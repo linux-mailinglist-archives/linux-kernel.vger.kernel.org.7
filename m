@@ -1,213 +1,262 @@
-Return-Path: <linux-kernel+bounces-759442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8D6B1DD9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:43:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7510B1DD9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FCB462059E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:43:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9117F7AA1DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C132A226D0D;
-	Thu,  7 Aug 2025 19:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCD522A813;
+	Thu,  7 Aug 2025 19:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PXQy9TOq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ItpylaLY"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651BA5CDF1
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 19:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CF92206BC
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 19:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754595776; cv=none; b=d75vzUUH4phMXZESdQ0/XnTa3rrkWJZY3Rs5MmbNNBnTygxxufot2mZx0sNSTvEUJvPCI2oiKoSWik+++W/6SZifp14UdqyTBC7GlVsnLg8mKdo7a2CbGGcuoF1lpCySNUQwGsdMtlGsN65yixnQXAq+NYfUwJWJhSPLGHXi6T8=
+	t=1754595801; cv=none; b=jjFWNs9hsdjUvpzh3xV/iA9v6RN1wiD0j1oBZ/763FO0VRgn6V0VLlW6PHzu0t03go9nbW5lFcjDNPCi7eQWYsLitB0PdQpyvda0VP8/AHzMvibZd/ML6Y8ZdqZnDiwUkUmyrZmwI0SMN0HhYpiJ6yiqFsq3bfQYN61Su7AKrQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754595776; c=relaxed/simple;
-	bh=OSZE3N09J+XSSRuD+ORoixfPCPu4RAFdLr8zoR1QR2s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWsTAJiiuV/kxWHqbF3aTY95rluwYCpiUoyvFbTBTXAs5moxP9Qp1lpBAT96G+e2EVfW/wYnroX9c1WJaYG06v1+3tIiZRFPOgsz6HMD0aHjFtBc93JEdyFcWK/k8XKLbeCws65iOaEJPXpr2uXaSAxorxWBVW0Y0FaXsQ0qZNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PXQy9TOq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754595772;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3LaDDgMqq/ecpftpql7G8nbETipKVAUsT3I+eSzopR4=;
-	b=PXQy9TOqDAOEEleHTaa8BRpu7dC7hJhTXrz9Z6epJzx8RYc6tz9lyjji2b+pvXzqxkRPvv
-	WzRGzQaCzAhKTz7TW9bgqx+NqtkaRes8SpyYH3swbdv4vUSObU2PRoVuIYmxvUnc0mdJwC
-	IEuP7MiRsMRCUbq3KQKJ+l7cbe7EpeQ=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-s_pZ4nAmN6ioqlFp14UeiQ-1; Thu, 07 Aug 2025 15:42:51 -0400
-X-MC-Unique: s_pZ4nAmN6ioqlFp14UeiQ-1
-X-Mimecast-MFC-AGG-ID: s_pZ4nAmN6ioqlFp14UeiQ_1754595770
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-459e30e4477so10803845e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 12:42:51 -0700 (PDT)
+	s=arc-20240116; t=1754595801; c=relaxed/simple;
+	bh=dEbV9u1yf7ixFmqTZylHBZeQnC4X+gY+bk3DjkiR0ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0zJtXphQYNFS2KUU4Pcd6qslPlOpUTM4TFZzxDuI0CA3VonZ/C28BvEJKPGHInuiA3jIhh1j0vT04nlfZmWeJyQllH9OLAHeSxyqC5fhgoeMbpW2O3bkYqKw0vGMDFR68X6hm3/7s/kbhE3b+CYxs1lViUwm2dyQUvwb0aVObE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ItpylaLY; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e40d006105so8434815ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 12:43:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1754595796; x=1755200596; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ksN7QoEbspBuW98h37TMe0g97VeYrOETORSi4asOWIE=;
+        b=ItpylaLYTzjLoY4U6YWATMUp0ImPyerOPadkIq8GWh7eQ6xIOSIIZEdW53W6hkXb4b
+         2+GkCLSnQGjGtExzikjLAnyUYvfzJfock12vf4TbuNB//buGXzXQjksC8wTT4A/DHeyI
+         QZ5uz11e0TshmARWhFTaWzoH0z02kYnddsjlDmfCDL0624mYVHw2dcn/+ZFix/znBd9Y
+         ERywnMKGc1wOlsYVOXWwY37Psxcq1GtAwxFSvsSgJqQaS1gPPdaGZRIs8VqtdAd3T2kX
+         xH1Cr43sK7zCPz9aXeizU/dkVMu7fdkQ3R5zWkoHEIc28+Bn6qLNN8WsVQFIGPq0so7w
+         dDqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754595770; x=1755200570;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3LaDDgMqq/ecpftpql7G8nbETipKVAUsT3I+eSzopR4=;
-        b=L4Fy2CCqFsU4DGU2nLcK3Sd6tng8sS10344HvbYkirX1uwWanuxYZCi7Om/hcvbtN9
-         Bvd7edO4tkslH7A1OHke/hHA+Ffy2qRfcmSVjEaw5AhXLkKnA3s705jrCa0XsJacNBTv
-         tlhzwkdLlxEsP3h8nDEdlmSHNn5+T1bzpTNzvsD99m6wMfNryzZtMNRzQU3+Agfr+Ezu
-         jgfPlasDssNj7lJysrGjdDFoLfb/XhdeRMJ+mWWKBs958RTL4jBtNdFUqW4xd+e+ZIZk
-         4FWh4PBzsjfOM/6ioTxnHjF6T+LFvuH3ALqsF5zGlTJruguHDDMa+stsp+ttUEgAaOYB
-         G8Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJbTGI8/pVhdPJ4JOBhxjIc8oY82nze4kE6XDXJj/mt+bRWMhcQn9DcxS/ewzbjIjE0iRd0+vRw2qtTwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZT5sXY+cxnUelJtFEg813ZzcW7f6+3sqqozaNa+V2ueU+AnKI
-	oscC4/OFWjEbPuNhM15pahzfLttBUrU3cYsehd/TpV5+rfgUaU2J4lnQWxSWE/d6XXsanm0XVH9
-	Fq/aW8EdH2ofLVkVZbRita1Vy2OEhIvJcFSdjucjBT008QCuVRWURho/86CGPbx8wqg==
-X-Gm-Gg: ASbGncuaQVwB+z7MmT7Rka8CX6VH1TfbaJuTbtufRc7V3bwpePQpYJihoeRXcLVMfZ5
-	3zugAPWG4TnskPTLz+EYxH1F0mMgeGNEijjPjap1TeLQ5eaciH0NhcTVTPcmRxECa4QKAsSMw96
-	nt9yWVVBWmRxL43e9ex4346w5X67MHV8ofKxBqCxspx1L89Uudhecr4z6Z30XTtlwRr6xM7siDR
-	f0lLQA3QWVe0inZfMlMpPYv5SIQEw9zii0mtvaTEaY9pi7Mm6kLHSnIam0uxB/eUFxNluPPLwsi
-	mTcyojAsXQmsVxPrIFZlCGlOwWN8HAZdcKT/4vBfMv8KP+GmjajmjMegKheZrnwQXsfSItVD8+K
-	aWOJTgMW+vrnp+7zDXLJtje4V9H3oZwMqzKw2i0Z1KzbvJSxcW2dbUiY9aEUQ9z/LBXA=
-X-Received: by 2002:a05:600c:1c0f:b0:456:19be:5cc with SMTP id 5b1f17b1804b1-459f4f51f9fmr1973265e9.14.1754595769784;
-        Thu, 07 Aug 2025 12:42:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGo6/clDb9BEZnuq3BiNmIprNXnt5JJSKR4eR1BFzhC172fm2kELBr9Eg3I29jiJ/sow7TFFw==
-X-Received: by 2002:a05:600c:1c0f:b0:456:19be:5cc with SMTP id 5b1f17b1804b1-459f4f51f9fmr1973095e9.14.1754595769330;
-        Thu, 07 Aug 2025 12:42:49 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f49:bc00:12fa:1681:c754:1630? (p200300d82f49bc0012fa1681c7541630.dip0.t-ipconnect.de. [2003:d8:2f49:bc00:12fa:1681:c754:1630])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e587e154sm116116445e9.27.2025.08.07.12.42.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 12:42:48 -0700 (PDT)
-Message-ID: <43f91e3e-84c5-4fd1-9b63-4e2cb28dab36@redhat.com>
-Date: Thu, 7 Aug 2025 21:42:47 +0200
+        d=1e100.net; s=20230601; t=1754595796; x=1755200596;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ksN7QoEbspBuW98h37TMe0g97VeYrOETORSi4asOWIE=;
+        b=eMaKvqdHr0pgof+awW8LyEQXcgiCOMjaASNjQkSbhnEMTceJVvL5fYZae70R/gD2EM
+         lixotwPu/jyGC4C6PR28sFkEZlmHcscFh3mxgRjhbVhiGdEWj0EflSJeTEOTVOcpVgBw
+         9Bqvj303X17NEyPWdq0F3d2JzLzP3mh3Edvd6H0T6a/2oTJyXoxNO7X9bLsOfhlBfprZ
+         7LP3aX/TxlOCmv0Xp9pGkRkivPbPCKZ0QUb54rLhBp93BYNyJeoNY0gjKqUy0nGUZe3t
+         Uxxf5uywXzOs809NxU0l87GtTthN66cin0bh4trWCoGq880Z+lhbsMUO3C6hDzcEkXZY
+         gWSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpk3DZTUaREVAA15HW5surH7b4NrOj2ENtz3o2Dk2f1Xmnn6Sjr0e+VVYU4C1hBf0q8GL4HHbR8yNkxU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWEe+/H1+WG6/eDYpr7gOcx3l/9xoqZKWJXmDSLAagAwr8Ln56
+	YyzEU9hhBn/6ZCxx9omI28VRM0VBZSjPaI70p/JnYqAZck1CfVqkr/qoal2m8MujMuF8Oob94sI
+	nho+VqiI=
+X-Gm-Gg: ASbGncvF00TfPgmuYbhaRHOFvIrG1317scVjZgATuP9PtYLLVp2hfXwkU2IvEAPJnPb
+	D/kIqapOntVHf1w2YrZ4F8f3WjVrkmTFEeLOcvlJEfVXkZEX/ArHp+cxkTEg6RqmoxuVOCdmoMq
+	BFVb2wEpS+Y/5PGyRWgiL2AUn9ADRmxn9lPYErEnbtDvUG/6p19HLtO4C4xFZTqU619eYr7MUPD
+	/9nAM3iyGIlSLVivn1aLnNlGZ09ktJZi7cHB/bnQ5rNWPkc9K30yHn6GP3nm2X16j39m5eR7NqP
+	EATUlqb2s4076vx2C7KUdFJzQLlbUtt3n87eqomtDMhF0nwzhSkEDdvrxm8UlJ1DV1evhO0jK4r
+	nylsJ
+X-Google-Smtp-Source: AGHT+IFA/sAzgFcR2AzlnIx+4w0z6jjnn+uYNSIEDm7YokMqWR7scpx2gbqcep8UiSxQf6yrkGVliw==
+X-Received: by 2002:a05:6e02:170c:b0:3e5:261c:bac0 with SMTP id e9e14a558f8ab-3e53317c453mr6676585ab.22.1754595796368;
+        Thu, 07 Aug 2025 12:43:16 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac5:8255:1b37::2b6:36])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e5254b5765sm11400145ab.34.2025.08.07.12.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 12:43:15 -0700 (PDT)
+Date: Thu, 7 Aug 2025 14:43:14 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Corey Minyard <corey@minyard.net>
+Cc: openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	kernel-team@cloudflare.com
+Subject: Re: [BUG] ipmi_si: watchdog: Watchdog detected hard LOCKUP
+Message-ID: <aJUB0gQZ6cH1zMRE@CMGLRV3>
+References: <aJO3q8JiVXKewMjW@CMGLRV3>
+ <CA+QrTELaLFRGn1ynG5dG+KB_40aPA31hU5QgLn7ikh2Zbk3Hpg@mail.gmail.com>
+ <aJPGItElGBN3nilX@mail.minyard.net>
+ <aJPK6Vuxc1jL-uu_@CMGLRV3>
+ <aJPccSayM2nXk891@mail.minyard.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] userfaultfd: fix a crash in UFFDIO_MOVE when PMD
- is a migration entry
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, peterx@redhat.com, aarcange@redhat.com,
- lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
-References: <20250806220022.926763-1-surenb@google.com>
- <3eba855a-740c-4423-b2ed-24d622af29a5@redhat.com>
- <CAJuCfpExxYOtsWZo6r0FncA0TMeuhpe3SdhLbF+udtbqQ+B_Qg@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <CAJuCfpExxYOtsWZo6r0FncA0TMeuhpe3SdhLbF+udtbqQ+B_Qg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJPccSayM2nXk891@mail.minyard.net>
 
-On 07.08.25 17:27, Suren Baghdasaryan wrote:
-> On Thu, Aug 7, 2025 at 3:31 AM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 07.08.25 00:00, Suren Baghdasaryan wrote:
->>> When UFFDIO_MOVE encounters a migration PMD entry, it proceeds with
->>> obtaining a folio and accessing it even though the entry is swp_entry_t.
->>> Add the missing check and let split_huge_pmd() handle migration entries.
->>>
->>> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
->>> Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
->>> Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
->>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->>> Reviewed-by: Peter Xu <peterx@redhat.com>
->>> Cc: stable@vger.kernel.org
->>> ---
->>> Changes since v3 [1]
->>> - Updated the title and changelog, per Peter Xu
->>> - Added Reviewed-by: per Peter Xu
->>>
->>> [1] https://lore.kernel.org/all/20250806154015.769024-1-surenb@google.com/
->>>
->>>    mm/userfaultfd.c | 17 ++++++++++-------
->>>    1 file changed, 10 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
->>> index 5431c9dd7fd7..116481606be8 100644
->>> --- a/mm/userfaultfd.c
->>> +++ b/mm/userfaultfd.c
->>> @@ -1826,13 +1826,16 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
->>>                        /* Check if we can move the pmd without splitting it. */
->>>                        if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
->>>                            !pmd_none(dst_pmdval)) {
->>> -                             struct folio *folio = pmd_folio(*src_pmd);
->>> -
->>> -                             if (!folio || (!is_huge_zero_folio(folio) &&
->>> -                                            !PageAnonExclusive(&folio->page))) {
->>> -                                     spin_unlock(ptl);
->>> -                                     err = -EBUSY;
->>> -                                     break;
->>> +                             /* Can be a migration entry */
->>> +                             if (pmd_present(*src_pmd)) {
->>> +                                     struct folio *folio = pmd_folio(*src_pmd);
->>> +
->>> +                                     if (!folio
->>
->>
->> How could you get !folio here? That only makes sense when calling
->> vm_normal_folio_pmd(), no?
+On Wed, Aug 06, 2025 at 05:51:29PM -0500, Corey Minyard wrote:
+> On Wed, Aug 06, 2025 at 04:36:41PM -0500, Frederick Lawler wrote:
+> > On Wed, Aug 06, 2025 at 04:16:18PM -0500, Corey Minyard wrote:
+> > > On Wed, Aug 06, 2025 at 03:19:02PM -0500, Fred Lawler wrote:
+> > > > + CC: Corey Minyard <corey@minyard.net>
+> > > > 
+> > 
+> > > I'm wondering if something is happening with the BMC resetting and
+> > > interactions with ACPI involved in that.  Adding the extra part of
+> > > trying to talk to the BMC while it's being reset could cause the BMC to
+> > > get confused and do bad things?
+> > > 
+> > 
+> > Sure, it's a possibility we explored. We have a lot of automation.
+> > Predominately of which is a prometheus module exporting IPMI information
+> > from the sysfs files. And we also have config management that's querying
+> > sysfs files to regulate updates etc... Sometimes, the config management
+> > automation will attempt to reset the BMC.
 > 
-> Yes, I think you are right, this check is not needed. I can fold it
-> into this fix or post a separate cleanup patch. I'm guessing a
-> separate patch would be better?
+> Ok.  I have tests that do BMC resets, but I can't run at the scale you
+> do, and I'm running in a simulator so it's not going to be have the
+> same.
+> 
+> The other possibility is the processor goes into the idle code while
+> interrupts are off, but I think the kernel has checks all around that.
+> I can't think of how else a processor would get stuck in idle.
+> 
 
-I think you can just post a fixup inline here and ask Andrew to squash 
-it. He will shout if he wants a completely new version :)
+Yes, it's a bit of an odd case. There's nothing obvious reported by the
+crash utility. By the time we get the NMI/panic, the CPUs are off doing
+something else in our crash typical case. That said, earlier this week I got a
+hard lockup outside of a BMC reset, but the node had too many MCE
+correctable memory errors.
 
--- 
-Cheers,
+For sake of completeness, I'll post that stack trace here anyway since
+that may provide some more context clues. In this case, I did catch two
+separate reads to sysfs files, and then they appear to have competed.
+The cat process seemed to already be off CPU, but the KCS
+message is still coming in at the same time the python script was being
+processed too. Only the python run was on CPU at time of crash. But NMI
+panic was still on a idle CPU. Unfortunately, I didn't write down all
+the logs this one, so it's missing the idle state NMI for watchdog, but
+hopefully the snippets show what's happening. I posted this below.
 
-David / dhildenb
+> > 
+> > > > >
+> > > > > I tried also tried to load the CPUs with stress-ng, but the best I can do
+> > > > > are the hung tasks.
+> > > > >
+> > > > > I identified that sni_send()[1] could be locked behind the
+> > > > > spin_lock_irqsave() and within the KCS send handler, there's another irq
+> > > > > save lock. I suspect this is where we're getting hung up. Below is a
+> > > > > sample stack trace + log output.
+> > > 
+> > > Yeah, I don't see that in the traceback.  There is a lock in the KCS
+> > > sender, but I don't see how that could do anything.
+> > > 
+> > > Maybe you could try changing the cpuidle handler?  That would be at
+> > > least something to try.
+> > > 
+> > 
+> > Would that help in forming a reproducer? I'd need to deploy any kernel
+> > modifications fleet wide to cast a wide enough net. The lockups arn't
+> > extremely consistent. We may get a couple or more a week.
+> 
+> Ah, so this isn't readily reproducable.  Bummer.
+> 
+> If the problem goes away if you change the cpuidle handler to something
+> non-ACPI, that would be a big clue that it's an ACPI issue.
+> 
+> > 
+> > Lastly, I have the rate limit patch backported. I'll be able to start
+> > testing with that tomorrow, and same with loading the IPMI watchdog
+> > module.
+> 
+> Ok.  I don't have much hope for it making much difference, but it's safe
+> and will be coming in the next kernel release.
+>
+
+It occurred to me last night that I'd probably like a rate limit on the KCS
+messages as well. I didn't see if a patch for that was made. I can whip
+that up sometime next week, that could be of use to anyone.
+
+[1533534.869508] [Hardware Error]: Corrected error, no action required.
+[1533534.884635] [Hardware Error]: CPU:1 (17:31:0) MC18_STATUS[Over|CE|MiscV|AddrV|-|-|SyndV|CECC|-|-|-]: 0xdc2040000000011b
+[1533534.912122] [Hardware Error]: Error Addr: 0x0000000313c7a020
+[1533534.926641] [Hardware Error]: IPID: 0x0000009600350f00, Syndrome: 0x9fec08000a800a01
+[1533534.943278] [Hardware Error]: Unified Memory Controller Ext. Error Code: 0
+[1533534.946635] EDAC MC0: 1 CE Cannot decode normalized address on mc#0csrow#1channel#3 (csrow:1 channel:3 page:0x0 offset:0x0 grain:64 syndrome:0x800)
+[1533535.369487] INFO: task cat:1844873 blocked for more than 10 seconds.
+[1533535.385145]       Tainted: G        W  O       6.12.35-cloudflare-2025.6.15 #1
+[1533535.401614] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[1533535.418715] task:cat             state:D stack:0     pid:1844873 tgid:1844873 ppid:1844872 task_flags:0x400000 flags:0x00004002
+[1533535.447475] Call Trace:
+[1533535.458691]  <TASK>
+[1533535.469154]  __schedule+0x4fa/0xbf0
+[1533535.481433]  schedule+0x27/0xf0
+[1533535.493181]  __get_guid+0xf4/0x130 [ipmi_msghandler]
+[1533535.506325]  ? __pfx_autoremove_wake_function+0x10/0x10
+[1533535.519910]  __bmc_get_device_id+0xd6/0xa30 [ipmi_msghandler]
+[1533535.534459]  ? srso_return_thunk+0x5/0x5f
+[1533535.546509]  ? srso_return_thunk+0x5/0x5f
+[1533535.558540]  ? __memcg_slab_post_alloc_hook+0x21b/0x410
+[1533535.571722]  aux_firmware_rev_show+0x38/0x90 [ipmi_msghandler]
+[1533535.585304]  ? __kmalloc_node_noprof+0x3f6/0x450
+[1533535.598144]  ? seq_read_iter+0x376/0x460
+[1533535.609621]  dev_attr_show+0x1c/0x40
+[1533535.621024]  sysfs_kf_seq_show+0x8f/0xe0
+[1533535.632316]  seq_read_iter+0x11f/0x460
+[1533535.643172]  ? security_file_permission+0x9/0xb0
+[1533535.655102]  vfs_read+0x260/0x330
+[1533535.665368]  ksys_read+0x65/0xe0
+[1533535.675559]  do_syscall_64+0x4b/0x110
+[1533535.686324]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[1533535.698530] RIP: 0033:0x7f72b587125d
+[1533535.708857] RSP: 002b:00007ffccc21bb48 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[1533535.723411] RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007f72b587125d
+[1533535.737361] RDX: 0000000000020000 RSI: 00007f72b5755000 RDI: 0000000000000003
+[1533535.751191] RBP: 0000000000020000 R08: 00000000ffffffff R09: 0000000000000000
+[1533535.764847] R10: 00007f72b5788b60 R11: 0000000000000246 R12: 00007f72b5755000
+[1533535.778536] R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000000000
+[1533535.792210]  </TASK>
+
+crash> bt -l 1781073
+PID: 1781073  TASK: ffff9d91c7040000  CPU: 81   COMMAND: "/usr/bin/python"
+ #0 [ffffb3a171683c00] __schedule at ffffffff9d559eea
+    /cfsetup_build/build/linux/kernel/sched/core.c: 5338
+ #1 [ffffb3a171683c80] schedule at ffffffff9d55a617
+    /cfsetup_build/build/linux/arch/x86/include/asm/preempt.h: 84
+ #2 [ffffb3a171683c90] __get_guid at ffffffffc22aa574 [ipmi_msghandler]
+ #3 [ffffb3a171683ce8] __bmc_get_device_id at ffffffffc22aa696 [ipmi_msghandler]
+ #4 [ffffb3a171683da0] aux_firmware_rev_show at ffffffffc22ab1c8 [ipmi_msghandler]
+ #5 [ffffb3a171683dd0] dev_attr_show at ffffffff9d1175dc
+    /cfsetup_build/build/linux/drivers/base/core.c: 2425
+ #6 [ffffb3a171683de8] sysfs_kf_seq_show at ffffffff9cc64caf
+    /cfsetup_build/build/linux/fs/sysfs/file.c: 60
+ #7 [ffffb3a171683e10] seq_read_iter at ffffffff9cbddf7f
+    /cfsetup_build/build/linux/fs/seq_file.c: 230
+ #8 [ffffb3a171683e68] vfs_read at ffffffff9cba8590
+    /cfsetup_build/build/linux/fs/read_write.c: 489
+ #9 [ffffb3a171683f00] ksys_read at ffffffff9cba9165
+    /cfsetup_build/build/linux/fs/read_write.c: 713
+#10 [ffffb3a171683f38] do_syscall_64 at ffffffff9d550c8b
+    /cfsetup_build/build/linux/arch/x86/entry/common.c: 52
+#11 [ffffb3a171683f50] entry_SYSCALL_64_after_hwframe at ffffffff9d60012f
+    /cfsetup_build/build/linux/arch/x86/entry/entry_64.S: 130
+    RIP: 00007f04e1b7c29c  RSP: 00007ffea7aaf6c0  RFLAGS: 00000246
+    RAX: ffffffffffffffda  RBX: 0000000000a840f8  RCX: 00007f04e1b7c29c
+    RDX: 0000000000001001  RSI: 000000002fd06ef0  RDI: 00000000000000c1
+    RBP: 00007f04e1a82fc0   R8: 0000000000000000   R9: 0000000000000000
+    R10: 0000000000000000  R11: 0000000000000246  R12: 0000000000001001
+    R13: 000000002fd06ef0  R14: 00000000000000c1  R15: 0000000000a41520
+    ORIG_RAX: 0000000000000000  CS: 0033  SS: 002b
+
+crash> files 1781073
+...
+193 ffff9db5132e5800 ffff9dafb18bd200 ffff9da7b780bcf0 REG  /sys/devices/platform/ipmi_bmc.0/aux_firmware_revision
+
+crash> log -c
+...
+[1533553.998160] [      C7] ipmi_si IPI0001:00: KCS in invalid state 6
+[1533554.009156] [      C7] ipmi_si IPI0001:00: KCS in invalid state 8
+[1533554.019973] [T1844873] ipmi_si IPI0001:00: KCS in invalid state 9
+[1533554.031005] [     C81] ipmi_si IPI0001:00: IPMI message handler: device id fetch failed: 0xd5
 
 
