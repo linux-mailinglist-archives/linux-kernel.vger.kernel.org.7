@@ -1,121 +1,142 @@
-Return-Path: <linux-kernel+bounces-759217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86802B1DA6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:55:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43312B1DA71
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765847A51EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:54:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8B9B18C7979
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FEC25DCE5;
-	Thu,  7 Aug 2025 14:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1552652A2;
+	Thu,  7 Aug 2025 14:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ldRXKL9Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jG2J7x9K"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EE6204F93
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171B825A2AE
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754578541; cv=none; b=Iqib6HcEDzbAXhAvoavEBYqTZ1aoqxjj5Ky3cdNbsEQ3juOX1ckvg/Ke5UgF4RZtgQfJ6KrZXcgIYnay0NzsgWKsBv1j4sz8U1xvJh9V+XuKd+tHuuiUDuW/HL63fEWLAlz7MlDtSY0C6X+2A2CUHW5fPr3bFWy5bN/K8g5AHx4=
+	t=1754578557; cv=none; b=Eupx+PC0anK+shPkA7dYG2pKtW0ZTQW/h76wfceueHuz7+wV5O4EAd68uwbeDlBvQ2pSLIgOBzwLsp4hv0DXmoY29nnk+siVFO1K7LkkrO4Mew0UMwnIlPxshZ5MEqTYDn/rcGIFYmVQys7XXOJepG7HJQBeARL7xZWKZ03m4ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754578541; c=relaxed/simple;
-	bh=LhNV4rNwlM1GjQoibhPSPw5h4vdR15BXotmQnSEIl4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=q/hNlwGO44Wcjk/0d5uyLPxG4LQU90KWihsML0nV8B3B9yvybaw+i+xunw+E/eCxGBL74oh+3c0mpJTaNA6/Sd8X0brCB6nqYyXrwsqzqZ8LICNwZAgp5h/Z0FT7uiu3ZYLdvLtPqnLOxJHYwDUgoCSL7uTyST1xmpvMQOW/i7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ldRXKL9Y; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754578540; x=1786114540;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=LhNV4rNwlM1GjQoibhPSPw5h4vdR15BXotmQnSEIl4A=;
-  b=ldRXKL9YrhXw5a101HDcPhls7eH7fd/JLrKPMZlBmSeLFEYJkcHKJQIW
-   sRf9/ErNuGT+Gs7GBm/g1wu2EXzSuDAc5DkL9a9sGJjI7wgBvrCuVHHEx
-   pT3POWSPZAkXR3Cd1EPnCyCDtBKYCWLLT5eFb93d7vRBMLr0FIX0Fvuba
-   VRHNGSeBizzDuGHsprW9sVz0NU2QjuW+dByBBUWDzHcogT+qlNwL3k4gC
-   5Za5IFwIKT4KSAIHd5/5nJwScL3F8LpwQK2p8+Qv7+guauOTxZFQ8gg49
-   UCVojBzbQdaY9ZOmgowBYw+DUucjGsXMRDb3eRPUDPzK5O9RvUmTSUq8o
-   Q==;
-X-CSE-ConnectionGUID: z0i4vunqS/CFX6d3spQYZA==
-X-CSE-MsgGUID: rBA6Lq1YSSOErUbkyTHoZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="68290568"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="68290568"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 07:55:39 -0700
-X-CSE-ConnectionGUID: ZA7AK/5SS2mLreS1dvtjVA==
-X-CSE-MsgGUID: E5QBsy51Qu+/IRazcBTbZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="164330131"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 07 Aug 2025 07:55:38 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uk21n-0002u8-1E;
-	Thu, 07 Aug 2025 14:55:35 +0000
-Date: Thu, 7 Aug 2025 22:54:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Stafford Horne <shorne@gmail.com>, Rong Xu <xur@google.com>
-Subject: (.head.text+0x900): relocation truncated to fit: R_OR1K_INSN_REL_26
- against `no symbol'
-Message-ID: <202508072204.buxqzhL3-lkp@intel.com>
+	s=arc-20240116; t=1754578557; c=relaxed/simple;
+	bh=HzO32Yh60OHiGqCK0y0hof+JHxVfAYcSBiCl3jE4fTs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sGaZGNBbKCzWRwkc4Cd0Z5mFmdYuIZ0XGGRFEG8aOIeNVNzPmks5PvdWFJy+YPCVKKERUkUUjh1Km9U18GNeW9g3AR0SB7FVoQLaOWK1KulZNN75e09cewg1osmIBGztkmxnOTQjvfi++sRWwGGAW0MLTw8ybBC1fMrw+9gJwBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jG2J7x9K; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76be7fe3d65so2411945b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 07:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754578555; x=1755183355; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jcPUX/VYgPTff9JpxJ+KoCMkZRni9WiIzz7CwqMYyyM=;
+        b=jG2J7x9Ko6Bl9VJUiMoAP0SksmlsYMO4W4VyqhRyUj8ENEwJNkNqjpDwQet3w1cWRF
+         GM1/QyhJ6dYDBy5ISo11QnmLHVJmb4bLKRclnIxdFzQOCY/Pe2dW6fapoFv4yt7U3cxg
+         Kpp/o9f2DD2ZNlh/bFvzFiaaygZyzjTvVMEdexEbpoNOC1EYlN8vqlbCgbx8+D4oZr/B
+         aurA73yalP+3x+nn7F3cCmdYg7pws0NRAWAv1Qxl3JMY0o5IGIATV+qLD5q+btNLwX60
+         FZwnDJD+SzdTyYS/NMC1QSZzn9Qo8uWvKq25RATlaZHh41dO3EsJq9u4sT5jN7SUmIVJ
+         RT9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754578555; x=1755183355;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jcPUX/VYgPTff9JpxJ+KoCMkZRni9WiIzz7CwqMYyyM=;
+        b=n26QHTR1ST0y8nyg8ZcUZLXqFwSFC9sg0bcwwJFxpOPGzl/xTrwzlMt4mMUTPOptNG
+         vF1xsdoxvYlMS+ADhq3+VpjzZMZK8G37j90It2T6cj6CdPD/cob4sUZXcfn1VyFTChhO
+         I2Y8cd6l3LohzFzBdsTd0co7rtm9iqxJwvTGrQrnhn90Ldpta+L/G+jt2CoxxeG6L17u
+         5WEn5JlSEyrEGgz1uKJDELMRRkNN2aZQLvNlVuFV4VlW71wg/MtzmdYgTiQkpobTwZEW
+         8kt85A0+sZkkQotfQeIz/qy9GUlwwwPGLpoMPIunZARJfOUBN8L+USwsrQ0a+gXNhAxq
+         5/YA==
+X-Forwarded-Encrypted: i=1; AJvYcCU54zsI89KLXSajHF9i8ATsgumyI5tddg/lDmUqwgtROZPVPLPx7xkSppmtZ9fruG4in6WeQYW/bpcHtWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZKt+oiBDCs+Rs7VUhdjZkDO9H1BN1JIlNoflwXK3OwSE302cA
+	sW3cvjMPHE9q80vXLGnITSN0ibFsS6O6JjTsH5SqhOJWpCGvTesgq3UNTs+DVI5lQ8DP0xNs79h
+	VBA==
+X-Google-Smtp-Source: AGHT+IHc4dZo6OEZz4pfAIClf+43hYuDLq9SKAoDuZay4FDjK25R8yRQgDScapgc5Lz+rs0x/IGp+47yZw==
+X-Received: from pgbcz7.prod.google.com ([2002:a05:6a02:2307:b0:b42:fe:62e2])
+ (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:328c:b0:234:8b24:108d
+ with SMTP id adf61e73a8af0-240313b0ec0mr12184119637.22.1754578555276; Thu, 07
+ Aug 2025 07:55:55 -0700 (PDT)
+Date: Thu,  7 Aug 2025 22:55:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
+Message-ID: <20250807145550.1837846-1-wakel@google.com>
+Subject: [PATCH] selftests/futex: Skip futex_waitv tests if ENOSYS
+From: Wake Liu <wakel@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, 
+	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, wakel@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Masahiro,
+The futex_waitv() syscall was introduced in Linux 5.16. The existing
+test in futex_wait_timeout.c will fail on kernels older than 5.16
+due to the syscall not being implemented.
 
-FYI, the error/warning still remains.
+Modify the test_timeout() function to check if the error returned
+is ENOSYS. If it is, skip the test and report it as such, rather than
+failing. This ensures the selftests can be run on a wider range of
+kernel versions without false negatives.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6e64f4580381e32c06ee146ca807c555b8f73e24
-commit: a412f04070e52e6d6b5f6f964b9d9644de16bb81 openrisc: place exception table at the head of vmlinux
-date:   8 months ago
-config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20250807/202508072204.buxqzhL3-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508072204.buxqzhL3-lkp@intel.com/reproduce)
+Signed-off-by: Wake Liu <wakel@google.com>
+---
+ .../selftests/futex/functional/futex_wait_timeout.c   | 11 ++++++++---
+ .../testing/selftests/futex/functional/futex_waitv.c  |  8 ++++++++
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508072204.buxqzhL3-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/openrisc/kernel/head.o: in function `_dispatch_do_ipage_fault':
->> (.head.text+0x900): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
-   (.head.text+0xa00): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
-   arch/openrisc/kernel/head.o: in function `exit_with_no_dtranslation':
->> (.init.text+0x21bc): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
-   arch/openrisc/kernel/head.o: in function `exit_with_no_itranslation':
-   (.init.text+0x2264): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
-   init/main.o: in function `trace_event_raw_event_initcall_level':
-   main.c:(.text+0x28c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `strlen' defined in .text section in lib/string.o
-   init/main.o: in function `initcall_blacklisted':
-   main.c:(.text+0x70c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `strcmp' defined in .text section in lib/string.o
-   init/main.o: in function `trace_initcall_finish_cb':
-   main.c:(.text+0x830): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/15.1.0/libgcc.a(_muldi3.o)
-   main.c:(.text+0x854): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/15.1.0/libgcc.a(_muldi3.o)
-   main.c:(.text+0x894): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/15.1.0/libgcc.a(_muldi3.o)
-   main.c:(.text+0x8c0): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/15.1.0/libgcc.a(_muldi3.o)
-   init/main.o: in function `do_one_initcall':
-   main.c:(.text+0xf54): additional relocation overflows omitted from the output
-
+diff --git a/tools/testing/selftests/futex/functional/futex_wait_timeout.c b/tools/testing/selftests/futex/functional/futex_wait_timeout.c
+index d183f878360b..323cab339814 100644
+--- a/tools/testing/selftests/futex/functional/futex_wait_timeout.c
++++ b/tools/testing/selftests/futex/functional/futex_wait_timeout.c
+@@ -64,9 +64,14 @@ void *get_pi_lock(void *arg)
+ static void test_timeout(int res, int *ret, char *test_name, int err)
+ {
+ 	if (!res || errno != err) {
+-		ksft_test_result_fail("%s returned %d\n", test_name,
+-				      res < 0 ? errno : res);
+-		*ret = RET_FAIL;
++		if (errno == ENOSYS) {
++			ksft_test_result_skip("%s: %s\n",
++					      test_name, strerror(errno));
++		} else {
++			ksft_test_result_fail("%s returned %d\n", test_name,
++					      res < 0 ? errno : res);
++			*ret = RET_FAIL;
++		}
+ 	} else {
+ 		ksft_test_result_pass("%s succeeds\n", test_name);
+ 	}
+diff --git a/tools/testing/selftests/futex/functional/futex_waitv.c b/tools/testing/selftests/futex/functional/futex_waitv.c
+index 034dbfef40cb..2a86fd3ea657 100644
+--- a/tools/testing/selftests/futex/functional/futex_waitv.c
++++ b/tools/testing/selftests/futex/functional/futex_waitv.c
+@@ -59,6 +59,14 @@ void *waiterfn(void *arg)
+ 
+ int main(int argc, char *argv[])
+ {
++	if (!ksft_min_kernel_version(5, 16)) {
++		ksft_print_header();
++		ksft_set_plan(0);
++		ksft_print_msg("%s: FUTEX_WAITV not implemented until 5.16\n",
++			       basename(argv[0]));
++		ksft_print_cnts();
++		return KSFT_SKIP;
++	}
+ 	pthread_t waiter;
+ 	int res, ret = RET_PASS;
+ 	struct timespec to;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.1.703.g449372360f-goog
+
 
