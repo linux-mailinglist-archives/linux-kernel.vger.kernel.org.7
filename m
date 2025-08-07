@@ -1,181 +1,151 @@
-Return-Path: <linux-kernel+bounces-758778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597A2B1D3C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A746EB1D3C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7701D583203
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:55:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA2416AB4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EA9242D8C;
-	Thu,  7 Aug 2025 07:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39677244684;
+	Thu,  7 Aug 2025 07:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2QNJUW1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGZp1GuR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA51231C8D;
-	Thu,  7 Aug 2025 07:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EE923C512;
+	Thu,  7 Aug 2025 07:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553344; cv=none; b=i0fhyCEKXjwd4yexSJVe/oqWoILgFBrncp+bU76P+DN3v4iLRl5oLgIFnq/vEmx7FtSA4wlYKGSA/2I2VZeL6MPJANev/oxEWrpl0K74q0KnCwf57SmuhU6YSUIv0e/jsnUBaXfYkpV24kgNZd24Kja5mAMN1E9m8Myg8YHF0ss=
+	t=1754553367; cv=none; b=FLI1jjjfIEMpeHE8aFXddno4gFVns/k3pWnhWuUWb4pPoab9+LpTTCd62dZLzYwwvCYB/p1RrCwHIG+M606ioniNpKhLeEyj60DiNkY/OuQGrAmBtJnm87DViZjW5HsfHhoyLsRlM/xiQyEU6Frq4SUExTg+50TcFgANhSfbTsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553344; c=relaxed/simple;
-	bh=dEHgSM22sblspxi3jWP8fT7feJl+4lJSdt4mMsidWVg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jXRDSY3+xWDSjpOXbBlm+E1r6BdXBy9V8QTwtkpeMm6SE0dUS5CxbGHIa8ZnEJBSqPl06fdt5sBXeop1YGaU4YpsVusFCv3BrIr+ysR7+8VhKtXKB71EmTvmgDqHKvSqO9puz36tl1hOO5t+M3CsgPzsebSvnVZu+/aOw8kNGCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2QNJUW1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12E76C4CEED;
-	Thu,  7 Aug 2025 07:55:40 +0000 (UTC)
+	s=arc-20240116; t=1754553367; c=relaxed/simple;
+	bh=AzHBwyfNbGjc4Jw1PZGXaDtEdx1kamPVd4BLcSJLvBo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MlDfd+zEe96KuVLbOG8zxV2G7wOz9UeyO3kfhRPr1eq5CAbP+taNmUV2awN2wrNZJJx/n9k3wEUYWbiVnalnyF+r7DTqRQzGouVqIf6r1vBvKH7VZt1DXgYsB/UhpoVQuIfg58U+C24yBENUl6msCm82i9z/sLtRR7uWptuTkxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGZp1GuR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 35588C4CEEB;
+	Thu,  7 Aug 2025 07:56:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754553344;
-	bh=dEHgSM22sblspxi3jWP8fT7feJl+4lJSdt4mMsidWVg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=b2QNJUW1gu0rDpVOR96PxHKl9OZIm7k8Y3Fs3xoK+/rHSjMyIMBSxl1dhAxO3GcM5
-	 zWmtS/7NgRELMQybHJOJl3ZNPOWn244yZPkyoA1H8YJMGWYMEY5l57NjNRWXuiJG1D
-	 ud6BSNmpSwDvZjTjHNpARJEQ+SQ08gViJAlGJ1c327gmb2JhorHepdPeT4xidGZz/E
-	 NZPcR8OVzWJEj+G05j6GQGKYAPTYSxed0B//qfna0qPyJdpPgxFfMlFabn73D3iKBT
-	 xripiokRCKj9mnZL6tkk2VwGAWsuactaIfP4rAWabgCWpqw0HM8cSjhHrcLDRH9P0V
-	 vUHFdCJORAYqw==
-Message-ID: <c86bcdf0-f692-4263-a597-f8e36a53e8d9@kernel.org>
-Date: Thu, 7 Aug 2025 09:55:39 +0200
+	s=k20201202; t=1754553367;
+	bh=AzHBwyfNbGjc4Jw1PZGXaDtEdx1kamPVd4BLcSJLvBo=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=qGZp1GuRICWLHmriBZXuC1xu7cOLoxviiWBHO1AB0FutndTWkZq8IpP7BIayvcf3X
+	 InyQzcsN9gcv8pdQ0kpTae7kUhKBssk4auHquZ4Xdv7k04pPRaBIG5ixY3v5fAEs0H
+	 x+lM3EcCU6e2Uym+QZMfx3fTM4d2ZIQmLPiWO1VA7EqH/uw7MZcgvVZ93fO65vbRfL
+	 VRLCunIVFj10BBE/cj2mPdsWjDPe1pFUX/EQyeT0XNQQTBXzWYGp8rL+kkUJ2ir+gS
+	 /UyUd9umnXXk4jZ6G/Xbh/lFlqyG6/apwI0M8fa1RPWZIVu4PtgKZCfNFzZOPOHaL2
+	 tyiTfVx2VdyCQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E2CC87FCA;
+	Thu,  7 Aug 2025 07:56:07 +0000 (UTC)
+From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
+Date: Thu, 07 Aug 2025 15:56:03 +0800
+Subject: [PATCH] Bluetooth: hci_sync: Prevent unintended PA sync when SID
+ is 0xFF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] dt-bindings: phy: rockchip,pcie3-phy: add
- rockchip,phy-ref-use-pad
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org,
- alberto.dassatti@heig-vd.ch, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250806133824.525871-1-rick.wertenbroek@gmail.com>
- <20250806133824.525871-4-rick.wertenbroek@gmail.com>
- <20250807-inquisitive-speedy-rooster-0a8488@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250807-inquisitive-speedy-rooster-0a8488@kuoka>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250807-sid_invalid-v1-1-94b3902a49e3@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIABJclGgC/x3MQQqAIBBA0avIrBNsIJOuEhGmYw2EhYIE4d2Tl
+ m/x/wuZElOGSbyQqHDmKzb0nQB32LiTZN8MqHBQRo0ys185Fnuyl+jMplHbgBSgFXeiwM9/m5d
+ aP661q7FdAAAA
+To: Marcel Holtmann <marcel@holtmann.org>, 
+ Johan Hedberg <johan.hedberg@gmail.com>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Yang Li <yang.li@amlogic.com>
+X-Mailer: b4 0.13-dev-f0463
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754553364; l=2518;
+ i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
+ bh=CtzsG6OQjFbI3wHcVoNvKNs7wHlNBWzJw+zuy9bA75s=;
+ b=ETEyq1rB1JGnX2oJgwsj6kgqPnLa65UEjLLIkyn2hV7modUsnow39Wh8EqiU4f2YaEViwC/HV
+ 6qM4SraBE3vARqgqVRrjGO9n13Ti6NdV6+nXLRN8wRtvZwpCW/Zm6Wk
+X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
+ pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
+X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
+ auth_id=180
+X-Original-From: Yang Li <yang.li@amlogic.com>
+Reply-To: yang.li@amlogic.com
 
-On 07/08/2025 09:54, Krzysztof Kozlowski wrote:
-> On Wed, Aug 06, 2025 at 03:38:23PM +0200, Rick Wertenbroek wrote:
->> >From the RK3588 Technical Reference Manual, Part1,
->> section 6.19 PCIe3PHY_GRF Register Description: "ref_use_pad"
->>
->> "Select reference clock connected to ref_pad_clk_p/ref_pad_clk_m.
->> Selects the external ref_pad_clk_p and ref_pad_clk_m inputs as the
->> reference clock source when asserted. When de-asserted, ref_alt_clk_p
->> and ref_alt_clk_m are the sources of the reference clock."
->>
->> The hardware reset value for this field is 0x1 (enabled).
->> Note that this register field is only available on RK3588, not on RK3568.
-> 
-> Then you miss restricting it (:false) in one of if:then: blocks.
-> 
-> Also, binding cannot be after the user. You need to reorder patches.
-> 
-> ...
-> 
->>  
->> +  rockchip,phy-ref-use-pad:
->> +    description: which PHY should use the external pad as PCIe reference clock.
->> +      1 means use pad (default), 0 means use internal clock (PLL_PPLL).
-> 
-> Can't you deduce it from the presence of clock inputs? IOW, if the
-> clocks are physically connected, is it even reasonable or possible to
-> use internal clock?
-> 
->> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->> +    minItems: 2
->> +    maxItems: 2
->> +    items:
->> +      minimum: 0
->> +      maximum: 1
-> 
-> More precise:
-> 
-> items:
->   - description: PHY0 reference clock config
->   - description: PHY1 reference clock config
->   enum: [ 0, 1 ]
+From: Yang Li <yang.li@amlogic.com>
 
-Eh, no, rather if this stays as int:
+After LE Extended Scan times out, conn->sid remains 0xFF,
+so the PA sync creation process should be aborted.
 
-    items:
-      - description: PHY0 reference clock config
-        enum: [ 0, 1 ]
-      - description: PHY1 reference clock config
-        enum: [ 0, 1 ]
-    default: [ 1, 1 ]
+Btmon snippet from PA sync with SID=0xFF:
 
+< HCI Command: LE Set Extended.. (0x08|0x0042) plen 6  #74726 [hci0] 863.107927
+        Extended scan: Enabled (0x01)
+        Filter duplicates: Enabled (0x01)
+        Duration: 0 msec (0x0000)
+        Period: 0.00 sec (0x0000)
+> HCI Event: Command Complete (0x0e) plen 4            #74727 [hci0] 863.109389
+      LE Set Extended Scan Enable (0x08|0x0042) ncmd 1
+        Status: Success (0x00)
+< HCI Command: LE Periodic Ad.. (0x08|0x0044) plen 14  #74728 [hci0] 865.141168
+        Options: 0x0000
+        Use advertising SID, Advertiser Address Type and address
+        Reporting initially enabled
+        SID: 0xff
+        Adv address type: Random (0x01)
+        Adv address: 0D:D7:2C:E7:42:46 (Non-Resolvable)
+        Skip: 0x0000
+        Sync timeout: 20000 msec (0x07d0)
+        Sync CTE type: 0x0000
+> HCI Event: Command Status (0x0f) plen 4              #74729 [hci0] 865.143223
+      LE Periodic Advertising Create Sync (0x08|0x0044) ncmd 1
+        Status: Success (0x00)
 
-> default: [ 1, 1 ]
-> 
-> Anyway, default 1, 1 is pretty non-obvious, so this should be just
-> non-unique-string-array (and property should be like
-> rockchip,phy-ref-clk-source/sel).
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+Signed-off-by: Yang Li <yang.li@amlogic.com>
+---
+ net/bluetooth/hci_sync.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index 387c128f2ba0..540794a4495f 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -7045,10 +7045,13 @@ static int hci_le_pa_create_sync(struct hci_dev *hdev, void *data)
+ 	/* SID has not been set listen for HCI_EV_LE_EXT_ADV_REPORT to update
+ 	 * it.
+ 	 */
+-	if (conn->sid == HCI_SID_INVALID)
+-		__hci_cmd_sync_status_sk(hdev, HCI_OP_NOP, 0, NULL,
++	if (conn->sid == HCI_SID_INVALID) {
++		err = __hci_cmd_sync_status_sk(hdev, HCI_OP_NOP, 0, NULL,
+ 					 HCI_EV_LE_EXT_ADV_REPORT,
+ 					 conn->conn_timeout, NULL);
++		if (err == -ETIMEDOUT)
++			goto done;
++	}
+ 
+ 	memset(&cp, 0, sizeof(cp));
+ 	cp.options = qos->bcast.options;
+@@ -7078,6 +7081,7 @@ static int hci_le_pa_create_sync(struct hci_dev *hdev, void *data)
+ 		__hci_cmd_sync_status(hdev, HCI_OP_LE_PA_CREATE_SYNC_CANCEL,
+ 				      0, NULL, HCI_CMD_TIMEOUT);
+ 
++done:
+ 	hci_dev_clear_flag(hdev, HCI_PA_SYNC);
+ 
+ 	/* Update passive scan since HCI_PA_SYNC flag has been cleared */
+
+---
+base-commit: df18778595f9423542f38784749feca5471f9de7
+change-id: 20250807-sid_invalid-2c8b626af2ef
 
 Best regards,
-Krzysztof
+-- 
+Yang Li <yang.li@amlogic.com>
+
+
 
