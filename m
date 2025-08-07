@@ -1,188 +1,151 @@
-Return-Path: <linux-kernel+bounces-759211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0C2B1DA5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:48:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85226B1DA61
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3A9169C5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D821E1888591
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6889A1C862E;
-	Thu,  7 Aug 2025 14:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDEF264F9F;
+	Thu,  7 Aug 2025 14:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lXSY6lef"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dc460t1D"
+Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C33533086;
-	Thu,  7 Aug 2025 14:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5D033086;
+	Thu,  7 Aug 2025 14:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754578095; cv=none; b=UdHqVkLb0mxuXih36KtcIu8ha5emPWPK1AR7YgBfBDg7qdps8coiafv87X0O+5j0Y+nePCn74vYRwdLtmuV43mButUcU1ov8iYfKdoWmXP+c27Uwe1q1FPGCRTHzdyDRsiij0yYgs7fvxZYaWDHP3ZR293eB4CyIDxE1+bOUHwU=
+	t=1754578121; cv=none; b=bEF0EjoeqmVkFHCam5OrZe4yD9Tat9wh5x1Yt5LcBGh+6ymbVqWWLFDJt6kw0jTQTgx/Zm7MUFH0wQvATtYMzGs7NSFh/dvciAmfDW4UZOg6ECdx8ZXPzddLDooKsSnKgonbuO35sedWbZtdXINMWhJeEd3W9FHQyz6sURrlkZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754578095; c=relaxed/simple;
-	bh=Uqx2K8iqj8C9J2fe3pyivDhLY31N5WS3GpKgVecfeqw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TiDRmFg/I3fY4xK9TqtQRAiAJWTAh25SxDoemqhg8yjzKmKq6B51OaUsIJMHdcEyzgzRWq1BbKALRPgMojwsZfNg0GUMHnwTHBDW0L2sA1T1QuCDKjY7l6lkM8cLL27wy08md/pqLp79YrGTUSq9a/gEC+4SEzHh7UM5D3jnD+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lXSY6lef; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-31efc10bb03so1035477a91.0;
-        Thu, 07 Aug 2025 07:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754578093; x=1755182893; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OzOvhq3GmbvaBtGUgAaXSZiV6ZbsCylTW2ygbBRF/o=;
-        b=lXSY6lefAdeCav+hi5Lz8+0pH6+UqbPtd1+OAFpy/47fuGosNoXj6AA5DrpTYnalD9
-         hGLfd6dAVVf9SKrLHXZdQTZLk/RPO6h0J87MO4FCwHsR4WpCqL/Qa0gq29LwlO21i8zy
-         EKTP3IaKGYi3/cP5RFHdeodHe1GFU4wuVlZ3T3iCbi9uMo5DFUO1WWjb6vtqMPZ4Cm8t
-         xLpEMVB+EAt39JP+HNJAwKSJsAmwVIHwIVNSESpBBNAd4qJfQu3hF3SUosgjW3iK6aoE
-         qiyaA1PAcCesPjPsOnzMB/CnT5k6k4Hdwms2mEPhaw2EzhFqP1O1pcAhjJcXL1KLzsXW
-         xcrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754578093; x=1755182893;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9OzOvhq3GmbvaBtGUgAaXSZiV6ZbsCylTW2ygbBRF/o=;
-        b=UmBIcmrAqzgNtlvWcOnLOeYh+tt4nnSLQW+dNpAgO+sziSBNHKeI73PVbiEGr8uhTy
-         7XMlB1cMej4jPvYRkKB/8SrjxPNpP/fIOkk5eBbawAi/8vs7S7RhsbUD0hsOfPNHrQ+e
-         5zG4vTthP+Fnxra3ocpManLqyPhk/942as/7OyGXHyp74QHdVg53WkL+R6Zxu79brvmL
-         +ACqXzSE1nlnKqNaB6EA31Yixp+iTQByTbxA0erCZrQIkFcSVczk0iEZFOunjaMF93H9
-         N0zav9jVB8TP7KAgLrgwnOrCuGJ91FYwSLTPr11b5OVSFSKf9HbJNQOn0Fw9olaQEMeo
-         KDeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCM3C4ikFHsbdCOGLu1AiNK4sIN1ZW6Zw3/cUXHd9GJ78JyO5oykT/fuUUHw2xlA5jAJJzlF/mIu34Juk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9BIPDTBheFUZlEYGHckXd4IJSt4niXkxDWoeZopkrHgYwq3Np
-	aP3jVE3WA44QFdfZN6riCPuD/ys6xXfhTu+ij44QvukBID+SsxKaHSv5
-X-Gm-Gg: ASbGncuNp/UpVNlS5/0DNLKlrSGZe/tojr73A1K6tVwlhTPfblgs+hz54EPWfDqNWeX
-	RcAgMVaQPB+7ofsZbpe+keX0/D9YX/8tFC1MupIPymVnZWdj2RwP66EZ0Ls9u/6edDOd9bEXNHb
-	lDlDC+iclg+b041aqKXVM0VkTVKCNlZosxfevpAL1XkvkwNSDC7KtJRbJ2ZLmxPXLLynYEjYBMs
-	p3azD1W8q/ZmFicW3k6eOPmqqPLvViadJoVFuqZiHc1tBeY6Z/07KT/o9/XdJfj0RJtzzw2ktOJ
-	2QTIANiPTHuuxns4ozBrGp8MUKiP8j/7gBvCUOeR8L6Nkx/AID7qYnfw8W8ehe4gMkR1A7fcR2F
-	3gIK+IG56Icshab0X0WXcQIq4Yq/x5PukmsdTTq1JOZa9Hu5TWIb7aCni9HpnibY=
-X-Google-Smtp-Source: AGHT+IHwaoMkTzcQeF2yNTgw2rwq0sXC8TFuiy0D0JP3G7qyIazfprxaglxJAOwviDiPYZNxs0iaeg==
-X-Received: by 2002:a17:90a:e7c2:b0:31c:15d9:8aa with SMTP id 98e67ed59e1d1-32166cd17a9mr9149630a91.34.1754578093407;
-        Thu, 07 Aug 2025 07:48:13 -0700 (PDT)
-Received: from ak-workspace.tail730999.ts.net ([49.207.200.134])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63f36311sm22574230a91.34.2025.08.07.07.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 07:48:12 -0700 (PDT)
-From: Akshaykumar Gunari <akshaygunari@gmail.com>
-To: corbet@lwn.net,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com
-Cc: linux-doc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Akshaykumar Gunari <akshaygunari@gmail.com>
-Subject: [PATCH] docs: arm: stm32: fix typo "busses" -> "buses"
-Date: Thu,  7 Aug 2025 20:18:05 +0530
-Message-ID: <20250807144805.2179-1-akshaygunari@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754578121; c=relaxed/simple;
+	bh=Fh5Ixr2mw08FiVNp1PHoL2g/L2km494MqXVDRGlCZmY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=FtyrnSCe4ECJaHZE+VTxLf1SU4QERBlWwHJY0dftxLsf/QVV8TW9otDlwu8vqGE7kd/s+6FPl/cO+MaPce1VjzXG9GYu3nXYmmuDfOdlI9S9AjEGVal3dcrqrfGULJC0H8K5Uy79ftakb9XVoZyhWuXvqF4xondYqoBoO3vzPbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dc460t1D; arc=none smtp.client-ip=217.70.178.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B93CD43136;
+	Thu,  7 Aug 2025 14:48:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754578111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Msx94y0SDrajFtd2r5knNPPeel3I8uSUHF21B2iumHI=;
+	b=dc460t1DfGOwUj8YDJJbl4IqqZwtR9DPwyVzAEZjO1BmD4IALnt9rVUR0N8M6ffKVISYec
+	VLw9G2Q1DAkfQHSMoh1CUvuTR2sJTT3eGZq/HhFXqyYLXlYdfzBrhvtt5TRMvsrW+CizNX
+	6A1ITZA2AANUIfe25Maz/wa82byPK0azaXkXcocxW+RBEg/+aDUYYEhtYbcoCWE1Pmy/G4
+	BYA0crnBsJSgCOL+0oPas1vB9tBGT1JcIQjizCg0FeCdWtyb1ftSl9fWo/DfQleqstIVGc
+	oMnxdfWFw9ofzVmfKLJo3gvW5Qi4FiMPtQv06OkfQALcxB/9TQrIvrAbpWO7zQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Aug 2025 16:48:27 +0200
+Message-Id: <DBWA12ZND9TY.2SA3R9T5UJTZR@bootlin.com>
+Subject: Re: [PATCH net-next v2 11/18] net: macb: single
+ dma_alloc_coherent() for DMA descriptors
+Cc: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+ <linux-mips@vger.kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Sean Anderson" <sean.anderson@linux.dev>, "Andrew Lunn"
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>, "Claudiu Beznea"
+ <claudiu.beznea@tuxon.dev>, "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Alexandre Ghiti" <alex@ghiti.fr>, "Samuel Holland"
+ <samuel.holland@sifive.com>, "Richard Cochran" <richardcochran@gmail.com>,
+ "Russell King" <linux@armlinux.org.uk>, "Thomas Bogendoerfer"
+ <tsbogend@alpha.franken.de>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "Cyrille Pitchen"
+ <cyrille.pitchen@atmel.com>, "Harini Katakam" <harini.katakam@xilinx.com>,
+ "Rafal Ozieblo" <rafalo@cadence.com>, "Haavard Skinnemoen"
+ <hskinnemoen@atmel.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250627-macb-v2-0-ff8207d0bb77@bootlin.com>
+ <20250627-macb-v2-11-ff8207d0bb77@bootlin.com>
+ <7752e805-0a06-46ed-b4ac-a51081a73f78@linux.dev>
+In-Reply-To: <7752e805-0a06-46ed-b4ac-a51081a73f78@linux.dev>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdduvdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevvffhofhfjgesthhqredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduteeltdevjedvkeelueejhfdvleeiueetvdfgveffffekueeghffhieduleejveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgupdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefvddprhgtphhtthhopehsvggrnhdrrghnuggvrhhsohhnsehlihhnuhigrdguvghvpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnv
+ ghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhg
 
-Fix the spelling of "busses" to the preferred form "buses" in STM32 ARM
-architecture documentation.
+Hello Sean,
 
-Signed-off-by: Akshaykumar Gunari <akshaygunari@gmail.com>
----
- Documentation/arch/arm/stm32/stm32f746-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32f769-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32h743-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32h750-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32mp13-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32mp151-overview.rst | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+Thanks for the review! I'll reply only to questions (or comments about
+which I have questions).
 
-diff --git a/Documentation/arch/arm/stm32/stm32f746-overview.rst b/Documentation/arch/arm/stm32/stm32f746-overview.rst
-index 78befddc7740..335f0855a858 100644
---- a/Documentation/arch/arm/stm32/stm32f746-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32f746-overview.rst
-@@ -15,7 +15,7 @@ It features:
- - SD/MMC/SDIO support
- - Ethernet controller
- - USB OTFG FS & HS controllers
--- I2C, SPI, CAN busses support
-+- I2C, SPI, CAN buses support
- - Several 16 & 32 bits general purpose timers
- - Serial Audio interface
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32f769-overview.rst b/Documentation/arch/arm/stm32/stm32f769-overview.rst
-index e482980ddf21..ef31aadee68f 100644
---- a/Documentation/arch/arm/stm32/stm32f769-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32f769-overview.rst
-@@ -15,7 +15,7 @@ It features:
- - SD/MMC/SDIO support*2
- - Ethernet controller
- - USB OTFG FS & HS controllers
--- I2C*4, SPI*6, CAN*3 busses support
-+- I2C*4, SPI*6, CAN*3 buses support
- - Several 16 & 32 bits general purpose timers
- - Serial Audio interface*2
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32h743-overview.rst b/Documentation/arch/arm/stm32/stm32h743-overview.rst
-index 4e15f1a42730..7659df24d362 100644
---- a/Documentation/arch/arm/stm32/stm32h743-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32h743-overview.rst
-@@ -15,7 +15,7 @@ It features:
- - SD/MMC/SDIO support
- - Ethernet controller
- - USB OTFG FS & HS controllers
--- I2C, SPI, CAN busses support
-+- I2C, SPI, CAN buses support
- - Several 16 & 32 bits general purpose timers
- - Serial Audio interface
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32h750-overview.rst b/Documentation/arch/arm/stm32/stm32h750-overview.rst
-index 0e51235c9547..be032b77d1f1 100644
---- a/Documentation/arch/arm/stm32/stm32h750-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32h750-overview.rst
-@@ -15,7 +15,7 @@ It features:
- - SD/MMC/SDIO support
- - Ethernet controller
- - USB OTFG FS & HS controllers
--- I2C, SPI, CAN busses support
-+- I2C, SPI, CAN buses support
- - Several 16 & 32 bits general purpose timers
- - Serial Audio interface
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32mp13-overview.rst b/Documentation/arch/arm/stm32/stm32mp13-overview.rst
-index 3bb9492dad49..b5e9589fb06f 100644
---- a/Documentation/arch/arm/stm32/stm32mp13-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32mp13-overview.rst
-@@ -24,7 +24,7 @@ More details:
- - ADC/DAC
- - USB EHCI/OHCI controllers
- - USB OTG
--- I2C, SPI, CAN busses support
-+- I2C, SPI, CAN buses support
- - Several general purpose timers
- - Serial Audio interface
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32mp151-overview.rst b/Documentation/arch/arm/stm32/stm32mp151-overview.rst
-index f42a2ac309c0..b58c256ede9a 100644
---- a/Documentation/arch/arm/stm32/stm32mp151-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32mp151-overview.rst
-@@ -23,7 +23,7 @@ More details:
- - ADC/DAC
- - USB EHCI/OHCI controllers
- - USB OTG
--- I2C, SPI busses support
-+- I2C, SPI buses support
- - Several general purpose timers
- - Serial Audio interface
- - LCD-TFT controller
--- 
-2.43.0
+On Tue Jul 1, 2025 at 6:32 PM CEST, Sean Anderson wrote:
+> On 6/27/25 05:08, Th=C3=A9o Lebrun wrote:
+>> Move from two (Tx/Rx) dma_alloc_coherent() for DMA descriptor rings *per
+>> queue* to two dma_alloc_coherent() overall.
+>>=20
+>> Issue is with how all queues share the same register for configuring the
+>> upper 32-bits of Tx/Rx descriptor rings. For example, with Tx, notice
+>> how TBQPH does *not* depend on the queue index:
+>>=20
+>> 	#define GEM_TBQP(hw_q)		(0x0440 + ((hw_q) << 2))
+>> 	#define GEM_TBQPH(hw_q)		(0x04C8)
+>>=20
+>> 	queue_writel(queue, TBQP, lower_32_bits(queue->tx_ring_dma));
+>> 	#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
+>> 	if (bp->hw_dma_cap & HW_DMA_CAP_64B)
+>> 		queue_writel(queue, TBQPH, upper_32_bits(queue->tx_ring_dma));
+>> 	#endif
+>>=20
+>> To maxime our chances of getting valid DMA addresses, we do a single
+>
+> maximize
+>
+>> dma_alloc_coherent() across queues.
+>
+> Is there really any chance involved (other than avoiding ENOMEM)?
+
+If we land in the the page allocator codepath of dma_alloc_coherent(),
+then we get natural alignment guarantees, see alloc_pages() comment [0].
+
+[0]: https://elixir.bootlin.com/linux/v6.16/source/mm/mempolicy.c#L2499-L25=
+02
+
+However, we cannot be certain we land in that path. If we have an
+IOMMU, then I don't think the API provides strong enough guarantees.
+
+Same for custom `struct dma_map_ops`, be it per-device or arch-specific.
+I am not aware (is anything documented on that?) of any alignment
+guarantees.
+
+Even if those give us page-aligned allocations, that isn't enough. For
+example let's say we want 256KiB. We get 0xFFFF0000 from an allocator.
+That is page aligned, but:
+
+   upper_32_bits(START)      !=3D upper_32_bits(START + SIZE - 1)
+   upper_32_bits(0xFFFF0000) !=3D upper_32_bits(0xFFFF0000 + 0x40000 - 1)
+   0x0                       !=3D 0x1
+
+Thanks!
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
