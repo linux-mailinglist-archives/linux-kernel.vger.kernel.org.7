@@ -1,244 +1,371 @@
-Return-Path: <linux-kernel+bounces-759380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B64B1DCD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:02:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892B2B1DCD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4B4A560647
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:02:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE52117565D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E692F221F20;
-	Thu,  7 Aug 2025 18:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1AA221F20;
+	Thu,  7 Aug 2025 18:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U8njI4zX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="B0uOnuW9"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E55720299E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C4172636
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589722; cv=none; b=LAVW+/Y0BRAY8c4pMjtJ6esktl1Ew31X55aSAwsdSCVBCn9zDsQcc2S62fOFhzwkhChg35ApvKIBxX/zwa/2ridwxMj7jLZ4yZW7bqsKihrLwNhu93H4QR5U1mnAbqkUc24b6a1+6uk+MIGmPLL3xqgXPMEobpHcQFJmwYORLvM=
+	t=1754589814; cv=none; b=fuoQ1G6dfijnnsYd3mZV3/x3o6W8tg6R0PWYiD69sGb8KLBkRtk1kVu17jctwCqyMBrLjENTwMq/aDEoQvJAzQ9utUSqlxP9EkSAhSEu4gOpqfCek4cjSy95LeiHsr6YMpf9wzXIaT10xTvG2l4e5El8eGqNqH1VlRCXwK/4yqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589722; c=relaxed/simple;
-	bh=q3CNsz9tOfecntu9d/V65Vv9GgNI01Z6fqbb8cjo1Co=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XKSfrSDKOVtXOcqb6SqrkeGwjfOhPpqRKfW0peGtnIXWKHw9ROr5BLzv6lsFzjK++/yy4r6gGGW8EqS1jPBWMbL/2dSrp7rVli1UZCoSh5Pz+qrRqG8CcZewfWOUxEMcjogTdrNH2dYmQot+yJ/p8GtVy2uXgJLGKvt4HEwGXCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U8njI4zX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754589719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mhUS2sM+ExcCQ6yCHHvb67H8y6ZDFz4/8Rje0oa/xWU=;
-	b=U8njI4zXjWpDZWTPBngiZo/+uZvx2VcQSOvC6rnleRy6mfT5J6SU0Yu0Dr4k2kTwkjzAA1
-	VXHtZcG+C/gLIIS7GVl6ZLfY0Wlya5KMz58Cf7kb2sbeHbFk6Lo/1Mjf9e8jBwS6fU1OmG
-	1odoG0ee0R9F7zSZjFzeodtG1vy9ewY=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-137-5lcxTr8RNvyBTfoDUvJUjA-1; Thu, 07 Aug 2025 14:01:55 -0400
-X-MC-Unique: 5lcxTr8RNvyBTfoDUvJUjA-1
-X-Mimecast-MFC-AGG-ID: 5lcxTr8RNvyBTfoDUvJUjA_1754589715
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-459e30eeea3so7727745e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:01:55 -0700 (PDT)
+	s=arc-20240116; t=1754589814; c=relaxed/simple;
+	bh=8xp1KnlDEk2U9CDh5P5T5g+1LdqC3Zs9Cl713SqU2tY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y+6LED8hYhT0AQa0jGZ+6wUwH5oxUhMFgaSuOWoeSBRaEd1ciBjiv3fzPWkBVA7cO3C+cULpkCkKFeIj4lb0yedusn1j9CcstCzcrpP/ieRKYI1vN0uOduBDsDJlhLj4OIEVe1xb7brjWxdpbZQyQvxu7dEJdXYwBQxrA8eU6jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=B0uOnuW9; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55b797ad392so1476325e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1754589811; x=1755194611; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tsCe5N2gySc6VwbPeAR1x0jE7zYqA5OJNfAjcrseA14=;
+        b=B0uOnuW9Lek3pVlLShoP0xrfZsTxpdPhr4RiOdahUkdCnC2BQgx0F4m2myKm/kxE76
+         JqnO8LrIZSmrlG9MjC9530OSRoLr42Jp5gRnvDBFGeLu8rSmbZYd+CGViZxMNbD7rI/P
+         ozv8n0taf8jTCzuIeeysbnNR906xxY7WzEcWY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754589715; x=1755194515;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mhUS2sM+ExcCQ6yCHHvb67H8y6ZDFz4/8Rje0oa/xWU=;
-        b=FJq7ZYTa2hKPspIFASW1/Al6FJkv7tSfpL15cOWIt6dqACBu/UkEPP+KlIQAZWf4VT
-         VZObohHoxGeJGrOtUY2Ek4WH6FYz9YMLRwumIRXY02QOWBqJ03P+Pw2n/56KxXK5ddM4
-         b90y+yaJpodrvh9CwTvqVb0EKox0xRhHCkUNzAsbL4ExtnfxpYNDjkF5aLOK8YFCvRqr
-         shtgHW6u2Wc2MxRhIX5HYadoqdNxNYi3F1uc6di1wYDYL9m1Eyf5lrLiscXc1U6Sm9j9
-         RGOIlcSG4pqdBYCNHZHk7/yiaDPcR9gCxh9/HzDsNgHLsJ9hm1670UUBQPjgj6op6Mqu
-         7BIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7DKQ51rxkxjGrHxHpOv4lH6We5aM/ASMXOlCFYzn3M+9pMEodp0c3QvjIdfogLxpDlhj2MDX+sq1beZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy71mOLYZq89rhrH4cbAUkwBldAJAGsxJGHMHfxA/5Af+owhW2r
-	D5Hym0txq/JN2cUKPiAdV3XIPbqQIm+lVlAzO3u0IdUeBIVq3ADmn4G8FxhYJIw5LCsUaWxNQy7
-	q1ccB9irUlDIShBaHBg3imlx3gXXpA5uqLSct7xOWAffuZNNdL27UyS/PUZhuBVtk2A==
-X-Gm-Gg: ASbGnct58c3M2gDvNg0wrHm06/FBWFTMA9jPNUjhPCt/3G4Ida8C/nx2AFjUrjkZF+8
-	hNnaDUfkRXOQ4LCU4PJJbvXBc+ocb1lL3KYcEkmAL8tv0qB7TnKH+2GredvfEb2lOXbeVeop44I
-	d9bW7PiZiIORahasx6UccMJX+kytr6lE8NNp16B6t4n0IQqb5DPH/4dRqqBmUYfedqASTCF8HD+
-	brcMiuCG4miwMv63ItUab8rNWT+cUhO7cpF4YlFcTb8ceskFm9RecS9tWpcZnXqoRylxKhdh5Yc
-	sDcyq5rq8tqTrg5EYeO9bzpSLd2uLMtuHCIOA7ryH7HxGH40yvS9XMyzENv5Zt2Q8UqEB/ncm+7
-	Bq983cOaW5/oi9Kp8jvUABG+ZnBu9A1fc5ALof12hzJCCEvqOPpZwB1zydWaxOIHl6oM=
-X-Received: by 2002:a05:600c:46c8:b0:459:ddad:a3a3 with SMTP id 5b1f17b1804b1-459e74a4ad6mr64013225e9.25.1754589714383;
-        Thu, 07 Aug 2025 11:01:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxcVatWP7rFIfVWx9CqdmH8FLM3Nm306vOiRTmVXgWVKdqiIY4890kJtBR5KGb3c604MXHrw==
-X-Received: by 2002:a05:600c:46c8:b0:459:ddad:a3a3 with SMTP id 5b1f17b1804b1-459e74a4ad6mr64012855e9.25.1754589713826;
-        Thu, 07 Aug 2025 11:01:53 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f49:bc00:12fa:1681:c754:1630? (p200300d82f49bc0012fa1681c7541630.dip0.t-ipconnect.de. [2003:d8:2f49:bc00:12fa:1681:c754:1630])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3c33fesm27989570f8f.29.2025.08.07.11.01.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 11:01:53 -0700 (PDT)
-Message-ID: <cbc2e23d-69ab-4820-9942-c7abf2066ff7@redhat.com>
-Date: Thu, 7 Aug 2025 20:01:51 +0200
+        d=1e100.net; s=20230601; t=1754589811; x=1755194611;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tsCe5N2gySc6VwbPeAR1x0jE7zYqA5OJNfAjcrseA14=;
+        b=hxKP4Bgkp9BWPJtLz8ZlMoMJa/Rw1Su7K13cOexMMOgWU5S6LOrL1WKpoDXEEIxOzZ
+         cre0kJBoYuPhWQKkMMjJ+ybj8D7yMb4Ubk+nhXcvx9OAkGU/RQQneO5pp+umXGeCia0H
+         SQEpcXCE/MUvKvQyE9MglRPKr5Q52FSTttfCQe+g9KSI89e+P3HPLkMMX6QFolKWIvRQ
+         6zMeowngxXyxOpXbNHAfLETZLQYyUxRkZidhklbeU9kMRKA9ultIMrtjkjeWlBxX26v0
+         ogFVJmbQSN9jJAvNYOMAHLKFRRKjcYNf6Qa1uZBUTufO9YwNp1VimMo7oiBDLEJcU7fq
+         N+OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDhgAuMKYlO75wT8FekSOFpVGcWoh0fi9s0kI3NOJ+16DNC6/BmXHR3BrAwUelPq64M4qlW5DT79hexRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYIWP5wYK2zewAB7av6hKlXhDSfX+gYzXXgAFF+4bpKZqfpx6U
+	ID30LpFZwgfOO0nQjrBbaqKvFE2JAUW7krrFFD0SBbzP7sLtpCKrbD23M78yYgcNdIxv+q/whDl
+	rKt3e/DMwu+peV3OKunhBi3W4XsNdPzbwbK8K6y+8
+X-Gm-Gg: ASbGncuhhj9o2tcEIcgn64xoP8Wieilkozl1IJAN95ZsCcyaDMztoroWSoSYahBnsu/
+	iRtYfEIkvCVofPWEaqBX2cAcQjyjeUoAX7X97Wal+VKc9ttpY4l+HbTJI9tJpV/uNOUb0iIraCe
+	H29MbgixNKrQQr+r8TC8qDs01/68B5+9sAQHEBAuKSjhsMvPc+GEZLpdgXv6/rqYLawHfWaKPcK
+	c8BCsI5
+X-Google-Smtp-Source: AGHT+IGxtV1LWhrRdo3JC0zmjO/3qahbZxj88Vi4n0XQrjfEYquPT8WHMQimEMtyURA/sbB2cafcxr/JmX92fyxW0XI=
+X-Received: by 2002:a05:6512:689:b0:55b:9647:8e75 with SMTP id
+ 2adb3069b0e04-55caf57bc22mr2577573e87.15.1754589810606; Thu, 07 Aug 2025
+ 11:03:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] f822a9a81a:
- stress-ng.bigheap.realloc_calls_per_sec 37.3% regression
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>
-Cc: kernel test robot <oliver.sang@intel.com>, Dev Jain <dev.jain@arm.com>,
- oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Barry Song <baohua@kernel.org>,
- Pedro Falcato <pfalcato@suse.de>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Bang Li <libang.li@antgroup.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, bibo mao <maobibo@loongson.cn>,
- Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@kernel.org>,
- Lance Yang <ioworker0@gmail.com>, Liam Howlett <liam.howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
- Qi Zheng <zhengqi.arch@bytedance.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Vlastimil Babka <vbabka@suse.cz>, Yang Shi <yang@os.amperecomputing.com>,
- Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
-References: <202508071609.4e743d7c-lkp@intel.com>
- <9e3a59b2-11c0-43ca-aff3-414091f04aa4@lucifer.local>
- <CAG48ez3=8f3eShjAe9hrvivP+Dvyisw=X_Tr_phc-OX_4MzeDw@mail.gmail.com>
- <be074809-e1fd-43a2-9396-8f7264532c4d@lucifer.local>
- <CAG48ez3=kLL4wBxAVSa2Ugrws+-RFQMdNY9jx5FAdbhpNt8fGg@mail.gmail.com>
- <e4f5faea-ccec-4cc7-83de-1a3c7013b81b@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <e4f5faea-ccec-4cc7-83de-1a3c7013b81b@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250613220843.698227-2-james.quinlan@broadcom.com> <20250806191448.GA8432@bhelgaas>
+In-Reply-To: <20250806191448.GA8432@bhelgaas>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Thu, 7 Aug 2025 14:03:18 -0400
+X-Gm-Features: Ac12FXyuvX7HlpoSndQL62wtvS59Rdx6QOQSiDT816IH2WZzhrhSN71QgjKybgk
+Message-ID: <CA+-6iNxsnj7-Nsy4Q6wFbiF-a6BwfYeTnCqdg1sAUXPCpyaMzg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PCI: brcmstb: Add a way to indicate if PCIe bridge is active
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000006b7d8c063bca468d"
 
-On 07.08.25 19:51, Lorenzo Stoakes wrote:
-> On Thu, Aug 07, 2025 at 07:46:39PM +0200, Jann Horn wrote:
->> On Thu, Aug 7, 2025 at 7:41 PM Lorenzo Stoakes
->> <lorenzo.stoakes@oracle.com> wrote:
->>> On Thu, Aug 07, 2025 at 07:37:38PM +0200, Jann Horn wrote:
->>>> On Thu, Aug 7, 2025 at 10:28 AM Lorenzo Stoakes
->>>> <lorenzo.stoakes@oracle.com> wrote:
->>>>> On Thu, Aug 07, 2025 at 04:17:09PM +0800, kernel test robot wrote:
->>>>>> 94dab12d86cf77ff f822a9a81a31311d67f260aea96
->>>>>> ---------------- ---------------------------
->>>>>>           %stddev     %change         %stddev
->>>>>>               \          |                \
->>>>>>       13777 ą 37%     +45.0%      19979 ą 27%  numa-vmstat.node1.nr_slab_reclaimable
->>>>>>      367205            +2.3%     375703        vmstat.system.in
->>>>>>       55106 ą 37%     +45.1%      79971 ą 27%  numa-meminfo.node1.KReclaimable
->>>>>>       55106 ą 37%     +45.1%      79971 ą 27%  numa-meminfo.node1.SReclaimable
->>>>>>      559381           -37.3%     350757        stress-ng.bigheap.realloc_calls_per_sec
->>>>>>       11468            +1.2%      11603        stress-ng.time.system_time
->>>>>>      296.25            +4.5%     309.70        stress-ng.time.user_time
->>>>>>        0.81 ą187%    -100.0%       0.00        perf-sched.sch_delay.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
->>>>>>        9.36 ą165%    -100.0%       0.00        perf-sched.sch_delay.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
->>>>>>        0.81 ą187%    -100.0%       0.00        perf-sched.wait_time.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
->>>>>>        9.36 ą165%    -100.0%       0.00        perf-sched.wait_time.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
->>>>>>        5.50 ą 17%    +390.9%      27.00 ą 56%  perf-c2c.DRAM.local
->>>>>>      388.50 ą 10%    +114.7%     834.17 ą 33%  perf-c2c.DRAM.remote
->>>>>>        1214 ą 13%    +107.3%       2517 ą 31%  perf-c2c.HITM.local
->>>>>>      135.00 ą 19%    +130.9%     311.67 ą 32%  perf-c2c.HITM.remote
->>>>>>        1349 ą 13%    +109.6%       2829 ą 31%  perf-c2c.HITM.total
->>>>>
->>>>> Yeah this also looks pretty consistent too...
->>>>
->>>> FWIW, HITM hat different meanings depending on exactly which
->>>> microarchitecture that test happened on; the message says it is from
->>>> Sapphire Rapids, which is a successor of Ice Lake, so HITM is less
->>>> meaningful than if it came from a pre-IceLake system (see
->>>> https://lore.kernel.org/all/CAG48ez3RmV6SsVw9oyTXxQXHp3rqtKDk2qwJWo9TGvXCq7Xr-w@mail.gmail.com/).
->>>>
->>>> To me those numbers mainly look like you're accessing a lot more
->>>> cache-cold data. (On pre-IceLake they would indicate cacheline
->>>> bouncing, but I guess here they probably don't.) And that makes sense,
->>>> since before the patch, this path was just moving PTEs around without
->>>> looking at the associated pages/folios; basically more or less like a
->>>> memcpy() on x86-64. But after the patch, for every 8 bytes that you
->>>> copy, you have to load a cacheline from the vmemmap to get the page.
->>>
->>> Yup this is representative of what my investigation is showing.
->>>
->>> I've narrowed it down but want to wait to report until I'm sure...
->>>
->>> But yeah we're doing a _lot_ more work.
->>>
->>> I'm leaning towards disabling except for arm64 atm tbh, seems mremap is
->>> especially sensitive to this (I found issues with this with my abortive mremap
->>> anon merging stuff too, but really expected it there...)
->>
->> Another approach would be to always read and write PTEs in
->> contpte-sized chunks here, without caring whether they're actually
->> contiguous or whatever, or something along those lines.
-> 
-> Not sure I love that, you'd have to figure out offset without cont pte batch and
-> can it vary? And we're doing this on non-arm64 arches for what reason?
-> 
-> And would it solve anything really? We'd still be looking at folio, yes less
-> than now, but uselessly for arches that don't benefit?
-> 
-> The basis of this series was (and I did explicitly ask) that it wouldn't harm
-> other arches.
+--0000000000006b7d8c063bca468d
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We'd need some hint to detect "this is either small" or "this is 
-unbatchable".
+On Wed, Aug 6, 2025 at 3:14=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> w=
+rote:
+>
+> On Fri, Jun 13, 2025 at 06:08:42PM -0400, Jim Quinlan wrote:
+> > In a future commit, a new handler will be introduced that in part does
+> > reads and writes to some of the PCIe registers.  When this handler is
+> > invoked, it is paramount that it does not do these register accesses wh=
+en
+> > the PCIe bridge is inactive, as this will cause CPU abort errors.
+> >
+> > To solve this we keep a spinlock that guards a variable which indicates
+> > whether the bridge is on or off.  When the bridge is on, access of the =
+PCIe
+> > HW registers may proceed.
+> >
+> > Since there are multiple ways to reset the bridge, we introduce a gener=
+al
+> > function to obtain the spinlock, call the specific function that is use=
+d
+> > for the specific SoC, sets the bridge active indicator variable, and
+> > releases the spinlock.
+> >
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > ---
+> >  drivers/pci/controller/pcie-brcmstb.c | 40 +++++++++++++++++++++++----
+> >  1 file changed, 35 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
+ller/pcie-brcmstb.c
+> > index 92887b394eb4..400854c893d8 100644
+> > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > @@ -29,6 +29,7 @@
+> >  #include <linux/reset.h>
+> >  #include <linux/sizes.h>
+> >  #include <linux/slab.h>
+> > +#include <linux/spinlock.h>
+> >  #include <linux/string.h>
+> >  #include <linux/types.h>
+> >
+> > @@ -254,6 +255,7 @@ struct pcie_cfg_data {
+> >       int (*perst_set)(struct brcm_pcie *pcie, u32 val);
+> >       int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+> >       int (*post_setup)(struct brcm_pcie *pcie);
+> > +     bool has_err_report;
+>
+> It doesn't look worth it to me to add this.  It only avoids locking in
+> a non-performance path.
+>
+> >  };
+> >
+> >  struct subdev_regulators {
+> > @@ -299,6 +301,8 @@ struct brcm_pcie {
+> >       struct subdev_regulators *sr;
+> >       bool                    ep_wakeup_capable;
+> >       const struct pcie_cfg_data      *cfg;
+> > +     bool                    bridge_on;
+> > +     spinlock_t              bridge_lock;
+> >  };
+> >
+> >  static inline bool is_bmips(const struct brcm_pcie *pcie)
+> > @@ -306,6 +310,24 @@ static inline bool is_bmips(const struct brcm_pcie=
+ *pcie)
+> >       return pcie->cfg->soc_base =3D=3D BCM7435 || pcie->cfg->soc_base =
+=3D=3D BCM7425;
+> >  }
+> >
+> > +static inline int brcm_pcie_bridge_sw_init_set(struct brcm_pcie *pcie,=
+ u32 val)
+> > +{
+> > +     unsigned long flags;
+> > +     int ret;
+> > +
+> > +     if (pcie->cfg->has_err_report)
+> > +             spin_lock_irqsave(&pcie->bridge_lock, flags);
+> > +
+> > +     ret =3D pcie->cfg->bridge_sw_init_set(pcie, val);
+> > +     if (ret)
+> > +             pcie->bridge_on =3D !val;
+>
+> AFAICT, .bridge_sw_init_set(1) asserts reset, .bridge_sw_init_set(0)
+> deasserts reset, and it returns 0 for success, so I'm confused about
+> this.  If either assert or deassert failed (ret !=3D 0), I guess we
+> don't know the state of the bridge and can't assume it's active, so I
+> would have expected something like:
+>
+>   ret =3D pcie->cfg->bridge_sw_init_set(pcie, val);
+>   if (ret)
+>     pcie->bridge_on =3D false;
+>   else
+>     pcie->bridge_on =3D !val;
+Ack
 
-Sure, we could use pte_batch_hint(), but I'm curious if x86 would also 
-benefit with larger folios (e.g., 64K, 128K) with this patch.
+>
+> Tangent: the last "return ret" in brcm_pcie_bridge_sw_init_set_generic()
+> should be "return 0" and drop the unnecessary initialization of "ret".
+Ack
+>
+> And the code there would be vastly improved by using FIELD_PREP() or
+> u32p_replace_bits() and getting rid of the shifting.
+Ack
 
--- 
-Cheers,
+>
+> > +     if (pcie->cfg->has_err_report)
+> > +             spin_unlock_irqrestore(&pcie->bridge_lock, flags);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> >  /*
+> >   * This is to convert the size of the inbound "BAR" region to the
+> >   * non-linear values of PCIE_X_MISC_RC_BAR[123]_CONFIG_LO.SIZE
+> > @@ -1078,7 +1100,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie=
+)
+> >       int memc, ret;
+> >
+> >       /* Reset the bridge */
+> > -     ret =3D pcie->cfg->bridge_sw_init_set(pcie, 1);
+> > +     ret =3D brcm_pcie_bridge_sw_init_set(pcie, 1);
+> >       if (ret)
+> >               return ret;
+> >
+> > @@ -1094,7 +1116,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie=
+)
+> >       usleep_range(100, 200);
+> >
+> >       /* Take the bridge out of reset */
+> > -     ret =3D pcie->cfg->bridge_sw_init_set(pcie, 0);
+> > +     ret =3D brcm_pcie_bridge_sw_init_set(pcie, 0);
+> >       if (ret)
+> >               return ret;
+> >
+> > @@ -1545,7 +1567,7 @@ static int brcm_pcie_turn_off(struct brcm_pcie *p=
+cie)
+> >
+> >       if (!(pcie->cfg->quirks & CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN))
+> >               /* Shutdown PCIe bridge */
+> > -             ret =3D pcie->cfg->bridge_sw_init_set(pcie, 1);
+> > +             ret =3D brcm_pcie_bridge_sw_init_set(pcie, 1);
+> >
+> >       return ret;
+> >  }
+> > @@ -1633,7 +1655,9 @@ static int brcm_pcie_resume_noirq(struct device *=
+dev)
+> >               goto err_reset;
+> >
+> >       /* Take bridge out of reset so we can access the SERDES reg */
+> > -     pcie->cfg->bridge_sw_init_set(pcie, 0);
+> > +     ret =3D brcm_pcie_bridge_sw_init_set(pcie, 0);
+> > +     if (ret)
+> > +             goto err_reset;
+> >
+> >       /* SERDES_IDDQ =3D 0 */
+> >       tmp =3D readl(base + HARD_DEBUG(pcie));
+> > @@ -1901,7 +1925,10 @@ static int brcm_pcie_probe(struct platform_devic=
+e *pdev)
+> >       if (ret)
+> >               return dev_err_probe(&pdev->dev, ret, "could not enable c=
+lock\n");
+> >
+> > -     pcie->cfg->bridge_sw_init_set(pcie, 0);
+> > +     ret =3D brcm_pcie_bridge_sw_init_set(pcie, 0);
+> > +     if (ret)
+> > +             return dev_err_probe(&pdev->dev, ret,
+> > +                                  "could not un-reset the bridge\n");
+>
+> "un-reset" doesn't mean anything to me.  Is this the same as "could
+> not take the bridge out of reset"?  Or maybe "could not deassert
+> bridge reset"?
+Ack
 
-David / dhildenb
+Thanks,
+Jim Quinlan
+Broadcom STB/CM
 
+>
+> >       if (pcie->swinit_reset) {
+> >               ret =3D reset_control_assert(pcie->swinit_reset);
+> > @@ -1976,6 +2003,9 @@ static int brcm_pcie_probe(struct platform_device=
+ *pdev)
+> >               return ret;
+> >       }
+> >
+> > +     if (pcie->cfg->has_err_report)
+> > +             spin_lock_init(&pcie->bridge_lock);
+> > +
+> >       return 0;
+> >
+> >  fail:
+> > --
+> > 2.34.1
+> >
+
+--0000000000006b7d8c063bca468d
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICYDCC
+AlwCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHHMC8GCSqGSIb3DQEJBDEiBCB47OOV0a6P5KfBZyQARHO6Hb1Ic1sB
+CtXnXRF2W0+h8zAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNTA4
+MDcxODAzMzFaMFwGCSqGSIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0B
+AQEFAASCAQBy0YTB2Gg6ynrSyjUP4abbwTBs+0MzSETb+W8OwlkBgUqRinLtWyGi1GF6B94KjxXj
+Ke3v23ttYBeW8zh9fHbFYYYblpdhFBRljfJ6Zc2GI1QaifFDYmXVOtke+aQs56h/rlvG3QbmDQ/v
+9F+gkEU8w9rJc5DEQPiaS1mnFCagaJ5OoD1fPQf8h33adJAmzVUsMHX311n5aRWxMFcIn9pi5Nhm
+kLc6bJWVKNhXhaLFcGlCL1XM5pvsoOHzfEjSjFa7S5+prmdEDRziMQG/Zl3tRvGS8dof4EQdoSM6
+0n1grxmjGOj2+XTaeuia2r7icN8uI5D8pwnIK77RqnUsdyTS
+--0000000000006b7d8c063bca468d--
 
