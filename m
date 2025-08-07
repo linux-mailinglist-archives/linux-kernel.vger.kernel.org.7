@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-758787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4DDB1D3D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:58:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F61B1D3D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD62B1AA077E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:59:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18E441718EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392B625228C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E305C2E36EC;
 	Thu,  7 Aug 2025 07:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ckIcgFRm"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlQq0xq+"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB2D246BA4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B254244679
 	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553500; cv=none; b=MmcdIwKOrAO+Z7uV3Zwom4hOb8Y04z7UX+tRBa9UVJ3HE+aPWeaGDmBxQG4P1zJx68x0odbhc9Io9skX5oMEkoxw8lIW52mWAs9V+bx2P1WKoq5sJfZkEv13+ay3JeJOW3erlnGXbbW9T4dH73StSyxVtR2GhGxRPbu5yHLkJjg=
+	t=1754553501; cv=none; b=KXFUSwCIbJPoRsgI3/LjHnvC4zRecF8sYvjb8DBTlkCdheXgBbgB7PhZYDZ7bkkjFQkzJ3sbqk9zcHwidPtkspy+S3XmKQWY6RTGv6Jo7V97UxMhZ9NUzEshHKQndlpLfUzjXQCZbcKQ/EFc73S7hVuHY89tnWtHiPsVDEXAsKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553500; c=relaxed/simple;
-	bh=5r+RNMQi8dZuy+pKbnq+Sw7xVkYVTe33iZQ90lvhbJM=;
+	s=arc-20240116; t=1754553501; c=relaxed/simple;
+	bh=StcpdyJ1gYyaSLGPjjN463sNq0rkXv8qZ4VH/a76lW4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Il9DmxvH4Sg3AjJd7nzoEYkmeq1UbWTw/oKcQE115X8HBsJSXfBXYKIwkGe2YpKROHhcc+XUYl6ee6tD46QDfC4sSXpw6enUK1vEYZmBItFezwIq/tJQPWjdWJN0A2xea5iOKuk7Z7Q1+Q64MVlH6vuyFQRuUPIoBkKhyQXrktg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ckIcgFRm; arc=none smtp.client-ip=209.85.167.47
+	 MIME-Version; b=MhY29qmn9zk96pbnF7CmQRsK04hdaTROs84YyYbwgicUd+hOF7nWZOyIfzMzLPRahKyiDp+R5NXK28PGh0cDD5rYZEFTUfhg2i85NeAUAzM5QwH+z1L8TGoGqrM2pG1Jg8SumSNpd1dBUXFm0H/Vfk586Dz9Gdm0MMiyldPItSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlQq0xq+; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55b7e35a452so775498e87.2
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55b96b154bdso727745e87.0
         for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1754553496; x=1755158296; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kkgUcN0etkmDxWZW74kDtO38nl/qqGRKhgYS9gb7Qoc=;
-        b=ckIcgFRmeVNoyh/8CcAGcKlgFAVW/CKtHtMUUH4X78CvTaY8/VavWw8KEymCBc3JXr
-         6XI3DIN2JF/vjlqtjK/fCWsQImfkEIh0dNZUvizJAFRGnumFSrpSQnk1v6Wm3r/lw52x
-         ASrnW5nwk272x9b1+nOz+054BdbyX8UyR1Y+axYSBzJ+tqSkIMJlWAGMPMfyJ0wRm4S/
-         31GkgEviMtJ603+/CwfmRocoRIv/F9OsYHVDUQAC8H4Qm4PZg4++A/uq/r8lZTdS6fna
-         w1z2xk3Rys7j1o6ktl9zEhxTsYLCuCmBCiBsVM5rd0K/LoTfIDYVAi0QyKF1Z+ko6lR2
-         poXA==
+        bh=KydXFGAE7W4DpoPvcZ+Z0Di5zFlR75RWumBb0izMzE4=;
+        b=PlQq0xq+4te2m17AsPfQIamGRDCeUNCs2Ubdif8b8PlkHdNxpymWY/2GoJkUl5diw3
+         Q1G4qt0Emz5+9Son5l4/66q37ox2cxms2nlgrJljmKxJrFCkLlbHNsBjGkS5QvuxB+Ww
+         2bxe21NGuvSkWvcIqzkERerPho5aVmQYxshYJJhKiMG87S2Wszjz2KZFDl55vRfKJJa1
+         6j5PsP9/jiRn0m8jgG9WLDqcgSeo6DfwaRQpHyh8PPqVQmyLfLe+atnLfdlga2ZDyZiv
+         7sf21MM+pUA79+QK6Zx3susv2VIRGGzwit3h0Yu3uFk5V8pakE0LMCvnSo9iv6cjrY3/
+         KVOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1754553496; x=1755158296;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kkgUcN0etkmDxWZW74kDtO38nl/qqGRKhgYS9gb7Qoc=;
-        b=YCE+5Xpbh41RplPhAAciAuFxmDeT1W8GBv3iThlZurTWbe3rpbHFLKhEJsQFKzp1VR
-         wMMOx827E+m+VUa3RLAbLsAj06sc6e8OytiUhQtidMOvGjBrnMrIyvserzATmJMTMc1X
-         kXKP0T3n2o34Eh/tIopRs5Zt+8hlAar0HVhcJKGOhRageWFmIRSNVE5iLYfWHUi/pk01
-         GugiUgztOQcH4d1WgpRYRT4xWtlj/9pkaMeiqltuLPpy+aKuRw0AQqk2yhu8LXHcW4BT
-         /xcizanm0L4mr76GRqsRz8vjkLOV4QXUnFrRoi13UGFYx2uF/xsL4XC3uuwnSCYEnO7X
-         IFOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtpqemJep/tXyYoQcRbjdO1VxDC/vcRSKl7+m8ZRg64ppeRoaQwzBRObTepqAs0eulrWYmP2qLn6gnxro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKkQ8SRL80DHzpQxmVoNHUIqrG25X8SLNGaE3KPjuWN+4YH/zu
-	eObqDpBhoTrRHjc/Ihu2b0fYHqLaPEWi1X1mYgE9Mdp2JnrdupCjnVtN
-X-Gm-Gg: ASbGnctq8AjVaLvkKZ3DDYOcXh5fL5cEOepYjutyL2RzUxE552eSpXocTguSjKD5vbo
-	h2K608DGlBvfBzgam0Z0Q2J82W6gzLxblUP27YlNJZeuWLD8FUpuWHbT2g+/ToIopRa39/cOC8j
-	10phUosOn7RtbI5I3lQfMb+S3scl0jYjzgcsrdPqT2Wmmj62HvF3buTz5DgXZnk41HS8QSA3UoD
-	lNGksifuUAN5fAOGejlbXMMK+yEAIy+SSR1dVDBy48iH+qKSKj9Em+pgQ7Au2Vip7D8GYggl9Oq
-	JosiMebAaH4zPQVSa+Np3vX/z0X0ziZye3sXQdgXU3H/ElYsdNGv9+hwjAkLahFaxkXsGWzu9xb
-	UQoJbdvkmUW0ymyeOtvP1OBQAt6Cg
-X-Google-Smtp-Source: AGHT+IGOcjP64D4GBMntjoVTHbHQlu7XVmla/+hekZ0Qvmh6kQrGAI+YoPjVAMyHSPY9JesHz+A3Jg==
-X-Received: by 2002:a05:6512:1591:b0:55b:8afb:e638 with SMTP id 2adb3069b0e04-55cb688b657mr632064e87.28.1754553495200;
-        Thu, 07 Aug 2025 00:58:15 -0700 (PDT)
+        bh=KydXFGAE7W4DpoPvcZ+Z0Di5zFlR75RWumBb0izMzE4=;
+        b=myjqpnx/GkSJ2mkQTpDW0TWgmLyAV3dEhHMqDffG4fH/Z8Hdm3xkWjURZ+vdSGdhQX
+         3rJ6k04BkFk/g/k/1tGuz6SlrVpHwKdf2Vl/csur5kmhRZwfcvLNbJgoPSpcRaEvAKeB
+         cbInRlgqFVQbzSCZn+vgJr5VpAWvxgQCIsjP/zWQCn0UtvH/1cdmfvLjib71Z+2P9qEd
+         e45Q0BLBk369/zuMibxduPgB2AEHO7ZuLkMp50/wwI0lSVqsKtnf0z0ud0OsXYQ3DX1c
+         37+QEwmnKhAbzJnxuesPn5IZWrfaWONWe9TwBgwrJTPu2+x7gUFvsaDs4ku2aUXIxaor
+         C//A==
+X-Forwarded-Encrypted: i=1; AJvYcCWMkw0MYxWqW1qsUqiZUR2Qg7ErWL5mY4jHsLnq82ep7/wwEBz91eG9OavJicxqnIOowlXqmZRVWUHIfnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTRHCyKn02TK26oPMfQcYaKdOGlbdVD28b3byHVuJWw8f/1y7n
+	aCNux3/SvKHbuFxUSw6giVg+HYo2wQ+/gOCiGqL/oy0O9QPdN67h8rE5
+X-Gm-Gg: ASbGncv4KSUUjtVi1O6EfmeqadDSMH6VTvA0eRuit1w0D/j5vHMt+G9u+bBWjy37zwx
+	/ALd1PC9mR3TF610TeSWPr3EofsjQEunJWp7t8iWcAyRm9sUds+bwhiKxZFFPZedlHFvLyH3khF
+	ZueBExAoti5wIN07WWazLnsRrSRnyEXvxV4xYgruIa7b7IEZDKp3uy/6pRCQB4Ji2Vym7MMKP9f
+	WOmGAonPGk8zUlmANd+M20asYbmi9DbxUdhRNAsnRWwTJl7+KXta6OHxTz49Ra41NVGH759eNBO
+	N1WgaW+VllYLAvTORDd2PS3cjO3BIqm4Dbq+l/AWCLBEaXlpi4Y8dbETX7G2tlEVMjTVS8lXIGB
+	phrrqn6wvyun3HF7HCX3HVYO6RaPw
+X-Google-Smtp-Source: AGHT+IF0q6rKChZ6oen9fNvbhVWsws8Z8fn91x3v64lQHUln2uy58X56NwoWxrXywEBePWrOTHfQTQ==
+X-Received: by 2002:a05:6512:3da8:b0:55b:81cb:9e5d with SMTP id 2adb3069b0e04-55caf3f37fcmr1726894e87.52.1754553496035;
+        Thu, 07 Aug 2025 00:58:16 -0700 (PDT)
 Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c9b1fesm2501995e87.96.2025.08.07.00.58.14
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c9b1fesm2501995e87.96.2025.08.07.00.58.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 00:58:14 -0700 (PDT)
+        Thu, 07 Aug 2025 00:58:15 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To: linux-mm@kvack.org,
 	Andrew Morton <akpm@linux-foundation.org>
@@ -80,9 +80,9 @@ Cc: Vlastimil Babka <vbabka@suse.cz>,
 	Baoquan He <bhe@redhat.com>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>
-Subject: [PATCH 3/8] mm/vmalloc: Support non-blocking GFP flags in alloc_vmap_area()
-Date: Thu,  7 Aug 2025 09:58:05 +0200
-Message-Id: <20250807075810.358714-4-urezki@gmail.com>
+Subject: [PATCH 4/8] mm/vmalloc: Remove cond_resched() in vm_area_alloc_pages()
+Date: Thu,  7 Aug 2025 09:58:06 +0200
+Message-Id: <20250807075810.358714-5-urezki@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250807075810.358714-1-urezki@gmail.com>
 References: <20250807075810.358714-1-urezki@gmail.com>
@@ -94,71 +94,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-alloc_vmap_area() currently assumes that sleeping is allowed during
-allocation. This is not true for callers which pass non-blocking
-GFP flags, such as GFP_ATOMIC or GFP_NOWAIT.
+The vm_area_alloc_pages() function uses cond_resched() to yield the
+CPU during potentially long-running loops. However, these loops are
+not considered long-running under normal conditions. In non-blocking
+contexts, calling cond_resched() is inappropriate also.
 
-This patch adds logic to detect whether the given gfp_mask permits
-blocking. It avoids invoking might_sleep() or falling back to reclaim
-path if blocking is not allowed.
+Remove these calls to ensure correctness for blocking/non-blocking
+contexts. This also simplifies the code path. In fact, a slow path
+of page allocator already includes reschedule points to mitigate
+latency.
 
-This makes alloc_vmap_area() safer for use in non-sleeping contexts,
-where previously it could hit unexpected sleeps, trigger warnings.
+This patch was tested for !CONFIG_PREEMPT kernel and with large
+allocation chunks(~1GB), without triggering any "BUG: soft lockup"
+warnings.
 
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- mm/vmalloc.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ mm/vmalloc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 6dbcdceecae1..81b6d3bde719 100644
+index 81b6d3bde719..b0255e0c74b3 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -2017,6 +2017,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	unsigned long freed;
- 	unsigned long addr;
- 	unsigned int vn_id;
-+	bool allow_block;
- 	int purged = 0;
- 	int ret;
+@@ -3633,7 +3633,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+ 							pages + nr_allocated);
  
-@@ -2026,7 +2027,8 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	if (unlikely(!vmap_initialized))
- 		return ERR_PTR(-EBUSY);
+ 			nr_allocated += nr;
+-			cond_resched();
  
--	might_sleep();
-+	allow_block = gfpflags_allow_blocking(gfp_mask);
-+	might_sleep_if(allow_block);
+ 			/*
+ 			 * If zero or pages were obtained partly,
+@@ -3675,7 +3674,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+ 		for (i = 0; i < (1U << order); i++)
+ 			pages[nr_allocated + i] = page + i;
  
- 	/*
- 	 * If a VA is obtained from a global heap(if it fails here)
-@@ -2065,8 +2067,16 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	 * If an allocation fails, the error value is
- 	 * returned. Therefore trigger the overflow path.
- 	 */
--	if (IS_ERR_VALUE(addr))
--		goto overflow;
-+	if (IS_ERR_VALUE(addr)) {
-+		if (allow_block)
-+			goto overflow;
-+
-+		/*
-+		 * We can not trigger any reclaim logic because
-+		 * sleeping is not allowed, thus fail an allocation.
-+		 */
-+		goto error;
-+	}
+-		cond_resched();
+ 		nr_allocated += 1U << order;
+ 	}
  
- 	va->va_start = addr;
- 	va->va_end = addr + size;
-@@ -2116,6 +2126,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 		pr_warn("vmalloc_node_range for size %lu failed: Address range restricted to %#lx - %#lx\n",
- 				size, vstart, vend);
- 
-+error:
- 	kmem_cache_free(vmap_area_cachep, va);
- 	return ERR_PTR(-EBUSY);
- }
 -- 
 2.39.5
 
