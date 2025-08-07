@@ -1,257 +1,117 @@
-Return-Path: <linux-kernel+bounces-759400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E06A9B1DD08
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110A9B1DD0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9B218812B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6F35824B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FEF273806;
-	Thu,  7 Aug 2025 18:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F072147E5;
+	Thu,  7 Aug 2025 18:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RF1kC5Ba"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmkfJM/L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27260186A;
-	Thu,  7 Aug 2025 18:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E6F218E96;
+	Thu,  7 Aug 2025 18:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754591365; cv=none; b=JjMaVwFqpR01IVrnvl/UsGwfV66KUay20QNAh0iFrRIO6Td0V9LP1LunTj1ohTUZePXEBqgTt/QlsQn/mc+KtJJ4WSv2mXc/w7DQikRTLLqYT/hZk4T4ql/puTUAKUcOEzIzmpZwNLELooub+FfK2vhLl9pkyQdriIHQpj5Uu7U=
+	t=1754591421; cv=none; b=FdtOD3G524y2wGmiwuYMAe1kFnNhnP08Re72HRNoC0v8QQEG7xxTmJ9vdmQY8WfbbfPIVqnJx6u7nEG9MOF9K06ueovapVptUwAhcJs7xpyZNPrXK3VLtOJjhrsr8E6qRzV2cVsJqPK+3zBXwnXHSOJGa50BNG9EjwzrkqRdIVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754591365; c=relaxed/simple;
-	bh=0MjuKQe8s182P5fSAkQSVzVV7ppG+0BIhgH4H7HpCyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bOfA1J6I29I3cDBH0qjOfDh+kGkO7rnfoeZOGgIMTP9RxL305kBOJi8NHiIPqfaFGSUcV67RXDWqNnJP6vl7s+MbijDchT8rL5wirZ8giSoCR72rNPslvNAjZ8oaXHwM6uMoZMP2e/fYSOsBWT1VYjIw3vsvbd/u2BLlzvatSnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RF1kC5Ba; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23dc5bcf49eso14925945ad.2;
-        Thu, 07 Aug 2025 11:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754591363; x=1755196163; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PXpLzh9f2OcRoQYEADq7bQNjN64p9yrTziTkYXi0ngg=;
-        b=RF1kC5Ba0Da5wapBT1FxQhE4rFsJi5Jov9SMq+IKq4lUj5w7m67EiMAHqGjcOEEuDE
-         NrlhzcUeV0p/E1OByDuvN/NnBojd9P0qHskYMgbLNnWHnZjtXNSyVPGA5FV5yzi0Hlij
-         b27fRBJnx1P5Xmm6zeW45XA73XMUKsqUVyxFqAQHuPaF4bQBXqSjDIPmH4xYEoDzeQtR
-         u1qKFBUsF+EsLJqvQ5ND4L6srlmsxj/JcmKm+GdtbDlh5zT9W7bcMprrs83IgNUliSb7
-         VzccyWc+5eEofIswjrRQftUvzxa25pcBgGQZEVWP57KecoEN1uf5WDOI0+x4JY7oupsH
-         Y+lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754591363; x=1755196163;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PXpLzh9f2OcRoQYEADq7bQNjN64p9yrTziTkYXi0ngg=;
-        b=hSVU0ipZ64jcLnQ7R7gcFVsfmPur4VlRzINruVhHe1M0YcpJ23N7Fh/wdkGI5zNJVJ
-         DxwWQvRb+tNYOy9lGU+J83CsHEm3t2oSY+h12EN4n8U304527qUemkFeAuzNZAkSfqmz
-         y5+foSx1QMjrq/RHe+6Ni4+I/Xxp1DVJvbAhUUGf2Bk6BPWyPo1ybwNFMDO7STLZcaOL
-         FtQ/CJYhluuXkIZuad2LmBaQqChnqXz6pNjeAnp7x5cg2q7HAqRauDCrQtpCeS4kvo7g
-         K8/RVYOBXTtQ8aTXWno5q7sUt+Mg1UDAC2YjN82dWh4ZwVKctBfJoQlj8toy6dwUXN0Q
-         h7PA==
-X-Forwarded-Encrypted: i=1; AJvYcCWV5iOn9z0RihBRK/IW7dEzToiQAjzH8D1SJbzL0wPfiJ5G+clzHNbP0RcKnunmyAxKlYkuXvlh8/QGQg==@vger.kernel.org, AJvYcCXV6wEB9xlVdXOEMCQW+MMLcYMGqPoZ5xrymL56JfkB8gNRs14l55esUv+aaM26bVtXe2E2gaZxcFcK53s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBPMht29fTK2pckJzRlNxXfev4MEMwgjeai618L3EW0HutbglU
-	zc39cwdhYUcu5V4ocsar7M9G7biNvIaoXy/5LeTCP28CiP90RE/wCJdL
-X-Gm-Gg: ASbGncuMaqggJ6afHghClbYLjXi4WmL6hxrA+czKPHr/JkLiwiOqxKsM3SpAo3OIoJz
-	4byaA1CAN57N+XNPUbd50T3B6DeuOHmiOztJrrT3cx5l/gYod4Z4GD0KTBKDVhtJ9a20UPWqwzx
-	eLKSKN9ilwiO+jXP55PC055JAMVj5W52fzSVCRp3GJ5Z/OgnHBRm2spnVrc7M97Bssp365jl3A4
-	Av975QpZ2RJLj3jOfwSQ+qXlFnEs+UHjSMeZQARTQTshqiplji17B3qPaNNu3evuZxlQtN4sb8o
-	z7WWX3FJahbdj06jQxL0T3v2ZMWTw4rmaC29YFL73LUu83IggEO1IFvQsFAMQTtZLXNK6qpVqai
-	kM7OIBJGaBQ16wm5552ArJIJkpC0vi5L/
-X-Google-Smtp-Source: AGHT+IEy6szDYvTpU5CXrnpu3V8cht2UYWOWNUxx22SUkuhwuo/Zno/RTiNiAgDk+fvXMjq2JtYryQ==
-X-Received: by 2002:a17:902:c992:b0:220:c164:6ee1 with SMTP id d9443c01a7336-242c21dd9c0mr219435ad.32.1754591363281;
-        Thu, 07 Aug 2025 11:29:23 -0700 (PDT)
-Received: from avinash ([2406:8800:9014:d938:f647:9d6a:9509:bc41])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0f603sm191567695ad.48.2025.08.07.11.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 11:29:22 -0700 (PDT)
-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-To: James.Bottomley@HansenPartnership.com
-Cc: martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abinash Singh <abinashsinghlalotra@gmail.com>
-Subject: [PATCH RFC] scsi: sd: Fix build warning in sd_revalidate_disk()
-Date: Fri,  8 Aug 2025 00:00:00 +0530
-Message-ID: <20250807183000.31465-1-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754591421; c=relaxed/simple;
+	bh=fvKzj6dUHRc3HjFsvlOPaQYwooIML33QLBDFoF6wir4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=OeTw/lWX1QJT0TgodFqJaxqoVVjA2mJXmZxpQlMVQkR6topc15HCtcGYnsqUSwiDZcTO9sNpE20D1on9+1oDTnIYBuVIV12699YWVfEJ0iHui6q9+BuGmh2fO3GlhN+/25fLp/J1Bb5e4NCcwzy7K/9aBbIjeLBYABjU3hi5MQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmkfJM/L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7A2C4CEEB;
+	Thu,  7 Aug 2025 18:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754591420;
+	bh=fvKzj6dUHRc3HjFsvlOPaQYwooIML33QLBDFoF6wir4=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=lmkfJM/LS6/7uM1TyYApJ0aWL6Xc7yNpgS1I0uzHlMlTxvDhBTz5h8jtlKu8jhaxe
+	 q5XLt+pxPU3vUy/IwD3lXnX7/BeC9DVmiroVtHbiuL/SsUq2WXQPalfysR5OBK/xtP
+	 nxSygpIcW/9nAK92lvoIRPa9tBwrU1S0M7KhKrcv/3LVfKqfBUch6ahNTFQoIF6oQQ
+	 z6KQc+1xDkeZYzap5py/DsIUOGBG8caN/UROmEZ9834uop1nnz8qDxP/oIsN1iyCoJ
+	 dSWzwbXWHe/MeyRErzxAYf0gFZxlnP3Qd6BF6nUMCzgKEk4ZIPHwJT0KrD+PQhlqJf
+	 ABHHa4Kw494nQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Thu, 07 Aug 2025 20:30:15 +0200
+Message-Id: <DBWEQWVWLJWA.2JHS152T8YSO1@kernel.org>
+Subject: Re: [PATCH 2/3] rust: maple_tree: add MapleTree::lock() and load()
+Cc: "Gary Guo" <gary@garyguo.net>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Andrew
+ Ballance" <andrewjballance@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Trevor
+ Gross" <tmgross@umich.edu>, <linux-kernel@vger.kernel.org>,
+ <maple-tree@lists.infradead.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-mm@kvack.org>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+ <20250726-maple-tree-v1-2-27a3da7cb8e5@google.com>
+ <20250726165020.46880c31.gary@garyguo.net>
+ <CAH5fLgi-3oT8+5Krzrg5JeagJMm6-8FNVr5G-UAszuhi0qZ1xA@mail.gmail.com>
+ <CAH5fLgjB7-xJ2OjVa6nxnUPk-1+wyxPMWQ15-Vc3mUp36+_Rhg@mail.gmail.com>
+ <20250727130257.3549ea3c.gary@garyguo.net>
+ <imzcbuqlhj3dhzxyk7t44pt3ufxckwlonuqpsdohxuztvk3sss@z4douqoxmxqw>
+In-Reply-To: <imzcbuqlhj3dhzxyk7t44pt3ufxckwlonuqpsdohxuztvk3sss@z4douqoxmxqw>
 
-A build warning was triggered due to excessive stack usage in
-sd_revalidate_disk():
+On Thu Aug 7, 2025 at 6:15 PM CEST, Liam R. Howlett wrote:
+> * Gary Guo <gary@garyguo.net> [250727 08:03]:
+>> On Sat, 26 Jul 2025 18:18:02 +0200
+>> Well, `Lock::from_raw` is designed to interact with a C-side lock:
+>>=20
+>> > Construct a Lock from a raw pointer
+>> >
+>> > This can be useful for interacting with a lock which was initialised o=
+utside of Rust.
+>>=20
+>
+> If it matters for future build out, the tree supports an external lock
+> that may not be a spinlock.  This is currently used by the mm for the
+> vma management, and others (although willy wants it to go away
+> eventually).
 
-drivers/scsi/sd.c: In function ‘sd_revalidate_disk.isra’:
-drivers/scsi/sd.c:3824:1: warning: the frame size of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+When I was considering maple tree for GPUVM, i.e. vma management for GPUs, =
+I
+would have needed the external lock as well. For GPU VMA management we have
+section for which we have to ensure that the tree won't be altered for a
+sequence of sleeping operations.
 
-This is caused by a large local struct queue_limits (~400B) allocated
-on the stack. Replacing it with a heap allocation using kmalloc()
-significantly reduces frame usage. Kernel stack is limited (~8 KB),
-and allocating large structs on the stack is discouraged.
-As the function already performs heap allocations (e.g. for buffer),
-this change fits well.
+In the worst case we could have used the internal spinlock and yet have an
+external mutex for this purpose; an uncontended spinlock shouldn't be that =
+big
+a deal to take. So, long story short, I think there may be a few cases wher=
+e an
+external lock can make sense.
 
-Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
+Just to recap why GPUVM couldn't leverage maple tree: we have cases where w=
+e
+have to pre-allocate multiple entries for the tree, whose ranges are yet un=
+known
+at the time we need to pre-allocate them. Unfortunately, I can't think of a
+solution for this given that in this situation we can't predict the number =
+of
+new nodes this requires.
 
----
-This was further confirmed by compiling sd.c with -fstack-usage flag
+If however in the meantime there have been ideas to tackle this please let =
+me
+know, I'd still love to have maple tree for GPUVM.
 
-Before: drivers/scsi/sd.c:3694:12:sd_revalidate_disk.isra 1248 dynamic,bounded
-After:  drivers/scsi/sd.c:3695:12:sd_revalidate_disk.isra  840 dynamic,bounded
-
-Already we had a heap allocation in this function so I think  we can do this
-without any issues.
-I have followed the same pattern on allocation failure as done for
-`buffer`.
-
-This function appears stable; if it's not under active development,
-we may consider cleaning up unused goto statements in a follow-up patch.
-
-Thanks For your valuable Time
-
-Best regards
-Abinash
----
- drivers/scsi/sd.c | 41 ++++++++++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 4a68b2ab2804..a03844400e51 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -34,6 +34,7 @@
-  */
- 
- #include <linux/bio-integrity.h>
-+#include <linux/cleanup.h>
- #include <linux/module.h>
- #include <linux/fs.h>
- #include <linux/kernel.h>
-@@ -3696,11 +3696,16 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 	struct scsi_disk *sdkp = scsi_disk(disk);
- 	struct scsi_device *sdp = sdkp->device;
- 	sector_t old_capacity = sdkp->capacity;
--	struct queue_limits lim;
- 	unsigned char *buffer;
- 	unsigned int dev_max;
- 	int err;
- 
-+	struct queue_limits *lim __free(kfree) = kmalloc(sizeof(*lim), GFP_KERNEL);
-+	if (!lim) {
-+		sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory allocation failure.\n");
-+		goto out;
-+	}
-+
- 	SCSI_LOG_HLQUEUE(3, sd_printk(KERN_INFO, sdkp,
- 				      "sd_revalidate_disk\n"));
- 
-@@ -3720,14 +3726,14 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 
- 	sd_spinup_disk(sdkp);
- 
--	lim = queue_limits_start_update(sdkp->disk->queue);
-+	*lim = queue_limits_start_update(sdkp->disk->queue);
- 
- 	/*
- 	 * Without media there is no reason to ask; moreover, some devices
- 	 * react badly if we do.
- 	 */
- 	if (sdkp->media_present) {
--		sd_read_capacity(sdkp, &lim, buffer);
-+		sd_read_capacity(sdkp, lim, buffer);
- 		/*
- 		 * Some USB/UAS devices return generic values for mode pages
- 		 * until the media has been accessed. Trigger a READ operation
-@@ -3741,17 +3747,17 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 		 * cause this to be updated correctly and any device which
- 		 * doesn't support it should be treated as rotational.
- 		 */
--		lim.features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
-+		lim->features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
- 
- 		if (scsi_device_supports_vpd(sdp)) {
- 			sd_read_block_provisioning(sdkp);
--			sd_read_block_limits(sdkp, &lim);
-+			sd_read_block_limits(sdkp, lim);
- 			sd_read_block_limits_ext(sdkp);
--			sd_read_block_characteristics(sdkp, &lim);
--			sd_zbc_read_zones(sdkp, &lim, buffer);
-+			sd_read_block_characteristics(sdkp, lim);
-+			sd_zbc_read_zones(sdkp, lim, buffer);
- 		}
- 
--		sd_config_discard(sdkp, &lim, sd_discard_mode(sdkp));
-+		sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
- 
- 		sd_print_capacity(sdkp, old_capacity);
- 
-@@ -3761,45 +3767,45 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 		sd_read_app_tag_own(sdkp, buffer);
- 		sd_read_write_same(sdkp, buffer);
- 		sd_read_security(sdkp, buffer);
--		sd_config_protection(sdkp, &lim);
-+		sd_config_protection(sdkp, lim);
- 	}
- 
- 	/*
- 	 * We now have all cache related info, determine how we deal
- 	 * with flush requests.
- 	 */
--	sd_set_flush_flag(sdkp, &lim);
-+	sd_set_flush_flag(sdkp, lim);
- 
- 	/* Initial block count limit based on CDB TRANSFER LENGTH field size. */
- 	dev_max = sdp->use_16_for_rw ? SD_MAX_XFER_BLOCKS : SD_DEF_XFER_BLOCKS;
- 
- 	/* Some devices report a maximum block count for READ/WRITE requests. */
- 	dev_max = min_not_zero(dev_max, sdkp->max_xfer_blocks);
--	lim.max_dev_sectors = logical_to_sectors(sdp, dev_max);
-+	lim->max_dev_sectors = logical_to_sectors(sdp, dev_max);
- 
- 	if (sd_validate_min_xfer_size(sdkp))
--		lim.io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
-+		lim->io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
- 	else
--		lim.io_min = 0;
-+		lim->io_min = 0;
- 
- 	/*
- 	 * Limit default to SCSI host optimal sector limit if set. There may be
- 	 * an impact on performance for when the size of a request exceeds this
- 	 * host limit.
- 	 */
--	lim.io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
-+	lim->io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
- 	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
--		lim.io_opt = min_not_zero(lim.io_opt,
-+		lim->io_opt = min_not_zero(lim->io_opt,
- 				logical_to_bytes(sdp, sdkp->opt_xfer_blocks));
- 	}
- 
- 	sdkp->first_scan = 0;
- 
- 	set_capacity_and_notify(disk, logical_to_sectors(sdp, sdkp->capacity));
--	sd_config_write_same(sdkp, &lim);
-+	sd_config_write_same(sdkp, lim);
- 	kfree(buffer);
- 
--	err = queue_limits_commit_update_frozen(sdkp->disk->queue, &lim);
-+	err = queue_limits_commit_update_frozen(sdkp->disk->queue, lim);
- 	if (err)
- 		return err;
- 
--- 
-2.50.1
-
+- Danilo
 
