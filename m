@@ -1,238 +1,139 @@
-Return-Path: <linux-kernel+bounces-758968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4A4B1D665
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:11:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF7EB1D668
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE3457A72C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:09:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B9C18C7BD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5EA277C8D;
-	Thu,  7 Aug 2025 11:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5171277CA1;
+	Thu,  7 Aug 2025 11:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rCaoB49H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yT6dzxF1"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F94231A55;
-	Thu,  7 Aug 2025 11:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88AF277CA0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754565076; cv=none; b=kU+6QeKOzeqS/o80m80goqvz5t8kxFSuFdtFeN6VL8r1m4oWF1ht3ZsK92wK3ROzsbRCG+6dwqGKT6G/B0W/G7Ns/ousdB6G8WTP6QYkawmLauYVH1BJZDB5lY1R6h4Wdk+M8No9zVDQsZjwMCu887UoSr57rfKViTxLLTK4Hkk=
+	t=1754565109; cv=none; b=NuTspZ/CIyTvv4GR5R3bvygwyW92pWbvLdKOoGQG1C6ju+ZHIemINpBZZivjEmf1h1JdRozW5PY7DhqxldOjCttRny/06P+cJzXRUlQqVHI51LeLj+2qHy7fPKJpT6cg/bHD8KkE8ARDKmV5XlJ+80YWIQ+vGiD8f/rDd0qQX8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754565076; c=relaxed/simple;
-	bh=gPoeZoK5liebP6zDwK59tggbgRkDGLyVHXWfBCPFvbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qv66UPD3EBjIEDDfPmQBWFi/A5g1hqNg37eWkeCtJSCsVwfhMmpaX/tgQN6J+Ie+NMG0My4PuK0ip6iVR7IspIEA43NExoEAiH/kLiZ0GcJVGquSG3p/ji2swCaMhHolLdhR6PuguIjzhqYFoIowsqAdZaACp3uSG79YbCR5XU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rCaoB49H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF8EC4CEEB;
-	Thu,  7 Aug 2025 11:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754565075;
-	bh=gPoeZoK5liebP6zDwK59tggbgRkDGLyVHXWfBCPFvbw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rCaoB49HTCUvH8I8PhurMsQzYrBrbd07Pj1blXzkoj2zhTJC5jfgzRGSEqqmL7nSa
-	 WkDHeCT60yksOPDKqdGsbjjrhoeCJm12gc/YEl4QMMMa9eDP1KdDNjuQ/vOqNum/WT
-	 2zEmEXQhbjR26qsy/jsrgsPCow4w3YXtxRas1SPYWB3S53qbGfjqN1zpH+DJIsaiRC
-	 ag5UBbh+6DIWpqx5k2MNArPV+QKCR8JCTjil6bCUI61KEVsb1POwUkJ4xHxN5pPMaH
-	 sc/w4SEvLO3L/XQI5fKw6Jf6ThngmFqAp6wvyzUsKXm/XK5zDhDgTvkU7Srb5roUfi
-	 bNZa2dsH3awEg==
-Date: Thu, 7 Aug 2025 13:11:06 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
- mount_attr.2type
-Message-ID: <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
+	s=arc-20240116; t=1754565109; c=relaxed/simple;
+	bh=yh0PXnTN7dNMPrb5G2ngQ/5OWRI9b6aFWmhhdzGSdk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yw6SpJiAfso28wcXG3Z1A66dJWLTX+NKFGlG5XwBucq06Npns7XWVMH8kNJhJbCNJETmLIvc/CrIGBxou9MjAtHwKYFAeUqmz4/NwWKrpFvzAcspOxeYIPL6wQ/kmPRX9XO+nB94xvNoC9JY4z/ZiCHx2+/CM2xHmuLvB5D3WBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yT6dzxF1; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-879d2e419b9so552516a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754565107; x=1755169907; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CoXNXUKeiOUNFFg2C7vkQ9nmMli8YvVdClg8JNyIxRk=;
+        b=yT6dzxF1WuM5wIrQnKCnQJvSaedBavtJmDJzKQ+aw1uTFwUWdMqWbdtjd27yzHMbhz
+         GTM/DG2CYy3a1GX2sK3w9to0zon11kY0mISGLLR7NgwDmU0Hjuw7NkZ+BoTj23ESXjDi
+         E91kRvRsgQ9P+Wtif8AL98ET/1BdMtGdD8A/1P4RHGKEZLpfzt368ZZboGcky+KtExK0
+         BnILx8nZiLYCMEa13zROgKRht7xv7SFJ4EcYgF9MXc8DrwgOp7LJ89/4iXg5oEIol4du
+         fuhtNw5UvS5gVfDF0cPkScdoQrDNTmN8tdpn4b3uQu8SyOhm81VoJq1vtYl/xRKEhyzC
+         9Ndg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754565107; x=1755169907;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CoXNXUKeiOUNFFg2C7vkQ9nmMli8YvVdClg8JNyIxRk=;
+        b=f8GWWyuhzPuxBgdG8Bwr3O0/c4xS1jCLhTinaWi7XwWft3Y8mAs9Fnff7nQafPDPhG
+         iVFxFYpN9a1/IT/Ul3Z/HhUC+xNICzPNn+aLTdmnNxFs4t5t4xP1v5NPWHXqFnmnedxd
+         Q7eYEOyUSPrdWedjOjvGlcPAdHWKJZF1Qx07UGyYlfVUYEmzlvo0ciXEza60H6wxEUGB
+         009nsPCq0OeGRME4x96AeKm+R4nVu8NPLml33YJAHYPsUnMugbU322W4TR7MV2vpItfO
+         6/dUMs2yIpxIuvE8kOv3oc9PREmkZBQZUE1tJnxVuV9sZ5x70eH8cGUQZ1AESb+cWZiW
+         39iA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQzZ2cJaY8cZyo5vWQHCig5JSjl987itszcUJuXI2/Sahk3B9xEtinYQKBdSCkNgXc8vUt6LP/DzA5wa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAzrmymYZ6/iZm5v80PV9YFnODbIqz0ojw4rypcDsHY6rarPCl
+	CrpvTKnD9n+IbjOGWVr8a4hkjMEzUYOQd9vkmNb8agPD/cMUrVGgwBfF5mY1HWgj5c+rp+P8AsJ
+	4kpYe3JFY3mkhtrXKCXBdhIbR53YY9vD13Q3hgGE4
+X-Gm-Gg: ASbGnctLA1UfpCtV8OupAA+RQUSYWuv19ZhXonTKdt0Vz7ypA7boOvbY66UGtQaeM2w
+	B0XvrW8Xgex0kWKvGhSM5B8nPSFMzkZUPwAz6vknXo0fppr9Qvayx6QvViYyWMZF81xtgtcA/fh
+	shYwAcBBIc2Q7FsiLMBk+kIIp1JzRoHhjq/WGJ3vfKCHITt+0ptIJYZEp/udWnzYsg9CThRFE7D
+	PuMdC/RX4t5J0TeRQIFmafgUuCZYV4+1xf8v64=
+X-Google-Smtp-Source: AGHT+IHWtnkQaumsTew0jXS9kaK3+ePJQyaqgUXoTNxp2BPH6vF9Q5lSXC7XsOCAVRCtweFXeukJL89E4f1X03Xzmvc=
+X-Received: by 2002:a17:902:f54b:b0:240:8f4:b36e with SMTP id
+ d9443c01a7336-2429f30a072mr90455775ad.34.1754565106720; Thu, 07 Aug 2025
+ 04:11:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3r3ryjdhw7s6f36v"
-Content-Disposition: inline
-In-Reply-To: <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
+References: <20250729193647.3410634-1-marievic@google.com> <20250729193647.3410634-5-marievic@google.com>
+ <CABVgOSnmtcjarGuZog9zKNvt9rYD2Tsox3ngVgh4pJUFMF737w@mail.gmail.com>
+In-Reply-To: <CABVgOSnmtcjarGuZog9zKNvt9rYD2Tsox3ngVgh4pJUFMF737w@mail.gmail.com>
+From: Marco Elver <elver@google.com>
+Date: Thu, 7 Aug 2025 13:11:10 +0200
+X-Gm-Features: Ac12FXxEPQeFs5tHqqfxXkjXiWaH8qt7LNAFX9V6D-alLoCQyoAF_FdJ5KU_fBk
+Message-ID: <CANpmjNMkcZaZ_dbXdd40dHrD3Wo2muv14ojmz4diwLG68LiFyQ@mail.gmail.com>
+Subject: Re: [PATCH 4/9] kcsan: test: Update parameter generator to new signature
+To: David Gow <davidgow@google.com>
+Cc: Marie Zhussupova <marievic@google.com>, rmoar@google.com, shuah@kernel.org, 
+	brendan.higgins@linux.dev, dvyukov@google.com, lucas.demarchi@intel.com, 
+	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+On Sat, 2 Aug 2025 at 11:45, David Gow <davidgow@google.com> wrote:
+>
+> On Wed, 30 Jul 2025 at 03:37, Marie Zhussupova <marievic@google.com> wrote:
+> >
+> > This patch modifies `nthreads_gen_params` in kcsan_test.c
+> > to accept an additional `struct kunit *test` argument.
+> >
+> > Signed-off-by: Marie Zhussupova <marievic@google.com>
+> > ---
+>
+> This is a pretty straightforward fix after patch 3. KCSAN folks, would
+> you prefer this kept as a separate patch, or squashed into the
+> previous one (so there's no commit where this is broken)?
+
+Normally patch series should be structured so that bisection does not
+break. Having this fixup as a separate patch means that bisections
+where the KCSAN test is enabled will break.
+
+This is a tiny change, so I'd just squash it.
 
 
---3r3ryjdhw7s6f36v
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
- mount_attr.2type
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
-
-Hi Aleksa,
-
-On Thu, Aug 07, 2025 at 03:44:36AM +1000, Aleksa Sarai wrote:
-> As with open_how(2type), it makes sense to move this to a separate man
-> page.  In addition, future man pages added in this patchset will want to
-> reference mount_attr(2type).
->=20
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->  man/man2/mount_setattr.2      | 17 ++++---------
->  man/man2type/mount_attr.2type | 58 +++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 63 insertions(+), 12 deletions(-)
->=20
-> diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-> index c96f0657f046..d44fafc93a20 100644
-> --- a/man/man2/mount_setattr.2
-> +++ b/man/man2/mount_setattr.2
-> @@ -114,18 +114,11 @@ .SH DESCRIPTION
->  .I attr
->  argument of
->  .BR mount_setattr ()
-> -is a structure of the following form:
-> -.P
-> -.in +4n
-> -.EX
-> -struct mount_attr {
-> -    __u64 attr_set;     /* Mount properties to set */
-> -    __u64 attr_clr;     /* Mount properties to clear */
-> -    __u64 propagation;  /* Mount propagation type */
-> -    __u64 userns_fd;    /* User namespace file descriptor */
-> -};
-> -.EE
-> -.in
-> +is a pointer to a
-> +.I mount_attr
-> +structure,
-> +described in
-> +.BR mount_attr (2type).
->  .P
->  The
->  .I attr_set
-> diff --git a/man/man2type/mount_attr.2type b/man/man2type/mount_attr.2type
-> new file mode 100644
-> index 000000000000..b7a3ace6b3b9
-> --- /dev/null
-> +++ b/man/man2type/mount_attr.2type
-> @@ -0,0 +1,58 @@
-> +
-
-Please remove this blank.  It is not diagnosed by groff(1), but I think
-it should be diagnosed (blank lines are diagnosed elsewhere).  I've
-reported a bug to groff(1) (Branden will be reading this, anyway).
-
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH mount_attr 2type (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +mount_attr \- what mount properties to set and clear
-> +.SH LIBRARY
-> +Linux kernel headers
-> +.SH SYNOPSIS
-> +.EX
-> +.B #include <sys/mount.h>
-> +.P
-> +.B struct mount_attr {
-> +.BR "    __u64 attr_set;" "     /* Mount properties to set */"
-> +.BR "    __u64 attr_clr;" "     /* Mount properties to clear */"
-> +.BR "    __u64 propagation;" "  /* Mount propagation type */"
-> +.BR "    __u64 userns_fd;" "    /* User namespace file descriptor */"
-> +    /* ... */
-> +.B };
-> +.EE
-> +.SH DESCRIPTION
-> +Specifies which mount properties should be changed with
-> +.BR mount_setattr (2).
-> +.P
-> +The fields are as follows:
-> +.TP
-> +.I .attr_set
-> +This field specifies which
-> +.BI MOUNT_ATTR_ *
-> +attribute flags to set.
-> +.TP
-> +.I .attr_clr
-> +This fields specifies which
-> +.BI MOUNT_ATTR_ *
-> +attribute flags to clear.
-> +.TP
-> +.I .propagation
-> +This field specifies what mount propagation will be applied.
-> +The valid values of this field are the same propagation types described =
-in
-> +.BR mount_namespaces (7).
-> +.TP
-> +.I .userns_fd
-> +This fields specifies a file descriptor that indicates which user namesp=
-ace to
-
-s/fields/field/
-
-> +use as a reference for ID-mapped mounts with
-> +.BR MOUNT_ATTR_IDMAP .
-> +.SH VERSIONS
-> +Extra fields may be appended to the structure,
-> +with a zero value in a new field resulting in
-> +the kernel behaving as though that extension field was not present.
-> +Therefore, a user
-> +.I must
-> +zero-fill this structure on initialization.
-
-I think this would be more appropriate for HISTORY.  In VERSIONS, we
-usually document differences with the BSDs or other systems.
-
-While moving this to HISTORY, it would also be useful to mention the
-glibc version that added the structure.  In the future, we'd document
-the versions of glibc and Linux that have added members.
-
-> +.SH STANDARDS
-> +Linux.
-> +.SH SEE ALSO
-> +.BR mount_setattr (2)
-
-Have a lovely day!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---3r3ryjdhw7s6f36v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiUicoACgkQ64mZXMKQ
-wqlXXQ/+JjKQpoNg8VTZVt84RZf2V2f+x5+0ztsw78i5Q9KS6szQCG/M7gMlpvEA
-OqKz65374rMAws/6+odAbh8bkQT66tT7VwUYprl4ZA+YtDHJ8xgIYtyasg2AOt+L
-oVHq7L/k/tSu0Dy+AW81YNDrqIUrfFDGdWcp6CiDf80RXk6J+Z8CAw8vQgam0Gnl
-qr12YRIet69fo6/CYwyP4vMrO1S8hq417odfn6SEs/cfkVvP9WrDCO+4ehKp6j0N
-gaa35px0M0VLd2Vtz7i8IjQXISmdsHW+/hdJpYE1DERcewNbU6cawZYOfBUQFv7N
-3DWhwZffVJ55F7Ru+0OK8dveasa97stao4gHn9Oav5MAIRapcOqPNVXWRdAwpaqC
-cmw0C+IapJGtif50j70fiRuktnfzFrZl2ZyfrBgYK6nLaTsVGpeFMOgMBegkP4tN
-hBpF1eemiGltuMGEwf6jqFiSTjHv6UQPVBxcWZlFM6pqQEFJW3g3Pu8hleh20iJD
-dwJJy+LQwscgyBp50k7NUTB7+1L4ZwomA7WUE4/367yuWBCYrpr179UjJo0ZQuar
-udlVYfWunn3E5F/qtDVwXBC09wJExHFnp426qsrtg+QDEg2dhEOviT7fYvO2Dvet
-L3dN2YJkNdNGAH1MzyF46LXQ4Md/6TqX7AoXunG9M+JKbgHJyEg=
-=39AD
------END PGP SIGNATURE-----
-
---3r3ryjdhw7s6f36v--
+> Either way,
+> Reviewed-by: David Gow <davidgow@google.com>
+>
+>
+> -- David
+>
+> >  kernel/kcsan/kcsan_test.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/kcsan/kcsan_test.c b/kernel/kcsan/kcsan_test.c
+> > index c2871180edcc..fc76648525ac 100644
+> > --- a/kernel/kcsan/kcsan_test.c
+> > +++ b/kernel/kcsan/kcsan_test.c
+> > @@ -1383,7 +1383,7 @@ static void test_atomic_builtins_missing_barrier(struct kunit *test)
+> >   * The thread counts are chosen to cover potentially interesting boundaries and
+> >   * corner cases (2 to 5), and then stress the system with larger counts.
+> >   */
+> > -static const void *nthreads_gen_params(const void *prev, char *desc)
+> > +static const void *nthreads_gen_params(struct kunit *test, const void *prev, char *desc)
+> >  {
+> >         long nthreads = (long)prev;
+> >
+> > --
+> > 2.50.1.552.g942d659e1b-goog
+> >
 
