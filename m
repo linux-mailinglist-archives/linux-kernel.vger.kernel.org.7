@@ -1,167 +1,125 @@
-Return-Path: <linux-kernel+bounces-759188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F3DB1D9E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:22:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A90B1D9E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC4985849AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84518189CB8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF9D262FE4;
-	Thu,  7 Aug 2025 14:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDCE25D549;
+	Thu,  7 Aug 2025 14:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndMOndCF"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CuyGTcNU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246A583A14;
-	Thu,  7 Aug 2025 14:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A772B2DA;
+	Thu,  7 Aug 2025 14:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754576523; cv=none; b=MnF9k7fmmV63mQR4PAgRbXaC7PXeltwztvjqzIVS2FBjjhGdmHsifGpxhj/YeeVqg6LChGeLcHb3OHrPa+o0BTL0Ysxs9GjzS4YJly/ANrpQyUBW9Awi+Kk2aFYagm4J8hjIJxOWaI3aguoWlvL+TzHp2qNCQ6tZ/U1nwktiWNs=
+	t=1754576654; cv=none; b=e1+ZaMvu+jyEbh1IHdh8pY0sG/+3EqY3ov0XNuK9xYsxjOCJZzlA2vDKUqUFWoqAj7Y0oVpt6XOg+5l+e9gGlKiEKab6cJ1SbQA0VMz97aO7YVIXZyF/yUBSr353Ef1Ik3OaQ8ihm/jlNVMXKUoksUF8uTL3W05BfYfNtwqpRHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754576523; c=relaxed/simple;
-	bh=dNa1Bny7iZ1EGEiI7VWML96Y5Ny6rNbeqmObEt5JvqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bs2JZNb7lrsIa3DLq9cC+3a9iK1GYuX7bDcp4WGg9RNLYVKl4rzqM0vnYuFEUKLtHJgigly2UFRgls7IF35pK69tdkNWPtnlN2d/ewbWA1BP6cHOdlAd9/rbU3RAsLUsJGLxohTlm4hOjJn1cJd6JU+OboTFt1YozZBs7PL/OJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndMOndCF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BF8AC4CEEB;
-	Thu,  7 Aug 2025 14:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754576522;
-	bh=dNa1Bny7iZ1EGEiI7VWML96Y5Ny6rNbeqmObEt5JvqI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ndMOndCF1jWP98uGYI8uwuZTPvoRBUGkNZ7MJlthypDVWbWaqD5Ip3/YaqNZWdAi7
-	 pAsrS3bgW/rVTdXma/79ooLYOWfZbfDlsDNkv8XCu8GV4hGPbt6mEEteV39XiwNX2u
-	 Qu5dPMxB3o5zYz0j/A61bNdXH9vACHIuoqKl7iE6bW3Zx7yQy2L/OuKdMTfjtLwyXQ
-	 FLdRK19bQXSF3It/rkgVriZZN6d9jqGDsPouuDP5U1I76H7Qh1fO5vyuhRAfDAsOxO
-	 M1FA8Ob3fSmaIQiwaUd7jFzEPcIUy9cOZhbJG24PLa2ozjqOy6PojcrMAWxdMtsm42
-	 1XlBXSaYXpJ9w==
-Message-ID: <da46ad00-910f-4eb1-9b74-14bd76fc8910@kernel.org>
-Date: Thu, 7 Aug 2025 16:21:53 +0200
+	s=arc-20240116; t=1754576654; c=relaxed/simple;
+	bh=3147mCzUDBc1B+hoOJzDTLpUzmPCJflpq7Pn7DUh6qY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FXWLKJ1He9JnQMCWVw2OnnABvKG5lXPbqLGwc+sUpF1EfwI/9uFKsAK/UFio/FBY6D0i2oe1POxLAGWySX03uGYjAFiUVwE65rtRDTk/Ew+5bkck19QtrIqj+PvrrSBLs0UwahSSBZDUJnAlj8uNNM3rafEdOVJMEY+RQTxj4+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CuyGTcNU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E87C4CEEB;
+	Thu,  7 Aug 2025 14:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754576653;
+	bh=3147mCzUDBc1B+hoOJzDTLpUzmPCJflpq7Pn7DUh6qY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CuyGTcNUBXr8BfDjkDV9hpHs2YgJ7scoqV4R2Kg0FBe0uHRYtzZEnCwCGB/IGM6V8
+	 rasZLjMkB26E5d6xqcfd1S7traXJs5eksjWXGHUGIT4ubyA8tx8VMy5LpIkiQfrMNP
+	 9YJFu4FIn8VU/Naa2eXYD3dgXrno9vSvc3N0DsUU=
+Date: Thu, 7 Aug 2025 15:24:09 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: liuqiqi@kylinos.cn
+Cc: cve@kernel.org, linux-cve-announce@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: CVE-2024-57884  patch review feedback
+ (https://lore.kernel.org/linux-cve-announce/2025011510-CVE-2024-57884-4cf8@gregkh/#R)
+Message-ID: <2025080744-buckskin-triumph-2f79@gregkh>
+References: <2025011510-CVE-2024-57884-4cf8@gregkh>
+ <20250807130515.1445117-1-liuqiqi@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: BPF selftest: mptcp subtest failing
-Content-Language: en-GB, fr-BE
-To: Harshvardhan Jha <harshvardhan.j.jha@oracle.com>,
- Mat Martineau <martineau@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>
-Cc: Geliang Tang <geliang@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- mptcp@lists.linux.dev, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- stable@vger.kernel.org
-References: <b1f933f6-545d-4f2e-a006-4e5568656c38@oracle.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <b1f933f6-545d-4f2e-a006-4e5568656c38@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807130515.1445117-1-liuqiqi@kylinos.cn>
 
-Hi Harshvardhan,
-
-On 07/08/2025 05:50, Harshvardhan Jha wrote:
-> Hi there,
-> I have explicitly disabled mptpcp by default on my custom kernel and
-> this seems to be causing the test case to fail. Even after enabling
-> mtpcp via sysctl command or adding an entry to /etc/sysctl.conf this
-> fails. I don't think this test should be failing and should account for
-> cases where mptcp has not been enabled by default?
-
-It looks like the test is failing because it expects MPTCP to be enabled
-by default. Or, said differently, it doesn't expect the kernel to be
-modified without adapting the corresponding tests :)
-
-> This is the custom patch I had applied on the LTS v6.12.36 kernel and
-> tested it:
+On Thu, Aug 07, 2025 at 09:05:15PM +0800, liuqiqi@kylinos.cn wrote:
+> CVE-2024-57884  patch fixes  mm: vmscan: account for free pages to prevent infinite Loop in throttle_direct_reclaim() modify as follows
+> @@ -342,7 +342,14 @@ unsigned long zone_reclaimable_pages(struct zone *zone)
+>  	if (get_nr_swap_pages() > 0)
+>  		nr += zone_page_state_snapshot(zone, NR_ZONE_INACTIVE_ANON) +
+>  			zone_page_state_snapshot(zone, NR_ZONE_ACTIVE_ANON);
+> -
+> +	/*
+> +	 * If there are no reclaimable file-backed or anonymous pages,
+> +	 * ensure zones with sufficient free pages are not skipped.
+> +	 * This prevents zones like DMA32 from being ignored in reclaim
+> +	 * scenarios where they can still help alleviate memory pressure.
+> +	 */
+> +	if (nr == 0)
+> +		nr = zone_page_state_snapshot(zone, NR_FREE_PAGES);
+>  	return nr;
+>  }
+> However, should_reclaim_retry() function calls zone_reclaimable_pages to count free pages. When nr is 0, it double-counts NR_FREE_PAGES. This seems to cause inaccurate page statistics, right?
+> static inline bool
+> should_reclaim_retry(gfp_t gfp_mask, unsigned order,
+> 		     struct alloc_context *ac, int alloc_flags,
+> 		     bool did_some_progress, int *no_progress_loops)
+> {
+> ......
 > 
-> diff --git a/net/mptcp/ctrl.c b/net/mptcp/ctrl.c
-> index dd595d9b5e50c..bdcc4136e92ef 100644
-> --- a/net/mptcp/ctrl.c
-> +++ b/net/mptcp/ctrl.c
-> @@ -89,7 +89,7 @@ const char *mptcp_get_scheduler(const struct net *net)
+> 		available = reclaimable = zone_reclaimable_pages(zone);
+> 		available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
+> 
+> 		/*
+> 		 * Would the allocation succeed if we reclaimed all
+> 		 * reclaimable pages?
+> 		 */
+> 		wmark = __zone_watermark_ok(zone, order, min_wmark,
+> 				ac->highest_zoneidx, alloc_flags, available);
+> 
+> compaction_zonelist_suitable() function has the same problem.
+> bool compaction_zonelist_suitable(struct alloc_context *ac, int order,
+> 		int alloc_flags)
+> {
+> ......
+> 		available = zone_reclaimable_pages(zone) / order;
+> 		available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
+> 		if (__compaction_suitable(zone, order, min_wmark_pages(zone),
+> 					  ac->highest_zoneidx, available))
+> 
+> If this is problematic, can it be modified as follows:
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -6417,7 +6417,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)
+>                 return true;
 >  
->  static void mptcp_pernet_set_defaults(struct mptcp_pernet *pernet)
->  {
-> -	pernet->mptcp_enabled = 1;
-> +	pernet->mptcp_enabled = 0;
->  	pernet->add_addr_timeout = TCP_RTO_MAX;
->  	pernet->blackhole_timeout = 3600;
->  	atomic_set(&pernet->active_disable_times, 0);
+>         for_each_managed_zone_pgdat(zone, pgdat, i, ZONE_NORMAL) {
+> -               if (!zone_reclaimable_pages(zone))
+> +               if (!zone_reclaimable_pages(zone) || !(zone_page_state_snapshot(zone, NR_FREE_PAGES)))
+>                         continue;
+> 
+> Signed-off-by: liuqiqi <liuqiqi@kylinos.cn>
 
-First, I have the same question as the one I asked to RedHat devs: do
-you still need to keep MPTCP disabled by default? If I remember well, on
-RHEL side, they started to do that when they backported MPTCP on a
-previous stable version, as an experimental feature. They left it like
-that later mostly for internal process reasons I think. But honestly,
-today, it no longer makes sense to do that and annoys users: all other
-Linux distributions enable MPTCP by default without patching the kernel
-like you did.
+I have no idea what you are asking about or wishing to see change.
+Please read the kernel documentation for how to send a proper patch.
 
-If you don't want to revert this patch, I guess you can modify the BPF
-selftests in 'prog_tests/mptcp.c' to set 'sysctl net.mptcp.enabled=1' in
-each netns created by the test. But again, not changing the default
-kernel behaviour sounds like a better solution.
+thanks,
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+greg k-h
 
