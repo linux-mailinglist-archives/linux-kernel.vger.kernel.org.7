@@ -1,272 +1,224 @@
-Return-Path: <linux-kernel+bounces-758559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FDFB1D0CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:00:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63078B1D0CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3492188BD36
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:00:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46FBD4E32FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681E9188907;
-	Thu,  7 Aug 2025 02:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMlOq1yt"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A26D187346;
+	Thu,  7 Aug 2025 02:02:45 +0000 (UTC)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D7D286A9;
-	Thu,  7 Aug 2025 02:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DB74430;
+	Thu,  7 Aug 2025 02:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754532031; cv=none; b=fNVi1E3UyzXSmM2y1r2O9y+HOuqau2k6BcsDdW2OgY9P6U0j48XDdDSqIw7CEgOq5oKae1CdZ+5C1qeHYXGZmfqIm+/PbwfFUjuXDRnwum3lB9PZCAS4eHtDj3lNEusf++UTCR4/8npyBS5vxwPn6Zn61UtJ3mNhGg6Woqu7eKQ=
+	t=1754532164; cv=none; b=ajgy5OzONCKc/pkQ86Hd19fmXtfj8taE57XeyG5kIXWo1J+iwApuqaiUlXn0aKmbhXJW03YFuoC7GLpYcl5bGW35yoQEVSTYo9R0RH1M/lVmkhwLHlNJ6fT/5Dy3IKfeB/vhzgSA8dW7mUdcEMieHg9McYCnWwNyrEFoe4oEa9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754532031; c=relaxed/simple;
-	bh=nEu9rgA6GeCYi3YzHKi+ug6Nu0lKdz8H8aV7Jp+ZH1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J7cFSsgCs+s8G9PlHUaoIn0arprTG2qwKj40cuxyy2mwitWDOeOMt4+XOPiEeQK7SNQKlu51Es1iTRauDH87P0JJXRwtslNmiWQ1a5szdyPglM/Lykdfi2/cBPOKWMCa2idbb5Ga4HpXQurZbjVSf+9n71uyEgGSzstq6jZzVgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMlOq1yt; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-61571192c3aso622846a12.2;
-        Wed, 06 Aug 2025 19:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754532028; x=1755136828; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ABRrAgyeGksuFUpWeQANtztghSDdAocaJuPB0k003W8=;
-        b=WMlOq1yt9Cavb4lWrYv2ZP+mD//RAUDOuXVude9hco89E8dI8yaW7FBlbFBvaQu5Tv
-         MafTv4LUrvFivP7z/WSvyz9IlU23EetcDYAnc7eo43ukdGFb7l8bQeYcBFn0mxbEqLmz
-         PM3vCc7rKDqubaQJgw2PIUeA/NzsZMtjlOcz5mKgpklFHUdYTJLowYFCr2Qj9CxRsyZ2
-         TBjq2NsXVsdl39ik1LbGeML6DNqpjMxg+3oYVRLOXOHIaCoEV1+aCFcc1HXhprjCxt40
-         Na8Pdpt1O1pHtnjietDxPZLcfuSO6M4wzu8MfBvgldCGlIn1j5xxjUggXzaumviAFypW
-         W25A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754532028; x=1755136828;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ABRrAgyeGksuFUpWeQANtztghSDdAocaJuPB0k003W8=;
-        b=oXjJEJIsX0s1CoaVlvIZvU0bXyvWLoH/btWChl14Cm7CDYTdDo+eRI1QcqfJLc12PN
-         SKP6qWyXip6rlpeFTYaJ3aQuTITimgxCmzOGGvZ6s7JBkXIyWPS+wFNK/A/7Javxtckp
-         UvqaRVrsDaGuymzqAApAqoX7FMP1lsbTAGvB9CgH3Ie9DLhNM4Sihw2pLc3yQWM382/i
-         LMIYbN5CS3WB81+mGy8YGqxqmd/Ou8Cm+S/6WvNoGf9I+TvO4XDZ2LIGrT56m6Pqh1+d
-         Os5AeNgHj5sMLj+5CckNCqT83XG7FJtLj1S9TqTlQJlje+tQQSTnCOybJ0Nc/a94hRRL
-         Zj7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUKVSldN8cTlgDK1c8w8ldpw9E8spNchZ1GdREp7qRWnQE0xUpULOnooN5aOvBhD9IArSuKVAV3MO9k@vger.kernel.org, AJvYcCVfNlRQEsWalXY+hvqhPLgeXZJGaDi6fzocSlQlIHUDqPB7NpzpP8ZVd5RIYLZqliYkvM6X2rPJyXjbpAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSt+F+FA2Dw56r3t5qprnfmGYyCpipe8905/mG2kuoW6jv0EC9
-	1Tr8exB8vrTngVaQQawviLMfT5pU5s+Llpu4kjsP0sESOuZqlLwemXeE
-X-Gm-Gg: ASbGncuU4ZGqz9F4TQkL69dkhijbQBJ/waggox/sbGZ8ynty2lpFj2h+u4EJ8HEENQB
-	6c8UAByw9aSp0UVUwCWOKW4DuPMoKqsMd7KjqkzFt+ISjvC3NDv06Xiv6A6gQAk+7pKfWGs1q6Q
-	aaR0QYPIZeRAQHf6kdYjpo/WgN8oblApQE3V8J1HUQo4bt3XMIRVMh4PNwdUNmHD7FcOEAqT15/
-	WrWbLrGnGTjvV9HpMqHEys5i/XVL9+9joOr14PHyFNx9hQlmbJ0sPQADi0wdxpESuAU7qB5lfXW
-	wkChjoh6GAjf2keF+aRuLDFfy21y0NB9pDi5udKAq1v0W1MdIFTF5c3hk6opceO2DmFsbbCmhrX
-	0GZ3aCW9VMQ2HZeD1lL7oevcMjGTyZaF0xTK48jAlZYzVYbobFguVH5sNxrkYvpOz2pnw+uLASh
-	f49Cj1Xzn/ha37PnxrbWegrpJCSF4=
-X-Google-Smtp-Source: AGHT+IEnSbQ9l5AyMsBRP/idqZTwghLbST+oqy4zLw7snINhb9wyCkI1OH6xs/LXOrnsd8nZVwfUhw==
-X-Received: by 2002:a17:907:6d19:b0:af2:9a9d:2857 with SMTP id a640c23a62f3a-af992a344b7mr441804666b.3.1754532027835;
-        Wed, 06 Aug 2025 19:00:27 -0700 (PDT)
-Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0766f9sm1235552766b.24.2025.08.06.19.00.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 19:00:27 -0700 (PDT)
-Message-ID: <43b6812c-4f00-48c2-a917-a3e25911c11c@gmail.com>
-Date: Thu, 7 Aug 2025 10:00:21 +0800
+	s=arc-20240116; t=1754532164; c=relaxed/simple;
+	bh=aZvKz2ob9JA2tr2waEk0IcVQT3b1rhmempwz68LWvF8=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=PS1AHgvl22O/Ftt9eMaE16jdRZPHLgE+IyKzjMi5f+IJX2IQwdYXIhpoJMmSWvvrsNVRUmLxALTU1GVtE0R+h++CPeALmM6dmRRwam5m6EquGBt0EtAMJ8o1mVJxESr7iX3Wp5K5Iaq/cmf+Js3KuNMx/hmCSMlH7h+x5lyc4mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
+EX-QQ-RecipientCnt: 4
+X-QQ-GoodBg: 2
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqT0lIevWKG+BVnbhYYmM7POEhOP+T0DEcs=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: GnUMECSdt3JZqJ9cmdSHzsyqfh9aFzwRX4BxOkJxwPM=
+X-QQ-STYLE: 
+X-QQ-mid: lv3sz3a-2t1754532104t73f26c5d
+From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
+To: "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>
+Cc: "=?utf-8?B?a2VudC5vdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>, "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/DPC: Extend DPC recovery timeout
-To: Hongbo Yao <andy.xu@hj-micro.com>,
- Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
- bhelgaas@google.com, lukas@wunner.de
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, jemma.zhang@hj-micro.com, peter.du@hj-micro.com
-References: <20250707103014.1279262-1-andy.xu@hj-micro.com>
- <24dfe8e2-e4b3-40e9-b9ac-026e057abd30@linux.intel.com>
- <b9b64b4f-dcec-4ab1-b796-54d66ec91fc5@hj-micro.com>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <b9b64b4f-dcec-4ab1-b796-54d66ec91fc5@hj-micro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Thu, 7 Aug 2025 10:01:44 +0800
+X-Priority: 3
+Message-ID: <tencent_27E675CD6ADE39EA7923AD17@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+	<20250805045745.iu4ukc6tfdm3j7xn@P16.>
+	<tencent_29AAD4111647BCD160DCFD85@qq.com>
+	<20250805162915.3kaqbxjbwfuj6u6w@P16.>
+	<tencent_59A1DBB462115B77340A389D@qq.com>
+	<20250806161050.iggmpp4mdmcysegn@P16.>
+In-Reply-To: <20250806161050.iggmpp4mdmcysegn@P16.>
+X-QQ-ReplyHash: 2201246355
+X-BIZMAIL-ID: 8098051558801133544
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Thu, 07 Aug 2025 10:01:45 +0800 (CST)
+Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: OfWmDiPF3NtuM2sbH7BcqjlqbDWZtn3XbNyptgAzTVNpLFDHQjYVwDz8
+	KKBdKvzMcC9gX9+ivARVrj/LfMm1lo91E0syhXYF4vHcmck1T6u8I/a7LesTMR7IT1zDHq8
+	gy4y4zWFlATjGtrQLYvK+4L+Ck+8SqJGy6vV+0xs7FWoXM9YekZyUKtu3NBWiHFFEVClr5W
+	y5PTRckkiok1+jy97Xmw21Vuj1f1YlM3c43D3Vsu+qyga9MqTxCe5cGmPGfEQt9PR2zejL8
+	WV6BZRayCga3IFn8wWIkvB/Y7I1UClcubPuJwHCae0w+3mNkuvuTlElTLKsy/+xNZqY2H3n
+	TsM7e+SmFyLRx7mskCWNIlRzjC+7j+SQbxAi/2AseGl3uyeq515GDKX01T3WtuLJU+2vDyk
+	+d+cV/mwiQaNTNNtg0TX4yiLsr2jGz1tyiQl0R/O6arV4F9Rcr6wKxvkw//muFp5VUJLdpd
+	taXgH4/lCh/eCtUlzhA7IxwfvZkTZdaY/Miyj5XQ+l4c0nDISPK/9jXjrZSYtOjAv9sYu6p
+	nI/UM7dlpzZXltdgfqLUaQc4dS5RBieknoxNr/fzCIrjpRzqtx7a7IlUkdTIr3wm1uJZMTp
+	bRo7a0pk8Hau20jaGTgmf5NJTfQIiTwyfYztJ6xxGf60RWO73V/yMi6ESyW65xWi9Q6ZNEa
+	9esd1xFC5S4aG97FjZRSw/J/v3zdMZsNYD6QH0e2NmiztVmbHegwmxMc8E1EULwcpq10rnQ
+	GzPfNfFHa0Js1B9QH8qL86LHEv9ZHw7LNNQYjmeeAnscfYYKrAoIWCjRt0k7bp5J6I73oqr
+	xHGyCYjf5kIYBMJWCWuxyq0NR6xu0LCLUxh08t8rA1kDAY4KRzugIsJdI3tYQ7pI/beDEBc
+	v8ckEDqcSEP7zgwh85MuGMjeu6mx3bZbpmcx2Db83j5tyaBjvycCBZreBoSwErAQiI0Y5up
+	ABdudCBekRd2fjNG9cf+mIntyEXQ/W4cf2exVR6KFw545LS6QZ7zotL+DfBcuY3SmCte+VY
+	Uh0Zlkhp0/UiCzO4hVEmHQKwuOMd7ie92ET5an/zG98fj1HFjxo7kcFpuI3wMa19BSaARNN
+	HJdiJcYsSVP9MII4rqeHTs=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-
-
-On 7/11/2025 11:20 AM, Hongbo Yao wrote:
-> 
-> 
-> 在 2025/7/8 1:04, Sathyanarayanan Kuppuswamy 写道:
->>
->> On 7/7/25 3:30 AM, Andy Xu wrote:
->>> From: Hongbo Yao <andy.xu@hj-micro.com>
->>>
->>> Extend the DPC recovery timeout from 4 seconds to 7 seconds to
->>> support Mellanox ConnectX series network adapters.
->>>
->>> My environment:
->>>     - Platform: arm64 N2 based server
->>>     - Endpoint1: Mellanox Technologies MT27800 Family [ConnectX-5]
->>>     - Endpoint2: Mellanox Technologies MT2910 Family [ConnectX-7]
->>>
->>> With the original 4s timeout, hotplug would still be triggered:
->>>
->>> [ 81.012463] pcieport 0004:00:00.0: DPC: containment event,
->>> status:0x1f01 source:0x0000
->>> [ 81.014536] pcieport 0004:00:00.0: DPC: unmasked uncorrectable error
->>> detected
->>> [ 81.029598] pcieport 0004:00:00.0: PCIe Bus Error:
->>> severity=Uncorrected (Non-Fatal), type=Transaction Layer, (Receiver ID)
->>> [ 81.040830] pcieport 0004:00:00.0: device [0823:0110] error status/
->>> mask=00008000/04d40000
->>> [ 81.049870] pcieport 0004:00:00.0: [ 0] ERCR (First)
->>> [ 81.053520] pcieport 0004:00:00.0: AER: TLP Header: 60008010 010000ff
->>> 00001000 9c4c0000
->>> [ 81.065793] mlx5_core 0004:01:00.0: mlx5_pci_err_detected Device
->>> state = 1 health sensors: 1 pci_status: 1. Enter, pci channel state = 2
->>> [ 81.076183] mlx5_core 0004:01:00.0: mlx5_error_sw_reset:231:(pid
->>> 1618): start
->>> [ 81.083307] mlx5_core 0004:01:00.0: mlx5_error_sw_reset:252:(pid
->>> 1618): PCI channel offline, stop waiting for NIC IFC
->>> [ 81.077428] mlx5_core 0004:01:00.0: E-Switch: Disable: mode(LEGACY),
->>> nvfs(0), neovfs(0), active vports(0)
->>> [ 81.486693] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid
->>> 1618): Skipping wait for vf pages stage
->>> [ 81.496965] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid
->>> 1618): Skipping wait for vf pages stage
->>> [ 82.395040] mlx5_core 0004:01:00.1: print_health:819:(pid 0): Fatal
->>> error detected
->>> [ 82.395493] mlx5_core 0004:01:00.1: print_health_info:423:(pid 0):
->>> PCI slot 1 is unavailable
->>> [ 83.431094] mlx5_core 0004:01:00.0: mlx5_pci_err_detected Device
->>> state = 2 pci_status: 0. Exit, result = 3, need reset
->>> [ 83.442100] mlx5_core 0004:01:00.1: mlx5_pci_err_detected Device
->>> state = 2 health sensors: 1 pci_status: 1. Enter, pci channel state = 2
->>> [ 83.441801] mlx5_core 0004:01:00.0: mlx5_crdump_collect:50:(pid
->>> 2239): crdump: failed to lock gw status -13
->>> [ 83.454050] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:231:(pid
->>> 1618): start
->>> [ 83.454050] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:252:(pid
->>> 1618): PCI channel offline, stop waiting for NIC IFC
->>> [ 83.849429] mlx5_core 0004:01:00.1: E-Switch: Disable: mode(LEGACY),
->>> nvfs(0), neovfs(0), active vports(0)
->>> [ 83.858892] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid
->>> 1618): Skipping wait for vf pages stage
->>> [ 83.869464] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid
->>> 1618): Skipping wait for vf pages stage
->>> [ 85.201433] pcieport 0004:00:00.0: pciehp: Slot(41): Link Down
->>> [ 85.815016] mlx5_core 0004:01:00.1: mlx5_health_try_recover:335:(pid
->>> 2239): handling bad device here
->>> [ 85.824164] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:231:(pid
->>> 2239): start
->>> [ 85.831283] mlx5_core 0004:01:00.1: mlx5_error_sw_reset:252:(pid
->>> 2239): PCI channel offline, stop waiting for NIC IFC
->>> [ 85.841899] mlx5_core 0004:01:00.1: mlx5_unload_one_dev_locked:1612:
->>> (pid 2239): mlx5_unload_one_dev_locked: interface is down, NOP
->>> [ 85.853799] mlx5_core 0004:01:00.1: mlx5_health_wait_pci_up:325:(pid
->>> 2239): PCI channel offline, stop waiting for PCI
->>> [ 85.863494] mlx5_core 0004:01:00.1: mlx5_health_try_recover:338:(pid
->>> 2239): health recovery flow aborted, PCI reads still not working
->>> [ 85.873231] mlx5_core 0004:01:00.1: mlx5_pci_err_detected Device
->>> state = 2 pci_status: 0. Exit, result = 3, need reset
->>> [ 85.879899] mlx5_core 0004:01:00.1: E-Switch: Unload vfs:
->>> mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
->>> [ 85.921428] mlx5_core 0004:01:00.1: E-Switch: Disable: mode(LEGACY),
->>> nvfs(0), neovfs(0), active vports(0)
->>> [ 85.930491] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid
->>> 1617): Skipping wait for vf pages stage
->>> [ 85.940849] mlx5_core 0004:01:00.1: mlx5_wait_for_pages:786:(pid
->>> 1617): Skipping wait for vf pages stage
->>> [ 85.949971] mlx5_core 0004:01:00.1: mlx5_uninit_one:1528:(pid 1617):
->>> mlx5_uninit_one: interface is down, NOP
->>> [ 85.959944] mlx5_core 0004:01:00.1: E-Switch: cleanup
->>> [ 86.035541] mlx5_core 0004:01:00.0: E-Switch: Unload vfs:
->>> mode(LEGACY), nvfs(0), neovfs(0), active vports(0)
->>> [ 86.077568] mlx5_core 0004:01:00.0: E-Switch: Disable: mode(LEGACY),
->>> nvfs(0), neovfs(0), active vports(0)
->>> [ 86.071727] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid
->>> 1617): Skipping wait for vf pages stage
->>> [ 86.096577] mlx5_core 0004:01:00.0: mlx5_wait_for_pages:786:(pid
->>> 1617): Skipping wait for vf pages stage
->>> [ 86.106909] mlx5_core 0004:01:00.0: mlx5_uninit_one:1528:(pid 1617):
->>> mlx5_uninit_one: interface is down, NOP
->>> [ 86.115940] pcieport 0004:00:00.0: AER: subordinate device reset failed
->>> [ 86.122557] pcieport 0004:00:00.0: AER: device recovery failed
->>> [ 86.128571] mlx5_core 0004:01:00.0: E-Switch: cleanup
->>>
->>> I added some prints and found that:
->>>    - ConnectX-5 requires >5s for full recovery
->>>    - ConnectX-7 requires >6s for full recovery
->>>
->>> Setting timeout to 7s covers both devices with safety margin.
->>
->>
->> Instead of updating the recovery time, can you check why your device
->> recovery takes
->> such a long time and how to fix it from the device end?
->>
-> Hi, Sathyanarayanan.
-> 
-> Thanks for the valuable feedback and suggestions.
-> 
-> I fully agree that ideally the root cause should be addressed on the
-> device side to reduce the DPC recovery latency, and that waiting longer
-> in the kernel is not a perfect solution.
-> 
-> However, the current 4 seconds timeout in pci_dpc_recovered() is indeed
-> an empirical value rather than a hard requirement from the PCIe
-> specification. In real-world scenarios, like with Mellanox ConnectX-5/7
-> adapters, we've observed that full DPC recovery can take more than 5-6
-> seconds, which leads to premature hotplug processing and device removal.
-> 
-> To improve robustness and maintain flexibility, I’m considering
-> introducing a module parameter to allow tuning the DPC recovery timeout
-> dynamically. Would you like me to prepare and submit such a patch for
-> review?
-> 
-What if another device just needs 7.1 seconds to recover ? revise the
-timeout again ?  no spec says 4 seconds is mandated. have a kernel 
-parameter to override it's default value is one choice to workaround.
-
-Ask FW guys to fix ? what justification we have ?
-
-Thanks,
-Ethan
-> 
-> Best regards,
-> Hongbo Yao
-> 
-> 
->>
->>> Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
->>> ---
->>>    drivers/pci/pcie/dpc.c | 4 ++--
->>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
->>> index fc18349614d7..35a37fd86dcd 100644
->>> --- a/drivers/pci/pcie/dpc.c
->>> +++ b/drivers/pci/pcie/dpc.c
->>> @@ -118,10 +118,10 @@ bool pci_dpc_recovered(struct pci_dev *pdev)
->>>        /*
->>>         * Need a timeout in case DPC never completes due to failure of
->>>         * dpc_wait_rp_inactive().  The spec doesn't mandate a time limit,
->>> -     * but reports indicate that DPC completes within 4 seconds.
->>> +     * but reports indicate that DPC completes within 7 seconds.
->>>         */
->>>        wait_event_timeout(dpc_completed_waitqueue, dpc_completed(pdev),
->>> -               msecs_to_jiffies(4000));
->>> +               msecs_to_jiffies(7000));
->>>          return test_and_clear_bit(PCI_DPC_RECOVERED, &pdev->priv_flags);
->>>    }
->>
-> 
-> 
+T24gVGh1LCA3IEF1ZyAyMDI1IGF0IDAwOjExLCBDb2x5IExpIDxjb2x5bGlAa2VybmVsLm9y
+Zz4gd3JvdGU6DQo+DQo+IE9uIFdlZCwgQXVnIDA2LCAyMDI1IGF0IDA3OjE5OjQ5UE0gKzA4
+MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0KPiA+IE9uIFdlZCwgNiBBdWcgMjAyNSBhdCAwMDoy
+OSwgQ29seSBMaSA8Y29seWxpQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiA+ID4NCj4gPiA+IE9u
+IFR1ZSwgQXVnIDA1LCAyMDI1IGF0IDA1OjM3OjQ0UE0gKzA4MDAsIFpob3UgSmlmZW5nIHdy
+b3RlOg0KPiA+ID4gPiBPbiBUdWUsIDUgQXVnIDIwMjUgYXQgMTM6MDAsIENvbHkgTGkgPGNv
+bHlsaUBrZXJuZWwub3JnPiB3cm90ZToNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IE9uIFRodSwg
+SnVsIDMxLCAyMDI1IGF0IDAyOjIxOjQwUE0gKzA4MDAsIFpob3UgSmlmZW5nIHdyb3RlOg0K
+PiA+ID4gPiA+ID4gVGhlcmUgaXMgYSBwb3RlbnRpYWwgZGF0YSBjb25zaXN0ZW5jeSByaXNr
+IGluIGJjYWNoZSdzIHdyaXRlYmFjayBtb2RlOndoZW4NCj4gPiA+ID4gPiA+IHRoZSBhcHBs
+aWNhdGlvbiBjYWxscyBmc3luYywgYmNhY2hlIHJldHVybnMgc3VjY2VzcyBhZnRlciBjb21w
+bGV0aW5nIHRoZQ0KPiA+ID4gPiA+ID4gbG9nIHdyaXRlLCBwZXJzaXN0aW5nIHRoZSBjYWNo
+ZSBkaXNrIGRhdGEsIGFuZCBwZXJzaXN0aW5nIHRoZSBIREQgaW50ZXJuYWwNCj4gPiA+ID4g
+PiA+IGNhY2hlLiBIb3dldmVyLCBhdCB0aGlzIHBvaW50LCB0aGUgYWN0dWFsIGFwcGxpY2F0
+aW9uIGRhdGEgbWF5IHN0aWxsIGJlIGluDQo+ID4gPiA+ID4gPiBhIGRpcnR5IHN0YXRlIGFu
+ZCByZW1haW4gc3R1Y2sgaW4gdGhlIGNhY2hlIGRpc2suIHdoZW4gdGhlc2UgZGF0YSBhcmUN
+Cj4gPiA+ID4gPiA+IHN1YnNlcXVlbnRseSB3cml0dGVuIGJhY2sgdG8gdGhlIEhERCBhc3lu
+Y2hyb25vdXNseSB0aHJvdWdoIFJFUV9PUF9XUklURSwNCj4gPiA+ID4gPiA+IHRoZXJlIGlz
+IG5vIGZvcmNlZCByZWZyZXNoIG1lY2hhbmlzbSB0byBlbnN1cmUgcGh5c2ljYWwgcGxhY2Vt
+ZW50IG9uIHRoZQ0KPiA+ID4gPiA+ID4gZGlzaywgYW5kIHRoZXJlIG1heSBiZSBubyBwb3dl
+ci1vZmYgcHJvdGVjdGlvbiBtZWFzdXJlcywgd2hpY2ggcG9zZXMgYSByaXNrDQo+ID4gPiA+
+ID4gPiBvZiBkYXRhIGxvc3MuIFRoaXMgbWVjaGFuaXNtIG1heSBjYXVzZSB0aGUgYXBwbGlj
+YXRpb24gdG8gbWlzanVkZ2UgdGhhdCB0aGUNCj4gPiA+ID4gPiA+IGRhdGEgaGFzIGJlZW4g
+cGVyc2lzdGVkLCB3aGljaCBpcyBkaWZmZXJlbnQgZnJvbSB0aGUgYWN0dWFsIHN0b3JhZ2Ug
+c3RhdGUsDQo+ID4gPiA+ID4gPiBhbmQgYWxzbyB2aW9sYXRlcyB0aGUgc2VtYW50aWMgYWdy
+ZWVtZW50IHRoYXQgZnN5bmMgc2hvdWxkIGVuc3VyZSBkYXRhDQo+ID4gPiA+ID4gPiBwZXJz
+aXN0ZW5jZS4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBbc25pcHBlZF0N
+Cj4gPiA+ID4gPg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBJZiBiZWZvcmUg
+dGhlIGNsZWFyZWQga2V5IGluc2VydGVkIGludG8gdGhlIGJ0cmVlLCB0aGVyZSBhcmUgbmV3
+IHdyaXRlDQo+ID4gPiA+ID4gaW50byBvdmVybGFwcGVkIExCQSByYW5nZSBvZiB0aGUgY2xl
+YXJlZCBrZXkgYW5kIGEgZGlydHkga2V5IGluc2VydGVkLg0KPiA+ID4gPiA+IFRoZW4gdGhl
+IGNsZWFyZWQga2V5IGlzIGluc2VydGVkIGFuZCBvdmVyd3JpdGVzIHRoZSBkaXJ0eSBrZXks
+IGJ1dCB0aGUNCj4gPiA+ID4gPiBkaXJ0eSBkYXRhIG9uIGNhY2hlIGlzIG5vdCB3cml0dGVu
+IGJhY2sgdG8gYmFja2luZyBkZXZpY2UgeWV0LiBIb3cgdG8NCj4gPiA+ID4gPiBoYW5kbGUg
+c3VjaCBzaXR1YXRpb24/DQo+ID4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gVGhlcmUgYXJl
+IGluZGVlZCBzb21lIGlzc3VlcyBoZXJlLiBJIGhhdmUgaW5pdGlhbGx5IGNvbWUgdXAgd2l0
+aCBhDQo+ID4gPiA+IHNvbHV0aW9uOiBVdGlsaXplIHRoZSBleGlzdGluZyBkYy0+d3JpdGVi
+YWNrX2tleXMgbWVjaGFuaXNtIGZvcg0KPiA+ID4gPiBwcm90ZWN0aW9uLiBUaGUgZ2VuZXJh
+bCBwcm9jZXNzaW5nIGZsb3cgaXMgYXMgZm9sbG93czoNCj4gPiA+ID4gMS4gSW4gdGhlIHdy
+aXRlX2RpcnR5X2ZpbmlzaCgpIGZ1bmN0aW9uLCByZW1vdmUgdGhlIG9wZXJhdGlvbiBvZg0K
+PiA+ID4gPiB1cGRhdGluZyBia2V5IGluc2VydGlvbiwgYW5kIGRlbGV0ZSB0aGUgY29kZSBi
+Y2hfa2V5YnVmX2RlbCgmZGMNCj4gPiA+ID4gLT53cml0ZWJhY2tfa2V5cywgdykuDQo+ID4g
+PiA+IDIuIEFmdGVyIGV4ZWN1dGluZyB0aGUgcmVhZF9kaXJ0eShkYykgY29kZSwgcGVyZm9y
+bSBmbHVzaCwgdGhlbg0KPiA+ID4gPiBpbnNlcnQgdGhlIHVwZGF0ZWQgYmtleSwgYW5kIGZp
+bmFsbHkgcmVtb3ZlIHRoZSBia2V5IGZyb20gZGMtPg0KPiA+ID4gPiB3cml0ZWJhY2tfa2V5
+cy4gVGhpcyBwcm9jZXNzIGlzIGVxdWl2YWxlbnQgdG8gc2VuZGluZyBhIGZsdXNoDQo+ID4g
+PiA+IGV2ZXJ5IEtFWUJVRl9OUiBia2V5cyBhcmUgd3JpdHRlbiBiYWNrLg0KPiA+ID4gPiAz
+LiBTdXBwb3J0IGNvbmZpZ3VyYWJsZSBLRVlCVUZfTlIgdG8gaW5kaXJlY3RseSBjb250cm9s
+IHRoZQ0KPiA+ID4gPiBmcmVxdWVuY3kgb2YgZmx1c2guDQo+ID4gPiA+DQo+ID4gPiA+IElz
+IHRoaXMgcGxhbiBhcHByb3ByaWF0ZT8gT3IgYXJlIHRoZXJlIGFueSBiZXR0ZXIgd2F5cyB0
+byBoYW5kbGUgaXQ/DQo+ID4gPg0KPiA+ID4gTm8sIEkgd29uJ3Qgc3VnZ2VzdCB0aGlzIHdh
+eS4gSXQgc291bmRzIGNvbXBsaWNhZWQgYW5kIGNoYW5nZXMgdGhlIG1haW4NCj4gPiA+IGNv
+ZGUgZmxvdyB0b28gbXVjaCBpbiBhbiBpbXBsaWNpdCB3YXksIHRoaXMgc2hvdWxkIGJlIGF2
+b2lkZWQuDQo+ID4gPg0KPiA+ID4gU28gaXQgc2VlbXMgS2VudCdzIHN1Z2dlc3Rpb24gdG8g
+Zmx1c2ggYmFja2luZyBkZXZpY2UgYmVmb3JlIGNvbW1pdHRpbmcNCj4gPiA+IGpzZXQgaXMg
+dGhlIHByb3BlciBtZXRob2QgSSBjYW4gc2VlIG5vdy4NCj4gPiA+DQo+ID4gPiBDb2x5IExp
+DQo+ID4gPg0KPiA+DQo+ID4gU29ycnksIG15IHByZXZpb3VzIHJlc3BvbnNlIHdhcyBub3Qg
+cmlnb3JvdXMgZW5vdWdoLiBJIGhhdmUgY2FyZWZ1bGx5DQo+ID4gY29uc2lkZXJlZCB5b3Vy
+IHF1ZXN0aW9uIGFib3V0ICJ0aGUgYmtleSBiZWluZyBvdmVyd3JpdHRlbiIuIEluIGZhY3Qs
+DQo+ID4gdGhlcmUgaXMgbm8gaXNzdWUgb2YgYmVpbmcgb3ZlcndyaXR0ZW4uIFRoZSBiY2Fj
+aGUgaGFzIGluZ2VuaW91c2x5DQo+ID4gZGVzaWduZWQgYSByZXBsYWNlIG1lY2hhbmlzbS4g
+SW4gbXkgY29kZSwgdGhlIGJrZXkgd2l0aCB0aGUgZGlydHkgZmxhZw0KPiA+IGNsZWFyZWQg
+aXMgaW5zZXJ0ZWQgdXNpbmcgdGhlIHJlcGxhY2UgbWV0aG9kLiBUaGlzIG1ldGhvZCBoYW5k
+bGVzDQo+ID4gYWRkcmVzcyBvdmVybGFwcyBpbmdlbmlvdXNseSBkdXJpbmcgdGhlIGluc2Vy
+dGlvbiBvZiB0aGUgYmtleSBhbmQgd2lsbA0KPiA+IG5vdCBvdmVyd3JpdGUgdGhlIGJrZXkg
+Z2VuZXJhdGVkIGJ5IGNvbmN1cnJlbnQgd3JpdGVzLiBUaGUgbWFpbiBjb2RlDQo+ID4gZm9y
+IHRoZSByZXBsYWNlIG1lY2hhbmlzbSBpcyBsb2NhdGVkIGluIGJjaF9idHJlZV9pbnNlcnRf
+a2V5LT5iY2hfZXh0ZW50X2luc2VydF9maXh1cA0KPiA+ICwgd2hpY2ggY2FsbHMgdGhlIGJj
+aF9ia2V5X2VxdWFsX2hlYWRlciBmdW5jdGlvbiwgd2hpY2ggaXMgYWxzbyBhDQo+ID4gY3J1
+Y2lhbCBjaGVja3BvaW50Lg0KPg0KPiBJIGFtIG5vdCBhYmxlIHRvIG1ha2UganVkZ2VtZW50
+IGJ5IHRoZSBhYm92ZSBkZXNjcmlwdGlvbiwgY2FuIHlvdSBwb3N0IGEgcGF0Y2gNCj4gdGhl
+biBJIGNhbiBzZWUgaG93IHlvdSBpbnNlcnQgdGhlIGtleSB3aXRoIHJlcGxhY2UgcGFyYW1l
+dGVyLg0KPg0KPiBDb2x5IExpDQo+DQoNCkluIHRoZSBwYXRjaCBJIHN1Ym1pdHRlZCBlYXJs
+aWVyLCB0aGUgYmtleSBmb3IgY2xlYXJpbmcgdGhlIGRpcnR5IG1hcmsgaXMNCmltcGxlbWVu
+dGVkIGluIHRoZSBmb2xsb3dpbmcgY29kZToNCisgICAgICAgLyoNCisgICAgICAgICogVGhl
+IGRpcnR5IGRhdGEgd2FzIHN1Y2Nlc3NmdWxseSB3cml0dGVuIGJhY2sgYW5kIGNvbmZpcm1l
+ZCB0byBiZSB3cml0dGVuDQorICAgICAgICAqIHRvIHRoZSBkaXNrLiBUaGUgc3RhdHVzIG9m
+IHRoZSBia2V5IGluIHRoZSBidHJlZSB3YXMgdXBkYXRlZC4NCisgICAgICAgICovDQorICAg
+ICAgIGxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShlLCB0bXAsICZkYy0+cHJlZmx1c2hfa2V5
+cy5saXN0LCBsaXN0KSB7DQorICAgICAgICAgICAgICAgbWVtc2V0KGtleXMuaW5saW5lX2tl
+eXMsIDAsIHNpemVvZihrZXlzLmlubGluZV9rZXlzKSk7DQorICAgICAgICAgICAgICAgYmNo
+X2tleWxpc3RfaW5pdCgma2V5cyk7DQorDQorICAgICAgICAgICAgICAgYmtleV9jb3B5KGtl
+eXMudG9wLCAmKGUtPmtleS5rZXkpKTsNCisgICAgICAgICAgICAgICBTRVRfS0VZX0RJUlRZ
+KGtleXMudG9wLCBmYWxzZSk7DQorICAgICAgICAgICAgICAgYmNoX2tleWxpc3RfcHVzaCgm
+a2V5cyk7DQorDQorICAgICAgICAgICAgICAgZm9yIChpID0gMDsgaSA8IEtFWV9QVFJTKCYo
+ZS0+a2V5LmtleSkpOyBpKyspDQorICAgICAgICAgICAgICAgICAgICAgICBhdG9taWNfaW5j
+KCZQVFJfQlVDS0VUKGRjLT5kaXNrLmMsICYoZS0+a2V5LmtleSksIGkpLT5waW4pOw0KKw0K
+KyAgICAgICAgICAgICAgIHJldCA9IGJjaF9idHJlZV9pbnNlcnQoZGMtPmRpc2suYywgJmtl
+eXMsIE5VTEwsICYoZS0+a2V5LmtleSkpOw0KKw0KKyAgICAgICAgICAgICAgIGlmIChyZXQp
+DQorICAgICAgICAgICAgICAgICAgICAgICB0cmFjZV9iY2FjaGVfd3JpdGViYWNrX2NvbGxp
+c2lvbigmKGUtPmtleS5rZXkpKTsNCisNCisgICAgICAgICAgICAgICBhdG9taWNfbG9uZ19p
+bmMocmV0DQorICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgID8gJmRjLT5kaXNrLmMt
+PndyaXRlYmFja19rZXlzX2ZhaWxlZA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICA6ICZkYy0+ZGlzay5jLT53cml0ZWJhY2tfa2V5c19kb25lKTsNCisNCisgICAgICAgICAg
+ICAgICBsaXN0X2RlbCgmZS0+bGlzdCk7DQorICAgICAgICAgICAgICAga2ZyZWUoZSk7DQor
+DQorICAgICAgICAgICAgICAgLyogRm9yIHRob3NlIGJrZXlzIHRoYXQgZmFpbGVkIHRvIGJl
+IGluc2VydGVkLCB5b3UgY2FuDQorICAgICAgICAgICAgICAgICogaWdub3JlIHRoZW0gYW5k
+IHRoZXkgd2lsbCBiZSBwcm9jZXNzZWQgYWdhaW4gaW4gdGhlDQorICAgICAgICAgICAgICAg
+ICogbmV4dCB3cml0ZS1iYWNrIHNjYW4uDQorICAgICAgICAgICAgICAgICovDQorICAgICAg
+IH0NCg0KQ29kZSBFeHBsYW5hdGlvbjoNCjEuIGRjLT5wcmVmbHVzaF9rZXlzLmxpc3Qgc3Rv
+cmVzIGFsbCBia2V5cyB3aG9zZSBkaXJ0eSBmbGFncyBhcmUgdG8NCmJlIGNsZWFyZWQuDQoy
+LiBJbiB0aGUgbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlIGxvb3AsIHRoZXJlIGFyZSB0d28g
+aW1wb3J0YW50DQp2YXJpYWJsZXM6IHZhcmlhYmxlICdlJyBzdG9yZXMgdGhlIGJrZXlzIHdo
+b3NlIGRpcnR5IGZsYWdzIGFyZSB0byBiZQ0KY2xlYXJlZCAodGhlIG9yaWdpbmFsIGJrZXlz
+IHdhaXRpbmcgdG8gYmUgcmVwbGFjZWQpLCBhbmQgdmFyaWFibGUNCidrZXlzJyBzdG9yZXMg
+dGhlIGJrZXlzIHdob3NlIGRpcnR5IGZsYWdzIGhhdmUgYmVlbiBjbGVhcmVkICh0aGUNCm5l
+dyBia2V5cyB3YWl0aW5nIHRvIGJlIGluc2VydGVkKS4NCjMuIEluIHRoZSBiY2hfYnRyZWVf
+aW5zZXJ0KGRjLT5kaXNrLmMsICZrZXlzLCBOVUxMLCAmKGUtPmtleS5rZXkpKQ0KZnVuY3Rp
+b24gY2FsbCwgdGhlIHNlY29uZCBwYXJhbWV0ZXIgJyZrZXlzJyByZXByZXNlbnRzIHRoZSBu
+ZXcgYmtleQ0KdG8gYmUgaW5zZXJ0ZWQsIHdob3NlIGRpcnR5IGZsYWcgaGFzIGJlZW4gY2xl
+YXJlZCwgYW5kIHRoZSBmb3VydGgNCnBhcmFtZXRlciAnJihlLT5rZXkua2V5KScgcmVwcmVz
+ZW50cyB0aGUgb3JpZ2luYWwgYmtleSB0byBiZSByZXBsYWNlZC4NCjQuIFRoZSBwcm90b3R5
+cGUgZGVmaW5pdGlvbiBvZiB0aGUgYmNoX2J0cmVlX2luc2VydCBmdW5jdGlvbiBpcyANCiJp
+bnQgYmNoX2J0cmVlX2luc2VydChzdHJ1Y3QgY2FjaGVfc2V0ICpjLCBzdHJ1Y3Qga2V5bGlz
+dCAqa2V5cywgDQphdG9taWNfdCAqam91cm5hbF9yZWYsIHN0cnVjdCBia2V5ICpyZXBsYWNl
+X2tleSkiLiBJdHMgZm91cnRoIHBhcmFtZXRlcg0Kc3BlY2lmaWVzIHRoZSBia2V5IHRvIGJl
+IHJlcGxhY2VkLg0KNS4gVGhlIGNvcmUgY29kZSBjYWxsIHN0YWNrIGZvciByZXBsYWNpbmcg
+dGhlIGJrZXk6IGJjaF9idHJlZV9pbnNlcnQtPg0KYmNoX2J0cmVlX21hcF9sZWFmX25vZGVz
+LT5iY2hfYnRyZWVfbWFwX25vZGVzX3JlY3Vyc2UtPg0KYnRyZWVfaW5zZXJ0X2ZuLT5iY2hf
+YnRyZWVfaW5zZXJ0X25vZGUtPmJjaF9idHJlZV9pbnNlcnRfa2V5cy0+DQpidHJlZV9pbnNl
+cnRfa2V5LT5iY2hfYnRyZWVfaW5zZXJ0X2tleS0+YmNoX2V4dGVudF9pbnNlcnRfZml4dXAN
+CjYuIFRoZSBwcm90b3R5cGUgb2YgdGhlIGJjaF9leHRlbnRfaW5zZXJ0X2ZpeHVwIGZ1bmN0
+aW9uIGlzIGRlZmluZWQgYXMNCiJzdGF0aWMgYm9vbCBiY2hfZXh0ZW50X2luc2VydF9maXh1
+cChzdHJ1Y3QgYnRyZWVfa2V5cyAqYiwgc3RydWN0IGJrZXkgDQoqaW5zZXJ0LCBzdHJ1Y3Qg
+YnRyZWVfaXRlciAqaXRlciwgc3RydWN0IGJrZXkgKnJlcGxhY2Vfa2V5KSIuIFRoZSBmdW5j
+dGlvbidzDQppbnRlcm5hbCBpbXBsZW1lbnRhdGlvbiBjaGVja3Mgd2hldGhlciB0aGUgcmVw
+bGFjZV9rZXkgcGFyYW1ldGVyDQpleGlzdHMuIElmIHNvLCBpdCBpbml0aWF0ZXMgdGhlIHJl
+cGxhY2VtZW50IHByb2Nlc3MuIFRoaXMgcmVwbGFjZW1lbnQNCnByb2Nlc3MgZW5zdXJlcyB0
+aGF0IHRoZSBia2V5IGlzIG5vdCBlcnJvciBvdmVyd3JpdHRlbiB3aGVuIGEgd3JpdGUNCnJl
+cXVlc3QgYW5kIGRpcnR5IGRhdGEgYXJlIHdyaXR0ZW4gYmFjayBjb25jdXJyZW50bHkuDQoN
+Clpob3UgSmlmZW5n
 
 
