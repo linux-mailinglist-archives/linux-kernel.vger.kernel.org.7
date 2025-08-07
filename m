@@ -1,328 +1,174 @@
-Return-Path: <linux-kernel+bounces-759361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64CEB1DCA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:46:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3406B1DCA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDD0171110
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3271164938
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5411B1F4192;
-	Thu,  7 Aug 2025 17:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1780D1DF73A;
+	Thu,  7 Aug 2025 17:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J//AvZZE"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fhT2rwqN"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4074C85
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D1013E02D
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754588781; cv=none; b=OMhoMM8rAbki6H2VLQRs5RZW5tp51BbXITW3ttAWM4zZ5zO3koJCd251Bz+0nXZ2VRbWN+B0emAFPA3i+k8IIUQJeqt9i6xe4QbOSICBEQlq8Rl4mC3S5Z0xHdXHtWpDIgg6AssCvhZ7Pptwv9njPXXtexdGq8K77FJuRbYl6rc=
+	t=1754588840; cv=none; b=L2rMer/3ZMkjrw+7mEUXxhX8AwZStOak9nQk61cJZciBQQdihl2XqnEo2G0vAyE0j7lTdL/mN0Z/R0RPZdQz9pAfDrJUjUHJalsFly41ptceRl3KjsHlXoIR+0JzRAPkou3iZrkL/AdsVPoWOEWjxlkpi3u5lKFiyPvh+7v+hCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754588781; c=relaxed/simple;
-	bh=Uq3iiNUU91g4FQyKlsdBmM5MGVUlLCvmUTwzVzeS5m4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=V6OtGBjkjIYsardpmZ8iHH/LWts2oYGFxFYB37B6Qv/7gT6daBUqjj6KFaStbSAM2bO4w407ca06AeJ12p9h/5WW/G8If75SHp9ae3C97V0WEkjbDP96xM3Ic2tEfaRAEJBKf13EaxJk3B13pe+LUY+gKqxW80tNYidP2JS4ndc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J//AvZZE; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1754588840; c=relaxed/simple;
+	bh=bxkn7i2AaddKJTrBuQ4SxegpUk68fzfrs9vOHQQz7TY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iGzOP8mrU0OTufUZasLe15LgsRLAdJ2ZZxU5q8uDcRHNZee/ZHPIBf9TKgtsiKtls8aljPR5yX8UxyrQD0DH8WRAnzgH0OVYAm7gqrwM9G2zMJ2OyLsoK4WrvqQ+k51hwbFERCIlMMycq0/QB8SMXT0lWo2jwnH+ddMnAiRPkHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fhT2rwqN; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f4d0f60caso1335458a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:46:19 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6154c7b3ee7so1301a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:47:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754588779; x=1755193579; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HcLjrOeqCd02Abu900eKiNp/ETH9Nin2wL4rT1C33Uc=;
-        b=J//AvZZEJXTa8GGXdPyNl6KeQd0LEgrzxnFZW3Sm6sm9TPcoPEsJ8J6qTDCOzmT5Dx
-         sKIAAR6Irar6VNpyveYuHkitULpD95EiHIzc6L2/qGtkHRiYXExhdLRUY3tWBk5RX4GW
-         u7loULwp6GdvOjhqvv6Z0D1cSainGMnwkh1DkYp1DSMGgSx8REUwtF7BU0V/2JO4Z7z9
-         67BcNj3GISt9p0Z4cFskxSWRZ7lTWdO4KNoySKLi1cBa0RRkE+Y4GpzbTFqFVeNGqNgl
-         ycgVr4Xw6a5T03LgW0/6tokNMQ/bQyfoP6036U+67aeTjM7pTmUdUElqU3ydVxcoqp03
-         /VPw==
+        d=google.com; s=20230601; t=1754588836; x=1755193636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hDJdMpTFc0KMKXcRTALWA1S9ovbUgwwdEZq6bXr34JU=;
+        b=fhT2rwqNKHfUVSPVphTLU/fFXvSUBUckpBTu9QnIoxoorMWZ4MciG6lrc7paVm1CgI
+         xiaB2sM6YnNpMZKUz8ME/8Pi0HXWqkHSlGpiFihEbxxk140I4kpmE1sOyQamwWrikWHx
+         +Yv0bWsbJ7/Iu37Wwn9kygzve2lx9a7Kh2ovchIxcNEM74bs/GYn7cZGHO+dU6g9JsGJ
+         RZYWHhsbBELMoe+jfQG/EjJizqFYfMAf3cYNCT6Fl7+ZDGN8UJa+hoh8hpHVPzVAmSDb
+         rMDMGxF0GsiiA330mf4Ic/2m8iZgzyFjJk69xNcRHnmepzwdnpD0z2Qh2JB2hu3ixNnf
+         7Kww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754588779; x=1755193579;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HcLjrOeqCd02Abu900eKiNp/ETH9Nin2wL4rT1C33Uc=;
-        b=MbMYzDH/KdQs5av4I58CV5VSbuJTf9WCrlHlgmS4UE1QLMAW1UCmLJaumiOzoBsgqJ
-         IXvNaws6iQmOducPTkZzQtB6ELniV652QZTn5E6qK6zGhVHYDaqW4usTkQgB/T26op/Y
-         ozSAAFcHPBnPimzrM6NpmY3PLlqI6Nlx6wWS/e5+ePwnp6sEnNqc8/dHhMdu0+2bNjiD
-         JjXAtS0rW714O0xePDzRBRA3yTiDUgEyjMXDMj55jJIhZviMTEqlEflwxjsYFC5mzOoV
-         SVDlOVR/Q1uOUsjOJ8rBDvt+/liAelEbQf0ryOQXSimjl7XwXFsU4fU15cIAxRN2py2I
-         OAmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLDTnzIfmU7toOfXxtnMYAg7KzpYHvauG1NK6jAZL/EZr9OMA48mKBtscgz8NE9aBU5/u+d7Iloy7GnRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6t75avBAtVSLOpz5imh0JsAp63M7uuKAkGqvGeFigdX05+Rl6
-	z28LzvUUwL85KP/bTf5pdKTnEXmDMvVPsfaB1QHwF/xxa+DlZN7rXh48CboZGpKzaVbIiB8u5X2
-	KQg==
-X-Google-Smtp-Source: AGHT+IH1TzamuhyocWAYv+jV0O95ZvaImp1W99Xp6lTkB1S1QMyzi0Kp+GJq5+BauORZKHrne7YiZLn0Zg==
-X-Received: from pjbsk13.prod.google.com ([2002:a17:90b:2dcd:b0:321:78e7:57fb])
- (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:55ce:b0:320:ff84:ceb5
- with SMTP id 98e67ed59e1d1-32182692d5emr600569a91.16.1754588779321; Thu, 07
- Aug 2025 10:46:19 -0700 (PDT)
-Date: Fri,  8 Aug 2025 01:46:13 +0800
+        d=1e100.net; s=20230601; t=1754588836; x=1755193636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hDJdMpTFc0KMKXcRTALWA1S9ovbUgwwdEZq6bXr34JU=;
+        b=FloMUixEgrOZDxKckmv5Sna4mTN5rKjwITDa5WAsfrcVGSmc1BYivX07tGKhWgBD90
+         +FlLS6aVCfmT1JoLGHTLpt4dZ22tYrJ2yv2Yun+XFK6mu0eiqp5CNo4WB6L4OS58RZRQ
+         1uggUyms4db92Er1faV5ih5QET+6byVBV+lkz5FyHPMy4v9chetshXqr4iKSGhr5Dv8X
+         9KxgrBNHyJWOp3tcDIxxS3pQCQM4zfmsWjlzvVyTzotDiYfLs4iV0ILN9uxo6J++VVri
+         okwUPd9P2JBYUaCPQGp8vpiEiY7bmq88R2H+1qoL43Qrlg8YZg9cjnwouxhHIkEMoFXi
+         bjGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvR6embNZPN6u+kuHNNia1/XtO5m7aG8UPoohcOkSZUAW7UWb3cfSvB3xDtYp7hIGPRqAEF2uIWWSJgUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCg+7F3g/lSm6M++3O4BKGCDj6cvY27KjT+nmXB/zC3lTH3nMz
+	d5PdeJvD0cxnXpBmy0hZtC5ju4h9UvQADOFQHF03tFDy9Um+GWay/pjYXGbEJOntprIZRLCciWT
+	Fl4+oFk9IoEHRZmrteLP/uorGW/seWa2mXvXf8OzS
+X-Gm-Gg: ASbGnctQTu7jx2NwhL3pVqAKqdUjZ/99NuZWngr/Ab471Jw+ziXce2dQUgLdCjc65Pl
+	GccwcbjTzJ6tsdRI4A7aVGyxNu2e4+iW3T5MzQ1VdEdaev/ckmhDaqQZS39T1p/Fhl1DsXC7m+4
+	FWbh/0vD2dAiPrZaJ3ghuwYCKSPwvUpDnyeAkseKd1CrtO+UFcBL8O31p4VABKWMNPriJha7rWd
+	b+VPS+6Nx1m5r+NQwNoH19U9KbyVid7l8E=
+X-Google-Smtp-Source: AGHT+IFVAwixRVEdAdG9acHP30gULaJwSYNDDdAwpFBfQR2iG91VTEgNHzYlsENI7tXxpeqYxK8IG0xUMq0IsdLdjZM=
+X-Received: by 2002:a05:6402:292f:b0:615:63af:84c7 with SMTP id
+ 4fb4d7f45d1cf-617e0c2fea6mr1229a12.0.1754588835703; Thu, 07 Aug 2025 10:47:15
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250807174613.1895006-1-wakel@google.com>
-Subject: [PATCH] selftests/seccomp: improve backwards compatibility for older kernels
-From: Wake Liu <wakel@google.com>
-To: Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Cc: wakel@google.com
+MIME-Version: 1.0
+References: <202508071609.4e743d7c-lkp@intel.com> <9e3a59b2-11c0-43ca-aff3-414091f04aa4@lucifer.local>
+ <CAG48ez3=8f3eShjAe9hrvivP+Dvyisw=X_Tr_phc-OX_4MzeDw@mail.gmail.com> <be074809-e1fd-43a2-9396-8f7264532c4d@lucifer.local>
+In-Reply-To: <be074809-e1fd-43a2-9396-8f7264532c4d@lucifer.local>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 7 Aug 2025 19:46:39 +0200
+X-Gm-Features: Ac12FXz0pqhZ5ZXNMYXrgkg69OVAPBJ7j_8d24_PRsIXf3jxPz6zdWEIncqLCrg
+Message-ID: <CAG48ez3=kLL4wBxAVSa2Ugrws+-RFQMdNY9jx5FAdbhpNt8fGg@mail.gmail.com>
+Subject: Re: [linus:master] [mm] f822a9a81a: stress-ng.bigheap.realloc_calls_per_sec
+ 37.3% regression
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: kernel test robot <oliver.sang@intel.com>, Dev Jain <dev.jain@arm.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Barry Song <baohua@kernel.org>, 
+	Pedro Falcato <pfalcato@suse.de>, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	Bang Li <libang.li@antgroup.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	bibo mao <maobibo@loongson.cn>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Ingo Molnar <mingo@kernel.org>, Lance Yang <ioworker0@gmail.com>, 
+	Liam Howlett <liam.howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Peter Xu <peterx@redhat.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Yang Shi <yang@os.amperecomputing.com>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This commit introduces checks for kernel version and seccomp filter flag
-support to the seccomp selftests. It also includes conditional header
-inclusions using __GLIBC_PREREQ.
+On Thu, Aug 7, 2025 at 7:41=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Thu, Aug 07, 2025 at 07:37:38PM +0200, Jann Horn wrote:
+> > On Thu, Aug 7, 2025 at 10:28=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > > On Thu, Aug 07, 2025 at 04:17:09PM +0800, kernel test robot wrote:
+> > > > 94dab12d86cf77ff f822a9a81a31311d67f260aea96
+> > > > ---------------- ---------------------------
+> > > >          %stddev     %change         %stddev
+> > > >              \          |                \
+> > > >      13777 =C4=85 37%     +45.0%      19979 =C4=85 27%  numa-vmstat=
+.node1.nr_slab_reclaimable
+> > > >     367205            +2.3%     375703        vmstat.system.in
+> > > >      55106 =C4=85 37%     +45.1%      79971 =C4=85 27%  numa-meminf=
+o.node1.KReclaimable
+> > > >      55106 =C4=85 37%     +45.1%      79971 =C4=85 27%  numa-meminf=
+o.node1.SReclaimable
+> > > >     559381           -37.3%     350757        stress-ng.bigheap.rea=
+lloc_calls_per_sec
+> > > >      11468            +1.2%      11603        stress-ng.time.system=
+_time
+> > > >     296.25            +4.5%     309.70        stress-ng.time.user_t=
+ime
+> > > >       0.81 =C4=85187%    -100.0%       0.00        perf-sched.sch_d=
+elay.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
+> > > >       9.36 =C4=85165%    -100.0%       0.00        perf-sched.sch_d=
+elay.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
+> > > >       0.81 =C4=85187%    -100.0%       0.00        perf-sched.wait_=
+time.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
+> > > >       9.36 =C4=85165%    -100.0%       0.00        perf-sched.wait_=
+time.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
+> > > >       5.50 =C4=85 17%    +390.9%      27.00 =C4=85 56%  perf-c2c.DR=
+AM.local
+> > > >     388.50 =C4=85 10%    +114.7%     834.17 =C4=85 33%  perf-c2c.DR=
+AM.remote
+> > > >       1214 =C4=85 13%    +107.3%       2517 =C4=85 31%  perf-c2c.HI=
+TM.local
+> > > >     135.00 =C4=85 19%    +130.9%     311.67 =C4=85 32%  perf-c2c.HI=
+TM.remote
+> > > >       1349 =C4=85 13%    +109.6%       2829 =C4=85 31%  perf-c2c.HI=
+TM.total
+> > >
+> > > Yeah this also looks pretty consistent too...
+> >
+> > FWIW, HITM hat different meanings depending on exactly which
+> > microarchitecture that test happened on; the message says it is from
+> > Sapphire Rapids, which is a successor of Ice Lake, so HITM is less
+> > meaningful than if it came from a pre-IceLake system (see
+> > https://lore.kernel.org/all/CAG48ez3RmV6SsVw9oyTXxQXHp3rqtKDk2qwJWo9TGv=
+XCq7Xr-w@mail.gmail.com/).
+> >
+> > To me those numbers mainly look like you're accessing a lot more
+> > cache-cold data. (On pre-IceLake they would indicate cacheline
+> > bouncing, but I guess here they probably don't.) And that makes sense,
+> > since before the patch, this path was just moving PTEs around without
+> > looking at the associated pages/folios; basically more or less like a
+> > memcpy() on x86-64. But after the patch, for every 8 bytes that you
+> > copy, you have to load a cacheline from the vmemmap to get the page.
+>
+> Yup this is representative of what my investigation is showing.
+>
+> I've narrowed it down but want to wait to report until I'm sure...
+>
+> But yeah we're doing a _lot_ more work.
+>
+> I'm leaning towards disabling except for arm64 atm tbh, seems mremap is
+> especially sensitive to this (I found issues with this with my abortive m=
+remap
+> anon merging stuff too, but really expected it there...)
 
-Some tests were gated by kernel version, and adjustments were made for
-flags introduced after kernel 5.4. This ensures the selftests can run
-and pass correctly on kernel versions 5.4 and later, preventing failures
-due to features not present in older kernels.
-
-The use of __GLIBC_PREREQ ensures proper compilation and functionality
-across different glibc versions in a mainline Linux kernel context.
-While it might appear redundant in specific build environments due to
-global overrides, it is crucial for upstream correctness and portability.
-
-Signed-off-by: Wake Liu <wakel@google.com>
----
- tools/testing/selftests/seccomp/seccomp_bpf.c | 108 ++++++++++++++++--
- 1 file changed, 99 insertions(+), 9 deletions(-)
-
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 61acbd45ffaa..9b660cff5a4a 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -13,12 +13,14 @@
-  * we need to use the kernel's siginfo.h file and trick glibc
-  * into accepting it.
-  */
-+#if defined(__GLIBC__) && defined(__GLIBC_PREREQ)
- #if !__GLIBC_PREREQ(2, 26)
- # include <asm/siginfo.h>
- # define __have_siginfo_t 1
- # define __have_sigval_t 1
- # define __have_sigevent_t 1
- #endif
-+#endif
- 
- #include <errno.h>
- #include <linux/filter.h>
-@@ -300,6 +302,26 @@ int seccomp(unsigned int op, unsigned int flags, void *args)
- }
- #endif
- 
-+int seccomp_flag_supported(int flag)
-+{
-+	/*
-+	 * Probes if a seccomp filter flag is supported by the kernel.
-+	 *
-+	 * When an unsupported flag is passed to seccomp(SECCOMP_SET_MODE_FILTER, ...),
-+	 * the kernel returns EINVAL.
-+	 *
-+	 * When a supported flag is passed, the kernel proceeds to validate the
-+	 * filter program pointer. By passing NULL for the filter program,
-+	 * the kernel attempts to dereference a bad address, resulting in EFAULT.
-+	 *
-+	 * Therefore, checking for EFAULT indicates that the flag itself was
-+	 * recognized and supported by the kernel.
-+	 */
-+	if (seccomp(SECCOMP_SET_MODE_FILTER, flag, NULL) == -1 && errno == EFAULT)
-+		return 1;
-+	return 0;
-+}
-+
- #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
- #define syscall_arg(_n) (offsetof(struct seccomp_data, args[_n]))
- #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-@@ -2436,13 +2458,12 @@ TEST(detect_seccomp_filter_flags)
- 		ASSERT_NE(ENOSYS, errno) {
- 			TH_LOG("Kernel does not support seccomp syscall!");
- 		}
--		EXPECT_EQ(-1, ret);
--		EXPECT_EQ(EFAULT, errno) {
--			TH_LOG("Failed to detect that a known-good filter flag (0x%X) is supported!",
--			       flag);
--		}
- 
--		all_flags |= flag;
-+		if (seccomp_flag_supported(flag))
-+			all_flags |= flag;
-+		else
-+			TH_LOG("Filter flag (0x%X) is not found to be supported!",
-+			       flag);
- 	}
- 
- 	/*
-@@ -2870,6 +2891,12 @@ TEST_F(TSYNC, two_siblings_with_one_divergence)
- 
- TEST_F(TSYNC, two_siblings_with_one_divergence_no_tid_in_err)
- {
-+	/* Depends on 5189149 (seccomp: allow TSYNC and USER_NOTIF together) */
-+	if (!seccomp_flag_supported(SECCOMP_FILTER_FLAG_TSYNC_ESRCH)) {
-+		SKIP(return, "Kernel does not support SECCOMP_FILTER_FLAG_TSYNC_ESRCH");
-+		return;
-+	}
-+
- 	long ret, flags;
- 	void *status;
- 
-@@ -3475,6 +3502,11 @@ TEST(user_notification_basic)
- 
- TEST(user_notification_with_tsync)
- {
-+	/* Depends on 5189149 (seccomp: allow TSYNC and USER_NOTIF together) */
-+	if (!seccomp_flag_supported(SECCOMP_FILTER_FLAG_TSYNC_ESRCH)) {
-+		SKIP(return, "Kernel does not support SECCOMP_FILTER_FLAG_TSYNC_ESRCH");
-+		return;
-+	}
- 	int ret;
- 	unsigned int flags;
- 
-@@ -3966,6 +3998,13 @@ TEST(user_notification_filter_empty)
- 
- TEST(user_ioctl_notification_filter_empty)
- {
-+	/* Depends on 95036a7 (seccomp: interrupt SECCOMP_IOCTL_NOTIF_RECV
-+	 * when all users have exited) */
-+	if (!ksft_min_kernel_version(6, 11)) {
-+		SKIP(return, "Kernel version < 6.11");
-+		return;
-+	}
-+
- 	pid_t pid;
- 	long ret;
- 	int status, p[2];
-@@ -4119,6 +4158,12 @@ int get_next_fd(int prev_fd)
- 
- TEST(user_notification_addfd)
- {
-+	/* Depends on 0ae71c7 (seccomp: Support atomic "addfd + send reply") */
-+	if (!ksft_min_kernel_version(5, 14)) {
-+		SKIP(return, "Kernel version < 5.14");
-+		return;
-+	}
-+
- 	pid_t pid;
- 	long ret;
- 	int status, listener, memfd, fd, nextfd;
-@@ -4281,6 +4326,12 @@ TEST(user_notification_addfd)
- 
- TEST(user_notification_addfd_rlimit)
- {
-+	/* Depends on 7cf97b1 (seccomp: Introduce addfd ioctl to seccomp user notifier) */
-+	if (!ksft_min_kernel_version(5, 9)) {
-+		SKIP(return, "Kernel version < 5.9");
-+		return;
-+	}
-+
- 	pid_t pid;
- 	long ret;
- 	int status, listener, memfd;
-@@ -4326,9 +4377,12 @@ TEST(user_notification_addfd_rlimit)
- 	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd), -1);
- 	EXPECT_EQ(errno, EMFILE);
- 
--	addfd.flags = SECCOMP_ADDFD_FLAG_SEND;
--	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd), -1);
--	EXPECT_EQ(errno, EMFILE);
-+	/* Depends on 0ae71c7 (seccomp: Support atomic "addfd + send reply") */
-+	if (ksft_min_kernel_version(5, 14)) {
-+		addfd.flags = SECCOMP_ADDFD_FLAG_SEND;
-+		EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd), -1);
-+		EXPECT_EQ(errno, EMFILE);
-+	}
- 
- 	addfd.newfd = 100;
- 	addfd.flags = SECCOMP_ADDFD_FLAG_SETFD;
-@@ -4356,6 +4410,12 @@ TEST(user_notification_addfd_rlimit)
- 
- TEST(user_notification_sync)
- {
-+	/* Depends on 48a1084 (seccomp: add the synchronous mode for seccomp_unotify) */
-+	if (!ksft_min_kernel_version(6, 6)) {
-+		SKIP(return, "Kernel version < 6.6");
-+		return;
-+	}
-+
- 	struct seccomp_notif req = {};
- 	struct seccomp_notif_resp resp = {};
- 	int status, listener;
-@@ -4520,6 +4580,12 @@ static char get_proc_stat(struct __test_metadata *_metadata, pid_t pid)
- 
- TEST(user_notification_fifo)
- {
-+	/* Depends on 4cbf6f6 (seccomp: Use FIFO semantics to order notifications) */
-+	if (!ksft_min_kernel_version(5, 19)) {
-+		SKIP(return, "Kernel version < 5.19");
-+		return;
-+	}
-+
- 	struct seccomp_notif_resp resp = {};
- 	struct seccomp_notif req = {};
- 	int i, status, listener;
-@@ -4623,6 +4689,12 @@ static long get_proc_syscall(struct __test_metadata *_metadata, int pid)
- /* Ensure non-fatal signals prior to receive are unmodified */
- TEST(user_notification_wait_killable_pre_notification)
- {
-+	/* Depends on c2aa2df (seccomp: Add wait_killable semantic to seccomp user notifier) */
-+	if (!ksft_min_kernel_version(5, 19)) {
-+		SKIP(return, "Kernel version < 5.19");
-+		return;
-+	}
-+
- 	struct sigaction new_action = {
- 		.sa_handler = signal_handler,
- 	};
-@@ -4693,6 +4765,12 @@ TEST(user_notification_wait_killable_pre_notification)
- /* Ensure non-fatal signals after receive are blocked */
- TEST(user_notification_wait_killable)
- {
-+	/* Depends on c2aa2df (seccomp: Add wait_killable semantic to seccomp user notifier) */
-+	if (!ksft_min_kernel_version(5, 19)) {
-+		SKIP(return, "Kernel version < 5.19");
-+		return;
-+	}
-+
- 	struct sigaction new_action = {
- 		.sa_handler = signal_handler,
- 	};
-@@ -4772,6 +4850,12 @@ TEST(user_notification_wait_killable)
- /* Ensure fatal signals after receive are not blocked */
- TEST(user_notification_wait_killable_fatal)
- {
-+	/* Depends on c2aa2df (seccomp: Add wait_killable semantic to seccomp user notifier) */
-+	if (!ksft_min_kernel_version(5, 19)) {
-+		SKIP(return, "Kernel version < 5.19");
-+		return;
-+	}
-+
- 	struct seccomp_notif req = {};
- 	int listener, status;
- 	pid_t pid;
-@@ -4854,6 +4938,12 @@ static void *tsync_vs_dead_thread_leader_sibling(void *_args)
-  */
- TEST(tsync_vs_dead_thread_leader)
- {
-+	/* Depends on bfafe5e (seccomp: release task filters when the task exits) */
-+	if (!ksft_min_kernel_version(6, 11)) {
-+		SKIP(return, "Kernel version < 6.11");
-+		return;
-+	}
-+
- 	int status;
- 	pid_t pid;
- 	long ret;
--- 
-2.50.1.703.g449372360f-goog
-
+Another approach would be to always read and write PTEs in
+contpte-sized chunks here, without caring whether they're actually
+contiguous or whatever, or something along those lines.
 
