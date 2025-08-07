@@ -1,237 +1,185 @@
-Return-Path: <linux-kernel+bounces-759372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC22B1DCB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B28BBB1DCC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0C21AA00FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5C31AA014F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D82205AA1;
-	Thu,  7 Aug 2025 17:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4594207A3A;
+	Thu,  7 Aug 2025 17:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="ZVx+ttTg"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q1flqUP6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07E2200BBC;
-	Thu,  7 Aug 2025 17:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02361FCF41;
+	Thu,  7 Aug 2025 17:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589341; cv=none; b=TWbFjJuHUV1COYIy3au5ol9U2WkaZHdxw+m1nTcQx6Ed0GrxrX4aUFxvyqpsV5DIipbRb4+CVW3i0RGs9XnTlkFf8PfUdcnxRtgSoD2J3r7uH3k0qdOcyxJZ6Pg05FdxVCyf6wPpozXI8KCqaWNaezHVEAgPH6HbSJTJjrVk8Xs=
+	t=1754589400; cv=none; b=hpl0ko3Vc2Sek8J2YaF9GpdmnHDQiBSfp0bQeTtcHTN2OJxIc4MoCjhwaUhZfNprVdO5PyUP4qRaTgfzDTavAisiO2XlP0eRDI5Sqhu21zLAv0Z/tcVmC6Mt5Jcu6OlwBsE4dKm9/nMtS1TNK8Gxoy5uXnlw0HDVsyifbipxwO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589341; c=relaxed/simple;
-	bh=5SipIL2mqzjw8Lq0NGeJ5rC1D8r6xnD/6FPUKkhjv6c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hrZABSBwVzRrf0dp9YRlHhyuNp/Qqb/YTqarrZFh2kpjbBPyw0sqCR4EC3lzgMJXvyAFhLTRfwLe4QBexeq2dA0zfhiQVDmo2Gn+kVjjCtgURt6yzFVC0z60BCOrRPVsmDLMRCSqjujwit2IEvT0ANYP2PvWGgcqYES9eP+d8qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=ZVx+ttTg; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4byZZT1KVKz9tfQ;
-	Thu,  7 Aug 2025 19:55:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754589329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u1tGdj0bYIbktrA9nGNPQV29HAdkSKoqYz5zUeS8lIY=;
-	b=ZVx+ttTgCC2wvM3YNPiaDoGGKLNuUQkh684NzSkrW0dQB58kAWvoTJd6IEZ29TjHt1xwim
-	2A+jYaAKD3fTz1J88KquQQx1bErSq1LWnIXkKMX6nQE6qmN7DT3kPUNROfQ03pUuKI0xNX
-	6ilWQGHpr9mTqplG9l3Oq8iP6DfQM8OZQ/jh3bN0G7IkXU3EPUdFTho/BgDuRZSRdhoGuo
-	TRTSTFhPClWmIpQFk9D6hHfHj+JRJnHRH9jlT23yfl6voachoR5tyrQ/uDtfmawdg3Ds8k
-	oZuDla+AQxvu/EjKskEZZ54oVxbogexfa4DgJGCXNmmWXqbVQUkEP7WBZOT2kQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Fri, 08 Aug 2025 03:55:06 +1000
-Subject: [PATCH 2/2] selftests/mount_setattr: add smoke tests for
- open_tree_attr(2) bug
+	s=arc-20240116; t=1754589400; c=relaxed/simple;
+	bh=zGma+H+t/u8Vc+j/CWH77yMZEYXD+Cn+I5YwYhpUZNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=t/bMd+WyMhSisOiMuULQAvJgykV59Wtciw/dOhwE6F5RnsDr2B9UAgklBaLWPqac/+aFPyhKujW74Xv3bgvHIRDHNpdLtYq7Doc2WKxaKFCubGNVveMlFvC9J80C1yVyrzy19K+TkfDkn6O/rq/qKLWYOIllgybyV6RTO1H/ArQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q1flqUP6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577EDJOF030191;
+	Thu, 7 Aug 2025 17:56:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6YHORUoMsrOOCbSVlY5NdFABShlBBXio8F17YDO65R0=; b=Q1flqUP6PMBVoDCh
+	4WuU/Ye6HRn0UYWMJediByNq9gVnohTMXsCGfMwGaUN7Z0Hn3ZtYM9rhzAGF/onQ
+	9Wkph3nL0JD4keWxzvxJN9TWQX3wOj1neujKNc1H0sSZW7pJ3T5w7ko09nNHdglb
+	ohQ280jUlCO2D54Z0lH4LGiZcF/0fzmNDaiww+izGdcPs4U6RPKwcVT9SlD/S6D9
+	9iPMA4d2S41SPI3S+9N/43ojTeGGkBHwqNftfTGNYycfHPTaKxGhqTgmykITj3Z9
+	GXOc4Eqm8V5YxfDvGE6Q+T5cTfw2d5/1ppGzursKE1OJNz0FYs10itpO7MFESZI4
+	y7qMKw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpvyyb4y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 17:56:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 577HuRmY002761
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Aug 2025 17:56:27 GMT
+Received: from [10.216.57.148] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 7 Aug
+ 2025 10:56:21 -0700
+Message-ID: <31461227-3f3a-4316-9c8a-c851209d0278@quicinc.com>
+Date: Thu, 7 Aug 2025 23:26:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-open_tree_attr-bugfix-idmap-v1-2-0ec7bc05646c@cyphar.com>
-References: <20250808-open_tree_attr-bugfix-idmap-v1-0-0ec7bc05646c@cyphar.com>
-In-Reply-To: <20250808-open_tree_attr-bugfix-idmap-v1-0-0ec7bc05646c@cyphar.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5342; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=5SipIL2mqzjw8Lq0NGeJ5rC1D8r6xnD/6FPUKkhjv6c=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMedHQ6HDUvlTz6mxFq8Q1dl/WW+W92xjQvMLsyvXkM
- +LpHybXdZSyMIhxMciKKbJs8/MM3TR/8ZXkTyvZYOawMoEMYeDiFICJ+K5i+O8W75S/+abnVS4V
- rgmrtC3b/vz8PXeWR+BsFl8DnUsvFe8x/NM84ryscxFPdcbm9js+TNw8Cl2yjI+K7J/Ya2w8ulL
- 0IQ8A
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4byZZT1KVKz9tfQ
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+To: Mark Brown <broonie@kernel.org>
+CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <mani@kernel.org>, <conor+dt@kernel.org>,
+        <bvanassche@acm.org>, <andersson@kernel.org>,
+        <neil.armstrong@linaro.org>, <dmitry.baryshkov@oss.qualcomm.com>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-5-quic_nitirawa@quicinc.com>
+ <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
+ <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+ <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
+ <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
+ <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
+ <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+ <685e3d36-c0e3-4faa-b817-aecc15976a25@quicinc.com>
+ <c1435858-6288-4525-8c92-e27ed86cb55e@sirena.org.uk>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <c1435858-6288-4525-8c92-e27ed86cb55e@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: f4X0BDZ2xxnLo2baqVvaSX_SGzcEVSXm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX6063Wcwgldw1
+ ePf2g2CsxZDBs0GpvopTBrpv/lYK64lYg60azlmMSyGEpJTkBJRf1Yw5UAcQMRJt3Xtqi69D3Jk
+ LE24U3CK88usnuU1gIm3U3TJ/YoPOlAy9XtgkPK9NVPQXAgPEz6oO6gAEOQlkAF2m7PqCpqw/CJ
+ 8Rf6bqobUPA5AMswFMYl6UeZQWS8ac/DACL5uYrjWzm08HilWV72o7d+Qy239uG4JM/lG2p21P3
+ boqVAsTpAlNe8oWZZTvzshBp74cUOt9884jxgKfN1DPwrb7twN4WG3zdZtN+VRNnx+th2ZQ2P5l
+ oEf72bIkznh0lKJrMmmUxAYwLD4rURFzIoOxDBR3vjUDiH1fFEXwaL4356GcsDGhq47DxMQPkZf
+ zTHwaQ3U
+X-Proofpoint-ORIG-GUID: f4X0BDZ2xxnLo2baqVvaSX_SGzcEVSXm
+X-Authority-Analysis: v=2.4 cv=NsLRc9dJ c=1 sm=1 tr=0 ts=6894e8cc cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=Q3xy-p0DM1bs88ZO6TcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_04,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0
+ adultscore=0 malwarescore=0 spamscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-There appear to be no other open_tree_attr(2) tests at the moment, but
-as a minimal solution just add some additional checks in the existing
-MOUNT_ATTR_IDMAP tests to make sure that open_tree_attr(2) cannot be
-used to bypass the tested restrictions that apply to mount_setattr(2).
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- .../selftests/mount_setattr/mount_setattr_test.c   | 77 ++++++++++++++++++----
- 1 file changed, 64 insertions(+), 13 deletions(-)
 
-diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-index b1e4618399be..a688871a98eb 100644
---- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-+++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-@@ -107,6 +107,26 @@
- 	#endif
- #endif
- 
-+#ifndef __NR_open_tree_attr
-+	#if defined __alpha__
-+		#define __NR_open_tree_attr 577
-+	#elif defined _MIPS_SIM
-+		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
-+			#define __NR_open_tree_attr (467 + 4000)
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
-+			#define __NR_open_tree_attr (467 + 6000)
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
-+			#define __NR_open_tree_attr (467 + 5000)
-+		#endif
-+	#elif defined __ia64__
-+		#define __NR_open_tree_attr (467 + 1024)
-+	#else
-+		#define __NR_open_tree_attr 467
-+	#endif
-+#endif
-+
- #ifndef MOUNT_ATTR_IDMAP
- #define MOUNT_ATTR_IDMAP 0x00100000
- #endif
-@@ -121,6 +141,12 @@ static inline int sys_mount_setattr(int dfd, const char *path, unsigned int flag
- 	return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
- }
- 
-+static inline int sys_open_tree_attr(int dfd, const char *path, unsigned int flags,
-+				     struct mount_attr *attr, size_t size)
-+{
-+	return syscall(__NR_open_tree_attr, dfd, path, flags, attr, size);
-+}
-+
- static ssize_t write_nointr(int fd, const void *buf, size_t count)
- {
- 	ssize_t ret;
-@@ -1222,6 +1248,12 @@ TEST_F(mount_setattr_idmapped, attached_mount_inside_current_mount_namespace)
- 	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
- 	ASSERT_GE(attr.userns_fd, 0);
- 	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
-+	/*
-+	 * Make sure that open_tree_attr() without OPEN_TREE_CLONE is not a way
-+	 * to bypass this mount_setattr() restriction.
-+	 */
-+	ASSERT_LT(sys_open_tree_attr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
-+
- 	ASSERT_EQ(close(attr.userns_fd), 0);
- 	ASSERT_EQ(close(open_tree_fd), 0);
- }
-@@ -1255,6 +1287,12 @@ TEST_F(mount_setattr_idmapped, attached_mount_outside_current_mount_namespace)
- 	ASSERT_GE(attr.userns_fd, 0);
- 	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,
- 				    sizeof(attr)), 0);
-+	/*
-+	 * Make sure that open_tree_attr() without OPEN_TREE_CLONE is not a way
-+	 * to bypass this mount_setattr() restriction.
-+	 */
-+	ASSERT_LT(sys_open_tree_attr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
-+
- 	ASSERT_EQ(close(attr.userns_fd), 0);
- 	ASSERT_EQ(close(open_tree_fd), 0);
- }
-@@ -1321,6 +1359,19 @@ TEST_F(mount_setattr_idmapped, detached_mount_outside_current_mount_namespace)
- 	ASSERT_EQ(close(open_tree_fd), 0);
- }
- 
-+static bool expected_uid_gid(int dfd, const char *path, int flags,
-+			     uid_t expected_uid, gid_t expected_gid)
-+{
-+	int ret;
-+	struct stat st;
-+
-+	ret = fstatat(dfd, path, &st, flags);
-+	if (ret < 0)
-+		return false;
-+
-+	return st.st_uid == expected_uid && st.st_gid == expected_gid;
-+}
-+
- /**
-  * Validate that currently changing the idmapping of an idmapped mount fails.
-  */
-@@ -1331,6 +1382,8 @@ TEST_F(mount_setattr_idmapped, change_idmapping)
- 		.attr_set = MOUNT_ATTR_IDMAP,
- 	};
- 
-+	ASSERT_TRUE(expected_uid_gid(-EBADF, "/mnt/D", 0, 0, 0));
-+
- 	if (!mount_setattr_supported())
- 		SKIP(return, "mount_setattr syscall not supported");
- 
-@@ -1348,27 +1401,25 @@ TEST_F(mount_setattr_idmapped, change_idmapping)
- 				    AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
- 	ASSERT_EQ(close(attr.userns_fd), 0);
- 
-+	EXPECT_FALSE(expected_uid_gid(open_tree_fd, ".", 0, 0, 0));
-+	EXPECT_TRUE(expected_uid_gid(open_tree_fd, ".", 0, 10000, 10000));
-+
- 	/* Change idmapping on a detached mount that is already idmapped. */
- 	attr.userns_fd	= get_userns_fd(0, 20000, 10000);
- 	ASSERT_GE(attr.userns_fd, 0);
- 	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
-+	/*
-+	 * Make sure that open_tree_attr() without OPEN_TREE_CLONE is not a way
-+	 * to bypass this mount_setattr() restriction.
-+	 */
-+	EXPECT_LT(sys_open_tree_attr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
-+	EXPECT_FALSE(expected_uid_gid(open_tree_fd, ".", 0, 20000, 20000));
-+	EXPECT_TRUE(expected_uid_gid(open_tree_fd, ".", 0, 10000, 10000));
-+
- 	ASSERT_EQ(close(attr.userns_fd), 0);
- 	ASSERT_EQ(close(open_tree_fd), 0);
- }
- 
--static bool expected_uid_gid(int dfd, const char *path, int flags,
--			     uid_t expected_uid, gid_t expected_gid)
--{
--	int ret;
--	struct stat st;
--
--	ret = fstatat(dfd, path, &st, flags);
--	if (ret < 0)
--		return false;
--
--	return st.st_uid == expected_uid && st.st_gid == expected_gid;
--}
--
- TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
- {
- 	int open_tree_fd = -EBADF;
+On 8/7/2025 11:13 PM, Mark Brown wrote:
+> On Thu, Aug 07, 2025 at 11:05:08PM +0530, Nitin Rawat wrote:
+>> On 8/7/2025 10:56 PM, Mark Brown wrote:
+> 
+>>> The issue isn't using regulator_set_load(), that's perfectly fine and
+>>> expected.  The issue is either reading the value to use from the
+>>> constraint information (which is just buggy) or adding a generic
+>>> property for this (which I'm not convinced is a good idea, I'd expect a
+>>> large propoprtion of drivers should just know what their requirements
+>>> are and that a generic property would just get abused).
+> 
+>>>> These drivers also define corresponding binding properties, as seen in the
+>>>> UFS instances documented here:
+> 
+>>>> UFS Common DT Binding ((link - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/ufs/ufs-common.yaml?h=next-20250807)
+> 
+>>> Note that that's specifying OPPs which is different...
+> 
+>> Sorry for the confusion .Instead, I meant the following three properties
+>> defined in the link to ufs-common.yaml binding, which specify the maximum
+>> load that can be drawn from the respective power supplies.
+> 
+>>    vcc-max-microamp:
+>>      description:
+>>        Specifies max. load that can be drawn from VCC supply.
+>>
+>>    vccq-max-microamp:
+>>      description:
+>>        Specifies max. load that can be drawn from VCCQ supply.
+>>
+>>    vccq2-max-microamp:
+>>      description:
+>>        Specifies max. load that can be drawn from VCCQ2 supply.
+> 
+> OK, but that's still not motivating putting things in DT (the properties
+> are there but don't explain why) and having this for some devices
+> doesn't really address the why make it a generic rather than device
+> specific part of things like Konrad was suggesting.  Perhaps there's
+> enough board specific variation that it does make sense to put something
+> specific to this consumer in DT, but it'd be another step to make it a
+> generic thing that applies to all regulators.
 
--- 
-2.50.1
+Hi Mark,
 
+Thanks for your review and feedback.
+To address your question about why these properties should be included 
+in the device tree:
+
+1. Regulator and PMIC configurations are board-specific, meaning they 
+can vary significantly across different platforms. For example, some 
+boards may use different generations of UFS devices — such as UFS 2.x — 
+which come with distinct power and load requirements and some with 
+UFS3.x which has it own power/load requirement.
+
+2. UFS PHY load and PMIC requirements also varies across targets, 
+depending on the underlying technology node and the specific PHY 
+capabilities. These differences can be influenced by the MIPI version or 
+other implementation details.
+
+Given this variability, expressing these requirements in the device tree 
+allows for a flexible and accurate way to describe board-specific 
+constraints without hardcoding them into the driver.
+
+Thanks,
+Nitin
 
