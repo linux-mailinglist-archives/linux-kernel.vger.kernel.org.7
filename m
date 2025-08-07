@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-758832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CEBB1D459
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:40:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D296DB1D45F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4D3189CA90
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A39E218C2EA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7273256C87;
-	Thu,  7 Aug 2025 08:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9990E256C8B;
+	Thu,  7 Aug 2025 08:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYhUSCRn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="LnUmBl1Z"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2B9243378;
-	Thu,  7 Aug 2025 08:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB8A233136;
+	Thu,  7 Aug 2025 08:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754555992; cv=none; b=Y9ElEN46Xp92Sf+aRlWNNf6srLLRMo6LI4Rs20c8VZihO3+VNI9Prmck497O1/b9GRVBMmq3l4ChHeQhnhh592F7jXci/DFPeo6eBgFd4K0izZwaPPa1kGqYgeYECmoJkQV2GYgRi6TqAZ4F+LVPchLhVnlUsW8csPb3ydciBng=
+	t=1754556071; cv=none; b=dCn1TKc532ka3pS48G5+1I26M6dptWdGOJEdqLcUNPB4DoO5JTMEUv0eS+Jz3SebmS79hH7a5eMbzAIBOYWZS4a6zutQJTuVmtJrc40+XXZdRvjYAz/I1aNJW2znhbZKXHCsihFlN4VsT4QCgen7AG0IPlYMOMxw2vueiyB0bsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754555992; c=relaxed/simple;
-	bh=AJJPiy1agRwTpowv6EP+XoQUHx8R5qQZZKujEl0mnSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6DXhX1t1h5SABKVZbfQ2WQkTL5vY5yZlagVlbFjQgTxSKDGK6qHp/l623LXT06aAIzghmACW438+U6t72EGprHPa3J62VnnRNKJARTUQFZBdv6uxPd9e+9BGOatfuqh7vIvwCUk9ASTYg8zc8hxexi9lN66gv2xgOaKUYSFZY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYhUSCRn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBE24C4CEEB;
-	Thu,  7 Aug 2025 08:39:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754555991;
-	bh=AJJPiy1agRwTpowv6EP+XoQUHx8R5qQZZKujEl0mnSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WYhUSCRnbFzRVQVuJl3VU70y9U0HGu8e/e6ji9e91TXFx6kNBt/05Di5eZKI6gkqS
-	 ixEc/xQc33xfDrQ1lIm9GP7lTnkMPcuWznChsGwkY7psf1NzKgVCc6rW2BB43dOy3k
-	 RqC6/zt2xVxOL1E1e2ltdkVPaiQQk2rlLmdGQm+27JIL6+L70KLKoHNz2TOAq2Skg/
-	 3bO3z1z/Ke1K8WW5DM5OeELprOLf2fjvY8EN/AyGTrIB4Fti3VbWbTwU+m4K4CkrNA
-	 2ok+6mcFtZwHcMg+RQS5VY5JpIVRLT3VSqgrEBuCJZNSBOG9YyUNlTcyBB+n9Y2uOY
-	 sWHR1vpm9I/gg==
-Date: Thu, 7 Aug 2025 14:09:43 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Nirmal Patel <nirmal.patel@linux.intel.com>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kenneth Crudup <kenny@panix.com>, 
-	Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH v2] PCI: vmd: Fix wrong kfree() in vmd_msi_free()
-Message-ID: <rbwjykknpgx5hgu36t7ncxbs6kpq4a6ty2234velg5kt7ntq4v@5jkqysy62rch>
-References: <20250807081051.2253962-1-namcao@linutronix.de>
+	s=arc-20240116; t=1754556071; c=relaxed/simple;
+	bh=29/0/D42/WwMJ2+ruqP8oXlKefinLhx/lRUtc4cP/kU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=E41DVD34a78bcsi7mLc8XDitx3T18UVab0xwtXm2jopG512qBXJe+epUPYu3Sfc1/+KTmhZ59ZZu3mcpndBMwgCsrgk9bHpSp3zcK7uJXVLGODCxssUuGuMDlXfBS5/KbZFuErIZx1245aCXBQ1re7gW07bqo214558najORNT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=LnUmBl1Z; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=YSbYWHuNmw8y1RdYInOumWjpEswg0F29surRDM+7eW0=; b=LnUmBl1ZkjfES3scO0WN9jKW6E
+	zDJTk55GVnoBGbPwyZCkF3Q5bFYld87AAgnEuCVC1g5PKf8ymlitAy4SJH7Uy45tbqMxvMSuxPpX9
+	9grXKs31pNJYpx4zR9Nz7ZlXmqtR4ckKZu5aD8Ux650Bi2vGz4kYSQjrOLlYr+yZi6wJlxHmq6kQR
+	GveqUgLoXvXKc7K3Bx4xvB5tRPUnUtmyvMEHQZSaUDaoEyOK4QJCRAVopGPeeDvFjARS+KAeoX1Kk
+	iF8UCZNwEy+IulVHPTnLjz8BJNJQ0SlMx9SqrnTieDo25gXAClBRBg3oIAzN40GbEczTxHm5rtF9H
+	HBZbRKTw==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1ujwBI-00Auyx-Nd; Thu, 07 Aug 2025 10:41:00 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Chunsheng Luo <luochunsheng@ustc.edu>
+Cc: miklos@szeredi.hu,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: Move same-superblock check to fuse_copy_file_range
+In-Reply-To: <20250806135254.352-1-luochunsheng@ustc.edu> (Chunsheng Luo's
+	message of "Wed, 6 Aug 2025 21:52:54 +0800")
+References: <20250806135254.352-1-luochunsheng@ustc.edu>
+Date: Thu, 07 Aug 2025 09:40:55 +0100
+Message-ID: <87bjorle20.fsf@wotan.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,70 +63,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250807081051.2253962-1-namcao@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 07, 2025 at 10:10:51AM GMT, Nam Cao wrote:
-> vmd_msi_alloc() allocates struct vmd_irq and stashes it into
-> irq_data->chip_data associated with the VMD's interrupt domain.
-> vmd_msi_free() extracts the pointer by calling irq_get_chip_data() and
-> frees it.
-> 
-> irq_get_chip_data() returns the chip_data associated with the top interrupt
-> domain. This worked in the past, because VMD's interrupt domain was the top
-> domain.
-> 
-> But since commit d7d8ab87e3e7 ("PCI: vmd: Switch to
-> msi_create_parent_irq_domain()") changed the interrupt domain hierarchy,
-> VMD's interrupt domain is not the top domain anymore. irq_get_chip_data()
-> now returns the chip_data at the MSI devices' interrupt domains. It is
-> therefore broken for vmd_msi_free() to kfree() this chip_data.
-> 
-> Fix this issue, correctly extract the chip_data associated with the VMD's
-> interrupt domain.
-> 
-> Fixes: d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
-> Reported-by: Kenneth Crudup <kenny@panix.com>
-> Closes: https://lore.kernel.org/linux-pci/dfa40e48-8840-4e61-9fda-25cdb3ad81c1@panix.com/
-> Reported-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> Closes: https://lore.kernel.org/linux-pci/ed53280ed15d1140700b96cca2734bf327ee92539e5eb68e80f5bbbf0f01@linux.gnuweeb.org/
-> Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> Tested-by: Kenneth Crudup <kenny@panix.com>
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+On Wed, Aug 06 2025, Chunsheng Luo wrote:
 
-Acked-by: Manivannan Sadhasivam <mani@kernel.org>
+> The copy_file_range COPY_FILE_SPLICE capability allows filesystems to
+> handle cross-superblock copy. However, in the current fuse implementation,
+> __fuse_copy_file_range accesses src_file->private_data under the assumpti=
+on
+> that it points to a fuse_file structure. When the source file belongs to a
+> non-FUSE filesystem, it will leads to kernel panics.
 
-- Mani
+I wonder if you have actually seen this kernel panic happening.  It seems
+like the code you're moving into fuse_copy_file_range() shouldn't be
+needed as the same check is already done in generic_copy_file_checks()
+(which is called from vfs_copy_file_range()).
 
+Either way, I think your change to fuse_copy_file_range() could be
+simplified with something like:
+
+	ssize_t ret =3D -EXDEV;
+
+	if (file_inode(src_file)->i_sb =3D=3D file_inode(dst_file)->i_sb)
+		ret =3D __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
+					     len, flags);
+
+	if (ret =3D=3D -EOPNOTSUPP || ret =3D=3D -EXDEV)
+		ret =3D splice_copy_file_range(src_file, src_off, dst_file,
+					     dst_off, len);
+
+But again, my understanding is that this should never happen in practice
+and that the superblock check could even be removed from
+__fuse_copy_file_range().
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+>
+> To resolve this, move the same-superblock check from __fuse_copy_file_ran=
+ge
+> to fuse_copy_file_range to ensure both files belong to the same fuse
+> superblock before accessing private_data.
+>
+> Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
 > ---
-> v2: Fix typo and describe the change more precisely
-> ---
->  drivers/pci/controller/vmd.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-> index 9bbb0ff4cc15..b679c7f28f51 100644
-> --- a/drivers/pci/controller/vmd.c
-> +++ b/drivers/pci/controller/vmd.c
-> @@ -280,10 +280,12 @@ static int vmd_msi_alloc(struct irq_domain *domain, unsigned int virq,
->  static void vmd_msi_free(struct irq_domain *domain, unsigned int virq,
->  			 unsigned int nr_irqs)
+>  fs/fuse/file.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 95275a1e2f54..a29f1b84f11b 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -2984,9 +2984,6 @@ static ssize_t __fuse_copy_file_range(struct file *=
+file_in, loff_t pos_in,
+>  	if (fc->no_copy_file_range)
+>  		return -EOPNOTSUPP;
+>=20=20
+> -	if (file_inode(file_in)->i_sb !=3D file_inode(file_out)->i_sb)
+> -		return -EXDEV;
+> -
+>  	inode_lock(inode_in);
+>  	err =3D fuse_writeback_range(inode_in, pos_in, pos_in + len - 1);
+>  	inode_unlock(inode_in);
+> @@ -3066,9 +3063,12 @@ static ssize_t fuse_copy_file_range(struct file *s=
+rc_file, loff_t src_off,
 >  {
-> +	struct irq_data *irq_data;
->  	struct vmd_irq *vmdirq;
->  
->  	for (int i = 0; i < nr_irqs; ++i) {
-> -		vmdirq = irq_get_chip_data(virq + i);
-> +		irq_data = irq_domain_get_irq_data(domain, virq + i);
-> +		vmdirq = irq_data->chip_data;
->  
->  		synchronize_srcu(&vmdirq->irq->srcu);
->  
-> -- 
-> 2.39.5
-> 
+>  	ssize_t ret;
+>=20=20
+> +	if (file_inode(src_file)->i_sb !=3D file_inode(dst_file)->i_sb)
+> +		return splice_copy_file_range(src_file, src_off, dst_file,
+> +					     dst_off, len);
+> +
+>  	ret =3D __fuse_copy_file_range(src_file, src_off, dst_file, dst_off,
+>  				     len, flags);
+> -
+>  	if (ret =3D=3D -EOPNOTSUPP || ret =3D=3D -EXDEV)
+>  		ret =3D splice_copy_file_range(src_file, src_off, dst_file,
+>  					     dst_off, len);
+> --=20
+> 2.43.0
+>
 
--- 
-மணிவண்ணன் சதாசிவம்
 
