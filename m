@@ -1,251 +1,134 @@
-Return-Path: <linux-kernel+bounces-758801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B287CB1D401
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:07:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685A3B1D405
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66FD01884A02
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495D9188B0B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B6D2550CD;
-	Thu,  7 Aug 2025 08:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22D823F405;
+	Thu,  7 Aug 2025 08:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OFEya+Oz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPEJYhOT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EAE25178C
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507A91442F4
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554019; cv=none; b=Cgyte+R4374qyr7MpARtXy9/HSY0wP814j1sKu09i+AoDMHIYczKXou4iO0cocYEXD9FyOt9uv2zddgASRU7UcEqA+sR3QtTKejekdEuqjjYWN4j5X/19jZ0VJBbfrHTL8CYH53jyyTwQaOPq6m7XRTx+WVQjm4aim03teqqJcs=
+	t=1754554121; cv=none; b=LjG+fFAULarYr7mW+r2gi4S/4D+00eVO9kk70An35q5Xmi2ueOMcIG8Z+CY4pf0rxLF8DxlxQTJgjeHPX1UFFWsQOLVHtGJCa1yznzSK0bjG042KauD2V2HHBrN0l+4r/AoL3ytOCiF+aV56Zat2iv6/Jwb3hLMXslia9FYoZMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554019; c=relaxed/simple;
-	bh=u2Il4zcXlbBWcOa6mv3Dqk2LkCaGUlZ1IGfaEMSMzMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUolAJVZPX972n7D1yKbtrRTzMW+do9iuecdfVce5HuwDhvMpVo757SpKYs5M1z/B0Pv8N9iFICi0+O6CpMRt3GkQSKtzoQHzPxpcdPQmqSrdN6+ksp2fveYDzydo+MAy5OdvcUrENQK0O3aNXf4eAFCgxdNIqsrdmo1uHG3vQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OFEya+Oz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754554016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7F/nfJfc6zfGggUKAtMQtDXDSwk2D4R5Dz6fv6UQzEk=;
-	b=OFEya+OzfRF7ifIb1yJuVzNn0ErzCKrGVrB/boMdx+q46meCuhyEI6yRB00XMghQtGITsy
-	EHZQi5ZFnks6rNhZVsGjWrf1cdDubmtOAZjVadbLfl5eEbh9rHx//yi6I4tw/oN+yHY04e
-	suKFbGHjR8bHQduAFhIrC/W/SR6LYAo=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-668-cCTkl4YuNCeUmobhOPzEog-1; Thu, 07 Aug 2025 04:06:55 -0400
-X-MC-Unique: cCTkl4YuNCeUmobhOPzEog-1
-X-Mimecast-MFC-AGG-ID: cCTkl4YuNCeUmobhOPzEog_1754554015
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-7196c919719so10781597b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 01:06:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754554010; x=1755158810;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7F/nfJfc6zfGggUKAtMQtDXDSwk2D4R5Dz6fv6UQzEk=;
-        b=ZV8uiM3uso0yQLk4wwnkC08Sd4BmpFJx8C4APoGqGlx7dgRzqTRcLEVxXhe94/+NMi
-         ATjmVmp8RzNlR97UsA20ePuZgVUW2kVLkKlPO7g4Nx7S/up+8q6pUxZ4ofME44VeZxf3
-         U/MxzB5XuD43jWNFlmLnr9fqlGdXsx+xyb1cjkEasCtsOLXWmbVU+A2kUF6k5nYYFZPL
-         +nMxZTWs9EOgtjZ9HTj7Rs3JZqrJk9wLLbLUbc+vSNtN1eN+5cMJ5I4Tr8dvFLwTXOx7
-         RU5/8qaJKI6xoG8vnRgTgOcq6Vk2kUxquzFz0Md/MYBDE1v07Hk91nSPcIRIx5Nzobzc
-         TK5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUBC6B93U1mEmAnJm0lRrW182ixZT82faqy/rLv1C/wDLTEkeNRUCIT/jiI9ijs6Lrw9tRchv2UGqg18GE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzspxz0qpFetO1bJ0grA3IjXiTGvSdw3PnSndRXSP6rvEpihxBA
-	FdweOspl3LmpJNF/jM5KUZDlDcDFUtMNaXwOMd1CMbsQbQFTRB1AQSuzx+6+RDJ7zNSLyOIOL+k
-	PWQr0N6SSxaBH0mJWkOplRbw2l1QVQ0+sqWFBjDcDiIpyLUgNQ7y0+ONyN0hPvqLMXA==
-X-Gm-Gg: ASbGncuWayVKYTZzcbV4ZNOeiVDZUEGrNuLG8gqR2evcb87j1dLXWTRHgluZLqpjbAz
-	i5TK/A67VdymyaEKwBpU58iHCmX/zRY22OCgYI+sm1pCVyotuw62CP4XRhuXgu1ioiF+ikpG9tG
-	Fqyyg+tco5lpRuxFJoqVxDUlaJ//5u/gxwGoS5UEUPBZq1BaYIq2dSKWbreonAXHrGqs7SzQN3p
-	FTFrT9jr/TE0isrJuiMEJQHBjpBCRUP3TaSver+XIFTn27oUZ4GvRJd9DIfXtWmKChaeUFGg1jF
-	BEZPt1I2UUniWfO3O36KOBAhIUhSyPPDoQwCVsp+meb7taHWGxh95IoBWI0wrGrYwHHwUnpWk31
-	7WpeVVvrsJeJe0eQ=
-X-Received: by 2002:a05:690c:6203:b0:71a:a9c:30dd with SMTP id 00721157ae682-71bcc6d6851mr85321017b3.2.1754554009645;
-        Thu, 07 Aug 2025 01:06:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHkk4jVdfxkNS66lXJnELQ1c8i2y7wkD6dlYIhb6ZnK84/IDwj2JHOFZ/v+UaqBfCV8rwA6qA==
-X-Received: by 2002:a05:690c:6203:b0:71a:a9c:30dd with SMTP id 00721157ae682-71bcc6d6851mr85319947b3.2.1754554008050;
-        Thu, 07 Aug 2025 01:06:48 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-45-205-118.retail.telecomitalia.it. [79.45.205.118])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a3a9110sm44916537b3.4.2025.08.07.01.06.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 01:06:47 -0700 (PDT)
-Date: Thu, 7 Aug 2025 10:06:35 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH RFC net-next v4 00/12] vsock: add namespace support to
- vhost-vsock
-Message-ID: <27a6zuc6wwuixgozhkxxd2bmpiegiat4bkwghvjz6y3wugtjqm@az7j7et7hzpq>
-References: <20250805-vsock-vmtest-v4-0-059ec51ab111@meta.com>
+	s=arc-20240116; t=1754554121; c=relaxed/simple;
+	bh=JCjp51GetSGxJBSbju8WEKymJlfBVo038kfQlZQ8YKE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gfHiXei6ujENgsx+G6qKh5HtxIHsPJuoEAcq5GtE+ifDlDjH/JcoCUIPanmLEdHbc0Wnl+CXCnKqlQXZVR6uD8hHv298vdTYrtw+e5+hUS+7g4Zd4PCI3wbR/5SKD98xQPLiMJ1uTwwsdGULCJpzvqMlHM1e7Db5u8WlO5KWtiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPEJYhOT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8A7AC4CEEB;
+	Thu,  7 Aug 2025 08:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754554120;
+	bh=JCjp51GetSGxJBSbju8WEKymJlfBVo038kfQlZQ8YKE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WPEJYhOT6hOQ3atLqNwK4S8HXVgi4w8J7j2F+rhma3uNR3JIjJCtjRFxd70gNbGJh
+	 qxpqBnxdr7KSBkOONBN2mm+XMtXnam2/toGcNPLQwJqbTRZOXC4q+cAvro8QKyypYZ
+	 kRrERMgqt1y9V5uidKwIV3d5vceB4xSLbaot9RsIwGOqNFIYn+BHz7+CbsAxSubPDn
+	 X4jiUzrlGUZhiCyl74XOmtHLSy0pa/RzXIYIAtTiSTL8g4EBQVbx1zAfr+0xOqjbdG
+	 D6fSxMjZgCuDZeSz8tvlEAFEGvkTvvn71I+na2wEFyZr62JZoFlsegyvahmR30BCly
+	 ZIiy7dYVab2gQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ujvfn-004mcZ-6S;
+	Thu, 07 Aug 2025 09:08:27 +0100
+Date: Thu, 07 Aug 2025 09:08:26 +0100
+Message-ID: <864iuja70l.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	oliver.upton@linux.dev,
+	james.morse@arm.com,
+	cohuck@redhat.com,
+	anshuman.khandual@arm.com,
+	palmerdabbelt@meta.com,
+	lpieralisi@kernel.org,
+	kevin.brodsky@arm.com,
+	scott@os.amperecomputing.com,
+	broonie@kernel.org,
+	james.clark@linaro.org,
+	yeoreum.yun@arm.com,
+	joey.gouly@arm.com,
+	huangxiaojia2@huawei.com,
+	yebin10@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: Expose CPUECTLR{,2}_EL1 via sysfs
+In-Reply-To: <20250806194812.46598-2-palmer@dabbelt.com>
+References: <20250806194812.46598-2-palmer@dabbelt.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250805-vsock-vmtest-v4-0-059ec51ab111@meta.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: palmer@dabbelt.com, catalin.marinas@arm.com, mark.rutland@arm.com, will@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, cohuck@redhat.com, anshuman.khandual@arm.com, palmerdabbelt@meta.com, lpieralisi@kernel.org, kevin.brodsky@arm.com, scott@os.amperecomputing.com, broonie@kernel.org, james.clark@linaro.org, yeoreum.yun@arm.com, joey.gouly@arm.com, huangxiaojia2@huawei.com, yebin10@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Bobby,
+On Wed, 06 Aug 2025 20:48:13 +0100,
+Palmer Dabbelt <palmer@dabbelt.com> wrote:
+> 
+> From: Palmer Dabbelt <palmerdabbelt@meta.com>
+> 
+> We've found that some of our workloads run faster when some of these
+> fields are set to non-default values on some of the systems we're trying
+> to run those workloads on.  This allows us to set those values via
+> sysfs, so we can do workload/system-specific tuning.
+> 
+> Signed-off-by: Palmer Dabbelt <palmerdabbelt@meta.com>
+> ---
+> I've only really smoke tested this, but I figured I'd send it along because I'm
+> not sure if this is even a sane thing to be doing -- these extended control
+> registers have some wacky stuff in them, so maybe they're not exposed to
+> userspace on purpose.  IIUC firmware can gate these writes, though, so it
+> should be possible for vendors to forbid the really scary values.
 
-On Tue, Aug 05, 2025 at 02:49:08PM -0700, Bobby Eshleman wrote:
->This series adds namespace support to vhost-vsock. It does not add
->namespaces to any of the guest transports (virtio-vsock, hyperv, or
->vmci).
->
->The current revision only supports two modes: local or global. Local
->mode is complete isolation of namespaces, while global mode is complete
->sharing between namespaces of CIDs (the original behavior).
->
->Future may include supporting a mixed mode, which I expect to be more
->complicated because socket lookups will have to include new logic and
->API changes to behave differently based on if the lookup is part of a
->mixed mode CID allocation, a global CID allocation, a mixed-to-global
->connection (allowed), or a global-to-mixed connection (not allowed).
->
->Modes are per-netns and write-once. This allows a system to configure
->namespaces independently (some may share CIDs, others are completely
->isolated). This also supports future mixed use cases, where there may 
->be
->namespaces in global mode spinning up VMs while there are
->mixed mode namespaces that provide services to the VMs, but are not
->allowed to allocate from the global CID pool.
->
->Thanks again for everyone's help and reviews!
+That's really wrong.
 
-Thanks for your work!
+For a start, these encodings fall into the IMPDEF range. They won't
+exist on non-ARM implementations.
 
-As I mentioned to you, I'll be off for the next 2 weeks, so I'll take a 
-look when I'm back, but feel free to send new versions if you receive 
-enough comments on this.
+Next, this will catch fire as a guest, either because the hypervisor
+will simply refuse to entertain letting it access registers that have
+no definition, or because the VM has been migrated from one
+implementation to another, and you have no idea this is doing on the
+new target.
+
+> 
+> That said, we do see some performance improvements here on real workloads.  So
+> we're hoping to roll some of this tuning work out more widely, but we also
+> don't want to adopt some internal interface.  Thus it'd make our lives easier
+> if we could twiddle these bits in a standard way.
+
+Honestly, this is the sort of bring-up stuff that is better kept in
+your private sandbox, and doesn't really help in general.
 
 Thanks,
-Stefano
 
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
->To: Stefano Garzarella <sgarzare@redhat.com>
->To: Shuah Khan <shuah@kernel.org>
->To: David S. Miller <davem@davemloft.net>
->To: Eric Dumazet <edumazet@google.com>
->To: Jakub Kicinski <kuba@kernel.org>
->To: Paolo Abeni <pabeni@redhat.com>
->To: Simon Horman <horms@kernel.org>
->To: Stefan Hajnoczi <stefanha@redhat.com>
->To: Michael S. Tsirkin <mst@redhat.com>
->To: Jason Wang <jasowang@redhat.com>
->To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
->To: Eugenio Pérez <eperezma@redhat.com>
->To: K. Y. Srinivasan <kys@microsoft.com>
->To: Haiyang Zhang <haiyangz@microsoft.com>
->To: Wei Liu <wei.liu@kernel.org>
->To: Dexuan Cui <decui@microsoft.com>
->To: Bryan Tan <bryan-bt.tan@broadcom.com>
->To: Vishnu Dasa <vishnu.dasa@broadcom.com>
->To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
->Cc: virtualization@lists.linux.dev
->Cc: netdev@vger.kernel.org
->Cc: linux-kselftest@vger.kernel.org
->Cc: linux-kernel@vger.kernel.org
->Cc: kvm@vger.kernel.org
->Cc: linux-hyperv@vger.kernel.org
->Cc: berrange@redhat.com
->
->Changes in v4:
->- removed RFC tag
->- implemented loopback support
->- renamed new tests to better reflect behavior
->- completed suite of tests with permutations of ns modes and vsock_test
->  as guest/host
->- simplified socat bridging with unix socket instead of tcp + veth
->- only use vsock_test for success case, socat for failure case (context
->  in commit message)
->- lots of cleanup
->
->Changes in v3:
->- add notion of "modes"
->- add procfs /proc/net/vsock_ns_mode
->- local and global modes only
->- no /dev/vhost-vsock-netns
->- vmtest.sh already merged, so new patch just adds new tests for NS
->- Link to v2:
->  https://lore.kernel.org/kvm/20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com
->
->Changes in v2:
->- only support vhost-vsock namespaces
->- all g2h namespaces retain old behavior, only common API changes
->  impacted by vhost-vsock changes
->- add /dev/vhost-vsock-netns for "opt-in"
->- leave /dev/vhost-vsock to old behavior
->- removed netns module param
->- Link to v1:
->  https://lore.kernel.org/r/20200116172428.311437-1-sgarzare@redhat.com
->
->Changes in v1:
->- added 'netns' module param to vsock.ko to enable the
->  network namespace support (disabled by default)
->- added 'vsock_net_eq()' to check the "net" assigned to a socket
->  only when 'netns' support is enabled
->- Link to RFC: https://patchwork.ozlabs.org/cover/1202235/
->
->---
->Bobby Eshleman (12):
->      vsock: a per-net vsock NS mode state
->      vsock: add net to vsock skb cb
->      vsock: add netns to af_vsock core
->      vsock/virtio: add netns to virtio transport common
->      vhost/vsock: add netns support
->      vsock/virtio: use the global netns
->      hv_sock: add netns hooks
->      vsock/vmci: add netns hooks
->      vsock/loopback: add netns support
->      selftests/vsock: improve logging in vmtest.sh
->      selftests/vsock: invoke vsock_test through helpers
->      selftests/vsock: add namespace tests
->
-> MAINTAINERS                             |    1 +
-> drivers/vhost/vsock.c                   |   48 +-
-> include/linux/virtio_vsock.h            |   12 +
-> include/net/af_vsock.h                  |   59 +-
-> include/net/net_namespace.h             |    4 +
-> include/net/netns/vsock.h               |   21 +
-> net/vmw_vsock/af_vsock.c                |  204 +++++-
-> net/vmw_vsock/hyperv_transport.c        |    2 +-
-> net/vmw_vsock/virtio_transport.c        |    5 +-
-> net/vmw_vsock/virtio_transport_common.c |   14 +-
-> net/vmw_vsock/vmci_transport.c          |    4 +-
-> net/vmw_vsock/vsock_loopback.c          |   59 +-
-> tools/testing/selftests/vsock/vmtest.sh | 1088 ++++++++++++++++++++++++++-----
-> 13 files changed, 1330 insertions(+), 191 deletions(-)
->---
->base-commit: dd500e4aecf25e48e874ca7628697969df679493
->change-id: 20250325-vsock-vmtest-b3a21d2102c2
->
->Best regards,
->-- 
->Bobby Eshleman <bobbyeshleman@meta.com>
->
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
 
