@@ -1,251 +1,181 @@
-Return-Path: <linux-kernel+bounces-759213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA20DB1DA63
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:49:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F388EB1DA66
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012A7188630B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:50:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB5017A4AFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C2225CC66;
-	Thu,  7 Aug 2025 14:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352C4265606;
+	Thu,  7 Aug 2025 14:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwDN4VG0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="iO/kwSzU"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012046.outbound.protection.outlook.com [40.107.75.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACDC611E;
-	Thu,  7 Aug 2025 14:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754578181; cv=none; b=seGT6EMR/S8ZvN3wXwhYI62FGRW2rSqhKZddlI+u3yEK7EGD/W1ttPUzFKHMawfRKUDNZuyxrFLSXss3vJoDR6t3cSmkuKVjwWA29VGqccum7Xi0KX1r7MLM5kBvAd1ziPkIUJGVtlz+vLH1b0aI6C2cx7mDopmXVm2v1FHl59c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754578181; c=relaxed/simple;
-	bh=IFWTg6TiKlUSHpwoiM0AKsYu+SDUeTwUkLonXsbAXWw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mrg5ArtVJyyjXm8TGhA8PxYKq97OtwvRHnYERk1ia9jT3GYTNYoiWgrHxSZXoDaljIWJEFTKC32LYZVyn90QY90u5Dy4KIBRRQ3kl6MGiU5aWycte/taML2dR4cOxeqTrkzMQMuaCbxWxp58G3hOu4XrQkw7wjBseKpJTYawZxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fwDN4VG0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00F4AC4CEEB;
-	Thu,  7 Aug 2025 14:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754578181;
-	bh=IFWTg6TiKlUSHpwoiM0AKsYu+SDUeTwUkLonXsbAXWw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fwDN4VG05UyE9iJgZztVaJSgjKMPqVlYgXmSQ/djxUH7UxTUXPHc3G1c7GLNhfz3G
-	 WEuPvmBHEYVwv43tZwWsbEQSaY4UjTlM+6M50X1z1idvnShyAejQ0Emto8O5CUCEtp
-	 ytgj4cjuFSh6Nmzzct8/U0991EN+yqmkhJcO3MDICD2clpQXk9f39GCY67aHwxshCY
-	 FfVYviyst2r0c9DP5ccRSn82CV5iChPGZGPLy5a9ktp0x2aGzE47o4KI8pmnftTZ/0
-	 g7fV/HxNQ1O9Mag3/bVSU/e7pqvHzUWeEZxvM0UT4v4R/My9PlEZ8WHPJyrGV0lrrO
-	 pO0Gj753IwC9Q==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com
-Subject: [GIT PULL v2] Networking for v6.17-rc1
-Date: Thu,  7 Aug 2025 07:49:40 -0700
-Message-ID: <20250807144940.830533-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CACF1C860A;
+	Thu,  7 Aug 2025 14:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754578199; cv=fail; b=JE78uXaGrhNMMloZ+qiWxTbnO+vo92/qDYA8cGQV5wZcHImjlkeU/g792RK2iIGa5B/aFQVGSsbzhG38D3/O3DTlY6fRE6obXlT4UdUBKgCI5NxAA+T8koBXc2/YRNIhDS13GLmzoPcFpr9WA9GFDFklu+dVH4V6FMxna9sDNeM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754578199; c=relaxed/simple;
+	bh=g8zdTMWXRkDJrgs6R/EdGnF371XIYiEKm9k03LmQn70=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pcg6Dr2dXQ+QOKQ4Qmdbz3cHePLJCXm1SwF7B6XDx2iqdEHRF9Z+gnn/jQVgDV/2qZTYaBvez4P9xwKpdGL2u6tEinBqt83tHQXI9Q9cvvu/BiSFsfvLfYFAq+iju8Q944Zj00+/Fpp3QpEjzxeTTgG+qsc1oPAcfLt2JTFBTJ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=iO/kwSzU; arc=fail smtp.client-ip=40.107.75.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oDyV0F1q57NqocZfBDPmsC7pulKz9UR7PF7+IL1MYRO1vlNoUEor4Qm6kUy22F0U8YhblJjpk5A76joXRDrUP0ZnhMrQt3++f9jheZOmcCe7JrOKn4ojBNX/Uo9TR9XSJ0Hc/+9ckj7Acf3UwW6KF1cZQ5vQ4cSXuWOYWSHVIe2ouG5r6wtSb6MCSKTBJLa3yUpTF2V60OFzqOaHDzb5cJKCCXBdoVnnFBmioqjWFw/zQZ9oJ+uuUbVoyJV1V/pxh7a2JpEUmZEQ+YrELZqFr/AMwMR69+Tbj9ytKWtXgfUfD191PcrX+qu4StReJrI+eGXXs4QrnSJEWe6V//Zr/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CDqMEaYl5i1x+hIBhDVQZBfDX/FquV3o1NGuhYkmhlw=;
+ b=k+80YO2GdPxPqUV3B+C1y7QbMRXmBP6zCV5fQKMdrZ6LbelYXmDoH5RuCPtEkzjgKeA0vJ19XPwZ2uvDyqn1a5SC8zLIgF+uPN3LZmbX8l5/U+Jq7Mwux985XHXWMEQX9lKFFJg/XJ14sbmlnCsFyMsktUwWK7kCSsOw6PAJdoly1x1MA7xw+cXwh8eK+G4Fqd8dGU2b+Owi5kz0LqmdIyULfsj6dm5dfGKS9aCLwYdsjAN6im1Ta88eH2MKIDh1Qd0dwPLsPrY2/RjCgWjHdhFLTiIP/oPSl8LupJ67AC4r2pTv1RIaAG2Tyep5BF7OeWkzqswlXnKh8TkS7OWZBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CDqMEaYl5i1x+hIBhDVQZBfDX/FquV3o1NGuhYkmhlw=;
+ b=iO/kwSzU3P3nhUBYNKzhF6K7jPzciSbhH02uZtJCppydeHQCeYpZhthoFf/Pge8aViNBjj2u0cq82q3GrmTZNnYP/h4/P5Ny+CaoY6B+gpyh5y4vSHaDFxm8soZDazt98BEeYMqPA9Pjbvv4Z1Cx/ALAZvuq6Gp6xShC+Wdnn5iiuOmYChXZCzL63XDgVIX5L0AiExalkwAA/ORHsHAMR0X/yeBP+SBdktPSRRNt7VBkH/ENaQUflLslYJhwD7Jcn+mHlyjofHxdRTDMWqS/9AVhTW4lkkqTotkDBLzHu20jjAc6OU6v+jDEQIUuFXcDPOwWRlP4VqHZJsG0otC9kA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SI2PR06MB5092.apcprd06.prod.outlook.com (2603:1096:4:1ab::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.15; Thu, 7 Aug 2025 14:49:54 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 14:49:54 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: willy@infradead.org,
+	Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] KVM: remove redundant __GFP_NOWARN
+Date: Thu,  7 Aug 2025 22:49:43 +0800
+Message-Id: <20250807144943.581663-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0157.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:383::12) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SI2PR06MB5092:EE_
+X-MS-Office365-Filtering-Correlation-Id: b91d7952-6820-4dcc-1f08-08ddd5c1ab90
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kFdsaDijVbao1Q2LLGUOg8OucI2wSNJgJq8K/SYx/gRxZy7t02WqPSn9Fb7z?=
+ =?us-ascii?Q?GIFW6SQmxXSF0jmaa15RTBGQg95XVbaBnf3RuoJaOvCzM94MzL9ypJz+nJFJ?=
+ =?us-ascii?Q?J9W5fWL/4l+2LtuoUkYDLWMXRta0hNgZxZYsHvgqk9sqaJWSmDFgoOLKlMB4?=
+ =?us-ascii?Q?A7QRjouInkHE9U6XOXYrfEMPWXg67tcgUALwvGTzVanGpaG4BF53HmDwlYTu?=
+ =?us-ascii?Q?KG9VdZ/9hTbheQIqI6mzOmwREzFpm3h1GVZOXwgwkiS/Z8ZVZ2IBZsTI6yEy?=
+ =?us-ascii?Q?EMzCBFLJZEUA/HXDgfW19EbstCyZXuf9wHcjYjpow3zXf9NgYAuTubJ7p8hd?=
+ =?us-ascii?Q?eV16ouYH1//MWrx5MH72Z59vygMLSb3mSr+WA89ak08T3BBUKHS+1hsHS3oz?=
+ =?us-ascii?Q?AILlqLE2iP5HpGO6iGMjDUcospz4KAkli1+mQ2GyTAENDgjCpXzAu06FM06D?=
+ =?us-ascii?Q?gMPVU8IuSOhTfgKU4mUaG5EqvIv0/lk8UG9taN+p3QOVUjYTJo89ML/X/8Wp?=
+ =?us-ascii?Q?yVXpJNDeAaypY6sA12X0UUjP5U1ZXvH+DFUYR850xgCHB0enqjPeb6NN0wnC?=
+ =?us-ascii?Q?hQrNgOogqIWvcOmRR4ew43ZS4R2+Uh+yygdWNs1nCgfkmWX0aOxoILra5pfn?=
+ =?us-ascii?Q?gWg1ky7tWiGdcceaoktc6AW1WmrdwiItrrqrS/7p9FJHNiKLkeqSnVV/hA4x?=
+ =?us-ascii?Q?PMW0Eq7Gxg68zwDeKQz5ERcFEsutO1srULruQKqIFmhDrpIGl+l31/Hb9tj0?=
+ =?us-ascii?Q?kXx7KaPFADeRnk2iVpVkVupNJli9rsrj4i9DGoVIb9q+Lbip+L79QmQvwPAL?=
+ =?us-ascii?Q?dAmE0lGq4G/pnFLa+t0GIFI+T2z9bOOgOegykooxFPdfBBS08bm/zTrYQIWF?=
+ =?us-ascii?Q?I2ake2fc5X6iXEOsCJsBae6PKFoiyp/Qlwjp+yjm3Cdqqp1Y+kRwSpPs55va?=
+ =?us-ascii?Q?wTPY2MXfkikf6qhrNh1jk12PuFRXz1rEL6acxgT7dXz165A1w7sJ1fxTocln?=
+ =?us-ascii?Q?FZxLuFy5c3vfJUh/LtkCbjq6eZmBpl6pp4XqQ124nkVLX4NuTGxW5qA17rqG?=
+ =?us-ascii?Q?YR4kP40Zu5WFVjPiH6AnV4WVibPLtxZxN+Qz7aGFummCMz191nwMAyCdOa9A?=
+ =?us-ascii?Q?+ptKBOSTKNCYxIVBVvnHD8f+kV9JyRT15NtT1dvL21jL/+SpFUPFVGXrqDLy?=
+ =?us-ascii?Q?RNseJXfKsnEbxpZYHtSmWWNj5zDzYW7RlbCqAC29+m5zc0ODJdl3L47orFWd?=
+ =?us-ascii?Q?CIAQQvP85LJbk9zpkGz9nb4SrotV1hlvCTII+zzPlZL0BYf4DD8PgVC+cNVA?=
+ =?us-ascii?Q?NulRfoaE1wKwGPlenGca7iD2JB87Mt2Yw0L6T7EDTYPXNYU/HALjTG6/BlLa?=
+ =?us-ascii?Q?hDZGYvJTCtNNlxM0nmxbY6aJQkdG0B1SJjxEqfAoOekhyD5ujcTYgWrGTfpX?=
+ =?us-ascii?Q?hbmqL1nO8NyJJ7E/qq6r3QyLVh8ASMtNBtpnoha6x04yHTZGw0CHkw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+vJlj113iIhMtzHF1DEMMqVymeVN9lJTHJqC8zu1sz5NEEBC2fviOJCABBK4?=
+ =?us-ascii?Q?H9+3Tagsk6CBeZdkF1KDyw5CIQU80yoVgNBvnLdDrQ5dgXCx//sUbEnNdGkE?=
+ =?us-ascii?Q?/8U58aps29S6VNJ9ESQTwPRKYu2ys0Yw3uzFMKJTuuzQQbIXBs0mM19OVeWb?=
+ =?us-ascii?Q?ZgKskoBlmrMS9snLGTUmRaLRNSJMX0cp2AcgQl8rmNMcjC5mHGwlkne/cQXD?=
+ =?us-ascii?Q?GFlfOjNXNzf7uuaUPNaWXUmIY6kwoXDtVnjYxDco66NE2JHW+Sjoay8LetiE?=
+ =?us-ascii?Q?9AziEMh7M14BUYqXyyc7TaCGUF5PeqQzBswNGBcvEsscvE5EWCunIleL9tfk?=
+ =?us-ascii?Q?fg3GpR2kU6CfkNrPdxbiiGqX+qAtvPx52hBtgdvcbRpjAInJycs/qtE48AFw?=
+ =?us-ascii?Q?xUXr9BXHSMxRfuBCxW/E4aJc1a989K/00yfh64qzfmt/1WGFdmKMnQ2AB5aH?=
+ =?us-ascii?Q?SVzsfDB3EIyc2gdiLg2D47cvZUs8HHKkjzETNoxHLVbkG4huwQQwlTErgcV5?=
+ =?us-ascii?Q?Q0AXu2K0hDX0QoMdL1RbeoHLkHgdwtr8lJ7rRlDITizPaAWqKQwbH5t8tatf?=
+ =?us-ascii?Q?sPdhvsVb4rVmQtZwoquQYScLtjwOinTcKutn7bOxW1k56bqu7HegDXllGqZi?=
+ =?us-ascii?Q?1GG1LJE0uJPs+LJqLMYelzX5pRjKIPgk+CK5D/N7r6NQHyFXF/LVAQHH45JR?=
+ =?us-ascii?Q?FIoXa7ww0bupFmeBYiUNJ7jXExBXi5R9TQ2RCgcgz7CpFr6SJVmvOX9LlxCU?=
+ =?us-ascii?Q?2GxxX9n5pEImaglzRdE5d/sgARcHPjFcSuKN7pQuk11nABhEL7sOm9SjjYl3?=
+ =?us-ascii?Q?sNeZPcoITklkbJl6YWhbDExBDPt/o5rHtvd1z6Lk9PUQXx6iIPwy1RjLIEtg?=
+ =?us-ascii?Q?RKAVXvyLfw3w6UnuEcaxHk0OTRcAHH6H6UdoFGTB5tXksWJJlADigFkid7S9?=
+ =?us-ascii?Q?HxI11++BJo0wBzqML07dc4D4i5bB0T8gp5rgOS7bGI1FykeJTAOAgabzWzy7?=
+ =?us-ascii?Q?Ys6BvNny/Z/5vuCFyyCEp3sqfvZb3xmb9G25eD+/cxOx0OSbdrHzJ24T9DGW?=
+ =?us-ascii?Q?eWk+YPHKy1w9JG9UV1OTff611NAKLI4jxdLiG/sAhbSeNuAqO/43iOpU+W1D?=
+ =?us-ascii?Q?yqFBLFfDoRHdYdcRFV2zTYaY8d3baeesXTqCGXfRywFUBxif9EZIITmaojMP?=
+ =?us-ascii?Q?2VZRlXvSP+Ek92Mv1p7MIqpIGC7vtrLFyiDvH9gPNp5X2SeJ84wrLc+IMtbJ?=
+ =?us-ascii?Q?ArVhX+GyAoyyW8EiXEABxoLZDpCBY6L854PNA66iKBI7LVTUQDi2TsDCA+ju?=
+ =?us-ascii?Q?GS6hofNIA78YYhWjiMgAFPybn7by3q1IOkCZvRjF/jgjgkal5cFEuyzzsjSv?=
+ =?us-ascii?Q?nX1Kjf/k2sUkpUWu9KfeeH0ATm6Jhvzk0XYOTSOKPcCtIpPOmYVXIO0ZeeDh?=
+ =?us-ascii?Q?fgrB9ND3kk64aAGx8YqAtt6InrvV+NwZeMeP5e3HZ1sAOjC5uD5UWuTibe8Z?=
+ =?us-ascii?Q?3ILg0tvtDMRtWUSodELeU+ITtFNNq0t841QqhtWjF8jBlqcQOsIDISze82tO?=
+ =?us-ascii?Q?wAHfppKlOhFa/VpMEbCfYB0sKhl1mSUfYCV2AQXf?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b91d7952-6820-4dcc-1f08-08ddd5c1ab90
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 14:49:54.4796
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k3WfQXpI9vlH/RMAzSt3xwpcg7p5ILYjpSyTSEGE87kK3liibmlwjKQdy8kn+l9xbTI0X552lGTS3d9BU5ey9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5092
 
-Hi Linus!
+Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
+GFP_NOWAIT implicitly include __GFP_NOWARN.
 
-The following changes since commit d9104cec3e8fe4b458b74709853231385779001f:
+Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
+`GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
+redundant flags across subsystems.
 
-  Merge tag 'bpf-next-6.17' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next (2025-07-30 09:58:50 -0700)
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ virt/kvm/async_pf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-are available in the Git repository at:
+diff --git a/virt/kvm/async_pf.c b/virt/kvm/async_pf.c
+index 0ee4816b079a..b8aaa96b799b 100644
+--- a/virt/kvm/async_pf.c
++++ b/virt/kvm/async_pf.c
+@@ -192,7 +192,7 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ 	 * do alloc nowait since if we are going to sleep anyway we
+ 	 * may as well sleep faulting in page
+ 	 */
+-	work = kmem_cache_zalloc(async_pf_cache, GFP_NOWAIT | __GFP_NOWARN);
++	work = kmem_cache_zalloc(async_pf_cache, GFP_NOWAIT);
+ 	if (!work)
+ 		return false;
+ 
+-- 
+2.34.1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc1
-
-for you to fetch changes up to ae633388cae349886f1a3cfb27aa092854b24c1b:
-
-  pptp: fix pptp_xmit() error path (2025-08-07 07:47:04 -0700)
-
-----------------------------------------------------------------
-Previous releases - regressions:
-
- - netlink: avoid infinite retry looping in netlink_unicast()
-
-Previous releases - always broken:
-
- - packet: fix a race in packet_set_ring() and packet_notifier()
-
- - ipv6: reject malicious packets in ipv6_gso_segment()
-
- - sched: mqprio: fix stack out-of-bounds write in tc entry parsing
-
- - net: drop UFO packets (injected via virtio) in udp_rcv_segment()
-
- - eth: mlx5: correctly set gso_segs when LRO is used, avoid false
-   positive checksum validation errors
-
- - netpoll: prevent hanging NAPI when netcons gets enabled
-
- - phy: mscc: fix parsing of unicast frames for PTP timestamping
-
- - number of device tree / OF reference leak fixes
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      ipa: fix compile-testing with qcom-mdt=m
-
-Bence Csókás (1):
-      net: mdio_bus: Use devm for getting reset GPIO
-
-Buday Csaba (1):
-      net: phy: smsc: add proper reset flags for LAN8710A
-
-Christoph Paasch (1):
-      net/mlx5: Correctly set gso_segs when LRO is used
-
-Edward Cree (1):
-      sfc: unfix not-a-typo in comment
-
-Eric Dumazet (4):
-      pptp: ensure minimal skb length in pptp_xmit()
-      selftests: avoid using ifconfig
-      ipv6: reject malicious packets in ipv6_gso_segment()
-      pptp: fix pptp_xmit() error path
-
-Fedor Pchelkin (1):
-      netlink: avoid infinite retry looping in netlink_unicast()
-
-Florian Fainelli (1):
-      net: mdio: mdio-bcm-unimac: Correct rate fallback logic
-
-Geert Uytterhoeven (2):
-      dpll: Make ZL3073X invisible
-      dpll: zl3073x: ZL3073X_I2C and ZL3073X_SPI should depend on NET
-
-Heiner Kallweit (1):
-      net: ftgmac100: fix potential NULL pointer access in ftgmac100_phy_disconnect
-
-Horatiu Vultur (1):
-      phy: mscc: Fix parsing of unicast frames
-
-Ido Schimmel (2):
-      selftests: net: Fix flaky neighbor garbage collection test
-      selftests: netdevsim: Xfail nexthop test on slow machines
-
-Jakub Kicinski (9):
-      Merge branch 'net-ethernet-fix-device-leaks'
-      netpoll: prevent hanging NAPI when netcons gets enabled
-      netlink: specs: ethtool: fix module EEPROM input/output arguments
-      eth: fbnic: unlink NAPIs from queues on error to open
-      net: devmem: fix DMA direction on unmapping
-      selftests: net: packetdrill: xfail all problems on slow machines
-      Revert "net: mdio_bus: Use devm for getting reset GPIO"
-      eth: fbnic: remove the debugging trick of super high page bias
-      Merge branch 'eth-fbnic-fix-drop-stats-support'
-
-Johan Hovold (5):
-      net: dpaa: fix device leak when querying time stamp info
-      net: enetc: fix device and OF node leak at probe
-      net: gianfar: fix device leak when querying time stamp info
-      net: mtk_eth_soc: fix device leak at probe
-      net: ti: icss-iep: fix device and OF node leaks at probe
-
-Krzysztof Kozlowski (1):
-      dt-bindings: net: Replace bouncing Alexandru Tachici emails
-
-Lorenzo Bianconi (2):
-      net: airoha: Fix PPE table access in airoha_ppe_debugfs_foe_show()
-      net: airoha: npu: Add missing MODULE_FIRMWARE macros
-
-Luca Weiss (1):
-      net: ipa: add IPA v5.1 and v5.5 to ipa_version_string()
-
-Maher Azzouzi (1):
-      net/sched: mqprio: fix stack out-of-bounds write in tc entry parsing
-
-Meghana Malladi (1):
-      net: ti: icssg-prueth: Fix skb handling for XDP_PASS
-
-Michal Luczaj (1):
-      kcm: Fix splice support
-
-Michal Schmidt (1):
-      benet: fix BUG when creating VFs
-
-Mohsin Bashir (2):
-      eth: fbnic: Fix tx_dropped reporting
-      eth: fbnic: Lock the tx_dropped update
-
-Quang Le (1):
-      net/packet: fix a race in packet_set_ring() and packet_notifier()
-
-Samiullah Khawaja (1):
-      net: Update threaded state in napi config in netif_set_threaded
-
-Sharath Chandra Vurukala (1):
-      net: Add locking to protect skb->dev access in ip_output
-
-Takamitsu Iwai (1):
-      net/sched: taprio: enforce minimum value for picos_per_byte
-
-Wang Liang (1):
-      net: drop UFO packets in udp_rcv_segment()
-
- .../devicetree/bindings/net/adi,adin.yaml          |   2 +-
- .../devicetree/bindings/net/adi,adin1110.yaml      |   2 +-
- Documentation/netlink/specs/ethtool.yaml           |   6 +-
- drivers/dpll/zl3073x/Kconfig                       |  10 +-
- drivers/net/ethernet/airoha/airoha_npu.c           |   2 +
- drivers/net/ethernet/airoha/airoha_ppe.c           |  26 +++--
- drivers/net/ethernet/emulex/benet/be_cmds.c        |   2 +-
- drivers/net/ethernet/faraday/ftgmac100.c           |   7 +-
- drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c |   4 +-
- drivers/net/ethernet/freescale/enetc/enetc_pf.c    |  14 ++-
- drivers/net/ethernet/freescale/gianfar_ethtool.c   |   4 +-
- drivers/net/ethernet/mediatek/mtk_wed.c            |   1 -
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c    |   1 +
- drivers/net/ethernet/meta/fbnic/fbnic_netdev.c     |  14 ++-
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.c       |   4 +-
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.h       |   6 +-
- drivers/net/ethernet/sfc/tc_encap_actions.c        |   2 +-
- drivers/net/ethernet/ti/icssg/icss_iep.c           |  23 ++++-
- drivers/net/ethernet/ti/icssg/icssg_common.c       |  15 +--
- drivers/net/ipa/Kconfig                            |   2 +-
- drivers/net/ipa/ipa_sysfs.c                        |   6 +-
- drivers/net/mdio/mdio-bcm-unimac.c                 |   5 +-
- drivers/net/phy/mscc/mscc_ptp.c                    |   1 +
- drivers/net/phy/mscc/mscc_ptp.h                    |   1 +
- drivers/net/phy/smsc.c                             |   1 +
- drivers/net/ppp/pptp.c                             |  18 ++--
- include/linux/skbuff.h                             |  23 +++++
- include/net/dst.h                                  |  12 +++
- include/net/udp.h                                  |  24 +++--
- net/core/dev.c                                     |  26 ++---
- net/core/devmem.c                                  |   6 +-
- net/core/devmem.h                                  |   7 +-
- net/core/netpoll.c                                 |   7 ++
- net/ipv4/ip_output.c                               |  15 ++-
- net/ipv6/ip6_offload.c                             |   4 +-
- net/kcm/kcmsock.c                                  |   6 ++
- net/netlink/af_netlink.c                           |   2 +-
- net/packet/af_packet.c                             |  12 +--
- net/sched/sch_mqprio.c                             |   2 +-
- net/sched/sch_taprio.c                             |  21 +++-
- tools/testing/selftests/drivers/net/Makefile       |   1 +
- .../testing/selftests/drivers/net/napi_threaded.py | 111 +++++++++++++++++++++
- .../selftests/drivers/net/netdevsim/nexthop.sh     |   2 +-
- .../selftests/net/packetdrill/ksft_runner.sh       |  19 +---
- tools/testing/selftests/net/test_neigh.sh          |   6 +-
- tools/testing/selftests/net/vlan_hw_filter.sh      |  16 +--
- 46 files changed, 363 insertions(+), 138 deletions(-)
- create mode 100755 tools/testing/selftests/drivers/net/napi_threaded.py
 
