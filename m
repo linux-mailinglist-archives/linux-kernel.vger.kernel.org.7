@@ -1,162 +1,130 @@
-Return-Path: <linux-kernel+bounces-759252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F7AB1DB02
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:49:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC878B1DB05
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C657258EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4977257C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0277B262FE6;
-	Thu,  7 Aug 2025 15:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218D71C5D72;
+	Thu,  7 Aug 2025 15:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z4NT5Pr+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vPXmgSTM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K89rIgAr"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E200F2528F7
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 15:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3238325A352;
+	Thu,  7 Aug 2025 15:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754581776; cv=none; b=LW96N4lvxJFjROdG7+hCC0JbSgt7JSPgsRwHVlwwhA+1QjdHgTzeS4TQ/lfzyJ1KgVPcUoOYAMwVy/4QWVMoHhL6fJ0DYWjxeS/cQXTtnR7uVVslXDien1NIP1vr0/ZUZQKjOUe8hnA1TCGf9wy6xX7nZPSsciSC3uVbRuEHmx4=
+	t=1754581801; cv=none; b=sav85xu0peg04UcVT98ZVBBLLBEYaymPL4ZDPTw03eOzmhLXrPvlAZjYH8t46ADGN056tJHtIB/fl8YTjurbfUm4iZ2IdJiEZ6TogeoQjBpzRumy1+fVpFOlTzZPxdrHUQk838L5bCekX/fYRrwEqwaEw4SS5TiTq+V2MjLuZ80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754581776; c=relaxed/simple;
-	bh=WFr/gKTSVj67oOJqXVUcwXdGsZmIexqWWRTJaCEIZWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJip5H1tdHGf0SgzJxF/UdkOyaeDPBjX5uHHnMY6/qv2B1xmjJtUd1Gg+yaFHfssBMWj2m75j7fpVurLallSLfCN8ysmOkX6BciaaBvPu/79OYlqfTKF8NjkJU/D0ek6dRrlb6jDJsFeycN1amHW9cQi4pWn2Ee5SNVw1gwDXjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z4NT5Pr+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vPXmgSTM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 7 Aug 2025 17:49:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754581771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vg0fBlM3Xy11uHUlRTsjiMCsXySl1087EGrPp8lXIgs=;
-	b=z4NT5Pr+POZMDa7h9M8qlxJI7SNC3HpqdprM3QxpGyRpAX5VVi8374th8xYTu2bJ7Bs8zM
-	Xxk+n7ii9XZU41onLagxy0/EiAmF2JKIOlLcHG9r39WMyAvuhCqx9l08Gvc5rJp2da3pvh
-	DXlATTe06kHzeQZTaFYzKNIPQ8ibFZHUBRXJ78c+6Kn8YwKvYMDieqicn1eIUlzO7HxVVS
-	o2gW/lHEqN/G1Zb16kJ9qWxW3g6FmGT+dBWn6+Yz5QbS1hO2W/FNWRe1auPtCswcv76bD1
-	4Lc+AcWyKHHCG7qEq7Mv+Zlm5HCGXe1U76t2DJXEUa+1UT+kp9NCL69u4MBc3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754581771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vg0fBlM3Xy11uHUlRTsjiMCsXySl1087EGrPp8lXIgs=;
-	b=vPXmgSTMGNbjPVtJ5B3I0zacsObwq9fvm7SWNhbov1n6ndz+gZQ8sfm62ujxnt32CRRNYc
-	0cPlS/rfMQocACDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	kprateek.nayak@amd.com, vineethr@linux.ibm.com
-Subject: Re: [PATCH V7 01/11] sched: Scheduler time slice extension
-Message-ID: <20250807154929.4Wpr6V4N@linutronix.de>
-References: <20250724161625.2360309-2-prakash.sangappa@oracle.com>
- <87ms8cchqf.ffs@tglx>
+	s=arc-20240116; t=1754581801; c=relaxed/simple;
+	bh=g1Z9vnuEvfB0Ol+v/vwya8CA1aQEqabWnHA43TWxiiE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q4kiGlAAwcmmJnvfpRB2dv4Xv/JHTXfXu64Y+GOKG1IfranW5iXKnSJc1JiZ61J6epL5iUo+q/0Iw0qXPLI4GkfELjSu1WwfJ50ZIqI0VyfAqX8K5RGdaKVbdw86sUIGiHnc233lAtkTPNGlmK3pmBYIs6VnywO717zCubmsNtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K89rIgAr; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2401b855635so8744715ad.2;
+        Thu, 07 Aug 2025 08:49:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754581799; x=1755186599; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tb2sXr7iZMxtDZGeGysd/W5Iy0nEDu8fCyzmsqY0v14=;
+        b=K89rIgArE4QQ4dJYSLJ+fHsy3N6oArewk62SJlx/y5TSzk6vyMmyN2J3xHmB6Sg0Gu
+         CxSsMOqQzOgPT44fmVJRNOkvTyCLZyl7zvAG6rmsLnFIpfTCznISXwEWfT8Dv9bBE/SK
+         lKhWV1aOGBVYndHjGLy6o5Th6cO9bDatpl7b08APuzW7IAFgY6njw7oXZkLKWZX4PYI8
+         mVcXseLALq2c6t6i3WyKrCIgZm0+mq363cXou5MP96SmvSssmunvrm5fsSHRXoOSAcbt
+         ZkEfsheHKI/8yKBKhwLjg5doYzIAtDVg61UfV1sv2ToUiSpcSzIxDTNPOTzZDphrWS5y
+         DM0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754581799; x=1755186599;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tb2sXr7iZMxtDZGeGysd/W5Iy0nEDu8fCyzmsqY0v14=;
+        b=KkshF6cM9K1IitxdUzam6EXvsNJFStcohYCFBl07YY8lmd4YwRtq1iFPOkhAfkTAdP
+         nc0VQ8JgG8Kfy22JIJU0H+q8aFNtvPGrFEbQYB7Wa3iw+6XMkKy+ttUKmHr4KBMBOd65
+         DsQuUfOvyi9u/IQO4wkhVLmvj8RRQkcfbsBo6YnL6729Y3W02nUYEf6dJJQO1Xxh/+yz
+         l4xU9qYXBGcCD+/+GiEtmikY7zzvRV5mmCvEp1Lqx9Ej4d/3h/0IBpOBat1LEh+Fd1Z4
+         NZNXqUuYRAo+ETw+/6x4mD6djh78JFgF7e1U14y0nTLgF5IW+Z6jZAhNqumb7D9XIlQk
+         2tRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJWSjR16SLDGkIcEfuJM3lVp1P+4xKE0jZN1s4zeny+BvUK8rLZBgJpmPDc3xH8Gzf/otArAnTVxBk990=@vger.kernel.org, AJvYcCXl1MpE6m16rYZa8ztgHMvIIalo7p1b/FQY6AedX+5nsrCiZYRmAqpFNt1FlFZgKZn3IperZHMlQs0Qe0Up3Dsd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCG+BnA+/9ldurhMLVB6UyW2WlcNCLUqEHF9iuTaTLn0YQbXrG
+	LmPcnJ71gDX89CE48bEphMe8bUOB8bfUqLAsWkKy8Fd4ytXWbuZJDUaV
+X-Gm-Gg: ASbGnctwWmkqGqsVACrf6MrZYcbMF9sDHGxOaPl0/0QijUE3bBmDBciQ2DhIWLg6/7g
+	Wnm4U5cBG20UdguOAnojJ+Rhdv2OhuBRmjtOgls84MtD4Zqw52RsxL3mQKSGRZ4Nb4b87C2yxp5
+	K5QIn4z2Y51xlN9XLFjjCdCjPEPNy9084B/oMEdxX2RTtwG5QtAx1j8/S6HcvwNl7YJKNg5Ak1K
+	+NLkYJte/ZWG4Ak1yEaZmXY/MXGNQo+eyh4WxClJ+JGDbp++FxqwSdc9UBg92Dcs08/Nh2BJdsg
+	paPdhVTihCHbriMKdahiptnJHemzFliVqZTUggpFZjMML5Iqq0q0PPMTkdXWBM8I4OkDdurquth
+	GWWKvvUeD4yVSJzIKNME5mfXImWRQV1l1ZA==
+X-Google-Smtp-Source: AGHT+IGtBI9mRz+JUlweCAYDzHjTxQ+R6ODQboeLUripcDbFR1smhvfREX+e7Demyuc5DLZ15yPraQ==
+X-Received: by 2002:a17:902:ebc1:b0:242:9bc5:31a0 with SMTP id d9443c01a7336-2429f5bcd01mr110369575ad.56.1754581799169;
+        Thu, 07 Aug 2025 08:49:59 -0700 (PDT)
+Received: from server.. ([103.250.145.191])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899b5f2sm187873315ad.125.2025.08.07.08.49.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 08:49:58 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	shuah@kernel.org,
+	broonie@kernel.org
+Cc: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: arm64: Check fread return value in exec_target
+Date: Thu,  7 Aug 2025 21:19:47 +0530
+Message-ID: <20250807154950.24105-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <87ms8cchqf.ffs@tglx>
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-06 22:34:00 [+0200], Thomas Gleixner wrote:
-> On Thu, Jul 24 2025 at 16:16, Prakash Sangappa wrote:
->=20
-> The obvious way to solve both issues is to clear NEED_RESCHED when
-> the delay is granted and then do in syscall_enter_from_user_mode_work()
->=20
->         rseq_delay_sys_enter()
->         {
->              if (unlikely(current->rseq_delay_resched =3D=3D GRANTED)) {
-> 		    set_tsk_need_resched(current);
->                     schedule();
->              }      =20
->         }     =09
->=20
-> No?
->=20
-> It's debatable whether the schedule() there is necessary. Removing it
-> would allow the task to either complete the syscall and reschedule on
-> exit to user space or go to sleep in the syscall. But that's a trivial
-> detail.
+Fix -Wunused-result warning generated when compiled with gcc 13.3.0,
+by checking fread's return value and handling errors, preventing
+potential failures when reading from stdin.
 
-Either schedule() or setting NEED_RESCHED is enough.
+Fixes compiler warning:
+warning: ignoring return value of 'fread' declared with attribute
+'warn_unused_result' [-Wunused-result]
 
-> The important point is that the NEED_RESCHED semantics stay sane and the
-> problem is solved right on the next syscall entry.
->=20
-=E2=80=A6
-> > +static inline bool rseq_delay_resched(unsigned long ti_work)
-> > +{
-> > +	if (!IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY))
-> > +		return false;
-> > +
-> > +	if (unlikely(current->rseq_delay_resched !=3D RSEQ_RESCHED_DELAY_PROB=
-E))
+Fixes: 806a15b2545e ("kselftests/arm64: add PAuth test for whether exec() changes keys")
 
-The functions and the task_struct member field share the same.
+Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+---
+ tools/testing/selftests/arm64/pauth/exec_target.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> > +		return false;
->=20
-> Why unlikely? The majority of applications do not use this.
->=20
-> > +
-> > +	if (!(ti_work & (_TIF_NEED_RESCHED|_TIF_NEED_RESCHED_LAZY)))
-> > +		return false;
->=20
-> The caller already established that one of these flags is set, no?
+diff --git a/tools/testing/selftests/arm64/pauth/exec_target.c b/tools/testing/selftests/arm64/pauth/exec_target.c
+index 4435600ca400..c22db59194eb 100644
+--- a/tools/testing/selftests/arm64/pauth/exec_target.c
++++ b/tools/testing/selftests/arm64/pauth/exec_target.c
+@@ -13,7 +13,12 @@ int main(void)
+ 	unsigned long hwcaps;
+ 	size_t val;
+ 
+-	fread(&val, sizeof(size_t), 1, stdin);
++	size_t size = fread(&val, sizeof(size_t), 1, stdin);
++
++	if (size != 1) {
++		fprintf(stderr, "Could not read input from stdin\n");
++		return -1;
++	}
+ 
+ 	/* don't try to execute illegal (unimplemented) instructions) caller
+ 	 * should have checked this and keep worker simple
+-- 
+2.43.0
 
-correct, and if they are set, this never gets to false.
-
-> > +	if (__rseq_delay_resched()) {
-> > +		clear_tsk_need_resched(current);
->=20
-> Why has this to be inline and is not done in __rseq_delay_resched()?
-
-A SCHED_OTHER wake up sets _TIF_NEED_RESCHED_LAZY so
-clear_tsk_need_resched() will revoke this granting an extension.
-
-The RT/DL wake up will set _TIF_NEED_RESCHED and
-clear_tsk_need_resched() will also clear it. However this one
-additionally sets set_preempt_need_resched() so the next preempt
-disable/ enable combo will lead to a scheduling event. A remote wakeup
-will trigger an IPI (scheduler_ipi()) which also does
-set_preempt_need_resched().
-
-If I understand this correct then a RT/DL wake up while the task is in
-kernel-mode should lead to a scheduling event assuming we pass a
-spinlock_t (ignoring the irq argument).
-Should the task be in user-mode then we return to user mode with the TIF
-flag cleared and the NEED-RESCHED flag folded into the preemption
-counter.
-
-I am once again asking to limit this to _TIF_NEED_RESCHED_LAZY.
-
-> > +		return true;
-> > +	}
-> > +	return false;
->=20
-
-=E2=80=A6
-
-> Thanks,
->=20
->         tglx
-
-Sebastian
 
