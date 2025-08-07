@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-758684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D882DB1D299
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0413BB1D29C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E85A8583523
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09F77239A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89337221704;
-	Thu,  7 Aug 2025 06:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDE321CA02;
+	Thu,  7 Aug 2025 06:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/Cs9Zff"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy89nCdr"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E514AEE2;
-	Thu,  7 Aug 2025 06:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7484A06;
+	Thu,  7 Aug 2025 06:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754549028; cv=none; b=WSXWbgNa/3vCUTtNKrCqKTvHhEEinKI9tBoQijJFxrlCuMo3c7laQxTvaLpa8BZhEtRrlxyV0APYcCvwzqI6RJFAqwPzxCLTWLOZGJqVRmjau5NSLQ/C1JuyaRk5VetWo82SNZlVlUz0GsdteBjvqxe6a6ViH4VPtiCIla1BifE=
+	t=1754549192; cv=none; b=VfpeQiP73i/bMeQ5UKIirKl4ZS563gOFryLvlDtnKLRc1qIsEaRZkMtoDZDKyKjpb2uSM7JFwdGV5TWWneU8+s+7rprxK+Tb8lHouYhbdf9LCdCVyUC8LoPhX/jebDKKDwutvsMOzFSCjVohtJteGrTK7qWqrDPrxZzyj0bjYxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754549028; c=relaxed/simple;
-	bh=1IMmTBxYG/qknqYQq7BIw8BK9rTqvbTdhk5QRlq9vU4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iLcaNj3EYA6QqlQbAl9o7odYavB5605OLHP5pkUHsGECXhH2QcWYZtVZwnOVdCqGnYwOnL6WnMGf+JIvyaNvDuE/r9SkpEad5QQ5jQx6vlibmdiTsSviE+WCAmtIDfbcg7PEvWkGPKqbjdjAnXsVaalGRUTewFNTtaT6QhsXu1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/Cs9Zff; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5122C4CEEB;
-	Thu,  7 Aug 2025 06:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754549028;
-	bh=1IMmTBxYG/qknqYQq7BIw8BK9rTqvbTdhk5QRlq9vU4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=l/Cs9ZffW5Nf9c/YIpemLhHrUqnC8Szc1rTh/MLAeo9Jgo0xwBfv+C+NtuzRvNxS9
-	 bnyIaDi37wMFukAIDqm++IFPrKF3IuEEGEuUdIVrhOatrAaZjCr1zLNhW5ByERuBHr
-	 QwjFFpQj0tn3rNj7P/cMqRZ1kQfJXAiW4aG5Ial/Ig/Qsd7rYWVuGI4W5Pa/0NGhMi
-	 lDS00TTfdyF8hCEtbLNxj9sY0HsNcq19wJO3ZaaUA6YQEhEq2PN//NBIvjRp3BB9Q3
-	 SagLbzea1RrRLZnhQGcNfs/iCH4Ybv1DqGvswsxMO1HoSGyJPHXnV0hGKO7qXRtba6
-	 LFzlw0JXsAuQw==
-Message-ID: <22204a4a-9c10-4aca-8159-a0e69c74cb34@kernel.org>
-Date: Thu, 7 Aug 2025 08:43:44 +0200
+	s=arc-20240116; t=1754549192; c=relaxed/simple;
+	bh=BQw9Ee3xh5tlkCKjINqME/B8sebkBqSB2PSgMl7bdfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W5Lcllnm7l/d6sB/4WzrMC+Gz+NzA1wSwihQMDPwTQTonlwnrwV1KqJR8BtU2h8/1YwwFm/Fod0ezikW2kNS/v96xNBmzzFIb6m4A++gytYUWeKrDVoIyxsei14vo9cR9XYsBIb28JbUk1zY1ZmxdHqz3SA2mk3W2A3ZRGjIRw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fy89nCdr; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-33229f67729so5521261fa.1;
+        Wed, 06 Aug 2025 23:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754549189; x=1755153989; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QFkLRKwmtXs5FXxCDyQ4QjXkb+b+IkADkIzCz8KAzTk=;
+        b=Fy89nCdr4udYopun6Tio7mE0YiiyAaEpm/csI6wefQ8kwTFN5JWLs46Tfi2wBpk32P
+         RMkl2pqGm/L5Bv1yT7+mOs1ua97vCIf9bZ8mWXLyK2b6XOnKc8mBE2KOxLkeh3XdVnPE
+         q5ey7yMrKzaBehirkZQlmjj7uhkcXLvt3BbPXd1nO/NAymUNUeEl5WB7hKQTw4hNZCMa
+         StOF8tEnfPYOrjFu64QE6UJ8c1fyF2GjZfq05BZNwJSVCZkm8N79rRMT1Vh47bQbkdq1
+         1Zn9B8CYAwwTDfpd6Y0AD0dbYBRRwIKNsnkofkFC+SkDJIMOPMOLzQ64iIczhiRBbtHY
+         EkZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754549189; x=1755153989;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QFkLRKwmtXs5FXxCDyQ4QjXkb+b+IkADkIzCz8KAzTk=;
+        b=LwRNyzm9VDCmVuV4yHhy6xNIjUrogTPCnD9QjFSuN0fzCWkzLSxS+FzzwFa/zhgGil
+         onGtH8CK3OJWeX7VsVQa1tXwapfp2mq00WZjZWYoWPZCcBp+e3uWYcl5HOfoSDGrIjm3
+         c1B3eJVI3y871lhGmrJ96i0KGVd4zymC7bqGi0tVQVwsRT/59CP8bkca4kxpkIb+UDub
+         NYlUsjkFJM2xWdBTBmMc6+KeF1DOznuqWM1c9lbr4+EC02/8BBKkwsRYc32N81uVb2s5
+         vwLEKr4PbCPdkhr0JhuWXU4KMaiQEyoWyL0GtlLE4Ej/11liutq8+9R1sLkHupfH5/FN
+         Axmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrXG9djPTHS9wJt0KO3dGNCbdynHeEfW1+cMA2sxfKtHZJAUgHGsn7HoOh0b858pZyyQ5PQPws1ZA0@vger.kernel.org, AJvYcCXHPNP8VIQDNv0cinu+YkkAu6sCr7AG4N+n9Moy62JWPlrv3t8TXKB3QFeQjvZD6ZPvkDYxluvFoTrzc84I@vger.kernel.org, AJvYcCXhOtXgiQT5Atzjbop2A0OD1yhHM2p8wPmMk1Qw84AoXJn/6OXW62QuE5kS7c5Xy/n4a0aNI0GyehRf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiO4SbtRPduBVRGJWSdj8FFg2hXM4S28Aq1L2Wc/PJRtUIjZWG
+	ec7Eux5j8cwfHAd9c/Na2qGSfTraLhG+pzibcqPQH+ovdB0RVFSoSY+P
+X-Gm-Gg: ASbGnctywNXsVRbj8yelIOrvEOtYkeemnoZU7hQy/4c0E4BdPJfSRVG7nNlrwbeD4lP
+	Nul/G0oRQbUDQJSVppSpmO6BdzF/DVZfAdnjNREho3O36GwYnq8JPLpRvIYA4rmmiypPJ8M9piQ
+	UtPCf5/gDCSG3X5qNqHvXZGcxqP3/cmNE3of2ePvpiLg7hulwiSU+3SUHCjDwKmTfvqNlzmXcCw
+	21bH/u/bHq3kO3OXNP8SXZ5Fr7RuKjMGqZhyLYjnCvtRaOR11IUb2l1ElYw/VkgGhhgTxKtNcH1
+	/x0XJ5NbqLcbnmHzs5yq4N6TyQ5Wi7Ter0+/C4PDdvFYEyu4Zvt5FC04a3bN8CGop8PTkLcLJfo
+	88ePNigBMaHqGLgc+PQkOjT3kH4i7aeoXXMBFNPd4OlnvIAraf7U6o9OwFKHOv3YXsAMeud+2rV
+	8UE6OyLwflyU8h4Q==
+X-Google-Smtp-Source: AGHT+IFneUhtOvhFzu2sBeJ9GfQ3QS+MKB6C3adzy8PGoiSDTRYFRQlZwQzcl5uV7vnTsp1Ose5XBg==
+X-Received: by 2002:a2e:bea5:0:b0:332:1720:2eb3 with SMTP id 38308e7fff4ca-33380fd6cc7mr16829411fa.0.1754549188517;
+        Wed, 06 Aug 2025 23:46:28 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33250984d0bsm20215391fa.1.2025.08.06.23.46.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 23:46:27 -0700 (PDT)
+Message-ID: <b1023916-23bb-455f-816a-1ca9412a6e32@gmail.com>
+Date: Thu, 7 Aug 2025 09:46:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,166 +82,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] tty: serial/8250: Fix build warning in
- serial8250_probe_acpi()
-From: Jiri Slaby <jirislaby@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>,
- Abinash Singh <abinashsinghlalotra@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sunil V L <sunilvl@ventanamicro.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
- <f765eae4-f83e-4c25-9697-2705afd7b9b8@app.fastmail.com>
- <b9f715c0-082f-46a3-b332-d5f6bf53ad71@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <b9f715c0-082f-46a3-b332-d5f6bf53ad71@kernel.org>
+Subject: Re: [PATCH 4/8] iio: adc: ad7476: Use correct channel for bit info
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1754463393.git.mazziesaccount@gmail.com>
+ <7c353ad496e0056e9fb3869bf07e7fd66d816018.1754463393.git.mazziesaccount@gmail.com>
+ <20250806160413.00005a75@huawei.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250806160413.00005a75@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 07. 08. 25, 7:25, Jiri Slaby wrote:
-> On 06. 08. 25, 9:01, Arnd Bergmann wrote:
->> Note how serial8250_register_8250_port() ands up just copying
->> individual members of the passed uart_8250_port structure into
->> the global array of the same type, so one way of addressing
->> this would be to use a structure for initialization that only
->> contains a subset of the uart_8250_port members and can still
->> be allocated on the stack, or possibly be constant.
+On 06/08/2025 18:04, Jonathan Cameron wrote:
+> On Wed, 6 Aug 2025 10:03:43 +0300
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 > 
-> Yes:
-> https://lore.kernel.org/all/ 
-> f84c2ee3-77b4-41c4-8517-26dfb44a2276@kernel.org/
+>> The ad7476 supports ADCs which use separate GPIO for starting the
+>> conversion. For such devices, the driver uses different channel
+>> information if the GPIO is found. The bit information is still always
+>> used from the original (non 'convstart') channels.
+>>
+>> This has not been causing problems because the bit information for the
+>> 'convstart' -channel and the 'normal' -channel is identical. It,
+>> however, will cause issues if an IC has different characteristics for an
+>> 'convstart' -channel and regular channel. Furthermore, this will cause
+>> problems if a device always requires the convstart GPIO and thus only
+>> defines the convstart channel.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> ---
+>> It appears that the _only_ difference between the 'convstart' -channel
+>> and the 'normal' channel is a lack of the 'raw-read' support. I might
+>> prefer seeing the _same_ channel information being used for 'convstart'
+>> and 'normal' channels, just setting the IIO_CHAN_INFO_RAW -bit when the
+>> CONVSTART GPIO is found. This would allow getting rid of the 'convstart'
+>> -channel spec altogeher. Having only one channel info spec would also
+>> help the code-reader to understand that the driver really provides only
+>> one data channel to the users. Currently a quick reader may assume the
+>> driver for some reason provides both the 'convstart' and the 'normal'
+>> channels.
+>>
+>> Adding the IIO_CHAN_INFO_RAW when CONVSTART GPIO is obtained would
+>> however require the channel information structs to be mutable - which may
+>> be seen as a "no, no" by some. Hence this minimally intrusive patch.
+> If you duplicate them before updating that is probably fine, just keep the
+> ones in the chip info static const.
 
-As a PoC, these members from uart_8250_port are really used in 
-serial8250_register_8250_port():
-struct uart_8250_port2 {
-         long unsigned int          iobase;               /*     0     8 */
-         resource_size_t            mapbase;              /*     8     8 */
-         unsigned char *            membase;              /*    16     8 */
-         long unsigned int          irqflags;             /*    24     8 */
-         upf_t                      flags;                /*    32     8 */
-         enum uart_iotype           iotype;               /*    40     4 */
-         unsigned int               tx_loadsz;            /*    44     4 */
-         unsigned int               type;                 /*    48     4 */
-         u32                        overrun_backoff_time_ms; /*    52 
-  4 */
-         u32                        capabilities;         /*    56     4 */
-         unsigned int               line;                 /*    60     4 */
-         /* --- cacheline 1 boundary (64 bytes) --- */
-         unsigned int               uartclk;              /*    64     4 */
-         unsigned int               ctrl_id;              /*    68     4 */
-         unsigned int               port_id;              /*    72     4 */
-         unsigned int               irq;                  /*    76     4 */
-         unsigned int               fifosize;             /*    80     4 */
-         u16                        bugs;                 /*    84     2 */
-         u16                        lsr_save_mask;        /*    86     2 */
-         unsigned char              regshift;             /*    88     1 */
-         unsigned char              hub6;                 /*    89     1 */
+This will mean allocating a new channel spec for each instance of this 
+driver. Tradeoff seems to be clarity Vs memory consumption then. Well, I 
+suppose systems don't have that many of these ADCs, right?
 
-         /* XXX 6 bytes hole, try to pack */
+Well, I'll do this if no-one objects then.
 
-         resource_size_t            mapsize;              /*    96     8 */
-         struct serial_rs485        rs485;                /*   104    32 */
-         /* --- cacheline 2 boundary (128 bytes) was 8 bytes ago --- */
-         struct serial_rs485        rs485_supported;      /*   136    32 */
-         void *                     private_data;         /*   168     8 */
-         struct uart_8250_dma *     dma;                  /*   176     8 */
-         void                       (*rs485_start_tx)(struct 
-uart_8250_port *, bool); /*   184     8 */
-         /* --- cacheline 3 boundary (192 bytes) --- */
-         void                       (*rs485_stop_tx)(struct 
-uart_8250_port *, bool); /*   192     8 */
-         void                       (*throttle)(struct uart_port *); /* 
-  200     8 */
-         void                       (*unthrottle)(struct uart_port *); 
-/*   208     8 */
-         u32                        (*serial_in)(struct uart_port *, 
-unsigned int); /*   216     8 */
-         void                       (*serial_out)(struct uart_port *, 
-unsigned int, u32); /*   224     8 */
-         void                       (*set_termios)(struct uart_port *, 
-struct ktermios *, const struct ktermios  *); /*   232     8 */
-         void                       (*set_ldisc)(struct uart_port *, 
-struct ktermios *); /*   240     8 */
-         unsigned int               (*get_mctrl)(struct uart_port *); /* 
-   248     8 */
-         /* --- cacheline 4 boundary (256 bytes) --- */
-         void                       (*set_mctrl)(struct uart_port *, 
-unsigned int); /*   256     8 */
-         unsigned int               (*get_divisor)(struct uart_port *, 
-unsigned int, unsigned int *); /*   264     8 */
-         void                       (*set_divisor)(struct uart_port *, 
-unsigned int, unsigned int, unsigned int); /*   272     8 */
-         int                        (*startup)(struct uart_port *); /* 
-280     8 */
-         void                       (*shutdown)(struct uart_port *); /* 
-  288     8 */
-         int                        (*handle_irq)(struct uart_port *); 
-/*   296     8 */
-         void                       (*pm)(struct uart_port *, unsigned 
-int, unsigned int); /*   304     8 */
-         void                       (*handle_break)(struct uart_port *); 
-/*   312     8 */
-         /* --- cacheline 5 boundary (320 bytes) --- */
-         int                        (*rs485_config)(struct uart_port *, 
-struct ktermios *, struct serial_rs485 *); /*   320     8 */
-         struct device *            dev;                  /*   328     8 */
-         u32                        (*dl_read)(struct uart_8250_port *); 
-/*   336     8 */
-         void                       (*dl_write)(struct uart_8250_port *, 
-u32); /*   344     8 */
-
-         /* size: 352, cachelines: 6, members: 46 */
-         /* sum members: 346, holes: 1, sum holes: 6 */
-         /* last cacheline: 32 bytes */
-};
-
-
--- 
-js
-suse labs
+>> ---
+>>   drivers/iio/adc/ad7476.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+>> index 7b6d36999afc..fc701267358e 100644
+>> --- a/drivers/iio/adc/ad7476.c
+>> +++ b/drivers/iio/adc/ad7476.c
+>> @@ -121,8 +121,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+>>   
+>>   		if (ret < 0)
+>>   			return ret;
+>> -		*val = (ret >> st->chip_info->channel[0].scan_type.shift) &
+>> -			GENMASK(st->chip_info->channel[0].scan_type.realbits - 1, 0);
+>> +		*val = (ret >> chan->scan_type.shift) &
+>> +			GENMASK(chan->scan_type.realbits - 1, 0);
+>>   		return IIO_VAL_INT;
+>>   	case IIO_CHAN_INFO_SCALE:
+>>   		*val = st->scale_mv;
+>> @@ -345,7 +345,7 @@ static int ad7476_probe(struct spi_device *spi)
+>>   	/* Setup default message */
+>>   
+>>   	st->xfer.rx_buf = &st->data;
+>> -	st->xfer.len = st->chip_info->channel[0].scan_type.storagebits / 8;
+>> +	st->xfer.len = indio_dev->channels[0].scan_type.storagebits / 8;
+>>   
+>>   	spi_message_init(&st->msg);
+>>   	spi_message_add_tail(&st->xfer, &st->msg);
+> 
 
 
