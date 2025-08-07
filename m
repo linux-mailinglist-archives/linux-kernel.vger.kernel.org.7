@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-758557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D37B1D0BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:55:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBAB0B1D0C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DE5158287D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00767582CB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6243B1E520E;
-	Thu,  7 Aug 2025 01:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C948B195811;
+	Thu,  7 Aug 2025 01:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFdezFu4"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KThIkaMN"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1029914D2B7;
-	Thu,  7 Aug 2025 01:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01AC7483;
+	Thu,  7 Aug 2025 01:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754531707; cv=none; b=E3v3DvmbLKaC1QeKkK2hmZtwnbHTxG6ydbfZhGJfIYKxCCu3MnTTWn23d9XL2W7R0YDyFE3N9d58XP/qOsX9NXSr8yMimyc3en36/nUKnvMqzpCuspeHOq4dX/4aRZO1pcsAWg2g1J8TQ41DpjooBG1Z1m4FweiWlECBxBvstsw=
+	t=1754531886; cv=none; b=rwPzGEaMRGBJnc7eJ6WSUMWCxfAgoJSFJccTdUjgSHlyNIpN2I3ALJlcuqxecsVhw9jzPIO+wNdz/sYxkPXY/28OPcfiSmIlRsvERcit8wt0+JYa0hQQAC2sUydKX203p3F9DvbKpmLGwmy1JNaWajWIGh3u9fSqBpCeNxUDegs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754531707; c=relaxed/simple;
-	bh=xIemcRtj/buSKba0olwitJryOOJRnALqFmIOZ32ilbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EWRM5NZx3pevXkBaF4EZDzEFYGqljd6Izl5xDNkwPuA1b1CjJn9cFMqv0JWaMpyGiYLhz//c15UKM9fIz0zhBaz94X+CAvgwmiiWVY1Hs6wcj341IdiFz4TeLIJg42rlNjcZ8FLE14qSApjzJI49DMINxdhEoood/WoG2nJE58c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFdezFu4; arc=none smtp.client-ip=209.85.218.67
+	s=arc-20240116; t=1754531886; c=relaxed/simple;
+	bh=8I9Gt1H0ZE5k1cffQXUAxhLrCOxZeM9nrDgBpbJx/qk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g7+mvAS9QQzq4Pvd1LoU88SPOPgWQSoFHzRcVuxw/nRySS+mfPnJCtnsBT5HE9xjjPIfZ+AJT3qKjRfadCi5yxgxYeNkyWetfi6diLx/t4hUd56zCX6uoOQi5CwKQZCn40/U0SQnVd/8Ee99MNEIlEvyB0X0hZhx692Z8gdKZfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KThIkaMN; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-af8fd1b80e5so83783266b.2;
-        Wed, 06 Aug 2025 18:55:00 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af934d7c932so70217066b.3;
+        Wed, 06 Aug 2025 18:58:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754531699; x=1755136499; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ujwRlQAOixxVFLF3P3Xei9KX9iGKrNXHg+2EQTVW5iw=;
-        b=FFdezFu4vDoke3zMgaq9jvRR5jLPpVUOG9pIivD40wDUoo2J+zVpEozAcRwwdpnh1N
-         Gr0rlgMSQJCEAGMs/ZyCWTSa6x7bWLXkxbuFjiR/zDkqRpmqiawiCGaR974CR6AYwnMU
-         UiIrtssR/XWr1p5DlB2G3Eu++F5f4fBqF4lLUxRJXdD52k1KUeybN4TekGS/hQ9wq4S+
-         kKlJDS1HcqyHV3RJlP7JH1iOQk9AkQeOtt3cGq5MuL/c3q3PLp0J8TaYtaHHc+m5VfOs
-         RmH2dMOKYDJtMFS57JebTSYLgxmNZQtoNZYdgkOnBTBxJ8gfUXXdcCt2doHcZRyBEtKX
-         57QQ==
+        d=gmail.com; s=20230601; t=1754531883; x=1755136683; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8I9Gt1H0ZE5k1cffQXUAxhLrCOxZeM9nrDgBpbJx/qk=;
+        b=KThIkaMNcnfSB8E1R0N15A+FXC8feW6EcJbDa2ooxALjdRRIxUM/3VsuaO6PEVOpW7
+         8kCrTOUNSBxnDz9pgcH+gTn7hpBHLnVQv7VSpiakjTadUXQsICsVM5y8+w9mviUOlYEV
+         Ukb+8PJsNguENP+dpFw5YlplOT23xZTONlZr6FtfOKic3CswPtD4n9hTcmLaM1mZTxae
+         AOvI02MUxj4X1V8WNrJoIEu4H4VBw2vf2uvmRUyQJZZBx9TyF9wazPgf3hcJ2zuzLE57
+         AhAlLmL9dbhNahNhDl8ab2QofbRzSINXjXGMr1O85QNQmbtVUSjZZ36fW1mrZEwZvtXc
+         JEdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754531699; x=1755136499;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ujwRlQAOixxVFLF3P3Xei9KX9iGKrNXHg+2EQTVW5iw=;
-        b=NLzYIR7xm5kw5MkXXhsfCnAtjPeb9vSwuzWKMKXnjzvFOEUmYt0LOgM9JIQpcxAUpG
-         Bq13VTQ1/BVqJNR7cJFKNywMNHRposzyEu0YN2MDWxBv+Y+k0E9MglDnhE6+l7NxJYyP
-         i1pjj/2BmrUFUuNGYph1va0yeMv1QvQMvqT6TD7hYR6mYswol8pIbOeFnTIMzGD2YQRH
-         DFfyNIoZHVurobQv3+hOdqysSvw1JrgC8SqEVw2W3NYS9Biwpa1Nx8u3fdGB6fMxh9yi
-         SfmaT2WMz4CthPD6dkRAQUixDimdZSgeBoApV8N3/qkzyT7XImDQCyIrwd02u7pLodhO
-         S6qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBzJwQJGuM0MKuJtDV10f9VVoLYDQ4kuxtKX6SnIfHWqsb1svdsOBJJusxpPkugm07ZiOdZFh4rzDKOK0=@vger.kernel.org, AJvYcCXOueEfNSDCOWjGlR2oXUhi3MquqBDjSIpMn3swym3Jushn5jAPpTM0pDymLre6TskzjerZ0kmywA1H@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFpPpj6DFkeqDygpFioyc7wF0xrmp6QbZ1nclZ8Fy2HJ1/2ALy
-	J37E52IHbpuecIc+iy8nKiq3fAI27gozNDdJ2p4u+3D0cu06ZBDxaBjO
-X-Gm-Gg: ASbGncsvyhIO0feiK/LJtyAsTH8vMzcfSUisk7yw5W4tXkEqXg8zJdrinHE8SXjr2Wl
-	6UcmZTqd1uRG256umPT+SLCPTprNwabLFsyn1EqyZ3c73TqeD5X9ARpkp5oXvic72TyjTo+YvxT
-	Vp+3/kLQRh6zdDfjZcGje3uqruJEkk5S4yKhA3i2OOQLwMjDMoUq9RE/qHEMHjLctWS229rKbvo
-	r+GLcSD5JDwM4dKXjKcT+jaK4KpGvGJ6WG1cKDhSKnajnuPC4wklf7q367kPtxLV4+pU+0472zB
-	42bZ6VQfUIoR0CyTPS5Vel/xDccj+1/aAdaEg7nyk23XY0FEcJl/V34NWnLBWrv4gReNqj/h+Fe
-	e8zQWlS+dgLfjmy3D257DIJokxKP6LLSwqV705pPgW8vlp2iYvfzb1RiWpkBpOVRV0hcqC6hHLI
-	N70WHdu2tPTsbVszb4
-X-Google-Smtp-Source: AGHT+IHgp4Rd2zyE3rVGDEOZP4X8ktT3n+JKIRK0hV5+AIl4Hb6xONo2Qx5UAqKol8VAGYxnqlw+Wg==
-X-Received: by 2002:a17:906:dc8d:b0:af3:9676:e9ec with SMTP id a640c23a62f3a-af9903fc6d2mr452862366b.39.1754531698948;
-        Wed, 06 Aug 2025 18:54:58 -0700 (PDT)
-Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c10asm1218337866b.116.2025.08.06.18.54.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 18:54:58 -0700 (PDT)
-Message-ID: <9d53f097-7e12-4a4c-a2e9-e7b3f2f911a9@gmail.com>
-Date: Thu, 7 Aug 2025 09:54:51 +0800
+        d=1e100.net; s=20230601; t=1754531883; x=1755136683;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8I9Gt1H0ZE5k1cffQXUAxhLrCOxZeM9nrDgBpbJx/qk=;
+        b=O9hBGf9td1n0xbidNlLv8stv1hm3kDpt/V3+Xv3ragM6QYk6enQzjOCvoJDqcB5SxR
+         ivYCBv65w8OshMeQGj8aAhGu9AlZ0ucWxCk4yY1yzyuM1wlcV2Y54tnqc2AIJpooQVW3
+         aQ4+9aDQXWS7P6iUL1mimZP8133fBP49YRuhGU3dluGioZFf0WEmKUmbsVcfLyocViBQ
+         mHNJmRzHqmRTQwIbslt/dWiOtfo+vPLsZvKHDyuicw2q1Mo7h8mf73zLt2mI8Xz8BwnE
+         Eou+pM47SXlQzP7jcOvnz9va6L/bf7kMHb9pAzMQ3J1UbtO1EImcV7ZidnZkfYUDXzry
+         UPIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG4z3KLiFVDMV8cvcIdSphlu7kd+j8QU3w9eCn1Eg/IbI0Jk0un7ILbQU0cTQm0Si+S5cGBHPtyJEgtJvmXFCs@vger.kernel.org, AJvYcCXEOtk5dyspyl4bSdNWzvZae2HcuNBSBny/Nw5ae9P6wEuo7RUUVwj79ob1TRi5czcdsaFHP1nNMXsllwy7@vger.kernel.org, AJvYcCXH+948q9d/VcvkBoMcJ4y7HjOt9EmJBZnkZbkdzoQED2BYJ4u+SJULNM5a8yDYF4Rr/e4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB8iq4xLGH/j7KqdEj0CDeulaDfRwZo8hQdCF1THZCRWTO+vec
+	zIpj0MeQ4kWoB2swSxGw3XwZgui8Hhn4cQEfXS/tuQwh7Q8z2t8kS9B/UQcj26vzPiavj03b7yc
+	PADwZVG71Lrifcq+MBvbaUtI4iakTWXc=
+X-Gm-Gg: ASbGnctRwlgaCxLXzzMnj47TDLBoB5GubrDv2IWE7qHMMjbrYi4vStzm3oehLoerp+U
+	TWPTDdjvlEHTu5i9vVH5LbYO08kk6onKO/IBzrRE+B2kiju4WqpMEXxSDHjLUcjsqyBZg14THG2
+	lHPZ7hak0oQ/Ee2xyJglS5OMpOwcNtzTBoLArOBapTzRZJ21z8mnNQLoQzlZrhm8YbiafSutweV
+	DHhCX9a3QUKlh3CVTVivHFsD1lxBK4CbQzW
+X-Google-Smtp-Source: AGHT+IHdYsCOHfZq+TV3JC2/vuQihc0W7AMnb4Y0PG/YGEWgDibGpFXd9SkrCT9S9ENhafpS4JzWygZ4TgULy81H9U0=
+X-Received: by 2002:a17:907:724c:b0:ae3:f16e:4863 with SMTP id
+ a640c23a62f3a-af992a60dc9mr358536666b.1.1754531882814; Wed, 06 Aug 2025
+ 18:58:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/DPC: Extend DPC recovery timeout
-To: Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: Lukas Wunner <lukas@wunner.de>, Hongbo Yao <andy.xu@hj-micro.com>,
- Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
- bhelgaas@google.com, mahesh@linux.ibm.com, oohall@gmail.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- jemma.zhang@hj-micro.com, peter.du@hj-micro.com
-References: <aHCPTU03s-SkAsPs@wunner.de> <20250806213409.GA19037@bhelgaas>
- <aJPOmw2c8LGW2qN7@kbusch-mbp>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <aJPOmw2c8LGW2qN7@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250807015415.2406263-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20250807015415.2406263-1-jiapeng.chong@linux.alibaba.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 6 Aug 2025 18:57:51 -0700
+X-Gm-Features: Ac12FXw4m4ezi8GQg7F0Kmfs3Ahtqd0_a5G-6CrUg7W-QgBI-8NK64mjOlikc8k
+Message-ID: <CAADnVQKZ8GTrV1x7FH8ffbFkVpQA2CeqDWTMkKyO1bTE-tGQVg@mail.gmail.com>
+Subject: Re: [PATCH -next] selftests/bpf: Fix warning comparing pointer to 0
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Abaci Robot <abaci@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 6, 2025 at 6:54=E2=80=AFPM Jiapeng Chong
+<jiapeng.chong@linux.alibaba.com> wrote:
+>
+> Avoid pointer type value compared with 0 to make code clear.
+>
+> ./tools/testing/selftests/bpf/progs/mem_rdonly_untrusted.c:221:10-11: WAR=
+NING comparing pointer to 0.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
 
+Hey Abaci folks,
 
-On 8/7/2025 5:52 AM, Keith Busch wrote:
-> On Wed, Aug 06, 2025 at 04:34:09PM -0500, Bjorn Helgaas wrote:
->>>> However, the current 4 seconds timeout in pci_dpc_recovered() is indeed
->>>> an empirical value rather than a hard requirement from the PCIe
->>>> specification. In real-world scenarios, like with Mellanox ConnectX-5/7
->>>> adapters, we've observed that full DPC recovery can take more than 5-6
->>>> seconds, which leads to premature hotplug processing and device removal.
->>>
->>> I think Sathya's point was:  Have you made an effort to talk to the
->>> vendor and ask them to root-cause and fix the issue e.g. with a firmware
->>> update.
->>
->> Would definitely be great, but unless we have a number in the spec to
->> point to, they might just shrug and ask what the requirement is.
-> 
-> I agree, and I have similar problems with other arbitrary kernel timing
-> decicsions. Specifically RRL where there's no spec defined number yet my
-> patch to modify it has not received much consideration.
-> 
->    https://lore.kernel.org/linux-pci/20250218165444.2406119-1-kbusch@meta.com/
-> 
-At least, with this patch, have a workaround in hand to make some device 
-work.
+stop sending this kind of patches.
+Use your time for actual useful work instead of noise like this.
 
-Thanks,
-Ethan
-
-
+--
+pw-bot: cr
 
