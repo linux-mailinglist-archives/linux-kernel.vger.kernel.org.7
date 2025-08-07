@@ -1,116 +1,105 @@
-Return-Path: <linux-kernel+bounces-758630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F4DDB1D1D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:04:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8F9B1D1DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1706268B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B0118C095F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6841EDA02;
-	Thu,  7 Aug 2025 05:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DD41F4192;
+	Thu,  7 Aug 2025 05:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G5tiEBYx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V/7op6CT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="mIKiLpf7"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8473208;
-	Thu,  7 Aug 2025 05:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069CD1EFF8B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 05:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754543038; cv=none; b=S/mXwNUbzIcA1pC3Sb+5knzP+Aei6aOX+8eos4ZcM4ILGlqp7jrl2IlAeLVkl/TwvPMk1BK8vtSuP6dMF8tsLHG9vWpy3uENGLbcfhRfqTCQzUzqg9A0Xz1dt72IFcyb1HNpU4jLqjKTIKOS2QAELnpd+uA49tyb2kUpejsfE3k=
+	t=1754543434; cv=none; b=WZvd4qtJH3Ctv3LsO+HvvzhhQqJYiMdFIYII14CUvqM7sSycIPMaaiiXoWg/zYS6d/tpqSHrCEO6fXWjQQbUmOidzngrQCPt+PGW6URcpHgs6ITlG2AHfN4QrCoYVI3X8hWnWYg+Wq/Vwvp/Iv4Bhge4fbK9i/2jZNOwyVIfXC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754543038; c=relaxed/simple;
-	bh=0q9cO/alk/trhYgceBWOPeTcWDdCn9delaZfQ2o5O+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2e9wCJ5cZ3DpO0i4MePHIVg7hhvaTWd5EbdZncdbWpfZrifGblWS/Nw9uJiibJzCWqzrnobs8gzd7YZ51t1pKiAPP9pQqWPJm1MGP6xA1xBJn/v/upQIGQFGRsFtbEVaKTCrfrg2ggAm27OTMKLRLbV0iAQICO/M36pjbpjeWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G5tiEBYx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V/7op6CT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 7 Aug 2025 07:03:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754543035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zXrQVRIdd7zZfKXZgOCzm4TnwtW/ih2Oep05XxnBgWY=;
-	b=G5tiEBYx0lgflvflWOSrh8YLZ+IopxZI6roi8nq+09St+U0F2OGX7bhK1j4tiLwiCwcbYP
-	5qd35Rvj9uho248zIsilGoGVMneLNZBNhQqTRaGclo4opvzTxmoNEnKU0jtt3GEvYId1+H
-	4JvNoONadWkJ6espJyE3oNNizyh+3bawdCMEslqBfIZZGjklw/4YbnuR637qYpk8LIEZxy
-	85i9BW3E/+aE03sbd87fEd6Ll5dBttn1leL2czf3HmtzHV3qhFmjgH/L3YI+bncgLP0ZGZ
-	2yLGBB7gF/OBVUHZdvDZgbJJUsDUgeaZXwVIdAntwZFJNHHEfhE8iMu5s0bHNw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754543035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zXrQVRIdd7zZfKXZgOCzm4TnwtW/ih2Oep05XxnBgWY=;
-	b=V/7op6CTN27/9gFjMez3Xr3ht3XqOPJsfmWKYfpJMd9L4v60SRV+/OVlblvmSonlRJdEGJ
-	isjyUsiJlTXaz8DQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux PCI Mailing List <linux-pci@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof Wilczynski <kwilczynski@kernel.org>,
-	Armando Budianto <sprite@gnuweeb.org>,
-	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-	gwml@vger.gnuweeb.org
-Subject: Re: [GIT PULL v2] PCI changes for v6.17
-Message-ID: <20250807050350.FyWHwsig@linutronix.de>
-References: <20250801142254.GA3496192@bhelgaas>
- <175408424863.4088284.13236765550439476565.pr-tracker-bot@kernel.org>
- <ed53280ed15d1140700b96cca2734bf327ee92539e5eb68e80f5bbbf0f01@linux.gnuweeb.org>
- <aJQi3RN6WX6ZiQ5i@wunner.de>
- <aJQxdBxcx6pdz8VO@linux.gnuweeb.org>
+	s=arc-20240116; t=1754543434; c=relaxed/simple;
+	bh=7FWaH7hEA5e4gZIpb2AnD3jlxaMVdwXMdJGNh8wHWVk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tcxSFT0r2nscZdPtiNNiNsn32ogoKVl4J5Nh9d7JKBbmDvN5NXArd7xXkZuwYBzoLS6mSaKruLY57TwfHRcTi9eRN0tVH8mABFHWo0GBoQN+tpnPvEMaKEL6s1bM9WVwVLtKuIwCxeYHY2o15dBjEs+4KEvlMEa7mwak5EK7bd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=mIKiLpf7; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=cEQcG8GPrJW+UKN5jm5bqFoBNXrzoJ5U62zfh9ZcaqI=;
+	t=1754543433; x=1755753033; b=mIKiLpf7k1rwlxxsoWlPe2xk+87detQEtO6D8jAJIeI5Qvz
+	tEXtwNOc3d8+LEiXR6S8EZpsK3nodxn9h/b4YKld0Qw/XQ4egofrYQxYR5fnURTFBsP7dhfl7vE2v
+	kft0JJxAM6HOfASH52JUl0TDlTSPD3UbQNNE3t/BExI9I65aYvGiWmCCtN64zIuo9Wq1jvNv7GP97
+	H4MoDZdPOAi5OdLs14ZbrN5kEu8nEu54qANlY+53QdJvOttFR2rMzOe1QY3bNEywmf+tUiR4warPj
+	gQeaVy2YtBxP+pr5GbVTFD4zC7pSduews0ZO5KHnCwyRacNeixLGouUit5OOCwZg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <benjamin@sipsolutions.net>)
+	id 1ujssB-0000000BqoD-1hbi;
+	Thu, 07 Aug 2025 07:09:03 +0200
+Message-ID: <69f40a6f907deb7225cb6c1c8f59926d98a580b2.camel@sipsolutions.net>
+Subject: Re: [PATCH -next] um: Use ARRAY_SIZE for array length
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, richard@nod.at
+Cc: anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net, 
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, Abaci Robot
+	 <abaci@linux.alibaba.com>
+Date: Thu, 07 Aug 2025 07:08:58 +0200
+In-Reply-To: <20250807023227.2443863-1-jiapeng.chong@linux.alibaba.com>
+References: <20250807023227.2443863-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJQxdBxcx6pdz8VO@linux.gnuweeb.org>
+X-malware-bazaar: not-scanned
 
-On Thu, Aug 07, 2025 at 11:54:12AM +0700, Ammar Faizi wrote:
-> On Thu, Aug 07, 2025 at 05:51:57AM +0200, Lukas Wunner wrote:
-> > Kenneth reports early-stage reboots caused by d7d8ab87e3e
-> > ("PCI: vmd: Switch to msi_create_parent_irq_domain()"):
-> > 
-> > https://lore.kernel.org/all/dfa40e48-8840-4e61-9fda-25cdb3ad81c1@panix.com/
-> > 
-> > Perhaps you're witnessing the same issue?
-> 
-> Confirmed, reverting that commit works on my machine. I'll try to
-> further diagnose it and report more details.
+Hi,
 
-Does the diff below help?
+there is a good reason for this. The bug is a false positive as the
+relevant include is not (and cannot be) used in the file. This patch
+does not even compile.
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index 9bbb0ff4cc15..b679c7f28f51 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -280,10 +280,12 @@ static int vmd_msi_alloc(struct irq_domain *domain, unsigned int virq,
- static void vmd_msi_free(struct irq_domain *domain, unsigned int virq,
- 			 unsigned int nr_irqs)
- {
-+	struct irq_data *irq_data;
- 	struct vmd_irq *vmdirq;
- 
- 	for (int i = 0; i < nr_irqs; ++i) {
--		vmdirq = irq_get_chip_data(virq + i);
-+		irq_data = irq_domain_get_irq_data(domain, virq + i);
-+		vmdirq = irq_data->chip_data;
- 
- 		synchronize_srcu(&vmdirq->irq->srcu);
- 
+Benjamin
+
+On Thu, 2025-08-07 at 10:32 +0800, Jiapeng Chong wrote:
+> Use of macro ARRAY_SIZE to calculate array size minimizes
+> the redundant code and improves code reusability.
+>=20
+> ./arch/um/kernel/skas/stub_exe.c:196:23-24: WARNING: Use ARRAY_SIZE.
+>=20
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D23410
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+> =C2=A0arch/um/kernel/skas/stub_exe.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/um/kernel/skas/stub_exe.c
+> b/arch/um/kernel/skas/stub_exe.c
+> index cbafaa684e66..01a938a5bb4f 100644
+> --- a/arch/um/kernel/skas/stub_exe.c
+> +++ b/arch/um/kernel/skas/stub_exe.c
+> @@ -193,7 +193,7 @@ noinline static void real_init(void)
+> =C2=A0			BPF_STMT(BPF_RET | BPF_K,
+> SECCOMP_RET_ALLOW),
+> =C2=A0		};
+> =C2=A0		struct sock_fprog prog =3D {
+> -			.len =3D sizeof(filter) / sizeof(filter[0]),
+> +			.len =3D ARRAY_SIZE(filter),
+> =C2=A0			.filter =3D filter,
+> =C2=A0		};
+> =C2=A0
 
