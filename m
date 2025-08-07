@@ -1,155 +1,166 @@
-Return-Path: <linux-kernel+bounces-759412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0351AB1DD38
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:55:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7C9B1DD3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F37581614
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:55:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0219F6272DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0921221DBD;
-	Thu,  7 Aug 2025 18:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADE7272E7F;
+	Thu,  7 Aug 2025 18:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cuhDNbmz"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ISOlgKj5"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D50C21FF55
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303742222B6
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754592922; cv=none; b=RT0wcS71B39R+vW9awrV5j3LEItEVs/HqY3KYzYJNIEaccGj/6TiseqZmXPoMB8IyVLqsrlj0kTS+uHLzZFoy4AY9MKUGvZVJ1L31ukJcvHFDsknyok80Q2GinWJCNdxWHpJOYgznUpdMsVyrNB4Uuz39vni1nnpm51SXnSvzDs=
+	t=1754593097; cv=none; b=n0g3QGllN0FzCYfUOrDj9uUNhMYRjtV5H5d8E+yv1Qq8lyrOtGtXpsx0UpUcb0qts7hf+hogxT//ezHGn3fb1zFmgsxg/MMOCqmcFBjeAqz30siZBF0VN8rLg/Y6L2xSiq81iUxLpt5dC8cXaFsVhNT5w99AalCZbpu9hGWMI30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754592922; c=relaxed/simple;
-	bh=MVjQL1zXfauCX4t2xdRj8XWjntGP7DD4nwGdRIzf4IU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3r+IIhevyxj3OpUkKjSXkuTSprcqkYlpVfWojDI0RtmPbbEVJtuJ/02McrcNw/4RMwVH4Oj8nsh1v+QfnXQwMsmg9LPkoz+kRoN56zanwmOY8iMFVkCr1+8gPvl2vdEIx/EQgRvmKuvQWGt02DDoDtW3KOVmhDOJMFX/Qkt44E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cuhDNbmz; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 7 Aug 2025 20:55:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754592908;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1nfWmyFZRY9zQ+jGVSq6NzX3t8OI1k9HDXqbAxjG7D4=;
-	b=cuhDNbmz3Z0nYpkBkGpoUzXNsAYtj+Xfr9zrmgUbc5/AXvNQGse2IUl48JzBMoqjShV26Z
-	bF3MukeCKFPcR4QjhLQZE5vSP5YkC5gXJJmolnexi5PjSU7CDeIfXz2D/BgrRosdW/+s9R
-	tySpNVCLzCDYckLGjeIhLUueMmOX30I=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Nicolas Schier <nicolas.schier@linux.dev>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Haoran lee <470658536@qq.com>, masahiroy@kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/mod/modpost: For CentOS 7/old binutils
- compatibility
-Message-ID: <aJT2ieqflTEArKYm@fjasle.eu>
-References: <tencent_6FE857803A1AAB21B71853A2E89626ABA407@qq.com>
- <20250807-elastic-transparent-kingfisher-8f7ada@l-nschier-aarch64>
- <20250807162238.GB2145434@ax162>
+	s=arc-20240116; t=1754593097; c=relaxed/simple;
+	bh=MuhIPyi2F5+ipcNc957b0wI7HllbWh/lbIIst2ORD2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pzB8ZqkuXCM1ui4mpm4+MfbpMY5CAB88tQaAKLu6VAou6QeD4yotZl3FjPiYOV7V8tNaF8arNmcMvsZT7RlxLlZDBfwrPxgAGd42nIpgKHsuK77hK/9dSUeBQuPw1ToxcZnfkw+TrX1PcwXFHpdisbdD+bIfOag5kG5s1Z9buHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ISOlgKj5; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b0673b0a7cso58751cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754593094; x=1755197894; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=96362UVupe8COf1P6wW/mjtmbdG3wWxnQMi7BMOUIUE=;
+        b=ISOlgKj5UPRwKsKRT0fvJs/VjevZ5F51s67VmcltqSE7U/yxGfriq2M79TbfX5nXPL
+         sIhbMGHdBEo9QLD0dUFmdd6/PoI2BnTxbG3aI9tEHsRKfRFeOp//4yNWYRRs9mtmWWEy
+         3d05ltVM9q0bi6kxh+HDAXVc4FF5xOl1GRozjkWV/vUHn/rdU1FDXQgBskJbIKZO6A4r
+         7HMPcan11p92JOJpm8EGerNHUfpBw8+DT0RnJ8ahNIki7csClzFYxopx50rV9nR3VeIC
+         Yic+1jlLMXOfVzGPh/j/savlM0vKk5JoNXPUPyX70liV54btLr1uMab7zKTo1WSofi6/
+         fYbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754593094; x=1755197894;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=96362UVupe8COf1P6wW/mjtmbdG3wWxnQMi7BMOUIUE=;
+        b=kWs4pblYT2w1elZrlKXf4z7MGNtliQQ9YXSLvdfYHWbiwhOA6qf6XVxfITeTNpzzL6
+         zDVStMn15gGBY/EcoldgrNzkYvY3NTzTX44ku4M+Kc06CED4U9A6PZBOqr1YK/ikuvQ8
+         k1yHs1Z1UMxaw8kZCqdQEh2urECmnJzs1VkOTUUyeBsAn0xeLI1kgXrdTGSjrFJ1KzXG
+         3BnPGWH25Ku3NcxT/N5b10841/WuAf3JKlWPtkGfMbRC6t90/Cr1dDlTVTvJTEP6TNhK
+         b0ik8NufObybpyDkAWF3yd+9VgXAa64+HbyE4sCq4nE42voHuQTGSXvFROxVAfG278ci
+         +R2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWcSQ67B2OJpNN6m/jLzRtVsj5B2hqjQImIK8t5Wn1580Cs1u5LPpKNK83CgTAsnPXua6Xhwfwzf+m24pU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWjeW7feSq25Vn12PBpAxa0etz3ZqQ9vpr2RAnMSpwzt5X6Bqi
+	fBN2GLwfLbae5x3CYUoWssVGL4sGYaw319Sybph7gqBe7D5CzQqjBu1z1uN5ZUVdONjJA6cZR7d
+	Gljz5up5YM5/aWlet6C0hkvijwdwz5uVhDuWL0rjh
+X-Gm-Gg: ASbGncuaVtrbbe1kQRcBfW9B28fk/PFKr58h9TMgdtheJCClSxxxE9rezYyfFqJZpAz
+	qVj8ety/OVp9VfrwuZUuVOOwbrGQnQ16ES51Ro8I2iA3c7RvwgPGm0MXd29vJvUV5JH9Ba1kiu9
+	SKaX1l92GXwjJXOPQz6g3WX/hs/0vQNvKt201J7AQuFu85UOYxHLGy0a1ZMCPH6nDQoNlaSnr3e
+	jPQUqHXPP0GAs4ZH6LiT7cO9b93KC/Hrxec
+X-Google-Smtp-Source: AGHT+IGQv3PJBbuZ1uXQcTT0alJEv27zQP6RUhp/GXkD21PwsG9r1YtfOqnK9qoS+hDRmSRDSNYUz0kE+B4S+clok58=
+X-Received: by 2002:a05:622a:a648:b0:4a5:a83d:f50d with SMTP id
+ d75a77b69052e-4b0af27a4c2mr270701cf.11.1754593093620; Thu, 07 Aug 2025
+ 11:58:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ysAbS6gdazat17Eu"
-Content-Disposition: inline
-In-Reply-To: <20250807162238.GB2145434@ax162>
-X-Migadu-Flow: FLOW_OUT
+References: <20250724235144.2428795-1-rananta@google.com> <20250724235144.2428795-3-rananta@google.com>
+ <aIjwalITY6CAj7TO@linux.dev>
+In-Reply-To: <aIjwalITY6CAj7TO@linux.dev>
+From: Raghavendra Rao Ananta <rananta@google.com>
+Date: Thu, 7 Aug 2025 11:58:01 -0700
+X-Gm-Features: Ac12FXylmxDAHRXg2gQCPPXuwIGOmW7c0vzzAhp62yyDvoK-TIuMbTJEHyOdR6k
+Message-ID: <CAJHc60wBNTP9SSt_skEXXv9N+tF_1RoV6vcQQx4hWphJF6EmkQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] KVM: arm64: Destroy the stage-2 page-table periodically
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Mingwei Zhang <mizhang@google.com>, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Oliver,
 
---ysAbS6gdazat17Eu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>
+> Protected mode is affected by the same problem, potentially even worse
+> due to the overheads of calling into EL2. Both protected and
+> non-protected flows should use stage2_destroy_range().
+>
+I experimented with this (see diff below), and it looks like it takes
+significantly longer to finish the destruction even for a very small
+VM. For instance, it takes ~140 seconds on an Ampere Altra machine.
+This is probably because we run cond_resched() for every breakup in
+the entire sweep of the possible address range, 0 to  ~(0ULL), even
+though there are no actual mappings there, and we context switch out
+more often.
 
-On Thu, Aug 07, 2025 at 09:22:38AM -0700 Nathan Chancellor wrote:
-> On Thu, Aug 07, 2025 at 12:51:59PM +0200, Nicolas Schier wrote:
-> > On Tue, Jul 29, 2025 at 12:19:46AM +0800, Haoran lee wrote:
-> > >=20
-> > > Signed-off-by: Haoran Lee <470658536@qq.com>
-> > > ---
-> >=20
-> > Please note that empty commit descriptions will not be accepted.
->=20
-> Agreed, a clear description of the issue (including an error message)
-> and logic of the fix is needed.
->=20
-> > >  scripts/mod/modpost.c | 26 ++++++++++++++++++++++++++
-> > >  1 file changed, 26 insertions(+)
-> > >=20
-> > > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> > > index 5ca7c268294e..216647e2f301 100644
-> > > --- a/scripts/mod/modpost.c
-> > > +++ b/scripts/mod/modpost.c
-> > > @@ -30,6 +30,32 @@
-> > > =20
-> > >  #define MODULE_NS_PREFIX "module:"
-> > > =20
-> > > +/* CentOS 7 / old binutils compatibility */
-> >=20
-> > Since v6.16-rc1 the minimum binutils version has been lifted to=20
-> > binutils-2.30 [1].
-> >=20
-> > [1]: https://git.kernel.org/torvalds/c/118c40b7b50340bf7ff7e0adee8e3
-> >=20
-> > Which binutils version do you have at CentOS 7 ?
->=20
-> These values come from glibc's elf.h if I understand correctly, so I
-> think this is more about compatibility with versions of glibc that do
-> not have these relocations defined, rather than binutils.
->=20
-> It appears these were all added in glibc 2.18 over ten years ago [1],
-> whereas CentOS 7 appears to use glibc 2.17. There is some prior art to
-> adding elf.h constants to modpost.c when they are not defined by elf.h
-> but I am not sure if it is worth it in this case, as CentOS 7 has been
-> EOL for over a year at this point (and I suspect the binutils / GCC
-> version is already prohibitive for working on mainline).
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
 
-ah, look what I found: https://lore.kernel.org/linux-kbuild/20240704134812.=
-1511315-2-masahiroy@kernel.org/
++ static void kvm_pgtable_stage2_destroy(struct kvm_pgtable *pgt)
++ {
++       u64 end = is_protected_kvm_enabled() ? ~(0ULL) : BIT(pgt->ia_bits);
++       u64 next, addr = 0;
++
++       do {
++               next = stage2_range_addr_end(addr, end);
++               KVM_PGT_FN(kvm_pgtable_stage2_destroy_range)(pgt, addr,
++                                                            next - addr);
++
++               if (next != end)
++                       cond_resched();
++       } while (addr = next, addr != end);
++
++
++       KVM_PGT_FN(kvm_pgtable_stage2_destroy_pgd)(pgt);
++ }
 
-According repology.org, CentOS 7 brings gcc 4.8.5 while v6.16 requires at
-least gcc 8.  I am pretty sure that this patch will not be sufficient for
-re-adding support for CentOS 7 - I doubt that its worth the effort.
+--- a/arch/arm64/kvm/pkvm.c
++++ b/arch/arm64/kvm/pkvm.c
+@@ -316,9 +316,13 @@ static int __pkvm_pgtable_stage2_unmap(struct
+kvm_pgtable *pgt, u64 start, u64 e
+        return 0;
+ }
 
-Kind regards,
-Nicolas
+-void pkvm_pgtable_stage2_destroy(struct kvm_pgtable *pgt)
++void pkvm_pgtable_stage2_destroy_range(struct kvm_pgtable *pgt, u64
+addr, u64 size)
++{
++       __pkvm_pgtable_stage2_unmap(pgt, addr, addr + size);
++}
++
++void pkvm_pgtable_stage2_destroy_pgd(struct kvm_pgtable *pgt)
++{
++}
 
-> If we do want to add these relocation defines, I think they should be
-> added in order of their numerical value. I do not have a strong opinion
-> either way.
->=20
-> [1]: https://sourceware.org/git/?p=3Dglibc.git;a=3Dcommit;h=3D08cbd996d33=
-114ca50644d060fbe3a08260430fb
+Without cond_resched() in place, it takes about half the time.
 
+I also tried moving cond_resched() to __pkvm_pgtable_stage2_unmap(),
+as per the below diff, and calling pkvm_pgtable_stage2_destroy_range()
+for the entire 0 to ~(1ULL) range (instead of breaking it up). Even
+for a fully 4K mapped 128G VM, I see it taking ~65 seconds, which is
+close to the baseline (no cond_resched()).
 
+--- a/arch/arm64/kvm/pkvm.c
++++ b/arch/arm64/kvm/pkvm.c
+@@ -311,8 +311,11 @@ static int __pkvm_pgtable_stage2_unmap(struct
+kvm_pgtable *pgt, u64 start, u64 e
+                        return ret;
+                pkvm_mapping_remove(mapping, &pgt->pkvm_mappings);
+                kfree(mapping);
++               cond_resched();
+        }
 
---ysAbS6gdazat17Eu
-Content-Type: application/pgp-signature; name="signature.asc"
+Does it make sense to call cond_resched() only when we actually unmap pages?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmiU9nkACgkQB1IKcBYm
-Emms4xAAwFSb3/WymU6xlP3c7e7QsqLHZzhVoKmeT/Q0qmHyWf1tsDA9y28sW7Qa
-GHTGuZY/nUP2AJrpjBbw5CbMHxgavF1FCbQX4IczGSVRwFtGsWWH7cPpZig6Vepd
-A5PzOvNDVSe/6PMLRrOCISXSOwhosYpj13FyGuZF/N7zGWAsoBjbpV3XkWGj4Pty
-R+cJl8BAfGiOal53APC1s2akBU3TlQqVOfC8HXeRDu8Os0RZsvRElJzzmR6/JObv
-dYPbhq6qBU4SNLUXLm4c9Zs4kR/o8VkWrCE73XE/GkQ/DdSL0xI7Lcs9A7cSobFO
-twxjnPWyiUsYW1VpqI5tLNwATEaqxjI61zRIcmNdEaDFc+OoQV0mvOcl/FS2IaxW
-kHbX39mey/18DyLg9Tg+Z3cE2KXBAWKjerOSrTrKFKmE+uhaPLZDLYcnYsnf5Pni
-Lnf2p9SNHzvu+AdC1BLtunuxJzz1XKqvCEOELq+vPuvYupVReJfxBii66kZQPwjj
-nQUXJxgGg81w8ccwYd0/99dNmBMjTwHVI4gxMJt6moKdAl/AdRBIF6+6nG3VfUeC
-8qwbTn2R1ihkpyIhrJx5kMRSR5Lk7e3TNcff/QnnfDnmajVud8xIwGxRMAvHya5/
-fcujVPdxp5KMzDQCsOMyls+JBJwwcKCgMX9N9rqBGv9TsoYhfm0=
-=Kj/4
------END PGP SIGNATURE-----
-
---ysAbS6gdazat17Eu--
+Thank you.
+Raghavendra
 
