@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-759287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3C4B1DB90
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:22:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA11B1DB95
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62025650A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3643BFBB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DFF26E711;
-	Thu,  7 Aug 2025 16:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B34326E71E;
+	Thu,  7 Aug 2025 16:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSSrT4+N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNGB1fF+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222571E766F;
-	Thu,  7 Aug 2025 16:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994161A0BFD;
+	Thu,  7 Aug 2025 16:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754583764; cv=none; b=CoIKmnGxkS/mK6dDBlrpB7FlVQt0Dfj0yH57nyB4t3vFwWYPTf6hKOF4fRXNupvHaihfWdr8n1kK1WWHCTh/b5WzBdexGVsjIKbG4HSe0g2A5MHnhWOzcGnnqazvrREfGXbaZWamOAt9DHy65oZLG6rg08mrlq2puKt8G7JqXC8=
+	t=1754583902; cv=none; b=TinydU51y1EmChFIyu013W3sapSQfrBebo2irpbkwEigkJVBBmM1kfPG7I2uOKUfyKhga4rlcPAlr9+RSin+uRRQmPQN4e8TK0vA22CW/gXGc6faFSBLKzAXXfXU3HMmXVpPWUmUyBWo+Erza79j5VALFOV2CXUXbKiTPcVuGno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754583764; c=relaxed/simple;
-	bh=sePTBshsVyA/U+dKkgUJmJ8cQsIoyj5xyZs0vl6/4+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jfB0OipxypsZktbPeyao30Ys/lZZK4c0hQxTZ/NLJbfAqlTOkk6fM3oIdlnlQNk+uXtvrhCvbEHC2dahnKDlsF/kuTURmm8YdXVzafrkeEo2o5ibINGMpPufPgs7PiGSmtvnzo3xpsRzcSsPaiJ/fiNzGV2HdMKZK6xuLWo0kcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSSrT4+N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF25C4CEEB;
-	Thu,  7 Aug 2025 16:22:41 +0000 (UTC)
+	s=arc-20240116; t=1754583902; c=relaxed/simple;
+	bh=gZuBfBfos6lnetLDGbxB+b0JOP5wvWRXNZu2oo5TIAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BpLGrqqP3l5ERa4x+263ZopdNXYBAWKxdnZB5s+hgfb8syt8J/vxYEvFyiT21QH8kjuT7B/4MbBeWp84BcORCIzqnF3RLSFMCqWbMhIT88a+YYr5uraY//BtHmfu0DU+5DRnVLhViX3zd7P0aiQiDddJs0AHtyvELo5YbnooA2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNGB1fF+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E65E7C4CEEB;
+	Thu,  7 Aug 2025 16:25:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754583762;
-	bh=sePTBshsVyA/U+dKkgUJmJ8cQsIoyj5xyZs0vl6/4+k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WSSrT4+N0x7+8IjmJc9HYBWYlQ0bOlMnc0or4HXUuy3fs+bqE+9cZuG8TxrT87yUh
-	 qIDs6fGF3ZFRQ/Ao1v2YfhomRYsQ75Bdh5StJzj6K83N0XJ46HILmVhsECRJnEjate
-	 Nwd9psEuYt9TfTO4/EwLU7JmTf+28IWoEf1AP3T+N52CboFK50NftjNcAuTF4goyyc
-	 gg/TdIA/nOchwYAxu68qRYIUbdi6cA2G9r/6G5XDmRYsRPa9aeYYX4n8qDiJSEtTBL
-	 mBhaZ4lTbllDPuDl6C4tUhj3Ekj3tQMU5wZruBz67A0MD+Xu3TkOLMYZtDza4lBMGz
-	 g099rEW19krMw==
-Date: Thu, 7 Aug 2025 09:22:38 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Haoran lee <470658536@qq.com>, masahiroy@kernel.org,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/mod/modpost: For CentOS 7/old binutils
- compatibility
-Message-ID: <20250807162238.GB2145434@ax162>
-References: <tencent_6FE857803A1AAB21B71853A2E89626ABA407@qq.com>
- <20250807-elastic-transparent-kingfisher-8f7ada@l-nschier-aarch64>
+	s=k20201202; t=1754583902;
+	bh=gZuBfBfos6lnetLDGbxB+b0JOP5wvWRXNZu2oo5TIAc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cNGB1fF+zSer4RrcHRNtDc4XjWOFIpr9Akj8vMOxKglY64CcCS+atMiPTTfgAy1FC
+	 J48secBhJX/fCDNEvnaclth1xE3MIgng0MEdsnSgKvECkDYpOufr1FlGc8HL8+IiXz
+	 lA3Xl2msKWXsXMLiP3JCeXIBBu8JZsQSxEKyE7H9AYh/oHjDF6viWvutOImxa+2tHL
+	 7oN3DDYzZjVYWBSq1V5c//1tRGa/qGfm4bH0o2K/YgnfVhzFxjFGmNtqDmZNiLPVcj
+	 0JtJRMVklulGL0ZqzgaTK7ApGaWicj8qZyUSBOCaODq/21fOPzmLksZ4dGYyMFfgXJ
+	 lUTeagY+M8Rbg==
+From: SeongJae Park <sj@kernel.org>
+To: Bijan Tabatabai <bijan311@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bijan Tabatabai <bijantabatab@micron.com>
+Subject: Re: [PATCH v2] mm/damon/core: skip needless update of damon_attrs in damon_commit_ctx()
+Date: Thu,  7 Aug 2025 09:24:59 -0700
+Message-Id: <20250807162459.52683-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAMvvPS7mcevjD-b2vz1P+grQfffVA0bx-x5WcUQ8=JApD+UkHw@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807-elastic-transparent-kingfisher-8f7ada@l-nschier-aarch64>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 07, 2025 at 12:51:59PM +0200, Nicolas Schier wrote:
-> On Tue, Jul 29, 2025 at 12:19:46AM +0800, Haoran lee wrote:
-> > 
-> > Signed-off-by: Haoran Lee <470658536@qq.com>
-> > ---
+On Wed, 6 Aug 2025 19:48:44 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+
+> On Wed, Aug 6, 2025 at 7:19 PM SeongJae Park <sj@kernel.org> wrote:
+> >
+> > On Wed,  6 Aug 2025 18:42:54 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+> >
+> > > From: Bijan Tabatabai <bijantabatab@micron.com>
+> > >
+> > > Currently, damon_commit_ctx() always calls damon_set_attrs() even if the
+> > > attributes have not been changed. This can be problematic when the DAMON
+> > > state is committed relatively frequently because damon_set_attrs() resets
+> > > ctx->next_{aggregation,ops_update}_sis, causing aggregation and ops
+> > > update operations to be needlessly delayed.
+> > >
+> > > This patch avoids this by only calling damon_set_attrs() in
+> > > damon_commit_ctx when the attributes have been changed.
+> > >
+> > > Cc: Bijan Tabatabai <bijan311@gmail.com>
+> >
+> > Maybe above line is added by a mistake?
 > 
-> Please note that empty commit descriptions will not be accepted.
+> Sorry about that. I added it because my internship ends this week and
+> wanted to make sure I get notifications on the status of this patch
+> (e.g. email notifications when the patch is merged in Andrew's tree).
+> If it's inappropriate I will remove it in the next version (unless
+> Andrew does it himself).
 
-Agreed, a clear description of the issue (including an error message)
-and logic of the fix is needed.
+I was just thinking you might not added this for a purpose.  I don't mind
+adding this Cc tag.  As you may already noticed, Andrew merged this patch as is
+with this Cc line, so seems Andrew also doesn't really mind, so all is good.
 
-> >  scripts/mod/modpost.c | 26 ++++++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> > 
-> > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> > index 5ca7c268294e..216647e2f301 100644
-> > --- a/scripts/mod/modpost.c
-> > +++ b/scripts/mod/modpost.c
-> > @@ -30,6 +30,32 @@
-> >  
-> >  #define MODULE_NS_PREFIX "module:"
-> >  
-> > +/* CentOS 7 / old binutils compatibility */
+I hope you had a nice internship and continue seeing on the mailing lists :)
+
+[...]
+> > > +static bool damon_attrs_equals(const struct damon_attrs *attrs1,
+> > > +             const struct damon_attrs *attrs2)
+> > > +{
+> > > +     const struct damon_intervals_goal *ig1 = &attrs1->intervals_goal;
+> > > +     const struct damon_intervals_goal *ig2 = &attrs2->intervals_goal;
+> > > +
+> > > +     return attrs1->sample_interval == attrs2->sample_interval &&
+> > > +             attrs1->aggr_interval == attrs2->aggr_interval &&
+> > > +             attrs1->ops_update_interval == attrs2->ops_update_interval &&
+> > > +             attrs1->min_nr_regions == attrs2->min_nr_regions &&
+> > > +             attrs1->max_nr_regions == attrs2->max_nr_regions &&
+> > > +             ig1->access_bp == ig2->access_bp &&
+> > > +             ig1->aggrs == ig2->aggrs &&
+> > > +             ig1->min_sample_us == ig2->min_sample_us &&
+> > > +             ig1->max_sample_us == ig2->max_sample_us;
+> > > +
+> >
+> > Unnecessary blank line?
 > 
-> Since v6.16-rc1 the minimum binutils version has been lifted to 
-> binutils-2.30 [1].
-> 
-> [1]: https://git.kernel.org/torvalds/c/118c40b7b50340bf7ff7e0adee8e3
-> 
-> Which binutils version do you have at CentOS 7 ?
+> Sorry for missing this!
 
-These values come from glibc's elf.h if I understand correctly, so I
-think this is more about compatibility with versions of glibc that do
-not have these relocations defined, rather than binutils.
+No worry, as you may already noticed, Andrew thankfully fixed this, with a
+followup fix patch[1].
 
-It appears these were all added in glibc 2.18 over ten years ago [1],
-whereas CentOS 7 appears to use glibc 2.17. There is some prior art to
-adding elf.h constants to modpost.c when they are not defined by elf.h
-but I am not sure if it is worth it in this case, as CentOS 7 has been
-EOL for over a year at this point (and I suspect the binutils / GCC
-version is already prohibitive for working on mainline).
+So all is well :)
 
-If we do want to add these relocation defines, I think they should be
-added in order of their numerical value. I do not have a strong opinion
-either way.
+[...]
 
-[1]: https://sourceware.org/git/?p=glibc.git;a=commit;h=08cbd996d33114ca50644d060fbe3a08260430fb
+[1] https://lore.kernel.org/20250807033443.BD30FC4CEEB@smtp.kernel.org
 
-Cheers,
-Nathan
+
+Thanks,
+SJ
+
 
