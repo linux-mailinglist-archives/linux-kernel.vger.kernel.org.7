@@ -1,182 +1,152 @@
-Return-Path: <linux-kernel+bounces-759170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C83CB1D985
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:57:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0F9B1D988
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8BD67AD9EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E78718C7BC7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787F2260585;
-	Thu,  7 Aug 2025 13:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2F1262FE4;
+	Thu,  7 Aug 2025 13:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RbRaX69u"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013065.outbound.protection.outlook.com [40.107.44.65])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C65Wv9YT"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE1125E816;
-	Thu,  7 Aug 2025 13:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754574974; cv=fail; b=Q9NscEBuiY3IYmKbmdyqwCLGTQ5SOE5xeAJEtZ3GDF9/QZbG3mYc53Z0j//hOaUfzqeM/e0WZBKLABlPIxLHCPi365hIjJYIFxYNsnHl6NjQ/J1O6zuiDtGcLpA8m/FFKv5/M2dr890QwHXKVAXN35YUSU7zVBKPqgF1anT6UT8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754574974; c=relaxed/simple;
-	bh=Klc4G+Z5S8AEOOPEyy2gZQu86ettl1EKxTpfOq+rwcU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VY4UucXQEXbPYk+JngLtvPVnikL3dzMPWyJAcK7S5C8ENuRjW4Zfi+ErPxSZnzDJbcCtjScf6dLj8zywaWkCahbVoemWXDqaer3xVg9MtnTuWexPZEbt05iKXTXuNY1CLebk3KSopJ0Q6Ol9lUNpECZpsy3s9QnPFKvYy5yy/+4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RbRaX69u; arc=fail smtp.client-ip=40.107.44.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uZfkvVwvazAuWeMiOKA2FnqYeDqMqzLNi7+YdYhtG1T0NED5MTPrdlZijzVQZmckatZQ5emTr1IDB7pIbDPZQbnGz1m2vZJUnjemU9a5ZDxZQ50uFZJIR+lx+pQ7+SeY61i5PHYiIX9QJWg1P/panRTuhWI7jh/kCLpVgTp69imA+PLO+0uNmTEXg8fMAu5lLI2zID4XC/Bpa3Jvdk0mbMMiNV2SrxRBwlI+ceV7rkI2Aco2Q0BBKBByQZspip73kraC4LTjRTX3SMPAk4NNH5Z96IX3TwNOHOdrS+fS7dQkqZNdVpyQXj0c9Iy8buH7FyFTf5A2FwQFMoTp8/1IPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xye0zUfjHoxPcKU0CPp0a8CUSJxIsR348jdqpVBLEEM=;
- b=SLPujDvG92B3ChuCW0Y+XNcNmmyY1z6hzRKWjKfHyp97syUQymBMqUsQhZv3TZ4//vEzv7qFRttbxZM6zEP/gUqg+eq7+8sCZpVKZzYqhMhesSJ/Z0d1++YrXAehsy/by99rAL1QW/e9T+KtWWspPNrFF43rKGfTCPq4EEtpRbWQfbGx/EgUL1/Hfk9C3ydkz5+lOP0paI91A+1aQfWbgofsT6QRWOhZvWAyOdCpLqraeLl7tR+1RxYfe0bTmtFEniC/reXqxmzyQ3ugr+jmROgy2ND88FpxO7OdRhGiq5gDMWG068yxBPRjUqKqiHJwAsBLHjuwFzlvG1das0h42w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xye0zUfjHoxPcKU0CPp0a8CUSJxIsR348jdqpVBLEEM=;
- b=RbRaX69u0CHWkrI2yJmmAkF2XQrUwSIHL+VBlRNS0q5+IjGMjZSaAqyvg4QAJ0lRMRRKptDnzzq2kMGVA84xwpEkSGM0WETQAqBYS+bmoEeKEIjy6P9rcYvReYskcT4iLGRV+hk5oTn4yZ6kpQaeZZ50tKndjsSlzOn+B4tslkJjBjokfHKeACA8j18LWj0IM7U3qtA1sQ2veRZVjzSm1rMjajYN5W22j6aEvj+0RoprTFNJ8HwtjxZ10j5sek0v5/j1KTu7SFfdiO+fRrvtri+BeROKKdKNtL0OdGu3NJpDzls4CO8/FWrYOx6B5cmnzxUhAmkl0itDQw2gpNyWow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- SEYPR06MB6614.apcprd06.prod.outlook.com (2603:1096:101:177::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.16; Thu, 7 Aug 2025 13:56:09 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
- 13:56:09 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] loop: Remove redundant __GFP_NOWARN
-Date: Thu,  7 Aug 2025 21:55:59 +0800
-Message-Id: <20250807135559.560837-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0226.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c7::20) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0AA25D202;
+	Thu,  7 Aug 2025 13:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754575001; cv=none; b=te5O9DAB7Za7GgA4ZQafmRkzladDZF+E0KheR41Vr1p9A/fp2gPm7d9lWGdhI54m5WhcVO0G5lID+ynlAUfUTj1b41eWX9mjH9CLGRtAnL2cJMtCKbuBjTKZ6hlEcpc9Jb70G5X8+hJhpHFwHLBrytAmhjXaNTUeW6QYhRbzQ7Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754575001; c=relaxed/simple;
+	bh=nT1zpSk6rGTxrru50YWAuKTr7MNceIHgrdP5v0fkZXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=toET1yhtoeSqXYymrxdRvNqXbMC36XxoDaBv4cnpbWgBkePqsTQf4lfUoCL8lzV1IAwucYL+oPZpZZgCauJcuQw9bqja2ZSp6IZvXT7CQ/YATfbDqQctsuwFJE9+R2m0+7YXXI9Ti79REyzQovMPA8Rbb9YU5pzktI1zfb14mnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C65Wv9YT; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 577DuTkD762015;
+	Thu, 7 Aug 2025 08:56:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754574989;
+	bh=FMfZdYvWcj7ok+cOE4Q9MRpiB9xW2uWoiOdsYz0zI0w=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=C65Wv9YTl2fRaQKg2EksFl51HXGVR8c3bPnJ0HYJIwKOgPH535CGfMcN5saroH6ov
+	 D+QVUZyydtE7iOnvrueejTr1xkv5eHCNcgxgk6pWp0P08b72Ss7O4tGJV2v9nEviJn
+	 zqhZidxaT82xriM8Zlv8dkeFRqc2tvuJqF6N4lj0=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 577DuTcg923289
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 7 Aug 2025 08:56:29 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 7
+ Aug 2025 08:56:28 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 7 Aug 2025 08:56:28 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 577DuSRL1410842;
+	Thu, 7 Aug 2025 08:56:28 -0500
+Message-ID: <c3277f21-14c4-40ca-9d48-a0aeecb54fb8@ti.com>
+Date: Thu, 7 Aug 2025 08:56:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEYPR06MB6614:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57afa243-22ea-4317-6ef8-08ddd5ba2997
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xncPRMy6AbGs+J6HQna0g3gR04mKdCYAB9N5qihSGO9cXAqLN6KzkhEAV3e3?=
- =?us-ascii?Q?3nHRIkHcL2F/pukUH85DnNy7T6Q1B+19RA34gbHfW/RGfBBIAPH6ivXCTdTN?=
- =?us-ascii?Q?lGteZ64h7TnXi7igvgiWPxTs/H1G990J1oRYEPt696VQPYE0qYdhZr5e3LAx?=
- =?us-ascii?Q?EDiNExyygJXB4myJ8ITf7BNLHAowwa3+j41ADI58wcS5vH/Ep3UBvrco55ts?=
- =?us-ascii?Q?DWApkBICL4BYeweuIn/Q+dsbOVYn70DfxyxIaHkojWWzsr7w3QRsDn4Uc+a4?=
- =?us-ascii?Q?ZvluORbx0tNYwgcWQACjvmA2oebRm1gQsjX0WUujCaL0YV8k7bNZ/map0Epa?=
- =?us-ascii?Q?W+jLNeNzXTda6bkyGfS7268znvk7xJQGAf49XBPyipcEiojE3cZk0eiwMMJ7?=
- =?us-ascii?Q?DKlEyk1R7peU0zS3aOsjZmilvaByfCFHl9WY8yjxHQA+aDmm1UuVz+pGcdPH?=
- =?us-ascii?Q?1BCXnLQJuex0Bl6VPO6AGPp2qx8fkDJgDiFiEnLo0dBqsdTBqXxVNnLkYPG2?=
- =?us-ascii?Q?IlNQHoszwDo5LfwVSZoPjs4WlSVTxe43MPx3+h/AMAxOkcrHb0L+T0UVUuMe?=
- =?us-ascii?Q?mbxjhYjZCm3ByCqSY0c70IxduVI54IAupwTJ9K3RFdmvKKdiCFoFENWYuOVj?=
- =?us-ascii?Q?5uAaKmmnyz6yB0vMWFChnFbJOnYiGee2j9RMfbROMxaV4j36iYfzS2UOXPKb?=
- =?us-ascii?Q?fy9tWUGcjYVr0e5j1Fm3CCvE9qa/JRUkzAC0DB7ObwcWSElv5BflZE51uaVL?=
- =?us-ascii?Q?CqIFm8bXShhQC+DX7koPWCJzjWbLu8CsO9TN01bN12PVV0vftpJEGaCphsvV?=
- =?us-ascii?Q?Zp6UHQ6OdImqfYhNt9+LEhoMAeu8zOQ/IzvH195hWW0eK4nTL5XjsCkY3/Xj?=
- =?us-ascii?Q?bspO0lS1linU9ldLpzK8XV5SPqfNgnl9y0u0UBRO53qQm9NYokLeJtf/sgpY?=
- =?us-ascii?Q?pbvNr9pY9FtUmHK3lO/a9PztrvIfROwAoHZIyhtHvntQLxu+xTEEfl+Y6KmP?=
- =?us-ascii?Q?6A/aQDdcv8b0WzmD5sMoPg4PaEJH3vNbmCC1+kQo1X4eXBBuC2qEbbiq4jIP?=
- =?us-ascii?Q?nrRYQnJpQ+E6BBK7ETh8llsGewvVjikcwj6mmdwX8Gezh+9rD8rXyR53tsv9?=
- =?us-ascii?Q?ACIGo1sXnmlSLWnoTQAK/HgzNKYhTFdxtZRUZj7qfSiCyVdsZtqQCPAZ4Vop?=
- =?us-ascii?Q?QMsSJj2sgInAw/nnHCL3jPCsffYky0dLQwky5xhhnPXkhlHJU+XyVhKarH/2?=
- =?us-ascii?Q?a9kBFf3dKwQ5PMEkvtU0c5UKns2nLjk81vVdzDxVYzk/8yOChlB+e2Kl8Is5?=
- =?us-ascii?Q?UdF3BD+X5Jz04QMh7Ile7AO39EB+y8eB7/J0PjDvBFhM5TFcxJ2cduUNzNsu?=
- =?us-ascii?Q?UyR+buMnxZ2AZr2dRiG1xjN7i6dMMS9XrZT+IWymu8emo60N+Y5BzNCej5iM?=
- =?us-ascii?Q?06TYMb/1gPdDBdkPpLEq+Cd6aYE3874SOP7Ubci6FiSH3ssJELeeJA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NLMWE/Brz0FIKuVawX0lRw1P3Qj5aPPAc3+JSiGocJyTpHVfa0kKu36e3WJd?=
- =?us-ascii?Q?4rDbNyDTASnKFAglpkkq8EiQP2SYoslxHNWwL+NnF5ZOZ/Iobn7KKL2Dp6Gn?=
- =?us-ascii?Q?lBC4uOV6nnxtzp8z32N2r0/8aqkI9/Grfq4JvT95fcC8jw6ttbGMMW6kIaNQ?=
- =?us-ascii?Q?1UhzWLknfgaN5EloSi5gnVMjeNxCkNd9aCdwW5v9mjBZplRlMZmGqH7ckYM4?=
- =?us-ascii?Q?9YdakwoA1tMbv/lACs2JEtvvXrbkrKq3XJcM5oeof6PgJRQ9wHNJNJLXnu4Y?=
- =?us-ascii?Q?YKZjR0t0Mt5eFrFIgyJWpQ9SvDiTpzGPTwdixfOG51HdOE1oH58+1d2wf+Fe?=
- =?us-ascii?Q?/mJCk4D02uZQ89k7HcZxgjz2rj0m+S2yk39Nx2ZSaAznW23RcgQ1KJcwkPI9?=
- =?us-ascii?Q?dZbF8cFYYhNvGJXL8wm/m1CgYZbTFewZIh1PZzyidFQs13BxDOkT+6lqEo7l?=
- =?us-ascii?Q?r52tLtu2bQzf0BDqh9b609pztG4MdOE/sDmctpf05Ov/LVYnAerS5LoaNWMD?=
- =?us-ascii?Q?NK5FepTvA5NSxzxV/pnoh7/MzGyUI9BTU6TGyF+DrwowHWQDdPEiAnvq0Ckt?=
- =?us-ascii?Q?Lerlaj/xPM9lyBj5tHNE1VF8V7fYTyDMESzZtk74LDJgutoudDi9NK3IwIkV?=
- =?us-ascii?Q?VPW+6yhsIGyYzg6E4aWr5iPxdH+MTfoPVkRjLevnu0pBbAHfVmVjOz/1+rZQ?=
- =?us-ascii?Q?DAhl8RE4Qz2oge/M+HAdmygkYF0GcNfcapQDnrxrer3CSeT8/QVSS56MpfBZ?=
- =?us-ascii?Q?W6o7I5AV3WkR3gLWxjyu7EAM+1QcXuW/VnICSaghl0t7csYxVeBRKtdmnvJM?=
- =?us-ascii?Q?m+2Cz0Q5rC9ECVEXDeVU+U0C1lZQzGwMYJKaNeFnMDErrUM0iZRmXYyURBcE?=
- =?us-ascii?Q?BDhyUi6GKpEtq5vcdC8nQrnWY9QISmGAGun/vdjQeG74GHim0uX/GQkZhpX2?=
- =?us-ascii?Q?A6i07hF9PVLIhhHxZcSFkeZW6DjNAvUs4FrnQaob4PnuCS1HWmWNwjzUjgbw?=
- =?us-ascii?Q?gbbcCevbT65gZXNTi4bm7cr+Efl33fr24Iewa/V1RvWHItmcApD8XrMrVogE?=
- =?us-ascii?Q?7FoipWUkYwMtnTDq6bV7yygNivHg4Nkdbeu1Eq1xp1TkKdfkdob1RluCmGGZ?=
- =?us-ascii?Q?flS7td46xHVGUsQje0/TBV32EOezejXuxCfytsyNePA9gEIPLpfuEebxKm9O?=
- =?us-ascii?Q?/gHkxE6R0BrHDlAQcxu+PR4ApendM4b5IdDJqQZ5Qa8OzxmNV94upS1nSHuR?=
- =?us-ascii?Q?MLPVqmrlR540RujOonp1d1T1ai5400ot7CrLFZF8ct1/uHzi5E5fNwH275ap?=
- =?us-ascii?Q?NmZgTO/YIEJGDjf5ldqPxKwtXZa7T+WmbE98V43oOlqDH+t7zjeCD6BUJKNM?=
- =?us-ascii?Q?3DsGGGMBlJ2QH5cDSKos9VQ0O00t9qrBgjztmb+g84RUFiSOlgpj/hWk9P/L?=
- =?us-ascii?Q?gqaamrVeJN3beOcuHpZ45zhOLziCDHNZ8nihv0YaLgNlGBInjnDvALP81oGU?=
- =?us-ascii?Q?aBnmzxMPQQ2AHuM1gHulWUytNQlApaWYA/jZfEwP8i7IxXmsd1cTigHAgUYx?=
- =?us-ascii?Q?7rgShkqVheqmgfWK2bfoSD905DgAuxquvbURVVer?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57afa243-22ea-4317-6ef8-08ddd5ba2997
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:56:09.6952
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d2xNsaIDwnGpymmHEW8wbMkHVYuddtRFpg6jLE8EyatedBHKHW6HmY+cMqlm2UUI8Dxk5HLed9sb5ENp1bugiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6614
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] counter: ti-ecap-capture: Use devm_pm_runtime_enable()
+To: Waqar Hameed <waqar.hameed@axis.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Julien Panis <jpanis@baylibre.com>,
+        William Breathitt Gray
+	<wbg@kernel.org>
+CC: <kernel@axis.com>, <linux-iio@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <pnda54bjmij.a.out@axis.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <pnda54bjmij.a.out@axis.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
-made GFP_NOWAIT implicitly include __GFP_NOWARN.
+On 8/7/25 8:21 AM, Waqar Hameed wrote:
+> There is no need to register a manual `devm` action for
+> `pm_runtime_disable()` when `devm_pm_runtime_enable()` exists. It does
+> the same thing (but also calls `pm_runtime_dont_use_autosuspend()`,
+> which should be fine here).
+> 
+> Moreover, when `devm_add_action_or_reset()` fails, it is due to a failed
+> memory allocation and will thus return `-ENOMEM`. `dev_err_probe()`
+> doesn't do anything when error is `-ENOMEM`. Therefore, the call to
+> `dev_err_probe()` is useless. Note that `devm_pm_runtime_enable()` has a
+> tail call to `devm_add_action_or_reset()` and thus returns that value.
+> Therefore, replace `dev_err_probe()` with the returning value.
+> 
+> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+> ---
 
-Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
-(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
-up these redundant flags across subsystems.
+Acked-by: Andrew Davis <afd@ti.com>
 
-No functional changes.
-
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- drivers/block/loop.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 1b6ee91f8eb9..8c90b43b348b 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -812,7 +812,7 @@ static void loop_queue_work(struct loop_device *lo, struct loop_cmd *cmd)
- 	if (worker)
- 		goto queue_work;
- 
--	worker = kzalloc(sizeof(struct loop_worker), GFP_NOWAIT | __GFP_NOWARN);
-+	worker = kzalloc(sizeof(struct loop_worker), GFP_NOWAIT);
- 	/*
- 	 * In the event we cannot allocate a worker, just queue on the
- 	 * rootcg worker and issue the I/O as the rootcg
--- 
-2.34.1
+> Changes in v3:
+> 
+> * Remove the manual `devm_add_action_or_reset()` and use
+>    `devm_pm_runtime_enable()` instead.
+>    
+> Link to v2: https://lore.kernel.org/lkml/pndms8em7tf.a.out@axis.com/
+> 
+> Changes in v2:
+> 
+> * Split the patch to one seperate patch for each sub-system.
+> 
+> Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
+> 
+> drivers/counter/ti-ecap-capture.c | 12 ++----------
+>   1 file changed, 2 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
+> index 3faaf7f60539..3586a7ab9887 100644
+> --- a/drivers/counter/ti-ecap-capture.c
+> +++ b/drivers/counter/ti-ecap-capture.c
+> @@ -465,11 +465,6 @@ static irqreturn_t ecap_cnt_isr(int irq, void *dev_id)
+>   	return IRQ_HANDLED;
+>   }
+>   
+> -static void ecap_cnt_pm_disable(void *dev)
+> -{
+> -	pm_runtime_disable(dev);
+> -}
+> -
+>   static int ecap_cnt_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> @@ -523,12 +518,9 @@ static int ecap_cnt_probe(struct platform_device *pdev)
+>   
+>   	platform_set_drvdata(pdev, counter_dev);
+>   
+> -	pm_runtime_enable(dev);
+> -
+> -	/* Register a cleanup callback to care for disabling PM */
+> -	ret = devm_add_action_or_reset(dev, ecap_cnt_pm_disable, dev);
+> +	ret = devm_pm_runtime_enable(dev);
+>   	if (ret)
+> -		return dev_err_probe(dev, ret, "failed to add pm disable action\n");
+> +		return ret;
+>   
+>   	ret = devm_counter_add(dev, counter_dev);
+>   	if (ret)
+> 
+> base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
 
 
