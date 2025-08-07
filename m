@@ -1,124 +1,204 @@
-Return-Path: <linux-kernel+bounces-759084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E8AB1D835
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:47:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66647B1D834
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C60D3BB58E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:47:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26006188634D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADC92571AD;
-	Thu,  7 Aug 2025 12:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A99254AE4;
+	Thu,  7 Aug 2025 12:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F+nGFL1O"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfLJWP0H"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D492566F5
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E455695;
+	Thu,  7 Aug 2025 12:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754570850; cv=none; b=mNTKXwIhTivwuDXzpH/wtTywFcV7jbH6h9RS3ocI9LZjXsWLs1nv0D+O/NbiHVhd3yUsUizUaH9aauy5jB3kr4vCr4wnXq/uXR1W5VnGW1jTNq+gEkZ5/tld2LKLMNySBpAdAK4PSRBAB5Nj+h7zfjlgPBn50UXzFe+BtOEiQSA=
+	t=1754570844; cv=none; b=FmWWxFzqRKYWAarOCScFj1O2qniRy7yhe3TyN4eZ/Hs3o685Lu7dgXnvMXKqlgdufB3IzgFFI9iG2hA9biA69PMFnQPhsOfux/vqzeUSbzNbhAqJ+0+ZDsLpwA3KLzEdoQ96WyEgSjoMF3x+6GX5XZTujb5ivolwvjiD0OSxHXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754570850; c=relaxed/simple;
-	bh=un3RrEaBjFQNWnpFNJaSEVX8CHxrowanZGwCtU3ENaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nUkQvdJRQOc1JKI/fhjCXpVl/nQw/RfC/IFRBUfQt/QB3L3cwBuJh3AhBDJYQSjrTZo3bb1x7WN/1SsPU+p5rNCIB4MuuG08sCzt8tTfP20r72VsOqlCDz9CRJbyMN2eCLrLnl9l3TNVwu7DLhjGLVt4NO6uInGZLKUJa22AL2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F+nGFL1O; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754570847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=aTK69kQaFZtjtvMSMDYC7o+QFQbEWEankqiOa7dNWH4=;
-	b=F+nGFL1O2otRqpfrcqPVxpXrKDNGDTW1qF14NO5224K5lJR0xcoka33xxsxRTIbaQEDwhJ
-	rEF4CSKWe4kPUOgtFJVpj8wimaGX2Dwxq1mi0kHbL5GTZ6w66S0s8fcECwBB3oSXrS3URO
-	rxWyZ7T3OMJEhZdlDPWUk6FKRnP7JXk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-aOMPnF-QPQOYGQcsZFSFbQ-1; Thu, 07 Aug 2025 08:47:26 -0400
-X-MC-Unique: aOMPnF-QPQOYGQcsZFSFbQ-1
-X-Mimecast-MFC-AGG-ID: aOMPnF-QPQOYGQcsZFSFbQ_1754570845
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-459de0d5fb1so9044575e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 05:47:26 -0700 (PDT)
+	s=arc-20240116; t=1754570844; c=relaxed/simple;
+	bh=ohZUwlzNhrP3gzHlsaNTEoW1K6lJB6KtxB5geZsOcL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JiTUNWhFC+hP/7SMTRldmY4fKykqmTeIHLPltOJT6xRwh8ywV3x9Av7IsoBI9sa569ObrzQ3C2VpghXL42IJOlSPqltLz07Ttj7juOuUyjCMujcuM7xzlvkkznOq8ELdR+lw+xoqdgG6adRPAB4GqikFI3iN4YOJb+F0rTSSJfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfLJWP0H; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b783d851e6so808420f8f.0;
+        Thu, 07 Aug 2025 05:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754570841; x=1755175641; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QAlTws1iiWsnLLkn24/CvwlHxdksR+gtg1kFJzrBdI8=;
+        b=SfLJWP0HZ7mmgtyr3WhgAEGF1Nb+PjCFVG02JLl2d0L+YCZ6RmSsLB3qUqWN7CIjxy
+         iR/MawrZbVZB9rX8rU1OogjWtX0jzPH1xrdO7q1C4iecJ3niDLm9XtJuuwGA61POT4f1
+         ltpsHD1xCM7vEzhTxGqxrvDYEUAL0/NvCyNQkarl+NXs23qJQyrmzm1qSrGqwyxnYn1/
+         wA+QeEx0IaMvjbP6SJjkuHg6KbwPRZJkqp8RGTAgbx/IeMkyk8kQHF9PAOs9k5MrNyCy
+         HG6u2vu8PnuWe4Pt1w3txLEsxxoSDWY2YudZBZHpGcZfcNZjI8ui/Nxbvy+ulRSYdtMV
+         RaJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754570845; x=1755175645;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1754570841; x=1755175641;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aTK69kQaFZtjtvMSMDYC7o+QFQbEWEankqiOa7dNWH4=;
-        b=fmEq9fRDwzKrBGDF/v+wC60nCj+Ka1xVNx3Hlof6DJHWawzztOi2jghIFkuB6OmPP7
-         3XVXAKPt52Wz+OX10YtL5MyMScTDu6ifrBKBUKty5aQzWgxp6JzofLP+DMC7vAj9wOr8
-         jKjiZ+jIYd8xTxMFjuwRij2We5YQ22DUAQCU8k7PDIE8i3KuPJZa3+eA159+UQAgW3Ng
-         xyBwWC+zX3951D+olJl8LraRG6o5pf7Nz4YSF5qUvyFgei0R6Y1ZdWUxInUzHKUcEksW
-         C3fxrOgsl+W7+Q5lCGE1gWFCxolniK13CI7bzvc/B6d4aP4rCxugAgtaUhsPWmKWnzEd
-         RLeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYKYLz0FXIfBroy2HZUKG7UzhzLx75VMvtz1wkuIDK7ReqZjz5c6iLoOIOtmgWOLH9ejW+PJOElJ533x4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbUZ5tNhRyOaJytAEVxMtudpsQmImFKZ1qIwOnTikAm75MNSTR
-	hxZGDcOtyh7M1z6SVLtC9Gkcx28Tb+mn2FU72FFoDqNQe1AoK7oAb5EYoRP4/dXq9vn3H+Le3KC
-	wu/O66Qy295CeD4H8VAIAujPTM2CurKwyE4lWDycs9hOpEhjrsud97W8IGqqbiwEmXLab6rJYdA
-	==
-X-Gm-Gg: ASbGncs3Dh0sfjPPp0mgSNSRKwU/xv6lEbTONuMpk/ylfwmUUS9hxqmKey0gljeoAjX
-	ECTNn7ftupMcAyWif0rScvYQHzfu+aoiXCX3EVMYFIP2dfpSlPTtXpzLfmN8UoTKBUfTDBdU7WP
-	w1uyelsmPgZbXXrHOx7WLpGFLdI4lnyMLeLN8O2Ubn65x6QU3XXjS/nVkc0PQUDVJuchWSINNqL
-	Kn9r33925XJx1MS+JYAHccxC0Tg4sOgdtoxH8hONAW4gyDOfCe/Z6KlbsGosn7YC89I6XwtPVfn
-	b/5h/k83bxJ0AVfXv/sJeG8JHoRVB91Y
-X-Received: by 2002:a05:600c:468b:b0:456:1ac8:cace with SMTP id 5b1f17b1804b1-459ebd12934mr46363015e9.12.1754570845007;
-        Thu, 07 Aug 2025 05:47:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG09B4jVXtQ521CCCpSOE6UxD7Ba5Baj1YjRug6kR2oAgnAlGT6bbB3OaejRPpTTtCumhOhhg==
-X-Received: by 2002:a05:600c:468b:b0:456:1ac8:cace with SMTP id 5b1f17b1804b1-459ebd12934mr46362755e9.12.1754570844604;
-        Thu, 07 Aug 2025 05:47:24 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0a24bf1sm120608885e9.1.2025.08.07.05.47.22
+        bh=QAlTws1iiWsnLLkn24/CvwlHxdksR+gtg1kFJzrBdI8=;
+        b=cZSuapjaptp517Oz+T0Rug1+j13oAMMI374vGYYmTWjy/DOommBOUdAej0WpNGP8Gt
+         pQHxLlBffHK4gUp/iCB1opOpFwhk57K7gu4+5Lwl0lqcFjWnbRuR+5oZp6YrcHYFe6oU
+         fYDGx3yi4JCRWcJBzYggHoG0pYNPdoHdKBRab9ELl36nPer6CAMacJWONamsqYtEQDNu
+         AROE2dC7LXEe8Z/A3J2aG3uxyl4KEylEWhj5V40ynzA2a7+N85L/xGBMPo+IPG0VKt0n
+         eUqRjAlBUTPE1ULqqtzuqz+8ySFITqdVrpt3e2pHzQypiWXla8rV8O0ZrKzF2xk4Ta7V
+         RpLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUItqWhimS45k6XWduFmsSMzZpSIDChzPnVxWu1H+GWFCzK+3n+Y4gmpUkw6p5tPqXOrGqfBjfuUevvZ1j5@vger.kernel.org, AJvYcCWQ25kFKLAiOCKBYhBQQzXOSLyqrqkRUbVd137MGYF5zo2gfh2HzxyoK4DJ94slK9WxDmwt5VOvZ+Uu@vger.kernel.org, AJvYcCWrSKQZ95RHe+hwRE5n0ZNNH/3SLCY8JA697n3Ec8cbaF8QBiOGA01ctnWMuBxoCY9IGcRIiSjd2Yps@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpn/rKc/wD6xzIK9lav1RJgq+hJyJTmNIt87xeaKaJoODDblMj
+	W3QpS8gK3uoVlEUMtf6aD8USlNmY96wqslJRdkYLbVlKYXOa7K6dHHwM
+X-Gm-Gg: ASbGncvT5zgCPKWXFFqmLkWjllhvpXEcFsHF8MMu5hiJdm1TqlGn9zzsA9ga4ZxjOPC
+	fFptbX5gID78DQpKAj7jE8iyEJIvVYTxNcdm2oMIPPHeyjUZSo1H7Sc4mt7TgwkBFVy0BBp87Xj
+	jOXNuLNf3Iw7w+g7MgZ4mGIbb1qT4lq+QIncECdBAEQjObH6znjTKtm4BGTYnf2K0KWG1HImy36
+	Gqb+nVCGDJsy9lHNBqvHkJZd23z2D1sX+07xsO8Mu/V+0OCNbjkhfCt3+ZBboZNLJrM8a5pYZb6
+	9Z8jXV1bXQl2PsqaAraZutwow9D5eUrnZjjHfRHuaQwjLeqcZDZ6CPi8vLQDPRNo5v2krojBd+h
+	JrAZfJEidK7w=
+X-Google-Smtp-Source: AGHT+IG4d7j552qDyDgbbYwRGoYTjLez+9p2AbEs/1+ssaAWuuEwp6Vel/PSjycNO67HGpQT0ca/LQ==
+X-Received: by 2002:a5d:64c3:0:b0:3b7:9141:f044 with SMTP id ffacd0b85a97d-3b8f48d8ed7mr5550820f8f.21.1754570840514;
+        Thu, 07 Aug 2025 05:47:20 -0700 (PDT)
+Received: from nsa ([185.128.9.33])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac158sm27151373f8f.4.2025.08.07.05.47.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 05:47:23 -0700 (PDT)
-Date: Thu, 7 Aug 2025 08:47:21 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jasowang@redhat.com, jhkim@linux.ibm.com, leitao@debian.org,
-	mst@redhat.com
-Subject: [GIT PULL] vhost: bugfix
-Message-ID: <20250807084721-mutt-send-email-mst@kernel.org>
+        Thu, 07 Aug 2025 05:47:20 -0700 (PDT)
+Date: Thu, 7 Aug 2025 13:47:36 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 07/10] iio: adc: ad7476: Conditionally call convstart
+Message-ID: <jqq73v23juc3wj3ykq5df3mevjatnq3zb2aq4w524xnl4xgban@qemnvtvs2twn>
+References: <cover.1754559149.git.mazziesaccount@gmail.com>
+ <bb96107301b249d4be912fa4384ed4de7791410b.1754559149.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mutt-Fcc: =sent
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bb96107301b249d4be912fa4384ed4de7791410b.1754559149.git.mazziesaccount@gmail.com>
 
-The following changes since commit 7e161a991ea71e6ec526abc8f40c6852ebe3d946:
+On Thu, Aug 07, 2025 at 12:35:03PM +0300, Matti Vaittinen wrote:
+> The ad7476 supports two IC variants which may have a 'convstart' -GPIO
+> for starting the conversion. Currently the driver calls a function which
+> tries to access the GPIO for all of the IC variants, whether they
+> support 'convstart' or not. This is not an error because this function
+> returns early if GPIO information is not populated.
+> 
+> We can do a tad better by calling this function only for the ICs which
+> have the 'convstart' by providing a function pointer to the convstart
+> function from the chip_info structure, and calling this function only
+> for the ICs which have the function pointer set.
+> 
+> This does also allow to support ICs which require different convstart
+> handling than the currently supported ICs.
+> 
+> Call convstart function only on the ICs which can support it and allow
+> IC-specific convstart functions for the ICs which require different
+> handling.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+> Revision history:
+>  v1 => v2:
+>  - Adapt to the change which removed the chip_info pointer from the
+>   driver's state structure.
+> 
+> The follow-up patch adding support for the ROHM BD79105 will bring
+> different 'convstart' functions in use. The IC specific pointer will
+> also prepare the way for this.
+> ---
+>  drivers/iio/adc/ad7476.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> index a30eb016c11c..8914861802be 100644
+> --- a/drivers/iio/adc/ad7476.c
+> +++ b/drivers/iio/adc/ad7476.c
+> @@ -30,6 +30,7 @@ struct ad7476_chip_info {
+>  	unsigned int			int_vref_mv;
+>  	struct iio_chan_spec		channel[2];
+>  	void (*reset)(struct ad7476_state *);
+> +	void (*conversion_pre_op)(struct ad7476_state *st);
+>  	bool				has_vref;
+>  	bool				has_vdrive;
+>  };
+> @@ -37,6 +38,7 @@ struct ad7476_chip_info {
+>  struct ad7476_state {
+>  	struct spi_device		*spi;
+>  	struct gpio_desc		*convst_gpio;
+> +	void (*conversion_pre_op)(struct ad7476_state *st);
 
-  Merge tag 'i2c-for-6.17-rc1-part2' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux (2025-08-04 16:37:29 -0700)
+Ok, I was going to reply to patch patch 5 saying I was not sure about
+the change. And now this makes it clear. My point would be that it's
+fairly easiy to end up needing chip info after probe. The above function
+pointer only has to exist because of patch 5. So I would better drop
+patch 5 and...
 
-are available in the Git repository at:
+>  	struct spi_transfer		xfer;
+>  	struct spi_message		msg;
+>  	struct iio_chan_spec		channel[2];
+> @@ -68,7 +70,8 @@ static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+>  	struct ad7476_state *st = iio_priv(indio_dev);
+>  	int b_sent;
+>  
+> -	ad7091_convst(st);
+> +	if (st->conversion_pre_op)
+> +		st->conversion_pre_op(st);
+>  
+>  	b_sent = spi_sync(st->spi, &st->msg);
+>  	if (b_sent < 0)
+> @@ -158,12 +161,14 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+>  static const struct ad7476_chip_info ad7091_chip_info = {
+>  	.channel[0] = AD7091R_CHAN(12),
+>  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +	.conversion_pre_op = ad7091_convst,
+>  	.reset = ad7091_reset,
+>  };
+>  
+>  static const struct ad7476_chip_info ad7091r_chip_info = {
+>  	.channel[0] = AD7091R_CHAN(12),
+>  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +	.conversion_pre_op = ad7091_convst,
+>  	.int_vref_mv = 2500,
+>  	.has_vref = true,
+>  	.reset = ad7091_reset,
+> @@ -319,6 +324,7 @@ static int ad7476_probe(struct spi_device *spi)
+>  			return ret;
+>  	}
+>  
+> +	st->conversion_pre_op = chip_info->conversion_pre_op;
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+... no need for the above. There's no real reason for the above to be
+done at runtime.
 
-for you to fetch changes up to 6a20f9fca30c4047488a616b5225acb82367ef6b:
+- Nuno Sá
 
-  vhost: initialize vq->nheads properly (2025-08-05 05:57:40 -0400)
+>  	st->convst_gpio = devm_gpiod_get_optional(&spi->dev,
+>  						  "adi,conversion-start",
+>  						  GPIOD_OUT_LOW);
+> -- 
+> 2.50.1
+> 
 
-----------------------------------------------------------------
-vhost: bugfix
-
-A single fix for a regression in vhost.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-----------------------------------------------------------------
-Jason Wang (1):
-      vhost: initialize vq->nheads properly
-
- drivers/vhost/vhost.c | 1 +
- 1 file changed, 1 insertion(+)
 
 
