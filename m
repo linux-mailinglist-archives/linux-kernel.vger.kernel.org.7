@@ -1,193 +1,152 @@
-Return-Path: <linux-kernel+bounces-758474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C35B1CFA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:04:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C84B1CFAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF1E3AD484
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:04:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9D93B25A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F04B4C6E;
-	Thu,  7 Aug 2025 00:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509AC4C6E;
+	Thu,  7 Aug 2025 00:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XW6Y1ix6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIEWpRVb"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A796B38B;
-	Thu,  7 Aug 2025 00:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563E7186A;
+	Thu,  7 Aug 2025 00:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754525037; cv=none; b=KI15ta3UKEM/Tiby/QHvJ9EE60QNXgNJ5hEHsRUa25MNrSxKVFJOBB1T1mvZ+Tfa1TJZL+J6+ldY/9Ayk/nxs4TugHFt1yikif8tJbjTb+sNf0Fo6JyESXNfZlTmUhHkFptNXahsmBNa/5atf95UQcoAUXzuI1IdGs/+u3/sApM=
+	t=1754525083; cv=none; b=USnkvPtwergDNrJUEavnueop9hGDwOOjeSTVNIs3gPx6c3xUzXhQRmMfc56dLlPPcZsRPkmGBiRVJWxpoDinKmmjG2/hvmIwfIQqArIocNZwY0wYu+EF9KmRbKwSSUBpKZQy4SrfMFmRZWMglNCucckvZMwKxeBKbvpHNOeLet8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754525037; c=relaxed/simple;
-	bh=Mo5zZx6+Ls09o6HSEjQ6aurVFAO/GmKzPOOACnlaro4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=femVmVyVPChfMf3Dv2ioJqMa8XbErCIg47KtPoZUucLR56lCLQUhK7hAi8MKT8Kbu6h5EAqXKlspPlvf4xKtniVnjEAY753piU1F6kwE9KYvHuODzALRcmFMsU9bJoF+VVjXq/BKzWoUxrNcCs+mTBB5Uh7zb1LMM14H7EST87E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XW6Y1ix6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B110C4CEE7;
-	Thu,  7 Aug 2025 00:03:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754525037;
-	bh=Mo5zZx6+Ls09o6HSEjQ6aurVFAO/GmKzPOOACnlaro4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XW6Y1ix6oPV0ctapSPBEJFFdUM6EWr6QHnqe10meQ90DcEhnSKyu4lM0rSDMLJwrA
-	 AxJXWiVvHEHxxoRho/xDcchl12cFK/y3kSEvrfROiC2uVgMbzdnBwivClPcX+HtJJx
-	 WYK47ohKJv4IUvoFy4UJmaxsWsRG3cnYxT5v5DzRyBPxXYDdPkDnKF8dWBw+wzefJT
-	 p81ZMy0MlVZqkq5aPbWL6E9ADfUEAiRW9qt8ad1X99W8tm9upYqSwWPa91KqSfFV4i
-	 WAhdSdBppef0yuPr+jj3jMIE/N9ujTk0dTN2oN8fEZwj4/Lpsw1QCcq3u5p4vROp8+
-	 xPptFRmbnVOpw==
-Date: Wed, 6 Aug 2025 19:03:56 -0500
-From: Rob Herring <robh@kernel.org>
-To: Mahdi Khosravi <mmk1776@gmail.com>
-Cc: devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ASoC: dt-bindings: realtek,alc5623: convert to DT
- schema
-Message-ID: <20250807000356.GA2072715-robh@kernel.org>
-References: <20250806131818.38278-1-mmk1776@gmail.com>
+	s=arc-20240116; t=1754525083; c=relaxed/simple;
+	bh=rWSJADiT5YFucAiGDF6MjM9ePHCHYf61hCJW+WuXhyE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UCo3sWeiXD1LOxEtjN5p3D+UdBgr04Z7tnrbci566JHPGsKria8pIZDbAv5NqRW3HffYptp08RUuMhM0zOmxkxkUTtFOLo7RFkpuARFud9kxx0sVA8X4yOokHvUyFrrrLS0sVeSRNF1PzJzpqlCHT6HapeTMct8lEhMEixRuZ+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EIEWpRVb; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-31effad130bso405399a91.3;
+        Wed, 06 Aug 2025 17:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754525082; x=1755129882; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=K/A9C8/bVgIC1L6UfQS08Wm98G+tK+gmaXMJoj3JOjM=;
+        b=EIEWpRVbbaxxnxRBRth5IHHKanlt5Iinbls+cR5wyQagPF3nFu6BVy4SNh7jDFx9Vm
+         UpibyT2ByvduSu7uKqZNuvxSSaBMsuLJO2p/18oZ2123U18SYgI2V/yI9E5blWQhdps5
+         96NMzHmL01Q+pQNpOfQdOigaisXzh9yP9fnm7khqYwM8PzF4WnAEs6CHsEFpmllppluo
+         aNDdjur3iAkbsQRo0atq5A75gHTEMRtMkIZI9d82SXrkrwHP3D8yVXuSdy5AnDFAAbos
+         sBo/6o1KSxUtUNCyRuCCYlkdqkwAg/rRBMlpO0wguoy0OmXtsEo/1a7z1atczibim2vU
+         vNNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754525082; x=1755129882;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K/A9C8/bVgIC1L6UfQS08Wm98G+tK+gmaXMJoj3JOjM=;
+        b=q6cLqWe9r3A/k8OjP3HJy7PoGQHflssoaMLCtegtrdKzyNsfTLgmMOXDz1en2N+rgY
+         T6tzX0lwrF760GH7IuGfl0kFNhQ51UVWkocA7w4xX6yY1ou7Tm6zmro7bJu/YSnO/Xn2
+         lychLpWDu/ZomYNur4DXoJYLy4ib5nV1xv2I56Jdu1YOXQc3Ycofv8RmBaPpaZTBlBYK
+         ny/YRHGngLwtQubw6fBB+Wb9Bih79VFG+rUMpSei+sCoqVmOsLpnVFKR5bVcLp8eTsHB
+         j0vf7QvOE3bPptCXHbPkpr27UrnRhxIJH5gzN8UiGjcdPvUBBQTN3WKHQL4xzNF/ngEo
+         v89w==
+X-Forwarded-Encrypted: i=1; AJvYcCUd2WXHsgeKwNv2kpqry7NGETermX2ICdNEFyhssjouRolUW0LCMl8oWfFoUpFeRTMFt3e4Zq1CxZU=@vger.kernel.org, AJvYcCVU2UbZpjU8CMS0np3OS+y8sdmBCyMSYKCMP1bRK+3Xtp6/QWWJS9Ge0STtd1/skFhe5y7McagB@vger.kernel.org, AJvYcCWDIZ7wjfaJosj4cYC2E0rHZOPzAX0cwQ5556O3MTdVAU94i0VGGb2Ldh97tjMuPt325CwQ8Ys4RAzJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOmByj0OqGGGJMs377WPAfoLwiWmfHpXditxuczZ7qQXBsvpsB
+	FedGLAmEuvDOFc59RIKJZdBLcH4FSkkZKyTjAxkEynCqeUsrpk2PfnUt
+X-Gm-Gg: ASbGncsSY58YN4Fw1Ed6xQmX3jrLF/GZfC6PZjML89H5StCOAa0CozBD919YIrcRhHn
+	s156629k7qFEObFWDxhXSJzeAIC7bYJbo0HTZy7rngQBZoDGSdb4zKvUBhIVfkzGX/e+kGwLyKJ
+	S5J77tvd1xFVK7CbU7NDRtZ8nvl+vvz9wcQDnO+/K5ermbC9MnZqmKAppf2yL2rMUOmWwjOii1X
+	90a0ootNIc3IguygBZj+833HfisMZ+w864urXn8M2i4JTKrA5bjUK0hPXZGw5kBv07fw/yNCIFN
+	sUB8v3NcR/EnYvDWmrlkkmrEuA5LxBEkhU4p1bCPNUcizatLedZz6E5cNdIFQSVQLxm9+hWGyS4
+	lBlaehiIS6+Bq54xCVk7ADgnlPDnq3DD0cjfHFcF16Y3nhoc=
+X-Google-Smtp-Source: AGHT+IE8yf3mW+Zix4aWhzoVPQkRdDv26V46vDKBnE4qstNKDwz/t8jIdzc+kq2t00duIY4+nurXzw==
+X-Received: by 2002:a17:90b:2d87:b0:313:f6fa:5bb5 with SMTP id 98e67ed59e1d1-3216752304fmr6652697a91.18.1754525081598;
+        Wed, 06 Aug 2025 17:04:41 -0700 (PDT)
+Received: from [192.168.0.69] ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32102a5be52sm10378051a91.1.2025.08.06.17.04.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 17:04:41 -0700 (PDT)
+Message-ID: <aa5680f2974cb18e4a7d40266a85727ef43377c4.camel@gmail.com>
+Subject: Re: [RFC 2/4] net/tls/tls_sw: use the record size limit specified
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: Damien Le Moal <dlemoal@kernel.org>, alistair.francis@wdc.com, 
+	chuck.lever@oracle.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, 	pabeni@redhat.com, horms@kernel.org,
+ donald.hunter@gmail.com, corbet@lwn.net, 	kbusch@kernel.org,
+ axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
+	borisp@nvidia.com, john.fastabend@gmail.com, jlayton@kernel.org,
+ neil@brown.name, 	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ trondmy@kernel.org, 	anna@kernel.org, kernel-tls-handshake@lists.linux.dev,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
+Date: Thu, 07 Aug 2025 10:04:30 +1000
+In-Reply-To: <8ce2c9ce-9636-4888-8d63-2169441addcb@kernel.org>
+References: <20250729024150.222513-2-wilfred.opensource@gmail.com>
+	 <20250729024150.222513-5-wilfred.opensource@gmail.com>
+	 <8ce2c9ce-9636-4888-8d63-2169441addcb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806131818.38278-1-mmk1776@gmail.com>
 
-On Wed, Aug 06, 2025 at 04:18:18PM +0300, Mahdi Khosravi wrote:
-> I converted the alc5623 audio codec binding from text to DT schema.
+On Tue, 2025-07-29 at 17:13 +0900, Damien Le Moal wrote:
+> On 7/29/25 11:41, Wilfred Mallawa wrote:
+> > From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> >=20
+> > Currently, for tls_sw, the kernel uses the default 16K
+> > TLS_MAX_PAYLOAD_SIZE for records. However, if an endpoint has
+> > specified
+> > a record size much lower than that, it is currently not respected.
+>=20
+> Remove "much". Lower is lower and we have to respect it, even if it
+> is 1B.
+>=20
+> > This patch adds support to using the record size limit specified by
+> > an
+> > endpoint if it has been set.
+>=20
+> s/to using/for using
+>=20
+> >=20
+> > Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+>=20
+> > @@ -1045,6 +1046,13 @@ static int tls_sw_sendmsg_locked(struct sock
+> > *sk, struct msghdr *msg,
+> > =C2=A0		}
+> > =C2=A0	}
+> > =C2=A0
+> > +	if (tls_ctx->tls_record_size_limit > 0) {
+> > +		tls_record_size_limit =3D min(tls_ctx-
+> > >tls_record_size_limit,
+> > +					=C2=A0=C2=A0=C2=A0 TLS_MAX_PAYLOAD_SIZE);
+> > +	} else {
+> > +		tls_record_size_limit =3D TLS_MAX_PAYLOAD_SIZE;
+> > +	}
+>=20
+> You can simplify this with:
+>=20
+> 	tls_record_size_limit =3D
+> 		min_not_zero(tls_ctx->tls_record_size_limit,
+> 			=C2=A0=C2=A0=C2=A0=C2=A0 TLS_MAX_PAYLOAD_SIZE);
+>=20
+Hey Damien,
 
-Convert the alc5623...
+Thanks for the feedback! Will amend for V2.
 
-> This is my first try and I used make dt_binding_check & make dtbs_check to verify
-> without getting any errors.
-
-Drop this. Passing is assumed. Actually, 'make dtbs_check' warnings are 
-fine if you think the .dts has a mistake.
-
-> 
-> Signed-off-by: Mahdi Khosravi <mmk1776@gmail.com>
-> ---
-> Changes in v3:
-> - Drop allOf, just use $ref for uint32
-> - Remove stray '>' in descriptions
-> - Fix subject to "to DT schema"
-> 
-> Changes in v2:
-> - Add dai-common ref
-> - Switch add-ctrl/jack-det-ctrl to allOf uint32
-> - Use unevaluatedProperties
-> - Fix example compatible
-> ---
->  .../devicetree/bindings/sound/alc5623.txt     | 25 ---------
->  .../bindings/sound/realtek,alc5623.yaml       | 52 +++++++++++++++++++
->  2 files changed, 52 insertions(+), 25 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/alc5623.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/alc5623.txt b/Documentation/devicetree/bindings/sound/alc5623.txt
-> deleted file mode 100644
-> index 26c86c98d671..000000000000
-> --- a/Documentation/devicetree/bindings/sound/alc5623.txt
-> +++ /dev/null
-> @@ -1,25 +0,0 @@
-> -ALC5621/ALC5622/ALC5623 audio Codec
-> -
-> -Required properties:
-> -
-> - - compatible:	"realtek,alc5623"
-> - - reg:		the I2C address of the device.
-> -
-> -Optional properties:
-> -
-> - - add-ctrl:	  Default register value for Reg-40h, Additional Control
-> -		  Register. If absent or has the value of 0, the
-> -		  register is untouched.
-> -
-> - - jack-det-ctrl: Default register value for Reg-5Ah, Jack Detect
-> -		  Control Register. If absent or has value 0, the
-> -		  register is untouched.
-> -
-> -Example:
-> -
-> -	alc5621: alc5621@1a {
-> -		compatible = "alc5621";
-> -		reg = <0x1a>;
-> -		add-ctrl = <0x3700>;
-> -		jack-det-ctrl = <0x4810>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-> new file mode 100644
-> index 000000000000..2a389ca95b0d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-> @@ -0,0 +1,52 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/realtek,alc5623.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ALC5621/ALC5622/ALC5623 Audio Codec
-> +
-> +maintainers:
-> +  - Mahdi Khosravi <mmk1776@gmail.com>
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: realtek,alc5623
-
-What about alc5621/22? At least 21 is in use:
-
-arch/arm/boot/dts/marvell/kirkwood-t5325.dts:                           compatible = "realtek,alc5621";
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  add-ctrl:
-> +    description:
-> +      Default register value for Reg-40h, Additional Control Register.
-> +      If absent or zero, the register is left untouched.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  jack-det-ctrl:
-> +    description:
-> +      Default register value for Reg-5Ah, Jack Detect Control Register.
-> +      If absent or zero, the register is left untouched.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        codec@1a {
-> +            compatible = "realtek,alc5623";
-> +            reg = <0x1a>;
-> +            add-ctrl = <0x3700>;
-> +            jack-det-ctrl = <0x4810>;
-> +        };
-> +    };
-> -- 
-> 2.50.1
-> 
+Regards,
+Wilfred
+>=20
+>=20
 
