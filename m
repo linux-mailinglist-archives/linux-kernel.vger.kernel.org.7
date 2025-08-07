@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-758913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67B9B1D580
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:06:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 920CDB1D588
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AD7017F637
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4955E722F1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9C822B5AC;
-	Thu,  7 Aug 2025 10:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0568925F963;
+	Thu,  7 Aug 2025 10:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HGGfEoLZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvmgJ6zf"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07E3222593
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B470D22C35D
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754561181; cv=none; b=Sm+FhcJUh3CdBIju7+grxyOS9LKzjPVe3jvDwKY2pr5hTOnp9Ry3HR2VjCdDNFe/dn2Q1tQ0HxZkGYipNwc9wBhz/7jAa7JLnSrlVhN0ViLw2xk8tji0zh2QkxhctZEk2HpN4i/yO7gxqjsJW0ThDe+ISwDgMD4qb6cHSXHDBL0=
+	t=1754561497; cv=none; b=cM9YnuL1KRrS+uD2e62yi5tcwDpTv8JPnVK5SCoxYri8YfRrtI4M1DUVz+nyespOEq2zwIz2oJwBXfG/AJiEx2qFstId6xCeJgzT9XDPzNKKxmKchY5aFcythO897c1x6QTPQgvG6LOblOy8dt91v2jf+2qa9Ytt9JZbXuXCWPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754561181; c=relaxed/simple;
-	bh=bpTvd9kY0BSNp2AYeh+4uwszKdEXu5/frZYnL+WgEeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GhTamnruFizi6iaeoYq4w+8huDXpm6cWrRthMW72J3/K7nGJOZeB1YawrW0nX+rC9aNt6JHA9VD9suhp323E6MyVGc5vV/BnL0TDzGbXzaopaowpKEGfq+nn2IMdLdpMsQWzbwXpYj3f/DaxMMDHhmwYIM14Qn/HK3vR0x3YMUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HGGfEoLZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D3E2140E0191;
-	Thu,  7 Aug 2025 10:06:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id J6YvumZt2dJo; Thu,  7 Aug 2025 10:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1754561172; bh=gXcp+swCFZ4zZxUqLhtYU6zzPnFJHoGvkH7pAriS+pU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HGGfEoLZqAToiZuicWEboUZJg/ul2gALyAlUOYLnOhuwJAsucmnUCeCXjW9uCXJhD
-	 oKVZoFSemZ/n+8wt7HEepCAvrjCIpRxeYcYmJkRJiFkc+SNrX82bhAHZz8eOqGZ4MT
-	 24BJcQFYVQiAIqA9trz8BOJMAFvOEgliMlNhHjwdYMNIgVDAJeN1p8AMKPi7LXmhbF
-	 VwNIL0IdFh3Vf9gIsI70cRPGYbwGABDFJWTH0PYNj9wz/cEYkgckFOPjdpA3ooCUAt
-	 kX7ZEmuLxNtcudiQFEukoissoxeOtKO8pm28dxVoy70PWU9t9VFpD988gzL2IWC4Es
-	 UwMjgbT/60bA2N5/zD2D3B6zfG/keuhg/9AEtFJWDLcW0ZZ5VWVq36HECbHR4nXwhI
-	 wGicR4d75MI4fWrKIbNCq5ySFF7m+evp4SfzhlO5vQEHZ7QvDwxKQGk67m4WFMH0kY
-	 eBBlCJdwboQIezdbVPpa4SsnvY6dRSIFwAPEZwtiTC3CbCA7EAZkQV9s4zDwT8Zoyh
-	 eA195Kdw7l+080QNMsEYp5YiCiOU3QqtdfRMIkRoTn/QexUEan2GVww9ZH36pQRxnC
-	 Iu88HHgB1SdLiwc50lDkwu/TRxoWNPXsLORZAeq/gk3UUy74iUplTtZYDNcX3v5chb
-	 vJ7SdlDnXjlKSEqhrajn+ZXw=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 507B140E0217;
-	Thu,  7 Aug 2025 10:06:05 +0000 (UTC)
-Date: Thu, 7 Aug 2025 12:05:58 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, tglx@linutronix.de,
-	mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: drop REG_OUT macro from hweight functions
-Message-ID: <20250807100558.GCaJR6hvI-UY-xpZrd@fat_crate.local>
-References: <20190728115140.GA32463@avx2>
- <20190729094329.GW31381@hirez.programming.kicks-ass.net>
- <20190729100447.GD31425@hirez.programming.kicks-ass.net>
+	s=arc-20240116; t=1754561497; c=relaxed/simple;
+	bh=O6Y8cVOuHgA/hdqV1bgBIn4O/CUwlnYyFlCzNIDIYM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ToX8/kjN3764OXzP9jR3qSgiAv/6OYYg50A+xZgm4nDko3cXX4AGmcf2nvARYjjllXHEN3wH3QL3HrgBmSXmFQRBHLI2n0dwN/KGA4WmOAyNGjMMIOqZG/PZsfAFEghFmQC0c1CyKNDIq69rHAeCVhG3C6JikKiBOlhnIFS6LJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvmgJ6zf; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so6606195e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 03:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754561494; x=1755166294; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UCEOeQAX58eFRpMAP8AQskjLHPoD1JzG7voJikyFC+Y=;
+        b=gvmgJ6zfWuydL4/n/O1WHIY/Pk2l40OgMcfVxiEJEC3vX3ObpnQ6Tw5HZdpB2Bqbxa
+         A3rxPcTOIUq6GBQMCjw7VdOlikB5h6tXxPMAV7LPL7UDcPPip4r0FxjsMAZ0D0U+VQ8Q
+         B4k4po9JxcIfgvM01w+dYCZCO57I8WxlgmCaFdRdC48lmHwh831qn7RhORvTB1lyHsoe
+         e2BPA9PLYjen6Z/ZYUIfi0lHxfzvBVW5N2nvNrMitbVe08SFrFQWdg5U2fM45HNqS4Cs
+         HylUpQvW6iyMZ3dYwxXGrYyUu9xPrlrnDLvB1LPQNI8JL/4jl1wouSILsnrQn9mJYf8H
+         15og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754561494; x=1755166294;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UCEOeQAX58eFRpMAP8AQskjLHPoD1JzG7voJikyFC+Y=;
+        b=vph5H/ZWeNag+/3UyvIN1Zwmc/3kkGpClC6UHKspJYe1gzyxS+020ZpddayP2P9F61
+         Ntaym0iijstUvMAavl5Fjk4UzfbNZm1/a2eiUYBDD9h8nyCeJtq+dH9hW7jlkGQDGBN9
+         SS087GNeFfJ48NsIcQ5h6VafXPImeEA0ZbDGIt5WKT74TLzeWtZyhHeQVgradhyxhi4d
+         7nSlSj2DR5hWPEyqge1sIzytOd3/lv9NPQQjsk6ZNCE0lkyIE6IXtrHj0PCNRU3URi81
+         97ad1EA+GurY6LgOLFyFPSx6F+uIpj9BaOauaQPJPOMIkcEiJ65BUXI9FolaqN29nWkG
+         FCKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxaBZDkpOhIm5yRfCf11dFI5EvOIvG+TGahEzmP0O+ZO5uXe4nmWhKWPRAsUnXeh1E221KXmBE7Z5bdD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzamQHQjodIziFgWfbyVCXSBPAp00vcoJlz3LlV9ehkjrXAD5es
+	3oQ5TzEna11NkaOzgSLXUWLG2MhtwFKy0hA8xg8zUHEI+WEIMl+SPzKOG5gvm78M40Y=
+X-Gm-Gg: ASbGnctpfU3db/Zj1EBP2EtDdN2w4leFM27lhUi14Ig7Km4tugl0GEbPiUjXse9BGn2
+	yzhE1CTa+jlzsHAvZ6hgcCFSQsjRYZrvc4pixxlqHSqBTgxw2deFkxsmjKTSPnCN5gutticdzlG
+	SoCDnYBVjk6h4z6blA6pjeBaqpp33IWi0EVDPSsTihAlGclN8ZzT9693DhOgU7mP5Z1ArKLNUb7
+	ae2Izxl8nwhLTMqknn0LcPlYfxuQXzv1o9fiAS3Zajq6ezKgEA33HGYe178lS8bikq5APCnWbh3
+	99H6K+8+HGHNE3NWBgpRXFSkeFwsoTjg6bQtZ5mlGCP1kC5e7x+K5NWPbHLyidz5m+aQYg3BYxX
+	ShXu50sgWXaTMG5GyjX/UFFxJBlJNT8y7Q4OkWFRrzLJ4p0ZP4TBWtWg6me35Z+Q=
+X-Google-Smtp-Source: AGHT+IHhek7qLMtG/D0lLB216ukv1XprlpVNWNYygMd7NFMy48jfNMcwOJb/6mt3RoRrKwpkALkG4w==
+X-Received: by 2002:a05:600c:4f4e:b0:459:e06b:afbd with SMTP id 5b1f17b1804b1-459e74b6367mr50737565e9.29.1754561493918;
+        Thu, 07 Aug 2025 03:11:33 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e9464f46sm12001442f8f.19.2025.08.07.03.11.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 03:11:33 -0700 (PDT)
+Message-ID: <40d543e4-e53d-4289-9b87-5ca8c0139bbb@linaro.org>
+Date: Thu, 7 Aug 2025 11:11:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190729100447.GD31425@hirez.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/7] media: venus: core: Add qcm2290 DT compatible and
+ resource data
+To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ quic_dikshita@quicinc.com, quic_vgarodia@quicinc.com,
+ konradybcio@kernel.org, krzk+dt@kernel.org, mchehab@kernel.org,
+ conor+dt@kernel.org, andersson@kernel.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com>
+ <20250805064430.782201-6-jorge.ramirez@oss.qualcomm.com>
+ <4chbcvub4scnv4jxjaagbswl74tz4ygovn3vhktfodakysbgy3@kukktkwd2zsr>
+ <aJHgh8mon9auOHzi@trex> <ce9cf017-5447-457c-9579-700782f9f0c2@linaro.org>
+ <aJRMUzF0GN2LFIZd@trex>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <aJRMUzF0GN2LFIZd@trex>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2019 at 12:04:47PM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 29, 2019 at 11:43:29AM +0200, Peter Zijlstra wrote:
-> 
-> > I _think_ something like the below should also work:
-> > 
-> > (fwiw _ASM_ARG 5 and 6 are broken, as are all the QLWB variants)
-> 
-> Fixed that, because
-> 
-> > ---
-> > diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
-> > index ba88edd0d58b..88704612b2f7 100644
-> > --- a/arch/x86/include/asm/arch_hweight.h
-> > +++ b/arch/x86/include/asm/arch_hweight.h
-> > @@ -3,22 +3,15 @@
-> >  #define _ASM_X86_HWEIGHT_H
-> >  
-> >  #include <asm/cpufeatures.h>
-> > -
-> > -#ifdef CONFIG_64BIT
-> > -#define REG_IN "D"
-> > -#define REG_OUT "a"
-> > -#else
-> > -#define REG_IN "a"
-> > -#define REG_OUT "a"
-> > -#endif
-> > +#include <asm/asm.h>
-> >  
-> >  static __always_inline unsigned int __arch_hweight32(unsigned int w)
-> >  {
-> >  	unsigned int res;
-> >  
-> >  	asm (ALTERNATIVE("call __sw_hweight32", "popcntl %1, %0", X86_FEATURE_POPCNT)
-> > -			 : "="REG_OUT (res)
-> > -			 : REG_IN (w));
-> > +			 : "=a" (res)
-> > +			 : _ASM_ARG1 (w));
-> 
-> That needs _ASM_ARG1L because popcntl..
+On 07/08/2025 07:48, Jorge Ramirez wrote:
+>> There's not alot of value to the user in that configuration.
+> I dont know the user base but when I originally did the code (v7) I was
+> thinking about security conscious users (signed firmwares) who might not
+> be able to switch to the new fw release so easily (unnaccessible key
+> management and updates).
 
-Frankly, the ASM_ARG* thing is less readable than simply having "=a" there.
+Since the driver for the LITE hasn't been upstreamed the # of users must 
+be ... zero
 
-ASM_ARG<number> naming needs optimizing.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+---
+bod
 
