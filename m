@@ -1,143 +1,250 @@
-Return-Path: <linux-kernel+bounces-758898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED1FB1D540
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38371B1D548
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2EE17C536
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:49:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4222163EC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2058721FF24;
-	Thu,  7 Aug 2025 09:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1DF25C809;
+	Thu,  7 Aug 2025 09:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="d7doqlbP"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E06221FC4
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 09:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Ur8avi2j"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A611DED5C;
+	Thu,  7 Aug 2025 09:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754560083; cv=none; b=O3F8hh9FiQT9pYI6QSN1GemBo4PWtGBHoQb7s/v/VngxzvhE5KPqEQyIyY/KRd/kVkYtGoaOmuL2+s3XcIlzwCGTFANIDxCUGjbAng8JdnQh3sXBhzUuZkzOAVQ3fJH7keAdNIJluUSmfKdM+GwsDjOz8grTQrk3ICp5qwHhJu4=
+	t=1754560227; cv=none; b=ecJ8NCe3vejM107uMeZzDlMjIQQqze6zelpNcQOQeJgvQLMLTXi1L1nNSlw7NssvS0m82RJjlYheEOee6gNZAruuMxUYYPxHP0WccWkJxKod2uVt132X0ul4JkAVSGVWyn0QGigLwCsZ9afQN5EfzN8HLe6+UcboJb1WUZXldOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754560083; c=relaxed/simple;
-	bh=a7GV8oZkKRbgbBlhJjrxG4bHZVDVwCvkjSf+UBHT6+o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UykufCwnXVHd/QuO4jtAAPiF5nBQq8Jn+Cm8X2xUMcftFy9H8KmiZ+Iw1By2dbGjfxhScSokMXktg3Pz6oOuwYaVAiqz4/QUBLVtEsXl29oJykRQlpXq+15r9ijmw/Xs49k63Lqah0EEHBYJSODecmXGul9hyLtEdABt4tffwxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=d7doqlbP; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Yu
-	060HFp7OokvIbTOySWGWsGGcfzytPoIFqY1n1bEK8=; b=d7doqlbPLjZP9cOhIp
-	oyEjnKydTXd3Xi9ISgffSmOz8L4Ll/P4v2qDSJYrcIJp442vFq1+1jGi+9bechSL
-	uxDGZscJmF8inMQANFJBone/LNUUdTxOU5/FrlN8G5z39OED93O+6oaHJAIYjAzt
-	IZq4IfKGm9q6mx4t0PYILmO4w=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wB3kiYpdpRoIY9GAQ--.12087S2;
-	Thu, 07 Aug 2025 17:47:23 +0800 (CST)
-From: oushixiong1025@163.com
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sunil Khatri <sunil.khatri@amd.com>,
-	Alexandre Demers <alexandre.f.demers@gmail.com>,
-	Boyuan Zhang <boyuan.zhang@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH] drm/amdgpu: skip disabling audio when device is unplugged
-Date: Thu,  7 Aug 2025 17:47:19 +0800
-Message-Id: <20250807094719.56145-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754560227; c=relaxed/simple;
+	bh=zNlml1UCdpfFEi8OpKphMeqD2CluP70X/mlWqFfABf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kd1nzgq2UytQSnCVxjoEftCeyAAhfI5sMhBJO7l6zbbRU9amXlaTz2IQzUJXZyMCiuvbq6al2sj9XE3ThBtjgQxtKqjnGREVDAXxnb/XDdYjmBJY6RpjmH9VOLf3OQDAW2jVi/NEmLGME78Q9nUTp7wR5/R5FaU0BoUQkvmUJbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Ur8avi2j; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=KGDncYSsxc1ieNgfCKAG+ROM7VI2/GSPqA10lbXeo/8=; b=Ur8avi2jIr7rJcClT5zqUgfiTf
+	5OdTsiHg4ofdRsA5qF0vl+bWhAORYX+r0VoLxzTYm5rsLl/1sRcZWB1Rjuju5imafvsp5DL8MbXmG
+	uP5RfDczseyIPsUIdxRAJ2YejisCirz0DS9hgAkaI4r6yvJR4Ot+HyZa81Brb4oiponV+Yi6ctdt4
+	UoW3xk1yBFbuwKXXFfgiAFJhnIbpN6yA+RNoIEKnpTBseMKw/UBdsHMH2bfiz/uFg70PdV36K4ZDR
+	8wPwBsgHuRX2LmNlNzgII8Q2NCDtAPZd15W4m9ql1bQ3JbNfkK9ANJS4FkSEFd2zEDMyHb693ztpM
+	25xQXmSA==;
+Received: from i53875a15.versanet.de ([83.135.90.21] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ujxGB-00078w-Kn; Thu, 07 Aug 2025 11:50:07 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+ Frank.Sae@motor-comm.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ Jijie Shao <shaojijie@huawei.com>
+Cc: shenjian15@huawei.com, liuyonglong@huawei.com, chenhao418@huawei.com,
+ jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+ salil.mehta@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ shaojijie@huawei.com
+Subject:
+ Re: [PATCH net-next 1/2] net: phy: motorcomm: Add support for PHY LEDs on
+ YT8521
+Date: Thu, 07 Aug 2025 11:50:06 +0200
+Message-ID: <7978337.lvqk35OSZv@diego>
+In-Reply-To: <20250716100041.2833168-2-shaojijie@huawei.com>
+References:
+ <20250716100041.2833168-1-shaojijie@huawei.com>
+ <20250716100041.2833168-2-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wB3kiYpdpRoIY9GAQ--.12087S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZF1DJF48Wr4xtw13ZrWxCrg_yoW5Aw18pF
-	yFya4Fkw48Zw4jqa1IyF9rXrn8A3ZFg3Wfur4kJr1a9ayDA3s0qa4rJF18u3s8JrWqvF42
-	q343J3yUZ3ZYg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j0XdbUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRGZD2iI7Tg5FAACsA
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+Am Mittwoch, 16. Juli 2025, 12:00:40 Mitteleurop=C3=A4ische Sommerzeit schr=
+ieb Jijie Shao:
+> Add minimal LED controller driver supporting
+> the most common uses with the 'netdev' trigger.
+>=20
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-When Stopping lightdm and removing amdgpu driver are executed, the following
-error is triggered probably:
+On a Qnap TS233 NAS using this phy, I get the expected device LEDs
+to light up (with appropriate config via sysfs), so
 
-Unable to handle kernel paging request at virtual address 0000000000005e00
-.....
-[ 2] [T10084] Call trace:
-[ 2] [T10084]  amdgpu_device_wreg.part.0+0x58/0x110 [amdgpu]
-[ 2] [T10084]  amdgpu_device_wreg+0x20/0x38 [amdgpu]
-[ 2] [T10084]  dce_v6_0_audio_endpt_wreg+0x64/0xd8 [amdgpu]
-[ 2] [T10084]  dce_v6_0_sw_fini+0xa0/0x118 [amdgpu]
-[ 2] [T10084]  amdgpu_device_ip_fini.isra.0+0xdc/0x1e8 [amdgpu]
-[ 2] [T10084]  amdgpu_device_fini_sw+0x2c/0x220 [amdgpu]
-[ 2] [T10084]  amdgpu_driver_release_kms+0x20/0x40 [amdgpu]
-[ 2] [T10084]  devm_drm_dev_init_release+0x8c/0xc0 [drm]
-[ 2] [T10084]  devm_action_release+0x18/0x28
-[ 2] [T10084]  release_nodes+0x5c/0xc8
-[ 2] [T10084]  devres_release_all+0xa0/0x130
-[ 2] [T10084]  device_unbind_cleanup+0x1c/0x70
-[ 2] [T10084]  device_release_driver_internal+0x1e4/0x228
-[ 2] [T10084]  driver_detach+0x90/0x100
-[ 2] [T10084]  bus_remove_driver+0x74/0x100
-[ 2] [T10084]  driver_unregister+0x34/0x68
-[ 2] [T10084]  pci_unregister_driver+0x24/0x108
-[ 2] [T10084]  amdgpu_exit+0x1c/0x3270 [amdgpu]
-[ 2] [T10084]  __do_sys_delete_module.constprop.0+0x1d0/0x330
-[ 2] [T10084]  __arm64_sys_delete_module+0x18/0x28
-[ 2] [T10084]  invoke_syscall+0x4c/0x120
-[ 2] [T10084]  el0_svc_common.constprop.0+0xc4/0xf0
-[ 2] [T10084]  do_el0_svc+0x24/0x38
-[ 2] [T10084]  el0_svc+0x24/0x88
-[ 2] [T10084]  el0t_64_sync_handler+0x134/0x150
-[ 2] [T10084]  el0t_64_sync+0x14c/0x150
-[ 2] [T10084] Code: f9401bf7 f9453e60 8b150000 d50332bf (b9000016)
-[ 2] [T10084] ---[ end trace 0000000000000000 ]---
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-The adev->rmmio has been unmmaped in amdgpu_device_fini_hw().
+(haven't found a v2 yet yesterday, so hopefully still the right thread
+to reply to ;-) )
 
-So skip disabling audio when device is unplugged.
+Thanks
+Heiko
 
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
- drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-index 276c025c4c03..48b29990da7f 100644
---- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-@@ -23,6 +23,7 @@
- 
- #include <linux/pci.h>
- 
-+#include <drm/drm_drv.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_modeset_helper.h>
-@@ -1459,8 +1460,10 @@ static void dce_v6_0_audio_fini(struct amdgpu_device *adev)
- 	if (!adev->mode_info.audio.enabled)
- 		return;
- 
--	for (i = 0; i < adev->mode_info.audio.num_pins; i++)
--		dce_v6_0_audio_enable(adev, &adev->mode_info.audio.pin[i], false);
-+	if (!drm_dev_is_unplugged(adev_to_drm(adev))) {
-+		for (i = 0; i < adev->mode_info.audio.num_pins; i++)
-+			dce_v6_0_audio_enable(adev, &adev->mode_info.audio.pin[i], false);
-+	}
- 
- 	adev->mode_info.audio.enabled = false;
- }
--- 
-2.25.1
+> ---
+>  drivers/net/phy/motorcomm.c | 120 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 120 insertions(+)
+>=20
+> diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
+> index 0e91f5d1a4fd..e1a1c3a1c9d0 100644
+> --- a/drivers/net/phy/motorcomm.c
+> +++ b/drivers/net/phy/motorcomm.c
+> @@ -213,6 +213,23 @@
+>  #define YT8521_RC1R_RGMII_2_100_NS		14
+>  #define YT8521_RC1R_RGMII_2_250_NS		15
+> =20
+> +/* LED CONFIG */
+> +#define YT8521_MAX_LEDS				3
+> +#define YT8521_LED0_CFG_REG			0xA00C
+> +#define YT8521_LED1_CFG_REG			0xA00D
+> +#define YT8521_LED2_CFG_REG			0xA00E
+> +#define YT8521_LED_ACT_BLK_IND			BIT(13)
+> +#define YT8521_LED_FDX_ON_EN			BIT(12)
+> +#define YT8521_LED_HDX_ON_EN			BIT(11)
+> +#define YT8521_LED_TXACT_BLK_EN			BIT(10)
+> +#define YT8521_LED_RXACT_BLK_EN			BIT(9)
+> +/* 1000Mbps */
+> +#define YT8521_LED_GT_ON_EN			BIT(6)
+> +/* 100Mbps */
+> +#define YT8521_LED_HT_ON_EN			BIT(5)
+> +/* 10Mbps */
+> +#define YT8521_LED_BT_ON_EN			BIT(4)
+> +
+>  #define YTPHY_MISC_CONFIG_REG			0xA006
+>  #define YTPHY_MCR_FIBER_SPEED_MASK		BIT(0)
+>  #define YTPHY_MCR_FIBER_1000BX			(0x1 << 0)
+> @@ -1681,6 +1698,106 @@ static int yt8521_config_init(struct phy_device *=
+phydev)
+>  	return phy_restore_page(phydev, old_page, ret);
+>  }
+> =20
+> +static const unsigned long supported_trgs =3D (BIT(TRIGGER_NETDEV_FULL_D=
+UPLEX) |
+> +					     BIT(TRIGGER_NETDEV_HALF_DUPLEX) |
+> +					     BIT(TRIGGER_NETDEV_LINK)        |
+> +					     BIT(TRIGGER_NETDEV_LINK_10)     |
+> +					     BIT(TRIGGER_NETDEV_LINK_100)    |
+> +					     BIT(TRIGGER_NETDEV_LINK_1000)   |
+> +					     BIT(TRIGGER_NETDEV_RX)          |
+> +					     BIT(TRIGGER_NETDEV_TX));
+> +
+> +static int yt8521_led_hw_is_supported(struct phy_device *phydev, u8 inde=
+x,
+> +				      unsigned long rules)
+> +{
+> +	if (index >=3D YT8521_MAX_LEDS)
+> +		return -EINVAL;
+> +
+> +	/* All combinations of the supported triggers are allowed */
+> +	if (rules & ~supported_trgs)
+> +		return -EOPNOTSUPP;
+> +
+> +	return 0;
+> +}
+> +
+> +static int yt8521_led_hw_control_set(struct phy_device *phydev, u8 index,
+> +				     unsigned long rules)
+> +{
+> +	u16 val =3D 0;
+> +
+> +	if (index >=3D YT8521_MAX_LEDS)
+> +		return -EINVAL;
+> +
+> +	if (test_bit(TRIGGER_NETDEV_LINK, &rules)) {
+> +		val |=3D YT8521_LED_BT_ON_EN;
+> +		val |=3D YT8521_LED_HT_ON_EN;
+> +		val |=3D YT8521_LED_GT_ON_EN;
+> +	}
+> +
+> +	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
+> +		val |=3D YT8521_LED_BT_ON_EN;
+> +
+> +	if (test_bit(TRIGGER_NETDEV_LINK_100, &rules))
+> +		val |=3D YT8521_LED_HT_ON_EN;
+> +
+> +	if (test_bit(TRIGGER_NETDEV_LINK_1000, &rules))
+> +		val |=3D YT8521_LED_GT_ON_EN;
+> +
+> +	if (test_bit(TRIGGER_NETDEV_FULL_DUPLEX, &rules))
+> +		val |=3D YT8521_LED_HDX_ON_EN;
+> +
+> +	if (test_bit(TRIGGER_NETDEV_HALF_DUPLEX, &rules))
+> +		val |=3D YT8521_LED_FDX_ON_EN;
+> +
+> +	if (test_bit(TRIGGER_NETDEV_TX, &rules) ||
+> +	    test_bit(TRIGGER_NETDEV_RX, &rules))
+> +		val |=3D YT8521_LED_ACT_BLK_IND;
+> +
+> +	if (test_bit(TRIGGER_NETDEV_TX, &rules))
+> +		val |=3D YT8521_LED_TXACT_BLK_EN;
+> +
+> +	if (test_bit(TRIGGER_NETDEV_RX, &rules))
+> +		val |=3D YT8521_LED_RXACT_BLK_EN;
+> +
+> +	return ytphy_write_ext(phydev, YT8521_LED0_CFG_REG + index, val);
+> +}
+> +
+> +static int yt8521_led_hw_control_get(struct phy_device *phydev, u8 index,
+> +				     unsigned long *rules)
+> +{
+> +	int val;
+> +
+> +	if (index >=3D YT8521_MAX_LEDS)
+> +		return -EINVAL;
+> +
+> +	val =3D ytphy_read_ext(phydev, YT8521_LED0_CFG_REG + index);
+> +	if (val < 0)
+> +		return val;
+> +
+> +	if (val & YT8521_LED_TXACT_BLK_EN)
+> +		set_bit(TRIGGER_NETDEV_TX, rules);
+> +
+> +	if (val & YT8521_LED_RXACT_BLK_EN)
+> +		set_bit(TRIGGER_NETDEV_RX, rules);
+> +
+> +	if (val & YT8521_LED_FDX_ON_EN)
+> +		set_bit(TRIGGER_NETDEV_FULL_DUPLEX, rules);
+> +
+> +	if (val & YT8521_LED_HDX_ON_EN)
+> +		set_bit(TRIGGER_NETDEV_HALF_DUPLEX, rules);
+> +
+> +	if (val & YT8521_LED_GT_ON_EN)
+> +		set_bit(TRIGGER_NETDEV_LINK_1000, rules);
+> +
+> +	if (val & YT8521_LED_HT_ON_EN)
+> +		set_bit(TRIGGER_NETDEV_LINK_100, rules);
+> +
+> +	if (val & YT8521_LED_BT_ON_EN)
+> +		set_bit(TRIGGER_NETDEV_LINK_10, rules);
+> +
+> +	return 0;
+> +}
+> +
+>  static int yt8531_config_init(struct phy_device *phydev)
+>  {
+>  	struct device_node *node =3D phydev->mdio.dev.of_node;
+> @@ -2920,6 +3037,9 @@ static struct phy_driver motorcomm_phy_drvs[] =3D {
+>  		.soft_reset	=3D yt8521_soft_reset,
+>  		.suspend	=3D yt8521_suspend,
+>  		.resume		=3D yt8521_resume,
+> +		.led_hw_is_supported =3D yt8521_led_hw_is_supported,
+> +		.led_hw_control_set =3D yt8521_led_hw_control_set,
+> +		.led_hw_control_get =3D yt8521_led_hw_control_get,
+>  	},
+>  	{
+>  		PHY_ID_MATCH_EXACT(PHY_ID_YT8531),
+>=20
+
+
+
 
 
