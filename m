@@ -1,149 +1,139 @@
-Return-Path: <linux-kernel+bounces-759011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36807B1D70E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:55:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2AB0B1D70F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8EB0189F20B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:55:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90EC07245F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911932356D9;
-	Thu,  7 Aug 2025 11:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D2C20B7F9;
+	Thu,  7 Aug 2025 11:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="KDkampQA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hMZTLgdo"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="GoxZJoKs"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE9D202F71
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9443202F71
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754567731; cv=none; b=D5xrsacUz1b6QVthrRu9lnqGzae8O/iIHYYLlxH4rVi14CeYTvoS+J2Nh4UDEa99Sm4bQWJFVITAx3kJuur4KejhtqLWJbvXJ5MzIKbRRUut3U6YSr0JPQDQWK6QRPhBmuGa5M/2fY0PjJnM07a+s1dlFQO0j3zrllLvygfHccc=
+	t=1754567743; cv=none; b=Seh4yzA7YYGvAeVJkn9QQZYhrCvlaaQaDuvOAOcLhscF61uJWou0US99DCExiOQqCm8P6ONZlm5oGjthohjOVzOkznASX+jEOEC4MnjcnflzAZ/TLOq3MVH/yfo6cbwHVOaI9aopGcp1X16HHEkMvzYBnrRL+aB+v6JpDDtKqiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754567731; c=relaxed/simple;
-	bh=KWU97gHIROBrSOH+bqHHhw4OYHrEW7Sk+TRJp7OHcCc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Wt8VjIy/YwW/+8saAbOPT5fs1q4xB0o1oB29ry5aLgVZXAoF01Nh3yqQ1SwuwOmW9H8jX3D21bobkt0bhB2+nKSI078gnck88uRMmCGnHBWBFDJc6rgRbXgvdFruvntm7MbYiTq45VkPXBGk+8PgezJFPS+O8q1X7Y8mPoAKdIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=KDkampQA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hMZTLgdo; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A58D914001BD;
-	Thu,  7 Aug 2025 07:55:29 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 07 Aug 2025 07:55:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1754567729;
-	 x=1754654129; bh=lvSVZIYjeywNLTrX0KHghBfKGGzoIVIlXjF7KGCgCM4=; b=
-	KDkampQAZpTEYb+NF94hFFs3Ia5T050xGnMocRGZbaOsFb3o56S7c0OiEY5YIBFo
-	I6NXGrzzjsg1lpjPY9mgjNQb3tpMdaMnprG+uD7pLFJ4BB1gbtgbAMpVPrDJeIeZ
-	C+Kon2y+FoOSlAJbewji4j37cb0IFsY/GYacnxVe4yxvMbp9PsnF6pIvTWHeOBhE
-	1elR20BjhBAIjmQr2bpc4+jY8uMbi1DiwazSvG4oJPvAr0bthZ3/TBfcYF5jOSSS
-	tZJAom492pEbKNMLzSW8RMSYVW2bF83xsQAuukspxwEL8c1wIBoCQh9/Yi0TMeUG
-	QDY4H0PWrbAj/BljEv1lCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754567729; x=
-	1754654129; bh=lvSVZIYjeywNLTrX0KHghBfKGGzoIVIlXjF7KGCgCM4=; b=h
-	MZTLgdo1hq/Vs4qpAh7hIeAs2TnwQEhQDwrbjEYbSt5aeJ7vkVWdRT3j5TBIKj0K
-	ftjK9BrUalncWmGeciF3dtHXR057p2hkG1J4jOVyI7FxQtUcaWUZjcDUPSs6lnky
-	9Y1MKYUbNMI0QiZTb6cwtukQmavzbCug/P9D+gSXZoieHeTxCAxBEUXkfI4grqVf
-	3llKvl2hcSULHP3ioiQxJxpkiNKBeD5kiwS253CXeVhXb222V39Xtbq7vZtihl6s
-	xfiS8+isuHMc+NPiZRrK10GmfyZH9QsitNZqIudYz8EfOqZgdGuJ48U7OjRZ26XX
-	0sBV7bhQBmKZUGrcx1tpA==
-X-ME-Sender: <xms:MZSUaFNGgyu401V88-P81oSXMrlTZl0DLbrOynFjoK5K5bovbipejw>
-    <xme:MZSUaH-fjY6fLgZXF6Fz1mnUK2Q37UGWrfBYrB0a-tyF8tCUHL7MxPiqRYsS5VBrM
-    CPgz9E-avSrhJeNiEo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvddtkeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpd
-    hrtghpthhtohepnhhitghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdr
-    tghomhdprhgtphhtthhopehjuhhsthhinhhsthhithhtsehgohhoghhlvgdrtghomhdprh
-    gtphhtthhopehmohhrsghosehgohhoghhlvgdrtghomhdprhgtphhtthhopegufihmfidv
-    sehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtth
-    hopehllhhvmheslhhishhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:MZSUaF8MnoSvOVnXsnH1iow5cFhSS313ILWiKBw_ToN9fWIEhmmadw>
-    <xmx:MZSUaPq_7LyanMLime-xYz1qPm06ifAVh0xo4Sf585qAmXWhEZjr6Q>
-    <xmx:MZSUaAL5LVEj4ocHvTDNm_ulxjOMOsyNiqov8Wd1k8hrK9euGCIJ0A>
-    <xmx:MZSUaKPcDMHjOY29YKsCPaOkM9RBbNHAUjNk8RQ_dhHCuHncijYCqA>
-    <xmx:MZSUaDmhMpOmsZZB29qd88KzyiKS_yEuYVciVN1NgPnBFYUibzaFM1rM>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EF241700065; Thu,  7 Aug 2025 07:55:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1754567743; c=relaxed/simple;
+	bh=lbQa2W/bR/FxgQYKWNOpVN+CNFSYZp4dz5+1eJ3QlwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PUsuie0naA6qEXYFvz6cEB9TvpEarXeg26yUrrgjTcvSo3sP/QeZiVODDt/IGuWZopBh0zTisQnLodeA06/xBX0IDdA+ox5RluS8VjsK7JxxB/Eb46URs2KYt7rfJ29rycXuOFJxUj/ct73vJ4JAVrgg/TPrE65Rn+tO2Kdnbi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=GoxZJoKs; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-883e1de0606so24314039f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:55:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google; t=1754567741; x=1755172541; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jDJav/l0x6TJpNlmvipxLhkS/rO66KRXVU4Ugz2QqFU=;
+        b=GoxZJoKshEFl8gLIRebbM6HSl5anMwEqEvlkaMze8TBZwwle4ffslpshcfcHisBGEZ
+         LQ9nRor4n2KanNUDAOv7V/eVDmDT+LQvodaeSEzrjvxdjkV1wtLvVvi35Z2epvgJyopg
+         MJXNd6mNw7TJYgVVSSfYQvvWKUUhLlsk7LOTk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754567741; x=1755172541;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jDJav/l0x6TJpNlmvipxLhkS/rO66KRXVU4Ugz2QqFU=;
+        b=PJp35Csk9rphKpQHFOiGO1r45XDptteSS+VmmU3RPQAvXXUIt6/6/gUTVjlA7HTcbW
+         77AaxwPnoq+w8/h3NZ1mdTKWW1I6CVNTaJSHH0nmpFT2t7dvzrsDoUZgbVOWABqrh2Dr
+         CEECNezOvJvpXSxk5dcK633M92TWbYUdFgpr8yUDJxtH5Qzo9JU/rVB3nWFVMAGovcOR
+         qfIfF9q0GZMEzylqEAcQoDUCEu6mjDbJNdGzRW9fNrJ/sHw5HGKfpFbsvKKuRP3JwzM1
+         EGxxFYRUL4C03PH/Gpr9PGCqb58ojQ48t80prQizwNPm5MorZRNTA65AqKbf1qxA/VHA
+         i16w==
+X-Forwarded-Encrypted: i=1; AJvYcCVn8kO/ArWFHskft6SmxxlcQYRErchYKqAtkz3MnXwWWO7aPx1Z5B1UasXV/0WVW4arYIdqP8SfPxxx6BI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKHqzpUgaPqOwPIiJpVIbo5igzur0f9QWMrqGiQ189E9L1dSC8
+	sKVbEbELRAH85qYFzHI68Y6BTHhBfZmaS5bosUa5LPtjJZ03tkNVzJ/CvNKm4cd0Tg==
+X-Gm-Gg: ASbGncuY8jaPpPD97fz4G/loe3CGUmZI8ucp/RqZlXuBlJ9yRI332lm1CJUh/q3S3zZ
+	PpCSbTJKF9wufdW48wbT/FEy/uv9DBd0lrkv9J1hKQd8yxPJo80/S6AN1oJAmW27FfosmqFnlte
+	C6+lMTgERlGJiU3VibJ4z+94W7KbIH3yx333ZewLULtNE4AUJwP+rbzzdPEvR6T0NRCUvNsgLDK
+	tClLDZ48hdOa9KxXTLO7K2RxqbIGIMA55HjlM+6dqs32HNCTke4beRm2Jq0m48yCLquBC1/6ker
+	3q7DZ4ADQtI4VILoZeejA5kTcEHpRbf0te8Z57tuhO2Hfqlog5JEpyQeUkqoImU0SblLLBQbf/q
+	2Jfy63UpMZ7bYzORTT2L1mJzhD6X4Dw4C5EELKExvmZNDAegY5X/NIhtq
+X-Google-Smtp-Source: AGHT+IEtBJjhUCVSUlXC+oL0iY/rk/JMAXniUp/7F2ZuuNi14gQDrMaDUSgLUnyC6w992pz9L32QZw==
+X-Received: by 2002:a05:6e02:1a04:b0:3e3:f8c4:2bcf with SMTP id e9e14a558f8ab-3e51b882290mr102842575ab.5.1754567740689;
+        Thu, 07 Aug 2025 04:55:40 -0700 (PDT)
+Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3e4029d41a6sm69781285ab.24.2025.08.07.04.55.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 04:55:39 -0700 (PDT)
+Message-ID: <81913369-783f-4e7e-8172-41f808537b3a@ieee.org>
+Date: Thu, 7 Aug 2025 06:55:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T52d1d27938ca8a40
-Date: Thu, 07 Aug 2025 13:55:08 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>,
- "Nathan Chancellor" <nathan@kernel.org>,
- "David Woodhouse" <dwmw2@infradead.org>,
- "Nick Desaulniers" <nick.desaulniers+lkml@gmail.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-Message-Id: <bb5c1c40-874a-4b30-b606-1785f00e9be9@app.fastmail.com>
-In-Reply-To: <87o6srd0sh.fsf@bootlin.com>
-References: <20250807072044.4146480-1-arnd@kernel.org>
- <87o6srd0sh.fsf@bootlin.com>
-Subject: Re: [PATCH] mtd: dc21285: fix bytewise memcpy()
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] greybus: svc: use string choice helpers instead of
+ ternary operator
+To: Nai-Chen Cheng <bleach1827@gmail.com>, Johan Hovold <johan@kernel.org>,
+ Alex Elder <elder@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>, linux-kernel-mentees@lists.linux.dev
+References: <20250806-greybus-string-choices-v1-1-3e1c91048b62@gmail.com>
+Content-Language: en-US
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20250806-greybus-string-choices-v1-1-3e1c91048b62@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 7, 2025, at 09:54, Miquel Raynal wrote:
->
-> On 07/08/2025 at 09:20:34 +02, Arnd Bergmann <arnd@kernel.org> wrote:
->
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> The commit that split up the 8/16/32-bit operations in 2004 seems to have
->> broken the 8-bit case, as clang-21 now points out:
->>
->> drivers/mtd/maps/dc21285.c:129:97: error: parameter 'len' set but not used [-Werror,-Wunused-but-set-parameter]
->>   129 | static void dc21285_copy_to_8(struct map_info *map, unsigned long to, const void *from, ssize_t len)
->>
->> Put back the loop that was in linux-2.6.8 and earlier for this case.
->>
->> Fixes: 67d4878e4e61 ("NOR flash drivers update")
->> Cc: David Woodhouse <dwmw2@infradead.org>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Thanks for the patch, I'll take it, but that probably means few to no
-> people still use it, if broken for more than 20 years...
+On 8/6/25 1:27 AM, Nai-Chen Cheng wrote:
+> Replace ternary operator with str_enabled_disabled() helper to improve
+> code readability and consistency.
+> 
+> Generated using Coccinelle semantic patch.
+> 
+> Signed-off-by: Nai-Chen Cheng <bleach1827@gmail.com>
 
-Yes, certainly. I also have a patch to mark the mach-footbridge
-platform as deprecated and schedule it for removal, I need to
-resend that patch.
+Looks good to me.  Thanks.
 
-What I suspect happened here is that the bug was harmless
-because the few boards that use this driver all have
-16-bit or 32-bit flashes, while the 8-bit codepath was indeed
-unused.
+Reviewed-by: Alex Elder <elder@riscstar.com>
 
-    Arnd
+> ---
+>   drivers/greybus/svc.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/greybus/svc.c b/drivers/greybus/svc.c
+> index 4256467fcd35..35ea7147dca6 100644
+> --- a/drivers/greybus/svc.c
+> +++ b/drivers/greybus/svc.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/kstrtox.h>
+>   #include <linux/workqueue.h>
+>   #include <linux/greybus.h>
+> +#include <linux/string_choices.h>
+>   
+>   #define SVC_INTF_EJECT_TIMEOUT		9000
+>   #define SVC_INTF_ACTIVATE_TIMEOUT	6000
+> @@ -73,7 +74,7 @@ static ssize_t watchdog_show(struct device *dev, struct device_attribute *attr,
+>   	struct gb_svc *svc = to_gb_svc(dev);
+>   
+>   	return sprintf(buf, "%s\n",
+> -		       gb_svc_watchdog_enabled(svc) ? "enabled" : "disabled");
+> +		       str_enabled_disabled(gb_svc_watchdog_enabled(svc)));
+>   }
+>   
+>   static ssize_t watchdog_store(struct device *dev,
+> 
+> ---
+> base-commit: 7881cd6886a89eda848192d3f5759ce08672e084
+> change-id: 20250806-greybus-string-choices-e6d53d2382a6
+> 
+> Best regards,
+
 
