@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-758814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B5CFB1D426
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:15:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23092B1D427
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27B1E4E3A1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:15:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC0DE1887362
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D3C23C512;
-	Thu,  7 Aug 2025 08:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCBC1DFDB8;
+	Thu,  7 Aug 2025 08:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Zw0Hlf4P"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X2jB3dII"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B889B182D3
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EA9182D3
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554550; cv=none; b=tOc9c/ddoEjhrjlqJrZWhYsWbJsjn9j4v5RehXqhjFGOO6G4yF/3tpczvmyN0BUwM0VhiMDbY1GgnM8NNt31SiagaqBjj/NX8lQ8lymiiMMHG0sTTX4EyGkEYgF46aAEJwtKFJk/luNj7JkpvKEwDIVziP+SWrZyopTiGgjXAk0=
+	t=1754554588; cv=none; b=fYlwp+r0hP8o2Hd4tj3SYBew2q0C9f6q4kw473/A8sLNZxNKrkmC4DxmBw4QVw+SqbOQVBhSmkMdEGELZ9D9ErsSUBJe2AYFls2caT1BImgdiobRIZDIf6GfOkkFO8fqq5h9fXedtml3AXEbNGFdF0NX+EfDxELJvGJUqnsDq/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554550; c=relaxed/simple;
-	bh=r7B6Q+7VnOlSFD9dmRU69c6xXNsKJZl6lpeNkdeAlW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tMWrqia+xWObDSdRsn+aNc+u1ZpSJDQ/61qL4XlJEiPPhqb0cGRxbyKbFQ4nKISMow29jWhyBu5qrbbtpUowlTeN8dFnvKf0+cdnZbHuEN/iUphTzLJuu2Y0Rk4balFfLXQgOs5JDeoRMvjbcpvrQ5+ZYS0CbjOi/VfO2xEiN+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Zw0Hlf4P; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577248Jr020326
-	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 08:15:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8FFkztz/vOpS42siZaTzrJaru4LZfNmwJ6q9DN41I/Q=; b=Zw0Hlf4PZ+FqrUk2
-	meWkuRneDRHwocs9It4DIeEOTI0KAJIwAK3QcCnNNUaq3LaBzpVE4wIYeE9sdLJH
-	HGQF2wv7yH20XDwoHYLAjuMDAzEBeHKTeEMlbJ75UUcI0pjrD0DExHbG2RvpDWVr
-	XIZNyMJP89xuUgf+nSAHGqXmYMxZiLmRCXs8WEY8NoWq6IfD9MTGwCMLvFF6W2no
-	DDn9ptcD4weuqS/fzSgx7uHQs/RPHM8holEp5JzkXVw6/s7DBOskZnBqI9sbnz/Q
-	7ngqwm7mE0CT81iwMAjeFmABHKyC1/YK+Z5JywDJfuiXWGus50O1tYL3KKXiAux/
-	ZC/5Bg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpvvwj1k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 08:15:48 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23fe984fe57so11211475ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 01:15:48 -0700 (PDT)
+	s=arc-20240116; t=1754554588; c=relaxed/simple;
+	bh=dY/tO0jgG3YpNcuWPR2EGMa/x0QbG9DwwPYBjTtd6l4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hhpwiL3FoHRoISyMlaQiOO8GBFD+gWo/n+t98NjMQ2F/o/DegGUw+ra5gLpjF/vAasBf7kml3YFWlGxclps5f9102zmnB1cuqPix8Nj9VtcGz1DZv2ymt2G14At/TnsU398b/vWeSS9a0lY37zYjQ/KBrv1qwpeG76JtkrhvQfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X2jB3dII; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-459e210bd2dso5914525e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 01:16:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754554585; x=1755159385; darn=vger.kernel.org;
+        h=content-transfer-encoding:organization:autocrypt:in-reply-to
+         :content-language:references:cc:to:reply-to:subject:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WY4HFaq47tlT3tpQq6GZ2l+firWxt4pgUV7KeO9v8lI=;
+        b=X2jB3dII2/0cIbfK/c+35rYEDp78iItsMt/6Q9VyBbS1+fWfDQ1B3qak7Z33Yji5nN
+         sHLGXq+t/xbRDEg9wacyR8nJ4NLEI4ncqrxTVvlpUklK6r+7Y7MiIR79dqrgAxsj+0Sa
+         a/b4QU4lmHccpwicDLb1ZEgbNa+Hz77zPlLemglV0INoL80gdPMZLRgEXBILGH6n57Es
+         ZbLrgufAzyAf58Bhjs2e839pC8MIa61p3zg3d5RoFpu6A5g6lNDIHOTruZzuNYpYMhO+
+         K2VzI1u0GiT7g7vEQweSoTOaln1Xysn7Fx00Vp17oU7PfNLb7pcoCSg0u0RVES4Lvq1j
+         C3Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754554547; x=1755159347;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8FFkztz/vOpS42siZaTzrJaru4LZfNmwJ6q9DN41I/Q=;
-        b=OTH/uwktQHbe/N0Svl1REmOlDnNZXjZNGABmkmFYywcDtd6LDo15AnR1iT6h+zTxWX
-         7pQD/QLlJmLM9c6qcZdY5atpzfI/rUY6FcU44lF7xypNMJvq/X5wtItDwUml9tIYS2Pf
-         ZYv2R4TEXyYTF5luh7HLo8OU61O/tt/zACKP3nIa4SaiSlWJkAQrx/MUSBk1UdIPnCwT
-         dzgPJpzLa05s8Grpn41EXIee+vxmjLA+K73uCQHDjL8vpjRcpgZbdrWpCFjRSnXGA0sJ
-         idErFTPb1vSLzctPPRLqP+DdjnSJOL1Pm0alLM2RTTtUOkKnQsJlMYv+SnFdfGIkaEpZ
-         FjqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1MwsW1KrUo/165JZDuULhHlpP/4pMo+utqvCz2bP6pvN8XIM40kZqnZbWjdhOBhIYsxQc9ytD/sXDvjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEt2Uu3MMJswHfdz/PPuZvuSBEkSOhGJJ2786mi2+aefwCRP2M
-	snN1C+lYzXFhmT+eY76AqAcrbeuSk03tCR+Dr/QuquXnyjlORPXAK16Fcm6a/a1ceAG57mdQ6eM
-	IF3nlNpRRiIA9J8qktTBUORoI0OXDv7yleW5i8OR2mMu6i7Eddmo8wENBglP8Os1oBuo=
-X-Gm-Gg: ASbGncslOq+g0/ewgEzUnZqNbvHO3C5SB04rtKuNv7RzXx7f2293NbGgeHaGFctQIUs
-	laFcBH8gcXxMR1gzpP+SegGDvrDT8Rpvvg70k+k+YEfg1sTfKjhWwSwnwYolGTQrIuNr3DGrCVJ
-	+8mOIYNfuUutrB9I0krSZP6gDJKRW/VmHSfLMfz0JPUEucBT9FwkSJRZeY43Xk0UFqLM3vnS5nP
-	XBzz9XD04W3wT1Cs9a5GVOtHlq364ptZXjLon2h3N2r7SmabnlyuXbnfnFd9STQjcE5yn/wweVo
-	LqFl4Bl/8UlSoHLKkcP928OTFkxjGfF64Ak55NPnPJVvFpE9+lA5Uw40C74G+bmJhT/INAykqQ=
-	=
-X-Received: by 2002:a17:903:189:b0:240:3d07:9ea4 with SMTP id d9443c01a7336-242a0a91131mr91223215ad.7.1754554547102;
-        Thu, 07 Aug 2025 01:15:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFzSnmBX83MC5kqRMV7W1QAuTOZBWwPl92I78BofL/XeVsXz8pCRHuSkr0ugBp8auFgWzSvVA==
-X-Received: by 2002:a17:903:189:b0:240:3d07:9ea4 with SMTP id d9443c01a7336-242a0a91131mr91222775ad.7.1754554546546;
-        Thu, 07 Aug 2025 01:15:46 -0700 (PDT)
-Received: from [10.218.42.132] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef65d2sm178661625ad.31.2025.08.07.01.15.44
+        d=1e100.net; s=20230601; t=1754554585; x=1755159385;
+        h=content-transfer-encoding:organization:autocrypt:in-reply-to
+         :content-language:references:cc:to:reply-to:subject:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WY4HFaq47tlT3tpQq6GZ2l+firWxt4pgUV7KeO9v8lI=;
+        b=iFcdfA0wap5K5gEexOenyA2BJBx8PsX4cygdoE9+NTSCvLZ71MJrII/09CkzHaHvXN
+         fUEhFUd+kdqjdyW/lJdxBCXWgCPDbAFqQupkbTBxPYiDKB5x8yXDe0dtKN7yBohA9oS1
+         6BZtQYf5O5eDpBsbqx7vCZQ8ZcMof9UtaBoJcnPZW2m6w/0lTgXVpnY4fxJFvvQo0oDH
+         TjwVxeUVvYuVIyaBf4sSHnvsY92sq/0/KokgSLwi94nw0KK70P7LFk/JG17hEGiqFJ2T
+         0/1wPKlDgQn+1+k0o02CdCozmRR0DjngCokFrRkiLGB+QiTFtgbdrN+A0ziDrfUywpdq
+         9sEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOAaVKVcBHAB/xhZ8kHvMBWc8Ih5WAnLLs8U297dtu8f+fRJi1AmGPJ/S7v/h3oLg648xK4+8yjc2Yc4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/fJDAtS26nFQCpUMJjt6ukHhsL0MvonBvgHUJFZwFDrQEDjUr
+	bYZ/Fhh/LeB99eWMr2Letors2XewMdfoqmyypoChZ745FEAXOIhWKraAYMSgpzvRRBc=
+X-Gm-Gg: ASbGnct54tx/T99Zm8aaQ/Bj+nECN/zswOnV4eVfUCtG/YGl44XSvfbiKSe/9ASVCIu
+	ziwuS0eKTvDMiyzTe7VRDHfl9F7lGrTW2Lp4ztKu+2CDctDg8kivs6Szek4LYmjL9hTHhRGPWvC
+	fLBQ8/nt8yLC5EMEATb8suqBI6cLFOYuKMjWdPG/e4UwWdEiiPJ81TzGQDLwYOtZiuFahnSkvyJ
+	vX5E0eTfoShMF8vU8iYBJFHuf789zymD9pt+05LHZKzGfD6x8CIaBu/TULDkMVJNH1Fwj9Amb/k
+	oECtdIdArPJWNEZRbDvhbMWL0G24s7w+OvjbYOJuyf2hG0tb61NoTJ5KJ32YSNcrFMAYQIwUT84
+	NEY1W//XrxXhnVp7uzT5qzI2E1gbSuMKZSFz87zTGIqUpX4e2jieBgQIuTCKfZKkrgc7zDrZBBs
+	0=
+X-Google-Smtp-Source: AGHT+IHE2H+JtDiHVg75yF/+EZzsaupqXfOXiG/R3nCARRikQYg2a0QwLqAvC10oGOycd0mXhQsOsA==
+X-Received: by 2002:a05:6000:18ad:b0:3a5:8934:4959 with SMTP id ffacd0b85a97d-3b8f97f5070mr2018365f8f.27.1754554585271;
+        Thu, 07 Aug 2025 01:16:25 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:5bf9:b40c:d741:ea95? ([2a01:e0a:3d9:2080:5bf9:b40c:d741:ea95])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b4f9e952sm222067015e9.9.2025.08.07.01.16.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 01:15:46 -0700 (PDT)
-Message-ID: <7118392a-2a19-44a4-97c0-d5e8a3190c08@oss.qualcomm.com>
-Date: Thu, 7 Aug 2025 13:45:42 +0530
+        Thu, 07 Aug 2025 01:16:24 -0700 (PDT)
+Message-ID: <1370b493-2026-4988-a8a2-d9595c0fb02b@linaro.org>
+Date: Thu, 7 Aug 2025 10:16:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,96 +84,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] bus: mhi: host: pci_generic: Read
- SUBSYSTEM_VENDOR_ID for VF's to check status
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Vivek.Pernamitta@quicinc.com, mhi@lists.linux.dev,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vivek Pernamitta <quic_vpernami@quicinc.com>
-References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
- <20250710-sriov_vdev_next-20250630-v2-2-4bd862b822e8@quicinc.com>
- <luaoyvwqp3fpvqgybhstnnrutn46ry3tyfxw2launvnxzfvyqo@pdfdpfocfq6k>
- <1c79cda0-2645-4f88-a05f-9082e305fad4@oss.qualcomm.com>
- <tynmkh4isrbi473zh6t4kd5bswrthxy3garhgpzafq6n2wrmqk@rfanfjgciyqv>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <tynmkh4isrbi473zh6t4kd5bswrthxy3garhgpzafq6n2wrmqk@rfanfjgciyqv>
+From: neil.armstrong@linaro.org
+Subject: Re: [PATCH] phy: ti: omap-usb2: enable compile testing
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Johan Hovold <johan@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250724131623.2662-1-johan@kernel.org>
+Content-Language: en-US, fr
+In-Reply-To: <20250724131623.2662-1-johan@kernel.org>
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: n6vHwTkOdGRY9Eo_oOAAru2CPJbUTB3k
-X-Authority-Analysis: v=2.4 cv=GttC+l1C c=1 sm=1 tr=0 ts=689460b4 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=uIgEQj9WjdynuVTCvEgA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: n6vHwTkOdGRY9Eo_oOAAru2CPJbUTB3k
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX0LzSj+sHcizC
- wiC714CxSfU6CMrx6yt75SnhQDPzurKFHNIEjjuhiq1Q1JiWu8sNvGpbs6ZOhKNyX28vQhaPJC9
- MStBl21d1E5Als/Fmw+LEnVSnf6uPHrRyX/nCVusyGinyvLSiBkN1IPixRHl2MaFXcIllM9Strb
- rrVIfluKOGbAUXhnogsF+dss+eYQJHkhdyN/7B0jnxy09hGg2A6g9eIiz7IsuW70rl+Qi8Ncolw
- rsQt/ZxiStXiMN7GLPgjQlnaD2KC1Yofq5FFbyY++SPWSpzG+oByzayEQ+o2CPkb0SBPc6L8NGM
- b4w3XqtiCScBJ2KZ767FGUzOpkphLRwKOsiJz6FGhEFCoXazThYtoEB1NXnU4wX22Vu4gnXJOJD
- WiI5ruaJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015
- spamscore=0 suspectscore=0 malwarescore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
 
-
-
-On 8/7/2025 1:43 PM, Manivannan Sadhasivam wrote:
-> On Thu, Aug 07, 2025 at 12:39:26PM GMT, Krishna Chaitanya Chundru wrote:
->>
->>
->> On 8/6/2025 10:29 PM, Manivannan Sadhasivam wrote:
->>> On Thu, Jul 10, 2025 at 02:28:33PM GMT, Vivek.Pernamitta@quicinc.com wrote:
->>>> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
->>>>
->>>> In SRIOV enabled devices, the VF DEVICE/VENDOR ID register returns FFFFh
->>>> when read (PCIe SRIOV spec-3.4.1.1). Therefore, read the PCIe
->>>> SUBSYSTEM_VENDOR_ID to check if the device is active.
->>>>
->>>> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
->>>> Reviewed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->>>> ---
->>>>    drivers/bus/mhi/host/pci_generic.c | 6 ++++--
->>>>    1 file changed, 4 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
->>>> index 7d0ac1c34ddf95ace2a85e5f08884f51604d9b0f..4bafe93b56c54e2b091786e7fcd68a36c8247b8e 100644
->>>> --- a/drivers/bus/mhi/host/pci_generic.c
->>>> +++ b/drivers/bus/mhi/host/pci_generic.c
->>>> @@ -1025,8 +1025,10 @@ static bool mhi_pci_is_alive(struct mhi_controller *mhi_cntrl)
->>>>    	struct pci_dev *pdev = to_pci_dev(mhi_cntrl->cntrl_dev);
->>>>    	u16 vendor = 0;
->>>> -	if (pci_read_config_word(pdev, PCI_VENDOR_ID, &vendor))
->>>> -		return false;
->>>> +	if (pdev->is_virtfn)
->>>> +		pci_read_config_word(pdev, PCI_SUBSYSTEM_VENDOR_ID, &vendor);
->>>> +	else
->>>> +		pci_read_config_word(pdev, PCI_VENDOR_ID, &vendor);
->>>
->>> You should not read the sub Vendor ID for VF. PCIe spec suggests reading the PF
->>> Vendor ID for VF. So you should just use pci_physfn() API as below:
->>>
->>> 	pci_read_config_word(pci_physfn(pdev), PCI_VENDOR_ID, &vendor);
->>>
->>> This will work for both PF and VF.
->>>
->> This will defeat the purpose of having health check monitor for VF,
->> as we are always reading PF vendor ID and will not know VF status at all.
+On 24/07/2025 15:16, Johan Hovold wrote:
+> Nothing seems to prevent the driver from being built on non-TI platforms
+> so enable compile testing for wider build coverage.
 > 
-> Do we really have a usecase to perform health check for VFs? Health check is
-> supposed to happen for devices that can fail abruptly.
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+>   drivers/phy/ti/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-yeah as VF is not a physical link we can disable health check monitor
-for VF's in the probe itself.
+> diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
+> index b905902d5750..b40f28019131 100644
+> --- a/drivers/phy/ti/Kconfig
+> +++ b/drivers/phy/ti/Kconfig
+> @@ -62,7 +62,7 @@ config OMAP_CONTROL_PHY
+>   
+>   config OMAP_USB2
+>   	tristate "OMAP USB2 PHY Driver"
+> -	depends on ARCH_OMAP2PLUS || ARCH_K3
+> +	depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
+>   	depends on USB_SUPPORT
+>   	select GENERIC_PHY
+>   	select USB_PHY
 
-- Krishna Chaitanya.
-> - Mani
-> 
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
 
