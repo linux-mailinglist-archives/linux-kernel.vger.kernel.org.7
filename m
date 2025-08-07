@@ -1,63 +1,73 @@
-Return-Path: <linux-kernel+bounces-758597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02AFB1D138
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:31:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91319B1D5F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1728216B543
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:31:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B1B27AC0A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DFB1D8A0A;
-	Thu,  7 Aug 2025 03:31:39 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1DF264627;
+	Thu,  7 Aug 2025 10:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ppYXl6BU"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F44642058;
-	Thu,  7 Aug 2025 03:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D505230BF6
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754537499; cv=none; b=pe2bgZ4WY2RIMuICJ43T34jHRtVQeR6idO3bu/2IK4aayW9fQsNXLKsTlslKc0nHryq9Lhrry/oM952lN/j8+gC9R6n0yB8LOz0KHa0s6niIgLn+W/WU8ysHzv51aM02PnepIgOibGb9SmqN9wPNSQfIex1YuqdcoyRYU/xAXp0=
+	t=1754563850; cv=none; b=KWjz/2bpDEbLrMhvOMlA/p5w6lmHU2fz/XhK9lLbM8bi9CqwCr1SIcAYvmTcKBkvAKIJUMf8KoAIaROWNfRcPuOCgd6+AZYSdcRm0uEu4KMGYaQcNRy3cxdB283TniL9Ai0IL1cNrO0Ro3vVHLx8PhAvmxPejAGh7ezEn3rSOdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754537499; c=relaxed/simple;
-	bh=hTd1hfm5gtu9wjeStAJhQAQyUDFf2bB9+C1LVeJHUJM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q4FOkemBmsXFkGN0vh27s+JINF1diygdP2lm9KUWgypzBuZaBidEB8UYPhWEFoBTcCh7m3DcZH++UEJsGe83AnqXxH3t/eiIsInDLI3XQJHOuTkx+lM7emtx22fAbMCGXu7jYvXAMnmHd+m6MdyQMhAdiJRzhIWrsMlZvZoFOig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4byCPg4ms9zYQv7P;
-	Thu,  7 Aug 2025 11:31:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4F90B1A0CDD;
-	Thu,  7 Aug 2025 11:31:34 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgC3MxQTHpRoeARdCw--.18209S6;
-	Thu, 07 Aug 2025 11:31:34 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	akpm@linux-foundation.org,
-	jack@suse.cz,
-	bvanassche@acm.org,
-	yang.yang@vivo.com,
-	dlemoal@kernel.org,
-	ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [patch v4 2/2] lib/sbitmap: make sbitmap_get_shallow() internal
-Date: Thu,  7 Aug 2025 11:24:13 +0800
-Message-Id: <20250807032413.1469456-3-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250807032413.1469456-1-yukuai1@huaweicloud.com>
-References: <20250807032413.1469456-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1754563850; c=relaxed/simple;
+	bh=5N0sCYf2Cs1KmNgBKMto4VeDsYyl1/Ny7xhHxwxRX48=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=cd+kaIL+PVXgPSlbWrgHxCxbccWVwkLZs//O/dFeJz7o/Kwap7pF9ZKQW0iVCrNuzMB7+UEtTel6ha0Bs5KGHN5onCTSFW6yEIRQNKSYyRRkKO+nmAga5zdn7Un8c97eyyQB5CmFxeSOfoWDF/wypVBa1FQvFf+u3shle/d3A6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ppYXl6BU; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250807105046epoutp049165f7525fd6d04ab359740be8efa23a~ZdoWs8OYi0344403444epoutp04R
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:50:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250807105046epoutp049165f7525fd6d04ab359740be8efa23a~ZdoWs8OYi0344403444epoutp04R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754563846;
+	bh=9EFIJet6GwguCOgHXt373HO19RdNPt1XWJDM2bajplk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ppYXl6BUAVAeVZr16oTAuTzCiqe7yhCZS+FFgZzvF4nkidEBipqlnZylkV4VUzezu
+	 CB2MBnBBTia4sRLvv5W4Z5g3ZJs3fIBqTRcepasnE5PQZyLIRAwSA7oHHnQdsqBTIM
+	 W4HRgZNEHXl+bbwWKiLK/xzlWe3vfYCA3lEUb/6E=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250807105045epcas5p200483d0bdac63cb3b323ff857f67fdc1~ZdoWNaOIH1874618746epcas5p2P;
+	Thu,  7 Aug 2025 10:50:45 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.88]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4byP8P11ymz2SSKf; Thu,  7 Aug
+	2025 10:50:45 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250807032459epcas5p1d6bd796f5b654c92372bdcc8a7926c22~ZXjJEevMZ2629026290epcas5p1A;
+	Thu,  7 Aug 2025 03:24:59 +0000 (GMT)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250807032457epsmtip217c0a672ffd1a22f97b647b84be6597d~ZXjHGrzJG1346113461epsmtip29;
+	Thu,  7 Aug 2025 03:24:57 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
+	andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+	alim.akhtar@samsung.com, robh@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, aswani.reddy@samsung.com,
+	anindya.sg@samsung.com, Aakarsh Jain <aakarsh.jain@samsung.com>
+Subject: [PATCH 00/10] Use SoC-specific compatible string for Samsung MFC
+Date: Thu,  7 Aug 2025 08:54:39 +0530
+Message-ID: <20250807032449.92770-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,104 +75,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3MxQTHpRoeARdCw--.18209S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF17AF45Xw18XF4xZryrZwb_yoW5Cw4rpF
-	4xKa48Gr9Yqryj9rnrWFWDZF98Ww4kJFnxGFsagF1Fkrs8tanavrn5CFWft343CFW8AF43
-	XFyY9ryxCr1UXFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
-	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
-	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
-	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
-	vjDU0xZFpf9x0JUQXo7UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CMS-MailID: 20250807032459epcas5p1d6bd796f5b654c92372bdcc8a7926c22
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250807032459epcas5p1d6bd796f5b654c92372bdcc8a7926c22
+References: <CGME20250807032459epcas5p1d6bd796f5b654c92372bdcc8a7926c22@epcas5p1.samsung.com>
 
-From: Yu Kuai <yukuai3@huawei.com>
+This patch series modifies the samsung MFC version compatible to
+SoC-specific compatible.
 
-Because it's only used in sbitmap.c
+Aakarsh Jain (10):
+  ARM: dts: samsung: exynos3250: Use SoC-specific compatible string for
+    MFC
+  ARM: dts: samsung: exynos4: Use SoC-specific compatible string for MFC
+  ARM: dts: samsung: exynos5250: Use SoC-specific compatible string for
+    MFC
+  ARM: dts: samsung: exynos5420: Use SoC-specific compatible string for
+    MFC
+  ARM: dts: samsung: exynos5800: Use SoC-specific compatible string for
+    MFC
+  ARM: dts: samsung: s5pv210: Use SoC-specific compatible string for MFC
+  media: s5p-mfc: Modify compatible string check for SoC-specific
+    support
+  media: s5p-mfc: Add new compatible string corresponding to S5pv210 SoC
+  dt-bindings: media: s5p-mfc: Modify compatible string check for
+    SoC-specific support
+  dt-bindings: media: s5p-mfc: Add SoC-specific compatible for
+    'samsung,mfc-v5'
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
----
- include/linux/sbitmap.h | 17 -----------------
- lib/sbitmap.c           | 18 ++++++++++++++++--
- 2 files changed, 16 insertions(+), 19 deletions(-)
+ .../bindings/media/samsung,s5p-mfc.yaml       | 24 ++++++++++---------
+ arch/arm/boot/dts/samsung/exynos3250.dtsi     |  2 +-
+ arch/arm/boot/dts/samsung/exynos4.dtsi        |  2 +-
+ arch/arm/boot/dts/samsung/exynos5250.dtsi     |  2 +-
+ arch/arm/boot/dts/samsung/exynos5420.dtsi     |  2 +-
+ arch/arm/boot/dts/samsung/exynos5800.dtsi     |  2 +-
+ arch/arm/boot/dts/samsung/s5pv210.dtsi        |  2 +-
+ .../media/platform/samsung/s5p-mfc/s5p_mfc.c  | 13 ++++++----
+ 8 files changed, 27 insertions(+), 22 deletions(-)
 
-diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-index 4adf4b364fcd..ffb9907c7070 100644
---- a/include/linux/sbitmap.h
-+++ b/include/linux/sbitmap.h
-@@ -209,23 +209,6 @@ void sbitmap_resize(struct sbitmap *sb, unsigned int depth);
-  */
- int sbitmap_get(struct sbitmap *sb);
- 
--/**
-- * sbitmap_get_shallow() - Try to allocate a free bit from a &struct sbitmap,
-- * limiting the depth used from each word.
-- * @sb: Bitmap to allocate from.
-- * @shallow_depth: The maximum number of bits to allocate from the bitmap.
-- *
-- * This rather specific operation allows for having multiple users with
-- * different allocation limits. E.g., there can be a high-priority class that
-- * uses sbitmap_get() and a low-priority class that uses sbitmap_get_shallow()
-- * with a @shallow_depth of (sb->depth >> 1). Then, the low-priority
-- * class can only allocate half of the total bits in the bitmap, preventing it
-- * from starving out the high-priority class.
-- *
-- * Return: Non-negative allocated bit number if successful, -1 otherwise.
-- */
--int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth);
--
- /**
-  * sbitmap_any_bit_set() - Check for a set bit in a &struct sbitmap.
-  * @sb: Bitmap to check.
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index c07e3cd82e29..4d188d05db15 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -307,7 +307,22 @@ static int __sbitmap_get_shallow(struct sbitmap *sb,
- 	return sbitmap_find_bit(sb, shallow_depth, index, alloc_hint, true);
- }
- 
--int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth)
-+/**
-+ * sbitmap_get_shallow() - Try to allocate a free bit from a &struct sbitmap,
-+ * limiting the depth used from each word.
-+ * @sb: Bitmap to allocate from.
-+ * @shallow_depth: The maximum number of bits to allocate from the bitmap.
-+ *
-+ * This rather specific operation allows for having multiple users with
-+ * different allocation limits. E.g., there can be a high-priority class that
-+ * uses sbitmap_get() and a low-priority class that uses sbitmap_get_shallow()
-+ * with a @shallow_depth of (sb->depth >> 1). Then, the low-priority
-+ * class can only allocate half of the total bits in the bitmap, preventing it
-+ * from starving out the high-priority class.
-+ *
-+ * Return: Non-negative allocated bit number if successful, -1 otherwise.
-+ */
-+static int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth)
- {
- 	int nr;
- 	unsigned int hint, depth;
-@@ -322,7 +337,6 @@ int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth)
- 
- 	return nr;
- }
--EXPORT_SYMBOL_GPL(sbitmap_get_shallow);
- 
- bool sbitmap_any_bit_set(const struct sbitmap *sb)
- {
 -- 
-2.39.2
+2.49.0
 
 
