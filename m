@@ -1,205 +1,143 @@
-Return-Path: <linux-kernel+bounces-759126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D522CB1D8DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:21:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AE7B1D8E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A79A87A578A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:19:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6CD18C5C74
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365E125A32E;
-	Thu,  7 Aug 2025 13:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A6125A626;
+	Thu,  7 Aug 2025 13:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="XQk1aKQh"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013005.outbound.protection.outlook.com [52.101.72.5])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OEOMs8+v"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA324A0C;
-	Thu,  7 Aug 2025 13:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572874; cv=fail; b=aoAHK30HI9C0RIu5qUNPq6ZFxl3uvkj4XIdUb8wdwTnGUnqwYDUmP2t6+eP1uatEmIiMjrWZFbgKOxcc0DPBBvM2t/miYHAG8QN/FhbhC7OzeKETqZmkfDdXi15ROI4e6Rhaj8t2+MxDzUZd0E7KFkVvyNA+aATNE5K30WNFi74=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572874; c=relaxed/simple;
-	bh=jY3onvjXhlOQnypq3SjqmmiVIKeCC4R3gmmxTzDfGMs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e52ZSIa/mTSdP0DHkeS72LpllwrxOdyS/g/hD8hFUhcfZnCv3o+W1NURw7mR/ciAOGE3rax0UAjPit8yufggVSIO5d3sZ8j1CHmL69J/HMYPVsZC5DqYDoz6zAHp4CI7flAXOIlqKOWmKUMEEOoa8CilES1houAoLHJY6JeMnrw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=XQk1aKQh; arc=fail smtp.client-ip=52.101.72.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RQqetpgNQczI4b0NA4KFTiOD8/TSRff6eEqLJMwRqP7zT1HvE0vi+b2AFTaTLl5y4RkemduEozLrG/EitpZ9ErYzK4JTenTF/MPgYrU/DrfnaupYyF46HlXg1wP0cXuhr4N3v/WiQPEAdN7jV6TcHI9NjGdw1SQtUH2niaVEZ8wTHm9VupeszNV5RpkwM9sRnEhPvj2ZTmnLeV34S++ycPAFSVERjBK1I5WGc3YPHufhc030FZ3gvsYeolmZwB2cjSpmAti2w0k+Es3aG75YbbIZoaQX//gGLIlO8TsUiX2osPVu8hoLpWtbvtpKuRrC6inEicnFIqW6HtRkPwR6aQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n4B+DuRdNoT6o8X0sV8dOh00GPR3turbXYwOseGQPak=;
- b=B1GT66J57S7Iq61eMDFktWudiwX94cBq6YRbirWhZ+9IKpP67ptRjbXv689HhGiSqGGD1vRw0QomvL8AbMIr3iIY0l+3br0r5mVl/w5JUhrRJTP90NQq1rH0UEqsELsiFx05jbQHCjolP3o8o3R97Wtwjiw0P9l0AVwKj8OYiBzTdZNxk6ky6mXnxbKZxispcZ8tEEWNR7XqMbbP5onhVV/cZIvN+CkdX9zSVBpkOz8v+X7nUbPcIrIz7Vnwm9yqaa0R/H5FTPIOGQxHQN8Vx+P9vA51MXSX1P0FoLojry1FIV4TwDtGxZPm8f6/PywY+pAoBwHJa1+ow57B0nN65w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n4B+DuRdNoT6o8X0sV8dOh00GPR3turbXYwOseGQPak=;
- b=XQk1aKQhuYn2VnkMZhW2GMT1MFPxFIrbemN0D4IcE/6ZMQ+B0KQMGzeS4PybfZ7PgF/C1NdXCr0rFyjeaCi3w+/uteBPi8OvIDyvXMDLe62DrO3KQ70VLiNz8PQi94T6U36at/qEcbFpye8AcJJFkrVzByhpyB78ePUCkde36eI=
-Received: from DUZPR01CA0342.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b8::26) by AS8PR02MB9090.eurprd02.prod.outlook.com
- (2603:10a6:20b:5b8::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Thu, 7 Aug
- 2025 13:21:09 +0000
-Received: from DB1PEPF000509F0.eurprd03.prod.outlook.com
- (2603:10a6:10:4b8:cafe::cb) by DUZPR01CA0342.outlook.office365.com
- (2603:10a6:10:4b8::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.16 via Frontend Transport; Thu,
- 7 Aug 2025 13:21:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- DB1PEPF000509F0.mail.protection.outlook.com (10.167.242.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9009.8 via Frontend Transport; Thu, 7 Aug 2025 13:21:09 +0000
-Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 7 Aug
- 2025 15:21:08 +0200
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>, Julien Panis <jpanis@baylibre.com>,
-	William Breathitt Gray <wbg@kernel.org>, Andrew Davis <afd@ti.com>
-CC: <kernel@axis.com>, <linux-iio@vger.kernel.org>,
-	<linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] counter: ti-ecap-capture: Use devm_pm_runtime_enable()
-User-Agent: a.out
-Date: Thu, 7 Aug 2025 15:21:08 +0200
-Message-ID: <pnda54bjmij.a.out@axis.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6CC252292;
+	Thu,  7 Aug 2025 13:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754572894; cv=none; b=aUDTLC4gICwi3LefOgSiXifOosoz6SAPnXLmQXXuTPAlQUhXA/ixhuOdd4lL1b8Xum864IzGRDhOynpiuy/em+1hJhF8Pg32GQa4hIp/XazSJvVyqitYFw4tldrapvWh2nUp4ORFkPFq5oenAggdgRgpFDHVEFouW41bdZ7y664=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754572894; c=relaxed/simple;
+	bh=rLtL8hckTH7atzqiF6Op54cB1WqbhNhqDi/kypatR6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r1pXwo6Faq3xJZoIQ8CRMmKov86RynF6Au0l80A5qu3kkiHG8fWWMu2Aw3sQxVe31efBxRmMC1XIxMTivcFO1VOJv2hNVoFFJhDZCkV8lZDp3FbEoYdL4iTVnBYRupzmZYwEBI54wL+Wtmg3SaEeue/bCobVaQAxdHzeIc7I3Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OEOMs8+v; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B0D93C78;
+	Thu,  7 Aug 2025 15:20:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754572840;
+	bh=rLtL8hckTH7atzqiF6Op54cB1WqbhNhqDi/kypatR6Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OEOMs8+vgICFtsA/sl4FTpNTNuVjWyl2lELl5Ud+n2I7OtpWEAqbb/lCu7yef08eF
+	 Yb6yIGwq1WDmoTOuuW7rJnAkdd+PQjX4qr/nNJSPeZIKtFZ3/1MaKJQOXjvGYx9YKA
+	 Fuhq0VzYfeKomu63E7d4KaebQTaVYFH8cdohuI2k=
+Message-ID: <1951ecfe-d080-464c-8441-f5400f535495@ideasonboard.com>
+Date: Thu, 7 Aug 2025 16:21:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509F0:EE_|AS8PR02MB9090:EE_
-X-MS-Office365-Filtering-Correlation-Id: f68ce342-411f-45f7-2505-08ddd5b545bb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PrsObfwO0QGbnWoK2GSU+2+CddNH/iT76vVxHfHyrutLGFD2P7SSP5g8t73t?=
- =?us-ascii?Q?eeWehHgYabypzp+2DfXM5+OWHOCeYn9KBe/K35XyVD1YqhGnbnfeZS5KiOq5?=
- =?us-ascii?Q?yHuV1eYbsip2CCiSZZfzG6dvmbuZiQ169PvCFN9Cb/exfKsx1WbuT4gJXuxu?=
- =?us-ascii?Q?LpeeFc/bgOkhJdp4O7Q3jpdxOFQZoVVxG1zCioytGmBKB9sF70Mx7nXoPVx1?=
- =?us-ascii?Q?Y5Pmuv0r561MFf0PI6PSJdwi1dVRyq7x0EUe5X9O8zPxjJHceYz5T4dh7LMB?=
- =?us-ascii?Q?MUE7kYmGq8PD7sfJFtJd2qHOzC2+UFIk6HkCUdddy1uYMPp2GcnnJwymHu0q?=
- =?us-ascii?Q?pXL/MUS1nl9RITWRlr2Aoi8ZEzVL7CrBgFDovu2cawhRVgNdV4zXWRRDhAdM?=
- =?us-ascii?Q?hf2vG3k+g+9xx1uZb4poANnklJ7Y4SO6+k2MMxOJLFCGCoLPxW3V7NLqy/5T?=
- =?us-ascii?Q?T9UdeCGENpyjri+oy30+RGsdh/cAzuQGX2zG9hlnKJ2W6k2B9ZCzEWIDxg3X?=
- =?us-ascii?Q?0HF+RdyxCog53mmeg2b51DBQramuYVIlSCd6Uupr3L8kuOwxilRWn0462Gw1?=
- =?us-ascii?Q?IkIXKPutTOZ8y9AKzAUyk36+lqO3fk5IUHvSyXjh1Cc8kg+4byuNkFrpt0Xm?=
- =?us-ascii?Q?Nq++i/EpQ0gSgJhmLg4s8Y1Ybqb2ANbmalbcatVe9vV93UClCGHVe9fNuUPL?=
- =?us-ascii?Q?nSsIqynpektP4HDCNhYLoQfBv2YB7rqeH7xrNgM4FAKuVVGJbIjJ4mNcUfFP?=
- =?us-ascii?Q?bzUlFy6nfNbz7DL9ZNS5JFcDaOHxYpwPHvVqrwNc8hSOGvnKINmHQnuA1WGg?=
- =?us-ascii?Q?HDmVPMcDS6hGycCvADXXaHCwDt3SI0unFcLq08YR+WlTNCzb3U0kjy4PPbXy?=
- =?us-ascii?Q?xWB6hzFcirLFNZDkMVIbv6PCGw3wz105Piqs1DbaYaFlgjEz2/y7DsQZg+Gs?=
- =?us-ascii?Q?VXRLkJP2YUd8tGo8OSMMyWIw9URl2bjqr8gtqBn0t2mwnOmrRr8lPNFUwesc?=
- =?us-ascii?Q?1DXg2bts+m2tAiGH2AJ97jgT7B/gSoxGfE3541mZ2ZHb3pnHTJeJ4nQLpxUo?=
- =?us-ascii?Q?kgrKBbihr7fKSCUVBTsAneD183nH5q/15NArY/LMXT3rEQA/gqPcWKm9bxdP?=
- =?us-ascii?Q?ljzMix3p5LIMB7CtVm4PCR2dgPmYS+y/G0cqXovsrJF1qxn9dgOypSH5DQlR?=
- =?us-ascii?Q?uHQRNXYJI1QHc9oFiU8Hly/1oJJxXlyQWmLbp8ZwX8GdTroi1HY/c3hAKTUo?=
- =?us-ascii?Q?1T9a+y+0FQCYQcDUUgNWueQ0YlMbvf61M7Ti2WyTVyW9jMfA22JaVfIQFPX0?=
- =?us-ascii?Q?+S/RFEkXYoZL4vVUdmw9BAbyPgONhtvXJ6xd/iE5DPHiabLTaud7xc6eF+V6?=
- =?us-ascii?Q?5H7C2+NEt5/sIonZNNBYbRAVrgbV/48v0QCLFyNdDX9Sj1QrSeLFvr0UgCLJ?=
- =?us-ascii?Q?MSQGQnoAgZfsR7AOmLcOQG4MoNhtvmQrANkJWXwRoESL7ijPnBHMCIp5NLss?=
- =?us-ascii?Q?lgviwtHC01UTYqnx3NJIyi5B/FCmXB5NY0gD8t+RsuG2pv5AAUzzmsJO3A?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:21:09.1643
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f68ce342-411f-45f7-2505-08ddd5b545bb
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF000509F0.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR02MB9090
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] drm/tidss: Fixes data edge sampling
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: thomas.petazzoni@bootlin.com, Jyri Sarha <jsarha@ti.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+ Benoit Parrot <bparrot@ti.com>, Lee Jones <lee@kernel.org>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tero Kristo <kristo@kernel.org>
+References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There is no need to register a manual `devm` action for
-`pm_runtime_disable()` when `devm_pm_runtime_enable()` exists. It does
-the same thing (but also calls `pm_runtime_dont_use_autosuspend()`,
-which should be fine here).
+Hi,
 
-Moreover, when `devm_add_action_or_reset()` fails, it is due to a failed
-memory allocation and will thus return `-ENOMEM`. `dev_err_probe()`
-doesn't do anything when error is `-ENOMEM`. Therefore, the call to
-`dev_err_probe()` is useless. Note that `devm_pm_runtime_enable()` has a
-tail call to `devm_add_action_or_reset()` and thus returns that value.
-Therefore, replace `dev_err_probe()` with the returning value.
+On 30/07/2025 20:02, Louis Chauvet wrote:
+> Currently the driver only configure the data edge sampling partially. The 
+> AM62 require it to be configured in two distincts registers: one in tidss 
+> and one in the general device registers.
+> 
+> Introduce a new dt property to link the proper syscon node from the main 
+> device registers into the tidss driver.
+> 
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
+> ---
+> Cc: stable@vger.kernel.org
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
----
-Changes in v3:
+I understand why you call this a fix, but I think this is not really a
+fix. From looking at the patches, my understanding is that for DPI
+outputs we have always only supported certain clock/data edge. So this
+series is adding a new feature to the driver.
 
-* Remove the manual `devm_add_action_or_reset()` and use
-  `devm_pm_runtime_enable()` instead.
-  
-Link to v2: https://lore.kernel.org/lkml/pndms8em7tf.a.out@axis.com/
+You can add new things to the DT bindings, but you have to keep the old
+bindings working.
 
-Changes in v2:
-
-* Split the patch to one seperate patch for each sub-system.
-
-Link to v1: https://lore.kernel.org/all/pnd7c0s6ji2.fsf@axis.com/
-
-drivers/counter/ti-ecap-capture.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
-index 3faaf7f60539..3586a7ab9887 100644
---- a/drivers/counter/ti-ecap-capture.c
-+++ b/drivers/counter/ti-ecap-capture.c
-@@ -465,11 +465,6 @@ static irqreturn_t ecap_cnt_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--static void ecap_cnt_pm_disable(void *dev)
--{
--	pm_runtime_disable(dev);
--}
--
- static int ecap_cnt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -523,12 +518,9 @@ static int ecap_cnt_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, counter_dev);
- 
--	pm_runtime_enable(dev);
--
--	/* Register a cleanup callback to care for disabling PM */
--	ret = devm_add_action_or_reset(dev, ecap_cnt_pm_disable, dev);
-+	ret = devm_pm_runtime_enable(dev);
- 	if (ret)
--		return dev_err_probe(dev, ret, "failed to add pm disable action\n");
-+		return ret;
- 
- 	ret = devm_counter_add(dev, counter_dev);
- 	if (ret)
-
-base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
--- 
-2.39.5
+ Tomi
 
 
