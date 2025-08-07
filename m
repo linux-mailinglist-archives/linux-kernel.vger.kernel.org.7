@@ -1,162 +1,122 @@
-Return-Path: <linux-kernel+bounces-758480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F34B1CFBE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47345B1CFC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB3D1665DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E0F2169C36
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35BA26AC3;
-	Thu,  7 Aug 2025 00:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90955125D6;
+	Thu,  7 Aug 2025 00:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wUgGEzCc"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J+cL1e6o"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C12211C;
-	Thu,  7 Aug 2025 00:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F53414F98
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754525750; cv=none; b=BiPHH/LCi5HaKHPNd4g/KOD/00HwBYUwRfgrChPtSykXx27watb2K0lpje387+AmwwvsNt6Fu5kqbzlTGWCiPOVZ6CtOxD9w/wNuTwIBJjmO+4aQrtxmyTKyqKnPLx/8ass9G957lvHaF26sTWZ5/SLVQzvOeD8Yvzn0Ii7UtlQ=
+	t=1754525975; cv=none; b=Oq9bL997gtSh+cxFyF7FRADUo7yUWGhKy9fK8iPsXUfRh01LADwiQtyvIMSd6BvXee5ethX7by6zvdVF+8buIVrM2ZbTBujypNmac36nUm7+hmKtVDfx1cWrr8EWhjsIcMJUAo+pLYx+fn9k7JgDqsFvy+PbnQ7LaDbsRC/mG08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754525750; c=relaxed/simple;
-	bh=i4LsIiz1RR4sd0mbWjIuP2fzUnEewdAdGw1p5tyqtAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fdnFZN0A8ayX7oqyWchREyKrh1+rPyirR/ThgwhPmRS4aicUtNpvGU1JCnjOWByDhpnGEexDkxBV/sd1OZuxriADQfsxVDRDF1clWouL/Drv0fS0ARsHvD4vsVuhEDhnopdIhEPkjM4ZwfCodZQmqw7ggHxcuU3GjafyG6F7md0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wUgGEzCc; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <425a7914-a653-45fe-800a-1da0108bb580@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754525745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vp76ut0yAE7zduuk2f9MkduB9mOiX9R61/7Yih6G71o=;
-	b=wUgGEzCcKbiwGMp0MlHKh3JobBUQK3umMr+C34AX2HPDrj51OxaDiG1U8rnvEFjDcp1Eco
-	ZLB7krlTbgToQPS2Ap7nwn6Ki0MpcRTyeN6kbU69isvmFDW1lTeAQyf2kPuSlBZj5I+z6H
-	KKPtZkaEqsUjJVvu311qylWMjh+Dfls=
-Date: Wed, 6 Aug 2025 17:15:37 -0700
+	s=arc-20240116; t=1754525975; c=relaxed/simple;
+	bh=V45+/g9l57X061i/AJfurAaQ1LktlWXKfnjc54KGRy4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tlnO46UPGURa00laviekSzo9i+G0XxWUEwcBsTm+tvKXZ33VUvI5gMDHll9pWEUGdE673lX3+BA0rbOUBg+E/zKpukHFSXdkU/YXWbjP/xZPBoB694EaypKBLSnhqUbeSg4M2W+Vr7Mc6OTySv/YnE39IeadSHauiaYbddN6ypM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J+cL1e6o; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b07a5e9f9fso177651cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 17:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754525972; x=1755130772; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dgP+zhcaADygYaQXyTSbLIaYArUUmgQtwcAwUW61Z8Y=;
+        b=J+cL1e6obB4ypVB5MWW+b6szs0z6nqCuQaxp4zuxJn0O12al5Z3pwvl1WEez4B16dh
+         kIqlKsKqa+YXn1SuVjSDyzMB3oMW7nBT4OKsyQSV1ZB+BbYbnrkjklJsfCWRqshWfYSK
+         mTwtfVHI1JFegKnlnOdYJU2j49oeWGuAdkcWkqFaCmEwRclaYvcWrvLolcZRHqwhq9Jt
+         sTTT7RA4GRdKDy0U28uMiW3YreT7AOmv3Div0+JzANW2wk2VpEpkzKQmMBxMV3njJkgQ
+         3/sLWkvlAVWa1adDAS0D7XY4SDUUaiAAZUyoWkLmpoVDhjOR3PXkLuDdi2tOKPo/Pse3
+         46Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754525972; x=1755130772;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dgP+zhcaADygYaQXyTSbLIaYArUUmgQtwcAwUW61Z8Y=;
+        b=HS2COhodVf/X7CfS1iuAzxncqdI1yUH3UgcNlhVpODVjPm4xIdIBOEaNahUtHzr06u
+         yINJ0c8ggKG2B1OHhFhRSDowr29qijK3T0NYkHregYb9k6TX80NxQ/RcIpkm2ju8o+iw
+         Ntd3T9LVJHboWrxg7Wx5sMlWHWjQVCdVs+X0zPMHIW4Pmxy1jHX4eYknYO5YWlXSt7Ns
+         KaPVFFVXkpkZFqlTRUr4nXG/hvsEeyLQYBv0kl5qTbGAMwyRj2QfveTNjLoqvtDeT6K9
+         mEUDHCDYBgGV1iDolbj6ZqwekrVtpzYCZpRAe8g/yNFZME1XO1rhJwTjxlqEWdxZiSoO
+         bu8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXP7ewbJXXT0k4nHoiJlTtePOl3q2EKX0yhr+P1R6byvYcWo0/iDzN0Yku60o13+qmbHoSajyLEuBGRV2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZf5EZ84JtJCBNRhzrfBDsCpxebbg86/yohc+HVWWF7uOAl8W9
+	9YRy4aDkWtA/SoFFjWPfYUN6+8iz6MCed1a1mC4fJ2eAX2ClHOsZjyHAjwVS+4gSMwvcvhWZ/wG
+	IpvkJDgbxbuCjjpYa3UwCefTV6ZbQlx86coqRKDzL
+X-Gm-Gg: ASbGncsNAm8pDJjt9ZziV7T6YUNRGno1BZo1FLMelH0QIX4ELTQIAVAWfDHtDBXXH1m
+	hsJAwaidz5IVdWJjRRqyIj9YQ7C7T1OOHSixpT+AKDEAY/qb3oygo5zIU2B0CPzo955NxYwfMKG
+	ACbINrz+/dgxl1daqJsCY+CUKyrY8DOab0aGhMsO+wXBt7x52bmTJgNOp06IXP/1jZLRTY+o384
+	Oyn9w==
+X-Google-Smtp-Source: AGHT+IEm2OZr5WMtmCHB+RT7oF6lUwc9a8EvYKHj0z/gLvtRLJO/PpUOF4nJhDVk8FyNRnVgayU+v6ZMDKG9re+oono=
+X-Received: by 2002:ac8:5984:0:b0:4a9:a4ef:35c2 with SMTP id
+ d75a77b69052e-4b0a37e19damr1095621cf.23.1754525972152; Wed, 06 Aug 2025
+ 17:19:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] perf: use __builtin_preserve_field_info for GCC
- compatibility
-Content-Language: en-GB
-To: Namhyung Kim <namhyung@kernel.org>, Sam James <sam@gentoo.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Andrew Pinski <quic_apinski@quicinc.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-References: <fea380fb0934d039d19821bba88130e632bbfe8d.1754438581.git.sam@gentoo.org>
- <aJPmX8xc5x0W_r0y@google.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <aJPmX8xc5x0W_r0y@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <aHTOSyhwIAaW_1m1@arm.com> <CAFivqmJ912sEdSih_DFkiWRm478XUJhNDe=s2M_UO2gVTu4e3w@mail.gmail.com>
+ <CAJZ5v0irG16e2cM_tX_UeEJVmB_EdUvk-4Nv36dXoUS=Ud3U5A@mail.gmail.com>
+ <CAFivqmLoDv_pWdmBG8ws-CMUBXcb9bS1TgMaxW9YZMqqHpRSyA@mail.gmail.com>
+ <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7> <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
+ <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
+ <aIso4kLtChiQkBjH@arm.com> <20250731111324.vv6vsh35enk3gg4h@vireshk-i7>
+ <aIvQvLL34br6haQi@arm.com> <20250801044340.6ycskhhkzenkzt7a@vireshk-i7>
+In-Reply-To: <20250801044340.6ycskhhkzenkzt7a@vireshk-i7>
+From: Prashant Malani <pmalani@google.com>
+Date: Wed, 6 Aug 2025 17:19:19 -0700
+X-Gm-Features: Ac12FXxojuuRrR58-DaRDywei9mlAi7OGPs5Bx-W4h0K6atiuzT9Wy5aIC8wuyE
+Message-ID: <CAFivqm+gBBSCoVUxmeatu8TjwunzBtfjeDMNBL0JCsPhkFEg5A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Beata Michalska <beata.michalska@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Jie Zhan <zhanjie9@hisilicon.com>, Ionela Voinescu <ionela.voinescu@arm.com>, 
+	Ben Segall <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 8/6/25 4:33 PM, Namhyung Kim wrote:
-> Hello,
+On Thu, 31 Jul 2025 at 21:43, Viresh Kumar <viresh.kumar@linaro.org> wrote:
 >
-> On Wed, Aug 06, 2025 at 01:03:01AM +0100, Sam James wrote:
->> When exploring building bpf_skel with GCC's BPF support, there was a
->> buid failure because of bpf_core_field_exists vs the mem_hops bitfield:
->> ```
->>   In file included from util/bpf_skel/sample_filter.bpf.c:6:
->> util/bpf_skel/sample_filter.bpf.c: In function 'perf_get_sample':
->> tools/perf/libbpf/include/bpf/bpf_core_read.h:169:42: error: cannot take address of bit-field 'mem_hops'
->>    169 | #define ___bpf_field_ref1(field)        (&(field))
->>        |                                          ^
->> tools/perf/libbpf/include/bpf/bpf_helpers.h:222:29: note: in expansion of macro '___bpf_field_ref1'
->>    222 | #define ___bpf_concat(a, b) a ## b
->>        |                             ^
->> tools/perf/libbpf/include/bpf/bpf_helpers.h:225:29: note: in expansion of macro '___bpf_concat'
->>    225 | #define ___bpf_apply(fn, n) ___bpf_concat(fn, n)
->>        |                             ^~~~~~~~~~~~~
->> tools/perf/libbpf/include/bpf/bpf_core_read.h:173:9: note: in expansion of macro '___bpf_apply'
->>    173 |         ___bpf_apply(___bpf_field_ref, ___bpf_narg(args))(args)
->>        |         ^~~~~~~~~~~~
->> tools/perf/libbpf/include/bpf/bpf_core_read.h:188:39: note: in expansion of macro '___bpf_field_ref'
->>    188 |         __builtin_preserve_field_info(___bpf_field_ref(field), BPF_FIELD_EXISTS)
->>        |                                       ^~~~~~~~~~~~~~~~
->> util/bpf_skel/sample_filter.bpf.c:167:29: note: in expansion of macro 'bpf_core_field_exists'
->>    167 |                         if (bpf_core_field_exists(data->mem_hops))
->>        |                             ^~~~~~~~~~~~~~~~~~~~~
->> cc1: error: argument is not a field access
->> ```
->>
->> ___bpf_field_ref1 was adapted for GCC in 12bbcf8e840f40b82b02981e96e0a5fbb0703ea9
->> but the trick added for compatibility in 3a8b8fc3174891c4c12f5766d82184a82d4b2e3e
->> isn't compatible with that as an address is used as an argument.
->>
->> Workaround this by calling __builtin_preserve_field_info directly as the
->> bpf_core_field_exists macro does, but without the ___bpf_field_ref use.
-> IIUC GCC doesn't support bpf_core_fields_exists() for bitfield members,
-> right?  Is it gonna change in the future?
+> On 31-07-25, 22:23, Beata Michalska wrote:
+> > The reason why I mentioned that is that getting current frequency
+> > for an idle CPU seems like smth we could potentially optimise away and save some
+> > cycles (fixing other problems on the way, like this one).
 >
->> Link: https://gcc.gnu.org/PR121420
->> Co-authored-by: Andrew Pinski <quic_apinski@quicinc.com>
->> Signed-off-by: Sam James <sam@gentoo.org>
->> ---
->>   tools/perf/util/bpf_skel/sample_filter.bpf.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/util/bpf_skel/sample_filter.bpf.c b/tools/perf/util/bpf_skel/sample_filter.bpf.c
->> index b195e6efeb8be..e5666d4c17228 100644
->> --- a/tools/perf/util/bpf_skel/sample_filter.bpf.c
->> +++ b/tools/perf/util/bpf_skel/sample_filter.bpf.c
->> @@ -164,7 +164,7 @@ static inline __u64 perf_get_sample(struct bpf_perf_event_data_kern *kctx,
->>   		if (entry->part == 8) {
->>   			union perf_mem_data_src___new *data = (void *)&kctx->data->data_src;
->>   
->> -			if (bpf_core_field_exists(data->mem_hops))
->> +			if (__builtin_preserve_field_info(data->mem_hops, BPF_FIELD_EXISTS))
-> I believe those two are equivalent (maybe worth a comment?).  But it'd
-> be great if BPF/clang folks can review if it's ok.
-
-Yes, from clang side, they are almost equnivalent. See tools/lib/bpf/bpf_core_read.h.
-
-#define bpf_core_field_exists(field...)                                     \
-         __builtin_preserve_field_info(___bpf_field_ref(field), BPF_FIELD_EXISTS)
-
-bpf_core_field_exists actually relies on clang builtin function
-__builtin_preserve_field_info(). This builtin is handled in frontend and
-also at early IR stage.
-
-So your above code is okay to me although bpf_core_field_exists() is much
-easy to understand the intent.
-
+> I agree with that idea, just that the cpufreq core may not be the right place
+> for that. Doing that in the driver should be fine.
 >
-> Anyway, I can build it with clang.
+> > But if that's undesired for any reason, it's perfectly fine to stay with
 >
-> Tested-by: Namhyung Kim <namhyung@kernel.org>
->
-> Thanks,
-> Namhyung
->
->
->>   				return data->mem_hops;
->>   
->>   			return 0;
->> -- 
->> 2.50.1
->>
 
+So, do we have consensus that the idle check is acceptable as proposed?
+(Just want to make sure this thread doesn't get lost given another thread
+has forked off in this conversation).
+
+Best regards,
+
+-- 
+-Prashant
 
