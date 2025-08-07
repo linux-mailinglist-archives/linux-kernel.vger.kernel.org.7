@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-759421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5DAB1DD57
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:07:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A014DB1DD5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D00627BF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:07:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B298316B292
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD58F267F48;
-	Thu,  7 Aug 2025 19:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99766273D6E;
+	Thu,  7 Aug 2025 19:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e0fnsrlv"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVIIHWHS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6143F8F6E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 19:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4D626A1AC;
+	Thu,  7 Aug 2025 19:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754593662; cv=none; b=R3KdoVTvM6u/FH0O9CWTZKX15VWS2eacYJbrblMze3k/KroEIVNj+/Q7vh8n6MBwJhJP3RET6VpwRyxSmUgv8t/UVgZpJaXFR5WYgUtwOpI503KUc9OD/cB3WOh4gtGvapsRz9wlty01Tqv4YGqqZwloKoqvvFpgl78agItH+hA=
+	t=1754593750; cv=none; b=exJ2dIERcKhWjukzf2UNnXpWXgQZopR98Rvd93tQaeXP95chjQ/8Bq8eYyNUskIXer6Zb00sMRYBkbzWG+lhZZ6f1YvIznhGtkNiGx+NUICbBm92t5lTrQLdId0IHrlftEeEcDhsiezm/kYGalm+RHCIN+JIhxqmkBCGrfjXXBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754593662; c=relaxed/simple;
-	bh=vVzUNgVmW/PgwiL7/RYY6G5Nk9YDHupaJR8VLG3ZN3c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=a0FrTr6oMtEq1Yw5VDs67HvKeC5zfbDfCnTgzqASmqZ3Beo4oKm6aTUw52mi27XbxRxJEdwTwweecnHbBgCmIdQvUXmBtrZstIsqwDjM4JjcOeLaR9AFhI/kSAd4gAXp0muWR/HJgHAAuALVqIgzIMmaQYVe3YOWXL61NBUvrII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e0fnsrlv; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1797f2fd-2b34-4c6b-bc61-043e01fde417@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754593648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IfOgLDJ9ixlszDcIQd7PgdDsuBPlh6W1bz0Tz9C3n3o=;
-	b=e0fnsrlvAzRPA4ZuX4EyRpl4P7sdJi5hMXpwyMy6gNSVfE2+PccMwm6x/jkg5kJavEYJnS
-	TMSMvFexguHw+4HFb9Pddxn41onOQ8095bqByg37j1R86ReY1k0lIn1LSZdCDSCcMh47eu
-	j8zrMX1E0nruydCEImYnJrCq83WzJxE=
-Date: Thu, 7 Aug 2025 12:07:15 -0700
+	s=arc-20240116; t=1754593750; c=relaxed/simple;
+	bh=h5F9tcewokv2v0wx3iMjy8IfFAlmrDNK0aJoLn0Qpyo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KHcAk+uxner9j7XVPyAICFpsX1DaQEU1T62QL74iEqGEWunci/4mPqDVQc58ErjI8s4kyA2e1wfc3jMFNDZyRzujcsch8PtIuynwOQI7qU/bT5fuxEt7gtkLwiE1gqkvC4xB3KPnN7r+m9KiHF0E/OzBFC2HSkNZTLPHUCfXXok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVIIHWHS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE7BC4CEF7;
+	Thu,  7 Aug 2025 19:09:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754593749;
+	bh=h5F9tcewokv2v0wx3iMjy8IfFAlmrDNK0aJoLn0Qpyo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=pVIIHWHSzdnCE18ikP5QEvNUXONkDu+GsxtTfXSJZf8la3IxFqoVXeLrgHgpo7ap2
+	 u5mYkKG80fY4kWG6cDHeCxyMJBmUBv4RwY4iDqcyVnYkyT6XlCjrAsbw/ykiQkMnrt
+	 5fP5V6cvNNbuhANfslRaan05LMbI/AdgnKNbKReJXbAhnHs1Eqc5a4QNlZ1ZgJt8RK
+	 WvuJxbeKjb/0wXdkWcWeVl249jeOBk2M19GLLg9yKzIVSEOSNm/QvHJStB/Pnr7ox6
+	 ZYnP1B1kBDd8z823yk2J1eLNkfLm5s9MRU+lxjjPiOYbGwXTjufvuJrs1YCqd2QS26
+	 dWpr6mv8acvCQ==
+From: Mark Brown <broonie@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>, Gabor Juhos <j4g8y7@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250805-qpic-snand-oob-ecc-fix-v2-1-e6f811c70d6f@gmail.com>
+References: <20250805-qpic-snand-oob-ecc-fix-v2-1-e6f811c70d6f@gmail.com>
+Subject: Re: [PATCH v2] spi: spi-qpic-snand: fix calculating of ECC OOB
+ regions' properties
+Message-Id: <175459374764.106952.4861259092289102637.b4-ty@kernel.org>
+Date: Thu, 07 Aug 2025 20:09:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] bpf: refactor max_depth computation in
- bpf_get_stack()
-Content-Language: en-GB
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-To: Arnaud Lecomte <contact@arnaud-lcm.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- song@kernel.org, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <6cc26e1f-6ad6-44cd-a049-c4e7af9a229a@linux.dev>
- <20250807175032.7381-1-contact@arnaud-lcm.com>
- <fbabac62-4bc1-4c11-9316-ed51ae9dbb0d@linux.dev>
-In-Reply-To: <fbabac62-4bc1-4c11-9316-ed51ae9dbb0d@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
+On Tue, 05 Aug 2025 18:05:42 +0200, Gabor Juhos wrote:
+> The OOB layout used by the driver has two distinct regions which contains
+> hardware specific ECC data, yet the qcom_spi_ooblayout_ecc() function sets
+> the same offset and length values for both regions which is clearly wrong.
+> 
+> Change the code to calculate the correct values for both regions.
+> 
+> For reference, the following table shows the computed offset and length
+> values for various OOB size/ECC strength configurations:
+> 
+> [...]
 
+Applied to
 
-On 8/7/25 12:01 PM, Yonghong Song wrote:
->
->
-> On 8/7/25 10:50 AM, Arnaud Lecomte wrote:
->> A new helper function stack_map_calculate_max_depth() that
->> computes the max depth for a stackmap.
->>
->> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->> ---
->>   kernel/bpf/stackmap.c | 38 ++++++++++++++++++++++++++++++--------
->>   1 file changed, 30 insertions(+), 8 deletions(-)
->>
->> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
->> index 3615c06b7dfa..14e034045310 100644
->> --- a/kernel/bpf/stackmap.c
->> +++ b/kernel/bpf/stackmap.c
->> @@ -42,6 +42,31 @@ static inline int stack_map_data_size(struct 
->> bpf_map *map)
->>           sizeof(struct bpf_stack_build_id) : sizeof(u64);
->>   }
->>   +/**
->> + * stack_map_calculate_max_depth - Calculate maximum allowed stack 
->> trace depth
->> + * @map_size:        Size of the buffer/map value in bytes
->> + * @elem_size:       Size of each stack trace element
->> + * @map_flags:       BPF stack trace flags (BPF_F_USER_STACK, 
->> BPF_F_USER_BUILD_ID, ...)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-One more thing: map_flags -> flags, as 'flags is used in bpf_get_stackid/bpf_get_stack etc.
+Thanks!
 
->> + *
->> + * Return: Maximum number of stack trace entries that can be safely 
->> stored,
->> + * or -EINVAL if size is not a multiple of elem_size
->
-> -EINVAL is not needed here. See below.
+[1/1] spi: spi-qpic-snand: fix calculating of ECC OOB regions' properties
+      commit: 13d0fe84a214658254a7412b2b46ec1507dc51f0
 
-[...]
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
