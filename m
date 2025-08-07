@@ -1,284 +1,210 @@
-Return-Path: <linux-kernel+bounces-759063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA113B1D7EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:32:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B75DB1D850
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8367718A7748
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:33:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95499722D8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA811244666;
-	Thu,  7 Aug 2025 12:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CA32561AE;
+	Thu,  7 Aug 2025 12:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TsMxB4R7"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="riD+zuYP"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE951F4C85
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E816C254AE4
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754569964; cv=none; b=CJEgee3QjDtoEz+1FKze/VsUeWhEFFoOrKRLPJNYph1sXokAn3OvgV8RIL8EBX+GaV0l08GtD61IHAfmRH2Y0lxL6JDzj4MOQ4hu5eAiJ5d2/ledEy/EoAbcgDc1DbvO2PgEIonIA+T42S/ZGsv238rGnVvAZ7HolvG9I6GCToc=
+	t=1754571251; cv=none; b=WjGPRGn4cXOUDo8jzw0zP/zJKJeiB/wGYx3JpcKp4cWc2AfLzlQ5AM/VkvfogbhWlTCooZu0Y39tPuoBr9mthDpIcF99Tm26OxEt7xApiGhnxDxFHX7mdvyVDWEyON4NQ3Eqsw5mahHYlgS+SfBB7LmoHiGR5jU30/ehVHBIOf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754569964; c=relaxed/simple;
-	bh=LL9kDu+PekLxf286FzNGXbiUwYKE/OIIkU6LvTiAzNk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z3KcnToeJgaY5TWuts4y2bp9rwPzLlnJdY06Xg2QGdzMye+frBgi3xfgtpcDsxFJ56MmxWiz+V3WXDB8bXAdzR2epb0/E3chCzjIfmuzc0kPUYMwcCA7TlgTCOZ+pi886DjPNudcHJrrqAoO7FGhUDgWGORaUOp3iJgUFtHlfrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TsMxB4R7; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 577CWX4E806344;
-	Thu, 7 Aug 2025 07:32:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754569953;
-	bh=n9Tvt37RYNI6tB4k4IIdtcoiXG9rpKdJc+MYArOqSeM=;
-	h=From:To:Subject:Date;
-	b=TsMxB4R7QP//saH2DayAfjTEpcCxVZHkA9r50RpNLRKC4mb32PAcLp8/vrHqk4+2Q
-	 dyLNFBhwLIwznWvMwkD2TkKUNh5r8ojMJKtavZqlY4hbFOu5QF6xF5fUcLMtL7aCNf
-	 hs9aa50KRSiud4Jq4kufDMkKDOdaZUfx8RaRDuPU=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 577CWXQL3877667
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 7 Aug 2025 07:32:33 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 7
- Aug 2025 07:32:33 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 7 Aug 2025 07:32:33 -0500
-Received: from a0507176-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (a0507176-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [10.24.68.171])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 577CWVRc1309003;
-	Thu, 7 Aug 2025 07:32:31 -0500
-From: Gokul Praveen <g-praveen@ti.com>
-To: <daniel.lezcano@linaro.org>, <g-praveen@ti.com>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-Subject: [PATCH] clocksource: timer-ti-dm : Capture functionality for OMAP DM timer
-Date: Thu, 7 Aug 2025 18:02:29 +0530
-Message-ID: <20250807123229.232771-1-g-praveen@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754571251; c=relaxed/simple;
+	bh=LjldSkJQMPE8uHzTH3tzxcJpt8WEj+V3/bsFC4+mGW4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=dG1UBcQRWqas7wC9Aa7VwSGmQbF8jT2k3RjdOA2Uk0+oexR0Ys1UqtJN5MW/UL5rQQMi3hymC0P4agPFf3cdcFPcqpwM3O6KIng1/Mw2LY7OFLkEobGQl0aploxMllualz9FebFdqRE+oOmmJKLW8rdZGgxr/fGqlt1oe5zrBfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=riD+zuYP; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250807125408epoutp045d6de82191d7ff4478fd86d041a06b45~ZfUEKe0AC1651616516epoutp04M
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:54:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250807125408epoutp045d6de82191d7ff4478fd86d041a06b45~ZfUEKe0AC1651616516epoutp04M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754571248;
+	bh=I7mb2jIbUh0JiJnEyqZvPWnQq89a45lYPc+Vw9PnUkQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=riD+zuYPQ8FMAYHqyVWVoIVckw9fUxPWmsqyJwBu/tNFxfbZREjBb53BTrmH+zd7+
+	 EYcYJGpUCHNTJwHb4vptQSPFciJ0cQNSHHwCLhm8xrUcoA8gizupYYN6K3niUNa2aU
+	 8iL/ZXvA6Rg9huEgoHaxiUpuC8Lj0ufXAsbvvMQ8=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250807125407epcas5p35e4cd40e01599ed1499d270c002fba5e~ZfUDKUl9m0574505745epcas5p3v;
+	Thu,  7 Aug 2025 12:54:07 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4byRtj5Pnyz6B9m4; Thu,  7 Aug
+	2025 12:54:05 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250807123301epcas5p1a3fbda824228f6723950c0207141e282~ZfBoRl6Kc1848318483epcas5p1q;
+	Thu,  7 Aug 2025 12:33:01 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250807123258epsmtip17d549f336ff5d3b7aad36c60d56f06ae~ZfBleqNA-0496104961epsmtip1Q;
+	Thu,  7 Aug 2025 12:32:58 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <20250806234309.GA2032999-robh@kernel.org>
+Subject: RE: [PATCH v5 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 combo ssphy
+Date: Thu, 7 Aug 2025 18:02:57 +0530
+Message-ID: <000101dc0797$69cb0080$3d610180$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ+ZgWj3OwstM5ZbwFL0KmcSzrOlQD+pBMSAdNyF8MCWOIs27LpCJrA
+Content-Language: en-in
+X-CMS-MailID: 20250807123301epcas5p1a3fbda824228f6723950c0207141e282
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805114320epcas5p3968288f8d01944d3d730b3094a7befe4
+References: <20250805115216.3798121-1-pritam.sutar@samsung.com>
+	<CGME20250805114320epcas5p3968288f8d01944d3d730b3094a7befe4@epcas5p3.samsung.com>
+	<20250805115216.3798121-6-pritam.sutar@samsung.com>
+	<20250806234309.GA2032999-robh@kernel.org>
 
-Add PWM capture function in DM timer driver.
+Hi Rob,
 
-OMAP DM timer hardware supports capture feature.It can be used to
-timestamp events (falling/rising edges) detected on input signal.
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: 07 August 2025 05:13 AM
+> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> Cc: vkoul@kernel.org; kishon@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
+> peter.griffin@linaro.org; kauschluss@disroot.org;
+> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
+> m.szyprowski@samsung.com; s.nawrocki@samsung.com; linux-
+> phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> samsung-soc@vger.kernel.org; rosa.pila@samsung.com;
+> dev.tailor@samsung.com; faraz.ata@samsung.com;
+> muhammed.ali@samsung.com; selvarasu.g@samsung.com
+> Subject: Re: [PATCH v5 5/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+> ExynosAutov920 combo ssphy
+> 
+> On Tue, Aug 05, 2025 at 05:22:15PM +0530, Pritam Manohar Sutar wrote:
+> > This phy supports USB3.1 SSP+(10Gbps) protocol and is backwards
+> > compatible to the USB3.0 SS(5Gbps). It requires two clocks, named
+> > "phy" and "ref". The required supplies for USB3.1 are named as
+> > vdd075_usb30(0.75v), vdd18_usb30(1.8v).
+> >
+> > Add schemas for combo ssphy found on this SoC.
+> >
+> > Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> > ---
+> >  .../bindings/phy/samsung,usb3-drd-phy.yaml    | 19
+> +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> > b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> > index 4a84b5405cd2..7a71cff10fb5 100644
+> > --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-
+> phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-
+> phy.yaml
+> > @@ -34,6 +34,7 @@ properties:
+> >        - samsung,exynos7870-usbdrd-phy
+> >        - samsung,exynos850-usbdrd-phy
+> >        - samsung,exynos990-usbdrd-phy
+> > +      - samsung,exynosautov920-usb31drd-combo-ssphy
+> >        - samsung,exynosautov920-usbdrd-combo-hsphy
+> >        - samsung,exynosautov920-usbdrd-phy
+> >
+> > @@ -118,6 +119,12 @@ properties:
+> >    vdd18-usb20-supply:
+> >      description: 1.8V power supply for the USB 2.0 phy.
+> >
+> > +  dvdd075-usb30-supply:
+> > +    description: 0.75V power supply for the USB 3.0 phy.
+> > +
+> > +  vdd18-usb30-supply:
+> > +    description: 1.8V power supply for the USB 3.0 phy.
+> > +
+> >  required:
+> >    - compatible
+> >    - clocks
+> > @@ -227,6 +234,7 @@ allOf:
+> >                - samsung,exynos7870-usbdrd-phy
+> >                - samsung,exynos850-usbdrd-phy
+> >                - samsung,exynos990-usbdrd-phy
+> > +              - samsung,exynosautov920-usb31drd-combo-ssphy
+> >                - samsung,exynosautov920-usbdrd-combo-hsphy
+> >                - samsung,exynosautov920-usbdrd-phy
+> >      then:
+> > @@ -258,6 +266,17 @@ allOf:
+> >          - vdd18-usb20-supply
+> >          - vdd33-usb20-supply
+> >
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - samsung,exynosautov920-usb31drd-combo-ssphy
+> > +    then:
+> > +      required:
+> > +        - dvdd075-usb30-supply
+> > +        - vdd18-usb30-supply
+> 
+> Similar issue here.
 
-Signed-off-by: Gokul Praveen <g-praveen@ti.com>
----
-Precondition : Before calling driver API,it is assumed that the
-               capture signal is active else both duty cycle
-               and period returned by driver will not be valid.
----
- drivers/clocksource/timer-ti-dm.c          | 127 ++++++++++++++++++++-
- include/linux/platform_data/dmtimer-omap.h |   4 +
- 2 files changed, 129 insertions(+), 2 deletions(-)
+Will the suggested lines of the code in next version of the patch-set.
+Snippet will look as below.
 
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index e9e32df6b566..a4bf72c850b5 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -31,6 +31,7 @@
- #include <linux/platform_data/dmtimer-omap.h>
- 
- #include <clocksource/timer-ti-dm.h>
-+#include <linux/delay.h>
- 
- /*
-  * timer errata flags
-@@ -836,6 +837,49 @@ static int omap_dm_timer_set_match(struct omap_dm_timer *cookie, int enable,
- 	return 0;
- }
- 
-+static int omap_dm_timer_set_cap(struct omap_dm_timer *cookie,
-+					int autoreload, bool config_period)
-+{
-+	struct dmtimer *timer;
-+	struct device *dev;
-+	int rc;
-+	u32 l;
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,exynosautov920-usb31drd-combo-ssphy
++    then:
++      required:
++        - dvdd075-usb30-supply
++        - vdd18-usb30-supply
 +
-+	timer = to_dmtimer(cookie);
-+	if (unlikely(!timer))
-+		return -EINVAL;
-+
-+	dev = &timer->pdev->dev;
-+	rc = pm_runtime_resume_and_get(dev);
-+
-+	if (rc)
-+		return rc;
-+	/*
-+	 *  1. Select autoreload mode. TIMER_TCLR[1] AR bit.
-+	 *  2. TIMER_TCLR[14]: Sets the functionality of the TIMER IO pin.
-+	 *  3. TIMER_TCLR[13] : Capture mode select bit.
-+	 *  3. TIMER_TCLR[9-8] : Select transition capture mode.
-+	 */
-+
-+	l = dmtimer_read(timer, OMAP_TIMER_CTRL_REG);
-+
-+	if (autoreload)
-+		l |= OMAP_TIMER_CTRL_AR;
-+
-+	l |= OMAP_TIMER_CTRL_CAPTMODE | OMAP_TIMER_CTRL_GPOCFG;
-+
-+	if (config_period == true)
-+		l |= OMAP_TIMER_CTRL_TCM_LOWTOHIGH; /*Time Period config*/
-+	else
-+		l |= OMAP_TIMER_CTRL_TCM_BOTHEDGES; /*Duty Cycle config*/
-+
-+	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, l);
-+
-+	pm_runtime_put_sync(dev);
-+
-+	return 0;
-+}
-+
- static int omap_dm_timer_set_pwm(struct omap_dm_timer *cookie, int def_on,
- 				 int toggle, int trigger, int autoreload)
- {
-@@ -1023,23 +1067,99 @@ static unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *cookie)
- 	return __omap_dm_timer_read_counter(timer);
- }
- 
-+static inline unsigned int __omap_dm_timer_cap(struct dmtimer *timer, int idx)
-+{
-+	return idx == 0 ? dmtimer_read(timer, OMAP_TIMER_CAPTURE_REG) :
-+			  dmtimer_read(timer, OMAP_TIMER_CAPTURE2_REG);
-+}
-+
- static int omap_dm_timer_write_counter(struct omap_dm_timer *cookie, unsigned int value)
- {
- 	struct dmtimer *timer;
-+	struct device *dev;
- 
- 	timer = to_dmtimer(cookie);
--	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
--		pr_err("%s: timer not available or enabled.\n", __func__);
-+	if (unlikely(!timer)) {
-+		pr_err("%s: timer not available.\n", __func__);
- 		return -EINVAL;
- 	}
- 
-+	dev = &timer->pdev->dev;
-+
-+	pm_runtime_resume_and_get(dev);
- 	dmtimer_write(timer, OMAP_TIMER_COUNTER_REG, value);
-+	pm_runtime_put_sync(dev);
- 
- 	/* Save the context */
- 	timer->context.tcrr = value;
- 	return 0;
- }
- 
-+/**
-+ * omap_dm_timer_cap_counter() - Calculate the high count or period count depending on the
-+ * configuration.
-+ * @cookie:Pointer to OMAP DM timer
-+ * @is_period:Whether to configure timer in period or duty cycle mode
-+ *
-+ * Return high count or period count if timer is enabled else appropriate error.
-+ */
-+static unsigned int omap_dm_timer_cap_counter(struct omap_dm_timer *cookie,	bool is_period)
-+{
-+	struct dmtimer *timer;
-+	unsigned int cap1 = 0;
-+	unsigned int cap2 = 0;
-+	u32 l, ret;
-+
-+	timer = to_dmtimer(cookie);
-+	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
-+		pr_err("%s:timer is not available or enabled.%p\n", __func__, (void *)timer);
-+		return -EINVAL;
-+	}
-+
-+	/*Stop the timer*/
-+	omap_dm_timer_stop(cookie);
-+
-+	/* Clear the timer counter value to 0 */
-+	ret = omap_dm_timer_write_counter(cookie, 0);
-+
-+	if (ret)
-+		return ret;
-+
-+	/*Sets the timer capture configuration for duty cycle calculation*/
-+	if (is_period == false)
-+		ret = omap_dm_timer_set_cap(cookie, true, false);
-+
-+	/*Sets the timer capture configuration for period calculation*/
-+	else
-+		ret = omap_dm_timer_set_cap(cookie, true, true);
-+
-+	if (ret) {
-+		pr_err("%s: Failed to set timer capture configuration.\n", __func__);
-+		return ret;
-+	}
-+	/*Start the timer*/
-+	omap_dm_timer_start(cookie);
-+
-+	/*
-+	 * 1 sec delay is given so as to provide
-+	 * enough time to capture low frequency signals.
-+	 */
-+	msleep(1000);
-+
-+	cap1 = __omap_dm_timer_cap(timer, 0);
-+	cap2 = __omap_dm_timer_cap(timer, 1);
-+
-+	/*
-+	 *	Clears the TCLR configuration.
-+	 *  The start bit must be set to 1 as the timer is already in start mode.
-+	 */
-+	l = dmtimer_read(timer, OMAP_TIMER_CTRL_REG);
-+	l &= ~(0xffff) | 0x1;
-+	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, l);
-+
-+	return (cap2-cap1);
-+}
-+
- static int __maybe_unused omap_dm_timer_runtime_suspend(struct device *dev)
- {
- 	struct dmtimer *timer = dev_get_drvdata(dev);
-@@ -1246,6 +1366,9 @@ static const struct omap_dm_timer_ops dmtimer_ops = {
- 	.write_counter = omap_dm_timer_write_counter,
- 	.read_status = omap_dm_timer_read_status,
- 	.write_status = omap_dm_timer_write_status,
-+	.set_cap = omap_dm_timer_set_cap,
-+	.get_cap_status = omap_dm_timer_get_pwm_status,
-+	.read_cap = omap_dm_timer_cap_counter,
- };
- 
- static const struct dmtimer_platform_data omap3plus_pdata = {
-diff --git a/include/linux/platform_data/dmtimer-omap.h b/include/linux/platform_data/dmtimer-omap.h
-index 95d852aef130..726d89143842 100644
---- a/include/linux/platform_data/dmtimer-omap.h
-+++ b/include/linux/platform_data/dmtimer-omap.h
-@@ -36,9 +36,13 @@ struct omap_dm_timer_ops {
- 	int	(*set_pwm)(struct omap_dm_timer *timer, int def_on,
- 			   int toggle, int trigger, int autoreload);
- 	int	(*get_pwm_status)(struct omap_dm_timer *timer);
-+	int	(*set_cap)(struct omap_dm_timer *timer,
-+			   int autoreload, bool config_period);
-+	int	(*get_cap_status)(struct omap_dm_timer *timer);
- 	int	(*set_prescaler)(struct omap_dm_timer *timer, int prescaler);
- 
- 	unsigned int (*read_counter)(struct omap_dm_timer *timer);
-+	unsigned int (*read_cap)(struct omap_dm_timer *timer, bool is_period);
- 	int	(*write_counter)(struct omap_dm_timer *timer,
- 				 unsigned int value);
- 	unsigned int (*read_status)(struct omap_dm_timer *timer);
--- 
-2.34.1
++    else:
++      properties:
++        dvdd075-usb30-supply: false
++        vdd18-usb30-supply: false
+
+Thank you.
+
+Regards,
+Pritam
 
 
