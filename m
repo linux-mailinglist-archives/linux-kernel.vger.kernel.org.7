@@ -1,60 +1,70 @@
-Return-Path: <linux-kernel+bounces-758725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB398B1D32A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:19:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB477B1D32E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D37118939C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F04018870A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEA0235041;
-	Thu,  7 Aug 2025 07:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658F6237180;
+	Thu,  7 Aug 2025 07:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlM+3OLn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pJce7DAc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBA68F48;
-	Thu,  7 Aug 2025 07:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C0B21FF38;
+	Thu,  7 Aug 2025 07:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551181; cv=none; b=QjMYnfnXg4ls03O3LplRo2f/s+YoH0FCOSg/3tOYqrQ7Lp2j7+lnrIp32BAnymY+c5DH4av0ootpTMmeHCZ/fT+7mY5dC5cbyo3TmwcD28/pZ9pTba8GKqhBCL2V3/iPpROai7K1Du+EcBx4ZwF2ucpZieW5HTf8azggq4DZJJU=
+	t=1754551223; cv=none; b=m1/TRd9q2mgI24v2OteeVO+S93/9Ep1cptXW7U+fyVJOX8xeye4tlSLYZgPMM4sQ3VNiL35CuzdyYkumixMaKGcSV+l1wijp1zwVa5M78M+zgnTKgP+GIp8E1FVB2+6Spghg1HibQYpjI4oJ4awwHfy73aCb6vBugomTbWVTQyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551181; c=relaxed/simple;
-	bh=AdJdBzD8fCrkZiV1XxDiJs2KuaTiavg3+PN4NwbZwyw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T587aAzx1ZZqkyexiRoWfVQs+0kIgtVhihLy8swsCsrAds3mtHUktp+SUDLd38UAtRQvQRFY6rUy/RKDAXL9pxihPUQBbVftyez97jZKybTkohdzKepImdoOHHmn5QIvMHPwS6o0X8BomIm2bXjIJUucsM4K9P2DHg9HkgQ6L+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BlM+3OLn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19432C4CEEB;
-	Thu,  7 Aug 2025 07:19:34 +0000 (UTC)
+	s=arc-20240116; t=1754551223; c=relaxed/simple;
+	bh=QAymJJ06cre5xL6TD3wl31zS7/sMx5/eUajrkA/4UAI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P58t5Q4CYDkH7F4mC2AsKEgwIXWPbYvdjk/qB/gksuzwCQm6GTrg+qBnqaubZD3F6gwF8UuNHRrr7oDzdWi/in8+/8s8sT9QcoXS3MxJcZD+15X1HkqMer3vYLzMaI9oCKymHhrn+tVuWCUpbRskjhoZq7tI8hHHez4SaefzZbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pJce7DAc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D271C4CEEB;
+	Thu,  7 Aug 2025 07:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754551177;
-	bh=AdJdBzD8fCrkZiV1XxDiJs2KuaTiavg3+PN4NwbZwyw=;
+	s=k20201202; t=1754551223;
+	bh=QAymJJ06cre5xL6TD3wl31zS7/sMx5/eUajrkA/4UAI=;
 	h=From:To:Cc:Subject:Date:From;
-	b=BlM+3OLnxJ3U6yt4pjlo9B5jGguBk/5a4iWnw7WsGu/YCMpVhugBCZnHXUXb97NBR
-	 fa2iUyKqUZV+CyVc+H/m1d+SABz3YylWoKn8nbCqk4p41RxVKCCGKzuan9ml/9j5t9
-	 HaLFQKI8yXPzUzf4eSCIv3BKIfT4ATCC8g5g+zIh/Fl4VEb7hqQUtRBAPAlGhIkXlq
-	 Ka1O28AjRGJPutdrB6ZiXUlwccNGMtH3vE7XhA9tFJRZ2JHVA4O/n1x0Xohhz3NxYE
-	 sUo10rUkB0DRGvhGvImbbif/AhfnNN+3AJArwJ2m7Ubt9/K1vzLwISiesO6KP6Kv3Y
-	 oJTcJXtntYVSQ==
+	b=pJce7DAc80rSzLxSCt141wdl8kSmtmRpLIv3RS4HCQ8+tcgchWjbo/HJh/RU9sa2u
+	 n1ZFXW8UNUGbTVpZpfmXhaNSioyP8FziwRp9aeCvYVq4dCdx+eBBN6sOKI8LuFvjR3
+	 r7nqSC/NaRZFMR868vdH1UuVjqCCPmqogzUjrJ3XhPg3XlfIrEQu6HOhFQVRbqDt4C
+	 pwl2xDwy5bSf8L4oJCkZJaF4KFtJZejxc6IYOtSwc0sYmyXMSYljB0jK0TDcWAnKvp
+	 YwgtNpvdkcrJfVkJxINPQsMa0iTSHW7vvX3z+lw6iRxiY6PnLVrgI2+gXKHi/n5luH
+	 BCGxnY0daRUbA==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Lee Jones <lee@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
+To: Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>
 Cc: Arnd Bergmann <arnd@arndb.de>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
 	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	Bill Wendling <morbo@google.com>,
 	Justin Stitt <justinstitt@google.com>,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
+	Antonino Maniscalco <antomani103@gmail.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Jun Nie <jun.nie@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	llvm@lists.linux.dev
-Subject: [PATCH] mfd: madera: work around false-positive -Wininitialized warning
-Date: Thu,  7 Aug 2025 09:19:28 +0200
-Message-Id: <20250807071932.4085458-1-arnd@kernel.org>
+Subject: [PATCH] drm/msm/dpu: avoid uninitialized variable use
+Date: Thu,  7 Aug 2025 09:19:48 +0200
+Message-Id: <20250807072016.4109051-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,51 +76,54 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-clang-21 warns about one uninitialized variable getting dereferenced
-in madera_dev_init:
+clang-21 points out a variable that is conditionally initialized
+but then dereferenced:
 
-drivers/mfd/madera-core.c:739:10: error: variable 'mfd_devs' is uninitialized when used here [-Werror,-Wuninitialized]
-  739 |                               mfd_devs, n_devs,
-      |                               ^~~~~~~~
-drivers/mfd/madera-core.c:459:33: note: initialize the variable 'mfd_devs' to silence this warning
-  459 |         const struct mfd_cell *mfd_devs;
-      |                                        ^
-      |                                         = NULL
+drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c:1138:6: error: variable 'crtc_state' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+ 1138 |         if (plane_state->crtc)
+      |             ^~~~~~~~~~~~~~~~~
+drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c:1142:58: note: uninitialized use occurs here
+ 1142 |         ret = dpu_plane_atomic_check_nosspp(plane, plane_state, crtc_state);
+      |                                                                 ^~~~~~~~~~
+drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c:1138:2: note: remove the 'if' if its condition is always true
+ 1138 |         if (plane_state->crtc)
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+ 1139 |                 crtc_state = drm_atomic_get_new_crtc_state(state,
+drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c:1132:35: note: initialize the variable 'crtc_state' to silence this warning
+ 1132 |         struct drm_crtc_state *crtc_state;
+      |                                          ^
+      |                                           = NULL
 
-The code is actually correct here because n_devs is only nonzero
-when mfd_devs is a valid pointer, but this is impossible for the
-compiler to see reliably.
+The bug is real, but the suggestion from clang to set it to NULL is
+unfortunately just as harmful as dereferencing a NULL pointer is little
+better than uninitialized data.
 
-Change the logic to check for the pointer as well, to make this easier
-for the compiler to follow.
+Change the function to return an error in this case.
 
+Fixes: 774bcfb73176 ("drm/msm/dpu: add support for virtual planes")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/mfd/madera-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-index bdbd5bfc9714..2f74a8c644a3 100644
---- a/drivers/mfd/madera-core.c
-+++ b/drivers/mfd/madera-core.c
-@@ -456,7 +456,7 @@ int madera_dev_init(struct madera *madera)
- 	struct device *dev = madera->dev;
- 	unsigned int hwid;
- 	int (*patch_fn)(struct madera *) = NULL;
--	const struct mfd_cell *mfd_devs;
-+	const struct mfd_cell *mfd_devs = NULL;
- 	int n_devs = 0;
- 	int i, ret;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+index 01171c535a27..4987f2f2fee0 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+@@ -1135,10 +1135,10 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+ 	if (IS_ERR(plane_state))
+ 		return PTR_ERR(plane_state);
  
-@@ -670,7 +670,7 @@ int madera_dev_init(struct madera *madera)
- 		goto err_reset;
- 	}
+-	if (plane_state->crtc)
+-		crtc_state = drm_atomic_get_new_crtc_state(state,
+-							   plane_state->crtc);
++	if (!plane_state->crtc)
++		return -ENXIO;
  
--	if (!n_devs) {
-+	if (!n_devs || !mfd_devs) {
- 		dev_err(madera->dev, "Device ID 0x%x not a %s\n", hwid,
- 			madera->type_name);
- 		ret = -ENODEV;
++	crtc_state = drm_atomic_get_new_crtc_state(state, plane_state->crtc);
+ 	ret = dpu_plane_atomic_check_nosspp(plane, plane_state, crtc_state);
+ 	if (ret)
+ 		return ret;
 -- 
 2.39.5
 
