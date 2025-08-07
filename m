@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-758733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED39FB1D33A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:23:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77F6B1D3F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 449423AC57F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:23:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9191AA19C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740B9235041;
-	Thu,  7 Aug 2025 07:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E4F257AC7;
+	Thu,  7 Aug 2025 08:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gBjHSuVf"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7CZTkbF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C08D1EDA02
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F5B23A98D;
+	Thu,  7 Aug 2025 08:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551412; cv=none; b=qarjNet23MgMfsqZsGi+tS3mSS3uIL9LCDkx90srjDvmkvCvD4Mw+G0vdC1tK35NmHVg6LfzCbIEQgB/2QLxJi1ThwkSqpQkQO6S9CgwG6SKqoVJI/PHnajUJK3Ama7s8bfQWMUjYWqKy9y56uj1ckq4eEiNaWx5zT8vbfUGCW8=
+	t=1754553835; cv=none; b=npHcmUdPTW9LW1lBTZxrMLL8ct67n/dYlXg3zV97rVnbPa01hcSqXFqQgqTTeKHALom7TyVF57tY1bH5zssIg3Dr2/3i9cLS5PvIu/TM1n70mjcwNoE9GxkMWUL7VVIr1VR8I/jHrOIb5yOlIlot5YKhcWSYndUh9wnXQsWInyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551412; c=relaxed/simple;
-	bh=9de88VugsDPa/LIlbpkda0gcU4yY7d+htJ3VqGCOGgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i5Ti2k+73G78Kr3rLxS15RtpD9Udgo8mjKMYbqfWaHvV7JvDmquRYVhLYSIPPKwAOoSAcwUhUVa2JgVH9xqOZVOabdpggUR3BlHAkzn1TEwWfKufvJ1bHjTHw4uACyWksPQsjptkqL99rvkIpn7XksIRxcbNMj7+mpb+sLWlX+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gBjHSuVf; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754551385; x=1755156185; i=markus.elfring@web.de;
-	bh=9de88VugsDPa/LIlbpkda0gcU4yY7d+htJ3VqGCOGgE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=gBjHSuVfgC/vi/GNk88NmnfPQBzNLSCzNa8UfbElKnqXJE9IJA4Ip9LjvaZCYNl1
-	 i/zNq3st4vePKRF0Kse3oX3XYgRV1ZfKv8MYZcabvtEXNmKwpPVtvdNZuJUN+A7+x
-	 6dVKo0y6M+7h/9sIYDvWm4pFd76e4mL1X8zr6lUN/16kUdtLRnsIQfohB+QHbYciw
-	 O1f7H63zT5Lwf2nvoHMCeSg8ion3t25kQNTk3d6uYcX//FinWOUgPuTWSAO/PJcBF
-	 TTytK/S9mLQ0ydcGwZbasDlCZayWOa4XZ8+PEtYqq95bORfIiwFV14CQ5buQSeIiT
-	 XzElQ891jo51iQdhHw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.218]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MZSBG-1v5JRG3Zvq-00IGB8; Thu, 07
- Aug 2025 09:23:04 +0200
-Message-ID: <effb29be-6d14-47e5-ab71-454119467750@web.de>
-Date: Thu, 7 Aug 2025 09:22:45 +0200
+	s=arc-20240116; t=1754553835; c=relaxed/simple;
+	bh=7RIeFKXx+V7kZidyJJc//ST8NllIMveQacSADLAJKhU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=l6yfzHjCdGM/Y2iSd1M4a7B1OXUKV+bykDPBKroCujNnnCkvVMxqdKVC0SivzbUIYLgUO+ysRe5j5uY6hjQ6qQkbhZeM5GwHrf2lx3J73SqR/PuWGW3OJQzWLLUIPZMjfHM/zv4b2MSoZjK3LaH+jJz8RmLndZB8K7bw0+zxS84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7CZTkbF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255B0C4CEED;
+	Thu,  7 Aug 2025 08:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754553835;
+	bh=7RIeFKXx+V7kZidyJJc//ST8NllIMveQacSADLAJKhU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=c7CZTkbFCCZ56pGA9EGZBuXHDSDUcYlOl8q8WPUKCc1vRAOqYQOw9US4uXtmHUyQw
+	 h87RwmWLmyoiugdNpWxVjohyYnG/phjp8VV29/kH8Rp0UhnsPkIy9+LNJNdEOjExCt
+	 /0g9FpgdsQyVnBU++QaKCRU/ZX7A6HL8ou0fU4MXgCM/eq4PuzYOH0j0R5L/r47UiZ
+	 o24AXV+t/e63e16hO/j5pJWet+/iK51IphlXvY4yq80QrHq/xn04/Djay8PDJVP0O6
+	 EkyeZuEy7sTlBagHGxRnIAMiwlskqvW+otF1qqaaCqYf8IIihviPjgYj1jnAbMW1nW
+	 w7CQ7CHh/XcRQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
+ Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 10/16] rust: block: add block related constants
+In-Reply-To: <8CD9F17A-0F1C-4EDC-A63D-F6A0EAC75F35@collabora.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-10-3a262b4e2921@kernel.org>
+ <26Qee_40jnYM_I3VKYZXkC6A09oh2MrlsQbBEhm4bwcBhoM0nqHPvHm4APDGXsNQl6y07zuVne3-cfbI31KPpw==@protonmail.internalid>
+ <8CD9F17A-0F1C-4EDC-A63D-F6A0EAC75F35@collabora.com>
+Date: Thu, 07 Aug 2025 09:26:07 +0200
+Message-ID: <87y0rv7fu8.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v?] iommu/riscv: check pte null pointer before use
-To: XianLiang Huang <huangxianliang@lanxincomputing.com>,
- iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
- Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, =?UTF-8?B?SsO2cmcgUsO2ZGVs?=
- <joro@8bytes.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
- <robin.murphy@arm.com>, Will Deacon <will@kernel.org>
-References: <20250807033252.1613-1-huangxianliang@lanxincomputing.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250807033252.1613-1-huangxianliang@lanxincomputing.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xXKAd9LN+7SrcX31YxR+DWd+PmSq61k7eWdXKUqnN2yiW7J3QZw
- RJpWlLJRRQMAjmoPmjGGbuS3he57QLxps7+hbJZ9wSrD0oWrVZAbiRZiIpblufjQq9yTrL3
- AHH6cxlSe8JRPRdswD9NMDuyZTXR5jqvhOCjddzvGMHMPlDu1Al4eBUBJiRVRyA9Id2DtJ0
- Y7x1mWOtCCc4Lewj1lbnA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zIrh8QRrPQ4=;lXwciPgDaLAizrl8IkBjNqDT8OH
- 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
- M0ZCWZ4mxrYty43wFU/8+CUMNR17mGVU=
 
-=E2=80=A6> Check the pointer before using it to avoid the bug. =E2=80=A6
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
 
-Would a summary phrase like =E2=80=9CPrevent null pointer dereference in r=
-iscv_iommu_iova_to_phys()=E2=80=9D
-be also helpful?
+>> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>> Add a few block subsystem constants to the rust `kernel::block` name spa=
+ce.
+>> This makes it easier to access the constants from rust code.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>> rust/kernel/block.rs | 12 ++++++++++++
+>> 1 file changed, 12 insertions(+)
+>>
+>> diff --git a/rust/kernel/block.rs b/rust/kernel/block.rs
+>> index 150f710efe5b..7461adf4d7e0 100644
+>> --- a/rust/kernel/block.rs
+>> +++ b/rust/kernel/block.rs
+>> @@ -3,3 +3,15 @@
+>> //! Types for working with the block layer.
+>>
+>> pub mod mq;
+>> +
+>> +/// Bit mask for masking out [`SECTOR_SIZE`]
+>
+> Missing period.
 
-Regards,
-Markus
+Thanks.
+
+>
+>> +pub const SECTOR_MASK: u32 =3D bindings::SECTOR_MASK;
+>> +
+>> +/// Sectors are size `1 << SECTOR_SHIFT`.
+>> +pub const SECTOR_SHIFT: u32 =3D bindings::SECTOR_SHIFT;
+>> +
+>> +/// Size of a sector.
+>> +pub const SECTOR_SIZE: u32 =3D bindings::SECTOR_SIZE;
+>> +
+>> +/// Power of two difference in size of a page and size of a sector.
+>
+> A bit hard to parse this.
+>
+> Maybe =E2=80=9CThe difference between the size of a page and the size of =
+a sector,
+> expressed as a power of two=E2=80=9D ?
+
+OK.
+
+>
+>> +pub const PAGE_SECTORS_SHIFT: u32 =3D bindings::PAGE_SECTORS_SHIFT;
+>>
+>> --
+>> 2.47.2
+>>
+>>
+>>
+>
+>
+>  let sector: usize =3D something;
+>  let page_offset =3D (sector & block::SECTOR_MASK as usize) << block::SEC=
+TOR_SHIFT;
+>
+>
+> Wait, the parenthesis evaluate to usize, and the shift is a u32. How does=
+ this compile?
+
+That is all good. `Shl` has a ton of impls for integers [1].
+
+Shifting more than 64 spaces on 64 bit system makes no sense anyway.
+
+Best regards,
+Andreas Hindborg
+
+
+[1] https://doc.rust-lang.org/std/ops/trait.Shl.html
+
 
