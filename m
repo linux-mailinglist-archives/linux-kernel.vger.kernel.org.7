@@ -1,151 +1,151 @@
-Return-Path: <linux-kernel+bounces-759378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FF2B1DCCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 297D2B1DCD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5ED1AA02E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BAC01769C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE83226CFF;
-	Thu,  7 Aug 2025 18:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08095186A;
+	Thu,  7 Aug 2025 18:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WEBgR6xL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mcXrtgYc"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1AC20551C;
-	Thu,  7 Aug 2025 18:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD08372636
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589625; cv=none; b=edQHXwvOdKfduj7FAA82LFlDdRVzCecBsJCIVcYllaQ+knzTSz8m8dtL1t51cfeHtu4FDL9Y+t15DG/uARZqUN/B2luYIY0jRr4stLBNioKcwORLsvxAlWUkbuw+3mZylJkochTlepfnSxVifPjhqSWE1vpN8dw9MFeWftHUW4o=
+	t=1754589689; cv=none; b=k6Pou5p+cCsyDOzPHuDnrg7iyw1p7N2FcFsAEbG7aFH5bqULDj4y7nIdT6Iyq7YoFndBiVUIUBq9a5CbA7pBNOeaNh3RjKOexeHNDAZ3j1XOLL5Im/w48zOsfgWcmB3QkZ2BO3/z0AMDXJnd1jaCgydzHvSBTj3TccbrihpOc6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589625; c=relaxed/simple;
-	bh=p0/5ZjNMeRUcx0ZGt+vz9JYpjwVrjWh5jgJOciV82V0=;
+	s=arc-20240116; t=1754589689; c=relaxed/simple;
+	bh=kGnBaGbneL6boqRfQk66ANHbaY1qqZYqDC0sQhY7Efc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gbjef2oG9A7arrrXmnIs1DjgoZFh5yzL+TpD84cKV1RBzwh5DxbSA/T26dp8YXdPmnktztzj+lQmSKPAryZ+xuXdFPM0mZO44wJTMkInC7uQ59CItAIEBm7yN5QmIq4L9sygjIaSRtxcmWBfIrotP5ygUQ5oLRCrT85I8DMLrRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WEBgR6xL; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754589624; x=1786125624;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=p0/5ZjNMeRUcx0ZGt+vz9JYpjwVrjWh5jgJOciV82V0=;
-  b=WEBgR6xL8UwgRcg3NvExIR1MZ1gWNZkjhlqR4Vjm4HFpk07Kl9ZZOu7N
-   raaKvjZi1GneXW+NzXd3Tz6MJ4pvkp6JEbk6JmJgCUQPq4g2PvGqi+7k9
-   ObtqGLtp8sdUhg50KMghvZruEwr4Si/+Ha51bP2BkzCIG2JcidwVuo5E2
-   4roE9PoFaiy0W5+vQ8WIrnY8Hy9yXl9NPX3Fs+CA4K+W8jAR3/oHtYru2
-   cMdNSBV55oyaQjjnjKHFRzdFUI3fyD5rm+aXy+yRmdbwHWdY8AEdUPRCt
-   HYVB8cy4lmh3j/tZeOEf35CG08+z2SxO6+RLbVWBJQmUNXABQ0pgsSnKO
-   g==;
-X-CSE-ConnectionGUID: Kob+85lnTiyl/BsfV5WZaQ==
-X-CSE-MsgGUID: zbwwK2d6QwKNXrk0/IlnGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56809824"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="56809824"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 11:00:22 -0700
-X-CSE-ConnectionGUID: RzBxIyYzQeqt3SGpYQkzoQ==
-X-CSE-MsgGUID: iVWW57sKR+i/fxWDFbhK7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="164641026"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.110.207]) ([10.125.110.207])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 11:00:21 -0700
-Message-ID: <7c36a16a-1c04-4c05-8689-52d8b75d3965@intel.com>
-Date: Thu, 7 Aug 2025 11:00:19 -0700
+	 In-Reply-To:Content-Type; b=VlPMulu5mh8NNBGGaM0fzhM/IWqVgdL+6Idmn1FphiGY0ZamRFEGbqSa86mUJw7tkhYf10ii4jhDRMO2mSy7zv/SZICT4/0+9Soh0uLEn0d4uwRY+O8eAFuJb/uVz3LII9WRYSNq7xq02Xe4H1fTCrngsMRPhhlR0G2W4SnI5h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mcXrtgYc; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e7ba3f7f-38b8-4c06-8aff-ef1fb8d04d86@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754589675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5+RLJIdnO4nFug6NwqhYgUcSF9+14CZNJQVj+XVkE2w=;
+	b=mcXrtgYcZu/Y7IeL0P5mqUechkqW9lWd2H6QNmfqoHQ7uLaILf3fNjR2TgP48mefi1THg2
+	5HbVB9YYgMvp3o85n18zt2zLulpgux0maR751TwrIfMrEtBBp17AcVBYne7DcEQLi+zW5H
+	OnuCDUHTlr6ErqSbFwuoRfB0xLez+aE=
+Date: Thu, 7 Aug 2025 11:01:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] KVM: SEV: Add support for SMT Protection
-To: Kim Phillips <kim.phillips@amd.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, linux-coco@lists.linux.dev, x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- "Nikunj A . Dadhania" <nikunj@amd.com>,
- Tom Lendacky <thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>,
- Ashish Kalra <ashish.kalra@amd.com>,
- Borislav Petkov <borislav.petkov@amd.com>, Borislav Petkov <bp@alien8.de>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Dhaval Giani <Dhaval.Giani@amd.com>, Santosh Shukla
- <santosh.shukla@amd.com>, Naveen Rao <naveen.rao@amd.com>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Ananth Narayan <ananth.narayan@amd.com>, Pankaj Gupta
- <pankaj.gupta@amd.com>, David Kaplan <david.kaplan@amd.com>,
- Jon Grimm <Jon.Grimm@amd.com>
-References: <20250807165950.14953-1-kim.phillips@amd.com>
- <20250807165950.14953-2-kim.phillips@amd.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250807165950.14953-2-kim.phillips@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v7 2/2] selftests/bpf: Force -O2 for USDT selftests to
+ cover SIB handling logic
+Content-Language: en-GB
+To: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250806092458.111972-1-phoenix500526@163.com>
+ <20250806092458.111972-3-phoenix500526@163.com>
+ <f5d8d886-1de3-4521-917a-e98b645b987e@linux.dev>
+ <30d8fcac.2669.19882763de2.Coremail.phoenix500526@163.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <30d8fcac.2669.19882763de2.Coremail.phoenix500526@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 8/7/25 09:59, Kim Phillips wrote:
-> Add the new CPUID bit that indicates available hardware support:
-> CPUID_Fn8000001F_EAX [AMD Secure Encryption EAX] bit 25.
-> 
-> Indicate support for SEV_FEATURES bit 15 (SmtProtection) to be set by
-> an SNP guest to enable the feature.
 
-It would be ideal to see an logical description of what "SmtProtection"
-is and what it means for the kernel as opposed to referring to the
-documentation and letting reviewers draw their own conclusions.
+
+On 8/6/25 7:57 PM, 赵佳炜 wrote:
+>
+>
+>
+> Hi Yonghong,
+>
+> I noticed that the USDT argument specification generated by GCC 14 is '8@array(,%rax,8)'.
+> This pattern is currently not handled correctly. I'm exploring whether I can use DWARF information
+> to calculate the address of this variable. This approach seems to work. However, since I can't
+
+I think 'array' should be in symbol table, so there is no need to check dwarf in my opinion.
+
+> reproduce the same issue on my machine, I plan to implement this approach for the PC-relative
+> issue in a separate patch. Would that affect the merging of this patch?
+
+Let us handle this since '8@array(,%rax,8)' may appear in CI environment.
+
+>
+>
+> At 2025-08-07 02:17:34, "Yonghong Song" <yonghong.song@linux.dev> wrote:
+>>
+>> On 8/6/25 2:24 AM, Jiawei Zhao wrote:
+>>> When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+>>> optimization, the compiler will generate SIB addressing mode for global
+>>> array and PC-relative addressing mode for global variable,
+>>> e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
+>>>
+>>> In this patch:
+>>> - add usdt_o2 test case to cover SIB addressing usdt argument spec
+>>>     handling logic
+>>>
+>>> Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
+>>> ---
+>>>    tools/testing/selftests/bpf/Makefile          |  8 +++
+>>>    .../selftests/bpf/prog_tests/usdt_o2.c        | 71 +++++++++++++++++++
+>>>    .../selftests/bpf/progs/test_usdt_o2.c        | 37 ++++++++++
+>>>    3 files changed, 116 insertions(+)
+>>>    create mode 100644 tools/testing/selftests/bpf/prog_tests/usdt_o2.c
+>>>    create mode 100644 tools/testing/selftests/bpf/progs/test_usdt_o2.c
+>>>
+>>> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+>>> index 910d8d6402ef..68cf6a9cf05f 100644
+>>> --- a/tools/testing/selftests/bpf/Makefile
+>>> +++ b/tools/testing/selftests/bpf/Makefile
+>>> @@ -759,6 +759,14 @@ TRUNNER_BPF_BUILD_RULE := $$(error no BPF objects should be built)
+>>>    TRUNNER_BPF_CFLAGS :=
+>>>    $(eval $(call DEFINE_TEST_RUNNER,test_maps))
+>>>    
+>>> +# Use -O2 optimization to generate SIB addressing usdt argument spec
+>>> +# Only apply on x86 architecture where SIB addressing is relevant
+>>> +ifeq ($(ARCH), x86)
+>>> +$(OUTPUT)/usdt_o2.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
+>>> +$(OUTPUT)/cpuv4/usdt_o2.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
+>>> +$(OUTPUT)/no_alu32/usdt_o2.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
+>>> +endif
+>> I tried your selftest with gcc14 and llvm20 in my environment. See below:
+>>
+>> llvm20:
+>> Displaying notes found in: .note.stapsdt
+>>    Owner                Data size        Description
+>>    stapsdt              0x0000002f       NT_STAPSDT (SystemTap probe descriptors)
+>>      Provider: test
+>>      Name: usdt1
+>>      Location: 0x00000000000003ac, Base: 0x0000000000000000, Semaphore: 0x0000000000000000
+>>      Arguments: 8@-64(%rbp)
+>>
+>> gcc14:
+>> Displaying notes found in: .note.stapsdt
+>>    Owner                Data size        Description
+>>    stapsdt              0x00000034       NT_STAPSDT (SystemTap probe descriptors)
+>>      Provider: test
+>>      Name: usdt1
+>>      Location: 0x0000000000000334, Base: 0x0000000000000000, Semaphore: 0x0000000000000000
+>>      Arguments: 8@array(,%rax,8)
+>>
+>> llvm20 and gcc14 generate different usdt patterns. '8@-64(%rbp)' already supports so
+>> with SIB support, the test should pass CI, I think.
+>>
+[...]
+
 
