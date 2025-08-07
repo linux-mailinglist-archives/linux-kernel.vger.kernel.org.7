@@ -1,158 +1,169 @@
-Return-Path: <linux-kernel+bounces-758773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF27EB1D3B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:52:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EDB9B1D3BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD4DE4E20BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4258D189AC14
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3346A23C4F1;
-	Thu,  7 Aug 2025 07:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669C8243364;
+	Thu,  7 Aug 2025 07:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ddpZ5xXi"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="O43eZfNy"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB541DF258
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F9924113D;
+	Thu,  7 Aug 2025 07:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553154; cv=none; b=LkzVf/KXTXdqM67cH5eRhgCz++ckOdlG92sgPXo/6QJYvfpzPZHOgOTh0fzTrjvWR/PCMV6P5k7eg+/ZNhKAiaHWhpgPVFbqDoM6gKnSHaxSK43YpXf5m7K4byPBnJ4Hy/p+nyZyJAkoCLgpDbGVuwMSEtW3xzSPcJZudGDyNDE=
+	t=1754553302; cv=none; b=samdM+o2Oyf8j5bgPIHTk/1J/MmE/RcfSBWq+wqEfsXEJeDJaIVBzg5KtGOvgPxSXbB4nVFxmCRYskRQNqY142tbWtXf2W3zz2CBQAfWH92YEgW1YAhIXjoQldiOYCX49ZSIDE3P5+nDCSde8+vTpDyZdWWoekxpfSWi+0Wo8bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553154; c=relaxed/simple;
-	bh=iU6+k605Pa6dK82vz9U+wSphvD1rr/weBJyGt8qTYck=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mMsGPUpGnNFSQqMsGzW3QXIRwioNJ/CO3oiM1HwbnYDyeiD1L5QEuU4b3gno1fMrGlEurwODLltobYdT2EDm5w8YqqZkgxOL0m6o6YGoDoGYmE4asBkLFd7uHXkLcHUYdAzusUNHCyuk5lUaAG/7ZVLUIzRLbBYygXI3aFQ/ows=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ddpZ5xXi; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7499c072736311f0b33aeb1e7f16c2b6-20250807
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=lDPf6gw3HXzny6ECXcfcEcO/+p36JpddaMwOtqXSszA=;
-	b=ddpZ5xXinw6yjqAAJBZkOiaPdkxiNGneBOJ5xzf08Odw6xbPk+y68wXnxAvDxQGs2HkizCq+Y81CYANcNUO3P9oSMnnF7QA2Ihcm2ayAcIHqsK/KpOre3UkiIFYz9hWCkvkfcRjxvTX9/dRsPq1XmGDLOq+MpeW7a/fNGJii48c=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:5a43bcd2-7f06-406c-9df2-b8511d72d3bf,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:fed62fa1-1800-4e4f-b665-a3d622db32cf,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:-5,Content:0|15|5
-	0,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,
-	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 7499c072736311f0b33aeb1e7f16c2b6-20250807
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <kuyo.chang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 445442348; Thu, 07 Aug 2025 15:52:24 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Thu, 7 Aug 2025 15:52:23 +0800
-Received: from [10.233.130.16] (10.233.130.16) by mtkmbs13n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1258.39 via Frontend
- Transport; Thu, 7 Aug 2025 15:52:23 +0800
-Message-ID: <9f91f77e5f39857aa84373fe1ae504de2a881533.camel@mediatek.com>
-Subject: Re: [PATCH] sched/deadline: Add DL server activated message
-From: Kuyo Chang <kuyo.chang@mediatek.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
-	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, "Ben
- Segall" <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, "Valentin
- Schneider" <vschneid@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-Date: Thu, 7 Aug 2025 15:52:23 +0800
-In-Reply-To: <aJRSmWCJI-GlApsR@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250805155347.1693676-1-kuyo.chang@mediatek.com>
-	 <aJRSmWCJI-GlApsR@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1754553302; c=relaxed/simple;
+	bh=eF41UGuHUZM9YiTxRuYW3QX8Wuqz7PLBtDX/R9mW6ig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ED+Pd0dgZHBFb2Vqf3zk7HH/VqtxYT7vdpwSrEqezY8bf5D4uXde4aMC0QcIJTuS2xDWx2jV0JOKd4IjbkyYEraUfY5BQHQELwMClawu0T1kYcBR+mBXBooO7lKIxu0tHwbWYljYNRmwMOkpboXpPaphrimcl7uGwmg2pMvQLUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=O43eZfNy; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5777SgqM007917;
+	Thu, 7 Aug 2025 09:54:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	+09BlbFswcQ8kqh6grV/WOvvjds15aYjFOjwNDgCvB4=; b=O43eZfNy0PW50uZs
+	kLog1fGY1J7XLkTaP1hE9tMl0PhLu3gf06HGBGOCV3IkX3nmxlg4UQJz1l/JvcT1
+	YpvpRMEcGkrJ98cAqOCg246I4WHbK4ERBkC01DdfhhzsZgr7h/LU9uT8am0sMk1p
+	doC6MXl8jhq/YzjCqy6MpbCeyHAWjd9L+5orhFWi8F0y/l8TmnB2Tbv224FXDyM7
+	tbpcgaJ6RUtx5oSRWbqbKbBH9KqA53Sh11NLqsjgevE02eSZrur+9sqrMPRBDIrl
+	CJHgBKLf5nIvCTF15aZraiQNxlLLsXIqZn7ZgGFgHTkGo2v5vquIDzZjTSyPrP99
+	yxjCsA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48bpx06nus-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 09:54:52 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C9EF54004B;
+	Thu,  7 Aug 2025 09:54:03 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3A1BF71CF0C;
+	Thu,  7 Aug 2025 09:53:44 +0200 (CEST)
+Received: from [10.130.78.67] (10.130.78.67) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 7 Aug
+ 2025 09:53:43 +0200
+Message-ID: <452a1263-2ec3-4174-9082-078445e67637@foss.st.com>
+Date: Thu, 7 Aug 2025 09:53:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: uvcvideo: Log driver load in uvc_probe function
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Imene Jaziri
+	<imenjazirii18@gmail.com>
+CC: <linux-media@vger.kernel.org>, <hansg@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250801145326.28560-1-imenjazirii18@gmail.com>
+ <20250801150430.GC4906@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <20250801150430.GC4906@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
 
-On Thu, 2025-08-07 at 08:15 +0100, Juri Lelli wrote:
->=20
-> External email : Please do not click links or open attachments until
-> you have verified the sender or the content.
->=20
->=20
+Hi,
+
+On 8/1/25 17:04, Laurent Pinchart wrote:
 > Hi,
->=20
-> On 05/08/25 23:53, Kuyo Chang wrote:
-> > From: kuyo chang <kuyo.chang@mediatek.com>
-> >=20
-> > The DL server is introduced as a replacement for realtime
-> > throttling.
-> > When RT throttling is activated, a message
-> > "sched: RT throttling activated" is shown. However, it is currently
-> > difficult for users to know when the DL server is activated.
-> >=20
-> > This patch adds a similar message to indicate when the DL server
-> > is activated, which helps users debug RT/CFS contention issues.
-> >=20
-> > Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
-> > ---
-> > =C2=A0kernel/sched/deadline.c | 3 +++
-> > =C2=A01 file changed, 3 insertions(+)
-> >=20
-> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> > index e2d51f4306b3..8e0de6cdb980 100644
-> > --- a/kernel/sched/deadline.c
-> > +++ b/kernel/sched/deadline.c
-> > @@ -2042,6 +2042,9 @@ enqueue_dl_entity(struct sched_dl_entity
-> > *dl_se, int flags)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __enqueue_dl_entity(dl_se);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0 if (dl_server(dl_se))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 printk_deferred_once("sched: dl_server activated\n");
-> > =C2=A0}
->=20
-> Not sure if we want/need this, but, if we do, I believe
-> fair_server_pick_task() might be a better place to put it, as it's
-> really when the dl-server is called to do its job.
->=20
+> 
+> On Fri, Aug 01, 2025 at 03:53:26PM +0100, Imene Jaziri wrote:
+>> Add a pr_info() in the uvc_probe function to trace when the
+>> uvcvideo driver is loaded. This is for learning purposes.
+> 
+> What part of the learning instructions you are following instructed you
+> to submit this patch to kernel mailing lists ? We are regularly spammed
+> by similar patches, which indicates the instructions are not clear
+> enough.
+> 
 
-Thanks for your suggestion, maybe the minor patch as below
+I got curious too. It comes from the Linux Foundation training LFD103
+[1]. Chapter 8 describes this patch pretty much, and chapter 9 describes
+how to send the patch, but with a warning not to do so :
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index e2d51f4306b3..82d1091e56f5 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2395,6 +2395,7 @@ static struct task_struct *__pick_task_dl(struct
-rq *rq)
- 			goto again;
- 		}
- 		rq->dl_server =3D dl_se;
-+		printk_deferred_once("sched: dl_server activated\n");
- 	} else {
- 		p =3D dl_task_of(dl_se);
- 	}
---=20
+  [...]
+  At this time, you can run:
 
-I believe the debug message could help to verify that the DL server is
-actually working.
-It will be a great help for users to debug RT/FAIR contention issues
-when this clue message occurs.
+  git format-patch -1 <commit ID> --to=maintainer1 --to=maintainer2
+--cc=maillist1 --cc=maillist2
 
-> Thanks,
-> Juri
->=20
+  This will generate a patch.
 
+  Important Note:
+  Please note that this is just an example. Don’t send this patch upstream.
+
+  You can revert this commit now.
+
+  Please refer to the Select the recipients for your patch section in
+the Submitting patches: the essential guide to getting your code into
+the kernel document.
+
+  When you have your own patch ready for submittal, you can follow this
+example process to generate the patch and send it upstream using the
+following command:
+
+  git send-email <patch_file>
+  [...]
+
+Looking at it I guess it's pretty easy to miss the note. Maybe
+requesting to add '--dry-run' to the git send-email command could be a
+simple fix to prevent from copy/pasting ?
+
+[1]
+https://training.linuxfoundation.org/training/a-beginners-guide-to-linux-kernel-development-lfd103/
+
+>> Signed-off-by: Imene Jaziri <imenjazirii18@gmail.com>
+>> ---
+>>  drivers/media/usb/uvc/uvc_driver.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+>> index da24a655ab68..4e5d1d636640 100644
+>> --- a/drivers/media/usb/uvc/uvc_driver.c
+>> +++ b/drivers/media/usb/uvc/uvc_driver.c
+>> @@ -2170,7 +2170,6 @@ static int uvc_probe(struct usb_interface *intf,
+>>  		(const struct uvc_device_info *)id->driver_info;
+>>  	int function;
+>>  	int ret;
+>> -
+>>  	/* Allocate memory for the device and initialize it. */
+>>  	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+>>  	if (dev == NULL)
+>> @@ -2188,7 +2187,7 @@ static int uvc_probe(struct usb_interface *intf,
+>>  	dev->info = info ? info : &uvc_quirk_none;
+>>  	dev->quirks = uvc_quirks_param == -1
+>>  		    ? dev->info->quirks : uvc_quirks_param;
+>> -
+>> +	pr_info("I changed uvcvideo driver in the Linux Kernel\n");
+>>  	if (id->idVendor && id->idProduct)
+>>  		uvc_dbg(dev, PROBE, "Probing known UVC device %s (%04x:%04x)\n",
+>>  			udev->devpath, id->idVendor, id->idProduct);
+> 
+
+-- 
+Regards,
+Benjamin
 
