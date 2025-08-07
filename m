@@ -1,329 +1,121 @@
-Return-Path: <linux-kernel+bounces-759216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A9CB1DA6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:54:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86802B1DA6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11641561DD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:54:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765847A51EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA6325A2AE;
-	Thu,  7 Aug 2025 14:54:51 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FEC25DCE5;
+	Thu,  7 Aug 2025 14:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ldRXKL9Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36B81411DE
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EE6204F93
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754578491; cv=none; b=a8GeAraq55les7slVXpjbBwFBxeNOnCoyiV8AZGylgigJ1lY7x25Dwt3heXpjEqzJ+QbLUcPbBWSppSm/SyV7H5iOh65b+XKRcNI1Tk1UkWQuKL4V2cHHder+I1vIGuRyh0m5kuszcnrPf72VDK/4FGw80soW3Ot2BH5ZSEuAxk=
+	t=1754578541; cv=none; b=Iqib6HcEDzbAXhAvoavEBYqTZ1aoqxjj5Ky3cdNbsEQ3juOX1ckvg/Ke5UgF4RZtgQfJ6KrZXcgIYnay0NzsgWKsBv1j4sz8U1xvJh9V+XuKd+tHuuiUDuW/HL63fEWLAlz7MlDtSY0C6X+2A2CUHW5fPr3bFWy5bN/K8g5AHx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754578491; c=relaxed/simple;
-	bh=+EVriUEjIYJRTHIS1GAz3bf5dRAmTPf8QbWlSVGg2nc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GZOBiqq2NLsA16zPFeZK/L6lkLkSOfYmodltM5OVJUz8oZ+zJL6C8s+eUc2GoYP8RIlhhrdIfX73pTPNP6cLmt/F2bj1BSp57a8uaV6jEfE8R5iDJbXjJiXeCEEoAhvTZjuuu/JH/TtbebnUYMfzTQiz6dswvmPN6lt1AkRbxWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D2F4C441B8;
-	Thu,  7 Aug 2025 14:54:44 +0000 (UTC)
-Message-ID: <416b8286-7c78-4c56-8328-5e1b99bf15d4@ghiti.fr>
-Date: Thu, 7 Aug 2025 16:54:44 +0200
+	s=arc-20240116; t=1754578541; c=relaxed/simple;
+	bh=LhNV4rNwlM1GjQoibhPSPw5h4vdR15BXotmQnSEIl4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=q/hNlwGO44Wcjk/0d5uyLPxG4LQU90KWihsML0nV8B3B9yvybaw+i+xunw+E/eCxGBL74oh+3c0mpJTaNA6/Sd8X0brCB6nqYyXrwsqzqZ8LICNwZAgp5h/Z0FT7uiu3ZYLdvLtPqnLOxJHYwDUgoCSL7uTyST1xmpvMQOW/i7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ldRXKL9Y; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754578540; x=1786114540;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=LhNV4rNwlM1GjQoibhPSPw5h4vdR15BXotmQnSEIl4A=;
+  b=ldRXKL9YrhXw5a101HDcPhls7eH7fd/JLrKPMZlBmSeLFEYJkcHKJQIW
+   sRf9/ErNuGT+Gs7GBm/g1wu2EXzSuDAc5DkL9a9sGJjI7wgBvrCuVHHEx
+   pT3POWSPZAkXR3Cd1EPnCyCDtBKYCWLLT5eFb93d7vRBMLr0FIX0Fvuba
+   VRHNGSeBizzDuGHsprW9sVz0NU2QjuW+dByBBUWDzHcogT+qlNwL3k4gC
+   5Za5IFwIKT4KSAIHd5/5nJwScL3F8LpwQK2p8+Qv7+guauOTxZFQ8gg49
+   UCVojBzbQdaY9ZOmgowBYw+DUucjGsXMRDb3eRPUDPzK5O9RvUmTSUq8o
+   Q==;
+X-CSE-ConnectionGUID: z0i4vunqS/CFX6d3spQYZA==
+X-CSE-MsgGUID: rBA6Lq1YSSOErUbkyTHoZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="68290568"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="68290568"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 07:55:39 -0700
+X-CSE-ConnectionGUID: ZA7AK/5SS2mLreS1dvtjVA==
+X-CSE-MsgGUID: E5QBsy51Qu+/IRazcBTbZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="164330131"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 07 Aug 2025 07:55:38 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uk21n-0002u8-1E;
+	Thu, 07 Aug 2025 14:55:35 +0000
+Date: Thu, 7 Aug 2025 22:54:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Stafford Horne <shorne@gmail.com>, Rong Xu <xur@google.com>
+Subject: (.head.text+0x900): relocation truncated to fit: R_OR1K_INSN_REL_26
+ against `no symbol'
+Message-ID: <202508072204.buxqzhL3-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] Re: [PATCH RFC 2/2] riscv: introduce percpu.h into
- include/asm
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: yury.norov@gmail.com, linux@rasmusvillemoes.dk, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, dennis@kernel.org, tj@kernel.org,
- cl@gentwo.org, linux-mm@kvack.org
-References: <20250618034328.21904-1-cuiyunhui@bytedance.com>
- <20250618034328.21904-2-cuiyunhui@bytedance.com>
- <c9ba6163-6703-441b-915c-d784044f862f@ghiti.fr>
- <b0583098-204a-4ad1-b173-4bd00a358d61@ghiti.fr>
- <CAEEQ3w=uz-kTe05-fnPa_BfkZ6ZocQHg-G001yBtLqRM2zEr+g@mail.gmail.com>
- <404d38d7-f21b-4c97-b851-8b331deb3f8a@ghiti.fr>
- <CAEEQ3wknpn0Y6H8A-MEk-9hkvUwv0VapbtBR97Qhz9ipCk2Jew@mail.gmail.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <CAEEQ3wknpn0Y6H8A-MEk-9hkvUwv0VapbtBR97Qhz9ipCk2Jew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdduvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeeuffefvdelteelteejhfejhedujeetteevtddvvddthfeiteffledvffeggfeiieenucffohhmrghinhepihhnfhhrrgguvggrugdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgtfhemkegsfhelmeelleduugemkegrrghfnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgtfhemkegsfhelmeelleduugemkegrrghfpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeelfhgtfhemkegsfhelmeelleduugemkegrrghfngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegtuhhihihunhhhuhhisegshihtvggurghntggvrdgtohhmpdhrtghpthhtohephihurhihrdhnohhrohhvsehgmhgrihhlrdgtohhmpdhrtghpt
- hhtoheplhhinhhugiesrhgrshhmuhhsvhhilhhlvghmohgvshdrughkpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Yunhui,
+Hi Masahiro,
 
-On 7/18/25 16:33, yunhui cui wrote:
-> Hi Alex，
->
-> On Fri, Jul 18, 2025 at 10:23 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
->> Hi Yunhui,
->>
->> On 7/18/25 08:40, yunhui cui wrote:
->>> Hi Alex,
->>>
->>> On Thu, Jul 17, 2025 at 9:06 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
->>>> On 7/17/25 15:04, Alexandre Ghiti wrote:
->>>>> Hi Yunhui,
->>>>>
->>>>> On 6/18/25 05:43, Yunhui Cui wrote:
->>>>>> Current percpu operations rely on generic implementations, where
->>>>>> raw_local_irq_save() introduces substantial overhead. Optimization
->>>>>> is achieved through atomic operations and preemption disabling.
->>>>>>
->>>>>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
->>>>>> ---
->>>>>>     arch/riscv/include/asm/percpu.h | 138 ++++++++++++++++++++++++++++++++
->>>>>>     1 file changed, 138 insertions(+)
->>>>>>     create mode 100644 arch/riscv/include/asm/percpu.h
->>>>>>
->>>>>> diff --git a/arch/riscv/include/asm/percpu.h
->>>>>> b/arch/riscv/include/asm/percpu.h
->>>>>> new file mode 100644
->>>>>> index 0000000000000..423c0d01f874c
->>>>>> --- /dev/null
->>>>>> +++ b/arch/riscv/include/asm/percpu.h
->>>>>> @@ -0,0 +1,138 @@
->>>>>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>>>>> +
->>>>>> +#ifndef __ASM_PERCPU_H
->>>>>> +#define __ASM_PERCPU_H
->>>>>> +
->>>>>> +#include <linux/preempt.h>
->>>>>> +
->>>>>> +#define PERCPU_RW_OPS(sz)                        \
->>>>>> +static inline unsigned long __percpu_read_##sz(void *ptr)        \
->>>>>> +{                                    \
->>>>>> +    return READ_ONCE(*(u##sz *)ptr);                \
->>>>>> +}                                    \
->>>>>> +                                    \
->>>>>> +static inline void __percpu_write_##sz(void *ptr, unsigned long
->>>>>> val)    \
->>>>>> +{                                    \
->>>>>> +    WRITE_ONCE(*(u##sz *)ptr, (u##sz)val);                \
->>>>>> +}
->>>>>> +
->>>>>> +#define __PERCPU_AMO_OP_CASE(sfx, name, sz, amo_insn)            \
->>>>>> +static inline void                            \
->>>>>> +__percpu_##name##_amo_case_##sz(void *ptr, unsigned long val)        \
->>>>>> +{                                    \
->>>>>> +    asm volatile (                            \
->>>>>> +    "amo" #amo_insn #sfx " zero, %[val], %[ptr]"            \
->>>>>> +    : [ptr] "+A" (*(u##sz *)ptr)                    \
->>>>>> +    : [val] "r" ((u##sz)(val))                    \
->>>>>> +    : "memory");                            \
->>>>>> +}
->>>>>> +
->>>>>> +#define __PERCPU_AMO_RET_OP_CASE(sfx, name, sz, amo_insn)        \
->>>>>> +static inline u##sz                            \
->>>>>> +__percpu_##name##_return_amo_case_##sz(void *ptr, unsigned long
->>>>>> val)    \
->>>>>> +{                                    \
->>>>>> +    register u##sz ret;                        \
->>>>>> +                                    \
->>>>>> +    asm volatile (                            \
->>>>>> +    "amo" #amo_insn #sfx " %[ret], %[val], %[ptr]"            \
->>>>>> +    : [ptr] "+A" (*(u##sz *)ptr), [ret] "=r" (ret)            \
->>>>>> +    : [val] "r" ((u##sz)(val))                    \
->>>>>> +    : "memory");                            \
->>>>>> +                                    \
->>>>>> +    return ret + val;                        \
->>>>>> +}
->>>>>> +
->>>>>> +#define PERCPU_OP(name, amo_insn)                    \
->>>>>> +    __PERCPU_AMO_OP_CASE(.b, name, 8, amo_insn)            \
->>>>>> +    __PERCPU_AMO_OP_CASE(.h, name, 16, amo_insn)            \
->>>>>> +    __PERCPU_AMO_OP_CASE(.w, name, 32, amo_insn)            \
->>>>>> +    __PERCPU_AMO_OP_CASE(.d, name, 64, amo_insn)            \
->>>>>> +
->>>>>> +#define PERCPU_RET_OP(name, amo_insn)                    \
->>>>>> +    __PERCPU_AMO_RET_OP_CASE(.b, name, 8, amo_insn) \
->>>>>> +    __PERCPU_AMO_RET_OP_CASE(.h, name, 16, amo_insn)        \
->>>>>> +    __PERCPU_AMO_RET_OP_CASE(.w, name, 32, amo_insn)        \
->>>>>> +    __PERCPU_AMO_RET_OP_CASE(.d, name, 64, amo_insn)
->>>>>> +
->>>>>> +PERCPU_RW_OPS(8)
->>>>>> +PERCPU_RW_OPS(16)
->>>>>> +PERCPU_RW_OPS(32)
->>>>>> +PERCPU_RW_OPS(64)
->>>>>> +
->>>>>> +PERCPU_OP(add, add)
->>>>>> +PERCPU_OP(andnot, and)
->>>>>> +PERCPU_OP(or, or)
->>>>>> +PERCPU_RET_OP(add, add)
->>>>>> +
->>>>>> +#undef PERCPU_RW_OPS
->>>>>> +#undef __PERCPU_AMO_OP_CASE
->>>>>> +#undef __PERCPU_AMO_RET_OP_CASE
->>>>>> +#undef PERCPU_OP
->>>>>> +#undef PERCPU_RET_OP
->>>>>> +
->>>>>> +#define _pcp_protect(op, pcp, ...)                    \
->>>>>> +({                                    \
->>>>>> +    preempt_disable_notrace();                    \
->>>>>> +    op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);                \
->>>>>> +    preempt_enable_notrace();                    \
->>>>>> +})
->>>>>> +
->>>>>> +#define _pcp_protect_return(op, pcp, args...)                \
->>>>>> +({                                    \
->>>>>> +    typeof(pcp) __retval;                        \
->>>>>> +    preempt_disable_notrace();                    \
->>>>>> +    __retval = (typeof(pcp))op(raw_cpu_ptr(&(pcp)), ##args);    \
->>>>>> +    preempt_enable_notrace();                    \
->>>>>> +    __retval;                            \
->>>>>> +})
->>>>>> +
->>>>>> +#define this_cpu_read_1(pcp) _pcp_protect_return(__percpu_read_8, pcp)
->>>>>> +#define this_cpu_read_2(pcp) _pcp_protect_return(__percpu_read_16, pcp)
->>>>>> +#define this_cpu_read_4(pcp) _pcp_protect_return(__percpu_read_32, pcp)
->>>>>> +#define this_cpu_read_8(pcp) _pcp_protect_return(__percpu_read_64, pcp)
->>>>>> +
->>>>>> +#define this_cpu_write_1(pcp, val) _pcp_protect(__percpu_write_8,
->>>>>> pcp, (unsigned long)val)
->>>>>> +#define this_cpu_write_2(pcp, val) _pcp_protect(__percpu_write_16,
->>>>>> pcp, (unsigned long)val)
->>>>>> +#define this_cpu_write_4(pcp, val) _pcp_protect(__percpu_write_32,
->>>>>> pcp, (unsigned long)val)
->>>>>> +#define this_cpu_write_8(pcp, val) _pcp_protect(__percpu_write_64,
->>>>>> pcp, (unsigned long)val)
->>>>>> +
->>>>>> +#define this_cpu_add_1(pcp, val)
->>>>>> _pcp_protect(__percpu_add_amo_case_8, pcp, val)
->>>>>> +#define this_cpu_add_2(pcp, val)
->>>>>> _pcp_protect(__percpu_add_amo_case_16, pcp, val)
->>>>>> +#define this_cpu_add_4(pcp, val)
->>>>>> _pcp_protect(__percpu_add_amo_case_32, pcp, val)
->>>>>> +#define this_cpu_add_8(pcp, val)
->>>>>> _pcp_protect(__percpu_add_amo_case_64, pcp, val)
->>>>>> +
->>>>>> +#define this_cpu_add_return_1(pcp, val)        \
->>>>>> +_pcp_protect_return(__percpu_add_return_amo_case_8, pcp, val)
->>>>>> +
->>>>>> +#define this_cpu_add_return_2(pcp, val)        \
->>>>>> +_pcp_protect_return(__percpu_add_return_amo_case_16, pcp, val)
->>>>>> +
->>>>>> +#define this_cpu_add_return_4(pcp, val)        \
->>>>>> +_pcp_protect_return(__percpu_add_return_amo_case_32, pcp, val)
->>>>>> +
->>>>>> +#define this_cpu_add_return_8(pcp, val)        \
->>>>>> +_pcp_protect_return(__percpu_add_return_amo_case_64, pcp, val)
->>>>>> +
->>>>>> +#define this_cpu_and_1(pcp, val)
->>>>>> _pcp_protect(__percpu_andnot_amo_case_8, pcp, ~val)
->>>>>> +#define this_cpu_and_2(pcp, val)
->>>>>> _pcp_protect(__percpu_andnot_amo_case_16, pcp, ~val)
->>>>>> +#define this_cpu_and_4(pcp, val)
->>>>>> _pcp_protect(__percpu_andnot_amo_case_32, pcp, ~val)
->>>>>> +#define this_cpu_and_8(pcp, val)
->>>>>> _pcp_protect(__percpu_andnot_amo_case_64, pcp, ~val)
->>>>> Why do we define __percpu_andnot based on amoand, and use
->>>>> __percpu_andnot with ~val here? Can't we just define __percpu_and?
->>
->> What about that ^?
->>
->>
->>>>>> +
->>>>>> +#define this_cpu_or_1(pcp, val) _pcp_protect(__percpu_or_amo_case_8,
->>>>>> pcp, val)
->>>>>> +#define this_cpu_or_2(pcp, val)
->>>>>> _pcp_protect(__percpu_or_amo_case_16, pcp, val)
->>>>>> +#define this_cpu_or_4(pcp, val)
->>>>>> _pcp_protect(__percpu_or_amo_case_32, pcp, val)
->>>>>> +#define this_cpu_or_8(pcp, val)
->>>>>> _pcp_protect(__percpu_or_amo_case_64, pcp, val)
->>>>>> +
->>>>>> +#define this_cpu_xchg_1(pcp, val) _pcp_protect_return(xchg_relaxed,
->>>>>> pcp, val)
->>>>>> +#define this_cpu_xchg_2(pcp, val) _pcp_protect_return(xchg_relaxed,
->>>>>> pcp, val)
->>>>>> +#define this_cpu_xchg_4(pcp, val) _pcp_protect_return(xchg_relaxed,
->>>>>> pcp, val)
->>>>>> +#define this_cpu_xchg_8(pcp, val) _pcp_protect_return(xchg_relaxed,
->>>>>> pcp, val)
->>>>>> +
->>>>>> +#define this_cpu_cmpxchg_1(pcp, o, n)
->>>>>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
->>>>>> +#define this_cpu_cmpxchg_2(pcp, o, n)
->>>>>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
->>>>>> +#define this_cpu_cmpxchg_4(pcp, o, n)
->>>>>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
->>>>>> +#define this_cpu_cmpxchg_8(pcp, o, n)
->>>>>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
->>>>>> +
->>>>>> +#include <asm-generic/percpu.h>
->>>>>> +
->>>>>> +#endif /* __ASM_PERCPU_H */
->>>>> It all looks good to me, just one thing, can you also implement
->>>>> this_cpu_cmpxchg64/128()?
->>>>>
->>>> One last thing sorry, can you add a cover letter too?
->>> Okay.
->>>
->>>> Thanks!
->>>>
->>>> Alex
->>>>
->>>>
->>>>> And since this is almost a copy/paste from arm64, either mention it at
->>>>> the top of the file or (better) merge both implementations somewhere
->>>>> to avoid redefining existing code :) But up to you.
->>> Actually, there's a concern here. We should account for scenarios
->>> where ZABHA isn't supported. Given that xxx_8() and xxx_16() are
->>> rarely used in practice, could we initially support only xxx_32() and
->>> xxx_64()? For xxx_8() and xxx_16(), we could default to the generic
->>> implementation.
->>
->> Why isn't lr/sc enough?
-> If I'm not mistaken, the current RISC-V does not support lr.bh/sc.bh,
-> is that right?
+FYI, the error/warning still remains.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   6e64f4580381e32c06ee146ca807c555b8f73e24
+commit: a412f04070e52e6d6b5f6f964b9d9644de16bb81 openrisc: place exception table at the head of vmlinux
+date:   8 months ago
+config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20250807/202508072204.buxqzhL3-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508072204.buxqzhL3-lkp@intel.com/reproduce)
 
-Yes, that's right, but we have an implementation of cmpxchg[8|16]() that 
-uses lr.w/sc.w which works (unless I missed something, I have just 
-checked again), so I think that's alright no?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508072204.buxqzhL3-lkp@intel.com/
 
-Thanks,
+All errors (new ones prefixed by >>):
 
-Alex
+   arch/openrisc/kernel/head.o: in function `_dispatch_do_ipage_fault':
+>> (.head.text+0x900): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
+   (.head.text+0xa00): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
+   arch/openrisc/kernel/head.o: in function `exit_with_no_dtranslation':
+>> (.init.text+0x21bc): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
+   arch/openrisc/kernel/head.o: in function `exit_with_no_itranslation':
+   (.init.text+0x2264): relocation truncated to fit: R_OR1K_INSN_REL_26 against `no symbol'
+   init/main.o: in function `trace_event_raw_event_initcall_level':
+   main.c:(.text+0x28c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `strlen' defined in .text section in lib/string.o
+   init/main.o: in function `initcall_blacklisted':
+   main.c:(.text+0x70c): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `strcmp' defined in .text section in lib/string.o
+   init/main.o: in function `trace_initcall_finish_cb':
+   main.c:(.text+0x830): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/15.1.0/libgcc.a(_muldi3.o)
+   main.c:(.text+0x854): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/15.1.0/libgcc.a(_muldi3.o)
+   main.c:(.text+0x894): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/15.1.0/libgcc.a(_muldi3.o)
+   main.c:(.text+0x8c0): relocation truncated to fit: R_OR1K_INSN_REL_26 against symbol `__muldi3' defined in .text section in ../lib/gcc/or1k-linux/15.1.0/libgcc.a(_muldi3.o)
+   init/main.o: in function `do_one_initcall':
+   main.c:(.text+0xf54): additional relocation overflows omitted from the output
 
-
->
->>
->>>
->>>>> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->>>>>
->>>>> Thanks,
->>>>>
->>>>> Alex
->>>>>
->>>>>
->>>>>
->>> Thanks,
->>> Yunhui
->>>
->>> _______________________________________________
->>> linux-riscv mailing list
->>> linux-riscv@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> Thanks,
-> Yunhui
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
