@@ -1,187 +1,211 @@
-Return-Path: <linux-kernel+bounces-758591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56775B1D121
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:07:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BE8B1D122
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2973B565A48
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:07:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB2C37AB88E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CD61A254E;
-	Thu,  7 Aug 2025 03:07:11 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.123])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FF9C133
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 03:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7860B1C8633;
+	Thu,  7 Aug 2025 03:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FiwO/d4l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD23C133;
+	Thu,  7 Aug 2025 03:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754536031; cv=none; b=pz6ktAhmNfKu9hPcBb5jptQYK3hJ4CYvthB2l2/ed8CyJAbARexT0C5ixPgOtxTjRR0SBb0M5//uAASocZZLVir/wkJMy6bb6wrkz2nBOJZF0XD2Ppt8MBZYXwt8/2kBDE3apEUcnVbGyjY2xlyrJ6yMahfGubJcW+v3gjnopuo=
+	t=1754536099; cv=none; b=SN6epNCz2VHePEa4+RSHjpTBTOquOcoJYrBvyYsubBeXlEcww57OmZVTcwZalkK+VeeLyharxN5i6PYtHvqYpZeVuJZ0pbkbW9WOVFS2EBDO11t7i0rKXRH7SU5L7Xg5FNfsH28zUCRU18gGP1/RQTD0yJ/eHH+0pfNz8vf2MU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754536031; c=relaxed/simple;
-	bh=QXAExtGoYnkZNd29M/cfGlJacKDEtEnzWkJ21uO5gzo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9ZdQUUQSSfcvCl6ETucrjMd0+bRWyKIo+zBs2CfdlYnQogwJjloEUt1dPpR0+4sEvvmJ5T7+BIJNJJZ12CGuo+RL764O4Tj/Cb1rlBehvUtONSRpKWNXbhfk+9+fm6PNMvoxrJpj3sUR7Eav/y/l9Fphtjh1yKIRHwtQ5s0NyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: +dECrOpUR3GfMfqzLmRmNQ==
-X-CSE-MsgGUID: 8853IuAbTgSN8PY41i3P6w==
-X-IronPort-AV: E=Sophos;i="6.17,271,1747670400"; 
-   d="scan'208";a="148487293"
-Date: Thu, 7 Aug 2025 11:06:50 +0800
-From: Fang Xiang <fangxiang3@xiaomi.com>
-To: Zicheng Qu <quzicheng@huawei.com>
-CC: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<tanghui20@huawei.com>, <zhangqiao22@huawei.com>, <judy.chenhui@huawei.com>
-Subject: Re: [PATCH] sched/fair: Fix overflow in vruntime_eligible() causing
- NULL return
-Message-ID: <aJQYShudNtx5eeVV@oa-fangxiang3.localdomain>
-References: <20250709093829.3213647-1-quzicheng@huawei.com>
+	s=arc-20240116; t=1754536099; c=relaxed/simple;
+	bh=GRk527uBL2x5DQixo/UdMSzo0YC2frEsKN6fDg6Cff0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=akX1GRmkjdd+6kpuGdgvJHDqt/0qkEmf9ljEepoG3KK96vF99eYLCa9RGOMwi+X3ozXCEDQVRLWy9W7BsQTqsVXumNq5djs8WTzJsejmKBDdxjtKzcbtQHX1CL5zPJaPzxHLYrIliqqZlTwLbsDEYQ/u3M0STLWsMGD4kZpBvww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FiwO/d4l; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754536098; x=1786072098;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GRk527uBL2x5DQixo/UdMSzo0YC2frEsKN6fDg6Cff0=;
+  b=FiwO/d4l0/tv0xzTVNr4Z2rRmJDFVzbY7ynmfn9kGtlAlPmfZN1rh9TG
+   knoeNBB95ZQLJiutBYMbu0lncIBYky8QuhMAgLhSNCejGarXRQpQ9QW/y
+   zsbBIHqV+/2CW25VXhf12TyWIPSE9qI2ZttlpZXfjaNcFvh39IPMcZfaF
+   i8Hoc6qQ8nQtF6BJASKa8Tql+ncOJvAF9LeBIQXampeD65aVczP1HD9Cz
+   tod/MsGu96HabmRStNGGMk985gGGhkL+1d/iEPyNlQMscmoL196WTdAAe
+   u84vHXQnyrF5oJ+Pirp8JCIoYCRHo2hrzQx1mEHk5/uingwNn3NXwvx5j
+   A==;
+X-CSE-ConnectionGUID: 5N/EwZa9S3KNWAeqdDU2yg==
+X-CSE-MsgGUID: GB85AskfQm+aCUde3ZGJaw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67562132"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="67562132"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 20:08:18 -0700
+X-CSE-ConnectionGUID: NEkFjQjTQPm+tJwfZnYgsA==
+X-CSE-MsgGUID: 0uspJoupTai29Vx6JfNEJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="164588660"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 20:08:15 -0700
+Message-ID: <154b59ee-0858-4caf-9972-3679db0a0c49@linux.intel.com>
+Date: Thu, 7 Aug 2025 11:08:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250709093829.3213647-1-quzicheng@huawei.com>
-X-ClientProxiedBy: BJ-MBX05.mioffice.cn (10.237.8.125) To BJ-MBX15.mioffice.cn
- (10.237.8.135)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] perf tools kvm: Use "cycles" to sample guest for "kvm
+ record" on Intel
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250805004633.135904-1-dapeng1.mi@linux.intel.com>
+ <20250805004633.135904-5-dapeng1.mi@linux.intel.com>
+ <aJPuhpFK_ZjLk-ct@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aJPuhpFK_ZjLk-ct@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 09, 2025 at 09:38:29AM +0000, Zicheng Qu wrote:
-> In the vruntime_eligible() function, the original comparison:
-> 	return avg >= (s64)(vruntime - cfs_rq->min_vruntime) * load;
-> could produce incorrect results due to integer overflow in the 'avg' or
-> s64 part.
-> 
-> This overflow causes the comparison to return false even when the
-> mathematical result should be true, leading all tasks to be falsely
-> deemed ineligible. Consequently, pick_eevdf() returns NULL, triggering a
-> kernel crash.
-> 
-> The best approach should be to dig deep into why overflow occurs, which
-> attributes lead to the overflow, whether it is normal, and how to avoid
-> it. Not pretty sure if this part of the modification will introduce new
-> issues, but it may be incorrect to simply spot a potentially
-> overflowing integer type and directly use the >= sign for comparison.
-> Therefore, drawing on the enqueue method in the rb tree, to avoid the
-> impact of overflow, the method of first performing subtraction and then
-> comparing with 0 is also adopted.
-> 
-> The following are the relevant attributes that cause the return of NULL:
-> crash> struct cfs_rq.avg_vruntime,avg_load,min_vruntime
-> ffff9ea77ecb4280
->   avg_vruntime = -4392414779907141680,
->   avg_load = 28644,
->   min_vruntime = 239776551994501,
-> 
-> sched_entity: curr
-> crash> struct sched_entity.deadline,min_vruntime,vruntime,load,vlag
-> 0xffff9ea74510d800
->   deadline = 86432035728535,
->   min_vruntime = 86431486021988,
->   vruntime = 86431531134184,
->   load = {
->     weight = 6066,
->     inv_weight = 0
->   },
->   vlag = 86431823023195,
-> 
-> the sched_entity mapping to the root node in the cfs_rq
-> crash> struct sched_entity.deadline,min_vruntime,vruntime,load,vlag -l
-> sched_entity.run_node 0xffff9ea849fbc350
->   deadline = 18446615868453340281,
->   min_vruntime = 18446615868452621390,
->   vruntime = 18446615868453018539,
->   load = {
->     weight = 9777152,
->     inv_weight = 449829
->   },
->   vlag = -5599,
-> 
-> the sched_entity mapping to the leftmost node in the csf_rq, also the
-> left child of root node.
-> crash> struct sched_entity.deadline,min_vruntime,vruntime,load,vlag -l
-> sched_entity.run_node 0xffff9ea78d0280d0
->   deadline = 18446615868452943132,
->   min_vruntime = 18446615868452621390,
->   vruntime = 18446615868452621390,
->   load = {
->     weight = 9777152,
->     inv_weight = 449829
->   },
->   vlag = 444143,
-> 
-> the sched_entity mapping to the rightmost node in the csf_rq, also the
-> right child of root node.
-> crash> struct sched_entity.deadline,min_vruntime,vruntime,load,vlag -l
-> sched_entity.run_node 0xffff9ea783144350
->   deadline = 515705106937888,
->   min_vruntime = 515705106616146,
->   vruntime = 515705106616146,
->   load = {
->     weight = 9777152,
->     inv_weight = 449829
->   },
->   vlag = -260493,
-> 
-> Fixes: 147f3efaa241 ("sched/fair: Implement an EEVDF-like scheduling policy")
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
-> ---
->  kernel/sched/fair.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 7a14da5396fb..bfa4090cef93 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -734,7 +734,7 @@ static int vruntime_eligible(struct cfs_rq *cfs_rq, u64 vruntime)
->  		load += weight;
->  	}
->  
-> -	return avg >= (s64)(vruntime - cfs_rq->min_vruntime) * load;
-> +	return avg - (s64)(vruntime - cfs_rq->min_vruntime) * load >= 0;
->  }
->  
->  int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
-> -- 
-> 2.34.1
-> 
-May I ask which specific version of the 6.6 LTS branch are you using? 
-On the 6.6.54 kernel version, I've also encountered the same issue in my device.
-The following are the relevant attributes that cause the return of NULL in pick_eevdf():
-cfs_rq:
-  avg_vruntime = -34534164181975319,
-  avg_load = 1531079,
-  min_vruntime = 26052230711305,
-  nr_running = 245,
-  h_nr_running = 245,
 
-sched_entity: curr is NULL
+On 8/7/2025 8:08 AM, Namhyung Kim wrote:
+> On Tue, Aug 05, 2025 at 08:46:32AM +0800, Dapeng Mi wrote:
+>> After KVM supports PEBS for guest on Intel platforms
+>> (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
+>> host loses the capability to sample guest with PEBS since all PEBS related
+>> MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
+>> switched to guest GVA at vm-entry. This would lead to "perf kvm record"
+>> fails to sample guest on Intel platforms since "cycles:P" event is used to
+>> sample guest by default as below case shows.
+> Do you mean we cannot use "cycles:PG" for perf kvm record?
 
-the sched_entity mapping to the root node in the cfs_rq
-  deadline = 26052232578140,
-  min_vruntime = 17382361763776,
-  vruntime = 26052229578140,
-  load = {
-    weight = 1048576,
-    inv_weight = 4194304
-  },
-  vlag = 656101,
+Yes. Here is the output on Intel Sapphire rapids.
 
-the sched_entity mapping to the leftmost node in the csf_rq
-  deadline = 17382364763776,
-  min_vruntime = 17382361763776,
-  vruntime = 17382361763776,
-  load = {
-    weight = 1048576,
-    inv_weight = 4194304
-  },
-  vlag = 8648818863863,
+sudo ./perf record -e cycles:PG -a
+^C[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.801 MB perf.data ]
+
+No guest records are captured with PEBS, and guest PEBS records can be
+sampled only without PEBS.
+
+sudo ./perf record -e cycles:G -a
+^C[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.798 MB perf.data (60 samples) ]
+
+
+>
+>> sudo perf kvm record -a
+>> ^C[ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0.787 MB perf.data.guest ]
+>>
+>> So to ensure guest record can be sampled successfully, use "cycles"
+>> instead of "cycles:P" to sample guest record by default on Intel
+>> platforms. With this patch, the guest record can be sampled
+>> successfully.
+>>
+>> sudo perf kvm record -a
+>> ^C[ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0.783 MB perf.data.guest (23 samples) ]
+> What if user already gave some events in the command line?  I think you
+> need to check if "-e" or "--event" (and "--pfm-events" too) is in the
+> argv[] before adding these.
+
+kvm_add_default_arch_event() would detect if user already sets events explicitly. If so, it won't add "cycles" event any more. Thanks.
+
+>
+> Thanks,
+> Namhyung
+>
+>> Reported-by: Kevin Tian <kevin.tian@intel.com>
+>> Fixes: 634d36f82517 ("perf record: Just use "cycles:P" as the default event")
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  tools/perf/arch/x86/util/kvm-stat.c | 46 +++++++++++++++++++++++++++++
+>>  1 file changed, 46 insertions(+)
+>>
+>> diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
+>> index 424716518b75..cdb5f3e1b5be 100644
+>> --- a/tools/perf/arch/x86/util/kvm-stat.c
+>> +++ b/tools/perf/arch/x86/util/kvm-stat.c
+>> @@ -3,9 +3,11 @@
+>>  #include <string.h>
+>>  #include "../../../util/kvm-stat.h"
+>>  #include "../../../util/evsel.h"
+>> +#include "../../../util/env.h"
+>>  #include <asm/svm.h>
+>>  #include <asm/vmx.h>
+>>  #include <asm/kvm.h>
+>> +#include <subcmd/parse-options.h>
+>>  
+>>  define_exit_reasons_table(vmx_exit_reasons, VMX_EXIT_REASONS);
+>>  define_exit_reasons_table(svm_exit_reasons, SVM_EXIT_REASONS);
+>> @@ -211,3 +213,47 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
+>>  
+>>  	return 0;
+>>  }
+>> +
+>> +/*
+>> + * After KVM supports PEBS for guest on Intel platforms
+>> + * (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
+>> + * host loses the capability to sample guest with PEBS since all PEBS related
+>> + * MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
+>> + * switched to guest GVA at vm-entry. This would lead to "perf kvm record"
+>> + * fails to sample guest on Intel platforms since "cycles:P" event is used to
+>> + * sample guest by default.
+>> + *
+>> + * So, to avoid this issue explicitly use "cycles" instead of "cycles:P" event
+>> + * by default to sample guest on Intel platforms.
+>> + */
+>> +int kvm_add_default_arch_event(int *argc, const char **argv)
+>> +{
+>> +	const char **tmp;
+>> +	bool event = false;
+>> +	int i, j = *argc;
+>> +
+>> +	const struct option event_options[] = {
+>> +		OPT_BOOLEAN('e', "event", &event, NULL),
+>> +		OPT_END()
+>> +	};
+>> +
+>> +	if (!x86__is_intel_cpu())
+>> +		return 0;
+>> +
+>> +	tmp = calloc(j + 1, sizeof(char *));
+>> +	if (!tmp)
+>> +		return -EINVAL;
+>> +
+>> +	for (i = 0; i < j; i++)
+>> +		tmp[i] = argv[i];
+>> +
+>> +	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
+>> +	if (!event) {
+>> +		argv[j++] = strdup("-e");
+>> +		argv[j++] = strdup("cycles");
+>> +		*argc += 2;
+>> +	}
+>> +
+>> +	free(tmp);
+>> +	return 0;
+>> +}
+>> -- 
+>> 2.34.1
+>>
 
