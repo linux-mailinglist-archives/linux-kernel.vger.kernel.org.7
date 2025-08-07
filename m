@@ -1,178 +1,123 @@
-Return-Path: <linux-kernel+bounces-758961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3A6B1D642
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4EDB1D644
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91378726C0B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EBB1AA20D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A36275AE1;
-	Thu,  7 Aug 2025 11:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF666275AE1;
+	Thu,  7 Aug 2025 11:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JeOf2zT1"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r+xBzmlb"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFECA1F4C99
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B323507B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754564453; cv=none; b=B8mA91YG+pkBtpdSTBK2KDOLJGt3iIPim0L4bYLEFQduKxTBiQuoeVdz2VqRbkVyJYstYSavg67OvTavZlSWzBJtKJtEXlySgIEmbLZ9Jw28f1lBuNjlkYXk994OsJGZ1W/6ymDBV62N4+bAuRl+YbRrZlC2we2Bun5/cQBK0+c=
+	t=1754564470; cv=none; b=TtCf8gnioUr4wyWDsQbQlJ5pA4F2G36jvMrVj8ruiagVfTtX5dwolXlcMRVsjTHxW19RZBpx67Xvy/adKYy1/aCzBpXZeGfvXWlmgIFeg7s2v0MzJWzkvB+Sp3WuZ05XG6YI9pJ83fUSsqlIPfK9QRtcjswwXzkEWus63116akQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754564453; c=relaxed/simple;
-	bh=3PmQW8H0sTWjCukAvN8hvHBDjjRhejSIa84Yy9Pq27k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GTHWMQRfmhN78cDDn6NPBE2xFDWYVx590fsLl1mDBpn5HwUlI5X//j9+ZBQY8117Io9oACaWla+TRcHGghm8lqrYP2j5Z2IBS7EnPxFEd+Vms6Vg8NaKE/HHhN1X5J66Jt6L0d10lpmWdkZSQIgaJmEtKLwwYTPSL3j39qUGVAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JeOf2zT1; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6fb1ded3afeso1245276d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:00:50 -0700 (PDT)
+	s=arc-20240116; t=1754564470; c=relaxed/simple;
+	bh=E8jZeHT0wkxyKIBmLVv0ZDLh/xYOgqEKfNBea1dffls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfrusqechLzLKJqDuBF+c/r3ctrFrkDF0LPq5AcDvYa/WnVItGIirtYJx8t6nmpxuxJL4QkTMcR9UFpFADEucN0F3HA4ElAdZ1sgBLWZiZZiqB6OG+RK3snEQLN0VXh2qJXKJZmeWqocr+VEHS++G2rrJCVtIVm0UE8yXM4GMcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r+xBzmlb; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b78b2c6ecfso414056f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:01:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754564450; x=1755169250; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=bRcb27c8tScey9iDEsBA7ABHwMfEvu6ZRBi9F3TXtqk=;
-        b=JeOf2zT17f6GPy1XpmKOeCh9j1+3J8VsX5nIkGwchEPd9MWc+1p3NNBbyEXRX0usbi
-         9FA1kLLQbw/975yXR25c3F+T68nyhGsBVcRoT8rSZvk5IVRyTI4jiNqPupBspQrnWg58
-         WNPuowsVBuzlk97VWIIVQaMLitV8sOFVSn5aSKt5hxXyd98dOibxhvJBd8x0wba68bel
-         8VV3s8Mu8Mz/IKLlkF0hgw99nI+eF+niVHs4muqgHXYCeCFFfCG0AjyLz8Fg82OEF8cs
-         cD0JHgNZtQm+K5W3F7ECtpUmIM2MnTkMp8jqQDOW5/M3HZVtbHcEV8scZB7g0JFESDz0
-         5zVQ==
+        d=google.com; s=20230601; t=1754564467; x=1755169267; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z1LA4zLatdYQ3Y3OjAbWN8XrQew8n5n36uGhalyKn/8=;
+        b=r+xBzmlbAyQG8aUBZ0VvEeycKoMs/+G3HiDWEl3rOyx3HoTGnfYQiA2RPCjEC9OmFP
+         nZpLiBavJqjZuEOMNsF/d3hO8aKSzZKnAUkrUpULrdO8qTZICkkZXjNl4iW+J5VS0cKN
+         7Bs/T0tZ49Zxgn0elY1ml1Ji2u1NW2PedwWsR2dIavUhcniIIsktBrP3tYQCru2QisAG
+         EsA75pwKiN2yE13PN0p3bTn58ai9S0RY9FmzzZ8ekApm15xx2jM3/Ws/uqYV4rzmsf4d
+         0Vj8SOQs30h5fenc1D/iaKpq6dSNohKUKXIHjdaTDxGZX/pYSJJ5zoKIjnc8WMn0mLvV
+         IUCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754564450; x=1755169250;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bRcb27c8tScey9iDEsBA7ABHwMfEvu6ZRBi9F3TXtqk=;
-        b=HIJSLJIY68iyH1A2FDT4dJhZ5lsWTWqtxp2brCDzpndGH7w0FKwT8YgOF9cNGyLBsz
-         AvdtoIfe/PjLkKB81u2t1xeRyVjBJOEW31Mh5w39e1gKQYW73+XIxlyOjoAZeeFItBvv
-         nZXGfx0sQ6Rggzfg6f3zdvnjfnbpGp2N7j/zaIRdrxokK1N9Xd2TtZVoi5vSEL1R2Y2h
-         OY7mavJ1N1JJVuoFX9nItu2cQlPikbTejzWQc9S/EuPvMAuzrO6iTOy1yMKEJQ0WnQYs
-         7oEA+Zs8M8UmrPYB0KVSA3jtlHCq0+ebJoJ2BGwNkFeNmvAM1fThP+1Tq/6c9q5ME2Li
-         BXiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXArLp9rUtgrZeB4BcCnF7JUwZwxPif4R6OjUP9Zux7zMZoGnDF9qbKqCpJwgWO6XD3bZgZlA8pcvdn9tE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya4nZweXG1B20G5HdHW7YvfOJvvEs1z6OYZszdHed6VpgEro8T
-	deQOeHqYHKTkXUxsu22KLl1BoZUxjVWGko+Zgcrn+xTwGxWhxhlsXU925tki2NLyVN4=
-X-Gm-Gg: ASbGncs/nE2hO5Igx+UMUNRDR0JZy4IKidDrVwSlcasyGUjbQ4oYpH+j0PUQC+vQGHq
-	ivL0Eps5TUms88amSjkmVYXJ0f/rWVgP4ZT/6EF9yGVa9sP7KCf7t8IcI+9DrDN10eGqGc2kUB/
-	qa1QyEC2dcZs7v4HMRgX+5ooeUor8a1LwZe0vF84oYC1NtZc+uBcYGOamm4bQONSYScn+aEbC6E
-	0ZD9fznGixCrFkQ+qOa2GNkSqWhPdAxV2/i3wNqCeObxNYNZX+H+xZ0r/SANMzdHvdhoz64XKRF
-	BJd9dl+TU+s02QUOUtrD0fYmF+t/V0c5kQBB/flLfYXFwie/2AOkdJ8x/5RaKlpxEOOXNV2sDWg
-	nzzcEIJ3by6KSXQFjOx0PEHtxMsXnBAhRX/hiop8h/7qir3pztIHf1Q==
-X-Google-Smtp-Source: AGHT+IFkQZucbySx973IMpGpQf31mwEpaX+tRF7OzK2L3zkcUFpWDVHU3/ckfQB6L7uNIc6/7qPHdA==
-X-Received: by 2002:a05:620a:2945:b0:7e8:37f:f364 with SMTP id af79cd13be357-7e814d20c67mr444620685a.7.1754564449587;
-        Thu, 07 Aug 2025 04:00:49 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.218.223])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f72a47esm931765485a.61.2025.08.07.04.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 04:00:48 -0700 (PDT)
-Message-ID: <fd2d1aab-a5e0-4822-89f9-eac45edd66c7@linaro.org>
-Date: Thu, 7 Aug 2025 13:00:42 +0200
+        d=1e100.net; s=20230601; t=1754564467; x=1755169267;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z1LA4zLatdYQ3Y3OjAbWN8XrQew8n5n36uGhalyKn/8=;
+        b=kjSQAPCnGDyaY142Gnfj2+/0dWvuDG2mouewDjxNn4MaQkxUWH8ejQ7znk2kmB/F2T
+         fXYBRRrfclssu0qaDkd+aGokRjr5VbcIaCwQtuxNCi19BzGUgq0cVuTg0ufamtxQnyvy
+         JLGwsYKNGbi36jn3qjDvNl3HoHYNr+G0TPbBButE/RHGHKdKnrI+8x6OeK5zb4UMOFc1
+         0RQoHxzIJkBj8gXl1xyu0Ngiog0xzf6QDtOIXzyDB5rf3q1lhEctte9ZD8Kyn0ychdZy
+         n/UEXoEL23j2F0Ey3fGQUTxsndbScooKQvzISBAsgIXEOuKoFIf5szSGrRz+ELbl+xY+
+         qKew==
+X-Forwarded-Encrypted: i=1; AJvYcCUaRsF0GwKzxDMBck2UNBiU7mQOW5XIWlXMvJjFLFBRcZWird5p4grBiHQIIoGvOEBoTO2GMgZsg1awk1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzx/y5DY9WIKf0jnsWU+nEfYzEPFNaCyONkIFixT6oD4PPMvQ3
+	nHXMe3dHDn8xffRVBASFj/LqVJhFTkwnnfmoX10ew/hgIOTTgAYzWlKC0R48HNuVoA==
+X-Gm-Gg: ASbGncuawWU+Q/0DXS3JQzNWpDk6PtvRLsspxSXEtvQVVTnijlqJjPVoqdumdQMHXW2
+	tZ558qCjR9wDWo21afGLMYnP0sO+5b7z6MVpzTLgfWm+xITh2tpFJmQhewYNQyS6H8DCetjbs6v
+	u95DwNmzFE3Db3YL+fmggTL7TypW8YaOfweqn7ajmxbn9TdOSmcWcPyKCTk6pNNILtd5YrgJbi3
+	wj9I/lfhjlJLiwbzpR1z6ZJIUmHVMIdQrWvSxnySLY5L7iSoox9LupxV3Bg2vaOr17vET+qdwQI
+	t2Ve8/mGIufr86QY270huoqnT3GBX3CTsy7kCjdwolBbG0ka7v48B9p8omLgBAbFgdsuIfTRC6g
+	+4w9QZ9o6bpaYp0OTJqQc7f7VRW7VDmUU9/tTBuVSrewu81/YD7/0VfOePEs=
+X-Google-Smtp-Source: AGHT+IEwZ2Oq+pTGZgJFxX26wp+82jD3we8xi3/GH3Welww/bjc1k6gfMisY/v82jM9c/h7V+Z4+SA==
+X-Received: by 2002:a05:6000:2489:b0:3a4:d6ed:8df8 with SMTP id ffacd0b85a97d-3b8f41b4ed8mr5599905f8f.39.1754564466804;
+        Thu, 07 Aug 2025 04:01:06 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:2834:9:ad48:3e8a:43af:495d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453aeasm27312698f8f.40.2025.08.07.04.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 04:01:05 -0700 (PDT)
+Date: Thu, 7 Aug 2025 13:01:00 +0200
+From: Marco Elver <elver@google.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+	Baoquan He <bhe@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com
+Subject: Re: [PATCH 0/8] __vmalloc() and no-block support
+Message-ID: <aJSHbFviIiB2oN5G@elver.google.com>
+References: <20250807075810.358714-1-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/10] dt-bindings: media: s5p-mfc: Modify compatible
- string check for SoC-specific support
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
- andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
- alim.akhtar@samsung.com, robh@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, aswani.reddy@samsung.com,
- anindya.sg@samsung.com
-References: <20250807032449.92770-1-aakarsh.jain@samsung.com>
- <CGME20250807032525epcas5p42f764c0b2af23d0e47e853fc5707cb46@epcas5p4.samsung.com>
- <20250807032449.92770-10-aakarsh.jain@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250807032449.92770-10-aakarsh.jain@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807075810.358714-1-urezki@gmail.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On 07/08/2025 05:24, Aakarsh Jain wrote:
-> Modify compatible strings in the s5p-mfc binding to reflect
-> accurate SoC-specific naming across multiple Samsung platforms.
+On Thu, Aug 07, 2025 at 09:58AM +0200, Uladzislau Rezki (Sony) wrote:
+> Hello.
 > 
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-> ---
->  .../bindings/media/samsung,s5p-mfc.yaml          | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+> This is a second series of making __vmalloc() to support GFP_ATOMIC and
+> GFP_NOWAIT flags. It tends to improve the non-blocking behaviour.
 > 
-> diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-> index b46cc780703c..6a711c8103ac 100644
-> --- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-> +++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-> @@ -20,15 +20,15 @@ properties:
->        - enum:
->            - samsung,exynos5433-mfc        # Exynos5433
->            - samsung,mfc-v5                # Exynos4
-> -          - samsung,mfc-v6                # Exynos5
-> -          - samsung,mfc-v7                # Exynos5420
-> -          - samsung,mfc-v8                # Exynos5800
-> -          - samsung,mfc-v10               # Exynos7880
-> +          - samsung,exynos5250-mfc        # Exynos5
-> +          - samsung,exynos5420-mfc        # Exynos5420
-> +          - samsung,exynos5800-mfc        # Exynos5800
-> +          - samsung,exynos7880-mfc        # Exynos7880
+> The first one can be found here:
+> 
+> https://lore.kernel.org/all/20250704152537.55724-1-urezki@gmail.com/
+> 
+> that was an RFC. Using this series for testing i have not found more
+> places which can trigger: scheduling during atomic. Though there is
+> one which requires attention. I will explain in [1].
+> 
+> Please note, non-blocking gets improved in the __vmalloc() call only,
+> i.e. vmalloc_huge() still contains in its paths many cond_resched()
+> points and can not be used as non-blocking as of now.
+> 
+> [1] The vmap_pages_range_noflush() contains the kmsan_vmap_pages_range_noflush()
+> external implementation for KCSAN specifically which is hard coded to GFP_KERNEL.
+> The kernel should be built with CONFIG_KCSAN option. To me it looks like not
+> straight forward to run such kernel on my box, therefore i need more time to
+> investigate what is wrong with CONFIG_KCSAN and my env.
 
-NAK, ABI break without any valid reason or explanation why.
+KMSAN or KCSAN?
 
-Best regards,
-Krzysztof
+[+Cc KMSAN maintainers]
 
