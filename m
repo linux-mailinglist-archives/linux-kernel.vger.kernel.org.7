@@ -1,188 +1,262 @@
-Return-Path: <linux-kernel+bounces-759116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C9CB1D8AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:12:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A261B1D8AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D57F07B275F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:10:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0467A189E7BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCC725A341;
-	Thu,  7 Aug 2025 13:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09B525A323;
+	Thu,  7 Aug 2025 13:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FK1nzQ7h"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b="lwlxXC8O"
+Received: from m.syntacore.com (m.syntacore.com [178.249.69.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE0B214813;
-	Thu,  7 Aug 2025 13:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFA72E36EC;
+	Thu,  7 Aug 2025 13:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.249.69.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572308; cv=none; b=dLdAOcF+1Wy9shSLizxlDNIZ8PmL+IcFXMuXZeDnGWazd5QAUdHr+WVWkXxFTmq8LVrLtpuvDwJeJQgUVRob4k69/6Wcck87Re7LpQv9plmMSVzZIx7+cxrZPuYXbkr/4oSnrqTsAKFzNGfpNRJ8WjG84Vm9xcloU29/d/TUcVI=
+	t=1754572438; cv=none; b=IY/alPr9I//IHLGRoJm/lMQcW2tHvqY0hAbt6pqf3ZzzOvh3EMjR1ezhQCfUsuvKlsncyLSx633mdUxzPGDPHDnEF+1pxAaLFYSTTp+rZeyKXEdvFpLdCgW+SNpKa0UhiSFpN8YYKJX9tVnkAFPjSZObOIht6ezQ1w7PYc8jvUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572308; c=relaxed/simple;
-	bh=m26lHftS7IlP7iMGha5zcOVxy2cQ5Y4OefzgkzmDR7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R3IdiuXbUd5P4Y7+DCESIRSOFbmJIqBQN+YQ3lU/N/mwGpVxenlM0VrFnKYZdk2w2GEv6kLU/clf0bvEh52hnEIhjRADGOSZXRAEAW5nNpvlmPN5SWzeKi3BdNBFZ3O5IfsWJ8PiBIo9F4zj/Mi74jraHf4a3oOnDeNcQ4yryd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FK1nzQ7h; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5776AYew021685;
-	Thu, 7 Aug 2025 13:11:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=Hq6l2Vqaq2ClYP24fuqKUawfQczgoqoysESf8KFRt
-	i0=; b=FK1nzQ7hyINYu6PIQ6E99KsFxdmJkNbl3Rl7REfZVeB9Iaw2XadFFNHbB
-	y7CMqFWHFeQDs3gZu6zAqs9VZxFyS9V5S5StF5350uhg8g/WRaIj0xGciMPSLzEV
-	t0ib8lckmzkn8e8Mj84K5F4zbPaSliJ/5x4x0MBbThLt7N2l2HEBOyZms6mx38Iq
-	+ZHQTBkN1AGytgp1WGS/tjNYG1p3fCzbT7CItEaEaocswNHdHIFppagG+nzLcVfv
-	px2dx6PNEhduOXv0npgxONkApz799J3Wgsq4L52n5C44S+R2GCZaT8PmrV95ZSc9
-	APvsZJw4ByRMzd1GK0YRxBmMj5j9g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63a48s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:11:36 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577D9gQ0011197;
-	Thu, 7 Aug 2025 13:11:35 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63a48p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:11:35 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779eev2022647;
-	Thu, 7 Aug 2025 13:11:34 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwqgqtr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:11:34 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577DBVJv53150180
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 13:11:31 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E889920043;
-	Thu,  7 Aug 2025 13:11:30 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B4D3A20040;
-	Thu,  7 Aug 2025 13:11:30 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Aug 2025 13:11:30 +0000 (GMT)
-From: Gerd Bayer <gbayer@linux.ibm.com>
-To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-        Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-        Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Moshe Shemesh <moshe@nvidia.com>, Shay Drori <shayd@nvidia.com>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
-        Alexandra Winter <wintera@linux.ibm.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Yuanyuan Zhong <yzhong@purestorage.com>,
-        Mohamed Khalfella <mkhalfella@purestorage.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net] net/mlx5: Avoid deadlock between PCI error recovery and health reporter
-Date: Thu,  7 Aug 2025 15:11:30 +0200
-Message-ID: <20250807131130.4056349-1-gbayer@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1754572438; c=relaxed/simple;
+	bh=2WKbjQVRF2KVnkFG08+yi39gLJTA1kh0qsWsfwI2jSs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=i2SYYC2pdyRA+y3dVduTOYF9khHQZT1XfakchPBBhl5EsKDRbfSOuGvPSQgX+7gVxXlUT6n/rmFn1E8T1l2ximpgfgJpe/SMrP1O6rLyimhyEVpLvFWIyCf+SB2bLJ/PQ8erD+Mq9+itvV7nAVj9SypPxbwnRKR1wZmN8RATUcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com; spf=pass smtp.mailfrom=syntacore.com; dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b=lwlxXC8O; arc=none smtp.client-ip=178.249.69.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syntacore.com
+Received: from MRN-SC-KSMG-01.corp.syntacore.com (localhost [127.0.0.1])
+	by m.syntacore.com (Postfix) with ESMTP id 428081A0004;
+	Thu,  7 Aug 2025 13:13:54 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 m.syntacore.com 428081A0004
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=syntacore.com; s=m;
+	t=1754572434; bh=PRldComWRoiWOPNshpB2MJ/sQDU9cbT00ez0s1BzS8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=lwlxXC8O4PxNXasjBDd5En6yslrBNKR2DOdsWuXC5VnWBHN451A0zyGjW/fCetcRS
+	 Xisbxr/ILirZiNrhm/rf5gYXrjwuvkahiy9xdStOPmj/7HasYhx+k9cCz1O19IJhbh
+	 G2F+OlT4Mp7aeotBQb1MhLhaFLBiDEBgCOSfHkWpSfm07paHg0V5EEF0z8DpNN0DuW
+	 IIKVn4HZmwry5/iH9X4hXaytkvZChritrSB9WS4+AhwdwdF9gvyAZfOa42FX1dvDL0
+	 1LmPyKNrVMvaL5FaSqTw1vR9xUafDPflnrzYeTA9jdtaKzekfP67saSzk/AY/7aKAM
+	 SSBmCcIkPU5fQ==
+Received: from S-SC-EXCH-01.corp.syntacore.com (mail.syntacore.com [10.76.202.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by m.syntacore.com (Postfix) with ESMTPS;
+	Thu,  7 Aug 2025 13:13:52 +0000 (UTC)
+Received: from [10.199.23.86] (10.199.23.86) by
+ S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 7 Aug 2025 16:13:20 +0300
+Message-ID: <e9990237-bc83-4cbb-bab8-013b939a61fb@syntacore.com>
+Date: Thu, 7 Aug 2025 19:13:50 +0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=NInV+16g c=1 sm=1 tr=0 ts=6894a608 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=2OwXVqhp2XgA:10 a=sWKEhP36mHoA:10 a=VnNF1IyMAAAA:8 a=bw0WNZ3Bkwh0Ihv45_YA:9
-X-Proofpoint-GUID: uvjlW20QgFidYsL1fE9SvzET59v4Ld5R
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEwMyBTYWx0ZWRfX/MXrqH9WlIQp
- lWNNAcnNoBsqPjhog3y1ehaA3BpAZW3FR1q9mHd8IJwYPgKuKYt24A/Hj6NS9Me8Ud7O0wUImCF
- sfvZqWzt1mU+ybNt9Qk3GXEy7YqW/m/zYQZaWzvHYuqB+ZISkxr9tu/7Y4mEAyUab6Q3+xx3eN9
- UtpYcT9FjHTPGyW2Jn4gMs3fVJ++FI9Jj4332lHSg33/Gw+Dox/70Teg5QB6MlWyml9wI9ciP/W
- dg30zllj4gMxAk0ytXSRLh7UUUBK+y3FW6zo4tHJMrhtoO+sYdtJUgIEA5DRO+6m5A6zT0u+RK/
- x5sG07h+R4xEjz7IrbN3j+rSG9xL1Il/0pH6rGHEf6BN+4Gv/V+BRg2RdMfMnE7O//sqgtDM2NY
- zByHx093AOjhmJHRCocTuUD81FNb6Rze2HaklRgKYORESUAFFr8vqIBGlGgPzTy+Thx+3hDu
-X-Proofpoint-ORIG-GUID: xNt2Ifd1HMgDAfVOfXdai4ywFg0ik2Yk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 clxscore=1011 adultscore=0 mlxscore=0
- bulkscore=0 priorityscore=1501 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070103
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC RESEND] binfmt_elf: preserve original ELF e_flags in core
+ dumps
+To: Kees Cook <kees@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
+	<brauner@kernel.org>, <jack@suse.cz>, <akpm@linux-foundation.org>,
+	<david@redhat.com>, <lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>,
+	<vbabka@suse.cz>, <rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>
+References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
+ <202508061152.6B26BDC6FB@keescook>
+Content-Language: en-US
+From: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
+In-Reply-To: <202508061152.6B26BDC6FB@keescook>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) To
+ S-SC-EXCH-01.corp.syntacore.com (10.76.202.20)
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/08/07 12:24:00 #27641897
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-During error recovery testing a pair of tasks was reported to be hung
-due to a dead-lock situation:
+On 07/08/2025 00.57, Kees Cook wrote:
+> On Wed, Aug 06, 2025 at 10:18:14PM +0600, Svetlana Parfenova wrote:
+>> Preserve the original ELF e_flags from the executable in the core dump
+>> header instead of relying on compile-time defaults (ELF_CORE_EFLAGS or
+>> value from the regset view). This ensures that ABI-specific flags in
+>> the dump file match the actual binary being executed.
+>>
+>> Save the e_flags field during ELF binary loading (in load_elf_binary())
+>> into the mm_struct, and later retrieve it during core dump generation
+>> (in fill_note_info()). Use this saved value to populate the e_flags in
+>> the core dump ELF header.
+>>
+>> Add a new Kconfig option, CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS, to guard
+>> this behavior. Although motivated by a RISC-V use case, the mechanism is
+>> generic and can be applied to all architectures.
+> 
+> In the general case, is e_flags mismatched? i.e. why hide this behind a
+> Kconfig? Put another way, if I enabled this Kconfig and dumped core from
+> some regular x86_64 process, will e_flags be different?
+> 
 
-- mlx5_unload_one() trying to acquire devlink lock while the PCI error
-  recovery code had acquired the pci_cfg_access_lock().
-- mlx5_crdump_collect() trying to acquire the pci_cfg_access_lock()
-  while devlink_health_report() had acquired the devlink lock.
+The Kconfig option is currently restricted to the RISC-V architecture 
+because it's not clear to me whether other architectures need actual 
+e_flags value from ELF header. If this option is disabled, the core dump 
+will always use a compile time value for e_flags, regardless of which 
+method is selected: ELF_CORE_EFLAGS or CORE_DUMP_USE_REGSET. And this 
+constant does not necessarily reflect the actual e_flags of the running 
+process (at least on RISC-V), which can vary depending on how the binary 
+was compiled. Thus, I made a third method to obtain e_flags that 
+reflects the real value. And it is gated behind a Kconfig option, as not 
+all users may need it.
 
-Move the check for pci_channel_offline prior to acquiring the
-pci_cfg_access_lock in mlx5_vsc_gw_lock since collecting the crdump will
-fail anyhow while PCI error recovery is running.
+>> This change is needed to resolve a debugging issue encountered when
+>> analyzing core dumps with GDB for RISC-V systems. GDB inspects the
+>> e_flags field to determine whether optional register sets such as the
+>> floating-point unit are supported. Without correct flags, GDB may warn
+>> and ignore valid register data:
+>>
+>>      warning: Unexpected size of section '.reg2/213' in core file.
+>>
+>> As a result, floating-point registers are not accessible in the debugger,
+>> even though they were dumped. Preserving the original e_flags enables
+>> GDB and other tools to properly interpret the dump contents.
+>>
+>> Signed-off-by: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
+>> ---
+>>   fs/Kconfig.binfmt        |  9 +++++++++
+>>   fs/binfmt_elf.c          | 26 ++++++++++++++++++++------
+>>   include/linux/mm_types.h |  5 +++++
+>>   3 files changed, 34 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+>> index bd2f530e5740..45bed2041542 100644
+>> --- a/fs/Kconfig.binfmt
+>> +++ b/fs/Kconfig.binfmt
+>> @@ -184,4 +184,13 @@ config EXEC_KUNIT_TEST
+>>   	  This builds the exec KUnit tests, which tests boundary conditions
+>>   	  of various aspects of the exec internals.
+>>   
+>> +config CORE_DUMP_USE_PROCESS_EFLAGS
+>> +	bool "Preserve ELF e_flags from executable in core dumps"
+>> +	depends on BINFMT_ELF && ELF_CORE && RISCV
+>> +	default n
+>> +	help
+>> +	  Save the ELF e_flags from the process executable at load time
+>> +	  and use it in the core dump header. This ensures the dump reflects
+>> +	  the original binary ABI.
+>> +
+>>   endmenu
+>> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+>> index caeddccaa1fe..e5e06e11f9fc 100644
+>> --- a/fs/binfmt_elf.c
+>> +++ b/fs/binfmt_elf.c
+>> @@ -1290,6 +1290,11 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>>   	mm->end_data = end_data;
+>>   	mm->start_stack = bprm->p;
+>>   
+>> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
+>> +	/* stash e_flags for use in core dumps */
+>> +	mm->saved_e_flags = elf_ex->e_flags;
+>> +#endif
+> 
+> Is this structure actually lost during ELF load? I thought we preserved
+> some more of the ELF headers during load...
+> 
 
-Fixes: 33afbfcc105a ("net/mlx5: Stop waiting for PCI if pci channel is offline")
-Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
----
+As far as I can tell, the ELF header itself is not preserved beyond 
+loading. If there's a mechanism I'm missing that saves it, please let me 
+know.
 
-Hi all,
+>> +
+>>   	/**
+>>   	 * DOC: "brk" handling
+>>   	 *
+>> @@ -1804,6 +1809,8 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+>>   	struct elf_thread_core_info *t;
+>>   	struct elf_prpsinfo *psinfo;
+>>   	struct core_thread *ct;
+>> +	u16 machine;
+>> +	u32 flags;
+>>   
+>>   	psinfo = kmalloc(sizeof(*psinfo), GFP_KERNEL);
+>>   	if (!psinfo)
+>> @@ -1831,17 +1838,24 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+>>   		return 0;
+>>   	}
+>>   
+>> -	/*
+>> -	 * Initialize the ELF file header.
+>> -	 */
+>> -	fill_elf_header(elf, phdrs,
+>> -			view->e_machine, view->e_flags);
+>> +	machine = view->e_machine;
+>> +	flags = view->e_flags;
+>>   #else
+>>   	view = NULL;
+>>   	info->thread_notes = 2;
+>> -	fill_elf_header(elf, phdrs, ELF_ARCH, ELF_CORE_EFLAGS);
+>> +	machine = ELF_ARCH;
+>> +	flags = ELF_CORE_EFLAGS;
+>>   #endif
+>>   
+>> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
+>> +	flags = dump_task->mm->saved_e_flags;
+>> +#endif
+> 
+> This appears to clobber the value from view->e_flags. Is that right? It
+> feels like this change should only be needed in the default
+> ELF_CORE_EFLAGS case. How is view->e_flags normally set?
+> 
 
-while the initial hit was recorded during "random" testing, where PCI
-error recovery and poll_health() tripped almost simultaneously, I found
-a way to reproduce a very similar hang at will on s390:
+view->e_flags is set at compile time, and view is pointing to const 
+struct. The override of e_flags is intentional in both cases 
+(ELF_CORE_EFLAGS and CORE_DUMP_USE_REGSET) to allow access to the 
+process actual e_flags, regardless of the selected method.
 
-Inject a PCI error recovery event on a Physical Function <BDF> with
-  zpcictl --reset-fw <BDF>
+>> +
+>> +	/*
+>> +	 * Initialize the ELF file header.
+>> +	 */
+>> +	fill_elf_header(elf, phdrs, machine, flags);
+>> +
+>>   	/*
+>>   	 * Allocate a structure for each thread.
+>>   	 */
+>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+>> index d6b91e8a66d6..39921b32e4f5 100644
+>> --- a/include/linux/mm_types.h
+>> +++ b/include/linux/mm_types.h
+>> @@ -1098,6 +1098,11 @@ struct mm_struct {
+>>   
+>>   		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
+>>   
+>> +#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
+>> +		/* the ABI-related flags from the ELF header. Used for core dump */
+>> +		unsigned long saved_e_flags;
+>> +#endif
+>> +
+>>   		struct percpu_counter rss_stat[NR_MM_COUNTERS];
+>>   
+>>   		struct linux_binfmt *binfmt;
+>> -- 
+>> 2.50.1
+>>
+> 
+> -Kees
+> 
 
-then request a crdump with
-  devlink health dump show pci/<BDF> reporter fw_fatal
 
-With the patch applied I didn't get the hang but kernel logs showed:
-[  792.885743] mlx5_core 000a:00:00.0: mlx5_crdump_collect:51:(pid 1415): crdump: failed to lock vsc gw err -13
-
-and the crdump request ended with:
-kernel answers: Permission denied
-
-Thanks, Gerd
----
- drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-index 432c98f2626d..d2d3b57a57d5 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-@@ -73,16 +73,15 @@ int mlx5_vsc_gw_lock(struct mlx5_core_dev *dev)
- 	u32 lock_val;
- 	int ret;
- 
-+	if (pci_channel_offline(dev->pdev))
-+		return -EACCES;
-+
- 	pci_cfg_access_lock(dev->pdev);
- 	do {
- 		if (retries > VSC_MAX_RETRIES) {
- 			ret = -EBUSY;
- 			goto pci_unlock;
- 		}
--		if (pci_channel_offline(dev->pdev)) {
--			ret = -EACCES;
--			goto pci_unlock;
--		}
- 
- 		/* Check if semaphore is already locked */
- 		ret = vsc_read(dev, VSC_SEMAPHORE_OFFSET, &lock_val);
 -- 
-2.48.1
-
+Best regards,
+Svetlana Parfenova
 
