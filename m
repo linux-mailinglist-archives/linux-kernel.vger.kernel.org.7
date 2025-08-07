@@ -1,140 +1,101 @@
-Return-Path: <linux-kernel+bounces-758953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C225BB1D625
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:54:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C801AB1D13D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C7A18C45C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:55:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24E716C205
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFF52777FD;
-	Thu,  7 Aug 2025 10:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B0019E992;
+	Thu,  7 Aug 2025 03:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XshrS32s"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="xOr2sX/L"
+Received: from sg-3-15.ptr.tlmpb.com (sg-3-15.ptr.tlmpb.com [101.45.255.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD43F27A10F
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634471E4AB
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 03:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.45.255.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754564034; cv=none; b=QDDTASuc5KjcCBlUJ4o5C8yG7jy7bz0+6vMDwNpLxdnl+fIy0LojKXh4my2aku/NcQ7E5pctAwmyZCmTnsE91FcxvUpN9UizmoAiZD8QE6z+4KaYatkzZz0kTz4E5lvnctgUsJhSwm0CU0XAxyhxjRmqKlUIq+xKpsYjli2g9wo=
+	t=1754537599; cv=none; b=VOgMWzP18x1z7VGmnzLd0G/ttBWjpVoMdr/qVUPPs6jGZGGqhSh/Epstt4OBmUhKjgE5X6Qwn8+LOtH5HaLsNRF66VmN2MT5+v6dBxB5/b7wUL9Sio28q5ogj40g6TugsRbOuJYnWQUZJSiabq8wemuiWHP90P3drT8AJsBCwcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754564034; c=relaxed/simple;
-	bh=mO7KKyVbAAB6LIeT63La3wZfx8885Z7ITq97oad3Rsw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=RVuEMAcmkh5MfFbVkQj+dcTiXTz+toIPabkExbLNj7iQUEggFoPnnwPkiTTaa7SVkInxDgxFTKuML3aAxvSOVdg4FiBlPFw7+WWa3pbogGGJtVeQVE98dKhp3ryo8yX5Vaz5mrHydQYqoynLlwdyYasBK3ivifq/9EIAzDqzvgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XshrS32s; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250807105349epoutp0130629c86d81f625dd00634bc3f7165fa~ZdrBsrOUG1288612886epoutp01x
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:53:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250807105349epoutp0130629c86d81f625dd00634bc3f7165fa~ZdrBsrOUG1288612886epoutp01x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754564029;
-	bh=68xVvjXbi6ynymUb0K2pHdKhGYhDNv+h3kRgipI5AtQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XshrS32skeKcznLRlgfF713BvYRbidj0KlEfhs5Y8CFtBRQEfp1D/Ehxl5daV4YJ4
-	 2k9oWP/8zvFBYRIiCbRdhzvBhdx1ucKBpHnbDusJWQG6SOw1jnztsoPwx9RklmlEbR
-	 TNtRe/Qhm7DdMuzGo6bPlfmVR6UytBqMp0bquJt0=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250807105348epcas5p3065541de7991a0705ff5e9059865079e~ZdrAxgdxa2228622286epcas5p3Z;
-	Thu,  7 Aug 2025 10:53:48 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4byPCv6Z6Zz3hhT3; Thu,  7 Aug
-	2025 10:53:47 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250807032527epcas5p488b0eed9dcb260cad4f864d9ec6e8477~ZXjjK2EY50583105831epcas5p4M;
-	Thu,  7 Aug 2025 03:25:27 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250807032525epsmtip212df53bafdf0fb26bd25845d81d27973~ZXjhND0eV1700017000epsmtip2j;
-	Thu,  7 Aug 2025 03:25:25 +0000 (GMT)
-From: Aakarsh Jain <aakarsh.jain@samsung.com>
-To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-	andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	alim.akhtar@samsung.com, robh@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, aswani.reddy@samsung.com,
-	anindya.sg@samsung.com, Aakarsh Jain <aakarsh.jain@samsung.com>
-Subject: [PATCH 10/10] dt-bindings: media: s5p-mfc: Add SoC-specific
- compatible for 'samsung,mfc-v5'
-Date: Thu,  7 Aug 2025 08:54:49 +0530
-Message-ID: <20250807032449.92770-11-aakarsh.jain@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250807032449.92770-1-aakarsh.jain@samsung.com>
+	s=arc-20240116; t=1754537599; c=relaxed/simple;
+	bh=hRea0IlzPQc+TJfL1Mi5sGTdqpcPUvPxWlNW9eL5ugw=;
+	h=From:Date:Content-Type:Cc:Subject:Mime-Version:Message-Id:To; b=VBs56GwZcf3MYHCXaxE1Sl6v0JGuFXxXJ8neSaH0wXWkcLT/P3EGnRhIkfyyp+NvE1edOdRG35qE+5urP77cslDGK8rpr0aP7TPNKASGRPQHhdYJow0Cf3iiFoenBYqVWIBGiGZnp7crVPT0VasMaIYH5d4GKk0j/Z7PV0uBwtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=xOr2sX/L; arc=none smtp.client-ip=101.45.255.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1754537583;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=xiMJCuJpfu6nMJUxvjNUYm7BQ48UmD6tw9atHX3Jh5o=;
+ b=xOr2sX/L49NQuZgliY/hmBvgx78stHE0DNsz0zQHrIgBKfnvxmFbI96XjvQqIWIZhpZfWp
+ ihvtsiyXBFf+kR30lTSOocqiTrMNMZ7EWflIfNRiplRiHW++KWVn8bzKCecKAVqCcCo+sh
+ uQJibh92yw9NSaL0F7JsY6Yc3C9ZY/FX/GQBz3ugLTufAPCJYuXakKNNSE8y1zyQdiN94Z
+ nBuOt8vOpF+ovNOOCLNtGSEbNxE44DRfv6VPqS/l+ZE7cnN9jafJmKxI97YIe0mlgC/TFv
+ QgQE7550pp9yvEm2Nprost4hgTYFPgYZZU+Or7BNQe8ssaEvg40S+tt7Hq+ZVg==
+From: "XianLiang Huang" <huangxianliang@lanxincomputing.com>
+Date: Thu,  7 Aug 2025 11:32:52 +0800
+Content-Type: text/plain; charset=UTF-8
+Cc: <markus.elfring@web.de>, <joro@8bytes.org>, <will@kernel.org>, 
+	<robin.murphy@arm.com>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, 
+	<aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <iommu@lists.linux.dev>, 
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, 
+	<huangxianliang@lanxincomputing.com>
+Received: from LeonHXL.localdomain ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Thu, 07 Aug 2025 11:33:01 +0800
+Subject: [PATCH v2 RESEND] iommu/riscv: check pte null pointer before use
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250807032527epcas5p488b0eed9dcb260cad4f864d9ec6e8477
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250807032527epcas5p488b0eed9dcb260cad4f864d9ec6e8477
-References: <20250807032449.92770-1-aakarsh.jain@samsung.com>
-	<CGME20250807032527epcas5p488b0eed9dcb260cad4f864d9ec6e8477@epcas5p4.samsung.com>
+Mime-Version: 1.0
+X-Original-From: XianLiang Huang <huangxianliang@lanxincomputing.com>
+X-Mailer: git-send-email 2.34.1
+Message-Id: <20250807033252.1613-1-huangxianliang@lanxincomputing.com>
+Content-Transfer-Encoding: 7bit
+X-Lms-Return-Path: <lba+268941e6d+83d74c+vger.kernel.org+huangxianliang@lanxincomputing.com>
+To: <tjeznach@rivosinc.com>
 
-'samsung,mfc-v5' compatible string was getting used for both S5pv210
-and Exynos4 SoC. Based on SoC-specific, modify existing 'samsung,mfc-v5'
-compatible to 'samsung,exynos4-mfc'. Add new compatible for s5pv210.
+The riscv_iommu_pte_fetch can return NULL when the provided iova is not
+yet mapped, the caller should check if the returned pointer is NULL or
+not, but riscv_iommu_iova_to_phys missed this, which will then lead to
+a kernel panic.
 
-Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+Check the pointer before using it to avoid the bug. Now, when
+iova_to_phys is called with an unmapped iova, the kernel will not crash
+here.
+
+Fixes: 488ffbf18171 ("iommu/riscv: Paging domain support")
+Cc: Tomasz Jeznach <tjeznach@rivosinc.com>
+Signed-off-by: XianLiang Huang <huangxianliang@lanxincomputing.com>
 ---
- .../devicetree/bindings/media/samsung,s5p-mfc.yaml     | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Changelog
+v2:
+- Update change description
+- Add "Fixes" tag
 
-diff --git a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-index 6a711c8103ac..922b1de66736 100644
---- a/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-+++ b/Documentation/devicetree/bindings/media/samsung,s5p-mfc.yaml
-@@ -18,10 +18,11 @@ properties:
-   compatible:
-     oneOf:
-       - enum:
--          - samsung,exynos5433-mfc        # Exynos5433
--          - samsung,mfc-v5                # Exynos4
-+          - samsung,s5pv210-mfc           # S5pv210
-+          - samsung,exynos4-mfc           # Exynos4
-           - samsung,exynos5250-mfc        # Exynos5
-           - samsung,exynos5420-mfc        # Exynos5420
-+          - samsung,exynos5433-mfc        # Exynos5433
-           - samsung,exynos5800-mfc        # Exynos5800
-           - samsung,exynos7880-mfc        # Exynos7880
-           - tesla,fsd-mfc                 # Tesla FSD
-@@ -114,7 +115,8 @@ allOf:
-         compatible:
-           contains:
-             enum:
--              - samsung,mfc-v5
-+              - samsung,s5pv210-mfc
-+              - samsung,exynos4-mfc
-     then:
-       properties:
-         clocks:
-@@ -184,7 +186,7 @@ examples:
-     #include <dt-bindings/interrupt-controller/irq.h>
+ drivers/iommu/riscv/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+index 2d0d31ba2886..b0186faa0300 100644
+--- a/drivers/iommu/riscv/iommu.c
++++ b/drivers/iommu/riscv/iommu.c
+@@ -1283,7 +1283,7 @@ static phys_addr_t riscv_iommu_iova_to_phys(struct iommu_domain *iommu_domain,
+ 	unsigned long *ptr;
  
-     codec@13400000 {
--        compatible = "samsung,mfc-v5";
-+        compatible = "samsung,exynos4-mfc";
-         reg = <0x13400000 0x10000>;
-         interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
-         power-domains = <&pd_mfc>;
+ 	ptr = riscv_iommu_pte_fetch(domain, iova, &pte_size);
+-	if (_io_pte_none(*ptr) || !_io_pte_present(*ptr))
++	if (!ptr || _io_pte_none(*ptr) || !_io_pte_present(*ptr))
+ 		return 0;
+ 
+ 	return pfn_to_phys(__page_val_to_pfn(*ptr)) | (iova & (pte_size - 1));
 -- 
-2.49.0
-
+2.34.1
 
