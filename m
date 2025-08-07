@@ -1,185 +1,193 @@
-Return-Path: <linux-kernel+bounces-759352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797FBB1DC7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:33:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F361B1DC87
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDDD728000
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9D756479C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E89273808;
-	Thu,  7 Aug 2025 17:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4578B273D77;
+	Thu,  7 Aug 2025 17:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HfGb6W4c"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jXqAKAsM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA68726D4C6;
-	Thu,  7 Aug 2025 17:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF81C13E02D;
+	Thu,  7 Aug 2025 17:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754587988; cv=none; b=k4NfyV/IYqIAM33rWo3RaGo/vx1czTcTzASXGnsFE7JWtVYgNptupoAV9C+vzqVGY0RkZ27+6CvzbO8mmxl7lc9dHnXFwk/w5DzQ0gikESZ2qHAGpkSEoK7S8WbWhNc4qECtzJSs6LZwfKMtaCLlELawAYneaUE82WB/MqKC60Q=
+	t=1754588139; cv=none; b=di3Xu8qHfgR/PJ5vTK/KTqGiBGk8vFOisrjbXATKUtwahk2fIrwyT2/PoQs/LBv1QkLSD8FgB6kb7eiNyFntn3HSaiZyMTjrumlPoAcDkjBDaySidrvg/hAbn+mEBO7/aEUXlPaxotEOQz5eK4xNtuqW3bXN1IM0TZRORiOgvgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754587988; c=relaxed/simple;
-	bh=DZ6NOr0ehfLg9BnUOTsa6g/71Hf2SIfO/iwKjdaAA7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1426LPeP9902RTZ/iO/ZWzvKAq9tR5r/lMpf4uf0gf8VeMprVQG1iKe03jZyYiJtTpvW/ikssAjrBf/lPvJiqWosDvXCPr9NQMRRb1wvC8Z6bXbPUdI15/COfRSHdnddiHj5a6g2NvQj77KiG0/v+EU5/uSF37PQyD71fGQ64M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HfGb6W4c; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754587987; x=1786123987;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DZ6NOr0ehfLg9BnUOTsa6g/71Hf2SIfO/iwKjdaAA7w=;
-  b=HfGb6W4cV7tylg5cGCKpjPtE/1n0kZZXln2BCdauEOOzq7u3WLvNjVyN
-   a2XvGk35jCAL5FLQTZaLLRnLuLCxwDRpu/LcdXPg2/aA5LKjiE0D+hhjh
-   bBCyTA7Ja96tZdv6F7XG/l061PoGdOgitJK1xXoRMAhCrn12SRnCfNYd0
-   +Cx5Ddv5fAe6p6EHWdFU/28LitpmKvsHoM/AC660jQO8U1baiPnl1Wf3K
-   RZlqDJLvCcNXlEkv8lXpRX87a/HYf8NzpGKXgBZPPAVOl4y6R2brWc8RR
-   CcjChceJwjuLoFegaTa1l54kVUfKhU+Hy4mBlYSPXfQGwyetlrKP/V0GA
-   Q==;
-X-CSE-ConnectionGUID: Q4y2qtGbTB+ibtPDnQX2Jg==
-X-CSE-MsgGUID: 5UHDbTKzQcSvn44oqzlRLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67524295"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="67524295"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 10:33:06 -0700
-X-CSE-ConnectionGUID: Mtwx5TdMQy6/jwJ7WC8qBg==
-X-CSE-MsgGUID: GbNqTIhZQ2KbqsOwRT42hQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="164367144"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 07 Aug 2025 10:33:02 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uk4U2-000338-31;
-	Thu, 07 Aug 2025 17:32:59 +0000
-Date: Fri, 8 Aug 2025 01:32:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Menglong Dong <menglong8.dong@gmail.com>, idosch@idosch.org
-Cc: oe-kbuild-all@lists.linux.dev, dsahern@kernel.org,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	sdf@fomichev.me, kuniyu@google.com, ahmed.zaki@intel.com,
-	aleksander.lobakin@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: vrf: don't down the interface when add
- slave
-Message-ID: <202508080147.1G52KerV-lkp@intel.com>
-References: <20250807055634.113753-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1754588139; c=relaxed/simple;
+	bh=UASj2AgO1mBNMVv3V0LG49z0ZdwooDIrgM/bG1FaMMA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FBNnGH6n4+O9ES9fs9l+GeAXk53W+c9CniDnb/uEpzra00N/fGmMC6Kp0XjSU0W+oMe4EKfP8mEk3IXEDzOJqB/ANS5nVe0ggZGGGvN8H7phgar//JzMQtBTCBXM3mh/dThNfzb3F9hgoISMEmjiBO/cU0nRAfQfUPsKMlD4j/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jXqAKAsM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577EDLAC009613;
+	Thu, 7 Aug 2025 17:35:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wzDxtcZ180VoLJkdrDeoWXbz8Llqqro6AJbxMaFVIoY=; b=jXqAKAsMdTB0JPwB
+	BJ0bMtbLMPFz1+IAK30eNIS0+H/nnGHJU3lGBSfAML8qj7yBTVk5EQXvQYykSOm/
+	lPR2PuY2c4jKkRrZ9JtlcmiWbD5Fsjl1h3/Mg9BL0QuV5WKY+fLZN/BOnbvJFs1N
+	eH76WMt258n9HQhhKcYPOY7JzPRft4KlPxKKis3ki/XJo5+qCq5x60BLb/ZqRVMY
+	OT9wzNbqSHqmpw0zWRrVg5DuRtQgZg6v0Lzbz4Fud4Dy+Adl1B11viM3GVIs6kP0
+	6FSKaJ2569M6kyUwpchqw+wmb0OGRFMBFe+x3VkVC76R9TjyBJvNzrN9QrqQWpUG
+	qn1qTQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c586crpc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 17:35:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 577HZGej004485
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Aug 2025 17:35:16 GMT
+Received: from [10.216.57.148] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 7 Aug
+ 2025 10:35:11 -0700
+Message-ID: <685e3d36-c0e3-4faa-b817-aecc15976a25@quicinc.com>
+Date: Thu, 7 Aug 2025 23:05:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807055634.113753-1-dongml2@chinatelecom.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+To: Mark Brown <broonie@kernel.org>
+CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <mani@kernel.org>, <conor+dt@kernel.org>,
+        <bvanassche@acm.org>, <andersson@kernel.org>,
+        <neil.armstrong@linaro.org>, <dmitry.baryshkov@oss.qualcomm.com>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-5-quic_nitirawa@quicinc.com>
+ <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
+ <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+ <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
+ <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
+ <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
+ <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: k1lFEkVAZU6taij4K4oZC9rkplLHAAwz
+X-Authority-Analysis: v=2.4 cv=MZpsu4/f c=1 sm=1 tr=0 ts=6894e3d6 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=lkdlCDLHdhMUbxeqZWYA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: k1lFEkVAZU6taij4K4oZC9rkplLHAAwz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA2NCBTYWx0ZWRfX83m6j4by5xD7
+ kzuddMKPMFvUXzKUCrjFR5j19yINc8/xPwq1zh/W/NS3NjyiV13dOeW4xZiYOp0BlCWp+emC/dP
+ KdHy9DZ20jiwhGc6SuOwXCymXZ9JNZizZWjqu+vqvqJIn0s2die5QiC2c9b+GtMi0Ppan/5u2hP
+ YzEPsTPaW1ztyPn2UGhlFx07EfM3crceh2JUgrQAhdzNoFe8PaLyTIKzFvnwnGMQF1tkoAWD3Hr
+ oirwPo8QZBJafcIu7TrbQSp0DBn3JZ4I/hTLZxbd3LuQ2d28XOYs34zqCmiOmJQ9I19OFfliwgO
+ 8dr7NTTfDSNLhUVHLwwDTR4hOTUMadZMQSc6vE3ZsHiCQF6sAtXEmDrxuJsjEwzP573EO1d3Enw
+ QV8H2zHZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
+ adultscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060064
 
-Hi Menglong,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/net-vrf-don-t-down-the-interface-when-add-slave/20250807-140407
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250807055634.113753-1-dongml2%40chinatelecom.cn
-patch subject: [PATCH net-next v2] net: vrf: don't down the interface when add slave
-config: arc-randconfig-001-20250808 (https://download.01.org/0day-ci/archive/20250808/202508080147.1G52KerV-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250808/202508080147.1G52KerV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508080147.1G52KerV-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   net/core/lock_debug.c: In function 'netdev_debug_event':
->> net/core/lock_debug.c:20:9: warning: enumeration value 'NETDEV_VRF_MASTER' not handled in switch [-Wswitch]
-      20 |         switch (cmd) {
-         |         ^~~~~~
 
 
-vim +/NETDEV_VRF_MASTER +20 net/core/lock_debug.c
+On 8/7/2025 10:56 PM, Mark Brown wrote:
+> On Thu, Aug 07, 2025 at 09:12:53PM +0530, Nitin Rawat wrote:
+>> On 8/7/2025 7:14 PM, Mark Brown wrote:
+> 
+>>>> The intended use is to set the load requirement and then only en/disable
+>>>> the consumer, so that the current load is updated in core (like in the
+>>>> kerneldoc of _regulator_handle_consumer_enable())
+> 
+>>>> My question was about moving the custom parsing of
+>>>> $supplyname-max-micromap introduced in this patch into the regulator
+>>>> core, as this seems like a rather common problem.
+> 
+>>> Wait, is this supposed to be some new property that you want to
+>>> standardise?  I didn't see a proposal for that, it's not something that
+>>> currently exists - the only standard properties that currently exist are
+>>> for the regulator as a whole.
+> 
+>> The UFS QMP PHY driver is not the first client to use regulator_set_load or
+>> alternatively set load requirements and invoke enable/disable or
+>> alternatively
+> 
+> The issue isn't using regulator_set_load(), that's perfectly fine and
+> expected.  The issue is either reading the value to use from the
+> constraint information (which is just buggy) or adding a generic
+> property for this (which I'm not convinced is a good idea, I'd expect a
+> large propoprtion of drivers should just know what their requirements
+> are and that a generic property would just get abused).
+> 
+>> These drivers also define corresponding binding properties, as seen in the
+>> UFS instances documented here:
+> 
+>> UFS Common DT Binding ((link - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/ufs/ufs-common.yaml?h=next-20250807)
+> 
+> Note that that's specifying OPPs which is different...
 
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  11  
-1901066aab7654 net/core/lock_debug.c     Stanislav Fomichev 2025-04-01  12  int netdev_debug_event(struct notifier_block *nb, unsigned long event,
-1901066aab7654 net/core/lock_debug.c     Stanislav Fomichev 2025-04-01  13  		       void *ptr)
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  14  {
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  15  	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  16  	struct net *net = dev_net(dev);
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  17  	enum netdev_cmd cmd = event;
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  18  
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  19  	/* Keep enum and don't add default to trigger -Werror=switch */
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04 @20  	switch (cmd) {
-22cbc1ee268b7e net/core/lock_debug.c     Jakub Kicinski     2025-04-15  21  	case NETDEV_XDP_FEAT_CHANGE:
-22cbc1ee268b7e net/core/lock_debug.c     Jakub Kicinski     2025-04-15  22  		netdev_assert_locked(dev);
-22cbc1ee268b7e net/core/lock_debug.c     Jakub Kicinski     2025-04-15  23  		fallthrough;
-cb7103298d1c5d net/core/lock_debug.c     Jakub Kicinski     2025-04-10  24  	case NETDEV_CHANGE:
-1901066aab7654 net/core/lock_debug.c     Stanislav Fomichev 2025-04-01  25  	case NETDEV_REGISTER:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  26  	case NETDEV_UP:
-1901066aab7654 net/core/lock_debug.c     Stanislav Fomichev 2025-04-01  27  		netdev_ops_assert_locked(dev);
-1901066aab7654 net/core/lock_debug.c     Stanislav Fomichev 2025-04-01  28  		fallthrough;
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  29  	case NETDEV_DOWN:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  30  	case NETDEV_REBOOT:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  31  	case NETDEV_UNREGISTER:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  32  	case NETDEV_CHANGEMTU:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  33  	case NETDEV_CHANGEADDR:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  34  	case NETDEV_PRE_CHANGEADDR:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  35  	case NETDEV_GOING_DOWN:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  36  	case NETDEV_FEAT_CHANGE:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  37  	case NETDEV_BONDING_FAILOVER:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  38  	case NETDEV_PRE_UP:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  39  	case NETDEV_PRE_TYPE_CHANGE:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  40  	case NETDEV_POST_TYPE_CHANGE:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  41  	case NETDEV_POST_INIT:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  42  	case NETDEV_PRE_UNINIT:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  43  	case NETDEV_RELEASE:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  44  	case NETDEV_NOTIFY_PEERS:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  45  	case NETDEV_JOIN:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  46  	case NETDEV_CHANGEUPPER:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  47  	case NETDEV_RESEND_IGMP:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  48  	case NETDEV_PRECHANGEMTU:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  49  	case NETDEV_CHANGEINFODATA:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  50  	case NETDEV_BONDING_INFO:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  51  	case NETDEV_PRECHANGEUPPER:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  52  	case NETDEV_CHANGELOWERSTATE:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  53  	case NETDEV_UDP_TUNNEL_PUSH_INFO:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  54  	case NETDEV_UDP_TUNNEL_DROP_INFO:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  55  	case NETDEV_CHANGE_TX_QUEUE_LEN:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  56  	case NETDEV_CVLAN_FILTER_PUSH_INFO:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  57  	case NETDEV_CVLAN_FILTER_DROP_INFO:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  58  	case NETDEV_SVLAN_FILTER_PUSH_INFO:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  59  	case NETDEV_SVLAN_FILTER_DROP_INFO:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  60  	case NETDEV_OFFLOAD_XSTATS_ENABLE:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  61  	case NETDEV_OFFLOAD_XSTATS_DISABLE:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  62  	case NETDEV_OFFLOAD_XSTATS_REPORT_USED:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  63  	case NETDEV_OFFLOAD_XSTATS_REPORT_DELTA:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  64  		ASSERT_RTNL();
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  65  		break;
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  66  
-be94cfdb993ff0 net/core/rtnl_net_debug.c Kuniyuki Iwashima  2025-01-15  67  	case NETDEV_CHANGENAME:
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  68  		ASSERT_RTNL_NET(net);
-be94cfdb993ff0 net/core/rtnl_net_debug.c Kuniyuki Iwashima  2025-01-15  69  		break;
-be94cfdb993ff0 net/core/rtnl_net_debug.c Kuniyuki Iwashima  2025-01-15  70  	}
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  71  
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  72  	return NOTIFY_DONE;
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  73  }
-1901066aab7654 net/core/lock_debug.c     Stanislav Fomichev 2025-04-01  74  EXPORT_SYMBOL_NS_GPL(netdev_debug_event, "NETDEV_INTERNAL");
-03fa534856593b net/core/rtnl_net_debug.c Kuniyuki Iwashima  2024-10-04  75  
+Sorry for the confusion .Instead, I meant the following three properties 
+defined in the link to ufs-common.yaml binding, which specify the 
+maximum load that can be drawn from the respective power supplies.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+   vcc-max-microamp:
+     description:
+       Specifies max. load that can be drawn from VCC supply.
+
+   vccq-max-microamp:
+     description:
+       Specifies max. load that can be drawn from VCCQ supply.
+
+   vccq2-max-microamp:
+     description:
+       Specifies max. load that can be drawn from VCCQ2 supply.
+
+
+> 
+>> There was a previous effort to introduce similar properties
+>> (vdda-phy-max-microamp and vdda-pll-max-microamp) in the device tree
+>> bindings.
+>> Link - (link- https://patchwork.kernel.org/project/linux-arm-msm/patch/20220418205509.1102109-3-bhupesh.sharma@linaro.org/#24820481)
+> 
+> That patch also fails to supply any rationale for making this board
+> specific or generally putting them in the DT, AFAICT it's one of these
+> things just pulled out of the vendor tree without really thinking about
+> it.  The changelog just says the properties are in downstream DTs.
+> 
+>> Currently, the regulator framework does support automatic aggregation of
+>> load requests from multiple client drivers. Therefore, it is reasonable and
+>> necessary for each client to individually communicate its expected runtime
+>> load to the regulator framework to put the regulators in current
+>> operation mode.
+> 
+> That doesn't mean that it's a good idea to put that information in the
+> DT, nor if it is sensible to put in DT does it mean that it's a good
+> idea to define a generic property that applies to all regulator
+> consumers which is what I now think Konrad is proposing.
+
 
