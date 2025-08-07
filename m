@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-759270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C04B1DB47
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:04:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA88B1DB4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723AB1AA5460
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:04:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD0CE7A9B84
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3887826E6F1;
-	Thu,  7 Aug 2025 16:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3608D26CE2E;
+	Thu,  7 Aug 2025 16:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="j0enLXZF"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCCGH98n"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7554026E6E4
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 16:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6326CE14
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 16:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582585; cv=none; b=F0BWyzaFNuoFkM2QDIc99o6KOdEjtZfxWIV32xb8anOcEQZ8kvAybLJT7bIfUiVPTkJ9Ry/Xwdd3zjzKJUe562LYO9ogrVvjUBdglNEZeyUV5mvU70ZR/R58IusORnc+U2t0sHhOg44uQQJDOqMDxFafNtjBsv4BaHiewp6eJ4I=
+	t=1754582774; cv=none; b=Ael/p0OrLk2+yUpMxGZqh+va9DteOJIVE6xRQVV+gNBlimx7K2YV/H/9qqEhVfbmh8bbOz9/hSBh1gN5eK4stInQMFmKDFLF1+QraNsQVIY92D6lFV4txKRtMiq9+lOzO3TBQM0PMHKJHC01EKalJi15W3M0cQcfEFbSBIx0Ftw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582585; c=relaxed/simple;
-	bh=SmbMv/qdEz28m9GrWcI4c2WD55LP+jRQUDQcxubXHCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XnDTn7XXIsfiLF0iJV8DEP6rVE9IxrCTu7z7SPWKO1mQ4YBbZmoEFweu+mo852hzSv1OqPscqTxULSECmHNEypQWlmky803Tsv6RqMEbWSeybGU/Fgb6BJIhVYzvQ1U3K9uCIbADCr7iTKQDNA3SfBOOz5CSX2U52+L4Y8J0PoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=j0enLXZF; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-30bc0cfd8e7so728298fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 09:03:03 -0700 (PDT)
+	s=arc-20240116; t=1754582774; c=relaxed/simple;
+	bh=m5OD47T9u28wJPFJNjugDG/Ks8NrQrnQw4IC+UnaYEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OWeMJRP0DHZD5yFMxSBRG9zMZF39Ex1OIZhQ6EGKVDLVap1iaOUFcrc+cbbAQTOh1sEXQQjwk7Jgxa6X7n2zy0DHYEkf1N/BLIPIKYpze1LqFkGMNvbrf87sObjXYyI9DvVUfVuAS6BhqSbJTQS57FA0sC+r13NEoyp3sVw1dTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCCGH98n; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-332341d99dbso1800881fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 09:06:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754582582; x=1755187382; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754582771; x=1755187571; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=IiA/OxVAqFEZu+6RNkj75UQ6W/OZ49cY1TnC8j0a0xo=;
-        b=j0enLXZFkwlMEHVqCs9FWUWuz6ZLTouHCgw7L6KuArVnA2FBnaIqTpsuTWmv9Zd9Nz
-         zBtjxqMYYVwuSkqb0TkQEPlSdLW6F4ddV/icQG5MMwBh6vdatXpXGKR2TUh0aSbTER/y
-         YlFf4qYvoFsahBFONizVbtTjCaOm3lQd+P3YHjosdfeUtehI2hksCc4vTmvLt5EKjrYX
-         X9wdB+j6SjPOkF/29jA/t7WBWAL+yG1OAEQQFBJVRHYAkQZ6vmEmxM6ttOKfM1nqDD3Q
-         H9zfi4+taE6N2wZfbSM0bfQb3QtbChxeFYdpxu1FmadI2FFw54LK+WH7w1cV0HlTbHVW
-         My6g==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yJBjqu3YD7XRAedLpR3J+C+OqUxVoJiaJAbOSselMEQ=;
+        b=TCCGH98nk240nj9GKhvdnpPMyhI6M9mfIU0zpTAI87VPvoCwr6vvJmgs5mMeZqJPIW
+         I/t0JVBizifPV74tXY5ua3w5nBrizpAdnat9znysMvX9LrsYfQ0ryK+TQKbSuPWQO0mj
+         c2rwZTfTe6+6RFNQjGQACk4Fbj1OBOJHug889EP54qXbFK/6xhWwEpFnuTHTPBWaghEY
+         bslT0rUNI6YpXATkC0BC1VcEzTB0gn6aabwuQym6bLIT2sxwUfZkfd1j9zQ2bbqs9T1n
+         rI5eJbuPf04UFATrStVHjNMf2DxRaomBqmH7aaw+f+mvc53WvrRDBur9RavpXnrm27ZX
+         ojGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754582582; x=1755187382;
+        d=1e100.net; s=20230601; t=1754582771; x=1755187571;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IiA/OxVAqFEZu+6RNkj75UQ6W/OZ49cY1TnC8j0a0xo=;
-        b=u1ULsM7U4F9omOwQ2C5QjGim9wpQAigFAwtQuj6yIZdxhcapsnwfESUe0PJBS2niaV
-         9iErxtAVLi8FFFSNWsE809quNJznwO+gULs+BI1qGZfl/t5VszJXGf7Efswt4hXQ4aqq
-         hljVLTsMEVmWxal3pjwfELp8cQJpOB4dznrfpWvJh8+cL++r2wBSVg6ZrIrJgQ+NDkeX
-         W4+NYRemBY//TBEuCiNVilJhdrAsPyhRdhaWsfC37EFqJOWIKcSlEn7IDgqjH/3QFBaj
-         Sy6gx5JCg32JCsJYY3ovSI5TYebSH4M+kPXqh0RqgtCKBMBw6OgY8loO/u43OVwjwIgk
-         uwWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxPBRALso0W8tVHM10QbnvRLg8MnmH81wQHeVXXmwa+nnjZAKy4h2rppYfbtMlrwCWlBXsNeh57cKMQIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy8wDWDfhH1EiRBJmfJFpgKp8+iVQLsAw6sdGgPkZT2SsPyzlO
-	0kqBnoBBXUPWwNaYmE8Un+cqgjE/4qjS95IGWAuxmcu1hdizevw/FLoO7R4urCFmnQg=
-X-Gm-Gg: ASbGnctikLE9oJofTbdjDmJ/WXyyhG/81Tmzag65emZRB+3eNVcDFPY7r3bYJu3kfzJ
-	p24QiOZ3s43BFhVoq7bR9BKvxzzTmbLj+PJLmotGOkGQ7xcj0qMcg2JWY+3Qs3rsnaByQ87bWxK
-	0F4KHyyAL5e+uhTcA5UN8tGewbxnPIzeUX77mmG9FxRJd6rYidSiMoHPUSMuWukDsYEGgCCYY6n
-	rCIiNYF7yWwtvdBmLKtw2aq16gDcRnU3ljOmNEtQc0B+HxS96F8ibrWnE9tAF9u94U1dBEc2Usp
-	PQUVppJBoEbbQ3MAmbj5XswIsHJkA36RFMdnpPSgpxcBlXok20x10mfqdPJdXbZN3016+e5J6xq
-	G8kjmHP83q9F4LNXXcGnW2YE+d7O2Xp1d1udvXWyE+IbjyyyTUOmAAMkBBSQTVCryFlr9rF9Vh3
-	M=
-X-Google-Smtp-Source: AGHT+IEDd9iWnbMRuwQ1lQVibSMLGfaiPKZhtrHEAEpQskYUkoxN/o/4EBgUPXTI+PhOLsKX+tnrsg==
-X-Received: by 2002:a05:6871:24e7:b0:2c2:4d73:ec43 with SMTP id 586e51a60fabf-30c004ddf0bmr2547212fac.15.1754582582003;
-        Thu, 07 Aug 2025 09:03:02 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:ce54:d09f:5709:ac85? ([2600:8803:e7e4:1d00:ce54:d09f:5709:ac85])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30ba8228a79sm2726450fac.35.2025.08.07.09.02.58
+        bh=yJBjqu3YD7XRAedLpR3J+C+OqUxVoJiaJAbOSselMEQ=;
+        b=RK2/woPoLeXr8cMioWW8LzT/rSyn3rEJdn0dxX9TIPzS7gRmYSW+AAe8WGY22Gkfxd
+         dghrhskLS4hzQmazDYMJGDXp0zcRO9aYjo3UvVn0utReuy70vkvVUlsBVAbhlLkvTACr
+         v0PuvhqbHveoCCzvmNltFzSbFl+o6MIrApOyC+VDb2g1YkNT5nk/XVWrKivf9GUa2c3D
+         p2uBVtK3/2WeAt7u8GWZSG8QBjXgKRlCe2gGOkfd6CsQfURGFn0espw+rFcWRJ3tSMEF
+         8Qoq17+1sCsp9JUQLgjqXfWg6p5kugsQAjsOUiVhM6a1ROw8yhgSOsh0WOTK7STY1GfR
+         ePTA==
+X-Forwarded-Encrypted: i=1; AJvYcCX67blLQIiNjd2hPlVRDaiCZ7v18MR+xNIDOicNnFjFtXQ1Vr1CScwqNs4p017NYRegAbxpPUCouEV8w+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQknFCheA01R0HmlQf4HUVvwSuDFHL+TN4F/y91Zo1TNiWQ7XY
+	yJpWimt4kiV55Nd1J902THQ7cvQEsoxoyVIlt24ZFDQqICw1/nUEm2y4
+X-Gm-Gg: ASbGncsbcvvOqquNSOhsKGvmM/Apwucmk2W9p9ea7LA6cNWHIg0BCexqcttI4ppJiPP
+	LZDr0cy2/WSf2I2oZi/mxBlRPgf+HI0uJf77LLR67wzMICoSnAARJHQgS/fib/JQ3LDr/tCFv7j
+	kmQ4UAi+ptKkkJFk5ISNHT86D5B+etfZEe/nXTnGZyvB8ZNIoLc9AEQFTWFFlUqzOZ1q/gAWtKj
+	OcYHcQa5NcOyWBwzvtsVRFDBopZAqDlj/t8cC1IkN45xB5CQ8G1CNJ3zbXUzygkGsSxf1YwvETS
+	i2EXdZLu3ptDpM8aSmmW97Ub0DlHEEAV1an89wJ+8HG1sXVe0GiV5p3qcso1PYc4kB73k5s1pSe
+	isxMdOciJL+kdHRRRMKlYTrUQtIUd
+X-Google-Smtp-Source: AGHT+IFHF81LeQAj8VhkvZSN48lQMwN14izUC9rPxv1TIYTDZL9tj4CKnu9CWhEAPd3obwD23VnlvQ==
+X-Received: by 2002:a05:651c:4112:20b0:32a:714c:12c4 with SMTP id 38308e7fff4ca-333812151c8mr5823071fa.1.1754582770692;
+        Thu, 07 Aug 2025 09:06:10 -0700 (PDT)
+Received: from [10.214.35.248] ([80.93.240.68])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332388d87ebsm26736341fa.55.2025.08.07.09.06.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 09:03:00 -0700 (PDT)
-Message-ID: <fe98c2a2-ec8d-4352-a9fb-6f0e798f7268@baylibre.com>
-Date: Thu, 7 Aug 2025 11:02:57 -0500
+        Thu, 07 Aug 2025 09:06:10 -0700 (PDT)
+Message-ID: <0d24f6b7-0e4c-4879-87f2-e31ad988baad@gmail.com>
+Date: Thu, 7 Aug 2025 18:05:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,58 +81,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: adc: ad4170-4: Use ERR_PTR() with %pe to improve
- error logging
-To: Salah Triki <salah.triki@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <aJReTh-t5D45aZNV@pc>
+Subject: Re: [PATCH 5/8] mm/kasan, mm/vmalloc: Respect GFP flags in
+ kasan_populate_vmalloc()
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+ Baoquan He <bhe@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ Alexander Potapenko <glider@google.com>
+References: <20250807075810.358714-1-urezki@gmail.com>
+ <20250807075810.358714-6-urezki@gmail.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aJReTh-t5D45aZNV@pc>
+From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+In-Reply-To: <20250807075810.358714-6-urezki@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/7/25 3:05 AM, Salah Triki wrote:
-> Use `ERR_PTR(ret)` with `%pe` in `ad4170_read_sample()` to properly display
-> symbolic error codes (e.g. `-ENOMEM`) instead of raw integers (e.g. `-12`),
-> improving readability and debug clarity.
-> 
-> Signed-off-by: Salah Triki <salah.triki@gmail.com>
-> ---
-> Changes in v2:
->    - Improve commit title
-> 
->  drivers/iio/adc/ad4170-4.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad4170-4.c b/drivers/iio/adc/ad4170-4.c
-> index 6cd84d6fb08b..6296b5dc930b 100644
-> --- a/drivers/iio/adc/ad4170-4.c
-> +++ b/drivers/iio/adc/ad4170-4.c
-> @@ -1253,11 +1253,11 @@ static int ad4170_read_sample(struct iio_dev *indio_dev,
->  
->  	ret = __ad4170_read_sample(indio_dev, chan, val);
->  	if (ret) {
-> -		dev_err(dev, "failed to read sample: %d\n", ret);
-> +		dev_err(dev, "failed to read sample: %pe\n", ERR_PTR(ret));
->  
->  		ret2 = ad4170_set_channel_enable(st, chan->address, false);
->  		if (ret2)
-> -			dev_err(dev, "failed to disable channel: %d\n", ret2);
-> +			dev_err(dev, "failed to disable channel: %pe\n", ERR_PTR(ret2));
->  
->  		return ret;
+
+On 8/7/25 9:58 AM, Uladzislau Rezki (Sony) wrote:
+
+> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+> index d2c70cd2afb1..5edfc1f6b53e 100644
+> --- a/mm/kasan/shadow.c
+> +++ b/mm/kasan/shadow.c
+> @@ -335,13 +335,13 @@ static void ___free_pages_bulk(struct page **pages, int nr_pages)
 >  	}
+>  }
+>  
+> -static int ___alloc_pages_bulk(struct page **pages, int nr_pages)
+> +static int ___alloc_pages_bulk(struct page **pages, int nr_pages, gfp_t gfp_mask)
+>  {
+>  	unsigned long nr_populated, nr_total = nr_pages;
+>  	struct page **page_array = pages;
+>  
+>  	while (nr_pages) {
+> -		nr_populated = alloc_pages_bulk(GFP_KERNEL, nr_pages, pages);
+> +		nr_populated = alloc_pages_bulk(gfp_mask, nr_pages, pages);
+>  		if (!nr_populated) {
+>  			___free_pages_bulk(page_array, nr_total - nr_pages);
+>  			return -ENOMEM;
+> @@ -353,25 +353,33 @@ static int ___alloc_pages_bulk(struct page **pages, int nr_pages)
+>  	return 0;
+>  }
+>  
+> -static int __kasan_populate_vmalloc(unsigned long start, unsigned long end)
+> +static int __kasan_populate_vmalloc(unsigned long start, unsigned long end, gfp_t gfp_mask)
+>  {
+>  	unsigned long nr_pages, nr_total = PFN_UP(end - start);
+> +	bool noblock = !gfpflags_allow_blocking(gfp_mask);
+>  	struct vmalloc_populate_data data;
+> +	unsigned int flags;
+>  	int ret = 0;
 
-Interesting, I didn't know we had this format specifier. But I think
-this is something we would want to do kernel-wide or not at all to stay
-consistent.
+gfp_mask = (gfp_mask & GFP_RECLAIM_MASK);
 
-And if we are doing this in more places, it would make sense to have a new
-format specifier for integer error values instead of casting them to
-pointers.
+
+But it might be better to do this in alloc_vmap_area().
+In alloc_vmap_area() we have this:
+
+retry:
+	if (IS_ERR_VALUE(addr)) {
+		preload_this_cpu_lock(&free_vmap_area_lock, gfp_mask, node);
+
+which probably needs GFP_RECLAIM_MASK too.
+
+>  
+> -	data.pages = (struct page **)__get_free_page(GFP_KERNEL | __GFP_ZERO);
+> +	data.pages = (struct page **)__get_free_page(gfp_mask | __GFP_ZERO);
+>  	if (!data.pages)
+>  		return -ENOMEM;
+>  
+>  	while (nr_total) {
+>  		nr_pages = min(nr_total, PAGE_SIZE / sizeof(data.pages[0]));
+> -		ret = ___alloc_pages_bulk(data.pages, nr_pages);
+> +		ret = ___alloc_pages_bulk(data.pages, nr_pages, gfp_mask);
+>  		if (ret)
+>  			break;
+>  
+>  		data.start = start;
+> +		if (noblock)
+> +			flags = memalloc_noreclaim_save();
+> +
+
+
+This should be the same as in __vmalloc_area_node():
+
+	if (noblock)
+		flags = memalloc_noreclaim_save();
+	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+ 		flags = memalloc_nofs_save();
+ 	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
+ 		flags = memalloc_noio_save();
+
+
+It would be better to fix noio/nofs stuff first with separate patch, as it's
+bug and needs cc stable. And add support for noblock in follow up.
+
+It might be a good idea to consolidate such logic in separate function,
+memalloc_save(gfp_mask)/memalloc_restore(gfp_mask, flags) ?
+
+>  		ret = apply_to_page_range(&init_mm, start, nr_pages * PAGE_SIZE,
+>  					  kasan_populate_vmalloc_pte, &data);
+> +		if (noblock)
+> +			memalloc_noreclaim_restore(flags);
+> +
+>  		___free_pages_bulk(data.pages, nr_pages);
+>  		if (ret)
 
