@@ -1,188 +1,329 @@
-Return-Path: <linux-kernel+bounces-759215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246D8B1DA6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:51:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A9CB1DA6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38CC3562A55
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11641561DD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168CC25DCE5;
-	Thu,  7 Aug 2025 14:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEvmgt5x"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA6325A2AE;
+	Thu,  7 Aug 2025 14:54:51 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BD41411DE;
-	Thu,  7 Aug 2025 14:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36B81411DE
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754578290; cv=none; b=ChvfMgAJCybLCKUrnvhAVAsPDM1fe7uSlBtq1FzF+vuZkE3a1Ss3+y0jZBDvpR2tNZmxjMX90C/RsGjORyGaXTpyx8gqGnuVzhZCpQmExdpRwprkhQvykXgv28F/zb5ujCbO2jwr9ei081P0w8iNxpiYKyNVcJY8PRkIninq0NA=
+	t=1754578491; cv=none; b=a8GeAraq55les7slVXpjbBwFBxeNOnCoyiV8AZGylgigJ1lY7x25Dwt3heXpjEqzJ+QbLUcPbBWSppSm/SyV7H5iOh65b+XKRcNI1Tk1UkWQuKL4V2cHHder+I1vIGuRyh0m5kuszcnrPf72VDK/4FGw80soW3Ot2BH5ZSEuAxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754578290; c=relaxed/simple;
-	bh=Uqx2K8iqj8C9J2fe3pyivDhLY31N5WS3GpKgVecfeqw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YbBrI/FKSpA+F0ko1WEhRMV4yO8FluICxT/ucQXN0aG8furVabnv8mK/CfYn1YyhFjW+rkq3aHX5bHatxf4S82GroGPHCwYblHCPA7UXrY2bj02KF5fT7zuWhzvBnZX1kcaGw+yXsS4zMFqUOrvgXosBQdblYBo2POkZtrDvMw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEvmgt5x; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76bc68cc9e4so1249393b3a.2;
-        Thu, 07 Aug 2025 07:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754578288; x=1755183088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OzOvhq3GmbvaBtGUgAaXSZiV6ZbsCylTW2ygbBRF/o=;
-        b=aEvmgt5xVj/YsLqy43drRU2tXYMHik4IUi6wWVjhp7aIR1rdGHdHVpZ6r97JjmZzfF
-         gR5KX3B8SDL53zejojx7dpJNRK/om+CqBUixE2At8lkL+XS7ve0PsFnVXUGx8z6WnXQn
-         iuRTcqYpHrraosyF2vu6cSQjLZu3uN0T19Fa1PNgVd8pc99CBcG6utWYAARDdRRuBnTX
-         nxndxQZFz17SfL/+iksZXDRv2h1/zPYjCtRbO87IJV7sjNO9spuINxCLOZBmG1nNTbnh
-         U4pD1t8Dr2BaqW/zjy4pzJ9BQYESnNE+EDe79FL+SjdC7yg+oRaBlf3/K24djyHIsvSG
-         eeow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754578288; x=1755183088;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9OzOvhq3GmbvaBtGUgAaXSZiV6ZbsCylTW2ygbBRF/o=;
-        b=AnFpB6OJBKvlVL0Fp91oAIdA+rnqwKjZbAnhka7oiAiZXGiq65U/Y4iHfkmg5QWmXi
-         eEiS7lnS933TOgLtM/k8mg1OrKMsqxQehU7zUi/J7d+NPzTqHXp57HONMl5W/sqYCDCQ
-         VUyBXLqhJKHAODKgy0MeHfBLKb6fUr/jf/niac0hZzIEiJHjijKpXQPz3OOWtezOKPL/
-         EVvrlJXdb3liugnvA8aRT8TSOcdbAlECFCyxb1x5tqyCy+GrJBUatlhNdjuXKpz/2KBr
-         kKislSgwNHtOMRvbghjai2Z5Y4AU9Ja4jDNTXUi5Ww52X9Ha3VEXbWReCJOOXmbpYvxI
-         ap+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXVoLNR1wVojNcOMMbd0WfHrCYKQDyscHI8tSFg7x+eMQefQJKxjlvA6U4W7Ndpb9jEUDDWbgw4fs8pEnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw76KsMmCIfvTbil7vNqrTCD016t5h9b3jQB9JgJweI5ByJNu/s
-	I1Djj45q663UFFVcrfcRPxPJW6OA3rVsAmiReVmefPLHgriQoh0eYUgd
-X-Gm-Gg: ASbGncsKrsmtWox+8YpPKdD+e0BquuCtogXnVOYMqj2UQVB0FC/f+z0e5nkTS6jQdDF
-	U/mXZRtvWIGxj4d1yr8QUkKgyZqqhFi0m9dZ8juLG79Mt7TU9wtefCU62+853pdxtkcr/6LMetd
-	9LXpyHlGQTvhWdBUBshDid/iMCozVTBiPKc4wbZZ2fHAaLhk1GH5xqUpdcU4z14Aj+8lIwFvMt2
-	CYv3BG1NsjjWpw4rWKdO7zlDkpkZv1AT1qbnqVhvdqo/xf14by1O/aksslLUX1WugMY1ecF9l6t
-	GrAgGhuJZPfXEq/dTUDxLgZXxofzqSGVNRsMyxYhezGCxibnR4oB5uaHmPI7bt5TMeKlmy+U9/s
-	dZLciop9MFDQfQ45KYi4iyQtJ6745H2rZVpAeLNVXmZROo8acM2+/Cqe7PM66fPA=
-X-Google-Smtp-Source: AGHT+IGtphOkrCppTiHiV45+Qe9W2hQNmX+FpcoXnXXadWOHWcmzG19NrBZWjxt3jESoe+Rbd+mthQ==
-X-Received: by 2002:a05:6300:210c:b0:23d:c4c6:f406 with SMTP id adf61e73a8af0-2403159487dmr11371637637.43.1754578288227;
-        Thu, 07 Aug 2025 07:51:28 -0700 (PDT)
-Received: from ak-workspace.tail730999.ts.net ([49.207.200.134])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bac0d6csm15569174a12.38.2025.08.07.07.51.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 07:51:27 -0700 (PDT)
-From: Akshaykumar Gunari <akshaygunari@gmail.com>
-To: corbet@lwn.net,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com
-Cc: linux-doc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Akshaykumar Gunari <akshaygunari@gmail.com>
-Subject: [PATCH RESEND] docs: arm: stm32: fix typo "busses" -> "buses"
-Date: Thu,  7 Aug 2025 20:21:19 +0530
-Message-ID: <20250807145119.2214-1-akshaygunari@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754578491; c=relaxed/simple;
+	bh=+EVriUEjIYJRTHIS1GAz3bf5dRAmTPf8QbWlSVGg2nc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GZOBiqq2NLsA16zPFeZK/L6lkLkSOfYmodltM5OVJUz8oZ+zJL6C8s+eUc2GoYP8RIlhhrdIfX73pTPNP6cLmt/F2bj1BSp57a8uaV6jEfE8R5iDJbXjJiXeCEEoAhvTZjuuu/JH/TtbebnUYMfzTQiz6dswvmPN6lt1AkRbxWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D2F4C441B8;
+	Thu,  7 Aug 2025 14:54:44 +0000 (UTC)
+Message-ID: <416b8286-7c78-4c56-8328-5e1b99bf15d4@ghiti.fr>
+Date: Thu, 7 Aug 2025 16:54:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] Re: [PATCH RFC 2/2] riscv: introduce percpu.h into
+ include/asm
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: yury.norov@gmail.com, linux@rasmusvillemoes.dk, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dennis@kernel.org, tj@kernel.org,
+ cl@gentwo.org, linux-mm@kvack.org
+References: <20250618034328.21904-1-cuiyunhui@bytedance.com>
+ <20250618034328.21904-2-cuiyunhui@bytedance.com>
+ <c9ba6163-6703-441b-915c-d784044f862f@ghiti.fr>
+ <b0583098-204a-4ad1-b173-4bd00a358d61@ghiti.fr>
+ <CAEEQ3w=uz-kTe05-fnPa_BfkZ6ZocQHg-G001yBtLqRM2zEr+g@mail.gmail.com>
+ <404d38d7-f21b-4c97-b851-8b331deb3f8a@ghiti.fr>
+ <CAEEQ3wknpn0Y6H8A-MEk-9hkvUwv0VapbtBR97Qhz9ipCk2Jew@mail.gmail.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CAEEQ3wknpn0Y6H8A-MEk-9hkvUwv0VapbtBR97Qhz9ipCk2Jew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdduvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeeuffefvdelteelteejhfejhedujeetteevtddvvddthfeiteffledvffeggfeiieenucffohhmrghinhepihhnfhhrrgguvggrugdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgtfhemkegsfhelmeelleduugemkegrrghfnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeelfhgtfhemkegsfhelmeelleduugemkegrrghfpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeelfhgtfhemkegsfhelmeelleduugemkegrrghfngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegtuhhihihunhhhuhhisegshihtvggurghntggvrdgtohhmpdhrtghpthhtohephihurhihrdhnohhrohhvsehgmhgrihhlrdgtohhmpdhrtghpt
+ hhtoheplhhinhhugiesrhgrshhmuhhsvhhilhhlvghmohgvshdrughkpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-Fix the spelling of "busses" to the preferred form "buses" in STM32 ARM
-architecture documentation.
+Hi Yunhui,
 
-Signed-off-by: Akshaykumar Gunari <akshaygunari@gmail.com>
----
- Documentation/arch/arm/stm32/stm32f746-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32f769-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32h743-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32h750-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32mp13-overview.rst  | 2 +-
- Documentation/arch/arm/stm32/stm32mp151-overview.rst | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+On 7/18/25 16:33, yunhui cui wrote:
+> Hi Alex，
+>
+> On Fri, Jul 18, 2025 at 10:23 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
+>> Hi Yunhui,
+>>
+>> On 7/18/25 08:40, yunhui cui wrote:
+>>> Hi Alex,
+>>>
+>>> On Thu, Jul 17, 2025 at 9:06 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
+>>>> On 7/17/25 15:04, Alexandre Ghiti wrote:
+>>>>> Hi Yunhui,
+>>>>>
+>>>>> On 6/18/25 05:43, Yunhui Cui wrote:
+>>>>>> Current percpu operations rely on generic implementations, where
+>>>>>> raw_local_irq_save() introduces substantial overhead. Optimization
+>>>>>> is achieved through atomic operations and preemption disabling.
+>>>>>>
+>>>>>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>>>>>> ---
+>>>>>>     arch/riscv/include/asm/percpu.h | 138 ++++++++++++++++++++++++++++++++
+>>>>>>     1 file changed, 138 insertions(+)
+>>>>>>     create mode 100644 arch/riscv/include/asm/percpu.h
+>>>>>>
+>>>>>> diff --git a/arch/riscv/include/asm/percpu.h
+>>>>>> b/arch/riscv/include/asm/percpu.h
+>>>>>> new file mode 100644
+>>>>>> index 0000000000000..423c0d01f874c
+>>>>>> --- /dev/null
+>>>>>> +++ b/arch/riscv/include/asm/percpu.h
+>>>>>> @@ -0,0 +1,138 @@
+>>>>>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>>>>>> +
+>>>>>> +#ifndef __ASM_PERCPU_H
+>>>>>> +#define __ASM_PERCPU_H
+>>>>>> +
+>>>>>> +#include <linux/preempt.h>
+>>>>>> +
+>>>>>> +#define PERCPU_RW_OPS(sz)                        \
+>>>>>> +static inline unsigned long __percpu_read_##sz(void *ptr)        \
+>>>>>> +{                                    \
+>>>>>> +    return READ_ONCE(*(u##sz *)ptr);                \
+>>>>>> +}                                    \
+>>>>>> +                                    \
+>>>>>> +static inline void __percpu_write_##sz(void *ptr, unsigned long
+>>>>>> val)    \
+>>>>>> +{                                    \
+>>>>>> +    WRITE_ONCE(*(u##sz *)ptr, (u##sz)val);                \
+>>>>>> +}
+>>>>>> +
+>>>>>> +#define __PERCPU_AMO_OP_CASE(sfx, name, sz, amo_insn)            \
+>>>>>> +static inline void                            \
+>>>>>> +__percpu_##name##_amo_case_##sz(void *ptr, unsigned long val)        \
+>>>>>> +{                                    \
+>>>>>> +    asm volatile (                            \
+>>>>>> +    "amo" #amo_insn #sfx " zero, %[val], %[ptr]"            \
+>>>>>> +    : [ptr] "+A" (*(u##sz *)ptr)                    \
+>>>>>> +    : [val] "r" ((u##sz)(val))                    \
+>>>>>> +    : "memory");                            \
+>>>>>> +}
+>>>>>> +
+>>>>>> +#define __PERCPU_AMO_RET_OP_CASE(sfx, name, sz, amo_insn)        \
+>>>>>> +static inline u##sz                            \
+>>>>>> +__percpu_##name##_return_amo_case_##sz(void *ptr, unsigned long
+>>>>>> val)    \
+>>>>>> +{                                    \
+>>>>>> +    register u##sz ret;                        \
+>>>>>> +                                    \
+>>>>>> +    asm volatile (                            \
+>>>>>> +    "amo" #amo_insn #sfx " %[ret], %[val], %[ptr]"            \
+>>>>>> +    : [ptr] "+A" (*(u##sz *)ptr), [ret] "=r" (ret)            \
+>>>>>> +    : [val] "r" ((u##sz)(val))                    \
+>>>>>> +    : "memory");                            \
+>>>>>> +                                    \
+>>>>>> +    return ret + val;                        \
+>>>>>> +}
+>>>>>> +
+>>>>>> +#define PERCPU_OP(name, amo_insn)                    \
+>>>>>> +    __PERCPU_AMO_OP_CASE(.b, name, 8, amo_insn)            \
+>>>>>> +    __PERCPU_AMO_OP_CASE(.h, name, 16, amo_insn)            \
+>>>>>> +    __PERCPU_AMO_OP_CASE(.w, name, 32, amo_insn)            \
+>>>>>> +    __PERCPU_AMO_OP_CASE(.d, name, 64, amo_insn)            \
+>>>>>> +
+>>>>>> +#define PERCPU_RET_OP(name, amo_insn)                    \
+>>>>>> +    __PERCPU_AMO_RET_OP_CASE(.b, name, 8, amo_insn) \
+>>>>>> +    __PERCPU_AMO_RET_OP_CASE(.h, name, 16, amo_insn)        \
+>>>>>> +    __PERCPU_AMO_RET_OP_CASE(.w, name, 32, amo_insn)        \
+>>>>>> +    __PERCPU_AMO_RET_OP_CASE(.d, name, 64, amo_insn)
+>>>>>> +
+>>>>>> +PERCPU_RW_OPS(8)
+>>>>>> +PERCPU_RW_OPS(16)
+>>>>>> +PERCPU_RW_OPS(32)
+>>>>>> +PERCPU_RW_OPS(64)
+>>>>>> +
+>>>>>> +PERCPU_OP(add, add)
+>>>>>> +PERCPU_OP(andnot, and)
+>>>>>> +PERCPU_OP(or, or)
+>>>>>> +PERCPU_RET_OP(add, add)
+>>>>>> +
+>>>>>> +#undef PERCPU_RW_OPS
+>>>>>> +#undef __PERCPU_AMO_OP_CASE
+>>>>>> +#undef __PERCPU_AMO_RET_OP_CASE
+>>>>>> +#undef PERCPU_OP
+>>>>>> +#undef PERCPU_RET_OP
+>>>>>> +
+>>>>>> +#define _pcp_protect(op, pcp, ...)                    \
+>>>>>> +({                                    \
+>>>>>> +    preempt_disable_notrace();                    \
+>>>>>> +    op(raw_cpu_ptr(&(pcp)), __VA_ARGS__);                \
+>>>>>> +    preempt_enable_notrace();                    \
+>>>>>> +})
+>>>>>> +
+>>>>>> +#define _pcp_protect_return(op, pcp, args...)                \
+>>>>>> +({                                    \
+>>>>>> +    typeof(pcp) __retval;                        \
+>>>>>> +    preempt_disable_notrace();                    \
+>>>>>> +    __retval = (typeof(pcp))op(raw_cpu_ptr(&(pcp)), ##args);    \
+>>>>>> +    preempt_enable_notrace();                    \
+>>>>>> +    __retval;                            \
+>>>>>> +})
+>>>>>> +
+>>>>>> +#define this_cpu_read_1(pcp) _pcp_protect_return(__percpu_read_8, pcp)
+>>>>>> +#define this_cpu_read_2(pcp) _pcp_protect_return(__percpu_read_16, pcp)
+>>>>>> +#define this_cpu_read_4(pcp) _pcp_protect_return(__percpu_read_32, pcp)
+>>>>>> +#define this_cpu_read_8(pcp) _pcp_protect_return(__percpu_read_64, pcp)
+>>>>>> +
+>>>>>> +#define this_cpu_write_1(pcp, val) _pcp_protect(__percpu_write_8,
+>>>>>> pcp, (unsigned long)val)
+>>>>>> +#define this_cpu_write_2(pcp, val) _pcp_protect(__percpu_write_16,
+>>>>>> pcp, (unsigned long)val)
+>>>>>> +#define this_cpu_write_4(pcp, val) _pcp_protect(__percpu_write_32,
+>>>>>> pcp, (unsigned long)val)
+>>>>>> +#define this_cpu_write_8(pcp, val) _pcp_protect(__percpu_write_64,
+>>>>>> pcp, (unsigned long)val)
+>>>>>> +
+>>>>>> +#define this_cpu_add_1(pcp, val)
+>>>>>> _pcp_protect(__percpu_add_amo_case_8, pcp, val)
+>>>>>> +#define this_cpu_add_2(pcp, val)
+>>>>>> _pcp_protect(__percpu_add_amo_case_16, pcp, val)
+>>>>>> +#define this_cpu_add_4(pcp, val)
+>>>>>> _pcp_protect(__percpu_add_amo_case_32, pcp, val)
+>>>>>> +#define this_cpu_add_8(pcp, val)
+>>>>>> _pcp_protect(__percpu_add_amo_case_64, pcp, val)
+>>>>>> +
+>>>>>> +#define this_cpu_add_return_1(pcp, val)        \
+>>>>>> +_pcp_protect_return(__percpu_add_return_amo_case_8, pcp, val)
+>>>>>> +
+>>>>>> +#define this_cpu_add_return_2(pcp, val)        \
+>>>>>> +_pcp_protect_return(__percpu_add_return_amo_case_16, pcp, val)
+>>>>>> +
+>>>>>> +#define this_cpu_add_return_4(pcp, val)        \
+>>>>>> +_pcp_protect_return(__percpu_add_return_amo_case_32, pcp, val)
+>>>>>> +
+>>>>>> +#define this_cpu_add_return_8(pcp, val)        \
+>>>>>> +_pcp_protect_return(__percpu_add_return_amo_case_64, pcp, val)
+>>>>>> +
+>>>>>> +#define this_cpu_and_1(pcp, val)
+>>>>>> _pcp_protect(__percpu_andnot_amo_case_8, pcp, ~val)
+>>>>>> +#define this_cpu_and_2(pcp, val)
+>>>>>> _pcp_protect(__percpu_andnot_amo_case_16, pcp, ~val)
+>>>>>> +#define this_cpu_and_4(pcp, val)
+>>>>>> _pcp_protect(__percpu_andnot_amo_case_32, pcp, ~val)
+>>>>>> +#define this_cpu_and_8(pcp, val)
+>>>>>> _pcp_protect(__percpu_andnot_amo_case_64, pcp, ~val)
+>>>>> Why do we define __percpu_andnot based on amoand, and use
+>>>>> __percpu_andnot with ~val here? Can't we just define __percpu_and?
+>>
+>> What about that ^?
+>>
+>>
+>>>>>> +
+>>>>>> +#define this_cpu_or_1(pcp, val) _pcp_protect(__percpu_or_amo_case_8,
+>>>>>> pcp, val)
+>>>>>> +#define this_cpu_or_2(pcp, val)
+>>>>>> _pcp_protect(__percpu_or_amo_case_16, pcp, val)
+>>>>>> +#define this_cpu_or_4(pcp, val)
+>>>>>> _pcp_protect(__percpu_or_amo_case_32, pcp, val)
+>>>>>> +#define this_cpu_or_8(pcp, val)
+>>>>>> _pcp_protect(__percpu_or_amo_case_64, pcp, val)
+>>>>>> +
+>>>>>> +#define this_cpu_xchg_1(pcp, val) _pcp_protect_return(xchg_relaxed,
+>>>>>> pcp, val)
+>>>>>> +#define this_cpu_xchg_2(pcp, val) _pcp_protect_return(xchg_relaxed,
+>>>>>> pcp, val)
+>>>>>> +#define this_cpu_xchg_4(pcp, val) _pcp_protect_return(xchg_relaxed,
+>>>>>> pcp, val)
+>>>>>> +#define this_cpu_xchg_8(pcp, val) _pcp_protect_return(xchg_relaxed,
+>>>>>> pcp, val)
+>>>>>> +
+>>>>>> +#define this_cpu_cmpxchg_1(pcp, o, n)
+>>>>>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
+>>>>>> +#define this_cpu_cmpxchg_2(pcp, o, n)
+>>>>>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
+>>>>>> +#define this_cpu_cmpxchg_4(pcp, o, n)
+>>>>>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
+>>>>>> +#define this_cpu_cmpxchg_8(pcp, o, n)
+>>>>>> _pcp_protect_return(cmpxchg_relaxed, pcp, o, n)
+>>>>>> +
+>>>>>> +#include <asm-generic/percpu.h>
+>>>>>> +
+>>>>>> +#endif /* __ASM_PERCPU_H */
+>>>>> It all looks good to me, just one thing, can you also implement
+>>>>> this_cpu_cmpxchg64/128()?
+>>>>>
+>>>> One last thing sorry, can you add a cover letter too?
+>>> Okay.
+>>>
+>>>> Thanks!
+>>>>
+>>>> Alex
+>>>>
+>>>>
+>>>>> And since this is almost a copy/paste from arm64, either mention it at
+>>>>> the top of the file or (better) merge both implementations somewhere
+>>>>> to avoid redefining existing code :) But up to you.
+>>> Actually, there's a concern here. We should account for scenarios
+>>> where ZABHA isn't supported. Given that xxx_8() and xxx_16() are
+>>> rarely used in practice, could we initially support only xxx_32() and
+>>> xxx_64()? For xxx_8() and xxx_16(), we could default to the generic
+>>> implementation.
+>>
+>> Why isn't lr/sc enough?
+> If I'm not mistaken, the current RISC-V does not support lr.bh/sc.bh,
+> is that right?
 
-diff --git a/Documentation/arch/arm/stm32/stm32f746-overview.rst b/Documentation/arch/arm/stm32/stm32f746-overview.rst
-index 78befddc7740..335f0855a858 100644
---- a/Documentation/arch/arm/stm32/stm32f746-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32f746-overview.rst
-@@ -15,7 +15,7 @@ It features:
- - SD/MMC/SDIO support
- - Ethernet controller
- - USB OTFG FS & HS controllers
--- I2C, SPI, CAN busses support
-+- I2C, SPI, CAN buses support
- - Several 16 & 32 bits general purpose timers
- - Serial Audio interface
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32f769-overview.rst b/Documentation/arch/arm/stm32/stm32f769-overview.rst
-index e482980ddf21..ef31aadee68f 100644
---- a/Documentation/arch/arm/stm32/stm32f769-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32f769-overview.rst
-@@ -15,7 +15,7 @@ It features:
- - SD/MMC/SDIO support*2
- - Ethernet controller
- - USB OTFG FS & HS controllers
--- I2C*4, SPI*6, CAN*3 busses support
-+- I2C*4, SPI*6, CAN*3 buses support
- - Several 16 & 32 bits general purpose timers
- - Serial Audio interface*2
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32h743-overview.rst b/Documentation/arch/arm/stm32/stm32h743-overview.rst
-index 4e15f1a42730..7659df24d362 100644
---- a/Documentation/arch/arm/stm32/stm32h743-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32h743-overview.rst
-@@ -15,7 +15,7 @@ It features:
- - SD/MMC/SDIO support
- - Ethernet controller
- - USB OTFG FS & HS controllers
--- I2C, SPI, CAN busses support
-+- I2C, SPI, CAN buses support
- - Several 16 & 32 bits general purpose timers
- - Serial Audio interface
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32h750-overview.rst b/Documentation/arch/arm/stm32/stm32h750-overview.rst
-index 0e51235c9547..be032b77d1f1 100644
---- a/Documentation/arch/arm/stm32/stm32h750-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32h750-overview.rst
-@@ -15,7 +15,7 @@ It features:
- - SD/MMC/SDIO support
- - Ethernet controller
- - USB OTFG FS & HS controllers
--- I2C, SPI, CAN busses support
-+- I2C, SPI, CAN buses support
- - Several 16 & 32 bits general purpose timers
- - Serial Audio interface
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32mp13-overview.rst b/Documentation/arch/arm/stm32/stm32mp13-overview.rst
-index 3bb9492dad49..b5e9589fb06f 100644
---- a/Documentation/arch/arm/stm32/stm32mp13-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32mp13-overview.rst
-@@ -24,7 +24,7 @@ More details:
- - ADC/DAC
- - USB EHCI/OHCI controllers
- - USB OTG
--- I2C, SPI, CAN busses support
-+- I2C, SPI, CAN buses support
- - Several general purpose timers
- - Serial Audio interface
- - LCD controller
-diff --git a/Documentation/arch/arm/stm32/stm32mp151-overview.rst b/Documentation/arch/arm/stm32/stm32mp151-overview.rst
-index f42a2ac309c0..b58c256ede9a 100644
---- a/Documentation/arch/arm/stm32/stm32mp151-overview.rst
-+++ b/Documentation/arch/arm/stm32/stm32mp151-overview.rst
-@@ -23,7 +23,7 @@ More details:
- - ADC/DAC
- - USB EHCI/OHCI controllers
- - USB OTG
--- I2C, SPI busses support
-+- I2C, SPI buses support
- - Several general purpose timers
- - Serial Audio interface
- - LCD-TFT controller
--- 
-2.43.0
 
+Yes, that's right, but we have an implementation of cmpxchg[8|16]() that 
+uses lr.w/sc.w which works (unless I missed something, I have just 
+checked again), so I think that's alright no?
+
+Thanks,
+
+Alex
+
+
+>
+>>
+>>>
+>>>>> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>> Alex
+>>>>>
+>>>>>
+>>>>>
+>>> Thanks,
+>>> Yunhui
+>>>
+>>> _______________________________________________
+>>> linux-riscv mailing list
+>>> linux-riscv@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> Thanks,
+> Yunhui
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
