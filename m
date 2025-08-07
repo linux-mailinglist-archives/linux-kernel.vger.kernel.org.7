@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-758735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78DBB1D348
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:27:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1287B1D349
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 663173A5DA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB881AA4731
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC8423F439;
-	Thu,  7 Aug 2025 07:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413A323B609;
+	Thu,  7 Aug 2025 07:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RARr7oXY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8346D23C4FD;
-	Thu,  7 Aug 2025 07:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="p1n8lpg7"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8911221884A
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551618; cv=none; b=nxD1jdE1GO3/BD1uHMZ0ptYEKnKTO0a8VV+0qCQ9xMe1wAKPMWTGQ4WboduQcLIKgT8YR2RUcLUJV4yuqhzAt5ZGBlCHFTMx7LhhcudNbyj/VEY++vVn4jhNuRwYyFkhtBJMaOn4TWfrFdaVYomqR4yLv5AKEjG5RbtlHZX40y0=
+	t=1754551648; cv=none; b=tOvc/OL2u5jnsWhPkGhVzVpobZDOCMFFdTC8PxFqOAC18So6nsd0mPeDU0V2jdLVkQEcM9rB9yEPu7jtsm7BJ0Zyz0F1yhKIeDl9oF1HCUpDaaOprKwAzc2KuaT0ER3rVVxocf0LpSGKbgHpDoxw/rLck8Ztarnxtb1n2BbLqRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551618; c=relaxed/simple;
-	bh=bb7LlDA7OpV7Qv2Xzhoqqi80I/uW8JaOPH4FzntEDfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JSyraXSqwzVU0RqBosm/VcSUvEm9h8pg1sWZQh7+RFSMdLXIojJJUn5emeYLsvA1rT/AJ26E8RAwIQoLoytoIGMPohSmr99dds3w5Cy6kJnHKPnDq9qJV8F69bf70uyXBuhO61lpCcY3tfEaMF8sudF6eZoe2bgtLp4ec5ThQUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RARr7oXY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6275DC4CEED;
-	Thu,  7 Aug 2025 07:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754551618;
-	bh=bb7LlDA7OpV7Qv2Xzhoqqi80I/uW8JaOPH4FzntEDfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RARr7oXYIsoOmGGKVYK80eGl+V7p9fEMpd6wq8gkvI2QAw3Pdn/Qza1dm4JMuQIrR
-	 ckHcFFIbPjSyYXr/bDzKd9wTpftvlrtlWh15XwQH58GQlO6e+zJGVNp3500ZZn5QYD
-	 5QneCWxxF3IjJSq5ND/6IsuN9KFsCuZch9rp7IJaEKeFaWa8yXIY41vKuTh9M5iowv
-	 ulfCsz9H9JMuN7Rc6ASg0VhV8C/3QfmVDNQteffZ4he+83stLI7XNfGWr4Vd5y9RNR
-	 e6HhbcXI/axVm5F+nI+ndKUr629ax2PLvQV26eyZ57qaiXWLKFxTy2cm/t4Tz3sNwv
-	 ItroFzgrdWagw==
-Date: Thu, 7 Aug 2025 09:26:55 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: imx@lists.linux.dev, Abel Vesa <abelvesa@kernel.org>, 
-	Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Marek Vasut <marex@denx.de>, Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 0/9] Add support for i.MX94 DCIF
-Message-ID: <20250807-psychedelic-vulture-of-valor-d743cc@kuoka>
-References: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
+	s=arc-20240116; t=1754551648; c=relaxed/simple;
+	bh=K8vukmWjzm1VXIEaooQ4JW9QPT7Hde7LLgIFCZCjTiA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H29rTyJEv1TlIpKmSkh3EPetfmSgs6TJD1ulzH9LpHFiuT6I3Rj9hp9eqIVtGzpz79GVWOEeZ2CgZri9o4FzwbgSxCsXK1Q1h0x9511QRM/6ZnI2yfqYiw+EHMKLO0pU4O/xYZcjbEKtgCFWrNdQYotj2FkUZfUYXTWR2qruL9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=p1n8lpg7; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=K2
+	tuHcrzTCjC6XtZmOmGV8ku7xQicRREc1BpWHeDuik=; b=p1n8lpg7453JSnznV9
+	ZweXVC461jhN3EXL1EYmTYWR7AlJXCOwDGfvHZRm5Vba+E8clLzrBupRyhTX4Ms4
+	mwx+mFtYoH4frMFyQpyxTNj8cbEUV31bdP9eRAlfIbtkIx3EI3KaIAlZiADfrPTx
+	M+Q2w2Ix3DrHAmhafz+doUSlg=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgDnOhxGVZRoUEhPDA--.562S2;
+	Thu, 07 Aug 2025 15:27:03 +0800 (CST)
+From: fanqincui@163.com
+To: catalin.marinas@arm.com,
+	will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	fanqincui@163.com,
+	Fanqin Cui <cuifq1@chinatelecom.cn>
+Subject: [PATCH] arm64/module: Support for patching modules during runtime
+Date: Thu,  7 Aug 2025 03:27:00 -0400
+Message-Id: <20250807072700.348514-1-fanqincui@163.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgDnOhxGVZRoUEhPDA--.562S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tFW7GF1kXryUKFWUAry7Wrg_yoW8trykpF
+	n8Crn5GrZ5Xwn3Cay8twn8WF15C398Can8KFy8W3sFyw1Yqr98AF1DKry5CFyUGr45Z3y8
+	WF18Gw1jq3WUA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UD73PUUUUU=
+X-CM-SenderInfo: 5idq1xpqfxxqqrwthudrp/1tbiOgqipWiUUrpNrgAAsA
 
-On Wed, Aug 06, 2025 at 06:05:07PM +0300, Laurentiu Palcu wrote:
-> Hi,
-> 
-> This patch-set adds support for the i.MX94 Display Control Interface.
-> It depends on Peng Fan's DTS patch [1] that was not yet merged. Also, it
-> needs the BLK CTL changes [2] that I spinned off from v2 in a different
-> patchset.
-> 
-> Also, included in the patch-set are a few extra patches that the DCIF
-> driver depends on for functioning properly:
->  * 1/9 - 3/9 : add support for i.MX94 to fsl-ldb driver. It also
-> 			   contains a patch (2/9) from Liu Ying that was already reviewed
-> 			   and was part of another patch-set ([3]), but was never merged;
-> 
-> v3:
->  * Removed the BLK CTL patches and created a separate patch set [2] for them;
->  * Collected r-b tags for 1/9, 2/9, 3/9 and 9/9;
->  * Removed the DCIF QoS functionality until I find a better way to
->    implement it through syscon. QoS functionality will be added in
->    subsequent patches. Also, used devm_clk_bulk_get_all() and used
->    dev_err_probe() as suggested;
->  * Addressed Frank's and Krzysztof's comments on the DCIF bindings;
+From: Fanqin Cui <cuifq1@chinatelecom.cn>
 
-What exactly changed? I cannot find v2 of one of the patches, no lore
-links here, so with incomplete changelog I say you make it difficult for
-me to review it.
+If use the ALTERNATIVE_CB interface in a kernel module to
+patch code, the kernel will crash. The relevant log is as follows:
 
-Best regards,
-Krzysztof
+ Mem abort info:
+   ESR = 0x000000008600000f
+   EC = 0x21: IABT (current EL), IL = 32 bits
+   SET = 0, FnV = 0
+   EA = 0, S1PTW = 0
+   FSC = 0x0f: level 3 permission fault
+ swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000013cfbed000
+ [ffff80007b0b0000] pgd=0000000000000000, p4d=10000013d0d03003,
+pud=1000000103175403, pmd=1000000115804403, pte=0068000116b77703
+ Internal error: Oops: 000000008600000f [#1]  SMP
+
+ Call trace:
+  0xffff80007b0b0000 (P)
+  apply_alternatives_module+0x48/0x7c
+  module_finalize+0xc0/0x134
+  load_module+0x15c0/0x1c08
+  init_module_from_file+0x8c/0xcc
+  __arm64_sys_finit_module+0x1c0/0x2d4
+  invoke_syscall+0x48/0x110
+  el0_svc_common.constprop.0+0xc0/0xe0
+  do_el0_svc+0x1c/0x28
+  el0_svc+0x34/0xf0
+  el0t_64_sync_handler+0xa0/0xe4
+  el0t_64_sync+0x198/0x19c
+ Code: 00000000 00000000 00000000 00000000 (d503233f)
+ ---[ end trace 0000000000000000 ]---
+
+To avoid this problem, this commit supports add a new section.
+When the module is loading, this section will be found and the
+page table attributes will be set to executable state in advance.
+
+Signed-off-by: Fanqin Cui <cuifq1@chinatelecom.cn>
+---
+ arch/arm64/kernel/module.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+index 40148d2725ce..2160b2877935 100644
+--- a/arch/arm64/kernel/module.c
++++ b/arch/arm64/kernel/module.c
+@@ -24,6 +24,7 @@
+ #include <asm/scs.h>
+ #include <asm/sections.h>
+ #include <asm/text-patching.h>
++#include <asm-generic/set_memory.h>
+ 
+ enum aarch64_reloc_op {
+ 	RELOC_OP_NONE,
+@@ -477,6 +478,9 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 	const Elf_Shdr *s;
+ 	int ret;
+ 
++	s = find_section(hdr, sechdrs, ".text.alternative_cb");
++	if (s && s->sh_size > PAGE_SIZE && PAGE_ALIGNED(s->sh_addr))
++		set_memory_x(s->sh_addr, s->sh_size >> PAGE_SHIFT);
+ 	s = find_section(hdr, sechdrs, ".altinstructions");
+ 	if (s)
+ 		apply_alternatives_module((void *)s->sh_addr, s->sh_size);
+-- 
+2.27.0
 
 
