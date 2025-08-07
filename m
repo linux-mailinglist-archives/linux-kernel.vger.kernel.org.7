@@ -1,134 +1,192 @@
-Return-Path: <linux-kernel+bounces-758802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685A3B1D405
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CF0B1D408
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 495D9188B0B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67BF13AA5C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22D823F405;
-	Thu,  7 Aug 2025 08:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031A61D5CD9;
+	Thu,  7 Aug 2025 08:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPEJYhOT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATKap2O9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507A91442F4
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540932236F4;
+	Thu,  7 Aug 2025 08:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554121; cv=none; b=LjG+fFAULarYr7mW+r2gi4S/4D+00eVO9kk70An35q5Xmi2ueOMcIG8Z+CY4pf0rxLF8DxlxQTJgjeHPX1UFFWsQOLVHtGJCa1yznzSK0bjG042KauD2V2HHBrN0l+4r/AoL3ytOCiF+aV56Zat2iv6/Jwb3hLMXslia9FYoZMA=
+	t=1754554153; cv=none; b=ZE1F7fNvnBYHVfy7NyLfjwApbTiBvY8DOeg0iCbBQcyGTvDtNTIMkmIFeJl7g1fvDWhk1ywYd14BM5kD1o7rUbE0tQJZhvEsY6Yp9zaWv2OoR6PN1sqOcLYOHJmyw0Tn/O/jQ5I4gHCXxTRnRZvwip3SM0L6rcbU9eaaPlGveGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554121; c=relaxed/simple;
-	bh=JCjp51GetSGxJBSbju8WEKymJlfBVo038kfQlZQ8YKE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gfHiXei6ujENgsx+G6qKh5HtxIHsPJuoEAcq5GtE+ifDlDjH/JcoCUIPanmLEdHbc0Wnl+CXCnKqlQXZVR6uD8hHv298vdTYrtw+e5+hUS+7g4Zd4PCI3wbR/5SKD98xQPLiMJ1uTwwsdGULCJpzvqMlHM1e7Db5u8WlO5KWtiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPEJYhOT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8A7AC4CEEB;
-	Thu,  7 Aug 2025 08:08:40 +0000 (UTC)
+	s=arc-20240116; t=1754554153; c=relaxed/simple;
+	bh=1fAo7M0jBlXKRquCCC4HBju9WC4VuWnfN1O1usBPWyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q+X27ZAc15DYfvuLKfW+9PythJq1Sj4yNAM9SVYIsUruf6/Vur8Sp18lzp2Zka3pCJxoyuaUfPdam0XleNY1GtehrtbA9TqebqNGcBaQHNL0xvHipYg8LgoHIHEH9ctl1IkWaMy+r72bHoWoSOWWPpq3B4cLRT7R5PN/eH6k1lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATKap2O9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB1DC4CEEB;
+	Thu,  7 Aug 2025 08:09:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754554120;
-	bh=JCjp51GetSGxJBSbju8WEKymJlfBVo038kfQlZQ8YKE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WPEJYhOT6hOQ3atLqNwK4S8HXVgi4w8J7j2F+rhma3uNR3JIjJCtjRFxd70gNbGJh
-	 qxpqBnxdr7KSBkOONBN2mm+XMtXnam2/toGcNPLQwJqbTRZOXC4q+cAvro8QKyypYZ
-	 kRrERMgqt1y9V5uidKwIV3d5vceB4xSLbaot9RsIwGOqNFIYn+BHz7+CbsAxSubPDn
-	 X4jiUzrlGUZhiCyl74XOmtHLSy0pa/RzXIYIAtTiSTL8g4EBQVbx1zAfr+0xOqjbdG
-	 D6fSxMjZgCuDZeSz8tvlEAFEGvkTvvn71I+na2wEFyZr62JZoFlsegyvahmR30BCly
-	 ZIiy7dYVab2gQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ujvfn-004mcZ-6S;
-	Thu, 07 Aug 2025 09:08:27 +0100
-Date: Thu, 07 Aug 2025 09:08:26 +0100
-Message-ID: <864iuja70l.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	oliver.upton@linux.dev,
-	james.morse@arm.com,
-	cohuck@redhat.com,
-	anshuman.khandual@arm.com,
-	palmerdabbelt@meta.com,
-	lpieralisi@kernel.org,
-	kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com,
-	broonie@kernel.org,
-	james.clark@linaro.org,
-	yeoreum.yun@arm.com,
-	joey.gouly@arm.com,
-	huangxiaojia2@huawei.com,
-	yebin10@huawei.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: Expose CPUECTLR{,2}_EL1 via sysfs
-In-Reply-To: <20250806194812.46598-2-palmer@dabbelt.com>
-References: <20250806194812.46598-2-palmer@dabbelt.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1754554152;
+	bh=1fAo7M0jBlXKRquCCC4HBju9WC4VuWnfN1O1usBPWyU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ATKap2O9VyWyhmILaijF0q7skMYB7Iod7SixyEVAYljXmkqPTms92OfFedvUOMRGR
+	 OuQY1XU28xp9GG9gnEzjTJ1T0ERDXlAg0zF5f0PDl7FSZUvMTjepCiHheF5ClSo1Fe
+	 k0RGu1c34zyEGppAIXEJbk33V0SPD9qSYzCno4e2gIZeo6GQtzCXCmuKIn315FPLPF
+	 cvWzwwYZFwaTkP/Vj6lzT62D685OAkPdKgi072uj5Jt979HvqZMSpo6L8elyMnWCUW
+	 KqnQOAKOVsEsxBMmrnBveN1z4x0t9BzLQM5gPQSPJE4tfeV4PC+/w/NAHJNvkjuoGE
+	 xqmNnyYlgWzhg==
+Message-ID: <a211c028-b6f4-4f0f-9dea-842eff201c8f@kernel.org>
+Date: Thu, 7 Aug 2025 10:09:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: palmer@dabbelt.com, catalin.marinas@arm.com, mark.rutland@arm.com, will@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, cohuck@redhat.com, anshuman.khandual@arm.com, palmerdabbelt@meta.com, lpieralisi@kernel.org, kevin.brodsky@arm.com, scott@os.amperecomputing.com, broonie@kernel.org, james.clark@linaro.org, yeoreum.yun@arm.com, joey.gouly@arm.com, huangxiaojia2@huawei.com, yebin10@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: display: sitronix,st7920: Add DT schema
+To: Iker Pedrosa <ikerpedrosam@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Javier Martinez Canillas <javierm@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org
+References: <20250806-st7920-v1-0-64ab5a34f9a0@gmail.com>
+ <20250806-st7920-v1-2-64ab5a34f9a0@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250806-st7920-v1-2-64ab5a34f9a0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 06 Aug 2025 20:48:13 +0100,
-Palmer Dabbelt <palmer@dabbelt.com> wrote:
+On 06/08/2025 14:48, Iker Pedrosa wrote:
+> +title: Sitronix ST7920 LCD Display Controllers
+> +
+> +maintainers:
+> +  - Iker Pedrosa <ikerpedrosam@gmail.com>
+> +
+> +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  The Sitronix ST7920 is a controller for monochrome dot-matrix graphical LCDs,
+> +  most commonly used for 128x64 pixel displays.
+> +  This binding supports connecting the display via a standard SPI bus.
+
+Drop last sentence. You should write complete bindings for complete
+hardware. Binding cannot support something and should not cover only one
+bus.
+
+> +
+> +properties:
+> +  compatible:
+> +    const: sitronix,st7920
+> +
+> +  reg:
+> +    description: The chip-select number for the device on the SPI bus.
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    description: Maximum SPI clock frequency in Hz.
+> +    maximum: 600000
+> +
+> +  spi-cs-high:
+> +    type: boolean
+> +    description: Indicates the chip select is active high.
+
+No supplies?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - spi-max-frequency
+
+Missing allOf: with ref to spi properties
+
+> +
+> +additionalProperties: false
+
+And this is unevaluatedProperties. Please look at other examples of
+devices like that.
+
+> +
+> +examples:
+> +  - |
+> +    // Example: ST7920 connected to an SPI bus
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    spi0 {
+
+spi {
+
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        display@0 {
+> +            compatible = "sitronix,st7920";
+> +            reg = <0>; // Chip select 0
+
+Drop comment, obvious.
+
+> +            spi-max-frequency = <600000>;
+> +            spi-cs-high;
+> +        };
+> +    };
 > 
-> From: Palmer Dabbelt <palmerdabbelt@meta.com>
-> 
-> We've found that some of our workloads run faster when some of these
-> fields are set to non-default values on some of the systems we're trying
-> to run those workloads on.  This allows us to set those values via
-> sysfs, so we can do workload/system-specific tuning.
-> 
-> Signed-off-by: Palmer Dabbelt <palmerdabbelt@meta.com>
-> ---
-> I've only really smoke tested this, but I figured I'd send it along because I'm
-> not sure if this is even a sane thing to be doing -- these extended control
-> registers have some wacky stuff in them, so maybe they're not exposed to
-> userspace on purpose.  IIUC firmware can gate these writes, though, so it
-> should be possible for vendors to forbid the really scary values.
 
-That's really wrong.
 
-For a start, these encodings fall into the IMPDEF range. They won't
-exist on non-ARM implementations.
-
-Next, this will catch fire as a guest, either because the hypervisor
-will simply refuse to entertain letting it access registers that have
-no definition, or because the VM has been migrated from one
-implementation to another, and you have no idea this is doing on the
-new target.
-
-> 
-> That said, we do see some performance improvements here on real workloads.  So
-> we're hoping to roll some of this tuning work out more widely, but we also
-> don't want to adopt some internal interface.  Thus it'd make our lives easier
-> if we could twiddle these bits in a standard way.
-
-Honestly, this is the sort of bring-up stuff that is better kept in
-your private sandbox, and doesn't really help in general.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Best regards,
+Krzysztof
 
