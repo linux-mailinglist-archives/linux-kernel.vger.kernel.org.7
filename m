@@ -1,130 +1,200 @@
-Return-Path: <linux-kernel+bounces-758984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF54EB1D698
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:25:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87591B1D699
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9CE580D7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:25:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DC3727280
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65133279DD8;
-	Thu,  7 Aug 2025 11:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876CB279327;
+	Thu,  7 Aug 2025 11:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJopB5yb"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="D/QFU8O9"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA2F279DDD;
-	Thu,  7 Aug 2025 11:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7222420126A
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754565874; cv=none; b=FneOdfihseqcZ6CST3veALPIDG7HCPlI4Ii95TKW+zxlgRwQJ19kA2TqHTEtVYaf6YnKf4QcPTO087wKMCk4kRjDxzMdvGVqUWcVGK+hYDV+o5qyIELYHopLwdo3nYRxYvjocjymfk/3roeEJXYzBIS1lIX8oKPWxCtZGXgXccg=
+	t=1754565907; cv=none; b=K4gtZ7c2UIrUWf12F9xKpJcDAXxQ+s5/T8vjDz9NRiR5oDYqb8DTmQYfIIGB7qwVMzuzQp99wSbhB4YO+mOtulT8uhTgKeWBSvsj/Pm95UUpD1zWd3t3VSQpz4XwGN+6o7n8zoa5EmDpOD5pxuSxa0Y9TVCdudUUQtvhnFIKnNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754565874; c=relaxed/simple;
-	bh=2stwprMZvZW2XYJRa7n21iVChnBjrX0o24yCS96ndBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dH5ICKZhepllxC2szDRTcvIoMRfXUO6rWRUAdk43T01KuUE2zlVvmr2qd5kZfW3E3kDI74H1NBwdU2MW6pm8m8wYN+Q8w9HMwJCNK3gYVKOf+2iR0U6SWz8zzlfDFa3pD24tf6S/t9wVD/RGUGBnL9JiDTyVSRf3kLa9XGOTMbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NJopB5yb; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55b978c61acso856384e87.2;
-        Thu, 07 Aug 2025 04:24:32 -0700 (PDT)
+	s=arc-20240116; t=1754565907; c=relaxed/simple;
+	bh=UKhNmjieTN7N6HBHjor9grjq3VWJiPT3ZEWXHyHQlXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qrqm1I7zNN9pvrrvZ6O991f7jBYPWrwAnz0U8SOK4z9QuLOv8n5uMbzA6hqZYhQw+qtsm1cgvqK1WmGN9Pg4KuADG7p+Y/VDVJI5+xdIZ7HxnQ0V6fM1UotRM5JAd1XS5bes5pndxV8WmCCQmHVl3AjqfHCcUNK8Dj8iMYqowQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=D/QFU8O9; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459e210bd2dso6800875e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754565871; x=1755170671; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t+kyO7X5xrXGHDKfjnAsz54SBIL83moTTuqtIiJyAcI=;
-        b=NJopB5ybuVwWaXkdN95J/UVMRH+upKLkfrpr945onBn3nN2xrJ1yt3uQLoYF94TY58
-         ifRMM1dSCw2l6z9LRcAsaNT07XmldmYDJxmEYhaTI94s+sYIJTKTy8U3PibGPcuJhQCv
-         EVPE4qvwcDlM7+iGLfvan+puoPkpcLW4yMu9rjBOhJquYExOx98qn5i+0RkuWL4U/fMU
-         o2JdskzNZF39JdtP1VSjnQtj9HsoiyrDecobuPhBZURiOAgYV6wnyx8CLoFVkGszgfBG
-         qDMiJdNVmBxK0+YSfwQQLN3HlzrG87vR3aC3FvjlPFKY4A8gOO2NYnGiH4WUWgqVm8pw
-         lxpg==
+        d=suse.com; s=google; t=1754565903; x=1755170703; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zqfBgbGZxLexl9YPolWTb1p84K6htyylxIPfQDbb+oI=;
+        b=D/QFU8O9fieJ7KQ4tnxGfimTIXvBZBR1LNPpf1GkKHKbxZnWTBSyaIwGgA9u9YyNv8
+         MPOZ9h+PFfFq9L7/CZk4+p6SnEpsQcus8cKo1dPep1EZOS8G5W9qtbaH3UGKRtwBqsrK
+         TRkL+Mzu9+4mkvFs6loZvVF/wCUB5jjxwTEYQvG/4dcFgaE591sMPLiAcmeI3E7b/4GQ
+         izTTVWa/k/RQV5efDLAqJUA3fko+B4yDkBYH0nxmjQmQHnVW7Uw6PCUBQna+NheUg2JI
+         uHrl4wiWigFxycr+rYR8yIDLMFRd21HBk904aKwgCBxFwkr30YhAMuQ/ceux8FOnI11D
+         bkaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754565871; x=1755170671;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t+kyO7X5xrXGHDKfjnAsz54SBIL83moTTuqtIiJyAcI=;
-        b=hg/ct6ZSyHYbMPbbo1J0QBvUzlJNZs4cEURP3qr7d9azEoX6WyzlWTVRagcwiwkCyo
-         Lqp2fX6QBul+iPRDXOmAwQRsI9vruoNBYCHMB2/Z+1aQzD1MCLNif930DsaU2tImRpwd
-         45k75q8vA6BygfeqRyGoVLdC6z55rSJHhUdOcZG86lO6wqDgq3B/shf+QS8C/dHe3043
-         poG52CzgjPjfby1wUJgjQf0ZQRS5oT8ow75507h1jYMsIzdkQrP9H61/q4+4/NMP4qNU
-         ZyJSDkNG6ZQRw2RLTw89Z9Xc5DDK3MPiF3mHcaNhm+EhhNt/6n8t0KmdHNPNqhKnQ2fP
-         rriw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9UWXkL1Wp2EuERt0LcPKu8+CYyNpb4sJfGieVqeO6rqqSL0iZnogAH2dqsZgy2jkfvNARGz6PiWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0MqpsQpPiS71FhfBa31+gQcP+vUxjLPXFFrgexWZZyrhUOoyf
-	uKg7egQ8fE9Xo1Bp5aq91ryGzz11u0jq8LITI6U6A5vOMgzYpa1HUM0lM2Ufx3XkdNo=
-X-Gm-Gg: ASbGncuzix5p8qGZHGCyM11Rzkg0P0U+c1RlrEuWIfsFruMw+4pgzYfJ12YOcjSTVCg
-	9MCWCUbtAkJxOwZ8jO4joT2dYq7KtFzNBhYILu8Gs1FpaExpn5NC9AsVAQ5u94N14ttjDo+fQmx
-	Fi1KvZRv8k08N31PvBbWVA0OIFJJ0dg94S4RMqZ9Ban/adqmFmWbaxIBCjFiw2X+RoqPtqwqsWG
-	UFtpfGx/2xqwaRIzPNGRfgiXr+0VZnXbIq39jxOOQFgwlcktvrs6anfrwFxSxoo5I0jaVgmniB9
-	OFpKQOtMi7jHjoU6/2OznJYauUXISzWWCIyYxWJCvjz+bef4WE6+SE/Psm+G+C1NeMY31lNOqZV
-	l592xKFCjGpDp1+Sasq5yIQ==
-X-Google-Smtp-Source: AGHT+IHRxwVgdAXmWpFo5aw8+rh5B8CNDljQxH4KtZXaN26ziWtW2a/nAmokkO9elGLy9RQFkY2TQg==
-X-Received: by 2002:a05:6512:b01:b0:55a:26ae:56e9 with SMTP id 2adb3069b0e04-55caf5ee78fmr1810359e87.40.1754565870969;
-        Thu, 07 Aug 2025 04:24:30 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-55cac7626fasm644277e87.174.2025.08.07.04.24.29
+        d=1e100.net; s=20230601; t=1754565903; x=1755170703;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zqfBgbGZxLexl9YPolWTb1p84K6htyylxIPfQDbb+oI=;
+        b=mTNs//FYnjfIsGfg0aslGv4MLICaTSVaTSPjK7O6T/Ocl/3KGofTzKEhNBFOifd76O
+         4jdFTd17DznHU2piyk1faHYAitLRGyXOfue++lOQKmqDCQLolp0OQWHe/KY1zcQJWQMO
+         0gXmTfRspnjhm4GTESTpkjiZJR4zWZfsf1USNWrjg5bTZHo27YB50H0QBTFikEvUm5kF
+         yWgke2cAtS9lzxEgSYdXcFqQmxmRTFfEcvXTDt4M7hUpVPZM3qgUMTgChjcsnhrqG9W5
+         vYpTrEIDxET+G/KqZO7oQAlT8vBntprSQhbXZfeos9dZyh6atXZgz9XyhWZAg3Nwry7d
+         nBdg==
+X-Forwarded-Encrypted: i=1; AJvYcCULmSQvZYnjE77NO9ZQ/aDcXNqggr63qjF7SCscIKP1a+UCn3sXpcBUD6WxckQyHMMAMKn5dryw6pJoBWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzhQkGVQnWBufcYUPWRuBQSqz0PMAS3QA08ggBawadl6rJIAuD
+	I6JVCjPQhvT0OTB6iD6h/aEe61B5smCEHJvzGKCTB59rPQb4cUUeCTtKHUUNfFcDoUwMe9bC4q+
+	IHOcvwCQ=
+X-Gm-Gg: ASbGnct7Nug2ktkmxYU3i4ckHZQsCTZj6L4/uLxhh49+FHAh8DPzvkMrMRY0+r3l8XM
+	2R/t8hV+X89uolWebF/dFGIyIe9G82bdVyUdvKjJ0oiSO5V+7bBRfQhf2r1QMP6WhWn09PpCoPm
+	s7QP744K3dptMAUXpkB4iZlZcG2MqyYKCFNXKRuY9FHQUPzlxWolG4Gj8aw+HcASKuoGRkhHMBN
+	Gj3QIlJOHsqj1aff3kvZ1eg7v02kQpaxTwGFZARi+Rf2l2vW3dHW2R+DxvPFGMgZcigmOWoWBTF
+	8EkYRWlQloN4lcu1ySBb7Ht1APrN//QUAwdUNXxrRmXQ39I6XpMzY+1AxAUIIIyaASReTlJcNpY
+	0My0utsHi9iWO0sZVprS5k0JN2FCjqRG7vlz5l6TOJEprZw==
+X-Google-Smtp-Source: AGHT+IFke9/I6vAWg281k3PGpP+cXL76PFDyxOcVdfRR48mIHmjOc48urydXdscm5wsfvX8iadHkkg==
+X-Received: by 2002:a5d:64c2:0:b0:3b7:8ed8:1c80 with SMTP id ffacd0b85a97d-3b8f97bc3e6mr2526097f8f.3.1754565902572;
+        Thu, 07 Aug 2025 04:25:02 -0700 (PDT)
+Received: from localhost (109-81-80-221.rct.o2.cz. [109.81.80.221])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3abf33sm26573824f8f.7.2025.08.07.04.25.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 04:24:30 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Chen Wang <unicorn_wang@outlook.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH 4/4] irqchip/sg2042-msi: Set MSI_FLAG_MULTI_PCI_MSI flags for SG2044
-Date: Thu,  7 Aug 2025 19:23:25 +0800
-Message-ID: <20250807112326.748740-5-inochiama@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250807112326.748740-1-inochiama@gmail.com>
-References: <20250807112326.748740-1-inochiama@gmail.com>
+        Thu, 07 Aug 2025 04:25:02 -0700 (PDT)
+Date: Thu, 7 Aug 2025 13:25:01 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/8] mm/vmalloc: Defer freeing partly initialized
+ vm_struct
+Message-ID: <aJSNDcMxE5BVl6or@tiehlicka>
+References: <20250807075810.358714-1-urezki@gmail.com>
+ <20250807075810.358714-7-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807075810.358714-7-urezki@gmail.com>
 
-The MSI controller on SG2044 has the ability to allocate
-multiple PCI MSI interrupt if the controller supports it.
-Add the missing flag so the controller can make full use
-of it.
+On Thu 07-08-25 09:58:08, Uladzislau Rezki wrote:
+> __vmalloc_area_node() may call free_vmap_area() or vfree() on
+> error paths, both of which can sleep. This becomes problematic
+> if the function is invoked from an atomic context, such as when
+> GFP_ATOMIC or GFP_NOWAIT is passed via gfp_mask.
+> 
+> To fix this, unify error paths and defer the cleanup of partly
+> initialized vm_struct objects to a workqueue. This ensures that
+> freeing happens in a process context and avoids invalid sleeps
+> in atomic regions.
+> 
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
----
- drivers/irqchip/irq-sg2042-msi.c | 1 +
- 1 file changed, 1 insertion(+)
+LGTM
+Acked-by: Michal Hocko <mhocko@suse.com>
+Thanks!
 
-diff --git a/drivers/irqchip/irq-sg2042-msi.c b/drivers/irqchip/irq-sg2042-msi.c
-index 2b7ee17232ab..6efb34a91937 100644
---- a/drivers/irqchip/irq-sg2042-msi.c
-+++ b/drivers/irqchip/irq-sg2042-msi.c
-@@ -212,6 +212,7 @@ static const struct msi_parent_ops sg2042_msi_parent_ops = {
- 				   MSI_FLAG_PCI_MSI_STARTUP_PARENT)
- 
- #define SG2044_MSI_FLAGS_SUPPORTED (MSI_GENERIC_FLAGS_MASK |	\
-+				    MSI_FLAG_MULTI_PCI_MSI |	\
- 				    MSI_FLAG_PCI_MSIX)
- 
- static const struct msi_parent_ops sg2044_msi_parent_ops = {
+> ---
+>  include/linux/vmalloc.h |  6 +++++-
+>  mm/vmalloc.c            | 34 +++++++++++++++++++++++++++++++---
+>  2 files changed, 36 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index fdc9aeb74a44..b1425fae8cbf 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -50,7 +50,11 @@ struct iov_iter;		/* in uio.h */
+>  #endif
+>  
+>  struct vm_struct {
+> -	struct vm_struct	*next;
+> +	union {
+> +		struct vm_struct *next;	  /* Early registration of vm_areas. */
+> +		struct llist_node llnode; /* Asynchronous freeing on error paths. */
+> +	};
+> +
+>  	void			*addr;
+>  	unsigned long		size;
+>  	unsigned long		flags;
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 7f48a54ec108..2424f80d524a 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3680,6 +3680,35 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>  	return nr_allocated;
+>  }
+>  
+> +static LLIST_HEAD(pending_vm_area_cleanup);
+> +static void cleanup_vm_area_work(struct work_struct *work)
+> +{
+> +	struct vm_struct *area, *tmp;
+> +	struct llist_node *head;
+> +
+> +	head = llist_del_all(&pending_vm_area_cleanup);
+> +	if (!head)
+> +		return;
+> +
+> +	llist_for_each_entry_safe(area, tmp, head, llnode) {
+> +		if (!area->pages)
+> +			free_vm_area(area);
+> +		else
+> +			vfree(area->addr);
+> +	}
+> +}
+> +
+> +/*
+> + * Helper for __vmalloc_area_node() to defer cleanup
+> + * of partially initialized vm_struct in error paths.
+> + */
+> +static DECLARE_WORK(cleanup_vm_area, cleanup_vm_area_work);
+> +static void defer_vm_area_cleanup(struct vm_struct *area)
+> +{
+> +	if (llist_add(&area->llnode, &pending_vm_area_cleanup))
+> +		schedule_work(&cleanup_vm_area);
+> +}
+> +
+>  static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  				 pgprot_t prot, unsigned int page_shift,
+>  				 int node)
+> @@ -3711,8 +3740,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  		warn_alloc(gfp_mask, NULL,
+>  			"vmalloc error: size %lu, failed to allocated page array size %lu",
+>  			nr_small_pages * PAGE_SIZE, array_size);
+> -		free_vm_area(area);
+> -		return NULL;
+> +		goto fail;
+>  	}
+>  
+>  	set_vm_area_page_order(area, page_shift - PAGE_SHIFT);
+> @@ -3789,7 +3817,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  	return area->addr;
+>  
+>  fail:
+> -	vfree(area->addr);
+> +	defer_vm_area_cleanup(area);
+>  	return NULL;
+>  }
+>  
+> -- 
+> 2.39.5
+
 -- 
-2.50.1
-
+Michal Hocko
+SUSE Labs
 
