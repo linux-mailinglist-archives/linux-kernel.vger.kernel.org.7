@@ -1,295 +1,257 @@
-Return-Path: <linux-kernel+bounces-759401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6496B1DD0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E06A9B1DD08
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89B69188CE6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9B218812B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903902737EF;
-	Thu,  7 Aug 2025 18:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FEF273806;
+	Thu,  7 Aug 2025 18:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NSOqNtNn"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RF1kC5Ba"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004D82737E2;
-	Thu,  7 Aug 2025 18:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754591393; cv=fail; b=HwJFh4O9m8vH6uwHFhqGf28Le7MzmvlpcAVEMtYDXwHDsuj/1ce+ThaqTbjuTgXYJeusvsD1DHFK4b+QqT7Gp4kdZTGPQH21LIZMzi4KE6QUnIb5LKY6AYVRkpEgCuQa1RQlDJBdzOHo0xbY7MxGbGchcNx7/NreHUkIsO+FxtU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754591393; c=relaxed/simple;
-	bh=Y4fY/ghLYzs89GjH+P/sFAh5zxLp/vGdkGaZHn8sKgc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dCGrjXe9XaO3YtLOqqBwNR6aIfSI9obdjpOfsCuJw0Ve9DqS1NIRn+ACN2Zg+Tn3Q4+TJiFs9+LFKoUvusi7B+FWj9xcSLLW0qmxVWdVPIvY1iLcs+zW8ACfYV/7KPNgjbd/hAS/A4H1ORf3xJS19Iv9/Lcx13MdyEchDbxSYU0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NSOqNtNn; arc=fail smtp.client-ip=40.107.94.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QX8nw3eqJJxIc0p6L03LqkDl9o5yVx2C8CCAGxu9eWRymQkNmRWX/pAmKruwemNf7EZA2hh54Okx3BhpEDwucEkzOEjp46TOlkWiut9Dmu0wayXNYdx74wehwHApWm/KrsR53ZQ/mCi6WquGdatEwo+8fLwwCQwYO4nb063Ef3SQslQjqhowYX9hkUvH3poWSkJEALQoPyfsshvkR6ch+sCdyFTOBJ6xdx/okgfAk+2SurUK/IGVMVvjXncmAeP+1wrlpiEsVPVhAiJDw0DGMdHnT8CWUwnaj3dG+AlihY7Tf3dI3oDUSMDr2psYzQ6/SbJwXF7f9Y0PwviwSclg5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=07RUgXOAap0CB0fsqi8jq/YJ2zsMofQX1GVx5l4otrQ=;
- b=jNqZn7bkbjPyCZjz+xsXZhhZOHPU0HAuZ4ZnFhoTWB2hnqCetJuUJtAr5XykD9hRPOvwfKmwMx++zwncwbk+JB3f6e1eWoKPJswHl9NA5jUN2+WlcLGs7fJRbc2fWPvKz4y8BUiInqn5lSeO31laj703KmjHVqpbPjQ2gFnXg4sPXGSGMaW6Eti4Ori3KG0NyFHjOlb9kOFCSGiAyn3g5QmMINVHHMIUcN+xggoO4F8PBYOoQ4pKHLqNxhmlLzaunrHGI6Km4JrQk0jnXM40cePP+on/KQdNiABHVMe+hIzmqx+PruM5Nt9XkVOJiThiFPPrWahCY6uBuGJJ7KHAWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=07RUgXOAap0CB0fsqi8jq/YJ2zsMofQX1GVx5l4otrQ=;
- b=NSOqNtNnJIdg5ox+Kzu+JQ4YfpKFswQqjUotwAlAzKWp+XmEw2/25Y9scNaP+KSyu79C+fVDTw/YXDmwK+3HR7lT8x9Voa96KsZQt6DJpYSCrcJAzIovgST4unOq5Lga9eWlxqRzethiAh5t3mWCmIlcdVaeEOuum0N2ZErzl4I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc) by MW4PR12MB6950.namprd12.prod.outlook.com
- (2603:10b6:303:207::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Thu, 7 Aug
- 2025 18:29:48 +0000
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16%7]) with mapi id 15.20.8989.011; Thu, 7 Aug 2025
- 18:29:47 +0000
-Message-ID: <aaab030c-29ca-4aae-b821-dd8fbb2fe5a8@amd.com>
-Date: Thu, 7 Aug 2025 13:29:43 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v16 17/34] fs/resctrl: Add the functionality to assign MBM
- events
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- tony.luck@intel.com, james.morse@arm.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
-Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
- akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
- Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
- seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
- xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
- sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
- peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
- mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
- gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
-References: <cover.1753467772.git.babu.moger@amd.com>
- <09e6eb24212047908127b8b9fbd1673d6892cad2.1753467772.git.babu.moger@amd.com>
- <0b906083-8579-48e3-9f73-4d80c327a30b@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <0b906083-8579-48e3-9f73-4d80c327a30b@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR02CA0059.namprd02.prod.outlook.com
- (2603:10b6:5:177::36) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27260186A;
+	Thu,  7 Aug 2025 18:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754591365; cv=none; b=JjMaVwFqpR01IVrnvl/UsGwfV66KUay20QNAh0iFrRIO6Td0V9LP1LunTj1ohTUZePXEBqgTt/QlsQn/mc+KtJJ4WSv2mXc/w7DQikRTLLqYT/hZk4T4ql/puTUAKUcOEzIzmpZwNLELooub+FfK2vhLl9pkyQdriIHQpj5Uu7U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754591365; c=relaxed/simple;
+	bh=0MjuKQe8s182P5fSAkQSVzVV7ppG+0BIhgH4H7HpCyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bOfA1J6I29I3cDBH0qjOfDh+kGkO7rnfoeZOGgIMTP9RxL305kBOJi8NHiIPqfaFGSUcV67RXDWqNnJP6vl7s+MbijDchT8rL5wirZ8giSoCR72rNPslvNAjZ8oaXHwM6uMoZMP2e/fYSOsBWT1VYjIw3vsvbd/u2BLlzvatSnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RF1kC5Ba; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23dc5bcf49eso14925945ad.2;
+        Thu, 07 Aug 2025 11:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754591363; x=1755196163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PXpLzh9f2OcRoQYEADq7bQNjN64p9yrTziTkYXi0ngg=;
+        b=RF1kC5Ba0Da5wapBT1FxQhE4rFsJi5Jov9SMq+IKq4lUj5w7m67EiMAHqGjcOEEuDE
+         NrlhzcUeV0p/E1OByDuvN/NnBojd9P0qHskYMgbLNnWHnZjtXNSyVPGA5FV5yzi0Hlij
+         b27fRBJnx1P5Xmm6zeW45XA73XMUKsqUVyxFqAQHuPaF4bQBXqSjDIPmH4xYEoDzeQtR
+         u1qKFBUsF+EsLJqvQ5ND4L6srlmsxj/JcmKm+GdtbDlh5zT9W7bcMprrs83IgNUliSb7
+         VzccyWc+5eEofIswjrRQftUvzxa25pcBgGQZEVWP57KecoEN1uf5WDOI0+x4JY7oupsH
+         Y+lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754591363; x=1755196163;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PXpLzh9f2OcRoQYEADq7bQNjN64p9yrTziTkYXi0ngg=;
+        b=hSVU0ipZ64jcLnQ7R7gcFVsfmPur4VlRzINruVhHe1M0YcpJ23N7Fh/wdkGI5zNJVJ
+         DxwWQvRb+tNYOy9lGU+J83CsHEm3t2oSY+h12EN4n8U304527qUemkFeAuzNZAkSfqmz
+         y5+foSx1QMjrq/RHe+6Ni4+I/Xxp1DVJvbAhUUGf2Bk6BPWyPo1ybwNFMDO7STLZcaOL
+         FtQ/CJYhluuXkIZuad2LmBaQqChnqXz6pNjeAnp7x5cg2q7HAqRauDCrQtpCeS4kvo7g
+         K8/RVYOBXTtQ8aTXWno5q7sUt+Mg1UDAC2YjN82dWh4ZwVKctBfJoQlj8toy6dwUXN0Q
+         h7PA==
+X-Forwarded-Encrypted: i=1; AJvYcCWV5iOn9z0RihBRK/IW7dEzToiQAjzH8D1SJbzL0wPfiJ5G+clzHNbP0RcKnunmyAxKlYkuXvlh8/QGQg==@vger.kernel.org, AJvYcCXV6wEB9xlVdXOEMCQW+MMLcYMGqPoZ5xrymL56JfkB8gNRs14l55esUv+aaM26bVtXe2E2gaZxcFcK53s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBPMht29fTK2pckJzRlNxXfev4MEMwgjeai618L3EW0HutbglU
+	zc39cwdhYUcu5V4ocsar7M9G7biNvIaoXy/5LeTCP28CiP90RE/wCJdL
+X-Gm-Gg: ASbGncuMaqggJ6afHghClbYLjXi4WmL6hxrA+czKPHr/JkLiwiOqxKsM3SpAo3OIoJz
+	4byaA1CAN57N+XNPUbd50T3B6DeuOHmiOztJrrT3cx5l/gYod4Z4GD0KTBKDVhtJ9a20UPWqwzx
+	eLKSKN9ilwiO+jXP55PC055JAMVj5W52fzSVCRp3GJ5Z/OgnHBRm2spnVrc7M97Bssp365jl3A4
+	Av975QpZ2RJLj3jOfwSQ+qXlFnEs+UHjSMeZQARTQTshqiplji17B3qPaNNu3evuZxlQtN4sb8o
+	z7WWX3FJahbdj06jQxL0T3v2ZMWTw4rmaC29YFL73LUu83IggEO1IFvQsFAMQTtZLXNK6qpVqai
+	kM7OIBJGaBQ16wm5552ArJIJkpC0vi5L/
+X-Google-Smtp-Source: AGHT+IEy6szDYvTpU5CXrnpu3V8cht2UYWOWNUxx22SUkuhwuo/Zno/RTiNiAgDk+fvXMjq2JtYryQ==
+X-Received: by 2002:a17:902:c992:b0:220:c164:6ee1 with SMTP id d9443c01a7336-242c21dd9c0mr219435ad.32.1754591363281;
+        Thu, 07 Aug 2025 11:29:23 -0700 (PDT)
+Received: from avinash ([2406:8800:9014:d938:f647:9d6a:9509:bc41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0f603sm191567695ad.48.2025.08.07.11.29.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 11:29:22 -0700 (PDT)
+From: Abinash Singh <abinashsinghlalotra@gmail.com>
+To: James.Bottomley@HansenPartnership.com
+Cc: martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abinash Singh <abinashsinghlalotra@gmail.com>
+Subject: [PATCH RFC] scsi: sd: Fix build warning in sd_revalidate_disk()
+Date: Fri,  8 Aug 2025 00:00:00 +0530
+Message-ID: <20250807183000.31465-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|MW4PR12MB6950:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e68368a-e7f7-4d4b-d8f8-08ddd5e06376
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?anlGcm5lNnJHMmdGK08zdzZVVGpjNjdHVG9QY0hGZnRZVzM0c2NHTU1NTW5E?=
- =?utf-8?B?N3BTdklZYlVZY3ZiQmN4QTJjeHJsdjdzM3JMYWNXbllVOTBxQVZMYW5KQ3BS?=
- =?utf-8?B?VmlyNU54NkVrcllCcGxOSFFqTUlCZm5pK0FnMEd1ellaWnpnbWJKRENLeC9N?=
- =?utf-8?B?cFV2a2RUMWVtMDVRbU1jMGJRREdNN1ZUZFg5WEZWTzNxM1E3eXZ3SGpyellM?=
- =?utf-8?B?NTI4QUhscU1sWGsyN2prQysvaC9yZkRjOVlnVUJRREdOR0g2S3dRZEovMStP?=
- =?utf-8?B?ekhXbE5ucW9vMERsVktpTWZQdXNJdXJNQVcrS2lJRVhNeFFMSHJKK1BWM0pS?=
- =?utf-8?B?c0svcUNIbjhWTDA4Q0diSGMrdndKZ2N0MzRFZUg1OWU4VXI4bU54cnBObWd3?=
- =?utf-8?B?WHFtRGprdm5vRGQ2T1gwR1lyNnVQTHVyVjBHenRoVnhkNTJXbDRscWM2RUNH?=
- =?utf-8?B?NXNpejJzUEp0aDdHejdPOFNQQkord3ZOQXBuK0VjTVY4TkdTLzhaZWVYREp0?=
- =?utf-8?B?T1pMRkZQYllpUXBmM3BhOS84VVoweHpuRkt5S3A3ZXdaMWhoejR4NUIyanBy?=
- =?utf-8?B?dG9pdUtpVHVzWUd5ditNOWNXN2MzWno5S29LYnZ0aCs5cTJCZm8wWUpscjEx?=
- =?utf-8?B?VmtpMkdvUkE2Mm1Xck1aWC8zaElMZnZYRTNVVENmY1FrTmpPWmVzK1dWdHpC?=
- =?utf-8?B?MDFDQ3UvL3MzdkE3L2szZ1F1a3BWdEdOeS95aDF2MFpraDNrZEZkMjNGWWMy?=
- =?utf-8?B?Y09IT3BIK2dSQlBKY2I2NFRCcGhHS0VkSzQ5ZjBDRnNUUFNZT1FISFRIN2dH?=
- =?utf-8?B?QlhDOHpyYzhQSlFFdlI3MEVSM1BrNG4yN3Bsd3Q4ZDkyeVRvdzVRU3Jna2ph?=
- =?utf-8?B?QjFpR1JoSGFTOEZiWEg5T1ZxM1MxOHQ0V0tXNGh2Z2hmcnl1eFFTZDYxNjdP?=
- =?utf-8?B?QmhleVA5ZVArc1RkU0hQNlZaMWVmSEpQYmt1NXoyZG1aVXF0TTNKVUhKVVdP?=
- =?utf-8?B?b2VxUW5vWUJMR0NOVVhjTTdOZ1k2cHcrV2wrOGlFTXAyU2QyZmY0aG05WWVu?=
- =?utf-8?B?R3VIQ3hMVGMzckQybllLU1gxODA4NjRjZDltcGM1cXNkSlgxa3laK3FRaXlK?=
- =?utf-8?B?N0srcm95d051c2loQ3NuNVJjRU9HOHh0RW5qOUF4QklwZFYrM1kvUCsvRlR3?=
- =?utf-8?B?QlowS2hsTTRlcHNSTXgrWDhoZDFLYkhtU2hjckErRXRzenJIUFBOeVRNUCtT?=
- =?utf-8?B?SDAzUWtiTVpveXU3UE5QcHU5bldEREswQlExWGNVa251Y1RmSDYrbjZXOHpS?=
- =?utf-8?B?eTJmbVhEeWU5UloySXRCMnk2Y2RITHdwWnFUaXBTWmJHYjR0V3VTQ3ZsVzdv?=
- =?utf-8?B?YWREd2UwMHNjUUlKTnluRFFxdEwzRDZycmhxMjVtV3NaNDZndkI4aEtsZzgz?=
- =?utf-8?B?Q0h4ZFVvMW0wZHBDc2R1YVBmcjhLcmd5RXBPT1FVQ01WamZwdGRYNUtUbkNu?=
- =?utf-8?B?T05vTDNPUnlTRXI2M1hTOUFDZnczSWJOQlpFeVRmeEVVWThmOXFZcktvN1Nm?=
- =?utf-8?B?RTNlUXNWNnBPaCtSby9zUnczUlVRMEM3M0lydUxFdzBxQWxrNkI3QXpaWE4x?=
- =?utf-8?B?K3E5RkhjTzNpb2g0RVRieEZzZ2FWbEpiWG0zS0V6akVCcEJxbGh6Sng0MEh0?=
- =?utf-8?B?ZlNnbmpLRWZwbEhBZXRwNFNrNGhnOEVMRTRyWnJmSitwSFpYaTdKQTVQdWww?=
- =?utf-8?B?dlFlUkpHeEk0cGRmSU1yRzZ5cyticUJ2NEhHdjRIZmtJclhJeCtjYTRYZmVm?=
- =?utf-8?B?NU5QSmd2cGE5TDJISFFuZU93d29RWmdUazhuUXJPNUpjdkltRTNpRXUrT2h1?=
- =?utf-8?B?bmJzL0RycFVYQ2pnOWl0aHJvZlRVZE5ENTRUZmpDcXFDNm5SdnpKKzdkc045?=
- =?utf-8?Q?Sa1L8oA2nuI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NUIrckxMRUUraERGM09FY2czSmNMbEl2N3ZIanhYc2pnUWVwT0tOcGtWdUNW?=
- =?utf-8?B?WDQwcG9CL2JNQ20yc3BhalNRWTFDSTAyQnA2NzBBYWVhMUFCV25oelQ4RnFJ?=
- =?utf-8?B?SGN0YmdBMWlVdG1PTWRsUnZxZ2xQelJ4bVVKZy9SdXpZRGxjc2xLMWkxS21q?=
- =?utf-8?B?TFk3bnpaL3gwSjJtbUtmeGFTV0JOTVBhdzJjRXZFYTBxR3ZWM1R4V3Y5OXFD?=
- =?utf-8?B?Vng0blgzMWx2WGhTQWQ0WEpoRGtZd1pKUnliK2ZRN2dRL3Vqaks3SmtDZStk?=
- =?utf-8?B?WnVUU3dwbGhENURNd3ZPa2piUzE2bTZCZkFNaU5keXFOS0d3d0lid013K1lv?=
- =?utf-8?B?L3B2eG5tOGlCTUpSYzdGTmJzVllVVXpLc0JYNmFDVHY2NmQrRklpZ0xLMXNY?=
- =?utf-8?B?dEZPazIzb0RXZEtqRzlpOWZZNm12Z2hnZ2hsRDZNc3kxOGVueHdLZjc4NE9U?=
- =?utf-8?B?Q2lSN1lkcDBwUkx4U1djNVpVT2lDRnRGMW1zRGRpRHRtR1lIWXZsODZIVjZa?=
- =?utf-8?B?L0dPVWpMcFJWaWNVK0FGZEFkbW5lMklOZlM3Zm41VFNQY0pXY0RxUDgxbVY4?=
- =?utf-8?B?c1NQU282ZkJYRk50UGNDeEdzd2M5ZUFRM2RIenoyaVYxb2hGQVJocHdoY253?=
- =?utf-8?B?aThpV0RacGg2UUJEZzBKNnhURllPWEtwRno0VGkrdTFFZ2JCRUVDY000Zzkz?=
- =?utf-8?B?RzZseWZiQUVNdjgvWlpJaGZ5ajBXV1kwT1ZIRzliczM5d3VaVTJYaUtOT1dm?=
- =?utf-8?B?ZDFaLzJhSmNKM0NmQkdSalRhNTFpSVcyZ2diM2RuN0xpelMzQ3VZRnFCM0Zo?=
- =?utf-8?B?L0xjQm5OV2JoejdQbXZvMEl1cWJQQmxqdnM4Zy9zdUR4WVhWRlJJZVBuWVBG?=
- =?utf-8?B?KzVhZFo5NEJYbU9xalYyL2xycmNRNHBqcmlEbFlpdlV3TUlFVGFxWGNxMmxS?=
- =?utf-8?B?YWVTM25rbTdCWnpXTmQ3OUtta0hGT2c3NE5JR1lCNVIrRTR2S3FXTjhGMzJj?=
- =?utf-8?B?R2U4RkxEa1NXSSsxdTU4RnZyVHN2bnJGRkxCelZ6TXFieFRKdzFwTCtvREZm?=
- =?utf-8?B?eGFzUjVENmp1Zys3VmlkN1JBV2FkUWxrR1BjQ2NCNFMxR2prZzJPM3JhOGI3?=
- =?utf-8?B?ZmJ6eEF5dGNtaEEzS3k0TnhHQjhxK1RRb2piaGtxNXVhemp4MWcyd3lGK3RM?=
- =?utf-8?B?ZU1UYmgva09YN3JDYXc5MHVFZGpEZ09lVllsdHljSExTSTdsZVZVeldjOS92?=
- =?utf-8?B?L1E0aUw4anJ2Q1JZMG9zZ0UyUDNSOUFTeGF4aVcvUXZuMVFKaC84cEVOenZw?=
- =?utf-8?B?QVhFYk1COW53aDlhYnh6KzF3Kzc5YStHbkdVZ0VValpESHpkalpVeHZ4eXcy?=
- =?utf-8?B?ZE0wTSszMDBDQWF0ZnR5YjY3Z3RRZTR6Lzh2U2Q2UngyZDFvYk5DVUpxeWRE?=
- =?utf-8?B?L3ZrZkRFbzZPNlQ1NTNJTG11bXFlQkZGWGR2OUw5MU8vRFRiQWp0Q3pFWldw?=
- =?utf-8?B?QTF6M0dWb01ZUkZha0w2VVVjQndXcEdSLytwd3ZiYlpZTXFLd1F4emxqcnRl?=
- =?utf-8?B?Q3dybVJBNngvUEpEdG05TjFsTUhiQ0JIRHFQcEdNdldPUjhndGM1c0hoVmZk?=
- =?utf-8?B?ZlEzc1k2UlhERGtLbVo5Ym56ZU5xVHdxcVNua1EwMDVNSEF6MHlNa1dMZTBa?=
- =?utf-8?B?MGZsRzA2aG5XSzdsS1ZvZjZwb1NMVjJTQnJJdisxM2tQYUhQcVRxRlN5NTI4?=
- =?utf-8?B?V0g0R0M4d1NHakg1NXpRNzlMNkhaajhRVHdaNlBGWmtrTG1ETWt5U2RnSlVy?=
- =?utf-8?B?a1l6S2x6a2ZHbWtCQU92YTRNZjcvSnlvUGdmV09lcDhKRVhLc09kZXRHK1l4?=
- =?utf-8?B?djFSNEEzZ0ZTVDlzbm1ndlREMkR2Q1g5R2k0cENHc0NpL3VRT0k1WlczMWJl?=
- =?utf-8?B?SXBFQzMxMXBpeFpGM2NocmdGb2Q1cURQenNTcVpYemFDU01sM2haMXk2ZmxN?=
- =?utf-8?B?L0pNNFVnMjhoUkNoaFB6QitqOHN4ZWpTeFlzeTJKT3ZkbUZ5VFU5N1MrZk9y?=
- =?utf-8?B?L2t0OUxhSGgrNkhraEkzMGtyYVp6TWFBdEordEhaVzl2UitmSUpFb3cwTzVU?=
- =?utf-8?Q?g2+Y=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e68368a-e7f7-4d4b-d8f8-08ddd5e06376
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 18:29:47.6856
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ecg8TK9r6v13kBEyyRNKH4sfxrBdExVW/Z6VAWRVx14+sUAlC/eaojkoSRhp/fqR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6950
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Reinette,
+A build warning was triggered due to excessive stack usage in
+sd_revalidate_disk():
 
-On 7/30/25 14:52, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 7/25/25 11:29 AM, Babu Moger wrote:
->> When supported, "mbm_event" counter assignment mode offers "num_mbm_cntrs"
->> number of counters that can be assigned to RMID, event pairs and monitor
->> bandwidth usage as long as it is assigned.
->>
->> Add the functionality to allocate and assign a counter to an RMID, event
->> pair in the domain.
->>
->> If all the counters are in use, kernel will log the error message
-> 
-> I think dropping "kernel will" will help the text to be imperative.
-> 
->> "Failed to allocate counter for <event> in domain <id>" in
->> /sys/fs/resctrl/info/last_cmd_status when a new assignment is requested.
-> 
-> "when a new assignment is requested" can be dropped. Or alternatively:
-> 	Log the error message "Failed to allocate counter for <event> in domain
-> 	<id>" in /sys/fs/resctrl/info/last_cmd_status if all the counters
-> 	are in use.
-> 
+drivers/scsi/sd.c: In function ‘sd_revalidate_disk.isra’:
+drivers/scsi/sd.c:3824:1: warning: the frame size of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
-Sure. will do.
+This is caused by a large local struct queue_limits (~400B) allocated
+on the stack. Replacing it with a heap allocation using kmalloc()
+significantly reduces frame usage. Kernel stack is limited (~8 KB),
+and allocating large structs on the stack is discouraged.
+As the function already performs heap allocations (e.g. for buffer),
+this change fits well.
 
->> Exit on the first failure when assigning counters across all the domains.
->>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
-> 
-> ...
-> 
->> ---
->>  fs/resctrl/internal.h |   3 +
->>  fs/resctrl/monitor.c  | 130 ++++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 133 insertions(+)
->>
->> diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
->> index db3a0f12ad77..419423bdabdc 100644
->> --- a/fs/resctrl/internal.h
->> +++ b/fs/resctrl/internal.h
->> @@ -387,6 +387,9 @@ bool closid_allocated(unsigned int closid);
->>  
->>  int resctrl_find_cleanest_closid(void);
->>  
->> +int rdtgroup_assign_cntr_event(struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
->> +			       struct mon_evt *mevt);
->> +
-> 
-> This internal.h change does not look necessary? Looking ahead this is because 
-> rdtgroup.c:rdtgroup_assign_cntrs() needs it, but rdtgroup_assign_cntrs()
-> also belongs in monitor.c, no? 
+Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
 
-Yes. Brought rdtgroup_assign_cntrs() in this patch for completeness and
-moved everything into monitor.c.
+---
+This was further confirmed by compiling sd.c with -fstack-usage flag
 
-> 
->>  #ifdef CONFIG_RESCTRL_FS_PSEUDO_LOCK
->>  int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
->>  
-> 
-> ...
-> 
->> +/*
->> + * rdtgroup_alloc_assign_cntr() - Allocate a counter ID and assign it to the event
->> + * pointed to by @mevt and the resctrl group @rdtgrp within the domain @d.
->> + *
->> + * Return:
->> + * 0 on success, < 0 on failure.
->> + */
->> +static int rdtgroup_alloc_assign_cntr(struct rdt_resource *r, struct rdt_mon_domain *d,
->> +				      struct rdtgroup *rdtgrp, struct mon_evt *mevt)
->> +{
->> +	int cntr_id;
->> +
->> +	/* No action required if the counter is assigned already. */
->> +	cntr_id = mbm_cntr_get(r, d, rdtgrp, mevt->evtid);
->> +	if (cntr_id >= 0)
->> +		return 0;
->> +
->> +	cntr_id = mbm_cntr_alloc(r, d, rdtgrp, mevt->evtid);
->> +	if (cntr_id <  0) {
-> 
-> Extra space above.
+Before: drivers/scsi/sd.c:3694:12:sd_revalidate_disk.isra 1248 dynamic,bounded
+After:  drivers/scsi/sd.c:3695:12:sd_revalidate_disk.isra  840 dynamic,bounded
 
-Sure.
+Already we had a heap allocation in this function so I think  we can do this
+without any issues.
+I have followed the same pattern on allocation failure as done for
+`buffer`.
 
-> 
->> +		rdt_last_cmd_printf("Failed to allocate counter for %s in domain %d\n",
->> +				    mevt->name, d->hdr.id);
->> +		return cntr_id;
->> +	}
->> +
->> +	rdtgroup_assign_cntr(r, d, mevt->evtid, rdtgrp->mon.rmid, rdtgrp->closid, cntr_id, true);
->> +
->> +	return 0;
->> +}
->> +
-> 
-> Reinette
-> 
+This function appears stable; if it's not under active development,
+we may consider cleaning up unused goto statements in a follow-up patch.
 
+Thanks For your valuable Time
+
+Best regards
+Abinash
+---
+ drivers/scsi/sd.c | 41 ++++++++++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 4a68b2ab2804..a03844400e51 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -34,6 +34,7 @@
+  */
+ 
+ #include <linux/bio-integrity.h>
++#include <linux/cleanup.h>
+ #include <linux/module.h>
+ #include <linux/fs.h>
+ #include <linux/kernel.h>
+@@ -3696,11 +3696,16 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 	struct scsi_disk *sdkp = scsi_disk(disk);
+ 	struct scsi_device *sdp = sdkp->device;
+ 	sector_t old_capacity = sdkp->capacity;
+-	struct queue_limits lim;
+ 	unsigned char *buffer;
+ 	unsigned int dev_max;
+ 	int err;
+ 
++	struct queue_limits *lim __free(kfree) = kmalloc(sizeof(*lim), GFP_KERNEL);
++	if (!lim) {
++		sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory allocation failure.\n");
++		goto out;
++	}
++
+ 	SCSI_LOG_HLQUEUE(3, sd_printk(KERN_INFO, sdkp,
+ 				      "sd_revalidate_disk\n"));
+ 
+@@ -3720,14 +3726,14 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 
+ 	sd_spinup_disk(sdkp);
+ 
+-	lim = queue_limits_start_update(sdkp->disk->queue);
++	*lim = queue_limits_start_update(sdkp->disk->queue);
+ 
+ 	/*
+ 	 * Without media there is no reason to ask; moreover, some devices
+ 	 * react badly if we do.
+ 	 */
+ 	if (sdkp->media_present) {
+-		sd_read_capacity(sdkp, &lim, buffer);
++		sd_read_capacity(sdkp, lim, buffer);
+ 		/*
+ 		 * Some USB/UAS devices return generic values for mode pages
+ 		 * until the media has been accessed. Trigger a READ operation
+@@ -3741,17 +3747,17 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 		 * cause this to be updated correctly and any device which
+ 		 * doesn't support it should be treated as rotational.
+ 		 */
+-		lim.features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
++		lim->features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
+ 
+ 		if (scsi_device_supports_vpd(sdp)) {
+ 			sd_read_block_provisioning(sdkp);
+-			sd_read_block_limits(sdkp, &lim);
++			sd_read_block_limits(sdkp, lim);
+ 			sd_read_block_limits_ext(sdkp);
+-			sd_read_block_characteristics(sdkp, &lim);
+-			sd_zbc_read_zones(sdkp, &lim, buffer);
++			sd_read_block_characteristics(sdkp, lim);
++			sd_zbc_read_zones(sdkp, lim, buffer);
+ 		}
+ 
+-		sd_config_discard(sdkp, &lim, sd_discard_mode(sdkp));
++		sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
+ 
+ 		sd_print_capacity(sdkp, old_capacity);
+ 
+@@ -3761,45 +3767,45 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 		sd_read_app_tag_own(sdkp, buffer);
+ 		sd_read_write_same(sdkp, buffer);
+ 		sd_read_security(sdkp, buffer);
+-		sd_config_protection(sdkp, &lim);
++		sd_config_protection(sdkp, lim);
+ 	}
+ 
+ 	/*
+ 	 * We now have all cache related info, determine how we deal
+ 	 * with flush requests.
+ 	 */
+-	sd_set_flush_flag(sdkp, &lim);
++	sd_set_flush_flag(sdkp, lim);
+ 
+ 	/* Initial block count limit based on CDB TRANSFER LENGTH field size. */
+ 	dev_max = sdp->use_16_for_rw ? SD_MAX_XFER_BLOCKS : SD_DEF_XFER_BLOCKS;
+ 
+ 	/* Some devices report a maximum block count for READ/WRITE requests. */
+ 	dev_max = min_not_zero(dev_max, sdkp->max_xfer_blocks);
+-	lim.max_dev_sectors = logical_to_sectors(sdp, dev_max);
++	lim->max_dev_sectors = logical_to_sectors(sdp, dev_max);
+ 
+ 	if (sd_validate_min_xfer_size(sdkp))
+-		lim.io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
++		lim->io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
+ 	else
+-		lim.io_min = 0;
++		lim->io_min = 0;
+ 
+ 	/*
+ 	 * Limit default to SCSI host optimal sector limit if set. There may be
+ 	 * an impact on performance for when the size of a request exceeds this
+ 	 * host limit.
+ 	 */
+-	lim.io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
++	lim->io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
+ 	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
+-		lim.io_opt = min_not_zero(lim.io_opt,
++		lim->io_opt = min_not_zero(lim->io_opt,
+ 				logical_to_bytes(sdp, sdkp->opt_xfer_blocks));
+ 	}
+ 
+ 	sdkp->first_scan = 0;
+ 
+ 	set_capacity_and_notify(disk, logical_to_sectors(sdp, sdkp->capacity));
+-	sd_config_write_same(sdkp, &lim);
++	sd_config_write_same(sdkp, lim);
+ 	kfree(buffer);
+ 
+-	err = queue_limits_commit_update_frozen(sdkp->disk->queue, &lim);
++	err = queue_limits_commit_update_frozen(sdkp->disk->queue, lim);
+ 	if (err)
+ 		return err;
+ 
 -- 
-Thanks
-Babu Moger
+2.50.1
 
 
