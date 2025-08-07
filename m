@@ -1,162 +1,232 @@
-Return-Path: <linux-kernel+bounces-758861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DE8B1D4DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:34:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A69EB1D4E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F64917C6C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5E75800C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C4225F799;
-	Thu,  7 Aug 2025 09:34:34 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C7726B76C;
+	Thu,  7 Aug 2025 09:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nccU0hpY"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBC922B584
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 09:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61185269B01;
+	Thu,  7 Aug 2025 09:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754559274; cv=none; b=qwu6E9RdAH6ASPbl2ZfxtVAYX43zA/BtsZ4YtLCFa+4JqZgZmcbwZ+EKiRrxNrO0YG0E/AqFFnbKA87X8P6bmbQEJ4XrMfNu7erkULkOBAmV8op1u7Cy49d0nKhCWtLa9w5DYyr5mAnkwT4RVUtzEmYrIrQ+mgTD/4DEFRUt0uA=
+	t=1754559290; cv=none; b=ShQdCSHYg2mmc22PoeScXtpovlWo70mUhs3VK4E0Bt/EoPPFPWOpdy6YR+HeSrVGOvthb0DbCAUbF58c1oYuSxQb6yiuJWmYlvzXkmQwapGKy8aY3N2WxyD7OUCG8dREXjOW0whEVqrlMjNoivbXxV2SRZBcotfcGagDFvHAzUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754559274; c=relaxed/simple;
-	bh=gELV5DYZDqSPBZtY1LBmOo1nEqecEpnLJxkPRWpmJ38=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SIhxtGvPpsNiH9dwVYBAoZ0ASdGjGi2nWODwkblBY5m1mRJDaHgJ1t+MqQ2vCW2fszgY/IRZkbihrlgdGUpQEsdFe2BmC0z3hjvEY9ST2BzrjfyokEZQYQs81kJHUQWMrp00pXWgXe3rnD8J/lNlvnD+6FuoywiGA4BvpuMw+KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88177c70d63so82552639f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 02:34:31 -0700 (PDT)
+	s=arc-20240116; t=1754559290; c=relaxed/simple;
+	bh=qPsfKAkOdwlhmMMYBpBVCtzg2cdLQVNNlgpnEcJ2Xrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmxWLD40bSgPI20VsY47jcvorTLsuwYXP+oWP8lnmjottxxvWUnxA/fBek32KKslAygiWAHywcgkGuBnukerRfTlQ176mA2SoGqhZI9j9AL26PxKbOfwNeKWJLv2gfADwcphr8C7RhFDX/0/H+iMYBZuF5kcZCNtsSl4XPKivFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nccU0hpY; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55b733911b3so809425e87.2;
+        Thu, 07 Aug 2025 02:34:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754559286; x=1755164086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dEdCWZIEU9/qClM35NNTpEudJXJlEAKAMyhURC1S95w=;
+        b=nccU0hpYl56J9OifH0ZiJOGpyb2vemHv1wu4CpUj4HFWj85PEMMCeOIti07uWAfQ1o
+         TaTI/Qk63HsSHW5IzeP2IJu7HOMSQ0nBO391EfPTnDzlQajgwphJ3s7PBq5SIA/WcJFW
+         gL2qFhctpvRPmFHM3WukYWKa9p0cDHlDXw+O7wdEZw6nc0wD89OYw4s0wVGGJP14aLnJ
+         J15SSjSlijCXqTWYeiUnyqTJux8Irr2g7TNdeR49SoOIHGfzj3c3Eh53/01gkJrd5mUg
+         WRZOLqH2ggtpnod5Hb+bNl6SQpzXSp0lkIG/IK5695F7j7FMgqyq1vhrqNQgWYyALjdt
+         2JrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754559271; x=1755164071;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Fjyqg8duMD58S8gtCQt8SefX/SjwKnwP2yTVcNnSrno=;
-        b=T8hhdcblUMFW1dVsUwLC1VK0TtkS1IYwsIokuYbgCURn3aTqIa9Hd8gLmKniQWBxL6
-         Z58mH9/reHeG+zgN9Qy0X0ttQohyD+aQWLjpTJlhjzXwlz8wW93Qw+VPytTF17EOKwLW
-         lho5Ei9rpNlCGo/4HnQwsK5T6OYANiHYKdw2P5wlZTmAy+DMmY1YKL7Yb7m+e9J02ZgW
-         l4KGE5TYmHcJHyy7sRwmWpN1aykX3205ZCXS3zHNI2Xmim3oft5jD3zoRXeNLvVFJ/4r
-         lKitr6sF/O7na3U8IdqhsB0gMAdTwrWlpHNHkN1/+GJp5I/0w3WT96kNzVpA/HWjr6G1
-         rXUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVK8Doq3vfahhBYUtQzHUjadUSotcKFWw7anNRZy7PYVSaJ9urx/4QDvs1sxDBRrOySmRt4YArWrtqvJfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXy93ImbaFoVbkZtvDa2RiereZ6o4nbyJ3ummnKUPTFqHTchC0
-	Z+iF13ZpHcFadrPXWerIvht5Wd1I8MOpttOIPks+6K5Lr0UZhT3/hHwHbd0MrJ9c1FSDCvYxRtm
-	V12wrxSZAm0ZWqUsvMC+HaVw5Znzw77Brb12O9cbTY3WJ/6bvGRfJPX9heBA=
-X-Google-Smtp-Source: AGHT+IGUmKSJT+d2iFTfH8WysDJUk7tflpCz4aox3079lXYwbRbYkW5oei9UVRZ+1Qti6tt3sRTcpTmEZrUR7RII+gdYo6AsG1N+
+        d=1e100.net; s=20230601; t=1754559286; x=1755164086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dEdCWZIEU9/qClM35NNTpEudJXJlEAKAMyhURC1S95w=;
+        b=xIJ417k8x1CRwQiLBzMflATgqcIqvIL6Q1BVkrPrX1AM3+t+hEL6V3rkLZuapDBwQN
+         NV+qFDeiRhb/CeUNhxNZWsHHkJ0/3fngSY/BKrlLbltFyRNXGQHpojDrHK68uVirJxAg
+         TdMlR7Xdu4MqVSFEeZ4p+YgdLe5Z57M7Sp4si1ycLPC0BuZx3oP6wWBtjVEEpbo4oxBH
+         auVBW/nHSN4MMx3VwYw9sVapyroZnkMlPHKX+a6/kIwoaher29qmmpW/Ln1+bfOB3Qzy
+         aac66l5S7Y9ftSLiDU/vMGUq00lbOxzlglIe6u+V6nVH7hghQ7g3Hq6rZaQPYPGgzwD7
+         UjYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVH2SW4Bs85Gc1N9xJ3S/x5VFtmT0YPDcfoIsz1m+Yg+sl5c7nw6z+eLoDvdAhg3CPDTK/hunf1rC+yGGe8@vger.kernel.org, AJvYcCVa2aFWuw12z43PQbSYAkHB+XCnqWuao1P00NPQ6hDZvmp4h3TQI2Tkn3RlWYMuhmGJQC2CItJ1v83R@vger.kernel.org, AJvYcCWPJ/Y9qQI+/5OWuaOnPYseZ42+7HRDjo+ifbLjzVYoAWgMk+0aaQvdidPAgr0aVMilJgRzZamvRjPb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdvGHVe2XZISd2k3RtWdb0wsk0Afn9O17SuQqck8qOX3EX0SHk
+	a3XskOY4L7mL8lxb/C57d/MJOHvXaHoD7rOEi52kcnY4MnUiR1r4QuPh
+X-Gm-Gg: ASbGncsjpU3/i0a3wlGDg6YSkkK3KMiPZRR0dxlZreBxZpDiqXuWq218zMKshvWkNZY
+	JSBS6UUzV3YcuSKjIj3ZSV+mIp2MiSdMLAhfzoTdZqA+KYlNA9/dksMCHzDU2/CMGDkAtQEiagL
+	YYojB0xHI9KlTQF1jyfLvO3WJivi/5nCFouKGGZTIh3Vf0jlHvzmq+4CGDH7ZAz76FZg07aYCLV
+	6SKCO9OmFMQl5iD+hFDEAiXaUMGJSjt2K7aVXl/zJ+Y30nwTNpzVYi2dADmUa9e1K5QK4C+yS75
+	jdJytjybFRnXvk8LfhrQpMuBAMaKcdo/eFzvp9WVZ5CvEl6tF8IvIJZgoe6ehQ6hSjv42/W2Tlp
+	hir5lnIjycCj70C93kXqVRAUs5DBu
+X-Google-Smtp-Source: AGHT+IGQDjOJ3EWcCO3jjdJTeflvMlvbULMrCmzMM71regQzvLzMOZoVRkX+hCBRm6SWEm3UfTX4bA==
+X-Received: by 2002:ac2:4bc1:0:b0:55b:914c:d0dd with SMTP id 2adb3069b0e04-55caf30641emr2157315e87.23.1754559286168;
+        Thu, 07 Aug 2025 02:34:46 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b9f90f0c6sm1567613e87.7.2025.08.07.02.34.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 02:34:45 -0700 (PDT)
+Date: Thu, 7 Aug 2025 12:34:41 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 05/10] iio: adc: ad7476: Limit the scope of the chip_info
+Message-ID: <b23ac0b287926b87c36c74e9057139c18e3f4c91.1754559149.git.mazziesaccount@gmail.com>
+References: <cover.1754559149.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:580d:0:b0:861:6f49:626 with SMTP id
- ca18e2360f4ac-8819f0b93b9mr978115239f.6.1754559271215; Thu, 07 Aug 2025
- 02:34:31 -0700 (PDT)
-Date: Thu, 07 Aug 2025 02:34:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68947327.050a0220.7f033.0042.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in ieee80211_recalc_chanctx_chantype
-From: syzbot <syzbot+3e1ddd8aa744da8bec01@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    7e161a991ea7 Merge tag 'i2c-for-6.17-rc1-part2' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1489c434580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=62d04834ef6637ed
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e1ddd8aa744da8bec01
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3e5f109fb8fc/disk-7e161a99.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/051cd2ea2369/vmlinux-7e161a99.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f4d2819ae9d5/bzImage-7e161a99.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3e1ddd8aa744da8bec01@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6016 at net/mac80211/chan.c:844 ieee80211_recalc_chanctx_chantype+0x7a7/0xae0 net/mac80211/chan.c:844
-Modules linked in:
-CPU: 1 UID: 0 PID: 6016 Comm: kworker/u8:3 Not tainted 6.16.0-syzkaller-11699-g7e161a991ea7 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Workqueue: netns cleanup_net
-RIP: 0010:ieee80211_recalc_chanctx_chantype+0x7a7/0xae0 net/mac80211/chan.c:844
-Code: 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 80 3c 02 00 0f 84 6f f9 ff ff 4c 89 ff e8 14 60 0c f7 e9 62 f9 ff ff e8 8a 08 a7 f6 90 <0f> 0b 90 e9 18 fc ff ff e8 7c 08 a7 f6 49 8d bd a0 09 00 00 48 b8
-RSP: 0018:ffffc900047c7098 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 000000000000000f RCX: ffffffff8b1484e2
-RDX: ffff888030da5a00 RSI: ffffffff8b1489d6 RDI: 0000000000000005
-RBP: dffffc0000000000 R08: 0000000000000005 R09: 000000000000000f
-R10: 000000000000000f R11: 0000000000000000 R12: 1ffff920008f8e1c
-R13: 0000000000000000 R14: ffff88805288a8c0 R15: 0000000000000007
-FS:  0000000000000000(0000) GS:ffff8881247c7000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000008000 CR3: 000000000e380000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- ieee80211_assign_link_chanctx+0xb90/0xf00 net/mac80211/chan.c:944
- __ieee80211_link_release_channel+0x273/0x4b0 net/mac80211/chan.c:1890
- ieee80211_link_release_channel+0x128/0x200 net/mac80211/chan.c:2165
- ieee80211_leave_mesh+0x71/0x150 net/mac80211/cfg.c:2842
- rdev_leave_mesh net/wireless/rdev-ops.h:372 [inline]
- cfg80211_leave_mesh+0x23e/0x900 net/wireless/mesh.c:277
- cfg80211_leave+0x26a/0x3f0 net/wireless/core.c:1383
- cfg80211_netdev_notifier_call+0x2c1/0x1120 net/wireless/core.c:1567
- notifier_call_chain+0xbc/0x410 kernel/notifier.c:85
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
- call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
- call_netdevice_notifiers net/core/dev.c:2281 [inline]
- __dev_close_many+0xff/0x770 net/core/dev.c:1726
- netif_close_many+0x233/0x630 net/core/dev.c:1780
- netif_close net/core/dev.c:1797 [inline]
- netif_close+0x17f/0x230 net/core/dev.c:1791
- dev_close+0xaa/0x240 net/core/dev_api.c:220
- cfg80211_shutdown_all_interfaces+0x9a/0x220 net/wireless/core.c:277
- ieee80211_remove_interfaces+0xc3/0x740 net/mac80211/iface.c:2364
- ieee80211_unregister_hw+0x55/0x3a0 net/mac80211/main.c:1664
- mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5674 [inline]
- hwsim_exit_net+0x3ac/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6554
- ops_exit_list net/core/net_namespace.c:198 [inline]
- ops_undo_list+0x2ee/0xab0 net/core/net_namespace.c:251
- cleanup_net+0x408/0x890 net/core/net_namespace.c:682
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nA78UKiSkG7Cylmn"
+Content-Disposition: inline
+In-Reply-To: <cover.1754559149.git.mazziesaccount@gmail.com>
 
 
+--nA78UKiSkG7Cylmn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+The chip_info structure is not required to be accessed after probe.
+
+Remove the chip_info pointer from the driver data to reduce the scope
+and to make driver clearer.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Revision history:
+ v1 =3D> v2:
+ - New patch
+---
+ drivers/iio/adc/ad7476.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+index fc701267358e..e97742912b8e 100644
+--- a/drivers/iio/adc/ad7476.c
++++ b/drivers/iio/adc/ad7476.c
+@@ -38,7 +38,6 @@ struct ad7476_chip_info {
+=20
+ struct ad7476_state {
+ 	struct spi_device		*spi;
+-	const struct ad7476_chip_info	*chip_info;
+ 	struct gpio_desc		*convst_gpio;
+ 	struct spi_transfer		xfer;
+ 	struct spi_message		msg;
+@@ -280,6 +279,7 @@ static const struct iio_info ad7476_info =3D {
+=20
+ static int ad7476_probe(struct spi_device *spi)
+ {
++	const struct ad7476_chip_info *chip_info;
+ 	struct ad7476_state *st;
+ 	struct iio_dev *indio_dev;
+ 	int ret;
+@@ -290,12 +290,12 @@ static int ad7476_probe(struct spi_device *spi)
+=20
+ 	st =3D iio_priv(indio_dev);
+=20
+-	st->chip_info =3D spi_get_device_match_data(spi);
+-	if (!st->chip_info)
++	chip_info =3D spi_get_device_match_data(spi);
++	if (!chip_info)
+ 		return -ENODEV;
+=20
+ 	/* Use VCC for reference voltage if vref / internal vref aren't used */
+-	if (!st->chip_info->int_vref_mv && !st->chip_info->has_vref) {
++	if (!chip_info->int_vref_mv && !chip_info->has_vref) {
+ 		ret =3D devm_regulator_get_enable_read_voltage(&spi->dev, "vcc");
+ 		if (ret < 0)
+ 			return ret;
+@@ -306,11 +306,11 @@ static int ad7476_probe(struct spi_device *spi)
+ 			return ret;
+ 	}
+=20
+-	if (st->chip_info->has_vref) {
++	if (chip_info->has_vref) {
+ 		ret =3D devm_regulator_get_enable_read_voltage(&spi->dev, "vref");
+ 		if (ret < 0) {
+ 			/* Vref is optional if a device has an internal reference */
+-			if (!st->chip_info->int_vref_mv || ret !=3D -ENODEV)
++			if (!chip_info->int_vref_mv || ret !=3D -ENODEV)
+ 				return ret;
+ 		} else {
+ 			st->scale_mv =3D ret / 1000;
+@@ -318,9 +318,9 @@ static int ad7476_probe(struct spi_device *spi)
+ 	}
+=20
+ 	if (!st->scale_mv)
+-		st->scale_mv =3D st->chip_info->int_vref_mv;
++		st->scale_mv =3D chip_info->int_vref_mv;
+=20
+-	if (st->chip_info->has_vdrive) {
++	if (chip_info->has_vdrive) {
+ 		ret =3D devm_regulator_get_enable(&spi->dev, "vdrive");
+ 		if (ret)
+ 			return ret;
+@@ -336,12 +336,12 @@ static int ad7476_probe(struct spi_device *spi)
+=20
+ 	indio_dev->name =3D spi_get_device_id(spi)->name;
+ 	indio_dev->modes =3D INDIO_DIRECT_MODE;
+-	indio_dev->channels =3D st->chip_info->channel;
++	indio_dev->channels =3D chip_info->channel;
+ 	indio_dev->num_channels =3D 2;
+ 	indio_dev->info =3D &ad7476_info;
+=20
+ 	if (st->convst_gpio)
+-		indio_dev->channels =3D st->chip_info->convst_channel;
++		indio_dev->channels =3D chip_info->convst_channel;
+ 	/* Setup default message */
+=20
+ 	st->xfer.rx_buf =3D &st->data;
+@@ -355,8 +355,8 @@ static int ad7476_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
+=20
+-	if (st->chip_info->reset)
+-		st->chip_info->reset(st);
++	if (chip_info->reset)
++		chip_info->reset(st);
+=20
+ 	return devm_iio_device_register(&spi->dev, indio_dev);
+ }
+--=20
+2.50.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+--nA78UKiSkG7Cylmn
+Content-Type: application/pgp-signature; name=signature.asc
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+-----BEGIN PGP SIGNATURE-----
 
-If you want to undo deduplication, reply with:
-#syz undup
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiUczEACgkQeFA3/03a
+ocU2tgf/Q41tk43emXzWe6VTVSoKP6nwCxzHyfNZ2q18U0UH2cN4R8lUT5OxRW37
+rLfebnEmLh+Jf2KXNkxttP3v8QNjJcbWWTMpa2f4HVb606Y+046ujtI2tZ+HaJby
+wPnmB3lTTmTW5Zc35tO58mzf701zPhF0vgET1rMXwIVvOcewSLKdIqoJPc85rDlI
+3wLatm87rB/scUoMdaTj8zUlFcDsvLFe/YFHFKUUDCz1e/3vAiRylHS7pl+nqT4j
+l6EuBLuQL8cduTfLvj1YseLGK23/FRIdmstas1c6H8H9sAxM2qNtNgd/6loTGiUw
+0jLa7FfuXftLUBQN/1Lu8HdZ3Akp3w==
+=qLDy
+-----END PGP SIGNATURE-----
+
+--nA78UKiSkG7Cylmn--
 
