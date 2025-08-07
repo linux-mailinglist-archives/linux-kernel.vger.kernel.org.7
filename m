@@ -1,134 +1,219 @@
-Return-Path: <linux-kernel+bounces-759288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA11B1DB95
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3645DB1DB97
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3643BFBB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49C6622802
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B34326E71E;
-	Thu,  7 Aug 2025 16:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B16226FA4E;
+	Thu,  7 Aug 2025 16:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNGB1fF+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5sSS+2O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994161A0BFD;
-	Thu,  7 Aug 2025 16:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA4C26E705;
+	Thu,  7 Aug 2025 16:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754583902; cv=none; b=TinydU51y1EmChFIyu013W3sapSQfrBebo2irpbkwEigkJVBBmM1kfPG7I2uOKUfyKhga4rlcPAlr9+RSin+uRRQmPQN4e8TK0vA22CW/gXGc6faFSBLKzAXXfXU3HMmXVpPWUmUyBWo+Erza79j5VALFOV2CXUXbKiTPcVuGno=
+	t=1754583923; cv=none; b=YkWTsMuIwwhjaZJGhzuatVLcMVw/JlTUTCg4zjCb7RB36kQ9tQjkEO085l9MGTXCbJ2oy2001XtapF1K5Gg7K1uqVpE+Qi3WzR27f7B6KC8e5y2Pib9ctuwzDrDnKn/9BAljEpWhtUPwi0A7aMbOE3vbAUJDYymYKiHp19O/gLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754583902; c=relaxed/simple;
-	bh=gZuBfBfos6lnetLDGbxB+b0JOP5wvWRXNZu2oo5TIAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BpLGrqqP3l5ERa4x+263ZopdNXYBAWKxdnZB5s+hgfb8syt8J/vxYEvFyiT21QH8kjuT7B/4MbBeWp84BcORCIzqnF3RLSFMCqWbMhIT88a+YYr5uraY//BtHmfu0DU+5DRnVLhViX3zd7P0aiQiDddJs0AHtyvELo5YbnooA2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNGB1fF+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E65E7C4CEEB;
-	Thu,  7 Aug 2025 16:25:01 +0000 (UTC)
+	s=arc-20240116; t=1754583923; c=relaxed/simple;
+	bh=BudXXcTDGTwxVD8ktjRz+4NV9TJy0IkwNxbBa3LWQks=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=CT2wAi0jff3+7cFcFlMHvl2BK9EVrG9aQcLDUT4olyRJ1i/jOCleUkolUABFeroCF6pxAEwAJFGqRIoBVcUC9lxFkcjFY8oobYiny8qH57qek0fGh509jT24NXlwqdfBQM64dMylo0kX8f1aIEIJ1BjedkGo56ObkfYVbwsk9rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5sSS+2O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9EEBC4CEEB;
+	Thu,  7 Aug 2025 16:25:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754583902;
-	bh=gZuBfBfos6lnetLDGbxB+b0JOP5wvWRXNZu2oo5TIAc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cNGB1fF+zSer4RrcHRNtDc4XjWOFIpr9Akj8vMOxKglY64CcCS+atMiPTTfgAy1FC
-	 J48secBhJX/fCDNEvnaclth1xE3MIgng0MEdsnSgKvECkDYpOufr1FlGc8HL8+IiXz
-	 lA3Xl2msKWXsXMLiP3JCeXIBBu8JZsQSxEKyE7H9AYh/oHjDF6viWvutOImxa+2tHL
-	 7oN3DDYzZjVYWBSq1V5c//1tRGa/qGfm4bH0o2K/YgnfVhzFxjFGmNtqDmZNiLPVcj
-	 0JtJRMVklulGL0ZqzgaTK7ApGaWicj8qZyUSBOCaODq/21fOPzmLksZ4dGYyMFfgXJ
-	 lUTeagY+M8Rbg==
-From: SeongJae Park <sj@kernel.org>
-To: Bijan Tabatabai <bijan311@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bijan Tabatabai <bijantabatab@micron.com>
-Subject: Re: [PATCH v2] mm/damon/core: skip needless update of damon_attrs in damon_commit_ctx()
-Date: Thu,  7 Aug 2025 09:24:59 -0700
-Message-Id: <20250807162459.52683-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAMvvPS7mcevjD-b2vz1P+grQfffVA0bx-x5WcUQ8=JApD+UkHw@mail.gmail.com>
-References: 
+	s=k20201202; t=1754583923;
+	bh=BudXXcTDGTwxVD8ktjRz+4NV9TJy0IkwNxbBa3LWQks=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=P5sSS+2OTaPHfKQ7mMNN/uSkilMMoN7DDZ7CND1CGKyvRJE85TL0J6gTIlABwqnSA
+	 NQXDcKFq5gydWUbE51EneYcRKby3Lu1TIymbHRfnZ/HY4R90XkkumVfQZmjF8JFOlh
+	 p2Qab2ZgAcxuHDjL72Zpd+sWhiUwVpXPsOiREIQ8FDJr254F5p2hC15CZ38aLUu6Br
+	 9boLOT1C0N4HuvQwpmyLVj0YwF248CMixT7+SS6YtmqBuw02RE06jDW5VVe2hGqbsS
+	 SHroNrEgmVyO4DJBAuwbtd1QXtnPtQCt6nFke40HU1txhdHAketkb22ynmYr6gHKU2
+	 NtateoowuMeEw==
+Date: Thu, 7 Aug 2025 11:25:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	Jonathan Cameron <Jonathan.Cameron@huwei.com>,
+	Nicolin Chen <nicolinc@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Chen Wang <unicorn_wang@outlook.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 2/4] PCI/MSI: Add startup/shutdown support for per device
+ MSI[X] domains
+Message-ID: <20250807162521.GA50955@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807112326.748740-3-inochiama@gmail.com>
 
-On Wed, 6 Aug 2025 19:48:44 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
+In subject, s/MSI[X]// and s/support for/for/
 
-> On Wed, Aug 6, 2025 at 7:19 PM SeongJae Park <sj@kernel.org> wrote:
-> >
-> > On Wed,  6 Aug 2025 18:42:54 -0500 Bijan Tabatabai <bijan311@gmail.com> wrote:
-> >
-> > > From: Bijan Tabatabai <bijantabatab@micron.com>
-> > >
-> > > Currently, damon_commit_ctx() always calls damon_set_attrs() even if the
-> > > attributes have not been changed. This can be problematic when the DAMON
-> > > state is committed relatively frequently because damon_set_attrs() resets
-> > > ctx->next_{aggregation,ops_update}_sis, causing aggregation and ops
-> > > update operations to be needlessly delayed.
-> > >
-> > > This patch avoids this by only calling damon_set_attrs() in
-> > > damon_commit_ctx when the attributes have been changed.
-> > >
-> > > Cc: Bijan Tabatabai <bijan311@gmail.com>
-> >
-> > Maybe above line is added by a mistake?
+The "MSI[X]" notation really isn't used anywhere else, and we already
+include "PCI/MSI" in the prefix, so I don't think we need it again.
+
+On Thu, Aug 07, 2025 at 07:23:23PM +0800, Inochi Amaoto wrote:
+> As The RISC-V PLIC can not apply affinity setting without calling
+> irq_enable(), it will make the interrupt unavaible when using as
+> an underlying irq chip for MSI controller.
+
+s/As The/As the/
+s/unavaible/unavailable/
+s/irq chip/IRQ chip/
+
+> Introduce the irq_startup/irq_shutdown for PCI domain template with
+> new MSI domain flag. This allow the PLIC can be properly configurated
+> when calling irq_startup().
+
+Maybe something like:
+
+  Implement .irq_startup() and .irq_shutdown() for the PCI MSI and
+  MSI-X templates.  For chips that specify MSI_FLAG_PCI_MSI_STARTUP_PARENT, 
+  these startup and shutdown the parent as well, which allows ...
+
+s/This allow/This allows/
+s/can be properly configurated/to be configured/
+
+Evidently PLIC depends on this "parent" connection, but that isn't
+explained at all in the commit log.
+
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  drivers/pci/msi/irqdomain.c | 52 +++++++++++++++++++++++++++++++++++++
+>  include/linux/msi.h         |  2 ++
+>  2 files changed, 54 insertions(+)
 > 
-> Sorry about that. I added it because my internship ends this week and
-> wanted to make sure I get notifications on the status of this patch
-> (e.g. email notifications when the patch is merged in Andrew's tree).
-> If it's inappropriate I will remove it in the next version (unless
-> Andrew does it himself).
+> diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
+> index 0938ef7ebabf..f0d18cadbe20 100644
+> --- a/drivers/pci/msi/irqdomain.c
+> +++ b/drivers/pci/msi/irqdomain.c
+> @@ -148,6 +148,23 @@ static void pci_device_domain_set_desc(msi_alloc_info_t *arg, struct msi_desc *d
+>  	arg->hwirq = desc->msi_index;
+>  }
+>  
+> +static __always_inline void cond_shutdown_parent(struct irq_data *data)
 
-I was just thinking you might not added this for a purpose.  I don't mind
-adding this Cc tag.  As you may already noticed, Andrew merged this patch as is
-with this Cc line, so seems Andrew also doesn't really mind, so all is good.
+Is there a functional reason why we need __always_inline?
 
-I hope you had a nice internship and continue seeing on the mailing lists :)
+If not, it seems like this annotation is just clutter, and the compiler
+will probably inline it all by itself.
 
-[...]
-> > > +static bool damon_attrs_equals(const struct damon_attrs *attrs1,
-> > > +             const struct damon_attrs *attrs2)
-> > > +{
-> > > +     const struct damon_intervals_goal *ig1 = &attrs1->intervals_goal;
-> > > +     const struct damon_intervals_goal *ig2 = &attrs2->intervals_goal;
-> > > +
-> > > +     return attrs1->sample_interval == attrs2->sample_interval &&
-> > > +             attrs1->aggr_interval == attrs2->aggr_interval &&
-> > > +             attrs1->ops_update_interval == attrs2->ops_update_interval &&
-> > > +             attrs1->min_nr_regions == attrs2->min_nr_regions &&
-> > > +             attrs1->max_nr_regions == attrs2->max_nr_regions &&
-> > > +             ig1->access_bp == ig2->access_bp &&
-> > > +             ig1->aggrs == ig2->aggrs &&
-> > > +             ig1->min_sample_us == ig2->min_sample_us &&
-> > > +             ig1->max_sample_us == ig2->max_sample_us;
-> > > +
-> >
-> > Unnecessary blank line?
+> +{
+> +	struct msi_domain_info *info = data->domain->host_data;
+> +
+> +	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+> +		irq_chip_shutdown_parent(data);
+> +}
+> +
+> +static __always_inline unsigned int cond_startup_parent(struct irq_data *data)
+> +{
+> +	struct msi_domain_info *info = data->domain->host_data;
+> +
+> +	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_STARTUP_PARENT))
+> +		return irq_chip_startup_parent(data);
+> +	return 0;
+> +}
+> +
+>  static __always_inline void cond_mask_parent(struct irq_data *data)
+>  {
+>  	struct msi_domain_info *info = data->domain->host_data;
+> @@ -164,6 +181,23 @@ static __always_inline void cond_unmask_parent(struct irq_data *data)
+>  		irq_chip_unmask_parent(data);
+>  }
+>  
+> +static void pci_irq_shutdown_msi(struct irq_data *data)
+> +{
+> +	struct msi_desc *desc = irq_data_get_msi_desc(data);
+> +
+> +	pci_msi_mask(desc, BIT(data->irq - desc->irq));
+> +	cond_shutdown_parent(data);
+> +}
+> +
+> +static unsigned int pci_irq_startup_msi(struct irq_data *data)
+> +{
+> +	struct msi_desc *desc = irq_data_get_msi_desc(data);
+> +	unsigned int ret = cond_startup_parent(data);
+> +
+> +	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
+> +	return ret;
+> +}
+> +
+>  static void pci_irq_mask_msi(struct irq_data *data)
+>  {
+>  	struct msi_desc *desc = irq_data_get_msi_desc(data);
+> @@ -194,6 +228,8 @@ static void pci_irq_unmask_msi(struct irq_data *data)
+>  static const struct msi_domain_template pci_msi_template = {
+>  	.chip = {
+>  		.name			= "PCI-MSI",
+> +		.irq_startup		= pci_irq_startup_msi,
+> +		.irq_shutdown		= pci_irq_shutdown_msi,
+>  		.irq_mask		= pci_irq_mask_msi,
+>  		.irq_unmask		= pci_irq_unmask_msi,
+>  		.irq_write_msi_msg	= pci_msi_domain_write_msg,
+> @@ -210,6 +246,20 @@ static const struct msi_domain_template pci_msi_template = {
+>  	},
+>  };
+>  
+> +static void pci_irq_shutdown_msix(struct irq_data *data)
+> +{
+> +	pci_msix_mask(irq_data_get_msi_desc(data));
+> +	cond_shutdown_parent(data);
+> +}
+> +
+> +static unsigned int pci_irq_startup_msix(struct irq_data *data)
+> +{
+> +	unsigned int ret = cond_startup_parent(data);
+> +
+> +	pci_msix_unmask(irq_data_get_msi_desc(data));
+> +	return ret;
+> +}
+> +
+>  static void pci_irq_mask_msix(struct irq_data *data)
+>  {
+>  	pci_msix_mask(irq_data_get_msi_desc(data));
+> @@ -234,6 +284,8 @@ EXPORT_SYMBOL_GPL(pci_msix_prepare_desc);
+>  static const struct msi_domain_template pci_msix_template = {
+>  	.chip = {
+>  		.name			= "PCI-MSIX",
+> +		.irq_startup		= pci_irq_startup_msix,
+> +		.irq_shutdown		= pci_irq_shutdown_msix,
+>  		.irq_mask		= pci_irq_mask_msix,
+>  		.irq_unmask		= pci_irq_unmask_msix,
+>  		.irq_write_msi_msg	= pci_msi_domain_write_msg,
+> diff --git a/include/linux/msi.h b/include/linux/msi.h
+> index e5e86a8529fb..3111ba95fbde 100644
+> --- a/include/linux/msi.h
+> +++ b/include/linux/msi.h
+> @@ -568,6 +568,8 @@ enum {
+>  	MSI_FLAG_PARENT_PM_DEV		= (1 << 8),
+>  	/* Support for parent mask/unmask */
+>  	MSI_FLAG_PCI_MSI_MASK_PARENT	= (1 << 9),
+> +	/* Support for parent startup/shutdown */
+> +	MSI_FLAG_PCI_MSI_STARTUP_PARENT	= (1 << 10),
+>  
+>  	/* Mask for the generic functionality */
+>  	MSI_GENERIC_FLAGS_MASK		= GENMASK(15, 0),
+> -- 
+> 2.50.1
 > 
-> Sorry for missing this!
-
-No worry, as you may already noticed, Andrew thankfully fixed this, with a
-followup fix patch[1].
-
-So all is well :)
-
-[...]
-
-[1] https://lore.kernel.org/20250807033443.BD30FC4CEEB@smtp.kernel.org
-
-
-Thanks,
-SJ
-
 
