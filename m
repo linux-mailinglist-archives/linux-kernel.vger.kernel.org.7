@@ -1,185 +1,256 @@
-Return-Path: <linux-kernel+bounces-759133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC54B1D8FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:27:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80015B1D90B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5908D6250F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:27:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906A5584D7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D113925A65A;
-	Thu,  7 Aug 2025 13:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ma8PWo3b"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013038.outbound.protection.outlook.com [40.107.44.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A2225C6E2;
+	Thu,  7 Aug 2025 13:28:32 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB0E25B1FC
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754573229; cv=fail; b=tuL9ncAsszmbAQj/fwdIN2SwWD70XZd87ZdmgqgqvcXNIi2pwyH71ZEQHwfI89Lf5a7UZkYFs2O8xUJqkIcPmfLEou1AymyzS3Sy9xRMvbBPiNuYl6Y+xJV91Lb4ajvjBSH8TZUXEvTLNDNseJEFWYp0QIgQ+MbsSeaIPhXoAk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754573229; c=relaxed/simple;
-	bh=W6pQe7BbDu060LqbWOtxuaVd8QaxMXGJIabaUI4Y4fE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZnDT+Job+YhurdAQwx//B7y+MuPzfa5/8xPSquolE48q7xCeSU/lOpNgPoMAHWww+H4CyPg/VfHohbKLaS8qhvw94sbPbDbrRBE06uIE1/k7/krpSTY4SI4yLxl/HpwRRMi3jiPNNtO8/mw+BabVqHUroHIeJ8WZmopkclQq6/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ma8PWo3b; arc=fail smtp.client-ip=40.107.44.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jh3BdIsCYK1u8Mpmh1D4MlIS0uar1tSpPOpBJHdLd1jKa7AdSQ8nWZqNOOVwgC0SJfSOnp5JFO0aFp2YeK6SXjSflvaE2AC6rYLfb/cl+whOJk1wj5ousUnssDDEWxTD8bM7p7406OmzBeiFZuKFS+9BASSCC7as8BrPy7L0wHuKvPrd22i9xcPRpL6717eoTaBcii7O9MXaXn00dMeKm59W9XGS+whbUvLTVG1AzqUia6UFGYAWdjR2F3H2i3ChvE/6aQeEmTVXy/Eld8A4ZrhB45PY/qtnduOZ+dllCD1Li1bZRm0iVRar4X750jznTSNcqnOvdAFagvnoRaR5Aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FZ1MsuARKMRjU3yo7tHDn+tzNptFT8sP4Qr9axEFxo4=;
- b=YIBqWc+/kcAg9/uOIJBgedwWNyw7of7c3zI14ZaFdB1FCgaDuVMN15OOsmqfio5J7TZYcnratSHePNS88Pgd5GWmvboJlWQopWsOaZU3EwWFNRGeDwNJkr6kvqD28ZK4xPcGuIVsBoIfx0oUfoIyvY3O3+XrcKNzTUKRVISF2+aM7ZrzYaXHY7q1iF8kwAUFsoIy7hBkOcmsOFsPAg0f0xZAZ8qQwwbPlMgkZTxUQd8FxtDjSZTO1UHNn+IdyzbRh9l9yXHojC6oUyRiGU0Qo8S2/uDXBC3R3D50/4QclhxPH4RVSm5Z1NIpMiOhnluYp50SqEQjrmulsjR+IkVY8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZ1MsuARKMRjU3yo7tHDn+tzNptFT8sP4Qr9axEFxo4=;
- b=ma8PWo3bS0yEHso8IpYpFqBo9k9yik87KMm/3sZR1fSJktrzFB8DX0/JKdZlwxk/+LT18aCMqPamG9uuGxzUNfJr2cAslnWU2YrcnoIA2VeflhYrz6eqtOlTZVythdXG4JlbzVjA8xiJVQRkoWvNPO4PPd4+DiBCKzPZQez/i7c3qEWxpUcJm9bVEW7lCKdqYFvVazqDH8lYONaOk0UU2MRKiRxLsXgL75+j/fE3F9JtKw7t+KJdGQq1bCf4VYSRDu6o1tF6pUUHAvuSsxCz2Es493j58n4B2O9B5L2oFnmzaPrDRegO4oRrQAa0hAO05dVA0PJaynmfL+10IsqO2Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- KU2PPF40E30BD52.apcprd06.prod.outlook.com (2603:1096:d18::490) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.16; Thu, 7 Aug 2025 13:27:02 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
- 13:27:02 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] virtio_balloon: Remove redundant __GFP_NOWARN
-Date: Thu,  7 Aug 2025 21:26:42 +0800
-Message-Id: <20250807132643.546237-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCPR01CA0007.jpnprd01.prod.outlook.com (2603:1096:405::19)
- To SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E62F25B311;
+	Thu,  7 Aug 2025 13:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754573311; cv=none; b=eQcc5c6KJXcjcmd8qlJE0r14fAp2HqbOOLzl9MxGh+AqVIToHRg6s9JA7dOLD6gm8AJEvk5TQtDgCEdXwY94ST9usIcoOwa9aaaOAg3jC+5NC6IsjJ/KlI84vEMFS2oxvHCJGDyhER54md+k7PneSWxa7ojlfg0ziHExFa1R76Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754573311; c=relaxed/simple;
+	bh=XR8sH5/FlFcL+r2fHAHH7X1jRBJEAolt+aRufWhyZ8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AtV/3Ar/zAmc4MrVUk97Kgva/t/QVpYFWpTgDK9+9Sp7rOlMC4q8DHii1sQVn/NNqSOrjtXHlSME/6PyutyYG1ZSOFUH8qoV/ZmemaS0DEyyWB6ZfaTUt99eAwOjYXwybZkhoP9db9m8ZzG3PVSnGLYJppxp6JfSBXkFsRrXGXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip4t1754573214ta6d0c65c
+X-QQ-Originating-IP: nyXN8PHY58+Z0DZJJ687fky/hGKI08TIsEz0d60ZHTU=
+Received: from [IPV6:240f:10b:7440:1:e250:2ab5 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 07 Aug 2025 21:26:50 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6478878975056497933
+Message-ID: <04D1B45242A546DF+12c39a6f-5aea-4229-b623-da257d09e9d2@radxa.com>
+Date: Thu, 7 Aug 2025 22:26:48 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|KU2PPF40E30BD52:EE_
-X-MS-Office365-Filtering-Correlation-Id: de2c0044-79f7-4883-8840-08ddd5b61848
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iPrAjEehnO99QfLDBTWJUVzCUae79Ncw0x0TXEksKZO75Oaxl27NioWQHKZY?=
- =?us-ascii?Q?0N2qkhKjFUJiP47a9FGMQxgCzcVtzJU1BKLhHl3bZIOHH8kmpyn4MGKBbvAl?=
- =?us-ascii?Q?YHr0kOEvgO3iR4j/+ZUsylPJsr0GTZiQ89/wGra3ST3zQd0iq4cdzkrTnAYM?=
- =?us-ascii?Q?Dr77RBI18lPGbFEDQ4inngB4DbD9TK6POIMhIyWpfo5uxsuTjEWie8l/9Jdf?=
- =?us-ascii?Q?BB2pqL34VajJQael0wWqD/XsuwSlWSz/Vr2qYJAOVxwiK8QKv27Dnah2ZLxx?=
- =?us-ascii?Q?NoGsP2wZNKpZ17nkTaGdbjc70nPDUDlu04fUMyIp1biOgaZxTEVF+HfbktfB?=
- =?us-ascii?Q?dOs/q2STJxNU2dcbIPuF4MJFSezIYeuAexiiYXQThVU4wTw56RV18zclhbKg?=
- =?us-ascii?Q?h1afSawQAAE9tr6o3nu0heRrKuq5w7ey9pEoACauJh1ZENOUBfJT5NnnwnPQ?=
- =?us-ascii?Q?7iEjjuJv+BfokJn1z0ZaDJa1ynsmLbl2IxKE8NnW0cOkUFd9RVzpu1MhE3SB?=
- =?us-ascii?Q?+yrEFYjeVd8I9CgZ5mW8waiHA0P+CrTtece1ciHO1unCXrY9yfIv1BYCCPch?=
- =?us-ascii?Q?LXe/JtnR3qI9lEgAcKAG7mx2IMLeT1ZbFl5i4CA6WQXPqwG/q1MowJCYrj8Q?=
- =?us-ascii?Q?2x3akNJoG7qBQWI0ZpR5Jq7MVvSWk6yZGZqqwSk8BlvG/mfjM4L6ctetaPC2?=
- =?us-ascii?Q?3OnYzXjwZ89XpzWVcw8AB8EKG+BsdeaxZo7ScNZSo1REQe2Pghnoq4I8AEc3?=
- =?us-ascii?Q?ipayREHs1V+sP0af+vsQhs+cNNHV7Tg/qXuX0VGL5Oy4zoMrN8ifb9PoM5tH?=
- =?us-ascii?Q?CmnG4atjNqyzFChNgtlvEPDjxMxRd2aUkVut1BNCx3o6msw1GHFx6EOIlY+u?=
- =?us-ascii?Q?AqW2xbmBKx96Kno6zZ3KKsp4+lqkatkaz9nIn0nRpGYumXfcdo0yNTgTv661?=
- =?us-ascii?Q?C8NHQ5g5i6U5kqD9Azl4uRHY0hOgBqT/1LGmbQtfTaBBXEpRlwbJJ7HvEF8C?=
- =?us-ascii?Q?/Dgdk4xjRTdtbnYU40XmIj6bFLf4D6HKbeMmrKqceaCwJCNdeeIuczRDDoBw?=
- =?us-ascii?Q?0KqQM1l0CMVmdoI0kqojEiaakFpOGCaJKWG5+7wiHD+Dx9UPqxSEBIDi1K+l?=
- =?us-ascii?Q?g1UD8YSzpWWvla1RbJWGptvg6KPy0KYyLNgfG6yVmS0Hzevk8QZArZO08dOU?=
- =?us-ascii?Q?kHz52ikK4EecaksdOcTo5e7n2N17BvzYoAT9yiLeBFGpFa1QwJWWXSrSRsZh?=
- =?us-ascii?Q?QkqyOl5hFXxGykPRVnUGZChuIlil2erg9PvOb74lYv3TLkIp1vHCZV9/HxD4?=
- =?us-ascii?Q?TuIHs/5DAJfQuBD6Gt5NGDnB14Jt5KuKFJE+o/AAyYdy7wcx7l2yGHZwWnZ/?=
- =?us-ascii?Q?1jq9XXaWnJBduryevq561hzyPSb5sy/fqs7QnoTF9keQyHEgYFwBtUqLkdoT?=
- =?us-ascii?Q?ZSh+AUYOsRoDY6946G5D1QnRTUaa18NyOZHj/LeReK4BlQPq7S0XOQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xemXpL62oymnQWHU5EkWDMs9DA6OWy9KV2U7lTDD+vcxnbLnCdCH3NX4s6jp?=
- =?us-ascii?Q?kvXEH1imqa75f07jZ0LLZoR2zuIHOmq+Kvp6A6BqB9whvsXWGFaIjt1TX4Jx?=
- =?us-ascii?Q?eR5DRP/fntiN9VBvnVkBU9flb0uRyPadRh7uKxPYvrY+WWpk+UZCEpAkultd?=
- =?us-ascii?Q?aW10fqhQazl/ucj0FRjui4m3CU6F5katlKyxLSkKnhpNElZiUloRpO6S8o6C?=
- =?us-ascii?Q?u+POOnAuRxLdvBL6GcIh7qngTcjNRfOrL8U1ItdaeRRzQSQvNb63KelLbEp2?=
- =?us-ascii?Q?Iw2bDpzt1unPOEcBqJpuYQHD7VMYqFUphwF9dWkEZaJ+oPpW0oyfTZW40l2H?=
- =?us-ascii?Q?vjcQIJE1Rp41IKmbGdDjAKN3dgxAEG+BA/osQ538jlrJ+HJsUZIs5Ouo5Ybg?=
- =?us-ascii?Q?jTXlGEf5tLMEDH8HoLx27+lh6INH6H5y+vS5Otbgyr3q5zGc/tEoVD9nwNKi?=
- =?us-ascii?Q?nK12v5a/AlLVM2GHjH7J9sjGLUYITNujPY0v4Dxuo1YC+133W6Lzwgg3a5aB?=
- =?us-ascii?Q?+t6EjzaiagNdZYB32SmWCxqjs6iqT8sydEc60zdx17xGSiUEc6akhOlG0day?=
- =?us-ascii?Q?UXAK4TfHCEMTMDWJTtXaeqrLLTcmGOHsbH0e5uzh0Nm/dz0F6R9Bp9QUxy3o?=
- =?us-ascii?Q?h3umTMdA5Kah379sJVorj9SwOQHXq8ubSl01ahCeDqeSdy+qGeDfaQoy5mv0?=
- =?us-ascii?Q?Z0RyR071WlReFcES8XPGyg92XGOg/JzponLYQsZ2Jznd280LCwNksWly/SbM?=
- =?us-ascii?Q?dam2sh5CC+jdmsfl4J52nrE4eP9RE8G8kb4T6SmzjL56DLc+t0OJ/jEGk4uO?=
- =?us-ascii?Q?EeH+gb4B0qfdz0dV5N1teaiAA80/qO+WK0pS78oqagDcX2GwspMbpWyerj5d?=
- =?us-ascii?Q?niUP5oNnWLWuIWUDN8xdAMCJC/bDDw45Id4eU0hTJM+yQApLrr9vf5TdLbSq?=
- =?us-ascii?Q?BmT68iCyB6PoRlvmLqxaFmVDwP+4gnUj/K1DnR2gSlSookv69aJamHr5gDf0?=
- =?us-ascii?Q?DJV7t1kf8pF0PoMr8ostcRR574NkN2jX0UlJE+OH+Dbcr8xW7VcWwwA/MzlX?=
- =?us-ascii?Q?a9R445B5QgE2J6oI5yixKrfu5Akwe+m/8oHSQp/Ejy13jivBgde9ZO0QjbIQ?=
- =?us-ascii?Q?T0jX+TN/bIG09YyUYUDdg7y+ApCyoopUENdyqnO+rfrJ/9cru1dssTzdiGlx?=
- =?us-ascii?Q?eVMGeF6TKAWm0aXC20aWc2qlpOIF5agTA1984//yLdsakK7fU1VF60cy5uRP?=
- =?us-ascii?Q?4k2+s8S4waPTj7mSS1f2mIN+trG/HTTqzkz1lg2jFZaivu490wNojb5ge63g?=
- =?us-ascii?Q?lnrfnuoIvpK6nY0DZYFFiIyjIs2dtaDHcj+bszDfM+Ia6Fqm1lJNfkSOYn46?=
- =?us-ascii?Q?m0D7zWdhaLHuXHTCv7nc4ggDpPsVNmrSC+rDQ4m2g3qTqFaxWDrL/D/bF8tE?=
- =?us-ascii?Q?GWkvFDLvk0DJfdC4ospW4DirRWP9pIA0edXePblr5c9g6Y3Vo68dKfJPcAHL?=
- =?us-ascii?Q?w4cU1sk2OmPmleywVXGfoOAi9kikudDE5f95ZReOaq9kCuHhLX1KzZAwEg5l?=
- =?us-ascii?Q?eaLqcF5hMMq+lsAqtPzTBKm2u7n5df9J+Kh9dehg?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de2c0044-79f7-4883-8840-08ddd5b61848
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:27:02.6977
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uFnkIJUdqrj1+P5I+nx9L6q8wdk7au6X7tvO6p24SHiPVSn/zFyN8+TEznMijKrZt6JjR4MpGIqe4bo6Ve+EsQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU2PPF40E30BD52
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] arm64: dts: rockchip: Add rk3588 based Radxa CM5
+To: Joseph Kogut <joseph.kogut@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jimmy Hon <honyuenkwun@gmail.com>
+Cc: Steve deRosier <derosier@cal-sierra.com>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
+ <20250617-rk3588s-cm5-io-dts-upstream-v5-2-8d96854a5bbd@gmail.com>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20250617-rk3588s-cm5-io-dts-upstream-v5-2-8d96854a5bbd@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OBDSLDo3By90qYTXoK/jbX3V0J2CywLXKaps1HJ9ymTJbR/D2yjmo4Cf
+	yLkmGhgSceF6V/gVQHxsptcXzIHxEAYAQxU72o5dzvIjLaFHptjoZ75PD0qbnEBN7cwPNts
+	ftmcP01EjoNYqMaoxNmrPlogFsGNJGFIPI7mrQWgA9pynXpMv0DPo7+tj0RUWZJcXuJu0GA
+	9hiN9zbDgVHYEHmJce5dT+/lR4hGgg4OkaS3Sos2xiVi1bY87s8Fm6IWOfbqwAiblO/Lt30
+	tcC70d2LJda1WK5PrIO2/zFi2DWIhfm0VZcSEFaYY4ayPXxckEoQozC6Qjoypcf1ATv74/7
+	+wmx9zZY51E2fIqpao8J+pQGWDne3+V4vdf1SFWY6uTjrj11EGvsh1fn6V9p0uZxK+nEoC+
+	BjEmnYklLxqji4yfiWv9ec8MgOH/j0omqkiCttVfOZnLYNfOnFKH82v8yQnGoDUy0Jjtvr6
+	97MuMuTOV1oIwAizw7XRWziOjccdzxYwLlhgBo3ebg+zL9TQ+n8790H9aO1SdJdSURfFjtd
+	zu8VT1+eoYzFKj5LiOmMvMqZoVEiDriqGTbXKrZL0uYIeO50FUoz3bWCSRjBjJz4XyySLHg
+	NkX9cmtMuFZ5SuJDWShMBVVJSY6d2PkinG35kbeV2tabWPNWgNAYgTIVuACQCqdtC9wq/Tl
+	Tsp6WaG8MPuY1l1L4LK8bT1PPqP1LrLLGykcxPFEouGeLW8JlQ8CQLiRc+KSqwa7MIiMkyV
+	XWXc8RvhgyFqMfL45RN5uNZJz+OVIN3u3uVTSWq3z5Hib4u9+VZtuIXUOUw7tKjLVz4Oyg5
+	tBtE2Ggkc5C/8KQnEVJ/yg/Ayq8lyVSriOA03dIn1jAhmoWPiTQ16MB9+/KF8TvLPl9pqzD
+	ETOzfjzbgfkwL+wnsiwqGmzP79NzSyohHjE4OuY9IsWbFxKvSss5ja7fAOYFy4Mu7mugqvb
+	RYe12oEAQwZy6FafznaAN9uY4mR2OknDgA8dsU9mQl2iXXmoV2wkqVeq4Fh5rbrqTSfc=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
-made GFP_NOWAIT implicitly include __GFP_NOWARN.
+Hi Joseph,
 
-Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
-(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
-up these redundant flags across subsystems.
+I overlooked a few things.
 
-No functional changes.
+On 6/18/25 07:12, Joseph Kogut wrote:
+> Add initial support for the Radxa Compute Module 5 (CM5). The CM5 uses a
+> proprietary connector.
+> 
+> Specification:
+> - Rockchip RK3588
+> - Up to 32 GB LPDDR4X
+> - Up to 128 GB eMMC
+> - 1x HDMI TX up to 8k@60 hz
+> - 1x eDP TX up to 4k@60 hz
+> - Gigabit Ethernet PHY
+> 
+> Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
+> ---
+>   .../arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi | 135 +++++++++++++++++++++
+>   1 file changed, 135 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..6410ea5255dc783e5d24677853ccf1c78008e834
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2025 Joseph Kogut <joseph.kogut@gmail.com>
+> + */
+> +
+> +/*
+> + * CM5 data sheet
+> + * https://dl.radxa.com/cm5/v2210/radxa_cm5_v2210_schematic.pdf
+> + */
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/soc/rockchip,vop2.h>
+> +#include <dt-bindings/usb/pd.h>
+> +
+> +/ {
+> +	compatible = "radxa,cm5", "rockchip,rk3588s";
+> +
+> +	aliases {
+> +		mmc0 = &sdhci;
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		led_sys: led-0 {
+> +			color = <LED_COLOR_ID_BLUE>;
+> +			default-state = "on";
+> +			function = LED_FUNCTION_HEARTBEAT;
+> +			gpios = <&gpio4 RK_PB4 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +};
+> +
+> +&cpu_b0 {
+> +	cpu-supply = <&vdd_cpu_big0_s0>;
+> +};
+> +
+> +&cpu_b1 {
+> +	cpu-supply = <&vdd_cpu_big0_s0>;
+> +};
+> +
+> +&cpu_b2 {
+> +	cpu-supply = <&vdd_cpu_big1_s0>;
+> +};
+> +
+> +&cpu_b3 {
+> +	cpu-supply = <&vdd_cpu_big1_s0>;
+> +};
+> +
+> +&cpu_l0 {
+> +	cpu-supply = <&vdd_cpu_lit_s0>;
+> +};
+> +
+> +&cpu_l1 {
+> +	cpu-supply = <&vdd_cpu_lit_s0>;
+> +};
+> +
+> +&cpu_l2 {
+> +	cpu-supply = <&vdd_cpu_lit_s0>;
+> +};
+> +
+> +&cpu_l3 {
+> +	cpu-supply = <&vdd_cpu_lit_s0>;
+> +};
+> +
+> +&gpu {
+> +	mali-supply = <&vdd_gpu_s0>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c0m2_xfer>;
+> +	status = "okay";
+> +
+> +	vdd_cpu_big0_s0: regulator@42 {
+> +		compatible = "rockchip,rk8602";
+> +		reg = <0x42>;
+> +		fcs,suspend-voltage-selector = <1>;
+> +		regulator-name = "vdd_cpu_big0_s0";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <550000>;
+> +		regulator-max-microvolt = <1050000>;
+> +		regulator-ramp-delay = <2300>;
+> +		vin-supply = <&vcc5v0_sys>;
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- drivers/virtio/virtio_balloon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+VCC_SYSIN.
 
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index e299e18346a3..5734e24cb21a 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -205,7 +205,7 @@ static int virtballoon_free_page_report(struct page_reporting_dev_info *pr_dev_i
- 	unsigned int unused, err;
- 
- 	/* We should always be able to add these buffers to an empty queue. */
--	err = virtqueue_add_inbuf(vq, sg, nents, vb, GFP_NOWAIT | __GFP_NOWARN);
-+	err = virtqueue_add_inbuf(vq, sg, nents, vb, GFP_NOWAIT);
- 
- 	/*
- 	 * In the extremely unlikely case that something has occurred and we
--- 
-2.34.1
+> +
+> +		regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +
+> +	vdd_cpu_big1_s0: regulator@43 {
+> +		compatible = "rockchip,rk8602";
+> +		reg = <0x43>;
+> +		fcs,suspend-voltage-selector = <1>;
+> +		regulator-name = "vdd_cpu_big1_s0";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <550000>;
+> +		regulator-max-microvolt = <1050000>;
+> +		regulator-ramp-delay = <2300>;
+> +		vin-supply = <&vcc5v0_sys>;
+
+VCC_SYSIN.
+
+Best regards,
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+> +		regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +};
+> +
+> +&mdio1 {
+> +	rgmii_phy1: phy@1 {
+> +		compatible = "ethernet-phy-ieee802.3-c22";
+> +		reg = <0x1>;
+> +	};
+> +};
+> +
+> +&pd_gpu {
+> +	domain-supply = <&vdd_gpu_s0>;
+> +};
+> +
+> +&sdhci {
+> +	bus-width = <8>;
+> +	no-sdio;
+> +	no-sd;
+> +	non-removable;
+> +	max-frequency = <200000000>;
+> +	mmc-hs400-1_8v;
+> +	mmc-hs400-enhanced-strobe;
+> +	mmc-hs200-1_8v;
+> +	status = "okay";
+> +};
+> +
 
 
