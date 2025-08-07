@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-759262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12773B1DB36
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:02:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40387B1DB38
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBFCB7A323C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:01:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6DB1892131
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BD726CE3E;
-	Thu,  7 Aug 2025 16:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D5D26CE2E;
+	Thu,  7 Aug 2025 16:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AhDZexlD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBU4NeT6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A77146A72;
-	Thu,  7 Aug 2025 16:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0D226A1A3;
+	Thu,  7 Aug 2025 16:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582561; cv=none; b=jBaxWyCb3sj9n9A+Wgp7AG0NuOtjMw/ccHc1YCaJVb8A5YNMv8rF01fPhITC46Jv+HVKAkyHFf9bUU0JzxakFk/rnbJgHSiTMgaXwy/HHL/tyLW0vnyv9ydJ2zxG4mQ72NDXfFlsHd6hUNv6keF4LZbbv5YQMkX34N8NXw8RkNY=
+	t=1754582569; cv=none; b=jqZJlrRvtT0co4cF4Wbzt7cxHPs8imayBU0erBiwsiG4sMxVOBqjObCyzNvaXbGt11dRQu+CiuW8QaR/7aG/PCcdGtZVAkpwVpMy9mHQBJL0FCtN9VmIDIG1nskgMXu9Lns6/Dpzj0+FPhN72z7mkiWkvG4HmtQfldFofdRi5XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582561; c=relaxed/simple;
-	bh=LvMMT8HRPwXsYdGloXGLjWypaXvPrcgc3WZiewkGmFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9uICxtx61WBHVqWo7VYHUr6r/cx7l0EtLexXaVPTDal5avIri17x7xrc4oLN1HI2NFMzS2obq6H8XME78yRViWEGdAE1sv2da4ajovIQthwhJSyEUdtPOCKua3AjF01F2BL0v1WzgdI4RXATUp117+CKVaYYrKUanGzMaXateo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AhDZexlD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13669C4CEEB;
-	Thu,  7 Aug 2025 16:02:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754582560;
-	bh=LvMMT8HRPwXsYdGloXGLjWypaXvPrcgc3WZiewkGmFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AhDZexlD4Ga0vzaZ0CyZ4wbKtaaaciAgaNGee60dFUyzle6d5Y4CsAarZqeurLWWq
-	 g3Vmc0CXy6nE3/jt5wdGEvJbTtQkgqWCtiG/QWlMD/44RZsneiG1awlZf3lue0s95d
-	 xdehdMalTGE/KwjGM9v3kuezKENTRkVQAwmcSs8g=
-Date: Thu, 7 Aug 2025 17:02:35 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Mario Limonciello <superm1@kernel.org>,
-	"Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andreas.noever@gmail.com, michael.jamet@intel.com,
-	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
-	Sanath.S@amd.com
-Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
- dynamically
-Message-ID: <2025080758-supervise-craftily-9b7f@gregkh>
-References: <20250722175026.1994846-1-Raju.Rangoju@amd.com>
- <20250728064743.GS2824380@black.fi.intel.com>
- <59cd3694-c6e5-42c4-a757-594b11b69525@amd.com>
- <20250806085118.GE476609@black.igk.intel.com>
- <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
- <20250806150024.GF476609@black.igk.intel.com>
- <2025080628-viral-untruth-4811@gregkh>
- <20250807051533.GG476609@black.igk.intel.com>
+	s=arc-20240116; t=1754582569; c=relaxed/simple;
+	bh=3JhWBhxd2u70kwy8Fen3Rx2vHh8BecM7RUudztSQYwM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qhwGiY+0nNFRSLE0F5l1jn+MZ5XvODbpDcJRoiWUFGJK5cdgG4qOkQeR3ErXOhYIhkwpAsKPHgkEiozdu+l+o8ST96feTCaqiJb2Mcf6TcTV9MQs0bGVIVnsR1fyedxiV1jIAZ9l8zDEvj4zPXAxZDcoJe2qIJLrSQI4Am6zLOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBU4NeT6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28387C4CEEB;
+	Thu,  7 Aug 2025 16:02:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754582569;
+	bh=3JhWBhxd2u70kwy8Fen3Rx2vHh8BecM7RUudztSQYwM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UBU4NeT60VIIRgJIaHmZJrxCXiGEDs0rTAOjkkvGNBHiMCwfi5y+xN6dQ2WC+tN+z
+	 uKQ18YQQLngICsSV2A764i+YeYeYewuyQLmSkikL8V66E4iyiGk2i3bvfnTQMgw96E
+	 9uLSo1wUAUC+fC4a+Y9wNbcsKzili1JXadhgxtvbg7TyIBPlf9vTmGOa6SxckIQhPP
+	 d+cE1c+BzvOfUqipMk2p3NQlTgE2o6xaSOQGPJv5vgnu4muUJb90H3//faatTTfzYQ
+	 v1ps+0foHb2ZrlwSmYVgv50yKHGaHUOinEF/3/aowQVAdry3z6MxQLEAFnD2yLpEaq
+	 tNeeFle/pynBA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uk34o-004zf7-JQ;
+	Thu, 07 Aug 2025 17:02:46 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 0/4] clocksource: Add standalone MMIO ARM arch timer driver
+Date: Thu,  7 Aug 2025 17:02:39 +0100
+Message-Id: <20250807160243.1970533-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807051533.GG476609@black.igk.intel.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, rafael@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Aug 07, 2025 at 07:15:33AM +0200, Mika Westerberg wrote:
-> On Wed, Aug 06, 2025 at 05:58:26PM +0100, Greg KH wrote:
-> > On Wed, Aug 06, 2025 at 05:00:24PM +0200, Mika Westerberg wrote:
-> > > On Wed, Aug 06, 2025 at 09:06:30AM -0500, Mario Limonciello wrote:
-> > > > On 8/6/2025 3:51 AM, Mika Westerberg wrote:
-> > > > > On Wed, Aug 06, 2025 at 11:46:04AM +0530, Rangoju, Raju wrote:
-> > > > > > 
-> > > > > > 
-> > > > > > On 7/28/2025 12:17 PM, Mika Westerberg wrote:
-> > > > > > > Hi,
-> > > > > > > 
-> > > > > > > On Tue, Jul 22, 2025 at 11:20:23PM +0530, Raju Rangoju wrote:
-> > > > > > > > This patch series aims to update vendor properties for XDomain
-> > > > > > > > dynamically for vendors like AMD, Intel and ASMedia.
-> > > > > > > 
-> > > > > > > The XDomain properties pretty much describe "software" not the underlying
-> > > > > > > hardware so I don't understand why this is needed? We could have some USB
-> > > > > > > IF registered Linux specific ID there but I don't see why this matters at
-> > > > > > > all.
-> > > > > > 
-> > > > > > Currently, it is showing up as "Intel" on AMD host controllers during
-> > > > > > inter-domain connection. I suppose an alternative is to just call it "Linux"
-> > > > > > or "Linux Connection Manager" to ensure we accurately represent the
-> > > > > > connections across different systems.
-> > > > > > 
-> > > > > > I appreciate your guidance on this and suggestions you might have.
-> > > > > 
-> > > > > Yeah, something like that (I prefer "Linux"). The "ID" still is 0x8086
-> > > > > though but I don't think that matters. AFAIK we have other "donated" IDs in
-> > > > > use in Linux. Let me check on our side if that's okay.
-> > > > 
-> > > > Having looked through this discussion I personally like "Linux" for this
-> > > > string too.
-> > > > 
-> > > > As for the vendor ID doesn't the LF have an ID assigned already of 0x1d6b?
-> > > > Would it make sense to use that?
-> > > 
-> > > AFAIK that's PCI ID, right? It should be USB IF assigned ID and LF is not
-> > > here at least:
-> > > 
-> > >   https://www.usb.org/members
-> > > 
-> > > If it really matters we can sure register one.
-> > 
-> > Linux has an official USB vendor id, we use it for when Linux is used as
-> > a USB gadget device and in a few other places.  If you want to reserve a
-> > product id from it, just let me know and I can dole it out (the list is
-> > around here somewhere...)
-> 
-> Yes please :) I think this is the right thing to do.
+For the past 10 years, both Mark and I have been lamenting about the
+sorry state of the badly named "arch_timer" driver, and about the way
+the MMIO part is intricately weaved into the system-register part.
 
-Great, please let me know why you need it and what it will be for and
-why.  I totally can not figure that out from this thread...
+The time has finally come to have a stab at it.
 
-thanks,
+This small series simply creates a new timer driver for the MMIO arch
+timer, and only that. It is an actual driver, and not some kludge that
+has to run super early (that's what the per-CPU timers are for). This
+allows, in turn, a pretty large cleanup of the per-CPU driver, though
+there is more to come -- one thing at a time.
 
-greg k-h
+As an added bonus, we get a clocksource, which the original code
+didn't provide. Just in case it might be useful. The end-result is far
+more readable, and about 100 lines smaller.
+
+Patches on top of 6.16.
+
+Marc Zyngier (4):
+  ACPI: GTDT: Generate platform devices for MMIO timers
+  clocksource/drivers/arm_arch_timer: Add standalone MMIO driver
+  clocksource/drivers/arm_arch_timer_mmio: Switch over to standalone
+    driver
+  clocksource/drivers/arm_arch_timer_mmio: Add MMIO clocksource
+
+ MAINTAINERS                               |   1 +
+ drivers/acpi/arm64/gtdt.c                 |  29 +-
+ drivers/clocksource/Makefile              |   1 +
+ drivers/clocksource/arm_arch_timer.c      | 686 ++--------------------
+ drivers/clocksource/arm_arch_timer_mmio.c | 439 ++++++++++++++
+ include/clocksource/arm_arch_timer.h      |   5 -
+ 6 files changed, 531 insertions(+), 630 deletions(-)
+ create mode 100644 drivers/clocksource/arm_arch_timer_mmio.c
+
+-- 
+2.39.2
+
 
