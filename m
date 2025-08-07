@@ -1,181 +1,234 @@
-Return-Path: <linux-kernel+bounces-759075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181B6B1D81E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:41:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D1DB1D821
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32E018C68A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:41:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE8A87AAEDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D6B253954;
-	Thu,  7 Aug 2025 12:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D74255F5E;
+	Thu,  7 Aug 2025 12:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="jINjAgi1"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013007.outbound.protection.outlook.com [40.107.44.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNp6FsM9"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551B524728B;
-	Thu,  7 Aug 2025 12:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754570475; cv=fail; b=aANjZmU+SmxKi+7qd2gEkLcQG1MvrJfEsHnSR0/PiZBDfGbvLJXqdC7DpXQ3TawyTYIt3XbDlgJ4M6zQXlrRsPUOctnoliFR+S0i43x6lsHkWoXX5f+OQOzDjQqpiGcAj98BHAJ9TLo03cfDkewNDLx9IMX0JYdVuWD6IEA19wc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754570475; c=relaxed/simple;
-	bh=fSgTeeZ6xS1wbURk5WarpLx7S+2sfYesJLyBaE+hN7A=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FeJs1RQATyy1M8ZR6DGTtwgtn2BnLhX/FTSOvud36jXQaHugTXRsIzTaqNXkFQPRmISzJSApFfH9KY7tVVpYwUBgwDwV+yBHmFFmdXz/xNjDa4Ne4T2Q0lAsLMfSKCfol8ihPiPO0OO/7o01xTir2DpFEGX3KKSQ+QNC9xbaprA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=jINjAgi1; arc=fail smtp.client-ip=40.107.44.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vEgb/k40SZ2gZHrJ9gm/NxJDUsy6UxHS8KpxdQZWfBq1H16IHuKEGqzOFTj1Be9rEUiskr9dKHAGL3rNPUJ8In0+4zF/l4dcjaeuCxsFYcfK7MO3nDE7BuGF4Vpkr+3OYbP8Zsu+W9JxNJLWyAxKXo0PvtGBxZdPf0WDPwt2aEZq/uMyD9axiQjrcAjw6Z+wKwkq0T2xiAW1wxW7NJr+0hrXbpti1A/I7E26BK+lTAwHiP/L/LhrQJrrPSoDba468gGQxfxECPdTZ4dYk7yPgbnFTQwtR4MTiK1m7bmDWEiUKpX0CJHVYBgFjgPKa+ACVS7wnkCzd3cK6h5V9NRnKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WZLrig63aqCGzWKFZPHwYMwhO2/LnMytvvPSrVuts8o=;
- b=TBf8v7KjkGvUHDUgsF4BPAmXe1tgl6Cpu4IN/m1Ut5Spp0tysCpfChDDchWPWCI6eG/xL0vc6cktynnNVOcpGppPmpuY9bBKOxqjyadltA2vWbdtAJTfLl+69v1mfF9htk1HZG45dCPxM1t55lfTCD7nMRdNK0y3XK11NWr3+EgZkeVcgvUXBTqb7ovQvbtK5hDouOdza67gVPHTi0ogkEt4cP8v61RoyZct/7c+D820oLTJojXuF8ppTPbnhjgaUFyX0CLy7YOyYQ9lBwLCirFwrKj93Jr4vaE9PuirB9JGy+4PakGB7DDfCjTasnRzMF6jbS3CXsreLrXYRhHVgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WZLrig63aqCGzWKFZPHwYMwhO2/LnMytvvPSrVuts8o=;
- b=jINjAgi1zlOzga8ehgWLduO+JNgSbWA+vHPorYI/b35drs/nky1l7i62l6g86REuoemsf4tYUxYoWXy7V/3Bs3kAjtouKriqoLeO69gCP4KdkTCO3/1pUEDcpHje5R2cLowBVaChqLTilX46YPb+8Loesu8+78n6zeQXxaVD0kGkTwx7o2DwVcinKZbOGz/zd2pqSeX5AIrot8oqjUZ2U4m0zEwD3e2baqM/s4m1M1qNdYETowr0tnGc7wbj5Gk53A40lEWJsjkmjyWf3z0seywjqP/+Mmltn9eRr6NQ6yY5WFoX/3Up9UmOjFagiHr9Zcz0YLdL6O/m60gXoigMsw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TY2PPF70F768FD5.apcprd06.prod.outlook.com (2603:1096:408::795) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Thu, 7 Aug
- 2025 12:41:10 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
- 12:41:10 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org (open list:CAVIUM LIQUIDIO NETWORK DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] ethernet: liquidio: Remove unnecessary memset
-Date: Thu,  7 Aug 2025 20:40:53 +0800
-Message-Id: <20250807124055.495489-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGXP274CA0005.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::17)
- To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FBA253F1D;
+	Thu,  7 Aug 2025 12:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754570478; cv=none; b=OllugN+3xiLQRX9nA1qoYrTz6iqD6Pg1HXwj4RGtpqnjBv96JVZhdmdmFUSswWJEmlcZLt3JIk5dEuZc++sDPUKSXqzOOLAEHESQnrU7bVMHtQOsaoty6W1tyLIsj/u1+ndPQhfQboiPbF7vwTDLMEKpVVDYM2cukroDqdl5OJk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754570478; c=relaxed/simple;
+	bh=TXGyvaGyMPPVNg79PAuVHfmrGIvwkuLJcVwwkb3efdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DzgrbUWFLsYAI6uXSj9m7QEfq89rvu6WRxtow554ZFxDQDUTDlNSDq6MaGCiZGH8CtV+UeghIsBLWrLeyF3fPVaRbMP7IkkIrnbNNqCx9x2hyaY6EaFbUUxg1gmJIUkYdJGJK63TjZcP6BXFo5grM9GDL9ibq3aD22XVQTVBBLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cNp6FsM9; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6152faff57eso1462012a12.1;
+        Thu, 07 Aug 2025 05:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754570475; x=1755175275; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=01XnmLDiSywh1IksP4ISoM8TkZ79wUU132NpH98B/mk=;
+        b=cNp6FsM9cCV1VepOM0+9CVHdVnacb9rTnKuCTXUyVDyqIMc0s2HVzJErfqdTiscvOK
+         7sUa7r6mECmQ14rQH0ohG2W9Uia8up03ANGefwxugrmkicbxDHDnhLTdWJwGXKk8R6Rq
+         M+QFGdpbvca+GZ20PvCCeycuUNrSh/T3/rzdlWJ+9FaO7CFyaaSwIlRGWAbdf3Gu4Tt6
+         p4ONTNlhTTdvSCCnRZ6fBc6xbnsU6SMGJevF6/jHFhfhImGhFUZtRp+8VWTZJW+/ZjC8
+         OGwTMHy859gmhK/wy254TWLdZPalooDyqMCAJjKC80jvbFePY64ZQhFDJae9qhpjvpdk
+         0PMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754570475; x=1755175275;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=01XnmLDiSywh1IksP4ISoM8TkZ79wUU132NpH98B/mk=;
+        b=JAyimAVNhnaS5rBtJRdxUaETD6pZm3cUnoFrofK7FEYAnPQN6Hw4pLRT/kFg84Gc9j
+         xYoZsuqzXHXuHJpVZXVGb/3oat/wQm3aEqFWWDGgUlEuFc1W1/bF0qnGgqc+jE62a/GN
+         Eg29DGIcpTfcq0URdpKjeMXEcni+2GuLTDgJ6FD7+FOqYnaSGeL8PErR9wBhvYbtighO
+         nY/BPThJi2T9iRWsiqYs36uKu6wKpsAue2l9nRa7iIiGJM8+FxmlgrOe5Mb0bpzHBWK5
+         LyEoJuoSc4l3W5yrX1WiLsCk7Ibaf4KCiQPQ+cRstnjHvJ8z3l2r1uztnLBpux+8g20q
+         ZYaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUCh4VPxh02z9c0jYBoiwdFz/ocRgrjuOmpx3geFthhjjuR+TXvH1NESs9MoLqPjD5xS2wokJAFpjnI8Om@vger.kernel.org, AJvYcCUqj+9XdCbpxeY3OIwehvm3LFOfTDeRfd01UqhEgWuzdRbPP5L72niCD+9diInSxDSysK/mzoWV9G8O@vger.kernel.org, AJvYcCXmw4KPL2dsAmr9Lc2C73yZXWEWTqXLR+i43uCfx2p0AvoT8ZneVq31KjiwTC9yF4yC4wvRWutdSCmx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj1y8zPYBG5uqu4nv2pu+gF6UnOfm2R1nbOxq2pvV5gdcJGqC9
+	jDABSOC8lYNh9BI8K9P66KCULTqZej4geFfODqdpn3JjVxuRo6gm6SyW
+X-Gm-Gg: ASbGnctSTavd93Dki+svPQ/h+Zb86bTvEQbnbBm0XP8kmMVfBL5n7B3Z9MQtsfojZLY
+	M2qrGLpk57nHmDMWQx++GoQPgZH/v4IK07z7plqbXHlaMucX+Ae4lOrjnz1U8PBT+6P+DoQpsKr
+	3y2+FZ4a9eEb+3u9jnvUuoEqaFhJ5jb2xTiYqZyHHVa9HHDMXy88fom+mZffjQso7enRg8d98du
+	uWn0Qe5WwFoUbQzvHcwwEk4hieLC0OFtqfZjJsPp2Hi6bqYq5LRGl65WOZpDvYWl0/Tls5l7nqE
+	sd/3CQCPEcPWQTl3Ne3bzxDMDFFPA89eJZSv14JjqHt2/WIAIISQceEH1bfb7Hls5Rbx1ZGYG5+
+	2oOBisOgbZ8M=
+X-Google-Smtp-Source: AGHT+IGku22djVhhVWppa2oQyT6ofOGRDGpP0ni3lMyo+dSJab9QhN1xKuqjT7L6D4y/OJ6hykUz2Q==
+X-Received: by 2002:a05:6402:1d29:b0:5fc:9979:78f7 with SMTP id 4fb4d7f45d1cf-617b662665dmr1594352a12.14.1754570474882;
+        Thu, 07 Aug 2025 05:41:14 -0700 (PDT)
+Received: from nsa ([185.128.9.33])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-617c843c48fsm718011a12.10.2025.08.07.05.41.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 05:41:14 -0700 (PDT)
+Date: Thu, 7 Aug 2025 13:41:31 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] iio: adc: ad7476: Drop convstart chan_spec
+Message-ID: <tc4od3jtqnj743naxefx5lxkha46wohuuvw46mik6nullvsqbe@knj4t23eaodw>
+References: <cover.1754559149.git.mazziesaccount@gmail.com>
+ <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TY2PPF70F768FD5:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ceab912-f5d3-4217-6015-08ddd5afafb0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FfvqD5mmVPXMh7WPIeaXBigokHgX5g5TAEqFl+jgWMY0GkYrniLKyc+x3Tq7?=
- =?us-ascii?Q?9tK4N+0DU8bQQ1SrFw2HjrqDuYf1gbE4eD7/qPGvUMv67x5uosqmr2/oC6pH?=
- =?us-ascii?Q?bI9+oNoXO2oRnyhapEXVIygysE9jYs8FiGKfL77SM46DtNt+JNKf62CHclRl?=
- =?us-ascii?Q?bOKcJYYrt3dqni1ssMHtRr42PUhPnPWSp45sBaJF+g2MyxTXiC7di1Rv9Mw/?=
- =?us-ascii?Q?2gfqh47GcfbAKK7kkWyx7ouYn2enNgMlO2Q5H0TOEV5A7fBl8Tw+draE7vSX?=
- =?us-ascii?Q?90c64lN6rZXPHJ0sSaDVzRiEcUK2OybxMaZObGg+q8AP6fst+Pu3ztoMkP15?=
- =?us-ascii?Q?fjIzCiY2jtpwIV1hT0qYN7fCjXpaUWGA01LznLr3v/amZoca1bu489zxyqoG?=
- =?us-ascii?Q?r4A+oBumdo5CzGCU9U7Hjj0yfliJFY1uUuS/NAHmDRSIkEEh21CwWVpkid2M?=
- =?us-ascii?Q?kbe7k4ROGctADGG/zS8PM+h5YC6tTGMA8SCGJh3f3f4T6krkDFYAc8Xw1bAc?=
- =?us-ascii?Q?LrnBXahNYN5VnyiflVG1PUuc1hEV7SryDsBZm4pnYd6H4ZHZYSG2RABMYBRh?=
- =?us-ascii?Q?Yo4XxU1eZ6UWZA5bS9z16qpb2AfFD+X4DlkCG7C1k+Zvicgevwe7Vy/BMII7?=
- =?us-ascii?Q?mz1DVFMZduOuP8q4LSNOjMKSMv6GCaaDggSAz0dg1NWbjBaMPAButt/OYkeF?=
- =?us-ascii?Q?GZ23Lh0dV30njAZdkPwG4gRQfN1ry38T7pwlO3bv/9dfOOKH+qDvcqpicfXJ?=
- =?us-ascii?Q?zTrpf6yhJcriDon0c3uFvkp8zII0+s0yaAeqbRTrqiW2AXOyV4ujRF3PqzAD?=
- =?us-ascii?Q?6UO24jpAmMh6gZVk5QtqWkBiHxTu4Anvw2ziQcRVLGE/uxs/jsqexSclBYlt?=
- =?us-ascii?Q?wGoLjJw2vBx3r3mLs7utj4TlZeCXeWsFl00NLcjvdQdWxTDvkSzI8zdadKOB?=
- =?us-ascii?Q?bJy0Q67RL8YiI7h3c923lDUlIknXjkaTFCLH6WcenjRS5DxbRoicCvAYtLCr?=
- =?us-ascii?Q?W4Sowf8f//emp22XLbURBQ1Vj4FegiYcII4RdxyabLhScjdC+yZ/nL6ye+if?=
- =?us-ascii?Q?mM0Z7ClHzUeaweoXvQWTizpoDOzs2r/ZlDwkfgWN6MOJvseopP6evtB71JKt?=
- =?us-ascii?Q?dQ8yOtzBZ2ADAqd1Mr4RQCw7RJ04mjJIp2cXbZKascBv57Pciscg3GEgMF30?=
- =?us-ascii?Q?NUPsf6X57KM87RquoQ0Z3zh0VyS7DuqaIzha+swFRiB9N4cQZnbAlXty7AJQ?=
- =?us-ascii?Q?JGn/EIkm2tshxqr0EZad7wMIkdQhUqkJa11GQbbp1IHPCiyeoW/zdXK1dErT?=
- =?us-ascii?Q?IX3tWIex+DGsFft/FNQJpg8f+0pB5PHIKAe5r1MNoTYQ5s43KiduKnOkvdr/?=
- =?us-ascii?Q?F1Y0aLg3APowoEy+HXTZ1o+eGVEIYqdx5oQCxl5TSM1DpNi7bmURe99nLI3+?=
- =?us-ascii?Q?HMzyTXCIvfgKeCdL4kMaD7LnTYzdcyIKoLKQ9ZUCB8d1y0rXIfWTOw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GN3ByTHOlgkcJcE8IyudTWxR3TyJkomr6AL+Er367Hc3WbhDRbLGIHhZmbFH?=
- =?us-ascii?Q?pcnIcdJfazUjrKqlI1823ZB2IiCjJsdni5hdnzbfzwk9JSlmvoGaXVOqu+io?=
- =?us-ascii?Q?HZZty6IBAVmxLlv9H0cXWvr1Vsb8Ryqxxz08cQfLU+AVN8j6Mfl3H8g7wJ1d?=
- =?us-ascii?Q?EBRbhmydhIhbow45SlL/NSEt1VBl/RaW185OlaYTnB9GAT52Q/9jdSluculY?=
- =?us-ascii?Q?Uadow8dz+yr8gP/i26Q+7zbEovsTI+cM/v5QRWvFevJk7agcYdI/fxIC2x2T?=
- =?us-ascii?Q?GwkVAv5FjOLveAO9UNJdps/KBFqWPpMdfBmdR+wd2cqppNYEYvSsCnwMCuRG?=
- =?us-ascii?Q?UdnJeMUaJnX87IR/4m+5SaO+Ocwk4WRIiik5smvKb13l5i3s0dmhCuxORo/q?=
- =?us-ascii?Q?+9ia/6NxH6CyW4/5QH7f+xLM4h+eRo2UgjRmy8Nj3ZPWMIrKtXmURPG7XdCc?=
- =?us-ascii?Q?JdFwMGB45C4zobuNp9n4+D6spKD+txix/zcsc4r8xBW9+Md0aPPsW/qTIMNt?=
- =?us-ascii?Q?204U95TgG5NSnjaU/y8CxsfqYKLP3Th582n1LDwWxTSMUq3GN3r+WShIE60N?=
- =?us-ascii?Q?Lgt2Zpc/Mr/iQDtLIt0vfVh07CX5iyXDduTexsj27S29ezCxaUMueXBEhQVb?=
- =?us-ascii?Q?HxjXDFST7j77UZpUC9cEXuOsDoUxOvN+MRRVmAPINDID83qww2ysC5vsKfFs?=
- =?us-ascii?Q?FYEbJgFsi+KfhgDKWfF/bTdC8FNMkRHwzUt1/akjR/aDcBuNUk6UVCgG6obN?=
- =?us-ascii?Q?sG8LJG8zXwhwdE0mA/Fe3rWTIqtsTaQa135sc5mG+DNBZjSVLP0b78ph+47x?=
- =?us-ascii?Q?RxplGbZKC6gjtD2Mmb+TCiq2J56uoJbsOetV5ZoSWbaGZQXFwTb3BzF/zQh2?=
- =?us-ascii?Q?4yRJ2YN+pRW69SXMbSAZwfzxshTGc02lFpw8k1B7bxyRMznJZfnyPeL54aBc?=
- =?us-ascii?Q?pfVUMMzK6a8lR0kw0Lqv3V2zmUCyvLVWbNYaUNf1UKELwPczMWMQOX18NTi/?=
- =?us-ascii?Q?7KQxYkeE642XSP9ECDQ5nKABNtNHxDBbt7rIUsQqMliogOclx/l11RACRykp?=
- =?us-ascii?Q?LlAdG3jvndMZiqReMWHfnMYA58vnRCzo76Si/rIVwHl6PJJASzIgolDp43A4?=
- =?us-ascii?Q?LSgAVz4BlVwuOF4KYkHk9z0jYddTSaJwsN4xzbFXBfQiwSQ+YDlh7nZgbE7/?=
- =?us-ascii?Q?Vcxh1y3LekxtKHGo7RKzZLVvfZoGRmxUv8TsenA9R2k3fpNN+7TDY1kEsYoi?=
- =?us-ascii?Q?DIx5PPklNwT+bO1Ln9oUQsk0STgGq442m1ZEhdyoKGx3RPtm4c1kIRt6dV2A?=
- =?us-ascii?Q?fyFuHsJaXAb5iVz9h93AGg7xsuGrdeJG7Czw45rD6wkh9mwY3V+T/4hj50nU?=
- =?us-ascii?Q?WuoHeqJEVjnz/GeLNKdW+H2qzx8cA9E02Z+Cm3NmcwthETJlQ1NCMeQaFzVm?=
- =?us-ascii?Q?M9DRaMbbUbNcLri/wlvVzVs16lRXJcQY+I4R6yREjCcdrtpJdU0y0g0dcD2h?=
- =?us-ascii?Q?nodBcAbMiRtqrrza1eU2UpiVXkh1PR5FRBTBxL7UXvnAYoI6SajlvV1uy0Bz?=
- =?us-ascii?Q?eYFejUnriw1v8Zfk/wwFZmUV6/L2eUciD2rBdTm1?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ceab912-f5d3-4217-6015-08ddd5afafb0
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 12:41:10.2206
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vgONRnnoXy1dMMlatKbTH8PCJMZSQzvDx5ICCyPYadmKqiZ7OOY0rDnHmNc9IMvKP/sKOtNulXPS/GkBjb8yiQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PPF70F768FD5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
 
-vzalloc_node() or vzalloc() has already been initialized to full 0 space,
-there is no need to use memset() to initialize again.
+On Thu, Aug 07, 2025 at 12:34:52PM +0300, Matti Vaittinen wrote:
+> The ad7476 driver defines separate chan_spec structures for operation
+> with and without convstart GPIO. At quick glance this may seem as if the
+> driver did provide more than 1 data-channel to users - one for the
+> regular data, other for the data obtained with the convstart GPIO.
+> 
+> The only difference between the 'convstart' and 'non convstart'
+> -channels is presence / absence of the BIT(IIO_CHAN_INFO_RAW) in
+> channel's flags.
+> 
+> We can drop the convstart channel spec, and related convstart macro, by
+> allocating a mutable per driver instance channel spec an adding the flag
+> in probe if needed. This will simplify the driver with the cost of added
+> memory consumption.
+> 
+> Assuming there aren't systems with very many ADCs and very few
+> resources, this tradeoff seems worth making.
+> 
+> Simplify the driver by dropping the 'convstart' channel spec and
+> allocating the chan spec for each driver instance.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/net/ethernet/cavium/liquidio/octeon_device.c | 1 -
- 1 file changed, 1 deletion(-)
+I do not agree with this one. Looking at the diff, code does not look
+simpler to me...
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_device.c b/drivers/net/ethernet/cavium/liquidio/octeon_device.c
-index 1753bb87dfbd..4d7d7a4da92e 100644
---- a/drivers/net/ethernet/cavium/liquidio/octeon_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/octeon_device.c
-@@ -893,7 +893,6 @@ int octeon_setup_instr_queues(struct octeon_device *oct)
- 			vzalloc(sizeof(struct octeon_instr_queue));
- 	if (!oct->instr_queue[0])
- 		return 1;
--	memset(oct->instr_queue[0], 0, sizeof(struct octeon_instr_queue));
- 	oct->instr_queue[0]->q_index = 0;
- 	oct->instr_queue[0]->app_ctx = (void *)(size_t)0;
- 	oct->instr_queue[0]->ifidx = 0;
--- 
-2.34.1
+- Nuno Sá
+
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> ---
+> Revision history:
+>  v1 => v2:
+>  - New patch
+> 
+> I considered squashing this change with the one limiting the chip_info
+> scope. Having this as a separate change should help reverting if someone
+> complains about the increased memory consumption though.
+> ---
+>  drivers/iio/adc/ad7476.c | 31 ++++++++++++++++++-------------
+>  1 file changed, 18 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> index e97742912b8e..a30eb016c11c 100644
+> --- a/drivers/iio/adc/ad7476.c
+> +++ b/drivers/iio/adc/ad7476.c
+> @@ -29,8 +29,6 @@ struct ad7476_state;
+>  struct ad7476_chip_info {
+>  	unsigned int			int_vref_mv;
+>  	struct iio_chan_spec		channel[2];
+> -	/* channels used when convst gpio is defined */
+> -	struct iio_chan_spec		convst_channel[2];
+>  	void (*reset)(struct ad7476_state *);
+>  	bool				has_vref;
+>  	bool				has_vdrive;
+> @@ -41,6 +39,7 @@ struct ad7476_state {
+>  	struct gpio_desc		*convst_gpio;
+>  	struct spi_transfer		xfer;
+>  	struct spi_message		msg;
+> +	struct iio_chan_spec		channel[2];
+>  	int				scale_mv;
+>  	/*
+>  	 * DMA (thus cache coherency maintenance) may require the
+> @@ -153,24 +152,18 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+>  #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+>  		BIT(IIO_CHAN_INFO_RAW))
+>  #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
+> -#define AD7091R_CONVST_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), \
+> -		BIT(IIO_CHAN_INFO_RAW))
+>  #define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
+>  		BIT(IIO_CHAN_INFO_RAW))
+>  
+>  static const struct ad7476_chip_info ad7091_chip_info = {
+>  	.channel[0] = AD7091R_CHAN(12),
+>  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
+> -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+>  	.reset = ad7091_reset,
+>  };
+>  
+>  static const struct ad7476_chip_info ad7091r_chip_info = {
+>  	.channel[0] = AD7091R_CHAN(12),
+>  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
+> -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+>  	.int_vref_mv = 2500,
+>  	.has_vref = true,
+>  	.reset = ad7091_reset,
+> @@ -282,7 +275,7 @@ static int ad7476_probe(struct spi_device *spi)
+>  	const struct ad7476_chip_info *chip_info;
+>  	struct ad7476_state *st;
+>  	struct iio_dev *indio_dev;
+> -	int ret;
+> +	int ret, i;
+>  
+>  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+>  	if (!indio_dev)
+> @@ -332,16 +325,28 @@ static int ad7476_probe(struct spi_device *spi)
+>  	if (IS_ERR(st->convst_gpio))
+>  		return PTR_ERR(st->convst_gpio);
+>  
+> +	/*
+> +	 * This will never realize. Unless someone changes the channel specs
+> +	 * in this driver. And if someone does, without changing the loop
+> +	 * below, then we'd better immediately produce a big fat error, before
+> +	 * the change proceeds from that developer's table.
+> +	 */
+> +	BUILD_BUG_ON(ARRAY_SIZE(st->channel) != ARRAY_SIZE(chip_info->channel));
+> +	for (i = 0; i < ARRAY_SIZE(st->channel); i++) {
+> +		st->channel[i] = chip_info->channel[i];
+> +		if (st->convst_gpio)
+> +			st->channel[i].info_mask_separate |=
+> +				BIT(IIO_CHAN_INFO_RAW);
+> +	}
+> +
+>  	st->spi = spi;
+>  
+>  	indio_dev->name = spi_get_device_id(spi)->name;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+> -	indio_dev->channels = chip_info->channel;
+> -	indio_dev->num_channels = 2;
+> +	indio_dev->channels = st->channel;
+> +	indio_dev->num_channels = ARRAY_SIZE(st->channel);
+>  	indio_dev->info = &ad7476_info;
+>  
+> -	if (st->convst_gpio)
+> -		indio_dev->channels = chip_info->convst_channel;
+>  	/* Setup default message */
+>  
+>  	st->xfer.rx_buf = &st->data;
+> -- 
+> 2.50.1
+> 
+
 
 
