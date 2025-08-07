@@ -1,160 +1,204 @@
-Return-Path: <linux-kernel+bounces-759165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98443B1D972
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:55:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E62CB1D978
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E3717C8F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:55:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D3B3AE56D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B9325DAE7;
-	Thu,  7 Aug 2025 13:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF78425DB07;
+	Thu,  7 Aug 2025 13:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QwSs7cDe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c88eQYTU"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722FF1EB5B
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D7A1EB5B;
+	Thu,  7 Aug 2025 13:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754574902; cv=none; b=p6z3B2grsyfyOTR5zKews2s1Vy8anSLjDcWxKq1DBzTKtHWv5lY7RpipO3WJx9+393BKhatFcskGtNEf1GGgqkP+Ol/IcsIzfcCzXQO0t+dvHLeLm6zNwNXB2iYrksoN5NA/iQ0BLHPmqQVa9cfy9GuLJo4kryPQ6ddYVZhhvfA=
+	t=1754574958; cv=none; b=XXdnm1E8D2t8FOH0EO3UcKDz+uWPa8O+e5MgtfkGWBfl+W8C+ohmHLG/l/b4BdkCEHSEfZRhR8g8DDtHimikbnvEqZipSmufJB7O6DmUcuaGJqhMz1SvcbC9v48V5zzfJdD85ugcb1e5/j7oH9BiN1AinSHkKvC1da8qRFcp2VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754574902; c=relaxed/simple;
-	bh=UU8/KLeMTZ3w3Iejl4Ec88LM3lsV+Um+Hl9MdDeZPjg=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=n42ZwViDm+FLe5vo1kgFNC6EipvGlqDY2BF/DuzU2dnYH6QQ006Za7gA7MbA0WX3yfXWwbnERGjAuDNb+ToNCToYJ4rMVp2dUqBdBhgSnE3yM6c9ZkKOQuFd6JDCrtLPBA0XprbDf8gU16hLJ+COZpGjsV8YVff8O8BBiQF0Oos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QwSs7cDe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754574899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5kXOrDwud7Md4kmVdYmDM5WejfgJDxWgdDUd88NMt5g=;
-	b=QwSs7cDerEKaxiDtK47SDSSyl3pJ1JysBKZKiruZ73l9Dkh6gErI0S6KECWFRoNTKpsBN9
-	QiniNaHk7kSEvym2vKpv326+19MUnvbTxpS2x+Z6h5EVqt+TfZtLmEG9LvlH/0RwwGo973
-	qR3mb1uCvHjXZxAzcReRntMvnYNM09c=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-wVrt40ufPqWG20i6q_bzyA-1; Thu, 07 Aug 2025 09:54:58 -0400
-X-MC-Unique: wVrt40ufPqWG20i6q_bzyA-1
-X-Mimecast-MFC-AGG-ID: wVrt40ufPqWG20i6q_bzyA_1754574898
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e81a449767aso1426792276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:54:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754574898; x=1755179698;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5kXOrDwud7Md4kmVdYmDM5WejfgJDxWgdDUd88NMt5g=;
-        b=Ia61QFfUTzoFTxiK+AgxP08W6NSOhOPHV+33/3x3kdKG3BuIBKmv7Hb1/+seDcdEn9
-         cuMy7/EykB7KUVeSdGhukA09EcusH9VYwRmQEX0npOH07ebXfkt1C0e9b+NK+wJiB2VO
-         Z7n/piWbrJQunxH5VFbtIIwdwRf1RPc32cBo5JA044p5hILfPqa1jLcaa4lUAkx+GZXx
-         DbLw3O9C+T8dSFFk3DJbzjFIQpneGVWuWHGnlwtUMDWTBBqmh+4pYZY+5BOXtONAIO4v
-         QD+TdLwMtjcG//83Xzqq4JsdStgfz7Xh655omA2hR+2JHT4Sbc1LIWw8EkhvMYHZwy4A
-         0nAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZbdiX0azrYhY4hn7EQ3meNuOf4ElgT+1sW+X5VMWC7kZ4kj/tcwMcygyEaET7mtcZs71p0+HpkmE4HvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydpbu7GXrRbKYVhEQkdphw4MQzAK5tm/uHy6jQwlJHuJNnTLcU
-	vXI45pQ99pmXawWiDyfP63dyz71/PcNzikCjBA6gXgJRS2g8uOsWa8mk9YnvW6ZGH9qlCGAIgJm
-	OjP9i/wYu2Pd6rtexhbxVnDtftqEbdCYidkwJvupAm1MtlYT8UioeZWRjr6U+oRWyJw==
-X-Gm-Gg: ASbGncv8UsU1hUu/pZJzlIKmP2WHHhRjL1K/qHFp3jUpbQdnAH3e4CTr1hfoNJIF4ti
-	U1NMzBPz2zyBkL9mdYsUeER2uWh4JwrLQB8ioXkJpMm10IOHzK7zQ2M5+YzbRsfV0JGJqUdNHpt
-	ZxNxWw0rftV1+7tSXijKvss1h8+2rRAsh17+iGhentPXzbu1XZHVDu2/bCRWf8GKGjqRZMGRcdu
-	maP4ys19sttW9fzr7Fj8iRJwnII3usMnnldIdvpzup0QphiUlvvVkdhepml3pgzMuDKyEBPy+q8
-	FhFCRdhNVby97LganM3KwyrG4ubnlA2AVNLrGbgJB8iiysVGBmIweGFHljH4guii7RJf0aY0hS9
-	z6X634mtOrQ==
-X-Received: by 2002:a05:6902:1883:b0:e90:493b:e26f with SMTP id 3f1490d57ef6-e90493be49amr1979276.11.1754574897540;
-        Thu, 07 Aug 2025 06:54:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhRLkUfURwG4WxqUpYTdWhMDZBK3/LXfHl0BbaQSACa+y2FwwxgrzOaoIU2pQxVH9TQQVp6A==
-X-Received: by 2002:a05:6902:1883:b0:e90:493b:e26f with SMTP id 3f1490d57ef6-e90493be49amr1950276.11.1754574897036;
-        Thu, 07 Aug 2025 06:54:57 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8fd3860a9csm6495969276.28.2025.08.07.06.54.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 06:54:55 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <2870d179-a2db-44ee-9183-11efe446ebd9@redhat.com>
-Date: Thu, 7 Aug 2025 09:54:54 -0400
+	s=arc-20240116; t=1754574958; c=relaxed/simple;
+	bh=genfLilDQilTlrVR+XjImpQdVjsDL45CfUIKqnfk+5E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OmhEEAu9n4huoVqBKY6+XfzLOEHZeezUjwFr1JZd5/Nj2qGvn6z/dIhQGQzMKz8cwiUXBJHg30MkXmfz8C3XKT8wdL4mwt8vStmaF48JgaALzIAN0SQMmWtaC1M6AOUIT/bRU2LA43Nv7d4ZCsbN1rDtB2Ldo+wk5u6VscQToCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c88eQYTU; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5778csZI021572;
+	Thu, 7 Aug 2025 13:55:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=y3+fywtBg7WA4g2vIVfSuzo1cv1w
+	/rMDMqYu2v+Dabg=; b=c88eQYTU5kYHu2kzEIaOcgGzXPUwEE6Cf1Hj31bDnbpB
+	PCwXQDMFGqjHb1e2Xl8cbNDwt7UIce6pb8rqTotHV8Uuh6E199wJBO5NanSwRyzn
+	q+w4xiCxGM9GkYy3KQsT+pwECZwkWapnRq9XMEaH/mWtli3V8UHvAiHQ54XZf+za
+	cbEI5GA80rl0QguSMBvMpcurrkGng/8jWfTbGSUvs50RHo5GGlGkJf6DnSwGLNkx
+	Yt2Es8vX17bKsyIsBleDcXaKl5SyKZoq2D9BVHrZrN56diphU94whURjxkTUslFr
+	nQfuu6uh+xf1E3m2kX9s7EOsRPm+RVHYeg9pim2HUw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq622fym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 13:55:48 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577DnxdR022588;
+	Thu, 7 Aug 2025 13:55:48 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq622fyk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 13:55:48 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 577DjUMV001627;
+	Thu, 7 Aug 2025 13:55:47 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwr0vm6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 13:55:47 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577Dtjed24707804
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Aug 2025 13:55:45 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 462B358062;
+	Thu,  7 Aug 2025 13:55:45 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 712C95805A;
+	Thu,  7 Aug 2025 13:55:42 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  7 Aug 2025 13:55:42 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: [PATCH v5 0/3] PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI
+ recovery
+Date: Thu, 07 Aug 2025 15:55:37 +0200
+Message-Id: <20250807-add_err_uevents-v5-0-adf85b0620b0@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] cgroup/cpuset.c: Fix a partition error with CPU
- hotplug
-To: Chen Ridong <chenridong@huaweicloud.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ingo Molnar <mingo@kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-References: <20250806172430.1155133-1-longman@redhat.com>
- <20250806172430.1155133-3-longman@redhat.com>
- <38800495-464f-4bbf-b605-9a6b8d2b4c11@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <38800495-464f-4bbf-b605-9a6b8d2b4c11@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFmwlGgC/23QTQrCMBAF4KtI1kYmP02iK+8hUtpkogFtJdFQk
+ d7dKEIXcfkG5nvDvEjCGDCR3epFIuaQwjiU0KxXxJ674YQ0uJIJB96AZJp2zrUYY/vAjMM9UeW
+ Nk05bhK0lZesW0YfpKx6OJZ9Duo/x+S3I7DP9WVxWVmaUUSGMdKrXemvV/hKGx7QJ/XVjxyv5e
+ JkvhuKiNjgF2omOW29QM+b+GWIxtIDaEMVoJPSsMRY0+H+GXAwD9V+yLIZVXPbeGSVMdcc8z2+
+ 4gbhAfgEAAA==
+X-Change-ID: 20250417-add_err_uevents-6f8d4d7ce09c
+To: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+Cc: Linas Vepstas <linasvepstas@gmail.com>,
+        =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Keith Busch <kbusch@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2241;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=genfLilDQilTlrVR+XjImpQdVjsDL45CfUIKqnfk+5E=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGDKmbIg1SJr82zwgzr6o7XfzXyGLXbq7WBrPaTy69SIkJ
+ J2nt0awo5SFQYyLQVZMkWVRl7PfuoIppnuC+jtg5rAygQxh4OIUgIlMb2b4H9MyX+rrE87HlfpB
+ NaXt57w5p8tHNC3qv3bLePmCSbO57jEybPLROi1xRLDVT2TPW8/l/PwtC+a2Py5OWMOeeV9nQhE
+ jDwA=
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEwOCBTYWx0ZWRfXypIpd6Ht8VBA
+ 4ArXLqP2NeA+aCDpkBLKklqTGdIxkINzfNJFQjXXXSf1ErVwcYbTBHpj9cXIWyais+yCLk9MkB3
+ ckOecV26LKsFKvyfHHmgFWqGo7/iIQ7SGSNZuqMkyDbVjCpzTvd9cTb/eQeICPisBcxg8arCujq
+ zSB+vJUNXsp048WZgbg8sIdsSV+uPBXI6dtalMZDb7t+SEpeTEtQWROtxzcuc5sqK8V4Q2obLxn
+ UwC1g4rXhvhgfMdwsv1lLtf2bdbO56yLzNyIBxfDJ+4butBi83tPhh4+9069fRzLMpkqlB0Ppmp
+ Wuxe8gxVJo2x0iC77SwJ0a85d6YIv1UaJsGJi5oX287BqiN2wPiF6+owwznm2YaneW6/ElcvhD/
+ HHtg65EWEnt+RRUfj/+mart8NEX4/jpo46e14Vyum4DORBHZB93XnSKUlCDyN3XiUW8dYJLZ
+X-Proofpoint-GUID: mjFpNY3XYbn_IxSgE3fyv19oNXETZZ82
+X-Authority-Analysis: v=2.4 cv=BIuzrEQG c=1 sm=1 tr=0 ts=6894b064 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=Ot2KE7TKgi5QPKB6m9EA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: 8dDb7rlIF5q5c9sp3xjcYHl_LrCS16l-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508070108
 
-On 8/6/25 10:44 PM, Chen Ridong wrote:
->
-> On 2025/8/7 1:24, Waiman Long wrote:
->> It was found during testing that an invalid leaf partition with an
->> empty effective exclusive CPU list can become a valid empty partition
->> with no CPU afer an offline/online operation of an unrelated CPU. An
->> empty partition root is allowed in the special case that it has no
->> task in its cgroup and has distributed out all its CPUs to its child
->> partitions. That is certainly not the case here.
->>
->> The problem is in the cpumask_subsets() test in the hotplug case
->> (update with no new mask) of update_parent_effective_cpumask() as it
->> also returns true if the effective exclusive CPU list is empty. Fix that
->> by addding the cpumask_empty() test to root out this exception case.
->> Also add the cpumask_empty() test in cpuset_hotplug_update_tasks()
->> to avoid calling update_parent_effective_cpumask() for this special case.
->>
->> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add cpuset.cpus.exclusive.effective for v2")
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>   kernel/cgroup/cpuset.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index bf149246e001..d993e058a663 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1843,7 +1843,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->>   			if (is_partition_valid(cs))
->>   				adding = cpumask_and(tmp->addmask,
->>   						xcpus, parent->effective_xcpus);
->> -		} else if (is_partition_invalid(cs) &&
->> +		} else if (is_partition_invalid(cs) && !cpumask_empty(xcpus) &&
->>   			   cpumask_subset(xcpus, parent->effective_xcpus)) {
->>   			struct cgroup_subsys_state *css;
->>   			struct cpuset *child;
-> This path looks good to me.
->
-> However, I found the update_parent_effective_cpumask function a bit difficult to follow due to its
-> complexity.
->
-> To improve readability, could we refactor the partcmd_enable, partcmd_disable, partcmd_update and
-> partcmd_invalidate logic into separate, well-defined function blocks?  I'd be happy to take
-> ownership of this refactoring work if you agree with the approach.
+Hi Bjorn, Lukas, Mahesh,
 
-I agree that the code can be a bit hard to read. You are more than 
-welcome to improve the readability of the code if you have time.
+This series adds issuing of uevents during PCI recovery on s390. In
+developing this I noticed that pci_uevent_ers() ignores
+PCI_ERS_RESULT_NEED_RESET. I think this will result in AER not generating a uevent
+at the beginning of recovery if drivers request a reset via the voting
+on error_detected() returns. This is fixed in the first patch and relied
+upon by the s390 recovery code as it also uses the result of
+error_detected() though with one device/driver at a time.
 
-Cheers,
-Longman
+Thanks,
+Niklas
+
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+---
+Changes in v5:
+- Add R-b from Lukas Wunner for EEH
+- Improve commit message for EEH (Lukas Wunner)
+- Move the EEH patch to the end so the reference to s390 relies on the
+  as is and not future state ;)
+- Link to v4: https://lore.kernel.org/r/20250807-add_err_uevents-v4-0-c624bfd8638d@linux.ibm.com
+
+Changes in v4:
+- Add change in EEH to use the return of error_detected() in the uevent
+  just like AER and the new s390 code
+- Add R-b from Lukas
+- Link to v3: https://lore.kernel.org/r/20250730-add_err_uevents-v3-0-540b158c070f@linux.ibm.com
+
+Changes in v3:
+- Reworded cover letter
+- Rebase on v6.16
+- Link to v2: https://lore.kernel.org/r/20250623-add_err_uevents-v2-0-a3a2cf8e711d@linux.ibm.com
+
+Changes in v2:
+- Add a patch fixing pci_uevent_ers() mistakenly ignoring PCI_ERS_RESULT_NEED_RESET
+- Use the result of error_detected() for initial pci_uevent_ers()
+- Drop fixes tag in s390 patch
+- Rebase and re-test on current master
+- Link to v1: https://lore.kernel.org/r/20250424-add_err_uevents-v1-1-3384d6b779c6@linux.ibm.com
+
+---
+Niklas Schnelle (3):
+      PCI/AER: Fix missing uevent on recovery when a reset is requested
+      PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI recovery
+      powerpc/eeh: Use result of error_detected() in uevent
+
+ arch/powerpc/kernel/eeh_driver.c | 2 +-
+ arch/s390/pci/pci_event.c        | 3 +++
+ drivers/pci/pci-driver.c         | 3 ++-
+ include/linux/pci.h              | 2 +-
+ 4 files changed, 7 insertions(+), 3 deletions(-)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250417-add_err_uevents-6f8d4d7ce09c
+
+Best regards,
+-- 
+Niklas Schnelle
 
 
