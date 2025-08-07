@@ -1,250 +1,324 @@
-Return-Path: <linux-kernel+bounces-759206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760A4B1DA43
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:44:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364F1B1DA48
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 650EF7A557D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B893AFDBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF6826AA8F;
-	Thu,  7 Aug 2025 14:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71FB264A9D;
+	Thu,  7 Aug 2025 14:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnKE9Q1c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OeQSbLKb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CE8264602;
-	Thu,  7 Aug 2025 14:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1756262FE4
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754577827; cv=none; b=qpBJmWubl+ercbXh6P+ztTAncXQebv55pd5Wa3cEi/HEaGKany16lvPN5CdtuiPH04eN+co7sp3Q0VY7NC8Q7adPltfCGdUDt7bs8hwKN7y41p839nWAYh+UPk5BiSqdRwXdC7CMUje5txRIC+dslwGd9kPc30cePquPt0MBjiM=
+	t=1754577890; cv=none; b=HN3IzMmP43Aek3774jOhsPYj7ojijcHezJzROihMyokR8kQ+SysOZ0BzpzzCzaaitaGlAZPgbs6lknDS0GJDV4ck0VFEyP/gx+Vlkw4a5sAX/mk+F9aVh3T1Y/rvKeztBYkCkFAhq4ZNCwzI83Jf96eRSqYR/jBTkGFy/o2eLSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754577827; c=relaxed/simple;
-	bh=h1tRnXm0w5Ltd/mhqt/EkhOKJAG3JgJDO1aJUMG687o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QwKRFNsxjsui7wVmtQOq2ONTlSUZxk2RwbtM0jIiLvSjc4NG4NlaRscT9XLD+KJl5MTP7BnL93Ws2sL9bsQY3H2Z+sSVII49KCOKQD7MpyKjk0P8+LmDP7yPHrHqvy8ZxHFYJnhxSVExfn3B6BVTqCXuOfG8iX8sMhw+ag8nL88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnKE9Q1c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70565C4CEF4;
-	Thu,  7 Aug 2025 14:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754577826;
-	bh=h1tRnXm0w5Ltd/mhqt/EkhOKJAG3JgJDO1aJUMG687o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lnKE9Q1cJTjduJq8BsGF4C4X0uYcMjRSlTXjQ7BPYcqvBRA37xFkukngUzYx4j70v
-	 +ZJn0zn7e0oXlsjlB1FbVz7iB1VUPiP7ii3i2+rSLDxMJyI93rbODfQO4DaW2TZcXe
-	 vp6Qk94l4AyL6LgmKmu/HMb5SmQMK1KmNyI+Q9tifgS9jKnqQTxmjr4oh432KFlLTo
-	 OJnmGTWNA0iAijCSdCJL4Q7giNUKa07O959u3EHU7wc+EYabe1d+HMcn6GDsFQcZYM
-	 mP1H+zdPQdOojh49Epsm3VYa5wb22c7bDkPWKQbobft/2OQbm9W64pUd2ESE5meCOD
-	 RM+qYkyZ1H8hg==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1754577890; c=relaxed/simple;
+	bh=xHdG9bnegdsYFSda4X6vtCSBfN1sfDNUPWqToEBiZ6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HHxIPxH5n4LwPpO+kIwVnrMFojTMTHKkJU78KgV9vUybWboMpuT5dFWt1GaLMUviBpTdR1P+CCtpSaSSVrrAgL45xeoFyP+BNENvNkwRrbZxm4H4rBuVqaYE2xUP1RzJbAZjS/GasdnTYdV7x3MXYfqTL5Drw7uK0vspu9Gf+CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OeQSbLKb; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754577888; x=1786113888;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xHdG9bnegdsYFSda4X6vtCSBfN1sfDNUPWqToEBiZ6c=;
+  b=OeQSbLKbch0tvmq63OefcdctNA1qMkIj2JTyXwBv28YY7L2inMIesZ/T
+   n1j2Ji6AhS1U6bp06YO+ZqM4+595neRkukPFN/e4uJSMN2AyKVvTgUOc3
+   5bQP6+U/WKoFe0RSuUZSCMN3CtSTPTvmsaCvDesnu70Xcl2YUZRhJlEf8
+   Dz6eMLKfHLx08RWvMbn0gAmQdd/by0oHvjnB2tGvDliLGYcpxE7Yy8icQ
+   yIvxV+yddoMnQrkDkXGDU2Mbi1xYgn/J0ApI108LY6Vtb9BT5KUkF39e+
+   PmFoMAMfa+QhDgt4NBb91ABudegT/Wg8CPqjR1Kr4+I0z3L6NzXywg17M
+   g==;
+X-CSE-ConnectionGUID: YiBxWQ75QtyZ/xg9i6sKxA==
+X-CSE-MsgGUID: BhFhaee7Rh2fOFiA86zCgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="74493137"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="74493137"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 07:44:47 -0700
+X-CSE-ConnectionGUID: SaH2uLB5SMieo43Bc+Do+g==
+X-CSE-MsgGUID: EwgTw66xQCOkmf5Ynca02A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="202242117"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 07 Aug 2025 07:44:44 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uk1rG-0002tK-0i;
+	Thu, 07 Aug 2025 14:44:42 +0000
+Date: Thu, 7 Aug 2025 22:44:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, richard@nod.at
+Cc: oe-kbuild-all@lists.linux.dev, anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net, linux-um@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com
-Subject: [GIT PULL] Networking for v6.17-rc1
-Date: Thu,  7 Aug 2025 07:43:45 -0700
-Message-ID: <20250807144345.806381-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] um: Use ARRAY_SIZE for array length
+Message-ID: <202508072253.pVtUjvoV-lkp@intel.com>
+References: <20250807023227.2443863-1-jiapeng.chong@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807023227.2443863-1-jiapeng.chong@linux.alibaba.com>
 
-Hi Linus!
+Hi Jiapeng,
 
-The following changes since commit d9104cec3e8fe4b458b74709853231385779001f:
+kernel test robot noticed the following build errors:
 
-  Merge tag 'bpf-next-6.17' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next (2025-07-30 09:58:50 -0700)
+[auto build test ERROR on next-20250806]
 
-are available in the Git repository at:
+url:    https://github.com/intel-lab-lkp/linux/commits/Jiapeng-Chong/um-Use-ARRAY_SIZE-for-array-length/20250807-103534
+base:   next-20250806
+patch link:    https://lore.kernel.org/r/20250807023227.2443863-1-jiapeng.chong%40linux.alibaba.com
+patch subject: [PATCH -next] um: Use ARRAY_SIZE for array length
+config: um-randconfig-001-20250807 (https://download.01.org/0day-ci/archive/20250807/202508072253.pVtUjvoV-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508072253.pVtUjvoV-lkp@intel.com/reproduce)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc1
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508072253.pVtUjvoV-lkp@intel.com/
 
-for you to fetch changes up to d942fe13f72bec92f6c689fbd74c5ec38228c16a:
+All errors (new ones prefixed by >>):
 
-  net: ti: icssg-prueth: Fix skb handling for XDP_PASS (2025-08-05 18:03:33 -0700)
+   arch/um/kernel/skas/stub_exe.c: In function 'real_init':
+>> arch/um/kernel/skas/stub_exe.c:196:32: error: implicit declaration of function 'ARRAY_SIZE' [-Werror=implicit-function-declaration]
+     196 |                         .len = ARRAY_SIZE(filter),
+         |                                ^~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-----------------------------------------------------------------
-Previous releases - regressions:
 
- - netlink: avoid infinite retry looping in netlink_unicast()
+vim +/ARRAY_SIZE +196 arch/um/kernel/skas/stub_exe.c
 
-Previous releases - always broken:
+    12	
+    13	noinline static void real_init(void)
+    14	{
+    15		struct stub_init_data init_data;
+    16		unsigned long res;
+    17		struct {
+    18			void  *ss_sp;
+    19			int    ss_flags;
+    20			size_t ss_size;
+    21		} stack = {
+    22			.ss_size = STUB_DATA_PAGES * UM_KERN_PAGE_SIZE,
+    23		};
+    24		struct {
+    25			void *sa_handler_;
+    26			unsigned long sa_flags;
+    27			void *sa_restorer;
+    28			unsigned long long sa_mask;
+    29		} sa = {
+    30			/* Need to set SA_RESTORER (but the handler never returns) */
+    31			.sa_flags = SA_ONSTACK | SA_NODEFER | SA_SIGINFO | 0x04000000,
+    32		};
+    33	
+    34		/* set a nice name */
+    35		stub_syscall2(__NR_prctl, PR_SET_NAME, (unsigned long)"uml-userspace");
+    36	
+    37		/* Make sure this process dies if the kernel dies */
+    38		stub_syscall2(__NR_prctl, PR_SET_PDEATHSIG, SIGKILL);
+    39	
+    40		/* Needed in SECCOMP mode (and safe to do anyway) */
+    41		stub_syscall5(__NR_prctl, PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+    42	
+    43		/* read information from STDIN and close it */
+    44		res = stub_syscall3(__NR_read, 0,
+    45				    (unsigned long)&init_data, sizeof(init_data));
+    46		if (res != sizeof(init_data))
+    47			stub_syscall1(__NR_exit, 10);
+    48	
+    49		/* In SECCOMP mode, FD 0 is a socket and is later used for FD passing */
+    50		if (!init_data.seccomp)
+    51			stub_syscall1(__NR_close, 0);
+    52		else
+    53			stub_syscall3(__NR_fcntl, 0, F_SETFL, O_NONBLOCK);
+    54	
+    55		/* map stub code + data */
+    56		res = stub_syscall6(STUB_MMAP_NR,
+    57				    init_data.stub_start, UM_KERN_PAGE_SIZE,
+    58				    PROT_READ | PROT_EXEC, MAP_FIXED | MAP_SHARED,
+    59				    init_data.stub_code_fd, init_data.stub_code_offset);
+    60		if (res != init_data.stub_start)
+    61			stub_syscall1(__NR_exit, 11);
+    62	
+    63		res = stub_syscall6(STUB_MMAP_NR,
+    64				    init_data.stub_start + UM_KERN_PAGE_SIZE,
+    65				    STUB_DATA_PAGES * UM_KERN_PAGE_SIZE,
+    66				    PROT_READ | PROT_WRITE, MAP_FIXED | MAP_SHARED,
+    67				    init_data.stub_data_fd, init_data.stub_data_offset);
+    68		if (res != init_data.stub_start + UM_KERN_PAGE_SIZE)
+    69			stub_syscall1(__NR_exit, 12);
+    70	
+    71		/* In SECCOMP mode, we only need the signalling FD from now on */
+    72		if (init_data.seccomp) {
+    73			res = stub_syscall3(__NR_close_range, 1, ~0U, 0);
+    74			if (res != 0)
+    75				stub_syscall1(__NR_exit, 13);
+    76		}
+    77	
+    78		/* setup signal stack inside stub data */
+    79		stack.ss_sp = (void *)init_data.stub_start + UM_KERN_PAGE_SIZE;
+    80		stub_syscall2(__NR_sigaltstack, (unsigned long)&stack, 0);
+    81	
+    82		/* register signal handlers */
+    83		sa.sa_handler_ = (void *) init_data.signal_handler;
+    84		sa.sa_restorer = (void *) init_data.signal_restorer;
+    85		if (!init_data.seccomp) {
+    86			/* In ptrace mode, the SIGSEGV handler never returns */
+    87			sa.sa_mask = 0;
+    88	
+    89			res = stub_syscall4(__NR_rt_sigaction, SIGSEGV,
+    90					    (unsigned long)&sa, 0, sizeof(sa.sa_mask));
+    91			if (res != 0)
+    92				stub_syscall1(__NR_exit, 14);
+    93		} else {
+    94			/* SECCOMP mode uses rt_sigreturn, need to mask all signals */
+    95			sa.sa_mask = ~0ULL;
+    96	
+    97			res = stub_syscall4(__NR_rt_sigaction, SIGSEGV,
+    98					    (unsigned long)&sa, 0, sizeof(sa.sa_mask));
+    99			if (res != 0)
+   100				stub_syscall1(__NR_exit, 15);
+   101	
+   102			res = stub_syscall4(__NR_rt_sigaction, SIGSYS,
+   103					    (unsigned long)&sa, 0, sizeof(sa.sa_mask));
+   104			if (res != 0)
+   105				stub_syscall1(__NR_exit, 16);
+   106	
+   107			res = stub_syscall4(__NR_rt_sigaction, SIGALRM,
+   108					    (unsigned long)&sa, 0, sizeof(sa.sa_mask));
+   109			if (res != 0)
+   110				stub_syscall1(__NR_exit, 17);
+   111	
+   112			res = stub_syscall4(__NR_rt_sigaction, SIGTRAP,
+   113					    (unsigned long)&sa, 0, sizeof(sa.sa_mask));
+   114			if (res != 0)
+   115				stub_syscall1(__NR_exit, 18);
+   116	
+   117			res = stub_syscall4(__NR_rt_sigaction, SIGILL,
+   118					    (unsigned long)&sa, 0, sizeof(sa.sa_mask));
+   119			if (res != 0)
+   120				stub_syscall1(__NR_exit, 19);
+   121	
+   122			res = stub_syscall4(__NR_rt_sigaction, SIGFPE,
+   123					    (unsigned long)&sa, 0, sizeof(sa.sa_mask));
+   124			if (res != 0)
+   125				stub_syscall1(__NR_exit, 20);
+   126		}
+   127	
+   128		/*
+   129		 * If in seccomp mode, install the SECCOMP filter and trigger a syscall.
+   130		 * Otherwise set PTRACE_TRACEME and do a SIGSTOP.
+   131		 */
+   132		if (init_data.seccomp) {
+   133			struct sock_filter filter[] = {
+   134	#if __BITS_PER_LONG > 32
+   135				/* [0] Load upper 32bit of instruction pointer from seccomp_data */
+   136				BPF_STMT(BPF_LD | BPF_W | BPF_ABS,
+   137					 (offsetof(struct seccomp_data, instruction_pointer) + 4)),
+   138	
+   139				/* [1] Jump forward 3 instructions if the upper address is not identical */
+   140				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (init_data.stub_start) >> 32, 0, 3),
+   141	#endif
+   142				/* [2] Load lower 32bit of instruction pointer from seccomp_data */
+   143				BPF_STMT(BPF_LD | BPF_W | BPF_ABS,
+   144					 (offsetof(struct seccomp_data, instruction_pointer))),
+   145	
+   146				/* [3] Mask out lower bits */
+   147				BPF_STMT(BPF_ALU | BPF_AND | BPF_K, 0xfffff000),
+   148	
+   149				/* [4] Jump to [6] if the lower bits are not on the expected page */
+   150				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (init_data.stub_start) & 0xfffff000, 1, 0),
+   151	
+   152				/* [5] Trap call, allow */
+   153				BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_TRAP),
+   154	
+   155				/* [6,7] Check architecture */
+   156				BPF_STMT(BPF_LD | BPF_W | BPF_ABS,
+   157					 offsetof(struct seccomp_data, arch)),
+   158				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K,
+   159					 UM_SECCOMP_ARCH_NATIVE, 1, 0),
+   160	
+   161				/* [8] Kill (for architecture check) */
+   162				BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_KILL_PROCESS),
+   163	
+   164				/* [9] Load syscall number */
+   165				BPF_STMT(BPF_LD | BPF_W | BPF_ABS,
+   166					 offsetof(struct seccomp_data, nr)),
+   167	
+   168				/* [10-16] Check against permitted syscalls */
+   169				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_futex,
+   170					 7, 0),
+   171				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K,__NR_recvmsg,
+   172					 6, 0),
+   173				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K,__NR_close,
+   174					 5, 0),
+   175				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, STUB_MMAP_NR,
+   176					 4, 0),
+   177				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_munmap,
+   178					 3, 0),
+   179	#ifdef __i386__
+   180				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_set_thread_area,
+   181					 2, 0),
+   182	#else
+   183				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_arch_prctl,
+   184					 2, 0),
+   185	#endif
+   186				BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_rt_sigreturn,
+   187					 1, 0),
+   188	
+   189				/* [17] Not one of the permitted syscalls */
+   190				BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_KILL_PROCESS),
+   191	
+   192				/* [18] Permitted call for the stub */
+   193				BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
+   194			};
+   195			struct sock_fprog prog = {
+ > 196				.len = ARRAY_SIZE(filter),
+   197				.filter = filter,
+   198			};
+   199	
+   200			if (stub_syscall3(__NR_seccomp, SECCOMP_SET_MODE_FILTER,
+   201					  SECCOMP_FILTER_FLAG_TSYNC,
+   202					  (unsigned long)&prog) != 0)
+   203				stub_syscall1(__NR_exit, 21);
+   204	
+   205			/* Fall through, the exit syscall will cause SIGSYS */
+   206		} else {
+   207			stub_syscall4(__NR_ptrace, PTRACE_TRACEME, 0, 0, 0);
+   208	
+   209			stub_syscall2(__NR_kill, stub_syscall0(__NR_getpid), SIGSTOP);
+   210		}
+   211	
+   212		stub_syscall1(__NR_exit, 30);
+   213	
+   214		__builtin_unreachable();
+   215	}
+   216	
 
- - packet: fix a race in packet_set_ring() and packet_notifier()
-
- - ipv6: reject malicious packets in ipv6_gso_segment()
-
- - sched: mqprio: fix stack out-of-bounds write in tc entry parsing
-
- - net: drop UFO packets (injected via virtio) in udp_rcv_segment()
-
- - eth: mlx5: correctly set gso_segs when LRO is used, avoid false
-   positive checksum validation errors
-
- - netpoll: prevent hanging NAPI when netcons gets enabled
-
- - phy: mscc: fix parsing of unicast frames for PTP timestamping
-
- - number of device tree / OF reference leak fixes
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      ipa: fix compile-testing with qcom-mdt=m
-
-Bence Csókás (1):
-      net: mdio_bus: Use devm for getting reset GPIO
-
-Buday Csaba (1):
-      net: phy: smsc: add proper reset flags for LAN8710A
-
-Christoph Paasch (1):
-      net/mlx5: Correctly set gso_segs when LRO is used
-
-Edward Cree (1):
-      sfc: unfix not-a-typo in comment
-
-Eric Dumazet (3):
-      pptp: ensure minimal skb length in pptp_xmit()
-      selftests: avoid using ifconfig
-      ipv6: reject malicious packets in ipv6_gso_segment()
-
-Fedor Pchelkin (1):
-      netlink: avoid infinite retry looping in netlink_unicast()
-
-Florian Fainelli (1):
-      net: mdio: mdio-bcm-unimac: Correct rate fallback logic
-
-Geert Uytterhoeven (2):
-      dpll: Make ZL3073X invisible
-      dpll: zl3073x: ZL3073X_I2C and ZL3073X_SPI should depend on NET
-
-Heiner Kallweit (1):
-      net: ftgmac100: fix potential NULL pointer access in ftgmac100_phy_disconnect
-
-Horatiu Vultur (1):
-      phy: mscc: Fix parsing of unicast frames
-
-Ido Schimmel (2):
-      selftests: net: Fix flaky neighbor garbage collection test
-      selftests: netdevsim: Xfail nexthop test on slow machines
-
-Jakub Kicinski (9):
-      Merge branch 'net-ethernet-fix-device-leaks'
-      netpoll: prevent hanging NAPI when netcons gets enabled
-      netlink: specs: ethtool: fix module EEPROM input/output arguments
-      eth: fbnic: unlink NAPIs from queues on error to open
-      net: devmem: fix DMA direction on unmapping
-      selftests: net: packetdrill: xfail all problems on slow machines
-      Revert "net: mdio_bus: Use devm for getting reset GPIO"
-      eth: fbnic: remove the debugging trick of super high page bias
-      Merge branch 'eth-fbnic-fix-drop-stats-support'
-
-Johan Hovold (5):
-      net: dpaa: fix device leak when querying time stamp info
-      net: enetc: fix device and OF node leak at probe
-      net: gianfar: fix device leak when querying time stamp info
-      net: mtk_eth_soc: fix device leak at probe
-      net: ti: icss-iep: fix device and OF node leaks at probe
-
-Krzysztof Kozlowski (1):
-      dt-bindings: net: Replace bouncing Alexandru Tachici emails
-
-Lorenzo Bianconi (2):
-      net: airoha: Fix PPE table access in airoha_ppe_debugfs_foe_show()
-      net: airoha: npu: Add missing MODULE_FIRMWARE macros
-
-Luca Weiss (1):
-      net: ipa: add IPA v5.1 and v5.5 to ipa_version_string()
-
-Maher Azzouzi (1):
-      net/sched: mqprio: fix stack out-of-bounds write in tc entry parsing
-
-Meghana Malladi (1):
-      net: ti: icssg-prueth: Fix skb handling for XDP_PASS
-
-Michal Luczaj (1):
-      kcm: Fix splice support
-
-Michal Schmidt (1):
-      benet: fix BUG when creating VFs
-
-Mohsin Bashir (2):
-      eth: fbnic: Fix tx_dropped reporting
-      eth: fbnic: Lock the tx_dropped update
-
-Quang Le (1):
-      net/packet: fix a race in packet_set_ring() and packet_notifier()
-
-Samiullah Khawaja (1):
-      net: Update threaded state in napi config in netif_set_threaded
-
-Sharath Chandra Vurukala (1):
-      net: Add locking to protect skb->dev access in ip_output
-
-Takamitsu Iwai (1):
-      net/sched: taprio: enforce minimum value for picos_per_byte
-
-Wang Liang (1):
-      net: drop UFO packets in udp_rcv_segment()
-
- .../devicetree/bindings/net/adi,adin.yaml          |   2 +-
- .../devicetree/bindings/net/adi,adin1110.yaml      |   2 +-
- Documentation/netlink/specs/ethtool.yaml           |   6 +-
- drivers/dpll/zl3073x/Kconfig                       |  10 +-
- drivers/net/ethernet/airoha/airoha_npu.c           |   2 +
- drivers/net/ethernet/airoha/airoha_ppe.c           |  26 +++--
- drivers/net/ethernet/emulex/benet/be_cmds.c        |   2 +-
- drivers/net/ethernet/faraday/ftgmac100.c           |   7 +-
- drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c |   4 +-
- drivers/net/ethernet/freescale/enetc/enetc_pf.c    |  14 ++-
- drivers/net/ethernet/freescale/gianfar_ethtool.c   |   4 +-
- drivers/net/ethernet/mediatek/mtk_wed.c            |   1 -
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c    |   1 +
- drivers/net/ethernet/meta/fbnic/fbnic_netdev.c     |  14 ++-
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.c       |   4 +-
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.h       |   6 +-
- drivers/net/ethernet/sfc/tc_encap_actions.c        |   2 +-
- drivers/net/ethernet/ti/icssg/icss_iep.c           |  23 ++++-
- drivers/net/ethernet/ti/icssg/icssg_common.c       |  15 +--
- drivers/net/ipa/Kconfig                            |   2 +-
- drivers/net/ipa/ipa_sysfs.c                        |   6 +-
- drivers/net/mdio/mdio-bcm-unimac.c                 |   5 +-
- drivers/net/phy/mscc/mscc_ptp.c                    |   1 +
- drivers/net/phy/mscc/mscc_ptp.h                    |   1 +
- drivers/net/phy/smsc.c                             |   1 +
- drivers/net/ppp/pptp.c                             |  15 +--
- include/linux/skbuff.h                             |  23 +++++
- include/net/dst.h                                  |  12 +++
- include/net/udp.h                                  |  24 +++--
- net/core/dev.c                                     |  26 ++---
- net/core/devmem.c                                  |   6 +-
- net/core/devmem.h                                  |   7 +-
- net/core/netpoll.c                                 |   7 ++
- net/ipv4/ip_output.c                               |  15 ++-
- net/ipv6/ip6_offload.c                             |   4 +-
- net/kcm/kcmsock.c                                  |   6 ++
- net/netlink/af_netlink.c                           |   2 +-
- net/packet/af_packet.c                             |  12 +--
- net/sched/sch_mqprio.c                             |   2 +-
- net/sched/sch_taprio.c                             |  21 +++-
- tools/testing/selftests/drivers/net/Makefile       |   1 +
- .../testing/selftests/drivers/net/napi_threaded.py | 111 +++++++++++++++++++++
- .../selftests/drivers/net/netdevsim/nexthop.sh     |   2 +-
- .../selftests/net/packetdrill/ksft_runner.sh       |  19 +---
- tools/testing/selftests/net/test_neigh.sh          |   6 +-
- tools/testing/selftests/net/vlan_hw_filter.sh      |  16 +--
- 46 files changed, 361 insertions(+), 137 deletions(-)
- create mode 100755 tools/testing/selftests/drivers/net/napi_threaded.py
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
