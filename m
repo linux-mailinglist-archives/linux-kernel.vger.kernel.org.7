@@ -1,333 +1,189 @@
-Return-Path: <linux-kernel+bounces-759422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5368B1DD5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:09:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277A0B1DD4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4BAD18C7B9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:09:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EC93AF2EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CAA2737FF;
-	Thu,  7 Aug 2025 19:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90F12222DA;
+	Thu,  7 Aug 2025 19:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JaepP3+c"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CrxDhWEc"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2AC23DE
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 19:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FB08F6E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 19:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754593749; cv=none; b=QR0peqvOhGYrWWzianhWLhoEY/ngFb+iTufVGy0SMGdFYhdND1x4+bFtm8cxcd/MFZDFO40BfTUZUo3opMxtKn1Aj7pec8ZCIG7nn8SCmX/KvkhbpL7d8v/+ibv1pxrff/K1VLug6KSrJRE9ikFDA2mMLsa2kfibMr7uPfNUfKA=
+	t=1754593544; cv=none; b=TftysoQaVWpptZ+FQl1gBgJx5uscrnJSOUxIbBCUeToz7C1s0cvEg3l1+L5OsDDHQMdk8SA6nmO+HEb7Nvz2jJaXSYgak/aEWBFCxhFLCXqKoOoneB3EpBqEW4SIrDV01xGuKa3y94+lVfE9ShNICwfQ6P7TgtB+uque//6Pt7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754593749; c=relaxed/simple;
-	bh=s591I6oynnReSxV3Au7zUb5EcbAqH7epNKeOHAuJfAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KMudjeGWkOH1mNUvApx6ahBCJAyOTa5Nhxgn/kBjO1P4HcDOblnt6iR9Bv342Pt+wu++LSpy/49V+VprGE8UF4qqpQD4hNFe1CXZU4nUdryEJjGuAjTUasa89PmE/yYr8ybsXM+UKR87e+BYuhazz1cPnCH7fWXqJLou0UV9yVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JaepP3+c; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45994a72356so11092695e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 12:09:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754593746; x=1755198546; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g45HxYT9zBnvjsNtcvhDhW+w7if+fXdh8cchCdpgOBs=;
-        b=JaepP3+c/eFYulj8HhvNEfRMXyCLeqyFDbm9Grs+PsbKQUY4biFvJmpCOVPugHSEyi
-         OIYBbCl6x371TNyDEuQ9+02THaVhkH9DOI0SX/kMDp2rQlnEBEI4U8xt7Vs7EUkuXHMh
-         gU5SRR/kSeim3Adqy+xv8Ug1EbIJ0OlobKcV/pBRa+ExRDs/dytb3U1YOviGa1j/x+Hv
-         sqtBivXWI9Vapk5SNPwUDUsw4z9jY0ishg2sAApoko6rVlqFtN4u2LcYpdTvVRb/ojnW
-         TlUvgLB9vMHlbjp2LLkCyrMkiiJbx6WCoZYF10OhtfMbPV2b7hqkPDiqob8GXmt3ZvNz
-         yYpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754593746; x=1755198546;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g45HxYT9zBnvjsNtcvhDhW+w7if+fXdh8cchCdpgOBs=;
-        b=v3U/0p5m60JzvUt0uxHFgRUMJ3nIoIcpKoZw/OkLRp1g1JcmniC2vt3eOlZqDNdTnR
-         qKuoZdRYEICZMnwfyR5o9+JDoQsCbouPwOQTSSQ5PhWumzfJTw2c33m1xAxbyWrDNJmV
-         0nEv/YcRKc6fpZt71/eR/r31bAYNx2ztP5z7/2YgZBqHY11T/ZN/3PGknSKeLAJ6xtiq
-         ePVdU/oRY8okNp4zpy2YLaW5TwR/if8O4rYBF1IRJ3SSRenD4ijhZi0RLvIGLEyUwsDc
-         xwRosK8D/nvm3q/Id2G00amRfO+skzPY7/0vY8t+opTXNUlTfRTM/UMgkUivdgDU5sUS
-         mObA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7c18N2b5bc6zY3rR6Qk/2s/77mYG7pfQDqiW0OiJWzmDYdFEbcih0lboRiPybiP7qbtL9wdNsX/Iz/Uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJiTiUB7WiECNirigaMNOmfUNwylFrwQ/cijiR7owxzzf12/v5
-	n3XdGqk82VdATRNOUeDnFfSsv7n+C6PBoPiPuh9PmcuFfwW++8ZjzfrJ
-X-Gm-Gg: ASbGncsST4pvFhQfY2w2cwGBSrh5UK0X44zNVAHJsXKqgNvdv+Dk/IulQgI9apXGTsK
-	+ARtPG+ck0YKKF4wKlFS0dZAMlt238YH13JkbAkdkX49ACkqUdxZWRCOvQlo8bPrWT1vQ3RlvZD
-	RrJDX6TR32zADfCI4cDKqgGSo1Kg08m179ZFS4urpf9YnZVmmT+ciY3okgbshFeDVAw6XaohMHz
-	6H4qSDFR/8pi499LWz6mX3nOHrwT871oq71lQNDeVdqanNW13idPrR+hJ/vE4niSqnmmLDfCrOY
-	6P7lnOOTZye0SA1IOQX0O+kkYN5SZDuX6GUoymQrFvgPcgTifHoa1/tLrjOw5qcXnEu5tTNExpo
-	iNLBMNmXC3sIB73Iw0XegS2rH/LaMTw1H6mMbHVVfEEgKVwriRzKX06NE2PbQ76LtSRisL4ez0S
-	4=
-X-Google-Smtp-Source: AGHT+IFobf4kIojYuJxP0fDlodEmVFPL4ql9FtQA1VuvrVstvddIqRAyKDvTstbs/lgtnuFoO8r1Zg==
-X-Received: by 2002:a05:600c:4c84:b0:459:dd4e:4435 with SMTP id 5b1f17b1804b1-459ede7d688mr31015785e9.5.1754593745799;
-        Thu, 07 Aug 2025 12:09:05 -0700 (PDT)
-Received: from ekhafagy-ROG-Zephyrus-M16-GU603HR-GU603HR.. ([156.204.172.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9074sm27131957f8f.17.2025.08.07.12.09.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 12:09:05 -0700 (PDT)
-From: Eslam Khafagy <eslam.medhat1993@gmail.com>
-To: 
-Cc: skhan@linuxfoundation.com,
-	Eslam Khafagy <eslam.medhat1993@gmail.com>,
-	Manikandan Muralidharan <manikandan.m@microchip.com>,
-	Dharma Balasubiramani <dharma.b@microchip.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] drm: atmel-hlcdc: replace dev_* print funtions with drm_* variants
-Date: Thu,  7 Aug 2025 22:03:12 +0300
-Message-ID: <20250807190857.92431-1-eslam.medhat1993@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754593544; c=relaxed/simple;
+	bh=dE+AVwYniT3vJHP+UoI8xx4iQ9ExHzmQRWkDYBFHlG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mgytKUi5f/yf0moMsYB4859cFjoA4tIbBeXgBQ/VqOUjEHZymxCBZSGAbd8L5A7/oCIpWsgu/oI+Qfv91HWAzyDvUfZTrQCyRty+Vki4hTxaDFdtQwZx8lrXe0hoVMbx3z+tZjn0bo68/k1OTOQAhqrrgmlA8zVAkJbJJsXXsQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CrxDhWEc; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <bfffe2d9-1d2a-4376-abb6-a8746a8a3a69@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754593529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G9mKcMRuq6jINq5ANG/Ei6hvRGRifdTxiEw9xKT697k=;
+	b=CrxDhWEcZS33BnpYpxKbyUZQNRwX0NeaXuFlJgj+4DnB3z99uyFAkxDpFvwwjB5JZCQ3ZM
+	YKrVUS+sQqvB7T6+2w1Y3rATiHxbuKWX4h6DQi/QbiffHlff5cQkaKzrRgrrfPthmMMznh
+	5NJZ+p4V7W8p75Gg74aH9HtBPl92Q6U=
+Date: Thu, 7 Aug 2025 12:05:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 2/2] bpf: fix stackmap overflow check in
+ __bpf_get_stackid()
+Content-Language: en-GB
+To: Arnaud Lecomte <contact@arnaud-lcm.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
+ song@kernel.org, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+References: <20250807175032.7381-1-contact@arnaud-lcm.com>
+ <20250807175258.7613-1-contact@arnaud-lcm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250807175258.7613-1-contact@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Update the Atmel HLCDC code to use DRM print macros drm_*() instead of
-dev_warn() and dev_err(). This change ensures consistency with DRM
-subsystem logging conventions [1].
 
-[1]
-https://docs.kernel.org/gpu/todo.html#convert-logging-to-drm-functions-with-drm-device-parameter
 
-Signed-off-by: Eslam Khafagy <eslam.medhat1993@gmail.com>
----
-v3:
-* include header file to fix compilation. Thanks Manikandan.
+On 8/7/25 10:52 AM, Arnaud Lecomte wrote:
+> Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
+> when copying stack trace data. The issue occurs when the perf trace
+>   contains more stack entries than the stack map bucket can hold,
+>   leading to an out-of-bounds write in the bucket's data array.
+>
+> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+> ---
+>   kernel/bpf/stackmap.c | 26 +++++++++++++++-----------
+>   1 file changed, 15 insertions(+), 11 deletions(-)
+>
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 14e034045310..d7ef840971f0 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -250,7 +250,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
+>   }
+>   
+>   static long __bpf_get_stackid(struct bpf_map *map,
+> -			      struct perf_callchain_entry *trace, u64 flags)
+> +			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
+>   {
+>   	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+>   	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+> @@ -266,6 +266,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
+>   
+>   	trace_nr = trace->nr - skip;
+>   	trace_len = trace_nr * sizeof(u64);
+> +	trace_nr = min(trace_nr, max_depth - skip);
+> +
+>   	ips = trace->ip + skip;
+>   	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+>   	id = hash & (smap->n_buckets - 1);
+> @@ -325,19 +327,19 @@ static long __bpf_get_stackid(struct bpf_map *map,
+>   BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+>   	   u64, flags)
+>   {
+> -	u32 max_depth = map->value_size / stack_map_data_size(map);
+> -	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+> +	u32 elem_size = stack_map_data_size(map);
+>   	bool user = flags & BPF_F_USER_STACK;
+>   	struct perf_callchain_entry *trace;
+>   	bool kernel = !user;
+> +	u32 max_depth;
+>   
+>   	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+>   			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+>   		return -EINVAL;
+>   
+> -	max_depth += skip;
+> -	if (max_depth > sysctl_perf_event_max_stack)
+> -		max_depth = sysctl_perf_event_max_stack;
+> +	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
+> +	if (max_depth < 0)
+> +		return -EFAULT;
 
-v2:
-* replace dev_dbg with drm_dbg  in atmel_hlcdc_plane.c
-* https://lore.kernel.org/all/20250806183049.52112-2-eslam.medhat1993@gmail.com/
+the above condition is not needed.
 
-v1:
-* replace dev_* print funtions with drm_* variants
-*https://lore.kernel.org/all/20250806000141.239753-2-eslam.medhat1993@gmail.com/
+>   
+>   	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+>   				   false, false);
+> @@ -346,7 +348,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+>   		/* couldn't fetch the stack trace */
+>   		return -EFAULT;
+>   
+> -	return __bpf_get_stackid(map, trace, flags);
+> +	return __bpf_get_stackid(map, trace, flags, max_depth);
+>   }
+>   
+>   const struct bpf_func_proto bpf_get_stackid_proto = {
+> @@ -378,6 +380,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+>   	bool kernel, user;
+>   	__u64 nr_kernel;
+>   	int ret;
+> +	u32 elem_size, pe_max_depth;
 
- .../gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c    | 21 ++++++++++---------
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c  | 14 ++++++-------
- .../gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c  |  3 ++-
- .../gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c   |  6 +++---
- 4 files changed, 23 insertions(+), 21 deletions(-)
+pe_max_depth -> max_depth.
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-index 0f7ffb3ced20..e0efc7309b1b 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -20,6 +20,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_modeset_helper_vtables.h>
-+#include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_vblank.h>
- 
-@@ -215,32 +216,32 @@ static void atmel_hlcdc_crtc_atomic_disable(struct drm_crtc *c,
- 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 					     !(status & ATMEL_XLCDC_CM),
- 					     10, 1000))
--			dev_warn(dev->dev, "Atmel LCDC status register CMSTS timeout\n");
-+			drm_warn(dev, "Atmel LCDC status register CMSTS timeout\n");
- 
- 		regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_XLCDC_SD);
- 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 					     status & ATMEL_XLCDC_SD,
- 					     10, 1000))
--			dev_warn(dev->dev, "Atmel LCDC status register SDSTS timeout\n");
-+			drm_warn(dev, "Atmel LCDC status register SDSTS timeout\n");
- 	}
- 
- 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_DISP);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     !(status & ATMEL_HLCDC_DISP),
- 				    10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register DISPSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register DISPSTS timeout\n");
- 
- 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_SYNC);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     !(status & ATMEL_HLCDC_SYNC),
- 				    10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register LCDSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register LCDSTS timeout\n");
- 
- 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_PIXEL_CLK);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     !(status & ATMEL_HLCDC_PIXEL_CLK),
- 				    10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register CLKSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register CLKSTS timeout\n");
- 
- 	clk_disable_unprepare(crtc->dc->hlcdc->sys_clk);
- 	pinctrl_pm_select_sleep_state(dev->dev);
-@@ -269,32 +270,32 @@ static void atmel_hlcdc_crtc_atomic_enable(struct drm_crtc *c,
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     status & ATMEL_HLCDC_PIXEL_CLK,
- 				     10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register CLKSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register CLKSTS timeout\n");
- 
- 	regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_HLCDC_SYNC);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     status & ATMEL_HLCDC_SYNC,
- 				     10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register LCDSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register LCDSTS timeout\n");
- 
- 	regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_HLCDC_DISP);
- 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 				     status & ATMEL_HLCDC_DISP,
- 				     10, 1000))
--		dev_warn(dev->dev, "Atmel LCDC status register DISPSTS timeout\n");
-+		drm_warn(dev, "Atmel LCDC status register DISPSTS timeout\n");
- 
- 	if (crtc->dc->desc->is_xlcdc) {
- 		regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_XLCDC_CM);
- 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 					     status & ATMEL_XLCDC_CM,
- 					     10, 1000))
--			dev_warn(dev->dev, "Atmel LCDC status register CMSTS timeout\n");
-+			drm_warn(dev, "Atmel LCDC status register CMSTS timeout\n");
- 
- 		regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_XLCDC_SD);
- 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
- 					     !(status & ATMEL_XLCDC_SD),
- 					     10, 1000))
--			dev_warn(dev->dev, "Atmel LCDC status register SDSTS timeout\n");
-+			drm_warn(dev, "Atmel LCDC status register SDSTS timeout\n");
- 	}
- 
- 	pm_runtime_put_sync(dev->dev);
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-index fa8ad94e431a..acb017a2486b 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-@@ -724,19 +724,19 @@ static int atmel_hlcdc_dc_modeset_init(struct drm_device *dev)
- 
- 	ret = atmel_hlcdc_create_outputs(dev);
- 	if (ret) {
--		dev_err(dev->dev, "failed to create HLCDC outputs: %d\n", ret);
-+		drm_err(dev, "failed to create HLCDC outputs: %d\n", ret);
- 		return ret;
- 	}
- 
- 	ret = atmel_hlcdc_create_planes(dev);
- 	if (ret) {
--		dev_err(dev->dev, "failed to create planes: %d\n", ret);
-+		drm_err(dev, "failed to create planes: %d\n", ret);
- 		return ret;
- 	}
- 
- 	ret = atmel_hlcdc_crtc_create(dev);
- 	if (ret) {
--		dev_err(dev->dev, "failed to create crtc\n");
-+		drm_err(dev, "failed to create crtc\n");
- 		return ret;
- 	}
- 
-@@ -778,7 +778,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 
- 	ret = clk_prepare_enable(dc->hlcdc->periph_clk);
- 	if (ret) {
--		dev_err(dev->dev, "failed to enable periph_clk\n");
-+		drm_err(dev, "failed to enable periph_clk\n");
- 		return ret;
- 	}
- 
-@@ -786,13 +786,13 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 
- 	ret = drm_vblank_init(dev, 1);
- 	if (ret < 0) {
--		dev_err(dev->dev, "failed to initialize vblank\n");
-+		drm_err(dev, "failed to initialize vblank\n");
- 		goto err_periph_clk_disable;
- 	}
- 
- 	ret = atmel_hlcdc_dc_modeset_init(dev);
- 	if (ret < 0) {
--		dev_err(dev->dev, "failed to initialize mode setting\n");
-+		drm_err(dev, "failed to initialize mode setting\n");
- 		goto err_periph_clk_disable;
- 	}
- 
-@@ -802,7 +802,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
- 	ret = atmel_hlcdc_dc_irq_install(dev, dc->hlcdc->irq);
- 	pm_runtime_put_sync(dev->dev);
- 	if (ret < 0) {
--		dev_err(dev->dev, "failed to install IRQ handler\n");
-+		drm_err(dev, "failed to install IRQ handler\n");
- 		goto err_periph_clk_disable;
- 	}
- 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-index 50fee6a93964..0b8a86afb096 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
-@@ -15,6 +15,7 @@
- #include <drm/drm_bridge.h>
- #include <drm/drm_encoder.h>
- #include <drm/drm_of.h>
-+#include <drm/drm_print.h>
- #include <drm/drm_simple_kms_helper.h>
- 
- #include "atmel_hlcdc_dc.h"
-@@ -92,7 +93,7 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
- 	output->bus_fmt = atmel_hlcdc_of_bus_fmt(ep);
- 	of_node_put(ep);
- 	if (output->bus_fmt < 0) {
--		dev_err(dev->dev, "endpoint %d: invalid bus width\n", endpoint);
-+		drm_err(dev, "endpoint %d: invalid bus width\n", endpoint);
- 		return -EINVAL;
- 	}
- 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-index 4a7ba0918eca..817284509b57 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-@@ -1034,7 +1034,7 @@ static void atmel_hlcdc_irq_dbg(struct atmel_hlcdc_plane *plane,
- 	if (isr &
- 	    (ATMEL_HLCDC_LAYER_OVR_IRQ(0) | ATMEL_HLCDC_LAYER_OVR_IRQ(1) |
- 	     ATMEL_HLCDC_LAYER_OVR_IRQ(2)))
--		dev_dbg(plane->base.dev->dev, "overrun on plane %s\n",
-+		drm_dbg(plane->base.dev, "overrun on plane %s\n",
- 			desc->name);
- }
- 
-@@ -1051,7 +1051,7 @@ static void atmel_xlcdc_irq_dbg(struct atmel_hlcdc_plane *plane,
- 	if (isr &
- 	    (ATMEL_XLCDC_LAYER_OVR_IRQ(0) | ATMEL_XLCDC_LAYER_OVR_IRQ(1) |
- 	     ATMEL_XLCDC_LAYER_OVR_IRQ(2)))
--		dev_dbg(plane->base.dev->dev, "overrun on plane %s\n",
-+		drm_dbg(plane->base.dev, "overrun on plane %s\n",
- 			desc->name);
- }
- 
-@@ -1140,7 +1140,7 @@ static void atmel_hlcdc_plane_reset(struct drm_plane *p)
- 	if (state) {
- 		if (atmel_hlcdc_plane_alloc_dscrs(p, state)) {
- 			kfree(state);
--			dev_err(p->dev->dev,
-+			drm_err(p->dev,
- 				"Failed to allocate initial plane state\n");
- 			return;
- 		}
--- 
-2.43.0
+>   
+>   	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
+>   	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
+> @@ -396,24 +399,25 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+>   		return -EFAULT;
+>   
+>   	nr_kernel = count_kernel_ip(trace);
+> -
+> +	elem_size = stack_map_data_size(map);
+>   	if (kernel) {
+>   		__u64 nr = trace->nr;
+>   
+>   		trace->nr = nr_kernel;
+> -		ret = __bpf_get_stackid(map, trace, flags);
+> +		pe_max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
+> +		ret = __bpf_get_stackid(map, trace, flags, pe_max_depth);
+>   
+>   		/* restore nr */
+>   		trace->nr = nr;
+>   	} else { /* user */
+>   		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
+> -
+
+please keep an empty line here.
+
+>   		skip += nr_kernel;
+>   		if (skip > BPF_F_SKIP_FIELD_MASK)
+>   			return -EFAULT;
+>   
+>   		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
+> -		ret = __bpf_get_stackid(map, trace, flags);
+> +		pe_max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
+> +		ret = __bpf_get_stackid(map, trace, flags, pe_max_depth);
+>   	}
+>   	return ret;
+>   }
 
 
