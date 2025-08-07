@@ -1,121 +1,84 @@
-Return-Path: <linux-kernel+bounces-759570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A26B1DF67
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:44:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC78BB1DF69
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F07CB165CCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CDD4A008EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DDD262FD0;
-	Thu,  7 Aug 2025 22:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364C4227EB9;
+	Thu,  7 Aug 2025 22:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkxEPRDL"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F9Yw2th/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF958242D6E;
-	Thu,  7 Aug 2025 22:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821EF218E96;
+	Thu,  7 Aug 2025 22:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754606641; cv=none; b=piB8GEkmhy0hs7qFJsMU7tt+sr8j6hofQj5nP2fVffY38vm/TAD0BjO/K2v/DoMJLPP6bfbAss1m5qmVycaP++OqJnWPdXKIhpq2Edkas2ZBYKU+MTf/PwdNS06kuzgv4ALEevAdswb2VJ0eGegTrmz3mrBNGVm/VKK1mfIiLKc=
+	t=1754606767; cv=none; b=eqa28l1XvwpRmIk1cRY1fRRnrLvKQo8CD68kYMaeoYM60EEfXMQ5/yfKHbzTM3VTyrmefhH2wCyy0BNEjg4RBkBicAc5rQ4rr+03f0XZJ0ARcxnZ0V2B32oixIgr8n2VlyxC7AtDc0SbYSfeiELWZ2t3OWsryOfaku6WQHTa2CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754606641; c=relaxed/simple;
-	bh=fU1H2VAF0DSpViQqqm1OKciBG+yRKzGeafPCrd9je9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=friP3bAiIajGmBQqJu82MSoxf3js0ejI10PoYIU1wtJt5Dqny2jRAMASV7dih/gBZes0XugN8M3DbDhO9vVTm8i+vs3aIHxc1G2PUmEPP68/SRyzCVwmGmGzTvmtwWmDCJwWG1o/T/9L609oJ97FJ9s8eNIzq9z2HAQBsjbli1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkxEPRDL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11575C4CEEB;
-	Thu,  7 Aug 2025 22:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754606641;
-	bh=fU1H2VAF0DSpViQqqm1OKciBG+yRKzGeafPCrd9je9A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YkxEPRDL5DPsw+YPsIZanQ5kM6NKfTgftka026sd7DeQxB3Y9jsAz6DJT0bMvFm91
-	 f0jxTKIhKjEoaDlR9MWt8g7mzfEdxEStlZOvCm39nauPuBcUbRdz14Tk4+2d9nF9nt
-	 yS6E1DIJJ/8NKMgD04ZDFwj+ZVcKF/WB7pGsHvwaDWvoPfxro1IU4eO9eq1bxNotuX
-	 1RRyNTxEwljfBmAXuFjpZFRZpa8WjdhxRMOoxapRsoc9+kfv54AF1weqEec6OtkuB6
-	 FlkIdR6qZlHsnzQ4zYD4H+5iRBimCFbNBoTc6XUWOo9pXyZ7hBgF3aukAe325uE7Ld
-	 U3tD+KY1/32kg==
-Date: Thu, 7 Aug 2025 17:43:59 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
-	lukas@wunner.de, Yilun Xu <yilun.xu@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Subject: Re: [PATCH v4 02/10] PCI/IDE: Enumerate Selective Stream IDE
- capabilities
-Message-ID: <20250807224359.GA66417@bhelgaas>
+	s=arc-20240116; t=1754606767; c=relaxed/simple;
+	bh=dKyb5nVhaIMQZ14/HklCnBFSa+CTSrgOq9B/byRkl3M=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=eM8FG4zUgcraWxAz1KdmG8MLInAVh1x2W7HNiwXmSJXhSwI3puuZi+dFayz58/5RjOlE/0btOEGITw1DJavvYMMpTbLzy7p9WmzrmePDFed06LvwnjBge1OCc9eChKvJyisYUbOxEwD2SHYXYXItawnujUjvxbYtYOTPy4QPocw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F9Yw2th/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE7DC4CEEB;
+	Thu,  7 Aug 2025 22:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1754606767;
+	bh=dKyb5nVhaIMQZ14/HklCnBFSa+CTSrgOq9B/byRkl3M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=F9Yw2th/LpLS6TV2pioJN3C1FJmUH13GR/GZBUMRuv/OT9vYcEZRgEVQ9Cz+uZBAB
+	 L5ZCcJXhm8PYxtmEfnIzomnP6f7ThB8VMvkWstnYRs7dLeRRkTmJzzp02iOaKvmtLt
+	 TdsSTAbaoC7X/fvE3U3nmlAlsbTAC3pcZhO/hk4s=
+Date: Thu, 7 Aug 2025 15:46:06 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Jialin Wang <wjl.linux@gmail.com>
+Cc: Penglei Jiang <superman.xpt@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] proc: proc_maps_open allow proc_mem_open to return NULL
+Message-Id: <20250807154606.131d96b133c19baca0c5f2e6@linux-foundation.org>
+In-Reply-To: <20250807165455.73656-1-wjl.linux@gmail.com>
+References: <20250807165455.73656-1-wjl.linux@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717183358.1332417-3-dan.j.williams@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 17, 2025 at 11:33:50AM -0700, Dan Williams wrote:
-> Link encryption is a new PCIe feature enumerated by "PCIe 6.2 section
-> 7.9.26 IDE Extended Capability".
+On Fri,  8 Aug 2025 00:54:55 +0800 Jialin Wang <wjl.linux@gmail.com> wrote:
+
+> The commit 65c66047259f ("proc: fix the issue of proc_mem_open returning NULL")
+> breaks `perf record -g -p PID` when profiling a kernel thread.
 > 
-> It is both a standalone port + endpoint capability, and a building block
-> for the security protocol defined by "PCIe 6.2 section 11 TEE Device
-> Interface Security Protocol (TDISP)". That protocol coordinates device
-> security setup between a platform TSM (TEE Security Manager) and a
-> device DSM (Device Security Manager). While the platform TSM can
-> allocate resources like Stream ID and manage keys, it still requires
-> system software to manage the IDE capability register block.
+> The strace of `perf record -g -p $(pgrep kswapd0)` shows:
 > 
-> Add register definitions and basic enumeration in preparation for
-> Selective IDE Stream establishment. A follow on change selects the new
-> CONFIG_PCI_IDE symbol. Note that while the IDE specification defines
-> both a point-to-point "Link Stream" and a Root Port to endpoint
-> "Selective Stream", only "Selective Stream" is considered for Linux as
-> that is the predominant mode expected by Trusted Execution Environment
-> Security Managers (TSMs), and it is the security model that limits the
-> number of PCI components within the TCB in a PCIe topology with
-> switches.
+>   openat(AT_FDCWD, "/proc/65/task/65/maps", O_RDONLY) = -1 ESRCH (No such process)
 > 
-> Cc: Yilun Xu <yilun.xu@intel.com>
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-> Co-developed-by: Alexey Kardashevskiy <aik@amd.com>
-> Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
-> Co-developed-by: Yilun Xu <yilun.xu@intel.com>
-> Signed-off-by: Yilun Xu <yilun.xu@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> This patch partially reverts the commit to fix it.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Thanks.  But "breaks" is a rather thin description of the problem!
 
-> +++ b/drivers/pci/Kconfig
-> @@ -122,6 +122,20 @@ config XEN_PCIDEV_FRONTEND
->  config PCI_ATS
->  	bool
->  
-> +config PCI_IDE
-> +	bool
-> +
-> +config PCI_IDE_STREAM_MAX
-> +	int "Maximum number of Selective IDE Streams supported per host bridge" if EXPERT
-> +	depends on PCI_IDE
-> +	range 1 256
-> +	default 64
-> +	help
-> +	  Set a kernel max for the number of IDE streams the PCI core supports
-> +	  per device. While the PCI specification max is 256, the hardware
-> +	  platform capability for the foreseeable future is 4 to 8 streams. Bump
-> +	  this value up if you have an expert testing need.
+Can you please describe the observed misbehavior fully?
 
-Maybe worth expanding IDE once as we did for DOE:
+> Fixes: 65c66047259f ("proc: fix the issue of proc_mem_open returning NULL")
 
-> +
->  config PCI_DOE
->  	bool "Enable PCI Data Object Exchange (DOE) support"
+Because we should backport this fix into 6.16.x -stable kernels.  The
+-stable maintainers may wonder why we're requesting this.  Also, any
+person who is having problems with their 6.16-based kernel will want
+such a description so they can decide whether this fix might address
+their problem.
+
+Thanks.
+
 
