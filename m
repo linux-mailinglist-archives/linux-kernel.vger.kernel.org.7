@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-758722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E854B1D324
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:18:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A96EB1D327
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A636D16506B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73FAB16538C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C668238D22;
-	Thu,  7 Aug 2025 07:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0134B230D35;
+	Thu,  7 Aug 2025 07:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Z12glsS8"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lln8OEvt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2A88F48;
-	Thu,  7 Aug 2025 07:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664098F48
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551101; cv=none; b=n6v0Aw8lDf4o4DkwgaGCuI/qz7ZOD8epbAYkap1/tt4cbPc7uMM9E7UdI0frKjEZ6sreTgk7pb9IBti2OekuxNTYQP2ofFJPy1KYJqMMGPd6UtZIB+5i2FNuWoRn7QdLNI1hoVagLT7cdSt1HxsjAYMStmnHNNRXzg6Ac90GAB8=
+	t=1754551147; cv=none; b=FVitD7Nno4KWfdZ39V8eRslQvqF3KqsbkF/KwEbq9XItroae2FRA3LSSQDCaOF6b10/iwqibzoaGV/yKVOjoxdX5OFH7ceGTtrlIqxX+PBfJdLZRNDxAXASaj/aKbN3qVLDx+G4hE6pcEYKXCaY2kZ8VIByCnwKibAZV4j6M38c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551101; c=relaxed/simple;
-	bh=+ULjuenwEzpGC8UAzxKw+UpGPt4UQhh+CmIbbChlejc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOegH35pPA0fBDuiYTIHycRlyED/uJq5KXc3pcr9/2esp+VyIr5MK/x6wwICoVHlaQ8xxihuwqz5BfyKYJYzP9wPHNbc1Xtftsd0JjnaXv7SoD9C0zqlzEMqIznsJa+7K564GY1GzpJdJrG3RU02g8sqcOzToYymiWX9qVLfTyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Z12glsS8; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4byJR86h77z9syY;
-	Thu,  7 Aug 2025 09:18:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754551093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ULjuenwEzpGC8UAzxKw+UpGPt4UQhh+CmIbbChlejc=;
-	b=Z12glsS8h5ztkydn7KCjBvp8B2d4sQhdHS+zy0dBp50B4bgFRDwn3iKX+ukysgEeH7ycmD
-	1fP2zrfNK/iq3ueO00R3iE2YKrjtes55OO0CveBD/oGdVpTy96/28NQ8kUCRzmZMVvthiy
-	dAg7+PnZWnPO2F5WEkaSm/UH6N2xgIFqwZ+iWAWqHu6ZrQwfCuBHcGWU297wOxsZuKti0w
-	VVnB8Big+Y08L+WWrbOfnEKIuT7mCorfJIns+4CO7po8sDf4+8z/vE/QNGqW0B+zSi5a6G
-	W0+mZ4fsBKK2h3Prvu5AvLppI7QfJmZ79OG7TVDvAkWDHA4alRtg3F/8vOrCow==
-Date: Thu, 7 Aug 2025 17:17:56 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: amir73il@gmail.com, brauner@kernel.org, corbet@lwn.net, jack@suse.cz, 
-	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, luto@amacapital.net, 
-	shuah@kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
-Message-ID: <2025-08-07.1754550206-glad-sneeze-upstate-sorts-swank-courts-YKmj7E@cyphar.com>
-References: <2025-08-05.1754378656-steep-harps-muscled-mailroom-lively-gosling-VVGNTP@cyphar.com>
- <20250806102501.75104-1-safinaskar@zohomail.com>
- <2025-08-06.1754489257-elated-baubles-defiant-growls-beloved-jewelry-9Ofm2b@cyphar.com>
+	s=arc-20240116; t=1754551147; c=relaxed/simple;
+	bh=5W3eN28C5zYIrodwX3zckGt4s9fOCjzucNG8qbTTNnY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fSIiJpExgi+u6nfa7VDjrmbDao5fNC2IFsV4h7dbdsr/a13tCMrIUFU7b18sroP8WD+cJK1tBwX8mnSKV91caUyn2m8XsPgS8EY2wwMR0B7BdOCJd9cqB1DSFnFKTylJzUPSuKAeR6N+totcv11/P0KPrPGnsSTkwNrpd3/u52o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lln8OEvt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55EDEC4CEED;
+	Thu,  7 Aug 2025 07:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754551147;
+	bh=5W3eN28C5zYIrodwX3zckGt4s9fOCjzucNG8qbTTNnY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Lln8OEvtE4EmZaUPkO/SuUQbXKikByck275Nph7310ezAasuJsthP4wwbCIXmWsSY
+	 QORYwUisgs47VOjSy7ip510ENuaoknOU6q2van/WF2b/X6BpIA9fC9vSK3ggnqZ4R0
+	 A4b50Y4vjMHPuxDiYxE3IKETWDD825uhU08viGVW9cKML7W1E34Blq15pl+jCqFV3d
+	 v+wL9QCy97rl9BhLyYCv5SQYajCkIy/Y1hC7DpDEL6aGs5gGPzuUJ6GiMojMwTyi27
+	 +AdmxD+rlNdNo04YsgojYRih/wcyeqgzJM2JEq0ocnjf+1UJRKBEOyuxyJm1xdDnEA
+	 8NtbdlPW433dQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Russell King <linux@armlinux.org.uk>,
+	Li Huafei <lihuafei1@huawei.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Linus Waleij <linus.walleij@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Kees Cook <kees@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: stacktrace: include asm/sections.h in asm/stacktrace.h
+Date: Thu,  7 Aug 2025 09:18:58 +0200
+Message-Id: <20250807071902.4077714-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s5bgiurac7jxabhb"
-Content-Disposition: inline
-In-Reply-To: <2025-08-06.1754489257-elated-baubles-defiant-growls-beloved-jewelry-9Ofm2b@cyphar.com>
+Content-Transfer-Encoding: 8bit
 
+From: Arnd Bergmann <arnd@arndb.de>
 
---s5bgiurac7jxabhb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/4] procfs: add "pidns" mount option
-MIME-Version: 1.0
+The recent kstack erase changes appear to have uncovered an existing
+issue with a missing header inclusion:
 
-On 2025-08-07, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2025-08-06, Askar Safin <safinaskar@zohomail.com> wrote:
-> > > I just realised that we probably also want to support FSCONFIG_SET_PA=
-TH
-> >=20
-> > I just checked kernel code. Indeed nobody uses FSCONFIG_SET_PATH.
-> > Moreover, fsparam_path macro is present since 5.1. And for all this
-> > time nobody used it. So, let's just remove FSCONFIG_SET_PATH. Nobody
-> > used it, so this will not break anything.
-> >=20
-> > If you okay with that, I can submit patch, removing it.
->=20
-> I would prefer you didn't -- "*at()" semantics are very useful to a lot
-> of programs (*especially* AT_EMPTY_PATH). I would like the pidns=3D stuff
-> to support it, and probably also overlayfs...
->=20
-> I suspect the primary issue is that when migrating to the new mount API,
-> filesystem devs just went with the easiest thing to use
-> (FSCONFIG_SET_STRING) even though FSCONFIG_SET_PATH would be better. I
-> suspect the lack of documentation around fsconfig(2) played a part too.
->=20
-> My impression is that interest in the minutia about fsconfig(2) is quite
-> low on the list of priorities for most filesystem devs, and so the neat
-> aspects of fsconfig(2) haven't been fully utilised. (In LPC last year,
-> we struggled to come to an agreement on how filesystems should use the
-> read(2)-based error interface.)
->=20
-> We can very easily move fsparam_string() or fsparam_file_or_string()
-> parameters to fsparam_path() and a future fsparam_file_or_path(). I
-> would much prefer that as a user.
+In file included from drivers/misc/lkdtm/kstack_erase.c:12:
+In file included from include/linux/kstack_erase.h:16:
+arch/arm/include/asm/stacktrace.h:48:21: error: call to undeclared function 'in_entry_text'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   48 |                 frame->ex_frame = in_entry_text(frame->pc);
+      |                                   ^
 
-Actually, fsparam_bdev() accepts FSCONFIG_SET_PATH in a very roundabout
-way (and the checker doesn't verify anything...?). So there is at least
-one user (ext4's "journal_path"), it's just not well-documented (which
-I'm trying to fix ;]).
+Include asm/sections.h here so the compiler can see the in_entry_text()
+declaration.
 
-My plan is to update fs_lookup_param() to be more useful for the (fairly
-common) use-case of wanting to support paths and file descriptors, and
-going through to clean up some of these unused fsparam_* helpers (or
-fsparam_* helpers being abused to implement stuff that the fs_parser
-core already supports).
+Fixes: 752ec621ef5c ("ARM: 9234/1: stacktrace: Avoid duplicate saving of exception PC value")
+Cc: Kees Cook <kees@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/arm/include/asm/stacktrace.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-At the very least, overlayfs, ext4, and this procfs patchset can make
-use of it.
+diff --git a/arch/arm/include/asm/stacktrace.h b/arch/arm/include/asm/stacktrace.h
+index f80a85b091d6..ba2f771cca23 100644
+--- a/arch/arm/include/asm/stacktrace.h
++++ b/arch/arm/include/asm/stacktrace.h
+@@ -2,8 +2,9 @@
+ #ifndef __ASM_STACKTRACE_H
+ #define __ASM_STACKTRACE_H
+ 
+-#include <asm/ptrace.h>
+ #include <linux/llist.h>
++#include <asm/ptrace.h>
++#include <asm/sections.h>
+ 
+ struct stackframe {
+ 	/*
+-- 
+2.39.5
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---s5bgiurac7jxabhb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJRTJAAKCRAol/rSt+lE
-b8vQAP4i3lUz0raHzBGHmCX+UhlLhpD2d850DSh9njsFS7RknQEArL1ac/38BwlE
-Qey3BzoNaEAAXVm8ZejpG1aKW6NoJAQ=
-=Xy1s
------END PGP SIGNATURE-----
-
---s5bgiurac7jxabhb--
 
