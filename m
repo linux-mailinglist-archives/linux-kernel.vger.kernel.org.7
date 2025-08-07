@@ -1,176 +1,238 @@
-Return-Path: <linux-kernel+bounces-759108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4CFB1D88C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:06:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6192AB1D88F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F7F53BC60E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:06:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29DE77AF544
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68480259C85;
-	Thu,  7 Aug 2025 13:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1C8259C93;
+	Thu,  7 Aug 2025 13:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FjBEaZ+K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CU9Aji/S"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330E3256C89
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E9F2E36EC
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572009; cv=none; b=Fq7c8dmG1UYXi7MxMM244hVmT3VbvgGNTsO/GsIHkJZ8PthSXg2iOJnyrvZCxRUOSBFLhAABc/OVv3tvs1jMJMKq7PzpUuCtH9qS+s/ijeeJzBHUae0p+6MlqG8mWZLumPOlDFkwtGyTi3ied+Fyw8xFUzGj9Tg34/uBbhcXusY=
+	t=1754572075; cv=none; b=t2JNF0a/0ZX7YpgBij1krSbvsCyhliKg40haRjp4vl1kqcCxIYM+7REfyFDDSNRFDWW50xP6MRQl3CAino8P0r8jjVYGA2hLlhykt7vNhxYhWPJGG6wtRN3PB0b0zDLm30Iawe9pq52kaxFyPvC3koDkuAd818fLuvjrgCw8uNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572009; c=relaxed/simple;
-	bh=BrZoqI55gDUKYWyrbKqWx1pT/0zoSkl9l5rCcBfokHY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Qz9V3kE5RBRmFdCsPBsdBIsy71Br+vPOvScAZZ6Vc58tAwwQvJkP2S3i3hSKRmA8zoT0un/aSiyx3Lx1F/ybIFe+qk/vaigWLrlCMFNbKCVNZNtNo7dBY7iXVeV6V0tZwYT2VbdzHwKTBTXByNNOkf4Ix0vhGK0bXErbGetnGqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FjBEaZ+K; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754572007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DSIPIMT9naRgReubOEbbzM4FjlFFTRK0DZ9wbkIeIeM=;
-	b=FjBEaZ+KCbNaW3dqFaemhmvTzqrlRGB8D6OHKC1oNIA9Uh3rlTG7Gm3ObV046SYc4rKy2s
-	X/uFcDXOHoZHVWTHvTTUn3FW1D4W0CXEsg2BzsC33dKZwszS8rJ1vZlHfNY+CGCQwXXwXa
-	MYTdT5W9eV+0srdk5wOnhlOq3/HD63c=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-O88bZ5erMKCBXUYvayMFWQ-1; Thu, 07 Aug 2025 09:06:42 -0400
-X-MC-Unique: O88bZ5erMKCBXUYvayMFWQ-1
-X-Mimecast-MFC-AGG-ID: O88bZ5erMKCBXUYvayMFWQ_1754572001
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so4231145e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:06:41 -0700 (PDT)
+	s=arc-20240116; t=1754572075; c=relaxed/simple;
+	bh=vC1L5uHVJJ5u5AqxaDxekBHje77miJh9Ju0KRoMlzjk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H3gUAKMjcbCqmkfhT97eYuE/HY9lmO8v5ABd4YZSGk5eJMTQ0kDxtvneo1bkTSFGzkID3RLoa11WH3qB0t46mvGPMYwaBX0dBeFOA8f5hIuTi/V+ajLybCmuLsjKaS2glWrl/yIJjLTrpSSdKNzjggPAvC5DMEVqS/X24OAOtJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CU9Aji/S; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779DjJM025440
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 13:07:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eK9XSXOchQCfWi8EBFJeSJTCKKXnDgji8hN/xsZotU0=; b=CU9Aji/S/yZbPrjO
+	cHAmqlqJ1KF0VzHdMTEIjWaofLXxPJJ8fZK5FFf40wdYCt/W01Es+dmPPvZgOM4k
+	muuiM1JT+oUo107dyedCJ5vrenv67Ugxjyqwa5Kw7C7+yAj/p8SnWqwOkQ4+BdJL
+	7ZToOwl6BYbbuaEA2isxFFd4NLIcnbTe3gCQkpi6tfJZDghiUdodWwYBO1/oLOik
+	FvZBeRu0QwwBgNlln3jiKIOhsBF/6I8syh+CMbld344tzclxP3khJEDVjSB5Y2If
+	mp9zzjXaZtTQUeNGH2FemQ8h4o/2cBCfv2VU73T0Z1JYCZkCJIJN8KVsPkTWBXOh
+	Byg2UQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw1ea71-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 13:07:52 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b067cb154eso2392761cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:07:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754572000; x=1755176800;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:to:from:subject:message-id
+        d=1e100.net; s=20230601; t=1754572072; x=1755176872;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DSIPIMT9naRgReubOEbbzM4FjlFFTRK0DZ9wbkIeIeM=;
-        b=rFLJHGxcTrjf4x8Hr3xGoBC1qO9RULss3fFKh6oZ9m+Ar9XR1JTh40I8PqJDcRwBNt
-         bmwaQFe8cIaNx6c4sHt8ERD91vGmJ/v3LPBQjdRV/FKVLxYgwvGLuzjYM/hi/nKnZRqx
-         CJVKRHi2YHz86VAYuUN9PN9rBtnf/F9mSJKbYtdHAKM0Si0m8b+QJPQxbiBhY6UEawm5
-         5zUl5xKvrn1oDiIyE9hAeBFK0UZmQOymKqfSAvBths0aV5mKSo5xbltuWrpbO7bSHJ6n
-         6bZ91okXFvf9iKXgVdlX1LDBVUs5jpSyEHGmeGb0wpIu3u0cXr9FFtMfARi6Z3kWjngm
-         MtWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUn4VybdJQWTEy06wQQGjDC35wizEISk5R3dE5Vqgb/RSnKq1yB5ioNyL0Ttz8It/XUCFBhmrGZFOqQmZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYUNTLetjqDCRUgaSLDB3lBCKqiobqdESlUOd2MVrDo/v3+/j4
-	itGFwZgNopi9S+EmX5Qkdna/Vq+jIKD+r4M1hTip1ITctTKH1ljLHYRgKEZRNBMmAInI7WHRVW0
-	+rtm6nLur/JKRY3mjv0kJa3td40azwUewlaNbpEx0i2whsU/Mbi97vXB/OgU6HDOM2/l+38dLHJ
-	ls
-X-Gm-Gg: ASbGncuhOBMYnRlTRWR4orBMBpLSw99SWKp5e/KC/ObhAHYjQkJ5hL6nIbiNeK/w0fG
-	NlY+4sYXkBqkq+SR2s7rK3rHRamYiz0djkXxYOyG1AANN4i3m3DvKzeMkkPFrqafkxx+GZFS9R3
-	kHOHMyLkwmrUOhU4NZd0+z6m4SfZ3+3tQbPgFL5Fi0fbTsy1/uXD71V0otk7Gu/1bl1ATg50bbi
-	6NrDi4S0Fz5WfRNtGdBJ6IyrMIPSeeg5Or6ZYrjspSRbod+0PXDc1+9gYuU2z6th++g6xBsAZ+t
-	s/LTTaHqI1dzrCH4J4E7XUhaegNvgfSdeJPGN9DT6J7Q+57SALzMk/4jgGyzp6LPUw==
-X-Received: by 2002:a05:600c:190d:b0:458:be62:dcd3 with SMTP id 5b1f17b1804b1-459ee85db15mr30439125e9.17.1754572000608;
-        Thu, 07 Aug 2025 06:06:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvuQErMrs7pQQjbgiBrZj5Oe6HhNXNVcrP7y6W8RfdTgSKkAlKOOHrHkibb93XutcY29YK/Q==
-X-Received: by 2002:a05:600c:190d:b0:458:be62:dcd3 with SMTP id 5b1f17b1804b1-459ee85db15mr30438635e9.17.1754572000105;
-        Thu, 07 Aug 2025 06:06:40 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ed07fsm189342675e9.22.2025.08.07.06.06.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 06:06:39 -0700 (PDT)
-Message-ID: <6754c61d60fc161963d0625a4b647a241b363fc5.camel@redhat.com>
-Subject: Re: [PATCH v2 3/5] verification/rvgen/ltl: Support per-cpu monitor
- generation
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, 	linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 07 Aug 2025 15:06:38 +0200
-In-Reply-To: <ccfa5ee80e6114b046f04dc1bf1de0c4e7a11c09.1754466623.git.namcao@linutronix.de>
-References: <cover.1754466623.git.namcao@linutronix.de>
-	 <ccfa5ee80e6114b046f04dc1bf1de0c4e7a11c09.1754466623.git.namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        bh=eK9XSXOchQCfWi8EBFJeSJTCKKXnDgji8hN/xsZotU0=;
+        b=kmo08aNYghk4WEddf0mRSYZomHiTpuhI+ZcovJ00UuNdKw0jmZ0gT0AggBNvYYfIU/
+         Vu0f/SPYNvDSNgO9+DEztdbCdILYLhduXiR8m4Qnk1wBIuqRVnvv4Xlmk48+SoU8nmTC
+         MtZt5mxdbURSosMkp7Syg8DjH/nT7p6sZU94BgkFTv8E6vEsmIFEV6p6kxZUmZBCO4VU
+         mY5IKf3KJeOcEs0/FSXb8myvGXQpVKU1g/S0y5PgtG4N+nEeG/c/LU8saDzx28auRy1p
+         Pk6yBTXjqy1VwuptUXAM/4XIwKJvrEQ1j5mFUaKNgoNbYaX6nEpIvK/Egm0h1wIb4b9J
+         i1VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS0dbK+46mDwB6XS4IToJNb//hHA/837QAcpsZhRlwwYaqgz3CgC1CYc+ANXeE3e64/sr4WuLcshz+tEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsDaeW+1izjMWJpM1APPv/Cx3IrM/a95CIg3b4unfc0+l6A8Gt
+	8Vd4QjAJIc3BOCV18ROR3CzMD5npwujHenrywLhYYU3NVE28zmIArXCEyAeaWcJLkqcoNPPX4X5
+	UMUseu5viYT73K6z0nzUH0Yi42CXC9bnp149u1OCDLc7ikulk9xN76Pp0/jC0PmZgxiM=
+X-Gm-Gg: ASbGncuD2feQAMAPvakxLyEhdL+l9IWOFo6XrpshQKtt2Xx59p73YTjD2lTWppubRtI
+	Ezm0z8PAjGsyKaAOAim63DkXFxkaWen+EcA2EEkCYdP8v9yB8FdYBakPu2QE9gX+bvfGEGRGUOm
+	eF2IPjP1LheNPpb4e0j2Ng6JH1REZutuBoOnGYQwRLf1WxCf5wVjjazeU13FzgN1AL45UYSjAVV
+	bUQlKqOC4NCCB+6e7vIOgjUNH3bYseOSRb2m5uZqmhaOdDqL5+DarC+vyQl4MsEdZHzv2p74lgG
+	wA/Y6s5XLFsYuH2+8VNmTq5BaTxvU5OjgxWgOgvAD0DM/NZcWX2jK9sUwBWq8Qgm1GySzZ/xJaF
+	/bzjj0iVIycwtEEjJ/w==
+X-Received: by 2002:ac8:5e4f:0:b0:4ab:723e:fba7 with SMTP id d75a77b69052e-4b09147d336mr39191631cf.7.1754572071658;
+        Thu, 07 Aug 2025 06:07:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAEVtX/FaNdkuqT6pyYcuVANHG3E3H7uatYjqkdIYJFTr1QtjKQ9o+lK4E/zBtcVM8O+8/+A==
+X-Received: by 2002:ac8:5e4f:0:b0:4ab:723e:fba7 with SMTP id d75a77b69052e-4b09147d336mr39191281cf.7.1754572071039;
+        Thu, 07 Aug 2025 06:07:51 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e82bbsm1310874666b.81.2025.08.07.06.07.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 06:07:50 -0700 (PDT)
+Message-ID: <ffbd9302-75f1-4148-881a-767fa413c825@oss.qualcomm.com>
+Date: Thu, 7 Aug 2025 15:07:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/7] clk: qcom: Add TCSR clock driver for Glymur
+To: Taniya Das <taniya.das@oss.qualcomm.com>, Abel Vesa <abel.vesa@linaro.org>
+Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
+ <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-3-227cfe5c8ef4@oss.qualcomm.com>
+ <aIoBFeo00PPZncCs@linaro.org>
+ <784545d0-2173-4a8b-9d5d-bee11226351e@oss.qualcomm.com>
+ <aIxRKHKdBHDefDs2@linaro.org>
+ <d2c17575-f188-4154-bb63-e0b1b89d8100@oss.qualcomm.com>
+ <b2f219d6-d441-45d0-a168-b2cdbc01b852@oss.qualcomm.com>
+ <3fc425fd-39fa-4efc-bc98-da86a88bfb1a@oss.qualcomm.com>
+ <c2f39786-5780-4124-9e41-6971428aa267@oss.qualcomm.com>
+ <9e3b4706-c61a-4d69-be84-a5b6fc90eb35@oss.qualcomm.com>
+ <462b4010-fd79-4682-b9d2-31ffdd53b75a@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <462b4010-fd79-4682-b9d2-31ffdd53b75a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX8CbhykK5nZBY
+ OLoYmv3T8TLiwP/HJyMwVt6j7LRz7qMNHyfaeIIGYLJ6qafg6pwdQRROndIXA9Pb1DSjCbeuA+8
+ wqBhsrw27dLwj9P7l+B7GBzTyimhytRwDSoVpDy6E5aMZyCjPNI+hChvrYN0DXtF8hjjtk3RY/W
+ Tp18vGeYxn2c8BTP32gL10TBB/uCRAY0+40EugOPicibgkGoEOsha6JJEQosdfBAqPq19zrDewg
+ UGROybY3S8F/jGUbd/zAcJNpY6U+o8/irPmSi/u+I3B8N1AVm08NIexLtfDkI0r4Lqbtq462fIm
+ mgP6zXHm/AmyWLAHL3GlgA/LMPO9wkfxUolEV4ZS4hTCTIu2VWQTZELj0Gw5Co5mD9QVrYHlRYR
+ FmsyVfPs
+X-Authority-Analysis: v=2.4 cv=Ha4UTjE8 c=1 sm=1 tr=0 ts=6894a528 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=PLusG5baLZIICTn4gS8A:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-ORIG-GUID: T1wpG78NI8pk8tQiATX-SG_b2Wug7cJv
+X-Proofpoint-GUID: T1wpG78NI8pk8tQiATX-SG_b2Wug7cJv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 phishscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-On Wed, 2025-08-06 at 10:01 +0200, Nam Cao wrote:
-> Add support to generate per-cpu LTL monitors. Similar to generating
-> per-cpu monitors from .dot files, the "-t per_cpu" parameter can be
-> used to generate per-cpu monitors from .ltl files.
->=20
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
-> v2: Rename "implicit" to "cpu"
-> ---
-> =C2=A0
-> -static void ltl_atoms_init(struct task_struct *task, struct
-> ltl_monitor *mon, bool task_creation)
-> +static void ltl_atoms_init(%%TARGET_ARG%%, struct ltl_monitor *mon,
-> bool target_creation)
-> =C2=A0{
-> =C2=A0	/*
-> =C2=A0	 * This should initialize as many atomic propositions as
-> possible.
-> =C2=A0	 *
-> -	 * @task_creation indicates whether the task is being
-> created. This is
-> -	 * false if the task is already running before the monitor
-> is enabled.
-> +	 * @target_creation indicates whether the monitored target
-> is being
-> +	 * created. This is false if the monitor target is already
-> online before
-> +	 * the monitor is enabled.
+On 8/6/25 12:21 PM, Taniya Das wrote:
+> 
+> 
+> On 8/6/2025 3:34 PM, Konrad Dybcio wrote:
+>> On 8/4/25 4:21 PM, Taniya Das wrote:
+>>>
+>>>
+>>> On 8/4/2025 6:40 PM, Konrad Dybcio wrote:
+>>>> On 8/4/25 11:00 AM, Taniya Das wrote:
+>>>>>
+>>>>>
+>>>>> On 8/1/2025 5:24 PM, Konrad Dybcio wrote:
+>>>>>> On 8/1/25 7:31 AM, Abel Vesa wrote:
+>>>>>>> On 25-08-01 10:02:15, Taniya Das wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 7/30/2025 4:55 PM, Abel Vesa wrote:
+>>>>>>>>> On 25-07-29 11:12:37, Taniya Das wrote:
+>>>>>>>>>> Add a clock driver for the TCSR clock controller found on Glymur, which
+>>>>>>>>>> provides refclks for PCIE, USB, and UFS.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>>>>>>>>> ---
+>>>>>>>>>>  drivers/clk/qcom/Kconfig         |   8 ++
+>>>>>>>>>>  drivers/clk/qcom/Makefile        |   1 +
+>>>>>>>>>>  drivers/clk/qcom/tcsrcc-glymur.c | 257 +++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>  3 files changed, 266 insertions(+)
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> [...]
+>>>>>>>>>
+>>>>>>>>>> +
+>>>>>>>>>> +static struct clk_branch tcsr_edp_clkref_en = {
+>>>>>>>>>> +	.halt_reg = 0x1c,
+>>>>>>>>>> +	.halt_check = BRANCH_HALT_DELAY,
+>>>>>>>>>> +	.clkr = {
+>>>>>>>>>> +		.enable_reg = 0x1c,
+>>>>>>>>>> +		.enable_mask = BIT(0),
+>>>>>>>>>> +		.hw.init = &(const struct clk_init_data) {
+>>>>>>>>>> +			.name = "tcsr_edp_clkref_en",
+>>>>>>>>>> +			.ops = &clk_branch2_ops,
+>>>>>>>>>
+>>>>>>>>> As discussed off-list, these clocks need to have the bi_tcxo as parent.
+>>>>>>>>>
+>>>>>>>>> Otherwise, as far as the CCF is concerned these clocks will have rate 0,
+>>>>>>>>> which is obviously not the case.
+>>>>>>>>>
+>>>>>>>>> Bringing this here since there is a disconnect between X Elite and
+>>>>>>>>> Glymur w.r.t this now.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> The ref clocks are not required to be have a parent of bi_tcxo as these
+>>>>>>>> ideally can be left enabled(as a subsystem requirement) even if HLOS
+>>>>>>>> (APSS) goes to suspend. With the bi_tcxo parent the ARC vote from
+>>>>>>>> HLOS/APSS will not allow APSS to collapse.
+>>>>>>>
+>>>>>>> Is there a scenario where the APSS is collapsed and still the ref clock
+>>>>>>> needs to stay enabled ? Sorry, this doesn't make sense to me.
+>>>>>>
+>>>>>> MDSS is capable of displaying things from a buffer when the CPU is off,
+>>>>>> AFAICU
+>>>>>>
+>>>>>> We can do CXO_AO instead to have it auto-collapse if it's just Linux
+>>>>>> requesting it to stay on, I think.
+>>>>>>
+>>>>>
+>>>>> Thanks Konrad for adding the display use case.
+>>>>> Abel, we earlier also had some PCIe, USB use cases where we had to leave
+>>>>> the ref clocks ON and APSS could collapse.
+>>>>
+>>>> XO votes will prevent CX collapse, not APSS collapse. CX also powers
+>>>> USB and PCIe so that only makes sense.
+>>>>
+>>>> I think it's fair to just stick XO as the parent of every refclock
+>>>> today and think about the what-ifs (such as the mdss case I mentioned
+>>>> above) later - especially since we have no infra to take full advantage
+>>>> of it today (non-APSS RSCs etc.)
+>>>>
+>>>
+>>> When ref clock have been part of GCC, then also they didn't have any xo
+>>> as the parent, similar design we kept when it was moved to TCSR as well.
+>>
+>> Perhaps we've been running on luck (i.e. XO votes being cast through
+>> another device / clock as a second order effect) all this time.. I'd
+>> happily move towards formal correctness.
+>>
+> 
+> I would like to stay with no XO linkage to TCSR. Any driver has specific
+> XO requirement should vote for the rpmhcc XO or XO_AO.
 
-I get you're trying to be more type-agnostic, but I believe this
-/online/ is a bit imprecise, unless you register a hotplug handler and
-just initialise the online CPUs (much of an overkill I'd say).
-What about something like "this is false if the monitor exists already
-before the monitor is enabled"
+Every driver has an XO requirement, as we happen not to have any
+other crystals onboard.. The clock plan says that these refclks
+are direct children of XO too
 
-Other than that it looks good to me.
-
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-
-Thanks,
-Gabriele
-
-> =C2=A0	 */
-> =C2=A0%%ATOMS_INIT%%
-> =C2=A0}
-> diff --git a/tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
-> b/tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
-> index 49394c4b0f1c..87d3a1308926 100644
-> --- a/tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
-> +++ b/tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
-> @@ -6,9 +6,8 @@
-> =C2=A0
-> =C2=A0#ifdef CONFIG_RV_MON_%%MODEL_NAME_UP%%
-> =C2=A0DEFINE_EVENT(event_%%MONITOR_CLASS%%, event_%%MODEL_NAME%%,
-> -	=C2=A0=C2=A0=C2=A0=C2=A0 TP_PROTO(struct task_struct *task, char *state=
-s, char
-> *atoms, char *next),
-> -	=C2=A0=C2=A0=C2=A0=C2=A0 TP_ARGS(task, states, atoms, next));
-> +%%TRACEPOINT_ARGS_SKEL_EVENT%%);
-> +
-> =C2=A0DEFINE_EVENT(error_%%MONITOR_CLASS%%, error_%%MODEL_NAME%%,
-> -	=C2=A0=C2=A0=C2=A0=C2=A0 TP_PROTO(struct task_struct *task),
-> -	=C2=A0=C2=A0=C2=A0=C2=A0 TP_ARGS(task));
-> +%%TRACEPOINT_ARGS_SKEL_ERROR%%);
-> =C2=A0#endif /* CONFIG_RV_MON_%%MODEL_NAME_UP%% */
-
+Konrad
 
