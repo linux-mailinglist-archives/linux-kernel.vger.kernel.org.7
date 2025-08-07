@@ -1,137 +1,181 @@
-Return-Path: <linux-kernel+bounces-759457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 015F1B1DDC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:04:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E1AB1DDC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1733D580CDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:04:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6044580F42
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CDB4438B;
-	Thu,  7 Aug 2025 20:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD68521D3F2;
+	Thu,  7 Aug 2025 20:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mc66A36I"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cdh0qANT"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510015695
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 20:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756285695
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 20:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754597063; cv=none; b=R+Xw131CbrhfTiRsfQR9yyCsRAjtv+WJMGrHi5lNAHokp7soLJ3RCMeoGESscxc6Wsf4s7lFkRalt/mXOXlAYvTumPoVDpdhw9hsggHeNg5RTtpgc2fwgDvGoykYi1eSAxf5FWJ4sS7ntjnblDSFCqjOK+8EkzFYx3K6brAynTY=
+	t=1754597133; cv=none; b=TotIg0Qq9nsJ3qTJgU0qp3b8wzNOZhHUWX9sIIFyI81tz0GhpeKRVpSq46Cd70H86yWJN3cWrg5sh5cwI0wstjklMr89E63XI9ES3E0nCfhkrvjGMkRiAn2GzNsjMdK4E1zwrJw+iuFy+UQHFNIPYAIyBU+CuA4n56ovv6nKHf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754597063; c=relaxed/simple;
-	bh=yAdVlTNcDD9pFesPs0syjVkGybrtiBA8rVOi7e+fVgU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GNyywv/e4PspD0d0UBGbozwMo6Wxlh2gwHu2pzWg9hXjXf6IJ5I6BKelgZSo+TAY39ypYJ8Vp1E1e83L6hUUFt6iXIoT1GsdDOOuDh+88Asns+gET4Pq0uiigqvqd4tDrkN8H5ipKYbNM8P6P7Mrdhq+5jXWl+5941/tk/rg4lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mc66A36I; arc=none smtp.client-ip=209.85.210.202
+	s=arc-20240116; t=1754597133; c=relaxed/simple;
+	bh=MDfSuV67bxy4VCH3RN5kuZpDksbMzRVpCl6KwWYKRqs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KvATN5JPc81zO1UfGOY0420dUS25lXNzIYHAoGKIftRPq7t5ghmb93FbFWQHInZv1pHeTW5lSsMXvwh0b0oCplWAm6t7NU/qUBbKjqHvbUYavderVXOqw2CB+aBDFzO6fwIqsGRBR53aRbNjf0/Yd1xix9UHKp7tU5fXNlKZ0DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cdh0qANT; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76bf2f8ba3aso1808060b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 13:04:22 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b099118fedso16601cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 13:05:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754597062; x=1755201862; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LopBZLPomTxRQOxqmq+ignoUy2OT7BDqSe/zG/uSirI=;
-        b=mc66A36I2r0ssqiwNNIdYzFzNVd4SVb6T/iiIBp6uOzO8gcbPuR26k64+cbzykoGrg
-         ewA2mmEV5YC9OMgZigMUpLYjW0PBntStO8oQwBTs3SU2AMGmdUiF5Tplq34y5Aw+ZV5W
-         Wzas7LMdtsKYRaDFxs82Z9MY53hCRkv73Mduwvsl0rIw9I4NovhueiYqTa4XKcbEaiDW
-         cK23kdJoGVMfntk+yT92ytt8yB0tJdtOMDPDVEYANk2X5duTfoQWmLjb3ozaVsey2xKA
-         79sR5qjx25kVVnTJMzciKAyij9qreFlTlSUoNJvC+IPDqrH0eQIvItuTHrVbmxn4YYFZ
-         lv0g==
+        d=google.com; s=20230601; t=1754597130; x=1755201930; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0C61XKHNGp1+eioPKY889x5RJjYc+RK8QZh4oQMa/B0=;
+        b=cdh0qANTacmw0dHP7hndNxDWDX2D/m1vwnUMNz0+MIZI/Hh2FevTUpZXrQ7W/FKJvt
+         Dmm5XZHTFXZu1c3yH3nwNYsgGgsFpwBiLstrjTLup5wEm5XBVWsFhYcUpRoVrhaYKvwV
+         UbwQxk7gkkceZ1d7OET5Yx8ThgT39nIL1wh4a601a0VSxtYz7mFQ28lYU20vP2TjA7wb
+         vOyOj8TabHXXrHink21nGtPbzlXhSrE7vM+T3KDeAA97fYSuVutR4UXhaoJNtdi3czxB
+         sCNMZ3/y5xtAmDvp87YVyrjc4ZTdStyFro2rUvue6gwt4B9rsgYn6RiexMXkoNz4Q0Bm
+         IpBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754597062; x=1755201862;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LopBZLPomTxRQOxqmq+ignoUy2OT7BDqSe/zG/uSirI=;
-        b=BaiQb/DxvyimbHEGHtdyQ0HOLr2JeWNPx1iaSbKuNW9g0D5RSCfIarWGaidxKBXmUo
-         UaF4cRcWXzfJkdcJE+HLBRT0AVfHkekkgsI3cx+S13aroPTtKar5fyqx0gDytmcUvaIb
-         l8FwAdZkL5ukL3XNqehEJTbqGAsef7HUDCgVo890zmjjs4HT1msfoMVf5OlkRwy+6Um3
-         41vpJYhjUvJbrg7S4x2cFnimXsov5I5CP81W/dmPtqqr9U3dc3Gyg+TzRIjaqSNo7LaQ
-         59XcIHSLr+G7PNo4gOH/kMdJW5kAfJjBOG7LPHkNl2JlwWC3DwZQg1QunEQ8fH+8643V
-         f7Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLy/ROjTB39QKR2On+s+ScqSkEDDLX+kREQcIdhls41uPWBvdXwb9uUGKtrjurlqwx0DXJiF07DW6+Xp0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNNaIsZrt2fzTiX/Xqr7QW0xew+z6RUBdapBCUh0CzopsLDZWY
-	XeBRZe49urYhWrDor0U7XHt3RzTUXSTRtp7Oe4EP66vgc+0kqFeiFtcEH/fTeasE0+ZdPYOakDh
-	uRT8RzA==
-X-Google-Smtp-Source: AGHT+IFfxdE58fnJSmEe7IBG3NEKzHhTu/Wj771qmKF+e/CxQGVaBBcd11vmFgPtdAqEdHyAx5FA9bsYdtI=
-X-Received: from pfsy42.prod.google.com ([2002:a05:6a00:3aa:b0:76b:dec5:1cb3])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a128:b0:23d:e6ec:5410
- with SMTP id adf61e73a8af0-240556a77cemr188540637.17.1754597061631; Thu, 07
- Aug 2025 13:04:21 -0700 (PDT)
-Date: Thu,  7 Aug 2025 13:04:18 -0700
+        d=1e100.net; s=20230601; t=1754597130; x=1755201930;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0C61XKHNGp1+eioPKY889x5RJjYc+RK8QZh4oQMa/B0=;
+        b=uPciai8Y6bt/koho6xIzCuOZE6J0AoBvcqJXbp2fy73lIYNA4EeeMJIct4CFpvLlA7
+         Qcf4B9b83YPlW3UdM6ODhTgmlo1QfndMXEwIgGrSDWJlfc+7a4GeokydTO1m5kKQ4wdX
+         70ypb7dI2bMJCGSYkSlphL/vudAcb5wslsv4OuaFocHq0N/84BpfCJx608cnXqNelE93
+         Ed9FCRKxbxG+3ha4VnTZAyTXeXnAsdFmp8cVJed5n79HXB5GNGUMToYEAtiTOYVYme9Q
+         Sixr8XzZhRcV3j9vXXmpo40KKYeRz2Ficl0Po7JVjbntpOHawynq6YKbV8oWamCWbv/q
+         5RYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyDBZ3UkEdKcuCNKhcvYMZrIN4nnmPTHDWCFSu7OqzRX7diDfCIORoY3yrxuSlQX2URJ+ZBwCOWc+gZK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD11UDX3v/bMc2PqEG2zzb+UlazTNjzodONRRfHE60Q2D7rE/N
+	q0HeUWZz9ZcVyhabcVIX5s3gXx8qm9JtFUiITIYriUlmh91F+Bj4s5X3qfb6WkXAHdvMGu56L/c
+	+8EnxdH0RAT/6U+RIMn4zS/tNTtySglfpnE+JSlxb
+X-Gm-Gg: ASbGncvNFs8NmE2+uqPf7LKqFg6lhfT1vWjYtk+5inw64NL0eGdChTIYO16g1+30VPh
+	+nG/+p7F1NTm2I5H/iZGG1eva187QKxE5cmO0gXiKsQcLc7geX3jhqo82kqUmWL6tt0bii9l7b7
+	tx6FA7SPvFnqGwpoEd8mNCRgl+9bFOJoTO0Dv2TwNvbK+41TnNJZVkn2NsMgZUT6SGey6dJP73I
+	g24BYcVjPBRQCJeCCIa6+7q86A38bQYXW8=
+X-Google-Smtp-Source: AGHT+IGQMe/wQvvb3DLWm+i0vcjYFqmqa45BGVHVdA8UQtjXkWXTK/VdaJDL20XcA1/NNzl54vQHgeEojTt03r+bOWo=
+X-Received: by 2002:a05:622a:1491:b0:48d:8f6e:ece7 with SMTP id
+ d75a77b69052e-4b0af2645f8mr894961cf.3.1754597129862; Thu, 07 Aug 2025
+ 13:05:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250807200418.1963585-1-surenb@google.com>
-Subject: [PATCH v5 1/1] userfaultfd: fix a crash in UFFDIO_MOVE when PMD is a
- migration entry
+MIME-Version: 1.0
+References: <20250806220022.926763-1-surenb@google.com> <3eba855a-740c-4423-b2ed-24d622af29a5@redhat.com>
+ <CAJuCfpExxYOtsWZo6r0FncA0TMeuhpe3SdhLbF+udtbqQ+B_Qg@mail.gmail.com>
+ <43f91e3e-84c5-4fd1-9b63-4e2cb28dab36@redhat.com> <CAJuCfpECC9w6RdfbH34Y906uV=egUDct=6H54Xn79okKK80cjw@mail.gmail.com>
+In-Reply-To: <CAJuCfpECC9w6RdfbH34Y906uV=egUDct=6H54Xn79okKK80cjw@mail.gmail.com>
 From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: peterx@redhat.com, david@redhat.com, aarcange@redhat.com, 
-	lokeshgidra@google.com, surenb@google.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, 
+Date: Thu, 7 Aug 2025 20:05:18 +0000
+X-Gm-Features: Ac12FXzODY9k8UiGEYg8VNmmjfzF8pjbaTykoNeJX-IcPkHHbmkD8MlKlZ5muOU
+Message-ID: <CAJuCfpF+OFZ3RNFaBVBQWmCG_EKxj9Jrb4QGz-Ladw3HJ9AN8A@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] userfaultfd: fix a crash in UFFDIO_MOVE when PMD
+ is a migration entry
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, peterx@redhat.com, aarcange@redhat.com, 
+	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
 	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When UFFDIO_MOVE encounters a migration PMD entry, it proceeds with
-obtaining a folio and accessing it even though the entry is swp_entry_t.
-Add the missing check and let split_huge_pmd() handle migration entries.
-While at it also remove unnecessary folio check.
+On Thu, Aug 7, 2025 at 7:48=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Thu, Aug 7, 2025 at 7:42=E2=80=AFPM David Hildenbrand <david@redhat.co=
+m> wrote:
+> >
+> > On 07.08.25 17:27, Suren Baghdasaryan wrote:
+> > > On Thu, Aug 7, 2025 at 3:31=E2=80=AFAM David Hildenbrand <david@redha=
+t.com> wrote:
+> > >>
+> > >> On 07.08.25 00:00, Suren Baghdasaryan wrote:
+> > >>> When UFFDIO_MOVE encounters a migration PMD entry, it proceeds with
+> > >>> obtaining a folio and accessing it even though the entry is swp_ent=
+ry_t.
+> > >>> Add the missing check and let split_huge_pmd() handle migration ent=
+ries.
+> > >>>
+> > >>> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> > >>> Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+> > >>> Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GA=
+E@google.com/
+> > >>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > >>> Reviewed-by: Peter Xu <peterx@redhat.com>
+> > >>> Cc: stable@vger.kernel.org
+> > >>> ---
+> > >>> Changes since v3 [1]
+> > >>> - Updated the title and changelog, per Peter Xu
+> > >>> - Added Reviewed-by: per Peter Xu
+> > >>>
+> > >>> [1] https://lore.kernel.org/all/20250806154015.769024-1-surenb@goog=
+le.com/
+> > >>>
+> > >>>    mm/userfaultfd.c | 17 ++++++++++-------
+> > >>>    1 file changed, 10 insertions(+), 7 deletions(-)
+> > >>>
+> > >>> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > >>> index 5431c9dd7fd7..116481606be8 100644
+> > >>> --- a/mm/userfaultfd.c
+> > >>> +++ b/mm/userfaultfd.c
+> > >>> @@ -1826,13 +1826,16 @@ ssize_t move_pages(struct userfaultfd_ctx *=
+ctx, unsigned long dst_start,
+> > >>>                        /* Check if we can move the pmd without spli=
+tting it. */
+> > >>>                        if (move_splits_huge_pmd(dst_addr, src_addr,=
+ src_start + len) ||
+> > >>>                            !pmd_none(dst_pmdval)) {
+> > >>> -                             struct folio *folio =3D pmd_folio(*sr=
+c_pmd);
+> > >>> -
+> > >>> -                             if (!folio || (!is_huge_zero_folio(fo=
+lio) &&
+> > >>> -                                            !PageAnonExclusive(&fo=
+lio->page))) {
+> > >>> -                                     spin_unlock(ptl);
+> > >>> -                                     err =3D -EBUSY;
+> > >>> -                                     break;
+> > >>> +                             /* Can be a migration entry */
+> > >>> +                             if (pmd_present(*src_pmd)) {
+> > >>> +                                     struct folio *folio =3D pmd_f=
+olio(*src_pmd);
+> > >>> +
+> > >>> +                                     if (!folio
+> > >>
+> > >>
+> > >> How could you get !folio here? That only makes sense when calling
+> > >> vm_normal_folio_pmd(), no?
+> > >
+> > > Yes, I think you are right, this check is not needed. I can fold it
+> > > into this fix or post a separate cleanup patch. I'm guessing a
+> > > separate patch would be better?
+> >
+> > I think you can just post a fixup inline here and ask Andrew to squash
+> > it. He will shout if he wants a completely new version :)
+>
+> I wouldn't do that to him! :)
+> Let me quickly send an updated version instead.
 
-Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
-Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Cc: stable@vger.kernel.org
----
-Applies to mm-unstable after reverting older v4 [1] version.
+Update posted at
+https://lore.kernel.org/all/20250807200418.1963585-1-surenb@google.com/
 
-Changes since v4 [1]
-- Removed extra folio check, per David Hildenbrand
-
-[1] https://lore.kernel.org/all/20250806220022.926763-1-surenb@google.com/
-
- mm/userfaultfd.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 5431c9dd7fd7..aefdf3a812a1 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -1826,13 +1826,16 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- 			/* Check if we can move the pmd without splitting it. */
- 			if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
- 			    !pmd_none(dst_pmdval)) {
--				struct folio *folio = pmd_folio(*src_pmd);
--
--				if (!folio || (!is_huge_zero_folio(folio) &&
--					       !PageAnonExclusive(&folio->page))) {
--					spin_unlock(ptl);
--					err = -EBUSY;
--					break;
-+				/* Can be a migration entry */
-+				if (pmd_present(*src_pmd)) {
-+					struct folio *folio = pmd_folio(*src_pmd);
-+
-+					if (!is_huge_zero_folio(folio) &&
-+					    !PageAnonExclusive(&folio->page)) {
-+						spin_unlock(ptl);
-+						err = -EBUSY;
-+						break;
-+					}
- 				}
- 
- 				spin_unlock(ptl);
--- 
-2.50.1.703.g449372360f-goog
-
+>
+> >
+> > --
+> > Cheers,
+> >
+> > David / dhildenb
+> >
 
