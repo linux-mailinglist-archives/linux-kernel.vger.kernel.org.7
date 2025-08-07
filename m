@@ -1,239 +1,128 @@
-Return-Path: <linux-kernel+bounces-759071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBC3B1D815
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:39:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D988B1D819
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE3753B1414
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89C6B18C5C9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2403253B56;
-	Thu,  7 Aug 2025 12:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F7625392D;
+	Thu,  7 Aug 2025 12:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="kM9UQQHD"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NZsPU/Pb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TepyGY1Q"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748F324728B;
-	Thu,  7 Aug 2025 12:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF2824728B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754570336; cv=none; b=IOrVDfhJ+FWXteAL2BeeFGHZWMv402knvAIETm+Hekio+lFGMisE+RTiHjIvk5E0b7s1rRgaj90kmqcqXqZVFTqDvEV0zdwDYrVs/ysmvwhBjoHTm3We1G25aYrsIBCqogT+H6pmsXWsRQdWkZOx2etoGVxP2QnNcFJpUlHsiI4=
+	t=1754570393; cv=none; b=ayw/xG0eyEeOrPwJIt6th9UgXM+x7+X4oYajs5zrjJTe3cSYjmdW7hSPL0ok8EYRIOHavVplz/dwCD1E8E5M9Vb9IWJ+1boO/PZsY6KogWdUSa+BVkAGKQ39wWYB7fZ80smWo2i7dw2PLF190rcuVXDkrrlqAzcDIqrSfzOjGts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754570336; c=relaxed/simple;
-	bh=YFLcIo16OfvzbGgpVCXltFxog7lFpdvAFZs0xLw95kY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcwlMpR/fjH0CTdnoTlI6cQI/ptELTFjrTbwok+v3rHtZ0ueLOZ9HonQ6V9sOZEYJ/tUweTvPxPTBqQNHsIiNr2hhp0vWoyefJGokDJVBdAaPQ2l28EfY+RSHyJAHlcxTxvzoRUsweZ8GqrZSZavdmTnhT0pX62/1WuGmr2v2nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=kM9UQQHD; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4byRY52lVvz9sQ0;
-	Thu,  7 Aug 2025 14:38:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754570329;
+	s=arc-20240116; t=1754570393; c=relaxed/simple;
+	bh=IhNfL21psMTR3yWMWB9MAI03PjqKlLcbpYNauM4CdRQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IK/oezuJDmYt5DpY6H5gLmgBnZXmcPkip4EW5NZ225o71XWqVH+GAOU2QgW6lLCcm9YFml2ATm8Y6C1KnCS4zGLVVJX4VhAYf1x1feN8EQYvTGKd+AS0hpH4brKBc0raGVfkU8lg94ieDia0Zw2VMFw06lnZ4fwMqKmybLEl1d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NZsPU/Pb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TepyGY1Q; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754570389;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bU/y9MWFa6B0gIwG3PfeO00P0lRWaDiO5X7C9N+oo0U=;
-	b=kM9UQQHDjzAmp/xrv3atJndAWsdCCFR7mMfP78QqFoplx1+Pdy6bZTKmOAuFlTRRql3qYi
-	tCXfgoRYSq/7XDRh86GZyVycpkfdHaDGPP9AauOWFsrgH7iMXlLoSx0cSSErElxCPG/7C2
-	6IkTzjYdqcXc8qHDulI52eFFG9/+lipLRXQWT1BHRBIUqTS/OE9+bgo1NcTRe62BPkoIfe
-	J371X18elF2EvVAJpI7CGXojf26F1uP+giUxASD5o2T8r9nN7tLUosLY3XPD71toDhO0vy
-	ZIsCB+Z2bWFUyaISC6dQVa3ucKtY5FX8m26cp8NO9j56ldMarOdhJuiCTc42Zw==
-Date: Thu, 7 Aug 2025 22:38:36 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
- mount_attr.2type
-Message-ID: <2025-08-07.1754570250-rented-dazzler-furry-proton-robust-diamonds-Kgpe2w@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
- <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
+	bh=H04ZIKmE6o/aPmfvgSEleptBdX7dH7MfiferMt7opCk=;
+	b=NZsPU/PbjAmXPLlxHSsskQxfOtibTbwPmlJokCaaAPMOjTFYCn+2cJlZ7fYnA1fMTc3lCu
+	n0XXake88wIY4bmJhFeTs0YjdBcQ2e1SBLlLp+95Tr12Txh/kpTFNMDGszDdWwvEhafK78
+	ZcCuuuiFX1sgn6lXLpC5USt9Phjr7hNi7HMsESOCvOOxk/jR3ozzijPU0QNVTwVYo/tkkB
+	OxJ/Qp5WQlfJVuUlNAsSzu+fW/3EEKc7zKILYspOpYNjL8W6YICh7NGQIKNMlMq3z93hXR
+	4/zVbF0HGELzmQaUL4uX6YDNIbiU7ryyi+Ly15+B0OlEGmL+uG4np0BLfmnsnQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754570389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H04ZIKmE6o/aPmfvgSEleptBdX7dH7MfiferMt7opCk=;
+	b=TepyGY1Q/w6JTWISuc7uBnfYRybQDBGRbEiIniDXkeS7XOTOy9r4ek7IMPif/ZYZVvKDqQ
+	9W16cb2F6VkPC9Ag==
+To: Inochi Amaoto <inochiama@gmail.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>, Samuel
+ Holland <samuel.holland@sifive.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, Longbin Li
+ <looong.bin@gmail.com>
+Subject: Re: [PATCH] irqchip/sifive-plic: Respect mask state when setting
+ affinity
+In-Reply-To: <20250807111806.741706-1-inochiama@gmail.com>
+References: <20250807111806.741706-1-inochiama@gmail.com>
+Date: Thu, 07 Aug 2025 14:39:42 +0200
+Message-ID: <87fre3mhkh.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2efsv5i2maco22bu"
-Content-Disposition: inline
-In-Reply-To: <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
+Content-Type: text/plain
 
+Inochi Amaoto <inochiama@gmail.com> writes:
 
---2efsv5i2maco22bu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
- mount_attr.2type
-MIME-Version: 1.0
+> The plic_set_affinity always call plic_irq_enable(), which clears up
+> the priority setting even the irq is only masked. This make the irq
+> unmasked unexpectly.
+>
+> Replace the plic_irq_enable/disable() with plic_irq_toggle() to
+> avoid changing priority setting.
+>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  drivers/irqchip/irq-sifive-plic.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+> index bf69a4802b71..5bf5050996da 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -148,6 +148,7 @@ static void plic_irq_enable(struct irq_data *d)
+>  
+>  static void plic_irq_disable(struct irq_data *d)
+>  {
+> +	plic_irq_mask(d);
+>  	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
+>  }
 
-On 2025-08-07, Alejandro Colomar <alx@kernel.org> wrote:
-> Hi Aleksa,
->=20
-> On Thu, Aug 07, 2025 at 03:44:36AM +1000, Aleksa Sarai wrote:
-> > As with open_how(2type), it makes sense to move this to a separate man
-> > page.  In addition, future man pages added in this patchset will want to
-> > reference mount_attr(2type).
-> >=20
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> >  man/man2/mount_setattr.2      | 17 ++++---------
-> >  man/man2type/mount_attr.2type | 58 +++++++++++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 63 insertions(+), 12 deletions(-)
-> >=20
-> > diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-> > index c96f0657f046..d44fafc93a20 100644
-> > --- a/man/man2/mount_setattr.2
-> > +++ b/man/man2/mount_setattr.2
-> > @@ -114,18 +114,11 @@ .SH DESCRIPTION
-> >  .I attr
-> >  argument of
-> >  .BR mount_setattr ()
-> > -is a structure of the following form:
-> > -.P
-> > -.in +4n
-> > -.EX
-> > -struct mount_attr {
-> > -    __u64 attr_set;     /* Mount properties to set */
-> > -    __u64 attr_clr;     /* Mount properties to clear */
-> > -    __u64 propagation;  /* Mount propagation type */
-> > -    __u64 userns_fd;    /* User namespace file descriptor */
-> > -};
-> > -.EE
-> > -.in
-> > +is a pointer to a
-> > +.I mount_attr
-> > +structure,
-> > +described in
-> > +.BR mount_attr (2type).
-> >  .P
-> >  The
-> >  .I attr_set
-> > diff --git a/man/man2type/mount_attr.2type b/man/man2type/mount_attr.2t=
-ype
-> > new file mode 100644
-> > index 000000000000..b7a3ace6b3b9
-> > --- /dev/null
-> > +++ b/man/man2type/mount_attr.2type
-> > @@ -0,0 +1,58 @@
-> > +
->=20
-> Please remove this blank.  It is not diagnosed by groff(1), but I think
-> it should be diagnosed (blank lines are diagnosed elsewhere).  I've
-> reported a bug to groff(1) (Branden will be reading this, anyway).
->=20
-> > +.\" Copyright, the authors of the Linux man-pages project
-> > +.\"
-> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> > +.\"
-> > +.TH mount_attr 2type (date) "Linux man-pages (unreleased)"
-> > +.SH NAME
-> > +mount_attr \- what mount properties to set and clear
-> > +.SH LIBRARY
-> > +Linux kernel headers
-> > +.SH SYNOPSIS
-> > +.EX
-> > +.B #include <sys/mount.h>
-> > +.P
-> > +.B struct mount_attr {
-> > +.BR "    __u64 attr_set;" "     /* Mount properties to set */"
-> > +.BR "    __u64 attr_clr;" "     /* Mount properties to clear */"
-> > +.BR "    __u64 propagation;" "  /* Mount propagation type */"
-> > +.BR "    __u64 userns_fd;" "    /* User namespace file descriptor */"
-> > +    /* ... */
-> > +.B };
-> > +.EE
-> > +.SH DESCRIPTION
-> > +Specifies which mount properties should be changed with
-> > +.BR mount_setattr (2).
-> > +.P
-> > +The fields are as follows:
-> > +.TP
-> > +.I .attr_set
-> > +This field specifies which
-> > +.BI MOUNT_ATTR_ *
-> > +attribute flags to set.
-> > +.TP
-> > +.I .attr_clr
-> > +This fields specifies which
-> > +.BI MOUNT_ATTR_ *
-> > +attribute flags to clear.
-> > +.TP
-> > +.I .propagation
-> > +This field specifies what mount propagation will be applied.
-> > +The valid values of this field are the same propagation types describe=
-d in
-> > +.BR mount_namespaces (7).
-> > +.TP
-> > +.I .userns_fd
-> > +This fields specifies a file descriptor that indicates which user name=
-space to
->=20
-> s/fields/field/
->=20
-> > +use as a reference for ID-mapped mounts with
-> > +.BR MOUNT_ATTR_IDMAP .
-> > +.SH VERSIONS
-> > +Extra fields may be appended to the structure,
-> > +with a zero value in a new field resulting in
-> > +the kernel behaving as though that extension field was not present.
-> > +Therefore, a user
-> > +.I must
-> > +zero-fill this structure on initialization.
->=20
-> I think this would be more appropriate for HISTORY.  In VERSIONS, we
-> usually document differences with the BSDs or other systems.
->=20
-> While moving this to HISTORY, it would also be useful to mention the
-> glibc version that added the structure.  In the future, we'd document
-> the versions of glibc and Linux that have added members.
+This part is not required for the problem you are addressing, right?
 
-Sure, though I just copied this section from open_how(2type).
+I do not oppose the change, I'm just curious if I miss something here.
 
-> > +.SH STANDARDS
-> > +Linux.
-> > +.SH SEE ALSO
-> > +.BR mount_setattr (2)
->=20
-> Have a lovely day!
-> Alex
->=20
-> --=20
-> <https://www.alejandro-colomar.es/>
+>  
+> @@ -179,12 +180,14 @@ static int plic_set_affinity(struct irq_data *d,
+>  	if (cpu >= nr_cpu_ids)
+>  		return -EINVAL;
+>  
+> -	plic_irq_disable(d);
+> +	/* Invalidate the original routing entry */
+> +	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
+>  
+>  	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+>  
+> +	/* Setting the new routing entry if irq is enabled */
+>  	if (!irqd_irq_disabled(d))
+> -		plic_irq_enable(d);
+> +		plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
+>  
+>  	return IRQ_SET_MASK_OK_DONE;
+>  }
 
+This part makes sense:
 
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---2efsv5i2maco22bu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJSeTAAKCRAol/rSt+lE
-byfSAQCqNmxfPk92j1CnM3+qclM4UB915txEO/XP3YjHlJP/CwD/X3E5g69iOsxF
-cZoG8TIXEQwoU/gIa8AeFIat7yb+7wA=
-=FiKS
------END PGP SIGNATURE-----
-
---2efsv5i2maco22bu--
+Reviewed-by: Nam Cao <namcao@linutronix.de>
+Tested-by: Nam Cao <namcao@linutronix.de> # VisionFive 2
 
