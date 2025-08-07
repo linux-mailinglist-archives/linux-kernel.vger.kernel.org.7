@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-758907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B1BB1D56A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:04:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73EBB1D571
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D296566067
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:04:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC30188D878
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D76222B5AC;
-	Thu,  7 Aug 2025 10:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C47D230D2B;
+	Thu,  7 Aug 2025 10:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sER3LyUg"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NRn9XqJ2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE25D145329
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A5379E1;
+	Thu,  7 Aug 2025 10:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754561077; cv=none; b=bGbd9SjHPd3BWqSQNmwwGm6/GxITLaGUU0B1OpO/iUJLAmFEvkP7QpU1/9jZ1qWteUNwmHjxKn/eiao7H6veC14EwArJbjXAPryBafZOlRS0ZcSXyT6esb8a9r7HdatfsnHmD0FoM9VUC/TXhQyLjFtDrjGcuxoPfawf/jQh60E=
+	t=1754561086; cv=none; b=ECxMhM270R4TKlv7Ziwu2ZiGPF1FaRqGenzXtWYl3AmnzEZ85KyV1hDZxhkjXxha+JlgkFx9btpNn7n0J+KNG1Aw/PNSmx7dpEmkpb0NUEwHaohHeJgMsKBRLF4aHR+467pfP/hhticpg3GbPMvFHCQP09xDPtMfmpODzgkPLOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754561077; c=relaxed/simple;
-	bh=v5J95RbVq1z7j0CBduLbYcWe25djTBYTApvThmtWUbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e/NA23y9x64eflaF9qrzurYF0L0CBALw+m1Tdh2wnUpmwgDMW8qP0d656UdNnn/qyRADj4MKXt4E7lMxwqZYCz7uIxXIcXO2hNiAwMrHqE7+cWAs5EHjxYf7htrc0YB27WRi+/UcPwUQaBLzikJPQQAH7KcZwS1D0WCsk1ur24A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sER3LyUg; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <85c9d06b-b62a-45b8-964c-d37f1176f0b0@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754561062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1eg2qejZVe0Hwmtk3aZSvEFkMvRjpU3KbucvKTo7QaA=;
-	b=sER3LyUgpOZl05+iAak3MJa/McPHLLz0+GbGgiNgTk5LE7MFU9uQU6Rd3gjaz6Xv4UENFT
-	+9JgbB3R41YDXON1qn0A5WiK/eMIZjzEpTTT6G5qi0hBIioWnfYkwWsiL4cdoC37aCXF+b
-	cqpZjqxgsjy2v0HOiSqkrh4/6abyD3Y=
-Date: Thu, 7 Aug 2025 18:04:04 +0800
+	s=arc-20240116; t=1754561086; c=relaxed/simple;
+	bh=Mvsmdpdd0oup14gFiJcofHJbuAXnnMeW/M/iNSFGzuE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UcPA2vdLbRnrO5QzH5AY6+FfQNfomEvbcd9cArxnB2JkdBfKbtQEkSOGxJzqzz0uCnKy7Uc29D8mHp88mO6IPUdUYvuQ4y//pIe7nE/+0wRSsy3Ievyat9uL8ALGpTf4woZfSMP2Dbd2fu40oaEQloTDFwi764v9Oc8IFubumyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NRn9XqJ2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779CvwV019237;
+	Thu, 7 Aug 2025 10:04:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=dDpX1+IEl+FXlp5JtBlux6
+	YoEf6Ff0wepUK6I5GiLXw=; b=NRn9XqJ2dH6l3VFcRW4EEbZbNgFwl+PJMdoqXP
+	p3okzsdpkKqCpJvyjU7x61PLnrqUAIvUXE/Vx/ysEqPPxXZYriCkJyqfdq2shZEK
+	6RDQ5Dq5lDtweD09kPM4qblSjEU2bqMBxYkJZ1fcMCeVV/4/Jzam2d9Q9vjkVpxb
+	h9tTi4D8tIqL0n1b3XYxP22Z4CrKagSU2FtxNLvNtXrGjtBUenfPWSI3xPnDw3jv
+	zZy4X4a+d8JQeFcgHHC1kf2OR6e3DeNIgYpuuZKtX08bhF/c+lwfyqSEfQUvDTHU
+	KvJTQYVVd3gjGxD5bj00sZKIQvoyQZQsffGuZkPxNO5FiQ1Q==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw2wx9c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 10:04:36 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 577A4ZlG032385
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Aug 2025 10:04:35 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Thu, 7 Aug 2025 03:04:31 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <srini@kernel.org>, <amahesh@qti.qualcomm.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <sumit.semwal@linaro.org>,
+        <christian.koenig@amd.com>, <thierry.escande@linaro.org>,
+        <quic_vgattupa@quicinc.com>
+CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>, Ling Xu <quic_lxu5@quicinc.com>
+Subject: [PATCH v3 0/4] Add missing fixes to FastRPC driver
+Date: Thu, 7 Aug 2025 15:34:16 +0530
+Message-ID: <20250807100420.1163967-1-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 1/8] dt-bindings: clock: loongson2: Add Loongson 2K0300
- compatible
-To: Huacai Chen <chenhuacai@kernel.org>, Yao Zi <ziyao@disroot.org>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>
-References: <20250805150147.25909-1-ziyao@disroot.org>
- <20250805150147.25909-2-ziyao@disroot.org>
- <CAAhV-H6fDjVFX_gyT3m39j09RWFu4O89FVdEumyV-dzUnU9Wig@mail.gmail.com>
- <aJNK2uI4HTIV99vz@pie>
- <CAAhV-H5XQ9+dL+QE50aO3XNZ4ic9QqA5frMi8y+eMb83Dv0Gyw@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <CAAhV-H5XQ9+dL+QE50aO3XNZ4ic9QqA5frMi8y+eMb83Dv0Gyw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Vbz3PEp9 c=1 sm=1 tr=0 ts=68947a34 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=YlbaB52rY0KjSQttpCIA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: lOKuDWKq_iS68PtYMvxouuzzp3iohNP3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfX9d9GJnteMlxz
+ ics4QaCcKbwiZu/KX5uelAEPfBr7uIMfrnB/gMMUg9OMA1rJt4bvtPZGupHAALM09lVXjUo5Io6
+ JsfZ9f+j9k/XAltENrqoYA/iX9v2zlIEdxgx+Ll9xgdEjA91f6QoGquX3zdWofDFr9rlapv5F34
+ rx5g/WSJ+b2MSDOEaND1EW+MRDeHOttyOB2lAiJcpDN/Eq5oePUOB5XaTEcDon2P+NUxbo3B8li
+ bGdK8i4sButjO3ELVxVb6cf2qhNefcbr0ZHrUA7ulFf5q1gjmP4H40PfhJSaul0kd3RgaaATHkL
+ V+hZx14Dg/DZ6A3c2Xw1M8MfyKa/DeZD4h6DclUYwt+QEWV67Nzy2ZrB/3aYIK+5QBeYVlODSsM
+ hyH4Ma2l
+X-Proofpoint-GUID: lOKuDWKq_iS68PtYMvxouuzzp3iohNP3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 adultscore=0 suspectscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
 
-在 8/7/25 12:44 PM, Huacai Chen 写道:
-> On Wed, Aug 6, 2025 at 8:30 PM Yao Zi <ziyao@disroot.org> wrote:
->>
->> On Wed, Aug 06, 2025 at 04:36:50PM +0800, Huacai Chen wrote:
->>> On Tue, Aug 5, 2025 at 11:03 PM Yao Zi <ziyao@disroot.org> wrote:
->>>>
->>>> Document the clock controller shipped in Loongson 2K0300 SoC, which
->>>> generates various clock signals for SoC peripherals.
->>>>
->>>> Differing from previous generations of SoCs, 2K0300 requires a 120MHz
->>>> external clock input, and a separate dt-binding header is used for
->>>> cleanness.
->>>>
->>>> Signed-off-by: Yao Zi <ziyao@disroot.org>
->>>> ---
->>>>   .../bindings/clock/loongson,ls2k-clk.yaml     | 21 ++++++--
->>>>   MAINTAINERS                                   |  1 +
->>>>   .../dt-bindings/clock/loongson,ls2k0300-clk.h | 54 +++++++++++++++++++
->>>>   3 files changed, 72 insertions(+), 4 deletions(-)
->>>>   create mode 100644 include/dt-bindings/clock/loongson,ls2k0300-clk.h
->>>>
->>
->> ...
->>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 4912b8a83bbb..7960e65d7dfc 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -14365,6 +14365,7 @@ S:      Maintained
->>>>   F:     Documentation/devicetree/bindings/clock/loongson,ls2k-clk.yaml
->>>>   F:     drivers/clk/clk-loongson2.c
->>>>   F:     include/dt-bindings/clock/loongson,ls2k-clk.h
->>>> +F:     include/dt-bindings/clock/loongson,ls2k0300-clk.h
->>> I think ls2k0300-clk.h can be merged into ls2k-clk.h
->>
->> Honestly I think a separate header makes the purpose more clear, and
->> follows the convention that name of binding header matches the
->> compatible, but I'm willing to change if you really consider merging
->> them together is better and dt-binding maintainer agrees on this.
+This patch series adds the listed bug fixes that have been missing
+in upstream fastRPC driver.
+- Store actual size of map and check it against the user passed size.
+- Consider map buf for map lookup.
+- Fix possible map leak in fastrpc_put_args.
+- Skip refcount increment for DMA handles.
+Patch [v2]: https://lore.kernel.org/linux-arm-msm/20250806115114.688814-1-quic_lxu5@quicinc.com/
 
-> I think merging is better, because:
-On this premise，pick my tag:
+Changes in v3:
+  - Remove the unused line.
+Changes in v2:
+  - Fix possible map leak in fastrpc_put_args.
+  - Remove take_ref argument.
 
-Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
+Ling Xu (4):
+  misc: fastrpc: Save actual DMA size in fastrpc_map structure
+  misc: fastrpc: Fix fastrpc_map_lookup operation
+  misc: fastrpc: fix possible map leak in fastrpc_put_args
+  misc: fastrpc: Skip reference for DMA handles
 
-Thanks,
-Yanteng
-> 1, loongson,ls2k-clk.h has already contains ls2k500, ls2k1000,
-> ls2k2000, so ls2k300 is not special.
-> 2, ls2k500, ls2k1000, ls2k2000 and ls2k300 use the same driver
-> (drivers/clk/clk-loongson2.c), it is not necessary to include two
-> headers.
-> 
-> And moreover, existing code uses NODE_PLL/DDR_PLL naming, ls2k300 uses
-> PLL_NODE/PLL_DDR is not so good.
-> 
-> 
-> Huacai
-> 
->>
->>> Huacai
->>
->> Thanks,
->> Yao Zi
->>
->>>>
->>>>   LOONGSON SPI DRIVER
->>>>   M:     Yinbo Zhu <zhuyinbo@loongson.cn>
->>>> diff --git a/include/dt-bindings/clock/loongson,ls2k0300-clk.h b/include/dt-bindings/clock/loongson,ls2k0300-clk.h
+ drivers/misc/fastrpc.c | 89 +++++++++++++++++++++++++++---------------
+ 1 file changed, 58 insertions(+), 31 deletions(-)
 
->>>> 2.50.1
->>>>
->>>
->>
+-- 
+2.34.1
 
 
