@@ -1,175 +1,162 @@
-Return-Path: <linux-kernel+bounces-758862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE69B1D4DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:35:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DE8B1D4DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5CB621667
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:35:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F64917C6C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006EF23BCF8;
-	Thu,  7 Aug 2025 09:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KabFeLze"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C4225F799;
+	Thu,  7 Aug 2025 09:34:34 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507B5220F5E;
-	Thu,  7 Aug 2025 09:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBC922B584
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 09:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754559279; cv=none; b=seyVgBJ7+r0Nks2pwU7hI0cUmyO2hpCJ9FVJQJ8gy1SsAvTQYGJBXDDCgjwxbAgYQx5LzAne7a3R9ikbKQPqXyQTaZ0BGifeylsL5EFsXvoP4SjJWBuWA2vLNthtY31iNhnXHxySyp2Mr2pHec1kkD/Y8PAACbratRWR9XIxv/A=
+	t=1754559274; cv=none; b=qwu6E9RdAH6ASPbl2ZfxtVAYX43zA/BtsZ4YtLCFa+4JqZgZmcbwZ+EKiRrxNrO0YG0E/AqFFnbKA87X8P6bmbQEJ4XrMfNu7erkULkOBAmV8op1u7Cy49d0nKhCWtLa9w5DYyr5mAnkwT4RVUtzEmYrIrQ+mgTD/4DEFRUt0uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754559279; c=relaxed/simple;
-	bh=0vCIztPZD+BesSzci2t30zHZGAgY7hFiC7LgX3rS02o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KL5h7R+TO8HsauXqtxEjpmoXnboXo96DSHSC6haV97KzMoxEYmSIv0Jg1o477zTfBx0u0/UWKry5Qk1YFlwBAImRFg2SsuhMZrfD0Hvc5wccJCCkSfCOKrcPy0HfI1nHBDLFGbjA8OgQklYlrFACOAvAjlskCU/KYjI23b0FYqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KabFeLze; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-555024588b1so894479e87.1;
-        Thu, 07 Aug 2025 02:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754559275; x=1755164075; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=addgU5+bNFveu8gx7RdfbotqD9xo7DZxzvISYg2VFeE=;
-        b=KabFeLzeIODospiIzHAxZthUEIUwY1eFWUmnswejkLkwu4k3aBOiamjL1bdZfkgKqs
-         usYWFrZyRh1bReO5rrPVpg7PzPsxmtbY7CA7a3NU/Ei7Ah9SBEptCRDArWt/DUZ5/umf
-         3I8dbO9jJ5zfwOKA2sPIGxlrVg6OGqiLoADlPMdlfmQgpRQbwxBcXmJNHi8RpDaBq01z
-         1efy+TlgGSaaIxxBnMRepoTlKvfXWPlIuYgfAFaFsk655rvsxqFz1/m2YwasUKvhn64k
-         THZHPuPkPr8DhW4yUUpNLhF6G6cGWdYWnYg6/8mtkoKY3Nr/puYGohU2Y1uISQ25AFeO
-         pfTg==
+	s=arc-20240116; t=1754559274; c=relaxed/simple;
+	bh=gELV5DYZDqSPBZtY1LBmOo1nEqecEpnLJxkPRWpmJ38=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SIhxtGvPpsNiH9dwVYBAoZ0ASdGjGi2nWODwkblBY5m1mRJDaHgJ1t+MqQ2vCW2fszgY/IRZkbihrlgdGUpQEsdFe2BmC0z3hjvEY9ST2BzrjfyokEZQYQs81kJHUQWMrp00pXWgXe3rnD8J/lNlvnD+6FuoywiGA4BvpuMw+KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88177c70d63so82552639f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 02:34:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754559275; x=1755164075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=addgU5+bNFveu8gx7RdfbotqD9xo7DZxzvISYg2VFeE=;
-        b=dJbPIJCoT59qFkz1qvApYWS1OuZh8i0w7StsgIvM+hTaSxDQzb6J2lbseZtfiQ373x
-         d8RuiO2QCkX9SnqesMWDDjMuM2mwKutSAdB7Ce4IQ6VXh1uGQpMSAuFjdXgQwzpsufQG
-         XpDUjxUV/2B784wWjgzZR7Pi9KGlWpRf9Z5FFKtvg3WIxWUU2OtNJ69bD/jVhwFGVZZ4
-         N9YXrjRzvGNtw5bnGPOelbxbKjTgZi8K/vkQZ52x/CMp+TBRsPiVZuToDtMMKFKik+ML
-         exQYx7KOzJpz7sO3fvyZJUbXhQGsdi8jY7XORBIqc7CZbdieBWL9WMEXcX8sgSD7A3RK
-         ei0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUeyjSxJdOk9tSLrCM9StgyHux2d3JOlZr5RzAjVRHVp7gB8i5w5ZddUzq7L/rC34Uj14drZ2kj063tpVbq@vger.kernel.org, AJvYcCUm1/ViRc3A9lQZCSb7zhCnUbq3SeMv1yo0XAB6ZJEFUZjtYLZl5PXwI9+oPtS0CSSRl1x8oEFgBHes@vger.kernel.org, AJvYcCX0AC6PWPcnrtlDgXybT7mcaZ7VIMFrODSsDXCI8s+Mtc6rPeul/LO+4vbY59jVDIjpgCQezcNP5ly0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1tq674nWEB5DVOAB0SiiCtFenRrupu6ySm9D5ydsyDUwBujUb
-	gWW1vzJq1RYMZFSvBHw4FYA9lSikmWOrUNjZOzBfuDj3iL8CdVXk0+4X
-X-Gm-Gg: ASbGncvk4Oclpocvh+JXfUimAHy8APUrBewQQAqetWDZcDkxsLcyeUDiRvyE0wilH65
-	JHy3PU71tiJu6M8cdiCVposVUI7YoBDtFtKflcr7W5sx3QFid0xQDrKSh6/fEbzvxT03vdCwpXE
-	SnCpw5BO/oPlDttQIBUB203szlg8lbjDG5C/lbf0tWRq2kNXfUUbXhjk2dkBikVqZIcM4KZYP4l
-	IXDIlifvrZIONNRFVV7LLgOBIFTxBOYjWgUUQBGnDUCwLBqWRATjbGVQX5q74pW7y75SjQ8fYkq
-	iL4FQUOFKgZT2Z0x24TbMNHxcxTLA93P3JmsXLpklo8oz6Pn7yYnfmvGQzR3eSrfOuSxMzBkP7W
-	7CQhj/Vn9C87buGHhSnXfe6c3n+tH
-X-Google-Smtp-Source: AGHT+IFVKMRLKU6d7beKECE+fUIy7Z0miFvbxfdxYF+dopbKIl3zZxeB9uMWB+FLrqjBQ2Q3P6/tfA==
-X-Received: by 2002:a05:6512:e99:b0:55b:5b33:bc09 with SMTP id 2adb3069b0e04-55caf5f3ed9mr1798960e87.28.1754559275079;
-        Thu, 07 Aug 2025 02:34:35 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cac6a3e06sm626646e87.172.2025.08.07.02.34.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 02:34:34 -0700 (PDT)
-Date: Thu, 7 Aug 2025 12:34:30 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/10] iio: adc: ad7476: Use correct channel for bit info
-Message-ID: <3d3ccb9195271c8c0cf4b476a10b81fe309d3564.1754559149.git.mazziesaccount@gmail.com>
-References: <cover.1754559149.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1754559271; x=1755164071;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fjyqg8duMD58S8gtCQt8SefX/SjwKnwP2yTVcNnSrno=;
+        b=T8hhdcblUMFW1dVsUwLC1VK0TtkS1IYwsIokuYbgCURn3aTqIa9Hd8gLmKniQWBxL6
+         Z58mH9/reHeG+zgN9Qy0X0ttQohyD+aQWLjpTJlhjzXwlz8wW93Qw+VPytTF17EOKwLW
+         lho5Ei9rpNlCGo/4HnQwsK5T6OYANiHYKdw2P5wlZTmAy+DMmY1YKL7Yb7m+e9J02ZgW
+         l4KGE5TYmHcJHyy7sRwmWpN1aykX3205ZCXS3zHNI2Xmim3oft5jD3zoRXeNLvVFJ/4r
+         lKitr6sF/O7na3U8IdqhsB0gMAdTwrWlpHNHkN1/+GJp5I/0w3WT96kNzVpA/HWjr6G1
+         rXUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVK8Doq3vfahhBYUtQzHUjadUSotcKFWw7anNRZy7PYVSaJ9urx/4QDvs1sxDBRrOySmRt4YArWrtqvJfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXy93ImbaFoVbkZtvDa2RiereZ6o4nbyJ3ummnKUPTFqHTchC0
+	Z+iF13ZpHcFadrPXWerIvht5Wd1I8MOpttOIPks+6K5Lr0UZhT3/hHwHbd0MrJ9c1FSDCvYxRtm
+	V12wrxSZAm0ZWqUsvMC+HaVw5Znzw77Brb12O9cbTY3WJ/6bvGRfJPX9heBA=
+X-Google-Smtp-Source: AGHT+IGUmKSJT+d2iFTfH8WysDJUk7tflpCz4aox3079lXYwbRbYkW5oei9UVRZ+1Qti6tt3sRTcpTmEZrUR7RII+gdYo6AsG1N+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uvmQgl2tyCPpRLdJ"
-Content-Disposition: inline
-In-Reply-To: <cover.1754559149.git.mazziesaccount@gmail.com>
+X-Received: by 2002:a6b:580d:0:b0:861:6f49:626 with SMTP id
+ ca18e2360f4ac-8819f0b93b9mr978115239f.6.1754559271215; Thu, 07 Aug 2025
+ 02:34:31 -0700 (PDT)
+Date: Thu, 07 Aug 2025 02:34:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68947327.050a0220.7f033.0042.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in ieee80211_recalc_chanctx_chantype
+From: syzbot <syzbot+3e1ddd8aa744da8bec01@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    7e161a991ea7 Merge tag 'i2c-for-6.17-rc1-part2' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1489c434580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=62d04834ef6637ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e1ddd8aa744da8bec01
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3e5f109fb8fc/disk-7e161a99.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/051cd2ea2369/vmlinux-7e161a99.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f4d2819ae9d5/bzImage-7e161a99.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3e1ddd8aa744da8bec01@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6016 at net/mac80211/chan.c:844 ieee80211_recalc_chanctx_chantype+0x7a7/0xae0 net/mac80211/chan.c:844
+Modules linked in:
+CPU: 1 UID: 0 PID: 6016 Comm: kworker/u8:3 Not tainted 6.16.0-syzkaller-11699-g7e161a991ea7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: netns cleanup_net
+RIP: 0010:ieee80211_recalc_chanctx_chantype+0x7a7/0xae0 net/mac80211/chan.c:844
+Code: 00 00 00 fc ff df 4c 89 fa 48 c1 ea 03 80 3c 02 00 0f 84 6f f9 ff ff 4c 89 ff e8 14 60 0c f7 e9 62 f9 ff ff e8 8a 08 a7 f6 90 <0f> 0b 90 e9 18 fc ff ff e8 7c 08 a7 f6 49 8d bd a0 09 00 00 48 b8
+RSP: 0018:ffffc900047c7098 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 000000000000000f RCX: ffffffff8b1484e2
+RDX: ffff888030da5a00 RSI: ffffffff8b1489d6 RDI: 0000000000000005
+RBP: dffffc0000000000 R08: 0000000000000005 R09: 000000000000000f
+R10: 000000000000000f R11: 0000000000000000 R12: 1ffff920008f8e1c
+R13: 0000000000000000 R14: ffff88805288a8c0 R15: 0000000000000007
+FS:  0000000000000000(0000) GS:ffff8881247c7000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000008000 CR3: 000000000e380000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ ieee80211_assign_link_chanctx+0xb90/0xf00 net/mac80211/chan.c:944
+ __ieee80211_link_release_channel+0x273/0x4b0 net/mac80211/chan.c:1890
+ ieee80211_link_release_channel+0x128/0x200 net/mac80211/chan.c:2165
+ ieee80211_leave_mesh+0x71/0x150 net/mac80211/cfg.c:2842
+ rdev_leave_mesh net/wireless/rdev-ops.h:372 [inline]
+ cfg80211_leave_mesh+0x23e/0x900 net/wireless/mesh.c:277
+ cfg80211_leave+0x26a/0x3f0 net/wireless/core.c:1383
+ cfg80211_netdev_notifier_call+0x2c1/0x1120 net/wireless/core.c:1567
+ notifier_call_chain+0xbc/0x410 kernel/notifier.c:85
+ call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:2229
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ __dev_close_many+0xff/0x770 net/core/dev.c:1726
+ netif_close_many+0x233/0x630 net/core/dev.c:1780
+ netif_close net/core/dev.c:1797 [inline]
+ netif_close+0x17f/0x230 net/core/dev.c:1791
+ dev_close+0xaa/0x240 net/core/dev_api.c:220
+ cfg80211_shutdown_all_interfaces+0x9a/0x220 net/wireless/core.c:277
+ ieee80211_remove_interfaces+0xc3/0x740 net/mac80211/iface.c:2364
+ ieee80211_unregister_hw+0x55/0x3a0 net/mac80211/main.c:1664
+ mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5674 [inline]
+ hwsim_exit_net+0x3ac/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6554
+ ops_exit_list net/core/net_namespace.c:198 [inline]
+ ops_undo_list+0x2ee/0xab0 net/core/net_namespace.c:251
+ cleanup_net+0x408/0x890 net/core/net_namespace.c:682
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x5d7/0x6f0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
---uvmQgl2tyCPpRLdJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-The ad7476 supports ADCs which use separate GPIO for starting the
-conversion. For such devices, the driver uses different channel
-information if the GPIO is found. The bit information is still always
-used from the original (non 'convstart') channels.
-
-This has not been causing problems because the bit information for the
-'convstart' -channel and the 'normal' -channel is identical. It,
-however, will cause issues if an IC has different characteristics for an
-'convstart' -channel and regular channel. Furthermore, this will cause
-problems if a device always requires the convstart GPIO and thus only
-defines the convstart channel.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
-Revision history:
- v1 =3D> :
- - No changes
----
- drivers/iio/adc/ad7476.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
-index 7b6d36999afc..fc701267358e 100644
---- a/drivers/iio/adc/ad7476.c
-+++ b/drivers/iio/adc/ad7476.c
-@@ -121,8 +121,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
-=20
- 		if (ret < 0)
- 			return ret;
--		*val =3D (ret >> st->chip_info->channel[0].scan_type.shift) &
--			GENMASK(st->chip_info->channel[0].scan_type.realbits - 1, 0);
-+		*val =3D (ret >> chan->scan_type.shift) &
-+			GENMASK(chan->scan_type.realbits - 1, 0);
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
- 		*val =3D st->scale_mv;
-@@ -345,7 +345,7 @@ static int ad7476_probe(struct spi_device *spi)
- 	/* Setup default message */
-=20
- 	st->xfer.rx_buf =3D &st->data;
--	st->xfer.len =3D st->chip_info->channel[0].scan_type.storagebits / 8;
-+	st->xfer.len =3D indio_dev->channels[0].scan_type.storagebits / 8;
-=20
- 	spi_message_init(&st->msg);
- 	spi_message_add_tail(&st->xfer, &st->msg);
---=20
-2.50.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
---uvmQgl2tyCPpRLdJ
-Content-Type: application/pgp-signature; name=signature.asc
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
------BEGIN PGP SIGNATURE-----
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiUcyYACgkQeFA3/03a
-ocX9UggAtce/kkLmUPgbx1P/Peqh1yCesHSorqLGfQdCQUfKQpEMT7QcwHPFmxkc
-n0j1vHNgWW/1bHdIhliJtApKS8JrLt8w7Ivsl2BPnzTIiolNiMFVFla6cYa29oJ+
-/vg5olH2briUQd2U1NguGof1HvyqXNsZWnRBeN2QWniabl7npb8elU+39no02bTH
-SGvIXmrcPGt1Xr6/V/0fhJZ+Om0qk0BjS3C4dxY8vT7ZPkU+OOoIJDioRbx1Unwl
-fiTTegAkPJnjDwkGXlIP8BpHzICq/y8QxzoSataGFMUZA9tlSq47XqvH6ULlbXZP
-dzVaN3SHq/EZ8f5gSFTodBw798c5Kw==
-=+Jui
------END PGP SIGNATURE-----
-
---uvmQgl2tyCPpRLdJ--
+If you want to undo deduplication, reply with:
+#syz undup
 
