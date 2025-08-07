@@ -1,84 +1,89 @@
-Return-Path: <linux-kernel+bounces-759583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBB6B1DFB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:07:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3889BB1DFB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE8B3A5EE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8FB63ADB3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7C4227B83;
-	Thu,  7 Aug 2025 23:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F852620D5;
+	Thu,  7 Aug 2025 23:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="2gv/qL+6"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="AI/37xwD"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6BE24B29
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 23:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B811F8ACA
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 23:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754608016; cv=none; b=WUibb9GHA6KJB1Ys233ZfLN6r+tuywvxzR6OXrdM57zbvMgVM4BC/ZKtaaFro3aXCpKWY2RUREw98lCjB/O0fxEM2KnS1QO2/grCjCXOIdY4gmNMsCvm7Gl2JAQDKPwM+v+uLVHpduZ9XpoOLElkV2Omsh38CJhQbxNA/9v389Y=
+	t=1754608017; cv=none; b=MPyp/AEQJZq8Ag3g4MbVgLN0pdRhtp/SL59Ju8taUjb9rlc0K/5izbb+JY4DRmlvMPaXs5Ftk1WpSsXdnUMzWxxeIBszJndMGkHHBL5Wu3leH69z6jM9aJ0S316ftGexeSo8/oCSMxO0u8j0kd08nmui9nov0UqEMcYaiZwax/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754608016; c=relaxed/simple;
-	bh=NVOuYC3xHbyWujKXJL7jLfVwx5wdzvzuq0RVO6u5wOQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ioQ86ok+e0WyzDuNFWSLm+6ODOvW/jfceRc9f2/5IKnRWV6WndPj8EKHRppW//UyMvA7f6qP7LH4hISPfisX8gBQHYT8A9DBk7Dgo09+wZPpcxZ67FQJc6Yv3isGRdH9d7Q0iVEFlP9Lqbg2AgrBwc/07dklN7aCf8wFcr0qdFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=2gv/qL+6; arc=none smtp.client-ip=209.85.210.44
+	s=arc-20240116; t=1754608017; c=relaxed/simple;
+	bh=h5Q/7ze6bM3o1VsTwHnPbmRG9FXXEVNIXMucrQZmgYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tSEVQlDEqY4SmwrcSMkClJ/jGJ2UcDlvN7pJlqoxjqi3t7jpr3+ZvnVuPQ7sSnzBoZk10PJcwbUMeQZe0fDu0yg1dRFnbvYbNwHcJGuUn9EZdKopkyht8Wrc6tlPMa7XujxHJhANGvJjWWKba4p9sahAnsDE7guAFk93fh0MdoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=AI/37xwD; arc=none smtp.client-ip=209.85.210.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-742f983e313so1270110a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 16:06:54 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7430e1fffe1so1077919a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 16:06:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1754608014; x=1755212814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=75Yx08DWsWdAobw9dHH5zVWLwwU9BE9U1Hzf6cU/Nt8=;
-        b=2gv/qL+6G2DXmEXFZRnDc2/qfOLr38lCUh3Bz9yspZjeFedt/PVNfsOOJ2a67bcEKK
-         5aA97GfuWmSqXqad7b/MLkh16F2gHUYeyUhwKIq1bvTlckMdDR4COPZvWM7ES5OIyRcr
-         xgAeFdI8PqT9xUvuVZLQuMtc5K3cgx/0F+2jDa9XfcqBst5gZOI/xUCjSCJuhOSp42Tz
-         9e2JwURmWa48TwLaXOS04OhMhg99GDgd/1Rt5+McSgn2OTCLD/dxJyQ35TTGNPI3Xdi1
-         CHce9Ys6Zkcwz3ZJY0IO2OgaQLEf0gaHPE7OZdpiGimiWuyBOqTLbyMlwr/AG5OVXCdH
-         g3OQ==
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1754608015; x=1755212815; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IdSyWAAmgtvWxwCCBM2UNaIrykEqdMEI7qno43QP/C0=;
+        b=AI/37xwDW07tLjktfEu/Mku2/IHEhL7VpP+qqRn/jzG8bH1rqoGZnD4WeCYXZWvLTx
+         ZM2IKp6kBWvIX6zNYIIVXukV3mpWzusnV1zCtazQFSDf/cfOFzMTeR+9ErXO/RuLoMKT
+         Ex9C0zzhfKK8SLFGndJfBs9LjOvzcnpAbD8HRW/h6M/ZlVX5ypghOu7ZR26Zy2KN/ekZ
+         PgHrI3qKsGsyqRUldhvQzfUMILxSbFMt1Ospl6hIeCFuI8ozETQ9SSl3zieZv9BYZVmL
+         CpCrvL9/xXglluoYnxvbd465rUrw7Zfhck6myZ3bnm5ZfgcoKv66ckITQ3kdR3ylu/jU
+         yRrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754608014; x=1755212814;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=75Yx08DWsWdAobw9dHH5zVWLwwU9BE9U1Hzf6cU/Nt8=;
-        b=qLCWXK7ZonzHMlt7fwRwYSzeN5BOuq8r3EgObWRZKOt6I+z0fxr3XIzTZ73xt1VSKT
-         xZtKYaPCji/4lKMoejhiBbg8p45dWD0aj4hXiK2a2nj61XGg+5Wgm49PX25m87EqZnvW
-         gkj3TKXIZwMqtIbn4huKqCmR/Jhpyt7DCDLOXPfCKddh+uZiZGSwXfKk+/lHj9x2i3za
-         /75ZizbsEfzabQf/AuqJeMx69H+cuTK1NqI24L089GoDAs4Kguk2O2U+HrnJImTUFwBQ
-         aKCEgY3AeqyS2PXj9LOWtnEocXPoNyFa1o1rGFLM0l26SNjnLUkG/L6rBGJgbPHPNH9R
-         kWdw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4IflurNjZVYnOidIJmJ7839lawES+NqrgIkmGPuO4WzqBbIoUoGlLCldLEwA1z8JZB6lKUfpK1GNet6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0L/esU5irmQdayG7/ZV+lrD3Q8/piDNHfVO2cZvzu9ahyAVqb
-	HZcL+QxAjXUAcwvMY/e6XkQKl9Uan+hTxuBjaWpK/i6S9ZMehDpGHSdIe8NRnPhsQTk=
-X-Gm-Gg: ASbGnct6eyHqLvam1+pu0z3DQr7T/tz2GDwxuDprI73ylwfWNTToqRBjQc0VuJD5FbD
-	tMBAX4zdjECvx1FktJoXfc5SjcjjwN3NUPweZmsQBKzLNsopudzYc+4tt3QwakNXiqYlcrP2TeF
-	xcEPPbo0L1k4P85qAsOb4IqpBgeNIQQwHa57M4hvVRsFEmiwqm1T3G/wtviotO/NveVh+lpXDh6
-	AadS6jQnuARPqq2SZNSet01kDHjJFW7r4k6Oc1ZGfsHd0ahKIfm2knZrxyowzvk3l0q/PaRx3Js
-	Bib6gn6Xgi9Gv3CWXFBp7HrKm9oIjPymRoERV6HqlxpE+0Wpw6x0E5WXsa9HuMbkjSLoKzSOyac
-	Z1rrLjsCYvI9YdR7Y
-X-Google-Smtp-Source: AGHT+IH57LnjubbD5UYK7L15NYiY7VlrhKFaIgo13Ia+wW70HiUgMFbemwc3ZpgTi1ORzEyJu7SgvA==
-X-Received: by 2002:a05:6830:3c1:b0:741:9e2e:863e with SMTP id 46e09a7af769-7432c86b6b0mr530342a34.13.1754608013676;
-        Thu, 07 Aug 2025 16:06:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754608015; x=1755212815;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IdSyWAAmgtvWxwCCBM2UNaIrykEqdMEI7qno43QP/C0=;
+        b=VuTBClb0VwFJYRpAjzx71tVkw59DJ1pH/Ka7fias1TuHKCT8NAKb3I6B8ffXko/AeX
+         pWWMXkr/0OYtznvTM6RRIti7fUWpcBohJBeM8ghpsAT9zY1Pg7+ZWejI2Dv/mci8oTk3
+         OP4n8XzNvOTc0eS5VX1SNBezvAt3cDnUmO0qej1Ec+itfKcuSNrnQuWyW/M1LhBvyShL
+         rl1i+yQt2yWCf9BS36Un4R43Rq7uzjz4cZvmEaTzX6kFtUGCOyI83jb1L3UkfvyUkvzd
+         V+/Pbq8KYJAWmxGhk8BhfCjQsLnOMb277C8rfbX5mGXcaW91ObsV9oW3DHa70iHWweIY
+         S9oA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDba47OkZM95CyO4fG4KEpkikXziK/hmOOVGQ1HjK3rIPkg+h8UV3Lgzd4IBrbnSyUC40wnB8HI8feNjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzDwOPeLRRdwwA5gKd4mevX4vRFYap1yq4NV8OZVl+kaAZWPiB
+	UOFKH0nQ1v4/1eUr4eT+L8Ggy+vbsH+iu3GxQhyVGIz3Mjk8Q/CbbkDRpFeKQNPZXE0=
+X-Gm-Gg: ASbGncvVjFlmpaYP2yI622KLzrrc6ApBc1y7+95suwtiQPBqiHm+7U4KK3fvHw0gm2X
+	VkqaVcCOJbBm/sxJ/oq3j9wfFoqBcb961WfywgTzz8HSDGYudOzMaaH4EoIa3YAHqq+LtitwEfq
+	hdThM0On6HNW2XiRd2CuiXaj3OzTXjH83vH0Qs+JN8ADgN4imesfs0CO5gS98QdhLYeh40ijBb+
+	n7wA8TkepydIcegK5/X0Mrlz+sGhFMDFJO1yxi5L1QkRvhLUA2MzpCzkrZ1o8mCkQoh9cNQWesg
+	6M3wfmtQANKYmUpAU3KNqVydnDnFBW1pHaDaX98Ov/MMA5qW4oM3mRr+GM6N8KvLnmAPQ6XnGnY
+	8d0UNyk47c9aV/cs/
+X-Google-Smtp-Source: AGHT+IH7Y8AzaYShbuhS5vqbSZHUaQieOK8Cs1pHFVec6IaNCbe50DEYijiU0MeA9Ur94GZnE/WR2w==
+X-Received: by 2002:a05:6830:60db:20b0:73e:9fea:f2bd with SMTP id 46e09a7af769-7432c92fcfcmr399306a34.26.1754608015042;
+        Thu, 07 Aug 2025 16:06:55 -0700 (PDT)
 Received: from localhost ([2001:470:b8f6:1b:e698:accb:897b:ca29])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-7430a0ad042sm1386716a34.6.2025.08.07.16.06.52
+        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-74186ca9887sm4248915a34.4.2025.08.07.16.06.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 16:06:53 -0700 (PDT)
+        Thu, 07 Aug 2025 16:06:54 -0700 (PDT)
 From: Corey Minyard <corey@minyard.net>
 To: Frederick Lawler <fred@cloudflare.com>
 Cc: openipmi-developer@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com
-Subject: [RFC] Patches to disable messages during BMC reset
-Date: Thu,  7 Aug 2025 18:02:31 -0500
-Message-ID: <20250807230648.1112569-1-corey@minyard.net>
+	kernel-team@cloudflare.com,
+	Corey Minyard <corey@minyard.net>
+Subject: [PATCH 1/4] ipmi: Differentiate between reset and firmware update in maintenance
+Date: Thu,  7 Aug 2025 18:02:32 -0500
+Message-ID: <20250807230648.1112569-2-corey@minyard.net>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250807230648.1112569-1-corey@minyard.net>
+References: <20250807230648.1112569-1-corey@minyard.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,19 +92,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I went ahead and did some patches for this, since it was on my mind.
+This allows later changes to have different behaviour during a reset
+verses a firmware update.
 
-With these, if a reset is sent to the BMC, the driver will disable
-messages to the BMC for a time, defaulting to 30 seconds.  Don't
-modify message timing, since no messages are allowed, anyway.
+Signed-off-by: Corey Minyard <corey@minyard.net>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 42 ++++++++++++++++++++---------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
 
-If a firmware update command is sent to the BMC, then just reject
-sysfs commands that query the BMC.  Modify message timing and
-allow direct messages through the driver interface.
-
-Hopefully this will work around the problem, and it's a good idea,
-anyway.
-
--corey
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 8e9050f99e9e..f124c0b33db8 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -539,7 +539,11 @@ struct ipmi_smi {
+ 
+ 	/* For handling of maintenance mode. */
+ 	int maintenance_mode;
+-	bool maintenance_mode_enable;
++
++#define IPMI_MAINTENANCE_MODE_STATE_OFF		0
++#define IPMI_MAINTENANCE_MODE_STATE_FIRMWARE	1
++#define IPMI_MAINTENANCE_MODE_STATE_RESET	2
++	int maintenance_mode_state;
+ 	int auto_maintenance_timeout;
+ 	spinlock_t maintenance_mode_lock; /* Used in a timer... */
+ 
+@@ -1534,8 +1538,15 @@ EXPORT_SYMBOL(ipmi_get_maintenance_mode);
+ static void maintenance_mode_update(struct ipmi_smi *intf)
+ {
+ 	if (intf->handlers->set_maintenance_mode)
++		/*
++		 * Lower level drivers only care about firmware mode
++		 * as it affects their timing.  They don't care about
++		 * reset, which disables all commands for a while.
++		 */
+ 		intf->handlers->set_maintenance_mode(
+-			intf->send_info, intf->maintenance_mode_enable);
++			intf->send_info,
++			(intf->maintenance_mode_state ==
++			 IPMI_MAINTENANCE_MODE_STATE_FIRMWARE));
+ }
+ 
+ int ipmi_set_maintenance_mode(struct ipmi_user *user, int mode)
+@@ -1552,16 +1563,17 @@ int ipmi_set_maintenance_mode(struct ipmi_user *user, int mode)
+ 	if (intf->maintenance_mode != mode) {
+ 		switch (mode) {
+ 		case IPMI_MAINTENANCE_MODE_AUTO:
+-			intf->maintenance_mode_enable
+-				= (intf->auto_maintenance_timeout > 0);
++			/* Just leave it alone. */
+ 			break;
+ 
+ 		case IPMI_MAINTENANCE_MODE_OFF:
+-			intf->maintenance_mode_enable = false;
++			intf->maintenance_mode_state =
++				IPMI_MAINTENANCE_MODE_STATE_OFF;
+ 			break;
+ 
+ 		case IPMI_MAINTENANCE_MODE_ON:
+-			intf->maintenance_mode_enable = true;
++			intf->maintenance_mode_state =
++				IPMI_MAINTENANCE_MODE_STATE_FIRMWARE;
+ 			break;
+ 
+ 		default:
+@@ -1922,13 +1934,18 @@ static int i_ipmi_req_sysintf(struct ipmi_smi        *intf,
+ 
+ 	if (is_maintenance_mode_cmd(msg)) {
+ 		unsigned long flags;
++		int newst;
++
++		if (msg->netfn == IPMI_NETFN_FIRMWARE_REQUEST)
++			newst = IPMI_MAINTENANCE_MODE_STATE_FIRMWARE;
++		else
++			newst = IPMI_MAINTENANCE_MODE_STATE_RESET;
+ 
+ 		spin_lock_irqsave(&intf->maintenance_mode_lock, flags);
+-		intf->auto_maintenance_timeout
+-			= maintenance_mode_timeout_ms;
++		intf->auto_maintenance_timeout = maintenance_mode_timeout_ms;
+ 		if (!intf->maintenance_mode
+-		    && !intf->maintenance_mode_enable) {
+-			intf->maintenance_mode_enable = true;
++				&& intf->maintenance_mode_state < newst) {
++			intf->maintenance_mode_state = newst;
+ 			maintenance_mode_update(intf);
+ 		}
+ 		spin_unlock_irqrestore(&intf->maintenance_mode_lock,
+@@ -5083,7 +5100,8 @@ static bool ipmi_timeout_handler(struct ipmi_smi *intf,
+ 				-= timeout_period;
+ 			if (!intf->maintenance_mode
+ 			    && (intf->auto_maintenance_timeout <= 0)) {
+-				intf->maintenance_mode_enable = false;
++				intf->maintenance_mode_state =
++					IPMI_MAINTENANCE_MODE_STATE_OFF;
+ 				maintenance_mode_update(intf);
+ 			}
+ 		}
+@@ -5099,7 +5117,7 @@ static bool ipmi_timeout_handler(struct ipmi_smi *intf,
+ static void ipmi_request_event(struct ipmi_smi *intf)
+ {
+ 	/* No event requests when in maintenance mode. */
+-	if (intf->maintenance_mode_enable)
++	if (intf->maintenance_mode_state)
+ 		return;
+ 
+ 	if (!intf->in_shutdown)
+-- 
+2.43.0
 
 
