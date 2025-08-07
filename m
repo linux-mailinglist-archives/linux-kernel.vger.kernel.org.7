@@ -1,195 +1,233 @@
-Return-Path: <linux-kernel+bounces-758891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E608B1D52B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:47:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7B0B1D529
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66FA87B2BF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:45:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7F7F1899AD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45712737E8;
-	Thu,  7 Aug 2025 09:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44D7279335;
+	Thu,  7 Aug 2025 09:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g2j2UeYv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=fetCA905017.onmicrosoft.com header.i=@fetCA905017.onmicrosoft.com header.b="mGzY9247"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023076.outbound.protection.outlook.com [52.101.127.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3149722D7B0;
-	Thu,  7 Aug 2025 09:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754559955; cv=none; b=dvVTd11LzE06cAlINC3lPaoeLTiIiXv+HFMnKTHl8k8u3/QJgKlhRBJ8ih6SruPtDuVXQVSuLzJb10PLn+n2lQQoVLtXwPm58OPSZ+rR694jf/T/YuA1wOdvNxrx4d2DCel7yzcnvFH3nVZLV24tO5P+YT/IXQ8ynX5nWmqQbiA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754559955; c=relaxed/simple;
-	bh=l29hIimh815GoKFm3H9eplWyu4g0DZR2lLgmyiXLfsk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mIOWdRbioFAholQwI0izWbnwGk3y9fRY5BZpC4QdbE8a5aBO9iymQXxLZX6IWl7B8Rux9xQg1D9hiOawX718HQSI1xclPSNNUjPSf6bkuqnCGrPfSI0O7wP/2LzZVlv6U9/74zcyu3H/+yILhWwJzCe/LHzAVzdmJj1RELHhIkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g2j2UeYv; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754559953; x=1786095953;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=l29hIimh815GoKFm3H9eplWyu4g0DZR2lLgmyiXLfsk=;
-  b=g2j2UeYviSOMvdE9A/juneq4PLabTw5NPbL1lpDq+V2T0KBYAsGo2wlr
-   dcmNowa0UnGZsFkEzkrmLxXQCHj0bVH+emeWibdjJw3qQpX70f/OcUzaI
-   RJaYHRDjTXDJu2QKxbBlZWJLqUrQPGP7+rBlmIZ9o8FyeMTygT615LgVf
-   Cw6hqWEW4rE8n66t318AMM1VU65ZYInog/aVpXk6gsnslA+1pu4DH1HTX
-   pmVDgLBTZmrvNkd4cX962W7UC47U3OKZjLcZlMLreFc8NEWNhjbgTfkTz
-   qbwAKIF46h0m/pRlK1g3nWSPmfkeiL1Sec2m2LbKVFYbirJ17YoukScT7
-   w==;
-X-CSE-ConnectionGUID: lSlgtCirR0esbptEACmicw==
-X-CSE-MsgGUID: Azn3/zwjR8SIKc0i10KxFw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="57028914"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="57028914"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 02:45:52 -0700
-X-CSE-ConnectionGUID: sC/K2qvCTJmOT/2zC6GqcA==
-X-CSE-MsgGUID: NC1tuRRITk+pgkHnDykcgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="202196509"
-Received: from yzhao56-desk.sh.intel.com ([10.239.47.19])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 02:45:46 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	x86@kernel.org,
-	rick.p.edgecombe@intel.com,
-	dave.hansen@intel.com,
-	kas@kernel.org,
-	tabba@google.com,
-	ackerleytng@google.com,
-	quic_eberman@quicinc.com,
-	michael.roth@amd.com,
-	david@redhat.com,
-	vannapurve@google.com,
-	vbabka@suse.cz,
-	thomas.lendacky@amd.com,
-	pgonda@google.com,
-	zhiquan1.li@intel.com,
-	fan.du@intel.com,
-	jun.miao@intel.com,
-	ira.weiny@intel.com,
-	isaku.yamahata@intel.com,
-	xiaoyao.li@intel.com,
-	binbin.wu@linux.intel.com,
-	chao.p.peng@intel.com,
-	yan.y.zhao@intel.com
-Subject: [RFC PATCH v2 18/23] x86/virt/tdx: Do not perform cache flushes unless CLFLUSH_BEFORE_ALLOC is set
-Date: Thu,  7 Aug 2025 17:45:16 +0800
-Message-ID: <20250807094516.4705-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250807093950.4395-1-yan.y.zhao@intel.com>
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FB0263F36;
+	Thu,  7 Aug 2025 09:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754559929; cv=fail; b=AkLgt2T9X+nWucJ/Ri+E2gaXI5NcAwHm+PEkjkNQcgzyVhEUnsngx5BB+sz3wUysBmxUME+pwfxUneTAKoyRTRngdOsJQYeyDALCECuArNeMJBMjCF/26F9KWpPOISpcdq+KMJy17zbmZ2c35xHbhJX3hv9AnHCFxxhsiDoSkkw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754559929; c=relaxed/simple;
+	bh=yE4qDjXEjz3uEZvKIwuBrUjYQ3Ob22Vx40d9o7ezNvM=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HoUFhjHmJzlZcOCJ6xX45JT3COI9hQcTOy9HKolrt6if2fGMnsF9lJM281Y5eEoLsuiarU8pfJ7IW4VkfrX5NbRL1g+qfX47JuYn3K2zwgCSXLfVWOmHNoRR1t6cKO5gl3662qU1+PsIZMmRIhPBxMoU8yCLOdVxzObRFEQvxI4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=portwell.com.tw; spf=pass smtp.mailfrom=portwell.com.tw; dkim=pass (2048-bit key) header.d=fetCA905017.onmicrosoft.com header.i=@fetCA905017.onmicrosoft.com header.b=mGzY9247; arc=fail smtp.client-ip=52.101.127.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=portwell.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=portwell.com.tw
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C7cBTnWmle3g45nDlYyFXl9SUJVXdMrhOr9WNY4Ev0GP3KD9pacc/lYfaDdgWXfS34GjFNbz6u1b6vNLRGI0o3bymi4BQ9rKBmOeTS4yAVIB+kye3eMFro3aV2u1DRnIYlq3RemJScCCr425Q+TFMHuPm4qrbDnPGJh5JVZyIiibcpc9cnTRQZXMwtlT7WaubZ9iJHx5p4vUiz8Cgaa7YFo2gJk8tiokqBkGvq7uXspKgTz75ffWqEYZE7yvA5WZfhJE9sc68aiOJSp8VTIljxClJxMVW3/qy0OrOIAnpZ0Pj0leQtIttwvvLS+1QZiyUkPGOJO11CxiaK3/2BimIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VV5S2nMr1i9MJjeY28uZgE+yVbphEEIiA+MsmFNOWlk=;
+ b=PPJYYFQYg/KfH2e43jObphIZE5lzMiIw37BWXNSfMX5VrBGB9r+W2e3D282F+TUh7yMyei/aLUPP1oAclXFLtXlnFrMdAXctrB3aITY/DeR8oB9lsDDvZIZrRSwypvL6lCUG/XZsMhPPb5JUtO9yGCxfJmn6lu0d8y/hiFGfADu1HBNqWnfXCgMLSjajm8v+ThYUKTQzM4KWWsm5m/ETr+Dn8WpZQcG5OJS9nY+MkuzKsxlR2wedc8bT/+ijnMWJahNvnQ7JYPjUa1upOm2r/W31HBDG1k8aTpgLhT1JhdfwNOrTN0MiDYn1N6MD3Zhuu1WeLwXWvTozv6qt5CPSXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=portwell.com.tw; dmarc=pass action=none
+ header.from=portwell.com.tw; dkim=pass header.d=portwell.com.tw; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fetCA905017.onmicrosoft.com; s=selector1-fetCA905017-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VV5S2nMr1i9MJjeY28uZgE+yVbphEEIiA+MsmFNOWlk=;
+ b=mGzY9247g0GQamQTReQy9y/xyv0p+od9251NqGAiCrzgDPr7BehCu1+UTlYWQzk0JE+EUx6S/c3R5AqQGGilNRG6Mr3DkPtr7X37ZP9NASNnmimdqHLkLnQS32OL7/6jsilH59WEJ6F3GqRijinir6VOm47wgj9VtdZnGCraPsfSJfovJ21yj9e7ty+ScvVka93s70ViqEepswMZZtdo6NWqNHj/ao0tQ+yOLlylHUlwVkOJhbhd2O/f66x/7xJZ7fF4ajhs6jfqmMXApFDdg0VFbVUnKop3drwUpPmAF40Mwb2t4HOeft5I0TJKla3RZP2CVmykL8QOqJFrWA9mgw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=portwell.com.tw;
+Received: from KL1PR06MB6395.apcprd06.prod.outlook.com (2603:1096:820:e7::10)
+ by TY2PPFA55642425.apcprd06.prod.outlook.com (2603:1096:408::7a0) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Thu, 7 Aug
+ 2025 09:45:20 +0000
+Received: from KL1PR06MB6395.apcprd06.prod.outlook.com
+ ([fe80::9235:5570:71b3:224]) by KL1PR06MB6395.apcprd06.prod.outlook.com
+ ([fe80::9235:5570:71b3:224%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 09:45:20 +0000
+Message-ID: <24439698-ac81-43b5-b808-e912954f573f@portwell.com.tw>
+Date: Thu, 7 Aug 2025 17:45:16 +0800
+User-Agent: Mozilla Thunderbird
+From: Yen-Chi Huang <jesse.huang@portwell.com.tw>
+Subject: Re: [PATCH v3 0/2] platform/x86: portwell-ec: Add watchdog
+ suspend/resume and hwmon
+To: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, jdelvare@suse.com,
+ linux@roeck-us.net, wim@linux-watchdog.org
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ jay.chen@canonical.com
+References: <22148817-aade-4e40-92b7-dcac0916e1ed@portwell.com.tw>
+Content-Language: en-US
+In-Reply-To: <22148817-aade-4e40-92b7-dcac0916e1ed@portwell.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TPYP295CA0050.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:7d0:8::12) To KL1PR06MB6395.apcprd06.prod.outlook.com
+ (2603:1096:820:e7::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6395:EE_|TY2PPFA55642425:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f30129e-fd5c-4684-368a-08ddd5971f62
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U1M5WVZweThkaE54N1pMN2N2UDFDaVZsTWtLZ0ttS3c1SU9DRm42K2I5V0Nk?=
+ =?utf-8?B?MWdPajRYeE9xM3Z6TFRUUlNiRWp0NUdwcnZBMmcvM2V2VFVsYncvNy9JWEhU?=
+ =?utf-8?B?dXNKTGR2cWMzdk1LL25Yc1RaMmxvdVA3R2ZlM0lNQjFWWmtRRmdRR1JVWFlh?=
+ =?utf-8?B?Q1NOMktQSm9JU3U3ell0OW9Wc09haForWWgrSDdINzZkS3B3c3R0dEtMRHli?=
+ =?utf-8?B?NStCK3BVMy9mTUsxd292bm5hdTlueXpYQmlCV0RtS2J0KzB4QjlyVzNCR1BZ?=
+ =?utf-8?B?UGliRzQ0MU9yUFhCWitJRTVMS0RuM05MSjVaTGJLKy9yckltYmdraVkyalVX?=
+ =?utf-8?B?RWxzVHdIM3preTlaZzlyT2VNZUFiSjJNV1JHZWU2Z3NBOExMdHpEM0ZiS3l1?=
+ =?utf-8?B?dlRhUFU4Z0Z6ejdzZDRFbHF5Ui9ocTZBQnhUOHc2Smxqb05rL0Y2QkhQSU8x?=
+ =?utf-8?B?YXNOTnZPTG9VWiswL1h1MDdMV0ErS2xMYjdwaGs2d0d4N2gzTE9uOUNkeXQ0?=
+ =?utf-8?B?U1REUU0wamluRzJhdXdZdE5hbk1OM1V2S2M4WEg5M1E3UzJCNkFHbHM2S0Jz?=
+ =?utf-8?B?b1d0dXg5RVYxdmwwZjB0VjFyZHdJRUw4VS9qckNvL3lpS0tYZ3U4Q09ZY2d2?=
+ =?utf-8?B?WndqSDM3UFMvWGhsc1cxdTk2ZWFaMGt0VFRiUGkwZVRBdDNHcWpUeU93RVU2?=
+ =?utf-8?B?cFo2b1hCeWx3N2xOZUlqRUVOR1hqSmt1c3BzeXh3VGEwNmo2eTVZdGtoKzNj?=
+ =?utf-8?B?eW9sYW5vR1B4VlFXWk5qeTZMdy9CTW9VMFdhWVBDNFBJaVlhVUJPdm8wd3cx?=
+ =?utf-8?B?bmd4bTBRSzYyWmU0UFBNVXhERkVpb3JVaUd4ZE1NZlR5d2dnQkhzUkpJRitk?=
+ =?utf-8?B?TnpvOHp1cEpaOG1talVEYlhoTmt4WXErYjNmV3l2M1VNZFdVQ3pMM3IzSlV4?=
+ =?utf-8?B?cjlObWdMdzczN0RlbHhoNU95MTBER2tvOFJQbnZQcWl0WExCbUtZYU0vUklS?=
+ =?utf-8?B?cmhuTlJUZ3BCUmJJK3YvRmNhSzdMME9Uc3ZxZ3Z2NnVoakVvVHVmMmtqdHNH?=
+ =?utf-8?B?TEptZHJ2SWw1bm12UjExeHBhMlRlODlEa1NxTDhMVlVpNHBzaHJmazh3UGZ4?=
+ =?utf-8?B?NHJXM21wdkhpZVZHN1dsUHZlU01mUjhTWFFGcFNOYXpJWUJwRDk5QmJIRFJ5?=
+ =?utf-8?B?aXBmL2Z4S1dueFZUWmlFb2JuTWhHYmZNS0hjeGNLQmhGYzFsMWZPeXV3TmxP?=
+ =?utf-8?B?dGlUMUtPTDJWYUlMMFQwUnVRRVhVODg3ZmZTODJNVUoyMnJuSDZZdUhMMVdN?=
+ =?utf-8?B?TzBzUFJCV1FIcUovRXRJelVxVVlEdUpuYVJjMjBDaXgrLzM4Qm9Pb0dCM0NF?=
+ =?utf-8?B?emtBVGJjTW5zVEZqempWTXJGWHM2SHFta3N6bU1JTldIek13cFA0ZThXUUM5?=
+ =?utf-8?B?N3ZieDhodkVNaEgvREdCcmJKa1dSSks5RWk1dGtjUUI5YVZVYmZkeWtzQTFM?=
+ =?utf-8?B?UXJQZG1kK3BYRjNYaElnVUZ3ZEVZdnh4NDBzVnpGK3VjSG52dVVUVW9SeXZs?=
+ =?utf-8?B?Z2hWUHZlWVE5ZUlPYTYvWGppRWgvdlZyWTl5WkQ3ZlpuckZkL05hU0w5ZEhE?=
+ =?utf-8?B?NVY0akRaVE8vSjN2YXRHRzV4TUdZQnJpQjRUMU85eGtrb2kyM21BNHFVS1Ny?=
+ =?utf-8?B?NmdmSDhpU2ovbDB2Zmx6enY1OVVBRXZ4cldueTRtUlRQMFRkbkNhTnBrV0NB?=
+ =?utf-8?B?b1pDR2NaYnlEeXI3WnR0OVBxUnNNUDAxbFMyRWpRbWxyVXdCZ1lTTldVK1BT?=
+ =?utf-8?B?Ull2NjRQcDZBRmhCSzRBWUI5ZVNYNnlGUEEwODh2Y3FpRUVObmhCYUZ3aXZV?=
+ =?utf-8?B?Vi9Qcm5RajlEV2N5eUZNbWVlMGFUWk5LSVVUWjlodXJNbnc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6395.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MGs5N3VROHp2RTVQSWp5Q1F2c0Jra3RwWFN6Ylc0UWZiVU5sRkZrNkRQTHFs?=
+ =?utf-8?B?V2IyQTNqMWlYS1NndHliMXRjM2dPWTVDK3ZHNU9tVFM0K1EwbkhzeUZ5OUZm?=
+ =?utf-8?B?MmMvMlBnRlFYZlF4bk5tV3g2RGQ1cUYvYmlxVFl1Y29XYWpFbktxdlFTOWpv?=
+ =?utf-8?B?MnBtNHdiS2FrREs4WUFCZEhxZ2dZcTZmVCtBaEtvM0puNGY5WEpjUnZPdnY1?=
+ =?utf-8?B?MVNud29ZTzlvRU5OTm1RbE5sQnFtM04yRTFtSFdabkpPeFg4ZWx0V01jTnBl?=
+ =?utf-8?B?Wk1ObFRIOG5zNlNLQUNDZFovZEJDNi8yemc0T0pZN3B6TldmUUxtU21VTS9I?=
+ =?utf-8?B?L1ZYVTFQazBkZzB4RkNXd2pPenFSQXRudXN2bDVSQ1V3dFRsUnB1OENlcGRF?=
+ =?utf-8?B?c1RSbVpqLzdnV0VZY3hJTEwxaDhuWmMxUTYxQ0U5QW1NVW9LMUlNVm1KbC94?=
+ =?utf-8?B?TDlrRytIdlFYdER0ZlRWUGIya200Z1VUeFRRblJkcWlhejZZRXVmcDh3RXpu?=
+ =?utf-8?B?TTIwZTVjU2w2UWpBWHU5YnN5SW01M21RMDJjSEx1V0w4cjd4T1JXQzNiWWpp?=
+ =?utf-8?B?UTkvczVrRGw2WVpIRncvNFFYb3hCc1pFRVBqSnQxanJ0YXJGQ3NZeklrMHhp?=
+ =?utf-8?B?NEVlK2xJdVovY0FXV0RlMWhCQmRkRXRWaXlKaS9iVnNPSVFHK3ZOdlNTYm80?=
+ =?utf-8?B?eDFXTlQrMS8wbFZKNnc3cjYvdEdqUWNBOWVQMHMyenRtMlo2cDVGKy91UTdW?=
+ =?utf-8?B?SUdpVUVWVmZFc0FLWG9lNnV1ck1LK0NMVE00alM3aTFJeUh2eHpZM0ZuRnI1?=
+ =?utf-8?B?NTUvVzVkWkxWNnpBakEwUlF4bHhLT1hmY0wwRGp2b3pQbXFEV1lqU1h4cFgw?=
+ =?utf-8?B?dm5QdEFOSWhVbG5kQlJ2aUw3S2RJL0hQT09GMEszdjVmbUhCTzUvS0x0Y2tG?=
+ =?utf-8?B?MmE0UmVjcTJkKzZpNUs0YkVxRzJiaFQ0Ulg1Q2QyTFo5SlRZaTJaaDlhKzlq?=
+ =?utf-8?B?NUhSY0hNd1diOUQvQTZ1dUY2ZFJGTHRxTGFweEdiU1JKZHQzSVBBc21uMFNX?=
+ =?utf-8?B?K3pnTk4wN2ptZFZFblEyUE9GTklDa3B3N0psR2NDemdsR3lOTHI3UDVvcllU?=
+ =?utf-8?B?djJhMExYYWhuWlp3dWVGZlNqSnpHcWpEOWdHUmRGOFpTK1lFTDM4V1hVM2NZ?=
+ =?utf-8?B?c2JIVXg4eHpIL090VDB2S1ovRkVRN2FmVHRsN2ZjeDhPYlRpTDFoUlEzLzFt?=
+ =?utf-8?B?bDhuNHdrcmg3SWJWdkxJUnpaaDhaMVJBVkNmSG9oeGd3a3hNRVk2dmtmbDd3?=
+ =?utf-8?B?NG8wWW1PekMvQWM4RXBOdjVPNXJmcm8velpzR3dwVkJsSk1Yc3Z0SHFYOGRT?=
+ =?utf-8?B?eE9wM2dVcmlvZm0yYXJCQmM4UjljNyt5TklUQWdianRTVFJqL2JpWTRmeDVj?=
+ =?utf-8?B?djkveUM3NHJ1M2J1MVNsN0EyU0ZjbGtHd2s4NjNmVWdFdFJGNDZONGk0Q2ln?=
+ =?utf-8?B?ZGZGVXpMTXNqZFB0VDZUTmR2K2p4emJjeDduV1h6eXhNampjRy9zR0dYM084?=
+ =?utf-8?B?MGNqdFVkT3VqMm9LZFJkUnl6RE5xNUhjQ293TURuQUQwRit2MGhuZ1VHOTVE?=
+ =?utf-8?B?VzdwY0lPNmkrZURQRW1Vc2tWVGQ1VnZjUlovbWFyd1dsRndxS24zS1V1cFQz?=
+ =?utf-8?B?SURQVGZWV2pQblU1ZGZoVUJGSmh6UjFkNFdiblNLMy8wVWRDSGQ3MGpwOGtP?=
+ =?utf-8?B?eG1JdXprY0lIdStLUWlYdk1MSERzMVFyWk1xd29jdXNNTXc5SEpxcWY5Nmdt?=
+ =?utf-8?B?L2E3QllMTFg1bVRlK3Zxa0RzR24wRzBwYzFwUnYzVXlNelN4KytDbjBjSVpv?=
+ =?utf-8?B?TGt2Wi9zSEViNy9NMEF3dmZ0VktpMjNONEpJUGpkajN2eEJrUFB5WjlZZ2k0?=
+ =?utf-8?B?WXlGWWJKTEI3N1VFNmhPVEUxRDdEd0JpbTUzVVYwQzlqMHpSV2pBTTlGOUZL?=
+ =?utf-8?B?L1Z1WFVKR0tTK01Nc1lOZ3pBQWRFSk5wOFltNWdYbk1yVFBpVmdKTnlhOVlX?=
+ =?utf-8?B?bE1ZSXl4UW9FU0dmVmRPSXd0UGx6SkI2OGNzbzFlWkZqVXgzdGdGajNxSWtn?=
+ =?utf-8?B?YzhRckxSTzZ0UllBbEtyVExobko2YU9DZzFTdHBiZDI1ek5pZ2FQcUxOK3RQ?=
+ =?utf-8?B?dmc9PQ==?=
+X-OriginatorOrg: portwell.com.tw
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f30129e-fd5c-4684-368a-08ddd5971f62
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6395.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 09:45:20.2674
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e309f7e-c3ee-443b-8668-97701d998b2c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0/IeYH8l+lV1aKCLv+qao5fVkjek9SBDWkIvk+J7Ta5AX7NOUkoGPk+alPfiaqSoCREvkqotTejcA7wqUiyLpXgV7KXMbC/bKmaZxrhZqHA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PPFA55642425
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Hi Ilpo, Guenter,
 
-The TDX module enumerates with a TDX_FEATURES0 bit if an explicit cache
-flush is necessary when switching KeyID for a page, like before
-handing the page over to a TD.
+Gentle ping on this patch series.
 
-Currently, none of the TDX-capable platforms have this bit enabled.
+If patch 2/2 (hwmon) still requires further work,
+would it be possible to apply patch 1/2 (watchdog suspend/resume support)
+independently?
 
-Moreover, cache flushing with TDH.PHYMEM.PAGE.WBINVD fails if
-Dynamic PAMT is active and the target page is not 4k. The SEAMCALL only
-supports 4k pages and will fail if there is no PAMT_4K for the HPA.
+For completeness: I kept the `(void *)` cast in `.driver_data` because
+`pwec_board_data_nano` is `const`. As discussed in v2, removing it triggers
+a compiler warning about discarding the qualifier.
 
-Avoid performing these cache flushes unless the CLFLUSH_BEFORE_ALLOC bit
-of TDX_FEATURES0 is set.
+Thanks again for your time and feedback.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
-RFC v2:
-- Pulled from
-  git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git tdx/dpamt-huge.
-- Rebased on top of TDX huge page RFC v2 (Yan)
----
- arch/x86/include/asm/tdx.h  |  1 +
- arch/x86/virt/vmx/tdx/tdx.c | 19 +++++++++++++------
- 2 files changed, 14 insertions(+), 6 deletions(-)
+Best regards,
+Yen-Chi Huang
 
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index f1bd74348b34..c058a82d4a97 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -15,6 +15,7 @@
- 
- /* Bit definitions of TDX_FEATURES0 metadata field */
- #define TDX_FEATURES0_NO_RBP_MOD		BIT_ULL(18)
-+#define TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC	BIT_ULL(23)
- #define TDX_FEATURES0_DYNAMIC_PAMT		BIT_ULL(36)
- 
- #ifndef __ASSEMBLER__
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 9ed585bde062..b7a0ee0f4a50 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1648,14 +1648,13 @@ static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
- 	return page_to_phys(td->tdvpr_page);
- }
- 
--/*
-- * The TDX module exposes a CLFLUSH_BEFORE_ALLOC bit to specify whether
-- * a CLFLUSH of pages is required before handing them to the TDX module.
-- * Be conservative and make the code simpler by doing the CLFLUSH
-- * unconditionally.
-- */
- static void tdx_clflush_page(struct page *page)
- {
-+	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
-+
-+	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
-+		return;
-+
- 	clflush_cache_range(page_to_virt(page), PAGE_SIZE);
- }
- 
-@@ -2030,8 +2029,12 @@ EXPORT_SYMBOL_GPL(tdh_phymem_cache_wb);
- 
- u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td)
- {
-+	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
- 	struct tdx_module_args args = {};
- 
-+	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
-+		return 0;
-+
- 	args.rcx = mk_keyed_paddr(tdx_global_keyid, td->tdr_page);
- 
- 	return seamcall(TDH_PHYMEM_PAGE_WBINVD, &args);
-@@ -2041,10 +2044,14 @@ EXPORT_SYMBOL_GPL(tdh_phymem_page_wbinvd_tdr);
- u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct folio *folio,
- 				unsigned long start_idx, unsigned long npages)
- {
-+	u64 tdx_features0 = tdx_sysinfo.features.tdx_features0;
- 	struct page *start = folio_page(folio, start_idx);
- 	struct tdx_module_args args = {};
- 	u64 err;
- 
-+	if (tdx_features0 & TDX_FEATURES0_CLFLUSH_BEFORE_ALLOC)
-+		return 0;
-+
- 	if (start_idx + npages > folio_nr_pages(folio))
- 		return TDX_OPERAND_INVALID;
- 
--- 
-2.43.2
-
+On 7/28/2025 7:56 PM, Yen-Chi Huang wrote:
+> This patch series adds suspend/resume support for the watchdog (patch 1/2)
+> and hwmon monitoring functionality (patch 2/2) to the Portwell EC driver.
+> These changes enable better power management and sensor reporting.
+> 
+> Tested on Portwell NANO-6064.
+> ---
+> V2->V3:
+> 
+> Patch 1/2:
+>   - Unchanged
+> 
+> Patch 2/2:
+>   - Replace hardcoded `1000` with `MILLIDEGREE_PER_DEGREE` and double check
+>   - Fix comma placement and spacing coding style issues
+>   - Simplify pwec_hwmon_is_visible() with ternary operator
+> 
+> V1->V2:
+> 
+> - Added watchdog mailing list to Cc.
+> 
+> Patch 1/2:
+>   - unchanged
+> 
+> Patch 2/2:
+>   - Removed `msb_reg` from `strucit pwec_hwmon_data`
+>   - Updated `pwec_read16_stable()` to assume MSB follows LSB
+>   - Moved `hwmon_channel_info` to per-board data and assigned it to `.info` at runtime
+>   - Replaced the `pwec_board_data[]` array with a standalone struct
+>   - Replaced literal `1000` with `MILLIDEGREE_PER_DEGREE`
+>   - Removed unused include and sorted header includes
+> 
+> ---
+> Yen-Chi Huang (2):
+>   platform/x86: portwell-ec: Add suspend/resume support for watchdog
+>   platform/x86: portwell-ec: Add hwmon support for voltage and temperature
+> 
+>  drivers/platform/x86/portwell-ec.c | 193 ++++++++++++++++++++++++++++-
+>  1 file changed, 191 insertions(+), 2 deletions(-)
+> 
 
