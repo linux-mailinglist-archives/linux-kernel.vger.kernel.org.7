@@ -1,206 +1,100 @@
-Return-Path: <linux-kernel+bounces-758699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF43B1D2CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:58:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60669B1D2C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43A2165094
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:58:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F6EA7B252E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD3B22D4F1;
-	Thu,  7 Aug 2025 06:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17DF22618F;
+	Thu,  7 Aug 2025 06:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiIz5oVg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LP3KnmTs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024244A06;
-	Thu,  7 Aug 2025 06:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E67C4A06;
+	Thu,  7 Aug 2025 06:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754549905; cv=none; b=sE3dnLbyk7aeGo8V/P2JoH2/phZPobMtAabpt4Dvque/goCrZw7d4vJJmbR6/t26S1Sl746F+krMZR2FVADxRJYp2VqIjZZdGCd/4HgEkJgKFQo/ZOOG93u/V6M+t5S77JDhWLC21n+6v6NZAbImRygwMi482Gro/bEYVKzmZxI=
+	t=1754549894; cv=none; b=PSVErpeSzVqNSCvIJ+PUMY+CrEzYQrYfrKVEoBGSdZYYE2pFTW2OPSuOwrDmsaWHm0eGX1h60h2o0/6ujUMI1K/ddSdPniEMgIgC/V4Sw+nszIE360/LWxG64FZkhZxtX9CAdvieXmdN3fv7gPyfYjPoVVJ4I9CtXcAa2v1a5Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754549905; c=relaxed/simple;
-	bh=tNf8yXWpoqOnHiYWPw3fqpNsTnL+1s/P0u4Xeao7oac=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Qfitpwl2/m9T5CLc5/dE22fHuvZEwOedX6ZVkgvao2cb50cFWwyBGk/4eWkNgd6Cz8g72vrKOweaxcXkAWDYXmlBVoDz2ADsQGlY3wigo/gDVKQfdWIpqB732zMD2XHIiY+W5UoOqT3CwNaexnxc4cQ8fMRJ1ZAd9wGKO5rtATI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiIz5oVg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3474EC4CEEB;
-	Thu,  7 Aug 2025 06:58:03 +0000 (UTC)
+	s=arc-20240116; t=1754549894; c=relaxed/simple;
+	bh=4Lbxqf6/CNfYbxwExDCoo3uJIOj0YFPbDWdDOOzBd+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tfi2vGCA37Yvv7mCBYq2TgzWXTodWwnYJLpsv36Mc2ldcipfutH90peOUcnyr2s8X/7oPvhQPLbeAgx7Q0n+rRuiXRexuJUZdoQUfEjijorPp65M0ZSeqiCaHrMwtP+vsCm+Pmb1YSON3jGPi7O1XKtrREY7fk0EHL69+AnpIYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LP3KnmTs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 295B2C4CEED;
+	Thu,  7 Aug 2025 06:58:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754549903;
-	bh=tNf8yXWpoqOnHiYWPw3fqpNsTnL+1s/P0u4Xeao7oac=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=FiIz5oVgOYMO6q4869RWcOtlVdu9nL+0h0TxLPttL1GsnNHj8WeGZvdTa0hQ9g2IF
-	 b2wpXZEdscZwcYTFUfD3Vak7J29IVobTHxanKkkz14AEYU/ukIZ++vsVvVAw99umRg
-	 fszGhSjaHM5r+e6TZDl+fqCQot/inXgAQ76e8uSvp7C7I/EYbVds7D778J5GQxDrvP
-	 K/8R8NLvCgWzWtfarV/vXEHBez0mayIYSmeKfaDsccXFY1Pe71Jfa20pHWGtm9MUgF
-	 6fVTDAxHrEq3NGzLwa0Z2/p/Q8or6h4Ic4LhSq8VFOMX6ph8bptUk/1SV7iMmp4cMZ
-	 528aoa8dBtCjQ==
-Message-ID: <d8875dea-aa04-41fc-b1b4-519d06ed6cba@kernel.org>
-Date: Thu, 7 Aug 2025 08:58:01 +0200
+	s=k20201202; t=1754549893;
+	bh=4Lbxqf6/CNfYbxwExDCoo3uJIOj0YFPbDWdDOOzBd+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LP3KnmTsJ4qGJUkalbyFcJijelz6GMzVGQpnWnmLXSurp7VH0OhgS8lu531eKvWYq
+	 VslWvZqel4mtXyc864qUuHh63fHF6GYmgl8qQDjOB5GTsrsP8BndJ6JRc2yLli3Tih
+	 k6lJZHVZVW6zcZ4gi3s86ADgfInhNM27RINr2UcX5wByJbgyaNB4wYbie3EEISfN8P
+	 uRE//alEFxenHMiFBR2g/YQs95fDhEsJ8vPT1SjXtrXHOUS8IYA3O1tLXYhInEmF1/
+	 7iomM0GXm+ou4Lp/6u4PZZUYkJThMmPsIn6qaY/PC6+CmdSTLqyNq12WKlrRncrLJB
+	 6RNKYRG3Rhw9g==
+Date: Thu, 7 Aug 2025 08:58:11 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Laura Nao <laura.nao@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com, 
+	guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
+	kernel@collabora.com, 
+	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>
+Subject: Re: [PATCH v4 09/27] dt-bindings: clock: mediatek: Describe MT8196
+ clock controllers
+Message-ID: <20250807-smoky-mature-eagle-a0feae@kuoka>
+References: <20250805135447.149231-1-laura.nao@collabora.com>
+ <20250805135447.149231-10-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH 58/65] media: zoran: Remove access to __fh
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Devarsh Thakkar
- <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
- Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hansg@kernel.org>,
- Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
- Christian Gromm <christian.gromm@microchip.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi
- <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
- Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
- Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Andy Walls <awalls@md.metrocast.net>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
- Zhou Peng <eagle.zhou@nxp.com>, Xavier Roumegue
- <xavier.roumegue@oss.nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Nas Chung <nas.chung@chipsnmedia.com>,
- Jackson Lee <jackson.lee@chipsnmedia.com>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
- Jacob Chen <jacob-chen@iotwrt.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Fabien Dessenne <fabien.dessenne@foss.st.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard
- <mripard@kernel.org>, Paul Kocialkowski <paulk@sys-base.io>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Corentin Labbe <clabbe@baylibre.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-58-eb140ddd6a9d@ideasonboard.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250802-media-private-data-v1-58-eb140ddd6a9d@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250805135447.149231-10-laura.nao@collabora.com>
 
-On 02/08/2025 11:23, Jacopo Mondi wrote:
-> The __fh parameter is assigned to an unsued variable. Remove it
-> and remove the unused struct zoran_fh type.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+On Tue, Aug 05, 2025 at 03:54:29PM +0200, Laura Nao wrote:
+> Introduce binding documentation for system clocks, functional clocks,
+> and PEXTP0/1 and UFS reset controllers on MediaTek MT8196.
+>=20
+> This binding also includes a handle to the hardware voter, a
+> fixed-function MCU designed to aggregate votes from the application
+> processor and other remote processors to manage clocks and power
+> domains.
+>=20
+> The HWV on MT8196/MT6991 is incomplete and requires software to manually
+> enable power supplies, parent clocks, and FENC, as well as write to both
+> the HWV MMIO and the controller registers.
+> Because of these constraints, the HWV cannot be modeled using generic
+> clock, power domain, or interconnect APIs. Instead, a custom phandle is
+> exceptionally used to provide direct, syscon-like register access to
+> drivers.
+>=20
+> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> Co-developed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
+llabora.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
 > ---
->  drivers/media/pci/zoran/zoran.h        | 6 ------
->  drivers/media/pci/zoran/zoran_driver.c | 3 +--
->  2 files changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/pci/zoran/zoran.h b/drivers/media/pci/zoran/zoran.h
-> index 1cd990468d3de9db8b14b72483972041c57bfee2..d05e222b392156bf1b3b4c83c6591db642c3c377 100644
-> --- a/drivers/media/pci/zoran/zoran.h
-> +++ b/drivers/media/pci/zoran/zoran.h
-> @@ -154,12 +154,6 @@ struct zoran_jpg_settings {
->  
->  struct zoran;
->  
-> -/* zoran_fh contains per-open() settings */
-> -struct zoran_fh {
-> -	struct v4l2_fh fh;
-> -	struct zoran *zr;
-> -};
-> -
->  struct card_info {
->  	enum card_type type;
->  	char name[32];
-> diff --git a/drivers/media/pci/zoran/zoran_driver.c b/drivers/media/pci/zoran/zoran_driver.c
-> index f42f596d3e6295e31e3b33cd83c5f7243911bd30..ec7fc1da4cc02f5a344cb49bb9a783c41c758195 100644
-> --- a/drivers/media/pci/zoran/zoran_driver.c
-> +++ b/drivers/media/pci/zoran/zoran_driver.c
-> @@ -511,12 +511,11 @@ static int zoran_s_fmt_vid_cap(struct file *file, void *__fh,
 
-This driver uses __fh as the name for the second argument of the ioctl
-callbacks. Can you take this opportunity to rename it to either 'fh' or 'priv'?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Generally it's not a good idea to prefix variables with __ for no good reason.
-
-Grepping for __fh also shows two other drivers:
-
-drivers/media/platform/chips-media/coda/coda-common.c:#define fh_to_ctx(__fh)   container_of(__fh, struct coda_ctx, fh)
-drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h:#define fh_to_ctx(__fh) container_of(__fh, struct s5p_mfc_ctx, fh)
-
-I think it is a good idea to rename __fh to fh there as well.
-
-Regards,
-
-	Hans
-
->  			       struct v4l2_format *fmt)
->  {
->  	struct zoran *zr = video_drvdata(file);
-> -	struct zoran_fh *fh = __fh;
->  	int i;
->  	int res = 0;
->  
->  	if (fmt->fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG)
-> -		return zoran_s_fmt_vid_out(file, fh, fmt);
-> +		return zoran_s_fmt_vid_out(file, __fh, fmt);
->  
->  	for (i = 0; i < NUM_FORMATS; i++)
->  		if (fmt->fmt.pix.pixelformat == zoran_formats[i].fourcc)
-> 
+Best regards,
+Krzysztof
 
 
