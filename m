@@ -1,181 +1,157 @@
-Return-Path: <linux-kernel+bounces-759558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76B4B1DF3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:07:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749D1B1DF41
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3701AA4753
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:07:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DFC47A207D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90B622DFA4;
-	Thu,  7 Aug 2025 22:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E182024A061;
+	Thu,  7 Aug 2025 22:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oH0Z+OaL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CiZ4Zq6k"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF03E1C8633;
-	Thu,  7 Aug 2025 22:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4159E1C8633;
+	Thu,  7 Aug 2025 22:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754604419; cv=none; b=Yh/Wh77/6SH8yydrF7VyG3PZNKVaOYomgZnCg87q2HmMYVtJJOYtIN+ksStjC4X4IncSZX4CqSZ5RNMxnjCdisIj+z41MXfYCmO7vF1l69rFYzTWVHPa6VIApIvvZImfQkwbt5jQSVrzjsiiJIbMM2ZKyTRS5FdN0+nz+Hm9a8Y=
+	t=1754604886; cv=none; b=MFVlg4FixJj2nPaS/N00cecClSm+t+9Ln9epfnu+o86IELYPq5xbHF2uHIr/juXJtcuqlRind9WPc3PuOUf+UKi3hlifYo+yapiQvH38RPfvaf4dnIs1DB8s76h2SIl//ppLwOJsg7M+9bAYBsZHL4odRCMiwqbGVpVkdWGeu+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754604419; c=relaxed/simple;
-	bh=1SWxxfi61RujHsu60gIIs45W2VXsmKVDVQQiD1um0cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ran1yEtNKO5N+3PYsBu9vVDKEU6FFMrh2//KwLO/PpGiBc8Mw9Cx0a7ycrixiB+SHrlbGHcEzVjw9xRL07nHJ35sw2VQUQJzE3S5ib9LKVjLYagxNk6LXRhSi3aqmWivFjwp887Q8NGOiIGi8p0rsvRrc5EtjcBuXaTGmOT542c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oH0Z+OaL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45420C4CEEB;
-	Thu,  7 Aug 2025 22:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754604418;
-	bh=1SWxxfi61RujHsu60gIIs45W2VXsmKVDVQQiD1um0cg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=oH0Z+OaLZOmV+fFy6/TagyO1FMXPmamR/gtjVpF3M+wb3LCDQnF7Fgyr3rhArTVEa
-	 +lEn6ZoykEvueSwHa6z9/HptkVvU0XO6q0dEB/GivqsrD7nyPSXS9X5boAu7Y+Y2c1
-	 PF8PM2m9t1YCZs1c+/xNMekFoCWxCUWMqMC46F8Of8ABAb/t4khx4MCTu+X08lLF3h
-	 W/SGQAsWSem0rJrYQbumhMWgtjc/tRm8HqCZnC4BGJgPEAJsD/bG+WZ52xIEXGQtT5
-	 inoqL4rqK1iLZf2nimkpbY+a9XwaaP8lklkFaGEdLMsNCy2PYsOQL6o3HT4qrT+mUG
-	 nZxizCIQEpCtw==
-Date: Thu, 7 Aug 2025 17:06:56 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
-	lukas@wunner.de,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>
-Subject: Re: [PATCH v4 06/10] PCI: Add PCIe Device 3 Extended Capability
- enumeration
-Message-ID: <20250807220656.GA64413@bhelgaas>
+	s=arc-20240116; t=1754604886; c=relaxed/simple;
+	bh=IZIOlHsbbEP+s6770gk+A8V13aNT9F9SkfyXLOdTqPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LWodamltiZZzdPXfIVD9VCs1x6CpfTlxqXCCd5U3pdwO1cj/29iqvExKtQNakIVjFAW/SOFBJ+Y1RgW4+ThksNDRMXyWzbNs4Sa9PcubC6VDdsyOErcmRUXQ1Ug8yb8Wl/IF9/yshm4Q07YOvFJumYFhw4RuNDPcm0yM4Gfx4Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CiZ4Zq6k; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 577MEVZE405890;
+	Thu, 7 Aug 2025 17:14:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754604871;
+	bh=anUu0iGZccTAr7XKInCn6vxxWIjEHT78iPCZEky3scE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=CiZ4Zq6kiEhHmG7UmhDjYE5gzTT8qkzVCiAa1gzKZi8NpwWxQY+eJwdkmzMzimYgL
+	 agpB0mzogoK2brivLEV+yE5zm3PqvDZFux9WN3292jXkezgMVcSAjpHreXVyljw4kA
+	 tFktZmmZDryX4fW1KRgoD6BmFV2mO8RP6wW5Dr54=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 577MEVlx1118947
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 7 Aug 2025 17:14:31 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 7
+ Aug 2025 17:14:31 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 7 Aug 2025 17:14:31 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 577MEVAV2047321;
+	Thu, 7 Aug 2025 17:14:31 -0500
+Message-ID: <f5b48a22-b036-4df0-b68d-0606b1bc454d@ti.com>
+Date: Thu, 7 Aug 2025 17:14:30 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] mmc: sdhci_am654: Disable HS400 for AM62P SR1.0 and
+ SR1.1
+To: Andrew Davis <afd@ti.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Santosh Shilimkar
+	<ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+References: <20250805234950.3781367-1-jm@ti.com>
+ <20250805234950.3781367-4-jm@ti.com>
+ <1f424bbd-3830-41f9-af4b-9d17af42edaa@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <1f424bbd-3830-41f9-af4b-9d17af42edaa@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250717183358.1332417-7-dan.j.williams@intel.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Jul 17, 2025 at 11:33:54AM -0700, Dan Williams wrote:
-> PCIe 6.2 Section 7.7.9 Device 3 Extended Capability Structure,
-> enumerates new link capabilities and status added for Gen 6 devices. One
+Hi Andrew,
 
-s/ added for Gen 6 devices//
-
-I know the "Gen 6 device" terminology is pervasive, but the spec
-suggests avoiding it because it's so ambiguous.
-
-> of the link details enumerated in that register block is the "Segment
-> Captured" status in the Device Status 3 register. That status is
-> relevant for enabling IDE (Integrity & Data Encryption) whereby
-> Selective IDE streams can be limited to a given Requester ID range
-> within a given segment.
+On 8/7/25 12:28 PM, Andrew Davis wrote:
+> On 8/5/25 6:49 PM, Judith Mendez wrote:
+>> This adds SDHCI_AM654_QUIRK_DISABLE_HS400 quirk which shall be used
+>> to disable HS400 support. AM62P SR1.0 and SR1.1 do not support HS400
+>> due to errata i2458 [0] so disable HS400 for these SoC revisions.
+>>
+>> [0] https://www.ti.com/lit/er/sprz574a/sprz574a.pdf
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>>   drivers/mmc/host/sdhci_am654.c | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/sdhci_am654.c 
+>> b/drivers/mmc/host/sdhci_am654.c
+>> index e4fc345be7e5..b7d2adff3277 100644
+>> --- a/drivers/mmc/host/sdhci_am654.c
+>> +++ b/drivers/mmc/host/sdhci_am654.c
+>> @@ -156,6 +156,7 @@ struct sdhci_am654_data {
+>>   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+>>   #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+>> +#define SDHCI_AM654_QUIRK_DISABLE_HS400 BIT(2)
+>>   };
+>>   struct window {
+>> @@ -820,6 +821,9 @@ static int sdhci_am654_init(struct sdhci_host *host)
+>>       if (ret)
+>>           goto err_cleanup_host;
+>> +    if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_DISABLE_HS400)
+>> +        host->mmc->caps2 &= ~(MMC_CAP2_HS400 | MMC_CAP2_HS400_ES);
+>> +
+>>       ret = __sdhci_add_host(host);
+>>       if (ret)
+>>           goto err_cleanup_host;
+>> @@ -883,6 +887,12 @@ static int sdhci_am654_get_of_property(struct 
+>> platform_device *pdev,
+>>       return 0;
+>>   }
+>> +static const struct soc_device_attribute sdhci_am654_descope_hs400[] = {
+>> +    { .family = "AM62PX", .revision = "SR1.0" },
+>> +    { .family = "AM62PX", .revision = "SR1.1" },
+>> +    { /* sentinel */ }
+>> +};
+>> +
+>>   static const struct of_device_id sdhci_am654_of_match[] = {
+>>       {
+>>           .compatible = "ti,am654-sdhci-5.1",
+>> @@ -970,6 +980,12 @@ static int sdhci_am654_probe(struct 
+>> platform_device *pdev)
+>>       if (ret)
+>>           return dev_err_probe(dev, ret, "parsing dt failed\n");
+>> +    soc = soc_device_match(sdhci_am654_descope_hs400);
+>> +    if (soc) {
+>> +        dev_err(dev, "Disable descoped HS400 mode for this silicon 
+>> revision\n");
 > 
-> If a device has captured its Segment value then it knows that PCIe Flit
-> Mode is enabled via all links in the path that a configuration write
-> traversed. IDE establishment requires that "Segment Base" in
-> IDE RID Association Register 2 (PCIe 6.2 Section 7.9.26.5.4.2) be
-> programmed if the RID association mechanism is in effect.
-> 
-> When / if IDE + Flit Mode capable devices arrive, the PCI core needs to
-> setup the segment base when using the RID association facility, but no
-> known deployments today depend on this.
+> Not really an error, use dev_info() or dev_warn(). Also this message
+> should go up in the init function when the caps are actually removed,
+> and only printed if the caps were set in the first place.
 
-So far this mentions a lot of facts, but only the subject hints at
-what it does.  I guess it just captures the Flit Mode status, inferred
-by Segment Captured?
+Will fix for v2, thanks
 
-I'm OK with basically just saying *that*, and moving some of the
-implications to places where we depend on them.
+~ Judith
 
-> Cc: Lukas Wunner <lukas@wunner.de>
-> Cc: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Samuel Ortiz <sameo@rivosinc.com>
-> Cc: Alexey Kardashevskiy <aik@amd.com>
-> Cc: Xu Yilun <yilun.xu@linux.intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/pci/probe.c           | 12 ++++++++++++
->  include/linux/pci.h           |  1 +
->  include/uapi/linux/pci_regs.h |  7 +++++++
->  3 files changed, 20 insertions(+)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index e19e7a926423..9ed25035a06d 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2271,6 +2271,17 @@ int pci_configure_extended_tags(struct pci_dev *dev, void *ign)
->  	return 0;
->  }
->  
-> +static void pci_dev3_init(struct pci_dev *pdev)
-> +{
-> +	u16 cap = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_DEV3);
-> +	u32 val = 0;
-> +
-> +	if (!cap)
-> +		return;
-> +	pci_read_config_dword(pdev, cap + PCI_DEV3_STA, &val);
-> +	pdev->fm_enabled = !!(val & PCI_DEV3_STA_SEGMENT);
-> +}
-> +
->  /**
->   * pcie_relaxed_ordering_enabled - Probe for PCIe relaxed ordering enable
->   * @dev: PCI device to query
-> @@ -2625,6 +2636,7 @@ static void pci_init_capabilities(struct pci_dev *dev)
->  	pci_doe_init(dev);		/* Data Object Exchange */
->  	pci_tph_init(dev);		/* TLP Processing Hints */
->  	pci_rebar_init(dev);		/* Resizable BAR */
-> +	pci_dev3_init(dev);		/* Device 3 capabilities */
->  	pci_ide_init(dev);		/* Link Integrity and Data Encryption */
->  
->  	pcie_report_downtraining(dev);
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 0e5703fad0f6..a7353df51fea 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -444,6 +444,7 @@ struct pci_dev {
->  	unsigned int	pasid_enabled:1;	/* Process Address Space ID */
->  	unsigned int	pri_enabled:1;		/* Page Request Interface */
->  	unsigned int	tph_enabled:1;		/* TLP Processing Hints */
-> +	unsigned int	fm_enabled:1;		/* Flit Mode (segment captured) */
->  	unsigned int	is_managed:1;		/* Managed via devres */
->  	unsigned int	is_msi_managed:1;	/* MSI release via devres installed */
->  	unsigned int	needs_freset:1;		/* Requires fundamental reset */
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 1b991a88c19c..2d49a4786a9f 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -751,6 +751,7 @@
->  #define PCI_EXT_CAP_ID_NPEM	0x29	/* Native PCIe Enclosure Management */
->  #define PCI_EXT_CAP_ID_PL_32GT  0x2A    /* Physical Layer 32.0 GT/s */
->  #define PCI_EXT_CAP_ID_DOE	0x2E	/* Data Object Exchange */
-> +#define PCI_EXT_CAP_ID_DEV3	0x2F	/* Device 3 Capability/Control/Status */
->  #define PCI_EXT_CAP_ID_IDE	0x30    /* Integrity and Data Encryption */
->  #define PCI_EXT_CAP_ID_PL_64GT	0x31	/* Physical Layer 64.0 GT/s */
->  #define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_PL_64GT
-> @@ -1227,6 +1228,12 @@
->  /* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE */
->  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE
->  
-> +/* Device 3 Extended Capability */
-> +#define PCI_DEV3_CAP		0x4	/* Device 3 Capabilities Register */
-> +#define PCI_DEV3_CTL		0x8	/* Device 3 Control Register */
-> +#define PCI_DEV3_STA		0xc	/* Device 3 Status Register */
-> +#define  PCI_DEV3_STA_SEGMENT	0x8	/* Segment Captured (end-to-end flit-mode detected) */
-> +
->  /* Compute Express Link (CXL r3.1, sec 8.1.5) */
->  #define PCI_DVSEC_CXL_PORT				3
->  #define PCI_DVSEC_CXL_PORT_CTL				0x0c
-> -- 
-> 2.50.1
-> 
 
