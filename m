@@ -1,148 +1,137 @@
-Return-Path: <linux-kernel+bounces-759246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E96B1DAE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:40:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E28B1DAE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94DE7723F15
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06D081785FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD9126A1A4;
-	Thu,  7 Aug 2025 15:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404A226A1AF;
+	Thu,  7 Aug 2025 15:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cm/CGNEn"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDdnwW0D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1B0262FE6
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 15:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CDB26562A;
+	Thu,  7 Aug 2025 15:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754581205; cv=none; b=eOUe65PzMPFVL5sb3xwDTTv6XyEYumg+p3ibDytIZ7pv0Gg5etpMMaS6DfYcLAsiKgyFk3xFujr+mJf9oiSdv722vfHhQiZunGZMm3a+Ll/FgwAfahst2x0GEvSG8WVuRpkDYaPxYX1X0d/9c9NO0n5gCKczF3CFXFGgKf6ssMs=
+	t=1754581237; cv=none; b=Q3aA16kdoywiNXcGYjamafsOZwfbOn+ipAfoSKsSj3CBP807y69PGwLUkacOpYaEbV+43ROCy9QTyJ4RIrndcCvTrbsXp+45/HwQJoWWsqNl9WBM+Zu1zwCdeSt+IVkDRgMb8lXNygxD04aCB2lohorEDDrGPzjqqO10YV/1NrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754581205; c=relaxed/simple;
-	bh=wIF+y5g2uGbuQo4bUcsxBrBWuM5465n72gjk9JaHt2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XnRvCnoa4PagQnySRHtWoJc86qhlrsz7vPO8XaLMlF0GRxjVf5tLv5UU93CToh3gowJgpe65OlCaIGi534gUR20m4tHgl6kmtYLfmSd6RpK8eTbnBayvBx2u+zEx31EniOi2/OV78cvx5WDSvz2iLYaPfPgNwZ3005qTZU7F2MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cm/CGNEn; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-61b43c84905so720830eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 08:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754581200; x=1755186000; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=zoN9jTY+2MEeazt9V1rAxwiLT3ACLDoB1uh4EsCKwso=;
-        b=cm/CGNEnpChAKW6kpwaP9IYYyfYiiYfKUSEq43RBqQ6at/K883thVF2pgexq0oO1PE
-         +dhCIP7RgifEL0baiRC12cNhQfDV0SoNrOq/GcJG1HmcMLXJ8kvaJKdoywLm5Y/YzGnG
-         EyMFTEfn1tszXek+l/ZT1SjxrGqJf13kI4aOVehtVfhTeOKdjBGa8rVwzu+NLa743s6M
-         aNMj2wE4R0PNB3THiUkSKNU8fegIEzI9Mg1MUgKS3CCKh+Enf09QNcstOWJgAUZpGSgy
-         gMdhMesjrTi3YtxZfhpjLOTeO+rYROGcIMMXpgGWAZAjcDQv0w5DIkg5s0MvUthoFHqN
-         C4nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754581200; x=1755186000;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zoN9jTY+2MEeazt9V1rAxwiLT3ACLDoB1uh4EsCKwso=;
-        b=r36H4pP1r3MHxJ9xI3vhyBCKi/errSeuKP92dDf/8qej2qfOFqyXoVtGEXuNTRESGN
-         yovPhbERa32/rxgCApGAqsn2mffskiVYL7gEFemjxo0Vi6yQgSA16FBJgddPowLDc2eb
-         F71/US0x5sXGNbft2n3qJpzjUYNOEwnP1vZDvMmpV1falCiO4PaFxG3VfemCysC2bNM/
-         FKGanDB0hyV8cJ0W19Iu2ovjsI18whtOeO4jyfcRLz0ETQzPLSh5K4Q/CCjVJ9hRDC9H
-         iJ+wqHCW+zRGH6XlNRUunzW4kVr5XZQCkgsDOFiyvow3bAyP0h9ANgmfXASZtMV7gELU
-         D8Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOml6nG3YXhElFVvSvHeU3YQulD3JiohWFwLnC9gZtjSzs81m6I4TVEsyqJ6OTnpm4yM+gUSSjKAwNysw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygoCRpnJrRei+0AbMudtjfH+Q8FBRVhchSsbcdUgPTVwKaPTt4
-	NSWzXpXkMShNTthqiNIxohpkqHvEde4IjNtIOCJ9DDJEWzE8CX5qfygd8XduSIq6Hvfu4mo7RUa
-	kB5Aa
-X-Gm-Gg: ASbGncvmw3sbWtUuCDyukganBzZnEOZ8gT/K11/1/bmAVQGwojlSRao0M8UCQtLpvbg
-	VLegoQ5gkIHLeyGlhKfeeFZYbisrdaX1ZMwfo62I6drEla9P4nr+tgaj5jq97DbEiY0qMUXKiOk
-	vOyaYlvWd5HDM/MpNHBFgpb5EwXqohdum0Sh9128/Y0AIyKwBCo65xBf2kM+wVOCZLSctZD085D
-	qJkph23uZNToKBZOtom6fFABadyRmHuL1dlwhjhuHhwb7lEF7okpwktDSuwlmqC1oZBrOlVo+Id
-	G2mCHBTTADpAQZslbf7Eg6q5v1DQmY3SL6KBv6uu2okolnIn2Uv3VnXYYSgtUwoi3RMtjhuqL6Z
-	XAbakjupt6Sw+3jhhm+a3RM5ttu1TlIKQjgbK8Yeu2f1UmLlNdXCwcikcbcfuQdjSeGMiGIxlot
-	Y=
-X-Google-Smtp-Source: AGHT+IH6AZ126w1Co9dLKeIbsdLPUJ9qvleOlVFbsD7VCIoegbLBFtcVomaYlYGr1sYxjG5QysSzcw==
-X-Received: by 2002:a05:6808:3198:b0:435:744c:929e with SMTP id 5614622812f47-43594a0a7b7mr368937b6e.17.1754581200539;
-        Thu, 07 Aug 2025 08:40:00 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:ce54:d09f:5709:ac85? ([2600:8803:e7e4:1d00:ce54:d09f:5709:ac85])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-742fd50d84dsm1487092a34.52.2025.08.07.08.39.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 08:39:59 -0700 (PDT)
-Message-ID: <a11e80b8-a52b-462f-8e69-b1fa7768a756@baylibre.com>
-Date: Thu, 7 Aug 2025 10:39:58 -0500
+	s=arc-20240116; t=1754581237; c=relaxed/simple;
+	bh=oxkXLZvPp3BqQEgtA6OlLjO1pulHs/NQGwamKgBjikQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7xumc6mtPahNAR0h+jX3S5hH28CttGlEaOJneAyg9Q69eDoUcdQauA+1qi4rGzo91x0zclgxmEB7fp0CTu9/IaB9kufcsUVTsexFirQvNeyIKj4hcxDDUumGKmSox1eFNdO0j/mj6+4pZfZd4zxngLs2mttj1JxdmtunLOp/ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDdnwW0D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B39CC4CEEB;
+	Thu,  7 Aug 2025 15:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754581234;
+	bh=oxkXLZvPp3BqQEgtA6OlLjO1pulHs/NQGwamKgBjikQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rDdnwW0DKcf/KVyf/uUqQ8cftSD+Xa9fB2BIXHgOnz7NdndcxH2o+EPXPHUVwwAeb
+	 CEPycnxuWPsTGUfG3cL65ht6RKlV99cwxjQUTRmqEbZ9uJ40mxPS6CKA8EKyXQ+6Cb
+	 uJag1T1BbVniRqyZuK3rXvJpSWiR70+E3WkXllCLdHFZB0dsElwF37SsTNpf96w8Kz
+	 NdolM9USSXP1YkV/ehKsWaHmVypfFMkXVQ/+1J+gTT4i6M0OzQ9KKSb1fEpMy7J1Ce
+	 bvtImt3bohQcqn2mUV4blTq6Z/dw/PjdX/7qEfhs1wyO4nlfz8L+dNYEce1yOkSeqg
+	 xhj1OqNdeEPqw==
+Date: Thu, 7 Aug 2025 16:40:28 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
+	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH RFC 0/5] Marvell PXA1908 power domains
+Message-ID: <20250807-avatar-comply-30aa8001aa82@spud>
+References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: pressure: bmp280: Use IS_ERR() in
- bmp280_common_probe()
-To: Salah Triki <salah.triki@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <aJQOmQKO219rS8ZN@pc>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aJQOmQKO219rS8ZN@pc>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="61gm189z7gN5234q"
+Content-Disposition: inline
+In-Reply-To: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
 
-On 8/6/25 9:25 PM, Salah Triki wrote:
-> `devm_gpiod_get_optional()` may return non-NULL error pointer on failure.
-> Check its return value using `IS_ERR()` and propagate the error if
-> necessary.
-> 
-> `dev_info()` has been dropped as it was considered noisy.
-> 
-> Also switch to `gpiod_set_value_cansleep()`, which is safe to use in
-> sleepable contexts like probe.
-> 
-> Signed-off-by: Salah Triki <salah.triki@gmail.com>
+
+--61gm189z7gN5234q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Aug 06, 2025 at 07:33:19PM +0200, Duje Mihanovi=C4=87 wrote:
+> Hello,
+>=20
+> This series implements support for the power domains found in Marvell's
+> PXA1908 SoC. The domains control power for the graphics, video and image
+> processors along with the DSI PHY.
+>=20
+> The series is based on master as the MAINTAINERS and device tree patches
+> depend on the very recently merged initial Marvell PXA1908 support series.
+> That series can be found at the following link:
+> https://lore.kernel.org/all/20250708-pxa1908-lkml-v16-0-b4392c484180@duje=
+mihanovic.xyz
+
+It's not clear to me, nor mentioned anywhere I could see, why this is an
+RFC. What are you actually soliciting feedback on?
+
+>=20
+> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
 > ---
-> Changes in v2:
->    - Use IS_ERR() instead of IS_ERR_OR_NULL()
->    - Drop dev_info()
->    - Use gpiod_set_value_cansleep()
->    - Improve commit title and message
->    
->  drivers/iio/pressure/bmp280-core.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> index 74505c9ec1a0..be6c981a4cc7 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -3213,11 +3213,11 @@ int bmp280_common_probe(struct device *dev,
->  
->  	/* Bring chip out of reset if there is an assigned GPIO line */
->  	gpiod = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(gpiod))
-> +		return dev_err_probe(dev, PTR_ERR(gpiod), "failed to get GPIO\n");
+> Duje Mihanovi=C4=87 (5):
+>       dt-bindings: clock: marvell,pxa1908: Add simple-mfd, syscon compati=
+ble to apmu
+>       dt-bindings: power: Add Marvell PXA1908 domains
+>       pmdomain: marvell: Add PXA1908 power domains
+>       MAINTAINERS: PXA1908: Add power domain controller
+>       arm64: dts: marvell: pxa1908: Add power controller
+>=20
+>  .../devicetree/bindings/clock/marvell,pxa1908.yaml |  36 ++-
+>  .../power/marvell,pxa1908-power-controller.yaml    | 105 +++++++
+>  MAINTAINERS                                        |   5 +
+>  .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts |   1 +
+>  arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       |  36 ++-
+>  drivers/pmdomain/Kconfig                           |   1 +
+>  drivers/pmdomain/Makefile                          |   1 +
+>  drivers/pmdomain/marvell/Kconfig                   |  16 +
+>  drivers/pmdomain/marvell/Makefile                  |   3 +
+>  .../pmdomain/marvell/pxa1908-power-controller.c    | 347 +++++++++++++++=
+++++++
+>  include/dt-bindings/power/marvell,pxa1908-power.h  |  17 +
+>  11 files changed, 561 insertions(+), 7 deletions(-)
+> ---
+> base-commit: cca7a0aae8958c9b1cd14116cb8b2f22ace2205e
+> change-id: 20250803-pxa1908-genpd-15918db5260c
+>=20
+> Best regards,
+> --=20
+> Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+>=20
 
-Could be slightly better if the error message said "reset GPIO".
+--61gm189z7gN5234q
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
->  	/* Deassert the signal */
-> -	if (gpiod) {
-> -		dev_info(dev, "release reset\n");
-> -		gpiod_set_value(gpiod, 0);
-> -	}
-> +	gpiod_set_value_cansleep(gpiod, 0);
->  
->  	data->regmap = regmap;
->  
+-----BEGIN PGP SIGNATURE-----
 
-In any case...
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJTI7AAKCRB4tDGHoIJi
+0qRUAPsGIBNq7EJeNjCewk/s7WezXIszK4j07CCitkja8bCHUQD/QUq7puCrhLyP
+vAJwA5dguhkavA4C1I5FPJDQbUdK5gM=
+=rOfT
+-----END PGP SIGNATURE-----
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-
+--61gm189z7gN5234q--
 
