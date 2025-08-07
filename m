@@ -1,169 +1,101 @@
-Return-Path: <linux-kernel+bounces-758777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDB9B1D3BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:55:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F35B1D3BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4258D189AC14
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC07F580D53
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669C8243364;
-	Thu,  7 Aug 2025 07:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DF823F405;
+	Thu,  7 Aug 2025 07:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="O43eZfNy"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="azPK9rMI"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F9924113D;
-	Thu,  7 Aug 2025 07:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE255FDA7
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553302; cv=none; b=samdM+o2Oyf8j5bgPIHTk/1J/MmE/RcfSBWq+wqEfsXEJeDJaIVBzg5KtGOvgPxSXbB4nVFxmCRYskRQNqY142tbWtXf2W3zz2CBQAfWH92YEgW1YAhIXjoQldiOYCX49ZSIDE3P5+nDCSde8+vTpDyZdWWoekxpfSWi+0Wo8bQ=
+	t=1754553283; cv=none; b=pGtrvZQF8S+I5r+Luo9u0dPZlCGdJJMUMUnhKe9NQzc+A6AnVh6+o8MU+mDNZssaBHS1dkpz4+bPqy/zb8inTkBZkpVbyqPdOzW5ws6s1tdqq7KpOVyNt3RIop4/JW6k8UOil17Pei4h53mXpckPTRUPp2+ossfxNCmtwFRcEzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553302; c=relaxed/simple;
-	bh=eF41UGuHUZM9YiTxRuYW3QX8Wuqz7PLBtDX/R9mW6ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ED+Pd0dgZHBFb2Vqf3zk7HH/VqtxYT7vdpwSrEqezY8bf5D4uXde4aMC0QcIJTuS2xDWx2jV0JOKd4IjbkyYEraUfY5BQHQELwMClawu0T1kYcBR+mBXBooO7lKIxu0tHwbWYljYNRmwMOkpboXpPaphrimcl7uGwmg2pMvQLUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=O43eZfNy; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5777SgqM007917;
-	Thu, 7 Aug 2025 09:54:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	+09BlbFswcQ8kqh6grV/WOvvjds15aYjFOjwNDgCvB4=; b=O43eZfNy0PW50uZs
-	kLog1fGY1J7XLkTaP1hE9tMl0PhLu3gf06HGBGOCV3IkX3nmxlg4UQJz1l/JvcT1
-	YpvpRMEcGkrJ98cAqOCg246I4WHbK4ERBkC01DdfhhzsZgr7h/LU9uT8am0sMk1p
-	doC6MXl8jhq/YzjCqy6MpbCeyHAWjd9L+5orhFWi8F0y/l8TmnB2Tbv224FXDyM7
-	tbpcgaJ6RUtx5oSRWbqbKbBH9KqA53Sh11NLqsjgevE02eSZrur+9sqrMPRBDIrl
-	CJHgBKLf5nIvCTF15aZraiQNxlLLsXIqZn7ZgGFgHTkGo2v5vquIDzZjTSyPrP99
-	yxjCsA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48bpx06nus-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 09:54:52 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C9EF54004B;
-	Thu,  7 Aug 2025 09:54:03 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3A1BF71CF0C;
-	Thu,  7 Aug 2025 09:53:44 +0200 (CEST)
-Received: from [10.130.78.67] (10.130.78.67) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 7 Aug
- 2025 09:53:43 +0200
-Message-ID: <452a1263-2ec3-4174-9082-078445e67637@foss.st.com>
-Date: Thu, 7 Aug 2025 09:53:41 +0200
+	s=arc-20240116; t=1754553283; c=relaxed/simple;
+	bh=AbBx+g64e2vm8iLodl8ltBApZbqC2ncTbIPhItXlekw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=E5e06w7FtXnll8ExLCEAk/2XfC4O2wyVJ0LJhLqjuBg9qbzzQbaFw/O1i3mWkl/hY6kU0AcRXk9RioVeulxwZ6B/9aye0JmMtubpQVYtZleLGS28c2+IJCRFgUDCXtOqODh7CsNpsspYXAGCQzX5B1kZ2fyo5DGLRmfeso5lsBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=azPK9rMI; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A525B43A2E;
+	Thu,  7 Aug 2025 07:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754553279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yDmxvPaKvO37Q4y8VV8Ok02yCaO2ZekBLC2D6ZLqovQ=;
+	b=azPK9rMIk4n6o+7Qf7kWoocNwZDbWAjw7Ar2zFK9KMScCejZ8Gmxp034nkJmHsbr2gaK+m
+	QzvXY8rAoQ6mQ44V8CQnRLJv8scm0Cd9qsdBMWXTaec1DWu7sltyjUQ6Wt7O1RWyZxR5he
+	t9nnZJs3QWNh6dgzErvxSwwVnZz99zPgOeOZ4GcW6GRieyFj0lzb1JV2CSFXytfxea9O03
+	ZMLde9v7HXd0IwNEaCcNuWab7rdM5707SORFzHoB1/5G9Dn4y8d5YY7AkGnWbx1EDbAliv
+	i5sq5Qm5AYNMRitWF9e9G8s0phE7z6+oZFqiXAGRz5M67ruoDk8/q2Q6zG3Cqw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  Nathan Chancellor <nathan@kernel.org>,  Arnd Bergmann
+ <arnd@arndb.de>,  David Woodhouse <dwmw2@infradead.org>,  Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>,  Bill Wendling <morbo@google.com>,
+  Justin Stitt <justinstitt@google.com>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  llvm@lists.linux.dev
+Subject: Re: [PATCH] mtd: dc21285: fix bytewise memcpy()
+In-Reply-To: <20250807072044.4146480-1-arnd@kernel.org> (Arnd Bergmann's
+	message of "Thu, 7 Aug 2025 09:20:34 +0200")
+References: <20250807072044.4146480-1-arnd@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Thu, 07 Aug 2025 09:54:38 +0200
+Message-ID: <87o6srd0sh.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: uvcvideo: Log driver load in uvc_probe function
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Imene Jaziri
-	<imenjazirii18@gmail.com>
-CC: <linux-media@vger.kernel.org>, <hansg@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250801145326.28560-1-imenjazirii18@gmail.com>
- <20250801150430.GC4906@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-In-Reply-To: <20250801150430.GC4906@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvddtfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopegufihmfidvsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepn
+ hhitghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdprhgtphhtthhopehmohhrsghosehgohhoghhlvgdrtghomh
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi,
+Hello Arnd,
 
-On 8/1/25 17:04, Laurent Pinchart wrote:
-> Hi,
-> 
-> On Fri, Aug 01, 2025 at 03:53:26PM +0100, Imene Jaziri wrote:
->> Add a pr_info() in the uvc_probe function to trace when the
->> uvcvideo driver is loaded. This is for learning purposes.
-> 
-> What part of the learning instructions you are following instructed you
-> to submit this patch to kernel mailing lists ? We are regularly spammed
-> by similar patches, which indicates the instructions are not clear
-> enough.
-> 
+On 07/08/2025 at 09:20:34 +02, Arnd Bergmann <arnd@kernel.org> wrote:
 
-I got curious too. It comes from the Linux Foundation training LFD103
-[1]. Chapter 8 describes this patch pretty much, and chapter 9 describes
-how to send the patch, but with a warning not to do so :
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The commit that split up the 8/16/32-bit operations in 2004 seems to have
+> broken the 8-bit case, as clang-21 now points out:
+>
+> drivers/mtd/maps/dc21285.c:129:97: error: parameter 'len' set but not use=
+d [-Werror,-Wunused-but-set-parameter]
+>   129 | static void dc21285_copy_to_8(struct map_info *map, unsigned long=
+ to, const void *from, ssize_t len)
+>
+> Put back the loop that was in linux-2.6.8 and earlier for this case.
+>
+> Fixes: 67d4878e4e61 ("NOR flash drivers update")
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-  [...]
-  At this time, you can run:
+Thanks for the patch, I'll take it, but that probably means few to no
+people still use it, if broken for more than 20 years...
 
-  git format-patch -1 <commit ID> --to=maintainer1 --to=maintainer2
---cc=maillist1 --cc=maillist2
-
-  This will generate a patch.
-
-  Important Note:
-  Please note that this is just an example. Don’t send this patch upstream.
-
-  You can revert this commit now.
-
-  Please refer to the Select the recipients for your patch section in
-the Submitting patches: the essential guide to getting your code into
-the kernel document.
-
-  When you have your own patch ready for submittal, you can follow this
-example process to generate the patch and send it upstream using the
-following command:
-
-  git send-email <patch_file>
-  [...]
-
-Looking at it I guess it's pretty easy to miss the note. Maybe
-requesting to add '--dry-run' to the git send-email command could be a
-simple fix to prevent from copy/pasting ?
-
-[1]
-https://training.linuxfoundation.org/training/a-beginners-guide-to-linux-kernel-development-lfd103/
-
->> Signed-off-by: Imene Jaziri <imenjazirii18@gmail.com>
->> ---
->>  drivers/media/usb/uvc/uvc_driver.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
->> index da24a655ab68..4e5d1d636640 100644
->> --- a/drivers/media/usb/uvc/uvc_driver.c
->> +++ b/drivers/media/usb/uvc/uvc_driver.c
->> @@ -2170,7 +2170,6 @@ static int uvc_probe(struct usb_interface *intf,
->>  		(const struct uvc_device_info *)id->driver_info;
->>  	int function;
->>  	int ret;
->> -
->>  	/* Allocate memory for the device and initialize it. */
->>  	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->>  	if (dev == NULL)
->> @@ -2188,7 +2187,7 @@ static int uvc_probe(struct usb_interface *intf,
->>  	dev->info = info ? info : &uvc_quirk_none;
->>  	dev->quirks = uvc_quirks_param == -1
->>  		    ? dev->info->quirks : uvc_quirks_param;
->> -
->> +	pr_info("I changed uvcvideo driver in the Linux Kernel\n");
->>  	if (id->idVendor && id->idProduct)
->>  		uvc_dbg(dev, PROBE, "Probing known UVC device %s (%04x:%04x)\n",
->>  			udev->devpath, id->idVendor, id->idProduct);
-> 
-
--- 
-Regards,
-Benjamin
+Cheers,
+Miqu=C3=A8l
 
