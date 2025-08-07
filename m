@@ -1,94 +1,196 @@
-Return-Path: <linux-kernel+bounces-758916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069DEB1D58F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:14:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2EBB1D596
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CADA188131A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:14:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2427018C6291
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC29925A2AE;
-	Thu,  7 Aug 2025 10:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EC622DFBA;
+	Thu,  7 Aug 2025 10:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AGlN3aiS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SrBV9kem"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3F41DF759
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A97418871F;
+	Thu,  7 Aug 2025 10:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754561670; cv=none; b=fY9V5PqrNyMq0F4ofwY5+8BP3JWxHHsCNg8S/+VJIVrKZliwZMMimCpHUskS9bxgL19nwIeqDktsIppljcdI1skbXaznO95iJWW3waS0v9k/dk5DFojDczo9lZjcwcDkj1Q4IbW9UDbe85G6D80DUX3J0t6DRv/MSQtHRagissM=
+	t=1754561751; cv=none; b=iNTuy1EDQPmPGfvIgQvO8yWzPbE9qFex2Z13NmU3FWQ6vRI/blqDmmUvy5UxdRhJU7h90KsA+n4M5SVwDeVWz7ZhhX02Y9ZsZxzczfEq2dUuEO7Z+lZGFca9bSwBJeLHxJFP0xcsOd96Tbo+dogy5nzhXnFWpWnVm87XhPcbZ6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754561670; c=relaxed/simple;
-	bh=qqgetxXoB79LbqPMFDraeWtm6ShkuPtCd6FJzkqn344=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=cH/yuzYSs5DY+jDbVJlZ/7DINXgAPsLIY+iqiiARR2uTZ593kviHfQA1P89YLX3FPsF5dvA2Pb3rx/Ke5QcOIZK9cEDQJRhGCvDIEQgOwDHBao3qLSsKFRHtkny1CkTqXm0VfpYaM0d1JuCw5y3BSKpPdeWZSEsGjtKrhPM/Cac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AGlN3aiS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754561667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qqgetxXoB79LbqPMFDraeWtm6ShkuPtCd6FJzkqn344=;
-	b=AGlN3aiSscOoMq0oYfNnWvXo6Th1Vmw0z5OTiSaOiD1G5SFfGeNymXi4TwGdKoZj74zzfw
-	UKUwXCETAGIOXhOtg7kGf8G1tdU6xurJJLHBMLrmvfNUb9mUYABCWXnSGimDKiyaWl/oK0
-	plyX9Ysl4QK8c7lpm61HWz7whIDOQ9M=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-124-ZtUGMtRfPeaSw6lW-81MFA-1; Thu,
- 07 Aug 2025 06:14:22 -0400
-X-MC-Unique: ZtUGMtRfPeaSw6lW-81MFA-1
-X-Mimecast-MFC-AGG-ID: ZtUGMtRfPeaSw6lW-81MFA_1754561661
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 934D11956050;
-	Thu,  7 Aug 2025 10:14:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.17])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3BCF2180035C;
-	Thu,  7 Aug 2025 10:14:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1b3e0ed3-35c5-46ce-932d-02de9ba17ab6@samba.org>
-References: <1b3e0ed3-35c5-46ce-932d-02de9ba17ab6@samba.org> <20250806203705.2560493-1-dhowells@redhat.com> <20250806203705.2560493-17-dhowells@redhat.com>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Wang Zhaolong <wangzhaolong@huaweicloud.com>,
-    Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org,
-    linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 16/31] cifs: Rewrite base TCP transmission
+	s=arc-20240116; t=1754561751; c=relaxed/simple;
+	bh=QwR/g9gCl0cuQrGYwZYsUDmIdsP7KonbdNDOCnypE+c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Kkkun+mVS0oVMtPUGZS8t3SC8eCHcIfTw4Eh9qzteekPz8otTE3P2lxjQc2xVV5frDaGuSJ3cD2OOpFpnQZBrYZ1jRuzOZ673X1AS0lbvQ/+b7M0Uiv2lLOAAUfwxghRHdbJgGlQ57pezPgdiFS2FLhDtyQsUIJYonChv0bY+64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SrBV9kem; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57768gGX019393;
+	Thu, 7 Aug 2025 10:15:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=l/+SEP9W1HI808c+t26c8v/UhqRx
+	C5G02OyRBCZLA0E=; b=SrBV9kemVKcu1yOAiMe/EHT4vVcf3TvfSbbghgfQHY0E
+	hMY0mOGcR8fv5Je9NzZWxy/02UHW2A0QvXCMV0+ixUqxZbCCAHUY+HB/UPtcvkoG
+	ngcDH75CgM93rGSbODw9wtqKuQ1NnzIuu+LALnXq6hHRkABssVYMgYi0de9QPOgC
+	kSVmZ8AGGFwjL2HeHr6Jji7vEh+zN3H/tArn0K34g4xwFiEZGtp3x9wbkDiYZIm1
+	7ozRsIg9Dt2vwf4DDuE0QVbO/olUTrcZEJibHXLWpFVHXFByuiWYpx4m+ptrDGpu
+	aQcWp7tQo8nqeW8rS8J0KCJHCr0p9s9aHUb0plocYA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26txucj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 10:15:43 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577AFgss021851;
+	Thu, 7 Aug 2025 10:15:42 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26txuce-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 10:15:42 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779T0BV007997;
+	Thu, 7 Aug 2025 10:15:41 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwn02rc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 10:15:41 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577AFV5T31523364
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Aug 2025 10:15:32 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 36A3C5805F;
+	Thu,  7 Aug 2025 10:15:39 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 63C8E58055;
+	Thu,  7 Aug 2025 10:15:36 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  7 Aug 2025 10:15:36 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: [PATCH v4 0/3] PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI
+ recovery
+Date: Thu, 07 Aug 2025 12:15:30 +0200
+Message-Id: <20250807-add_err_uevents-v4-0-c624bfd8638d@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2577379.1754561655.1@warthog.procyon.org.uk>
-Date: Thu, 07 Aug 2025 11:14:15 +0100
-Message-ID: <2577380.1754561655@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMJ8lGgC/23N3wqCMBTH8VeJXTfZP5121XtEiG7HHOSMTYchv
+ ntTAiG7/P7gfM6MPDgDHl1OM3IQjDe9jSHOJ6Tayj4AGx0bMcJSIqjEldYlOFeOEMAOHmdNroW
+ WCkihULx6OWjMtIm3e+zW+KF37+1BoOv6tZg4WIFiijnPhc5qKQuVXZ/GjlNi6i5RfYdWL7Ddy
+ Bg/GgwTXPGKqSYHSan+Z/DdkJwcDR6NVJCaprkikjS/xrIsH3yogd06AQAA
+X-Change-ID: 20250417-add_err_uevents-6f8d4d7ce09c
+To: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+Cc: Linas Vepstas <linasvepstas@gmail.com>,
+        =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Keith Busch <kbusch@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1934;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=QwR/g9gCl0cuQrGYwZYsUDmIdsP7KonbdNDOCnypE+c=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGDKm1Bzdx2O597Pf9h9Hpk57P3einfr5zta1tzXygjqiR
+ UqCJ3Q5dZSyMIhxMciKKbIs6nL2W1cwxXRPUH8HzBxWJpAhDFycAjARxb0M/8s3B2f/LtKX2LPb
+ YN2Rtnn3/YVePjWefyqqe1lwDkdTzlWG/0U9dpMW6wsrPaniEePc+Xu12J6dl7//CPJjzTQIunL
+ jNA8A
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: UQ8b2gZMgDFxw_ehMZi0GX83mVCpFKRQ
+X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=68947ccf cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=akVQnn9Ajh7wPi5GvloA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: LBtR00s-TY3MdBWy78IPVMvB4fsARNX9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA3MyBTYWx0ZWRfX0z0IzgHqDF5s
+ H/zb2dl4gCb+hXFmcSm5mU6NPolZu63JtpXEQVLIBUndJk8nMcRa/9pu4702Erlk8UdfFMl8ha/
+ imzhXircjMy+MA8XrqdKXPKla+5Z6lbRTkOhN0w2EDqF1u5i+cyEUcF7C4xggONECyQbe1Njr6F
+ zbuKWldLxUJIbJownnjuK9YxVJbC+LxJxfYkgtNr3HPobwoR8lhjhAsR5jwkYdwHeSFz8PavWa5
+ lTaKaSLfghp+CokcuxfeWpcHLkVdovObDiWUtK7biyQjdhsnTpEQSYAnRw6mNXMkJlk4UomesV4
+ kMW2jhKK4wXStS77beJLxmRbDSxWd1gPGi9mPoX/kfTrepo6w3AKbF9FI39BezNfVXPq0jKvYod
+ +bj0cDfhPTBKg4Rq5SRT08FAQp591j9AQ3Jf5D/nxFGhth4bO2u5MTvmO/nFYsCate+p1Gd4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 phishscore=0 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508070073
 
-Stefan Metzmacher <metze@samba.org> wrote:
+Hi Bjorn, Lukas, Mahesh,
 
-> > + smb_msg->msg_flags = MSG_DONTWAIT + MSG_NOSIGNAL;
+This series adds issuing of uevents during PCI recovery on s390. In
+developing this I noticed that pci_uevent_ers() ignores
+PCI_ERS_RESULT_NEED_RESET. I think this will result in AER not generating a uevent
+at the beginning of recovery if drivers request a reset via the voting
+on error_detected() returns. This is fixed in the first patch and relied
+upon by the s390 recovery code as it also uses the result of
+error_detected() though with one device/driver at a time.
 
-And whilst I'm sure addition works, I would much rather that be bit-OR.
+Thanks,
+Niklas
 
-David
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+---
+Changes in v4:
+- Add change in EEH to use the return of error_detected() in the uevent
+  just like AER and the new s390 code
+- Add R-b from Lukas
+- Link to v3: https://lore.kernel.org/r/20250730-add_err_uevents-v3-0-540b158c070f@linux.ibm.com
+
+Changes in v3:
+- Reworded cover letter
+- Rebase on v6.16
+- Link to v2: https://lore.kernel.org/r/20250623-add_err_uevents-v2-0-a3a2cf8e711d@linux.ibm.com
+
+Changes in v2:
+- Add a patch fixing pci_uevent_ers() mistakenly ignoring PCI_ERS_RESULT_NEED_RESET
+- Use the result of error_detected() for initial pci_uevent_ers()
+- Drop fixes tag in s390 patch
+- Rebase and re-test on current master
+- Link to v1: https://lore.kernel.org/r/20250424-add_err_uevents-v1-1-3384d6b779c6@linux.ibm.com
+
+---
+Niklas Schnelle (3):
+      PCI/AER: Fix missing uevent on recovery when a reset is requested
+      powerpc/eeh: Use result of error_detected() in uevent
+      PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI recovery
+
+ arch/powerpc/kernel/eeh_driver.c | 2 +-
+ arch/s390/pci/pci_event.c        | 3 +++
+ drivers/pci/pci-driver.c         | 3 ++-
+ include/linux/pci.h              | 2 +-
+ 4 files changed, 7 insertions(+), 3 deletions(-)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250417-add_err_uevents-6f8d4d7ce09c
+
+Best regards,
+-- 
+Niklas Schnelle
 
 
