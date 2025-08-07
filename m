@@ -1,134 +1,112 @@
-Return-Path: <linux-kernel+bounces-759386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39628B1DCDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:07:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 167E7B1DCE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDCFB624043
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:07:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2AC47B1394
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B156A221DAC;
-	Thu,  7 Aug 2025 18:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43682248A0;
+	Thu,  7 Aug 2025 18:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jY1NQlkV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IjKHGVc/"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA4420299E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC0E221737
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754590034; cv=none; b=oRwoxoFlPr0Ri+acGnWcFgkm61efdu7lEJ2IlJCxu3ESbxOTxCnXcyU4T5NXl1NAEMX99NV3kKmSkLT2Oo2hY1CRadbrOLwgYQE88iAgJEQxEzp80j364fo7nMjNacReJyvWlcPsyS3iVybHBotxv8Je5QQrBY1UhOK7lDnQlPA=
+	t=1754590079; cv=none; b=DZ/KgxyWhAPkPkhB6hVQL4tq+w9mIw8knFxGgjRsiU8MRu6RafAYweGemSZ/ZQSI/XIUrvCvaEJVC5J/FZC44gEH0lgfHQt32pQx4WjGNaTYJ2miQ9DrF4Gr3i4JXqBxoTFEQ1TTF4Jt8TwOLRSaBmUv+B9Qs29GVYpxcYjY9Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754590034; c=relaxed/simple;
-	bh=xHKkV4DD2DuoLr05gEBrQk1TLxEWU/M1iyMdw4ivK30=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RoR7qtIPb3cPJPWqZ5bIfesJvFMzRZhkNRuBJIsAvcg6xD1BiLCLMEPAGGI5oOU5PpzrdWGYBUZ80w/3KJqZdkZQgXqTCZOohpELnqTnsm+7fWMZEcZXe5FxvRBMtF6UpdS9BWP8K23wfSLl/j2OuUxvaAJ0FufYZVqA+poZ7n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jY1NQlkV; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754590032; x=1786126032;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=xHKkV4DD2DuoLr05gEBrQk1TLxEWU/M1iyMdw4ivK30=;
-  b=jY1NQlkVhQ3e8xbZr/HfpZNHve3e60pjjRBVKK6AYb+tb60rOLZ6l5Pu
-   U/64K57WNq4eOiiCiVPRM5LoSShnkACRxJFiDi1wESyM0Sy3I4PsPtNW3
-   4Q44UbBCbDIprTazpKNIlzAWtAOeoaLidLIvga2mPeDNkv8ytYoQrENJg
-   2ZFEEMZZrA04JQcDew2kU1if07QHrlRgXETPtcxWaKZlNleNv9CfjeXwg
-   NXT8XQ4R14crXwTRAdx67pyaC5kjnq9cdVqr0mpfQTUmWVczEsaswkNKb
-   kBvC9F6Fs3IKREV56MwNeFhwsh1xa3/Qfhs37KuCKG42eFsp5g9oOY7hx
-   g==;
-X-CSE-ConnectionGUID: g+z4LcJzRoqtA46g0R3iuQ==
-X-CSE-MsgGUID: W35pXe4tRKGhVVkJgMP2Lg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="79489022"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="79489022"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 11:07:10 -0700
-X-CSE-ConnectionGUID: hanbwvowSUi97SDYIz70dA==
-X-CSE-MsgGUID: Bkhc8bHqTnm6cysL/dVeCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="169338011"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.96])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 11:07:07 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Qianfeng Rong <rongqianfeng@vivo.com>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list
- <linux-kernel@vger.kernel.org>
-Cc: willy@infradead.org
-Subject: Re: [PATCH v2 2/2] drm/i915: remove redundant __GFP_NOWARN
-In-Reply-To: <20250807143919.575439-3-rongqianfeng@vivo.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250807143919.575439-1-rongqianfeng@vivo.com>
- <20250807143919.575439-3-rongqianfeng@vivo.com>
-Date: Thu, 07 Aug 2025 21:07:03 +0300
-Message-ID: <0a744ae4266a0e240a8d6e4c3a1ab4998b7404e8@intel.com>
+	s=arc-20240116; t=1754590079; c=relaxed/simple;
+	bh=OJjrlRJdnoSfaEsthcGrvehuO++RaWyGHz6KW+JMhbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ck4g8A1MAJVa0CRSutV5N9000vROXgPjxshZOHWX+O1j9sDcIR7qFmyeU7IefkTx9UP81LKidd1YzXD5NVDwTHCvas/Hau9oeJPcu0C0X+tioYE/tYzslRqz4Sopu6OIrE4URZI0Wx8q1FuYj46ZxNdfqkMIfI4+eHn1lvkJc2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IjKHGVc/; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6156c3301ccso1323a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754590075; x=1755194875; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OJjrlRJdnoSfaEsthcGrvehuO++RaWyGHz6KW+JMhbA=;
+        b=IjKHGVc/ZCUBlEz7zun6AwnjXmRdrHk42JSvTWJJ7Yw8+V+bsEVyrX04TlseDafqC1
+         U3QQOEpsIMIz7wrcA6qQunq5lQQYqSgpmugCEtsBiHwv4H/13iBK64RX5to9PJGl1E56
+         62PFMFRx6qMriFaczX1zRJMJzRF/TmxBoDuWpzk6fH3rC2i/NeMY5R1Df+pCeLKo+Lln
+         gAkVugJ38U03iE0erhrQcoGefG8ETUQWHDlXTozXVxreahLZ/yLL4/oQZdvhICnEWLnO
+         elJ8jz5IyW9U5PvAcp0BG7fwn+iiXAxtO2TrFfSlzPnTSa0rOSHp2H9Be0wO7HjfeU0Y
+         dE5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754590075; x=1755194875;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OJjrlRJdnoSfaEsthcGrvehuO++RaWyGHz6KW+JMhbA=;
+        b=Fy7ZtO2nntotO/zjUV/8pP25Elr0ChiAUEQtEt5KXkfRTDN98R3uodAkcvhTupAmF6
+         RpR7gHlKz+9POhjfPRs0H0jlL0VBkLMhgzuFqnkH5Y2weNUyapSiOJbEarMZggSzom2F
+         eTrSh+w3aitAKo/cqutDVDryAQv3tWEXrzrDiO0vCI7ouPfV0PhEGS2oeOOXKfjY9oGC
+         tJeRMivXY3oGWwZ8DOdZqJVpKqSbf57gT1dkusWOf81Pu5JJFIwT4uvqgZcf9rhJx5CJ
+         sExKcNRcgKuyj1PI/MU4mNR8ciyuCroufIdM22L6zdudzaD8bUsL837+vT15gHw0bZ9x
+         c+tw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFrbGrIKAJocxvHkb05GXqgjsXZo2iE5iisty8TN5cZK1gxAouMaRvjQVTQMnERAAMFUa6/4n0DbOAquw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhV1waGlFhRHHgzcPgygDmQv17uNNT2YOG7gdVt6lLUcrvFUj+
+	nFcc8OFV0uE+oGG0DR9qh35CsprhWXMiMEFTlbCCKk1GpVSTkUPka5sUfSSg5qQ95as9eN+9zyQ
+	Zk08Mb38s1jnz5ZcT+QTumfsC2YfhBpuJ+e8g9b1U
+X-Gm-Gg: ASbGnctzYufEDkjLD/cb/lDvPZ4rJuBceyW8LdF6Afk5rvHXFVLi3Xop3SHozJjJYkM
+	lkNjOQJte+dF96Jm0i5rBag0fMLg+idGvCbne6ZQwJZ2uGQ4MnMnLhzbVlddIFQXU1S61ODEIFF
+	nGMA15m7DVFXFPJ9i3Nmq8a1ed0m1xM3PxLjvHB8v3JEMxG82HWPleVxBW7axb0dSlJ7mRI63FO
+	/3P6kE9EdXA4B11hkq3gPUs6/tsNjxzbgmZJclt8dqJKQ==
+X-Google-Smtp-Source: AGHT+IEvzSpesfYkgCCAObC0Xg+i6NHA/CnpVU4+05f2BuAcOX+avD3vpz0PZpZe3fpUS1se60bl8/syKu6NXlsQlSk=
+X-Received: by 2002:aa7:c40b:0:b0:615:49c4:893f with SMTP id
+ 4fb4d7f45d1cf-617e1500d80mr6028a12.2.1754590074764; Thu, 07 Aug 2025 11:07:54
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <202508071609.4e743d7c-lkp@intel.com> <9e3a59b2-11c0-43ca-aff3-414091f04aa4@lucifer.local>
+ <CAG48ez3=8f3eShjAe9hrvivP+Dvyisw=X_Tr_phc-OX_4MzeDw@mail.gmail.com>
+ <be074809-e1fd-43a2-9396-8f7264532c4d@lucifer.local> <CAG48ez3=kLL4wBxAVSa2Ugrws+-RFQMdNY9jx5FAdbhpNt8fGg@mail.gmail.com>
+ <e4f5faea-ccec-4cc7-83de-1a3c7013b81b@lucifer.local> <cbc2e23d-69ab-4820-9942-c7abf2066ff7@redhat.com>
+In-Reply-To: <cbc2e23d-69ab-4820-9942-c7abf2066ff7@redhat.com>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 7 Aug 2025 20:07:18 +0200
+X-Gm-Features: Ac12FXzrdHLe93hwXByTP7b5qoMtUlDB28KMIEXNNyEkjC99e8lIwwa1vdl72oo
+Message-ID: <CAG48ez1vM35DZ=kTSd4+ndgR6y33AodLLC2KbfbhGrkDaqdnNQ@mail.gmail.com>
+Subject: Re: [linus:master] [mm] f822a9a81a: stress-ng.bigheap.realloc_calls_per_sec
+ 37.3% regression
+To: David Hildenbrand <david@redhat.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, kernel test robot <oliver.sang@intel.com>, 
+	Dev Jain <dev.jain@arm.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Barry Song <baohua@kernel.org>, Pedro Falcato <pfalcato@suse.de>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Bang Li <libang.li@antgroup.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, bibo mao <maobibo@loongson.cn>, 
+	Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@kernel.org>, Lance Yang <ioworker0@gmail.com>, 
+	Liam Howlett <liam.howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Peter Xu <peterx@redhat.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Yang Shi <yang@os.amperecomputing.com>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 07 Aug 2025, Qianfeng Rong <rongqianfeng@vivo.com> wrote:
-> GFP_NOWAIT already includes __GFP_NOWARN, so let's remove the redundant
-> __GFP_NOWARN.
->
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+On Thu, Aug 7, 2025 at 8:02=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+> Sure, we could use pte_batch_hint(), but I'm curious if x86 would also
+> benefit with larger folios (e.g., 64K, 128K) with this patch.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-
-> ---
->  drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c | 4 ++--
->  drivers/gpu/drm/i915/i915_active.c               | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c b/drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c
-> index 8d4bb95f8424..22432912db2e 100644
-> --- a/drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c
-> +++ b/drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c
-> @@ -220,7 +220,7 @@ static void heartbeat(struct work_struct *wrk)
->  		goto out;
->  	}
->  
-> -	rq = heartbeat_create(ce, GFP_NOWAIT | __GFP_NOWARN);
-> +	rq = heartbeat_create(ce, GFP_NOWAIT);
->  	if (IS_ERR(rq))
->  		goto unlock;
->  
-> @@ -282,7 +282,7 @@ static int __intel_engine_pulse(struct intel_engine_cs *engine)
->  	GEM_BUG_ON(!intel_engine_has_preemption(engine));
->  	GEM_BUG_ON(!intel_engine_pm_is_awake(engine));
->  
-> -	rq = heartbeat_create(ce, GFP_NOWAIT | __GFP_NOWARN);
-> +	rq = heartbeat_create(ce, GFP_NOWAIT);
->  	if (IS_ERR(rq))
->  		return PTR_ERR(rq);
->  
-> diff --git a/drivers/gpu/drm/i915/i915_active.c b/drivers/gpu/drm/i915/i915_active.c
-> index 0dbc4e289300..402043cd84d5 100644
-> --- a/drivers/gpu/drm/i915/i915_active.c
-> +++ b/drivers/gpu/drm/i915/i915_active.c
-> @@ -727,7 +727,7 @@ int i915_request_await_active(struct i915_request *rq,
->  static int sw_await_fence(void *arg, struct dma_fence *fence)
->  {
->  	return i915_sw_fence_await_dma_fence(arg, fence, 0,
-> -					     GFP_NOWAIT | __GFP_NOWARN);
-> +					     GFP_NOWAIT);
->  }
->  
->  int i915_sw_fence_await_active(struct i915_sw_fence *fence,
-
--- 
-Jani Nikula, Intel
+Where would you expect such a benefit to come from? This function is
+more or less a memcpy(), except it has to read PTEs with xchg(), write
+them atomically, and set softdirty flags. For x86, what the associated
+folios look like and whether the PTEs are contiguous shouldn't matter.
 
