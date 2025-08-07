@@ -1,186 +1,208 @@
-Return-Path: <linux-kernel+bounces-758936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBB2B1D5E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F59B1D629
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0903BF42B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1541A16BDC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6B622D780;
-	Thu,  7 Aug 2025 10:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WPmGawis"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCC8274FD9;
+	Thu,  7 Aug 2025 10:55:58 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85F642AA5
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCBA2A1CF;
+	Thu,  7 Aug 2025 10:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754562896; cv=none; b=SH43leOSgZh4L7WraXm7MzmfC8AqQ+kxTnjtRBzUAmRmXRZfmXjSZlWofchYySi4He6nw309L0D6TvfjxUr5XuNRErAiLqArzU35C5w6gyEq5CMiZeK2bp2VeQfx14mPYC9r5qlPJxsvUpsNWRBgQLjSUJlQqVv7ch7YFWMeCyk=
+	t=1754564158; cv=none; b=pAyX+RSiPx8b7EUGlo7bENLyqErFdWve7N8P++Gh2FzCEWKbUTOOoVC6HzHs83DJFGjRhQk6URi79UKHf9ccNi9hXldEOh6a1kKCrBwhLEmonYZgFtJ/BfywO7M6+hVeyWiliuN5j+ARvJ23NIY0yfsWzUqofZ0BhdEWZE5FfEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754562896; c=relaxed/simple;
-	bh=gwjFiegsOP4xcnWbW0X5ifEkq0MsOmbvf2Z95Us2gCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aM4oUD29NFGO4pu8KOC5vm77MsmX8xrOMbT1iVFpxPk8nYnA7i2SKmCrejTi2pUXx1JrG7mHQFz+Wx/y5c91/iqJdi71UTOe9TwKR17yL/D5nto3BN/pbEedBtkypPx7qBT7tgdtBshjq1bZqHDp2nhfE4QaVJNCWwIZkUSFUlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WPmGawis; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b8de6f7556so459535f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 03:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754562893; x=1755167693; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+jqpfHFtr9RJd+Rj5jDYwLXh+hHq7pFdE9Sw57Atqmk=;
-        b=WPmGawissfzMWa6qpPa0bLRvu60bfY5y3yjKLZbZK37l9uD9CjHmYksbnwU+CyLqt2
-         a81zVXMddA+GEToFhLKfl1j67J4LB9btSXmOiSj/YujpZ9YsoFllpR/GRWbU9u6qDPDq
-         620cs7FiBXtCzxabdSCn9QUpn3p/p7RdNt26MYA9naavJB5f27fs5vZjB8w1IS52C2IZ
-         IwGYQI+0zgYrIJSjXQxETlX9g1HMzEvhIKaKgbiCg2WZ1MwUeFRSROnlR3NyJoe5DZyC
-         N0b0j2Vs4/bhxZ72C/VACCFog2euKC9uHYbV5niZkbO04u+hmxjhG3JOCn4gfaxxfV/U
-         lFaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754562893; x=1755167693;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+jqpfHFtr9RJd+Rj5jDYwLXh+hHq7pFdE9Sw57Atqmk=;
-        b=DtQTbuKCpMtJV/kOvPl0VD4KXZ9Jmw4ezkdKmWZbJ/FvLSunkS0MbUSHUg5bpE+fG6
-         tP3UT+ab/m+6DAcnXzUnd1dJrroD7jzTGI9tSMLtWrErTDongNwXUDTR0f6nRyNkAMo0
-         kp3UTKGkhJ3Gy0L376Y7L/AeH460WFNk/oxv2R5tP/CzAVO44gfnkwPHDcAo9ddNyrH6
-         NyCqGuG1zhYQBLFli46MkxgwNUi7NOTaNsbTcd7LTyrPW4urufmkGWe8QkzEn1rVhdZe
-         qnqjmzQ4Qi9ekoCff34sT5G/S+xxLCEKPBGII5+wthO6yW8nRMJk+10zCQHd+tI9TMvl
-         JRNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSzl4PwFY92xJJD6RFeJKD+40xqVR+uMGLf3UmC9oSy75ylwWhgmfyVVRu99CP/Q76lPlODUNqYDYfJAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm5j+5R5MzW/PuulupgrLcl/PFcGSz41gw8+fHENKJ2Pv1Cckx
-	Z4i3q8q5e5VoIT9krxazcFsQZY5CfcAlngDUb1xws4o+3ZEhZmvcITWpRGIFdmtXVfw=
-X-Gm-Gg: ASbGnctoDor7dbOsfqHzVmdSWSTmJzUFErjQ6sj/9XN2HdDp4zRnkr9nc5ePFBWfAY8
-	gdAbVeoUv+/kOMHqMmytjZwhGqUR4RYgRon3XCHOp1m1XJHytF/8q/3api8CHE9XptxV9KiOmiM
-	G79MbRfeujGU34ItsAhyadRDuSz70PB6OBVpsw6wSr8BgE6PkORmAOHU422Kdu5VC9f+YVfxjiK
-	7uKNZmzJ1f0RQYtTtjohKRl5p9EaPYcaFN43/ldUC8w+VGLPxDkIAAlHVyV3s85tRT/MFCdTFJK
-	MgqUeGBza0ycCkGXvTNYMvz+n9jAR7cOKxND55Ce+1qLQnIWmdy8NyvGAkM/OUZp1e4I1dx00/8
-	9t6ZFm/cq/mL5j/10eCsuNHjHFoo=
-X-Google-Smtp-Source: AGHT+IEJZFFSnC6OyV3Ckz3ldGk5h0RG3Okc+NeFrocarUAZUjxcjd1haqhnntbT67+wRuAV6TUqug==
-X-Received: by 2002:a05:6000:2f86:b0:3a0:b84d:60cc with SMTP id ffacd0b85a97d-3b8f41a837fmr5055520f8f.2.1754562892893;
-        Thu, 07 Aug 2025 03:34:52 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b8ff860acbsm70000f8f.51.2025.08.07.03.34.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 03:34:52 -0700 (PDT)
-Date: Thu, 7 Aug 2025 13:34:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: Maxime Ripard <mripard@kernel.org>, wens@csie.org,
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
-	airlied@gmail.com, simona@ffwll.ch, jernej.skrabec@gmail.com,
-	samuel@sholland.org, neil.armstrong@linaro.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: backend: Fix error pointers in
- sun4i_backend_atomic_check
-Message-ID: <aJSBSLvIeSpvaYpK@stanley.mountain>
-References: <20250314012029.668306-1-chenyuan0y@gmail.com>
- <20250314-prophetic-attentive-platypus-3ab214@houat>
- <CALGdzurT1_fY_o8Hv92j4+XFQHu1iHRzqVtZAM8upHYBPfA1BA@mail.gmail.com>
+	s=arc-20240116; t=1754564158; c=relaxed/simple;
+	bh=2vHE/1SX60ijzzDdtv+ErW2FQvLsq4c1MNieh+o9OyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nDDVhXuA7XHcGjE7gLorvXcDNQeskCUl7dEj4zYcznoz/jvvghXQNaP0ua6m67xI9QqqoJc0Hn2qqr5EXsYEM62n5tdmocE+w6vJxqWObyR4KJZUkG4V/z1KJ9N0mztkBM5BESuQwoaCj9LXuOcjTWlqec8yGfvSmnF4o7mmMA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4byNsW5Y1nz2YPjN;
+	Thu,  7 Aug 2025 18:37:51 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id C7DE11A0188;
+	Thu,  7 Aug 2025 18:36:48 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 7 Aug 2025 18:36:47 +0800
+Message-ID: <1b374635-2444-453f-a7bd-7e732184998e@huawei.com>
+Date: Thu, 7 Aug 2025 18:36:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: bridge: fix soft lockup in
+ br_multicast_query_expired()
+To: Nikolay Aleksandrov <razor@blackwall.org>, <idosch@nvidia.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>
+CC: <bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>,
+	<zhangchangzhong@huawei.com>
+References: <20250806094941.1285944-1-wangliang74@huawei.com>
+ <9071898b-ad70-45f1-a671-89448ea168df@blackwall.org>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <9071898b-ad70-45f1-a671-89448ea168df@blackwall.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALGdzurT1_fY_o8Hv92j4+XFQHu1iHRzqVtZAM8upHYBPfA1BA@mail.gmail.com>
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Fri, Mar 14, 2025 at 11:00:26AM -0500, Chenyuan Yang wrote:
-> HI Maxime.
-> 
-> Thanks so much for pointing that out!
-> 
-> How about such a patch?
-> 
 
-This patch is corrupted so we can't review it.
+在 2025/8/6 18:08, Nikolay Aleksandrov 写道:
+> On 8/6/25 12:49, Wang Liang wrote:
+>> When set multicast_query_interval to a large value, the local variable
+>> 'time' in br_multicast_send_query() may overflow. If the time is smaller
+>> than jiffies, the timer will expire immediately, and then call mod_timer()
+>> again, which creates a loop and may trigger the following soft lockup
+>> issue:
+>>
+>>    watchdog: BUG: soft lockup - CPU#1 stuck for 221s! [rb_consumer:66]
+>>    CPU: 1 UID: 0 PID: 66 Comm: rb_consumer Not tainted 6.16.0+ #259 PREEMPT(none)
+>>    Call Trace:
+>>     <IRQ>
+>>     __netdev_alloc_skb+0x2e/0x3a0
+>>     br_ip6_multicast_alloc_query+0x212/0x1b70
+>>     __br_multicast_send_query+0x376/0xac0
+>>     br_multicast_send_query+0x299/0x510
+>>     br_multicast_query_expired.constprop.0+0x16d/0x1b0
+>>     call_timer_fn+0x3b/0x2a0
+>>     __run_timers+0x619/0x950
+>>     run_timer_softirq+0x11c/0x220
+>>     handle_softirqs+0x18e/0x560
+>>     __irq_exit_rcu+0x158/0x1a0
+>>     sysvec_apic_timer_interrupt+0x76/0x90
+>>     </IRQ>
+>>
+>> This issue can be reproduced with:
+>>    ip link add br0 type bridge
+>>    echo 1 > /sys/class/net/br0/bridge/multicast_querier
+>>    echo 0xffffffffffffffff >
+>>    	/sys/class/net/br0/bridge/multicast_query_interval
+>>    ip link set dev br0 up
+>>
+>> Fix this by comparing expire time with jiffies, to avoid the timer loop.
+>>
+>> Fixes: 7e4df51eb35d ("bridge: netlink: add support for igmp's intervals")
+>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>> ---
+>>   net/bridge/br_multicast.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
+>> index 1377f31b719c..631ae3b4c45d 100644
+>> --- a/net/bridge/br_multicast.c
+>> +++ b/net/bridge/br_multicast.c
+>> @@ -1892,7 +1892,8 @@ static void br_multicast_send_query(struct net_bridge_mcast *brmctx,
+>>   	time += own_query->startup_sent < brmctx->multicast_startup_query_count ?
+>>   		brmctx->multicast_startup_query_interval :
+>>   		brmctx->multicast_query_interval;
+>> -	mod_timer(&own_query->timer, time);
+>> +	if (time_is_after_jiffies(time))
+>> +		mod_timer(&own_query->timer, time);
+>>   }
+>>   
+>>   static void
+> This is the wrong way to fix it, it is a configuration issue, so we could either
+> cap the value at something that noone uses, e.g. 24 hours, or we could make sure time
+> is at least 1s (that is BR_MULTICAST_QUERY_INTVL_MIN).
+>
+> The simple fix would be to do a min(time, BR_MULTICAST_QUERY_INTVL_MIN), but I'd go
+> for something similar to:
+>   commit 99b40610956a
+>   Author: Nikolay Aleksandrov <razor@blackwall.org>
+>   Date:   Mon Dec 27 19:21:15 2021 +0200
+>
+>       net: bridge: mcast: add and enforce query interval minimum
+>
+> for the maximum to avoid the overflow altogether. By the way multicast_startup_query_interval
+> would also cause the same issue, so you'd have to cap it.
+>
+> Cheers,
+>   Nik
 
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> index 2dded3b828df..5ad0e90d3e6b 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> @@ -490,9 +490,14 @@ static int sun4i_backend_atomic_check(struct
-> sunxi_engine *engine,
->   drm_for_each_plane_mask(plane, drm, crtc_state->plane_mask) {
->   struct drm_plane_state *plane_state =
->   drm_atomic_get_plane_state(state, plane);
-> - struct sun4i_layer_state *layer_state =
-> - state_to_sun4i_layer_state(plane_state);
-> - struct drm_framebuffer *fb = plane_state->fb;
-> + struct sun4i_layer_state *layer_state = NULL;
-> + struct drm_framebuffer *fb = NULL;
 
-No need to initialize things like this.  NULL isn't a valid pointer.
-This just disables static checker tools from finding uninitialized
-variable warnings so all the expense of writing the checker tools is
-now wasted.
+Thanks very much for your suggestions!
 
-regards,
-dan carpenter
+Similar to the commit 99b40610956a("net: bridge: mcast: add and enforce
+query interval minimum"), it is indeed a better choice to add query
+interval maximum:
 
-> +
-> + if (IS_ERR(plane_state))
-> + return PTR_ERR(plane_state);
-> +
-> + layer_state = state_to_sun4i_layer_state(plane_state);
-> + fb = plane_state->fb;
-> 
->   if (!sun4i_backend_plane_is_supported(plane_state,
->         &layer_state->uses_frontend))
-> -- 
-> 
-> -Chenyuan
-> 
-> On Fri, Mar 14, 2025 at 2:17 AM Maxime Ripard <mripard@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Mar 13, 2025 at 08:20:29PM -0500, Chenyuan Yang wrote:
-> > > The function sun4i_backend_atomic_check was dereferencing pointers
-> > > returned by drm_atomic_get_plane_state without checking for errors. This
-> > > could lead to undefined behavior if the function returns an error pointer.
-> > >
-> > > This commit adds checks using IS_ERR to ensure that plane_state is
-> > > valid before dereferencing them.
-> > >
-> > > Similar to commit da29abe71e16
-> > > ("drm/amd/display: Fix error pointers in amdgpu_dm_crtc_mem_type_changed").
-> > >
-> > > Fixes: 96180dde23b7 ("drm/sun4i: backend: Add a custom atomic_check for the frontend")
-> > > Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/sun4i/sun4i_backend.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> > > index 2dded3b828df..a8e0e2123764 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> > > @@ -490,6 +490,10 @@ static int sun4i_backend_atomic_check(struct sunxi_engine *engine,
-> > >       drm_for_each_plane_mask(plane, drm, crtc_state->plane_mask) {
-> > >               struct drm_plane_state *plane_state =
-> > >                       drm_atomic_get_plane_state(state, plane);
-> > > +
-> > > +             if (IS_ERR(plane_state))
-> > > +                     return PTR_ERR(plane_state);
-> > > +
-> >
-> > This introduces a build warning. You shouldn't mix declarations and code.
-> >
-> > Maxime
+diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
+index 1377f31b719c..8ce145938b02 100644
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -4818,6 +4818,14 @@ void br_multicast_set_query_intvl(struct 
+net_bridge_mcast *brmctx,
+                 intvl_jiffies = BR_MULTICAST_QUERY_INTVL_MIN;
+         }
+
++       if (intvl_jiffies > BR_MULTICAST_QUERY_INTVL_MAX) {
++               br_info(brmctx->br,
++                       "trying to set multicast query interval above 
+maximum, setting to %lu (%ums)\n",
++ jiffies_to_clock_t(BR_MULTICAST_QUERY_INTVL_MAX),
++ jiffies_to_msecs(BR_MULTICAST_QUERY_INTVL_MAX));
++               intvl_jiffies = BR_MULTICAST_QUERY_INTVL_MAX;
++       }
++
+         brmctx->multicast_query_interval = intvl_jiffies;
+  }
+
+@@ -4834,6 +4842,14 @@ void br_multicast_set_startup_query_intvl(struct 
+net_bridge_mcast *brmctx,
+                 intvl_jiffies = BR_MULTICAST_STARTUP_QUERY_INTVL_MIN;
+         }
+
++       if (intvl_jiffies > BR_MULTICAST_STARTUP_QUERY_INTVL_MAX) {
++               br_info(brmctx->br,
++                       "trying to set multicast startup query interval 
+above maximum, setting to %lu (%ums)\n",
++ jiffies_to_clock_t(BR_MULTICAST_STARTUP_QUERY_INTVL_MAX),
++ jiffies_to_msecs(BR_MULTICAST_STARTUP_QUERY_INTVL_MAX));
++               intvl_jiffies = BR_MULTICAST_STARTUP_QUERY_INTVL_MAX;
++       }
++
+         brmctx->multicast_startup_query_interval = intvl_jiffies;
+  }
+
+diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
+index b159aae594c0..8de0904b9627 100644
+--- a/net/bridge/br_private.h
++++ b/net/bridge/br_private.h
+@@ -31,6 +31,8 @@
+  #define BR_MULTICAST_DEFAULT_HASH_MAX 4096
+  #define BR_MULTICAST_QUERY_INTVL_MIN msecs_to_jiffies(1000)
+  #define BR_MULTICAST_STARTUP_QUERY_INTVL_MIN BR_MULTICAST_QUERY_INTVL_MIN
++#define BR_MULTICAST_QUERY_INTVL_MAX msecs_to_jiffies(86400000) /* 24 
+hours */
++#define BR_MULTICAST_STARTUP_QUERY_INTVL_MAX BR_MULTICAST_QUERY_INTVL_MAX
+
+  #define BR_HWDOM_MAX BITS_PER_LONG
+
+Set the interval maximum to 24 hours, it is big enough.
+Please check it. If the above code is ok, I will send a v2 patch then.
+
+------
+Best regards
+Wang Liang
+
+>
+>
 
