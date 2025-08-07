@@ -1,211 +1,165 @@
-Return-Path: <linux-kernel+bounces-759392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45878B1DCEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:12:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA03FB1DCE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96903B934A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:12:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711D01AA22B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E45A266582;
-	Thu,  7 Aug 2025 18:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B351226CFF;
+	Thu,  7 Aug 2025 18:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b7K8qC/N"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BeMxJ5q4"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA159224B0D;
-	Thu,  7 Aug 2025 18:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F337820299E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754590342; cv=none; b=lnAkruxwiHEgtm6mQe3zfIj4fzjEGq3xsVmi0IxYHYx5gsjelwjGw1NlQnQNGHa+4n4bPPslgSvyGGhbof/y/zmY3BDkIyeq+gRLCObtTw/HlJdMb+9ZDfaaTZnw32yc4p8yL+Fkzn3GgNRs4Xe8fJISKDMAEOm5T1nM7/CcqmY=
+	t=1754590213; cv=none; b=J9hSCxwmer2Gzr+7cDglyxQPAu5+iY2x8mzeANNoDgEz8Dw5oJiXXFcFPxdgK7msxVy2RFHuKHTMhoBVUH3Aakk8ubrUkeclP2x2hK4dEPukgCgUuDmVrhOxR/CmNFB2OV76FXryX9/HP7ZrgVcMqVyf4gYKvX0N7cLSUEQzVHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754590342; c=relaxed/simple;
-	bh=VMelHbU6csVktxN5OU+O1GDhtXJv/FuaUSflNAAkfI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rdeFyg+gTCF2+cJp21mXtWERCQmBhl8yn3H6ZqKCxebOjXIunKoeJ/VlfsdlXbfpfAzgeyhRPjWcALVuKaP6E+bCRAB4fV7sU/MSAVyJ+UJihRY+IqOQSW5CdOo4KUX7x6JhNyP9xta0lxg2LRKIeLb2J91z+DphX6GD15e8u0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b7K8qC/N; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577I8jl2020477;
-	Thu, 7 Aug 2025 18:12:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RUPFuDurNcU5UoOOsQcIR6j0Wk6MQdcDGgVZKlKzfuw=; b=b7K8qC/NNE7i2zYP
-	KGPPiFtpBHWHKSEOx0fqjQLbMMeq6oEvuGL2bO/HyaApSAbGwBwDbvh7kT568A28
-	l8u7bmCIAlVFGLdBqIiMY6GBpECz3Pi8kQgufpsaT/EAcSLt3XDGByUcYZ0h1bXV
-	cGGQDqpF2mm7Kc60mfLohGyFQodxcUHUBaE1q5OcXM8rRjRj3nj18Go8xy/30Hyt
-	bItrxwi4fFc17jZmJ6EfJOpm3U0v8Et/OMkYviLXoN6fRopItLE5/P50P5Zw70Qq
-	n0pRqRCQFkQdz3R+vbSQhpYwvqqkfyd8M20oQtWMITZHfgCa17PFhvxBMcjdwGkS
-	QFWhRA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy8f8wn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 18:12:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 577I9c0B017557
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Aug 2025 18:09:38 GMT
-Received: from [10.216.57.148] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 7 Aug
- 2025 11:09:32 -0700
-Message-ID: <faadad49-9fa6-4f76-9162-d6f19974ad49@quicinc.com>
-Date: Thu, 7 Aug 2025 23:39:29 +0530
+	s=arc-20240116; t=1754590213; c=relaxed/simple;
+	bh=undqdjb7Cj5qXyTPAeQEDrcBeJD8DH+zyfxYBBjDJpk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P9Z00DAySvkTcDPDuL5SBmIQcHhkj6tAjRkZnCqXoZmm5aw5N5k1VqVAykl2emz0EH0s+VS0iPbHpzxsCz0WCclAKwrAIchQhjiPiEd7opMZHBtaUMeV+LKJsIkh2wSlwubnSkzaeOlwui5HHNetZKaxmhTQ5QcI0glbeJ1SE/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BeMxJ5q4; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55b9a23d633so1403158e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754590208; x=1755195008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=undqdjb7Cj5qXyTPAeQEDrcBeJD8DH+zyfxYBBjDJpk=;
+        b=BeMxJ5q47WNi4yWmNCGjTKT3V9RNVRQYczayiQBwpejp8zFAIMSchowYJg5WXupiUh
+         a5eu5AmT+uiYa/5EmAkdb7VkYngAAAG7taDczJFK6BwzapOecYa6EIZjw3g7vSr4flc1
+         Q1t2FVUZUWls6C4DjqZG0nwO0DDyyDghA+QJNapo6nAJs/9/vE2jyJ1tlXQY5bZBCUFM
+         PCNy7Ee1bPrnKT5veYHPN/LN3qn6PpZ6kiKLmWwGNotwGd2Vt3/OCL/RYfc2KWqlEGB9
+         2++rWvudVU4FQ4ERHeHgTmWakafukfLJMBWjy8IpCF9ArlLOS8NPNzZV8AWjKZFrj+Qe
+         zhWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754590208; x=1755195008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=undqdjb7Cj5qXyTPAeQEDrcBeJD8DH+zyfxYBBjDJpk=;
+        b=RFAoroOGW7pJzF26GRwh1zQbQ+S3OT/2ueF0VjhMN537JevMeSJqxoMC+t/ETqAZMI
+         M+2hFaWFJIB6uSG0YKxcwViCjsL0IlrVpvHosCl5PL6u21w8BXMb0a6MzmhTaYzqahQA
+         z3o+cRLOQ1ajI0djaQUXCKuovzT8OlAp21Ewm3na0b6xO92JbAucM87wYI29IdW/4zOk
+         8/6Wch52wBUQkIEWGbTyUeUbVqWKWBnspALy7NFstgthcbtASrWcEB220fA+ct4xBV3W
+         xkHH2Z0PZc83soN94m6EJ34tHL+OkD15Z6n4PAWKQJ9abuSYegCw7wYdeF/VQNoDZWTV
+         x2Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrvjbeYN+tymfXuT0a4Px4y04UsRSUx2g1H068Tcumj+ztzOWVWqf0sd38BvSAg/TzIlIAlkIeOvJPAXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg6sskeRItE0UUDN1a/byIXB7QD7Lb/8qYnFKtkJ4EZxCb3Pbw
+	GiDb7ar8iZI2Zc5MDmoI+r50Nj0bDzAkt1LpbpiSvpL15Omdb8CKU3KJZlwfA/U30uqMPgr04Dm
+	15tskVTlpBylas9Z6dcRaFMAm7AtahYLTJhdseC0=
+X-Gm-Gg: ASbGncsrzfPsivsq0Niu3OI3HbBEs+4ogfXY2YAFrHLJJx6FgSc9u8hx8Si6+RlAj7X
+	WNICLxl6KLViyqGA6bnI34e+Ot3Ad2dM7hp+2pw0h/o0ZFRFw1eUSdkX4hgFjHSXJxCHubkF7VD
+	0N9axgje5Y/oX9/BXjXOxJMWKM/O9g5lAxjEjD6pkJw7VtwSNf9Jp8uCmxENx5oNFXT4M8RowAn
+	6+9TEs=
+X-Google-Smtp-Source: AGHT+IFj26gAarF9lEJMiYhzLFQXeXYoZ/3YXgwEb2CQdUVeYAJ3voVdP6ox7aC7qY1raCNksDYU8dJse4iGH7bKs0o=
+X-Received: by 2002:a05:6512:239c:b0:556:fb24:6f85 with SMTP id
+ 2adb3069b0e04-55cb61e220cmr1442281e87.22.1754590207592; Thu, 07 Aug 2025
+ 11:10:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
- device tree
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Mark Brown
-	<broonie@kernel.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <mani@kernel.org>,
-        <conor+dt@kernel.org>, <bvanassche@acm.org>, <andersson@kernel.org>,
-        <neil.armstrong@linaro.org>, <dmitry.baryshkov@oss.qualcomm.com>,
-        <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
- <20250806154340.20122-5-quic_nitirawa@quicinc.com>
- <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
- <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
- <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
- <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
- <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
- <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
- <8c7f8cfc-2090-449e-b6ec-688a0021bac4@oss.qualcomm.com>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <8c7f8cfc-2090-449e-b6ec-688a0021bac4@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: iwrIEPwi4ki_J7zqiXwvK_q13RnAwWha
-X-Proofpoint-ORIG-GUID: iwrIEPwi4ki_J7zqiXwvK_q13RnAwWha
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX+neVPzguomz1
- arvwZyTBUn6e8f8MkIOTgYhVfBIWsS+kCgEZmMoogbWDlGce29bIujLQHLYfmhVOZ1OKiAO5Lcc
- q7qCYiydqr3xNdt4xo/TMQ42VtbjFhQMH7omML3YthFwuR5xRr+4vw6gI7q6hrzTA8loXppro9y
- Wl0v5ULI4G7XfV9VW7Q2RbhGjIhUENydnSwKbZyW8Zz0FSrKLRIp+Fb8Var6tC6BiLBNpNvFCEY
- jSrVE0zstzfU06t8gDZGdqyz1hbpTqoL6rA+JGXq1pgbtcmreUjmEVtapzma38CnR0bJ7koAqVN
- pT+qURIAvRX+TR5mtKpp8lq+19uz4AW5L7XsWNZHLdAL44jZpptaT5h17f5X1m4N7fdvqzkvgPY
- r2wkhBq/
-X-Authority-Analysis: v=2.4 cv=GrlC+l1C c=1 sm=1 tr=0 ts=6894ec7a cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=eogAV7dI_pG_N5qXJEUA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_04,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
- phishscore=0 adultscore=0 bulkscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
+References: <20250807152720.62032-1-ryncsn@gmail.com> <20250807152720.62032-4-ryncsn@gmail.com>
+ <CAG48ez114_bmuca2UL-g0ZY76-VqhL-4rQtJM_k0N2NJXE4vdg@mail.gmail.com>
+ <CAMgjq7BhfGC7jVHQ62wAJBfTKCDG2+VdgpjiZ7hjxXeC5fHg-w@mail.gmail.com> <CAG48ez0O-Ro9-x1LZ8QdijMk57j1D2jWf3MR7F6AiDP7Wq1p_w@mail.gmail.com>
+In-Reply-To: <CAG48ez0O-Ro9-x1LZ8QdijMk57j1D2jWf3MR7F6AiDP7Wq1p_w@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 8 Aug 2025 02:09:31 +0800
+X-Gm-Features: Ac12FXzZmSlM9Lu3wRnHAzlk8tqAltT0Tp_y8BAOl3P0HBRgteVJt8NuwhYJOpU
+Message-ID: <CAMgjq7Aosd20rpFa8thPaGQ9dL-qLeq6Ki7S0H0VirQy5rh=Kw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] mm/mincore: avoid touching the PTL
+To: Jann Horn <jannh@google.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 8, 2025 at 1:45=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
+> On Thu, Aug 7, 2025 at 7:28=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wro=
+te:
+> > On Fri, Aug 8, 2025 at 12:06=E2=80=AFAM Jann Horn <jannh@google.com> wr=
+ote:
+> > >
+> > > On Thu, Aug 7, 2025 at 5:27=E2=80=AFPM Kairui Song <ryncsn@gmail.com>=
+ wrote:
+> > > > mincore only interested in the existence of a page, which is a
+> > > > changing state by nature, locking and making it stable is not neede=
+d.
+> > > > And now neither mincore_page or mincore_swap requires PTL, this PTL
+> > > > locking can be dropped.
+> > >
+> > > This means you can race such that you end up looking at an unrelated
+> > > page of another process, right?
+> >
+> > I was thinking If the PTE is gone, it will make mincore go check the
+> > page cache, but even if we hold the PTL here, the next mincore call
+> > (if called soon enough) could check the page cache using the same
+> > address. And it never checks any actual page if the PTE is not none.
+> >
+> > Perhaps you mean that it's now doing the page / swap cache lookup
+> > without holding PTL so if the PTE changed, then the lookup could be
+> > using an invalidated index, and may find an unrelated page.
+>
+> Yes, that's what I meant.
+>
+> > A changing PTE also means the mincore return value is changing, and if
+> > called earlier or later by a little bit, the result of that address
+> > could be opposite, and mincore only checks if the page existed,
+> > it's hard to say the returned value is a false positive / negative?
+> >
+> > Or could this introduce a new security issue?
+>
+> I don't have specific security concerns here; but this is a change
+> that trades accuracy and simplicity for performance.
+>
+> > > And your patch intentionally allows that to happen in order to make m=
+incore() faster?
+> >
+> > When doing a clean up (patch 1) I noticed and didn't understand why we
+> > need a PTL here. It will no longer block others and go faster as we
+> > remove one lock, I can drop this one if we are not comfortable with
+> > it.
+>
+> If you had a specific performance concern here, I think we could
+> consider changing this, but in my view it would sort of be breaking
+> the locking rules (by using a swap index that is not guaranteed to be
+> kept alive) and would need an explanatory comment explaining the
+> tradeoff.
 
+Thanks for the explanation.
 
-On 8/7/2025 11:13 PM, Konrad Dybcio wrote:
-> On 8/7/25 7:26 PM, Mark Brown wrote:
->> On Thu, Aug 07, 2025 at 09:12:53PM +0530, Nitin Rawat wrote:
->>> On 8/7/2025 7:14 PM, Mark Brown wrote:
->>
->>>>> The intended use is to set the load requirement and then only en/disable
->>>>> the consumer, so that the current load is updated in core (like in the
->>>>> kerneldoc of _regulator_handle_consumer_enable())
->>
->>>>> My question was about moving the custom parsing of
->>>>> $supplyname-max-micromap introduced in this patch into the regulator
->>>>> core, as this seems like a rather common problem.
->>
->>>> Wait, is this supposed to be some new property that you want to
->>>> standardise?  I didn't see a proposal for that, it's not something that
->>>> currently exists - the only standard properties that currently exist are
->>>> for the regulator as a whole.
->>
->>> The UFS QMP PHY driver is not the first client to use regulator_set_load or
->>> alternatively set load requirements and invoke enable/disable or
->>> alternatively
->>
->> The issue isn't using regulator_set_load(), that's perfectly fine and
->> expected.  The issue is either reading the value to use from the
->> constraint information (which is just buggy) or adding a generic
->> property for this (which I'm not convinced is a good idea, I'd expect a
->> large propoprtion of drivers should just know what their requirements
->> are and that a generic property would just get abused).
->>
->>> These drivers also define corresponding binding properties, as seen in the
->>> UFS instances documented here:
->>
->>> UFS Common DT Binding ((link - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/ufs/ufs-common.yaml?h=next-20250807)
->>
->> Note that that's specifying OPPs which is different...
-> 
-> The microamp properties are in the top-level, not under OPP if
-> that's what you meant
+From the swap side, get_swap_device also ensures the offset is still
+in the valid lookup range so the worst thing is a very rare inaccurate
+value.
+PTE change will mean the page is being swapped in/out or zapped, so if
+the mincore is called by like a jitter earlier / later, the result
+changes. So I thought it hard to define the accuracy in such a case
+considering the timing.
 
-Thanks for pointing that out, Konrad
+>
+> Since you only wrote the patch because you thought the lock was
+> unnecessary, I'd prefer it if you drop this patch.
 
-
-> 
-> Or are you perhaps suggesting that any device requiring explicit
-> current requirement settings, should do so through an OPP table
-> (perhaps a degenerated one with just a single entry detailling
-> the single requirement most of the time)?
-> 
->>> There was a previous effort to introduce similar properties
->>> (vdda-phy-max-microamp and vdda-pll-max-microamp) in the device tree
->>> bindings.
->>> Link - (link- https://patchwork.kernel.org/project/linux-arm-msm/patch/20220418205509.1102109-3-bhupesh.sharma@linaro.org/#24820481)
->>
->> That patch also fails to supply any rationale for making this board
->> specific or generally putting them in the DT, AFAICT it's one of these
->> things just pulled out of the vendor tree without really thinking about
->> it.  The changelog just says the properties are in downstream DTs.
->>
->>> Currently, the regulator framework does support automatic aggregation of
->>> load requests from multiple client drivers. Therefore, it is reasonable and
->>> necessary for each client to individually communicate its expected runtime
->>> load to the regulator framework to put the regulators in current
->>> operation mode.
->>
->> That doesn't mean that it's a good idea to put that information in the
->> DT, nor if it is sensible to put in DT does it mean that it's a good
->> idea to define a generic property that applies to all regulator
->> consumers which is what I now think Konrad is proposing.
-> 
-> Yeah, that's what I had in mind
-> 
-> I was never able to get a reliable source for those numbers myselfe
-> either.. At least some of them are prooooobably? chosen based on the
-> used regulator type, to ensure it's always in HPM..
-> 
-> That said, our drivers cover a wide variety of hardware, built on a
-> wide variety of process nodes, with different configurations, etc.,
-> so it's either polluting the DT, or polluting the driver with
-> per-compatible hardcoded data (and additional compatibles because
-> fallbacks wouldn't work most of the time)
-
-I missed to read this before replying to my last reply.
-Thanks for the explaining this. I too had mention similar thing in reply 
-to mark's query in my last reply.
-
-
-
-> 
-> Konrad
-
+Understandable, I can update and keep patch 1 and 2, which improves
+the performance and clean it up without causing any potential accuracy
+issues.
 
