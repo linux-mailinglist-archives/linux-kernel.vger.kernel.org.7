@@ -1,250 +1,432 @@
-Return-Path: <linux-kernel+bounces-758929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C03B1D5C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:26:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431A5B1D5CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E9D37ACD05
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60573164D20
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4455E260592;
-	Thu,  7 Aug 2025 10:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YDc+KMLp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fr070QO1";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YDc+KMLp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fr070QO1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B2424DD1F;
+	Thu,  7 Aug 2025 10:27:08 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AE423D281
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBA123D281;
+	Thu,  7 Aug 2025 10:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754562351; cv=none; b=Wy6wUrjF0IKgJ0CjkIV9b95VMYKLEEO8yZlGQVmjbsWHlaM77/zT5cFAZ6S781J0/Mu9KJZT+nbxvqrtNzY/+fSXHsSOr5T55JwvaAJGfVtlm3yb4yc20MstFiawAuPQL0niV7UZfh848ELN/yHmbEEK/jplwWif/dPSRonGdAQ=
+	t=1754562428; cv=none; b=oF24o5yE55ossOpYPZLfpFn+apzAqm8gDy/hsPJjl1NTz27/yIPPIR+mJtq5QCroy+GMzB7mofRFF532lJzPhYK7fk2TcSjLghd7yRUF6GT+LjMGBNNWXW4sYqryKth7c5rH8IE0z8YylbKiLhlc154ta46wo/QqR6Lw3BfQRts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754562351; c=relaxed/simple;
-	bh=Los14N1lZpnxneFo2KPJ9mh+B/nQbkeGnrvYl7rPD2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ug8mn0wAdMeUX1Douc0xXzLeS2+Agy42cN3J0El670bH9b9I8GmtapOl1VQCZzbdyHCPqRVfADezOfDJwWxTSjoIKTY00lK0IEkpTuSM/Iuu4PpUQOm5bL0vlzF/bZD59EytuYE2vgCod4gY1LGJQEoTxDYSHXLufWcVqOlQIIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YDc+KMLp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fr070QO1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YDc+KMLp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fr070QO1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8619633CD1;
-	Thu,  7 Aug 2025 10:25:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754562341; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y+3VvCsoxNp5my7hzH07+UXcTWds5y41HFvpaJwE24c=;
-	b=YDc+KMLpPBukUqO/26f+re2k1QlkiUyoesR8sfdj3FWt0HVH8LY/6QN3TEVcSz5aRrPuPO
-	cMyIjrQJTZCUqhZ6329yrhyKk8Hi/2nxsAHNJIU5xR02b4yU9YUJa1ob/ONroBFjzqOdx2
-	Wvlf1gmObFO5Gj6jWhPzmXKHJWn+AJ0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754562341;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y+3VvCsoxNp5my7hzH07+UXcTWds5y41HFvpaJwE24c=;
-	b=Fr070QO1dbYv5zCv6Ftd93YOCXKzUcpI1Ae6H7UBLS3c+3+bHUb00KR//Dud6TIF4BlMX6
-	aYn1nNnEgYmLmLCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YDc+KMLp;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Fr070QO1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754562341; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y+3VvCsoxNp5my7hzH07+UXcTWds5y41HFvpaJwE24c=;
-	b=YDc+KMLpPBukUqO/26f+re2k1QlkiUyoesR8sfdj3FWt0HVH8LY/6QN3TEVcSz5aRrPuPO
-	cMyIjrQJTZCUqhZ6329yrhyKk8Hi/2nxsAHNJIU5xR02b4yU9YUJa1ob/ONroBFjzqOdx2
-	Wvlf1gmObFO5Gj6jWhPzmXKHJWn+AJ0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754562341;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y+3VvCsoxNp5my7hzH07+UXcTWds5y41HFvpaJwE24c=;
-	b=Fr070QO1dbYv5zCv6Ftd93YOCXKzUcpI1Ae6H7UBLS3c+3+bHUb00KR//Dud6TIF4BlMX6
-	aYn1nNnEgYmLmLCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C1A5136DC;
-	Thu,  7 Aug 2025 10:25:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id paqRFSV/lGikTQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 07 Aug 2025 10:25:41 +0000
-Message-ID: <0668d246-ccbb-4a74-96d8-c13bf180053f@suse.cz>
-Date: Thu, 7 Aug 2025 12:25:41 +0200
+	s=arc-20240116; t=1754562428; c=relaxed/simple;
+	bh=8zgp6Hrxq3hg3DU7yU4BsBAnqWmy+gDYxEGqdUTihXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/AJrVs65FkKKUcDj1tLhca82JUghb/jQmy05BzkzH+v1HmK+Fgmw7shub8FsRzJ0mDO57jpxPx051QrHzZLHHAsANvplXxngRtKkgGnG5+vRKtUbXs4MXKkt/Wdd/zBDWeYxqYfVHLh5wVSXdw9810sT2p3tPfr98wdudgKi1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 06d26c54737911f0b29709d653e92f7d-20250807
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_C_CI, GTI_FG_IT
+	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
+	AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:78cf0644-c9ff-4665-baec-8b7fbda81c8c,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-5
+X-CID-INFO: VERSION:1.1.45,REQID:78cf0644-c9ff-4665-baec-8b7fbda81c8c,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:7b1e0f23c6d717d722284e6f70270356,BulkI
+	D:250805121026AMCKBPYY,BulkQuantity:7,Recheck:0,SF:17|19|24|44|64|66|78|80
+	|81|82|83|102|841,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,B
+	ulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:
+	0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_ULS
+X-UUID: 06d26c54737911f0b29709d653e92f7d-20250807
+X-User: duanchenghao@kylinos.cn
+Received: from localhost [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 415827434; Thu, 07 Aug 2025 18:26:49 +0800
+Date: Thu, 7 Aug 2025 18:26:31 +0800
+From: Chenghao Duan <duanchenghao@kylinos.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Hengqi Chen <hengqi.chen@gmail.com>, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, yangtiezhu@loongson.cn,
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+	yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	jolsa@kernel.org, kernel@xen0n.name, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, bpf@vger.kernel.org,
+	guodongtai@kylinos.cn, youling.tang@linux.dev,
+	jianghaoran@kylinos.cn, vincent.mc.li@gmail.com, geliang@kernel.org
+Subject: Re: [PATCH v5 3/5] LoongArch: BPF: Implement dynamic code
+ modification support
+Message-ID: <20250807102631.GA1401760@chenghao-pc>
+References: <20250730131257.124153-1-duanchenghao@kylinos.cn>
+ <20250730131257.124153-4-duanchenghao@kylinos.cn>
+ <CAEyhmHTE8yd0-N5YkMvJScv+Dsw3sAvgyZt8h1sd1=rzaCoTwQ@mail.gmail.com>
+ <CAAhV-H55VoFdK8B-PBhYfzHAOQJLnOxLUZGZyHqqdvt=5K3Zhg@mail.gmail.com>
+ <20250805063014.GA543627@chenghao-pc>
+ <CAAhV-H4W6z2CRBJ2VDsKTmmGNS+NmfH4aZCRB6K9+XQ4i3vPCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for
- performance
-Content-Language: en-US
-To: Li Qiang <liqiang01@kylinos.cn>, akpm@linux-foundation.org,
- david@redhat.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, Nadav Amit <nadav.amit@gmail.com>
-References: <9d60bae4-a61b-4d4a-a0a8-19058df30b0f@lucifer.local>
- <20250806055111.1519608-1-liqiang01@kylinos.cn>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250806055111.1519608-1-liqiang01@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 8619633CD1
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kvack.org,vger.kernel.org,oracle.com,kernel.org,google.com,suse.com,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAhV-H4W6z2CRBJ2VDsKTmmGNS+NmfH4aZCRB6K9+XQ4i3vPCA@mail.gmail.com>
 
-On 8/6/25 07:51, Li Qiang wrote:
-> Tue, 5 Aug 2025 14:35:22, Lorenzo Stoakes wrote:
->> I'm not sure, actual workloads would be best but presumably you don't have
->> one where you've noticed a demonstrable difference otherwise you'd have
->> mentioned...
->> 
->> At any rate I've come around on this series, and think this is probably
->> reasonable, but I would like to see what increasing max-inline-insns-single
->> does first?
+On Tue, Aug 05, 2025 at 07:13:04PM +0800, Huacai Chen wrote:
+> On Tue, Aug 5, 2025 at 2:30 PM Chenghao Duan <duanchenghao@kylinos.cn> wrote:
+> >
+> > On Tue, Aug 05, 2025 at 12:10:05PM +0800, Huacai Chen wrote:
+> > > On Mon, Aug 4, 2025 at 10:02 AM Hengqi Chen <hengqi.chen@gmail.com> wrote:
+> > > >
+> > > > On Wed, Jul 30, 2025 at 9:13 PM Chenghao Duan <duanchenghao@kylinos.cn> wrote:
+> > > > >
+> > > > > This commit adds support for BPF dynamic code modification on the
+> > > > > LoongArch architecture.:
+> > > > > 1. Implement bpf_arch_text_poke() for runtime instruction patching.
+> > > > > 2. Add bpf_arch_text_copy() for instruction block copying.
+> > > > > 3. Create bpf_arch_text_invalidate() for code invalidation.
+> > > > >
+> > > > > On LoongArch, since symbol addresses in the direct mapping
+> > > > > region cannot be reached via relative jump instructions from the paged
+> > > > > mapping region, we use the move_imm+jirl instruction pair as absolute
+> > > > > jump instructions. These require 2-5 instructions, so we reserve 5 NOP
+> > > > > instructions in the program as placeholders for function jumps.
+> > > > >
+> > > > > larch_insn_text_copy is solely used for BPF. The use of
+> > > > > larch_insn_text_copy() requires page_size alignment. Currently, only
+> > > > > the size of the trampoline is page-aligned.
+> > > > >
+> > > > > Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> > > > > Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> > > > > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> > > > > ---
+> > > > >  arch/loongarch/include/asm/inst.h |   1 +
+> > > > >  arch/loongarch/kernel/inst.c      |  27 ++++++++
+> > > > >  arch/loongarch/net/bpf_jit.c      | 104 ++++++++++++++++++++++++++++++
+> > > > >  3 files changed, 132 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/asm/inst.h
+> > > > > index 2ae96a35d..88bb73e46 100644
+> > > > > --- a/arch/loongarch/include/asm/inst.h
+> > > > > +++ b/arch/loongarch/include/asm/inst.h
+> > > > > @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction insn, struct pt_regs *regs);
+> > > > >  int larch_insn_read(void *addr, u32 *insnp);
+> > > > >  int larch_insn_write(void *addr, u32 insn);
+> > > > >  int larch_insn_patch_text(void *addr, u32 insn);
+> > > > > +int larch_insn_text_copy(void *dst, void *src, size_t len);
+> > > > >
+> > > > >  u32 larch_insn_gen_nop(void);
+> > > > >  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
+> > > > > diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
+> > > > > index 674e3b322..7df63a950 100644
+> > > > > --- a/arch/loongarch/kernel/inst.c
+> > > > > +++ b/arch/loongarch/kernel/inst.c
+> > > > > @@ -4,6 +4,7 @@
+> > > > >   */
+> > > > >  #include <linux/sizes.h>
+> > > > >  #include <linux/uaccess.h>
+> > > > > +#include <linux/set_memory.h>
+> > > > >
+> > > > >  #include <asm/cacheflush.h>
+> > > > >  #include <asm/inst.h>
+> > > > > @@ -218,6 +219,32 @@ int larch_insn_patch_text(void *addr, u32 insn)
+> > > > >         return ret;
+> > > > >  }
+> > > > >
+> > > > > +int larch_insn_text_copy(void *dst, void *src, size_t len)
+> > > > > +{
+> > > > > +       int ret;
+> > > > > +       unsigned long flags;
+> > > > > +       unsigned long dst_start, dst_end, dst_len;
+> > > > > +
+> > > > > +       dst_start = round_down((unsigned long)dst, PAGE_SIZE);
+> > > > > +       dst_end = round_up((unsigned long)dst + len, PAGE_SIZE);
+> > > > > +       dst_len = dst_end - dst_start;
+> > > > > +
+> > > > > +       set_memory_rw(dst_start, dst_len / PAGE_SIZE);
+> > > > > +       raw_spin_lock_irqsave(&patch_lock, flags);
+> > > > > +
+> > > > > +       ret = copy_to_kernel_nofault(dst, src, len);
+> > > > > +       if (ret)
+> > > > > +               pr_err("%s: operation failed\n", __func__);
+> > > > > +
+> > > > > +       raw_spin_unlock_irqrestore(&patch_lock, flags);
+> > > > > +       set_memory_rox(dst_start, dst_len / PAGE_SIZE);
+> > > > > +
+> > > > > +       if (!ret)
+> > > > > +               flush_icache_range((unsigned long)dst, (unsigned long)dst + len);
+> > > > > +
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > >  u32 larch_insn_gen_nop(void)
+> > > > >  {
+> > > > >         return INSN_NOP;
+> > > > > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> > > > > index 7032f11d3..5e6ae7e0e 100644
+> > > > > --- a/arch/loongarch/net/bpf_jit.c
+> > > > > +++ b/arch/loongarch/net/bpf_jit.c
+> > > > > @@ -4,8 +4,12 @@
+> > > > >   *
+> > > > >   * Copyright (C) 2022 Loongson Technology Corporation Limited
+> > > > >   */
+> > > > > +#include <linux/memory.h>
+> > > > >  #include "bpf_jit.h"
+> > > > >
+> > > > > +#define LOONGARCH_LONG_JUMP_NINSNS 5
+> > > > > +#define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
+> > > > > +
+> > > > >  #define REG_TCC                LOONGARCH_GPR_A6
+> > > > >  #define TCC_SAVED      LOONGARCH_GPR_S5
+> > > > >
+> > > > > @@ -88,6 +92,7 @@ static u8 tail_call_reg(struct jit_ctx *ctx)
+> > > > >   */
+> > > > >  static void build_prologue(struct jit_ctx *ctx)
+> > > > >  {
+> > > > > +       int i;
+> > > > >         int stack_adjust = 0, store_offset, bpf_stack_adjust;
+> > > > >
+> > > > >         bpf_stack_adjust = round_up(ctx->prog->aux->stack_depth, 16);
+> > > > > @@ -98,6 +103,10 @@ static void build_prologue(struct jit_ctx *ctx)
+> > > > >         stack_adjust = round_up(stack_adjust, 16);
+> > > > >         stack_adjust += bpf_stack_adjust;
+> > > > >
+> > > > > +       /* Reserve space for the move_imm + jirl instruction */
+> > > > > +       for (i = 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
+> > > > > +               emit_insn(ctx, nop);
+> > > > > +
+> > > > >         /*
+> > > > >          * First instruction initializes the tail call count (TCC).
+> > > > >          * On tail call we skip this instruction, and the TCC is
+> > > > > @@ -1367,3 +1376,98 @@ bool bpf_jit_supports_subprog_tailcalls(void)
+> > > > >  {
+> > > > >         return true;
+> > > > >  }
+> > > > > +
+> > > > > +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 target)
+> > > > > +{
+> > > > > +       if (!target) {
+> > > > > +               pr_err("bpf_jit: jump target address is error\n");
+> > > > > +               return -EFAULT;
+> > > > > +       }
+> > > > > +
+> > > > > +       move_imm(ctx, LOONGARCH_GPR_T1, target, false);
+> > > > > +       emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
+> > > > > +
+> > > > > +       return 0;
+> > > > > +}
+> > > > > +
+> > > > > +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_call)
+> > > > > +{
+> > > > > +       struct jit_ctx ctx;
+> > > > > +
+> > > > > +       ctx.idx = 0;
+> > > > > +       ctx.image = (union loongarch_instruction *)insns;
+> > > > > +
+> > > > > +       if (!target) {
+> > > > > +               emit_insn((&ctx), nop);
+> > > > > +               emit_insn((&ctx), nop);
+> > > >
+> > > > There should be 5 nops, no ?
+> > > Chenghao,
+> > >
+> > > We have already fixed the concurrent problem, now this is the only
+> > > issue, please reply tas soon as possible.
+> > >
+> > > Huacai
+> >
+> > Hi Hengqi & Huacai,
+> >
+> > I'm sorry I just saw the email.
+> > This position can be configured with 5 NOP instructions, and I have
+> > tested it successfully.
+> OK, now loongarch-next [1] has integrated all needed changes, you and
+> Vincent can test to see if everything is OK.
 > 
-> Thank you for your suggestions. I'll pay closer attention 
-> to email formatting in future communications.
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git/log/?h=loongarch-next
 > 
-> Regarding the performance tests on x86_64 architecture:
-> 
-> Parameter Observation:
-> When setting max-inline-insns-single=400 (matching arm64's 
-> default value) without applying my patch, the compiler 
-> automatically inlines the critical functions.
-> 
-> Benchmark Results:
-> 
-> Configuration			Baseline		With Patch			max-inline-insns-single=400
-> UnixBench Score			1824			1835 (+0.6%)			1840 (+0.9%)
-> vmlinux Size (bytes)	35,379,608		35,379,786 (+0.005%)	35,529,641 (+0.4%)
-> 
-> Key Findings:
-> 
-> The patch provides significant performance gain (0.6%) with 
-> minimal size impact (0.005% increase). While 
-> max-inline-insns-single=400 yields slightly better 
-> performance (0.9%), it incurs a larger size penalty (0.4% increase).
-> 
-> Conclusion:
-> The patch achieves a better performance/size trade-off 
-> compared to globally adjusting the inline threshold. The targeted 
-> approach (selective __always_inline) appears more efficient for 
-> this specific optimization.
+> Huacai
 
-Another attempt at my opensuse tumbleweed system gcc 15.1.1:
+The following test items have been successfully tested:
 
-add/remove: 1/0 grow/shrink: 4/7 up/down: 1069/-520 (549)
-Function                                     old     new   delta
-unmap_page_range                            6493    7424    +931
-add_mm_counter                                 -     112    +112
-finish_fault                                1101    1117     +16
-do_swap_page                                6523    6531      +8
-remap_pfn_range_internal                    1358    1360      +2
-pte_to_swp_entry                             123     122      -1
-pte_move_swp_offset                          219     218      -1
-restore_exclusive_pte                        356     325     -31
-__handle_mm_fault                           3988    3949     -39
-do_wp_page                                  3926    3810    -116
-copy_page_range                             8051    7930    -121
-swap_pte_batch                               817     606    -211
-Total: Before=66483, After=67032, chg +0.83%
+./test_progs -a fentry_test/fentry
+./test_progs -a fexit_test/fexit
+./test_progs -a fentry_fexit
+./test_progs -a modify_return
+./test_progs -a fexit_sleep
+./test_progs -a test_overhead
+./test_progs -a trampoline_count
+./test_progs -a fexit_bpf2bpf
 
-The functions changed by your patch were already inlined, and yet this force
-inlining apparently changed some heuristics to change also completely
-unrelated functions.
+./test_progs -t struct_ops -d struct_ops_multi_pages
+#15/1    bad_struct_ops/invalid_prog_reuse:OK
+#15/2    bad_struct_ops/unused_program:OK
+#15      bad_struct_ops:OK
+#408/1   struct_ops_autocreate/cant_load_full_object:OK
+#408/2   struct_ops_autocreate/can_load_partial_object:OK
+#408/3   struct_ops_autocreate/autoload_and_shadow_vars:OK
+#408/4   struct_ops_autocreate/optional_maps:OK
+#408     struct_ops_autocreate:OK
+#409/1   struct_ops_kptr_return/kptr_return:OK
+#409/2   struct_ops_kptr_return/kptr_return_fail__wrong_type:OK
+#409/3   struct_ops_kptr_return/kptr_return_fail__invalid_scalar:OK
+#409/4   struct_ops_kptr_return/kptr_return_fail__nonzero_offset:OK
+#409/5   struct_ops_kptr_return/kptr_return_fail__local_kptr:OK
+#409     struct_ops_kptr_return:OK
+#410/1   struct_ops_maybe_null/maybe_null:OK
+#410/2   struct_ops_maybe_null/maybe_null_fail:OK
+#410     struct_ops_maybe_null:OK
+#411/1   struct_ops_module/struct_ops_load:OK
+#411/2   struct_ops_module/struct_ops_not_zeroed:OK
+#411/3   struct_ops_module/struct_ops_incompatible:OK
+#411/4   struct_ops_module/struct_ops_null_out_cb:OK
+#411/5   struct_ops_module/struct_ops_forgotten_cb:OK
+#411/6   struct_ops_module/test_detach_link:OK
+#411/7   struct_ops_module/unsupported_ops:OK
+#411     struct_ops_module:OK
+#413/1   struct_ops_no_cfi/load_bpf_test_no_cfi:OK
+#413     struct_ops_no_cfi:OK
+#414/1   struct_ops_private_stack/private_stack:SKIP
+#414/2   struct_ops_private_stack/private_stack_fail:SKIP
+#414/3   struct_ops_private_stack/private_stack_recur:SKIP
+#414     struct_ops_private_stack:SKIP
+#415/1   struct_ops_refcounted/refcounted:OK
+#415/2   struct_ops_refcounted/refcounted_fail__ref_leak:OK
+#415/3   struct_ops_refcounted/refcounted_fail__global_subprog:OK
+#415/4   struct_ops_refcounted/refcounted_fail__tail_call:OK
+#415     struct_ops_refcounted:OK
+Summary: 8/25 PASSED, 3 SKIPPED, 0 FAILED
 
-So that just shows how fragile these kinds of attempts to hand-hold gcc for
-a specific desired behavior is, and I'd be wary of it.
+while true; do ./test_progs -a fentry_attach_stress; sleep 1; done
+(Loop 60 times.)
+
+Chenghao
+> 
+> >
+> > sudo ./test_progs -a fentry_test/fentry
+> > sudo ./test_progs -a fexit_test/fexit
+> > sudo ./test_progs -a fentry_fexit
+> > sudo ./test_progs -a modify_return
+> > sudo ./test_progs -a fexit_sleep
+> > sudo ./test_progs -a test_overhead
+> > sudo ./test_progs -a trampoline_count
+> > sudo ./test_progs -a fexit_bpf2bpf
+> >
+> > if (!target) {
+> >         int i;
+> >         for (i = 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
+> >                 emit_insn((&ctx), nop);
+> >         return 0;
+> > }
+> >
+> >
+> > Chenghao
+> >
+> > >
+> > > >
+> > > > > +               return 0;
+> > > > > +       }
+> > > > > +
+> > > > > +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : LOONGARCH_GPR_ZERO,
+> > > > > +                                 (unsigned long)target);
+> > > > > +}
+> > > > > +
+> > > > > +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
+> > > > > +                      void *old_addr, void *new_addr)
+> > > > > +{
+> > > > > +       u32 old_insns[LOONGARCH_LONG_JUMP_NINSNS] = {[0 ... 4] = INSN_NOP};
+> > > > > +       u32 new_insns[LOONGARCH_LONG_JUMP_NINSNS] = {[0 ... 4] = INSN_NOP};
+> > > > > +       bool is_call = poke_type == BPF_MOD_CALL;
+> > > > > +       int ret;
+> > > > > +
+> > > > > +       if (!is_kernel_text((unsigned long)ip) &&
+> > > > > +               !is_bpf_text_address((unsigned long)ip))
+> > > > > +               return -ENOTSUPP;
+> > > > > +
+> > > > > +       ret = gen_jump_or_nops(old_addr, ip, old_insns, is_call);
+> > > > > +       if (ret)
+> > > > > +               return ret;
+> > > > > +
+> > > > > +       if (memcmp(ip, old_insns, LOONGARCH_LONG_JUMP_NBYTES))
+> > > > > +               return -EFAULT;
+> > > > > +
+> > > > > +       ret = gen_jump_or_nops(new_addr, ip, new_insns, is_call);
+> > > > > +       if (ret)
+> > > > > +               return ret;
+> > > > > +
+> > > > > +       mutex_lock(&text_mutex);
+> > > > > +       if (memcmp(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES))
+> > > > > +               ret = larch_insn_text_copy(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES);
+> > > > > +       mutex_unlock(&text_mutex);
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > > +int bpf_arch_text_invalidate(void *dst, size_t len)
+> > > > > +{
+> > > > > +       int i;
+> > > > > +       int ret = 0;
+> > > > > +       u32 *inst;
+> > > > > +
+> > > > > +       inst = kvmalloc(len, GFP_KERNEL);
+> > > > > +       if (!inst)
+> > > > > +               return -ENOMEM;
+> > > > > +
+> > > > > +       for (i = 0; i < (len/sizeof(u32)); i++)
+> > > > > +               inst[i] = INSN_BREAK;
+> > > > > +
+> > > > > +       mutex_lock(&text_mutex);
+> > > > > +       if (larch_insn_text_copy(dst, inst, len))
+> > > > > +               ret = -EINVAL;
+> > > > > +       mutex_unlock(&text_mutex);
+> > > > > +
+> > > > > +       kvfree(inst);
+> > > > > +       return ret;
+> > > > > +}
+> > > > > +
+> > > > > +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
+> > > > > +{
+> > > > > +       int ret;
+> > > > > +
+> > > > > +       mutex_lock(&text_mutex);
+> > > > > +       ret = larch_insn_text_copy(dst, src, len);
+> > > > > +       mutex_unlock(&text_mutex);
+> > > > > +       if (ret)
+> > > > > +               return ERR_PTR(-EINVAL);
+> > > > > +
+> > > > > +       return dst;
+> > > > > +}
+> > > > > --
+> > > >
+> > > > bpf_arch_text_invalidate() and bpf_arch_text_copy() is not related to
+> > > > BPF trampoline, right ?
+> >
+> > From the perspective of BPF core source code calls, the two functions
+> > bpf_arch_text_invalidate() and bpf_arch_text_copy() are not only used for
+> > trampolines.
+> >
+> > > >
+> > > > > 2.25.1
+> > > > >
+> >
 
