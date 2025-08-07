@@ -1,272 +1,192 @@
-Return-Path: <linux-kernel+bounces-759130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A59B1D8E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:24:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8B2B1D8F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AECDC175CB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:24:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D00D3B7142
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2439C25A320;
-	Thu,  7 Aug 2025 13:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD36B25B311;
+	Thu,  7 Aug 2025 13:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jOucBXVj"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PWDJSY1x"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B84C136E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754573060; cv=fail; b=kHvc9AQ0PQD2l+cGv6qW/97Eahw4kbmHRQ84Fsnp424e1LPnKayMZAza/KrMAkJwR5jh8RXug/SkKlsvUtk7EWFAJxeLRu/F53UiLGbeOGw22YM3G4reDy2iSg6DAfa4JNGvJK/mCJobzAZxv5PFzXrc3IRqyKwS6QhLZHIm5dE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754573060; c=relaxed/simple;
-	bh=iJT1ckxcWgzeMH8tTNR5zQx4laRqsrk6yu6fDW6kZ6U=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=enN2wCKG32VEUO0rG3WF3xTtRx5QDc1QkLIlFHSxYUCucloE9DToOwxBR4/Q1HH4AP8ZkLH0y24+iGRd0DipGpmpVFxP5jVf8dRDwgmRpX4a7JyYz8kUAnSwySDnfNleu2tm0lPrlr0fCcAWNzEYf72pN+F2zw+G6zi6j8dB+ds=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jOucBXVj; arc=fail smtp.client-ip=40.107.244.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B/dkAXxdevkBV1krRw7NU/DdV29xY6+qL2sWt6DuqSSlwL+jLk55eFkz+phtB6fHCk1dv3A/LiyiS4vk+ibd96uvBHYQTgQutdLOJGu2COOF8g9SXRC/yZwckPJDTrLeh+WEQyi4S3Fz1N8jZklPoJzHvg7bXDowBeTjbXxZ4DITE3L+q+uGgb5VN7/licSxEm0VGSqM6x9EWI3ozbVCrdJpwry0e5Z6Q1YBBvMe7xAS8fW5hPgoSgxFGfIKjxFSuUu8lQvKPWWLVfvGrRWrYDxjT5mmQdW6b73tfE/W2rAm92ouiu8gQfscvw9zmDBY5A32Xnn/2TqtkS94DTRJ9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PxC1w00Ua8AEi5e36cmLaiqoJ8oHvBBu6bB7PWnDyak=;
- b=pa2tudwGPEc97/CsEsjLqUuOG8GC3PEulbtZl8Rn9Ij2yeo9zpDXJxWpJUnmBjzqNQj9hlqnCz2OoHEKCtPyk763Z1wApqSMJsDRKGsmIya05L89V3Y4kjxGhqZnpme1VTaivOcsKIb0vAurznOniwaL2fb3uygqiuHLy1jUyk0bNjMHAcWSbJ4rUX8GLikFzgICW4JuUO3Vmhr0kNqRXJRQGGGQjYbht/ZFuZy2uTq9NGmQ4IOlgCvv3F2VReQSaHsGbnBwTQG785SDnu4qcFhqnuh2TSNQ19ALxISflAX2BX0+Z4xAjGb39LAPD8iCSpcYBZvnTCF3FWcPTvQl+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PxC1w00Ua8AEi5e36cmLaiqoJ8oHvBBu6bB7PWnDyak=;
- b=jOucBXVjpXXXF/Tnhx7WVJc1X4mV36bScDHWkxtpUuaYqH3t1PRZic+t5H6ei42Ps6sLkyjtKFwVfjYsiEQn8ZrXsDDI+OftxgYyUDjTvU2kIWeorPMpU89RFXc32VjYD9PBeL1V8SJUWLS4U6CKRigQI/FQdimDt5RfDUBETJE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DM6PR12MB4043.namprd12.prod.outlook.com (2603:10b6:5:216::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.17; Thu, 7 Aug
- 2025 13:24:12 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8989.018; Thu, 7 Aug 2025
- 13:24:12 +0000
-Message-ID: <93561b1e-0410-4e21-804a-bcaa8f2585a7@amd.com>
-Date: Thu, 7 Aug 2025 15:24:07 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu: skip disabling audio when device is unplugged
-To: oushixiong <oushixiong1025@163.com>,
- Alex Deucher <alexander.deucher@amd.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sunil Khatri <sunil.khatri@amd.com>,
- Alexandre Demers <alexandre.f.demers@gmail.com>,
- Boyuan Zhang <boyuan.zhang@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250807094719.56145-1-oushixiong1025@163.com>
- <9a632900-4ebb-40af-8bf8-bf55f8e25c7b@amd.com>
- <c6cc5a81-ed5a-474d-bd2f-29d1cfde34e2@163.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <c6cc5a81-ed5a-474d-bd2f-29d1cfde34e2@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: IA4P220CA0006.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:558::7) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCBC2561AE
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754573140; cv=none; b=rXCawqKx6fd1yt2jxKE+gJFylPr2YFxbAwkddkZfmdkmGQH7xasbTM698zLkic9kI60s2sg1EIz6XqbC/aVj97Jd2xNUt7xJDOTYnhe9BLkcp4vtAlGZ6d1FFGWr2uFw90hiq3/9IFAtlSXtVVMGoxZTk5JhhG2h6uqGUuQ8Jpo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754573140; c=relaxed/simple;
+	bh=BE5Henonj83S/x58TbOMswxN6uWYEKzKyZZTSsbruCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DSsvlBpw3F10dKcESbckJ1FE2Wnqaw9nDZgTv1eL5BUUzMZ4be16bYITE1TxtIEbCt80by+u2jNyZ/p6ZsnhXhSaN8dCAubOZMisWIHaWOlOLdF/sUvKwm5RpGtjaiICcyYc+fP2nc7QSmBf09perZpl9UxnUkgbG+zGGp1QBFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PWDJSY1x; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b7910123a0so845792f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:25:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754573135; x=1755177935; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QkK/h5wyW78slTbM7rfscexueduuSs96e2Qc2RW5gY8=;
+        b=PWDJSY1x3KjIoYMyRAV/nD8dicioBVARS+3hoJXNlET0sg58G2ZjUOEvn8PDbav+1j
+         OsZpkEpx2lfO17rbC2SAEYeIL2Pa6ODOBw68VrpELrTa2if1E4a5AORzmAkdOb3ct/5A
+         YacrUmrPsTOXLOjlnXu6RHXhjlur2LVQKFsU4r2PRHeYOFCJ/CgBaB9I4NJ8dXP2lRi+
+         8DXiBG1mXTVv1azIpPECnV1jkVlPMKpOUx48kwq5YOkkKfwPyM5dhAZhPhJ1i6aJ8zVu
+         q0zy01V3PqUJT3w9T1MS10KqnK3qpvRfgXvYmgAq81px+dwjqknCIAcQOePn34dX96EZ
+         iH0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754573135; x=1755177935;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QkK/h5wyW78slTbM7rfscexueduuSs96e2Qc2RW5gY8=;
+        b=SPrDvS+WGUZEdmsZKt5urKyBC10JWgxpK4bsk6rIGVdHMt+rWAemMwipG2EGCPc1e7
+         QrByVHVMFI/Z4wCQIw8wSzZjZVXotQPfNvMXs84zc7pNH2tMIyFCujAxS7QbD1KQfP6A
+         I+k8J7+yjlu2oUqVmBySDXRxYbxwISGWracp1fpZOLZ0y1oGQelGJlgyxymFsvg4eG+L
+         N8u54Wv9NGiM78sl6BzNYbUnajF/ilIz0iVVE69O3seyoPiAEF9fnts+WZIKspDjAPzL
+         EYi2GEVM1auWOmUTduVR1x4pkGicI0m1W7ytZcRteHyLHi3XJkJtYiSsGryz/QEb/CT2
+         L4qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGBpsJgF+fGvC4Wkqa1yc8N8z5hC7Ayy4QuLWWA/BgCtt4rGgxxCg2LgD8W8Q1X3WWAMsRdEe6g2Xfa6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLhq3Y+eFr9sxdSu0b7m9ymcsO57d2i3LBf10F6O6WL0N9YA+X
+	3HGrxN2/pqn1DYqm7pd9//vpHNrS6Zdrm6epZiC5oaOO5o0ZXp0thkdkIKVWA5c7dl4=
+X-Gm-Gg: ASbGncs/XObaFqpXH/HscG+Fikh0xi4spUC6Xq4j7fWaeozkqHImMNHJQBN6hEh0QJq
+	h6HBtZPA/YIUnCimyk+dMLSh3ZfhwmsaePMpNhLQ4Z8GE2F3CKtm0pQHKGuPgXWgTFo1TUpXIPl
+	Eqi4sQrAbCUTBY8eA7mx7XRj0t+5zAlV6G9Tvy4YKFNb3FQoQmGXNRXTTTfvy673b6ND/K75FqQ
+	foNh5vRedg83bv3QR2JaV3SLMpiYZ340/c6SH60yC8lPQG5AZoHoW6zBNh3n4CR8MfrKHpj5Zqj
+	2k2u1VTWucWI2FWgeLVa/2yiq4OcHUYdQp6ec8+9AZbue8fyRuSOww2Lg4hCnFrmm+SyqH7OrXd
+	GKvMkkgBrIvGc+qMHL4IukZOqNgWBSZTzrIv8vaPjkf9bcQ==
+X-Google-Smtp-Source: AGHT+IHQ9dMmpvwSG0LG+OsU60Voye7P7DJOnU5DCYn4cofMlrbc+GKVT9M1/0FDZpZM67dPsg7qAw==
+X-Received: by 2002:a05:6000:1a85:b0:3b7:78c8:9392 with SMTP id ffacd0b85a97d-3b8f4166f4emr5537116f8f.19.1754573135392;
+        Thu, 07 Aug 2025 06:25:35 -0700 (PDT)
+Received: from localhost (109-81-80-221.rct.o2.cz. [109.81.80.221])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c453ab0sm27171452f8f.44.2025.08.07.06.25.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 06:25:35 -0700 (PDT)
+Date: Thu, 7 Aug 2025 15:25:34 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
+	wangfushuai <wangfushuai@baidu.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
+ address process dependency issues
+Message-ID: <aJSpTpB9_jijiO6m@tiehlicka>
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM6PR12MB4043:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77eb82dc-0348-41ce-c22d-08ddd5b5b2e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NTl2REErNjdJZkVwdDhHWk1XK2NzRklUK1N3R2dza3k3VUVpMUtzVzF0ZlZm?=
- =?utf-8?B?YkxkbDQ0WjZmV01XdzRldEtYTXpIem92T2pmTkorcXBhZWZ0RWR6cldNcTRp?=
- =?utf-8?B?Q0ZYNUZYNDcwTTF2VUIxc1RUbWFyVi9NUkQrRk4ydWFhV3c2OHo1emdNQW0y?=
- =?utf-8?B?TWY1QXdKS2JJUHgwZmFXaUFPQUlsKzYyZ1Mwa29BY3U4OVdXRlVKYUQ4SVk4?=
- =?utf-8?B?REk3MU43OFFKa0tqTXhUSWhSakFWNkhKTnlsenlHak50QndRdWNBY2lWb0Jw?=
- =?utf-8?B?SGNxSEpXTTNHRDRPUFF3dnFKS2g1dmVmb3ZBVGs1QXJMY05yZU5QeWlaTkQ3?=
- =?utf-8?B?dkJYZXl1RHhoWHY1RzZvMU5UNHA2RFI5N21ZVW5QUklrZ1J6OU9rSWRTQits?=
- =?utf-8?B?clVkOVVicWt0L2hlYUlUK2NZZTBub21XdGdLVHd4NW5aSGhRamQ0YWVuM21F?=
- =?utf-8?B?aWVWbGV5WmlNcE1qR0k5bTZ5UjJuN2h6eDVkRHI4ZkE0TzVScjNpTjBXeGd2?=
- =?utf-8?B?R3pLTEQ3bVJJUmdwZFZPakhYaERzNlF1VllUN3Q2Zk5VU1RmYXAzeUFZNTJl?=
- =?utf-8?B?MnNSL2pVcEdZaDl2SzE4ZVBtdjRram9tcUtZRml3ZHQvVzRTdGdoekVueUJh?=
- =?utf-8?B?ODZTaklqeUdyZXdqdUV3Zm91Y0ZLM3FxeVlRdlZDQklHWEQvMjNaMGMrbVJs?=
- =?utf-8?B?dVY4c2MzUDdPazJpRXVWVFRFSFJTS3ZEdWxtcmgxV3hueW5OYktmcjRxb1BV?=
- =?utf-8?B?YWxUNGFscytRTFB2R2pqbDRRLzliZFJDQWpUS3FmK0pSa0FuOHYvTGRpc1o2?=
- =?utf-8?B?L2xDaHJvRDVSbUZaL2tBY05jRmNxUUkyNTJWZEEwK0tkRXllRXAwNzN0cjAz?=
- =?utf-8?B?ZE5rNVNmSUlXU3hUYnFxekZXQ1p2M01aQjdQanVLcDZ1WXlsWEhJeFZMSnA2?=
- =?utf-8?B?OU9kRHQzWGxSTDJNZGFWUEdVTStBMnl5dkFmZVNBTlBEMnRkSTR6Q2NJREtk?=
- =?utf-8?B?MVpzbnhwRittTlNpanlUaWpnd1RiUHFudGNuakxTS0pTQTFKbVJhRDlQU2xO?=
- =?utf-8?B?QzErUkR3ZzE5NWVKNGFKenloMW9vSDRyMSs2MitpL3kxZHc4QUZkODZZT3Ir?=
- =?utf-8?B?SDZEYVlIbnByT1VHS1NZYnBZWGdCU3dBdDY0dDd2SGtrcmZpMjR6SmowMytH?=
- =?utf-8?B?bU9uSlVQVlZnQThmSFQ0Tmd6ZFFXRVBEZnhxVUEyRDFFdE5lRm1DMlJJOEV6?=
- =?utf-8?B?L2dlbnV5NzhsWVBuczN5a2taV25jTS93dDJjcFFQSHRzZTd6N0JGRU9lSHgy?=
- =?utf-8?B?Qkl4c0lTWUc4TzhyYXBybWpPblI5QmtRZ2t1Smw5TS90d3hhSVdYbXI1WVAz?=
- =?utf-8?B?WFhjTjF2WmVBZ3JWQmRiSEYrNTZvZUFaZEhlbVFEYXZKcktQV1JVRG9oODUr?=
- =?utf-8?B?aVFiaVZIM0F4aUloQ3VmVkVwYUZYYytvYnBjSituckc3WitzOVlRNWNEYVZ4?=
- =?utf-8?B?RVFsdll6VTZTRnNGMWpkM2V6SEsxN0d6QXhiVDYveUJmSlh6WXBzVzZRQXcz?=
- =?utf-8?B?TU5ObUpoeGhqZnJQYXFISFFBQ25zQmFVcnNvVWpjYWlxUmxmaWprN2h3Z25k?=
- =?utf-8?B?NGpjZFoyVWgwb0tTY1BxcjJLMk1BTFgrVXlzWm9Eb0tocFhZR3ZPMGNvWHE0?=
- =?utf-8?B?cjJnamJYbHV5bEpVdThFR1ZNNEpodkY3Mk1PVHJYY3lmQ1VtZzArdThNS1Vn?=
- =?utf-8?B?TmtISTN2MDZlUkxieFdKTGtaMjBRQldWOHd0NVgyV0o1R0xwcFNzcXAyZUE0?=
- =?utf-8?B?dThOZXVGd2t4U0xRdnVvZ2tGSDF3SHl1QXV4QTNLRm1EQUJnSWJyTGxxWkxZ?=
- =?utf-8?B?eW5qZ0VUY0Nrbk01UDNINjBvaGJzWVlnYVg3dTJaVzE5a3NrNUNtOUE1cWxV?=
- =?utf-8?Q?Apt5FSxO1vs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dExFK1JRMVY5cC9lNUZ5Vlhva0JCWVo2TWRFR2JmeFVzM3ZKaTVQcWRaZ2Jl?=
- =?utf-8?B?TUxaQVRXRVdHUTV4Nk8rT2pjNUpPMzJTZ2xPLzcyR0VSeDNhV3VTTW04SjNH?=
- =?utf-8?B?SWZ6Y3IrOG9EZ3NpdGw4ZllVVGFUdzZzM1hoL2xnN0dWaEZGSDRsRTdNZmZr?=
- =?utf-8?B?ZGdBVjYwd0JHb0M0emJRY0U1aEhiR3RnN0o4TldmaVpzcGp4bVd6V2hoVXNn?=
- =?utf-8?B?T25hZTV5QkEzUnRNNitmN2JITHgwc29iRTdBTUY1U2NUWE5JTWhFcEZRYTlp?=
- =?utf-8?B?dTE5TjZja29Eb0t3aWoxK2lvaGt2K1BPRkVoQ3ExU2I0VEthOG0wVlF6QUZP?=
- =?utf-8?B?SUVHMVhSaUpudnFpalJHUjFFTnVKRFlPaFhSbytyWno1eDFvbnNZNG1CVHA1?=
- =?utf-8?B?bGljZTJmVHgvSmgvODBBMzU2TXQ3T0FSV2Y2bjhzVWN6UDV1bTArTlF4VXh5?=
- =?utf-8?B?b2RKUm5WbkFVSnJvajIzL3lEc2dGZWZLQStUZGFrblk1REI1RHUvd2NaNGZK?=
- =?utf-8?B?bVlPbTM5OVZIZWNuUjNQN3lTRWszSTdXcHV4WjdaZ0xnTFhSNG1pdTBnZXFl?=
- =?utf-8?B?ZDJoaU04RzVGUmpOdzZLdENGSVM1SlJvdHhSSjdRWVdldkUyUzJrclBKZ2NS?=
- =?utf-8?B?Wm43bGlMNU5qRW9BcVNqN2xuaFB2VVRsalE0emExblZ3dVpCVm9nWXR2UmtO?=
- =?utf-8?B?RHFrU2UyS05Qc0tQQU5zVGFmMjdsUVplQVRrdHVFZzgrWGV2UUtyaERRcjB6?=
- =?utf-8?B?OGVmUGorN0JST3ZmTEZrZ2ZWazA4WnlYcVV2TExLREdCNEJXNlJOUkhRTkdI?=
- =?utf-8?B?dUdxOCtDb09yQ3JUb2hFcFpCK2t5S3lJSkRIM2NuRXA3NUwvRTFGcHlKK2lW?=
- =?utf-8?B?M3BhaUY0c3dJZ0ZYb21VWjM4UnhMWm1JRExWVGhTY3lianIvS3IvZDhsY3Zw?=
- =?utf-8?B?S2JYMFlYSXJuYUFJSExlWnBjcDkzR2NINmhZQk9uN3IvM3RJYXVvY3IrOUNO?=
- =?utf-8?B?bDRqVjNkTlZ1cEFCdndTR0Ryem82TmdEWmQ0TENTUXVnaEtaYkYyK0VUQ1Zt?=
- =?utf-8?B?ZnovajBSeW1aWnRubHc0OEFjR2dacFQweGJGUnNPRjlvbCtGbEhWNi9zeVFH?=
- =?utf-8?B?STNubGtHOE4xbjgyUWl0MlFxTklSNDVIY1M5cEorN3B0bGVEYjNvY0ZUK1BY?=
- =?utf-8?B?eGtaVkFhQ3A0VUo0ZG16dmc3WGRsbW1xRm81bEVab3ZJUzNEditxT3p5SFlS?=
- =?utf-8?B?Q3RkQnp6a28zcUJOWHIzUzEvMEZiRittWGlnR3RuRzZOMHd6ZW5FdzMzczVN?=
- =?utf-8?B?OGM2czZ4ckJONWcxSFQybmhhb3lJeXpUSHVoYjIwbkxobURZeHE5bmZ5c1dF?=
- =?utf-8?B?c25LOE8vaVNTc3VKVnMrcjJRR2IxQUNIeEtpTkR5aWtBU3BrcUZMMFdSUVo2?=
- =?utf-8?B?ZnBhZFhVeVVndG9GWmU0QjBXa0Vqa2JGNlEybThvc1NSUnlxUW9xYXE3VSt0?=
- =?utf-8?B?RksrSTBZTlZBK25QQWYxWk9kd0ZEY2ZraUgvYkg3bzlyVWJzaXd0K1FSVXNY?=
- =?utf-8?B?Uk4zbG9YeUFIQVE0bEhHdUp0b2RoMjZ3OHo2RkZaL0FQbzdWVmtUMzl0aXNy?=
- =?utf-8?B?UEpuVkkySUN1WG1GelZoZkhSemxlK1ArRjNwWHlzdTlaMGZQL2Z6enEyek9p?=
- =?utf-8?B?clRrQUtxQXowZ1hSaE9TckgvWWI4MW5VZlovQXVvOVFoRjBHK01jdE5TcHBt?=
- =?utf-8?B?TSsxcTlyTityaVk3YzVyaFVLVURkVEZDMCtMeDh5djRBRkp3WXVUc3hsRXll?=
- =?utf-8?B?ZlNDeFF3cFl1cGw1MG1TUTUvSWZtWTdvalJaS0M3S1FVR3Vmd3crb2xmRnA1?=
- =?utf-8?B?c2puc3cyQy9UbDhzblBNU3ozZ0ZKWFF6V21zWkxwVDJyaVVrNDRZTjJ1Ulpm?=
- =?utf-8?B?MjlYSFhIalNOUXRpK2svdVd1MnhwdDNaSE9wREJ0L2h2K2FQeUNMdE1kcjEr?=
- =?utf-8?B?ZkF4WnZqdkR1UkVvWU91YlRkWmhOM0RqbWlIa2tzalAvUGQ0QVZSSWthQ2p6?=
- =?utf-8?B?Si9WTnlWeXVuODZKVG81WERxeGUyQ2RoYW1HLzV1VHF5Mm1FNWUzRVprN0xk?=
- =?utf-8?Q?vJV5Ng555fDDThCZMFGm6RC2D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77eb82dc-0348-41ce-c22d-08ddd5b5b2e7
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:24:12.5712
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: giQU9FEtRT363PjIYOVgsI2wX3iGz3d4amY3DRWyJicnzq7nPoybfK4xYCv9Vdv9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4043
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
 
-On 07.08.25 15:01, oushixiong wrote:
-> Should we move audio disabling to hw_fini()?
+On Thu 07-08-25 20:14:09, Zihuan Zhang wrote:
+> The Linux task freezer was designed in a much earlier era, when userspace was relatively simple and flat.
+> Over the years, as modern desktop and mobile systems have become increasingly complex—with intricate IPC,
+> asynchronous I/O, and deep event loops—the original freezer model has shown its age.
 
-Yes and when you look at the patch Alex pointed out that is pretty much exactly what it does.
+A modern userspace might be more complex or convoluted but I do not
+think the above statement is accurate or even correct.
 
-So still good catch from your side, but a fix is already in the pipeline.
-
-Regards,
-Christian.
-
+> ## Background
 > 
-> Regards,
-> Shixiong Ou.
+> Currently, the freezer traverses the task list linearly and attempts to freeze all tasks equally.
+> It sends a signal and waits for `freezing()` to become true. While this model works well in many cases, it has several inherent limitations:
+> 
+> - Signal-based logic cannot freeze uninterruptible (D-state) tasks
+> - Dependencies between processes can cause freeze retries 
+> - Retry-based recovery introduces unpredictable suspend latency
+> 
+> ## Real-world problem illustration
+> 
+> Consider the following scenario during suspend:
+> 
+> Freeze Window Begins
+> 
+>     [process A] - epoll_wait()
+>         │
+>         ▼
+>     [process B] - event source (already frozen)
+> 
+> → A enters D-state because of waiting for B
+
+I thought opoll_wait was waiting in interruptible sleep.
+
+> → Cannot respond to freezing signal
+> → Freezer retries in a loop
+> → Suspend latency spikes
+> 
+> In such cases, we observed that a normal 1–2ms freezer cycle could balloon to **tens of milliseconds**. 
+> Worse, the kernel has no insight into the root cause and simply retries blindly.
+> 
+> ## Proposed solution: Freeze priority model
+> 
+> To address this, we propose a **layered freeze model** based on per-task freeze priorities.
+> 
+> ### Design
+> 
+> We introduce 4 levels of freeze priority:
 > 
 > 
-> 在 2025/8/7 18:03, Christian König 写道:
->> On 07.08.25 11:47, oushixiong1025@163.com wrote:
->>> From: Shixiong Ou <oushixiong@kylinos.cn>
->>>
->>> When Stopping lightdm and removing amdgpu driver are executed, the following
->>> error is triggered probably:
->>>
->>> Unable to handle kernel paging request at virtual address 0000000000005e00
->>> .....
->>> [ 2] [T10084] Call trace:
->>> [ 2] [T10084]  amdgpu_device_wreg.part.0+0x58/0x110 [amdgpu]
->>> [ 2] [T10084]  amdgpu_device_wreg+0x20/0x38 [amdgpu]
->>> [ 2] [T10084]  dce_v6_0_audio_endpt_wreg+0x64/0xd8 [amdgpu]
->>> [ 2] [T10084]  dce_v6_0_sw_fini+0xa0/0x118 [amdgpu]
->>> [ 2] [T10084]  amdgpu_device_ip_fini.isra.0+0xdc/0x1e8 [amdgpu]
->>> [ 2] [T10084]  amdgpu_device_fini_sw+0x2c/0x220 [amdgpu]
->>> [ 2] [T10084]  amdgpu_driver_release_kms+0x20/0x40 [amdgpu]
->>> [ 2] [T10084]  devm_drm_dev_init_release+0x8c/0xc0 [drm]
->>> [ 2] [T10084]  devm_action_release+0x18/0x28
->>> [ 2] [T10084]  release_nodes+0x5c/0xc8
->>> [ 2] [T10084]  devres_release_all+0xa0/0x130
->>> [ 2] [T10084]  device_unbind_cleanup+0x1c/0x70
->>> [ 2] [T10084]  device_release_driver_internal+0x1e4/0x228
->>> [ 2] [T10084]  driver_detach+0x90/0x100
->>> [ 2] [T10084]  bus_remove_driver+0x74/0x100
->>> [ 2] [T10084]  driver_unregister+0x34/0x68
->>> [ 2] [T10084]  pci_unregister_driver+0x24/0x108
->>> [ 2] [T10084]  amdgpu_exit+0x1c/0x3270 [amdgpu]
->>> [ 2] [T10084]  __do_sys_delete_module.constprop.0+0x1d0/0x330
->>> [ 2] [T10084]  __arm64_sys_delete_module+0x18/0x28
->>> [ 2] [T10084]  invoke_syscall+0x4c/0x120
->>> [ 2] [T10084]  el0_svc_common.constprop.0+0xc4/0xf0
->>> [ 2] [T10084]  do_el0_svc+0x24/0x38
->>> [ 2] [T10084]  el0_svc+0x24/0x88
->>> [ 2] [T10084]  el0t_64_sync_handler+0x134/0x150
->>> [ 2] [T10084]  el0t_64_sync+0x14c/0x150
->>> [ 2] [T10084] Code: f9401bf7 f9453e60 8b150000 d50332bf (b9000016)
->>> [ 2] [T10084] ---[ end trace 0000000000000000 ]---
->>>
->>> The adev->rmmio has been unmmaped in amdgpu_device_fini_hw().
->>>
->>> So skip disabling audio when device is unplugged.
->>>
->>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
->>> ---
->>>   drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 7 +++++--
->>>   1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
->>> index 276c025c4c03..48b29990da7f 100644
->>> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
->>> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
->>> @@ -23,6 +23,7 @@
->>>     #include <linux/pci.h>
->>>   +#include <drm/drm_drv.h>
->>>   #include <drm/drm_edid.h>
->>>   #include <drm/drm_fourcc.h>
->>>   #include <drm/drm_modeset_helper.h>
->>> @@ -1459,8 +1460,10 @@ static void dce_v6_0_audio_fini(struct amdgpu_device *adev)
->>>       if (!adev->mode_info.audio.enabled)
->>>           return;
->>>   -    for (i = 0; i < adev->mode_info.audio.num_pins; i++)
->>> -        dce_v6_0_audio_enable(adev, &adev->mode_info.audio.pin[i], false);
->>> +    if (!drm_dev_is_unplugged(adev_to_drm(adev))) {
->> Good catch, but that looks like a workaround for something done in the wrong place.
->>
->> A *_sw_fini() function should not enable/disable HW.
->>
->> Regards,
->> Christian.
->>
->>> +        for (i = 0; i < adev->mode_info.audio.num_pins; i++)
->>> +            dce_v6_0_audio_enable(adev, &adev->mode_info.audio.pin[i], false);
->>> +    }
->>>         adev->mode_info.audio.enabled = false;
->>>   }
+> | Priority | Level             | Description                       |
+> |----------|-------------------|-----------------------------------|
+> | 0        | HIGH              | D-state TASKs                     |
+> | 1        | NORMAL            | regular  use space TASKS          |
+> | 2        | LOW               | not yet used                      |
+> | 4        | NEVER_FREEZE      | zombie TASKs , PF_SUSPNED_TASK    |
 > 
+> 
+> The kernel will freeze processes **in priority order**, ensuring that higher-priority tasks are frozen first.
+> This avoids dependency inversion scenarios and provides a deterministic path forward for tricky cases.
+> By freezing control or event-source threads first, we prevent dependent tasks from entering D-state prematurely — effectively avoiding dependency inversion.
 
+I really fail to see how that is supposed to work to be honest. If a
+process is running in the userspace then the priority shouldn't really
+matter much. Tasks will get a signal, freeze themselves and you are
+done. If they are running in the userspace and e.g. sleeping while not
+TASK_FREEZABLE then priority simply makes no difference. And if they are
+TASK_FREEZABLE then the priority doens't matter either.
+
+What am I missing?
+-- 
+Michal Hocko
+SUSE Labs
 
