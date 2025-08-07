@@ -1,257 +1,175 @@
-Return-Path: <linux-kernel+bounces-758863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A391B1D4E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE69B1D4DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C81B07ACB1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5CB621667
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD7E265614;
-	Thu,  7 Aug 2025 09:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006EF23BCF8;
+	Thu,  7 Aug 2025 09:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RDsRrwpr"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KabFeLze"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA94624DD00;
-	Thu,  7 Aug 2025 09:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507B5220F5E;
+	Thu,  7 Aug 2025 09:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754559286; cv=none; b=AaHXuc46kBsopyF+AMiJN9v3dY03W+OH2nQFfiCcB2UyLvj2dYGA+eGv7jWRlq+qIFJb0sJKZTT4ckyXESjnufonkUstLRgG6IEFjERTHAIFJhBdhEoVcKvzBi4ifNJwpjJaSHoz8NZ7sk9/TNAHBm63qcNYJU6KTToo/qqOiaE=
+	t=1754559279; cv=none; b=seyVgBJ7+r0Nks2pwU7hI0cUmyO2hpCJ9FVJQJ8gy1SsAvTQYGJBXDDCgjwxbAgYQx5LzAne7a3R9ikbKQPqXyQTaZ0BGifeylsL5EFsXvoP4SjJWBuWA2vLNthtY31iNhnXHxySyp2Mr2pHec1kkD/Y8PAACbratRWR9XIxv/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754559286; c=relaxed/simple;
-	bh=bi5/cUDmfgbhIMHd6ZTDNPs0NPoSsPI20ih8TFJpEfs=;
+	s=arc-20240116; t=1754559279; c=relaxed/simple;
+	bh=0vCIztPZD+BesSzci2t30zHZGAgY7hFiC7LgX3rS02o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fJLQz1A3QvaLwDQ8zH/ZtMRPL9WM6NDR+x1I1DiYpCp3HRfMWmUa2LfdtP1+cNMhrvfPxqyUqzuxeEFnWjX1aGOWBBFwdDHOe90UeySplaWNK0cd4omz3sA84+5trRX1N2ILNPIPu8LdM/zJB+4+asiM/g4cj8GUAXBMh+GbXa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RDsRrwpr; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5772hmde017964;
-	Thu, 7 Aug 2025 09:34:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=6vWCBn2ea2AJ8hlZ7l2i2oo4f/pnID
-	rmDJGP0OfWrxg=; b=RDsRrwprbMwU5R7G0NJ4yvG0oFV5lXhM8LLYysN9NxNqDY
-	IOiUDqEAfmXwXcZkuN5P9+7tioqcLRqNu6NJrPhueqYfUFDz4CdzWKHX/m81M+3h
-	5d6TyKiKe3eoVsLWRcwX1QYle99ayN40vV4hdxKpK5iA0cIenHOa9i7qEa+HDjVZ
-	XMVk6MDi1be5/5IuBuG83XzltFC9AMJG/IrCaHO/SY3E4LI7HIn0K4jE+kzRtCqg
-	Yl/G26IzF4RKM/KfA+aVM/LJrQFitEyv5WExGuAsMxEFqK9VpYnCXWi3ygP0iIvA
-	04hsHo+eSnHMkv7OtFxb0JxmlpHB1xkuRSGiZ/AA==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq6396h2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 09:34:36 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779UOoT007961;
-	Thu, 7 Aug 2025 09:34:36 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwmyx1u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 09:34:36 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5779YYxX33947992
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 09:34:34 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3E95220043;
-	Thu,  7 Aug 2025 09:34:34 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1853C2004B;
-	Thu,  7 Aug 2025 09:34:32 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.39.27.140])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  7 Aug 2025 09:34:31 +0000 (GMT)
-Date: Thu, 7 Aug 2025 15:04:29 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
-Message-ID: <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
-Mail-Followup-To: Alex Mastro <amastro@fb.com>, 
-	Alex Williamson <alex.williamson@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org
-References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KL5h7R+TO8HsauXqtxEjpmoXnboXo96DSHSC6haV97KzMoxEYmSIv0Jg1o477zTfBx0u0/UWKry5Qk1YFlwBAImRFg2SsuhMZrfD0Hvc5wccJCCkSfCOKrcPy0HfI1nHBDLFGbjA8OgQklYlrFACOAvAjlskCU/KYjI23b0FYqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KabFeLze; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-555024588b1so894479e87.1;
+        Thu, 07 Aug 2025 02:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754559275; x=1755164075; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=addgU5+bNFveu8gx7RdfbotqD9xo7DZxzvISYg2VFeE=;
+        b=KabFeLzeIODospiIzHAxZthUEIUwY1eFWUmnswejkLkwu4k3aBOiamjL1bdZfkgKqs
+         usYWFrZyRh1bReO5rrPVpg7PzPsxmtbY7CA7a3NU/Ei7Ah9SBEptCRDArWt/DUZ5/umf
+         3I8dbO9jJ5zfwOKA2sPIGxlrVg6OGqiLoADlPMdlfmQgpRQbwxBcXmJNHi8RpDaBq01z
+         1efy+TlgGSaaIxxBnMRepoTlKvfXWPlIuYgfAFaFsk655rvsxqFz1/m2YwasUKvhn64k
+         THZHPuPkPr8DhW4yUUpNLhF6G6cGWdYWnYg6/8mtkoKY3Nr/puYGohU2Y1uISQ25AFeO
+         pfTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754559275; x=1755164075;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=addgU5+bNFveu8gx7RdfbotqD9xo7DZxzvISYg2VFeE=;
+        b=dJbPIJCoT59qFkz1qvApYWS1OuZh8i0w7StsgIvM+hTaSxDQzb6J2lbseZtfiQ373x
+         d8RuiO2QCkX9SnqesMWDDjMuM2mwKutSAdB7Ce4IQ6VXh1uGQpMSAuFjdXgQwzpsufQG
+         XpDUjxUV/2B784wWjgzZR7Pi9KGlWpRf9Z5FFKtvg3WIxWUU2OtNJ69bD/jVhwFGVZZ4
+         N9YXrjRzvGNtw5bnGPOelbxbKjTgZi8K/vkQZ52x/CMp+TBRsPiVZuToDtMMKFKik+ML
+         exQYx7KOzJpz7sO3fvyZJUbXhQGsdi8jY7XORBIqc7CZbdieBWL9WMEXcX8sgSD7A3RK
+         ei0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUeyjSxJdOk9tSLrCM9StgyHux2d3JOlZr5RzAjVRHVp7gB8i5w5ZddUzq7L/rC34Uj14drZ2kj063tpVbq@vger.kernel.org, AJvYcCUm1/ViRc3A9lQZCSb7zhCnUbq3SeMv1yo0XAB6ZJEFUZjtYLZl5PXwI9+oPtS0CSSRl1x8oEFgBHes@vger.kernel.org, AJvYcCX0AC6PWPcnrtlDgXybT7mcaZ7VIMFrODSsDXCI8s+Mtc6rPeul/LO+4vbY59jVDIjpgCQezcNP5ly0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1tq674nWEB5DVOAB0SiiCtFenRrupu6ySm9D5ydsyDUwBujUb
+	gWW1vzJq1RYMZFSvBHw4FYA9lSikmWOrUNjZOzBfuDj3iL8CdVXk0+4X
+X-Gm-Gg: ASbGncvk4Oclpocvh+JXfUimAHy8APUrBewQQAqetWDZcDkxsLcyeUDiRvyE0wilH65
+	JHy3PU71tiJu6M8cdiCVposVUI7YoBDtFtKflcr7W5sx3QFid0xQDrKSh6/fEbzvxT03vdCwpXE
+	SnCpw5BO/oPlDttQIBUB203szlg8lbjDG5C/lbf0tWRq2kNXfUUbXhjk2dkBikVqZIcM4KZYP4l
+	IXDIlifvrZIONNRFVV7LLgOBIFTxBOYjWgUUQBGnDUCwLBqWRATjbGVQX5q74pW7y75SjQ8fYkq
+	iL4FQUOFKgZT2Z0x24TbMNHxcxTLA93P3JmsXLpklo8oz6Pn7yYnfmvGQzR3eSrfOuSxMzBkP7W
+	7CQhj/Vn9C87buGHhSnXfe6c3n+tH
+X-Google-Smtp-Source: AGHT+IFVKMRLKU6d7beKECE+fUIy7Z0miFvbxfdxYF+dopbKIl3zZxeB9uMWB+FLrqjBQ2Q3P6/tfA==
+X-Received: by 2002:a05:6512:e99:b0:55b:5b33:bc09 with SMTP id 2adb3069b0e04-55caf5f3ed9mr1798960e87.28.1754559275079;
+        Thu, 07 Aug 2025 02:34:35 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cac6a3e06sm626646e87.172.2025.08.07.02.34.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 02:34:34 -0700 (PDT)
+Date: Thu, 7 Aug 2025 12:34:30 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 04/10] iio: adc: ad7476: Use correct channel for bit info
+Message-ID: <3d3ccb9195271c8c0cf4b476a10b81fe309d3564.1754559149.git.mazziesaccount@gmail.com>
+References: <cover.1754559149.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uvmQgl2tyCPpRLdJ"
+Content-Disposition: inline
+In-Reply-To: <cover.1754559149.git.mazziesaccount@gmail.com>
+
+
+--uvmQgl2tyCPpRLdJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA3MyBTYWx0ZWRfXyzA19daRx9Jv
- +S0nugzECf8LjRgaWq9Uidy+7lXie11jZxPN50pOzFw+DF12e6gEkqmRecrnhnV224ZxELfB8Yj
- G5S+VNlm8+hXRRRhqZlRsju1bQZfgE/PFbK8yDw0afmQ1DAB4VFt8Oy7jLyxLVnEpcE7E0fQhi5
- gF49kT7r/LFgq/VIgFqgjpgzaXMuLOKhcbKFRSBCwAK43Y0CpBwaSnyLRDIOIdfwXcsgIpZoCZS
- 9S5Wqrat766/Y1nbEsCpk5YkQAv3YHbUd+WZaGrhVvt2DMATNYaRkU8ZGCnLocGOXCfrZpzkw1r
- QGpGI0lCX+PQXqzRb3PkCDNq4RrCB2dBb8FF60evsJevO9mHhnNAkm2aVhMm61Z59ouqgWu3Y9g
- cWcQGxEkHkA+IXQl/gn92M2TG7Iqc3NroY/kVMyHBAFHY+7IRMSOzTfTm3WCTg0RcuiCvKuk
-X-Proofpoint-GUID: CvV8F5CmtDJe8LqRhlB-dMTow_wL2oOA
-X-Authority-Analysis: v=2.4 cv=PoCTbxM3 c=1 sm=1 tr=0 ts=6894732d cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=FOH2dFAWAAAA:8
- a=VnNF1IyMAAAA:8 a=kvThyvOQPCVtOW654kcA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: CvV8F5CmtDJe8LqRhlB-dMTow_wL2oOA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound
- score=100 suspectscore=0 malwarescore=0 adultscore=0 clxscore=1011
- bulkscore=0 priorityscore=1501 impostorscore=0 mlxlogscore=-999 mlxscore=100
- phishscore=0 lowpriorityscore=0 spamscore=100 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070073
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+The ad7476 supports ADCs which use separate GPIO for starting the
+conversion. For such devices, the driver uses different channel
+information if the GPIO is found. The bit information is still always
+used from the original (non 'convstart') channels.
 
-On 2025/08/04 12:44 PM, Alex Mastro wrote:
-> Print the PCI device syspath to a vfio device's fdinfo. This enables tools
-> to query which device is associated with a given vfio device fd.
-> 
-> This results in output like below:
-> 
-> $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
-> vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-> 
-> Signed-off-by: Alex Mastro <amastro@fb.com>
+This has not been causing problems because the bit information for the
+'convstart' -channel and the 'normal' -channel is identical. It,
+however, will cause issues if an IC has different characteristics for an
+'convstart' -channel and regular channel. Furthermore, this will cause
+problems if a device always requires the convstart GPIO and thus only
+defines the convstart channel.
 
-I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
-could see the VFIO device syspath in fdinfo.
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+---
+Revision history:
+ v1 =3D> :
+ - No changes
+---
+ drivers/iio/adc/ad7476.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- Without this patch:
- -------------------
+diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+index 7b6d36999afc..fc701267358e 100644
+--- a/drivers/iio/adc/ad7476.c
++++ b/drivers/iio/adc/ad7476.c
+@@ -121,8 +121,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+=20
+ 		if (ret < 0)
+ 			return ret;
+-		*val =3D (ret >> st->chip_info->channel[0].scan_type.shift) &
+-			GENMASK(st->chip_info->channel[0].scan_type.realbits - 1, 0);
++		*val =3D (ret >> chan->scan_type.shift) &
++			GENMASK(chan->scan_type.realbits - 1, 0);
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val =3D st->scale_mv;
+@@ -345,7 +345,7 @@ static int ad7476_probe(struct spi_device *spi)
+ 	/* Setup default message */
+=20
+ 	st->xfer.rx_buf =3D &st->data;
+-	st->xfer.len =3D st->chip_info->channel[0].scan_type.storagebits / 8;
++	st->xfer.len =3D indio_dev->channels[0].scan_type.storagebits / 8;
+=20
+ 	spi_message_init(&st->msg);
+ 	spi_message_add_tail(&st->xfer, &st->msg);
+--=20
+2.50.1
 
-    [root@localhost ~]# cat /proc/7059/fdinfo/188
-    pos:    0
-    flags:  02000002
-    mnt_id: 17
-    ino:    1113
 
- With this patch:
- ----------------
-    [root@localhost ~]# cat /proc/7722/fdinfo/188
-    pos:    0
-    flags:  02000002
-    mnt_id: 17
-    ino:    2145
-    vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
+--uvmQgl2tyCPpRLdJ
+Content-Type: application/pgp-signature; name=signature.asc
 
-..., and the code changes LGTM. Hence,
+-----BEGIN PGP SIGNATURE-----
 
-Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
-Tested-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiUcyYACgkQeFA3/03a
+ocX9UggAtce/kkLmUPgbx1P/Peqh1yCesHSorqLGfQdCQUfKQpEMT7QcwHPFmxkc
+n0j1vHNgWW/1bHdIhliJtApKS8JrLt8w7Ivsl2BPnzTIiolNiMFVFla6cYa29oJ+
+/vg5olH2briUQd2U1NguGof1HvyqXNsZWnRBeN2QWniabl7npb8elU+39no02bTH
+SGvIXmrcPGt1Xr6/V/0fhJZ+Om0qk0BjS3C4dxY8vT7ZPkU+OOoIJDioRbx1Unwl
+fiTTegAkPJnjDwkGXlIP8BpHzICq/y8QxzoSataGFMUZA9tlSq47XqvH6ULlbXZP
+dzVaN3SHq/EZ8f5gSFTodBw798c5Kw==
+=+Jui
+-----END PGP SIGNATURE-----
 
-Thanks,
-Amit
-
-> ---
-> Changes in v4:
-> - Remove changes to vfio.h
-> - Link to v3: https://lore.kernel.org/r/20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com
-> Changes in v3:
-> - Remove changes to vfio_pci.c
-> - Add section to Documentation/filesystems/proc.rst
-> - Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
-> Changes in v2:
-> - Instead of PCI bdf, print the fully-qualified syspath (prefixed by
->   /sys) to fdinfo.
-> - Rename the field to "vfio-device-syspath". The term "syspath" was
->   chosen for consistency e.g. libudev's usage of the term.
-> - Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
-> ---
->  Documentation/filesystems/proc.rst | 14 ++++++++++++++
->  drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
->  2 files changed, 34 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 2a17865dfe39..fc5ed3117834 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -2162,6 +2162,20 @@ DMA Buffer files
->  where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
->  the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
->  
-> +VFIO Device files
-> +~~~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +	pos:    0
-> +	flags:  02000002
-> +	mnt_id: 17
-> +	ino:    5122
-> +	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-> +
-> +where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
-> +file.
-> +
->  3.9	/proc/<pid>/map_files - Information about memory mapped files
->  ---------------------------------------------------------------------
->  This directory contains symbolic links which represent memory mapped files
-> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> index 1fd261efc582..37a39cee10ed 100644
-> --- a/drivers/vfio/vfio_main.c
-> +++ b/drivers/vfio/vfio_main.c
-> @@ -28,6 +28,7 @@
->  #include <linux/pseudo_fs.h>
->  #include <linux/rwsem.h>
->  #include <linux/sched.h>
-> +#include <linux/seq_file.h>
->  #include <linux/slab.h>
->  #include <linux/stat.h>
->  #include <linux/string.h>
-> @@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
->  	return device->ops->mmap(device, vma);
->  }
->  
-> +#ifdef CONFIG_PROC_FS
-> +static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
-> +{
-> +	char *path;
-> +	struct vfio_device_file *df = filep->private_data;
-> +	struct vfio_device *device = df->device;
-> +
-> +	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
-> +	if (!path)
-> +		return;
-> +
-> +	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
-> +	kfree(path);
-> +}
-> +#endif
-> +
->  const struct file_operations vfio_device_fops = {
->  	.owner		= THIS_MODULE,
->  	.open		= vfio_device_fops_cdev_open,
-> @@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
->  	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
->  	.compat_ioctl	= compat_ptr_ioctl,
->  	.mmap		= vfio_device_fops_mmap,
-> +#ifdef CONFIG_PROC_FS
-> +	.show_fdinfo	= vfio_device_show_fdinfo,
-> +#endif
->  };
->  
->  static struct vfio_device *vfio_device_from_file(struct file *file)
-> 
-> ---
-> base-commit: 4518e5a60c7fbf0cdff393c2681db39d77b4f87e
-> change-id: 20250801-show-fdinfo-ef109ca738cf
-> 
-> Best regards,
-> -- 
-> Alex Mastro <amastro@fb.com>
-> 
+--uvmQgl2tyCPpRLdJ--
 
