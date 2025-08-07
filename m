@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-759022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2EBB1D727
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:00:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A45B1D729
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:01:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED38D18918DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:01:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF7DE170A22
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AF621C167;
-	Thu,  7 Aug 2025 12:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACE0239E7F;
+	Thu,  7 Aug 2025 12:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OObStDQ5"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NNt1hp2P"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068B8748F
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD766748F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754568051; cv=none; b=E3WV01e9NFRg1MiIPcqJLclgxpJXZ9A7HpvHiY/F6HJAXp9eC+30ZMvZOGPibuptgc0djnmAxNGDsjgeCHbT7BEmmFbMje5HECzEsEH8ZCtMJabL+QE7hrqF3Eg4hGDzBm7o5IFrXN2C5Hsa9skLL1BLSxz+JwZ7FWaHa/7vJ/0=
+	t=1754568074; cv=none; b=HHA/eKoitxk+Z9Aw99Ud2nbL8wHjop2uqgyh4AConbiN/PWPWLO4FH26inMV25C4A4TODcTIeCQUuRWU02gfcX1w9jBA17/5vhrE9W7GtNE4N+IK4djSWtkyQYAKCIV7Bdm9bzd3W4NzJjfqamckjASvi1En6WDE8NDpu/EeIpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754568051; c=relaxed/simple;
-	bh=LdY/i+rMPmKQZOWkhSXJPPTOIyh9JDAEwzRhIXeqI2I=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=u5qPY+MDFNoiKG4yV2bqxNZDcj57EcU234djbXfoXRxmd0pMq/CkWImMBsrKD+zz/zRB/wqlT+i71vaVk8blyH5wMVW1KS/Aojh4rPly8EvCtK7xWMwxXRUZn609tt1w501qYsYvvmbYzcFE07oRrBsVChknIINYHehPaVdCWEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OObStDQ5; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1754568074; c=relaxed/simple;
+	bh=PTuDDwFBwxhGEN64Mf0RFqdneEGdd1Qgrhit1izSWXk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ctx/Dv1XJGNdpPUfgoLJTjXaAg0i8sXzsJG6qfl2pVGgOREafNvE2CJfkbTdcLu0ye3XN0di1KanId/DTjRUstFQGKG+VfPQM3htKQ+L4atc6lBfyXQ9qPwIo4dN7SZ640M88WZAnyXPZdwsmvHAhrv7xXZmbVyF5PyUq9/WTEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NNt1hp2P; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24249098fd0so12077295ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 05:00:49 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3211b736a11so2100697a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 05:01:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754568049; x=1755172849; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NVQMzpDcKZ25lxhvOtkAAfHad41TvtlPkpgkU/8pXts=;
-        b=OObStDQ5dTcKUWemSHj0uMpZj9uah+wcneL4Sl0BpS3DqJwC7NZNj+OcPfiLZ2nk4d
-         pbmPg5inXtU+9mu8ySoW8dGPpcxz0heVMpDJVaqIRVTJ0hBwawrWShM6xjXqu7uj41QN
-         9mn70pZoFDb0ZWvUaOuLFHR9MCVIogEh9egvQLfDC/A61DfA/pjHfhc51ZMiJH2pp5jP
-         Dt5MJQHK//yuv01UZUWnOiN9tdgW2J1yIr2CaYqWLcwk6KtkLYCQIYC13c0zDrjus7Qy
-         REDtEZ7LIYVnJ9WfX/VLhgFr2fSuik/+wrEm/15qbzbCGgVMliMtaRH01/8Bzm2vBySh
-         TFfQ==
+        d=google.com; s=20230601; t=1754568072; x=1755172872; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nE+MHF3K5eYH5csmXDAz3FZkVfKhmhgeV7wuvi+Opms=;
+        b=NNt1hp2PiU00rpElFCxC7emx05wyFj5a3k7fnvcty/TXyWjM1J99NFGjUxO0ha1ga1
+         mjppkimoZ664VwQKt06z8RL4kJ81ZpmmQyG/zxjvPPrI85gYYXm8ZUFJPVrfs+9CyDzY
+         jYTrfJ/rHmvpWtGeeESQl8TtiS29J3tOo9cUfOhHKA6isd2xL5ig9Kmms90wMxcWtmH8
+         zA8hdNy0K++sLOn7samhN/tQ4tsLavXM+qLRn73LXCymgFm55BB1m/bOyxGo1yWSr2Hj
+         MbeWTW0gF+VqY0fVdVgQ7vXCr8Vs4Yeh0ydj483rtnL617vOdnGAVm3ssO0kJm/oax4H
+         vPUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754568049; x=1755172849;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NVQMzpDcKZ25lxhvOtkAAfHad41TvtlPkpgkU/8pXts=;
-        b=DpvHdyRo68wNGoPSy16NhCtdPQ2te867kkCz6ENTbdULL86ApSri4gx3FsBJgsziIa
-         dNhRo+30nNYeVqx+XA0GyGVDV3fHQeLIU+FzfCOx+9Aj/XEjtRugH6s5ztp91KefeCZh
-         dwoxc5ULmqJwOk6ljGay3sta6jfAMfegFLltcirpY5nOcvNlYb4shFWsyBdBtAcc87yz
-         N1TKkGgcvV1eqPbF1pQTL1P40h8HBMZsvKtSS/TIbeeeJ9BVJFhX5AZhidZkFnphHEiN
-         5yIJol+BMQsnVYgznRQMdfpYa8IwT8llIChXcQiYMGSV0Rz+LXyyGPFcQT4aNfMzDOQ6
-         GzWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZmLgSY31ani7ZJrIuP3iYvHFesf7UMfwe4X5h7aNpbZPDLeoXzNnKwSrnJblMIxqhAHQfxbhQ4W+Mhps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfQy07muk1FUl4TzCtrd5BssZfwvzZ8TYbWtIOm4HlnGSk8XxX
-	LB22TqRyVZuGmzw4D96+M+BqiCUdmtj/0AprSsi3ojVpEguaXPgYFc+ZmTWgKkg/mhKaPV3suX0
-	Nvw==
-X-Google-Smtp-Source: AGHT+IHAQEVxCio5STxDcfDDBOE+qECR7XPXNMNLX8/DgAGu0ZsKEeHIC699gNm6QUfd7tqb3Uw+frWVBA==
-X-Received: from plgk7.prod.google.com ([2002:a17:902:ce07:b0:242:86ec:7de6])
- (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e5c8:b0:240:9dd8:2194
- with SMTP id d9443c01a7336-2429f5772camr112852665ad.22.1754568049158; Thu, 07
- Aug 2025 05:00:49 -0700 (PDT)
-Date: Thu,  7 Aug 2025 20:00:41 +0800
+        d=1e100.net; s=20230601; t=1754568072; x=1755172872;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nE+MHF3K5eYH5csmXDAz3FZkVfKhmhgeV7wuvi+Opms=;
+        b=IrOG4T7kHqXzXiuHbEGHrI1UDKWm2aEGbzP6ufOPv+NV/16r/seevxOF/G9fJRfL6h
+         J/f0NsUaUFeONCDaKemZ4pYuzOkXFxQKxwch16XDqeoYRNzCFOXVOPeocheb7jgLChBV
+         iqs96gYgj41v3j2iWAQRl4xSrsHFczfynTDcylGyri0HI2E0ov8esXnWrTf34DI+/B02
+         WMLPNWyQFoPeUMixPgLukqRxk5j+8QLZYBQT+JtlsKLu9vQUyaGk8o0wNHwYQ/m31zs7
+         xrdFs2QgThJBBCAcFrPeWMxJivoYLqeAyxjL6Y6DvFPxpFvV+0Zyt1Ee6CAJI+2qTgfD
+         Q4ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUaY5zJzbwLxzYQ1HrwVk6CvC1LwssWXJdACZOeuFk38ICUJ/pALwwayHcmZzX7MCEaWBnJykU3r8Ai89Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY1+wPgUZ6eOKGfm96f/u3gNHeGvetxaSFvhSB3uaB2X1us1E4
+	8q9lyb1A158Vf1Y6tBcvv8ll3rjWZstuGBSuXoyDsJRhrxcW41fARrlIlxWOnhfOoUcIdFqcq6d
+	Gpg==
+X-Google-Smtp-Source: AGHT+IEiq+F58PXfR8QwIK6Rfn8eBJtpb9nE3fFwhIJI+opiDopLji7Te3FqifzMunuYwkoBSIlVwbNmUw==
+X-Received: from pjbpv3.prod.google.com ([2002:a17:90b:3c83:b0:312:e266:f849])
+ (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5101:b0:31f:3c3:947c
+ with SMTP id 98e67ed59e1d1-32166c2af67mr9244790a91.10.1754568071943; Thu, 07
+ Aug 2025 05:01:11 -0700 (PDT)
+Date: Thu,  7 Aug 2025 20:00:42 +0800
+In-Reply-To: <20250807120042.1761685-1-wakel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250807120042.1761685-1-wakel@google.com>
 X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250807120042.1761685-1-wakel@google.com>
-Subject: [PATCH v2 0/1] selftests/futex: Check for shmget support at runtime
+Message-ID: <20250807120042.1761685-2-wakel@google.com>
+Subject: [PATCH v2 1/1] selftests/futex: Check for shmget support at runtime
 From: Wake Liu <wakel@google.com>
 To: tglx@linutronix.de, mingo@redhat.com, shuah@kernel.org, 
 	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
@@ -79,17 +82,205 @@ Cc: peterz@infradead.org, dvhart@infradead.org, dave@stgolabs.net,
 	andrealmeid@igalia.com, wakel@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-Changes in v2:
-- Restore RET_FAIL assignments in error paths to ensure the test's exit
-  code accurately reflects the failure status.
+The futex tests `futex_wait.c` and `futex_waitv.c` rely on the `shmget()`
+syscall, which may not be available if the kernel is built without
+System V IPC support (CONFIG_SYSVIPC=n). This can lead to test
+failures on such systems.
 
-Wake Liu (1):
-  selftests/futex: Check for shmget support at runtime
+This patch modifies the tests to check for `shmget()` support at
+runtime by calling it and checking for an `ENOSYS` error. If `shmget()`
+is not supported, the tests are skipped with a clear message,
+improving the user experience and preventing false negatives.
 
+This approach is more robust than relying on compile-time checks and
+ensures that the tests run only when the required kernel features are
+present.
+
+Signed-off-by: Wake Liu <wakel@google.com>
+---
  .../selftests/futex/functional/futex_wait.c   | 49 +++++++------
  .../selftests/futex/functional/futex_waitv.c  | 73 ++++++++++++-------
  2 files changed, 73 insertions(+), 49 deletions(-)
 
+diff --git a/tools/testing/selftests/futex/functional/futex_wait.c b/tools/testing/selftests/futex/functional/futex_wait.c
+index 685140d9b93d..17a465313a59 100644
+--- a/tools/testing/selftests/futex/functional/futex_wait.c
++++ b/tools/testing/selftests/futex/functional/futex_wait.c
+@@ -48,7 +48,7 @@ static void *waiterfn(void *arg)
+ int main(int argc, char *argv[])
+ {
+ 	int res, ret = RET_PASS, fd, c, shm_id;
+-	u_int32_t f_private = 0, *shared_data;
++	u_int32_t f_private = 0, *shared_data = NULL;
+ 	unsigned int flags = FUTEX_PRIVATE_FLAG;
+ 	pthread_t waiter;
+ 	void *shm;
+@@ -96,32 +96,35 @@ int main(int argc, char *argv[])
+ 	/* Testing an anon page shared memory */
+ 	shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
+ 	if (shm_id < 0) {
+-		perror("shmget");
+-		exit(1);
+-	}
+-
+-	shared_data = shmat(shm_id, NULL, 0);
++		if (errno == ENOSYS) {
++			ksft_test_result_skip("Kernel does not support System V shared memory\n");
++		} else {
++			ksft_test_result_fail("shmget() failed with error: %s\n", strerror(errno));
++			ret = RET_FAIL;
++		}
++	} else {
++		shared_data = shmat(shm_id, NULL, 0);
+ 
+-	*shared_data = 0;
+-	futex = shared_data;
++		*shared_data = 0;
++		futex = shared_data;
+ 
+-	info("Calling shared (page anon) futex_wait on futex: %p\n", futex);
+-	if (pthread_create(&waiter, NULL, waiterfn, NULL))
+-		error("pthread_create failed\n", errno);
++		info("Calling shared (page anon) futex_wait on futex: %p\n", futex);
++		if (pthread_create(&waiter, NULL, waiterfn, NULL))
++			error("pthread_create failed\n", errno);
+ 
+-	usleep(WAKE_WAIT_US);
++		usleep(WAKE_WAIT_US);
+ 
+-	info("Calling shared (page anon) futex_wake on futex: %p\n", futex);
+-	res = futex_wake(futex, 1, 0);
+-	if (res != 1) {
+-		ksft_test_result_fail("futex_wake shared (page anon) returned: %d %s\n",
+-				      errno, strerror(errno));
+-		ret = RET_FAIL;
+-	} else {
+-		ksft_test_result_pass("futex_wake shared (page anon) succeeds\n");
++		info("Calling shared (page anon) futex_wake on futex: %p\n", futex);
++		res = futex_wake(futex, 1, 0);
++		if (res != 1) {
++			ksft_test_result_fail("futex_wake shared (page anon) returned: %d %s\n",
++					      errno, strerror(errno));
++			ret = RET_FAIL;
++		} else {
++			ksft_test_result_pass("futex_wake shared (page anon) succeeds\n");
++		}
+ 	}
+ 
+-
+ 	/* Testing a file backed shared memory */
+ 	fd = open(SHM_PATH, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+ 	if (fd < 0) {
+@@ -161,7 +164,8 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	/* Freeing resources */
+-	shmdt(shared_data);
++	if (shared_data)
++		shmdt(shared_data);
+ 	munmap(shm, sizeof(f_private));
+ 	remove(SHM_PATH);
+ 	close(fd);
+@@ -169,3 +173,4 @@ int main(int argc, char *argv[])
+ 	ksft_print_cnts();
+ 	return ret;
+ }
++
+diff --git a/tools/testing/selftests/futex/functional/futex_waitv.c b/tools/testing/selftests/futex/functional/futex_waitv.c
+index a94337f677e1..034dbfef40cb 100644
+--- a/tools/testing/selftests/futex/functional/futex_waitv.c
++++ b/tools/testing/selftests/futex/functional/futex_waitv.c
+@@ -110,40 +110,58 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	/* Shared waitv */
+-	for (i = 0; i < NR_FUTEXES; i++) {
+-		int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
+-
+-		if (shm_id < 0) {
+-			perror("shmget");
+-			exit(1);
++	bool shm_supported = true;
++	int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
++
++	if (shm_id < 0) {
++		if (errno == ENOSYS) {
++			shm_supported = false;
++			ksft_test_result_skip("Kernel does not support System V shared memory\n");
++		} else {
++			ksft_test_result_fail("shmget() failed with error: %s\n", strerror(errno));
++			ret = RET_FAIL;
++			shm_supported = false;
+ 		}
++	} else {
++		shmctl(shm_id, IPC_RMID, NULL);
++	}
+ 
+-		unsigned int *shared_data = shmat(shm_id, NULL, 0);
++	if (shm_supported) {
++		for (i = 0; i < NR_FUTEXES; i++) {
++			int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
+ 
+-		*shared_data = 0;
+-		waitv[i].uaddr = (uintptr_t)shared_data;
+-		waitv[i].flags = FUTEX_32;
+-		waitv[i].val = 0;
+-		waitv[i].__reserved = 0;
+-	}
++			if (shm_id < 0) {
++				perror("shmget");
++				exit(1);
++			}
+ 
+-	if (pthread_create(&waiter, NULL, waiterfn, NULL))
+-		error("pthread_create failed\n", errno);
++			unsigned int *shared_data = shmat(shm_id, NULL, 0);
+ 
+-	usleep(WAKE_WAIT_US);
++			*shared_data = 0;
++			waitv[i].uaddr = (uintptr_t)shared_data;
++			waitv[i].flags = FUTEX_32;
++			waitv[i].val = 0;
++			waitv[i].__reserved = 0;
++		}
+ 
+-	res = futex_wake(u64_to_ptr(waitv[NR_FUTEXES - 1].uaddr), 1, 0);
+-	if (res != 1) {
+-		ksft_test_result_fail("futex_wake shared returned: %d %s\n",
+-				      res ? errno : res,
+-				      res ? strerror(errno) : "");
+-		ret = RET_FAIL;
+-	} else {
+-		ksft_test_result_pass("futex_waitv shared\n");
+-	}
++		if (pthread_create(&waiter, NULL, waiterfn, NULL))
++			error("pthread_create failed\n", errno);
+ 
+-	for (i = 0; i < NR_FUTEXES; i++)
+-		shmdt(u64_to_ptr(waitv[i].uaddr));
++		usleep(WAKE_WAIT_US);
++
++		res = futex_wake(u64_to_ptr(waitv[NR_FUTEXES - 1].uaddr), 1, 0);
++        if (res != 1) {
++            ksft_test_result_fail("futex_wake shared returned: %d %s\n",
++                                  res ? errno : res,
++                                  res ? strerror(errno) : "");
++            ret = RET_FAIL;
++        } else {
++			ksft_test_result_pass("futex_waitv shared\n");
++		}
++
++		for (i = 0; i < NR_FUTEXES; i++)
++			shmdt(u64_to_ptr(waitv[i].uaddr));
++	}
+ 
+ 	/* Testing a waiter without FUTEX_32 flag */
+ 	waitv[0].flags = FUTEX_PRIVATE_FLAG;
+@@ -235,3 +253,4 @@ int main(int argc, char *argv[])
+ 	ksft_print_cnts();
+ 	return ret;
+ }
++
 -- 
 2.50.1.703.g449372360f-goog
 
