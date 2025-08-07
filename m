@@ -1,191 +1,239 @@
-Return-Path: <linux-kernel+bounces-759336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44909B1DC4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C759B1DC50
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247F27AD0F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:04:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7005F7ACF1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB25327380F;
-	Thu,  7 Aug 2025 17:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e7a2B5P3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FFF273D6C;
+	Thu,  7 Aug 2025 17:05:41 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCD32737EC
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A81273D65
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754586338; cv=none; b=q3CF76PzsVBU3IMMdrZzA0NulnkfMgkWchvqvvjysXzI8I6tAZ1rColkeWCfUgeo5LIA/puwOKsihLzK0H0mCEus0m9q3A/ocYmQjIlJ140W7a79C9m5B8YVf4swlP+tLp+iEFE93tF5FJGjmLZSEmFqHoXN3TNLv8kw1wnAC/U=
+	t=1754586341; cv=none; b=ded83fH1j9SQv80Qfrhpc9BBpcK1Bv4FFiX/XJ827/5vpiFC5AE6oQLIYS2p58U6bF/YYPah9XI82gJq6BLHl6gqD8L3aJf3zXASRZj8XbFdamIjYA4fqCq9wNvH7hKeNj5uzjG5e4Ex0HLOfaj5jQPWY5drvn25fLt5Y1DjJQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754586338; c=relaxed/simple;
-	bh=7BcLue4zNf8lh70DptjhR/LsV/JNkg4RxWWsehEWIKs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSPpVb/c2+KAjkOm/on1WdLfJwwIAQhXwA5MY6XiPLYOCw0yo8ijCavNv4ra7cWAFcS7sIGvKRcK8ijSNsXQy2IwR0nKWBbZ5WlUjBYQoWq6aBUF94rKamjrB7/YGVoMyQdqsc1xlA5KLUo1T7hF7LLDtLrYKEEqTFuBbseCtqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e7a2B5P3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577ED7V7027726
-	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 17:05:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+YVGts+2Sled3/WFdtpAvTjBFp/SLx+lym4bizAU+QI=; b=e7a2B5P3g7Iube3v
-	k0L3FknEIDsT6meQfIxMZiCs97o9sxB4E68R2yOwfiS+TZMP+xE3kXlU5kKe69Ml
-	0r35IuTfFshpG8+reSDUTNztlrvQZCe73IAR3Z188i311tZBqT0GwQ8cyb7s/ABK
-	JWWj+BEC1SYkjpFps/UAtXMt5PIgZoKzGQBAs15VVd0uMEcoTzkPDqHOZuExevdA
-	pxwlvONJLhvHf/QL4xX5YBy+BrswhhEyqwPxo3moDqR5QigUK3rTu+n96JKQ6Mig
-	C2AMZCKM+wyNsPrqBuG0DP/G/8k+Ux10g8d5f2IgPVAIu1xaudrbDg7OZZZBV1Xj
-	RzOAuQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw3711q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 17:05:35 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b07bf0783bso32891051cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:05:35 -0700 (PDT)
+	s=arc-20240116; t=1754586341; c=relaxed/simple;
+	bh=OpH+VmOWTeWlhHyubUOQO8A9ywraJL0gvONVJ6EW2QU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZnCTok20to2MWgqkudLo4Db1U5UAj7ynorfSmE5TN4ZGlG0KVVUG3v2xhapCnCkeixoft7Ed84Rwv9sDs/8NzFrWRwpZ8Xwp1+D7d0Z20/kUkyaF7UPEBk4yDr97KpD3XnmcPYhsP5kAFbLgMX2skoPEWQwAkurfv/QnpFx7hgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88178b5ce3aso105082439f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:05:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754586334; x=1755191134;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+YVGts+2Sled3/WFdtpAvTjBFp/SLx+lym4bizAU+QI=;
-        b=nGe/Wyjr03RTdZIkX3wSX1qmhHkKmHM/d0GzyPDT9CgAbKFm74Pcm15HJ0fBZxh/lw
-         PEMgtedRDCo4mLFo5nWII45vmV42qFpO5JFVH+yAK/vttfcYWjCZDcJxhuHdq9NY3pVH
-         nEGLoA+rFy9AoAhaQlXBSydFZtrYBW5kKPXRnyi+ANZ/zQ5U0hc10M+yl1VT3ADepygD
-         WEhkv2+smzhVmw6JXGDVdMqQU7ZcYnFUMIY1LK8Vbvooc6cyuY/jGZ9p2Ud5okMHgZBp
-         v28vfiV/rAO3fZtD3s8sHAU0YRpftdb8EP4t5YhDDY0q17mDsaMaumobcg++7FQ98sl/
-         0lvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhx5YK+6m4jONvPGrD1Flp9a33UpAjuinOnBWS/nppEajzRFpgMVMpHXaqVvheCFYxxWPWoNvmVdul8DQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2DWdxRSOCwBczJz2EemdmYn29F9X+6yQvb1+w3a2E7yNRuzhU
-	LgDhPLGpPRiKwLHIamg5IE73Olu4/3MUDbnGcF4wqphuxkr6wcO65NvNVgYD8OeMLrhQg1jJzjy
-	Qb1xuVQCckhgyk8PAAo1F5S+UXTWj9rYi9606t15TrVOmRPIRxCEkZ9Mj9hqPe3UK5Uk=
-X-Gm-Gg: ASbGncuHbwx0HtORQI4GpK/Lds02kPI4mNklwrloom5ooteHlGAFNXaqKxs5fQufffg
-	wDLBKhLkny5bk3GJLg8XbhxO+c2ZRZpwfn4HLhud89B+7GawPYCwWg1hSWJfWViKFvdiJL0l1w+
-	trup6wzTey/7wtmJokw1BH3bkDmjBeyx1ywKIhNoruYdElzVfztF1V4GSus+wE1FEHvJhmjQXpt
-	W6mUv3t5oX9wI2zJ5OXE9qeg96K93XxeqV7RmO5uqsJj3rQSPAl4CjmpfvIpZXY6HUHQpDiv7yk
-	hzE2p6VMb7VZguzCyS2YVCpzGVoVykt0ti3mRhDawMfoVtxKOt7yiCO+D8w/ttVqdFjayA==
-X-Received: by 2002:a05:622a:1e0e:b0:4ab:89c8:bd32 with SMTP id d75a77b69052e-4b0aeb4d828mr1126581cf.0.1754586334090;
-        Thu, 07 Aug 2025 10:05:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHuJh1mTWFqp6hyurqkEUgQw6kJtf6LoQerLeeKQ3qvvsHPlmZlE9GV+bqqtb6iODk5kTGVaA==
-X-Received: by 2002:a05:622a:1e0e:b0:4ab:89c8:bd32 with SMTP id d75a77b69052e-4b0aeb4d828mr1125181cf.0.1754586333354;
-        Thu, 07 Aug 2025 10:05:33 -0700 (PDT)
-Received: from trex (205.red-83-60-94.dynamicip.rima-tde.net. [83.60.94.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e6dcdbbbsm42231205e9.7.2025.08.07.10.05.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 10:05:32 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Thu, 7 Aug 2025 19:05:30 +0200
-To: Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        bryan.odonoghue@linaro.org, quic_dikshita@quicinc.com,
-        konradybcio@kernel.org, krzk+dt@kernel.org, mchehab@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 5/7] media: venus: core: Add qcm2290 DT compatible and
- resource data
-Message-ID: <aJTc2sj+iRExnwCA@trex>
-References: <4chbcvub4scnv4jxjaagbswl74tz4ygovn3vhktfodakysbgy3@kukktkwd2zsr>
- <aJHgh8mon9auOHzi@trex>
- <aJHqpiqvulGY2BYH@trex>
- <to2hrxml3um6iep4fcxhkq7pbibuimfnv4kfwqzlwdkh4osk5f@orjzbuawwgko>
- <aJMMhIqNupwPjCN+@trex>
- <0248afed-b82d-4555-8277-e84aacf153fd@oss.qualcomm.com>
- <aJNTigOMy1JFOxot@trex>
- <fcdd9534-d494-3fdb-dfa7-1d15da6f697a@quicinc.com>
- <aJSvjqfQw3kNrVVH@trex>
- <447caa6d-13d2-2e75-5f33-6df9b2fd6d69@quicinc.com>
+        d=1e100.net; s=20230601; t=1754586338; x=1755191138;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3hbCc7AtsWdvPIjN+0jmVfB8z9Bo/thEn64rIMH7468=;
+        b=LlCOfWVNxc7CO/zt5haDGWjtrgb4PAGUKQoqxqxSiEKWmQ4q10BkNnZwGrILcz1hHM
+         Y5Lj6VMyoBMZ+AhiEU9jdbj3tsLtfKwsnjwj/fcdllOD4GyGnt/tgKCEiCDgBRbF9AXS
+         RPaf7BXol4twTOFcz9TjzMw0cO00oXp7ug3olLOuOC+BRUmkgccIXYPZ5otD7y55FHVK
+         Xcr7EdehdrPokf9fQhaPyGqrinulzW7NBpL4gy1b4hVhWRO7a9F0TIxi5sn40PF2reNS
+         M8bJojfxhPXhlu8sFwZuI2vcY3WmgKRY3wnBt1Oys9RHFJ2EsT2vZmlfBj7MLGIDT3GR
+         fYYw==
+X-Forwarded-Encrypted: i=1; AJvYcCULsMO6wOwc5yS/FJTiK6q51RolXESuW5a8IOkChVOtWEpqdInbN5YQIrCo9mqAWMRkvI0ZLJyPAT8nT8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztRbE+bwDAZBARcrN7bvFhGWsBb6S8jovZx2e5eNkoYKThYxxT
+	L5owZyyiTCWvkLLgfXKSeySX4cV1/ANwd338OZ5//woh0ovLr5pGOn3o5qTHVncvS8EJZO3Fi3N
+	J+6txIY7brtIwtdCM2J+z9yMVVFGU8kkpuEjLMZsiL02aFLJlVTkybJdR5iE=
+X-Google-Smtp-Source: AGHT+IH1KGwvGGy0CInwIkKFH4HCXYyl4wJsDnDAR5a7oRQ30bh0MGlNXDCmFVS59wvwzE54ujQ4e9nvwiJ8BfG3cCIVq2C2Gn9b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <447caa6d-13d2-2e75-5f33-6df9b2fd6d69@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfX82//c5NPslvc
- z+sWYJMYM5eo12ezv/k6Q57XJrfichNRQzxaWhmUSkDpMqPoqBczliSJqz60CQ4rz0AMJXBWenB
- zl6YrElDEvPFUosmkrXAnFkaDU7C5z3OsTw2ElKLzqPHqB4/fn4eeZdMxLTF/9d4bE7Go6H2A55
- ZOHLUZ+1r3SI0W5+U9en+OrhRBskhKs91dwK0M8mdZAAdHXA2JyY+0zHazRVL3oFs5W7EQXsQrp
- 24SWmzbk+c8+z+eE43OQ1nniUIe8dS7sTk421jsuLWoFsFk6G6BHFY4wW9e4M2mqMWplc6gsHqB
- SvqIH487QObbqRKSE07kZw40X7zVwLXtLUwopWswxqrDIZg5aGGHpke04DhDLlzYV2ATwG7vrvA
- mhtXXsLN
-X-Authority-Analysis: v=2.4 cv=J8Cq7BnS c=1 sm=1 tr=0 ts=6894dcdf cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=Rr2dNH5/fcnoRoBmcVUeRg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=htlqvOAJlCn4xgGRiTMA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: CJNl18gBR2sOerpwtD15gRATmvHtllqY
-X-Proofpoint-ORIG-GUID: CJNl18gBR2sOerpwtD15gRATmvHtllqY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
+X-Received: by 2002:a05:6602:1589:b0:87c:72f3:d5d7 with SMTP id
+ ca18e2360f4ac-8819f193dcemr1537872439f.13.1754586338204; Thu, 07 Aug 2025
+ 10:05:38 -0700 (PDT)
+Date: Thu, 07 Aug 2025 10:05:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6894dce2.050a0220.7f033.0049.GAE@google.com>
+Subject: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_dev_up (2)
+From: syzbot <syzbot+740e04c2a93467a0f8c8@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	krzk@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 07/08/25 22:05:10, Vikash Garodia wrote:
-> 
-> 
-> On 8/7/2025 7:22 PM, Jorge Ramirez wrote:
-> > On 07/08/25 16:36:41, Vikash Garodia wrote:
-> >>
-> >>> It was agreed that this complexity was not necessary and that we should
-> >>> just drop <6.0.55 firmware support (which would in any case only include
-> >>> video decode).
-> >>>
-> >>> And so on v8, I removed the above.
-> >>>
-> >>> Now I have v9 ready to post it, but Dmitry is asking why cant we have
-> >>> the v7 functionality so I am waiting for direction.
-> >>
-> >> the issue is in firmware for both encoder and decoder. Didn't like the idea of
-> >> driver carrying the hack for a firmware issue. Just because, for encoder, we are
-> >> unable to hack it in driver, we are ok to have it enabled in a newer version of
-> >> the firmware, we can follow the same for decoders as well.
-> > 
-> > if that is the only reason please do explain what do you mean by hack.
-> 
-> I meant that the EOS handling was not needed in driver after fixing it in
-> firmware, isn't it ? Was trying to avoid carrying this in driver.
+Hello,
 
-sure I agree with that, just that I dont call that a hack (more a quirk
-or workaround)
+syzbot found the following issue on:
 
-> 
-> I tend to agree with the comment made by Dmitry in another thread to have decode
-> enabled with existing firmware, no option but to support the *already* published
-> bins.
+HEAD commit:    89748acdf226 Merge tag 'drm-next-2025-08-01' of https://gi..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=165cfcf0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff65239b4835001
+dashboard link: https://syzkaller.appspot.com/bug?extid=740e04c2a93467a0f8c8
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b88042580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115cfcf0580000
 
-The way I see it—and as we discussed the other day—I was fine with
-dropping decoding support for firmware versions < 6.0.55, as long as
-someone with internal insight could confirm we won't upset users. Maybe
-I’m overthinking it, but coming from OTA, I’ve seen how nice it is when
-users upgrade their kernel and suddenly get hardware video decode
-without having to worry about firmware upgrades.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ce090dd92dc2/disk-89748acd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/32b5903a7759/vmlinux-89748acd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dc68a867773d/bzImage-89748acd.xz
 
-> 
-> Having said that, these limitation of having a separate EOS dummy buffer is well
-> sorted out in gen2 HFI which have an explicit DRAIN cmd for it. Hope this
-> motivates you to migrate to iris soon for AR50LITE variants :)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+740e04c2a93467a0f8c8@syzkaller.appspotmail.com
 
-100% , I saw it!
+=====================================================
+BUG: KMSAN: uninit-value in nci_init_req net/nfc/nci/core.c:177 [inline]
+BUG: KMSAN: uninit-value in __nci_request net/nfc/nci/core.c:108 [inline]
+BUG: KMSAN: uninit-value in nci_open_device net/nfc/nci/core.c:521 [inline]
+BUG: KMSAN: uninit-value in nci_dev_up+0x13a2/0x1ba0 net/nfc/nci/core.c:632
+ nci_init_req net/nfc/nci/core.c:177 [inline]
+ __nci_request net/nfc/nci/core.c:108 [inline]
+ nci_open_device net/nfc/nci/core.c:521 [inline]
+ nci_dev_up+0x13a2/0x1ba0 net/nfc/nci/core.c:632
+ nfc_dev_up+0x201/0x3d0 net/nfc/core.c:118
+ nfc_genl_dev_up+0xe9/0x1c0 net/nfc/netlink.c:775
+ genl_family_rcv_msg_doit+0x335/0x3f0 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xacf/0xc10 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x54a/0x680 net/netlink/af_netlink.c:2552
+ genl_rcv+0x41/0x60 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0xf04/0x12b0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x333/0x3d0 net/socket.c:729
+ ____sys_sendmsg+0x7e0/0xd80 net/socket.c:2614
+ ___sys_sendmsg+0x271/0x3b0 net/socket.c:2668
+ __sys_sendmsg net/socket.c:2700 [inline]
+ __do_sys_sendmsg net/socket.c:2705 [inline]
+ __se_sys_sendmsg net/socket.c:2703 [inline]
+ __x64_sys_sendmsg+0x211/0x3e0 net/socket.c:2703
+ x64_sys_call+0x1dfd/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:47
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> 
-> Regards,
-> Vikash
+Uninit was stored to memory at:
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6169 at kernel/stacktrace.c:29 stack_trace_print+0xd4/0xf0 kernel/stacktrace.c:29
+Modules linked in:
+CPU: 1 UID: 0 PID: 6169 Comm: syz-executor421 Not tainted 6.16.0-syzkaller-10499-g89748acdf226 #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:stack_trace_print+0xd4/0xf0 kernel/stacktrace.c:29
+Code: 8f bc 03 92 89 de ba 20 00 00 00 4c 89 e1 e8 c3 5d 4d ff 49 83 c6 08 49 ff cd 0f 85 6e ff ff ff eb 0b e8 ff 26 c3 00 eb d4 90 <0f> 0b 90 5b 41 5c 41 5d 41 5e 41 5f 5d e9 9a 33 07 0f cc 66 0f 1f
+RSP: 0018:ffff8881343b31c8 EFLAGS: 00010246
+RAX: ffff888114afac20 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff8881343b31f0 R08: 0000000000000000 R09: 0000000000000000
+R10: ffff888133bb3208 R11: 0000000000000001 R12: 0000000000000000
+R13: 00000000abcd0100 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f0c264ae6c0(0000) GS:ffff8881aa9a5000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0c26531650 CR3: 00000001193c6000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ kmsan_print_origin+0xb0/0x340 mm/kmsan/report.c:133
+ kmsan_report+0x1d3/0x320 mm/kmsan/report.c:196
+ __msan_warning+0x1b/0x30 mm/kmsan/instrumentation.c:315
+ nci_init_req net/nfc/nci/core.c:177 [inline]
+ __nci_request net/nfc/nci/core.c:108 [inline]
+ nci_open_device net/nfc/nci/core.c:521 [inline]
+ nci_dev_up+0x13a2/0x1ba0 net/nfc/nci/core.c:632
+ nfc_dev_up+0x201/0x3d0 net/nfc/core.c:118
+ nfc_genl_dev_up+0xe9/0x1c0 net/nfc/netlink.c:775
+ genl_family_rcv_msg_doit+0x335/0x3f0 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xacf/0xc10 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x54a/0x680 net/netlink/af_netlink.c:2552
+ genl_rcv+0x41/0x60 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0xf04/0x12b0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x333/0x3d0 net/socket.c:729
+ ____sys_sendmsg+0x7e0/0xd80 net/socket.c:2614
+ ___sys_sendmsg+0x271/0x3b0 net/socket.c:2668
+ __sys_sendmsg net/socket.c:2700 [inline]
+ __do_sys_sendmsg net/socket.c:2705 [inline]
+ __se_sys_sendmsg net/socket.c:2703 [inline]
+ __x64_sys_sendmsg+0x211/0x3e0 net/socket.c:2703
+ x64_sys_call+0x1dfd/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:47
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0c264f62c9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0c264ae218 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f0c2657f368 RCX: 00007f0c264f62c9
+RDX: 0000000000000000 RSI: 0000200000000140 RDI: 0000000000000004
+RBP: 00007f0c2657f360 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0c2654c074
+R13: 0000200000000150 R14: 00002000000000c0 R15: 0000200000000300
+ </TASK>
+---[ end trace 0000000000000000 ]---
 
-Dmitry, all ok then? 
+Uninit was stored to memory at:
+ nci_core_reset_ntf_packet net/nfc/nci/ntf.c:36 [inline]
+ nci_ntf_packet+0x179d/0x42b0 net/nfc/nci/ntf.c:812
+ nci_rx_work+0x403/0x750 net/nfc/nci/core.c:1555
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xb8e/0x1d80 kernel/workqueue.c:3319
+ worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
+ kthread+0xd5c/0xf00 kernel/kthread.c:464
+ ret_from_fork+0x1e0/0x310 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4186 [inline]
+ slab_alloc_node mm/slub.c:4229 [inline]
+ kmem_cache_alloc_node_noprof+0x818/0xf00 mm/slub.c:4281
+ kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:578
+ __alloc_skb+0x347/0x7d0 net/core/skbuff.c:669
+ alloc_skb include/linux/skbuff.h:1336 [inline]
+ virtual_ncidev_write+0x6b/0x430 drivers/nfc/virtual_ncidev.c:120
+ vfs_write+0x463/0x1580 fs/read_write.c:684
+ ksys_write fs/read_write.c:738 [inline]
+ __do_sys_write fs/read_write.c:749 [inline]
+ __se_sys_write fs/read_write.c:746 [inline]
+ __x64_sys_write+0x1fb/0x4d0 fs/read_write.c:746
+ x64_sys_call+0x3014/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6169 Comm: syz-executor421 Tainted: G        W           6.16.0-syzkaller-10499-g89748acdf226 #0 PREEMPT(none) 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
