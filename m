@@ -1,161 +1,132 @@
-Return-Path: <linux-kernel+bounces-759041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FA1B1D781
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:15:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394B3B1D785
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D6B05615B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:15:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17DF518A16E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FFD253F2B;
-	Thu,  7 Aug 2025 12:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB7224EA9D;
+	Thu,  7 Aug 2025 12:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDY+A7XQ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fbPAqEC2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4AWyzCfH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3CC253351;
-	Thu,  7 Aug 2025 12:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963D724677C;
+	Thu,  7 Aug 2025 12:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754568870; cv=none; b=Cpb+TvWk1zPV9hFjT4tBAU5nDuvJAHAzbGghAyBC0xJIJIJtzjgo8Q9PNlyLGF2etNOhcLgmTsN1xrPOGPF3KNkK/WtkjgXu0GLiuf5ij5Hr10rqelsFnCqsaBiXZa/7ZKeBzKfIwtJgApSLFAbduq2jPavkXMyho8LRiHfnAh8=
+	t=1754568855; cv=none; b=ccJ0GbblnFU3h/v2L6ZoN+RaYrbrHtutIfPhaiSXpwfkrlax+f/ugBX5YnnznoLOtrQNZjbkHcD1V0vCPttTyntpS0tyz1rzVFYxVZX8BDKtNdzh7tm6P6gHyuqDvhCu09UTasQicQakyMiJVvxW/JG+DU+GpTR5wfQq/zbG1S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754568870; c=relaxed/simple;
-	bh=zEfKvxCGsksFx0cOWCeN3rSo3TD1UVcOgZ+kg33gJoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZB5/bUl2vDOSZnUT68Ve7Eq/OCdZox0rCSWJ2x1e4FbkVuDrfUCrL/uP6O1oF39mRH83py5nDZP7M4xBYBmMp+L+8AZ9+nuX3Pj97mQOt/gGd1Q1fzx6XVD7tcxupqhgSyL6sd4oJGFqRxMOgpgheuVemJwHylbv8lMXCGowlvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDY+A7XQ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459e210bd2dso6934705e9.1;
-        Thu, 07 Aug 2025 05:14:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754568867; x=1755173667; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HOvxPdhdkRmgXuqA5D4OZ0OGc0TX4IdKP6S9H5e+35E=;
-        b=GDY+A7XQRo9pNJE3B2Nwp/G82jvEZN6zBtu9rfWKKO0D+ylLcKQyZ0zGQjDHxN4z0y
-         g0jP4IowqgH3XdWKhosaryoIwHhQ0NQyiXyXmRdC1p5R+pShd+Bw64Uy3SfrP/EKSplM
-         7kMGG+TIojJBQ6Guy5bkZj8sMDKiNCpex4XCz0gDM35XRQSO3RcE/4yNuMajpoRDQ8OK
-         FbeatuWggaFDuAuEFZkVg+ND4O62mVcCkbR74P+V9dgvSZ24zr+oCM3eweGEeerRV98w
-         BMsGthiABPcvlRT53BcuRkeQf+HwQ+piW2zcnNA6PpI6xOn+a+SygqHnaaOvBFDkN4rg
-         hDHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754568867; x=1755173667;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HOvxPdhdkRmgXuqA5D4OZ0OGc0TX4IdKP6S9H5e+35E=;
-        b=ZQnBwZM9vMqzngjXVk3dA1dbETyOWMZZRrXd8qMImoX2JSD2f3Ztjj2pUIv5nYV2IU
-         vuApyN68MBLwwCQTre/jJILsXM8VNyM4mmL1uboyOPRxhx6BBvvM0stpVaaLcyS1kL8u
-         jzQh2oBBwk7yhYC36sTYKVCTP6rhVPPxZveyBeD6xp2iz5g6Pm2dQ7s8z2gPmuOm5Nyr
-         BHbS6sCefbc5eWb5lDiXvtf2DWZ4v8oryFSwXul42hZ5lhl3owGPWpPTHmCBH+mtwfaY
-         8DEWYhYTXMGIy518mzXmjf2tELdLcxrGwHjRmw/YOnzauTz1HM3ZQuakgwVq/5yaX0sc
-         Os3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV/wxz9+zjSMo7IV8nlEwJwwi5eUtGQGyP2tZ15HcEzhmSGoI471fSHOj55Y/TsLaiPmu99+dF6L7I=@vger.kernel.org, AJvYcCXw8lpiwArnYvpvB7Bn4kasqsUOQL3izLXgVxsQUAiYvhQje/f26/b0zXvGiU1dhM5poaQuTx0jJpo6z+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzguqSInZFUb72kTJYLaRTIu18UyAtJQp3MEjdSLmY0rLyztVze
-	5mwmokf8WAhYohOGLyPuyLpqWv70hi4Rzie82EJNcuN9pTq1ZSaHjLMVhCu3K8jXQTQ=
-X-Gm-Gg: ASbGncuZbdC6N0T9lEAguW/p3GXOgx3QRA1VcmYqm+wQd4E4yblgqjBcU0c4zZQHBWZ
-	xithf4jT678/6vrX0OE0eDr7JxqWixlq2fx48fCNFemIJxZH9yQw7DC6/sjxwZ0m1dnO1Dscb4p
-	xsgid6Xj6Gn4K/WSUjy+3sssxTDP175F7T/thQbOp/hY3tt03RvT0AZDDt0JCPKuYvMO1kXHMaX
-	fPkd4P0JRULKpfR7LcTtDxJ9HgFo+t2Ls1jSuqX2KeRan/rmpm4TFxeZk0wtZtTyVvqIdKr3hd0
-	KjMQUcODDf5hDjnIx8X6UxLLiGrqoEn0yVLdv2EnparpHJGHEhWGC7o1yKsi8ad4qNUaQ7JBqEm
-	7WmUOh+dTBHzzvhU9owYA
-X-Google-Smtp-Source: AGHT+IFTsPrkYUi4hoaFQ8iZd6m5pc/Quo2AQuS9Wt7r6JJPPCobmoHZ4FcuWwsU3o6X9A7AomJ/JA==
-X-Received: by 2002:a05:600c:4fc3:b0:456:ed3:a488 with SMTP id 5b1f17b1804b1-459f39c50bdmr2643125e9.1.1754568866537;
-        Thu, 07 Aug 2025 05:14:26 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4530a8sm26578463f8f.38.2025.08.07.05.14.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 05:14:26 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] power: supply: 88pm860x: make fsm_state array static const, simplify usage
-Date: Thu,  7 Aug 2025 13:13:49 +0100
-Message-ID: <20250807121349.460862-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754568855; c=relaxed/simple;
+	bh=9eAjqVoPH60xTe4hk8BzLnfJUmmamtnI61RI8cXAJuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kEAomSHE35qoJLU2CrJlftgMZYE7BFe5jteWJnCMaSYQY7zCTx+WeVLugDDOiOLNLB9oenNyjOdxGu7oFXN/4cOEL24E781lBTmfdmyPQE/ObE0ixZ8r6/LAxzCdk/6ohFSLnLJ3hwemUDRM+lyeng04x91B+tVxFSg0X5nh8xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fbPAqEC2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4AWyzCfH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 7 Aug 2025 14:14:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754568851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+f0xBoJCXrCB5TMcth5fRcGRrB61mzdJpKiYAAtIrhI=;
+	b=fbPAqEC23v9amshmY4QKxjsXzScVKQZhnj1wI64Frg6lW5nOZEaKwaENbBC6t4vfATxIkC
+	VqEEjQOZyunqoODZg11ItMnc7fYjYurgsP2s5OXLkbcRITuk6vO0uSXZQBNHilZPKxCRhf
+	XEWk1NIZpPMxSsk0Q7IVNYTndFY1Rr16p7PLK/z5i131Ej1Qt4slz12Qy0ZZnK++KTcCND
+	5+JHa4mX0yQvEfL1t+XRZyeffxd7cKR7b+Q+fpsvNLGHcTujQMgRZOfNJumm4okzBYCPOx
+	0qlLKyckPwwW7Ro8osjh6L7zjW7tBTlcYWIU/QFiwR2wNS3gH0BTPRb6mVnOGA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754568851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+f0xBoJCXrCB5TMcth5fRcGRrB61mzdJpKiYAAtIrhI=;
+	b=4AWyzCfHVykARLgrbKHhSFqGKWl9RSQqMjZ7lOIrIgb1YmrTJZMvHoJKfJadsebsGV68S5
+	DCLgjHpF9WovqqDw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Wake Liu <wakel@google.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, shuah@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, peterz@infradead.org, 
+	dvhart@infradead.org, dave@stgolabs.net, andrealmeid@igalia.com
+Subject: Re: [PATCH v2 1/1] selftests/futex: Check for shmget support at
+ runtime
+Message-ID: <20250807140508-d3df8cab-249a-47ed-b92a-d33e43de0aee@linutronix.de>
+References: <20250807120042.1761685-1-wakel@google.com>
+ <20250807120042.1761685-2-wakel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807120042.1761685-2-wakel@google.com>
 
-Don't populate the read-only array fsm_state on the stack at run time,
-instead make it static const, this reduces the object code size as
-the data is placed on the data segment and this removes the need to
-have code to set the array up on each call.
+On Thu, Aug 07, 2025 at 08:00:42PM +0800, Wake Liu wrote:
+> The futex tests `futex_wait.c` and `futex_waitv.c` rely on the `shmget()`
+> syscall, which may not be available if the kernel is built without
+> System V IPC support (CONFIG_SYSVIPC=n). This can lead to test
+> failures on such systems.
+> 
+> This patch modifies the tests to check for `shmget()` support at
+> runtime by calling it and checking for an `ENOSYS` error. If `shmget()`
+> is not supported, the tests are skipped with a clear message,
+> improving the user experience and preventing false negatives.
+> 
+> This approach is more robust than relying on compile-time checks and
+> ensures that the tests run only when the required kernel features are
+> present.
+> 
+> Signed-off-by: Wake Liu <wakel@google.com>
+> ---
+>  .../selftests/futex/functional/futex_wait.c   | 49 +++++++------
+>  .../selftests/futex/functional/futex_waitv.c  | 73 ++++++++++++-------
+>  2 files changed, 73 insertions(+), 49 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/futex/functional/futex_wait.c b/tools/testing/selftests/futex/functional/futex_wait.c
+> index 685140d9b93d..17a465313a59 100644
+> --- a/tools/testing/selftests/futex/functional/futex_wait.c
+> +++ b/tools/testing/selftests/futex/functional/futex_wait.c
+> @@ -48,7 +48,7 @@ static void *waiterfn(void *arg)
+>  int main(int argc, char *argv[])
+>  {
+>  	int res, ret = RET_PASS, fd, c, shm_id;
+> -	u_int32_t f_private = 0, *shared_data;
+> +	u_int32_t f_private = 0, *shared_data = NULL;
+>  	unsigned int flags = FUTEX_PRIVATE_FLAG;
+>  	pthread_t waiter;
+>  	void *shm;
+> @@ -96,32 +96,35 @@ int main(int argc, char *argv[])
+>  	/* Testing an anon page shared memory */
+>  	shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
+>  	if (shm_id < 0) {
+> -		perror("shmget");
+> -		exit(1);
+> -	}
+> -
+> -	shared_data = shmat(shm_id, NULL, 0);
+> +		if (errno == ENOSYS) {
+> +			ksft_test_result_skip("Kernel does not support System V shared memory\n");
+> +		} else {
+> +			ksft_test_result_fail("shmget() failed with error: %s\n", strerror(errno));
+> +			ret = RET_FAIL;
 
-Note that making the size of the strings to a more optimal 11 bytes long
-does not seem to reduce the overall size. Making the array an array of
-pointers to the strings increases the code size due to the dereferencing
-overhead.
+kselftest.h is already keeping track of the failure status.
+Just call ksft_finished() at the end.
+Also the whole perror()/exit(1) pattern doesn't really make sense in a kselftest.
 
-Simplify the array access with &fsm_state[info->state][0] with the simpler
-expression fsm_state[info->state] to clean up the code.
+> +		}
+> +	} else {
+> +		shared_data = shmat(shm_id, NULL, 0);
 
-Original:
-   text    data     bss     dec     hex filename
-  22884    8272      64   31220    79f4 drivers/power/supply/88pm860x_charger.o
-
-Patched:
-   text	   data	    bss	    dec	    hex	filename
-  22695	   8368	     64	  31127	   7997	drivers/power/supply/88pm860x_charger.o
-
-Difference:
-   text	   data	    bss	    dec
-  -189     +96        0     -93
-
-Reduction of 93 bytes total.
-
-gcc version 14.2.0 (x86-64)
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/power/supply/88pm860x_charger.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/power/supply/88pm860x_charger.c b/drivers/power/supply/88pm860x_charger.c
-index 2b9fcb7e71d7..8d99c6ff72ed 100644
---- a/drivers/power/supply/88pm860x_charger.c
-+++ b/drivers/power/supply/88pm860x_charger.c
-@@ -284,8 +284,8 @@ static int set_charging_fsm(struct pm860x_charger_info *info)
- {
- 	struct power_supply *psy;
- 	union power_supply_propval data;
--	unsigned char fsm_state[][16] = { "init", "discharge", "precharge",
--		"fastcharge",
-+	static const unsigned char fsm_state[][16] = {
-+		"init", "discharge", "precharge", "fastcharge",
- 	};
- 	int ret;
- 	int vbatt;
-@@ -313,7 +313,7 @@ static int set_charging_fsm(struct pm860x_charger_info *info)
- 
- 	dev_dbg(info->dev, "Entering FSM:%s, Charger:%s, Battery:%s, "
- 		"Allowed:%d\n",
--		&fsm_state[info->state][0],
-+		fsm_state[info->state],
- 		(info->online) ? "online" : "N/A",
- 		(info->present) ? "present" : "N/A", info->allowed);
- 	dev_dbg(info->dev, "set_charging_fsm:vbatt:%d(mV)\n", vbatt);
-@@ -385,7 +385,7 @@ static int set_charging_fsm(struct pm860x_charger_info *info)
- 	}
- 	dev_dbg(info->dev,
- 		"Out FSM:%s, Charger:%s, Battery:%s, Allowed:%d\n",
--		&fsm_state[info->state][0],
-+		fsm_state[info->state],
- 		(info->online) ? "online" : "N/A",
- 		(info->present) ? "present" : "N/A", info->allowed);
- 	mutex_unlock(&info->lock);
--- 
-2.50.1
-
+(...)
 
