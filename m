@@ -1,180 +1,256 @@
-Return-Path: <linux-kernel+bounces-759114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA66BB1D8A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:10:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA9FB1D8A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20914188CFEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC0A416C9D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18FD25A353;
-	Thu,  7 Aug 2025 13:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC5525A320;
+	Thu,  7 Aug 2025 13:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F8QvmU5w"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eF9xhdhP"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755DF2E36EC;
-	Thu,  7 Aug 2025 13:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0A72E36EC;
+	Thu,  7 Aug 2025 13:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572200; cv=none; b=i6bL7BC1HkN7YcJGbxQZMMqXw8ntrXGvmWRsiSZanFXnmZlNSiUCaBTHHmFGss6QUjWDJIPlXR2Wpyjt3iOiTcQywSOhKQqY4im45UXGfJ4ZdCXOG6I1zMwQ319AO5DHffOC66Y2wb1o4e11WLXUkkL/gJ6RybWyvu9V6yQCSzg=
+	t=1754572189; cv=none; b=I3bx9C6Bf0ZIM4P26Cslf12Lmb8WVxcgIPoSJUn8BpIf4nJs9jopXtSRSqgdAhNvnihf6wa2Q082j8CgfHwLwcU407lqGmzr1fah7UPdwEeH6OOGiLEO+vr1KOW0mX5XNucTtGYuFz79fLDHPgp08CFt28+rluMA3RRGrXHE/lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572200; c=relaxed/simple;
-	bh=NhAS2kDezo3m8PwFKscrSj7mqzam+NvpBnxO73urFck=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DCpdfl8RXNOl6moZcAF5mFEGcSjDDBpN6FC04+iA6DGtvZxmByrNYeHv1mJ65hAuMfsRek9ZuThgNVBYm5RIZFIfaeSFx+jw6CjG5xZ3C7Vf9Mrt1qHkB2bu3n/oLhzsrx9Y6Qtrb2qUxM9QHo8hhNP+myPiGrdmIe41YcAOgWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F8QvmU5w; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5775CLEq021001;
-	Thu, 7 Aug 2025 13:09:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:message-id:mime-version:subject:to; s=
-	pp1; bh=IKOA5vTBDey4K9y0ryP3ZJcPpVfj5ngQjdLp4oyotBo=; b=F8QvmU5w
-	f5zc0xuSTQMsrd+NoKFcwnKrtB4kAQExBZIt6OQiqxgyTuADN8kSUbLapRm3AGhn
-	UkFoUqv2awOJ93DNR+L8pSeo9mn7qbHa0M3KSzk9uYQHfV8SzZK6/D8aWeDuhrqR
-	xsNj566oKy/HVgxrHdsZaiJsOp/YnusT7WvBvbintkVedEiTqlmOK7kuftcK9oRZ
-	9QcOLBEJsASXDLZzHUMt7gcXoJwnzzAu3u4dqN7MJoU2RLu+aFYF11Sd4U2JcDJx
-	W3Yb/gsrd7x2Li1bM9JNW2zA0Kqvd4+YuTykdq83L/4J+fCROyZpMtX0wY5PJPiR
-	Eie+2pPyvouxWw==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63a3q8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:09:56 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779kM9g001627;
-	Thu, 7 Aug 2025 13:09:55 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwr0pwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:09:55 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577D9pMj57082122
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 13:09:51 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 81D482004B;
-	Thu,  7 Aug 2025 13:09:51 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6694020040;
-	Thu,  7 Aug 2025 13:09:51 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  7 Aug 2025 13:09:51 +0000 (GMT)
-Date: Thu, 7 Aug 2025 15:09:50 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] more s390 updates for 6.17 merge window
-Message-ID: <20250807130950.4053091Adb-agordeev@linux.ibm.com>
+	s=arc-20240116; t=1754572189; c=relaxed/simple;
+	bh=60f0HspwGwMFdmSTzD2KBC/tMa1Xtd0DilHBC581pJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ukoOh7YR0wKRZStEW0vzGp6WWLr98yD3jyx6Pkt4LIbS+ibWcSKHFBpgafH1XgeRNhRhoStrn8UkMQtFxUDY9HQCYNfJTWbxgZFxb9mz7BS3F6QPHxTl7enaED5YJcmvmIo+o+xH9RCHdfaAeMNaLNJSBMgIUbt4flhEhqgiW58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eF9xhdhP; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459ddf9019cso3667465e9.0;
+        Thu, 07 Aug 2025 06:09:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754572185; x=1755176985; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=t21oNJ2+kEwHVDNe/DBt9NKLDmLG4nx1kTuI1yhdKLE=;
+        b=eF9xhdhPuLeMRpxNBANbdm2mZ1xnE4KnF2R5v52aFz0NOPn9toOFMuLjL6KkLvpDYH
+         wweYh2D8C+3rS+Gpd1eX1+YmF6btcCrFfhNscI13lA66qkOS+EekpNVLfVjmSZLxQFSK
+         wNOaet5xwEsxf9Bfvh7+y03PIQ26riEeyQZ5DPwp9RlW+YVwdGxeSloeKqxdtUpJKfSF
+         6rJOxOtm5/ptfRGU6zmUXhH3xLnz7dSeBZDkHNeguqNUhRMUzi0HDLEBkYt39ODPI+SG
+         jsjzyjU2tPaHD0IHDnSNEDOmbko/yMkoyDWny/Fy9Dhyic83rMFCCS3HkNlUu6UCKP/8
+         VovQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754572185; x=1755176985;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t21oNJ2+kEwHVDNe/DBt9NKLDmLG4nx1kTuI1yhdKLE=;
+        b=fxn24JEKKsFFhULqEioSfYHVAqU5ASU5q6fQAj+GOLOQ3tNqFeKoNdI13EUaPkeQ0z
+         gt4kW21qzOfiOAxM8+6xoGWnVldbhSxJzd0NtMqbO6b5gj9mshCdVheoiDc+6ES1lZO2
+         GTiFPC2veTN4wqzLfw3CTukXkbpk3kiI8ujAW0mSsXFHJYgHJWeIgmoYmf9dFSWiD3Vl
+         uCFzXe74pLvWixw9TaDCahk0QSgwDkZhuvLlIUa+nyMXij6oMkLetFYNR0WTPNB/VerP
+         tgNbpZGkrwn23ToBxfQkWHKPJ+Yt03S9tWocWB8QdRt1XF1cGzjsq7ZOUNUi3n3sW4GQ
+         wsrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLEfwruFh8e/mgsselSInheQ482IXe2rBrTztJaInXBeVmuKckUUv5jFpH/Yv2tCnk3FIM3SgKjgvn@vger.kernel.org, AJvYcCWrYVJDoohSVvUlBtYCdArNQCEQhBw+XWiMKNE7M8YlzFgVnjQLkK31SP2e/WyiV5qUCPJ6t0oSYazv@vger.kernel.org, AJvYcCXEO2YmzzMqz3EZCamTYav2fwE/a1x0yY0cOLomLom/rkYIEhRdxvMpKMCfn/TJWQxAy/YAcSYD10MBfnL1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+51dwEt4Lp99//mhuxaZOPhK8ZaUYCXdY5475y2Oif2q77tuB
+	8ewFxk8eSz1TssvWAVhCyR7alKv1Azl/7Q3k+0CePIgKi/zKDOPPtLAn
+X-Gm-Gg: ASbGncvY3kdnnC84m0KH+YgyWoQmgLTtSODcv7eTL1l7AZEw5eLkK7bDXto8qPXQWEC
+	GeDx+s9vF1FO0uFApcYZhztWwlCXgcWPi1c+C7b+iUaiDt/ivI8LPuLq0xbe9iTZCslrn52NQrj
+	tgbZzJbQJAgEGikLelDpXkYZJYyzcQh4kj5UzEtXczccPY8VB/PrJLZWUyby6tlDb05vKckEiuJ
+	7ZPKdC/lfXJ0t9CUbcSOhLmKwmJJ/p0WFRsz4TXeWDxYFoTZBVPqpJZISg0+dPe93T7Z+YJ+lve
+	3grBchIPOXFNhy8gpk4QVKlnc6V8/ObsW096W5PikXh0s59D/P4mgQlSlJuqSH3PlcFGXs38km8
+	KLPmx8+TjUka63XS43knkvQ==
+X-Google-Smtp-Source: AGHT+IEO9mb5h7m1yfmZXglvzVxbi25FeHRc2cxk1zk2vVJv/ksCknRQ5Qep3lXrYEZ8tCUKzAvMXA==
+X-Received: by 2002:a05:600c:4fd5:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-459e70eeb5cmr73207005e9.17.1754572185368;
+        Thu, 07 Aug 2025 06:09:45 -0700 (PDT)
+Received: from nsa ([185.128.9.33])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459de91ea4csm146945685e9.10.2025.08.07.06.09.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 06:09:45 -0700 (PDT)
+Date: Thu, 7 Aug 2025 14:10:01 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] iio: adc: ad7476: Drop convstart chan_spec
+Message-ID: <ngcbj6p7vfakah5fqsxqjlmrcycpg5rxfrbh4s34fll2kb3zq2@eyesluawn5w2>
+References: <cover.1754559149.git.mazziesaccount@gmail.com>
+ <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
+ <tc4od3jtqnj743naxefx5lxkha46wohuuvw46mik6nullvsqbe@knj4t23eaodw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=NInV+16g c=1 sm=1 tr=0 ts=6894a5a4 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=WR95G3A0MTiJF30CLH4A:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: cqCGx4S1k40MIadIvIeO-7l0qsSs0Xyl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEwMyBTYWx0ZWRfXzBmgQR1Awh+P
- vRhIe/dDuDsiIfjqs5JTt6svjKvhEgGlca52r8ZrVE3IHq5KEycoNcuxn7UNqQvwaKnutxeDsig
- KQvwAJ0bD/QXtpIBHXKnZoGXDdUbRHRAaoBLbyh5ZHHziiJjkNPo/j3o9bYofjtJ/bhECbeYt7L
- S7T7kclftauVnnGyZoD35ofxQr8tcMSxFsvwlxgwWm7phgxVWWfOYmcAH8ZBItL3ka3++bE/xW2
- TD8dJa6GriSF9lGtKCfdrbTAIs2lA2rWYbX6qdN7y4Lqsd8TndRiu6GxZpNZLZIuDiCopFBog6/
- QQua55ybprcy5qptNwkH6qsDV0iqmOJNfL5y/XsfTP/y78QCKeTh92Vmc9NeMW3A+DBsaMcaRQO
- ZaNIKiX+fO2SKSqKKb+2jMCO7KVJP1RcSDzhr3M9E+2cdpAgL/LK6yYaPk6Re3z5sOiss1Be
-X-Proofpoint-ORIG-GUID: cqCGx4S1k40MIadIvIeO-7l0qsSs0Xyl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound
- score=100 phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=-999
- lowpriorityscore=0 malwarescore=0 clxscore=1015 adultscore=0 mlxscore=100
- bulkscore=0 priorityscore=1501 spamscore=100 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070103
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tc4od3jtqnj743naxefx5lxkha46wohuuvw46mik6nullvsqbe@knj4t23eaodw>
 
-Hi Linus,
+On Thu, Aug 07, 2025 at 01:41:31PM +0100, Nuno Sá wrote:
+> On Thu, Aug 07, 2025 at 12:34:52PM +0300, Matti Vaittinen wrote:
+> > The ad7476 driver defines separate chan_spec structures for operation
+> > with and without convstart GPIO. At quick glance this may seem as if the
+> > driver did provide more than 1 data-channel to users - one for the
+> > regular data, other for the data obtained with the convstart GPIO.
+> > 
+> > The only difference between the 'convstart' and 'non convstart'
+> > -channels is presence / absence of the BIT(IIO_CHAN_INFO_RAW) in
+> > channel's flags.
+> > 
+> > We can drop the convstart channel spec, and related convstart macro, by
+> > allocating a mutable per driver instance channel spec an adding the flag
+> > in probe if needed. This will simplify the driver with the cost of added
+> > memory consumption.
+> > 
+> > Assuming there aren't systems with very many ADCs and very few
+> > resources, this tradeoff seems worth making.
+> > 
+> > Simplify the driver by dropping the 'convstart' channel spec and
+> > allocating the chan spec for each driver instance.
+> 
+> I do not agree with this one. Looking at the diff, code does not look
+> simpler to me...
 
-please pull more s390 updates for the 6.17 merge window.
-Thanks,
+Ok, on a second thought I'm ok with this. It makes adding devices easier
+and (IIUC) for the one you're adding later we only have "convst_channel"
+channels.
 
-Alexander
+On comment though...
 
-The following changes since commit bc46b7cbc58c4cb562b6a45a1fbc7b8e7b23df58:
+> 
+> - Nuno Sá
+> 
+> > 
+> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> > 
+> > ---
+> > Revision history:
+> >  v1 => v2:
+> >  - New patch
+> > 
+> > I considered squashing this change with the one limiting the chip_info
+> > scope. Having this as a separate change should help reverting if someone
+> > complains about the increased memory consumption though.
+> > ---
+> >  drivers/iio/adc/ad7476.c | 31 ++++++++++++++++++-------------
+> >  1 file changed, 18 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> > index e97742912b8e..a30eb016c11c 100644
+> > --- a/drivers/iio/adc/ad7476.c
+> > +++ b/drivers/iio/adc/ad7476.c
+> > @@ -29,8 +29,6 @@ struct ad7476_state;
+> >  struct ad7476_chip_info {
+> >  	unsigned int			int_vref_mv;
+> >  	struct iio_chan_spec		channel[2];
+> > -	/* channels used when convst gpio is defined */
+> > -	struct iio_chan_spec		convst_channel[2];
+> >  	void (*reset)(struct ad7476_state *);
+> >  	bool				has_vref;
+> >  	bool				has_vdrive;
+> > @@ -41,6 +39,7 @@ struct ad7476_state {
+> >  	struct gpio_desc		*convst_gpio;
+> >  	struct spi_transfer		xfer;
+> >  	struct spi_message		msg;
+> > +	struct iio_chan_spec		channel[2];
+> >  	int				scale_mv;
+> >  	/*
+> >  	 * DMA (thus cache coherency maintenance) may require the
+> > @@ -153,24 +152,18 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+> >  #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+> >  		BIT(IIO_CHAN_INFO_RAW))
+> >  #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
+> > -#define AD7091R_CONVST_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), \
+> > -		BIT(IIO_CHAN_INFO_RAW))
+> >  #define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
+> >  		BIT(IIO_CHAN_INFO_RAW))
+> >  
+> >  static const struct ad7476_chip_info ad7091_chip_info = {
+> >  	.channel[0] = AD7091R_CHAN(12),
+> >  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
+> > -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> >  	.reset = ad7091_reset,
+> >  };
+> >  
+> >  static const struct ad7476_chip_info ad7091r_chip_info = {
+> >  	.channel[0] = AD7091R_CHAN(12),
+> >  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
+> > -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> >  	.int_vref_mv = 2500,
+> >  	.has_vref = true,
+> >  	.reset = ad7091_reset,
+> > @@ -282,7 +275,7 @@ static int ad7476_probe(struct spi_device *spi)
+> >  	const struct ad7476_chip_info *chip_info;
+> >  	struct ad7476_state *st;
+> >  	struct iio_dev *indio_dev;
+> > -	int ret;
+> > +	int ret, i;
+> >  
+> >  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> >  	if (!indio_dev)
+> > @@ -332,16 +325,28 @@ static int ad7476_probe(struct spi_device *spi)
+> >  	if (IS_ERR(st->convst_gpio))
+> >  		return PTR_ERR(st->convst_gpio);
+> >  
+> > +	/*
+> > +	 * This will never realize. Unless someone changes the channel specs
+> > +	 * in this driver. And if someone does, without changing the loop
+> > +	 * below, then we'd better immediately produce a big fat error, before
+> > +	 * the change proceeds from that developer's table.
+> > +	 */
+> > +	BUILD_BUG_ON(ARRAY_SIZE(st->channel) != ARRAY_SIZE(chip_info->channel));
 
-  Merge tag 's390-6.17-1' of git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux (2025-07-29 20:17:08 -0700)
+I guess it make sense but still looks too fancy for this :)
 
-are available in the Git repository at:
+> > +	for (i = 0; i < ARRAY_SIZE(st->channel); i++) {
+> > +		st->channel[i] = chip_info->channel[i];
+> > +		if (st->convst_gpio)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.17-2
+I would flip this an do:
+	if (!st->convst_gpio)
+		break;
+		
+> > +			st->channel[i].info_mask_separate |=
+> > +				BIT(IIO_CHAN_INFO_RAW);
+		
+		__set_bit()...
 
-for you to fetch changes up to 2baf16f381decee303da406ca5a0991134260270:
+- Nuno Sá
 
-  s390/debug: Fix typo in debug_sprintf_format_fn() comment (2025-08-06 17:18:27 +0200)
-
-----------------------------------------------------------------
-more s390 updates for 6.17 merge window
-
-- Support MMIO read/write tracing
-
-- Enable THP swapping and THP migration
-
-- Unmask SLCF bit ("stateless command filtering") introduced with
-  CEX8 cards, so that user space applications like lszcrypt could
-  evaluate and list this feature
-
-- Fix the value of high_memory variable, so it considers possible
-  tailing offline memory blocks
-
-- Make vmem_pte_alloc() consistent and always allocate memory of
-  PAGE_SIZE for page tables. This ensures a page table occupies
-  the whole page, as the rest of the code assumes
-
-- Fix kernel image end address in the decompressor debug output
-
-- Fix a typo in debug_sprintf_format_fn() comment
-
-----------------------------------------------------------------
-Alexander Gordeev (1):
-      s390/mm: Set high_memory at the end of the identity mapping
-
-Gerald Schaefer (1):
-      s390/mm: Enable THP_SWAP and THP_MIGRATION
-
-Harald Freudenberger (1):
-      s390/ap: Unmask SLCF bit in card and queue ap functions sysfs
-
-Mikhail Zaslonko (1):
-      s390/boot: Fix startup debugging log
-
-Steffen Maier (1):
-      s390: Support CONFIG_TRACE_MMIO_ACCESS
-
-Sumanth Korikkar (1):
-      s390/mm: Allocate page table with PAGE_SIZE granularity
-
-Tigran Mkrtchyan (1):
-      s390/debug: Fix typo in debug_sprintf_format_fn() comment
-
- arch/s390/Kconfig               |  3 +++
- arch/s390/boot/startup.c        |  2 +-
- arch/s390/include/asm/ap.h      |  2 +-
- arch/s390/include/asm/pgtable.h | 45 +++++++++++++++++++++++++++++++++++++++++
- arch/s390/kernel/debug.c        |  2 +-
- arch/s390/kernel/setup.c        |  6 ++++++
- arch/s390/mm/vmem.c             |  5 ++---
- drivers/s390/crypto/ap_bus.h    |  2 +-
- 8 files changed, 60 insertions(+), 7 deletions(-)
+> > +	}
+> > +
+> >  	st->spi = spi;
+> >  
+> >  	indio_dev->name = spi_get_device_id(spi)->name;
+> >  	indio_dev->modes = INDIO_DIRECT_MODE;
+> > -	indio_dev->channels = chip_info->channel;
+> > -	indio_dev->num_channels = 2;
+> > +	indio_dev->channels = st->channel;
+> > +	indio_dev->num_channels = ARRAY_SIZE(st->channel);
+> >  	indio_dev->info = &ad7476_info;
+> >  
+> > -	if (st->convst_gpio)
+> > -		indio_dev->channels = chip_info->convst_channel;
+> >  	/* Setup default message */
+> >  
+> >  	st->xfer.rx_buf = &st->data;
+> > -- 
+> > 2.50.1
+> > 
+> 
+> 
 
