@@ -1,166 +1,202 @@
-Return-Path: <linux-kernel+bounces-758869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E42B1D4F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:36:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7C8B1D4FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6973C627837
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:36:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69EEC1686CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA1726B0B6;
-	Thu,  7 Aug 2025 09:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i829ksI0"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0681A24BBE4;
+	Thu,  7 Aug 2025 09:38:31 +0000 (UTC)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80A4257ACF;
-	Thu,  7 Aug 2025 09:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DDB2264A7;
+	Thu,  7 Aug 2025 09:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754559345; cv=none; b=dhEdh+wvnZqv/HsWMZ4kf9BO359DUcCyW9jU9U7NcyphVdbRq56Khp7xr85FWQKvGdV/+JMUNDVIlozGRpBasEhzV+KaUHDw1vod7amG3IdqntM300VVYGoehuNdSqSjkzaSIm24vc+yHQKGSjqtmXKAGjt2nt3muV1cdjlQZVw=
+	t=1754559510; cv=none; b=D38a605gKl73+90ia/Ifctxp71U0FzCx6Wv49tPmmR13DRokYpB3Jfp1tC/NaATuOnSRnbrE2FuGZxjSeq8Ur/v/BlKyEiCl3ItD5ncKcevTyOC51fI2oR2F+Z3LMiYiVsX5zw35i2X4hJ+cXDJttRhV9ncQZXXMSzxibDsj4bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754559345; c=relaxed/simple;
-	bh=3ZmZxda5fwI6t9T+++UojtC/Ikta8I6rVnxdF3YhgRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NM+5VhTXxMOf+mE7atF07EbjFxVWTJS3Br8lf+ke26qkGJ1gVDtLjQZRFLuWjL+zNdQ7HRFV0zkO7ogtNG9J2DPSYSqHMCwXEAd7uA9jWZjaSvSLBSUpiWYnVgr1Z779l/ulyCJAaIa6zY7sC9ufnewO8G95FuLtF/0qgA0Hvkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i829ksI0; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1754559510; c=relaxed/simple;
+	bh=HY6zT8/BDEjGGXWZNg+FplBqUklqVaKsTKOVXero19I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OPbvbp/cO07EJC5c7cTxa01shdxxS98+oGE0nsZbIUEGLSORRNQtfP36vMYzritQtHPIfYKhdEiJXKKWNcSVi4h1nhsQ8W9DL/YGgfq+QB6I4e4keH4N9k1FCABRsTsaYL679r7AjGJ80P5Ffg0cQ6RQIcSgEI8KskLvCmuhLa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55b827aba01so771065e87.0;
-        Thu, 07 Aug 2025 02:35:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754559342; x=1755164142; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EQS5hdBw6jdDe9JhXS58Gfk518osTqMd8NXHuh/iDro=;
-        b=i829ksI0JFAGoQyv6uuNSvGSilUqyJAqZl3F1L6FN+q61EvqktakPwESwJinOL5EOt
-         XOuiBQ02TOrmPueklsijmNg02+eTV9yhiflVZHZ7D+e13VDEhW9yC1ep0ibUkwuZjQty
-         IEGe8CxH6E0nUqmqh68utNUFpX3GUNSoKQoEhKtvzSuYaEQkGbYie0y0q5+NRfQ0UIfr
-         0U/+cnbvA17scmoJmyK6uM8cxk24HsEDKaIF5PZElybyDAQUILVxlChrgyewNUGs7+FB
-         CO2uUF46hsVViJCGbDeIGU8ZWETDIISGTpKKnxV1ZSykXAQDz5mWmohL1OjcaCvz6DTE
-         xwOw==
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-539512e3c3aso207831e0c.3;
+        Thu, 07 Aug 2025 02:38:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754559342; x=1755164142;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EQS5hdBw6jdDe9JhXS58Gfk518osTqMd8NXHuh/iDro=;
-        b=FOUEoODVkcLvM1pO+fZQDMDqtSVvVRb4zmy6f0UEQAriykxDJcENvR06E1v/ghbYGL
-         dYq1l/DozFYl6IQRkCZ6duzxphHCPveUAQOm2GDLQUdH2PC0XDv4BYgYyZe6llkOtyeX
-         rU5ycJBn83MaH7pHLGqX+osviA/LzKcTYQCSZZEHoHo9WxgW7sBwKbweUACipbmA+mty
-         dtWViza7lVnIDGm0jB+S/bxNbnZ1TyuUjm0CwSzNUKRfmXRAYqK+olWTmY8T0tt4ro9y
-         gqaYnqe+AbYa23M32TalU+r/gvzAu5kLFjJHOlqI7A8O50mgtksMzXmEaVEofPG7OQU6
-         7+Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6co2FM6OsdWBpIqhJRRkpktdnKPz4ql/htBc0uj7TqoDfCZ7wjGJJObEcHCHpICRWgSPmD0nFWEdXpZzn@vger.kernel.org, AJvYcCVGGGBmpjUVUsnWXebx8Ad7dhubwVyAhu41oiMWRvgERmwYcTdNr/et72Fx1UQxd8mPmzv5UH6oqkkI@vger.kernel.org, AJvYcCXEXJMJ/A0tOkJirNdzgkMxwUyrMQ+ejn5QqvyCAdRBYxAbTe8ezw4plTFleC2zwskNRUO1/b3z6qtI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy841DYQTDNQm4jblKEXKSD8IAKLxMBzRwg9zfVrIef/AmI2OjQ
-	xizk0ipcoq4auPNPa1PznaAb6t1BECf/TwE90bdBYGeIji3In3yg2kQa
-X-Gm-Gg: ASbGncvYiE4pmQ2cJ5tIM/PdCZv9mR371i1n0airixCbLifcNbugbB6UOoDJNVdcS3k
-	sqe2eltxPwS04d4sqNcZlBdODJTM0T2Hh6QiBv/oKUzVQQvm8AGwZHrByCeAmDpzeotJ8T51ydx
-	AJPhvPdG1xcHmALMV2v4sAmxMLf5pfekFgnyEng4aERGaW57flIJoF6lm0oq4FmhFLthqNZN4ud
-	UNV0h8c02yXRAyptFts91oT3DvQDYbGghwLb8PrI3sM9Z+GQ8+d5bqD5KwydZnfsfb9rqo9GCuK
-	MoZn2R/YF13TXupPX1v9YsqI2bqThQTXmH3fAbMSP+vL9R7hUXmwsu5gqO19S0M6+jqaVH82CQx
-	fYUFKoTinxes/1ZbXHFM9Cx6k++3m
-X-Google-Smtp-Source: AGHT+IHwpS9xPNMbyeflY/IkeZw7hFymrnWVT43OPpHQfrsf9G7ixdFFvLxl0FqGrRVLeme0HxatMQ==
-X-Received: by 2002:a05:6512:2395:b0:553:2ee0:7728 with SMTP id 2adb3069b0e04-55caf45444bmr2076994e87.0.1754559341705;
-        Thu, 07 Aug 2025 02:35:41 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55ba8954f0bsm1022001e87.162.2025.08.07.02.35.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 02:35:40 -0700 (PDT)
-Date: Thu, 7 Aug 2025 12:35:37 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/10] MAINTAINERS: A driver for simple 1-channel SPI ADCs
-Message-ID: <008ef72e484906cf4760f99eab6bfcd7a4b3c4be.1754559149.git.mazziesaccount@gmail.com>
-References: <cover.1754559149.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1754559507; x=1755164307;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kg4yVMonzvoboWXkN1zzSwUBk/T53kVazB7EUBcPsmw=;
+        b=qiiPIJK7O0jD63wY1eGLKCQStfI/FPTynZ/ua893P07m2IA6V2AqZuFFo4dWxUSwnw
+         ICserb5oqNhsHrh+rw332I/w7JBjptLPUp+VuFuxIilA+I8YD1Iz5BaFseAWi3b3i2uE
+         QXGNNNWsvG/mUnFPfLg++1kXypIZcOBySHyHMGnz23fYyDaAM4p/z0Ioq4hlzNzei0Mz
+         g862Nyz5rSuu9lWDHm3y0rXo7FIfIM70y9o5M+/VbWzOZhsJ8l8gWf2SPbhMsmGigHN1
+         w+VXyrHdzDZhP6Q7xU+S00ALKC9RcCJoBVY3QmcQKCd4CbEzhzwQhNde0XZcVQ5cJkQx
+         ozIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhFBdkC1Nf5Sf7889INK2mnSKgEzyWaaniZUg4LTH9y3pmXS6shR2qk5WC4RFWM55RnUsr37BLcVwrsLs=@vger.kernel.org, AJvYcCVKWh0oKtMdCNBZ1eBah34T9/0oqd2MEBatdcOzmUf58/G5q03I+rAUJY5io1v9khw1jmugLQq688E=@vger.kernel.org, AJvYcCXEhWDrpLrnU/3EVNW6phEn9XdKoiZQ77U09nawYeA7f+WJXly4qlJ1c9QUMV9UIkrd5GtcHsTCfQ1yDquwBrJGI9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8WsYRcZq0tiCMTcey84AWX3FaFUbpAY0MZ6xl6eh+opuM3Tok
+	X02r0IzKlXpMjtcyw3KN94EoHyL/NeiQyN0iH7tPbTOF3/CRNnTRz9m+kty1GMZ7QqU=
+X-Gm-Gg: ASbGncs/KaKavyhaywKp7rNNDKMlFuO8QDCe7nWsPhD3cPgpIDj3gJ4t+Gl6OVldw9H
+	n34UHCr7ExOV6gM+FO0K3pwuTn+tuLhehZ0mdtYv/PG0sPOcELAxBjp+pSZ32ABAuPyfVnr8pqz
+	vJCyX/stql/MWEEGr+w95MbvR5VrblD830C8g3+SBH517Z1+iBQ1OeXA1ToBleNdT+XWZpHmFto
+	Q3uhuqDRdzZXZXHMXdl04hQU3e625qiJM4eEpAVjGAoFgMCqdFdmGP9/Jye39HoIyBnOZwhzUPO
+	1BWhL/alkW/6PA+8Uh84fgyL6H4pDmINGzBY80uJ44dDVovxqa8MkmGQazQC4TDCVT03si6Tr9J
+	GG6dE+9YTlaWf4L0C6q6B6rLVb/bPa+9DoBTGP1EDn12AAX0DGH1llqO4vsRFiErD
+X-Google-Smtp-Source: AGHT+IEkFixhE5X6a9Va2nyQEtUPAJHqEEr1qga+5QljWiD4G2ghe+CHrGVrvTYZVR/5UD6VKWXD3Q==
+X-Received: by 2002:a05:6122:d9c:b0:535:aea0:7a2f with SMTP id 71dfb90a1353d-539ade239ccmr877249e0c.4.1754559506748;
+        Thu, 07 Aug 2025 02:38:26 -0700 (PDT)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88e0268d423sm234046241.2.2025.08.07.02.38.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 02:38:26 -0700 (PDT)
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-539613258e8so257064e0c.1;
+        Thu, 07 Aug 2025 02:38:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUoKyGBoFigQpsoFfDTgeJG0LfbMfm4rXuNtBOL6Q+Iim+1XVOPaKZZmobaf1k5gaKhfZIcafoX7mQ=@vger.kernel.org, AJvYcCWFlHN2zwK3xru2PgArgL5u0rI8UKxWQVgwVS/SztKzMCyJQA6uJZyQsjMr5CwoVCwLeD3400N7Zl9XBHU=@vger.kernel.org, AJvYcCWFrDalQXSpdxtcmLCkSg2LE2zvalx11BrDUG4ReO5sb4xHjg6JNLs2S2qrcRMBiuKxqTwgBpICnJP1ZH+rXEC2dKY=@vger.kernel.org
+X-Received: by 2002:a67:e715:0:b0:4fc:d0e5:23fe with SMTP id
+ ada2fe7eead31-504b889fb24mr993877137.15.1754559506070; Thu, 07 Aug 2025
+ 02:38:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kEIOraG57ZNktAFU"
-Content-Disposition: inline
-In-Reply-To: <cover.1754559149.git.mazziesaccount@gmail.com>
+References: <20250701114733.636510-1-ulf.hansson@linaro.org>
+ <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
+ <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com> <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
+In-Reply-To: <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 Aug 2025 11:38:14 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com>
+X-Gm-Features: Ac12FXz_Wf7VThW0eyyjvLdjQbW2gc7dwXYQXV43OPnnHHrM4sUfbNQtDD8n2Ug
+Message-ID: <CAMuHMdVrkr56XsRsbG7H-tLHVzmP+g-7=5Nrv9asC25ismwiYA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Ulf,
 
---kEIOraG57ZNktAFU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 30 Jul 2025 at 12:29, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On Wed, 30 Jul 2025 at 11:56, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Wed, 9 Jul 2025 at 13:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > On Tue, 1 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > > Changes in v3:
+> > > >         - Added a couple of patches to adress problems on some Renesas
+> > > >         platforms. Thanks Geert and Tomi for helping out!
+> > > >         - Adressed a few comments from Saravanna and Konrad.
+> > > >         - Added some tested-by tags.
+> > >
+> > > I decided it was time to give this a try, so I have queued this up for
+> > > v6.17 via the next branch at my pmdomain tree.
+> > >
+> > > If you encounter any issues, please let me know so I can help to fix them.
+> >
+> > Thanks for your series!  Due to holidays, I only managed to test
+> > this very recently.
+> >
+> > Unfortunately I have an issue with unused PM Domains no longer being
+> > disabled on R-Car:
+> >   - On R-Car Gen1/2/3, using rcar-sysc.c, unused PM Domains are never
+> >     disabled.
+> >   - On R-Car Gen4, using rcar-gen4-sysc.c, unused PM Domains are
+> >     sometimes not disabled.
+> >     At first, I noticed the IOMMU driver was not enabled in my config,
+> >     and enabling it did fix the issue.  However, after that I still
+> >     encountered the issue in a different config that does have the
+> >     IOMMU driver enabled...
+> >
+> > FTR, unused PM Domains are still disabled correctly on R/SH-Mobile
+> > (using rmobile-sysc.c) and on BeagleBone Black. Note that these use
+> > of_genpd_add_provider_simple(), while all R-Car drivers use
+> > of_genpd_add_provider_onecell().  Perhaps there is an issue with
+> > the latter?  If you don't have a clue, I plan to do some more
+> > investigation later...
 
-Add undersigned as a maintainer for the ad7476.c which supports a few
-simple 1-channel ADC connected to SPI.
+of_genpd_add_provider_onecell() has:
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+    if (!dev)
+            sync_state = true;
+    else
+            dev_set_drv_sync_state(dev, genpd_sync_state);
 
----
-Revision history:
- v1 =3D> :
- - No changes.
+    for (i = 0; i < data->num_domains; i++) {
+            ...
+            if (sync_state && !genpd_is_no_sync_state(genpd)) {
+                    genpd->sync_state = GENPD_SYNC_STATE_ONECELL;
+                    device_set_node(&genpd->dev, fwnode);
+                    sync_state = false;
+                    ^^^^^^^^^^^^^^^^^^^
+            }
+            ...
+    }
 
-I'll try to keep this on eye.
+As the R-Car SYSC drivers are not platform drivers, dev is NULL, and
+genpd->sync_state is set to GENPD_SYNC_STATE_ONECELL for the first PM
+Domain only.  All other domains have the default value of sync_state
+(0 = GENPD_SYNC_STATE_OFF).  Hence when genpd_provider_sync_state()
+is called later, it ignores all but the first domain.
+Apparently this is intentional, as of_genpd_sync_state() tries to
+power off all domains handled by the same controller anyway (see below)?
 
-I only have access to the ROHM BD79105 and BU79100g. I would welcome
-anyone with access to other supported ADCs (and time, energy and the
-knowledge) to join me. :)
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
+> > BTW, the "pending due to"-messages look weird to me.
+> > On R-Car M2-W (r8a7791.dtsi) I see e.g.:
+> >
+> >     genpd_provider ca15-cpu0: sync_state() pending due to e6020000.watchdog
+> >     renesas-cpg-mssr e6150000.clock-controller: sync_state() pending
+> > due to e6020000.watchdog
+> >
+> > ca15-cpu0 is the PM Domain holding the first CPU core, while
+> > the watchdog resides in the always-on Clock Domain, and uses the
+> > clock-controller for PM_CLK handling.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f8c8f682edf6..36fa6333f7b5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -455,6 +455,11 @@ F:	Documentation/devicetree/bindings/iio/adc/adi,ad738=
-0.yaml
- F:	Documentation/iio/ad7380.rst
- F:	drivers/iio/adc/ad7380.c
-=20
-+AD7476 ADC DRIVER FOR VARIOUS SIMPLE 1-CHANNEL SPI ADCs
-+M:	Matti Vaittinen <mazziesaccount@gmail.com>
-+S:	Maintained
-+F:	drivers/iio/adc/ad7476.c
-+
- AD7877 TOUCHSCREEN DRIVER
- M:	Michael Hennerich <michael.hennerich@analog.com>
- S:	Supported
---=20
-2.50.1
+Unfortunately the first PM Domain is "ca15-cpu0", which is blocked on
+these bogus pending states, and no PM Domain is powered off.
 
+If I remove the "sync_state = false" above, genpd_provider_sync_state()
+considers all domains, and does power down all unused domains (even
+multiple times, as expected).
 
---kEIOraG57ZNktAFU
-Content-Type: application/pgp-signature; name=signature.asc
+Upon closer look, all "pending due to" messages I see claim that the
+first (index 0) PM Domain is pending on some devices, while all of
+these devices are part of a different domain (usually the always-on
+domain, which is always the last (32 or 64) on R-Car).
 
------BEGIN PGP SIGNATURE-----
+So I think there are two issues:
+  1. Devices are not attributed to the correct PM Domain using
+     fw_devlink sync_state,
+  2. One PM Domain of a multi-domain controller being blocked should
+     not block all other domains handled by the same controller.
 
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiUc2kACgkQeFA3/03a
-ocUqCwgAs1dmwvRjQSh7iYhvrvM+e590DW8p7gXDISZt8rRXRu8ebrZztFD9UwLP
-xmnakfPq9Tj0UX3GwzarBS020+UCL4rAPz43QQYQOxj5B68DQCQXmHLNju3QX2by
-ThYNmhIwjnJWnLaP7XtnqMd79wVN5ausm3xHk5v1MR8u7ACsSoVBnSC+etRHKkYL
-FzpOD281q1eROzUF9DiooqfHIJZ4Wr4PvQ6HTKJhMv6hAGiihRf7qgV2Fpo7Xha8
-CKs8nO54Io7o/C4eIfAomslBRhWlSQwulwn82EGRk1pJHVEoSs0xPiNHrNAdIYk7
-5OaYm6MqXZW7A5EWBDYV+sPtiYmupQ==
-=b8D0
------END PGP SIGNATURE-----
+Does that make sense?
+Thanks!
 
---kEIOraG57ZNktAFU--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
