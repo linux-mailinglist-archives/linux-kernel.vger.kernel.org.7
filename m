@@ -1,147 +1,143 @@
-Return-Path: <linux-kernel+bounces-758507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82DDAB1D00F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:24:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD089B1D013
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B8C627ACA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:24:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 861A74E3100
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF630195811;
-	Thu,  7 Aug 2025 01:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BB4199385;
+	Thu,  7 Aug 2025 01:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bHlB8/P9"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Q3NgA8OL"
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C075918F2FC
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 01:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585724C6C;
+	Thu,  7 Aug 2025 01:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754529882; cv=none; b=sYXjcj+vBQsiMUt5zSHjVuPAH2ZKaNBrsdiw/zLG/70/WJ/DFOyXGUssk4iXg1HXhkXOvA1cU+5GEurSKjY1INJpS7Ait/mWlr7/DDQ0ohX6pWAmaOJUQhW+uC6gYgTuilIjNKzMu8S43RhIgrhsMrhqYPPfiCBjhi/fpyrlFt4=
+	t=1754530239; cv=none; b=BzdN3Y00YQTYvbEgx0TbrRoSzS7OcMZH1pqY9PUIVB5UPa4r0noH/6h1IdKSBgVo+HfwgIszHC7n5FV0w0kfWqnIoPsnWQv+SE++wBpUkGyO/hxKLnLNLn//ARj5jeCbInkRnmH540qbsIMPOzj083EHCfNv6MnEAtbLvQlqY+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754529882; c=relaxed/simple;
-	bh=7U4fHvP0ih8VFJgO3STDVGAT0vqMcDLOgP2/LcG5M0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=omkALmJFQ7WBRUT61hR/b5xooE6PmfqFtTCTjifKoxF0r613pWa1IC2zJ/wFoClUCQHD+D4noDFMGbUc6g/CzxZPvF0M1xh2tt27XNlsTfhLZ1jHWgSRX/nnK+/tMUAkTjrohm8QQ64u6qPnOJNn3S27M4rf7QZV1/+RPBKpNg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bHlB8/P9; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-30bbb2d332eso178860fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 18:24:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754529878; x=1755134678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jlob5EoTKbwfdk1l3MgDDEiHlXNGbyvCLwvCntrqVtE=;
-        b=bHlB8/P9Buw2yIBk/eD8D+zl3e3hcwObWtpOkdrcOlE7nSg3Qw8LjlACJTcxHulyf3
-         C82pXSrRxEHYAKeSqLlrLrBKRFqwWWv59W3t0TOPz6crJPcYy6SPY9ACU/dEC8EOngDF
-         erB20RY3Nc4QHFKEAGXkdYgR+1g/lQEKubGpOEE7O+RWbs7Q2K1l+8K9Nr45Kjdgruxz
-         u1Yf02LOD0llubyA8clPidwGSUePdkvRl28JY00tghWQdvMAmaCfUJZE/7G1HGzJx3tL
-         nN6ytIHBUS+3Iu3O448LkSVkKQqsUu6qcmSryrKu1jhYtbJoVBc9oO/h/kze2UQd6/+j
-         QWeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754529878; x=1755134678;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jlob5EoTKbwfdk1l3MgDDEiHlXNGbyvCLwvCntrqVtE=;
-        b=edaaxBdcd4sOV1PzYnH6IA8/STZsIQKIyFzFfxy+t7AwOBtJ/rajNhUNNuqZ8ACGTv
-         u3x2mTNiE1cH3bPseWkFRS0xKbvt22N/dn5+AfXvBtsFRXJMWd3SSbg0L7ljmc1VOavu
-         645XiXB7msYl+icwGVfn19Fg2p+mMFw74up8SdWR6fP47U75PHCSV1lrOSvlUsjQJe5O
-         bCIrT0gvIr4N6heLLQMFREeef4cnRxNy2NEhEEnOZTNcKmLdVVqRs9EUITI0qp2X7P+8
-         0h3oV/JnF+2dGEderRKp2Wktwn3OlNU7esZvG2zfWzHh9s7FLmf52AZ6HL4E6/sDJsO2
-         1tiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwusgaqueob0Joi06NlD1WsUyJ6zLRzNjjYc/dbK868fXzOCd65a9WLe85rlePnGt2zkqHQRVBkvNGmtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd6MDoUI2KjJU6hLkWv1CIOhaRZpRJLrmbbn10Es9+BfZrVYJF
-	SQnDGAUJB9qrI+6dHBMqVE+X2jwDZ6h4pmtMZ14qS693h3unW4c3pNRzjr7JjvsHf1M=
-X-Gm-Gg: ASbGncvub0fqUbIcxjrfKcmIx7H7qIv36bmOvdpV8xDa4AQjKdLgI4v1av539YulYiB
-	/tft0Vc0RUI9IcJCr+ozLb1AdTGWODwUoVm6/q84K95Kc8l6s7PqmNylY9LSgE4tcdTknp/ZKiY
-	Wecwwsn8batwxaZ6p4lgZwjThyrDHKfdZJo+VrN2iM0bZ8AiJxDTfNF6JtZF95/Tix3mhLsQrl1
-	loEFZfqgyzXaggNSwTq+Lz0ngTqi0uuLWdhiaJ5oMZIThxT2LyAwtzZWTGSIPSK07XpMMHCEKEF
-	1Hkdg+zY6p1auau1nwGZemT1+dtFs1X1c4zYXHIfvsCnpmwU/34pW5IuBJO0ch3GeinDSRui3TE
-	qI3DbBAu9mMs0Rn7NojpqJ4Z+desRvICeO6VqyNvjFW8B8CkPNLvM54ASBvuPeubh9lfbzEGA0b
-	wbNthhlUk3Nw==
-X-Google-Smtp-Source: AGHT+IEZAM7i8noTFma5wAnR8o4D7glt2vGuAH01kSmUPVRf7KW72alZoNCyV4wMEfKwuI1X7qG5Qg==
-X-Received: by 2002:a05:6870:3c0d:b0:2e9:4038:83d7 with SMTP id 586e51a60fabf-30be296ad83mr3038244fac.11.1754529878596;
-        Wed, 06 Aug 2025 18:24:38 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d? ([2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30b6dac161esm3485598fac.22.2025.08.06.18.24.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 18:24:38 -0700 (PDT)
-Message-ID: <b7288d5e-8dc8-4ee1-ae34-52904a3f989d@baylibre.com>
-Date: Wed, 6 Aug 2025 20:24:37 -0500
+	s=arc-20240116; t=1754530239; c=relaxed/simple;
+	bh=Zsnd2yhm0e8Z7N/XbjGsxi9+PjwfVA0yvEOrhmxO1r8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UBwTEvMFTiUPF9yTjt0kFhz6mEp3Umdzg28r6G+nRzApVanOekC5Qp/77qOOBVR/I4faWX23T+63RE5Zb2wKxEUK4PW6okeQ0EQYw3gKgU0jK4Y0s2PvN6MwvCN0Nt0tBiyXuck41v9oAIto90PPlzUct1UR22wqzQi7ZrvI1bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Q3NgA8OL; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1754530213;
+	bh=R55Ce30YMHeTG1lDNGUKrl/+gpE/GNdMkbzIFbY7bEI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=Q3NgA8OLeYRV5iBUy+2dGz2qBTQU8LjhtidAZdKz/Vz+rbIhH7Up/tfdfzVmnO+hS
+	 /hSiHa/ivVVwDQW+Av93e6h1kVUwvYlgHlaEbpLvVgotPGE/NGPu2ixRCgugBB18Tb
+	 B90jKWVQz0YTTk68tYoOHMT/RvecvwgWMDDMOamA=
+X-QQ-mid: esmtpgz16t1754530212t66e66a1a
+X-QQ-Originating-IP: 87YQa/E+l5byIBWQdG0icPTbS7PxkSsJP/II3qCKtys=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 07 Aug 2025 09:30:10 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5881493761293327476
+EX-QQ-RecipientCnt: 16
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH 0/2] clk: spacemit: fix i2s clock
+Date: Thu, 07 Aug 2025 09:30:09 +0800
+Message-Id: <20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: pressure: bmp280: Use IS_ERR_OR_NULL() in
- bmp280_common_probe()
-To: Salah Triki <salah.triki@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <aJP44mH0AXQGCFFR@pc>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aJP44mH0AXQGCFFR@pc>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKEBlGgC/x3MSwqAIBRG4a3IHXdBpeixlWgg9VeXwkIjAmnvS
+ cMz+E6iiCCI1KlEAbdEOXwOUygaV+cXsEy5yWpb6UaXvBke943FRl7gEdyVBQOoddkCpnaU7Rk
+ wy/N/++F9PyMipt1nAAAA
+X-Change-ID: 20250804-k1-clk-i2s-generation-eee7049ee17a
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>, 
+ Inochi Amaoto <inochiama@outlook.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754530210; l=1573;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=Zsnd2yhm0e8Z7N/XbjGsxi9+PjwfVA0yvEOrhmxO1r8=;
+ b=0y4pPVuvzy8we9mgGSoUWCZEz15xMZi/SA/847+BJGpcTkqgMsSMohCJM+mYV7GLAqMsRhOle
+ LXLTBsvHm+6Cxooaj4TmFAcWbbyM7yOuDY9ZtiUXZegifGLQyE6s7is
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OPv1v8QuUFDkJsuwDqEIRadsHqLmzvDVecahBjMLuUPJ0NX57+fmdXMx
+	3G4Jfk/vA9kMJlkz6r+ENoe8rLKQ9MCXsjx7WOqQHKd796JvgvtbaLxeE3I/QUqj8B8RLRj
+	wNsDSanul2lqSo+Xr1Pxi6QFWu79vzgdBRRobArxj6ix3Zb32mTs7qvhO0H46OIr39iNj1r
+	sa57hH8wRgHhgFMfe9j+J7TQ97Bp+SwvkTnet6hcRSTNROfR7Ilu8y/paTyhtdSIucTE+x8
+	KiM9gj9nli2zGh4WAmdWubh2efivCRS0lMbACUkoZtEdBCfTHYnxv0gy106PhpEek8Y6lcS
+	ksvT8hwSHbha7NWCcVKzVunnXyt5reEw6UcNKF1/nZzpuDEz4CPfK1V7n+ce2Afj39B+WJB
+	RminYSU1yjnQBBfsaCkVJvleKcCoHb1T2Ze6gxgIJ9AZRMwBFSfc5uhTTJB3u2Yc3alGvvF
+	BO6iEQ3dcW7g2VxwYA/fC664igyaeSRD9sFBbrKV1GRqYh7MFTC4XAjVzfni/5b+C0g6ojB
+	vH0CNLGDEmzEBNUf+3vsNjhIa7crJGP222OZzBI9hElTBzwBUsW0n9JQjAzFyzvwrHljEEN
+	MOaR2Ox8CpQxxfFIOFsSOjtnD4Zn+4v+pUSQx1FBj1kWOUhD+VqPsWl7hNQqV0PqO7p01DH
+	f5OE8Qnd1FfqgUTk+gXQ15SrsC3T//4b45pD0uuvLx8AreCh/ng0mgrGrFNMZjCgXmzSYlD
+	wNS7s91KZV/UhSnxnjpEBx+rLTLJUKQPYp8eN96cu4EYUZ/ryDQrju6sCpfkFQWrKXBbHmD
+	vRTJuS+6u5BfcsVnsEaR/fRI0OILezRtETcrLwdwylS0pzAl4xOxr2ANw8GBuQOGdw3X3OF
+	oZBt615UVTu56sBt1bHhmyU6sjKLLI2/Z6oJ/qqnjlWyu+7onCkcgNTU3I4UxKfNETbz8n7
+	9xq7AepOWpDeRWNWolvCUEoo8/DMUIdGA4rwaKpEyDOAuRdOEvqLU1mjThqdqOoXVmz1H/+
+	QRoNZJI+u7ZHBdWpHvWv0onLLNC2sowiwB6KSrmt3aywhtwsM5fAmwgYBtYL/NBp3fEWWPE
+	pLn53GFduAXG3/B7Bo/t6bn8DnD0IMt0FxIVwjmyGNGkzMUQmS/WS+WdBsldfvjcw==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On 8/6/25 7:52 PM, Salah Triki wrote:
-> `devm_gpiod_get_optional()` may return non-NULL error pointer on failure.
-> Check its return value using `IS_ERR_OR_NULL()` and propagate the error if
-> necessary.
-> 
-> Signed-off-by: Salah Triki <salah.triki@gmail.com>
-> ---
->  drivers/iio/pressure/bmp280-core.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> index 74505c9ec1a0..2ac0188d2857 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -3213,11 +3213,13 @@ int bmp280_common_probe(struct device *dev,
->  
->  	/* Bring chip out of reset if there is an assigned GPIO line */
->  	gpiod = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +
+Previously, the driver defined two clocks for the I2S controller:
+i2s_bclk and its parent i2s_sysclk.
 
-No blank line here.
+Both i2s_bclk and i2s_sysclk were treated as fixed-rate clocks,
+which clearly does not reflect the practical requirements for I2S operation.
 
-> +	if (IS_ERR_OR_NULL(gpiod))
+Additionally, the original driver overlooked some upstream clock sources.
 
-This needs to be IS_ERR(). NULL is not an error and we
-cant return early here because there is more to do in
-the probe function.
+To fix the I2S clock, this series also introduces several new clock definition macros.
 
-> +		return dev_err_probe(dev, PTR_ERR(gpiod), "failed to get GPIO\n");
-> +
->  	/* Deassert the signal */
-> -	if (gpiod) {
-> -		dev_info(dev, "release reset\n");
-> -		gpiod_set_value(gpiod, 0);
-> -	}
-> +	dev_info(dev, "release reset\n");
-> +	gpiod_set_value(gpiod, 0);
+The I2S clock hierarchy can be found here [1].
 
-If we drop the `if` here, we should also drop the
-dev_info(). gpiod_set_value() handles NULL gpiod value
-so that is fine, but the message is just noise.
+Link:
+https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
+[1]
 
-Also, gpiod_set_value_cansleep() would be more
-appropriate. This is not an atomic context.
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+---
+Troy Mitchell (2):
+      dt-bindings: clock: spacemit: introduce i2s pre-clock
+      clk: spacemit: introduce i2s pre-clock and fix i2s clock
 
->  
->  	data->regmap = regmap;
->  
+ drivers/clk/spacemit/ccu-k1.c                  | 34 ++++++++++++++++---
+ drivers/clk/spacemit/ccu_common.h              | 13 +++++++
+ drivers/clk/spacemit/ccu_ddn.c                 | 47 ++++++++++++++++++++++----
+ drivers/clk/spacemit/ccu_ddn.h                 | 25 ++++++++++++--
+ drivers/clk/spacemit/ccu_mix.c                 | 47 +++++++++++++++++++-------
+ drivers/clk/spacemit/ccu_mix.h                 | 26 ++++++++------
+ include/dt-bindings/clock/spacemit,k1-syscon.h |  3 ++
+ include/soc/spacemit/k1-syscon.h               |  7 ++--
+ 8 files changed, 164 insertions(+), 38 deletions(-)
+---
+base-commit: e991acf1bce7a428794514cbbe216973c9c0a3c8
+change-id: 20250804-k1-clk-i2s-generation-eee7049ee17a
+
+Best regards,
+-- 
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
 
