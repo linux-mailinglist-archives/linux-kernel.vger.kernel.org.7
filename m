@@ -1,294 +1,181 @@
-Return-Path: <linux-kernel+bounces-758760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AEEB1D390
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E424CB1D391
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD7137B39B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:41:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7A627B3BEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5B723CF12;
-	Thu,  7 Aug 2025 07:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D243523F42A;
+	Thu,  7 Aug 2025 07:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VcliJxuP"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nBdaCbm5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4A71799F;
-	Thu,  7 Aug 2025 07:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0361799F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754552575; cv=none; b=K6geY2QuVX5W66CaZD0UN8rlUixXp1FOS37wj7nZ9wAH8DcjGtgA7oRQzUFNrlseJPpG/aA9b/Fzmamcvc2RCFG1jGlZQA3mGAryTkWYMi01Aep+ve/ICIZMe//niFifAfZO1ElzOdzY8vfPCaVm4K2/OBAwa965Ml2BJTVS7nI=
+	t=1754552607; cv=none; b=d11AikUCSNlES43pzQBGkXo3yWzEYwmT9Mo6cOwcHwhuYqKeY6O5NB0YiuFEtka7PnbW3Tuk50HmBiLytmp16YmQNQc2V0xc1QDTnnc1gfxKMZNxU7KrlEcTck63L5VVtOy+iscAYE6lvtVtNKCVX/2Lro/pMVSnnzQI8p3yfbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754552575; c=relaxed/simple;
-	bh=HQgZxozEInQGtZeitnlKUz/X/aogQK/xmKgDuDLRE/Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c5giZ8j6ZEGZGocOtLn4xezWsBj5sDz1FioiBlHc0dSt/5ZYa+SzybF+sQxcrI0kPS9/+QgtbzEaN4C+24TR4xqyCiyvxZbMHbQi1/YXGBZJKzbF7dc3DKEjomBUBacEtVXxI4PU30ub8cpraM6Sr9n4tcriAmb66Gb+KacmOYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VcliJxuP; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3e40212e6ceso3544945ab.0;
-        Thu, 07 Aug 2025 00:42:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754552573; x=1755157373; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Yib2PCEaqNp1Pj8TAlHvoEegTED9u37QcVhIiDH6gc=;
-        b=VcliJxuPYSL+V8cJ0evUZPrVLG2ES4pwHy52eBgXZDCedQwEMxOXfA+fNhYgZLLXNB
-         CqflKv8FFvVDSfxxdhaz+tIdw2/dxrYrIgSipBmY3e/uCwTxQNOl9Exguv3VtciBrSQq
-         5YF60s9Wtasng92aMtQSxr4tyTaeX2BmPB6/rfIqUYpVWI+kJXN28Ob9QfS5mBVOV9kR
-         pkGRQUlNeOIFwhkMI3KHbed7lrMjkG1w8yI7F53ln5CzOrtPUKwWI0CbElGDYmIjG8ga
-         ZFU9h48k7SitUyCJDI4dvQ4ylNwOo4HvCL1shHRza/6WFE+AgvjK/KIOyJPbWaCmuz1L
-         NYUg==
+	s=arc-20240116; t=1754552607; c=relaxed/simple;
+	bh=aJf8dgH4dYz4FeXdIaB9wlD7Vgy/o7rrXh0zl/XsgWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qrgOgBcjLxECPs0cBM/JsUM7zYdMQAZ5Awb+VwIFknietgRxd8vV1ChFseAblJIX7DKeyz7bdCRunbdTth7R2EXnuSyUmWqcW+iHf7HtTnNw4TsmLfKDmZkUJ3ujUzNlQPGplm60Mk3s3f8B4tWjLp6slGbkJ+vLKfc+knBG7lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nBdaCbm5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577248FF020326
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 07:43:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=SdrbuuxHkEeQigeY7KFKAwRwQZ1v06KXS3A
+	qG305+AI=; b=nBdaCbm5x8LI4sQsiTXL6sdEItOKhtIwIR4NWJd9vFS8SIpVBAM
+	N+RzVIvi2W0ZmCoak2/+cJO/0KH4qzIviQZcXra7qc69fbVc0UvuiCCKqItUzlJQ
+	lvH2/THLqc1P9DInQse5YBUs7Mwn/9M+ee90lRJf0VOkfeP+F5mY47BPHZNsR1u0
+	m11Eu2vVsTZN8DvVRq4qAkIz7AP3hjqbalATTEHHqiQJnU98uVpT8pTkaR359kTF
+	bKnwshfhDwMFwaFbPMHaraW6/UMZYEpWB2g9JXAqKgvnJqp2UTW+JQqVG4C/HkD4
+	KzwjHLWvZkAqXuwWUzb0VxGNfJcqkgaqWGQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpvvwf12-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 07:43:25 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-24004ac2ecdso11591025ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:43:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754552573; x=1755157373;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Yib2PCEaqNp1Pj8TAlHvoEegTED9u37QcVhIiDH6gc=;
-        b=jYM81sGSESKm1u4Cb2DF/vTRSXlQtVr6P9/rrUMRbQLzmEUyaJACzR4s4Ds48UfHpR
-         3hKYe9i7XxbxucRciOurKZmPYy5vxHvmaXh6UUjNBDsYbDpPSqtH6qt+Zgbs792hxi4n
-         Wgx0oFpaHOSA78NHfsBiqYGYGQNcycBK9uf1D88U8wNgxY6IvCVKTFRHNP+SBo454Jag
-         QUwYV0x/33Z3gI+VgMA53VMijEHppAlTLIxzxrOZPHzyaBzv+e96+E2izLB9m06R41Hn
-         l/YGGS4tuAww/+QqCQXjYGG+U0SRgmlkeJ0Mw/hmuyCvkeu2nWfPzxB3SrPQyXwV8txI
-         OA/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVYAciwq0MlhP0AHXk4gsrXYqGhvXwq3jo9mgspARWZ+lonRS15oPhokRy92Xj/ggSMMsVlhIc7SwT1@vger.kernel.org, AJvYcCWTGUQInPK+l1iMsk3vH1Dwf3N2+f8s9Z1fWiU8vrdgxTm3LyjIvFJQ3z58+a3mCTT3SE4r6HbbLFWvFTo=@vger.kernel.org, AJvYcCXFvffIQA7Jw4VfWLkWnG+C7AFux6jIYlHc8hfTMM9SyRDxQ4wkSc1mD1un2YlujTrzUqkg4TGy5I9h1njL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrSmiOU6JqWScXWaKOc1hSOcN5smOZ0F/39Ijt1zaJ6Wfxle+j
-	sbv18fm/12UMAYcFFDdhpiBFzx/tiihY7+iJQhKnaaxDG7L4+87mEmxURyMopjXPpr+pCmgnu5Y
-	l7npeYBV4gAgdGRJMhVW7aCfBatzvm0U=
-X-Gm-Gg: ASbGncvuL1Ztr1D2cBcVB7XmJf/DRcmyerJETVTj59rejNgV6uGVl8AiZZcOCnuZpR9
-	CaquBa0isPOqUREtmtUfGGLlbzCMkbYVF0G8dLhbCYyYVWpuxP0aqBBNcmt2EivmwMwJx8otpvR
-	jDjQhcgfd09wD9O2Y5Sg4Nuq8by2dETrNHGka70nA85mNH9CDU2X7pb1t3Z6cYZi9N+VQjwcB3I
-	4FeiGs=
-X-Google-Smtp-Source: AGHT+IHdqQFtfjRtDehIGRFADkvBaA4NvCzKMcHYFjCPCJ2UEYMmg8NkMVh8psgCR7M3BrtP7IfXADIqspKMXA8NOUE=
-X-Received: by 2002:a05:6e02:3f08:b0:3e3:f1e9:635f with SMTP id
- e9e14a558f8ab-3e51b8985cdmr117142635ab.8.1754552572965; Thu, 07 Aug 2025
- 00:42:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754552604; x=1755157404;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SdrbuuxHkEeQigeY7KFKAwRwQZ1v06KXS3AqG305+AI=;
+        b=dH3719EwLDdUy18WJAXraQ+AGGQl2KFf6Iyg4DfKChpAVQMxQ841aj7lxfobEufst6
+         5NIFK5hhkGW/QAYaa9DQaPaW2yUxcT1ttM5uk5lfljinANnVmLhRe6ap1mG2Prc3Fn2V
+         5FSn2vqePgbc6pkMBRXVP7sOiMi5zYWAyFmfd9P1zv2z8m4S5gFa7PbeDLBzw/I/9c5j
+         5NxBZqcO3BXXnI0ZUDbL/mTaMRjDuswBFUtYe5POSwOPGXh86lUTheFi7oozxw+Hjhpt
+         bxcFECZ8SVK1UJm4QxtJkl1J4qOb8068lC8swm7o+OUaT0pdWOF4arptt9ROcwla7CEt
+         dNsg==
+X-Forwarded-Encrypted: i=1; AJvYcCULyxBkAfvwGMrUJwPznQtztqk8py9QbOlOsh5JLG1aI/ULfTgykhK8uE4tk6aj1CVjZSr9hvVECQUyT4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOqxOUVqDbRz1X3PwBdTPR+oAv9QRj8rFAJX67c1TPHGawAv/s
+	9fD3T8bLUimwrUViCPOwf92I1veABdVOhmcMv6cTKs5cuVD4CMMG8Zxp6BdAvkxqZRgqn1og2i6
+	sh0Vc4UGIqO8SX4zdscfAup6IeRh3UXoE58rv4VFcTqP6//2vq6T8lcXCHVOQpZvdN3I=
+X-Gm-Gg: ASbGncvESDUec+rkXUnv/BsO51yNFhdfw34PJ4+WocDE5Dhze9WV7ZDR3V7Vtt5Nw0E
+	+YB/Ym0JEsUmTSEQWQaYdVMb86pIyfBsq2YHYJXq9yHeXaPjfoNeCzR8wWv2pF/VBpmsJ7Bk5qk
+	+CZAIaLNp6Wa2c3gzzTYsoZiPDVPkPICZZ5+geL51ATTJZP4RCRy6djvxS6Og1115ATYdRyNpBU
+	ZYycYgGLSgfpZa+77/oULNupNoRa8wRNqh7rAe3iowssXId1kAXXREXV0mYWHLiDEEGyyyoF03O
+	G8/QrD4x9osQQ8ls/BQXjr9koLnlr8IohrO3/U1oqMsFwRiDyEbV3+t4PeuHdiMbOhk=
+X-Received: by 2002:a17:902:d2c2:b0:242:9bca:863f with SMTP id d9443c01a7336-2429f5bbc5fmr72030695ad.57.1754552604155;
+        Thu, 07 Aug 2025 00:43:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHANSCJfj5IWevcX9I21BsXg/+4n+zB41jVKkCMdFHRNuqkAEqf/i9yKeqzmpgMCnYVJaYulg==
+X-Received: by 2002:a17:902:d2c2:b0:242:9bca:863f with SMTP id d9443c01a7336-2429f5bbc5fmr72030435ad.57.1754552603705;
+        Thu, 07 Aug 2025 00:43:23 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef678dsm178166395ad.39.2025.08.07.00.43.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 00:43:23 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: [Patch v3 1/3] soc: qcom: mdt_loader: Remove unused parameter
+Date: Thu,  7 Aug 2025 13:13:09 +0530
+Message-ID: <20250807074311.2381713-1-mukesh.ojha@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804104722.601440-1-shengjiu.wang@nxp.com>
- <2380862.ElGaqSPkdT@steina-w> <CAA+D8AMqBqfRuR7oGLwH4CUrAdY4q1XGmnPXGQYUGndY0eS=yw@mail.gmail.com>
- <3006103.e9J7NaK4W3@steina-w>
-In-Reply-To: <3006103.e9J7NaK4W3@steina-w>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Thu, 7 Aug 2025 15:42:40 +0800
-X-Gm-Features: Ac12FXyRnD4EHNKIjcnFtD3LudiK7-g39dWsOJVNfZbpF_BspGvpp8foyFbcxgc
-Message-ID: <CAA+D8ANb_9GQTGCV0c5y517aSbQNnAu4wYvDhc4QPd+RqOhjbQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] drm/bridge: imx: add driver for HDMI TX Parallel
- Audio Interface
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org, 
-	l.stach@pengutronix.de, perex@perex.cz, tiwai@suse.com, 
-	linux-sound@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: Lfns7A7mBUJp9_rSUEueWRKYglD7bBn-
+X-Authority-Analysis: v=2.4 cv=GttC+l1C c=1 sm=1 tr=0 ts=6894591d cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=qLU0tmo_xPokh9XVZMUA:9
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: Lfns7A7mBUJp9_rSUEueWRKYglD7bBn-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX93CbF8ptRKgd
+ +PVnyYqVhm1jI61zig9y2oJ6R1Gf+GRhFlHyZ27L8aPrw7/yr5C3Mi8+UNT1jXEDoQaUHmYrt69
+ XTDdmBhtHi9q716Fc6ZDc9RDrBMK+FjZVDaABTSs3uibt2VaxQ52+9Njl5Lk+i0rOMYSTWfirbF
+ 5bfX9kv6lE/67G43j01cBIjHJ+VOsraz6yw9LRvnTeBLV1sDhGnCe58NxPtWvMkacE7NYsOR6Ph
+ 5nuKdjK6eiHUmF9CcP2AwWxEt495ssqy995VDAvhIglRiH6fZjbK198wqjVH+3auQwv7okhKXyy
+ e2PtV28o0eibyYlvr/9d8BKPwOCf8t6kNoD/N0jw0frwkK/B3SnNEP6JNi+saHK4YVZxquadguk
+ Zie8uZGi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 malwarescore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-On Thu, Aug 7, 2025 at 2:48=E2=80=AFPM Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
->
-> Hi,
->
-> Am Mittwoch, 6. August 2025, 05:49:13 CEST schrieb Shengjiu Wang:
-> > On Tue, Aug 5, 2025 at 3:09=E2=80=AFPM Alexander Stein
-> > <alexander.stein@ew.tq-group.com> wrote:
-> > [snip]
-> > > > +static int imx8mp_dw_hdmi_bind(struct device *dev)
-> > > > +{
-> > > > +     struct dw_hdmi_plat_data *plat_data;
-> > > > +     struct imx8mp_hdmi *hdmi;
-> > > > +     int ret;
-> > > > +
-> > > > +     hdmi =3D dev_get_drvdata(dev);
-> > > > +     plat_data =3D &hdmi->plat_data;
-> > > > +
-> > > > +     ret =3D component_bind_all(dev, plat_data);
-> > >
-> > > Do you really need plat_data variable?
-> >
-> > yes,  it is used in imx8mp_hdmi_pai_bind()
->
-> Sorry for not being clear. I'm not talking about struct dw_hdmi_plat_data=
-, but
-> the local variable plat_data. You can use
->
-> ret =3D component_bind_all(dev, &hdmi->plat_data);
->
-> directly.
+commit f4e526ff7e38e ("soc: qcom: mdt_loader: Extract PAS
+ operations") move pas specific code from __qcom_mdt_load()
+to a separate function qcom_mdt_pas_init() after which the
+pas_init variable became unused in __qcom_mdt_load().
 
-Ok,  will update the code.
+Remove pas_init argument from __qcom_mdt_load().
 
->
-> >
-> > >
-> > > > +     if (ret)
-> > > > +             return dev_err_probe(dev, ret, "component_bind_all fa=
-iled!\n");
-> > > > +
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > > > +static void imx8mp_dw_hdmi_unbind(struct device *dev)
-> > > > +{
-> > > > +     struct dw_hdmi_plat_data *plat_data;
-> > > > +     struct imx8mp_hdmi *hdmi;
-> > > > +
-> > > > +     hdmi =3D dev_get_drvdata(dev);
-> > > > +     plat_data =3D &hdmi->plat_data;
-> > > > +
-> > > > +     component_unbind_all(dev, plat_data);
-> > >
-> > > Do you really need plat_data variable?
-> >
-> > yes,  it is used by imx8mp_hdmi_pai_unbind()
->
-> Same as above. Call
->
-> component_unbind_all(dev, &hdmi->plat_data)
->
-> directly. Also consider assigning struct imx8mp_hdmi *hdmi =3D dev_get_dr=
-vdata(dev);
-> directly.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+---
+Changes in v3: https://lore.kernel.org/lkml/20250806172531.1865088-2-mukesh.ojha@oss.qualcomm.com/
+ - Because of the drop of 1/4 in earlier version this becomes first
+   patch.
 
-Ok,  will update the code. Thanks.
+- Changes in v2:
+ - Added R-b tag and its order in the series.
 
-Best regards
-Shengjiu Wang
->
-> Best regards,
-> Alexander
->
-> >
-> > >
-> > > > +}
-> > > > +
-> > > > +static const struct component_master_ops imx8mp_dw_hdmi_ops =3D {
-> > > > +     .bind   =3D imx8mp_dw_hdmi_bind,
-> > > > +     .unbind =3D imx8mp_dw_hdmi_unbind,
-> > > > +};
-> > > > +
-> > > >  static int imx8mp_dw_hdmi_probe(struct platform_device *pdev)
-> > > >  {
-> > > >       struct device *dev =3D &pdev->dev;
-> > > >       struct dw_hdmi_plat_data *plat_data;
-> > > > +     struct component_match *match;
-> > >
-> > > Set match =3D NULL for drm_of_component_match_add (and subcalls) to a=
-llocate memory.
-> >
-> > Ok.
-> >
-> > best regards
-> > Shengjiu wang.
-> > >
-> > > Best regards
-> > > Alexander
-> > >
-> > > > +     struct device_node *remote;
-> > > >       struct imx8mp_hdmi *hdmi;
-> > > > +     int ret;
-> > > >
-> > > >       hdmi =3D devm_kzalloc(dev, sizeof(*hdmi), GFP_KERNEL);
-> > > >       if (!hdmi)
-> > > > @@ -108,6 +145,22 @@ static int imx8mp_dw_hdmi_probe(struct platfor=
-m_device *pdev)
-> > > >
-> > > >       platform_set_drvdata(pdev, hdmi);
-> > > >
-> > > > +     /* port@2 is for hdmi_pai device */
-> > > > +     remote =3D of_graph_get_remote_node(pdev->dev.of_node, 2, 0);
-> > > > +     if (remote && of_device_is_available(remote)) {
-> > > > +             drm_of_component_match_add(dev, &match, component_com=
-pare_of, remote);
-> > > > +
-> > > > +             of_node_put(remote);
-> > > > +
-> > > > +             ret =3D component_master_add_with_match(dev, &imx8mp_=
-dw_hdmi_ops, match);
-> > > > +             if (ret)
-> > > > +                     dev_warn(dev, "Unable to register aggregate d=
-river\n");
-> > > > +             /*
-> > > > +              * This audio function is optional for avoid blocking=
- display.
-> > > > +              * So just print warning message and no error is retu=
-rned.
-> > > > +              */
-> > > > +     }
-> > > > +
-> > > >       return 0;
-> > > >  }
-> > > >
-> > > > @@ -115,6 +168,8 @@ static void imx8mp_dw_hdmi_remove(struct platfo=
-rm_device *pdev)
-> > > >  {
-> > > >       struct imx8mp_hdmi *hdmi =3D platform_get_drvdata(pdev);
-> > > >
-> > > > +     component_master_del(&pdev->dev, &imx8mp_dw_hdmi_ops);
-> > > > +
-> > > >       dw_hdmi_remove(hdmi->dw_hdmi);
-> > > >  }
-> > > >
-> > > > diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_h=
-dmi.h
-> > > > index 095cdd9b7424..336f062e1f9d 100644
-> > > > --- a/include/drm/bridge/dw_hdmi.h
-> > > > +++ b/include/drm/bridge/dw_hdmi.h
-> > > > @@ -143,6 +143,12 @@ struct dw_hdmi_plat_data {
-> > > >                                          const struct drm_display_i=
-nfo *info,
-> > > >                                          const struct drm_display_m=
-ode *mode);
-> > > >
-> > > > +     /*
-> > > > +      * priv_audio is specially used for additional audio device t=
-o get
-> > > > +      * driver data through this dw_hdmi_plat_data.
-> > > > +      */
-> > > > +     void *priv_audio;
-> > > > +
-> > > >       /* Platform-specific audio enable/disable (optional) */
-> > > >       void (*enable_audio)(struct dw_hdmi *hdmi, int channel,
-> > > >                            int width, int rate, int non_pcm, int ie=
-c958);
-> > > >
-> > >
-> > >
-> > > --
-> > > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld=
-, Germany
-> > > Amtsgericht M=C3=BCnchen, HRB 105018
-> > > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stef=
-an Schneider
-> > > http://www.tq-group.com/
-> > >
-> > >
-> >
->
->
-> --
-> TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Ge=
-rmany
-> Amtsgericht M=C3=BCnchen, HRB 105018
-> Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan S=
-chneider
-> http://www.tq-group.com/
->
->
+ drivers/soc/qcom/mdt_loader.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index 0ca268bdf1f8..dfd15d189087 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -333,7 +333,7 @@ static bool qcom_mdt_bins_are_split(const struct firmware *fw, const char *fw_na
+ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 			   const char *fw_name, int pas_id, void *mem_region,
+ 			   phys_addr_t mem_phys, size_t mem_size,
+-			   phys_addr_t *reloc_base, bool pas_init)
++			   phys_addr_t *reloc_base)
+ {
+ 	const struct elf32_phdr *phdrs;
+ 	const struct elf32_phdr *phdr;
+@@ -459,7 +459,7 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 		return ret;
+ 
+ 	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
+-			       mem_size, reloc_base, true);
++			       mem_size, reloc_base);
+ }
+ EXPORT_SYMBOL_GPL(qcom_mdt_load);
+ 
+@@ -482,7 +482,7 @@ int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
+ 			  size_t mem_size, phys_addr_t *reloc_base)
+ {
+ 	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
+-			       mem_size, reloc_base, false);
++			       mem_size, reloc_base);
+ }
+ EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
+ 
+-- 
+2.50.1
+
 
