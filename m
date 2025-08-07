@@ -1,56 +1,86 @@
-Return-Path: <linux-kernel+bounces-758808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF878B1D419
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:12:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCE5B1D41B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61661890EC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F24727EE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B4524DD00;
-	Thu,  7 Aug 2025 08:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24912550D4;
+	Thu,  7 Aug 2025 08:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="dDDGVCXu"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MhPmoXBg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E91F242D8C;
-	Thu,  7 Aug 2025 08:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A0A2459D2
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554370; cv=none; b=kAnAYM8WQKExtrG7azeyZm4QNi6FJ0NsV6zw0x+J6uMaXtfFn/2GA1+JT40VA1UFd+HpMjIbvmp/Ir+f9QjWV+96nl7oDh9Jj0z4+v+R2GcSV/Zy2s5q9PfGpTDDTAZ9QhraPvOhBWr8T3J8xjNa4pA/CFMjgP1LkYGwWj7beLg=
+	t=1754554377; cv=none; b=OMjH4PdbaYDIrHBdmIMYFvhwjYY+DnyVwkL2R0W7HrvJ5/rzOoF+uoYPXdlcvkkkZen/FtVSs42smGS8YFB9ANBrK5qehaLTeH81XF9vIOTaZcAqXSGYF2M7ELBYuVxWlUt8cvSaas1JgHwE3pP/eqRQnHhtV1lKBtSeTIVpWN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554370; c=relaxed/simple;
-	bh=7EdlOcRR0NwYJwD8hYbF7warJbChcL56i1E37eWEx/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hEd4Bo0kjT5yHQKMDVPuSS5SaCNExHOOFNft93f+bgg1N2yHQDdOQIg0+w0faF93ev3+OGdBtYmuY1uVp+GqXzIdmsfPqLFrGGtYafLJgiATHaNRp8iBJDfK7Bx/v/GJHGR1yGfv9rzryT9grk1Pg7N1+3siBnzsJnS2G0whrUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=dDDGVCXu; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 38C56A037B;
-	Thu,  7 Aug 2025 10:12:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=UuRqPb6SX7syB2TiesZJ
-	ExxNgF2tJCZyFOUHLCx1+As=; b=dDDGVCXu8G/3AJDBLLZ5h5sPkNz/9EgA0A/3
-	CKUPObCBjSpfp0U0g6abhE451Xe5OZnECt+8WIFGVcTZ0XhOxKc/ObBab7SXRICX
-	In/ct3ZKdYcW1XJoM66ptAcGCmg9dqIoNTIpB457vmv5lwC9J9EVZz1kryg7kTU2
-	sXlqV6tIJzV+4dGb6d0rxps/102kAmL+7X1o8Zg1ryho45VeXkkgMODkVDss3r4L
-	fB1J9OAw0rBi8q9bnaTDFa8X9lP4YwHDvAmD4xlRt6ujq26d3js6SWyZE5gFAzMw
-	u481iug4I+HAFAIv+lT+TUmnBYBxAiAt7DDnNyLWrtqGEiN8TJDDVBAztjNLzQLF
-	TsJfbu+t+abdExZaWnLkT3vILeaKqy+12EUpXqZoPXzzS+eUUD/h/KzDUclNViKE
-	ZjnoJ4Dci7iLrProypXcenQv8RC1ca5nPS6BH2grbXVUTvgvlJDYvif9rYgFt9Qg
-	I749EWTcmiMvbSj2Ds9ACwecMJkIUL7wulwqEPqjaHcZcNQO71BNbsAjJoHxYPnL
-	x6ywM9UBq/Rbg4AVkHpj+lHrg9HIK5mwywslaioW2Psx71rdi29gL4LGg8J0BwkO
-	pEB/2+qf8FpxLR1NT4Jaqg1iZPB31RPgyrZtexVwpT8kbplKgSBHM3t7VaGpnyvk
-	63LwwKI=
-Message-ID: <5600f2ea-eaa2-4a8d-8092-e9f3d3cb42d1@prolan.hu>
-Date: Thu, 7 Aug 2025 10:12:37 +0200
+	s=arc-20240116; t=1754554377; c=relaxed/simple;
+	bh=k/6tc9NbcaDu74J8Ujd5CIcZNK+IHGpjJSYSQ2uZnMg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uavigqyUY8RC9c2XvbRXAzlXC4V0zFPQDPTLphkuZ4oU6KWjvYn3wI77zezI5+//v6sAL4vIUXkPL2IA2qorzXxiM6PiJF72LfITFGLRcXHu4hwjKiZiTR8Xq+vqB3FSifP5pq5hlUT9CNusJ3oVZO36WAJMNlv+hqhcDsrVBDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MhPmoXBg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754554374;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qvbx3D1NwDDjkwzVbaeev/eBkCMCtqgbfvWKeFB+QqE=;
+	b=MhPmoXBgJOhYvbSvKRuDerIQoV7mwg0Jz9S8CazkntVgtrv7DzABg+W28bMn59HrzfQZKT
+	NR70DCJm6OsSTuiZexoGvvzfhp9Kbw4EtqbRQe/Ziz5fAi5e6jOENy5POtXF1mQBQAPCBl
+	M45fuA1lAa8XLLi62jVRHqN7gVxRf20=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-10-R0XImq-yMJ2QcKEUn2I-Zg-1; Thu, 07 Aug 2025 04:12:53 -0400
+X-MC-Unique: R0XImq-yMJ2QcKEUn2I-Zg-1
+X-Mimecast-MFC-AGG-ID: R0XImq-yMJ2QcKEUn2I-Zg_1754554373
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7073834cda0so14929886d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 01:12:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754554372; x=1755159172;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qvbx3D1NwDDjkwzVbaeev/eBkCMCtqgbfvWKeFB+QqE=;
+        b=N6/2/qmsTtQAUTUkpEnVj9RP6Np76/UQ2AfFCawlddF2vG8o98K3SP5hNkgdoLwLKB
+         SOyZ1/wRl5+fPTfwirZhnf5YnupqHUndb6YQHE3NWte9/KcaM6HlXrlkO159EvB3ILvM
+         kKHWUvWgZs0+7bwWI/hwB2xuwLTdwNQ5A6kEwbYrO97+j4GF7TDFyqTnUkC1T5ShzWYD
+         ZVP2knkbKH8uctXnwl0Cv2H/iWppLes3umur7SVkYQ+GyIUZuvsujDTNX2wvsOZrtEXm
+         LkcdNa28ZO8NEluWAXBfFkCQVKZcLs0OqF/bfESIn9Zm9GIfpfS3huDwuvL50g1kH0DJ
+         i0iw==
+X-Gm-Message-State: AOJu0YxlEL800xq+hF/aq7bEDmpyUkCsWyZFE2+iotFaQgOglfWRFE2i
+	JNuW1OyHBituy7tcU2WrrEm4X+Fl/Hxk2I/XQkIzjxvOdrz3vmEFAaOcKCu8m8gvkZopy6LUaNz
+	6Gyb8aa6s/xgtaLyfPM8Ync0h/NI6N32uDSxu0hzcOG1SjO1RlXt2q3N1lamrU3yYTQ==
+X-Gm-Gg: ASbGncvm8b0VV5cWRZOU6LmZYsIODJw7xB5XKYcFZFBSpxGIGnGvLoevxGCNmkt9I7s
+	AHuprEHq2DMBPRzivwTN8o6GW+Wvf4xvFZjzEbmhmdsb1VEZDOFMYvyrrj6HEqtI1SZr/no/bcl
+	WgF5pvPxpApl8X+b9vvr82e+PhnqroRmnQ3iONpenzfqqFNyL0E0dV+lNgoyXGVaXv1VDnLBl/w
+	l6g82tRPQcExaTOcmMyjXXsI2BXT+ItUPMlKrkt0Ju0tj2VPALgJWBzxbvX4dibtqENeyLl5sGF
+	bUiV6aiuO8A/nHJ/M/W6wnzxkLSrCxYIGX6AFs+u6q0=
+X-Received: by 2002:ad4:5cc2:0:b0:707:5ff2:ae87 with SMTP id 6a1803df08f44-709795648f0mr74596686d6.18.1754554372617;
+        Thu, 07 Aug 2025 01:12:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwcZYfEQy6iy9UL2xTDhxg8p5mWd43fDI3rjApX13ozfe17GvhEWhlLZCOj6ouaWiLP3Fsdg==
+X-Received: by 2002:ad4:5cc2:0:b0:707:5ff2:ae87 with SMTP id 6a1803df08f44-709795648f0mr74596496d6.18.1754554372130;
+        Thu, 07 Aug 2025 01:12:52 -0700 (PDT)
+Received: from [192.168.43.95] ([37.167.96.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077cd56e1csm96276266d6.45.2025.08.07.01.12.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 01:12:50 -0700 (PDT)
+Message-ID: <2cf5aed8-3636-40f3-9ecf-21270ad83f9b@redhat.com>
+Date: Thu, 7 Aug 2025 10:12:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,54 +88,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: mdio_bus: Use devm for getting reset GPIO
-To: Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Sergei Shtylyov
-	<sergei.shtylyov@cogentembedded.com>, "David S. Miller"
-	<davem@davemloft.net>, Rob Herring <robh@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Csaba Buday <buday.csaba@prolan.hu>, "Heiner
- Kallweit" <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "Eric
- Dumazet" <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, "Geert
- Uytterhoeven" <geert@linux-m68k.org>, Mark Brown <broonie@kernel.org>
-References: <20250728153455.47190-2-csokas.bence@prolan.hu>
- <20250730181645.6d818d6a@kernel.org>
+Reply-To: eric.auger@redhat.com
+Subject: Re: [PATCH 0/2] vfio: Deprecate fsl-mc, platform, and amba
 Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20250730181645.6d818d6a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E66706B
+To: Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, clg@redhat.com
+References: <20250806170314.3768750-1-alex.williamson@redhat.com>
+From: Eric Auger <eric.auger@redhat.com>
+In-Reply-To: <20250806170314.3768750-1-alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Alex,
 
-On 2025. 07. 31. 3:16, Jakub Kicinski wrote:
-> On Mon, 28 Jul 2025 17:34:55 +0200 Bence Csókás wrote:
->> Commit bafbdd527d56 ("phylib: Add device reset GPIO support") removed
->> devm_gpiod_get_optional() in favor of the non-devres managed
->> fwnode_get_named_gpiod(). When it was kind-of reverted by commit
->> 40ba6a12a548 ("net: mdio: switch to using gpiod_get_optional()"), the devm
->> functionality was not reinstated. Nor was the GPIO unclaimed on device
->> remove. This leads to the GPIO being claimed indefinitely, even when the
->> device and/or the driver gets removed.
->>
->> Fixes: bafbdd527d56 ("phylib: Add device reset GPIO support")
->> Fixes: 40ba6a12a548 ("net: mdio: switch to using gpiod_get_optional()")
->> Cc: Csaba Buday <buday.csaba@prolan.hu>
->> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
-> 
-> Looks like this is a v2 / rewrite of
-> https://lore.kernel.org/all/20250709133222.48802-3-buday.csaba@prolan.hu/
-> ? Please try to include more of a change log / history of the changes
-> (under the --- marker)
+On 8/6/25 7:03 PM, Alex Williamson wrote:
+> The vfio-fsl-mc driver has been orphaned since April 2024 after the
+> maintainer became unresponsive.  More than a year later, the driver
+> has only received community maintenance.  Let's take the next step
+> towards removal by marking it obsolete/deprecated.
+>
+> The vfio-platform and vfio-amba drivers have an active maintainer,
+> but even the maintainer has no ability to test these drivers anymore.
+> The hardware itself has become obsolete and despite Eric's efforts to
+> add support for new devices and presenting on the complexities of
+> trying to manage and support shared resources at KVM Forum 2024, the
+> state of the driver and ability to test it upstream has not advanced.
+> The experiment has been useful, but seems to be reaching a conclusion.
+> QEMU intends to remove vfio-platform support in the 10.2 release.
+> Mark these drivers as obsolete/deprecated in the kernel as well.
 
-I talked with Csaba, and now I realize I shouldn't have modified the 
-original. I will resubmit that instead.
+for the whole series:
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
 
-Bence
+Thanks
+
+Eric
+>
+> Thanks,
+> Alex
+>
+> Alex Williamson (2):
+>   vfio/fsl-mc: Mark for removal
+>   vfio/platform: Mark for removal
+>
+>  MAINTAINERS                           |  4 ++--
+>  drivers/vfio/fsl-mc/Kconfig           |  5 ++++-
+>  drivers/vfio/fsl-mc/vfio_fsl_mc.c     |  2 ++
+>  drivers/vfio/platform/Kconfig         | 10 ++++++++--
+>  drivers/vfio/platform/reset/Kconfig   |  6 +++---
+>  drivers/vfio/platform/vfio_amba.c     |  2 ++
+>  drivers/vfio/platform/vfio_platform.c |  2 ++
+>  7 files changed, 23 insertions(+), 8 deletions(-)
+>
 
 
