@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-759197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C01B1D9FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:35:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49381B1D9F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 957607B0784
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:33:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B45718C2EF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A367A264619;
-	Thu,  7 Aug 2025 14:35:17 +0000 (UTC)
-Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE91262FF3;
+	Thu,  7 Aug 2025 14:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="Vqo4DixE"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8ED3262FE4;
-	Thu,  7 Aug 2025 14:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A7C262FD1;
+	Thu,  7 Aug 2025 14:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754577317; cv=none; b=PZzbY4e1alwUVpEjhR4ORlrtw4yHXU+gU+75oNLwnSPl5+7viQdcZbzvbRUaujfzGrSW3z0OqWKfhDdxhLu3S5e5+NeV5thqniHxfq0xFPfG6Z02a36CWxE+oOPIMBYxyx2FVbUtfjU1YnhmYi+i7ePYcwU3vXnxCCURK2itJAY=
+	t=1754576868; cv=none; b=eq3vFKVl5jgwtPxHYFLzM6rztC8iEDSriX/E9ziHIFibF4G14s96H3i21fuMTUA3aq3peHiBXfz1vhVcBCfBvA4/9Fxkc5H9NsxRly1z2y6F6xmDmCuhabCrnC/JqJu3e2elmM5z7RGotEga1+QBMTCc1pgw0LseIMGf6xPACTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754577317; c=relaxed/simple;
-	bh=nWXqu19Z2b9S0qTX4q0JcitlMU/BmuH+gBHAjGFV9x0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qItKLa+I6/dnov/cCTU3F8cd8GEGqCMuhYpipUgaDJURdCNUKopnefP1bL0dqB2UHQ8vPHro5CN4GwCBHNPvS6EMReF34H8c05qKYgso5VlKPnzpC9ea3jxAs8BY173opdxTaxj+6k4AkKR6S3tMGfGQUeOX/HTZQFNM02FoQ9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id 8ECED12CA1C;
-	Thu, 07 Aug 2025 14:27:35 +0000 (UTC)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Date: Thu, 07 Aug 2025 16:27:32 +0200
-Message-ID: <2235744.irdbgypaU6@lichtvoll.de>
-In-Reply-To: <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
-References:
- <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
+	s=arc-20240116; t=1754576868; c=relaxed/simple;
+	bh=Ui2YdGX52qhIubOx9bG69bbpoh4fcB4If/FluerDLno=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A8VldIwiGIkTJX3rHCe/Hw6BJoZMtgmDtSXCh4cWwYhIH/KERBZY5guID+qNODBq3ksX5Ah9PwySzNVKiNNSHJbHzpltsRtzN+Vejyfk7r+9fbVvZMpOCEpyPvLAFtpLTKlZmnhDHi5zSIlrXReo2GuqT7G4PO5udVTVBX8jzEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=Vqo4DixE; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=iaUztr6gHas6stUyHR0KydIvegK9VgiaXvSMroTPDtU=; b=Vqo4DixERx+lnPS0I+NcIdGgZT
+	cYm4FqyqE0o/bjvY/YElCLl5gq0o0hDlc8X+ohBWxcYwSp3GseCXDAVXuINlix7xc7gVgpbkSvfxw
+	fbih7BMEW3FpvcYN2H6W+0OImgmRuhB23Kunugnbv0y9z5Wqi1sPO/OEBEHq3S/D5NHd7xqRnnCR1
+	Uf+/t/NqlglLlDLzkvAR+tRF5tGJ9MlqerX5zhEUXPE4Ml4Gtv+TWWNbygu/DMutmM59l3yUoIlfq
+	RASH/nhO3TfnJSnFyT7DQTiPcXTmedH98XOx0RjA3fyxzLQVHQnNw/oKIwEFAXOf9j5fSyblvYyGa
+	cBZvsR9zP8bwr0j6CqG3L02uaSU/aKhgnv1lBTtffZ6/s63Op9gjZ8+z6r5vzmgMqTTCByh2lazqK
+	QpKRjR/mZ/9/wJ5QMEpurYLohKV8xrQH8l0msxm5J2Sj6ZEqWUVH4KldGTG9iktJuWUmLdLWspWko
+	71cv+twR2or1UM8MXQdiGPI7;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1uk1ao-001ayG-1j;
+	Thu, 07 Aug 2025 14:27:42 +0000
+Message-ID: <aa65df64-68f1-47bb-ab69-9817387f3ab8@samba.org>
+Date: Thu, 7 Aug 2025 16:27:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Using smatch and sparse together (Re: [PATCH next] smb: client:
+ Fix use after free in send_done())
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Namjae Jeon <linkinjeon@kernel.org>
+References: <aJNASZzOWtg8aljM@stanley.mountain>
+ <ad2e9d94-2d95-4351-b800-627f20672209@samba.org>
+ <87646c67-78b8-41c5-9b72-361cb3b733d1@suswa.mountain>
+ <e291d925-bfd9-4202-b5d4-de5bf30ab870@samba.org>
+ <a1a0046c-f47f-4e8a-ae3c-85db58a6cb2f@suswa.mountain>
+ <df4905fb-933e-4055-8363-d6427515773b@samba.org>
+ <d3b63d25-1b03-4c7c-85cc-efd9d74c3a8a@suswa.mountain>
+Content-Language: en-US
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <d3b63d25-1b03-4c7c-85cc-efd9d74c3a8a@suswa.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi.
+Am 07.08.25 um 09:22 schrieb Dan Carpenter:
+> On Thu, Aug 07, 2025 at 08:34:09AM +0200, Stefan Metzmacher wrote:
+>> Am 06.08.25 um 16:39 schrieb Dan Carpenter:
+>>> On Wed, Aug 06, 2025 at 04:17:41PM +0200, Stefan Metzmacher wrote:
+>>>>>> What was the test that triggered the problem?
+>>>>>> Or did you only noticed it by looking at the code?
+>>>>>
+>>>>> This was a Smatch static checker warning.  You need to have the cross
+>>>>> function DB to detect it.
+>>>>
+>>>> Ok, I'll try to integrate it into my build flow...
+>>>>
+>>>> Does it replace sparse or does it run in addition?
+>>>
+>>> In addition.  I find the Sparse endianness checks especially useful.
+>>>
+>>>> If it replaces sparse I guess a small script would
+>>>> run them both?
+>>>>
+>>>> $ cat mychecker.sh:
+>>>> #!/bin/bash
+>>>> set -e
+>>>> sparse $@
+>>>> smatch $@
+>>>>
+>>>> And maybe all others from
+>>>> https://gautammenghani.com/linux,/c/2022/05/19/static-analysis-tools-linux-kernel.html
+>>
+>> I'm using this now:
 
-Malte Schr=C3=B6der - 05.08.25, 23:19:21 CEST:
-> So, no merge yet? That really is a bummer. I was really hoping to
-> finally be able to run mainline Linux again on my boxes (yes, I
-> converted all of them to bcachefs early this year), now that pretty much
-> all issues I was hitting are fixed by this merge request.
+This seems to work for me now:
 
-Thanks, that is great to know.
+$ cat custom-checker.sh
+#!/bin/bash
 
-> I mean, at the rate Kent's tree is stabilizing right now I am actually
-> considering moving some productive systems over there. But those will
-> need to run distro kernels. So, please merge, I don't want to jump
-> through the hoops to run OpenZFS ...
+set -e
 
-I did not agree to some of your behavior before, Kent. But actually at=20
-least from your description I had the feeling this pull request is about=20
-stabilizing BCacheFS in order to remove the experimental tag. The pull=20
-request looked quite reasonable to me.
+which sparse > /dev/null 2>&1 && {
+         sparse -Winit-cstring -Wsparse-error -fdiagnostic-prefix=SPARSE $@
+}
 
-And frankly I am using BCacheFS in production meanwhile, even with=20
-encryption: On a 4 TB XS-2000 external SSD and I am quite sure I am not=20
-willing to copy over all that data to a different filesystem again. And on=
-=20
-a scratch filesystem on my laptop, but that one is easily replaceable.
+which smatch > /dev/null 2>&1 && {
+         smatch -p=kernel --pedantic --succeed $@
+}
 
-Sure I can switch to a different kernel source tree, having compiled=20
-BCacheFS tools myself as well. And I am fine to do so.
+$ cat build-fs-smb.sh
+#!/bin/bash
+#
 
-But on the other hand, Linus, on a past rc1 pull request that does not=20
-only contain bug fixes, there is still the option to simply not pull it.=20
-After the discussion that has been had, even not pulling it without=20
-explaining it sounds absolutely fair enough to me. It is not that someone=20
-could force you to accept a pull request as far as I understand.
+set -ueo pipefail
 
-Well, maybe that is the strategy here: Just pull this at the last day of=20
-the 2-week window to make sure everything else after that can only contain=
-=20
-bug fixes anymore. :)
+make modules_prepare
+make -j16 M=fs/smb CF=-D__CHECK_ENDIAN__ W=1ce C=1 KBUILD_MODPOST_WARN=1 KCFLAGS="-Wfatal-errors" CHECK="$(pwd)/custom-checker.sh" $@ 2>&1 | tee build-fs-smb.out
 
-So my two cents=E2=80=A6 I'd appreciate BCacheFS to stay in kernel. I bet t=
-he=20
-churn to remove it and later again reintroduce it would be actually more=20
-work than to simply ignore a pull request every now and then.
-
-And I think I may not be the only BCacheFS user who prefers to use=20
-mainline kernels.
-
-Maybe at one conference you could come together in a room and sort this=20
-all out face to face. But until then maybe the approach I outlined above=20
-can be an option?
-
-Best,
-=2D-=20
-Martin
+cat build-fs-smb.out | grep -v 'parse error: Function too hairy' | grep -q 'error:' || {
+         rm build-fs-smb.out
+         exit 0
+}
+echo ""
+echo "BUILD-ERRORS:"
+cat build-fs-smb.out | grep -v 'parse error: Function too hairy' | grep 'error:'
+find fs/smb -name '*.o' | xargs rm
+find fs/smb -name '*.ko' | xargs rm
+rm build-fs-smb.out
+exit 1
 
 
+> The DB is too big and too dependent on your .config but I should
+> share the smatch_data/ more regularly.  I started to push that into
+> a separate git repo but I didn't finish that work.  I should do
+> that.
+
+Ok, what's the gain of updating it?
+Does it help when doing fixes on old kernels?
+
+I'm typically doing a full kernel build a week after each rc.
+My idea was to rebuild the whole db after doing that.
+
+Thanks!
+metze
 
