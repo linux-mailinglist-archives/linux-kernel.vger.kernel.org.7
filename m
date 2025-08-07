@@ -1,192 +1,129 @@
-Return-Path: <linux-kernel+bounces-758803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CF0B1D408
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:09:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598A3B1D40D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67BF13AA5C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:09:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D3616BD70
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031A61D5CD9;
-	Thu,  7 Aug 2025 08:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B767F24A061;
+	Thu,  7 Aug 2025 08:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATKap2O9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JnyTN5lo"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540932236F4;
-	Thu,  7 Aug 2025 08:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E5F24503C
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554153; cv=none; b=ZE1F7fNvnBYHVfy7NyLfjwApbTiBvY8DOeg0iCbBQcyGTvDtNTIMkmIFeJl7g1fvDWhk1ywYd14BM5kD1o7rUbE0tQJZhvEsY6Yp9zaWv2OoR6PN1sqOcLYOHJmyw0Tn/O/jQ5I4gHCXxTRnRZvwip3SM0L6rcbU9eaaPlGveGI=
+	t=1754554181; cv=none; b=TXUvrYxjIZsd3Jc/Cbz2g4qJsRGh1g7ROBY9kLyINnzR7xsD6wktMFwfYhNKSqNUjz+W8mFAKEG7w9ZfGm3jAh7ks4cfeJL5hVGsnPoN4LjoWmS4Ssj8sOnVzv2mWIKwB6zcaI2LtLe5IlFxlthlSJeRdhfzfRZSxPsqlltmT7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554153; c=relaxed/simple;
-	bh=1fAo7M0jBlXKRquCCC4HBju9WC4VuWnfN1O1usBPWyU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q+X27ZAc15DYfvuLKfW+9PythJq1Sj4yNAM9SVYIsUruf6/Vur8Sp18lzp2Zka3pCJxoyuaUfPdam0XleNY1GtehrtbA9TqebqNGcBaQHNL0xvHipYg8LgoHIHEH9ctl1IkWaMy+r72bHoWoSOWWPpq3B4cLRT7R5PN/eH6k1lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATKap2O9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB1DC4CEEB;
-	Thu,  7 Aug 2025 08:09:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754554152;
-	bh=1fAo7M0jBlXKRquCCC4HBju9WC4VuWnfN1O1usBPWyU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ATKap2O9VyWyhmILaijF0q7skMYB7Iod7SixyEVAYljXmkqPTms92OfFedvUOMRGR
-	 OuQY1XU28xp9GG9gnEzjTJ1T0ERDXlAg0zF5f0PDl7FSZUvMTjepCiHheF5ClSo1Fe
-	 k0RGu1c34zyEGppAIXEJbk33V0SPD9qSYzCno4e2gIZeo6GQtzCXCmuKIn315FPLPF
-	 cvWzwwYZFwaTkP/Vj6lzT62D685OAkPdKgi072uj5Jt979HvqZMSpo6L8elyMnWCUW
-	 KqnQOAKOVsEsxBMmrnBveN1z4x0t9BzLQM5gPQSPJE4tfeV4PC+/w/NAHJNvkjuoGE
-	 xqmNnyYlgWzhg==
-Message-ID: <a211c028-b6f4-4f0f-9dea-842eff201c8f@kernel.org>
-Date: Thu, 7 Aug 2025 10:09:06 +0200
+	s=arc-20240116; t=1754554181; c=relaxed/simple;
+	bh=NG8aMCDYi/WL5efK/Uu3n3eKEM6SXtiTD1GUBeg7nR4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jbjsKp90ClMFY+Rzfa2/FZ9V+Mkgh26bCyzKPwYgayOMVQFIAZAPv2CXsZXm7FMy/HOT0NQR6pW6ohWK7GYepDMX6Xk5Gr3NxF31oe4w2SQJOh+lhqgyBSUqPxHF7QjHlyodb2iuy0lf70zoztMFt6hQNtxnLLyHdwyNvsLUdPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JnyTN5lo; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31ebadfb7f2so799142a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 01:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754554178; x=1755158978; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VLNRGdnrrrHWLpewd/Xb7yM5Du12QJz86ZRVs5IOSyk=;
+        b=JnyTN5loA/U/zeh9EeRsprpZCyI2pJlOp6FFJmTzOB2Veeb9Wk9B6rrKu2CyOf4KYO
+         oQ2w6ntg47wJMWr8I5I6NdClUJ/teNpVldLR7UHMBkykcYLVMcBGxyT3l9v7uckP+C5C
+         2tuMMTgglLr9VW5vIMVpQ8rp1E0W7KaOeWSw82/hhAGnb5zQkLbjExnUMb3b6Nzx4AZl
+         HY5AOgb68tmbxUo52bwyedurzoCokZxCTSSgEZee8UILfQHKRaKT7t4uO8CdvCd9IJiJ
+         YZrGsDelopxNu0O7py9I7I2rREQNW/J5Es7XFfi1edBGXVRHqTSTIn5F4sUqZTb0csAj
+         EdPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754554178; x=1755158978;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VLNRGdnrrrHWLpewd/Xb7yM5Du12QJz86ZRVs5IOSyk=;
+        b=ats9tu/3zwyIJSfoWDXfTmy+SXuVVc6ruBUSl8/8Y4fqgJnJpXUw8zGOuS+LDTSlQw
+         fC93wlDEUESXuqgAb4DBR4y1Q/3maFjXFp9DNKwiRrvXZzY3ErnBUY3EpqlwqiB0oQHF
+         xdKvudsdv0F+8kBDIyJySSSTbS3IAN9g2ATh3n9V0qP2sMMJYCs5Ikt4CCNoKnIFdAy3
+         1s/WAf1xynoupF+GToznW40kNNYN2x/PibCp8OoihjB5g0QwKfGLejZYJj1F/9SexV/a
+         A2KQLOOs9iheootWiGBBo+mw9BeCzg181A2ARkmBfar71ZTScmP7Bcpc4/cSTC/XXUB6
+         ESXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNWwqk+YGdiLP3DPdggf/CWWh5x5Hvk1RA/TBDfhtSmeYOESS2rcK96j7iTZkQh6ez4ZXAaaJerLU7OD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiLDX0yBc7MB8BOwqVBdrKwKakCq9sAxbzZ6kiepfugv1qOxpu
+	D9TU1cwtINV52XrazsR2hqwH/3UCoZJj1AHYZgfWB9nvdiuIaf8G5Qhi5GslHsLADL3qZ8rQxiT
+	9yw==
+X-Google-Smtp-Source: AGHT+IG8sljjPjemytxJ6EepEkRImkq0DnvG/hG3DgghsQDxt5WKavU7F2Clp5GAwSB/brbaER3yPagxfw==
+X-Received: from pjbta7.prod.google.com ([2002:a17:90b:4ec7:b0:314:d44:4108])
+ (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4e85:b0:31e:326e:4d2d
+ with SMTP id 98e67ed59e1d1-321763087famr3140808a91.5.1754554178483; Thu, 07
+ Aug 2025 01:09:38 -0700 (PDT)
+Date: Thu,  7 Aug 2025 16:09:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: display: sitronix,st7920: Add DT schema
-To: Iker Pedrosa <ikerpedrosam@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org
-References: <20250806-st7920-v1-0-64ab5a34f9a0@gmail.com>
- <20250806-st7920-v1-2-64ab5a34f9a0@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250806-st7920-v1-2-64ab5a34f9a0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
+Message-ID: <20250807080932.1678178-1-wakel@google.com>
+Subject: [PATCH] selftests/net: Replace non-standard __WORDSIZE with
+ sizeof(long) * 8
+From: Wake Liu <wakel@google.com>
+To: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>
+Cc: Simon Horman <horms@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, wakel@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 06/08/2025 14:48, Iker Pedrosa wrote:
-> +title: Sitronix ST7920 LCD Display Controllers
-> +
-> +maintainers:
-> +  - Iker Pedrosa <ikerpedrosam@gmail.com>
-> +
-> +description: |
+The `__WORDSIZE` macro, defined in the non-standard `<bits/wordsize.h>`
+header, is a GNU extension and not universally available with all
+toolchains, such as Clang when used with musl libc.
 
-Do not need '|' unless you need to preserve formatting.
+This can lead to build failures in environments where this header is
+missing.
 
-> +  The Sitronix ST7920 is a controller for monochrome dot-matrix graphical LCDs,
-> +  most commonly used for 128x64 pixel displays.
-> +  This binding supports connecting the display via a standard SPI bus.
+The intention of the code is to determine the bit width of a C `long`.
+Replace the non-portable `__WORDSIZE` with the standard and portable
+`sizeof(long) * 8` expression to achieve the same result.
 
-Drop last sentence. You should write complete bindings for complete
-hardware. Binding cannot support something and should not cover only one
-bus.
+This change also removes the inclusion of the now-unused
+`<bits/wordsize.h>` header.
 
-> +
-> +properties:
-> +  compatible:
-> +    const: sitronix,st7920
-> +
-> +  reg:
-> +    description: The chip-select number for the device on the SPI bus.
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    description: Maximum SPI clock frequency in Hz.
-> +    maximum: 600000
-> +
-> +  spi-cs-high:
-> +    type: boolean
-> +    description: Indicates the chip select is active high.
+Signed-off-by: Wake Liu <wakel@google.com>
+---
+ tools/testing/selftests/net/psock_tpacket.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-No supplies?
+diff --git a/tools/testing/selftests/net/psock_tpacket.c b/tools/testing/selftests/net/psock_tpacket.c
+index 221270cee3ea..0dd909e325d9 100644
+--- a/tools/testing/selftests/net/psock_tpacket.c
++++ b/tools/testing/selftests/net/psock_tpacket.c
+@@ -33,7 +33,6 @@
+ #include <ctype.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+-#include <bits/wordsize.h>
+ #include <net/ethernet.h>
+ #include <netinet/ip.h>
+ #include <arpa/inet.h>
+@@ -785,7 +784,7 @@ static int test_kernel_bit_width(void)
+ 
+ static int test_user_bit_width(void)
+ {
+-	return __WORDSIZE;
++	return sizeof(long) * 8;
+ }
+ 
+ static const char *tpacket_str[] = {
+-- 
+2.50.1.703.g449372360f-goog
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - spi-max-frequency
-
-Missing allOf: with ref to spi properties
-
-> +
-> +additionalProperties: false
-
-And this is unevaluatedProperties. Please look at other examples of
-devices like that.
-
-> +
-> +examples:
-> +  - |
-> +    // Example: ST7920 connected to an SPI bus
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    spi0 {
-
-spi {
-
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        display@0 {
-> +            compatible = "sitronix,st7920";
-> +            reg = <0>; // Chip select 0
-
-Drop comment, obvious.
-
-> +            spi-max-frequency = <600000>;
-> +            spi-cs-high;
-> +        };
-> +    };
-> 
-
-
-Best regards,
-Krzysztof
 
