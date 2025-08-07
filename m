@@ -1,99 +1,96 @@
-Return-Path: <linux-kernel+bounces-759316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E0FB1DBFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:51:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 957F4B1DC02
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E69A16FE11
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:51:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B99B7B00D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5AE272E48;
-	Thu,  7 Aug 2025 16:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455662741A3;
+	Thu,  7 Aug 2025 16:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNik9z27"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="yZkIAOS4"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F15C26B777;
-	Thu,  7 Aug 2025 16:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCB42737F0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 16:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754585458; cv=none; b=YLJeIQ0mXbRQOth+mTLvqpgTdggEzU4drLfLG+GrlpeG4F8XyJVWp84dnxS+pD+jYgeonps6CpxgF+KOWo/01gpqUGkgZTFHFJ7Tmgw+vfyFG5iuO3aZ4tCBNRIDKRmPn4jSbzwQwm5cegEB7DsvSyp5KSi2mArgf6VIPiV1ImA=
+	t=1754585461; cv=none; b=aQu1y3QsJn+So8j9A+LnSAADooyOGmlEq69rsyH3ra2tprkRl9n6nVN95xLcEUyEdcjWPaHDsTt4XM/LE+SVlr7Md2ioiqhw+4AHm051XthObeLx0kOOwKZUrCMpgtp0b7Iti2AYj/B03SZRfRzC/Zp2AGI/svWkc8NW3qGfbDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754585458; c=relaxed/simple;
-	bh=ZCdy8wrGaS31m/vyICQ0sTRH47wx7RDv45XHLSPATl8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JJiWBUenQYKAxS92EUmfmfjA7sXUDiEzh1Gpmp9y8Xqt0TvRfka3xMfPQPKbiG50XoFKDZrYidX2X1ssHxIRmxLl7BrLOlhop9sdvZAZS0KSUkvjizUf/aR7eeMCAptg1c3vo1nfcYgwQxDP7OAHVsPYWd3l/VnC9qvarxchJDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNik9z27; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03939C4CEEB;
-	Thu,  7 Aug 2025 16:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754585457;
-	bh=ZCdy8wrGaS31m/vyICQ0sTRH47wx7RDv45XHLSPATl8=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=qNik9z27Gusn8Dk1XqpuixFITS1eF8nfsD0OLtmIPFNYe8ipK9j1zenCckHJewAyM
-	 iO45DVl+9CJrbLfDQxwixJ+ih9YbPa7rGjcdQltbZVhAgHvCMnEE+jtzDK/D/xZDL6
-	 XoVIemImM3IpQMChEHWkSCVIEEnNHKhu/xsfoqbWUO69SuQQwBfSdKH8R/3bp0iYWx
-	 f6r7qWaYqYY4JGlcRlDa6C0j77xWgFxE0ptgcU+nBvut0XvZ3J1A52VIDzU0SXS5bB
-	 VnSBaN8zI5C/Rz5qp+/4SpLU7X3QJFi9LuEPl/g1Rqyp6ZPN92hCyZ6cdhr1JgVqdG
-	 d9jRG0oTobIPw==
-Date: Thu, 7 Aug 2025 09:50:52 -0700
-From: Bjorn Andersson <andersson@kernel.org>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] soc: qcom: mdt_loader: Remove pas id parameter
-Message-ID: <vvo63eeg7q37qrgcpsiw5a6dl4ffa4usrr6lqozwyqknyz23ny@g4m7oeeudvby>
-References: <20250806172531.1865088-1-mukesh.ojha@oss.qualcomm.com>
- <20250806172531.1865088-3-mukesh.ojha@oss.qualcomm.com>
- <c9d761a2-7121-4ce6-84c7-232a6c4ce976@oss.qualcomm.com>
- <20250807053610.siel2gsvl2igc3ga@hu-mojha-hyd.qualcomm.com>
+	s=arc-20240116; t=1754585461; c=relaxed/simple;
+	bh=v8rFHgkrPNB3ELButopohje3DL8oevA26/4a+ko21Ew=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lVPstKIPkhcXs/8vpLFn2NkDIO5V/klikPIoQ3GKQK++apj27aHMoquib0fQMn616kPMUyKldKLfPN9fRLnPenMsXSouYVMUh6PtZKPY4vpSqMxkPmV8g0pq+7hN1mNoF5e4Ksx00Y2gHnUnHF+FogNKgDnba9w7XW4eGGJn324=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=yZkIAOS4; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577EIrak005787
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 09:50:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=v8rFHgkrPNB3ELButopo
+	hje3DL8oevA26/4a+ko21Ew=; b=yZkIAOS4tJlscJPy7cL3PG2M4DNN5EVknRaB
+	3sz9yJBC1Ym3BLZ4HJLiLD+dklxLjaIGOZ2Ow+b+f9ujGDDF7AmCKzQX13Ce+2NK
+	bKRN6iFDbugsCovB8iL+BrEpJOzrCU9ZYDzhSFoGf+0+U4IZv2zba476iNA9zJ+r
+	PUfWcE/WJizAhqj2ZnvSvTPcP4Q2FnYtLBAgvyVY9aZXYHxLwsx4hO06sBSY5s2k
+	9l9kF+nepviKWOS73Qm5WhwBD7qOVuc/Y1nGvIb/zA9F9vGqTTYTlxqfPUi4blyP
+	AGhYQPkJn2ZgySo6NL7HvFs09etYMCDliOu0E/ynRBaAfMoPyg==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 48ckc34g9d-9
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 09:50:59 -0700 (PDT)
+Received: from twshared24438.15.frc2.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.17; Thu, 7 Aug 2025 16:50:58 +0000
+Received: by devgpu013.nha3.facebook.com (Postfix, from userid 199522)
+	id 0DF4C837B4F; Thu,  7 Aug 2025 09:50:54 -0700 (PDT)
+Date: Thu, 7 Aug 2025 09:50:54 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Amit Machhiwal <amachhiw@linux.ibm.com>
+CC: Alex Williamson <alex.williamson@redhat.com>,
+        Jonathan Corbet
+	<corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Keith Busch
+	<kbusch@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <kvm@vger.kernel.org>
+Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
+Message-ID: <aJTZboKCbYVkLLUE@devgpu013.nha3.facebook.com>
+References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
+ <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250807053610.siel2gsvl2igc3ga@hu-mojha-hyd.qualcomm.com>
+In-Reply-To: <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
+X-FB-Internal: Safe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEzNyBTYWx0ZWRfX72W4CAs2W51V upWtOCqpew1R0JtoaWQCiHcJ89mi5Sbrlu/W6Wp3iwC/FXoUXynTWKlSp1HP+OWUCCE6Ss2k1Dm uFawTwNhAmifdJrXoKjJxsXiX+lgY5zWKG1zgIeUMmbo0ACM6jKnZQpvyX1I7WVJJAly8dvIE6C
+ j7d2CVPdbytjunaw+oaRaCzNGXsn3TC05bSXl4jL18hosNCiIpkZl8kL5r0cdDkmhTcqhDbQWk9 cByd3ouhP2GYksMov880NKD863JQTWOICvhzTbPEptC0GHe7cbyKAGEg0akoBgdCCZbQbINIUDb 8+t9Psm2WkvxaO8Q/akvBE5h2fSqStNLMXFMJSKHfklNt3TGYCEpwvvqH9qAWOTtS8TWYgtYA7z
+ F7vTlRjfVnTquFw7IBIT501BQuNsam6LSQWBH9Z18xnWuLIuHhZ5/8hcE9bwr540EnCJkvj/
+X-Proofpoint-ORIG-GUID: 9Y2okoxG_4xaGwFCRmcakv4bJiPf7zAG
+X-Proofpoint-GUID: 9Y2okoxG_4xaGwFCRmcakv4bJiPf7zAG
+X-Authority-Analysis: v=2.4 cv=d6X1yQjE c=1 sm=1 tr=0 ts=6894d973 cx=c_pps a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=Ocdik3-Q_VXzhM4yoKoA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
 
-On Thu, Aug 07, 2025 at 11:06:10AM +0530, Mukesh Ojha wrote:
-> On Wed, Aug 06, 2025 at 12:07:05PM -0700, Jeff Johnson wrote:
-> > On 8/6/2025 10:25 AM, Mukesh Ojha wrote:
-> > > pas id is not used in qcom_mdt_load_no_init() and it should not
-> > > be used as it is non-PAS specific function and has no relation
-> > > to PAS specific mechanism.
-> > ...> @@ -353,7 +353,7 @@ static int __qcom_mdt_load(struct device *dev, const
-> > struct firmware *fw,
-> > >  	if (!mdt_header_valid(fw))
-> > >  		return -EINVAL;
-> > >  
-> > > -	is_split = qcom_mdt_bins_are_split(fw, fw_name);
-> > > +	is_split = qcom_mdt_bins_are_split(fw);
-> > 
-> > this should be in the 4/4 patch
-> > 
-> 
-> Rush to send patches!!
-> 
+On Thu, Aug 07, 2025 at 03:04:29PM +0530, Amit Machhiwal wrote:
+> Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+> Tested-by: Amit Machhiwal <amachhiw@linux.ibm.com>
 
-Please don't!
+Hi Amit, thanks for taking the time to test and review!
 
-Also remember that this isn't a regression fix and we're in the merge
-window, so we're not going to pick these changes this week anyways.
-
-Regards,
-Bjorn
-
-> -- 
-> -Mukesh
+Alex
 
