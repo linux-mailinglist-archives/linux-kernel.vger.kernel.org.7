@@ -1,81 +1,201 @@
-Return-Path: <linux-kernel+bounces-758581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1AAB1D105
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59EDB1D106
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24CC43BD9E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:48:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B059518C11FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DB71C4A13;
-	Thu,  7 Aug 2025 02:48:53 +0000 (UTC)
-Received: from baidu.com (mx24.baidu.com [111.206.215.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803D31B87C9;
+	Thu,  7 Aug 2025 02:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XwkQtqVI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A96B79EA;
-	Thu,  7 Aug 2025 02:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FFB79EA;
+	Thu,  7 Aug 2025 02:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754534932; cv=none; b=urG6rgvu8HhzQ7f3PqNTCx4K5Z0TDy5vM7z1jQ6NtfddxQzkTGP7iV99JhsmHWhV1BxGdx5+hXqVLJZKev4gc3AkhYUCzQW1W1xSAE4tED1OmC0ilgkLQmTt5aDMaLCpGy/ku5MEYj3BYlDWkSPrqTbtX5aIgxDgWCK25+400rg=
+	t=1754535084; cv=none; b=oKcIHuhbzaJOvxFR8oSpkMP4uJbvw1ES7x6HDnPkXQI8S/8UDky/+WpUI1SlXR4mi9KrXIrU4kBmehpQYoeSDnaJrHvcuUGDsNsIecYhO+SkK7wDl9aJlKsdZOmGEYbjDDz2DTYgmKHzaZO8yMwUvUfom/kWZU5VuzGYja9+tmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754534932; c=relaxed/simple;
-	bh=VUt8Jc33Tq024p6jV2/CkCuqg6EK8ygao2cRjBx5J4k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jxJr1v7wxdrgxA4HaTgvnmcmoLjPKbTyhH7Xj5apJHFTE+S5RyxLZcx6NtMz2nDCLagCvjlNdoeZEHi07Hs3eLyYwUeDm3vsqIrwuA1xaJ3MScF4iRzxicgImkyzgiObVIC5mDvsrPTOa6WHOX8RMlB/BepkwK7NhnLVzOdcJyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: Fushuai Wang <wangfushuai@baidu.com>
-To: <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-CC: <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@fomichev.me>, <haoluo@google.com>, <jolsa@kernel.org>, Fushuai Wang
-	<wangfushuai@baidu.com>
-Subject: [PATCH bpf] bpf: Use cpumask_next_wrap() in get_next_cpu()
-Date: Thu, 7 Aug 2025 10:48:00 +0800
-Message-ID: <20250807024800.39491-1-wangfushuai@baidu.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1754535084; c=relaxed/simple;
+	bh=vNKcBICRt0gpOhUNPqPd86752k5yVrJIW8FRc0yP5Zs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kry9xmr9A96xmBGsscDL+cMhj9JbJH/agHypHZE9WRihGRdeBmiUypUJoIBpjEa7QuyoWSKzsUJb+UZtmqT/fLuNyBDhuHPiRVfg9dqMi+9LNn7JMi8WHhdofJ8fT9wb0r1rJflEegfpvkctZNmB6/VfIW4XIOzu6L4LoxyK7KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XwkQtqVI; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754535083; x=1786071083;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vNKcBICRt0gpOhUNPqPd86752k5yVrJIW8FRc0yP5Zs=;
+  b=XwkQtqVIjrD+wU/agkuvZmdk5Ie7JQpvf451T/Xd6YGcHlxt9FPkzZV9
+   Xa4AViGEiAViUDfdlfkSZbNTP9JXWD7Gnd65VUz0xDQwwANiMMqdwLhKW
+   zX6EE52e7lxRbOFRkBMiCpEG2kgn7DvaC49jtb0lwfuS9+otDpZEby7x9
+   RncwALo54g/47BlKP2mtNfqrxLAStqBcbTssDzCYFbE6FYoj8WZTuxYwT
+   uuUcenjfcgGPKIpVfVRGjXAuLA8Tz4gkp3jy8k/rClp1N76JymAT7sSk3
+   VfLg15p35xbFYqvilGV7+IQkVnVh4vF1aNf3sHpO7NYvHCEpXGYe6mCZz
+   g==;
+X-CSE-ConnectionGUID: ynKOmBXvS5uvr0hV1+hyHQ==
+X-CSE-MsgGUID: Uigq02uOTviHx5KDdla7nA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56938105"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="56938105"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 19:51:23 -0700
+X-CSE-ConnectionGUID: sCQdZdSSRUuIqfnZtwPDVQ==
+X-CSE-MsgGUID: tMkfoCwiSiWHZyNYgUeNcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="165733074"
+Received: from leiliu4-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 19:51:20 -0700
+Message-ID: <9cac1ec3-fd5f-4f20-842e-9903642126a3@linux.intel.com>
+Date: Thu, 7 Aug 2025 10:51:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] perf tools kvm: Add missed memory allocation check
+ and free
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250805004633.135904-1-dapeng1.mi@linux.intel.com>
+ <20250805004633.135904-2-dapeng1.mi@linux.intel.com>
+ <aJPn1Z5zxqOjZ-Ym@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aJPn1Z5zxqOjZ-Ym@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bjhj-exc6.internal.baidu.com (172.31.3.16) To
- bjhj-exc17.internal.baidu.com (172.31.4.15)
-X-FEAS-Client-IP: 172.31.4.15
-X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Replace the manual sequence of cpumask_next() and cpumask_first()
-with a single call to cpumask_next_wrap() in get_next_cpu().
 
-Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
----
- kernel/bpf/bpf_lru_list.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+On 8/7/2025 7:40 AM, Namhyung Kim wrote:
+> On Tue, Aug 05, 2025 at 08:46:29AM +0800, Dapeng Mi wrote:
+>> Current code allocates rec_argv[] array, but doesn't check if the
+>> allocation is successful and explicitly free the rec_argv[] array.
+>>
+>> Add them back.
+>>
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  tools/perf/builtin-kvm.c | 29 +++++++++++++++++++++++------
+>>  1 file changed, 23 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+>> index 7b15b4a705e4..f78a67a199ff 100644
+>> --- a/tools/perf/builtin-kvm.c
+>> +++ b/tools/perf/builtin-kvm.c
+>> @@ -1719,7 +1719,9 @@ kvm_events_record(struct perf_kvm_stat *kvm, int argc, const char **argv)
+>>  	set_option_flag(record_options, 0, "transaction", PARSE_OPT_DISABLED);
+>>  
+>>  	record_usage = kvm_stat_record_usage;
+>> -	return cmd_record(i, rec_argv);
+>> +	ret = cmd_record(i, rec_argv);
+>> +	free(rec_argv);
+> Well.. it's not enough just to free rec_argv.  You also need to free all
+> items in the rec_argv[].  Probably you want to add more STRDUP_FAIL_EXIT
+> when copying the original argv (here and other places).
 
-diff --git a/kernel/bpf/bpf_lru_list.c b/kernel/bpf/bpf_lru_list.c
-index 2d6e1c98d8ad..34881f4da8ae 100644
---- a/kernel/bpf/bpf_lru_list.c
-+++ b/kernel/bpf/bpf_lru_list.c
-@@ -21,10 +21,7 @@
- 
- static int get_next_cpu(int cpu)
- {
--	cpu = cpumask_next(cpu, cpu_possible_mask);
--	if (cpu >= nr_cpu_ids)
--		cpu = cpumask_first(cpu_possible_mask);
--	return cpu;
-+	return cpumask_next_wrap(cpu, cpu_possible_mask);
- }
- 
- /* Local list helpers */
--- 
-2.36.1
+Oh, yes. Would do. Thanks. 
 
+
+>
+> Thanks,
+> Namhyung
+>
+>
+>> +	return ret;
+>>  }
+>>  
+>>  static int
+>> @@ -2006,6 +2008,9 @@ static int __cmd_record(const char *file_name, int argc, const char **argv)
+>>  
+>>  	rec_argc = argc + 2;
+>>  	rec_argv = calloc(rec_argc + 1, sizeof(char *));
+>> +	if (!rec_argv)
+>> +		return -ENOMEM;
+>> +
+>>  	rec_argv[i++] = strdup("record");
+>>  	rec_argv[i++] = strdup("-o");
+>>  	rec_argv[i++] = strdup(file_name);
+>> @@ -2014,16 +2019,21 @@ static int __cmd_record(const char *file_name, int argc, const char **argv)
+>>  
+>>  	BUG_ON(i != rec_argc);
+>>  
+>> -	return cmd_record(i, rec_argv);
+>> +	ret = cmd_record(i, rec_argv);
+>> +	free(rec_argv);
+>> +	return ret;
+>>  }
+>>  
+>>  static int __cmd_report(const char *file_name, int argc, const char **argv)
+>>  {
+>> -	int rec_argc, i = 0, j;
+>> +	int rec_argc, i = 0, j, ret;
+>>  	const char **rec_argv;
+>>  
+>>  	rec_argc = argc + 2;
+>>  	rec_argv = calloc(rec_argc + 1, sizeof(char *));
+>> +	if (!rec_argv)
+>> +		return -ENOMEM;
+>> +
+>>  	rec_argv[i++] = strdup("report");
+>>  	rec_argv[i++] = strdup("-i");
+>>  	rec_argv[i++] = strdup(file_name);
+>> @@ -2032,17 +2042,22 @@ static int __cmd_report(const char *file_name, int argc, const char **argv)
+>>  
+>>  	BUG_ON(i != rec_argc);
+>>  
+>> -	return cmd_report(i, rec_argv);
+>> +	ret = cmd_report(i, rec_argv);
+>> +	free(rec_argv);
+>> +	return ret;
+>>  }
+>>  
+>>  static int
+>>  __cmd_buildid_list(const char *file_name, int argc, const char **argv)
+>>  {
+>> -	int rec_argc, i = 0, j;
+>> +	int rec_argc, i = 0, j, ret;
+>>  	const char **rec_argv;
+>>  
+>>  	rec_argc = argc + 2;
+>>  	rec_argv = calloc(rec_argc + 1, sizeof(char *));
+>> +	if (!rec_argv)
+>> +		return -ENOMEM;
+>> +
+>>  	rec_argv[i++] = strdup("buildid-list");
+>>  	rec_argv[i++] = strdup("-i");
+>>  	rec_argv[i++] = strdup(file_name);
+>> @@ -2051,7 +2066,9 @@ __cmd_buildid_list(const char *file_name, int argc, const char **argv)
+>>  
+>>  	BUG_ON(i != rec_argc);
+>>  
+>> -	return cmd_buildid_list(i, rec_argv);
+>> +	ret = cmd_buildid_list(i, rec_argv);
+>> +	free(rec_argv);
+>> +	return ret;
+>>  }
+>>  
+>>  int cmd_kvm(int argc, const char **argv)
+>> -- 
+>> 2.34.1
+>>
 
