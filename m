@@ -1,252 +1,142 @@
-Return-Path: <linux-kernel+bounces-759000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B090BB1D6EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8AEB1D6F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CECD18889A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E0C3BBCD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAE123507F;
-	Thu,  7 Aug 2025 11:49:34 +0000 (UTC)
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1A1230D0D;
+	Thu,  7 Aug 2025 11:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="1SEAdqom"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F15C196C7C;
-	Thu,  7 Aug 2025 11:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1A11F4615
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754567373; cv=none; b=N5Xa/nRmUhqjinkK9N4sPNeqy0GprbQru110iSy8W8rM1JYDbj1jf3xXv7pBivOFZzDOrEeM/PmrR7YCEUrQ/ww6LIwuqyCr/4TTiF1XEZ6LSS6umWYukryzhOVfg0etszH3MTAWEoE4B9HiQBPqbu/MD0woUDY2AyHhEN+rNAE=
+	t=1754567399; cv=none; b=jPIuBr5j7UwwgKcrtMwVKC96LsHr3oLMcJqgTfssZVYQs/0Z9daSoZMyrwPyFBzXtXvgo0fbYKDhMUoTLqUbubBJKjJlZBKw4ag7p3g5L3healxiOkcIFgapC/75BFZLjTXgPm19w0XCWRHrjVbg/MhHqg8UXK23Wm902l4Pucw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754567373; c=relaxed/simple;
-	bh=7VB3deSobFqRRYrxJWdOyLo4eZ2Jg7wtTAQhZHsOn6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CunjWdfLtgXAW2H1diaQR+7eajrMazqxVOkFF9iDJpkb4YaYtl7Z5UO76sW4+h3LjACuqh6hFGkeNgjeTp8jobxpotV14/Mo0YTfazTsoXX66Vukyzlwov8taB7cwoMf2ZosxTC6a8r569+/MPn30umH0RampyXvsNTWSweuCxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip4t1754567235t8a796b49
-X-QQ-Originating-IP: mmCBvCuxEsz+t7Bnuow0glS9H9YFEoLdKihw4Fq2iCc=
-Received: from [IPV6:240f:10b:7440:1:e250:2ab5 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 07 Aug 2025 19:47:11 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3419397945701426730
-Message-ID: <15182C5FA04DB0A2+e2dbbd1f-24d6-4d9a-a822-222a71cc6dd8@radxa.com>
-Date: Thu, 7 Aug 2025 20:47:11 +0900
+	s=arc-20240116; t=1754567399; c=relaxed/simple;
+	bh=CFkGqDO7Q7+R0C5bRPKy/3270nuGPRHtyhIqCKi8MPI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DunYHH+iPwfFJm+flRJMFs3GRM3J4hFJZvUy2gnA4q3Pci5OInjGHooYLvfSKxfqws66ef6jyOtLD+/5EdOqH310fC0N7YPYe1Sc2w6HCWDyAzpLvRA883+05TGyPBNr5lv8iDaO9vIUsH3sK6O5bE6kI2LsNvVZgRAFZlXurTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=1SEAdqom; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779orbi011575;
+	Thu, 7 Aug 2025 13:49:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=frNa2nBmhsFWjChnvqTYWM
+	GE1qrm7ecsPfV2Lh8SkAY=; b=1SEAdqomI6QeZCcCa/1A9G2A0MPtbf3ABTp7TG
+	nHaKWPw7ZTirAUS+EDyu/dL8FvPSg4bnlT/LBNNMQNGcS367UJwFHrA2W2p9wEwd
+	1j/GEvh1GBB9zprn1d7I4XB86LKjfOhCmVRvNYwY8t5IDtbgxkOoFBqBM2qwg5B5
+	+Dkzh+8NOZS4YNul6LWVP/JBfP114Hdl3pCfHWfjSvwQVOu0hmSFzNBm2iI1LEbB
+	RyI39NhXp0QRVkzkBswGJvI0GixmrJeNuYWMVLuo2SnfDV9ljyoZY4+iUcM8R/70
+	0HLsloN2j5JDi9TexUo7kZcbQX9gHXOCJ+Xh0haVEjypPZEA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48c7mcutra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 13:49:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B0E4140048;
+	Thu,  7 Aug 2025 13:48:36 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 16AEA71FDA0;
+	Thu,  7 Aug 2025 13:48:14 +0200 (CEST)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 7 Aug
+ 2025 13:48:13 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <maz@kernel.org>, <tglx@linutronix.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <fabrice.gasnier@foss.st.com>, <mani@kernel.org>,
+        Christian Bruel
+	<christian.bruel@foss.st.com>
+Subject: [PATCH] irqchip: gic-v2m: Handle multiple MSI base IRQ mis-alignment
+Date: Thu, 7 Aug 2025 13:47:58 +0200
+Message-ID: <20250807114759.3966195-1-christian.bruel@foss.st.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] arm64: dts: rockchip: Add rk3588 based Radxa CM5
-To: Joseph Kogut <joseph.kogut@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jimmy Hon <honyuenkwun@gmail.com>
-Cc: Steve deRosier <derosier@cal-sierra.com>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
- <20250617-rk3588s-cm5-io-dts-upstream-v5-2-8d96854a5bbd@gmail.com>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <20250617-rk3588s-cm5-io-dts-upstream-v5-2-8d96854a5bbd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MW2WLBvYEeCvozn6IR6114VdDJEeDAXqEaoS5O9L8r0IWBg6EDEfGLiJ
-	WGErZjg1II8kwxfMZQ/BfhhwQyDOib6DhjKfBQGdlypOYWdPL7UmZAU3gzjRWWQ/tszV4t0
-	XsuPcLH6NXxqpZrHR3/64rsarupAxsBYAfHzFL6rCwafApQG3rOQnUU0IqZj9KTB0ymycMV
-	cVosiV3n6XTSjvESHT7ElsfhpJEw53Pim5ecHAwiV98aNaELlSN28Q+Zu36r4HdUHWpawvH
-	zxXyvoZFLTgKcFPn2dsPo8pzbh9n8tjRuamxL6dUnhxxrNag6adrJTqrg2LbaLmJEj76+Gb
-	wVy5S5j+bB+t13n+bhaGnDt5xw487Ihn1kHuO+u2hijKoXe9PKh8vc0KqwQeNz2TWx5JqsY
-	wrs61wDK6nouwyR1WI0QUBRYedwGTemT2LB8LIJUAHzFd3MJH/fUq/5XQ7KKyKSyjkJduUy
-	RwzrrOMr5vDfjinZJEQtHsJQLPnaP+r43F0j/PAsq6u3fLWxhx26TKpTI/aRzWdwsoE15Yj
-	Cr0CErSTuTeeQ1h301HWb3FejdaCCZU9emyhdu8NJkjuk2Ns0mzcFNTDG9LU+nlDEMmQX35
-	9or82EDGtR7/LQV97SUhfc7JxIna1xA508SpbjC7U4Gvm27K87/gbi5N0+fA/PR9mBW3ChK
-	kRtdcET9Lq4DMZuQr2T/elycn27dSQA7Wzl4STyIUUXdFkE6jAsY5SG2Hm+9psOx++kqP0e
-	JeoKC6l5kzuzjjWVq9xwRiqWa5bVjhuNN9uONvSn/0v5ugnY8fTdC7ug772WtOlTDK4iP1I
-	LxPujcdkoIKYgjcx+zy/HZ1NZIc94VSttUPA271Ka+bfGzoFqjX97lPUHJ6mXBiLzfecIKI
-	MiGjahGIjBdmOpYMuezypoX2lJrcV54Fllg65kOEXJxO80pjw9HjslclZDj5Pv0Gk00+19K
-	kHq3pexWm/CaN0f2zW/51+VNctwO/UZh9sv1LbOcZzRdwoA==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
 
-Hi Joseph,
+The PCI Local Bus Specification (section 6.8.3.4 in Rev 3) allows modifying
+the low-order bits of the MSI Message Data to encode the interrupt number.
+However, the base SPI used for allocation may not be aligned to the
+requested number of irqs.
 
-First of all, thank you very much for your hard work!
+For instance, on STM32MP25 with an initial MSI_TYPER base SPI of 0x16A,
+allocating a multiple MSI of size 8 with the first two slots reserved, the
+offset returned is 8, resulting in an MSI DATA base of 0x172.
+This causes the endpoint device to send a wrong interrupt number:
 
-On 6/18/25 07:12, Joseph Kogut wrote:
-> Add initial support for the Radxa Compute Module 5 (CM5). The CM5 uses a
-> proprietary connector.
-> 
-> Specification:
-> - Rockchip RK3588
-> - Up to 32 GB LPDDR4X
-> - Up to 128 GB eMMC
-> - 1x HDMI TX up to 8k@60 hz
-> - 1x eDP TX up to 4k@60 hz
-> - Gigabit Ethernet PHY
-> 
-> Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
-> ---
->   .../arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi | 135 +++++++++++++++++++++
->   1 file changed, 135 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..6410ea5255dc783e5d24677853ccf1c78008e834
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2025 Joseph Kogut <joseph.kogut@gmail.com>
-> + */
-> +
-> +/*
-> + * CM5 data sheet
-> + * https://dl.radxa.com/cm5/v2210/radxa_cm5_v2210_schematic.pdf
-> + */
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/soc/rockchip,vop2.h>
-> +#include <dt-bindings/usb/pd.h>
-> +
-> +/ {
-> +	compatible = "radxa,cm5", "rockchip,rk3588s";
-> +
-> +	aliases {
-> +		mmc0 = &sdhci;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		led_sys: led-0 {
-> +			color = <LED_COLOR_ID_BLUE>;
-> +			default-state = "on";
-> +			function = LED_FUNCTION_HEARTBEAT;
-> +			gpios = <&gpio4 RK_PB4 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +};
-> +
-> +&cpu_b0 {
-> +	cpu-supply = <&vdd_cpu_big0_s0>;
-> +};
-> +
-> +&cpu_b1 {
-> +	cpu-supply = <&vdd_cpu_big0_s0>;
-> +};
-> +
-> +&cpu_b2 {
-> +	cpu-supply = <&vdd_cpu_big1_s0>;
-> +};
-> +
-> +&cpu_b3 {
-> +	cpu-supply = <&vdd_cpu_big1_s0>;
-> +};
-> +
-> +&cpu_l0 {
-> +	cpu-supply = <&vdd_cpu_lit_s0>;
-> +};
-> +
-> +&cpu_l1 {
-> +	cpu-supply = <&vdd_cpu_lit_s0>;
-> +};
-> +
-> +&cpu_l2 {
-> +	cpu-supply = <&vdd_cpu_lit_s0>;
-> +};
-> +
-> +&cpu_l3 {
-> +	cpu-supply = <&vdd_cpu_lit_s0>;
-> +};
-> +
-> +&gpu {
-> +	mali-supply = <&vdd_gpu_s0>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c0m2_xfer>;
-> +	status = "okay";
-> +
-> +	vdd_cpu_big0_s0: regulator@42 {
-> +		compatible = "rockchip,rk8602";
-> +		reg = <0x42>;
-> +		fcs,suspend-voltage-selector = <1>;
-> +		regulator-name = "vdd_cpu_big0_s0";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <550000>;
-> +		regulator-max-microvolt = <1050000>;
-> +		regulator-ramp-delay = <2300>;
-> +		vin-supply = <&vcc5v0_sys>;
-> +
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +
-> +	vdd_cpu_big1_s0: regulator@43 {
-> +		compatible = "rockchip,rk8602";
-> +		reg = <0x43>;
-> +		fcs,suspend-voltage-selector = <1>;
-> +		regulator-name = "vdd_cpu_big1_s0";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <550000>;
-> +		regulator-max-microvolt = <1050000>;
-> +		regulator-ramp-delay = <2300>;
-> +		vin-supply = <&vcc5v0_sys>;
-> +
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +};
-> +
-> +&mdio1 {
-> +	rgmii_phy1: phy@1 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <0x1>;
-> +	};
-> +};
-> +
-> +&pd_gpu {
-> +	domain-supply = <&vdd_gpu_s0>;
-> +};
-> +
-> +&sdhci {
-> +	bus-width = <8>;
-> +	no-sdio;
-> +	no-sd;
-> +	non-removable;
-> +	max-frequency = <200000000>;
-> +	mmc-hs400-1_8v;
-> +	mmc-hs400-enhanced-strobe;
-> +	mmc-hs200-1_8v;
-> +	status = "okay";
-> +};
-> +
+1st MSI = 0x172 | 0x0 = 0x172
+2nd MSI = 0x172 | 0x1 = 0x173
+3rd MSI = 0x172 | 0x2 = 0x172 wrongly triggers the 1st MSI
 
-Please remove the last blank line.
+The alignment offset can be computed in the gicv2m driver:
+replacing bitmap_find_free_region() with bitmap_find_next_zero_area_off()
+to accommodate the required alignment.
 
-Best regards,
+Without this fix, the workaround is to force the alignment in the DT
+within the MSI range (if 32 MSIs are mapped from 362 to 393):
+arm,msi-base-spi = <368>
+arm,msi-num-spis = <26>
+with the effect of reducing the number of available MSIs.
 
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
+Change-Id: I316a580755cd1b1684929d2540295f4a45f0532d
+Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+---
+ drivers/irqchip/irq-gic-v2m.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic-v2m.c b/drivers/irqchip/irq-gic-v2m.c
+index 24ef5af569fe..21a14d15e7a9 100644
+--- a/drivers/irqchip/irq-gic-v2m.c
++++ b/drivers/irqchip/irq-gic-v2m.c
+@@ -153,14 +153,18 @@ static int gicv2m_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+ {
+ 	msi_alloc_info_t *info = args;
+ 	struct v2m_data *v2m = NULL, *tmp;
+-	int hwirq, offset, i, err = 0;
++	int hwirq, i, err = 0;
++	unsigned long align_mask = (1 << get_count_order(nr_irqs)) - 1;
++	unsigned long align_off, offset;
+ 
+ 	spin_lock(&v2m_lock);
+ 	list_for_each_entry(tmp, &v2m_nodes, entry) {
+-		offset = bitmap_find_free_region(tmp->bm, tmp->nr_spis,
+-						 get_count_order(nr_irqs));
+-		if (offset >= 0) {
++		align_off = tmp->spi_start & info->desc->pci.msi_attrib.multiple;
++		offset = bitmap_find_next_zero_area_off(tmp->bm, tmp->nr_spis, 0,
++							nr_irqs, align_mask, align_off);
++		if (offset < tmp->nr_spis) {
+ 			v2m = tmp;
++			bitmap_set(v2m->bm, offset, nr_irqs);
+ 			break;
+ 		}
+ 	}
+-- 
+2.34.1
+
 
