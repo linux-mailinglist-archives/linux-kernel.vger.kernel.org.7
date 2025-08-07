@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-759159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B9AB1D95A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:50:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB7BAB1D95F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01B173AE635
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814C918C53B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE3D25DD07;
-	Thu,  7 Aug 2025 13:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E59257427;
+	Thu,  7 Aug 2025 13:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nvVRMBAr"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="At4XKK7p"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDD62561AA
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143BE204583
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754574627; cv=none; b=jpgUKngsYoKBdjMe2qPZdMt+XtANQH6xtAa5AwV/lg5xU7HSuF9FLYCww8/ghBzsKx5rJWdZZQvIQYfqdkTr8+imlK8ibfpH73nYGpHmMyxfBSWsKfLnyZ6ZXUZdhOyh1OrWQVZH7o7KL6KJtMI53u36CbX4NfRAHgsEhVyfD50=
+	t=1754574669; cv=none; b=TBe+BOve3kSEW758pdkCiiX7isZ9Jcq7yyK/1gDqWb1fhGinFjd0XdAUa5H7cypBjUMGifirCJaBpM1dLUpkU0p2rhzJ8mGTarGlLhSlzj6ygtWCXZgs9MlbbTV2xP3uPsaVeg/ip8w9GHLbL1yn83YGDYLnG415vKZ+5oLouO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754574627; c=relaxed/simple;
-	bh=pVZc/u2JXcJZ/aRAfpTKab2xWf0eHpihlZOCZE1c4dc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ln4nkHUS3QrYSLqTL//bM0JTWP0TpgeJFty+BGiM8YQC86k3Y5idt4Ziaa/X1LCEJR9Fj7P9xl9P0b1AGuYuaz0eQOgfsArVIK5PL3WDT+YVlYBrWGncTYhurZCoV16DQDdSQmZ1nUI88lj+/GbGtRabx+wFjfB0Nvi/oa6n1Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nvVRMBAr; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1754574669; c=relaxed/simple;
+	bh=lEjzv6Q2sce3TtT8oygCrHfS3QGBSOpkfnjE4V4tuZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oMZJ1GisioMEVNKrAi/GV7CI8MAhTqS3zUTJXt5MuwalhP8W2iN2oItIsxUc41gj/LEOXDMDU5a+n9/AZme3AyhAuC7qmatVRve2sskttEyjdWkCd1FuZyBJKSGWBvftI54/uzsdTNBk0wDDj/5CnCvmagT9OM051JzrxmhD7RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=At4XKK7p; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779D16E019133
-	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 13:50:24 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779CuoK018681
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 13:51:07 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5OmLGnYd7WdAQT7cvTn0HfXjvy8zdD3OEZAP/wXH4gA=; b=nvVRMBArE+Uh4dD9
-	D5hbo4mfYcGTwYgQ/dCvaplVYAexzlxNyPx2OejbF25SU+c5Ws6rn9/igO2FP60t
-	PDT+kipj6iaAmYYzvSJVQ2hiu5KDCz77O2hS0ICMuG0HNZEoyUmjX++1I19DiANq
-	zfZMG6C0zg3OGSMMSItBWKEdN0tktNIgScH/4+t1YpEGNT0hi8OXI70Vz30e/vwY
-	xwQA7kN/zHS7LbMsBLnZK0kb1dEJFhW1Z0ZH0ydZigxNVd/GdB8Qk8ZUFr5VZWuV
-	f0XrT6LrxR2gha7mNccKC48SPXrpbpzFwepjac3sADT8oRi0ps3eZux58iKk7jQt
-	dDASig==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy8eehj-1
+	YJaOnJPrQPzYB5QLyB82PbBYQ3YcFtLHpT0PXF3urfk=; b=At4XKK7p5ORvOQQc
+	dzZBJJx1j7ulVqMKhjIUWMmK8HwTpD1MdfEME1TAvbfys5RL9pJXXseh9Bq4rm+F
+	qXOkcwt4s78uQoGgVyCdtv6vsHLIDgI8s4WWdRC1vlHSpqtxNrIRZHCgarYmLQg3
+	lDUUshPXfXg9m+2eQP6VWtoGJWGsHC74b1anYhoS4h7Sv9WiIJvMSjEgUd3YjH49
+	ZRqAIL7IQYlMtJclt+OkcV6Meq4q3tntXFoe+ttkPiPe9FLrBpIo5B6O7A2k6VC2
+	eOGqtG+SdYT0VCnqJbXdhhi59qIZ+7MYCD8TQgg3PcJSRf3c4Orfk4n3CedGfUrL
+	q7TSOw==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy8eekc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 13:50:24 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70771983a52so23785276d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:50:24 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 13:51:07 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7074b13178eso1559116d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:51:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754574623; x=1755179423;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1754574666; x=1755179466;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5OmLGnYd7WdAQT7cvTn0HfXjvy8zdD3OEZAP/wXH4gA=;
-        b=tW9f5U9pi5uR263uBWSCSQIqRMklXoLM5+ahyTbiNtb8Ai/UxeMCdHubWKN6yW3JcX
-         Vo3m0TgHZZrUXyMr8stREpy+MUasOH9Bp0bbiNWqzYarU8hLJiWeOzQ+aATQxIcxeRMd
-         xk7jlacUgZnFmzifzlY8gAEGRAlNh6gDtrz2MwRPDQxb1ulCkXAJ0V/KkCdoENJwOMvs
-         k+Nqm7qabhcmO595toalRSpayTBHT7ZSk7Zk8VSUAPUdcsInbC1K59jRXJbhCjcboWKA
-         qixeHjGObYXRpe/3B6NT2Btlen/xMeYIB8qvA5fwspxuEId0+3D9F9aBypCvMe/XSYpD
-         Q6pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWacGyN3AVU/rRs6jLFnNL8ml/Ts0GudAVnIFvJOM3F5CzwJZ2R5lM7WPYyEc8woZ+DxxW0xs/N6/CJtZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlMTmKWC09+AEqu9XMlZU7jcr6cTGFiICjgp4gH9C0UqMk7w5B
-	U4BaoRMJnd+UghkmalJ5bNRZTf6+kZ38E6BYLMzyG0J6eW7aso23haqIF6v4/T9obaRqQIxu//n
-	Ia5xW7pDfaBGF9CDwFW3NJOOJeeX0Yr93+fL1JLGbyVSZbxHQPwOrCZGrjoBoBWrgyJM=
-X-Gm-Gg: ASbGncstHyDSzJw68Csbk38+j3UIL1LeVc2ikwCnvaCsPV94f0zr75k+JsmeHdDJYZC
-	moL4aB4rsU35gF2D4qWeYL7cYNKO0/bCIQd7Y2PzFGu9FKdug8ILqUbvOSOJfVTDZtwI4d8qEQU
-	kBwyPC08gls3O32O6OrWN4LK2rx4ClVKh1TpqIMFK3nhEynvYSbLmMPVvsz6oOia932z+yGrjV1
-	myE9DNQe++Yft+4DVURpaMydaEI3BwID3P4x2rNvROlYJCtAfjGbgNb8YCPQ2t42nzFhECrRYuL
-	2H4n8OirQg2ujAkd1mVV46e0/ca6q/VcDf7AzorgiuWYr3jtnYACSsRhkAxue2X9TEHGeQ==
-X-Received: by 2002:a05:6214:4102:b0:6fa:a4ed:cce5 with SMTP id 6a1803df08f44-7098a855026mr44069946d6.44.1754574622778;
-        Thu, 07 Aug 2025 06:50:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHX5W9OIu6saBYDV0YXjlz5Xl07l+QbXVshJX2L+0ypDPs8YDP0IdLJwPHCyRtytfrRNuaQaw==
-X-Received: by 2002:a05:6214:4102:b0:6fa:a4ed:cce5 with SMTP id 6a1803df08f44-7098a855026mr44068536d6.44.1754574621124;
-        Thu, 07 Aug 2025 06:50:21 -0700 (PDT)
-Received: from trex (205.red-83-60-94.dynamicip.rima-tde.net. [83.60.94.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e009e465sm17965636f8f.43.2025.08.07.06.50.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 06:50:20 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Thu, 7 Aug 2025 15:50:18 +0200
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        bryan.odonoghue@linaro.org, quic_dikshita@quicinc.com,
-        quic_vgarodia@quicinc.com, konradybcio@kernel.org, krzk+dt@kernel.org,
-        mchehab@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 5/7] media: venus: core: Add qcm2290 DT compatible and
- resource data
-Message-ID: <aJSvGhRkFXEJeR8u@trex>
-References: <20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com>
- <20250805064430.782201-6-jorge.ramirez@oss.qualcomm.com>
- <4chbcvub4scnv4jxjaagbswl74tz4ygovn3vhktfodakysbgy3@kukktkwd2zsr>
- <aJHgh8mon9auOHzi@trex>
- <aJHqpiqvulGY2BYH@trex>
- <to2hrxml3um6iep4fcxhkq7pbibuimfnv4kfwqzlwdkh4osk5f@orjzbuawwgko>
- <aJMMhIqNupwPjCN+@trex>
- <0248afed-b82d-4555-8277-e84aacf153fd@oss.qualcomm.com>
- <aJNTigOMy1JFOxot@trex>
- <s3rr3p5axi3iu4zvgwgjyhjtxmv7sgp6bqkmsgv2l76p7zxu2k@rxzbblyr57an>
+        bh=YJaOnJPrQPzYB5QLyB82PbBYQ3YcFtLHpT0PXF3urfk=;
+        b=ONGSEsxiCT4r6f1fLl5Zd0CGyz40MjoRX9nwwE96S4iwhlh82tTuw3orjQ4f0ZDCME
+         ZnLWgwEHnvhfO8MpaUt9H5irk/uVRL/PQw5WKw9NTlLQ33Fg/mbWQofnJMAn00C1gIo0
+         7WNw3f//A+ydpV23tFNJm9KDNkQzzJ/yNzEh9KPZiO34inBgh1x7U24KQbXTsyJscSKG
+         yA0KXrInuMVqnHAHR8sOAjfHs9K5JdmG2QBwsgDLyjiaf/w+28sGyvKXHwYvtVo8APDh
+         ATAGGjihdFe0DtlL2xjgMNN4B5+umvsHxKk16nJVexkdY9O4xJYbMTbP8/cZ/xA23ZXg
+         NQMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6NR83F1yfPna6BTbx5CIsCWbvsIgeSWPQkmVT6HG+jJonkODGuRmuuv5r3aWSE4LVDBZ7/JS2KgadKGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypRjaa2GsVeHkm+2v2EP93Arux/KN+S2NeJQb1IChdCGO5ZGTC
+	9/Q7EYAPQO1YEe+op6WhPl5TWDfHdb0S1yq8rupnaGFjIoH7RM6+FW8Kz/PeFMhmBNbZGM49VWa
+	2lL9pTqYP5RqKpLKgLzHFsBf5nE7vANnW84C//TIS+OyNu99E2uF/BN3mbxcI60CYh98=
+X-Gm-Gg: ASbGncsKvmJ4gZHEIE3R0/IClnvRRK9De5155+KTqqEwo78Mpzm4GuEUhRP3oE76cwh
+	S30AmcxzDwyX/jqXkcFJBZ3m5+1vT16N9inbE6WZ2+Ym2He1uO3TwyiYOH7lPR+JEFPhS7Cb5sh
+	rupGDfVivJnYJLVh50nBrbEstqPXsoXmlekELjTchzDisbm8uLR65JbbHsZqIxq9eH6FI227HbS
+	3ZlN/RtVDLLiWxtfLlnkkYlfLLmApYxHeoDGf1tRjPe+T3QtmRli7hj3X9cDH/ULcFKlnZxo/B8
+	bdie4oTrz++djC1yVJSijT8ucbo1PHdQQwCp/iNiEl0cjQFt8uGOm4DhIUs2zTPQ+y1YC/iuG+G
+	1R2suwuiQRU/z4LTgzQ==
+X-Received: by 2002:ad4:596a:0:b0:707:1654:ced4 with SMTP id 6a1803df08f44-7097943f2d4mr53232786d6.0.1754574665956;
+        Thu, 07 Aug 2025 06:51:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG05izQ2F1cJL0JtNMoakn9YJ17uRV6nsijU+bcL9wSJdmVXy+nD+ZxHapPlNUdAOzNVzIiHQ==
+X-Received: by 2002:ad4:596a:0:b0:707:1654:ced4 with SMTP id 6a1803df08f44-7097943f2d4mr53232626d6.0.1754574665396;
+        Thu, 07 Aug 2025 06:51:05 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f15a66sm12009012a12.16.2025.08.07.06.51.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 06:51:04 -0700 (PDT)
+Message-ID: <937197e9-09dd-4f3c-bdb4-4001f5217c07@oss.qualcomm.com>
+Date: Thu, 7 Aug 2025 15:51:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <s3rr3p5axi3iu4zvgwgjyhjtxmv7sgp6bqkmsgv2l76p7zxu2k@rxzbblyr57an>
-X-Proofpoint-GUID: C5m2bDfI3BVDWk1ilMwOqtc8fdrdN__L
-X-Proofpoint-ORIG-GUID: C5m2bDfI3BVDWk1ilMwOqtc8fdrdN__L
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX+ADAUZ6c6fWL
- z8JXIZ6el/pdb7JpS6FqabeYwFlsXGOKH7agFknixgOV5c3TfWeGaor47dDd0FCXvg6CgBJIiEM
- 3b0mr6swr7wyDbUZtEF7d/tY8dN6W7gs5AGzQnZZtxjTlb74hfgXO486NgZtghCDAPJCecq2gar
- mi5Fwx81UYaQrxJTmigp9/+qmOlCDUDopqZgie2EMRmj8Rqj5Am8e8M8ULQ3TzpHBKUEZrmN3o7
- wnMhjDD4NGpHRPMsr50Q3bGfQj0FfkpGSxhEz0IoCwlJBxjg8zHpvJw/A2LOJeauCx2roZi1VXS
- cTVE0bkwtf0UjbVvtozPiT2ZbMWYyGKy67qFyfdf/+UkdN9oRgvTbwKTvEwczu7mCtyHtnRRi+p
- 9Vpi4ANl
-X-Authority-Analysis: v=2.4 cv=GrlC+l1C c=1 sm=1 tr=0 ts=6894af20 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=Rr2dNH5/fcnoRoBmcVUeRg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
- a=COk6AnOGAAAA:8 a=NOzLQxjBGogwJnxeP90A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/17] drm/msm/a6xx: Fix PDC sleep sequence
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-5-9347aa5bcbd6@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250720-ifpc-support-v1-5-9347aa5bcbd6@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: wwV8zTTj2Sp07B3WT689LkwZT0-ikv5h
+X-Proofpoint-ORIG-GUID: wwV8zTTj2Sp07B3WT689LkwZT0-ikv5h
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX83Gg8yrWk2Zq
+ uYGJhvbMqAL4SgHT6s3Zh9XLhCdvcE2zhzd0x8zdu9fqxNqjxfTnBwsdsFUfs34PHG87Q06whn1
+ bEgbaO+k60Z4EHDgvzVOcMTHYjHavjMME3S/OsqMKLzlySIIe9jO7/zLkuZ54W1I4G2+rauDgMH
+ ztWS6CQO1iDiTj1D1iWlMMI/9VN/m3XHa2VFhqrlZnNurOAp0yNSdk44vZOia2CNgc8RNEkiEY+
+ SEOjUNYG/+V7puldvJLR78OImLCOgHkBR1kD2TH1eFeIpGv2WQPTavDg4CfgHXx2b10DuiJsIMN
+ uZ5Hf+IyluXT8xivzxC4eC7jMpox4UZFgW8IszBUZ6mk4zHcqtgYLgtPX6JmHPcFuTjN7BBbLCw
+ LyOQ3YZW
+X-Authority-Analysis: v=2.4 cv=GrlC+l1C c=1 sm=1 tr=0 ts=6894af4b cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=f2c1g6THgo9BaYdya5UA:9
+ a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
@@ -136,137 +129,104 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
  engine=8.19.0-2507300000 definitions=main-2508060009
 
-On 07/08/25 14:52:08, Dmitry Baryshkov wrote:
-> On Wed, Aug 06, 2025 at 03:07:22PM +0200, Jorge Ramirez wrote:
-> > On 06/08/25 11:01:09, Konrad Dybcio wrote:
-> > > On 8/6/25 10:04 AM, Jorge Ramirez wrote:
-> > > > On 06/08/25 04:37:05, Dmitry Baryshkov wrote:
-> > > >> On Tue, Aug 05, 2025 at 01:27:34PM +0200, Jorge Ramirez wrote:
-> > > >>> On 05/08/25 12:44:23, Jorge Ramirez wrote:
-> > > >>>> On 05/08/25 13:04:50, Dmitry Baryshkov wrote:
-> > > >>>>> On Tue, Aug 05, 2025 at 08:44:28AM +0200, Jorge Ramirez-Ortiz wrote:
-> > > >>>>>> Add a qcm2290 compatible binding to the Cenus core.
-> > > >>>>>>
-> > > >>>>>> The maximum concurrency is video decode at 1920x1080 (FullHD) with video
-> > > >>>>>> encode at 1280x720 (HD).
-> > > >>>>>>
-> > > >>>>>> The driver is not available to firmware versions below 6.0.55 due to an
-> > > >>>>>> internal requirement for secure buffers.
-> > > >>>>>>
-> > > >>>>>> The bandwidth tables incorporate a conservative safety margin to ensure
-> > > >>>>>> stability under peak DDR and interconnect load conditions.
-> > > >>>>>>
-> > > >>>>>> Co-developed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> > > >>>>>> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> > > >>>>>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> > > >>>>>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > > >>>>>> Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> > > >>>>>> ---
-> > > >>>>>>  drivers/media/platform/qcom/venus/core.c | 50 ++++++++++++++++++++++++
-> > > >>>>>>  1 file changed, 50 insertions(+)
-> > > >>>>>>
-> > > >>>>>> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> > > >>>>>> index adc38fbc9d79..753a16f53622 100644
-> > > >>>>>> --- a/drivers/media/platform/qcom/venus/core.c
-> > > >>>>>> +++ b/drivers/media/platform/qcom/venus/core.c
-> > > >>>>>> @@ -1070,6 +1070,55 @@ static const struct venus_resources sc7280_res = {
-> > > >>>>>>  	.enc_nodename = "video-encoder",
-> > > >>>>>>  };
-> > > >>>>>>  
-> > > >>>>>> +static const struct bw_tbl qcm2290_bw_table_dec[] = {
-> > > >>>>>> +	{ 352800, 597000, 0, 746000, 0 }, /* 1080p@30 + 720p@30 */
-> > > >>>>>> +	{ 244800, 413000, 0, 516000, 0 }, /* 1080p@30 */
-> > > >>>>>> +	{ 216000, 364000, 0, 454000, 0 }, /* 720p@60  */
-> > > >>>>>> +	{ 108000, 182000, 0, 227000, 0 }, /* 720p@30  */
-> > > >>>>>> +};
-> > > >>>>>> +
-> > > >>>>>> +static const struct bw_tbl qcm2290_bw_table_enc[] = {
-> > > >>>>>> +	{ 352800, 396000, 0, 0, 0 }, /* 1080p@30 + 720p@30 */
-> > > >>>>>> +	{ 244800, 275000, 0, 0, 0 }, /* 1080p@30 */
-> > > >>>>>> +	{ 216000, 242000, 0, 0, 0 }, /* 720p@60  */
-> > > >>>>>> +	{ 108000, 121000, 0, 0, 0 }, /* 720p@30  */
-> > > >>>>>> +};
-> > > >>>>>> +
-> > > >>>>>> +static const struct firmware_version min_fw = {
-> > > >>>>>> +	.major = 6, .minor = 0, .rev = 55,
-> > > >>>>>> +};
-> > > >>>>>
-> > > >>>>> This will make venus driver error out with the firmware which is
-> > > >>>>> available in Debian trixie (and possibly other distributions). If I
-> > > >>>>> remember correctly, the driver can work with that firmware with the
-> > > >>>>> limited functionality. Can we please support that instead of erroring
-> > > >>>>> out completely?
-> > > >>>>
-> > > >>>> yes, in V7 I did implement this functionality plus a fix for EOS
-> > > >>>> handling (broken in pre 6.0.55 firmwares).
-> > > >>>
-> > > >>> just re-reading your note, in case this was not clear, the _current_
-> > > >>> driver upstream will never work with the current firmware if that is
-> > > >>> what you were thinking (it would need v7 of this series to enable video
-> > > >>> decoding).
-> > > >>
-> > > >> I'd really prefer if we could support firmware that is present in Debian
-> > > >> trixie and that has been upstreamed more than a year ago.
-> > > > 
-> > > > 
-> > > > I share your view — which is why I put the effort into v7 — but I also
-> > > > understand that maintaining the extra code and EOS workaround for
-> > > > decoding needs to be justifiable. So I chose to align with the
-> > > > maintainers' perspective on this and removed it on v8 (partially also
-> > > > because I wanted to unblock the current EOS discussion).
-> > > 
-> > > +$0.05
-> > > 
-> > > I thought we were going to eventually relax/drop the fw requirement
-> > > when the driver learns some new cool tricks, but are we now straying
-> > > away from that? (particularly thinking about the EOS part)
-> > > 
-> > 
-> > um, no not really: the decision was to simply drop support for pre
-> > 6.0.55 firmwares for the AR50_LITE.
-> > 
-> > Pre 6.0.55:
-> > 
-> > -  has a requirement for secure buffers to support encoding
-> > -  requires a driver workaround for EOS (providing a dummy length)
-> > -  during video encoding.
+On 7/20/25 2:16 PM, Akhil P Oommen wrote:
+> Since the PDC resides out of the GPU subsystem and cannot be reset in
+> case it enters bad state, utmost care must be taken to trigger the PDC
+> wake/sleep routines in the correct order.
 > 
-> If it requires secure buffers to support encoding (which we do not
-> implement), then EOS workaround is also not required (at this point).
+> The PDC wake sequence can be exercised only after a PDC sleep sequence.
+> Additionally, GMU firmware should initialize a few registers before the
+> KMD can trigger a PDC sleep sequence. So PDC sleep can't be done if the
+> GMU firmware has not initialized. Track these dependencies using a new
+> status variable and trigger PDC sleep/wake sequences appropriately.
+> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
 
-My bad earlier — the EOS workaround applies to video decoding, not
-encoding.
+FWIW some time ago I made this patch, which tackles a similar issue,
+perhaps it's a good idea to merge both:
 
-Video decoding does NOT require secure buffers, which is why it can be
-enabled independently of the firmware update.
+From 7d6441fc6ec5ee7fe723e1ad86d11fdd17bee922 Mon Sep 17 00:00:00 2001
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Date: Thu, 20 Feb 2025 10:28:51 +0100
+Subject: [PATCH] drm/msm/adreno: Delay the Adreno RPMh startup to HFI init
 
-to clarify, the EOS workaround is necessary for decoding because:
+There's no use in trying to power up the GX logic before we're almost
+ready to fire up the GPU. In fact, with A8xx the PDC and RSC uCode are
+loaded by the GMU firmware, so we *must* wait for the GMU to fully
+initialize before trying to do so.
 
-- The current driver doesn't fully follow to the HFI spec WRT EOS
-  handling, which leads to issues like the one we're seeing.
+Move it to right before HFI init.
 
-- The firmware we're using doesn't accept the upstream driver's existing
-  workarounds — such as hardcoded buffer addresses like 0x0 or
-  0xdeadb000, which vary across firmware versions.
-    
-The way I see it sticking to the spec — that is, always passing a valid
-buffer which was my preferred choice and my first implementation — would
-make the driver more robust and less prone to this kind of problems.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 12 ++----------
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+ drivers/gpu/drm/msm/adreno/a6xx_hfi.c |  2 +-
+ 3 files changed, 4 insertions(+), 11 deletions(-)
 
-Failing that, I dont see the issue with adding workarounds/quirks to the
-EOS handling (in this case).
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 28e6705c6da6..3335583ada45 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -513,7 +513,7 @@ static int a6xx_gmu_notify_slumber(struct a6xx_gmu *gmu)
+ 	return ret;
+ }
+ 
+-static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
++int a6xx_rpmh_start(struct a6xx_gmu *gmu)
+ {
+ 	int ret;
+ 	u32 val;
+@@ -842,19 +842,11 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
+ 	else
+ 		gmu_write(gmu, REG_A6XX_GMU_GENERAL_7, 1);
+ 
+-	if (state == GMU_WARM_BOOT) {
+-		ret = a6xx_rpmh_start(gmu);
+-		if (ret)
+-			return ret;
+-	} else {
++	if (state == GMU_COLD_BOOT) {
+ 		if (WARN(!adreno_gpu->fw[ADRENO_FW_GMU],
+ 			"GMU firmware is not loaded\n"))
+ 			return -ENOENT;
+ 
+-		ret = a6xx_rpmh_start(gmu);
+-		if (ret)
+-			return ret;
+-
+ 		ret = a6xx_gmu_fw_load(gmu);
+ 		if (ret)
+ 			return ret;
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+index d1ce11131ba6..309305298a45 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+@@ -216,5 +216,6 @@ bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu);
+ bool a6xx_gmu_sptprac_is_on(struct a6xx_gmu *gmu);
+ void a6xx_sptprac_disable(struct a6xx_gmu *gmu);
+ int a6xx_sptprac_enable(struct a6xx_gmu *gmu);
++int a6xx_rpmh_start(struct a6xx_gmu *gmu);
+ 
+ #endif
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+index 8e69b1e84657..9ea01daf2995 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+@@ -910,7 +910,7 @@ int a6xx_hfi_start(struct a6xx_gmu *gmu, int boot_state)
+ 	if (ret)
+ 		return ret;
+ 
+-	return 0;
++	return a6xx_rpmh_start(gmu);
+ }
+ 
+ void a6xx_hfi_stop(struct a6xx_gmu *gmu)
+-- 
+2.50.1
 
-if (IS_AR50_LITE(core) && is_fw_rev_or_older(core, 6, 0, 53))
-	data->alloc_len = 1;
 
-Even more considering we already have:
 
-if (IS_V6(core) && is_fw_rev_or_older(core, 1, 0, 87))
-	data->device_addr = 0x0;
-else	
-        data->device_addr = 0xdeadb000;
-
-In terms of an abstration, there is no meaning to these values since
-these are not valid buffers: we are just filling whatever it makes the
-firmware work.
+Konrad
 
