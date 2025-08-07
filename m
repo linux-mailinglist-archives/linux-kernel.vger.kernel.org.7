@@ -1,238 +1,168 @@
-Return-Path: <linux-kernel+bounces-759157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12A1B1D954
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:47:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D38B1D956
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A6A318937FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9021816478C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9D82561AA;
-	Thu,  7 Aug 2025 13:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4690F25A338;
+	Thu,  7 Aug 2025 13:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="iO9WCwlq"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012046.outbound.protection.outlook.com [52.101.126.46])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XqvSoo6X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06D9204583
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754574425; cv=fail; b=u6USRMlZ8xyYasM6Zs0sUuxzjOzWloaPE+Hhna9e/Eu1ljArzVR9P+NKFU0oCQ3upaikEtcct9LEgffSkPFZJKZehZbuVBzHTm7kp8hThL2c7mUVhtZhILu0aEi5U3EFNu+uBxvJS+5lx8E+BTrceSHwmM02eZpgJuwyda8vszs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754574425; c=relaxed/simple;
-	bh=HziLT3PX4e+/cmHiuviUFHgnKkcObfQN+is5LesnFPA=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=V4B/A7ubUgtrllap6C5sGJ/Wvcv0ncZMTR3zk5qYjkFLLaWQ5FdvxOnCwT/RrVf/ARUmzvpP+Q++IBepaG+fUQ0O8OTMhiE+qUrIKlCHB1aLoPR5mLonoXX94bx9mVMoPSloqTojZ6O/kEJToy+pRAQL/PWGqbYEl8RkzuT10q4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=iO9WCwlq; arc=fail smtp.client-ip=52.101.126.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NMGBlQP6ga70dDqAyP6xGfcat0fjIXKSFuPgFwR+4g3z8b5zpWxhElW+VRY+wb2OkLoSiAZ/TaE4t/CGT91+a4eDBQbW0ujfnRj7c2k/l7FQtZNZAGXT5zbURFCQjka1sEYnsC2C5SNJID0iN4LRDFYT3haxrybia9+Ju1H9pggpyfLMYcCA05FP6We7+VadwdT/P5d3KX5QwHgyMLoTqYMF5FeTqA3OljD55i/eVJhCwnyanQz1caQ6ksgI8sPucPXJUjzZWRbkJeBY3INRVg8+UHMQkS62irO1DiuUySNneV9KzKF4ZRkuBo8bVRPTV1MXhjaQhQFtvzylDkEc8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aP0gdHnWiQ5XC4jj5pNk2kq8/VQPDl9jZhPCRIr5L3w=;
- b=K/Zd4wgStT5elWNidi4ojezapGsY8bp3YKILR2Ce9AqvtkcfikSnYdeMGrBcmT0cMb8wEllUdsVmHFKz0z905lTQ5jSxe2ovJ17hBf1HzXBzld2Fs/6ermiddB9JcAXgeE94ONxa/icgSM/Z5KtluowDWhOeiCgklua4urK10SUq2n/gWPVTwb7fOpNKhCuvjG9ko3lh2R/k6NfgI3RFXAoXHw4miR38XsmBeQ1no0k5f8i+C7yor7izDBxBfu031rPuelSTtP4eG6m4+fWPCIJDZGjdRX3UiIWBPV3/qtmPHvX/f8dGnGD5sUkrsoepHo3rCtJrXQfh1+M4MQHeZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aP0gdHnWiQ5XC4jj5pNk2kq8/VQPDl9jZhPCRIr5L3w=;
- b=iO9WCwlqT2H6y+gOv+REIMgXtanW7c8o0e4wMZuALZ+p0sMKC/MZMHVNEIx4Hw7VquY71PBW3gqtkqdLhy/BdFOpv33isGStnTX1Kj53NDCTElRTpXkZ/BKe0LYrs+AKerPgcyaBB76FTAbrPkFG51tzHI+4nzPzyxJJ9k8l71iwsi3skuOXyf7KMAsZyjNQRuyp6frecnAYOQiJePbiI78kYZjlSr3VT2/lFuRB0p4JQNwQ5safq4OjXKVcR6aRVxrPLui1RX3jLmg7DEkqrZebrc7exn6ssUFCTDXGI6nymtsfKJRQ8m9IJbmX9jh14k7fZeKZI4RmJMdRl849Kg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- SEYPR06MB6614.apcprd06.prod.outlook.com (2603:1096:101:177::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.16; Thu, 7 Aug 2025 13:46:56 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
- 13:46:55 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Qianfeng Rong <rongqianfeng@vivo.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org
-Subject: [PATCH] drm: Remove redundant __GFP_NOWARN
-Date: Thu,  7 Aug 2025 21:46:36 +0800
-Message-Id: <20250807134639.555274-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYBP286CA0043.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:404:10a::31) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2971021CC61
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754574462; cv=none; b=YW6s0rlS5usw1dFVRUZozl73tQo96mFpDiMNZvWdqvOFJsykVGABouXQjXWUv1w6Ntucv8xUXkigNCGOsYsRrQUANZfPBkpOxAUJ166avRraQ4Qoz3kL2SQp4J/P0au5V6COOkz5fO9UnR1SlMT4pPpQfwDOX1Pxc4oA8jr0r1M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754574462; c=relaxed/simple;
+	bh=Lt1VrcFl4j1dHrRBmGpd0wx8gcYqsA1Q2MC823007J4=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=I2/pYZEt1vMGDokIC4CNNXRQZ5xDpCxI0QItlJirvM8SbaTWOfI4aBelAX2BxB9qEVecTdy9j1BCSnXWHMdhNWINJq8IIqmRPI5TBRt+8YEdyQmEjiTb7g+ekQuFtnYxV7t6GPYIyuBfgr728wHyYLV3JxdfVbr/s1Au7KYDb3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XqvSoo6X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754574460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I7tmna+C/APWbW5l/h+M3jZHOM4DQuJitrvRR57OaOY=;
+	b=XqvSoo6XdRpKzos8EZUeK9hTNKTUU3orQVC2EKuhqF9eWD34WaUgHB6IZ9k6e98OOa8adj
+	vW5YkIoWeiomuN2tQdf+e156lM04YcVudVtmnOS5Pqt5vPL+zSFR9/1l0apNPVp0n/wIkZ
+	YFgMzC8VUQXjqBV7hge4YumE0iDpwSg=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-158-9v9lPJDMMz2Od8CjC-uCTw-1; Thu, 07 Aug 2025 09:47:38 -0400
+X-MC-Unique: 9v9lPJDMMz2Od8CjC-uCTw-1
+X-Mimecast-MFC-AGG-ID: 9v9lPJDMMz2Od8CjC-uCTw_1754574458
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-70e73d3c474so15294187b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:47:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754574458; x=1755179258;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I7tmna+C/APWbW5l/h+M3jZHOM4DQuJitrvRR57OaOY=;
+        b=Mzch1EMqoFFZZwsx7AeB4ln453n5wPW6Rn9wSApUwJEx2QP6GTSkPS4wakw2WIfMCK
+         ejbkn7uf5fvHZdvnWLr24a8DK4YDBnJNmVRK0cqOQqvWfZaG99ggtxuGTAqa937M5mmw
+         ZmOJMwnO2GJTnsSIJyiHNmcQWzc7mxgRwS7ghbyO3MiFZzi21X+y44Sgu6fuMlZoNcrE
+         IWu+Z097GeeguLqKBWYxJK9qfQCN+ZtvC0Kjy4y3v0eYsWvHhEwsmw399ZF+jHVj6flw
+         bwok2FhPhLqBECKxoK9/TtuMYHYX2ETk+swUI5gLtBeszAdBYbuxO0kehMGfKAWWRz8W
+         i/zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsIR6qmXGFujKXir3f0MefIZnQkE5STy9B6UdI18oVGTujGj+/QT/3ayHmQ9bLwKphPfzzUalFAEvu0XE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPrIcK5lAJZ/ncy2M9GwWa+zRGExO2u7GIlkVX+OUOkHns+ipa
+	HuUGBIxj5vXyDCCt4t6HwZVIs4QTu4xzXPopPt+h1hojxNET+xU/k43nVkUrdMYc5d7TTzxx+no
+	kjwnTOKJC4ITmHAngDTYGzIU8lO5uAwyxi6SlGchzlxdDOxyMkmHzdnH+x/w034cI6Q==
+X-Gm-Gg: ASbGncvpVWyw+kpwdEM5wwPapCRllclvIcO/86ICHt4kExr1P4vCdY+I8H7AEdgIxdo
+	1YJlO1quvjBUZqJluJ9aoYbEPJ72iVpefizqT2ZKdcUFd8YgKrzKyqPhZ+YIJDP4PmH5F5ebhgd
+	bWdJzy24lubI+BtkVVmklIPSx8tZzy/cLqbKWd+sBgrFd/ITivcu8LgkTVMhKvuC9H/Nemwx+nh
+	0KgUZVgm/V09awLu8fq5lt7t9Wrrw2SWq194UeFe0NEdEkGNekbRnkUrPzuRoEKyeeHeJXs/1Tz
+	YSjZdfqctLMo/UMGvDxBauv4AtA72V+HQL4eOWxaM9wjTLfM7+MpGIK8yiGf6nZDx+DryRgrqFL
+	baXRr59PgJw==
+X-Received: by 2002:a05:690c:6001:b0:71a:2a7e:9cb with SMTP id 00721157ae682-71bcc86dffemr83137087b3.21.1754574458120;
+        Thu, 07 Aug 2025 06:47:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEd/JntNjoL+g8+cqvaBLEooL3Wyjt2vW1P7aDxm7/dfts5x4uvWMWOlD9ChxBAudpsyM9hYw==
+X-Received: by 2002:a05:690c:6001:b0:71a:2a7e:9cb with SMTP id 00721157ae682-71bcc86dffemr83136657b3.21.1754574457595;
+        Thu, 07 Aug 2025 06:47:37 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a5cdfc5sm45823827b3.77.2025.08.07.06.47.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 06:47:37 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <5536314d-84de-488c-be56-9c66a5d1a8f5@redhat.com>
+Date: Thu, 7 Aug 2025 09:47:36 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEYPR06MB6614:EE_
-X-MS-Office365-Filtering-Correlation-Id: b3e34cc3-0aea-4453-6654-08ddd5b8df5d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VZzZC1vEoDscXtOlwzfbXiwonc9nhM+7aZcdTf5bhI4/AEwBf+uwnKnp8Xnz?=
- =?us-ascii?Q?rHMLs8eKOfHzyqriD37uNdwb0OSm9XSLLjzroKO7CU/MT705gBq5aNLPNzNu?=
- =?us-ascii?Q?Xp/waNZol4fn6Q+21ncCZy1urh953JNcAXUdwypoZDAOPfxNPWzwQfZX4xWc?=
- =?us-ascii?Q?TAO+GlC+edeIFv88+bSCYdp0K2gGIANQ2daGm2MBMD4PGB2Jo43KUCFGV1S8?=
- =?us-ascii?Q?Gy//WLz6e1DanaeqamyOMONULOSu9HbkhKkr+uks7IuZfjr37r1i86UC69ZU?=
- =?us-ascii?Q?hWSlPcxV0c4Sxqim7fsY/Yer3PKoxjI5b40AQ4vFRwfiJyjIdOnHwbObX7gl?=
- =?us-ascii?Q?ShK05gjpUor0x1pMXIorOKhn4RaMfkQ/gSqbMHZdHJtFK6gTfyn2Qw2weJNw?=
- =?us-ascii?Q?vXylv0SYpw3wRF95U7my8gmPX26lwLVkeciU8jb0fIfrh7KsBMAHZyMqpXf6?=
- =?us-ascii?Q?AN+C2t/Abz7NJoXWtUM8vr96UIbf5PHXk8vMFPURJDD7SMdo28kz6GFWVNSj?=
- =?us-ascii?Q?vzi/vfyrJJrGat3POhWYwC4ReeZEkNo9sGq9yINrQGvH/7v+AwT28UaQ4m5J?=
- =?us-ascii?Q?AoD95yTsvvgpWBvE253dtN9ucVrYYrgdk0NrE3EaC42rSRTR716cqylLoRNI?=
- =?us-ascii?Q?ETYtDV8bteQvzr1h5qsoXlrhPdMeRk3i4EWRCUmRkdIOcjslwzmPSjfVvk2P?=
- =?us-ascii?Q?GHkYiIGb5ZyvB4KzL1SGaALqD7R/JIoYIj8UUivIKCB9OVlfXd5999HUAAFe?=
- =?us-ascii?Q?keC6uXynM8HxyZ8asSDQvW33lDZwMSng6vodkPO42a1ZVnAokcIX0hKCwwcI?=
- =?us-ascii?Q?luAiLVHeoAcEE3h+Az0rq9xCb3XL2WLA04F2EerPJo6lxUqkBw52DI1amtLW?=
- =?us-ascii?Q?NZo2kSYoy9LBJJ9QPj4c8ETQyuVl91rDUuALgSfkibXWtKvGBJxs22XKjASi?=
- =?us-ascii?Q?cB/Rvk7xYdNWRYhr3opPwN44JtEnJZt4/A65+lJ5dXcZmnqnolY6zl+UstTq?=
- =?us-ascii?Q?tXNJQRobiWAeJH+presk+VEMTyc6tiaJUm6zCgDxcTxdK3wEBVTy1w2tE2i/?=
- =?us-ascii?Q?D1iu9ZsG2kHjHtXFWl0FvGbUJpzZaUrUj7rSqcy1Ge1iuNO2urqPnP5mpGIE?=
- =?us-ascii?Q?/jjo9L1pSrzNvcC37l0XplHcS9LQhGguDwl4m3NG7rLjT32RgntgRaIYbgYv?=
- =?us-ascii?Q?RSxupxp2hvmyWEn1E08tXTmeHY1ZOAw3sDsPa4l6cWG0QCEOaYiWqHj/9fNs?=
- =?us-ascii?Q?oVTeSxs6JrQvhfTUpT55sdYTR3x9aASgb1cXI5c4TvaU1OB8iPhNy6m7Lh39?=
- =?us-ascii?Q?rLrjgMenZRYQcCBr/GgYIqwfDBPKrnpuolPB8R8yW0yvZZT35JMmwmaojKOz?=
- =?us-ascii?Q?OP6FBYde4cqJPY1AVx/s4mXhvY3AdooajGBLOzRJZx0wL1vdBnwVQFRqlttz?=
- =?us-ascii?Q?f1dLRS5tkQWg7NSXNE1VSS0YuRLZWn1c3S7As4jomvmgr5vvtZ2nSbvH1YBV?=
- =?us-ascii?Q?ZHzvFlM+YxwYono=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?43lEFtQZjzzS52c4D5UIDIrcKNbqvgQTuHaLyn1XhbKHSqhrOKSWwyyU4+lG?=
- =?us-ascii?Q?iza173tlmKPJKFOaBNOk9J/EnmC0CCF9julGkYvqszFqjoATP4krEa1fpE1O?=
- =?us-ascii?Q?IC4GOGk7MbsjeKAE/DeOqmID2Qp4ANQbU2R740ZbfxQFEx8a9QDut749NptW?=
- =?us-ascii?Q?ggHLSr1foxfrOkUk7Pz2+fZb+8+gpTgUX6UBadrCLCJ6GWwoWfyKtc7CmmB8?=
- =?us-ascii?Q?Ysx4ddeXKpa4siVne2FI3TC+TYZVyix0yZAk3YV31vvJWaup/M7Rp3Zio53j?=
- =?us-ascii?Q?pivGuIjpEEk/e32L//+q5m3kv6E9ktE9sYCmY0Vl4DCv52QU9DGkWCLMuUhh?=
- =?us-ascii?Q?7k9nTG0zV/I00yD2JLwENLY1eGn57JDhB5zPdHq7vciHvgNTBrdgcSdWjwP2?=
- =?us-ascii?Q?EoEBqeyV1KdjgZRJRkh59vxxHvl2yb7fb2erY9GGtLxu1lGFKXaAH0K3Ypp3?=
- =?us-ascii?Q?Zxb1CMb6q372MDkj+BxFiHLzk9NYdD6p/DNrnLoG2xukNzF25MYhNnkxjtxy?=
- =?us-ascii?Q?/MZJFANkIwAo2JCMDiX9FkW7Ksh7EBvfEHJd5/pgnbdLFd36c2KngI+wAnaf?=
- =?us-ascii?Q?aU47ZqLGOE/ii4AmdSgdKKQ47Az0dapQH48aQJHMVpF7UY+/KiG4LUxRJoin?=
- =?us-ascii?Q?VMXc4yTQfl2cvWhCkWHHhDTYO2pmI2Ff6ISJVnxSMNSBJqccCETCrh3rUmEO?=
- =?us-ascii?Q?ZJFhytzAGhJ2iBgWWxbqoSdi6w3N6BrWBtF3NRRDBfA3gYmjPpMLKNBd06tq?=
- =?us-ascii?Q?CyIcXT5OhG1E6QMN66RgChTIdCYpgmsXgssDzN6HfqI8664Uq1Rs0DqIXfsa?=
- =?us-ascii?Q?IjX9UDKdOQE0X9bqetvKHfr2nXVcCZ/FP8eab+tsjJRVHLYojj3jnPFBZmh4?=
- =?us-ascii?Q?IyB58g0/IOqHiC5W65M4+g1Lqm+oTrtmzx5mPFrJMh/dw7DjpUsIFzyWO71/?=
- =?us-ascii?Q?yZVRnC8sxxhAr059mOqqGh9PwL4/hiT4TTewd1NWTWUcIWrg7c3xtEs/4kav?=
- =?us-ascii?Q?Za2OJf0jFR8iGyZy4BHW1Yb49LcCT+/XiIXkHRlB7xVR277J98eidHjX36Rs?=
- =?us-ascii?Q?M6kyaOOeKzE/qOHVNpMpIReIcgOlhI+B8kV1ngMwcNE6FOxg785dVwnhCScD?=
- =?us-ascii?Q?OBBAgXFLNC4D+V3UpZhjE+dLxrUVhvpr364ZAaNozgidifSZMaTOfb4jIVDm?=
- =?us-ascii?Q?dZstYapkjP887cWXrD2Y5NhdTyCT5nevp/md5zUschMhqykkp8tmCtiONHh6?=
- =?us-ascii?Q?MLIOT8NE2JPcZOomZwOKqNScnWH0en9AcGfemoaDV1AIPKOoIdsU+1oIoOOx?=
- =?us-ascii?Q?2v2OdFGsyX9rksp5xPwWwD/6Xr8l2klW3lPZPlng9WV2k95E06XxOWe3LETp?=
- =?us-ascii?Q?1iXqxi4/e6CJroJD3GQyflU35KQKhqafVEqUbUIG5UIYs48xVoUYIs3hxl96?=
- =?us-ascii?Q?9QpFOscziVpbA5CcVWhgl3PRIrQQDQsBLNvFBVhAjH5suHMqC+0fD8HzVeXE?=
- =?us-ascii?Q?nRwsgaA/WBeenEP/w382FNH0u6AGapvoVv75Z3Dvo5+ujRodsDDZYF82b4EW?=
- =?us-ascii?Q?TiHaEoOqqHaWk7QkZ3A8LyZPqcNscJhbjUbLGTTS?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3e34cc3-0aea-4453-6654-08ddd5b8df5d
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:46:55.7238
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lUUBsmuiV6NSmO+IjoeerDv2eQ09MfPdlJVBAdNLp/JZgZWM4/KhDH6ejmigAeTLEr/QV4NneHbpoMRGe6Y4RA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6614
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] cgroup/cpuset: Use static_branch_enable_cpuslocked()
+ on cpusets_insane_config_key
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>
+References: <20250806172430.1155133-1-longman@redhat.com>
+ <20250806172430.1155133-2-longman@redhat.com>
+ <aJSm2sG1G_mk_1P-@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US
+In-Reply-To: <aJSm2sG1G_mk_1P-@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
-made GFP_NOWAIT implicitly include __GFP_NOWARN.
+On 8/7/25 9:15 AM, Juri Lelli wrote:
+> Hi,
+>
+> On 06/08/25 13:24, Waiman Long wrote:
+>> The following lockdep splat was observed.
+>>
+>> [  812.359086] ============================================
+>> [  812.359089] WARNING: possible recursive locking detected
+>> [  812.359097] --------------------------------------------
+>> [  812.359100] runtest.sh/30042 is trying to acquire lock:
+>> [  812.359105] ffffffffa7f27420 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_enable+0xe/0x20
+>> [  812.359131]
+>> [  812.359131] but task is already holding lock:
+>> [  812.359134] ffffffffa7f27420 (cpu_hotplug_lock){++++}-{0:0}, at: cpuset_write_resmask+0x98/0xa70
+>>       :
+>> [  812.359267] Call Trace:
+>> [  812.359272]  <TASK>
+>> [  812.359367]  cpus_read_lock+0x3c/0xe0
+>> [  812.359382]  static_key_enable+0xe/0x20
+>> [  812.359389]  check_insane_mems_config.part.0+0x11/0x30
+>> [  812.359398]  cpuset_write_resmask+0x9f2/0xa70
+>> [  812.359411]  cgroup_file_write+0x1c7/0x660
+>> [  812.359467]  kernfs_fop_write_iter+0x358/0x530
+>> [  812.359479]  vfs_write+0xabe/0x1250
+>> [  812.359529]  ksys_write+0xf9/0x1d0
+>> [  812.359558]  do_syscall_64+0x5f/0xe0
+>>
+>> Since commit d74b27d63a8b ("cgroup/cpuset: Change cpuset_rwsem
+>> and hotplug lock order"), the ordering of cpu hotplug lock
+>> and cpuset_mutex had been reversed. That patch correctly
+>> used the cpuslocked version of the static branch API to enable
+>> cpusets_pre_enable_key and cpusets_enabled_key, but it didn't do the
+>> same for cpusets_insane_config_key.
+>>
+>> The cpusets_insane_config_key can be enabled in the
+>> check_insane_mems_config() which is called from update_nodemask()
+>> or cpuset_hotplug_update_tasks() with both cpu hotplug lock and
+>> cpuset_mutex held. Deadlock can happen with a pending hotplug event that
+>> tries to acquire the cpu hotplug write lock which will block further
+>> cpus_read_lock() attempt from check_insane_mems_config(). Fix that by
+>> switching to use static_branch_enable_cpuslocked().
+>>
+>> Fixes: d74b27d63a8b ("cgroup/cpuset: Change cpuset_rwsem and hotplug lock order")
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+> Looks good to me. Thanks for spotting and fixing this.
+>
+> Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
 
-Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
-(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
-up these redundant flags across subsystems.
+It is really a corner case that is not easy to trigger. I would have 
+missed that myself.
 
-No functional changes.
+Thanks,
+Longman
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- drivers/gpu/drm/drm_modeset_lock.c               | 4 ++--
- drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c | 4 ++--
- drivers/gpu/drm/i915/i915_active.c               | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_modeset_lock.c b/drivers/gpu/drm/drm_modeset_lock.c
-index beb91a13a312..58eac20a8138 100644
---- a/drivers/gpu/drm/drm_modeset_lock.c
-+++ b/drivers/gpu/drm/drm_modeset_lock.c
-@@ -88,7 +88,7 @@ static noinline depot_stack_handle_t __drm_stack_depot_save(void)
- 
- 	n = stack_trace_save(entries, ARRAY_SIZE(entries), 1);
- 
--	return stack_depot_save(entries, n, GFP_NOWAIT | __GFP_NOWARN);
-+	return stack_depot_save(entries, n, GFP_NOWAIT);
- }
- 
- static void __drm_stack_depot_print(depot_stack_handle_t stack_depot)
-@@ -98,7 +98,7 @@ static void __drm_stack_depot_print(depot_stack_handle_t stack_depot)
- 	unsigned int nr_entries;
- 	char *buf;
- 
--	buf = kmalloc(PAGE_SIZE, GFP_NOWAIT | __GFP_NOWARN);
-+	buf = kmalloc(PAGE_SIZE, GFP_NOWAIT);
- 	if (!buf)
- 		return;
- 
-diff --git a/drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c b/drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c
-index 8d4bb95f8424..22432912db2e 100644
---- a/drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c
-+++ b/drivers/gpu/drm/i915/gt/intel_engine_heartbeat.c
-@@ -220,7 +220,7 @@ static void heartbeat(struct work_struct *wrk)
- 		goto out;
- 	}
- 
--	rq = heartbeat_create(ce, GFP_NOWAIT | __GFP_NOWARN);
-+	rq = heartbeat_create(ce, GFP_NOWAIT);
- 	if (IS_ERR(rq))
- 		goto unlock;
- 
-@@ -282,7 +282,7 @@ static int __intel_engine_pulse(struct intel_engine_cs *engine)
- 	GEM_BUG_ON(!intel_engine_has_preemption(engine));
- 	GEM_BUG_ON(!intel_engine_pm_is_awake(engine));
- 
--	rq = heartbeat_create(ce, GFP_NOWAIT | __GFP_NOWARN);
-+	rq = heartbeat_create(ce, GFP_NOWAIT);
- 	if (IS_ERR(rq))
- 		return PTR_ERR(rq);
- 
-diff --git a/drivers/gpu/drm/i915/i915_active.c b/drivers/gpu/drm/i915/i915_active.c
-index 0dbc4e289300..402043cd84d5 100644
---- a/drivers/gpu/drm/i915/i915_active.c
-+++ b/drivers/gpu/drm/i915/i915_active.c
-@@ -727,7 +727,7 @@ int i915_request_await_active(struct i915_request *rq,
- static int sw_await_fence(void *arg, struct dma_fence *fence)
- {
- 	return i915_sw_fence_await_dma_fence(arg, fence, 0,
--					     GFP_NOWAIT | __GFP_NOWARN);
-+					     GFP_NOWAIT);
- }
- 
- int i915_sw_fence_await_active(struct i915_sw_fence *fence,
--- 
-2.34.1
+>
+> Best,
+> Juri
+>
 
 
