@@ -1,152 +1,193 @@
-Return-Path: <linux-kernel+bounces-758473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC32B1CFA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:03:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C35B1CFA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E742918C41BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF1E3AD484
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB6279E1;
-	Thu,  7 Aug 2025 00:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F04B4C6E;
+	Thu,  7 Aug 2025 00:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYD/6c5s"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XW6Y1ix6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A91E36D;
-	Thu,  7 Aug 2025 00:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A796B38B;
+	Thu,  7 Aug 2025 00:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754525009; cv=none; b=BMPzdRWsagIqOT+cg39uNPuO1ndMkCGvLq8DXhX4P3VR50j1YOsLtOowpVNlS2mHDclTa1k+mYL4CGoBTrWassT7bZ86cqktLf60C2XLs8gv7mmQPUcO0cwaRyAbVOOlUE3CqYcFyq9Tg6bg2/ImH4Je1OzCljPUCHfxQ/dNAos=
+	t=1754525037; cv=none; b=KI15ta3UKEM/Tiby/QHvJ9EE60QNXgNJ5hEHsRUa25MNrSxKVFJOBB1T1mvZ+Tfa1TJZL+J6+ldY/9Ayk/nxs4TugHFt1yikif8tJbjTb+sNf0Fo6JyESXNfZlTmUhHkFptNXahsmBNa/5atf95UQcoAUXzuI1IdGs/+u3/sApM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754525009; c=relaxed/simple;
-	bh=tDY9PLdL7KzBuSVPjaxM+AXpLClNtgGmFkXweb/RZUk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CxC6KDz0lHEmAqdT72Q3aJHpNB+15vqwVi2XB7RvI0QrGJS5R7F+i3vNU4NDH0suiFScwdzodHYVW/+12fXEpguabfY2gMSflmfND6th/1EuqmOR0mOOlyXF9KBh+lYNZJ/x9eh+HJRngwGXCgCSCe4R/Tj0KJwKHheHh/fSpX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYD/6c5s; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-313bb9b2f5bso585875a91.3;
-        Wed, 06 Aug 2025 17:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754525008; x=1755129808; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=s2nIm9pR2VFff1R0Gt37lG+o36/Td6KpLeuI6lVGeTs=;
-        b=SYD/6c5sb6OM7vfFH11hvFid9lWPAu6jEhebuU3vM38H2UWD0AJETvnsk8/naWwyJB
-         Ctm+i5aQwMVabwK02HFOdliwDLa5YvH819JVJtILe7pFrdxpRipeasPsASCHdAjbz8gg
-         T8mkb2iEOF+meUqYS5qyZi2zgwgXu5waKrjhJfEnIXjtC05B32oqZkzxTChcrt8sKAJ9
-         sDCq1epAJCRA+iKsBGrLY6S+78UvnEw6fBQXbS4cd6TLIukfVDggM8cZtoIDgLJg6vIS
-         tNjI3vNVdXzTxFmDkBa1h1Rxl4yHtMufTzBEemsSeMbx/4gqtrZer28UQQfX0KDz8ZmP
-         3Xnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754525008; x=1755129808;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s2nIm9pR2VFff1R0Gt37lG+o36/Td6KpLeuI6lVGeTs=;
-        b=lzcd0oiDfMGtB51d04dO8S/4qnuEvgxtoBuAfXZiQNfkZg77got7heumDAy9n5gwE1
-         RvWYYFaiXfua14V1xxMOYyJhi22lj/3DgaGV38wQ1uwpBtg4comgv8G4cwCbSL9ooUme
-         nsVNe1pflEi4YwHFOpVdr3Jwk0YRGbH4kQI5K/8eV5WPGbZ8mrVjewS14fwW74cS1q2b
-         stgHYltZMua1tKSs4VVkVAb/luxDg5Jiwj7qqhyj+kiccNKqju+/9lSog7ZWTfNGEVm+
-         hTD+LXYSc3c8iA/8EZ4jvNcBIekz30jUXk2Em9eFnR2THWeSKAXt8eYRAijrD3SP56f8
-         DUBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbjf9uHqqVNkpEg0L1YHkoi6NMhRrPfTujJWZSgEkeTgyhklDUJ4U8SQpkZihMq3HnhwKiW9WlPJ+h@vger.kernel.org, AJvYcCVjPEbz1eu9IkLtxuQ2lILw0ABB1EuKjwadrGt+wF50gUhWzjYsxfWxm7PbJOHFnBUxjrOf4ufJ@vger.kernel.org, AJvYcCXGYHXBzjVS1lWrn5JxLAY/WpeaerglgNbiLpI8ktEJfSUozrbB2ASWIeQR61GZD4PEh+SzSitjQtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBsA2TKC/1SCpk1jlcqQh8Lkz0dZfnuV1vY07+WDMTBKk8++TS
-	nj6VtnS50SLH1xo0Yt+IO1OubA1M8AXdPr2hTuYj2K+j324+pYldGLgH
-X-Gm-Gg: ASbGncuB0FDDmxC5KikvW/edJiX0NOu64lA30hUQQ+4XzpBgWs8LTuv5WM9hq3rTKW5
-	2tIrWlp2EIPwFIAlMLLLot84qvQSixcMPpaJCVwyyttbzezNBMO2F5pC9DVro0G7R9wiqRrR3/1
-	MMXzgTpeGmcYhPKYTav+ZZMyoaohZYPWaM5S8FSjUA9XJ2c656JGi8ainDnDVZixja3By3PUb8K
-	E4qwbl/ZntpYglYNo35Umv0IitlStZuteQvFz/x2cbQ+cKNh1ZoRxTuVxL56riIj32zVBkEeAtV
-	5epHUK+RzE9Ou24/2ArERkbaGD6N4dC0nNV+PHS39jdw4TwrLffTpOYvQLmMn+1Z+bHnv33Df/L
-	oRPWBrFZFLUFIS/NPs+sMN3s8uKM/bYVCAZIj
-X-Google-Smtp-Source: AGHT+IHndIqzglD98iobqIfSre5A1Dz03NPUiXq1oQdA0qqIpiN9bEtefJ4HDNfGWlO3SOLnCSjtyw==
-X-Received: by 2002:a17:90b:1c85:b0:31f:6f8c:6c92 with SMTP id 98e67ed59e1d1-32166c2b18emr6044750a91.11.1754525007434;
-        Wed, 06 Aug 2025 17:03:27 -0700 (PDT)
-Received: from [192.168.0.69] ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32102a559bdsm9223807a91.1.2025.08.06.17.03.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 17:03:26 -0700 (PDT)
-Message-ID: <ad14410ef291af926e7185d5d95cb0c932135ee3.camel@gmail.com>
-Subject: Re: [RFC 1/4] net/handshake: get negotiated tls record size limit
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: Hannes Reinecke <hare@suse.de>, alistair.francis@wdc.com, 
-	dlemoal@kernel.org, chuck.lever@oracle.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	donald.hunter@gmail.com, corbet@lwn.net, kbusch@kernel.org,
- axboe@kernel.dk, 	hch@lst.de, sagi@grimberg.me, kch@nvidia.com,
- borisp@nvidia.com, 	john.fastabend@gmail.com, jlayton@kernel.org,
- neil@brown.name, okorniev@redhat.com, 	Dai.Ngo@oracle.com, tom@talpey.com,
- trondmy@kernel.org, anna@kernel.org, 	kernel-tls-handshake@lists.linux.dev,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
-Date: Thu, 07 Aug 2025 10:03:14 +1000
-In-Reply-To: <2a9c71e0-f29d-46b6-823d-a957b10b4858@suse.de>
-References: <20250729024150.222513-2-wilfred.opensource@gmail.com>
-	 <20250729024150.222513-4-wilfred.opensource@gmail.com>
-	 <2a9c71e0-f29d-46b6-823d-a957b10b4858@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754525037; c=relaxed/simple;
+	bh=Mo5zZx6+Ls09o6HSEjQ6aurVFAO/GmKzPOOACnlaro4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=femVmVyVPChfMf3Dv2ioJqMa8XbErCIg47KtPoZUucLR56lCLQUhK7hAi8MKT8Kbu6h5EAqXKlspPlvf4xKtniVnjEAY753piU1F6kwE9KYvHuODzALRcmFMsU9bJoF+VVjXq/BKzWoUxrNcCs+mTBB5Uh7zb1LMM14H7EST87E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XW6Y1ix6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B110C4CEE7;
+	Thu,  7 Aug 2025 00:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754525037;
+	bh=Mo5zZx6+Ls09o6HSEjQ6aurVFAO/GmKzPOOACnlaro4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XW6Y1ix6oPV0ctapSPBEJFFdUM6EWr6QHnqe10meQ90DcEhnSKyu4lM0rSDMLJwrA
+	 AxJXWiVvHEHxxoRho/xDcchl12cFK/y3kSEvrfROiC2uVgMbzdnBwivClPcX+HtJJx
+	 WYK47ohKJv4IUvoFy4UJmaxsWsRG3cnYxT5v5DzRyBPxXYDdPkDnKF8dWBw+wzefJT
+	 p81ZMy0MlVZqkq5aPbWL6E9ADfUEAiRW9qt8ad1X99W8tm9upYqSwWPa91KqSfFV4i
+	 WAhdSdBppef0yuPr+jj3jMIE/N9ujTk0dTN2oN8fEZwj4/Lpsw1QCcq3u5p4vROp8+
+	 xPptFRmbnVOpw==
+Date: Wed, 6 Aug 2025 19:03:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mahdi Khosravi <mmk1776@gmail.com>
+Cc: devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ASoC: dt-bindings: realtek,alc5623: convert to DT
+ schema
+Message-ID: <20250807000356.GA2072715-robh@kernel.org>
+References: <20250806131818.38278-1-mmk1776@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806131818.38278-1-mmk1776@gmail.com>
 
-On Tue, 2025-07-29 at 10:12 +0200, Hannes Reinecke wrote:
->=20
-[snip]...
-> > diff --git a/Documentation/networking/tls-handshake.rst
-> > b/Documentation/networking/tls-handshake.rst
-> > index 6f5ea1646a47..cd984a137779 100644
-> > --- a/Documentation/networking/tls-handshake.rst
-> > +++ b/Documentation/networking/tls-handshake.rst
-> > @@ -169,7 +169,8 @@ The synopsis of this function is:
-> > =C2=A0 .. code-block:: c
-> > =C2=A0=20
-> > =C2=A0=C2=A0=C2=A0 typedef void	(*tls_done_func_t)(void *data, int stat=
-us,
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 key_serial_t p=
-eerid);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 key_serial_t p=
-eerid,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 size_t tls_rec=
-ord_size_limit);
-> > =C2=A0=20
-> > =C2=A0 The consumer provides a cookie in the @ta_data field of the
-> > =C2=A0 tls_handshake_args structure that is returned in the @data
-> > parameter of
->=20
-> Why is this exposed to the TLS handshake consumer?
-> The TLS record size is surely required for handling and processing
-> TLS
-> streams in net/tls, but the consumer of that (eg NVMe-TCP, NFS)
-> are blissfully unaware that there _are_ such things like TLS records.
-> And they really should keep it that way.
->=20
-> So I'd really _not_ expose that to any ULP and keep it internal to
-> the TLS layer.
->=20
-Hey Hannes,
+On Wed, Aug 06, 2025 at 04:18:18PM +0300, Mahdi Khosravi wrote:
+> I converted the alc5623 audio codec binding from text to DT schema.
 
-Sorry for the delay in response, and thanks for the feedback! Yeah I
-agree it was a bad approach from me. It definitely makes more sense to
-keep things in the TLS layer. I will try to address this in V2.
+Convert the alc5623...
 
-Regards,
-Wilfred
+> This is my first try and I used make dt_binding_check & make dtbs_check to verify
+> without getting any errors.
+
+Drop this. Passing is assumed. Actually, 'make dtbs_check' warnings are 
+fine if you think the .dts has a mistake.
+
+> 
+> Signed-off-by: Mahdi Khosravi <mmk1776@gmail.com>
+> ---
+> Changes in v3:
+> - Drop allOf, just use $ref for uint32
+> - Remove stray '>' in descriptions
+> - Fix subject to "to DT schema"
+> 
+> Changes in v2:
+> - Add dai-common ref
+> - Switch add-ctrl/jack-det-ctrl to allOf uint32
+> - Use unevaluatedProperties
+> - Fix example compatible
+> ---
+>  .../devicetree/bindings/sound/alc5623.txt     | 25 ---------
+>  .../bindings/sound/realtek,alc5623.yaml       | 52 +++++++++++++++++++
+>  2 files changed, 52 insertions(+), 25 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/alc5623.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/alc5623.txt b/Documentation/devicetree/bindings/sound/alc5623.txt
+> deleted file mode 100644
+> index 26c86c98d671..000000000000
+> --- a/Documentation/devicetree/bindings/sound/alc5623.txt
+> +++ /dev/null
+> @@ -1,25 +0,0 @@
+> -ALC5621/ALC5622/ALC5623 audio Codec
+> -
+> -Required properties:
+> -
+> - - compatible:	"realtek,alc5623"
+> - - reg:		the I2C address of the device.
+> -
+> -Optional properties:
+> -
+> - - add-ctrl:	  Default register value for Reg-40h, Additional Control
+> -		  Register. If absent or has the value of 0, the
+> -		  register is untouched.
+> -
+> - - jack-det-ctrl: Default register value for Reg-5Ah, Jack Detect
+> -		  Control Register. If absent or has value 0, the
+> -		  register is untouched.
+> -
+> -Example:
+> -
+> -	alc5621: alc5621@1a {
+> -		compatible = "alc5621";
+> -		reg = <0x1a>;
+> -		add-ctrl = <0x3700>;
+> -		jack-det-ctrl = <0x4810>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
+> new file mode 100644
+> index 000000000000..2a389ca95b0d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/realtek,alc5623.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ALC5621/ALC5622/ALC5623 Audio Codec
+> +
+> +maintainers:
+> +  - Mahdi Khosravi <mmk1776@gmail.com>
+> +
+> +allOf:
+> +  - $ref: dai-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: realtek,alc5623
+
+What about alc5621/22? At least 21 is in use:
+
+arch/arm/boot/dts/marvell/kirkwood-t5325.dts:                           compatible = "realtek,alc5621";
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  add-ctrl:
+> +    description:
+> +      Default register value for Reg-40h, Additional Control Register.
+> +      If absent or zero, the register is left untouched.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  jack-det-ctrl:
+> +    description:
+> +      Default register value for Reg-5Ah, Jack Detect Control Register.
+> +      If absent or zero, the register is left untouched.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        codec@1a {
+> +            compatible = "realtek,alc5623";
+> +            reg = <0x1a>;
+> +            add-ctrl = <0x3700>;
+> +            jack-det-ctrl = <0x4810>;
+> +        };
+> +    };
+> -- 
+> 2.50.1
+> 
 
