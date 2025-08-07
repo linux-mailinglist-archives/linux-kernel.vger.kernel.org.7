@@ -1,251 +1,154 @@
-Return-Path: <linux-kernel+bounces-759543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88FCB1DEDA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5C6B1DEDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E683BBF22
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:27:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF6173BACB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706222459E3;
-	Thu,  7 Aug 2025 21:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3758C246BA4;
+	Thu,  7 Aug 2025 21:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgA49b+q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mzR2A4CW"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC89D4430;
-	Thu,  7 Aug 2025 21:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6464430;
+	Thu,  7 Aug 2025 21:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754602038; cv=none; b=e5V/IyEo4EMnZ1CfdWdvc87iHhq8acLpjo5k/inAHsYVIQhAbSLJpitU3UiLqOmdzTQCbXR+anY/6Hfa1TMy04tpeVAbWBNdGtpStNXCmL4jlifmP5K+pFqr0SsREzE5bhaPTTgNFOxSyhfrD6jecOCCrN/mYKRj5S43e3uRRFM=
+	t=1754602147; cv=none; b=IyQdbR3N3t44BFoQGIILifWbaZWmDrMkZdy/4g/ghxMR8XbyJrYRIiw8LdOJtMkn2pQV2zVpHqmUqAGJD47aH6pOQ5BN3m0ZIaLd3eDzxPQEsMa+iRjfri94qL9GEaiF8R48P+fPFRQ5/ppGcQZGKzlE6M1MY/zpIvl/sKQw47M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754602038; c=relaxed/simple;
-	bh=M+BpxkzLlHggZ+tzzpG3I7CKLqmuVCeyZCvynYpp+cI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=BxC5L7XyYLByBQH0Dy994+tzUX8tAOo2L4bbpazIhZ+K0PQ1Om4aYnek5lTWoMm0Dwx36JyXCrog9nbha0HXavh18EMC4lQOhEUF3hdCHS+IKtSUOCCsku/NgcGZ4GZMNO0zM2wz0/LW1c2ZH8zhFVBQwTUbXqJGlF8b+vFRhqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgA49b+q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C326C4CEEB;
-	Thu,  7 Aug 2025 21:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754602038;
-	bh=M+BpxkzLlHggZ+tzzpG3I7CKLqmuVCeyZCvynYpp+cI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=tgA49b+qML6PL5Nw3Npd8nkQGofTTIN3bl8U8n3258gH2XQRG775PVx5zWEXpt7qx
-	 ShgISsRS3CBesFuYKQ4lTECYOZrFprP7FZvwF/Y4oGoG8Lb9NV7sKRcNlF+dYYXasK
-	 odmm5pnqmuUImoscTfYT6tPlYQGgDMGvMcVT/o+Ig8BX992zWm/GF5rqJyfYjpfOB6
-	 2zTFUKVCZ557RnvFH6yb67pJAy74x6sS644GXb2fYwPsCaEFuOjGntgXlB/uRTQrwF
-	 yLAONkcemsMR6FMbDQ6ApOys6l3BR2uUF+WCNH9sM7LfGZDakfWIBRbdc7fjHrDJb9
-	 IjM1iYbTwzk9g==
-Date: Thu, 7 Aug 2025 16:27:16 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
-	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>
-Subject: Re: [PATCH v4 04/10] PCI/TSM: Authenticate devices via platform TSM
-Message-ID: <20250807212716.GA62016@bhelgaas>
+	s=arc-20240116; t=1754602147; c=relaxed/simple;
+	bh=e5ZroBIz+n4D+tQJf8o64lB4daFJ+ZpSVvOGHo1c41U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CHeazdRYgJ4VefnJCZNkmvzprZ0Ae2DxkjsDHWdPRNtoovR55Bu9YA/Pttn/N0EKbpRONa8/WqlklKypIJKSK+rC3yWLS7XZfgwIeX3JCxy7q8YdLWSkxUZFnJyRt2Zev0eSLaXBQLo9MGw69D4Mt3aeBetSttHRtr00F+mYgXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mzR2A4CW; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55b88369530so1657383e87.0;
+        Thu, 07 Aug 2025 14:29:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754602144; x=1755206944; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2o6wy1hxsqYKmmF+f3dxWhM/eGBJynYmK8a0QZYd+z8=;
+        b=mzR2A4CWxPpIkaILWT1LBwO25IM+M/5vsPAyTlOlDZQ942I5lB9C7jyjRtSOujsUle
+         Jof7y7Xhu5z77tuj3iu8My9oZEA429psYAQupe6nol3zyPQTVyFZHe5eZXC6ft2r1aVe
+         DTq47BoAaIIy9g9tzL5iPGbmQHDGAXVRGkE/jLBuLBBpHRfgj5KD48+NNt9Cq2hVQiOA
+         zf85jJAB+FIhOTI4+G/1WVvWN4Z0a4/Xe7OKwz/OHB/RfaKpReFixP00j80CZUlNd5yL
+         jLWQ8/0sZyQtflSwnIZyc1eYfnX+zjbYAi7zKB/j4qNr7ksqD0NS00fLrHDB+WN+NHHb
+         CDxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754602144; x=1755206944;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2o6wy1hxsqYKmmF+f3dxWhM/eGBJynYmK8a0QZYd+z8=;
+        b=eBdECQvrP9u8xq7L+GoHLAC1PJKnX+StSfm5qYi62/2ws74rLiAet64FdVUNcpo2sW
+         QJvfQe/lAWx0ZcvhU0S+SeCKP7rfFQVznoDjZb6dsFmTpb4lMysbJz+5Bvrq6sWFgIb+
+         MdADsIEq5e3DdAqDu5a8ivAqhJXLzd1vcKlJdofvcRJXFnDT1LmAsBWKn81QLd98TpVy
+         rlVJdB6maW6+2VrU/Jl4vKERgz5ix32Yuq8YtC2WoeDv7MkeTY4wk4aGJ63PjY12WzYk
+         IY5yI9zAJJUqNr/HNTikzX3TwnR3c+ADS7GanBAwdXiqVw+KtYNyw43CYD8nXhNSHD4H
+         OCEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEqCEmD9ZhfGoI+M+SMC0pRIU+3Sz9Fvtr6g54m+Dz6XfkEaUwJIFh2erdmbGdkM8U/bgO1ENmDh/d@vger.kernel.org, AJvYcCVEbuGMx/x5f2U0b+P/CwTuCvjkV3oF8Cg3/6oEymlJgknSnG/uIk0QtqHqDL3Vkk4qCDG6ouLOCyGV4piJ@vger.kernel.org, AJvYcCVP1m0V5BTKph1BEBXC2NeRLTwycJYWH6lTEzDVd0SMG4ttNoQ6VdneVAWmf0TKFDy/9obBy7jtagKh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTXcAwS8CDZTSoHU2ecQB8y3bVaZhe2PWCs15LL0zdGyQLtlMX
+	nEby8Dhi9ovOeay++FBYfE1itHWzfwtEIplNmBncvUzDTdSD/TJru1A1RdgPOKFB4+Dp9qFuDHD
+	5TRZXDS6rWRpl91UxMQvfaaVa9QtGKoY=
+X-Gm-Gg: ASbGnctWrPiOqp3EXQp5yAu1JqXYiaXTgvojflquc1AWLQNdpV2fvPpBAYsXTGaSCTf
+	dXpwPrVjqIRIEL69wa0ndyI3eMwuZUy2GytbcwNazEtuBWtCT2cZ3NHj9Jnh/TNLjJEkThTDDD1
+	+CyIE/x41wnB+qAJ66somWtyM0FlGMIEHBpzLBO0u8C1gAIjPS6vukYDy/Mo0U3W8bGGKwn734h
+	3AESuYT978swFlmZZiQEqCVi3z5qnaDLSLLGfySLg==
+X-Google-Smtp-Source: AGHT+IF2gn9Jbw2iuW9TmBoqCfY6sXuVmxhSrPEdUtl5zQbjv/HZcAEM7A9krusR9oI/gvhf/frzYunkfyCgqaF6we4=
+X-Received: by 2002:a05:6512:39c3:b0:55b:8273:5190 with SMTP id
+ 2adb3069b0e04-55cc00eb78bmr91681e87.18.1754602143932; Thu, 07 Aug 2025
+ 14:29:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717183358.1332417-5-dan.j.williams@intel.com>
+References: <cover.1754559149.git.mazziesaccount@gmail.com> <da7e6b31a0f25106d7e2f56fb089c8fe71224654.1754559149.git.mazziesaccount@gmail.com>
+In-Reply-To: <da7e6b31a0f25106d7e2f56fb089c8fe71224654.1754559149.git.mazziesaccount@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 7 Aug 2025 23:28:27 +0200
+X-Gm-Features: Ac12FXwukEbIXj-ZESPmfX-vzfO2suKhMqGuLrQ8trHV1ZCoeJdpa7KaO-sFewo
+Message-ID: <CAHp75VfBvqzKR53qTbiGxE-JQdLOuA3+M-Z=9S6LTf0fGnwmvg@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] iio: adc: ad7476: Support ROHM BD79105
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 11:33:52AM -0700, Dan Williams wrote:
-> The PCIe 6.1 specification, section 11, introduces the Trusted Execution
-> Environment (TEE) Device Interface Security Protocol (TDISP).  This
-> protocol definition builds upon Component Measurement and Authentication
-> (CMA), and link Integrity and Data Encryption (IDE). It adds support for
-> assigning devices (PCI physical or virtual function) to a confidential
-> VM such that the assigned device is enabled to access guest private
-> memory protected by technologies like Intel TDX, AMD SEV-SNP, RISCV
-> COVE, or ARM CCA.
+On Thu, Aug 7, 2025 at 11:35=E2=80=AFAM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+>
+> The ROHM BD79105 is a simple 16-bit ADC accessible via SPI*.
+>
+> The BD79105 has a CONVSTART pin, which must be set high to start the ADC
+> conversion. Unlike with the ad7091 and ad7091r which also have a
+> CONVSTART pin, the BD79105 requires that the pin must remain high also
+> for the duration of the SPI access.
+>
+> (*) Couple of words about the SPI. The BD79105 has pins named as
+> CONVSTART, SCLK, DIN and DOUT. For the curious reader, DIN is not SPI
+> ISO.
+>
+> DIN is a signal which can be used as a chip-select. When DIN is pulled
+> low, the ADC will output the completed measurement via DOUT as SCLK is
+> clocked. According to the data-sheet, the DIN can also be used for
+> daisy-chaining multiple ADCs. Furthermore, DOUT can be used also for a
+> 'data-ready' -IRQ. These modes aren't supported by this driver.
+>
+> Support reading ADC scale and data from the BD79105 using SPI, when DIN
+> is used as a chip-select.
 
-Previous patches reference PCIe r6.2.  Personally I would change them
-all the citations to r7.0, since that's out now and (I assume)
-includes everything.  I guess you said "introduced in r6.1," which is
-not the same as "introduced in r7.0," but I'm not sure how relevant it
-is to know that very first revision.
+...
 
-> The operations that can be executed against a PCI device are split into
-> 2 mutually exclusive operation sets, "Link" and "Security" (struct
-
-s/2/two/  Old skool, but you obviously pay attention to details like
-that :)
-
-> +++ b/Documentation/ABI/testing/sysfs-bus-pci
-> +What:		/sys/bus/pci/devices/.../tsm/
-> +Contact:	linux-coco@lists.linux.dev
-> +Description:
-> +		This directory only appears if a physical device function
-> +		supports authentication (PCIe CMA-SPDM), interface security
-> +		(PCIe TDISP), and is accepted for secure operation by the
-> +		platform TSM driver. This attribute directory appears
-> +		dynamically after the platform TSM driver loads. So, only after
-> +		the /sys/class/tsm/tsm0 device arrives can tools assume that
-> +		devices without a tsm/ attribute directory will never have one,
-> +		before that, the security capabilities of the device relative to
-> +		the platform TSM are unknown. See
-> +		Documentation/ABI/testing/sysfs-class-tsm.
-
-s/never have one,/never have one;/
-
-> +++ b/drivers/pci/tsm.c
-> +#define dev_fmt(fmt) "TSM: " fmt
-
-Include "PCI" for context?
-
-> + * Provide a read/write lock against the init / exit of pdev tsm
-> + * capabilities and arrival/departure of a tsm instance
-
-s/tsm/TSM/ in comments.
-
-> +static void pci_tsm_walk_fns(struct pci_dev *pdev,
-> +			     int (*cb)(struct pci_dev *pdev, void *data),
-> +			     void *data)
+> +static void bd79105_convst_enable(struct ad7476_state *st)
 > +{
-> +	struct pci_dev *fn;
-> +	int i;
-> +
-> +	/* walk virtual functions */
-> +        for (i = 0; i < pci_num_vf(pdev); i++) {
-> +		fn = pci_get_domain_bus_and_slot(pci_domain_nr(pdev->bus),
-> +						 pci_iov_virtfn_bus(pdev, i),
-> +						 pci_iov_virtfn_devfn(pdev, i));
-> +		if (call_cb_put(fn, data, cb))
-> +			return;
-> +        }
-> +
-> +	/* walk subordinate physical functions */
-> +	for (i = 1; i < 8; i++) {
-> +		fn = pci_get_slot(pdev->bus,
-> +				  PCI_DEVFN(PCI_SLOT(pdev->devfn), i));
-> +		if (call_cb_put(fn, data, cb))
-> +			return;
-> +	}
-> +
-> +	/* walk downstream devices */
-> +        if (pci_pcie_type(pdev) != PCI_EXP_TYPE_UPSTREAM)
-> +                return;
-> +
-> +        if (!is_dsm(pdev))
-> +                return;
-> +
-> +        pci_walk_bus(pdev->subordinate, cb, data);
+> +       if (!st->convst_gpio)
+> +               return;
 
-What's the difference between all this and just pci_walk_bus() of
-pdev->subordinate?  Are VFs not included in that walk?  Maybe a
-hint here would be useful.
+Still consider this unneeded churn. 3us delay is tolerable in almost
+any setup with this driver.
 
-> +static int pci_tsm_connect(struct pci_dev *pdev, struct tsm_dev *tsm_dev)
-> +{
-> +	int rc;
-> +	struct pci_tsm_pf0 *tsm_pf0;
-> +	const struct pci_tsm_ops *ops = tsm_pci_ops(tsm_dev);
-> +	struct pci_tsm *pci_tsm __free(tsm_remove) = ops->probe(pdev);
-> +
-> +	if (!pci_tsm)
-> +		return -ENXIO;
-> +
-> +	pdev->tsm = pci_tsm;
-> +	tsm_pf0 = to_pci_tsm_pf0(pdev->tsm);
-> +
-> +	ACQUIRE(mutex_intr, lock)(&tsm_pf0->lock);
-> +	if ((rc = ACQUIRE_ERR(mutex_intr, &lock)))
-> +		return rc;
-> +
-> +	rc = ops->connect(pdev);
-> +	if (rc)
-> +		return rc;
-> +
-> +	pdev->tsm = no_free_ptr(pci_tsm);
-> +
-> +	/*
-> +	 * Now that the DSM is established, probe() all the potential
-> +	 * dependent functions. Failure to probe a function is not fatal
-> +	 * to connect(), it just disables subsequent security operations
-> +	 * for that function.
-> +	 */
-> +	pci_tsm_probe_fns(pdev);
+> +       gpiod_set_value(st->convst_gpio, 1);
+> +       /* Worst case, 2790 nS required for conversion */
 
-Makes me wonder what happens if a device is hot-added in the
-hierarchy.  I guess nothing.  Is that what we want?  What would be the
-flow if we *did* want to do something?  I guess disconnect and connect
-again?
+nS --> ns (SI unit for seconds is 's')
 
-> + * Find the PCI Device instance that serves as the Device Security
-> + * Manger (DSM) for @pdev. Note that no additional reference is held for
+> +       ndelay(2790);
+> +}
 
-s/Manger/Manager/
+...
 
-> +	 * For cases where a switch may be hosting TDISP services on
-> +	 * behalf of downstream devices, check the first usptream port
-> +	 * relative to this endpoint.
+> +       /*
+> +        * The BD79105 starts ADC data conversion when the CONVSTART line=
+ is
+> +        * set HIGH. The CONVSTART must be kept HIGH until the data has b=
+een
+> +        * read from the ADC.
 
-s/usptream/upstream/
+Is this terminology in absolute levels of the pin or logical ones
+(that implied active-low)? If it's the latter, use active/inactive
+instead as the GPIO subsystem does.
 
-> +++ b/include/linux/pci-tsm.h
-> + * struct pci_tsm_ops - manage confidential links and security state
-> + * @link_ops: Coordinate PCIe SPDM and IDE establishment via a platform TSM.
-> + * 	      Provide a secure session transport for TDISP state management
-> + * 	      (typically bare metal physical function operations).
-> + * @sec_ops: Lock, unlock, and interrogate the security state of the
-> + *	     function via the platform TSM (typically virtual function
-> + *	     operations).
-> + * @owner: Back reference to the TSM device that owns this instance.
-> + *
-> + * This operations are mutually exclusive either a tsm_dev instance
-> + * manages phyiscal link properties or it manages function security
-> + * states like TDISP lock/unlock.
+> +        */
 
-s/phyiscal/physical/
-
-> +struct pci_tsm_ops {
-> +	/*
-> +	 * struct pci_tsm_link_ops - Manage physical link and the TSM/DSM session
-> +	 * @probe: probe device for tsm link operation readiness, setup
-> +	 *	   DSM context
-
-s/tsm link/TSM link/
-
-> +	 * struct pci_tsm_security_ops - Manage the security state of the function
-> +	 * @sec_probe: probe device for tsm security operation
-> +	 *	       readiness, setup security context
-
-s/for tsm/for TSM/
-
-> + * struct pci_tsm - Core TSM context for a given PCIe endpoint
-> + * @pdev: Back ref to device function, distinguishes type of pci_tsm context
-> + * @dsm: PCI Device Security Manager for link operations on @pdev.
-
-Extra period at end, unlike others.
-
-> + * @ops: Link Confidentiality or Device Function Security operations
-
-> +static inline bool is_pci_tsm_pf0(struct pci_dev *pdev)
-> +{
-> +	if (!pci_is_pcie(pdev))
-> +		return false;
-> +
-> +	if (pdev->is_virtfn)
-> +		return false;
-> +
-> +	/*
-> +	 * Allow for a Device Security Manager (DSM) associated with function0
-> +	 * of an Endpoint to coordinate TDISP requests for other functions
-> +	 * (physical or virtual) of the device, or allow for an Upstream Port
-> +	 * DSM to accept TDISP requests for switch Downstream Endpoints.
-
-What exactly is a "switch Downstream Endpoint"?  Do you mean a "Switch
-Downstream Port"?  Or an Endpoint that is downstream of a Switch?
-
-Bjorn
+--=20
+With Best Regards,
+Andy Shevchenko
 
