@@ -1,157 +1,130 @@
-Return-Path: <linux-kernel+bounces-759347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0298CB1DC6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F10B1DC72
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90510189CBCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:27:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29991583A01
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7830273D7B;
-	Thu,  7 Aug 2025 17:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D1C2737EF;
+	Thu,  7 Aug 2025 17:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="UZUGJs/Q"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWWHEYqq"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3533208
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7502526FA5A
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754587593; cv=none; b=E7IIT4U4FMmXZqnUCaLVOsJ1CX8W9M6zTYx5gXN+grmEclz9Fe29Ia7CsgSZ+gBxrex6oluICh19kOHHCa4OSq1pehbQ1DLl180FADppcf43mpR3ntnJxiMRAVhNd/bCqIWoFWAYr3PLtFOgoLjPFJ+XZRbHCxhynk8HByjDXMk=
+	t=1754587683; cv=none; b=laLiO7hCQmbRb3X0EybT0L3EfZPIOO6ThsYi5k51JWsmvycp4qMJP5H/v4q8NI3787OrCNCRHQdMqXJ7r7dzB+l9Go3MFYd9jTW8CaAn40tWHpJAYHbQGLPubkwHo2Tp+3y6/++lklkMMxaU6umm1QZMSutKfRxIFbAITD6Qko0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754587593; c=relaxed/simple;
-	bh=pb46ry44LgWLgMfVloaZqMENQPf7IeyFHi9rZVLLYzI=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=g1YgE31HaYh9jNSebf00vrKkgInHXkuNG46nzi2NzR72m9HrnSrUOlyYgiI7eIy5ti+1WDLii0f1EPcVyc4+SRGXaf3NxRRZ4V/pW96AOBro3yHVhxEIJuJUcXAbCZg17A2JPP/N9F3A4tMnmI2jP5dMJJYzGDftXXqUcoNMufM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=UZUGJs/Q; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2403ca0313aso10650145ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:26:31 -0700 (PDT)
+	s=arc-20240116; t=1754587683; c=relaxed/simple;
+	bh=LvjzDrIKgQsl2erKo7Ihb16VcGyaazDWcGJoJP+5K/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NL1t/iUJuczP86DknExKWcuyx05Gmte5ZHJSxK4C9oql/i8opEVW6I6OSDIpM+bMbdFwEjz/eWYZaccm8PHMc9JMBnOY+e+IZL5GLZYvc4Zngf+0Czgn+lHZECMEtNzp1/jQae7LzVP16t7+OrR+24SGIpbS7wG8sxz/7Pl8WkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWWHEYqq; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-332559ace6eso11550331fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:28:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1754587591; x=1755192391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+h378Tf504uUiMOV37MEQKpGK3kMCBEgWjqEH4cjsGQ=;
-        b=UZUGJs/Q8lX2o/yic13qITEW6hUxIqq83/i65FFVtiovjAlQIbglI7NPexzkVMjnRt
-         XFCNUTkffnPGvGhwWpMWKquqvOc0xcJGVfoNtasxHaca6SH5x1SWnkcWhdhPHEIWMlyI
-         y0fEGaOTMBxwVguARO6af9aX/yrmVCDanv0AC2vuyHiXkDfM6Blj0DvqqYJKkEVNBlk1
-         USk31Yzl2h1ZorTIwPkz42u8mluD4w9r8SwscAKq7UPYhDoO+MslokYKpc8HZz08UBql
-         2DnaZnXYAlqCrMo5Rb/nPCuywalZabfxZ+gJe+3eQcOIlZsr1WnQMA3e1A/oGbZzcJ+O
-         jFwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754587591; x=1755192391;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754587680; x=1755192480; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+h378Tf504uUiMOV37MEQKpGK3kMCBEgWjqEH4cjsGQ=;
-        b=cGdK95GnTKSe0ff+rv89/z/sSg+3xS5kSfhhihFJ/rQ8FnjvXS+bE5ISzjnG63eXwx
-         rwJRaHk96quL0rBgLyYaCO1ktOlhwJVyCGKIrZUmPW8wgiRBOkbX+x+OV5Fk4tn4fmRC
-         qR9IesJCkqtZQS5ujm4d7d+j+Y6vTOyEB38CFNVzNsQN1J28Qtot8qyS6Xu5la4fr54e
-         PFRbz56q6/FRo5PNpz/hmlUxTdOHeua1QujKC+Etx2Zz3baAAA8OsEzC1vhjQ8TtP8FN
-         izAZ3QqoKIaWlH4qRKZXKAEqxS9QUjyqGt8hVgAsHTdrtihMGLYjagO2WL3V4oJ/QV+5
-         mvBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzFfOLYbTW41uhCpn0NlsEZmPiJgQOPteqIiky8JZyAq+3yP6uka61D8NTYJzlSy68QumSBf73Lj0OVcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr49PSqEBDGTpTqCPyN1g+51WWcTtWCsjQTug9w/b4ZsoGM0yd
-	Clrlx95TcEQB6naROhCsceuO258mM2woDLhV2vNrZ9bVhFMS8A8KXcxwN3luy2Wwx24=
-X-Gm-Gg: ASbGncsPeYRwt3wfSn3OXuqueDP/XS0qEOmQeeNsHHS6kuhP/wJGDjgQz5o030slmsq
-	uAK7mDyVPmVml9w0G6s+TRP4mpFjUnHnFoo4BPwBvywVf9sfPoz4M7bZqCYQEeGcynFo/EdxRcd
-	VF/T0MCYgFOWycT4HM/0OMlvmwMxv2ka5w2ewfckJ4rTWvIXk27+sbllSlrtZdHWklt8UFpcx/q
-	QnGLMlsJcVYBGISqcmHOrtD4bGx8AWF8PpD8QJYohQ24PtIc1U1DBuzcm6igKtMwnU+fi41V+xO
-	A0cudqfDayHGEOaSj1VcErpSiNr6GWlv+rFdhLmWsfWbX3lwaUynJUKCt+NgwdmJ9NEwWupBP40
-	Dtp8cAGV6t5zjciZUNphhCTjpSg==
-X-Google-Smtp-Source: AGHT+IFozWV8vrd5EMGtMyKdfiS3Pbokb+TNy5cuHGj4vZa1810QnCu0am++Rh915Hc5K1tcnkuECA==
-X-Received: by 2002:a17:903:41d2:b0:240:8704:fb9 with SMTP id d9443c01a7336-2429f582b30mr110618495ad.53.1754587590509;
-        Thu, 07 Aug 2025 10:26:30 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:500::4:30b7])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241e899d21dsm188812445ad.139.2025.08.07.10.26.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 10:26:29 -0700 (PDT)
-Date: Thu, 07 Aug 2025 10:26:29 -0700 (PDT)
-X-Google-Original-Date: Thu, 07 Aug 2025 10:26:27 PDT (-0700)
-Subject:     Re: [PATCH] arm64: Expose CPUECTLR{,2}_EL1 via sysfs
-In-Reply-To: <864iuja70l.wl-maz@kernel.org>
-CC: Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-  Will Deacon <will@kernel.org>, oliver.upton@linux.dev, james.morse@arm.com, cohuck@redhat.com,
-  anshuman.khandual@arm.com, palmerdabbelt@meta.com, lpieralisi@kernel.org, kevin.brodsky@arm.com,
-  scott@os.amperecomputing.com, broonie@kernel.org, james.clark@linaro.org, yeoreum.yun@arm.com,
-  joey.gouly@arm.com, huangxiaojia2@huawei.com, yebin10@huawei.com,
-  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Marc Zyngier <maz@kernel.org>
-Message-ID: <mhng-9D9CB730-A22F-43E2-A012-D51EF3C1E027@palmerdabbelt-mac>
+        bh=LvjzDrIKgQsl2erKo7Ihb16VcGyaazDWcGJoJP+5K/o=;
+        b=lWWHEYqqUirSbkjSIVSsh8UWvHEYDKWuoZRIjYxA5fel8I4d7z3KvfEc9lI968DPv2
+         NZTjwgWQDrkf1td+ubvktMdArov0Z9y31DnRjINd9p0XpQqlp4ilFVmi6ORAA/hbi6QO
+         QvNvAdV9kk6hqHLwKkfSMo8a7vDYDkHXBIxMXAPkzI1FChvicrl2bvgsfiHE0KKHBkCr
+         NWjRbdpNOwXkt3Lb8Oqkby1Da6yitLwXPcAeJyHEPJVBvwVUAeh0oIu5cslntp5LIfjU
+         EHv7ZQmSf9Zq+IJBMpypc5XAmsHebl1Vlu318dUXK5vLi/i4Wx7uy/CQUMchh9t90AAZ
+         R2ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754587680; x=1755192480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LvjzDrIKgQsl2erKo7Ihb16VcGyaazDWcGJoJP+5K/o=;
+        b=pKp3NWzXaxgKRhux4JmARwCrmb9MRrjdZFAfgc2wYhmv2IJ0BZICZVKrRtWQp5Wr25
+         3Vv0BExx/Fezft6yXUt+vDRpT8usgYHhY35QPxA2PmrysGgk9FZlE+HJLVBZUEr2ltwd
+         hWhJoqE9hQwQLgAXRXzGCsNV+MqV7gJ+BvFlerGa6MPayrxly4elzCE7bmyV64QZyVzs
+         uuz02KZzFk/WSjgg++QHBx/ZwzAOyL2PJXyCEyiK79SYUO5G5nRSt1GoDnpJr6NoC4qx
+         EkZ2wI6iJj2IHGUCE4sk5cLASUsjlniH3oejDk2hFv/2nLSTJh+eZLV/tRal9DrVhGg4
+         rKkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYsdi0xYebD6UjJAh/wXkF7FH+VY7SBKbAUAqt+hf7tdyssP8JLj+I7Ju5oNuGD2doQEUZ0qjJUkp4FqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeU+Cf8p3SlmXs0lUj98fkoREpKg1McM8Lb92ZKbNHRuxntBUg
+	mzmmpQDq5oRzY08TUIvcSZZIUTC2scXMErqPnENuv6PWFl/bMaYsZGhszXRL7WT5F2nu2O4jzI7
+	J1mVwKc6Al5PCszILScNbWRd5BHNu4zc=
+X-Gm-Gg: ASbGncv11i7UsjbVxMFKe3Ik9+17MIkabEGO4Xr+PMaUSy8y4ue87VLL6MWReKx65h1
+	WqxtkGA+bQmaZ9efPXDoN2YV/g37rF35Ve3mEgirU5jNmEwyMpFwcv7RNi90njvIZO8GWfG3cob
+	Lw0NthJ16m+No+SjlDnQV0VodQXvhQRNFP8UKgppoZEM3DjkB9pB8wvk+bjggwSQch5QOxDagO2
+	OnkM7VXQ8vRe1FEDA==
+X-Google-Smtp-Source: AGHT+IEsofgEMhOWhxj+6CrqZxW8VohN4VKvhX5Y/sB1Q6lk09l9sgHuPrSa5zu+rayoeA04o5iPmoqGWRidyTDUFt0=
+X-Received: by 2002:a05:651c:220f:b0:332:5ffa:762f with SMTP id
+ 38308e7fff4ca-333813c31e7mr20434821fa.20.1754587679313; Thu, 07 Aug 2025
+ 10:27:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20250807152720.62032-1-ryncsn@gmail.com> <20250807152720.62032-4-ryncsn@gmail.com>
+ <CAG48ez114_bmuca2UL-g0ZY76-VqhL-4rQtJM_k0N2NJXE4vdg@mail.gmail.com>
+In-Reply-To: <CAG48ez114_bmuca2UL-g0ZY76-VqhL-4rQtJM_k0N2NJXE4vdg@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 8 Aug 2025 01:27:22 +0800
+X-Gm-Features: Ac12FXz2l6lNInPFGDit_HyoORi-NE2WSIgBtNtHvx6HzsR_ww-M4jCga4R7IBQ
+Message-ID: <CAMgjq7BhfGC7jVHQ62wAJBfTKCDG2+VdgpjiZ7hjxXeC5fHg-w@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] mm/mincore: avoid touching the PTL
+To: Jann Horn <jannh@google.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 07 Aug 2025 01:08:26 PDT (-0700), Marc Zyngier wrote:
-> On Wed, 06 Aug 2025 20:48:13 +0100,
-> Palmer Dabbelt <palmer@dabbelt.com> wrote:
->>
->> From: Palmer Dabbelt <palmerdabbelt@meta.com>
->>
->> We've found that some of our workloads run faster when some of these
->> fields are set to non-default values on some of the systems we're trying
->> to run those workloads on.  This allows us to set those values via
->> sysfs, so we can do workload/system-specific tuning.
->>
->> Signed-off-by: Palmer Dabbelt <palmerdabbelt@meta.com>
->> ---
->> I've only really smoke tested this, but I figured I'd send it along because I'm
->> not sure if this is even a sane thing to be doing -- these extended control
->> registers have some wacky stuff in them, so maybe they're not exposed to
->> userspace on purpose.  IIUC firmware can gate these writes, though, so it
->> should be possible for vendors to forbid the really scary values.
+On Fri, Aug 8, 2025 at 12:06=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
 >
-> That's really wrong.
+> On Thu, Aug 7, 2025 at 5:27=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wro=
+te:
+> > mincore only interested in the existence of a page, which is a
+> > changing state by nature, locking and making it stable is not needed.
+> > And now neither mincore_page or mincore_swap requires PTL, this PTL
+> > locking can be dropped.
 >
-> For a start, these encodings fall into the IMPDEF range. They won't
-> exist on non-ARM implementations.
+> This means you can race such that you end up looking at an unrelated
+> page of another process, right?
 
-OK, and that's because it says "Provides additional IMPLEMENTATION 
-DEFINED configuration and control options for the processor." at the 
-start of the manual page?  Sorry, I'm kind of new to trying to read the 
-Arm specs -- I thought just the meaning of the values was changing, but 
-I probably just didn't read enough specs.
+I was thinking If the PTE is gone, it will make mincore go check the
+page cache, but even if we hold the PTL here, the next mincore call
+(if called soon enough) could check the page cache using the same
+address. And it never checks any actual page if the PTE is not none.
 
-> Next, this will catch fire as a guest, either because the hypervisor
-> will simply refuse to entertain letting it access registers that have
-> no definition, or because the VM has been migrated from one
-> implementation to another, and you have no idea this is doing on the
-> new target.
+Perhaps you mean that it's now doing the page / swap cache lookup
+without holding PTL so if the PTE changed, then the lookup could be
+using an invalidated index, and may find an unrelated page.
 
-Ya, makes sense.
+A changing PTE also means the mincore return value is changing, and if
+called earlier or later by a little bit, the result of that address
+could be opposite, and mincore only checks if the page existed,
+it's hard to say the returned value is a false positive / negative?
 
->> That said, we do see some performance improvements here on real workloads.  So
->> we're hoping to roll some of this tuning work out more widely, but we also
->> don't want to adopt some internal interface.  Thus it'd make our lives easier
->> if we could twiddle these bits in a standard way.
->
-> Honestly, this is the sort of bring-up stuff that is better kept in
-> your private sandbox, and doesn't really help in general.
+Or could this introduce a new security issue?
 
-So we're not doing bringup (or at least not doing what I'd call bringup) 
-here, the theory is that we just get better performance on different 
-workloads with different tunings.  That's all still a little early, but 
-if the data holds we'd want to be setting these based on what workload 
-is running (ie, not just some static tuning for everything).
+> And your patch intentionally allows that to happen in order to make minco=
+re() faster?
 
-That said, part of the reason I just sent this as-is is because I was 
-sort of expecting the answer to be "no" here.  No big deal if that's the 
-case, we can figure out some other way to solve the problem.  Happy to 
-throw some time in to making some more generic flavor of this, though...
-
-> Thanks,
->
-> 	M.
+When doing a clean up (patch 1) I noticed and didn't understand why we
+need a PTL here. It will no longer block others and go faster as we
+remove one lock, I can drop this one if we are not comfortable with
+it.
 
