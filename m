@@ -1,160 +1,192 @@
-Return-Path: <linux-kernel+bounces-758681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF6EEB1D28B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:38:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B071B1D28D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBA737AA50F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528091AA2048
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4907B221545;
-	Thu,  7 Aug 2025 06:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E833221704;
+	Thu,  7 Aug 2025 06:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VA7bqTGT"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sGWQU9Ge"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8171BE46;
-	Thu,  7 Aug 2025 06:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50C01D516F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 06:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754548669; cv=none; b=DUY1ZlK8EU965bHVqGxO7f8OlGVFW2wl87BOY9DvgqrmFHyKFxinCsBY3vOFQF4zOxWIa62PtXpN0YlnOH6T0nZwdqZ4C/eoQ6bDF3gIVIFBOQPCAZUIZt0pkOcP7orZL727VLi1wPMywv11IGjFLExj/mqXpZea5T9ADah76d4=
+	t=1754548702; cv=none; b=tpweo1foFE/h7/t1il+io7Zvyo1KlzJWjft0u3iPT6KD5wVRI2+W0Wp4TL2yUaBE9eLvBtLZaY79ey3pW/Tah/KV6EjrMnVR1uXR6eCO0qZaAQoWbFIVn7cjHLBt5hJzmgTELNbaiGsktpZJr5PdY1mWgTzDMcY3mN52yNzgw8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754548669; c=relaxed/simple;
-	bh=KU/dL3mG3Md8aBqaFIdCNSPZNK7zMBvCEEECnzytUB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HL4FxvTUiuu0d1CGasEqtp9sANkdPRWdDOZ0Ev8oNwF1Yr99rgYmKgeu+RUz1QQe1k7KgGfiVUB1LxR8XC7Fs6esdqsFAFmvg4OGAWA3ojisZea5EKl7BhuallL48WeTy0yUPsjt8A9VG4kkMrunGfvVpw0axPiIfhLGcNlFMAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VA7bqTGT; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af939afe5efso79600366b.2;
-        Wed, 06 Aug 2025 23:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754548666; x=1755153466; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b3kXoEJzAnht57ORcdub3zD3TjgG/w06tqt5/2uQm8o=;
-        b=VA7bqTGTKJVUQVkufg++9TT0v8Nh4+Ma/BdpZ86psDm1Jc5ri26k4mOrlsXThnL7+a
-         3czCL+pLE59cdoPud7hC6IGplVWl2D2apuKxnsZYQUM27RjTUl6g0tqXtXIt9VlhNwho
-         Ii/SQBEoP8iZnFZ3AFamslIfxPhVMmeFFmYssE8pSfdouNovcw4Ny5C6Vd1H2UGljdF+
-         F83zS9kYSPHt1G7V7Y0PLssX6YnaMhB+pm1iXZsLedJSD51Ok3KTDBfrosxvE9aje+rZ
-         19SbUar2szOwmGkjRRuG61y/FS67ork2Ho2+NA6uRQMK6S/VOJoFARxoYnpk445xe16R
-         z1Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754548666; x=1755153466;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b3kXoEJzAnht57ORcdub3zD3TjgG/w06tqt5/2uQm8o=;
-        b=XojgAsRPkVVZnT8Mr0IDzKwNdOt3LMrYlTiGuLTKWrjCd7xkZqExW80XEu6yu/cLWx
-         nTV7cX3P4JPVkCMY9uC4fvrErfm2+BsEOZDEf/1GWzD0w3fN1kdXQIRqOsZI6Oz6fUT2
-         VeQgQTwJXNn8K3/v4Pz3Om6jPxkY5kBsUmzhRZJRIBDJZwlZHTt68Dry/KbJm1YUgASs
-         +YPqyPn1HLJj9CK1kqkUJPplNbzhDBFsVV0crz8veAkpgmGw/9YMpVwJpzlbn87YP+wL
-         wCUR4lKgyuGGSNw7c6/MnawTKpQg3Jvd9uD8dMuP/7ioAEoIhJXnM6Io965g/FnR0mg5
-         iAlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLXkIs9LvKCjwz45dzLQrB17CspyACXxP+SX4D2kHgNl3sn4iI8iX2T6iyBr70iRTsAo64ZimP2mnKcj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYiGlGxkhFRkzUcem/PB9C6bySdUOupCFjHl0dywJaV7VCvOOL
-	rDuIHfb4ufX5hg4m3ox4Ygb2OEdzeZt34xHhQYI/fC52LqVy1j/FXa/lgAU2EQ==
-X-Gm-Gg: ASbGncsyRWAtAspFEyuNAk8D4hmQCAPuTdgbBWABPIAmpqPS1xcQgl74/38CbatUifi
-	Rs3LxJCPftT0q/4PiKdOdwr+Yi+aOS2//1bxfZGhOTX8XqJp7EprRPDshTIpVLJBf2pykeFOmia
-	mQRqLBecy061PcAl8nSwt47CYI8LrO/29YkAze9mgHRTR/cBaDdc4M12CrJVcLJuT+uAmVNjTT9
-	LTk6qsbV4V/vQcPGDG92s+uzk5eD6zkK2qzFXGONQT8aqtPcD5NS1eyFpNvbJovjUvPDCEDZTCg
-	WBReRBavyu6WxR8I8IztP0SSCUa0FyB+K0G2cO2tXlaC0NFSY3VFaZMX01gSkuANxVNbTx7nZdv
-	1NS2L/M10bTEQGiI7x078Yw==
-X-Google-Smtp-Source: AGHT+IF5vJV9wVXd+wDl2ivqlJxldKYE2Ea38jhYAJ7H8Pa0wLMcOswp/1vKVn6eGCF3qy51Xt8onw==
-X-Received: by 2002:a17:907:9810:b0:af8:fa64:917f with SMTP id a640c23a62f3a-af992c27b3emr529378766b.48.1754548665654;
-        Wed, 06 Aug 2025 23:37:45 -0700 (PDT)
-Received: from fedora ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a219ecfsm1246343966b.94.2025.08.06.23.37.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 23:37:45 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: kvm@vger.kernel.org,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] KVM: VMX: Micro-optimize SPEC_CTRL handling in __vmx_vcpu_run()
-Date: Thu,  7 Aug 2025 08:36:51 +0200
-Message-ID: <20250807063733.6943-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754548702; c=relaxed/simple;
+	bh=NaHeBeboawkQZN7VuEvlphwxCwIvNRoU9hVoqOnhAcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mB71anEZZJRXGFDc/o/vq9nDehQ0mf1l4USRqz6xZMsQMpdlAx2k9pkCawV5Sn9VIT6x3uyKARRHGI/6m3BAbFS7r6V33g8MiF3xx5ZaRc5K1hdA6Beo3IuVDsx3VOmdMXaiU0LvEZyXHoXOyw+NYKNIltQC4e1mfj/w0iojiEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sGWQU9Ge; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 576IJgH4021584;
+	Thu, 7 Aug 2025 06:37:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=IzNx+T
+	s4Sj8KTSFzoPL/V2RPpf7rbjSgqMLYZqc30z4=; b=sGWQU9Geqz0qhR/+T3tX+y
+	S0J3M50WeDYZI9tFIKRefYqMmD2xvPW+pkZrhFWzdV/7/h9MGHjCz0io7M2JIpsv
+	K3iScxplXsEQBcbKCRxHEECGUb402jnFhyS+TeQLDcJV3bseR9wgewpfgaoc6n7A
+	VOqUR254QZ4EedKbGmElo2UhqMMiCfd1SOHcxJEmXzqIDirczbouDyhchLxm9eiX
+	uewHZEtybXFF0mvA6QvXmv9vqPuEDemFBdgk8vt1s3xDk9pQ7Xtt8dVJ73Q1i8hZ
+	RQoGXT+Yc7U7IxU6AAchxvQp73J6sv3fto8tRD86tv9jtdn2c/r/ha4kY/mUbrtw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq620eg2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 06:37:39 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5776bcVV003309;
+	Thu, 7 Aug 2025 06:37:38 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq620efx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 06:37:38 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5775Z3e2022687;
+	Thu, 7 Aug 2025 06:37:37 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwqf9yq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 06:37:37 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5776bZxx27132422
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Aug 2025 06:37:35 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1A31D581AE;
+	Thu,  7 Aug 2025 06:37:35 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AD192581A3;
+	Thu,  7 Aug 2025 06:37:29 +0000 (GMT)
+Received: from [9.67.88.77] (unknown [9.67.88.77])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  7 Aug 2025 06:37:29 +0000 (GMT)
+Message-ID: <13be1ce2-85b5-46e2-aab8-94aa7f8a0cfe@linux.ibm.com>
+Date: Thu, 7 Aug 2025 12:07:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: Remove stale references to LAST_BUDDY and
+ SKIP_BUDDY
+To: 20250314090128.25141-1-vineethr@linux.ibm.com,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Adam Li
+ <adamli@os.amperecomputing.com>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20250314090128.25141-1-vineethr@linux.ibm.com>
+ <4da6d43b-59f6-48e4-b58c-2f0792035851@linux.ibm.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <4da6d43b-59f6-48e4-b58c-2f0792035851@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA0NyBTYWx0ZWRfXzAQLRr5g8YcB
+ azDlxagUzvgY2/ilgJPpjcajBlw0McGT0qkUwUArAb0ymKpuxXzVdNdDNbQO4DfoTuMzJVmC69y
+ Sf1e/2NmbiHjS3VdQCzZDjum5G79MHucUJCGxhb5+DKhCP9iyPhpGKJ1AfFZIUld8VMpDRPWTYT
+ 9Tu6z7yisXSfLnvAf0McxDLZkhXvt3it8XC7KtSar1BJOiDFGbVR+OajBiZ+w7Ci/Fi0fhgRpws
+ DQE8B2CRQdryl8k8mis/7Y0fjlf0bhGAlsufcv0P98n1J2H5XlyIaWk3v4ak1gbpU8tkf6m6UBL
+ PeF17eslyQLVB9O02eLfhNqhroWAPub1DLbAY/J+qzTp6Javf33io+SxgOVj/ap2Idyvr92CJ1i
+ w1nXnaUnTE5Sv97VV/bX4FiM6By8NvDlHXzjzDSet9KMjwCCoRyfw5+DvF75n0fxMzEanUUw
+X-Proofpoint-GUID: UMOkaenvapBH4qSNnJPOd9d07qYQJNv2
+X-Authority-Analysis: v=2.4 cv=BIuzrEQG c=1 sm=1 tr=0 ts=689449b3 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=vzhER2c_AAAA:8 a=VnNF1IyMAAAA:8
+ a=ITTc_KzUxks3pkYUosUA:9 a=QEXdDO2ut3YA:10 a=0YTRHmU2iG2pZC6F1fw2:22
+X-Proofpoint-ORIG-GUID: yCfuYDoR0q0r-vLeIjOIP1qTe7m4M3Ax
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 bulkscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508070047
 
-Use memory operand in CMP instruction to avoid usage of a
-temporary register. Use %eax register to hold VMX_spec_ctrl
-and use it directly in the follow-up WRMSR.
+On 13/04/25 09:40, Madadi Vineeth Reddy wrote:
+> Hi Peter, Ingo,
+> 
+> Ping.
+> 
+> Any thoughts on this? Can it be picked up?
+> 
+> Thanks,
+> Madadi Vineeth Reddy
 
-The new code saves a few bytes by removing two MOV insns, from:
+Hi Peter, Ingo,
 
-  2d:	48 8b 7c 24 10       	mov    0x10(%rsp),%rdi
-  32:	8b bf 48 18 00 00    	mov    0x1848(%rdi),%edi
-  38:	65 8b 35 00 00 00 00 	mov    %gs:0x0(%rip),%esi
-  3f:	39 fe                	cmp    %edi,%esi
-  41:	74 0b                	je     4e <...>
-  43:	b9 48 00 00 00       	mov    $0x48,%ecx
-  48:	31 d2                	xor    %edx,%edx
-  4a:	89 f8                	mov    %edi,%eax
-  4c:	0f 30                	wrmsr
+This still applies cleanly on top of tip/sched/core.
 
-to:
+Could this be considered for merging?
 
-  2d:	48 8b 7c 24 10       	mov    0x10(%rsp),%rdi
-  32:	8b 87 48 18 00 00    	mov    0x1848(%rdi),%eax
-  38:	65 3b 05 00 00 00 00 	cmp    %gs:0x0(%rip),%eax
-  3f:	74 09                	je     4a <...>
-  41:	b9 48 00 00 00       	mov    $0x48,%ecx
-  46:	31 d2                	xor    %edx,%edx
-  48:	0f 30                	wrmsr
+Thank you,
+Madadi Vineeth Reddy
 
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/kvm/vmx/vmenter.S | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-index 0a6cf5bff2aa..c65de5de92ab 100644
---- a/arch/x86/kvm/vmx/vmenter.S
-+++ b/arch/x86/kvm/vmx/vmenter.S
-@@ -118,13 +118,11 @@ SYM_FUNC_START(__vmx_vcpu_run)
- 	 * and vmentry.
- 	 */
- 	mov 2*WORD_SIZE(%_ASM_SP), %_ASM_DI
--	movl VMX_spec_ctrl(%_ASM_DI), %edi
--	movl PER_CPU_VAR(x86_spec_ctrl_current), %esi
--	cmp %edi, %esi
-+	movl VMX_spec_ctrl(%_ASM_DI), %eax
-+	cmp PER_CPU_VAR(x86_spec_ctrl_current), %eax
- 	je .Lspec_ctrl_done
- 	mov $MSR_IA32_SPEC_CTRL, %ecx
- 	xor %edx, %edx
--	mov %edi, %eax
- 	wrmsr
- 
- .Lspec_ctrl_done:
--- 
-2.50.1
+> 
+> On 14/03/25 14:31, Madadi Vineeth Reddy wrote:
+>> Commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") removed the
+>> functionality associated with LAST_BUDDY and SKIP_BUDDY. However,
+>> some outdated references remained in the comments for pick_next_entity
+>> and check_preempt_wakeup_fair. This commit cleans up those comments
+>> to maintain clarity and correctness.
+>>
+>> No functional change intended.
+>>
+>> Co-developed-by: Adam Li <adamli@os.amperecomputing.com>
+>> Signed-off-by: Adam Li <adamli@os.amperecomputing.com>
+>> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+>> ---
+>>  kernel/sched/fair.c | 6 +-----
+>>  1 file changed, 1 insertion(+), 5 deletions(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 9dafb374d76d..379dbcbb24e9 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -5578,8 +5578,6 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags);
+>>   * Pick the next process, keeping these things in mind, in this order:
+>>   * 1) keep things fair between processes/task groups
+>>   * 2) pick the "next" process, since someone really wants that to run
+>> - * 3) pick the "last" process, for cache locality
+>> - * 4) do not run the "skip" process, if something else is available
+>>   */
+>>  static struct sched_entity *
+>>  pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+>> @@ -8780,9 +8778,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>>  	 *
+>>  	 * Note: this also catches the edge-case of curr being in a throttled
+>>  	 * group (e.g. via set_curr_task), since update_curr() (in the
+>> -	 * enqueue of curr) will have resulted in resched being set.  This
+>> -	 * prevents us from potentially nominating it as a false LAST_BUDDY
+>> -	 * below.
+>> +	 * enqueue of curr) will have resulted in resched being set.
+>>  	 */
+>>  	if (test_tsk_need_resched(rq->curr))
+>>  		return;
+> 
 
 
