@@ -1,176 +1,157 @@
-Return-Path: <linux-kernel+bounces-758477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F601B1CFB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:08:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9A5B1CFBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9F87A103E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0799D626CA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219CE4A0C;
-	Thu,  7 Aug 2025 00:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BEA101F2;
+	Thu,  7 Aug 2025 00:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qxptms4r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kw2m80ER"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A96E36D;
-	Thu,  7 Aug 2025 00:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D284A0C;
+	Thu,  7 Aug 2025 00:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754525320; cv=none; b=RIV98aAnp0m6wN4VJLcOVxcxIXspL/m91l5QNDxoi56ZL03qQWU/Hgid39GqW241DdQ4wpy5K82TlirR8I3neeEoKZ0mmg474BOzbOc9F+OFAD6hVIo4JeF7LLK7I7hQz4LdFzaKXGwglRVYB2cC2pLNKO7uHpTNNvYDb1Stl/w=
+	t=1754525668; cv=none; b=GUdY6p789hz3oo80ogIlQsi2CdCvfxK7Kxrf6KOiIDGlj7kxJvPtQah13KINQfiPPiyHxhA+c0OXdqiRMVoUepbhgvTUyvX6/vwMGLRlPsa0QE0tGbpTfcjikebWNPDqt0hs2u7830OqAlEQL7qeHH5oJ9890Lf/OPiV9fu4WVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754525320; c=relaxed/simple;
-	bh=VyZExco2dKDu7jHN+QS2bBXqITlKj8MshUpQWgIF4PU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dvtnNPUyIzICuiq7fGxY/x99Sxn1qcFHXf+BexfWbtvoiBOCxDDjfHcQWDrFLlT8Fy3vq2u2ObszEu2gg2us6Bourxc/S91pWTOaOURDJ+4MSN6AvhFxUdxmnLZ4z+1eHRoYJOXHCeIPWHSCdymg8fAUdar+0Iw2PbMskucquUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qxptms4r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7C8C4CEE7;
-	Thu,  7 Aug 2025 00:08:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754525320;
-	bh=VyZExco2dKDu7jHN+QS2bBXqITlKj8MshUpQWgIF4PU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qxptms4rdNkS0gG39JU1NUcuI5qcWFffXIQ8hqqTe+CwU0ZoTU4TBJ5inww+NBoQQ
-	 jC51XwVA4U4yMASUHxY8nUldnH6/ewUUpQJmBTATFJLGlERyvxZSIjScayLd6gGH8O
-	 9kg4GpKmBYrkG1SSeIhyYd4XiXvcExNCFf1YciIt+B2eHZJ/P+vcXs+4RcEOtEC83V
-	 5Jc9Gaqrej9Pir2vnFFCPyloxKRa3X8AhYi/TbxsQ8PkuzScXmB8ZqFYK6HYswWCXw
-	 LIbE++wstdpMwXISsKDVq4ecUEO5m2kWMeSmXjKb23ODkmHdoR2pFSHkKYQoR2nCym
-	 C5O74wq/PLX4Q==
-Date: Wed, 6 Aug 2025 17:08:38 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kevin Tian <kevin.tian@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [PATCH 4/5] perf tools kvm: Use "cycles" to sample guest for
- "kvm record" on Intel
-Message-ID: <aJPuhpFK_ZjLk-ct@google.com>
-References: <20250805004633.135904-1-dapeng1.mi@linux.intel.com>
- <20250805004633.135904-5-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1754525668; c=relaxed/simple;
+	bh=Wn7+MLg+mx7R+loSOdJwKVEpmHzJFAcSmm3zYQYHZK0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eVH7BG+RtyMUi8WxKZZp8pTTNIy14nVN3JLPuPEPo6+gV1l8j3UHFtd40/69Ugg7KwhghkJrSqApOnssOV2zv5Of6ARidILAvCGc/m+07+mI3BhDlUWDzaaSGN9gI5qXJQ/nk8A7jZlnVMMq/pFJ95YEisfEp+KuQuuLhECXrCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kw2m80ER; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76bd041c431so481352b3a.2;
+        Wed, 06 Aug 2025 17:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754525666; x=1755130466; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Wn7+MLg+mx7R+loSOdJwKVEpmHzJFAcSmm3zYQYHZK0=;
+        b=kw2m80ERfv6TptsH71KaE9tpJek7th3oL9DJaMUT3vj0tc6FP0H4zsP9D3DWB4D+/N
+         xmj+AKjqo6tUnDluzT3CQBMHnKVL/9h/6tQw4Qv+5yslU+W4SMpFi2VUVnB8Xv5Dp8NR
+         +h89MXFgdVD0/Oc5UzwZ96JnbEVobclDp4HHOtz+Kzoc2BCDOLGdgYMCN+RGeplEVFY8
+         g88l8vEjzqw2pvDPvtqiwk9tNqu1koYmjvIt69vGSEniITyIhF7GtPW6FvPU9C2Lqhej
+         BwgnHybMFdvQIbdDHz3hED1QN83a8XUE8Y2jpEzDNFBVRZ7yqljatPk1e2hAM+qnSFJ9
+         3H+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754525666; x=1755130466;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wn7+MLg+mx7R+loSOdJwKVEpmHzJFAcSmm3zYQYHZK0=;
+        b=QKa0Ag7wEnUGgZVRohV7sseF2H0BPb3uaTtM2w4JOEGak9l/tEtC1yESSwLMgJi+kR
+         lQxK3EekpX7KZY5P+jy0NNsWG7JbZ2DSYxeIe9QQh9ZcnX7KAsjb5Ath+wd3G7r4Z4fA
+         v8SDYZQ060w1Rs3SfDLOcrAUtEKuYHqluYNioVJ6/tLYCx6fMQlKnBf2pS46wAbdR7lv
+         EJeM2ihWE4ueQrXt+bLeLOvGUnitjzfsA+N2eaQP3LIoslChF+hyFLoXxAChGPuEj3EY
+         5Zh5ktTa849LjAmCCNB2NV3+sLBT7M/hcVoGCiYQALq7isd28akzLeHWDAFE+sb2t80l
+         ytKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/7pA5Qy0K7Yn+s2yy7FG1LtvZnxYF2KCv5ZiGXipfyuasAi8CB0pOTG53QNk3BJrQzSEVac4uhJBN@vger.kernel.org, AJvYcCVMXh/FsPziy3ZNbXsX4SvcmfEuJpWvvN8Subh2FungrNLCehqvhej7zU7gPC//ymZDFAkGFkan@vger.kernel.org, AJvYcCXAJ7tqnX6jCYIJH7u35arMNtsfakJqon80M6mJIbyRnnyYBPzUVkZyfcnxmKAFBOrauILAVqEuQIE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWsvh7KD8TqS5qcCe8ZX5RpKIkBYa7Xp/SOCQLQqDwerd/aoqx
+	yh0/KlW2bEpGeMq796I7AHEF8ZcHlC0geJNcsDDB63Rv6DWQ+/NDKpz5
+X-Gm-Gg: ASbGnctg3vd8vecyzPGvB6ey4XxDY9cIywkY9SjiVrR6e34+GLSHPw2Y5yG8iyBrj/X
+	5YUYtev6/UWztIZ9PjOe6oTAEOqKOgT+93gRK31wyTUuqqHGoaqaFeaKfssep+6ZSZLEGS55Gzg
+	KmGMCa2w812nr25ml0WXfBZePl7+EWF5DlHKCxWCpI02ABq5EB+lqTPPLGmeybqdWJB9pqwvonH
+	4y3COlwTVBdBIhfblWLg4JUeAnslYnddvrEb7NGAjC/HgwxmE0kB1ZJhgxrwr67wC9Rz6bTXP9I
+	Mm5zxUcbQOcv192G/5VizHFE/3RWN9DnSNeUVLnjppvJaxACQMUm4QBWgioJtaXT6uCXUNlpOE7
+	Q2fgVp6gB4+k/6guZYqmt4uYBcGygCz7FrQ5H9/Q7SpBGSew=
+X-Google-Smtp-Source: AGHT+IFv3fICeSVNB66r1CGZa9K57JTbAU/G+cw8lORmFzP1zvxfL+ysyO4WBfOOvQ2rCC3Vekbzqg==
+X-Received: by 2002:a05:6a00:2d26:b0:76b:c882:e0a with SMTP id d2e1a72fcca58-76c387f6269mr1193271b3a.5.1754525665892;
+        Wed, 06 Aug 2025 17:14:25 -0700 (PDT)
+Received: from [192.168.0.69] ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8f911sm16602234b3a.47.2025.08.06.17.14.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Aug 2025 17:14:25 -0700 (PDT)
+Message-ID: <7af292c6bb2c42cead77202a9034fcb6111b898c.camel@gmail.com>
+Subject: Re: [RFC 0/4] net/tls: add support for the record size limit
+ extension
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>, alistair.francis@wdc.com, 
+	dlemoal@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, 	pabeni@redhat.com, horms@kernel.org,
+ donald.hunter@gmail.com, corbet@lwn.net, 	kbusch@kernel.org,
+ axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
+	borisp@nvidia.com, john.fastabend@gmail.com, jlayton@kernel.org,
+ neil@brown.name, 	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ trondmy@kernel.org, 	anna@kernel.org, kernel-tls-handshake@lists.linux.dev,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org
+Date: Thu, 07 Aug 2025 10:14:14 +1000
+In-Reply-To: <96ca4de7-d647-47ac-b42f-d76284394526@oracle.com>
+References: <20250729024150.222513-2-wilfred.opensource@gmail.com>
+	 <96ca4de7-d647-47ac-b42f-d76284394526@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250805004633.135904-5-dapeng1.mi@linux.intel.com>
 
-On Tue, Aug 05, 2025 at 08:46:32AM +0800, Dapeng Mi wrote:
-> After KVM supports PEBS for guest on Intel platforms
-> (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
-> host loses the capability to sample guest with PEBS since all PEBS related
-> MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
-> switched to guest GVA at vm-entry. This would lead to "perf kvm record"
-> fails to sample guest on Intel platforms since "cycles:P" event is used to
-> sample guest by default as below case shows.
+Hey Chuck,
 
-Do you mean we cannot use "cycles:PG" for perf kvm record?
+On Tue, 2025-07-29 at 09:37 -0400, Chuck Lever wrote:
+> Hi Wilfred -
+>=20
+> On 7/28/25 10:41 PM, Wilfred Mallawa wrote:
+> > From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> >=20
+> > During a tls handshake, an endpoint may specify a maximum record
+> > size limit. As
+> > specified by [1]. which allows peers to negotiate a maximum
+> > plaintext record
+> > size during the TLS handshake. If a TLS endpoint receives a record
+> > larger
+> > than its advertised limit, it must send a fatal "record_overflow"
+> > alert [1].
+> > Currently, this limit is not visble to the kernel, particularly in
+> > the case
+> > where userspace handles the handshake (tlshd/gnutls).
+>=20
+> This paragraph essentially says "The spec says we can, so I'm
+> implementing it". Generally we don't implement spec features just
+> because they are there.
+>=20
+> What we reviewers need instead is a problem statement. What is not
+> working for you, and why is this the best way to solve it?
+Thanks for the feedback.
 
-> 
-> sudo perf kvm record -a
-> ^C[ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.787 MB perf.data.guest ]
-> 
-> So to ensure guest record can be sampled successfully, use "cycles"
-> instead of "cycles:P" to sample guest record by default on Intel
-> platforms. With this patch, the guest record can be sampled
-> successfully.
-> 
-> sudo perf kvm record -a
-> ^C[ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.783 MB perf.data.guest (23 samples) ]
+Essentially, this is to support upcoming WD NVMe-TCP controller that
+implements TLS support. These devices require record size negotiation
+as they support a maximum record size less than the current kernel
+default. I will add this to my V2 series in more detail.
+>=20
+>=20
+> > This series in conjunction with the respective userspace changes
+> > for tlshd [2]
+> > and gnutls [3], adds support for the kernel the receive the
+> > negotiated record
+> > size limit through the existing netlink communication layer, and
+> > use this
+> > value to limit outgoing records to the size specified.
+>=20
+> As Hannes asked elsewhere, why is it up to the TLS consumer to be
+> aware of this limit? Given the description here, it sounds to me
+> like something that should be handled for all consumers by the TLS
+> layer.
+Yeah great point, I didn't think it through too well. I will address
+this in V2 and have the record size limit implemented in the TLS layer
+without involving ULPs.
 
-What if user already gave some events in the command line?  I think you
-need to check if "-e" or "--event" (and "--pfm-events" too) is in the
-argv[] before adding these.
+Regards,
+Wilfred
 
-Thanks,
-Namhyung
-
-> 
-> Reported-by: Kevin Tian <kevin.tian@intel.com>
-> Fixes: 634d36f82517 ("perf record: Just use "cycles:P" as the default event")
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> ---
->  tools/perf/arch/x86/util/kvm-stat.c | 46 +++++++++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-> diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
-> index 424716518b75..cdb5f3e1b5be 100644
-> --- a/tools/perf/arch/x86/util/kvm-stat.c
-> +++ b/tools/perf/arch/x86/util/kvm-stat.c
-> @@ -3,9 +3,11 @@
->  #include <string.h>
->  #include "../../../util/kvm-stat.h"
->  #include "../../../util/evsel.h"
-> +#include "../../../util/env.h"
->  #include <asm/svm.h>
->  #include <asm/vmx.h>
->  #include <asm/kvm.h>
-> +#include <subcmd/parse-options.h>
->  
->  define_exit_reasons_table(vmx_exit_reasons, VMX_EXIT_REASONS);
->  define_exit_reasons_table(svm_exit_reasons, SVM_EXIT_REASONS);
-> @@ -211,3 +213,47 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
->  
->  	return 0;
->  }
-> +
-> +/*
-> + * After KVM supports PEBS for guest on Intel platforms
-> + * (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
-> + * host loses the capability to sample guest with PEBS since all PEBS related
-> + * MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
-> + * switched to guest GVA at vm-entry. This would lead to "perf kvm record"
-> + * fails to sample guest on Intel platforms since "cycles:P" event is used to
-> + * sample guest by default.
-> + *
-> + * So, to avoid this issue explicitly use "cycles" instead of "cycles:P" event
-> + * by default to sample guest on Intel platforms.
-> + */
-> +int kvm_add_default_arch_event(int *argc, const char **argv)
-> +{
-> +	const char **tmp;
-> +	bool event = false;
-> +	int i, j = *argc;
-> +
-> +	const struct option event_options[] = {
-> +		OPT_BOOLEAN('e', "event", &event, NULL),
-> +		OPT_END()
-> +	};
-> +
-> +	if (!x86__is_intel_cpu())
-> +		return 0;
-> +
-> +	tmp = calloc(j + 1, sizeof(char *));
-> +	if (!tmp)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < j; i++)
-> +		tmp[i] = argv[i];
-> +
-> +	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
-> +	if (!event) {
-> +		argv[j++] = strdup("-e");
-> +		argv[j++] = strdup("cycles");
-> +		*argc += 2;
-> +	}
-> +
-> +	free(tmp);
-> +	return 0;
-> +}
-> -- 
-> 2.34.1
-> 
 
