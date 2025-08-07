@@ -1,64 +1,52 @@
-Return-Path: <linux-kernel+bounces-758696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE74B1D2B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97626B1D2B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6697258AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:56:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44741882F75
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D58223705;
-	Thu,  7 Aug 2025 06:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3544421CC79;
+	Thu,  7 Aug 2025 06:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bpwR0rZ4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="gOrDFONM"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA681C862D;
-	Thu,  7 Aug 2025 06:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2A94A06;
+	Thu,  7 Aug 2025 06:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754549782; cv=none; b=mkNt5c5e97WVeIY++4VuwR1v+9OMQ8WVk9CBoPit8TsYjpDJxOeU5i+YDvQOO02pR5YGDBiwhrQXW2emTuOeApkZ/A1FKtyLsUKWKYbTbE8grAZubqDtJcbkjqOg5laOhXQM0adv3uuBAWjKZmOP3B1LN02MK0NHAqizX/b0LMc=
+	t=1754549669; cv=none; b=E5XAd3su1QB0zsO63mQAE7zdDwLLna3DjSow3grgeBuR9/Gcj66h5vaP8Byns1rPhgqPI4Bgo9oHYdlT4emsPhDD91xWew5gT0z5wTnumRoEKZuwAbYQYkfT/IbZEEMay54pyH5sAZcJEj0t7jrpDbWhsCJ8667jF+kte61mQi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754549782; c=relaxed/simple;
-	bh=r5ZCaUWe5Zj67D/I0QB99rgW+0T7bCVTt1DYQGPGn4g=;
+	s=arc-20240116; t=1754549669; c=relaxed/simple;
+	bh=UZ3kKz+L6SWuJovjfZtF+5IceB2C1ZXCCNzn8WYBsCU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R/xg30KS5Drg0PyDqxIiAdriryq8ydlqhFR/wZDcnEr7HuOtIzq6nSo/9hCiMbl3wOcBG0GrGnENN2pov1CTXohTE4+tXsHnkoRXXrMSsH8DftLQPwY/ZzHcHHt9VbVhHTIUySQjwApAIjUIK+bKWOp/k1g2yz6Fk4Y3OHfCqgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bpwR0rZ4; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754549781; x=1786085781;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=r5ZCaUWe5Zj67D/I0QB99rgW+0T7bCVTt1DYQGPGn4g=;
-  b=bpwR0rZ4icq++nOzgk+V3Ehw2jZalGnaa73PreIbCQGQipCjZHD6T2Po
-   Z2RmrqQsINC1tdfM5viibQkAEulRDk6AWl78lRyraWYNuK0zxPPLgx56s
-   E0udygxdkcudf+tlbkWl0AYvnBAVH5ul68H3EDtoN0P45gRilpSxPID5E
-   c7mP5LVofdOIquyzh8kgy2L572PxyzpBaWE82sfaoG9hh+NtnCyRrSbmn
-   9uNx8eX9kqnWUItHdMKdL7sY7NSEht8PxgkloUrdjYudGqPn0XMk+1Rl9
-   0ZpgRLD/wzbhibVWUa7+IjdEGo7GPYIZGLbmPtRBtwtoeFQ0JKVsSO0RH
-   g==;
-X-CSE-ConnectionGUID: +3qoUz3IRLGSWKjexmOaeg==
-X-CSE-MsgGUID: KnY6/i2NQq25HwxVH6dQ7A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56839931"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="56839931"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 23:56:20 -0700
-X-CSE-ConnectionGUID: dKh6cH87Qva1jMqbriMu/Q==
-X-CSE-MsgGUID: O2RcK+slTCW7q0yLaxtgbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="169439423"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 23:56:17 -0700
-Message-ID: <f0d561a1-231d-495e-a91a-9724d4037f05@linux.intel.com>
-Date: Thu, 7 Aug 2025 14:53:46 +0800
+	 In-Reply-To:Content-Type; b=CvPikMW/roPPboRiIVdoZqYmLFV4sjRVUAYUFjTaQO8b0QEEnhnjSoEA/5NcUJDLkRfSPMjb58YuYPPxkFJuCDRX5afdvfjqAteV6NaZx2wdAxKWYS/VC6DdVminMm7YrE7V/vAOePhvRzvS7A80DLNIvrXGZiOu4WBAz1d/9gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=gOrDFONM; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=iDHkx2i7fBVZgz1YuVRDZzIJYfP4Gyp3ojsDJpTljHk=; b=gOrDFONMqUif6vPO7Y4heUdtIY
+	lLumL+5dV672BzupH9aytka2SXD2kpU75jZ1Bm1WVCt6od2e0TPbZ0ZfBbj3BSK4KTeGjPpDzHn3h
+	O7gdRO5XBzWK2v7ijt2tHwNUN0ut4UoJQKnBEgWZcnCXgkQko4WwUASCqyzC4EKF5m/znv5dXUoND
+	bekjg0u5Ndl/JUD/J22NoQJPz8Zjah4QfAiylmlxRp8Iu+d3dfisTyklVvD2m9pzMkRC+jrrQIX6q
+	4Y8+fiGkXVZQpD+bfjjmcWNo0EYO7EmVNUaJBcazkJbtSlbZuyhH1diJuc8SkO5z0ips9m+sQfJSi
+	/l6Ik7rftaPsxQlLi1xEW5oj/pZNBQhWDRjt8M8xHOHVuAub9q917xS8jfOdMIoettm2Knp5GLTCq
+	zfOEnhIyuczZvIQCPYimSLpiGbgglY+vKEErFrUE1iTQwp9G/+gSkZgIHHsNqpL5XsbEhY8fGb9Wb
+	KWDOqNrpq9Q7dI+aZNwCa3ji;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1ujuW7-001VqH-2G;
+	Thu, 07 Aug 2025 06:54:23 +0000
+Message-ID: <40d1f78c-d437-4ab4-8e5e-8708af6486ab@samba.org>
+Date: Thu, 7 Aug 2025 08:54:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,110 +54,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
-Cc: iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
+Subject: Re: [RFC PATCH 00/31] netfs: [WIP] Allow the use of MSG_SPLICE_PAGES
+ and use netmem allocator
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Wang Zhaolong <wangzhaolong@huaweicloud.com>,
+ Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <c213ace1-7845-4454-a746-8a5926ab41d0@samba.org>
+ <20250806203705.2560493-1-dhowells@redhat.com>
+ <2572846.1754547848@warthog.procyon.org.uk>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <2572846.1754547848@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 8/6/25 23:03, Dave Hansen wrote:
-> On 8/5/25 22:25, Lu Baolu wrote:
->> In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
->> shares and walks the CPU's page tables. The Linux x86 architecture maps
->> the kernel address space into the upper portion of every process’s page
->> table. Consequently, in an SVA context, the IOMMU hardware can walk and
->> cache kernel space mappings. However, the Linux kernel currently lacks
->> a notification mechanism for kernel space mapping changes. This means
->> the IOMMU driver is not aware of such changes, leading to a break in
->> IOMMU cache coherence.
-> FWIW, I wouldn't use the term "cache coherence" in this context. I'd
-> probably just call them "stale IOTLB entries".
+Am 07.08.25 um 08:24 schrieb David Howells:
+> Stefan Metzmacher <metze@samba.org> wrote:
 > 
-> I also think this over states the problem. There is currently no problem
-> with "kernel space mapping changes". The issue is solely when kernel
-> page table pages are freed and reused.
+>> So the current situation is that we memcpy (at least) in sendmsg()
+>> and with your patches we do a memcpy higher in the stack, but then
+>> use MSG_SPLICE_PAGES in order to do it twice. Is that correct?
 > 
->> Modern IOMMUs often cache page table entries of the intermediate-level
->> page table as long as the entry is valid, no matter the permissions, to
->> optimize walk performance. Currently the iommu driver is notified only
->> for changes of user VA mappings, so the IOMMU's internal caches may
->> retain stale entries for kernel VA. When kernel page table mappings are
->> changed (e.g., by vfree()), but the IOMMU's internal caches retain stale
->> entries, Use-After-Free (UAF) vulnerability condition arises.
->>
->> If these freed page table pages are reallocated for a different purpose,
->> potentially by an attacker, the IOMMU could misinterpret the new data as
->> valid page table entries. This allows the IOMMU to walk into attacker-
->> controlled memory, leading to arbitrary physical memory DMA access or
->> privilege escalation.
-> Note that it's not just use-after-free. It's literally that the IOMMU
-> will keep writing Accessed and Dirty bits while it thinks the page is
-> still a page table. The IOMMU will sit there happily setting bits. So,
-> it's_write_ after free too.
-> 
->> To mitigate this, introduce a new iommu interface to flush IOMMU caches.
->> This interface should be invoked from architecture-specific code that
->> manages combined user and kernel page tables, whenever a kernel page table
->> update is done and the CPU TLB needs to be flushed.
-> There's one tidbit missing from this:
-> 
-> 	Currently SVA contexts are all unprivileged. They can only
-> 	access user mappings and never kernel mappings. However, IOMMU
-> 	still walk kernel-only page tables all the way down to the leaf
-> 	where they realize that the entry is a kernel mapping and error
-> 	out.
+> Not twice, no.  MSG_SPLICE_PAGES allows sendmsg() to splice the supplied pages
+> into the sk_buffs directly, thereby avoiding a copy in the TCP layer and
+> cutting out the feeder loop in cifs.
 
-Thank you for the guidance. I will improve the commit message
-accordingly, as follows.
+Yes, and we must be careful to not touch the pages after
+calling sendmsg(MSG_SPLICE_PAGES).
 
-iommu/sva: Invalidate stale IOTLB entries for kernel address space
+And unlike MSG_ZEROCOPY tcp_sendmsg_locked() has no
+no struct ubuf_info *uarg when MSG_SPLICE_PAGES is used
+and there's no way to know when the pages are no longer
+used by the tcp stack.
 
-In the IOMMU Shared Virtual Addressing (SVA) context, the IOMMU hardware
-shares and walks the CPU's page tables. The x86 architecture maps the
-kernel's virtual address space into the upper portion of every process's
-page table. Consequently, in an SVA context, the IOMMU hardware can walk
-and cache kernel page table entries.
+Can you explain how/where we allocate the memory and where
+we unreference it in the caller of sendmsg(MSG_SPLICE_PAGES).
 
-The Linux kernel currently lacks a notification mechanism for kernel page
-table changes, specifically when page table pages are freed and reused.
-The IOMMU driver is only notified of changes to user virtual address
-mappings. This can cause the IOMMU's internal caches to retain stale
-entries for kernel VA.
+> However, this is meant to be an intermediate step.  I actually want to
+> assemble the fragment list in a bvecq in the smb_create_request() as called by
+> the PDU encoders, with everything aligned for crypto so that the crypto layer
+> doesn't copy it also.  But cleaning up the transport first should hopefully
+> reduce the size of the later patches.
 
-A Use-After-Free (UAF) and Write-After-Free (WAF) condition arises when
-kernel page table pages are freed and later reallocated. The IOMMU could
-misinterpret the new data as valid page table entries. The IOMMU might
-then walk into attacker-controlled memory, leading to arbitrary physical
-memory DMA access or privilege escalation. This is also a Write-After-Free
-issue, as the IOMMU will potentially continue to write Accessed and Dirty
-bits to the freed memory while attempting to walk the stale page tables.
+Sounds good :-)
 
-Currently, SVA contexts are unprivileged and cannot access kernel
-mappings. However, the IOMMU will still walk kernel-only page tables
-all the way down to the leaf entries, where it realizes the mapping
-is for the kernel and errors out. This means the IOMMU still caches
-these intermediate page table entries, making the described vulnerability
-a real concern.
+metze
 
-To mitigate this, a new IOMMU interface is introduced to flush IOTLB
-entries for the kernel address space. This interface is invoked from the
-x86 architecture code that manages combined user and kernel page tables,
-specifically when a kernel page table update requires a CPU TLB flush.
-
-Thanks,
-baolu
 
