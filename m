@@ -1,171 +1,307 @@
-Return-Path: <linux-kernel+bounces-758763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A230DB1D39F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:44:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 847EAB1D3A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A54720E5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:44:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B44E7ACEF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BD925394A;
-	Thu,  7 Aug 2025 07:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C3623F439;
+	Thu,  7 Aug 2025 07:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kq23wH5D"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="XGB1bkfF"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012022.outbound.protection.outlook.com [40.107.75.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8619124BCF5
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754552618; cv=none; b=Dyqo5pIhNRWmNv2o0X6y3iv+EcZeTdHY2Rcjprh8kkFXQC/Y2oDbolGMD7a98HEkYWkl74aaaEGc2r+D0eUX0hWO3KKKB/ASlbuS5riE+kbDj18INteW0qWtiEpwk8rtFdzVFjLzPcxJZOVzKGHqVSNVFRshY0BlKFuqtweYw7k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754552618; c=relaxed/simple;
-	bh=RRxiBs16r7KTIHUs8Zak5jbdXnfM3F+ay1jRs1C93GE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CLHpgIxjpsLE+78B4XLAS2dPE+y40dqqru5/azKt3v+cjS7XQYD4HJJ0//LGcZ+r55S36JijyMp8h4LISG8DAAmPEMrbyxQEkHPHjhgP2O+7MvLYq48A5PEM+ViKP+vD7uumf1mJHbb9jKaG4Mvaio0+Jk0xEQGshk50geWt7Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kq23wH5D; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57702lPw011051
-	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 07:43:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=IAd5Ze4vzEv
-	wh8CRNYeZ2qA7tHf7jWkHfXPtXA/b2Zg=; b=kq23wH5DE2+oLegmUvtX/zF+xtk
-	g/FzoL6TijTXlnE32k18k+uqSgh8GeqMAlROGd8glIE9JimOn/gvrPY6p1yT/M6c
-	hvUYYjy4mKzw+PWBhlybCB5wlRK4tCqB0FCGCASdh1dyJ9cLEs6wAAtNrJ2azJPT
-	SKfMOV/BLmhYZPeropj9mMsLU39N7O348ny4KPgPgyf2PN8cRiTk9ExORGz8YT64
-	ueOIL8NOdJKbRwlbVIpTO626RO+4buwTgyDjSliJXBp/cbm1jPai0e721awRoUc5
-	WYQjTUZUMkAhiXrnLddJIHwL6ITOAcnK7Y4a4wYDy9lIm9U/VAf+qaVK4Og==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw35gp9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 07:43:35 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b3beafa8d60so1032055a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:43:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754552614; x=1755157414;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IAd5Ze4vzEvwh8CRNYeZ2qA7tHf7jWkHfXPtXA/b2Zg=;
-        b=roeCZhkfHagqEc7LuKQQnqMviBlFZdmFSkR210H6XcGxuG+hFOaOvGgNA3gNZpdUOD
-         kSKMmYMTHJpIa8H48fr4ygxgYdjPV+uwIQnSVf8kAKczEjtyZdXhqMhScVkAqjm985cp
-         zzzmTr+x2WAgr9viSvuT7pLwHAm5hrvwtN3l65xXa+/JBfGprb/P/wBy6TmegzOOnaVR
-         jOaMn9hcBIiIfOQBVDeS6tXiNaZCtTogHAyjTc79v9EFbHeSQw7pSl8bwUjbCL6E69+j
-         z5qdadYoeL3l6RUDBY9wcHmp4FzwVyf5MB5uK6E7g3aU85FcOJvDVzG+WEtpus7ZB2Al
-         F58A==
-X-Forwarded-Encrypted: i=1; AJvYcCW4yWVkxR4vvmQq8LCQcvm75tj645R5ZB6ebPWX4IGsoiqRN0hn4I/FORY82k+kgl0yvulR1hXavLU82Kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtcH5FCUh8xs9UXrjmMXlbTgNC2efPrMq/F1kn6UBN6vAKsJOg
-	+uUCoDKuCBXTlggVFwcI3AQPEyZ2NPygOfn+UOdm++/GHsuF0S0RSQQuAMwB3UrFgrHMH5cSUbZ
-	7bNcU3FeJDxmb14dUXu99Hy4xRVc5IMRk306+TNhMlyVmgY9ScHs/R1KSLAVpiv360n8=
-X-Gm-Gg: ASbGncuqIRiRJNDz0F4TuzsG1vMQi/FDWkRIvs/AmKFXC8BlSYW4MZpkKVQQlCayt+d
-	37XX6ezHiNDGFdXKfWL7Y0OZouuNYn4SSMbAQlJvnzAxh6XXc+qNWmAB0pcegEc5Q0D2SEkYYIn
-	URsTm1Ds9Cn5B7+nlwwbbJ9pAyRAsKK1yTw5+fWkQwe8upqkGpoCuAe3rOHMF0EVUbiEdOk69wN
-	aY/57XM6rsr4cD/0/3PztfBlz8u5BegckHZhSWSTgj9H4XaOwHpvMNxOx8u29/FuqbDEIyVXOx/
-	hfaXuG8+JloczIy/r4wcAzEnUX/+r8KtU6Lw8dqOK5F3VB8Mu0g5NKp7J9LqSde5J2A=
-X-Received: by 2002:a17:902:f68f:b0:240:3915:99d6 with SMTP id d9443c01a7336-2429f4abfd4mr86270785ad.33.1754552614146;
-        Thu, 07 Aug 2025 00:43:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmQ70xW0VJBqeSlIUWMJPARL1fYQTkCAlkasjy9//oof5xTgkO6mW9mVoX4c12poiyfQ7JHg==
-X-Received: by 2002:a17:902:f68f:b0:240:3915:99d6 with SMTP id d9443c01a7336-2429f4abfd4mr86270555ad.33.1754552613777;
-        Thu, 07 Aug 2025 00:43:33 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef678dsm178166395ad.39.2025.08.07.00.43.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 00:43:33 -0700 (PDT)
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: [Patch v3 3/3] soc: qcom: mdt_loader: Remove unused parameter
-Date: Thu,  7 Aug 2025 13:13:11 +0530
-Message-ID: <20250807074311.2381713-3-mukesh.ojha@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250807074311.2381713-1-mukesh.ojha@oss.qualcomm.com>
-References: <20250807074311.2381713-1-mukesh.ojha@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5D423D29F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754552682; cv=fail; b=u9+Z7/xU9veaRXzsd9RPojJsolxZtFvxCtfVCPzTwcJpjGixzVqMZ/b2zu+CgPfdD8EV8++NGU49qa/gKTmbUIi7Vdp7IzafRO62iz+oZ/u5uhDL+U3IFkf5I7oq8/N1NDqOafFH122i741weoI+Fwf4xPWgy3Q9E92yDazQhJQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754552682; c=relaxed/simple;
+	bh=k536LGCfVGWf2OQWkzCSJV5XzenNtgavtE5dypn1Xv4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DM6CDoGtn919A/NosaQeldVK40umi0CyR+/wfNeVYAEvlXHgvGCFoTwP9VMTXIFoJ4EHdkhN8IaTmStWoyAegkClyCzmYSaS6Rfr1CvPDm844OpMwmA4Wg6fA1iQQvEz2qVdMwKqf2ZZ81mY6YdB6Ujj2v6p/UMb3WT8Q1il3+8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=XGB1bkfF; arc=fail smtp.client-ip=40.107.75.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l5yGhOXENZ1bujcJs1kAJMwbdGp/VfZju81kpQJ5uuyIyvRLN0ZGCAPvXeXQnN6d2eptpheImYbJd60BYutOZGNUOZQOvO6PKPAj7C4HT+N21M3MovxUybvVXKliLdnEyQIiCt6uI6riEdPJ3hfm7SFrsP8J/Su+PNMkX4Uxn1PCdpM8BziBBAo03obmxRVIJhCd2Py20NYR4da7dPTa1UbIoIDXRxJw8Wz32+zw5CkiP5HwKcr4BVN5M0vsE2IHO0kDfJX7VGAjmrsfRofEOuNnUQmBguwWm2PM55V/AHwHt4pwkrhSFSkre8LZOPVv9uYKYNHNGGSILkDzxFGh+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9zNosMjRJgs1JBlZrjtDGHdmEJ9Tufo7d/Qbz8EccmE=;
+ b=RxBNZyeStSsdveH9bPEZElYHzON1MMZ92f8E9hqM4LogkR6+psRAWACkxL+zTOR/KyLBUqWMTQoD5cAa7pVKRLpkqtfg/ng/kHJZGuayIMlTXgRCWDzi1mY6x7Lf6ARSuxGRzFw9ceQTvbcj3CUYFiKUdaBKXmFwURENob3Bvl/4pA3bE4kDfHKPwgKiLZSFUw6qQAAOuWiC117Lc/hwF7goVGqrBfHDQVmnTs5N1QSwXbNdhNAZiOFmpnz5uEa/upZGNLJJGuQXC8XcVN0A49g0rULqMEk1bZJtU2SIAWlgmo94fd4OR9oP/iB2okmeRfxBp9/Hm0wNdl4wPPSKuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9zNosMjRJgs1JBlZrjtDGHdmEJ9Tufo7d/Qbz8EccmE=;
+ b=XGB1bkfFfb+C65j/IYs7GpWjeYqeAqjEvhdn3+BIpwdpaONrX6vai+HHI5OVLbfTzvPvw167UUYZAW2MaCqZ2Q37zQ7FzyQLouw3GjiI/h7Ji6FG1b4BTjVlTDfklbC6Gj+Fym17QLMeYzLh05Ek4X3grINZ6E6ZTv1149/cOc47o7TUbGtb6cyoL1uaWXQCIaWbp4y/oRE/qYMzMuGH1c0l4u9FiNu3yN5Z9fBv6E3tqeaw405t7ZOptCi4LRXPHaChfjkQd7IhTkmxBSzYHz5DbHcKeY1EME7DIuy5kPYOuWzm6RYqMfjIVC7dyGAU6L6oUY/R8MqOQoWVOkcvDQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SE1PPFF973AF9A5.apcprd06.prod.outlook.com (2603:1096:108:1::431) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Thu, 7 Aug
+ 2025 07:44:34 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 07:44:34 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH v3] f2fs: Add bggc_block_io to adjust the priority of BG_GC when issuing IO
+Date: Thu,  7 Aug 2025 15:44:15 +0800
+Message-Id: <20250807074415.387181-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250805132208.486601-1-liaoyuanhong@vivo.com>
+References: <20250805132208.486601-1-liaoyuanhong@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR01CA0151.jpnprd01.prod.outlook.com
+ (2603:1096:404:7e::19) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfXzkFh937Q3CDy
- QWEgg6F8Ey+YIu+7BC8qN+/WitTKTNczHU+w3C6poz7SAQ99VhFsvxdnu4jG5BN6ic1SJWV45H9
- ozPNJPs3eIgZZRzn/kLyPp5QcHE89wvB+BuQgFIJaSLJmkaoaxruihKYdV6zvjSYTPwRRgEJYLQ
- zUxRuqVVnZpPbrtFA2umPT/VeV4M7JKeGAFs84AQ90/mqqviI9N8h6oYoEFxSLDQhaKMLgiJ2eB
- nzGi9Qus9OU7RVLw8osRBqbNVALsLwOFkc0mT0r0rN/PYIRT9EoGuN6Kf9HZ7Trk+3GszXfYhoK
- lQzy5AUfk8COrTk69HIN3Xv7wv4XWXTp1/URlWtUBW8IBHhfPODYr6gDHnn9D8ZmCp2bHBre7/i
- 3mGtPY8S
-X-Authority-Analysis: v=2.4 cv=J8Cq7BnS c=1 sm=1 tr=0 ts=68945927 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=wln2f8d1oZJPYHCAfSYA:9
- a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-GUID: d7TlItg3FCeersJD7bEiuYps8vmN3heh
-X-Proofpoint-ORIG-GUID: d7TlItg3FCeersJD7bEiuYps8vmN3heh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SE1PPFF973AF9A5:EE_
+X-MS-Office365-Filtering-Correlation-Id: 567ecef4-da3b-4414-1ed1-08ddd586409e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rcrCz1O95+4wFEG12IMadUpMCG6gpT7kelYRZZTMWcEQVCe5N+LfTYRiLCQA?=
+ =?us-ascii?Q?JCrlauE/J8qEm+Fa+Nhrl2SohygnJ62qTDzS2ntrOe0loWfK0j7cCBI1pBwp?=
+ =?us-ascii?Q?sb+POSeEbBtnpWWpXlDpKywRO5iCFCnCPfe4gajJcPFFuv8yskbuUwPoqvIc?=
+ =?us-ascii?Q?NhpVumooQxlC3Qud5BC1HbaioiJCRqRsQMKhVmZzWF2MDBY0k/TOqipEH0tW?=
+ =?us-ascii?Q?jdk7q/sN+M+3WzLfMZUxUgzJ+7JFvN8zo/PqYTql+cSUPGsMExjo572EiW6V?=
+ =?us-ascii?Q?ma75T7fhbVcUfvGTJeL56p+k58Ao6kthi2TWXlWIFukidoxpmqCM2Kdmxkbh?=
+ =?us-ascii?Q?tJiGC45YeYP42+CZ7QGQdKKW1zfPki1yvn/CVsVF4O9l5rGlewOlXQVzt6gF?=
+ =?us-ascii?Q?9Auksg6z+K+2fnOp0r3ozypTwVknDGYqas6DtJCmR05kDw65MgHR6yHPbKf/?=
+ =?us-ascii?Q?8V2lM516nayJRYjgJgBoQJ/1wXIW6d1JiO4QsTLms2T6O7pQmcRsP1SBehas?=
+ =?us-ascii?Q?SFeBJdeFIWDBW1fWhYv3pw3G2myGHDyfO/8YHUkwCMdog2H1TAP441oez0Gt?=
+ =?us-ascii?Q?Q1jkAodU7fWAJMkcK6YyBV2HH2a8TSUVtxCOekLWoKZmBODRLjD85wFkrQSn?=
+ =?us-ascii?Q?BnN8vEmGqUI1fRI3ym2hKDYOaINO3KqTZzqkZqQNRgx5Tkd0QPG2kR1kzVs9?=
+ =?us-ascii?Q?IZkVBY++rNoA4lmPK9g1aEEd0Rzv/Vbx2muVeJCp7xcEXYe2zb7xpNVT+DCy?=
+ =?us-ascii?Q?7SCKFRQFeH32PGiBTJyzruF8zvprzN7qwZjqI4Cs5J1bC3wyUSR+ATfaATAx?=
+ =?us-ascii?Q?pDBU/7YPzZMzTLUSciUlwxy6XDl/1jSXMj8mmDOUl/Sl5NljHTrQBUsIHYud?=
+ =?us-ascii?Q?pw0qwpFlNysjFs9AE4xI4DnCjE4n2Fj0j9vekyIf8b7WYPtLhqW+R5FtAJA1?=
+ =?us-ascii?Q?tDLVsfZkXoA97oHXbV8XJo3nYeLErhsWoCR/TMtp0AJvYql7v7V1ZVywHkh+?=
+ =?us-ascii?Q?sUz4NUbZ07BVQAXU0VFP7kZLVR4/ClMhnQ9uGfppJJldQkn5U/lM0cN2uSO1?=
+ =?us-ascii?Q?EBUnsB8wekl2kvang7e37yMLq/KPFOqF8a+nS/193FBZvIpmsAz4c2bFOcie?=
+ =?us-ascii?Q?/tANxeRmquH8M+8cq2LrGEFdwZH9nhn2OBT1z/IrcVu+T5EdvKc4lgtoRnSO?=
+ =?us-ascii?Q?ZaRUrv7fUaAoluxO0xI/bIYljgf/lXrAx6aBPHANnvuNxK6QRom6bXir4ALK?=
+ =?us-ascii?Q?Z8zMxXMPSFp2Xh9Ioi4wFxigQhMGDMhafHP8XtF/UaYXyLAHUKA8WMrn+INf?=
+ =?us-ascii?Q?DIMPpmza+jTLTaBli+jCCE+GFEltIh9m81AOj+oqqpi5YealzphsobSlre0A?=
+ =?us-ascii?Q?dn0i3F/W4IJY9DsXYOR5HySeutASfhRB8o3u2KfrYeFvAXXhTO5n0mY2SkWd?=
+ =?us-ascii?Q?KhRRgMEJobXWXIV33EZz8fNhuk6/lwpd3NV8wQcx0pfn9rfhcoWImA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?E1ndwLoOf0hqEYwFASJzvb55xb90Yp7sCQGAu7cZV0GGcOw7jz2G1MVVJNqc?=
+ =?us-ascii?Q?aSVuSu/e4J4bXuRnz0vn9S0vBR8USooLXu1n3YwIcpNra/cY7niM3b1ufOcg?=
+ =?us-ascii?Q?nTwuqDCrvtdsGskmdom/YRct0AVnab6Eqj32ShUhqeBmRu/lme5wLID75H7D?=
+ =?us-ascii?Q?vZ3poHmZMalYME44EAvPqqTzschSaU/J5imSK/gdgRCUgTmFIscJp3J4k0WR?=
+ =?us-ascii?Q?lMvfxrPQq859PMnLgXDa/9e9He/BXJUp8NCk1BRUqxwxOpLQSdK6mGTrWs5E?=
+ =?us-ascii?Q?RYsCvRgE60U3oiRWtcVA7VW148jUtob9AeBM4Q+QegXQ0x4CrXc5WeWEzKnL?=
+ =?us-ascii?Q?3ltwZCz80eYIgCpUCQUmNfqqDs+vEweOppe935ugPvU0k8B2DeUgZ7HLHnXS?=
+ =?us-ascii?Q?HuSCw4OTc0iw+kB15OCDqt/Pu1roiVmXwINQh+4inXQM0zLOI6QRJDBiV1go?=
+ =?us-ascii?Q?XroaBu5v0uMPZmK8Ri6OBw2ybQSbmdwjcv61pCkCwTI/w4UCK9GC5gRwNMEK?=
+ =?us-ascii?Q?gofgij20fbagUn0SMjUXp4AHtbjFqjAvbfXxMQLsJmgbOWgZoSodpxnt/gjY?=
+ =?us-ascii?Q?kNRRxGpayj6yGAaAjDSSokX7wRc8VrGhMG4vLIp/jN94CQIwzNL8x2TOKAA7?=
+ =?us-ascii?Q?7ZXalQ8uuM8EJ8HYiKvKnShH4I+0DSP4873mnEcf5feXwTfBcuNNSm9cTTO3?=
+ =?us-ascii?Q?puH5I84GVp/LM6tgqagp+rSJR/AVDrcdPuya1arh5csBwEhDnCQFqIp2Ac6U?=
+ =?us-ascii?Q?0rZU8lrWSMyY3qTvCqNNYsFUPyNQvxyLK7sqwkPWQzBuAB1sT4DBFdq4Lgxn?=
+ =?us-ascii?Q?M/g0x9j/blwQWZToB9+99XhuT8l1yHPEEfm658FVe5e0ZmLll4eyxIFXM4Sd?=
+ =?us-ascii?Q?53voP2Brl0WHHoStwNOOB4AVJ9E2xj/+o0L6Tie5vAlRBiIQTkW2Dtn5ekuW?=
+ =?us-ascii?Q?8NoN7oBjo61mClyuOBajsSW6oStyFgspdeMEzwwtBq2Ds7Tul1mv1pPJiRlZ?=
+ =?us-ascii?Q?lnv1eP/HLeDl9JpeBLp5wYz9SaHyPsY81ZzF3wKGJb0X7a5xXrFqpa3BQZF9?=
+ =?us-ascii?Q?fWUc56ys4UNwGOMwwLlP09sBpbtdE2zs7/aizjopLBgs4cvweqhwUJFjCkEU?=
+ =?us-ascii?Q?ho2BpxDCG5qYZ6R61X8W2bAE3dSd21qo6q30FgmKn+TAmwc8TGDcouYmjBhr?=
+ =?us-ascii?Q?VL/sj/kODcr0RDj/+Vp6JINO1CDPdU5YJZxjBTiBw1RA0BM7HvzhQyjy+RbF?=
+ =?us-ascii?Q?qoHtjfGsC4UbCCQVwgfu97BQFDdQNObtQO+ta71SBkj0KKFih5RfVEBGXdxr?=
+ =?us-ascii?Q?gAF8+ucLx+qyglAkrtCvYBkmtV+lqItWN4YGhwY3pROuFmAzd2AAehthHnfG?=
+ =?us-ascii?Q?Gmd762CygrenCTfwzzlgex4dQEcCUEzjOJMBPxpc0qFZiIifPj9eyqjE9Tc8?=
+ =?us-ascii?Q?KItyQIo2xkz667c+VXOcilYrWc+AXCokzFMiZfokAGQfEClPTKPsKGojqHz/?=
+ =?us-ascii?Q?gE9dlm5KcqoMl3LyROR6acuphCd+0UJ9Iluyk23ppePI2ZKXpYOmOhSP2Yur?=
+ =?us-ascii?Q?5TkR13yHm6S0cJn9b3aU1uAwR95zRN3b/ianNogK?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 567ecef4-da3b-4414-1ed1-08ddd586409e
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 07:44:34.5224
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: r/opkVUIbT1FGZBV6AyPxTSa7K2TcdbgY6SOzsNKfSjj2RexKjKboW+a3euukvQMKF0tyK5X5PmetGo1wcO0PQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1PPFF973AF9A5
 
-fw_name in qcom_mdt_bins_are_split() seems unused now, it may have
-used in the past for logging it but due to code refactor this parameter
-is unused now.
+Currently, we have encountered some issues while testing ZUFS. In
+situations near the storage limit (e.g., 50GB remaining), and after
+simulating fragmentation by repeatedly writing and deleting data, we found
+that application installation and startup tests conducted after idling for
+a few minutes take significantly longer several times that of traditional
+UFS. Tracing the operations revealed that the majority of I/Os were issued
+by background GC, which blocks normal I/O operations.
 
-Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Under normal circumstances, ZUFS indeed requires more background GC and
+employs a more aggressive GC strategy. However, I aim to find a way to
+minimize the impact on regular I/O operations under these near-limit
+conditions. To address this, I have introduced a bggc_block_io feature,
+which controls the prioritization of background GC in the presence of I/Os.
+This switch can be adjusted at the framework level to implement different
+strategies. If set to ALL_IO_PRIOR, all background GC operations will be
+skipped during active I/O issuance. The default option remains consistent
+with the current strategy, ensuring no change in behavior.
 ---
-Changes in v3: https://lore.kernel.org/lkml/20250806172531.1865088-4-mukesh.ojha@oss.qualcomm.com/
- - Caller of qcom_mdt_bins_are_split() was modified in 2/2 of this patch in
-   earlier version, bring the change here.
- - patch order changes due to drop of one patch from earlier version.
+Changes in v3:
+	Modified the issue where it does not work after closing
+	CONFIG_BLK_DEV_ZONED.
 
 Changes in v2:
- - made this as separate patch.
+	Non ZUFS can also be adjusted through this option.
 
- drivers/soc/qcom/mdt_loader.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs | 13 +++++++++++++
+ fs/f2fs/f2fs.h                          | 18 +++++++++++-------
+ fs/f2fs/super.c                         |  2 ++
+ fs/f2fs/sysfs.c                         |  9 +++++++++
+ 4 files changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 74c415774657..7522223835f5 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -302,7 +302,7 @@ int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
- }
- EXPORT_SYMBOL_GPL(qcom_mdt_pas_init);
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index bc0e7fefc39d..12fda11d4da5 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -883,3 +883,16 @@ Date:		June 2025
+ Contact:	"Daeho Jeong" <daehojeong@google.com>
+ Description:	Control GC algorithm for boost GC. 0: cost benefit, 1: greedy
+ 		Default: 1
++
++What:		/sys/fs/f2fs/<disk>/bggc_block_io
++Date:		August 2025
++Contact:	"Liao Yuanhong" <liaoyuanhong@vivo.com>
++Description:	Used to adjust the BG_GC priority when issuing IO, with a default value
++		of 1.
++
++		==================  =============================================
++		value				description
++		bggc_block_io = 0   Prioritize background GC
++		bggc_block_io = 1   Stop background GC only when issuing read I/O
++		bggc_block_io = 2   Stop background GC when issuing I/O
++		==================  =============================================
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 46be7560548c..fe41b733fbc2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -155,6 +155,12 @@ enum blkzone_allocation_policy {
+ 	BLKZONE_ALLOC_PRIOR_CONV,	/* Prioritize writing to conventional zones */
+ };
  
--static bool qcom_mdt_bins_are_split(const struct firmware *fw, const char *fw_name)
-+static bool qcom_mdt_bins_are_split(const struct firmware *fw)
- {
- 	const struct elf32_phdr *phdrs;
- 	const struct elf32_hdr *ehdr;
-@@ -353,7 +353,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	if (!mdt_header_valid(fw))
- 		return -EINVAL;
++enum bggc_block_io_policy {
++	BGGC_PRIOR,
++	READ_IO_PRIOR,
++	ALL_IO_PRIOR,
++};
++
+ /*
+  * An implementation of an rwsem that is explicitly unfair to readers. This
+  * prevents priority inversion when a low-priority reader acquires the read lock
+@@ -1804,6 +1810,7 @@ struct f2fs_sb_info {
+ 	spinlock_t dev_lock;			/* protect dirty_device */
+ 	bool aligned_blksize;			/* all devices has the same logical blksize */
+ 	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
++	unsigned int bggc_block_io;		/* For adjust the BG_GC priority when issuing IO */
  
--	is_split = qcom_mdt_bins_are_split(fw, fw_name);
-+	is_split = qcom_mdt_bins_are_split(fw);
- 	ehdr = (struct elf32_hdr *)fw->data;
- 	phdrs = (struct elf32_phdr *)(fw->data + ehdr->e_phoff);
+ 	/* For write statistics */
+ 	u64 sectors_written_start;
+@@ -2998,13 +3005,10 @@ static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
+ 	if (sbi->gc_mode == GC_URGENT_HIGH)
+ 		return true;
  
+-	if (zoned_gc) {
+-		if (is_inflight_read_io(sbi))
+-			return false;
+-	} else {
+-		if (is_inflight_io(sbi, type))
+-			return false;
+-	}
++	if (sbi->bggc_block_io == READ_IO_PRIOR && is_inflight_read_io(sbi))
++		return false;
++	if (sbi->bggc_block_io == ALL_IO_PRIOR && is_inflight_io(sbi, type))
++		return false;
+ 
+ 	if (sbi->gc_mode == GC_URGENT_MID)
+ 		return true;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index e16c4e2830c2..a21cecc5424e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4629,9 +4629,11 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 
+ 	logical_blksize = bdev_logical_block_size(sbi->sb->s_bdev);
+ 	sbi->aligned_blksize = true;
++	sbi->bggc_block_io = ALL_IO_PRIOR;
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	sbi->max_open_zones = UINT_MAX;
+ 	sbi->blkzone_alloc_policy = BLKZONE_ALLOC_PRIOR_SEQ;
++	sbi->bggc_block_io = READ_IO_PRIOR;
+ #endif
+ 
+ 	for (i = 0; i < max_devices; i++) {
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index f736052dea50..381f29ae90fc 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -866,6 +866,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "bggc_block_io")) {
++		if (t < BGGC_PRIOR || t > ALL_IO_PRIOR)
++			return -EINVAL;
++		sbi->bggc_block_io = t;
++		return count;
++	}
++
+ 	*ui = (unsigned int)t;
+ 
+ 	return count;
+@@ -1175,6 +1182,7 @@ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
+ F2FS_SBI_GENERAL_RW_ATTR(carve_out);
+ F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
++F2FS_SBI_GENERAL_RW_ATTR(bggc_block_io);
+ 
+ /* STAT_INFO ATTR */
+ #ifdef CONFIG_F2FS_STAT_FS
+@@ -1303,6 +1311,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(discard_idle_interval),
+ 	ATTR_LIST(gc_idle_interval),
+ 	ATTR_LIST(umount_discard_timeout),
++	ATTR_LIST(bggc_block_io),
+ #ifdef CONFIG_F2FS_IOSTAT
+ 	ATTR_LIST(iostat_enable),
+ 	ATTR_LIST(iostat_period_ms),
 -- 
-2.50.1
+2.34.1
 
 
