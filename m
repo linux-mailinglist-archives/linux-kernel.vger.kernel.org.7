@@ -1,156 +1,203 @@
-Return-Path: <linux-kernel+bounces-758494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB77CB1CFDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:46:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C07E8B1CFDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88FC565A66
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73A7563597
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFB478F34;
-	Thu,  7 Aug 2025 00:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B37478F34;
+	Thu,  7 Aug 2025 00:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fovr11XA"
-Received: from mail-vk1-f196.google.com (mail-vk1-f196.google.com [209.85.221.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEoExSir"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66CE2E36E2;
-	Thu,  7 Aug 2025 00:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31CE4A11
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754527580; cv=none; b=a14sAhgBdhz7ysOk0uTw9EW3ZW1mV8FF22hCmZa2swNoDOdVHG91RfNUYRwtVTwyyoDsAYy2ERtQVQhSyDCsbv/DUh9Khsz6ehdgQrkUZPF74ygMpEzB/QmyhjXS05KOXujG06Pd9NrhMr91uBh0FekByuqfvNU+68vEVLanWLk=
+	t=1754527739; cv=none; b=VLM2Pq/cA/wv7yG2/L9Jvl7ACybfc+r2xYPw6I/PcyGLPJeemlv+Y0Y2+B1+yWLcdFE/gy0xu6dvIriijWaSQtG326qpWew6o4RD2tBVFU7lqi0KODEAO+R/zqTZWMNy69MyJ8a6QSzNgGhySeFcaKAbmbWiXpcWq5t9y+3eylo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754527580; c=relaxed/simple;
-	bh=8ARsvRmbGTr1c/flMy85gwIvw4VsWQIgMoVqfGy7IJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BIio/6Nae9xf/Ff/9sKvkSe58vJNbOVyVhcusi6NEbkIv3CWGsWPgiz4meOPGBstJHYtTOvhiSncT4gEYv1aMuDVMmazW1cxOoOrIl5Y2SEzeu6Lg9sGaieeqp/l6G9PVLlaDbDm2FF2zpRSDD6x3J6Rt07ySdO9u/dlrQEOiOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fovr11XA; arc=none smtp.client-ip=209.85.221.196
+	s=arc-20240116; t=1754527739; c=relaxed/simple;
+	bh=ZjOifc3000tlaK0hGk3I5QgSPMkVhf0anMnWrqSVVcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ImDW4+N1Tf2ky+Mpxyprf4ZDpY0XK+cscuen4JfKgVRJ7JyobTUJeMaWLuF2o3vVgeR1WekuGUMpLq2dZdDP1WffXwjaccPkPCkDPhJuzjTDzdXNVkVG/77a9QrBtCFAYk5jE+GFqrD7ugtssDWNiVxojxDdyoR1ok/sLpB2uHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEoExSir; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f196.google.com with SMTP id 71dfb90a1353d-53960818e9fso392263e0c.0;
-        Wed, 06 Aug 2025 17:46:18 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-af8fd1b80e5so77955966b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 17:48:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754527578; x=1755132378; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rmc1rEtWWDIvM/pd+dlvLBSfFeCnTebznounEkESmm8=;
-        b=Fovr11XArDmAvhVpKdNRkzg5KadIwumYeacJ0ECX2j+m9bAbrL/E54+w3U40Kv3mzS
-         TxIYuA+lru/mMLpTe4E0CJ5gkBDpKfxSH8aM7wPqVDCdg8nvxiqcc5kyMgXr6wjglzZI
-         eUSL++hkzDr23UuU2fgjoHNGPewksdO/vWBKEtAvavMV1kKOtpfZhcD7TbwNwqXHX1dg
-         p7gByIGJY/sLC7Y2W9XjEyIuBkIXUsfdjasbC3WKSPhIriefXzg/uCEMtpUV5M3p8/s6
-         OWFMsaT2J6q+AVTs2j68BqREV0DcUT98ndcprDcE0mHZ4iba41yjNO3Ys0jEgSY5E30h
-         WP0g==
+        d=gmail.com; s=20230601; t=1754527736; x=1755132536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FyU0sgZz9qTulaKfMDXTxb3hNbzZ1ImXa4EG7joeiFI=;
+        b=CEoExSirjhBSlyCf2XMBkToeE1A7931BW50F44qfpVYIJzwhTffMVYdZ25lvvny3qk
+         kK7PzpFNlueE9+fcmNpvJp2OaczLfuLEkcGRrdCvMWC5CL/2cLnqEtdzKomPhM5IhA1e
+         u4KT0a0v6mKotykOw/LH/fnBJ+Skyer55WXPruhIG6qk14yo5xXdyo7WMcur7bAIu0E5
+         cL8YYDmt6ksN0QHxtvXghfXYkqtBBcfKVeLKKwVlzcrpWhINs/JTmHwG3U+8lKISeucr
+         o40vm5K1zQi6dm1vG2N1B3ssyUaxAPNjp0bYKy45g2djGsM19nbmxygCyes1GPw8K/mM
+         lE2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754527578; x=1755132378;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rmc1rEtWWDIvM/pd+dlvLBSfFeCnTebznounEkESmm8=;
-        b=cqlbbvTOkivVmrxcRIUlGZ6bFuXShxmHqPeO40+f2UkY14UqqMiiFOomg5uELu/Fit
-         5lFnP4OZ6Y/D+hKTj6jnwuErjKsurNMaOums87DyqYj8IXQ0Ln/NOzY2ksPSsZn/EGs2
-         JOtLEztvg7rwoUy4Sr+jBAlYUndBv5QL4GNjT3T6EFsOqHBRhMuuSf9uyU7LqURG7yI9
-         /dJQQYQsAEdqSaGa7JxH4QFD+c2L2V+Z008XSoyWLRYLvUcrMXH+/DVUYNo8MU9wGRd9
-         qM31gVrzyY6UOWJsf3myTrg6XM5szxD179qKy88Gt/WjoHwoflggsntdo20e8AEmv0MN
-         NYiw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2LVD/SSXC0GdogMavyjYcUd0OyPzhFGetEeH8lnVBTjJaXAp9SRedH3FeiNjmrx2GxHTDcHkeYVGW@vger.kernel.org, AJvYcCW5Y/QdO67n5DFvixzcZ8NHbvkAgFzQHSqceVfpMUto5QS9J/DaHPjALAKCh/Semw2hw/HlJUZh1VSSDV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCwA5nlXFBzQOscfMYws+Zv0m7qY51UsB+AlKridTw6+o1VESK
-	XAsrDuGCbCpz0BS3H2nDeWSZEZiGK6QQK0yPGBN33G3La1Sec85hSrwF
-X-Gm-Gg: ASbGnctvWTFqfVXZo3L7v0JM0KvrQp5ublM9RHptqogrz3uBpI5FyfOEPyjunXcJVfo
-	gYBDZ5wuKS6AVIfoof5XUB2UAFX2Z4v1SotaUvBadZm9+aKuxdk26lthpmt/dPb8ZM6ol/cF5pp
-	BpMcccNJGhU9MtWX2C1KjsEqDb+OhH4+lZufHUyiQnR2/mk2kI3glTLaQe9WpgBWDa9K5SxUs3J
-	gQhEDlR7QQxF2RLfs0kv1/StGSEbFT0Tf1zq+/isK/FHLjurasXYcc48xfCGHNm+ExwOe/jFhYu
-	AvOt7PA6k6ZnRF+tYCNRk1TT1xbhd6Ru3E7jiJnXeQsNK8En0qYI6qjiBBtm53KGf8d+Qvshld/
-	OswbRF0B+9ecMMBevnyuap7AYErQXklgev6Nrw1FEDqG9O9D09sv8Zcq70sUVBPHgNWpbYpS1wl
-	sLjC9spKvPJTWypF0AyA==
-X-Google-Smtp-Source: AGHT+IFZepYERxh2hTblseaMPrVinVFDPj77BmHfxlgef5ZJVdCxI3Rs/9/yOXAWQqnIRxoRQr+uHg==
-X-Received: by 2002:a05:6122:2020:b0:539:4e00:dba0 with SMTP id 71dfb90a1353d-539a03d5349mr2625544e0c.4.1754527577649;
-        Wed, 06 Aug 2025 17:46:17 -0700 (PDT)
-Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-539b02b2113sm121074e0c.31.2025.08.06.17.46.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 17:46:17 -0700 (PDT)
-Message-ID: <3eca0594-ebe4-4b34-8463-555136199dc1@gmail.com>
-Date: Thu, 7 Aug 2025 08:46:10 +0800
+        d=1e100.net; s=20230601; t=1754527736; x=1755132536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FyU0sgZz9qTulaKfMDXTxb3hNbzZ1ImXa4EG7joeiFI=;
+        b=P5TIvDaJCnTxE7Fxwqxu1luj5BwO41IcIkCj6ilb/a+iY/aITsnxbA2gKE3IkQMMub
+         u3xkeuo9Dj7xT2kYFeiCjc5KlDVKew0fxRdiMG1ivd8MavQdAtYNS751WmC8BN1xGTA2
+         kk8U+ky1wT9nrj1qz6rqAoXhny3pIG0FYMGD+KKf4/SUfGqIzAkd8FQ7Krojt4YuwuLn
+         jzaC+1xsnmuX1GoZG9DJ0YXlATWgF+kWDRVvOgmvmDi0la2GZhBFsso8+qhuKeOG+D4s
+         5+YWvTdGfCKZD8grhIgtp/EZ/6WYuVOW93ag7r/wHVhK30Twlkc3ianMvyG/21vRQ9lj
+         h0/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXr7ysSb5NaCAzOd+2Jnm9tkjaohA+4qYI8b2AqExLT8raIdxQnGDQipzqcPb+drv6wttT7CpSqfD5HGmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp3OQgH504nw+aq3IVDJydTgouRBw6acAs4E8LUIfTGlfi4RSB
+	Mzrh4BEg3+4B9+KEqauJlO3luV0r9Jwx0Oor4VoSdyU+fNsmteFsw3XQTZoVws6CEAUKY+wOsQ+
+	eBiD/uAAz7StcNj/AdGhQNEN4v9Uq4qmn8Q==
+X-Gm-Gg: ASbGncvSvEIYjxN9liCDJpJM48Ur3tSsKHqZhrz4WrK6Ocv0GhRVxFn2MM5FBFPPAn5
+	85cxiSNYkYSz6+qWbJFDFNXBs9jHcAKEgIUXGkEse1uuCVH8Hq/FcnfblfV/mgi6Z/mEz4Em1aZ
+	JsnMsdn7yg42hubC2cLVTXTjsde2FFBG0WcRX81wmfbaVgn7s6yI0elf444MoAI7Tl/6GvPpNvN
+	321rPzIXHElzFsjQtgeTiljBSbutB8KDkxsU55ZMGHJgJf0nlFWvoMi6E9mtHY=
+X-Google-Smtp-Source: AGHT+IFQwMopH6azHH9WIpfqyaRZ5dbJlxtTcRscsdnncSFoc6hUjK52CP/r7T5PFLOBcK4Y/4ju5GykKep2RTRqt/w=
+X-Received: by 2002:a17:907:7e9c:b0:ae3:5e70:32fb with SMTP id
+ a640c23a62f3a-af990105cdcmr469979166b.4.1754527735982; Wed, 06 Aug 2025
+ 17:48:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/AER: Check for NULL aer_info before ratelimiting in
- pci_print_aer()
-To: Breno Leitao <leitao@debian.org>
-Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- Jon Pan-Doh <pandoh@google.com>, linuxppc-dev@lists.ozlabs.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20250804-aer_crash_2-v1-1-fd06562c18a4@debian.org>
- <50f6c23f-1f46-4be1-813a-c11f2db3ec4f@gmail.com>
- <umpfhbh2eufgryjzngc7kyvjlqf3d6fgzftgeb44yf4bbtizb6@x7iqbksbbcot>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <umpfhbh2eufgryjzngc7kyvjlqf3d6fgzftgeb44yf4bbtizb6@x7iqbksbbcot>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250806234254.10572-1-bijan311@gmail.com> <20250807001924.76275-1-sj@kernel.org>
+In-Reply-To: <20250807001924.76275-1-sj@kernel.org>
+From: Bijan Tabatabai <bijan311@gmail.com>
+Date: Wed, 6 Aug 2025 19:48:44 -0500
+X-Gm-Features: Ac12FXy1RsWB25PBoiuQCuL0TSug1jNHZq5fTiL_FTzQznrao8zQPdz3aIU7wRQ
+Message-ID: <CAMvvPS7mcevjD-b2vz1P+grQfffVA0bx-x5WcUQ8=JApD+UkHw@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/damon/core: skip needless update of damon_attrs in damon_commit_ctx()
+To: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Bijan Tabatabai <bijantabatab@micron.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 6, 2025 at 7:19=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote:
+>
+> On Wed,  6 Aug 2025 18:42:54 -0500 Bijan Tabatabai <bijan311@gmail.com> w=
+rote:
+>
+> > From: Bijan Tabatabai <bijantabatab@micron.com>
+> >
+> > Currently, damon_commit_ctx() always calls damon_set_attrs() even if th=
+e
+> > attributes have not been changed. This can be problematic when the DAMO=
+N
+> > state is committed relatively frequently because damon_set_attrs() rese=
+ts
+> > ctx->next_{aggregation,ops_update}_sis, causing aggregation and ops
+> > update operations to be needlessly delayed.
+> >
+> > This patch avoids this by only calling damon_set_attrs() in
+> > damon_commit_ctx when the attributes have been changed.
+> >
+> > Cc: Bijan Tabatabai <bijan311@gmail.com>
+>
+> Maybe above line is added by a mistake?
 
+Sorry about that. I added it because my internship ends this week and
+wanted to make sure I get notifications on the status of this patch
+(e.g. email notifications when the patch is merged in Andrew's tree).
+If it's inappropriate I will remove it in the next version (unless
+Andrew does it himself).
 
-On 8/6/2025 4:45 PM, Breno Leitao wrote:
-> Hello Ethan,
-> 
-> On Wed, Aug 06, 2025 at 09:55:05AM +0800, Ethan Zhao wrote:
->> On 8/4/2025 5:17 PM, Breno Leitao wrote:
->>> Similarly to pci_dev_aer_stats_incr(), pci_print_aer() may be called
->>> when dev->aer_info is NULL. Add a NULL check before proceeding to avoid
->>> calling aer_ratelimit() with a NULL aer_info pointer, returning 1, which
->>> does not rate limit, given this is fatal.
->>>
->>> This prevents a kernel crash triggered by dereferencing a NULL pointer
->>> in aer_ratelimit(), ensuring safer handling of PCI devices that lack
->>> AER info. This change aligns pci_print_aer() with pci_dev_aer_stats_incr()
->>> which already performs this NULL check.
->>>
->> The enqueue side has lock to protect the ring, but the dequeue side no lock
->> held.
->>
->> The kfifo_get in
->> static void aer_recover_work_func(struct work_struct *work)
->> {
->> ...
->> while (kfifo_get(&aer_recover_ring, &entry)) {
->> ...
->> }
->> should be replaced by
->> kfifo_out_spinlocked()
-> 
-> The design seems not to need the lock on the reader side. There is just
-> one reader, which is the aer_recover_work. aer_recover_work runs
-> aer_recover_work_func(). So, if we just have one reader, we do not need
-> to protect the kfifo by spinlock, right?
+> > Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
+>
+> Reviewed-by: SeongJae Park <sj@kernel.org>
+>
+> I have a trivial comment below, though.
+>
+> > ---
+> > Changes from v1[1]:
+> >   - Compare entirety of struct damon_attrs
+> >   - Apply logic in damon_commit_ctx() instead of damon_set_attrs()
+>
+> Thank you for doing this!
+>
+> >
+> > [1] https://lore.kernel.org/all/20250806164316.5728-1-bijan311@gmail.co=
+m/
+> > ---
+> >  mm/damon/core.c | 26 +++++++++++++++++++++++---
+> >  1 file changed, 23 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/mm/damon/core.c b/mm/damon/core.c
+> > index 6a2fe1f2c952..80aaeb876bf2 100644
+> > --- a/mm/damon/core.c
+> > +++ b/mm/damon/core.c
+> > @@ -570,6 +570,24 @@ void damon_destroy_ctx(struct damon_ctx *ctx)
+> >       kfree(ctx);
+> >  }
+> >
+> > +static bool damon_attrs_equals(const struct damon_attrs *attrs1,
+> > +             const struct damon_attrs *attrs2)
+> > +{
+> > +     const struct damon_intervals_goal *ig1 =3D &attrs1->intervals_goa=
+l;
+> > +     const struct damon_intervals_goal *ig2 =3D &attrs2->intervals_goa=
+l;
+> > +
+> > +     return attrs1->sample_interval =3D=3D attrs2->sample_interval &&
+> > +             attrs1->aggr_interval =3D=3D attrs2->aggr_interval &&
+> > +             attrs1->ops_update_interval =3D=3D attrs2->ops_update_int=
+erval &&
+> > +             attrs1->min_nr_regions =3D=3D attrs2->min_nr_regions &&
+> > +             attrs1->max_nr_regions =3D=3D attrs2->max_nr_regions &&
+> > +             ig1->access_bp =3D=3D ig2->access_bp &&
+> > +             ig1->aggrs =3D=3D ig2->aggrs &&
+> > +             ig1->min_sample_us =3D=3D ig2->min_sample_us &&
+> > +             ig1->max_sample_us =3D=3D ig2->max_sample_us;
+> > +
+>
+> Unnecessary blank line?
 
-Not exactly,
-If the writer and reader are serialized, no lock is needed. However, 
-here the writer kfifo_in_spinlocked() and the system work queue task 
-aer_recover_work() cannot guarantee serialized execution.
+Sorry for missing this!
 
-@Bjorn, help to check it out.
+> > +}
+> > +
+> >  static unsigned int damon_age_for_new_attrs(unsigned int age,
+> >               struct damon_attrs *old_attrs, struct damon_attrs *new_at=
+trs)
+> >  {
+> > @@ -1198,9 +1216,11 @@ int damon_commit_ctx(struct damon_ctx *dst, stru=
+ct damon_ctx *src)
+> >        * 2. ops update should be done after pid handling is done (targe=
+t
+> >        *    committing require putting pids).
+> >        */
+> > -     err =3D damon_set_attrs(dst, &src->attrs);
+> > -     if (err)
+> > -             return err;
+> > +     if (!damon_attrs_equals(&dst->attrs, &src->attrs)) {
+> > +             err =3D damon_set_attrs(dst, &src->attrs);
+> > +             if (err)
+> > +                     return err;
+> > +     }
+> >       dst->ops =3D src->ops;
+> >
+> >       return 0;
+> > --
+> > 2.43.0
+>
+> Other than the above trivial things, looks good to me.  Thank you again!
 
+Thank you!
+Bijan
 
-Thanks,
-Ethan>
-> In fact, the code documents it in the aer_recover_ring_lock.
-> 
-> 	/*
-> 	* Mutual exclusion for writers of aer_recover_ring, reader side don't
-> 	* need lock, because there is only one reader and lock is not needed
-> 	* between reader and writer.
-> 	*/
-> 	static DEFINE_SPINLOCK(aer_recover_ring_lock);
-
+[...]
 
