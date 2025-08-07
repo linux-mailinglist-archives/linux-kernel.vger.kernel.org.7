@@ -1,221 +1,173 @@
-Return-Path: <linux-kernel+bounces-758904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C913FB1D557
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:59:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE5AB1D5B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABE227A5C71
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E78F51AA008C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112FE26D4E2;
-	Thu,  7 Aug 2025 09:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DEC26B09A;
+	Thu,  7 Aug 2025 10:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ukOWrGq4"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKnROJao"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6437D26738D;
-	Thu,  7 Aug 2025 09:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AF221B9C0;
+	Thu,  7 Aug 2025 10:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754560750; cv=none; b=rCCkofaaDcEh8Rt1IfOAdcMDMtYMnSiNTIX7kMS5900XDS+iwc+at65repFPPHG+uWC8CSQVQaeJ2FslfM2wl9kQGEK3bvHClLUWu+8WYLv++vBAadQi2pV3p2F2xIIX8hu4baXDqXNtjxqbywTlFkjqV7B1iNOYd5WGPAE6U3U=
+	t=1754562001; cv=none; b=bndP9Quz2o5JBVAKkHfiHbaKl+8DPbBZcTfMXYoXlIDZFB5+KfLddf83+pQDIUIS0uiudLkQhEOI32L5QKg4TW9L2bCo5MMToow8G+TbebY2MLh5TUtmZV+fgw1Wn4FCGLYcEFqI3DZIt1dLjQmLIzdFJgWZr82EYyz1d8m/t+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754560750; c=relaxed/simple;
-	bh=DMxUrYjj8eaVrJcJUU7pioIzruw4YoLOAdkzg1ORnYE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YXqyHftOEfWH2h27TrNwJ4Ropz5fg+uoin+Hf6WbLl5E1uwhTtMAX60YHQhTmRCCHDf3PY6qONKOdoGjM8i0ilJXIQqslwmJlDS9pUOjYew3gS9SLZYiWyW5PaipsTxw+glpaJqBlYFnH1zyfLz00gblQWcy00xSNzbQkbf0RSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ukOWrGq4; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 2617845e737511f08871991801538c65-20250807
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=yb5FSBesMT6JpX1CwM3cVhFTXCcNWnol+0+6CIyy+ho=;
-	b=ukOWrGq4WehIKcTTN+/fWMLFyl6n1/8f8m4U78X89To3eYpbb3PuGaidRQPffO2a9xab0nZ8tmB4vlAPEmZrbVR/Pi3RGzY20qIXPGRd2OVSnFNLjDFTrXQQR0oU3Llc9CYJSgyZm/LzHXzMe5hjdX0Qi3S3eV++HSoPOCf9JSQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:953a7690-a1b8-4427-aaaf-ba935d4f3cd2,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:f1326cf,CLOUDID:032031a1-1800-4e4f-b665-a3d622db32cf,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 2617845e737511f08871991801538c65-20250807
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-	(envelope-from <zhengnan.chen@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 907614881; Thu, 07 Aug 2025 17:59:03 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Thu, 7 Aug 2025 17:59:02 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Thu, 7 Aug 2025 17:59:01 +0800
-From: zhengnan chen <zhengnan.chen@mediatek.com>
-To: Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <iommu@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, zhengnan chen
-	<zhengnan.chen@mediatek.com>
-Subject: [PATCH 3/3] iommu/mediatek: Add support for mt8189
-Date: Thu, 7 Aug 2025 17:57:48 +0800
-Message-ID: <20250807095756.11840-4-zhengnan.chen@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250807095756.11840-1-zhengnan.chen@mediatek.com>
-References: <20250807095756.11840-1-zhengnan.chen@mediatek.com>
+	s=arc-20240116; t=1754562001; c=relaxed/simple;
+	bh=g5fMARJkStIZRukybN28ZxPDEiWlSxFkOz8YjlHIsXo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dwnVXT5oZha9wEuqeCDtfRA/6TDUFtaVxsPuHNRt8acxnyspQGsR7szXVawro63JHWqaVpee8SzTf3Ri1rkSVVpBdKpTJAf3VoIW38ECbUirr1TvPi+uFDSXP5owj+/mrvLq+dJCi8sAzTta70OppBYP55HSKDP27t2kJgj2kWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKnROJao; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B87FC4CEED;
+	Thu,  7 Aug 2025 10:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754562000;
+	bh=g5fMARJkStIZRukybN28ZxPDEiWlSxFkOz8YjlHIsXo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=KKnROJaoYnTv0vN9keIPCURYfrwib0IuDIfzzzkAt8wCfBvvALzXxjPFjwWZhMhOb
+	 BdwTesh+o+tQp+8XvYNchveaHMmHdkQ5e4gCtYJ0SKqJ7Y5cwe+OLik/lPBje+9tJv
+	 1rDzZDxV4FuxjDfQlnnNUDW+V3YYploYNVAUjPtniHH39fHSjrDMvFeiMe+rAAUX17
+	 mvOi2/6o1dVNbDUuihsBusu1z8JtBoC5rVlfYw9Fz7t96QngdMqbJ8+akA44gzR6he
+	 D8bIeBbthjU3GcEy334jQqo1Qzf/4llTGxhZyoDxRXIbhEQPQAgddB5eUQS4kPKHEu
+	 CXbWXQPTJLQow==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
+ <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 13/16] rust: block: add `GenDisk` private data support
+In-Reply-To: <aHYkkQpFOIcKuK-v@google.com>
+References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
+ <20250711-rnull-up-v6-16-v3-13-3a262b4e2921@kernel.org>
+ <-KgJHntx-n5a5umJjT0FGpcfzzMW3y5_vQAbYz3taMckXoUccILBz4xT9ZVzkRZS98UDGX4KXm7qdGK9713Iig==@protonmail.internalid>
+ <aHYkkQpFOIcKuK-v@google.com>
+Date: Thu, 07 Aug 2025 11:57:49 +0200
+Message-ID: <87pld778te.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-From: "zhengnan chen" <zhengnan.chen@mediatek.com>
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Add support for mt8189 INFRA & APU & MM IOMMUs.
+> On Fri, Jul 11, 2025 at 01:43:14PM +0200, Andreas Hindborg wrote:
 
-Signed-off-by: zhengnan chen <zhengnan.chen@mediatek.com>
----
- drivers/iommu/mtk_iommu.c | 76 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+..
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 7af47c59b10b..8ee1208735bf 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -139,6 +139,7 @@
- /* 2 bits: iommu type */
- #define MTK_IOMMU_TYPE_MM		(0x0 << 13)
- #define MTK_IOMMU_TYPE_INFRA		(0x1 << 13)
-+#define MTK_IOMMU_TYPE_APU		(0x2 << 13)
- #define MTK_IOMMU_TYPE_MASK		(0x3 << 13)
- /* PM and clock always on. e.g. infra iommu */
- #define PM_CLK_AO			BIT(15)
-@@ -173,6 +174,7 @@ enum mtk_iommu_plat {
- 	M4U_MT8183,
- 	M4U_MT8186,
- 	M4U_MT8188,
-+	M4U_MT8189,
- 	M4U_MT8192,
- 	M4U_MT8195,
- 	M4U_MT8365,
-@@ -337,6 +339,8 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data, unsigned int ban
- #define MTK_IOMMU_4GB_MODE_REMAP_BASE	 0x140000000UL
- 
- static LIST_HEAD(m4ulist);	/* List all the M4U HWs */
-+static LIST_HEAD(apulist);	/* List the apu iommu HWs */
-+static LIST_HEAD(infralist);	/* List the iommu_infra HW */
- 
- #define for_each_m4u(data, head)  list_for_each_entry(data, head, list)
- 
-@@ -351,6 +355,15 @@ static const struct mtk_iommu_iova_region single_domain[] = {
- #define MT8192_MULTI_REGION_NR	(IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT) ? \
- 				 MT8192_MULTI_REGION_NR_MAX : 1)
- 
-+static const struct mtk_iommu_iova_region mt8189_multi_dom_apu[] = {
-+	{ .iova_base = 0x200000ULL,	.size = SZ_512M},	/* APU SECURE */
-+#if IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT)
-+	{ .iova_base = SZ_1G,		.size = 0xc0000000},	/* APU CODE */
-+	{ .iova_base = 0x70000000ULL,	.size = 0x12600000},	/* APU VLM */
-+	{ .iova_base = SZ_4G,		.size = SZ_4G * 3},	/* APU VPU */
-+#endif
-+};
-+
- static const struct mtk_iommu_iova_region mt8192_multi_dom[MT8192_MULTI_REGION_NR] = {
- 	{ .iova_base = 0x0,		.size = MTK_IOMMU_IOVA_SZ_4G},	/* 0 ~ 4G,  */
- 	#if IS_ENABLED(CONFIG_ARCH_DMA_ADDR_T_64BIT)
-@@ -1725,6 +1738,66 @@ static const struct mtk_iommu_plat_data mt8188_data_vpp = {
- 			   27, 28 /* ccu0 */, MTK_INVALID_LARBID}, {4, 6}},
- };
- 
-+static const unsigned int mt8189_apu_region_msk[][MTK_LARB_NR_MAX] = {
-+	[0] = {[0] = BIT(2)},	/* Region0: fake larb 0 APU_SECURE */
-+	[1] = {[0] = BIT(1)},	/* Region1: fake larb 0 APU_CODE */
-+	[2] = {[0] = BIT(3)},	/* Region2: fake larb 0 APU_VLM */
-+	[3] = {[0] = BIT(0)},	/* Region3: fake larb 0 APU_DATA */
-+};
-+
-+static const struct mtk_iommu_plat_data mt8189_data_apu = {
-+	.m4u_plat       = M4U_MT8189,
-+	.flags          = IOVA_34_EN | DCM_DISABLE |
-+			  MTK_IOMMU_TYPE_APU | PGTABLE_PA_35_EN,
-+	.hw_list        = &apulist,
-+	.inv_sel_reg    = REG_MMU_INV_SEL_GEN2,
-+	.banks_num	= 1,
-+	.banks_enable	= {true},
-+	.iova_region	= mt8189_multi_dom_apu,
-+	.iova_region_nr	= ARRAY_SIZE(mt8189_multi_dom_apu),
-+	.larbid_remap   = {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}},
-+	.iova_region_larb_msk = mt8189_apu_region_msk,
-+};
-+
-+static const struct mtk_iommu_plat_data mt8189_data_infra = {
-+	.m4u_plat	= M4U_MT8189,
-+	.flags		= WR_THROT_EN | DCM_DISABLE | MTK_IOMMU_TYPE_INFRA |
-+			  CFG_IFA_MASTER_IN_ATF | SHARE_PGTABLE | PGTABLE_PA_35_EN,
-+	.hw_list	= &infralist,
-+	.banks_num	= 1,
-+	.banks_enable	= {true},
-+	.inv_sel_reg	= REG_MMU_INV_SEL_GEN2,
-+	.iova_region	= single_domain,
-+	.iova_region_nr	= ARRAY_SIZE(single_domain),
-+};
-+
-+static const u32 mt8189_larb_region_msk[MT8192_MULTI_REGION_NR_MAX][MTK_LARB_NR_MAX] = {
-+	[0] = {~0, ~0, ~0, [22] = BIT(0)},	/* Region0: all ports for larb0/1/2 */
-+	[1] = {[3] = ~0, [4] = ~0},		/* Region1: all ports for larb4(3)/7(4) */
-+	[2] = {[5] = ~0, [6] = ~0,		/* Region2: all ports for larb9(5)/11(6) */
-+	       [7] = ~0, [8] = ~0,		/* Region2: all ports for larb13(7)/14(8) */
-+	       [9] = ~0, [10] = ~0,		/* Region2: all ports for larb16(9)/17(10) */
-+	       [11] = ~0, [12] = ~0,		/* Region2: all ports for larb19(11)/20(12) */
-+	       [21] = ~0},			/* Region2: larb21 fake GCE larb */
-+};
-+
-+static const struct mtk_iommu_plat_data mt8189_data_mm = {
-+	.m4u_plat	= M4U_MT8189,
-+	.flags		= HAS_BCLK | HAS_SUB_COMM_3BITS | OUT_ORDER_WR_EN |
-+			  WR_THROT_EN | IOVA_34_EN | MTK_IOMMU_TYPE_MM |
-+			  PGTABLE_PA_35_EN | DL_WITH_MULTI_LARB,
-+	.hw_list	= &m4ulist,
-+	.inv_sel_reg	= REG_MMU_INV_SEL_GEN2,
-+	.banks_num	= 5,
-+	.banks_enable	= {true, false, false, false, true},
-+	.iova_region	= mt8192_multi_dom,
-+	.iova_region_nr	= ARRAY_SIZE(mt8192_multi_dom),
-+	.iova_region_larb_msk = mt8189_larb_region_msk,
-+	.larbid_remap	= {{0}, {1}, {21/*GCE_D*/, 21/*GCE_M*/, 2},
-+			   {19, 20, 9, 11}, {7}, {4},
-+			   {13, 17}, {14, 16}},
-+};
-+
- static const struct mtk_iommu_plat_data mt8192_data = {
- 	.m4u_plat       = M4U_MT8192,
- 	.flags          = HAS_BCLK | HAS_SUB_COMM_2BITS | OUT_ORDER_WR_EN |
-@@ -1826,6 +1899,9 @@ static const struct of_device_id mtk_iommu_of_ids[] = {
- 	{ .compatible = "mediatek,mt8188-iommu-infra", .data = &mt8188_data_infra},
- 	{ .compatible = "mediatek,mt8188-iommu-vdo",   .data = &mt8188_data_vdo},
- 	{ .compatible = "mediatek,mt8188-iommu-vpp",   .data = &mt8188_data_vpp},
-+	{ .compatible = "mediatek,mt8189-iommu-apu",   .data = &mt8189_data_apu},
-+	{ .compatible = "mediatek,mt8189-iommu-infra", .data = &mt8189_data_infra},
-+	{ .compatible = "mediatek,mt8189-iommu-mm",    .data = &mt8189_data_mm},
- 	{ .compatible = "mediatek,mt8192-m4u", .data = &mt8192_data},
- 	{ .compatible = "mediatek,mt8195-iommu-infra", .data = &mt8195_data_infra},
- 	{ .compatible = "mediatek,mt8195-iommu-vdo",   .data = &mt8195_data_vdo},
--- 
-2.46.0
+>> @@ -97,7 +98,14 @@ pub fn build<T: Operations>(
+>>          self,
+>>          name: fmt::Arguments<'_>,
+>>          tagset: Arc<TagSet<T>>,
+>> +        queue_data: T::QueueData,
+>>      ) -> Result<GenDisk<T>> {
+>> +        let data = queue_data.into_foreign();
+>> +        let recover_data = ScopeGuard::new(|| {
+>> +            // SAFETY: T::QueueData was created by the call to `into_foreign()` above
+>> +            unsafe { T::QueueData::from_foreign(data) };
+>
+> I think this is clearer to read as
+>
+> drop(unsafe { T::QueueData::from_foreign(data) });
+
+OK.
+
+>
+>> +        });
+>> +
+>>          // SAFETY: `bindings::queue_limits` contain only fields that are valid when zeroed.
+>>          let mut lim: bindings::queue_limits = unsafe { core::mem::zeroed() };
+>>
+>> @@ -112,7 +120,7 @@ pub fn build<T: Operations>(
+>>              bindings::__blk_mq_alloc_disk(
+>>                  tagset.raw_tag_set(),
+>>                  &mut lim,
+>> -                core::ptr::null_mut(),
+>> +                data.cast(),
+>>                  static_lock_class!().as_ptr(),
+>>              )
+>>          })?;
+>> @@ -166,8 +174,12 @@ pub fn build<T: Operations>(
+>>              },
+>>          )?;
+>>
+>> +        recover_data.dismiss();
+>> +
+>>          // INVARIANT: `gendisk` was initialized above.
+>>          // INVARIANT: `gendisk` was added to the VFS via `device_add_disk` above.
+>> +        // INVARIANT: `gendisk.queue.queue_data` is set to `data` in the call to
+>> +        // `__blk_mq_alloc_disk` above.
+>>          Ok(GenDisk {
+>>              _tagset: tagset,
+>>              gendisk,
+>> @@ -179,9 +191,10 @@ pub fn build<T: Operations>(
+>>  ///
+>>  /// # Invariants
+>>  ///
+>> -/// - `gendisk` must always point to an initialized and valid `struct gendisk`.
+>> -/// - `gendisk` was added to the VFS through a call to
+>> -///   `bindings::device_add_disk`.
+>> +///  - `gendisk` must always point to an initialized and valid `struct gendisk`.
+>> +///  - `gendisk` was added to the VFS through a call to
+>> +///    `bindings::device_add_disk`.
+>> +///  - `self.gendisk.queue.queuedata` is initialized by a call to `ForeignOwnable::into_foreign`.
+>>  pub struct GenDisk<T: Operations> {
+>>      _tagset: Arc<TagSet<T>>,
+>>      gendisk: *mut bindings::gendisk,
+>> @@ -193,9 +206,20 @@ unsafe impl<T: Operations + Send> Send for GenDisk<T> {}
+>>
+>>  impl<T: Operations> Drop for GenDisk<T> {
+>>      fn drop(&mut self) {
+>> +        // SAFETY: By type invariant of `Self`, `self.gendisk` points to a valid
+>> +        // and initialized instance of `struct gendisk`, and, `queuedata` was
+>> +        // initialized with the result of a call to
+>> +        // `ForeignOwnable::into_foreign`.
+>> +        let queue_data = unsafe { (*(*self.gendisk).queue).queuedata };
+>> +
+>>          // SAFETY: By type invariant, `self.gendisk` points to a valid and
+>>          // initialized instance of `struct gendisk`, and it was previously added
+>>          // to the VFS.
+>>          unsafe { bindings::del_gendisk(self.gendisk) };
+>> +
+>> +        // SAFETY: `queue.queuedata` was created by `GenDiskBuilder::build` with
+>> +        // a call to `ForeignOwnable::into_foreign` to create `queuedata`.
+>> +        // `ForeignOwnable::from_foreign` is only called here.
+>> +        let _queue_data = unsafe { T::QueueData::from_foreign(queue_data.cast()) };
+>
+> Ditto here.
+>
+> drop(unsafe { T::QueueData::from_foreign(queue_data.cast()) });
+
+Thanks, I agree.
+
+>
+> Also, is this cast necessary as of
+> https://lore.kernel.org/all/20250711-rnull-up-v6-16-v3-13-3a262b4e2921@kernel.org/
+> ?
+
+I think you have the wrong link, you probably refer to the recent
+`ForeignOwnable` change. And yes, the cast is redundant.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
 
