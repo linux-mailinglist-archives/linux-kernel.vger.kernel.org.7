@@ -1,306 +1,443 @@
-Return-Path: <linux-kernel+bounces-759473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A106DB1DDF1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C189B1DDCB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024255863BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D9B817B0EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FF627605A;
-	Thu,  7 Aug 2025 20:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA4C21ADAE;
+	Thu,  7 Aug 2025 20:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ktw5nj8h"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxpzlAKU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4762D275AED
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 20:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391493FE7;
+	Thu,  7 Aug 2025 20:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754597817; cv=none; b=JMFc9FsyGsqVqAs7vMR1xMSlF4guQkz9x5C54V1338W+siMksjrJrvDKzjilCu8mz+1NhIXa0cJHId16sKCIbFVKVKsxF+4esCJPR3hI0IndFrqb16On0RuzkxIdOc2ST7psQBqtVw0Fyw/0E47K97Jb14JuUiOJpGK05UTcSdY=
+	t=1754597771; cv=none; b=lFP9vGx1ZiRaDbgGV75kso1iR9NIycL2KLIfQf3ZblxqEsOfr2dAMwJxSyyCdn4kK1LzDmVhtNVBlyF5aleBdix/U7OU9vbKTt/nURI0fjocv7LWPmNeZupSwVks0PfYP6PpAUnTs3KFnyzO7atpKfeM0vfbmN252SIW8KaVVvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754597817; c=relaxed/simple;
-	bh=8/991SaqhfbOuXxYGVBkbjKMlNrrAbPc+jQ8DkNet6Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hyO0wCxlr745WlbRHx+oDpnJZeBRZJRCR3bMa5mx4REWjaskY/w6p8tff5iCCCS7oWFZfSaQ90s8qiN7CQxGaeP0hSIpSsY/8W+6r/13sj7Bu/7kRnMZfqpe11Cf+8ZoiFClq+MBL4xWbAahCymFMnNYkchqx96J5zcb7XHnxpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ktw5nj8h; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76bb73b63d2so1555239b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 13:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754597815; x=1755202615; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qod859ACwAJ9KJXJ66Pu3+9/i9Fm4EF7ZGslehKFgPA=;
-        b=ktw5nj8hoBYBZya6tgjKW1e0edgY0Gyc4rjJmkPbKOJaXe16ikMFwbfC3zw7xxMgDe
-         SAH9GcOYDGpLrmFS+X8UdaR2lJwRR4v+F1+ZqZYHx+mo2oaQs4q3nrXzRQmHrTeFDeJQ
-         Yd6RJ2zMcetkFhH3hI2/ots2HHTDqJR3My27eVB8pzlrboIH8AWujf/iRwQHIldV/KyT
-         5RcGiWL3lMRo4YuLqX/YLJI9UdM6mvc3PsgV9uGccM4l1On9bpXawLx4GBeUEwSxwzdp
-         hjKRBWxSGdOLtnp8Y/oVp2xGfRVv4sz36oYLFCEHaobnojnc7dcJgbYtpfpehf1JSkIT
-         Xxwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754597815; x=1755202615;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qod859ACwAJ9KJXJ66Pu3+9/i9Fm4EF7ZGslehKFgPA=;
-        b=ctWP3uWVwgeNSKq0Mfcu+MmObH6g4j8l2FWXFgsG8ok8zxIvd/ty4FXRoKEIlVW9wR
-         OEfIgpxUS7P/+LoXmv7g5gP/mNmP+Y0nGMRaJbfy954VBmSJsiys2OtYXrXfWuqaJqs0
-         R9ZxBreHAx9IVBnNRK+toG3iZp9oGPZlQcT1F9d8rCZZYYJX1pjTBMywLi/h7jlc9PBd
-         LqZr1UVRN7dWF6u9ZWwW0WXl4viaiJ2H8t20rZhw5elckNlwtITRJ/dwLfp7KBxJ2EGI
-         qSKvLfLxWM8gMiV0fbo6WTpSBGIvINsHLyFtBqOiQMPuFgUy771FeAl4nXc0dTw+PG3O
-         H/dw==
-X-Gm-Message-State: AOJu0Yxy+7a9doF6bjUsLVxdBn1MlCyREsELUK7Ng5uPpL2ThqJ2lP6T
-	b2tMDsYxGs5RjCrl+AP/aNQieiUVyIitnnAdbIt94yBiyI3Rv8VOkdDRWz0g6v6jpgeO8ikFlsH
-	gFQ==
-X-Google-Smtp-Source: AGHT+IElhGKAW5wN//qmv94pEi0jFcwaYTH9QkghkSjAapFDDJMVQZjNYUu6DUB+rXi8WiqKmyIVXaKSpQ==
-X-Received: from pftb22.prod.google.com ([2002:a05:6a00:2d6:b0:76b:fe87:6051])
- (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1389:b0:736:54c9:df2c
- with SMTP id d2e1a72fcca58-76c46111288mr619107b3a.15.1754597814594; Thu, 07
- Aug 2025 13:16:54 -0700 (PDT)
-Date: Thu,  7 Aug 2025 13:16:07 -0700
-In-Reply-To: <20250807201628.1185915-1-sagis@google.com>
+	s=arc-20240116; t=1754597771; c=relaxed/simple;
+	bh=ycXHqE/+e5jbr/Du7ZL9FKcFJunnChGS2pIDIUwBxVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eYjmzqQzmckgaSfhN3NYRDPy1lUihXj3ggM0AJuzK10mAjTWvvCVFw/fJbD4ih2hZ7DcTPbV+GQlS10F1wyPej7N/Hfy2Ol+SPqVMn4M1v+82l3sHXnGHdcIMVYCEUyS1xvjEs+5H0IKtw16MLFy3/RPk0PCnvA5QwYuC8IQT/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxpzlAKU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E1CC4CEEB;
+	Thu,  7 Aug 2025 20:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754597770;
+	bh=ycXHqE/+e5jbr/Du7ZL9FKcFJunnChGS2pIDIUwBxVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fxpzlAKUVLm0ERru7xlATFutELiBOEc6zZWWLh6jr5rNcgQhMZ3Za2gG+W8Q/zKCI
+	 J6kp71mi07WODHBAGB/Bl0SBQwf3mo949uyyDJLFUuDOp2gZ8/pmaI+arWshHU3I70
+	 KAH3L3jpqBKQhd6Ljtc7TPYa+/rLvqfJy57+F177c36GUuvHWYAXiEk5tehqZuDosd
+	 obbJl3/uB8LDEIdFk4PV6NMVOyrpj8vJW+cA2flqXoPcEDEq4oHCQCoa4bR8X1Tr3f
+	 QXgOdwlOt8I0TZhbGOZx/1qhufmZ6EGqGQQY9P3BLsv45wx8MBybBSo4p4AdKQRJBM
+	 XgGHNMRp0dwOQ==
+Date: Thu, 7 Aug 2025 17:16:07 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Jakub Brnak <jbrnak@redhat.com>, peterz@infradead.org, mingo@redhat.com,
+	irogers@google.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	howardchu95@gmail.com
+Subject: Re: [PATCH] perf: use standard syscall tracepoint structs for
+ augmentation
+Message-ID: <aJUJh8oDaH-2Ptll@x1>
+References: <20250806130017.541416-1-jbrnak@redhat.com>
+ <aJPgNMi-6J2ewGza@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807201628.1185915-1-sagis@google.com>
-X-Mailer: git-send-email 2.51.0.rc0.155.g4a0f42376b-goog
-Message-ID: <20250807201628.1185915-12-sagis@google.com>
-Subject: [PATCH v8 11/30] KVM: selftests: TDX: Adding test case for TDX port IO
-From: Sagi Shahar <sagis@google.com>
-To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Sagi Shahar <sagis@google.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJPgNMi-6J2ewGza@google.com>
 
-Verifies TDVMCALL<INSTRUCTION.IO> READ and WRITE operations.
+On Wed, Aug 06, 2025 at 04:07:32PM -0700, Namhyung Kim wrote:
+> Hello,
+> 
+> On Wed, Aug 06, 2025 at 03:00:17PM +0200, Jakub Brnak wrote:
+> > Replace custom syscall structs with the standard trace_event_raw_sys_enter
+> > and trace_event_raw_sys_exit from vmlinux.h.
+> > This fixes a data structure misalignment issue discovered on RHEL-9, which
+> > prevented BPF programs from correctly accessing syscall arguments.
+> 
+> Can you explain what the alignment issue was?  It's not clear to me what
+> makes it misaligned.
 
-Signed-off-by: Sagi Shahar <sagis@google.com>
----
- .../selftests/kvm/include/x86/tdx/test_util.h | 20 +++++
- .../selftests/kvm/lib/x86/tdx/test_util.c     | 35 +++++++++
- tools/testing/selftests/kvm/x86/tdx_vm_test.c | 78 ++++++++++++++++++-
- 3 files changed, 130 insertions(+), 3 deletions(-)
+Yeah, mentioning a "misalignment" and then not spelling it out precisely
+doesn't help.
 
-diff --git a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-index dafeee9af1dc..cf11955d56d6 100644
---- a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-+++ b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-@@ -13,6 +13,19 @@
- #define PORT_READ	0
- #define PORT_WRITE	1
- 
-+/*
-+ * Assert that some IO operation involving tdg_vp_vmcall_instruction_io() was
-+ * called in the guest.
-+ */
-+void tdx_test_assert_io(struct kvm_vcpu *vcpu, uint16_t port, uint8_t size,
-+			uint8_t direction);
-+
-+/*
-+ * Run the tdx vcpu and check if there was some failure in the guest, either
-+ * an exception like a triple fault, or if a tdx_test_fatal() was hit.
-+ */
-+void tdx_run(struct kvm_vcpu *vcpu);
-+
- /*
-  * Run a test in a new process.
-  *
-@@ -57,4 +70,11 @@ void tdx_test_fatal(uint64_t error_code);
-  */
- void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa);
- 
-+/*
-+ * Assert on @error and report the @error to userspace.
-+ * Return value from tdg_vp_vmcall_report_fatal_error() is ignored since execution
-+ * is not expected to continue beyond this point.
-+ */
-+void tdx_assert_error(uint64_t error);
-+
- #endif // SELFTEST_TDX_TEST_UTIL_H
-diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-index 6c82a0c3bd37..4ccc5298ba25 100644
---- a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-+++ b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-@@ -8,8 +8,37 @@
- 
- #include "kvm_util.h"
- #include "tdx/tdx.h"
-+#include "tdx/tdx_util.h"
- #include "tdx/test_util.h"
- 
-+void tdx_test_assert_io(struct kvm_vcpu *vcpu, uint16_t port, uint8_t size,
-+			uint8_t direction)
-+{
-+	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_IO,
-+		    "Got exit_reason other than KVM_EXIT_IO: %u (%s)\n",
-+		    vcpu->run->exit_reason,
-+		    exit_reason_str(vcpu->run->exit_reason));
-+
-+	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_IO &&
-+		    vcpu->run->io.port == port &&
-+		    vcpu->run->io.size == size &&
-+		    vcpu->run->io.direction == direction,
-+		    "Got unexpected IO exit values: %u (%s) %u %u %u\n",
-+		    vcpu->run->exit_reason,
-+		    exit_reason_str(vcpu->run->exit_reason),
-+		    vcpu->run->io.port, vcpu->run->io.size,
-+		    vcpu->run->io.direction);
-+}
-+
-+void tdx_run(struct kvm_vcpu *vcpu)
-+{
-+	td_vcpu_run(vcpu);
-+	if (vcpu->run->exit_reason == KVM_EXIT_SYSTEM_EVENT)
-+		TEST_FAIL("Guest reported error. error code: %lld (0x%llx)\n",
-+			  vcpu->run->system_event.data[12],
-+			  vcpu->run->system_event.data[13]);
-+}
-+
- int run_in_new_process(void (*func)(void))
- {
- 	int wstatus;
-@@ -69,3 +98,9 @@ void tdx_test_fatal(uint64_t error_code)
- {
- 	tdx_test_fatal_with_data(error_code, 0);
- }
-+
-+void tdx_assert_error(uint64_t error)
-+{
-+	if (error)
-+		tdx_test_fatal(error);
-+}
-diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-index 7d6d71602761..97330e28f236 100644
---- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-+++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-@@ -3,6 +3,7 @@
- #include <signal.h>
- 
- #include "kvm_util.h"
-+#include "tdx/tdcall.h"
- #include "tdx/tdx.h"
- #include "tdx/tdx_util.h"
- #include "tdx/test_util.h"
-@@ -25,7 +26,7 @@ static void verify_td_lifecycle(void)
- 
- 	printf("Verifying TD lifecycle:\n");
- 
--	td_vcpu_run(vcpu);
-+	tdx_run(vcpu);
- 	tdx_test_assert_success(vcpu);
- 
- 	kvm_vm_free(vm);
-@@ -69,9 +70,78 @@ void verify_report_fatal_error(void)
- 	TEST_ASSERT_EQ(vcpu->run->system_event.data[12], 0x0BAAAAAD00000000);
- 	TEST_ASSERT_EQ(vcpu->run->system_event.data[13], 0);
- 
--	td_vcpu_run(vcpu);
-+	tdx_run(vcpu);
-+	tdx_test_assert_success(vcpu);
-+
-+	kvm_vm_free(vm);
-+	printf("\t ... PASSED\n");
-+}
-+
-+#define TDX_IOEXIT_TEST_PORT 0x50
-+
-+/*
-+ * Verifies IO functionality by writing a |value| to a predefined port.
-+ * Verifies that the read value is |value| + 1 from the same port.
-+ * If all the tests are passed then write a value to port TDX_TEST_PORT
-+ */
-+void guest_ioexit(void)
-+{
-+	uint64_t data_out, data_in;
-+	uint64_t ret;
-+
-+	data_out = 0xAB;
-+	ret = tdg_vp_vmcall_instruction_io(TDX_IOEXIT_TEST_PORT, 1,
-+					   PORT_WRITE, &data_out);
-+	tdx_assert_error(ret);
-+
-+	ret = tdg_vp_vmcall_instruction_io(TDX_IOEXIT_TEST_PORT, 1,
-+					   PORT_READ, &data_in);
-+	tdx_assert_error(ret);
-+
-+	if (data_in != 0xAC)
-+		tdx_test_fatal(data_in);
-+
-+	tdx_test_success();
-+}
-+
-+void verify_td_ioexit(void)
-+{
-+	struct kvm_vcpu *vcpu;
-+	uint32_t port_data;
-+	struct kvm_vm *vm;
-+
-+	vm = td_create();
-+	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
-+	vcpu = td_vcpu_add(vm, 0, guest_ioexit);
-+	td_finalize(vm);
-+
-+	printf("Verifying TD IO Exit:\n");
-+
-+	/* Wait for guest to do a IO write */
-+	tdx_run(vcpu);
-+	tdx_test_assert_io(vcpu, TDX_IOEXIT_TEST_PORT, 1, PORT_WRITE);
-+	port_data = *(uint8_t *)((void *)vcpu->run + vcpu->run->io.data_offset);
-+
-+	printf("\t ... IO WRITE: DONE\n");
-+
-+	/*
-+	 * Wait for the guest to do a IO read. Provide the previous written data
-+	 * + 1 back to the guest
-+	 */
-+	tdx_run(vcpu);
-+	tdx_test_assert_io(vcpu, TDX_IOEXIT_TEST_PORT, 1, PORT_READ);
-+	*(uint8_t *)((void *)vcpu->run + vcpu->run->io.data_offset) = port_data + 1;
-+
-+	printf("\t ... IO READ: DONE\n");
-+
-+	/*
-+	 * Wait for the guest to complete execution successfully. The read
-+	 * value is checked within the guest.
-+	 */
-+	tdx_run(vcpu);
- 	tdx_test_assert_success(vcpu);
- 
-+	printf("\t ... IO verify read/write values: OK\n");
- 	kvm_vm_free(vm);
- 	printf("\t ... PASSED\n");
- }
-@@ -83,11 +153,13 @@ int main(int argc, char **argv)
- 	if (!is_tdx_enabled())
- 		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
- 
--	ksft_set_plan(2);
-+	ksft_set_plan(3);
- 	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
- 			 "verify_td_lifecycle\n");
- 	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
- 			 "verify_report_fatal_error\n");
-+	ksft_test_result(!run_in_new_process(&verify_td_ioexit),
-+			 "verify_td_ioexit\n");
- 
- 	ksft_finished();
- 	return 0;
--- 
-2.51.0.rc0.155.g4a0f42376b-goog
+Showing the pahole output of the expected structure layout in both
+kernels and what was being used would help us to understand the problem.
 
+For instance, here I have:
+
+acme@x1:~/git/bpf-next$ uname -r
+6.15.5-200.fc42.x86_64
+acme@x1:~/git/bpf-next$ pahole -E trace_event_raw_sys_enter
+struct trace_event_raw_sys_enter {
+	struct trace_entry {
+		short unsigned int type;                 /*     0     2 */
+		unsigned char      flags;                /*     2     1 */
+		unsigned char      preempt_count;        /*     3     1 */
+		int                pid;                  /*     4     4 */
+	} ent; /*     0     8 */
+	long int                   id;                   /*     8     8 */
+	long unsigned int          args[6];              /*    16    48 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	char                       __data[];             /*    64     0 */
+
+	/* size: 64, cachelines: 1, members: 4 */
+};
+
+acme@x1:~/git/bpf-next$
+
+And:
+
+⬢ [acme@toolbx linux]$ pahole -C syscall_enter_args /tmp/build/linux/util/bpf_skel/.tmp/augmented_raw_syscalls.bpf.o 
+struct syscall_enter_args {
+	unsigned long long         common_tp_fields;     /*     0     8 */
+	long                       syscall_nr;           /*     8     8 */
+	unsigned long              args[6];              /*    16    48 */
+
+	/* size: 64, cachelines: 1, members: 3 */
+};
+
+⬢ [acme@toolbx linux]$
+
+So yes, it is "aligned", the 'id' is the 'syscall_nr' and both are at
+offset 8, then we have the syscall args starting at offset 16 in both
+cases.
+
+The layout for rhel9 then we see the issue, the id, syscall_nr, is at
+offset 16, there is the misalignment:
+
+sh-5.1# pahole -E -C trace_event_raw_sys_enter /usr/lib/debug/lib/modules/5.14.0-570.32.1.el9_6.x86_64/vmlinux
+struct trace_event_raw_sys_enter {
+	struct trace_entry {
+		short unsigned int type;                 /*     0     2 */
+		unsigned char      flags;                /*     2     1 */
+		unsigned char      preempt_count;        /*     3     1 */
+		int                pid;                  /*     4     4 */
+		unsigned char      preempt_lazy_count;   /*     8     1 */
+	} ent; /*     0    12 */
+
+	/* XXX last struct has 3 bytes of padding */
+	/* XXX 4 bytes hole, try to pack */
+
+	long int                   id;                   /*    16     8 */
+	long unsigned int          args[6];              /*    24    48 */
+	/* --- cacheline 1 boundary (64 bytes) was 8 bytes ago --- */
+	char                       __data[];             /*    72     0 */
+
+	/* size: 72, cachelines: 2, members: 4 */
+	/* sum members: 68, holes: 1, sum holes: 4 */
+	/* paddings: 1, sum paddings: 3 */
+	/* last cacheline: 8 bytes */
+};
+
+sh-5.1#
+
+So if we always use 'struct trace_event_raw_sys_enter' from the
+vmlinux.h generated from the BTF info and have it all as CO-RE enabled
+(preserving the access index of fields, etc) it will work on any kernel
+you install on machine.
+
+Cheers,
+
+- Arnaldo
+ 
+> > This change also aims to improve compatibility between different version
+> > of the perf tool and kernel by using CO-RE so BPF code can correclty
+> > adjust field offsets.
+> > 
+> > Signed-off-by: Jakub Brnak <jbrnak@redhat.com>
+> > ---
+> > The issue was encountered on RHEL-9 by failing trace enum augmentation tests.
+> > 
+> > Before change:
+> > 113: perf trace enum augmentation tests:
+> > --- start ---
+> > test child forked, pid 92876
+> > Checking if vmlinux exists
+> > Tracing syscall landlock_add_rule
+> > [syscall failure] Failed to trace syscall landlock_add_rule, output:
+> > 
+> > ---- end(-1) ----
+> > 113: perf trace enum augmentation tests                              : FAILED!
+> > 
+> > After change:
+> > 113: perf trace enum augmentation tests:
+> > --- start ---
+> > test child forked, pid 98369
+> > Checking if vmlinux exists
+> > Tracing syscall landlock_add_rule
+> > Tracing non-syscall tracepoint timer:hrtimer_start
+> > ---- end(0) ----
+> > 113: perf trace enum augmentation tests                              : Ok
+> > 
+> >  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 58 ++++++++-----------
+> >  tools/perf/util/bpf_skel/vmlinux/vmlinux.h    | 14 +++++
+> >  2 files changed, 37 insertions(+), 35 deletions(-)
+> > 
+> > diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > index cb86e261b4de..de397b3b0776 100644
+> > --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
+> > @@ -60,18 +60,6 @@ struct syscalls_sys_exit {
+> >  	__uint(max_entries, 512);
+> >  } syscalls_sys_exit SEC(".maps");
+> >  
+> > -struct syscall_enter_args {
+> > -	unsigned long long common_tp_fields;
+> > -	long		   syscall_nr;
+> > -	unsigned long	   args[6];
+> > -};
+> > -
+> > -struct syscall_exit_args {
+> > -	unsigned long long common_tp_fields;
+> > -	long		   syscall_nr;
+> > -	long		   ret;
+> > -};
+> > -
+> >  /*
+> >   * Desired design of maximum size and alignment (see RFC2553)
+> >   */
+> > @@ -115,7 +103,7 @@ struct pids_filtered {
+> >  } pids_filtered SEC(".maps");
+> >  
+> >  struct augmented_args_payload {
+> > -	struct syscall_enter_args args;
+> > +	struct trace_event_raw_sys_enter args;
+> >  	struct augmented_arg arg, arg2; // We have to reserve space for two arguments (rename, etc)
+> >  };
+> >  
+> > @@ -135,7 +123,7 @@ struct beauty_map_enter {
+> >  } beauty_map_enter SEC(".maps");
+> >  
+> >  struct beauty_payload_enter {
+> > -	struct syscall_enter_args args;
+> > +	struct trace_event_raw_sys_enter args;
+> >  	struct augmented_arg aug_args[6];
+> >  };
+> >  
+> > @@ -192,7 +180,7 @@ unsigned int augmented_arg__read_str(struct augmented_arg *augmented_arg, const
+> >  }
+> >  
+> >  SEC("tp/raw_syscalls/sys_enter")
+> > -int syscall_unaugmented(struct syscall_enter_args *args)
+> > +int syscall_unaugmented(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	return 1;
+> >  }
+> > @@ -204,7 +192,7 @@ int syscall_unaugmented(struct syscall_enter_args *args)
+> >   * filename.
+> >   */
+> >  SEC("tp/syscalls/sys_enter_connect")
+> > -int sys_enter_connect(struct syscall_enter_args *args)
+> > +int sys_enter_connect(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const void *sockaddr_arg = (const void *)args->args[1];
+> > @@ -225,7 +213,7 @@ int sys_enter_connect(struct syscall_enter_args *args)
+> >  }
+> >  
+> >  SEC("tp/syscalls/sys_enter_sendto")
+> > -int sys_enter_sendto(struct syscall_enter_args *args)
+> > +int sys_enter_sendto(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const void *sockaddr_arg = (const void *)args->args[4];
+> > @@ -243,7 +231,7 @@ int sys_enter_sendto(struct syscall_enter_args *args)
+> >  }
+> >  
+> >  SEC("tp/syscalls/sys_enter_open")
+> > -int sys_enter_open(struct syscall_enter_args *args)
+> > +int sys_enter_open(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const void *filename_arg = (const void *)args->args[0];
+> > @@ -258,7 +246,7 @@ int sys_enter_open(struct syscall_enter_args *args)
+> >  }
+> >  
+> >  SEC("tp/syscalls/sys_enter_openat")
+> > -int sys_enter_openat(struct syscall_enter_args *args)
+> > +int sys_enter_openat(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const void *filename_arg = (const void *)args->args[1];
+> > @@ -273,7 +261,7 @@ int sys_enter_openat(struct syscall_enter_args *args)
+> >  }
+> >  
+> >  SEC("tp/syscalls/sys_enter_rename")
+> > -int sys_enter_rename(struct syscall_enter_args *args)
+> > +int sys_enter_rename(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const void *oldpath_arg = (const void *)args->args[0],
+> > @@ -304,7 +292,7 @@ int sys_enter_rename(struct syscall_enter_args *args)
+> >  }
+> >  
+> >  SEC("tp/syscalls/sys_enter_renameat2")
+> > -int sys_enter_renameat2(struct syscall_enter_args *args)
+> > +int sys_enter_renameat2(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const void *oldpath_arg = (const void *)args->args[1],
+> > @@ -346,7 +334,7 @@ struct perf_event_attr_size {
+> >  };
+> >  
+> >  SEC("tp/syscalls/sys_enter_perf_event_open")
+> > -int sys_enter_perf_event_open(struct syscall_enter_args *args)
+> > +int sys_enter_perf_event_open(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const struct perf_event_attr_size *attr = (const struct perf_event_attr_size *)args->args[0], *attr_read;
+> > @@ -378,7 +366,7 @@ int sys_enter_perf_event_open(struct syscall_enter_args *args)
+> >  }
+> >  
+> >  SEC("tp/syscalls/sys_enter_clock_nanosleep")
+> > -int sys_enter_clock_nanosleep(struct syscall_enter_args *args)
+> > +int sys_enter_clock_nanosleep(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const void *rqtp_arg = (const void *)args->args[2];
+> > @@ -399,7 +387,7 @@ int sys_enter_clock_nanosleep(struct syscall_enter_args *args)
+> >  }
+> >  
+> >  SEC("tp/syscalls/sys_enter_nanosleep")
+> > -int sys_enter_nanosleep(struct syscall_enter_args *args)
+> > +int sys_enter_nanosleep(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args = augmented_args_payload();
+> >  	const void *req_arg = (const void *)args->args[0];
+> > @@ -429,7 +417,7 @@ static bool pid_filter__has(struct pids_filtered *pids, pid_t pid)
+> >  	return bpf_map_lookup_elem(pids, &pid) != NULL;
+> >  }
+> >  
+> > -static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+> > +static int augment_sys_enter(void *ctx, struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	bool augmented, do_output = false;
+> >  	int zero = 0, index, value_size = sizeof(struct augmented_arg) - offsetof(struct augmented_arg, value);
+> > @@ -444,7 +432,7 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+> >  		return 1;
+> >  
+> >  	/* use syscall number to get beauty_map entry */
+> > -	nr             = (__u32)args->syscall_nr;
+> > +	nr             = (__u32)args->id;
+> >  	beauty_map     = bpf_map_lookup_elem(&beauty_map_enter, &nr);
+> >  
+> >  	/* set up payload for output */
+> > @@ -454,8 +442,8 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+> >  	if (beauty_map == NULL || payload == NULL)
+> >  		return 1;
+> >  
+> > -	/* copy the sys_enter header, which has the syscall_nr */
+> > -	__builtin_memcpy(&payload->args, args, sizeof(struct syscall_enter_args));
+> > +	/* copy the sys_enter header, which has the id */
+> > +	__builtin_memcpy(&payload->args, args, sizeof(struct trace_event_raw_sys_enter));
+> 
+> I think we prefer sizeof(*args) than sizeof(<type-name>).
+
+yeah, please change it to that idiom, I understand that is how it was
+before, and thus is unrelated to this patch, but it is a good time to
+fix it since you're touching this line.
+
+> 
+> >  
+> >  	/*
+> >  	 * Determine what type of argument and how many bytes to read from user space, using the
+> > @@ -515,14 +503,14 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
+> >  		}
+> >  	}
+> >  
+> > -	if (!do_output || (sizeof(struct syscall_enter_args) + output) > sizeof(struct beauty_payload_enter))
+> > +	if (!do_output || (sizeof(struct trace_event_raw_sys_enter) + output) > sizeof(struct beauty_payload_enter))
+> >  		return 1;
+> >  
+> > -	return augmented__beauty_output(ctx, payload, sizeof(struct syscall_enter_args) + output);
+> > +	return augmented__beauty_output(ctx, payload, sizeof(struct trace_event_raw_sys_enter) + output);
+> 
+> Ditto.
+> 
+> Thanks,
+> Namhyung
+> 
+> >  }
+> >  
+> >  SEC("tp/raw_syscalls/sys_enter")
+> > -int sys_enter(struct syscall_enter_args *args)
+> > +int sys_enter(struct trace_event_raw_sys_enter *args)
+> >  {
+> >  	struct augmented_args_payload *augmented_args;
+> >  	/*
+> > @@ -550,16 +538,16 @@ int sys_enter(struct syscall_enter_args *args)
+> >  	 * unaugmented tracepoint payload.
+> >  	 */
+> >  	if (augment_sys_enter(args, &augmented_args->args))
+> > -		bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.syscall_nr);
+> > +		bpf_tail_call(args, &syscalls_sys_enter, augmented_args->args.id);
+> >  
+> >  	// If not found on the PROG_ARRAY syscalls map, then we're filtering it:
+> >  	return 0;
+> >  }
+> >  
+> >  SEC("tp/raw_syscalls/sys_exit")
+> > -int sys_exit(struct syscall_exit_args *args)
+> > +int sys_exit(struct trace_event_raw_sys_exit *args)
+> >  {
+> > -	struct syscall_exit_args exit_args;
+> > +	struct trace_event_raw_sys_exit exit_args;
+> >  
+> >  	if (pid_filter__has(&pids_filtered, getpid()))
+> >  		return 0;
+> > @@ -570,7 +558,7 @@ int sys_exit(struct syscall_exit_args *args)
+> >  	 * "!raw_syscalls:unaugmented" that will just return 1 to return the
+> >  	 * unaugmented tracepoint payload.
+> >  	 */
+> > -	bpf_tail_call(args, &syscalls_sys_exit, exit_args.syscall_nr);
+> > +	bpf_tail_call(args, &syscalls_sys_exit, exit_args.id);
+> >  	/*
+> >  	 * If not found on the PROG_ARRAY syscalls map, then we're filtering it:
+> >  	 */
+> > diff --git a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+> > index a59ce912be18..b8b234726863 100644
+> > --- a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+> > +++ b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+> > @@ -212,4 +212,18 @@ struct pglist_data {
+> >  	int nr_zones;
+> >  } __attribute__((preserve_access_index));
+> >  
+> > +struct trace_event_raw_sys_enter {
+> > +	struct trace_entry ent;
+> > +	long int id;
+> > +	long unsigned int args[6];
+> > +	char __data[0];
+> > +} __attribute__((preserve_access_index));
+> > +
+> > +struct trace_event_raw_sys_exit {
+> > +	struct trace_entry ent;
+> > +	long int id;
+> > +	long int ret;
+> > +	char __data[0];
+> > +} __attribute__((preserve_access_index));
+> > +
+> >  #endif // __VMLINUX_H
+> > -- 
+> > 2.50.1
+> > 
 
