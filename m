@@ -1,164 +1,181 @@
-Return-Path: <linux-kernel+bounces-759452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B957B1DDB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:56:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E73FB1DDB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0CCB3A1EE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:56:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0D83B0247
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B37C22ACEF;
-	Thu,  7 Aug 2025 19:56:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571A0155A4D
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 19:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98279235BEE;
+	Thu,  7 Aug 2025 19:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyIUtxP8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FFA223705;
+	Thu,  7 Aug 2025 19:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754596613; cv=none; b=UyrE3KyAEr/kyXXtRCXclrdh9gVO5/Kq+X1W+Q0Pmpgl5f3FQhhFoOup1ruB/KTICSTI4UBrNsgITlh8z3Nn7EoxLfYsfh6p5Qp7uNRofr1NS8SLxaNG/AStQdy+YZzO49xDBnY39ElDWQkpAePgBU+ukiZhrxaIc9unMSMSIa4=
+	t=1754596622; cv=none; b=TqPZJ0w9r/CPQtIbbl+tjpH4GjOKFCdYXUPcdd/FBMyMOmYAgqfHV/la8E6GlAPgZTmWpkrmJbVMaHyQ4vddxmeNOw9CXTHpPqkUXLXTuC5poqVCyPj+gFCX5CAQD0fMt5WKnG7Q/mm5nHarm+GIbc86jIQxga3mHWYKyzbsBQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754596613; c=relaxed/simple;
-	bh=x1Ln2q/psX8+A+IIwYMCCPNRQX9QWdn+t9MLKFLP6EU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U3Le0V2/0LxEYm92HfxCBeAhQPTkXTlFTFXOZYBncZQVqC46RoeuJjrMhOpH83a6LY9RcHGghA30irWAFLtrqK1UioFyW02q1mif005zJP/9RuA/3sdCzzh8t83BAZOkI1x1flMi0V4Cc8/ohXDvKvv7PXkwf5EyWllXX/aZ2bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 244581756;
-	Thu,  7 Aug 2025 12:56:41 -0700 (PDT)
-Received: from [10.57.87.232] (unknown [10.57.87.232])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF1EB3F5A1;
-	Thu,  7 Aug 2025 12:56:46 -0700 (PDT)
-Message-ID: <6870e24f-dda6-421c-8df8-58294927b62d@arm.com>
-Date: Thu, 7 Aug 2025 20:56:44 +0100
+	s=arc-20240116; t=1754596622; c=relaxed/simple;
+	bh=nDMGNwMtc0VDvGNgvp1lhcxe2RK30/Cr/bqKvCLRm4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oa4vu7Ug7eE809lijottV3SacTsPgkQR6s+PcDTxpDzu8lPtuzcAP7OSmpHDIJ7N1+65ZGXqKgE2jC/axFZ5oWPLZ8USrzhwGzTkVDfKt3T1yQKcxg0YnuncpC05UBLQtegiiHZEzMUQhRBOPRTmTb6jphwO3gq1R69Tv6KqXSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyIUtxP8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57827C4CEEB;
+	Thu,  7 Aug 2025 19:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754596621;
+	bh=nDMGNwMtc0VDvGNgvp1lhcxe2RK30/Cr/bqKvCLRm4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NyIUtxP8PF4fKg+4Apcqo/Yi27bIkP6caR+mUukIKY0/MxtNOh/N5K6MX45YVsGqI
+	 U3zgqIq5FrXhBq2HsGd1XkDY6a8bNSCSTpbiNHkgQ0twdqWb/PUpaw0JLJjUiUM4zm
+	 aPNSkI1/pndVkiOq3IKOuT7ynLiNAB1jgJrpIWXMv13Y0Jo5JhC6gKp4xEH+a2gQh+
+	 GtF6E2I92pin3tRO+bImY+Rim9m+Ba8B+V70FUGk65kSHawmpOzy9DoWInjVMYucsa
+	 B/rq+ECAGqhQfWXp2x3mXT6grN9sUpa2U43CR/qZUm2EOSDMsYIKOgnnuX7CiouGMY
+	 bS3CGWCDZ6AEQ==
+Date: Thu, 7 Aug 2025 12:57:00 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Zhang Yi <yi.zhang@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [PATCH 1/2] ext4: Fix fsmap end of range reporting with bigalloc
+Message-ID: <20250807195700.GS2672022@frogsfrogsfrogs>
+References: <e7472c8535c9c5ec10f425f495366864ea12c9da.1754377641.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH HOTFIX 6.17] mm/mremap: avoid expensive folio lookup on
- mremap folio pte batch
-Content-Language: en-GB
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>, Barry Song <baohua@kernel.org>,
- Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
- <158e6422-fc82-4d6c-a442-2ebe956a66da@redhat.com>
- <3fc75720-8da7-4f6c-bdce-1e1280b8e28f@lucifer.local>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <3fc75720-8da7-4f6c-bdce-1e1280b8e28f@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7472c8535c9c5ec10f425f495366864ea12c9da.1754377641.git.ojaswin@linux.ibm.com>
 
-On 07/08/2025 20:20, Lorenzo Stoakes wrote:
-> +cc Ryan for ContPTE stuff.
-
-Appologies, I was aware of the other thread and on-going issues but haven't had
-the bandwidth to follow too closely.
-
+On Tue, Aug 05, 2025 at 02:00:30PM +0530, Ojaswin Mujoo wrote:
+> With bigalloc enabled, the logic to report last extent has a bug since
+> we try to use cluster units instead of block units. This can cause an issue
+> where extra incorrect entries might be returned back to the user. This was
+> flagged by generic/365 with 64k bs and -O bigalloc.
 > 
-> On Thu, Aug 07, 2025 at 09:10:52PM +0200, David Hildenbrand wrote:
->> Acked-by: David Hildenbrand <david@redhat.com>
+> ** Details of issue **
 > 
-> Thanks!
+> The issue was noticed on 5G 64k blocksize FS with -O bigalloc which has
+> only 1 bg.
 > 
->>
->> Wondering whether we could then just use the patch hint instead of going via
->> the folio.
->>
->> IOW,
->>
->> return pte_batch_hint(ptep, pte);
+> $ xfs_io -c "fsmap -d" /mnt/scratch
 > 
-> Wouldn't that break the A/D stuff? Also this doesn't mean that the PTE won't
-> have some conflicting flags potentially. The check is empirical:
+>   0: 253:48 [0..127]: static fs metadata 128   /* sb */
+>   1: 253:48 [128..255]: special 102:1 128   /* gdt */
+>   3: 253:48 [256..383]: special 102:3 128   /* block bitmap */
+>   4: 253:48 [384..2303]: unknown 1920       /* flex bg empty space */
+>   5: 253:48 [2304..2431]: special 102:4 128   /* inode bitmap */
+>   6: 253:48 [2432..4351]: unknown 1920      /* flex bg empty space */
+>   7: 253:48 [4352..6911]: inodes 2560
+>   8: 253:48 [6912..538623]: unknown 531712
+>   9: 253:48 [538624..10485759]: free space 9947136
 > 
-> static inline unsigned int pte_batch_hint(pte_t *ptep, pte_t pte)
-> {
-> 	if (!pte_valid_cont(pte))
-> 		return 1;
+> The issue can be seen with:
 > 
-> 	return CONT_PTES - (((unsigned long)ptep >> 3) & (CONT_PTES - 1));
-> }
+> $ xfs_io -c "fsmap -d 0 3" /mnt/scratch
 > 
-> So it's 'the most number of PTEs that _might_ coalesce'.
-
-No that's not correct; It's "at least this number of ptes _do_ coalesce".
-folio_pte_batch() may end up returning a larger batch, but never smaller.
-
-This function is looking to see if ptep is inside a conpte mapping, and if it
-is, it's returning the number of ptes to the end of the contpte mapping (which
-is of 64K size and alignment on 4K kernels). A contpte mapping will only exist
-if the physical memory is appropriately aligned/sized and all belongs to a
-single folio.
-
+>   0: 253:48 [0..127]: static fs metadata 128
+>   1: 253:48 [384..2047]: unknown 1664
 > 
-> (note that a bit grossly we'll call it _again_ in folio_pte_batch_flags()).
+> Only the first entry was expected to be returned but we get 2. This is
+> because:
 > 
-> I suppose we could not even bother with checking if same folio and _just_ check
-> if PTEs have consecutive PFNs, which is not very likely if different folio
-> but... could that break something?
-
-Yes something could break; the batch must *all* belong to the same folio.
-Functions like set_ptes() require that in their documentation, and arm64 depends
-upon it in order not to screw up the access/dirty bits.
-
+> ext4_getfsmap_datadev()
+>   first_cluster, last_cluster = 0
+>   ...
+>   info->gfi_last = true;
+>   ext4_getfsmap_datadev_helper(sb, end_ag, last_cluster + 1, 0, info);
+>     fsb = C2B(1) = 16
+>     fslen = 0
+>     ...
+>     /* Merge in any relevant extents from the meta_list */
+>     list_for_each_entry_safe(p, tmp, &info->gfi_meta_list, fmr_list) {
+>       ...
+>       // since fsb = 16, considers all metadata which starts before 16 blockno
+>       iter 1: error = ext4_getfsmap_helper(sb, info, p);  // p = sb (0,1), nop
+>         info->gfi_next_fsblk = 1
+>       iter 2: error = ext4_getfsmap_helper(sb, info, p);  // p = gdt (1,2), nop
+>         info->gfi_next_fsblk = 2
+>       iter 3: error = ext4_getfsmap_helper(sb, info, p);  // p = blk bitmap (2,3), nop
+>         info->gfi_next_fsblk = 3
+>       iter 4: error = ext4_getfsmap_helper(sb, info, p);  // p = ino bitmap (18,19)
+>         if (rec_blk > info->gfi_next_fsblk) { // (18 > 3)
+>           // emits an extra entry ** BUG **
+>         }
+>     }
 > 
-> It seems the 'magic' is in set_ptes() on arm64 where it'll know to do the 'right
-> thing' for a contPTE batch (I may be missing something - please correct me if so
-> Dev/Ryan).
-
-It will all do the right thing functionally no matter how you call it. But if
-you can set_ptes() (and friends) on full contpte mappings, things are more
-efficient.
-
+> Fix this by directly calling ext4_getfsmap_datadev() with a dummy record
+> that has fmr_physical set to (end_fsb + 1) instead of last_cluster + 1. By
+> using the block instead of cluster we get the correct behavior.
 > 
-> So actually do we even really care that much about folio?
-
-From arm64's perspective, we're happy enough with batches the size of
-pte_batch_hint(). folio_pte_batch() is a bonus, but certainly not a deal-breaker
-for this location.
-
-For the record, I'm pretty sure I was the person pushing for protecting
-vm_normal_folio() with pte_batch_hint() right at the start of this process :)
-
-Thanks,
-Ryan
-
+> Replacing ext4_getfsmap_datadev_helper() with ext4_getfsmap_helper() is
+> okay since the gfi_lastfree and metadata checks in
+> ext4_getfsmap_datadev_helper() are anyways redundant when we only want to
+> emit the last allocated block of the range, as we have already taken care
+> of emitting metadata and any last free blocks.
 > 
->>
->>
->> Not sure if that was discussed at some point before we went into the
->> direction of using folios. But there really doesn't seem to be anything
->> gained for other architectures here (as raised by Jann).
+> Reported-by: Disha Goel <disgoel@linux.ibm.com>
+> Fixes: 4a622e4d477b ("ext4: fix FS_IOC_GETFSMAP handling")
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+Looks fine to me
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+> ---
+>  fs/ext4/fsmap.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
 > 
-> Yup... I wonder about the other instances of this... ruh roh.
-
-IIRC prior to Dev's mprotect and mremap optimizations, I believe all sites
-already needed the folio. I haven't actually looked at how mprotect ended up,
-but maybe worth checking to see if it should protect with pte_batch_hint() too.
-
-Thanks,
-Ryan
-
+> diff --git a/fs/ext4/fsmap.c b/fs/ext4/fsmap.c
+> index 383c6edea6dd..9d63c39f6077 100644
+> --- a/fs/ext4/fsmap.c
+> +++ b/fs/ext4/fsmap.c
+> @@ -526,6 +526,7 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
+>  	ext4_group_t end_ag;
+>  	ext4_grpblk_t first_cluster;
+>  	ext4_grpblk_t last_cluster;
+> +	struct ext4_fsmap irec;
+>  	int error = 0;
+>  
+>  	bofs = le32_to_cpu(sbi->s_es->s_first_data_block);
+> @@ -609,10 +610,18 @@ static int ext4_getfsmap_datadev(struct super_block *sb,
+>  			goto err;
+>  	}
+>  
+> -	/* Report any gaps at the end of the bg */
+> +	/*
+> +	 * The dummy record below will cause ext4_getfsmap_helper() to report
+> +	 * any allocated blocks at the end of the range.
+> +	 */
+> +	irec.fmr_device = 0;
+> +	irec.fmr_physical = end_fsb + 1;
+> +	irec.fmr_length = 0;
+> +	irec.fmr_owner = EXT4_FMR_OWN_FREE;
+> +	irec.fmr_flags = 0;
+> +
+>  	info->gfi_last = true;
+> -	error = ext4_getfsmap_datadev_helper(sb, end_ag, last_cluster + 1,
+> -					     0, info);
+> +	error = ext4_getfsmap_helper(sb, info, &irec);
+>  	if (error)
+>  		goto err;
+>  
+> -- 
+> 2.49.0
 > 
->>
->> --
->> Cheers,
->>
->> David / dhildenb
->>
->>
 > 
-> Cheers, Lorenzo
-
 
