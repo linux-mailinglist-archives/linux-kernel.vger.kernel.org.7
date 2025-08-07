@@ -1,121 +1,88 @@
-Return-Path: <linux-kernel+bounces-758707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87835B1D2EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:03:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDACB1D31A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6822B1AA2EC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:03:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25208172291
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A7622A7E9;
-	Thu,  7 Aug 2025 07:03:23 +0000 (UTC)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4389723313E;
+	Thu,  7 Aug 2025 07:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b="gAIfZ4TG"
+Received: from mail0.khirnov.net (red.khirnov.net [176.97.15.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECCD4AEE2;
-	Thu,  7 Aug 2025 07:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A900230BCE;
+	Thu,  7 Aug 2025 07:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.97.15.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754550202; cv=none; b=sKbtfrIAsDMrQYQp0bYaEPK0od4Ze88pOVnvv2rP+N1AKnivs+o60XrqUnqQaWSB+eMATmzUWV8pcD9jJEu28sHFnpVLuzGRfkwTMEJVi9MULhHeyDtoGDMWMfkNz6hwKEuujcfPlnJVlxq/QnHo0nNnEqdOOHIvlZQtahf8b+8=
+	t=1754550827; cv=none; b=ZN2+82uLWO4KoHA6qUpV8pA8sfQP9bRfYBQK8JLJVKgwITqkHNb/f/8G8X+EYLt6XKEJPcVvfG/ps9ztiKCHWRAQXM9NmH2CCseatN4qzkGE3JXttrEaqO1KkprWwfi1jpm/lBh/64IG4IYnaBoDL1o6ZdGs8Si/gG1SKFzKAPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754550202; c=relaxed/simple;
-	bh=NZTmWWnxv4F8M3/i0Xepe/SlX3tm/fnvmK+bF10p6cI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dgk1IAtyeUa+VSF1r2aO7PpD9AmA4dpBH6BFELNQWtxwulAYG1/EuaGd9yY1JQABpVoAyIJzc2DmbP/t4cZMqmaIjbjZwfVwZGuOmR2RV381/AGelL625TWFo1tOG5BRCiRb7HAw2hcjnqD8y/ExWJ7lKUDKxI+nFJCR9NHxD3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4fc18de8e1bso238831137.0;
-        Thu, 07 Aug 2025 00:03:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754550200; x=1755155000;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TWu6B4qb51mVSqOrpcU1++wtRjVZzTKfb8/NIZVZsT0=;
-        b=cfJ9csAa5bvvdJJr2tPZ5wkOT9k+lYhGjTjfXICDpYXGLWEYVl7JqO3HjsXLpID+SK
-         vIf9GqRWQwMKpBrKz/KHHM5eypcwU74rdHo+ltLgXM3i/ZtAlGu8UusFxOVEqxGqmJi4
-         4PwH63PGnj2D0GAkqVQvXB1/Hn0Sros32+eehtECbrmcnbnv6hRcf3UaymkVm6NVfYJj
-         q8wbJdWBxPtgpkd6gdKmWhyzEQzcrKP9WcBStrNdR7u8P6HSUv8tWqAhxN7xMFFpr6j+
-         nyuuU+KFhSinbNdnK8jGgOnx16MSy8WDwCHuKwCPDo6ZfFr7jsMAIEQpZa9nsoWUnocS
-         ge0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2dcTxLqUrJ1jFemp4UdxKN8nvwcBQmbD5FOHIo3ty+Z+QpF4Ezl2hjmOhaWISECqrUeux0z2EsMIJskIp@vger.kernel.org, AJvYcCVHHb54XK1JBxzZmbW6g6WUFtLamb1laBDTkMMFS2sMGZ3ezgjsRGcpDU0hsMhXuvih4COZJ5hKb3pa9OKn3KT0e6I=@vger.kernel.org, AJvYcCXK8xeRu1pwFBjRV+VkCyYeO/XGrd6DX202KjEXu1yL9dc6dvKiPKE8eJTJL6XTb6fzvNFOPWQz+XVi@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwkb/XYGJat0L5++dwIOyBfHYUI5WsfSxDhjO4MrGZUwTeQ4CN
-	+gqBr2YCEQSRN+I8VDgU++/GCTUaZoa8L86T+6GuLmuModf/GHRGCY065lnFFy8AkrY=
-X-Gm-Gg: ASbGnctGEHX9Jwm1npyIFHnjOrHmrG/FhHrS85bALBB+4aZeUbyb4Zt2xGn4Dg8ssxL
-	4EsDsGQGVOrfkYxu30m3E9vC/R3MxQt2+UWs+f7MSDA94G3mTU1Uo+IbmumdJmCzmaxtAVDbo63
-	sK2mfSyweNVjOFc+NbvzSeCRnvVgBWZnzVhsLHNET7e/++eIfyqKfXq3TiAmeNqx9VQuWzUZsmO
-	Qwl++0uAgn2xrpMJTzuW3fCX9TLo8EBuGX9kwMBypMw/CQmBYhnfFmK70ASgkjAQOLOs3E6MoG5
-	dUvyEdK70ecqSTtVRP+gRE6AXDJ+CK5l/9QgFwuBsnxZG8++HSrT44evzcls60OEJqs0WnK6XIC
-	W+wNOSTcFcYyZzLOgyWA9XabLYAhY/rn7/EESwhO5MnI1jYOAa9NqR79dtGTy
-X-Google-Smtp-Source: AGHT+IH+Vp0xopven5MmQXOa90KgpBbUttTC71rL4RgqNnlL+QT/wZgVH5twJqIhQshRPQt1Bnzyzw==
-X-Received: by 2002:a05:6102:4a91:b0:4f1:2ec7:af39 with SMTP id ada2fe7eead31-504b889e7a6mr918854137.18.1754550200000;
-        Thu, 07 Aug 2025 00:03:20 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d503f48sm3833019137.22.2025.08.07.00.03.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 00:03:19 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4fc19b5fd8cso243126137.2;
-        Thu, 07 Aug 2025 00:03:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfc54xBV+67lOgP8hTV85SyvOGS/p1KkGmy5pEd7c6ZhtEfOyDxwXo2CtC+/NeVW5DHlMbrY1k+KVSBEUa@vger.kernel.org, AJvYcCV0WksDudZXIvwIA0fi2NrGoBPmsnkBkmCmTQwIiFmqNE4JQVyet24wYvw5RrHdiytXFIMSPnNv4EGnuwMkUmhHyvo=@vger.kernel.org, AJvYcCXWb5OrbvVYqUWbyl4zxuz5hUP5bRG/exNd7kkrNgGa6dJHiLQiV9iwIrgNpCpojvRBDaE6YSDOOO0L@vger.kernel.org
-X-Received: by 2002:a05:6102:418a:b0:4d7:11d1:c24e with SMTP id
- ada2fe7eead31-504b8cc5c5dmr779640137.21.1754550199293; Thu, 07 Aug 2025
- 00:03:19 -0700 (PDT)
+	s=arc-20240116; t=1754550827; c=relaxed/simple;
+	bh=YUA5RiBpGAWvHlxz8fkf1jghXvZc3JwjJoR84RaygdQ=;
+	h=Content-Type:Subject:From:To:Cc:In-Reply-To:References:Date:
+	 Message-ID:MIME-Version; b=CAq3rJDlhhxfRbdRi6/kF4hU8RxGLTUTnQaYn3kAHhi2IotIQhEgX58vc3gwqpAnQVANwAtaJE7xjCQ23r4Qj9DrvJISs/7i+rC6yjoGKfjCUgHUjfkVEQIYfUGfS+szLXCvSOSVTNYowtGB6Rd8T8hx3xiHFF1eoyi/FOJYZNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net; spf=pass smtp.mailfrom=khirnov.net; dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b=gAIfZ4TG; arc=none smtp.client-ip=176.97.15.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=khirnov.net
+Authentication-Results: mail0.khirnov.net;
+	dkim=pass (2048-bit key; unprotected) header.d=khirnov.net header.i=@khirnov.net header.a=rsa-sha256 header.s=mail header.b=gAIfZ4TG;
+	dkim-atps=neutral
+Received: from localhost (localhost [IPv6:::1])
+	by mail0.khirnov.net (Postfix) with ESMTP id 59BD3244CD3;
+	Thu,  7 Aug 2025 09:04:36 +0200 (CEST)
+Received: from mail0.khirnov.net ([IPv6:::1])
+ by localhost (mail0.khirnov.net [IPv6:::1]) (amavis, port 10024) with ESMTP
+ id gZ89qqBFjTSv; Thu,  7 Aug 2025 09:04:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=khirnov.net; s=mail;
+	t=1754550274; bh=YUA5RiBpGAWvHlxz8fkf1jghXvZc3JwjJoR84RaygdQ=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
+	b=gAIfZ4TG2b94qbXW4Mr74i9wHfoyIGxDV2FaEeVRmGEFg66z545iz7ZJeUmyjL6v/
+	 /AZArhDoFdG+uABq0TPY68aS7/C67ExDMszMxPtm8IoDSkpTCCkiPsP4rKSTaiRkYk
+	 JiGP8N4AAddXpfTZFQgM7IkCdbOXBo1KbVpCsnJoQEksu5lY2GyQFKKJ2Oar5hHpRi
+	 g45LlAO+cntHN8Gee076rGXNloZZH1fZmDeZKKxOFhnFvg2TaOlgCaumnRFLC7PSYK
+	 Onxq87Bjvf8rrJiMj1LAxi1Ba+UOq2fYCbvKsLDvcKFvl9QkHiNskqGigPDJYE25cs
+	 wz7/v//fNOnuw==
+Received: from lain.khirnov.net (lain.khirnov.net [IPv6:2001:67c:1138:4306::3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256
+	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
+	(Client CN "lain.khirnov.net", Issuer "smtp.khirnov.net SMTP CA" (verified OK))
+	by mail0.khirnov.net (Postfix) with ESMTPS id 1DEA0244CD2;
+	Thu,  7 Aug 2025 09:04:34 +0200 (CEST)
+Received: by lain.khirnov.net (Postfix, from userid 1000)
+	id F1FB91601BA; Thu,  7 Aug 2025 09:04:33 +0200 (CEST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject:  Re: [PATCH v2 1/2] Input: allocate a keycode for Fn+space
+From:  Anton Khirnov <anton@khirnov.net>
+To:  Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:  platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org, Corentin Chary <corentin.chary@gmail.com>,
+ "Luke D. Jones" <luke@ljones.dev>, Hans de Goede <hansg@kernel.org>,
+ Ilpo =?utf-8?q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+In-Reply-To:  <20250714150756.21197-2-anton@khirnov.net>
+References:  <20250714150756.21197-1-anton@khirnov.net>
+ <20250714150756.21197-2-anton@khirnov.net>
+Date: Thu, 07 Aug 2025 09:04:33 +0200
+Message-ID: <175455027396.18450.6158883214483744371@lain.khirnov.net>
+User-Agent: alot/0.8.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806195555.1372317-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250806195555.1372317-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250806195555.1372317-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 7 Aug 2025 09:03:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXKxH_rvgAfOJF5tdD8MQoHFPdyfEYTJMLEr+aELwf2cQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyEBUkACg13ZwjKj1gGmG-FLcQDJ45LxPbDnyWLp4b_wmHye9zS0I52v6w
-Message-ID: <CAMuHMdXKxH_rvgAfOJF5tdD8MQoHFPdyfEYTJMLEr+aELwf2cQ@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] pinctrl: renesas: rzg2l: Drop oen_read and
- oen_write callbacks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 6 Aug 2025 at 21:56, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Remove oen_read and oen_write callbacks from rzg2l_pinctrl_data as
-> all SoCs now use the same rzg2l_read_oen() and rzg2l_write_oen()
-> functions directly.
->
-> Change rzg2l_read_oen() return type to int for proper error reporting
-> and update callers to handle errors consistently.
->
-> This simplifies the code by removing redundant callbacks and ensures
-> uniform OEN handling across all supported SoCs.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2->v3:
-> - Added Reviewed-by tag from Geert.
+Hi Dmitry,
+could you please look at this?
 
-Thanks, will queue in renesas-pinctrl for v6.18.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Thanks,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Anton Khirnov
 
