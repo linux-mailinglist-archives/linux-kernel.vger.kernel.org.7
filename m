@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-758567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80CBBB1D0E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:19:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15482B1D0E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C72D1757F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 124B0560A7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EC019E971;
-	Thu,  7 Aug 2025 02:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB221C2437;
+	Thu,  7 Aug 2025 02:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Rc2HRveE"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EkP/4WJ4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6A0433C8
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 02:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4FD9461;
+	Thu,  7 Aug 2025 02:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754533153; cv=none; b=kKBkkoQzX6B2uTzO3PX+KeT8HA5X3MdHa1VeI3gkgphrbZ05EdScP8nH5ginxrKeV18GJJTX2/FkozUYVS45ImHVtR6tsENzdwjfVIXmvpTbtu0t8uEggnAJblhIr/ILaBN/yXXo0XK1Q62NCYzgsE4OGGTJmj3pfk/UPzy+Sng=
+	t=1754533451; cv=none; b=Mx+uI0abUnv7YfeKj/hUfB2de6cQOi1fGYfUbgjJVBZsKLgmn2mU7fd0t1DeZt9I/qN4sveESXgFGNMBDZo/paFSXXSCi+CkZ/YhAY2Ycwc6c4BST5bjNL1XHCo9NF1mA+SSECrPz4IAnBwJAEo09fr75PKJs1o6APYHLBHkfug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754533153; c=relaxed/simple;
-	bh=FgZn0ARQQS7XwZ3K8kkGoyAKS/jcRfRt37uxZJLcqKg=;
+	s=arc-20240116; t=1754533451; c=relaxed/simple;
+	bh=VUVNzu31LJWKIeyqAa2HIaHX9Nc3eAxgg8BRTJDmoBM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DNYNffBAGHXpFbBlykl6Dwuy8k313sSwL2MaXW5DHZzyYKHcZg3ICXMZAW3LUaMjVaX2y4+YD2B8IZ0ZcFMWcSHbWdPwu2RsCbdeJHVCEjdVlZFQNY5uCKlzi3pUqimCplCFWVxZNXd2u4JHne+AYpkUwtBrTkv9wGHnOvWtcUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Rc2HRveE; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-23ffdea3575so3373055ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 19:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754533151; x=1755137951; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=83sd6PCmkNwpnDM6Yeh1ANcUc7ticTzZNGY/Dmbpuig=;
-        b=Rc2HRveEvy0TSS4s5nbvDaO2YUxkVmYpQlRQkuTFCZJCZn9fwCHqqQ2DM5fJ1BxeHP
-         bcrxWW/Udzp2/gI4eQhF2a60se1W1PiolcoowKUmBYtrf04Cp9BGyyMVYhJYx/nEu2HP
-         SBy+vNTWPgo+8ISXGaVN79xnW91BdbnviY9rFRMWYLRMNvmcBo6IIwF76IC5kF9ozYnz
-         WvtI5pnp7OK2NSG6tQcyzC7lXrTU5ufUpf/UT2BvQGGOWWgs+iUg4GZsLiMt34FH1Vju
-         ATxQDfano2MVxHItE75iZwWBckA8qs+kOeuRVpmg/SLXOdlXs5v31KkvXjCmloGPWzSc
-         Gz/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754533151; x=1755137951;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=83sd6PCmkNwpnDM6Yeh1ANcUc7ticTzZNGY/Dmbpuig=;
-        b=DBXDh8P8bDbFaY4+bNH7c3Hldw4038C8z5GeGzJsuARNgJhWwSN617yIIPq5PSPpPF
-         88s0Hi/XLZQv8sn+hNnIHMaTDZl+6yuq4hlNYJvrvko/YRN08lJQG3I6CrN65h3XYlbu
-         JURi8JbqByXuW6UP1ZKwrBbfEYZJ+CMhhm3V6tJMZGa70QlDI8aJju1CX6SfziGoiYAc
-         EA0q9LxYTbLyB5TSZYRdWQOAdYcTeT03vNq5djzmsQiXVnvWO8C87diGp6/6IiOeu86H
-         nDRf+ED0oOS0geueN4Hqi7MFvI4fyvKLlSKQRawvqgXmHAeJO4xxsNfXd8X5tT2nsbOS
-         msVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1YwwRGtW3L/Up+PysUrlPutLst6qXfkxW0hbNxY859oI/CtPL7AQ+ajcwvaXBDw9O7OaZbS1EoT20/+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5VdSvb8/4jRmbw2ZtXEXsd+egxVM2k8U3BGSuJC5RYYolIoYb
-	8Zi4XD7jvC+uYLSNnJ8kBwX5rwzvWioM3XteWlDjFFqj62HazwFO/R4ScsMyqXkgwdg=
-X-Gm-Gg: ASbGncu8L7PrZTQYlV6dL8RVzS1494FrvLkv0nuo76N7jJyC8UFwd49qgTePfgjo49w
-	T+h+yD822NYxyuZ6B/VGIqUXI/w64YuW/AdjtjQOCGIEEH2dEmQWBUO7GEVlukAyP6hQO3vck9a
-	gCJ8EpqPQgo1U2jnQ9f1sJLeEE3aW/6aROTTEPdSk+WMdjhSG06n6wSBup2PyfwYu5ebKjVJhxD
-	jbUPqiNN0H7Wficb/5RhgkIU5faX4arA7U74u/S/Doyx3PGk4lP5Q0mhYQi4sEEsie+YWqoAktC
-	G/pEM81BVIk8LgX+hE/1UhPE0CKFkq/erA/GX5XwTUchgWbdJWcxwX9Nat40DGFnpMlvklS/BjC
-	5PqIZDkQxfIIcnV78lsyQsFJRLD5kmRY=
-X-Google-Smtp-Source: AGHT+IHJkCOHPE4vj/BlDybTg1YsT19M7uHIHqiHIRYNEuidJTNydsrIVz6RcyzzfBLtxZFvDlsLFA==
-X-Received: by 2002:a17:903:1a68:b0:235:779:edfa with SMTP id d9443c01a7336-242a0b3e4c6mr94146195ad.32.1754533150912;
-        Wed, 06 Aug 2025 19:19:10 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e89769absm171958365ad.80.2025.08.06.19.19.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Aug 2025 19:19:10 -0700 (PDT)
-Message-ID: <98e3bdfc-41ed-40b6-92df-4aacab3d92c5@kernel.dk>
-Date: Wed, 6 Aug 2025 20:19:09 -0600
+	 In-Reply-To:Content-Type; b=BwYfRk47QJDF+viwdCvXRpUs331DvI9mQq89rtHfDIhaFDyrRHeKkhLT3qJv8IFgTTv1s0RB7RhOp/F/f0tTIsUvxsN1jXsZyp5h2fE6B1DkaMEjUbSOFg6TSr1QqqQSvdgbtOplEd/6A61TxKIlI5jNWEi/vUb42qqjHCHAnLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EkP/4WJ4; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754533450; x=1786069450;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VUVNzu31LJWKIeyqAa2HIaHX9Nc3eAxgg8BRTJDmoBM=;
+  b=EkP/4WJ42sTaiKFakKoDKGbCnCsop4XYIMferrey53/E8Ab/n3DR5oj1
+   avYhP6psa3uEGuT945Uppq9nuXhjQHo65gpSZemPm80paJEwONkpTJo7G
+   n4vI8so4gPT043oUaLCSCk518NeewShcEdyDh/ZWpFDdKKQ9rk55qqox5
+   fuAEjExBCKiPZ+6Vd8dnRNeIGnN/rimumoWedmh5UITwznCtt5fcrIFcI
+   29GhF1mfG6dGYlwBnPzm3Zsu4yHr8+b0ItjvWGmsJ+h+l76KAOXYBHASH
+   h6PYk+7EJmWPZGTudHEwqSwn/8SOMx54wY185An3tszKoimPugrS7aSTU
+   Q==;
+X-CSE-ConnectionGUID: SKwwAw7jTEa5kqVqs++mrQ==
+X-CSE-MsgGUID: G7hj7W9NQXaA61HvodL9tQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67939642"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="67939642"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 19:24:09 -0700
+X-CSE-ConnectionGUID: 7jlSB0LZRUSzrY+yR46A0A==
+X-CSE-MsgGUID: RruIQFfpS4OkGH5s5K8Wtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="164936763"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 19:24:08 -0700
+Message-ID: <515a5221-dbcd-45cc-bc55-887ae70b63db@linux.intel.com>
+Date: Thu, 7 Aug 2025 10:24:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,66 +66,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] lib/sbitmap: convert shallow_depth from one word
- to the whole sbitmap
-To: Yu Kuai <yukuai1@huaweicloud.com>, kernel test robot <lkp@intel.com>,
- akpm@linux-foundation.org, ming.lei@redhat.com, dlemoal@kernel.org,
- jack@suse.cz
-Cc: oe-kbuild-all@lists.linux.dev, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250805073748.606294-2-yukuai1@huaweicloud.com>
- <202508061722.0vTVFHLe-lkp@intel.com>
- <7d2b0108-4d16-97fb-5de9-7438414d9ca4@huaweicloud.com>
+Subject: Re: [PATCH 17/18] KVM: x86: Push acquisition of SRCU in fastpath into
+ kvm_pmu_trigger_event()
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>,
+ Sandipan Das <sandipan.das@amd.com>
+References: <20250805190526.1453366-1-seanjc@google.com>
+ <20250805190526.1453366-18-seanjc@google.com>
+ <e64951b0-4707-42ed-abf4-947def74ea34@linux.intel.com>
+ <aJOR4Bk3DwKSVdQV@google.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <7d2b0108-4d16-97fb-5de9-7438414d9ca4@huaweicloud.com>
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aJOR4Bk3DwKSVdQV@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/6/25 7:30 PM, Yu Kuai wrote:
-> Hi,
-> 
-> ? 2025/08/06 17:41, kernel test robot ??:
->> All error/warnings (new ones prefixed by >>):
->>
->>     In file included from ./arch/sparc/include/generated/asm/div64.h:1,
->>                      from include/linux/math.h:6,
->>                      from include/linux/kernel.h:27,
->>                      from include/linux/cpumask.h:11,
->>                      from arch/sparc/include/asm/smp_32.h:15,
->>                      from arch/sparc/include/asm/smp.h:7,
->>                      from arch/sparc/include/asm/switch_to_32.h:5,
->>                      from arch/sparc/include/asm/switch_to.h:7,
->>                      from arch/sparc/include/asm/ptrace.h:120,
->>                      from arch/sparc/include/asm/thread_info_32.h:19,
->>                      from arch/sparc/include/asm/thread_info.h:7,
->>                      from include/linux/thread_info.h:60,
->>                      from arch/sparc/include/asm/current.h:15,
->>                      from include/linux/sched.h:12,
->>                      from lib/sbitmap.c:7:
->>     lib/sbitmap.c: In function '__map_depth_with_shallow':
->>     include/asm-generic/div64.h:183:35: warning: comparison of distinct pointer types lacks a cast
->>       183 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
->>           |                                   ^~
->>     lib/sbitmap.c:222:20: note: in expansion of macro 'do_div'
->>       222 |         reminder = do_div(shallow_word_depth, sb->depth);
->>           |                    ^~~~~~
-> 
-> /* The unnecessary pointer compare is there
->  * to check for type safety (n must be 64bit)
->  */
-> # define do_div(n,base) ({
-> 
-> I didn't notice that under specific arch, do_div() will require the fist
-> paramater to be 64bit.
-> 
-> I'll wait a bit longer for people to review the solution before I send a
-> new version.
 
-I think it looks good, so please do spin a new version with that fixed
-as that's the only thing holding up the inclusion right now.
+On 8/7/2025 1:33 AM, Sean Christopherson wrote:
+> On Wed, Aug 06, 2025, Dapeng Mi wrote:
+>> On 8/6/2025 3:05 AM, Sean Christopherson wrote:
+>>> Acquire SRCU in the VM-Exit fastpath if and only if KVM needs to check the
+>>> PMU event filter, to further trim the amount of code that is executed with
+>>> SRCU protection in the fastpath.  Counter-intuitively, holding SRCU can do
+>>> more harm than good due to masking potential bugs, and introducing a new
+>>> SRCU-protected asset to code reachable via kvm_skip_emulated_instruction()
+>>> would be quite notable, i.e. definitely worth auditing.
+>>>
+>>> E.g. the primary user of kvm->srcu is KVM's memslots, accessing memslots
+>>> all but guarantees guest memory may be accessed, accessing guest memory
+>>> can fault, and page faults might sleep, which isn't allowed while IRQs are
+>>> disabled.  Not acquiring SRCU means the (hypothetical) illegal sleep would
+>>> be flagged when running with PROVE_RCU=y, even if DEBUG_ATOMIC_SLEEP=n.
+>>>
+>>> Note, performance is NOT a motivating factor, as SRCU lock/unlock only
+>>> adds ~15 cycles of latency to fastpath VM-Exits.  I.e. overhead isn't a
+>>> concern _if_ SRCU protection needs to be extended beyond PMU events, e.g.
+>>> to honor userspace MSR filters.
+>>>
+>>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+>>> ---
+> ...
+>
+>>> @@ -968,12 +968,14 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu,
+>>>  			     (unsigned long *)&pmu->global_ctrl, X86_PMC_IDX_MAX))
+>>>  		return;
+>>>  
+>>> +	idx = srcu_read_lock(&vcpu->kvm->srcu);
+>> It looks the asset what "kvm->srcu" protects here is
+>> kvm->arch.pmu_event_filter which is only read by pmc_is_event_allowed().
+>> Besides here, pmc_is_event_allowed() is called by reprogram_counter() but
+>> without srcu_read_lock()/srcu_read_unlock() protection.
+> No, reprogram_counter() is only called called in the context of KVM_RUN, i.e. with
+> the vCPU loaded and thus with kvm->srcu already head for read (acquired by
+> kvm_arch_vcpu_ioctl_run()).
 
--- 
-Jens Axboe
+Not sure if I understand correctly, but KVM_SET_PMU_EVENT_FILTER ioctl is a
+VM-level ioctl and it can be set when vCPUs are running. So assume
+KVM_SET_PMU_EVENT_FILTER ioctl is called at vCPU0 and vCPU1 is running
+reprogram_counter(). Is it safe without srcu_read_lock()/srcu_read_unlock()
+protection?
+
+
+>  
+>> So should we shrink the protection range further and move the
+>> srcu_read_lock()/srcu_read_unlock() pair into pmc_is_event_allowed()
+>> helper? The side effect is it would bring some extra overhead since
+>> srcu_read_lock()/srcu_read_unlock() could be called multiple times.
+> No, I don't think it's worth getting that precise.  As you note, there will be
+> extra overhead, and it could actually become non-trivial amount of overhead,
+> albeit in a somewhat pathological scenario.  And cpl_is_matched() is easy to
+> audit, i.e. is very low risk with respect to having "bad" behavior that's hidden
+> by virtue of holding SRCU.
+>
+> E.g. if the guest is using all general purpose PMCs to count instructions
+> retired, then KVM would acquire/release SRCU 8+ times.  On Intel, the fastpath
+> can run in <800 cycles.  Adding 8 * 2 full memory barriers (difficult to measure,
+> but somewhere in the neighborhood of ~10 cycles per barrier) would increase the
+> latency by 10-20%.
+>
+> Again, that's an extreme scenario, but since there's almost nothing to gain from
+> pushing SRCU acquisition into the filter checks, I don't see any reason to go
+> with an approach that we *know* is sub-optimal.
+
+Yeah, indeed. If there is no need to
+add srcu_read_lock()/srcu_read_unlock() protection in reprogram_counter(),
+I'm good with this. Thanks.
+
+
+>
+>> An alternative could be to add srcu_read_lock()/srcu_read_unlock() around
+>> pmc_is_event_allowed() in reprogram_counter() helper as well.
+> As above, there's no need to modify reprogram_counter().  I don't see any future
+> where reprogram_counter() would be safe to call in the fastpath, there's simply
+> too much going on, i.e. I think reprogram_counter() will always be a non-issue.
 
