@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-759593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC4AB1DFD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:34:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE08B1DFCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CECB0583180
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA89623DFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F27B2367B6;
-	Thu,  7 Aug 2025 23:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E05262FD0;
+	Thu,  7 Aug 2025 23:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="pRV6ZVsK"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Md0xDHXC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A6C5475E;
-	Thu,  7 Aug 2025 23:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF04C1946AA;
+	Thu,  7 Aug 2025 23:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754609681; cv=none; b=eZx8gWLMkNjFAVdJ7dTOY9+EpbjQMa5R1S+DZd5gAZSOwV1q0eolvVAXQe+JaKkGKCGzWqru8pnDk95CN7R1IZMzoDDYWPYqc0AU2obOsQ0Sq0tlaRchicvGrldCylyE/HB+4Lf7pOhFqJn4vzhzEY0z8JHy2jNNnf7tv1xaGC4=
+	t=1754609198; cv=none; b=n7i91ZYRfpWphm13ynhRTazBVyafghUkuuJzfA3T2RryUtE4kpysqoeBv09Uf27eWCk2U81aHciwxPYbFP+QHXEbg9uKL5sQNrsmRh33WtSi1W4afrqwQ6dbbLamhgErV4Dkk68/kAZSSEdg2vAnm2i+ncmc5rp+MnHsYVzvX0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754609681; c=relaxed/simple;
-	bh=+GjCo8mqWli11PkYxbzY8bH0AmMOZ81OFu18PSPNlYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HAXNsJmlC/A9Hs2LWSJzJ6illrTjTmO3nDuJ15Ybay2g2I4SWtBoDk6oUQT0bipCieWHA9ZPcVLrHkRLhJNzC57X4GecWOFXoM8u1s/FAwcXAbk2SyrZ0kSNiStZrXDEne/KXrxdYdij1LElkfuItmnisn+Kiv34DPSleqQohdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=pRV6ZVsK; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
-	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577IL34k029305;
-	Thu, 7 Aug 2025 23:34:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pps0720; bh=poHsgaP+YF707V5y9z/iclpM0uKCkrx3EfLqu
-	iZMAiw=; b=pRV6ZVsKNgvQFHEXycQsfOmjI12EuZV5hNI+S1VNARpbh/d9bccA+
-	W0t7ka9p3MFZe6NXc8JnG8q/WOXEM2iA+P4/gF+6+rkl/BujcTyA+ZXfYNWSk8FW
-	0pRBHFBku9pjp3tU+hpIYZghSvr+ximr8UZVOzt8l5m1e9KxKbilVS6LIP0yhniD
-	c0AfHOD8YlfMGwaCyajM7pcD7VJV8I1JCos3cIzUfJebgQ4z7VZ9IpYnkkxuaTHA
-	AgQkKsBpugaSCWhPx9TM9Il/QT4VNoQ+DW4KG+XNJjuxa5l/oWPvQzWCPeWhvW11
-	j8xoGt1lOO53GjuiI7X8cyWFQVfIXFk7A==
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 48cn351mm4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 23:34:29 +0000 (GMT)
-Received: from test-build-fcntl.hpe.com (unknown [192.58.206.35])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id ECCAA1317F;
-	Thu,  7 Aug 2025 23:34:03 +0000 (UTC)
-Received: by test-build-fcntl.hpe.com (Postfix, from userid 1000)
-	id 34D2D8800132; Thu,  7 Aug 2025 23:25:25 +0000 (UTC)
-From: Rajeev Mishra <rajeevm@hpe.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajeev Mishra <rajeevm@hpe.com>
-Subject: [PATCH 1/1] loop: sync filesystem cache before getting file size in get_size()
-Date: Thu,  7 Aug 2025 23:25:22 +0000
-Message-ID: <20250807232522.192898-1-rajeevm@hpe.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1754609198; c=relaxed/simple;
+	bh=/Dha1AnamekDF+eoFpqLFEytcJK/ld7mdjOG9Qbmd4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ZgjhXYBVgmlLm4/rpDTw4v3eXv2pbMTnWDl0RAPH4O4RsxwLUf2cebvTYQcTapntoZdvWAhdeFz1X5uV1ulQqdoQd0irQDKlFEWzzIRr76aGqrTuRK+FkyCHFlNYGcHVNWYxi7cpW85RvwmM+tvazBYyDs7Ww/EZQ18roPO70UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Md0xDHXC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D2BC4CEEB;
+	Thu,  7 Aug 2025 23:26:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754609198;
+	bh=/Dha1AnamekDF+eoFpqLFEytcJK/ld7mdjOG9Qbmd4I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Md0xDHXCqK0W1aOnfinpaq5J0qSsqFz+a9V42g554Rmlslwzh5qrWu3HoboBSJref
+	 dRj2RTrkGPuanolIXn0H8YVE+gk9sB9YOaBqRIMGcH38KKU/o5Rs9ds5h/mbHgVqIN
+	 I15K32DokaG2nuPK1CTGxx+wepDlpmWIaD+FjULeZ9vgUdtRc5c2Pqjf4fX2oU/DIP
+	 fIBEUsr8XmMzUbzWrJQqgod2WqXGajinftyfkBrpiiAheqhAs2s6se1ubpmmrjdshn
+	 z/GESIkfPLU0w9DQ66PsRE2XilsS/Gmkh8xtJ/Rv7lynRgnDHo+w+HOVQstnnplLWV
+	 4zg+1tCUxjVGw==
+Date: Thu, 7 Aug 2025 18:26:36 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: dan.j.williams@intel.com
+Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
+	lukas@wunner.de
+Subject: Re: [PATCH v4 03/10] PCI: Introduce pci_walk_bus_reverse(),
+ for_each_pci_dev_reverse()
+Message-ID: <20250807232636.GA68733@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDE5NSBTYWx0ZWRfX44fP3CaigCC5
- oGjK3tXUNvrPPorzzydo/vbllI7kWoCMRt0+tvNM6MCw5vaBIv0+y4HvSUp/0fdniVw8lnTZZCo
- OMynil7GrXU5UWl/CbTs+23XgGt9ZfunSeKlWywLzXHlE/eoPRxgbyhKxlA3YIOl2XcrYA+ym2p
- nP9gIl8G1lNqrZmfxRqsPBForOsIgLPfn1a6Q/a17PfT/dxUN30Gv7BSxTzd8B8MowHGYNjnUqo
- WmLaXwOmNRYbZYHbYtXyX+dSfjs4VVisVe3TRfS9oz5+v0P0Jss8UrRjz9YyqWDJmRJfWAdqGMx
- 84/sG1sjk5EgKOF2N9ISO4QxO1HoozxDq/x+a/MoHkGXkCzE3m0Vwlv9rTnSJMNu87TtNm4c3x6
- VipM8El/mQzVNrva4Paka2sS76nAZNJz2Fys5Jt91tJVtelyMOBJ0h6lKoRuTC7JjeVpFnHv
-X-Proofpoint-GUID: YSvOs_ititAaa6pGdyqAdVq21CBwQJaS
-X-Authority-Analysis: v=2.4 cv=UNndHDfy c=1 sm=1 tr=0 ts=68953805 cx=c_pps
- a=5jkVtQsCUlC8zk5UhkBgHg==:117 a=5jkVtQsCUlC8zk5UhkBgHg==:17
- a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=oPlePqoASfxsVqDn9Q0A:9
-X-Proofpoint-ORIG-GUID: YSvOs_ititAaa6pGdyqAdVq21CBwQJaS
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_06,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
- adultscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0 phishscore=0
- impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508070195
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6895342226a99_cff9910086@dwillia2-xfh.jf.intel.com.notmuch>
 
-The get_size() function now uses vfs_getattr_nosec() with AT_STATX_SYNC_AS_STAT
-to ensure filesystem cache is synchronized before retrieving file size. This
-provides more accurate size information, especially when:
+On Thu, Aug 07, 2025 at 04:17:54PM -0700, dan.j.williams@intel.com wrote:
+> Bjorn Helgaas wrote:
+> > On Thu, Jul 17, 2025 at 11:33:51AM -0700, Dan Williams wrote:
 
-- The backing file size has been changed by another process
-- The file is on a network filesystem (NFS, CIFS, etc.)
-- The file is being modified concurrently
-- The most accurate size is needed for loop device setup
+> > > +++ b/drivers/base/bus.c
+> > > +static struct device *prev_device(struct klist_iter *i)
+> > > +{
+> > > +	struct klist_node *n = klist_prev(i);
+> > > +	struct device *dev = NULL;
+> > > +	struct device_private *dev_prv;
+> > > +
+> > > +	if (n) {
+> > > +		dev_prv = to_device_private_bus(n);
+> > > +		dev = dev_prv->device;
+> > > +	}
+> > > +	return dev;
+> > 
+> > I think this would be simpler as:
+> > 
+> >   if (!n)
+> >     return NULL;
+> > 
+> >   dev_prv = to_device_private_bus(n);
+> >   return dev_prv->device;
+> 
+> Agree, in isolation, but next to next_device() the style looks odd. So,
+> go back and style-fix code from 2008, or make 2025 code look like 2008
+> code is the choice.
 
-The implementation gracefully falls back to i_size_read() if vfs_getattr_nosec()
-fails, maintaining backward compatibility.
+Good point, I didn't look around at that code.  Following the existing
+style seems right to me.
 
-Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
----
- drivers/block/loop.c | 31 +++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+> > > +++ b/drivers/pci/bus.c
+> > > +static int __pci_walk_bus_reverse(struct pci_bus *top,
+> > > +				  int (*cb)(struct pci_dev *, void *),
+> > > +				  void *userdata)
+> > > +{
+> > > +	struct pci_dev *dev;
+> > > +	int ret = 0;
+> > > +
+> > > +	list_for_each_entry_reverse(dev, &top->devices, bus_list) {
+> > > +		if (dev->subordinate) {
+> > > +			ret = __pci_walk_bus_reverse(dev->subordinate, cb,
+> > > +						     userdata);
+> > > +			if (ret)
+> > > +				break;
+> > > +		}
+> > > +		ret = cb(dev, userdata);
+> > > +		if (ret)
+> > > +			break;
+> > > +	}
+> > > +	return ret;
+> > 
+> > Why not:
+> > 
+> >   list_for_each_entry_reverse(...) {
+> >     ...
+> >     if (ret)
+> >       return ret;
+> >   }
+> >   return 0;
+> 
+> Again, for conformance to existing style of __pci_walk_bus(). Want a
+> lead-in cleanup for that?
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 1b6ee91f8eb9..15d5edbc69ce 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -137,12 +137,39 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
- static int max_part;
- static int part_shift;
- 
-+/**
-+ * get_size - calculate the effective size of a loop device
-+ * @offset: offset into the backing file
-+ * @sizelimit: user-specified size limit
-+ * @file: the backing file
-+ *
-+ * Calculate the effective size of the loop device
-+ *
-+ * Returns: size in 512-byte sectors, or 0 if invalid
-+ */
- static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
- {
-+	struct kstat stat;
- 	loff_t loopsize;
-+	int ret;
-+
-+	/*
-+	 * Get file attributes for validation. We use vfs_getattr() to ensure
-+	 * we have up-to-date file size information.
-+	 */
-+	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 
-+			        AT_STATX_SYNC_AS_STAT);
-+	if (ret) {
-+		/*
-+		 * If we can't get attributes, fall back to i_size_read()
-+		 * which should work for most cases.
-+		 */
-+		loopsize = i_size_read(file->f_mapping->host);
-+	} else {
-+		/* Use the size from getattr for consistency */
-+		loopsize = stat.size;
-+	}
- 
--	/* Compute loopsize in bytes */
--	loopsize = i_size_read(file->f_mapping->host);
- 	if (offset > 0)
- 		loopsize -= offset;
- 	/* offset is beyond i_size, weird but possible */
--- 
-2.43.5
+Don't bother.  Maybe some janitor will show up and do it eventually.
 
+Bjorn
 
