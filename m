@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-759353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F361B1DC87
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:35:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7989B1DC8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9D756479C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:35:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4BBF7AB536
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4578B273D77;
-	Thu,  7 Aug 2025 17:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12571273807;
+	Thu,  7 Aug 2025 17:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jXqAKAsM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YXEC8ApT"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF81C13E02D;
-	Thu,  7 Aug 2025 17:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BACA26FA5A
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754588139; cv=none; b=di3Xu8qHfgR/PJ5vTK/KTqGiBGk8vFOisrjbXATKUtwahk2fIrwyT2/PoQs/LBv1QkLSD8FgB6kb7eiNyFntn3HSaiZyMTjrumlPoAcDkjBDaySidrvg/hAbn+mEBO7/aEUXlPaxotEOQz5eK4xNtuqW3bXN1IM0TZRORiOgvgg=
+	t=1754588259; cv=none; b=cITsocf4R3uW3m+pK+vU3Fgwz76yV6J/k4e83dR0/X10UzqhGCfDK0ce8cJddHNLNtqtL4kr7QfI+xNuebB6bPn66qK85sgJtjqVuWkIwl7LyU06kM+bwyjwNaaDXJ0yq2livbn6iPnTLQibZyZQtb+n937ThN0UEhuKAeUuueA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754588139; c=relaxed/simple;
-	bh=UASj2AgO1mBNMVv3V0LG49z0ZdwooDIrgM/bG1FaMMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FBNnGH6n4+O9ES9fs9l+GeAXk53W+c9CniDnb/uEpzra00N/fGmMC6Kp0XjSU0W+oMe4EKfP8mEk3IXEDzOJqB/ANS5nVe0ggZGGGvN8H7phgar//JzMQtBTCBXM3mh/dThNfzb3F9hgoISMEmjiBO/cU0nRAfQfUPsKMlD4j/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jXqAKAsM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577EDLAC009613;
-	Thu, 7 Aug 2025 17:35:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wzDxtcZ180VoLJkdrDeoWXbz8Llqqro6AJbxMaFVIoY=; b=jXqAKAsMdTB0JPwB
-	BJ0bMtbLMPFz1+IAK30eNIS0+H/nnGHJU3lGBSfAML8qj7yBTVk5EQXvQYykSOm/
-	lPR2PuY2c4jKkRrZ9JtlcmiWbD5Fsjl1h3/Mg9BL0QuV5WKY+fLZN/BOnbvJFs1N
-	eH76WMt258n9HQhhKcYPOY7JzPRft4KlPxKKis3ki/XJo5+qCq5x60BLb/ZqRVMY
-	OT9wzNbqSHqmpw0zWRrVg5DuRtQgZg6v0Lzbz4Fud4Dy+Adl1B11viM3GVIs6kP0
-	6FSKaJ2569M6kyUwpchqw+wmb0OGRFMBFe+x3VkVC76R9TjyBJvNzrN9QrqQWpUG
-	qn1qTQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c586crpc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 17:35:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 577HZGej004485
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Aug 2025 17:35:16 GMT
-Received: from [10.216.57.148] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 7 Aug
- 2025 10:35:11 -0700
-Message-ID: <685e3d36-c0e3-4faa-b817-aecc15976a25@quicinc.com>
-Date: Thu, 7 Aug 2025 23:05:08 +0530
+	s=arc-20240116; t=1754588259; c=relaxed/simple;
+	bh=gFjK4IZg/x8i0UzkItkBxuT6/xYa8m2rIZd6U5MK6Ks=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KMJKfz47+QanwhSX8cuX6yiRlPGQwzCIA572gxvfn74c1vOP4oKqYxTpWUTtQtcNeF0JDQBtTdhYuwnUH/hj4SZDjeN+zk5a7rwzk8F73nRB8dvDB9TFHmxy0W7f+BrDOAnh6EEZk3w7MAD4m2D+Q6SpMKyF5I86VWLsjn1s/Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YXEC8ApT; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 577HbZJJ363743;
+	Thu, 7 Aug 2025 12:37:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754588255;
+	bh=x0D6AfYaIhHYDb4wkYTuWl1uLKkImqomQG11iMKFXok=;
+	h=Date:Subject:To:References:From:In-Reply-To;
+	b=YXEC8ApTTRIZeySF4lIW0ZkLPfVNPYaNrL0A4HV1cMDQsugnQFiZS0daV7UQHaHyt
+	 USUh9vxu3od1Hs1gGknoybHGpPXoAgbFK9Kvs0Zc27elXBwXGgKxt8wCuBoOYTWhdg
+	 8EbwjbtWv12qap2sebXmLHlW1I2dDz0PhRb6U1k8=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 577HbZ5v4053142
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 7 Aug 2025 12:37:35 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 7
+ Aug 2025 12:37:34 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 7 Aug 2025 12:37:34 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 577HbYuJ1433426;
+	Thu, 7 Aug 2025 12:37:34 -0500
+Message-ID: <7c50613c-e48b-4e94-8fae-bf5d2227df0b@ti.com>
+Date: Thu, 7 Aug 2025 12:37:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,130 +64,241 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
- device tree
-To: Mark Brown <broonie@kernel.org>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <mani@kernel.org>, <conor+dt@kernel.org>,
-        <bvanassche@acm.org>, <andersson@kernel.org>,
-        <neil.armstrong@linaro.org>, <dmitry.baryshkov@oss.qualcomm.com>,
-        <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
- <20250806154340.20122-5-quic_nitirawa@quicinc.com>
- <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
- <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
- <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
- <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
- <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
- <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+Subject: Re: [PATCH] clocksource: timer-ti-dm : Capture functionality for OMAP
+ DM timer
+To: Gokul Praveen <g-praveen@ti.com>, <daniel.lezcano@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20250807123229.232771-1-g-praveen@ti.com>
 Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250807123229.232771-1-g-praveen@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: k1lFEkVAZU6taij4K4oZC9rkplLHAAwz
-X-Authority-Analysis: v=2.4 cv=MZpsu4/f c=1 sm=1 tr=0 ts=6894e3d6 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=lkdlCDLHdhMUbxeqZWYA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: k1lFEkVAZU6taij4K4oZC9rkplLHAAwz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA2NCBTYWx0ZWRfX83m6j4by5xD7
- kzuddMKPMFvUXzKUCrjFR5j19yINc8/xPwq1zh/W/NS3NjyiV13dOeW4xZiYOp0BlCWp+emC/dP
- KdHy9DZ20jiwhGc6SuOwXCymXZ9JNZizZWjqu+vqvqJIn0s2die5QiC2c9b+GtMi0Ppan/5u2hP
- YzEPsTPaW1ztyPn2UGhlFx07EfM3crceh2JUgrQAhdzNoFe8PaLyTIKzFvnwnGMQF1tkoAWD3Hr
- oirwPo8QZBJafcIu7TrbQSp0DBn3JZ4I/hTLZxbd3LuQ2d28XOYs34zqCmiOmJQ9I19OFfliwgO
- 8dr7NTTfDSNLhUVHLwwDTR4hOTUMadZMQSc6vE3ZsHiCQF6sAtXEmDrxuJsjEwzP573EO1d3Enw
- QV8H2zHZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015 bulkscore=0
- adultscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060064
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On 8/7/25 7:32 AM, Gokul Praveen wrote:
+> Add PWM capture function in DM timer driver.
+> 
+> OMAP DM timer hardware supports capture feature.It can be used to
+> timestamp events (falling/rising edges) detected on input signal.
+> 
+> Signed-off-by: Gokul Praveen <g-praveen@ti.com>
+> ---
+> Precondition : Before calling driver API,it is assumed that the
+>                 capture signal is active else both duty cycle
+>                 and period returned by driver will not be valid.
+> ---
+>   drivers/clocksource/timer-ti-dm.c          | 127 ++++++++++++++++++++-
+>   include/linux/platform_data/dmtimer-omap.h |   4 +
+>   2 files changed, 129 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
+> index e9e32df6b566..a4bf72c850b5 100644
+> --- a/drivers/clocksource/timer-ti-dm.c
+> +++ b/drivers/clocksource/timer-ti-dm.c
+> @@ -31,6 +31,7 @@
+>   #include <linux/platform_data/dmtimer-omap.h>
+>   
+>   #include <clocksource/timer-ti-dm.h>
+> +#include <linux/delay.h>
+>   
+>   /*
+>    * timer errata flags
+> @@ -836,6 +837,49 @@ static int omap_dm_timer_set_match(struct omap_dm_timer *cookie, int enable,
+>   	return 0;
+>   }
+>   
+> +static int omap_dm_timer_set_cap(struct omap_dm_timer *cookie,
+> +					int autoreload, bool config_period)
+> +{
+> +	struct dmtimer *timer;
+> +	struct device *dev;
+> +	int rc;
+> +	u32 l;
+> +
+> +	timer = to_dmtimer(cookie);
+> +	if (unlikely(!timer))
+> +		return -EINVAL;
+> +
+> +	dev = &timer->pdev->dev;
 
+Do this assignment up where the var is declared
 
-On 8/7/2025 10:56 PM, Mark Brown wrote:
-> On Thu, Aug 07, 2025 at 09:12:53PM +0530, Nitin Rawat wrote:
->> On 8/7/2025 7:14 PM, Mark Brown wrote:
-> 
->>>> The intended use is to set the load requirement and then only en/disable
->>>> the consumer, so that the current load is updated in core (like in the
->>>> kerneldoc of _regulator_handle_consumer_enable())
-> 
->>>> My question was about moving the custom parsing of
->>>> $supplyname-max-micromap introduced in this patch into the regulator
->>>> core, as this seems like a rather common problem.
-> 
->>> Wait, is this supposed to be some new property that you want to
->>> standardise?  I didn't see a proposal for that, it's not something that
->>> currently exists - the only standard properties that currently exist are
->>> for the regulator as a whole.
-> 
->> The UFS QMP PHY driver is not the first client to use regulator_set_load or
->> alternatively set load requirements and invoke enable/disable or
->> alternatively
-> 
-> The issue isn't using regulator_set_load(), that's perfectly fine and
-> expected.  The issue is either reading the value to use from the
-> constraint information (which is just buggy) or adding a generic
-> property for this (which I'm not convinced is a good idea, I'd expect a
-> large propoprtion of drivers should just know what their requirements
-> are and that a generic property would just get abused).
-> 
->> These drivers also define corresponding binding properties, as seen in the
->> UFS instances documented here:
-> 
->> UFS Common DT Binding ((link - https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/ufs/ufs-common.yaml?h=next-20250807)
-> 
-> Note that that's specifying OPPs which is different...
+> +	rc = pm_runtime_resume_and_get(dev);
+> +
 
-Sorry for the confusion .Instead, I meant the following three properties 
-defined in the link to ufs-common.yaml binding, which specify the 
-maximum load that can be drawn from the respective power supplies.
+Extra newline, fix this everywhere
 
-   vcc-max-microamp:
-     description:
-       Specifies max. load that can be drawn from VCC supply.
+> +	if (rc)
+> +		return rc;
+> +	/*
+> +	 *  1. Select autoreload mode. TIMER_TCLR[1] AR bit.
+> +	 *  2. TIMER_TCLR[14]: Sets the functionality of the TIMER IO pin.
+> +	 *  3. TIMER_TCLR[13] : Capture mode select bit.
+> +	 *  3. TIMER_TCLR[9-8] : Select transition capture mode.
+> +	 */
+> +
+> +	l = dmtimer_read(timer, OMAP_TIMER_CTRL_REG);
+> +
+> +	if (autoreload)
+> +		l |= OMAP_TIMER_CTRL_AR;
+> +
+> +	l |= OMAP_TIMER_CTRL_CAPTMODE | OMAP_TIMER_CTRL_GPOCFG;
+> +
+> +	if (config_period == true)
+> +		l |= OMAP_TIMER_CTRL_TCM_LOWTOHIGH; /*Time Period config*/
 
-   vccq-max-microamp:
-     description:
-       Specifies max. load that can be drawn from VCCQ supply.
+Add space around /* xxx */ in your comments, do this everywhere
 
-   vccq2-max-microamp:
-     description:
-       Specifies max. load that can be drawn from VCCQ2 supply.
+> +	else
+> +		l |= OMAP_TIMER_CTRL_TCM_BOTHEDGES; /*Duty Cycle config*/
+> +
+> +	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, l);
+> +
+> +	pm_runtime_put_sync(dev);
+> +
+> +	return 0;
+> +}
+> +
+>   static int omap_dm_timer_set_pwm(struct omap_dm_timer *cookie, int def_on,
+>   				 int toggle, int trigger, int autoreload)
+>   {
+> @@ -1023,23 +1067,99 @@ static unsigned int omap_dm_timer_read_counter(struct omap_dm_timer *cookie)
+>   	return __omap_dm_timer_read_counter(timer);
+>   }
+>   
+> +static inline unsigned int __omap_dm_timer_cap(struct dmtimer *timer, int idx)
+> +{
+> +	return idx == 0 ? dmtimer_read(timer, OMAP_TIMER_CAPTURE_REG) :
+> +			  dmtimer_read(timer, OMAP_TIMER_CAPTURE2_REG);
+> +}
+> +
+>   static int omap_dm_timer_write_counter(struct omap_dm_timer *cookie, unsigned int value)
+>   {
+>   	struct dmtimer *timer;
+> +	struct device *dev;
+>   
+>   	timer = to_dmtimer(cookie);
+> -	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
+> -		pr_err("%s: timer not available or enabled.\n", __func__);
+> +	if (unlikely(!timer)) {
+> +		pr_err("%s: timer not available.\n", __func__);
+>   		return -EINVAL;
+>   	}
+>   
+> +	dev = &timer->pdev->dev;
+> +
+> +	pm_runtime_resume_and_get(dev);
+>   	dmtimer_write(timer, OMAP_TIMER_COUNTER_REG, value);
+> +	pm_runtime_put_sync(dev);
+>   
+>   	/* Save the context */
+>   	timer->context.tcrr = value;
+>   	return 0;
+>   }
+>   
+> +/**
+> + * omap_dm_timer_cap_counter() - Calculate the high count or period count depending on the
+> + * configuration.
+> + * @cookie:Pointer to OMAP DM timer
+> + * @is_period:Whether to configure timer in period or duty cycle mode
+> + *
+> + * Return high count or period count if timer is enabled else appropriate error.
+> + */
+> +static unsigned int omap_dm_timer_cap_counter(struct omap_dm_timer *cookie,	bool is_period)
+> +{
+> +	struct dmtimer *timer;
+> +	unsigned int cap1 = 0;
+> +	unsigned int cap2 = 0;
+> +	u32 l, ret;
+> +
+> +	timer = to_dmtimer(cookie);
+> +	if (unlikely(!timer || !atomic_read(&timer->enabled))) {
+> +		pr_err("%s:timer is not available or enabled.%p\n", __func__, (void *)timer);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*Stop the timer*/
+> +	omap_dm_timer_stop(cookie);
+> +
+> +	/* Clear the timer counter value to 0 */
+> +	ret = omap_dm_timer_write_counter(cookie, 0);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*Sets the timer capture configuration for duty cycle calculation*/
+> +	if (is_period == false)
+> +		ret = omap_dm_timer_set_cap(cookie, true, false);
+> +
+> +	/*Sets the timer capture configuration for period calculation*/
+> +	else
+> +		ret = omap_dm_timer_set_cap(cookie, true, true);
+> +
 
+The above 8 lines could just be:
 
-> 
->> There was a previous effort to introduce similar properties
->> (vdda-phy-max-microamp and vdda-pll-max-microamp) in the device tree
->> bindings.
->> Link - (link- https://patchwork.kernel.org/project/linux-arm-msm/patch/20220418205509.1102109-3-bhupesh.sharma@linaro.org/#24820481)
-> 
-> That patch also fails to supply any rationale for making this board
-> specific or generally putting them in the DT, AFAICT it's one of these
-> things just pulled out of the vendor tree without really thinking about
-> it.  The changelog just says the properties are in downstream DTs.
-> 
->> Currently, the regulator framework does support automatic aggregation of
->> load requests from multiple client drivers. Therefore, it is reasonable and
->> necessary for each client to individually communicate its expected runtime
->> load to the regulator framework to put the regulators in current
->> operation mode.
-> 
-> That doesn't mean that it's a good idea to put that information in the
-> DT, nor if it is sensible to put in DT does it mean that it's a good
-> idea to define a generic property that applies to all regulator
-> consumers which is what I now think Konrad is proposing.
+ret = omap_dm_timer_set_cap(cookie, true, is_period);
+
+Andrew
+
+> +	if (ret) {
+> +		pr_err("%s: Failed to set timer capture configuration.\n", __func__);
+> +		return ret;
+> +	}
+> +	/*Start the timer*/
+> +	omap_dm_timer_start(cookie);
+> +
+> +	/*
+> +	 * 1 sec delay is given so as to provide
+> +	 * enough time to capture low frequency signals.
+> +	 */
+> +	msleep(1000);
+> +
+> +	cap1 = __omap_dm_timer_cap(timer, 0);
+> +	cap2 = __omap_dm_timer_cap(timer, 1);
+> +
+> +	/*
+> +	 *	Clears the TCLR configuration.
+> +	 *  The start bit must be set to 1 as the timer is already in start mode.
+> +	 */
+> +	l = dmtimer_read(timer, OMAP_TIMER_CTRL_REG);
+> +	l &= ~(0xffff) | 0x1;
+> +	dmtimer_write(timer, OMAP_TIMER_CTRL_REG, l);
+> +
+> +	return (cap2-cap1);
+> +}
+> +
+>   static int __maybe_unused omap_dm_timer_runtime_suspend(struct device *dev)
+>   {
+>   	struct dmtimer *timer = dev_get_drvdata(dev);
+> @@ -1246,6 +1366,9 @@ static const struct omap_dm_timer_ops dmtimer_ops = {
+>   	.write_counter = omap_dm_timer_write_counter,
+>   	.read_status = omap_dm_timer_read_status,
+>   	.write_status = omap_dm_timer_write_status,
+> +	.set_cap = omap_dm_timer_set_cap,
+> +	.get_cap_status = omap_dm_timer_get_pwm_status,
+> +	.read_cap = omap_dm_timer_cap_counter,
+>   };
+>   
+>   static const struct dmtimer_platform_data omap3plus_pdata = {
+> diff --git a/include/linux/platform_data/dmtimer-omap.h b/include/linux/platform_data/dmtimer-omap.h
+> index 95d852aef130..726d89143842 100644
+> --- a/include/linux/platform_data/dmtimer-omap.h
+> +++ b/include/linux/platform_data/dmtimer-omap.h
+> @@ -36,9 +36,13 @@ struct omap_dm_timer_ops {
+>   	int	(*set_pwm)(struct omap_dm_timer *timer, int def_on,
+>   			   int toggle, int trigger, int autoreload);
+>   	int	(*get_pwm_status)(struct omap_dm_timer *timer);
+> +	int	(*set_cap)(struct omap_dm_timer *timer,
+> +			   int autoreload, bool config_period);
+> +	int	(*get_cap_status)(struct omap_dm_timer *timer);
+>   	int	(*set_prescaler)(struct omap_dm_timer *timer, int prescaler);
+>   
+>   	unsigned int (*read_counter)(struct omap_dm_timer *timer);
+> +	unsigned int (*read_cap)(struct omap_dm_timer *timer, bool is_period);
+>   	int	(*write_counter)(struct omap_dm_timer *timer,
+>   				 unsigned int value);
+>   	unsigned int (*read_status)(struct omap_dm_timer *timer);
 
 
