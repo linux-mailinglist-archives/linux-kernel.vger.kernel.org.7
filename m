@@ -1,206 +1,221 @@
-Return-Path: <linux-kernel+bounces-759310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC798B1DBE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:38:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1036B1DBE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA4DB188E5C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:39:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB3195833FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FCB270EDE;
-	Thu,  7 Aug 2025 16:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D87270579;
+	Thu,  7 Aug 2025 16:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RRrqPL7I"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUj8qhwI"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB7D26E6E4
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 16:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07335695;
+	Thu,  7 Aug 2025 16:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754584722; cv=none; b=qmQEwLeq0IKDHzMpQJNrqnvmSEs9n9roDWnUXihqplDv3RDH30BgNskdzP/au6frKWgEzB0fI46/P0385AK0tvjIvlYcn2pSq7X4cYMkRSumzWZW2Rh1tGuNpwB40IF0mEPRKYPlcnfAYh8iPHy1nZgNoi4t27UCxF9E67LYcSA=
+	t=1754585046; cv=none; b=eYun8g7RuGR1/kAveUv9uww7MtwTXI1XoaIqC1iIjE2yaniLqUpRdgffhcsxA81yphZaP8lzj++livhz0x2reA+gqIHCNcP5lhFTKucUJExaapRaknVT5z32lenAxbqJRFFOpj/NEi7EJHe4O9ckkKCB4QlfrWJwWWRhLP+6F1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754584722; c=relaxed/simple;
-	bh=RNN38tsTm5gD4/5zcgMkN8UqPOSEJ3iJYtKGRjL3GEo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=iwT8ltR8slo8Pi4V3HJpC58IY3rnifiNBC84z2p0jvINNPpwfDHCCh31yTApcJXNd1xuUauo/wKQiAuCBOXfYZPd952lJ7U+9hdIDk+i3AXqDZ9JFSGym0+fwY50Z3Tvg93P9LGXS2/JKKFIcYolFvHxLBCrFx4rU0kYIvgfCT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RRrqPL7I; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250807163838epoutp039fb2522959a0da5299a4d3e30c90f9fc~ZiYFpmnTw1012910129epoutp03g
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 16:38:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250807163838epoutp039fb2522959a0da5299a4d3e30c90f9fc~ZiYFpmnTw1012910129epoutp03g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754584718;
-	bh=RNN38tsTm5gD4/5zcgMkN8UqPOSEJ3iJYtKGRjL3GEo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=RRrqPL7I1BR8u5+IhTUXbdIyg84Nu+3FtTbZUnq42fRt9nfCz4qBX8jq7bRhQw1Cp
-	 HXl8wqC+o0ErtP2+pj3nL7GXvy7Y3/6R/zoQ9RDn2II6eYCK7HoVw1X3JIglDcjie9
-	 XyvmQFvgk/CoFA/IYjMXP3eafxhjwdzFraUF48FE=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250807163837epcas5p14ae55f821c4afb408ac72af9bbb0e179~ZiYEvxws-1656116561epcas5p1h;
-	Thu,  7 Aug 2025 16:38:37 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4byXsn0gNKz2SSKX; Thu,  7 Aug
-	2025 16:38:37 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250807163836epcas5p15300402e991a5be93922a414f2bd3959~ZiYDPHN-30434604346epcas5p1M;
-	Thu,  7 Aug 2025 16:38:36 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250807163833epsmtip1ba365b680e7c3d3c40d24d2656f73c35~ZiYA86Fky1962119621epsmtip1g;
-	Thu,  7 Aug 2025 16:38:33 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Manivannan Sadhasivam'" <mani@kernel.org>
-Cc: "'Konrad Dybcio'" <konrad.dybcio@oss.qualcomm.com>, "'Krzysztof
- Kozlowski'" <krzk@kernel.org>, "'Ram Kumar Dwivedi'"
-	<quic_rdwivedi@quicinc.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<andersson@kernel.org>, <konradybcio@kernel.org>,
-	<James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-	<agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
-Subject: RE: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-Date: Thu, 7 Aug 2025 22:08:32 +0530
-Message-ID: <0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
+	s=arc-20240116; t=1754585046; c=relaxed/simple;
+	bh=aRVTg3NkA2j/+MLhyrI8o9+95qc57OCvEyQf/f9fKbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=runlfIGkNhWTxM6MLUJNEEze8LBudsj1ahAPxlh72u/SJyuBfXnDaFORHgsVhrb0fVeY4GCy+ore/c1ClmebmX2NB+eKt6Ot5a6wejGXvfIfa8SPtLkzd2iYXjGZ8P+iy5H7QJBsmJhamTTi83wQBkcCt4ODWSEcyLgYZwuB+pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUj8qhwI; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so10357145e9.3;
+        Thu, 07 Aug 2025 09:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754585043; x=1755189843; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UeFcbpNlz4XFli2IHS15ciDVbC4CdcWNGh3GZoGiWtI=;
+        b=VUj8qhwIR4t8/IbDtWAT9QinqO1RMq3wI2e/Z23ZREVLEuZuH9Y0hopPf42dIpl4rE
+         tPCX1aeyryPdKaSsg8EbA5KtX1+IpGfUSAdl7YDgfWb6l9E9z3vGnZX07pNd8ZFSp5Ns
+         c/40AOovPiUfYZjgXvS5OT4UrYRfQAwUBRBvSDU5bxZLhOwqwPprLPhwFJDpNPRDwnAq
+         yTI2eudpXP9Wyc79OxF67JsqoY8O0+wV8W4eQvoKG7Qf+NVrE92NREdsWWDiqhhTPS5v
+         wmJmWpCqDTd/0D8qD9L7SQtppxammgtN448PcI1Plnpsnw590PLZ7bZAn+0Rr36U8ycd
+         Iw5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754585043; x=1755189843;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UeFcbpNlz4XFli2IHS15ciDVbC4CdcWNGh3GZoGiWtI=;
+        b=LgZiqbfevYlDm+iKAbVn8EnlwXYpKt9oCDB+oEJLaBE8ypbPjyhwwI8u8eLddDp8Ei
+         +vsaj4/hrL6g/vEhpK5qKMFncfTFKqYZTATVZLGheIhB7R+5Ytivbgk2f4TAHcNV2UiZ
+         J+W1WzLIgyrbEL5EYbAB/LNUYOxd8QCjiEjAYUmmXnxVwApaE7UasgwQ48I2XKQXSY+X
+         GjiGAIsi9aWHUZ7zhAJ53VRWZXc7JbSemLnH8LRm9T3KDCoTX7WyqQcC17kcF+Vrtev3
+         KrV9X2al+HtmgWgBbNnQYY/IiNI26ZAxEh9WNK8HimYaBW/PInYFR5HZ0k22yqYtxQDu
+         93Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXE3Jbu4XVNZi4QkDZ4QbQU5AW7tIxvFfSOKvinDiOGTJkoqcK0SmGTZuochf1qeL5GQ+XpcRP2/aU=@vger.kernel.org, AJvYcCXwIOZVayNnoWRtqm8qICt8oywRAcTF4vcfQa3Cw8B/Pax5bcXXG67ZweEOvkhrbTS0VAYR77MdOEqmEB26@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKHsy1kWljVD+up5kOlS+P/grv6KWF2gp9FNp1/5yOHidseCh5
+	9EDmDB3AtgQb5/dX+klONwC4DSpd5D2yJAUjWe96zf+zBHAGzgU7d6UJ
+X-Gm-Gg: ASbGnctT0bWpRDaOas24zlrLilgKEo8h5fUWsZFJNeR2M0TXxTQao5CVWJbjyZhx/2U
+	hjPNOwZEuQ1zBL4VWtG71GvMNC+GeEZ5996MEjuuTNi1E3q6nfhNAIG8YGFxkXRHZruitrjqZlj
+	Zyo+XkAI4OOia5/+i2NwbootJvJIpHcrWrTN9F+6Z9H9ITeYBEi3sMjcK5AS6KhIShJO4578oT9
+	2o8WybI1XOvyghr0TlsHBugsORenYXiWqHWnd3FXeTFaJDXPtfRX5OU/hGwObr3kT5ydo1nDapL
+	nVa6FDFUCZ+a6PHziPpdltHrzz8G6b1Ss/BLi/VDW2Oagpt74XSfBFKwAJt/uiHS0IJSRxqrj9P
+	Ix4B2IzCJ6nrTgS+jtS51N9HH4pq17jnvhlE/o6fMsHL7hcSFi2a7fG6SvynxufAEmDzNZwWBHg
+	==
+X-Google-Smtp-Source: AGHT+IG6Kiu2mNQJUtBj2vCOU6NxM356lFEZdStFI5+TwQwAFVXc5X/Hdkuj1V92HQMigv3a08Q2KA==
+X-Received: by 2002:a05:600c:4706:b0:459:d667:1842 with SMTP id 5b1f17b1804b1-459e744f6bfmr64869875e9.12.1754585042290;
+        Thu, 07 Aug 2025 09:44:02 -0700 (PDT)
+Received: from iku.Home (97e54365.skybroadband.com. [151.229.67.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9074sm26786942f8f.17.2025.08.07.09.44.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 09:44:01 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: cpg-mssr: Add module reset support for RZ/T2H
+Date: Thu,  7 Aug 2025 17:43:53 +0100
+Message-ID: <20250807164353.1543461-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQHWPm1h7sMntUE9BjOfqFdL0FvwlQKqKM9CAg+/nxMBCUK1JQJtFIHyAldjN/MB24cyRgGnpjwRAmX4p5MB936htgLh1QaLARPOx0SzsAOLcA==
-X-CMS-MailID: 20250807163836epcas5p15300402e991a5be93922a414f2bd3959
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60
-References: <b235e338-8c16-439b-b7a5-24856893fb5d@oss.qualcomm.com>
-	<061b01dc062d$25c47800$714d6800$@samsung.com>
-	<i6eyiscdf2554znc4aaglhi22opfgyicif3y7kzjafwsrtdrtm@jjpzak64gdft>
-	<061c01dc062f$70ec34b0$52c49e10$@samsung.com>
-	<87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
-	<061d01dc0631$c1766c00$44634400$@samsung.com>
-	<3cd33dce-f6b9-4f60-8cb2-a3bf2942a1e5@oss.qualcomm.com>
-	<06d201dc0689$9f438200$ddca8600$@samsung.com>
-	<wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
-	<06f301dc0695$6bf25690$43d703b0$@samsung.com>
-	<CGME20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60@epcas5p1.samsung.com>
-	<nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+Add support for module reset handling on the RZ/T2H SoC. Unlike earlier
+CPG/MSSR variants, RZ/T2H uses a unified set of Module Reset Control
+Registers (MRCR) where both reset and deassert actions are done via
+read-modify-write (RMW) to the same register.
 
-> -----Original Message-----
-> From: 'Manivannan Sadhasivam' <mani=40kernel.org>
-> Sent: Wednesday, August 6, 2025 4:56 PM
-> To: Alim Akhtar <alim.akhtar=40samsung.com>
-> Cc: 'Konrad Dybcio' <konrad.dybcio=40oss.qualcomm.com>; 'Krzysztof
-=5B...=5D
+Introduce a new MRCR offset table (mrcr_for_rzt2h) for RZ/T2H and assign
+it to both reset_regs and reset_clear_regs. For RZ/T2H, set
+rcdev.nr_resets based on the number of MRCR registers rather than the
+number of module clocks.
 
-> > >
-> > > On Wed, Aug 06, 2025 at 09:51:43AM GMT, Alim Akhtar wrote:
-> > >
-> > > =5B...=5D
-> > >
-> > > > > >> Introducing generic solutions preemptively for problems that
-> > > > > >> are simple in concept and can occur widely is good practice
-> > > > > >> (although it's sometimes hard to gauge whether this is a
-> > > > > >> one-off), as if the issue spreads a generic solution will
-> > > > > >> appear at some point, but we'll have to keep supporting the
-> > > > > >> odd ones as well
-> > > > > >>
-> > > > > > Ok,
-> > > > > > I would prefer if we add a property which sounds like =22poor
-> > > > > > thermal dissipation=22 or =22routing channel loss=22 rather tha=
-n
-> > > > > > adding limiting UFS gear
-> > > > > properties.
-> > > > > > Poor thermal design or channel losses are generic enough and
-> > > > > > can happen
-> > > > > on any board.
-> > > > >
-> > > > > This is exactly what I'm trying to avoid through my suggestion -
-> > > > > one board may have poor thermal dissipation, another may have
-> > > > > channel losses, yet another one may feature a special batch of
-> > > > > UFS chips that will set the world on fire if instructed to
-> > > > > attempt link training at gear 7 - they all are causes, as
-> > > > > opposed to describing what needs to happen (i.e. what the
-> > > > > hardware must be treated as - gear N incapable despite what can
-> > > > > be discovered at runtime), with perhaps a comment on the side
-> > > > >
-> > > > But the solution for all possible board problems can't be by
-> > > > limiting Gear
-> > > speed.
-> > >
-> > > Devicetree properties should precisely reflect how they are relevant
-> > > to the hardware. 'limiting-gear-speed' is self-explanatory that the
-> > > gear speed is getting limited (for a reason), but the devicetree
-> > > doesn't need to describe the
-> > > *reason* itself.
-> > >
-> > > > So it should be known why one particular board need to limit the ge=
-ar.
-> > >
-> > > That goes into the description, not in the property name.
-> > >
-> > > > I understand that this is a static configuration, where it is
-> > > > already known
-> > > that board is broken for higher Gear.
-> > > > Can this be achieved by limiting the clock? If not, can we add a
-> > > > board
-> > > specific _quirk_ and let the _quirk_ to be enabled from vendor
-> > > specific hooks?
-> > > >
-> > >
-> > > How can we limit the clock without limiting the gears? When we limit
-> > > the gear/mode, both clock and power are implicitly limited.
-> > >
-> > Possibly someone need to check with designer of the SoC if that is poss=
-ible
-> or not.
->=20
-> It's not just clock. We need to consider reducing regulator, interconnect
-> votes also. But as I said above, limiting the gear/mode will take care of=
- all
-> these parameters.
->=20
-> > Did we already tried _quirk_? If not, why not?
-> > If the board is so poorly designed and can't take care of the channel
-> > loses or heat dissipation etc, Then I assumed the gear negotiation
-> > between host and device should fail for the higher gear and driver can =
-have
-> a re-try logic to re-init / re-try =22power mode change=22 at the lower g=
-ear. Is
-> that not possible / feasible?
-> >
->=20
-> I don't see why we need to add extra logic in the UFS driver if we can ex=
-tract
-> that information from DT.
->=20
-You didn=E2=80=99t=20answer=20my=20question=20entirely,=20I=20am=20still=20=
-not=20able=20to=20visualised=20how=20come=20Linkup=20is=20happening=20in=20=
-higher=20gear=20and=20then=20=0D=0ASuddenly=20it=20is=20failing=20and=20we=
-=20need=20to=20reduce=20the=20gear=20to=20solve=20that?=0D=0AThat's=20why=
-=20my=20suggestion=20is=20to=20go=20for=20a=20re-try=20at=20lower=20gear=20=
-when=20problem=20happens.=0D=0AIt=20is=20not=20that=20since=20adding=20DT=
-=20property=20is=20simple=20to=20just=20go=20that=20path,=20that=20is=20sol=
-ving=20_just_=20this=20case,=20may=20be.=20=0D=0A=0D=0A=0D=0A=0D=0A>=20-=20=
-Mani=0D=0A>=20=0D=0A>=20--=0D=0A>=20=E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=
-=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=E0=AF=8D=20=E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=
-=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=E0=AF=8D=0D=0A=0D=0A
+Update the reset/assert/deassert/status operations to perform RMW when
+handling RZ/T2H-specific layout. This enables proper reset sequencing for
+modules on RZ/T2H without affecting the behavior of other supported SoCs.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 40 ++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 5ff6ee1f7d4b..d299c2bb6100 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -137,6 +137,22 @@ static const u16 srcr_for_gen4[] = {
+ 	0x2C60, 0x2C64, 0x2C68, 0x2C6C, 0x2C70, 0x2C74,
+ };
+ 
++static const u16 mrcr_for_rzt2h[] = {
++	0x240,	/* MRCTLA */
++	0x244,	/* Reserved */
++	0x248,	/* Reserved */
++	0x24C,	/* Reserved */
++	0x250,	/* MRCTLE */
++	0x254,	/* Reserved */
++	0x258,	/* Reserved */
++	0x25C,	/* Reserved */
++	0x260,	/* MRCTLI */
++	0x264,	/* Reserved */
++	0x268,	/* Reserved */
++	0x26C,	/* Reserved */
++	0x270,	/* MRCTLM */
++};
++
+ /*
+  * Software Reset Clearing Register offsets
+  */
+@@ -686,12 +702,16 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+ 
+ 	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
+ 
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++		bitmask = readl(priv->pub.base0 + priv->reset_regs[reg]) | bitmask;
+ 	/* Reset module */
+ 	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+ 
+ 	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+ 	udelay(35);
+ 
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++		bitmask = readl(priv->pub.base0 + priv->reset_clear_regs[reg]) & ~bitmask;
+ 	/* Release module from reset state */
+ 	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+ 
+@@ -707,6 +727,8 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
+ 
+ 	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
+ 
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++		bitmask = readl(priv->pub.base0 + priv->reset_regs[reg]) | bitmask;
+ 	writel(bitmask, priv->pub.base0 + priv->reset_regs[reg]);
+ 	return 0;
+ }
+@@ -721,6 +743,8 @@ static int cpg_mssr_deassert(struct reset_controller_dev *rcdev,
+ 
+ 	dev_dbg(priv->dev, "deassert %u%02u\n", reg, bit);
+ 
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++		bitmask = readl(priv->pub.base0 + priv->reset_regs[reg]) & ~bitmask;
+ 	writel(bitmask, priv->pub.base0 + priv->reset_clear_regs[reg]);
+ 	return 0;
+ }
+@@ -764,7 +788,16 @@ static int cpg_mssr_reset_controller_register(struct cpg_mssr_priv *priv)
+ 	priv->rcdev.of_node = priv->dev->of_node;
+ 	priv->rcdev.of_reset_n_cells = 1;
+ 	priv->rcdev.of_xlate = cpg_mssr_reset_xlate;
+-	priv->rcdev.nr_resets = priv->num_mod_clks;
++
++	/*
++	 * RZ/T2H (and family) has the Module Reset Control Registers
++	 * which allows control resets of certain modules.
++	 * The number of resets is not equal to the number of module clocks.
++	 */
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++		priv->rcdev.nr_resets = ARRAY_SIZE(mrcr_for_rzt2h) * 32;
++	else
++		priv->rcdev.nr_resets = priv->num_mod_clks;
+ 	return devm_reset_controller_register(priv->dev, &priv->rcdev);
+ }
+ 
+@@ -1166,6 +1199,8 @@ static int __init cpg_mssr_common_init(struct device *dev,
+ 		priv->control_regs = stbcr;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H) {
+ 		priv->control_regs = mstpcr_for_rzt2h;
++		priv->reset_regs = mrcr_for_rzt2h;
++		priv->reset_clear_regs = mrcr_for_rzt2h;
+ 	} else if (priv->reg_layout == CLK_REG_LAYOUT_RCAR_GEN4) {
+ 		priv->status_regs = mstpsr_for_gen4;
+ 		priv->control_regs = mstpcr_for_gen4;
+@@ -1262,8 +1297,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 		goto reserve_exit;
+ 
+ 	/* Reset Controller not supported for Standby Control SoCs */
+-	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A ||
+-	    priv->reg_layout == CLK_REG_LAYOUT_RZ_T2H)
++	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
+ 		goto reserve_exit;
+ 
+ 	error = cpg_mssr_reset_controller_register(priv);
+-- 
+2.50.1
+
 
