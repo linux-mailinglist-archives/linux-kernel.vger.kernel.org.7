@@ -1,104 +1,218 @@
-Return-Path: <linux-kernel+bounces-759053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6290B1D7AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82DDEB1D84D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EAE585BDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DFAB5833B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976832472B0;
-	Thu,  7 Aug 2025 12:17:42 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBFC242D72;
+	Thu,  7 Aug 2025 12:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E9pOdQfq"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4606123BF83;
-	Thu,  7 Aug 2025 12:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E62F254B1B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754569062; cv=none; b=D1+jqMon7Yw8+hXdee7DizYGDVeyNRUb/pu4oW3YF0mVLAB1RnmKsdvULMydiP81Sw6po0gV4E6tG/e7IHTQyS53l4+j3AYA3LdUU960VgnsP3lfU1FmZDsSVHG7DsGm2zX5H9G0mjlRSVUdrvQ7fvkHs0hbFfW9KWAjtMS5L+k=
+	t=1754571228; cv=none; b=Y0khPs1ooSWD/XLCfNFIPUIwalPFtDAkhc7Bl41ULD+rJygNaky8I/6sBgoA3q+nU4Fxp1f/qKgdxMCQcf/hdyGp1lxWsJOlr/xUxcZoYId8UjX80aAiDR9+T3v76BvDtzU8j87v6kXI5RW9klH/aaB0w50OTPqdcqg7tJzGO1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754569062; c=relaxed/simple;
-	bh=7UKHMSFdkKDbez4DfaZNlRBYRu6oMuke+R79dQz65Z4=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=O6CAr870JQtWRPGu7vCrLikC5LiPpgvIu7lDd5+DTSWmiSSEjwY61TtgZPp7eqJZbKZfXKI6gv0tEE9mWphKAwpEsXscGTzwCu6pLut25/y4jnqUVEAYOKmgM/hn7F7oYrgc03d1pzR0Gr+vxrY9/g5whX9s8cAoGsuM5tnXAwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4byR4Q18Jpz6FyC0;
-	Thu, 07 Aug 2025 20:17:26 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 577CHJLE025104;
-	Thu, 7 Aug 2025 20:17:19 +0800 (+08)
-	(envelope-from zhang.enpei@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 7 Aug 2025 20:17:22 +0800 (CST)
-Date: Thu, 7 Aug 2025 20:17:22 +0800 (CST)
-X-Zmail-TransId: 2afa689499523ea-d5054
-X-Mailer: Zmail v1.0
-Message-ID: <20250807201722468rYsJszSAHXqlVrVHEIuAz@zte.com.cn>
+	s=arc-20240116; t=1754571228; c=relaxed/simple;
+	bh=vDeXb/wWTLJc+GArcSXI4AvbdX5CK+i8acNbQ3jBGQ8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=SDLD47+BXDiMtElP88H8q3ucfND7dTeNCwRGtamcaOzCXbhvhbgDxhJTS2gPxI8epCEeFg+k9CkIuccVGH0vP22WSEGxn5BPkFrmk6QxXYaJ9Q2QIABgi6FYJ2d0+KL55nqpk3dEgG2ezrApVUgKSg5m5tFERBHnjbYkz8FSN50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=E9pOdQfq; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250807125343epoutp049cc761752b7632123d67ba2c10976c3a~ZfTtDupM31649516495epoutp04D
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:53:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250807125343epoutp049cc761752b7632123d67ba2c10976c3a~ZfTtDupM31649516495epoutp04D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754571223;
+	bh=Y9yyMjJ6Z+ujgBsWuyrsPhhrjWzJPw1UoObDzyEPgL4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=E9pOdQfq4Qa2TdxuASOp5se5gRtcVeNTzuHVeusffcLZYFYKZ35xpBKe+dkW8KY4b
+	 gCleL7e6RdpthnFxPvyOLofetQwtL6bb/zX8TGGa3qNXHMJQVw5N4lNZys1ePsuVQG
+	 QweD9NdVskdjUHUsAw0OVN8eQdUVW4FQsWRlRYiA=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250807125342epcas5p4cdf059b042ae879c14d7be75965eb1e8~ZfTsXP8_y2236622366epcas5p4G;
+	Thu,  7 Aug 2025 12:53:42 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4byRtF4R8Cz2SSKX; Thu,  7 Aug
+	2025 12:53:41 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250807122107epcas5p3978bf8e0b47f7d228a5c54d5bfe0a243~Ze3PYb-jU2564125641epcas5p3K;
+	Thu,  7 Aug 2025 12:21:07 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250807122103epsmtip110f44008e2ef1b2699b700ad35390c96~Ze3MRHzto2980529805epsmtip1D;
+	Thu,  7 Aug 2025 12:21:03 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>
+Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <20250806234217.GA2030512-robh@kernel.org>
+Subject: RE: [PATCH v5 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+Date: Thu, 7 Aug 2025 17:51:02 +0530
+Message-ID: <000001dc0795$c0432660$40c97320$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <zhang.enpei@zte.com.cn>
-To: <chessman@tux.org>
-Cc: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBldGhlcm5ldDogdGxhbjogQ29udmVydCB0byB1c2UgamlmZmllcyBtYWNybw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 577CHJLE025104
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: zhang.enpei@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Thu, 07 Aug 2025 20:17:26 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68949956.000/4byR4Q18Jpz6FyC0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ+ZgWj3OwstM5ZbwFL0KmcSzrOlQJdB2aaAjkoxRUCiVKxNbLZYP5A
+Content-Language: en-in
+X-CMS-MailID: 20250807122107epcas5p3978bf8e0b47f7d228a5c54d5bfe0a243
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805114306epcas5p37782c02ae0ddc6b77094786c90af247a
+References: <20250805115216.3798121-1-pritam.sutar@samsung.com>
+	<CGME20250805114306epcas5p37782c02ae0ddc6b77094786c90af247a@epcas5p3.samsung.com>
+	<20250805115216.3798121-2-pritam.sutar@samsung.com>
+	<20250806234217.GA2030512-robh@kernel.org>
 
-From: Zhang Enpei <zhang.enpei@zte.com.cn>
+Hi Rob, 
 
-Use time_after_eq macro instead of using jiffies directly to handle
-wraparound.
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: 07 August 2025 05:12 AM
+> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> Cc: vkoul@kernel.org; kishon@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
+> peter.griffin@linaro.org; kauschluss@disroot.org;
+> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
+> m.szyprowski@samsung.com; s.nawrocki@samsung.com; linux-
+> phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> samsung-soc@vger.kernel.org; rosa.pila@samsung.com;
+> dev.tailor@samsung.com; faraz.ata@samsung.com;
+> muhammed.ali@samsung.com; selvarasu.g@samsung.com
+> Subject: Re: [PATCH v5 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+> ExynosAutov920 HS phy compatible
+> 
+> On Tue, Aug 05, 2025 at 05:22:11PM +0530, Pritam Manohar Sutar wrote:
+> > This SoC has USB2.0 phy and supports only UTMI+ interface. This phy
+> > requires two clocks, named as "phy" and "ref". The required supplies
+> > for this phy are vdd075_usb20(0.75v), vdd18_usb20(1.8v),
+> vdd33_usb20(3.3v).
+> >
+> > Add a dedicated compatible string for USB HS phy found in this SoC.
+> >
+> > Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> > ---
+> >  .../bindings/phy/samsung,usb3-drd-phy.yaml    | 19
+> +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> > b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> > index e906403208c0..1932a2272ef9 100644
+> > --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-
+> phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-
+> phy.yaml
+> > @@ -34,6 +34,7 @@ properties:
+> >        - samsung,exynos7870-usbdrd-phy
+> >        - samsung,exynos850-usbdrd-phy
+> >        - samsung,exynos990-usbdrd-phy
+> > +      - samsung,exynosautov920-usbdrd-phy
+> >
+> >    clocks:
+> >      minItems: 1
+> > @@ -110,6 +111,12 @@ properties:
+> >    vddh-usbdp-supply:
+> >      description: VDDh power supply for the USB DP phy.
+> >
+> > +  dvdd075-usb20-supply:
+> > +    description: 0.75V power supply for the USB 2.0 phy.
+> > +
+> > +  vdd18-usb20-supply:
+> > +    description: 1.8V power supply for the USB 2.0 phy.
+> > +
+> >  required:
+> >    - compatible
+> >    - clocks
+> > @@ -219,6 +226,7 @@ allOf:
+> >                - samsung,exynos7870-usbdrd-phy
+> >                - samsung,exynos850-usbdrd-phy
+> >                - samsung,exynos990-usbdrd-phy
+> > +              - samsung,exynosautov920-usbdrd-phy
+> >      then:
+> >        properties:
+> >          clocks:
+> > @@ -235,6 +243,17 @@ allOf:
+> >
+> >          reg-names:
+> >            maxItems: 1
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - samsung,exynosautov920-usbdrd-phy
+> > +    then:
+> > +      required:
+> > +        - dvdd075-usb20-supply
+> > +        - vdd18-usb20-supply
+> > +        - vdd33-usb20-supply
+> 
+> Presumably the existing devices don't have these new supplies, so:
+> 
+> else:
+>   properties:
+>     dvdd075-usb20-supply: false
+>     vdd18-usb20-supply: false
 
-Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
----
- drivers/net/ethernet/ti/tlan.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Appreciated for the suggestion. Will add this change in next version (v6) of
+the patch-set. 
+Snippet will look as mentioned below.
 
-diff --git a/drivers/net/ethernet/ti/tlan.c b/drivers/net/ethernet/ti/tlan.c
-index a55b0f951181..78e439834f26 100644
---- a/drivers/net/ethernet/ti/tlan.c
-+++ b/drivers/net/ethernet/ti/tlan.c
-@@ -1817,7 +1817,6 @@ static void tlan_timer(struct timer_list *t)
- {
-        struct tlan_priv        *priv = timer_container_of(priv, t, timer);
-        struct net_device       *dev = priv->dev;
--       u32             elapsed;
-        unsigned long   flags = 0;
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - samsung,exynosautov920-usbdrd-phy
++    then:
++      required:
++        - dvdd075-usb20-supply
++        - vdd18-usb20-supply
++        - vdd33-usb20-supply
++
++    else:
++      properties:
++        dvdd075-usb20-supply: false
++        vdd18-usb20-supply: false
 
-        priv->timer.function = NULL;
-@@ -1844,8 +1843,7 @@ static void tlan_timer(struct timer_list *t)
-        case TLAN_TIMER_ACTIVITY:
-                spin_lock_irqsave(&priv->lock, flags);
-                if (priv->timer.function == NULL) {
--                       elapsed = jiffies - priv->timer_set_at;
--                       if (elapsed >= TLAN_TIMER_ACT_DELAY) {
-+                       if (time_after_eq(jiffies, priv->timer_set_at + TLAN_TIMER_ACT_DELAY)) {
-                                tlan_dio_write8(dev->base_addr,
-                                                TLAN_LED_REG, TLAN_LED_LINK);
-                        } else  {
--- 
-2.25.1
+Thank you.
+
+Regards,
+Pritam
+
 
