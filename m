@@ -1,294 +1,252 @@
-Return-Path: <linux-kernel+bounces-758650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A805B1D20A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:31:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6FFFB1D20C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D7C97B0916
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF0D723F4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9961EB9E3;
-	Thu,  7 Aug 2025 05:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4B11E521A;
+	Thu,  7 Aug 2025 05:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Plo4Y/9q"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lj1Wrf5l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904A0BE46
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 05:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02274FBF0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 05:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754544705; cv=none; b=TRkdYU7fGjSrSAUJBGRLNIe7y/Bhk1y/C3hlhphvShGMJ1PxPGpW1RvbehTTsmw9ek4TB10Nw29wLEPg0Xoa1ugpL9wKlqZ9QwNKgB72AIQIXpv71F6I8gIKX/IoFP7giVE1FkEY8Fws8oahGuJtZbKOOCIyHe4ujjURfUA5SAM=
+	t=1754544772; cv=none; b=c4Z0uyrRDaTRno4umWZd0OqyVksylyJUMqpxIqQ7oDshNc4jTe+upOE5lMlDShU+Nd9OE7iN4YAFq947QFqqRZWNdly2J4J4k3j3uGGhVFGWSHN32glV4VV/ZOVGTdvIr17+gkJG74q68xYxOJwswSOwy/CkZSHlNbDyojJUJxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754544705; c=relaxed/simple;
-	bh=AS6s4IT1YzGRsUIdjsSPDVN0moYEi0p2uCvIfsfOCZE=;
+	s=arc-20240116; t=1754544772; c=relaxed/simple;
+	bh=rAB/UBmBSFxnXd0nKV8bRIRC+NXmYJqrmY/gqpJtuMo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UZaNk26OlSpRW82uShnnp5Iw4bPfLHSOznn66321PSktNXqkN73JQyPEtj+luEabbx84bIOyEy0FSAggko8lOiDsWQvNERSMGnL7rlXuOnu/Aj5IoVYYRAjnBMq8mosJS8Pcqc4PAutTkhmfgVkH0XQVjTCG56rJ9NwfJyCU9JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Plo4Y/9q; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b780e4fb03so71134f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 22:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754544702; x=1755149502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=njZCyAMu9kVs+e9nxOAr6y+cEt3JyrSwGOU1aOFwKhw=;
-        b=Plo4Y/9qYtQwerDs0NMgUOEU3PcsWX1xxq4If54bBc5WnVblP84WC9sGR/e5BOfCqO
-         pZcAGBemVrC1084OZ4tUl6Wl/wOHJsKcz9GDImnOOWFeF+M3x7oOk3cFmCdAupZvGYA3
-         eUtVSCV86GuBlrJFszbvkTcWwZwR0RzLAL8zyG69ZsVdbEzZOruV5f4rSXN83DcafJsq
-         JFeE7uWwEmfuPgiLn/oyK1lEGBdjPEx6ZH22i2QkmyeIeL5+53leTlFWqphyGIR5PU+A
-         IA2Msr0DbruDbGrmFF7lAlfu+phUkKfsJJIyyagON8/eH2lYHEZDQtkc4Y0pUZtno2in
-         dPhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754544702; x=1755149502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=njZCyAMu9kVs+e9nxOAr6y+cEt3JyrSwGOU1aOFwKhw=;
-        b=eL8agCp/vnZbi+tzsXNMYQwmx92X0D2mrJLXHg5hSXyRDzlevAhda/B+SvDBbO+oHL
-         2GiZYKzzkisECmYKGTo71iBFBin+jRKcQiVc425ATpM4Bu/HKvx327ibef/SSzw+2WoH
-         GFDNt/3n1MaC3NW5XLoXhgQVf28MA6w76zS7N6fQ6pWubpCEU2e1zsoMxuwpE2Dl4XlX
-         EB4/+b6UQvNTOEQqL8gO6jDf5sZNxyn6JB4puzddeMq65snxoChilXXbGnLi10V9NeVE
-         tEdGLfRe2qxGZkYESyw3EIex/cSwIoDsJyhkWvnyCIPcrVNUQbjAKjCnVIshmm3ptw6j
-         YQ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKlSooGKydZ5Yc1yHapZOI9WU9E92LTiX4m/yjtXy1ZlMqUTYBX7h4cOO7mN/RR9DK+gwxQ2EJOvOZuNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeUPAyM94OT8GGLfP2iT5JSz+NrtOLVF4373JtTBBA0+MhRvSl
-	kUs5Hml7YvAYlJUiEi7zZafo0GCbRfUY16tIyc9MqHPlSA09ODwgVHh77z152neiSEoErB7Aoqo
-	+gLxp6AvZ3GVYqqiHtyXvznmFJybVe4o=
-X-Gm-Gg: ASbGncslrkUQFJVWwbLqKni1BlZwNcm4HxKiRVY9iMIZyEAB5KXsxMS1En1GiEfLAtY
-	Sps22qyW09jPxkNPuXh9AHMSXOffMy5zl+bLtE6JwFRV9WOvK3ureu8SCriQcYkGnovL/oi1WCy
-	2u+xISLoe8OamZLhu4yNpkge9Sc1g0yJETR7tc0iW5cRNoGNWMONn1QPiBraHFxCNkXAfNvyge7
-	DDkL+vK
-X-Google-Smtp-Source: AGHT+IFm5LqeXhOW47Zl3FuUL7jTfekl2INwaEKG+Hodxz8s4tdxlmAYh783y41tz/50OledFd6Ggn0PWg/Yt6oNqvA=
-X-Received: by 2002:a05:600c:3d95:b0:459:4441:1c13 with SMTP id
- 5b1f17b1804b1-459e710369bmr21082195e9.6.1754544701297; Wed, 06 Aug 2025
- 22:31:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=MooX+hRdtoOm9o4UGS77glg05teVfzP9h5qZaKXGvXM+w+2IDpodwnea/9Xm8/YASfPJpznp6nHQWJWSeJujgHDpQNjtk2FpKiPdEu5po/fai4LYj8egjqhoJZelnEsRFTL2Xs0QoFKjyeuOTrZyo8CR4DgGG1upfsIBGMeKkIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lj1Wrf5l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA41C4CEF6
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 05:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754544771;
+	bh=rAB/UBmBSFxnXd0nKV8bRIRC+NXmYJqrmY/gqpJtuMo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lj1Wrf5l+enWTJt92Q1f37ftQ6dRrRa/7pz9cNsSfOpR54nNChwjJSgnINjviPBQK
+	 cxfld5TJinjB/Tm9qvyqfqEsPcQ4N/3QGYgZ0T4RtEYtKtq+yndJPnApo2uiUrPVza
+	 kzZ+1f1c/k/slOvXg/YsoEtEqftXUCeH7rIl5Y7fxZ/j6GNA3LqAO+plYqOvLlgO2p
+	 t739YkcQDv+WWMV9ItEuD26oJu2rjg/m02FbN0apS5WFYLQT4chCJMyBQtN6Jnv3VZ
+	 QU6LLIG7kjmsjf250GeDS3LxclJ7YNvZvMzskGIKOA8n4l59GHG/73thCogbgHfuoy
+	 rSUED+Qb852tA==
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-459e497776cso43905e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 22:32:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9InYPQYR2lBZhbKF6mDr6SxBGmriuUJ9lH+Yyc+V5m+9/f4N9iLQLlV3sTgoJeb6qv0/R16mncPH71no=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAHokdERPxodzk76dE9/aaIrDFG1oedqN3aNeRvaE40pUE4S+H
+	tf61fZgTYRQRFTdEyKTvNnZfzgGfsSNEwlhbZ8xJsiRRmV6eIKRmN6ALSoxPUrB2VTVGoysmRic
+	wnocNlVFwm06W3I3JFbZyCLqV+m4AdjGTD2e5vmmo
+X-Google-Smtp-Source: AGHT+IHRY2M2xDkw4ZJWViT3kxgvACrWtMMqxvgefNDPmHZPVLE+Ow533nj6Df/LWU4LDwUk6uK+U/WK5zAooMEDvyA=
+X-Received: by 2002:a05:600c:3148:b0:456:4607:b193 with SMTP id
+ 5b1f17b1804b1-459f0357255mr301155e9.7.1754544770158; Wed, 06 Aug 2025
+ 22:32:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807034838.3829794-1-chao@kernel.org>
-In-Reply-To: <20250807034838.3829794-1-chao@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Thu, 7 Aug 2025 13:31:30 +0800
-X-Gm-Features: Ac12FXy7DHOlFps8GQ9i084054Llw7QNVpciKeEv5CLYspV6oxEmfwjDo9keYCI
-Message-ID: <CAHJ8P3+tT70BLK38ROh_jiZO-OBWGXDSu65Q0w+ppMW0QHSFSA@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: introduce flush_policy sysfs entry
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net
+References: <20250806161748.76651-1-ryncsn@gmail.com> <20250806161748.76651-2-ryncsn@gmail.com>
+In-Reply-To: <20250806161748.76651-2-ryncsn@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 6 Aug 2025 22:32:38 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuNSvQTxEOiWZRwwB4117713Ks51AvD0gbMhuA7KUhtARA@mail.gmail.com>
+X-Gm-Features: Ac12FXyXdS9CEOgVD9cnX_UtpBJ_eBgMrn2QY5iTZyySscX0lUCFjLmmrl_fVCE
+Message-ID: <CAF8kJuNSvQTxEOiWZRwwB4117713Ks51AvD0gbMhuA7KUhtARA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] mm, swap: only scan one cluster in fragment list
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
-=E4=BA=8E2025=E5=B9=B48=E6=9C=887=E6=97=A5=E5=91=A8=E5=9B=9B 11:50=E5=86=99=
-=E9=81=93=EF=BC=9A
->
-> This patch introduces a new sysfs entry /sys/fs/f2fs/<disk>/flush_policy
-> in order to tune performance of f2fs data flush flow.
->
-> For example, checkpoint will use REQ_FUA to persist CP metadata, however,
-> some kind device has bad performance on REQ_FUA command, result in that
-> checkpoint being blocked for long time, w/ this sysfs entry, we can give
-> an option to use REQ_PREFLUSH command instead of REQ_FUA during checkpoin=
-t,
-> it can help to mitigate long latency of checkpoint.
->
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
-> v3:
-> - export f2fs_submit_flush_wait()
-looks good to me.
-Reviewed-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Acked-by: Chris Li <chrisl@kernel.org>
 
->  Documentation/ABI/testing/sysfs-fs-f2fs |  9 +++++++++
->  fs/f2fs/checkpoint.c                    | 11 ++++++++++-
->  fs/f2fs/f2fs.h                          |  9 +++++++++
->  fs/f2fs/segment.c                       |  8 ++++----
->  fs/f2fs/sysfs.c                         |  9 +++++++++
->  5 files changed, 41 insertions(+), 5 deletions(-)
+Chris
+
+On Wed, Aug 6, 2025 at 9:18=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrote=
+:
 >
-> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/=
-testing/sysfs-fs-f2fs
-> index bc0e7fefc39d..2fedb44b713b 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
-> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-> @@ -883,3 +883,12 @@ Date:              June 2025
->  Contact:       "Daeho Jeong" <daehojeong@google.com>
->  Description:   Control GC algorithm for boost GC. 0: cost benefit, 1: gr=
-eedy
->                 Default: 1
-> +
-> +What:          /sys/fs/f2fs/<disk>/flush_policy
-> +Date:          July 2025
-> +Contact:       "Chao Yu" <chao@kernel.org>
-> +Description:   Device has different performance for the same flush metho=
-ds, this node
-> +               can be used to tune performance by setting different flus=
-h methods.
-> +
-> +               policy value            description
-> +               0x00000001              Use preflush instead of fua durin=
-g checkpoint
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index db3831f7f2f5..2450e382fe6b 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1419,7 +1419,9 @@ static void commit_checkpoint(struct f2fs_sb_info *=
-sbi,
->         f2fs_folio_put(folio, false);
+> From: Kairui Song <kasong@tencent.com>
 >
->         /* submit checkpoint (with barrier if NOBARRIER is not set) */
-> -       f2fs_submit_merged_write(sbi, META_FLUSH);
-> +       f2fs_submit_merged_write(sbi,
-> +               sbi->flush_policy & BIT(FLUSH_POLICY_CP_NO_FUA) ?
-> +               META : META_FLUSH);
->  }
+> Fragment clusters were mostly failing high order allocation already.
+> The reason we scan it through now is that a swap slot may get freed
+> without releasing the swap cache, so a swap map entry will end up in
+> HAS_CACHE only status, and the cluster won't be moved back to non-full
+> or free cluster list. This may cause a higher allocation failure rate.
 >
->  static inline u64 get_sectors_written(struct block_device *bdev)
-> @@ -1594,6 +1596,13 @@ static int do_checkpoint(struct f2fs_sb_info *sbi,=
- struct cp_control *cpc)
+> Usually only !SWP_SYNCHRONOUS_IO devices may have a large number of
+> slots stuck in HAS_CACHE only status. Because when a !SWP_SYNCHRONOUS_IO
+> device's usage is low (!vm_swap_full()), it will try to lazy free
+> the swap cache.
 >
->         __set_cp_next_pack(sbi);
+> But this fragment list scan out is a bit overkill. Fragmentation
+> is only an issue for the allocator when the device is getting full,
+> and by that time, swap will be releasing the swap cache aggressively
+> already. Only scan one fragment cluster at a time is good enough to
+
+Only *scanning* one fragment cluster...
+
+> reclaim already pinned slots, and move the cluster back to nonfull.
 >
-> +       /* flush device cache to make sure last cp pack can be persisted =
-*/
-> +       if (sbi->flush_policy & BIT(FLUSH_POLICY_CP_NO_FUA)) {
-> +               err =3D f2fs_submit_flush_wait(sbi, sbi->sb->s_bdev);
-> +               if (err)
-> +                       return err;
-> +       }
-> +
->         /*
->          * redirty superblock if metadata like node page or inode cache i=
-s
->          * updated during writing checkpoint.
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 46be7560548c..e7b866a98c92 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1594,6 +1594,11 @@ struct decompress_io_ctx {
->  #define MAX_COMPRESS_LOG_SIZE          8
->  #define MAX_COMPRESS_WINDOW_SIZE(log_size)     ((PAGE_SIZE) << (log_size=
-))
+> And besides, only high order allocation requires iterating over the
+> list, order 0 allocation will succeed on the first attempt. And
+> high order allocation failure isn't a serious problem.
 >
-> +enum flush_policy {
-> +       FLUSH_POLICY_CP_NO_FUA,
-> +       FLUSH_POLICY_MAX,
-> +};
-> +
->  struct f2fs_sb_info {
->         struct super_block *sb;                 /* pointer to VFS super b=
-lock */
->         struct proc_dir_entry *s_proc;          /* proc entry */
-> @@ -1845,6 +1850,8 @@ struct f2fs_sb_info {
->         /* carve out reserved_blocks from total blocks */
->         bool carve_out;
+> So the iteration of fragment clusters is trivial, but it will slow down
+> large allocation by a lot when the fragment cluster list is long.
+> So it's better to drop this fragment cluster iteration design.
+
+One side note is that we make some trade off here. We trade lower
+success rates >4K swap entry allocation on fragment lists with overall
+faster swap entry time, because we stop searching the fragment list
+early.
+
+I notice this patch will suffer from fragment list trap behavior. The
+clusters go from free -> non full -> fragment -> free again (ignore
+the full list for now). Only when the cluster is completely free
+again, it will reset the cluster back to the free list. Otherwise
+given random swap entry access pattern, and long life cycle of some
+swap entry.  Free clusters are very hard to come by. Once it is in the
+fragment list, it is not easy to move back to a non full list. The
+cluster will eventually gravitate towards the fragment list and trap
+there. This kind of problem is not easy to expose by the kernel
+compile work load, which is a batch job in nature, with very few long
+running processes. If most of the clusters in the swapfile are in the
+fragment list. This will cause us to give up too early and force the
+more expensive swap cache reclaim path more often.
+
+To counter that fragmentation list trap effect,  one idea is that not
+all clusters in the fragment list are equal. If we make the fragment
+list into a few buckets by how empty it is. e.g. >50% vs <50%. I
+expect the <50% free cluster has a very low success rate for order >0
+allocation. Given an order "o", we can have a math formula P(o, count)
+of the success rate if slots are even randomly distributed with count
+slots used. The >50% free cluster will likely have a much higher
+success rate.  We should set a different search termination threshold
+for different bucket classes. That way we can give the cluster a
+chance to move up or down the bucket class. We should try the high
+free bucket before the low free bucket.
+
+That can combat the fragmentation list trap behavior.
+
+BTW, we can have some simple bucket statistics to see what is the
+distribution of fragmented clusters. The bucket class threshold can
+dynamically adjust using the overall fullness of the swapfile.
+
+Chris
+
 >
-> +       unsigned int flush_policy;              /* flush policy */
-> +
->  #ifdef CONFIG_F2FS_FS_COMPRESSION
->         struct kmem_cache *page_array_slab;     /* page array entry */
->         unsigned int page_array_slab_size;      /* default page array sla=
-b size */
-> @@ -3821,6 +3828,8 @@ int f2fs_commit_atomic_write(struct inode *inode);
->  void f2fs_abort_atomic_write(struct inode *inode, bool clean);
->  void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need);
->  void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi, bool from_bg);
-> +int f2fs_submit_flush_wait(struct f2fs_sb_info *sbi,
-> +                               struct block_device *bdev);
->  int f2fs_issue_flush(struct f2fs_sb_info *sbi, nid_t ino);
->  int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
->  int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index cc82d42ef14c..d68c903f1ad3 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -544,7 +544,7 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi, boo=
-l from_bg)
->         f2fs_sync_fs(sbi->sb, 1);
->  }
+> Test on a 48c96t system, build linux kernel using 10G ZRAM, make -j48,
+> defconfig with 768M cgroup memory limit, on top of tmpfs, 4K folio
+> only:
 >
-> -static int __submit_flush_wait(struct f2fs_sb_info *sbi,
-> +int f2fs_submit_flush_wait(struct f2fs_sb_info *sbi,
->                                 struct block_device *bdev)
->  {
->         int ret =3D blkdev_issue_flush(bdev);
-> @@ -562,12 +562,12 @@ static int submit_flush_wait(struct f2fs_sb_info *s=
-bi, nid_t ino)
->         int i;
+> Before: sys time: 4432.56s
+> After:  sys time: 4430.18s
 >
->         if (!f2fs_is_multi_device(sbi))
-> -               return __submit_flush_wait(sbi, sbi->sb->s_bdev);
-> +               return f2fs_submit_flush_wait(sbi, sbi->sb->s_bdev);
+> Change to make -j96, 2G memory limit, 64kB mTHP enabled, and 10G ZRAM:
 >
->         for (i =3D 0; i < sbi->s_ndevs; i++) {
->                 if (!f2fs_is_dirty_device(sbi, ino, i, FLUSH_INO))
->                         continue;
-> -               ret =3D __submit_flush_wait(sbi, FDEV(i).bdev);
-> +               ret =3D f2fs_submit_flush_wait(sbi, FDEV(i).bdev);
->                 if (ret)
->                         break;
+> Before: sys time: 11609.69s  64kB/swpout: 1787051  64kB/swpout_fallback: =
+20917
+> After:  sys time: 5572.85s   64kB/swpout: 1797612  64kB/swpout_fallback: =
+19254
+>
+> Change to 8G ZRAM:
+>
+> Before: sys time: 21524.35s  64kB/swpout: 1687142  64kB/swpout_fallback: =
+128496
+> After:  sys time: 6278.45s   64kB/swpout: 1679127  64kB/swpout_fallback: =
+130942
+>
+> Change to use 10G brd device with SWP_SYNCHRONOUS_IO flag removed:
+>
+> Before: sys time: 7393.50s  64kB/swpout:1788246  swpout_fallback: 0
+> After:  sys time: 7399.88s  64kB/swpout:1784257  swpout_fallback: 0
+>
+> Change to use 8G brd device with SWP_SYNCHRONOUS_IO flag removed:
+>
+> Before: sys time: 26292.26s 64kB/swpout:1645236  swpout_fallback: 138945
+> After:  sys time: 9463.16s  64kB/swpout:1581376  swpout_fallback: 259979
+>
+> The performance is a lot better for large folios, and the large order
+> allocation failure rate is only very slightly higher or unchanged even
+> for !SWP_SYNCHRONOUS_IO devices high pressure.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> Acked-by: Nhat Pham <nphamcs@gmail.com>
+> ---
+>  mm/swapfile.c | 23 ++++++++---------------
+>  1 file changed, 8 insertions(+), 15 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index b4f3cc712580..1f1110e37f68 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -926,32 +926,25 @@ static unsigned long cluster_alloc_swap_entry(struc=
+t swap_info_struct *si, int o
+>                 swap_reclaim_full_clusters(si, false);
+>
+>         if (order < PMD_ORDER) {
+> -               unsigned int frags =3D 0, frags_existing;
+> -
+>                 while ((ci =3D isolate_lock_cluster(si, &si->nonfull_clus=
+ters[order]))) {
+>                         found =3D alloc_swap_scan_cluster(si, ci, cluster=
+_offset(si, ci),
+>                                                         order, usage);
+>                         if (found)
+>                                 goto done;
+> -                       /* Clusters failed to allocate are moved to frag_=
+clusters */
+> -                       frags++;
+>                 }
+>
+> -               frags_existing =3D atomic_long_read(&si->frag_cluster_nr[=
+order]);
+> -               while (frags < frags_existing &&
+> -                      (ci =3D isolate_lock_cluster(si, &si->frag_cluster=
+s[order]))) {
+> -                       atomic_long_dec(&si->frag_cluster_nr[order]);
+> -                       /*
+> -                        * Rotate the frag list to iterate, they were all
+> -                        * failing high order allocation or moved here du=
+e to
+> -                        * per-CPU usage, but they could contain newly re=
+leased
+> -                        * reclaimable (eg. lazy-freed swap cache) slots.
+> -                        */
+> +               /*
+> +                * Scan only one fragment cluster is good enough. Order 0
+> +                * allocation will surely success, and large allocation
+> +                * failure is not critical. Scanning one cluster still
+> +                * keeps the list rotated and reclaimed (for HAS_CACHE).
+> +                */
+> +               ci =3D isolate_lock_cluster(si, &si->frag_clusters[order]=
+);
+> +               if (ci) {
+>                         found =3D alloc_swap_scan_cluster(si, ci, cluster=
+_offset(si, ci),
+>                                                         order, usage);
+>                         if (found)
+>                                 goto done;
+> -                       frags++;
+>                 }
 >         }
-> @@ -748,7 +748,7 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi)
->                         continue;
 >
->                 do {
-> -                       ret =3D __submit_flush_wait(sbi, FDEV(i).bdev);
-> +                       ret =3D f2fs_submit_flush_wait(sbi, FDEV(i).bdev)=
-;
->                         if (ret)
->                                 f2fs_io_schedule_timeout(DEFAULT_IO_TIMEO=
-UT);
->                 } while (ret && --count);
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index f736052dea50..b69015f1dc67 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -852,6 +852,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
->                 return count;
->         }
->
-> +       if (!strcmp(a->attr.name, "flush_policy")) {
-> +               if (t >=3D BIT(FLUSH_POLICY_MAX))
-> +                       return -EINVAL;
-> +               *ui =3D (unsigned int)t;
-> +               return count;
-> +       }
-> +
->         if (!strcmp(a->attr.name, "gc_boost_gc_multiple")) {
->                 if (t < 1 || t > SEGS_PER_SEC(sbi))
->                         return -EINVAL;
-> @@ -1175,6 +1182,7 @@ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
->  #endif
->  F2FS_SBI_GENERAL_RW_ATTR(carve_out);
->  F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
-> +F2FS_SBI_GENERAL_RW_ATTR(flush_policy);
->
->  /* STAT_INFO ATTR */
->  #ifdef CONFIG_F2FS_STAT_FS
-> @@ -1371,6 +1379,7 @@ static struct attribute *f2fs_attrs[] =3D {
->         ATTR_LIST(max_read_extent_count),
->         ATTR_LIST(carve_out),
->         ATTR_LIST(reserved_pin_section),
-> +       ATTR_LIST(flush_policy),
->         NULL,
->  };
->  ATTRIBUTE_GROUPS(f2fs);
 > --
-> 2.49.0
+> 2.50.1
 >
 >
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
