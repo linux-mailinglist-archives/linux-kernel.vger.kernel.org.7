@@ -1,203 +1,187 @@
-Return-Path: <linux-kernel+bounces-758495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07E8B1CFDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:49:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97027B1CFE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73A7563597
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:49:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D1F9625552
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B37478F34;
-	Thu,  7 Aug 2025 00:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FE3136E;
+	Thu,  7 Aug 2025 00:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEoExSir"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTz9IEpv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31CE4A11
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3354C6E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754527739; cv=none; b=VLM2Pq/cA/wv7yG2/L9Jvl7ACybfc+r2xYPw6I/PcyGLPJeemlv+Y0Y2+B1+yWLcdFE/gy0xu6dvIriijWaSQtG326qpWew6o4RD2tBVFU7lqi0KODEAO+R/zqTZWMNy69MyJ8a6QSzNgGhySeFcaKAbmbWiXpcWq5t9y+3eylo=
+	t=1754527851; cv=none; b=lFroqzXrQZZGbn766po9xgQj6A7ofBSHOYHUWsOW572L8oBar8GEAT3q3vpoWmse0UzGxKj+OBYb3uHZQznQqUtOpN/LKVfJ2itJ70oOYfKva0fSUruMl6ifLbxrrpkQGr/0mRj+lvx+El3s1MWJaftJI3hodheuOi1tfDXJ79A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754527739; c=relaxed/simple;
-	bh=ZjOifc3000tlaK0hGk3I5QgSPMkVhf0anMnWrqSVVcI=;
+	s=arc-20240116; t=1754527851; c=relaxed/simple;
+	bh=grPj4nUiqlg/GvMehvwd/PM7Ps+66XCt4iskjSNeqTI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ImDW4+N1Tf2ky+Mpxyprf4ZDpY0XK+cscuen4JfKgVRJ7JyobTUJeMaWLuF2o3vVgeR1WekuGUMpLq2dZdDP1WffXwjaccPkPCkDPhJuzjTDzdXNVkVG/77a9QrBtCFAYk5jE+GFqrD7ugtssDWNiVxojxDdyoR1ok/sLpB2uHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEoExSir; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-af8fd1b80e5so77955966b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 17:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754527736; x=1755132536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FyU0sgZz9qTulaKfMDXTxb3hNbzZ1ImXa4EG7joeiFI=;
-        b=CEoExSirjhBSlyCf2XMBkToeE1A7931BW50F44qfpVYIJzwhTffMVYdZ25lvvny3qk
-         kK7PzpFNlueE9+fcmNpvJp2OaczLfuLEkcGRrdCvMWC5CL/2cLnqEtdzKomPhM5IhA1e
-         u4KT0a0v6mKotykOw/LH/fnBJ+Skyer55WXPruhIG6qk14yo5xXdyo7WMcur7bAIu0E5
-         cL8YYDmt6ksN0QHxtvXghfXYkqtBBcfKVeLKKwVlzcrpWhINs/JTmHwG3U+8lKISeucr
-         o40vm5K1zQi6dm1vG2N1B3ssyUaxAPNjp0bYKy45g2djGsM19nbmxygCyes1GPw8K/mM
-         lE2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754527736; x=1755132536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FyU0sgZz9qTulaKfMDXTxb3hNbzZ1ImXa4EG7joeiFI=;
-        b=P5TIvDaJCnTxE7Fxwqxu1luj5BwO41IcIkCj6ilb/a+iY/aITsnxbA2gKE3IkQMMub
-         u3xkeuo9Dj7xT2kYFeiCjc5KlDVKew0fxRdiMG1ivd8MavQdAtYNS751WmC8BN1xGTA2
-         kk8U+ky1wT9nrj1qz6rqAoXhny3pIG0FYMGD+KKf4/SUfGqIzAkd8FQ7Krojt4YuwuLn
-         jzaC+1xsnmuX1GoZG9DJ0YXlATWgF+kWDRVvOgmvmDi0la2GZhBFsso8+qhuKeOG+D4s
-         5+YWvTdGfCKZD8grhIgtp/EZ/6WYuVOW93ag7r/wHVhK30Twlkc3ianMvyG/21vRQ9lj
-         h0/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXr7ysSb5NaCAzOd+2Jnm9tkjaohA+4qYI8b2AqExLT8raIdxQnGDQipzqcPb+drv6wttT7CpSqfD5HGmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp3OQgH504nw+aq3IVDJydTgouRBw6acAs4E8LUIfTGlfi4RSB
-	Mzrh4BEg3+4B9+KEqauJlO3luV0r9Jwx0Oor4VoSdyU+fNsmteFsw3XQTZoVws6CEAUKY+wOsQ+
-	eBiD/uAAz7StcNj/AdGhQNEN4v9Uq4qmn8Q==
-X-Gm-Gg: ASbGncvSvEIYjxN9liCDJpJM48Ur3tSsKHqZhrz4WrK6Ocv0GhRVxFn2MM5FBFPPAn5
-	85cxiSNYkYSz6+qWbJFDFNXBs9jHcAKEgIUXGkEse1uuCVH8Hq/FcnfblfV/mgi6Z/mEz4Em1aZ
-	JsnMsdn7yg42hubC2cLVTXTjsde2FFBG0WcRX81wmfbaVgn7s6yI0elf444MoAI7Tl/6GvPpNvN
-	321rPzIXHElzFsjQtgeTiljBSbutB8KDkxsU55ZMGHJgJf0nlFWvoMi6E9mtHY=
-X-Google-Smtp-Source: AGHT+IFQwMopH6azHH9WIpfqyaRZ5dbJlxtTcRscsdnncSFoc6hUjK52CP/r7T5PFLOBcK4Y/4ju5GykKep2RTRqt/w=
-X-Received: by 2002:a17:907:7e9c:b0:ae3:5e70:32fb with SMTP id
- a640c23a62f3a-af990105cdcmr469979166b.4.1754527735982; Wed, 06 Aug 2025
- 17:48:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=NtjbB7Rxnww6j4Bz82sIiK/xA1e3vOmz6bKfNezgRd/jCVzVhM5kZFpeo32oca+fYNUES7sIfPOJGf5xuPIg4rcFFW/oNrnaroADvuy4Vxqrz95DHskGup4s7ZQJ5poNCqtbxcL/TfedAT6S0FDb6DNATl3yXZOozKzFoLjlMrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTz9IEpv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD036C4CEFA
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:50:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754527850;
+	bh=grPj4nUiqlg/GvMehvwd/PM7Ps+66XCt4iskjSNeqTI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HTz9IEpvRGU5Kag0/OLxpBfg31H/M5cMUEZ3opwD93imc7f4sGxKgs3oUex89I2nb
+	 hxzO6iowo+ZbiQ70YFpfKaBTo/wZ1uDMb3ImAwgkUtrprdBZ/C7w1GSZ85i9S2wINF
+	 flqmfWsLLtA7qsIVS5IR2pkuUqjXvBh9SIoIkJcYGTgIpPKsPLM58AvSkhXVLjzvPk
+	 qvejLXRMKRvkwtIY9Dyp2rSxbxSOZPw0Dnu4di3x/SBgqtzC0fYPSfeTTUGajbYr2d
+	 k840k1dNkB+jRAMX/wnJPz4hATkHNcA5iGcyQR9p+xJkmaG4YiRPu88jd0T5Z69vR5
+	 xgQphFzj9cBCQ==
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459b3904fdeso18215e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 17:50:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUXSAaMYNND1oplQL1iiauKoO+gUybPpKdPuatnvRtZep4Z4TYoVaN1Ur0u7Gam/s+GH2YsWo/q5NGUNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdafnrHnkdnZWtcJnf8P+QoBrez0E1vTUScKi+UbvnDP/Pvt2I
+	Mf6tXnYnwSqYoaSSHeqH3tqkAw4AMcXGjsHL1R/UkJDvXdKPcCQU+K73REcjriWQv2RyoojNzjI
+	ElkvM5M9bvNMoKx+J5rhlL3CW2hkB6wZ/KAhE0iNd
+X-Google-Smtp-Source: AGHT+IGd7AVqzUBj3ViITTLxWIkbOiciEeiGJAqp3Zj3Tc1+LEEggLoa5F5uWFg80218MiuBPCcZLN8HDT/+zDOogCY=
+X-Received: by 2002:a05:600c:a215:b0:453:65f4:f4c8 with SMTP id
+ 5b1f17b1804b1-459eee38e99mr254455e9.3.1754527849296; Wed, 06 Aug 2025
+ 17:50:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806234254.10572-1-bijan311@gmail.com> <20250807001924.76275-1-sj@kernel.org>
-In-Reply-To: <20250807001924.76275-1-sj@kernel.org>
-From: Bijan Tabatabai <bijan311@gmail.com>
-Date: Wed, 6 Aug 2025 19:48:44 -0500
-X-Gm-Features: Ac12FXy1RsWB25PBoiuQCuL0TSug1jNHZq5fTiL_FTzQznrao8zQPdz3aIU7wRQ
-Message-ID: <CAMvvPS7mcevjD-b2vz1P+grQfffVA0bx-x5WcUQ8=JApD+UkHw@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/damon/core: skip needless update of damon_attrs in damon_commit_ctx()
-To: SeongJae Park <sj@kernel.org>
-Cc: damon@lists.linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Bijan Tabatabai <bijantabatab@micron.com>
+References: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
+ <20250728-luo-pci-v1-20-955b078dd653@kernel.org> <87zfconsaw.ffs@tglx>
+ <CAF8kJuOM=2oEFP20xWtQ==ECwF_vNB032Os3-N12zY1xVau-yw@mail.gmail.com>
+ <20250731150132.GV26511@ziepe.ca> <CAF8kJuPbJWea+o=GTFEM6KRCq4DxDad+83+vM0Np+n=Mmzqzag@mail.gmail.com>
+ <20250802135034.GJ26511@ziepe.ca>
+In-Reply-To: <20250802135034.GJ26511@ziepe.ca>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 6 Aug 2025 17:50:37 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuN4yjBzaTuAA9wERbxbJQs=YSf-1RY_nHu+XvMybpYbfA@mail.gmail.com>
+X-Gm-Features: Ac12FXwr_lgsbosoQEiUbhniouBJKo-bOKc3xyjaNCaRQ66umGk7SeForY_LB9o
+Message-ID: <CAF8kJuN4yjBzaTuAA9wERbxbJQs=YSf-1RY_nHu+XvMybpYbfA@mail.gmail.com>
+Subject: Re: [PATCH RFC 20/25] PCI/LUO: Avoid write to liveupdate devices at boot
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Leon Romanovsky <leon@kernel.org>, Junaid Shahid <junaids@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 6, 2025 at 7:19=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote:
+Hi Jason,
+
+Thanks for your feedback.
+
+On Sat, Aug 2, 2025 at 6:50=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrote=
+:
 >
-> On Wed,  6 Aug 2025 18:42:54 -0500 Bijan Tabatabai <bijan311@gmail.com> w=
-rote:
+> On Fri, Aug 01, 2025 at 04:04:39PM -0700, Chris Li wrote:
+> > My philosophy is that the LUO PCI subsystem is for service of the PCI
+> > device driver. Ultimately it is the PCI device driver who decides what
+> > part of the config space they want to preserve or overwrite. The PCI
+> > layer is just there to facilitate that service.
 >
-> > From: Bijan Tabatabai <bijantabatab@micron.com>
-> >
-> > Currently, damon_commit_ctx() always calls damon_set_attrs() even if th=
+> I don't think this makes any sense at all. There is nothing the device
+> driver can contribute here.
+
+I am considering that the device driver owner will know a lot more
+device internal knowledge, e.g. why it needs to reserve this and that
+register where the PCI layer might not know much about the internal
+device behavior.
+
+> > If you still think it is unjustifiable to have one test try to
+> > preserve all config space for liveupdate.
+>
+> I do think it is unjustifiable, it is architecurally wrong. You only
+> should be preserving the absolute bare minimum of config space bits
+> and everything else should be rewritten by the next kernel in the
+> normal way. This MSI is a prime example of a nonsensical outcome if
+> you take the position the config space should not be written to.
+
+OK. Let me rework the V2 with your approach.
+
+>
+> > > Only some config accesse are bad. Each and every "bad" one needs to b=
 e
-> > attributes have not been changed. This can be problematic when the DAMO=
-N
-> > state is committed relatively frequently because damon_set_attrs() rese=
-ts
-> > ctx->next_{aggregation,ops_update}_sis, causing aggregation and ops
-> > update operations to be needlessly delayed.
+> > > clearly explained *why* it is bad and only then mitigated.
 > >
-> > This patch avoids this by only calling damon_set_attrs() in
-> > damon_commit_ctx when the attributes have been changed.
-> >
-> > Cc: Bijan Tabatabai <bijan311@gmail.com>
+> > That is exactly the reason why we have the conservative test that
+> > preserves every config space test as a starting point.
 >
-> Maybe above line is added by a mistake?
+> That is completely the opposite of what I said. Preserving everything
+> is giving up on the harder job of identifying which bits cannot be
+> changed, explaining why they can't be changed, and then mitigating
+> only those things.
 
-Sorry about that. I added it because my internship ends this week and
-wanted to make sure I get notifications on the status of this patch
-(e.g. email notifications when the patch is merged in Andrew's tree).
-If it's inappropriate I will remove it in the next version (unless
-Andrew does it himself).
+We can still preserve every thing then work backwards to preserve
+less.  As I said, I will rework V2 with your approach preserving bare
+minimum as the starting place.
 
-> > Signed-off-by: Bijan Tabatabai <bijantabatab@micron.com>
+> > Another constraint is that the data center servers are dependent on
+> > the network device able to connect to the network appropriately. Take
+> > diorite NIC  for example, if I try only preserving ATS/PASID did not
+> > finish the rest of liveupdate, the nic wasn't able to boot up and
+> > connect to the network all the way. Even if the test passes for the
+> > ATS part, the over test fails because the server is not back online. I
+> > can't include that test into the test dashboard, because it brings
+> > down the server. The only way to recover from that is rebooting the
+> > server, which takes a long time for a big server. I can only keep that
+> > non-passing test as my own private developing test, not the regression
+> > test set.
 >
-> Reviewed-by: SeongJae Park <sj@kernel.org>
->
-> I have a trivial comment below, though.
->
-> > ---
-> > Changes from v1[1]:
-> >   - Compare entirety of struct damon_attrs
-> >   - Apply logic in damon_commit_ctx() instead of damon_set_attrs()
->
-> Thank you for doing this!
->
-> >
-> > [1] https://lore.kernel.org/all/20250806164316.5728-1-bijan311@gmail.co=
-m/
-> > ---
-> >  mm/damon/core.c | 26 +++++++++++++++++++++++---
-> >  1 file changed, 23 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/mm/damon/core.c b/mm/damon/core.c
-> > index 6a2fe1f2c952..80aaeb876bf2 100644
-> > --- a/mm/damon/core.c
-> > +++ b/mm/damon/core.c
-> > @@ -570,6 +570,24 @@ void damon_destroy_ctx(struct damon_ctx *ctx)
-> >       kfree(ctx);
-> >  }
-> >
-> > +static bool damon_attrs_equals(const struct damon_attrs *attrs1,
-> > +             const struct damon_attrs *attrs2)
-> > +{
-> > +     const struct damon_intervals_goal *ig1 =3D &attrs1->intervals_goa=
-l;
-> > +     const struct damon_intervals_goal *ig2 =3D &attrs2->intervals_goa=
-l;
-> > +
-> > +     return attrs1->sample_interval =3D=3D attrs2->sample_interval &&
-> > +             attrs1->aggr_interval =3D=3D attrs2->aggr_interval &&
-> > +             attrs1->ops_update_interval =3D=3D attrs2->ops_update_int=
-erval &&
-> > +             attrs1->min_nr_regions =3D=3D attrs2->min_nr_regions &&
-> > +             attrs1->max_nr_regions =3D=3D attrs2->max_nr_regions &&
-> > +             ig1->access_bp =3D=3D ig2->access_bp &&
-> > +             ig1->aggrs =3D=3D ig2->aggrs &&
-> > +             ig1->min_sample_us =3D=3D ig2->min_sample_us &&
-> > +             ig1->max_sample_us =3D=3D ig2->max_sample_us;
-> > +
->
-> Unnecessary blank line?
+> I have no idea what this is trying to say and it sounds like you also
+> can't explain exactly what is "wrong" and justify why things are being
+> preserved.
 
-Sorry for missing this!
+I know what register is causing the trouble but I think we are under a
+different philosophy of addressing the problem from different ends.
+Another consideration is the device testing matrixs. The kexec with
+device liveupdate is a rare event. With that many device state
+re-initializing might trigger some very rare bug in the device or
+firmware. So it might be due to the device internal implementation,
+even though PCI spec might say otherwise or undefined.
 
-> > +}
-> > +
-> >  static unsigned int damon_age_for_new_attrs(unsigned int age,
-> >               struct damon_attrs *old_attrs, struct damon_attrs *new_at=
-trs)
-> >  {
-> > @@ -1198,9 +1216,11 @@ int damon_commit_ctx(struct damon_ctx *dst, stru=
-ct damon_ctx *src)
-> >        * 2. ops update should be done after pid handling is done (targe=
-t
-> >        *    committing require putting pids).
-> >        */
-> > -     err =3D damon_set_attrs(dst, &src->attrs);
-> > -     if (err)
-> > -             return err;
-> > +     if (!damon_attrs_equals(&dst->attrs, &src->attrs)) {
-> > +             err =3D damon_set_attrs(dst, &src->attrs);
-> > +             if (err)
-> > +                     return err;
-> > +     }
-> >       dst->ops =3D src->ops;
-> >
-> >       return 0;
-> > --
-> > 2.43.0
->
-> Other than the above trivial things, looks good to me.  Thank you again!
+Anyway, let me do it your way in V2 then.
 
-Thank you!
-Bijan
+> Again, your series should be starting simpler. Perserve the dumbest
+> simplest PCI configuration. Certainly no switches, P2P, ATS or
+> PASID. When that is working you can then add on more complex PCI
+> features piece by piece.
 
-[...]
+With the V1 the patch series deliverable is having an Intel diorite
+NVMe device preserve every config space access and pass to the vfio
+and iommu people to build the vfio and iommu on top of it. Let's
+forget about V1.
+
+With V2 I want to start with the minimal end. No switches,P2P, ATS or
+PASID. I need some help to define what is deliverable in such a
+minimal preserve. e.g. Do I be able to read back the config value not
+changed then call it a day. Or do I expect to see the device fully
+initialized, it is able to be used by the user space. Will the device
+need to perform any DMA? Interrupt?
+
+I will probably find a device as simple as possible and it is attached
+to the root PCI host bridge, not the PCI-PCI bridge.
+Maybe no interrupt as the first step. One possibility is using the
+Intel DSA device that does the DMA streaming.
+
+If you have any other feedback on the candidate device and deliverable
+test for V2, I am looking forward to it.
+
+Thanks.
+
+Chris
 
