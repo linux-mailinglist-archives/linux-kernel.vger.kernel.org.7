@@ -1,384 +1,184 @@
-Return-Path: <linux-kernel+bounces-759331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B45DCB1DC2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:03:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9628AB1DC34
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097EB7E0D70
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:02:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31121623FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067A327146D;
-	Thu,  7 Aug 2025 17:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133CC272E60;
+	Thu,  7 Aug 2025 17:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="phZL2UTK"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2076.outbound.protection.outlook.com [40.107.96.76])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="H9zy3vnp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A54026A1BE;
-	Thu,  7 Aug 2025 17:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754586162; cv=fail; b=SKpLKk/3JreIe2Oat7ZRhfgSipEOGZvefKaoTmj9+iP6Z1aiUDWgdAEoaJH8+qe21dcE/xUetdQG8VHL4pKb/vQ/BmD9yuHJlgbjL5IeMh6aqKXhnm3pwRP7nDbwK0LBx50vCqJMJ6ZZLk5Aekr9QhZDLxB3/e96eioNu/vvSeM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754586162; c=relaxed/simple;
-	bh=619jnH7Y4Ku6nbph4+/5BO8EdoaD0JTqP8Uw4a7mF54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Zf4cGPGgK2HhHJbfWRW4phlOoIueEF2QhaocltffS4qEC72uzNxUnO9BbwwVSrHeVPZzoaSYfEH/CkTfhZFTIQHfxR9DYJwkBZE0ps+Z9LfC/QhtmvpLMip1TiAbCjQEx2jbY9ewH6m97BMJ2TfTccPO7rg4PeUL8pRcRe+vMvA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=phZL2UTK; arc=fail smtp.client-ip=40.107.96.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J7iHmULboGQ3CIZJlnaiSfg66iLvdfmPBU3dR5Y5u+7HGgT4labQbvoHXqNJKInsp4M3Qbqff39id8ROSnlLu0bsUC+gFBgEZwAOwbg9y2V/V8EP27Wvq0IFuzQvRDThMr8Cd6bT1L9JAGhPiY8Zltmxq5CE6+iUIhM7vKxD+qInxJvCgeH8SsNcY3TR7bGa2F0hftDj6aPTNkSZBporUz/YO+8wJkaip9bYFVQssLz0Vhpz/Qfinp7jd3GOYhNfATe+4UpHSDKyX+ywtMweBaVcvPlta59ir1jzdLW9UAbX3Q/I1dI+OvE4yC6rlnEZlQkrnots9LbpqHO0z8VfCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UpGoIJs7rUC9IK7WzjGH7rQqrnD8R92iJ7efBvY9rZU=;
- b=pFuUXx2Rf+v5rXAn9c0vXTt2gXTiTU9rJRxmhWRq+rXtekE4BMDBIwWAA0aHUJqqm1w1QA5XF/67Nx9LDX04y0Dcu1rpY9K/4nIngEwVYwg3vgklfxMFpnIrMXat8Hs4u8Hfb73/OqhPfP0/YCSMZC2DUfwNWutffUASEPkVudn/FpKiF85Eb+qo1KwyWZbZdOgb4D5RxD+pLBP+NEDEzZ5mZ0YGCfiiju4+zeus6lcHtTEoUKPEnGJ3/kZ2Yhv7HOltMi1no0aRhEFkrLvqdZePEQrZlGLXuQDTamSLou/vnuY4Y/+zI7he/aLi/+PuP9dTRh1qNnDDdiEOcLusqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UpGoIJs7rUC9IK7WzjGH7rQqrnD8R92iJ7efBvY9rZU=;
- b=phZL2UTK0NKLI79J5nIM2o5UrbHUI3HXcWB8KSnNpPzSIc/lfxDEG96R99mmljA7/HTSGfAd5fnD6Ba+ct6r8MszGb8MJxHNXop3aKl3a52SmUJ3ksGfzOFFeITnYWX/e7FUqqXXhQerA/T8vXqaNNPP0sq4RHqnaNWElLostutxzqbv/9juyJG9JG+DSKPcIBYFCu1nGcRUXD/1kw00bqF08Mt5V8yjdwt75pG71w1Ru6eiVj13ysLwBg8072DNEJTgkNFybeSzlaODLUwo96aWl7AFcheykO+q8Ayp/9mTFzL5HHYHwx+279PkqmD2PgAswBTGmCktNnquFFhWUQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- BL4PR12MB9482.namprd12.prod.outlook.com (2603:10b6:208:58d::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.17; Thu, 7 Aug
- 2025 17:02:34 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
- 17:02:33 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 3/4] selftests/mm: add check_folio_orders() helper.
-Date: Thu, 07 Aug 2025 13:02:31 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <898EC7C6-8AFE-4CED-AED7-C59C5CC03EB6@nvidia.com>
-In-Reply-To: <dd2118cd-9209-43d5-9c73-8e3989931841@linux.alibaba.com>
-References: <20250806022045.342824-1-ziy@nvidia.com>
- <20250806022045.342824-4-ziy@nvidia.com>
- <dd2118cd-9209-43d5-9c73-8e3989931841@linux.alibaba.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BN9P220CA0010.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:408:13e::15) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D569926CE14
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754586185; cv=none; b=b4ubEyqszM9iu1n90myX0fIkMxNTPnDF4RYDBHLToJtl4Cu0UuXuqyL2cuYjHaQxGx2+NDuqMIe/5xXe26BMaY7dTfl7FnqJXiY5/nqXDbnmSF2stHVqjueWEFdJJuDMAc27lFp6NBvfmQmXxKm5TKnPXO8RW/iIiWH6jVpaB9I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754586185; c=relaxed/simple;
+	bh=MRqFzhSuWwMpaPKOkiqO3zfdABs1SDMuFlkVK8Hi3u4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oNRaraOGn9JFUF8k7hM6GhRRZ7g63o2i6ptp9j1YR53q7O5UozTRBHGaEzwl509BwNthKWGDe/ah+qMH4KtCo05PfsDv7cpD2h9OSnQm7ar//KTnjXoIG+4rjQYVK9Oj+cas6ofShTXXrFzBrxXmYQwEBZwU5T7r8lLrOtzLh4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=H9zy3vnp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779DCPQ020091
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 17:03:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kT9b3uyCnzcpZ8XsWUfgQTVB6SbH1uKhJl+tlG2vK5E=; b=H9zy3vnpq6MgjC04
+	VmGfddc2j/iB+dB+g3TFzNJOnF/pDKU4u6vMZ8DeeC/nPcs5e7O6HRDTnxk23IA4
+	ENZmQFyo81AZje4Uxy7qzcALQmLDvAd383lzSUSxsxFIW6p/eOPUvzTjWbysQWJ5
+	wRO7vxVTrn2A7QSNjVwgfxviPEUt03OU+IQuUZO/M90jozjQ1F7pihr6X/yHjNsE
+	6JLcLYxhLU2PYFbf6EG+ZO5VoRalT0thvBqEFbOYSOtdPVAKmPA4BAmQI41WI9zU
+	sfjVVny+O/0uI1J7yR7o20dYs0CnkdQM03n8HO28FV+OvmVs6cfezW/KNS3WRPxJ
+	0I6lGQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw2y10e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 17:03:02 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b06c7cf38eso673751cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:03:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754586182; x=1755190982;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kT9b3uyCnzcpZ8XsWUfgQTVB6SbH1uKhJl+tlG2vK5E=;
+        b=hpUutzKk5CBtUf1J11QVsGspzal3pSbrfbpjDpRgluXt5lKfjzAVgD+u9srUbYzIEA
+         mbI/5em9dn433mpTQA9p/5VXF/KTNb69K9Rb8/hdwu5XRtPylGKbfEQFRMwh7QdocjyE
+         hH4auqiAzYLJ5x/xbBEiEpKtoPxKZmsg3e/j98naSt3lZJfgOKkmARiU48xkpSOHsUNd
+         5MT9jv4I/Yt5/AKYqiu/17QVbxP+seYD8TisOzYt9462tSyK6zNENEDUSekhODYOTE43
+         3D4abz8eZP3pKWBNbO/GSQRvgzh8vc7YKajq0XcFtpaSE3qB05NwbjZe5lDxwszNZd3j
+         1Jqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnGjheDK+KYIBfA1hC6X1RCvtBlzpoqAJZgXxHANIVyNcvMyWm+30Tz77naMucYD/g0nHA45R0Zc6LwGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiUy1ibZlQIJ4dKXm5zImLdNy//YS3nbs6/Y267rKoMZpV6bxI
+	4zP6OqRcKfgRL3fnWGk9USDsO8xmNRKUa1p1raOPl4XjJY7i3VpjURxYYzlDUfSUvsM1PpcWp5e
+	wYn48nTIFBuneXziGyBLfvCtMQqKhReJBTfR9iTfoM7AnVWkyjnt0Cqtrz4QRMIc2jb8=
+X-Gm-Gg: ASbGnctmPKwzDf/zbLZZX4uLSFdQgA2af0kYgd1uNJLEGUDMkXYIaMUPep1E6DRfxUQ
+	YAAgwstGsQsLx4JTcIfP1ahL92iz981UWGjyGzKYe//bjRKw30XjuuCJiuOL4bhnCLk2o/Co4AO
+	tRKMTwuWezWF+gBRInRdQQEQ8E6zt1t0f2AW8nmjeJxxvRWZMAZ2CANDnGGdHPDsYKIAxUppgpu
+	tswcu1WKvNue/37dykovJ+qCYU3Yf9ate0FNQ0N0q3RAWJapGjsmb2xL+ELdQOSgP8BlV3LiMvs
+	onBzY0sNrQyK3FybwCSLhizK6woVkPuezioUwgLEQAzmk4/007w/g1WTMFgMpB1o8NbZGEOzcEI
+	p6pM642a5ZQqdLI7Kdg==
+X-Received: by 2002:ac8:5f50:0:b0:4a9:7fc9:d20d with SMTP id d75a77b69052e-4b0913be649mr53722611cf.5.1754586181562;
+        Thu, 07 Aug 2025 10:03:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHodntMZuoTRllm//xlI3139nJlzflRuOhQf5+gUbl8UpYksDbejgbdK/rIApVL2XVDtz6+aA==
+X-Received: by 2002:ac8:5f50:0:b0:4a9:7fc9:d20d with SMTP id d75a77b69052e-4b0913be649mr53722101cf.5.1754586180920;
+        Thu, 07 Aug 2025 10:03:00 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2c265sm12028589a12.26.2025.08.07.10.02.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 10:03:00 -0700 (PDT)
+Message-ID: <d0871d6d-7593-4cbc-b5dd-2ec358bda27a@oss.qualcomm.com>
+Date: Thu, 7 Aug 2025 19:02:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BL4PR12MB9482:EE_
-X-MS-Office365-Filtering-Correlation-Id: c752f727-d047-4abc-ec05-08ddd5d433e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bcct5+RmU7/Xd9UqaCtOnnLTIwbeofMv948H+OR48fpsgBArq57oziz6tGR+?=
- =?us-ascii?Q?AQzGTVGf/l4J/UlKCSD/HTECfyD0IsmCkMdYO/E9y0j3AdC12+5OrwJpi3U9?=
- =?us-ascii?Q?MMSyf+uxmpPQJ3fPtvyd0xXbF4n0qARDvcVv2vHslKc3U/9OeTuoe3f/fXWU?=
- =?us-ascii?Q?AUt961s2cO9ahf3w4s2aKUY2EZ56b6BR5xvu61Vzufp2jYyMH8b7IGSZUBqo?=
- =?us-ascii?Q?Z1frJqwcicFluWHT4md9UwbDvKCCrjcigevQjdBuyGijkBzKBQrHCK0075WK?=
- =?us-ascii?Q?M2ofyw+dAi2e4wDPHjZkzDZW7P3C3R0qqjTaDN8XNGVa7xzMAh2XJ9aRmc8U?=
- =?us-ascii?Q?cZGyFW/K+ZUmEFdQ9zm+CKhROlgUZrZUC/1h3ap4jEOfDfrJ85Iuq2AQww3t?=
- =?us-ascii?Q?sILToaWHDgmkhQGpMl4+pmIJ3tI0lstpC8ozZOgjKEydLFQrEJ30fg1Yiv6P?=
- =?us-ascii?Q?fsVQj4ln4x4glw1JhqJvH0983FEEBO5ZbicBN7D8Iv98k8JXpPZ1PF4QlTab?=
- =?us-ascii?Q?gsCf/aP30438vLg6I9QXxy0RqbO+ztuJ8UZ8pLS7tJrQ3objkC83Sx0W0LWv?=
- =?us-ascii?Q?Nz9W5QMP0r63hKvgXEJ2Sb1EkjW/CIBxV/jU1rZX3yh1BXSBqtUfZDEml3f/?=
- =?us-ascii?Q?RAaRm5uQuaqUsjsbmI32W/AI1PuaYbk7q/120joEFXn40+4SCkoAEyNejGrb?=
- =?us-ascii?Q?YbzSondIOU8fbQo0/BsWSFcELIOSV5T4sHue29KcgRXViNzAKnGf6mpvOzSG?=
- =?us-ascii?Q?TtKMXg3kp8rcrIVtOulu0fKL6o+TPmMk0US4UfRzJB9YPz6VdLlDKT2IR97g?=
- =?us-ascii?Q?DqzmMtI9y2HfCKE48wv7G2ZK8JR2X+iLe3Q+Ga9itRqAhYhs4UqkSlZj/Lp1?=
- =?us-ascii?Q?rjz/jI2KNCYy7u9kSGVlYjXDA7fQY8vwApuYozWKMazXTjq4W9boy46rameW?=
- =?us-ascii?Q?uiVZYX01QD1iOAV9MJBiWy26x3oquoOtfn903H+UabLUlTHN6Q41RnQNog45?=
- =?us-ascii?Q?AYLI1IEc0oZDBmDK2e6m65XKyxzrRBFFEp6Y+QC613Td8oa2sody3hem/9Cy?=
- =?us-ascii?Q?nDlTKXT0xHP3Ryz9PO8UMoWgUjW8E5rQJQbZnWGUT9+A8LAfTGlukzjXYLfH?=
- =?us-ascii?Q?zP9Dn45zR7NzZdD1nQRAhODILhvXEpQobBufZaS/lJcqUBEs/ZcUr7KbKJlR?=
- =?us-ascii?Q?P1LTs1xq+t1Rb1B/UmMI2n6bJVzX7vMpntsMbT6MN+GMTpI/Az1kYlPmoBQ8?=
- =?us-ascii?Q?2HTDRX0U8VeDGFMnSvJmSlK9rs/xFLauD/gKtqyHyVFpznoqyL+UBlxXkQsD?=
- =?us-ascii?Q?1f1DGW1to/3tq1JIWAlh3zEJcQGuFpJ8D0ATYvLR8vc/eDrIRpRNUHrpfc2d?=
- =?us-ascii?Q?qJEpZmedtv88hIu1b7cIxFK8LoCYKu4p/TrdS+3qMJcIk9ykQapjsL+XQYTw?=
- =?us-ascii?Q?CdmIugwcSYk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pqf8UqoUUoJCCOEwuiJ0GaZhuOlgXhyhTZxmIsITfWi+54m8NWNlFOJvGorR?=
- =?us-ascii?Q?u7YUWfyj9GniS9RSEioUhcOWk0tz9OlTakcC0O5osmHt2pCEeRlJ1v9UhUNJ?=
- =?us-ascii?Q?TsC4EZctu/okFzxMKx8J9X3gGBdInGxQwR3FO2Qfls5+Xc7RJJHK5VPjzJNO?=
- =?us-ascii?Q?U16oDFFIEZ5VD22F8g12V9/TRlKJk8g6jOPX41BPWVrKVnFQnGlYQHXhMLoA?=
- =?us-ascii?Q?fpYZzq7Eyp2VQF+aslAgRjzMoNl8FFGRc2AVOspUUlFwhrD5E4E35j2yqCzf?=
- =?us-ascii?Q?DXBWVN2wCQ/dPKkvCqtceCEz8zk+SO835jpmHUl3b71LUNr6k732sw8SrAEK?=
- =?us-ascii?Q?eULDeXtrVociNMYcCMnDYVs5SLUX5EZ1wPrMnSO5rYm1Od7sRPFy/4xp16Cg?=
- =?us-ascii?Q?uzwoaCg+TL+bNn1DiJt9CwCjmcFe8JIXiHGieLOr7rHtkNcV8bpPHVrDHEFt?=
- =?us-ascii?Q?Ri2RhphoruL9dUzzc+Z2CEhah+FSKHKA0vO/lqAXuujEKAn+Wo04rA6NrQQH?=
- =?us-ascii?Q?CD8GwoBbdGEh0942XgX0vcAvgfXUrxOKrQhjBImASkgel2NWT3WqgBawrwAq?=
- =?us-ascii?Q?12yqF4Nau6/vF5HGSptIwo6u8Do/PUXFFuUPx8nBo3TvVVkWuT/zIiYwcdqX?=
- =?us-ascii?Q?ANOFKthaF3hUuOYrKl/FtD68pIZNhJkkmV832MmM6tOt5tkjsAyo3Xiw9OcB?=
- =?us-ascii?Q?hFPwxmkwwp+vwBlWUm/ZZoSwuBL8tfiMqyAiPCIYknQIhUANowd50EmQA4+r?=
- =?us-ascii?Q?ikB9NDvbrttEFqOgtZUQqHqJlhk3Eh5acNkzS0fjR/t+QjYaqtUMfefnbGj2?=
- =?us-ascii?Q?1GFJl2pURQlIIoObXKSr8N4v/6sB2j4u+Ed9OEUOYY2/kl+bXt/JGKM9F4SO?=
- =?us-ascii?Q?janmLkhbGuBJ4CyQjrHd52/AN5IXsi2HtG6XnAMPMbiwZD+25LyIJ0gBFUsg?=
- =?us-ascii?Q?mUogA8l/+11VGIov8Excf+k38i6T0dLPLjyksIw2cMLFn/Ixa0sUL8PkyiZ8?=
- =?us-ascii?Q?M9vfujTzFDnkfos8n6uaoK7chMrJcv4c0oeyfeD1TkOF75vnAOnDOEK9jloT?=
- =?us-ascii?Q?etVcrFCfNak1NoDUMzyowO3nCRW07cit4VXkZgMVu2Hj8sboTK9VRovHRdfL?=
- =?us-ascii?Q?BdIcZ61b9UP2AVseFJzRI8IPDtvxzuLZrnRwLA0I4PkK5Qo1W22ykIx6RNqZ?=
- =?us-ascii?Q?t7T+3x2J4YRAxES8Asj72xnGLShECrAmwkd2J5fe+n6qTRDHAvmkA+Jahi07?=
- =?us-ascii?Q?LR8nFP6gR+k5k/nSw38ldS6ud0kztrMKu4S/I3ZoQc1TpH7IK2C3j2eHHnz5?=
- =?us-ascii?Q?4+xwYklFR7xHP1OFaf9b/BXXB0PxVakwUM9DPECoF4nF6uZ+UXmvagF5mn8x?=
- =?us-ascii?Q?QbiASE+t49yxEfbKvreS1gxOaszZ+jikdjTh0tnYp6DXfkNRWHcRnnD9kyWd?=
- =?us-ascii?Q?2nW6WE9SZ8srx3RYwNsUvoLTpWAI3LEu+lDiZMPbWA6ARF29e9AEQ2CRI+sb?=
- =?us-ascii?Q?ZOGCDwVeHUGPV+bAU1NVB0gKCSse4d/Mqob6W2wkBJEri5xjjlWvfjW5H2aZ?=
- =?us-ascii?Q?hvKSdmHNX8gKsXIaV02dv7zI4QjzfHTvDnCdUZhH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c752f727-d047-4abc-ec05-08ddd5d433e5
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 17:02:33.8069
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mB08rKstu1ecP8uOyH4IbW2bEqOas2dVWr5PI0RuVdSshmj8GA5bN3D7j9uTwKxg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9482
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc: Update the SDCC clock to use
+ shared_floor_ops
+To: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-sdcc_rcg2_shared_ops-v1-1-41f989e8cbb1@oss.qualcomm.com>
+ <bnlnz6nz3eotle2mlhhhk7pmnpw5mjxl4efyvcmgzfwl4vzgg3@4x4og6dlg43n>
+ <c54e8ac4-9753-47bf-af57-47410cee8ed7@oss.qualcomm.com>
+ <d6a2937f-7d63-4f17-a6fb-8632ec4d60c8@oss.qualcomm.com>
+ <db8241b0-1ef3-439e-8d74-a3cb86b610ba@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <db8241b0-1ef3-439e-8d74-a3cb86b610ba@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Vbz3PEp9 c=1 sm=1 tr=0 ts=6894dc46 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+ a=F93HE1ha22ImTei5Bi4A:9 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: JlhOTLS7Xhvq9g-ftd7epeq5YvcHjwzS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfX14D/XQoFxuKN
+ uIo9tTZcZ0AyCTV9VfG38woycNfPa4vqpXs/rINMdy+VEnknoVZjhgWpi8yVRa0qLxI0K7bFQzL
+ 1nXUrADVFi7Xi4hAhJZGujyxN1c3kHzzpHBKOmOPwbFrczR6Vrm+s0wwsYxO3oXsTb9T+1iMJel
+ blFRTO0krcX4foKHe1ht7Abzn/zCcpWtbaYDbPd1ezIvh/MSc7dX7zKz4QGajuVMG3DM118gc0P
+ Fmhp6baheETF119WJUjKaKT4yoRMcNrBryQOY2NtpPLLyIr4Z1ocVJv7SI04vyzWN52eQdchp99
+ B0estNJZ99xuFoS/d+neZR3/q6uO/fsqpi7h78VpnrFj7VaJSqLIV+NvpIMYiB/eVyjr91qCjeD
+ VQI2ZqzH
+X-Proofpoint-GUID: JlhOTLS7Xhvq9g-ftd7epeq5YvcHjwzS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 adultscore=0 suspectscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
 
-On 7 Aug 2025, at 2:49, Baolin Wang wrote:
-
-> On 2025/8/6 10:20, Zi Yan wrote:
->> The helper gathers an folio order statistics of folios within a virtua=
-l
->> address range and checks it against a given order list. It aims to pro=
-vide
->> a more precise folio order check instead of just checking the existenc=
-e of
->> PMD folios.
+On 8/6/25 11:39 AM, Taniya Das wrote:
+> 
+> 
+> On 8/6/2025 3:00 PM, Konrad Dybcio wrote:
+>> On 8/6/25 11:27 AM, Taniya Das wrote:
+>>>
+>>>
+>>> On 8/5/2025 10:52 AM, Dmitry Baryshkov wrote:
+>>>> On Mon, Aug 04, 2025 at 11:59:21PM +0530, Taniya Das wrote:
+>>>>> gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during
+>>>>> boot. This happens due to the floor_ops tries to update the rcg
+>>>>> configuration even if the clock is not enabled.
+>>>>
+>>>> This has been working for other platforms (I see Milos, SAR2130P,
+>>>> SM6375, SC8280XP, SM8550, SM8650 using shared ops, all other platforms
+>>>> seem to use non-shared ops). What's the difference? Should we switch all
+>>>> platforms? Is it related to the hypervisor?
+>>>>
+>>>
+>>> If a set rate is called on a clock before clock enable, the
 >>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->> ---
->>   tools/testing/selftests/mm/vm_util.c | 139 +++++++++++++++++++++++++=
-++
->>   tools/testing/selftests/mm/vm_util.h |   2 +
->>   2 files changed, 141 insertions(+)
+>> Is this something we should just fix up the drivers not to do?
 >>
->> diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/self=
-tests/mm/vm_util.c
->> index 9dafa7669ef9..373621145b2a 100644
->> --- a/tools/testing/selftests/mm/vm_util.c
->> +++ b/tools/testing/selftests/mm/vm_util.c
->> @@ -17,6 +17,12 @@
->>   #define STATUS_FILE_PATH "/proc/self/status"
->>   #define MAX_LINE_LENGTH 500
->>  +#define PGMAP_PRESENT		(1UL << 63)
->> +#define KPF_COMPOUND_HEAD	(1UL << 15)
->> +#define KPF_COMPOUND_TAIL	(1UL << 16)
->> +#define KPF_THP			(1UL << 22)
->> +#define PFN_MASK     ((1UL<<55)-1)
->> +
->>   unsigned int __page_size;
->>   unsigned int __page_shift;
->>  @@ -338,6 +344,139 @@ int detect_hugetlb_page_sizes(size_t sizes[], i=
-nt max)
->>   	return count;
->>   }
->>  +static int get_page_flags(uint64_t vpn, int pagemap_file, int kpagef=
-lags_file,
->> +			  uint64_t *flags)
->> +{
->> +	uint64_t pfn;
->> +	size_t count;
->> +
->> +	count =3D pread(pagemap_file, &pfn, sizeof(pfn),
->> +		      vpn * sizeof(pfn));
->> +
->> +	if (count !=3D sizeof(pfn))
->> +		return -1;
->> +
->> +	/*
->> +	 * Treat non-present page as a page without any flag, so that
->> +	 * gather_folio_orders() just record the current folio order.
->> +	 */
->> +	if (!(pfn & PGMAP_PRESENT)) {
->> +		*flags =3D 0;
->> +		return 0;
->> +	}
->
-> It looks like you can reuse the helper pagemap_get_pfn() in this file?
+> 
+> I do not think CCF has any such limitation where the clock should be
+> enabled and then a clock rate should be invoked. We should handle it
+> gracefully and that is what we have now when the caching capabilities
+> were added in the code. This has been already in our downstream drivers.
 
-Sure.
+Should we do CFG caching on *all* RCGs to avoid having to scratch our
+heads over which ops to use with each clock individually?
 
->
->> +
->> +	count =3D pread(kpageflags_file, flags, sizeof(*flags),
->> +		      (pfn & PFN_MASK) * sizeof(*flags));
->> +
->> +	if (count !=3D sizeof(*flags))
->> +		return -1;
->> +
->> +	return 0;
->> +}
->> +
->> +static int gather_folio_orders(uint64_t vpn_start, size_t nr_pages,
->
-> In this file, other helper functions use userspace virtual address as p=
-arameters, so can we consistently use virtual address for calculations in=
-stead of the 'vpn_start'?
->
+> 
+> We can add the fix to do a check 'clk_hw_is_enabled(hw)' in the normal
+> rcg2_ops/rcg2_floor/ceil_ops as well, then we can use them.
 
-Sure.
+FWIW this is not the first time this issue has popped up..
 
->> +			       int pagemap_file, int kpageflags_file,
->> +			       int orders[], int nr_orders)
->> +{
->> +	uint64_t page_flags =3D 0;
->> +	int cur_order =3D -1;
->> +	uint64_t vpn;
->> +
->> +	if (!pagemap_file || !kpageflags_file)
->> +		return -1;
->> +	if (nr_orders <=3D 0)
->> +		return -1;
->> +
->> +	for (vpn =3D vpn_start; vpn < vpn_start + nr_pages; ) {
->> +		uint64_t next_folio_vpn;
->> +		int status;
->> +
->> +		if (get_page_flags(vpn, pagemap_file, kpageflags_file, &page_flags)=
-)
->> +			return -1;
->> +
->> +		/* all order-0 pages with possible false postive (non folio) */
->> +		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
->> +			orders[0]++;
->> +			vpn++;
->> +			continue;
->> +		}
->> +
->> +		/* skip non thp compound pages */
->> +		if (!(page_flags & KPF_THP)) {
->> +			vpn++;
->> +			continue;
->> +		}
->> +
->> +		/* vpn points to part of a THP at this point */
->> +		if (page_flags & KPF_COMPOUND_HEAD)
->> +			cur_order =3D 1;
->> +		else {
->> +			/* not a head nor a tail in a THP? */
->> +			if (!(page_flags & KPF_COMPOUND_TAIL))
->> +				return -1;
->> +			continue;
->> +		}
->> +
->> +		next_folio_vpn =3D vpn + (1 << cur_order);
->> +
->> +		if (next_folio_vpn >=3D vpn_start + nr_pages)
->> +			break;
->> +
->> +		while (!(status =3D get_page_flags(next_folio_vpn, pagemap_file,
->> +						 kpageflags_file,
->> +						 &page_flags))) {
->> +			/* next compound head page or order-0 page */
->> +			if ((page_flags & KPF_COMPOUND_HEAD) ||
->> +			    !(page_flags & (KPF_COMPOUND_HEAD |
->> +			      KPF_COMPOUND_TAIL))) {
->> +				if (cur_order < nr_orders) {
->> +					orders[cur_order]++;
->> +					cur_order =3D -1;
->> +					vpn =3D next_folio_vpn;
->> +				}
->> +				break;
->> +			}
->> +
->> +			/* not a head nor a tail in a THP? */
->> +			if (!(page_flags & KPF_COMPOUND_TAIL))
->> +				return -1;
->> +
->> +			cur_order++;
->> +			next_folio_vpn =3D vpn + (1 << cur_order);
->> +		}
->> +
->> +		if (status)
->> +			return status;
->> +	}
->> +	if (cur_order > 0 && cur_order < nr_orders)
->> +		orders[cur_order]++;
->> +	return 0;
->> +}
->> +
->> +int check_folio_orders(uint64_t vpn_start, size_t nr_pages, int pagem=
-ap_file,
->> +			int kpageflags_file, int orders[], int nr_orders)
->> +{
->> +	int vpn_orders[nr_orders];
->
-> IIRC, we should avoid using VLA (variable length arrays)?
+I don't remember the details other than what I sent in the thread
 
-OK. I can change it to malloc.
+https://lore.kernel.org/linux-arm-msm/20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org/
 
-Thanks.
-
->
->> +	int status;
->> +	int i;
->> +
->> +	memset(vpn_orders, 0, sizeof(int) * nr_orders);
->> +	status =3D gather_folio_orders(vpn_start, nr_pages, pagemap_file,
->> +				     kpageflags_file, vpn_orders, nr_orders);
->> +	if (status)
->> +		return status;
->> +
->> +	status =3D 0;
->> +	for (i =3D 0; i < nr_orders; i++)
->> +		if (vpn_orders[i] !=3D orders[i]) {
->> +			ksft_print_msg("order %d: expected: %d got %d\n", i,
->> +				       orders[i], vpn_orders[i]);
->> +			status =3D -1;
->> +		}
->> +
->> +	return status;
->> +}
->> +
->>   /* If `ioctls' non-NULL, the allowed ioctls will be returned into th=
-e var */
->>   int uffd_register_with_ioctls(int uffd, void *addr, uint64_t len,
->>   			      bool miss, bool wp, bool minor, uint64_t *ioctls)
->> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/self=
-tests/mm/vm_util.h
->> index b55d1809debc..dee9504a6129 100644
->> --- a/tools/testing/selftests/mm/vm_util.h
->> +++ b/tools/testing/selftests/mm/vm_util.h
->> @@ -85,6 +85,8 @@ bool check_huge_shmem(void *addr, int nr_hpages, uin=
-t64_t hpage_size);
->>   int64_t allocate_transhuge(void *ptr, int pagemap_fd);
->>   unsigned long default_huge_page_size(void);
->>   int detect_hugetlb_page_sizes(size_t sizes[], int max);
->> +int check_folio_orders(uint64_t vpn_start, size_t nr_pages, int pagem=
-ap_file,
->> +			int kpageflags_file, int orders[], int nr_orders);
->>    int uffd_register(int uffd, void *addr, uint64_t len,
->>   		  bool miss, bool wp, bool minor);
-
-
---
-Best Regards,
-Yan, Zi
+Konrad
+> 
+> AFAIK the eMMC framework has this code and this is not limited to drivers.
+> 
 
