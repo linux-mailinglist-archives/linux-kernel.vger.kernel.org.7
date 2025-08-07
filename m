@@ -1,155 +1,133 @@
-Return-Path: <linux-kernel+bounces-759236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFC3B1DACC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:28:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6626B1DACD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD0D3BC380
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547BF626FFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AAB26A1BE;
-	Thu,  7 Aug 2025 15:27:30 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E861269B01;
+	Thu,  7 Aug 2025 15:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBlIVhwW"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642AC79E1;
-	Thu,  7 Aug 2025 15:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AF12686A0
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 15:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754580450; cv=none; b=BQVrvisKcCeqLEfWNX2+UPS7quSj/vOwQ4RSnqHJntH4v2kjQY/b+L7BWdlhsEXiv9ZX5raTS19SEAv4ELx8dnXh3oG7/1+PWMoRQDqAemKG2c/MJzX+qNbErMeuhvEQqlP0Bs3fGVg+HZ7eoFXST+OqdGZWeh2qdJ14xMWgi7c=
+	t=1754580459; cv=none; b=a2AWMJ87epFJkUOwC6tXkOCWnLG2LfiLarUuQrZv7t+66dnE2/5Ivgsi+tU32fEwb3tIpIlKUvhuKFOCUIPncqRlVQAAt2j6n86o0Wb8Q42R7CRTR/mVx7CURD4ennnyHvCaslC8+qKOXXKq5rZ5OcJXWeUfVkUvTcfESq7a5uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754580450; c=relaxed/simple;
-	bh=e/buhj0LH5h7jDHhk7DCXGrKQnZWYDFjzzgWm1lgcSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qvwln7t1QCru8tP2w1mF4YqNoXIGK7+htoawKOiDWsYz215C48vKgaqmLXbVCkA9gb/IoC1VCnGMoATqrS9GGOOV9GcL8FCfpg06TvlzRah0scRaL5UIzXC01KQ/VEAXRTYINwDNT2rQ8qOWuquUifSlE8vkbNZfKpgN8+uP9PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 762211F0004D;
-	Thu,  7 Aug 2025 15:27:18 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id C5607B012C1; Thu,  7 Aug 2025 15:27:14 +0000 (UTC)
-X-Spam-Level: 
-Received: from shepard (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id E09D5B012B0;
-	Thu,  7 Aug 2025 15:27:11 +0000 (UTC)
-Date: Thu, 7 Aug 2025 17:27:09 +0200
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Parthiban Nallathambi <parthiban@linumiz.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 01/22] dt-bindings: iommu: sun50i: remove resets from
- required property
-Message-ID: <aJTFzQP61Kt02gOj@shepard>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-1-13b52f71fb14@linumiz.com>
+	s=arc-20240116; t=1754580459; c=relaxed/simple;
+	bh=HScgKSCvc0aqtEouHRD6nbYXe/fN1pJqDJMEJMjP9bA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TGug4lWVloiMPqyS6JTRz+kSu46zZU65w1wuIHW6jXYBmEvudaQLuFgeB8ftnNhWiiQkC3CVKJBWlwxwENJ5lECFcKzJvCO4t/qTu+CuJ7SnNzAZ7QyRkEd7FH841v7XWo/4LA8BKGdZvaoxLhHR+WtJARwGuNWUyFqD5C+sFD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBlIVhwW; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76c18568e5eso1346407b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 08:27:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754580457; x=1755185257; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DwNT7dW2/m7U6b9mOpn50Hlu8qReyNYgvDKR7CG4bYw=;
+        b=MBlIVhwWZYyIvrsbf7vUKX8y28OVVpd++NnOGzUq0ljXuJNk9SZ9yW4CBToJ+jh4V0
+         vd1rYmCQvZzYLIRdyw+epD9YUu2hiUKaNvarJb/Jkl1cVCBkyouJ7SyeAAvI7MHHNXRs
+         USR//JQu1E/7wejTWOojkt00VcUMpsI764ZuY1vWHJRjzN+/0WVrPDmsfcIhsKGYeNpt
+         bwm/CHrpWmxdY/dA1TEXBg0Igo4S8uoDFhIL8CvbAiIcVNGaQ2c0kKNL1l/dQYvKEhBd
+         zCVuzevDb9LEvErP8jsm0TeG15tJ9MJBahzjTbqDk2IsCOWZOlApaFue6I+jAGv13U0w
+         4SoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754580457; x=1755185257;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DwNT7dW2/m7U6b9mOpn50Hlu8qReyNYgvDKR7CG4bYw=;
+        b=EUYLa4qSHltHk546pQeGWkhVIzTvMTMH2nmE7dKCM6IctQ3ZfqNfRpxH2kORqYuu6V
+         s2MXT1AOw3j9qiOfNgoeWPW8m4pAE3OAeBCY0okXcsWzDXvy4paJK1ubKXWH0RdjnP6g
+         MvY2jocLJuoojjjs5LJt7hJvPcJ9t9MDxBhxuvfO7thnb2ZpXdtY0bwROy6CZ80u8/zn
+         5KVRJW5mCJotcJWsNGiy5f15cdDLVaB/Pp1fTOCaLU71cmywc2yKXzlX4nn8dNmQezDd
+         LkbizhNqwBScIGVyHw+Fyy5cQ5jGgYcQDJrfuKIB8ndG5pohtx142MUl8gK8t6s1w4Gs
+         zZkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkEUrVkLGlPstiO7S6cr4w+/7P+Vo+5eDTRQmKEVpUUAclkl/4SFBSGDqprKWRdo6J7OiurG5b0kcSaBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFVaZpg6ZiR1XKVoXmWPU2YlJgCMH7wok6amWYudlqVPy+0T+v
+	Qfk0aLmidsEp1aiTP7jG34lGdBWVKsuZQ8ZuU2TxgnIm0ZXbwwZfRwwG
+X-Gm-Gg: ASbGncvENYCy4KT3Q5V/b/U4lFrm+mX0RP7Rbzr6QngycmJgH27GtLcG8kjcC9KJkIy
+	3MN9bAC8p7rUlyo+1+1CWAuj3b+NSP+gEOeXz+yQnNpuPN1XObPb/1OhC6pivPMKS2RESDwyws3
+	p4/RprDddGXcZIcSwXwckJ+5b31EFsQdEWk9hLCYNYAzY8+10J33deitll+g+VL6HxvnV8UQvM7
+	5DxsyP8qgKiGUSNSR6cXtmSbm7AGRKGGBAFicBfvlZ7d6qPjSpzl5wLFqVu5cwG8f7vFfygoi4f
+	IU2QJekVXzK4QVuZ8ggTmh3c28zg4DFBQ/D/SmzEWX73JNMdCfaWurIaLAhHG1KjTSlCKw1UW8A
+	SFQRQsp+tk3xY5nNmbcFaYXyveeuWmt8GMiNS1A==
+X-Google-Smtp-Source: AGHT+IHUEMkzIs6sGCBEK7uIhxHW9mD0/IfEBuS7WV3HY9lgjM/Si26KklbYhO8GRSVlZzAmoRamrg==
+X-Received: by 2002:a05:6a20:3946:b0:230:8b26:9d47 with SMTP id adf61e73a8af0-24031252281mr11358527637.10.1754580456487;
+        Thu, 07 Aug 2025 08:27:36 -0700 (PDT)
+Received: from KASONG-MC4 ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f319sm18430540b3a.18.2025.08.07.08.27.32
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 07 Aug 2025 08:27:36 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Chris Li <chrisl@kernel.org>,
+	Barry Song <baohua@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [RFC PATCH 0/3] mm/mincore: clean up swap cache helper and PTL
+Date: Thu,  7 Aug 2025 23:27:17 +0800
+Message-ID: <20250807152720.62032-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.50.1
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NVigExWBuOabMF3V"
-Content-Disposition: inline
-In-Reply-To: <20241227-a133-display-support-v1-1-13b52f71fb14@linumiz.com>
+Content-Transfer-Encoding: 8bit
 
+From: Kairui Song <kasong@tencent.com>
 
---NVigExWBuOabMF3V
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There is a swap cache helper that is only used by mincore. It was
+seperated out from mincore some time ago to be shared with other users,
+but now mincore is the only user again. So it can be easily merged back
+to simplify the code.
 
-Hi Parthiban,
+Patch 1 clean this up, but I'm not very sure about Patch 2 and 3:
 
-On Fri 27 Dec 24, 16:37, Parthiban Nallathambi wrote:
-> iommu in a133/a100 does not have reset control. remove it
-> from required property to make it optional.
->=20
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
-> ---
->  Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.yaml |=
- 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-=
-iommu.yaml b/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-io=
-mmu.yaml
-> index a8409db4a3e3..03176f68485b 100644
-> --- a/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.y=
-aml
-> +++ b/Documentation/devicetree/bindings/iommu/allwinner,sun50i-h6-iommu.y=
-aml
-> @@ -42,7 +42,6 @@ required:
->    - reg
->    - interrupts
->    - clocks
-> -  - resets
+Realizing that the PTL seems only useful for stablizing the swap
+cache space now, by grabbing the swap device before looking up the swap
+cache space (patch 2), we can drop the PTL locking (patch 3).
 
-Since it was previously specified that other platforms do need the reset li=
-ne,
-the required part should be applied conditionally based on the compatible, =
-not
-removed entirely.
+Let me know if I'm missing something. With mmap lock, the mincore result
+should be reliable enough without the PTL.
 
-Also your commit title and message would look better with uppercase first
-letters at the start of a sentence :)
+Kairui Song (3):
+  mm/mincore, swap: consolidate swap cache checking for mincore
+  mm/mincore: use a helper for checking the swap cache
+  mm/mincore: avoid touching the PTL
 
-All the best,
+ mm/mincore.c    | 53 ++++++++++++++++++++++++++++++++++++++-----------
+ mm/swap.h       | 10 ----------
+ mm/swap_state.c | 38 -----------------------------------
+ 3 files changed, 41 insertions(+), 60 deletions(-)
 
-Paul
+-- 
+2.50.1
 
->  additionalProperties: false
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Expert in multimedia, graphics and embedded hardware support with Linux.
-
---NVigExWBuOabMF3V
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmiUxc0ACgkQhP3B6o/u
-lQxePg/+I0antnSk4NZw/II2a+R7vYY846KcFkqe7Hdo6lt9AuNigC7OGCb//F4L
-LW4uXEl9CXkYopR2+NyD02PK1B7Pleojfy82QoqXF9MLE4/KCDSEc73YuNxMUeVc
-R1gbG4msxjFjDMCTofXCuVqFUApxag6j1H6UEgwN7+3bMWtgGIjWnyT5miP9dkYs
-qXTlz9D4Z6FmfYJzGHARhwAUYnbgVFCfCsrJVgvwu33pylJufcK/i3QMy9bdM/Bh
-5fYLCAAu1FVcTBqjVTHjAgSI5ZbQMzISZwxTZlKU/SEb2Mu5ua2rOMDvwvkls10X
-VXyn14xdaleJuWmSOVl4tgvJ28BSR/KkSrzfjx164jP8U530L3IZGKLzAOitm/Wx
-Im40uRt6IF7kFV/oQhB/SEeGaIu+e7c76NmRcDtlIXSi5nv4DH/S7r5eFQ2g9JUT
-r3D9gnBKLch8e/axI1I0nL+ppzFaE8dlxCP29rCpNZQaB3UyaP0EJr6xdLmf+CpH
-ZKQiXypL+YoDAA/g6h+tjIxfirJod7wz6K7iOXJQ+mD4S/NhEV4zbN+Ik3H5ucxc
-jC8amc1AIaO/ozQMPweLX6Uo1+wtlN5PELms4aWobzl+PIHQ//ndLq2jlQ5rRGhT
-VoLcL8+6G9omA96w1h6c/I5I6MT2AikJ8vLqD3qUi+ILP9dZ8W0=
-=yKpA
------END PGP SIGNATURE-----
-
---NVigExWBuOabMF3V--
 
