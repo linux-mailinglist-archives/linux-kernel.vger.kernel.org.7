@@ -1,141 +1,115 @@
-Return-Path: <linux-kernel+bounces-758811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D4AB1D420
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B22EB1D422
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65152189B382
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0719C189C678
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026DA2550D4;
-	Thu,  7 Aug 2025 08:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114932517AF;
+	Thu,  7 Aug 2025 08:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITYlz7R1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRmREYey"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52794246BB7;
-	Thu,  7 Aug 2025 08:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D46230BF6;
+	Thu,  7 Aug 2025 08:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554393; cv=none; b=FYDSyMUcTFjxHFk/3gCDesxWsGvBT4JQtJIL1OR+smVjzGLdV19wqAsoA49cHYbJmTMTH368Sr3vsPFGXz8U4fphOJsTUfse4KPZn7qxhoy5OysW8MT2dUPB1CXhBFWfLTKHmpyjc0FeEGR+gAzr/2no8B8eO1G+j2k7BD9+9/k=
+	t=1754554419; cv=none; b=clyCtH56t1CxSpnBu38Dl68d52x8vRSHCqJSonkFjGtVZr0DouDCMyY/Q4DOSqdQChVdWUodGG6dIIYRU9jNMBsg4jzKJBx+91sQn6nUoRx+ptG15F7FW9Ciz9XcgBSLA9jYKtOxwKr+f18wh3641qqrLI4yP+q9Q8URyidgisU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554393; c=relaxed/simple;
-	bh=A51/Rqu8ChKnnqJyQB7GXr9rO6OuMmU/1Y4g1/PZF04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u9mnCRQrX8X68C6N26hAQ/DckdTWPQL+3m9FFOMbe/ONJ0CNyw8K5A1Von5IlL3KN23QZ60vfnkIQ+boaK8yJVe8KpLPqhXBUvif9BI4hf4YbtJE95FOoUDEZaOq7yJyZ6FISgyrcKE6TmTKHEth58YzlnvOpDj0edVmI+iFFfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITYlz7R1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC76EC4CEEB;
-	Thu,  7 Aug 2025 08:13:09 +0000 (UTC)
+	s=arc-20240116; t=1754554419; c=relaxed/simple;
+	bh=+Yk8Uv86kmMnuO9jGP8i+tVuJCHQl8+S/L2YDuEhcbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uAnMOWok9eQILDpSW9G0c1bgzzKw+TfdtQxI+zqGyPfaF4xvNzg4KJrYmuYzew7ziEiFiLOp2mu0lAFg4xRM4f7Ljg7QHFHD52OOHpFgVJJpyFgjoK8m3bnbAc+WfflMP9ZoKCUiwn+nMmWii8BY4R7RrI1s+gkXewLcf8AYjHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRmREYey; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D980EC4CEEB;
+	Thu,  7 Aug 2025 08:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754554392;
-	bh=A51/Rqu8ChKnnqJyQB7GXr9rO6OuMmU/1Y4g1/PZF04=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ITYlz7R1JNbfGV+hsFTvC+oIYHKQTKsVcN+CTSh231gRIlqYG7zlqdaZkU46+XC5/
-	 AfGpzWy+HLENLFPMgn19axIxHCk6pauDPkETYiyXBJD5QtZxjpocTcC50aeWEhbyWr
-	 UZhTIDhx7W3Azi2r1i9jymX+MjRIaMhQky41LiYRPO6tjA9iSlHUoe2OHoDX+jQcq8
-	 I0Sfb+6VmL4E260BtVsdY94BDqSoI7oeQ6hsy0xqi2rVvkgdUIRePmFTEcvymHKMsc
-	 gik6yBvAtLWDkeXMekyC/ZFJRwVtw5sSm5t5LSAKEbcx9E7SQm4eE/H+zfv6RHXe5S
-	 WH2YDY1K8d7cA==
-Message-ID: <24a5ac33-945b-4861-ac0b-94eaa647e893@kernel.org>
-Date: Thu, 7 Aug 2025 10:13:07 +0200
+	s=k20201202; t=1754554418;
+	bh=+Yk8Uv86kmMnuO9jGP8i+tVuJCHQl8+S/L2YDuEhcbU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kRmREYeyX2Dw/YxLAYuW6hDZsumaWUl7aun8zWo25iRfwGiIJxr3hQc2Oa/avmXXC
+	 f13aXmi6f2E5Y/GmyOgOvj3hh9+qU5QPQhW2I7rjSwq/4nLqu1CFgnwaJZRYO0vF4G
+	 fufNisxvQTKKRLuUARoSsKBHmZSY2SbLwukEoA6Qj4VqUI9EvqjfR+5BhINpkAcymv
+	 3zmnQKvKVxWsbJvWhfhhR4owbjZ5fxvqzgZM5cSI7wgHpkceNLsmh7LPga4uRekBFA
+	 hjNLuD+5CW/W/NOBD7T9MXyAQ4QP/TJSv62lts9AtMITaE1kOrvu+YEtEMJ+5AK5C8
+	 HaqeJoP2OsDUw==
+Date: Thu, 7 Aug 2025 13:43:33 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Vivek.Pernamitta@quicinc.com, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vivek Pernamitta <quic_vpernami@quicinc.com>
+Subject: Re: [PATCH v2 2/5] bus: mhi: host: pci_generic: Read
+ SUBSYSTEM_VENDOR_ID for VF's to check status
+Message-ID: <tynmkh4isrbi473zh6t4kd5bswrthxy3garhgpzafq6n2wrmqk@rfanfjgciyqv>
+References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
+ <20250710-sriov_vdev_next-20250630-v2-2-4bd862b822e8@quicinc.com>
+ <luaoyvwqp3fpvqgybhstnnrutn46ry3tyfxw2launvnxzfvyqo@pdfdpfocfq6k>
+ <1c79cda0-2645-4f88-a05f-9082e305fad4@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] MAINTAINERS: Add entry for Sitronix ST7920 driver
-To: Iker Pedrosa <ikerpedrosam@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org
-References: <20250806-st7920-v1-0-64ab5a34f9a0@gmail.com>
- <20250806-st7920-v1-3-64ab5a34f9a0@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250806-st7920-v1-3-64ab5a34f9a0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c79cda0-2645-4f88-a05f-9082e305fad4@oss.qualcomm.com>
 
-On 06/08/2025 14:48, Iker Pedrosa wrote:
-> Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
-
-Missing commit msg or just squash it with patch #2.
-
-> ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
+On Thu, Aug 07, 2025 at 12:39:26PM GMT, Krishna Chaitanya Chundru wrote:
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5ddf37f0acc960039422ef988cadfa7176972fc5..79b8a277e38b55ebcff05450d6c565c0d87c6b51 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7861,6 +7861,13 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
->  F:	Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
->  F:	drivers/gpu/drm/sitronix/st7735r.c
->  
-> +DRM DRIVER FOR SITRONIX ST7920 LCD DISPLAYS
-> +M:	Iker Pedrosa <ikerpedrosam@gmail.com>
-> +S:	Maintained
-> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> 
+> On 8/6/2025 10:29 PM, Manivannan Sadhasivam wrote:
+> > On Thu, Jul 10, 2025 at 02:28:33PM GMT, Vivek.Pernamitta@quicinc.com wrote:
+> > > From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> > > 
+> > > In SRIOV enabled devices, the VF DEVICE/VENDOR ID register returns FFFFh
+> > > when read (PCIe SRIOV spec-3.4.1.1). Therefore, read the PCIe
+> > > SUBSYSTEM_VENDOR_ID to check if the device is active.
+> > > 
+> > > Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> > > Reviewed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > > ---
+> > >   drivers/bus/mhi/host/pci_generic.c | 6 ++++--
+> > >   1 file changed, 4 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> > > index 7d0ac1c34ddf95ace2a85e5f08884f51604d9b0f..4bafe93b56c54e2b091786e7fcd68a36c8247b8e 100644
+> > > --- a/drivers/bus/mhi/host/pci_generic.c
+> > > +++ b/drivers/bus/mhi/host/pci_generic.c
+> > > @@ -1025,8 +1025,10 @@ static bool mhi_pci_is_alive(struct mhi_controller *mhi_cntrl)
+> > >   	struct pci_dev *pdev = to_pci_dev(mhi_cntrl->cntrl_dev);
+> > >   	u16 vendor = 0;
+> > > -	if (pci_read_config_word(pdev, PCI_VENDOR_ID, &vendor))
+> > > -		return false;
+> > > +	if (pdev->is_virtfn)
+> > > +		pci_read_config_word(pdev, PCI_SUBSYSTEM_VENDOR_ID, &vendor);
+> > > +	else
+> > > +		pci_read_config_word(pdev, PCI_VENDOR_ID, &vendor);
+> > 
+> > You should not read the sub Vendor ID for VF. PCIe spec suggests reading the PF
+> > Vendor ID for VF. So you should just use pci_physfn() API as below:
+> > 
+> > 	pci_read_config_word(pci_physfn(pdev), PCI_VENDOR_ID, &vendor);
+> > 
+> > This will work for both PF and VF.
+> > 
+> This will defeat the purpose of having health check monitor for VF,
+> as we are always reading PF vendor ID and will not know VF status at all.
 
+Do we really have a usecase to perform health check for VFs? Health check is
+supposed to happen for devices that can fail abruptly.
 
-Drop, unless you have commit rights there. Parent entry already covers
-this, doesn't it?
+- Mani
 
-Best regards,
-Krzysztof
+-- 
+மணிவண்ணன் சதாசிவம்
 
