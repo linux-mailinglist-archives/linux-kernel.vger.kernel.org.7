@@ -1,142 +1,160 @@
-Return-Path: <linux-kernel+bounces-759175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E236B1D99A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:03:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98443B1D972
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAD061AA4F9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E3717C8F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07262609E3;
-	Thu,  7 Aug 2025 14:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B9325DAE7;
+	Thu,  7 Aug 2025 13:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="sTDPq+Ke"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QwSs7cDe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE9725D536;
-	Thu,  7 Aug 2025 14:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722FF1EB5B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754575397; cv=none; b=FS3CLPm5nYpuCxKGQ7uDxLH4xQlWJmy3W13C5oB90M6HndxjTdKbSmriOdXXeFyG8FXJCL5Da7CDxENEgRIz84WUPACA/5NmR3JlhMDhgLotLfnNjgt094FvoQuI4RExInp5lvuIt2vnVwca3RPqn5a3/JKNujcCykQFqoKlLeg=
+	t=1754574902; cv=none; b=p6z3B2grsyfyOTR5zKews2s1Vy8anSLjDcWxKq1DBzTKtHWv5lY7RpipO3WJx9+393BKhatFcskGtNEf1GGgqkP+Ol/IcsIzfcCzXQO0t+dvHLeLm6zNwNXB2iYrksoN5NA/iQ0BLHPmqQVa9cfy9GuLJo4kryPQ6ddYVZhhvfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754575397; c=relaxed/simple;
-	bh=bjEiiI161dYTrY0Cw3+ZZGVoX2NnHUSvIH1QPcitc9w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N6Lm6nmTyJXwz9u5uuemdRKmtcReykE0s//C2TeM1IS+9KnY55c22tOLpFqUgaSOKoeGb916uT/gtDGlvTPOBJ2pCwFgn8v5cL4kL+7bdOh/q+h6gRmosi1fp2faVVqH6l3ThCi49eSJi0oeDdnLHCi2GxK6hwWutoSucUWakcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=sTDPq+Ke; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 59F64A037B;
-	Thu,  7 Aug 2025 16:03:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=H0mVJmCWOicg9EcBRx/NfEzNMf28ZNNzr0DbLGreYW8=; b=
-	sTDPq+KeRzVhg8O8HZh3s+/CBi+XOgzUpJh3dvxLrDj+Zepd0UBhtKG5UhaE5gEq
-	EGTNtMdmWUeCbvzjfmJaM7s6vru4SeO24VeAncROkyH0f2ashTFdZMmUGY1ybR1a
-	3dmA1Cw4q3hyrNnR9yJSAV+N7TYlh+6tnYM7G1bHa7skl0l081x223l5HcMtS9Sc
-	YYqLeyzCsaqFOpJj8s8VKFm7acYeArpWdh5CuNCh+I2IJJwmU9cjpZkNLlx8C+Kf
-	trjs0kEyUBWstsRT47V4N2pOuE1j4rBpFcMcE1V9nr3lFg8+0NwyNZJipQ/WCV6I
-	ZzTLfnXIW/cyK4AcAxKETlnlM13q4/0IHrQspKYfDvQ6RG9yKp25c1yDUodv1duP
-	Eib+g65a9x/wP+xSS4rcTMwiEsaupZNkyfHxwiWAw1tJg1cJHjLu23uLs7/ArPPl
-	vPxe+3+AJfkUHylTxZG9hN2fvacPXWJlbx0GBdHEd2Ld2elQ9mmZ2bt4UhDHNSLE
-	O1nx6rr05auXZyAPSyqYUyLIAl+JplGAbXf//RGyBwOoNKLhWi/8HyaKE+FoyW0Q
-	D/G3FIfOMiHVsBtizDiQ8pFtC8fr4otul9ve1tL8ZKr7kOkxStMf9gUzmrZ3BEuJ
-	PTPWW4g9GzzMx/eOJDt2M/6QQcmb58BEWcIWxsvr+sQ=
-From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-To: Rob Herring <robh@kernel.org>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, "David S. Miller" <davem@davemloft.net>, "Sergei
- Shtylyov" <sergei.shtylyov@cogentembedded.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Buday Csaba <buday.csaba@prolan.hu>, Andrew Lunn <andrew@lunn.ch>,
-	=?UTF-8?q?Cs=C3=B3k=C3=A1s=20Bence?= <csokas.bence@prolan.hu>, "Heiner
- Kallweit" <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>
-Subject: [PATCH net v2] net: mdiobus: release reset_gpio in mdiobus_unregister_device()
-Date: Thu, 7 Aug 2025 15:54:49 +0200
-Message-ID: <20250807135449.254254-2-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754574902; c=relaxed/simple;
+	bh=UU8/KLeMTZ3w3Iejl4Ec88LM3lsV+Um+Hl9MdDeZPjg=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=n42ZwViDm+FLe5vo1kgFNC6EipvGlqDY2BF/DuzU2dnYH6QQ006Za7gA7MbA0WX3yfXWwbnERGjAuDNb+ToNCToYJ4rMVp2dUqBdBhgSnE3yM6c9ZkKOQuFd6JDCrtLPBA0XprbDf8gU16hLJ+COZpGjsV8YVff8O8BBiQF0Oos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QwSs7cDe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754574899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5kXOrDwud7Md4kmVdYmDM5WejfgJDxWgdDUd88NMt5g=;
+	b=QwSs7cDerEKaxiDtK47SDSSyl3pJ1JysBKZKiruZ73l9Dkh6gErI0S6KECWFRoNTKpsBN9
+	QiniNaHk7kSEvym2vKpv326+19MUnvbTxpS2x+Z6h5EVqt+TfZtLmEG9LvlH/0RwwGo973
+	qR3mb1uCvHjXZxAzcReRntMvnYNM09c=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-wVrt40ufPqWG20i6q_bzyA-1; Thu, 07 Aug 2025 09:54:58 -0400
+X-MC-Unique: wVrt40ufPqWG20i6q_bzyA-1
+X-Mimecast-MFC-AGG-ID: wVrt40ufPqWG20i6q_bzyA_1754574898
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e81a449767aso1426792276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:54:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754574898; x=1755179698;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5kXOrDwud7Md4kmVdYmDM5WejfgJDxWgdDUd88NMt5g=;
+        b=Ia61QFfUTzoFTxiK+AgxP08W6NSOhOPHV+33/3x3kdKG3BuIBKmv7Hb1/+seDcdEn9
+         cuMy7/EykB7KUVeSdGhukA09EcusH9VYwRmQEX0npOH07ebXfkt1C0e9b+NK+wJiB2VO
+         Z7n/piWbrJQunxH5VFbtIIwdwRf1RPc32cBo5JA044p5hILfPqa1jLcaa4lUAkx+GZXx
+         DbLw3O9C+T8dSFFk3DJbzjFIQpneGVWuWHGnlwtUMDWTBBqmh+4pYZY+5BOXtONAIO4v
+         QD+TdLwMtjcG//83Xzqq4JsdStgfz7Xh655omA2hR+2JHT4Sbc1LIWw8EkhvMYHZwy4A
+         0nAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZbdiX0azrYhY4hn7EQ3meNuOf4ElgT+1sW+X5VMWC7kZ4kj/tcwMcygyEaET7mtcZs71p0+HpkmE4HvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydpbu7GXrRbKYVhEQkdphw4MQzAK5tm/uHy6jQwlJHuJNnTLcU
+	vXI45pQ99pmXawWiDyfP63dyz71/PcNzikCjBA6gXgJRS2g8uOsWa8mk9YnvW6ZGH9qlCGAIgJm
+	OjP9i/wYu2Pd6rtexhbxVnDtftqEbdCYidkwJvupAm1MtlYT8UioeZWRjr6U+oRWyJw==
+X-Gm-Gg: ASbGncv8UsU1hUu/pZJzlIKmP2WHHhRjL1K/qHFp3jUpbQdnAH3e4CTr1hfoNJIF4ti
+	U1NMzBPz2zyBkL9mdYsUeER2uWh4JwrLQB8ioXkJpMm10IOHzK7zQ2M5+YzbRsfV0JGJqUdNHpt
+	ZxNxWw0rftV1+7tSXijKvss1h8+2rRAsh17+iGhentPXzbu1XZHVDu2/bCRWf8GKGjqRZMGRcdu
+	maP4ys19sttW9fzr7Fj8iRJwnII3usMnnldIdvpzup0QphiUlvvVkdhepml3pgzMuDKyEBPy+q8
+	FhFCRdhNVby97LganM3KwyrG4ubnlA2AVNLrGbgJB8iiysVGBmIweGFHljH4guii7RJf0aY0hS9
+	z6X634mtOrQ==
+X-Received: by 2002:a05:6902:1883:b0:e90:493b:e26f with SMTP id 3f1490d57ef6-e90493be49amr1979276.11.1754574897540;
+        Thu, 07 Aug 2025 06:54:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhRLkUfURwG4WxqUpYTdWhMDZBK3/LXfHl0BbaQSACa+y2FwwxgrzOaoIU2pQxVH9TQQVp6A==
+X-Received: by 2002:a05:6902:1883:b0:e90:493b:e26f with SMTP id 3f1490d57ef6-e90493be49amr1950276.11.1754574897036;
+        Thu, 07 Aug 2025 06:54:57 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8fd3860a9csm6495969276.28.2025.08.07.06.54.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 06:54:55 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <2870d179-a2db-44ee-9183-11efe446ebd9@redhat.com>
+Date: Thu, 7 Aug 2025 09:54:54 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1754575389;VERSION=7995;MC=2460790112;ID=765739;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515E667361
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] cgroup/cpuset.c: Fix a partition error with CPU
+ hotplug
+To: Chen Ridong <chenridong@huaweicloud.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>
+References: <20250806172430.1155133-1-longman@redhat.com>
+ <20250806172430.1155133-3-longman@redhat.com>
+ <38800495-464f-4bbf-b605-9a6b8d2b4c11@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <38800495-464f-4bbf-b605-9a6b8d2b4c11@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Buday Csaba <buday.csaba@prolan.hu>
+On 8/6/25 10:44 PM, Chen Ridong wrote:
+>
+> On 2025/8/7 1:24, Waiman Long wrote:
+>> It was found during testing that an invalid leaf partition with an
+>> empty effective exclusive CPU list can become a valid empty partition
+>> with no CPU afer an offline/online operation of an unrelated CPU. An
+>> empty partition root is allowed in the special case that it has no
+>> task in its cgroup and has distributed out all its CPUs to its child
+>> partitions. That is certainly not the case here.
+>>
+>> The problem is in the cpumask_subsets() test in the hotplug case
+>> (update with no new mask) of update_parent_effective_cpumask() as it
+>> also returns true if the effective exclusive CPU list is empty. Fix that
+>> by addding the cpumask_empty() test to root out this exception case.
+>> Also add the cpumask_empty() test in cpuset_hotplug_update_tasks()
+>> to avoid calling update_parent_effective_cpumask() for this special case.
+>>
+>> Fixes: 0c7f293efc87 ("cgroup/cpuset: Add cpuset.cpus.exclusive.effective for v2")
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 7 ++++---
+>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index bf149246e001..d993e058a663 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1843,7 +1843,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>>   			if (is_partition_valid(cs))
+>>   				adding = cpumask_and(tmp->addmask,
+>>   						xcpus, parent->effective_xcpus);
+>> -		} else if (is_partition_invalid(cs) &&
+>> +		} else if (is_partition_invalid(cs) && !cpumask_empty(xcpus) &&
+>>   			   cpumask_subset(xcpus, parent->effective_xcpus)) {
+>>   			struct cgroup_subsys_state *css;
+>>   			struct cpuset *child;
+> This path looks good to me.
+>
+> However, I found the update_parent_effective_cpumask function a bit difficult to follow due to its
+> complexity.
+>
+> To improve readability, could we refactor the partcmd_enable, partcmd_disable, partcmd_update and
+> partcmd_invalidate logic into separate, well-defined function blocks?  I'd be happy to take
+> ownership of this refactoring work if you agree with the approach.
 
-reset_gpio is claimed in mdiobus_register_device(), but it is not
-released in mdiobus_unregister_device(). It is instead only
-released when the whole MDIO bus is unregistered.
-When a device uses the reset_gpio property, it becomes impossible
-to unregister it and register it again, because the GPIO remains
-claimed.
-This patch resolves that issue.
+I agree that the code can be a bit hard to read. You are more than 
+welcome to improve the readability of the code if you have time.
 
-Fixes: bafbdd527d56 ("phylib: Add device reset GPIO support") # see notes
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Cc: Csókás Bence <csokas.bence@prolan.hu>
-[ csokas.bence: Resolve rebase conflict and clarify msg ]
-Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
----
-
-Notes:
-    Changes in v2:
-    * Rebase onto net-next (from 6.12)
-    * Clarify msg after talking with Csaba in person
-    * Collect Andrew's tag
-    
-    Link to v1:
-    https://lore.kernel.org/all/20250709133222.48802-3-buday.csaba@prolan.hu/
-    
-    Note to stable@:
-    * for 6.12 and before, the above v1 patch can be used.
-
- drivers/net/phy/mdio_bus.c          | 1 +
- drivers/net/phy/mdio_bus_provider.c | 3 ---
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index fda2e27c1810..cad6ed3aa10b 100644
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -91,6 +91,7 @@ int mdiobus_unregister_device(struct mdio_device *mdiodev)
- 	if (mdiodev->bus->mdio_map[mdiodev->addr] != mdiodev)
- 		return -EINVAL;
- 
-+	gpiod_put(mdiodev->reset_gpio);
- 	reset_control_put(mdiodev->reset_ctrl);
- 
- 	mdiodev->bus->mdio_map[mdiodev->addr] = NULL;
-diff --git a/drivers/net/phy/mdio_bus_provider.c b/drivers/net/phy/mdio_bus_provider.c
-index 48dc4bf85125..f43973e73ea3 100644
---- a/drivers/net/phy/mdio_bus_provider.c
-+++ b/drivers/net/phy/mdio_bus_provider.c
-@@ -443,9 +443,6 @@ void mdiobus_unregister(struct mii_bus *bus)
- 		if (!mdiodev)
- 			continue;
- 
--		if (mdiodev->reset_gpio)
--			gpiod_put(mdiodev->reset_gpio);
--
- 		mdiodev->device_remove(mdiodev);
- 		mdiodev->device_free(mdiodev);
- 	}
-
-base-commit: d9104cec3e8fe4b458b74709853231385779001f
--- 
-2.43.0
-
+Cheers,
+Longman
 
 
