@@ -1,165 +1,162 @@
-Return-Path: <linux-kernel+bounces-759251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9193CB1DB00
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:49:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F7AB1DB02
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 540BB7B34EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:47:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C657258EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CF5262FE4;
-	Thu,  7 Aug 2025 15:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0277B262FE6;
+	Thu,  7 Aug 2025 15:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WFIrEp9B"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z4NT5Pr+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vPXmgSTM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEA11C5D72;
-	Thu,  7 Aug 2025 15:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E200F2528F7
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 15:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754581733; cv=none; b=opy0MyqifwWzuO2fy4Ep1Wrmniub1rvwdvcwCPaC2knefr/17etDmCeB8udBI7vpWoeIxNFxvkRwiTlb8yyxMHewcs92t3gA2pvKY0lMgQvfkA1RoM3j2+HImD8a0V7/9oqphLVMJDzY9fkGh+kEap/qXC9vm6XcNDCPYQsIqSc=
+	t=1754581776; cv=none; b=LW96N4lvxJFjROdG7+hCC0JbSgt7JSPgsRwHVlwwhA+1QjdHgTzeS4TQ/lfzyJ1KgVPcUoOYAMwVy/4QWVMoHhL6fJ0DYWjxeS/cQXTtnR7uVVslXDien1NIP1vr0/ZUZQKjOUe8hnA1TCGf9wy6xX7nZPSsciSC3uVbRuEHmx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754581733; c=relaxed/simple;
-	bh=t2isChxoZmZHcVZWs0H8jL1QOW+h0x2ii/7YPK7/tqQ=;
+	s=arc-20240116; t=1754581776; c=relaxed/simple;
+	bh=WFr/gKTSVj67oOJqXVUcwXdGsZmIexqWWRTJaCEIZWQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXtEWlZvmZXATSq0B/xf2m3IGxDcU4vkWxs6mJbAfms0x0wHSR4A+PAILei47v+FaNC9KaCWTilmPwQg3vKHZDpVnRM53asZyxCoQqIkYFJKyWwnFATsnkpHhtO32QPlHwolW4pQeLcKQc5WFKUv6VTOsPLHB5tJIbLDZf1MGQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WFIrEp9B; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754581730; x=1786117730;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t2isChxoZmZHcVZWs0H8jL1QOW+h0x2ii/7YPK7/tqQ=;
-  b=WFIrEp9Bwy9S/5y66vDklufZD8AXvVoO2UiHcFylh7ZU18y16JKsB5i0
-   b+FRkxw5s67hYts9o6Pcxz2Dbbi4W+gCyk3XSwBrJnEbQcvogOSjVn0dP
-   JuBqwzR+Po2GF+iQZGCUg7KJgP+dJ4dpDHW472d0aqLB7NV1yg1q0So1Q
-   8G9Zpw5YIayAgdfY94hXXwmVahhKzxGe72EUyD0dowObsQ3KBufvuGTtX
-   NEbfG69L0jzUEwv/Y0RkIAuSbH25/ezhUhVj3UFpUyw4VMWjApeceTf47
-   +QyrGO+yNVo1DdXJV0HBTX+IFZJ2qv31A261CyXPx+dznr7WTOTVmoT/r
-   Q==;
-X-CSE-ConnectionGUID: KMCCa7RaR9+vtvFgaQ6heA==
-X-CSE-MsgGUID: Ua2hOEIkQtWUzvZIet7DTQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="60767582"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="60767582"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 08:48:50 -0700
-X-CSE-ConnectionGUID: BY5hG06OTfOL7QAQywpv+Q==
-X-CSE-MsgGUID: +Sf8aCMDT/OsviQNwBC+Dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="170353220"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 07 Aug 2025 08:48:48 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uk2rF-0002vu-1n;
-	Thu, 07 Aug 2025 15:48:45 +0000
-Date: Thu, 7 Aug 2025 23:48:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Denis Benato <benato.denis96@gmail.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
-	mario.limonciello@amd.com, "Luke D . Jones" <luke@ljones.dev>,
-	Denis Benato <benato.denis96@gmail.com>
-Subject: Re: [PATCH v10 2/8] platform/x86: asus-armoury: move existing
- tunings to asus-armoury module
-Message-ID: <202508072334.8n7nwIG3-lkp@intel.com>
-References: <20250806135319.1205762-3-benato.denis96@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WJip5H1tdHGf0SgzJxF/UdkOyaeDPBjX5uHHnMY6/qv2B1xmjJtUd1Gg+yaFHfssBMWj2m75j7fpVurLallSLfCN8ysmOkX6BciaaBvPu/79OYlqfTKF8NjkJU/D0ek6dRrlb6jDJsFeycN1amHW9cQi4pWn2Ee5SNVw1gwDXjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z4NT5Pr+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vPXmgSTM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 7 Aug 2025 17:49:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754581771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vg0fBlM3Xy11uHUlRTsjiMCsXySl1087EGrPp8lXIgs=;
+	b=z4NT5Pr+POZMDa7h9M8qlxJI7SNC3HpqdprM3QxpGyRpAX5VVi8374th8xYTu2bJ7Bs8zM
+	Xxk+n7ii9XZU41onLagxy0/EiAmF2JKIOlLcHG9r39WMyAvuhCqx9l08Gvc5rJp2da3pvh
+	DXlATTe06kHzeQZTaFYzKNIPQ8ibFZHUBRXJ78c+6Kn8YwKvYMDieqicn1eIUlzO7HxVVS
+	o2gW/lHEqN/G1Zb16kJ9qWxW3g6FmGT+dBWn6+Yz5QbS1hO2W/FNWRe1auPtCswcv76bD1
+	4Lc+AcWyKHHCG7qEq7Mv+Zlm5HCGXe1U76t2DJXEUa+1UT+kp9NCL69u4MBc3Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754581771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vg0fBlM3Xy11uHUlRTsjiMCsXySl1087EGrPp8lXIgs=;
+	b=vPXmgSTMGNbjPVtJ5B3I0zacsObwq9fvm7SWNhbov1n6ndz+gZQ8sfm62ujxnt32CRRNYc
+	0cPlS/rfMQocACDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Prakash Sangappa <prakash.sangappa@oracle.com>,
+	linux-kernel@vger.kernel.org, peterz@infradead.org,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	kprateek.nayak@amd.com, vineethr@linux.ibm.com
+Subject: Re: [PATCH V7 01/11] sched: Scheduler time slice extension
+Message-ID: <20250807154929.4Wpr6V4N@linutronix.de>
+References: <20250724161625.2360309-2-prakash.sangappa@oracle.com>
+ <87ms8cchqf.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250806135319.1205762-3-benato.denis96@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87ms8cchqf.ffs@tglx>
 
-Hi Denis,
+On 2025-08-06 22:34:00 [+0200], Thomas Gleixner wrote:
+> On Thu, Jul 24 2025 at 16:16, Prakash Sangappa wrote:
+>=20
+> The obvious way to solve both issues is to clear NEED_RESCHED when
+> the delay is granted and then do in syscall_enter_from_user_mode_work()
+>=20
+>         rseq_delay_sys_enter()
+>         {
+>              if (unlikely(current->rseq_delay_resched =3D=3D GRANTED)) {
+> 		    set_tsk_need_resched(current);
+>                     schedule();
+>              }      =20
+>         }     =09
+>=20
+> No?
+>=20
+> It's debatable whether the schedule() there is necessary. Removing it
+> would allow the task to either complete the syscall and reschedule on
+> exit to user space or go to sleep in the syscall. But that's a trivial
+> detail.
 
-kernel test robot noticed the following build warnings:
+Either schedule() or setting NEED_RESCHED is enough.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.16 next-20250807]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> The important point is that the NEED_RESCHED semantics stay sane and the
+> problem is solved right on the next syscall entry.
+>=20
+=E2=80=A6
+> > +static inline bool rseq_delay_resched(unsigned long ti_work)
+> > +{
+> > +	if (!IS_ENABLED(CONFIG_RSEQ_RESCHED_DELAY))
+> > +		return false;
+> > +
+> > +	if (unlikely(current->rseq_delay_resched !=3D RSEQ_RESCHED_DELAY_PROB=
+E))
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Denis-Benato/platform-x86-asus-wmi-export-symbols-used-for-read-write-WMI/20250806-215748
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250806135319.1205762-3-benato.denis96%40gmail.com
-patch subject: [PATCH v10 2/8] platform/x86: asus-armoury: move existing tunings to asus-armoury module
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250807/202508072334.8n7nwIG3-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508072334.8n7nwIG3-lkp@intel.com/reproduce)
+The functions and the task_struct member field share the same.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508072334.8n7nwIG3-lkp@intel.com/
+> > +		return false;
+>=20
+> Why unlikely? The majority of applications do not use this.
+>=20
+> > +
+> > +	if (!(ti_work & (_TIF_NEED_RESCHED|_TIF_NEED_RESCHED_LAZY)))
+> > +		return false;
+>=20
+> The caller already established that one of these flags is set, no?
 
-All warnings (new ones prefixed by >>):
+correct, and if they are set, this never gets to false.
 
-   In file included from drivers/platform/x86/asus-armoury.c:28:
->> include/linux/platform_data/x86/asus-wmi.h:199:35: warning: 'asus_use_hid_led_dmi_ids' defined but not used [-Wunused-const-variable=]
-     199 | static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+> > +	if (__rseq_delay_resched()) {
+> > +		clear_tsk_need_resched(current);
+>=20
+> Why has this to be inline and is not done in __rseq_delay_resched()?
 
+A SCHED_OTHER wake up sets _TIF_NEED_RESCHED_LAZY so
+clear_tsk_need_resched() will revoke this granting an extension.
 
-vim +/asus_use_hid_led_dmi_ids +199 include/linux/platform_data/x86/asus-wmi.h
+The RT/DL wake up will set _TIF_NEED_RESCHED and
+clear_tsk_need_resched() will also clear it. However this one
+additionally sets set_preempt_need_resched() so the next preempt
+disable/ enable combo will lead to a scheduling event. A remote wakeup
+will trigger an IPI (scheduler_ipi()) which also does
+set_preempt_need_resched().
 
-ffb6ce7086ee2d Daniel Drake  2018-10-09  196  
-a720dee5e03923 Luke D. Jones 2024-07-13  197  /* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
-9d3b02ad9b1d1f Luke D. Jones 2025-08-06  198  #if IS_REACHABLE(CONFIG_ASUS_WMI) || IS_REACHABLE(CONFIG_HID_ASUS)
-a720dee5e03923 Luke D. Jones 2024-07-13 @199  static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
-a720dee5e03923 Luke D. Jones 2024-07-13  200  	{
-a720dee5e03923 Luke D. Jones 2024-07-13  201  		.matches = {
-a720dee5e03923 Luke D. Jones 2024-07-13  202  			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
-a720dee5e03923 Luke D. Jones 2024-07-13  203  		},
-a720dee5e03923 Luke D. Jones 2024-07-13  204  	},
-a720dee5e03923 Luke D. Jones 2024-07-13  205  	{
-a720dee5e03923 Luke D. Jones 2024-07-13  206  		.matches = {
-a720dee5e03923 Luke D. Jones 2024-07-13  207  			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
-a720dee5e03923 Luke D. Jones 2024-07-13  208  		},
-a720dee5e03923 Luke D. Jones 2024-07-13  209  	},
-a720dee5e03923 Luke D. Jones 2024-07-13  210  	{
-a720dee5e03923 Luke D. Jones 2024-07-13  211  		.matches = {
-a720dee5e03923 Luke D. Jones 2024-07-13  212  			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
-a720dee5e03923 Luke D. Jones 2024-07-13  213  		},
-a720dee5e03923 Luke D. Jones 2024-07-13  214  	},
-53078a736fbc60 Luke D. Jones 2025-01-11  215  	{
-53078a736fbc60 Luke D. Jones 2025-01-11  216  		.matches = {
-53078a736fbc60 Luke D. Jones 2025-01-11  217  			DMI_MATCH(DMI_PRODUCT_FAMILY, "ProArt P16"),
-53078a736fbc60 Luke D. Jones 2025-01-11  218  		},
-53078a736fbc60 Luke D. Jones 2025-01-11  219  	},
-a720dee5e03923 Luke D. Jones 2024-07-13  220  	{
-a720dee5e03923 Luke D. Jones 2024-07-13  221  		.matches = {
-a720dee5e03923 Luke D. Jones 2024-07-13  222  			DMI_MATCH(DMI_BOARD_NAME, "GA403U"),
-a720dee5e03923 Luke D. Jones 2024-07-13  223  		},
-a720dee5e03923 Luke D. Jones 2024-07-13  224  	},
-a720dee5e03923 Luke D. Jones 2024-07-13  225  	{
-a720dee5e03923 Luke D. Jones 2024-07-13  226  		.matches = {
-a720dee5e03923 Luke D. Jones 2024-07-13  227  			DMI_MATCH(DMI_BOARD_NAME, "GU605M"),
-a720dee5e03923 Luke D. Jones 2024-07-13  228  		},
-a720dee5e03923 Luke D. Jones 2024-07-13  229  	},
-a720dee5e03923 Luke D. Jones 2024-07-13  230  	{
-a720dee5e03923 Luke D. Jones 2024-07-13  231  		.matches = {
-a720dee5e03923 Luke D. Jones 2024-07-13  232  			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
-a720dee5e03923 Luke D. Jones 2024-07-13  233  		},
-a720dee5e03923 Luke D. Jones 2024-07-13  234  	},
-a720dee5e03923 Luke D. Jones 2024-07-13  235  	{ },
-a720dee5e03923 Luke D. Jones 2024-07-13  236  };
-9d3b02ad9b1d1f Luke D. Jones 2025-08-06  237  #endif
-a720dee5e03923 Luke D. Jones 2024-07-13  238  
+If I understand this correct then a RT/DL wake up while the task is in
+kernel-mode should lead to a scheduling event assuming we pass a
+spinlock_t (ignoring the irq argument).
+Should the task be in user-mode then we return to user mode with the TIF
+flag cleared and the NEED-RESCHED flag folded into the preemption
+counter.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I am once again asking to limit this to _TIF_NEED_RESCHED_LAZY.
+
+> > +		return true;
+> > +	}
+> > +	return false;
+>=20
+
+=E2=80=A6
+
+> Thanks,
+>=20
+>         tglx
+
+Sebastian
 
