@@ -1,116 +1,107 @@
-Return-Path: <linux-kernel+bounces-758914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920CDB1D588
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:11:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C40B1D58C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4955E722F1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:11:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E98C58113F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0568925F963;
-	Thu,  7 Aug 2025 10:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEF6230BF6;
+	Thu,  7 Aug 2025 10:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvmgJ6zf"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SmtBxUV7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B470D22C35D
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED5C1DF759
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754561497; cv=none; b=cM9YnuL1KRrS+uD2e62yi5tcwDpTv8JPnVK5SCoxYri8YfRrtI4M1DUVz+nyespOEq2zwIz2oJwBXfG/AJiEx2qFstId6xCeJgzT9XDPzNKKxmKchY5aFcythO897c1x6QTPQgvG6LOblOy8dt91v2jf+2qa9Ytt9JZbXuXCWPQ=
+	t=1754561590; cv=none; b=d6EO81kpxd7Y9cQL/gSc2fOE061SvhtBPuNCRxZ7h6CaYRFMvXaREySSMk2yk3JzNY2gWoQ3DSoppeORrJskF7g/bMN+LadT5GRrkUNYg8YIyxtfLDeOjbB6If0HMKe8hL4AoJKsiUeYeCgIeYfHhYEyGI5SAJqtvamrz2zQOUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754561497; c=relaxed/simple;
-	bh=O6Y8cVOuHgA/hdqV1bgBIn4O/CUwlnYyFlCzNIDIYM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ToX8/kjN3764OXzP9jR3qSgiAv/6OYYg50A+xZgm4nDko3cXX4AGmcf2nvARYjjllXHEN3wH3QL3HrgBmSXmFQRBHLI2n0dwN/KGA4WmOAyNGjMMIOqZG/PZsfAFEghFmQC0c1CyKNDIq69rHAeCVhG3C6JikKiBOlhnIFS6LJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvmgJ6zf; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so6606195e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 03:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754561494; x=1755166294; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UCEOeQAX58eFRpMAP8AQskjLHPoD1JzG7voJikyFC+Y=;
-        b=gvmgJ6zfWuydL4/n/O1WHIY/Pk2l40OgMcfVxiEJEC3vX3ObpnQ6Tw5HZdpB2Bqbxa
-         A3rxPcTOIUq6GBQMCjw7VdOlikB5h6tXxPMAV7LPL7UDcPPip4r0FxjsMAZ0D0U+VQ8Q
-         B4k4po9JxcIfgvM01w+dYCZCO57I8WxlgmCaFdRdC48lmHwh831qn7RhORvTB1lyHsoe
-         e2BPA9PLYjen6Z/ZYUIfi0lHxfzvBVW5N2nvNrMitbVe08SFrFQWdg5U2fM45HNqS4Cs
-         HylUpQvW6iyMZ3dYwxXGrYyUu9xPrlrnDLvB1LPQNI8JL/4jl1wouSILsnrQn9mJYf8H
-         15og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754561494; x=1755166294;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UCEOeQAX58eFRpMAP8AQskjLHPoD1JzG7voJikyFC+Y=;
-        b=vph5H/ZWeNag+/3UyvIN1Zwmc/3kkGpClC6UHKspJYe1gzyxS+020ZpddayP2P9F61
-         Ntaym0iijstUvMAavl5Fjk4UzfbNZm1/a2eiUYBDD9h8nyCeJtq+dH9hW7jlkGQDGBN9
-         SS087GNeFfJ48NsIcQ5h6VafXPImeEA0ZbDGIt5WKT74TLzeWtZyhHeQVgradhyxhi4d
-         7nSlSj2DR5hWPEyqge1sIzytOd3/lv9NPQQjsk6ZNCE0lkyIE6IXtrHj0PCNRU3URi81
-         97ad1EA+GurY6LgOLFyFPSx6F+uIpj9BaOauaQPJPOMIkcEiJ65BUXI9FolaqN29nWkG
-         FCKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxaBZDkpOhIm5yRfCf11dFI5EvOIvG+TGahEzmP0O+ZO5uXe4nmWhKWPRAsUnXeh1E221KXmBE7Z5bdD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzamQHQjodIziFgWfbyVCXSBPAp00vcoJlz3LlV9ehkjrXAD5es
-	3oQ5TzEna11NkaOzgSLXUWLG2MhtwFKy0hA8xg8zUHEI+WEIMl+SPzKOG5gvm78M40Y=
-X-Gm-Gg: ASbGnctpfU3db/Zj1EBP2EtDdN2w4leFM27lhUi14Ig7Km4tugl0GEbPiUjXse9BGn2
-	yzhE1CTa+jlzsHAvZ6hgcCFSQsjRYZrvc4pixxlqHSqBTgxw2deFkxsmjKTSPnCN5gutticdzlG
-	SoCDnYBVjk6h4z6blA6pjeBaqpp33IWi0EVDPSsTihAlGclN8ZzT9693DhOgU7mP5Z1ArKLNUb7
-	ae2Izxl8nwhLTMqknn0LcPlYfxuQXzv1o9fiAS3Zajq6ezKgEA33HGYe178lS8bikq5APCnWbh3
-	99H6K+8+HGHNE3NWBgpRXFSkeFwsoTjg6bQtZ5mlGCP1kC5e7x+K5NWPbHLyidz5m+aQYg3BYxX
-	ShXu50sgWXaTMG5GyjX/UFFxJBlJNT8y7Q4OkWFRrzLJ4p0ZP4TBWtWg6me35Z+Q=
-X-Google-Smtp-Source: AGHT+IHhek7qLMtG/D0lLB216ukv1XprlpVNWNYygMd7NFMy48jfNMcwOJb/6mt3RoRrKwpkALkG4w==
-X-Received: by 2002:a05:600c:4f4e:b0:459:e06b:afbd with SMTP id 5b1f17b1804b1-459e74b6367mr50737565e9.29.1754561493918;
-        Thu, 07 Aug 2025 03:11:33 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e9464f46sm12001442f8f.19.2025.08.07.03.11.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 03:11:33 -0700 (PDT)
-Message-ID: <40d543e4-e53d-4289-9b87-5ca8c0139bbb@linaro.org>
-Date: Thu, 7 Aug 2025 11:11:31 +0100
+	s=arc-20240116; t=1754561590; c=relaxed/simple;
+	bh=CPopPMj8LioWRHIyzGaFGr8Mw1L+UeJSVDEyIKNC7HI=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=LkNPPE0zIoxFj9cDRoPtZGHQ2Cyl0Kg+/lEjqOKHaFyaSrBWeXvHzeeVUxllQBmIwn6Ws6idhmmZf2yw9j9505ND7sGvQJz2YuO6etGFzbCuOTTITjO/0uYH+RSFHxQLHpCAW29VNHXfOufRy60v+AYFvXK3FVMlgq6IWLHA6TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SmtBxUV7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754561587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6s2qakK1H83v7JhO0KIXmutVDDo4HtQJtj7wpDCCMpc=;
+	b=SmtBxUV7yePzCqEDq8yYgcfvBFoN7eXyy75iRqWUGQAVh8yliQTFGjWJqw48Xq7Z81bp1F
+	aeOfRius3ixYnuJehPLyC5Lreaf8p4AVNTzX15+duEiJDGe1rkYZSjU6NCinZTAdQbJQJO
+	+d8jD1XfyzUONZ0AvMbv9FM7BpmeRRY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-1-zWALXjYdMTmhEIpmzFinXw-1; Thu,
+ 07 Aug 2025 06:13:02 -0400
+X-MC-Unique: zWALXjYdMTmhEIpmzFinXw-1
+X-Mimecast-MFC-AGG-ID: zWALXjYdMTmhEIpmzFinXw_1754561580
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED5D319560AD;
+	Thu,  7 Aug 2025 10:12:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.17])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1A8A93001477;
+	Thu,  7 Aug 2025 10:12:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1b3e0ed3-35c5-46ce-932d-02de9ba17ab6@samba.org>
+References: <1b3e0ed3-35c5-46ce-932d-02de9ba17ab6@samba.org> <20250806203705.2560493-1-dhowells@redhat.com> <20250806203705.2560493-17-dhowells@redhat.com>
+To: Stefan Metzmacher <metze@samba.org>
+Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
+    Paulo Alcantara <pc@manguebit.org>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Wang Zhaolong <wangzhaolong@huaweicloud.com>,
+    Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org,
+    linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 16/31] cifs: Rewrite base TCP transmission
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/7] media: venus: core: Add qcm2290 DT compatible and
- resource data
-To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- quic_dikshita@quicinc.com, quic_vgarodia@quicinc.com,
- konradybcio@kernel.org, krzk+dt@kernel.org, mchehab@kernel.org,
- conor+dt@kernel.org, andersson@kernel.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com>
- <20250805064430.782201-6-jorge.ramirez@oss.qualcomm.com>
- <4chbcvub4scnv4jxjaagbswl74tz4ygovn3vhktfodakysbgy3@kukktkwd2zsr>
- <aJHgh8mon9auOHzi@trex> <ce9cf017-5447-457c-9579-700782f9f0c2@linaro.org>
- <aJRMUzF0GN2LFIZd@trex>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <aJRMUzF0GN2LFIZd@trex>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2577279.1754561571.1@warthog.procyon.org.uk>
+Date: Thu, 07 Aug 2025 11:12:51 +0100
+Message-ID: <2577280.1754561571@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 07/08/2025 07:48, Jorge Ramirez wrote:
->> There's not alot of value to the user in that configuration.
-> I dont know the user base but when I originally did the code (v7) I was
-> thinking about security conscious users (signed firmwares) who might not
-> be able to switch to the new fw release so easily (unnaccessible key
-> management and updates).
+Stefan Metzmacher <metze@samba.org> wrote:
 
-Since the driver for the LITE hasn't been upstreamed the # of users must 
-be ... zero
+> > + if (server->noblocksnd)
+> > + smb_msg->msg_flags = MSG_DONTWAIT + MSG_NOSIGNAL;
+> > + else
+> > + smb_msg->msg_flags = MSG_NOSIGNAL;
+> > + smb_msg->msg_flags = MSG_SPLICE_PAGES;
+> > +
+> 
+> I guess you want '|=' instead of '=' in all 3 lines?
 
----
-bod
+Well on the third line.  msg_flags is 0 on entry to the function.
+
+> I also think msghdr should be setup in the caller completely
+> or it should be a local variable in smb_sendmsg() and the caller
+> only passes struct iov_iter.
+
+Yeah, makes sense.
+
+David
+
 
