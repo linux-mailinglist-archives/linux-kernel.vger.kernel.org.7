@@ -1,151 +1,123 @@
-Return-Path: <linux-kernel+bounces-759496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26CF5B1DE36
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:25:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF857B1DE40
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048BE18A2085
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B393AAA47
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8FA239567;
-	Thu,  7 Aug 2025 20:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16E5244697;
+	Thu,  7 Aug 2025 20:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lod1zMqF"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IOLqSjqH"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A34221765E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 20:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A514723C51D;
+	Thu,  7 Aug 2025 20:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754598012; cv=none; b=JkfuVmijsJ2oMRPYgdTNwsxcImIXWk6rTj0PY3e6e+FyLH11j/OtQFfqBKdjEIIgNaFnnwVjMaFvAaP0GfW1XHLZtffCCCTudjVWhUqxyNm8DJtnuakQGHVbblgFO0RL0jI6qTYc7ccVLtLcVOFAIGBIo6Ts/trBpkyMTikhUD8=
+	t=1754598113; cv=none; b=DrWIfRWU646JFF8cUVgLGwXewxiW2KrjSiLaa810g+y2QKNuQmkrrWHcA6RiWiPsqbR/MQ0tcNQUVVahgwkHzHzwXsAtW5wjxs1OjlCXeizwL44IfD5to3fmzyZAgHiLb/QjoKXSZ2Ih4XAfHrRF4IZqYZa9iRb2lKC3NDw+ANo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754598012; c=relaxed/simple;
-	bh=y4Je+uCw4PjgwpynM6o+m6QzQjMA4HULEA4ADOsYgv0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WlUU8AV0oEti4K8Zd9JV9g8JoXxYCdY0CiSQONxFt2FAHaMAq3gZQbauf1tyreArBMy2tvpz0IoJby1tM6no4AwGR3DN35WE57g07taXZf6hm/0fUR7y7n7t3MyYBAoEHCQzpuIb9qFs1XVRKncyrWaligb3L0/Mq02GLj+fKro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lod1zMqF; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4aaf43cbbdcso21051cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 13:20:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754598009; x=1755202809; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B1njzRZRI0yuxaZu+3pXAmpwVjNQUojJP+cqDBoYOMo=;
-        b=Lod1zMqFzSWd87CGcbdII1lg9ADrYScbc75jb/7JkBD48vhAnYfHr9F2DfNQRwmfkB
-         wJOdQuNmMA3Jhiu+3LUBV6ALmSCAHA7Tgcc3HcxTmPNn+RLp8dr+nD1lwzpHfULWjvSJ
-         JwlxqW9pv/tKaNrCOBrQel376iV6+9gKR2QATq/N5c1fH5nis4EHFZ+2genjhPfrF25N
-         QZ1kC1W8WI/fa5FRfEis5Wd2kb8/G2b8MYiKBQZfS0Kn8ssZY3fqr/shLxgfaTcGSzNh
-         DomqELjt1RsZpY74IFPKXpTVh+gT6guQH4qpKWmzyRK8b0/NiY2WEiSZadksoxin4pRM
-         D2Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754598009; x=1755202809;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B1njzRZRI0yuxaZu+3pXAmpwVjNQUojJP+cqDBoYOMo=;
-        b=IQ0/0dSU3nPMYVu7cZdqzZXUh+XcCEJdHJH5uIy9eRYdvRwd7H7cmCKEcPEMEQxO/F
-         YO8WM7bUki2W3WKoxU7jyDFanmlsU/3J4rlXi3/7JRpkjeID3Nb1Ec/k6OlDce5hAyph
-         TVuEgnxwv/GFAGnNnVwSO+DQd8JJTYHt/PCIpzLoxtCGH5HEvaknc7+2qex/+YfhuiAS
-         XsFicrI/aDEK9Jx2d+U/DMRW8+zFBZxEQrPL5eF6PyzOs8vZNQiYSv1SQkOabIeFGW3M
-         6FHGD9Licp8t1qCh9aOtsR318cs2nrWVa0qAlg+aniLaUAS/GVEZISogmOBXpm+LG8oU
-         xNXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXifrwRHM3IAT5xRvcayGSNFjVFsLYeloNc6vFNRp2K21vZ28QB20JrZT0Mk/8VFPuQQ5t2JH+bzFsy4vc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjQJUB8BHjl/LL08TWJkyXkgLNgi/+YuqAERy+C6ivtFB7fQQQ
-	tRu2tBEuFxxXGGTh2CwTeInQ4b/LnK6kqxHzrpuSQg6yhbrrCee2RXk8RuS99x+kBcDmtPqFfLJ
-	irPH/Hjr91Apn3x9pZRCXBeTdD3X09uofkZfVKjDp
-X-Gm-Gg: ASbGnctmLMmR+aLkn7mKNk3xU5RuhQQPv/26n/eFoqgTWpNfLMT4dtm/uvwKLVjJDtX
-	TatI0x/pRKxCOgt8X7GugwEv7ZsHPyXkkJXt6f6Q8FBeJ1CzPkDg/uSQoI99iskR4U+Wu79I43w
-	8YlvJwoGgZ0s9jtwUqcrrOYkLJQs6HdOE3TgQMUZbQrLL6nS6JjW8JQ4/WHtgWrsv19594Fkr6z
-	qIYLEFL5H4OkCtPHRwk0W7FcEagLhMmbpzOpqIb
-X-Google-Smtp-Source: AGHT+IG5ycJ5Q52QFJSqxl/YemOAi2b5Lxu6OTbgyP5z84bzVWLUjQSVs1bZvuqtq7Om/J7u6tqoa91cHop/0QJeevI=
-X-Received: by 2002:ac8:5d10:0:b0:4a9:e17a:6287 with SMTP id
- d75a77b69052e-4b0af24d8c7mr863411cf.7.1754598008591; Thu, 07 Aug 2025
- 13:20:08 -0700 (PDT)
+	s=arc-20240116; t=1754598113; c=relaxed/simple;
+	bh=I2rrN3Y0hd3DDIX5ZrPwcQ/5ZGpRZ9QYaIzsdOTkcb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVwrIeap8lIav02guvemtzDSt7i8vnd+bPe+4G8UYQV2GQL56AMCTsdEMlfiNnBK/S1+2NU8kPJZwga12BPDyQ3QzCVRfpTCfs/EVX6CrivHsBnz/5okw6qOIuaL5uJ56r/neEVESGqvtJBM8fSbnUcGhwNyTZ6DwJijbeK/DLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IOLqSjqH; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 15C8544369;
+	Thu,  7 Aug 2025 20:21:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754598106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fzalCYw2na9KY0FHYqIxf5tZkPW5UaHRqpyCgMjgDrw=;
+	b=IOLqSjqHHqPAdp5okV+hl1oKaLuNgpO+acKT+QM81kpigrRHjMJQ6UR3b7D8+YbqcaflDt
+	SVwYKdzWrF5U+Wan6+YShaU5nt/CiScFCtOc1eARVUbtZBjAuqJfwaMfIv7+vW/QWd82lL
+	/FSSgSYw/HPQNQmLIpeAn5HoMf62pbSHVnrfgg927QGV08mWtHM/ettyIFAliwTq3eax2F
+	wV2rbCz2dMDfMnr01CJ6aUALct3MEO4IoiKR/BY8kUzShR5QvywM953XwekjCEvx5lj7/+
+	osIKx9fwxg3iYnfFINvVAx9harzSb7jbmU809D219yh/OoSGz3dss21be7fv0A==
+Date: Thu, 7 Aug 2025 22:21:42 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>, Frank Li <Frank.Li@nxp.com>,
+	Jorge Marques <jorge.marques@analog.com>,
+	linux-i3c@lists.infradead.org
+Subject: Re: [PATCH] i3c: remove 'const' from FIFO helpers
+Message-ID: <2025080720214218750df5@mail.local>
+References: <20250807043456.1624-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250613191359.35078-1-sagis@google.com> <20250613191359.35078-6-sagis@google.com>
- <aH62f9X25LHuUx8n@iweiny-mobl> <CAAhR5DEQ9QWfdzO1yCuFzYjju+Q=pDGbcYyRWFmA_6tc8A4LNA@mail.gmail.com>
- <68922612d9712_1923952949e@iweiny-mobl.notmuch>
-In-Reply-To: <68922612d9712_1923952949e@iweiny-mobl.notmuch>
-From: Sagi Shahar <sagis@google.com>
-Date: Thu, 7 Aug 2025 15:19:56 -0500
-X-Gm-Features: Ac12FXx0v8U4YOXtP8smuLJE-WItrOpjqXG-rvcfjA7uQFOCAuFZGv2_OLJKm3M
-Message-ID: <CAAhR5DGLnEdWzQEEuQcH202BT_GiqU-aQWM9Zcnh0QF=YSjmWQ@mail.gmail.com>
-Subject: Re: [PATCH v7 05/30] KVM: selftests: Update kvm_init_vm_address_properties()
- for TDX
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807043456.1624-2-wsa+renesas@sang-engineering.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvddukeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepkedurddvvddtrdelfedrudegleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeekuddrvddvtddrleefrddugeelpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeejpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkv
+ ghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhpsehinhhtvghlrdgtohhmpdhrtghpthhtohephfhrrghnkhdrnfhisehngihprdgtohhmpdhrtghpthhtohepjhhorhhgvgdrmhgrrhhquhgvshesrghnrghlohhgrdgtohhmpdhrtghpthhtoheplhhinhhugidqiheftgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Aug 5, 2025 at 10:39=E2=80=AFAM Ira Weiny <ira.weiny@intel.com> wro=
-te:
->
-> Sagi Shahar wrote:
-> > On Mon, Jul 21, 2025 at 4:51=E2=80=AFPM Ira Weiny <ira.weiny@intel.com>=
- wrote:
-> > >
-> > > On Fri, Jun 13, 2025 at 12:13:32PM -0700, Sagi Shahar wrote:
-> > > > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > > >
-> > >
-> > > [snip]
-> > >
-> > > >
-> > > > diff --git a/tools/testing/selftests/kvm/lib/x86/processor.c b/tool=
-s/testing/selftests/kvm/lib/x86/processor.c
-> > > > index d082d429e127..d9f4ecd6ffbc 100644
-> > > > --- a/tools/testing/selftests/kvm/lib/x86/processor.c
-> > > > +++ b/tools/testing/selftests/kvm/lib/x86/processor.c
-> > > > @@ -1166,10 +1166,19 @@ void kvm_get_cpu_address_width(unsigned int=
- *pa_bits, unsigned int *va_bits)
-> > > >
-> > > >  void kvm_init_vm_address_properties(struct kvm_vm *vm)
-> > > >  {
-> > > > +     uint32_t gpa_bits =3D kvm_cpu_property(X86_PROPERTY_GUEST_MAX=
-_PHY_ADDR)
-> > >
-> > > This fails to compile.
-> >
-> > Looks like it's a simple case of missing semicolon at the end of the
-> > line, it builds fine if you add it.
->
-> Yea.
->
-> > I can update it in the next
-> > version.
->
-> When do you expect this to be updated?
+On 07/08/2025 06:31:24+0200, Wolfram Sang wrote:
+> As buildbot reports, some architectures do not want const pointers.
+> 
+> Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508070438.TZZA3f2S-lkp@intel.com/
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> I still wonder why SPARC discards the const but since nobody seems to be
+> commenting on that, I guess the fastest way to get the build error out
+> of Linus' tree is to adapt the usage in I3C.
+> 
 
-I just sent out v8 of the patches.
->
-> It would be nice to see this land soon such that we don't have to keep
-> carrying these patches out of tree.
->
-> Would it help if I review this series?  I thought it was relatively well
-> reviewed.  But given the above simple mistake perhaps it needs more
-> review?
+My plan was to let sparc people handle their mess, there is no reason
+const should be discarded.
 
-If you can review v8 that would be great.
->
-> Ira
+>  drivers/i3c/internals.h | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
+> index 0d857cc68cc5..2b0b9c3a9131 100644
+> --- a/drivers/i3c/internals.h
+> +++ b/drivers/i3c/internals.h
+> @@ -30,8 +30,7 @@ void i3c_dev_free_ibi_locked(struct i3c_dev_desc *dev);
+>   * @buf: Pointer to the data bytes to write
+>   * @nbytes: Number of bytes to write
+>   */
+> -static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
+> -				   int nbytes)
+> +static inline void i3c_writel_fifo(void __iomem *addr, void *buf, int nbytes)
+>  {
+>  	writesl(addr, buf, nbytes / 4);
+>  	if (nbytes & 3) {
+> @@ -48,8 +47,7 @@ static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
+>   * @buf: Pointer to the buffer to store read bytes
+>   * @nbytes: Number of bytes to read
+>   */
+> -static inline void i3c_readl_fifo(const void __iomem *addr, void *buf,
+> -				  int nbytes)
+> +static inline void i3c_readl_fifo(void __iomem *addr, void *buf, int nbytes)
+>  {
+>  	readsl(addr, buf, nbytes / 4);
+>  	if (nbytes & 3) {
+> -- 
+> 2.47.2
+> 
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
