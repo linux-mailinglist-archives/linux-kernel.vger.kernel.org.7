@@ -1,68 +1,62 @@
-Return-Path: <linux-kernel+bounces-759512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319AAB1DE80
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:53:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8D5B1DE81
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A661AA52A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:53:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841C91AA5342
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB58237708;
-	Thu,  7 Aug 2025 20:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BFF238152;
+	Thu,  7 Aug 2025 20:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YD1KCJDA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IUugfyB2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40491FDD;
-	Thu,  7 Aug 2025 20:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3D023496F;
+	Thu,  7 Aug 2025 20:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754599992; cv=none; b=Lsf2CWNMDSn2I0a4EFzOKV/pL+OKDYebbeCR6HgRDGKZ9vdeJfyhJsNGIsucpOZAw8Q+6ZXI6AlUqVlALtCmmbS2W6sWn/cjvzYqbqfMUb9dOOW4w49eb5swxpzgCg1aBxdOp9CAZubZcaSAcNa+IvnLqLdVSu9Cmj8UVIxg5cI=
+	t=1754600020; cv=none; b=lGzsVC6c0mpytBZDditTzX6ZzqO4rb02G4czQBZuWfXw+QhBy7jqooyb+qPXljmflu0klUovmmgl21GoNwq3tR6pA5uF95AsErLON1GvTdjwxx9fzrgrJR7XKGuf0z6bvjvlgTyQHsnpoO2S38Q3t/WfFqvxfjOUPSH8kC+ZF/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754599992; c=relaxed/simple;
-	bh=eEXKk+I5tcJfGdMDXMtI2opCtm6L4e5pQiFvbhVEGIg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Aya7sFBIvX7lS60JBwuUaKXicD4x0nqKdQmlsyRWilymK3TXv6/zL2QJvPEksrHZLj7wNMT7VqwAV6M312aXJH3FuEd1MI36v0n/ZAQCVMf+BInz4RRL8zPoEkm3sbaIlVhmI57D9nxnOBTBVT0qDeLghgOdEvh0vNnhvSeVC2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YD1KCJDA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB75BC4CEEB;
-	Thu,  7 Aug 2025 20:53:07 +0000 (UTC)
+	s=arc-20240116; t=1754600020; c=relaxed/simple;
+	bh=kH4x0nQoHGXsfTEQ8cxUERLnGeheUD+EOH3nHe3Tqik=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BHeRXab1PSIwAWDXRbbw3WaAteVLDEFQNtTU29SrSXrOZ0rblylO/00Mpjeo8c7Du/5Ys8S+4IPTEiZR7QkpLow2cKwwvMxJN5BViUS4MURVWddbGpGKnO4TLbQCDHp8ECU5R3natHk1YLnJgEmHv8C9429NRI6MjsOX4PKfL9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IUugfyB2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ACEAC4CEEB;
+	Thu,  7 Aug 2025 20:53:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754599991;
-	bh=eEXKk+I5tcJfGdMDXMtI2opCtm6L4e5pQiFvbhVEGIg=;
+	s=k20201202; t=1754600019;
+	bh=kH4x0nQoHGXsfTEQ8cxUERLnGeheUD+EOH3nHe3Tqik=;
 	h=From:To:Cc:Subject:Date:From;
-	b=YD1KCJDAp/afwmcAIXaDAe+TcWH+rKH/N+MWNtUKeAkI8XBwfq8FgWIbqX4f4ExGR
-	 G2sn1c7exZ1BQVApQGsRD46319pTu4w8uxdw4W+MUbYiPCYPsST7rkHS2b943o/Eqy
-	 VQW7p4aQBQUT/SvMG5rThh7dpBvC0FOHsSjD4sR9xgy3DssE0CBpwWkYmypatyHbI6
-	 Ed5ojaPLOZ9UK5sIB8aME66LydmX6tUf/6/tCV/9NmPTgZcgg3ocfmSdhLpHdHIPFH
-	 L3vC1T5CXyGoBtf8Bvhacpo0+2IoyJcDbYMc9UlExO3JAdPDJaa5Kkb9SkgHXrrl7O
-	 lQLmhLehB4otg==
+	b=IUugfyB2m8tC+SLUvsNqA13Q+SVSQHfPYz61cTwNMOPAcg3XDy/sPnC6eXD1B3yd1
+	 ATYg8XP3h1V+3paXgNAhoKdn4XEwthWb0Eego+C23gmjBb0LpeZ88qgKpp+iI5BtNL
+	 1wX1oDxB+oCb8/I8/igN78CYG39OE8qJf03HRySdgtaXNf9ls+nEKXaNMPIpiJNpDY
+	 mn4Omh8rWyIFd8qANu8k/ZWRdzt/wZo9AnKWw4CZaKmlOA9l7Knxb093vliPGo2lsn
+	 n/MPZ07N4hm2daxAxKuWwi8t6RWp8oSR3qBnKEmFjHYIwgCw+XCz+TN+I53N6jNvk6
+	 ecaavF4ycEJdA==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Felix Fietkau <nbd@nbd.name>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+To: Bill Metzenthen <billm@melbpc.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
 	Nathan Chancellor <nathan@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
 	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	Bill Wendling <morbo@google.com>,
 	Justin Stitt <justinstitt@google.com>,
-	Peter Chiu <chui-hao.chiu@mediatek.com>,
-	Bo Jiao <Bo.Jiao@mediatek.com>,
-	Howard Hsu <howard-yh.hsu@mediatek.com>,
-	linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
 	llvm@lists.linux.dev
-Subject: [PATCH] mt76: avoid uninitialized skb data
-Date: Thu,  7 Aug 2025 22:52:57 +0200
-Message-Id: <20250807205305.88394-1-arnd@kernel.org>
+Subject: [PATCH] x86: math-emu: fix div_Xsig prototype
+Date: Thu,  7 Aug 2025 22:53:28 +0200
+Message-Id: <20250807205334.123231-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,72 +68,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Two functions in the mt7996 driver cause a clang-21 build warning because
-the pass uninitialized data into skb_put_data:
+The third argument of div_Xsig() is the output of the division, but is marked
+'const', which means the compiler is not expecting it to be updated and may
+generate bad code around the call. clang-21 now warns about the pattern since
+an uninitialized variable is passed into two 'const' arguments by reference:
 
-drivers/net/wireless/mediatek/mt76/mt7996/mcu.c:1894:21: error: variable 'hdr' is uninitialized when passed as a const pointer argument here [-Werror,-Wuninitialized-const-pointer]
- 1894 |         skb_put_data(skb, &hdr, sizeof(hdr));
-      |                            ^~~
-drivers/net/wireless/mediatek/mt76/mt7996/mcu.c:3386:21: error: variable 'hdr' is uninitialized when passed as a const pointer argument here [-Werror,-Wuninitialized-const-pointer]
- 3386 |         skb_put_data(skb, &hdr, sizeof(hdr));
-      |                            ^~~
+arch/x86/math-emu/poly_atan.c:93:28: error: variable 'argSignif' is uninitialized when passed as a const pointer argument here [-Werror,-Wuninitialized-const-pointer]
+   93 |         div_Xsig(&Numer, &Denom, &argSignif);
+      |                                   ^~~~~~~~~
+arch/x86/math-emu/poly_l2.c:195:29: error: variable 'argSignif' is uninitialized when passed as a const pointer argument here [-Werror,-Wuninitialized-const-pointer]
+  195 |                 div_Xsig(&Numer, &Denom, &argSignif);
+      |                                           ^~~~~~~~~
 
-Remove the otherwise unused variables and instead use skb_put_zero() instead
-to fill the header with zeroes.
+The implementation is in assembly, so the problem has gone unnoticed since the
+code was added in the linux-1.1 days. Remove the 'const' marker here.
 
+Fixes: e19a1bdb835c ("Import 1.1.38")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ arch/x86/math-emu/poly.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-index 3593fd40c51b..6a00df3c5343 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
-@@ -1880,18 +1880,17 @@ int mt7996_mcu_set_fixed_rate_ctrl(struct mt7996_dev *dev,
- 				   void *data, u16 version)
- {
- 	struct ra_fixed_rate *req;
--	struct uni_header hdr;
- 	struct sk_buff *skb;
- 	struct tlv *tlv;
- 	int len;
+diff --git a/arch/x86/math-emu/poly.h b/arch/x86/math-emu/poly.h
+index fc1c887ca073..654bfe4e29a0 100644
+--- a/arch/x86/math-emu/poly.h
++++ b/arch/x86/math-emu/poly.h
+@@ -39,7 +39,7 @@ asmlinkage void mul_Xsig_Xsig(Xsig *dest, const Xsig *mult);
+ asmlinkage void shr_Xsig(Xsig *, const int n);
+ asmlinkage int round_Xsig(Xsig *);
+ asmlinkage int norm_Xsig(Xsig *);
+-asmlinkage void div_Xsig(Xsig *x1, const Xsig *x2, const Xsig *dest);
++asmlinkage void div_Xsig(Xsig *x1, const Xsig *x2, Xsig *dest);
  
--	len = sizeof(hdr) + sizeof(*req);
-+	len = sizeof(struct uni_header) + sizeof(*req);
- 
- 	skb = mt76_mcu_msg_alloc(&dev->mt76, NULL, len);
- 	if (!skb)
- 		return -ENOMEM;
- 
--	skb_put_data(skb, &hdr, sizeof(hdr));
-+	skb_put_zero(skb, sizeof(struct uni_header));
- 
- 	tlv = mt7996_mcu_add_uni_tlv(skb, UNI_RA_FIXED_RATE, sizeof(*req));
- 	req = (struct ra_fixed_rate *)tlv;
-@@ -3370,20 +3369,17 @@ void mt7996_mcu_exit(struct mt7996_dev *dev)
- 
- int mt7996_mcu_set_hdr_trans(struct mt7996_dev *dev, bool hdr_trans)
- {
--	struct {
--		u8 __rsv[4];
--	} __packed hdr;
- 	struct hdr_trans_blacklist *req_blacklist;
- 	struct hdr_trans_en *req_en;
- 	struct sk_buff *skb;
- 	struct tlv *tlv;
--	int len = MT7996_HDR_TRANS_MAX_SIZE + sizeof(hdr);
-+	int len = MT7996_HDR_TRANS_MAX_SIZE + 4;
- 
- 	skb = mt76_mcu_msg_alloc(&dev->mt76, NULL, len);
- 	if (!skb)
- 		return -ENOMEM;
- 
--	skb_put_data(skb, &hdr, sizeof(hdr));
-+	skb_put_zero(skb, 4);
- 
- 	tlv = mt7996_mcu_add_uni_tlv(skb, UNI_HDR_TRANS_EN, sizeof(*req_en));
- 	req_en = (struct hdr_trans_en *)tlv;
+ /* Macro to extract the most significant 32 bits from a long long */
+ #define LL_MSW(x)     (((unsigned long *)&x)[1])
 -- 
 2.39.5
 
