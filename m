@@ -1,111 +1,161 @@
-Return-Path: <linux-kernel+bounces-759564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B70B1DF53
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:22:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B99B1DF57
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6BFC3B6611
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C55A13AAA82
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA1F255F53;
-	Thu,  7 Aug 2025 22:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE0A257AFE;
+	Thu,  7 Aug 2025 22:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q8W6czGP"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ERzNQZ3m"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99EE246BA4;
-	Thu,  7 Aug 2025 22:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293E5190498;
+	Thu,  7 Aug 2025 22:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754605348; cv=none; b=kQRFvu3EiMCoFg7E4mjNNPxs8mTOsp+lAXNyTylpRGQmxr/YHqxuYOO6uElBotgIaInAzQZ9fLhvrMAPO8i3hEny031yPpi3jJeFO7+hhavmhXzjYLgSWXoIkUQ0cpCyVQsyaKQdKByNO7AL7fWkcaamYRBryU+l+68/4IrzAdc=
+	t=1754605775; cv=none; b=VZlko6jXevzq68uxYswVN6Rn5iOz1lxVSzaG72V3WYUxA/T6eCFEgG8+uQvwog7pvlE/Bn3E/Doamvj5CuFKzdRYd2cBjjBIxsVhkgukFUDLXMNIfEAxdFqQFYQseqy/aN0yHJLjL/dZRkw7C18GKpXSFpe9oYqc2R6nDf3kajM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754605348; c=relaxed/simple;
-	bh=JSpf2ptRywNd2j8GJ35NjosfBhP+dq3rNvcJKUUd4qQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=om9NaS0a5GzEYoInztKqaE9PCVBdlBIRUSeev5zRn+yLq9IxUpHIAGkR4VeQ7lrsHGjLVMOomRT3vV8UzvauqwPcrIVj6FfKwROXhIDBGq2MmF5hsfciYzzd4GHJhR5UJvvvzlWq9NSohJuux704pLyw1762KE6yUebO+h4U1L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Q8W6czGP; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754605339;
-	bh=pgecB+cd0d7chm+o1LDyp4M6rsvKMQCOem0wHxfohYE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Q8W6czGP6QAI/Ct8344x9HH+2JK3W1Asfh3ShEwZqeyyoYIFSj4EIgiU8XFDSZCPO
-	 eGQhkBlXcjZKT/2ahfADDoQYCbshWwYERNkcQny3RM9IKgxfwbkgAaaho7h2BUCYoY
-	 YlfwwV5HKiZ173etDrsWj3Xtauyi2t41XnMmtn3aSLC8BCDjszTrm3rkoj17l/uklp
-	 WIxMUPJZzxr5cXP3+a4vV+tGxrTJSzpQQp6MfgZE5wLdRDmXkvzK47KgjUxS5wNsN3
-	 EVWFgnjRP3urTiRyQXl57AtBKkk6E2tMw4CILtXZCnHU5cXLhqH8T0Nc9+kc8/uGxS
-	 QJnHeXXxFekVQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4byhVM4XTBz4w2H;
-	Fri,  8 Aug 2025 08:22:19 +1000 (AEST)
-Date: Fri, 8 Aug 2025 08:22:17 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Igor Torrente <igor.torrente@collabora.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the vhost tree
-Message-ID: <20250808082217.6503856d@canb.auug.org.au>
+	s=arc-20240116; t=1754605775; c=relaxed/simple;
+	bh=GnhXBlhan00EnWMeW6CfAY8zoMr8CZr1dFclyjoHcpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HR3vaKXqk8RI0JVmCrlUh3+3m0+ChKuRgI48usBrX37v2hP9A1bPMwgUYz6YXUahuGroRtY9pRzrGLrHAzN0dc4Xqqmr2kAooPaobGSDssqpvpRWTv7rhslcGORmtwjzs7jOY4l5ojR0vU45llsYRkfu5ZDwQnj6zlZHV8Rlots=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ERzNQZ3m; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 577MTP5M902301;
+	Thu, 7 Aug 2025 17:29:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754605765;
+	bh=vGg0k6siYa6ZSIVgo5SD6iu9EKp7AtLaUnHfY9l895Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ERzNQZ3mdvKb80aeNo3DpUYphXfZLnY45zeAjNzQIjUxTUwrc75Oa4QAj/fd0ShHF
+	 gcgx/100x5BIM33bsFEIeSv/wOct/nxx/09J4SHjf1sToUE1Nn3uUr106e3L9H70Sc
+	 WBDpPZb8bAjICh0NDARBBS9unBN+iMFAkA9Musag=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 577MTPak465544
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 7 Aug 2025 17:29:25 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 7
+ Aug 2025 17:29:24 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 7 Aug 2025 17:29:24 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 577MTOBE1764481;
+	Thu, 7 Aug 2025 17:29:24 -0500
+Message-ID: <da9c4afb-84ce-49ee-86b3-b7f50457a067@ti.com>
+Date: Thu, 7 Aug 2025 17:29:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/u6_nzrL_jY8tlG=t5Fw.EMO";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] soc: ti: k3-socinfo: Add support for AM62P variants
+To: Andrew Davis <afd@ti.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Santosh Shilimkar
+	<ssantosh@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+References: <20250805234950.3781367-1-jm@ti.com>
+ <20250805234950.3781367-3-jm@ti.com>
+ <37f73812-be0c-43b2-a5bc-a41e09db85ea@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <37f73812-be0c-43b2-a5bc-a41e09db85ea@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
---Sig_/u6_nzrL_jY8tlG=t5Fw.EMO
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Andrew,
 
-Hi all,
+On 8/7/25 12:24 PM, Andrew Davis wrote:
+> On 8/5/25 6:49 PM, Judith Mendez wrote:
+>> This adds a support for detecting AM62P SR1.0, SR1.1, SR1.2.
+>>
+>> On AM62P, silicon revision is discovered with GP_SW1 instead of JTAGID
+>> register, so introduce GP_SW register range to determine SoC revision.
+>>
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>>   drivers/soc/ti/k3-socinfo.c | 82 +++++++++++++++++++++++++++++++++----
+>>   1 file changed, 74 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/soc/ti/k3-socinfo.c b/drivers/soc/ti/k3-socinfo.c
+>> index d716be113c84..9daeced656d6 100644
+>> --- a/drivers/soc/ti/k3-socinfo.c
+>> +++ b/drivers/soc/ti/k3-socinfo.c
+>> @@ -15,6 +15,7 @@
+>>   #include <linux/sys_soc.h>
+>>   #define CTRLMMR_WKUP_JTAGID_REG        0
+>> +#define CTRLMMR_WKUP_GP_SW1_REG        4
+>>   /*
+>>    * Bits:
+>>    *  31-28 VARIANT    Device variant
+>> @@ -62,10 +63,63 @@ static const struct k3_soc_id {
+>>       { JTAG_ID_PARTNO_AM62LX, "AM62LX" },
+>>   };
+>> +static const struct regmap_config k3_chipinfo_regmap_cfg = {
+>> +    .reg_bits = 32,
+>> +    .val_bits = 32,
+>> +    .reg_stride = 4,
+>> +};
+>> +
+>>   static const char * const j721e_rev_string_map[] = {
+>>       "1.0", "1.1", "2.0",
+>>   };
+>> +static const char * const am62p_gpsw_rev_string_map[] = {
+>> +    "1.0", "1.1", "1.2",
+>> +};
+>> +
+>> +static int
+>> +k3_chipinfo_get_variant_alternate(struct platform_device *pdev, 
+>> unsigned int partno, u32 *variant)
+>> +{
+>> +    struct device *dev = &pdev->dev;
+>> +    struct regmap *regmap;
+>> +    void __iomem *base;
+>> +    u32 offset;
+>> +    int ret;
+>> +
+>> +    base = devm_platform_ioremap_resource(pdev, 1);
+>> +    if (IS_ERR(base))
+>> +        return PTR_ERR(base);
+>> +
+>> +    regmap = regmap_init_mmio(dev, base, &k3_chipinfo_regmap_cfg);
+> 
+> devm_regmap_init_mmio()
+> 
+> Otherwise this regmap never gets freed up in the error paths.
 
-In commit
+Thanks for reviewing, but....
 
-  878676525147 ("Revert "virtio: reject shm region if length is zero"")
+I have completely changed this patch in v2, feel free to review v2
+though (:
 
-Fixes tag
 
-  Fixes: 206cc44588f7 ("virtio: reject shm region if length is zero` breaks=
- the Virtio-gpu `host_visible")
+..
 
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-        git log -1 --format=3D'Fixes: %h ("%s")'
-
-Thus:
-
-Fixes: 206cc44588f7 ("virtio: reject shm region if length is zero")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/u6_nzrL_jY8tlG=t5Fw.EMO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiVJxoACgkQAVBC80lX
-0GyPQgf/eAZ0m3Ggy0j0bZ1gYLgDuRdhtYpmh5vqkhc3ls4CryxwJRKd682dvdgt
-QozUPDsibntOYsi/H70MgYRZcY77ENQ2SdspuZUiYW65zCt6qksE+L5QaFSkCLVL
-yIkEez5pCbBzZ6c0ouaZXjrl+N1Jmz+lmUo1WLb/oLqXNvz9IRo6aJ+0rJrranQt
-/uBB2zHsHmC+RKOkgrkfD4D3t2vYs4AjGvvBpWrq3KWEE7gdy2K6DEOz5e4p18w7
-wqSfvJQaICzRXJJzYhIXuvaa9/cUAvNcILjE++9KmnKZzjrvZKXonOXMW81WDQ3/
-hZ/9TnN9uttw0QqlyPGft/w0TEs2CA==
-=d0aC
------END PGP SIGNATURE-----
-
---Sig_/u6_nzrL_jY8tlG=t5Fw.EMO--
 
