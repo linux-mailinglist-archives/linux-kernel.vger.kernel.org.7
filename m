@@ -1,257 +1,234 @@
-Return-Path: <linux-kernel+bounces-758905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF4FB1D55E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:03:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FA8B1D562
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0887C1890DBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B4C518A25A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FB7223DF9;
-	Thu,  7 Aug 2025 10:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B8F22D793;
+	Thu,  7 Aug 2025 10:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ou+dk48h"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQLXgkfT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17AB145329
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754561020; cv=fail; b=Tayx5MkDizrj3xwh3y0jh0tHuyHAG/KZzGlOpBM/9rnsNmvNUh8CbF39CbU9a7WbCcAkQpWPB298vNN6QTtWHL2+LTRGFiyvphLyvSYrDQKCuA40ElLHvQFzZ/Em2tYCSvmhc/6KhfXOys7uf25t8CsPow9lSGYIUG63EWYbXSk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754561020; c=relaxed/simple;
-	bh=7Z3S8EIXOeihZxlOl0Ir1x/Vj5bEeS9KfY5knGfzhyU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WqdxR0IG5bWMs0MUcl0S8TAg9ivKXshlnH0OSX6/Ekc04zX9ga5CNkImjCE93504cX4h4i0WsNCcTDqXIYf7ZOyeRQ6j/agPxA4L5JocxPapdbD4B894pZPwUKq1JOGSPXocnjmAAvc30j7DqQVkPp5ONiaUD3Bdhoxqpk44M1k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ou+dk48h; arc=fail smtp.client-ip=40.107.93.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sIwa5Z0iLZ8AeBeLwqCNr3rD13RmvwdYn3c4KJLphjx1gMvG8OCDCRezN2yOgSndoaeYMjLkJM5B3Ppvq8EpxCXvy7eU91gzX5zjvjlUpJbwvJ1B0fiRQTjvRiBvq9D7m5j8JuzdT7KelR1sUyMyVIVxhvvGylVCFo3b0bMLBXzoOIvzc2jpMxRxW92x62nUcV2dnDkZZOxifIPST/2UM/Bonmc6UYJN4lUkc2N8C7k1cQ49ZSe9KheJ2eignhvQgnXkaIAF68qTRzjbfru8iMGnx9wSssTUsB0U5ntNndKR22SpmuUyjvZzLTUSvD4gmJBhuk7gwk/JeIZ7dO+GPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1NjhkL/HPv9RLoAdfc0EFgeRpUGmPQPimqYC6lD4jpQ=;
- b=tbjav2E4iA+osmwAn0D8ICIpamkL/r7pyAWsVpbn3PUKZrpXAvPxNi/mtF/CKgaJ4xC61RWA+vhxl5LJSgXmNxhUUIoy4j7KnQDZpD9zKqgZuHh/q/EKawvIw/91aBJ4Pri14enAv+aqL39qevp9Z+KpY6NVogamRbyQb1DVcAvDqFdIblIxmiwsVpgGkq8tW9s0DJfKNxATPgrDGbHKbkCP6CiP0+aCXWKxOdrCvtouqnuDvT/XTIGFjdEy6Zo9zFM1irognnhuN9q7iTfRwkmODc4kY7SYQiRuhcmrM8QXP3661y8CatMJTwugX6oosHriNSL0uQ8M7Y+P9t3r/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1NjhkL/HPv9RLoAdfc0EFgeRpUGmPQPimqYC6lD4jpQ=;
- b=ou+dk48hQDM/CZm/x4ZA5N2RBSS65rWzFQss7dlbhsn3rXU0QirBtrmO5Mg6EN+AnfBH2BgyXUNGVl9ZJgGKy90p+10YCjzckko1ZheflbGN1vU+WXZlxlJW3ukcZC72jjhd0eTfusrrmoGc5bWOAVRWWkU7tDk2msfbJvjPY+I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by IA1PR12MB6484.namprd12.prod.outlook.com (2603:10b6:208:3a7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.12; Thu, 7 Aug
- 2025 10:03:34 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8989.018; Thu, 7 Aug 2025
- 10:03:27 +0000
-Message-ID: <9a632900-4ebb-40af-8bf8-bf55f8e25c7b@amd.com>
-Date: Thu, 7 Aug 2025 12:03:21 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amdgpu: skip disabling audio when device is unplugged
-To: oushixiong1025@163.com, Alex Deucher <alexander.deucher@amd.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sunil Khatri <sunil.khatri@amd.com>,
- Alexandre Demers <alexandre.f.demers@gmail.com>,
- Boyuan Zhang <boyuan.zhang@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250807094719.56145-1-oushixiong1025@163.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250807094719.56145-1-oushixiong1025@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0402.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cf::14) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8176722256F;
+	Thu,  7 Aug 2025 10:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754561034; cv=none; b=glgYAXiI1VknrqVc3BxzRMA7r3mmjtX986ENCr5d4M0LfJIP1yZXOOOoGAkrC9kwudRG7Tk2fRhj75vysfsU6/ZuiTA+vpDSr+8Dw1gM6fM+wA5YPewtyeCNKOrJWPGwrbSnjoV13Zrz80n84oCxXpXilXszF+4839AkN1YpjFo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754561034; c=relaxed/simple;
+	bh=YsqhzwTGXsR1Inz4NSQKc7b929mseLNbPE/51iSw51I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EUxf3O9UCj/TCpQqhkRFzwD3zyIR4N/AXEsVhwyp/b8r7b9fTH4LuYTNov7kJI2IDQRMqEf5w0Fem2WoWHLYpg6jRgNp277NzhJaH/jnJMj9/9l2xlyxYMcC5yaOJZUOk+qEN+L0nRFfYGQIyIcvtS6txRtMzuzd2vrhP9+OjYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQLXgkfT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A6A6C4CEEB;
+	Thu,  7 Aug 2025 10:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754561033;
+	bh=YsqhzwTGXsR1Inz4NSQKc7b929mseLNbPE/51iSw51I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aQLXgkfT6CABBvINOQd0JkgipyPhzRY4X9At4aPhH2YDexocOd/T49lHaLOQ9T55Q
+	 Fhjf1afz77KsJXqa5Qdn4/MkvJXaAjnBUQRhvuKx/CM6HCAt5LMN63ago/pVK2cPUy
+	 JNY3NsFeOlWFqo1P90D3aPZvelkDYwTCiL9q+px3Jlu+MezxMrHFr6Rtg7wftkNQeJ
+	 VJ3G8TshAj3JGk98t5Pb9pyj5aXLp9VyDlWsSrK0WMKb11i/5GeB3ZCMFs/o7dqyy5
+	 0GOdUVfXBsUw2vU39ErMupqgB7vk98M5i+V/wA6NPK1LMM+Mt9aboc11Fr08iv4vnw
+	 Khl6HMDo18RkQ==
+Date: Thu, 7 Aug 2025 15:33:43 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, Jeff Johnson <jjohnson@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Nirmal Patel <nirmal.patel@linux.intel.com>, Jonathan Derrick <jonathan.derrick@linux.dev>, 
+	linux-wireless@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ath12k@lists.infradead.org, 
+	ath11k@lists.infradead.org, ath10k@lists.infradead.org, Bjorn Helgaas <helgaas@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Qiang Yu <qiang.yu@oss.qualcomm.com>
+Subject: Re: [PATCH 4/6] wifi: ath12k: Use pci_{enable/disable}_link_state()
+ APIs to enable/disable ASPM states
+Message-ID: <poam3nvpyeahyvuyyow63u7hl63kq7ju6rondfonjjv6mix4vh@gflqxihdm2yk>
+References: <20250716-ath-aspm-fix-v1-0-dd3e62c1b692@oss.qualcomm.com>
+ <20250716-ath-aspm-fix-v1-4-dd3e62c1b692@oss.qualcomm.com>
+ <7a97d075-2e37-5f40-5247-867146938613@linux.intel.com>
+ <3q2gqo6ipzyqr7i64yhndtpg4etwep4lgffk7emxluxuhjfya5@vt7czmsgpbuw>
+ <52baf40b-41ed-2588-7817-4d8cd859e0d1@linux.intel.com>
+ <je7sz6lgig3picksxv4ncfjcnnw2sdsp5ja6bwofqjuydhc4v6@b3kavwicxggu>
+ <fdfcc2c8-c749-2616-9295-7f4aa37fb0a4@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|IA1PR12MB6484:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c748df9-a0ee-4dcf-c25b-08ddd599a796
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qkt5cFZMYzBBcXhRY0sxMWEwVWFDa2doNHZyd0x3cndzTG1obUVCOFVqT04z?=
- =?utf-8?B?bUZ5c1VpekdtcFNTWG9nUDN1MWpHZHNTMXdvVVpWYnJNUkUxTjNxQVJpRldQ?=
- =?utf-8?B?UHE2cnFKbHB3VjRnNlVwNzJrV0V6dFRHY0JLd2tVUjRKZmhpQXM0anVZaTMz?=
- =?utf-8?B?T3M0YVZ3TjhSczBzNUlGY2gydTdxdUlvMW9XTXF5eTJjM0tuQU1aalFDRkZr?=
- =?utf-8?B?bkxScDhtQTlBYU9kaVJwZ05oUlVvejlQcE9GazZSYnhZUmRuNi9iL21EK2o0?=
- =?utf-8?B?VGRPaDkzQzNwNk9jeDg0VHJ1SUhXY3hwUDh4VTBXREJ5Q0FET2ZVbFFPYmdP?=
- =?utf-8?B?YldjbC9VRzZMaGF1Y0x5NFhzY2pBem1zd2d0dW5qQWhWOXVCdmFCS3NSenFh?=
- =?utf-8?B?YzFWWHBreVZoWHVuWG0rWTdEOG9IZU4wVlFiOHhzL3Q3QU9jM3hNRjV3ZXQy?=
- =?utf-8?B?ZXA3U3BLRDJWQUFiZDhicGpDRUE0L29zemhicW1waXcvbjdIMUxLKzNVaEhY?=
- =?utf-8?B?WG5oVGl4UEp3UVg0dExZUkt0ZVBXMEVWanVoSG5lamJEc3hsUW1XSVlHSFZ3?=
- =?utf-8?B?dDh1ekp4RWVzZG01YlhNS3Fmdk1TazZqMkNTUXExd08wR2dtYTd3SEZHelpO?=
- =?utf-8?B?QkdLVFpqY0lvTnhSQUF4Y08zbVovMW1sQ3ZGbDJadStCSis0NEpOQzljRk8z?=
- =?utf-8?B?U3ZJWFZWbTh1WFVXcEhZalFMZU5jT1prUmVBeXhKcUJYSmtJRWNwNldmNzZ6?=
- =?utf-8?B?MlpQaEROcTZqdTIyL3g3SGtoQnlMMmZMb1hXalJEenJKYWpRWlgwS2dGa3pq?=
- =?utf-8?B?TnVvS1pROVlLOHZSK3I4U3pPK3g0ZGlIR0tvZktYUGM3YTNRU3BWNzB3eGtK?=
- =?utf-8?B?ZlRPWHFOZ29ZUDk1ekkyRzMyRncrOGk2ZHRmZHRkb3lWYW95VitneUhuZ1hU?=
- =?utf-8?B?MFhEUmdXQXo0YWhGdkgrZ1FubDRoUWJFdzIra2tVWXRaYkRJRWlHQ0VGNE5a?=
- =?utf-8?B?dG9hc1dCZTJQU1RQd0xJcGZBZ2NWN3pua1FxTlgvMDhYTVdtU1VYWmcrTUxu?=
- =?utf-8?B?U3FvOWxaeSt2V0R6S3BZTWlHK0dsR0h0SzY5eTd1R01NTWxIQkNVWlE4d0g1?=
- =?utf-8?B?c0ZjRWdFMGlFSk5sNnErSXhZSC9PMVFYdmVCQ2ZqZkVMNUQ1U1k0VmJTRXJu?=
- =?utf-8?B?dEdaeVJaOWllMXNydjYwN01RWjdId3RRN3ZkY0tsZXVyOTY0bVFDaXF6ekNn?=
- =?utf-8?B?Vm9WZ1ZUc1drL1pCSVJRckZLYm9ZVjNtRm5RbEJTK0I0dlNBYWMvTTVhU3E2?=
- =?utf-8?B?ckZYTmE0YW1UTDFkek52RTdpbG44Lys4dHZ3cTB0Sm1nSzJDaVFHaTRScHc5?=
- =?utf-8?B?NERYQndYdndqb0FFY2t0SUhyTUFVNnVkenNCSkpKWnoyQ2w2ZXBEb1BGejBI?=
- =?utf-8?B?VUcvYXpubHNuMW5CMnlzTXhMT1FuZjBVeTVFQkc4bTA0djZZRTV1RWd6WEEx?=
- =?utf-8?B?a042YzI4b1IvQ3E0bmRQOU9BVHdPcTFxRmhkTFgvclZuaWhlS1RNcGtOVkJu?=
- =?utf-8?B?aThSRGZDamtnNk5oU2VoZGdFR24rUnkzNEo2akNHV0h4d0p4di81RUpTMVhI?=
- =?utf-8?B?cE55eXVTK0dDT1RoZXkvSGw3OHM0K0F2Qi9PYlFXUndRRWR5YVA2RG9NRWhM?=
- =?utf-8?B?S0lTSHJVb083dlBCbkczSCtSMUNCZ09LK1huckZlbHFiTVJoWWtGdnBEQzhL?=
- =?utf-8?B?Mjl0YjlYTjlIQldvcW9qOG90eFd4YWpBZTdZOVd0UStuSFJTTWVJZXJQbGFY?=
- =?utf-8?B?bGx6OGxjTG5DTVhYTjNHWHFnUFlNSnBPYkRicU80MjArdXdCbWNsZ1ZOYytZ?=
- =?utf-8?B?NGJicVRjOXlVemtjVjhkMURXekkrMWgreXZCNUkrZCtaZ3BqS0liNEZ2Mnc5?=
- =?utf-8?Q?1C56d6w0giY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RTBKUVE5RmxaR3IvQlRGWDdKWllHc1FqeUFDQVN3dmErSHhDV0RmbG80NlAv?=
- =?utf-8?B?eTJwQmpVeklOQ3Rsc2xQSi8ySGd0Y3k4Vm9SRXQ2VUNlU0l0NHFHS1RBaGxk?=
- =?utf-8?B?SUpNUjlyMUNmY0Nua1ZIRy9xTG9qSXF3emlkTHdORSt5UmljenBrRDhyZGpv?=
- =?utf-8?B?Y3NBWitUT21vS0JDREVlNGVEdlg3cHJLTGtqMFJidHpjS0t0bHRBbDVKVXN2?=
- =?utf-8?B?UklzbDNIciszSW5JM01YdjdGU0pxM3pjUkRUSFFGWEk0d0h6NW5maGd0Wldl?=
- =?utf-8?B?ZnkrQk1STjZBUlpNRWppczN1OXkvc3pMbEl6THcxejZoc1lVb3l6RDFvUzNh?=
- =?utf-8?B?aHR4T0xvK3FOZ2FRaTJOc1V1bzUwdzJqQjdGVnVnNjFYaEo1NGtHK25FVDJq?=
- =?utf-8?B?WTBQZVRsaGFwZFl1NTNmTFlPYk82TWRvVHRoWDdaOGFkaE43SDIvZTYya1BP?=
- =?utf-8?B?YTFRUHBXMWhMVFh2b1JVRWgvQlh0RkZWcVBtMkxETzN2TmlhRDlVM3pIRVEw?=
- =?utf-8?B?NUNhQm55bDM0OHMxSzBUOFJPRjd3d3BaaHpxMDZnZmo1K01DY29yaDNDSk5I?=
- =?utf-8?B?QitRMEdhekVBMCtzcDM3WXpSOU1sYmVna1E4bDZNSWZmd1pBeTFRYXNteHdi?=
- =?utf-8?B?YUxWY0VNaExmL0lSck9KK2lKSTIxUEt1NjlLYndsdXRHYy9KNFdDeXVyRVp3?=
- =?utf-8?B?RmdTcjNxeVNkSUVFclNmZ3FRbUF4cllJL3ZxdmhOYmx5NEtQa3RnYWNNcitn?=
- =?utf-8?B?R2pwTU1nck5MYkxia3Raak9tdFhRSEFYUlJLbjg5OGt4cnpWWW9HNHZUOVFN?=
- =?utf-8?B?Z2labG5yTmh6RHQ3NHlwRW1JYUprZTRxZGwzWkNWazJ6Q1dHNFN6cFo4cWtx?=
- =?utf-8?B?L0srSDVnZFFPYjF0WERtNmdzN294N2k0aXhDKzNXdXMzREdHektRMTEyZ042?=
- =?utf-8?B?ZEd4ODZRVXBCYjNOaFVkZlE1dUtXKy9Fc2IzeTZnR3lLWkRBcGR4UVdSMTJm?=
- =?utf-8?B?Y0doSTF2RXZNN2tNa3FiK1E5Y0kyVU9qZkZ0MkJzTFgrZEcvY25KNFFhaTV2?=
- =?utf-8?B?T2FDOThPdDlqY0N1bmZ3bVd4ZlRwZFpSUXV0VVF3QnhHS0RETDJQZFRHYXcw?=
- =?utf-8?B?TnNsejAzcTZJNkNrNHFFV1NSZUtFZ1YrMGx1OWc5ZmZEZHJ3YXZjUXo3L3Nw?=
- =?utf-8?B?RDc4S3VYQUtGbFk5WDFrREJEZDhTR255dzY1a2pqTGlpS1hqR0VEbEQ5NUo4?=
- =?utf-8?B?cE5CSTlwQWI2ZnBzWUFSMTZ3d3U1RkozZ25GSnV2eisxRlI1NUMxdndoN1JR?=
- =?utf-8?B?M1pheHBVU3ZscEtkanNOeW8yNHdkbE1TRkx1Q2JLTi9VWE9URnl2WWdHMEVL?=
- =?utf-8?B?SmdWK1JwaSt1TFNhNGx5RHZROHVtNmJzckVmYnc0OXVWNHJpUnVsNkh2NThO?=
- =?utf-8?B?c0RDUjErTkRvSlFqUWN5UER6Vzl1ZGxTZEhFbVFSL1RuMVE4VGREVmpEOUZu?=
- =?utf-8?B?dmMzUHNnS3lHWnI5MXpWNnFMelpKVFpCWEI1WXhJbmFUMHk5VHVpd3ZkUis1?=
- =?utf-8?B?SjhyUG9ZSERlWVBtNTBFMDhLRG1tS1pMWWNUZnlhR0dmQVhsVTdOdCsvSDkz?=
- =?utf-8?B?aFRQcVBaOG04QW4vZHVpZWpMcDhqWC9XSlo2K3dHbDh1b0Z6bWk1b2xmN2NS?=
- =?utf-8?B?MUc3WXk4WldsMWhISGQ4M0ZSNkc4ckVJM0dKKy9BNVc5UXlsREllRnhjekx4?=
- =?utf-8?B?TzhVNlZXZ2lsWms1c3dvUlhNZXJXOXYrOFcwWDZpbk9Tcmk1RFp3bCtlOWJH?=
- =?utf-8?B?L1hZRDRqRStnUlpYUWtNdWZMMWNXbWI5cUgvWVFUU1duTzYwa1BoenFDSGVZ?=
- =?utf-8?B?bUlzdUxuR212a2ZJcWlDU3RmOWxqM0NrakU3bllkWjdzOUU4RDF4VVlQN1hG?=
- =?utf-8?B?WnVMVUZVRjNyZ0doZHFQUHdqQ3Iva2VlbkJrQjNsQnFDN3VvUWNndzRUc1Qw?=
- =?utf-8?B?R2ZSZ0xvekw3cFpHNEFVS3hYVjlvQ2ZNYW9ORkdYa2NVa1FITDVIUW5TUlkw?=
- =?utf-8?B?V1BxS3pHV0ZNK0RwNXZZU1lDRll3QUJwMS9UdWkrQ0IzdTBsT0FyTzZiQURH?=
- =?utf-8?Q?OI6vid1uY2epifa9gqoiRo4JH?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c748df9-a0ee-4dcf-c25b-08ddd599a796
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 10:03:27.6282
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xSuJEnp4h15cg0Dzyird2iQOF3nBPi+umxU7Es70sTzGOf3NKUkIa+0Gr0Hx2ORx
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6484
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fdfcc2c8-c749-2616-9295-7f4aa37fb0a4@linux.intel.com>
 
-On 07.08.25 11:47, oushixiong1025@163.com wrote:
-> From: Shixiong Ou <oushixiong@kylinos.cn>
+On Mon, Jul 21, 2025 at 02:28:24PM GMT, Ilpo Järvinen wrote:
+> On Mon, 21 Jul 2025, Manivannan Sadhasivam wrote:
 > 
-> When Stopping lightdm and removing amdgpu driver are executed, the following
-> error is triggered probably:
+> > On Mon, Jul 21, 2025 at 01:09:05PM GMT, Ilpo Järvinen wrote:
+> > > On Mon, 21 Jul 2025, Manivannan Sadhasivam wrote:
+> > > > On Mon, Jul 21, 2025 at 11:04:10AM GMT, Ilpo Järvinen wrote:
+> > > > > On Wed, 16 Jul 2025, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > > > > 
+> > > > > > It is not recommended to enable/disable the ASPM states on the back of the
+> > > > > > PCI core directly using the LNKCTL register. It will break the PCI core's
+> > > > > > knowledge about the device ASPM states. So use the APIs exposed by the PCI
+> > > > > > core to enable/disable ASPM states.
+> > > > > > 
+> > > > > > Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
+> > > > > > 
+> > > > > > Reported-by: Qiang Yu <qiang.yu@oss.qualcomm.com>
+> > > > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > > > > ---
+> > > > > >  drivers/net/wireless/ath/ath.h        | 14 ++++++++++++++
+> > > > > >  drivers/net/wireless/ath/ath12k/pci.c | 10 ++++------
+> > > > > >  2 files changed, 18 insertions(+), 6 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/net/wireless/ath/ath.h b/drivers/net/wireless/ath/ath.h
+> > > > > > index 34654f710d8a1e63f65a47d4602e2035262a4d9e..ef685123b66bf4f41428fec67c1967f242a9ef27 100644
+> > > > > > --- a/drivers/net/wireless/ath/ath.h
+> > > > > > +++ b/drivers/net/wireless/ath/ath.h
+> > > > > > @@ -21,6 +21,8 @@
+> > > > > >  #include <linux/skbuff.h>
+> > > > > >  #include <linux/if_ether.h>
+> > > > > >  #include <linux/spinlock.h>
+> > > > > > +#include <linux/pci.h>
+> > > > > > +#include <linux/pci_regs.h>
+> > > > > >  #include <net/mac80211.h>
+> > > > > >  
+> > > > > >  /*
+> > > > > > @@ -336,4 +338,16 @@ static inline const char *ath_bus_type_to_string(enum ath_bus_type bustype)
+> > > > > >  	return ath_bus_type_strings[bustype];
+> > > > > >  }
+> > > > > >  
+> > > > > > +static inline int ath_pci_aspm_state(u16 lnkctl)
+> > > > > > +{
+> > > > > > +	int state = 0;
+> > > > > > +
+> > > > > > +	if (lnkctl & PCI_EXP_LNKCTL_ASPM_L0S)
+> > > > > > +		state |= PCIE_LINK_STATE_L0S;
+> > > > > > +	if (lnkctl & PCI_EXP_LNKCTL_ASPM_L1)
+> > > > > > +		state |= PCIE_LINK_STATE_L1;
+> > > > > > +
+> > > > > > +	return state;
+> > > > > > +}
+> > > > > > +
+> > > > > >  #endif /* ATH_H */
+> > > > > > diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
+> > > > > > index 489d546390fcdab8f615cc9184006a958d9f140a..a5e11509e3ab8faad6638ff78ce6a8a5e9c3cbbd 100644
+> > > > > > --- a/drivers/net/wireless/ath/ath12k/pci.c
+> > > > > > +++ b/drivers/net/wireless/ath/ath12k/pci.c
+> > > > > > @@ -16,6 +16,8 @@
+> > > > > >  #include "mhi.h"
+> > > > > >  #include "debug.h"
+> > > > > >  
+> > > > > > +#include "../ath.h"
+> > > > > > +
+> > > > > >  #define ATH12K_PCI_BAR_NUM		0
+> > > > > >  #define ATH12K_PCI_DMA_MASK		36
+> > > > > >  
+> > > > > > @@ -928,8 +930,7 @@ static void ath12k_pci_aspm_disable(struct ath12k_pci *ab_pci)
+> > > > > >  		   u16_get_bits(ab_pci->link_ctl, PCI_EXP_LNKCTL_ASPM_L1));
+> > > > > >  
+> > > > > >  	/* disable L0s and L1 */
+> > > > > > -	pcie_capability_clear_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> > > > > > -				   PCI_EXP_LNKCTL_ASPMC);
+> > > > > > +	pci_disable_link_state(ab_pci->pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1);
+> > > > > 
+> > > > > I'd remove to comment too as the code is self-explanatory after this 
+> > > > > change.
+> > > > > 
+> > > > 
+> > > > Ack
+> > > > 
+> > > > > >  
+> > > > > >  	set_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags);
+> > > > > >  }
+> > > > > > @@ -958,10 +959,7 @@ static void ath12k_pci_aspm_restore(struct ath12k_pci *ab_pci)
+> > > > > >  {
+> > > > > >  	if (ab_pci->ab->hw_params->supports_aspm &&
+> > > > > >  	    test_and_clear_bit(ATH12K_PCI_ASPM_RESTORE, &ab_pci->flags))
+> > > > > > -		pcie_capability_clear_and_set_word(ab_pci->pdev, PCI_EXP_LNKCTL,
+> > > > > > -						   PCI_EXP_LNKCTL_ASPMC,
+> > > > > > -						   ab_pci->link_ctl &
+> > > > > > -						   PCI_EXP_LNKCTL_ASPMC);
+> > > > > > +		pci_enable_link_state(ab_pci->pdev, ath_pci_aspm_state(ab_pci->link_ctl));
+> > > > > >  }
+> > > > > >  
+> > > > > >  static void ath12k_pci_cancel_workqueue(struct ath12k_base *ab)
+> > > > > 
+> > > > > As you now depend on ASPM driver being there, these should also add to 
+> > > > > Kconfig:
+> > > > > 
+> > > > > depends on PCIEASPM
+> > > > > 
+> > > > 
+> > > > I thought about it, but since this driver doesn't necessarily enable ASPM for
+> > > > all the devices it supports, I didn't add the dependency. But looking at it
+> > > > again, I think makes sense to add the dependency since the driver cannot work
+> > > > reliably without disabling ASPM (for the supported devices).
+> > > 
+> > > PCIEASPM is already default y and if EXPERT so it is not something 
+> > > that is expected to be disabled.
+> > > 
+> > > You also no longer need to move the ASPM link state defines LKP found out 
+> > > about after adding the depends on.
+> > > 
+> > 
+> > Yes, it will fix the reported issue, but guarding the definitions feels wrong to
+> > me still. Maybe that's something we can worry later.
+> > 
+> > > I'm a bit worried this series will regress in the cases where OS doesn't 
+> > > control ASPM so it might be necessary to include something along the 
+> > > lines of the patch below too (the earlier discussion on this is in Link 
+> > > tags):
+> > > 
+> > 
+> > atheros drivers didn't have such comment (why they were manually changing the
+> > LNKCTL register), but I agree that there is a chance that they could cause issue
+> > on platforms where BIOS didn't give ASPM control to the OS.
+> > 
+> > But as a non-ACPI developer, I don't know what does 'ACPI doesn't give
+> > permission to manage ASPM' mean exactly. Does ACPI allow to disable ASPM but not
+> > enable it?
 > 
-> Unable to handle kernel paging request at virtual address 0000000000005e00
-> .....
-> [ 2] [T10084] Call trace:
-> [ 2] [T10084]  amdgpu_device_wreg.part.0+0x58/0x110 [amdgpu]
-> [ 2] [T10084]  amdgpu_device_wreg+0x20/0x38 [amdgpu]
-> [ 2] [T10084]  dce_v6_0_audio_endpt_wreg+0x64/0xd8 [amdgpu]
-> [ 2] [T10084]  dce_v6_0_sw_fini+0xa0/0x118 [amdgpu]
-> [ 2] [T10084]  amdgpu_device_ip_fini.isra.0+0xdc/0x1e8 [amdgpu]
-> [ 2] [T10084]  amdgpu_device_fini_sw+0x2c/0x220 [amdgpu]
-> [ 2] [T10084]  amdgpu_driver_release_kms+0x20/0x40 [amdgpu]
-> [ 2] [T10084]  devm_drm_dev_init_release+0x8c/0xc0 [drm]
-> [ 2] [T10084]  devm_action_release+0x18/0x28
-> [ 2] [T10084]  release_nodes+0x5c/0xc8
-> [ 2] [T10084]  devres_release_all+0xa0/0x130
-> [ 2] [T10084]  device_unbind_cleanup+0x1c/0x70
-> [ 2] [T10084]  device_release_driver_internal+0x1e4/0x228
-> [ 2] [T10084]  driver_detach+0x90/0x100
-> [ 2] [T10084]  bus_remove_driver+0x74/0x100
-> [ 2] [T10084]  driver_unregister+0x34/0x68
-> [ 2] [T10084]  pci_unregister_driver+0x24/0x108
-> [ 2] [T10084]  amdgpu_exit+0x1c/0x3270 [amdgpu]
-> [ 2] [T10084]  __do_sys_delete_module.constprop.0+0x1d0/0x330
-> [ 2] [T10084]  __arm64_sys_delete_module+0x18/0x28
-> [ 2] [T10084]  invoke_syscall+0x4c/0x120
-> [ 2] [T10084]  el0_svc_common.constprop.0+0xc4/0xf0
-> [ 2] [T10084]  do_el0_svc+0x24/0x38
-> [ 2] [T10084]  el0_svc+0x24/0x88
-> [ 2] [T10084]  el0t_64_sync_handler+0x134/0x150
-> [ 2] [T10084]  el0t_64_sync+0x14c/0x150
-> [ 2] [T10084] Code: f9401bf7 f9453e60 8b150000 d50332bf (b9000016)
-> [ 2] [T10084] ---[ end trace 0000000000000000 ]---
+> While others are likely better qualified to answer this, my impression is 
+> that even disabling ASPM is not allowed when OS does has not been granted 
+> control over ASPM (OS should not change the value of ASPM Control in 
+> LNKCTL at all).
 > 
-> The adev->rmmio has been unmmaped in amdgpu_device_fini_hw().
+> The obvious trouble then is, if a driver/hw needs ASPM to be disabled over 
+> certain period of its operation or entirely to ensure stable operation, 
+> and ASPM is enabled, we're between a rock and a hard place when changes to 
+> ASPM Control field are disallowed.
 > 
-> So skip disabling audio when device is unplugged.
+> Because the ASPM driver took a hard stance of conformance here and did 
+> not let touching the ASPM Control field, we ended up having drivers that 
+> then write ASPM Control on their own to work around HW problems (see e.g. 
+> the comments in drivers/net/ethernet/intel/e1000e/netdev.c that make it 
+> very clear it was intentional from the driver) so it was considered that 
+> allowing disabling ASPM might be acceptable compromise over drivers doing 
+> it on their own (and leaving the ASPM driver out of the loop because it 
+> cannot be relied to disable ASPM consistently in all cases).
 > 
-> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
-> ---
->  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-> index 276c025c4c03..48b29990da7f 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-> @@ -23,6 +23,7 @@
->  
->  #include <linux/pci.h>
->  
-> +#include <drm/drm_drv.h>
->  #include <drm/drm_edid.h>
->  #include <drm/drm_fourcc.h>
->  #include <drm/drm_modeset_helper.h>
-> @@ -1459,8 +1460,10 @@ static void dce_v6_0_audio_fini(struct amdgpu_device *adev)
->  	if (!adev->mode_info.audio.enabled)
->  		return;
->  
-> -	for (i = 0; i < adev->mode_info.audio.num_pins; i++)
-> -		dce_v6_0_audio_enable(adev, &adev->mode_info.audio.pin[i], false);
-> +	if (!drm_dev_is_unplugged(adev_to_drm(adev))) {
 
-Good catch, but that looks like a workaround for something done in the wrong place.
+Since there was no comments from ACPI folks, I will go ahead with your patch. I
+will also CC them in the next version so that they can yell at me if they want.
 
-A *_sw_fini() function should not enable/disable HW.
+- Mani
 
-Regards,
-Christian.
-
-> +		for (i = 0; i < adev->mode_info.audio.num_pins; i++)
-> +			dce_v6_0_audio_enable(adev, &adev->mode_info.audio.pin[i], false);
-> +	}
->  
->  	adev->mode_info.audio.enabled = false;
->  }
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
