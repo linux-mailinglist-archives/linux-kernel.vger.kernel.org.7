@@ -1,256 +1,236 @@
-Return-Path: <linux-kernel+bounces-758999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70539B1D6EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:49:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C887B1D6F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E683B2DCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:49:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 337417A4255
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB311229B28;
-	Thu,  7 Aug 2025 11:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C531231836;
+	Thu,  7 Aug 2025 11:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="U60vL/HY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="YZEKvmbQ"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IK7cjiJN"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A46C20B7F9;
-	Thu,  7 Aug 2025 11:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F5520B7F9;
+	Thu,  7 Aug 2025 11:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754567345; cv=none; b=PLRUsBWbO+rCoOELNau5Uj1p0PaOCzatpj/NBYgOuAWTE+vOOjA9HQ9ckhO3SwDC0Wi+c8UyOIaXGAZPoE44XPGayxjRFFFHhx9gLG85ktGfIWT1B/KHKNujd2WOsuIXR1x5g5j7usLZTK6JZ6IiMwRBfDEWP+VNOghAwlff6YM=
+	t=1754567384; cv=none; b=mQtvVqCD0BrVGwJHPIOY883dDevlc11FhWYvAx0zYnV201I3Gv+N4BKJQng4IxMr7eCJenJQifPNLn6tq/YM/JKMTws/QkLb/xFagF8jbQNZBoiwqxvsddhfY6osFkq+YH7IVWfF3Dc3YsJ53mKH2VfAezveGc4PQqytT0oQB1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754567345; c=relaxed/simple;
-	bh=4Dfm16dtenqZus4B42uNTr1IMVz5WLJ9W5cHmjdS4zM=;
+	s=arc-20240116; t=1754567384; c=relaxed/simple;
+	bh=BT1HlxdXNuTIhguxoWsF6urixgs3t34G1XWxfUWA/MA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tUjy1erseDRZECm03k1weXmqJvh+ths5vumb2iZ+0M2lHXuvUyI7DdL/SJBxE6oI1UWPLIMfmVN3dn29fn2PA7BFMBao8b3BojSMPW/7JJ52sPrAL9tposKjVzu0Ev41PRQHrTolAxyPcPZZUIm/I+ebNap3cp87J1j51FPh9U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=U60vL/HY; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=YZEKvmbQ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1754567341; x=1786103341;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=i4uPAJ9IW9vl88ePcdpKzjtiZLMIb7GgbwNe3+1BvWY=;
-  b=U60vL/HYE98SySrBhYoGQydt9LI2SAjQu4ASfJojDgKjV9Vtf/Nl9pp8
-   DgRz+ZD/9tkc+EiAWkz5WUI5nJyPv+wjBtAhn3z49uLTbjcWn4y0Tz2xT
-   BjfLiREaKoFxhhwI8Hr1Nz6C8xLaysvDCA1cW2JMxl3dNdwnaB4Ku9/th
-   aQNXwx+d27jgEiNPsX3SgYQ3AFExXz9unp8lcH85Z7dFCTLbM3suNy2vA
-   05G2qgIA7dOvRsFfX3QpT+nQeYgBzoM63OMg6o1zs0e3/qefculF8TWsl
-   XtfASwLJaM3rJeSWitOU0oZ+Jhgy+T5XFVMDlcYOi3/dFHeLIewEhPvtZ
-   A==;
-X-CSE-ConnectionGUID: JhyOYoELRGids6Bki+OUFQ==
-X-CSE-MsgGUID: MWiHtDpCT6Gx+H7wzZdvGQ==
-X-IronPort-AV: E=Sophos;i="6.17,271,1747692000"; 
-   d="scan'208";a="45636873"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 Aug 2025 13:48:58 +0200
-X-CheckPoint: {689492AA-4-410E8DD8-CEA8F0F8}
-X-MAIL-CPID: DB5FC63FD761EBF6D413EA6E6EFE8B37_3
-X-Control-Analysis: str=0001.0A00211B.6894924C.001C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8A688160F56;
-	Thu,  7 Aug 2025 13:48:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1754567333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i4uPAJ9IW9vl88ePcdpKzjtiZLMIb7GgbwNe3+1BvWY=;
-	b=YZEKvmbQVMlloS5TBtRx2jH63mxAKDXRmp81JNNnnORSKU65/CXFVB4N7q/JCJyI8NtVIg
-	lE9IhQN6SaJRWHltDgRY/9dDZO43cbUlx8KQ32bnqCGyfiIMaI7eiwGu33SIot7wwgVQ/o
-	b4IxJib7SlKv3XFzErmdh1nIgwXsb/uVwGLgB5j2DbEXG6p+WChtd300JvPe/vR9t/4T/A
-	vjpFiTogyMpRD4ccus+sBNvweEOpOmdnsRy76uyrnHo8uDsGuuH3wfZ2r/Dvz6WjB1tF9x
-	vT6Wk/a1+ulF4sGtukHQE2vvb9J+LlSn5GAvOnp0YFtBRbxjYs/gAFt69n7qkw==
-Message-ID: <e659763b2535701e9061d0a19e1ce9c285d92045.camel@ew.tq-group.com>
-Subject: Re: [PATCH v2] phy: ti: gmii-sel: Force RGMII TX delay
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Lunn <andrew@lunn.ch>, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, nm@ti.com, vigneshr@ti.com, Vinod Koul
- <vkoul@kernel.org>,  Kishon Vijay Abraham I <kishon@kernel.org>
-Date: Thu, 07 Aug 2025 13:48:52 +0200
-In-Reply-To: <20250806135913.662340-1-mwalle@kernel.org>
-References: <20250806135913.662340-1-mwalle@kernel.org>
+	 Content-Type:MIME-Version; b=kqKV/p4VY7T9W5qb4Ljk/5CnQY9JRsRW1PATMcP5Snf0DQkEXrJln806zmn1hfbEirMH0u/2/S1MXZpeaBGo/7rmZIKljmRY4mFwChb5DtmTKXADQyMgqWXCpAMOy4n0r+vLrZnht/Z2VeptKjvpyInzax1nL5u4JWVKFNBr+jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IK7cjiJN; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5775bj2b012372;
+	Thu, 7 Aug 2025 11:49:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BT1Hlx
+	dXNuTIhguxoWsF6urixgs3t34G1XWxfUWA/MA=; b=IK7cjiJNi4o97y1CyXr4YY
+	xBiYwwKVU5zPMDDMK1gMp8LUNVDuskcKWbk8I9r+mQ3BRQrvlAh5EcYy/9DNMDRb
+	HwlSbVmgSC30377j3NhQpHSMGtx97xz3S3iW1tICkzgC260+vKR9TjAd4lMOsgOB
+	e7tPujpLcCaSKCb48KLxB5D2jqSEI4cx4qrQtdUSAAQ3W1z9BzLlDpm/PeBjeF+K
+	dx3/MY1Bq+DE3KfUJR3m5f7vIzfkSiYZJZn0mWW4tEk62rWDy1oHXTXpjZk+s0MQ
+	FPOKY5xOaj3GZ1qMeVJZOAe0Hob74Sa4caflmd8gOdwyxg9DsG20XXFFxBaARG8w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63ss6f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 11:49:32 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577BgXVn018736;
+	Thu, 7 Aug 2025 11:49:32 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63ss6d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 11:49:32 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779QR3g020616;
+	Thu, 7 Aug 2025 11:49:31 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwn0cy5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 11:49:31 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577BnTml64815412
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Aug 2025 11:49:30 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B21A75805E;
+	Thu,  7 Aug 2025 11:49:29 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF16858055;
+	Thu,  7 Aug 2025 11:49:26 +0000 (GMT)
+Received: from [9.152.212.100] (unknown [9.152.212.100])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  7 Aug 2025 11:49:26 +0000 (GMT)
+Message-ID: <9e27675effcee26fce059a7e81ea4ba0fecfa86d.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 2/3] powerpc/eeh: Use result of error_detected() in
+ uevent
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Mahesh J Salgaonkar	
+ <mahesh@linux.ibm.com>,
+        Linas Vepstas <linasvepstas@gmail.com>,
+        Ilpo
+ =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Manivannan
+ Sadhasivam <mani@kernel.org>,
+        Gerald Schaefer	
+ <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger	 <borntraeger@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Matthew
+ Rosato <mjrosato@linux.ibm.com>,
+        "Oliver O'Halloran"	 <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Keith Busch	 <kbusch@kernel.org>
+Date: Thu, 07 Aug 2025 13:49:26 +0200
+In-Reply-To: <aJSPU6bF-DRNN1ZT@wunner.de>
+References: <20250807-add_err_uevents-v4-0-c624bfd8638d@linux.ibm.com>
+	 <20250807-add_err_uevents-v4-2-c624bfd8638d@linux.ibm.com>
+	 <aJSPU6bF-DRNN1ZT@wunner.de>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA5MCBTYWx0ZWRfX9Pye0DKyMrAL
+ b7tNmwL/8ush2E2mCttj/E4tERwjnctVAyPcZKV62Jy43G7ej/Ea89yCGWqLDpCLQ4tDRNDptPX
+ 44xWlZ4we3aUVV5sUWLHPxBmoa4qGKi5DRWg+wLU4545QFltBf2Fu/sXL2wApFssxowqT97C6o6
+ lKbS/5o27I6VwYjrrwcHWg7r1foYSnC/0XcpFr1vpm71QY1rtJdU51RzpweRdCirc2VQRCAMQP9
+ iEcLTK9CDRjZIARx34rttrZV8Duyn+JWSJjoG2kE4fu2cKfFgctlRAa5naso7RkSVkMsnAgyF92
+ 7BBqqnneLZjrNoKscWgwi6pCySBZ/KQcr9cflJ6Wv/TQKKx4PIqxVkS9xlifhy7LmGEEO4o3PG1
+ OrCocExyjo8vl+1PdVx4dKr252e85V+tFDAJo6h/nGRNXLm+s+97BDZnGiY4OgdLudSn5iuP
+X-Proofpoint-ORIG-GUID: IDnsoJ2r8JayJPGOrGhM0d7NiaaXetfZ
+X-Authority-Analysis: v=2.4 cv=LreSymdc c=1 sm=1 tr=0 ts=689492cc cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=y5LWfs1rpAMjDq6n04wA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: MRF2tTobtj6c6Dbk-XeirXgADp0PnXUS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508070090
 
-On Wed, 2025-08-06 at 15:59 +0200, Michael Walle wrote:
-> Some SoCs are just validated with the TX delay enabled. With commit
-> ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed
-> RGMII TX delay"), the network driver will patch the delay setting on the
-> fly assuming that the TX delay is fixed. In reality, the TX delay is
-> configurable and just skipped in the documentation. There are
-> bootloaders, which will disable the TX delay and this will lead to a
-> transmit path which doesn't add any delays at all. Fix that by always
-> forcing the TX delay to be enabled.
+On Thu, 2025-08-07 at 13:34 +0200, Lukas Wunner wrote:
+> On Thu, Aug 07, 2025 at 12:15:32PM +0200, Niklas Schnelle wrote:
+> > With pci_uevent_ers() handling PCI_ERS_RESULT_NEED_RESET the result of
+> > error_detected() can be used in pci_uevent_ers() even if drivers reques=
+t
+> > a reset. This aligns EEH's behavior with both AER.
 >=20
-> This is safe to do and shouldn't break any boards in mainline because
-> the fixed delay is only introduced for gmii-sel compatibles which are
-> used together with the am65-cpsw-nuss driver and are affected by the
-> commit above.
+> I guess the sentence is supposed to end with "and s390"?
+
+Yes had it there and then realized that this is only true after the
+last patch, did a bad job of adjusting.
+
 >=20
-> Fixes: ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fi=
-xed RGMII TX delay")
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
-> v2:
->  - reject invalid PHY modes. Thanks Matthias.
->  - add a paragraph to the commit message that this patch shouldn't
->    break any existing boards. Thanks Andrew.
+> I would have recounted the history a bit, e.g.:
 >=20
->  drivers/phy/ti/phy-gmii-sel.c | 58 ++++++++++++++++++++++++++++++-----
->  1 file changed, 50 insertions(+), 8 deletions(-)
+> Ever since uevent support was added for AER and EEH with commit
+> 856e1eb9bdd4 ("PCI/AER: Add uevents in AER and EEH error/resume"), it
+> reported PCI_ERS_RESULT_NONE as the result of ->error_detected() to
+> user space.
 >=20
-> diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.=
-c
-> index ff5d5e29629f..ed078475c4cb 100644
-> --- a/drivers/phy/ti/phy-gmii-sel.c
-> +++ b/drivers/phy/ti/phy-gmii-sel.c
-> @@ -34,6 +34,7 @@ enum {
->  	PHY_GMII_SEL_PORT_MODE =3D 0,
->  	PHY_GMII_SEL_RGMII_ID_MODE,
->  	PHY_GMII_SEL_RMII_IO_CLK_EN,
-> +	PHY_GMII_SEL_FIXED_TX_DELAY,
->  	PHY_GMII_SEL_LAST,
->  };
-> =20
-> @@ -127,6 +128,22 @@ static int phy_gmii_sel_mode(struct phy *phy, enum p=
-hy_mode mode, int submode)
->  		goto unsupported;
->  	}
-> =20
-> +	/*
-> +	 * Some SoCs only support fixed MAC side TX delays. According to the
-> +	 * datasheet, they are always enabled, but that turns out not to be the
-> +	 * case and the delay is configurable. But according to the vendor that
-> +	 * mode is not validated and might not work. Some bootloaders disable
-> +	 * this bit. To work around that, enable it again.
-> +	 */
-> +	if (soc_data->features & BIT(PHY_GMII_SEL_FIXED_TX_DELAY)) {
-> +		/* With a fixed delay, some modes are not supported at all. */
-> +		if (submode =3D=3D PHY_INTERFACE_MODE_RGMII_ID ||
-> +		    submode =3D=3D PHY_INTERFACE_MODE_RGMII_TXID)
-> +			return -EINVAL;
-> +
-> +		rgmii_id =3D 0;
+> Commit 7b42d97e99d3 ("PCI/ERR: Always report current recovery status for
+> udev") subsequently amended AER to report the actual return value of
+> ->error_detected().
+>=20
+> Make the same change to EEH to align it with AER (and s390 error
+> recovery).
 
-Can't this just be the following? (maybe with an error message)
+Thanks for figuring out the history, I'll incorporate this and send a
+v5.
 
-if (soc_data->features & BIT(PHY_GMII_SEL_FIXED_TX_DELAY)) {
-	if (rgmii_id !=3D 0)
-		return -EINVAL;
-}
+>=20
+> > Suggested-by: Lukas Wunner <lukas@wunner.de>
+> > Link: https://lore.kernel.org/linux-pci/aIp6LiKJor9KLVpv@wunner.de/
+> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+>=20
+> Reviewed-by: Lukas Wunner <lukas@wunner.de>
 
-
-
-Best,
-Matthias
-
-> +	}
-> +
->  	if_phy->phy_if_mode =3D submode;
-> =20
->  	dev_dbg(dev, "%s id:%u mode:%u rgmii_id:%d rmii_clk_ext:%d\n",
-> @@ -210,25 +227,46 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_dm814=
- =3D {
-> =20
->  static const
->  struct reg_field phy_gmii_sel_fields_am654[][PHY_GMII_SEL_LAST] =3D {
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x0, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x4, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x8, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0xC, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x10, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x14, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x18, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x1C, 0, 2), },
-> +	{
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x0, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x0, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x4, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x4, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x8, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x8, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0xC, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0xC, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x10, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x10, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x14, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x14, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x18, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x18, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x1C, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x1C, 4, 4),
-> +	},
->  };
-> =20
->  static const
->  struct phy_gmii_sel_soc_data phy_gmii_sel_soc_am654 =3D {
->  	.use_of_data =3D true,
-> +	.features =3D BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-> +		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
->  	.regfields =3D phy_gmii_sel_fields_am654,
->  };
-> =20
->  static const
->  struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_j7200 =3D {
->  	.use_of_data =3D true,
-> +	.features =3D BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-> +		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
->  	.regfields =3D phy_gmii_sel_fields_am654,
->  	.extra_modes =3D BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MOD=
-E_SGMII) |
->  		       BIT(PHY_INTERFACE_MODE_USXGMII),
-> @@ -239,6 +277,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_=
-j7200 =3D {
->  static const
->  struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j721e =3D {
->  	.use_of_data =3D true,
-> +	.features =3D BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-> +		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
->  	.regfields =3D phy_gmii_sel_fields_am654,
->  	.extra_modes =3D BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MOD=
-E_SGMII),
->  	.num_ports =3D 8,
-> @@ -248,6 +288,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_=
-j721e =3D {
->  static const
->  struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j784s4 =3D {
->  	.use_of_data =3D true,
-> +	.features =3D BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-> +		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
->  	.regfields =3D phy_gmii_sel_fields_am654,
->  	.extra_modes =3D BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MOD=
-E_SGMII) |
->  		       BIT(PHY_INTERFACE_MODE_USXGMII),
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+Thanks for the R-b.
 
