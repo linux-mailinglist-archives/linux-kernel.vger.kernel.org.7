@@ -1,62 +1,67 @@
-Return-Path: <linux-kernel+bounces-759513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8D5B1DE81
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:53:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F33B1DE83
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841C91AA5342
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC39583B04
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BFF238152;
-	Thu,  7 Aug 2025 20:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13F1237708;
+	Thu,  7 Aug 2025 20:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IUugfyB2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="if3H0ODi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3D023496F;
-	Thu,  7 Aug 2025 20:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B03221269;
+	Thu,  7 Aug 2025 20:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754600020; cv=none; b=lGzsVC6c0mpytBZDditTzX6ZzqO4rb02G4czQBZuWfXw+QhBy7jqooyb+qPXljmflu0klUovmmgl21GoNwq3tR6pA5uF95AsErLON1GvTdjwxx9fzrgrJR7XKGuf0z6bvjvlgTyQHsnpoO2S38Q3t/WfFqvxfjOUPSH8kC+ZF/I=
+	t=1754600066; cv=none; b=NG4hlw90o1BWgAITtT2VJ7xCbsdKOcrjP6Vv8HkTOz7SPPyOoMRxd6FAQhdH3FoXZZ5cwlxl1Ngi+hXdlAsUkjgW2l94wGhHy+GrKdE23ufrQ1C8YCUkJvrFQ9wdqwDK3GmwXTAkBj5nwGn69ChFa7uuzY95DUPu0x+zssDJLSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754600020; c=relaxed/simple;
-	bh=kH4x0nQoHGXsfTEQ8cxUERLnGeheUD+EOH3nHe3Tqik=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BHeRXab1PSIwAWDXRbbw3WaAteVLDEFQNtTU29SrSXrOZ0rblylO/00Mpjeo8c7Du/5Ys8S+4IPTEiZR7QkpLow2cKwwvMxJN5BViUS4MURVWddbGpGKnO4TLbQCDHp8ECU5R3natHk1YLnJgEmHv8C9429NRI6MjsOX4PKfL9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IUugfyB2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ACEAC4CEEB;
-	Thu,  7 Aug 2025 20:53:36 +0000 (UTC)
+	s=arc-20240116; t=1754600066; c=relaxed/simple;
+	bh=bvW6h/SDGKuox4lFV0iT3YHecRUJJV15jJEMcASTIfc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tfGa4r3dHyxwir9qP9A1cft07EnrDbxCc8ixvmY3IwFWY776P8CqKh2mJaVtkGJ9s3pKTyj/HZE0tqvT3l3E3GDWkA+REq+dhXnWmX53D7WCnIL/Tv8j92KpO1+iZGDe0318RxWdl9BJHIGI5BEb3S2FhaVr2nxDuoA89pMYmqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=if3H0ODi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27EF2C4CEEB;
+	Thu,  7 Aug 2025 20:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754600019;
-	bh=kH4x0nQoHGXsfTEQ8cxUERLnGeheUD+EOH3nHe3Tqik=;
+	s=k20201202; t=1754600065;
+	bh=bvW6h/SDGKuox4lFV0iT3YHecRUJJV15jJEMcASTIfc=;
 	h=From:To:Cc:Subject:Date:From;
-	b=IUugfyB2m8tC+SLUvsNqA13Q+SVSQHfPYz61cTwNMOPAcg3XDy/sPnC6eXD1B3yd1
-	 ATYg8XP3h1V+3paXgNAhoKdn4XEwthWb0Eego+C23gmjBb0LpeZ88qgKpp+iI5BtNL
-	 1wX1oDxB+oCb8/I8/igN78CYG39OE8qJf03HRySdgtaXNf9ls+nEKXaNMPIpiJNpDY
-	 mn4Omh8rWyIFd8qANu8k/ZWRdzt/wZo9AnKWw4CZaKmlOA9l7Knxb093vliPGo2lsn
-	 n/MPZ07N4hm2daxAxKuWwi8t6RWp8oSR3qBnKEmFjHYIwgCw+XCz+TN+I53N6jNvk6
-	 ecaavF4ycEJdA==
+	b=if3H0ODixS0AdSgQu8GFrZZN8B9N9zIGpjhyQr7atLmwR6ITZqHwj+aumiUEmAf/q
+	 FKaAYa7IAkRYKhhGPfMXQ92MAe7eOM6twQRb7iTESYAgDz8ZsAV6esBLuX4eYFhe7F
+	 A6N/0t4riMMQ0l0sCGgCY4ffhYmBtohmttCTOtBIg0ZwGOg3R73fRrcnvW/mR5jgqY
+	 OKdGZKOTTf8eu/NMKejlQWBupbmV3/kbKpYsFSBGLzGY6JsZyIc9CtPIoNbMteuHlF
+	 YAt3WCX2bXbPGJYJiGGVh9ZpefaZlyFUU6AV0pgXNe/lyPZGZvUFssf/dPT627EpXH
+	 YpLIbW6ic/UIw==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Bill Metzenthen <billm@melbpc.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Jaeryul Oh <jaeryul.oh@samsung.com>,
+	Arun Kumar K <arun.kk@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Janghyuck Kim <janghyuck.kim@samsung.com>,
+	Jeongtae Park <jtp.park@samsung.com>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
 	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	Bill Wendling <morbo@google.com>,
 	Justin Stitt <justinstitt@google.com>,
+	Naveen Krishna Chatradhi <ch.naveen@samsung.com>,
+	Kamil Debski <k.debski@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-media@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	llvm@lists.linux.dev
-Subject: [PATCH] x86: math-emu: fix div_Xsig prototype
-Date: Thu,  7 Aug 2025 22:53:28 +0200
-Message-Id: <20250807205334.123231-1-arnd@kernel.org>
+Subject: [PATCH] media: s5p-mfc: remove an unused/unitialized variable
+Date: Thu,  7 Aug 2025 22:54:15 +0200
+Message-Id: <20250807205419.143208-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,40 +73,126 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The third argument of div_Xsig() is the output of the division, but is marked
-'const', which means the compiler is not expecting it to be updated and may
-generate bad code around the call. clang-21 now warns about the pattern since
-an uninitialized variable is passed into two 'const' arguments by reference:
+The s5p_mfc_cmd_args structure in the v6 driver is never used, not
+initialized to anything other than zero, but as of clang-21 this
+causes a warning:
 
-arch/x86/math-emu/poly_atan.c:93:28: error: variable 'argSignif' is uninitialized when passed as a const pointer argument here [-Werror,-Wuninitialized-const-pointer]
-   93 |         div_Xsig(&Numer, &Denom, &argSignif);
-      |                                   ^~~~~~~~~
-arch/x86/math-emu/poly_l2.c:195:29: error: variable 'argSignif' is uninitialized when passed as a const pointer argument here [-Werror,-Wuninitialized-const-pointer]
-  195 |                 div_Xsig(&Numer, &Denom, &argSignif);
-      |                                           ^~~~~~~~~
+/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_cmd_v6.c:45:7: error: variable 'h2r_args' is uninitialized when passed as a const pointer argument here [-Werror,-Wuninitialized-const-pointer]
+   45 |                                         &h2r_args);
+      |                                          ^~~~~~~~
 
-The implementation is in assembly, so the problem has gone unnoticed since the
-code was added in the linux-1.1 days. Remove the 'const' marker here.
+Just remove this for simplicity. Since the function is also called
+through a callback, this does require adding a trivial wrapper with
+the correct prototype.
 
-Fixes: e19a1bdb835c ("Import 1.1.38")
+Fixes: f96f3cfa0bb8 ("[media] s5p-mfc: Update MFC v4l2 driver to support MFC6.x")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/math-emu/poly.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../platform/samsung/s5p-mfc/s5p_mfc_cmd_v6.c | 35 +++++++------------
+ 1 file changed, 13 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/math-emu/poly.h b/arch/x86/math-emu/poly.h
-index fc1c887ca073..654bfe4e29a0 100644
---- a/arch/x86/math-emu/poly.h
-+++ b/arch/x86/math-emu/poly.h
-@@ -39,7 +39,7 @@ asmlinkage void mul_Xsig_Xsig(Xsig *dest, const Xsig *mult);
- asmlinkage void shr_Xsig(Xsig *, const int n);
- asmlinkage int round_Xsig(Xsig *);
- asmlinkage int norm_Xsig(Xsig *);
--asmlinkage void div_Xsig(Xsig *x1, const Xsig *x2, const Xsig *dest);
-+asmlinkage void div_Xsig(Xsig *x1, const Xsig *x2, Xsig *dest);
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_cmd_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_cmd_v6.c
+index 47bc3014b5d8..f7c682fca645 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_cmd_v6.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_cmd_v6.c
+@@ -14,8 +14,7 @@
+ #include "s5p_mfc_opr.h"
+ #include "s5p_mfc_cmd_v6.h"
  
- /* Macro to extract the most significant 32 bits from a long long */
- #define LL_MSW(x)     (((unsigned long *)&x)[1])
+-static int s5p_mfc_cmd_host2risc_v6(struct s5p_mfc_dev *dev, int cmd,
+-				    const struct s5p_mfc_cmd_args *args)
++static int s5p_mfc_cmd_host2risc_v6(struct s5p_mfc_dev *dev, int cmd)
+ {
+ 	mfc_debug(2, "Issue the command: %d\n", cmd);
+ 
+@@ -31,7 +30,6 @@ static int s5p_mfc_cmd_host2risc_v6(struct s5p_mfc_dev *dev, int cmd,
+ 
+ static int s5p_mfc_sys_init_cmd_v6(struct s5p_mfc_dev *dev)
+ {
+-	struct s5p_mfc_cmd_args h2r_args;
+ 	const struct s5p_mfc_buf_size_v6 *buf_size = dev->variant->buf_size->priv;
+ 	int ret;
+ 
+@@ -41,33 +39,23 @@ static int s5p_mfc_sys_init_cmd_v6(struct s5p_mfc_dev *dev)
+ 
+ 	mfc_write(dev, dev->ctx_buf.dma, S5P_FIMV_CONTEXT_MEM_ADDR_V6);
+ 	mfc_write(dev, buf_size->dev_ctx, S5P_FIMV_CONTEXT_MEM_SIZE_V6);
+-	return s5p_mfc_cmd_host2risc_v6(dev, S5P_FIMV_H2R_CMD_SYS_INIT_V6,
+-					&h2r_args);
++	return s5p_mfc_cmd_host2risc_v6(dev, S5P_FIMV_H2R_CMD_SYS_INIT_V6);
+ }
+ 
+ static int s5p_mfc_sleep_cmd_v6(struct s5p_mfc_dev *dev)
+ {
+-	struct s5p_mfc_cmd_args h2r_args;
+-
+-	memset(&h2r_args, 0, sizeof(struct s5p_mfc_cmd_args));
+-	return s5p_mfc_cmd_host2risc_v6(dev, S5P_FIMV_H2R_CMD_SLEEP_V6,
+-			&h2r_args);
++	return s5p_mfc_cmd_host2risc_v6(dev, S5P_FIMV_H2R_CMD_SLEEP_V6);
+ }
+ 
+ static int s5p_mfc_wakeup_cmd_v6(struct s5p_mfc_dev *dev)
+ {
+-	struct s5p_mfc_cmd_args h2r_args;
+-
+-	memset(&h2r_args, 0, sizeof(struct s5p_mfc_cmd_args));
+-	return s5p_mfc_cmd_host2risc_v6(dev, S5P_FIMV_H2R_CMD_WAKEUP_V6,
+-					&h2r_args);
++	return s5p_mfc_cmd_host2risc_v6(dev, S5P_FIMV_H2R_CMD_WAKEUP_V6);
+ }
+ 
+ /* Open a new instance and get its number */
+ static int s5p_mfc_open_inst_cmd_v6(struct s5p_mfc_ctx *ctx)
+ {
+ 	struct s5p_mfc_dev *dev = ctx->dev;
+-	struct s5p_mfc_cmd_args h2r_args;
+ 	int codec_type;
+ 
+ 	mfc_debug(2, "Requested codec mode: %d\n", ctx->codec_mode);
+@@ -129,23 +117,20 @@ static int s5p_mfc_open_inst_cmd_v6(struct s5p_mfc_ctx *ctx)
+ 	mfc_write(dev, ctx->ctx.size, S5P_FIMV_CONTEXT_MEM_SIZE_V6);
+ 	mfc_write(dev, 0, S5P_FIMV_D_CRC_CTRL_V6); /* no crc */
+ 
+-	return s5p_mfc_cmd_host2risc_v6(dev, S5P_FIMV_H2R_CMD_OPEN_INSTANCE_V6,
+-					&h2r_args);
++	return s5p_mfc_cmd_host2risc_v6(dev, S5P_FIMV_H2R_CMD_OPEN_INSTANCE_V6);
+ }
+ 
+ /* Close instance */
+ static int s5p_mfc_close_inst_cmd_v6(struct s5p_mfc_ctx *ctx)
+ {
+ 	struct s5p_mfc_dev *dev = ctx->dev;
+-	struct s5p_mfc_cmd_args h2r_args;
+ 	int ret = 0;
+ 
+ 	dev->curr_ctx = ctx->num;
+ 	if (ctx->state != MFCINST_FREE) {
+ 		mfc_write(dev, ctx->inst_no, S5P_FIMV_INSTANCE_ID_V6);
+ 		ret = s5p_mfc_cmd_host2risc_v6(dev,
+-					S5P_FIMV_H2R_CMD_CLOSE_INSTANCE_V6,
+-					&h2r_args);
++					S5P_FIMV_H2R_CMD_CLOSE_INSTANCE_V6);
+ 	} else {
+ 		ret = -EINVAL;
+ 	}
+@@ -153,9 +138,15 @@ static int s5p_mfc_close_inst_cmd_v6(struct s5p_mfc_ctx *ctx)
+ 	return ret;
+ }
+ 
++static int s5p_mfc_cmd_host2risc_v6_args(struct s5p_mfc_dev *dev, int cmd,
++				    const struct s5p_mfc_cmd_args *ignored)
++{
++	return s5p_mfc_cmd_host2risc_v6(dev, cmd);
++}
++
+ /* Initialize cmd function pointers for MFC v6 */
+ static const struct s5p_mfc_hw_cmds s5p_mfc_cmds_v6 = {
+-	.cmd_host2risc = s5p_mfc_cmd_host2risc_v6,
++	.cmd_host2risc = s5p_mfc_cmd_host2risc_v6_args,
+ 	.sys_init_cmd = s5p_mfc_sys_init_cmd_v6,
+ 	.sleep_cmd = s5p_mfc_sleep_cmd_v6,
+ 	.wakeup_cmd = s5p_mfc_wakeup_cmd_v6,
 -- 
 2.39.5
 
