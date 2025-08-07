@@ -1,93 +1,178 @@
-Return-Path: <linux-kernel+bounces-758553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95397B1D0B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:54:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19531B1D0BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A184A582A69
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:54:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 028E67AC422
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD59821ADAE;
-	Thu,  7 Aug 2025 01:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031DD8F6E;
+	Thu,  7 Aug 2025 01:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwG8Fu7t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WfaoMtyR"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A01517C211
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 01:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26B11B4F1F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 01:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754531335; cv=none; b=d9ALklMSlZERzC8ecCL5NzWhJfoSc/2edF15OY+mLxMuNnmhPv/Qu3uH2UJm+QoqziTyHxRdHN/hqDHfijm/GeNIHTvVTsO+JZiWO4pP2Nek7YNKpMmZXa9RMFghndI59ylm8wXK12wHl6M1b40+fbveU1wiBtDDHuC5MqpsasI=
+	t=1754531609; cv=none; b=cfAWfSM3Q+kqjB586rQfaLW5yGuY6DK9MGpukxK/qmRTcHTtSIUkWIQKE6Bn7i6D6hCM8WTF5bfpcxhkp9C2TXlsD2eu20vJRtlF/0s17SXYhfcmJjPuwXkoNVb3g6Irob0SaFzIEJT+kjbskwVhq118qEv3g7iy0jTapWhvaOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754531335; c=relaxed/simple;
-	bh=NwGyzV0uPsVPS98dCHheGmGxPIh3v1lpFVzgj9NHjQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZU0jcgo0oOqiiW3Pt1h6Y23H8Gqr3TAZNlBHPg9J4bxNb2cHsAwX2EZKMu4+TnorF+5pPEW/CQ4AAyCQqkBKqCBZ3LSihhjf5kjZdhHbFc81B2jAXabotBTcUfnwKyhEBYDGX7B9VC8m3QwNC6LFvnAZuaCADIJ8+lL5UTKf9aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwG8Fu7t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64CDAC4CEEB;
-	Thu,  7 Aug 2025 01:48:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754531334;
-	bh=NwGyzV0uPsVPS98dCHheGmGxPIh3v1lpFVzgj9NHjQ8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pwG8Fu7t+iYodC1k+T7Mxon11m2dralbZeg5KG5rJC0mDdnhhpBFFUs01nkvkNEQQ
-	 oTKMHT9P121wlRScZ/4mudXUWrDU3hDQIjFUzxrzeNGSETz1Qx29M32asSHLUfgTTz
-	 FM1dpN7w+jMo0fZ1CI0rMDTpVIdVtLW3Ma0k0QLeYcvSbSStjzSxZQozgRfqdAuvbk
-	 9t3+AGpD2a9z0xgBvFH/Ruys6lKUwBCymhDo52gSOnNID1Nbzywi9W+vJZZAW908LZ
-	 Vrcgj7dVWMxrDIyS+EcKYzKmJpQczqSZ8wxOV9GFKaB+jesjO7Yj/cL0ViEwCvEUEd
-	 NT7XtWXh/TTyg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to clear unusable_cap for checkpoint=enable
-Date: Thu,  7 Aug 2025 09:48:35 +0800
-Message-ID: <20250807014836.3780988-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+	s=arc-20240116; t=1754531609; c=relaxed/simple;
+	bh=Y9oSM9/w1NfZrP1j30ItyWLKlJpMBNsclInALq9iQeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=H2plTGrP9vr/G/riOEihCQ5zKGexVV3orATsfnN3yeyNZTCC7rcO6i647rVXmpkC89apTQD1pqTplx0tpzSZGDCKbhoXIlHSyHQ4T3geMC1gF4fEqYqGRbf/ntCuYXp4nRuAWJVXj70uRxGRvfeLJH1YfQepS2zfmSM94lzUSis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WfaoMtyR; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250807015323epoutp0383d5adbd1dc433837d5c8fde63917656~ZWTJyyqSW3080430804epoutp03F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 01:53:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250807015323epoutp0383d5adbd1dc433837d5c8fde63917656~ZWTJyyqSW3080430804epoutp03F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754531603;
+	bh=DGZ/El3JOSWXEpxSygYUARXe3bm1cG1lUFQojuw/LbI=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=WfaoMtyROS0ZpjvrFHBRglt8/yt3VrBfvAea8BBlydE861jrggr7b3DUr13EBGW+l
+	 2Sbw87ue77R5T5dh+QCaioRnnR/XIGDrsgGggdTyqfDGE/n55JCC74IRe3dhwM9DaT
+	 C19Aquak/cnObwyfiCgL0xhPyc0PwqY3uJNaBf2g=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250807015322epcas5p42de63a1834a128fc0fcb5008dcbf1a56~ZWTJaCVhT0035700357epcas5p4s;
+	Thu,  7 Aug 2025 01:53:22 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4by9DK64kfz2SSKX; Thu,  7 Aug
+	2025 01:53:21 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250807015321epcas5p32599056a49a47c2e20acb82f51102b81~ZWTILEu7y2538125381epcas5p3D;
+	Thu,  7 Aug 2025 01:53:21 +0000 (GMT)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250807015318epsmtip12e93a87b574a61829d7e74d9f2f25ee5~ZWTF2MIkw0137501375epsmtip1e;
+	Thu,  7 Aug 2025 01:53:18 +0000 (GMT)
+Message-ID: <81b12279-e84d-4f81-b41c-0857c6a7975c@samsung.com>
+Date: Thu, 7 Aug 2025 07:23:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: dwc3: Remove WARN_ON for device endpoint command
+ timeouts
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>, "balbi@ti.com"
+	<balbi@ti.com>, "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>, "dh10.jung@samsung.com"
+	<dh10.jung@samsung.com>, "akash.m5@samsung.com" <akash.m5@samsung.com>,
+	"hongpooh.kim@samsung.com" <hongpooh.kim@samsung.com>,
+	"eomji.oh@samsung.com" <eomji.oh@samsung.com>, "shijie.cai@samsung.com"
+	<shijie.cai@samsung.com>, "alim.akhtar@samsung.com"
+	<alim.akhtar@samsung.com>, "muhammed.ali@samsung.com"
+	<muhammed.ali@samsung.com>, "thiagu.r@samsung.com" <thiagu.r@samsung.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <20250807005638.thhsgjn73aaov2af@synopsys.com>
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250807015321epcas5p32599056a49a47c2e20acb82f51102b81
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250804142356epcas5p3aa0566fb78e44a37467ac088aa387f5e
+References: <CGME20250804142356epcas5p3aa0566fb78e44a37467ac088aa387f5e@epcas5p3.samsung.com>
+	<20250804142258.1577-1-selvarasu.g@samsung.com>
+	<20250805233832.5jgtryppvw2xbthq@synopsys.com>
+	<99fa41ed-dee0-499f-8827-67e1e1c70e60@samsung.com>
+	<20250807005638.thhsgjn73aaov2af@synopsys.com>
 
-mount -t f2fs -o checkpoint=disable:10% /dev/vdb /mnt/f2fs/
-mount -t f2fs -o remount,checkpoint=enable /dev/vdb /mnt/f2fs/
 
-kernel log:
-F2FS-fs (vdb): Adjust unusable cap for checkpoint=disable = 204440 / 10%
+On 8/7/2025 6:26 AM, Thinh Nguyen wrote:
+> On Wed, Aug 06, 2025, Selvarasu Ganesan wrote:
+>> On 8/6/2025 5:08 AM, Thinh Nguyen wrote:
+>>> On Mon, Aug 04, 2025, Selvarasu Ganesan wrote:
+>>>> From: Akash M <akash.m5@samsung.com>
+>>>>
+>>>> This commit addresses a rarely observed endpoint command timeout
+>>>> which causes kernel panic due to warn when 'panic_on_warn' is enabled
+>>>> and unnecessary call trace prints when 'panic_on_warn' is disabled.
+>>>> It is seen during fast software-controlled connect/disconnect testcases.
+>>>> The following is one such endpoint command timeout that we observed:
+>>>>
+>>>> 1. Connect
+>>>>      =======
+>>>> ->dwc3_thread_interrupt
+>>>>    ->dwc3_ep0_interrupt
+>>>>     ->configfs_composite_setup
+>>>>      ->composite_setup
+>>>>       ->usb_ep_queue
+>>>>        ->dwc3_gadget_ep0_queue
+>>>>         ->__dwc3_gadget_ep0_queue
+>>>>          ->__dwc3_ep0_do_control_data
+>>>>           ->dwc3_send_gadget_ep_cmd
+>>>>
+>>>> 2. Disconnect
+>>>>      ==========
+>>>> ->dwc3_thread_interrupt
+>>>>    ->dwc3_gadget_disconnect_interrupt
+>>>>     ->dwc3_ep0_reset_state
+>>>>      ->dwc3_ep0_end_control_data
+>>>>       ->dwc3_send_gadget_ep_cmd
+>>>>
+>>>> In the issue scenario, in Exynos platforms, we observed that control
+>>>> transfers for the previous connect have not yet been completed and end
+>>>> transfer command sent as a part of the disconnect sequence and
+>>>> processing of USB_ENDPOINT_HALT feature request from the host timeout.
+>>>> This maybe an expected scenario since the controller is processing EP
+>>>> commands sent as a part of the previous connect. It maybe better to
+>>>> remove WARN_ON in all places where device endpoint commands are sent to
+>>>> avoid unnecessary kernel panic due to warn.
+>>>>
+>>>> Fixes: e192cc7b5239 ("usb: dwc3: gadget: move cmd_endtransfer to extra function")
+>>>> Fixes: 72246da40f37 ("usb: Introduce DesignWare USB3 DRD Driver")
+>>>> Fixes: c7fcdeb2627c ("usb: dwc3: ep0: simplify EP0 state machine")
+>>>> Fixes: f0f2b2a2db85 ("usb: dwc3: ep0: push ep0state into xfernotready processing")
+>>>> Fixes: 2e3db064855a ("usb: dwc3: ep0: drop XferNotReady(DATA) support")
+>>>> Cc: stable@vger.kernel.org
+>>> I don't think this is a fix patch. You're just replacing WARN* with
+>>> dev_warn* without doing any recovery. Let's remove the Fixes and table
+>>> tag. Also, can we replace dev_warn* with dev_err* because these are
+>>> critical errors that may put the controller in a bad state.
+>>>
+>>> Thanks,
+>>> Thinh
+>>
+>> Hi Thinh,
+>>
+>> Thanks for your review comments.
+>> Yeah we agree. This is not a fix patch. Sure we will update new patchset
+>> with replace dev_warn* with dev_err*.
+>>
+>> As for dropping the stable tag,  It would be better these changes to be
+>> applied across all stable kernels, so shall we keep stable tag in place?
+>>
+> That's fine with me.
 
-If we has assigned checkpoint=enable mount option, unusable_cap{,_perc}
-parameters of checkpoint=disable should be reset, then calculation and
-log print could be avoid in adjust_unusable_cap_perc().
+Hi Thinh,
+Thanks for the confirmation.
 
-Fixes: 1ae18f71cb52 ("f2fs: fix checkpoint=disable:%u%%")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/super.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f37004780ce0..c1f45df9efec 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1014,6 +1014,10 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 			ctx_set_opt(ctx, F2FS_MOUNT_DISABLE_CHECKPOINT);
- 			break;
- 		case Opt_checkpoint_enable:
-+			F2FS_CTX_INFO(ctx).unusable_cap_perc = 0;
-+			ctx->spec_mask |= F2FS_SPEC_checkpoint_disable_cap_perc;
-+			F2FS_CTX_INFO(ctx).unusable_cap = 0;
-+			ctx->spec_mask |= F2FS_SPEC_checkpoint_disable_cap;
- 			ctx_clear_opt(ctx, F2FS_MOUNT_DISABLE_CHECKPOINT);
- 			break;
- 		default:
--- 
-2.49.0
-
+Please review the updated patchset v2:
+https://lore.kernel.org/all/20250807014639.1596-1-selvarasu.g@samsung.com/
+Thanks,
+Selva
+>
+> BR,
+> Thinh
 
