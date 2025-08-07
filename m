@@ -1,139 +1,135 @@
-Return-Path: <linux-kernel+bounces-758792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5C0B1D3DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:59:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4243AB1D3DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD94817061A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D70918C691B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A9E248880;
-	Thu,  7 Aug 2025 07:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414CC24BC07;
+	Thu,  7 Aug 2025 07:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7InA4b5"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ilwVLM76"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C8C24C06A
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF8E246BDE;
+	Thu,  7 Aug 2025 07:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553504; cv=none; b=LqjJUfJPiUUxTgSJ/bGvzcJ4mzMJLpBunV51bsdt+mdXNTCO2Sk/mbzAH2X6MLgnK1iWRKgwvnfcpsNK1Zjx35ZhTCL+1mibSyMnM0YC7x/jVrYVEtH1xvp4k+Z/hv3r3mmSac6L0YH5R8dP1c1mWinJWefPKJfsWb6o3HHMgvo=
+	t=1754553530; cv=none; b=jgFDwj3TXBHCsDOdDwHZGZUh8JwCMbhSsCzLDWdH7r4WubYbEtonxLoSU2W3y3D08q0upWKM76HRvTmMQDtJx5GKppQT86kchGxowjrAp6rFf0VIX4XJSTdKC+ilPVEUfxV+vVxyIMvioMmUcvAXq/2ruw1Hgvxph2v5gJUudi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553504; c=relaxed/simple;
-	bh=TvQr2RyUocSFiKxvTqKWoN2lucqADlstvP8cqkf6nBs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=snSEt33vFFQCnv9ovbhqYEJQobgOw1hkEf+m2WZqANxAemvx5ZSwOVDNQp7A2HsdRYhm+LrhRHAbalkf+7xoIFus3hqeXglGV1fndlg/TljLDA4Mjo/cmE6cHMweGtvMos+HfH8GVowVUfsf8yAIop89xpyWnQsZasYvoe/t7z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E7InA4b5; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1754553530; c=relaxed/simple;
+	bh=DDU4mUfLGa/kC/rD4398PtK/yjh8S6aRiKIZIanDiL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E+rbhIK3rY68fhaHgCgiZQ5ROV1vQvLJ0L6LaftcMfZSLItmuxzIUO+1/rjb08cS/Wowdoe6oHYWCrd4TnBhK9sULame04L41eFZa5o8oU/zKuCnFn0pVzGqzpjpFZ5pyf4MsKKZI0pd3dqD2xAPLFBRIg48IhNCOqIqjuWKdHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ilwVLM76; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55b8bf653dfso846234e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:58:21 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-718409593b9so7131267b3.3;
+        Thu, 07 Aug 2025 00:58:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754553500; x=1755158300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754553528; x=1755158328; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oVukRiidJtnbsHfjBQsGQf+AgMjYijGPFu00oV3qGko=;
-        b=E7InA4b5K0/mFEqQSXRuH71TysAGHjMEtBBtecJ/hBDVmFIc/SV6o6JpYBDtofbxxh
-         Hzon6oYMGhRbCjjAGUuzaSjNfrgN0bRR4gau/r+oalJTqw38oWhllRnDeRH0hfjV9UCL
-         gxizqO/R8hx+s3+XwXPMflziezHbQQ7idmGaVKTaXzyVW9jjC+pxwG2WvPsx9X8s8h4b
-         g4l+wfnwmLax9WOufUjq+V42ALrtFJ/T6DsImJRCF92vVlr/dr6xSyB8siMQIAXGaRnv
-         N+MVzN06t0SiE04yrf72ecPY/ZnbmeOstOn/HZ/y46FB1th4BBKRfGo8GdcGaibee6WR
-         zIQA==
+        bh=DDU4mUfLGa/kC/rD4398PtK/yjh8S6aRiKIZIanDiL0=;
+        b=ilwVLM76HbNieyenFnYK2rY1ysohkjxxV+r9IqqpKmYhtEvoI06Hw2fiZAUjMOip4O
+         u2vIKhB/+LXB+8eX1I4HhkOJy+mCgoFNut2Wcs1xOHopiiG2gT9kHdpqLxLOsBIHu2dT
+         /be6x5EEkIza5REaIsL1qiX2gbdpITa8Ts2Ly7Ghj4ndjuFlwOwgQ8DIbSLTzozixoN3
+         YxVyMdWujf9q92k9np+CasjsS1m5oKmVntLCYRL+88yM1pWVU1KOHpowNEvqUZBRPie6
+         /iwZotfpDhYX5xDMOI0pUF7nrFYT+8Lca7nmIWP5iW+OnKhaGu6BEEIx02w/CoGWszdt
+         9mKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754553500; x=1755158300;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1754553528; x=1755158328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oVukRiidJtnbsHfjBQsGQf+AgMjYijGPFu00oV3qGko=;
-        b=WViRJabm+05wdqEWFIoauHiTx9yDhOMVYgh2dFjSis7IZ06R9HX7q9+x3wYeI4KgVO
-         pJbDPmVTsjvf9yK1o1pN3S/hrPORD2pMbhT6O3EkYo+zj5ZTWBt3qSLJYF1blsldJPZ4
-         hnWsxZDSyQnA3UpqYPZYA+PpiBaWSPsD3cmjyCyQr6nWGfZdx2kj9Cx+t6kb4pbSSAuN
-         ickURjtbgDw76jzkcMMRsADTUyVK86KbQiTwsxpIdhT/8JLc84f7nd+f//B1ZGKw4yIF
-         yG1uGrTBJjwdUppIe9rhsTa3QX7LAF3e/PqjQXGHTrjKGWa6doGOVC5zjhLLMRfz0K8Q
-         Kf3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWWKLsepurmIgwAQu2oQYCyLdauqBZxWGn3+eFVVa1L6Ymlx59E7lPenW2b45gWjdAGe4V575vYzT4Y6jQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWDd2zIog9bVKcaxP30P44aP97ORibCegIZoFAkWVqFQ4KVmB3
-	SonJxTp6AfgNieFrInS8HjjGTHKPFQgj154Q1cpXXbbsrYFJR/OZXalS
-X-Gm-Gg: ASbGnctwwHSH76z+q2ACPPaKKTo1f4T9st4KOAwRfkCS4PgyqW005Iqgwe/lULH8X18
-	ZxI6HW7n1bxGSUWj+wIza69SFvQpzPG22llyTkqC+KmYppfCMdhfX9g0sgiS4OpBy672gTJBetZ
-	9O4Fe83t6G638XGbRPSJmaL8wGudy3aTIRDPa8w73yqEF6FX3BMmoJwf1mB1dOP3SMkNsoelK+D
-	Sh14jQQk1TkNOQ9O5F+Vz7paE2i/bxaOlIr20ukRRtH21hXP3zXjRIxMcKGwe4eZ6r/HaI4ktQS
-	f6KJQotpI/tp5u9iWCD17A9Pgp5RzTC3qQ9BiQHdABKEQUcEU/GtptZgooCZ/vglO1tlVzZRMDB
-	z7y5jMH0USIwJh51pqA==
-X-Google-Smtp-Source: AGHT+IHOkzVtTGSJTwNmbg3z+KP8NHPcTU/o7KzFNOnpCVXQwOy0R5xTlB2QHMbSZDCe++0b21e2tg==
-X-Received: by 2002:a05:6512:3b07:b0:55a:4c3a:b11e with SMTP id 2adb3069b0e04-55caf5d7b8amr1802321e87.30.1754553499405;
-        Thu, 07 Aug 2025 00:58:19 -0700 (PDT)
-Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c9b1fesm2501995e87.96.2025.08.07.00.58.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 00:58:18 -0700 (PDT)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Michal Hocko <mhocko@kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: [PATCH 8/8] mm: Drop __GFP_DIRECT_RECLAIM flag if PF_MEMALLOC is set
-Date: Thu,  7 Aug 2025 09:58:10 +0200
-Message-Id: <20250807075810.358714-9-urezki@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250807075810.358714-1-urezki@gmail.com>
-References: <20250807075810.358714-1-urezki@gmail.com>
+        bh=DDU4mUfLGa/kC/rD4398PtK/yjh8S6aRiKIZIanDiL0=;
+        b=ugqbYoZEyt7nepEmgLjoAoWEzGuxGI+8YWdXpc2Zhw9Jy67Rl7eR9AzCETQf92oOHR
+         sspGgquR0tl9yRme9xR2j3cMstZ1ZeT4Aa2ywa60Y/r8XZMRwkQCVPhaZCpSYA5Ihh2h
+         Pfbi4zRXKOcyl2L1645mEWT/yeOZCPcKHtBU7JuA2c4tHOaiYT5ApXSn8/9yzyYpQ31n
+         9z4BNtaQeEqtI+RMtB97J09YpIyz5nsjBgc+1Fsh8J47mC8IopcnxXH2HAsWOfA3/zWj
+         d2IGewE4Iw3i/e7HYxY95Ru7qoANkG/OFVzHB92i9zxjSIeyn1EHeUEcjqIrRlJWzJdJ
+         wyDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVq5pfexFCh0pAojoHHBDOiYDGzcDmdq8XmsV12rpPG3ixwdd27jY6SGudQlXtQ+TUYjHD4Xl7Tnwgm@vger.kernel.org, AJvYcCXzd8M6wFD4Ecvg5GqE9xQBNUyJHm1aiN1LqQW2sBRA2LltgvtseIS53X7r4Wgv7sb9mJ8NFDd2dppTmGv2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGRghpsu9b+ocnq4IexAMMeRP6gWvUGdD9St+mWW1zVbJbGXcN
+	aiU63u60wODOI/8CLmFUSeDaU1AOY7h1F9pmpMxIdRuzjR3F6P9VeSh/QLQkkyHDDO55xU89I3/
+	j8WBkPKJ5u68hSKwwpicY3rEulxDya24=
+X-Gm-Gg: ASbGnctTaSj2NX4yAapcUCDC/zP75lfLI+K7nXJ9Jl2BskrYqOsHxZ9I2TIbL7QC8r9
+	b698h2XBvvg+gRJNcOA07/+DdycLtGj6cr6foA3Ct/4Ehh0JqLdAYBco+w1ncFZuX7JIxIuFLsC
+	HK9xFxFTFDBZWZrzySLpHf595nsLdO4OztXBsKmOiVCnSH0H1icTWwFOQpw3Udp8uxAhlSlfmF6
+	M98sd+eunK8HFGxeed9D/lCa4+IBLNM32AGcVA=
+X-Google-Smtp-Source: AGHT+IGZKz1tpSwZENVH7eq2lbQKS/ckKC1RJ5Elh7kv3TzcssZgVYBUSlfRHCr803DVDFTPFP0Xzi7enXaZL6INYzQ=
+X-Received: by 2002:a05:690c:6d8b:b0:718:3b9f:f1f0 with SMTP id
+ 00721157ae682-71bc991cebdmr84514327b3.26.1754553527739; Thu, 07 Aug 2025
+ 00:58:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250806133824.525871-1-rick.wertenbroek@gmail.com>
+ <20250806133824.525871-2-rick.wertenbroek@gmail.com> <20250807-amphibian-fanatic-muskrat-b1365b@kuoka>
+ <7ea03b71-d36d-49a4-b848-34eba4c1620d@kernel.org>
+In-Reply-To: <7ea03b71-d36d-49a4-b848-34eba4c1620d@kernel.org>
+From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Date: Thu, 7 Aug 2025 09:58:11 +0200
+X-Gm-Features: Ac12FXykZEwvQuAbP1opdqmWRhEGs-r5-vMCR-fxkqHt9AuoJgwdnEGvT3Iy_Qg
+Message-ID: <CAAEEuhpZGbuGkAKRiYQouAwDwnJbP+9ppi7BtrZekKpp20iOgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: phy: rockchip,pcie3-phy: add optional
+ differential phy clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org, 
+	alberto.dassatti@heig-vd.ch, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The memory allocator already avoids reclaim when PF_MEMALLOC is set.
-Clear __GFP_DIRECT_RECLAIM explicitly to suppress might_alloc() warnings
-to make more correct behavior.
+On Thu, Aug 7, 2025 at 9:44=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 07/08/2025 09:42, Krzysztof Kozlowski wrote:
+> > On Wed, Aug 06, 2025 at 03:38:21PM +0200, Rick Wertenbroek wrote:
+> >> Both PHYs can use an alternate reference differential clock, add the c=
+locks
+> >
+> > I do not see any changes in rockchip,rk3588-pcie3-phy, so your "both" i=
+s
+>
+> I meant 3568, the other one.
+>
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- include/linux/sched/mm.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+By "both" I meant both PHYs of the RK3588 as the rk3588-pcie-phy is
+actually a dual PHY (PHY0 and PHY1 which both can use independent
+clocks).
 
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 2201da0afecc..8332fc09f8ac 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -246,12 +246,14 @@ static inline bool in_vfork(struct task_struct *tsk)
-  * PF_MEMALLOC_NOIO implies GFP_NOIO
-  * PF_MEMALLOC_NOFS implies GFP_NOFS
-  * PF_MEMALLOC_PIN  implies !GFP_MOVABLE
-+ * PF_MEMALLOC      implies !__GFP_DIRECT_RECLAIM
-  */
- static inline gfp_t current_gfp_context(gfp_t flags)
- {
- 	unsigned int pflags = READ_ONCE(current->flags);
- 
--	if (unlikely(pflags & (PF_MEMALLOC_NOIO | PF_MEMALLOC_NOFS | PF_MEMALLOC_PIN))) {
-+	if (unlikely(pflags & (PF_MEMALLOC_NOIO | PF_MEMALLOC_NOFS |
-+			PF_MEMALLOC_PIN | PF_MEMALLOC))) {
- 		/*
- 		 * NOIO implies both NOIO and NOFS and it is a weaker context
- 		 * so always make sure it makes precedence
-@@ -263,6 +265,9 @@ static inline gfp_t current_gfp_context(gfp_t flags)
- 
- 		if (pflags & PF_MEMALLOC_PIN)
- 			flags &= ~__GFP_MOVABLE;
-+
-+		if (pflags & PF_MEMALLOC)
-+			flags &= ~__GFP_DIRECT_RECLAIM;
- 	}
- 	return flags;
- }
--- 
-2.39.5
+The RK3588 PHY is a dual PHY with two independent PCIe 3.0 x2
+interfaces (that can be combined into an x4 or used independently).
+The RK3568 PHY is a single PHY with one PCIe 3.0 x2 interface.
 
+The RK3568 already has the bindings for the extra differential clock
+for its PHY, but the RK3588 did not, so I added them.
+
+I should maybe rephrase this to make it clearer it applies only to the
+RK3588 and that by both PHYs I mean RK3588 PHY0 and PHY1
+
+> > either incorrect or ambiguous.
+> >
+> > ...
+> >
+> >> to the DT bindings
+> >>
+>
+> Best regards,
+> Krzysztof
 
