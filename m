@@ -1,225 +1,99 @@
-Return-Path: <linux-kernel+bounces-759317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B2DB1DC00
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:51:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E0FB1DBFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F26EF17C58B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E69A16FE11
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E0C273D7B;
-	Thu,  7 Aug 2025 16:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5AE272E48;
+	Thu,  7 Aug 2025 16:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aiztritw"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNik9z27"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16CF1E832E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F15C26B777;
 	Thu,  7 Aug 2025 16:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754585460; cv=none; b=gDZMYSxSZbtqa+2AyLYMDIzR0sbumSaKL7Scw0UGBwobl07FVzD82mbsW6efuoDqT7TfsCmZMenivsc3DMLX0UN1kodKVk1ffDoL+Jj4wn1EASTCUz4gX8YR+/6K6BSuIqeVl90fkuqO1txbRMxqeoyBx4VbPuiTNcdIzEiRm0k=
+	t=1754585458; cv=none; b=YLJeIQ0mXbRQOth+mTLvqpgTdggEzU4drLfLG+GrlpeG4F8XyJVWp84dnxS+pD+jYgeonps6CpxgF+KOWo/01gpqUGkgZTFHFJ7Tmgw+vfyFG5iuO3aZ4tCBNRIDKRmPn4jSbzwQwm5cegEB7DsvSyp5KSi2mArgf6VIPiV1ImA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754585460; c=relaxed/simple;
-	bh=rvHzHNNeX42Ajw+oPnvddqWVsP011jQpeQ76XsjgJjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=es+sHrMvbxLFy2skIIlJkKzw9yCnbcpSQSCVUtZPicIPxDNiz/qBTGKbpu0/zHZxlrHHuwDdn8riXykkXORBP7Z7BHOZcFGk0M4b84KEc24Iupb1j1crpOjbIPEMmoM16aXHGHwwJ63CwazmkwCWO1iEF5PLED+fOby5Dffp+Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aiztritw; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b783ea5014so645549f8f.0;
-        Thu, 07 Aug 2025 09:50:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754585456; x=1755190256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BI+CDnO3S/HRsnMbehWHSmPi1UCDpaAWXx0mQumQV1k=;
-        b=Aiztritw9v4+tpsmzFwFTRRbi+GnbOMWKtnXixfTZ22lPVNg+YepO4A2dEk2QpWt9n
-         fOI9xp3YEe7NRhFcNzYKVSDiH5l0bD73RKNFUbaLtdggh3mxN67ulo7bdMKgc2rvLXD0
-         rm8iWSgKF7L8Pwut4v+rPRE3S21RFVlrUrIhPw8v5TqDrHQ+EqlP3rmAyBnnUrgITfn3
-         j3axnt035ISz3f+unlVu5o8iK25/f+X1sOSiQtWAMkwnpvv93R1H2+oqhv5N5fT6VR7p
-         20sypjSH5gY4jEY7PgrOkTgzK4N4J4OsUbJlw5ZcGrjlUyd/doXf0acCVhwSxxx5YAis
-         9ZPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754585456; x=1755190256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BI+CDnO3S/HRsnMbehWHSmPi1UCDpaAWXx0mQumQV1k=;
-        b=mHgAO6ApiC7XeL7OF9kIV80z7cZ38YZ0cEdjtEINGO3nIfDEvUZ98Y+pJWjYFN9gBw
-         vF8NOo8ENHQ5wt6yqDrltX8U+cniscKOkMBN9sGU5MWlWvD+319Pz+KlaJZK5T/WjjW0
-         oMi8fH5qMdTZvW1NloCmNhiBNOF/H8zOhUqN9Bi/NZ8ncF7mOr/1ct2MQpytIKZLJVJq
-         p2DIgUw2bCH1TNcsp1jxW7/Y5jQbxJS4uS+PelSp5ORrj3MBdNuD7PMVsTR0Qt9JKtXB
-         ImSo8BdkTFR9cHZcmE8pvwWWz8IWB8I2GZHK1e9/+zHr2Ez6IsMCJAQlQ6JeBKPV96gi
-         A/2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUP9iQ8CV/oWvyBjFMZM5pj+XLq3Sjz59+sXpHeTPkJ5qrZo4S5G73lDqR9YaMbUOvFn6o=@vger.kernel.org, AJvYcCWCoBvKmb4Re2XQqVo30Cy6kvRmzq3AXdYtepIJqGeNJ8iVUFPqx38HFgUjJrWMlk8p73GiOzXF2oamwZyU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAQDYrZmDaN1StPTzVeQo16PWwlfl1oqOXy2hbdZICmycbhguv
-	JML1RcCM60Z8u5ro7+UJlcRgGRV9xUoGxV4SG9Q2eS/c2t3VVysqxsy+1LZLWXySWOhKCoXltKZ
-	wJkM/d/zlN3xLQ8Vn4SdpawwhlrjPpqs=
-X-Gm-Gg: ASbGncs0xwcLbc4HCFJ/ktATyn20MChz0yqhPbEFE4U2xcKUA0X12pdjE+g0qxfTYnQ
-	+KXqhbyYVm/l9u9uzHVUIuO0T+ZKpJe83aiEAEBVz4LjSx07ev24DLxZT+ddchIWLql28jGC9ay
-	Zr+Tl4xA1iHUwDg3IXtaROcJ2nBdCjComWIZAcP/kh1jPWIH4NfnHz3frwFgFu6fAq1Xdh4YANE
-	T09iHpV5hT1u5CARX4uIQc=
-X-Google-Smtp-Source: AGHT+IGq3jfQ2I7+YTZKWmezts8ksMJtEUFLNuu7yd4Jw8iw8OJixukAUDSMkhzOoJ9jzYlKEOSlPd43kV56ZahM0w8=
-X-Received: by 2002:a05:6000:2003:b0:3b7:820b:a830 with SMTP id
- ffacd0b85a97d-3b8f48f66aemr6042295f8f.25.1754585455883; Thu, 07 Aug 2025
- 09:50:55 -0700 (PDT)
+	s=arc-20240116; t=1754585458; c=relaxed/simple;
+	bh=ZCdy8wrGaS31m/vyICQ0sTRH47wx7RDv45XHLSPATl8=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJiWBUenQYKAxS92EUmfmfjA7sXUDiEzh1Gpmp9y8Xqt0TvRfka3xMfPQPKbiG50XoFKDZrYidX2X1ssHxIRmxLl7BrLOlhop9sdvZAZS0KSUkvjizUf/aR7eeMCAptg1c3vo1nfcYgwQxDP7OAHVsPYWd3l/VnC9qvarxchJDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNik9z27; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03939C4CEEB;
+	Thu,  7 Aug 2025 16:50:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754585457;
+	bh=ZCdy8wrGaS31m/vyICQ0sTRH47wx7RDv45XHLSPATl8=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=qNik9z27Gusn8Dk1XqpuixFITS1eF8nfsD0OLtmIPFNYe8ipK9j1zenCckHJewAyM
+	 iO45DVl+9CJrbLfDQxwixJ+ih9YbPa7rGjcdQltbZVhAgHvCMnEE+jtzDK/D/xZDL6
+	 XoVIemImM3IpQMChEHWkSCVIEEnNHKhu/xsfoqbWUO69SuQQwBfSdKH8R/3bp0iYWx
+	 f6r7qWaYqYY4JGlcRlDa6C0j77xWgFxE0ptgcU+nBvut0XvZ3J1A52VIDzU0SXS5bB
+	 VnSBaN8zI5C/Rz5qp+/4SpLU7X3QJFi9LuEPl/g1Rqyp6ZPN92hCyZ6cdhr1JgVqdG
+	 d9jRG0oTobIPw==
+Date: Thu, 7 Aug 2025 09:50:52 -0700
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, 
+	Vikash Garodia <quic_vgarodia@quicinc.com>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] soc: qcom: mdt_loader: Remove pas id parameter
+Message-ID: <vvo63eeg7q37qrgcpsiw5a6dl4ffa4usrr6lqozwyqknyz23ny@g4m7oeeudvby>
+References: <20250806172531.1865088-1-mukesh.ojha@oss.qualcomm.com>
+ <20250806172531.1865088-3-mukesh.ojha@oss.qualcomm.com>
+ <c9d761a2-7121-4ce6-84c7-232a6c4ce976@oss.qualcomm.com>
+ <20250807053610.siel2gsvl2igc3ga@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805115513.4018532-1-kafai.wan@linux.dev>
-In-Reply-To: <20250805115513.4018532-1-kafai.wan@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 7 Aug 2025 09:50:42 -0700
-X-Gm-Features: Ac12FXwDvr7D5yeAtsPz6ePp67cc_tchJz2vkfuTXMoJDP0gbWSavjnd2i11164
-Message-ID: <CAADnVQLecBEmQzxOzUwv_2mO9BDrKSp1xiC4WY8-gL2w4OaxaQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/1] bpf: Allow fall back to interpreter for
- programs with stack size <= 512
-To: KaFai Wan <kafai.wan@linux.dev>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Jiayuan Chen <mrpre@163.com>, KaFai Wan <mannkafai@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Felix Fietkau <nbd@nbd.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807053610.siel2gsvl2igc3ga@hu-mojha-hyd.qualcomm.com>
 
-On Tue, Aug 5, 2025 at 4:55=E2=80=AFAM KaFai Wan <kafai.wan@linux.dev> wrot=
-e:
->
-> OpenWRT users reported regression on ARMv6 devices after updating to late=
-st
-> HEAD, where tcpdump filter:
->
-> tcpdump -i mon1 \
-> "not wlan addr3 3c37121a2b3c and not wlan addr2 184ecbca2a3a \
-> and not wlan addr2 14130b4d3f47 and not wlan addr2 f0f61cf440b7 \
-> and not wlan addr3 a84b4dedf471 and not wlan addr3 d022be17e1d7 \
-> and not wlan addr3 5c497967208b and not wlan addr2 706655784d5b"
->
-> fails with warning: "Kernel filter failed: No error information"
-> when using config:
->  # CONFIG_BPF_JIT_ALWAYS_ON is not set
->  CONFIG_BPF_JIT_DEFAULT_ON=3Dy
->
-> The issue arises because commits:
-> 1. "bpf: Fix array bounds error with may_goto" changed default runtime to
->    __bpf_prog_ret0_warn when jit_requested =3D 1
-> 2. "bpf: Avoid __bpf_prog_ret0_warn when jit fails" returns error when
->    jit_requested =3D 1 but jit fails
->
-> This change restores interpreter fallback capability for BPF programs wit=
-h
-> stack size <=3D 512 bytes when jit fails.
->
-> Reported-by: Felix Fietkau <nbd@nbd.name>
-> Closes: https://lore.kernel.org/bpf/2e267b4b-0540-45d8-9310-e127bf95fc63@=
-nbd.name/
-> Fixes: 6ebc5030e0c5 ("bpf: Fix array bounds error with may_goto")
+On Thu, Aug 07, 2025 at 11:06:10AM +0530, Mukesh Ojha wrote:
+> On Wed, Aug 06, 2025 at 12:07:05PM -0700, Jeff Johnson wrote:
+> > On 8/6/2025 10:25 AM, Mukesh Ojha wrote:
+> > > pas id is not used in qcom_mdt_load_no_init() and it should not
+> > > be used as it is non-PAS specific function and has no relation
+> > > to PAS specific mechanism.
+> > ...> @@ -353,7 +353,7 @@ static int __qcom_mdt_load(struct device *dev, const
+> > struct firmware *fw,
+> > >  	if (!mdt_header_valid(fw))
+> > >  		return -EINVAL;
+> > >  
+> > > -	is_split = qcom_mdt_bins_are_split(fw, fw_name);
+> > > +	is_split = qcom_mdt_bins_are_split(fw);
+> > 
+> > this should be in the 4/4 patch
+> > 
+> 
+> Rush to send patches!!
+> 
 
-This commit looks fine.
+Please don't!
 
-> Fixes: 86bc9c742426 ("bpf: Avoid __bpf_prog_ret0_warn when jit fails")
+Also remember that this isn't a regression fix and we're in the merge
+window, so we're not going to pick these changes this week anyways.
 
-But this one is indeed problematic.
-But before we revert, please provide a selftest that is causing
-valid classic bpf prog to fail JITing on arm,
-because it has to be fixed as well.
+Regards,
+Bjorn
 
-Sounds like OpenWRT was suffering performance loss due to the interpreter.
-
-> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> ---
->  kernel/bpf/core.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-> index 5d1650af899d..2d86bd4b0b97 100644
-> --- a/kernel/bpf/core.c
-> +++ b/kernel/bpf/core.c
-> @@ -2366,8 +2366,8 @@ static unsigned int __bpf_prog_ret0_warn(const void=
- *ctx,
->                                          const struct bpf_insn *insn)
->  {
->         /* If this handler ever gets executed, then BPF_JIT_ALWAYS_ON
-> -        * is not working properly, or interpreter is being used when
-> -        * prog->jit_requested is not 0, so warn about it!
-> +        * or may_goto may cause stack size > 512 is not working properly=
-,
-> +        * so warn about it!
-
-We shouldn't have touched this comment. Let's not do it again.
-
->          */
->         WARN_ON_ONCE(1);
->         return 0;
-> @@ -2478,10 +2478,10 @@ static void bpf_prog_select_func(struct bpf_prog =
-*fp)
->          * But for non-JITed programs, we don't need bpf_func, so no boun=
-ds
->          * check needed.
->          */
-> -       if (!fp->jit_requested &&
-> -           !WARN_ON_ONCE(idx >=3D ARRAY_SIZE(interpreters))) {
-> +       if (idx < ARRAY_SIZE(interpreters)) {
->                 fp->bpf_func =3D interpreters[idx];
-
-this is fine.
-
->         } else {
-> +               WARN_ON_ONCE(!fp->jit_requested);
-
-drop it. Let's not give syzbot more opportunities
-to spam us again with fault injection -like corner cases.
-
->                 fp->bpf_func =3D __bpf_prog_ret0_warn;
->         }
->  #else
-> @@ -2505,7 +2505,7 @@ struct bpf_prog *bpf_prog_select_runtime(struct bpf=
-_prog *fp, int *err)
->         /* In case of BPF to BPF calls, verifier did all the prep
->          * work with regards to JITing, etc.
->          */
-> -       bool jit_needed =3D fp->jit_requested;
-> +       bool jit_needed =3D false;
-
-ok
-
->
->         if (fp->bpf_func)
->                 goto finalize;
-> @@ -2515,6 +2515,8 @@ struct bpf_prog *bpf_prog_select_runtime(struct bpf=
-_prog *fp, int *err)
->                 jit_needed =3D true;
->
->         bpf_prog_select_func(fp);
-> +       if (fp->bpf_func =3D=3D __bpf_prog_ret0_warn)
-> +               jit_needed =3D true;
-
-This is too hacky.
-Change bpf_prog_select_func() to return bool and
-rename it bpf_prog_select_func/bpf_prog_select_interpreter()
-
-true on success, false on when interpreter is impossible.
-
-And target bpf tree.
-
---
-pw-bot: cr
-
->
->         /* eBPF JITs can rewrite the program in case constant
->          * blinding is active. However, in case of error during
-> --
-> 2.43.0
->
+> -- 
+> -Mukesh
 
