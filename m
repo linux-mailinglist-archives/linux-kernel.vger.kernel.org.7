@@ -1,169 +1,264 @@
-Return-Path: <linux-kernel+bounces-758686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEEBB1D2A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98AD4B1D2A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDD11724E9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:49:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5261725A50
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4772222D6;
-	Thu,  7 Aug 2025 06:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4922264BE;
+	Thu,  7 Aug 2025 06:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RBpnyMs3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="J9asc+eW"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9581E5B60
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 06:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A79225413;
+	Thu,  7 Aug 2025 06:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754549338; cv=none; b=sWaND2+5tVtdKmG2fVwi1HglofgZnLZhWxV4t8AbaS9eD5bUarha5hSpOi+/wBexduWMqN1bzgT/aj3EUAFfTkALCg9GQkfFazFXa0zV8TRK6lAFOvbYmxIHjLvGuFTDiObaVCtW0tsxo65/9O2lbvrm1paOCF+B59oV3/nU7Hw=
+	t=1754549370; cv=none; b=fxYtP387FrqopbYIAf2g++4tSE2A8efKXFBLuBziiU4/XdhIwujmVZxmtK1AVFr/bW/e5ThS6EiXag+DEwLBbgRvkMtzSjaVLFqwd8BXxqooxYVjqcwq666VsVSs7F8nNlZiW7YSJnqcXS03YAI9EMHKmRvfVEjkMyMfTCtZZ6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754549338; c=relaxed/simple;
-	bh=aZrNzzQLDAEnGHKbIl3kMoz+DHiDzbdiBzd6iB8M95U=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVOpJxUWNKX5HimnGKx4DmJ2k+0VYJnBbpWO03+v1d6Oj+1zyYqnjJw+/EdJXKQ4xNIdlh98KPDntLPB13d626DgO+G3Op1/DUaMwy7iQC49dUh6bPajbxmQEPsqJyamHmEZm8dxvAS+D0XGFjDW0tnnuIPOkGG+uiS+Y6Tt+hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RBpnyMs3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5772tTE0003968
-	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 06:48:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=IIrAD+p6ljX7tc226RXg54qe
-	tKyZ/GO0KJyMxB2uPLQ=; b=RBpnyMs3uocDtG0EGSOllwX924wT2wNgOSY2LFnp
-	XL5CjlUjYJcgvMNKItuL3hT4uIKs7vmqk+mZA1rpBcft21tqn9Gf2jS3nTdOUpOp
-	m5FagWttN1b01DX+icz5eNYX0+gB2KrmskU7J8DkoTkjiE7R60Xqry2ka25tMGuE
-	BfMqxZxsCJQKUPpYCK2Ge1UozMv9IK91CUtblPsnp9mDefK19sMzeZ4kOFfP2O7V
-	Buhg0Fa8GuD7dpdvvsQ17EzQ4DyI2L0l8DY6amevN7blPWNqx84EgP4pWoOSaGCI
-	jTvO61xDswIE4iox/RYrAJOGm1XB2s2PKn8/LO3Q81XEUg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c8u22awx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:48:56 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4af156a27b1so25183771cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 23:48:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754549335; x=1755154135;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IIrAD+p6ljX7tc226RXg54qetKyZ/GO0KJyMxB2uPLQ=;
-        b=IT8Z+MgsuRrr9FyjFqyWGcDubz1coO6d/nLv2O0ZUb1wIvUjgoCjzPuZn/cVg7BaLS
-         uUNTOlUPk80Wlv1Mu2c1AsIY/y0E2kfqEYTEcDwLJYFCEhuZRrfRZFY7poeMTKj9WG2D
-         cpf9HvqOt8zG73/WEsSx3fpUW/2O1BFRxW2KvzPIYJRNHcMZOMjG8bsULbLspkh45khV
-         A95+XjlCXM4IwZEjYs4JGsUjVCRGzb6yXXWVQqp+ca6mWuZ12y7PUtBhLSdZt/686ZYQ
-         Byd0Rr9zqdBukxwwKxUNdD0V0Ty5iLIVuYye5m230ONoLzmn/QoCpqU8WHLLLp5mq4Jm
-         IRKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVF88d4vFQvIxCcZM+SB/HGrSLhBTR89BTao8oPIVztPRDamaxxO0cO4QRmPtKLRRRZhtuKEGGTVwYXEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNU2DZVR9yp/gJcViWSSD/DA6AY+gxr9kRoLqpQ2pIlS4wnEFp
-	r/a9wPFlUFzyUJvVPdunhcIJcDQ3UzHQQEUM6dHb2D87kB9lNlCB5HJOf6xbnRyxMKMTUSmYm+E
-	2y/Tstfpri1htPtfaHVbQ0BsRuRv+2A0IarttxWw8hvdkX5w9kqYQ1uEwx41BjPdBwNE=
-X-Gm-Gg: ASbGncvQ3X2v9+DZB6QXal5frpwMW+q0JEpk43jSRWVPj0ycPNf775w9Z9Sb5qXNg38
-	+Q7erNWDMSOr8RjPw2jhH2HbdshuV9Z9pwUlfsEZ1O+FCsl3EeZoiOzjUv9kSerE/jzwdUsGLOq
-	N9Akv0bPoMAmWgTCRCpPvtSDKlwgUdk6ZYqjt+JGlB0gDWZ1xKG5NS3z94n3Z9e6I4z/BKj1lZe
-	F930FJfDn8NQPJ5rhMpXOFWNoSMiA/W9fJA21c966m7NqWnRUMZHn2S7Dr7ApnC4Tzpcf5x8HNz
-	6PSIIoxhiEZ0d78zhBNcWgFxoRx92p01g+3MJf3lDXCNK25B5R23guJCiRnnxAEVzv+o3g==
-X-Received: by 2002:a05:622a:848a:b0:4b0:9814:e225 with SMTP id d75a77b69052e-4b09814e67bmr45500421cf.0.1754549334373;
-        Wed, 06 Aug 2025 23:48:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEP0oJoncPJHaap5fxItHw99SW/LCLWUFYaaiyhrRJkYhI9cF/QkF/Nfho8pad+5TlCldgaog==
-X-Received: by 2002:a05:622a:848a:b0:4b0:9814:e225 with SMTP id d75a77b69052e-4b09814e67bmr45500251cf.0.1754549333839;
-        Wed, 06 Aug 2025 23:48:53 -0700 (PDT)
-Received: from trex (205.red-83-60-94.dynamicip.rima-tde.net. [83.60.94.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5c40eb1sm36362705e9.6.2025.08.06.23.48.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 23:48:53 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Thu, 7 Aug 2025 08:48:51 +0200
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        quic_dikshita@quicinc.com, quic_vgarodia@quicinc.com,
-        konradybcio@kernel.org, krzk+dt@kernel.org, mchehab@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, linux-media@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 5/7] media: venus: core: Add qcm2290 DT compatible and
- resource data
-Message-ID: <aJRMUzF0GN2LFIZd@trex>
-References: <20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com>
- <20250805064430.782201-6-jorge.ramirez@oss.qualcomm.com>
- <4chbcvub4scnv4jxjaagbswl74tz4ygovn3vhktfodakysbgy3@kukktkwd2zsr>
- <aJHgh8mon9auOHzi@trex>
- <ce9cf017-5447-457c-9579-700782f9f0c2@linaro.org>
+	s=arc-20240116; t=1754549370; c=relaxed/simple;
+	bh=T76TioZMcOj7VGQh9GKIieWlhtVjG92/ny35GPPAPYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mly9pWaQ6W/0folxImjRmxdcLoWRuysmp5AwKAjnUHhDJQnD+mcYNZmGxMq/DLihiwdxVyCwO90fSybNCwmygf1lfZqeSxfUW2bJgfJIewZI5Op/pqLwa7/15HtXjlCJZvSMOE9S1Du4j6BIydEgvaISBsYLbvJmvHg3hOq40mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=J9asc+eW; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1754549364; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=zhRuHq1YazfF0XCQjIZWM8IeeeAiuRg4ltzrKTelAdA=;
+	b=J9asc+eWyk8CToWn0/SEdsInsjnHM+1CRJEXMxaPbYCnUw1Vj59BPpcLyyfqMip8G6aWu5iT5WcYndSKPdSv283DjrNaa8UQDfVb41KhWVvD/zjdwIGheRZakCKh/T7Qr8cVhDBZWdP4sXMOMu3mpdBSnEHo2p1x2rbj35WcBSQ=
+Received: from 30.74.144.111(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WlDE4jg_1754549362 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 07 Aug 2025 14:49:22 +0800
+Message-ID: <dd2118cd-9209-43d5-9c73-8e3989931841@linux.alibaba.com>
+Date: Thu, 7 Aug 2025 14:49:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce9cf017-5447-457c-9579-700782f9f0c2@linaro.org>
-X-Proofpoint-GUID: Qkqm7vgCR3X3ZMKrrSSq614diO_cBPUP
-X-Authority-Analysis: v=2.4 cv=Q/TS452a c=1 sm=1 tr=0 ts=68944c58 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=Rr2dNH5/fcnoRoBmcVUeRg==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=p0WdMEafAAAA:8 a=z1Oz6Vkx26DYFd3kf8sA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-ORIG-GUID: Qkqm7vgCR3X3ZMKrrSSq614diO_cBPUP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA5MCBTYWx0ZWRfX4nrWYHIHwFdg
- vJYEjlCpgkZ8sesNXgtQoyQSbBbfRa45sH0biViYtn1+POMvAGKfisFuEHlS0YAd7x3hj5Yajp3
- IHW/oFsaT3qgUzA/4CUjrFxZOyP2Z0EClVp3ldRo+kG8e+kM+vl1FDTu6x8u/u3g+J+eubwsgHM
- gAsmQxXN3OnafHZwtpdDe1BV+thkoTYGRzfj0rOZvdJVk53UiwZGSIPQGNEt2ejr3Auf5SGVPHl
- fHuStpiUNTvL80vRmiRAljInGOdN/TGvkcoFEorAAY5lRd6hL/3jLXN7SKSRp1AVMqAwFJvGkQh
- vPmvIw1SIbegqDfq2XJarwwwCgZ32LrsVuKutMsO+aASlwEsymnpg/h6WoddLoqcdy3qmYErMAG
- 3LQv4OBj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060090
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] selftests/mm: add check_folio_orders() helper.
+To: Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>,
+ linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250806022045.342824-1-ziy@nvidia.com>
+ <20250806022045.342824-4-ziy@nvidia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250806022045.342824-4-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 07/08/25 07:35:35, Bryan O'Donoghue wrote:
-> On 05/08/2025 11:44, Jorge Ramirez wrote:
-> > yes, in V7 I did implement this functionality plus a fix for EOS
-> > handling (broken in pre 6.0.55 firmwares).
-> > 
-> > This added some complexity to the driver. And so in internal discussions
-> > it was agreed that it was not worth to carry it and that it should be dropped.
-> > 
-> > I'll let Vikash and Bryan comment on the decision.
+
+
+On 2025/8/6 10:20, Zi Yan wrote:
+> The helper gathers an folio order statistics of folios within a virtual
+> address range and checks it against a given order list. It aims to provide
+> a more precise folio order check instead of just checking the existence of
+> PMD folios.
 > 
-> TBH I think there's not alot of value in supporting a broken firmware which
-> only does decode.
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   tools/testing/selftests/mm/vm_util.c | 139 +++++++++++++++++++++++++++
+>   tools/testing/selftests/mm/vm_util.h |   2 +
+>   2 files changed, 141 insertions(+)
 > 
-> There's not alot of value to the user in that configuration.
+> diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
+> index 9dafa7669ef9..373621145b2a 100644
+> --- a/tools/testing/selftests/mm/vm_util.c
+> +++ b/tools/testing/selftests/mm/vm_util.c
+> @@ -17,6 +17,12 @@
+>   #define STATUS_FILE_PATH "/proc/self/status"
+>   #define MAX_LINE_LENGTH 500
+>   
+> +#define PGMAP_PRESENT		(1UL << 63)
+> +#define KPF_COMPOUND_HEAD	(1UL << 15)
+> +#define KPF_COMPOUND_TAIL	(1UL << 16)
+> +#define KPF_THP			(1UL << 22)
+> +#define PFN_MASK     ((1UL<<55)-1)
+> +
+>   unsigned int __page_size;
+>   unsigned int __page_shift;
+>   
+> @@ -338,6 +344,139 @@ int detect_hugetlb_page_sizes(size_t sizes[], int max)
+>   	return count;
+>   }
+>   
+> +static int get_page_flags(uint64_t vpn, int pagemap_file, int kpageflags_file,
+> +			  uint64_t *flags)
+> +{
+> +	uint64_t pfn;
+> +	size_t count;
+> +
+> +	count = pread(pagemap_file, &pfn, sizeof(pfn),
+> +		      vpn * sizeof(pfn));
+> +
+> +	if (count != sizeof(pfn))
+> +		return -1;
+> +
+> +	/*
+> +	 * Treat non-present page as a page without any flag, so that
+> +	 * gather_folio_orders() just record the current folio order.
+> +	 */
+> +	if (!(pfn & PGMAP_PRESENT)) {
+> +		*flags = 0;
+> +		return 0;
+> +	}
 
-I dont know the user base but when I originally did the code (v7) I was
-thinking about security conscious users (signed firmwares) who might not
-be able to switch to the new fw release so easily (unnaccessible key
-management and updates).
+It looks like you can reuse the helper pagemap_get_pfn() in this file?
 
-But I dont have those numbers so it might be none.
+> +
+> +	count = pread(kpageflags_file, flags, sizeof(*flags),
+> +		      (pfn & PFN_MASK) * sizeof(*flags));
+> +
+> +	if (count != sizeof(*flags))
+> +		return -1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int gather_folio_orders(uint64_t vpn_start, size_t nr_pages,
 
-> 
-> Provided you have done the work to get the fixed firmware into
-> linux-firmware just cut at that point and have the driver reject lesser
-> versions.
+In this file, other helper functions use userspace virtual address as 
+parameters, so can we consistently use virtual address for calculations 
+instead of the 'vpn_start'?
 
-yep, that went smoothly:
+> +			       int pagemap_file, int kpageflags_file,
+> +			       int orders[], int nr_orders)
+> +{
+> +	uint64_t page_flags = 0;
+> +	int cur_order = -1;
+> +	uint64_t vpn;
+> +
+> +	if (!pagemap_file || !kpageflags_file)
+> +		return -1;
+> +	if (nr_orders <= 0)
+> +		return -1;
+> +
+> +	for (vpn = vpn_start; vpn < vpn_start + nr_pages; ) {
+> +		uint64_t next_folio_vpn;
+> +		int status;
+> +
+> +		if (get_page_flags(vpn, pagemap_file, kpageflags_file, &page_flags))
+> +			return -1;
+> +
+> +		/* all order-0 pages with possible false postive (non folio) */
+> +		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
+> +			orders[0]++;
+> +			vpn++;
+> +			continue;
+> +		}
+> +
+> +		/* skip non thp compound pages */
+> +		if (!(page_flags & KPF_THP)) {
+> +			vpn++;
+> +			continue;
+> +		}
+> +
+> +		/* vpn points to part of a THP at this point */
+> +		if (page_flags & KPF_COMPOUND_HEAD)
+> +			cur_order = 1;
+> +		else {
+> +			/* not a head nor a tail in a THP? */
+> +			if (!(page_flags & KPF_COMPOUND_TAIL))
+> +				return -1;
+> +			continue;
+> +		}
+> +
+> +		next_folio_vpn = vpn + (1 << cur_order);
+> +
+> +		if (next_folio_vpn >= vpn_start + nr_pages)
+> +			break;
+> +
+> +		while (!(status = get_page_flags(next_folio_vpn, pagemap_file,
+> +						 kpageflags_file,
+> +						 &page_flags))) {
+> +			/* next compound head page or order-0 page */
+> +			if ((page_flags & KPF_COMPOUND_HEAD) ||
+> +			    !(page_flags & (KPF_COMPOUND_HEAD |
+> +			      KPF_COMPOUND_TAIL))) {
+> +				if (cur_order < nr_orders) {
+> +					orders[cur_order]++;
+> +					cur_order = -1;
+> +					vpn = next_folio_vpn;
+> +				}
+> +				break;
+> +			}
+> +
+> +			/* not a head nor a tail in a THP? */
+> +			if (!(page_flags & KPF_COMPOUND_TAIL))
+> +				return -1;
+> +
+> +			cur_order++;
+> +			next_folio_vpn = vpn + (1 << cur_order);
+> +		}
+> +
+> +		if (status)
+> +			return status;
+> +	}
+> +	if (cur_order > 0 && cur_order < nr_orders)
+> +		orders[cur_order]++;
+> +	return 0;
+> +}
+> +
+> +int check_folio_orders(uint64_t vpn_start, size_t nr_pages, int pagemap_file,
+> +			int kpageflags_file, int orders[], int nr_orders)
+> +{
+> +	int vpn_orders[nr_orders];
 
-https://gitlab.com/kernel-firmware/linux-firmware/-/commit/8ecf764788f8dbf33fc1c483ddf91f882ad792b6
+IIRC, we should avoid using VLA (variable length arrays)?
 
-> 
-> I as a user have no use-case or value in a broken old firmware which
-> supports decode only, I'd much rather have the full transcoder.
-> 
-> Its Vikash/Dikshita's call though.
+> +	int status;
+> +	int i;
+> +
+> +	memset(vpn_orders, 0, sizeof(int) * nr_orders);
+> +	status = gather_folio_orders(vpn_start, nr_pages, pagemap_file,
+> +				     kpageflags_file, vpn_orders, nr_orders);
+> +	if (status)
+> +		return status;
+> +
+> +	status = 0;
+> +	for (i = 0; i < nr_orders; i++)
+> +		if (vpn_orders[i] != orders[i]) {
+> +			ksft_print_msg("order %d: expected: %d got %d\n", i,
+> +				       orders[i], vpn_orders[i]);
+> +			status = -1;
+> +		}
+> +
+> +	return status;
+> +}
+> +
+>   /* If `ioctls' non-NULL, the allowed ioctls will be returned into the var */
+>   int uffd_register_with_ioctls(int uffd, void *addr, uint64_t len,
+>   			      bool miss, bool wp, bool minor, uint64_t *ioctls)
+> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+> index b55d1809debc..dee9504a6129 100644
+> --- a/tools/testing/selftests/mm/vm_util.h
+> +++ b/tools/testing/selftests/mm/vm_util.h
+> @@ -85,6 +85,8 @@ bool check_huge_shmem(void *addr, int nr_hpages, uint64_t hpage_size);
+>   int64_t allocate_transhuge(void *ptr, int pagemap_fd);
+>   unsigned long default_huge_page_size(void);
+>   int detect_hugetlb_page_sizes(size_t sizes[], int max);
+> +int check_folio_orders(uint64_t vpn_start, size_t nr_pages, int pagemap_file,
+> +			int kpageflags_file, int orders[], int nr_orders);
+>   
+>   int uffd_register(int uffd, void *addr, uint64_t len,
+>   		  bool miss, bool wp, bool minor);
 
-I'll keep on holding v9 until then.
 
