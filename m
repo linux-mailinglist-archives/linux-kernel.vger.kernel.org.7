@@ -1,127 +1,148 @@
-Return-Path: <linux-kernel+bounces-758718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74CBB1D30B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:13:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCE5B1D31D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E094F7B2D2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 515453A4F39
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0BF231858;
-	Thu,  7 Aug 2025 07:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2D523184F;
+	Thu,  7 Aug 2025 07:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BwDXFUV/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPIF4UBG"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B46230BCE
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358283FE7;
+	Thu,  7 Aug 2025 07:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754550788; cv=none; b=srbN9zUoBPVFC9ueOMN1UbjQZ3RNZjFt+sQFGPKbxitiDGLqcacRS7DECoGdGRr49i9UNTc/jAEWvD6a4nKlw/EbX5mPXtclz1XaLyeQ38Z2N29ZWYLqxbuLBxyN3ZBA1fgS3Cx8wrn/bWy48sZ4uQgpDYlcpOUdZXeuAZTGLck=
+	t=1754550853; cv=none; b=Pm1eUerxRy7PZjmJrY+k98qZxD/NL13+ZVYPLLIhvnih2dS8L0GtvdCKBd5ks79UzsYJxQ5+gesvY/0Vc7Wns/li0bKOkDI5sR6ZX43C0IMDusJlTu152X2PE4ac0TywSIL96JJvFvvBvHD1Wd4Itq75cBKGFgV476GcUX9vy6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754550788; c=relaxed/simple;
-	bh=7qzIfJ2L9nGiid7kAWJriiXEYS7021OFu3DhwRGi3oU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=blpgoZgZVBF38TZ9dkzIykSNp/kRVgDG1AmOCT9B2N1NP8MoaK6gHHRUUXe1chfGEfbwJkgbYsZ+iIm1eGICl2BK7mfiedhi5wzCFXlHe15Fs6ffFgQMrT7xiVK5Y4hjgUjSW/fs9CpGVukMfYEUmjGgv5wvarRLEclWF6/dK8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BwDXFUV/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754550785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WK22s4SVCLJoZJSJWhvgu24NEJGE5iXkCiG4gIgbRQo=;
-	b=BwDXFUV/ylCERRWmgDNh+VVQlo3z+jRcJnPw7Va+DVYikZaIpaUTBn9ZLmeNxPc7Xv2qr7
-	P4W1xtfNJ6M5AAWzeEStfJ/WF3ZXOYYqbXvCoE1uccRzBiJ4F8jZ4pqx4KL/p58I1iC9P7
-	UN0X565xJP/u+l0MkxDDE2xC7yPLZhA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-rzehe_U4O2eXokTWpeGl4A-1; Thu,
- 07 Aug 2025 03:13:04 -0400
-X-MC-Unique: rzehe_U4O2eXokTWpeGl4A-1
-X-Mimecast-MFC-AGG-ID: rzehe_U4O2eXokTWpeGl4A_1754550783
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6DEE01800297;
-	Thu,  7 Aug 2025 07:13:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.17])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A74F63001454;
-	Thu,  7 Aug 2025 07:12:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <40d1f78c-d437-4ab4-8e5e-8708af6486ab@samba.org>
-References: <40d1f78c-d437-4ab4-8e5e-8708af6486ab@samba.org> <c213ace1-7845-4454-a746-8a5926ab41d0@samba.org> <20250806203705.2560493-1-dhowells@redhat.com> <2572846.1754547848@warthog.procyon.org.uk>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Wang Zhaolong <wangzhaolong@huaweicloud.com>,
-    Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/31] netfs: [WIP] Allow the use of MSG_SPLICE_PAGES and use netmem allocator
+	s=arc-20240116; t=1754550853; c=relaxed/simple;
+	bh=3rWOqfJ9s4nsk42+0Lkf3fShUfgDtrdrHgjnMnJOx5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LdSdOopNI/dZSCWROoZkH7A2ZdhtIH5xGA/ml9VOaBpBz4E/DvENTyqllP8CbYzO/v6fyCF8Qn5ogcFoiL8B4K3R15GIb19Y1hWYiD++3Km6wOcKNwo2vr38iOmKZcXtIq7QPldHkkePNhBpQzmdALIO7h5QtnmAofa8KmtOJ5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPIF4UBG; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3323b99094fso5610411fa.0;
+        Thu, 07 Aug 2025 00:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754550849; x=1755155649; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xNZ6B8Gr4WCNsBSx0OnMQeHirAX7DQf2f3C5knNNIbk=;
+        b=aPIF4UBGm1lGAT8Z6SB8q6r6Xbakbpu2aQkjlTFwpXhbsKMOcRTv2ZUpUpRXelNvAg
+         5M0vy+JBzD1T67lFWso+ZScey55O2siyS3uelzPB5k1W65Eo60HzpnTNQcRHLAW2F6zj
+         ZY/27wwdTMHtgBs8RGA6OgldMzuOVhWG1X83reBmdIfwVWRc+6Dlhm6L/UoawW/F1uDc
+         oSXmBNK3M7wVsDLAWn5gqICd5p1X53MsdJ0oGk36L7E6CNT1+DEi2k8PCMsHtRSz6uqp
+         ku/4NH6MaUY5dFBg7kObesbY9dsxULRAjsz6IAQ8lrZdxX1SGOibq9v9CL5YSy7d4/TE
+         o0yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754550849; x=1755155649;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNZ6B8Gr4WCNsBSx0OnMQeHirAX7DQf2f3C5knNNIbk=;
+        b=DC7EOUWozPMugjuSvFwHyuQpuCH/APiNVloipJX4FzW/Oh5S+/2JKmksrp1n2VYKGy
+         ClZ7XlVg0bkeiuZ7kdM5RmfYIlWk5imDEPlsgjk/UiRcSVa+ib+zS5b8PZja6Kj/k04a
+         RiCXYp5l634FrZmvUWo2uSGkFhOiC4j04ynt6hRdA74qaqODHyZmo1MWXfG+G/pXITjS
+         sa7oG1bOX4P+uKr0QPBJ4GIfyWhNXwLak7CHmjcN22vYvgK5I+kTvJpytljlkQJjVzqQ
+         z+bRDVpAWzCjT7IRd+mHI746n89AbFVfPwKKoLitZkv6c8dZ/Kp0CnzBUXvPiakP0E7K
+         5HMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXBE8YsaVTRMz5XTuS61I1oFykskkJJIFOq1eHMI1dIHAk0dFTgdXX5iKPbNwichOfhy4oS+dYkFgo/LL6@vger.kernel.org, AJvYcCXOnUM8T+11BWrgYgst4Y88SbKn1+4NWu9612s0TLiZa2z1ukkAzclAYdCvhO3n36vcRyQvDTFMqYzU@vger.kernel.org, AJvYcCXgMyIp9DlPYiwa/6XtoXh9fnZfzl/4PhWSQN6V7nuO/EH7qyDftLrMwiU/fhYcwlnc6xqUJrFzeLxX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXymGgJHgrubCNBeiCwRD0AsX7LKVliguBfyiPbdma5lqWvtz0
+	o5vu4kBIyWz7Wy6fX8omPmo4XATJxYkfJmg0AGFRIjeOoVW4wqGsXh3W
+X-Gm-Gg: ASbGnct8uTISXKyxck1AjccAeoRq625mohdTDc3rOnd3b7Dt19TIjch9Qi5900uP4xd
+	fDQDd0DYL+VuZsinbYy9NdVz7DPEt3Qj/1zaEe8FuuZDuZOfapVgKXMNzK8804lfEL4faTgvXS1
+	57aJyRp3mmK3abiZeYiVc9Uy6sWwCT19y+fOyjchCeRqkbgRzbIk3OdfdEdQEziy7AY32RzIWLZ
+	5iIXltXkg6TJgFHGFHTQIs8wlWXcmovMiO+Rwu3b/hM8rsO+C2wj4Z+Or6ya4+hjI8iPox26b60
+	USSL24Y0pKez4RCpkTWrZEG0vkuA+lXuPXzHmUXkLiFjVnYbbvjKuZDRdLfzh2Q+rg1RfiFd+H+
+	+bBMm3bL0tMgYWbD2TVys764IIybnNL5ayZMVcZIbLjxgkdnwosxZVV7mS1P615yMHlcjrsDeQN
+	5HZ8I=
+X-Google-Smtp-Source: AGHT+IE+pO/21lxZBTuhD0vk4BsBusTBvO4EhD2FklE39MLJ5EoSnynwVxKXC86d216G9BaGwQ8wvg==
+X-Received: by 2002:a05:651c:4093:b0:32a:6a85:f294 with SMTP id 38308e7fff4ca-33381432df4mr9870821fa.35.1754550848874;
+        Thu, 07 Aug 2025 00:14:08 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33281ad09e9sm7449301fa.63.2025.08.07.00.14.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 00:14:08 -0700 (PDT)
+Message-ID: <cd85d510-b4f3-4e01-b1c2-de84204c5892@gmail.com>
+Date: Thu, 7 Aug 2025 10:14:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2573494.1754550778.1@warthog.procyon.org.uk>
-Date: Thu, 07 Aug 2025 08:12:58 +0100
-Message-ID: <2573495.1754550778@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] dt-bindings: iio: adc: ad7476: Add ROHM bd79105
+To: David Lechner <dlechner@baylibre.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1754463393.git.mazziesaccount@gmail.com>
+ <3066337cb183afa5f53a4e6cf94ce15a36d14ec8.1754463393.git.mazziesaccount@gmail.com>
+ <d37371a8-4a03-4893-a6bc-48b7f367c916@baylibre.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <d37371a8-4a03-4893-a6bc-48b7f367c916@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Stefan Metzmacher <metze@samba.org> wrote:
-
-> >> So the current situation is that we memcpy (at least) in sendmsg()
-> >> and with your patches we do a memcpy higher in the stack, but then
-> >> use MSG_SPLICE_PAGES in order to do it twice. Is that correct?
-> > Not twice, no.  MSG_SPLICE_PAGES allows sendmsg() to splice the supplied
-> > pages
-> > into the sk_buffs directly, thereby avoiding a copy in the TCP layer and
-> > cutting out the feeder loop in cifs.
+On 06/08/2025 18:15, David Lechner wrote:
+> On 8/6/25 2:04 AM, Matti Vaittinen wrote:
+>> The ROHM BD79105 is a simple, 16-bit, 1-channel ADC with a 'CONVSTART'
+>> pin used to start the ADC conversion. Other than the 'CONVSTART', there
+>> are 3 supply pins (one used as a reference), analog inputs, ground and
+>> communication pins. It's worth noting that the pin somewhat confusingly
+>> labeled as 'DIN', is a pin which should be used as a chip-select. The IC
+>> does not have any writable registers.
+>>
+>> The device is designed so that the output pin can, in addition to
+>> outputting the data, be used as a 'data-ready'-IRQ. This, however, would
+>> require the IRQ to be masked from host side for the duration of the data
+>> reads - and it wouldn't also work when the SPI is shared. (As access to
+>> the other SPI devices would cause data line changes to be detected as
+>> IRQs - and the BD79105 provides no means to detect if it has generated
+>> an IRQ).
+>>
+>> Hence the device-tree does not contain any IRQ properties.
 > 
-> Yes, and we must be careful to not touch the pages after
-> calling sendmsg(MSG_SPLICE_PAGES).
+> There are lots of other ADC chips that have a ready signal like this
+> and we've made them work.
 
-Until we get a response from the server, yes, but for the protocol info that
-shouldn't be an issue.  And if we're going to encrypt, we'll have to do a copy
-anyway for something like Write, but we can get the encryption algo to do that
-for us by giving it a separate destination buffer.
+Ah. I had no idea. Thanks for the insight!
 
-> And unlike MSG_ZEROCOPY tcp_sendmsg_locked() has no
-> no struct ubuf_info *uarg when MSG_SPLICE_PAGES is used
-> and there's no way to know when the pages are no longer
-> used by the tcp stack.
+> Since devicetree bindings should be as
+> complete as possible even if the driver doesn't use all of the
+> features, I think we should be including the interrupt in the binding.
 
-Correct (and this is something we'll need to address), but for the moment we
-can rely on page refcounts.  MSG_SPLICE_PAGES takes a ref on each page - which
-is why you can't use it with slab memory.  However, if we pass in
-netmem-allocated memory, that works by refcounting, so that should work.
+After what you wrote above, I do agree. There may be systems where the 
+IRQ is usable, so dt should have it even if the Linux driver never used it.
 
-> Can you explain how/where we allocate the memory and where
-> we unreference it in the caller of sendmsg(MSG_SPLICE_PAGES).
+> We have also found that some interrupt controllers won't work
+> as you have suggested and in that case we also needed a ready-gpios
+> to be able to read the state of the pin.
 
-Currently, we allocate the buffer in fs/netfs/buffer.c in
-netfs_alloc_bvecq_buffer().  That just bulk allocates a bunch of pages and
-adds them into a bvecq.  As they're untyped pages, we can use the refcount.  I
-want to allocate netmem instead, but I haven't done that yet.
+Oh. My thinking was just hard-coding the conversion-time delay, but this 
+can indeed make sense - especially if there are other examples :)
 
-We then call sendmsg(MSG_SPLICE_PAGES) and then drop our ref on the pages.
-TCP will have taken its own ref which it will drop in due course when the
-skbuffs are cleaned up.
+Thanks a lot for the insight!
 
-David
+Yours,
+	-- Matti
 
 
