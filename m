@@ -1,287 +1,443 @@
-Return-Path: <linux-kernel+bounces-759023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A45B1D729
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:01:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295F9B1D730
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF7DE170A22
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA81189B5CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACE0239E7F;
-	Thu,  7 Aug 2025 12:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NNt1hp2P"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32A3241114;
+	Thu,  7 Aug 2025 12:02:25 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD766748F
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24915221275;
+	Thu,  7 Aug 2025 12:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754568074; cv=none; b=HHA/eKoitxk+Z9Aw99Ud2nbL8wHjop2uqgyh4AConbiN/PWPWLO4FH26inMV25C4A4TODcTIeCQUuRWU02gfcX1w9jBA17/5vhrE9W7GtNE4N+IK4djSWtkyQYAKCIV7Bdm9bzd3W4NzJjfqamckjASvi1En6WDE8NDpu/EeIpY=
+	t=1754568145; cv=none; b=NVAj8HPtv4fHC8tlTNRdxWJkgWJewH0RObAByKmoljlshR75Ou34Tg6pFnlj/MNfe3hPqK+wHO373jBU4vNS8g7y4sf/ZOths2tMElIKlv2oVx2i2IiqYbEIvAPQFjeBbO3k0mcFTqtwqry5XR5BQWL8Sjkw79NkYaLoewsrv+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754568074; c=relaxed/simple;
-	bh=PTuDDwFBwxhGEN64Mf0RFqdneEGdd1Qgrhit1izSWXk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ctx/Dv1XJGNdpPUfgoLJTjXaAg0i8sXzsJG6qfl2pVGgOREafNvE2CJfkbTdcLu0ye3XN0di1KanId/DTjRUstFQGKG+VfPQM3htKQ+L4atc6lBfyXQ9qPwIo4dN7SZ640M88WZAnyXPZdwsmvHAhrv7xXZmbVyF5PyUq9/WTEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NNt1hp2P; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3211b736a11so2100697a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 05:01:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754568072; x=1755172872; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nE+MHF3K5eYH5csmXDAz3FZkVfKhmhgeV7wuvi+Opms=;
-        b=NNt1hp2PiU00rpElFCxC7emx05wyFj5a3k7fnvcty/TXyWjM1J99NFGjUxO0ha1ga1
-         mjppkimoZ664VwQKt06z8RL4kJ81ZpmmQyG/zxjvPPrI85gYYXm8ZUFJPVrfs+9CyDzY
-         jYTrfJ/rHmvpWtGeeESQl8TtiS29J3tOo9cUfOhHKA6isd2xL5ig9Kmms90wMxcWtmH8
-         zA8hdNy0K++sLOn7samhN/tQ4tsLavXM+qLRn73LXCymgFm55BB1m/bOyxGo1yWSr2Hj
-         MbeWTW0gF+VqY0fVdVgQ7vXCr8Vs4Yeh0ydj483rtnL617vOdnGAVm3ssO0kJm/oax4H
-         vPUQ==
+	s=arc-20240116; t=1754568145; c=relaxed/simple;
+	bh=WmmLTqk2OgTgbcaK+tbH9f2X98OF6Jw7cAoJOaXSLIE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=K8krU621zjp9CKXlZsNVEnMb5JrOwnXvYQRSmh1l6GF/MhVYwUcf4A+Fr2IEZ7A+1xGWDDiX7ukrejN11DhV9ALpdCsGNM0TVAG8On0WQGb+YOTvVSZKt7KRuMb8AjwdJH+XidmkFG0oXxpiCSH8ZCoi9On00bGoy76lw+0pM5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af949891d3aso132132566b.1;
+        Thu, 07 Aug 2025 05:02:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754568072; x=1755172872;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nE+MHF3K5eYH5csmXDAz3FZkVfKhmhgeV7wuvi+Opms=;
-        b=IrOG4T7kHqXzXiuHbEGHrI1UDKWm2aEGbzP6ufOPv+NV/16r/seevxOF/G9fJRfL6h
-         J/f0NsUaUFeONCDaKemZ4pYuzOkXFxQKxwch16XDqeoYRNzCFOXVOPeocheb7jgLChBV
-         iqs96gYgj41v3j2iWAQRl4xSrsHFczfynTDcylGyri0HI2E0ov8esXnWrTf34DI+/B02
-         WMLPNWyQFoPeUMixPgLukqRxk5j+8QLZYBQT+JtlsKLu9vQUyaGk8o0wNHwYQ/m31zs7
-         xrdFs2QgThJBBCAcFrPeWMxJivoYLqeAyxjL6Y6DvFPxpFvV+0Zyt1Ee6CAJI+2qTgfD
-         Q4ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUaY5zJzbwLxzYQ1HrwVk6CvC1LwssWXJdACZOeuFk38ICUJ/pALwwayHcmZzX7MCEaWBnJykU3r8Ai89Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY1+wPgUZ6eOKGfm96f/u3gNHeGvetxaSFvhSB3uaB2X1us1E4
-	8q9lyb1A158Vf1Y6tBcvv8ll3rjWZstuGBSuXoyDsJRhrxcW41fARrlIlxWOnhfOoUcIdFqcq6d
-	Gpg==
-X-Google-Smtp-Source: AGHT+IEiq+F58PXfR8QwIK6Rfn8eBJtpb9nE3fFwhIJI+opiDopLji7Te3FqifzMunuYwkoBSIlVwbNmUw==
-X-Received: from pjbpv3.prod.google.com ([2002:a17:90b:3c83:b0:312:e266:f849])
- (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5101:b0:31f:3c3:947c
- with SMTP id 98e67ed59e1d1-32166c2af67mr9244790a91.10.1754568071943; Thu, 07
- Aug 2025 05:01:11 -0700 (PDT)
-Date: Thu,  7 Aug 2025 20:00:42 +0800
-In-Reply-To: <20250807120042.1761685-1-wakel@google.com>
+        d=1e100.net; s=20230601; t=1754568141; x=1755172941;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TcEqD2Pp6Z225d6tl17GjpdF9VhMMcRo1GStFJJS27w=;
+        b=wEprYdzqWtQ3ZqohktgdfttcByCQ3AXQNFA5NJLiPwYbsM/1XgBFvC5Fh8Fb9WeEQp
+         EbkrsNXu87a1S1XAEhnVo412seuOfzD5v3F+1DKud1kTg+pVaRDi7z6mtpvVI7heaLLY
+         u0NaaNWFNn3Yvx/PucNAeOcuDyAUq7G+acfAh2I0Mrgrtn+2q53DHTSb7gIhZ4wdkZHK
+         69VQ72EyvdJN7eiK0Mo5bQdU8yVnOmKF5+lInvDiN2MRuyR+9NF4H3k2+7QHopS3Kk7M
+         kCduwNOjujxpH9LOtiBU9WDZWuFuFHNHXcScm4a85VGsNK4hUqdkJqb3RMw/jaDZr4kf
+         e0/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVL43qydsf7o6S3bfl82rGOWU6OdpiKzMzR7cfJXSpowCwWg3hZrsxqWem3fGyn+tKM7F0aPp0aVKlx@vger.kernel.org, AJvYcCVbVvqvzdcKZmNsQ7tTQPBkLCYCmlF1vMgVWBmnbJL7Oam9TF+kvLyYhaUGW8gQyqizRbZBc5hpPqnn@vger.kernel.org, AJvYcCW+FhFjyZ3P+iSNxDXblnF9QDCj3Y97uP7eQ5/EYlTY9fRvfHhuTUQ96IALu8dVPAV9WbLxB1aUnnFFBII+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHIGGDubZc6q/U/bsvT5G8sA+OBApCinnoiu3/jjyx/DYbi8H+
+	CCRQH0zfm8JkptwdB+DwyYMk9I5r9NDEYmL1YgA6Rkj5BsbRQ21vRO/9xXs+Gw==
+X-Gm-Gg: ASbGncvldYuU80fZktLopp8G1+PzEvubAA6G/Kz4Wqjeqd6jBa23eHBqTGIwlvKEkAm
+	2McErPi8iRzsG8EcwcxRNBI9+KQ4ggF+gvtEzWu7f7MTlQIKV6C0UL7JX2b8v5w4jSM0y7wMBRq
+	KCIkgTo4j0rKnurcpvywonOlGV7OgWMp5VVO1+lCoPD0MKwdS9Mf0Al8K4Bqaz/Fioy8nUIpbcE
+	NL7Z4NCLQUT6ktkCT8g3varkk3xBe1klK1TU2iTHTt92yMW0k8MnCpvukBwLMwHWIg5+NxypdYr
+	0N59ChezKRAM3dROhsjUMtMUslGYzDsEuQi74J3qnFIUPNmMb/gcrZ6AL1CsoyJPxIN+tbdS0co
+	f5OL6W2VKt3FS5iAFoue+3go=
+X-Google-Smtp-Source: AGHT+IGa1I/ilvIOBCvInSAxZfDpaVsMb4OkBgAFcX5LwdXi64LWkAcj3+hpGQebA5QV/8oJSjfE7g==
+X-Received: by 2002:a17:907:3d93:b0:af5:a834:c327 with SMTP id a640c23a62f3a-af99031cd5fmr577553966b.21.1754568140812;
+        Thu, 07 Aug 2025 05:02:20 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:9::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a219ef2sm1295120066b.96.2025.08.07.05.02.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 05:02:20 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 07 Aug 2025 05:02:11 -0700
+Subject: [PATCH v5] vmcoreinfo: Track and log recoverable hardware errors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807120042.1761685-1-wakel@google.com>
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250807120042.1761685-2-wakel@google.com>
-Subject: [PATCH v2 1/1] selftests/futex: Check for shmget support at runtime
-From: Wake Liu <wakel@google.com>
-To: tglx@linutronix.de, mingo@redhat.com, shuah@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: peterz@infradead.org, dvhart@infradead.org, dave@stgolabs.net, 
-	andrealmeid@igalia.com, wakel@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250807-vmcore_hw_error-v5-1-0df35396e4b2@debian.org>
+X-B4-Tracking: v=1; b=H4sIAMKVlGgC/23PzWrDMAzA8VcxOsfDkr+ynPYeYxTHkRsflgxnp
+ B0l7z5SNpbhXgX6/aUbLFwyL9CJGxRe85LnCTphGwFxDNOZZR6gE0CKrPLKy/U9zoVP4+XEpcx
+ FaiJDz+yiRgeNgI/CKV/v4utbI2DMy+dcvu6BFffpj4WmslaUKNuYjOWhd1qbl4H7HKanuZxhx
+ 1Y6Aq4GSKJM2PrkB0ehD0eg+f2C8PFi6J0Nrjc62lCV9aFMVAN6LyflWp0iJvQVYP6AVj24wOx
+ AwMRu/77V/4Bt274Bb1xdTasBAAA=
+X-Change-ID: 20250707-vmcore_hw_error-322429e6c316
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
+ Borislav Petkov <bp@alien8.de>, Robert Moore <robert.moore@intel.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ acpica-devel@lists.linux.dev, osandov@osandov.com, 
+ xueshuai@linux.alibaba.com, konrad.wilk@oracle.com, 
+ linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-pci@vger.kernel.org, kernel-team@meta.com, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11826; i=leitao@debian.org;
+ h=from:subject:message-id; bh=WmmLTqk2OgTgbcaK+tbH9f2X98OF6Jw7cAoJOaXSLIE=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBolJXLLipo1TDCKVywDcpai5J+PL9QnUPwrqKfW
+ P8sDVDZTvKJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaJSVywAKCRA1o5Of/Hh3
+ bSrHD/95S6d363l5YVcJC+RC5CaiPry+uBeGaRYCZ46OUPPhWLlCd14I+s8M3tyZau7hg+Ng47C
+ 0+jMJjzWQhYrPrWiVshbf2JA8oxwx6ZImBx3VPaYlKWNUz1k+GyH468Rj+3juO+KeERQIT4HDoU
+ DapphCHFmO0joirLNNEAAA5vfLN2vChY4CXyAGFrZq3ONzyPRowry0Tv93UcRlfvVhwrNMGeipT
+ ymVpDgfkdfvApspenJjvsPanUC1a9QWB0LLaTqDaNVwML/MmLVyaxlGTZIW5jP5jhAM9RBN3x9q
+ r6LivoXpbAQBIJScHrrMgPz1FcuvcdvyQcBfd/L8GnHZs8uPpemmOF8+yBkPJSpAuJSQuirMrnG
+ Yxco9PV5o3LOmBfRT5giYRqr4AzsEuTg5rhARhS/v8uAa360I7NmmYlkvP5jE5zykGpY+k5ofDe
+ MOv61/NfOHSIbbNrnxJcvFsOpZj/dmQ25ipxsJ5i1OG29W9X8M2Re+HfNK3R+cya5UdLp0G0p+Q
+ 3DrciRehC6/8tnIZ1PNSlZ4bpUTYOeS3q6qDq+BHYkh1urV4NCEcIJDi/5oKZzakvPUeEJO4pQZ
+ ST6OsrwjYBE0gFGwQPmoBmfBe8aP7eI8/EENCYjviC1ZmKtFYyqxHE3pgIsZVl8q5irbq0PKhqx
+ Q5K1jD22+WLzL6w==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-The futex tests `futex_wait.c` and `futex_waitv.c` rely on the `shmget()`
-syscall, which may not be available if the kernel is built without
-System V IPC support (CONFIG_SYSVIPC=n). This can lead to test
-failures on such systems.
+Introduce a generic infrastructure for tracking recoverable hardware
+errors (HW errors that are visible to the OS but does not cause a panic)
+and record them for vmcore consumption. This aids post-mortem crash
+analysis tools by preserving a count and timestamp for the last
+occurrence of such errors. On the other side, correctable errors, which
+the OS typically remains unaware of because the underlying hardware
+handles them transparently, are less relevant for crash dump
+and therefore are NOT tracked in this infrastructure.
 
-This patch modifies the tests to check for `shmget()` support at
-runtime by calling it and checking for an `ENOSYS` error. If `shmget()`
-is not supported, the tests are skipped with a clear message,
-improving the user experience and preventing false negatives.
+Add centralized logging for sources of recoverable hardware
+errors based on the subsystem it has been notified.
 
-This approach is more robust than relying on compile-time checks and
-ensures that the tests run only when the required kernel features are
-present.
+hwerror_data is write-only at kernel runtime, and it is meant to be read
+from vmcore using tools like crash/drgn. For example, this is how it
+looks like when opening the crashdump from drgn.
 
-Signed-off-by: Wake Liu <wakel@google.com>
+	>>> prog['hwerror_data']
+	(struct hwerror_info[1]){
+		{
+			.count = (int)844,
+			.timestamp = (time64_t)1752852018,
+		},
+		...
+
+This helps fleet operators quickly triage whether a crash may be
+influenced by hardware recoverable errors (which executes a uncommon
+code path in the kernel), especially when recoverable errors occurred
+shortly before a panic, such as the bug fixed by
+commit ee62ce7a1d90 ("page_pool: Track DMA-mapped pages and unmap them
+when destroying the pool")
+
+This is not intended to replace full hardware diagnostics but provides
+a fast way to correlate hardware events with kernel panics quickly.
+
+Rare machine check exceptions—like those indicated by mce_flags.p5 or
+mce_flags.winchip—are not accounted for in this method, as they fall
+outside the intended usage scope for this feature’s user base.
+
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Suggested-by: Shuai Xue <xueshuai@linux.alibaba.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Shuai Xue <xueshuai@linux.alibaba.com>
 ---
- .../selftests/futex/functional/futex_wait.c   | 49 +++++++------
- .../selftests/futex/functional/futex_waitv.c  | 73 ++++++++++++-------
- 2 files changed, 73 insertions(+), 49 deletions(-)
+Changes in v5:
+- Move the headers to uapi file (Dave Hansen)
+- Use atomic operations in the tracking struct (Dave Hansen)
+- Drop the MCE enum type, and track MCE errors as "others"
+- Document this feature better
+- Link to v4: https://lore.kernel.org/r/20250801-vmcore_hw_error-v4-1-fa1fe65edb83@debian.org
 
-diff --git a/tools/testing/selftests/futex/functional/futex_wait.c b/tools/testing/selftests/futex/functional/futex_wait.c
-index 685140d9b93d..17a465313a59 100644
---- a/tools/testing/selftests/futex/functional/futex_wait.c
-+++ b/tools/testing/selftests/futex/functional/futex_wait.c
-@@ -48,7 +48,7 @@ static void *waiterfn(void *arg)
- int main(int argc, char *argv[])
+Changes in v4:
+- Split the error by hardware subsystem instead of kernel
+  subsystem/driver (Shuai)
+- Do not count the corrected errors, only focusing on recoverable errors (Shuai)
+- Link to v3: https://lore.kernel.org/r/20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org
+
+Changes in v3:
+- Add more information about this feature in the commit message
+  (Borislav Petkov)
+- Renamed the function to hwerr_log_error_type() and use hwerr as
+  suffix (Borislav Petkov)
+- Make the empty function static inline (kernel test robot)
+- Link to v2: https://lore.kernel.org/r/20250721-vmcore_hw_error-v2-1-ab65a6b43c5a@debian.org
+
+Changes in v2:
+- Split the counter by recoverable error (Tony Luck)
+- Link to v1: https://lore.kernel.org/r/20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org
+---
+ Documentation/driver-api/hw-recoverable-errors.rst | 60 ++++++++++++++++++++++
+ arch/x86/kernel/cpu/mce/core.c                     |  4 ++
+ drivers/acpi/apei/ghes.c                           | 36 +++++++++++++
+ drivers/pci/pcie/aer.c                             |  2 +
+ include/linux/vmcore_info.h                        |  8 +++
+ include/uapi/linux/vmcore.h                        |  9 ++++
+ kernel/vmcore_info.c                               | 17 ++++++
+ 7 files changed, 136 insertions(+)
+
+diff --git a/Documentation/driver-api/hw-recoverable-errors.rst b/Documentation/driver-api/hw-recoverable-errors.rst
+new file mode 100644
+index 0000000000000..fc526c3454bd7
+--- /dev/null
++++ b/Documentation/driver-api/hw-recoverable-errors.rst
+@@ -0,0 +1,60 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=================================================
++Recoverable Hardware Error Tracking in vmcoreinfo
++=================================================
++
++Overview
++--------
++
++This feature provides a generic infrastructure within the Linux kernel to track
++and log recoverable hardware errors. These are hardware recoverable errors
++visible that might not cause immediate panics but may influence health, mainly
++because new code path will be executed in the kernel.
++
++By recording counts and timestamps of recoverable errors into the vmcoreinfo
++crash dump notes, this infrastructure aids post-mortem crash analysis tools in
++correlating hardware events with kernel failures. This enables faster triage
++and better understanding of root causes, especially in large-scale cloud
++environments where hardware issues are common.
++
++Benefits
++--------
++
++- Facilitates correlation of hardware recoverable errors with kernel panics or
++  unusual code paths that lead to system crashes.
++- Provides operators and cloud providers quick insights, improving reliability
++  and reducing troubleshooting time.
++- Complements existing full hardware diagnostics without replacing them.
++
++Data Exposure and Consumption
++-----------------------------
++
++- The tracked error data consists of per-error-type counts and timestamps of
++  last occurrence.
++- This data is stored in the `hwerror_data` array, categorized by error source
++  types like CPU, memory, PCI, CXL, and others.
++- It is exposed via vmcoreinfo crash dump notes and can be read using tools
++  like `crash`, `drgn`, or other kernel crash analysis utilities.
++- There is no other way to read these data other than from crash dumps.
++- These errors are divided by area, which includes CPU, Memory, PCI, CXL and
++  others.
++
++Typical usage example (in drgn REPL):
++
++.. code-block:: python
++
++    >>> prog['hwerror_data']
++    (struct hwerror_info[HWERR_RECOV_MAX]){
++        {
++            .count = (int)844,
++            .timestamp = (time64_t)1752852018,
++        },
++        ...
++    }
++
++Enabling
++--------
++
++- This feature is enabled when CONFIG_VMCORE_INFO is set.
++
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 4da4eab56c81d..9cc38c5ffb77a 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -45,6 +45,7 @@
+ #include <linux/task_work.h>
+ #include <linux/hardirq.h>
+ #include <linux/kexec.h>
++#include <linux/vmcore_info.h>
+ 
+ #include <asm/fred.h>
+ #include <asm/cpu_device_id.h>
+@@ -1690,6 +1691,9 @@ noinstr void do_machine_check(struct pt_regs *regs)
+ 	}
+ 
+ out:
++	/* Given it didn't panic, mark it as recoverable */
++	hwerr_log_error_type(HWERR_RECOV_OTHERS);
++
+ 	instrumentation_end();
+ 
+ clear:
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index a0d54993edb3b..562459e9d632e 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -43,6 +43,7 @@
+ #include <linux/uuid.h>
+ #include <linux/ras.h>
+ #include <linux/task_work.h>
++#include <linux/vmcore_info.h>
+ 
+ #include <acpi/actbl1.h>
+ #include <acpi/ghes.h>
+@@ -867,6 +868,40 @@ int cxl_cper_kfifo_get(struct cxl_cper_work_data *wd)
+ }
+ EXPORT_SYMBOL_NS_GPL(cxl_cper_kfifo_get, "CXL");
+ 
++static void ghes_log_hwerr(int sev, guid_t *sec_type)
++{
++	if (sev != CPER_SEV_RECOVERABLE)
++		return;
++
++	if (guid_equal(sec_type, &CPER_SEC_PROC_ARM) ||
++	    guid_equal(sec_type, &CPER_SEC_PROC_GENERIC) ||
++	    guid_equal(sec_type, &CPER_SEC_PROC_IA)) {
++		hwerr_log_error_type(HWERR_RECOV_CPU);
++		return;
++	}
++
++	if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR) ||
++	    guid_equal(sec_type, &CPER_SEC_CXL_GEN_MEDIA_GUID) ||
++	    guid_equal(sec_type, &CPER_SEC_CXL_DRAM_GUID) ||
++	    guid_equal(sec_type, &CPER_SEC_CXL_MEM_MODULE_GUID)) {
++		hwerr_log_error_type(HWERR_RECOV_CXL);
++		return;
++	}
++
++	if (guid_equal(sec_type, &CPER_SEC_PCIE) ||
++	    guid_equal(sec_type, &CPER_SEC_PCI_X_BUS)) {
++		hwerr_log_error_type(HWERR_RECOV_PCI);
++		return;
++	}
++
++	if (guid_equal(sec_type, &CPER_SEC_PLATFORM_MEM)) {
++		hwerr_log_error_type(HWERR_RECOV_MEMORY);
++		return;
++	}
++
++	hwerr_log_error_type(HWERR_RECOV_OTHERS);
++}
++
+ static void ghes_do_proc(struct ghes *ghes,
+ 			 const struct acpi_hest_generic_status *estatus)
  {
- 	int res, ret = RET_PASS, fd, c, shm_id;
--	u_int32_t f_private = 0, *shared_data;
-+	u_int32_t f_private = 0, *shared_data = NULL;
- 	unsigned int flags = FUTEX_PRIVATE_FLAG;
- 	pthread_t waiter;
- 	void *shm;
-@@ -96,32 +96,35 @@ int main(int argc, char *argv[])
- 	/* Testing an anon page shared memory */
- 	shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
- 	if (shm_id < 0) {
--		perror("shmget");
--		exit(1);
--	}
--
--	shared_data = shmat(shm_id, NULL, 0);
-+		if (errno == ENOSYS) {
-+			ksft_test_result_skip("Kernel does not support System V shared memory\n");
-+		} else {
-+			ksft_test_result_fail("shmget() failed with error: %s\n", strerror(errno));
-+			ret = RET_FAIL;
-+		}
-+	} else {
-+		shared_data = shmat(shm_id, NULL, 0);
+@@ -888,6 +923,7 @@ static void ghes_do_proc(struct ghes *ghes,
+ 		if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
+ 			fru_text = gdata->fru_text;
  
--	*shared_data = 0;
--	futex = shared_data;
-+		*shared_data = 0;
-+		futex = shared_data;
++		ghes_log_hwerr(sev, sec_type);
+ 		if (guid_equal(sec_type, &CPER_SEC_PLATFORM_MEM)) {
+ 			struct cper_sec_mem_err *mem_err = acpi_hest_get_payload(gdata);
  
--	info("Calling shared (page anon) futex_wait on futex: %p\n", futex);
--	if (pthread_create(&waiter, NULL, waiterfn, NULL))
--		error("pthread_create failed\n", errno);
-+		info("Calling shared (page anon) futex_wait on futex: %p\n", futex);
-+		if (pthread_create(&waiter, NULL, waiterfn, NULL))
-+			error("pthread_create failed\n", errno);
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index e286c197d7167..d814c06cdbee6 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -30,6 +30,7 @@
+ #include <linux/kfifo.h>
+ #include <linux/ratelimit.h>
+ #include <linux/slab.h>
++#include <linux/vmcore_info.h>
+ #include <acpi/apei.h>
+ #include <acpi/ghes.h>
+ #include <ras/ras_event.h>
+@@ -751,6 +752,7 @@ static void pci_dev_aer_stats_incr(struct pci_dev *pdev,
+ 		break;
+ 	case AER_NONFATAL:
+ 		aer_info->dev_total_nonfatal_errs++;
++		hwerr_log_error_type(HWERR_RECOV_PCI);
+ 		counter = &aer_info->dev_nonfatal_errs[0];
+ 		max = AER_MAX_TYPEOF_UNCOR_ERRS;
+ 		break;
+diff --git a/include/linux/vmcore_info.h b/include/linux/vmcore_info.h
+index 37e003ae52626..e71518caacdfc 100644
+--- a/include/linux/vmcore_info.h
++++ b/include/linux/vmcore_info.h
+@@ -5,6 +5,7 @@
+ #include <linux/linkage.h>
+ #include <linux/elfcore.h>
+ #include <linux/elf.h>
++#include <uapi/linux/vmcore.h>
  
--	usleep(WAKE_WAIT_US);
-+		usleep(WAKE_WAIT_US);
+ #define CRASH_CORE_NOTE_HEAD_BYTES ALIGN(sizeof(struct elf_note), 4)
+ #define CRASH_CORE_NOTE_NAME_BYTES ALIGN(sizeof(NN_PRSTATUS), 4)
+@@ -77,4 +78,11 @@ extern u32 *vmcoreinfo_note;
+ Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
+ 			  void *data, size_t data_len);
+ void final_note(Elf_Word *buf);
++
++#ifdef CONFIG_VMCORE_INFO
++void hwerr_log_error_type(enum hwerr_error_type src);
++#else
++static inline void hwerr_log_error_type(enum hwerr_error_type src) {};
++#endif
++
+ #endif /* LINUX_VMCORE_INFO_H */
+diff --git a/include/uapi/linux/vmcore.h b/include/uapi/linux/vmcore.h
+index 3e9da91866ffd..2ba89fafa518a 100644
+--- a/include/uapi/linux/vmcore.h
++++ b/include/uapi/linux/vmcore.h
+@@ -15,4 +15,13 @@ struct vmcoredd_header {
+ 	__u8 dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Device dump's name */
+ };
  
--	info("Calling shared (page anon) futex_wake on futex: %p\n", futex);
--	res = futex_wake(futex, 1, 0);
--	if (res != 1) {
--		ksft_test_result_fail("futex_wake shared (page anon) returned: %d %s\n",
--				      errno, strerror(errno));
--		ret = RET_FAIL;
--	} else {
--		ksft_test_result_pass("futex_wake shared (page anon) succeeds\n");
-+		info("Calling shared (page anon) futex_wake on futex: %p\n", futex);
-+		res = futex_wake(futex, 1, 0);
-+		if (res != 1) {
-+			ksft_test_result_fail("futex_wake shared (page anon) returned: %d %s\n",
-+					      errno, strerror(errno));
-+			ret = RET_FAIL;
-+		} else {
-+			ksft_test_result_pass("futex_wake shared (page anon) succeeds\n");
-+		}
- 	}
++enum hwerr_error_type {
++	HWERR_RECOV_CPU,
++	HWERR_RECOV_MEMORY,
++	HWERR_RECOV_PCI,
++	HWERR_RECOV_CXL,
++	HWERR_RECOV_OTHERS,
++	HWERR_RECOV_MAX,
++};
++
+ #endif /* _UAPI_VMCORE_H */
+diff --git a/kernel/vmcore_info.c b/kernel/vmcore_info.c
+index e066d31d08f89..fe9bf8db1922e 100644
+--- a/kernel/vmcore_info.c
++++ b/kernel/vmcore_info.c
+@@ -31,6 +31,13 @@ u32 *vmcoreinfo_note;
+ /* trusted vmcoreinfo, e.g. we can make a copy in the crash memory */
+ static unsigned char *vmcoreinfo_data_safecopy;
  
--
- 	/* Testing a file backed shared memory */
- 	fd = open(SHM_PATH, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
- 	if (fd < 0) {
-@@ -161,7 +164,8 @@ int main(int argc, char *argv[])
- 	}
- 
- 	/* Freeing resources */
--	shmdt(shared_data);
-+	if (shared_data)
-+		shmdt(shared_data);
- 	munmap(shm, sizeof(f_private));
- 	remove(SHM_PATH);
- 	close(fd);
-@@ -169,3 +173,4 @@ int main(int argc, char *argv[])
- 	ksft_print_cnts();
- 	return ret;
++struct hwerr_info {
++	atomic_t count;
++	time64_t timestamp;
++};
++
++static struct hwerr_info hwerr_data[HWERR_RECOV_MAX];
++
+ Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
+ 			  void *data, size_t data_len)
+ {
+@@ -118,6 +125,16 @@ phys_addr_t __weak paddr_vmcoreinfo_note(void)
  }
+ EXPORT_SYMBOL(paddr_vmcoreinfo_note);
+ 
++void hwerr_log_error_type(enum hwerr_error_type src)
++{
++	if (src < 0 || src >= HWERR_RECOV_MAX)
++		return;
 +
-diff --git a/tools/testing/selftests/futex/functional/futex_waitv.c b/tools/testing/selftests/futex/functional/futex_waitv.c
-index a94337f677e1..034dbfef40cb 100644
---- a/tools/testing/selftests/futex/functional/futex_waitv.c
-+++ b/tools/testing/selftests/futex/functional/futex_waitv.c
-@@ -110,40 +110,58 @@ int main(int argc, char *argv[])
- 	}
- 
- 	/* Shared waitv */
--	for (i = 0; i < NR_FUTEXES; i++) {
--		int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
--
--		if (shm_id < 0) {
--			perror("shmget");
--			exit(1);
-+	bool shm_supported = true;
-+	int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
++	atomic_inc(&hwerr_data[src].count);
++	WRITE_ONCE(hwerr_data[src].timestamp, ktime_get_real_seconds());
++}
++EXPORT_SYMBOL_GPL(hwerr_log_error_type);
 +
-+	if (shm_id < 0) {
-+		if (errno == ENOSYS) {
-+			shm_supported = false;
-+			ksft_test_result_skip("Kernel does not support System V shared memory\n");
-+		} else {
-+			ksft_test_result_fail("shmget() failed with error: %s\n", strerror(errno));
-+			ret = RET_FAIL;
-+			shm_supported = false;
- 		}
-+	} else {
-+		shmctl(shm_id, IPC_RMID, NULL);
-+	}
- 
--		unsigned int *shared_data = shmat(shm_id, NULL, 0);
-+	if (shm_supported) {
-+		for (i = 0; i < NR_FUTEXES; i++) {
-+			int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
- 
--		*shared_data = 0;
--		waitv[i].uaddr = (uintptr_t)shared_data;
--		waitv[i].flags = FUTEX_32;
--		waitv[i].val = 0;
--		waitv[i].__reserved = 0;
--	}
-+			if (shm_id < 0) {
-+				perror("shmget");
-+				exit(1);
-+			}
- 
--	if (pthread_create(&waiter, NULL, waiterfn, NULL))
--		error("pthread_create failed\n", errno);
-+			unsigned int *shared_data = shmat(shm_id, NULL, 0);
- 
--	usleep(WAKE_WAIT_US);
-+			*shared_data = 0;
-+			waitv[i].uaddr = (uintptr_t)shared_data;
-+			waitv[i].flags = FUTEX_32;
-+			waitv[i].val = 0;
-+			waitv[i].__reserved = 0;
-+		}
- 
--	res = futex_wake(u64_to_ptr(waitv[NR_FUTEXES - 1].uaddr), 1, 0);
--	if (res != 1) {
--		ksft_test_result_fail("futex_wake shared returned: %d %s\n",
--				      res ? errno : res,
--				      res ? strerror(errno) : "");
--		ret = RET_FAIL;
--	} else {
--		ksft_test_result_pass("futex_waitv shared\n");
--	}
-+		if (pthread_create(&waiter, NULL, waiterfn, NULL))
-+			error("pthread_create failed\n", errno);
- 
--	for (i = 0; i < NR_FUTEXES; i++)
--		shmdt(u64_to_ptr(waitv[i].uaddr));
-+		usleep(WAKE_WAIT_US);
-+
-+		res = futex_wake(u64_to_ptr(waitv[NR_FUTEXES - 1].uaddr), 1, 0);
-+        if (res != 1) {
-+            ksft_test_result_fail("futex_wake shared returned: %d %s\n",
-+                                  res ? errno : res,
-+                                  res ? strerror(errno) : "");
-+            ret = RET_FAIL;
-+        } else {
-+			ksft_test_result_pass("futex_waitv shared\n");
-+		}
-+
-+		for (i = 0; i < NR_FUTEXES; i++)
-+			shmdt(u64_to_ptr(waitv[i].uaddr));
-+	}
- 
- 	/* Testing a waiter without FUTEX_32 flag */
- 	waitv[0].flags = FUTEX_PRIVATE_FLAG;
-@@ -235,3 +253,4 @@ int main(int argc, char *argv[])
- 	ksft_print_cnts();
- 	return ret;
- }
-+
--- 
-2.50.1.703.g449372360f-goog
+ static int __init crash_save_vmcoreinfo_init(void)
+ {
+ 	vmcoreinfo_data = (unsigned char *)get_zeroed_page(GFP_KERNEL);
+
+---
+base-commit: 54efec8782214652b331c50646013f8526570e8d
+change-id: 20250707-vmcore_hw_error-322429e6c316
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
 
