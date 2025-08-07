@@ -1,87 +1,62 @@
-Return-Path: <linux-kernel+bounces-758925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BC1B1D5B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636CEB1D5BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3E0F1AA00FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 457FF1AA015F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CA823815D;
-	Thu,  7 Aug 2025 10:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B7B260592;
+	Thu,  7 Aug 2025 10:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X6978Vhu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ly3OWM66"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2C4145329
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2884A229B2E;
+	Thu,  7 Aug 2025 10:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754562086; cv=none; b=NbMVtkNjSBkB7T6xsjK0amOc2PkMzXTQO9M1smbOV0VZK+CW1nmYfnTJfPTXCs5hSDgc5RpMOYJRZYeTe6AsMKHK8RbwZ4Z88cDUrOeg3jeKwjyABECNK1zXLFmfvo34nsbKIWkXqz7FHbruX7TcP/ApV9RgdQjlMgHGnLMGcsY=
+	t=1754562153; cv=none; b=Xjvsl38oAbAjOjTc+PNzh2yWpoY7T5pOmpk88LjPOY/iEh8Y5AKVuBvKeau7fqZdX3w4otGTPQ31r/4hdn1lbylBjx32HKQvQRmTZPdK5OM1SrM8LOJHHg2g+PDCwZBa3k2nxaj+t48TuCyDEYrZIBe2i7LkLLAsKu+aSb8FgM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754562086; c=relaxed/simple;
-	bh=Q7MNPgRuWRtnmjAzlb54akQbFcBT66Hn87mOf6Rm+9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SLyTjU8Aa+J7qAkMVXcUcl2S/6fY/Jfb7l/zYV6MW2tG0CzsaPx421KqNbcJdds4QNG5hjotAl9XSYxNlCTi8g9dI0qf9ILKzwAvezuQTcxpSIFRigbUAMnnEyK2SqC7LY61G3p3sqgtVJrCmccIQBcO6EAi7bnjXANzS9DAvwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X6978Vhu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754562083;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3pPCKCDw2qqu0amhP0jmadWwdffE5h/laeuaPK5g2Y8=;
-	b=X6978VhunbcK2RDDO5eRl/BgiJyaGo/aTweC/dv5+MCRkPpfkD/zDEdZi0vER7oy1yhbl1
-	R7ekVbD8j5tJf7mU8zcH2Ypatnw7Odko4twhFXHqp4bbvS9zMTwzXcMWnZ/XUmM97sSEOm
-	AmWtVh3hBZgXe2z1T1U9MshRFJcTY2Y=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-75-R1mFEFuvNlKyTg-MgD9ctA-1; Thu, 07 Aug 2025 06:21:22 -0400
-X-MC-Unique: R1mFEFuvNlKyTg-MgD9ctA-1
-X-Mimecast-MFC-AGG-ID: R1mFEFuvNlKyTg-MgD9ctA_1754562081
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-459e30eeea3so4923965e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 03:21:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754562081; x=1755166881;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3pPCKCDw2qqu0amhP0jmadWwdffE5h/laeuaPK5g2Y8=;
-        b=EUq6BangA6fJesTVMtT7cWHfwgKKJRvHEvpE6Sk4HEoisONb5gbUDurgLSOsJDIQJ6
-         k056tHYAyph0lt5CY0qx4AGU35/jcQ6JVxVKJSKjHtIPGzFZ7NVZVASOq40yLww6lSTP
-         Ekdc8YKztALwx1nGpn3mUAyLHqsLu4CtOHHzzJiexEEcR96rhPGx6JB84+kSuzj21Ft0
-         r+JXPy5233Zrq6cxYBIUuzPce1Rnhp7PAl6/Lb5yG7djn32uxrGktflpfRjXsVdMa44j
-         69pc0govQSiXg3iLplZ8dJ/depstNz+QlnhxnjlRSpe89vhkbCi+7i6Tra5f97tTY9EQ
-         cBqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2sRB5CmAMJR2MmYMYZuY9zrNE0A50S8P6QTtmOlS2h6/LoCuwR4S3FWZYoht3NYZuDyzP4oVakECBem0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy89NSTNz1pxgx20JOvviaDCcuUpigoK6jTEzmBP93HOi42Aklc
-	a+k2t9j7OQE4N95JJu83LqrEz9fMmb8P1wY5lDq2UJZ6Ii+om2v1KhFx9Wc5wwmGA2E5lxTQGBv
-	VgpYVQ2j8HsUtSdgE7oepXmGbqTc8reoht2sXHXHAeMval9lZjsoUF6j+VdOvfFPLXw==
-X-Gm-Gg: ASbGnctY1xv62g0cmz3bgf6sg4e73HKL9QcgTL21hRLH4d+nzZ975GU1HvAZi8GXdYD
-	zo5voRA3UjPYEp3PikRt1vyZ5IWkB1wMP2hPjYVvCX20f0bv8LXbT75SEc8Ddp3hD4SRwSMe4Pg
-	/DDne9poSnS18S9gWd+cAOGbeEe4cKqtewiEJkAobbfy+Odyer1MeKmlYCl/At9s7XuWNrfnLdM
-	PNakEFMJNNWfG5L8H7Arlfy7E1nX3EPyP+jiz+jP++FrkJ6vMN8tMuT4dzmWBCfdYBrxB7H4/dN
-	JnjyhoED8loeyB0Y2WYxckeNr0jA1mxiqrlPs3a1SisVrr4YpDEWMNLzVnRpSVb/l3JdD/r4fM6
-	XftB63n13RgoRcTajhaDz7+Yb83Yh2sTkf/8/eiQODaapbjBPpdsu1Ljt4Gwn5jhSXtQ=
-X-Received: by 2002:a05:600c:548b:b0:458:bc3f:6a7b with SMTP id 5b1f17b1804b1-459e748fd16mr58072935e9.18.1754562081394;
-        Thu, 07 Aug 2025 03:21:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLvD/ci4VcJLffdp3IqvGO83bI1vYTvAdh4Ih6kxzqUVno/uCFkxRHyCn9UNUbRNUVCU+vsw==
-X-Received: by 2002:a05:600c:548b:b0:458:bc3f:6a7b with SMTP id 5b1f17b1804b1-459e748fd16mr58072305e9.18.1754562080711;
-        Thu, 07 Aug 2025 03:21:20 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f49:bc00:12fa:1681:c754:1630? (p200300d82f49bc0012fa1681c7541630.dip0.t-ipconnect.de. [2003:d8:2f49:bc00:12fa:1681:c754:1630])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953eaeeesm359376465e9.25.2025.08.07.03.21.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 03:21:20 -0700 (PDT)
-Message-ID: <97419aca-af5f-4328-84dc-c97bb73ca1ac@redhat.com>
-Date: Thu, 7 Aug 2025 12:21:18 +0200
+	s=arc-20240116; t=1754562153; c=relaxed/simple;
+	bh=bxXxBx0q+rEvahnpBPM8quAxYfnYhXwuzt+kP9CiZpE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q3esLskRtRLx8EEYGgPSzq3w+b88WdnApkQb7Ke3gtt5pz9YWHKe8zwE6cPkxCy/bElOTquYDbHwm0ny+MAafBk+AOXyhnGgNT3aER/rPzG/IHD3vqmYI2uL4wOg48SXJ6RWWaZpSoPExKMiE93cA9P/CCi7Md2f0uA5ZWRUzI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ly3OWM66; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779DA3d003603;
+	Thu, 7 Aug 2025 10:22:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mFLRsK25BoxpZs4W0silGq6dm59BiiPnRbKoTG1ly3c=; b=ly3OWM66NDMUh2GH
+	EkOEvofUFsjOT9+QUDuT9cKoL4fhGRQe9fiRAkN9aCxQRY+M5yQ43YDPygiX1QvW
+	Jlowb9knejFGaSr5JYZfja35trt3sSbAfkdBNLqsqjuN69kiWG+afaEvuwxszzY7
+	jw/1/qzlTAAPU9s+VuECDfRSDL+ZLq7W0s6ilL7dEAG043AX2qWs9r09W77yrbmH
+	8TB9Etk0HsawGbeCtbFIArIvUHjAZB1hEzzClGDw3/JzTsjwq9bnNL/YPszdAo+T
+	bpqNQUNebj3ZIwNHHMyV2uPwKtkZk8CQWkkE+9aFZGofCcI399ednN7ORcyFGLBS
+	PUBwZQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpvyx4m0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 10:22:27 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 577AMQip001044
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 7 Aug 2025 10:22:26 GMT
+Received: from [10.216.18.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 7 Aug
+ 2025 03:22:23 -0700
+Message-ID: <0bfb6a39-785b-431f-9cd4-c63df35c5ac3@quicinc.com>
+Date: Thu, 7 Aug 2025 15:52:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,163 +64,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] f822a9a81a:
- stress-ng.bigheap.realloc_calls_per_sec 37.3% regression
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- kernel test robot <oliver.sang@intel.com>
-Cc: Dev Jain <dev.jain@arm.com>, oe-lkp@lists.linux.dev, lkp@intel.com,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Barry Song <baohua@kernel.org>, Pedro Falcato <pfalcato@suse.de>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Bang Li <libang.li@antgroup.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, bibo mao <maobibo@loongson.cn>,
- Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@kernel.org>,
- Jann Horn <jannh@google.com>, Lance Yang <ioworker0@gmail.com>,
- Liam Howlett <liam.howlett@oracle.com>, Matthew Wilcox
- <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
- Qi Zheng <zhengqi.arch@bytedance.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Vlastimil Babka <vbabka@suse.cz>, Yang Shi <yang@os.amperecomputing.com>,
- Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org
-References: <202508071609.4e743d7c-lkp@intel.com>
- <9e3a59b2-11c0-43ca-aff3-414091f04aa4@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v1] ufs: ufs-qcom: Align programming sequence of Shared
+ ICE for UFS controller v5
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+CC: <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>
+References: <20250806063409.21206-1-quic_pkambar@quicinc.com>
+ <ucr4imzntw6ghcvpeioprmva7gxrqnkphjirjppnqgdpq5ghss@y5nwjzzpvluj>
+ <c62c2744-0d07-4fe8-8d2a-febc5fa8720a@oss.qualcomm.com>
+ <mhridnexscaevsmssu6k3l4x276cj63gl2rlvypym23kj2kgov@pw323zkhqcrg>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <9e3a59b2-11c0-43ca-aff3-414091f04aa4@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Palash Kambar <quic_pkambar@quicinc.com>
+In-Reply-To: <mhridnexscaevsmssu6k3l4x276cj63gl2rlvypym23kj2kgov@pw323zkhqcrg>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: l5T1PRQxmbobViJG3Kxh3Sbm9UIXktxe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX5n48MN/3KK4H
+ GJCrHcoPyPcOZ95/AUxe6hJbz2HlPNJch6HATKv3Iby8HPjXfL7/uOIgpPFmqUgamvG7Wo9R0f/
+ cKKbk+GIYtaITUepBqg35jENZSo6Yc6YlirTmcGUZls3ZYncjfDB1HsZGIgU6M9M/Uqa9AmssYk
+ tHxX3afe+nYJhrTfk9PWOl/AhD4Kt5hPq7820xLgwNmSSpRUeJvYpjMsp+KTvILxy8Fm4o8sKvp
+ MYA6thiQCsdRwS/M0lzym0siQYYfmlLgNVhfc4o0seB6tRJCQtWYYA6Vd0w6XDGP/L+F813OaQg
+ GbmFXjCm2PNCikMSm+u472iemUaKlS0jjRcKmuhtqlk3ysPF5Gp+6KiYErQG/Zb+GJC0Yp6oKnA
+ JYg76iap
+X-Proofpoint-ORIG-GUID: l5T1PRQxmbobViJG3Kxh3Sbm9UIXktxe
+X-Authority-Analysis: v=2.4 cv=NsLRc9dJ c=1 sm=1 tr=0 ts=68947e63 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=ftMxJ0LbfJfX_HPbJzQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0
+ adultscore=0 malwarescore=0 spamscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-On 07.08.25 10:27, Lorenzo Stoakes wrote:
-> On Thu, Aug 07, 2025 at 04:17:09PM +0800, kernel test robot wrote:
+
+
+On 8/6/2025 11:09 PM, Manivannan Sadhasivam wrote:
+> On Wed, Aug 06, 2025 at 02:56:43PM GMT, Konrad Dybcio wrote:
+>> On 8/6/25 1:14 PM, Manivannan Sadhasivam wrote:
+>>> On Wed, Aug 06, 2025 at 12:04:09PM GMT, Palash Kambar wrote:
+>>>> Disable of AES core in Shared ICE is not supported during power
+>>>> collapse for UFS Host Controller V5.0.
+>>>>
+>>>> Hence follow below steps to reset the ICE upon exiting power collapse
+>>>> and align with Hw programming guide.
+>>>>
+>>>> a. Write 0x18 to UFS_MEM_ICE_CFG
+>>>> b. Write 0x0 to UFS_MEM_ICE_CFG
+>>>>
+>>>> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+>>>> ---
 >>
+>> [...]
 >>
->> Hello,
+>>>
+>>>> +		ufshcd_readl(hba, UFS_MEM_ICE);
+>>>> +		ufshcd_writel(hba, 0x0, UFS_MEM_ICE);
+>>>> +		ufshcd_readl(hba, UFS_MEM_ICE);
+>>>
+>>> Why do you need readl()? Writes to device memory won't get reordered.
 >>
->> kernel test robot noticed a 37.3% regression of stress-ng.bigheap.realloc_calls_per_sec on:
+>> I'm not sure if we need a delay between them, otherwise they'll happen
+>> within a couple cycles of each other which may not be enough since this
+>> is a synchronous reset and the clock period is 20-50ns when running at
+>> XO (19.2 / 38.4 MHz) rate
 >>
 > 
-> Dev - could you please investigate and provide a fix for this as a
-> priority? As these numbers are quite scary (unless they're somehow super
-> synthetic or not meaningful or something).
+> IIUC, the second register write is just reenabling the mask, so there is no
+> delay required between these two writes. If that's not true, and if there is a
+> delay required, then do:
 > 
->>
->> commit: f822a9a81a31311d67f260aea96005540b18ab07 ("mm: optimize mremap() by PTE batching")
->> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->>
->> [still regression on      linus/master 186f3edfdd41f2ae87fc40a9ccba52a3bf930994]
->> [still regression on linux-next/master b9ddaa95fd283bce7041550ddbbe7e764c477110]
->>
->> testcase: stress-ng
->> config: x86_64-rhel-9.4
->> compiler: gcc-12
->> test machine: 192 threads 2 sockets Intel(R) Xeon(R) Platinum 8468V  CPU @ 2.4GHz (Sapphire Rapids) with 384G memory
->> parameters:
->>
->> 	nr_threads: 100%
->> 	testtime: 60s
->> 	test: bigheap
->> 	cpufreq_governor: performance
->>
->>
->>
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <oliver.sang@intel.com>
->> | Closes: https://lore.kernel.org/oe-lkp/202508071609.4e743d7c-lkp@intel.com
->>
->>
->> Details are as below:
->> -------------------------------------------------------------------------------------------------->
->>
->>
->> The kernel config and materials to reproduce are available at:
->> https://download.01.org/0day-ci/archive/20250807/202508071609.4e743d7c-lkp@intel.com
->>
->> =========================================================================================
->> compiler/cpufreq_governor/kconfig/nr_threads/rootfs/tbox_group/test/testcase/testtime:
->>    gcc-12/performance/x86_64-rhel-9.4/100%/debian-12-x86_64-20240206.cgz/igk-spr-2sp1/bigheap/stress-ng/60s
->>
->> commit:
->>    94dab12d86 ("mm: call pointers to ptes as ptep")
->>    f822a9a81a ("mm: optimize mremap() by PTE batching")
->>
->> 94dab12d86cf77ff f822a9a81a31311d67f260aea96
->> ---------------- ---------------------------
->>           %stddev     %change         %stddev
->>               \          |                \
->>       13777 ± 37%     +45.0%      19979 ± 27%  numa-vmstat.node1.nr_slab_reclaimable
->>      367205            +2.3%     375703        vmstat.system.in
->>       55106 ± 37%     +45.1%      79971 ± 27%  numa-meminfo.node1.KReclaimable
->>       55106 ± 37%     +45.1%      79971 ± 27%  numa-meminfo.node1.SReclaimable
->>      559381           -37.3%     350757        stress-ng.bigheap.realloc_calls_per_sec
->>       11468            +1.2%      11603        stress-ng.time.system_time
->>      296.25            +4.5%     309.70        stress-ng.time.user_time
->>        0.81 ±187%    -100.0%       0.00        perf-sched.sch_delay.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
->>        9.36 ±165%    -100.0%       0.00        perf-sched.sch_delay.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
->>        0.81 ±187%    -100.0%       0.00        perf-sched.wait_time.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
->>        9.36 ±165%    -100.0%       0.00        perf-sched.wait_time.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
->>        5.50 ± 17%    +390.9%      27.00 ± 56%  perf-c2c.DRAM.local
->>      388.50 ± 10%    +114.7%     834.17 ± 33%  perf-c2c.DRAM.remote
->>        1214 ± 13%    +107.3%       2517 ± 31%  perf-c2c.HITM.local
->>      135.00 ± 19%    +130.9%     311.67 ± 32%  perf-c2c.HITM.remote
->>        1349 ± 13%    +109.6%       2829 ± 31%  perf-c2c.HITM.total
+> 	ufshcd_writel(0x18);
+> 	ufshcd_readl();
+> 	usleep()/msleep();
+> 	ufshcd_write(0x0);
 > 
-> Yeah this also looks pretty consistent too...
 
-It almost looks like some kind of NUMA effects?
+ I will address this in next patch set.
 
-I would have expected that it's the overhead of the vm_normal_folio(), 
-but not sure how that corresponds to the SLAB + local vs. remote stats. 
-Maybe they are just noise?
+-Palash K
 
--- 
-Cheers,
 
-David / dhildenb
 
 
