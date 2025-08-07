@@ -1,132 +1,290 @@
-Return-Path: <linux-kernel+bounces-758765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCB1B1D3A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B36FAB1D3A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4BA565B32
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6774618873D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0831023FC5A;
-	Thu,  7 Aug 2025 07:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC2C23F405;
+	Thu,  7 Aug 2025 07:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxWbVqWm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="MSOoUILZ"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591E123D281;
-	Thu,  7 Aug 2025 07:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BF12AD32
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754552694; cv=none; b=i5Xstv1cNA/BTdbycRJf0hikeY9bkojHzpvPcyZpyO6zKsfebHFnSO9IF9+Wb8XyWn79KvQSSu8vqp/qQCIdfn6V5O/ILKlXOsAQpSj+dqsuHfCL8PbDfW0TAZ+/m6b/RLa3LNwVxunHHnrq7E1UoNkCWdfhUvnsTecPfu8vBYs=
+	t=1754552804; cv=none; b=jddMcNZzeCL0lUmowX6IUOFRtpqKWopL1PeVVZnSe3KYkls9GSLdQ/iY6RX8huenjZ6BS04OlHj2CWcdhZbI0fJw0vH3IxtPoi3sJ4FgHhZlKEtECKaExARnvazQg/sVV8+1Kibis8IsQvlEb1Fl/8pRONFm8NZEhDwVelplheE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754552694; c=relaxed/simple;
-	bh=zO+dp9boIMCQAxswROsuVcRJzokM5HhWOE/v8b2AhdM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EEOheLRcemX6cktJHa3D2f9tALaoK9UTbyhQTxnGykfk8wDoFl+8/7zEOihaCXKJoxPnb6zF7R21bek1phwTgi0UE0mQav0zrrSJKDljNm3vZ7PsdBwwmUD10bzgGMS0zJHL2Klte1nPGTk2I8coxzAacyZJwTJsJZ8ODh1I/+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxWbVqWm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98886C4CEEB;
-	Thu,  7 Aug 2025 07:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754552692;
-	bh=zO+dp9boIMCQAxswROsuVcRJzokM5HhWOE/v8b2AhdM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=HxWbVqWm/oVIuLc6sBuhqfr1NpUAtowkhubOiTCd3IVPsQIPP2zYcsoIItlieO72F
-	 FJa0bEH243K/xtzBDV+JSpo26EFvKB48ajs1WPB8Y9le5GkChiJkwlpBh7rKUl2GnC
-	 nKUYourpazJfuWvEE2tLMfqsUFv5jiuYOh1LWfsDgosyRdsAqYT8fu9fnOvfLVIvS8
-	 /5rWh5gICZn4Y4onBdOa2CdVqs3rRp/t9xAhXgsjCbglHpLMa5Lcymw3v1TjiLfBt4
-	 EKFMeBhhNEi5iuyFsl66INw3lK18fIxpXACAkf9rFavi0aSV/8fe2m87LKmPtyyMJM
-	 yh6FS5ZbCIYHw==
-Message-ID: <7ea03b71-d36d-49a4-b848-34eba4c1620d@kernel.org>
-Date: Thu, 7 Aug 2025 09:44:47 +0200
+	s=arc-20240116; t=1754552804; c=relaxed/simple;
+	bh=rFB1wig4ecHf0PRR92x6pcq2Sf2DAobCtEQ8ikk0LR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KtJJaDBZRPmsT78IY91mIKxmTO6mwmqadt1FnZsrxKqFnLT1C93tGi9FzAxKNZ5eeNLn0fY7F83Vim7ycwArCmn5XonPQG703+jd9d967yoGo5mfb7ySjrO3GBzZwF/YtH9rGuKeP7pODeySOAFwrmJVSeuBmkv6oWkb2qCDnZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=MSOoUILZ; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76b6422756fso1157134b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1754552802; x=1755157602; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HF9umwp9Y28asf6+OPLYyndmZD30y/3WqPWlvcSTu1s=;
+        b=MSOoUILZN2s5oYOl9Vohe/Aw09jw2OrAuB7zNXawHdUKzkifR6RbgRQDkgG0ZSlWNC
+         BvQWiH5MoRCV0rRIj7EF1WwVB3jR77kOJlwVOzJyih+vdsd9XiuVPQpYpy6wvzKMG5kX
+         qrw8R8E+MIsqUD4jHSsWbtRVThYnqumabe/Uc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754552802; x=1755157602;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HF9umwp9Y28asf6+OPLYyndmZD30y/3WqPWlvcSTu1s=;
+        b=UFaQorDDCisgP80Sqhn5fXEvVnMXIBO0kehem8t5e54E7cm60mLTQ1b6o4/0qU9Eje
+         5NGReQCGcovV9uJxW+OfoXl0ON92LkEQxphTZZj1ezmJ1rgJ3/hmCVuFwD6SHvX85xa2
+         psx0MHPetf2q8ZFgKth7sRwm4Vj8XumlT8YPL6hjqYE97AqocDDM5Lfeg+qmLbFkLQh/
+         lPxwYpjAuO5W3rhpKIVh+wZ8cwLCm4740fz/LRV7yRhpaJnE/Per7K45N9KrqZE8uUSS
+         rwBWyzzuSKnBvCIiqgVLljPRfxMMgmni1RWvY5tP9ip8yO1n9zu0OngkIKEW4xJv2JRk
+         wyXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYs1oA8nUoJnWvCYJ8BIxHTWqiaAWoZhn39fppQ4D34HnehninJ9+gPdLKBKIACAV5x8irOoa8Nryqndw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAte+L9O+83RppwQvMzhdgkezqv9ftkp44UjUIM+KxNXzhh3xI
+	N1Oh5VU3ifrtwGqD5WXvNhXwOBovL7INvOe4OoFV86B+hDQ69AD1V40fGoj1Kyy9ON0=
+X-Gm-Gg: ASbGncvm8gYjjY9/7xdLUiJzCkBW2GPg2Q7QJ/hVudvggGPi4ayiNiy7BuAahi4fJJX
+	HzApQnGjozNsv5HbkeQ/R3I11GXFH+Jx/CQrKmxc/dByLGw3WiGLkqUX5cS8l2f5xQmczSJWabA
+	n3pqxK912zG2qowXgYkRNqzuShu5qx5q7Wl79dkM4xZi13H4K6EhVo6N2jOTOE7U4vN4+V0UYFc
+	Q9DjHGFY3eIJzbFUC2Bc3sQwZvr0cPTDTHIJV0ocCXexOOh0aD/o3i9eGrGiGBrX69xBaWgv1ed
+	UnX97hPs78T8WQLKRraNOE04hyx1jMLMD5k3kBVqXDwvqPff0fq59ZBp9LrZvfuNkCjGMBqofza
+	FOUC8FTsr7VuCqhgzUUKHO1sEWMAynGp+667Kpu2sgGZupZFQ30Cl9M+xoQorhQ==
+X-Google-Smtp-Source: AGHT+IHrl0OYwhOOLM+IkPxGunWxJPMNM0YaWGeu7A++wfheky0kC3Rbf02TFHu0ZTweWVVGWP3MeQ==
+X-Received: by 2002:a05:6a21:33a1:b0:23d:d9dd:8e4f with SMTP id adf61e73a8af0-240313b0efdmr8733231637.28.1754552801756;
+        Thu, 07 Aug 2025 00:46:41 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([175.195.128.78])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbd174sm17344464b3a.63.2025.08.07.00.46.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 00:46:41 -0700 (PDT)
+Date: Thu, 7 Aug 2025 16:46:36 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v2 3/4] rust: miscdevice: add uring_cmd() for
+ MiscDevice trait
+Message-ID: <aJRZ3NUm2xp2H4iX@sidongui-MacBookPro.local>
+References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
+ <20250727150329.27433-4-sidong.yang@furiosa.ai>
+ <BC40C40D-D835-4B5E-927C-A55939110114@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: phy: rockchip,pcie3-phy: add optional
- differential phy clocks
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org,
- alberto.dassatti@heig-vd.ch, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250806133824.525871-1-rick.wertenbroek@gmail.com>
- <20250806133824.525871-2-rick.wertenbroek@gmail.com>
- <20250807-amphibian-fanatic-muskrat-b1365b@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250807-amphibian-fanatic-muskrat-b1365b@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BC40C40D-D835-4B5E-927C-A55939110114@collabora.com>
 
-On 07/08/2025 09:42, Krzysztof Kozlowski wrote:
-> On Wed, Aug 06, 2025 at 03:38:21PM +0200, Rick Wertenbroek wrote:
->> Both PHYs can use an alternate reference differential clock, add the clocks
+On Fri, Aug 01, 2025 at 11:04:36AM -0300, Daniel Almeida wrote:
+> Hi Sidong,
 > 
-> I do not see any changes in rockchip,rk3588-pcie3-phy, so your "both" is
-
-I meant 3568, the other one.
-
-> either incorrect or ambiguous.
+> > On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> > 
+> > This patch adds uring_cmd() function for MiscDevice trait and its
+> > callback implementation. It uses IoUringCmd that io_uring_cmd rust
+> > abstraction.
 > 
-> ...
-> 
->> to the DT bindings
->>
+> I can´t parse this.
 
-Best regards,
-Krzysztof
+Okay, I'll fix this.
+
+> 
+> > 
+> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > ---
+> > rust/kernel/miscdevice.rs | 41 +++++++++++++++++++++++++++++++++++++++
+> > 1 file changed, 41 insertions(+)
+> > 
+> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> > index 288f40e79906..54be866ea7ff 100644
+> > --- a/rust/kernel/miscdevice.rs
+> > +++ b/rust/kernel/miscdevice.rs
+> > @@ -14,6 +14,7 @@
+> >     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+> >     ffi::{c_int, c_long, c_uint, c_ulong},
+> >     fs::File,
+> > +    io_uring::IoUringCmd,
+> >     mm::virt::VmaNew,
+> >     prelude::*,
+> >     seq_file::SeqFile,
+> > @@ -175,6 +176,19 @@ fn show_fdinfo(
+> >     ) {
+> >         build_error!(VTABLE_DEFAULT_ERROR)
+> >     }
+> > +
+> > +    /// Handler for uring_cmd.
+> > +    ///
+> > +    /// This function is invoked when userspace process submits the uring_cmd op
+> > +    /// on io_uring submission queue. The `io_uring_cmd` would be used for get
+> > +    /// arguments cmd_op, sqe, cmd_data.
+> 
+> Please improve this. I don´t think that anyone reading this can really get
+> a good grasp on what this function does.
+> 
+> What does `issue_flags` do?
+> 
+
+Agreed, Let me revise this comments to make them easier to understand.
+
+issue_flags includes flags options for io_uring. it's defined as `io_uring_cmd_flags`
+in "include/linux/io_uring_types.h".
+
+> > +    fn uring_cmd(
+> > +        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
+> > +        _io_uring_cmd: Pin<&mut IoUringCmd>,
+> > +        _issue_flags: u32,
+> > +    ) -> Result<i32> {
+> > +        build_error!(VTABLE_DEFAULT_ERROR)
+> > +    }
+> > }
+> > 
+> > /// A vtable for the file operations of a Rust miscdevice.
+> > @@ -332,6 +346,28 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+> >         T::show_fdinfo(device, m, file);
+> >     }
+> > 
+> > +    /// # Safety
+> > +    ///
+> > +    /// `ioucmd` is not null and points to a valid `bindings::io_uring_cmd`.
+> 
+> Please rewrite this as "the caller must ensure that  `ioucmd` points to a
+> valid `bindings::io_uring_cmd`" or some variation thereof.
+
+Okay, Thanks.
+> 
+> > +    unsafe extern "C" fn uring_cmd(
+> > +        ioucmd: *mut bindings::io_uring_cmd,
+> > +        issue_flags: ffi::c_uint,
+> > +    ) -> ffi::c_int {
+> > +        // SAFETY: The file is valid for the duration of this call.
+> > +        let ioucmd = unsafe { IoUringCmd::from_raw(ioucmd) };
+> 
+> What file?
+> 
+> Also, this is what you wrote for IoUringCmd::from_raw:
+
+Sorry, it's typo. It should be rewritted.
+
+> 
+> +
+> + /// Constructs a new `IoUringCmd` from a raw `io_uring_cmd`
+> + ///
+> + /// # Safety
+> + ///
+> + /// The caller must guarantee that:
+> + /// - The pointer `ptr` is not null and points to a valid `bindings::io_uring_cmd`.
+> + /// - The memory pointed to by `ptr` remains valid for the duration of the returned reference's lifetime `'a`.
+> + /// - The memory will not be moved or freed while the returned `Pin<&mut IoUringCmd>` is alive.
+> + #[inline]
+> + pub unsafe fn from_raw<'a>(ptr: *mut bindings::io_uring_cmd) -> Pin<&'a mut IoUringCmd> {
+> 
+> Here, you have to mention how the safety requirements above are fulfilled in this call site.
+
+Okay, Actually, I'm little confused because it seems that the unsafe code deleted in email.
+Anyway I would mention it in next.
+
+> 
+> > +        let file = ioucmd.file();
+> > +
+> > +        // SAFETY: The file is valid for the duration of this call.
+> 
+> Same here.
+
+Thanks.
+> 
+> > +        let private = unsafe { (*file.as_ptr()).private_data }.cast();
+> 
+> Perhaps this can be hidden away in an accessor?
+
+It seems that there is no accessor for private_data in File. 
+
+> 
+> > +        // SAFETY: uring_cmd calls can borrow the private data of the file.
+> > +        let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+> 
+> This is ForeignOwnable::borrow():
+> 
+>     /// Borrows a foreign-owned object immutably.
+>     ///
+>     /// This method provides a way to access a foreign-owned value from Rust immutably. It provides
+>     /// you with exactly the same abilities as an `&Self` when the value is Rust-owned.
+>     ///
+>     /// # Safety
+>     ///
+>     /// The provided pointer must have been returned by a previous call to [`into_foreign`], and if
+>     /// the pointer is ever passed to [`from_foreign`], then that call must happen after the end of
+>     /// the lifetime `'a`.
+>     ///
+>     /// [`into_foreign`]: Self::into_foreign
+>     /// [`from_foreign`]: Self::from_foreign
+>     unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> Self::Borrowed<'a>;
+> 
+> You must say how the safety requirements above are fulfilled in this call site
+> as well. In particular, are you sure that this is true? i.e.:
+> 
+> > The provided pointer must have been returned by a previous call to
+> > [`into_foreign`],
+
+Okay, I would mention that the this call fulfilled the requirements.
+> 
+> 
+> > +
+> > +        match T::uring_cmd(device, ioucmd, issue_flags) {
+> > +            Ok(ret) => ret as ffi::c_int,
+> > +            Err(err) => err.to_errno() as ffi::c_int,
+> 
+> c_int is in the prelude. Also, please have a look at error::from_result().
+
+Thanks.
+
+
+Thank you for detailed Review.
+Sidong
+
+> 
+> > +        }
+> > +    }
+> > +
+> >     const VTABLE: bindings::file_operations = bindings::file_operations {
+> >         open: Some(Self::open),
+> >         release: Some(Self::release),
+> > @@ -354,6 +390,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+> >         } else {
+> >             None
+> >         },
+> > +        uring_cmd: if T::HAS_URING_CMD {
+> > +            Some(Self::uring_cmd)
+> > +        } else {
+> > +            None
+> > +        },
+> >         // SAFETY: All zeros is a valid value for `bindings::file_operations`.
+> >         ..unsafe { MaybeUninit::zeroed().assume_init() }
+> >     };
+> > -- 
+> > 2.43.0
+> > 
+> > 
+> 
+> - Daniel
+> 
 
