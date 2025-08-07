@@ -1,131 +1,97 @@
-Return-Path: <linux-kernel+bounces-759286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71114B1DB8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 868EEB1DB89
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CD018C44D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456FB1898B81
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC982701D9;
-	Thu,  7 Aug 2025 16:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5FB26F443;
+	Thu,  7 Aug 2025 16:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOEoXXJw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/dDvxZr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F290926FA6A;
-	Thu,  7 Aug 2025 16:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5DD146A72;
+	Thu,  7 Aug 2025 16:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754583598; cv=none; b=G4oB1zi+f5bEMwvJt1YimtjMabJM3/5E8GitDTOgFM9b45ZYf9wf6NlPlVk7Jk+Db6IPjAPSYzAIeYcjAtvLQ8x59QW2lKgkwhvJgawsNkKBFuc80URPJRgckmSWxDhCLHAPgMqEd8bOn1O4qOhsM0CYJi4S6gqyR2UCEENqyW0=
+	t=1754583596; cv=none; b=Hjlss8uQQf5dX9lnoYorX7MvtWNjDbfe5hnVZdsTD6IW6ZiK7+tdgDtDK0XJYzpIeP6SlfKsyZLmsOv+blhLiUDxVgcjdSqLI2vNz0aTPARI6TUclLq3PAg7wzvB+ltT4mZJbovqIOh0KegMqz4TF9Gmqo5hRbFFhNeV/vHPfq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754583598; c=relaxed/simple;
-	bh=71l1WbPfSqzMfZQuYilf4vVUCeTfgFXR+IWoTWtgAZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z7tl7dV/TM+SOaAHLOKmoyc44Ng2NTc3OgO4ttr3LFC5pUGzAu9cRKWeLl5wQxp8FfV8qpODtR6dP/dAOu8WVtPfH6AJnIU+EZerqKuogCfRwpGxytfqYEufyN3n5ZxbkW//Otdxby7R5hE4M/K0FgtynaDZbREGZbl4sY40MUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOEoXXJw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B145C4CEF6;
-	Thu,  7 Aug 2025 16:19:53 +0000 (UTC)
+	s=arc-20240116; t=1754583596; c=relaxed/simple;
+	bh=XEfHPKSktUmKnDddPO998nRTlmFtkYWmxCYrK5ds3IY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=luuPm3VGxv3ovo9nwF6lV5TwEkhn/W9Im4G5ofoNuRLqjC9qiHk7aEOXYFRkNkENsBJ7Qz4iKKFr1M7jnQuf7e7U5+d7Pyw/zu20YKpA6C3W05B13vskGtApiADOip6Tu43EmaVLJ3lVPRqi5rHaKVPRtPlFuvcDNcI0EcVwmHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/dDvxZr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB7F9C4CEEB;
+	Thu,  7 Aug 2025 16:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754583597;
-	bh=71l1WbPfSqzMfZQuYilf4vVUCeTfgFXR+IWoTWtgAZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iOEoXXJwEzKxABOK2piOyFyGcOGYq8gYy7PKw6jSnPdq0qXY4eONlgysv6P+NDBAq
-	 UbXqbOeioVzmwsCyw0FUhLcOtciG47kW0QS7GkC5LE7Wgx/VqL6GzxzpQvhnCJx+Wx
-	 eKA1vFqOH46fkH6dXM2B4hE1DmclhSXeVOsQYyC1NxgA+HFVyvu5/+V1Iu5+R7X7Sr
-	 rsiR8Tc26KmY0AoKwR/Jf5jCzIp7AbJ+pVPU+qqc1pJayJvgWGc+JsgFvaD1nSv2Fq
-	 HWH8q7StUg/0WBQYSIwSJJGhQDPrDcT3tDEZj7r799mvuGHfF19KgLMrc27shTqzks
-	 HXWz0m8QZSWCA==
-Date: Thu, 7 Aug 2025 17:19:51 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: spacemit: introduce i2s pre-clock
-Message-ID: <20250807-untrained-anthology-bcf760fe73cb@spud>
-References: <20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com>
- <20250807-k1-clk-i2s-generation-v1-1-7dc25eb4e4d3@linux.spacemit.com>
+	s=k20201202; t=1754583596;
+	bh=XEfHPKSktUmKnDddPO998nRTlmFtkYWmxCYrK5ds3IY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=H/dDvxZrxxn6SyFIQHQTJZDmho3MOWpLXQuPi6kPIOamraCjq8XYlkuX1rSKjv8gm
+	 yZgUjAZDgrU4iaOPM/snpGjtIeC41nCi5h7++CTNVaN5Yf6f4trKy4UZMPzplXByco
+	 Ccz8E8e3S8J4mAdfXqMOoEA/ckwjPuwL4HkCDZ3tcW6uisHDkv4VHJ3TNvasywnDyp
+	 XVBj8Xqu9d97lH1ZrEf13mzZgJuYkiiEnyB41EhHQ0zTeLle0U2ZcDnBCOsL4JFRak
+	 xAymfXRScKNgr8JlOUzCzSy0NMCKccAx/WCGUhD/FpdmvGHJDStY5Yrd0KzUUKUW3Q
+	 idKuNnXQbRLBg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE006383BF4E;
+	Thu,  7 Aug 2025 16:20:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MGb6O0jv4+1CWhb1"
-Content-Disposition: inline
-In-Reply-To: <20250807-k1-clk-i2s-generation-v1-1-7dc25eb4e4d3@linux.spacemit.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 0/2] perf/s390: Regression: Move uid filtering to BPF
+ filters
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175458360947.3615598.15789792776386317397.git-patchwork-notify@kernel.org>
+Date: Thu, 07 Aug 2025 16:20:09 +0000
+References: <20250806162417.19666-1-iii@linux.ibm.com>
+In-Reply-To: <20250806162417.19666-1-iii@linux.ibm.com>
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ irogers@google.com, acme@kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, tmricht@linux.ibm.com, jolsa@kernel.org,
+ hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com
+
+Hello:
+
+This series was applied to bpf/bpf.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Wed,  6 Aug 2025 18:22:40 +0200 you wrote:
+> v4: https://lore.kernel.org/bpf/20250806114227.14617-1-iii@linux.ibm.com/
+> v4 -> v5: Fix a typo in the commit message (Yonghong).
+> 
+> v3: https://lore.kernel.org/bpf/20250805130346.1225535-1-iii@linux.ibm.com/
+> v3 -> v4: Rename the new field to dont_enable (Alexei, Eduard).
+>           Switch the Fixes: tag in patch 2 (Alexander, Thomas).
+>           Fix typos in the cover letter (Thomas).
+> 
+> [...]
+
+Here is the summary with links:
+  - [v5,1/2] libbpf: Add the ability to suppress perf event enablement
+    https://git.kernel.org/bpf/bpf/c/9474e27a24a4
+  - [v5,2/2] perf bpf-filter: Enable events manually
+    https://git.kernel.org/bpf/bpf/c/5e2ac8e8571d
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---MGb6O0jv4+1CWhb1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Aug 07, 2025 at 09:30:10AM +0800, Troy Mitchell wrote:
-> Previously, the K1 clock driver did not include the parent clocks of
-> the I2S sysclk.
->=20
-> This patch adds their definitions to allow proper registration
-> in the driver and usage in the device tree.
->=20
-> Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 S=
-oC")
-
-I'm not sure that a fixes tag is suitable here, seems to be some new
-feature/development. The driver change seems to talk about how modelling
-as a fixed-clock is incorrect, but this change mentions none of that.
-Without whatever context that provides, it's hard to see how this can be
-justified as a fix rather than a new feature being added.
-
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
->  include/dt-bindings/clock/spacemit,k1-syscon.h | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-=
-bindings/clock/spacemit,k1-syscon.h
-> index 2714c3fe66cd5b49e12c8b20689f5b01da36b774..524268246fedd3f1238320f35=
-244baf32354fbd2 100644
-> --- a/include/dt-bindings/clock/spacemit,k1-syscon.h
-> +++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
-> @@ -77,6 +77,9 @@
->  #define CLK_I2S_BCLK		30
->  #define CLK_APB			31
->  #define CLK_WDT_BUS		32
-> +#define CLK_I2S_153P6		33
-> +#define CLK_I2S_153P6_BASE	34
-> +#define CLK_I2S_SYSCLK_SRC	35
-> =20
->  /* MPMU resets */
->  #define RESET_WDT		0
->=20
-> --=20
-> 2.50.1
->=20
->=20
-
---MGb6O0jv4+1CWhb1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJTSJwAKCRB4tDGHoIJi
-0lrAAPwLeTxg0DmEWOZuiKramMswKD+FBk48f8HQ5cra59xk+wEA+uDoxchmMLyD
-O74kiFlXHVfpag4BaRKO/wVQczwXmAQ=
-=y1/8
------END PGP SIGNATURE-----
-
---MGb6O0jv4+1CWhb1--
 
