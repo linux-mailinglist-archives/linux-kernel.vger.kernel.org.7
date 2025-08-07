@@ -1,187 +1,85 @@
-Return-Path: <linux-kernel+bounces-758496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97027B1CFE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:50:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2B5B1CFE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D1F9625552
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:50:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8873B81E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FE3136E;
-	Thu,  7 Aug 2025 00:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTz9IEpv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF15F82899;
+	Thu,  7 Aug 2025 00:52:21 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3354C6E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DBE4C6E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754527851; cv=none; b=lFroqzXrQZZGbn766po9xgQj6A7ofBSHOYHUWsOW572L8oBar8GEAT3q3vpoWmse0UzGxKj+OBYb3uHZQznQqUtOpN/LKVfJ2itJ70oOYfKva0fSUruMl6ifLbxrrpkQGr/0mRj+lvx+El3s1MWJaftJI3hodheuOi1tfDXJ79A=
+	t=1754527941; cv=none; b=DXoZlPNhkw1aRADMsJQ6e6usjEF5FsYZWP85F+EHZx6g2KN/76/gv5rg+S5wT++klwW9gVezyVulEq0A0jWoF95MRiU/V+Uf0jibsXQrELQiLuoG6tUx/f6iiMD7eN9S6CI4Ht+u6j+R2pMe+NPtKkz+6ZrwijjT6rWGnPLwyH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754527851; c=relaxed/simple;
-	bh=grPj4nUiqlg/GvMehvwd/PM7Ps+66XCt4iskjSNeqTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NtjbB7Rxnww6j4Bz82sIiK/xA1e3vOmz6bKfNezgRd/jCVzVhM5kZFpeo32oca+fYNUES7sIfPOJGf5xuPIg4rcFFW/oNrnaroADvuy4Vxqrz95DHskGup4s7ZQJ5poNCqtbxcL/TfedAT6S0FDb6DNATl3yXZOozKzFoLjlMrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTz9IEpv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD036C4CEFA
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 00:50:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754527850;
-	bh=grPj4nUiqlg/GvMehvwd/PM7Ps+66XCt4iskjSNeqTI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HTz9IEpvRGU5Kag0/OLxpBfg31H/M5cMUEZ3opwD93imc7f4sGxKgs3oUex89I2nb
-	 hxzO6iowo+ZbiQ70YFpfKaBTo/wZ1uDMb3ImAwgkUtrprdBZ/C7w1GSZ85i9S2wINF
-	 flqmfWsLLtA7qsIVS5IR2pkuUqjXvBh9SIoIkJcYGTgIpPKsPLM58AvSkhXVLjzvPk
-	 qvejLXRMKRvkwtIY9Dyp2rSxbxSOZPw0Dnu4di3x/SBgqtzC0fYPSfeTTUGajbYr2d
-	 k840k1dNkB+jRAMX/wnJPz4hATkHNcA5iGcyQR9p+xJkmaG4YiRPu88jd0T5Z69vR5
-	 xgQphFzj9cBCQ==
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459b3904fdeso18215e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 17:50:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUXSAaMYNND1oplQL1iiauKoO+gUybPpKdPuatnvRtZep4Z4TYoVaN1Ur0u7Gam/s+GH2YsWo/q5NGUNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdafnrHnkdnZWtcJnf8P+QoBrez0E1vTUScKi+UbvnDP/Pvt2I
-	Mf6tXnYnwSqYoaSSHeqH3tqkAw4AMcXGjsHL1R/UkJDvXdKPcCQU+K73REcjriWQv2RyoojNzjI
-	ElkvM5M9bvNMoKx+J5rhlL3CW2hkB6wZ/KAhE0iNd
-X-Google-Smtp-Source: AGHT+IGd7AVqzUBj3ViITTLxWIkbOiciEeiGJAqp3Zj3Tc1+LEEggLoa5F5uWFg80218MiuBPCcZLN8HDT/+zDOogCY=
-X-Received: by 2002:a05:600c:a215:b0:453:65f4:f4c8 with SMTP id
- 5b1f17b1804b1-459eee38e99mr254455e9.3.1754527849296; Wed, 06 Aug 2025
- 17:50:49 -0700 (PDT)
+	s=arc-20240116; t=1754527941; c=relaxed/simple;
+	bh=hD0gV6oDpXkjRfUKez9qUYR8PBxXLHXYHRwy0exbtwI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GfOLiuo5xIm43ATfww0TuBiInZqJsY/WEBFN7BlXJI+oC36q5g4EIQmkMHYkn93UKz+3QbNGlYc7u9S9xswXYcpaNDJF8/UASMX/Z5XruB7FiiLEAkOqQhpRuZNCve7QUvTc4TTqneOIO1T5zJqwtaObOuFVhtihkit60wcJsYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 7 Aug
+ 2025 08:52:08 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Thu, 7 Aug 2025 08:52:08 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] soc: aspeed: socinfo: Add AST27xx silicon IDs
+Date: Thu, 7 Aug 2025 08:52:08 +0800
+Message-ID: <20250807005208.3517283-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
- <20250728-luo-pci-v1-20-955b078dd653@kernel.org> <87zfconsaw.ffs@tglx>
- <CAF8kJuOM=2oEFP20xWtQ==ECwF_vNB032Os3-N12zY1xVau-yw@mail.gmail.com>
- <20250731150132.GV26511@ziepe.ca> <CAF8kJuPbJWea+o=GTFEM6KRCq4DxDad+83+vM0Np+n=Mmzqzag@mail.gmail.com>
- <20250802135034.GJ26511@ziepe.ca>
-In-Reply-To: <20250802135034.GJ26511@ziepe.ca>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 6 Aug 2025 17:50:37 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuN4yjBzaTuAA9wERbxbJQs=YSf-1RY_nHu+XvMybpYbfA@mail.gmail.com>
-X-Gm-Features: Ac12FXwr_lgsbosoQEiUbhniouBJKo-bOKc3xyjaNCaRQ66umGk7SeForY_LB9o
-Message-ID: <CAF8kJuN4yjBzaTuAA9wERbxbJQs=YSf-1RY_nHu+XvMybpYbfA@mail.gmail.com>
-Subject: Re: [PATCH RFC 20/25] PCI/LUO: Avoid write to liveupdate devices at boot
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Leon Romanovsky <leon@kernel.org>, Junaid Shahid <junaids@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Jason,
+Extend the ASPEED SoC info driver to support AST27XX silicon IDs.
 
-Thanks for your feedback.
+Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+---
 
-On Sat, Aug 2, 2025 at 6:50=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrote=
-:
->
-> On Fri, Aug 01, 2025 at 04:04:39PM -0700, Chris Li wrote:
-> > My philosophy is that the LUO PCI subsystem is for service of the PCI
-> > device driver. Ultimately it is the PCI device driver who decides what
-> > part of the config space they want to preserve or overwrite. The PCI
-> > layer is just there to facilitate that service.
->
-> I don't think this makes any sense at all. There is nothing the device
-> driver can contribute here.
+v2:
+ Update subject title from driver/soc/aspeed -> soc: aspeed: socinfo:
 
-I am considering that the device driver owner will know a lot more
-device internal knowledge, e.g. why it needs to reserve this and that
-register where the PCI layer might not know much about the internal
-device behavior.
+---
+ drivers/soc/aspeed/aspeed-socinfo.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> > If you still think it is unjustifiable to have one test try to
-> > preserve all config space for liveupdate.
->
-> I do think it is unjustifiable, it is architecurally wrong. You only
-> should be preserving the absolute bare minimum of config space bits
-> and everything else should be rewritten by the next kernel in the
-> normal way. This MSI is a prime example of a nonsensical outcome if
-> you take the position the config space should not be written to.
+diff --git a/drivers/soc/aspeed/aspeed-socinfo.c b/drivers/soc/aspeed/aspeed-socinfo.c
+index 3f759121dc00..67e9ac3d08ec 100644
+--- a/drivers/soc/aspeed/aspeed-socinfo.c
++++ b/drivers/soc/aspeed/aspeed-socinfo.c
+@@ -27,6 +27,10 @@ static struct {
+ 	{ "AST2620", 0x05010203 },
+ 	{ "AST2605", 0x05030103 },
+ 	{ "AST2625", 0x05030403 },
++	/* AST2700 */
++	{ "AST2750", 0x06000003 },
++	{ "AST2700", 0x06000103 },
++	{ "AST2720", 0x06000203 },
+ };
+ 
+ static const char *siliconid_to_name(u32 siliconid)
+-- 
+2.34.1
 
-OK. Let me rework the V2 with your approach.
-
->
-> > > Only some config accesse are bad. Each and every "bad" one needs to b=
-e
-> > > clearly explained *why* it is bad and only then mitigated.
-> >
-> > That is exactly the reason why we have the conservative test that
-> > preserves every config space test as a starting point.
->
-> That is completely the opposite of what I said. Preserving everything
-> is giving up on the harder job of identifying which bits cannot be
-> changed, explaining why they can't be changed, and then mitigating
-> only those things.
-
-We can still preserve every thing then work backwards to preserve
-less.  As I said, I will rework V2 with your approach preserving bare
-minimum as the starting place.
-
-> > Another constraint is that the data center servers are dependent on
-> > the network device able to connect to the network appropriately. Take
-> > diorite NIC  for example, if I try only preserving ATS/PASID did not
-> > finish the rest of liveupdate, the nic wasn't able to boot up and
-> > connect to the network all the way. Even if the test passes for the
-> > ATS part, the over test fails because the server is not back online. I
-> > can't include that test into the test dashboard, because it brings
-> > down the server. The only way to recover from that is rebooting the
-> > server, which takes a long time for a big server. I can only keep that
-> > non-passing test as my own private developing test, not the regression
-> > test set.
->
-> I have no idea what this is trying to say and it sounds like you also
-> can't explain exactly what is "wrong" and justify why things are being
-> preserved.
-
-I know what register is causing the trouble but I think we are under a
-different philosophy of addressing the problem from different ends.
-Another consideration is the device testing matrixs. The kexec with
-device liveupdate is a rare event. With that many device state
-re-initializing might trigger some very rare bug in the device or
-firmware. So it might be due to the device internal implementation,
-even though PCI spec might say otherwise or undefined.
-
-Anyway, let me do it your way in V2 then.
-
-> Again, your series should be starting simpler. Perserve the dumbest
-> simplest PCI configuration. Certainly no switches, P2P, ATS or
-> PASID. When that is working you can then add on more complex PCI
-> features piece by piece.
-
-With the V1 the patch series deliverable is having an Intel diorite
-NVMe device preserve every config space access and pass to the vfio
-and iommu people to build the vfio and iommu on top of it. Let's
-forget about V1.
-
-With V2 I want to start with the minimal end. No switches,P2P, ATS or
-PASID. I need some help to define what is deliverable in such a
-minimal preserve. e.g. Do I be able to read back the config value not
-changed then call it a day. Or do I expect to see the device fully
-initialized, it is able to be used by the user space. Will the device
-need to perform any DMA? Interrupt?
-
-I will probably find a device as simple as possible and it is attached
-to the root PCI host bridge, not the PCI-PCI bridge.
-Maybe no interrupt as the first step. One possibility is using the
-Intel DSA device that does the DMA streaming.
-
-If you have any other feedback on the candidate device and deliverable
-test for V2, I am looking forward to it.
-
-Thanks.
-
-Chris
 
