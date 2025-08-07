@@ -1,160 +1,101 @@
-Return-Path: <linux-kernel+bounces-758563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA01B1D0D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:05:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 032BDB1D025
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD64585799
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BE79626B68
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DD519DF66;
-	Thu,  7 Aug 2025 02:05:28 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278B81A23AC;
+	Thu,  7 Aug 2025 01:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="oJCW887q"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455E14430;
-	Thu,  7 Aug 2025 02:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C3EEC4;
+	Thu,  7 Aug 2025 01:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754532327; cv=none; b=tfVSP7IFAQQEpBQAZoCaTRPn0DbTQhZkT41EXFth14egssk8cAhxsaWeTuJn7g0PSLlSUDLQ7KuWMJ11aTAbAiSEh6WHhf2VGbtD3APxzhukhfMmDhRl/JwquJRPXQ8x4GzoH8YbEGSrhShGg7bOo30cwLXZsaPJREbyLWmVeiw=
+	t=1754530663; cv=none; b=Dk0JLkpb12/r9D5o1l5GUwHZ5PYIdTSpXiUae4ag7GoC/MU8hEGYvP/ROSWgH+eowLfgsxyYp+2QHphqXjHnMfT3BuMlXB3n9axv+VMK8eqHBSxBp1HHt/ObCdCDyV6wjCqt4FjjL1F7dhvfOhpWzCl4Ib6yxJrXf/2rU+B/sUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754532327; c=relaxed/simple;
-	bh=y6Cegs55RTc/Itckvdkju3HEUITi+3NCWQNq869xaRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YrmCV9D9gWWDkA8tmb3ZaPIyXMnjeRGkmFxMwr28DUoz6fZYO4PofKiCntJcFr52yOlewsCpL+haPmLCJPcXFB7ZikCD48SNTGkxBeuxEGH17gwcXtsoYK8lFwO3liXkHDsxIO/umd1lu/GK0zP86tROGcHVTxeJ1caSrvY2I3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4by8lv20M4z13Mrs;
-	Thu,  7 Aug 2025 09:32:11 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 43ED21400DC;
-	Thu,  7 Aug 2025 09:35:27 +0800 (CST)
-Received: from [10.174.179.155] (10.174.179.155) by
- kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 7 Aug 2025 09:35:26 +0800
-Message-ID: <1b283ae6-d972-4b85-bd4c-bfbb58492914@huawei.com>
-Date: Thu, 7 Aug 2025 09:35:25 +0800
+	s=arc-20240116; t=1754530663; c=relaxed/simple;
+	bh=ce65IqiN2VyqeISLJNiRFdmLyT7oo1QL65dXx6+DtR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cR5V3WJrLRz9fBn41oywVgeUwYOeoX1Sv4fGyrzdz+/GKobP19q41BNFHosBfnexnrL+rlGhJJ4Xjh8NcyczWzjom7ccOgUahE3h9EL5Sqb3xAAg9JZh+9xvb0WmDdhZqYSBRYSy8YLt+gieY0foDU0UnnOy/GoL6LYv3A8z+WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=oJCW887q; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1754530653;
+	bh=ce65IqiN2VyqeISLJNiRFdmLyT7oo1QL65dXx6+DtR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=oJCW887qTh75G6bKT8AkskQKWDq5I394sVFXgJxcRQlDOFBbKOmaZLu1+c8YDFzwP
+	 g5hhi+5tLzUqXFqE53vK5Bl78/c9XxnmOpKUafIlS5WU7JQvp1z3/NCkrfgTSpUtam
+	 PjcDbaY4KBj2ZcvFAlDjEi25rOX8T5xmowiOEvc52mj/fnB56E6IXsngj/jKRy575Z
+	 009c+xVYceZLs0Hfs6APlA4+m1yv/PayC0WnnUXrXfCRcekP/Due8fQHIP9LmdgZy9
+	 dX71rpkwIv80eHPlgdcGISIoee1XSJZb4A19XXvZZTxiO9NW+5yTxHoWiEO602IWWC
+	 KhEgX4qj2QaPg==
+Received: from linux.gnuweeb.org (unknown [182.253.126.227])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 7E4CD3127C48;
+	Thu,  7 Aug 2025 01:37:30 +0000 (UTC)
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Thu, 7 Aug 2025 08:37:27 +0700
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Simon Horman <horms@kernel.org>, Oliver Neukum <oneukum@suse.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Netdev Mailing List <netdev@vger.kernel.org>,
+	Linux USB Mailing List <linux-usb@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>, gwml@vger.gnuweeb.org,
+	stable@vger.kernel.org, John Ernberg <john.ernberg@actia.se>
+Subject: Re: [PATCH net v2] net: usbnet: Fix the wrong netif_carrier_on()
+ call placement
+Message-ID: <aJQDV5eQTVzVNg9y@linux.gnuweeb.org>
+References: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
+ <20250804100050.GQ8494@horms.kernel.org>
+ <20250805202848.GC61519@horms.kernel.org>
+ <CAHk-=wjqL4uF0MG_c8+xHX1Vv8==sPYQrtzbdA3kzi96284nuQ@mail.gmail.com>
+ <CAHk-=wh+bnqPjL=9oq3uEkyZ7WB8=F_QMOHsGjHLj98oYk-X3Q@mail.gmail.com>
+ <CAHk-=wjedw0vsfByNOrxd-QMF9svfNjbSo1szokEZuKtktG7Lw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
-Subject: Re: CVE-2022-50031: scsi: iscsi: Fix HW conn removal use after free
-To: Greg Kroah-Hartman <gregkh@kernel.org>
-CC: <cve@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cve-announce@vger.kernel.org>, <lduncan@suse.com>,
-	<cleech@redhat.com>, Mike Christie <michael.christie@oracle.com>,
-	<James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-	<open-iscsi@googlegroups.com>, <linux-scsi@vger.kernel.org>, yangerkun
-	<yangerkun@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>, Hou Tao
-	<houtao1@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>,
-	"chengzhihao1@huawei.com" <chengzhihao1@huawei.com>, <liumingrui@huawei.com>
-References: <2025061839-CVE-2022-50031-f2bc@gregkh>
- <563d1da8-abd8-48e6-9aab-5a4f13859995@huawei.com>
- <2025070318-slinging-germproof-7da9@gregkh>
-From: Li Lingfeng <lilingfeng3@huawei.com>
-In-Reply-To: <2025070318-slinging-germproof-7da9@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjedw0vsfByNOrxd-QMF9svfNjbSo1szokEZuKtktG7Lw@mail.gmail.com>
+X-Machine-Hash: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
 
-Hi, Greg
+On Wed, Aug 06, 2025 at 04:54:36AM +0300, Linus Torvalds wrote:
+> Anyway, I've applied Ammar's v3 that ended up the same patch that I also tested,
 
-在 2025/7/3 22:33, Greg Kroah-Hartman 写道:
-> On Thu, Jul 03, 2025 at 10:16:58PM +0800, Li Lingfeng wrote:
->> Hi, Greg
->>
->> 在 2025/6/18 19:01, Greg Kroah-Hartman 写道:
->>> From: Greg Kroah-Hartman <gregkh@kernel.org>
->>>
->>> Description
->>> ===========
->>>
->>> In the Linux kernel, the following vulnerability has been resolved:
->>>
->>> scsi: iscsi: Fix HW conn removal use after free
->>>
->>> If qla4xxx doesn't remove the connection before the session, the iSCSI
->>> class tries to remove the connection for it. We were doing a
->>> iscsi_put_conn() in the iter function which is not needed and will result
->>> in a use after free because iscsi_remove_conn() will free the connection.
->>>
->>> The Linux kernel CVE team has assigned CVE-2022-50031 to this issue.
->>>
->>>
->>> Affected and fixed versions
->>> ===========================
->>>
->>> 	Fixed in 5.19.4 with commit 0483ffc02ebb953124c592485a5c48ac4ffae5fe
->>> 	Fixed in 6.0 with commit c577ab7ba5f3bf9062db8a58b6e89d4fe370447e
->>>
->>> Please see https://www.kernel.org for a full list of currently supported
->>> kernel versions by the kernel community.
->>>
->>> Unaffected versions might change over time as fixes are backported to
->>> older supported kernel versions.  The official CVE entry at
->>> 	https://cve.org/CVERecord/?id=CVE-2022-50031
->>> will be updated if fixes are backported, please check that for the most
->>> up to date information about this issue.
->>>
->>>
->>> Affected files
->>> ==============
->>>
->>> The file(s) affected by this issue are:
->>> 	drivers/scsi/scsi_transport_iscsi.c
->>>
->>>
->>> Mitigation
->>> ==========
->>>
->>> The Linux kernel CVE team recommends that you update to the latest
->>> stable kernel version for this, and many other bugfixes.  Individual
->>> changes are never tested alone, but rather are part of a larger kernel
->>> release.  Cherry-picking individual commits is not recommended or
->>> supported by the Linux kernel community at all.  If however, updating to
->>> the latest release is impossible, the individual changes to resolve this
->>> issue can be found at these commits:
->>> 	https://git.kernel.org/stable/c/0483ffc02ebb953124c592485a5c48ac4ffae5fe
->>> 	https://git.kernel.org/stable/c/c577ab7ba5f3bf9062db8a58b6e89d4fe370447e
->>>
->> Based on the details described in the linked discussion, I have concerns
->> that this patch may not fully resolve the Use-After-Free vulnerability.
->> Instead, it appears the changes could potentially introduce memory leak
->> issues.
-> Great, then that is a different type of issue, and when fixed, would get
-> a different CVE assigned to it.
->
->> Given these concerns, I'd recommend ​rejecting this CVE until we can
->> thoroughly investigate and validate the complete solution.
-> This fixes a known issue, why would it be rejected as such?  The only
-> way we would reject this is if the upstream commit is reverted because
-> it was deemed to not be correct at all.  If you feel this is the case,
-> please work to get that commit reverted there first.
-Since it has been reverted by commit 7bdc68921481 ("scsi: Revert "scsi:
-iscsi: Fix HW conn removal use after free""), can this CVE be rejected
-now?
+Yesterday, I synced with your tree, but couldn't boot. Crashed with
+this call trace:
 
-Links: 
-https://lore.kernel.org/all/20250715073926.3529456-1-lilingfeng3@huawei.com/
+  https://gist.githubusercontent.com/ammarfaizi2/3ba41f13517be4bae70cde869347d259/raw/0ac09b3e1d90d51c3fed14ca9f837f45d7730f0a/crash.jpg
 
-Thanks,
+This morning, I synced with your tree again, still the same result.
 
-Lingfeng
+I'll try to bisect it and report to approriate subsystem once I get the
+first bad commit. I suspect it's related to pci or nvme (based on that
+call trace).
 
->
-> Otherwise just fix the new bug :)
->
-> thanks,
->
-> greg k-h
+-- 
+Ammar Faizi
+
 
