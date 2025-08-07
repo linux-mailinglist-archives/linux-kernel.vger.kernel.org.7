@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-758514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C244DB1D027
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85967B1D029
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A06961885B66
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40CDA18864C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BE919E82A;
-	Thu,  7 Aug 2025 01:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E8819E971;
+	Thu,  7 Aug 2025 01:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcPARo1F"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PkM2EYBL"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02F210E9;
-	Thu,  7 Aug 2025 01:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33D410E9;
+	Thu,  7 Aug 2025 01:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754530771; cv=none; b=unaGLFiARAw/pxIn4OKVRq6B0qZ1FrVes3m03ktIP9H2p7iqHv60V/CQnSCl3UWDIxrzuOIKjQhbVPWEK4l5TBuGSNvUomYQ+FQnHfD4dmw/Vy/iVUmGI0ckYvOMj7FHAVOnK8mlA1uuTHngXW5Krc1Vgik0xV+WzWpuY/BKLPE=
+	t=1754530826; cv=none; b=KzRFAx3lXdyetDquY8+fsDgQFpYZ0MwKJYv9BoBZbOCCsdwVn5rBhMaRoBh9d7mhpQpI4CME7Lr3/rF7zfhwjxjSmyaWh955IsjF10yuC5saU8gTL1REKT6dgF5To31GtoeUzwZv2Rrwt/xg97S3hV7l1b7uxekYWYfKPCyqWsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754530771; c=relaxed/simple;
-	bh=PDT9GuMb/u879R3g5593PFs7w0VAyXcCvu7d48Kp4k8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ba/hxKXq7naLcaCqmEXUzUUDyecocu1VP1Dst0EQly0pB82sOWpqCUkZx3Vo+5oB7Zu6yIQj0ljIUYyTzwi0CAOTe9eFZPgDkCNgFH6tTnmRvghrRSfdWEE5lGIMbc0kD5upF5p1OQzfw3HzgIqFzK+VgdNbD9NiR713F6RM87k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcPARo1F; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b7825e2775so344684f8f.2;
-        Wed, 06 Aug 2025 18:39:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754530768; x=1755135568; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j4xuTfsagYz2+8hLX5Pmbg+o1X+l2ulu4VJFs0h7n68=;
-        b=jcPARo1FCC1SqUn4xujWNyMmvaA4qkcMASkNscT++derjo2x7ayY8q5+4Sif6Uv3rA
-         SjsGXCeExUhrDrJM2HbuPWRnbaXWQldWR2br5U4MDxeFb8rdx18jLbM3hy/ZMKBKQU9H
-         9t3ZQ+Is/rP8OGx7BLECHNY9T37lcptr0bNWl04Rx2lqqu2IkxuvxYsNCijg1nV2PPJ1
-         Rh8kqpKlk0Bm//c0kP20lrquxM7OWd7F39fKMEkPj0WVCcpZYTK3YzYSSxWgc/OB+asa
-         ulaq5ZvmHSE+zHGHx21P3FtxeC8W+pN4RwiLWrmCgEWijjB2UCt5/NCW/ZG5u+PizqzR
-         hmNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754530768; x=1755135568;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4xuTfsagYz2+8hLX5Pmbg+o1X+l2ulu4VJFs0h7n68=;
-        b=lvmWKeMOloOLfr+XngT77syZiExn8gWYTg6oif0MTBdG4CCCUbv/+6e9R6QuOv81A7
-         YCPHLzivdxERJ1hfMGwG/0rrgXY3pNk761ISlZEWEvSbyz1fL68mIMAMNVkGE2mXMlN7
-         Sge2cDmfh0N1Ms7+1qMIBC+hhBSdZUb0pAwa7z5agiDFou4NxArtN/jHzVk9cDU6xFkN
-         wExqKV8XXRPDaJ5ukypLJTobw5Stj1unxnwPSdh4lKMYXTS4wRKkzg7HC8qdi9Dl1MUO
-         K7/0gzOGXj+vdoxBR9/hE3x5IkRkx1NYhgmuPixW96i1ep91RbFAJ+LrIi+QdZjSfGdI
-         /+bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQoVD/0y9QusBGTT62VdhVGFFXsmvaD474FqcEuciIPFRQFNSlX2VOm6HvBQcgIT+TRB8BS1PyYPhZbTdV@vger.kernel.org, AJvYcCWDYMDMTyrjQOp1iqhHsylLmmvDgWUc8bnpbrsYiZJHI3rUK2fPxsF9ilieP63scyCm1LSSh2zuxF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgHHxKBdMcpkruvmP7CR2NnvQ9GLzR8qJ6ljLXflpHfnW4j//U
-	NJ4ZFzlH7ME6LxdHXaNgZXiOZJzklTXbN5WDeUWZJqXYZ3vKsmPJpMSW
-X-Gm-Gg: ASbGncstB8bW0dEPtsBKF/ueBBor47OGfGTt9lYjdjoEh3v5oQfcKYIcprXF9eJpjGB
-	4x7Pze4KxlfJEsaZICBvf1GyoxpWwd5guIH6RZ803l0LjW2M6H7ap0wiHbvRp+UnuL1SobJn56H
-	TobXALmdIgEOE3iq+7cw8At89r4M852Gr3QvTeHxXJf/+3pdtJi9yQTloI0WUaPxT/BEMg8ZYhe
-	DjgsyMmIq8rWLksbtCtj1g3DAk0b6PK7J7sA+XWGOdsI7vPgBOKqOAzeZjQ+nQ/mvmDMkZXRLax
-	RLgFBTCnVL63/ZUY1rgSOHgSz0pj5ID1rDjbHydmDktTVk5QHj/wutdDcm52GdtkZM5lt4mYXRh
-	KpD/xD6b5Ddj09uAAnXR2NY/Q
-X-Google-Smtp-Source: AGHT+IHqDnrVSLOXogXBLqS7HQd2Obxvb4ZStcdc39De8YJSVG9kMZykeFQ6BD3kmb5ap0/JvY9/sQ==
-X-Received: by 2002:a05:6000:2308:b0:3b7:6828:5f71 with SMTP id ffacd0b85a97d-3b8f415995emr3701971f8f.9.1754530767769;
-        Wed, 06 Aug 2025 18:39:27 -0700 (PDT)
-Received: from pc ([196.235.182.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dd85f423sm130861015e9.18.2025.08.06.18.39.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 18:39:26 -0700 (PDT)
-Date: Thu, 7 Aug 2025 02:39:23 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH] iio: adc: ad9467: Replace PTR_ERR_OR_ZERO() in ad9467_reset()
-Message-ID: <aJQDyzoxLsF8nKYW@pc>
+	s=arc-20240116; t=1754530826; c=relaxed/simple;
+	bh=Lrpz/rQsmPtlTB0aV7ECFfRkBbimsLZ+UO1/WuDhCuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Lg3QCSHGn/EJKko2xVfdhAYn5G6isb3APwx+nEN8mQ0gGtqeQzR3gMNiLjwuRMRw5hFWtqgqTULysJ+hFgQonQ89x5sRiH+oFn4YKDxN6IajhHh3vLmHeolWr7SbIlqFLMfKpFNnthHRH/CVf8kI+/bcNBpSD7PFcRsAWtMEnLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PkM2EYBL; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754530811;
+	bh=qf72l415B4gPbQygeTi94z6VL1WKUjCCFAbJieWnsb8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PkM2EYBLWB8sMTnFqYoboavENs2EPJyDIBi/fF1s7XFAIJ/RzH3sfxwmy1mgWVscv
+	 SBYMibYQNnYa40k0XTZoLlIRoHjCJin2Vl2fDaZEwkQ4LdsiUfb7zwXzWB2cA7bJhr
+	 MUDk207jvhb7uNM9YKaKug9bC1mRF7PBm6W8UpJdrjpHghtrYXFpYOYDgDVL1QNl1s
+	 IomkTjN6FxxmPwJU9nQqvj+bobdW3R2WDdGHC8Y7czkLOGhhafu5ER5+K+VJtDrqjW
+	 KDK/Xnizv4/7SRVC15mTaLHTxsMXT9trmC2B+3owHodstnNaqUrMiZ2jVnBNx9YrtP
+	 CzRHujr5zGm9w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4by8x4026wz4x7j;
+	Thu,  7 Aug 2025 11:40:07 +1000 (AEST)
+Date: Thu, 7 Aug 2025 11:40:06 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Deepak Gupta
+ <debug@rivosinc.com>, Zong Li <zong.li@sifive.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the risc-v tree
+Message-ID: <20250807114006.548d5f32@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/signed; boundary="Sig_/pQEjjmPyPhctgQqYenlE0do";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-PTR_ERR_OR_ZERO() returns 0 if the argument is NULL, which can hide real
-issues when the caller expects an ERR_PTR on failure. Use a ternary
-expression instead to return the appropriate error code.
+--Sig_/pQEjjmPyPhctgQqYenlE0do
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/iio/adc/ad9467.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi all,
 
-diff --git a/drivers/iio/adc/ad9467.c b/drivers/iio/adc/ad9467.c
-index f7a9f46ea0dc..70aee2666ff1 100644
---- a/drivers/iio/adc/ad9467.c
-+++ b/drivers/iio/adc/ad9467.c
-@@ -945,7 +945,7 @@ static int ad9467_reset(struct device *dev)
- 
- 	gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
- 	if (IS_ERR_OR_NULL(gpio))
--		return PTR_ERR_OR_ZERO(gpio);
-+		return gpio ? PTR_ERR(gpio) : -ENODEV;
- 
- 	fsleep(1);
- 	gpiod_set_value_cansleep(gpio, 0);
--- 
-2.43.0
+After merging the risc-v tree, today's linux-next build (htmldocs)
+produced these warnings:
 
+Documentation/arch/riscv/zicfilp.rst:42: WARNING: Literal block ends withou=
+t a blank line; unexpected unindent. [docutils]
+Documentation/arch/riscv/zicfiss.rst:106: WARNING: Inline emphasis start-st=
+ring without end-string. [docutils]
+Documentation/arch/riscv/zicfilp.rst:114: WARNING: Unparseable C cross-refe=
+rence: 'SIGSEV`'
+Invalid C declaration: Expected end of definition. [error at 6]
+  SIGSEV`
+  ------^
+Documentation/arch/riscv/zicfiss.rst:129: WARNING: Unparseable C cross-refe=
+rence: 'SIGSEV`'
+Invalid C declaration: Expected end of definition. [error at 6]
+  SIGSEV`
+  ------^
+
+Introduced by commit
+
+  9868b87525d9 ("riscv: Documentation for landing pad / indirect branch tra=
+cking")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/pQEjjmPyPhctgQqYenlE0do
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiUA/YACgkQAVBC80lX
+0GymKQf6AxwCBpCkn5OHcybFBHF6AK55Q0+Xr7k2xt1/DFg1TGCYERvVJpMxU51K
+w//sG5QknhnFjrRxArC4dmTox5UM6vVcOh+MV9RY/lDG31LEIbeTC8lut7e2e5EN
+8zcEkUbZauQVxxu+WcRUkZZXXOJHoTqIWdh3VAcUoREz5t3uX6jB6cxqv9k4G9BI
+dtnjSfCPDo5dwrPJkGSGDynp8p5gMViKbYi6a48/oXvMNCUOvWzKzkuJdFvKwS4i
+7pBSJC1QL0rrHwMyUdDgsjCiywzJqW+fJdyIN9rGgLFgTASXYC7aOHcm4XShvz3k
+jJLxvAXsKuHhqNoS7s5fhwUknnrscg==
+=LfG0
+-----END PGP SIGNATURE-----
+
+--Sig_/pQEjjmPyPhctgQqYenlE0do--
 
