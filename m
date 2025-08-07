@@ -1,141 +1,156 @@
-Return-Path: <linux-kernel+bounces-759121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5DCB1D8C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:15:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F1BB1D8BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48D01AA365F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96D13AD1E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BA025A353;
-	Thu,  7 Aug 2025 13:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAA9136E;
+	Thu,  7 Aug 2025 13:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+NQsCx2"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qk9PlVhN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2146191F84;
-	Thu,  7 Aug 2025 13:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8E425BF1B
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572545; cv=none; b=K4zOl+rr9x2TmGHJbt8QO1cgoxjx3Y1DxE0dIywFJIGF1XepYVcW6xI/dHWnAW5vzy5fl2KLy8eAIdccK+zrRs28PIpFa6+s1yzvWIEShN4qoTEcdKy7fGSAE2z31JqWBmyr9fmCaGvlcbc2zdTDDjzAgLL+vIh5RNKdduU0Fcw=
+	t=1754572514; cv=none; b=DphuxX84TcdsUJrh5k/77q1c4Da8I+dP+tOW6OXBviEhCjZvHY96YPjNdzK9L1QVViB0zodc1yIqBFuygym6dV0E0Ks24eHsMkIUEgnp9dc43fa0zuPSWoB9Jnnu1LGjNFanznQUa/JNf6PSqeieKpKyYxLifq5NFdhO0frbQZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572545; c=relaxed/simple;
-	bh=PC1Qx3ySQrnwhSPp6gHnIParaisBxDPrG26FiRlnL0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oh7y+s+tmVMB7xfElRJgkRH/OqUMIAfVouLdn4sb9Df/gbaFNGaaEJBfD5c0ziFNB/R8tNLB66TgEAhYXVBCiRVW78Jy6QKIC6EMpOXRR/SMNR6Gf9uXodYOm5fEpFZzx9ZQWJadJhLqZaktEVl7nZdf2rQa1sExfF4V3CARkoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+NQsCx2; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-459d62184c9so6410405e9.1;
-        Thu, 07 Aug 2025 06:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754572542; x=1755177342; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T/Elo2MUTB6Vn1PUhDPXwkwYqbWpk8OjBvFLAxfq4Wg=;
-        b=Q+NQsCx2tpiY8T5Lj8o2CkVDDRLeLjKdixsRgqq3PNc3RVoT7Qe0J54+nvGUGHDkf7
-         tp9YqoMNPnxv0qEPsKIzexZmCQ7EhQ8nzh0ZIIecajSB0ErG9DsLmCh6U6Ek7aB0WZPS
-         aPau0L92+/Ah5CNavlDQctIk92n8yA6TA4+ie8qy+ejzA0DYZOKCmL1wGyzy4c0FSB4K
-         wAz8br5EVxwr6KmPGSW9ypUZN7nbc5cvGvfYw6T/48RVRFEH7EqUT7Dm+46JR6b7x58L
-         1niKjjYD38BWBG+XxDFHScYnBwo4eLoevoAnK9bY5WJnMMc8w6b0mNYQE0lfEjz1qZaF
-         WqLg==
+	s=arc-20240116; t=1754572514; c=relaxed/simple;
+	bh=vkgsdxbnV+jO/2KYWJGzI77qW+k8hy9tEjiVY7fTWfE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AS1L/x3AzMdPuVvvOkpg6SdRRixLvahSZw2CAwqw0pIoWyU9Fdycm4YkP5c67zEtOzUdQ8tGTRilm2sRo68F+CAHFJEHK5pK4mtjEgb0HMhL2wLgTjHAqa3ZltZkPRTSQ/0G9XvEy0jenLqsev0W3WMjWTpXiXRwQWM3YRKh5Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qk9PlVhN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754572511;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bsCl+fG5s7XEuq47rWMb299hn6Md+wm0F7CH1smdlp4=;
+	b=Qk9PlVhNkD8m8U/Eo2xCGtC9IEVqIcI26vi7OCNbIXrZjqAFdH4dt9gvwMLKpFr39IgwDm
+	tQ5FMMuwldJbMW/nglFaIKB2uiOZ9dTEMSHcq2qzX2+r1fnHjVqSn9PlxDi3mDUQbwhyn6
+	ILX24sAN7WJlJJyfqN5LCnmb80awJMw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-312-UvXr1tDcOiyRD7r4qqs5IQ-1; Thu, 07 Aug 2025 09:15:10 -0400
+X-MC-Unique: UvXr1tDcOiyRD7r4qqs5IQ-1
+X-Mimecast-MFC-AGG-ID: UvXr1tDcOiyRD7r4qqs5IQ_1754572509
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-458c0c8d169so4853015e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:15:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754572542; x=1755177342;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T/Elo2MUTB6Vn1PUhDPXwkwYqbWpk8OjBvFLAxfq4Wg=;
-        b=DEWOB0MQ5pP1XGubzqpVYb7Clp7+eI4Rk3V3K10D5idswWxmcvnGyFFyKG34aG/GsM
-         I4qjeXz3bt788qQ+nKvD8OPzx+EIjmU36w1NwNAUM4Cyo+6cVTRD0OYPyIcHU6os2xaO
-         qwJi35bY3u5sP55+5mXQt4r6DnHyBRMopW72IS6abCxySlLQkK097ax5Y6u07cwmuSid
-         FmaeaW5LoQvzMx2t6fONX+BKCa7DGLtfFdSTzF19umWOtTS/NUjGYGcM0BLu5MkaZG1q
-         DTiNh2ycQzVhN7Ws4eNCs6L0+Yl+E7VCu9Bozg529iWYTGSNe07EQuhwv/huxPYI9LNc
-         bpyw==
-X-Forwarded-Encrypted: i=1; AJvYcCViu/CY8C9smQvyafzIT1mRHPOEwOmMhn0qldJ9qyeffh6gAnrOpPJma6cwDOngPMC0Yo08wEbdccXdS5c=@vger.kernel.org, AJvYcCWLbivOBithsbLlsL87p+t+H8913Jsr8AXhMlE5rgZLe/TxmwHs2haTmKW+VLj+AaEvUEz5tD68@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO2/4TDZZyWwPd9bxhxYPfK76xbenPh1m2HUafRmoiY835zwV2
-	HBprFRJJjATxt9lAx+jRXbiI37DFdph0snc6tfeV8vQttW6uqrW+yh7/bwH3r8ENl0jTyg==
-X-Gm-Gg: ASbGncsYQsM79f6iUQx/IKAIZJWFbNOXXg8zwW4S0aunGev4UK8lgSB2ZeIHdWm0hvl
-	OboSQrQQ0ej72tJuUDEQsScr+9RdYp2vvMx6C5F12hk3KEZqnPizjdug1JYUzpNKHr1fEyo+Jtu
-	TT0L27znsiypezCzOo8fvyZWosafAMl7+t0rIzMAxzWaG6/3Qy+gK6iuTzRR53AU2feDmZyOU4z
-	ozdNCM52o0QdCtYoJSCv5rPByikKHF8z4JgF20lO3qjDbT79CgmUo/NQ2bB2ClGobhYfjxW1e+l
-	BD4V4hb0HoSXV0pbs1Agzl+8+rR3urJ/xpcJWyBJjkdQ2ipaRvSYxcoXNo9fUEChnWgZSeHop2J
-	0r4Y9hTIrZQE8+arf0ZkBq3+qkRYA6hs=
-X-Google-Smtp-Source: AGHT+IHBZX8/gLxxU0sgoAYhuaC8Y6Xs0eg1d+9FmJDYjXwojNuHv2mfe+sV59j/bpFM8jIHAiU21w==
-X-Received: by 2002:a05:600c:4e8c:b0:459:d709:e5b0 with SMTP id 5b1f17b1804b1-459e707b412mr57851895e9.5.1754572541674;
-        Thu, 07 Aug 2025 06:15:41 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c453aeasm27736616f8f.40.2025.08.07.06.15.41
+        d=1e100.net; s=20230601; t=1754572509; x=1755177309;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bsCl+fG5s7XEuq47rWMb299hn6Md+wm0F7CH1smdlp4=;
+        b=UkaG/8MvwgQ99xW3xWK4Y5ryPjFnuOGitNhes8p7E+NSM1fY4I/H+R6P0L2PPRSOhg
+         luY3N3hgBLETeI69NMjz6HmDvMtvORozQfej6Cb/bon2UFW7cKKzvzrSEyLtKdMKIY7r
+         C66HsMOAXT7u5nhbi9KaGFYMsiZ/lMmiTVt3AMACTuoXaPGhxHWEdSsitcLqbMOpXLAr
+         PHfI2Tq4v1EEILuDn3yVeAO7MPW+tP2DEgjWL2xHgS0JiwB9dp7nL4qlhreUhFWFpui5
+         0lKKijjZkhfu3OSwq9mCGYqxJ6NePTys/HsMAz5wXe+xWyF5DKcAH3iisUgkX0WkLrYW
+         5cAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpg/4PUrRjay4cXWoJX1LC0fDTdx/bkkuKnf1pJd2Btie8Pr62EbjnPk3lKkh4p2YdKkcodOii1g3owdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI0UFurSF5G90ye+ZzYrJxVYFHxbcruGYlcysC/5DO2KFtc59L
+	sQRSuhimdNh6ZlguuRaO5FKnZgdnES1uvJDjzJlrwHYe76pxdbIq3osKSRgUCa1Nf8to4WwZGNB
+	BXhvu8Q5G4MVCk3gsY2muylLirLrAc4idBRuLIupV4eFP0gLTNuc9RNEbrDYqir1iaw==
+X-Gm-Gg: ASbGncsmarI9PijZ71yZXLK1MLvXLrp4ahgbn4Rjla1ahE/SfjchFJb28QmlehMLsHc
+	JaJsLkycDpQLsefNVky0i856DfGoc3RzEcnSfkoThH15een3d9C/q8bomI9y1CnbwXyUx79POgO
+	YQnFrWOEhKfoJ++BAiehgj3gq76DyG6ph41CjF2BMr/rgiHpZQBfFZQ09bWXnoc9LgqOV8llZo6
+	b1G/DdJO74x6rDwcB9uAGPoKlj+T3QWTI7RpdtlJcERumHM5VJNs9O8Qk9YPVdEcmXZcrfxoc+t
+	Acdn8AvdB1msX/v/hkqUSFZtv4BvV8I8ijWviPAGjS4laMUW1EqeFVtQkIwA1HqCr8PGVTbffBw
+	yAqCjYjip98kZuQGYqRW0ldc=
+X-Received: by 2002:a05:600c:35d4:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-459e7440902mr54691985e9.6.1754572508991;
+        Thu, 07 Aug 2025 06:15:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IES0zbDgiFtIMLurP4jaGdX+lg+7QeTWhWmoc1YE1i42QiR0yB42DLVlO7szOf+gfWylt/oDQ==
+X-Received: by 2002:a05:600c:35d4:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-459e7440902mr54691615e9.6.1754572508454;
+        Thu, 07 Aug 2025 06:15:08 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-2-102-14-151.as13285.net. [2.102.14.151])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459de91ea4csm147149985e9.10.2025.08.07.06.15.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 06:15:41 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Frank <Frank.Sae@motor-comm.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: phy: motorcomm: make const array mac_addr_reg static
-Date: Thu,  7 Aug 2025 14:15:04 +0100
-Message-ID: <20250807131504.463704-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Thu, 07 Aug 2025 06:15:07 -0700 (PDT)
+Date: Thu, 7 Aug 2025 14:15:06 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: Re: [PATCH 1/3] cgroup/cpuset: Use static_branch_enable_cpuslocked()
+ on cpusets_insane_config_key
+Message-ID: <aJSm2sG1G_mk_1P-@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250806172430.1155133-1-longman@redhat.com>
+ <20250806172430.1155133-2-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806172430.1155133-2-longman@redhat.com>
 
-Don't populate the const read-only arrays mac_addr_reg on the stack at
-run time, instead make them static, this reduces the object code size.
+Hi,
 
-Size before:
-   text	   data	    bss	    dec	    hex	filename
-  65066	  11352	      0	  76418	  12a82	drivers/net/phy/motorcomm.o
+On 06/08/25 13:24, Waiman Long wrote:
+> The following lockdep splat was observed.
+> 
+> [  812.359086] ============================================
+> [  812.359089] WARNING: possible recursive locking detected
+> [  812.359097] --------------------------------------------
+> [  812.359100] runtest.sh/30042 is trying to acquire lock:
+> [  812.359105] ffffffffa7f27420 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_enable+0xe/0x20
+> [  812.359131]
+> [  812.359131] but task is already holding lock:
+> [  812.359134] ffffffffa7f27420 (cpu_hotplug_lock){++++}-{0:0}, at: cpuset_write_resmask+0x98/0xa70
+>      :
+> [  812.359267] Call Trace:
+> [  812.359272]  <TASK>
+> [  812.359367]  cpus_read_lock+0x3c/0xe0
+> [  812.359382]  static_key_enable+0xe/0x20
+> [  812.359389]  check_insane_mems_config.part.0+0x11/0x30
+> [  812.359398]  cpuset_write_resmask+0x9f2/0xa70
+> [  812.359411]  cgroup_file_write+0x1c7/0x660
+> [  812.359467]  kernfs_fop_write_iter+0x358/0x530
+> [  812.359479]  vfs_write+0xabe/0x1250
+> [  812.359529]  ksys_write+0xf9/0x1d0
+> [  812.359558]  do_syscall_64+0x5f/0xe0
+> 
+> Since commit d74b27d63a8b ("cgroup/cpuset: Change cpuset_rwsem
+> and hotplug lock order"), the ordering of cpu hotplug lock
+> and cpuset_mutex had been reversed. That patch correctly
+> used the cpuslocked version of the static branch API to enable
+> cpusets_pre_enable_key and cpusets_enabled_key, but it didn't do the
+> same for cpusets_insane_config_key.
+> 
+> The cpusets_insane_config_key can be enabled in the
+> check_insane_mems_config() which is called from update_nodemask()
+> or cpuset_hotplug_update_tasks() with both cpu hotplug lock and
+> cpuset_mutex held. Deadlock can happen with a pending hotplug event that
+> tries to acquire the cpu hotplug write lock which will block further
+> cpus_read_lock() attempt from check_insane_mems_config(). Fix that by
+> switching to use static_branch_enable_cpuslocked().
+> 
+> Fixes: d74b27d63a8b ("cgroup/cpuset: Change cpuset_rwsem and hotplug lock order")
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
 
-Size after:
-   text	   data	    bss	    dec	    hex	filename
-  64761	  11512	      0	  76273	  129f1	drivers/net/phy/motorcomm.o
+Looks good to me. Thanks for spotting and fixing this.
 
-Reducton of 145 bytes (gcc 14.2.0 x86-64)
+Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/phy/motorcomm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
-index 0e91f5d1a4fd..aeae7ec897c6 100644
---- a/drivers/net/phy/motorcomm.c
-+++ b/drivers/net/phy/motorcomm.c
-@@ -536,7 +536,7 @@ static void ytphy_get_wol(struct phy_device *phydev,
- static int ytphy_set_wol(struct phy_device *phydev, struct ethtool_wolinfo *wol)
- {
- 	struct net_device *p_attached_dev;
--	const u16 mac_addr_reg[] = {
-+	static const u16 mac_addr_reg[] = {
- 		YTPHY_WOL_MACADDR2_REG,
- 		YTPHY_WOL_MACADDR1_REG,
- 		YTPHY_WOL_MACADDR0_REG,
-@@ -608,7 +608,7 @@ static int ytphy_set_wol(struct phy_device *phydev, struct ethtool_wolinfo *wol)
- static int yt8531_set_wol(struct phy_device *phydev,
- 			  struct ethtool_wolinfo *wol)
- {
--	const u16 mac_addr_reg[] = {
-+	static const u16 mac_addr_reg[] = {
- 		YTPHY_WOL_MACADDR2_REG,
- 		YTPHY_WOL_MACADDR1_REG,
- 		YTPHY_WOL_MACADDR0_REG,
--- 
-2.50.1
+Best,
+Juri
 
 
