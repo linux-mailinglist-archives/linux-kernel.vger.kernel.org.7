@@ -1,220 +1,137 @@
-Return-Path: <linux-kernel+bounces-758783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DC4B1D3CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:58:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D121B1D3D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84E531AA0777
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:58:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 480FF7AFB38
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF332475E3;
-	Thu,  7 Aug 2025 07:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB53E24728E;
+	Thu,  7 Aug 2025 07:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kXc6hT0J"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhKomHvI"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CE823F405
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2079A242D6E
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553476; cv=none; b=ZgH9plj9E16QipD/CLu/HNdUfHIJTvN29QPmfwrBjoDMwYW0xp3Ytt5x9QafDMf1YINHeAx+diDrJCha3H1uQlIhE0dXWNrGZTmOEHzdkpmnEQsCxsG9zyvquS4OMrLUOoeZ5dDezXbtNOILLQNJxkaDK6GMRS859XOkUrSOjrY=
+	t=1754553497; cv=none; b=M1ROUWJTydoBm4hxoJ/qGGrZ+hLA+y2YQPMb9nIbKZBH5e6Mh/yqDbAKPh2fC5MkkwXQiTyu924CI5A748C6lapJy1uEck4fMq861XPD2FciszshSSn2bMe9ozQF5kLbs06IYtpljQZWqmwS6JHk0jpYP5egmbsEklDo3MfdJY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553476; c=relaxed/simple;
-	bh=xN8SgTYjPE3paXbAT6wVrG1234fQaF1txx30pF6zyjk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GFazhukD3oWT5700SxH3xhOA9GPf3gBkkqTQl4omy4/KAOUsnXCKBaUNzCXjPNbxvWe2a2RiC5/MHK4Vbex7OnqD7z7Vc4KHlb6YNVd+ze31gnnfyS5X5PdRhwD3E2YfRPunkQIeHwg9yAWsnC8RmYmREQFkDunZelqWqWyJ+y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kXc6hT0J; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tweek.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b3f38d3cabeso573865a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:57:54 -0700 (PDT)
+	s=arc-20240116; t=1754553497; c=relaxed/simple;
+	bh=+7mbJhg5ogq/hLbv2t4xVJQET9QlZWMqFFlgC1XifPA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D2nTsmlSEXo1sQkUbaY2yGRgFf01/emW9TU3t+YH9kgBbDH6Oqjmf7ble3f7z28padj/6Orr6MsajrNBz89kbehnPW2MHxPTe0YX7zuhMkrpy10YCxF5i3Gu77a0mRfL5u9gzIfOChRMX6umU7KVbJB9xwTKFJgFu+XCWF23tDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhKomHvI; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55b85413019so859399e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 00:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754553474; x=1755158274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YlvLgISNZUMVd8V5cqfKKA37QM8euuKbf1YxDJ77g88=;
-        b=kXc6hT0JRGZ1lOjKiZFx8sj8ckA6OaSMHbvDC8kwRxjUL2LZibIqhrGHp/mVfAKRDS
-         7xT7/e5xnO0Rc2DVuFXDQkjAWgugClkLsTw2ObqZpaUNIKFYwLCF81/engmfByScty9W
-         PgewgsHaDybdXp5BM/86FuUZU3rMrY0TLUmV4SMhtsjMo+2MJvqQ5BmDxe4ckOsHMps3
-         bb13jywXSzPtiKyj46K/U6fBdK/NK/TTITrksh23bZq22boNbu87k2ZBeQNxbmGt/AEd
-         r1a1q4laVE05fXTbjTopU6WHv4iiVoBRMua1k14KimfaL0ddUtQViW6xZNsCcS2tjqQY
-         IC2g==
+        d=gmail.com; s=20230601; t=1754553493; x=1755158293; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7lfFD0H26eQ3nJKq96zgfvg/HFsoB+3WUik64IcXqFw=;
+        b=QhKomHvItU0BEJXFxk1DPm/X23PurWyj6W3N+WcUKojapzU2Sy1r/K30vT7taGh6/t
+         BoTgaVZ/NMIqfWq0e9ONjlMEoWYsVdWFW9ERNr/2q2Shm/JWhZ67dwC7RKcZUdmhiEDc
+         kOGPjjbt6hTUGdIzHWY/JaTnpfT7tAZUJrH9EQLmXk1mgX9e2DYLjVoKXNw6EvA0VUzJ
+         A5jx2pPrhLTI0LiX0Ozvr5S8gjWupGiWiqN5kjPUA2V2A3LDlH6yUAlLrRPYv/ihe3y/
+         6oI780H7wLRz15NueIWA2QdCX8FR1839gm++JUZneVl5E1tkyEqUgO3IE8yt8GJ+q8R2
+         +Avg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754553474; x=1755158274;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YlvLgISNZUMVd8V5cqfKKA37QM8euuKbf1YxDJ77g88=;
-        b=kQJJV6ya0TqQb3DHGhww2egYkv7CJScqe7ht/u0XNPGLxRRFsyb80c46m4XzMIdoZr
-         M/2XjfPWyhDso6iBvXVEyecBgXsZrtKhnZzSW21YxgtD4T8tfGoDnjBwNbSH2ZcmZ6CP
-         K5BeFcgeIq3fX/hnN/4+B324sj2C3RuSBxALIwC031GdstJO9jQl18dwWJF00hBEgHUx
-         aiAmqHmYiqaeswv7MsMf4ukLZXzabOmrtsB/LB3anRkbclpR6wn8X1XWYMPVXWnvKvOz
-         iVrXGiRWGyj2aMMcxP3Z5ZoI5quekJhWWKNANFw1tHG9IrcryoXZFo0uCXVOJnLpfOvS
-         q0WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlK5cnqjz1beoOmHBTYaASdwv1rr1LA5rgkgZR8/ANlsv96N/z8PeGh0XGv6vHz18HzPFuAaw0VX5L/Rc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM7oqMVRBwnqofqJtRRsnGnnzfflo0e2aA1NRAEax5wpmqeQvV
-	6niiRzR0WYM0mRvzevzH7vCUc8xICgGrTii5KWtgYVl7WFHXLbQPpOV8mG45zSgjt/ytcIc707G
-	t3A==
-X-Google-Smtp-Source: AGHT+IHNIIcS02q9yEtK/CycKioNSm/xVnF7oU0CQTIF6GSZSwCqJv0pj1GYTNZPgPdmBaaClonc0irU2w==
-X-Received: from pllo14.prod.google.com ([2002:a17:902:778e:b0:23f:8d14:d415])
- (user=tweek job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4c2:b0:240:6ae4:3695
- with SMTP id d9443c01a7336-2429f520b52mr65586545ad.4.1754553473692; Thu, 07
- Aug 2025 00:57:53 -0700 (PDT)
-Date: Thu,  7 Aug 2025 17:57:45 +1000
+        d=1e100.net; s=20230601; t=1754553493; x=1755158293;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7lfFD0H26eQ3nJKq96zgfvg/HFsoB+3WUik64IcXqFw=;
+        b=SVqU3ssE/aPpaSEP/+o880sjvrB89iZ6NoUm7RfLnHbpWLBIxRUtFRNHOy7Mqc+G/i
+         LVlNEMR8zYC9rtliaBhC2ezV/eROt7mOdo6xRjAssayrRY8kAqmiQI1XEw+q/En4hp5g
+         VszvFtm/Hhg+beC+RTMKg+22YBWzJBB2LZFlX+BHM3Uui6psEZif5FT6FYAsbojb0gN8
+         +uYtJQVTTWGJRrf34bC/kQA9iMBGyq272p34do9TMsvJwB0VrjZF6NnaG09ujHv27Klh
+         UweVnKTdiNFYgZD3Zu4nRvZeAvPFV1pXw6yer3+xrsnLWP8D58q/LMS183/5AKvaC0XN
+         OSYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUW8g6HqlPTBq84z3v7s6aeR8KbcX2osLCeQY+HionBj+MnelVmewngZizQUpgZP8X0G9VBBDpzQyv6nFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK5KMSaRV1DiNjk3m7r9/s7MqFcC9Re8Ld0hDBkAGQuNmE0pwE
+	lWdJfzLHB0omCxErq++BLyZ+mRGGLOf/UPTsnIYhYtR1YMf2YUJgYcqT
+X-Gm-Gg: ASbGnctgSeCB1wzN6CD3YcMxN+6k2a/Nmu5cYfiBmh+RxkSvv/CpW6nnGLPsAXr8Ksc
+	R2Tn0/UYjmWk+y48z+n3451DKA+8aBhgrhFcOuMhxVkn8pR5a10Xhd3MWaftWCik1/LZLMa9vBP
+	ZMZ8HsH/ryZ2aEbUEeHT7m2fc/hY4HYaJtcZI/aSzf+TyEQla2qC23gxeTGs+8MP7EsjHmOAXWq
+	FjRx3WdGUNoFo+YZMuF0/RObOVZvlJF3W+2N+3Ruu5gM6Nf8HfvIXUZgLBaTrJ+opEZG1F2ehtx
+	OSQmvdgIUPf7coKte3s8B96xWnmz40bwbgUVo2XFemKx0aps72KZHJqSO2zDa3Pp6vKEhpsdAj/
+	AhZcDouK2sH/+zmHYyg==
+X-Google-Smtp-Source: AGHT+IFUFvl/B+gKgVfcI+251dgjRYmvDV+X9oeio2bie1Pk9xKH31TU+OhTXKzuYvbgizg2DGttpA==
+X-Received: by 2002:a05:6512:230d:b0:55b:81c0:c22a with SMTP id 2adb3069b0e04-55caf2cf94amr1594035e87.2.1754553492794;
+        Thu, 07 Aug 2025 00:58:12 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c9b1fesm2501995e87.96.2025.08.07.00.58.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 00:58:12 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Michal Hocko <mhocko@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>
+Subject: [PATCH 0/8] __vmalloc() and no-block support
+Date: Thu,  7 Aug 2025 09:58:02 +0200
+Message-Id: <20250807075810.358714-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250807075745.756415-1-tweek@google.com>
-Subject: [RFC PATCH 2/2] memfd: call security_inode_init_security_anon
-From: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>
-To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Hugh Dickins <hughd@google.com>, 
-	Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>
-Cc: "=?UTF-8?q?Thi=C3=A9baud=20Weksteen?=" <tweek@google.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Prior to this change, no security hooks were called at the creation of a
-memfd file. It means that, for SELinux as an example, it will receive
-the default type of the filesystem that backs the in-memory inode. In
-most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
-be hugetlbfs. Both can be considered implementation details of memfd.
+Hello.
 
-It also means that it is not possible to differentiate between a file
-coming from memfd_create and a file coming from a standard tmpfs mount
-point.
+This is a second series of making __vmalloc() to support GFP_ATOMIC and
+GFP_NOWAIT flags. It tends to improve the non-blocking behaviour.
 
-Additionally, no permission is validated at creation, which differs from
-the similar memfd_secret syscall.
+The first one can be found here:
 
-Call security_inode_init_security_anon during creation. This ensures
-that the file is setup similarly to other anonymous inodes. On SELinux,
-it means that the file will receive the security context of its task.
+https://lore.kernel.org/all/20250704152537.55724-1-urezki@gmail.com/
 
-The ability to limit fexecve on memfd has been of interest to avoid
-potential pitfalls where /proc/self/exe or similar would be executed
-[1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
-similarly to the file class. These access vectors may not make sense for
-the existing "anon_inode" class. Therefore, define and assign a new
-class "memfd_file" to support such access vectors.
+that was an RFC. Using this series for testing i have not found more
+places which can trigger: scheduling during atomic. Though there is
+one which requires attention. I will explain in [1].
 
-[1] https://crbug.com/1305267
-[2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com/
+Please note, non-blocking gets improved in the __vmalloc() call only,
+i.e. vmalloc_huge() still contains in its paths many cond_resched()
+points and can not be used as non-blocking as of now.
 
-Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
----
- mm/memfd.c                          | 16 ++++++++++++++--
- security/selinux/hooks.c            | 15 +++++++++++----
- security/selinux/include/classmap.h |  2 ++
- 3 files changed, 27 insertions(+), 6 deletions(-)
+[1] The vmap_pages_range_noflush() contains the kmsan_vmap_pages_range_noflush()
+external implementation for KCSAN specifically which is hard coded to GFP_KERNEL.
+The kernel should be built with CONFIG_KCSAN option. To me it looks like not
+straight forward to run such kernel on my box, therefore i need more time to
+investigate what is wrong with CONFIG_KCSAN and my env.
 
-diff --git a/mm/memfd.c b/mm/memfd.c
-index bbe679895ef6..13bff0e91816 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -433,6 +433,9 @@ static struct file *alloc_file(const char *name, unsign=
-ed int flags)
- {
- 	unsigned int *file_seals;
- 	struct file *file;
-+	struct inode *inode;
-+	int err =3D 0;
-+	const char *anon_name =3D "[memfd]";
-=20
- 	if (flags & MFD_HUGETLB) {
- 		file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
-@@ -444,12 +447,21 @@ static struct file *alloc_file(const char *name, unsi=
-gned int flags)
- 	}
- 	if (IS_ERR(file))
- 		return file;
-+
-+	inode =3D file_inode(file);
-+	err =3D security_inode_init_security_anon(inode,
-+			LSM_ANON_INODE_MEMFD,
-+			&QSTR(anon_name), NULL);
-+	if (err) {
-+		fput(file);
-+		file =3D ERR_PTR(err);
-+		return file;
-+	}
-+
- 	file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
- 	file->f_flags |=3D O_LARGEFILE;
-=20
- 	if (flags & MFD_NOEXEC_SEAL) {
--		struct inode *inode =3D file_inode(file);
--
- 		inode->i_mode &=3D ~0111;
- 		file_seals =3D memfd_file_seals_ptr(file);
- 		if (file_seals) {
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 8d36d5ebb6e5..49742930e706 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2367,8 +2367,8 @@ static int selinux_bprm_creds_for_exec(struct linux_b=
-inprm *bprm)
- 	ad.u.file =3D bprm->file;
-=20
- 	if (new_tsec->sid =3D=3D old_tsec->sid) {
--		rc =3D avc_has_perm(old_tsec->sid, isec->sid,
--				  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
-+		rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
-+				  FILE__EXECUTE_NO_TRANS, &ad);
- 		if (rc)
- 			return rc;
- 	} else {
-@@ -2378,8 +2378,8 @@ static int selinux_bprm_creds_for_exec(struct linux_b=
-inprm *bprm)
- 		if (rc)
- 			return rc;
-=20
--		rc =3D avc_has_perm(new_tsec->sid, isec->sid,
--				  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
-+		rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
-+				  FILE__ENTRYPOINT, &ad);
- 		if (rc)
- 			return rc;
-=20
-@@ -2997,6 +2997,13 @@ static int selinux_inode_init_security_anon(struct i=
-node *inode,
-=20
- 		isec->sclass =3D context_isec->sclass;
- 		isec->sid =3D context_isec->sid;
-+	} else if (type =3D=3D LSM_ANON_INODE_MEMFD) {
-+		isec->sclass =3D SECCLASS_MEMFD_FILE;
-+		rc =3D security_transition_sid(
-+			sid, sid,
-+			isec->sclass, name, &isec->sid);
-+		if (rc)
-+			return rc;
- 	} else {
- 		isec->sclass =3D SECCLASS_ANON_INODE;
- 		rc =3D security_transition_sid(
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include=
-/classmap.h
-index 5665aa5e7853..3ec85142771f 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -179,6 +179,8 @@ const struct security_class_mapping secclass_map[] =3D =
-{
- 	{ "anon_inode", { COMMON_FILE_PERMS, NULL } },
- 	{ "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NULL } },
- 	{ "user_namespace", { "create", NULL } },
-+	{ "memfd_file",
-+	  { COMMON_FILE_PERMS, "execute_no_trans", "entrypoint", NULL } },
- 	/* last one */ { NULL, {} }
- };
-=20
---=20
-2.50.1.703.g449372360f-goog
+Uladzislau Rezki (Sony) (8):
+  lib/test_vmalloc: add no_block_alloc_test case
+  lib/test_vmalloc: Remove xfail condition check
+  mm/vmalloc: Support non-blocking GFP flags in alloc_vmap_area()
+  mm/vmalloc: Remove cond_resched() in vm_area_alloc_pages()
+  mm/kasan, mm/vmalloc: Respect GFP flags in kasan_populate_vmalloc()
+  mm/vmalloc: Defer freeing partly initialized vm_struct
+  mm/vmalloc: Support non-blocking GFP flags in __vmalloc_area_node()
+  mm: Drop __GFP_DIRECT_RECLAIM flag if PF_MEMALLOC is set
+
+ include/linux/kasan.h    |  6 ++--
+ include/linux/sched/mm.h |  7 +++-
+ include/linux/vmalloc.h  |  6 +++-
+ lib/test_vmalloc.c       | 28 ++++++++++++++-
+ mm/kasan/shadow.c        | 22 ++++++++----
+ mm/vmalloc.c             | 77 ++++++++++++++++++++++++++++++++--------
+ 6 files changed, 119 insertions(+), 27 deletions(-)
+
+-- 
+2.39.5
 
 
