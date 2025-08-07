@@ -1,136 +1,212 @@
-Return-Path: <linux-kernel+bounces-758579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C35B1D100
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:46:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F50B1D101
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C37418A2AA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:47:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C065816EF4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04241C84A8;
-	Thu,  7 Aug 2025 02:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A584E1940A1;
+	Thu,  7 Aug 2025 02:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="sJGCq99k"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwBV7J5E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FC379EA;
-	Thu,  7 Aug 2025 02:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19AE79EA
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 02:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754534792; cv=none; b=O76bCnNm8SfRRhOHL4VJ3m81070kVHtTDUuahpvbQHvbCSKFUo0XEALCn5zLVtMyj+fwyb0MhTiqTTFf+WthfDk/mU9WBKWaEZLfNVzQqC/FwL3bgFmNHy+EGVjMWOrNcT7jnqB5NCibyLkEr3JMXSFcW81nX7QhwQcQmUNKXlA=
+	t=1754534868; cv=none; b=XvaICAeQ0h37FBHd3rnya2D28h7ifGNTC+qMA0jLntoDudixidqewWJ3+IPm1U11oiiQK8V5b8WveJ54ilaKAZkkpRV/J6bolK7/BndQhWGhIZEtpjBji63Gu3Gp9ohJjfsPiJkBOK1VFlh7rhcHmW7+p5H4m0WZ7vCuApTQIB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754534792; c=relaxed/simple;
-	bh=6fytCeeUudLTY0ffUnh8JTpCldUAMNOKqbM15mFHfZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6yZjJ2LY3aRg1ftOReRmXhXOnXr9MrOd7PJWx/0zFXgywuDDleEskgID0p4pAEY4rbB7lgoPSrdiCsiNetzMAwdw/qUnxAnFPBgaJVc+GrPsP8C6Ar6BVEdz4i60IZ7IkMmnuMIKA00bY6/Lx2FFZYCoQOKoGoSVaO/ozy64YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=sJGCq99k; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4byBPY6Dbdz9t4B;
-	Thu,  7 Aug 2025 04:46:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754534785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tub9/9osH95VcqyXOi1mtkKeG5xrj44pXKAdmNqMqBE=;
-	b=sJGCq99kPI1k/JhV6zWQVYmo0T9/Xse07waxFNQPdPpkiBD+FLCjnckGgEW5Xd7QO/JrMO
-	NeC5oNLAX73swxhjdQFCcnOptsSvJYPaxx2SOq+loy06v68MiRg8hq8Fj6VLJEhZV1hNaS
-	DrKX5HGFY9CQJ0zUetyU8VGein+J4n/BJHjfHxAXdcOGs37VbXsjQQhBDktfKseoE8xzyt
-	4S8QNJXYEeYtcTLXEOopLm3IGouEd5UOZw2nMeyj3yWJbRSrSI9N0MoL2HHcr/o8j3Xk2K
-	4X3/dciU8tjQCG3jPgpFkiWIk17aA1uYA6z1TZzVEaVZT3WqH6EbwKWwGfQIgQ==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Thu, 7 Aug 2025 12:46:17 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
- returning -EMSGSIZE
-Message-ID: <2025-08-07.1754534735-core-snowplow-plaid-exiles-anemic-gulls-v9Da77@cyphar.com>
-References: <20250807-fscontext-log-cleanups-v3-0-8d91d6242dc3@cyphar.com>
- <20250807-fscontext-log-cleanups-v3-1-8d91d6242dc3@cyphar.com>
- <20250806190751.GG222315@ZenIV>
+	s=arc-20240116; t=1754534868; c=relaxed/simple;
+	bh=uTtkPEq2yFmxCcFM/cPem5ZdCduiGqyu/C6uW0UOaZc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H19RXMPZI+6AT/50YG/BbsXpM/AZghfl/qiAQ+9DnNQEgOB7fzpoqe5D4gt9lGbbBJdBHB3dsWK205GRnHPJOsObxXM2xECU8uG0lB6ZPcJ3t5vz4L7cOkarCoYv3ywgJBNzGyobVfXKayXeBtnZKQ2tfBPIyDe+qhQkuaMFkZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwBV7J5E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD8DC4CEE7;
+	Thu,  7 Aug 2025 02:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754534866;
+	bh=uTtkPEq2yFmxCcFM/cPem5ZdCduiGqyu/C6uW0UOaZc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=pwBV7J5E4b9ZdLq6jrLdWGFr/R9CR1SwZMqjXpOnX6WPH9o3VcvOZqPJv/t+hinSR
+	 DZMoLDfT6q4XB3etQ2EoCZrkBF7hKxPrZ+gVPrc7mMfYKEcK4+Fq1c3gtsKBO8Opap
+	 AKhZ9ms5Rbi+zPnH00ykgztByByAFwU6syZVZsumcorFLzyApW6DVD/OISMPLQpoNz
+	 YPVGJ6C20b5pS/J7MkIKmHctNuWmpL1ypbD2mz9lpK0A39bPJADWPCeFYKrzzMV4p3
+	 VZwwGJi5qtJo9dCz4wqOU5r9Tym27pItJ7Idr07eE8/IGzf7ghYjQcEWSCZqwk7ury
+	 8RzCcYstVEEMA==
+Message-ID: <da1b15f0-95bd-43ab-9900-c3afd87e9ac7@kernel.org>
+Date: Thu, 7 Aug 2025 10:47:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="esbkpzrhwvkavmb4"
-Content-Disposition: inline
-In-Reply-To: <20250806190751.GG222315@ZenIV>
-X-Rspamd-Queue-Id: 4byBPY6Dbdz9t4B
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce flush_policy sysfs entry
+To: Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <20250731084700.1230841-1-chao@kernel.org>
+ <CAHJ8P3+GJu8ztM85pMUih93RUsDF65n2OUc-F7QPwvGwv2x48w@mail.gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CAHJ8P3+GJu8ztM85pMUih93RUsDF65n2OUc-F7QPwvGwv2x48w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 8/7/25 10:16, Zhiguo Niu wrote:
+> Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+> 于2025年7月31日周四 16:49写道：
+>>
+>> This patch introduces a new sysfs entry /sys/fs/f2fs/<disk>/flush_policy
+>> in order to tune performance of f2fs data flush flow.
+>>
+>> For example, checkpoint will use REQ_FUA to persist CP metadata, however,
+>> some kind device has bad performance on REQ_FUA command, result in that
+>> checkpoint being blocked for long time, w/ this sysfs entry, we can give
+>> an option to use REQ_PREFLUSH command instead of REQ_FUA during checkpoint,
+>> it can help to mitigate long latency of checkpoint.
+>>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>  Documentation/ABI/testing/sysfs-fs-f2fs |  9 +++++++++
+>>  fs/f2fs/checkpoint.c                    | 10 +++++++++-
+>>  fs/f2fs/f2fs.h                          |  7 +++++++
+>>  fs/f2fs/sysfs.c                         |  9 +++++++++
+>>  4 files changed, 34 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+>> index bc0e7fefc39d..2fedb44b713b 100644
+>> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+>> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+>> @@ -883,3 +883,12 @@ Date:              June 2025
+>>  Contact:       "Daeho Jeong" <daehojeong@google.com>
+>>  Description:   Control GC algorithm for boost GC. 0: cost benefit, 1: greedy
+>>                 Default: 1
+>> +
+>> +What:          /sys/fs/f2fs/<disk>/flush_policy
+>> +Date:          July 2025
+>> +Contact:       "Chao Yu" <chao@kernel.org>
+>> +Description:   Device has different performance for the same flush methods, this node
+>> +               can be used to tune performance by setting different flush methods.
+>> +
+>> +               policy value            description
+>> +               0x00000001              Use preflush instead of fua during checkpoint
+>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+>> index bbe07e3a6c75..10cc27158770 100644
+>> --- a/fs/f2fs/checkpoint.c
+>> +++ b/fs/f2fs/checkpoint.c
+>> @@ -1419,7 +1419,9 @@ static void commit_checkpoint(struct f2fs_sb_info *sbi,
+>>         f2fs_folio_put(folio, false);
+>>
+>>         /* submit checkpoint (with barrier if NOBARRIER is not set) */
+>> -       f2fs_submit_merged_write(sbi, META_FLUSH);
+>> +       f2fs_submit_merged_write(sbi,
+>> +               sbi->flush_policy & BIT(FLUSH_POLICY_CP_NO_FUA) ?
+>> +               META : META_FLUSH);
+>>  }
+>>
+>>  static inline u64 get_sectors_written(struct block_device *bdev)
+>> @@ -1606,6 +1608,12 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>>         f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
+>>         stat_cp_time(cpc, CP_TIME_WAIT_LAST_CP);
+>>
+>> +       if (sbi->flush_policy & BIT(FLUSH_POLICY_CP_NO_FUA)) {
+>> +               err = f2fs_flush_device_cache(sbi);
+>> +               if (err)
+>> +                       return err;
+>> +       }
+> Hi Chao,
+> sorry for late interruption.
+> f2fs_flush_device_cache is just used for multi device cases, so this patch will
+> not be suitable for a single device if the user changes flush_policy
+> by sysfs, otherwise it
+> will not use FUA write when committing checkpoint? Is this expected?
 
---esbkpzrhwvkavmb4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
- returning -EMSGSIZE
-MIME-Version: 1.0
+Zhiguo, I expected to flush primary device as well, so I need to fix this, thanks
+for catching this.
 
-On 2025-08-06, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Thu, Aug 07, 2025 at 03:55:23AM +1000, Aleksa Sarai wrote:
->=20
-> > -		goto err_free;
-> > -	ret =3D -EFAULT;
-> > -	if (copy_to_user(_buf, p, n) !=3D 0)
-> > -		goto err_free;
-> > +	if (copy_to_user(_buf, p, n))
-> > +		n =3D -EFAULT;
-> >  	ret =3D n;
-> > -
-> > -err_free:
-> >  	if (need_free)
-> >  		kfree(p);
-> >  	return ret;
->=20
-> Minor nit: seeing that there's only one path to that return, I would
-> rather turn it into
-> 	return n;
-> and dropped the assignment to ret a few lines above.  Anyway, that's
-> trivially done when applying...
+Thanks,
 
-It felt odd to use "return ret;" at the start and switch to "return n;"
-at the end, but feel free to change it when applying.
+> Thanks!
+>> +
+>>         /*
+>>          * invalidate intermediate page cache borrowed from meta inode which are
+>>          * used for migration of encrypted, verity or compressed inode's blocks.
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 5c0ea60e502e..5bba24ca15c8 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1621,6 +1621,11 @@ struct decompress_io_ctx {
+>>  #define MAX_COMPRESS_LOG_SIZE          8
+>>  #define MAX_COMPRESS_WINDOW_SIZE(log_size)     ((PAGE_SIZE) << (log_size))
+>>
+>> +enum flush_policy {
+>> +       FLUSH_POLICY_CP_NO_FUA,
+>> +       FLUSH_POLICY_MAX,
+>> +};
+>> +
+>>  struct f2fs_sb_info {
+>>         struct super_block *sb;                 /* pointer to VFS super block */
+>>         struct proc_dir_entry *s_proc;          /* proc entry */
+>> @@ -1873,6 +1878,8 @@ struct f2fs_sb_info {
+>>         /* carve out reserved_blocks from total blocks */
+>>         bool carve_out;
+>>
+>> +       unsigned int flush_policy;              /* flush policy */
+>> +
+>>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+>>         struct kmem_cache *page_array_slab;     /* page array entry */
+>>         unsigned int page_array_slab_size;      /* default page array slab size */
+>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>> index f736052dea50..b69015f1dc67 100644
+>> --- a/fs/f2fs/sysfs.c
+>> +++ b/fs/f2fs/sysfs.c
+>> @@ -852,6 +852,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+>>                 return count;
+>>         }
+>>
+>> +       if (!strcmp(a->attr.name, "flush_policy")) {
+>> +               if (t >= BIT(FLUSH_POLICY_MAX))
+>> +                       return -EINVAL;
+>> +               *ui = (unsigned int)t;
+>> +               return count;
+>> +       }
+>> +
+>>         if (!strcmp(a->attr.name, "gc_boost_gc_multiple")) {
+>>                 if (t < 1 || t > SEGS_PER_SEC(sbi))
+>>                         return -EINVAL;
+>> @@ -1175,6 +1182,7 @@ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+>>  #endif
+>>  F2FS_SBI_GENERAL_RW_ATTR(carve_out);
+>>  F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
+>> +F2FS_SBI_GENERAL_RW_ATTR(flush_policy);
+>>
+>>  /* STAT_INFO ATTR */
+>>  #ifdef CONFIG_F2FS_STAT_FS
+>> @@ -1371,6 +1379,7 @@ static struct attribute *f2fs_attrs[] = {
+>>         ATTR_LIST(max_read_extent_count),
+>>         ATTR_LIST(carve_out),
+>>         ATTR_LIST(reserved_pin_section),
+>> +       ATTR_LIST(flush_policy),
+>>         NULL,
+>>  };
+>>  ATTRIBUTE_GROUPS(f2fs);
+>> --
+>> 2.49.0
+>>
+>>
+>>
+>> _______________________________________________
+>> Linux-f2fs-devel mailing list
+>> Linux-f2fs-devel@lists.sourceforge.net
+>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-> Anyway, who's carrying fscontext-related stuff this cycle?  I've got
-> a short series in that area, but there won't be much from me around
-> there - a plenty of tree-in-dcache stuff, quite a bit of mount-related
-> work, etc., but not a lot around the options-parsing machinery.
->=20
-> Christian, do you have any plans around that area?
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---esbkpzrhwvkavmb4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJQTeAAKCRAol/rSt+lE
-b94wAQCrCBDcIXw22aUu3figMXSuo1sk4u/y3z9goDq6pKhwEwEA2arOWYUnSBnh
-o66eC1CZ/DJYZ+VQYJpyPsDGCErquwc=
-=gJe2
------END PGP SIGNATURE-----
-
---esbkpzrhwvkavmb4--
 
