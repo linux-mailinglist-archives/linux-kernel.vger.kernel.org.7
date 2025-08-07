@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-758633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F92B1D1DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB5DB1D1E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2973E3B5F1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD113B574D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCB81F4198;
-	Thu,  7 Aug 2025 05:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6611F4E57;
+	Thu,  7 Aug 2025 05:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="XGpK3uHp"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUTaLlRa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D6B1DF73A;
-	Thu,  7 Aug 2025 05:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15A41DF73A;
+	Thu,  7 Aug 2025 05:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754543621; cv=none; b=kUekWmcTZtxuPJPjw5qvoh5Efh0Z0LMJKf9V+EM+Fn9hhzgoL/4kVvmFZe3Wt7HWE6KM+LaS9PrLo+NU9HHPOGrc+A9znDkNGNOdcsYa5gqPkibF1Di0n3mD3Gr6nX73pQjAm1rW2VyDoKpExGdlMAMEs3Q9LST7ahVZOS07YsI=
+	t=1754543700; cv=none; b=YCHimNO143RGHti6UU6kgJCYBSq4kcJR88vtPn7iD9tAU2FOMAK71Gg9Yre0941XDnsEUAV38J5XBKky7KiQFr0S97Bguz864wHGMy4uUk8T3a94hcu5A2Lg3Q2BWvqtY1BdgP9Gq8yB5/G+5lZ8jsaaXPbQTMDOu8bgaF5HrfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754543621; c=relaxed/simple;
-	bh=rS31D5/HfWJNHKPfhcFL7sfeglexx2Eafj0XwRXL/f4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VyDn3RHU37d+onyYx/8e+kO19XTzRPgcvULrWYAc/UgYBM6I30V7mJ+73mnlx38U5b9Rhwb+ApRdBTPMnVe0N6dMlNyc11B7LTI55VLJJuihLjRWylJAqHzNyfCIVhzpMo17a6uw513rm131Jnff0Z5DnXL2j/nPMFP6s+6S9+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=XGpK3uHp; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1754543617;
-	bh=rS31D5/HfWJNHKPfhcFL7sfeglexx2Eafj0XwRXL/f4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
-	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
-	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
-	b=XGpK3uHp+FMEmXGSGDToohlqEr0f4/GM4ypLoCR0MR+glMgE7zVzn1lpFfw/x5NtA
-	 W8ms1ymELrK8POszG4L9ZKl3fQ5DQyiZ2icp8hzApzPZcVv++G2eFq9k2i0ogTEMqQ
-	 Wt3dn5D6QxPIcq6yMCsPK32+yMIzkRI73vYnomxBceqn1QPcLXyrf3HxgTGkvPLARZ
-	 1aoWfPFYhylWiUg5zdfNoef2ZTBaqD+ZZngCj/75Aq+98PjtU49fRhdDQOZj4VEK09
-	 IaeOmoT3mIvWYH+EJjg7tijL8a1ywprrI1y5CJvogi3lhl6agFJNidfCBbwhEpBhns
-	 o5JoJ6S+EHrsA==
-Received: from linux.gnuweeb.org (unknown [36.72.212.139])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 8765F3127C8C;
-	Thu,  7 Aug 2025 05:13:34 +0000 (UTC)
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Thu, 7 Aug 2025 12:13:25 +0700
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux PCI Mailing List <linux-pci@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof Wilczynski <kwilczynski@kernel.org>,
-	Armando Budianto <sprite@gnuweeb.org>,
-	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-	gwml@vger.gnuweeb.org
-Subject: Re: [GIT PULL v2] PCI changes for v6.17
-Message-ID: <aJQ19UvTviTNbNk4@linux.gnuweeb.org>
-References: <20250801142254.GA3496192@bhelgaas>
- <175408424863.4088284.13236765550439476565.pr-tracker-bot@kernel.org>
- <ed53280ed15d1140700b96cca2734bf327ee92539e5eb68e80f5bbbf0f01@linux.gnuweeb.org>
- <aJQi3RN6WX6ZiQ5i@wunner.de>
- <aJQxdBxcx6pdz8VO@linux.gnuweeb.org>
- <20250807050350.FyWHwsig@linutronix.de>
+	s=arc-20240116; t=1754543700; c=relaxed/simple;
+	bh=ciVFylXTqG/nxTYMvEMzn+66ztMvJbHv34RuWXUpK4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=so2M/41k/Q+0iwNFrILvtx2hbXBfS+gRHCwh72/il61lKpRVXdqXmduw5SWWnbqZpRItXpAImApU2SUOLgbkKshatQOyvhPzSYH8V/fI/AnlcaTrR3VH1JeHR/CJgrtkHyqyTRc+qf8+niiVh9RWHt2i8I2YAaKjw/f6jAKiuPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUTaLlRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30995C4CEEB;
+	Thu,  7 Aug 2025 05:14:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754543699;
+	bh=ciVFylXTqG/nxTYMvEMzn+66ztMvJbHv34RuWXUpK4s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jUTaLlRaP3XZR/8g6hXmw5O/abZTBnGW+qn3VSjymyzmtIjlIO0LkDitMQHa06kl8
+	 Na4Ud+6CxN7/tuggWL/Yh9qSL7PS+DumqGALIA+jHMQzplN0jPbg4RYcbCH0qeisZF
+	 AUIbA/R3SFdSKokHgdCisGozHeKlUyghaRV1w/T4RJW2xkaLm8ob+tzbGNOzRny4h/
+	 ynOaWeclnvdd5oeRWOjbYxOULnmqpfrzekLU24HYZ8KZdo7eKWVGKCgq5UB8FWhSj7
+	 Pi/1KG1ryfMHb4SEnCw0xn2nIAPrWTp1F3CzMvhSX5WDfnV+zP3f+r+J1IB0F5Fk/G
+	 tqVnDxr1S5xQQ==
+Message-ID: <4db2a6cc-0520-4712-b823-df157e71e7f0@kernel.org>
+Date: Thu, 7 Aug 2025 07:14:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807050350.FyWHwsig@linutronix.de>
-X-Machine-Hash: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Input: sysrq: delete unnecessary check
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aJNAhHtKkhWjosDV@stanley.mountain>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <aJNAhHtKkhWjosDV@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 07, 2025 at 07:03:50AM +0200, Nam Cao wrote:
-> Does the diff below help?
-> 
-> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-> index 9bbb0ff4cc15..b679c7f28f51 100644
-> --- a/drivers/pci/controller/vmd.c
-> +++ b/drivers/pci/controller/vmd.c
-> @@ -280,10 +280,12 @@ static int vmd_msi_alloc(struct irq_domain *domain, unsigned int virq,
->  static void vmd_msi_free(struct irq_domain *domain, unsigned int virq,
->  			 unsigned int nr_irqs)
->  {
-> +	struct irq_data *irq_data;
->  	struct vmd_irq *vmdirq;
->  
->  	for (int i = 0; i < nr_irqs; ++i) {
-> -		vmdirq = irq_get_chip_data(virq + i);
-> +		irq_data = irq_domain_get_irq_data(domain, virq + i);
-> +		vmdirq = irq_data->chip_data;
->  
->  		synchronize_srcu(&vmdirq->irq->srcu);
->  
+On 06. 08. 25, 13:46, Dan Carpenter wrote:
+> This code checks if (write) is true twice in a row.  It's more
+> readable to delete the first check.
 
-Yes, it works.
+Not sure why "Input" in $SUBJ, but regardless:
 
-Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-Thank you for the fix!
-
+thanks,
 -- 
-Ammar Faizi
-
+js
+suse labs
 
