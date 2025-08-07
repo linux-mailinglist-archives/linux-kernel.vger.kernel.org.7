@@ -1,129 +1,251 @@
-Return-Path: <linux-kernel+bounces-758800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BC4B1D3FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:06:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B287CB1D401
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F1572632F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66FD01884A02
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1072236F4;
-	Thu,  7 Aug 2025 08:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B6D2550CD;
+	Thu,  7 Aug 2025 08:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QiZ8UEUL"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OFEya+Oz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A714A02;
-	Thu,  7 Aug 2025 08:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EAE25178C
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553942; cv=none; b=W53yVqgkVZ7KM+v+9H5Q2rVaD8Ux/mYaWkFtKw0KM82RvZqkGlVLpzqW1IFJ83TPTU/c14r60/k3bkdRZgNKnyO2beQ4etLqf+vu7mvFsKk1/lw3Wv6+khoXbCCpUsdm19qSzZCM9W6wGGK34ZhfruHoGX9RFQGV0l8RRFTiwG0=
+	t=1754554019; cv=none; b=Cgyte+R4374qyr7MpARtXy9/HSY0wP814j1sKu09i+AoDMHIYczKXou4iO0cocYEXD9FyOt9uv2zddgASRU7UcEqA+sR3QtTKejekdEuqjjYWN4j5X/19jZ0VJBbfrHTL8CYH53jyyTwQaOPq6m7XRTx+WVQjm4aim03teqqJcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553942; c=relaxed/simple;
-	bh=ip6K3fdTKfokHW17Y6B1Ps0/90JQcfs+OErW4kS5DuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IKuO30Kzv5ez50y+vDmFHSaNDBaXh5lnq/diqnvAiVW8mOIWEYm88G/ifmEjnXmhLHpKhrKH6xh7QRj3CRSwj5+ecPjpCCUt1mbYqjKX0NFZbYlWgp3S1G8SqdL3Bg2I2PimcOSbqBhfJKztj4TAA3eXbngr+TjQDTrpZiK0tLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QiZ8UEUL; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-454f428038eso5921755e9.2;
-        Thu, 07 Aug 2025 01:05:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754553938; x=1755158738; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yTA2hXl02Bzi5wRFrDEw+E3Nz6ei7Gh7Y9iWwvyZTt8=;
-        b=QiZ8UEUL0k3yhE8IqCLV/e9JsJu0aicI9M/v/6ivd00SePvAqV7CXfGO310mI3hyut
-         XvqAywqU4JYTk72rMadJw6NseKJBPJZ/kE2LX8ex0hQxcEyjFg6bMVJQ2qfMDkoZwY/P
-         CtKm4UAEA/dH42HN8nzptpE5FWBPQuTplADWvRoKu8JP6c9gF/zfAIIevMi3mfR4Ofmf
-         f+n/wPRGf1IHsYfgjY852GzpJy+iMXIYGAr5IIurHcCBYkYsIRB4Yu7ZlWGeEI7e/0XH
-         SK6HzTexiWhbPauQPy5Y7oDL5TPkBR+A5NBCwyzCHaYa/AORCqsecwvoNIhlPPDlCLj8
-         nTcg==
+	s=arc-20240116; t=1754554019; c=relaxed/simple;
+	bh=u2Il4zcXlbBWcOa6mv3Dqk2LkCaGUlZ1IGfaEMSMzMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUolAJVZPX972n7D1yKbtrRTzMW+do9iuecdfVce5HuwDhvMpVo757SpKYs5M1z/B0Pv8N9iFICi0+O6CpMRt3GkQSKtzoQHzPxpcdPQmqSrdN6+ksp2fveYDzydo+MAy5OdvcUrENQK0O3aNXf4eAFCgxdNIqsrdmo1uHG3vQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OFEya+Oz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754554016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7F/nfJfc6zfGggUKAtMQtDXDSwk2D4R5Dz6fv6UQzEk=;
+	b=OFEya+OzfRF7ifIb1yJuVzNn0ErzCKrGVrB/boMdx+q46meCuhyEI6yRB00XMghQtGITsy
+	EHZQi5ZFnks6rNhZVsGjWrf1cdDubmtOAZjVadbLfl5eEbh9rHx//yi6I4tw/oN+yHY04e
+	suKFbGHjR8bHQduAFhIrC/W/SR6LYAo=
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
+ [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668-cCTkl4YuNCeUmobhOPzEog-1; Thu, 07 Aug 2025 04:06:55 -0400
+X-MC-Unique: cCTkl4YuNCeUmobhOPzEog-1
+X-Mimecast-MFC-AGG-ID: cCTkl4YuNCeUmobhOPzEog_1754554015
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-7196c919719so10781597b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 01:06:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754553938; x=1755158738;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1754554010; x=1755158810;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yTA2hXl02Bzi5wRFrDEw+E3Nz6ei7Gh7Y9iWwvyZTt8=;
-        b=CiVjgw5sk3Fxsbb0nQZl9FxrqEElvBRzSUjVYXhxEeKTR1w8/USspXsuBK+KXwCzMw
-         YCPhyFzVZFQzJk0rOWnVYDGZa6ULn0suXIJqUb72aGJ+XcOw+bq7qwMyQl6iA9I0jfqZ
-         tm1E0n9fTIZL9w9Ra2vfp+f02SxZqujlxdSK/3OcCLuzfGIORzi69bBsL1Orfmgzr9M6
-         RMCH3wGrqPrCDB5rJwBH+nhXUCU4+/ZUo6daufVwRG+DKLmxHLlJhWUBZ4V38dPpCCG/
-         G1C+DDWnGbLWTpfY6hMvFAlTaowN7hjVHNPuaTEhp903REUitDwl8NqeGA0Xjhu6lcSL
-         zMNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGvUep2d+0rkRWthMOsWeE1V2Lq6HSUyasBRYhG2vO9KoVDFJOZZi7pwryZvZFdN6F5CL5kS775yE=@vger.kernel.org, AJvYcCX4nWjD6MrVPzqBp2G/ycswNil16MnWkCBw+DnXq2ZrH39GKjUNDgx2gCSJ/BsENIZnZc33+6Un+d2lbiLL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH/66/IC5+NQ+KD/sfMmA2TUh9S3/Xlk0AFg9qu7l4zrX6ZVTP
-	/HkHWLpqGURiMfo28KDDoDgOETnMGpmPA8Nhye0nOXdpSpaMLw4gnsEP
-X-Gm-Gg: ASbGncsYyINy+eFwsjn+9hp1oqoBQk9DCwyIlevXE0mb+hA3rWFXK1mERmgwO2oQFoJ
-	N4A1MHkCwnKyMI0c7PCGJM46Pkg3tVYDkZnRLLan2s+NoA3FQk98lRTFUpExHKKnN3oglR6Pgxf
-	lFdHKwNqM+ZKKcuet2Xo+6I9UoszF8Wznj3Z1Px4Mpshfa5MtGQUGnjfSnmOjueqMAGbPmoJOFL
-	MYwwCCm6U5vj6kz6wnbN4t6KsS8FChdI9OWYJhazBBUCGBrTI/YOsqP1OpcLunlKZyQRQA9yTGI
-	xXu8441UmXbsC+SrroGSgYIze0kFY+tIisO8iX19QbUx/zINAdhpgIQvT7JVKALhu7brcxDCaVA
-	jZSaAsPgjysvAIg==
-X-Google-Smtp-Source: AGHT+IFqNRrMjMZ2LEIDWMHV9hg2RmoPj3QYwvILfyKFp0XwBTZwz1kdN5a9ezudOIdvz11DNt0BYA==
-X-Received: by 2002:a05:600c:3103:b0:459:e20e:be2f with SMTP id 5b1f17b1804b1-459e708e76emr61697195e9.14.1754553938150;
-        Thu, 07 Aug 2025 01:05:38 -0700 (PDT)
-Received: from pc ([196.235.182.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459eec47306sm20058095e9.28.2025.08.07.01.05.36
+        bh=7F/nfJfc6zfGggUKAtMQtDXDSwk2D4R5Dz6fv6UQzEk=;
+        b=ZV8uiM3uso0yQLk4wwnkC08Sd4BmpFJx8C4APoGqGlx7dgRzqTRcLEVxXhe94/+NMi
+         ATjmVmp8RzNlR97UsA20ePuZgVUW2kVLkKlPO7g4Nx7S/up+8q6pUxZ4ofME44VeZxf3
+         U/MxzB5XuD43jWNFlmLnr9fqlGdXsx+xyb1cjkEasCtsOLXWmbVU+A2kUF6k5nYYFZPL
+         +nMxZTWs9EOgtjZ9HTj7Rs3JZqrJk9wLLbLUbc+vSNtN1eN+5cMJ5I4Tr8dvFLwTXOx7
+         RU5/8qaJKI6xoG8vnRgTgOcq6Vk2kUxquzFz0Md/MYBDE1v07Hk91nSPcIRIx5Nzobzc
+         TK5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUBC6B93U1mEmAnJm0lRrW182ixZT82faqy/rLv1C/wDLTEkeNRUCIT/jiI9ijs6Lrw9tRchv2UGqg18GE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzspxz0qpFetO1bJ0grA3IjXiTGvSdw3PnSndRXSP6rvEpihxBA
+	FdweOspl3LmpJNF/jM5KUZDlDcDFUtMNaXwOMd1CMbsQbQFTRB1AQSuzx+6+RDJ7zNSLyOIOL+k
+	PWQr0N6SSxaBH0mJWkOplRbw2l1QVQ0+sqWFBjDcDiIpyLUgNQ7y0+ONyN0hPvqLMXA==
+X-Gm-Gg: ASbGncuWayVKYTZzcbV4ZNOeiVDZUEGrNuLG8gqR2evcb87j1dLXWTRHgluZLqpjbAz
+	i5TK/A67VdymyaEKwBpU58iHCmX/zRY22OCgYI+sm1pCVyotuw62CP4XRhuXgu1ioiF+ikpG9tG
+	Fqyyg+tco5lpRuxFJoqVxDUlaJ//5u/gxwGoS5UEUPBZq1BaYIq2dSKWbreonAXHrGqs7SzQN3p
+	FTFrT9jr/TE0isrJuiMEJQHBjpBCRUP3TaSver+XIFTn27oUZ4GvRJd9DIfXtWmKChaeUFGg1jF
+	BEZPt1I2UUniWfO3O36KOBAhIUhSyPPDoQwCVsp+meb7taHWGxh95IoBWI0wrGrYwHHwUnpWk31
+	7WpeVVvrsJeJe0eQ=
+X-Received: by 2002:a05:690c:6203:b0:71a:a9c:30dd with SMTP id 00721157ae682-71bcc6d6851mr85321017b3.2.1754554009645;
+        Thu, 07 Aug 2025 01:06:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkk4jVdfxkNS66lXJnELQ1c8i2y7wkD6dlYIhb6ZnK84/IDwj2JHOFZ/v+UaqBfCV8rwA6qA==
+X-Received: by 2002:a05:690c:6203:b0:71a:a9c:30dd with SMTP id 00721157ae682-71bcc6d6851mr85319947b3.2.1754554008050;
+        Thu, 07 Aug 2025 01:06:48 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-45-205-118.retail.telecomitalia.it. [79.45.205.118])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a3a9110sm44916537b3.4.2025.08.07.01.06.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 01:05:37 -0700 (PDT)
-Date: Thu, 7 Aug 2025 09:05:34 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH v2] iio: adc: ad4170-4: Use ERR_PTR() with %pe to improve
- error logging
-Message-ID: <aJReTh-t5D45aZNV@pc>
+        Thu, 07 Aug 2025 01:06:47 -0700 (PDT)
+Date: Thu, 7 Aug 2025 10:06:35 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Bryan Tan <bryan-bt.tan@broadcom.com>, Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, berrange@redhat.com, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH RFC net-next v4 00/12] vsock: add namespace support to
+ vhost-vsock
+Message-ID: <27a6zuc6wwuixgozhkxxd2bmpiegiat4bkwghvjz6y3wugtjqm@az7j7et7hzpq>
+References: <20250805-vsock-vmtest-v4-0-059ec51ab111@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250805-vsock-vmtest-v4-0-059ec51ab111@meta.com>
 
-Use `ERR_PTR(ret)` with `%pe` in `ad4170_read_sample()` to properly display
-symbolic error codes (e.g. `-ENOMEM`) instead of raw integers (e.g. `-12`),
-improving readability and debug clarity.
+Hi Bobby,
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
-Changes in v2:
-   - Improve commit title
+On Tue, Aug 05, 2025 at 02:49:08PM -0700, Bobby Eshleman wrote:
+>This series adds namespace support to vhost-vsock. It does not add
+>namespaces to any of the guest transports (virtio-vsock, hyperv, or
+>vmci).
+>
+>The current revision only supports two modes: local or global. Local
+>mode is complete isolation of namespaces, while global mode is complete
+>sharing between namespaces of CIDs (the original behavior).
+>
+>Future may include supporting a mixed mode, which I expect to be more
+>complicated because socket lookups will have to include new logic and
+>API changes to behave differently based on if the lookup is part of a
+>mixed mode CID allocation, a global CID allocation, a mixed-to-global
+>connection (allowed), or a global-to-mixed connection (not allowed).
+>
+>Modes are per-netns and write-once. This allows a system to configure
+>namespaces independently (some may share CIDs, others are completely
+>isolated). This also supports future mixed use cases, where there may 
+>be
+>namespaces in global mode spinning up VMs while there are
+>mixed mode namespaces that provide services to the VMs, but are not
+>allowed to allocate from the global CID pool.
+>
+>Thanks again for everyone's help and reviews!
 
- drivers/iio/adc/ad4170-4.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for your work!
 
-diff --git a/drivers/iio/adc/ad4170-4.c b/drivers/iio/adc/ad4170-4.c
-index 6cd84d6fb08b..6296b5dc930b 100644
---- a/drivers/iio/adc/ad4170-4.c
-+++ b/drivers/iio/adc/ad4170-4.c
-@@ -1253,11 +1253,11 @@ static int ad4170_read_sample(struct iio_dev *indio_dev,
- 
- 	ret = __ad4170_read_sample(indio_dev, chan, val);
- 	if (ret) {
--		dev_err(dev, "failed to read sample: %d\n", ret);
-+		dev_err(dev, "failed to read sample: %pe\n", ERR_PTR(ret));
- 
- 		ret2 = ad4170_set_channel_enable(st, chan->address, false);
- 		if (ret2)
--			dev_err(dev, "failed to disable channel: %d\n", ret2);
-+			dev_err(dev, "failed to disable channel: %pe\n", ERR_PTR(ret2));
- 
- 		return ret;
- 	}
--- 
-2.43.0
+As I mentioned to you, I'll be off for the next 2 weeks, so I'll take a 
+look when I'm back, but feel free to send new versions if you receive 
+enough comments on this.
+
+Thanks,
+Stefano
+
+>
+>Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
+>To: Stefano Garzarella <sgarzare@redhat.com>
+>To: Shuah Khan <shuah@kernel.org>
+>To: David S. Miller <davem@davemloft.net>
+>To: Eric Dumazet <edumazet@google.com>
+>To: Jakub Kicinski <kuba@kernel.org>
+>To: Paolo Abeni <pabeni@redhat.com>
+>To: Simon Horman <horms@kernel.org>
+>To: Stefan Hajnoczi <stefanha@redhat.com>
+>To: Michael S. Tsirkin <mst@redhat.com>
+>To: Jason Wang <jasowang@redhat.com>
+>To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+>To: Eugenio Pérez <eperezma@redhat.com>
+>To: K. Y. Srinivasan <kys@microsoft.com>
+>To: Haiyang Zhang <haiyangz@microsoft.com>
+>To: Wei Liu <wei.liu@kernel.org>
+>To: Dexuan Cui <decui@microsoft.com>
+>To: Bryan Tan <bryan-bt.tan@broadcom.com>
+>To: Vishnu Dasa <vishnu.dasa@broadcom.com>
+>To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+>Cc: virtualization@lists.linux.dev
+>Cc: netdev@vger.kernel.org
+>Cc: linux-kselftest@vger.kernel.org
+>Cc: linux-kernel@vger.kernel.org
+>Cc: kvm@vger.kernel.org
+>Cc: linux-hyperv@vger.kernel.org
+>Cc: berrange@redhat.com
+>
+>Changes in v4:
+>- removed RFC tag
+>- implemented loopback support
+>- renamed new tests to better reflect behavior
+>- completed suite of tests with permutations of ns modes and vsock_test
+>  as guest/host
+>- simplified socat bridging with unix socket instead of tcp + veth
+>- only use vsock_test for success case, socat for failure case (context
+>  in commit message)
+>- lots of cleanup
+>
+>Changes in v3:
+>- add notion of "modes"
+>- add procfs /proc/net/vsock_ns_mode
+>- local and global modes only
+>- no /dev/vhost-vsock-netns
+>- vmtest.sh already merged, so new patch just adds new tests for NS
+>- Link to v2:
+>  https://lore.kernel.org/kvm/20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com
+>
+>Changes in v2:
+>- only support vhost-vsock namespaces
+>- all g2h namespaces retain old behavior, only common API changes
+>  impacted by vhost-vsock changes
+>- add /dev/vhost-vsock-netns for "opt-in"
+>- leave /dev/vhost-vsock to old behavior
+>- removed netns module param
+>- Link to v1:
+>  https://lore.kernel.org/r/20200116172428.311437-1-sgarzare@redhat.com
+>
+>Changes in v1:
+>- added 'netns' module param to vsock.ko to enable the
+>  network namespace support (disabled by default)
+>- added 'vsock_net_eq()' to check the "net" assigned to a socket
+>  only when 'netns' support is enabled
+>- Link to RFC: https://patchwork.ozlabs.org/cover/1202235/
+>
+>---
+>Bobby Eshleman (12):
+>      vsock: a per-net vsock NS mode state
+>      vsock: add net to vsock skb cb
+>      vsock: add netns to af_vsock core
+>      vsock/virtio: add netns to virtio transport common
+>      vhost/vsock: add netns support
+>      vsock/virtio: use the global netns
+>      hv_sock: add netns hooks
+>      vsock/vmci: add netns hooks
+>      vsock/loopback: add netns support
+>      selftests/vsock: improve logging in vmtest.sh
+>      selftests/vsock: invoke vsock_test through helpers
+>      selftests/vsock: add namespace tests
+>
+> MAINTAINERS                             |    1 +
+> drivers/vhost/vsock.c                   |   48 +-
+> include/linux/virtio_vsock.h            |   12 +
+> include/net/af_vsock.h                  |   59 +-
+> include/net/net_namespace.h             |    4 +
+> include/net/netns/vsock.h               |   21 +
+> net/vmw_vsock/af_vsock.c                |  204 +++++-
+> net/vmw_vsock/hyperv_transport.c        |    2 +-
+> net/vmw_vsock/virtio_transport.c        |    5 +-
+> net/vmw_vsock/virtio_transport_common.c |   14 +-
+> net/vmw_vsock/vmci_transport.c          |    4 +-
+> net/vmw_vsock/vsock_loopback.c          |   59 +-
+> tools/testing/selftests/vsock/vmtest.sh | 1088 ++++++++++++++++++++++++++-----
+> 13 files changed, 1330 insertions(+), 191 deletions(-)
+>---
+>base-commit: dd500e4aecf25e48e874ca7628697969df679493
+>change-id: 20250325-vsock-vmtest-b3a21d2102c2
+>
+>Best regards,
+>-- 
+>Bobby Eshleman <bobbyeshleman@meta.com>
+>
 
 
