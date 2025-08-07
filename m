@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-759059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB51B1D7DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:29:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C1CB1D7DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ABE51888AB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:29:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17F03B2A4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB5515665C;
-	Thu,  7 Aug 2025 12:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D501E48A;
+	Thu,  7 Aug 2025 12:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfRz8/lo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Nr415/Cj"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400CD24293B;
-	Thu,  7 Aug 2025 12:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5246226290
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754569730; cv=none; b=bB/NEk5V23zU3lu/IwaSSzshEjPrbLEDur6uZbAfqDT/dSjUgRLCnPzcA3Yj1W7VFvx+Pk5btca8C2o+kvAhCP1fjNY1qKpKsZ/5KjiH33njnidTNouqoe7stg5yuiDlO4ZA32F8ZiqyVgVk1hFm5/y+bq02eSDQFZlTS9qo/14=
+	t=1754569833; cv=none; b=GTd0AHbJ1Fejkv64BIcpWAwHPbqy8WcnQlzQl3jlRrOzNAoyEk3fltufAOm/IcOi3faLq33Q5mIPcQYcd9LCr7IFd34BlK44vTginrg/DkkLrDzVXZpORcNf5p25EpRd/XPLo4ecZCQu7fb0lZiepWLyf5wXz+XFkyHXhw4BZX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754569730; c=relaxed/simple;
-	bh=kUH5cN8R6K2VxLTJzE/eGBwS7eFdgy3gZa8/khg7FMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9e3kBsv5TqLG0d8glRcEl3eesOLWooNxQDuUaw6gAd0Tlqu+7kdnPmnghmn5NHgJ8WyT9r+UbpCzrMr/Sr4YVIxtDK7JSod0dxUmejzAeerUQIc9+xIYj0Ti5U0CbJVxSpONGN6bcIqgBSzWEWQAYwv9UEzShLT1qDgFZLpcf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfRz8/lo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB578C4CEEB;
-	Thu,  7 Aug 2025 12:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754569729;
-	bh=kUH5cN8R6K2VxLTJzE/eGBwS7eFdgy3gZa8/khg7FMc=;
-	h=Date:From:List-Id:To:Cc:Subject:References:In-Reply-To:From;
-	b=QfRz8/lokPQVbrBLQdFUg7Zb/pO83LwtQj6QWEu50ZIIRiNZFCedBiyH1vPKdZCmn
-	 sd6EpNnPi3l2PXkuxCii2LHjBXBHhb8dMe7F02R3uXDPg+W0NEArdn2LzuNZWk4n4C
-	 /Sx0iu7o5KWBtcGI3LpmP5Ug+gPg6/SSSMluaZMDVq7o8iEupbbo1t+inLw6H7xOEs
-	 jqbuylhW2q93qMf3JwvCe+wxRi2FEEeMt64N6gLqFXR4huwOVfenuJMDp6TjvScCLC
-	 7UWGcPsoYmI5swp1B3/noAXrQ9FI+wP3dI6JCb6TOGkWKhf2Oy8Cic2ZCTYFeNZEkL
-	 7GwpI5SHcfNkg==
-Date: Thu, 7 Aug 2025 13:28:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: patchwork-bot+linux-riscv@kernel.org
-Cc: Deepak Gupta <debug@rivosinc.com>, linux-riscv@lists.infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, conor@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, arnd@arndb.de,
-	brauner@kernel.org, peterz@infradead.org, oleg@redhat.com,
-	ebiederm@xmission.com, kees@kernel.org, corbet@lwn.net,
-	shuah@kernel.org, jannh@google.com, conor+dt@kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
-	aliceryhl@google.com, tmgross@umich.edu, lossin@kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com,
-	richard.henderson@linaro.org, jim.shu@sifive.com,
-	andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
-	atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
-	alexghiti@rivosinc.com, samitolvanen@google.com,
-	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
-	zong.li@sifive.com, david@redhat.com
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-Message-ID: <db4eb976-693c-426c-a867-66cadd3dd7d8@sirena.org.uk>
-References: <20250731-v5_user_cfi_series-v19-0-09b468d7beab@rivosinc.com>
- <175450053775.2863135.11568399057706626223.git-patchwork-notify@kernel.org>
+	s=arc-20240116; t=1754569833; c=relaxed/simple;
+	bh=4DvpSd4yVqHzHkwCXz3p0CQpoTy6HFJdk6xU1V+cQ/c=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qZhlLIVv0rckKDjajbjMxrAkiVxaPxos86b8NQZW0WfUzxZkiFiTtC9GuYaqaYoXqqjRPniWc3yCqPG7tZ7bWxusaSqHzPaCzDn8+WD3Y5umduhZ1IdgxlqnegyIQX9KN91kSKeelkjuATjOEGrw4pD0VdS2+JhNQSBoTWA89h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Nr415/Cj; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-23dc5bcf49eso9967985ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 05:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754569831; x=1755174631; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ovNXJZdNjCqbBc/USCjaRDfQSVeVkoTTcWW5YVZuA4w=;
+        b=Nr415/CjjA+wLNX5sPmQKACatXYXHhmze2+qS+GL3BQBqWtD66jev3FQ6836Uerb3K
+         Mm8kJq/dTTgQrosWItRd10EYFOR6v6oxy5uv/C31/aV4BBwN9xetC4Jni2pMY7ojF66d
+         QmmW7ZOnJYZvbIpl1SMpfZiTfxS2Gsf8kVw8UY/fuZassHqRp8NGz+IYZ8PRT+KBddPH
+         oK3VgIWbABvL7HJi//QFsbejVrH5NTtU4c6QmquUP8mLOyiPOgvvYWskkaAagwOO0Szg
+         TOuoRNscY45QqOUB2E9hHTvvaXvjMmG0zTLRCXeQmi/ymmtbzK4k2DnX7jlMZ6JX3SMJ
+         Gqnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754569831; x=1755174631;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ovNXJZdNjCqbBc/USCjaRDfQSVeVkoTTcWW5YVZuA4w=;
+        b=wcjTpjvmDo69rV97DI4PEDnPvQermv838wLy2zaM3SMuXKfZA4HV83JNv4wayLVsEx
+         O3VUfrAdRC1K64r1BDdzC85FnhFKf24cSA7gDzwU9EJRsAmWvUuLb754myorrODsjKb9
+         kolzpzkdul4M2Pwoj2FoZN6sC+/E11JF5QY5GHrXa7c7we9qcHrRSKwDGvYizAJhVNJ0
+         ZtSD03MpPOYsDJfbXu/eOnxkg29LjNeqQdW/jYmC/sSdgC7fOlmIIWGiSD3WgfIb2fLX
+         myLP8V/+K8URFkIT7bqf8Be5IDI2qd6LUjQCpoS9hYibiPtSSxN+r+zTsR5HE2apcFLt
+         6iIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcCPwlt4g5Xcx3cdv5OV5XS3wQ0xvFGY+UyqfZLAmLPL8GcCUxr1+krk1G9v+reCOFpI46RaXIqKpB/n0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiI6pNoHy1tWhojrO3wvPwyxKT49sscRVAoi//XLdO0/ypgw8U
+	F/vIX5mgF+R5hBcvHtNToGcPcNh8TJ1PWMKziWaCuBxd8fpXLp2SdDIuTo01lwkEgqA=
+X-Gm-Gg: ASbGnctWKebqEGDAADu6Cy+hwwYcd1TMphohcLzEB4q97CyyNtF9GOpuZyLAdqoeeOA
+	zfA3ZBwlzoKBLeTj6BaKf6F5JdCmEI6Rgyr7VUrFsbeHXJpM6an4aQp/k4gAOgQFiljk/36YqhF
+	wCv7VN9GgpxcQ+I1ziYfsWK2efalPco4P7ol+1fTZ4pd0dA1U4xmKTwdNwMmt+Zi7gCH3oPhc+j
+	uaPLNmBWELjE3qeuaLNho4Sal9D38A1+g0pfH0WBIKKWA+viNkUhHW6futrOX+61Xtv+E5sSfgA
+	eiKfMvUjS0QaN0UlhW74wvRbi19JjHV6cKhh2KAtAbl4nFkAL3t4fzytE1P/6J1+FTwx3uY9W8q
+	1GRBn8PINF5chc24=
+X-Google-Smtp-Source: AGHT+IHUR1uGhPGD/KFM4lnMJmJdwThick9UHisL5mR7cOdeMkJI+5hsCEoLqQMvzDZh6FSLvmhIWQ==
+X-Received: by 2002:a17:902:f543:b0:242:5f6c:6b4c with SMTP id d9443c01a7336-2429f32c718mr89263325ad.18.1754569831498;
+        Thu, 07 Aug 2025 05:30:31 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976ca5sm184428645ad.100.2025.08.07.05.30.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 05:30:30 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: akpm@linux-foundation.org, jack@suse.cz, bvanassche@acm.org, 
+ yang.yang@vivo.com, dlemoal@kernel.org, ming.lei@redhat.com, 
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com, 
+ johnny.chenyi@huawei.com
+In-Reply-To: <20250807032413.1469456-1-yukuai1@huaweicloud.com>
+References: <20250807032413.1469456-1-yukuai1@huaweicloud.com>
+Subject: Re: [patch v4 0/2] lib/sbitmap: convert shallow_depth from one
+ word to the whole sbitmap
+Message-Id: <175456983026.306211.17359385146553083669.b4-ty@kernel.dk>
+Date: Thu, 07 Aug 2025 06:30:30 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8Jovl+rM+g+rY2Z6"
-Content-Disposition: inline
-In-Reply-To: <175450053775.2863135.11568399057706626223.git-patchwork-notify@kernel.org>
-X-Cookie: Real Users hate Real Programmers.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
 
---8Jovl+rM+g+rY2Z6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thu, 07 Aug 2025 11:24:11 +0800, Yu Kuai wrote:
+> Changes from v3:
+>  - fix do_div() compile error in patch 1;
+>  - add review tag by Bart in patch 2;
+> Changes from v2:
+>  - split shallow_depth to each word in patch 1, suggested by Jan;
+>  - add review tag by Jan in patch 2
+> Changes from v1:
+>  - fix some wording in patch 2
+>  - add review tag by Damien in patch 2
+> 
+> [...]
 
-On Wed, Aug 06, 2025 at 05:15:37PM +0000, patchwork-bot+linux-riscv@kernel.org wrote:
+Applied, thanks!
 
-> This series was applied to riscv/linux.git (for-next)
-> by Alexandre Ghiti <alexghiti@rivosinc.com>:
+[1/2] lib/sbitmap: convert shallow_depth from one word to the whole sbitmap
+      commit: 42e6c6ce03fd3e41e39a0f93f9b1a1d9fa664338
+[2/2] lib/sbitmap: make sbitmap_get_shallow() internal
+      commit: 45fa9f97e65231a9fd4f9429489cb74c10ccd0fd
 
->   - [v19,11/27] riscv/shstk: If needed allocate a new shadow stack on clone
->     https://git.kernel.org/riscv/c/9c72a71321a6
->   - [v19,12/27] riscv: Implements arch agnostic shadow stack prctls
->     https://git.kernel.org/riscv/c/52eff0ab5f8e
+Best regards,
+-- 
+Jens Axboe
 
-Congratulations Deepak!  Do you have an update for my clone3() shadow
-stack series that I could roll in for when I repost that after the merge
-window, and/or instructions for how to run this stuff for RISC-V on some
-emulated platform?
 
---8Jovl+rM+g+rY2Z6
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiUm/QACgkQJNaLcl1U
-h9BDYgf/Ty4Hzzi0OZOuIjqMAO+hAw56Z5Cp+NT+3TWGYWAJtxuukMORT3mrkWI4
-+lKrRIDqhecWHSZ3jeKvFjPvxTcPu/kwjG7GsseqGj7HJGoOufVlruKUj79xtdKS
-4V/WwyvqakZ4h3F0zy+bCyIrkBkQNbC3TTJVey1+4t0WNSj2uK4ZXespwXt+omY7
-MOsfSOj3AY1ueunPYkofK1g6VWYe4HSldfLRvwJMeUadPJ49XFhfpi41NsqdfhBB
-I8rdBWPSCS47tFoalL0R2oB+Dp78k8LmZhqKIRpPwAhMHIg3sI/kBMK4neka58L2
-d0MPk00RRPiLdsDKGHuaAWzwtLHXaA==
-=viF/
------END PGP SIGNATURE-----
-
---8Jovl+rM+g+rY2Z6--
 
