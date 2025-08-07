@@ -1,418 +1,274 @@
-Return-Path: <linux-kernel+bounces-759560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C74CB1DF47
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:15:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA8BFB1DF4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B22720F02
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:15:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A2A77AA125
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C2825D1F5;
-	Thu,  7 Aug 2025 22:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B77239E75;
+	Thu,  7 Aug 2025 22:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eFw6rQDb"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="W8gQFF10"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3742253BA
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 22:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DA921D3EC
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 22:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754604888; cv=none; b=WBJcoro54k41W2a5oTMsukIxkykSm87mMQFDdOSXiAOQ3mITkR9pcNz+FeUC3vbkM2eV6WJyExAnfz0oJPzjB8pd1PUwtPi3PRPI/4xZtXZ/AOcXP25Ni9ifNxDepMo+V0vAnFVQU+sgG2C6hJPVZfq7m9g/XUv9ESb3h6Xxx2A=
+	t=1754604922; cv=none; b=OQOUddUE071vDy97JT1Ggi+SeEGjA8XkfuoLJ9gFerloV8SjbQLdhZZQoqHfE8rlskyGSqPWXLD/BqslvtMh+PVF3qQWlXjD82OypINr6vljahS0J6rhbsTQkNmH4639sCE/fkccXmzPZvqow4rdSo6OmmwvqxChEj+yifoFyjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754604888; c=relaxed/simple;
-	bh=xshvLV2vb31Wkr+PIvc5fW+lxDkRCDr+2ByErhM8NDQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hl3Tn30fcVGNx7ghnj475E8KRyhpu11UW0oxQ9QhZ/Yr0AtSoaeEVyWtfkFM08JNWxr9trmIH8PQRt0cIzziXM436IQaGqJTkoVr1OMlg3resROcqMA3m1LROMW4InZJFdWHr2nlZ/wVJbnZItRQwMN0g4LbUluMdKNLK8suZRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eFw6rQDb; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32129c65bf8so1700584a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 15:14:45 -0700 (PDT)
+	s=arc-20240116; t=1754604922; c=relaxed/simple;
+	bh=bZhK3Ug6n0M7Y/KebJqwpWQBQMbBn47GnkGv84IdfUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jGACt72OUwd1liBy7ZfYVK4mHezlT3KGaXxGGpSpfYQYMEoJ6KlqCvfe6D94MiNQs3MFHA08pmOeL6i8l4TpNZ5bbwX+WTbNldX6Q7d11F4zHgU7uWn6N/kifaE6Ku9jKzOZB5DrGxGkb2micJzYuprYdD4JoVecfexv8m+w9Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=W8gQFF10; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b08c56d838so19480581cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 15:15:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754604885; x=1755209685; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfxYlW2qMJC6ED5bCsPHTl22hm4a2dt17JIaMaifM1o=;
-        b=eFw6rQDbfHAzygONwESElXJ9i+DSrAa4WBjwZHnZCqtem6mSdzha6v9BO/R8K8aMxZ
-         aZh566EVckch6GwA5h6QblzZxWj9u3DwVtBYYfTrVyKvfqTqISP0cffqm6hJkSRB39DP
-         Jbc6QX4AxDEfIYK3hPusI5swPlrOfOecfgTaOv7JLmwkNLCTAnAdmnBhwS2k/dfjpQAs
-         buMdJKHxYSd7JK0uKM2VXeRhlqlGqir3fsl20EtisZ/TUMwnF1l8goKKBWphJqVSHkHG
-         UAsIfYMVLjvfTkmJzbv51TdeXd7Az/038axiseEfTa3nD43yyIOG1LYAgWCENJVzRuH5
-         HsfA==
+        d=broadcom.com; s=google; t=1754604918; x=1755209718; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o7aXLLLTdaewYlSZFKdW1YKq/QeHggS65uLCSdSCq1A=;
+        b=W8gQFF10EyToeRtOA8nhHS5zVeriTpuUzn/PyrIIVB/SMo8WhQG9HpYtlYkBtSf8pA
+         q27k5k0ly8xemar01OLO+FAyCBTAoNri2qg1hMBa8GDpnutEnTamZecq51D7gU7rTQ3E
+         jvgGSSlMl1JrSVcGczmm94U17LQs1j//mbL+g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754604885; x=1755209685;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfxYlW2qMJC6ED5bCsPHTl22hm4a2dt17JIaMaifM1o=;
-        b=cIEsMOivP9DBCAfCow2T+hXzyIFOh5/C0oc2+5zK2TrhsU9OueakIzMRCKrqOPZbHJ
-         bMMYoLVU19zN90MOtr+00ogGWqRnqCPL0Au+eqPm4K24gB88lkhCII5kH9qe9Xir79JL
-         Iqlhv5US8IVRDIjdigwncicnlxR31+tgcDcwTOTBLgc4RPnWenJWMrWDS5PYm4E5lFFR
-         Wb+A+SknRe/GkDkoH9QZ9vuR2daXJY3jUYt1VFokLeQgjz7hvzZmVlqn6xo/zDn0Tf8I
-         VSd4EU3dkJsHKlgZKI4ud1trY/kjQuGlKvggc6sqsNj2YpWF0WiMVk7j4f/Uf1P5n11P
-         lj8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXQcIa47YX8CkPJbtjvzafP0Z6QpveU0i9YS6u4QQaHTpAfhKccVT0LV9I45Dz7iUY+IwVKv4GisWSo+EM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxYCS+y64/rF8gIdhrd7GE5wIVClRYEP0Rz221HyBkhZsvPh8y
-	PEpsRPvpkd3Oqjnz2buNu9q9H5sPsP8AAOKvBP4E4Nn602xAWsZkaM4yyk0bynNutfqjS9BprXp
-	SuRxHPdcWwGf+TLKw8aTzNAZ9RQ==
-X-Google-Smtp-Source: AGHT+IG5jNphm0eq8JKWIiHMQnDqV1k9N3zpO9NfBB3SQdGjJcZ4B0Cgeoq+hULf5zIEBAON8V8CKg4Vp024w4Pluw==
-X-Received: from pjbnw14.prod.google.com ([2002:a17:90b:254e:b0:31e:3c57:ffc8])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4a06:b0:31f:6ddd:eef with SMTP id 98e67ed59e1d1-32183b3f4e7mr781688a91.21.1754604884089;
- Thu, 07 Aug 2025 15:14:44 -0700 (PDT)
-Date: Thu, 07 Aug 2025 15:14:42 -0700
-In-Reply-To: <diqz4iui4y00.fsf@ackerleytng-ctop.c.googlers.com>
+        d=1e100.net; s=20230601; t=1754604918; x=1755209718;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o7aXLLLTdaewYlSZFKdW1YKq/QeHggS65uLCSdSCq1A=;
+        b=VRjIPX1Su7hB21zpj2i40pFCEwRRIpoIjCjp9HaQ/licCTNrn5PRtxzWpV1JXCnX12
+         ZXr6Aal7qa5ycoFzmPwMEvyJKVxa+YOYaneSTDPtsPDPzMLCHvfDHZ5Ko1Cw3779meJU
+         4vMR8/yJBpeTo5ka+Gx4v8E5Hr1igScRx8rn/XmcSXfHO1P5UASRmY/eMaYDE9IzLHv7
+         LAPXe3PX99Tv6wq7xcErZmlCCoQT9gk0Q2MmhestXG+61GZceWhfq6DWOmP7DqrFs43W
+         4HQExKwQwL7mSotp0TGo1QADjSxT1KKYgSLC28y4fNTCscybejODUywwY+cX24sHNrIP
+         ZgKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmzkYNU4EZPdssz9/eNG/unDeMSl+H640UOCInny7DZaXxr244k14iF26mB57VR00MHJ1sMXTWT7N3coY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4IxZFejXQrrqlZIUh345IIau2goSIQMEI9xilunZDR1bhBWN4
+	SKk9UKpxRuLrcOFoq4ip1NtJNbqjZcbw2KwrBvymGcb/L9vagRFGXo+N1eHvY+/qeg==
+X-Gm-Gg: ASbGnctvhsi1pBTjd6uMhAFXQZrQ8xfuELeTUxtiMullpYrhOPYeocJbtLnWMZkp9Yt
+	mfd9DKxG/gzd3zsPHEdUV7lBY2B+1y77Y/IGtAOy2Ky4XG5oAl4epwd5Lee8IZxKOJIX2RaLGja
+	nc+3/lBvIOx6YHgvmzdXFHeafXJeXOCKHwl0JiO551WVaDSfrHb4kUvqDsmssyZb9rkZ3oACX3c
+	e6jgNe2SC/LSBeWKT/DwY8xQG2neLHvggNSAUUpP76/xR/L4w+XzktOOOOgwopbM+eIShimMGAG
+	ord6PMCNemtxDF7ptIpVe4lFgOSu5RuXU0UGXBBlpXq22qYY+AisOYHn7QBnBAT9pnfdFiEyuUs
+	qyRo380Mwhq9u+V52jByfGAXFa0g916fhtZEj6oZuvdktm8+ZVD8lSuHpkAHujI4eq9XbEgmH1J
+	UL8s4erJvOXqRj
+X-Google-Smtp-Source: AGHT+IFECAtHrfofLNszmttHHQwFVkK40S3ZHWrqpD2n3W0M30Gfsipiqbx2ZOcLlQJ+kKSkdKgcYg==
+X-Received: by 2002:a05:622a:1a8a:b0:4a7:81f6:331e with SMTP id d75a77b69052e-4b0afd8200bmr6892381cf.6.1754604918375;
+        Thu, 07 Aug 2025 15:15:18 -0700 (PDT)
+Received: from stband-bld-1.and.broadcom.net ([192.19.144.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b0aa1efe78sm9527421cf.8.2025.08.07.15.15.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 15:15:17 -0700 (PDT)
+From: Jim Quinlan <james.quinlan@broadcom.com>
+To: linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	jim2101024@gmail.com,
+	james.quinlan@broadcom.com
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/2] PCI: brcmstb: Add a way to indicate if PCIe bridge is active
+Date: Thu,  7 Aug 2025 18:15:12 -0400
+Message-Id: <20250807221513.1439407-2-james.quinlan@broadcom.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250807221513.1439407-1-james.quinlan@broadcom.com>
+References: <20250807221513.1439407-1-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250713174339.13981-2-shivankg@amd.com> <20250713174339.13981-4-shivankg@amd.com>
- <1e37e4e7-aa7b-4a2a-b1aa-1243f8094dcb@redhat.com> <diqz4iui4y00.fsf@ackerleytng-ctop.c.googlers.com>
-Message-ID: <diqz1ppm4w4t.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [PATCH V9 1/7] KVM: guest_memfd: Use guest mem inodes instead of
- anonymous inodes
-From: Ackerley Tng <ackerleytng@google.com>
-To: David Hildenbrand <david@redhat.com>, Shivank Garg <shivankg@amd.com>, seanjc@google.com, 
-	vbabka@suse.cz, willy@infradead.org, akpm@linux-foundation.org, 
-	shuah@kernel.org, pbonzini@redhat.com, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	shdhiman@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, 
-	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, 
-	kalyazin@amazon.com, peterx@redhat.com, jack@suse.cz, rppt@kernel.org, 
-	hch@infradead.org, cgzones@googlemail.com, ira.weiny@intel.com, 
-	rientjes@google.com, roypat@amazon.co.uk, ziy@nvidia.com, 
-	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com, 
-	byungchul@sk.com, gourry@gourry.net, kent.overstreet@linux.dev, 
-	ying.huang@linux.alibaba.com, apopple@nvidia.com, chao.p.peng@intel.com, 
-	amit@infradead.org, ddutile@redhat.com, dan.j.williams@intel.com, 
-	ashish.kalra@amd.com, gshan@redhat.com, jgowans@amazon.com, 
-	pankaj.gupta@amd.com, papaluri@amd.com, yuzhao@google.com, 
-	suzuki.poulose@arm.com, quic_eberman@quicinc.com, 
-	aneeshkumar.kizhakeveetil@arm.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Ackerley Tng <ackerleytng@google.com> writes:
+In a future commit, a new handler will be introduced that in part does
+reads and writes to some of the PCIe registers.  When this handler is
+invoked, it is paramount that it does not do these register accesses when
+the PCIe bridge is inactive, as this will cause CPU abort errors.
 
-> David Hildenbrand <david@redhat.com> writes:
->
+To solve this we keep a spinlock that guards a variable which indicates
+whether the bridge is on or off.  When the bridge is on, access of the PCIe
+HW registers may proceed.
 
-[snip]
+Since there are multiple ways to reset the bridge, we introduce a general
+function to obtain the spinlock, call the specific function that is used
+for the specific SoC, sets the bridge active indicator variable, and
+releases the spinlock.
 
->>
->> Nothing else jumped at me.
->>
->
-> Thanks for the review!
->
-> Since we're going to submit this patch through Shivank's mempolicy
-> support series, I'll follow up soon by sending a replacement patch in
-> reply to this series so Shivank could build on top of that?
->
->> -- 
->> Cheers,
->>
->> David / dhildenb
-
-I hope sending a patch within a reply this way works!
-
+Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 ---
+ drivers/pci/controller/pcie-brcmstb.c | 51 +++++++++++++++++++++------
+ 1 file changed, 40 insertions(+), 11 deletions(-)
 
-From 11845fed725ff68c3bad07cd9c717ae968465bf4 Mon Sep 17 00:00:00 2001
-Message-ID: <11845fed725ff68c3bad07cd9c717ae968465bf4.1754603750.git.ackerleytng@google.com>
-From: Ackerley Tng <ackerleytng@google.com>
-Date: Sun, 13 Jul 2025 17:43:35 +0000
-Subject: [PATCH 1/1] KVM: guest_memfd: Use guest mem inodes instead of
- anonymous inodes
-
-guest_memfd's inode represents memory the guest_memfd is
-providing. guest_memfd's file represents a struct kvm's view of that
-memory.
-
-Using a custom inode allows customization of the inode teardown
-process via callbacks. For example, ->evict_inode() allows
-customization of the truncation process on file close, and
-->destroy_inode() and ->free_inode() allow customization of the inode
-freeing process.
-
-Customizing the truncation process allows flexibility in management of
-guest_memfd memory and customization of the inode freeing process
-allows proper cleanup of memory metadata stored on the inode.
-
-Memory metadata is more appropriately stored on the inode (as opposed
-to the file), since the metadata is for the memory and is not unique
-to a specific binding and struct kvm.
-
-Co-developed-by: Fuad Tabba <tabba@google.com>
-Change-Id: I64925f069637323023fbff91fc8521f92b8561bd
-Signed-off-by: Fuad Tabba <tabba@google.com>
-Signed-off-by: Shivank Garg <shivankg@amd.com>
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
----
- include/uapi/linux/magic.h |   1 +
- virt/kvm/guest_memfd.c     | 128 ++++++++++++++++++++++++++++++-------
- virt/kvm/kvm_main.c        |   7 +-
- virt/kvm/kvm_mm.h          |   9 +--
- 4 files changed, 118 insertions(+), 27 deletions(-)
-
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index bb575f3ab45e5..638ca21b7a909 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -103,5 +103,6 @@
- #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
- #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
- #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
-+#define GUEST_MEMFD_MAGIC	0x474d454d	/* "GMEM" */
-
- #endif /* __LINUX_MAGIC_H__ */
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 08a6bc7d25b60..0e93323fc8392 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -1,12 +1,16 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <linux/anon_inodes.h>
- #include <linux/backing-dev.h>
- #include <linux/falloc.h>
-+#include <linux/fs.h>
- #include <linux/kvm_host.h>
-+#include <linux/pseudo_fs.h>
- #include <linux/pagemap.h>
--#include <linux/anon_inodes.h>
-
- #include "kvm_mm.h"
-
-+static struct vfsmount *kvm_gmem_mnt;
-+
- struct kvm_gmem {
- 	struct kvm *kvm;
- 	struct xarray bindings;
-@@ -385,9 +389,45 @@ static struct file_operations kvm_gmem_fops = {
- 	.fallocate	= kvm_gmem_fallocate,
+diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+index 9afbd02ded35..ceb431a252b7 100644
+--- a/drivers/pci/controller/pcie-brcmstb.c
++++ b/drivers/pci/controller/pcie-brcmstb.c
+@@ -30,6 +30,7 @@
+ #include <linux/reset.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
++#include <linux/spinlock.h>
+ #include <linux/string.h>
+ #include <linux/types.h>
+ 
+@@ -259,6 +260,7 @@ struct pcie_cfg_data {
+ 	int (*perst_set)(struct brcm_pcie *pcie, u32 val);
+ 	int (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
+ 	int (*post_setup)(struct brcm_pcie *pcie);
++	bool has_err_report;
  };
-
--void kvm_gmem_init(struct module *module)
-+static int kvm_gmem_init_fs_context(struct fs_context *fc)
-+{
-+	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
-+		return -ENOMEM;
-+
-+	fc->s_iflags |= SB_I_NOEXEC;
-+	fc->s_iflags |= SB_I_NODEV;
-+
-+	return 0;
-+}
-+
-+static struct file_system_type kvm_gmem_fs = {
-+	.name		 = "guest_memfd",
-+	.init_fs_context = kvm_gmem_init_fs_context,
-+	.kill_sb	 = kill_anon_super,
-+};
-+
-+static int kvm_gmem_init_mount(void)
-+{
-+	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
-+
-+	if (IS_ERR(kvm_gmem_mnt))
-+		return PTR_ERR(kvm_gmem_mnt);
-+
-+	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
-+	return 0;
-+}
-+
-+int kvm_gmem_init(struct module *module)
- {
- 	kvm_gmem_fops.owner = module;
-+
-+	return kvm_gmem_init_mount();
-+}
-+
-+void kvm_gmem_exit(void)
-+{
-+	kern_unmount(kvm_gmem_mnt);
-+	kvm_gmem_mnt = NULL;
+ 
+ struct subdev_regulators {
+@@ -303,6 +305,8 @@ struct brcm_pcie {
+ 	struct subdev_regulators *sr;
+ 	bool			ep_wakeup_capable;
+ 	const struct pcie_cfg_data	*cfg;
++	bool			bridge_on;
++	spinlock_t		bridge_lock;
+ };
+ 
+ static inline bool is_bmips(const struct brcm_pcie *pcie)
+@@ -310,6 +314,24 @@ static inline bool is_bmips(const struct brcm_pcie *pcie)
+ 	return pcie->cfg->soc_base == BCM7435 || pcie->cfg->soc_base == BCM7425;
  }
-
- static int kvm_gmem_migrate_folio(struct address_space *mapping,
-@@ -463,11 +503,71 @@ bool __weak kvm_arch_supports_gmem_mmap(struct kvm *kvm)
- 	return true;
- }
-
-+static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
-+						      loff_t size, u64 flags)
+ 
++static inline int brcm_pcie_bridge_sw_init_set(struct brcm_pcie *pcie, u32 val)
 +{
-+	struct inode *inode;
++	unsigned long flags;
++	int ret;
 +
-+	inode = anon_inode_make_secure_inode(kvm_gmem_mnt->mnt_sb, name, NULL);
-+	if (IS_ERR(inode))
-+		return inode;
++	if (pcie->cfg->has_err_report)
++		spin_lock_irqsave(&pcie->bridge_lock, flags);
 +
-+	inode->i_private = (void *)(unsigned long)flags;
-+	inode->i_op = &kvm_gmem_iops;
-+	inode->i_mapping->a_ops = &kvm_gmem_aops;
-+	inode->i_mode |= S_IFREG;
-+	inode->i_size = size;
-+	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-+	mapping_set_inaccessible(inode->i_mapping);
-+	/* Unmovable mappings are supposed to be marked unevictable as well. */
-+	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
++	ret = pcie->cfg->bridge_sw_init_set(pcie, val);
++	/* If we fail, assume the bridge is in reset (off) */
++	pcie->bridge_on = ret ? false : !val;
 +
-+	return inode;
++	if (pcie->cfg->has_err_report)
++		spin_unlock_irqrestore(&pcie->bridge_lock, flags);
++
++	return ret;
 +}
 +
-+static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
-+						  u64 flags)
-+{
-+	static const char *name = "[kvm-gmem]";
-+	struct inode *inode;
-+	struct file *file;
-+	int err;
-+
-+	err = -ENOENT;
-+	if (!try_module_get(kvm_gmem_fops.owner))
-+		goto err;
-+
-+	inode = kvm_gmem_inode_make_secure_inode(name, size, flags);
-+	if (IS_ERR(inode)) {
-+		err = PTR_ERR(inode);
-+		goto err_put_module;
-+	}
-+
-+	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
-+				 &kvm_gmem_fops);
-+	if (IS_ERR(file)) {
-+		err = PTR_ERR(file);
-+		goto err_put_inode;
-+	}
-+
-+	file->f_flags |= O_LARGEFILE;
-+	file->private_data = priv;
-+
-+out:
-+	return file;
-+
-+err_put_inode:
-+	iput(inode);
-+err_put_module:
-+	module_put(kvm_gmem_fops.owner);
-+err:
-+	file = ERR_PTR(err);
-+	goto out;
-+}
-+
- static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ /*
+  * This is to convert the size of the inbound "BAR" region to the
+  * non-linear values of PCIE_X_MISC_RC_BAR[123]_CONFIG_LO.SIZE
+@@ -756,9 +778,8 @@ static void __iomem *brcm7425_pcie_map_bus(struct pci_bus *bus,
+ 
+ static int brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
  {
--	const char *anon_name = "[kvm-gmem]";
- 	struct kvm_gmem *gmem;
--	struct inode *inode;
- 	struct file *file;
- 	int fd, err;
-
-@@ -481,32 +581,16 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 		goto err_fd;
+-	u32 tmp, mask = RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+-	u32 shift = RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+-	int ret = 0;
++	u32 tmp;
++	int ret;
+ 
+ 	if (pcie->bridge_reset) {
+ 		if (val)
+@@ -774,10 +795,10 @@ static int brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pcie, u32 val)
  	}
-
--	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
--					 O_RDWR, NULL);
-+	file = kvm_gmem_inode_create_getfile(gmem, size, flags);
- 	if (IS_ERR(file)) {
- 		err = PTR_ERR(file);
- 		goto err_gmem;
- 	}
-
--	file->f_flags |= O_LARGEFILE;
--
--	inode = file->f_inode;
--	WARN_ON(file->f_mapping != inode->i_mapping);
--
--	inode->i_private = (void *)(unsigned long)flags;
--	inode->i_op = &kvm_gmem_iops;
--	inode->i_mapping->a_ops = &kvm_gmem_aops;
--	inode->i_mode |= S_IFREG;
--	inode->i_size = size;
--	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
--	mapping_set_inaccessible(inode->i_mapping);
--	/* Unmovable mappings are supposed to be marked unevictable as well. */
--	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
--
- 	kvm_get_kvm(kvm);
- 	gmem->kvm = kvm;
- 	xa_init(&gmem->bindings);
--	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
-+	list_add(&gmem->entry, &file_inode(file)->i_mapping->i_private_list);
-
- 	fd_install(fd, file);
- 	return fd;
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 18f29ef935437..301d48d6e00d0 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -6489,7 +6489,9 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
- 	if (WARN_ON_ONCE(r))
- 		goto err_vfio;
-
--	kvm_gmem_init(module);
-+	r = kvm_gmem_init(module);
-+	if (r)
-+		goto err_gmem;
-
- 	r = kvm_init_virtualization();
- 	if (r)
-@@ -6510,6 +6512,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
- err_register:
- 	kvm_uninit_virtualization();
- err_virt:
-+	kvm_gmem_exit();
-+err_gmem:
- 	kvm_vfio_ops_exit();
- err_vfio:
- 	kvm_async_pf_deinit();
-@@ -6541,6 +6545,7 @@ void kvm_exit(void)
- 	for_each_possible_cpu(cpu)
- 		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
- 	kmem_cache_destroy(kvm_vcpu_cache);
-+	kvm_gmem_exit();
- 	kvm_vfio_ops_exit();
- 	kvm_async_pf_deinit();
- 	kvm_irqfd_exit();
-diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
-index 31defb08ccbab..9fcc5d5b7f8d0 100644
---- a/virt/kvm/kvm_mm.h
-+++ b/virt/kvm/kvm_mm.h
-@@ -68,17 +68,18 @@ static inline void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,
- #endif /* HAVE_KVM_PFNCACHE */
-
- #ifdef CONFIG_KVM_GUEST_MEMFD
--void kvm_gmem_init(struct module *module);
-+int kvm_gmem_init(struct module *module);
-+void kvm_gmem_exit(void);
- int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
- int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- 		  unsigned int fd, loff_t offset);
- void kvm_gmem_unbind(struct kvm_memory_slot *slot);
- #else
--static inline void kvm_gmem_init(struct module *module)
-+static inline int kvm_gmem_init(struct module *module)
- {
--
+ 
+ 	tmp = readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+-	tmp = (tmp & ~mask) | ((val << shift) & mask);
++	u32p_replace_bits(&tmp, val, RGR1_SW_INIT_1_INIT_GENERIC_MASK);
+ 	writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+ 
+-	return ret;
 +	return 0;
  }
--
-+static inline void kvm_gmem_exit(void) {};
- static inline int kvm_gmem_bind(struct kvm *kvm,
- 					 struct kvm_memory_slot *slot,
- 					 unsigned int fd, loff_t offset)
---
-2.50.1.703.g449372360f-goog
+ 
+ static int brcm_pcie_bridge_sw_init_set_7278(struct brcm_pcie *pcie, u32 val)
+@@ -1081,7 +1102,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+ 	int memc, ret;
+ 
+ 	/* Reset the bridge */
+-	ret = pcie->cfg->bridge_sw_init_set(pcie, 1);
++	ret = brcm_pcie_bridge_sw_init_set(pcie, 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1097,7 +1118,7 @@ static int brcm_pcie_setup(struct brcm_pcie *pcie)
+ 	usleep_range(100, 200);
+ 
+ 	/* Take the bridge out of reset */
+-	ret = pcie->cfg->bridge_sw_init_set(pcie, 0);
++	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1565,7 +1586,7 @@ static int brcm_pcie_turn_off(struct brcm_pcie *pcie)
+ 
+ 	if (!(pcie->cfg->quirks & CFG_QUIRK_AVOID_BRIDGE_SHUTDOWN))
+ 		/* Shutdown PCIe bridge */
+-		ret = pcie->cfg->bridge_sw_init_set(pcie, 1);
++		ret = brcm_pcie_bridge_sw_init_set(pcie, 1);
+ 
+ 	return ret;
+ }
+@@ -1653,7 +1674,9 @@ static int brcm_pcie_resume_noirq(struct device *dev)
+ 		goto err_reset;
+ 
+ 	/* Take bridge out of reset so we can access the SERDES reg */
+-	pcie->cfg->bridge_sw_init_set(pcie, 0);
++	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
++	if (ret)
++		goto err_reset;
+ 
+ 	/* SERDES_IDDQ = 0 */
+ 	tmp = readl(base + HARD_DEBUG(pcie));
+@@ -1921,7 +1944,10 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(&pdev->dev, ret, "could not enable clock\n");
+ 
+-	pcie->cfg->bridge_sw_init_set(pcie, 0);
++	ret = brcm_pcie_bridge_sw_init_set(pcie, 0);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "could not un-reset the bridge\n");
+ 
+ 	if (pcie->swinit_reset) {
+ 		ret = reset_control_assert(pcie->swinit_reset);
+@@ -1938,7 +1964,7 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+ 		if (ret) {
+ 			clk_disable_unprepare(pcie->clk);
+ 			return dev_err_probe(&pdev->dev, ret,
+-					     "could not de-assert reset 'swinit'\n");
++					     "could not deassert bridge reset\n");
+ 		}
+ 	}
+ 
+@@ -1996,6 +2022,9 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	if (pcie->cfg->has_err_report)
++		spin_lock_init(&pcie->bridge_lock);
++
+ 	return 0;
+ 
+ fail:
+-- 
+2.34.1
+
 
