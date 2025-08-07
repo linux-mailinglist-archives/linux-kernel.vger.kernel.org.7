@@ -1,220 +1,201 @@
-Return-Path: <linux-kernel+bounces-759152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 214B7B1D942
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:43:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961C2B1D945
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBEC8626019
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:42:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57BC6188EFB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF43257448;
-	Thu,  7 Aug 2025 13:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEWLYMxH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFED25CC7A;
+	Thu,  7 Aug 2025 13:44:31 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB122242D84;
-	Thu,  7 Aug 2025 13:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F5C13B58A;
+	Thu,  7 Aug 2025 13:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754574168; cv=none; b=SaIND0iHXNKmSStJbQI3X89satVCUoQvIPlPyI1dxX0KS8QC7FHcoGK1K+WHDPFUy5RL7E7iPvAvcrfX4+Syi5Pd2+WwKVSXQUyZ3SOB2h7hnQtuZ4R5uhAGvOgloRmxOX6VIjWvLDluHPprdF3sNXkDH6BUrrVlYMJELpjSilE=
+	t=1754574271; cv=none; b=D4xHT7WLh32/6idsv9BwhtsbIekx/y1Sn/lEae7fRL+I8HmzkyAKTyNgaqpr4wc7zu5Uhd8sXDi+bXvWTw4ebXwZn4Taf0+ybNMjNvDZ8J8h/IM/ijNTlzxEL5JUfCDh8mEFqolJTce7T1F2F4N00SXipr82mTfMw1dI2aR5UAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754574168; c=relaxed/simple;
-	bh=dhX65AbgfS/KR4PaiEOOQpG6AstcgDk1GMb4f5SARWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mOb1Y+fYxqLb8sffP1Mjh8xOgXGKCE/RMDbG5yhwvGkMaUP9KlOBcpV95IZszB1OhpAQOmPPHkzZ4Lj824zIl9b9B4gRCeKA2WfUkQRMfhyp0C22F1Mh2sr8XjmF3d079XkX0KsfDypqsZX1lSAYpM6Zu1DFWfD4CUY00fwsDEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEWLYMxH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58EB7C4CEF6;
-	Thu,  7 Aug 2025 13:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754574168;
-	bh=dhX65AbgfS/KR4PaiEOOQpG6AstcgDk1GMb4f5SARWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bEWLYMxHcH2jizGyY/SFgN5uigtWAiTuKXTIcPw3oMNicxwhx7UQQy/ECp6kPCBRz
-	 Q+a4BU9bTXkObP4c4MgyD53iy8bgZSrveG3zzbKFYdxHKgDgBaHkZrxfuxeEhpGx9B
-	 ayQpfQineK/u17uTenDsF6t6ZSWlacb839OtcnoeUSc1u2vsPVepZmUgrKZYbwx/sp
-	 KwjFJ3vfM7YoauRiKlKG13yrwBD1y7f2m8wY+voQpUH1dr/tEtTbB25+BzWtkSiYK1
-	 mA2DqWTTZ4SLB3LXsRQJ1l1Fp3S+RLfRUPZGxmfiuRHABuDuC9MIqJZZ30iSnloPtL
-	 pmACWhnM4CCtg==
-Date: Thu, 7 Aug 2025 15:42:39 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 03/11] fsopen.2: document 'new' mount api
-Message-ID: <3u44qtys5a6k7hspgs6syhhuuicwjtdzdsdhe65j3kilacmfuj@pqsaofcc4lul>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
- <afty6mfpowwj3kzzbn3p7s4j4ovmput34dtqfzzwa57ocaita4@2jj4qandbnw3>
- <2025-08-07.1754570381-dill-stub-postwar-mowers-wrinkly-pacifism-hYIHTB@cyphar.com>
+	s=arc-20240116; t=1754574271; c=relaxed/simple;
+	bh=TeaD2IgUIVzQ5ragLIu88y/T0MM1pyFNVBzbYH6mJZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O7Hv+C22oXmzM/IvsmdMldQeXyNJsuazE8R1u9asefCcLP1EtZODTIbYA2kJo01md9iIKoweIqggeY2HmEmEkm8195bHoZcmPgqIF5adMhEZrqGlOv5z6j6+bFNHHH516RIyw7QfWjBXUwAdSVvDkSidh48l1nnrWtOjVd6bQF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4byT0m6qWxzYQtrx;
+	Thu,  7 Aug 2025 21:44:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 976C91A1508;
+	Thu,  7 Aug 2025 21:44:23 +0800 (CST)
+Received: from [10.174.178.72] (unknown [10.174.178.72])
+	by APP4 (Coremail) with SMTP id gCh0CgBn4hKzrZRoI_OMCw--.46689S3;
+	Thu, 07 Aug 2025 21:44:21 +0800 (CST)
+Message-ID: <1aa629f8-88d3-4e1b-9e96-003959809fa1@huaweicloud.com>
+Date: Thu, 7 Aug 2025 21:44:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qkuodxlnnepjp6wv"
-Content-Disposition: inline
-In-Reply-To: <2025-08-07.1754570381-dill-stub-postwar-mowers-wrinkly-pacifism-hYIHTB@cyphar.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] block: fix kobject double initialization in add_disk
+To: Nilay Shroff <nilay@linux.ibm.com>, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+ houtao1@huawei.com, zhengqixing@huawei.com
+References: <20250807072056.2627592-1-zhengqixing@huaweicloud.com>
+ <470ab442-e5eb-4fa8-bde7-d6d2d1115a5a@linux.ibm.com>
+From: Zheng Qixing <zhengqixing@huaweicloud.com>
+In-Reply-To: <470ab442-e5eb-4fa8-bde7-d6d2d1115a5a@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBn4hKzrZRoI_OMCw--.46689S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF1fArWxJw47AFyxZFykGrg_yoWrCw4rpr
+	WfWw47G3yktr4xZwsrC3WDAr18Krs5Grn3Ars3Kr9IvrZxXrnIgF4UGFW7ZF48Ars3CF4S
+	qF40ywsxKr1kCFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+
+Hi,
 
 
---qkuodxlnnepjp6wv
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 03/11] fsopen.2: document 'new' mount api
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
- <afty6mfpowwj3kzzbn3p7s4j4ovmput34dtqfzzwa57ocaita4@2jj4qandbnw3>
- <2025-08-07.1754570381-dill-stub-postwar-mowers-wrinkly-pacifism-hYIHTB@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <2025-08-07.1754570381-dill-stub-postwar-mowers-wrinkly-pacifism-hYIHTB@cyphar.com>
-
-Hi Aleksa,
-
-On Thu, Aug 07, 2025 at 10:50:17PM +1000, Aleksa Sarai wrote:
-> > > +A filesystem configuration context is an in-kernel representation of=
- a pending
-> > > +transaction,
-> >=20
-> > This page still needs semantic newlines.  (Please review all pages
-> > regarding that.)  (In this specific sentence, I'd break after 'is'.)
->=20
-> I did try adding them to this page (and all of the other pages -- I
-> suspect the pages later in the patchset have more aggressive newlining).
-> If you compare the newline placement between v1 and v2 you'll see that I
-> have added a lot of newlines in all of the man-pages, but it's possible
-> I missed a couple of sentences like this one.
-
-Yup, it's quite better.  Thanks!
-
-> To be honest I feel quite lost where the "semantic newlines" school
-> would deem appropriate to place newlines, and man-pages(7) is very terse
-> on the topic. Outside of very obvious examples,
-> it just feels wrong
-> to have such choppy
-> line break usage.
-> I understand
-> the argument that
-> this helps
-> with reviewing diffs,
-> but I really find it
-> incredibly unnatural.
-> (And this tongue-in-cheek example
-> is probably wrong too.)
-
-I understand.  The guidelines I use are:
-
-	If there's punctuation, break.
-	If there isn't punctuation, but the sentence would go past the
-	80-char right margin, try to find the best point to break (this
-	is sometimes hard or subjective).
-	Other than that, there's no need to break.
-
-Does that seem reasonable?  (I can always amend a few cases that you
-don't know where to split.)
-
->=20
-> > > +containing a set of configuration parameters that are to be applied
-> > > +when creating a new instance of a filesystem
-> > > +(or modifying the configuration of an existing filesystem instance,
-> > > +such as when using
-> > > +.BR fspick (2)).
-> > > +.P
-> > > +After obtaining a filesystem configuration context with
-> > > +.BR fsopen (),
-> > > +the general workflow for operating on the context looks like the fol=
-lowing:
-> > > +.IP (1) 5
-> > > +Pass the filesystem context file descriptor to
-> > > +.BR fsconfig (2)
-> > > +to specify any desired filesystem parameters.
-> > > +This may be done as many times as necessary.
-> > > +.IP (2)
-> > > +Pass the same filesystem context file descriptor to
-> >=20
-> > Do we need to say "same"?  I guess it's obvious.  Or do you expect
-> > any confusion if we don't?
->=20
-> The first time I saw this interface I was confused when you pass
-> which file descriptor (especially around the FSCONFIG_CMD_CREATE stage),
-> so I felt it better to make it clear which file descriptor we are
-> talking about.
-
-Okay.
-
-> > > +.EX
-> > > +int fsfd, mntfd;
-> > > +\&
-> > > +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
-> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> > > +fsconfig(fsfd, FSCONFIG_SET_PATH, "source", "/dev/sdb1", AT_FDCWD);
-> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
-> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
-> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
-> > > +fsconfig(fsfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0)
-> > > +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> > > +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_RELATIME);
-> > > +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-> > > +.EE
-> > > +.in
-> > > +.P
-> > > +First, an ext4 configuration context is created and attached to the =
-file
-> >=20
-> > Here, I'd break after the ',', and if you need to break again, after
-> > 'created'.
->=20
-> Okay, I wanted to avoid having lines with single words due to semantic
-> newlines, but if that's what you prefer I can update that everywhere...
-
-I don't have a strong opinion on that.  I sometimes avoid the break if
-the rest of the sentence is short and all fits in one line, but if you
-already need to break, that'd be the first obvious place to look at.
-Other times, I have a more pedantic day, and split at every comma, even
-unnecessarily.
+在 2025/8/7 19:47, Nilay Shroff 写道:
+>
+> On 8/7/25 12:50 PM, Zheng Qixing wrote:
+>> From: Zheng Qixing <zhengqixing@huawei.com>
+>>
+>> Device-mapper can call add_disk() multiple times for the same gendisk
+>> due to its two-phase creation process (dm create + dm load). This leads
+>> to kobject double initialization errors when the underlying iSCSI devices
+>> become temporarily unavailable and then reappear.
+>>
+>> However, if the first add_disk() call fails and is retried, the queue_kobj
+>> gets initialized twice, causing:
+>>
+>> kobject: kobject (ffff88810c27bb90): tried to init an initialized object,
+>> something is seriously wrong.
+>>   Call Trace:
+>>    <TASK>
+>>    dump_stack_lvl+0x5b/0x80
+>>    kobject_init.cold+0x43/0x51
+>>    blk_register_queue+0x46/0x280
+>>    add_disk_fwnode+0xb5/0x280
+>>    dm_setup_md_queue+0x194/0x1c0
+>>    table_load+0x297/0x2d0
+>>    ctl_ioctl+0x2a2/0x480
+>>    dm_ctl_ioctl+0xe/0x20
+>>    __x64_sys_ioctl+0xc7/0x110
+>>    do_syscall_64+0x72/0x390
+>>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>>
+>> Fix this by separating kobject initialization from sysfs registration:
+>>   - Initialize queue_kobj early during gendisk allocation
+>>   - add_disk() only adds the already-initialized kobject to sysfs
+>>   - del_gendisk() removes from sysfs but doesn't destroy the kobject
+>>   - Final cleanup happens when the disk is released
+>>
+>> Fixes: 2bd85221a625 ("block: untangle request_queue refcounting from sysfs")
+>> Reported-by: Li Lingfeng <lilingfeng3@huawei.com>
+>> Closes: https://lore.kernel.org/all/83591d0b-2467-433c-bce0-5581298eb161@huawei.com/
+>> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+>> ---
+>>   block/blk-sysfs.c | 4 +---
+>>   block/blk.h       | 1 +
+>>   block/genhd.c     | 2 ++
+>>   3 files changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+>> index 396cded255ea..37d8654faff9 100644
+>> --- a/block/blk-sysfs.c
+>> +++ b/block/blk-sysfs.c
+>> @@ -847,7 +847,7 @@ static void blk_queue_release(struct kobject *kobj)
+>>   	/* nothing to do here, all data is associated with the parent gendisk */
+>>   }
+>>   
+>> -static const struct kobj_type blk_queue_ktype = {
+>> +const struct kobj_type blk_queue_ktype = {
+>>   	.default_groups = blk_queue_attr_groups,
+>>   	.sysfs_ops	= &queue_sysfs_ops,
+>>   	.release	= blk_queue_release,
+>> @@ -875,7 +875,6 @@ int blk_register_queue(struct gendisk *disk)
+>>   	struct request_queue *q = disk->queue;
+>>   	int ret;
+>>   
+>> -	kobject_init(&disk->queue_kobj, &blk_queue_ktype);
+>>   	ret = kobject_add(&disk->queue_kobj, &disk_to_dev(disk)->kobj, "queue");
+>>   	if (ret < 0)
+>>   		goto out_put_queue_kobj;
+> If the kobject_add() fails here, then we jump to the label out_put_queue_kobj,
+> where we release/put disk->queue_kobj. That would decrement the kref of
+> disk->queue_kobj and possibly bring it to zero.
 
 
-Cheers,
-Alex
+Since we remove the kobject_init() into alloc disk, when the 
+kobject_add() fails here,
 
---=20
-<https://www.alejandro-colomar.es/>
+it should return without kobject_del/put().
 
---qkuodxlnnepjp6wv
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+If kobject_add() succeeds but later steps fail, we should call 
+kobject_del() to rollback.
 
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiUrU4ACgkQ64mZXMKQ
-wqnTaA/+O7z7oj6Sv67u8mhwvcsgbLALqTTvBca9IqwAMeJnEV7a9X5PKUGQty3B
-Hc6L+Zsfdm2kDSU42TxeI2hqDelup+jKCwmzWJpQMGgOoiI4XcnXgf1YobvEXhhT
-riLc9i2PQT/Bd6U5C+6zzuntBVjHxaRCfTzqDrSolQinZYAGIRztEqWrdI0C+hXy
-cGbRE3dXFt2sTcLP4MftPuvV6hWm6keeOvDYaBtH9fprE777obJhVHMxdZZQMY83
-ZwtJKT27dVlm6LAVHGKddaBOydZkCIjHVAW1me0nRxW5ZYFZelWXuh/9dO0MW4lF
-bXPVL09qeDA/s7sPacOYpcHguKAQ4NAngPd2RMtm0YG+INoSx3RuY9wUxfudcYbU
-YVJspezm0+VaUv1zS10venuv1swWpSiJjjL9kohopGe9PXctxzze9OwCHhU8i6WB
-HafuQtrQV/0jPsnNmcU0vk8vjRHFedvVDO7KGDs+8YcILsBdspuqGHniqPPJfeWk
-4Vf1V5SnOHvSJPWJ/LJXy6C/vvaV5zmjGYuvtZPcV/GuJgFV0y0d6yFKf/C4nHeu
-EsyzNEhqhficSws6eslw6RerjrvjUWLdYIGUBNzvni5u/PfZToFpBxI5thKPluXH
-aPoYsZDPJWot38955MK4LIETF783alrCL8xJXESg239BCZ513j0=
-=QzCX
------END PGP SIGNATURE-----
 
---qkuodxlnnepjp6wv--
+The current error handling with kobject_put() in blk_register_queue() is 
+indeed problematic.
+
+
+> Next time, when we call add_disk() again without invoking kobject_init()
+> (because the initialization is now moved outside add_disk()), the refcount
+> of disk->queue_kobj — which was previously released — would now go for a
+> toss. Wouldn't that lead to use-after-free or inconsistent state?
+>
+>> @@ -986,5 +985,4 @@ void blk_unregister_queue(struct gendisk *disk)
+>>   		elevator_set_none(q);
+>>   
+>>   	blk_debugfs_remove(disk);
+>> -	kobject_put(&disk->queue_kobj);
+>>   }
+> I'm thinking a case where add_disk() fails after the queue is registered.
+> In that case, we call blk_unregister_queue() — which would ideally put()
+> the disk->queue_kobj.
+> But if we skip that put() in blk_unregister_queue() (and that's what we do
+> above), and then later retry add_disk(), wouldn’t kobject_add() from
+> blk_register_queue() complain loudly — since we’re trying to add a kobject
+> that was already added previously?
+
+
+blk_unregister_queue() calls kobject_del(), then the sysfs state is 
+properly cleaned up
+
+and retry should work fine.
+
+
+>
+> Thanks,
+> --Nilay
+
+
+Thanks,
+
+Qixing
+
 
