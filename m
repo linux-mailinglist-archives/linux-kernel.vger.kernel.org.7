@@ -1,62 +1,52 @@
-Return-Path: <linux-kernel+bounces-759257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EA9B1DB1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:56:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E51B1DB1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F23727446
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE6B3AAAA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8746226A0A6;
-	Thu,  7 Aug 2025 15:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCA026A1BE;
+	Thu,  7 Aug 2025 15:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/xuTx+X"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="brf6SW+g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC982367BF;
-	Thu,  7 Aug 2025 15:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AF72367BF;
+	Thu,  7 Aug 2025 15:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582193; cv=none; b=oSuFaLWkSJCdjIlyxEFSZ7VzlwBc3qRvdMJYymamrjx5YOUQ4CT7lbs9awsYlNKlFig3KY6/T3kCmIU3O1bDvmCzclKI2SGciQ2jweqkS4vy84atCQgxANz1gBD9qHvl4MpEuhrBD/xxG09JjwyfDUjxIC5Fgu7p1DeT8XOFJGM=
+	t=1754582237; cv=none; b=UTehySQc22yDcorWZB4CHe7qgc9mE+Vzu7e5f7gDWG+5g66xc9brENtkPekKz+wJuOBDZBxs2YgQUE6719nUHYxZTfng8OD/7ZGp7CHM5n0fRuzUqVFe+0853q4I5Hm5RUn195iX/qK18fRCMkFvMXjpiUnBfVgrJxxxYPB0/eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582193; c=relaxed/simple;
-	bh=Xs2eRRgMOKZ3yJrDm7z8G/UmvBpz47OWkvePKKXCCzg=;
+	s=arc-20240116; t=1754582237; c=relaxed/simple;
+	bh=wijCqtSFgvwfCnGWy8j3vxWrbKu6Gn+GUWOOTZgLR3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ryRdrvpuJpGi3YyzldtPmbA/xSdp52PlCRJfo54NqjAOlp1bJsn1JEZEve/5I/pjVpi7EQYiXVcC1q0YqA2oOviU/qXQpH+M7us2syb0ZTUU8BzuTSzjUiFRPavFCin2CkmlyggGGxvHQVGR19iqZvg2OfvB/qoPAfL2Pqj9a/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/xuTx+X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60936C4CEEB;
-	Thu,  7 Aug 2025 15:56:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754582192;
-	bh=Xs2eRRgMOKZ3yJrDm7z8G/UmvBpz47OWkvePKKXCCzg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdjN2YeUtjJQsmteDvDXrDZx8p+NP7HQ7SboUmn3uXL+LrS9Y9KjESqmy0dLpAWTHs7w2nc4fAIa1DHY2fMzdr/PqEVh+ayASCySJ397lVIY1dsgT3bTTV7rm61tB7Tlsw9g5IzdIXw9l8dQvUsc9Cu9joniIoV4UllhPfuUWEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=brf6SW+g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDB4C4CEF1;
+	Thu,  7 Aug 2025 15:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754582236;
+	bh=wijCqtSFgvwfCnGWy8j3vxWrbKu6Gn+GUWOOTZgLR3s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f/xuTx+Xd3I3yDNkd0MUdhEoTNZ047KhLQOr9QMASpgWAs41RDJGRtToDZumDRi7F
-	 8nt4LKReshbg3CBXwjNAV2gHvn+kp+Dw6CIX1DS1CyqATd22MgTQ0qgHj8QEsz8xki
-	 iL/AmLh0jkWcGPTRYMKbT1J+/fiED9IxR3Zd6pxEFVZXrRzH7yDuSutgaGkHUpfwCr
-	 ycWChe0d/aUecgorjBVETU9z+ishyX96Wl2IJDrJqnwqGLQFK0axlZtjspMGYsoZR6
-	 UjjHWaHJYgqfV9JpFuLzkzO79RYVwIIr30gO3CzG6zB18SjxVIaM+2SBIfZzmyvO82
-	 vt8EY3yvXZIqQ==
-Date: Thu, 7 Aug 2025 08:56:26 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] kvm: arm64: use BUG() instead of BUG_ON(1)
-Message-ID: <20250807155626.GA2145434@ax162>
-References: <20250807072132.4170088-1-arnd@kernel.org>
+	b=brf6SW+gcSqUbaBUS+Fgzi6oxKy9Hme41RnY9oTbxW2vbJCaJF9Vhn4MoQgVRC72j
+	 jPxzCxP2cWMV8dn2PXEItHOlK3k07GSGmSNMjG0b6OnXrVcUx+MKBKi8kHmRzSXa2W
+	 6nIaFvFwIbOIGmQgjcrLc6V07wCzQZSHLlVLQ8Kk=
+Date: Thu, 7 Aug 2025 16:57:11 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Devaansh Kumar <devaanshk840@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+	dvhart@infradead.org, skhan@linuxfoundation.org, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] futex: selftests: Add description for futex_wake_op()
+Message-ID: <2025080753-utensil-magnifier-3301@gregkh>
+References: <20250806183030.542453-1-devaanshk840@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,63 +55,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250807072132.4170088-1-arnd@kernel.org>
+In-Reply-To: <20250806183030.542453-1-devaanshk840@gmail.com>
 
-On Thu, Aug 07, 2025 at 09:21:28AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The BUG_ON() macro adds a little bit of complexity over BUG(), and in
-> some cases this ends up confusing the compiler's control flow analysis
-> in a way that results in a warning. This one now shows up with clang-21:
-> 
-> arch/arm64/kvm/vgic/vgic-mmio.c:1094:3: error: variable 'len' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
->  1094 |                 BUG_ON(1);
-> 
-> Change both instances of BUG_ON(1) to a plain BUG() in the arm64 kvm
-> code, to avoid the false-positive warning.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Yeah I had responded to a build report around this but I never followed
-up on seeing if it got fixed.
-
-https://lore.kernel.org/20250714171559.GA1364710@ax162/
-
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
+On Thu, Aug 07, 2025 at 12:00:26AM +0530, Devaansh Kumar wrote:
+> Signed-off-by: Devaansh Kumar <devaanshk840@gmail.com>
 > ---
->  arch/arm64/kvm/hyp/nvhe/list_debug.c | 2 +-
->  arch/arm64/kvm/vgic/vgic-mmio.c      | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  tools/testing/selftests/futex/include/futextest.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/list_debug.c b/arch/arm64/kvm/hyp/nvhe/list_debug.c
-> index 46a2d4f2b3c6..baa6260f88dc 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/list_debug.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/list_debug.c
-> @@ -17,7 +17,7 @@ static inline __must_check bool nvhe_check_data_corruption(bool v)
->  		bool corruption = unlikely(condition);			 \
->  		if (corruption) {					 \
->  			if (IS_ENABLED(CONFIG_BUG_ON_DATA_CORRUPTION)) { \
-> -				BUG_ON(1);				 \
-> +				BUG();				 	 \
->  			} else						 \
->  				WARN_ON(1);				 \
->  		}							 \
-> diff --git a/arch/arm64/kvm/vgic/vgic-mmio.c b/arch/arm64/kvm/vgic/vgic-mmio.c
-> index e416e433baff..a573b1f0c6cb 100644
-> --- a/arch/arm64/kvm/vgic/vgic-mmio.c
-> +++ b/arch/arm64/kvm/vgic/vgic-mmio.c
-> @@ -1091,7 +1091,7 @@ int vgic_register_dist_iodev(struct kvm *kvm, gpa_t dist_base_address,
->  		len = vgic_v3_init_dist_iodev(io_device);
->  		break;
->  	default:
-> -		BUG_ON(1);
-> +		BUG();
->  	}
+> diff --git a/tools/testing/selftests/futex/include/futextest.h b/tools/testing/selftests/futex/include/futextest.h
+> index ddbcfc9b7..c77352b97 100644
+> --- a/tools/testing/selftests/futex/include/futextest.h
+> +++ b/tools/testing/selftests/futex/include/futextest.h
+> @@ -134,7 +134,9 @@ futex_unlock_pi(futex_t *uaddr, int opflags)
+>  }
 >  
->  	io_device->base_addr = dist_base_address;
+>  /**
+> - * futex_wake_op() - FIXME: COME UP WITH A GOOD ONE LINE DESCRIPTION
+> + * futex_wake_op() - atomically modify uaddr2
+> + * @nr_wake:	wake up to this many tasks on uaddr
+> + * @nr_wake2:	wake up to this many tasks on uaddr2
+>   */
+>  static inline int
+>  futex_wake_op(futex_t *uaddr, futex_t *uaddr2, int nr_wake, int nr_wake2,
 > -- 
-> 2.39.5
+> 2.49.0
 > 
 > 
+
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
