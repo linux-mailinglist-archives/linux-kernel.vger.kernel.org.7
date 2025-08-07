@@ -1,143 +1,176 @@
-Return-Path: <linux-kernel+bounces-758476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779F1B1CFB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:08:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F601B1CFB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAD73BDB46
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:08:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9F87A103E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 00:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D15D79F5;
-	Thu,  7 Aug 2025 00:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219CE4A0C;
+	Thu,  7 Aug 2025 00:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akbBS9j7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qxptms4r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C93A36D;
-	Thu,  7 Aug 2025 00:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A96E36D;
+	Thu,  7 Aug 2025 00:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754525282; cv=none; b=r5C0mehDAQS4bahVkpzrkdpf3DJbXafOLd21QhCbnogPD59SR/m9XKnzfHgDh8Gw7sTuQzepETSxS4G/JopqNLcanXOaTd0sdNROcsZzqZfPZJbfPPnHWG8JCEEsZhIgxVYCD0AECDYmpybCaDhj0lwpbGJMS4CG5a7MbCV+e4I=
+	t=1754525320; cv=none; b=RIV98aAnp0m6wN4VJLcOVxcxIXspL/m91l5QNDxoi56ZL03qQWU/Hgid39GqW241DdQ4wpy5K82TlirR8I3neeEoKZ0mmg474BOzbOc9F+OFAD6hVIo4JeF7LLK7I7hQz4LdFzaKXGwglRVYB2cC2pLNKO7uHpTNNvYDb1Stl/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754525282; c=relaxed/simple;
-	bh=i1Qi1/3wzDaKetCKmFYqM8eZOcimxutdL+vhkFS3Up4=;
+	s=arc-20240116; t=1754525320; c=relaxed/simple;
+	bh=VyZExco2dKDu7jHN+QS2bBXqITlKj8MshUpQWgIF4PU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ez5AeIbuOXKQMcKlHnTwJA88khuvhNn7ha3mpXEwoNNLE+fUaTS3BiPYYn23A9+2E4Tf8qos1a3zCnq+Hu0pAjijqSABiJ9hJn6lFV29ecmSNIjB+hQyPaI3rA8t26AHVCy4xt1+jwT4vvEj+jmY267mPX/HuOxbUBRSw78bqp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akbBS9j7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D8BC4CEE7;
-	Thu,  7 Aug 2025 00:08:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dvtnNPUyIzICuiq7fGxY/x99Sxn1qcFHXf+BexfWbtvoiBOCxDDjfHcQWDrFLlT8Fy3vq2u2ObszEu2gg2us6Bourxc/S91pWTOaOURDJ+4MSN6AvhFxUdxmnLZ4z+1eHRoYJOXHCeIPWHSCdymg8fAUdar+0Iw2PbMskucquUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qxptms4r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7C8C4CEE7;
+	Thu,  7 Aug 2025 00:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754525282;
-	bh=i1Qi1/3wzDaKetCKmFYqM8eZOcimxutdL+vhkFS3Up4=;
+	s=k20201202; t=1754525320;
+	bh=VyZExco2dKDu7jHN+QS2bBXqITlKj8MshUpQWgIF4PU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=akbBS9j75asLBDfgYXm9aUCnsMFoBIprkjJgc7KXttK4z6RST44eQGAK/E4R09Ko8
-	 PvxWNuXzOSPlojIXKnCYyLz4c2MN9OSrZ1a6CzwLGD+6fxLJeEXCZTJicajSCKlWQ4
-	 se9SA3mGsu8H7Nd8QCEX0AMQ8XeyVOjBXST/PvSInQloGkd2/D49Ttd7TYJEHAOIpx
-	 fS8ItDq75rWU7mpvLArpbK4KaQoeBHVB3tyn6B/7kMPo/S1UkZRf2m6paPS6I0iSBi
-	 EPdS6F5Xy5vLJFOZVTti7HU/iaHZQvQ5H1tyTT+lHA6+0s/XAHyG84OxTDwfeP9ayD
-	 QhRIc1+98UjWg==
-Date: Wed, 6 Aug 2025 19:08:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luca Weiss <luca.weiss@fairphone.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: input: Add bindings for Awinic AW86927
-Message-ID: <20250807000801.GA2081012-robh@kernel.org>
-References: <20250806-aw86927-v1-0-23d8a6d0f2b2@fairphone.com>
- <20250806-aw86927-v1-1-23d8a6d0f2b2@fairphone.com>
+	b=Qxptms4rdNkS0gG39JU1NUcuI5qcWFffXIQ8hqqTe+CwU0ZoTU4TBJ5inww+NBoQQ
+	 jC51XwVA4U4yMASUHxY8nUldnH6/ewUUpQJmBTATFJLGlERyvxZSIjScayLd6gGH8O
+	 9kg4GpKmBYrkG1SSeIhyYd4XiXvcExNCFf1YciIt+B2eHZJ/P+vcXs+4RcEOtEC83V
+	 5Jc9Gaqrej9Pir2vnFFCPyloxKRa3X8AhYi/TbxsQ8PkuzScXmB8ZqFYK6HYswWCXw
+	 LIbE++wstdpMwXISsKDVq4ecUEO5m2kWMeSmXjKb23ODkmHdoR2pFSHkKYQoR2nCym
+	 C5O74wq/PLX4Q==
+Date: Wed, 6 Aug 2025 17:08:38 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kevin Tian <kevin.tian@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [PATCH 4/5] perf tools kvm: Use "cycles" to sample guest for
+ "kvm record" on Intel
+Message-ID: <aJPuhpFK_ZjLk-ct@google.com>
+References: <20250805004633.135904-1-dapeng1.mi@linux.intel.com>
+ <20250805004633.135904-5-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250806-aw86927-v1-1-23d8a6d0f2b2@fairphone.com>
+In-Reply-To: <20250805004633.135904-5-dapeng1.mi@linux.intel.com>
 
-On Wed, Aug 06, 2025 at 05:10:08PM +0200, Griffin Kroah-Hartman wrote:
-> Add bindings for the Awinic AW86927 haptic chip which can be found in
-> smartphones.
+On Tue, Aug 05, 2025 at 08:46:32AM +0800, Dapeng Mi wrote:
+> After KVM supports PEBS for guest on Intel platforms
+> (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
+> host loses the capability to sample guest with PEBS since all PEBS related
+> MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
+> switched to guest GVA at vm-entry. This would lead to "perf kvm record"
+> fails to sample guest on Intel platforms since "cycles:P" event is used to
+> sample guest by default as below case shows.
+
+Do you mean we cannot use "cycles:PG" for perf kvm record?
+
 > 
-> Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+> sudo perf kvm record -a
+> ^C[ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.787 MB perf.data.guest ]
+> 
+> So to ensure guest record can be sampled successfully, use "cycles"
+> instead of "cycles:P" to sample guest record by default on Intel
+> platforms. With this patch, the guest record can be sampled
+> successfully.
+> 
+> sudo perf kvm record -a
+> ^C[ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.783 MB perf.data.guest (23 samples) ]
+
+What if user already gave some events in the command line?  I think you
+need to check if "-e" or "--event" (and "--pfm-events" too) is in the
+argv[] before adding these.
+
+Thanks,
+Namhyung
+
+> 
+> Reported-by: Kevin Tian <kevin.tian@intel.com>
+> Fixes: 634d36f82517 ("perf record: Just use "cycles:P" as the default event")
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 > ---
->  .../devicetree/bindings/input/awinic,aw86927.yaml  | 48 ++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
+>  tools/perf/arch/x86/util/kvm-stat.c | 46 +++++++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/input/awinic,aw86927.yaml b/Documentation/devicetree/bindings/input/awinic,aw86927.yaml
-> new file mode 100644
-> index 000000000000..43012f28d9aa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/awinic,aw86927.yaml
-> @@ -0,0 +1,48 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only)
-
-Dual license please: OR BSD-2-Clause
-
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/awinic,aw86927.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
+> index 424716518b75..cdb5f3e1b5be 100644
+> --- a/tools/perf/arch/x86/util/kvm-stat.c
+> +++ b/tools/perf/arch/x86/util/kvm-stat.c
+> @@ -3,9 +3,11 @@
+>  #include <string.h>
+>  #include "../../../util/kvm-stat.h"
+>  #include "../../../util/evsel.h"
+> +#include "../../../util/env.h"
+>  #include <asm/svm.h>
+>  #include <asm/vmx.h>
+>  #include <asm/kvm.h>
+> +#include <subcmd/parse-options.h>
+>  
+>  define_exit_reasons_table(vmx_exit_reasons, VMX_EXIT_REASONS);
+>  define_exit_reasons_table(svm_exit_reasons, SVM_EXIT_REASONS);
+> @@ -211,3 +213,47 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
+>  
+>  	return 0;
+>  }
 > +
-> +title: Awinic AW86927 LRA Haptics driver
-
-The binding is for a device, not a driver. So drop 'driver'.
-
-Otherwise, looks good.
-
+> +/*
+> + * After KVM supports PEBS for guest on Intel platforms
+> + * (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
+> + * host loses the capability to sample guest with PEBS since all PEBS related
+> + * MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
+> + * switched to guest GVA at vm-entry. This would lead to "perf kvm record"
+> + * fails to sample guest on Intel platforms since "cycles:P" event is used to
+> + * sample guest by default.
+> + *
+> + * So, to avoid this issue explicitly use "cycles" instead of "cycles:P" event
+> + * by default to sample guest on Intel platforms.
+> + */
+> +int kvm_add_default_arch_event(int *argc, const char **argv)
+> +{
+> +	const char **tmp;
+> +	bool event = false;
+> +	int i, j = *argc;
 > +
-> +maintainers:
-> +  - Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+> +	const struct option event_options[] = {
+> +		OPT_BOOLEAN('e', "event", &event, NULL),
+> +		OPT_END()
+> +	};
 > +
-> +properties:
-> +  compatible:
-> +    const: awinic,aw86927
+> +	if (!x86__is_intel_cpu())
+> +		return 0;
 > +
-> +  reg:
-> +    maxItems: 1
+> +	tmp = calloc(j + 1, sizeof(char *));
+> +	if (!tmp)
+> +		return -EINVAL;
 > +
-> +  reset-gpios:
-> +    maxItems: 1
+> +	for (i = 0; i < j; i++)
+> +		tmp[i] = argv[i];
 > +
-> +  interrupts:
-> +    maxItems: 1
+> +	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
+> +	if (!event) {
+> +		argv[j++] = strdup("-e");
+> +		argv[j++] = strdup("cycles");
+> +		*argc += 2;
+> +	}
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reset-gpios
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        vibrator@5a {
-> +            compatible = "awinic,aw86927";
-> +            reg = <0x5a>;
-> +            interrupts-extended = <&tlmm 101 IRQ_TYPE_EDGE_FALLING>;
-> +            reset-gpios = <&tlmm 100 GPIO_ACTIVE_LOW>;
-> +        };
-> +    };
-> 
+> +	free(tmp);
+> +	return 0;
+> +}
 > -- 
-> 2.43.0
+> 2.34.1
 > 
 
