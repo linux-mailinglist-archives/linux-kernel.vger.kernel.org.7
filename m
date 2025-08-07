@@ -1,143 +1,179 @@
-Return-Path: <linux-kernel+bounces-759105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29DFDB1D887
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:05:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5EF8B1D88A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDB9B189C4BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:05:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABDBC7AD1EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AD8257AC6;
-	Thu,  7 Aug 2025 13:05:33 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7102594B9;
+	Thu,  7 Aug 2025 13:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DTIiN6OK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FB23816E;
-	Thu,  7 Aug 2025 13:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6559521CA0D
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754571933; cv=none; b=Mqm1VaNzbiyapxi44iH1m8ncdUFbKSJCeK/WFpmq5+vGrjYB25Kn27sK1muHOf1iYi87NtrTZ0YNfqidi5k+Y2JLzn/FUueyAR9qyyIaJIB4uQqdNfcJ0G/+CeaT/LJkg6DBgGKiYI06dnSjs4MkzZHtBErTqGWwxR86tRiAybs=
+	t=1754571969; cv=none; b=d37K2KiTjRe2eXQjmULfwNQkMc7lE0Vo464tVulsfE2y/usnT/a/1QdjxoW5SCR0Khj6twFvUDygWAVvc1/LjPhVf/nSTwSTkQhTTOSt244lEtmHpqFZrmTC66P72XTWRKUAI6MxEVe+MhaAACUnIuoj1yPe4nxcveqeQbVdo74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754571933; c=relaxed/simple;
-	bh=wFXb5lAQXTDrmzUC6XfMd0dRpKtnEjFNW4RV0ePxg8s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fP2UcuDW4KREU5Ey/PI4oWTn1J/FC09MPNVGsfB+TTMj74pex9+IvDID9IzNdG5pxTR44JjcCJftQHlfCESbL61lfknSfHIejA8vWTLERY5pUMVuiVH5zH6uGyXOlejSbveDmY7ewN81suPfZOjiLvO0lOXCgD9Guj80As//Xr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2d8da2ee738f11f0b29709d653e92f7d-20250807
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_QP
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:7e20fc9a-254b-4258-9f29-81d1d9c5fa59,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:5
-X-CID-INFO: VERSION:1.1.45,REQID:7e20fc9a-254b-4258-9f29-81d1d9c5fa59,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:5
-X-CID-META: VersionHash:6493067,CLOUDID:c2842ccf03033012f8abbe80433b3499,BulkI
-	D:2508072055154RQQU8EA,BulkQuantity:1,Recheck:0,SF:19|24|44|66|72|78|81|82
-	|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil
-	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 2d8da2ee738f11f0b29709d653e92f7d-20250807
-X-User: liuqiqi@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <liuqiqi@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1725618865; Thu, 07 Aug 2025 21:05:23 +0800
-From: liuqiqi@kylinos.cn
-To: gregkh@linuxfoundation.org
-Cc: cve@kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liuqiqi <liuqiqi@kylinos.cn>
-Subject: CVE-2024-57884  patch review feedback (https://lore.kernel.org/linux-cve-announce/2025011510-CVE-2024-57884-4cf8@gregkh/#R)
-Date: Thu,  7 Aug 2025 21:05:15 +0800
-Message-Id: <20250807130515.1445117-1-liuqiqi@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2025011510-CVE-2024-57884-4cf8@gregkh>
-References: <2025011510-CVE-2024-57884-4cf8@gregkh>
+	s=arc-20240116; t=1754571969; c=relaxed/simple;
+	bh=YhkaZWRCFgO5FeHJ2OKKrnXnUc1X6v1ryYXb+OKrIJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Od3qI9H31fAq8x0kFX1Irvj0BzYnvDE/ZLFSaLBNhfI9HB6WDdO/U8QhXKClfZS/fS/VREp474VeLPXAbdlUSXsLNQzMdJRydaj21Z4TR9DhobbkoUW076FpA/NCcbb+DmDK/gP2vvGA7RAyxhwbrTBUa0PaQJ7CqWjVGb2MaTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DTIiN6OK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779DCqp001947
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 13:06:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FBcHHZfiUOp++mqWXUPK8pryPqtEB0VS2HuB1/078ss=; b=DTIiN6OKDoIjOaO4
+	OC8rpTbQGvguholN17OtKg2iqya2D/ELG3j6EOXCe7rwcyImk7mx5OvoPnJCTB1W
+	jYG06ZuobdmqDG3RUdRuuFa8Aa4azYMIrYM6WkOR2SlVpibF1gSZ44bC70csptE8
+	i1X4/msKGunDC/4xb78WafOpfYasd/80ViVJGd/R52Cn3KswxwECiTBuph2/+Zrd
+	EdsivZD166b58WKRT9lbjT1bUeNZJuiAhjZkBocVo9P8B4GZgFR8ksoklSmGLu1P
+	Rp7y+DjzgOSwzsyq7lgiiS+1NQtALd8iElw2Jn1qoX+YYdnypwyzkPZ8i9GtG1HA
+	MiWfoQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw36ah3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 13:06:06 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4af23052fb8so1540581cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 06:06:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754571966; x=1755176766;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FBcHHZfiUOp++mqWXUPK8pryPqtEB0VS2HuB1/078ss=;
+        b=I2kZgrqxbcLCObTzfBmsireHUX7vATO/MSor3hYvVUdVtSbCddX4qrpUT27HaObjho
+         VR6qjc8EWFLX6dls/Mvi+/S5Y3osclOr2sdWszOKCGyEjNtRnFAEbtf3PlGyxOh+TP57
+         AivFHdIpmSVsBANQqWaOcTnoI68cw58tW4s/GvNjAeDeFchAzffW97wwtCgkWy8qqDak
+         51LH2mIExd4loAwsaefi5I/s02kA3QnQhENdgwuVmnXE3XZZgre4xJiDAqDUcnmzrFRA
+         8VJXjD8smpQadbbd0v7ZgTNEhtRIAu6+q3C4qzDyi/9KWE5hoRgeZQRmYNHW6MBvdDip
+         Mm5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU62jJYWc8uDk3GZnk3aluKma3G2A+mtRJ661byPe0afLUQc1xFqHDG/k8i2ynJI/tCanYbNcSiyt1Ot1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK2+ALHumasgpg3JJR0EYu8Nbc8SfvbLsjWR1H5FsYUiFjyb0q
+	7Wg2Ov/9FAxlFHvR5QB3AJngLlQNsWtK1n83UiwlxXod6uH0Q5QJvZ9O5ofXFb6WzyxQYgt0wic
+	8ctdl61Zv10qW89kcNiy5xeE3sEVLgCtXbvDRmQG2hekyZFGf5aLpVIJxu0RUgD313JrjzSCXpg
+	Q=
+X-Gm-Gg: ASbGncs2n5y4gPz7ShZfbqNL4/CFgZIl8RxsdnCU9WCaawvx0QzokHaC5t/4Tc+moLQ
+	2M2ndHSUnAyWMSevX+IEaqUyatVAtOnWi0fNLE+l/I9Oypl5vmeMpnVIKcd+kx2+vIXJZlWmhRC
+	mjo2Zsj5/fRMe/fvHtt26Mgv16yLFctMSzip8cRc3ugbyDzr8BHtak/hyfnMnU/jLfWQXZZmPGQ
+	RekALrNvv+w3zZk/0zYuuvRnUHQQTjLEXgvprjZL0+O6/njRDI1UA6JJDufo3azQAtOJe9rT0fs
+	pEWWROpHxO7A4EqTEVYplKrUVJsVHa6rUvg7vXWVjcpVtsNZKW20e5Cr6/ewE2Cczm3qv2pn56D
+	OkdqA15hYqt5WVUST/w==
+X-Received: by 2002:a05:622a:1482:b0:4a9:e46d:ca65 with SMTP id d75a77b69052e-4b0912cb849mr59963641cf.3.1754571965601;
+        Thu, 07 Aug 2025 06:06:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZ8LROlrHhAO/nx3LuVhJ4aWIUOSeMqQnvYxszMmFd8ZNXQqKXcDSu0gnMVTLJH/zAcvVbmg==
+X-Received: by 2002:a05:622a:1482:b0:4a9:e46d:ca65 with SMTP id d75a77b69052e-4b0912cb849mr59963051cf.3.1754571964966;
+        Thu, 07 Aug 2025 06:06:04 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21b115sm1282528466b.103.2025.08.07.06.06.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 06:06:04 -0700 (PDT)
+Message-ID: <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
+Date: Thu, 7 Aug 2025 15:06:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org,
+        kishon@kernel.org, mani@kernel.org, conor+dt@kernel.org,
+        bvanassche@acm.org, andersson@kernel.org, neil.armstrong@linaro.org,
+        dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
+        krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-5-quic_nitirawa@quicinc.com>
+ <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
+ <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfX5xlEHZ/N6+2O
+ tc4HonfmEDR+FAq5ITzJ3eePZt28pOvSTgspJemY+mUZXTTDlF4e6f107Ip94Taff7mB3EwO2EE
+ wyHIHuOllRKLLIWs5b8ebXRmMK06Nki21KiwK8YXNkHuDNAqHHEvfDTNHiLvbX4Se5hDNGfcgSq
+ UTiwrtqKTVaccHBoNenecrDgmk3TNX5YBvcG+F5/GkCmtkb4cQulX4fEY7RTgUEz/JYjq0ooi6b
+ GOVE3BSNVpKjZE27xKd6+BOcPE9D6hTDqjGimzzpEcNpRlOYHF4HOY1/0qbKwOssNwMT7YFv3eS
+ sBFvm9Ln1Xk7aqWxo5PP6F0aL/EWU1zuCosoPh4dfdOB8+wmjJY98UoRnKiUsFig7fxRGyUB2tC
+ QOBzaJwv
+X-Authority-Analysis: v=2.4 cv=J8Cq7BnS c=1 sm=1 tr=0 ts=6894a4bf cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=kfhvm8o0YWoXJs5BtVMA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: JP1Nywljx-1JXQMSCA9kXtVfgGzctz3S
+X-Proofpoint-ORIG-GUID: JP1Nywljx-1JXQMSCA9kXtVfgGzctz3S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
 
-CVE-2024-57884  patch fixes  mm: vmscan: account for free pages to prevent =
-infinite Loop in throttle_direct_reclaim() modify as follows=0D
-@@ -342,7 +342,14 @@ unsigned long zone_reclaimable_pages(struct zone *zone=
-)=0D
- 	if (get_nr_swap_pages() > 0)=0D
- 		nr +=3D zone_page_state_snapshot(zone, NR_ZONE_INACTIVE_ANON) +=0D
- 			zone_page_state_snapshot(zone, NR_ZONE_ACTIVE_ANON);=0D
--=0D
-+	/*=0D
-+	 * If there are no reclaimable file-backed or anonymous pages,=0D
-+	 * ensure zones with sufficient free pages are not skipped.=0D
-+	 * This prevents zones like DMA32 from being ignored in reclaim=0D
-+	 * scenarios where they can still help alleviate memory pressure.=0D
-+	 */=0D
-+	if (nr =3D=3D 0)=0D
-+		nr =3D zone_page_state_snapshot(zone, NR_FREE_PAGES);=0D
- 	return nr;=0D
- }=0D
-However, should_reclaim_retry() function calls zone_reclaimable_pages to co=
-unt free pages. When nr is 0, it double-counts NR_FREE_PAGES. This seems to=
- cause inaccurate page statistics, right?=0D
-static inline bool=0D
-should_reclaim_retry(gfp_t gfp_mask, unsigned order,=0D
-		     struct alloc_context *ac, int alloc_flags,=0D
-		     bool did_some_progress, int *no_progress_loops)=0D
-{=0D
-......=0D
-=0D
-		available =3D reclaimable =3D zone_reclaimable_pages(zone);=0D
-		available +=3D zone_page_state_snapshot(zone, NR_FREE_PAGES);=0D
-=0D
-		/*=0D
-		 * Would the allocation succeed if we reclaimed all=0D
-		 * reclaimable pages?=0D
-		 */=0D
-		wmark =3D __zone_watermark_ok(zone, order, min_wmark,=0D
-				ac->highest_zoneidx, alloc_flags, available);=0D
-=0D
-compaction_zonelist_suitable() function has the same problem.=0D
-bool compaction_zonelist_suitable(struct alloc_context *ac, int order,=0D
-		int alloc_flags)=0D
-{=0D
-......=0D
-		available =3D zone_reclaimable_pages(zone) / order;=0D
-		available +=3D zone_page_state_snapshot(zone, NR_FREE_PAGES);=0D
-		if (__compaction_suitable(zone, order, min_wmark_pages(zone),=0D
-					  ac->highest_zoneidx, available))=0D
-=0D
-If this is problematic, can it be modified as follows:=0D
-diff --git a/mm/vmscan.c b/mm/vmscan.c=0D
---- a/mm/vmscan.c=0D
-+++ b/mm/vmscan.c=0D
-@@ -6417,7 +6417,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat)=0D
-                return true;=0D
- =0D
-        for_each_managed_zone_pgdat(zone, pgdat, i, ZONE_NORMAL) {=0D
--               if (!zone_reclaimable_pages(zone))=0D
-+               if (!zone_reclaimable_pages(zone) || !(zone_page_state_snap=
-shot(zone, NR_FREE_PAGES)))=0D
-                        continue;=0D
-=0D
-Signed-off-by: liuqiqi <liuqiqi@kylinos.cn>=0D
+On 8/6/25 6:51 PM, Mark Brown wrote:
+> On Wed, Aug 06, 2025 at 05:58:30PM +0200, Konrad Dybcio wrote:
+>> On 8/6/25 5:43 PM, Nitin Rawat wrote:
+> 
+>>> Add support in QMP PHY driver to read optional vdda-phy-max-microamp
+>>> and vdda-pll-max-microamp properties from the device tree.
+> 
+>>> These properties define the expected maximum current (in microamps) for
+>>> each supply. The driver uses this information to configure regulators
+>>> more accurately and ensure they operate in the correct mode based on
+>>> client load requirements.
+> 
+>>> If the property is not present, the driver defaults load to
+>>> `QMP_VREG_UNUSED`.
+> 
+>> do you think having this in regulator core would make sense?
+> 
+> I'm not clear why the driver is trying to do this at all, the driver is
+> AFAICT making no other effort to manage the load at all.  We already
+> impose any constraints that are defined for a regulator while initially
+> parsing them so it's not clear to me what this is supposed to
+> accomplish, and it'll be broken if the supply is ever shared since it'll
+> set the load from this individual consumer to the maximum that's
+> permitted for the regulator as a whole.
+
+Qualcomm regulators feature a low- and a high-power mode. As one may
+imagine, low- is preferred, and high- needs to be engaged if we go
+over a current threshold.
+
+The specific regulator instances in question are often shared between
+a couple PHYs (UFS, PCIe, USB..) and we need to convey to the
+framework how much each consumer requires (and consumers can of course
+go on/off at runtime). The current value varies between platforms, so
+we want to read from DT.
+The intended use is to set the load requirement and then only en/disable
+the consumer, so that the current load is updated in core (like in the
+kerneldoc of _regulator_handle_consumer_enable())
+
+My question was about moving the custom parsing of
+$supplyname-max-micromap introduced in this patch into the regulator
+core, as this seems like a rather common problem.
+
+Unless you meant to object to the "QMP_VREG_UNUSED" part specifically?
+
+Konrad
 
