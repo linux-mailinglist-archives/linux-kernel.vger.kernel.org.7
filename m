@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-758850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F792B1D49F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F59B1D4A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 140EC7B26F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D4917817F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0D31A0703;
-	Thu,  7 Aug 2025 09:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D6Aab23q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8490821E082;
+	Thu,  7 Aug 2025 09:23:25 +0000 (UTC)
+Received: from sonata.ens-lyon.org (sonata.ens-lyon.org [140.77.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3827324B29;
-	Thu,  7 Aug 2025 09:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ACE2AD00
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 09:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.77.166.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754558198; cv=none; b=d2Ont/Pt3u0ZpgXQiOvhfB7KiLytYEJS/Hj+1sNdOq4IFPGqcH/TtASDbhw/4W+tvCCKWdugv+ND5tL6QOnRDa3KtrlkLzFQlJscGk9MR8AM5/K65VJE2Eq9qSUem6N4CtHJAzvC8EJTaBGi4trGkVHFlFAtAOUa5DCmsMcfrE4=
+	t=1754558605; cv=none; b=C7+FWu4S6IwFbNZFrr9bBLCwdIQsoMoYqJWKDl7cK5kVbII9x6PqVsjjojj10GADvSsGSI+d7AqAo0VX592PmjX4hhxSXBMpdxnrXgirLc8dvEaBSBVhvX3cNXX7Hs+Nz9jUVHS90/8YcsxKtquz9GZdWVKfEiyZxKHMuVYe6AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754558198; c=relaxed/simple;
-	bh=6iqrnOYYLyzkebV0B++6wAFa+s7dj//oSdXPQIZYi44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=im2y+MZHoyUFGFCqcP4BOQcGUqz6PA12nYggmvUSi04w46jaU6BiekWlIUI7aGjMnsO5ioYMY/d6zNJX98a2Wo3INWLIHMSgz5pew67kZqpVYZcZvASReUcF7mhXGhmfrMTaIKjQfeVX60FaiAruDppEzSf+r25bYA4sfN3Faos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D6Aab23q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779CtYY011664;
-	Thu, 7 Aug 2025 09:16:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cpP2hSi7/Vhx0v9dxSjlQoY4/hYRFnUAC1G1O8b+8yE=; b=D6Aab23q2LHDnHgq
-	vOfCf3FlxoYZke+09LECx/aGqV1s/sQ/OiUCYsWnpf2TZPPvM7wqW8pTy+DDHwQH
-	lkN3Z5wm8Iq01o8s7bXvgYAlF318fr7s8VJdpZtFgFb8O5O4buMQsdXbpnn9S3tZ
-	Z4l1EivIO3CoaNm7+a8Cehe0jPUZBVmnddUbw+7dTSQQiNJep3vP6wfAAxP/hj/V
-	v1IhJ2jNJvG7Ec9lpV3JpIh4hn9SJkb44VoSM1BYf28XGlHARFbkpF8etBINgFNA
-	lxfJj0f/kgcttx0iTUGfgBO4Ywcad/meNRHDWTtAgZvlne0Dyf5ymoPERu4geLfF
-	ajqmTw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48cpvy0fyf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 09:16:25 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5779GO1L016072
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 7 Aug 2025 09:16:24 GMT
-Received: from [10.239.105.140] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 7 Aug
- 2025 02:16:21 -0700
-Message-ID: <436fc0d5-2959-4364-93b4-7a14d8e2cb99@quicinc.com>
-Date: Thu, 7 Aug 2025 17:16:19 +0800
+	s=arc-20240116; t=1754558605; c=relaxed/simple;
+	bh=e3MUUokPjw0bTZ2ANzf/uKJTeFbNCTn3AWgwhIT6uRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEfky1Q+OBedQKpLAHIP9SdFdESnec29/zlxD2eHFjzN3DPb/BP04KLmf5fvtKNHHroM8dXc/amyYjS4LyOerIq8yEXKmUBVSYOMvxvMZXkxjpOa+IDLiccu4jjdAMfDtPY5R5FsWw9PupDkYOPxi6DlutvLNmDtxaRoeagNlL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org; arc=none smtp.client-ip=140.77.166.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org
+Received: from localhost (localhost [127.0.0.1])
+	by sonata.ens-lyon.org (Postfix) with ESMTP id 7935EA0493;
+	Thu,  7 Aug 2025 11:18:00 +0200 (CEST)
+Received: from sonata.ens-lyon.org ([127.0.0.1])
+	by localhost (sonata.ens-lyon.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id zKMl65vKd_rK; Thu,  7 Aug 2025 11:18:00 +0200 (CEST)
+Received: from begin (nat-inria-interne-52-gw-01-bso.bordeaux.inria.fr [194.199.1.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by sonata.ens-lyon.org (Postfix) with ESMTPSA id EAA70A03B6;
+	Thu,  7 Aug 2025 11:17:59 +0200 (CEST)
+Received: from samy by begin with local (Exim 4.98.2)
+	(envelope-from <samuel.thibault@ens-lyon.org>)
+	id 1ujwl5-0000000ALFG-2frs;
+	Thu, 07 Aug 2025 11:17:59 +0200
+Date: Thu, 7 Aug 2025 11:17:59 +0200
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: w.d.hubbs@gmail.com, chris@the-brannons.com, kirk@reisers.ca,
+	speakup@linux-speakup.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] accessibility: Use str_plural() to simplify the code
+Message-ID: <aJRvR9xEkzMix5zQ@begin>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Xichao Zhao <zhao.xichao@vivo.com>, w.d.hubbs@gmail.com,
+	chris@the-brannons.com, kirk@reisers.ca, speakup@linux-speakup.org,
+	linux-kernel@vger.kernel.org
+References: <20250807085930.429665-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v6 2/3] virtio-spi: Add virtio-spi.h
-To: Harald Mommer <harald.mommer@oss.qualcomm.com>,
-        <quic_msavaliy@quicinc.com>, <broonie@kernel.org>,
-        <virtio-dev@lists.linux.dev>, <viresh.kumar@linaro.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <hdanton@sina.com>, <qiang4.zhang@linux.intel.com>,
-        <alex.bennee@linaro.org>
-CC: <quic_ztu@quicinc.com>, <matti@qti.qualcomm.com>
-References: <20250724092746.1297608-1-quic_haixcui@quicinc.com>
- <20250724092746.1297608-3-quic_haixcui@quicinc.com>
- <d962ed41-2566-432d-975d-9bab8d844c70@oss.qualcomm.com>
-Content-Language: en-US
-From: Haixu Cui <quic_haixcui@quicinc.com>
-In-Reply-To: <d962ed41-2566-432d-975d-9bab8d844c70@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=TJpFS0la c=1 sm=1 tr=0 ts=68946ee9 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=7kKVInmZTBA3fObjQNwA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: HPfRBmeH8rVQ3EcCbs9kAurqh1G0Fra1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA0NiBTYWx0ZWRfXwcOe3Gf6kyCe
- zn3oD/H757SFdJiCTaEGRII0/UtWY4r9HLrhX5t6cKwQS7bbs5yr7JlMlEN8/SNxdFxan4rigHB
- cD8DBwMkbbcBUK+iUxDtsJGuh7D4REp8Eu1uhl6rCV08A9sr2h6f65vxokSvf4B8NvChg5eorDb
- D4UsiNtlwm2KFG5gRVvr3xp+s8FE8XGvWCkjDyd5Wz2/gqR+094EJP8Fy/wHoFCkRuddjperpmO
- dBc6fQF5zR4jAOZwOK69rJL5lDzyjSpvefoSyt7NHK5+knGI1GY7EI7coYmVPR6YQnU+VrWIIPf
- h+TKUCcG9RrWba2LQ/7KhRQ4SrpK0p4rXFPIcQurm60/mo4cv4+7wGLTJm45SBRAnuJwCgGWbvu
- u9EJ66J5
-X-Proofpoint-ORIG-GUID: HPfRBmeH8rVQ3EcCbs9kAurqh1G0Fra1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- adultscore=0 spamscore=0 malwarescore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070046
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250807085930.429665-1-zhao.xichao@vivo.com>
+Organization: I am not organized
 
-
-
-On 7/30/2025 8:31 PM, Harald Mommer wrote:
-
+Xichao Zhao, le jeu. 07 août 2025 16:59:30 +0800, a ecrit:
+> Use the string choice helper function str_plural() to simplify the code.
 > 
-> Policy was to keep the old OpenSynergy copyright notice when up-streaming started when up-streaming started in OpenSynergy times. This is also the case here with those files.
-> 
-> The old "Copyright (C) 2023 OpenSynergy GmbH" still present in V3 must probably be kept on top of the Qualcomm copyright line.
-> 
-> Re-checked this in virtio_rtc_driver.c from my colleague who also transitioned from OpenSynergy to Qualcomm. Virtio RTC has landed in the meantime in the mainline kernel.
-> 
-> What's for sure is that this has not started in 2025.
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-Hi Harald,
-     I've restored the "Copyright (C) 2023 OpenSynergy GmbH" in latest 
-patch v8, please check, thanks.
+Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
 
-Haixu Cui
+> ---
+>  drivers/accessibility/speakup/kobjects.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/accessibility/speakup/kobjects.c b/drivers/accessibility/speakup/kobjects.c
+> index 0dfdb6608e02..57139971e997 100644
+> --- a/drivers/accessibility/speakup/kobjects.c
+> +++ b/drivers/accessibility/speakup/kobjects.c
+> @@ -98,7 +98,7 @@ static void report_char_chartab_status(int reset, int received, int used,
+>  		if (rejected)
+>  			snprintf(buf + (len - 1), sizeof(buf) - (len - 1),
+>  				 " with %d reject%s\n",
+> -				 rejected, rejected > 1 ? "s" : "");
+> +				 rejected, str_plural(rejected));
+>  		pr_info("%s", buf);
+>  	}
+>  }
+> @@ -740,7 +740,7 @@ static void report_msg_status(int reset, int received, int used,
+>  		if (rejected)
+>  			snprintf(buf + (len - 1), sizeof(buf) - (len - 1),
+>  				 " with %d reject%s\n",
+> -				 rejected, rejected > 1 ? "s" : "");
+> +				 rejected, str_plural(rejected));
+>  		pr_info("%s", buf);
+>  	}
+>  }
+> -- 
+> 2.34.1
 
