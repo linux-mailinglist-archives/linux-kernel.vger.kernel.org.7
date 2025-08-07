@@ -1,144 +1,117 @@
-Return-Path: <linux-kernel+bounces-758724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6BE9B1D328
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:19:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB398B1D32A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989C3189BE26
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:19:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D37118939C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2019E21B8F7;
-	Thu,  7 Aug 2025 07:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEA0235041;
+	Thu,  7 Aug 2025 07:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FOJxSC7z";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QZg+PxFg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="RAfJhFuC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lY2gJQbn"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BlM+3OLn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DDE230D35
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBA68F48;
+	Thu,  7 Aug 2025 07:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754551167; cv=none; b=cIOB1ZQWFzk2kVG2ZAs426FTmsFR9FMtuQUiFM6Jp0xRnoD1vtLVWDOf5y9hw8IpdJ3YGpAShOsiWt30EuZZjovTSPGfm09H52QKygUv0AwYRht8HmCasjRBMGpZdx9GcRPnhAG/diTdALxsM4wWOQf3fmM+wG1MbBKdWif9l5U=
+	t=1754551181; cv=none; b=QjMYnfnXg4ls03O3LplRo2f/s+YoH0FCOSg/3tOYqrQ7Lp2j7+lnrIp32BAnymY+c5DH4av0ootpTMmeHCZ/fT+7mY5dC5cbyo3TmwcD28/pZ9pTba8GKqhBCL2V3/iPpROai7K1Du+EcBx4ZwF2ucpZieW5HTf8azggq4DZJJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754551167; c=relaxed/simple;
-	bh=P2gSR1aLw59U4sqMXOhZY6Vgfj7g8iKPjxIPsUuA0P8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCX7WOAROZM4vLairsgBDi7+IALfbHO63l3X9IBYl3YNgYgHkYxama5RRKUYoSkgD7mEnxV8JSoYVOEthOplRZum1/5G5fP7XDO05ck8Ly3yheqnLgb2/XUWcNw3SXmbhoaEAOABjw64XnENFpnMwEbjpdxm6UWx9p9t1IFcw5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FOJxSC7z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QZg+PxFg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=RAfJhFuC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lY2gJQbn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B4A1B33C79;
-	Thu,  7 Aug 2025 07:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754551163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eLTKkM9X+h1vSlLK1ga+n6ZzEZYUtbam/CrQYcayB5w=;
-	b=FOJxSC7zGyCrvj8vxuhgICa+/ruIOTxJiTJsAUH9+L0qIhuj72AifnM6qa0L/7mCs78RBw
-	t/UTmAVt5cAgrzmTsWRnrZWVpLXF9HTeHIhCLLXQ8jrX5eQfrDdW6sEbKJlccEq4+mgbBB
-	SX4Zhy65i01jH8WWgqkn1X9KnGvnhTs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754551163;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eLTKkM9X+h1vSlLK1ga+n6ZzEZYUtbam/CrQYcayB5w=;
-	b=QZg+PxFgXQw9Um9Xh9/LwUwACUTD2IhUJcpoi9gBZnCwMXh0YPciUjq55oA47mP53gq2w4
-	u04wtZEP8dCFCYBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754551162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eLTKkM9X+h1vSlLK1ga+n6ZzEZYUtbam/CrQYcayB5w=;
-	b=RAfJhFuCEq8++cmJU6YyWtl/iL/79g0/W5fcUDyMphuR5wW0+s/6YMu5clCzcgQI/h5Ei1
-	jhLCnG/umEjg9/ff4eKHCZmoXcpSrgKLILattR5OC1o6vbT5MU4e0JavqwB9fqIh72BZlz
-	HDP/4Rknt6eCYMAaJ0aN1Uq5ntIL9AU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754551162;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eLTKkM9X+h1vSlLK1ga+n6ZzEZYUtbam/CrQYcayB5w=;
-	b=lY2gJQbnPkglW94gaAuw5FPWa/DsnU5Wn9ntzCqBFSFmJBxZwP6YXhfZ9Jw3Zbm2T2MoLW
-	35d9N77Y/OmI53Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A1F9413969;
-	Thu,  7 Aug 2025 07:19:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id einYJnpTlGhKEwAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Thu, 07 Aug 2025 07:19:22 +0000
-Date: Thu, 7 Aug 2025 09:19:22 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Mohamed Khalfella <mkhalfella@purestorage.com>
-Cc: Yi Zhang <yi.zhang@redhat.com>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>, 
-	Keith Busch <kbusch@kernel.org>, Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, 
-	Hannes Reinecke <hare@kernel.org>, Maurizio Lombardi <mlombard@redhat.com>, 
-	Jens Axboe <axboe@kernel.dk>, Randy Jennings <randyj@purestorage.com>, 
-	linux-nvme@lists.infradead.org, linux-block <linux-block@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmet: exit debugfs after discovery subsystem exits
-Message-ID: <3f440533-8feb-49bb-8dde-6ae520b81d39@flourine.local>
-References: <20250807053507.2794335-1-mkhalfella@purestorage.com>
+	s=arc-20240116; t=1754551181; c=relaxed/simple;
+	bh=AdJdBzD8fCrkZiV1XxDiJs2KuaTiavg3+PN4NwbZwyw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T587aAzx1ZZqkyexiRoWfVQs+0kIgtVhihLy8swsCsrAds3mtHUktp+SUDLd38UAtRQvQRFY6rUy/RKDAXL9pxihPUQBbVftyez97jZKybTkohdzKepImdoOHHmn5QIvMHPwS6o0X8BomIm2bXjIJUucsM4K9P2DHg9HkgQ6L+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BlM+3OLn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19432C4CEEB;
+	Thu,  7 Aug 2025 07:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754551177;
+	bh=AdJdBzD8fCrkZiV1XxDiJs2KuaTiavg3+PN4NwbZwyw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BlM+3OLnxJ3U6yt4pjlo9B5jGguBk/5a4iWnw7WsGu/YCMpVhugBCZnHXUXb97NBR
+	 fa2iUyKqUZV+CyVc+H/m1d+SABz3YylWoKn8nbCqk4p41RxVKCCGKzuan9ml/9j5t9
+	 HaLFQKI8yXPzUzf4eSCIv3BKIfT4ATCC8g5g+zIh/Fl4VEb7hqQUtRBAPAlGhIkXlq
+	 Ka1O28AjRGJPutdrB6ZiXUlwccNGMtH3vE7XhA9tFJRZ2JHVA4O/n1x0Xohhz3NxYE
+	 sUo10rUkB0DRGvhGvImbbif/AhfnNN+3AJArwJ2m7Ubt9/K1vzLwISiesO6KP6Kv3Y
+	 oJTcJXtntYVSQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Lee Jones <lee@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] mfd: madera: work around false-positive -Wininitialized warning
+Date: Thu,  7 Aug 2025 09:19:28 +0200
+Message-Id: <20250807071932.4085458-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807053507.2794335-1-mkhalfella@purestorage.com>
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,flourine.local:mid,purestorage.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 06, 2025 at 10:35:07PM -0700, Mohamed Khalfella wrote:
-> Commit 528589947c180 ("nvmet: initialize discovery subsys after debugfs
-> is initialized") changed nvmet_init() to initialize nvme discovery after
-> "nvmet" debugfs directory is initialized. The change broke nvmet_exit()
-> because discovery subsystem now depends on debugfs. Debugfs should be
-> destroyed after discovery subsystem. Fix nvmet_exit() to do that.
-> 
-> Reported-by: Yi Zhang <yi.zhang@redhat.com>
-> Closes: https://lore.kernel.org/all/CAHj4cs96AfFQpyDKF_MdfJsnOEo=2V7dQgqjFv+k3t7H-=yGhA@mail.gmail.com/
-> Fixes: 528589947c180 ("nvmet: initialize discovery subsys after debugfs is initialized")
-> Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Daniel Wagner <dwagner@suse.de>
+clang-21 warns about one uninitialized variable getting dereferenced
+in madera_dev_init:
+
+drivers/mfd/madera-core.c:739:10: error: variable 'mfd_devs' is uninitialized when used here [-Werror,-Wuninitialized]
+  739 |                               mfd_devs, n_devs,
+      |                               ^~~~~~~~
+drivers/mfd/madera-core.c:459:33: note: initialize the variable 'mfd_devs' to silence this warning
+  459 |         const struct mfd_cell *mfd_devs;
+      |                                        ^
+      |                                         = NULL
+
+The code is actually correct here because n_devs is only nonzero
+when mfd_devs is a valid pointer, but this is impossible for the
+compiler to see reliably.
+
+Change the logic to check for the pointer as well, to make this easier
+for the compiler to follow.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mfd/madera-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+index bdbd5bfc9714..2f74a8c644a3 100644
+--- a/drivers/mfd/madera-core.c
++++ b/drivers/mfd/madera-core.c
+@@ -456,7 +456,7 @@ int madera_dev_init(struct madera *madera)
+ 	struct device *dev = madera->dev;
+ 	unsigned int hwid;
+ 	int (*patch_fn)(struct madera *) = NULL;
+-	const struct mfd_cell *mfd_devs;
++	const struct mfd_cell *mfd_devs = NULL;
+ 	int n_devs = 0;
+ 	int i, ret;
+ 
+@@ -670,7 +670,7 @@ int madera_dev_init(struct madera *madera)
+ 		goto err_reset;
+ 	}
+ 
+-	if (!n_devs) {
++	if (!n_devs || !mfd_devs) {
+ 		dev_err(madera->dev, "Device ID 0x%x not a %s\n", hwid,
+ 			madera->type_name);
+ 		ret = -ENODEV;
+-- 
+2.39.5
+
 
