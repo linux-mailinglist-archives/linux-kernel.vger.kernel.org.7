@@ -1,147 +1,328 @@
-Return-Path: <linux-kernel+bounces-759360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25088B1DC9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E64CEB1DCA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C67B582EC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDD0171110
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E301D61A3;
-	Thu,  7 Aug 2025 17:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5411B1F4192;
+	Thu,  7 Aug 2025 17:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bnrl9Xr7"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J//AvZZE"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BF71A0712
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4074C85
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754588745; cv=none; b=GKiDTmiHS73k/mzGWI+s+NsDg+xth/P+LqTNKomAGmaG2IBdCFanA57pTxKywe4RTXkatt3VjwJg7wVzFkV5YkJs3L0OqkUJA6fvpBssrjzyJnc4Cx/dpsCMwIdZNdtv6z1jhUduEGxznpba/r8QDUHP0X7+WIMwHyJUEipes9E=
+	t=1754588781; cv=none; b=OMhoMM8rAbki6H2VLQRs5RZW5tp51BbXITW3ttAWM4zZ5zO3koJCd251Bz+0nXZ2VRbWN+B0emAFPA3i+k8IIUQJeqt9i6xe4QbOSICBEQlq8Rl4mC3S5Z0xHdXHtWpDIgg6AssCvhZ7Pptwv9njPXXtexdGq8K77FJuRbYl6rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754588745; c=relaxed/simple;
-	bh=mfvcv7HiZ+WmvEiPy97ympVI9kZ6wtR/RomqPMn3sQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CQ5qU4ne+5vpuENwcMaBysm5kZdDJ+fhbKw4AFrjRkQ9EjD7ayEx8/3kVKhsu6Q2vNUXveOj2Z1iS/pQNahziUCLYfDJkps7lzEZzcJVZPowTaJ2/VwDhZiUZa6DMjRo9U0xM/SvuYSw2qWFXXP64xh/6a3SZftUlUQ0+XJ/pqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bnrl9Xr7; arc=none smtp.client-ip=209.85.208.47
+	s=arc-20240116; t=1754588781; c=relaxed/simple;
+	bh=Uq3iiNUU91g4FQyKlsdBmM5MGVUlLCvmUTwzVzeS5m4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=V6OtGBjkjIYsardpmZ8iHH/LWts2oYGFxFYB37B6Qv/7gT6daBUqjj6KFaStbSAM2bO4w407ca06AeJ12p9h/5WW/G8If75SHp9ae3C97V0WEkjbDP96xM3Ic2tEfaRAEJBKf13EaxJk3B13pe+LUY+gKqxW80tNYidP2JS4ndc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J//AvZZE; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso1042a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:45:41 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f4d0f60caso1335458a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:46:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754588740; x=1755193540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mfvcv7HiZ+WmvEiPy97ympVI9kZ6wtR/RomqPMn3sQQ=;
-        b=bnrl9Xr7n7n+D5cscB1g8c/95df3BIKeMTRqWfblPTlOFxKL3vtJtEkhY3Mqc8E7co
-         Wa6QXthEfwnn2fo8pnFiw3SfBvznDO+Cln5x6pfSYER7rB3VnYndjqCg2G2PrArEmKCb
-         pmgx6xNUmVGTXrkFg3Z2NtzDzM12iFYD3PZUVgJyhj48sl6cCROGfekRvpbfssH8yZDK
-         sEZpMSMNyAydtt6ydOgUniwDJ7x1sWn5tlxJG6xa0pK+Y2Rq06/n7v0OG/+itWeE9kDS
-         0IGRIFG1O3A4D6c52oBtndwpZd2oNaSZOu6bxCJG1TApqmSVkQbAbozGobE3rYbKNkxS
-         W+fA==
+        d=google.com; s=20230601; t=1754588779; x=1755193579; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HcLjrOeqCd02Abu900eKiNp/ETH9Nin2wL4rT1C33Uc=;
+        b=J//AvZZEJXTa8GGXdPyNl6KeQd0LEgrzxnFZW3Sm6sm9TPcoPEsJ8J6qTDCOzmT5Dx
+         sKIAAR6Irar6VNpyveYuHkitULpD95EiHIzc6L2/qGtkHRiYXExhdLRUY3tWBk5RX4GW
+         u7loULwp6GdvOjhqvv6Z0D1cSainGMnwkh1DkYp1DSMGgSx8REUwtF7BU0V/2JO4Z7z9
+         67BcNj3GISt9p0Z4cFskxSWRZ7lTWdO4KNoySKLi1cBa0RRkE+Y4GpzbTFqFVeNGqNgl
+         ycgVr4Xw6a5T03LgW0/6tokNMQ/bQyfoP6036U+67aeTjM7pTmUdUElqU3ydVxcoqp03
+         /VPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754588740; x=1755193540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mfvcv7HiZ+WmvEiPy97ympVI9kZ6wtR/RomqPMn3sQQ=;
-        b=gVK+h4kkTTFiGIC1hn9N8dZjyIo8tq/kLY4NS5c5eu4q3kkcQwXX56HzfTy+lY0nl2
-         4PYyO+bVCAARtP3rVn3zHqkO5k/OnPfXZGELjF8hRzePnmbx9fW2S0MMliWvjD83yE/A
-         t5T75RSaqfp093p3ABERU8jp8HEArpW73B4JC2vWbtWhrxKsbvzjnuJ6qGkqnMjEg3No
-         y4cB1H9VyXoCIk1Pd56+F6w5CBbMExNuHeEh/LkIbQUhfIfMj3XBJTLWpH1htqdVp+Ql
-         xfn5SWp/wc/6HA5L9LDfPJtnm1d6vXjpCrQ8mvtLGzsrPDanouoRuSzlIIiLoTG3SVma
-         E6ww==
-X-Forwarded-Encrypted: i=1; AJvYcCU8w/QQo1nDo5wJOaNlpfswPKwGJxxTXZzpqSBZA/TaSSzUKXgWxuCaxam8gSdYEpvCFq6lN7aKYIfHoIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoEPaD3m95aj6zReRHFb/kwWOMXOZjHdTFdGuwBErInsvD4Q+q
-	Ii0BtPCH6xUyqY/Fb4WLrc7fxaqV9WHZc652S2H1hVQzxYBaJD42aLNzFS6tYywJkeykgodAGDW
-	wThBdRxj/0+kjhl30nkwhMBT1tAMQJijSfes1qekQ
-X-Gm-Gg: ASbGncuvFBMgkItF2Z+vwbf8Y9VtFoDodQwYFEmJMygi6PeTYVeHHi4QIyFlrIf4BEn
-	V9wtUbt5IsMoRUCVC/pURZQN9ZxuOLJXyuJO/HcXofMuwxvXRdGxzxrKlscrxJzAhqihMCuAFl+
-	jfNU9f9Tyh86XpVZULGiPS6Rx/mQ0ivf5lNdBjZFum9bqmfTbpM+EW0H2N9Iu92HDNq7hlqyGc5
-	mkkkrqsXedIvXXl38N0INVqmBhjIkdTJlg=
-X-Google-Smtp-Source: AGHT+IGcEDpK8Ms228S31UJyQbAhkBpRIwdLjP1Clq9AvE21KoiH4tSwTjlg40PwpAD3vSeDQTwiPuojzRmAtQXU/js=
-X-Received: by 2002:a05:6402:42ca:b0:612:ce4f:3c5 with SMTP id
- 4fb4d7f45d1cf-617e0c31262mr1251a12.0.1754588739638; Thu, 07 Aug 2025 10:45:39
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754588779; x=1755193579;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HcLjrOeqCd02Abu900eKiNp/ETH9Nin2wL4rT1C33Uc=;
+        b=MbMYzDH/KdQs5av4I58CV5VSbuJTf9WCrlHlgmS4UE1QLMAW1UCmLJaumiOzoBsgqJ
+         IXvNaws6iQmOducPTkZzQtB6ELniV652QZTn5E6qK6zGhVHYDaqW4usTkQgB/T26op/Y
+         ozSAAFcHPBnPimzrM6NpmY3PLlqI6Nlx6wWS/e5+ePwnp6sEnNqc8/dHhMdu0+2bNjiD
+         JjXAtS0rW714O0xePDzRBRA3yTiDUgEyjMXDMj55jJIhZviMTEqlEflwxjsYFC5mzOoV
+         SVDlOVR/Q1uOUsjOJ8rBDvt+/liAelEbQf0ryOQXSimjl7XwXFsU4fU15cIAxRN2py2I
+         OAmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLDTnzIfmU7toOfXxtnMYAg7KzpYHvauG1NK6jAZL/EZr9OMA48mKBtscgz8NE9aBU5/u+d7Iloy7GnRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6t75avBAtVSLOpz5imh0JsAp63M7uuKAkGqvGeFigdX05+Rl6
+	z28LzvUUwL85KP/bTf5pdKTnEXmDMvVPsfaB1QHwF/xxa+DlZN7rXh48CboZGpKzaVbIiB8u5X2
+	KQg==
+X-Google-Smtp-Source: AGHT+IH1TzamuhyocWAYv+jV0O95ZvaImp1W99Xp6lTkB1S1QMyzi0Kp+GJq5+BauORZKHrne7YiZLn0Zg==
+X-Received: from pjbsk13.prod.google.com ([2002:a17:90b:2dcd:b0:321:78e7:57fb])
+ (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:55ce:b0:320:ff84:ceb5
+ with SMTP id 98e67ed59e1d1-32182692d5emr600569a91.16.1754588779321; Thu, 07
+ Aug 2025 10:46:19 -0700 (PDT)
+Date: Fri,  8 Aug 2025 01:46:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250807152720.62032-1-ryncsn@gmail.com> <20250807152720.62032-4-ryncsn@gmail.com>
- <CAG48ez114_bmuca2UL-g0ZY76-VqhL-4rQtJM_k0N2NJXE4vdg@mail.gmail.com> <CAMgjq7BhfGC7jVHQ62wAJBfTKCDG2+VdgpjiZ7hjxXeC5fHg-w@mail.gmail.com>
-In-Reply-To: <CAMgjq7BhfGC7jVHQ62wAJBfTKCDG2+VdgpjiZ7hjxXeC5fHg-w@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 7 Aug 2025 19:45:03 +0200
-X-Gm-Features: Ac12FXwnxeugojc67eEPK0kCxtOuhwPnrmiHNsk9EMBjaGBmvR-4KLfAtDyKybA
-Message-ID: <CAG48ez0O-Ro9-x1LZ8QdijMk57j1D2jWf3MR7F6AiDP7Wq1p_w@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] mm/mincore: avoid touching the PTL
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
+Message-ID: <20250807174613.1895006-1-wakel@google.com>
+Subject: [PATCH] selftests/seccomp: improve backwards compatibility for older kernels
+From: Wake Liu <wakel@google.com>
+To: Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, 
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Cc: wakel@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 7, 2025 at 7:28=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrote=
-:
-> On Fri, Aug 8, 2025 at 12:06=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > On Thu, Aug 7, 2025 at 5:27=E2=80=AFPM Kairui Song <ryncsn@gmail.com> w=
-rote:
-> > > mincore only interested in the existence of a page, which is a
-> > > changing state by nature, locking and making it stable is not needed.
-> > > And now neither mincore_page or mincore_swap requires PTL, this PTL
-> > > locking can be dropped.
-> >
-> > This means you can race such that you end up looking at an unrelated
-> > page of another process, right?
->
-> I was thinking If the PTE is gone, it will make mincore go check the
-> page cache, but even if we hold the PTL here, the next mincore call
-> (if called soon enough) could check the page cache using the same
-> address. And it never checks any actual page if the PTE is not none.
->
-> Perhaps you mean that it's now doing the page / swap cache lookup
-> without holding PTL so if the PTE changed, then the lookup could be
-> using an invalidated index, and may find an unrelated page.
+This commit introduces checks for kernel version and seccomp filter flag
+support to the seccomp selftests. It also includes conditional header
+inclusions using __GLIBC_PREREQ.
 
-Yes, that's what I meant.
+Some tests were gated by kernel version, and adjustments were made for
+flags introduced after kernel 5.4. This ensures the selftests can run
+and pass correctly on kernel versions 5.4 and later, preventing failures
+due to features not present in older kernels.
 
-> A changing PTE also means the mincore return value is changing, and if
-> called earlier or later by a little bit, the result of that address
-> could be opposite, and mincore only checks if the page existed,
-> it's hard to say the returned value is a false positive / negative?
->
-> Or could this introduce a new security issue?
+The use of __GLIBC_PREREQ ensures proper compilation and functionality
+across different glibc versions in a mainline Linux kernel context.
+While it might appear redundant in specific build environments due to
+global overrides, it is crucial for upstream correctness and portability.
 
-I don't have specific security concerns here; but this is a change
-that trades accuracy and simplicity for performance.
+Signed-off-by: Wake Liu <wakel@google.com>
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 108 ++++++++++++++++--
+ 1 file changed, 99 insertions(+), 9 deletions(-)
 
-> > And your patch intentionally allows that to happen in order to make min=
-core() faster?
->
-> When doing a clean up (patch 1) I noticed and didn't understand why we
-> need a PTL here. It will no longer block others and go faster as we
-> remove one lock, I can drop this one if we are not comfortable with
-> it.
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 61acbd45ffaa..9b660cff5a4a 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -13,12 +13,14 @@
+  * we need to use the kernel's siginfo.h file and trick glibc
+  * into accepting it.
+  */
++#if defined(__GLIBC__) && defined(__GLIBC_PREREQ)
+ #if !__GLIBC_PREREQ(2, 26)
+ # include <asm/siginfo.h>
+ # define __have_siginfo_t 1
+ # define __have_sigval_t 1
+ # define __have_sigevent_t 1
+ #endif
++#endif
+ 
+ #include <errno.h>
+ #include <linux/filter.h>
+@@ -300,6 +302,26 @@ int seccomp(unsigned int op, unsigned int flags, void *args)
+ }
+ #endif
+ 
++int seccomp_flag_supported(int flag)
++{
++	/*
++	 * Probes if a seccomp filter flag is supported by the kernel.
++	 *
++	 * When an unsupported flag is passed to seccomp(SECCOMP_SET_MODE_FILTER, ...),
++	 * the kernel returns EINVAL.
++	 *
++	 * When a supported flag is passed, the kernel proceeds to validate the
++	 * filter program pointer. By passing NULL for the filter program,
++	 * the kernel attempts to dereference a bad address, resulting in EFAULT.
++	 *
++	 * Therefore, checking for EFAULT indicates that the flag itself was
++	 * recognized and supported by the kernel.
++	 */
++	if (seccomp(SECCOMP_SET_MODE_FILTER, flag, NULL) == -1 && errno == EFAULT)
++		return 1;
++	return 0;
++}
++
+ #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+ #define syscall_arg(_n) (offsetof(struct seccomp_data, args[_n]))
+ #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+@@ -2436,13 +2458,12 @@ TEST(detect_seccomp_filter_flags)
+ 		ASSERT_NE(ENOSYS, errno) {
+ 			TH_LOG("Kernel does not support seccomp syscall!");
+ 		}
+-		EXPECT_EQ(-1, ret);
+-		EXPECT_EQ(EFAULT, errno) {
+-			TH_LOG("Failed to detect that a known-good filter flag (0x%X) is supported!",
+-			       flag);
+-		}
+ 
+-		all_flags |= flag;
++		if (seccomp_flag_supported(flag))
++			all_flags |= flag;
++		else
++			TH_LOG("Filter flag (0x%X) is not found to be supported!",
++			       flag);
+ 	}
+ 
+ 	/*
+@@ -2870,6 +2891,12 @@ TEST_F(TSYNC, two_siblings_with_one_divergence)
+ 
+ TEST_F(TSYNC, two_siblings_with_one_divergence_no_tid_in_err)
+ {
++	/* Depends on 5189149 (seccomp: allow TSYNC and USER_NOTIF together) */
++	if (!seccomp_flag_supported(SECCOMP_FILTER_FLAG_TSYNC_ESRCH)) {
++		SKIP(return, "Kernel does not support SECCOMP_FILTER_FLAG_TSYNC_ESRCH");
++		return;
++	}
++
+ 	long ret, flags;
+ 	void *status;
+ 
+@@ -3475,6 +3502,11 @@ TEST(user_notification_basic)
+ 
+ TEST(user_notification_with_tsync)
+ {
++	/* Depends on 5189149 (seccomp: allow TSYNC and USER_NOTIF together) */
++	if (!seccomp_flag_supported(SECCOMP_FILTER_FLAG_TSYNC_ESRCH)) {
++		SKIP(return, "Kernel does not support SECCOMP_FILTER_FLAG_TSYNC_ESRCH");
++		return;
++	}
+ 	int ret;
+ 	unsigned int flags;
+ 
+@@ -3966,6 +3998,13 @@ TEST(user_notification_filter_empty)
+ 
+ TEST(user_ioctl_notification_filter_empty)
+ {
++	/* Depends on 95036a7 (seccomp: interrupt SECCOMP_IOCTL_NOTIF_RECV
++	 * when all users have exited) */
++	if (!ksft_min_kernel_version(6, 11)) {
++		SKIP(return, "Kernel version < 6.11");
++		return;
++	}
++
+ 	pid_t pid;
+ 	long ret;
+ 	int status, p[2];
+@@ -4119,6 +4158,12 @@ int get_next_fd(int prev_fd)
+ 
+ TEST(user_notification_addfd)
+ {
++	/* Depends on 0ae71c7 (seccomp: Support atomic "addfd + send reply") */
++	if (!ksft_min_kernel_version(5, 14)) {
++		SKIP(return, "Kernel version < 5.14");
++		return;
++	}
++
+ 	pid_t pid;
+ 	long ret;
+ 	int status, listener, memfd, fd, nextfd;
+@@ -4281,6 +4326,12 @@ TEST(user_notification_addfd)
+ 
+ TEST(user_notification_addfd_rlimit)
+ {
++	/* Depends on 7cf97b1 (seccomp: Introduce addfd ioctl to seccomp user notifier) */
++	if (!ksft_min_kernel_version(5, 9)) {
++		SKIP(return, "Kernel version < 5.9");
++		return;
++	}
++
+ 	pid_t pid;
+ 	long ret;
+ 	int status, listener, memfd;
+@@ -4326,9 +4377,12 @@ TEST(user_notification_addfd_rlimit)
+ 	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd), -1);
+ 	EXPECT_EQ(errno, EMFILE);
+ 
+-	addfd.flags = SECCOMP_ADDFD_FLAG_SEND;
+-	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd), -1);
+-	EXPECT_EQ(errno, EMFILE);
++	/* Depends on 0ae71c7 (seccomp: Support atomic "addfd + send reply") */
++	if (ksft_min_kernel_version(5, 14)) {
++		addfd.flags = SECCOMP_ADDFD_FLAG_SEND;
++		EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_ADDFD, &addfd), -1);
++		EXPECT_EQ(errno, EMFILE);
++	}
+ 
+ 	addfd.newfd = 100;
+ 	addfd.flags = SECCOMP_ADDFD_FLAG_SETFD;
+@@ -4356,6 +4410,12 @@ TEST(user_notification_addfd_rlimit)
+ 
+ TEST(user_notification_sync)
+ {
++	/* Depends on 48a1084 (seccomp: add the synchronous mode for seccomp_unotify) */
++	if (!ksft_min_kernel_version(6, 6)) {
++		SKIP(return, "Kernel version < 6.6");
++		return;
++	}
++
+ 	struct seccomp_notif req = {};
+ 	struct seccomp_notif_resp resp = {};
+ 	int status, listener;
+@@ -4520,6 +4580,12 @@ static char get_proc_stat(struct __test_metadata *_metadata, pid_t pid)
+ 
+ TEST(user_notification_fifo)
+ {
++	/* Depends on 4cbf6f6 (seccomp: Use FIFO semantics to order notifications) */
++	if (!ksft_min_kernel_version(5, 19)) {
++		SKIP(return, "Kernel version < 5.19");
++		return;
++	}
++
+ 	struct seccomp_notif_resp resp = {};
+ 	struct seccomp_notif req = {};
+ 	int i, status, listener;
+@@ -4623,6 +4689,12 @@ static long get_proc_syscall(struct __test_metadata *_metadata, int pid)
+ /* Ensure non-fatal signals prior to receive are unmodified */
+ TEST(user_notification_wait_killable_pre_notification)
+ {
++	/* Depends on c2aa2df (seccomp: Add wait_killable semantic to seccomp user notifier) */
++	if (!ksft_min_kernel_version(5, 19)) {
++		SKIP(return, "Kernel version < 5.19");
++		return;
++	}
++
+ 	struct sigaction new_action = {
+ 		.sa_handler = signal_handler,
+ 	};
+@@ -4693,6 +4765,12 @@ TEST(user_notification_wait_killable_pre_notification)
+ /* Ensure non-fatal signals after receive are blocked */
+ TEST(user_notification_wait_killable)
+ {
++	/* Depends on c2aa2df (seccomp: Add wait_killable semantic to seccomp user notifier) */
++	if (!ksft_min_kernel_version(5, 19)) {
++		SKIP(return, "Kernel version < 5.19");
++		return;
++	}
++
+ 	struct sigaction new_action = {
+ 		.sa_handler = signal_handler,
+ 	};
+@@ -4772,6 +4850,12 @@ TEST(user_notification_wait_killable)
+ /* Ensure fatal signals after receive are not blocked */
+ TEST(user_notification_wait_killable_fatal)
+ {
++	/* Depends on c2aa2df (seccomp: Add wait_killable semantic to seccomp user notifier) */
++	if (!ksft_min_kernel_version(5, 19)) {
++		SKIP(return, "Kernel version < 5.19");
++		return;
++	}
++
+ 	struct seccomp_notif req = {};
+ 	int listener, status;
+ 	pid_t pid;
+@@ -4854,6 +4938,12 @@ static void *tsync_vs_dead_thread_leader_sibling(void *_args)
+  */
+ TEST(tsync_vs_dead_thread_leader)
+ {
++	/* Depends on bfafe5e (seccomp: release task filters when the task exits) */
++	if (!ksft_min_kernel_version(6, 11)) {
++		SKIP(return, "Kernel version < 6.11");
++		return;
++	}
++
+ 	int status;
+ 	pid_t pid;
+ 	long ret;
+-- 
+2.50.1.703.g449372360f-goog
 
-If you had a specific performance concern here, I think we could
-consider changing this, but in my view it would sort of be breaking
-the locking rules (by using a swap index that is not guaranteed to be
-kept alive) and would need an explanatory comment explaining the
-tradeoff.
-
-Since you only wrote the patch because you thought the lock was
-unnecessary, I'd prefer it if you drop this patch.
 
