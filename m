@@ -1,147 +1,128 @@
-Return-Path: <linux-kernel+bounces-758635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E59B1D1E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A941B1D1E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598E15650E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:15:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C7518C77DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 05:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AD01F91C8;
-	Thu,  7 Aug 2025 05:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A0E201004;
+	Thu,  7 Aug 2025 05:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ni8aT9GD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptI1l/OT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0641C5F27;
-	Thu,  7 Aug 2025 05:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80DF1C5F27;
+	Thu,  7 Aug 2025 05:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754543739; cv=none; b=XFqUxLJ3XD+t9MkPHzqM1ant7H6Eoa+WQIr+dZyUXvA4AJbVTqQ7ltQck6kdxJQNgvNb8Pf7wmiLSkJzzGdqgfP9vEJUKGHKVT4Xbblq8OWKxsluCCaHqjyWsbesKSYQamuea1TqTDIPwrrfV57eFeiG01dj4XrfxxTK3Cb913o=
+	t=1754543744; cv=none; b=sTY6FED3f1fYc6ffNuhznQ2Z9WyxlxPXP7R7q/NOX+cFtTFWgTnnZRod+/pYYXK2fzuyJZ/D9bbn2mfoLN+TJ13OqgsQEgy6H3B+TRfHX9xmz9zw37/WBOu4wdxN13izaeEeKKF3nUKaPMamw9+kP74ysE8z9smVbpwm3LluoOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754543739; c=relaxed/simple;
-	bh=OABG8QK27oVphx3KmqQS2k4HAfAU3yskGkRAX0znjrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1rOphzRomV1Yqe+HU7BLMyd/4aArL++UjcV/x4n7a/qVHgR3cHvkLcs+/P0RA1mWzXgGed1jR3yt+LlutSzzZKa6mwv0Rr5TVKyfSKdrsyQBR80q1ccSWb1D/lTay3dKqLJ1SWeDihMZAmT+WBY9e4raQPKI0arj8PzKJWKWrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ni8aT9GD; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754543738; x=1786079738;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OABG8QK27oVphx3KmqQS2k4HAfAU3yskGkRAX0znjrU=;
-  b=ni8aT9GDVeagtkfiZZYn4LUHWggDwVURr2EHEfHgH/P3i9FxsrFO/pEF
-   zCXe0FuIzjmFgaCjY/iRrCdkYOVo9kGLm21c+fNiwe7ekV54n3V/2Ghxx
-   702nws8vOb+hag2HjFasfcshWjX6cX8jhpius487nOSIaTP6jvvac1JUv
-   ay8DJxsW1mMYoswRx6oHX7fb36Q4EEv2R28bQSNPrWnkX/bukD8LifeFx
-   kj1Tt7sIIjD0nKj/5isL2Swch8kzeao07dJf0uIpx0hBKh7fkIOUegZDl
-   kHJAx1KlXnBrGQm3JM9DSL/AL5IB6z7623J2FDqf/FLUIAtpeNnKcNJ6P
-   Q==;
-X-CSE-ConnectionGUID: i5G4oNfHQxiNhivXFNHirw==
-X-CSE-MsgGUID: J/8IHxFcQ2+KYXH+4OeVpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="74329375"
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="74329375"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2025 22:15:37 -0700
-X-CSE-ConnectionGUID: A+BIQ4/nTU2iPkTP4V9FmA==
-X-CSE-MsgGUID: 6nXx22+eRF2/SLMSaTn02Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
-   d="scan'208";a="165327763"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa009.fm.intel.com with ESMTP; 06 Aug 2025 22:15:34 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id B8DF793; Thu, 07 Aug 2025 07:15:33 +0200 (CEST)
-Date: Thu, 7 Aug 2025 07:15:33 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Mario Limonciello <superm1@kernel.org>,
-	"Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andreas.noever@gmail.com, michael.jamet@intel.com,
-	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
-	Sanath.S@amd.com
-Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
- dynamically
-Message-ID: <20250807051533.GG476609@black.igk.intel.com>
-References: <20250722175026.1994846-1-Raju.Rangoju@amd.com>
- <20250728064743.GS2824380@black.fi.intel.com>
- <59cd3694-c6e5-42c4-a757-594b11b69525@amd.com>
- <20250806085118.GE476609@black.igk.intel.com>
- <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
- <20250806150024.GF476609@black.igk.intel.com>
- <2025080628-viral-untruth-4811@gregkh>
+	s=arc-20240116; t=1754543744; c=relaxed/simple;
+	bh=E02Aj5EQepLu9AzkfD7zyC/ZazyUIRA04m+VFrjcY2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BBfdAgbn9N9GrRNW3ZeSgIK2tlvliZa85eTc2ozRiRxGdUb0vVo7FjpgrPN5t9JbR3uUhq97Uoewht/fehazB1ZgHBsrzNuDqocq8TnCNcbtpl73jhoq/PuIryyi4RTapRh5C4P6YRSeuukQzySL4C/j9DFGHy11BsSCcGgwQZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptI1l/OT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77951C4CEED;
+	Thu,  7 Aug 2025 05:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754543744;
+	bh=E02Aj5EQepLu9AzkfD7zyC/ZazyUIRA04m+VFrjcY2Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ptI1l/OTKWAbn9QA0oqE0DooXqa38R6DVMSt3zQjeAiC4V7RhYiIW7q5eBZbK6bgw
+	 bDS208OPGN3+wW4rX+SLzGoGLqPRUTjUlonhrY+VjDp1qDGRcFh31tCRaPRnY1bwkL
+	 SKogCYQa29cbZY4Nbp6O94AwM6O1IbYkxerqRy21U5QW22NwOZggo0Z0LxtS3GTMws
+	 R+CENeDw6+O/2yI6wz2k0ZCkEGUb1Zxum60D8eUZi5mRLmIAzme481FJB1dfNG8fmg
+	 tISFo8uHZuvNdXL2kMTyD+Y8cpAobz0Lf9sfdRY2P+vE20Sl7o6AfHyjF2pfOTD3LY
+	 lKIVEGe1angmw==
+Message-ID: <8fa90e41-53d1-4060-a077-6bf2807e0820@kernel.org>
+Date: Thu, 7 Aug 2025 07:15:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2025080628-viral-untruth-4811@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] genirq: add support for warning on long-running IRQ
+ handlers
+To: Wladislav Wiebe <wladislav.wiebe@nokia.com>, tglx@linutronix.de,
+ corbet@lwn.net
+Cc: akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
+ Neeraj.Upadhyay@amd.com, david@redhat.com, bp@alien8.de, arnd@arndb.de,
+ fvdl@google.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peterz@infradead.org
+References: <20250804093525.851-1-wladislav.wiebe@nokia.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250804093525.851-1-wladislav.wiebe@nokia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 06, 2025 at 05:58:26PM +0100, Greg KH wrote:
-> On Wed, Aug 06, 2025 at 05:00:24PM +0200, Mika Westerberg wrote:
-> > On Wed, Aug 06, 2025 at 09:06:30AM -0500, Mario Limonciello wrote:
-> > > On 8/6/2025 3:51 AM, Mika Westerberg wrote:
-> > > > On Wed, Aug 06, 2025 at 11:46:04AM +0530, Rangoju, Raju wrote:
-> > > > > 
-> > > > > 
-> > > > > On 7/28/2025 12:17 PM, Mika Westerberg wrote:
-> > > > > > Hi,
-> > > > > > 
-> > > > > > On Tue, Jul 22, 2025 at 11:20:23PM +0530, Raju Rangoju wrote:
-> > > > > > > This patch series aims to update vendor properties for XDomain
-> > > > > > > dynamically for vendors like AMD, Intel and ASMedia.
-> > > > > > 
-> > > > > > The XDomain properties pretty much describe "software" not the underlying
-> > > > > > hardware so I don't understand why this is needed? We could have some USB
-> > > > > > IF registered Linux specific ID there but I don't see why this matters at
-> > > > > > all.
-> > > > > 
-> > > > > Currently, it is showing up as "Intel" on AMD host controllers during
-> > > > > inter-domain connection. I suppose an alternative is to just call it "Linux"
-> > > > > or "Linux Connection Manager" to ensure we accurately represent the
-> > > > > connections across different systems.
-> > > > > 
-> > > > > I appreciate your guidance on this and suggestions you might have.
-> > > > 
-> > > > Yeah, something like that (I prefer "Linux"). The "ID" still is 0x8086
-> > > > though but I don't think that matters. AFAIK we have other "donated" IDs in
-> > > > use in Linux. Let me check on our side if that's okay.
-> > > 
-> > > Having looked through this discussion I personally like "Linux" for this
-> > > string too.
-> > > 
-> > > As for the vendor ID doesn't the LF have an ID assigned already of 0x1d6b?
-> > > Would it make sense to use that?
-> > 
-> > AFAIK that's PCI ID, right? It should be USB IF assigned ID and LF is not
-> > here at least:
-> > 
-> >   https://www.usb.org/members
-> > 
-> > If it really matters we can sure register one.
+On 04. 08. 25, 11:35, Wladislav Wiebe wrote:
+> Introduce a mechanism to detect and warn about prolonged IRQ handlers.
+> With a new command-line parameter (irqhandler.duration_warn_us=),
+> users can configure the duration threshold in microseconds when a warning
+> in such format should be emitted:
 > 
-> Linux has an official USB vendor id, we use it for when Linux is used as
-> a USB gadget device and in a few other places.  If you want to reserve a
-> product id from it, just let me know and I can dole it out (the list is
-> around here somewhere...)
+> "[CPU14] long duration of IRQ[159:bad_irq_handler [long_irq]], took: 1330 us"
+> 
+> The implementation uses local_clock() to measure the execution duration of the
+> generic IRQ per-CPU event handler.
+> 
+> Signed-off-by: Wladislav Wiebe <wladislav.wiebe@nokia.com>
 
-Yes please :) I think this is the right thing to do.
+OK:
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-> Note, the LF is NOT listed as a USB-IF member anymore, as the USB-IF
-> kicked us out at the request of one of their founding members many years
-> ago.  But we still got to keep the product id, they can't take that away
-> from us :)
-
-Hehe, understood.
+-- 
+js
+suse labs
 
