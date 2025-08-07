@@ -1,165 +1,130 @@
-Return-Path: <linux-kernel+bounces-758755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B3DB1D380
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:41:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2CAB1D36E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C34187AD1ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BDAA626998
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B47244679;
-	Thu,  7 Aug 2025 07:40:37 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C67723AE93;
+	Thu,  7 Aug 2025 07:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="15WPNXIq"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7E8242D6E;
-	Thu,  7 Aug 2025 07:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF68234963
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754552437; cv=none; b=qccRAt5hKs0tD9TBs61FVB6st0VRtAiAbPSmgNk9UOTBbqL3+ZajUyhetMljxkCZ7TBySx+Yh8JuzrMObBtBrglIJSgD17h0UAlnsjg5s1GfKV12pCZ0kwjIWROWGSRyuqmiTebwx7iL5Il4RjUOW2UGLTnX+e8eL+kiZsNkBKc=
+	t=1754552155; cv=none; b=OfKDe752YGgAyRSAHRDI5iiCZQKo+4iHSXL62CV1Aj2pHNKZfFVfF2k4DzqtUnUva9qnDAymQOLWyZMfD7lBmj+RcHiY6zpZbm82+cSUXnenaplxF4eHB+lm9v/GpvoBud7YseOU67PWxBqQ3+jd6cnAnbKyV5FMRVB2avGBtBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754552437; c=relaxed/simple;
-	bh=+VozcMLy1p/2md6uD2ddC3N3it/NxFpzbSy7adB3IKA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U7RedjukCxI81e/1Bs6IHlcF18eg478TZc+bArwax+WKYX/cnFLGm3eHgG7jHqbdg5zgaPpnDM/Mfpiac8G+yCiopDk/kI2UR8psZibiYr4Wqvnmk5/wxINIJayu1z3yJF2ClJ8XeZjQxpcPhF5a0GctwLRnODfe0GDP8GNQGZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4byJww17CpzKHLv3;
-	Thu,  7 Aug 2025 15:40:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3F2D01A058E;
-	Thu,  7 Aug 2025 15:40:31 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3QBFtWJRouJ1wCw--.53470S4;
-	Thu, 07 Aug 2025 15:40:31 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: song@kernel.org,
-	yukuai3@huawei.com,
-	linan122@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH] md: fix sync_action incorrect display during resync
-Date: Thu,  7 Aug 2025 15:33:10 +0800
-Message-Id: <20250807073310.2694206-1-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1754552155; c=relaxed/simple;
+	bh=HKUzYDECya07epEvvznHsEcdx7fHOsFvjwKVftSILYM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=asbNOD1CFz85xM+K734MVKKUl0S37lbEib1I6acACMRb+ifO+19D03nE/nVlj02LpypxSPbhmS040UDzYLA77BoUYrigu4NFdkwsxeyrMfTZpzbMd0MZtoWUz78M7kjX6KHoSlYmTl26DcMYBZO88pWlLKgsWBRNTMR30AxbMUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=15WPNXIq; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5776Y6k6008798;
+	Thu, 7 Aug 2025 09:35:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=TrfZdnEzM8YI3DydNQ0/ut
+	FTCYg5k0TRMMcoKD0jcS8=; b=15WPNXIqawe1InQtQS6TSQ7l19vx8wRzokD1YL
+	JX3/zXFuyzz5TtJrOWn2Xp66pICNI8wj98GWT3UZ7WYqw2bjZ2Dk8Fk23dOO9oDF
+	jCn39Tkb0mpexYUSFm1r38PeLTP0B4WYP/DjQqxlsYOEx/RElBTWflhMj5Rj1Iog
+	KG4nK4TYItqmOS4zJgFWL+lEoM5KXMuVkHj8vPYcqIpQ3dG2oYb3Iszy1LZFyCFF
+	P5FGPzk/JuN9yOFEGdolwa6TS/rFj+deMJR4hcDE3ukiRmX9roLV7PF4WGncL6eY
+	AZ8f8rF+A2LMpVJcergbpPDF3H4kSox0TZnLvU91k6cZAKCg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48cq00g955-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 09:35:26 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D4AC94005B;
+	Thu,  7 Aug 2025 09:34:36 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0AEF871860B;
+	Thu,  7 Aug 2025 09:34:11 +0200 (CEST)
+Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 7 Aug
+ 2025 09:34:10 +0200
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Date: Thu, 7 Aug 2025 09:34:09 +0200
+Subject: [PATCH v2] memory: stm32_omm: Fix req2ack update test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3QBFtWJRouJ1wCw--.53470S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr1rWr17ArWDJr47WFy8Zrb_yoW5Ww17pF
-	W0yFy5Wr1DAryfJ39IyryDta45u3WxWrW7WryfG34UAanxKr1Fva4qka45XF90yF909a1Y
-	q34DJFW3uFWUCaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU10PfPUUUUU==
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250807-upstream_omm_fix_req2ack_test_condition-v2-1-d7df4af2b48b@foss.st.com>
+X-B4-Tracking: v=1; b=H4sIAPBWlGgC/5WNQQ7CIBQFr2JYSwNYhbryHqYhCB9LDKXysdE0v
+ bvYG7icl5eZhSDkAEjOu4VkmAOGNFYQ+x2xgxnvQIOrTAQTR6bYib4mLBlM1ClG7cNbZ3gKYx+
+ 6ABZt0+hCqQ4qJSh/Y44fnCLVNmWo76107SsPAUvKny0889/6f2PmlNNWyc5wJ73s2otPiA2Wx
+ qZI+nVdvyRBBrTgAAAA
+X-Change-ID: 20250806-upstream_omm_fix_req2ack_test_condition-77e8fb0d13d8
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Christophe Kerello <christophe.kerello@foss.st.com>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
 
-From: Zheng Qixing <zhengqixing@huawei.com>
+If "st,omm-req2ack-ns" property is found and its value is not 0,
+the current test doesn't allow to compute and set req2ack value,
+Fix this test.
 
-During raid resync, if a disk becomes faulty, the operation is
-briefly interrupted. The MD_RECOVERY_RECOVER flag triggered by
-the disk failure causes sync_action to incorrectly show "recover"
-instead of "resync". The same issue affects reshape operations.
-
-Reproduction steps:
-  mdadm -Cv /dev/md1 -l1 -n4 -e1.2 /dev/sd{a..d} // -> resync happended
-  mdadm -f /dev/md1 /dev/sda 			 // -> resync interrupted
-  cat sync_action
-  -> recover
-
-Add progress checks in md_sync_action() for resync/recover/reshape
-to ensure the interface correctly reports the actual operation type.
-
-Fixes: 4b10a3bc67c1 ("md: ensure resync is prioritized over recovery")
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+Fixes: 8181d061dcff ("memory: Add STM32 Octo Memory Manager driver")
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 ---
- drivers/md/md.c | 41 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
+Changes in v2:
+- Add more detail in commit message
+- Remove "Cc: <stable@vger.kernel.org>" tag as the fixed patch is not part of a LTS.
+- Link to v1: https://lore.kernel.org/r/20250806-upstream_omm_fix_req2ack_test_condition-v1-1-4879a1d7f794@foss.st.com
+---
+ drivers/memory/stm32_omm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index ac85ec73a409..2a4055ad72a1 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -4835,9 +4835,37 @@ metadata_store(struct mddev *mddev, const char *buf, size_t len)
- static struct md_sysfs_entry md_metadata =
- __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
+diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
+index 79ceb1635698f6bc8bd4a39fdeaced1ec318e1f6..9efc56a85b5ecca49eb6dfc0ef83880f89591cd1 100644
+--- a/drivers/memory/stm32_omm.c
++++ b/drivers/memory/stm32_omm.c
+@@ -247,7 +247,7 @@ static int stm32_omm_configure(struct device *dev)
+ 		if (mux & CR_MUXEN) {
+ 			ret = of_property_read_u32(dev->of_node, "st,omm-req2ack-ns",
+ 						   &req2ack);
+-			if (!ret && !req2ack) {
++			if (!ret && req2ack) {
+ 				req2ack = DIV_ROUND_UP(req2ack, NSEC_PER_SEC / clk_rate_max) - 1;
  
-+static enum sync_action md_get_active_sync_action(struct mddev *mddev)
-+{
-+	struct md_rdev *rdev;
-+	bool is_recover = false;
-+
-+	if (mddev->resync_offset < MaxSector)
-+		return ACTION_RESYNC;
-+
-+	if (mddev->reshape_position != MaxSector)
-+		return ACTION_RESHAPE;
-+
-+	rcu_read_lock();
-+	rdev_for_each_rcu(rdev, mddev) {
-+		if (rdev->raid_disk >= 0 &&
-+		    !test_bit(Journal, &rdev->flags) &&
-+		    !test_bit(Faulty, &rdev->flags) &&
-+		    !test_bit(In_sync, &rdev->flags) &&
-+		    rdev->recovery_offset < MaxSector) {
-+			is_recover = true;
-+			break;
-+		}
-+	}
-+	rcu_read_unlock();
-+
-+	return is_recover ? ACTION_RECOVER : ACTION_IDLE;
-+}
-+
- enum sync_action md_sync_action(struct mddev *mddev)
- {
- 	unsigned long recovery = mddev->recovery;
-+	enum sync_action active_action;
- 
- 	/*
- 	 * frozen has the highest priority, means running sync_thread will be
-@@ -4861,8 +4889,17 @@ enum sync_action md_sync_action(struct mddev *mddev)
- 	    !test_bit(MD_RECOVERY_NEEDED, &recovery))
- 		return ACTION_IDLE;
- 
--	if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
--	    mddev->reshape_position != MaxSector)
-+	/*
-+	 * Check if any sync operation (resync/recover/reshape) is currently
-+	 * active. This ensures mutual exclusion - only one sync operation
-+	 * can run at a time. Returns the type of active operation, or
-+	 * ACTION_IDLE if none are active.
-+	 */
-+	active_action = md_get_active_sync_action(mddev);
-+	if (active_action != ACTION_IDLE)
-+		return active_action;
-+
-+	if (test_bit(MD_RECOVERY_RESHAPE, &recovery))
- 		return ACTION_RESHAPE;
- 
- 	if (test_bit(MD_RECOVERY_RECOVER, &recovery))
+ 				if (req2ack > 256)
+
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250806-upstream_omm_fix_req2ack_test_condition-77e8fb0d13d8
+
+Best regards,
 -- 
-2.39.2
+Patrice Chotard <patrice.chotard@foss.st.com>
 
 
