@@ -1,307 +1,180 @@
-Return-Path: <linux-kernel+bounces-759367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC8F5B1DCA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:52:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99F7B1DCAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A157918C4894
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:52:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108D61695BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37B41F463E;
-	Thu,  7 Aug 2025 17:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="a1/4pXwC";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rSEHcpZd"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89AF91FECCD;
+	Thu,  7 Aug 2025 17:53:09 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0E043146
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 17:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754589124; cv=fail; b=Or7FyTt2YUjHJnkZyWwwG4F1L+L8rWF4td05gtcs5E4dXB1LXutIZslC1sVC7qejNLWg6vmD2fbE6fgeIhuTvbw5Ku8PtpKms1OzMZaEDPljhX+f/gimy/HdMBsmIGM4K1StwCgdHi/mKNZ20UzLfL46pfW1GC/cI0Nb9HGXhGE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754589124; c=relaxed/simple;
-	bh=D7//QlUXpL0H5J+vVoSGdiw5tOSlgVAUA3yZwtVfU6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iuLRtsf0lJcUafEejTGi3CLgztkgbdCTbYVotQVUEt5EGMJqCRIVPiMgptXk0D+j/IZamcSHZoiqqn1hwFXs68ONj8/A2rLY/3piRZ/ROzO8LjPql1LxjbvLopt55FBq1WemSCJW4uDUxPq26NgLCGdDRcKDxIP4iQAF7T6xeKo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=a1/4pXwC; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rSEHcpZd; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577HC81k005037;
-	Thu, 7 Aug 2025 17:51:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=I/l4RkUajL+YRlHtK5c5krT4QDDWXqIXmN0ra3lyx4I=; b=
-	a1/4pXwC+hDck5IjMxwPXdRK4OQIHW1bHK3V9yyoxTccEkDwPxON41RtfxLnHozS
-	9pmR81Rvo1DXU7oQWGhOm2q8I6OgyeOXUPWPsoBPB2235Rth/JuVmAQsFaz/WwWy
-	WywUFJ9HaKoy91g6avCE4rfu99+iiA0hfd4CUAIvjXo6TH2ZGTjNGjCO/5hQk/37
-	VdImMWtPITuiZyCBbX2GWeI3zXJYryr8bLgWLee0Gm0KGuYzvPNW0pA25nHEWu+7
-	eEP8KB0+JK+4aVOtbFub/1sEjLTGK9Y/Y/xheV9ahzUgb//dZZUs1Xia/GxoIDLi
-	42JO+kOuCgLRmg9TrepfUA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpvh4nn2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 07 Aug 2025 17:51:15 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 577HFwrp028296;
-	Thu, 7 Aug 2025 17:51:14 GMT
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04on2063.outbound.protection.outlook.com [40.107.100.63])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48bpwnyq9e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 07 Aug 2025 17:51:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CYk7CBcmjnq0zsZ5/A7W/7PbTBqyGYTELzUpntsHt5YLxjSRQCQmd1IBx8CnKPKeNl7mvlKN/w7Y3T25AwHZA6dST0KYLR/ldV7zqIzcgeMl+iGiTq91nWL2+T0oXnRZGoshh0OgHSYbvrMj9G+MQlwnTPZuVQWTBrtVcBfEKZ429bmeprwdcaYpVm7VYYv8woXI3bA4xYgvLNUWxYyWmJCsBVzCgBKjvtKggi6bun/MgOF6FsQT454roSjPWIvC5Jp2W4KGR8GxJpkcfiQYKVp9FWpVuyVVNWszUNWlaLFfia5CeTCD1y78OcJ0qtnX5kShqwxm2hB4s9M8mjQEVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I/l4RkUajL+YRlHtK5c5krT4QDDWXqIXmN0ra3lyx4I=;
- b=fbY+Leb+wgzttK2xxClRNvZz5Yhnj0aQsnQ9y4bg/R3AupHwldW8oGCEPrBAGvZcKA4z5HBEwKlFmDrzGMX70YqEZHpWlce0LPP+TdhGUwVpPHXGr74sP3F6ZbHoeZWgN01j4L1FjLQP5z6jDoEX/Ul++FFA4l4nxit95lpWz0u+FX/7RlevyJzMSHXnTmxsK7AgJ29YneTcG9EHl+UPOoX+KS6lLEh7iHId3rPhqmAAfN8nZQAk2m+Bso5O2polerLDGPnbjvSR1tPxl+LK2CKgS4b5tIXcStyhoIqcGctkgoYbjjdvqHe3ICX2/g5cQ6NIvBeEjK+3wrUVCtwEBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I/l4RkUajL+YRlHtK5c5krT4QDDWXqIXmN0ra3lyx4I=;
- b=rSEHcpZd9SV7l57gfMg1KfR881ajEeumX64XFjOB/WdlFaFeedts2yVIe3lemI8JvG6QrM3FBPsyd2ilINzU2DoJ7X0w521z9Gb51ha+Lz6tYL6AO3gOIyxuqkoBzLJnbr9sLrDyXbCC5DdXcI2HN/gCmuhemerJCkQwHAbmBMs=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SA6PR10MB8015.namprd10.prod.outlook.com (2603:10b6:806:438::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.17; Thu, 7 Aug
- 2025 17:51:11 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
- 17:51:11 +0000
-Date: Thu, 7 Aug 2025 18:51:09 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jann Horn <jannh@google.com>
-Cc: kernel test robot <oliver.sang@intel.com>, Dev Jain <dev.jain@arm.com>,
-        oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Barry Song <baohua@kernel.org>, Pedro Falcato <pfalcato@suse.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Bang Li <libang.li@antgroup.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        bibo mao <maobibo@loongson.cn>, David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@kernel.org>,
-        Lance Yang <ioworker0@gmail.com>,
-        Liam Howlett <liam.howlett@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Ryan Roberts <ryan.roberts@arm.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <yang@os.amperecomputing.com>, Zi Yan <ziy@nvidia.com>,
-        linux-mm@kvack.org
-Subject: Re: [linus:master] [mm] f822a9a81a:
- stress-ng.bigheap.realloc_calls_per_sec 37.3% regression
-Message-ID: <e4f5faea-ccec-4cc7-83de-1a3c7013b81b@lucifer.local>
-References: <202508071609.4e743d7c-lkp@intel.com>
- <9e3a59b2-11c0-43ca-aff3-414091f04aa4@lucifer.local>
- <CAG48ez3=8f3eShjAe9hrvivP+Dvyisw=X_Tr_phc-OX_4MzeDw@mail.gmail.com>
- <be074809-e1fd-43a2-9396-8f7264532c4d@lucifer.local>
- <CAG48ez3=kLL4wBxAVSa2Ugrws+-RFQMdNY9jx5FAdbhpNt8fGg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez3=kLL4wBxAVSa2Ugrws+-RFQMdNY9jx5FAdbhpNt8fGg@mail.gmail.com>
-X-ClientProxiedBy: LO6P265CA0022.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ff::17) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB2A43146;
+	Thu,  7 Aug 2025 17:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754589189; cv=none; b=HYfEIIGt8XArBWE0k61AhOTEJHuC26TckhYv+iwyMvCzlcsKMS26sw+6Y0e0f5pFLHCeoSbNhh5nieoOe084o6lNe2FeYjcrWqPF+9f9de5AKvvMTdQ+J1emepE24WdrW66ANjnrefqNJ+asi6tHt1umMXj8cvUIIJoQeaWoV9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754589189; c=relaxed/simple;
+	bh=murgxXqK5MEygbTVNZ3W89Tu4fD2ohjtqaOMSeQzUaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RMS/SR39BAtvtDCtHiB4pzfLnGDfm32JdqzkxKikpoP4eDHZr8MC5/W147eFpZsbdIYcPIN0rh9k14mW/JrotDJvZgqABv8srK2sNwn5bYtK/m7RwGj6KdQSImd/hVZTrvQxeqtIeZXB/XWjf+10m833hGyh4EeWQj1262BWEA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:ce11:d0e1:e548:b0a5])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id C6AD7401FA;
+	Thu,  7 Aug 2025 17:53:04 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:ce11:d0e1:e548:b0a5) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: yonghong.song@linux.dev
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	Arnaud Lecomte <contact@arnaud-lcm.com>
+Subject: [PATCH 2/2] bpf: fix stackmap overflow check in __bpf_get_stackid()
+Date: Thu,  7 Aug 2025 18:52:58 +0100
+Message-ID: <20250807175258.7613-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250807175032.7381-1-contact@arnaud-lcm.com>
+References: <20250807175032.7381-1-contact@arnaud-lcm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SA6PR10MB8015:EE_
-X-MS-Office365-Filtering-Correlation-Id: fbf6e2ff-7e01-4c7d-c05a-08ddd5dafedb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T2JNVDVLVU5Xb2ZuV1ZGeXhNbnNaZFp2UjlNV25xbXZJdUNSVEdBZnZkNVI5?=
- =?utf-8?B?Q09pUkU3Uy91dVk1V0s0cS9PMkNQNnJBVktQRFZoTUt2WThUVEVOcGovSUl6?=
- =?utf-8?B?QTBPUFlVNktmVVVROGxlQlpmK3FHRTM1RFc5ZEprUE0yV0pVY1IyVVN5bmNF?=
- =?utf-8?B?alFMMDhGcGZhcWJ1Y1RmbXpZaXZBc000Vll4R2VzRWhYN2IzYlBvYlVqUXZZ?=
- =?utf-8?B?NkwwbkJtdHNVT3hHWnhCNFNjMjZTU0pqVGFMelVGQ014dlFsNXNWKzBFbXdm?=
- =?utf-8?B?UVZ1Ylh1ZEFNcGkyem1GQklsUzNUN1BHWGFBaGJtcHBBbHVVSUREMExodUNy?=
- =?utf-8?B?b3RnakJCaUFjT1dHZzVzdm0yNU5HSFQyR2wySk8va2gxVnBBdVpJOENQblJm?=
- =?utf-8?B?NVF5bXBhVnFld3lKRXNvODZVQ0d5OXkwY1FxY29ZRFhMY1ZkTzYxSXVxQzJB?=
- =?utf-8?B?bi85R25STzRuam9BWlYxcHNYMTBHb3VCMHJtNGdPZ0FxNWhia3R6MkRuR1hP?=
- =?utf-8?B?VCtKS3pnbHI2UG1BdUx2M1hvK0dOR3piWllOOW5BeS9nL1kydENxZk1uUmw3?=
- =?utf-8?B?dVU2bjRmU2Izd2ZGSkpQU1NXZnA0NzJyTW1BTGFKZGRMMmt4ZWJ4L3duTTZk?=
- =?utf-8?B?dW1SMkJuRFljS0wrTVVHakkzSnZRU2Vob3ZQaHRJZE1SSStRUlFSUjdCeFlC?=
- =?utf-8?B?NnRtMDQyWTNMRmowdVpsVVBKS2F4MFBYa2tma2lGTEZUQTVYbHhkZjJDVnRU?=
- =?utf-8?B?MmZJTm9tV2JZRkMzWDZ5bzd5MlQ3emlWa3ZHLzFpTmNLMkZIUTUyWURsbGF1?=
- =?utf-8?B?RXZsT0hhVk5MS29EZzN3VHM3cTF4ZTVRTFdoSzBBM1A4OXJjd0JDZm5ISGZw?=
- =?utf-8?B?bnF6MmxYQXVNSEQ5ZGc1enJWNU5uMGNFc2FacEdvMEVCZmttbU9penJiRDdo?=
- =?utf-8?B?c2QyYm1KSzBwZHlrUU01TkVGd0RaV0o5SnVWMVBGVm1xZC8vbzBxdU9sbHJw?=
- =?utf-8?B?ZTVGdHc2N1Avc2sreG5aSWlYMTJmOVZ1UTBia1Q0K1JKT0ZVSi9hY2FHOWN5?=
- =?utf-8?B?Nm9OMm1OSjYzVUhYdHEvL2RIcTRiZGtsQ29MdENVdFZMM2xxaEZNaXNUN0Uy?=
- =?utf-8?B?ZXZtaDNNODNNZ1NNQStlbHRwQW84Y3kzWmRSN291d1N0c05DbnUzdkxmbnJv?=
- =?utf-8?B?M0tNYWs5TzVtSXQwekpMbm80TEsrblphdVdRdnVSWEhQdUlwMmI0UzdZcGlJ?=
- =?utf-8?B?VUw2K2t4NmZpQkVsWHdEazhHYnZ2Nko5M0Fwdjk5T0Vibi9nK2MvVWJnZVNX?=
- =?utf-8?B?MzRpVlVlUm45WTJtVlVTZkNDWWxqMzZmVFBYRjhwT0pIdE1VYW1MZWNNMVNX?=
- =?utf-8?B?R2dMVWp3UDNNTXN2SkYvc05ZaWl2TDVQZjhSQ3JGaUNLT3p6OCtVLzJ6ODVy?=
- =?utf-8?B?dWg0WnRLWGIwTE40UjZmamFZU2N1OEVOaUR4REdnZTYzeEV3Rkx2SEhXZjlZ?=
- =?utf-8?B?N0U4R2M2aTNoNHNsWlJOdGZEU2R6K2tXd1FOMEJEMVFZWDJJV0t3MW5GVDF6?=
- =?utf-8?B?Qmh1ZHh1VVZPbkhNTVhGUitVSU0rTUZYeTg4TlY2Q0J6SXZ0Uy9VcUJOdU0x?=
- =?utf-8?B?VHdJMzUyNE4vc3JxRCs5K2VVUVJYa2pvU1ltbVJjS0JDN2FmenY0OXREZmZi?=
- =?utf-8?B?UXNLM29vM2NvSVI5L2lxOXlLb0szM1Vkc2JCQUxiWnhyaGpPelZ6SjMrb29u?=
- =?utf-8?B?N0pEczB3NUl2Nkc1NjE1ZE1BcUtmVytDL0NqUC8rbEVOMkFFNTE3c28vSmdo?=
- =?utf-8?B?Y0tzdDdoLzJ1TU1hWDZTeGtGc3ZnWE9PY2hVRHl1VnVlNm45aGVHd1BYSTMz?=
- =?utf-8?B?ZTNpVStoYVZOZXVjdzloYlBZa0RoaFE3VW54d0FtM0ZVMlpIL29yTWN5K3dk?=
- =?utf-8?Q?joXnCRTRBI0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RlIvZFIvMzlCVHRRNjcvU1pVUkRPTTN5bDBnVmFMNk1nL0xPd1RvTnFNSCtN?=
- =?utf-8?B?MnVhZFNyaU01MWQ1Z2hsYWwzOWFObnFJWElFa2o3NXU3eW5YYyt2aXIrUkRR?=
- =?utf-8?B?Y1BQalVTV0hpWFpkNFhQL0F4ZEo0dkNTWGdocFluUVM5anc0M0ljdCsrQmdX?=
- =?utf-8?B?VlNnRkppTmVRK1hScXlmUmswM0hCb1dxMzFyMTk5Q2hqU3NhaWp5U1ZETTUr?=
- =?utf-8?B?ZmlxUGZoTWtXd0RsMm5rcFU5amNrVG03NlN0MjFOS0pycmJBbE0ydXg4My8r?=
- =?utf-8?B?c0tNMEN2Y2cvaDRiY3NsYjRzenZoeXNWUDdLUHJlTFZ5VzBWc05sVFNwdmNl?=
- =?utf-8?B?UVJISGNLOUZNd0pvUnlNWC9RNlZ1aFd2blVJU0JrOWs4c21iUkxwYkkyZFR3?=
- =?utf-8?B?Ri9mcm8zM3JJc2pGbG1CNngrZlpHZDdvdE52VVlmbHUyNTNIV2F0OGxDLy84?=
- =?utf-8?B?SmxRRytpOUFieDNiZGFGMjc2RFFrU2EzSi9OTGpETHYvWk4xa2lBOEkzOGsv?=
- =?utf-8?B?NEhWckUvTUl0dUovSmt0QWpmL2YzcXRBMzJTaTV4bHVZUHRLNlZ3UmRESktF?=
- =?utf-8?B?RVRRS3FsTlhWWmJ4Y20xSGM1cHgwUy9hbjFaQVZpWmdyVDVtcU41ZHQ4b0tB?=
- =?utf-8?B?Wkw1aE4xOFR3NVRWN2l1NDZvMkRTRWdpdjJJZWR0QzNPRDBnOFlLaXJZb2M5?=
- =?utf-8?B?TW1iOHk0aE9YelpzYXc5N1cwTXZ3eHovS3RXc2w1aE4yZlZRbWhPZjhZSUFs?=
- =?utf-8?B?OXdrQmdkaVNMTjF1OTRidjh5Ykg5R2Zjc2NNTW9XK1NNTXcwOVN1aW5iYXlW?=
- =?utf-8?B?SjFmcmhJN3MrU0J4N0taY2lUcGFNbHBNamJLaEhmMGtua1lpVFMwOWwzN1ZZ?=
- =?utf-8?B?WDFnL2hjK0w1SVY2UW1wQTV5REJKOWZMdC9CdDdYMVN4L2UvUnF5alBzbmZ4?=
- =?utf-8?B?bHpWRU9jeGQ1cEdFajM0VkFpcERFRDhqNVhLWXAvK0xtRVFVTWUxZW9OTDVB?=
- =?utf-8?B?Y1pjNHgrbjJ0TkRFWWVVdklGcThaYWVaVGdSdHhhRncyZGtSclhvVUs0OFUx?=
- =?utf-8?B?TlVsUldtbjl3eHc5Q0F3Rmd2S0xqclpWaDBYaGZDWW5nK2tjQ0JnOTNKY1Zz?=
- =?utf-8?B?eDhWK2FjWUVjL1k3clk1NkxBOCtYTit5VFB4blNmK1hFTldkMmJXbWxqdk81?=
- =?utf-8?B?dVFmc29lUUMzUDEweTgzeTIzTkhHTzk1aitXaG05dUdxb3NNd2x2V1ViczI0?=
- =?utf-8?B?TnZOUUw1ejRqNmdNUUswSnhuYW5JRUdjK3RFaDZvK3lYQzdDWStpcGwyK1ZK?=
- =?utf-8?B?YmdKa1RYT1EvZnA3QTVPeEJuR2RhQnRId0ZDOFlMdXFENEVFcEcxMDYxZldq?=
- =?utf-8?B?MXR1UWt1K3R2aDZWSnN2M1Q2ek0yN1FiVDh2K3EvZkJqVlhadXA2WWhhRWxT?=
- =?utf-8?B?T3dLaTJVRElqY203ZjE2ODdlNEdBbTM1Vmp1dEJmMEFxaFFVYy9vUGJEdnhv?=
- =?utf-8?B?NFVjNUdJL01SbWhKaStlbTNGc28yLzJZM1NzbS9KQlNWUTFOa2tSMDhGYXZv?=
- =?utf-8?B?UzVoSzQ3VktESmRLSS9KTkdieFg3MjRPSFBRdys1M0s2TE4vU28yS2FTZEFL?=
- =?utf-8?B?ZStNeXNORVJ6amlNSC9jVnppcXFiVFJsLzVtb3ZtQTJtaE42b1Q5cWJ1NDRl?=
- =?utf-8?B?QTNoaXBUSlYzL2FBZVNQbThDaWFuSGdLaWVLY25JQ0hsRkk2dkY1VXpmKys1?=
- =?utf-8?B?MFFxbXo3clpHRk11SG1NYy9aWnQyS0dqbjhvak1Ja1ZuSDhZbnk3aXlJcTA1?=
- =?utf-8?B?ekxIQ2JzOVAwN1FwNzNVb1JEQVdXOXZRNWN5eWNIeUpsakNIcVNzM1UwcCt3?=
- =?utf-8?B?OTh1VjlERkpBcjUwMFN2M1BSUHNnVi96enhnUXRMZDk5ZzJ3OXNPUlFXaEFt?=
- =?utf-8?B?OCtxMUVQUkJDTk9QY0lNVlRNVDRXRVVKWFlOYlNnWlEvM1U1cUdoZ1pqVmta?=
- =?utf-8?B?a1hRMVVEQzFXTHlsWEhIa0lhZ1U5VWZQRzNhS2RZTTZuL0NpTkM4dmNOUHdO?=
- =?utf-8?B?M0dyd0JLcFRxQy81M0xBL0hSdGtqMzZuYXJuRkJMNEo4em9JMFowaTdNU0NN?=
- =?utf-8?B?OXdoK2Z4VkZjbzdubTl3Y3ZKYTZYNG5YWjhmZ3NPSnpMZzBCYXhEUXZjY1JT?=
- =?utf-8?B?MXc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	QMpy9PnkFelP9isV9NzW8z/EXGm3yOwD8l5R8mKYbhm24TbVK45c1FtIwuyvVdxkHz5iTV2IpE5JVIVtGmmd06sXjO+YjGcYyixqUtKHf+ARZgJLZd/4Sfb2DrhcQkRvSEr7drryvRQwiMcObvWzl2wJ8D53wsiVHFA8D0LRJ/hLdSG9ZyZ6y4oZerwn7ZnFLjPE9U+mszuOb9R6e/q5LN7t9tiypwgzDJPN6H1ScTYtfCXZPNAHu50BsjtPGoy4MlDRU+fqyd/2voX9Nsc2Ds356TB6VSHlGSWWiPjxXKeKjzw3rDQV0b3SyKIVCWxIgAVprqUFqetFcY4Cu2J3PRgnAWlUl91+OVOP87xW5Kje/D68U9AxqHP0uUZJUNtaDyK2drK7T+M7qsYgabrQMRIeGSckCr+Z5H/u7MyCkvedfNeZlJ+T+tz3GoIZ5G6z3fAVnPAbVEDixP7E0mpMW+yBSi5D/qiGA/UWA/PIonAB3Kic5W/S1oHoJUPKMmafvdSCeIfBeQ1U89Bs92+53e07PayHMloMGG4xYAMmizVZOrvBDqLVl7I+dvJcXis9z5grU5sb/VT+lzIlkh45Bi0JJh3gIuI8K14p85wsWho=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbf6e2ff-7e01-4c7d-c05a-08ddd5dafedb
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 17:51:11.2462
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zsAKsN4XTMxtaXidv2CqwCqwCmvFocEgf6KNjmO3mgnwcRtNnbNbURdqWrih/1djSsp8sdSo/OPmCJzVHVq7SV4Wd6YuSl7vMtM/rf3Myrc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR10MB8015
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_04,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2507300000 definitions=main-2508070145
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDE0NiBTYWx0ZWRfX586LtVISer2P
- yveXv+CO4l42PMjaxvOw86ZS3EjfWNNcIPPbfR7AUG8QHmRNtAsWftsjmMr3GE5ZCk3V/v1jXPx
- sr08Pey0uvn3Ui01PUiBrj3mwiPdcmkIxnsGHztP0uoq5gJKRYp20Rb699bvrPvbiVDK1wzXsAw
- FY4403znSDqNxO5ECsFXErnQbbBZfQdUI1Zzv49CGtQQ2LmOlYFBJ0PWofsPLqf0RhXIy2fvUJ1
- qgo5yklTJ9NGn7F7e3j45A1woiEq+LfuBw8KEPQqvaVaL0PYSGyvzzPbGIr2+Ha/56I+9a1T8ZW
- 4X+e0gMn/a94Gbxq9agALOw1zzzOBq0ymBXWiBU2i1s9Od5dxQlQbcPkC93MpgQ/vKZ0NBN50ST
- xOZaYocteOOxbqS9NhEKe8ZO3S2H6E/nMGPoALpdez/27Lay8C7duCqI2P+c9Z78lxxZBZ1R
-X-Proofpoint-ORIG-GUID: ggiTjkgfUx78QqjW99AqwANm3YIRn1U2
-X-Proofpoint-GUID: ggiTjkgfUx78QqjW99AqwANm3YIRn1U2
-X-Authority-Analysis: v=2.4 cv=Hpl2G1TS c=1 sm=1 tr=0 ts=6894e793 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
- a=yPCof4ZbAAAA:8 a=Bge3NiY2uUHJcAqHsokA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175458918573.18374.9325590239414294602@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On Thu, Aug 07, 2025 at 07:46:39PM +0200, Jann Horn wrote:
-> On Thu, Aug 7, 2025 at 7:41 PM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> > On Thu, Aug 07, 2025 at 07:37:38PM +0200, Jann Horn wrote:
-> > > On Thu, Aug 7, 2025 at 10:28 AM Lorenzo Stoakes
-> > > <lorenzo.stoakes@oracle.com> wrote:
-> > > > On Thu, Aug 07, 2025 at 04:17:09PM +0800, kernel test robot wrote:
-> > > > > 94dab12d86cf77ff f822a9a81a31311d67f260aea96
-> > > > > ---------------- ---------------------------
-> > > > >          %stddev     %change         %stddev
-> > > > >              \          |                \
-> > > > >      13777 ą 37%     +45.0%      19979 ą 27%  numa-vmstat.node1.nr_slab_reclaimable
-> > > > >     367205            +2.3%     375703        vmstat.system.in
-> > > > >      55106 ą 37%     +45.1%      79971 ą 27%  numa-meminfo.node1.KReclaimable
-> > > > >      55106 ą 37%     +45.1%      79971 ą 27%  numa-meminfo.node1.SReclaimable
-> > > > >     559381           -37.3%     350757        stress-ng.bigheap.realloc_calls_per_sec
-> > > > >      11468            +1.2%      11603        stress-ng.time.system_time
-> > > > >     296.25            +4.5%     309.70        stress-ng.time.user_time
-> > > > >       0.81 ą187%    -100.0%       0.00        perf-sched.sch_delay.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
-> > > > >       9.36 ą165%    -100.0%       0.00        perf-sched.sch_delay.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
-> > > > >       0.81 ą187%    -100.0%       0.00        perf-sched.wait_time.avg.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
-> > > > >       9.36 ą165%    -100.0%       0.00        perf-sched.wait_time.max.ms.__cond_resched.zap_pte_range.zap_pmd_range.isra.0
-> > > > >       5.50 ą 17%    +390.9%      27.00 ą 56%  perf-c2c.DRAM.local
-> > > > >     388.50 ą 10%    +114.7%     834.17 ą 33%  perf-c2c.DRAM.remote
-> > > > >       1214 ą 13%    +107.3%       2517 ą 31%  perf-c2c.HITM.local
-> > > > >     135.00 ą 19%    +130.9%     311.67 ą 32%  perf-c2c.HITM.remote
-> > > > >       1349 ą 13%    +109.6%       2829 ą 31%  perf-c2c.HITM.total
-> > > >
-> > > > Yeah this also looks pretty consistent too...
-> > >
-> > > FWIW, HITM hat different meanings depending on exactly which
-> > > microarchitecture that test happened on; the message says it is from
-> > > Sapphire Rapids, which is a successor of Ice Lake, so HITM is less
-> > > meaningful than if it came from a pre-IceLake system (see
-> > > https://lore.kernel.org/all/CAG48ez3RmV6SsVw9oyTXxQXHp3rqtKDk2qwJWo9TGvXCq7Xr-w@mail.gmail.com/).
-> > >
-> > > To me those numbers mainly look like you're accessing a lot more
-> > > cache-cold data. (On pre-IceLake they would indicate cacheline
-> > > bouncing, but I guess here they probably don't.) And that makes sense,
-> > > since before the patch, this path was just moving PTEs around without
-> > > looking at the associated pages/folios; basically more or less like a
-> > > memcpy() on x86-64. But after the patch, for every 8 bytes that you
-> > > copy, you have to load a cacheline from the vmemmap to get the page.
-> >
-> > Yup this is representative of what my investigation is showing.
-> >
-> > I've narrowed it down but want to wait to report until I'm sure...
-> >
-> > But yeah we're doing a _lot_ more work.
-> >
-> > I'm leaning towards disabling except for arm64 atm tbh, seems mremap is
-> > especially sensitive to this (I found issues with this with my abortive mremap
-> > anon merging stuff too, but really expected it there...)
->
-> Another approach would be to always read and write PTEs in
-> contpte-sized chunks here, without caring whether they're actually
-> contiguous or whatever, or something along those lines.
+Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
+when copying stack trace data. The issue occurs when the perf trace
+ contains more stack entries than the stack map bucket can hold,
+ leading to an out-of-bounds write in the bucket's data array.
 
-Not sure I love that, you'd have to figure out offset without cont pte batch and
-can it vary? And we're doing this on non-arm64 arches for what reason?
+Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+---
+ kernel/bpf/stackmap.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-And would it solve anything really? We'd still be looking at folio, yes less
-than now, but uselessly for arches that don't benefit?
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 14e034045310..d7ef840971f0 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -250,7 +250,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
+ }
+ 
+ static long __bpf_get_stackid(struct bpf_map *map,
+-			      struct perf_callchain_entry *trace, u64 flags)
++			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
+ {
+ 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+ 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+@@ -266,6 +266,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ 
+ 	trace_nr = trace->nr - skip;
+ 	trace_len = trace_nr * sizeof(u64);
++	trace_nr = min(trace_nr, max_depth - skip);
++
+ 	ips = trace->ip + skip;
+ 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+ 	id = hash & (smap->n_buckets - 1);
+@@ -325,19 +327,19 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 	   u64, flags)
+ {
+-	u32 max_depth = map->value_size / stack_map_data_size(map);
+-	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 elem_size = stack_map_data_size(map);
+ 	bool user = flags & BPF_F_USER_STACK;
+ 	struct perf_callchain_entry *trace;
+ 	bool kernel = !user;
++	u32 max_depth;
+ 
+ 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+ 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+ 		return -EINVAL;
+ 
+-	max_depth += skip;
+-	if (max_depth > sysctl_perf_event_max_stack)
+-		max_depth = sysctl_perf_event_max_stack;
++	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++	if (max_depth < 0)
++		return -EFAULT;
+ 
+ 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+ 				   false, false);
+@@ -346,7 +348,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 		/* couldn't fetch the stack trace */
+ 		return -EFAULT;
+ 
+-	return __bpf_get_stackid(map, trace, flags);
++	return __bpf_get_stackid(map, trace, flags, max_depth);
+ }
+ 
+ const struct bpf_func_proto bpf_get_stackid_proto = {
+@@ -378,6 +380,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 	bool kernel, user;
+ 	__u64 nr_kernel;
+ 	int ret;
++	u32 elem_size, pe_max_depth;
+ 
+ 	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
+ 	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
+@@ -396,24 +399,25 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 		return -EFAULT;
+ 
+ 	nr_kernel = count_kernel_ip(trace);
+-
++	elem_size = stack_map_data_size(map);
+ 	if (kernel) {
+ 		__u64 nr = trace->nr;
+ 
+ 		trace->nr = nr_kernel;
+-		ret = __bpf_get_stackid(map, trace, flags);
++		pe_max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		ret = __bpf_get_stackid(map, trace, flags, pe_max_depth);
+ 
+ 		/* restore nr */
+ 		trace->nr = nr;
+ 	} else { /* user */
+ 		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
+-
+ 		skip += nr_kernel;
+ 		if (skip > BPF_F_SKIP_FIELD_MASK)
+ 			return -EFAULT;
+ 
+ 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
+-		ret = __bpf_get_stackid(map, trace, flags);
++		pe_max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		ret = __bpf_get_stackid(map, trace, flags, pe_max_depth);
+ 	}
+ 	return ret;
+ }
+-- 
+2.43.0
 
-The basis of this series was (and I did explicitly ask) that it wouldn't harm
-other arches.
 
