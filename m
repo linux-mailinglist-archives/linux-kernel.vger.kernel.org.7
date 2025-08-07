@@ -1,240 +1,244 @@
-Return-Path: <linux-kernel+bounces-758671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00219B1D26E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9CDB1D272
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4363A8CA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:22:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FB73AA7C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 06:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9573521B8E7;
-	Thu,  7 Aug 2025 06:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FF721D59B;
+	Thu,  7 Aug 2025 06:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gp5t7iIK"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yTETvz/H"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2040.outbound.protection.outlook.com [40.107.101.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185BB1537A7;
-	Thu,  7 Aug 2025 06:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754547730; cv=none; b=T4jXz6UdvQd7VQYQIWC3ynnzRMEGAGGsIOW2wFlN8hVGc3WAGrAT4jl0loL1gkpbPkANoueOnga5mstW3eetGiFyeeTOIhROOc2HsfF//OMYWMfiC4flwasY1yM6yY9x1yJDt9PgXQSZ90IQnTpft7WmvD2co/EQQ4FvWyyl4vQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754547730; c=relaxed/simple;
-	bh=h4HAzvbNPfu2hlTDaZ1JnlfaRsCsMn3xWXo3/bjYla0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EKV8QETO1McDZleiiFiftD90FoDooKjenJbjLqJTIExgZF7Tv9TliFwLnb0Zc/LFfNX/79jVCmk59JCTk8b1TCaQeH7rtK4GkJhKnyGyeFkS5+eSlYy0fsh/b2xebQvf6D+xYfnsP+HCITWiYyPUbAM3eH4JpSI03PYjNYu0SUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gp5t7iIK; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-615c8ca53efso1162636a12.2;
-        Wed, 06 Aug 2025 23:22:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754547727; x=1755152527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ktbyr9SzycNcU3hnEzNp337kzitNq3svuSJ+tfB4O4=;
-        b=gp5t7iIKpG9B6h+LOBKAN5Q0XdOrT9NDiBE1rAResv4aoDIHqvhZNnmSSil7FIBPyf
-         zuYMPDfCkSoyu01csekdll5Zy6Qg8ztZQLVKctA0qMW8HWw9oY6m8Vsi1/pl79dgSx4z
-         I7ro5J1VXNJQz3MeHcvWRHESKTkiLUonDHs7fglQminvVwdosC1r9x5s3zwR2DfRaI5b
-         9KQX07mbOera0ahH5vC4Wv27wG1JLpw7OQ4dSJAeBkxaio/NQSrRor22oeHggOrjLOLG
-         XV/HZpPLGyVJ39dFHQwf7hEf531guTgE/01oy/aYTi++j/Osl1Zy0tO1OrNaqkJRDfux
-         N3dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754547727; x=1755152527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3ktbyr9SzycNcU3hnEzNp337kzitNq3svuSJ+tfB4O4=;
-        b=Gaoy0mgc5hWE+rezsjft0GITmi9W0ljfPVjuBzlUcDz6VNieBq4l9pMYijUQr07Vkd
-         /BXAaSj0/ySR2Oa2TYf7+GB6qYqJuXJbjqHhj76tfw/APciAV/x88hCE7gG/Wz7y1aqj
-         spMMrEWmfbexmfVR2n43mnAusdabYcrSRn7G9msrTs1eaRZjPTYPxhRTwRCIz33leWMm
-         L6BCp8pooxsTe6bcPzjMKZRiK2Ki9x17/K9uZqxnoMNXP0eba7LoHMjfRJZHBE4+czbR
-         DpRR3uydB8To+KSH2oIg2h6tkXSaBffAgVW5AlQ0YHsfGuw7e51/6Q4391oqzJ96faam
-         eLGg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6A4M/AXkL+Z9IaCEVXZJvAZjOb/6y1ROiKA60eIZYBL9toY1CNw7g/eAoGdPmFdKSLEQ2nBb0fpuP@vger.kernel.org, AJvYcCWGwm2H8H1yGIZbiYZqTnFkxGsISHe33GyUWTq2KfzBujAkUwUkOVIOtsv7Q1tpe+aWihlJ9XLTejQyMrrW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8ILA+djbOdvTRMZP6sgadMgTkke5rED4Mec31byj8L/1EpReX
-	yUJzlJOwPCbMshGPeAdMuLwgYWloMQFlGD/C7sSP+wgi9WlCBsxl73R0n7xfAgkuJvXXsO2OtUK
-	N2nanEkcIjylNJSSp2011jPee6A6JXKA=
-X-Gm-Gg: ASbGncsT6ni+x7ZkDFiAiXAC8sHTKaFUaQvCkuYFsfvjWnNAyZ7BidqPCMOcT4bnYNt
-	QY5O5CYDoKColgon25S+IZ93f8J7gPFEdK9nmyHSYaih0AcadFdpdYsB8sBMqrWZAFS00NofS9C
-	ZoGhgDeIhbHs9Q5yIOQdtmU8wzv2G5Ik4H/DMAX0Vl911qqy3J1rQFzrOFeRZvhMQZIjsmwu3eY
-	FE8AA==
-X-Google-Smtp-Source: AGHT+IGtyMCANSoiLMOF/IIteuE7iwefk4ZGp11or1k1vGqtVJL/BQwhSDgSaVpXdy8jhiEdCUzZxU9t5Mg5Ti4BG0s=
-X-Received: by 2002:a05:6402:5106:b0:615:80eb:76ba with SMTP id
- 4fb4d7f45d1cf-61796141a85mr4669366a12.17.1754547727161; Wed, 06 Aug 2025
- 23:22:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABC81537A7;
+	Thu,  7 Aug 2025 06:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754547817; cv=fail; b=iUykf4xT8tFMn87Zdz1j4qEoWoYqaTqy4IZtk48JC+0heELf39qnddMnoxz9dADluP5TcKi85QkVHc4ZuAEekflhfIZsCaP/hdeoNXyavAE2jyWzsZ4LBROg0bM8OFn+dhphO+6IOcDoWRcoEZ/L2ZW7kFVF8FS6hmts4ly1FZI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754547817; c=relaxed/simple;
+	bh=C9wOtzWujzncWUDUF2ZCPAf45F2aKdIJC+sCQnkY2tw=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sGORPMxR+Xu2pV0+rKbzou6nhDg0/n9s/S05XnCg94gCX32hgdf0d48pE7MpS7wGyjSxubr9z8Z+5vnMHjcFm0CLHnym4lDrVNLPh8UdYfKMELGJceK2Tg8petn5mXkfQoYiZDdYHn2JD9ZoUM1jItY6zeD2LlU31ERuaRsvaAY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yTETvz/H; arc=fail smtp.client-ip=40.107.101.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eRcO2oNMSisDLnLYOMdt9G0NXbghlSxvd4Z3yS+EcvbxxSsBbsVQYxLPbu/V9E7nc+f9Uq9BhqAEPtgpo2rVYmKz1xSEj7eCaZdUnzoGOS9LuggOEtcIjTRcLcU91A5cpYuaR1kK3RmhK4RiI9K29NrP0HKQUlvOOBaD/PBwFCuC3n9hUjuAvBIdCi32FwzHcv4UHrJW2Q3/hgDlNwaYLreojzSA/Scq/gJFZrIs3+j382ovdBZ1967NkJENZJW0VQLwdlz+cUuEKBiRhGv5k0juPE09xJVFKJwrnrw0Zf2SnFYyBxhKvRmvOfEimb0dpbgn3BYZxQ1KsVVFbXktXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6AyJBnBNN5zzHGhXTBM4/MOWf4gfzgZpOyoXFWOOZZM=;
+ b=CTf+JH3kNFFmaRtXGZelZcH1aHv9Ozhg9krD9bJHz5u2yK+AeF31TEUIlrrECH28Yi/oA4SXOgHxrYHw6g+06Y6JqaISYIZF5lYqL2+wrQFv+Qe0THm6i5G7yBVMM7uXyV/F11UrfdqbNXO1c/jNnCZNO1ttwkAg6jWWej2ajVy4kLvd1j6zTOB1eKpje2UsNPi1F3yRm1V5MjCPe+4C1OTj4kx0eyWLTvqs375hPwS2JtMV7gkfSe4xq5cqqsOWc/jhndIYkPMhWMo/+LePxTjErdvsNS1qFd6QuJaMc/PJwCaHeVyBVeaI+bGGSpeUc+Acj7aNGinyqu99fu8Vcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6AyJBnBNN5zzHGhXTBM4/MOWf4gfzgZpOyoXFWOOZZM=;
+ b=yTETvz/H1K/t+g+6KD8pFAQcf6qmp2hoARBRYdfGehVS1ALPiCa1fPN9SzPbIxTVMCAPveM4aStJ6avItphbf+JGDyKvyYOB0q+JGscwTSckQZ/3NRlYW/5v83rO63FjTyw18buboxIkTUdCd1V+QNV8+BWFlSqT7TcO+bUBwYc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5712.namprd12.prod.outlook.com (2603:10b6:510:1e3::13)
+ by BY5PR12MB4290.namprd12.prod.outlook.com (2603:10b6:a03:20e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Thu, 7 Aug
+ 2025 06:23:32 +0000
+Received: from PH7PR12MB5712.namprd12.prod.outlook.com
+ ([fe80::2efc:dc9f:3ba8:3291]) by PH7PR12MB5712.namprd12.prod.outlook.com
+ ([fe80::2efc:dc9f:3ba8:3291%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 06:23:32 +0000
+Message-ID: <129c59a7-1715-41f4-b839-19e6a0adb9f1@amd.com>
+Date: Thu, 7 Aug 2025 11:53:24 +0530
+User-Agent: Mozilla Thunderbird
+From: Sandipan Das <sandipan.das@amd.com>
+Subject: Re: [PATCH 00/18] KVM: x86: Fastpath cleanups and PMU prep work
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li
+ <xin@zytor.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>
+References: <20250805190526.1453366-1-seanjc@google.com>
+Content-Language: en-US
+In-Reply-To: <20250805190526.1453366-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BMXP287CA0018.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:2c::34) To PH7PR12MB5712.namprd12.prod.outlook.com
+ (2603:10b6:510:1e3::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806132211.94686-2-ysk@kzalloc.com> <CAH2r5mt97q_jtjtAT0DVDySU0jnk9=KeTDYha-KgOip_CAT_iw@mail.gmail.com>
-In-Reply-To: <CAH2r5mt97q_jtjtAT0DVDySU0jnk9=KeTDYha-KgOip_CAT_iw@mail.gmail.com>
-From: Shyam Prasad N <nspmangalore@gmail.com>
-Date: Thu, 7 Aug 2025 11:51:55 +0530
-X-Gm-Features: Ac12FXwD7pQ3n-0mANzi1TD_ZDrU4JcAARE48kDt7Tfj-YuFN3HIKcB-7hMpqHE
-Message-ID: <CANT5p=qiuF0=PZaN9eCzrps=azamWjkh9U19zu2B5dRADUrP1g@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix null-ptr-deref by static initializing global lock
-To: Steve French <smfrench@gmail.com>
-Cc: Yunseong Kim <ysk@kzalloc.com>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Bharath SM <bharathsm@microsoft.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5712:EE_|BY5PR12MB4290:EE_
+X-MS-Office365-Filtering-Correlation-Id: 549b5a93-af8a-4957-7c53-08ddd57aee93
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SVhSZ3dXZ0drMWVNRE5YSFVWS01xUEpoa2JlWFB6RzBJU2loN2Exb2R0WEJL?=
+ =?utf-8?B?eEgvTmh6WDNlTjZIMGk0R0drTjNOQnkwV3F5aC8vTVJjWmZpQ0wzTEprRW1D?=
+ =?utf-8?B?WVd6SENHMDdmWGVrb2VJVWVNTlZWMU9zRWhGeStUYkkwempCRURDR3RnNVJX?=
+ =?utf-8?B?dE1IUlpsNnZaUDNXc1o2cmp6SkQxNVFGSWhGNHl6ZTVBb1dGOTFtTXBvM3Nt?=
+ =?utf-8?B?Qmw3dCt0MXFpL1FjMjBCTmV3WllHM1Y2YkgwYXY0NGxJWlBxM2o1YmJzZm8w?=
+ =?utf-8?B?VFVKZExhQTk5WjlpL0ZvQmxwTWkxOWdaUGpPeDFmdFlycUZiL0ZNdGVZeGhP?=
+ =?utf-8?B?N0V0a1daNEgwUjBhd3hNWXh2NnhkUmFKNmI5aGhTcW9HMUwzd0xRUE0rRE9J?=
+ =?utf-8?B?dlFRQXhzLzhSWnZoOWRZMzVnOTlabXVIcERrUDdsNnJkVDJSNHFBcXpMMUFO?=
+ =?utf-8?B?UFpreEl4ZklhaWtpbmNPaTl5VkV0d3BiclYwMGlraVlDOGRWSUF1dFVrdU8r?=
+ =?utf-8?B?eldIMzMxaTBJeENJL1BwalFrTFRzU2hTaXlSUStwQXZOOEpueE1yVHRCbmxM?=
+ =?utf-8?B?SnlTcHlzR2tYSndZbSt5NjRvM053TWhZb0J2ek5kdks3Q2VDWU9xZnVFT3gw?=
+ =?utf-8?B?dHNGc3UzMm9NbC9ZeFBLbzBENUcvM25zUElaWnoxcE5DaWQ1RmdnVDFZRi9k?=
+ =?utf-8?B?NnVDWkpsOWFyTWpDOGhMSmVpN1lDcFg1THcwY1pwWElodEIzUnFHRlZsUU1C?=
+ =?utf-8?B?Mk9UaEV5NnJWNmt3OFh4eUhEN3g0THczRGZUdi9KMm1CTFZJekN2UndTSHZo?=
+ =?utf-8?B?dGphK05CekVxbVdVdHhXMzFJSnhOT0dzVzZJbGRkbjRTTFczOWdwNHpFU0Zu?=
+ =?utf-8?B?OXE3OWF0N2ROYXlacmdmVXQxMUozZEVSNGgyR3hnZUZLTVBWck1NQUlXOE8z?=
+ =?utf-8?B?bWgybFQ5eER2cndsd0Q1T3hGU3VQWWRYM25mRFNGRlp6Wk9tZTgwbG91T2dK?=
+ =?utf-8?B?aUZ3RmMxTmZGb3hNMDdNVi9HTHlyemhDazA0VnpDTjdnUmdKOFJDZTNuQ2U4?=
+ =?utf-8?B?YTFDcmxwOTJ5QXhlNVBUa0swYmlMS2dXUlUxWDBjNS9MT016U2lXdXMrd0N0?=
+ =?utf-8?B?VisyV1U3Zng4bDhabmUrWmtrYlFXUlBTWjVuby9oZjhoSWdtdDZqOHcxa21q?=
+ =?utf-8?B?L29ZYlhpWC8xdnJqc2tZSTBLNXFmM0lmWHhFNElvMGJ0Vzdlajh3Kyt2b3V1?=
+ =?utf-8?B?WFFSV1BJS0R5UTVqZmJUb2J6KzRPeDJIVGxUUVRlbTh6M3ptdDh3NG1UZy9D?=
+ =?utf-8?B?NGlJaGxDOG1TMG5LckNna3h3bEZoUmx1ZUJWSkx2ZDd5YWtIS05tWGJnRUlJ?=
+ =?utf-8?B?NG56Q1ZWUGE5c3VqcytlS3JmNkY0bkF4aDNnZzFrQmVVeU1JV0tpQ0FiMmx5?=
+ =?utf-8?B?Q1FoYmE1UkVXZnd0S2hPZVZNcU9nT2RxYWRKK0xidDEzSHB1aUR2VWttc2FN?=
+ =?utf-8?B?eDFjQkFOWEFPcTlqb1MvS0huWGJvRXIzTGgxeTV1ZzdkclJ5OGFPdHJxdEVH?=
+ =?utf-8?B?LzVlM0UveW9nT2ZmNWh6QWlrNXhWZHMzUDgrMFNiUTRwaDlnZXFRSzE1VUpP?=
+ =?utf-8?B?YW1qSUZJMzdaemxUQ3lTQVNndnBXbExOdVpPSU54TE1ERks4QkV1c3ZoOHZR?=
+ =?utf-8?B?WGZ0NzFCV3pFbXRVS0FnenExRGx4T0gxbHFHUWZxdDhjcDM5M0lCNW0xdXVr?=
+ =?utf-8?B?M2pKeFpqRE9uVURCb2pzKzZtcjhCa3Vzb2tRVWI1eVYvVkkzNEJhZHFWOVNB?=
+ =?utf-8?B?WEtZZW9sMThEb0lDdlV5QzJqMm5JYkFGK1oyUEFMbHhINTJoVTQxWUJ2V204?=
+ =?utf-8?B?djd2cXpzYkZ5eFJyS0xIdW92UHBXSUQzUmQzVDhOYUJadzduc2JZRXQxRmF5?=
+ =?utf-8?Q?v/EdKkHSJ+Q=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5712.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UGFtZGJMckVOaHMvU2Jud2NYZGFleGFPVnRaYlZZY0s5R3AwMW0xcVdtTlQ0?=
+ =?utf-8?B?RklHZzMyek9GUEpkdWpLYkdmSS9JRDh6UEpoOW1YQmhJOHpGSmhibFBrdExr?=
+ =?utf-8?B?eEY3QWRXMzdMajJoc2xyYStLUlRuME5vRit4bTcrajhxY2tVL0huN1NnN0Rj?=
+ =?utf-8?B?ZWpHQlB2WmhJWXU5MVlvZGJVT0lyVnpoWWhPQ0Jqa3F1c1ZheWVCM0c5OExI?=
+ =?utf-8?B?aXhocUxxeXNrUU5qc0JEcFNwZmE4ZTh6ZHl2Skc2N3k2ZW5SREY0VnhPTjUz?=
+ =?utf-8?B?Wk9qbGRlb0FpK3Y0a0V1UHZBeGkxbmV0ZExzRCtKVDhmUFFOZitwOVM0NGlz?=
+ =?utf-8?B?TE9TRnFtZStZYzVScmlWRWlSUTJOUmRJZnFTRmdIblBIRW9VcnZ4eFk1NW9Q?=
+ =?utf-8?B?SVJlMUthaExBMERCQ2h4ejZqSkZJN1NGRWxhUEFlVE5tTjV1dTl6UEtQcmpT?=
+ =?utf-8?B?c2hBZzJiWkhMYkhJZkM3YzFJYVhueGF1T1RJakZNOEp1bXlwQk8ydGJ4RUpT?=
+ =?utf-8?B?N2JjR091WFpFMGh2QkpndmNyQXk1THR3TmxnaHpkWnZjZVdsc3dTQjBQOG1F?=
+ =?utf-8?B?THFPeVRNaHZEcm5qdDlzekQ0WlVMYWxZWWJPdmU4OHo3QUtheWxDOUMwVnFt?=
+ =?utf-8?B?QlBNckhzWjRHZmlzaUQ4YlkyUVB5ZVVQOVBOUkk4VGV5cFRwdmhxK2lUbkpI?=
+ =?utf-8?B?WUZDRE52ZXh2bnV6U09oNVI4YmVrQnBSNitXSURTdnhaMjZWdkdOVzh5eVFT?=
+ =?utf-8?B?Tk0zcEpMbzZFaVBwZ1NFZi9CTUhrWVRWczRtUTMyc1h6ajJzUTJCYWR3c0I1?=
+ =?utf-8?B?NWoxOWFqY0xTa0lFelU3elEwL3BqcGJnNU8yTnBPdUF5U2tMN0pjZEQvaEdO?=
+ =?utf-8?B?MXNKcm83QjJPMGhRMFJ6T3l4Zld6dWZZUVd6dmY0TU9seExkai9XM0RiMFQ3?=
+ =?utf-8?B?a1d2RzFuY25aQUNqOFpJZDB5YzErbnJLZ2ZKa2hGT2JmeWhpZzJmQzlTYVZt?=
+ =?utf-8?B?cWQ5Y1hXZ1N2bHBwTGxZYzJRdW1FTzRVRlRKdnJHeGxOSVZZeXZIQjRKdCsr?=
+ =?utf-8?B?SFNtQllUaGJEb0QvVzRCSmhMdWtMcEpCRGhXSHNhbCtMcW04eDZkWGtkZzNJ?=
+ =?utf-8?B?WUdzWjJUc1Z3OEFEZG53cVM4b0pBaVpBSVBkcWU0TXR3dW9SczFzeGhLRzQw?=
+ =?utf-8?B?R3RadkdCdlZPQ0kvaW1vUGJHWnRGWFBpUXZSQlpaMEpJY1AwaVg0TkRsRity?=
+ =?utf-8?B?aFQ5MjhhWm5idVRob2hRVGVMVXZXQkx4OWNrR3FrejQ3UE8wbWVMbnZ3WGIv?=
+ =?utf-8?B?MDBEdWhzNm9IMG0rNjNQQ2lTRjJEY2xUM0luM051Z3RPeG9GaGFhZHZPZU9S?=
+ =?utf-8?B?UmtiWDZucGdRYURvZW5iaFh4a2x4Z1NHQVlQNnFTYXM1WDhSdVczbk1QcU5v?=
+ =?utf-8?B?dmpycW54TGJNL0czTnRhNkZDQ0oyUXViR1oxdWJ2UDdkOTM0N0JjdjMzVklO?=
+ =?utf-8?B?RkZNRHhISW9tMWxxMktXeWVRUzRycDBYQ2E4Skh1ZGtsMWI5Q1pFZU5BRU1M?=
+ =?utf-8?B?Y2xib3V5aUVYZktFVjNteFBVK0ZIYVJwaTZ1TWJRRnMwT3RkMTROUnEzUzQy?=
+ =?utf-8?B?K0hhcSszbU0yenQvbUhqaHFlTUxKYXRielhPY1ZQbWZzYmJ3azhDcWxHTlN1?=
+ =?utf-8?B?SzlqN3FjZURKcVRzeWhmZmE0VlpmWjFIcTRIc3BVWS9SbEZmVlRPQ3JDMCto?=
+ =?utf-8?B?bktSZlpnaWdFZThnbkZrZ0hiQW9xMzZrYnJpc3kraUNpUjdjQkdCU21HYk44?=
+ =?utf-8?B?dWVFUktqQ2dwODlLZHRPMUFiZHVtWU8waHBhV0NKNDE3T0FvK0tkdXJsc0ZC?=
+ =?utf-8?B?bHczNUlPZnQ1ZWRVVUVqRWFueHZIdjdvdWlLNEN0WkEvRUwxSjZKd3ZNWEg3?=
+ =?utf-8?B?N3R1eVNmOEt5ZEFkVzMzTlE3T3pyZjZSOFA2R3hxZUFnUjg4MXF3RE4xbUZH?=
+ =?utf-8?B?WWMxeHdvQnIwZjRESm9mUFN6SVRxK2lzTjRRK1BENUVjdFNkNkxpenBta1VE?=
+ =?utf-8?B?YXFYQlo5ZHVlUExDYm9LT1BlakZPMGFiemF3Y1RtRVJ2MjllQldvNTRrbnlY?=
+ =?utf-8?Q?13cDAKLZ9vlpUW/Sez/QNH2PC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 549b5a93-af8a-4957-7c53-08ddd57aee93
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5712.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 06:23:32.3696
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ekk1oRZ7G7PcHbOFiqRgRKsrBuifRQ0kLJazowwqWemKFZTV74Te3iONMIISO7vBgwcGsYDQSa3rsv4r6dzBbg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4290
 
-On Thu, Aug 7, 2025 at 1:44=E2=80=AFAM Steve French <smfrench@gmail.com> wr=
-ote:
->
-> merged into cifs-2.6.git for-next
->
-> On Wed, Aug 6, 2025 at 8:23=E2=80=AFAM Yunseong Kim <ysk@kzalloc.com> wro=
-te:
-> >
-> > A kernel panic can be triggered by reading /proc/fs/cifs/debug_dirs.
-> > The crash is a null-ptr-deref inside spin_lock(), caused by the use of =
-the
-> > uninitialized global spinlock cifs_tcp_ses_lock.
-> >
-> > init_cifs()
-> >  =E2=94=94=E2=94=80=E2=94=80 cifs_proc_init()
-> >       =E2=94=94=E2=94=80=E2=94=80 // User can access /proc/fs/cifs/debu=
-g_dirs here
-> >            =E2=94=94=E2=94=80=E2=94=80 cifs_debug_dirs_proc_show()
-> >                 =E2=94=94=E2=94=80=E2=94=80 spin_lock(&cifs_tcp_ses_loc=
-k); // Uninitialized!
-> >
-> > KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> > Mem abort info:
-> > ESR =3D 0x0000000096000005
-> > EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> > SET =3D 0, FnV =3D 0
-> > EA =3D 0, S1PTW =3D 0
-> > FSC =3D 0x05: level 1 translation fault
-> > Data abort info:
-> > ISV =3D 0, ISS =3D 0x00000005, ISS2 =3D 0x00000000
-> > CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> > GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> > [dfff800000000000] address between user and kernel address ranges
-> > Internal error: Oops: 0000000096000005 [#1] SMP
-> > Modules linked in:
-> > CPU: 3 UID: 0 PID: 16435 Comm: stress-ng-procf Not tainted 6.16.0-10385=
--g79f14b5d84c6 #37 PREEMPT
-> > Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/20=
-25
-> > pstate: 23400005 (nzCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=3D--)
-> > pc : do_raw_spin_lock+0x84/0x2cc
-> > lr : _raw_spin_lock+0x24/0x34
-> > sp : ffff8000966477e0
-> > x29: ffff800096647860 x28: ffff800096647b88 x27: ffff0001c0c22070
-> > x26: ffff0003eb2b60c8 x25: ffff0001c0c22018 x24: dfff800000000000
-> > x23: ffff0000f624e000 x22: ffff0003eb2b6020 x21: ffff0000f624e768
-> > x20: 0000000000000004 x19: 0000000000000000 x18: 0000000000000000
-> > x17: 0000000000000000 x16: ffff8000804b9600 x15: ffff700012cc8f04
-> > x14: 1ffff00012cc8f04 x13: 0000000000000004 x12: ffffffffffffffff
-> > x11: 1ffff00012cc8f00 x10: ffff80008d9af0d2 x9 : f3f3f304f1f1f1f1
-> > x8 : 0000000000000000 x7 : 7365733c203e6469 x6 : 20656572743c2023
-> > x5 : ffff0000e0ce0044 x4 : ffff80008a4deb6e x3 : ffff8000804b9718
-> > x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-> > Call trace:
-> > do_raw_spin_lock+0x84/0x2cc (P)
-> > _raw_spin_lock+0x24/0x34
-> > cifs_debug_dirs_proc_show+0x1ac/0x4c0
-> > seq_read_iter+0x3b0/0xc28
-> > proc_reg_read_iter+0x178/0x2a8
-> > vfs_read+0x5f8/0x88c
-> > ksys_read+0x120/0x210
-> > __arm64_sys_read+0x7c/0x90
-> > invoke_syscall+0x98/0x2b8
-> > el0_svc_common+0x130/0x23c
-> > do_el0_svc+0x48/0x58
-> > el0_svc+0x40/0x140
-> > el0t_64_sync_handler+0x84/0x12c
-> > el0t_64_sync+0x1ac/0x1b0
-> > Code: aa0003f3 f9000feb f2fe7e69 f8386969 (38f86908)
-> > ---[ end trace 0000000000000000 ]---
-> >
-> > The root cause is an initialization order problem. The lock is declared
-> > as a global variable and intended to be initialized during module start=
-up.
-> > However, the procfs entry that uses this lock can be accessed by usersp=
-ace
-> > before the spin_lock_init() call has run. This creates a race window wh=
-ere
-> > reading the proc file will attempt to use the lock before it is
-> > initialized, leading to the crash.
-> >
-> > For a global lock with a static lifetime, the correct and robust approa=
-ch
-> > is to use compile-time initialization.
-> >
-> > Fixes: 844e5c0eb176 ("smb3 client: add way to show directory leases for=
- improved debugging")
-> > Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
-> > ---
-> >  fs/smb/client/cifsfs.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> > index 31930b7266db..3bd85ab2deb1 100644
-> > --- a/fs/smb/client/cifsfs.c
-> > +++ b/fs/smb/client/cifsfs.c
-> > @@ -77,7 +77,7 @@ unsigned int global_secflags =3D CIFSSEC_DEF;
-> >  unsigned int GlobalCurrentXid; /* protected by GlobalMid_Lock */
-> >  unsigned int GlobalTotalActiveXid; /* prot by GlobalMid_Lock */
-> >  unsigned int GlobalMaxActiveXid;       /* prot by GlobalMid_Lock */
-> > -spinlock_t GlobalMid_Lock; /* protects above & list operations on midQ=
- entries */
-> > +DEFINE_SPINLOCK(GlobalMid_Lock); /* protects above & list operations o=
-n midQ entries */
-> >
-> >  /*
-> >   *  Global counters, updated atomically
-> > @@ -97,7 +97,7 @@ atomic_t total_buf_alloc_count;
-> >  atomic_t total_small_buf_alloc_count;
-> >  #endif/* STATS2 */
-> >  struct list_head       cifs_tcp_ses_list;
-> > -spinlock_t             cifs_tcp_ses_lock;
-> > +DEFINE_SPINLOCK(cifs_tcp_ses_lock);
-> >  static const struct super_operations cifs_super_ops;
-> >  unsigned int CIFSMaxBufSize =3D CIFS_MAX_MSGSIZE;
-> >  module_param(CIFSMaxBufSize, uint, 0444);
-> > @@ -1863,8 +1863,6 @@ init_cifs(void)
-> >         GlobalCurrentXid =3D 0;
-> >         GlobalTotalActiveXid =3D 0;
-> >         GlobalMaxActiveXid =3D 0;
-> > -       spin_lock_init(&cifs_tcp_ses_lock);
-> > -       spin_lock_init(&GlobalMid_Lock);
-> >
-> >         cifs_lock_secret =3D get_random_u32();
-> >
-> > --
-> > 2.50.0
-> >
-> >
->
->
-> --
-> Thanks,
->
-> Steve
->
+On 06-08-2025 00:35, Sean Christopherson wrote:
+> This is a prep series for the mediated PMU, and for Xin's series to add
+> support for the immediate forms of RDMSR and WRMSRNS (I'll post a v3 of
+> that series on top of this).
+> 
+> The first half cleans up a variety of warts and flaws in the VM-Exit fastpath
+> handlers.  The second half cleans up the PMU code related to "triggering"
+> instruction retired and branches retired events.  The end goal of the two
+> halves (other than general cleanup) is to be able bail from the fastpath when
+> using the mediated PMU and the guest is counting instructions retired, with
+> minimal overhead, e.g. without having to acquire SRCU.
+> 
+> Because the mediated PMU context switches PMU state _outside_ of the fastpath,
+> the mediated PMU won't be able to increment PMCs in the fastpath, and so won't
+> be able to skip emulated instructions in the fastpath if the vCPU is counting
+> instructions retired.
+> 
+> The last patch to handle INVD in the fastpath is a bit dubious.  It works just
+> fine, but it's dangerously close to "just because we can, doesn't mean we
+> should" territory.  I added INVD to the fastpath before I realized that
+> MSR_IA32_TSC_DEADLINE could be handled in the fastpath irrespective of the
+> VMX preemption timer, i.e. on AMD CPUs.  But being able to use INVD to test
+> the fastpath is still super convenient, as there are no side effects (unless
+> someone ran the test on bare metal :-D), no register constraints, and no
+> vCPU model requirements.  So, I kept it, because I couldn't come up with a
+> good reason not to.
+> 
+> Sean Christopherson (18):
+>   KVM: SVM: Skip fastpath emulation on VM-Exit if next RIP isn't valid
+>   KVM: x86: Add kvm_icr_to_lapic_irq() helper to allow for fastpath IPIs
+>   KVM: x86: Only allow "fast" IPIs in fastpath WRMSR(X2APIC_ICR) handler
+>   KVM: x86: Drop semi-arbitrary restrictions on IPI type in fastpath
+>   KVM: x86: Unconditionally handle MSR_IA32_TSC_DEADLINE in fastpath
+>     exits
+>   KVM: x86: Acquire SRCU in WRMSR fastpath iff instruction needs to be
+>     skipped
+>   KVM: x86: Unconditionally grab data from EDX:EAX in WRMSR fastpath
+>   KVM: x86: Fold WRMSR fastpath helpers into the main handler
+>   KVM: x86/pmu: Move kvm_init_pmu_capability() to pmu.c
+>   KVM: x86/pmu: Add wrappers for counting emulated instructions/branches
+>   KVM: x86/pmu: Calculate set of to-be-emulated PMCs at time of WRMSRs
+>   KVM: x86/pmu: Rename pmc_speculative_in_use() to
+>     pmc_is_locally_enabled()
+>   KVM: x86/pmu: Open code pmc_event_is_allowed() in its callers
+>   KVM: x86/pmu: Drop redundant check on PMC being globally enabled for
+>     emulation
+>   KVM: x86/pmu: Drop redundant check on PMC being locally enabled for
+>     emulation
+>   KVM: x86/pmu: Rename check_pmu_event_filter() to
+>     pmc_is_event_allowed()
+>   KVM: x86: Push acquisition of SRCU in fastpath into
+>     kvm_pmu_trigger_event()
+>   KVM: x86: Add a fastpath handler for INVD
+> 
+>  arch/x86/include/asm/kvm_host.h |   3 +
+>  arch/x86/kvm/lapic.c            |  59 ++++++++----
+>  arch/x86/kvm/lapic.h            |   3 +-
+>  arch/x86/kvm/pmu.c              | 155 +++++++++++++++++++++++++-------
+>  arch/x86/kvm/pmu.h              |  60 ++-----------
+>  arch/x86/kvm/svm/svm.c          |  14 ++-
+>  arch/x86/kvm/vmx/nested.c       |   2 +-
+>  arch/x86/kvm/vmx/pmu_intel.c    |   2 +-
+>  arch/x86/kvm/vmx/vmx.c          |   2 +
+>  arch/x86/kvm/x86.c              |  85 +++++-------------
+>  arch/x86/kvm/x86.h              |   1 +
+>  11 files changed, 218 insertions(+), 168 deletions(-)
+> 
+> 
+> base-commit: 196d9e72c4b0bd68b74a4ec7f52d248f37d0f030
 
-Good catch.
-But the problem is that cifs_proc_init gets called very early on in init_ci=
-fs.
-That call should be moved to just before (or possibly after)
-registering the filesystem.
-
---=20
-Regards,
-Shyam
+No issues observed with KVM Unit Tests on recent AMD platforms (Milan, Genoa and Turin).
 
