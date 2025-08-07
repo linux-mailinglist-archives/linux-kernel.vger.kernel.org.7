@@ -1,124 +1,192 @@
-Return-Path: <linux-kernel+bounces-759319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0EBB1DC03
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:55:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E119B1DC06
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C97316C548
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9CC626948
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EBA271478;
-	Thu,  7 Aug 2025 16:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04678271478;
+	Thu,  7 Aug 2025 16:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkLwyS6f"
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A6Z4M6hf"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F4D186A;
-	Thu,  7 Aug 2025 16:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA846186A;
+	Thu,  7 Aug 2025 16:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754585706; cv=none; b=mhWWGPnXmts0bqqTWI5y3MzH+U15gJ9zYw9Jq3aYygfpnnfVpKAKFsFr5Q93jnMBBbApeUuKrFOcxaZR8ZlBdFF7XcV9DsqoU9SwNoIhN8u/+E42gzKE6IVW+16FqzstQABJ91jZqhf5KBo+RrHBfAOcvU92I5HR8HG+HwgRa44=
+	t=1754585739; cv=none; b=ZW9/AkQ4XW8nQB4DOZQ2DDboL82W26Jpy73Z4X8YT7vcL9Sh/chUlNeZGBHr+HKnIjJluYcP/iYX3yaC+tSMKmrb6vu3yqfTOq+C1A0ZbAXtnK7MSJrO+3IqGD+BdVIl0ClG0j5lC9doYZYqgF7lssFMdaWL01tDZJs6ozQXxUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754585706; c=relaxed/simple;
-	bh=l3DtQRpYB5RTDk46I7413GNLIhcqwBDTYZT5TpROceo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CkulGndO8a56FmboK+wRUSQkHb+k76PjHCMG08SVBzhsAPFHuOcLEfQ6oc5EqePIcjtzWZ5S6cZq1aIZu0vwU6XZXJGHyQPwCU5wzN3sHNXTakF8i0Ch1NSEfH7F6evBHezOcNN/fbamA1PE0mAalp3tUQco6ESWinSdxIo5Ybw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WkLwyS6f; arc=none smtp.client-ip=209.85.215.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b4281fabee0so857772a12.2;
-        Thu, 07 Aug 2025 09:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754585704; x=1755190504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iq2W53PaksP7m4jbktUk0gHJCrNmSbCmS2yXdqV7dD8=;
-        b=WkLwyS6fJCpHa7oHB2kZblWzW0c9E8cCTLMP0xN2OO8pIzCdUBoD/i8M7kXLqWM2vX
-         m4yFCSeZzLzuIrvot8YitOK319waIWCBkKoPXckmjgEpNxjLUVSe03a379s4KmS2lY7b
-         A5I2z64Im8w/ZAzlEvdFaPa1LbK1LFrYbeP6marVKaVX3/RgppAZfFhvUZQAGOHEkI7S
-         KfEMCLy/t50sKvUUbZOKvnpRrYwg/rW7P8KJNfps6RddSHZhIoB8dGEVYHXFvVumWuIA
-         tvUtBBj2tcS13Vpc13GRYsH6F3A2NBeRGvTSoRAGiwXxkjUbGe6uQbKLkU8vmaY5KlVX
-         JmwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754585704; x=1755190504;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iq2W53PaksP7m4jbktUk0gHJCrNmSbCmS2yXdqV7dD8=;
-        b=bNhre4uXD0ps9l714ilcDtcsW/78aSWPC4Xk7y9q4JAhBwl0nbZNIZWVlCiW+shodj
-         mg6opO/0EYue1gS2zQEi3FyTgmjyosnCJIzVOmE2w7P4VC4rsSC889nz/UqZo9/SlIJC
-         shdgYlfz2LFbJlmoZIHPX1VEU+q01t+dg24/kOdEMLxDDkaj9sEGQI5iY8WTVLjBzqTE
-         Q5jYgyK18Jty8iMXBT2d/ZfzYtMYrcOMD5IVTjrGAGAsPfgls9PDu/ob0jchm7zlkq95
-         n7bj4wp0JSMrRffhDqlnHvibu9x6PE+2w6wg+IsBl8K5yDIrwmu4SUn14/UwNyQz4OIB
-         quLA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/uwKBrMzbbG4pHixKLx9ZPSLEN1fBCBt7hY4sIc+vOU6snz+LTW9/f2mTrTlTqeYKqadD2hOqWSiMwjnU@vger.kernel.org, AJvYcCUG+Qx0mBCNKs7JE8vxDjOd0fBoS9/j18Laqz8tN5+VzJJI5j0lnKzqyWXuyTAcN/Yflxck6puv9xChvO2r@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMKg3v8nP+LAnUB3jzzbwAiG0b3+I3ifEjBb20N84atTXGwdfz
-	OQVhN+VFKH9Uiqy8G+fohX2een7MlLMOOsCwGZr3+Ig4D0qRCV4cZ7JR
-X-Gm-Gg: ASbGncvO87/G74+vxVoXYHtbZroZ/hwzAujAYccQLDslYvuir3DsK32vx1P/EF+kBOp
-	30u9JPth8x5WBAADKRH+J74ZmAYU/4O6EfRDqkPHZZjois9VCyCC1aI9IJGpXbTjPJRcvsiNs49
-	TOl9Vrq2hvibykt3vePuOYD/sxufUV97Azg21PsFXktDR+qNmT5VkuxWq4VuaLGdSoPpn5FPE2i
-	uiz+8xNXLl/bc8R0QGxXr7xLGNGM0CZMF5F82WMmf/lo/8RVeQtGO61gmI3I0qiBOgOgrkllmkv
-	KnKCeJQMK2BPP/unIrrCoOfS5VQkenSvBvlyN7oz1AeYSo6VddTpewqhZHebmg6lsarmcZgC19l
-	7o79kLCxuuw==
-X-Google-Smtp-Source: AGHT+IHjGIDdfLcH/CylLSuTLaAdxW/Bxe5A/6jb2R++T/jR61KPerOxYSQMKmtbz5TClTk9H2CWsA==
-X-Received: by 2002:a17:903:2347:b0:240:49e8:1d38 with SMTP id d9443c01a7336-242a0b3e6b9mr99733295ad.35.1754585704228;
-        Thu, 07 Aug 2025 09:55:04 -0700 (PDT)
-Received: from archlinux.lan ([117.185.160.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aabdedsm190575505ad.167.2025.08.07.09.55.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 09:55:03 -0700 (PDT)
-From: Jialin Wang <wjl.linux@gmail.com>
-To: Penglei Jiang <superman.xpt@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Jialin Wang <wjl.linux@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] proc: proc_maps_open allow proc_mem_open to return NULL
-Date: Fri,  8 Aug 2025 00:54:55 +0800
-Message-ID: <20250807165455.73656-1-wjl.linux@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1754585739; c=relaxed/simple;
+	bh=LHMSEcsoebGC9EJHozewBHkA4UA9nKXrl/+pyd3FhuA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ePI8xn1VEdhCgZddym7jodPzIGCjefdWvS46MpmqCmPWTHhTqZeEKAjcPqgPqujiRKcqaZ7pBo2qx3pGrTTl7oHAxYOf8NnY9RM000gnxfMh5isYI5eI1PosBV/aQJGTv0G+O7ZIp2ssdmMG5FmoTN9T5Xa8KJCEqH/yuwmdXtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=A6Z4M6hf; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 577GtLoJ357219;
+	Thu, 7 Aug 2025 11:55:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754585721;
+	bh=fyNnhg4lijQ4v6QmS/629cAiN3798tTQNEz0d9moVMM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=A6Z4M6hfPXyzEe4lh33jMZO/WciwcaV+08K8yxl+sTcpX6ifTttw2h7sDsQ/6KnIx
+	 85/RDY7/hU/aRLN/OQ0caPkKbVwQ7xygnWWwWRlpncmTwImKs4Dg6S6sS5YDAq2G0x
+	 7H7lLHvQwYkktfLCKiA/7NZ+DdHf7FcckOB3gNFM=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 577GtLTB947670
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 7 Aug 2025 11:55:21 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 7
+ Aug 2025 11:55:20 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 7 Aug 2025 11:55:20 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 577GtKo61672369;
+	Thu, 7 Aug 2025 11:55:20 -0500
+Message-ID: <fca8e682-9db6-4726-95e9-db437042e98e@ti.com>
+Date: Thu, 7 Aug 2025 11:55:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: arm: Convert ti,keystone to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon
+	<nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250806212824.1635084-1-robh@kernel.org>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250806212824.1635084-1-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The commit 65c66047259f ("proc: fix the issue of proc_mem_open returning NULL")
-breaks `perf record -g -p PID` when profiling a kernel thread.
+On 8/6/25 4:28 PM, Rob Herring (Arm) wrote:
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-The strace of `perf record -g -p $(pgrep kswapd0)` shows:
+Reviewed-by: Andrew Davis <afd@ti.com>
 
-  openat(AT_FDCWD, "/proc/65/task/65/maps", O_RDONLY) = -1 ESRCH (No such process)
-
-This patch partially reverts the commit to fix it.
-
-Fixes: 65c66047259f ("proc: fix the issue of proc_mem_open returning NULL")
-Signed-off-by: Jialin Wang <wjl.linux@gmail.com>
----
- fs/proc/task_mmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 3d6d8a9f13fc..7a7ce26106ac 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -340,8 +340,8 @@ static int proc_maps_open(struct inode *inode, struct file *file,
- 
- 	priv->inode = inode;
- 	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
--	if (IS_ERR_OR_NULL(priv->mm)) {
--		int err = priv->mm ? PTR_ERR(priv->mm) : -ESRCH;
-+	if (IS_ERR(priv->mm)) {
-+		int err = PTR_ERR(priv->mm);
- 
- 		seq_release_private(inode, file);
- 		return err;
--- 
-2.50.0
+>   .../bindings/arm/keystone/keystone.txt        | 42 -------------------
+>   .../bindings/arm/ti/ti,keystone.yaml          | 42 +++++++++++++++++++
+>   2 files changed, 42 insertions(+), 42 deletions(-)
+>   delete mode 100644 Documentation/devicetree/bindings/arm/keystone/keystone.txt
+>   create mode 100644 Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/keystone/keystone.txt b/Documentation/devicetree/bindings/arm/keystone/keystone.txt
+> deleted file mode 100644
+> index f310bad04483..000000000000
+> --- a/Documentation/devicetree/bindings/arm/keystone/keystone.txt
+> +++ /dev/null
+> @@ -1,42 +0,0 @@
+> -TI Keystone Platforms Device Tree Bindings
+> ------------------------------------------------
+> -
+> -Boards with Keystone2 based devices (TCI66xxK2H) SOC shall have the
+> -following properties.
+> -
+> -Required properties:
+> - - compatible: All TI specific devices present in Keystone SOC should be in
+> -   the form "ti,keystone-*". Generic devices like gic, arch_timers, ns16550
+> -   type UART should use the specified compatible for those devices.
+> -
+> -SoC families:
+> -
+> -- Keystone 2 generic SoC:
+> -   compatible = "ti,keystone"
+> -
+> -SoCs:
+> -
+> -- Keystone 2 Hawking/Kepler
+> -   compatible = "ti,k2hk", "ti,keystone"
+> -- Keystone 2 Lamarr
+> -   compatible = "ti,k2l", "ti,keystone"
+> -- Keystone 2 Edison
+> -   compatible = "ti,k2e", "ti,keystone"
+> -- K2G
+> -   compatible = "ti,k2g", "ti,keystone"
+> -
+> -Boards:
+> --  Keystone 2 Hawking/Kepler EVM
+> -   compatible = "ti,k2hk-evm", "ti,k2hk", "ti,keystone"
+> -
+> --  Keystone 2 Lamarr EVM
+> -   compatible = "ti,k2l-evm", "ti, k2l", "ti,keystone"
+> -
+> --  Keystone 2 Edison EVM
+> -   compatible = "ti,k2e-evm", "ti,k2e", "ti,keystone"
+> -
+> --  K2G EVM
+> -   compatible = "ti,k2g-evm", "ti,k2g", "ti-keystone"
+> -
+> --  K2G Industrial Communication Engine EVM
+> -   compatible = "ti,k2g-ice", "ti,k2g", "ti-keystone"
+> diff --git a/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml b/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
+> new file mode 100644
+> index 000000000000..20d4084f4506
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/ti/ti,keystone.yaml
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/ti/ti,keystone.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI Keystone Platforms
+> +
+> +maintainers:
+> +  - Nishanth Menon <nm@ti.com>
+> +  - Santosh Shilimkar <ssantosh@kernel.org>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - description: K2G
+> +        items:
+> +          - enum:
+> +              - ti,k2g-evm
+> +              - ti,k2g-ice
+> +          - const: ti,k2g
+> +          - const: ti,keystone
+> +      - description: Keystone 2 Edison
+> +        items:
+> +          - enum:
+> +              - ti,k2e-evm
+> +          - const: ti,k2e
+> +          - const: ti,keystone
+> +      - description: Keystone 2 Lamarr
+> +        items:
+> +          - enum:
+> +              - ti,k2l-evm
+> +          - const: ti,k2l
+> +          - const: ti,keystone
+> +      - description: Keystone 2 Hawking/Kepler
+> +        items:
+> +          - enum:
+> +              - ti,k2hk-evm
+> +          - const: ti,k2hk
+> +          - const: ti,keystone
+> +
+> +additionalProperties: true
 
 
