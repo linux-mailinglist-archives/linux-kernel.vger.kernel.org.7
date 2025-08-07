@@ -1,256 +1,113 @@
-Return-Path: <linux-kernel+bounces-759113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA9FB1D8A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:09:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614DDB1D8C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC0A416C9D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162C23A5CDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC5525A320;
-	Thu,  7 Aug 2025 13:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1E825A2A2;
+	Thu,  7 Aug 2025 13:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eF9xhdhP"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NJOipFBH"
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0A72E36EC;
-	Thu,  7 Aug 2025 13:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EB92327A3;
+	Thu,  7 Aug 2025 13:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572189; cv=none; b=I3bx9C6Bf0ZIM4P26Cslf12Lmb8WVxcgIPoSJUn8BpIf4nJs9jopXtSRSqgdAhNvnihf6wa2Q082j8CgfHwLwcU407lqGmzr1fah7UPdwEeH6OOGiLEO+vr1KOW0mX5XNucTtGYuFz79fLDHPgp08CFt28+rluMA3RRGrXHE/lk=
+	t=1754572613; cv=none; b=FM1nMNcDcqW711ek/D6YurNtmaDcZVOMELptnFqDAkuKdaFOxEtl+DUuL54IRZKgXYoEegMxd3lnnJDOURytfOZjwlzh0Fxr1kDknn+R7+k3wSPMrWpUhcRIrCLF+L/GEblqlmd3FT1j1Pgozb5S6i/HKUHo0ei8J+Tc+jeYfSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572189; c=relaxed/simple;
-	bh=60f0HspwGwMFdmSTzD2KBC/tMa1Xtd0DilHBC581pJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ukoOh7YR0wKRZStEW0vzGp6WWLr98yD3jyx6Pkt4LIbS+ibWcSKHFBpgafH1XgeRNhRhoStrn8UkMQtFxUDY9HQCYNfJTWbxgZFxb9mz7BS3F6QPHxTl7enaED5YJcmvmIo+o+xH9RCHdfaAeMNaLNJSBMgIUbt4flhEhqgiW58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eF9xhdhP; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459ddf9019cso3667465e9.0;
-        Thu, 07 Aug 2025 06:09:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754572185; x=1755176985; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=t21oNJ2+kEwHVDNe/DBt9NKLDmLG4nx1kTuI1yhdKLE=;
-        b=eF9xhdhPuLeMRpxNBANbdm2mZ1xnE4KnF2R5v52aFz0NOPn9toOFMuLjL6KkLvpDYH
-         wweYh2D8C+3rS+Gpd1eX1+YmF6btcCrFfhNscI13lA66qkOS+EekpNVLfVjmSZLxQFSK
-         wNOaet5xwEsxf9Bfvh7+y03PIQ26riEeyQZ5DPwp9RlW+YVwdGxeSloeKqxdtUpJKfSF
-         6rJOxOtm5/ptfRGU6zmUXhH3xLnz7dSeBZDkHNeguqNUhRMUzi0HDLEBkYt39ODPI+SG
-         jsjzyjU2tPaHD0IHDnSNEDOmbko/yMkoyDWny/Fy9Dhyic83rMFCCS3HkNlUu6UCKP/8
-         VovQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754572185; x=1755176985;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t21oNJ2+kEwHVDNe/DBt9NKLDmLG4nx1kTuI1yhdKLE=;
-        b=fxn24JEKKsFFhULqEioSfYHVAqU5ASU5q6fQAj+GOLOQ3tNqFeKoNdI13EUaPkeQ0z
-         gt4kW21qzOfiOAxM8+6xoGWnVldbhSxJzd0NtMqbO6b5gj9mshCdVheoiDc+6ES1lZO2
-         GTiFPC2veTN4wqzLfw3CTukXkbpk3kiI8ujAW0mSsXFHJYgHJWeIgmoYmf9dFSWiD3Vl
-         uCFzXe74pLvWixw9TaDCahk0QSgwDkZhuvLlIUa+nyMXij6oMkLetFYNR0WTPNB/VerP
-         tgNbpZGkrwn23ToBxfQkWHKPJ+Yt03S9tWocWB8QdRt1XF1cGzjsq7ZOUNUi3n3sW4GQ
-         wsrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLEfwruFh8e/mgsselSInheQ482IXe2rBrTztJaInXBeVmuKckUUv5jFpH/Yv2tCnk3FIM3SgKjgvn@vger.kernel.org, AJvYcCWrYVJDoohSVvUlBtYCdArNQCEQhBw+XWiMKNE7M8YlzFgVnjQLkK31SP2e/WyiV5qUCPJ6t0oSYazv@vger.kernel.org, AJvYcCXEO2YmzzMqz3EZCamTYav2fwE/a1x0yY0cOLomLom/rkYIEhRdxvMpKMCfn/TJWQxAy/YAcSYD10MBfnL1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+51dwEt4Lp99//mhuxaZOPhK8ZaUYCXdY5475y2Oif2q77tuB
-	8ewFxk8eSz1TssvWAVhCyR7alKv1Azl/7Q3k+0CePIgKi/zKDOPPtLAn
-X-Gm-Gg: ASbGncvY3kdnnC84m0KH+YgyWoQmgLTtSODcv7eTL1l7AZEw5eLkK7bDXto8qPXQWEC
-	GeDx+s9vF1FO0uFApcYZhztWwlCXgcWPi1c+C7b+iUaiDt/ivI8LPuLq0xbe9iTZCslrn52NQrj
-	tgbZzJbQJAgEGikLelDpXkYZJYyzcQh4kj5UzEtXczccPY8VB/PrJLZWUyby6tlDb05vKckEiuJ
-	7ZPKdC/lfXJ0t9CUbcSOhLmKwmJJ/p0WFRsz4TXeWDxYFoTZBVPqpJZISg0+dPe93T7Z+YJ+lve
-	3grBchIPOXFNhy8gpk4QVKlnc6V8/ObsW096W5PikXh0s59D/P4mgQlSlJuqSH3PlcFGXs38km8
-	KLPmx8+TjUka63XS43knkvQ==
-X-Google-Smtp-Source: AGHT+IEO9mb5h7m1yfmZXglvzVxbi25FeHRc2cxk1zk2vVJv/ksCknRQ5Qep3lXrYEZ8tCUKzAvMXA==
-X-Received: by 2002:a05:600c:4fd5:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-459e70eeb5cmr73207005e9.17.1754572185368;
-        Thu, 07 Aug 2025 06:09:45 -0700 (PDT)
-Received: from nsa ([185.128.9.33])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459de91ea4csm146945685e9.10.2025.08.07.06.09.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 06:09:45 -0700 (PDT)
-Date: Thu, 7 Aug 2025 14:10:01 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/10] iio: adc: ad7476: Drop convstart chan_spec
-Message-ID: <ngcbj6p7vfakah5fqsxqjlmrcycpg5rxfrbh4s34fll2kb3zq2@eyesluawn5w2>
-References: <cover.1754559149.git.mazziesaccount@gmail.com>
- <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
- <tc4od3jtqnj743naxefx5lxkha46wohuuvw46mik6nullvsqbe@knj4t23eaodw>
+	s=arc-20240116; t=1754572613; c=relaxed/simple;
+	bh=d70PNvUSr+Ig8dY5oH1WbyWi3rXq3qN21CY3dQwEHwI=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=XDLO9ylFo8yIOl0PmM3TvMdqseTrCPx17prgcs8r3Hj1iiq7ZTdspD2QHCZMfeifZ9Fy5CQ37GbtzkiDH49/ID44deuH/IxW/qJK7Pi2EHP0wVSxOjRySzxP+JgUo5LAbDpFvG72f0cCEzAV3837m6ZDw5FcK/L/s9uLPjP82LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NJOipFBH; arc=none smtp.client-ip=203.205.221.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1754572601; bh=RcHRWb5DAuWCDBHoiqPic68VtC16FWLD08hD8/gKNA4=;
+	h=From:To:Cc:Subject:Date;
+	b=NJOipFBH8vpNJsyNA4vuhJ5dNsgCsJN3Hvx/y7kL2u+agdmGRW0tULqmdGAL6cCTc
+	 h7eY9HQ22vi/FywpnQfDZkMh7n6kxBLqPZV+uCVv4+dsdLyGJwfXbbZUXS4aKwL4dG
+	 PO2vXw+Q71p75ITEhy1QmkHSCJdPnujJcvXmLG0I=
+Received: from localhost.localdomain ([45.250.181.71])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id 2A28B0C5; Thu, 07 Aug 2025 21:10:34 +0800
+X-QQ-mid: xmsmtpt1754572234t10e38kwf
+Message-ID: <tencent_FE21EA217C7FF6B3CEAB5749F98F0267EC0A@qq.com>
+X-QQ-XMAILINFO: NAuAIaytDrXp5l4QV3QI1hr69CyNRgRDQ+H9pR/CvqdQdOgluR1TnJpqSzF4nN
+	 0gQ9guSZHW6NJZ60wG39ETGSUoV89tWfl5WuublsevdraxGeryKPaL8M9aabqCRB/5b5dHsvZiq0
+	 MwZYUNjeWysHdQtZhcWj6wEf2+Et/cMhGnbXaZtkFyvlZxnBnWW+v/Cb/xxud5wP/GcdgtJOvFwM
+	 DLwk9G2RXIY5AbjdHh2OvQ65U9oN8WfmGsfaf3OMgU3n7/9ZgOuBvwsoN1XJymJjuvayE/Sznbsf
+	 1mc7xpwrnQ3Pvprd7NAdpiWopQ+AXCQ/OgFBw2tcFmC1BGt/W7bVWazlhTyTXhg3b2i6Xr8wi59Y
+	 8AGfGOl/o4MrXYcjmh0LtX0kziRlgZ/PNZJ0bPRVnuXNqHUBQq9PJAXOJZ2UCtMGK7Q+rmYQM07E
+	 lUfezjzGSNXFvWK9Ta/sFlMX4C0LhBdk0ijlzDNXH4A1Ms553fZ2uoIes1atYvp1nh//pEBgoAin
+	 Mjwcne7PRbJAGt9n3Eh6rN6Zz1TOo/SP88mjlT3fbUffqNLtyjD3MmzwI9IEzJaF3i7aSzRIYMf5
+	 NS7X8fJTMQXQ6Uwda6cyh6EFX/nWhLWS/zVaBJku3MBnSSVnxcYVq0ozkLTdaoxv7Fv4gn0cUdaU
+	 RxNPah9vdzs8m2xmM+thohVcCjgCt7xxlC2z3S4lSnMqLsz8Niwm91jDLOpFK5ERUFfgQd/dpHuy
+	 wuMesRsocOfd+ZAVfhPwb2m6/0/xlRv5E3AET71DrMijxaZzeGbSRPnQXRKQOMsHcpRBY/mWANuv
+	 6twEkS1f0tyZXpoB6eIV2CgpZvvWIN+GWs/NacgKem2jJQX8CLX7WTj2Pv3y77SlzPthSlFqsbQV
+	 ct9L4CUlCdHp4YfT0FUcUW+/7OTOUrMxjhqyeHvNNzYwh7COP7yjakXfCHytfPo/EIpqGm3nbm6c
+	 cyIg9aifL50nioeTAS6m9OJyZbXm0eQ1MPpJAMJ7Cuuy3gLTX6llTX49FjHu/mFgctnnhVwxWKE4
+	 SuKTQ3b+o/Pxpgc706iWPR7JnBPCKXtmXo19QONz9vjall4poexxvDfmVxd7A=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Callan Huang <luvings@qq.com>
+To: johannes@sipsolutions.net
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	luvings@qq.com
+Subject: [PATCH v1] wifi: wext: propagate metadata on -E2BIG for GET ioctls
+Date: Thu,  7 Aug 2025 21:10:18 +0800
+X-OQ-MSGID: <20250807131018.56291-1-luvings@qq.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <tc4od3jtqnj743naxefx5lxkha46wohuuvw46mik6nullvsqbe@knj4t23eaodw>
 
-On Thu, Aug 07, 2025 at 01:41:31PM +0100, Nuno Sá wrote:
-> On Thu, Aug 07, 2025 at 12:34:52PM +0300, Matti Vaittinen wrote:
-> > The ad7476 driver defines separate chan_spec structures for operation
-> > with and without convstart GPIO. At quick glance this may seem as if the
-> > driver did provide more than 1 data-channel to users - one for the
-> > regular data, other for the data obtained with the convstart GPIO.
-> > 
-> > The only difference between the 'convstart' and 'non convstart'
-> > -channels is presence / absence of the BIT(IIO_CHAN_INFO_RAW) in
-> > channel's flags.
-> > 
-> > We can drop the convstart channel spec, and related convstart macro, by
-> > allocating a mutable per driver instance channel spec an adding the flag
-> > in probe if needed. This will simplify the driver with the cost of added
-> > memory consumption.
-> > 
-> > Assuming there aren't systems with very many ADCs and very few
-> > resources, this tradeoff seems worth making.
-> > 
-> > Simplify the driver by dropping the 'convstart' channel spec and
-> > allocating the chan spec for each driver instance.
-> 
-> I do not agree with this one. Looking at the diff, code does not look
-> simpler to me...
+When GET ioctls encounter insufficient buffer (-E2BIG),
+preserve u.data.length metadata in iwreq structure for size detection
 
-Ok, on a second thought I'm ok with this. It makes adding devices easier
-and (IIUC) for the one you're adding later we only have "convst_channel"
-channels.
+Typical usage in userspace tools like 'iwlist wlan0 scanning':
+- Detect required buffer size via u.data.length
+- Implement retry logic with proper allocation
 
-On comment though...
+Signed-off-by: Callan Huang <luvings@qq.com>
+---
+ net/wireless/wext-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> - Nuno Sá
-> 
-> > 
-> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> > 
-> > ---
-> > Revision history:
-> >  v1 => v2:
-> >  - New patch
-> > 
-> > I considered squashing this change with the one limiting the chip_info
-> > scope. Having this as a separate change should help reverting if someone
-> > complains about the increased memory consumption though.
-> > ---
-> >  drivers/iio/adc/ad7476.c | 31 ++++++++++++++++++-------------
-> >  1 file changed, 18 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
-> > index e97742912b8e..a30eb016c11c 100644
-> > --- a/drivers/iio/adc/ad7476.c
-> > +++ b/drivers/iio/adc/ad7476.c
-> > @@ -29,8 +29,6 @@ struct ad7476_state;
-> >  struct ad7476_chip_info {
-> >  	unsigned int			int_vref_mv;
-> >  	struct iio_chan_spec		channel[2];
-> > -	/* channels used when convst gpio is defined */
-> > -	struct iio_chan_spec		convst_channel[2];
-> >  	void (*reset)(struct ad7476_state *);
-> >  	bool				has_vref;
-> >  	bool				has_vdrive;
-> > @@ -41,6 +39,7 @@ struct ad7476_state {
-> >  	struct gpio_desc		*convst_gpio;
-> >  	struct spi_transfer		xfer;
-> >  	struct spi_message		msg;
-> > +	struct iio_chan_spec		channel[2];
-> >  	int				scale_mv;
-> >  	/*
-> >  	 * DMA (thus cache coherency maintenance) may require the
-> > @@ -153,24 +152,18 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
-> >  #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
-> >  		BIT(IIO_CHAN_INFO_RAW))
-> >  #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
-> > -#define AD7091R_CONVST_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), \
-> > -		BIT(IIO_CHAN_INFO_RAW))
-> >  #define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
-> >  		BIT(IIO_CHAN_INFO_RAW))
-> >  
-> >  static const struct ad7476_chip_info ad7091_chip_info = {
-> >  	.channel[0] = AD7091R_CHAN(12),
-> >  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
-> > -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
-> > -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
-> >  	.reset = ad7091_reset,
-> >  };
-> >  
-> >  static const struct ad7476_chip_info ad7091r_chip_info = {
-> >  	.channel[0] = AD7091R_CHAN(12),
-> >  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
-> > -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
-> > -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
-> >  	.int_vref_mv = 2500,
-> >  	.has_vref = true,
-> >  	.reset = ad7091_reset,
-> > @@ -282,7 +275,7 @@ static int ad7476_probe(struct spi_device *spi)
-> >  	const struct ad7476_chip_info *chip_info;
-> >  	struct ad7476_state *st;
-> >  	struct iio_dev *indio_dev;
-> > -	int ret;
-> > +	int ret, i;
-> >  
-> >  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> >  	if (!indio_dev)
-> > @@ -332,16 +325,28 @@ static int ad7476_probe(struct spi_device *spi)
-> >  	if (IS_ERR(st->convst_gpio))
-> >  		return PTR_ERR(st->convst_gpio);
-> >  
-> > +	/*
-> > +	 * This will never realize. Unless someone changes the channel specs
-> > +	 * in this driver. And if someone does, without changing the loop
-> > +	 * below, then we'd better immediately produce a big fat error, before
-> > +	 * the change proceeds from that developer's table.
-> > +	 */
-> > +	BUILD_BUG_ON(ARRAY_SIZE(st->channel) != ARRAY_SIZE(chip_info->channel));
+diff --git a/net/wireless/wext-core.c b/net/wireless/wext-core.c
+index c32a7c690..b4f72a49f 100644
+--- a/net/wireless/wext-core.c
++++ b/net/wireless/wext-core.c
+@@ -1075,7 +1075,7 @@ int wext_handle_ioctl(struct net *net, unsigned int cmd, void __user *arg)
+ 	ret = wext_ioctl_dispatch(net, &iwr, cmd, &info,
+ 				  ioctl_standard_call,
+ 				  ioctl_private_call);
+-	if (ret >= 0 &&
++	if ((ret >= 0 || ret == -E2BIG) &&
+ 	    IW_IS_GET(cmd) &&
+ 	    copy_to_user(arg, &iwr, sizeof(struct iwreq)))
+ 		return -EFAULT;
+@@ -1138,7 +1138,7 @@ int compat_wext_handle_ioctl(struct net *net, unsigned int cmd,
+ 				  compat_standard_call,
+ 				  compat_private_call);
+ 
+-	if (ret >= 0 &&
++	if ((ret >= 0 || ret == -E2BIG) &&
+ 	    IW_IS_GET(cmd) &&
+ 	    copy_to_user(argp, &iwr, sizeof(struct iwreq)))
+ 		return -EFAULT;
+-- 
+2.25.1
 
-I guess it make sense but still looks too fancy for this :)
-
-> > +	for (i = 0; i < ARRAY_SIZE(st->channel); i++) {
-> > +		st->channel[i] = chip_info->channel[i];
-> > +		if (st->convst_gpio)
-
-I would flip this an do:
-	if (!st->convst_gpio)
-		break;
-		
-> > +			st->channel[i].info_mask_separate |=
-> > +				BIT(IIO_CHAN_INFO_RAW);
-		
-		__set_bit()...
-
-- Nuno Sá
-
-> > +	}
-> > +
-> >  	st->spi = spi;
-> >  
-> >  	indio_dev->name = spi_get_device_id(spi)->name;
-> >  	indio_dev->modes = INDIO_DIRECT_MODE;
-> > -	indio_dev->channels = chip_info->channel;
-> > -	indio_dev->num_channels = 2;
-> > +	indio_dev->channels = st->channel;
-> > +	indio_dev->num_channels = ARRAY_SIZE(st->channel);
-> >  	indio_dev->info = &ad7476_info;
-> >  
-> > -	if (st->convst_gpio)
-> > -		indio_dev->channels = chip_info->convst_channel;
-> >  	/* Setup default message */
-> >  
-> >  	st->xfer.rx_buf = &st->data;
-> > -- 
-> > 2.50.1
-> > 
-> 
-> 
 
