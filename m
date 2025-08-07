@@ -1,152 +1,183 @@
-Return-Path: <linux-kernel+bounces-758978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6377BB1D68D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09437B1D68E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48EAE1899A9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:23:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBB6170E97
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F97277C9B;
-	Thu,  7 Aug 2025 11:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gYlDBY/+"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762ED278E75;
+	Thu,  7 Aug 2025 11:23:04 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51058238C16
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6C9238C16
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754565764; cv=none; b=WblrDCd6fcqpKGFc5bqaEtA4XYqmsi0UEDGxmVE4APKAeVT7X4Bozvg9JOUszz6N5IU/0kWlsh273AvN71zIsQozkRyKqpve1DVJhNgnFSQQcojzOkPvXieYQU7iNkfJdjLR24QYVHPoKFQWttZAbrGkevIQU1sxi4j5K8IeGrM=
+	t=1754565784; cv=none; b=UoDB+xMVrCPdI+fN31/2aN1NxlLMsFTgLxnuxCJCIfsWeGA/GdYPk9ww+j+nM2NNYG1i/bbI/ZOf1mcNYdbXb4GLZxFb7eaYuwLaQMkgaxWXkEe0goP4tGU4ifpmhKzOzn/FWPRvbgv6gf/KF3qTWxfu/uMD9pRQXAGU1t9juas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754565764; c=relaxed/simple;
-	bh=/Lyz6Y478XwCWiMxICNCWD29e/SQvCT67SBndBcNMlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WoCDXRNOkqwKL6ThNzFM9UXfVVveVl3OG40nXkrGZLI3wQFHHri9XJS3tPHoheSZPbIPuFwINdm5webrSGT0atDSwoZk5CVM+cNn0cB2MED19J1Xanpau/mqx2Af8QwppTHlQGb+uYsk4v2PNNvI2UM2cgI+4Ui7UMW2Z1jRgqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gYlDBY/+; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b785a69454so503475f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754565757; x=1755170557; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ZbKQJ5W6ertupco9EzwscMnQ6iskl29md9zy6imu7Y=;
-        b=gYlDBY/+c9fa7LQeLKFin4ATfLIxyaiaiqIW3W2MzbxwZcXMP+KA8ESr80/5Iq/meI
-         twi1rWPN7o0XE85cGQ9y9/l4iAuhSJ9UqWV2aUrUOiFPU8/8xPDpLjHSNL1tC85hKrXo
-         aujVfCyWdxtC6eIrkIpi893PBrGFhIOjWbbVeEvur25IYFYvvEuHrlyqShJVVNiF8MIx
-         T17C/AoFvjp/G7THg36IjSb/Ebf+po8REUbrCef/4PQ2mr4T+4b4h1Wlrb1HHxxaY/q3
-         EXJaPq1zqaRmuGytjkXf8I5GdD6IupEt3jI5+tIwKMvytB40Fh4HZAONEpE7qwrNs0LD
-         oqxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754565757; x=1755170557;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ZbKQJ5W6ertupco9EzwscMnQ6iskl29md9zy6imu7Y=;
-        b=uBPpx7h/gWLRQLMO4QvVC50apmsrSEMAb09myRQkNnaVXbYqMs6jh7hEQhmmSfYkQA
-         julPgW98U7ANpx4TQxk147Bs6KPzdKcPwy0AIPal7v3Fm5Rj39DXWWA8Y47LwnmMyX34
-         oMlBOpAByazlj4lestUtC09MF44fmotobCggcUsnLKjtefh1K7MCv1UH1J8ApEiqb/sA
-         TKEpotC4ektYml11xEHRAoOOU5to4CCvpaFLY0SZPZzmuFrCLHdc8r/AwxLpJdvEpkF9
-         8sX8tQ5BaQyuSNODuKmuPOtaHZNQjVM5UOYuSfHr87mQF+zGK6vYjZazUz38Nl2cGjsV
-         EhOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNK6cAOinYZcQb1YVru1srhB/78gVeGqLpD8tS18ZgvR2PAuc1JMXYdFlqXiBzVoW+NCxm7x1IjOfji38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvLy9OYrrKMfu3oLWjyWq8FXxozSvsVukY9LZam/mrYyl0oAoy
-	1PByomFcYlt/PWLXleqHjutY04YPB7tCOhvqXcOj4y6q59ONGLLLUOx4TrL9V+Wxeqw=
-X-Gm-Gg: ASbGncve1yUiSIiPmOcdYF6rJoLiT9I/2jezrIayh0oXujG6wXt8sWIhG+/ISSBDMjP
-	L3u9X3payn4grhYgproeJnvvyp3UZLkh4hRkiZCCcZzOreUIbbvCNgyiACwOUSj/Vesp8sC0WHO
-	lwLqON/bNb8OMlXoZ/9+QBF5SHJLq8Xai1RnWy1VPhDOUxEqtcv7ujRsgpU6VCV8xFTAruKBcUc
-	pm0uz5M+06WrGokDsubIq/hgsPMep9zpwQg8M63yzmzUsRgbcjTbaZGFaTh0n0Nme/gW7Im9i1D
-	5sQixGXJm/pgaiio16HwdtzuYEYNcL0q/QA64QmW8+Rdh3BleZwyiDY8twGstjTireoJFKZ5KQg
-	HQf/v5P7ZAu92cAKCDtjeVG/y94iMuFiAKmiGkNXW1h3x/g==
-X-Google-Smtp-Source: AGHT+IHpcvEuPhORaYXA7n7MCRIWBnQ/M3PrlPL9izMPtoJsoR7KrAC2MiYimpXbbI1MYSV6/obt7w==
-X-Received: by 2002:a05:6000:4201:b0:3b8:d15f:45a2 with SMTP id ffacd0b85a97d-3b8f48e2e45mr4360108f8f.14.1754565757391;
-        Thu, 07 Aug 2025 04:22:37 -0700 (PDT)
-Received: from localhost (109-81-80-221.rct.o2.cz. [109.81.80.221])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3b9c7dsm26206779f8f.26.2025.08.07.04.22.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 04:22:37 -0700 (PDT)
-Date: Thu, 7 Aug 2025 13:22:36 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/8] mm/vmalloc: Remove cond_resched() in
- vm_area_alloc_pages()
-Message-ID: <aJSMfJhBOltRiSUh@tiehlicka>
-References: <20250807075810.358714-1-urezki@gmail.com>
- <20250807075810.358714-5-urezki@gmail.com>
+	s=arc-20240116; t=1754565784; c=relaxed/simple;
+	bh=fjxbetrR15ug7yjWQVSUKp9bUJF3eGDbUSXsAEyHTHQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lmHVIIz75b+OE2hslM2tlAQnG/g4CfAb0q/AP1U/lbQHaPNnCBLfxxdX90rnmtkHhbhNnisGH1p0vW2VUG5Reqqb3zu7MVWJc6X8mQLKlmR6J5xZcLFRSyGUgyzA6tzxE2Q4jM84t8FlMJtZ5Ok4my6+lU9O1Jva228ykzigh2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: dd2e0996738011f0b29709d653e92f7d-20250807
+X-CID-CACHE: Type:Local,Time:202508071912+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:8ffeef84-cc78-4d9f-8f2f-9a0c2c155af6,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:6493067,CLOUDID:d140946473c6e663ff6cfd9239c73f90,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:5,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: dd2e0996738011f0b29709d653e92f7d-20250807
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <cuiguoqi@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 851429058; Thu, 07 Aug 2025 19:22:55 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id EC5D4E01A758;
+	Thu,  7 Aug 2025 19:22:54 +0800 (CST)
+X-ns-mid: postfix-68948C8C-7858575
+Received: from localhost.localdomain (unknown [10.41.103.97])
+	by mail.kylinos.cn (NSMail) with ESMTPA id BB3EFE0000B0;
+	Thu,  7 Aug 2025 19:22:49 +0800 (CST)
+From: cuiguoqi <cuiguoqi@kylinos.cn>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org,
+	rostedt@goodmis.org
+Cc: farbere@amazon.com,
+	guoqi0226@163.com,
+	cuiguoqi@kylinos.cn,
+	tglx@linutronix.de,
+	pmladek@suse.com,
+	akpm@linux-foundation.org,
+	feng.tang@linux.alibaba.com,
+	joel.granados@kernel.org,
+	john.ogness@linutronix.de,
+	namcao@linutronix.de,
+	takakura@valinux.co.jp,
+	sravankumarlpu@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: [PATCH] printk: Fix panic log flush to serial console during kdump in PREEMPT_RT kernels
+Date: Thu,  7 Aug 2025 19:22:47 +0800
+Message-Id: <20250807112247.170127-1-cuiguoqi@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807075810.358714-5-urezki@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 07-08-25 09:58:06, Uladzislau Rezki wrote:
-> The vm_area_alloc_pages() function uses cond_resched() to yield the
-> CPU during potentially long-running loops. However, these loops are
-> not considered long-running under normal conditions.
+When a system running a real-time (PREEMPT_RT) kernel panics and triggers=
+ kdump,
+the critical log messages (e.g., panic reason, stack traces) may fail to =
+appear
+on the serial console.
 
-To be more precise they can take long if they dive into the page
-allocator but that already involves cond_rescheds where appropriate so
-these are not needed in fact.
+When kdump cannot be used properly, serial console logs are crucial,
+whether for diagnosing kdump issues or troubleshooting the underlying pro=
+blem.
 
-> In non-blocking
-> contexts, calling cond_resched() is inappropriate also.
-> 
-> Remove these calls to ensure correctness for blocking/non-blocking
-> contexts. This also simplifies the code path. In fact, a slow path
-> of page allocator already includes reschedule points to mitigate
-> latency.
-> 
-> This patch was tested for !CONFIG_PREEMPT kernel and with large
-> allocation chunks(~1GB), without triggering any "BUG: soft lockup"
-> warnings.
-> 
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+This issue arises due to synchronization or deferred flushing of the prin=
+tk buffer
+in real-time contexts, where preemptible console locks or delayed workque=
+ues prevent
+timely log output before kexec transitions to the crash kernel.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+The test results are as follows:
+[  T197] Kernel panic - not syncing: sysrq triggered crash
+[  T197] Call trace:
+[  T197]  dump_backtrace+0x9c/0x120
+[  T197]  show_stack+0x1c/0x30
+[  T197]  dump_stack_lvl+0x34/0x88
+[  T197]  dump_stack+0x14/0x20
+[  T197]  panic+0x3c4/0x3f8
+[  T197]  sysrq_handle_crash+0x20/0x28
+[  T197]  __handle_sysrq+0xd4/0x1e0
+[  T197]  write_sysrq_trigger+0x88/0x108
+[  T197]  proc_reg_write+0x9c/0xf8
+[  T197]  vfs_write+0xf4/0x450
+[  T197]  ksys_write+0x70/0x100
+[  T197]  __arm64_sys_write+0x20/0x30
+[  T197]  invoke_syscall+0x48/0x110
+[  T197]  el0_svc_common.constprop.0+0x44/0xe8
+[  T197]  do_el0_svc+0x20/0x30
+[  T197]  el0_svc+0x24/0x88
+[  T197]  el0t_64_sync_handler+0xb8/0xc0
+[  T197]  el0t_64_sync+0x14c/0x150
+[  T197] SMP: stopping secondary CPUs
+[  T197] Starting crashdump kernel...
+[  T197] Bye!
 
-Thanks!
-> ---
->  mm/vmalloc.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 81b6d3bde719..b0255e0c74b3 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3633,7 +3633,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->  							pages + nr_allocated);
->  
->  			nr_allocated += nr;
-> -			cond_resched();
->  
->  			/*
->  			 * If zero or pages were obtained partly,
-> @@ -3675,7 +3674,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->  		for (i = 0; i < (1U << order); i++)
->  			pages[nr_allocated + i] = page + i;
->  
-> -		cond_resched();
->  		nr_allocated += 1U << order;
->  	}
->  
-> -- 
-> 2.39.5
-> 
+Signed-off-by: cuiguoqi <cuiguoqi@kylinos.cn>
+---
+ arch/arm64/kernel/machine_kexec.c | 4 ++++
+ kernel/panic.c                    | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
--- 
-Michal Hocko
-SUSE Labs
+diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machin=
+e_kexec.c
+index 6f121a0..66c7d90 100644
+--- a/arch/arm64/kernel/machine_kexec.c
++++ b/arch/arm64/kernel/machine_kexec.c
+@@ -24,6 +24,7 @@
+ #include <asm/page.h>
+ #include <asm/sections.h>
+ #include <asm/trans_pgd.h>
++#include <linux/console.h>
+=20
+ /**
+  * kexec_image_info - For debugging output.
+@@ -176,6 +177,9 @@ void machine_kexec(struct kimage *kimage)
+=20
+ 	pr_info("Bye!\n");
+=20
++	if (IS_ENABLED(CONFIG_PREEMPT_RT) && in_kexec_crash)
++		console_flush_on_panic(CONSOLE_FLUSH_PENDING);
++
+ 	local_daif_mask();
+=20
+ 	/*
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 72fcbb5..e0ad0df 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -437,6 +437,8 @@ void vpanic(const char *fmt, va_list args)
+ 	 */
+ 	kgdb_panic(buf);
+=20
++	printk_legacy_allow_panic_sync();
++
+ 	/*
+ 	 * If we have crashed and we have a crash kernel loaded let it handle
+ 	 * everything else.
+@@ -450,8 +452,6 @@ void vpanic(const char *fmt, va_list args)
+=20
+ 	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+=20
+-	printk_legacy_allow_panic_sync();
+-
+ 	/*
+ 	 * Run any panic handlers, including those that might need to
+ 	 * add information to the kmsg dump output.
+--=20
+2.7.4
+
 
