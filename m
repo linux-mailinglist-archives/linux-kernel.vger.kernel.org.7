@@ -1,224 +1,124 @@
-Return-Path: <linux-kernel+bounces-758751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D03B1D374
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:37:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8E4B1D37A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D9F3B0B49
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:37:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5AB93B0E59
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795BB23C512;
-	Thu,  7 Aug 2025 07:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D05220D4F9;
+	Thu,  7 Aug 2025 07:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3igw4UG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GtK/px3t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832F1235041;
-	Thu,  7 Aug 2025 07:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDA91A8F97
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 07:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754552231; cv=none; b=a0Sbk9XY0+PG1AmS1iWJGYsAh7JWvqK5zgx7OaQAwHhvtdpoIk93lVsDGa4CGIB6QP2Xo0dxa0XWxox38CUGplihL7J99y+DyGWs3BNXWAJ2qRCfId2ap7+fYvxHIlayLpUxVJWO/cuPL7dZQ7kkUNcJ6AMrKjTJGBPQmnkvmGg=
+	t=1754552378; cv=none; b=T8i5/KpVmbeoZudLkJDb3VYA0EpARz3Lpzov1jeKiZ7t4SDA1b4vO1z9lMTNTTzC8qPkBsKt532F9ZYnZu+OyvPo0yP8HAz8vqSUMnEw1HXsIAN8vDulAlqpGLTufVLv6oFwQQoVxOgMzeSHVaJ/QnImu4EZHFj31AcOfSshSV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754552231; c=relaxed/simple;
-	bh=lFMthv6QrKBOTRITI6/tRl8fokRfUTY5lwM7iuvzmlM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mlHuMS0RSCU+LgWysD7FFFDJPdOrPp+IjysjPB20Qc+i8VlD5aH7fr81SKlTUwvH5d7hDzvlK9knC0zM2Y27RYpCokX6Yj4mPTBoSqi+ZdNc9mPll27Kz7WLSUszydeMFRLPw1tYjHtbpw6MsvIN58s2X53a7Skb+A8u94TZT3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3igw4UG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66FAAC4CEEB;
-	Thu,  7 Aug 2025 07:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754552231;
-	bh=lFMthv6QrKBOTRITI6/tRl8fokRfUTY5lwM7iuvzmlM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=f3igw4UGfk9jmIHErNNNdAstrdBymQJsFP03lam5JbZcRKPRT9yQvrIzkf6i5gIA0
-	 /jvrOdwAigpIpIsn49AJBeKHHaIjKbcsPHs/oeiFWFUSlbwk+1ewkVJvGl5FBS7QJp
-	 yatohQrhjetYzipktlwyQbdukkjT4N8JSPFD0bx6g/IopgqMBZTIh+y6Wb4B0dJYvG
-	 yh+CtW+8salgTqNltB+FlQkPkzeClthV4yCQfTatLx3h3DJ/O2HW5UEGB8rVbbAIKI
-	 /e45UWT19lDn2djtCp7IwtR35gPYcqKtsE+nBM6veEm1ZTk+71iwrrjOuMI7UxnfIV
-	 hhYS5Dk3SZz8w==
-Message-ID: <8fa64c82-d5f8-4045-8ebf-5b938df8cc7c@kernel.org>
-Date: Thu, 7 Aug 2025 09:37:07 +0200
+	s=arc-20240116; t=1754552378; c=relaxed/simple;
+	bh=CVW6dhHGoaX37jD4MwW6k2ibzzrwhaNAGUotggSnULE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aZ3uMttWGzqfiPNi2LsHsOptxjGM1C1HM/gDzHmIVAgu6eYKZQJQOVkk/LLVWCNAbUi0IZKoeozDYJqYxQbrIWltBvLOBMfm0vLwG5CvWSMW9m1Ilen8+Ks+CesZC4CWnJJ8EC5ZfNGh9NeW9ngIJ3SMAyXsGlemEFHViO0iSok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GtK/px3t; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754552378; x=1786088378;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CVW6dhHGoaX37jD4MwW6k2ibzzrwhaNAGUotggSnULE=;
+  b=GtK/px3th+femJptGVyyAXpUlu+qCxU4/xmPGme6W6xBY5kqpA+RsWkB
+   GbqlG1iDt5NhkWNskec0l3FFdbcLkffW8ai8jlzgVvpxzcxyhsR3cFDhc
+   /rbD+YfOuZOiGOoIgPtqsalcZsWn8rHIMZo6SD+JOs4deoVRvfY5OR74h
+   EkgTHWs5Z6b/ThTlcHyx7GiTNbcMSS2aau/VLulJOAtgLPVoZ/RiOI04r
+   8IoeUgAQy8+fvOazna1/1SEkCcBVxExNbEOTOXObwSOKqZWQrZDA8rSDV
+   rW1yKBDU36N9N6Y/omQ5fDMJ6BEI3A7qx5TlYXWDJjwH3bASSuXi4F5bR
+   Q==;
+X-CSE-ConnectionGUID: T1F1tfHaS329g4+VJKxO2g==
+X-CSE-MsgGUID: nEeMin3qTkW52WtlHIbuVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56843504"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="56843504"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 00:39:37 -0700
+X-CSE-ConnectionGUID: ke5D6zy4RFSRq1Cft0ciRg==
+X-CSE-MsgGUID: I6QIuU94RwinFZepWPMwkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="195826329"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 07 Aug 2025 00:39:35 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ujvDN-0002Wc-03;
+	Thu, 07 Aug 2025 07:39:16 +0000
+Date: Thu, 7 Aug 2025 15:37:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wake Liu <wakel@google.com>, Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	wakel@google.com
+Subject: Re: [PATCH] vdso: Define NSEC_PER_SEC as 64-bit to prevent overflow
+Message-ID: <202508071518.qaTdbvoM-lkp@intel.com>
+References: <20250805162153.952693-1-wakel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] tty: serial/8250: Fix build warning in
- serial8250_probe_acpi()
-From: Jiri Slaby <jirislaby@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>,
- Abinash Singh <abinashsinghlalotra@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sunil V L <sunilvl@ventanamicro.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
- <f765eae4-f83e-4c25-9697-2705afd7b9b8@app.fastmail.com>
- <b9f715c0-082f-46a3-b332-d5f6bf53ad71@kernel.org>
- <22204a4a-9c10-4aca-8159-a0e69c74cb34@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <22204a4a-9c10-4aca-8159-a0e69c74cb34@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250805162153.952693-1-wakel@google.com>
 
-On 07. 08. 25, 8:43, Jiri Slaby wrote:
-> On 07. 08. 25, 7:25, Jiri Slaby wrote:
->> On 06. 08. 25, 9:01, Arnd Bergmann wrote:
->>> Note how serial8250_register_8250_port() ands up just copying
->>> individual members of the passed uart_8250_port structure into
->>> the global array of the same type, so one way of addressing
->>> this would be to use a structure for initialization that only
->>> contains a subset of the uart_8250_port members and can still
->>> be allocated on the stack, or possibly be constant.
->>
->> Yes:
->> https://lore.kernel.org/all/ 
->> f84c2ee3-77b4-41c4-8517-26dfb44a2276@kernel.org/
-> 
-> As a PoC, these members from uart_8250_port are really used in 
-> serial8250_register_8250_port():
-> struct uart_8250_port2 {
->          long unsigned int          iobase;               /*     0     8 */
->          resource_size_t            mapbase;              /*     8     8 */
->          unsigned char *            membase;              /*    16     8 */
->          long unsigned int          irqflags;             /*    24     8 */
->          upf_t                      flags;                /*    32     8 */
->          enum uart_iotype           iotype;               /*    40     4 */
->          unsigned int               tx_loadsz;            /*    44     4 */
->          unsigned int               type;                 /*    48     4 */
->          u32                        overrun_backoff_time_ms; /*    52  4 */
->          u32                        capabilities;         /*    56     4 */
->          unsigned int               line;                 /*    60     4 */
->          /* --- cacheline 1 boundary (64 bytes) --- */
->          unsigned int               uartclk;              /*    64     4 */
->          unsigned int               ctrl_id;              /*    68     4 */
->          unsigned int               port_id;              /*    72     4 */
->          unsigned int               irq;                  /*    76     4 */
->          unsigned int               fifosize;             /*    80     4 */
->          u16                        bugs;                 /*    84     2 */
->          u16                        lsr_save_mask;        /*    86     2 */
->          unsigned char              regshift;             /*    88     1 */
->          unsigned char              hub6;                 /*    89     1 */
-> 
->          /* XXX 6 bytes hole, try to pack */
-> 
->          resource_size_t            mapsize;              /*    96     8 */
->          struct serial_rs485        rs485;                /*   104    32 */
->          /* --- cacheline 2 boundary (128 bytes) was 8 bytes ago --- */
->          struct serial_rs485        rs485_supported;      /*   136    32 */
->          void *                     private_data;         /*   168     8 */
->          struct uart_8250_dma *     dma;                  /*   176     8 */
+Hi Wake,
 
-And if in the above link mentioned conversion to ops [1] is finished, we 
-would replace all the below by a single pointer to a const ops. The 
-struct would be then 176+8.
+kernel test robot noticed the following build errors:
 
-[1] the two "ops" commits at 
-https://git.kernel.org/pub/scm/linux/kernel/git/jirislaby/linux.git/log/?h=devel
+[auto build test ERROR on tip/timers/vdso]
+[also build test ERROR on linus/master v6.16 next-20250806]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->          void                       (*rs485_start_tx)(struct 
-> uart_8250_port *, bool); /*   184     8 */
->          /* --- cacheline 3 boundary (192 bytes) --- */
->          void                       (*rs485_stop_tx)(struct 
-> uart_8250_port *, bool); /*   192     8 */
->          void                       (*throttle)(struct uart_port *); /* 
->   200     8 */
->          void                       (*unthrottle)(struct uart_port *); / 
-> *   208     8 */
->          u32                        (*serial_in)(struct uart_port *, 
-> unsigned int); /*   216     8 */
->          void                       (*serial_out)(struct uart_port *, 
-> unsigned int, u32); /*   224     8 */
->          void                       (*set_termios)(struct uart_port *, 
-> struct ktermios *, const struct ktermios  *); /*   232     8 */
->          void                       (*set_ldisc)(struct uart_port *, 
-> struct ktermios *); /*   240     8 */
->          unsigned int               (*get_mctrl)(struct uart_port *); /* 
->    248     8 */
->          /* --- cacheline 4 boundary (256 bytes) --- */
->          void                       (*set_mctrl)(struct uart_port *, 
-> unsigned int); /*   256     8 */
->          unsigned int               (*get_divisor)(struct uart_port *, 
-> unsigned int, unsigned int *); /*   264     8 */
->          void                       (*set_divisor)(struct uart_port *, 
-> unsigned int, unsigned int, unsigned int); /*   272     8 */
->          int                        (*startup)(struct uart_port *); /* 
-> 280     8 */
->          void                       (*shutdown)(struct uart_port *); /* 
->   288     8 */
->          int                        (*handle_irq)(struct uart_port *); / 
-> *   296     8 */
->          void                       (*pm)(struct uart_port *, unsigned 
-> int, unsigned int); /*   304     8 */
->          void                       (*handle_break)(struct uart_port 
-> *); /*   312     8 */
->          /* --- cacheline 5 boundary (320 bytes) --- */
->          int                        (*rs485_config)(struct uart_port *, 
-> struct ktermios *, struct serial_rs485 *); /*   320     8 */
->          struct device *            dev;                  /*   328     8 */
->          u32                        (*dl_read)(struct uart_8250_port 
-> *); /*   336     8 */
->          void                       (*dl_write)(struct uart_8250_port *, 
-> u32); /*   344     8 */
-> 
->          /* size: 352, cachelines: 6, members: 46 */
->          /* sum members: 346, holes: 1, sum holes: 6 */
->          /* last cacheline: 32 bytes */
-> };
-> 
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Wake-Liu/vdso-Define-NSEC_PER_SEC-as-64-bit-to-prevent-overflow/20250806-125650
+base:   tip/timers/vdso
+patch link:    https://lore.kernel.org/r/20250805162153.952693-1-wakel%40google.com
+patch subject: [PATCH] vdso: Define NSEC_PER_SEC as 64-bit to prevent overflow
+config: m68k-randconfig-r064-20250807 (https://download.01.org/0day-ci/archive/20250807/202508071518.qaTdbvoM-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508071518.qaTdbvoM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508071518.qaTdbvoM-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "__udivdi3" [drivers/leds/leds-sun50i-a100.ko] undefined!
+>> ERROR: modpost: "__divdi3" [drivers/leds/leds-sun50i-a100.ko] undefined!
+>> ERROR: modpost: "__divdi3" [drivers/clk/qcom/clk-spmi-pmic-div.ko] undefined!
+>> ERROR: modpost: "__udivdi3" [drivers/tty/serial/8250/8250_bcm7271.ko] undefined!
+>> ERROR: modpost: "__divdi3" [drivers/tty/serial/8250/8250_bcm7271.ko] undefined!
+>> ERROR: modpost: "__udivdi3" [drivers/spi/spi-axi-spi-engine.ko] undefined!
+>> ERROR: modpost: "__divdi3" [drivers/spi/spi-axi-spi-engine.ko] undefined!
+>> ERROR: modpost: "__divdi3" [drivers/spi/spi-dw.ko] undefined!
+>> ERROR: modpost: "__udivdi3" [drivers/spi/spi-dw.ko] undefined!
+>> ERROR: modpost: "__udivdi3" [drivers/input/touchscreen/ads7846.ko] undefined!
+WARNING: modpost: suppressed 3 unresolved symbol warnings because there were too many)
 
 -- 
-js
-suse labs
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
