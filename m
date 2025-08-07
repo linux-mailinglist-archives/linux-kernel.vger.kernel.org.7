@@ -1,159 +1,142 @@
-Return-Path: <linux-kernel+bounces-759164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3313AB1D96E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:52:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E236B1D99A
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B065817BB57
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAD061AA4F9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E3125E816;
-	Thu,  7 Aug 2025 13:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07262609E3;
+	Thu,  7 Aug 2025 14:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mr8mJLNb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="sTDPq+Ke"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFBC221269;
-	Thu,  7 Aug 2025 13:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE9725D536;
+	Thu,  7 Aug 2025 14:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754574767; cv=none; b=N+cBD+tBRAQDOHPYowYBZqRO4islP9J7c/Z1q11KgwWxSl4N6+aljL+teYzQEI0gbgxEsSRTWdOJ7ko7o2J9StpfaW0rut69t3xNZoWhUK3ZMs2T72sJTtbq4XOuVWPWVVJBwTSyQjjZ/L2tG04PZ8V+sJ5GFKyU5VkPGClWcpo=
+	t=1754575397; cv=none; b=FS3CLPm5nYpuCxKGQ7uDxLH4xQlWJmy3W13C5oB90M6HndxjTdKbSmriOdXXeFyG8FXJCL5Da7CDxENEgRIz84WUPACA/5NmR3JlhMDhgLotLfnNjgt094FvoQuI4RExInp5lvuIt2vnVwca3RPqn5a3/JKNujcCykQFqoKlLeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754574767; c=relaxed/simple;
-	bh=iV8ZODixFlQQUTPJW6A3MmqFtbVGwaA71qL/Ob3oMA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tKQXdmF1SuXEbaAgnLMLuDJZ9IRywpsfCEudRILLfpxSpCWcE7JwIXs5Uyt9OQpXEd8HVc7xAI40l9VKIYoQzEbtzuy1tCNDBOsxv4dZvVv7agp9w0NeSk/OstVCb3pzn+doZKicxrb0jIckVQuQyuHbfI7l3ZfTo2DYw41swy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mr8mJLNb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96235C4CEEB;
-	Thu,  7 Aug 2025 13:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754574767;
-	bh=iV8ZODixFlQQUTPJW6A3MmqFtbVGwaA71qL/Ob3oMA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mr8mJLNbrbolDVzFzrYOrZoWNQbNuAign58UCd3XJBSXmg4aLktmmqh963W53fbzE
-	 VF6+yra5s5wFoK+G76M5foTv3hyap/MAMCTSbfXxRRQPbQjjV3CHoZM4ioETyrjbqA
-	 D+xeMlBkmYXmcMfQ21ZjccJcIRi0CNWkuqZWNuh4EVA35JZtsNCXAJYsbjibkaHRH1
-	 KiZhPosneKMQY6qzx0vZ4qt4JXZi/0ZHwTeBTmHal8JGdGcJGCd1UgTw+vZzIRsNs6
-	 CdoGC8k52FwNBavnF49hyUJDNRBTpfQgrZjhG4pnqMPcDCTA0REjRX9LtJHCyiRuOu
-	 Nut79/rhJEvGg==
-Date: Thu, 7 Aug 2025 15:52:37 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 03/11] fsopen.2: document 'new' mount api
-Message-ID: <zax5dst65kektsdjgvktpfxmwppzczzl7t2etciywpkl2ywmib@u57e6fkrddcw>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
- <afty6mfpowwj3kzzbn3p7s4j4ovmput34dtqfzzwa57ocaita4@2jj4qandbnw3>
- <2025-08-07.1754572878-gory-flags-frail-rant-breezy-habits-pRuwdA@cyphar.com>
+	s=arc-20240116; t=1754575397; c=relaxed/simple;
+	bh=bjEiiI161dYTrY0Cw3+ZZGVoX2NnHUSvIH1QPcitc9w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N6Lm6nmTyJXwz9u5uuemdRKmtcReykE0s//C2TeM1IS+9KnY55c22tOLpFqUgaSOKoeGb916uT/gtDGlvTPOBJ2pCwFgn8v5cL4kL+7bdOh/q+h6gRmosi1fp2faVVqH6l3ThCi49eSJi0oeDdnLHCi2GxK6hwWutoSucUWakcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=sTDPq+Ke; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 59F64A037B;
+	Thu,  7 Aug 2025 16:03:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=H0mVJmCWOicg9EcBRx/NfEzNMf28ZNNzr0DbLGreYW8=; b=
+	sTDPq+KeRzVhg8O8HZh3s+/CBi+XOgzUpJh3dvxLrDj+Zepd0UBhtKG5UhaE5gEq
+	EGTNtMdmWUeCbvzjfmJaM7s6vru4SeO24VeAncROkyH0f2ashTFdZMmUGY1ybR1a
+	3dmA1Cw4q3hyrNnR9yJSAV+N7TYlh+6tnYM7G1bHa7skl0l081x223l5HcMtS9Sc
+	YYqLeyzCsaqFOpJj8s8VKFm7acYeArpWdh5CuNCh+I2IJJwmU9cjpZkNLlx8C+Kf
+	trjs0kEyUBWstsRT47V4N2pOuE1j4rBpFcMcE1V9nr3lFg8+0NwyNZJipQ/WCV6I
+	ZzTLfnXIW/cyK4AcAxKETlnlM13q4/0IHrQspKYfDvQ6RG9yKp25c1yDUodv1duP
+	Eib+g65a9x/wP+xSS4rcTMwiEsaupZNkyfHxwiWAw1tJg1cJHjLu23uLs7/ArPPl
+	vPxe+3+AJfkUHylTxZG9hN2fvacPXWJlbx0GBdHEd2Ld2elQ9mmZ2bt4UhDHNSLE
+	O1nx6rr05auXZyAPSyqYUyLIAl+JplGAbXf//RGyBwOoNKLhWi/8HyaKE+FoyW0Q
+	D/G3FIfOMiHVsBtizDiQ8pFtC8fr4otul9ve1tL8ZKr7kOkxStMf9gUzmrZ3BEuJ
+	PTPWW4g9GzzMx/eOJDt2M/6QQcmb58BEWcIWxsvr+sQ=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: Rob Herring <robh@kernel.org>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, "David S. Miller" <davem@davemloft.net>, "Sergei
+ Shtylyov" <sergei.shtylyov@cogentembedded.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Buday Csaba <buday.csaba@prolan.hu>, Andrew Lunn <andrew@lunn.ch>,
+	=?UTF-8?q?Cs=C3=B3k=C3=A1s=20Bence?= <csokas.bence@prolan.hu>, "Heiner
+ Kallweit" <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>
+Subject: [PATCH net v2] net: mdiobus: release reset_gpio in mdiobus_unregister_device()
+Date: Thu, 7 Aug 2025 15:54:49 +0200
+Message-ID: <20250807135449.254254-2-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bsuqqhomyowvpfnz"
-Content-Disposition: inline
-In-Reply-To: <2025-08-07.1754572878-gory-flags-frail-rant-breezy-habits-pRuwdA@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1754575389;VERSION=7995;MC=2460790112;ID=765739;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2998FD515E667361
+
+From: Buday Csaba <buday.csaba@prolan.hu>
+
+reset_gpio is claimed in mdiobus_register_device(), but it is not
+released in mdiobus_unregister_device(). It is instead only
+released when the whole MDIO bus is unregistered.
+When a device uses the reset_gpio property, it becomes impossible
+to unregister it and register it again, because the GPIO remains
+claimed.
+This patch resolves that issue.
+
+Fixes: bafbdd527d56 ("phylib: Add device reset GPIO support") # see notes
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Cc: Csókás Bence <csokas.bence@prolan.hu>
+[ csokas.bence: Resolve rebase conflict and clarify msg ]
+Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+---
+
+Notes:
+    Changes in v2:
+    * Rebase onto net-next (from 6.12)
+    * Clarify msg after talking with Csaba in person
+    * Collect Andrew's tag
+    
+    Link to v1:
+    https://lore.kernel.org/all/20250709133222.48802-3-buday.csaba@prolan.hu/
+    
+    Note to stable@:
+    * for 6.12 and before, the above v1 patch can be used.
+
+ drivers/net/phy/mdio_bus.c          | 1 +
+ drivers/net/phy/mdio_bus_provider.c | 3 ---
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index fda2e27c1810..cad6ed3aa10b 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -91,6 +91,7 @@ int mdiobus_unregister_device(struct mdio_device *mdiodev)
+ 	if (mdiodev->bus->mdio_map[mdiodev->addr] != mdiodev)
+ 		return -EINVAL;
+ 
++	gpiod_put(mdiodev->reset_gpio);
+ 	reset_control_put(mdiodev->reset_ctrl);
+ 
+ 	mdiodev->bus->mdio_map[mdiodev->addr] = NULL;
+diff --git a/drivers/net/phy/mdio_bus_provider.c b/drivers/net/phy/mdio_bus_provider.c
+index 48dc4bf85125..f43973e73ea3 100644
+--- a/drivers/net/phy/mdio_bus_provider.c
++++ b/drivers/net/phy/mdio_bus_provider.c
+@@ -443,9 +443,6 @@ void mdiobus_unregister(struct mii_bus *bus)
+ 		if (!mdiodev)
+ 			continue;
+ 
+-		if (mdiodev->reset_gpio)
+-			gpiod_put(mdiodev->reset_gpio);
+-
+ 		mdiodev->device_remove(mdiodev);
+ 		mdiodev->device_free(mdiodev);
+ 	}
+
+base-commit: d9104cec3e8fe4b458b74709853231385779001f
+-- 
+2.43.0
 
 
---bsuqqhomyowvpfnz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 03/11] fsopen.2: document 'new' mount api
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-3-558a27b8068c@cyphar.com>
- <afty6mfpowwj3kzzbn3p7s4j4ovmput34dtqfzzwa57ocaita4@2jj4qandbnw3>
- <2025-08-07.1754572878-gory-flags-frail-rant-breezy-habits-pRuwdA@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <2025-08-07.1754572878-gory-flags-frail-rant-breezy-habits-pRuwdA@cyphar.com>
-
-Hi Aleksa,
-
-On Thu, Aug 07, 2025 at 11:27:04PM +1000, Aleksa Sarai wrote:
-> > I think 'author' is more appropriate than 'developer' for documentation.
-> > It is also more consistent with the Copyright notice, which assigns
-> > copyright to the authors (documented in AUTHORS).  And ironically, even
-> > the kernel documentation about Co-authored-by talks about authorship
-
-(Oops, s/Co-authored-by/Co-developed-by/)
-
-> > instead of development:
-> >=20
-> > 	Co-developed-by: states that the patch was co-created by
-> > 	multiple developers; it is used to give attribution to
-> > 	co-authors (in addition to the author attributed by the From:
-> > 	tag) when several people work on a single patch.
->=20
-> Sure, fixed.
->=20
-> Can you also clarify whether CONTRIBUTING.d/patches/range-diff is
-> required for submissions? I don't think b4 supports including it (and I
-> really would prefer to not have to use raw git-send-email again just for
-> man-pages -- b4 has so many benefits over raw git-send-email). Is the
-> b4-style changelog I include in the cover-letter sufficient?
-
-Yes, that's sufficient.  As Captain Barbossa would say, "the code is
-more what you'd call 'guidelines' than actual rules".  ;)
-
-> I like to think of myself as a fairly prolific git user, but I don't
-> think I've ever seen --range-diff=3D output in a git-send-email patch
-> before...
-
-Yup, I only learnt about a few years ago.  I have to say it's great as
-a reviewer; it changed my efficiency reviewing code when we started
-using it at $dayjob-1.
-
-And even as a submitter, it has also saved me a few times, when I
-introduced a regression in some revision of a patch set, and I could
-easily trace back to the revision where I had introduced it by reading
-the range diffs, which are much shorter than the actual code.
-
-Maybe we could ping Konstantin to add this to b4?
-
-
-Cheers,
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---bsuqqhomyowvpfnz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiUr6QACgkQ64mZXMKQ
-wqlqGw/9H2CSI4snzWFUExNlDa/nGng9n9BuowRW8WA4+wzYrIQM3E242OgZW+BK
-QzXqKzJw4mY40yfo1k9+IoEGOG7afvdN7vS5UlTHGyyINUIMcqr//aG1Lk5Hiwew
-kBVIQILQUb4lJKuF4ENJhAIBP9zOfhkG75H3pb6k3SDMZp3/BhROloEiqQu8fNQ9
-nDDs6iPwv90Qtcm5sWd9fgllpOXu+kVKi2ebzJ2mv9LItpa5AWw2d19IpbVd8rR2
-dM6aZWdBtiXRY8T7uRD25YTBIpB2Ji3rDMkICVIaHQU7Nk9OW+79m7E83B5V6nfI
-U6mFSH0PlkLfs832OaWJLem5WT+SEhqiIt9vQkC68PtYCWPsYLffSDPdSZ/GZlA7
-VOT/SLwdn0IWklWWGm7ALJfr6Mn/sCe6qAvjVTjl+KyJZPk1yecfvCzTPTVBqy06
-h/yU4clhj/svFWO2G8sDVlpl+RlugsCcz/agVPFeIWM+W70FBEE4CnsGhWIGEcdP
-vnSpYtsjh3ceu3V3dAU4ydMGanjyt+iyjs4cFfEQ9zXPnkFLZQ1J2IQs+LsPiQW4
-6QnydM3Hp9WGvhNONPOfp85WzgsUaOEPxElmaWQNXsChSoI4wkyOQ6euoLbK+NaO
-h2Mj4PVJ4fAYYEWTO/ThKF/P59lotVbTVuiV3Vt30tF1xUQqpx0=
-=uMr7
------END PGP SIGNATURE-----
-
---bsuqqhomyowvpfnz--
 
