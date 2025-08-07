@@ -1,205 +1,172 @@
-Return-Path: <linux-kernel+bounces-758934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487C2B1D5D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:32:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7F1B1D5DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E93A16698C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C33D1664BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8320E230D08;
-	Thu,  7 Aug 2025 10:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3B218FC97;
+	Thu,  7 Aug 2025 10:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7nUKLYP"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ddF2XvkY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA3842AA5;
-	Thu,  7 Aug 2025 10:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4689A42AA5
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754562759; cv=none; b=O7rqBCNe41BN88XlunB/Ta8oi/79mqd676RphHaDuXpXQpOHlNXQ/eDrHmpRBpgBmD2l4XJFJNjP9x9K8xL12KmgWwj476cS4JZWzc/zQUBrxFvlKoxHt8bl4WngPaxtYK0cYzqG1Y5us46gpJspUvW22XYfRoXiRkxZHzKJJIc=
+	t=1754562823; cv=none; b=WEpoCyEYvEfk37DUzeXZNJ2FoniNCGlA05q6FiAlSBoCF38kV9DkcByf3aGI1E0YuSwsyOEnf3VIIzyJj9eua1ZvDnDfsYyc81r236Sz2yuHzze0+hejowQ+uMUNpO35Qx8kEEQsCN/n7hVkNgnyX4f7Gcn/w7IEqTRivJdEHuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754562759; c=relaxed/simple;
-	bh=8T4ciwZYIdTlobh2yTQlV72mffUjAvybA1slfR+u/AA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J0LgMjc5eszerQuOKA/+G/egp3tuzlBAkQWOYxy6e43YI5SUnviitYRHJpWCgV8Zx+GFuBY4Sga5WJJReBm1oNGjLbZqZPkKYU1qM8hh8JOrXSvPb+JGohtGLjnDTgfyEnBD9BjMWngpTzHHWrAKknmaCaYfNEydoSZLnwp2Exw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7nUKLYP; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71bce78e14fso8622057b3.1;
-        Thu, 07 Aug 2025 03:32:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754562757; x=1755167557; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0B8JKmuj7NoKhGZ2Qof2Rmk4iilq75YN49pVYUQ/rPY=;
-        b=A7nUKLYP9wLYtUZ2dYHLflefPO2ZxtDwK998xdqNM1ckqPbqDs4vaFOqDzQTWe/2eC
-         /TDcduIhcFVqOvle9eCObuCIefpkwnPe5rhbu0L7oC/qjfBqU1jOwUie/nM+k0wJbWhf
-         xAfnsH5F7/tyzWVma3Y4vQ55fBvi/mJWPIDK5WTQQCFQZRFgZjdr/G2rd3cMKuRI9ARb
-         vw5LP5HSpL29CDk5QclEtID5ilU/+OaJUs+wEH9eIzQOqvmj77YsjTimrW1kW7ciYkGe
-         ANptq5KiA1WAd1d1cLR3gzYF/YDdbuGoV16KNLY90wa5j+C7tUHlfYxB2kBeMpS8Kkbk
-         1maw==
+	s=arc-20240116; t=1754562823; c=relaxed/simple;
+	bh=aRfkNpM//pBU+oYZRnw2Z6WAeGX51uxS/BOb0CAPA6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UAXoBKEO6mNXuuf4HUkOqenJZwckC8LjTHw2VThyLsAUre14yqRF4V6J83DSGHxLBjUfTGPr3xHkKD+TEifegQkDAMaRDmQFBRF5R3Wux+zXv1igKcAqgjDSFh+Ps3Dyy0V4d1Mz4ocfXDd6A840HrTy3PGvgeHaFXC3m0RlEmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ddF2XvkY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5779Cvdh018698
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 10:33:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Yj4wYlTbCwxe2PSZY7rFcU9tQhw7WtnXz4t6GtIJ6mA=; b=ddF2XvkYouSbD/jW
+	I9Gfw8ecfrNOno3xqLGPTcI7vIADoEwAIucXcHMemYaKY3xtPVNzO9gXQwWSOCjP
+	Fu04Ld7vQUm3h1Bv5fcB9qBTKCaUsKsuhaa96r2Urc6tvQLfbEXE9GVUcupG9rG7
+	QcyaPmDB3kyQV2GlLrARQUd9ygcjirEmq4yGzm9CSdWEaf+g5Ps2SVRU3Upj9KH+
+	oiLMs9H3jaJQE0OvkTaW1eu1vwpnbAKXN7W+o8sQYtY9hUNeuVlyAfNsJjR2A59A
+	WiOydk0b35h3AlEC4VBV1ab1HCfD/O1hmD/hBJ/NLeaKrFK452wNLq3QRg0ZSqgH
+	x2y1iw==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy8dxuq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 10:33:41 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76bf8e79828so1863727b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 03:33:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754562757; x=1755167557;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0B8JKmuj7NoKhGZ2Qof2Rmk4iilq75YN49pVYUQ/rPY=;
-        b=XPc3Gmqmy98SjOi6Ba9qULbYNtNQDrisAIS8FmVbxUbXzw3SrL+kFTapWZR+3lxufN
-         NjnKySfZ/Aiz4vsyTVDvCd2J4QZf8aiNwya5bvlNc/cW70pr4Et5sqLsS9YBvcvcgSxe
-         sT0SxECarYnPhjpz65uBIAiJL0sINA9X4Nlcf6jhmn9sQtLtUMQBLATCmmFJen0tCHlH
-         h4sZsar/cdhADxxRZZ+ojA9qvxjSA7Jv+viA0pq93Ua+lO10pGiC9jfPMBN7wkeAPi0r
-         bOhRDD2mC5KkjsqDnWcvC27wFbQJwBq/HuV/qFCACoj99J5ihaQR3G9aRUr8w4rkTXmE
-         kdFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiiiIU7dU+TbCslUbN0xEFEtoWOzbIkBmK0Dc4XRj3ZsW8nub7c3ZvafnbWc+5XoUZ5mpyoTWrh3/8G7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+tn2NhbXdG2g64OSpo43VTjtojATToDHwG21AJlfx1iqnzIqR
-	YR9nYo3D9dgEi6PhJ+oRtEQ2r+lUvsUpHuI2r8sWfgty6+CMlAlQf5t31OGa0rXK
-X-Gm-Gg: ASbGnctJwFiUV5KdpNob0ehuV1jqQcZyJZsLm//STmslVUpYdRNxLA456JKcwwwggHU
-	z3h8SYbYsi8M3qc1KEpIYTFVwjC681vJM5b2+cUIDqOU7VVhjaB5sW7zJNl56Jh3bCdKVj+A8Xz
-	cdVu6R7Upr4iwvEj1IiYznsm9eztFNDhX3XeT7SetwNyQvPl+rl0HneCKvCqL9VfFlEfuNDPZ9K
-	4dphBnIBgNO1r/xE91z6Y+h+wPiQYCpzLqNsTb6DLcfIvj8Eqq2y5mgMNefsgZ8gZTD6O3fcejt
-	Iv4WUaAAvT9H/+6FpPi/3rkJ2BFd8Z6nbuLwnvsMZn2Nb+C9xRNnKOub+hfoMPAjz287XaRcpZO
-	OtL4uDxwcRtar386h+b5riYlyX//ENsDDMoahZuIzInvL
-X-Google-Smtp-Source: AGHT+IFPufnvFSsR8r6T7GxkS4gEbZwWXr6CP+c/UMnPc/HrB9L8UVLsIPq1jzvkyhEUv+s/coVuwg==
-X-Received: by 2002:a05:690c:9b08:b0:71a:2cb:db1c with SMTP id 00721157ae682-71bcc86886cmr69241197b3.25.1754562757019;
-        Thu, 07 Aug 2025 03:32:37 -0700 (PDT)
-Received: from z-Lenovo-Product.home.local ([137.118.180.123])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a5c8fd9sm44766317b3.61.2025.08.07.03.32.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 03:32:36 -0700 (PDT)
-From: David Ober <dober6023@gmail.com>
-To: linux-hwmon@vger.kernel.org
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	corbet@lwn.net,
-	dober@lenovo.com,
-	mpearson@lenovo.com,
-	David Ober <dober6023@gmail.com>
-Subject: [PATCH] hwmon:Update EC Chip driver for Lenovo ThinkStation motherboards
-Date: Thu,  7 Aug 2025 06:32:28 -0400
-Message-Id: <20250807103228.10465-1-dober6023@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1754562821; x=1755167621;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yj4wYlTbCwxe2PSZY7rFcU9tQhw7WtnXz4t6GtIJ6mA=;
+        b=YWtnYYtXZmYDZ+O6fVyT/JUIhGaZsPspIW3a4IrWBnOHZCn+ZgUOsoZ9tTAGnKZlgN
+         RKLnglQBuCURDa2N0sk4P8jfgzKfvhXi5+QEVcB20cojzTTX63IU/rFaQujZL3Jg6jem
+         ZA9DBJJMuVH4CVxAWbZGMukFtsYqvjkGkJvuO7DKlb9+MdBWNHkczD1783z8ManQdanb
+         pHGjdHv5+gGlhGiLtGDWCenA8LxgCFup3DAjUl1WmohH4jzw7p5SqSMytJ9p2GvWVfHt
+         Nzcxh0jS3YSKqGtWal+IKu3c20t+cbKy6CUUCdLXMQZfzbuqrq1aKZf0V3Js+NSXvXlt
+         qFHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfHNKpU8dlDCLyZ7tsiMQZKd/E/o85vww+6OT2IfLGbthcvoROnagYPOcz1kG200HKbAvFu3xr7c82Itg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwORzkEXk7hwRTJRUMmOtO1OXAnuPjNtaoUbX9Xux1uoZX5Jbn2
+	irvKdpLxO5a2CMIiZ/R2JEVekTStunkAwN6P+3wREV4v8ftQMev6OLUOsfsmT7dyGxvpSbtuvOZ
+	fbH7m4OAD772gBIq2QMXug8SumpMnBLgRguT6c0UryqUUJQRaptstgCb2Sv9odlp+i1k=
+X-Gm-Gg: ASbGncvfjWrpVh6E6A0R8e7H26vZTOW4dbPdt7km2e2tAJwzAt0rrnlGwL6/BU0Um2w
+	K+D0D4JGthvko/kPQ1fKBinnH+rQ6cgALuuhBtuDNSwx3RvpswinYsjLJ3Hc5tWKRSrFkCodObt
+	46HycUDnlfrNHzL2HsG+ezxQFPQrh4YywGoMQPXP+mbY++UaI2jUodM2TDif9bC4DipGs0dB0LP
+	9H34Wh9rI7F4hFnEo90el9Na4ZLnlwTgnLgu6CGEUWNYkPw5eqpi+liLl2Sx1/o3Jkf2uYe7Jf2
+	h6OqQroW0VQpIMrcThHor+5lK/Q0F9x+ZpzI5u8A1dGEHpmrC9C9U0JIAqQwLaSXRmE9ppYpJI+
+	29F6gtIsp
+X-Received: by 2002:a05:6300:218f:b0:240:160b:81bf with SMTP id adf61e73a8af0-240330504demr8438048637.19.1754562820797;
+        Thu, 07 Aug 2025 03:33:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGhYvbZOVRKIjkflKJ6i4gZ1vDxK7SFCJ8tqdD4ynpxPyraozOCdxExCiCicXthuRRWP2JZtA==
+X-Received: by 2002:a05:6300:218f:b0:240:160b:81bf with SMTP id adf61e73a8af0-240330504demr8438021637.19.1754562820406;
+        Thu, 07 Aug 2025 03:33:40 -0700 (PDT)
+Received: from [10.151.37.217] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bdd2725c9sm15502209b3a.6.2025.08.07.03.33.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 03:33:39 -0700 (PDT)
+Message-ID: <8b262389-3c1c-4618-9670-8de86751c83e@oss.qualcomm.com>
+Date: Thu, 7 Aug 2025 16:03:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: ipq5424: Add reserved memory for TF-A
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vignesh Viswanathan <quic_viswanat@quicinc.com>
+References: <20250624-atf-reserved-mem-v1-1-43b1940e2853@oss.qualcomm.com>
+ <0826de9f-0125-44d9-84cd-1c52ba199a4a@oss.qualcomm.com>
+ <7d641576-7ec7-46f2-ad53-e0b8b36351d1@oss.qualcomm.com>
+ <64febbd6-abca-4ab2-abe9-93812bc115cb@oss.qualcomm.com>
+ <95959a89-655b-4ac9-86ba-d8d943809b6b@oss.qualcomm.com>
+Content-Language: en-US
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <95959a89-655b-4ac9-86ba-d8d943809b6b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: X59pyCjEg3V9dfeJcjSGxb8cxCZbenMj
+X-Proofpoint-ORIG-GUID: X59pyCjEg3V9dfeJcjSGxb8cxCZbenMj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX9EaCD91nQ5Zz
+ H4EEc2WHah0/dsWsfH7yop1lWyAUqGBvzp2w7WPBq/9qIFtVpCHe8YSn3qUz4xFjgNEaurpGUff
+ xyc4g0vTTcEF9SGnNGkbewnOjuUkuTfo9tuRdx9l+LM6btVo/GdLzHj6LSZbyxFsb8svHPvSS2t
+ J3/nsyGk4Fp4MSvYqPV63hIZCsDSFWlSOxq1pltesYyv6ETaTfplpGLsidOcgCKmAPZ4Q1Q2iQd
+ QPm8zt6yRccrehd0riUTLNd/SA5NLdEBIy62G0B5v5k/R0n9c9DYaILh9wykYieCOLzMEXN0xOE
+ QgPQQbJ4CfdEudbsDveZuD7Pj5EIkvscgdajbf5TjWJvBbuJNAwzpdvV0EEd9PyWk5VwhGM1kq0
+ 9DUc18cx
+X-Authority-Analysis: v=2.4 cv=GrlC+l1C c=1 sm=1 tr=0 ts=68948105 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=OAahIlVLQCIYRdnnqX8A:9 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
+ phishscore=0 adultscore=0 bulkscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-This fixes differences for the P8 system that was initially set to
-the same thermal values as the P7, also adds in the PSU sensor for
-all of the supported systems
 
-Signed-off-by: David Ober <dober@lenovo.com>
-Signed-off-by: David Ober <dober6023@gmail.com>
----
- drivers/hwmon/lenovo-ec-sensors.c | 34 +++++++++++++++++++++++++++----
- 1 file changed, 30 insertions(+), 4 deletions(-)
+On 8/5/2025 6:52 PM, Konrad Dybcio wrote:
+> On 7/23/25 9:04 AM, Kathiravan Thirumoorthy wrote:
+>> On 6/25/2025 10:20 AM, Kathiravan Thirumoorthy wrote:
+>>> On 6/24/2025 6:57 PM, Konrad Dybcio wrote:
+>>>> On 6/24/25 12:36 PM, Kathiravan Thirumoorthy wrote:
+>>>>> From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+>>>>>
+>>>>> IPQ5424 supports both TZ and TF-A as secure software options and various
+>>>>> DDR sizes. In most cases, TF-A or TZ is loaded at the same memory
+>>>>> location, but in the 256MB DDR configuration TF-A is loaded at a different
+>>>>> region.
+>>>>>
+>>>>> So, add the reserved memory node for TF-A and keep it disabled by default.
+>>>>> During bootup, U-Boot will detect which secure software is running and
+>>>>> enable or disable the node accordingly.
+>>>>>
+>>>>> Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+>>>>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+>>>>> ---
+>>>> Can the said u-boot simply dynamically add the reservation then?
+>>> Yeah it could have been done in U-Boot itself but it wasn't. 256MB DDR configuration solution is already shipped out and the stock U-Boot enable this node to avoid the random issues.
+>>
+>> Konrad, Do you have any further comments on this?
+> I really don't like it, but fine, I won't be blocking this either..
+>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>
+> Please make sure that the next time around the bootloader reserves
+> its own memory and doesn't depend on what the OS decides to do
 
-diff --git a/drivers/hwmon/lenovo-ec-sensors.c b/drivers/hwmon/lenovo-ec-sensors.c
-index 143fb79713f7..8681bbf6665b 100644
---- a/drivers/hwmon/lenovo-ec-sensors.c
-+++ b/drivers/hwmon/lenovo-ec-sensors.c
-@@ -66,7 +66,7 @@ enum systems {
- 	LENOVO_P8,
- };
- 
--static int px_temp_map[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-+static int px_temp_map[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 31, 32};
- 
- static const char * const lenovo_px_ec_temp_label[] = {
- 	"CPU1",
-@@ -84,9 +84,29 @@ static const char * const lenovo_px_ec_temp_label[] = {
- 	"PCI_Z3",
- 	"PCI_Z4",
- 	"AMB",
-+	"PSU1",
-+	"PSU2",
- };
- 
--static int gen_temp_map[] = {0, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-+static int p8_temp_map[] = {0, 1, 2, 8, 9, 13, 14, 15, 16, 17, 19, 20, 33};
-+
-+static const char * const lenovo_p8_ec_temp_label[] = {
-+	"CPU1",
-+	"CPU_DIMM_BANK1",
-+	"CPU_DIMM_BANK2",
-+	"M2_Z2R",
-+	"M2_Z3R",
-+	"DIMM_RIGHT",
-+	"DIMM_LEFT",
-+	"PCI_Z1",
-+	"PCI_Z2",
-+	"PCI_Z3",
-+	"AMB",
-+	"REAR_VR",
-+	"PSU",
-+};
-+
-+static int gen_temp_map[] = {0, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 31};
- 
- static const char * const lenovo_gen_ec_temp_label[] = {
- 	"CPU1",
-@@ -101,6 +121,7 @@ static const char * const lenovo_gen_ec_temp_label[] = {
- 	"PCI_Z3",
- 	"PCI_Z4",
- 	"AMB",
-+	"PSU",
- };
- 
- static int px_fan_map[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-@@ -293,6 +314,8 @@ static const struct hwmon_channel_info *lenovo_ec_hwmon_info_px[] = {
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
-+			   HWMON_T_INPUT | HWMON_T_LABEL,
-+			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL),
- 	HWMON_CHANNEL_INFO(fan,
- 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MAX,
-@@ -327,6 +350,7 @@ static const struct hwmon_channel_info *lenovo_ec_hwmon_info_p8[] = {
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
-+			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL),
- 	HWMON_CHANNEL_INFO(fan,
- 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MAX,
-@@ -359,6 +383,7 @@ static const struct hwmon_channel_info *lenovo_ec_hwmon_info_p7[] = {
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
-+			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL),
- 	HWMON_CHANNEL_INFO(fan,
- 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MAX,
-@@ -388,6 +413,7 @@ static const struct hwmon_channel_info *lenovo_ec_hwmon_info_p5[] = {
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL,
-+			   HWMON_T_INPUT | HWMON_T_LABEL,
- 			   HWMON_T_INPUT | HWMON_T_LABEL),
- 	HWMON_CHANNEL_INFO(fan,
- 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MAX,
-@@ -545,9 +571,9 @@ static int lenovo_ec_probe(struct platform_device *pdev)
- 		break;
- 	case 3:
- 		ec_data->fan_labels = p8_ec_fan_label;
--		ec_data->temp_labels = lenovo_gen_ec_temp_label;
-+		ec_data->temp_labels = lenovo_p8_ec_temp_label;
- 		ec_data->fan_map = p8_fan_map;
--		ec_data->temp_map = gen_temp_map;
-+		ec_data->temp_map = p8_temp_map;
- 		lenovo_ec_chip_info.info = lenovo_ec_hwmon_info_p8;
- 		break;
- 	default:
--- 
-2.34.1
 
+Thanks Konrad, yeah we have a plan to mitigate this one for the upcoming 
+projects.
+
+
+>
+> Konrad
 
