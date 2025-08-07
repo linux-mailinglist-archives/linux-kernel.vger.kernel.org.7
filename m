@@ -1,191 +1,239 @@
-Return-Path: <linux-kernel+bounces-759072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F08B1D818
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:39:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBC3B1D815
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D523B1248
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE3753B1414
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D4225392A;
-	Thu,  7 Aug 2025 12:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2403253B56;
+	Thu,  7 Aug 2025 12:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Pckk4d0t"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013063.outbound.protection.outlook.com [52.101.127.63])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="kM9UQQHD"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341F524728B
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754570381; cv=fail; b=ifdzpUGpQOVXVTUZD4pCHqEm+8xosAN7/c5GSw3TIu0Z+9Nc4H6q++h8BnM3v9mwJ4uo2DIpz4jhFmUKKAaaE8et+Uqx16J9Spk4pkjjOxP0x8/AwB8aWHPXm+B12/oE6QcHvfSyMGxji7wFvipH0HjL/lMvroUfnDiMOtgdWs0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754570381; c=relaxed/simple;
-	bh=TeiKwmSTd43WLePvjSeHVr2Dmq5XnCBulQm2/rZW3Mo=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=O1UcjYW5XO1q3iXtkiYeAMG1vVRMgImVm/52tYnLkSCDwoX9oFDqpGSJDvIFslO5gUIwLLv9c0X9x93xh8ZvoQGKfCYs0DzM0dEZ8mIHiBDjhHqhIM913SjmJ5GwBDgn8W8IOlifc5PPmHrR6Vmyry934YUoh+O/K/h+0rC+ovI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Pckk4d0t; arc=fail smtp.client-ip=52.101.127.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=usuhxz0g2yawPUiC7egqGzKCaEw1nTm20y6ixc9oRjBC8IKqDQb33F7aLYZr6i0qmtjG+6ARyfCYsA/CMlTk/ZXGgcfX5ts25GJ+b30QOTZoO5xZ6HWS2C1g7RHwA1/TolPaueNfTEgrrm7y/e4jkvxvcWpH8CYqKiy5c1NlufTFWwbKeeR5DRMktPka4yGx02TcepLFtNhd95zRyLcfM3sSVir89fr0caVA4J66P79eBHyS8BcFdTukCsZSkDe85WquhopFMigRh4UleKBTclCMn5i2wi/sA0rzONhDDpQYJTyVywulGWV8q3rojLhfzyInuI+texNjjjB9L3eXFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uas5N4eV7hS8/EtB1rsbgE3e7Q4LkRPQMv3Dx5iABnA=;
- b=GsbOJ9tSvmjPJJCUQ2LPFhUZQvKn9UEvbnGmiYsiRgLAOiAlqZ3+WCtjs9l2YczaXAQ5Lsk5m8LTdrIE5St3OZ/Qe1yfHCnrIQAKIRRpTAoJDe3MIv3M3R1ubISHSwR9teCVtKNknt313e6Ma0/kLjn0EH6nSskw2iD5FcU/X5aIUzs35pw4756vdYbpnPqxz+g05PlmP4/zSaizDeV5DCaf0yiYWNgQ8ZUOGr17DiKXnLibjlQ5h3RzwSiek7aAua0OmFXdP4kofEzYrmdm+H2cXl2XMXWnTw1qYcF4E9Ca52rtrPx+wv0Mr6TcwMQPaVze9YkuNc/rRiUJVUR06g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uas5N4eV7hS8/EtB1rsbgE3e7Q4LkRPQMv3Dx5iABnA=;
- b=Pckk4d0t9gG0O66FNXo7+JYqqiZlsJ1Ot+w/qkfp8uFI8I+wWUSVUIakx85tS2Vnyr6P5G9hklclFfB8O7IXzrCvGjJPH5WdmbY4blK/QpwM8nHqS0prKHl9iCiEV2OqP9kJ+eV0QEg93wQC7NYqCysahsZtdFZpTtjrlc8ITivH1LRbKpV0WP9NJCyqfg62oqBp+8g38iSOHkFP3ifU4I1XGiw6rT5TzKi1l8fVczkXrRuq1X0e6G/OfvBKbk9Fc3lIctxpmXwM/DHCLNsaRcNlRhwarykrCa3ax7ReFWw/erl06Pn02Fo7VxNmyYCcPX7hBNfSiGJ0LQyvGgyXDw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by SEZPR06MB5574.apcprd06.prod.outlook.com (2603:1096:101:cb::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Thu, 7 Aug
- 2025 12:39:30 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
- 12:39:30 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Aradhya Bhatia <a-bhatia1@ti.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] drm/bridge: Remove unnecessary memset
-Date: Thu,  7 Aug 2025 20:38:33 +0800
-Message-Id: <20250807123836.494696-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCPR01CA0174.jpnprd01.prod.outlook.com
- (2603:1096:400:2b2::13) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748F324728B;
+	Thu,  7 Aug 2025 12:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754570336; cv=none; b=IOrVDfhJ+FWXteAL2BeeFGHZWMv402knvAIETm+Hekio+lFGMisE+RTiHjIvk5E0b7s1rRgaj90kmqcqXqZVFTqDvEV0zdwDYrVs/ysmvwhBjoHTm3We1G25aYrsIBCqogT+H6pmsXWsRQdWkZOx2etoGVxP2QnNcFJpUlHsiI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754570336; c=relaxed/simple;
+	bh=YFLcIo16OfvzbGgpVCXltFxog7lFpdvAFZs0xLw95kY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UcwlMpR/fjH0CTdnoTlI6cQI/ptELTFjrTbwok+v3rHtZ0ueLOZ9HonQ6V9sOZEYJ/tUweTvPxPTBqQNHsIiNr2hhp0vWoyefJGokDJVBdAaPQ2l28EfY+RSHyJAHlcxTxvzoRUsweZ8GqrZSZavdmTnhT0pX62/1WuGmr2v2nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=kM9UQQHD; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4byRY52lVvz9sQ0;
+	Thu,  7 Aug 2025 14:38:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754570329;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bU/y9MWFa6B0gIwG3PfeO00P0lRWaDiO5X7C9N+oo0U=;
+	b=kM9UQQHDjzAmp/xrv3atJndAWsdCCFR7mMfP78QqFoplx1+Pdy6bZTKmOAuFlTRRql3qYi
+	tCXfgoRYSq/7XDRh86GZyVycpkfdHaDGPP9AauOWFsrgH7iMXlLoSx0cSSErElxCPG/7C2
+	6IkTzjYdqcXc8qHDulI52eFFG9/+lipLRXQWT1BHRBIUqTS/OE9+bgo1NcTRe62BPkoIfe
+	J371X18elF2EvVAJpI7CGXojf26F1uP+giUxASD5o2T8r9nN7tLUosLY3XPD71toDhO0vy
+	ZIsCB+Z2bWFUyaISC6dQVa3ucKtY5FX8m26cp8NO9j56ldMarOdhJuiCTc42Zw==
+Date: Thu, 7 Aug 2025 22:38:36 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
+ mount_attr.2type
+Message-ID: <2025-08-07.1754570250-rented-dazzler-furry-proton-robust-diamonds-Kgpe2w@cyphar.com>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-2-558a27b8068c@cyphar.com>
+ <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEZPR06MB5574:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf3d6cf0-686b-4f3d-8166-08ddd5af7446
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JjfKkk3lOx1/Dd+lM1Mfc1wJ8NDKjeQIlgzinJwc+Df4Jc3cFQ1BJhims5T2?=
- =?us-ascii?Q?StUuVcilCI/r3fFpRlrHIIN3YPxmzoO5fMaIV9dCZXqTKlYZL8KM7WOinNKS?=
- =?us-ascii?Q?5vLqMjGAniWTo4KrQZMz68ufj7L1XfTgwikpJyHLETCSwyGJ7xKzi+w0nszj?=
- =?us-ascii?Q?7Vg5T4EmL66ENhlirQ3xYTuS0d+R9pQxLkAT7IPMnFz+PkqniUGE0M3XyhNP?=
- =?us-ascii?Q?cXAIsv/V217Enr0Y83lMGJJSjMbhiG4+USmf7SshaHYcdBVNq4fHZxUQFD5K?=
- =?us-ascii?Q?rIN2ue+vV/MeJlpt+cxPFZsMOi6jYZNThqDTMHGGWyZn/LOC7XdH2QjqHRIs?=
- =?us-ascii?Q?oXiSkLZRYF3gHV3f3ehzDRpQYSqz8LOmgh/2x4UubUtjNUQnfW6oNYAcSzF4?=
- =?us-ascii?Q?kuJUSE5jJGkTM431UK8awbwad57OR+JNN/8ziI+JWqIBq5cVkp1lGT4JDuK7?=
- =?us-ascii?Q?FWVlr7qs4gIFdYb7HH3ovwm99tGuDgyNFBGJk4y3NnHYBihPA9f1eQt8hdx6?=
- =?us-ascii?Q?fmYx6QS42XoYgpKIynztIx+s/AaxYzIvjLV3OnjE2l6U4x4hN7IIgd/xsgqw?=
- =?us-ascii?Q?nPqbZgM8HNcp/ddDmKGD7a7EoF5ADbQVc9PG70iS3jk56ebSgEXH7yvfdVgB?=
- =?us-ascii?Q?83I1pIdz7sPijmpEncFxxeBju/o02hDZXaMDrNvf/UrnAqwu2RCuJyCU+fal?=
- =?us-ascii?Q?o3kYD0IF46qafgWichdFrtSTEQnJ9RfuPl/6qiXQbd0NNvEYcV+0tgUxE4cI?=
- =?us-ascii?Q?WlsDqAR8CLm+7stqlOp7zNaya5nDZtqVrVURtOsD+CrVsd3vi95MI0gdEVBr?=
- =?us-ascii?Q?7gFHQY0q3rgrE20wT6C0v5d1bRJtHPdcRgfcxPXw+AXfVT1Yj6jrEerhTc7O?=
- =?us-ascii?Q?e/xxwGH/SBg3Z96GmSHsYL2opXn+t1PajlccC3zdzKdcf9UPjaiNS9YfsFN/?=
- =?us-ascii?Q?R/WZ7ml44X0djSKRVG+TmQkGbZ+dbgGSRVU2bcbRagkFaGNSG973DDVep1HQ?=
- =?us-ascii?Q?QmhYpHISTyxHlacK25rGJUreXZ4zn1N4y3F5rv6e4pwZaXklGldqJJE++c7K?=
- =?us-ascii?Q?oF3A1XtnZBbRWUxawAxBLIg262Ys7PYMHBLI2GP4liAGHxiCIqiPEifNvvVc?=
- =?us-ascii?Q?rczlWKwouj29gIQWiUGbwahGrXFRtOwPO8X/EFtC8ENKFgA/fx+3kg5EoG1h?=
- =?us-ascii?Q?0pFD08dM8FlI6hdljveyaI8r90gpzVd/qxUKfvPLFl35H9K5ed1BGVEJ0IiL?=
- =?us-ascii?Q?bFTXxxd8gQUqKAMycmCmRltBiYj2KqV9cP9xhqjCb86b9crraJXLemstW/0w?=
- =?us-ascii?Q?1k2nzyIdujCNY4gRe+0/eVEeUY81UnG4mDFNjYbljUokqWkNZglPvHUi3sIW?=
- =?us-ascii?Q?o2AVVIG3THM2Nu2cdlrO4g4ykUaJwuNxcr5HjTKpV1sy6dTn4FOEWECTNQ0E?=
- =?us-ascii?Q?hOhrvCzVi/77hxVAu9GE6LdLV93GZ+nDMnG8DugF/XXKFA99LCl7mlVfxOJB?=
- =?us-ascii?Q?7r22sPh9klLfPj0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4WQhjBdbHPTJojQsPs7Sy9MvhwPYjxgWy3XB5vseDqKBSlmC9T3F+ML7EwNn?=
- =?us-ascii?Q?OxDUy63QJnQztFVytkCSRCULiRUEnLOSRj5qzOM5e+L3XbP2Ra12/XYWsIwQ?=
- =?us-ascii?Q?43/9fOuNl5Vzvee5dtoESiEjRtlfmO6abW3wrlGg1u79Y24hNsKMchjw76D/?=
- =?us-ascii?Q?mSRrk0RlMI4uFA9sjf/jlREN3wF/QaQaWLaawC2FoLtiCkDyNSvOFdNScQ2F?=
- =?us-ascii?Q?71AartauKFHvJZsUSxyg5Gdx+Lo37XZbX5nFdizzrEwPKgbqkaxySEW5BNaw?=
- =?us-ascii?Q?1fzZlEoiPMYzVYnuQr7pAi3MZrr6egdDYxbU6P5PFCo0RJOVNclQINauLHxM?=
- =?us-ascii?Q?DtK4F5JbHAV5EN1mW2BbyEH1XSsawVgzhJfzQP02nxFm+HwNI+d1ODKGPew3?=
- =?us-ascii?Q?dg1nHq9VEN6QIxNHGY8LzU5d6Y8Xg+bjVl9a26SSLY/BclIP+d8ARwV8y6Ws?=
- =?us-ascii?Q?B1PhJX4AfCcc3E083nb9opwwPS82dhWAFOPV8OQAyBeA2NuPk1sIYXs8xXYp?=
- =?us-ascii?Q?utRArMZsxSZ0kf37kLQePzPKFblKIJ9jjj2Fb+2ffSiK+vaxJcU7NlV8pJUa?=
- =?us-ascii?Q?1udiF4pOBXQkI2UxPHVPhPWFRoMRNzmNdz2elVTEQ+YT+zy3fSoUqGpI0LZx?=
- =?us-ascii?Q?FKOLRpD6Rhhi/ZP3xTt8lKbcyXrFQsijkhkeBW1b97iKe9pRJtSeJGQgckhj?=
- =?us-ascii?Q?sbiC9R91/RygE4tDXr/m93I23tzqP3sEkMIbgPpKzjaMeiEjUTm4XUeOZRxX?=
- =?us-ascii?Q?q4QMskx56y7llWXDGD/EV4/Fct8i0mJvKfAvFGtM66HP4p2f0acG5Rurox/r?=
- =?us-ascii?Q?woQpmJaTLMN5tg/gRxcxr/5n0ZauSbuTZ1ELFeTBlDkIFuLjyiJ8aaBwP0c5?=
- =?us-ascii?Q?U1kwXFMMCaDdRNJpLFVHqGKEqjhqwfCNvFbybutj9r0OgH8aA0wk6dJRT6rd?=
- =?us-ascii?Q?N7h4v/s12AncmYWpRqnR4OpYslagNAgMAwoh1eoxh5HhWrzsYP1kDT9SK139?=
- =?us-ascii?Q?QHiCunajz/qWLmXzao2x9luvt6m+tI7Sj+PMBUyfPVVNGmOwigN76PbpSnG7?=
- =?us-ascii?Q?8XRiTf6RvIw45R3FWNq3OmM9SJXgy7tEGWCK36/uJJAJecabLrMeaE3GRVLR?=
- =?us-ascii?Q?BJQKhU6N8NH1aM2ZvHMY2a578W2DxKOgQQ6W6JsXi2NWOrGtknYexAXpTJBt?=
- =?us-ascii?Q?BhhLxsU9goeg7Xnun9FIKn6/PolYmavK42qHRgSlWN6TbhGrXPW5+24Ed+27?=
- =?us-ascii?Q?LJ4qljYHiUA7VO82YA2YeZ4qaT8aquwFju3gdelhTL0VBMPSE4B/JoO/Sdic?=
- =?us-ascii?Q?jM9XSdBaAIDUvn3eNoMSQxFjMVdSCE6UAZYKZ7IUf2YvWqfEZn6fm7UDJK/V?=
- =?us-ascii?Q?X2+ZlLbozoMHU2E42FjObozCbXtdC5z/M7w8/Wv6mcV6RZ9i+zCtlvCKIuZR?=
- =?us-ascii?Q?+FUomNviJylScL8rAO872JLpDCs1WIFaK+TeEXDEwWMVULTMDvXrTTufydeX?=
- =?us-ascii?Q?Ae1IFsbIXFOVrNth5h17LQjGZ0gUyaVn8FXmdv2XjFhQ1/jybPYYpnIz6Qre?=
- =?us-ascii?Q?khy6JPL2GRxVNlIO51UEzMGELIrf51X8FwSWkhuB?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf3d6cf0-686b-4f3d-8166-08ddd5af7446
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 12:39:30.6206
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KNTzcLh9H/nlXABOGVfwfl2qN8lKfCVvy4urDVq/W1bQUdCZe86vlrA8tWJLdvIbHaETe9fdSVZq5h2PCh+84g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5574
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2efsv5i2maco22bu"
+Content-Disposition: inline
+In-Reply-To: <cselxzuadkkf4cfx45fm3cm77mkq7gxrbzg7idr5726p52w5qa@sarhby7scgp6>
 
-kzalloc() has already been initialized to full 0 space, there is no need to
-use memset() to initialize again.
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 1 -
- 1 file changed, 1 deletion(-)
+--2efsv5i2maco22bu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 02/11] mount_setattr.2: move mount_attr struct to
+ mount_attr.2type
+MIME-Version: 1.0
 
-diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-index a57ca8c3bdae..590f7c75744e 100644
---- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-+++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-@@ -1047,7 +1047,6 @@ cdns_dsi_bridge_atomic_reset(struct drm_bridge *bridge)
- 	if (!dsi_state)
- 		return NULL;
- 
--	memset(dsi_state, 0, sizeof(*dsi_state));
- 	dsi_state->base.bridge = bridge;
- 
- 	return &dsi_state->base;
--- 
-2.34.1
+On 2025-08-07, Alejandro Colomar <alx@kernel.org> wrote:
+> Hi Aleksa,
+>=20
+> On Thu, Aug 07, 2025 at 03:44:36AM +1000, Aleksa Sarai wrote:
+> > As with open_how(2type), it makes sense to move this to a separate man
+> > page.  In addition, future man pages added in this patchset will want to
+> > reference mount_attr(2type).
+> >=20
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+> >  man/man2/mount_setattr.2      | 17 ++++---------
+> >  man/man2type/mount_attr.2type | 58 +++++++++++++++++++++++++++++++++++=
+++++++++
+> >  2 files changed, 63 insertions(+), 12 deletions(-)
+> >=20
+> > diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
+> > index c96f0657f046..d44fafc93a20 100644
+> > --- a/man/man2/mount_setattr.2
+> > +++ b/man/man2/mount_setattr.2
+> > @@ -114,18 +114,11 @@ .SH DESCRIPTION
+> >  .I attr
+> >  argument of
+> >  .BR mount_setattr ()
+> > -is a structure of the following form:
+> > -.P
+> > -.in +4n
+> > -.EX
+> > -struct mount_attr {
+> > -    __u64 attr_set;     /* Mount properties to set */
+> > -    __u64 attr_clr;     /* Mount properties to clear */
+> > -    __u64 propagation;  /* Mount propagation type */
+> > -    __u64 userns_fd;    /* User namespace file descriptor */
+> > -};
+> > -.EE
+> > -.in
+> > +is a pointer to a
+> > +.I mount_attr
+> > +structure,
+> > +described in
+> > +.BR mount_attr (2type).
+> >  .P
+> >  The
+> >  .I attr_set
+> > diff --git a/man/man2type/mount_attr.2type b/man/man2type/mount_attr.2t=
+ype
+> > new file mode 100644
+> > index 000000000000..b7a3ace6b3b9
+> > --- /dev/null
+> > +++ b/man/man2type/mount_attr.2type
+> > @@ -0,0 +1,58 @@
+> > +
+>=20
+> Please remove this blank.  It is not diagnosed by groff(1), but I think
+> it should be diagnosed (blank lines are diagnosed elsewhere).  I've
+> reported a bug to groff(1) (Branden will be reading this, anyway).
+>=20
+> > +.\" Copyright, the authors of the Linux man-pages project
+> > +.\"
+> > +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> > +.\"
+> > +.TH mount_attr 2type (date) "Linux man-pages (unreleased)"
+> > +.SH NAME
+> > +mount_attr \- what mount properties to set and clear
+> > +.SH LIBRARY
+> > +Linux kernel headers
+> > +.SH SYNOPSIS
+> > +.EX
+> > +.B #include <sys/mount.h>
+> > +.P
+> > +.B struct mount_attr {
+> > +.BR "    __u64 attr_set;" "     /* Mount properties to set */"
+> > +.BR "    __u64 attr_clr;" "     /* Mount properties to clear */"
+> > +.BR "    __u64 propagation;" "  /* Mount propagation type */"
+> > +.BR "    __u64 userns_fd;" "    /* User namespace file descriptor */"
+> > +    /* ... */
+> > +.B };
+> > +.EE
+> > +.SH DESCRIPTION
+> > +Specifies which mount properties should be changed with
+> > +.BR mount_setattr (2).
+> > +.P
+> > +The fields are as follows:
+> > +.TP
+> > +.I .attr_set
+> > +This field specifies which
+> > +.BI MOUNT_ATTR_ *
+> > +attribute flags to set.
+> > +.TP
+> > +.I .attr_clr
+> > +This fields specifies which
+> > +.BI MOUNT_ATTR_ *
+> > +attribute flags to clear.
+> > +.TP
+> > +.I .propagation
+> > +This field specifies what mount propagation will be applied.
+> > +The valid values of this field are the same propagation types describe=
+d in
+> > +.BR mount_namespaces (7).
+> > +.TP
+> > +.I .userns_fd
+> > +This fields specifies a file descriptor that indicates which user name=
+space to
+>=20
+> s/fields/field/
+>=20
+> > +use as a reference for ID-mapped mounts with
+> > +.BR MOUNT_ATTR_IDMAP .
+> > +.SH VERSIONS
+> > +Extra fields may be appended to the structure,
+> > +with a zero value in a new field resulting in
+> > +the kernel behaving as though that extension field was not present.
+> > +Therefore, a user
+> > +.I must
+> > +zero-fill this structure on initialization.
+>=20
+> I think this would be more appropriate for HISTORY.  In VERSIONS, we
+> usually document differences with the BSDs or other systems.
+>=20
+> While moving this to HISTORY, it would also be useful to mention the
+> glibc version that added the structure.  In the future, we'd document
+> the versions of glibc and Linux that have added members.
 
+Sure, though I just copied this section from open_how(2type).
+
+> > +.SH STANDARDS
+> > +Linux.
+> > +.SH SEE ALSO
+> > +.BR mount_setattr (2)
+>=20
+> Have a lovely day!
+> Alex
+>=20
+> --=20
+> <https://www.alejandro-colomar.es/>
+
+
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--2efsv5i2maco22bu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJSeTAAKCRAol/rSt+lE
+byfSAQCqNmxfPk92j1CnM3+qclM4UB915txEO/XP3YjHlJP/CwD/X3E5g69iOsxF
+cZoG8TIXEQwoU/gIa8AeFIat7yb+7wA=
+=FiKS
+-----END PGP SIGNATURE-----
+
+--2efsv5i2maco22bu--
 
