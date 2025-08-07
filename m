@@ -1,55 +1,65 @@
-Return-Path: <linux-kernel+bounces-759555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16494B1DF0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 23:46:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B47B1DF33
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC6837AF161
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:44:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D2DD7A5F58
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449F222D4F6;
-	Thu,  7 Aug 2025 21:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9484F24BBE4;
+	Thu,  7 Aug 2025 22:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heOOZV2a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o4CjexnF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C52124B29;
-	Thu,  7 Aug 2025 21:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D2A233D7C;
+	Thu,  7 Aug 2025 22:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754603157; cv=none; b=uE99LOloifvA64hPLqfGkMkPsFHNgGbXkmT+h5B8XvYzkaLXS9Vks6IPzJb9MhTdzGR2nIYhosqCskXLv0yCBtNS1YXdEuevZafkrGmPSmayFCM9FKdqj5ttW2bubK+lvGj3MXINNWwKeiputnAX70xP4counErdpaOYJHqg/PQ=
+	t=1754604025; cv=none; b=G8XAvg5iFNRhKwWVAydVOpMjasiL3JT3elSLTB5lqvuxJf1X/LOZ9op7DfLuHp9lDPYVWlybQpo1BcRfvQyFoCdbXu4FIKVS91mGb5JV/w6AorI3SUbtna51h2uvfAKeQyru8ks3kyVD+6wEH9kpu2PR0eHpIVH/DAHRrN9gMGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754603157; c=relaxed/simple;
-	bh=L+NVF+13JGNJ3SpYwk9loHGdcV3JgX/IGVOXLZzuTfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=iLX1I1bihXtkuAHNjMFyrk1hfE867kZA5oxjgDfqeuDVr5ae/IbCeW+J3EMFtcNtgVcqcIaS7mclHHpr6kgjTeGjwAj2fLXvueDoPaUNYulAoKDKuJmX6djWbd4zeFAEYuI42P3uLgwhzFoJOzVdSic0OHm51vU3PQyh3Fv0aLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heOOZV2a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 115ABC4CEEB;
-	Thu,  7 Aug 2025 21:45:56 +0000 (UTC)
+	s=arc-20240116; t=1754604025; c=relaxed/simple;
+	bh=Ut11L6heyBfAU0NJL1jWvWVqaogbRscBzHfDu0x35y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XfzZairwd+UBIQk7sQlEGlnGWusp/Tuq6FR0yGgleKAocorKVNcWo9ofucCuQEN9AFDY1/Any/opcmOo4iFiXcwhdC9n59V6WVCErpTYdijMmUXHGorHjuapIGw2d6BG7r+6Bo+nveah26rCNaFIRkGdcHI0Ur2u0oQl7PLjpYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o4CjexnF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC090C4CEEB;
+	Thu,  7 Aug 2025 22:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754603157;
-	bh=L+NVF+13JGNJ3SpYwk9loHGdcV3JgX/IGVOXLZzuTfI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=heOOZV2a83lmdFL5bz1KDJ5ite60lE0S8k5/wfaozDWClL5eEKb2bljH34aAk8Q6K
-	 nZ1YbhteXS+n3GPaIk/qdLyFjHL1H5n9pPFDuAyQe+aNu5hD5SH0H6u1aO26munw0m
-	 AhF65+g8i56YXA57CCwdBxc+9ai/a3u/R6g6+EMNyE+0qQz5oZQR2x1S1AR0Stvc/6
-	 +LpgtOvczEQpH5Y2yTrmmHXMye6pHUEeoJIhQitSGua7mAV/rLvPfSQRwMY0LdWF8+
-	 Ym7diOR228PwuWX0YsOqupBF3REe50ULO0OJ/puvzI+JcUASHMwlyjfihttb9gW6N8
-	 ryjlwihN7bHxA==
-Date: Thu, 7 Aug 2025 16:45:55 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
-	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>
-Subject: Re: [PATCH v4 05/10] samples/devsec: Introduce a PCI device-security
- bus + endpoint sample
-Message-ID: <20250807214555.GA63946@bhelgaas>
+	s=k20201202; t=1754604024;
+	bh=Ut11L6heyBfAU0NJL1jWvWVqaogbRscBzHfDu0x35y4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o4CjexnFfl1SKDaqHcwlLYBiqOoF17E7SVN4eKLjILTgky9RlB5zEGjCp+IWZD81D
+	 U4QvhOAH8B16tSXTN8JidSqr+wvTT9hoCJc7xiI7YL3xV5o6VsVhTAI7EF+bM3Qo+Q
+	 Rd38rgumucKitr6yqc2iGrkalY3CRDukDRamIQF2aSwcwv0IgSpLSBzrIp9HiVmdwy
+	 2wbpG0XymeEydaH7YLrkGEEViAt0tbIn+6nCQJoM3iA7bCQ2HgZUshDeor2Dj27RAa
+	 rGm+zvg1WzUolMZtVkquu6uF2VnVnZxUnTT8j2X5bTMnZh4nAtzqtSRvc7RRiMuTTO
+	 Hehc1Jk7yOlrQ==
+Date: Thu, 7 Aug 2025 15:00:24 -0700
+From: Kees Cook <kees@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kbuild@vger.kernel.org,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: Re-enable -Wunterminated-string-initialization
+Message-ID: <202508071458.A97B471@keescook>
+References: <20250802184328.it.438-kees@kernel.org>
+ <20250803173235.GA716998@ax162>
+ <e4d801e3-3004-484b-897d-ed43c25e1576@intel.com>
+ <20250805214823.GB200407@ax162>
+ <546c9819-20e7-4474-9281-5d1567263637@intel.com>
+ <202508061158.49E749B46@keescook>
+ <a01cb1af-8f17-42c0-815c-f9c44a399cbf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,71 +68,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250717183358.1332417-6-dan.j.williams@intel.com>
+In-Reply-To: <a01cb1af-8f17-42c0-815c-f9c44a399cbf@intel.com>
 
-On Thu, Jul 17, 2025 at 11:33:53AM -0700, Dan Williams wrote:
-> Establish just enough emulated PCI infrastructure to register a sample
-> TSM (platform security manager) driver and have it discover an IDE + TEE
-> (link encryption + device-interface security protocol (TDISP)) capable
-> device.
-> 
-> Use the existing a CONFIG_PCI_BRIDGE_EMUL to emulate an IDE capable root
-> port, and open code the emulation of an endpoint device via simulated
-> configuration cycle responses.
+On Thu, Aug 07, 2025 at 03:31:05PM +0200, Alexander Lobakin wrote:
+> Sure, lots of drivers uses normal string copy functions etc.
+> But Ethtool strings *must* be NUL-terminated, so this fixed-size +
+> memcpy() only hurts.
 
-s/existing a/existing/
+This is the misunderstanding: they're only NUL padded, but not strictly
+NUL terminated. You can see ethtool itself has to be careful with the
+strings, limiting the fprintf to their sizeof():
 
-> The devsec_tsm driver responds to the PCI core TSM operations as if it
-> successfully exercised the given interface security protocol message.
-> 
-> The devsec_bus and devsec_tsm drivers can be loaded in either order to
-> reflect cases like SEV-TIO where the TSM is PCI-device firmware, and
-> cases like TDX Connect where the TSM is a software agent running on the
-> host CPU.
-> 
-> Follow-on patches add common code for TSM managed IDE establishment. For
-> now, just successfully complete setup and teardown of the DSM (device
-> security manager) context as a building block for management of TDI
-> (trusted device interface) instances.
-> 
->  # modprobe devsec_bus
->     devsec_bus devsec_bus: PCI host bridge to bus 10000:00
->     pci_bus 10000:00: root bus resource [bus 00-01]
->     pci_bus 10000:00: root bus resource [mem 0xf000000000-0xffffffffff 64bit]
->     pci 10000:00:00.0: [8086:7075] type 01 class 0x060400 PCIe Root Port
->     pci 10000:00:00.0: PCI bridge to [bus 00]
->     pci 10000:00:00.0:   bridge window [io  0x0000-0x0fff]
->     pci 10000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
->     pci 10000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
->     pci 10000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
->     pci 10000:01:00.0: [8086:ffff] type 00 class 0x000000 PCIe Endpoint
->     pci 10000:01:00.0: BAR 0 [mem 0xf000000000-0xf0001fffff 64bit pref]
->     pci_doe_abort: pci 10000:01:00.0: DOE: [100] Issuing Abort
->     pci_doe_cache_protocols: pci 10000:01:00.0: DOE: [100] Found protocol 0 vid: 1 prot: 1
->     pci 10000:01:00.0: disabling ASPM on pre-1.1 PCIe device.  You can enable it with 'pcie_aspm=force'
->     pci 10000:00:00.0: PCI bridge to [bus 01]
->     pci_bus 10000:01: busn_res: [bus 01] end is updated to 01
+https://git.kernel.org/pub/scm/network/ethtool/ethtool.git/tree/ethtool.c#n1013
 
-Most of these messages don't seem relevant to DSM/TDISP/etc.  It
-*would* be useful to have a hint about what specifically makes this an
-IDE + TEE device.  Capability visible via lspci?  Are devices at both
-ends required, e.g., a Root Port and an Endpoint?
+or using strncmp everywhere.
 
-Oooh, I see (finally).  This hierarchy is all totally fabricated, no
-actual hardware involved at all.  You did say that above; it just took
-a while to sink in.
-
->  # modprobe devsec_tsm
->     devsec_tsm_pci_probe: pci 10000:01:00.0: devsec: tsm enabled
->     __pci_tsm_init: pci 10000:01:00.0: TSM: Device security capabilities detected ( ide tee ), TSM attach
-
-s/tsm/TSM/ in the message
-s/ide/IDE/
-s/tee/TEE/
-
-Looks like spurious spaces inside parens?
-
-> + * The expectation is the helpers referenceed are convenience "library"
-
-s/referenceed/referenced/
+-- 
+Kees Cook
 
