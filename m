@@ -1,503 +1,176 @@
-Return-Path: <linux-kernel+bounces-758797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC0A8B1D3F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:04:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 775A6B1D3F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 065A516611C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:04:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49C4E7A3DEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F6F253B58;
-	Thu,  7 Aug 2025 08:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29709248F4B;
+	Thu,  7 Aug 2025 08:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHpHOCww"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyOFjGsG"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032CB4A02;
-	Thu,  7 Aug 2025 08:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42762459D2;
+	Thu,  7 Aug 2025 08:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754553832; cv=none; b=SImiOc91RLjHu4WDOoCAMaIlfv47UGlDj9YMP0q/939XAURRf15tItDkNfrmI69YHdx/1fWcuu4rzchpABWpfG6nrfQcJbZQGy6IxrjcnxPFawa+DUZkzlAxmY/L8WLHd6C6FPI34Ns0s1DIMtzP1/fvItVktLkRgW/Ves9TMRg=
+	t=1754553851; cv=none; b=Qj0WjTP7qTchff7y9j5vO3tun3LTSyS4h2wJCztVpOlt+XIhx4ghAao384KMWgHLhppBzFooyAwplBksxVwkjGQ/0SV67xYJBbxCB54v0NXP7m3oroi9X1s6PB5EOHloN1/CSMQpbf39PpbHzxXELn7GFw3zu7BEtzPFSMpVdzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754553832; c=relaxed/simple;
-	bh=DigsrD5oXyoi+hw/E7nzS9uA860Z7qmA03IEuU7gOx8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W+9lEKvuuxW3wAFYN2aDrO0I2M+AWEINwLWriOdl23+geuWw7d/CgwnQf2/6Mdg/7FGpjUGqUCi1onLRaeO6haDzYJitLQDmVooi0Uh+XLzinR4Gnae+zYZwyCuD/ne0YlyZNqU/Of4Mh5GfCUHR8ITBsRkATbipCb71zDalxCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHpHOCww; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE5C3C4CEEB;
-	Thu,  7 Aug 2025 08:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754553831;
-	bh=DigsrD5oXyoi+hw/E7nzS9uA860Z7qmA03IEuU7gOx8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gHpHOCwwxhBsxmCQGOWcBCNjqTZucQ4ckqY3O/z+siorf+Zrq3101A4QRUc6Z/xhJ
-	 aiMBYZgh5VbBBMvwaHXtZPsibo8bA3DQxeewFDGt8h2NqXYuAlIrl2bY0t94hGbBMH
-	 gbFRolP9EV0k+mk7qZ/QdRHoM/Kr4nIJLpyjXPHxg5qDyLn+/4YOUQWZX0uWs75zcb
-	 vHCN7ryyYgU2jfcLA69gWUUFSItdEI4UZqOAwMaR8CXmw/n52hha/WghmlOk5KpNTD
-	 GtV6btzd67wyfyrplhAmnPCvsM4Rk4+3xLUOFltxDjCh9bHjML7oFzFuC0X4H4jHS0
-	 lpOwAJKvrNcBg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo
- Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 12/16] rnull: enable configuration via `configfs`
-In-Reply-To: <03D084B5-5844-4BC5-902C-14E53AC13DC9@collabora.com>
-References: <20250711-rnull-up-v6-16-v3-0-3a262b4e2921@kernel.org>
- <20250711-rnull-up-v6-16-v3-12-3a262b4e2921@kernel.org>
- <ja8Fq-6i7ve2g9-WET0f6gi7n7LRRoxxmur2UiowKZQN-_n2RVtLR7TGMJKyQfvrwIwgY7N1xFkPLp25-yrPsA==@protonmail.internalid>
- <03D084B5-5844-4BC5-902C-14E53AC13DC9@collabora.com>
-Date: Thu, 07 Aug 2025 10:02:52 +0200
-Message-ID: <87v7mz7e4z.fsf@kernel.org>
+	s=arc-20240116; t=1754553851; c=relaxed/simple;
+	bh=dqc9EFJjG8Mr8IC/9Tl9cIt27Y+U76FKz/aNuKscP3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=As/JUIggqHzQS4dZiDRYZR3WqouRSgAtzHKG3k62fNAwShZRn7fmNBgg7nBy6PYM40RRNtXCAZYsqUGJ22F+kpiTSc7OlvQBTMbt13wbuTRaFFWtiZ3/Xl1KOlMh1bnEMOlp0FpqV3McV1CKSM2EJ6ZW18dnNvT+PdlMrHC7McE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GyOFjGsG; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-61997c8e2a1so446527eaf.1;
+        Thu, 07 Aug 2025 01:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754553849; x=1755158649; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8wae+qR5fhE8jQMOdtpw1vQe+BuczBuTenzUdlRZ9tY=;
+        b=GyOFjGsGI5epLdaeSGKkLJOCK2R6BId3OKuY1XJhU6kYclLJ1Gz283KbeUWlf0V7Gs
+         wiPbwfRJFaveRfDwuKRSunbd5bdn0+h9mJOESJh9NdZ7GxpVtjEdVu+kMs8hnbxSunax
+         lQLw5ESOBjJnsazz40fLsMoi6Hh8wRsbs4LI1jKvv5YPbsCbg4HT0rcZoJIfxJPpr/Vj
+         mNYmMgI//ozLl+1sLmn6zchCwhzF1pqmzO5NSFkItyEy3h8jyyzNSELpL1fItoQvhGyc
+         v2BLy4JOhj9ZYwXGYMYCgqlfPd0tTKqTzfvvJ8XqRr6ubVh4/5DOZ7U/Rx3T+VGL14ST
+         sEDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754553849; x=1755158649;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8wae+qR5fhE8jQMOdtpw1vQe+BuczBuTenzUdlRZ9tY=;
+        b=lnlgrkIItMBJahoYXg9y7AQCVNfbdyxPc6DrxuEzZszHyIiLaEt2f/bGHEqasqb+OI
+         fzt38T74D9qNQsuybzIl8p60QImQGEMigJBLzckcTRvfj8kc3rRgC1w0DHwafUFlJdiv
+         ouCsnf5BdHHMazId0390UkOGBpx60V95tPS0HMNGsv00scdSD2oK8blG2mH52tpi3JaZ
+         zfmSqS02W+T1bnGp1f1DAT1NHIo+VCaEKZE0jkdxNk01S4x7ovCUti/EidNIiMzfWDGH
+         3t1DGdT6IZwPrS+rPEDu2T8oNRmJFWhsGDHwt5YhamTLYXxV004ZmnRJslhKkS+2g95R
+         V06A==
+X-Forwarded-Encrypted: i=1; AJvYcCXAnGQhGVK5cGAeaB+QjwL7NRFpEfuqL8xd70aFEqfLEDLtlv2y72q+/rSqrvOq8FJE8MQ=@vger.kernel.org, AJvYcCXu9pGu8MW07ay6rpo3hGSIb8tNubuGXvOzARAxe9ctFsGh5PGVw6o4Vwl8vMIlvtrjmj/z+weCPuj/t3Jh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBrIMcBCbkuzMfFQfwF3mSopMq/hbB+xmwdSVPt9s9dulSYXXR
+	E9dxxJEyI+bcWOE2HqhQ0oa5qftB93ita8O4uUMW3RG6Av2YPvCH2zJxio/p4rxoI11m1u2Y7GX
+	3jW+gpNC2vwuDjqYgM1lp0rtIpAjWOfU=
+X-Gm-Gg: ASbGncvzrtxcsrv9P+99+cBXehyAX0hGUr01pvQjqwHigUwEF+AeGvfBlSHllI1ilMV
+	dsl8qbQGFdJJ2qEy4yg1dmeQSbORCPshE93aqoHLPSnHacM6shcLG457saXIamHcLs8R4vDFopP
+	GQMsMBTWa54IaE6YSIZbg9EBZLR209NUggBopL85rj1hn+a/PR2wsnIl09JMYvFTA4bC9Y+YFMm
+	2H1LH4=
+X-Google-Smtp-Source: AGHT+IH3rC620Ad0bDM8bPs/dSkuakMXrw+b62dY9ttQbWB+LhmXAlXtlNpoCZtfqdD2ku0pTkueOWNxOghxYLJZQz8=
+X-Received: by 2002:a4a:ee19:0:b0:619:a34b:3e29 with SMTP id
+ 006d021491bc7-61b6ed17b1amr1746527eaf.1.1754553848581; Thu, 07 Aug 2025
+ 01:04:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250806081051.3533470-1-hugoolli@tencent.com> <aJOc8vIkds_t3e8C@google.com>
+In-Reply-To: <aJOc8vIkds_t3e8C@google.com>
+From: hugo lee <cs.hugolee@gmail.com>
+Date: Thu, 7 Aug 2025 16:03:56 +0800
+X-Gm-Features: Ac12FXxHJZjqVcXiDcK5WpwSoEYWRRNT84CAqoxo1hkGbDkaTZtrLeDUrHvcNo0
+Message-ID: <CAAdeq_+Ppuj8PxABvCT54phuXY021HxdayYyb68G3JjkQE0WQg@mail.gmail.com>
+Subject: Re: [PATCH] KVM: x86: Synchronize APIC State with QEMU when irqchip=split
+To: Sean Christopherson <seanjc@google.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yuguo Li <hugoolli@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
-
->> On 11 Jul 2025, at 08:43, Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->> Allow rust null block devices to be configured and instantiated via
->> `configfs`.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->> drivers/block/rnull/Kconfig      |   2 +-
->> drivers/block/rnull/configfs.rs  | 220 +++++++++++++++++++++++++++++++++=
-++++++
->> drivers/block/rnull/rnull.rs     |  58 ++++++-----
->> rust/kernel/block/mq/gen_disk.rs |   2 +-
->> 4 files changed, 253 insertions(+), 29 deletions(-)
->>
->> diff --git a/drivers/block/rnull/Kconfig b/drivers/block/rnull/Kconfig
->> index 6dc5aff96bf4..7bc5b376c128 100644
->> --- a/drivers/block/rnull/Kconfig
->> +++ b/drivers/block/rnull/Kconfig
->> @@ -4,7 +4,7 @@
->>
->> config BLK_DEV_RUST_NULL
->> tristate "Rust null block driver (Experimental)"
->> - depends on RUST
->> + depends on RUST && CONFIGFS_FS
+On Thu, Aug 7, 2025 Sean Christopherson wrote:
 >
-> Should this really be a dependency? IIUC, the driver still works with this
-> unset, it just doesn=E2=80=99t have this feature?
+> On Wed, Aug 06, 2025, Yuguo Li wrote:
+> > When using split irqchip mode, IOAPIC is handled by QEMU while the LAPIC is
+> > emulated by KVM.  When guest disables LINT0, KVM doesn't exit to QEMU for
+> > synchronization, leaving IOAPIC unaware of this change.  This may cause vCPU
+> > to be kicked when external devices(e.g. PIT)keep sending interrupts.
+>
+> I don't entirely follow what the problem is.  Is the issue that QEMU injects an
+> IRQ that should have been blocked?  Or is QEMU forcing the vCPU to exit unnecessarily?
+>
 
-It does not and I do not intend for it to operate without configfs.
+This issue is about QEMU keeps injecting should-be-blocked
+(blocked by guest and qemu just doesn't know that) IRQs.
+As a result, QEMU forces vCPU to exit unnecessarily.
 
-I did not try to build without configfs enabled, but the rnull driver
-has calls to symbols provided by the configfs subsystem, so it really
-should not work without configfs loaded.
+> > This patch ensure that KVM exits to QEMU for synchronization when the guest
+> > disables LINT0.
+>
+> Please wrap at ~75 characters.
+
+Thanks for reminding, will do in the next patch.
 
 >
->> help
->>  This is the Rust implementation of the null block driver. Like
->>  the C version, the driver allows the user to create virutal block
->> diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/confi=
-gfs.rs
->> new file mode 100644
->> index 000000000000..6c0e3bbb36ec
->> --- /dev/null
->> +++ b/drivers/block/rnull/configfs.rs
->> @@ -0,0 +1,220 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +use super::{NullBlkDevice, THIS_MODULE};
->> +use core::fmt::Write;
->> +use kernel::{
->> +    block::mq::gen_disk::{GenDisk, GenDiskBuilder},
->> +    c_str,
->> +    configfs::{self, AttributeOperations},
->> +    configfs_attrs, new_mutex,
->> +    page::PAGE_SIZE,
->> +    prelude::*,
->> +    str::CString,
->> +    sync::Mutex,
->> +};
->> +use pin_init::PinInit;
->> +
->> +pub(crate) fn subsystem() -> impl PinInit<kernel::configfs::Subsystem<C=
-onfig>, Error> {
->> +    let item_type =3D configfs_attrs! {
->> +        container: configfs::Subsystem<Config>,
->> +        data: Config,
->> +        child: DeviceConfig,
->> +        attributes: [
->> +            features: 0,
->> +        ],
->> +    };
->> +
->> +    kernel::configfs::Subsystem::new(c_str!("rnull"), item_type, try_pi=
-n_init!(Config {}))
->> +}
->> +
->> +#[pin_data]
->> +pub(crate) struct Config {}
+> > Signed-off-by: Yuguo Li <hugoolli@tencent.com>
+> > ---
+> >  arch/x86/include/asm/kvm_host.h | 1 +
+> >  arch/x86/kvm/lapic.c            | 4 ++++
+> >  arch/x86/kvm/x86.c              | 5 +++++
+> >  include/uapi/linux/kvm.h        | 1 +
+> >  4 files changed, 11 insertions(+)
+> >
+> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > index f19a76d3ca0e..f69ce111bbe0 100644
+> > --- a/arch/x86/include/asm/kvm_host.h
+> > +++ b/arch/x86/include/asm/kvm_host.h
+> > @@ -129,6 +129,7 @@
+> >       KVM_ARCH_REQ_FLAGS(32, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
+> >  #define KVM_REQ_UPDATE_PROTECTED_GUEST_STATE \
+> >       KVM_ARCH_REQ_FLAGS(34, KVM_REQUEST_WAIT)
+> > +#define KVM_REQ_LAPIC_UPDATE              KVM_ARCH_REQ(35)
+> >
+> >  #define CR0_RESERVED_BITS                                               \
+> >       (~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
+> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > index 8172c2042dd6..65ffa89bf8a6 100644
+> > --- a/arch/x86/kvm/lapic.c
+> > +++ b/arch/x86/kvm/lapic.c
+> > @@ -2329,6 +2329,10 @@ static int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
+> >                       val |= APIC_LVT_MASKED;
+> >               val &= apic_lvt_mask[index];
+> >               kvm_lapic_set_reg(apic, reg, val);
+> > +             if (irqchip_split(apic->vcpu->kvm) && (val & APIC_LVT_MASKED)) {
 >
-> This still builds:
->
-> diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/config=
-fs.rs
-> index 3ae84dfc8d62..2e5ffa82e679 100644
-> --- a/drivers/block/rnull/configfs.rs
-> +++ b/drivers/block/rnull/configfs.rs
-> @@ -24,10 +24,9 @@ pub(crate) fn subsystem() -> impl PinInit<kernel::conf=
-igfs::Subsystem<Config>, E
->          ],
->      };
->
-> -    kernel::configfs::Subsystem::new(c_str!("rnull"), item_type, try_pin=
-_init!(Config {}))
-> +    kernel::configfs::Subsystem::new(c_str!("rnull"), item_type, Config =
-{})
->  }
->
-> -#[pin_data]
->  pub(crate) struct Config {}
->
-> Perhaps due to:
->
-> // SAFETY: the `__pinned_init` function always returns `Ok(())` and initi=
-alizes every field of
-> // `slot`. Additionally, all pinning invariants of `T` are upheld.
-> unsafe impl<T> PinInit<T> for T {
->     unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), Infallible>=
- {
->         // SAFETY: `slot` is valid for writes by the safety requirements =
-of this function.
->         unsafe { slot.write(self) };
->         Ok(())
->     }
-> }
+> This applies to much more than just LINT0, and for at least LVTPC and LVTCMCI,
+> KVM definitely doesn't want to exit on every change.
 
-Hmm, when I apply this change it does not work out for me:
+Actually every masking on LAPIC should be synchronized with IOAPIC.
+Because any desynchronization may cause unnecessary kicks
+which rarely happens due to the well-behaving guests.
+Exits here won't harm, but maybe only exit when LINT0 is being masked?
+Since others unlikely cause exits.
 
-      RUSTC [M] drivers/block/rnull/rnull.o
-    error[E0277]: the trait bound `Config: PinInit<Config, kernel::error::E=
-rror>` is not satisfied
-      --> /home/aeh/src/linux-rust/rnull-up-v6.16-rc1/drivers/block/rnull/c=
-onfigfs.rs:27:66
-        |
-    27  |     kernel::configfs::Subsystem::new(c_str!("rnull"), item_type, =
-Config {})
-        |     --------------------------------                             =
-^^^^^^^^^ the trait `PinInit<Config, kernel::error::Error>` is not implemen=
-ted for `Config`
-        |     |
-        |     required by a bound introduced by this call
-        |
-        =3D help: the following other types implement trait `PinInit<T, E>`:
-                  <AlwaysFail<T> as PinInit<T, ()>>
-                  <ChainPinInit<I, F, T, E> as PinInit<T, E>>
-                  <ChainInit<I, F, T, E> as PinInit<T, E>>
-                  <core::result::Result<T, E> as PinInit<T, E>>
-    note: required by a bound in `Subsystem::<Data>::new`
-      --> /home/aeh/src/linux-rust/rnull-up-v6.16-rc1/rust/kernel/configfs.=
-rs:151:20
-        |
-    148 |     pub fn new(
-        |            --- required by a bound in this associated function
-    ...
-    151 |         data: impl PinInit<Data, Error>,
-        |                    ^^^^^^^^^^^^^^^^^^^^ required by this bound in=
- `Subsystem::<Data>::new`
+>
+> Even for LINT0, it's not obvious that "pushing" from KVM is a better option than
+> having QEMU "pull" as needed.
+>
 
-    error[E0277]: the trait bound `Config: PinInit<Config, kernel::error::E=
-rror>` is not satisfied
-      --> /home/aeh/src/linux-rust/rnull-up-v6.16-rc1/drivers/block/rnull/c=
-onfigfs.rs:17:30
-        |
-    17  | pub(crate) fn subsystem() -> impl PinInit<kernel::configfs::Subsy=
-stem<Config>, Error> {
-        |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
-^^^^^^^^^^^^^^^^^^^^ the trait `PinInit<Config, kernel::error::Error>` is n=
-ot implemented for `Config`
-        |
-        =3D help: the following other types implement trait `PinInit<T, E>`:
-                  <AlwaysFail<T> as PinInit<T, ()>>
-                  <ChainPinInit<I, F, T, E> as PinInit<T, E>>
-                  <ChainInit<I, F, T, E> as PinInit<T, E>>
-                  <core::result::Result<T, E> as PinInit<T, E>>
-    note: required by a bound in `Subsystem::<Data>::new`
-      --> /home/aeh/src/linux-rust/rnull-up-v6.16-rc1/rust/kernel/configfs.=
-rs:151:20
-        |
-    148 |     pub fn new(
-        |            --- required by a bound in this associated function
-    ...
-    151 |         data: impl PinInit<Data, Error>,
-        |                    ^^^^^^^^^^^^^^^^^^^^ required by this bound in=
- `Subsystem::<Data>::new`
+QEMU has no idea when LINT0 is masked by the guest. Then the problem becomes
+when it is needed to "pull". The guess on this could lead to extra costs.
 
-    error: aborting due to 2 previous errors
+> At the very least, this would need to be guarded by a capability, otherwise
+> the new userspace exit would confuse existing VMMs (and probably result in the
+> VM being terminated).
 
-I rebased on rust-6.17. What did you apply this series to?
+True, I'll add this protection.
 
 >
 >
->> +
->> +#[vtable]
->> +impl AttributeOperations<0> for Config {
->> +    type Data =3D Config;
->> +
->> +    fn show(_this: &Config, page: &mut [u8; PAGE_SIZE]) -> Result<usize=
-> {
->> +        let mut writer =3D kernel::str::Formatter::new(page);
->> +        writer.write_str("blocksize,size,rotational\n")?;
->> +        Ok(writer.bytes_written())
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::GroupOperations for Config {
->> +    type Child =3D DeviceConfig;
->> +
->> +    fn make_group(
->> +        &self,
->> +        name: &CStr,
->> +    ) -> Result<impl PinInit<configfs::Group<DeviceConfig>, Error>> {
->> +        let item_type =3D configfs_attrs! {
->> +            container: configfs::Group<DeviceConfig>,
->> +            data: DeviceConfig,
->> +            attributes: [
->> +                // Named for compatibility with C null_blk
->> +                power: 0,
->> +                blocksize: 1,
->> +                rotational: 2,
->> +                size: 3,
->> +            ],
->> +        };
->> +
->> +        Ok(configfs::Group::new(
->> +            name.try_into()?,
->> +            item_type,
->> +            // TODO: cannot coerce new_mutex!() to impl PinInit<_, Erro=
-r>, so put mutex inside
+> > +                     kvm_make_request(KVM_REQ_LAPIC_UPDATE, apic->vcpu);
+> > +                     kvm_vcpu_kick(apic->vcpu);
 >
-> Isn=E2=80=99t this related to [0] ?
+> Why kick?  Cross-vCPU writes to LINT0 shouldn't be a thing, i.e. the kick should
+> effectivel be a nop.
 
-No, I think this is a type inference problem.
-
->
->
->> +            try_pin_init!( DeviceConfig {
->> +                data <- new_mutex!( DeviceConfigInner {
->> +                    powered: false,
->> +                    block_size: 4096,
->> +                    rotational: false,
->> +                    disk: None,
->> +                    capacity_mib: 4096,
->> +                    name: name.try_into()?,
->> +                }),
->> +            }),
->> +        ))
->> +    }
->> +}
->> +
->> +#[pin_data]
->> +pub(crate) struct DeviceConfig {
->> +    #[pin]
->> +    data: Mutex<DeviceConfigInner>,
->> +}
->> +
->> +#[pin_data]
->> +struct DeviceConfigInner {
->> +    powered: bool,
->> +    name: CString,
->> +    block_size: u32,
->> +    rotational: bool,
->> +    capacity_mib: u64,
->> +    disk: Option<GenDisk<NullBlkDevice>>,
->> +}
->> +
->> +#[vtable]
->> +impl configfs::AttributeOperations<0> for DeviceConfig {
->> +    type Data =3D DeviceConfig;
->> +
->> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<=
-usize> {
->> +        let mut writer =3D kernel::str::Formatter::new(page);
->> +
->> +        if this.data.lock().powered {
->> +            writer.write_fmt(fmt!("1\n"))?;
->> +        } else {
->> +            writer.write_fmt(fmt!("0\n"))?;
->> +        }
->> +
->> +        Ok(writer.bytes_written())
->> +    }
->> +
->> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
->> +        let power_op: bool =3D core::str::from_utf8(page)?
->> +            .trim()
->> +            .parse::<u8>()
->> +            .map_err(|_| kernel::error::code::EINVAL)?
->
-> nit: I=E2=80=99d import that if I were you, but it=E2=80=99s your call.
-
-OK.
-
->
->> +            !=3D 0;
->> +
->> +        let mut guard =3D this.data.lock();
->> +
->> +        if !guard.powered && power_op {
->> +            guard.disk =3D Some(NullBlkDevice::new(
->> +                &guard.name,
->> +                guard.block_size,
->> +                guard.rotational,
->> +                guard.capacity_mib,
->> +            )?);
->> +            guard.powered =3D true;
->> +        } else if guard.powered && !power_op {
->> +            drop(guard.disk.take());
->> +            guard.powered =3D false;
->> +        }
->
-> nit: the guard is not used here, but it is still alive. This is harmless =
-in
-> this case, but as I general pattern, I find that using closures cuts back=
- on
-> the scope, i.e.:
->
-> this.with_locked_data(|data| {
->     // use the guard
-> });
->
-> // Guard is already free here, no surprises.
-
-I don't see `with_locked_data` anywhere in the kernel crate? It would be
-a method on `Mutex`? Or would you add the method to `DeviceConfig`?
-
->
->> +
->> +        Ok(())
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::AttributeOperations<1> for DeviceConfig {
->> +    type Data =3D DeviceConfig;
->> +
->> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<=
-usize> {
->> +        let mut writer =3D kernel::str::Formatter::new(page);
->> +        writer.write_fmt(fmt!("{}\n", this.data.lock().block_size))?;
->> +        Ok(writer.bytes_written())
->> +    }
->> +
->> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
->> +        if this.data.lock().powered {
->> +            return Err(EBUSY);
->> +        }
->> +
->> +        let text =3D core::str::from_utf8(page)?.trim();
->> +        let value =3D text
->> +            .parse::<u32>()
->> +            .map_err(|_| kernel::error::code::EINVAL)?;
->> +
->> +        GenDiskBuilder::validate_block_size(value)?;
->> +        this.data.lock().block_size =3D value;
->> +        Ok(())
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::AttributeOperations<2> for DeviceConfig {
->> +    type Data =3D DeviceConfig;
->> +
->> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<=
-usize> {
->> +        let mut writer =3D kernel::str::Formatter::new(page);
->> +
->> +        if this.data.lock().rotational {
->> +            writer.write_fmt(fmt!("1\n"))?;
->> +        } else {
->> +            writer.write_fmt(fmt!("0\n"))?;
->> +        }
->> +
->> +        Ok(writer.bytes_written())
->> +    }
->> +
->> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
->> +        if this.data.lock().powered {
->> +            return Err(EBUSY);
->> +        }
->> +
->> +        this.data.lock().rotational =3D core::str::from_utf8(page)?
->> +            .trim()
->> +            .parse::<u8>()
->> +            .map_err(|_| kernel::error::code::EINVAL)?
->> +            !=3D 0;
->> +
->> +        Ok(())
->> +    }
->> +}
->> +
->> +#[vtable]
->> +impl configfs::AttributeOperations<3> for DeviceConfig {
->> +    type Data =3D DeviceConfig;
->> +
->> +    fn show(this: &DeviceConfig, page: &mut [u8; PAGE_SIZE]) -> Result<=
-usize> {
->> +        let mut writer =3D kernel::str::Formatter::new(page);
->> +        writer.write_fmt(fmt!("{}\n", this.data.lock().capacity_mib))?;
->> +        Ok(writer.bytes_written())
->> +    }
->> +
->> +    fn store(this: &DeviceConfig, page: &[u8]) -> Result {
->> +        if this.data.lock().powered {
->> +            return Err(EBUSY);
->> +        }
->> +
->> +        let text =3D core::str::from_utf8(page)?.trim();
->> +        let value =3D text
->> +            .parse::<u64>()
->> +            .map_err(|_| kernel::error::code::EINVAL)?;
->> +
->> +        this.data.lock().capacity_mib =3D value;
->> +        Ok(())
->> +    }
->> +}
->> diff --git a/drivers/block/rnull/rnull.rs b/drivers/block/rnull/rnull.rs
->> index d07e76ae2c13..d09bc77861e4 100644
->> --- a/drivers/block/rnull/rnull.rs
->> +++ b/drivers/block/rnull/rnull.rs
->> @@ -1,28 +1,26 @@
->> // SPDX-License-Identifier: GPL-2.0
->>
->> //! This is a Rust implementation of the C null block driver.
->> -//!
->> -//! Supported features:
->> -//!
->> -//! - blk-mq interface
->> -//! - direct completion
->> -//! - block size 4k
->
-> Why are these three removed?
-
-Because the list is stale and I did not want to maintain it.
-
-
-Best regards,
-Andreas Hindborg
-
-
-
-
+It is unnecessary, I will fix it in the next version.
 
