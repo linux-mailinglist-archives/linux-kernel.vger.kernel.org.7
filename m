@@ -1,143 +1,224 @@
-Return-Path: <linux-kernel+bounces-758750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF60B1D372
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:36:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D03B1D374
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9722626A45
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D9F3B0B49
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 07:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3C9235041;
-	Thu,  7 Aug 2025 07:36:46 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795BB23C512;
+	Thu,  7 Aug 2025 07:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3igw4UG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292A02AD32;
-	Thu,  7 Aug 2025 07:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832F1235041;
+	Thu,  7 Aug 2025 07:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754552206; cv=none; b=LZk7sbdMWglkcQohSJp/d7lHPp3ODnGQBQ2lWtIjseRhmBi7tFIPZjFn/FL91dyQu0GtG1zoxEjATVjBenJ5N4ldx65tXqWeGNv9PwYJb3Lvmy7KuJ29+es9QE2xqvHg8joSl6SJp/22N8IY5QLCeG88h4IC47TYk4MsepaW/h8=
+	t=1754552231; cv=none; b=a0Sbk9XY0+PG1AmS1iWJGYsAh7JWvqK5zgx7OaQAwHhvtdpoIk93lVsDGa4CGIB6QP2Xo0dxa0XWxox38CUGplihL7J99y+DyGWs3BNXWAJ2qRCfId2ap7+fYvxHIlayLpUxVJWO/cuPL7dZQ7kkUNcJ6AMrKjTJGBPQmnkvmGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754552206; c=relaxed/simple;
-	bh=xQJsxPI2cAE+XdvtefXltIELpJOI0cOw2uYRjm17pwY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o5VKOA/+NuI3eyPZbvf6qhtW4xi7Q0Sa4RI1zjyqWzWCvn2/hV7nEbIZIDhgqwCmmRV2N7hvKSPZG9ZvFM6NqJ3xGD/GFHD+cnFWZHN/PVLXtQv+6asn8PZch+QYlJCqY7XPpMuRUkPVt6fi1K8Lzb310VqHlS8qrBttRAmqxDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24049d16515so5196705ad.1;
-        Thu, 07 Aug 2025 00:36:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754552202; x=1755157002;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9HKfSAyrZ2BvktZne3hUZFZiKCfhfC4bYOLFKAq1gCM=;
-        b=pJUz7xg+lQY6427AXAJS+6ptxwhSmub4JrDUJ017RjqJ35Z7PctDd7f2lyHxM8zcNV
-         SgJ52/lryc/wmHei8AN3faC5wMe8o8gHTzoYpVC0w8Y1/vsoWXdGDDz1HGurW2wKHia5
-         dIoGDYCd1eca1HfokMLrKhrvmu/xTel8N6WBLFZpfXgExPxwQuLARfMPBgTBS4GdLllF
-         3ioIRnXxXXzXVm4HCkFAXEmktngpKrrIDY/0u6EgwHnnePYBoYmxYGy4jDjTsOiruM/6
-         30gL36Q7sk1u2roQzycpPZ4HId0DgINb0vyk4mo709l45sV0H/g8R5LD5UL/ME/sUajF
-         Biow==
-X-Forwarded-Encrypted: i=1; AJvYcCVLQ73X9c3NUptL/pTFIsKX4kK3lb/kVMRcvOxVlwANGzR/9L81GTOarzwpl5Kvlz/xMDmxRZNre6uu@vger.kernel.org, AJvYcCWUbneQxD9VHGi3sW1++T7Z0UGfJD0icK9cFDwWAYutxZKUEvLWV7p3uYO6zkGZ6fYP7uVjy3BqccBzozx3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxdSLh0BJU1vI7ov8+v8uSrh6FkReUdUDK9+ctu+UZzTxS6tLd
-	RuKsHOOxdIX3FYJt4Dy/ijzbSUK3F934Gy6pJ+E5tU/p+/Ygvad7yBDp
-X-Gm-Gg: ASbGncvN8qWm+vx1kNiBtA5RPq0hcibGIBmdCWYFrXpvl4IeRd+lIpf1YmxpwwwiVdm
-	I1palbI9OQVWICfp9bNG6mGYs/UEDt45skgeE7lYWKgm4N+DefUv81K6PadTSc7Wzu3OieL6E3G
-	rAQ7fJOt1grreY3ikkEpoyScbrxvj3sVgZg6eu4xShw5LNWmtEoXFHrr346fc+51uTHUBqKdluB
-	pvMwGzfk1Wg90gmlnlUxgUHk0wv/t5GiEu9h6u1ABKa8KaCCW55yPj3lqVk0M6QSwnOOH/boQom
-	XQsiyUylsnwalp6iY3Eyvzssoml5Tuz8cy5vj7kCvWdHnMneyqUV8wowcyqS0DBt53fRfUdnz8G
-	buZDp/WMKgN8be2GM0Zh1zmOo7CWzw5kosmtsjinf6fUS
-X-Google-Smtp-Source: AGHT+IHjtnIDwqnwHu2tVfvxK2+xIjGDDYPSo2jUj3dg5GI+sd464cduEnfix8ylS9kOHwBHz5F1+Q==
-X-Received: by 2002:a17:903:3bcc:b0:234:c8ec:51b5 with SMTP id d9443c01a7336-242a0bffb31mr70548125ad.53.1754552202196;
-        Thu, 07 Aug 2025 00:36:42 -0700 (PDT)
-Received: from localhost.localdomain ([116.128.244.169])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f15092sm177955265ad.66.2025.08.07.00.36.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 00:36:41 -0700 (PDT)
-From: xiehongyu1@kylinos.cn
-To: yilun.xu@intel.com
-Cc: trix@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	mdf@kernel.org,
-	Hongyu Xie <xiehongyu1@kylinos.cn>
-Subject: [PATCH v2] fpga: afu: fix potential integer overflow
-Date: Thu,  7 Aug 2025 15:36:33 +0800
-Message-Id: <20250807073633.140532-1-xiehongyu1@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754552231; c=relaxed/simple;
+	bh=lFMthv6QrKBOTRITI6/tRl8fokRfUTY5lwM7iuvzmlM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mlHuMS0RSCU+LgWysD7FFFDJPdOrPp+IjysjPB20Qc+i8VlD5aH7fr81SKlTUwvH5d7hDzvlK9knC0zM2Y27RYpCokX6Yj4mPTBoSqi+ZdNc9mPll27Kz7WLSUszydeMFRLPw1tYjHtbpw6MsvIN58s2X53a7Skb+A8u94TZT3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3igw4UG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66FAAC4CEEB;
+	Thu,  7 Aug 2025 07:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754552231;
+	bh=lFMthv6QrKBOTRITI6/tRl8fokRfUTY5lwM7iuvzmlM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=f3igw4UGfk9jmIHErNNNdAstrdBymQJsFP03lam5JbZcRKPRT9yQvrIzkf6i5gIA0
+	 /jvrOdwAigpIpIsn49AJBeKHHaIjKbcsPHs/oeiFWFUSlbwk+1ewkVJvGl5FBS7QJp
+	 yatohQrhjetYzipktlwyQbdukkjT4N8JSPFD0bx6g/IopgqMBZTIh+y6Wb4B0dJYvG
+	 yh+CtW+8salgTqNltB+FlQkPkzeClthV4yCQfTatLx3h3DJ/O2HW5UEGB8rVbbAIKI
+	 /e45UWT19lDn2djtCp7IwtR35gPYcqKtsE+nBM6veEm1ZTk+71iwrrjOuMI7UxnfIV
+	 hhYS5Dk3SZz8w==
+Message-ID: <8fa64c82-d5f8-4045-8ebf-5b938df8cc7c@kernel.org>
+Date: Thu, 7 Aug 2025 09:37:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] tty: serial/8250: Fix build warning in
+ serial8250_probe_acpi()
+From: Jiri Slaby <jirislaby@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+ Abinash Singh <abinashsinghlalotra@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sunil V L <sunilvl@ventanamicro.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20250805195155.742004-1-abinashsinghlalotra@gmail.com>
+ <f765eae4-f83e-4c25-9697-2705afd7b9b8@app.fastmail.com>
+ <b9f715c0-082f-46a3-b332-d5f6bf53ad71@kernel.org>
+ <22204a4a-9c10-4aca-8159-a0e69c74cb34@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <22204a4a-9c10-4aca-8159-a0e69c74cb34@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Hongyu Xie <xiehongyu1@kylinos.cn>
+On 07. 08. 25, 8:43, Jiri Slaby wrote:
+> On 07. 08. 25, 7:25, Jiri Slaby wrote:
+>> On 06. 08. 25, 9:01, Arnd Bergmann wrote:
+>>> Note how serial8250_register_8250_port() ands up just copying
+>>> individual members of the passed uart_8250_port structure into
+>>> the global array of the same type, so one way of addressing
+>>> this would be to use a structure for initialization that only
+>>> contains a subset of the uart_8250_port members and can still
+>>> be allocated on the stack, or possibly be constant.
+>>
+>> Yes:
+>> https://lore.kernel.org/all/ 
+>> f84c2ee3-77b4-41c4-8517-26dfb44a2276@kernel.org/
+> 
+> As a PoC, these members from uart_8250_port are really used in 
+> serial8250_register_8250_port():
+> struct uart_8250_port2 {
+>          long unsigned int          iobase;               /*     0     8 */
+>          resource_size_t            mapbase;              /*     8     8 */
+>          unsigned char *            membase;              /*    16     8 */
+>          long unsigned int          irqflags;             /*    24     8 */
+>          upf_t                      flags;                /*    32     8 */
+>          enum uart_iotype           iotype;               /*    40     4 */
+>          unsigned int               tx_loadsz;            /*    44     4 */
+>          unsigned int               type;                 /*    48     4 */
+>          u32                        overrun_backoff_time_ms; /*    52  4 */
+>          u32                        capabilities;         /*    56     4 */
+>          unsigned int               line;                 /*    60     4 */
+>          /* --- cacheline 1 boundary (64 bytes) --- */
+>          unsigned int               uartclk;              /*    64     4 */
+>          unsigned int               ctrl_id;              /*    68     4 */
+>          unsigned int               port_id;              /*    72     4 */
+>          unsigned int               irq;                  /*    76     4 */
+>          unsigned int               fifosize;             /*    80     4 */
+>          u16                        bugs;                 /*    84     2 */
+>          u16                        lsr_save_mask;        /*    86     2 */
+>          unsigned char              regshift;             /*    88     1 */
+>          unsigned char              hub6;                 /*    89     1 */
+> 
+>          /* XXX 6 bytes hole, try to pack */
+> 
+>          resource_size_t            mapsize;              /*    96     8 */
+>          struct serial_rs485        rs485;                /*   104    32 */
+>          /* --- cacheline 2 boundary (128 bytes) was 8 bytes ago --- */
+>          struct serial_rs485        rs485_supported;      /*   136    32 */
+>          void *                     private_data;         /*   168     8 */
+>          struct uart_8250_dma *     dma;                  /*   176     8 */
 
-Without context, There are two overflow scenarios:
-1, region->offset + region->size Overflow:
-  When region->offset is close to U64_MAX and region->size is
-sufficiently large, the addition result may wrap around to a
-very small value (e.g., 0 or near 0).
-  In this case, even if the target range [offset, offset+size)
-falls within the region, the condition region->offset +
-region->size >= offset + size will fail due to the wrapped
-value being small. This causes the function to erroneously
-return -EINVAL.
+And if in the above link mentioned conversion to ops [1] is finished, we 
+would replace all the below by a single pointer to a const ops. The 
+struct would be then 176+8.
 
-2, offset + size overflow:
-  When offset is close to U64_MAX and size is large, offset +
-size wraps around to a small value.
+[1] the two "ops" commits at 
+https://git.kernel.org/pub/scm/linux/kernel/git/jirislaby/linux.git/log/?h=devel
 
-  Here, region->offset + region->size (which would be a large
-value if not overflowing) might incorrectly satisfy
-region->offset + region->size >= offset + size due to the
-wrapped small value. This leads to a false match, even though
-the actual range [offset, offset+size) spans the wrap-around
-boundary and does not belong to this region.
+>          void                       (*rs485_start_tx)(struct 
+> uart_8250_port *, bool); /*   184     8 */
+>          /* --- cacheline 3 boundary (192 bytes) --- */
+>          void                       (*rs485_stop_tx)(struct 
+> uart_8250_port *, bool); /*   192     8 */
+>          void                       (*throttle)(struct uart_port *); /* 
+>   200     8 */
+>          void                       (*unthrottle)(struct uart_port *); / 
+> *   208     8 */
+>          u32                        (*serial_in)(struct uart_port *, 
+> unsigned int); /*   216     8 */
+>          void                       (*serial_out)(struct uart_port *, 
+> unsigned int, u32); /*   224     8 */
+>          void                       (*set_termios)(struct uart_port *, 
+> struct ktermios *, const struct ktermios  *); /*   232     8 */
+>          void                       (*set_ldisc)(struct uart_port *, 
+> struct ktermios *); /*   240     8 */
+>          unsigned int               (*get_mctrl)(struct uart_port *); /* 
+>    248     8 */
+>          /* --- cacheline 4 boundary (256 bytes) --- */
+>          void                       (*set_mctrl)(struct uart_port *, 
+> unsigned int); /*   256     8 */
+>          unsigned int               (*get_divisor)(struct uart_port *, 
+> unsigned int, unsigned int *); /*   264     8 */
+>          void                       (*set_divisor)(struct uart_port *, 
+> unsigned int, unsigned int, unsigned int); /*   272     8 */
+>          int                        (*startup)(struct uart_port *); /* 
+> 280     8 */
+>          void                       (*shutdown)(struct uart_port *); /* 
+>   288     8 */
+>          int                        (*handle_irq)(struct uart_port *); / 
+> *   296     8 */
+>          void                       (*pm)(struct uart_port *, unsigned 
+> int, unsigned int); /*   304     8 */
+>          void                       (*handle_break)(struct uart_port 
+> *); /*   312     8 */
+>          /* --- cacheline 5 boundary (320 bytes) --- */
+>          int                        (*rs485_config)(struct uart_port *, 
+> struct ktermios *, struct serial_rs485 *); /*   320     8 */
+>          struct device *            dev;                  /*   328     8 */
+>          u32                        (*dl_read)(struct uart_8250_port 
+> *); /*   336     8 */
+>          void                       (*dl_write)(struct uart_8250_port *, 
+> u32); /*   344     8 */
+> 
+>          /* size: 352, cachelines: 6, members: 46 */
+>          /* sum members: 346, holes: 1, sum holes: 6 */
+>          /* last cacheline: 32 bytes */
+> };
+> 
+> 
 
-Assume region->offset and region->size had been properly
-initialized at the very beginning. And fix the second scenario.
-
-Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
----
-
-v1->v2: check sum before for loop
-
- drivers/fpga/dfl-afu-region.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/fpga/dfl-afu-region.c b/drivers/fpga/dfl-afu-region.c
-index b11a5b21e666..517a59a9410a 100644
---- a/drivers/fpga/dfl-afu-region.c
-+++ b/drivers/fpga/dfl-afu-region.c
-@@ -151,13 +151,20 @@ int afu_mmio_region_get_by_offset(struct dfl_feature_dev_data *fdata,
- {
- 	struct dfl_afu_mmio_region *region;
- 	struct dfl_afu *afu;
-+	u64 sum = 0;
- 	int ret = 0;
- 
- 	mutex_lock(&fdata->lock);
-+
-+	if (check_add_overflow(offset, size, &sum)) {
-+		ret = -EINVAL;
-+		goto exit;
-+	}
-+
- 	afu = dfl_fpga_fdata_get_private(fdata);
- 	for_each_region(region, afu)
- 		if (region->offset <= offset &&
--		    region->offset + region->size >= offset + size) {
-+		    region->offset + region->size >= sum) {
- 			*pregion = *region;
- 			goto exit;
- 		}
 -- 
-2.25.1
+js
+suse labs
 
 
