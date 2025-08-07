@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-759432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6506FB1DD75
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:23:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B13B1DD77
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 21:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0FC584BC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B897260B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 19:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116D5222578;
-	Thu,  7 Aug 2025 19:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D46B222578;
+	Thu,  7 Aug 2025 19:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeNm/SBM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=infradead.org header.i=@infradead.org header.b="fuorNKpl"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4D11C860A;
-	Thu,  7 Aug 2025 19:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A951C860A;
+	Thu,  7 Aug 2025 19:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754594587; cv=none; b=X/z3bR7xSlzCiVzq2t6JahpuHYczG7yvLBs7v4Tv5D4KHRtekEsYNPgXZMIjohicYRKxZMW8fgKXoChgADn2cPbrp7pKnPsIxNTmq2TZQJXVWGrMAi7of5wy41kfCXsX17r2nx9WUG5cOrSdYT7lzRPk0zd8xkjzkBEL0CXGRyE=
+	t=1754594645; cv=none; b=cdoY6AVf+/dkHKC6CwmWf0O5ITVCNXCCeOm3vt/evjUDHiUbucbzMOjtCnZ04497DCYb7gRwe7sD8SazdJrVOHGLNGgqpaeoYigzJexkv09bYm390VuEuEWxFfyOiOK6SwDtOu7lwM+Qa1W5fNqBbt6tODqM8NMrz7f1eHQqUKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754594587; c=relaxed/simple;
-	bh=bO0vADNCneshUIVHVe/hVO5ZsIGpYnBPeUVMpWJqGAM=;
+	s=arc-20240116; t=1754594645; c=relaxed/simple;
+	bh=9jSjr+EURfU5xfxNvcaPXMxpgN/NZuM4BFqn0flPaZs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rCFADVIFqa7FxMNlUWOQGtI2y80wAJCZ0LUsO40QvM+5MYWQkuKt9Baslbq4x/VYAnwyjFHKAMhMJNbp3CIYIIwZbxNIqvOu4kzV50TAPYPj/PN30tsLZzxtxby6KG9JyXoIgFUfO0Gr+p7i9yBkS1ChcAwCLAf2kaXPE15VYjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeNm/SBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CF7CC4CEEB;
-	Thu,  7 Aug 2025 19:23:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754594586;
-	bh=bO0vADNCneshUIVHVe/hVO5ZsIGpYnBPeUVMpWJqGAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GeNm/SBMZx67YSIsEMyUKUL7FL7ui9baKhJ5p6Pm9dJFfoOvs+EbdM7/34+mZPMxJ
-	 sSEnTwpUbnrKNbQsCzQxPrY/6dqg296Bn/QbB+NsgOp0b14lbHpil6CzWTcAWBGLnk
-	 LUEu+oQpGX8cQBGSTQKP6bDEHvk3juv854a+pcioXZEV3U/5h1+SIH5R2O+0DRVoky
-	 lWuEF/31rVyOBY7yJGPBF5M5WU3HI0TgpqxfLkLpEVuUfZNQagTVb5HW/Rfx23Zmli
-	 SG93Y+FZvwDqOPENpT7c3BxufBcmJx6qvm8WnqQdAG6dC7RZDuMjHX0aCCbhYQoOcS
-	 bWMSIB921g9oQ==
-Date: Thu, 7 Aug 2025 20:23:01 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, shuah@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: arm64: Check fread return value in exec_target
-Message-ID: <a72e8741-a63a-487e-838e-daeed3458c0f@sirena.org.uk>
-References: <20250807154950.24105-1-reddybalavignesh9979@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kYSvylHx8WJ2Oez1S+9wBRpq+bTMn22J5m6tqKae+9voBbo2fn2u+xhaNpf5n4GvrSQB2sprbthkizecIbcHjxM53h7oOIidS0mGUJBIPHm0f4BwHoXdZLHpgLNf4/GCE5Ynsa+avoUufAKX6M4zMhvNe7JifkG+xNoHbphqcsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=evilplan.org; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=fail (0-bit key) header.d=infradead.org header.i=@infradead.org header.b=fuorNKpl reason="key not found in DNS"; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=evilplan.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Skjp0sBpmtDbsb/1j6FQvMUsRdB+FKZ6YT6MzZJmPPA=; b=fuorNKplXxA/NCLxvJcR/K2XY8
+	B4kyxLsLQ7bLwKiHe5Pj6ykHrIrYu4ez8wSUuQSGQaE8E33qky5kkRt2S6Lsu8z54ONm78KDJc/4s
+	47EOHiLztuivpi8VRVcRUVClq0KraaOb6h1nqt9yxex+K1f8UOlx2iCxfqsH3+lCD3hEfphZWa8mY
+	rlhK2+o5k1U8ROFADLIn7LwAZWSbpFtNXbs2xHUqf7b74V7mAezoMOpnVKIaTTZ3BW+3REQNJp+OI
+	be3ohtQJeNcZ+2Ng7P2jth4xTlHXsWsDyhkulMJwLTnlXstssxP++waYgFW+o8LCFwKWZEFn1OiPG
+	Y/7KN8pQ==;
+Received: from jlbec by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uk6DS-00000007los-22rE;
+	Thu, 07 Aug 2025 19:23:54 +0000
+Date: Thu, 7 Aug 2025 12:23:50 -0700
+From: Joel Becker <jlbec@evilplan.org>
+To: yili <yili@winhong.com>
+Cc: joseph.qi@linux.alibaba.com, mark@fasheh.com,
+	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ocfs2: Fix super block reserved field offset comment
+Message-ID: <aJT9RpG19PWIcLe-@google.com>
+Mail-Followup-To: yili <yili@winhong.com>, joseph.qi@linux.alibaba.com,
+	mark@fasheh.com, ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+References: <20250807155749.164481-1-yili@winhong.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lDXe6O6YHA3QjJr+"
-Content-Disposition: inline
-In-Reply-To: <20250807154950.24105-1-reddybalavignesh9979@gmail.com>
-X-Cookie: Real Users hate Real Programmers.
-
-
---lDXe6O6YHA3QjJr+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250807155749.164481-1-yili@winhong.com>
+X-Burt-Line: Trees are cool.
+X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
+ come to perfection.
+Sender: Joel Becker <jlbec@ftp.linux.org.uk>
 
-On Thu, Aug 07, 2025 at 09:19:47PM +0530, Bala-Vignesh-Reddy wrote:
+Yep.  And 140 - (sizeof(s_reserved2) aka 8 * F) = C8.
 
-> Fix -Wunused-result warning generated when compiled with gcc 13.3.0,
-> by checking fread's return value and handling errors, preventing
-> potential failures when reading from stdin.
->=20
-> Fixes compiler warning:
-> warning: ignoring return value of 'fread' declared with attribute
-> 'warn_unused_result' [-Wunused-result]
+Reviewed-by: Joel Becker <jlbec@evilplan.org>
 
-> --- a/tools/testing/selftests/arm64/pauth/exec_target.c
-> +++ b/tools/testing/selftests/arm64/pauth/exec_target.c
-> @@ -13,7 +13,12 @@ int main(void)
+On Thu, Aug 07, 2025 at 11:57:49PM +0800, yili wrote:
+> The offset annotation for s_reserved2 in struct ocfs2_super_block
+> was incorrect. After the preceding fields:
+> - s_xattr_inline_size (2 bytes at 0xB8)
+> - s_reserved0 (2 bytes at 0xBA)
+> - s_dx_seed[3] (12 bytes at 0xBC)
+> 
+> The actual offset of s_reserved2 is at 0xC8,
+> when calculating from the start of the structure.
+> 
+> Correct the offset comment from C0 to C8 to reflect the proper
+> location in the super block structure.
+> 
+> Signed-off-by: yili <yili@winhong.com>
+> ---
+>  fs/ocfs2/ocfs2_fs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
+> index e8e94599e907..ae0e44e5f2ad 100644
+> --- a/fs/ocfs2/ocfs2_fs.h
+> +++ b/fs/ocfs2/ocfs2_fs.h
+> @@ -614,7 +614,7 @@ struct ocfs2_super_block {
+>  	__le16 s_reserved0;
+>  	__le32 s_dx_seed[3];		/* seed[0-2] for dx dir hash.
+>  					 * s_uuid_hash serves as seed[3]. */
+> -/*C0*/  __le64 s_reserved2[15];		/* Fill out superblock */
+> +/*C8*/  __le64 s_reserved2[15];		/* Fill out superblock */
+>  /*140*/
+>  
+>  	/*
+> -- 
+> 2.43.0
+> 
 
-> -	fread(&val, sizeof(size_t), 1, stdin);
-> +	size_t size =3D fread(&val, sizeof(size_t), 1, stdin);
-> +
-> +	if (size !=3D 1) {
-> +		fprintf(stderr, "Could not read input from stdin\n");
-> +		return -1;
-> +	}
+-- 
 
-It doesn't really matter but it'd be nicer to return a standard value
-=66rom main(), EXIT_FAILURE is probably a good choice.  Exit values are in
-the range 0..255.
+Life's Little Instruction Book #15
 
---lDXe6O6YHA3QjJr+
-Content-Type: application/pgp-signature; name="signature.asc"
+	"Own a great stereo system."
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiU/RUACgkQJNaLcl1U
-h9AyyQf+Mg0LhcTpLXab7BZn+ejV6G4bsn2lcC2nLCXOkHWLPMlKyO26ip+/7+Gd
-BfeJ1PFXe4q6YNENah0xOEL1n3kCUXNYUJXmiat+FSAEgqIMYA3KZr/NNiZovIll
-zAbTQj0795xW27sGvS3rXXv5eoCr0IiqCgUsT+VSw1FQLEWYf3KF0ZQCGLzF73+E
-qHBrCqsUURH7dYANOMOmIood/LECtoeHxkiv0f5WLXegHany/MV0XWOL85Qfw6lL
-t0I5zJfiNL47WXJcc8MksVS1o9JFxtx9r2B+son/rzJiVthlyW3B93DnaiEld48I
-VkRyo+Wc4JMtxadU6wOjINGD8if2sQ==
-=s09D
------END PGP SIGNATURE-----
-
---lDXe6O6YHA3QjJr+--
+			http://www.jlbec.org/
+			jlbec@evilplan.org
 
