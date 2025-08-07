@@ -1,133 +1,147 @@
-Return-Path: <linux-kernel+bounces-758506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E35B1D005
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:10:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82DDAB1D00F
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 03:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C729E189BC69
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B8C627ACA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 01:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B6C195808;
-	Thu,  7 Aug 2025 01:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF630195811;
+	Thu,  7 Aug 2025 01:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u1qb2Ubb"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bHlB8/P9"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44327404E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 01:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C075918F2FC
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 01:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754528980; cv=none; b=s//eEj2tyI7i5d3+wiJhqyiD68H5/qZ2e8fYDd7iviPNTSsYBYG3ZOl840O2bB81FQkDBEf/pvkLCcK2sJ5wid7UIf9dj3MZ/t23ONhbm9LS23U9CmGVGAZAT7BpHQuh1wAhHB5uGO/x8IrjjC/n2ijRDQESpoz2d+SqkdInuh0=
+	t=1754529882; cv=none; b=sYXjcj+vBQsiMUt5zSHjVuPAH2ZKaNBrsdiw/zLG/70/WJ/DFOyXGUssk4iXg1HXhkXOvA1cU+5GEurSKjY1INJpS7Ait/mWlr7/DDQ0ohX6pWAmaOJUQhW+uC6gYgTuilIjNKzMu8S43RhIgrhsMrhqYPPfiCBjhi/fpyrlFt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754528980; c=relaxed/simple;
-	bh=B/HhbrVApmn9pq0h5M1gnl/C5pn/W6FSo7549Z36cLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sUhe/CKYZPaDzQYLKIWmKgqM2PELWbF+j4a1VHNNP5hBanBnH9hRCCxs/hebsgUy14VSNZTJdF4k/aZL900ZWLAzTSz7Na3dYB8CfSR4xyeaNUgP70AOAruno4KyzGGjt7NsTUBqTKd5Vn9OymlXgXSQKmdk+18NHZIRtwW/CxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u1qb2Ubb; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <5a31f3ef-358f-4382-8ad1-8050569a2a23@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754528963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hzQ/jmAEqx+5WztylhoXd83cleNXPFmc4NXF0vaDdo0=;
-	b=u1qb2UbbuaVXfm4nJMwd/9zXSq5G7gyY1LrGFEx7eFTduBR6dB7Yz7GpPrWE1xb7PDvrl6
-	saodhydnnj/E+lqYPIqO7NfcpYu7TouluXO8xFYRi1B8SK+WTYIkVznw1pLcQlUWPQyIvS
-	Dwhk/c2lnCOqJKmHdWflj26r/EWVr4Q=
-Date: Wed, 6 Aug 2025 18:09:06 -0700
+	s=arc-20240116; t=1754529882; c=relaxed/simple;
+	bh=7U4fHvP0ih8VFJgO3STDVGAT0vqMcDLOgP2/LcG5M0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=omkALmJFQ7WBRUT61hR/b5xooE6PmfqFtTCTjifKoxF0r613pWa1IC2zJ/wFoClUCQHD+D4noDFMGbUc6g/CzxZPvF0M1xh2tt27XNlsTfhLZ1jHWgSRX/nnK+/tMUAkTjrohm8QQ64u6qPnOJNn3S27M4rf7QZV1/+RPBKpNg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bHlB8/P9; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-30bbb2d332eso178860fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Aug 2025 18:24:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754529878; x=1755134678; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=jlob5EoTKbwfdk1l3MgDDEiHlXNGbyvCLwvCntrqVtE=;
+        b=bHlB8/P9Buw2yIBk/eD8D+zl3e3hcwObWtpOkdrcOlE7nSg3Qw8LjlACJTcxHulyf3
+         C82pXSrRxEHYAKeSqLlrLrBKRFqwWWv59W3t0TOPz6crJPcYy6SPY9ACU/dEC8EOngDF
+         erB20RY3Nc4QHFKEAGXkdYgR+1g/lQEKubGpOEE7O+RWbs7Q2K1l+8K9Nr45Kjdgruxz
+         u1Yf02LOD0llubyA8clPidwGSUePdkvRl28JY00tghWQdvMAmaCfUJZE/7G1HGzJx3tL
+         nN6ytIHBUS+3Iu3O448LkSVkKQqsUu6qcmSryrKu1jhYtbJoVBc9oO/h/kze2UQd6/+j
+         QWeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754529878; x=1755134678;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jlob5EoTKbwfdk1l3MgDDEiHlXNGbyvCLwvCntrqVtE=;
+        b=edaaxBdcd4sOV1PzYnH6IA8/STZsIQKIyFzFfxy+t7AwOBtJ/rajNhUNNuqZ8ACGTv
+         u3x2mTNiE1cH3bPseWkFRS0xKbvt22N/dn5+AfXvBtsFRXJMWd3SSbg0L7ljmc1VOavu
+         645XiXB7msYl+icwGVfn19Fg2p+mMFw74up8SdWR6fP47U75PHCSV1lrOSvlUsjQJe5O
+         bCIrT0gvIr4N6heLLQMFREeef4cnRxNy2NEhEEnOZTNcKmLdVVqRs9EUITI0qp2X7P+8
+         0h3oV/JnF+2dGEderRKp2Wktwn3OlNU7esZvG2zfWzHh9s7FLmf52AZ6HL4E6/sDJsO2
+         1tiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwusgaqueob0Joi06NlD1WsUyJ6zLRzNjjYc/dbK868fXzOCd65a9WLe85rlePnGt2zkqHQRVBkvNGmtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd6MDoUI2KjJU6hLkWv1CIOhaRZpRJLrmbbn10Es9+BfZrVYJF
+	SQnDGAUJB9qrI+6dHBMqVE+X2jwDZ6h4pmtMZ14qS693h3unW4c3pNRzjr7JjvsHf1M=
+X-Gm-Gg: ASbGncvub0fqUbIcxjrfKcmIx7H7qIv36bmOvdpV8xDa4AQjKdLgI4v1av539YulYiB
+	/tft0Vc0RUI9IcJCr+ozLb1AdTGWODwUoVm6/q84K95Kc8l6s7PqmNylY9LSgE4tcdTknp/ZKiY
+	Wecwwsn8batwxaZ6p4lgZwjThyrDHKfdZJo+VrN2iM0bZ8AiJxDTfNF6JtZF95/Tix3mhLsQrl1
+	loEFZfqgyzXaggNSwTq+Lz0ngTqi0uuLWdhiaJ5oMZIThxT2LyAwtzZWTGSIPSK07XpMMHCEKEF
+	1Hkdg+zY6p1auau1nwGZemT1+dtFs1X1c4zYXHIfvsCnpmwU/34pW5IuBJO0ch3GeinDSRui3TE
+	qI3DbBAu9mMs0Rn7NojpqJ4Z+desRvICeO6VqyNvjFW8B8CkPNLvM54ASBvuPeubh9lfbzEGA0b
+	wbNthhlUk3Nw==
+X-Google-Smtp-Source: AGHT+IEZAM7i8noTFma5wAnR8o4D7glt2vGuAH01kSmUPVRf7KW72alZoNCyV4wMEfKwuI1X7qG5Qg==
+X-Received: by 2002:a05:6870:3c0d:b0:2e9:4038:83d7 with SMTP id 586e51a60fabf-30be296ad83mr3038244fac.11.1754529878596;
+        Wed, 06 Aug 2025 18:24:38 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d? ([2600:8803:e7e4:1d00:a4aa:5c40:1610:d43d])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30b6dac161esm3485598fac.22.2025.08.06.18.24.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Aug 2025 18:24:38 -0700 (PDT)
+Message-ID: <b7288d5e-8dc8-4ee1-ae34-52904a3f989d@baylibre.com>
+Date: Wed, 6 Aug 2025 20:24:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] rdma_rxe: call comp_handler without holding cq->cq_lock
-To: Philipp Reisner <philipp.reisner@linbit.com>,
- Zhu Yanjun <zyjzyj2000@gmail.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250806123921.633410-1-philipp.reisner@linbit.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20250806123921.633410-1-philipp.reisner@linbit.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: pressure: bmp280: Use IS_ERR_OR_NULL() in
+ bmp280_common_probe()
+To: Salah Triki <salah.triki@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <aJP44mH0AXQGCFFR@pc>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aJP44mH0AXQGCFFR@pc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-在 2025/8/6 5:39, Philipp Reisner 写道:
-> Allow the comp_handler callback implementation to call ib_poll_cq().
-> A call to ib_poll_cq() calls rxe_poll_cq() with the rdma_rxe driver.
-> And rxe_poll_cq() locks cq->cq_lock. That leads to a spinlock deadlock.
+On 8/6/25 7:52 PM, Salah Triki wrote:
+> `devm_gpiod_get_optional()` may return non-NULL error pointer on failure.
+> Check its return value using `IS_ERR_OR_NULL()` and propagate the error if
+> necessary.
 > 
-> The Mellanox and Intel drivers allow a comp_handler callback
-> implementation to call ib_poll_cq().
-> 
-> Avoid the deadlock by calling the comp_handler callback without
-> holding cq->cw_lock.
-> 
-> Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
-
-ERROR: test_resize_cq (tests.test_cq.CQTest.test_resize_cq)
-Test resize CQ, start with specific value and then increase and decrease
-----------------------------------------------------------------------
-Traceback (most recent call last):
-   File "/root/deb/rdma-core/tests/test_cq.py", line 135, in test_resize_cq
-     u.poll_cq(self.client.cq)
-   File "/root/deb/rdma-core/tests/utils.py", line 687, in poll_cq
-     wcs = _poll_cq(cq, count, data)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-   File "/root/deb/rdma-core/tests/utils.py", line 669, in _poll_cq
-     raise PyverbsError(f'Got timeout on polling ({count} CQEs remaining)')
-pyverbs.pyverbs_error.PyverbsError: Got timeout on polling (1 CQEs 
-remaining)
-
-After I applied your patch in kervel v6.16, I got the above errors.
-
-Zhu Yanjun
-
+> Signed-off-by: Salah Triki <salah.triki@gmail.com>
 > ---
->   drivers/infiniband/sw/rxe/rxe_cq.c | 12 +++++++-----
->   1 file changed, 7 insertions(+), 5 deletions(-)
+>  drivers/iio/pressure/bmp280-core.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_cq.c b/drivers/infiniband/sw/rxe/rxe_cq.c
-> index fffd144d509e..1195e109f89b 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_cq.c
-> +++ b/drivers/infiniband/sw/rxe/rxe_cq.c
-> @@ -88,6 +88,7 @@ int rxe_cq_post(struct rxe_cq *cq, struct rxe_cqe *cqe, int solicited)
->   	int full;
->   	void *addr;
->   	unsigned long flags;
-> +	u8 notify;
->   
->   	spin_lock_irqsave(&cq->cq_lock, flags);
->   
-> @@ -110,14 +111,15 @@ int rxe_cq_post(struct rxe_cq *cq, struct rxe_cqe *cqe, int solicited)
->   
->   	queue_advance_producer(cq->queue, QUEUE_TYPE_TO_CLIENT);
->   
-> -	if ((cq->notify & IB_CQ_NEXT_COMP) ||
-> -	    (cq->notify & IB_CQ_SOLICITED && solicited)) {
-> -		cq->notify = 0;
-> -		cq->ibcq.comp_handler(&cq->ibcq, cq->ibcq.cq_context);
-> -	}
-> +	notify = cq->notify;
-> +	cq->notify = 0;
->   
->   	spin_unlock_irqrestore(&cq->cq_lock, flags);
->   
-> +	if ((notify & IB_CQ_NEXT_COMP) ||
-> +	    (notify & IB_CQ_SOLICITED && solicited))
-> +		cq->ibcq.comp_handler(&cq->ibcq, cq->ibcq.cq_context);
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index 74505c9ec1a0..2ac0188d2857 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -3213,11 +3213,13 @@ int bmp280_common_probe(struct device *dev,
+>  
+>  	/* Bring chip out of reset if there is an assigned GPIO line */
+>  	gpiod = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
 > +
->   	return 0;
->   }
->   
+
+No blank line here.
+
+> +	if (IS_ERR_OR_NULL(gpiod))
+
+This needs to be IS_ERR(). NULL is not an error and we
+cant return early here because there is more to do in
+the probe function.
+
+> +		return dev_err_probe(dev, PTR_ERR(gpiod), "failed to get GPIO\n");
+> +
+>  	/* Deassert the signal */
+> -	if (gpiod) {
+> -		dev_info(dev, "release reset\n");
+> -		gpiod_set_value(gpiod, 0);
+> -	}
+> +	dev_info(dev, "release reset\n");
+> +	gpiod_set_value(gpiod, 0);
+
+If we drop the `if` here, we should also drop the
+dev_info(). gpiod_set_value() handles NULL gpiod value
+so that is fine, but the message is just noise.
+
+Also, gpiod_set_value_cansleep() would be more
+appropriate. This is not an atomic context.
+
+>  
+>  	data->regmap = regmap;
+>  
 
 
