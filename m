@@ -1,317 +1,155 @@
-Return-Path: <linux-kernel+bounces-759413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C27B1DD3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:56:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0351AB1DD38
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164B118C05BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:57:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F37581614
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7978B2222BA;
-	Thu,  7 Aug 2025 18:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0921221DBD;
+	Thu,  7 Aug 2025 18:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jrehkemper.de header.i=@jrehkemper.de header.b="XwqXkt2x";
-	dkim=permerror (0-bit key) header.d=jrehkemper.de header.i=@jrehkemper.de header.b="yTYBaQon"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cuhDNbmz"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF3C2206A6
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754593000; cv=pass; b=PNFCw4XUHn142SxA8dtPkLsSzSfVKX8+IuJMd2A5okcRXbNAVW9DW4rIAP3CmMp4uMaX+ByVmpVNVOW6lMuHg3eUPXD/0F/IG6uitsVwy0hSyzFEFlZc4Xjh7B7q41j54YLw9NPL+weayspJiLHJ0OyzxR5C9RZhd/5M+xU+Ze0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754593000; c=relaxed/simple;
-	bh=NnDtTwFvLQ0Rr2HPPVNQHfOWHto9wSQDfYXWq60KuXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ET8qebvGH/fd0aPkHKX1f9yBNiBo/Qkx2TT/zkpSOspuGfiQgJ6QjYejPyPDLWbgBcFV+u/z3yDk+4cVbC2pi+4q1PoaH5N+9yps+ZhVAVj3kMZpsTJ112XGwGF6vrmbuDqaB+Rvq9wc2fNb1SFPrYgOJqofrBHvQufgTW5J2Gg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jrehkemper.de; spf=none smtp.mailfrom=jrehkemper.de; dkim=pass (2048-bit key) header.d=jrehkemper.de header.i=@jrehkemper.de header.b=XwqXkt2x; dkim=permerror (0-bit key) header.d=jrehkemper.de header.i=@jrehkemper.de header.b=yTYBaQon; arc=pass smtp.client-ip=85.215.255.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=jrehkemper.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=jrehkemper.de
-ARC-Seal: i=1; a=rsa-sha256; t=1754592989; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=LMq1OD3q5MaWC1TM6LuUTTyvjpB+GYARlQfZexQF93o/Q8tZwS0iAybqBiSfKiqu8L
-    sNXNxc4oIBmIb6+jBOsO2cVLpFeRFXDREYjRIyNQE64f54ibM19QD+PV1hoxzMpUn4gq
-    Z286WAdxNnfdNLM4zgEWYViJx8qLGfC0YT/Einqrb2eCsZq1Edi8rYEZ6inSUANZ7vKn
-    a0yzI8DtiKPiUDvwzSdktMSafNN1SY9m7zVej71SclciA+wvXPZVztfr9tD2SvEWqAD8
-    KBuTlnpyWcLeKUdkxoAiYNR+cgPb9wTiZAuZ1xndnn/SfgP3FhF9ogO3lKf2x8LlN/r0
-    RBlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1754592989;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=YzDBe2sAGz/FOk8/LhAxz0Yhd2qb63gxZFWAqhaO1/c=;
-    b=gbcHsLvYCk1LgbWSDRc5jDuFgo3FEKf1BJnpoktotxYqo6H754sZSh9BZhuZPbwOS+
-    qGG24w0W2H1dTJH6maNpMTRO/SjhsFYX6wEob4Mv8VqTraVxk06b9gzO/gWvXqaT8f5i
-    +8999MOKOB98pEM33KBPS+bp0dvtIys0bo/s0rZNjRSZZDiUUHc8yRRTCHzEfoUS9wOD
-    KHAPkK1VSt7TSXepNdtjaPXwDfq6VGuiFeZkafeAwmxsKtSRCSqWFJgP89tQkmgxf678
-    vzQS8Ld8oTxYmfqKoe3Em1vSEnBwsaXHRbNwP+5A+OXxSNq+tV7HcYQuFpMLoKNmKkmU
-    swzg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1754592989;
-    s=strato-dkim-0002; d=jrehkemper.de;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=YzDBe2sAGz/FOk8/LhAxz0Yhd2qb63gxZFWAqhaO1/c=;
-    b=XwqXkt2xmo6i0n686iOj+HzxbhD0JMG+HlKt5+pJozLDb+c+e6Jlj1kS63Q2L9Xk7/
-    ODuwNiHjrz4OlTAaFEWFa2MZedPHaJYhKv4JKQI0owPA2Hf5hnVlmhVpl/4UAnA5dz5l
-    ZDLQaUdeN+YzND7EyEHEivk3M2BLvCInjzIIO88BdtMgA/pqfjY9C+igBuWtSQ87NYxW
-    FSeqbbbef7BlBDG/E8cGHJLRwtcZxwvH9PKn9qt8fSpDaLxdM0NNXL26hbS3QhOGfDiC
-    5mFhKcwyxWtWFV5Lv02dzB+lld0Hm2CGdbSx7huvPAnB63vIJi3FSrMM72szxf2hyJ7B
-    dbJw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1754592989;
-    s=strato-dkim-0003; d=jrehkemper.de;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=YzDBe2sAGz/FOk8/LhAxz0Yhd2qb63gxZFWAqhaO1/c=;
-    b=yTYBaQonpKAl5cDqrrwFMGDyxt56LMjPhbgSgDpN9qr+MXhJglu1W/l7+gVp2AnIOR
-    K7Q1ihgsSobky5SC9GDg==
-X-RZG-AUTH: ":P3UXYUWlW/UH7OuSEKkxZGZB7CoZcv/KhgufPjlnnfm8Lzx4y5P5Ne1ZkYm0mIrMdSfG"
-Received: from localhost
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id y4e242177IuTSru
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 7 Aug 2025 20:56:29 +0200 (CEST)
-From: Jannik Rehkemper <jannik@jrehkemper.de>
-To: gregkh@linuxfoundation.org,
-	vivek6429.ts@gmail.com
-Cc: philipp.g.hortmann@gmail.com,
-	dan.carpenter@linaro.org,
-	hansg@kernel.org,
-	straube.linux@gmail.com,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jannik Rehkemper <jannik@jrehkemper.de>
-Subject: [PATCH] staging: rtl8723bs: fix checkpatch spaces preferred around that
-Date: Thu,  7 Aug 2025 20:54:37 +0200
-Message-ID: <20250807185436.853318-2-jannik@jrehkemper.de>
-X-Mailer: git-send-email 2.50.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D50C21FF55
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754592922; cv=none; b=RT0wcS71B39R+vW9awrV5j3LEItEVs/HqY3KYzYJNIEaccGj/6TiseqZmXPoMB8IyVLqsrlj0kTS+uHLzZFoy4AY9MKUGvZVJ1L31ukJcvHFDsknyok80Q2GinWJCNdxWHpJOYgznUpdMsVyrNB4Uuz39vni1nnpm51SXnSvzDs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754592922; c=relaxed/simple;
+	bh=MVjQL1zXfauCX4t2xdRj8XWjntGP7DD4nwGdRIzf4IU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G3r+IIhevyxj3OpUkKjSXkuTSprcqkYlpVfWojDI0RtmPbbEVJtuJ/02McrcNw/4RMwVH4Oj8nsh1v+QfnXQwMsmg9LPkoz+kRoN56zanwmOY8iMFVkCr1+8gPvl2vdEIx/EQgRvmKuvQWGt02DDoDtW3KOVmhDOJMFX/Qkt44E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cuhDNbmz; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 7 Aug 2025 20:55:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754592908;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1nfWmyFZRY9zQ+jGVSq6NzX3t8OI1k9HDXqbAxjG7D4=;
+	b=cuhDNbmz3Z0nYpkBkGpoUzXNsAYtj+Xfr9zrmgUbc5/AXvNQGse2IUl48JzBMoqjShV26Z
+	bF3MukeCKFPcR4QjhLQZE5vSP5YkC5gXJJmolnexi5PjSU7CDeIfXz2D/BgrRosdW/+s9R
+	tySpNVCLzCDYckLGjeIhLUueMmOX30I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Nicolas Schier <nicolas.schier@linux.dev>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Haoran lee <470658536@qq.com>, masahiroy@kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/mod/modpost: For CentOS 7/old binutils
+ compatibility
+Message-ID: <aJT2ieqflTEArKYm@fjasle.eu>
+References: <tencent_6FE857803A1AAB21B71853A2E89626ABA407@qq.com>
+ <20250807-elastic-transparent-kingfisher-8f7ada@l-nschier-aarch64>
+ <20250807162238.GB2145434@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ysAbS6gdazat17Eu"
+Content-Disposition: inline
+In-Reply-To: <20250807162238.GB2145434@ax162>
+X-Migadu-Flow: FLOW_OUT
 
-Added spaces where prefered or required by the checkpatch.pl script to
-adhere codestyle.
 
-Signed-off-by: Jannik Rehkemper <jannik@jrehkemper.de>
----
- .../staging/rtl8723bs/core/rtw_wlan_util.c    | 60 +++++++++----------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+--ysAbS6gdazat17Eu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-index 0c6072d08661..1def9758852c 100644
---- a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
-@@ -170,10 +170,10 @@ void get_rate_set(struct adapter *padapter, unsigned char *pbssrate, int *bssrat
- 
- void set_mcs_rate_by_mask(u8 *mcs_set, u32 mask)
- {
--	u8 mcs_rate_1r = (u8)(mask&0xff);
--	u8 mcs_rate_2r = (u8)((mask>>8)&0xff);
--	u8 mcs_rate_3r = (u8)((mask>>16)&0xff);
--	u8 mcs_rate_4r = (u8)((mask>>24)&0xff);
-+	u8 mcs_rate_1r = (u8)(mask & 0xff);
-+	u8 mcs_rate_2r = (u8)((mask >> 8) & 0xff);
-+	u8 mcs_rate_3r = (u8)((mask >> 16) & 0xff);
-+	u8 mcs_rate_4r = (u8)((mask >> 24) & 0xff);
- 
- 	mcs_set[0] &= mcs_rate_1r;
- 	mcs_set[1] &= mcs_rate_2r;
-@@ -267,21 +267,21 @@ inline void rtw_set_oper_ch(struct adapter *adapter, u8 ch)
- 		dvobj->on_oper_ch_time = jiffies;
- 
- #ifdef DBG_CH_SWITCH
--		cnt += scnprintf(msg+cnt, len-cnt, "switch to ch %3u", ch);
-+		cnt += scnprintf(msg + cnt, len - cnt, "switch to ch %3u", ch);
- 
- 		for (i = 0; i < dvobj->iface_nums; i++) {
- 			struct adapter *iface = dvobj->padapters[i];
- 
--			cnt += scnprintf(msg+cnt, len-cnt, " [%s:", ADPT_ARG(iface));
-+			cnt += scnprintf(msg + cnt, len - cnt, " [%s:", ADPT_ARG(iface));
- 			if (iface->mlmeextpriv.cur_channel == ch)
--				cnt += scnprintf(msg+cnt, len-cnt, "C");
-+				cnt += scnprintf(msg + cnt, len - cnt, "C");
- 			else
--				cnt += scnprintf(msg+cnt, len-cnt, "_");
-+				cnt += scnprintf(msg + cnt, len - cnt, "_");
- 			if (iface->wdinfo.listen_channel == ch && !rtw_p2p_chk_state(&iface->wdinfo, P2P_STATE_NONE))
--				cnt += scnprintf(msg+cnt, len-cnt, "L");
-+				cnt += scnprintf(msg + cnt, len - cnt, "L");
- 			else
--				cnt += scnprintf(msg+cnt, len-cnt, "_");
--			cnt += scnprintf(msg+cnt, len-cnt, "]");
-+				cnt += scnprintf(msg + cnt, len - cnt, "_");
-+			cnt += scnprintf(msg + cnt, len - cnt, "]");
- 		}
- 
- #endif /* DBG_CH_SWITCH */
-@@ -381,7 +381,7 @@ int is_client_associated_to_ap(struct adapter *padapter)
- 	pmlmeext = &padapter->mlmeextpriv;
- 	pmlmeinfo = &(pmlmeext->mlmext_info);
- 
--	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && ((pmlmeinfo->state&0x03) == WIFI_FW_STATION_STATE))
-+	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && ((pmlmeinfo->state & 0x03) == WIFI_FW_STATION_STATE))
- 		return true;
- 	else
- 		return _FAIL;
-@@ -392,7 +392,7 @@ int is_client_associated_to_ibss(struct adapter *padapter)
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
- 
--	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && ((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE))
-+	if ((pmlmeinfo->state & WIFI_FW_ASSOC_SUCCESS) && ((pmlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE))
- 		return true;
- 	else
- 		return _FAIL;
-@@ -431,7 +431,7 @@ void invalidate_cam_all(struct adapter *padapter)
- 
- 	spin_lock_bh(&cam_ctl->lock);
- 	cam_ctl->bitmap = 0;
--	memset(dvobj->cam_cache, 0, sizeof(struct cam_entry_cache)*TOTAL_CAM_ENTRY);
-+	memset(dvobj->cam_cache, 0, sizeof(struct cam_entry_cache) * TOTAL_CAM_ENTRY);
- 	spin_unlock_bh(&cam_ctl->lock);
- }
- 
-@@ -453,7 +453,7 @@ void _write_cam(struct adapter *padapter, u8 entry, u16 ctrl, u8 *mac, u8 *key)
- 			break;
- 		default:
- 			i = (j - 2) << 2;
--			val = (key[i] | (key[i+1] << 8) | (key[i+2] << 16) | (key[i+3] << 24));
-+			val = (key[i] | (key[i + 1] << 8) | (key[i + 2] << 16) | (key[i + 3] << 24));
- 			break;
- 		}
- 
-@@ -522,7 +522,7 @@ static bool _rtw_camid_is_gk(struct adapter *adapter, u8 cam_id)
- 	if (!(cam_ctl->bitmap & BIT(cam_id)))
- 		goto exit;
- 
--	ret = (dvobj->cam_cache[cam_id].ctrl&BIT6)?true:false;
-+	ret = (dvobj->cam_cache[cam_id].ctrl & BIT6) ? true : false;
- 
- exit:
- 	return ret;
-@@ -537,7 +537,7 @@ static s16 _rtw_camid_search(struct adapter *adapter, u8 *addr, s16 kid)
- 	for (i = 0; i < TOTAL_CAM_ENTRY; i++) {
- 		if (addr && memcmp(dvobj->cam_cache[i].mac, addr, ETH_ALEN))
- 			continue;
--		if (kid >= 0 && kid != (dvobj->cam_cache[i].ctrl&0x03))
-+		if (kid >= 0 && kid != (dvobj->cam_cache[i].ctrl & 0x03))
- 			continue;
- 
- 		cam_id = i;
-@@ -571,7 +571,7 @@ s16 rtw_camid_alloc(struct adapter *adapter, struct sta_info *sta, u8 kid)
- 
- 	mlmeinfo = &adapter->mlmeextpriv.mlmext_info;
- 
--	if ((((mlmeinfo->state&0x03) == WIFI_FW_AP_STATE) || ((mlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE))
-+	if ((((mlmeinfo->state & 0x03) == WIFI_FW_AP_STATE) || ((mlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE))
- 		&& !sta) {
- 		/* AP/Ad-hoc mode group key: static alloction to default key by key ID */
- 		if (kid > 3) {
-@@ -585,7 +585,7 @@ s16 rtw_camid_alloc(struct adapter *adapter, struct sta_info *sta, u8 kid)
- 		cam_id = kid;
- 	} else {
- 		int i;
--		u8 *addr = sta?sta->hwaddr:NULL;
-+		u8 *addr = sta ? sta->hwaddr : NULL;
- 
- 		if (!sta) {
- 			if (!(mlmeinfo->state & WIFI_FW_ASSOC_SUCCESS)) {
-@@ -792,7 +792,7 @@ void WMMOnAssocRsp(struct adapter *padapter)
- 			switch (ACI) {
- 			case 0x0:
- 				rtw_hal_set_hwreg(padapter, HW_VAR_AC_PARAM_BE, (u8 *)(&acParm));
--				acm_mask |= (ACM ? BIT(1):0);
-+				acm_mask |= (ACM ? BIT(1) : 0);
- 				edca[XMIT_BE_QUEUE] = acParm;
- 				break;
- 
-@@ -804,13 +804,13 @@ void WMMOnAssocRsp(struct adapter *padapter)
- 
- 			case 0x2:
- 				rtw_hal_set_hwreg(padapter, HW_VAR_AC_PARAM_VI, (u8 *)(&acParm));
--				acm_mask |= (ACM ? BIT(2):0);
-+				acm_mask |= (ACM ? BIT(2) : 0);
- 				edca[XMIT_VI_QUEUE] = acParm;
- 				break;
- 
- 			case 0x3:
- 				rtw_hal_set_hwreg(padapter, HW_VAR_AC_PARAM_VO, (u8 *)(&acParm));
--				acm_mask |= (ACM ? BIT(3):0);
-+				acm_mask |= (ACM ? BIT(3) : 0);
- 				edca[XMIT_VO_QUEUE] = acParm;
- 				break;
- 			}
-@@ -1170,7 +1170,7 @@ int rtw_check_bcn_info(struct adapter *Adapter, u8 *pframe, u32 packet_len)
- 		ht_info_infos_0 = 0;
- 	}
- 	if (ht_cap_info != cur_network->bcn_info.ht_cap_info ||
--	    ((ht_info_infos_0&0x03) != (cur_network->bcn_info.ht_info_infos_0&0x03))) {
-+	    ((ht_info_infos_0 & 0x03) != (cur_network->bcn_info.ht_info_infos_0 & 0x03))) {
- 		{
- 			/* bcn_info_update */
- 			cur_network->bcn_info.ht_cap_info = ht_cap_info;
-@@ -1238,12 +1238,12 @@ int rtw_check_bcn_info(struct adapter *Adapter, u8 *pframe, u32 packet_len)
- 		goto _mismatch;
- 
- 	if (encryp_protocol == ENCRYP_PROTOCOL_WPA || encryp_protocol == ENCRYP_PROTOCOL_WPA2) {
--		pbuf = rtw_get_wpa_ie(&bssid->ies[12], &wpa_ielen, bssid->ie_length-12);
-+		pbuf = rtw_get_wpa_ie(&bssid->ies[12], &wpa_ielen, bssid->ie_length - 12);
- 		if (pbuf && (wpa_ielen > 0)) {
- 			rtw_parse_wpa_ie(pbuf, wpa_ielen + 2, &group_cipher,
- 					 &pairwise_cipher, &is_8021x);
- 		} else {
--			pbuf = rtw_get_wpa2_ie(&bssid->ies[12], &wpa_ielen, bssid->ie_length-12);
-+			pbuf = rtw_get_wpa2_ie(&bssid->ies[12], &wpa_ielen, bssid->ie_length - 12);
- 
- 			if (pbuf && (wpa_ielen > 0))
- 				rtw_parse_wpa2_ie(pbuf, wpa_ielen + 2, &group_cipher,
-@@ -1630,7 +1630,7 @@ void process_addba_req(struct adapter *padapter, u8 *paddba_req, u8 *addr)
- 
- 	if (psta) {
- 		param = le16_to_cpu(preq->BA_para_set);
--		tid = (param>>2)&0x0f;
-+		tid = (param >> 2) & 0x0f;
- 
- 		preorder_ctrl = &psta->recvreorder_ctrl[tid];
- 
-@@ -1648,7 +1648,7 @@ void update_TSF(struct mlme_ext_priv *pmlmeext, u8 *pframe, uint len)
- 	pIE = pframe + sizeof(struct ieee80211_hdr_3addr);
- 	pbuf = (__le32 *)pIE;
- 
--	pmlmeext->TSFValue = le32_to_cpu(*(pbuf+1));
-+	pmlmeext->TSFValue = le32_to_cpu(*(pbuf + 1));
- 
- 	pmlmeext->TSFValue = pmlmeext->TSFValue << 32;
- 
-@@ -1674,14 +1674,14 @@ void adaptive_early_32k(struct mlme_ext_priv *pmlmeext, u8 *pframe, uint len)
- 	pIE = pframe + sizeof(struct ieee80211_hdr_3addr);
- 	pbuf = (__le32 *)pIE;
- 
--	tsf = le32_to_cpu(*(pbuf+1));
-+	tsf = le32_to_cpu(*(pbuf + 1));
- 	tsf = tsf << 32;
- 	tsf |= le32_to_cpu(*pbuf);
- 
- 	/* delay = (timestamp mod 1024*100)/1000 (unit: ms) */
- 	/* delay_ms = do_div(tsf, (pmlmeinfo->bcn_interval*1024))/1000; */
--	delay_ms = do_div(tsf, (pmlmeinfo->bcn_interval*1024));
--	delay_ms = delay_ms/1000;
-+	delay_ms = do_div(tsf, (pmlmeinfo->bcn_interval * 1024));
-+	delay_ms = delay_ms / 1000;
- 
- 	if (delay_ms >= 8)
- 		pmlmeext->bcn_delay_cnt[8]++;
--- 
-2.50.1
+On Thu, Aug 07, 2025 at 09:22:38AM -0700 Nathan Chancellor wrote:
+> On Thu, Aug 07, 2025 at 12:51:59PM +0200, Nicolas Schier wrote:
+> > On Tue, Jul 29, 2025 at 12:19:46AM +0800, Haoran lee wrote:
+> > >=20
+> > > Signed-off-by: Haoran Lee <470658536@qq.com>
+> > > ---
+> >=20
+> > Please note that empty commit descriptions will not be accepted.
+>=20
+> Agreed, a clear description of the issue (including an error message)
+> and logic of the fix is needed.
+>=20
+> > >  scripts/mod/modpost.c | 26 ++++++++++++++++++++++++++
+> > >  1 file changed, 26 insertions(+)
+> > >=20
+> > > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> > > index 5ca7c268294e..216647e2f301 100644
+> > > --- a/scripts/mod/modpost.c
+> > > +++ b/scripts/mod/modpost.c
+> > > @@ -30,6 +30,32 @@
+> > > =20
+> > >  #define MODULE_NS_PREFIX "module:"
+> > > =20
+> > > +/* CentOS 7 / old binutils compatibility */
+> >=20
+> > Since v6.16-rc1 the minimum binutils version has been lifted to=20
+> > binutils-2.30 [1].
+> >=20
+> > [1]: https://git.kernel.org/torvalds/c/118c40b7b50340bf7ff7e0adee8e3
+> >=20
+> > Which binutils version do you have at CentOS 7 ?
+>=20
+> These values come from glibc's elf.h if I understand correctly, so I
+> think this is more about compatibility with versions of glibc that do
+> not have these relocations defined, rather than binutils.
+>=20
+> It appears these were all added in glibc 2.18 over ten years ago [1],
+> whereas CentOS 7 appears to use glibc 2.17. There is some prior art to
+> adding elf.h constants to modpost.c when they are not defined by elf.h
+> but I am not sure if it is worth it in this case, as CentOS 7 has been
+> EOL for over a year at this point (and I suspect the binutils / GCC
+> version is already prohibitive for working on mainline).
 
+ah, look what I found: https://lore.kernel.org/linux-kbuild/20240704134812.=
+1511315-2-masahiroy@kernel.org/
+
+According repology.org, CentOS 7 brings gcc 4.8.5 while v6.16 requires at
+least gcc 8.  I am pretty sure that this patch will not be sufficient for
+re-adding support for CentOS 7 - I doubt that its worth the effort.
+
+Kind regards,
+Nicolas
+
+> If we do want to add these relocation defines, I think they should be
+> added in order of their numerical value. I do not have a strong opinion
+> either way.
+>=20
+> [1]: https://sourceware.org/git/?p=3Dglibc.git;a=3Dcommit;h=3D08cbd996d33=
+114ca50644d060fbe3a08260430fb
+
+
+
+--ysAbS6gdazat17Eu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmiU9nkACgkQB1IKcBYm
+Emms4xAAwFSb3/WymU6xlP3c7e7QsqLHZzhVoKmeT/Q0qmHyWf1tsDA9y28sW7Qa
+GHTGuZY/nUP2AJrpjBbw5CbMHxgavF1FCbQX4IczGSVRwFtGsWWH7cPpZig6Vepd
+A5PzOvNDVSe/6PMLRrOCISXSOwhosYpj13FyGuZF/N7zGWAsoBjbpV3XkWGj4Pty
+R+cJl8BAfGiOal53APC1s2akBU3TlQqVOfC8HXeRDu8Os0RZsvRElJzzmR6/JObv
+dYPbhq6qBU4SNLUXLm4c9Zs4kR/o8VkWrCE73XE/GkQ/DdSL0xI7Lcs9A7cSobFO
+twxjnPWyiUsYW1VpqI5tLNwATEaqxjI61zRIcmNdEaDFc+OoQV0mvOcl/FS2IaxW
+kHbX39mey/18DyLg9Tg+Z3cE2KXBAWKjerOSrTrKFKmE+uhaPLZDLYcnYsnf5Pni
+Lnf2p9SNHzvu+AdC1BLtunuxJzz1XKqvCEOELq+vPuvYupVReJfxBii66kZQPwjj
+nQUXJxgGg81w8ccwYd0/99dNmBMjTwHVI4gxMJt6moKdAl/AdRBIF6+6nG3VfUeC
+8qwbTn2R1ihkpyIhrJx5kMRSR5Lk7e3TNcff/QnnfDnmajVud8xIwGxRMAvHya5/
+fcujVPdxp5KMzDQCsOMyls+JBJwwcKCgMX9N9rqBGv9TsoYhfm0=
+=Kj/4
+-----END PGP SIGNATURE-----
+
+--ysAbS6gdazat17Eu--
 
