@@ -1,401 +1,185 @@
-Return-Path: <linux-kernel+bounces-759132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE430B1D8FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:27:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC54B1D8FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D773A7760
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5908D6250F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151A425B695;
-	Thu,  7 Aug 2025 13:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D113925A65A;
+	Thu,  7 Aug 2025 13:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Gn5mMbzy"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ma8PWo3b"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013038.outbound.protection.outlook.com [40.107.44.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50976233713;
-	Thu,  7 Aug 2025 13:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754573210; cv=none; b=lOTQWE5gx82N2c/JcdbZ7Uw1aMcnNItFwiERMAuq5aEEa4IAM4UB/vXn/hWo7kpoGmj2EP5LuI/oTIZF0QhytQUHJy55QhW6+/v/seFRYIZimVXlJE7iDWhwG0mUgoqqrzySCfON2kzVW70PjH76qIrrgD8wGgdZi7rVZx2v+FI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754573210; c=relaxed/simple;
-	bh=KAVhXMrcZbEZXDk69RtWXbUN9zoFR9b7YkdCbgO9hXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHu5E+ZBZXJICcgnpDb0cYDMib4NWR9XV7ev2UVfVzVLJRdA2wWIES4XSSX0A3JBPHQ9pdmYzkL6OIZK1M2s0YWSP2XzbFe5CKz1XBUiMH1ZP4u3fCYD1TmK8pYdY/Dc1diIjP1CIfSvkOD1keNvEvHH2tAqyRV73SsheEn7b6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Gn5mMbzy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5773hi2J017879;
-	Thu, 7 Aug 2025 13:26:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=9oVqEe
-	j9wiaQjQl3Hk9fdlTeBWzpOkwFCwpLKucQfvY=; b=Gn5mMbzyp8Y4jCK0TxCu/R
-	obNSQ3+tbhzPPinnlIF0Mn+g29VBbQ7h546MbVZBUCr5YgHDNEVA9+9FMLyyEXpD
-	Dki1GCUf+km7ofosPf9S1VTK3JjWnA2HDAG6R6geNFXxdkv4ZGtS8qlCgq59QrGK
-	01Ne3bIj5BLE5af3sLXy6KA8N64J42fxZzNCI2n2FVoxVGqK30yHbS0E84nZRrIF
-	ugIdr0Cw8E19HtjMt6Wo8n8tjqCb8qlxLCSot63Iskbdjhc3ugff0EGeX/W4OIhL
-	n38/LTl/6oQSh+Ro3bGQkUvpljvpW7zwUgUszCJzx0TRIoIUyVxpCPmm/h+V9YyA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63a6kv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:26:10 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577DMSoX002781;
-	Thu, 7 Aug 2025 13:26:09 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63a6kr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:26:09 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779chwF022668;
-	Thu, 7 Aug 2025 13:26:08 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwqgsk5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:26:08 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577DQ4H920120054
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 13:26:04 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 728AC20043;
-	Thu,  7 Aug 2025 13:26:04 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BF21D20040;
-	Thu,  7 Aug 2025 13:25:57 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.43.75.32])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  7 Aug 2025 13:25:57 +0000 (GMT)
-Date: Thu, 7 Aug 2025 18:55:54 +0530
-From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hbathini@linux.ibm.com, sachinpb@linux.ibm.com, venkat88@linux.ibm.com,
-        andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
-        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
-        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
-        naveen@kernel.org, maddy@linux.ibm.com, mpe@ellerman.id.au,
-        npiggin@gmail.com, memxor@gmail.com, iii@linux.ibm.com,
-        shuah@kernel.org
-Subject: Re: [bpf-next 2/6] bpf,powerpc: Implement PROBE_MEM32 pseudo
- instructions
-Message-ID: <aJSpYtksqwp4IVkX@linux.ibm.com>
-References: <20250805062747.3479221-1-skb99@linux.ibm.com>
- <20250805062747.3479221-3-skb99@linux.ibm.com>
- <c53da8e9-c15d-47b4-9422-4461f0b7c188@csgroup.eu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB0E25B1FC
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 13:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754573229; cv=fail; b=tuL9ncAsszmbAQj/fwdIN2SwWD70XZd87ZdmgqgqvcXNIi2pwyH71ZEQHwfI89Lf5a7UZkYFs2O8xUJqkIcPmfLEou1AymyzS3Sy9xRMvbBPiNuYl6Y+xJV91Lb4ajvjBSH8TZUXEvTLNDNseJEFWYp0QIgQ+MbsSeaIPhXoAk8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754573229; c=relaxed/simple;
+	bh=W6pQe7BbDu060LqbWOtxuaVd8QaxMXGJIabaUI4Y4fE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZnDT+Job+YhurdAQwx//B7y+MuPzfa5/8xPSquolE48q7xCeSU/lOpNgPoMAHWww+H4CyPg/VfHohbKLaS8qhvw94sbPbDbrRBE06uIE1/k7/krpSTY4SI4yLxl/HpwRRMi3jiPNNtO8/mw+BabVqHUroHIeJ8WZmopkclQq6/s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ma8PWo3b; arc=fail smtp.client-ip=40.107.44.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jh3BdIsCYK1u8Mpmh1D4MlIS0uar1tSpPOpBJHdLd1jKa7AdSQ8nWZqNOOVwgC0SJfSOnp5JFO0aFp2YeK6SXjSflvaE2AC6rYLfb/cl+whOJk1wj5ousUnssDDEWxTD8bM7p7406OmzBeiFZuKFS+9BASSCC7as8BrPy7L0wHuKvPrd22i9xcPRpL6717eoTaBcii7O9MXaXn00dMeKm59W9XGS+whbUvLTVG1AzqUia6UFGYAWdjR2F3H2i3ChvE/6aQeEmTVXy/Eld8A4ZrhB45PY/qtnduOZ+dllCD1Li1bZRm0iVRar4X750jznTSNcqnOvdAFagvnoRaR5Aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FZ1MsuARKMRjU3yo7tHDn+tzNptFT8sP4Qr9axEFxo4=;
+ b=YIBqWc+/kcAg9/uOIJBgedwWNyw7of7c3zI14ZaFdB1FCgaDuVMN15OOsmqfio5J7TZYcnratSHePNS88Pgd5GWmvboJlWQopWsOaZU3EwWFNRGeDwNJkr6kvqD28ZK4xPcGuIVsBoIfx0oUfoIyvY3O3+XrcKNzTUKRVISF2+aM7ZrzYaXHY7q1iF8kwAUFsoIy7hBkOcmsOFsPAg0f0xZAZ8qQwwbPlMgkZTxUQd8FxtDjSZTO1UHNn+IdyzbRh9l9yXHojC6oUyRiGU0Qo8S2/uDXBC3R3D50/4QclhxPH4RVSm5Z1NIpMiOhnluYp50SqEQjrmulsjR+IkVY8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FZ1MsuARKMRjU3yo7tHDn+tzNptFT8sP4Qr9axEFxo4=;
+ b=ma8PWo3bS0yEHso8IpYpFqBo9k9yik87KMm/3sZR1fSJktrzFB8DX0/JKdZlwxk/+LT18aCMqPamG9uuGxzUNfJr2cAslnWU2YrcnoIA2VeflhYrz6eqtOlTZVythdXG4JlbzVjA8xiJVQRkoWvNPO4PPd4+DiBCKzPZQez/i7c3qEWxpUcJm9bVEW7lCKdqYFvVazqDH8lYONaOk0UU2MRKiRxLsXgL75+j/fE3F9JtKw7t+KJdGQq1bCf4VYSRDu6o1tF6pUUHAvuSsxCz2Es493j58n4B2O9B5L2oFnmzaPrDRegO4oRrQAa0hAO05dVA0PJaynmfL+10IsqO2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ KU2PPF40E30BD52.apcprd06.prod.outlook.com (2603:1096:d18::490) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.16; Thu, 7 Aug 2025 13:27:02 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 13:27:02 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] virtio_balloon: Remove redundant __GFP_NOWARN
+Date: Thu,  7 Aug 2025 21:26:42 +0800
+Message-Id: <20250807132643.546237-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0007.jpnprd01.prod.outlook.com (2603:1096:405::19)
+ To SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c53da8e9-c15d-47b4-9422-4461f0b7c188@csgroup.eu>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEwOCBTYWx0ZWRfX/iEXtPdpd1Eg
- 6g8RAHUynDG+j2LPpWMxbIzSAYgHmLZvggunwNd6WdY+o0Wu753R+D/EkBzHkLgcFXeYDZh63bu
- dEX+o7bGxgP/RHj8OQACTVn9VeKaCdLiFMyhjL6tXCGD71VrG/9RZ0f8KtC2UqArdGmub2Df56i
- csCTLyOvMaDrYGuWrPprmXmiPoVLJ2cT8Z/9H33DQ1qKHfLcU84TvbOrY9CnQuWQDZtA7UD7wUq
- Dks7hllZM60dBYwizrhqO23ZgZ8qokvXL34P7JWRa56ouEVEl0SM9Lg4IM5SOCVYSWOHnnr6o67
- gwUPpkriSp5pFk8B4NFFnajkz4oLlGn3JwQO/YzKnlzt8QlKu0hcLxLogPY1t9+qcguLOPTO2Kx
- NXFwL5J2EjSoNnN1yrwdf2Xlwtb2xa1jOtt33mMZAYz7hfclqzNKEhsntzHqzWHPsM0ESi2H
-X-Proofpoint-GUID: X-mH1yrkqFE2hfomJdku2NBcgpwQzPab
-X-Authority-Analysis: v=2.4 cv=PoCTbxM3 c=1 sm=1 tr=0 ts=6894a972 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=_ttamy9umuXLLvATu48A:9
- a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
-X-Proofpoint-ORIG-GUID: vEDoO0hLNA0SKg24SpSXOqYsQmNfBFJT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 mlxscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508070108
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|KU2PPF40E30BD52:EE_
+X-MS-Office365-Filtering-Correlation-Id: de2c0044-79f7-4883-8840-08ddd5b61848
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iPrAjEehnO99QfLDBTWJUVzCUae79Ncw0x0TXEksKZO75Oaxl27NioWQHKZY?=
+ =?us-ascii?Q?0N2qkhKjFUJiP47a9FGMQxgCzcVtzJU1BKLhHl3bZIOHH8kmpyn4MGKBbvAl?=
+ =?us-ascii?Q?YHr0kOEvgO3iR4j/+ZUsylPJsr0GTZiQ89/wGra3ST3zQd0iq4cdzkrTnAYM?=
+ =?us-ascii?Q?Dr77RBI18lPGbFEDQ4inngB4DbD9TK6POIMhIyWpfo5uxsuTjEWie8l/9Jdf?=
+ =?us-ascii?Q?BB2pqL34VajJQael0wWqD/XsuwSlWSz/Vr2qYJAOVxwiK8QKv27Dnah2ZLxx?=
+ =?us-ascii?Q?NoGsP2wZNKpZ17nkTaGdbjc70nPDUDlu04fUMyIp1biOgaZxTEVF+HfbktfB?=
+ =?us-ascii?Q?dOs/q2STJxNU2dcbIPuF4MJFSezIYeuAexiiYXQThVU4wTw56RV18zclhbKg?=
+ =?us-ascii?Q?h1afSawQAAE9tr6o3nu0heRrKuq5w7ey9pEoACauJh1ZENOUBfJT5NnnwnPQ?=
+ =?us-ascii?Q?7iEjjuJv+BfokJn1z0ZaDJa1ynsmLbl2IxKE8NnW0cOkUFd9RVzpu1MhE3SB?=
+ =?us-ascii?Q?+yrEFYjeVd8I9CgZ5mW8waiHA0P+CrTtece1ciHO1unCXrY9yfIv1BYCCPch?=
+ =?us-ascii?Q?LXe/JtnR3qI9lEgAcKAG7mx2IMLeT1ZbFl5i4CA6WQXPqwG/q1MowJCYrj8Q?=
+ =?us-ascii?Q?2x3akNJoG7qBQWI0ZpR5Jq7MVvSWk6yZGZqqwSk8BlvG/mfjM4L6ctetaPC2?=
+ =?us-ascii?Q?3OnYzXjwZ89XpzWVcw8AB8EKG+BsdeaxZo7ScNZSo1REQe2Pghnoq4I8AEc3?=
+ =?us-ascii?Q?ipayREHs1V+sP0af+vsQhs+cNNHV7Tg/qXuX0VGL5Oy4zoMrN8ifb9PoM5tH?=
+ =?us-ascii?Q?CmnG4atjNqyzFChNgtlvEPDjxMxRd2aUkVut1BNCx3o6msw1GHFx6EOIlY+u?=
+ =?us-ascii?Q?AqW2xbmBKx96Kno6zZ3KKsp4+lqkatkaz9nIn0nRpGYumXfcdo0yNTgTv661?=
+ =?us-ascii?Q?C8NHQ5g5i6U5kqD9Azl4uRHY0hOgBqT/1LGmbQtfTaBBXEpRlwbJJ7HvEF8C?=
+ =?us-ascii?Q?/Dgdk4xjRTdtbnYU40XmIj6bFLf4D6HKbeMmrKqceaCwJCNdeeIuczRDDoBw?=
+ =?us-ascii?Q?0KqQM1l0CMVmdoI0kqojEiaakFpOGCaJKWG5+7wiHD+Dx9UPqxSEBIDi1K+l?=
+ =?us-ascii?Q?g1UD8YSzpWWvla1RbJWGptvg6KPy0KYyLNgfG6yVmS0Hzevk8QZArZO08dOU?=
+ =?us-ascii?Q?kHz52ikK4EecaksdOcTo5e7n2N17BvzYoAT9yiLeBFGpFa1QwJWWXSrSRsZh?=
+ =?us-ascii?Q?QkqyOl5hFXxGykPRVnUGZChuIlil2erg9PvOb74lYv3TLkIp1vHCZV9/HxD4?=
+ =?us-ascii?Q?TuIHs/5DAJfQuBD6Gt5NGDnB14Jt5KuKFJE+o/AAyYdy7wcx7l2yGHZwWnZ/?=
+ =?us-ascii?Q?1jq9XXaWnJBduryevq561hzyPSb5sy/fqs7QnoTF9keQyHEgYFwBtUqLkdoT?=
+ =?us-ascii?Q?ZSh+AUYOsRoDY6946G5D1QnRTUaa18NyOZHj/LeReK4BlQPq7S0XOQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xemXpL62oymnQWHU5EkWDMs9DA6OWy9KV2U7lTDD+vcxnbLnCdCH3NX4s6jp?=
+ =?us-ascii?Q?kvXEH1imqa75f07jZ0LLZoR2zuIHOmq+Kvp6A6BqB9whvsXWGFaIjt1TX4Jx?=
+ =?us-ascii?Q?eR5DRP/fntiN9VBvnVkBU9flb0uRyPadRh7uKxPYvrY+WWpk+UZCEpAkultd?=
+ =?us-ascii?Q?aW10fqhQazl/ucj0FRjui4m3CU6F5katlKyxLSkKnhpNElZiUloRpO6S8o6C?=
+ =?us-ascii?Q?u+POOnAuRxLdvBL6GcIh7qngTcjNRfOrL8U1ItdaeRRzQSQvNb63KelLbEp2?=
+ =?us-ascii?Q?Iw2bDpzt1unPOEcBqJpuYQHD7VMYqFUphwF9dWkEZaJ+oPpW0oyfTZW40l2H?=
+ =?us-ascii?Q?vjcQIJE1Rp41IKmbGdDjAKN3dgxAEG+BA/osQ538jlrJ+HJsUZIs5Ouo5Ybg?=
+ =?us-ascii?Q?jTXlGEf5tLMEDH8HoLx27+lh6INH6H5y+vS5Otbgyr3q5zGc/tEoVD9nwNKi?=
+ =?us-ascii?Q?nK12v5a/AlLVM2GHjH7J9sjGLUYITNujPY0v4Dxuo1YC+133W6Lzwgg3a5aB?=
+ =?us-ascii?Q?+t6EjzaiagNdZYB32SmWCxqjs6iqT8sydEc60zdx17xGSiUEc6akhOlG0day?=
+ =?us-ascii?Q?UXAK4TfHCEMTMDWJTtXaeqrLLTcmGOHsbH0e5uzh0Nm/dz0F6R9Bp9QUxy3o?=
+ =?us-ascii?Q?h3umTMdA5Kah379sJVorj9SwOQHXq8ubSl01ahCeDqeSdy+qGeDfaQoy5mv0?=
+ =?us-ascii?Q?Z0RyR071WlReFcES8XPGyg92XGOg/JzponLYQsZ2Jznd280LCwNksWly/SbM?=
+ =?us-ascii?Q?dam2sh5CC+jdmsfl4J52nrE4eP9RE8G8kb4T6SmzjL56DLc+t0OJ/jEGk4uO?=
+ =?us-ascii?Q?EeH+gb4B0qfdz0dV5N1teaiAA80/qO+WK0pS78oqagDcX2GwspMbpWyerj5d?=
+ =?us-ascii?Q?niUP5oNnWLWuIWUDN8xdAMCJC/bDDw45Id4eU0hTJM+yQApLrr9vf5TdLbSq?=
+ =?us-ascii?Q?BmT68iCyB6PoRlvmLqxaFmVDwP+4gnUj/K1DnR2gSlSookv69aJamHr5gDf0?=
+ =?us-ascii?Q?DJV7t1kf8pF0PoMr8ostcRR574NkN2jX0UlJE+OH+Dbcr8xW7VcWwwA/MzlX?=
+ =?us-ascii?Q?a9R445B5QgE2J6oI5yixKrfu5Akwe+m/8oHSQp/Ejy13jivBgde9ZO0QjbIQ?=
+ =?us-ascii?Q?T0jX+TN/bIG09YyUYUDdg7y+ApCyoopUENdyqnO+rfrJ/9cru1dssTzdiGlx?=
+ =?us-ascii?Q?eVMGeF6TKAWm0aXC20aWc2qlpOIF5agTA1984//yLdsakK7fU1VF60cy5uRP?=
+ =?us-ascii?Q?4k2+s8S4waPTj7mSS1f2mIN+trG/HTTqzkz1lg2jFZaivu490wNojb5ge63g?=
+ =?us-ascii?Q?lnrfnuoIvpK6nY0DZYFFiIyjIs2dtaDHcj+bszDfM+Ia6Fqm1lJNfkSOYn46?=
+ =?us-ascii?Q?m0D7zWdhaLHuXHTCv7nc4ggDpPsVNmrSC+rDQ4m2g3qTqFaxWDrL/D/bF8tE?=
+ =?us-ascii?Q?GWkvFDLvk0DJfdC4ospW4DirRWP9pIA0edXePblr5c9g6Y3Vo68dKfJPcAHL?=
+ =?us-ascii?Q?w4cU1sk2OmPmleywVXGfoOAi9kikudDE5f95ZReOaq9kCuHhLX1KzZAwEg5l?=
+ =?us-ascii?Q?eaLqcF5hMMq+lsAqtPzTBKm2u7n5df9J+Kh9dehg?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de2c0044-79f7-4883-8840-08ddd5b61848
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:27:02.6977
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uFnkIJUdqrj1+P5I+nx9L6q8wdk7au6X7tvO6p24SHiPVSn/zFyN8+TEznMijKrZt6JjR4MpGIqe4bo6Ve+EsQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KU2PPF40E30BD52
 
-On Tue, Aug 05, 2025 at 09:41:37AM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 05/08/2025 à 08:27, Saket Kumar Bhaskar a écrit :
-> > Add support for [LDX | STX | ST], PROBE_MEM32, [B | H | W | DW]
-> > instructions.  They are similar to PROBE_MEM instructions with the
-> > following differences:
-> > - PROBE_MEM32 supports store.
-> > - PROBE_MEM32 relies on the verifier to clear upper 32-bit of the
-> > src/dst register
-> > - PROBE_MEM32 adds 64-bit kern_vm_start address (which is stored in _R26
-> > in the prologue). Due to bpf_arena constructions such _R26 + reg +
-> > off16 access is guaranteed to be within arena virtual range, so no
-> > address check at run-time.
-> > - PROBE_MEM32 allows STX and ST. If they fault the store is a nop. When
-> > LDX faults the destination register is zeroed.
-> > 
-> > To support these on powerpc, we do tmp1 = _R26 + src/dst reg and then use
-> > tmp1 as the new src/dst register. This allows us to reuse most of the
-> > code for normal [LDX | STX | ST].
-> > 
-> > Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-> > ---
-> >   arch/powerpc/net/bpf_jit.h        |   5 +-
-> >   arch/powerpc/net/bpf_jit_comp.c   |  10 ++-
-> >   arch/powerpc/net/bpf_jit_comp32.c |   2 +-
-> >   arch/powerpc/net/bpf_jit_comp64.c | 108 ++++++++++++++++++++++++++++--
-> >   4 files changed, 114 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/net/bpf_jit.h b/arch/powerpc/net/bpf_jit.h
-> > index 4c26912c2e3c..2d095a873305 100644
-> > --- a/arch/powerpc/net/bpf_jit.h
-> > +++ b/arch/powerpc/net/bpf_jit.h
-> > @@ -161,9 +161,10 @@ struct codegen_context {
-> >   	unsigned int seen;
-> >   	unsigned int idx;
-> >   	unsigned int stack_size;
-> > -	int b2p[MAX_BPF_JIT_REG + 2];
-> > +	int b2p[MAX_BPF_JIT_REG + 3];
-> >   	unsigned int exentry_idx;
-> >   	unsigned int alt_exit_addr;
-> > +	u64 arena_vm_start;
-> >   };
-> >   #define bpf_to_ppc(r)	(ctx->b2p[r])
-> > @@ -201,7 +202,7 @@ int bpf_jit_emit_exit_insn(u32 *image, struct codegen_context *ctx, int tmp_reg,
-> >   int bpf_add_extable_entry(struct bpf_prog *fp, u32 *image, u32 *fimage, int pass,
-> >   			  struct codegen_context *ctx, int insn_idx,
-> > -			  int jmp_off, int dst_reg);
-> > +			  int jmp_off, int dst_reg, u32 code);
-> >   #endif
-> > diff --git a/arch/powerpc/net/bpf_jit_comp.c b/arch/powerpc/net/bpf_jit_comp.c
-> > index c0684733e9d6..35bfdf4d8785 100644
-> > --- a/arch/powerpc/net/bpf_jit_comp.c
-> > +++ b/arch/powerpc/net/bpf_jit_comp.c
-> > @@ -204,6 +204,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
-> >   	/* Make sure that the stack is quadword aligned. */
-> >   	cgctx.stack_size = round_up(fp->aux->stack_depth, 16);
-> > +	cgctx.arena_vm_start = bpf_arena_get_kern_vm_start(fp->aux->arena);
-> >   	/* Scouting faux-generate pass 0 */
-> >   	if (bpf_jit_build_body(fp, NULL, NULL, &cgctx, addrs, 0, false)) {
-> > @@ -326,7 +327,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
-> >    */
-> >   int bpf_add_extable_entry(struct bpf_prog *fp, u32 *image, u32 *fimage, int pass,
-> >   			  struct codegen_context *ctx, int insn_idx, int jmp_off,
-> > -			  int dst_reg)
-> > +			  int dst_reg, u32 code)
-> >   {
-> >   	off_t offset;
-> >   	unsigned long pc;
-> > @@ -354,7 +355,12 @@ int bpf_add_extable_entry(struct bpf_prog *fp, u32 *image, u32 *fimage, int pass
-> >   		(fp->aux->num_exentries * BPF_FIXUP_LEN * 4) +
-> >   		(ctx->exentry_idx * BPF_FIXUP_LEN * 4);
-> > -	fixup[0] = PPC_RAW_LI(dst_reg, 0);
-> > +	if ((BPF_CLASS(code) == BPF_LDX && BPF_MODE(code) == BPF_PROBE_MEM32) ||
-> > +	    (BPF_CLASS(code) == BPF_LDX && BPF_MODE(code) == BPF_PROBE_MEM))
-> > +		fixup[0] = PPC_RAW_LI(dst_reg, 0);
-> > +	else if (BPF_CLASS(code) == BPF_ST || BPF_CLASS(code) == BPF_STX)
-> > +		fixup[0] = PPC_RAW_NOP();
-> > +
-> 
-> Is there also a 'else' to consider ? If not, why not just a 'else' instead
-> of an 'if else' ?
-> 
-Thanks Chris, for pointing it out. Will try to accomodate this in v2.
-> >   	if (IS_ENABLED(CONFIG_PPC32))
-> >   		fixup[1] = PPC_RAW_LI(dst_reg - 1, 0); /* clear higher 32-bit register too */
-> > diff --git a/arch/powerpc/net/bpf_jit_comp32.c b/arch/powerpc/net/bpf_jit_comp32.c
-> > index 0aace304dfe1..3087e744fb25 100644
-> > --- a/arch/powerpc/net/bpf_jit_comp32.c
-> > +++ b/arch/powerpc/net/bpf_jit_comp32.c
-> > @@ -1087,7 +1087,7 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
-> >   				}
-> >   				ret = bpf_add_extable_entry(fp, image, fimage, pass, ctx, insn_idx,
-> > -							    jmp_off, dst_reg);
-> > +							    jmp_off, dst_reg, code);
-> >   				if (ret)
-> >   					return ret;
-> >   			}
-> > diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-> > index 489de21fe3d6..16e62766c757 100644
-> > --- a/arch/powerpc/net/bpf_jit_comp64.c
-> > +++ b/arch/powerpc/net/bpf_jit_comp64.c
-> > @@ -44,6 +44,7 @@
-> >   /* BPF register usage */
-> >   #define TMP_REG_1	(MAX_BPF_JIT_REG + 0)
-> >   #define TMP_REG_2	(MAX_BPF_JIT_REG + 1)
-> > +#define ARENA_VM_START  (MAX_BPF_JIT_REG + 2)
-> >   /* BPF to ppc register mappings */
-> >   void bpf_jit_init_reg_mapping(struct codegen_context *ctx)
-> > @@ -61,6 +62,8 @@ void bpf_jit_init_reg_mapping(struct codegen_context *ctx)
-> >   	ctx->b2p[BPF_REG_7] = _R28;
-> >   	ctx->b2p[BPF_REG_8] = _R29;
-> >   	ctx->b2p[BPF_REG_9] = _R30;
-> > +	/* non volatile register for kern_vm_start address */
-> > +	ctx->b2p[ARENA_VM_START] = _R26;
-> >   	/* frame pointer aka BPF_REG_10 */
-> >   	ctx->b2p[BPF_REG_FP] = _R31;
-> >   	/* eBPF jit internal registers */
-> > @@ -69,8 +72,8 @@ void bpf_jit_init_reg_mapping(struct codegen_context *ctx)
-> >   	ctx->b2p[TMP_REG_2] = _R10;
-> >   }
-> > -/* PPC NVR range -- update this if we ever use NVRs below r27 */
-> > -#define BPF_PPC_NVR_MIN		_R27
-> > +/* PPC NVR range -- update this if we ever use NVRs below r26 */
-> > +#define BPF_PPC_NVR_MIN		_R26
-> >   static inline bool bpf_has_stack_frame(struct codegen_context *ctx)
-> >   {
-> > @@ -170,10 +173,17 @@ void bpf_jit_build_prologue(u32 *image, struct codegen_context *ctx)
-> >   		if (bpf_is_seen_register(ctx, bpf_to_ppc(i)))
-> >   			EMIT(PPC_RAW_STD(bpf_to_ppc(i), _R1, bpf_jit_stack_offsetof(ctx, bpf_to_ppc(i))));
-> > +	if (ctx->arena_vm_start)
-> > +		EMIT(PPC_RAW_STD(bpf_to_ppc(ARENA_VM_START), _R1,
-> > +				 bpf_jit_stack_offsetof(ctx, bpf_to_ppc(ARENA_VM_START))));
-> > +
-> >   	/* Setup frame pointer to point to the bpf stack area */
-> >   	if (bpf_is_seen_register(ctx, bpf_to_ppc(BPF_REG_FP)))
-> >   		EMIT(PPC_RAW_ADDI(bpf_to_ppc(BPF_REG_FP), _R1,
-> >   				STACK_FRAME_MIN_SIZE + ctx->stack_size));
-> > +
-> > +	if (ctx->arena_vm_start)
-> > +		PPC_LI64(bpf_to_ppc(ARENA_VM_START), ctx->arena_vm_start);
-> >   }
-> >   static void bpf_jit_emit_common_epilogue(u32 *image, struct codegen_context *ctx)
-> > @@ -185,6 +195,10 @@ static void bpf_jit_emit_common_epilogue(u32 *image, struct codegen_context *ctx
-> >   		if (bpf_is_seen_register(ctx, bpf_to_ppc(i)))
-> >   			EMIT(PPC_RAW_LD(bpf_to_ppc(i), _R1, bpf_jit_stack_offsetof(ctx, bpf_to_ppc(i))));
-> > +	if (ctx->arena_vm_start)
-> > +		EMIT(PPC_RAW_LD(bpf_to_ppc(ARENA_VM_START), _R1,
-> > +				bpf_jit_stack_offsetof(ctx, bpf_to_ppc(ARENA_VM_START))));
-> > +
-> >   	/* Tear down our stack frame */
-> >   	if (bpf_has_stack_frame(ctx)) {
-> >   		EMIT(PPC_RAW_ADDI(_R1, _R1, BPF_PPC_STACKFRAME + ctx->stack_size));
-> > @@ -990,6 +1004,50 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
-> >   			}
-> >   			break;
-> > +		case BPF_STX | BPF_PROBE_MEM32 | BPF_B:
-> > +		case BPF_STX | BPF_PROBE_MEM32 | BPF_H:
-> > +		case BPF_STX | BPF_PROBE_MEM32 | BPF_W:
-> > +		case BPF_STX | BPF_PROBE_MEM32 | BPF_DW:
-> > +
-> > +			EMIT(PPC_RAW_ADD(tmp1_reg, dst_reg, bpf_to_ppc(ARENA_VM_START)));
-> > +
-> > +			ret = bpf_jit_emit_probe_mem_store(ctx, src_reg, off, code, image);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			ret = bpf_add_extable_entry(fp, image, fimage, pass, ctx,
-> > +						    ctx->idx - 1, 4, -1, code);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			break;
-> > +
-> > +		case BPF_ST | BPF_PROBE_MEM32 | BPF_B:
-> > +		case BPF_ST | BPF_PROBE_MEM32 | BPF_H:
-> > +		case BPF_ST | BPF_PROBE_MEM32 | BPF_W:
-> > +		case BPF_ST | BPF_PROBE_MEM32 | BPF_DW:
-> > +
-> > +			EMIT(PPC_RAW_ADD(tmp1_reg, dst_reg, bpf_to_ppc(ARENA_VM_START)));
-> > +
-> > +			if (BPF_SIZE(code) == BPF_W || BPF_SIZE(code) == BPF_DW) {
-> > +				PPC_LI32(tmp2_reg, imm);
-> > +				src_reg = tmp2_reg;
-> > +			} else {
-> > +				EMIT(PPC_RAW_LI(tmp2_reg, imm));
-> > +				src_reg = tmp2_reg;
-> > +			}
-> > +
-> > +			ret = bpf_jit_emit_probe_mem_store(ctx, src_reg, off, code, image);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			ret = bpf_add_extable_entry(fp, image, fimage, pass, ctx,
-> > +						    ctx->idx - 1, 4, -1, code);
-> > +			if (ret)
-> > +				return ret;
-> > +
-> > +			break;
-> > +
-> >   		/*
-> >   		 * BPF_STX ATOMIC (atomic ops)
-> >   		 */
-> > @@ -1142,9 +1200,10 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
-> >   				 * Check if 'off' is word aligned for BPF_DW, because
-> >   				 * we might generate two instructions.
-> >   				 */
-> > -				if ((BPF_SIZE(code) == BPF_DW ||
-> > -				    (BPF_SIZE(code) == BPF_B && BPF_MODE(code) == BPF_PROBE_MEMSX)) &&
-> > -						(off & 3))
-> > +				if ((BPF_SIZE(code) == BPF_DW && (off & 3)) ||
-> > +				    (BPF_SIZE(code) == BPF_B &&
-> > +				     BPF_MODE(code) == BPF_PROBE_MEMSX) ||
-> > +				    (BPF_SIZE(code) == BPF_B && BPF_MODE(code) == BPF_MEMSX))
-> >   					PPC_JMP((ctx->idx + 3) * 4);
-> >   				else
-> >   					PPC_JMP((ctx->idx + 2) * 4);
-> > @@ -1190,12 +1249,49 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
-> >   			if (BPF_MODE(code) == BPF_PROBE_MEM) {
-> >   				ret = bpf_add_extable_entry(fp, image, fimage, pass, ctx,
-> > -							    ctx->idx - 1, 4, dst_reg);
-> > +							    ctx->idx - 1, 4, dst_reg, code);
-> >   				if (ret)
-> >   					return ret;
-> >   			}
-> >   			break;
-> > +		/* dst = *(u64 *)(ul) (src + ARENA_VM_START + off) */
-> > +		case BPF_LDX | BPF_PROBE_MEM32 | BPF_B:
-> > +		case BPF_LDX | BPF_PROBE_MEM32 | BPF_H:
-> > +		case BPF_LDX | BPF_PROBE_MEM32 | BPF_W:
-> > +		case BPF_LDX | BPF_PROBE_MEM32 | BPF_DW:
-> > +
-> > +			EMIT(PPC_RAW_ADD(tmp1_reg, src_reg, bpf_to_ppc(ARENA_VM_START)));
-> > +
-> > +			switch (size) {
-> > +			case BPF_B:
-> > +				EMIT(PPC_RAW_LBZ(dst_reg, tmp1_reg, off));
-> > +				break;
-> > +			case BPF_H:
-> > +				EMIT(PPC_RAW_LHZ(dst_reg, tmp1_reg, off));
-> > +				break;
-> > +			case BPF_W:
-> > +				EMIT(PPC_RAW_LWZ(dst_reg, tmp1_reg, off));
-> > +				break;
-> > +			case BPF_DW:
-> > +				if (off % 4) {
-> > +					EMIT(PPC_RAW_LI(tmp2_reg, off));
-> > +					EMIT(PPC_RAW_LDX(dst_reg, tmp1_reg, tmp2_reg));
-> > +				} else {
-> > +					EMIT(PPC_RAW_LD(dst_reg, tmp1_reg, off));
-> > +				}
-> > +				break;
-> > +			}
-> > +
-> > +			if (size != BPF_DW && insn_is_zext(&insn[i + 1]))
-> > +				addrs[++i] = ctx->idx * 4;
-> > +
-> > +			ret = bpf_add_extable_entry(fp, image, fimage, pass, ctx,
-> > +						    ctx->idx - 1, 4, dst_reg, code);
-> > +			if (ret)
-> > +				return ret;
-> > +			break;
-> > +
-> >   		/*
-> >   		 * Doubleword load
-> >   		 * 16 byte instruction that uses two 'struct bpf_insn'
-> 
-Thanks for reviewing, Chris.
+Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
+made GFP_NOWAIT implicitly include __GFP_NOWARN.
 
-Regards,
-Saket
+Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
+(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
+up these redundant flags across subsystems.
+
+No functional changes.
+
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ drivers/virtio/virtio_balloon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index e299e18346a3..5734e24cb21a 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -205,7 +205,7 @@ static int virtballoon_free_page_report(struct page_reporting_dev_info *pr_dev_i
+ 	unsigned int unused, err;
+ 
+ 	/* We should always be able to add these buffers to an empty queue. */
+-	err = virtqueue_add_inbuf(vq, sg, nents, vb, GFP_NOWAIT | __GFP_NOWARN);
++	err = virtqueue_add_inbuf(vq, sg, nents, vb, GFP_NOWAIT);
+ 
+ 	/*
+ 	 * In the extremely unlikely case that something has occurred and we
+-- 
+2.34.1
+
 
