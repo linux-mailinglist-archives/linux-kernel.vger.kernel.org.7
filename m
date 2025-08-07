@@ -1,127 +1,165 @@
-Return-Path: <linux-kernel+bounces-759250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4071FB1DAFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:47:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9193CB1DB00
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 17:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62ACB179846
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:47:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 540BB7B34EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0332528F7;
-	Thu,  7 Aug 2025 15:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CF5262FE4;
+	Thu,  7 Aug 2025 15:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="riyxmJM4"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WFIrEp9B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BA2199939
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 15:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEA11C5D72;
+	Thu,  7 Aug 2025 15:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754581654; cv=none; b=cXhaf50yvD86WtyKwITNJFnp+g2aOIU6H0oqQYnSD/lHU9bulJ8yeb2pWsz3Vg+WU+A5UEglvmKWKs5RXq5p9dO7CBZaZ2s7xA7HVdFhQOamf1IJZe4T7PyzuAjei1vOO1XtIsM1zqKzIc6rH5piUTLqszcWt6j3f1P15SIG3Sw=
+	t=1754581733; cv=none; b=opy0MyqifwWzuO2fy4Ep1Wrmniub1rvwdvcwCPaC2knefr/17etDmCeB8udBI7vpWoeIxNFxvkRwiTlb8yyxMHewcs92t3gA2pvKY0lMgQvfkA1RoM3j2+HImD8a0V7/9oqphLVMJDzY9fkGh+kEap/qXC9vm6XcNDCPYQsIqSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754581654; c=relaxed/simple;
-	bh=Oxi5eWJU7s2SlcsiqYRHQ35AuzWO3Fb6jKMq/IZZdFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QS4YzhuGMY6P0J9555nALUe0UUdDLWMV5v+NwTFy9HwtOOb+Bsvr7eu7ioETHBRLdBSvwRtwc0LTTP1oMPTi8G+ls7aJIYs+D5g2yxW/CccJNvI4RfkrMaNaXRPDySTftyJ07esaobeavDpgtlVGztLIrgi+VfKu5Tow0ASb+RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=riyxmJM4; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6199bd724e1so316947eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 08:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754581651; x=1755186451; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B9w+Mm/aT3ZlnWlb1RihW8NtCtGTA4ZWXS9cDDH/vP8=;
-        b=riyxmJM4z0XrZ30wsE/HKcssC1KgKp4HhYHze9HkQVW96+jiE6ZYLcyFTyiM/cbjEv
-         jQ8Qe+e3wqvseyZALXPj/MkJTpgmMAaiGcShjsWYuzbHdHUdhY4AoW7LAGLwKTTiStc3
-         stUiZR9n/tYGLgHEocT0K4br+cr7XNJpUzZojK7mdLloHT2W6pm9BncZQjU13WDzdRUg
-         MVoDceZpD5wHnOGFhcdK48bTKDBfAuv16BNumER2WmXioOrHWTUuhs0sTPty3LHw/5yS
-         ErL7FXPZx4vvr3U4xCbKog1BJ4NisfawbN1Bm6lDH3mATToQN7lpZBq+Qy+nVuh6jfo3
-         lj6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754581651; x=1755186451;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B9w+Mm/aT3ZlnWlb1RihW8NtCtGTA4ZWXS9cDDH/vP8=;
-        b=fi+OEGAVeXwng/SFr6SorvqLDipROFru7Xo9duaEM0BO4l8pDj3qNfrI6Rs2KQTl3i
-         z4dDbN4pyDri94njUaq2G0AGjo4UOrd4vlwBXIcDy2LtH8gGXuPKC9x6UqXWS6264SP0
-         vDvcNx1LXcwjCAhK73KOnDwHwTwI8AXUftQKtBCyqbMlbinG8Srsre3BrnMNH9JElteU
-         4OrKAuzZXi3+UPlHycy6sDV6NFQsJhK+BS3lCskQ1beduLIaARGdXSM5PJoGHGItvZ1M
-         11tcTIBbUSIYUll3q4kd5jEpvPVel5OH5XJHZPMS5c1BV9XSBo6HK+grzuNG6QpL9rLE
-         baqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUih5SnsbEdNdGHt/ZacR98CbskO+FtUkTeUCctWJeM4RDyCaLI2uRREHFXPNZnfY/J4ejpZnTaIaYPZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4RYLtnjba/pr7nGUGB01ymS8gEnTtKdKyi5Qttik45mfAgYaz
-	pI/IYZH6CGn08DiTrtZJb2SOxrmZ0rDNYXkasbc7ECpvF+4KXnjkGokiD1UcYUPtzNglEHXmIet
-	9NZHc
-X-Gm-Gg: ASbGnctQsIuJURq0GiLfNiHe6G+5EMcHPI/lruJVilo++fcDcV3W5LAZJHQQJFUIKzQ
-	N/bFmjMPPqZfynuOlT3twh3Dfia0cW7W1snuTIygwbnc0JNh7PATP/zc8TnSrToSjrJ8h/nxFY2
-	e8vNDeQxy9zrlxxulouTD3LhSci25iNPKWqsmgAIGSOIYaAcvly0Bg2f8LOOGjN2nA363on7nmO
-	sUOpRg0dtsy8VsJdOY9RPTKLH6HghKQMoYTAgOrxwfAzxhH3pE1kGhBts2g2ktIXBNv8f3pj4F8
-	3+aNmjHHtA4ENXVLBvBh17gTg6GsMpwpfHFi/aLvFOrCSs7OzQiolyAn9LtasSufQShsDhQ2af6
-	vrjWNwX4o+4t8+mAezW22DlC2PnJRJQL0JNs6HCz2wpp2ewTWpOof3WyEzk5r50N0ypMooAsvty
-	o=
-X-Google-Smtp-Source: AGHT+IH/jQmRIhTYgqXAQJlVNBbxOFGgfnuGhsoGMmbqNIfHN5FNVDYK+7XSfSv6eCDpXoSo9hgqBA==
-X-Received: by 2002:a05:6820:822:b0:615:a91b:8e7b with SMTP id 006d021491bc7-61b7a7ab42fmr159249eaf.4.1754581651349;
-        Thu, 07 Aug 2025 08:47:31 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:ce54:d09f:5709:ac85? ([2600:8803:e7e4:1d00:ce54:d09f:5709:ac85])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-61984046280sm2642947eaf.30.2025.08.07.08.47.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 08:47:30 -0700 (PDT)
-Message-ID: <aef22644-2869-4888-8fc6-f14859917dcd@baylibre.com>
-Date: Thu, 7 Aug 2025 10:47:29 -0500
+	s=arc-20240116; t=1754581733; c=relaxed/simple;
+	bh=t2isChxoZmZHcVZWs0H8jL1QOW+h0x2ii/7YPK7/tqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXtEWlZvmZXATSq0B/xf2m3IGxDcU4vkWxs6mJbAfms0x0wHSR4A+PAILei47v+FaNC9KaCWTilmPwQg3vKHZDpVnRM53asZyxCoQqIkYFJKyWwnFATsnkpHhtO32QPlHwolW4pQeLcKQc5WFKUv6VTOsPLHB5tJIbLDZf1MGQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WFIrEp9B; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754581730; x=1786117730;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t2isChxoZmZHcVZWs0H8jL1QOW+h0x2ii/7YPK7/tqQ=;
+  b=WFIrEp9Bwy9S/5y66vDklufZD8AXvVoO2UiHcFylh7ZU18y16JKsB5i0
+   b+FRkxw5s67hYts9o6Pcxz2Dbbi4W+gCyk3XSwBrJnEbQcvogOSjVn0dP
+   JuBqwzR+Po2GF+iQZGCUg7KJgP+dJ4dpDHW472d0aqLB7NV1yg1q0So1Q
+   8G9Zpw5YIayAgdfY94hXXwmVahhKzxGe72EUyD0dowObsQ3KBufvuGTtX
+   NEbfG69L0jzUEwv/Y0RkIAuSbH25/ezhUhVj3UFpUyw4VMWjApeceTf47
+   +QyrGO+yNVo1DdXJV0HBTX+IFZJ2qv31A261CyXPx+dznr7WTOTVmoT/r
+   Q==;
+X-CSE-ConnectionGUID: KMCCa7RaR9+vtvFgaQ6heA==
+X-CSE-MsgGUID: Ua2hOEIkQtWUzvZIet7DTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="60767582"
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="60767582"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 08:48:50 -0700
+X-CSE-ConnectionGUID: BY5hG06OTfOL7QAQywpv+Q==
+X-CSE-MsgGUID: +Sf8aCMDT/OsviQNwBC+Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,271,1747724400"; 
+   d="scan'208";a="170353220"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 07 Aug 2025 08:48:48 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uk2rF-0002vu-1n;
+	Thu, 07 Aug 2025 15:48:45 +0000
+Date: Thu, 7 Aug 2025 23:48:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Denis Benato <benato.denis96@gmail.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
+	mario.limonciello@amd.com, "Luke D . Jones" <luke@ljones.dev>,
+	Denis Benato <benato.denis96@gmail.com>
+Subject: Re: [PATCH v10 2/8] platform/x86: asus-armoury: move existing
+ tunings to asus-armoury module
+Message-ID: <202508072334.8n7nwIG3-lkp@intel.com>
+References: <20250806135319.1205762-3-benato.denis96@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] iio: adc: ad799x: reference voltage capability
-To: Stefano Manni <stefano.manni@gmail.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, jic23@kernel.org, nuno.sa@analog.com,
- andy@kernel.org
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250807074850.130831-1-stefano.manni@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250807074850.130831-1-stefano.manni@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806135319.1205762-3-benato.denis96@gmail.com>
 
-On 8/7/25 2:48 AM, Stefano Manni wrote:
-> This patch series refactors 6b104e7895ab16b9b7f466c5f2ca282b87f661e8
-> in order to add the capability of the chip to have an
-> external reference voltage into the chip_info struct.
-> And so avoid ugly conditional checks on the chip id.
-> 
-> In addition the AD7994 is marked to have the external
-> reference voltage as well.
-> 
-> Changes in v2 compared to v1 [1]:
-> * remove has_vref from the chips that do not support it,
->   rely on the default false value
-> * remove useless message "Supplied reference not supported"
->   shown for all the chips with has_vref = false
-> * refactor check on regulator being err or zero
-> * add external reference to ad7994 as oneliner
-> 
-> [1] https://lore.kernel.org/linux-iio/20250806090158.117628-1-stefano.manni@gmail.com/
-> 
-> Stefano Manni (2):
->   iio: adc: ad799x: add reference voltage capability to chip_info
->   iio: adc: ad799x: add reference voltage to ad7994
-> 
->  drivers/iio/adc/ad799x.c | 30 +++++++++++++-----------------
->  1 file changed, 13 insertions(+), 17 deletions(-)
-> 
+Hi Denis,
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.16 next-20250807]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Denis-Benato/platform-x86-asus-wmi-export-symbols-used-for-read-write-WMI/20250806-215748
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250806135319.1205762-3-benato.denis96%40gmail.com
+patch subject: [PATCH v10 2/8] platform/x86: asus-armoury: move existing tunings to asus-armoury module
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250807/202508072334.8n7nwIG3-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508072334.8n7nwIG3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508072334.8n7nwIG3-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/platform/x86/asus-armoury.c:28:
+>> include/linux/platform_data/x86/asus-wmi.h:199:35: warning: 'asus_use_hid_led_dmi_ids' defined but not used [-Wunused-const-variable=]
+     199 | static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
+         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/asus_use_hid_led_dmi_ids +199 include/linux/platform_data/x86/asus-wmi.h
+
+ffb6ce7086ee2d Daniel Drake  2018-10-09  196  
+a720dee5e03923 Luke D. Jones 2024-07-13  197  /* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
+9d3b02ad9b1d1f Luke D. Jones 2025-08-06  198  #if IS_REACHABLE(CONFIG_ASUS_WMI) || IS_REACHABLE(CONFIG_HID_ASUS)
+a720dee5e03923 Luke D. Jones 2024-07-13 @199  static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
+a720dee5e03923 Luke D. Jones 2024-07-13  200  	{
+a720dee5e03923 Luke D. Jones 2024-07-13  201  		.matches = {
+a720dee5e03923 Luke D. Jones 2024-07-13  202  			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
+a720dee5e03923 Luke D. Jones 2024-07-13  203  		},
+a720dee5e03923 Luke D. Jones 2024-07-13  204  	},
+a720dee5e03923 Luke D. Jones 2024-07-13  205  	{
+a720dee5e03923 Luke D. Jones 2024-07-13  206  		.matches = {
+a720dee5e03923 Luke D. Jones 2024-07-13  207  			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
+a720dee5e03923 Luke D. Jones 2024-07-13  208  		},
+a720dee5e03923 Luke D. Jones 2024-07-13  209  	},
+a720dee5e03923 Luke D. Jones 2024-07-13  210  	{
+a720dee5e03923 Luke D. Jones 2024-07-13  211  		.matches = {
+a720dee5e03923 Luke D. Jones 2024-07-13  212  			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
+a720dee5e03923 Luke D. Jones 2024-07-13  213  		},
+a720dee5e03923 Luke D. Jones 2024-07-13  214  	},
+53078a736fbc60 Luke D. Jones 2025-01-11  215  	{
+53078a736fbc60 Luke D. Jones 2025-01-11  216  		.matches = {
+53078a736fbc60 Luke D. Jones 2025-01-11  217  			DMI_MATCH(DMI_PRODUCT_FAMILY, "ProArt P16"),
+53078a736fbc60 Luke D. Jones 2025-01-11  218  		},
+53078a736fbc60 Luke D. Jones 2025-01-11  219  	},
+a720dee5e03923 Luke D. Jones 2024-07-13  220  	{
+a720dee5e03923 Luke D. Jones 2024-07-13  221  		.matches = {
+a720dee5e03923 Luke D. Jones 2024-07-13  222  			DMI_MATCH(DMI_BOARD_NAME, "GA403U"),
+a720dee5e03923 Luke D. Jones 2024-07-13  223  		},
+a720dee5e03923 Luke D. Jones 2024-07-13  224  	},
+a720dee5e03923 Luke D. Jones 2024-07-13  225  	{
+a720dee5e03923 Luke D. Jones 2024-07-13  226  		.matches = {
+a720dee5e03923 Luke D. Jones 2024-07-13  227  			DMI_MATCH(DMI_BOARD_NAME, "GU605M"),
+a720dee5e03923 Luke D. Jones 2024-07-13  228  		},
+a720dee5e03923 Luke D. Jones 2024-07-13  229  	},
+a720dee5e03923 Luke D. Jones 2024-07-13  230  	{
+a720dee5e03923 Luke D. Jones 2024-07-13  231  		.matches = {
+a720dee5e03923 Luke D. Jones 2024-07-13  232  			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+a720dee5e03923 Luke D. Jones 2024-07-13  233  		},
+a720dee5e03923 Luke D. Jones 2024-07-13  234  	},
+a720dee5e03923 Luke D. Jones 2024-07-13  235  	{ },
+a720dee5e03923 Luke D. Jones 2024-07-13  236  };
+9d3b02ad9b1d1f Luke D. Jones 2025-08-06  237  #endif
+a720dee5e03923 Luke D. Jones 2024-07-13  238  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
