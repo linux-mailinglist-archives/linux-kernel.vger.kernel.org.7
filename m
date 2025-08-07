@@ -1,224 +1,284 @@
-Return-Path: <linux-kernel+bounces-759177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E868B1D9A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B11B1D9A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2576417C920
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:06:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCCA179B65
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C08C2627F9;
-	Thu,  7 Aug 2025 14:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77622638B2;
+	Thu,  7 Aug 2025 14:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OMfMyLcl"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013037.outbound.protection.outlook.com [52.101.127.37])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=rsg.ci.i.u-tokyo.ac.jp header.i=@rsg.ci.i.u-tokyo.ac.jp header.b="wHpaSRxJ"
+Received: from www3579.sakura.ne.jp (www3579.sakura.ne.jp [49.212.243.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF9819DF4D;
-	Thu,  7 Aug 2025 14:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754575579; cv=fail; b=DT+n86kwEdrxMIj7etZO2s0nIupqHCucxdW+NTOz6lgjD7a/GD/vVtosXY8is7EFUip9MIqr29GTpnxGZNZBx+XVjt6V62f3OkPtVpIM7HTSPSaVHDBcugEba85pK9Si9Agj4HMlttD+lC8YdBG29Fmu/WQFFGCLlTVQ4w1wacY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754575579; c=relaxed/simple;
-	bh=D6D4T/Z+20Oy5samUQBcuUyO282MaRhbptIx5WlitLQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZXzBke4kjsnq/LQ8F8oJq2b7HjFhVul2JzVWx1sCOC0VUCjCWcXQGUpUQOOlwOd/F95vY5geVIsg4sXRuwLhc4tPLIim/DCWodNwPWy8y/i3oH6wo7c9jvzY6ccdVWLm9qEe8FoB8o2YBej978FTw4+FFGJWwDSLrB16NBTRFEc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OMfMyLcl; arc=fail smtp.client-ip=52.101.127.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hovu1rPLYDvOPsxHZSi9AMUTBfZtzaIQhTw9+yb257DxFKl0Uv686MPzeghmoig90cZxBMVkPnoKIjFMYkLm5dHprJlgkwEkMVeWcVHGXajvGenDTq7QjCuEfOnW71PzBwoh0lSXYBO531r5sCxzKf2CL2J1UMwy/yMRrMDhnBXVDRaltVmT/OgO09LmMVkD4rdqoCXtVSDo8Y/YmQs8dwHeXVr7+qQk8EUdJXUIYXdP+b+CmMm3YUvzYoHunfCMq9xrERdUWfqZAQUJ3MSZge7yfMfcYrYMjjqxNAv71jvP41jH2ZZkvF3+J6S4L5JMo5Ah0DjJbTwFYVv5jj8CwQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bdx/umFsXow8/zUITIZQibtW3yERtLxrQaDAorCQBHE=;
- b=DZGPysi+t9JCbm7Fb6rgpj4OrD3CRsYEToMPMNIfVI+fEiBueIEI7gaMMa/63ZdtroKbvps1gdOfhPFayNwG2lNGtBVWf6f/D92Kd+61rjF3TUFcymPxKgnFeASYrJbksXd3knd8bXZDwOWQ7UUHc6Q1YvZo8XEL2magFNS5Hp9pCmvVqPqhDt/9qU90YsuZrB1LkhvMSWOixK6mH3y4+BN6T0yP2iQba+yZ20ue7Nt2GKK8Pr3oFL7d0cve2PaNJtwNpelFLAmKEaq2mkkSIjsEVhd5xfF9PB0Vp5bJfNM36HtF8iOQRb6W8UxkxbVv8OEte/K/uLHhGJYJbN91uQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bdx/umFsXow8/zUITIZQibtW3yERtLxrQaDAorCQBHE=;
- b=OMfMyLclZFzRdkRUq0390l+4vDJ6mb+ZwWc5cn315KsqbEosfiLqFSCzqPpAbfw8pGV5qRRSIFO84FsRQmLKVMkwVUh6a1LKcmnc5EbkE7VLjzN53zROtq+3pksmgKiNX4UFIZUwR7jjNBRD1cdGtQVLM409JVq2YFr7Y2NXlocQkETf34uGrMKzIi7R3M9uCoOzLT11Lu+/ZsxfwS6GaaDdaVCtSQTfGa/1Zvn1s3qN/l9tmUdM4s+/g7JZ4P7TKcpfIjKpB2H/HMHyJKslMUDMk7OXrrH0v8tYj8jtJZ7Nnf1YzkrAEqmfnekqQU//g4z4Z4Ow3eCzyguugjT3dw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- TY1PPFECF6DCA7C.apcprd06.prod.outlook.com (2603:1096:408::92f) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8943.29; Thu, 7 Aug 2025 14:06:12 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
- 14:06:12 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] selinux: Remove redundant __GFP_NOWARN
-Date: Thu,  7 Aug 2025 22:05:45 +0800
-Message-Id: <20250807140545.566615-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0131.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b6::13) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFBF19DF4D;
+	Thu,  7 Aug 2025 14:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.212.243.89
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754575655; cv=none; b=UKNyI8yM5PeJUsFL4rTy+Jh1zqP9L4bmNSJYGP1Bc4WgzH4Fopu5SxbLe24a/wKgt71B0TdUSIUMoudZay7Eziv/SBHUu6OHLNnBoSSPVoQ56iIfDMh0WsBLuW+HtzjJiIlutwIBnt0LFIXVP+IvyxVfp1N9HOwUNQykfkC/TX4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754575655; c=relaxed/simple;
+	bh=lO1HHJ3X/GaVGV+wIVWg2HeDSvmGUPWK0m6q9kblWCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hp3xO7EXMdv5f5Pn01YVL1ccm/9smgIDruCniANco8bJD8enVr70euWnRLeNK/gxlqD9ebEsXlQGk8ywjohuuqwX+A3n+KxGFYTsw/zXhvRFs5gKGf1Hfgwil9lldqg6syH9T5Sp4dhf0SkJcRGloA4LQ3+66isjND9PJj3G5kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rsg.ci.i.u-tokyo.ac.jp; spf=pass smtp.mailfrom=rsg.ci.i.u-tokyo.ac.jp; dkim=fail (0-bit key) header.d=rsg.ci.i.u-tokyo.ac.jp header.i=@rsg.ci.i.u-tokyo.ac.jp header.b=wHpaSRxJ reason="key not found in DNS"; arc=none smtp.client-ip=49.212.243.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rsg.ci.i.u-tokyo.ac.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rsg.ci.i.u-tokyo.ac.jp
+Received: from [192.168.10.111] (p865013-ipoe.ipoe.ocn.ne.jp [153.242.222.12])
+	(authenticated bits=0)
+	by www3579.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 577E6LlB000918
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 7 Aug 2025 23:06:21 +0900 (JST)
+	(envelope-from odaki@rsg.ci.i.u-tokyo.ac.jp)
+DKIM-Signature: a=rsa-sha256; bh=i7iE/7SX2gO6QBT2EKt/EXBIxabMBibRZNzbUQmAwfg=;
+        c=relaxed/relaxed; d=rsg.ci.i.u-tokyo.ac.jp;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250326; t=1754575582; v=1;
+        b=wHpaSRxJE1Sxz4oyxTr3tKGmb4Jo1/LL0dOVh4CtMYBkyuY+Nc4cEjg8BfgFfk4m
+         GlO70nONuAf3bqAlG1Pd0+yeAZ+VqxsQ4xOOWcoTdCNf1R84yWPWilddv5sdwqcE
+         8tXz1EgvguhKzp1Oov9ypd8bZrbUnf894eFL7lJK44ehZIuIwdvoCDQFWYfIQ5yP
+         Rv1KOztHFGVRzoq1XVKneYqnMNI/uKyCRICiylBQ9BrZWs+d0l5EXPuKuXM1+x0J
+         3C/diag1x4lfCjqlii+SyHolIsB654VtvOIUdWsYS8xm5QrPCihlgMHmMRVD6OGm
+         oY80A1gZ1HqxCNI2QdCwcw==
+Message-ID: <62494f54-13c6-4b9f-86a1-9a19ce58e91f@rsg.ci.i.u-tokyo.ac.jp>
+Date: Thu, 7 Aug 2025 23:06:21 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TY1PPFECF6DCA7C:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce6d04cf-eb70-4812-2993-08ddd5bb9107
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pPSZIbgI2pkEkTuuog7IL3CCqKkhR7EXtdfw4JC1l1kdwEG+6ogpDsNyPNqp?=
- =?us-ascii?Q?vZ179tDki+wbPG3KzGM5l0xpyhAUNQmkCCJNMWOfwY76pN+EEyO+q8abrWz4?=
- =?us-ascii?Q?e72z7AsQLfXslWO8ogGUiEgoodSb5aUYU454bwLAfW7f2u2y8JPAbkVAVK/H?=
- =?us-ascii?Q?z6xm6ObsFQezMP2KC28MQYxJsLbjlurKiTtZw09nwyNzst46eY9ZEZ35ltoT?=
- =?us-ascii?Q?EQJ/8WeZUJugcHBVJOZX4xgWXrL2YeYmdaQnsltOfGy9e9E/IK/dTKVPfi03?=
- =?us-ascii?Q?3/b8YZ85w1aVvniaXAo2K+M4VJLG08/WbaSCLk3rwmiDV3Z7ys2G0AiXxTMW?=
- =?us-ascii?Q?g8Iz9ICGvyXzp075m4NrjakF1xS1i1j0G1jwuGEcMe3REswlvRUa+lW+rH/9?=
- =?us-ascii?Q?PSRuOjcmlT7CNock0fC/7093nN6rwloW4D6F9Rx3Gx912YFd+2jfltIHLtoy?=
- =?us-ascii?Q?mqwhQav4+j1mofygQRORlcIGQ/oPxDCgcOQaXNradr0Ua1jbh+zQLKUcg6vX?=
- =?us-ascii?Q?mSrLJLNe0yzNnJHFuoqZ9hyTb4lml+a8xrNQCeLoriRFNuoaXpm6MQr66KP7?=
- =?us-ascii?Q?Laqmsxf5inl/NFNlmJMM2ww42c3QYwJ7xLK13bYFp0CWyYZL1EzfBcgGBobC?=
- =?us-ascii?Q?d9ahq1LvKGbhN+F9Jh+wXaFfeHKY8O8Iao6TAVUn+YqBNyYblj+3XqCqmNbo?=
- =?us-ascii?Q?z5LMDc4a/oPVElVDpx3i+HpG2Qm3LQcWjTKw2VPAVPNCKDOVs4PrjDw6sFDu?=
- =?us-ascii?Q?zUXQFjwdUbCdPCz4rRQMi0oM7L7InxlhN9pDySn49pK4+zb8x8vc3QlFyxFu?=
- =?us-ascii?Q?FHtyzYVn8TuJtPGvzl5PXbfvEOGOF5A+jMaLB56OP9pqffamQrnbdjYBNJhQ?=
- =?us-ascii?Q?PhzkKdueWjbelMWa5+c5ss14+Iu21RjE1uHK2LeGpJKNlJxhW/9h5Y1PP6wf?=
- =?us-ascii?Q?g4gKv5z1Lk2G4q8+Zq2i2GtIJLFFhT5QBYEy8XssNjsFX9YjLTza7XhatReX?=
- =?us-ascii?Q?R3yoYxlvZzAwJBOopRkoZ4vb6t5P9zzKki3DNGbRFHqGJM6M1y6xpwEKby5b?=
- =?us-ascii?Q?fY6l6XHKuG5G+h+u4JG6dmYD6YzUwAhlEQfUYICn4wUkxq/6ZnLQKrgJDtN4?=
- =?us-ascii?Q?2D6WCpi2XC6xN9iUMUztEkONOnvDLthBayVE/XLH0hCg03rJ5IFiSAH2g47q?=
- =?us-ascii?Q?R3BgyZcyUC6RfVyqSI8H6CPQ22kKa9urcrFCcm1LH/yhi5xb2AaXu6rX2sbG?=
- =?us-ascii?Q?NNBKo3/jqQANzk9sIvEK9XXa/gr21NIATF4AsO7GhqO3McBs/QIazTKtEdXy?=
- =?us-ascii?Q?TN0dVag/JxMtWsHNHDfa+zPW4oQyMMoSVNwdoVPqKmRoX3/SE81fRkO1dE0J?=
- =?us-ascii?Q?tTek4Z6pwhJihPB3EHBMWRxJIr5DdeUkIZ8Kp8b0u7eb3eu/ysW0rOAHJJxm?=
- =?us-ascii?Q?+xmGptqTjZ3WegSf1JJttSA1vkPm8z6kIXAs4lDzruW/WsQZp7KIeQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Inxw5e8sxFA+YdmTggMmczT0Rpj1/eHTozJdp8rvmRoFwUMQqPywp8mE1AUB?=
- =?us-ascii?Q?3rqJEzFTQdt0p26av86RJ4avLYK838vISIkGnFCRR7pHFDqtkJ40lLfwPd7f?=
- =?us-ascii?Q?094PGguqWBmCclHf+P3FxcHdorUA6is9M9mF3DVgziVs91kWoMydU9xHxJzF?=
- =?us-ascii?Q?W0Y8fstb5ZJQUVQ4qmFhtNg1lAOdh8Tpsl9zLFseX0qzhfoXzDZ5WzF4uf6+?=
- =?us-ascii?Q?oVIIrL5qOqFHdoSXuPVsagprf6HSnGHq2PPTlfs1LRZHPyizB1gbKZTLpWFM?=
- =?us-ascii?Q?pcjsDuAkA+qCIgLIlbooEm21IK22wdrOrRhxtKcQ9kzw6i+wRWgGtLO8a37G?=
- =?us-ascii?Q?sz5+rdmkwtDG8r73BzJ1cCPBWIhy/HLTW4+Tb78dO6zdHaz0bw6QTfoTklGX?=
- =?us-ascii?Q?7p3wU3ZWWYFKcckJdC4bme2wmwOalqSHXPrRe13oHe3IJUMFwcmiI+13BDHP?=
- =?us-ascii?Q?540fjONHQM7nv0IMhKKOFs3XdN/lfgawFOrjr3nZUPz3/NSXMGEwZTH4O9qJ?=
- =?us-ascii?Q?IZ4zQeOyMZGbAyZx8gIjmdMKGMdR08DZIZdekcX7nm2RVuO5RerQ4NNniX13?=
- =?us-ascii?Q?A7yXBJlRzuVRYxRWWT3COPjO0hSx7Kw+Lz0mvxQvu7ynocohpVZ10M8XxIQ1?=
- =?us-ascii?Q?PjnoXFlNsA7d16mH280DGr5xO9mSVo/Q42emcwNzLFAGju6vbyPHJf5GU2J5?=
- =?us-ascii?Q?78Z9bISIho0eicWAjK1kCbinfOlRuE9qaJ8a78aZK0PjDk641MU0Z/v6GPzf?=
- =?us-ascii?Q?UnR2r1ugn3fqFEKeDExc2zOmk/lkC4IrhwsuFmTNhW7NxozcglJyRlR35MLa?=
- =?us-ascii?Q?j4T+1hCZX3DWvxMLpxpCSXMoeBcqceBasfIJAqlvzcoQuiKs1dwr2RcSe3qa?=
- =?us-ascii?Q?mwXbfcZmDYIJ45bWKOmtXw6S8txdGfEkQEsj0q6WP2gMENcjgA1rMxsIHj2h?=
- =?us-ascii?Q?M91BaseByLtTgrXg6AEZZDLS5N/oFCuydA8B3OCeYsIPzfi++hycOFHoXo58?=
- =?us-ascii?Q?1Z72hh9E7IKNf6gF/fbc5Tt0YghhmDeWvarKqYuVBKvvmqlff5NtLqW7I8ql?=
- =?us-ascii?Q?3UBHB29Rn6www1FqJYf5y/9cZV4zx9aJyGURCSbdHSSDC1bz4DQSnRHv80mZ?=
- =?us-ascii?Q?2zr0TSKREr39BSyJcr+oLKGOZz/6vBB0P23L12bgtgiliYVux5y2jvfaTClF?=
- =?us-ascii?Q?rqlzonr/bVL70NeT+GXLfYBPcetqF8YeaGXb0sYUXyxcoKE/ojs2pB0fU5xQ?=
- =?us-ascii?Q?VmBhrqIguafinjUCPat1QJTDwuGrRxclpOQ5F0KKenZ0AXuufrkNIJxQRqu3?=
- =?us-ascii?Q?CZFbM//J3nWh9HWwj4GNIcXNvRaDQJ05dmhAIx0Lhm5TR9tg28rCHWkgjlO1?=
- =?us-ascii?Q?0EibsTL+0UUqrXn/0XKkv7EueeDLQTXxCGBQGRxWv0GtHWapdDs4Y2ywrgO2?=
- =?us-ascii?Q?Cgki/ptzH7KqEOHSI6tOj8gNlEUYuTcTzNdxnjrvmi02VHjoX+4hHKZIQQTC?=
- =?us-ascii?Q?exJgDoGnZTxchSIWqXgoEHRzhx5LC3GjP54BoRyoe5T05SYmBAvPy297HWVn?=
- =?us-ascii?Q?Vg8yBE4KlPP1/9ZW0nZofxs69v6T0XV6txc+0ZBB?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce6d04cf-eb70-4812-2993-08ddd5bb9107
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 14:06:12.7254
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BDkJyTVenPhsUXCaAVLqUm4+QbUXyyFHKDOpEoY3crLwucSVysc3IHLew335aqjIPL5RpwRDKlCA+wU0TPJ2gQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PPFECF6DCA7C
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/2] KVM: arm64: PMU: Introduce
+ KVM_ARM_VCPU_PMU_V3_COMPOSITION
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zenghui Yu
+ <yuzenghui@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, devel@daynix.com, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20250806-hybrid-v2-0-0661aec3af8c@rsg.ci.i.u-tokyo.ac.jp>
+ <20250806-hybrid-v2-1-0661aec3af8c@rsg.ci.i.u-tokyo.ac.jp>
+ <aJOO99xUrhsrvLwl@linux.dev>
+ <276fdfb8-f1ca-44ad-b310-a811684b265a@rsg.ci.i.u-tokyo.ac.jp>
+ <aJQJdElbZJ6KzQxD@linux.dev>
+Content-Language: en-US
+From: Akihiko Odaki <odaki@rsg.ci.i.u-tokyo.ac.jp>
+In-Reply-To: <aJQJdElbZJ6KzQxD@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
-made GFP_NOWAIT implicitly include __GFP_NOWARN.
+On 2025/08/07 11:03, Oliver Upton wrote:
+> On Thu, Aug 07, 2025 at 03:24:43AM +0900, Akihiko Odaki wrote:
+>> On 2025/08/07 2:20, Oliver Upton wrote:
+>>> Hi Akihiko,
+>>>
+>>> This is an unreasonably large patch that needs to be broken down into
+>>> smaller patches, ideally one functional change per patch. We need this
+>>> even for an RFC for the sake of reviews.
+>>>
+>>> On Wed, Aug 06, 2025 at 06:09:54PM +0900, Akihiko Odaki wrote:
+>>>> +static u64 kvm_pmu_get_pmc_value(struct kvm_vcpu *vcpu, u8 idx)
+>>>>    {
+>>>> -	struct kvm_vcpu *vcpu = kvm_pmc_to_vcpu(pmc);
+>>>> +	struct kvm_pmc *pmc = *kvm_vcpu_idx_to_pmc(vcpu, idx);
+>>>>    	u64 counter, reg, enabled, running;
+>>>> +	unsigned int i;
+>>>> -	reg = counter_index_to_reg(pmc->idx);
+>>>> +	reg = counter_index_to_reg(idx);
+>>>>    	counter = __vcpu_sys_reg(vcpu, reg);
+>>>>    	/*
+>>>>    	 * The real counter value is equal to the value of counter register plus
+>>>>    	 * the value perf event counts.
+>>>>    	 */
+>>>> -	if (pmc->perf_event)
+>>>> -		counter += perf_event_read_value(pmc->perf_event, &enabled,
+>>>> -						 &running);
+>>>> +	if (pmc)
+>>>> +		for (i = 0; i < pmc->nr_perf_events; i++)
+>>>> +			counter += perf_event_read_value(pmc->perf_events[i],
+>>>> +							 &enabled, &running);
+>>>
+>>> I'm concerned that this array of events concept you're introducing is
+>>> going to be error-prone. An approach that reallocates a new PMU event in
+>>> the case of a vCPU migrating to a new PMU implementation would be
+>>> desirable.
+>>
+>> I avoided allocation at migration because I was worried with disabled
+>> preemption. perf_event_create_kernel_counter() internally takes a mutex so
+>> it cannot be used if preemption is disabled.
+>>
+>> I wonder if it is guaranteed that kvm_arch_vcpu_load() executes with
+>> preemption. If so, I can add a hook there to call
+>> perf_event_create_kernel_counter().
+> 
+> You don't need to allocate the event at vcpu_load(). The only guarantee
+> we need is that an event has been attached to the PMC prior to entering
+> the guest, for which the KVM_REQ_* infrastructure is quite useful.
 
-Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
-(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
-up these redundant flags across subsystems.
+I see that kvm_arch_vcpu_load() makes a KVM_REQ_RECORD_STEAL request. 
+Indeed I can add another request for PMC handling.
 
-No functional changes.
+I'm a bit concerned with the overhead of allocation, but perhaps 
+migration between heterogeneous cores is rare.
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- security/selinux/avc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+>>>
+>>>> +static void reset_sample_period(struct perf_event *perf_event)
+>>>> +{
+>>>> +	struct kvm_pmc **pmc = perf_event->overflow_handler_context;
+>>>> +	struct kvm_vcpu *vcpu = kvm_pmc_to_vcpu(pmc);
+>>>> +	struct arm_pmu *cpu_pmu = to_arm_pmu(perf_event->pmu);
+>>>> +	u64 period;
+>>>> +
+>>>> +	cpu_pmu->pmu.stop(perf_event, PERF_EF_UPDATE);
+>>>> +
+>>>> +	/*
+>>>> +	 * Reset the sample period to the architectural limit,
+>>>> +	 * i.e. the point where the counter overflows.
+>>>> +	 */
+>>>> +	period = compute_period(pmc, kvm_pmu_get_pmc_value(vcpu, (*pmc)->idx));
+>>>> +
+>>>> +	local64_set(&perf_event->hw.period_left, 0);
+>>>> +	perf_event->attr.sample_period = period;
+>>>> +	perf_event->hw.sample_period = period;
+>>>> +
+>>>> +	cpu_pmu->pmu.start(perf_event, PERF_EF_RELOAD);
+>>>> +}
+>>>
+>>> No, we can't start calling into the internal driver interfaces. The fact
+>>> that we have a pointer to the PMU is an ugly hack and shouldn't be used
+>>> like this.
+>>
+>> This function was extracted from kvm_pmu_perf_overflow() and is not a new
+>> addition (which should have been clear if I would have split the patch as
+>> you noted).
+> 
+> Yuck, then forgive my whining.
+> 
+>> I thought of replacing it with perf_event_period(), but there is a catch: it
+>> returns -EINVAL if the 63th bit of the sample period number is set. Perhaps
+>> we can just specify ((1ULL << 63) - 1) if the sample period is going to be
+>> so long, but I conservatively avoided that. I can change it if you prefer
+>> that way or have an alternative idea.
+> 
+> Let's keep it as-is then. Sorry about the noise.
+> 
+>>> Can we just special-case the fixed CPU cycle counter to use
+>>> PERF_TYPE_HARDWARE / PERF_COUNT_HW_CPU_CYCLES? That _should_ have the
+>>> intended effect of opening an event on the PMU for this CPU.
+>>
+>> I have an impression that perhaps this emulation can be more generic by
+>> converting eventsel to PERF_COUNT_HW_* numbers with armv8_pmuv3_perf_map in
+>> drivers/perf/arm_pmuv3.c, but it is not in scope of this change. The current
+>> code is sufficient for now.
+> 
+> The only cross-PMU events we will support are the fixed counters, my
+> strong preference is that we do not reverse-map architectural events to
+> generic perf events for all counters.
 
-diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-index 4b4837a20225..c70053f2806e 100644
---- a/security/selinux/avc.c
-+++ b/security/selinux/avc.c
-@@ -293,26 +293,26 @@ static struct avc_xperms_decision_node
- 	struct extended_perms_decision *xpd;
- 
- 	xpd_node = kmem_cache_zalloc(avc_xperms_decision_cachep,
--				     GFP_NOWAIT | __GFP_NOWARN);
-+				     GFP_NOWAIT);
- 	if (!xpd_node)
- 		return NULL;
- 
- 	xpd = &xpd_node->xpd;
- 	if (which & XPERMS_ALLOWED) {
- 		xpd->allowed = kmem_cache_zalloc(avc_xperms_data_cachep,
--						GFP_NOWAIT | __GFP_NOWARN);
-+						GFP_NOWAIT);
- 		if (!xpd->allowed)
- 			goto error;
- 	}
- 	if (which & XPERMS_AUDITALLOW) {
- 		xpd->auditallow = kmem_cache_zalloc(avc_xperms_data_cachep,
--						GFP_NOWAIT | __GFP_NOWARN);
-+						GFP_NOWAIT);
- 		if (!xpd->auditallow)
- 			goto error;
- 	}
- 	if (which & XPERMS_DONTAUDIT) {
- 		xpd->dontaudit = kmem_cache_zalloc(avc_xperms_data_cachep,
--						GFP_NOWAIT | __GFP_NOWARN);
-+						GFP_NOWAIT);
- 		if (!xpd->dontaudit)
- 			goto error;
- 	}
-@@ -340,7 +340,7 @@ static struct avc_xperms_node *avc_xperms_alloc(void)
- {
- 	struct avc_xperms_node *xp_node;
- 
--	xp_node = kmem_cache_zalloc(avc_xperms_cachep, GFP_NOWAIT | __GFP_NOWARN);
-+	xp_node = kmem_cache_zalloc(avc_xperms_cachep, GFP_NOWAIT);
- 	if (!xp_node)
- 		return xp_node;
- 	INIT_LIST_HEAD(&xp_node->xpd_head);
-@@ -495,7 +495,7 @@ static struct avc_node *avc_alloc_node(void)
- {
- 	struct avc_node *node;
- 
--	node = kmem_cache_zalloc(avc_node_cachep, GFP_NOWAIT | __GFP_NOWARN);
-+	node = kmem_cache_zalloc(avc_node_cachep, GFP_NOWAIT);
- 	if (!node)
- 		goto out;
- 
--- 
-2.34.1
+I wonder if there is a benefit to special case PERF_COUNT_HW_CPU_CYCLES 
+then; the current logic of kvm_map_pmu_event() looks sufficient for me.
 
+> 
+>>> I'm not sure there's much value in preventing the user from configuring
+>>> the PMU event filter. Even in the case of the fixed CPU cycle counter we
+>>> allow userspace to filter the event.
+>>
+>> It is possible to configure the PMU event filter, but it needs to be done
+>> after setting the attribute. This behavior is aligned with
+>> KVM_ARM_VCPU_PMU_V3_SET_PMU.
+> 
+> That's fine then, I missed that detail.
+> 
+>> They are mutually exclusive and the latest configuration takes effect.
+>>
+>> If you set SET_PMU after COMPOSITION, SET_PMU will take effect.
+>> If you set COMPOSITION after SET_PMU, COMPOSITION will take effect.
+>>
+>> I'll note that in the documentation.
+> 
+> This isn't what I meant. What I mean is that userspace either can use
+> the SET_PMU ioctl or the COMPOSITION ioctl. Once one of them has been
+> used the other ioctl returns an error.
+> 
+> We're really bad at getting ioctl ordering / interleaving right and
+> syzkaller has a habit of finding these mistakes. There's zero practical
+> value in using both of these ioctls on the same VM, let's prevent it.
+
+The corresponding RFC series for QEMU uses KVM_ARM_VCPU_PMU_V3_SET_PMU 
+to probe host PMUs, and falls back to KVM_ARM_VCPU_PMU_V3_COMPOSITION if 
+none covers all CPUs. Switching between SET_PMU and COMPOSITION is 
+useful during such probing.
+
+COMPOSITION is designed to behave like just another host PMU that is set 
+with SET_PMU. SET_PMU allows setting a different host PMU even if 
+SET_PMU has already been invoked so it is also allowed to set a host PMU 
+even if COMPOSITION has already been invoked, maintaining consistency 
+with non-composed PMUs.
+
+You can find the QEMU patch at:
+https://lore.kernel.org/qemu-devel/20250806-kvm-v1-1-d1d50b7058cd@rsg.ci.i.u-tokyo.ac.jp/
+
+(look up KVM_ARM_VCPU_PMU_V3_SET_PMU for the probing code)
+
+> 
+>>>> +	case KVM_ARM_VCPU_PMU_V3_COMPOSITION:
+>>>> +		return kvm_arm_pmu_v3_set_pmu_composition(vcpu);
+>>>
+>>> I'd prefer naming this something like 'KVM_ARM_VCPU_PMU_V3_FIXED_COUNTERS_ONLY'.
+>>> We will have the fixed instruction counter eventually which is another
+>>> event we could potentially provide system-wide.
+>>
+>> The design decision to expose the cycle counter is driven by the motivation
+>> to satisfy FEAT_PMU for the guest rather than the host capability.
+>>
+>> When we implement FEAT_PMUv3_ICNTR in the future, I think we will need to
+>> add KVM_ARM_VCPU_PMU_V3_COMPOSITION_ICNTR or something. The resultig
+>> emulated PMU will work only on host CPUs that have instruction counters; a
+>> host CPU may lack one because it doesn't implement FEAT_PMUv3_ICNTR or has a
+>> third-party PMU like apple-m1-cpu-pmu (this particular PMU has an
+>> instruction counter fortunately).
+> 
+> No, this is at odds with the way we handle CPU features in KVM/arm64.
+> 
+> Ignoring this ioctl, the goal is that after KVM_ARM_VCPU_INIT the vCPU
+> is initialized to the maximum possible feature set. If userspace wants
+> to de-feature the VM it can do so by modifying the ID registers.
+> 
+> OTOH, your ioctl is dealing with something structural in how we
+> support PMUs on the system. It should be defined as exposing all fixed
+> counters that we support on a given piece of hardware. On systems
+> without FEAT_PMUv3_ICNTR, the result should be a vPMU that only has the
+> CPU cycle counter.
+> 
+> On a system that has FEAT_PMUv3_ICNTR, userspace can still use this
+> ioctl and explicitly de-feature ICNTR by writing to the ID register
+> after initialization.
+
+Now I understand better.
+
+Currently, KVM_ARM_VCPU_PMU_V3_COMPOSITION sets supported_cpus to ones 
+that have cycle counters compatible with PMU emulation.
+
+If FEAT_PMUv3_ICNTR is set to the ID register, I guess 
+KVM_ARM_VCPU_PMU_V3_COMPOSITION will set supported_cpus to ones that 
+have compatible cycle and instruction counters. If so, the naming 
+KVM_ARM_VCPU_PMU_V3_FIXED_COUNTERS_ONLY indeed makes sense.
+
+Regards,
+Akihiko Odaki
 
