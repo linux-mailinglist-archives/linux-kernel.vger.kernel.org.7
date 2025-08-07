@@ -1,169 +1,184 @@
-Return-Path: <linux-kernel+bounces-758813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469E3B1D424
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:14:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5CFB1D426
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003303AD9E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:14:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27B1E4E3A1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D395624DD00;
-	Thu,  7 Aug 2025 08:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D3C23C512;
+	Thu,  7 Aug 2025 08:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HzjIGpx/"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Zw0Hlf4P"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8ADB1442F4;
-	Thu,  7 Aug 2025 08:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B889B182D3
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554467; cv=none; b=L4anREavWwVQ6qDoB5T59mVm5m190rLtkXSDATTnueJjgb9As/mU5vj4/KgCTSCKuLD1GTjs6AwSnFY2PYDhZy2viYYXqk/eRCR1DK29Uy7HOtIROimULtNbVPAsB8D1JCrMPX1DjfTvxaHV+G0mv60BAUn1H49+IlyXIpYGwFI=
+	t=1754554550; cv=none; b=tOc9c/ddoEjhrjlqJrZWhYsWbJsjn9j4v5RehXqhjFGOO6G4yF/3tpczvmyN0BUwM0VhiMDbY1GgnM8NNt31SiagaqBjj/NX8lQ8lymiiMMHG0sTTX4EyGkEYgF46aAEJwtKFJk/luNj7JkpvKEwDIVziP+SWrZyopTiGgjXAk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554467; c=relaxed/simple;
-	bh=ss7D3gvEVCdb21Yn3aX6Pv5/jr3E1C1emoZLPQrYWfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLTMU0VbDnagNaiuoZgOvM74LfABiGMFQw6frRw4/NUzI5cNqiIExbf1jEG5Qp6XD/w+F1/zXYvJxzJ3NCNWPU/ZU3mPB1VuWps3xRsBYfvSSs8s8+l+nSVICztZfScL7dRnVrftzZmPaCXGtg1u1qlWH43nbGRWsmgy6oABy68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HzjIGpx/; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id BCF46416A;
-	Thu,  7 Aug 2025 10:13:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754554413;
-	bh=ss7D3gvEVCdb21Yn3aX6Pv5/jr3E1C1emoZLPQrYWfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HzjIGpx/x6DdNzwiUruZTfS9GOzGv23n9ORsWKx/gO+PS2ThQcnRNpfpwDxYO+dTJ
-	 AZne6JlRIOPxSHaSVByl8WGIIjtgNN4PxlQZbss0KgDKJdg7+pBV50FBU4W/vLKr3I
-	 cUMB57++xFLm1W/JViAlYOHimFKR4s+Kd5ZdsjBo=
-Date: Thu, 7 Aug 2025 11:14:08 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-Cc: Imene Jaziri <imenjazirii18@gmail.com>, linux-media@vger.kernel.org,
-	hansg@kernel.org, linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] media: uvcvideo: Log driver load in uvc_probe function
-Message-ID: <20250807081408.GB11583@pendragon.ideasonboard.com>
-References: <20250801145326.28560-1-imenjazirii18@gmail.com>
- <20250801150430.GC4906@pendragon.ideasonboard.com>
- <452a1263-2ec3-4174-9082-078445e67637@foss.st.com>
+	s=arc-20240116; t=1754554550; c=relaxed/simple;
+	bh=r7B6Q+7VnOlSFD9dmRU69c6xXNsKJZl6lpeNkdeAlW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tMWrqia+xWObDSdRsn+aNc+u1ZpSJDQ/61qL4XlJEiPPhqb0cGRxbyKbFQ4nKISMow29jWhyBu5qrbbtpUowlTeN8dFnvKf0+cdnZbHuEN/iUphTzLJuu2Y0Rk4balFfLXQgOs5JDeoRMvjbcpvrQ5+ZYS0CbjOi/VfO2xEiN+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Zw0Hlf4P; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577248Jr020326
+	for <linux-kernel@vger.kernel.org>; Thu, 7 Aug 2025 08:15:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8FFkztz/vOpS42siZaTzrJaru4LZfNmwJ6q9DN41I/Q=; b=Zw0Hlf4PZ+FqrUk2
+	meWkuRneDRHwocs9It4DIeEOTI0KAJIwAK3QcCnNNUaq3LaBzpVE4wIYeE9sdLJH
+	HGQF2wv7yH20XDwoHYLAjuMDAzEBeHKTeEMlbJ75UUcI0pjrD0DExHbG2RvpDWVr
+	XIZNyMJP89xuUgf+nSAHGqXmYMxZiLmRCXs8WEY8NoWq6IfD9MTGwCMLvFF6W2no
+	DDn9ptcD4weuqS/fzSgx7uHQs/RPHM8holEp5JzkXVw6/s7DBOskZnBqI9sbnz/Q
+	7ngqwm7mE0CT81iwMAjeFmABHKyC1/YK+Z5JywDJfuiXWGus50O1tYL3KKXiAux/
+	ZC/5Bg==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpvvwj1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 08:15:48 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23fe984fe57so11211475ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 01:15:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754554547; x=1755159347;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8FFkztz/vOpS42siZaTzrJaru4LZfNmwJ6q9DN41I/Q=;
+        b=OTH/uwktQHbe/N0Svl1REmOlDnNZXjZNGABmkmFYywcDtd6LDo15AnR1iT6h+zTxWX
+         7pQD/QLlJmLM9c6qcZdY5atpzfI/rUY6FcU44lF7xypNMJvq/X5wtItDwUml9tIYS2Pf
+         ZYv2R4TEXyYTF5luh7HLo8OU61O/tt/zACKP3nIa4SaiSlWJkAQrx/MUSBk1UdIPnCwT
+         dzgPJpzLa05s8Grpn41EXIee+vxmjLA+K73uCQHDjL8vpjRcpgZbdrWpCFjRSnXGA0sJ
+         idErFTPb1vSLzctPPRLqP+DdjnSJOL1Pm0alLM2RTTtUOkKnQsJlMYv+SnFdfGIkaEpZ
+         FjqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1MwsW1KrUo/165JZDuULhHlpP/4pMo+utqvCz2bP6pvN8XIM40kZqnZbWjdhOBhIYsxQc9ytD/sXDvjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEt2Uu3MMJswHfdz/PPuZvuSBEkSOhGJJ2786mi2+aefwCRP2M
+	snN1C+lYzXFhmT+eY76AqAcrbeuSk03tCR+Dr/QuquXnyjlORPXAK16Fcm6a/a1ceAG57mdQ6eM
+	IF3nlNpRRiIA9J8qktTBUORoI0OXDv7yleW5i8OR2mMu6i7Eddmo8wENBglP8Os1oBuo=
+X-Gm-Gg: ASbGncslOq+g0/ewgEzUnZqNbvHO3C5SB04rtKuNv7RzXx7f2293NbGgeHaGFctQIUs
+	laFcBH8gcXxMR1gzpP+SegGDvrDT8Rpvvg70k+k+YEfg1sTfKjhWwSwnwYolGTQrIuNr3DGrCVJ
+	+8mOIYNfuUutrB9I0krSZP6gDJKRW/VmHSfLMfz0JPUEucBT9FwkSJRZeY43Xk0UFqLM3vnS5nP
+	XBzz9XD04W3wT1Cs9a5GVOtHlq364ptZXjLon2h3N2r7SmabnlyuXbnfnFd9STQjcE5yn/wweVo
+	LqFl4Bl/8UlSoHLKkcP928OTFkxjGfF64Ak55NPnPJVvFpE9+lA5Uw40C74G+bmJhT/INAykqQ=
+	=
+X-Received: by 2002:a17:903:189:b0:240:3d07:9ea4 with SMTP id d9443c01a7336-242a0a91131mr91223215ad.7.1754554547102;
+        Thu, 07 Aug 2025 01:15:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzSnmBX83MC5kqRMV7W1QAuTOZBWwPl92I78BofL/XeVsXz8pCRHuSkr0ugBp8auFgWzSvVA==
+X-Received: by 2002:a17:903:189:b0:240:3d07:9ea4 with SMTP id d9443c01a7336-242a0a91131mr91222775ad.7.1754554546546;
+        Thu, 07 Aug 2025 01:15:46 -0700 (PDT)
+Received: from [10.218.42.132] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef65d2sm178661625ad.31.2025.08.07.01.15.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 01:15:46 -0700 (PDT)
+Message-ID: <7118392a-2a19-44a4-97c0-d5e8a3190c08@oss.qualcomm.com>
+Date: Thu, 7 Aug 2025 13:45:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <452a1263-2ec3-4174-9082-078445e67637@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] bus: mhi: host: pci_generic: Read
+ SUBSYSTEM_VENDOR_ID for VF's to check status
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Vivek.Pernamitta@quicinc.com, mhi@lists.linux.dev,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vivek Pernamitta <quic_vpernami@quicinc.com>
+References: <20250710-sriov_vdev_next-20250630-v2-0-4bd862b822e8@quicinc.com>
+ <20250710-sriov_vdev_next-20250630-v2-2-4bd862b822e8@quicinc.com>
+ <luaoyvwqp3fpvqgybhstnnrutn46ry3tyfxw2launvnxzfvyqo@pdfdpfocfq6k>
+ <1c79cda0-2645-4f88-a05f-9082e305fad4@oss.qualcomm.com>
+ <tynmkh4isrbi473zh6t4kd5bswrthxy3garhgpzafq6n2wrmqk@rfanfjgciyqv>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <tynmkh4isrbi473zh6t4kd5bswrthxy3garhgpzafq6n2wrmqk@rfanfjgciyqv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: n6vHwTkOdGRY9Eo_oOAAru2CPJbUTB3k
+X-Authority-Analysis: v=2.4 cv=GttC+l1C c=1 sm=1 tr=0 ts=689460b4 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=uIgEQj9WjdynuVTCvEgA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: n6vHwTkOdGRY9Eo_oOAAru2CPJbUTB3k
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX0LzSj+sHcizC
+ wiC714CxSfU6CMrx6yt75SnhQDPzurKFHNIEjjuhiq1Q1JiWu8sNvGpbs6ZOhKNyX28vQhaPJC9
+ MStBl21d1E5Als/Fmw+LEnVSnf6uPHrRyX/nCVusyGinyvLSiBkN1IPixRHl2MaFXcIllM9Strb
+ rrVIfluKOGbAUXhnogsF+dss+eYQJHkhdyN/7B0jnxy09hGg2A6g9eIiz7IsuW70rl+Qi8Ncolw
+ rsQt/ZxiStXiMN7GLPgjQlnaD2KC1Yofq5FFbyY++SPWSpzG+oByzayEQ+o2CPkb0SBPc6L8NGM
+ b4w3XqtiCScBJ2KZ767FGUzOpkphLRwKOsiJz6FGhEFCoXazThYtoEB1NXnU4wX22Vu4gnXJOJD
+ WiI5ruaJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-06_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 malwarescore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508060009
 
-Hi Benjamin,
 
-(CC'ing Shuah)
 
-On Thu, Aug 07, 2025 at 09:53:41AM +0200, Benjamin Mugnier wrote:
-> On 8/1/25 17:04, Laurent Pinchart wrote:
-> > On Fri, Aug 01, 2025 at 03:53:26PM +0100, Imene Jaziri wrote:
-> >> Add a pr_info() in the uvc_probe function to trace when the
-> >> uvcvideo driver is loaded. This is for learning purposes.
-> > 
-> > What part of the learning instructions you are following instructed you
-> > to submit this patch to kernel mailing lists ? We are regularly spammed
-> > by similar patches, which indicates the instructions are not clear
-> > enough.
-> > 
+On 8/7/2025 1:43 PM, Manivannan Sadhasivam wrote:
+> On Thu, Aug 07, 2025 at 12:39:26PM GMT, Krishna Chaitanya Chundru wrote:
+>>
+>>
+>> On 8/6/2025 10:29 PM, Manivannan Sadhasivam wrote:
+>>> On Thu, Jul 10, 2025 at 02:28:33PM GMT, Vivek.Pernamitta@quicinc.com wrote:
+>>>> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+>>>>
+>>>> In SRIOV enabled devices, the VF DEVICE/VENDOR ID register returns FFFFh
+>>>> when read (PCIe SRIOV spec-3.4.1.1). Therefore, read the PCIe
+>>>> SUBSYSTEM_VENDOR_ID to check if the device is active.
+>>>>
+>>>> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+>>>> Reviewed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>>>> ---
+>>>>    drivers/bus/mhi/host/pci_generic.c | 6 ++++--
+>>>>    1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+>>>> index 7d0ac1c34ddf95ace2a85e5f08884f51604d9b0f..4bafe93b56c54e2b091786e7fcd68a36c8247b8e 100644
+>>>> --- a/drivers/bus/mhi/host/pci_generic.c
+>>>> +++ b/drivers/bus/mhi/host/pci_generic.c
+>>>> @@ -1025,8 +1025,10 @@ static bool mhi_pci_is_alive(struct mhi_controller *mhi_cntrl)
+>>>>    	struct pci_dev *pdev = to_pci_dev(mhi_cntrl->cntrl_dev);
+>>>>    	u16 vendor = 0;
+>>>> -	if (pci_read_config_word(pdev, PCI_VENDOR_ID, &vendor))
+>>>> -		return false;
+>>>> +	if (pdev->is_virtfn)
+>>>> +		pci_read_config_word(pdev, PCI_SUBSYSTEM_VENDOR_ID, &vendor);
+>>>> +	else
+>>>> +		pci_read_config_word(pdev, PCI_VENDOR_ID, &vendor);
+>>>
+>>> You should not read the sub Vendor ID for VF. PCIe spec suggests reading the PF
+>>> Vendor ID for VF. So you should just use pci_physfn() API as below:
+>>>
+>>> 	pci_read_config_word(pci_physfn(pdev), PCI_VENDOR_ID, &vendor);
+>>>
+>>> This will work for both PF and VF.
+>>>
+>> This will defeat the purpose of having health check monitor for VF,
+>> as we are always reading PF vendor ID and will not know VF status at all.
 > 
-> I got curious too. It comes from the Linux Foundation training LFD103
-> [1]. Chapter 8 describes this patch pretty much, and chapter 9 describes
-> how to send the patch, but with a warning not to do so :
+> Do we really have a usecase to perform health check for VFs? Health check is
+> supposed to happen for devices that can fail abruptly.
 > 
->   [...]
->   At this time, you can run:
+yeah as VF is not a physical link we can disable health check monitor
+for VF's in the probe itself.
+
+- Krishna Chaitanya.
+> - Mani
 > 
->   git format-patch -1 <commit ID> --to=maintainer1 --to=maintainer2
-> --cc=maillist1 --cc=maillist2
-> 
->   This will generate a patch.
-> 
->   Important Note:
->   Please note that this is just an example. Don’t send this patch upstream.
-> 
->   You can revert this commit now.
-> 
->   Please refer to the Select the recipients for your patch section in
-> the Submitting patches: the essential guide to getting your code into
-> the kernel document.
-> 
->   When you have your own patch ready for submittal, you can follow this
-> example process to generate the patch and send it upstream using the
-> following command:
-> 
->   git send-email <patch_file>
->   [...]
-
-Imene provided me with that information in private.
-
-> Looking at it I guess it's pretty easy to miss the note.
-
-Yes, reading the text, I really can't blame the people training the
-course for missing it. It's a bit like if a mushroom foraging book said
-
-- go pick those red mushrooms with white dots on the cap in the forest
-- cut them in pieces, pan-fry them with butter
-- add a couple of eggs, salt and pepper to make an omelette
-- the dish is ready ! enjoy your meal !
-- you won't be eating that, it's poisonous. throw it away
-
-:-)
-
-> Maybe
-> requesting to add '--dry-run' to the git send-email command could be a
-> simple fix to prevent from copy/pasting ?
-
-I've contacted Shuah, who told me she updated the training material.
-Hopefully we'll soon stop getting such patches.
-
-> [1] https://training.linuxfoundation.org/training/a-beginners-guide-to-linux-kernel-development-lfd103/
-
-I wonder why the training materials are not public, given that the
-training is free of charge. Did I miss something, or does the LF
-encourage people to develop free software, but won't eat their own
-dogfood and publish their materials under open licenses ?
-
-> >> Signed-off-by: Imene Jaziri <imenjazirii18@gmail.com>
-> >> ---
-> >>  drivers/media/usb/uvc/uvc_driver.c | 3 +--
-> >>  1 file changed, 1 insertion(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> >> index da24a655ab68..4e5d1d636640 100644
-> >> --- a/drivers/media/usb/uvc/uvc_driver.c
-> >> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> >> @@ -2170,7 +2170,6 @@ static int uvc_probe(struct usb_interface *intf,
-> >>  		(const struct uvc_device_info *)id->driver_info;
-> >>  	int function;
-> >>  	int ret;
-> >> -
-> >>  	/* Allocate memory for the device and initialize it. */
-> >>  	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> >>  	if (dev == NULL)
-> >> @@ -2188,7 +2187,7 @@ static int uvc_probe(struct usb_interface *intf,
-> >>  	dev->info = info ? info : &uvc_quirk_none;
-> >>  	dev->quirks = uvc_quirks_param == -1
-> >>  		    ? dev->info->quirks : uvc_quirks_param;
-> >> -
-> >> +	pr_info("I changed uvcvideo driver in the Linux Kernel\n");
-> >>  	if (id->idVendor && id->idProduct)
-> >>  		uvc_dbg(dev, PROBE, "Probing known UVC device %s (%04x:%04x)\n",
-> >>  			udev->devpath, id->idVendor, id->idProduct);
-
--- 
-Regards,
-
-Laurent Pinchart
 
