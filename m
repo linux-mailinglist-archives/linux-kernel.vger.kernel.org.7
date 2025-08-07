@@ -1,95 +1,87 @@
-Return-Path: <linux-kernel+bounces-758974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6753B1D682
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCCFB1D686
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704167216AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDCC0721C1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE64278E75;
-	Thu,  7 Aug 2025 11:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F07F27814A;
+	Thu,  7 Aug 2025 11:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jcZ03XH6"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OhXs0LA6"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96311B7F4
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181E2267B15
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754565626; cv=none; b=cjgs2qBaHflG/shniQ4WTBq8PcvqGQRci9QtyDYYO2nUbVtnrMxLYTJCyKZBvRzCX4cdy20kaScPs1cOcKDhsC9g16ED2sO8eJbmMBuREF5oATOsuoks6ojuYm7W1UKvkff/OBf8dWKPZ8whEvPXMz6nm0AR1arzXuNsoCi+LgI=
+	t=1754565659; cv=none; b=JYo+uJv+Hat7+pcn4wdxIUeDU4pG57RhQtVvmmlDQ7ux4rfYQrB/YJeBECJqFltZLq6xHNfPglcMpwekC9+WB+mzgc5F0LPUdLggp36yCnhkqIItPfpiG2CQMF5M1AP6tlmPlOgxPjtz/zphbdFIcYtMhFbSDPHfvckywBWCxZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754565626; c=relaxed/simple;
-	bh=bT199VEQVqscKcI1ySGvbrsT+zAn6cUa1qjcLrPjd5w=;
+	s=arc-20240116; t=1754565659; c=relaxed/simple;
+	bh=5QP9nMkkcmn8cVMDf7O6vbSnVzwSiJraPAQjkjZw8JQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJMLC5RW46irknJJP52xedj+1VUDSg+Kgxp7EcYQzaAnK+SSXH5i4DuggLixA94EOdDTni2lyEHvkotdORaQY/J3NGxr1sJl7Vd//kTi6x/bFaQkqNnL5aMo6dZiXjjW1IXlIyM9u5XCmHRjlOUuN3QU2rJxpQwanXRGNd7zvsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jcZ03XH6; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-459d4d7c745so8442815e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:20:24 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rqegqvGzmc5iK05piDvB4DgUpb9dVjkEd4HTIwkMQ6gvfxMct4t1PfmIXwStePplFq6c/I7W9p+XVVeKTEDdgVG5apyQNqooZNkeAQUN7yb6uSB+KPLPJWcnDaTbaG5BymKW3y84GhUXHBPmRWG/Eh6Lq27k07ElHmZXl8k2iw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OhXs0LA6; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b78bca0890so402440f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:20:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754565623; x=1755170423; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1754565655; x=1755170455; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t+xe2dZhSU0YB/2XKMOmDkqHorIZkYeC9Ed4u60MW1U=;
-        b=jcZ03XH6iuRL3ExacLRh3+izApPk6khtidHPYAPhOnPQXGdT5Wtht9ZIFzJwWLakUW
-         BDka++7AcfQklFD08BpxQD5LbO9w6OCzFLKG8vs2FNH3MgFNNLKV/WxyGk29X4R/28BZ
-         iEDzpK+mag9ib/j/S5BHNboB+J1f2wHuX8/0vpiEHeAVwF6vi2T+8YMqi2VI/8z0Sv3g
-         isPMMISWSreKCr0GYyCcs5AleXV5ZqqxzCzi+wkQ0oaC909ebpxvdZJg5PS644hL+xTn
-         Zql4q+lZ/xeNvi9DTQm6unEQgIKMb9vSBEhslduDYX8jzFlRlD+jsrTgMaO2TEQpRhIJ
-         +V2A==
+        bh=ddfW087BVCo9R6jS1rE1MnNhGEOPmweIEOxT56WjhsY=;
+        b=OhXs0LA638MWoYBj8OcD7fgdhggR4nx5uyBReZPt6I4wn7W5dEk/1dljYI0e3ocBaa
+         4vwdRfiy18vNOZPi2idI1JyyeJ1c5+8/Rjr3O5JqMmbOxHjJlDpmLv/jpjp+oaHV5YKa
+         XUgLzU9BFW+0sFb1NbfPHa0754OTEmUHHjEGMcIluuD1BpDsckRKASY68AkYVJCBVNFO
+         BvEB5hYvj+eGRjn07l7EiLg8boKaoaKEgKdj/owelJnL0gwnk3gRU/ef7tMnjkfk5swZ
+         AT7ffQn/nwF4GOk/Ji5l8nf0Z4+Yy9g+tS7Of5WVTzGm6s/TkbgMprZsQrpvDvDB3Kb2
+         /bkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754565623; x=1755170423;
+        d=1e100.net; s=20230601; t=1754565655; x=1755170455;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t+xe2dZhSU0YB/2XKMOmDkqHorIZkYeC9Ed4u60MW1U=;
-        b=UmTEN5s+wfL8y1npo7B0h0d6jSwHlVnObw9DMeP9Pk47RkGlACNPKeBex4nNGNpbJs
-         nth/uLruMx0lwEaUqkXxYJdw1/wgkcw5R6dQPi5IJUD2UX/kKq9BmFvlE33EydG5IDam
-         Vp0B3zNH6QbQWDicHgJDBfTmSTzZ7gISo1V3nHQNzOLVN1xBcL2kll3UZLi1/gqK0QU6
-         MBBujZWJDalLJRpIjeR8tcvu2gB8LPF+LbQXAiX+kwFTWK9zoHsPbsKTX1YXLc0El1Ty
-         js+8k88zf+YMrUIafYLz4gmKvx1X0SFxWI6NjvvvyA9jG72Ib3oiyFWEelGhxVL36qEb
-         P5vA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlsMtYONOfE61mkI0oOEpPfcH5dHRdw6YLTJ+S7Tn3R6BjnDWjvA0PErWRgFWD8oALhsj2RVMG7VMRtnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6H3hesjocIto/BWsrnb/70AVYqAzwZZKvSo6rY6NxPczsSoRX
-	MoaOIfrZGufmNmqb41wPAtDkDaw19z1hv3NP8+8t93QMlkX/ZvIQwM/LQ+AvhPzONKo=
-X-Gm-Gg: ASbGnctW5C8gYm/in0rn0lEuGamD7eW0p0l0mVbH3jgykRnMKLlaZ63gQZI/YCvLiv5
-	/OIr4b43r5TVIHcMOw+0UmqtL1j5eRmb7d49R2naUzfxrDZ1lmK+PQRLHsZdXweMGYYbTJnFj11
-	vRne9JVbxKz7Ob5fNf5QdipicHKELeVXEM9kYdH1HisRNUkzG+IeZok8q1HwW9YhPxhmeyM2/VC
-	4d6MH0+DuHFIO5Kyzkk1UoQtkV7crBBhKBiPr2SQQAYcL91i10oD4Y90sMMdn/xHEj6lU9ChqMe
-	XbKWXmP77cNhj9YzQE7OIjzoj3nPCnLa2kb7x0N6auIYtYBql+sDRDS1MPvWq15JmPWAjQw8kHG
-	paZEgfQ8irF3yXgQiLVtFHNZmF9I=
-X-Google-Smtp-Source: AGHT+IHle4/R1ej0UE31AopKf2sNC+DTWDiHvIqjOlfMPaSTgNALiUGVLhXkvILnmSQe+GoiHKqW1Q==
-X-Received: by 2002:a05:600c:3b98:b0:43c:eeee:b713 with SMTP id 5b1f17b1804b1-459f33960a5mr5645055e9.20.1754565622973;
-        Thu, 07 Aug 2025 04:20:22 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e6214640sm88873865e9.1.2025.08.07.04.20.21
+        bh=ddfW087BVCo9R6jS1rE1MnNhGEOPmweIEOxT56WjhsY=;
+        b=D0kA8AxchKagFtJpjOg321We7GEpiSpzsEdq+BkcJpzU1+U0+ypVMqktUdnIwBHKIP
+         xeOXrFjc4vI4HMbjFORhSLnL9FzAg2KGBvXWtRkVuQoVuaB+nrsVvEmcTObXVXCgMbI6
+         XMK+GfG+IzO6iK6i37IiFTIZRrVw3Td3WZuf5hYMeLWyOtS23OIa+xZ27J3+vKHfRQAO
+         DejZdneyXp8IuoAxKTAZ702Ql16RoODON06LWV+NhEsNXh04tlwtIF8CJqd9JsPO3QkL
+         flBXDmffgcXzyqePifAv/h2S7bD9dnV9Jg9JzowBDB2d7pelQocvXYXxiP9md162OcrG
+         pT1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkwf/aSgVBCEMpUTdXD3nF7A2iK+EI2t4OLoOT1L2z0otTXt5ht19SiOGtwje9doh5AeqJodO8JSw/VUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQG7Rt2DpRE2oD9uu1xJlLZyr38aoOfSmuy+qoJBPQ2RdxP785
+	mUZ3bQpnUxfGYXzxKAozzwPfQCAFT9lm2XpF0g7r6JcDAIXm39QYaP2KbOvnPwa5K5w=
+X-Gm-Gg: ASbGncs4c8bXnnpcLY0g9N6MQz/eS6xXNoOnMZRc23Ijd0K4c/qqNvoQZEFiYwu0x6o
+	2mYQp6kLBCohVMdssY8etzDDL153cCEGcunEgZQ9VwoL/l4/lQeVAJ47W/aeseHRImHfSGRJw0d
+	5CXf7DkgR5HsJDLOQ5XbQMnplNeo0tTEDV0l2lqJNJ8O1WjO12LizjqjZhrYyJV4Yyyd5NjmAY9
+	zLo7LNE1rYG/JtCrBu0dr5WYcSVEMl3qUnYqAUZkPA+EfR2z42Yvc4YpdYQcv6zYnI+402RgrTr
+	XpBHaeqciKTTTEteo5WqzmJ0pCab95UeOfOmv6Q/KpJ7d1NjeIyJf79i7sFi+HMYIS8z2TvAaD0
+	xmC+F1a1NU0Tq3ZbKzCLqEk6gwaeb5ra4zwg=
+X-Google-Smtp-Source: AGHT+IHOu/dkjQy4sl03HVD1C9gSx90Y0R1uDAO4yyw9e75J4od/tpJNEfFOepafebY+xXR46niLqw==
+X-Received: by 2002:a05:6000:1885:b0:3a4:eef5:dece with SMTP id ffacd0b85a97d-3b8f41ab66bmr5864243f8f.35.1754565655344;
+        Thu, 07 Aug 2025 04:20:55 -0700 (PDT)
+Received: from localhost (109-81-80-221.rct.o2.cz. [109.81.80.221])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3ac158sm26896024f8f.4.2025.08.07.04.20.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 04:20:22 -0700 (PDT)
-Date: Thu, 7 Aug 2025 14:20:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Renjiang Han <quic_renjiang@quicinc.com>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	Cgroups <cgroups@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	linux-fsdevel@vger.kernel.org, Song Liu <song@kernel.org>,
-	yukuai3@huawei.com, Arnd Bergmann <arnd@arndb.de>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: next-20250804 Unable to handle kernel execute from
- non-executable memory at virtual address idem_hash
-Message-ID: <66c0fb9f-c9fc-4186-9450-ecf726b6791f@suswa.mountain>
-References: <CA+G9fYvZtbQLoS=GpaZ_uzm3YiZEQmz0oghnwVamNQ49CosT2w@mail.gmail.com>
- <aJNsreA4FuxalDc8@stanley.mountain>
- <CA+G9fYvEGBAAEetvvtXWsGb3EQ2sTOM=szkxZ4m-Gt2bTszBdQ@mail.gmail.com>
+        Thu, 07 Aug 2025 04:20:55 -0700 (PDT)
+Date: Thu, 7 Aug 2025 13:20:54 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/8] mm/vmalloc: Support non-blocking GFP flags in
+ alloc_vmap_area()
+Message-ID: <aJSMFgvrLEN-nwdT@tiehlicka>
+References: <20250807075810.358714-1-urezki@gmail.com>
+ <20250807075810.358714-4-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,115 +90,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYvEGBAAEetvvtXWsGb3EQ2sTOM=szkxZ4m-Gt2bTszBdQ@mail.gmail.com>
+In-Reply-To: <20250807075810.358714-4-urezki@gmail.com>
 
-On Thu, Aug 07, 2025 at 02:51:29PM +0530, Naresh Kamboju wrote:
-> Hi Dan,
+On Thu 07-08-25 09:58:05, Uladzislau Rezki wrote:
+> alloc_vmap_area() currently assumes that sleeping is allowed during
+> allocation. This is not true for callers which pass non-blocking
+> GFP flags, such as GFP_ATOMIC or GFP_NOWAIT.
+
+Those are currently not allowed so it would be better to mention this is
+a preparation for those to _be_ supported later in the series.
+ 
+> This patch adds logic to detect whether the given gfp_mask permits
+> blocking. It avoids invoking might_sleep() or falling back to reclaim
+> path if blocking is not allowed.
 > 
-> On Wed, 6 Aug 2025 at 20:24, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > On Tue, Aug 05, 2025 at 12:50:28AM +0530, Naresh Kamboju wrote:
-> > > While booting and testing selftest cgroups and filesystem testing on arm64
-> > > dragonboard-410c the following kernel warnings / errors noticed and system
-> > > halted and did not recover with selftests Kconfig enabled running the kernel
-> > > Linux next tag next-20250804.
-> > >
-> > > Regression Analysis:
-> > > - New regression? Yes
-> > > - Reproducibility? Re-validation is in progress
-> > >
-> > > First seen on the next-20250804
-> > > Good: next-20250801
-> > > Bad: next-20250804
-> > >
-> > > Test regression: next-20250804 Unable to handle kernel execute from
-> > > non-executable memory at virtual address idem_hash
-> > > Test regression: next-20250804 refcount_t: addition on 0;
-> > > use-after-free refcount_warn_saturate
-> > >
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > >
-> > > ## Test crash log
-> > > [    9.811341] Unable to handle kernel NULL pointer dereference at
-> > > virtual address 000000000000002e
-> > > [    9.811444] Mem abort info:
-> > > [    9.821150]   ESR = 0x0000000096000004
-> > > [    9.833499]   SET = 0, FnV = 0
-> > > [    9.833566]   EA = 0, S1PTW = 0
-> > > [    9.835511]   FSC = 0x04: level 0 translation fault
-> > > [    9.838901] Data abort info:
-> > > [    9.843788]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> > > [    9.846565]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > > [    9.851938]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > > [    9.853510] rtc-pm8xxx 200f000.spmi:pmic@0:rtc@6000: registered as rtc0
-> > > [    9.856992] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000856f8000
-> > > [    9.862446] rtc-pm8xxx 200f000.spmi:pmic@0:rtc@6000: setting system
-> > > clock to 1970-01-01T00:00:31 UTC (31)
-> > > [    9.868789] [000000000000002e] pgd=0000000000000000, p4d=0000000000000000
-> > > [    9.875459] Internal error: Oops: 0000000096000004 [#1]  SMP
-> > > [    9.889547] input: pm8941_pwrkey as
-> > > /devices/platform/soc@0/200f000.spmi/spmi-0/0-00/200f000.spmi:pmic@0:pon@800/200f000.spmi:pmic@0:pon@800:pwrkey/input/input1
-> > > [    9.891545] Modules linked in: qcom_spmi_temp_alarm rtc_pm8xxx
-> > > qcom_pon(+) qcom_pil_info videobuf2_dma_sg ubwc_config qcom_q6v5
-> > > venus_core(+) qcom_sysmon qcom_spmi_vadc v4l2_fwnode llcc_qcom
-> > > v4l2_async qcom_vadc_common qcom_common ocmem v4l2_mem2mem drm_gpuvm
-> > > videobuf2_memops qcom_glink_smem videobuf2_v4l2 drm_exec mdt_loader
-> > > qmi_helpers gpu_sched drm_dp_aux_bus qnoc_msm8916 videodev
-> > > drm_display_helper qcom_stats videobuf2_common cec qcom_rng
-> > > drm_client_lib mc phy_qcom_usb_hs socinfo rpmsg_ctrl display_connector
-> > > rpmsg_char ramoops rmtfs_mem reed_solomon drm_kms_helper fuse drm
-> > > backlight
-> > > [    9.912286] input: pm8941_resin as
-> > > /devices/platform/soc@0/200f000.spmi/spmi-0/0-00/200f000.spmi:pmic@0:pon@800/200f000.spmi:pmic@0:pon@800:resin/input/input2
-> > > [    9.941186] CPU: 2 UID: 0 PID: 221 Comm: (udev-worker) Not tainted
-> > > 6.16.0-next-20250804 #1 PREEMPT
-> > > [    9.941200] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-> > > [    9.941206] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > [    9.941215] pc : dev_pm_opp_put (/builds/linux/drivers/opp/core.c:1685)
-> > > [    9.941233] lr : core_clks_enable+0x54/0x148 venus_core
-> > > [   10.004266] sp : ffff8000842b35f0
-> > > [   10.004273] x29: ffff8000842b35f0 x28: ffff8000842b3ba0 x27: ffff0000047be938
-> > > [   10.004289] x26: 0000000000000000 x25: 0000000000000000 x24: ffff80007b350ba0
-> > > [   10.004303] x23: ffff00000ba380c8 x22: ffff00000ba38080 x21: 0000000000000000
-> > > [   10.004316] x20: 0000000000000000 x19: ffffffffffffffee x18: 00000000ffffffff
-> > > [   10.004330] x17: 0000000000000000 x16: 1fffe000017541a1 x15: ffff8000842b3560
-> > > [   10.004344] x14: 0000000000000000 x13: 007473696c5f7974 x12: 696e696666615f65
-> > > [   10.004358] x11: 00000000000000c0 x10: 0000000000000020 x9 : ffff80007b33f2bc
-> > > [   10.004371] x8 : ffffffffffffffde x7 : ffff0000044a4800 x6 : 0000000000000000
-> > > [   10.004384] x5 : 0000000000000002 x4 : 00000000c0000000 x3 : 0000000000000001
-> > > [   10.004397] x2 : 0000000000000002 x1 : ffffffffffffffde x0 : ffffffffffffffee
-> > > [   10.004412] Call trace:
-> > > [   10.004417] dev_pm_opp_put (/builds/linux/drivers/opp/core.c:1685) (P)
-> > > [   10.004435] core_clks_enable+0x54/0x148 venus_core
-> > > [   10.004504] core_power_v1+0x78/0x90 venus_core
-> > > [   10.004560] venus_runtime_resume+0x6c/0x98 venus_core
-> > > [   10.004616] pm_generic_runtime_resume
-> >
-> > Could you try adding some error checking to core_clks_enable()?
-> > Does the patch below help?
+> This makes alloc_vmap_area() safer for use in non-sleeping contexts,
+> where previously it could hit unexpected sleeps, trigger warnings.
 > 
-> Your patch works.
-> The attached patch from Sasha fixes this reported problem on today's
-> Linux next tag.
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+
+With the changelog clarified
+Acked-by: Michal Hocko <mhocko@suse.com>
+Thanks!
+
+> ---
+>  mm/vmalloc.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
 > 
-> $ git log --oneline next-20250805..next-20250807 --
-> drivers/media/platform/qcom/venus/pm_helpers.c
-> 7881cd6886a89 media: venus: Fix OPP table error handling
-> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6dbcdceecae1..81b6d3bde719 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2017,6 +2017,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  	unsigned long freed;
+>  	unsigned long addr;
+>  	unsigned int vn_id;
+> +	bool allow_block;
+>  	int purged = 0;
+>  	int ret;
+>  
+> @@ -2026,7 +2027,8 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  	if (unlikely(!vmap_initialized))
+>  		return ERR_PTR(-EBUSY);
+>  
+> -	might_sleep();
+> +	allow_block = gfpflags_allow_blocking(gfp_mask);
+> +	might_sleep_if(allow_block);
+>  
+>  	/*
+>  	 * If a VA is obtained from a global heap(if it fails here)
+> @@ -2065,8 +2067,16 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  	 * If an allocation fails, the error value is
+>  	 * returned. Therefore trigger the overflow path.
+>  	 */
+> -	if (IS_ERR_VALUE(addr))
+> -		goto overflow;
+> +	if (IS_ERR_VALUE(addr)) {
+> +		if (allow_block)
+> +			goto overflow;
+> +
+> +		/*
+> +		 * We can not trigger any reclaim logic because
+> +		 * sleeping is not allowed, thus fail an allocation.
+> +		 */
+> +		goto error;
+> +	}
+>  
+>  	va->va_start = addr;
+>  	va->va_end = addr + size;
+> @@ -2116,6 +2126,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
+>  		pr_warn("vmalloc_node_range for size %lu failed: Address range restricted to %#lx - %#lx\n",
+>  				size, vstart, vend);
+>  
+> +error:
+>  	kmem_cache_free(vmap_area_cachep, va);
+>  	return ERR_PTR(-EBUSY);
+>  }
+> -- 
+> 2.39.5
 
-I feel a bit bad about this, because I saw this bug as a static
-checker warning:
-
-drivers/media/platform/qcom/venus/pm_helpers.c:51 core_clks_enable() error: 'opp' dereferencing possible ERR_PTR()
-
-But I figured that leaving out the error checking was probably
-deliberate so I didn't report it...  I'll go through my list of old
-warnings and review them again.
-
-$ grep "dereferencing possible ERR_PTR" smatch_warns.txt | wc -l
-115
-
-regards,
-dan carpenter
-
+-- 
+Michal Hocko
+SUSE Labs
 
