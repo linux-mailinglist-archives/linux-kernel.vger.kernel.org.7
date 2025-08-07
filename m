@@ -1,175 +1,143 @@
-Return-Path: <linux-kernel+bounces-758897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB91B1D53D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED1FB1D540
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E751316B1EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2EE17C536
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D652C279DAF;
-	Thu,  7 Aug 2025 09:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2058721FF24;
+	Thu,  7 Aug 2025 09:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="go9qRIE7"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE7376F1;
-	Thu,  7 Aug 2025 09:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="d7doqlbP"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E06221FC4
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 09:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754560034; cv=none; b=WSiYB1sov9r+MyOLLEO6RGAWbcL0l17FwXQ+H2xTTEzkXWesvR/IAHJIm6psFUlXLyOB5RQ9OVjVO9KZtqTGtQxxikQnDDz8KOVw7s5Mta7lCrfrkyjSMU1RwpNirg67TwJODNuYxfUDTODaXao3bbHjqeKRr0aMcc7CaTJhLRA=
+	t=1754560083; cv=none; b=O3F8hh9FiQT9pYI6QSN1GemBo4PWtGBHoQb7s/v/VngxzvhE5KPqEQyIyY/KRd/kVkYtGoaOmuL2+s3XcIlzwCGTFANIDxCUGjbAng8JdnQh3sXBhzUuZkzOAVQ3fJH7keAdNIJluUSmfKdM+GwsDjOz8grTQrk3ICp5qwHhJu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754560034; c=relaxed/simple;
-	bh=TDeiBApOh1NcX4yBW9i2CsFOUdCFeSFRwM+KeVVkTrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sTQXZgV5k76/7a0JzNMXmvVyerfb5kbE2Z9SZ+vSuXIkpMJ96HGqPuMrGfj3LQpL8Hj6uA8Y4DjmETc2k6OEA9b88Wi81VGjdUJG8lE58o7qxeoHndmrEauBy+PK8S7lEU8W8+vr+zPNgDLO3iE5cfFF+aJd3M7XQNMho7+aKgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=go9qRIE7; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57790AX3021567;
-	Thu, 7 Aug 2025 09:46:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ImRZUe
-	6tVuS8TT869/9J1UoTQ8hVJxjnFHqcKjWzkmg=; b=go9qRIE70CfPyS9Kn8TPsq
-	JkZyaxDOMfgvgd9oOkezsaYQ7nO6H1+vyJlxnFf+6IS8gazLQFoHJPSCtC/ozPKm
-	6VKICh++4mFIXlvEA+Fv861i489NybwU9awUyTQXXGMIfzvBpYV01KVsDF9Iz4YI
-	Ww/eXWrOH1iZah1GKzst8ykQD8OdLbBS52aH5gpTLX9hzYzJnzq1Wj6ghnhGN7K+
-	HeSCbGXR0u5BWfqTnzNxp7wSohfiND9Ay/p0FkDgE9Qit35GSbcVN7CqdFOj9pan
-	uk5bsEsgRkx16zjIPUzdIH9a6QpTBUGyN7bRfWvIADnQUc0lqNAVn74p649+uPzA
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq621brx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 09:46:53 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779eRBP008042;
-	Thu, 7 Aug 2025 09:46:52 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwmyygs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 09:46:52 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5779kpb241746786
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 09:46:51 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 450E158055;
-	Thu,  7 Aug 2025 09:46:51 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2F5705804E;
-	Thu,  7 Aug 2025 09:46:39 +0000 (GMT)
-Received: from [9.197.227.8] (unknown [9.197.227.8])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Aug 2025 09:46:38 +0000 (GMT)
-Message-ID: <7f4f4d07-38f7-444c-adff-ec2a2387e86b@linux.ibm.com>
-Date: Thu, 7 Aug 2025 15:16:35 +0530
+	s=arc-20240116; t=1754560083; c=relaxed/simple;
+	bh=a7GV8oZkKRbgbBlhJjrxG4bHZVDVwCvkjSf+UBHT6+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UykufCwnXVHd/QuO4jtAAPiF5nBQq8Jn+Cm8X2xUMcftFy9H8KmiZ+Iw1By2dbGjfxhScSokMXktg3Pz6oOuwYaVAiqz4/QUBLVtEsXl29oJykRQlpXq+15r9ijmw/Xs49k63Lqah0EEHBYJSODecmXGul9hyLtEdABt4tffwxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=d7doqlbP; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Yu
+	060HFp7OokvIbTOySWGWsGGcfzytPoIFqY1n1bEK8=; b=d7doqlbPLjZP9cOhIp
+	oyEjnKydTXd3Xi9ISgffSmOz8L4Ll/P4v2qDSJYrcIJp442vFq1+1jGi+9bechSL
+	uxDGZscJmF8inMQANFJBone/LNUUdTxOU5/FrlN8G5z39OED93O+6oaHJAIYjAzt
+	IZq4IfKGm9q6mx4t0PYILmO4w=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wB3kiYpdpRoIY9GAQ--.12087S2;
+	Thu, 07 Aug 2025 17:47:23 +0800 (CST)
+From: oushixiong1025@163.com
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sunil Khatri <sunil.khatri@amd.com>,
+	Alexandre Demers <alexandre.f.demers@gmail.com>,
+	Boyuan Zhang <boyuan.zhang@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/amdgpu: skip disabling audio when device is unplugged
+Date: Thu,  7 Aug 2025 17:47:19 +0800
+Message-Id: <20250807094719.56145-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/17] powerpc: Add __attribute_const__ to ffs()-family
- implementations
-To: Kees Cook <kees@kernel.org>, linux-arch@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, llvm@lists.linux.dev,
-        linux-hardening@vger.kernel.org
-References: <20250804163910.work.929-kees@kernel.org>
- <20250804164417.1612371-5-kees@kernel.org>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <20250804164417.1612371-5-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA3MyBTYWx0ZWRfX0unUnmBlk9BR
- JyFnhjGUCcX72+ZTvzudrWhw0DB4YVlTamytH3O0p7bgfe1t3RFHu6oXmijVRlkSINNESQcI2ed
- WV3l/gYRQ2VZynkYP3Tav0+7jWhZaLSgpYND2noyaRsJ968IyHQXslrcztFRDh0MZBgxPGbCx8b
- +uiLKSt+6Y6IffZklEx4VluWHkjrCmfWHrp45aQanh3SGagw7gHzrJqpepYvNT4HS8EbCADH/Wn
- zPt3JFi7B14TKcENIp/5NLm0esF1T5EYGCGzXF9hdI2cf8y7VhMMiJqeZefBkl9p6Z1CLp13muG
- PGN5oX3iZrejuEHJm8J9sJaxrIF5Rg9tb8/6Jc0aiE3VKei/f3z6YRAKdY8HGg4pDBW4p1GLl1f
- BVmzVXfbgFB6avmCIX9UByEecqNiyQFlc4BOgzcQYghhJIGa/JLCPKcNMH7ACy88lL+pl3p9
-X-Proofpoint-GUID: _d76WmYcTWXQ7iz_O6QVqZlqoAE5ZdTK
-X-Authority-Analysis: v=2.4 cv=BIuzrEQG c=1 sm=1 tr=0 ts=6894760d cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=NEAV23lmAAAA:8 a=VnNF1IyMAAAA:8
- a=VwQbUJbxAAAA:8 a=ob59Q8BqYF9JHPHMJZcA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: _d76WmYcTWXQ7iz_O6QVqZlqoAE5ZdTK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 spamscore=0 mlxlogscore=999 adultscore=0 clxscore=1011
- malwarescore=0 phishscore=0 bulkscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070073
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wB3kiYpdpRoIY9GAQ--.12087S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZF1DJF48Wr4xtw13ZrWxCrg_yoW5Aw18pF
+	yFya4Fkw48Zw4jqa1IyF9rXrn8A3ZFg3Wfur4kJr1a9ayDA3s0qa4rJF18u3s8JrWqvF42
+	q343J3yUZ3ZYg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j0XdbUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRGZD2iI7Tg5FAACsA
 
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
+When Stopping lightdm and removing amdgpu driver are executed, the following
+error is triggered probably:
 
-On 8/4/25 10:14 PM, Kees Cook wrote:
-> While tracking down a problem where constant expressions used by
-> BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
-> initializer was convincing the compiler that it couldn't track the state
-> of the prior statically initialized value. Tracing this down found that
-> ffs() was used in the initializer macro, but since it wasn't marked with
-> __attribute__const__, the compiler had to assume the function might
-> change variable states as a side-effect (which is not true for ffs(),
-> which provides deterministic math results).
-> 
-> Add missing __attribute_const__ annotations to PowerPC's implementations of
-> fls() function. These are pure mathematical functions that always return
-> the same result for the same input with no side effects, making them eligible
-> for compiler optimization.
-> 
-> Build tested ARCH=powerpc defconfig with GCC powerpc-linux-gnu 14.2.0.
-> 
+Unable to handle kernel paging request at virtual address 0000000000005e00
+.....
+[ 2] [T10084] Call trace:
+[ 2] [T10084]  amdgpu_device_wreg.part.0+0x58/0x110 [amdgpu]
+[ 2] [T10084]  amdgpu_device_wreg+0x20/0x38 [amdgpu]
+[ 2] [T10084]  dce_v6_0_audio_endpt_wreg+0x64/0xd8 [amdgpu]
+[ 2] [T10084]  dce_v6_0_sw_fini+0xa0/0x118 [amdgpu]
+[ 2] [T10084]  amdgpu_device_ip_fini.isra.0+0xdc/0x1e8 [amdgpu]
+[ 2] [T10084]  amdgpu_device_fini_sw+0x2c/0x220 [amdgpu]
+[ 2] [T10084]  amdgpu_driver_release_kms+0x20/0x40 [amdgpu]
+[ 2] [T10084]  devm_drm_dev_init_release+0x8c/0xc0 [drm]
+[ 2] [T10084]  devm_action_release+0x18/0x28
+[ 2] [T10084]  release_nodes+0x5c/0xc8
+[ 2] [T10084]  devres_release_all+0xa0/0x130
+[ 2] [T10084]  device_unbind_cleanup+0x1c/0x70
+[ 2] [T10084]  device_release_driver_internal+0x1e4/0x228
+[ 2] [T10084]  driver_detach+0x90/0x100
+[ 2] [T10084]  bus_remove_driver+0x74/0x100
+[ 2] [T10084]  driver_unregister+0x34/0x68
+[ 2] [T10084]  pci_unregister_driver+0x24/0x108
+[ 2] [T10084]  amdgpu_exit+0x1c/0x3270 [amdgpu]
+[ 2] [T10084]  __do_sys_delete_module.constprop.0+0x1d0/0x330
+[ 2] [T10084]  __arm64_sys_delete_module+0x18/0x28
+[ 2] [T10084]  invoke_syscall+0x4c/0x120
+[ 2] [T10084]  el0_svc_common.constprop.0+0xc4/0xf0
+[ 2] [T10084]  do_el0_svc+0x24/0x38
+[ 2] [T10084]  el0_svc+0x24/0x88
+[ 2] [T10084]  el0t_64_sync_handler+0x134/0x150
+[ 2] [T10084]  el0t_64_sync+0x14c/0x150
+[ 2] [T10084] Code: f9401bf7 f9453e60 8b150000 d50332bf (b9000016)
+[ 2] [T10084] ---[ end trace 0000000000000000 ]---
 
-Also tested with gcc 8.1.
+The adev->rmmio has been unmmaped in amdgpu_device_fini_hw().
 
-Acked-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+So skip disabling audio when device is unplugged.
 
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> Link: https://github.com/KSPP/linux/issues/364 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->  arch/powerpc/include/asm/bitops.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/bitops.h b/arch/powerpc/include/asm/bitops.h
-> index 671ecc6711e3..0d0470cd5ac3 100644
-> --- a/arch/powerpc/include/asm/bitops.h
-> +++ b/arch/powerpc/include/asm/bitops.h
-> @@ -276,7 +276,7 @@ static inline void arch___clear_bit_unlock(int nr, volatile unsigned long *addr)
->   * fls: find last (most-significant) bit set.
->   * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
->   */
-> -static __always_inline int fls(unsigned int x)
-> +static __always_inline __attribute_const__ int fls(unsigned int x)
->  {
->  	int lz;
->  
-> @@ -294,7 +294,7 @@ static __always_inline int fls(unsigned int x)
->   * 32-bit fls calls.
->   */
->  #ifdef CONFIG_PPC64
-> -static __always_inline int fls64(__u64 x)
-> +static __always_inline __attribute_const__ int fls64(__u64 x)
->  {
->  	int lz;
->  
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+index 276c025c4c03..48b29990da7f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+@@ -23,6 +23,7 @@
+ 
+ #include <linux/pci.h>
+ 
++#include <drm/drm_drv.h>
+ #include <drm/drm_edid.h>
+ #include <drm/drm_fourcc.h>
+ #include <drm/drm_modeset_helper.h>
+@@ -1459,8 +1460,10 @@ static void dce_v6_0_audio_fini(struct amdgpu_device *adev)
+ 	if (!adev->mode_info.audio.enabled)
+ 		return;
+ 
+-	for (i = 0; i < adev->mode_info.audio.num_pins; i++)
+-		dce_v6_0_audio_enable(adev, &adev->mode_info.audio.pin[i], false);
++	if (!drm_dev_is_unplugged(adev_to_drm(adev))) {
++		for (i = 0; i < adev->mode_info.audio.num_pins; i++)
++			dce_v6_0_audio_enable(adev, &adev->mode_info.audio.pin[i], false);
++	}
+ 
+ 	adev->mode_info.audio.enabled = false;
+ }
+-- 
+2.25.1
 
 
