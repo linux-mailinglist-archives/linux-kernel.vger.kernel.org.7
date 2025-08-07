@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-759285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868EEB1DB89
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3C4B1DB90
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456FB1898B81
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:20:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62025650A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5FB26F443;
-	Thu,  7 Aug 2025 16:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DFF26E711;
+	Thu,  7 Aug 2025 16:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/dDvxZr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSSrT4+N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5DD146A72;
-	Thu,  7 Aug 2025 16:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222571E766F;
+	Thu,  7 Aug 2025 16:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754583596; cv=none; b=Hjlss8uQQf5dX9lnoYorX7MvtWNjDbfe5hnVZdsTD6IW6ZiK7+tdgDtDK0XJYzpIeP6SlfKsyZLmsOv+blhLiUDxVgcjdSqLI2vNz0aTPARI6TUclLq3PAg7wzvB+ltT4mZJbovqIOh0KegMqz4TF9Gmqo5hRbFFhNeV/vHPfq0=
+	t=1754583764; cv=none; b=CoIKmnGxkS/mK6dDBlrpB7FlVQt0Dfj0yH57nyB4t3vFwWYPTf6hKOF4fRXNupvHaihfWdr8n1kK1WWHCTh/b5WzBdexGVsjIKbG4HSe0g2A5MHnhWOzcGnnqazvrREfGXbaZWamOAt9DHy65oZLG6rg08mrlq2puKt8G7JqXC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754583596; c=relaxed/simple;
-	bh=XEfHPKSktUmKnDddPO998nRTlmFtkYWmxCYrK5ds3IY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=luuPm3VGxv3ovo9nwF6lV5TwEkhn/W9Im4G5ofoNuRLqjC9qiHk7aEOXYFRkNkENsBJ7Qz4iKKFr1M7jnQuf7e7U5+d7Pyw/zu20YKpA6C3W05B13vskGtApiADOip6Tu43EmaVLJ3lVPRqi5rHaKVPRtPlFuvcDNcI0EcVwmHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/dDvxZr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB7F9C4CEEB;
-	Thu,  7 Aug 2025 16:19:55 +0000 (UTC)
+	s=arc-20240116; t=1754583764; c=relaxed/simple;
+	bh=sePTBshsVyA/U+dKkgUJmJ8cQsIoyj5xyZs0vl6/4+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfB0OipxypsZktbPeyao30Ys/lZZK4c0hQxTZ/NLJbfAqlTOkk6fM3oIdlnlQNk+uXtvrhCvbEHC2dahnKDlsF/kuTURmm8YdXVzafrkeEo2o5ibINGMpPufPgs7PiGSmtvnzo3xpsRzcSsPaiJ/fiNzGV2HdMKZK6xuLWo0kcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSSrT4+N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF25C4CEEB;
+	Thu,  7 Aug 2025 16:22:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754583596;
-	bh=XEfHPKSktUmKnDddPO998nRTlmFtkYWmxCYrK5ds3IY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=H/dDvxZrxxn6SyFIQHQTJZDmho3MOWpLXQuPi6kPIOamraCjq8XYlkuX1rSKjv8gm
-	 yZgUjAZDgrU4iaOPM/snpGjtIeC41nCi5h7++CTNVaN5Yf6f4trKy4UZMPzplXByco
-	 Ccz8E8e3S8J4mAdfXqMOoEA/ckwjPuwL4HkCDZ3tcW6uisHDkv4VHJ3TNvasywnDyp
-	 XVBj8Xqu9d97lH1ZrEf13mzZgJuYkiiEnyB41EhHQ0zTeLle0U2ZcDnBCOsL4JFRak
-	 xAymfXRScKNgr8JlOUzCzSy0NMCKccAx/WCGUhD/FpdmvGHJDStY5Yrd0KzUUKUW3Q
-	 idKuNnXQbRLBg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE006383BF4E;
-	Thu,  7 Aug 2025 16:20:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1754583762;
+	bh=sePTBshsVyA/U+dKkgUJmJ8cQsIoyj5xyZs0vl6/4+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WSSrT4+N0x7+8IjmJc9HYBWYlQ0bOlMnc0or4HXUuy3fs+bqE+9cZuG8TxrT87yUh
+	 qIDs6fGF3ZFRQ/Ao1v2YfhomRYsQ75Bdh5StJzj6K83N0XJ46HILmVhsECRJnEjate
+	 Nwd9psEuYt9TfTO4/EwLU7JmTf+28IWoEf1AP3T+N52CboFK50NftjNcAuTF4goyyc
+	 gg/TdIA/nOchwYAxu68qRYIUbdi6cA2G9r/6G5XDmRYsRPa9aeYYX4n8qDiJSEtTBL
+	 mBhaZ4lTbllDPuDl6C4tUhj3Ekj3tQMU5wZruBz67A0MD+Xu3TkOLMYZtDza4lBMGz
+	 g099rEW19krMw==
+Date: Thu, 7 Aug 2025 09:22:38 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nicolas Schier <nicolas.schier@linux.dev>
+Cc: Haoran lee <470658536@qq.com>, masahiroy@kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/mod/modpost: For CentOS 7/old binutils
+ compatibility
+Message-ID: <20250807162238.GB2145434@ax162>
+References: <tencent_6FE857803A1AAB21B71853A2E89626ABA407@qq.com>
+ <20250807-elastic-transparent-kingfisher-8f7ada@l-nschier-aarch64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v5 0/2] perf/s390: Regression: Move uid filtering to BPF
- filters
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175458360947.3615598.15789792776386317397.git-patchwork-notify@kernel.org>
-Date: Thu, 07 Aug 2025 16:20:09 +0000
-References: <20250806162417.19666-1-iii@linux.ibm.com>
-In-Reply-To: <20250806162417.19666-1-iii@linux.ibm.com>
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- irogers@google.com, acme@kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, tmricht@linux.ibm.com, jolsa@kernel.org,
- hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807-elastic-transparent-kingfisher-8f7ada@l-nschier-aarch64>
 
-Hello:
-
-This series was applied to bpf/bpf.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Wed,  6 Aug 2025 18:22:40 +0200 you wrote:
-> v4: https://lore.kernel.org/bpf/20250806114227.14617-1-iii@linux.ibm.com/
-> v4 -> v5: Fix a typo in the commit message (Yonghong).
+On Thu, Aug 07, 2025 at 12:51:59PM +0200, Nicolas Schier wrote:
+> On Tue, Jul 29, 2025 at 12:19:46AM +0800, Haoran lee wrote:
+> > 
+> > Signed-off-by: Haoran Lee <470658536@qq.com>
+> > ---
 > 
-> v3: https://lore.kernel.org/bpf/20250805130346.1225535-1-iii@linux.ibm.com/
-> v3 -> v4: Rename the new field to dont_enable (Alexei, Eduard).
->           Switch the Fixes: tag in patch 2 (Alexander, Thomas).
->           Fix typos in the cover letter (Thomas).
+> Please note that empty commit descriptions will not be accepted.
+
+Agreed, a clear description of the issue (including an error message)
+and logic of the fix is needed.
+
+> >  scripts/mod/modpost.c | 26 ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
+> > 
+> > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> > index 5ca7c268294e..216647e2f301 100644
+> > --- a/scripts/mod/modpost.c
+> > +++ b/scripts/mod/modpost.c
+> > @@ -30,6 +30,32 @@
+> >  
+> >  #define MODULE_NS_PREFIX "module:"
+> >  
+> > +/* CentOS 7 / old binutils compatibility */
 > 
-> [...]
+> Since v6.16-rc1 the minimum binutils version has been lifted to 
+> binutils-2.30 [1].
+> 
+> [1]: https://git.kernel.org/torvalds/c/118c40b7b50340bf7ff7e0adee8e3
+> 
+> Which binutils version do you have at CentOS 7 ?
 
-Here is the summary with links:
-  - [v5,1/2] libbpf: Add the ability to suppress perf event enablement
-    https://git.kernel.org/bpf/bpf/c/9474e27a24a4
-  - [v5,2/2] perf bpf-filter: Enable events manually
-    https://git.kernel.org/bpf/bpf/c/5e2ac8e8571d
+These values come from glibc's elf.h if I understand correctly, so I
+think this is more about compatibility with versions of glibc that do
+not have these relocations defined, rather than binutils.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+It appears these were all added in glibc 2.18 over ten years ago [1],
+whereas CentOS 7 appears to use glibc 2.17. There is some prior art to
+adding elf.h constants to modpost.c when they are not defined by elf.h
+but I am not sure if it is worth it in this case, as CentOS 7 has been
+EOL for over a year at this point (and I suspect the binutils / GCC
+version is already prohibitive for working on mainline).
 
+If we do want to add these relocation defines, I think they should be
+added in order of their numerical value. I do not have a strong opinion
+either way.
 
+[1]: https://sourceware.org/git/?p=glibc.git;a=commit;h=08cbd996d33114ca50644d060fbe3a08260430fb
+
+Cheers,
+Nathan
 
