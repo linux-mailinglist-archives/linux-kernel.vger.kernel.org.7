@@ -1,123 +1,160 @@
-Return-Path: <linux-kernel+bounces-758962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4EDB1D644
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:01:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E58B1D64B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EBB1AA20D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:01:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA1A57AECAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF666275AE1;
-	Thu,  7 Aug 2025 11:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7343594C;
+	Thu,  7 Aug 2025 11:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r+xBzmlb"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y1UH4Jw6"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B323507B
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871AC1F4C99
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754564470; cv=none; b=TtCf8gnioUr4wyWDsQbQlJ5pA4F2G36jvMrVj8ruiagVfTtX5dwolXlcMRVsjTHxW19RZBpx67Xvy/adKYy1/aCzBpXZeGfvXWlmgIFeg7s2v0MzJWzkvB+Sp3WuZ05XG6YI9pJ83fUSsqlIPfK9QRtcjswwXzkEWus63116akQ=
+	t=1754564547; cv=none; b=F6qlk1wgUq8kXG507X0urNHPrM7zU+j2rghB0TfAVEXhOUCS+QUUlrDABimSjUHJtrQV+d6KQnkppUuMkkL788jlu+49ZTr5ALbx2CqKqJwtUfEXm+lV+MLKUCk0QYz3NINg93TP0ut/YIuozlBNRqypoDXar7jBA4yPG99LEek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754564470; c=relaxed/simple;
-	bh=E8jZeHT0wkxyKIBmLVv0ZDLh/xYOgqEKfNBea1dffls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfrusqechLzLKJqDuBF+c/r3ctrFrkDF0LPq5AcDvYa/WnVItGIirtYJx8t6nmpxuxJL4QkTMcR9UFpFADEucN0F3HA4ElAdZ1sgBLWZiZZiqB6OG+RK3snEQLN0VXh2qJXKJZmeWqocr+VEHS++G2rrJCVtIVm0UE8yXM4GMcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r+xBzmlb; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b78b2c6ecfso414056f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:01:08 -0700 (PDT)
+	s=arc-20240116; t=1754564547; c=relaxed/simple;
+	bh=r6tDG+AbJN1HgjRV+2/Hx5PHw82masXWUHrUDGuJ7fk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wm4aJ3Ojbm91E6SWa5ZH3OTPb9VO0FshOOk0g71jTTPp6Iq3Vd0WbucFvhFgXBaGIT+yU1cF7Gdhu72bPHxowsZ7ckicfWK5rmuNlUFxLABQHLZsQUFSFGP4G+8lts6FB7ksmtErUv9pXg3p9agZles9inkEgDUNNk0crYpWyNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y1UH4Jw6; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-617c64512a7so31719a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:02:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754564467; x=1755169267; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z1LA4zLatdYQ3Y3OjAbWN8XrQew8n5n36uGhalyKn/8=;
-        b=r+xBzmlbAyQG8aUBZ0VvEeycKoMs/+G3HiDWEl3rOyx3HoTGnfYQiA2RPCjEC9OmFP
-         nZpLiBavJqjZuEOMNsF/d3hO8aKSzZKnAUkrUpULrdO8qTZICkkZXjNl4iW+J5VS0cKN
-         7Bs/T0tZ49Zxgn0elY1ml1Ji2u1NW2PedwWsR2dIavUhcniIIsktBrP3tYQCru2QisAG
-         EsA75pwKiN2yE13PN0p3bTn58ai9S0RY9FmzzZ8ekApm15xx2jM3/Ws/uqYV4rzmsf4d
-         0Vj8SOQs30h5fenc1D/iaKpq6dSNohKUKXIHjdaTDxGZX/pYSJJ5zoKIjnc8WMn0mLvV
-         IUCA==
+        d=linaro.org; s=google; t=1754564544; x=1755169344; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CObGEyXsBl5ckArYvb62OQgoq3Ny+zC7kyISSXYr+yM=;
+        b=y1UH4Jw6lXWVkE7z45zizpwvZJo91oreTIrHSvUWhlECrj6HP6reQiQGoQXr6ASAkm
+         VBfftTbkXnVk+ytbFbRrj97e774uxom65ldyCyZ/MQ6xl7jjXBxVdX1AYKNiu/cMRACq
+         jVLZhTC612XQqb373/ZIIc0Nwd4bEkOd2rvo9xXcKLjhUs8j/E41QT4NSabcAVMfC/po
+         bGW5XMUhxiIaVsERJvjbYfoMWlLfqmjq346FBjPOrc7lLu8e8l+7m0B/kyQO8Ly9Vqmh
+         JXhZC7Fl9fKriMSPv4rl6JVbYZlkWGCLv/hSTIL1ilAEr23GIrZTI19sHfiSBVAY8A2s
+         XT1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754564467; x=1755169267;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z1LA4zLatdYQ3Y3OjAbWN8XrQew8n5n36uGhalyKn/8=;
-        b=kjSQAPCnGDyaY142Gnfj2+/0dWvuDG2mouewDjxNn4MaQkxUWH8ejQ7znk2kmB/F2T
-         fXYBRRrfclssu0qaDkd+aGokRjr5VbcIaCwQtuxNCi19BzGUgq0cVuTg0ufamtxQnyvy
-         JLGwsYKNGbi36jn3qjDvNl3HoHYNr+G0TPbBButE/RHGHKdKnrI+8x6OeK5zb4UMOFc1
-         0RQoHxzIJkBj8gXl1xyu0Ngiog0xzf6QDtOIXzyDB5rf3q1lhEctte9ZD8Kyn0ychdZy
-         n/UEXoEL23j2F0Ey3fGQUTxsndbScooKQvzISBAsgIXEOuKoFIf5szSGrRz+ELbl+xY+
-         qKew==
-X-Forwarded-Encrypted: i=1; AJvYcCUaRsF0GwKzxDMBck2UNBiU7mQOW5XIWlXMvJjFLFBRcZWird5p4grBiHQIIoGvOEBoTO2GMgZsg1awk1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzx/y5DY9WIKf0jnsWU+nEfYzEPFNaCyONkIFixT6oD4PPMvQ3
-	nHXMe3dHDn8xffRVBASFj/LqVJhFTkwnnfmoX10ew/hgIOTTgAYzWlKC0R48HNuVoA==
-X-Gm-Gg: ASbGncuawWU+Q/0DXS3JQzNWpDk6PtvRLsspxSXEtvQVVTnijlqJjPVoqdumdQMHXW2
-	tZ558qCjR9wDWo21afGLMYnP0sO+5b7z6MVpzTLgfWm+xITh2tpFJmQhewYNQyS6H8DCetjbs6v
-	u95DwNmzFE3Db3YL+fmggTL7TypW8YaOfweqn7ajmxbn9TdOSmcWcPyKCTk6pNNILtd5YrgJbi3
-	wj9I/lfhjlJLiwbzpR1z6ZJIUmHVMIdQrWvSxnySLY5L7iSoox9LupxV3Bg2vaOr17vET+qdwQI
-	t2Ve8/mGIufr86QY270huoqnT3GBX3CTsy7kCjdwolBbG0ka7v48B9p8omLgBAbFgdsuIfTRC6g
-	+4w9QZ9o6bpaYp0OTJqQc7f7VRW7VDmUU9/tTBuVSrewu81/YD7/0VfOePEs=
-X-Google-Smtp-Source: AGHT+IEwZ2Oq+pTGZgJFxX26wp+82jD3we8xi3/GH3Welww/bjc1k6gfMisY/v82jM9c/h7V+Z4+SA==
-X-Received: by 2002:a05:6000:2489:b0:3a4:d6ed:8df8 with SMTP id ffacd0b85a97d-3b8f41b4ed8mr5599905f8f.39.1754564466804;
-        Thu, 07 Aug 2025 04:01:06 -0700 (PDT)
-Received: from elver.google.com ([2a00:79e0:2834:9:ad48:3e8a:43af:495d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453aeasm27312698f8f.40.2025.08.07.04.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 04:01:05 -0700 (PDT)
-Date: Thu, 7 Aug 2025 13:01:00 +0200
-From: Marco Elver <elver@google.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-	Baoquan He <bhe@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com
-Subject: Re: [PATCH 0/8] __vmalloc() and no-block support
-Message-ID: <aJSHbFviIiB2oN5G@elver.google.com>
-References: <20250807075810.358714-1-urezki@gmail.com>
+        d=1e100.net; s=20230601; t=1754564544; x=1755169344;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CObGEyXsBl5ckArYvb62OQgoq3Ny+zC7kyISSXYr+yM=;
+        b=qLQs8jGYwpy3aExR3SxB+7uZgszXrxFM4/a9Zj4383dpjJ7G2Tf0Nu+QwZZKFLhsUP
+         NeVNCRIBQZEN7zkfdGdlHfSK0K/HRg1Z4HB5vihDLGzj9N+Sfb3u5i/Y13EYRZ2TLr2r
+         1QvZM1rxQljqOnyMHgGBs0PtXuE8YsUklpru4JX3maBO2aKe+f+x0JO5qct7fxMq6srO
+         61bbw5wrqWrCuOt3sTaYKgzcbrMbk5LJwv/PoFkU1kaWoTEEJFIHmimZNackpH8JcHrG
+         JvCDnAFc2HH3aPKMhTpF5VEzYTRj9an3aL1mcewiYtYlruB8yF7JrLIFHQN49g6MlO9p
+         9jUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUk0wdpWbBbARHFFZUunbt0/DEUXV9G+rIv9bWbIUAG1qiBQylr0oCmaDdOL48g/jkjzaykljKeh75ESc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBUQH01uTPqcScMEhmJcY0ao7R9YlChfP4VQ19wleunxgisH4L
+	bLP75rjZgtTdYtKgBbC4P5T2uRStuy0fh4nWnTavzfJOrJ7blcr96jSKP3gh4qrofKw=
+X-Gm-Gg: ASbGncv3O+L6FjHKMztHExnAVvzYkn/hJbGMsK9GjJAuurU8W5uQvjRpQedy7H4B+CD
+	rIL/JXnZ0ldHnQwH2xUsj7CNFqTa75W1doSBx9xe3uFJZ924MtHgIpxqBOvvUgwr68JfGMvkmXk
+	jn++jPOskh7JBk1+jjNY9jTNEk6lJYvyEk2IHHdqu1zCXBFj/NZ9+rWzlCAgUkLG8faVrTVxlqV
+	rR+PFI03AaW3jLkVzu3OhHSkO+cJChyZJJwlWT2ZZ0sZPhODNPPF8MslSC8XRyohhClZKABzYyG
+	aesdyGPiGUwEtHkPXPQu9jUCrkVkmAKNagzIKkgBhR/iEb8gseFAqa0sVrtO2+7jBOL8hbRDpl2
+	NDT2FJL9JurXCdu/+6qwh8R+677EFAGpE3yGGvn6QMEE=
+X-Google-Smtp-Source: AGHT+IHxxXvgiIBcVo2bRXpywTm3YPRpmc1P0j9HlD/oGdag2IrL12KHdTRAWZTF1ygVNW+NegUEJg==
+X-Received: by 2002:a05:6402:3595:b0:612:e262:929c with SMTP id 4fb4d7f45d1cf-61795fbbd25mr2327171a12.0.1754564543182;
+        Thu, 07 Aug 2025 04:02:23 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.218.223])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615c57f9fd0sm10434591a12.11.2025.08.07.04.02.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 04:02:22 -0700 (PDT)
+Message-ID: <4150c213-b99a-4862-9e60-f374e40f97c8@linaro.org>
+Date: Thu, 7 Aug 2025 13:02:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807075810.358714-1-urezki@gmail.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/10] media: s5p-mfc: Modify compatible string check for
+ SoC-specific support
+To: Aakarsh Jain <aakarsh.jain@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
+ andrzej.hajda@intel.com, mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+ alim.akhtar@samsung.com, robh@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, aswani.reddy@samsung.com,
+ anindya.sg@samsung.com
+References: <20250807032449.92770-1-aakarsh.jain@samsung.com>
+ <CGME20250807032520epcas5p47545f2b03e29296b583248f8315abf45@epcas5p4.samsung.com>
+ <20250807032449.92770-8-aakarsh.jain@samsung.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250807032449.92770-8-aakarsh.jain@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 07, 2025 at 09:58AM +0200, Uladzislau Rezki (Sony) wrote:
-> Hello.
+On 07/08/2025 05:24, Aakarsh Jain wrote:
+> Modify the compatible string handling in the MFC driver
+> to explicitly match SoC-specific identifiers.
 > 
-> This is a second series of making __vmalloc() to support GFP_ATOMIC and
-> GFP_NOWAIT flags. It tends to improve the non-blocking behaviour.
-> 
-> The first one can be found here:
-> 
-> https://lore.kernel.org/all/20250704152537.55724-1-urezki@gmail.com/
-> 
-> that was an RFC. Using this series for testing i have not found more
-> places which can trigger: scheduling during atomic. Though there is
-> one which requires attention. I will explain in [1].
-> 
-> Please note, non-blocking gets improved in the __vmalloc() call only,
-> i.e. vmalloc_huge() still contains in its paths many cond_resched()
-> points and can not be used as non-blocking as of now.
-> 
-> [1] The vmap_pages_range_noflush() contains the kmsan_vmap_pages_range_noflush()
-> external implementation for KCSAN specifically which is hard coded to GFP_KERNEL.
-> The kernel should be built with CONFIG_KCSAN option. To me it looks like not
-> straight forward to run such kernel on my box, therefore i need more time to
-> investigate what is wrong with CONFIG_KCSAN and my env.
+> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
 
-KMSAN or KCSAN?
+Please read maintainer soc profile, submitting patches in DT dir and
+writing bindings. You just broke all platforms without even admitting it
+and without providing rationale.
 
-[+Cc KMSAN maintainers]
+Best regards,
+Krzysztof
 
