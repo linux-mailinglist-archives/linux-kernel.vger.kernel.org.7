@@ -1,194 +1,96 @@
-Return-Path: <linux-kernel+bounces-759184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CA6B1D9CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:18:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31703B1D9E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D9A75636FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:18:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94EE189858D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83E2258CFA;
-	Thu,  7 Aug 2025 14:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04FA25B1C5;
+	Thu,  7 Aug 2025 14:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jcNwdx4n"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VKG0OYHu"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795712B2DA;
-	Thu,  7 Aug 2025 14:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FCE264A77
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 14:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754576280; cv=none; b=pq2nUWA6JMfrs4T0qiC1MqQ0oc1jseAjTpAAVkTckfNst4tl8yJi5oCvRZ6M1O1raF1EYCkafGEHZcaaut6S9+t8MTKUKnnv1rPb+xfcpYosAj+8RrRWIQCgUOKHcE9uVVsRmoyvREdV5nhz2W7fWNTBxeuZNquEOGhwiduwXXQ=
+	t=1754576531; cv=none; b=rC6sHZoGfBzUhDVP0DN4C6szayIa0UbHd8Q7cpVh0p7lNqdiIei8qxjjq1bPrym6jh3QmMh/szZ68QD7FI2JFe9+zZXNKBMSq945KZBW9rOUxAvZvr2ouuDMTMkwnE7aRV/jz19P08Cv5UbD/3wMHpLlEHdPI7jzffvBrO7ZpVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754576280; c=relaxed/simple;
-	bh=f7NEbGJwIqidNvMi1hJ+xhJqRZbVKqypzrXyMG7AQeY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=JkPPU3MDFXDJXDjJfEImFGv+KZ2SLmH2hW6pxN3b0IbiGZZNpoejn3hHAA3gjQz7nDyw5/YDrmPjeGyh97pg4qSR3Rr9W3M9AtS8pip/4K3bPiNmnSVHX33NPJo4idTZpKAq6pBk9LC7dDwMi1d5SOwf1OrP1uixd0vQAiYgMTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jcNwdx4n; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577DQaY4023128;
-	Thu, 7 Aug 2025 16:17:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	0rKaft9+XU83BazRufG1bMpf0DcHNm09LrzRYaslGhI=; b=jcNwdx4nFkb1smh5
-	h5I16w88LgIWv9EFwVomPh41WuDDm3tU7puXrvrzQiVSR1tvJRm7DCk5cFWC7Eom
-	Qwg1OwWGqvZUyjm07/BYReQSQo79lSF1dhIf9oKjstVoB9bWPfvACu2Oc8xw+84f
-	Zlhh5p0bqDLXFK4VJlhOPKdkrUwW/7pfYQgC0sTAs4EcR8+RFeBT/dMkUzmzxZM+
-	uFyOQ0dhCccbAYgg8w3+HpWrxjhMOq43zPfM/MXN8fF5kXMtitJph28y9NgOhd5d
-	G6m1tRUZsRJ5bc4Nm4yfONACvLJTSu0R4A7uIAQ+f/XpTOuDer4E7FPtzm2ZfWkL
-	L9UTIw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48bpx083p2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 16:17:41 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0A04840046;
-	Thu,  7 Aug 2025 16:16:34 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5DA2371582F;
-	Thu,  7 Aug 2025 16:15:42 +0200 (CEST)
-Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 7 Aug
- 2025 16:15:41 +0200
-Message-ID: <cb76e0da-f4c9-4aaf-8e0b-4666738d238e@foss.st.com>
-Date: Thu, 7 Aug 2025 16:15:39 +0200
+	s=arc-20240116; t=1754576531; c=relaxed/simple;
+	bh=4BqfYnpWvnQMSL5nhqpRk9+A0ReDfFntrkj99hrVMC8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=KZ6mIHVlOTkwDp7RYPLEzDAjOOsrAf580IXAfmJZKJOvexgeLxvkrhUiUOJ78+YM5gV4YN0qidtOTvpQMzVFwtJRGL2UqyX9D9rKYaoEjrsq9yiICLVQ90Q2SqHMAvfBoETh5S86H8EwxzQ2zxVksxDKuMC39sOF2XamwvDYgF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=VKG0OYHu; arc=none smtp.client-ip=43.163.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1754576517; bh=d+dMpIrhJw974g6imMm8tUUBqmD/9oTQWfC9nS9Xy1A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=VKG0OYHuhoIpkU7omRlSRXIDV3ec4BIeOrHBm4UcOvz94hUEZlmGlvIiB39dJtsOR
+	 o0HxzoEkhRmEarymyH5ahs/zuXjlopY34eh67NxmCQzPOZNJo9tNyZ159Xz6d2MKK5
+	 7I4orS31BU0L0v6z7H70YwhyUJLZWyjKabbejKh8=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.231.14])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 3F20BE0D; Thu, 07 Aug 2025 22:15:50 +0800
+X-QQ-mid: xmsmtpt1754576150tyeu5g5e4
+Message-ID: <tencent_12A5C08DB79240DDA95D9119784FA08DAC07@qq.com>
+X-QQ-XMAILINFO: NVJ0hJNx7N5S3mZRam08OiXFR46p1qiXXi0WnhljyhJ+RWQj6mrUuuLHpO7GWG
+	 2A1LPx0i84tWkbSu1GINfaGGIGuCjv0WJlTgjBpf+n1pGWqEoWLRKvaBLy8VAYu/kSZUxZKWAd7f
+	 vDoyi8R9g9yz8WFmzL3/nS0xP+Wk8HNkQQaPu/ZrDR3yqtAyzz/NRbwO68D7eAI1fLqmtJ/z7uwQ
+	 9w/ihnC9Ry1/oi0jMdVUsnw0s4XNJ0bk3RXy4nkFDlbyIS8B7ZCqKKfsLVYmQDnwV3JiUYbyCfJi
+	 YcC5DAvZz6/NFEFi1+rxRk9mSofr7fw08zvtbjZSfoZxKOVX5TLvgmNSjP7X0JFVY+1fnxUrhKtS
+	 KXzMhOjR4MWZM5YC0WtrCt2dbk1ZKxfTVX23iEcvfxiM7mQrbevvZudzdl4i7TVLGuYaSvcK4MlR
+	 OzA8kWyYmbgpSiWXwzDdpvqyJ0IpRJH01N21yy/MXIShyl4tGR3Rsn/YmClUERxautHgPUy2X7Pa
+	 kBw9MbbDWCm34Ql4evgS9SqVV5sBo9E58BNCCDfya3WZujZ9tQEMsUbvAXUlTVxa9oDMnbQMH2Xm
+	 haToehZwn/96ydx0tkqiHAJ46Gss4c+FjqzMUhGQA3G60NPYIic/ZC8NOo4Hcx6D2889NXigYhDU
+	 Io8TBwjI5C4cX73hPa7kKK8Vqt/wPi6pGZvZIPrcAL8SKsLJvVsn6ruw/0VnhjvOlTwWztDKvsxd
+	 e9QciiQ6yF5xH4o0Bik19zJeeEL0T3YN6c39AMclVgTiqqg4dmbywAsPwXndttmmJ2eIbDI5TtG4
+	 xnnEULzygTpHZsbRBwgQazj4DehaUKu82DDFHcstpzyRTLVLwG+SqyqAeqtGk1G1o6ZvcvLb/QkK
+	 vemA7kRoZCoevP7dALAqEZjpEDAkN4gjLBOTH0rXApRFuCTkALnWVb+ntHpAPJixbrmxJ0rV4tUb
+	 TXAdTrmGFUzcfIBJ40iQ==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+2d7d0fbb5fb979113ff3@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_remove
+Date: Thu,  7 Aug 2025 22:15:43 +0800
+X-OQ-MSGID: <20250807141542.3380283-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <6890f71a.050a0220.7f033.0010.GAE@google.com>
+References: <6890f71a.050a0220.7f033.0010.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 0/2] Add pinctrl_pm_select_init_state helper
- function
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>
-CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>
-References: <20250723210753.GA2911683@bhelgaas>
- <99737d4f-488d-4208-91aa-83ce52957147@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <99737d4f-488d-4208-91aa-83ce52957147@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
 
-Gentle ping,
+#syz test
 
-Maybe the best for Linus is to apply only 1/2 on his pinctrl tree.
-
-I'll rebase 2/2 stm32 PCIe part after the merge to mainline and respin 
-for the PCI tree
-
-Best Regards
-
-Christian
-
-On 7/24/25 15:36, Christian Bruel wrote:
-> 
-> 
-> On 7/23/25 23:07, Bjorn Helgaas wrote:
->> On Wed, Jul 23, 2025 at 01:32:52PM +0200, Linus Walleij wrote:
->>> On Thu, Jul 17, 2025 at 8:33 AM Christian Bruel
->>> <christian.bruel@foss.st.com> wrote:
->>>
->>>> We have the helper functions pinctrl_pm_select_default_state and
->>>> pinctrl_pm_select_sleep_state.
->>>> This patch adds the missing pinctrl_pm_select_init_state function.
->>>>
->>>> The STM32MP2 needs to set the pinctrl to an initial state during
->>>> pm_resume, just like in probe. To achieve this, the function
->>>> pinctrl_pm_select_init_state is added.
->>>>
->>>> This allows a driver to balance pinctrl_pm_select_sleep_state()
->>>> with pinctrl_pm_select_default_state() and
->>>> pinctrl_pm_select_init_state() in pm_runtime_suspend and 
->>>> pm_runtime_resume.
->>>>
->>>> Christian Bruel (2):
->>>>    pinctrl: Add pinctrl_pm_select_init_state helper function
->>>>    PCI: stm32: use pinctrl_pm_select_init_state() in
->>>>      stm32_pcie_resume_noirq()
->>>
->>> If Bjorn Helgaas is OK with it I can apply this to the pinctrl tree.
->>>
->>> Otherwise I can also just apply patch 1/2, but that doesn't solve
->>> any problem.
->>
->> The stm32 driver has been posted and is on this branch of the PCI
->> tree:
->>
->>    https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/? 
->> h=controller/dwc-stm32&id=5a972a01e24b
->>
->> but it's not in mainline (or even in pci/next) yet, so you would only
->> be able to apply patch 2/2 if you took the whole driver, which is
->> probably more than you would want to do.
->>
->> I haven't put it in pci/next yet because it doesn't build when
->> CONFIG_PINCTRL is not defined:
->>
->>    https://lore.kernel.org/r/20250716192418.GA2550861@bhelgaas
->>
->> I don't know enough about pinctrl to know why stm32 needs this when
->> nobody else seems to.  I doubt it's really unique, so maybe it's just
->> not doing the right thing here.
-> 
-> The STM32MP2 is unique because the core clock is gated on CLKREQ#. 
-> Consequently, it is not possible to access the core registers from DBI 
-> when no card is attached, causing the board to freeze. I don't know 
-> another platform with this limitation
-> 
-> To fix this, we use a GPIO to de-assert CLKREQ# during probe and restore 
-> the pin to its default AF mode afterward. This works perfectly for 
-> probe, but we lack functionality for PM resume unless we explicitly 
-> select the state with pinctrl_pm_select_XXX_state().
-> 
-> For reference, the init_state functionality was introduced in
-> https://lkml.org/lkml/2015/10/21/1
-> 
-> If we prefer not to extend the pinctrl API in patch 1/2, I can fix the 
-> case in patch 2/2 only with something like:
-> 
-> in stm32_pcie_probe()
->       pinctrl = devm_pinctrl_get(dev);
-> 
->       if(pinctrl!= -ENODEV) // PINCTRL is defined
->            pinctrl_init = pinctrl_lookup_state(stm32_pcie>pinctrl, 
-> PINCTRL_STATE_IN
-> 
-> in stm32_pcie_resume_noirq()
->     if (pinctrl) {
->            ret = pinctrl_select_state(stm32_pcie->pinctrl, stm32_pcie- 
->  >pinctrl_init);
-> 
-> What do you advise ?
-> 
-> thank you
-> 
-> Christian
-> 
-> 
-> 
->>
->> Bjorn
-> 
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 9692fa4c3ef2..0d69572fe1ce 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -4443,8 +4443,11 @@ struct gendisk *__blk_mq_alloc_disk(struct blk_mq_tag_set *set,
+ {
+ 	struct request_queue *q;
+ 	struct gendisk *disk;
++	unsigned int nofs_flag;
+ 
++	nofs_flag = memalloc_nofs_save();
+ 	q = blk_mq_alloc_queue(set, lim, queuedata);
++	memalloc_nofs_restore(nofs_flag);
+ 	if (IS_ERR(q))
+ 		return ERR_CAST(q);
+ 
 
 
