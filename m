@@ -1,209 +1,111 @@
-Return-Path: <linux-kernel+bounces-759575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC0FB1DF74
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:49:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B7AB1DF75
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E10620EB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:49:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5502E1AA0FAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5781924EABC;
-	Thu,  7 Aug 2025 22:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4AA23D2B2;
+	Thu,  7 Aug 2025 22:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8tMGNh1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wClrZvay"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BFC1E520E;
-	Thu,  7 Aug 2025 22:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92F51E520E;
+	Thu,  7 Aug 2025 22:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754606952; cv=none; b=ZTaBz3BymrjAz+z5ArKzbgUG3TsaGYn7C18VyuIBNP8y6XN6I1orSKbVuxRxUq3kDagnnlT3Y+jt6QQpbSDhItpWS5jCLkW9pWVMK9rEKxYly4LOxEll5MC/l2NON9GvD4ROwy4770/bxwza13ZoeXEkTUWmO4cY6oMFlDNkPZY=
+	t=1754607108; cv=none; b=JkNjI+eHRpWNIBKFBeL/6VKjQcof9nf4I+2Qv3W2RNM2lbLrrFmV7xM9M/FSHCRbsfvnIcoOyW/VuJPz0eF/Yfk/dCX2OL+ydMi2KeZePLes6b8Hag93JLVUtMCt7vy3H/7ezTqMj5B7HPY3kOPDM6p+UwbMQrUCFNif/vRFetg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754606952; c=relaxed/simple;
-	bh=ct9wP1hAXhHSS7zT1f1XYryEJu/IvFRqbmyxNBbRnFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ciYLDLW6yABVhyyDS+gJY1kbBirB1po7hs8QbIP6i8vTP8IjFS460KwKNqvOvx1t5GFrshviXL5h/5oz6Chrics12onfPgPnfIG7YEuyGztKEILaJ/jaT4GX/uzohhoo1vxYGQ3OaXdJcVwA83V9iafUidCqVjLqAmtL3KnVRvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8tMGNh1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62495C4CEEB;
-	Thu,  7 Aug 2025 22:49:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754606952;
-	bh=ct9wP1hAXhHSS7zT1f1XYryEJu/IvFRqbmyxNBbRnFM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=M8tMGNh1pbTUhX2erH8MrwVCeFfJlseNkNkv0qLXz37KfIfc+g36MZ4K74SyCQotG
-	 GE1wUNeiRLHM6z9f0BkU5CNNQccnwUEDeMIn7FcgiJUQVs5sxBrQTh16Xq4DCTwU82
-	 Yc5VslmbQ9Y7LYQijDPuY6dWGrxA0pimU+XBRm5oAZ20QUBh6vKTEkDI2dJDEcdpX9
-	 1HWasmT10Ge2wj2CSD22CtRRTV4BW/zLiNHBc/TlfGHgsMedYMlP0vZWmxzjfvPs6c
-	 P/jAYvsJ+WnQSXzcwpxvRXZcakf5zi6G9e7xWx0CAzMKV+zuZ+IuGNG+80yZoYhWkt
-	 anPcYkgkBvUEg==
-Date: Thu, 7 Aug 2025 17:49:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
-	lukas@wunner.de
-Subject: Re: [PATCH v4 09/10] PCI/TSM: Report active IDE streams
-Message-ID: <20250807224911.GA66859@bhelgaas>
+	s=arc-20240116; t=1754607108; c=relaxed/simple;
+	bh=na2QU6FWDELkYVoPgCkWkalJvPfa5WbFf4KfIP57n0w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=alMgtKaZrCKKjKETeA1lI20dvZTHHzhPiZDVLdaguekO5x9TBYR/+ORk6zZSk1S/E4ysQAzHmYk9CP1563mUvYI3kIBjtFZ93xXkGra9mlLU7NMWfo2NS3wulkZArlGwd9YXPNLdXSMihLEsJWsijY2T687jOp8MmB4A2og02gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wClrZvay; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 577Mpc5X410651;
+	Thu, 7 Aug 2025 17:51:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754607098;
+	bh=ZOY+VD/ZDT6Ubghvl2iEKCAJZ/RRCH2WxMpO8jS3lDY=;
+	h=From:To:CC:Subject:Date;
+	b=wClrZvayjyvXYXPm+dvkgIp4el+7u5hKIQFk1qeFmpDGsq+DXEu9MpuwI95FlG53M
+	 snUR2x/UVNZBir4NUHOoN9Apbz2nFaE4O7VXDErAvVqncY67o3PH1orwIllLtPLhzG
+	 9LxWGXANeEXcp9/h5dVE8fArPc5ka+IVjRjaV7M0=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 577MpcCn477040
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 7 Aug 2025 17:51:38 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 7
+ Aug 2025 17:51:38 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 7 Aug 2025 17:51:38 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 577MpcBj2086622;
+	Thu, 7 Aug 2025 17:51:38 -0500
+From: Judith Mendez <jm@ti.com>
+To: Judith Mendez <jm@ti.com>, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf
+ Hansson <ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Andrew Davis <afd@ti.com>
+Subject: [PATCH v2 0/2] Add support for AM62P SR1.2
+Date: Thu, 7 Aug 2025 17:51:36 -0500
+Message-ID: <20250807225138.1228333-1-jm@ti.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717183358.1332417-10-dan.j.williams@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Jul 17, 2025 at 11:33:57AM -0700, Dan Williams wrote:
-> Given that the platform TSM owns IDE Stream ID allocation, report the
-> active streams via the TSM class device. Establish a symlink from the
-> class device to the PCI endpoint device consuming the stream, named by
-> the Stream ID.
-> 
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+This patch series adds support for the AM62P SR1.2 silicon revision by
+adding logic in k3-socinfo to detect AM62P variants.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+This also disables HS400 support for AM62P SR1.0 and SR1.1 in sdhci host
+driver and enable by default for AM62P SR1.2.
 
-> ---
->  Documentation/ABI/testing/sysfs-class-tsm | 10 ++++++++
->  drivers/pci/ide.c                         |  4 ++++
->  drivers/virt/coco/tsm-core.c              | 28 +++++++++++++++++++++++
->  include/linux/pci-ide.h                   |  2 ++
->  include/linux/tsm.h                       |  4 ++++
->  5 files changed, 48 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-class-tsm b/Documentation/ABI/testing/sysfs-class-tsm
-> index 2949468deaf7..6fc1a5ac6da1 100644
-> --- a/Documentation/ABI/testing/sysfs-class-tsm
-> +++ b/Documentation/ABI/testing/sysfs-class-tsm
-> @@ -7,3 +7,13 @@ Description:
->  		signals when the PCI layer is able to support establishment of
->  		link encryption and other device-security features coordinated
->  		through a platform tsm.
-> +
-> +What:		/sys/class/tsm/tsmN/streamH.R.E
-> +Contact:	linux-pci@vger.kernel.org
-> +Description:
-> +		(RO) When a host bridge has established a secure connection via
-> +		the platform TSM, symlink appears. The primary function of this
-> +		is have a system global review of TSM resource consumption
-> +		across host bridges. The link points to the endpoint PCI device
-> +		and matches the same link published by the host bridge. See
-> +		Documentation/ABI/testing/sysfs-devices-pci-host-bridge.
-> diff --git a/drivers/pci/ide.c b/drivers/pci/ide.c
-> index cafbc740a9da..923b0db4803c 100644
-> --- a/drivers/pci/ide.c
-> +++ b/drivers/pci/ide.c
-> @@ -5,6 +5,7 @@
->  
->  #define dev_fmt(fmt) "PCI/IDE: " fmt
->  #include <linux/pci.h>
-> +#include <linux/tsm.h>
->  #include <linux/sysfs.h>
->  #include <linux/pci-ide.h>
->  #include <linux/bitfield.h>
-> @@ -271,6 +272,9 @@ void pci_ide_stream_release(struct pci_ide *ide)
->  	if (ide->partner[PCI_IDE_EP].enable)
->  		pci_ide_stream_disable(pdev, ide);
->  
-> +	if (ide->tsm_dev)
-> +		tsm_ide_stream_unregister(ide);
-> +
->  	if (ide->partner[PCI_IDE_RP].setup)
->  		pci_ide_stream_teardown(rp, ide);
->  
-> diff --git a/drivers/virt/coco/tsm-core.c b/drivers/virt/coco/tsm-core.c
-> index 093824dc68dd..b0ef9089e0f2 100644
-> --- a/drivers/virt/coco/tsm-core.c
-> +++ b/drivers/virt/coco/tsm-core.c
-> @@ -2,14 +2,17 @@
->  /* Copyright(c) 2024 Intel Corporation. All rights reserved. */
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +#define dev_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
->  #include <linux/tsm.h>
->  #include <linux/idr.h>
-> +#include <linux/pci.h>
->  #include <linux/rwsem.h>
->  #include <linux/device.h>
->  #include <linux/module.h>
->  #include <linux/cleanup.h>
->  #include <linux/pci-tsm.h>
-> +#include <linux/pci-ide.h>
->  
->  static struct class *tsm_class;
->  static DECLARE_RWSEM(tsm_rwsem);
-> @@ -140,6 +143,31 @@ void tsm_unregister(struct tsm_dev *tsm_dev)
->  }
->  EXPORT_SYMBOL_GPL(tsm_unregister);
->  
-> +/* must be invoked between tsm_register / tsm_unregister */
-> +int tsm_ide_stream_register(struct pci_ide *ide)
-> +{
-> +	struct pci_dev *pdev = ide->pdev;
-> +	struct pci_tsm *tsm = pdev->tsm;
-> +	struct tsm_dev *tsm_dev = tsm->ops->owner;
-> +	int rc;
-> +
-> +	rc = sysfs_create_link(&tsm_dev->dev.kobj, &pdev->dev.kobj,
-> +				 ide->name);
-> +	if (rc == 0)
-> +		ide->tsm_dev = tsm_dev;
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(tsm_ide_stream_register);
-> +
-> +void tsm_ide_stream_unregister(struct pci_ide *ide)
-> +{
-> +	struct tsm_dev *tsm_dev = ide->tsm_dev;
-> +
-> +	sysfs_remove_link(&tsm_dev->dev.kobj, ide->name);
-> +	ide->tsm_dev = NULL;
-> +}
-> +EXPORT_SYMBOL_GPL(tsm_ide_stream_unregister);
-> +
->  static void tsm_release(struct device *dev)
->  {
->  	struct tsm_dev *tsm_dev = container_of(dev, typeof(*tsm_dev), dev);
-> diff --git a/include/linux/pci-ide.h b/include/linux/pci-ide.h
-> index 89c1ef0de841..36290bdaf51f 100644
-> --- a/include/linux/pci-ide.h
-> +++ b/include/linux/pci-ide.h
-> @@ -42,6 +42,7 @@ struct pci_ide_partner {
->   * @host_bridge_stream: track platform Stream ID
->   * @stream_id: unique Stream ID (within Partner Port pairing)
->   * @name: name of the established Selective IDE Stream in sysfs
-> + * @tsm_dev: For TSM established IDE, the TSM device context
->   *
->   * Negative @stream_id values indicate "uninitialized" on the
->   * expectation that with TSM established IDE the TSM owns the stream_id
-> @@ -53,6 +54,7 @@ struct pci_ide {
->  	u8 host_bridge_stream;
->  	int stream_id;
->  	const char *name;
-> +	struct tsm_dev *tsm_dev;
->  };
->  
->  int pci_ide_domain(struct pci_dev *pdev);
-> diff --git a/include/linux/tsm.h b/include/linux/tsm.h
-> index ce95589a5d5b..4eba45a754ec 100644
-> --- a/include/linux/tsm.h
-> +++ b/include/linux/tsm.h
-> @@ -120,4 +120,8 @@ const char *tsm_name(const struct tsm_dev *tsm_dev);
->  struct tsm_dev *find_tsm_dev(int id);
->  const struct pci_tsm_ops *tsm_pci_ops(const struct tsm_dev *tsm_dev);
->  const struct attribute_group *tsm_pci_group(const struct tsm_dev *tsm_dev);
-> +struct pci_dev;
-> +struct pci_ide;
-> +int tsm_ide_stream_register(struct pci_ide *ide);
-> +void tsm_ide_stream_unregister(struct pci_ide *ide);
->  #endif /* __TSM_H */
-> -- 
-> 2.50.1
-> 
+Tested against AM62P SR1.2, SR1.1, SR1.0 and AM62X SK.
+Log for AM62P SR1.2:
+https://gist.github.com/jmenti/3d605dcd9445c2fac86c626bfa519103
+
+Changes since v1:
+- Drop binding and DT patches 
+- Move disable HS400 print to sdhci_am654_init & only print if caps are
+  already enabled, according to Andrew's review
+- Completely refactor/change patch 2/4 for k3-socinfo to not add a new
+  item to reg property, find GP_SW as an offset of JTAG ID. This approach
+  is based off-of Krzysztof's review.
+
+Link to v1:
+https://lore.kernel.org/linux-mmc/20250805234950.3781367-1-jm@ti.com
+
+Judith Mendez (2):
+  soc: ti: k3-socinfo: Add support for AM62P variants
+  mmc: sdhci_am654: Disable HS400 for AM62P SR1.0 and SR1.1
+
+ drivers/mmc/host/sdhci_am654.c | 18 ++++++++++++++++++
+ drivers/soc/ti/k3-socinfo.c    | 27 +++++++++++++++++++++++++--
+ 2 files changed, 43 insertions(+), 2 deletions(-)
+
+--
+2.49.0
+
 
