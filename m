@@ -1,233 +1,141 @@
-Return-Path: <linux-kernel+bounces-759407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A309BB1DD2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:36:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E984B1DD2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611C618C2CC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:36:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEF534E254E
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2E820D51C;
-	Thu,  7 Aug 2025 18:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12383218ACC;
+	Thu,  7 Aug 2025 18:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mof9kBKP"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hnmqpRKz"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE10535959;
-	Thu,  7 Aug 2025 18:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051F7258A
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 18:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754591777; cv=none; b=nrzk1ECyj+3ZLt+8CzJUXcWeMswAZ0MUOJ2BXhweGGd7ghHTsxYCBsnutOap8cvfz3v/BBNeyUe0WTViCzJFIkNAtHYNYI757zn0ahOP4g6CNyo2dxkdNqCPHqdT+lXUCYGKim3RgnyxMSXwRB51M9be8udw4WSlJr2ottdIJr4=
+	t=1754591929; cv=none; b=oHeALNwY6XlJrCsb0iTASehDvQuZ8w1UgUvzJRzxe9598Yh5NhvSMIi0W9DvygmcxhKOYTDxiaEY6yTTPEobsEV5yoYAZi3ePNcATp+aGHqNjVaejnqT+7e+SAzcZi+1Cs6kh6lUWozaCM0ceBfP1JOB+ylO1yirtVj2lNdXxiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754591777; c=relaxed/simple;
-	bh=ZoQzIXp3rakOxPPgb+1zQCTb3aKhJz4zxp+ORodGSfM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r9Lj6LK5ATnqZljrJ3AnPwfKRQ2QYdy/R85adP1DAalHZtFA5ih01grfRFGiuKBh39BucA4wpi/1OwGiVLnUhqCu8xTReTvYkqI/Pmk44CDa6vrFFQvz2PKCadE0jdRRHj5FijE4XMpDiqC1tE7IeRakk38ftV1mhSw6yI65wZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mof9kBKP; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577FK01Y019425;
-	Thu, 7 Aug 2025 18:36:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=aKhneyAzDdfZGjI0wau8ksWW5iYO6xcbL43ns9QOC
-	Zs=; b=mof9kBKPdjsZeCBrQDBVlm/p4u6oxZBgLpqgrk/EIf/EqANKdmzqXnWdp
-	np5K+dxnbK3XyYO7kAAawTkhyYwl7b/53NMwuVpbSDqwQSsoPF8zSQKs0aBx23Pi
-	/8oQUHDTxgNz2jPIQVye7btQtlouYVStUoGxA1IHEX8l3vkjFVWlmB+ZJ9Rcrk3N
-	l/4R3aZ5+BSMVc5FPesHA0jts/hVMs+EQd0tpCiKFqfbFXtfaeqgnh4+PzNPS4ps
-	6u/JJJe7Lw/gnvk1dJVDuYfZM3B+3F5H1NpqS4u/AWmc+k31lwf7BlmdZqCvqziJ
-	E/9DeyfwwL/Ffn+F8HfSV9rAQkmQQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26u1ef0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 18:36:07 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577ITA8c029483;
-	Thu, 7 Aug 2025 18:36:06 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26u1eeu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 18:36:06 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 577Gq7Yf022661;
-	Thu, 7 Aug 2025 18:36:05 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwqj5pn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 18:36:05 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577Ia19l48890134
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 18:36:01 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4CEBB20043;
-	Thu,  7 Aug 2025 18:36:01 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2259A20040;
-	Thu,  7 Aug 2025 18:36:01 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Aug 2025 18:36:01 +0000 (GMT)
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>, richard.weiyang@gmail.com
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>, sumanthk@linux.ibm.com
-Subject: [PATCH v4] mm: fix accounting of memmap pages
-Date: Thu,  7 Aug 2025 20:35:45 +0200
-Message-ID: <20250807183545.1424509-1-sumanthk@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1754591929; c=relaxed/simple;
+	bh=xmmHCmJcE2ulD2451FS6SDHBUoDFstNnx3dJA00gofo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SgtI2U2fiy4ltd3F5wIACOf+jtV0i36qJszWIIUbOWwBI0elj8FMQVQq8pdC5oHbF6T3epk1diocPGiTVFSz1SCmMlHTYb6zf4ZfQOzcg0uXtA1TiSMivrtX6Hj3nTGhw2IasBK+iLZ72xye/zHWxc3tAqJg/9TmwMCN5OEf4lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hnmqpRKz; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3211b736a11so2788834a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 11:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754591927; x=1755196727; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yp84IsrpOeYSbgICcPR8apvUJuROu2Gav6Oyrx9mTk4=;
+        b=hnmqpRKzSQp0UndbKtkjlzsUeE52pwoO38uc6md0/VsOZ30hrpGBYfIVSY3n46So4D
+         qvcjHtUBxOxgLjGVZ3d5fvytgJGxYZ6N2XI1+2oLVAbVtpnLMRqK588RTV9FrYf5vMuW
+         OYb0f6J5eAFTtuWqKlNKdFn8IoR9jfY2ONyZZwX3xXSsoXBuv295hLpkmeXpes1rVwrA
+         /UYYqd5tA8QeeqyJNxhDeX9AyHXgyM6m6LVgewrIWd9TmBqd6+wL7CaRaENifMYFpJoB
+         P9rsn9CHqw4njfOOH2wX3RL2OYmf51TCiSHI5gltPW+MMcpARprDlN/V2fkG+Herjfmd
+         EaoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754591927; x=1755196727;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yp84IsrpOeYSbgICcPR8apvUJuROu2Gav6Oyrx9mTk4=;
+        b=QXhe6+6MkJSK/8G3BCKFB1Cz3z8lWyiVDI/Ueq0U1vVfGVdJtCqLEDCtfLq0YQODOx
+         sl2sWr52s/VQEczwy3TDn5HUU2c+DcVa+94a2VM6ZayHAw07TosZIXEH0frJsU+9y3a0
+         34+SulNn6li7W79pP1p3kE7gcUl0/0FX9+MwlkStCqrry/YlJdhmzssDO33FLPqOPNr9
+         Ap+pDigAFr4YlYZNn/G7mcFtJXwzFab+C7NIW6uzSSPhG7g6PrqjHzwDF46yl08zPMd1
+         SmE1W4uplFGKIOXLiwZ+7HSzzX+Xod7W+uq1R7jTMmrbufnfhHWbD3f2E3/eXNxnMZY5
+         npCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtLQgOubINk19k5z/2iI2XytBU9JnRtQjh+Z244WDivQrvilaK24J8tNjX/fJnwbHPtOKTe0xK0EkEFkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZTuaSp3R4+SGmUBUJ20K4VAvDzEgvxUA1FaMUCSJQz+HH28DY
+	WndlzWX4msGU5ZxGCVF6YkH8JKPEjDERxTHQSbSEH9fl/QRKs/QYrTp7UXwuPgulkfCZ+N0bBfl
+	2GZzD+w==
+X-Google-Smtp-Source: AGHT+IFCWCOlCO6n5/AEOdaCe6fYz3jM8iX2vBVKNK9vB/91SLgPbLstukRS4VE0qXM9vySMQaYSmXIXgcA=
+X-Received: from pjg13.prod.google.com ([2002:a17:90b:3f4d:b0:31c:2fe4:33ba])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b41:b0:31f:6ddd:ef3
+ with SMTP id 98e67ed59e1d1-32183e74d4dmr55251a91.35.1754591927300; Thu, 07
+ Aug 2025 11:38:47 -0700 (PDT)
+Date: Thu, 7 Aug 2025 11:38:46 -0700
+In-Reply-To: <CAAdeq_+Ppuj8PxABvCT54phuXY021HxdayYyb68G3JjkQE0WQg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Q6gTKsj0jKKFacG6gPQXzsemAJFWNtlj
-X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=6894f217 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8
- a=cUr1TRy4Y1kx_8V_9hMA:9
-X-Proofpoint-GUID: zyRnUKR7nx37eiBWiP3FzLDWANvrDLTR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDE1MCBTYWx0ZWRfXxAj55tLiecDX
- ZawhDJzPQ98PWwrQ282eCqurzzmouxKExGZuL82WEpF/C1GtVaqMUjm1TFyJVCeKZ8GehrrSvlO
- foGcE4RTwsTs5KABA/ZBr/j6a4PYQ7JloGXYU7GpSSDZ6ojC6iN+7x3K+r66RoyU7qdypCM/kuk
- wthcc89EeopQhctjFvnHcf7PZFQ0u+i3eSBEIjP7eHE67DPhw3u+7M//QLeoiJAiFDagdssVabA
- 2MA2kDG2a/Nfz+iZrvFaBC1BQOsGQiknUiiPrJoaSDyugq+mWDsPo54QMcFN5H/OPdtmvbH4E0i
- FF6O5W6bOMJw9D02JgYfbgRwz6ppmTf7gvG6a2fef6lYpMsaRSBODafigN3kBwOw9Z2/3CrH0gU
- Bi1cnXU0KVYeJwnbP47DvN0HFGIa5Oa4tv4BT5bwiVS19M5StY+eafBU6uvBU3bttjGISXPe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_04,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=737
- malwarescore=0 phishscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070150
+Mime-Version: 1.0
+References: <20250806081051.3533470-1-hugoolli@tencent.com>
+ <aJOc8vIkds_t3e8C@google.com> <CAAdeq_+Ppuj8PxABvCT54phuXY021HxdayYyb68G3JjkQE0WQg@mail.gmail.com>
+Message-ID: <aJTytueCqmZXtbUk@google.com>
+Subject: Re: [PATCH] KVM: x86: Synchronize APIC State with QEMU when irqchip=split
+From: Sean Christopherson <seanjc@google.com>
+To: hugo lee <cs.hugolee@gmail.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yuguo Li <hugoolli@tencent.com>
+Content-Type: text/plain; charset="us-ascii"
 
-For !CONFIG_SPARSEMEM_VMEMMAP, memmap page accounting is currently done
-upfront in sparse_buffer_init(). However, sparse_buffer_alloc() may
-return NULL in failure scenario.
+On Thu, Aug 07, 2025, hugo lee wrote:
+> On Thu, Aug 7, 2025 Sean Christopherson wrote:
+> >
+> > On Wed, Aug 06, 2025, Yuguo Li wrote:
+> > > When using split irqchip mode, IOAPIC is handled by QEMU while the LAPIC is
+> > > emulated by KVM.  When guest disables LINT0, KVM doesn't exit to QEMU for
+> > > synchronization, leaving IOAPIC unaware of this change.  This may cause vCPU
+> > > to be kicked when external devices(e.g. PIT)keep sending interrupts.
+> >
+> > I don't entirely follow what the problem is.  Is the issue that QEMU injects an
+> > IRQ that should have been blocked?  Or is QEMU forcing the vCPU to exit unnecessarily?
+> >
+> 
+> This issue is about QEMU keeps injecting should-be-blocked
+> (blocked by guest and qemu just doesn't know that) IRQs.
+> As a result, QEMU forces vCPU to exit unnecessarily.
 
-Also, memmap pages may be allocated either from the memblock allocator
-during early boot or from the buddy allocator. When removed via
-arch_remove_memory(), accounting of memmap pages must reflect the
-original allocation source.
+Is the problem that the guest receives spurious IRQs, or that QEMU is forcing
+unnecesary exits, i.e hurting performance?
 
-To ensure correctness:
-* Account memmap pages after successful allocation in sparse_init_nid()
-  and section_activate().
-* Account memmap pages in section_deactivate() based on allocation
-  source.
+> > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > > index 8172c2042dd6..65ffa89bf8a6 100644
+> > > --- a/arch/x86/kvm/lapic.c
+> > > +++ b/arch/x86/kvm/lapic.c
+> > > @@ -2329,6 +2329,10 @@ static int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
+> > >                       val |= APIC_LVT_MASKED;
+> > >               val &= apic_lvt_mask[index];
+> > >               kvm_lapic_set_reg(apic, reg, val);
+> > > +             if (irqchip_split(apic->vcpu->kvm) && (val & APIC_LVT_MASKED)) {
+> >
+> > This applies to much more than just LINT0, and for at least LVTPC and LVTCMCI,
+> > KVM definitely doesn't want to exit on every change.
+> 
+> Actually every masking on LAPIC should be synchronized with IOAPIC.
 
-Cc: stable@vger.kernel.org
-Fixes: 15995a352474 ("mm: report per-page metadata information")
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
----
-v4:
-* Add fixes and suggested-by.
+No, because not all LVT entries can be wired up to the I/O APIC.
 
-v3: 
-* Account memmap pages for !CONFIG_SPARSEMEM_VMEMMAP and only when memmap
-  allocation succeeds. Thanks Wei Yang.
+> Because any desynchronization may cause unnecessary kicks
+> which rarely happens due to the well-behaving guests.
+> Exits here won't harm, but maybe only exit when LINT0 is being masked?
 
-v2: 
-* Account memmap pages for  !CONFIG_SPARSEMEM_VMEMMAP in
-  section_deactivate().  Thanks David.
-* https://lore.kernel.org/all/20250804151328.2326642-1-sumanthk@linux.ibm.com/
+Exits here absolutely will harm the VM by generating spurious slow path exits.
 
-v1: 
-* Account memmap pages for early sections.
-* https://lore.kernel.org/all/20250804084015.270570-1-sumanthk@linux.ibm.com/
+> Since others unlikely cause exits.
 
- mm/sparse-vmemmap.c |  5 -----
- mm/sparse.c         | 15 +++++++++------
- 2 files changed, 9 insertions(+), 11 deletions(-)
+On Intel, LVTPC is masked on every PMI.
 
-diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-index fd2ab5118e13..41aa0493eb03 100644
---- a/mm/sparse-vmemmap.c
-+++ b/mm/sparse-vmemmap.c
-@@ -578,11 +578,6 @@ struct page * __meminit __populate_section_memmap(unsigned long pfn,
- 	if (r < 0)
- 		return NULL;
- 
--	if (system_state == SYSTEM_BOOTING)
--		memmap_boot_pages_add(DIV_ROUND_UP(end - start, PAGE_SIZE));
--	else
--		memmap_pages_add(DIV_ROUND_UP(end - start, PAGE_SIZE));
--
- 	return pfn_to_page(pfn);
- }
- 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 066cbf82acb8..24323122f6cb 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -454,9 +454,6 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
- 	 */
- 	sparsemap_buf = memmap_alloc(size, section_map_size(), addr, nid, true);
- 	sparsemap_buf_end = sparsemap_buf + size;
--#ifndef CONFIG_SPARSEMEM_VMEMMAP
--	memmap_boot_pages_add(DIV_ROUND_UP(size, PAGE_SIZE));
--#endif
- }
- 
- static void __init sparse_buffer_fini(void)
-@@ -567,6 +564,8 @@ static void __init sparse_init_nid(int nid, unsigned long pnum_begin,
- 				sparse_buffer_fini();
- 				goto failed;
- 			}
-+			memmap_boot_pages_add(DIV_ROUND_UP(PAGES_PER_SECTION * sizeof(struct page),
-+							   PAGE_SIZE));
- 			sparse_init_early_section(nid, map, pnum, 0);
- 		}
- 	}
-@@ -680,7 +679,6 @@ static void depopulate_section_memmap(unsigned long pfn, unsigned long nr_pages,
- 	unsigned long start = (unsigned long) pfn_to_page(pfn);
- 	unsigned long end = start + nr_pages * sizeof(struct page);
- 
--	memmap_pages_add(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
- 	vmemmap_free(start, end, altmap);
- }
- static void free_map_bootmem(struct page *memmap)
-@@ -856,10 +854,14 @@ static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
- 	 * The memmap of early sections is always fully populated. See
- 	 * section_activate() and pfn_valid() .
- 	 */
--	if (!section_is_early)
-+	if (!section_is_early) {
-+		memmap_pages_add(-1L * (DIV_ROUND_UP(nr_pages * sizeof(struct page), PAGE_SIZE)));
- 		depopulate_section_memmap(pfn, nr_pages, altmap);
--	else if (memmap)
-+	} else if (memmap) {
-+		memmap_boot_pages_add(-1L * (DIV_ROUND_UP(nr_pages * sizeof(struct page),
-+							  PAGE_SIZE)));
- 		free_map_bootmem(memmap);
-+	}
- 
- 	if (empty)
- 		ms->section_mem_map = (unsigned long)NULL;
-@@ -904,6 +906,7 @@ static struct page * __meminit section_activate(int nid, unsigned long pfn,
- 		section_deactivate(pfn, nr_pages, altmap);
- 		return ERR_PTR(-ENOMEM);
- 	}
-+	memmap_pages_add(DIV_ROUND_UP(nr_pages * sizeof(struct page), PAGE_SIZE));
- 
- 	return memmap;
- }
--- 
-2.48.1
+> > Even for LINT0, it's not obvious that "pushing" from KVM is a better option than
+> > having QEMU "pull" as needed.
+> >
+> 
+> QEMU has no idea when LINT0 is masked by the guest. Then the problem becomes
+> when it is needed to "pull". The guess on this could lead to extra costs.
 
+So this patch is motivated by performance?
 
