@@ -1,47 +1,94 @@
-Return-Path: <linux-kernel+bounces-758820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2873BB1D436
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:22:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C86B1D439
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54A83AECCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C11516871B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 08:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0983024A049;
-	Thu,  7 Aug 2025 08:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E498024A049;
+	Thu,  7 Aug 2025 08:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6t+EgxD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SNy/cDep";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ChiITLvC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SNy/cDep";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ChiITLvC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4771B7F4;
-	Thu,  7 Aug 2025 08:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE171B7F4
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 08:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754554944; cv=none; b=JDGlZpTXUBCYkJl1xh4gFpk0jk0g3igCXnfOeT+hftm4yuCi5d/66/yPt2iBuUIDb/rjMB49S/IzDwkbUM8TZicz7Y9iWvUG5nrJ6xboxNsfidIf3lhWS2ByckFqBvxG7dkfJPdiKAjwHOBWXLolP3+TcEO0YII3GUozJWkuP08=
+	t=1754554994; cv=none; b=RDbioREQfIyJzNRB9jRJkRvCKxrF77ePURT9iHlxF1Clnu2rotxbm+Vlfdx71iSgwq4Y3fweJX1/mHWhSs542TAkJOcWbRSc42LaYGELCBeouEv5Zwt0UGYWaDtv0hiRxR7Ge+RI+9FDcP6ZXOgZv0YrGqN9LWQT0NyJCP1NpCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754554944; c=relaxed/simple;
-	bh=8C4inM6yOFso0Am9xXZYWM42MjMpACCo5iG0A2RqFEs=;
+	s=arc-20240116; t=1754554994; c=relaxed/simple;
+	bh=QEqg73s6sFYnqMqGBE1SH2IlzCEUFgrHzIxne7HMXSw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D2oMX8q2H3YaORKlfEoNQH87lufR1Q4paK/KBcacZHRnvF/2EVAR/g0i2JYphCkny24YD76jvAGAh9kwNGsfROc2NM4At23JElBW10TxDxoH6utSy8Mm6wWuwI6gI44gtlm5Q0EzPshXWzLZbR9SFL/ACXluyzy8RXCc5L5ECak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o6t+EgxD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBFEC4CEEB;
-	Thu,  7 Aug 2025 08:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754554943;
-	bh=8C4inM6yOFso0Am9xXZYWM42MjMpACCo5iG0A2RqFEs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o6t+EgxDMPRpw2gN34ZkDXO56KLnbiqhytA8xQqv/ZYM5KIksbH6qwLqnOXbg8/sG
-	 lOwkvfdAUQ9uxZwyksY6FTbaUiHt5a8SGM0im+oYHv+Xx6qJDSBCsoy3mgWzqmrR1x
-	 Z+A6uEjrZYUtOkO0KhIsstwNDwn9BttKubelUN4byatNltep5uj5/ViVhhxLwjAsmy
-	 L6aEkoLlFymWxNJbB2jmEHB1Z+fF3YqiqXaB9uBq690ucB2fNc21Nvn56vhReTJ0r3
-	 fcPcihDjV+IE5CqJQzDMhlAcUxChuIHY/Hk97PzYW+xYaURYbFlW/Vx0RiME2vDFo+
-	 SYcFHs3i7V9nw==
-Message-ID: <736f09e0-075a-48e0-9b32-6b8805a7ee2a@kernel.org>
-Date: Thu, 7 Aug 2025 10:22:19 +0200
+	 In-Reply-To:Content-Type; b=Aa1zbiPieU+mnFRi0PUA+oW2m6Lz6frgC+YYiSTeIzFIKyei12g4TTlnNMWu2RFh0/yfJjE1OsqyT5QM1NHRRfyaIeJVCeK412o3P4bCO93GRtJZ+fh2U4/NGDb6ZT0Q4ufyuLMU8cJcyP/li+Sk4PgkaKshQOo1x6SnN3r+32s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SNy/cDep; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ChiITLvC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SNy/cDep; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ChiITLvC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B46EB1F7F4;
+	Thu,  7 Aug 2025 08:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754554989; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QGEAN017bliOyl2SdA5tKF8ug9wKFUQ4OjKLerQ0lic=;
+	b=SNy/cDepnjs8OmfRS4x9JUz+KxkAyY81771ANu+iQC/tK8fx/jaJkpneLBgUvqyxxyl/wL
+	gWMlUGAqvYFv8RuyoUUFnpq3vZfA3BNTna8PZ0yXZjDf9UICBSLXWN859cKuvQilrlWsEW
+	6dKaUe/LAKoJyui2+p544rqciT/WuHA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754554989;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QGEAN017bliOyl2SdA5tKF8ug9wKFUQ4OjKLerQ0lic=;
+	b=ChiITLvCoN9YdHUeqa6ZiodBVXelh6pGawj/WmENOPW4R/UMevizIcnwVLOx1QYy9p76uy
+	PQf6d/fi/WeYjDBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754554989; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QGEAN017bliOyl2SdA5tKF8ug9wKFUQ4OjKLerQ0lic=;
+	b=SNy/cDepnjs8OmfRS4x9JUz+KxkAyY81771ANu+iQC/tK8fx/jaJkpneLBgUvqyxxyl/wL
+	gWMlUGAqvYFv8RuyoUUFnpq3vZfA3BNTna8PZ0yXZjDf9UICBSLXWN859cKuvQilrlWsEW
+	6dKaUe/LAKoJyui2+p544rqciT/WuHA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754554989;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QGEAN017bliOyl2SdA5tKF8ug9wKFUQ4OjKLerQ0lic=;
+	b=ChiITLvCoN9YdHUeqa6ZiodBVXelh6pGawj/WmENOPW4R/UMevizIcnwVLOx1QYy9p76uy
+	PQf6d/fi/WeYjDBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4B586136DC;
+	Thu,  7 Aug 2025 08:23:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GXPBEG1ilGgBKAAAD6G6ig
+	(envelope-from <hare@suse.de>); Thu, 07 Aug 2025 08:23:09 +0000
+Message-ID: <3b2765ff-4a7d-4bf7-b390-b392b695c675@suse.de>
+Date: Thu, 7 Aug 2025 10:23:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,100 +96,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: hwinfo: Add second register range for
- GP_SW
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-References: <20250805234950.3781367-1-jm@ti.com>
- <20250805234950.3781367-2-jm@ti.com>
- <0f1cbec6-6032-48f6-8887-e526484c0d20@kernel.org>
- <e9394117-996c-4134-b9f2-50accf633601@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] nvmet: exit debugfs after discovery subsystem exits
+To: Mohamed Khalfella <mkhalfella@purestorage.com>,
+ Yi Zhang <yi.zhang@redhat.com>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
+ Keith Busch <kbusch@kernel.org>
+Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Hannes Reinecke <hare@kernel.org>, Daniel Wagner <dwagner@suse.de>,
+ Maurizio Lombardi <mlombard@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+ Randy Jennings <randyj@purestorage.com>, linux-nvme@lists.infradead.org,
+ linux-block <linux-block@vger.kernel.org>, linux-kernel@vger.kernel.org
+References: <20250807053507.2794335-1-mkhalfella@purestorage.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <e9394117-996c-4134-b9f2-50accf633601@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250807053507.2794335-1-mkhalfella@purestorage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo,purestorage.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On 06/08/2025 17:24, Judith Mendez wrote:
-> Hi Krystoff,
-
-That's not really my name. I know it is tricky to type, so it's enough
-to say Hi.
-
->>>   
->>>     reg:
->>> -    maxItems: 1
->>> +    maxItems: 2
->>> +    minItems: 1
->>
->> They always come with reversed order... but anyway, you instead must
->> list the items with minItems.
->>
->> another problem is that this is not supposed to be per register. I
->> already complained more than once about some of TI bindings: stop
->> creating device nodes or address spaces per register.
->>
->> That's one address space.
+On 8/7/25 07:35, Mohamed Khalfella wrote:
+> Commit 528589947c180 ("nvmet: initialize discovery subsys after debugfs
+> is initialized") changed nvmet_init() to initialize nvme discovery after
+> "nvmet" debugfs directory is initialized. The change broke nvmet_exit()
+> because discovery subsystem now depends on debugfs. Debugfs should be
+> destroyed after discovery subsystem. Fix nvmet_exit() to do that.
 > 
-> That does not really make sense. Registers jtag vs gp_sw have a
-> different back-end, one from silicon and another from efuse. Not even
-
-How does the datasheet describe this address space(s) (not registers,
-address space)?
-
-> sure if the memory map will always be the same across processors.
+> Reported-by: Yi Zhang <yi.zhang@redhat.com>
+> Closes: https://lore.kernel.org/all/CAHj4cs96AfFQpyDKF_MdfJsnOEo=2V7dQgqjFv+k3t7H-=yGhA@mail.gmail.com/
+> Fixes: 528589947c180 ("nvmet: initialize discovery subsys after debugfs is initialized")
+> Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
+> ---
+>   drivers/nvme/target/core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->>
-Best regards,
-Krzysztof
+> diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+> index 83f3d2f8ef2d0..0dd7bd99afa32 100644
+> --- a/drivers/nvme/target/core.c
+> +++ b/drivers/nvme/target/core.c
+> @@ -1992,8 +1992,8 @@ static int __init nvmet_init(void)
+>   static void __exit nvmet_exit(void)
+>   {
+>   	nvmet_exit_configfs();
+> -	nvmet_exit_debugfs();
+>   	nvmet_exit_discovery();
+> +	nvmet_exit_debugfs();
+>   	ida_destroy(&cntlid_ida);
+>   	destroy_workqueue(nvmet_wq);
+>   	destroy_workqueue(buffered_io_wq);
+
+Hehe. I knew this would've been the case once I've seen the latest
+blktest failure. Thanks for fixing it.
+
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
