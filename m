@@ -1,381 +1,386 @@
-Return-Path: <linux-kernel+bounces-758955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78CA8B1D62A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:56:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5034B1D631
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3725F1899DC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E960726AB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8772A1CF;
-	Thu,  7 Aug 2025 10:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2849275AE2;
+	Thu,  7 Aug 2025 10:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gf4KmJah"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRBUPCVk"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A826220F5E
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6920322A4E1;
+	Thu,  7 Aug 2025 10:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754564166; cv=none; b=iZsCKNbmgbXxz74YJSfc1yjUPxzMiFYBDyVJR7bdjvyJFyc286y9FqgFWww8ekHcN3KxhlAmuBa1qQCcn1VAZ9dN/fO3kwjHYiQxSVrM8StFVwZScLl714RlTzzXc7GRcku9Wjvpkvl2ZHW6sceh5QL055wIbst5vKVvHONdpCQ=
+	t=1754564311; cv=none; b=OncYlE/ziSNK06N7dnoot5WwtyWZnKHYfOrhdDQ1Prd1DxXKETri0rOgK+E8WKjP7i+IVn+JOcBslMPTYKzdAcMgghq7AZ6oGhmWgq+cK2gPfK/H2G0iy8FctnV1lVwOK2GPEbYyn+nQ9dSudgKRcR98xQjIz6iUbMnISv/nrHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754564166; c=relaxed/simple;
-	bh=CDQTqUTjrGZ1O6/rxjVzuhg84bZA+kR2laLJczdt2ZY=;
+	s=arc-20240116; t=1754564311; c=relaxed/simple;
+	bh=BJZZIjaCNP9cY68tcTgiHdHm/mpm2TZTSvFFCy9daD8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Exwx0l8osD+rfJ/26eupIatkVmwysJDhSxz9qfwnT2tpSmWohQUCAMDEDvdOXQzfT0gJY4IP2rj2hbNgZETdFrHE1VFG1bORDwZ5afgYyBb/Ln+19BARTkh8+ZCxC8blP4+ICgqxnRV9ml4fltjsqcIu25LxXQ77dvlfB0+U8ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gf4KmJah; arc=none smtp.client-ip=209.85.128.49
+	 To:Cc:Content-Type; b=D6Gp0UYkJwtYUXNLy/RtWxMF+xaMWgPWZludnaD8xPRivw/eXUgYmSrCfDQyfIYu0VIRIXpr4vD2kzX94qJtxKi5rvVxV5GhU+Uxnhgw8PUCgr/+0BT7OzWWCsXXRB+u3LCQE0p+/NKLVzpj8x9cr40QaxnrfNy7mqSAkTH8U8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRBUPCVk; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-456127b9958so1102105e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 03:56:03 -0700 (PDT)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3e406ca2d22so4174345ab.1;
+        Thu, 07 Aug 2025 03:58:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754564162; x=1755168962; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754564308; x=1755169108; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EX3WQJmJq3E5QVkf3JsVMi+F+5ARelFh3TVezhOd40M=;
-        b=Gf4KmJahCfhdyiR8iRmRqL3ZxOO+BXVnAMSESzg6GLnzGZIuBSCdk42FnFzP+ZKJe2
-         S+BMqqRvj8km+BAPTa3y0c+yNk8xwiJp0mm/OLPHl8LTXgTeWDqLiENgGVS1lQCiIQpc
-         owTnrcxJxHdvQ2NTruArY7f5arSVDAyX3/IsUMpvpFLLEUjiO8oim9CJlic+dyMPt8KT
-         zkYjXEto/StPE8G2IAncW2LuSxVfMdN1nh2/QQtHBDVsdM7/sucLFCnVQXfCAd+qaksz
-         bAQnOdU8+iI0rqpClrFS/lhxyKQfOuklx7xxPEs2keBvjBNDZwKtBZLgvO+Rd7qOAAcG
-         Fv/g==
+        bh=8tWMOA3+MxqIET7zOeogQlZpQrCQ4ulH5geagIzb9wU=;
+        b=ZRBUPCVkc/0353itGzp1maC4xyNBodpQtyxc2LtC+LEh8CeeiSdAjeYzTHxPExdYVs
+         U7xkPf+0iuc9JmSgiBDpyDOXZNlzPGZSkSFlIZwaYxJtPLZlieVyW/iZCq+m4oMwgvEB
+         Dx8PXtBenYc6DJkh4gusEg0C4SQbzHIrMsE3Ftmfk8SFrK92Av/ef17gT4yoOGeb/TgE
+         gOkgJpiozi1fpxP/VuON3n+p41HeGie5M5edkjzrHXk3syZ486lfW02prWWsKpbPx8cT
+         Zsp6dNYPT9UDh3V6Auw5Db9sK4rk2n314MgTC8C72MY6k0b4amNrOxWP7aHzncsgK72O
+         gzyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754564162; x=1755168962;
+        d=1e100.net; s=20230601; t=1754564308; x=1755169108;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EX3WQJmJq3E5QVkf3JsVMi+F+5ARelFh3TVezhOd40M=;
-        b=RDPb0FsBO6XYZ9JUgda7r/e7lwflUzMEGi3jQJXoeubOtSWy2/EY9qZg+qoTMutuJx
-         eNDK36KTkhJYbXdzF234fulwI4UvcrWGDk+avdAAge3Kgzc/sM85x8Op7t1facy8uNac
-         Bddlf0rtbW2Naj4ZCsmz+CLOr0xfT6FgkLgzKidD0svpq7gOErvS8NiS0SKo/8XVuPv6
-         cWqDXKp5zgOtSljB3oriBNgDfd5TkWcLameKeTGGv+LBxPEW1r1gMG+rnQF6O1xJFrU5
-         X2GUVIgDj9xnN7bkYea0kKC2KTFKNGZb3t+2/rChHPeVvSc1ivzU3gyWYhrZp4GGNH/S
-         l+wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWc06Izz9oYHH8E3OyHjH3zOF3iZqC6Zhin7RnALJRGEBXCuGLQUUY3Akoi+QlLS369t9Rld1KinvBc+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAxAWofpe4ASoWfecuuuYzZGYrHDawMVdLObAVmjjtf/zDDla8
-	a3ZZipFtrMRDqQYXFCkwJr11iGkakGgAu6HVbnHV3l+D49iZzkoNTCGmFnIBG0SKhqBkcMJQh+p
-	eey/xcJaW74HRehLT597wZwvJ3aZKgS8=
-X-Gm-Gg: ASbGncsIT7WbwavZIu1Cat/8stcu/AdQqkOWmNkf1TgUM8rafTZsxytSPVPT9n9w4Fz
-	STQeOuLrYsJ6sclG0D3yektLpbuiS6xS3QzqdFGkaM1JyV1kAwea4KVKO+7xHxlJ2MVF+2b7aj9
-	sEfFrjkYkrLtUsO8wadbK78Ke3kbR/rH/NfYkXGdtu3/w9Xti/hMBtBxJ/Z19bj3iOLvL6DS4kt
-	M/X38nNoGOlpXKHsmo=
-X-Google-Smtp-Source: AGHT+IGnnIOhfh+KKuN5sigk2Gs1Yp+4JNKkwW6CZAaoM2vNoTTZ+Xu985FmlD9VEpx6+iXf24fReS5td73e992vjFc=
-X-Received: by 2002:a05:6000:290b:b0:3b7:95ad:a6d9 with SMTP id
- ffacd0b85a97d-3b8f419271fmr2022271f8f.1.1754564162223; Thu, 07 Aug 2025
- 03:56:02 -0700 (PDT)
+        bh=8tWMOA3+MxqIET7zOeogQlZpQrCQ4ulH5geagIzb9wU=;
+        b=uPEZiYEOaTwR2e0Fir6XuQvSGsoH7eCjXmmcb6uTTYbsWj7oXnHohxh5IU3479XQgn
+         zrjpsMC6/DLB9iohWw/FcIpsOJoTbNj/MA8EOsQRwAjppR8NT54pgOREEK/uqxlgpayh
+         G1NAf+3EvKdVrQqSTv0Cioac3xeNhMU6safn22sQqoDU3Y3TKLqJ0qqHfIHuDKcqAOB9
+         RGxwFYkqkQxdTvgvBX5CSkkIspDKNHAeICrZl4egDrLEGltw5fLZ60XRJRR2JmmCx4zV
+         IYR3KDMlDEmdtGG9DX4lw4rreYp41wH/4BoxBZTdLTc2SoMOOknhCK9VGQoafVsa7sV+
+         VwPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWizbVdU/gGVWeiqpC3Bv/dZYVculr6aDtRBzi5XZF+q/XLPrBpL6kMIdxx1QtVLwGotfcrUSe9IQQM7QU=@vger.kernel.org, AJvYcCXUHs/LJHdtoV7ESUadqTopcHeaO+J02/WNaG7AQczHLlbFN/675/N+htQDTggfyIDFyXiMDjsLhqc74qyR@vger.kernel.org, AJvYcCXWdVTjhrNlW+rXzYahdPgmTsOErzPQVDrLWdWQRzGvOtYSY04S9ss75sZNNuRF41W/dci9oIqRTbEY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAh6+/Oxui56FQecNdQPjqPMCQTG24n7wwokiFMx+scsnmuO3g
+	+Sie+o0uBommpNo6DR1YTZH7guAJBYhua249UzfMKZItF1vJDL4xgqeH4LTPjAbcHvpJ0ownFBH
+	XysxCaP5zHAq9AHt3xa7WFlp7IAAoLz4=
+X-Gm-Gg: ASbGncsNXWYaHFEdnZnKXjkMsUiaKmI4E8WWxFsPJOZBVaOSL5W8ZetMoAnew6k+MCa
+	HicdpClw6j43avg0uZty3rjORtTl3D05bl1nQMO0PhPRXNfrH87I3mSitssnaqTr3e/1yPN4+rr
+	oPU36bcvr3mcJzl9sf70+9UzOdtMUk6kW0JQp6mwMogL3a7VFS7NfW512EI20cz1T2g7IsatkMV
+	DfWkyk=
+X-Google-Smtp-Source: AGHT+IHFyEqQlwA4nzQRnsXvPUsGwZOgKB36m7+Ke65jmW1lXiVYvMW77eXhUFaYX4r2OmzVe+1dFNu46sXVYvnzZ80=
+X-Received: by 2002:a05:6e02:18c7:b0:3df:3598:7688 with SMTP id
+ e9e14a558f8ab-3e51b93cc8dmr120096585ab.21.1754564308346; Thu, 07 Aug 2025
+ 03:58:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806091954.180602-1-guochunhai@vivo.com>
-In-Reply-To: <20250806091954.180602-1-guochunhai@vivo.com>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Thu, 7 Aug 2025 18:55:51 +0800
-X-Gm-Features: Ac12FXwU9VA2_-6askRY3FUIvHtONZQojbEIJwGOE7pdhXzH00kWAlRtVtdtFag
-Message-ID: <CAHJ8P3Kmkc751eEWVH1wJnA7t_2kYWSzezkv1CfRDvoPPQg-aw@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v5] f2fs: add reserved nodes for privileged users
-To: Chunhai Guo <guochunhai@vivo.com>
-Cc: chao@kernel.org, jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net
+References: <20250804104722.601440-1-shengjiu.wang@nxp.com>
+ <20250804104722.601440-6-shengjiu.wang@nxp.com> <fa455148-a071-4433-8c9c-26add3872604@nxp.com>
+ <CAA+D8AN4n0H6M_0EqX4z_37ViSCyThKbmtMgqPmipintJ8Wtwg@mail.gmail.com> <ba02693b-8ad2-4297-ab89-5b39d5c4315f@nxp.com>
+In-Reply-To: <ba02693b-8ad2-4297-ab89-5b39d5c4315f@nxp.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 7 Aug 2025 18:58:15 +0800
+X-Gm-Features: Ac12FXwUPM-Znt5cq2SUHVDzi6o3wmoQ462FD5iaVLkULQVZBddMO5yf_2W0GwQ
+Message-ID: <CAA+D8AN3VzFx1g=8wyxJROw96xS2-qoVs3X4vUfFnJtUCqFj_w@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] drm/bridge: imx: add driver for HDMI TX Parallel
+ Audio Interface
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
+	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	p.zabel@pengutronix.de, devicetree@vger.kernel.org, l.stach@pengutronix.de, 
+	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Chunhai Guo via Linux-f2fs-devel
-<linux-f2fs-devel@lists.sourceforge.net> =E4=BA=8E2025=E5=B9=B48=E6=9C=886=
-=E6=97=A5=E5=91=A8=E4=B8=89 17:22=E5=86=99=E9=81=93=EF=BC=9A
+On Wed, Aug 6, 2025 at 2:52=E2=80=AFPM Liu Ying <victor.liu@nxp.com> wrote:
 >
-> This patch allows privileged users to reserve nodes via the
-> 'reserve_node' mount option, which is similar to the existing
-> 'reserve_root' option.
+> On 08/06/2025, Shengjiu Wang wrote:
+> > On Tue, Aug 5, 2025 at 4:55=E2=80=AFPM Liu Ying <victor.liu@nxp.com> wr=
+ote:
+> >>
+> >> On 08/04/2025, Shengjiu Wang wrote:
 >
-> "-o reserve_node=3D<N>" means <N> nodes are reserved for privileged
-> users only.
+> [...]
 >
-> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
-> ---
-> v4->v5: Apply Chao's suggestion from v4.
-> v3->v4: Rebase this patch on https://lore.kernel.org/linux-f2fs-devel/202=
-50731060338.1136086-1-chao@kernel.org
-> v2->v3: Apply Chao's suggestion from v2.
-> v1->v2: Add two missing handling parts.
-> v1: https://lore.kernel.org/linux-f2fs-devel/20250729095238.607433-1-guoc=
-hunhai@vivo.com/
-> ---
->  Documentation/filesystems/f2fs.rst |  9 ++++---
->  fs/f2fs/f2fs.h                     | 17 ++++++++----
->  fs/f2fs/super.c                    | 43 +++++++++++++++++++++++++-----
->  3 files changed, 54 insertions(+), 15 deletions(-)
+> >>> +static int imx8mp_hdmi_pai_bind(struct device *dev, struct device *m=
+aster, void *data)
+> >>> +{
+> >>> +     struct dw_hdmi_plat_data *plat_data =3D (struct dw_hdmi_plat_da=
+ta *)data;
+> >>> +     struct imx8mp_hdmi_pai *hdmi_pai;
+> >>> +
+> >>> +     hdmi_pai =3D dev_get_drvdata(dev);
+> >>> +
+> >>> +     plat_data->enable_audio =3D imx8mp_hdmi_pai_enable;
+> >>> +     plat_data->disable_audio =3D imx8mp_hdmi_pai_disable;
+> >>> +     plat_data->priv_audio =3D hdmi_pai;
+> >>> +
+> >>> +     return 0;
+> >>> +}
+> >>> +
+> >>> +static void imx8mp_hdmi_pai_unbind(struct device *dev, struct device=
+ *master, void *data)
+> >>> +{
+> >>> +     struct dw_hdmi_plat_data *plat_data =3D (struct dw_hdmi_plat_da=
+ta *)data;
+> >>> +
+> >>> +     plat_data->enable_audio =3D NULL;
+> >>> +     plat_data->disable_audio =3D NULL;
+> >>> +     plat_data->priv_audio =3D NULL;
+> >>
+> >> Do you really need to set these ptrs to NULL?
+> >
+> > yes.  below code in dw-hdmi.c use the pdata->enable_audio as condition.
 >
-> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesyste=
-ms/f2fs.rst
-> index 03b1efa6d3b2..95dbcd7ac9a8 100644
-> --- a/Documentation/filesystems/f2fs.rst
-> +++ b/Documentation/filesystems/f2fs.rst
-> @@ -173,9 +173,12 @@ data_flush          Enable data flushing before chec=
-kpoint in order to
->                          persist data of regular and symlink.
->  reserve_root=3D%d                 Support configuring reserved space whi=
-ch is used for
->                          allocation from a privileged user with specified=
- uid or
-> -                        gid, unit: 4KB, the default limit is 0.2% of use=
-r blocks.
-> -resuid=3D%d               The user ID which may use the reserved blocks.
-> -resgid=3D%d               The group ID which may use the reserved blocks=
-.
-> +                        gid, unit: 4KB, the default limit is 12.5% of us=
-er blocks.
-> +reserve_node=3D%d                 Support configuring reserved nodes whi=
-ch are used for
-> +                        allocation from a privileged user with specified=
- uid or
-> +                        gid, the default limit is 12.5% of all nodes.
-> +resuid=3D%d               The user ID which may use the reserved blocks =
-and nodes.
-> +resgid=3D%d               The group ID which may use the reserved blocks=
- and nodes.
->  fault_injection=3D%d      Enable fault injection in all supported types =
-with
->                          specified injection rate.
->  fault_type=3D%d           Support configuring fault injection type, shou=
-ld be
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index eb372af22edc..a4e4c3931441 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -131,6 +131,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
->   * string rather than using the MS_LAZYTIME flag, so this must remain.
->   */
->  #define F2FS_MOUNT_LAZYTIME            0x40000000
-> +#define F2FS_MOUNT_RESERVE_NODE                0x80000000
+> Note that this is all about tearing down components.
+> If this is done properly as the below snippet of pseudo-code, then
+> hdmi->{enable,disable}_audio() and pdata->{enable,disable}_audio() won't =
+be
+> called after audio device is removed by dw_hdmi_remove().  So, it's unnec=
+essary
+> to set these pointers to NULL here.
 >
->  #define F2FS_OPTION(sbi)       ((sbi)->mount_opt)
->  #define clear_opt(sbi, option) (F2FS_OPTION(sbi).opt &=3D ~F2FS_MOUNT_##=
-option)
-> @@ -172,6 +173,7 @@ struct f2fs_rwsem {
->  struct f2fs_mount_info {
->         unsigned int opt;
->         block_t root_reserved_blocks;   /* root reserved blocks */
-> +       block_t root_reserved_nodes;    /* root reserved nodes */
->         kuid_t s_resuid;                /* reserved blocks for uid */
->         kgid_t s_resgid;                /* reserved blocks for gid */
->         int active_logs;                /* # of active logs */
-> @@ -2355,7 +2357,7 @@ static inline bool f2fs_has_xattr_block(unsigned in=
-t ofs)
->         return ofs =3D=3D XATTR_NODE_OFFSET;
->  }
+> imx8mp_dw_hdmi_unbind()
+> {
+>    dw_hdmi_remove(); // platform_device_unregister(hdmi->audio);
+>    component_unbind_all(); //imx8mp_hdmi_pai_unbind()
+> }
 >
-> -static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
-> +static inline bool __allow_reserved_root(struct f2fs_sb_info *sbi,
->                                         struct inode *inode, bool cap)
->  {
->         if (!inode)
-> @@ -2380,7 +2382,7 @@ static inline unsigned int get_available_block_coun=
-t(struct f2fs_sb_info *sbi,
->         avail_user_block_count =3D sbi->user_block_count -
->                                         sbi->current_reserved_blocks;
+> BTW, I suggest the below snippet[1] to bind components.
 >
-> -       if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_blocks(sbi, =
-inode, cap))
-> +       if (test_opt(sbi, RESERVE_ROOT) && !__allow_reserved_root(sbi, in=
-ode, cap))
->                 avail_user_block_count -=3D F2FS_OPTION(sbi).root_reserve=
-d_blocks;
+> imx8mp_dw_hdmi_bind()
+> {
+>    component_bind_all(); // imx8mp_hdmi_pai_bind()
+>                          //   set pdata->{enable,disable}_audio
+>    dw_hdmi_probe(); // hdmi->audio =3D platform_device_register_full(&pde=
+vinfo);
+> }
+
+Looks like we should use dw_hdmi_bind() here to make unbind -> bind work.
+But can't get the encoder pointer.  the encoder pointer is from lcdif_drv.c=
+,
+the probe sequence of lcdif, pvi, dw_hdmi should be dw_hdmi first, then pvi=
+,
+then lcdif, because current implementation in lcdif and pvi driver.
+
+Should the lcdif and pvi driver be modified to use component helper?
+This seems out of the scope of this patch set.
+
+Best regards
+Shengjiu Wang
 >
->         if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-> @@ -2738,7 +2740,7 @@ static inline int inc_valid_node_count(struct f2fs_=
-sb_info *sbi,
->                                         struct inode *inode, bool is_inod=
-e)
->  {
->         block_t valid_block_count;
-> -       unsigned int valid_node_count;
-> +       unsigned int valid_node_count, avail_user_node_count;
->         unsigned int avail_user_block_count;
->         int err;
+> >
+> >         if (pdata->enable_audio)
+> >                 pdata->enable_audio(hdmi,
+> >                                     hdmi->channels,
+> >                                     hdmi->sample_width,
+> >                                     hdmi->sample_rate,
+> >                                     hdmi->sample_non_pcm,
+> >                                     hdmi->sample_iec958);
+> >
+> >
+> >>
 >
-> @@ -2760,15 +2762,20 @@ static inline int inc_valid_node_count(struct f2f=
-s_sb_info *sbi,
->         spin_lock(&sbi->stat_lock);
+> [...]
 >
->         valid_block_count =3D sbi->total_valid_block_count + 1;
-> -       avail_user_block_count =3D get_available_block_count(sbi, inode, =
-false);
-> +       avail_user_block_count =3D get_available_block_count(sbi, inode,
-> +                       test_opt(sbi, RESERVE_NODE));
+> >>> +     return component_add(dev, &imx8mp_hdmi_pai_ops);
+> >>
+> >> Imagine that users could enable this driver without enabling imx8mp-hd=
+mi-tx
+> >> driver, you may add the component in this probe() callback only and mo=
+ve all
+> >> the other stuff to bind() callback to avoid unnecessary things being d=
+one here.
+> >
+> > component helper functions don't have such dependency that the aggregat=
+e
+> > driver or component driver must be probed or not.  if imx8mp-hdmi-tx is=
+ not
+> > enabled, there is no problem, just the bind() callback is not called.
 >
->         if (unlikely(valid_block_count > avail_user_block_count)) {
->                 spin_unlock(&sbi->stat_lock);
->                 goto enospc;
+> I meant I'd write imx8mp_hdmi_pai_probe() as below snippet and do all the
+> other stuff in imx8mp_hdmi_pai_bind().  This ensures minimum things are d=
+one
+> in imx8mp_hdmi_pai_probe() if imx8mp-hdmi-tx doesn't probe.
+>
+> static int imx8mp_hdmi_pai_probe(struct platform_device *pdev)
+> {
+>         return component_add(&pdev->dev, &imx8mp_hdmi_pai_ops);
+> }
+>
+> >
+> >>
+> >>> +}
+> >>> +
+> >>> +static void imx8mp_hdmi_pai_remove(struct platform_device *pdev)
+> >>> +{
+> >>> +     component_del(&pdev->dev, &imx8mp_hdmi_pai_ops);
+> >>> +}
+> >>> +
+> >>> +static const struct of_device_id imx8mp_hdmi_pai_of_table[] =3D {
+> >>> +     { .compatible =3D "fsl,imx8mp-hdmi-pai" },
+> >>> +     { /* Sentinel */ }
+> >>> +};
+> >>> +MODULE_DEVICE_TABLE(of, imx8mp_hdmi_pai_of_table);
+> >>> +
+> >>> +static struct platform_driver imx8mp_hdmi_pai_platform_driver =3D {
+> >>> +     .probe          =3D imx8mp_hdmi_pai_probe,
+> >>> +     .remove         =3D imx8mp_hdmi_pai_remove,
+> >>> +     .driver         =3D {
+> >>> +             .name   =3D "imx8mp-hdmi-pai",
+> >>> +             .of_match_table =3D imx8mp_hdmi_pai_of_table,
+> >>> +     },
+> >>> +};
+> >>> +module_platform_driver(imx8mp_hdmi_pai_platform_driver);
+> >>> +
+> >>> +MODULE_DESCRIPTION("i.MX8MP HDMI PAI driver");
+> >>> +MODULE_LICENSE("GPL");
+> >>> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gp=
+u/drm/bridge/imx/imx8mp-hdmi-tx.c
+> >>> index 1e7a789ec289..ee08084d2394 100644
+> >>> --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> >>> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> >>> @@ -5,11 +5,13 @@
+> >>>   */
+> >>>
+> >>>  #include <linux/clk.h>
+> >>> +#include <linux/component.h>
+> >>>  #include <linux/mod_devicetable.h>
+> >>>  #include <linux/module.h>
+> >>>  #include <linux/platform_device.h>
+> >>>  #include <drm/bridge/dw_hdmi.h>
+> >>>  #include <drm/drm_modes.h>
+> >>> +#include <drm/drm_of.h>
+> >>>
+> >>>  struct imx8mp_hdmi {
+> >>>       struct dw_hdmi_plat_data plat_data;
+> >>> @@ -79,11 +81,46 @@ static const struct dw_hdmi_phy_ops imx8mp_hdmi_p=
+hy_ops =3D {
+> >>>       .update_hpd     =3D dw_hdmi_phy_update_hpd,
+> >>>  };
+> >>>
+> >>> +static int imx8mp_dw_hdmi_bind(struct device *dev)
+> >>> +{
+> >>> +     struct dw_hdmi_plat_data *plat_data;
+> >>> +     struct imx8mp_hdmi *hdmi;
+> >>> +     int ret;
+> >>> +
+> >>> +     hdmi =3D dev_get_drvdata(dev);
+> >>> +     plat_data =3D &hdmi->plat_data;
+> >>> +
+> >>> +     ret =3D component_bind_all(dev, plat_data);
+> >>> +     if (ret)
+> >>> +             return dev_err_probe(dev, ret, "component_bind_all fail=
+ed!\n");
+> >>
+> >> As component_bind_all() would bind imx8mp-hdmi-pai and hence set
+> >> {enable,disable}_audio callbacks, you need to call dw_hdmi_probe() aft=
+er
+> >> component_bind_all() instead of too early in probe() callback.
+> >
+> > There is no such dependency.
+> > Maybe you mixed the hdmi->enable_audio() with pdata->enable_audio().
+>
+> As the above snippet[1] shows, once dw_hdmi_probe() registers audio devic=
+e,
+> the audio device could be functional soon after audio driver probes, henc=
+e
+> hdmi->enable_audio() would be called and hence pdata->enable_audio() woul=
+d
+> be called. So, you need to set pdata->enable_audio() before dw_hdmi_probe=
+()
+> is called, otherwise pdata->enable_audio could be NULL when is called by
+> audio driver.
+>
+> [...]
+>
+> >>> +     remote =3D of_graph_get_remote_node(pdev->dev.of_node, 2, 0);
+> >>> +     if (remote && of_device_is_available(remote)) {
+> >>
+> >> Doesn't of_graph_get_remote_node() ensure that remote is avaiable?
+> >
+> > No.  'remote' is the node,  not the 'device'.
+>
+> See of_device_is_available() is called by of_graph_get_remote_node():
+>
+> struct device_node *of_graph_get_remote_node(const struct device_node *no=
+de,
+>                                              u32 port, u32 endpoint)
+> {
+>         struct device_node *endpoint_node, *remote;
+>
+>         endpoint_node =3D of_graph_get_endpoint_by_regs(node, port, endpo=
+int);
+>         if (!endpoint_node) {
+>                 pr_debug("no valid endpoint (%d, %d) for node %pOF\n",
+>                          port, endpoint, node);
+>                 return NULL;
 >         }
 >
-> +       avail_user_node_count =3D sbi->total_node_count - F2FS_RESERVED_N=
-ODE_NUM;
-> +       if (test_opt(sbi, RESERVE_NODE) &&
-> +                       !__allow_reserved_root(sbi, inode, true))
-> +               avail_user_node_count -=3D F2FS_OPTION(sbi).root_reserved=
-_nodes;
->         valid_node_count =3D sbi->total_valid_node_count + 1;
-> -       if (unlikely(valid_node_count > sbi->total_node_count)) {
-> +       if (unlikely(valid_node_count > avail_user_node_count)) {
->                 spin_unlock(&sbi->stat_lock);
->                 goto enospc;
+>         remote =3D of_graph_get_remote_port_parent(endpoint_node);
+>         of_node_put(endpoint_node);
+>         if (!remote) {
+>                 pr_debug("no valid remote node\n");
+>                 return NULL;
 >         }
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 30c038413040..a24e855a38ed 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -143,6 +143,7 @@ enum {
->         Opt_extent_cache,
->         Opt_data_flush,
->         Opt_reserve_root,
-> +       Opt_reserve_node,
->         Opt_resgid,
->         Opt_resuid,
->         Opt_mode,
-> @@ -265,6 +266,7 @@ static const struct fs_parameter_spec f2fs_param_spec=
-s[] =3D {
->         fsparam_flag_no("extent_cache", Opt_extent_cache),
->         fsparam_flag("data_flush", Opt_data_flush),
->         fsparam_u32("reserve_root", Opt_reserve_root),
-> +       fsparam_u32("reserve_node", Opt_reserve_node),
->         fsparam_gid("resgid", Opt_resgid),
->         fsparam_uid("resuid", Opt_resuid),
->         fsparam_enum("mode", Opt_mode, f2fs_param_mode),
-> @@ -336,6 +338,7 @@ static match_table_t f2fs_checkpoint_tokens =3D {
->  #define F2FS_SPEC_discard_unit                 (1 << 21)
->  #define F2FS_SPEC_memory_mode                  (1 << 22)
->  #define F2FS_SPEC_errors                       (1 << 23)
-> +#define F2FS_SPEC_reserve_node                 (1 << 24)
-Hi Chunhai,
-It seems that this conflicts with commit:1399fd4ff25d (f2fs: add
-lookup_mode mount option)
-#define F2FS_SPEC_errors (1 << 23)
-+#define F2FS_SPEC_lookup_mode (1 << 24)
-thanks!
 >
->  struct f2fs_fs_context {
->         struct f2fs_mount_info info;
-> @@ -437,22 +440,30 @@ static void f2fs_destroy_casefold_cache(void) { }
->
->  static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
->  {
-> -       block_t limit =3D min((sbi->user_block_count >> 3),
-> +       block_t block_limit =3D min((sbi->user_block_count >> 3),
->                         sbi->user_block_count - sbi->reserved_blocks);
-> +       block_t node_limit =3D sbi->total_node_count >> 3;
->
->         /* limit is 12.5% */
->         if (test_opt(sbi, RESERVE_ROOT) &&
-> -                       F2FS_OPTION(sbi).root_reserved_blocks > limit) {
-> -               F2FS_OPTION(sbi).root_reserved_blocks =3D limit;
-> +                       F2FS_OPTION(sbi).root_reserved_blocks > block_lim=
-it) {
-> +               F2FS_OPTION(sbi).root_reserved_blocks =3D block_limit;
->                 f2fs_info(sbi, "Reduce reserved blocks for root =3D %u",
->                           F2FS_OPTION(sbi).root_reserved_blocks);
+>         if (!of_device_is_available(remote)) {
+>              ^~~~~~~~~~~~~~~~~~~~~~
+>                 pr_debug("not available for remote node\n");
+>                 of_node_put(remote);
+>                 return NULL;
 >         }
-> -       if (!test_opt(sbi, RESERVE_ROOT) &&
-> +       if (test_opt(sbi, RESERVE_NODE) &&
-> +                       F2FS_OPTION(sbi).root_reserved_nodes > node_limit=
-) {
-> +               F2FS_OPTION(sbi).root_reserved_nodes =3D node_limit;
-> +               f2fs_info(sbi, "Reduce reserved nodes for root =3D %u",
-> +                         F2FS_OPTION(sbi).root_reserved_nodes);
-> +       }
-> +       if (!test_opt(sbi, RESERVE_ROOT) && !test_opt(sbi, RESERVE_NODE) =
-&&
->                 (!uid_eq(F2FS_OPTION(sbi).s_resuid,
->                                 make_kuid(&init_user_ns, F2FS_DEF_RESUID)=
-) ||
->                 !gid_eq(F2FS_OPTION(sbi).s_resgid,
->                                 make_kgid(&init_user_ns, F2FS_DEF_RESGID)=
-)))
-> -               f2fs_info(sbi, "Ignore s_resuid=3D%u, s_resgid=3D%u w/o r=
-eserve_root",
-> +               f2fs_info(sbi, "Ignore s_resuid=3D%u, s_resgid=3D%u w/o r=
-eserve_root"
-> +                               " and reserve_node",
->                           from_kuid_munged(&init_user_ns,
->                                            F2FS_OPTION(sbi).s_resuid),
->                           from_kgid_munged(&init_user_ns,
-> @@ -841,6 +852,11 @@ static int f2fs_parse_param(struct fs_context *fc, s=
-truct fs_parameter *param)
->                 F2FS_CTX_INFO(ctx).root_reserved_blocks =3D result.uint_3=
-2;
->                 ctx->spec_mask |=3D F2FS_SPEC_reserve_root;
->                 break;
-> +       case Opt_reserve_node:
-> +               ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
-> +               F2FS_CTX_INFO(ctx).root_reserved_nodes =3D result.uint_32=
-;
-> +               ctx->spec_mask |=3D F2FS_SPEC_reserve_node;
-> +               break;
->         case Opt_resuid:
->                 F2FS_CTX_INFO(ctx).s_resuid =3D result.uid;
->                 ctx->spec_mask |=3D F2FS_SPEC_resuid;
-> @@ -1424,6 +1440,14 @@ static int f2fs_check_opt_consistency(struct fs_co=
-ntext *fc,
->                 ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
->                 ctx->opt_mask &=3D ~F2FS_MOUNT_RESERVE_ROOT;
->         }
-> +       if (test_opt(sbi, RESERVE_NODE) &&
-> +                       (ctx->opt_mask & F2FS_MOUNT_RESERVE_NODE) &&
-> +                       ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_NODE)) {
-> +               f2fs_info(sbi, "Preserve previous reserve_node=3D%u",
-> +                       F2FS_OPTION(sbi).root_reserved_nodes);
-> +               ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
-> +               ctx->opt_mask &=3D ~F2FS_MOUNT_RESERVE_NODE;
-> +       }
 >
->         err =3D f2fs_check_test_dummy_encryption(fc, sb);
->         if (err)
-> @@ -1623,6 +1647,9 @@ static void f2fs_apply_options(struct fs_context *f=
-c, struct super_block *sb)
->         if (ctx->spec_mask & F2FS_SPEC_reserve_root)
->                 F2FS_OPTION(sbi).root_reserved_blocks =3D
->                                         F2FS_CTX_INFO(ctx).root_reserved_=
-blocks;
-> +       if (ctx->spec_mask & F2FS_SPEC_reserve_node)
-> +               F2FS_OPTION(sbi).root_reserved_nodes =3D
-> +                                       F2FS_CTX_INFO(ctx).root_reserved_=
-nodes;
->         if (ctx->spec_mask & F2FS_SPEC_resgid)
->                 F2FS_OPTION(sbi).s_resgid =3D F2FS_CTX_INFO(ctx).s_resgid=
-;
->         if (ctx->spec_mask & F2FS_SPEC_resuid)
-> @@ -2342,9 +2369,11 @@ static int f2fs_show_options(struct seq_file *seq,=
- struct dentry *root)
->         else if (F2FS_OPTION(sbi).fs_mode =3D=3D FS_MODE_FRAGMENT_BLK)
->                 seq_puts(seq, "fragment:block");
->         seq_printf(seq, ",active_logs=3D%u", F2FS_OPTION(sbi).active_logs=
-);
-> -       if (test_opt(sbi, RESERVE_ROOT))
-> -               seq_printf(seq, ",reserve_root=3D%u,resuid=3D%u,resgid=3D=
-%u",
-> +       if (test_opt(sbi, RESERVE_ROOT) || test_opt(sbi, RESERVE_NODE))
-> +               seq_printf(seq, ",reserve_root=3D%u,reserve_node=3D%u,res=
-uid=3D%u,"
-> +                               "resgid=3D%u",
->                                 F2FS_OPTION(sbi).root_reserved_blocks,
-> +                               F2FS_OPTION(sbi).root_reserved_nodes,
->                                 from_kuid_munged(&init_user_ns,
->                                         F2FS_OPTION(sbi).s_resuid),
->                                 from_kgid_munged(&init_user_ns,
+>         return remote;
+> }
+> EXPORT_SYMBOL(of_graph_get_remote_node);
+>
+> >
+> >>
+> >>> +             drm_of_component_match_add(dev, &match, component_compa=
+re_of, remote);
+> >>> +
+> >>> +             of_node_put(remote);
+> >>> +
+> >>> +             ret =3D component_master_add_with_match(dev, &imx8mp_dw=
+_hdmi_ops, match);
+> >>> +             if (ret)
+> >>> +                     dev_warn(dev, "Unable to register aggregate dri=
+ver\n");
+> >>> +             /*
+> >>> +              * This audio function is optional for avoid blocking d=
+isplay.
+> >>> +              * So just print warning message and no error is return=
+ed.
+> >>
+> >> No, since PAI node is available here, it has to be bound.  Yet you sti=
+ll need
+> >> to properly handle the case where PAI node is inavailable.
+> >
+> > This is for aggregate driver registration,  not for bind()
+> >
+> > The bind() is called after both drivers have been registered.  again th=
+ere is no
+> > dependency for both aggregate driver and component driver should be
+> > registered or probed.
+>
+> Sorry for not being clear about my previous wording.  I meant since PAI n=
+ode is
+> available here, component_master_add_with_match() must be called to regis=
+ter
+> the master and if it fails to register it, imx8mp_dw_hdmi_probe() should =
+return
+> proper error code, not 0.
+>
 > --
-> 2.34.1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> Regards,
+> Liu Ying
 
