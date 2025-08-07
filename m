@@ -1,263 +1,202 @@
-Return-Path: <linux-kernel+bounces-758932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AECB1D5D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:30:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09ACB1D5D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D70C189CEBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84093165C44
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 10:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA0026A0C7;
-	Thu,  7 Aug 2025 10:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20CE265CC8;
+	Thu,  7 Aug 2025 10:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="p5/6mjoN"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hfDRaaRs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0725326561E;
-	Thu,  7 Aug 2025 10:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D470BB652
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 10:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754562606; cv=none; b=CvODFIQyN4dyBDaK5bin3eLMQYRTOrHDAN1KfROFrP/63sTNzi3IWWsBCOyrbLevVX7ppYyqRHSBv1wrTMSvOl7tlaVWyqKE9mYqZZflR1CAamFC8YcXQeRSxgiaA+5VUtR7/L/73FVN7u/4lob0Sal0K3yfEgzkjVnnv8cfa6s=
+	t=1754562668; cv=none; b=n+RzbEovptYrvskq7EFZCB7/3Fatw/nu5+f5eSyqfWXAmxbwJEdpgiRB4HHIFAONx71Y5AHlSh4YdxFtRAO1+sMQaV2JTBxpjhFhovSTByF33S6NTa0Rpov0AwErjaOoSHvmWLhbnFD7w4Q8A0FwFK23ouLgsmdArUNOYSUk1ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754562606; c=relaxed/simple;
-	bh=He4oXwRkGQwwnMKuvE1JNOy0L9t+AV80B+PiKJMBwW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cCmXUFZrcFXov5/U1NwwB7JpHPMgu1hG+Q0W32UKa8fa0IowIUehv2M8d7EQdBILBYECzlBQDcr+popKw3HaoLX5YfT1fhpqL78kVDg2uwA4y4IS3Lwa7Cif8OtbB/iRNH9veLcOGnXTIH2XZ2xR583qZYSCl4+9JyDtC0x4Hd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=p5/6mjoN; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57722E0s029284;
-	Thu, 7 Aug 2025 10:29:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=jY0FVL
-	TdDSDoJ57bi4wKXnVk8rdd8QZwfL9IBgn8/B8=; b=p5/6mjoNxyJJimXhlH2t4f
-	0+XDNx/S/zFf1LpP+yeGQlqOh4aSxf+JtJAiK5ek3mCDxtqqIfuvsdhU8DISUdiL
-	aqZke5cEAQodX/o/JXSwxrMaXmZn57VlctOsclkm+JRZY93yM2q6dSYQXfiGaKAq
-	MY0N1r8/v+Ty/DID6VrNOdfl+tk3dfDUh4IslqAfKWfb1gUIZ7zTfPcteSzjm94v
-	ly/JfK9+C+0SBB95pcv+vxfFFr7jOGQLkkm1QYdmUt5Um1df+kOUbpv4GLmwZRp+
-	hmovVogdMGd2qc1o8GipDMyUHhWIta2pIQCLM2KYm/41RsXYNyV99ZHh+8pYdd4Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq611mbu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 10:29:28 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577ARCK0015633;
-	Thu, 7 Aug 2025 10:29:27 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq611mbn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 10:29:27 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779etoQ020603;
-	Thu, 7 Aug 2025 10:29:26 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwn03yn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 10:29:26 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577ATMWe56492312
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 10:29:22 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ED6332004D;
-	Thu,  7 Aug 2025 10:29:21 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6142F20065;
-	Thu,  7 Aug 2025 10:29:17 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.109.219.153])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  7 Aug 2025 10:29:17 +0000 (GMT)
-Date: Thu, 7 Aug 2025 15:59:15 +0530
-From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>, bpf@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hbathini@linux.ibm.com,
-        sachinpb@linux.ibm.com, andrii@kernel.org, eddyz87@gmail.com,
-        mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net,
-        martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
-        haoluo@google.com, jolsa@kernel.org, naveen@kernel.org,
-        maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        memxor@gmail.com, iii@linux.ibm.com, shuah@kernel.org
-Subject: Re: [bpf-next 1/6] bpf,powerpc: Introduce
- bpf_jit_emit_probe_mem_store() to emit store instructions
-Message-ID: <aJR/+4cl8NzhIsQU@linux.ibm.com>
-References: <20250805062747.3479221-1-skb99@linux.ibm.com>
- <20250805062747.3479221-2-skb99@linux.ibm.com>
- <e65548d0-14aa-4b9c-8051-7c91c5dffd1f@csgroup.eu>
- <8cfa1cb2-57bf-4984-a64e-53c82440e87f@linux.ibm.com>
- <e8c39250-e9a0-4075-92b2-ffa2344a9212@csgroup.eu>
+	s=arc-20240116; t=1754562668; c=relaxed/simple;
+	bh=dh1uMBzVyCLvxx3aaJ1ZDm8eOvtrxLj4sQbJQKADO1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mQWu2htk61rjh0d/vAhQn4LOypWRXkf6n7GaRPJo1O+RbN2EcgV5CXGGoSY7n7pX6lK7H4akpabyrOPSyUxa2AsTUXQJ1NFSXazhCJNfMle5rn0rWMd9Ui81IfUaseQsMT78jxD9blY/qK5/QQidPDWq6C9eyibnHG/U3618mpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hfDRaaRs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754562663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+qVW9cLOj54YF0xIaj0lWIjiH/j6vomCG3o/DXozcQc=;
+	b=hfDRaaRsjKFL3HmVG6aWrXzs9HrMXiszjYyz/BsHRlkxeD26fROrUCGML16Me9hmHsTsnD
+	7o2VU6GWBc5ro+DqY9s5yEx81pfuHLoLTvZzN878UfZm3ew9k+R/JTZe8sUD+/HcTFc+SS
+	cuAHaQEm6IyXT0UUKBMt9Ow5U1L6ob8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-08qPhMkdPwqTCB5TGcdjZA-1; Thu, 07 Aug 2025 06:31:02 -0400
+X-MC-Unique: 08qPhMkdPwqTCB5TGcdjZA-1
+X-Mimecast-MFC-AGG-ID: 08qPhMkdPwqTCB5TGcdjZA_1754562661
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b79629bd88so307301f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 03:31:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754562661; x=1755167461;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+qVW9cLOj54YF0xIaj0lWIjiH/j6vomCG3o/DXozcQc=;
+        b=tWCmfLVv8hTL5qd4KNdg4weAisix7wPmWZsJxrCVRW8/qGuMUzlaj9c8RSkjxW4nzK
+         6GB1LoEMMDCSJBm0pQ5ISg/YkCDXNP6c+PltBvRp8IJVXI2OMUtLsWjeyQwJEDM8YS6H
+         D3Piq3xDyiaByouSBqa1kJNcZgFbIaZrdSTDZf9OdcilGr9O3AysazK67vQ5lgfJ625y
+         8vGnYcAtEw+FQffQqbwKFvScdWRrCzGjP/Re+rVBJeVNhITTpBaI+UHAW7h67lgB8XaR
+         oDsf8dl+Zrzsff9w+jIUYS/zji/fSTlrgF02Q7NXXbpgI2bfnfrs+V2DvmAZmcRGaf4D
+         qMcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpQV7NLG6wFzgtNJNwi4tGw2ettKR+uVCMPkKgZv7o4zM8bsi87Y5kQazb0ldHROzpFqUbTCeI7rmunOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX8AZZYqfRBBlxar03PBptph6RJiUykA1H1KZSf9VKOS0RKGug
+	rypnCksmZG0NpJogqQw/264tsS4+ZhybYwflbpKFxr35bUZEpCYwxVdiWwGFWGjSPLRqCFhZne6
+	u0fm1lbaHuA2SCMYcW22X1GdFetSld8QhTjnvTSSSCw1bQsMmYNeZmIDaDAEEjN/jWw==
+X-Gm-Gg: ASbGnctJwKwmKBkD4dWhGW3wNtlD5XU0imFaFKqZmgZmNVUNvN1rjQkKCFJRyL0oEh2
+	HQKk648irXWjJQ6nwwAaZ078diMfgmqxPRHjNpg1wrTR3fK+4ss35lxXxyab9aZTPUcdOUWk+pt
+	z7FcVgKB+Fmc7rsfNCKeTqE/hQga0gaxC0qa+ixOB/zsLu64ZAZDPTVJnk2pujJXnM7BjKR9yCw
+	+rKibjai5imEusnJrLtRyV/ffTG5EMIw8BvG58HoTJD5tbFNlAyyKf3lnl54oS+hkR5l63Ylg+G
+	CTiIc5hkAl2ggQneOYJ++Q/S5WomkbHWqHUboBQfVIrrJhPM2JWdXRMv/7lBNYwOK1oGOn1aS+Q
+	hGxNiRgA0+YKYMP5nPjfaxuayWoiiWC08wBYGEJ5ct7H2Fm+OfzUvldMLuAR+jO98+9I=
+X-Received: by 2002:a05:6000:188e:b0:3b7:8473:31bd with SMTP id ffacd0b85a97d-3b8f414c4a7mr5352817f8f.0.1754562661255;
+        Thu, 07 Aug 2025 03:31:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGVvmP83x7UutNKzV8FG/fdk3ibG+3w7boHxmbnZj/SXv3iUKT38lto02D3K+S+RQXWyX0Mbg==
+X-Received: by 2002:a05:6000:188e:b0:3b7:8473:31bd with SMTP id ffacd0b85a97d-3b8f414c4a7mr5352785f8f.0.1754562660784;
+        Thu, 07 Aug 2025 03:31:00 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f49:bc00:12fa:1681:c754:1630? (p200300d82f49bc0012fa1681c7541630.dip0.t-ipconnect.de. [2003:d8:2f49:bc00:12fa:1681:c754:1630])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b95f4sm26154427f8f.23.2025.08.07.03.30.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Aug 2025 03:31:00 -0700 (PDT)
+Message-ID: <3eba855a-740c-4423-b2ed-24d622af29a5@redhat.com>
+Date: Thu, 7 Aug 2025 12:30:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e8c39250-e9a0-4075-92b2-ffa2344a9212@csgroup.eu>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DSzCux4_h6B7ySns_xeM7ItLouIEWGKF
-X-Proofpoint-ORIG-GUID: G9LxTEJixdQw1il1gwmEI6kL9RZFksiI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA3OCBTYWx0ZWRfX01cQkLNHoPfi
- ZfC6/ckNr1UxBAgVL6Fw/O49ir83bbqyIA3XqqwkmGlhIo+SsZCIgEeSmk8SzwinvJpTIjpB/9+
- ftto1aotSMbt2sWhN2rPBm458Yf9FFGeDqn/KtdcwJLMT7QKnKrbObmFefX2OAR0qzG2OsuHY4E
- V3WNhtNyEWdV7oG19StT/2Kw9Wb6Sen7JiPT/QDxI6O1Du0NgPnYYc2XKa4H0VzymomRwiHdxgc
- g4AzQJI+cz2yiAtRGxawibp/FMy3O+f7WngcO1MVVTZd32UpDTX6KMrzYOIbPgA7V2U1qegE4zT
- BbxEbHlKon/WGNLLUXauom4ixETEr84qW+cnFx4+5ZkheeEqTGVxDYuVwCSRK5IlaA635P7YULx
- RZVqwluSzZPYW+h7n/DOHemcwkpBVsGrATprg9qkjGQNxBvDyhXLPGtMwNBvUcW7UOOgchEF
-X-Authority-Analysis: v=2.4 cv=TayWtQQh c=1 sm=1 tr=0 ts=68948008 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=UqCG9HQmAAAA:8 a=VwQbUJbxAAAA:8
- a=Oh2cFVv5AAAA:8 a=VnNF1IyMAAAA:8 a=Eszfrv2eY0fpnUJKUzwA:9 a=3ZKOabzyN94A:10
- a=wPNLvfGTeEIA:10 a=7KeoIwV6GZqOttXkcoxL:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508070078
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] userfaultfd: fix a crash in UFFDIO_MOVE when PMD
+ is a migration entry
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: peterx@redhat.com, aarcange@redhat.com, lokeshgidra@google.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+References: <20250806220022.926763-1-surenb@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250806220022.926763-1-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 06, 2025 at 08:59:59AM +0200, Christophe Leroy wrote:
+On 07.08.25 00:00, Suren Baghdasaryan wrote:
+> When UFFDIO_MOVE encounters a migration PMD entry, it proceeds with
+> obtaining a folio and accessing it even though the entry is swp_entry_t.
+> Add the missing check and let split_huge_pmd() handle migration entries.
 > 
+> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Reviewed-by: Peter Xu <peterx@redhat.com>
+> Cc: stable@vger.kernel.org
+> ---
+> Changes since v3 [1]
+> - Updated the title and changelog, per Peter Xu
+> - Added Reviewed-by: per Peter Xu
 > 
-> Le 05/08/2025 à 13:59, Venkat Rao Bagalkote a écrit :
-> > 
-> > On 05/08/25 1:04 pm, Christophe Leroy wrote:
-> > > 
-> > > 
-> > > Le 05/08/2025 à 08:27, Saket Kumar Bhaskar a écrit :
-> > > > bpf_jit_emit_probe_mem_store() is introduced to emit instructions for
-> > > > storing memory values depending on the size (byte, halfword,
-> > > > word, doubleword).
-> > > 
-> > > Build break with this patch
-> > > 
-> > >   CC      arch/powerpc/net/bpf_jit_comp64.o
-> > > arch/powerpc/net/bpf_jit_comp64.c:395:12: error:
-> > > 'bpf_jit_emit_probe_mem_store' defined but not used [-Werror=unused-
-> > > function]
-> > >  static int bpf_jit_emit_probe_mem_store(struct codegen_context
-> > > *ctx, u32 src_reg, s16 off,
-> > >             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > cc1: all warnings being treated as errors
-> > > make[4]: *** [scripts/Makefile.build:287: arch/powerpc/net/
-> > > bpf_jit_comp64.o] Error 1
-> > > 
-> > I tried this on top of bpf-next, and for me build passed.
+> [1] https://lore.kernel.org/all/20250806154015.769024-1-surenb@google.com/
 > 
-> Build of _this_ patch (alone) passed ?
+>   mm/userfaultfd.c | 17 ++++++++++-------
+>   1 file changed, 10 insertions(+), 7 deletions(-)
 > 
-> This patch defines a static function but doesn't use it, so the build must
-> breaks because of that, unless you have set CONFIG_PPC_DISABLE_WERROR.
-> 
-> Following patch starts using this function so then the build doesn't break
-> anymore. But until next patch is applied the build doesn't work. Both
-> patches have to be squashed together in order to not break bisectability of
-> the kernel.
-> 
-> Christophe
-> 
-Got it Chris, will squash both the patches together in v2.
-> > 
-> > Note: I applied https://eur01.safelinks.protection.outlook.com/?
-> > url=https%3A%2F%2Flore.kernel.org%2Fbpf%2F20250717202935.29018-2- puranjay%40kernel.org%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C0468473019834e07ef2b08ddd4179b9c%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638899920058624267%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=iZLg9NUWxtH3vO1STI8wRYLzwvhohd2KKTAGYDe3WnM%3D&reserved=0
-> > before applying current patch.
-> > 
-> > gcc version 14.2.1 20250110
-> > 
-> > uname -r: 6.16.0-gf2844c7fdb07
-> > 
-> > bpf-next repo: https://eur01.safelinks.protection.outlook.com/? url=https%3A%2F%2Fkernel.googlesource.com%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fbpf%2Fbpf-next&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C0468473019834e07ef2b08ddd4179b9c%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638899920058644309%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=OrMauttrzPbaFYhzKdkH5l%2FltISc95MwitnUC7YLhJQ%3D&reserved=0
-> > 
-> > HEAD:
-> > 
-> > commit f3af62b6cee8af9f07012051874af2d2a451f0e5 (origin/master, origin/
-> > HEAD)
-> > Author: Tao Chen <chen.dylane@linux.dev>
-> > Date:   Wed Jul 23 22:44:42 2025 +0800
-> > 
-> >      bpftool: Add bash completion for token argument
-> > 
-> > 
-> > Build Success logs:
-> > 
-> >    TEST-OBJ [test_progs-cpuv4] xdp_vlan.test.o
-> >    TEST-OBJ [test_progs-cpuv4] xdpwall.test.o
-> >    TEST-OBJ [test_progs-cpuv4] xfrm_info.test.o
-> >    BINARY   bench
-> >    BINARY   test_maps
-> >    BINARY   test_progs
-> >    BINARY   test_progs-no_alu32
-> >    BINARY   test_progs-cpuv4
-> > 
-> > 
-> > Regards,
-> > 
-> > Venkat.
-> > 
-> > > 
-> > > > 
-> > > > Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-> > > > ---
-> > > >   arch/powerpc/net/bpf_jit_comp64.c | 30 ++++++++++++++++++++++++++++++
-> > > >   1 file changed, 30 insertions(+)
-> > > > 
-> > > > diff --git a/arch/powerpc/net/bpf_jit_comp64.c
-> > > > b/arch/powerpc/net/ bpf_jit_comp64.c
-> > > > index 025524378443..489de21fe3d6 100644
-> > > > --- a/arch/powerpc/net/bpf_jit_comp64.c
-> > > > +++ b/arch/powerpc/net/bpf_jit_comp64.c
-> > > > @@ -409,6 +409,36 @@ asm (
-> > > >   "        blr                ;"
-> > > >   );
-> > > >   +static int bpf_jit_emit_probe_mem_store(struct
-> > > > codegen_context *ctx, u32 src_reg, s16 off,
-> > > > +                    u32 code, u32 *image)
-> > > > +{
-> > > > +    u32 tmp1_reg = bpf_to_ppc(TMP_REG_1);
-> > > > +    u32 tmp2_reg = bpf_to_ppc(TMP_REG_2);
-> > > > +
-> > > > +    switch (BPF_SIZE(code)) {
-> > > > +    case BPF_B:
-> > > > +        EMIT(PPC_RAW_STB(src_reg, tmp1_reg, off));
-> > > > +        break;
-> > > > +    case BPF_H:
-> > > > +        EMIT(PPC_RAW_STH(src_reg, tmp1_reg, off));
-> > > > +        break;
-> > > > +    case BPF_W:
-> > > > +        EMIT(PPC_RAW_STW(src_reg, tmp1_reg, off));
-> > > > +        break;
-> > > > +    case BPF_DW:
-> > > > +        if (off % 4) {
-> > > > +            EMIT(PPC_RAW_LI(tmp2_reg, off));
-> > > > +            EMIT(PPC_RAW_STDX(src_reg, tmp1_reg, tmp2_reg));
-> > > > +        } else {
-> > > > +            EMIT(PPC_RAW_STD(src_reg, tmp1_reg, off));
-> > > > +        }
-> > > > +        break;
-> > > > +    default:
-> > > > +        return -EINVAL;
-> > > > +    }
-> > > > +    return 0;
-> > > > +}
-> > > > +
-> > > >   static int emit_atomic_ld_st(const struct bpf_insn insn,
-> > > > struct codegen_context *ctx, u32 *image)
-> > > >   {
-> > > >       u32 code = insn.code;
-> > > 
-> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index 5431c9dd7fd7..116481606be8 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1826,13 +1826,16 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
+>   			/* Check if we can move the pmd without splitting it. */
+>   			if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+>   			    !pmd_none(dst_pmdval)) {
+> -				struct folio *folio = pmd_folio(*src_pmd);
+> -
+> -				if (!folio || (!is_huge_zero_folio(folio) &&
+> -					       !PageAnonExclusive(&folio->page))) {
+> -					spin_unlock(ptl);
+> -					err = -EBUSY;
+> -					break;
+> +				/* Can be a migration entry */
+> +				if (pmd_present(*src_pmd)) {
+> +					struct folio *folio = pmd_folio(*src_pmd);
+> +
+> +					if (!folio
+
+
+How could you get !folio here? That only makes sense when calling 
+vm_normal_folio_pmd(), no?
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
