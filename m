@@ -1,260 +1,234 @@
-Return-Path: <linux-kernel+bounces-759124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAD4B1D8CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:18:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12CA6B1D8D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197941AA4663
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:18:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4F5A3A76B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F4A259CBC;
-	Thu,  7 Aug 2025 13:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EC325BF13;
+	Thu,  7 Aug 2025 13:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iME6Fw4Q"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrXszesK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724184A0C;
-	Thu,  7 Aug 2025 13:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03371238C26;
+	Thu,  7 Aug 2025 13:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572693; cv=none; b=qEmHWG/3k92xnLTv+0AfgSUUD2zPih6e7eqjq437xzF3rsuIv2Fied3HCabN41zTa7bhNaoJNcMZAPpY4+w1fs/h6+0kyLivj539LpcFjQCgoe1tLMYI0R1qzzu8858STCYBScToXY6bME/WetJDfSjdcHldPZisFMc8grOxlfg=
+	t=1754572724; cv=none; b=aDf086oprbcXKiFpp9n+rxgdGCU0Ckwu+D8E9LGTgAiIy1mwW7U7hX0omrWrQu3WfHtsU3K3ghGvNVh0b/yv7QE/sLVtJdG9G/3zIDBbNSMOdxiYgOik9ZsAuoWm8pcedjXJpuo1c+zpXS6JSPk7Ri3HZSxblExpn7sigy0khw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572693; c=relaxed/simple;
-	bh=wYwiqpDIRB6YC0o8erHDDUs4XVbsYNSvbHFyw8ZnKps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHG4aUOrsPVTNswWdcckWAJSenPwq32NaXILrcYr7LEheLwkZIgQfgxX6bIgBZAozl1faar7sZ5V3/Ses3kF1EkVmX0FfDOVx2ToOWVYZ9Wtm5X8nNyd2sMLuE07RB0ggld+veZ7ITUrAC1J1iDUMonxWhP6UWTFMld+jVrBjdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iME6Fw4Q; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577Cmb0p019634;
-	Thu, 7 Aug 2025 13:17:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ReRMI1
-	w5O5kV+P3X1vvXZsrm2JTNYKpxE8su60j9QmI=; b=iME6Fw4Q2AlpWBaRqruKU0
-	/GUbmKqw2xwrh/F0+EI0Dco3u13BS6bex2gFBJwzTRgAtBBWHEk2ogIY1FajKvNC
-	s2HHB8rzH+e9Eaa8ppYyLisNVMV5yiNYtVGJ7nYcZ+uO0+4Rs64UfQFJD73MsRTw
-	kSUZbdv4cDY/7gB4ur++wcS7fza48BngaDpm47myHNy8mDmdt/WAFKUCymWiZ96w
-	Z689RwinbhzWd1DyRYS4ibGuBdQj70dZrYpS+zXd0n7MGiEn+Gd0kNAlnxwxumee
-	L8i0FsL5Fct/0eb8FoyTeNGAkjxt3Ug5zura4qow9J+PrighkNiI9of5zGfulfMA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26tynbf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:17:32 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577DHVaX002921;
-	Thu, 7 Aug 2025 13:17:31 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26tynb9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:17:31 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779vWDG007960;
-	Thu, 7 Aug 2025 13:17:30 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwn0r16-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 13:17:30 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577DHQf450594166
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Aug 2025 13:17:27 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DBEC620040;
-	Thu,  7 Aug 2025 13:17:26 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C35DA20043;
-	Thu,  7 Aug 2025 13:17:19 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.43.75.32])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  7 Aug 2025 13:17:19 +0000 (GMT)
-Date: Thu, 7 Aug 2025 18:47:16 +0530
-From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Cc: bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        hbathini@linux.ibm.com, sachinpb@linux.ibm.com, andrii@kernel.org,
-        eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
-        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
-        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, memxor@gmail.com,
-        iii@linux.ibm.com, shuah@kernel.org
-Subject: Re: [bpf-next 0/6] bpf,powerpc: Add support for bpf arena and arena
- atomics
-Message-ID: <aJSnXO62QRglnNsw@linux.ibm.com>
-References: <20250805062747.3479221-1-skb99@linux.ibm.com>
- <e918bef7-5f9b-4591-b671-fe3c0f681862@linux.ibm.com>
+	s=arc-20240116; t=1754572724; c=relaxed/simple;
+	bh=jhZGuKs+VTL1EX9JQsLLNKW9dU7Cq1mi1XfmDpxGgmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AGT/DfvD9gGdlmfcdAziBCe8fsiivrt5X0MW/T/lxJCcx7A/IV88SEBgX32Gbqs/OYaNMnY0+ZzTqgeQW1gQxMK1UUcUaCBGsDxPaOLeqYDVWvmOhSXvBVd/o6JOPDpcCyhjEPtkqvKrxTH4CqSUc0WxIyaNPVN9IfviZGG1Paw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrXszesK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E7EEC4CEEB;
+	Thu,  7 Aug 2025 13:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754572721;
+	bh=jhZGuKs+VTL1EX9JQsLLNKW9dU7Cq1mi1XfmDpxGgmo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JrXszesK5tUM43V2eGqUN+jLW7uAsSpNpdAmHts3xnx9QnJBpsYabAVOkIMuN0hlu
+	 vzSFO46kPooQ1U2SGy2fglffZP201jX0qjnxVu3is1h2rPaX0wgEZlqC1slHgg6arf
+	 yfim2V/46ZQzB6iWcvcGW/VFgwkYTHHWrZeMvCx5Q571Hhw5KHIT3k0pRTF/MjEovO
+	 ZwltMIlwKlapLaLNAQpAk4dMiYSWyUMDBcDlSWqJ56K+t555RJyDC/bTgOZ+V4Nys1
+	 PFvalFsiCbVAcywS7w3AHHACq/81AbcrBbBOyU/09/Ie/BhylPBBz3NbkFZV04DH0t
+	 fUmdplWqOQxWQ==
+Message-ID: <8c24481d-dfdf-4923-9629-3f6b074c27da@kernel.org>
+Date: Thu, 7 Aug 2025 15:18:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e918bef7-5f9b-4591-b671-fe3c0f681862@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: YXGzjED4pJhXligsrAzBvBlxy0HdLnrb
-X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=6894a76c cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8
- a=alihBsh1ZAGIVrIkydwA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
-X-Proofpoint-GUID: 6kbce07YtCxIaLhugwtQhO4aIFlYDmMx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEwMyBTYWx0ZWRfX4IsiQ9WBU6y2
- 730rC1TJZQZvrnmYLmcctkvELPG9Ir9+k1xV0LCmmDwFZPHtUJQVUFuotTz0tkwZJTROc1TnoMO
- mqeXIuP2v8cgnspXRlQzjrKT3ZV/DyHY7uMJmyNQ0GaR7r0XTfCYS3zxykukzQsIb21U/E7LEU9
- h5vcEDlvr1rWF/wViHhmEEH9eIb22oAXPCPI/OeYJhmQAxjQcgloGRNdbwAjccQLaynVLE+UQi+
- aPuG2RSH71pzS2DOfEIwjbhsdzI2jc8+56bPCZPaHnrbxkC3uoe4uyNbjDgWXamUZ3yMxkfwfTD
- kF4YG+5AMOpmuOMoKcLqIv5VM9zXwwsEdkoCynpBBDwHsyWQeydAL2Y8adqd02yJT8xS2/n9C2N
- WYMm/vBkT9JSDhz1Ww2dQnUmvU39rGXpO2SULE+ZdoOILjjCtwdHOQnI0GssfxeZNWwALFPI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=999
- malwarescore=0 phishscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070103
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 58/65] media: zoran: Remove access to __fh
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Devarsh Thakkar
+ <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
+ Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
+ Hans de Goede <hansg@kernel.org>,
+ Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+ Christian Gromm <christian.gromm@microchip.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi
+ <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+ Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
+ Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Andy Walls <awalls@md.metrocast.net>,
+ Michael Tretter <m.tretter@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Dmitry Osipenko <digetx@gmail.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
+ Zhou Peng <eagle.zhou@nxp.com>, Xavier Roumegue
+ <xavier.roumegue@oss.nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Nas Chung <nas.chung@chipsnmedia.com>,
+ Jackson Lee <jackson.lee@chipsnmedia.com>,
+ Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+ Houlong Wei <houlong.wei@mediatek.com>,
+ Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+ Tiffany Lin <tiffany.lin@mediatek.com>,
+ Yunfei Dong <yunfei.dong@mediatek.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+ Jacob Chen <jacob-chen@iotwrt.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+ Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Fabien Dessenne <fabien.dessenne@foss.st.com>,
+ Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard
+ <mripard@kernel.org>, Paul Kocialkowski <paulk@sys-base.io>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Corentin Labbe <clabbe@baylibre.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-tegra@vger.kernel.org, imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, mjpeg-users@lists.sourceforge.net
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-58-eb140ddd6a9d@ideasonboard.com>
+ <d8875dea-aa04-41fc-b1b4-519d06ed6cba@kernel.org>
+ <20250807123157.GF11583@pendragon.ideasonboard.com>
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250807123157.GF11583@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 05, 2025 at 05:37:00PM +0530, Venkat Rao Bagalkote wrote:
+On 8/7/25 14:31, Laurent Pinchart wrote:
+> On Thu, Aug 07, 2025 at 08:58:01AM +0200, Hans Verkuil wrote:
+>> On 02/08/2025 11:23, Jacopo Mondi wrote:
+>>> The __fh parameter is assigned to an unsued variable. Remove it
+>>> and remove the unused struct zoran_fh type.
+>>>
+>>> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>>> ---
+>>>  drivers/media/pci/zoran/zoran.h        | 6 ------
+>>>  drivers/media/pci/zoran/zoran_driver.c | 3 +--
+>>>  2 files changed, 1 insertion(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/media/pci/zoran/zoran.h b/drivers/media/pci/zoran/zoran.h
+>>> index 1cd990468d3de9db8b14b72483972041c57bfee2..d05e222b392156bf1b3b4c83c6591db642c3c377 100644
+>>> --- a/drivers/media/pci/zoran/zoran.h
+>>> +++ b/drivers/media/pci/zoran/zoran.h
+>>> @@ -154,12 +154,6 @@ struct zoran_jpg_settings {
+>>>  
+>>>  struct zoran;
+>>>  
+>>> -/* zoran_fh contains per-open() settings */
+>>> -struct zoran_fh {
+>>> -	struct v4l2_fh fh;
+>>> -	struct zoran *zr;
+>>> -};
+>>> -
+>>>  struct card_info {
+>>>  	enum card_type type;
+>>>  	char name[32];
+>>> diff --git a/drivers/media/pci/zoran/zoran_driver.c b/drivers/media/pci/zoran/zoran_driver.c
+>>> index f42f596d3e6295e31e3b33cd83c5f7243911bd30..ec7fc1da4cc02f5a344cb49bb9a783c41c758195 100644
+>>> --- a/drivers/media/pci/zoran/zoran_driver.c
+>>> +++ b/drivers/media/pci/zoran/zoran_driver.c
+>>> @@ -511,12 +511,11 @@ static int zoran_s_fmt_vid_cap(struct file *file, void *__fh,
+>>
+>> This driver uses __fh as the name for the second argument of the ioctl
+>> callbacks. Can you take this opportunity to rename it to either 'fh' or 'priv'?
 > 
-> On 05/08/25 11:57 am, Saket Kumar Bhaskar wrote:
-> > This patch series introduces support for the PROBE_MEM32,
-> > bpf_addr_space_cast and PROBE_ATOMIC instructions in the powerpc BPF JIT,
-> > facilitating the implementation of BPF arena and arena atomics.
-> > 
-> > The last patch in the series has fix for arena spinlock selftest
-> > failure.
-> > 
-> > This series is rebased on top of:
-> > https://lore.kernel.org/bpf/20250717202935.29018-2-puranjay@kernel.org/
-> > 
-> > All selftests related to bpf_arena, bpf_arena_atomic(except
-> > load_acquire/store_release) enablement are passing:
+> It's a bit of yak shaving, but not too difficult so it will be addressed
+> in the next version (Jacopo already wrote the patches, thanks).
 > 
+>> Generally it's not a good idea to prefix variables with __ for no good reason.
+>>
+>> Grepping for __fh also shows two other drivers:
+>>
+>> drivers/media/platform/chips-media/coda/coda-common.c:#define fh_to_ctx(__fh)   container_of(__fh, struct coda_ctx, fh)
+>> drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h:#define fh_to_ctx(__fh) container_of(__fh, struct s5p_mfc_ctx, fh)
+>>
+>> I think it is a good idea to rename __fh to fh there as well.
 > 
-> Hello Saket,
+> That can't be done, otherwise things like
 > 
+> #define fh_to_ctx(fh)	container_of(fh, struct coda_ctx, fh)
 > 
-> I see couple of selftests are failing on my set up.
+> static inline struct coda_ctx *file_to_ctx(struct file *filp)
+> {
+> 	return fh_to_ctx(file_to_v4l2_fh(filp));
+> }
 > 
-> > 
-> > # ./test_progs -t arena_list
-> > #5/1     arena_list/arena_list_1:OK
-> > #5/2     arena_list/arena_list_1000:OK
-> > #5       arena_list:OK
-> > Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> > 
-> > # ./test_progs -t arena_htab
-> > #4/1     arena_htab/arena_htab_llvm:OK
-> > #4/2     arena_htab/arena_htab_asm:OK
-> > #4       arena_htab:OK
-> > Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
-> > 
-> > # ./test_progs -t verifier_arena
-> > #464/1   verifier_arena/basic_alloc1:OK
-> > #464/2   verifier_arena/basic_alloc2:OK
-> > #464/3   verifier_arena/basic_alloc3:OK
-> > #464/4   verifier_arena/iter_maps1:OK
-> > #464/5   verifier_arena/iter_maps2:OK
-> > #464/6   verifier_arena/iter_maps3:OK
-> > #464     verifier_arena:OK
-> > #465/1   verifier_arena_large/big_alloc1:OK
-> > #465/2   verifier_arena_large/big_alloc2:OK
-> > #465     verifier_arena_large:OK
-> > Summary: 2/8 PASSED, 0 SKIPPED, 0 FAILED
+> will expand in the file_to_ctx() function to
 > 
-> 
-> All error logs:
-> tester_init:PASS:tester_log_buf 0 nsec
-> process_subtest:PASS:obj_open_mem 0 nsec
-> process_subtest:PASS:specs_alloc 0 nsec
-> run_subtest:PASS:obj_open_mem 0 nsec
-> run_subtest:PASS:unexpected_load_failure 0 nsec
-> do_prog_test_run:PASS:bpf_prog_test_run 0 nsec
-> run_subtest:FAIL:1103 Unexpected retval: 4 != 0
-> #513/7   verifier_arena/reserve_invalid_region:FAIL
-> #513     verifier_arena:FAIL
-> Summary: 1/14 PASSED, 0 SKIPPED, 1 FAILED
-> 
-> 
-Hi Venkat,
+> 	return container_of(file_to_v4l2_fh(filp), struct coda_ctx, file_to_v4l2_fh(filp))
 
-It is known failure. This selftest was added recently. We are working on it to
-fix this. Will post the fix for this selftest separately.
-> > 
-> > # ./test_progs -t arena_atomics
-> > #3/1     arena_atomics/add:OK
-> > #3/2     arena_atomics/sub:OK
-> > #3/3     arena_atomics/and:OK
-> > #3/4     arena_atomics/or:OK
-> > #3/5     arena_atomics/xor:OK
-> > #3/6     arena_atomics/cmpxchg:OK
-> > #3/7     arena_atomics/xchg:OK
-> > #3/8     arena_atomics/uaf:OK
-> > #3/9     arena_atomics/load_acquire:SKIP
-> > #3/10    arena_atomics/store_release:SKIP
-> > #3       arena_atomics:OK (SKIP: 2/10)
-> > Summary: 1/8 PASSED, 2 SKIPPED, 0 FAILED
-> > 
-> > All selftests related to arena_spin_lock are passing:
-> > 
-> > # ./test_progs -t arena_spin_lock
-> > #6/1     arena_spin_lock/arena_spin_lock_1:OK
-> > #6/2     arena_spin_lock/arena_spin_lock_1000:OK
-> > #6/3     arena_spin_lock/arena_spin_lock_50000:OK
-> > #6       arena_spin_lock:OK
-> > Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
-> test_arena_spin_lock_size:FAIL:check counter value unexpected check counter
-> value: actual 15999 != expected 16000
-> #6/1     arena_spin_lock/arena_spin_lock_1:FAIL
-> #6       arena_spin_lock:FAIL
-> Summary: 0/2 PASSED, 0 SKIPPED, 1 FAILED
+If the fh_to_ctx #define is changed to a static inline, then there is no problem.
 
-This too, with llvm-19 the failure is known to us, where llvm doesn't have support for
-may_goto insn https://github.com/llvm/llvm-project/commit/0e0bfacff71859d1f9212205f8f873d47029d3fb.
-Though, there is else condition which is envoked incase llvm doesn't have support for may_goto insn,
-which we are looking into.
-
-Since llvm-20 has support for may_goto, we are not seeing this failure there(the selftest passes).
-So we are planning to fix this in separate patch for llvm-19 for now.
+That said, it is overkill.
 
 Regards,
-Saket
-> > Saket Kumar Bhaskar (6):
-> >    bpf,powerpc: Introduce bpf_jit_emit_probe_mem_store() to emit store
-> >      instructions
-> >    bpf,powerpc: Implement PROBE_MEM32 pseudo instructions
-> >    bpf,powerpc: Implement bpf_addr_space_cast instruction
-> >    bpf,powerpc: Introduce bpf_jit_emit_atomic_ops() to emit atomic
-> >      instructions
-> >    bpf,powerpc: Implement PROBE_ATOMIC instructions
-> >    selftests/bpf: Fix arena_spin_lock selftest failure
-> > 
-> >   arch/powerpc/net/bpf_jit.h                    |   6 +-
-> >   arch/powerpc/net/bpf_jit_comp.c               |  32 +-
-> >   arch/powerpc/net/bpf_jit_comp32.c             |   2 +-
-> >   arch/powerpc/net/bpf_jit_comp64.c             | 378 +++++++++++++-----
-> >   .../bpf/prog_tests/arena_spin_lock.c          |  23 +-
-> >   .../selftests/bpf/progs/arena_spin_lock.c     |   8 +-
-> >   .../selftests/bpf/progs/bpf_arena_spin_lock.h |   4 +-
-> >   7 files changed, 348 insertions(+), 105 deletions(-)
-> > 
-> > base-commit: ea2aecdf7a954a8c0015e185cc870c4191d1d93f
+
+	Hans
+
 > 
+> We could rename the __fh argument to vfh or v4l2fh, but I think __fh is
+> equally good there. It's just the macro argument name.
 > 
-> Regards,
+>>>  			       struct v4l2_format *fmt)
+>>>  {
+>>>  	struct zoran *zr = video_drvdata(file);
+>>> -	struct zoran_fh *fh = __fh;
+>>>  	int i;
+>>>  	int res = 0;
+>>>  
+>>>  	if (fmt->fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG)
+>>> -		return zoran_s_fmt_vid_out(file, fh, fmt);
+>>> +		return zoran_s_fmt_vid_out(file, __fh, fmt);
+>>>  
+>>>  	for (i = 0; i < NUM_FORMATS; i++)
+>>>  		if (fmt->fmt.pix.pixelformat == zoran_formats[i].fourcc)
 > 
-> Venkat.
-> 
+
 
