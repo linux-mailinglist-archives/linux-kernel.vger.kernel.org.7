@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-759018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645E9B1D71E
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2EBB1D727
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48C0118C160D
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED38D18918DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1B9246335;
-	Thu,  7 Aug 2025 11:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AF621C167;
+	Thu,  7 Aug 2025 12:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KXXHSYoT"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OObStDQ5"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC36246BB6
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 11:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068B8748F
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754567905; cv=none; b=d++EY4t7ow24wu87NQL3hk40IAzu+62osxU3am2Z3qiJYmmBQWhtRFgApA64d7iiDbQcKlc5JXSAa93w14SdD6VuUz81gsgbCrG3gK5jFGuGHNoTDoEIiL3HGBo6zTMNVkcp7IkMafqdR53DCpxjg60hvKcW61MRxAZei8ZDeAo=
+	t=1754568051; cv=none; b=E3WV01e9NFRg1MiIPcqJLclgxpJXZ9A7HpvHiY/F6HJAXp9eC+30ZMvZOGPibuptgc0djnmAxNGDsjgeCHbT7BEmmFbMje5HECzEsEH8ZCtMJabL+QE7hrqF3Eg4hGDzBm7o5IFrXN2C5Hsa9skLL1BLSxz+JwZ7FWaHa/7vJ/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754567905; c=relaxed/simple;
-	bh=SN9g39cLqAzYSOTSMSjv5YitFPShMgxH/v/PUOCJ5JQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9O/TRXQS2KqYDOZpHo3wWDF3lQR6QXgVl+CiCF6rhXU8QNBR/mM5hcPz4XVgzaKXZ/t8DlgLRuGlJUxFjJ56JYUKBCUVnYcCxavyLst21XHTg+Kppste6gmc91gVssrgRoe1LicLn83/Lu1wFB6xEv1GWK16ywruRNr6SJNPsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KXXHSYoT; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-459ddb41539so2962215e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 04:58:23 -0700 (PDT)
+	s=arc-20240116; t=1754568051; c=relaxed/simple;
+	bh=LdY/i+rMPmKQZOWkhSXJPPTOIyh9JDAEwzRhIXeqI2I=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=u5qPY+MDFNoiKG4yV2bqxNZDcj57EcU234djbXfoXRxmd0pMq/CkWImMBsrKD+zz/zRB/wqlT+i71vaVk8blyH5wMVW1KS/Aojh4rPly8EvCtK7xWMwxXRUZn609tt1w501qYsYvvmbYzcFE07oRrBsVChknIINYHehPaVdCWEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OObStDQ5; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24249098fd0so12077295ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 05:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754567902; x=1755172702; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oEwamW+fTRz5W2tukoAtJ50nny4AOmxMr4ZAI4xj6H0=;
-        b=KXXHSYoT4YqwQ2IujEq1p4qYhGUvoshIusWNkRR/xLnHWhvFFH1BtaIZ4B6/wm60sp
-         yEYj0NTlXm/AwskYahKfOTWaSMuJvLIFrZy3yTmn4o50xZw4UZVZaieM2i7bioXco7NW
-         rZ5ghITLZG0D3ascLWGBcGOBsdzoOUoSl7gklKFqZthzOY2eokLmk2oXpTDCg1UhzMHw
-         mvV7wrDsKOPcF2OhjcPCtLDWNEaTg7J4bxcxCIT+famXa0OdZMmoZJJBgddPP093Ghi6
-         dKRe1ca8ReGZ48vxM2+MozeUAVp5VKnXb6rt9jnc30mR4NDk8IYZ/dyuBIGmZPd8dF79
-         4q7g==
+        d=google.com; s=20230601; t=1754568049; x=1755172849; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NVQMzpDcKZ25lxhvOtkAAfHad41TvtlPkpgkU/8pXts=;
+        b=OObStDQ5dTcKUWemSHj0uMpZj9uah+wcneL4Sl0BpS3DqJwC7NZNj+OcPfiLZ2nk4d
+         pbmPg5inXtU+9mu8ySoW8dGPpcxz0heVMpDJVaqIRVTJ0hBwawrWShM6xjXqu7uj41QN
+         9mn70pZoFDb0ZWvUaOuLFHR9MCVIogEh9egvQLfDC/A61DfA/pjHfhc51ZMiJH2pp5jP
+         Dt5MJQHK//yuv01UZUWnOiN9tdgW2J1yIr2CaYqWLcwk6KtkLYCQIYC13c0zDrjus7Qy
+         REDtEZ7LIYVnJ9WfX/VLhgFr2fSuik/+wrEm/15qbzbCGgVMliMtaRH01/8Bzm2vBySh
+         TFfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754567902; x=1755172702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oEwamW+fTRz5W2tukoAtJ50nny4AOmxMr4ZAI4xj6H0=;
-        b=E7Hh0hW37PelVP0/sj5FNpPqQB4S4rDZEy4971nIjX+CjL/Lvou3Wu49MA475mzkCd
-         CC5O1ero/WNdG9rgm9YT/XhknKqs1dZmrS3H922sHhRBOSKOkGX5rHGPNaU6GlKqk4lk
-         QduTI2/Krflfc+OwKAk4iq7Gldx3KFGsdJQdsIttonfRlOC/cJFiwFz7pCHYNYQ6MALe
-         M/LVXLlNXEgjrQSRXz2Un5CZsynpAFufpNrZzU2gMesmIRxK7M0QvSQTWxcytaE0bGxB
-         f01DguTlKV7PJ/bk1Y+iw8tRXxR6YhRiN8GxnUDnmcTLJ1lrBmcibF2hvLfDobayqTfa
-         FH8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWiwJRlTp0xgynUfu3Hz6am9vVgqG8kP5n1o87DwriZSoQYT4zr/y5OHPbZdlMQCB+buF8jNhw1ie2Blmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd3dDjqt9ZTzC/Q5sy4oYDiB58syr1LTX77hB4Tn0s42BUFGGj
-	DqH4Vg7+wxvlUgMAg3jLhcvcsMeSqI9ZYf9KYtzbp5bXLZJa4EDcNTNOfAhJR56rCsg=
-X-Gm-Gg: ASbGncsUkGMUP9v+9X/B7rg96R0vPfPuVnnUhdN3dTDBy91fw1bHPSPrpDXJyCeWY34
-	gkPo81JEBY0HgKwhKDvN1j8U+5FvWd+Q6mVUNmauqisR1L0sKp8slRsCGcMfsOmRHLXKyX4Eo5f
-	5RqrUBWOfwatW4P8F1dyZ3V7bHifG2HuB9QpvlYWldYY40PW1SXm2D8YRE5qMwOyu0Orc20J74A
-	6pCzEnyds2XzXbiELPxKMwFMbjX7+uitysFLE7E09wPLuy5dPg/WT8gEMMvZ49pv1MeFjbwgNvM
-	Z/lvGT4Zw2RRUxmUn12XUEmwJs5VG/IHoM2GhS26GGwJpDZvc+mw+A6E29CXfzEVOgbnHnMVqZt
-	syKV0FIY0hqabDc9n3hv/PkuvSJHowibHK8w=
-X-Google-Smtp-Source: AGHT+IHkj6EB4TheQIsgXjPsOSdAMwVvBUUvVzBRTFz+9EO1TMkeOl6rO09TeVq1Dqf5kEBw9RNIMA==
-X-Received: by 2002:a05:600c:4fc4:b0:456:161c:3d77 with SMTP id 5b1f17b1804b1-459e748faeemr70285315e9.16.1754567902154;
-        Thu, 07 Aug 2025 04:58:22 -0700 (PDT)
-Received: from localhost (109-81-80-221.rct.o2.cz. [109.81.80.221])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459ebede65asm44807495e9.8.2025.08.07.04.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 04:58:21 -0700 (PDT)
-Date: Thu, 7 Aug 2025 13:58:20 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 8/8] mm: Drop __GFP_DIRECT_RECLAIM flag if PF_MEMALLOC is
- set
-Message-ID: <aJSU3O-pUnTnl_wP@tiehlicka>
-References: <20250807075810.358714-1-urezki@gmail.com>
- <20250807075810.358714-9-urezki@gmail.com>
+        d=1e100.net; s=20230601; t=1754568049; x=1755172849;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NVQMzpDcKZ25lxhvOtkAAfHad41TvtlPkpgkU/8pXts=;
+        b=DpvHdyRo68wNGoPSy16NhCtdPQ2te867kkCz6ENTbdULL86ApSri4gx3FsBJgsziIa
+         dNhRo+30nNYeVqx+XA0GyGVDV3fHQeLIU+FzfCOx+9Aj/XEjtRugH6s5ztp91KefeCZh
+         dwoxc5ULmqJwOk6ljGay3sta6jfAMfegFLltcirpY5nOcvNlYb4shFWsyBdBtAcc87yz
+         N1TKkGgcvV1eqPbF1pQTL1P40h8HBMZsvKtSS/TIbeeeJ9BVJFhX5AZhidZkFnphHEiN
+         5yIJol+BMQsnVYgznRQMdfpYa8IwT8llIChXcQiYMGSV0Rz+LXyyGPFcQT4aNfMzDOQ6
+         GzWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZmLgSY31ani7ZJrIuP3iYvHFesf7UMfwe4X5h7aNpbZPDLeoXzNnKwSrnJblMIxqhAHQfxbhQ4W+Mhps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfQy07muk1FUl4TzCtrd5BssZfwvzZ8TYbWtIOm4HlnGSk8XxX
+	LB22TqRyVZuGmzw4D96+M+BqiCUdmtj/0AprSsi3ojVpEguaXPgYFc+ZmTWgKkg/mhKaPV3suX0
+	Nvw==
+X-Google-Smtp-Source: AGHT+IHAQEVxCio5STxDcfDDBOE+qECR7XPXNMNLX8/DgAGu0ZsKEeHIC699gNm6QUfd7tqb3Uw+frWVBA==
+X-Received: from plgk7.prod.google.com ([2002:a17:902:ce07:b0:242:86ec:7de6])
+ (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e5c8:b0:240:9dd8:2194
+ with SMTP id d9443c01a7336-2429f5772camr112852665ad.22.1754568049158; Thu, 07
+ Aug 2025 05:00:49 -0700 (PDT)
+Date: Thu,  7 Aug 2025 20:00:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807075810.358714-9-urezki@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
+Message-ID: <20250807120042.1761685-1-wakel@google.com>
+Subject: [PATCH v2 0/1] selftests/futex: Check for shmget support at runtime
+From: Wake Liu <wakel@google.com>
+To: tglx@linutronix.de, mingo@redhat.com, shuah@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: peterz@infradead.org, dvhart@infradead.org, dave@stgolabs.net, 
+	andrealmeid@igalia.com, wakel@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 07-08-25 09:58:10, Uladzislau Rezki wrote:
-> The memory allocator already avoids reclaim when PF_MEMALLOC is set.
-> Clear __GFP_DIRECT_RECLAIM explicitly to suppress might_alloc() warnings
-> to make more correct behavior.
+Changes in v2:
+- Restore RET_FAIL assignments in error paths to ensure the test's exit
+  code accurately reflects the failure status.
 
-Rather than chaning the gfp mask would it make more sense to update
-might_alloc instead?
+Wake Liu (1):
+  selftests/futex: Check for shmget support at runtime
+
+ .../selftests/futex/functional/futex_wait.c   | 49 +++++++------
+ .../selftests/futex/functional/futex_waitv.c  | 73 ++++++++++++-------
+ 2 files changed, 73 insertions(+), 49 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.50.1.703.g449372360f-goog
+
 
