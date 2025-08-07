@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-759497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF857B1DE40
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:26:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF47FB1DE3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 22:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B393AAA47
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:25:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B84524E14B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 20:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16E5244697;
-	Thu,  7 Aug 2025 20:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965C1262FD1;
+	Thu,  7 Aug 2025 20:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IOLqSjqH"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A53dJri8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A514723C51D;
-	Thu,  7 Aug 2025 20:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1584238D54;
+	Thu,  7 Aug 2025 20:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754598113; cv=none; b=DrWIfRWU646JFF8cUVgLGwXewxiW2KrjSiLaa810g+y2QKNuQmkrrWHcA6RiWiPsqbR/MQ0tcNQUVVahgwkHzHzwXsAtW5wjxs1OjlCXeizwL44IfD5to3fmzyZAgHiLb/QjoKXSZ2Ih4XAfHrRF4IZqYZa9iRb2lKC3NDw+ANo=
+	t=1754598255; cv=none; b=YYffMqvSBkwvKZDrnDfXUlV0ETGTcCHpcJkTGr7NcpMJitWaGeFSmwiEuvEFauwtglLQy3zCt8mivEgThFFDnK5cHY2GMsAlTlAIwPcSoPu5nz7+grrdIim7mZDwr0TsePPLUHxQlHdzO+0AOiYvmT9T/dK52T6Ca8V3EA3QpsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754598113; c=relaxed/simple;
-	bh=I2rrN3Y0hd3DDIX5ZrPwcQ/5ZGpRZ9QYaIzsdOTkcb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVwrIeap8lIav02guvemtzDSt7i8vnd+bPe+4G8UYQV2GQL56AMCTsdEMlfiNnBK/S1+2NU8kPJZwga12BPDyQ3QzCVRfpTCfs/EVX6CrivHsBnz/5okw6qOIuaL5uJ56r/neEVESGqvtJBM8fSbnUcGhwNyTZ6DwJijbeK/DLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IOLqSjqH; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 15C8544369;
-	Thu,  7 Aug 2025 20:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754598106;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fzalCYw2na9KY0FHYqIxf5tZkPW5UaHRqpyCgMjgDrw=;
-	b=IOLqSjqHHqPAdp5okV+hl1oKaLuNgpO+acKT+QM81kpigrRHjMJQ6UR3b7D8+YbqcaflDt
-	SVwYKdzWrF5U+Wan6+YShaU5nt/CiScFCtOc1eARVUbtZBjAuqJfwaMfIv7+vW/QWd82lL
-	/FSSgSYw/HPQNQmLIpeAn5HoMf62pbSHVnrfgg927QGV08mWtHM/ettyIFAliwTq3eax2F
-	wV2rbCz2dMDfMnr01CJ6aUALct3MEO4IoiKR/BY8kUzShR5QvywM953XwekjCEvx5lj7/+
-	osIKx9fwxg3iYnfFINvVAx9harzSb7jbmU809D219yh/OoSGz3dss21be7fv0A==
-Date: Thu, 7 Aug 2025 22:21:42 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>, Frank Li <Frank.Li@nxp.com>,
-	Jorge Marques <jorge.marques@analog.com>,
-	linux-i3c@lists.infradead.org
-Subject: Re: [PATCH] i3c: remove 'const' from FIFO helpers
-Message-ID: <2025080720214218750df5@mail.local>
-References: <20250807043456.1624-2-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1754598255; c=relaxed/simple;
+	bh=w56Fm8QQWgdrpjsnEzkkPxBRYWWXw7L9fTHzBHniPQg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VbDEES4y+FtBsPmuoZrGA98mV8wOoMUsWYxzUde3gSf7+gtcdyf0qQz6z9BKmdPkqqtjXM9ZWD4A+y5kosNZkuFOpyeFuqhI/qvV9E14449aVO1bbBsVOKNY1gw7DgbcbYhNX5EZ3ZtXueqltYVqOy1L5Khb+KuQjRwq0dSZtYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A53dJri8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA68C4CEEB;
+	Thu,  7 Aug 2025 20:24:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754598255;
+	bh=w56Fm8QQWgdrpjsnEzkkPxBRYWWXw7L9fTHzBHniPQg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=A53dJri8niNA7EsnRET8LQvNeDhL0QB+E1iy0hZZ7DagU6tlIFxyDsXW2Ghk/RQak
+	 Xxew23iOpsfI1BGUooyHB7FXmI7aK471m0oh0JkyqRXoXSUUQ5jN7NT5DH0dzDgjVa
+	 4sYvPLTAhfrI3Jd2BxWcfrOt1g1USdxPE2geJTi/kOB6XE79nq4YYb8hbcTjLY1rld
+	 I0/jlFicantyTwWvRGVKqCrb5qdm75AGVQSHpJMD76or1BI7G/Bih1+/tRHx/ngUSt
+	 dyZcSz4Nbvsq2fqbyQzNDQ9K07rhln/iNFp9541MYB0Gt5abWo5knqZSqKSu1J0m2C
+	 JHBn5JY/hdtcQ==
+Date: Thu, 7 Aug 2025 15:24:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
+	lukas@wunner.de
+Subject: Re: [PATCH v4 03/10] PCI: Introduce pci_walk_bus_reverse(),
+ for_each_pci_dev_reverse()
+Message-ID: <20250807202413.GA61777@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,63 +57,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250807043456.1624-2-wsa+renesas@sang-engineering.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvddukeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepkedurddvvddtrdelfedrudegleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeekuddrvddvtddrleefrddugeelpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeejpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkv
- ghrnhgvlhdrohhrghdprhgtphhtthhopehlkhhpsehinhhtvghlrdgtohhmpdhrtghpthhtohephfhrrghnkhdrnfhisehngihprdgtohhmpdhrtghpthhtohepjhhorhhgvgdrmhgrrhhquhgvshesrghnrghlohhgrdgtohhmpdhrtghpthhtoheplhhinhhugidqiheftgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrgh
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <20250717183358.1332417-4-dan.j.williams@intel.com>
 
-On 07/08/2025 06:31:24+0200, Wolfram Sang wrote:
-> As buildbot reports, some architectures do not want const pointers.
-> 
-> Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202508070438.TZZA3f2S-lkp@intel.com/
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> I still wonder why SPARC discards the const but since nobody seems to be
-> commenting on that, I guess the fastest way to get the build error out
-> of Linus' tree is to adapt the usage in I3C.
-> 
+On Thu, Jul 17, 2025 at 11:33:51AM -0700, Dan Williams wrote:
+> PCI/TSM, the PCI core functionality for the PCIe TEE Device Interface
+> Security Protocol (TDISP), has a need to walk all subordinate functions of
+> a Device Security Manager (DSM) to setup a device security context. A DSM
+> is physical function 0 of multi-function or SRIOV device endpoint, or it is
+> an upstream switch port.
 
-My plan was to let sparc people handle their mess, there is no reason
-const should be discarded.
+s/SRIOV/SR-IOV/
 
->  drivers/i3c/internals.h | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> In error scenarios or when a TEE Security Manager (TSM) device is removed
+> it needs to unwind all established DSM contexts.
 > 
-> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
-> index 0d857cc68cc5..2b0b9c3a9131 100644
-> --- a/drivers/i3c/internals.h
-> +++ b/drivers/i3c/internals.h
-> @@ -30,8 +30,7 @@ void i3c_dev_free_ibi_locked(struct i3c_dev_desc *dev);
->   * @buf: Pointer to the data bytes to write
->   * @nbytes: Number of bytes to write
->   */
-> -static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
-> -				   int nbytes)
-> +static inline void i3c_writel_fifo(void __iomem *addr, void *buf, int nbytes)
->  {
->  	writesl(addr, buf, nbytes / 4);
->  	if (nbytes & 3) {
-> @@ -48,8 +47,7 @@ static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
->   * @buf: Pointer to the buffer to store read bytes
->   * @nbytes: Number of bytes to read
->   */
-> -static inline void i3c_readl_fifo(const void __iomem *addr, void *buf,
-> -				  int nbytes)
-> +static inline void i3c_readl_fifo(void __iomem *addr, void *buf, int nbytes)
->  {
->  	readsl(addr, buf, nbytes / 4);
->  	if (nbytes & 3) {
-> -- 
-> 2.47.2
-> 
+> Introduce reverse versions of PCI device iteration helpers to mirror the
+> setup path and ensure that dependent children are handled before parents.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I really don't like these search and iterator interfaces.  I wish we
+didn't need them like this because code that uses them becomes a
+one-time thing that doesn't handle hotplug and has potential locking
+and race issues.  But I assume you really do need these.
+
+> +++ b/drivers/base/bus.c
+> +static struct device *prev_device(struct klist_iter *i)
+> +{
+> +	struct klist_node *n = klist_prev(i);
+> +	struct device *dev = NULL;
+> +	struct device_private *dev_prv;
+> +
+> +	if (n) {
+> +		dev_prv = to_device_private_bus(n);
+> +		dev = dev_prv->device;
+> +	}
+> +	return dev;
+
+I think this would be simpler as:
+
+  if (!n)
+    return NULL;
+
+  dev_prv = to_device_private_bus(n);
+  return dev_prv->device;
+
+> +++ b/drivers/pci/bus.c
+> +static int __pci_walk_bus_reverse(struct pci_bus *top,
+> +				  int (*cb)(struct pci_dev *, void *),
+> +				  void *userdata)
+> +{
+> +	struct pci_dev *dev;
+> +	int ret = 0;
+> +
+> +	list_for_each_entry_reverse(dev, &top->devices, bus_list) {
+> +		if (dev->subordinate) {
+> +			ret = __pci_walk_bus_reverse(dev->subordinate, cb,
+> +						     userdata);
+> +			if (ret)
+> +				break;
+> +		}
+> +		ret = cb(dev, userdata);
+> +		if (ret)
+> +			break;
+> +	}
+> +	return ret;
+
+Why not:
+
+  list_for_each_entry_reverse(...) {
+    ...
+    if (ret)
+      return ret;
+  }
+  return 0;
 
