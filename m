@@ -1,235 +1,260 @@
-Return-Path: <linux-kernel+bounces-759122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1719DB1D8C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAD4B1D8CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 15:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5EEE1AA4408
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:16:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197941AA4663
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 13:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2C723F40C;
-	Thu,  7 Aug 2025 13:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F4A259CBC;
+	Thu,  7 Aug 2025 13:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="EibNamFn";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="qkTAnFmG"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iME6Fw4Q"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB67013FD86;
-	Thu,  7 Aug 2025 13:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754572574; cv=fail; b=OQdPYBWhyJOTUclkWOX82chuTw33phVH7Q4xzmtSx1ExniANFb49f6jtzj0vi8phvMaw6tCI1aLL4Fv7fTMH74uHh4oB2vXZbOU8KaRxCHix2WJHwz/JsPIxRLxviMvpvk9YuKww/I+zChvgNS6c7CNMq01BbgIc487Z/ghhDq4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754572574; c=relaxed/simple;
-	bh=d8ygnZ16KZ4Xu9/Bp7s9SpAX2im5CnKvtMnFHT40bs4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QTH2U5tkrbrsSD/+vD4qO8/F27EjtJRC/tvwLgH0zmvZ8ofcV6n51H4wIB89J456W8WJstTNMyRaqOob6fXHh5nW7eAc/paoLhiSK6uIGaXhtsAYkkF4GmVXiBSVXgNilRPFOW4tYJYTx4VndYkQ4R0T2a6/EKHF/6h8d0VJDys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=EibNamFn; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=qkTAnFmG; arc=fail smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577AoWPI024694;
-	Thu, 7 Aug 2025 08:15:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724184A0C;
+	Thu,  7 Aug 2025 13:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754572693; cv=none; b=qEmHWG/3k92xnLTv+0AfgSUUD2zPih6e7eqjq437xzF3rsuIv2Fied3HCabN41zTa7bhNaoJNcMZAPpY4+w1fs/h6+0kyLivj539LpcFjQCgoe1tLMYI0R1qzzu8858STCYBScToXY6bME/WetJDfSjdcHldPZisFMc8grOxlfg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754572693; c=relaxed/simple;
+	bh=wYwiqpDIRB6YC0o8erHDDUs4XVbsYNSvbHFyw8ZnKps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHG4aUOrsPVTNswWdcckWAJSenPwq32NaXILrcYr7LEheLwkZIgQfgxX6bIgBZAozl1faar7sZ5V3/Ses3kF1EkVmX0FfDOVx2ToOWVYZ9Wtm5X8nNyd2sMLuE07RB0ggld+veZ7ITUrAC1J1iDUMonxWhP6UWTFMld+jVrBjdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iME6Fw4Q; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577Cmb0p019634;
+	Thu, 7 Aug 2025 13:17:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=Oe6rLdidTgVK3hL24ozGkDAIk/IsLPwb5xflBmj82Vc=; b=
-	EibNamFnjCIzy4E0Q2M05kQ97zVp+TyVSlgoskL7VuHgoamamB5ab5Jd0X0Z7nnN
-	dKVjrC+KRoTh94rlmqz6K4atEBP+JnFgbTW/hWuZvTEUI3w9s9r3f51QcwmIC4ZQ
-	MHdBmEubRAIuhDotzRW2BY4zOltjfARlFZpnUcns2vEqhkTRU3Ilsdg98Q/5ZOXN
-	WlAyZ9mCn3G3iVFJ1GevZRJ3MwqJF6xY1171edP+RBsSXm8QqFiU4vfPnx9htXKP
-	8EetAAEUS6x66iI/f6NaUeA+2hqSWqy4UUJ7vftYlFG2PDNz5iNlOBssFQufSbeq
-	qNl85BejhKqiAsNy0dezWg==
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12on2124.outbound.protection.outlook.com [40.107.237.124])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 48c3m52eja-1
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ReRMI1
+	w5O5kV+P3X1vvXZsrm2JTNYKpxE8su60j9QmI=; b=iME6Fw4Q2AlpWBaRqruKU0
+	/GUbmKqw2xwrh/F0+EI0Dco3u13BS6bex2gFBJwzTRgAtBBWHEk2ogIY1FajKvNC
+	s2HHB8rzH+e9Eaa8ppYyLisNVMV5yiNYtVGJ7nYcZ+uO0+4Rs64UfQFJD73MsRTw
+	kSUZbdv4cDY/7gB4ur++wcS7fza48BngaDpm47myHNy8mDmdt/WAFKUCymWiZ96w
+	Z689RwinbhzWd1DyRYS4ibGuBdQj70dZrYpS+zXd0n7MGiEn+Gd0kNAlnxwxumee
+	L8i0FsL5Fct/0eb8FoyTeNGAkjxt3Ug5zura4qow9J+PrighkNiI9of5zGfulfMA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26tynbf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Aug 2025 08:15:47 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z92P6YMFm52GGYrSKW353xHH60Ps+J5fPL1NrbScT4t09ZfZ1Mh4bFrA0Y3aHKDxN5S0PoUAICWj+Bln+79nJR8l/j0hLUdE5VwpNKVQawuaizR0MJ5A5/jwwIvCXifR5WxrQAJtK5xAknrWcrlnJtOCX2Yk2kxBhhovoHhcRR9m7zkLFDdcYyDHJmwjCO9AbzQBOcH87jpopoJoswGOVvqJKAVJGNMy3z8CGcqit7A+qxODayGXvGj8ZRv1c5k5XQWd/biGw3M0DI9ChqujdnOPOndYGX4T69Kz02LtINbtUDGqbdXiXoDaPPMWdFopeaAPddalfXzad6aPT1wskg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Oe6rLdidTgVK3hL24ozGkDAIk/IsLPwb5xflBmj82Vc=;
- b=I4fdKoYF86w6FXGeBhluUWF0kXRuFFGtSiZaP2FJqox/AANoCpjzKWLzebkOULo2hl5//QKfeTdArKGY0UdayJt3gIx0YoVME1OLnRr5M79shtwQWtDEx1pmg18enNr/QyDYiTQBnLR+bzJuVhftAvG8ClQAXhd9H+0+FNyOhJRNRjbdRsm2j3tO/XUkkIHmAhBbCgwsZ6DlEtrY3YuDXu8BoFd6Ro9MKqKp83qWdDpTg56LFPcKG8cofnX5UJZrjjw/uR2Xrmc9jhCw4dBKav26lrb4iHvDdPH9iAV62CHCqUgcDR8T5tNWjuSYD8MjVqQuwroXDA9Rzb0MkVCLPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=arndb.de smtp.mailfrom=opensource.cirrus.com;
- dmarc=fail (p=reject sp=reject pct=100) action=oreject
- header.from=opensource.cirrus.com; dkim=none (message not signed); arc=none
- (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Oe6rLdidTgVK3hL24ozGkDAIk/IsLPwb5xflBmj82Vc=;
- b=qkTAnFmGVf0/W6/oeEIfJx6f8+3l2+2ROkf64TumhNXz9RYzRdC/Zb/B05BCrNEomaQdDyuJdlXmcZs/3cZrgaIY/+z1Y1YN+MrzUOF6OJ9RwNevN+T0Asd4ktFKyU1BFLckIGHD8K4mYhbI9LWCIhFpyjelqUILtKRfvpF1P/c=
-Received: from SA1PR03CA0018.namprd03.prod.outlook.com (2603:10b6:806:2d3::29)
- by CY5PR19MB6339.namprd19.prod.outlook.com (2603:10b6:930:21::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Thu, 7 Aug
- 2025 13:15:45 +0000
-Received: from SA2PEPF0000150B.namprd04.prod.outlook.com
- (2603:10b6:806:2d3:cafe::d8) by SA1PR03CA0018.outlook.office365.com
- (2603:10b6:806:2d3::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.16 via Frontend Transport; Thu,
- 7 Aug 2025 13:15:44 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
- does not designate 84.19.233.75 as permitted sender)
- receiver=protection.outlook.com; client-ip=84.19.233.75;
- helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- SA2PEPF0000150B.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
- via Frontend Transport; Thu, 7 Aug 2025 13:15:44 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 1E4CB406540;
-	Thu,  7 Aug 2025 13:15:43 +0000 (UTC)
-Received: from [198.90.208.24] (ediswws06.ad.cirrus.com [198.90.208.24])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 02873820249;
-	Thu,  7 Aug 2025 13:15:43 +0000 (UTC)
-Message-ID: <1e7d772f-f4db-4202-a9c5-6792b37c3d26@opensource.cirrus.com>
-Date: Thu, 7 Aug 2025 14:15:35 +0100
+	Thu, 07 Aug 2025 13:17:32 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 577DHVaX002921;
+	Thu, 7 Aug 2025 13:17:31 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26tynb9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 13:17:31 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5779vWDG007960;
+	Thu, 7 Aug 2025 13:17:30 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwn0r16-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 07 Aug 2025 13:17:30 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 577DHQf450594166
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 7 Aug 2025 13:17:27 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DBEC620040;
+	Thu,  7 Aug 2025 13:17:26 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C35DA20043;
+	Thu,  7 Aug 2025 13:17:19 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.43.75.32])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  7 Aug 2025 13:17:19 +0000 (GMT)
+Date: Thu, 7 Aug 2025 18:47:16 +0530
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Cc: bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hbathini@linux.ibm.com, sachinpb@linux.ibm.com, andrii@kernel.org,
+        eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com,
+        mpe@ellerman.id.au, npiggin@gmail.com, memxor@gmail.com,
+        iii@linux.ibm.com, shuah@kernel.org
+Subject: Re: [bpf-next 0/6] bpf,powerpc: Add support for bpf arena and arena
+ atomics
+Message-ID: <aJSnXO62QRglnNsw@linux.ibm.com>
+References: <20250805062747.3479221-1-skb99@linux.ibm.com>
+ <e918bef7-5f9b-4591-b671-fe3c0f681862@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: madera: work around false-positive -Wininitialized
- warning
-To: Arnd Bergmann <arnd@kernel.org>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Lee Jones <lee@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>, linux-sound@vger.kernel.org,
-        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-References: <20250807071932.4085458-1-arnd@kernel.org>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <20250807071932.4085458-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF0000150B:EE_|CY5PR19MB6339:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a119742-2bc7-41a9-9d11-08ddd5b48439
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|61400799027|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZitITHhaUkhDd3Juc0FSeDc0VjR2a1ZsOFB3R05jYjhYMVlXbE1vdmRmU3Vz?=
- =?utf-8?B?WDVCT0owMVB3K3BGRmdWcjJMd3pVVTVsR3ZrYUsweW1FZDUrNXVtMitaRHlU?=
- =?utf-8?B?TFh1a2NlMW1DMVJNVHhUeXp3Y2p3K1AyRHBqdElWSkhSR1EyQ0ZxRnRxcUFa?=
- =?utf-8?B?YmFqZWU0UWFobjNTOTBkekU3N2EwdHFTQzRnMkk5VVQwR2t6NHo0SzN4WEVx?=
- =?utf-8?B?bVZCZWJlUElBWmJLVCtHL1g1bkhPdlNTcHMxbEZ1bkF3ZEtURWJoZHk1ZU0y?=
- =?utf-8?B?NUUrQzcrRFU1aE9mdDIxR0t1d05sMi9NL09uODZoa2xJM0tUREloNHZLZnds?=
- =?utf-8?B?cUFHNFFUUFBtVzdqOWlZMEkxSjAzQW1OeUxLOFd0N2o2emtKSHcxL0JCU2tv?=
- =?utf-8?B?RzNVSzhkRWJPU29FRmJGallwT1hNeGxUZXlYa21BRUNRQWVXS1FqU2JDZnhG?=
- =?utf-8?B?MUhMNnRMU1pZRHJkZllvaENJRUpTUFFoM1ZDOU1ySmZLNUZHUzcwUmtRV2Yv?=
- =?utf-8?B?TFJteWpGTnQ0eDJ5Nk1oNzNuN2ttZHp4aUQ3R214ZENCTTJMZ01hLzYrbXc5?=
- =?utf-8?B?WmhrTlpzVjhOUjRrWVIxZ0YyR3RIQzExS09lMlY1OGhMb3IwcGlKU0lDazR3?=
- =?utf-8?B?azNuMGJlZkZuV3NlNTZVY1J1ZHZOL0tGWmZmOEFVRmI3RGJWY0N6bXZzdStZ?=
- =?utf-8?B?bXhxak9vOWdtMCtUN1FxdCtqK1FUL1U3V0xVNGpSYjBHajNHOEtyeUNydCs2?=
- =?utf-8?B?MmVuS2c3L2toVWw5OS9sblBqTzBDQnFTU3h0SURzUHVZVUlkN3JicElrUkRx?=
- =?utf-8?B?dUFJR0tMU2VjMklXQWNjblNuN2dKaFhDL25jbkJ3eStNNTB0b3RJbUh2L0dM?=
- =?utf-8?B?bEZaWkpsYkw2WVAybVc5VTJvYVV4cWo2TjIrNStpUDJaZ3NUK0draXEySXFU?=
- =?utf-8?B?WmdwY2Z1VlVVaXUrcjVmNXJzZ2VNYTRrQVdydXBpUUNwQm54Q3J1dTdzTHBV?=
- =?utf-8?B?UTcyNlNKWDEyQnF2RGVwWm15VkxaTUFqVmo5SU5NdFNUcXFKaUszeUJMWnpt?=
- =?utf-8?B?WXQ5b1RXbVFuR2xjcUluL21NdGVvQ3RMRnVZUmVCRk1VMXNtUCtBSFhWeUJx?=
- =?utf-8?B?QWZ3bDFtM0lYVGVEOVkvY3pRTkF6aXRYejQ1cXFaRDZDNHFlL0hLS0tZdnp6?=
- =?utf-8?B?OHU0Mkt6NzZXL2dUUmZYWEx6UzRzL0FRazVITDVUYkZJdnJXWTZEbndMWkRC?=
- =?utf-8?B?RDNEblZET3NmVFY2SFJzdHFmVXhmaVorZ0RzcEJqOXBQaFBKbk5HV2hkYVNw?=
- =?utf-8?B?Z2QveEM5SENYRUhJcTYrWHIzTm11M1lVSmpseHVUNU5sampzL0pabXpxMDZo?=
- =?utf-8?B?L0x6SjRYOERIcjlGVzcwamJjMFUxRit0djU0L1dwTW14ZVZVbG04ZWZCVllE?=
- =?utf-8?B?enpRUm9IcC9LQ1h6Z3QrWG03U0tVRHpxTmY1eVJYZmEvUThMRmFUTkxNc05E?=
- =?utf-8?B?d2k4Q2lwbE83a3Z3MVJmT0RVV0JWK2dPcUNxOE9TL2JUL3pQa2VYbmRxRm5u?=
- =?utf-8?B?TE11dW1WU1RmOGZpVGY2MTNXdjJYd2V3dklpOFpJREhxWCtPQWdTcFRxTDN6?=
- =?utf-8?B?c3dMUE4rdUI0UVoyNUdPN2tBeS9ibGF2cWRwc3RuNUdNbDRWbXNRVG5qMm5m?=
- =?utf-8?B?UGxnc3RBaXdxYnBPanMxeXYwZnBuaFliQU1lbDlhVmc4Q0U3WTc4WFFnblBv?=
- =?utf-8?B?TTBMaUEyZUhuSHA5OWdGbmREZHk3U1ZiQmFySlM0dXJsbFJvUFZJcGRqQmFU?=
- =?utf-8?B?KzF0Z2NMcVlJcFBMYkxFT3NYdHU2QmZRNytqZVRSMTBUMmhpMG90OVY1a28r?=
- =?utf-8?B?bnNhTVE2b09FM1ZlSXNsSnlFZERYWDdOby9MVGRSY1MrNXhyUFVQUld0VDA4?=
- =?utf-8?B?L2xMMElDZmpYRFU1Wlc1bUJxdUNNeEpidWoxa1NWdEYyUm5Ga3hPS1J5cUlB?=
- =?utf-8?B?OFVMdkx3b3hJSlpQb2dmK3ArbThRMVJHaWdJQVBIcWZoWmx5aERsUithZHgv?=
- =?utf-8?Q?fP2gU4?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(61400799027)(376014)(7416014)(7053199007);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 13:15:44.2830
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a119742-2bc7-41a9-9d11-08ddd5b48439
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF0000150B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR19MB6339
-X-Proofpoint-GUID: n8q7axAr2KM6hiCVbNGIgnuTD-taG-cD
-X-Authority-Analysis: v=2.4 cv=W/A4VQWk c=1 sm=1 tr=0 ts=6894a703 cx=c_pps a=Bx4JecnaPChsX23rVfvkjQ==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8 a=voSFIoK9SR7PB3qk9MUA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: n8q7axAr2KM6hiCVbNGIgnuTD-taG-cD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA1MCBTYWx0ZWRfX+3PLYaqQo6NE XNdxTkjqiM5hgvfwxFaBq+wLbDaNTvtZ3kROCp/8S1dAhFT+uWVx2ugXA/JSBMEdwrUqcXpubEo IQ3eGvbSOOJKS8rjpSdSeeX4TFM5qnyjMD6EdUWiDz/DMwDOUUB8ihZkjt3kljBNhf1n5XeZKx3
- 2ZhaI0L8OV332+W5dNJiPLvjur8UaY9dVa4mIhFFJYGLNoNh/SHmVD+2B9YlTR7gcEDF3uD2nzj BXM183C5MbMa/XRhZgpu7CIcCwU//WSTlEKrx8iFZFZZhLcdSRtj6bX2NeBE2ZZNZq2+dodfXtf srPf55ZIlLCZ9M4BDhdIiYnxdAo5ezY9dO6KE4C9E29wZeoefRnJfGyUh03sH4ME08cpYW8d9zn 9jUJAsga
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e918bef7-5f9b-4591-b671-fe3c0f681862@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: YXGzjED4pJhXligsrAzBvBlxy0HdLnrb
+X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=6894a76c cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8
+ a=alihBsh1ZAGIVrIkydwA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-GUID: 6kbce07YtCxIaLhugwtQhO4aIFlYDmMx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEwMyBTYWx0ZWRfX4IsiQ9WBU6y2
+ 730rC1TJZQZvrnmYLmcctkvELPG9Ir9+k1xV0LCmmDwFZPHtUJQVUFuotTz0tkwZJTROc1TnoMO
+ mqeXIuP2v8cgnspXRlQzjrKT3ZV/DyHY7uMJmyNQ0GaR7r0XTfCYS3zxykukzQsIb21U/E7LEU9
+ h5vcEDlvr1rWF/wViHhmEEH9eIb22oAXPCPI/OeYJhmQAxjQcgloGRNdbwAjccQLaynVLE+UQi+
+ aPuG2RSH71pzS2DOfEIwjbhsdzI2jc8+56bPCZPaHnrbxkC3uoe4uyNbjDgWXamUZ3yMxkfwfTD
+ kF4YG+5AMOpmuOMoKcLqIv5VM9zXwwsEdkoCynpBBDwHsyWQeydAL2Y8adqd02yJT8xS2/n9C2N
+ WYMm/vBkT9JSDhz1Ww2dQnUmvU39rGXpO2SULE+ZdoOILjjCtwdHOQnI0GssfxeZNWwALFPI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 phishscore=0 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508070103
 
-On 07/08/2025 8:19 am, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Tue, Aug 05, 2025 at 05:37:00PM +0530, Venkat Rao Bagalkote wrote:
 > 
-> clang-21 warns about one uninitialized variable getting dereferenced
-> in madera_dev_init:
+> On 05/08/25 11:57 am, Saket Kumar Bhaskar wrote:
+> > This patch series introduces support for the PROBE_MEM32,
+> > bpf_addr_space_cast and PROBE_ATOMIC instructions in the powerpc BPF JIT,
+> > facilitating the implementation of BPF arena and arena atomics.
+> > 
+> > The last patch in the series has fix for arena spinlock selftest
+> > failure.
+> > 
+> > This series is rebased on top of:
+> > https://lore.kernel.org/bpf/20250717202935.29018-2-puranjay@kernel.org/
+> > 
+> > All selftests related to bpf_arena, bpf_arena_atomic(except
+> > load_acquire/store_release) enablement are passing:
 > 
-> drivers/mfd/madera-core.c:739:10: error: variable 'mfd_devs' is uninitialized when used here [-Werror,-Wuninitialized]
->    739 |                               mfd_devs, n_devs,
->        |                               ^~~~~~~~
-> drivers/mfd/madera-core.c:459:33: note: initialize the variable 'mfd_devs' to silence this warning
->    459 |         const struct mfd_cell *mfd_devs;
->        |                                        ^
->        |                                         = NULL
 > 
-> The code is actually correct here because n_devs is only nonzero
-> when mfd_devs is a valid pointer, but this is impossible for the
-> compiler to see reliably.
+> Hello Saket,
 > 
-> Change the logic to check for the pointer as well, to make this easier
-> for the compiler to follow.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/mfd/madera-core.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> I see couple of selftests are failing on my set up.
 > 
-> diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-> index bdbd5bfc9714..2f74a8c644a3 100644
-> --- a/drivers/mfd/madera-core.c
-> +++ b/drivers/mfd/madera-core.c
-> @@ -456,7 +456,7 @@ int madera_dev_init(struct madera *madera)
->   	struct device *dev = madera->dev;
->   	unsigned int hwid;
->   	int (*patch_fn)(struct madera *) = NULL;
-> -	const struct mfd_cell *mfd_devs;
-> +	const struct mfd_cell *mfd_devs = NULL;
->   	int n_devs = 0;
->   	int i, ret;
->   
-> @@ -670,7 +670,7 @@ int madera_dev_init(struct madera *madera)
->   		goto err_reset;
->   	}
->   
-> -	if (!n_devs) {
-> +	if (!n_devs || !mfd_devs) {
->   		dev_err(madera->dev, "Device ID 0x%x not a %s\n", hwid,
->   			madera->type_name);
->   		ret = -ENODEV;
-Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> > 
+> > # ./test_progs -t arena_list
+> > #5/1     arena_list/arena_list_1:OK
+> > #5/2     arena_list/arena_list_1000:OK
+> > #5       arena_list:OK
+> > Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+> > 
+> > # ./test_progs -t arena_htab
+> > #4/1     arena_htab/arena_htab_llvm:OK
+> > #4/2     arena_htab/arena_htab_asm:OK
+> > #4       arena_htab:OK
+> > Summary: 1/2 PASSED, 0 SKIPPED, 0 FAILED
+> > 
+> > # ./test_progs -t verifier_arena
+> > #464/1   verifier_arena/basic_alloc1:OK
+> > #464/2   verifier_arena/basic_alloc2:OK
+> > #464/3   verifier_arena/basic_alloc3:OK
+> > #464/4   verifier_arena/iter_maps1:OK
+> > #464/5   verifier_arena/iter_maps2:OK
+> > #464/6   verifier_arena/iter_maps3:OK
+> > #464     verifier_arena:OK
+> > #465/1   verifier_arena_large/big_alloc1:OK
+> > #465/2   verifier_arena_large/big_alloc2:OK
+> > #465     verifier_arena_large:OK
+> > Summary: 2/8 PASSED, 0 SKIPPED, 0 FAILED
+> 
+> 
+> All error logs:
+> tester_init:PASS:tester_log_buf 0 nsec
+> process_subtest:PASS:obj_open_mem 0 nsec
+> process_subtest:PASS:specs_alloc 0 nsec
+> run_subtest:PASS:obj_open_mem 0 nsec
+> run_subtest:PASS:unexpected_load_failure 0 nsec
+> do_prog_test_run:PASS:bpf_prog_test_run 0 nsec
+> run_subtest:FAIL:1103 Unexpected retval: 4 != 0
+> #513/7   verifier_arena/reserve_invalid_region:FAIL
+> #513     verifier_arena:FAIL
+> Summary: 1/14 PASSED, 0 SKIPPED, 1 FAILED
+> 
+> 
+Hi Venkat,
+
+It is known failure. This selftest was added recently. We are working on it to
+fix this. Will post the fix for this selftest separately.
+> > 
+> > # ./test_progs -t arena_atomics
+> > #3/1     arena_atomics/add:OK
+> > #3/2     arena_atomics/sub:OK
+> > #3/3     arena_atomics/and:OK
+> > #3/4     arena_atomics/or:OK
+> > #3/5     arena_atomics/xor:OK
+> > #3/6     arena_atomics/cmpxchg:OK
+> > #3/7     arena_atomics/xchg:OK
+> > #3/8     arena_atomics/uaf:OK
+> > #3/9     arena_atomics/load_acquire:SKIP
+> > #3/10    arena_atomics/store_release:SKIP
+> > #3       arena_atomics:OK (SKIP: 2/10)
+> > Summary: 1/8 PASSED, 2 SKIPPED, 0 FAILED
+> > 
+> > All selftests related to arena_spin_lock are passing:
+> > 
+> > # ./test_progs -t arena_spin_lock
+> > #6/1     arena_spin_lock/arena_spin_lock_1:OK
+> > #6/2     arena_spin_lock/arena_spin_lock_1000:OK
+> > #6/3     arena_spin_lock/arena_spin_lock_50000:OK
+> > #6       arena_spin_lock:OK
+> > Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
+> test_arena_spin_lock_size:FAIL:check counter value unexpected check counter
+> value: actual 15999 != expected 16000
+> #6/1     arena_spin_lock/arena_spin_lock_1:FAIL
+> #6       arena_spin_lock:FAIL
+> Summary: 0/2 PASSED, 0 SKIPPED, 1 FAILED
+
+This too, with llvm-19 the failure is known to us, where llvm doesn't have support for
+may_goto insn https://github.com/llvm/llvm-project/commit/0e0bfacff71859d1f9212205f8f873d47029d3fb.
+Though, there is else condition which is envoked incase llvm doesn't have support for may_goto insn,
+which we are looking into.
+
+Since llvm-20 has support for may_goto, we are not seeing this failure there(the selftest passes).
+So we are planning to fix this in separate patch for llvm-19 for now.
+
+Regards,
+Saket
+> > Saket Kumar Bhaskar (6):
+> >    bpf,powerpc: Introduce bpf_jit_emit_probe_mem_store() to emit store
+> >      instructions
+> >    bpf,powerpc: Implement PROBE_MEM32 pseudo instructions
+> >    bpf,powerpc: Implement bpf_addr_space_cast instruction
+> >    bpf,powerpc: Introduce bpf_jit_emit_atomic_ops() to emit atomic
+> >      instructions
+> >    bpf,powerpc: Implement PROBE_ATOMIC instructions
+> >    selftests/bpf: Fix arena_spin_lock selftest failure
+> > 
+> >   arch/powerpc/net/bpf_jit.h                    |   6 +-
+> >   arch/powerpc/net/bpf_jit_comp.c               |  32 +-
+> >   arch/powerpc/net/bpf_jit_comp32.c             |   2 +-
+> >   arch/powerpc/net/bpf_jit_comp64.c             | 378 +++++++++++++-----
+> >   .../bpf/prog_tests/arena_spin_lock.c          |  23 +-
+> >   .../selftests/bpf/progs/arena_spin_lock.c     |   8 +-
+> >   .../selftests/bpf/progs/bpf_arena_spin_lock.h |   4 +-
+> >   7 files changed, 348 insertions(+), 105 deletions(-)
+> > 
+> > base-commit: ea2aecdf7a954a8c0015e185cc870c4191d1d93f
+> 
+> 
+> Regards,
+> 
+> Venkat.
+> 
 
