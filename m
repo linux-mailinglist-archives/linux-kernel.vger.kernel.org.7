@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-758578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-758579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7288B1D0FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:44:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C35B1D100
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 04:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1DC55628D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C37418A2AA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 02:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6939E1C860A;
-	Thu,  7 Aug 2025 02:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04241C84A8;
+	Thu,  7 Aug 2025 02:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jq/MaPLF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="sJGCq99k"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AB3199949
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 02:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FC379EA;
+	Thu,  7 Aug 2025 02:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754534678; cv=none; b=CuQhRa7AsrZaBFm1PMc1eWO3JF4QclCY5Js/BZWNO/sfyxRlFcvjKCsUDgK26UwDd/r+UY7nPfyiUPY1WNispED6DM+/xFeoeGN460v4R68OdwIYiEbzF0oh5OkYrx3JfY3sma4357atQbNS78G2ZpIuS74b7YnryDWChNCPPNw=
+	t=1754534792; cv=none; b=O76bCnNm8SfRRhOHL4VJ3m81070kVHtTDUuahpvbQHvbCSKFUo0XEALCn5zLVtMyj+fwyb0MhTiqTTFf+WthfDk/mU9WBKWaEZLfNVzQqC/FwL3bgFmNHy+EGVjMWOrNcT7jnqB5NCibyLkEr3JMXSFcW81nX7QhwQcQmUNKXlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754534678; c=relaxed/simple;
-	bh=c9pOcEq733xsT46pnT71jjNVyY0UXgWUHpI7NDDAkFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fkAhWoo4vK2FN+U3M6oLoESvX61JwYPusaQchN1JP04yXw6qQfETyFf012PhLpjJZnbkHNWF0Qi4PPildwLSvuQtTQ7fM72UI3Q4JNq2MJwfGmR4k5gAwT5EKRoMKKwLGNtPQ45ptAnDxpA6E6BeJ91H4EEyYYjB69Vb4AkIZRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jq/MaPLF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5495C4CEF8;
-	Thu,  7 Aug 2025 02:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754534678;
-	bh=c9pOcEq733xsT46pnT71jjNVyY0UXgWUHpI7NDDAkFg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jq/MaPLF3kzXUvUxqp9OPWs3Nzvxyc64oiZrObh2md7bM5Noq3cptH8zoIE6Jdlft
-	 1+fUsO8lHrhIO/jn6Wgslcu8+K3jEV3gP4/AdGQW5b6zP2PLTDsY03KorNhFc2ZdVk
-	 4bA2IKAPBmk9LYERasyCX3pi8iOYaBLy99+L+qv/JX+51UC9mxA9IoCAcvUvgHG60s
-	 +QsCLt9jzxZ+SnEzjzyPzZ2CPpvY3HNIfuiDayTER1Mo3jhgKtomXOyxVNUXIdd3Du
-	 r3hd/U7H0R/iSiNienhdajtzzngV9JKOQe7f4xNlyu8py8oZS8UQKKAqa/nK9PMDMa
-	 yIClP7oiW5JZg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to detect potential corrupted nid in free_nid_list
-Date: Thu,  7 Aug 2025 10:44:31 +0800
-Message-ID: <20250807024431.3805293-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+	s=arc-20240116; t=1754534792; c=relaxed/simple;
+	bh=6fytCeeUudLTY0ffUnh8JTpCldUAMNOKqbM15mFHfZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t6yZjJ2LY3aRg1ftOReRmXhXOnXr9MrOd7PJWx/0zFXgywuDDleEskgID0p4pAEY4rbB7lgoPSrdiCsiNetzMAwdw/qUnxAnFPBgaJVc+GrPsP8C6Ar6BVEdz4i60IZ7IkMmnuMIKA00bY6/Lx2FFZYCoQOKoGoSVaO/ozy64YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=sJGCq99k; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4byBPY6Dbdz9t4B;
+	Thu,  7 Aug 2025 04:46:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754534785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tub9/9osH95VcqyXOi1mtkKeG5xrj44pXKAdmNqMqBE=;
+	b=sJGCq99kPI1k/JhV6zWQVYmo0T9/Xse07waxFNQPdPpkiBD+FLCjnckGgEW5Xd7QO/JrMO
+	NeC5oNLAX73swxhjdQFCcnOptsSvJYPaxx2SOq+loy06v68MiRg8hq8Fj6VLJEhZV1hNaS
+	DrKX5HGFY9CQJ0zUetyU8VGein+J4n/BJHjfHxAXdcOGs37VbXsjQQhBDktfKseoE8xzyt
+	4S8QNJXYEeYtcTLXEOopLm3IGouEd5UOZw2nMeyj3yWJbRSrSI9N0MoL2HHcr/o8j3Xk2K
+	4X3/dciU8tjQCG3jPgpFkiWIk17aA1uYA6z1TZzVEaVZT3WqH6EbwKWwGfQIgQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Thu, 7 Aug 2025 12:46:17 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	David Howells <dhowells@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
+ returning -EMSGSIZE
+Message-ID: <2025-08-07.1754534735-core-snowplow-plaid-exiles-anemic-gulls-v9Da77@cyphar.com>
+References: <20250807-fscontext-log-cleanups-v3-0-8d91d6242dc3@cyphar.com>
+ <20250807-fscontext-log-cleanups-v3-1-8d91d6242dc3@cyphar.com>
+ <20250806190751.GG222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="esbkpzrhwvkavmb4"
+Content-Disposition: inline
+In-Reply-To: <20250806190751.GG222315@ZenIV>
+X-Rspamd-Queue-Id: 4byBPY6Dbdz9t4B
 
-As reported, on-disk footer.ino and footer.nid is the same and
-out-of-range, let's add sanity check on f2fs_alloc_nid() to detect
-any potential corruption in free_nid_list.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/node.c          | 17 ++++++++++++++++-
- include/linux/f2fs_fs.h |  1 +
- 2 files changed, 17 insertions(+), 1 deletion(-)
+--esbkpzrhwvkavmb4
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
+ returning -EMSGSIZE
+MIME-Version: 1.0
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 27743b93e186..286e8a53f8e7 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -27,12 +27,17 @@ static struct kmem_cache *free_nid_slab;
- static struct kmem_cache *nat_entry_set_slab;
- static struct kmem_cache *fsync_node_entry_slab;
- 
-+static inline bool is_invalid_nid(struct f2fs_sb_info *sbi, nid_t nid)
-+{
-+	return nid < F2FS_ROOT_INO(sbi) || nid >= NM_I(sbi)->max_nid;
-+}
-+
- /*
-  * Check whether the given nid is within node id range.
-  */
- int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
- {
--	if (unlikely(nid < F2FS_ROOT_INO(sbi) || nid >= NM_I(sbi)->max_nid)) {
-+	if (unlikely(is_invalid_nid(sbi, nid))) {
- 		set_sbi_flag(sbi, SBI_NEED_FSCK);
- 		f2fs_warn(sbi, "%s: out-of-range nid=%x, run fsck to fix.",
- 			  __func__, nid);
-@@ -2634,6 +2639,16 @@ bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid)
- 		f2fs_bug_on(sbi, list_empty(&nm_i->free_nid_list));
- 		i = list_first_entry(&nm_i->free_nid_list,
- 					struct free_nid, list);
-+
-+		if (unlikely(is_invalid_nid(sbi, i->nid))) {
-+			spin_unlock(&nm_i->nid_list_lock);
-+			f2fs_err(sbi, "Corrupted nid %u in free_nid_list",
-+								i->nid);
-+			f2fs_stop_checkpoint(sbi, false,
-+					STOP_CP_REASON_CORRUPTED_NID);
-+			return false;
-+		}
-+
- 		*nid = i->nid;
- 
- 		__move_free_nid(sbi, i, FREE_NID, PREALLOC_NID);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 2f8b8bfc0e73..6afb4a13b81d 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -79,6 +79,7 @@ enum stop_cp_reason {
- 	STOP_CP_REASON_FLUSH_FAIL,
- 	STOP_CP_REASON_NO_SEGMENT,
- 	STOP_CP_REASON_CORRUPTED_FREE_BITMAP,
-+	STOP_CP_REASON_CORRUPTED_NID,
- 	STOP_CP_REASON_MAX,
- };
- 
--- 
-2.49.0
+On 2025-08-06, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Thu, Aug 07, 2025 at 03:55:23AM +1000, Aleksa Sarai wrote:
+>=20
+> > -		goto err_free;
+> > -	ret =3D -EFAULT;
+> > -	if (copy_to_user(_buf, p, n) !=3D 0)
+> > -		goto err_free;
+> > +	if (copy_to_user(_buf, p, n))
+> > +		n =3D -EFAULT;
+> >  	ret =3D n;
+> > -
+> > -err_free:
+> >  	if (need_free)
+> >  		kfree(p);
+> >  	return ret;
+>=20
+> Minor nit: seeing that there's only one path to that return, I would
+> rather turn it into
+> 	return n;
+> and dropped the assignment to ret a few lines above.  Anyway, that's
+> trivially done when applying...
 
+It felt odd to use "return ret;" at the start and switch to "return n;"
+at the end, but feel free to change it when applying.
+
+> Anyway, who's carrying fscontext-related stuff this cycle?  I've got
+> a short series in that area, but there won't be much from me around
+> there - a plenty of tree-in-dcache stuff, quite a bit of mount-related
+> work, etc., but not a lot around the options-parsing machinery.
+>=20
+> Christian, do you have any plans around that area?
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--esbkpzrhwvkavmb4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJQTeAAKCRAol/rSt+lE
+b94wAQCrCBDcIXw22aUu3figMXSuo1sk4u/y3z9goDq6pKhwEwEA2arOWYUnSBnh
+o66eC1CZ/DJYZ+VQYJpyPsDGCErquwc=
+=gJe2
+-----END PGP SIGNATURE-----
+
+--esbkpzrhwvkavmb4--
 
