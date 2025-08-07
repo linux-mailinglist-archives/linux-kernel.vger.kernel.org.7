@@ -1,258 +1,200 @@
-Return-Path: <linux-kernel+bounces-759051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81496B1D7B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9097B1D7B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 14:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E893A3739
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A43611AA5BFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 12:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B39324E4A8;
-	Thu,  7 Aug 2025 12:15:26 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDBC23BF8F;
+	Thu,  7 Aug 2025 12:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3NttjHh"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96467246779;
-	Thu,  7 Aug 2025 12:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F117227BB5
+	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 12:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754568925; cv=none; b=iH6dZstbC/ghJThPSObIf8tQGMCPVm6qvwxWB037khyCPMGHNF7EzoM220l6VMpJRlPjIxLRybD0MoMawcBMrG4dwQ9g0Rrwg7NGM0PLBgmd2Tb7dwkFtBTu3VInvS2gtKevT4ffaYlj431+CG3w9OvVJNJeeOPT6KrNmGuEkcY=
+	t=1754568991; cv=none; b=i8sI9UoyrGiOKpnVTnQgx1jvYsgFVuHytS2TX1HVCM9e0cTJesm3W44+NYO8+EEonBoP6WSqG8l8INY5yaCFV8+XF87bXnRfN6IBBynjSyruOSOk/xeqR2Xf9/7ephjFScE/JymhddjqwPOwIR2SA1K4SASak6tecj0xm2GPIb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754568925; c=relaxed/simple;
-	bh=l38keMA1spohuhmIndrpLKx86PGXdFzls9phBtXxR30=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LT1OVRQLWQHpLxHnMAmKnwZvbzAp1FZfJHC4NSqbHngoKPMIZ5bMXm1d4xs+XW1/CdMh+FzsIoBRsVf9ERzXb1aG+Me6ebuwtW9/PS+wjLk03o1arf1wQ8jaYRDGq1JkNBTaBM/xjHvhpamabsDJ5H0EGQitattrGrsJPZ7XNrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2dda5884738811f0b29709d653e92f7d-20250807
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:c9f6a6e8-399a-490e-8347-7d1f4825cb24,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:6169b3659762d4f1f45ccf9d34c3b578,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2dda5884738811f0b29709d653e92f7d-20250807
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1235472273; Thu, 07 Aug 2025 20:15:17 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 93F64E01A758;
-	Thu,  7 Aug 2025 20:15:16 +0800 (CST)
-X-ns-mid: postfix-689498D4-37051772
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 07760E0000B0;
-	Thu,  7 Aug 2025 20:15:12 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	len brown <len.brown@intel.com>,
-	pavel machek <pavel@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Nico Pache <npache@redhat.com>,
-	xu xin <xu.xin16@zte.com.cn>,
-	wangfushuai <wangfushuai@baidu.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Layton <jlayton@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	linux-pm@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [RFC PATCH v1 9/9] proc: Add /proc/<pid>/freeze_priority interface
-Date: Thu,  7 Aug 2025 20:14:18 +0800
-Message-Id: <20250807121418.139765-10-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1754568991; c=relaxed/simple;
+	bh=QKyJ16bfUqqq4m+uPGZs8XFxjmM8/t5B8GO7S8gKkK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Aedrgl6v0vxQl6GrdKT5DOUQWyAJqpht/4w2s7lS7rrtbHoJHdRhqW7wo+z8DncfKVI405iLkn22PMhwf9r4kkHtwaUCoDv1+FhjZ9PX83grJ3f68op+v2yq33MadCPDTRt5QAGK5uItvfkDQ9v/G2fpo6bh8LDogS7KdE9jDf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3NttjHh; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-458b2d9dba5so5994695e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 05:16:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754568987; x=1755173787; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GHVxavGBrjI2mC/mT+iovNRLtR2msFcHcq0N4dnm4w4=;
+        b=O3NttjHhmcoEPuIb7fB0wE4mF/a1VWcNcUcOV5Q4a2gH8UKZ/2rLrCAuF8bgWXk2Rw
+         CbTNooRrxmrVHxJFUbrYQR7b9L7S/PhshYYgXdUBf0ulp7s641SSNO9aL3gYCjRXGDIp
+         mVzYuGCPsZECBy14i4q9WI8okKTou+cexXkSuk5SIIgQQxqKdS4QG2l/Uy0nx37gKUqT
+         l3s5bqjRDIbHooKLrAbkTUhsO1is2RL+tN2rDcFPRl+/vnlHGlkahC198D6xwrDXOcJT
+         ND+MzAhkeZ4zPocC5EMeiCaX4R5h5AZyAR6vbsF5xKSqwSn5s4ROf0UmlDwptX7gn3Ri
+         Bnng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754568987; x=1755173787;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GHVxavGBrjI2mC/mT+iovNRLtR2msFcHcq0N4dnm4w4=;
+        b=l3vH2YFd7yY9hRmTsTdtZyim5I/mrqPfC2iP5vkU56qk7COOHt+H0uJhunychrDBJG
+         Hb6+XALD+YcjG/vEVsHYSAzOtTujo8a1RaxkJamOL3ckBqbj4OGk2z+t9mcGuClyYkmX
+         rwZopajzZvU+CBMBdQps0pp5kTSIh+1EBXhkcl8yjf5mzGgT4WCcuJe95t57jOSvrP+F
+         bgFR+0xwJ18C9D/hj0ooubJltlaaIFZl1wjdF2OOOIz7Qj8T14K2og149FKvXjCCaLTo
+         Fxc/JBxsD0SPW7rook4pxh54/k5bq7/znOkh76cvWVaEnahJ93b0wHMDb2wzvpzy58sC
+         SSNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyFyUtt+AOroXfXxBzlZ/OODyAL8AFReq+gGdtESYZQiqg06Efxmsd6cch8WGy4XhKHw91dGWfA+D7aME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZN62SH5CFl5u/bV5FnG1bX9b8r9MWAUpR6zbksXT2w//X50eK
+	tGLoDBd3VWOPuO1AEs4kE+MPVh0+st/bwRBs+50/XKmQ0AlGZVnjDFcS
+X-Gm-Gg: ASbGnctf+VH1OrRsOOxOlv4FpoLgqVkvVP5HWXmOg7G5ZgATCcsv6o4VAAqKnXHbiDn
+	5gxWEZDdJDGoC9/e11RgnAP39UF0VSNUsAohHYA3o6Kezje4+V6R130HUDwIGJS9ubIzCyibXdU
+	4y6mYuJAp1W8lP902MRwc/tAPy8gJZ3c0b2a73gYurGyMBkEkptFvMqW/5uj49jH2n7p1KfNh/5
+	2rl3H1Ck8zituhuSvBq1h9NXy+Y32Gny3QyAmarvnV4iyKv12ppDH9W5ZNR5nku8F8kX9TR8HY8
+	2LX2D1OD76pk1k/akgLxRWqejqUv7T9depP2mHNGe4WDyDva3y3TSdKUI8LoZlntmqqdYSodgTn
+	d1ZlFdIBIWUHQS/vxdMWzZUflWUWPBtk9dQ6VeAgRoZ+mYmySNtAwwNtwuBJm
+X-Google-Smtp-Source: AGHT+IEOgiOG7X+/+74Nfd3tZumZZr82xYQBn2+nD/Q2k2sFIFigqmAXZC4pBSX/xsQ8vrDeLg+6aQ==
+X-Received: by 2002:a05:600c:5486:b0:456:43c:dcdc with SMTP id 5b1f17b1804b1-459e7136bfbmr57298345e9.33.1754568987042;
+        Thu, 07 Aug 2025 05:16:27 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0e70218sm120028755e9.20.2025.08.07.05.16.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 05:16:26 -0700 (PDT)
+Date: Thu, 7 Aug 2025 13:16:11 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: wang lian <lianux.mm@gmail.com>, akpm@linux-foundation.org,
+ broonie@kernel.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ sj@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ brauner@kernel.org, gkwang@linx-info.com, jannh@google.com,
+ Liam.Howlett@oracle.com, ludovico.zy.wu@gmail.com, p1ucky0923@gmail.com,
+ richard.weiyang@gmail.com, ryncsn@gmail.com, shuah@kernel.org,
+ vbabka@suse.cz, zijing.zhang@proton.me
+Subject: Re: [PATCH 1/2] selftests/mm: reuse FORCE_READ to replace "asm
+ volatile("" : "+r" (XXX));"
+Message-ID: <20250807131611.430a097a@pumpkin>
+In-Reply-To: <22169C82-5701-4ABB-811F-075D22CE6FCD@nvidia.com>
+References: <20250717131857.59909-1-lianux.mm@gmail.com>
+	<20250717131857.59909-2-lianux.mm@gmail.com>
+	<22169C82-5701-4ABB-811F-075D22CE6FCD@nvidia.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This patch introduces a new proc file `/proc/[pid]/freeze_priority`
-that allows reading and writing the freeze priority of a task.
+On Tue, 05 Aug 2025 10:26:17 -0400
+Zi Yan <ziy@nvidia.com> wrote:
 
-This is useful for  process freezing mechanisms that wish to prioritize
-which tasks to freeze first during suspend or hibernation.
+> On 17 Jul 2025, at 9:18, wang lian wrote:
+> 
+> > Several mm selftests use the `asm volatile("" : "+r" (variable));`
+> > construct to force a read of a variable, preventing the compiler from
+> > optimizing away the memory access. This idiom is cryptic and duplicated
+> > across multiple test files.
+> >
+> > Following a suggestion from David[1], this patch refactors this
+> > common pattern into a FORCE_READ() macro
+> >
+> > [1] https://lore.kernel.org/lkml/4a3e0759-caa1-4cfa-bc3f-402593f1eee3@redhat.com/
+> >
+> > Signed-off-by: wang lian <lianux.mm@gmail.com>
+> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > ---
+> >  tools/testing/selftests/mm/cow.c              | 30 +++++++++----------
+> >  tools/testing/selftests/mm/guard-regions.c    |  7 -----
+> >  tools/testing/selftests/mm/hugetlb-madvise.c  |  5 +---
+> >  tools/testing/selftests/mm/migration.c        | 13 ++++----
+> >  tools/testing/selftests/mm/pagemap_ioctl.c    |  4 +--
+> >  .../selftests/mm/split_huge_page_test.c       |  4 +--
+> >  tools/testing/selftests/mm/vm_util.h          |  7 +++++
+> >  7 files changed, 31 insertions(+), 39 deletions(-)
+> >  
+> 
+> <snip>
+> 
+> > diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+> > index f0d9c035641d..05de1fc0005b 100644
+> > --- a/tools/testing/selftests/mm/split_huge_page_test.c
+> > +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+> > @@ -399,7 +399,6 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+> >  		char **addr)
+> >  {
+> >  	size_t i;
+> > -	int dummy = 0;
+> >  	unsigned char buf[1024];
+> >
+> >  	srand(time(NULL));
+> > @@ -441,8 +440,7 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
+> >  	madvise(*addr, fd_size, MADV_HUGEPAGE);
+> >
+> >  	for (size_t i = 0; i < fd_size; i++)
+> > -		dummy += *(*addr + i);
+> > -	asm volatile("" : "+r" (dummy));
+> > +		FORCE_READ((*addr + i));  
+> 
+> I encountered a segfault when running the test on x86_64.
+> i is 4194297 and fd_size is 4194304.
+> It seems that FORCE_READ() is reading (*addr + i) in 8 byte size
+> and i is only 7 bytes away from the end of the memory address.
+> This led to segfault.
+> 
+> (*(volatile char*)(*addr + i)); works fine.
+> 
+> Both gcc-12 and gcc-14 have the issue.
 
-To avoid misuse and for system integrity, userspace is not permitted to
-assign the `FREEZE_PRIORITY_NEVER` level to any task.
+The definition of FORCE_READ in 6.16 is:
+#define FORCE_READ(x) (*(volatile typeof(x) *)x)
+this is clearly bogus.
+'x' is a pointer - follow it through.
+Possibly:
+#define FORCE_READ(x) (*(volatile typeof(*(x)) *)(x))
+is better,
+But why not use READ_ONCE(*addr[i]) ?
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- Documentation/filesystems/proc.rst | 14 ++++++-
- fs/proc/base.c                     | 64 ++++++++++++++++++++++++++++++
- 2 files changed, 77 insertions(+), 1 deletion(-)
+	David
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
-ms/proc.rst
-index 2971551b7235..4b7bc695b249 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -48,7 +48,8 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold=
-.net>    June 9 2009
-   3.11	/proc/<pid>/patch_state - Livepatch patch operation state
-   3.12	/proc/<pid>/arch_status - Task architecture specific information
-   3.13  /proc/<pid>/fd - List of symlinks to open files
--  3.14  /proc/<pid/ksm_stat - Information about the process's ksm status=
-.
-+  3.14  /proc/<pid>/ksm_stat - Information about the process's ksm statu=
-s
-+  3.15  /proc/<pid>/freeze_priority - Information about freeze_priority.
-=20
-   4	Configuring procfs
-   4.1	Mount options
-@@ -2349,6 +2350,17 @@ applicable to KSM.
- More information about KSM can be found in
- Documentation/admin-guide/mm/ksm.rst.
-=20
-+3.15	/proc/<pid>/freeze_priority - Information about freeze_priority
-+-----------------------------------------------------------------------
-+This file exposes the `freeze_priority` value of a given task.
-+
-+The freezer subsystem uses `freeze_priority` to determine the order
-+in which tasks are frozen during suspend/hibernate. Tasks with
-+lower values are frozen earlier. Higher values defer the task to
-+later freeze rounds.
-+
-+Writing a value to this file allows user space to adjust the
-+priority of the task in the freezer traversal.
-=20
- Chapter 4: Configuring procfs
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 62d35631ba8c..724145356128 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -86,6 +86,7 @@
- #include <linux/user_namespace.h>
- #include <linux/fs_parser.h>
- #include <linux/fs_struct.h>
-+#include <linux/freezer.h>
- #include <linux/slab.h>
- #include <linux/sched/autogroup.h>
- #include <linux/sched/mm.h>
-@@ -3290,6 +3291,66 @@ static int proc_pid_ksm_stat(struct seq_file *m, s=
-truct pid_namespace *ns,
- }
- #endif /* CONFIG_KSM */
-=20
-+#ifdef CONFIG_FREEZER
-+static int freeze_priority_show(struct seq_file *m, void *v)
-+{
-+	struct inode *inode =3D m->private;
-+	struct task_struct *p;
-+
-+	p =3D get_proc_task(inode);
-+	if (!p)
-+		return -ESRCH;
-+
-+	task_lock(p);
-+	seq_printf(m, "%u\n", p->freeze_priority);
-+	task_unlock(p);
-+
-+	put_task_struct(p);
-+
-+	return 0;
-+}
-+
-+static ssize_t freeze_priority_write(struct file *file, const char __use=
-r *buf,
-+				     size_t count, loff_t *ppos)
-+{
-+	struct inode *inode =3D file_inode(file);
-+	struct task_struct *p;
-+	u64 freeze_priority;
-+	int err;
-+
-+	err =3D kstrtoull_from_user(buf, count, 10, &freeze_priority);
-+	if (err < 0)
-+		return err;
-+
-+	if (freeze_priority >=3D FREEZE_PRIORITY_NEVER)
-+		return -EINVAL;
-+
-+	p =3D get_proc_task(inode);
-+	if (!p)
-+		return -ESRCH;
-+
-+	task_lock(p);
-+	p->freeze_priority =3D freeze_priority;
-+	task_unlock(p);
-+
-+	put_task_struct(p);
-+	return count;
-+}
-+
-+static int freeze_priority_open(struct inode *inode, struct file *filp)
-+{
-+	return single_open(filp, freeze_priority_show, inode);
-+}
-+
-+static const struct file_operations proc_pid_freeze_priority =3D {
-+	.open		=3D freeze_priority_open,
-+	.read		=3D seq_read,
-+	.write		=3D freeze_priority_write,
-+	.llseek		=3D seq_lseek,
-+	.release	=3D single_release,
-+};
-+#endif /* CONFIG_FREEZER */
-+
- #ifdef CONFIG_KSTACK_ERASE_METRICS
- static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns=
-,
- 				struct pid *pid, struct task_struct *task)
-@@ -3407,6 +3468,9 @@ static const struct pid_entry tgid_base_stuff[] =3D=
- {
- 	REG("timers",	  S_IRUGO, proc_timers_operations),
- #endif
- 	REG("timerslack_ns", S_IRUGO|S_IWUGO, proc_pid_set_timerslack_ns_operat=
-ions),
-+#ifdef CONFIG_FREEZER
-+	REG("freeze_priority",  S_IRUGO|S_IWUSR, proc_pid_freeze_priority),
-+#endif
- #ifdef CONFIG_LIVEPATCH
- 	ONE("patch_state",  S_IRUSR, proc_pid_patch_state),
- #endif
---=20
-2.25.1
+> 
+> >
+> >  	if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
+> >  		ksft_print_msg("No large pagecache folio generated, please provide a filesystem supporting large folio\n");
+> > diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+> > index 2b154c287591..c20298ae98ea  100644
+> > --- a/tools/testing/selftests/mm/vm_util.h
+> > +++ b/tools/testing/selftests/mm/vm_util.h
+> > @@ -18,6 +18,13 @@
+> >  #define PM_SWAP                       BIT_ULL(62)
+> >  #define PM_PRESENT                    BIT_ULL(63)
+> >
+> > +/*
+> > + * Ignore the checkpatch warning, we must read from x but don't want to do
+> > + * anything with it in order to trigger a read page fault. We therefore must use
+> > + * volatile to stop the compiler from optimising this away.
+> > + */
+> > +#define FORCE_READ(x) (*(volatile typeof(x) *)x)
+> > +  
+> 
+> Also, look at FORCE_READ again, it converts x to a pointer to x and
+> deferences x as a point. It does not seem right to me.
+> 
+> Best Regards,
+> Yan, Zi
+> 
 
 
