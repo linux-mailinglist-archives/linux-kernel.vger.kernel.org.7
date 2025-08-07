@@ -1,265 +1,425 @@
-Return-Path: <linux-kernel+bounces-759297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE48EB1DBB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:28:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921D1B1DBB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 18:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B07E7ADA37
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:27:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 541A37A467D
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 16:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7552737FA;
-	Thu,  7 Aug 2025 16:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9AC26FD8E;
+	Thu,  7 Aug 2025 16:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="d6Pc9UnH";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="d6Pc9UnH"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013071.outbound.protection.outlook.com [52.101.72.71])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OUKvI3KT";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="RC7oKg69"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CB9272807
-	for <linux-kernel@vger.kernel.org>; Thu,  7 Aug 2025 16:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.71
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754584082; cv=fail; b=pv5Yg4+0JXZW2BZzTSY2HOCg6xrLLufv1Cv7n77D+HYHfZNA9lTvFd8y+lbWNNwWGUJQA/RM27jvSxOc+Ts88iHb8/phGr2DisfihRWy9wR7UYucpAa7lmYOydbqkPI9QsZAojKOWKgxzlAv0cwteqx37ee1KeCs24qiRPz5/Lo=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754584082; c=relaxed/simple;
-	bh=ZwZVCfh0wORYMRwn4FZU62xbJ03fgOE/Rd3UY9clDVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=u3sHO7wpKUWSG0EcIHes69+wJTElOlHcrsQXyiODLOhjPUhP4hEmu9nQToV2XNSpjlHrh/k0tSFYp3fAJUA4cKTrJa0O1g2W+XNfhcCqp0xRlHRi3AnHGOmGi0K177JaOpbhAfbRQpUv1l9haJi1y5J1RsuBDHyRsA9fpQ6OHSE=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=d6Pc9UnH; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=d6Pc9UnH; arc=fail smtp.client-ip=52.101.72.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=YjiWWAv8mVEuyZua5l0dVK6rGVoZp03HRvJDHOarbAQG2jLEHAN9LEuuoe2VASWgf4n8KVwGopJfV1RHL91iQP3TcPbZP8NVLfgapjkPHOHdmSLnVcx9hf0IvHmCdAc9ddyLjG5plSQkO5LauYxOVWfj+2E48vF42ekXbE66FhYDxm6/FVAhkW8OmfsBDbJVAd1ncY7agNq59y7Sy10M3VAFDylYi1TI6FEtFst2EA6KaIfA5liyOSv/LuaQjrvY7JkZcj81iVIzvJgJUK/dlOr2wyEN2J5OJ1zXfR3o0DKwA2boLE4Z4VGkjKt2acQKErEdqwg6jhaExD3dmmSnPw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UUs28UoSJOnec1LakISrYkPOT7k6uFeYEAAL0w78y2U=;
- b=Ud8M9Pi3LxN4boJdNeUW+/G+VVeopJ+kjujJpQAhH8uoxyX6Nijj11sAyNgzZEx5kPA4YORFbmTAGOuURWKp9zfZYFOqBFzOAqZwCjYZenbCI+NQQpkDAbjfULJeg7BURKrlcy5bkBkrk2/w6VLzWOuHSO1NPnz7F0W4YlqEZPHZMCLer5XocE+fZTiyrs+sYOXLnBt/p88bTqkgu70rUFuWjinE5cjTZboFvKzXPURA/ZOgYpN6gtn68XaH28Ib9hQkUMtheEA2joz/8R1QrRFpqJlGVwuBYwDs2lSjPu7GVnr+GvOWlYhFJ6RerDV9HgUVomUNCFT2n3VsPFFfcg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UUs28UoSJOnec1LakISrYkPOT7k6uFeYEAAL0w78y2U=;
- b=d6Pc9UnHe32PKe4PV1ealuuOY+MFot5oYfKLpH73Q3L6KbDwigPc2ruzPDSLHQVLplHnA25NHrZ2pHQyRRdVBu0VrY8KXY9zfxGSEQ/O2p3Itrs4pbi9i5HzvWMgjxlvRdaXQh3Zfxu4z3yoegWTA5BMP8fOSRlJEdNQZ/8fD5I=
-Received: from AM8P251CA0013.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:21b::18)
- by DU0PR08MB9201.eurprd08.prod.outlook.com (2603:10a6:10:415::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Thu, 7 Aug
- 2025 16:27:56 +0000
-Received: from AM3PEPF0000A78E.eurprd04.prod.outlook.com
- (2603:10a6:20b:21b:cafe::c8) by AM8P251CA0013.outlook.office365.com
- (2603:10a6:20b:21b::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.16 via Frontend Transport; Thu,
- 7 Aug 2025 16:27:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM3PEPF0000A78E.mail.protection.outlook.com (10.167.16.117) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
- via Frontend Transport; Thu, 7 Aug 2025 16:27:55 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B0F49641;
+	Thu,  7 Aug 2025 16:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754584201; cv=fail; b=XC0W9hDfaaC+fSLOtV8u2AaiVQsJoiGc+ZZxUb000vzi7nb8CDv1FEfssZ4spUlenAPNc4zgqftkgC36KftGOJt4IVKoPCGbHVqpUpsvW0jEcMLWRhAR+HzTD0Ga5ULwT8IddGB6wyqj7oK+kJYmk85W/JUT+m6OQ7KbbJvig1Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754584201; c=relaxed/simple;
+	bh=+STwVe0Nsy/RIyxcyR5ldsbWHQsGtdyld31ZCLT+6y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UeA0GC5Ka0xFZjBVKYxpiLktqs0XF2jksM9Zts+yO1NHckF/T/bI9UUevm6Qw4VTLmS8IlgXcVTIXz1DLd30HitHdQj/qk0azPsNL4fmRD6vMVj7sjI0UIa6wPhHW9bxfB3pm/8KWA6XvlBRHpzEE9k8CTAUEJOYHVSw8HY1Oks=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OUKvI3KT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=RC7oKg69; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577FGGS0018025;
+	Thu, 7 Aug 2025 16:29:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=l16pDzghuDRsAuja8p
+	75FbXoGk4Y2QEWcRkRnTtPuUU=; b=OUKvI3KTFjYPRxVjo4Gd1RtB1pQsB3JCrZ
+	3rroWG13FW4/uxX1SO0FDEOOTrInEHWwGmgXT9/Rfqq5yaKzDWq6bGNusiCIvzpD
+	dzAj53lsyxfi3hu9t7FUDctSRg2zNjBKYUKrQXnPr5KMVUEqppSwLYxr7uguqadH
+	ZIg53bvTea40zk0HWvOBzce7KjvdTLzjAc5xDiApUvvWMNdOLxOgVkTTwMK/Vkvr
+	YX6YtwjYi/dzQGcdbdfAddCJC6kEBxXSaV+HSmRUhh9Rxlwabq3K2tDY10qYiSEt
+	yHHxgcz1W7GjWqYgH08bD0/v0hR2VXxP3IlzVSzJ8CFoxIovbfgA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpve4jax-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 07 Aug 2025 16:29:28 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 577FJO6A005633;
+	Thu, 7 Aug 2025 16:29:27 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2061.outbound.protection.outlook.com [40.107.243.61])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48bpwyp0kj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 07 Aug 2025 16:29:27 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OZ00DAfa3AHBLgnsZkhdwEJxqaOClTSF1X2x0m/wFyWwccgcKXy1CdqgHi4kj7HMS6GHRynPnCVtgpmwA4ggEiQ/KLAogQmn3S6lzFOVLAWSTLSeHYOC7ZOgKCi+3Si5mHPo1Nd2RbGqqMjBeaWZWsxmVXh/N0o1fpdovkdAkeMCVMbbP52wd2KDIfvFqHIMvboAe4Kc09/tOFyMg3Zxjk1MMtEG6EnD4dKo1qgKl/v0SNgX2jNsU76I2hPO7SOVD4t8oR1hp2Xt0wp7oP7IbykSIrKoSOR7B2M7bg22jAGmYJeH20qz1WN6K8uZw/D/EoobkvfeMI08/miJWLxksg==
+ b=o6myNH/xDsH3jr5UX37ck9MPknIOg5mtbJMIK0Uel/6URK2S8gTYqElbdQilAdRQNeXJTE7muvslnb8C8ooDBwdOhzywOhBlAyDuxrHRvvEbTokOj8WJ0C2Pt3eLgK2TcR9jSkxsOCpU5MO6dnagrJEEFiRlH6p01O56oP4plOTzzNFi+wwuROwqHJ0MmBON/zqNKYmiqZZXYwkfCRwfzoMmtuxua+6CeXYbJTX70Iu0zmXyAY0NM2Pt8oR/fUQvaVxod/yITM1GrcqZYmxYK6Td/HCNtUqmIp76+Er3GEzsRgd6NDSJq6ei6XPK4W8PbbAZNf3VHfy6PaixJYU5MA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UUs28UoSJOnec1LakISrYkPOT7k6uFeYEAAL0w78y2U=;
- b=vqUshTLfjP6k4ExEzVRdxbxpESSAQHSsNG7MLE1ezKVvQ14f6WHGeJoj1Zp0Mo0SvMi9Yc+QTzfTYTKFmQxF+FyWk5n29TNVSQm/tYEJfZqpKTXQSecly1btJ3Yaa+5jba9Pst762Yb1p9K8ov+Fzp+i7B1itPxOZlQfixNcZIXv8ifjY+QUFiTkcsqXvtqhCT1SxISwpvuizY/j9QBqeYh4QrU8LzQNHNuTOz8qFPySH2GVN2AUimpQ6aWlx91J2o/aX4sCrrv52ROdUCVZV2bjxpKF2DMKqcWW0bFlXEtiwWuKnvWWL4gyznakaNu6mkU1/jqTHDbGeNZuecUNHg==
+ bh=l16pDzghuDRsAuja8p75FbXoGk4Y2QEWcRkRnTtPuUU=;
+ b=wA/0dA2wT9Fl6hUPUiNxMs02DvhY9O7h/AWU94vHXjLl3c96f9dBL+f35JEMUndyOB33f+Y1hS0dGlEbl4P/J2BkcM9wETSQ+/9gtOrj2O1cVgTpZpSxc0cRqjYeC/twafxsPOVjroL9KAxEW417zUZsfqnELKvQMlgBom0GTD/IYAQM5iOsRx0idhN/7z9GZLqdEMBfaDGvXKNNRHCv0XnAm5QRxy45jg1wK/SC4WRhxuHW+DndzMXIJE2kKa8ibWd3Tjv69H+oD1w6Qq1RIfKsvrhUGeZMUDD0+4EmN63566OWDwantWPD1Xapa/Gd7ZieJ2mS3XoYuFB6xwQJKg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UUs28UoSJOnec1LakISrYkPOT7k6uFeYEAAL0w78y2U=;
- b=d6Pc9UnHe32PKe4PV1ealuuOY+MFot5oYfKLpH73Q3L6KbDwigPc2ruzPDSLHQVLplHnA25NHrZ2pHQyRRdVBu0VrY8KXY9zfxGSEQ/O2p3Itrs4pbi9i5HzvWMgjxlvRdaXQh3Zfxu4z3yoegWTA5BMP8fOSRlJEdNQZ/8fD5I=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18) by DB9PR08MB9443.eurprd08.prod.outlook.com
- (2603:10a6:10:45b::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Thu, 7 Aug
- 2025 16:27:23 +0000
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74%5]) with mapi id 15.20.9009.016; Thu, 7 Aug 2025
- 16:27:23 +0000
-From: Karunika Choo <karunika.choo@arm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v9 7/7] drm/panthor: Add support for Mali-Gx20 and Mali-Gx25 GPUs
-Date: Thu,  7 Aug 2025 17:26:33 +0100
-Message-ID: <20250807162633.3666310-8-karunika.choo@arm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250807162633.3666310-1-karunika.choo@arm.com>
-References: <20250807162633.3666310-1-karunika.choo@arm.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0129.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:193::8) To VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18)
+ bh=l16pDzghuDRsAuja8p75FbXoGk4Y2QEWcRkRnTtPuUU=;
+ b=RC7oKg69BD7WxL15mibKRNXJgW4i6RHwIFG/x/8Q73JCVIYqfYlkfHP3oG8dr5yEleaXDXIO3QTLBhDRM4qsoaSEp69YL/6dsesuq23QBCKdlVAoivb4PReMpwjXg38iiP4Euca7ONJ1yMT8zkhu7DkhEU6tjTPnAiW9k8eZK3g=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by DS0PR10MB7979.namprd10.prod.outlook.com (2603:10b6:8:1ab::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Thu, 7 Aug
+ 2025 16:29:23 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9009.013; Thu, 7 Aug 2025
+ 16:29:23 +0000
+Date: Thu, 7 Aug 2025 12:29:19 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Andrew Ballance <andrewjballance@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Benno Lossin <lossin@kernel.org>,
+        Andreas Hindborg <a.hindborg@kernel.org>,
+        Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+        linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+        rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 3/3] rust: maple_tree: add MapleTreeAlloc
+Message-ID: <jfqpnx7iatu5q3tnzwhuv6cav5y2444jyyjxnia3py6bqfb3bl@ijqc35utzpwk>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andrew Ballance <andrewjballance@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+References: <20250726-maple-tree-v1-0-27a3da7cb8e5@google.com>
+ <20250726-maple-tree-v1-3-27a3da7cb8e5@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250726-maple-tree-v1-3-27a3da7cb8e5@google.com>
+User-Agent: NeoMutt/20250510
+X-ClientProxiedBy: YT4PR01CA0336.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10a::20) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	VI0PR08MB11200:EE_|DB9PR08MB9443:EE_|AM3PEPF0000A78E:EE_|DU0PR08MB9201:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe910b80-ffcb-4032-2a01-08ddd5cf5d8c
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|DS0PR10MB7979:EE_
+X-MS-Office365-Filtering-Correlation-Id: 273a87c4-4eb5-4eb2-0de6-08ddd5cf918a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?LT9HTqCo1mYs3Y8aA/pGYHtcutU4j52oED0i3f2AeBIAbEQTxEFJE5jHQQwd?=
- =?us-ascii?Q?UlyXtt92to4jptYcCE8VRaVdxG348i/FTNPwLHtfZ3auaG8nIcpLHUFNCsVh?=
- =?us-ascii?Q?JSqd80vRZA8yVaLtTpLQ60pQ3T2HJpafNNcpZrRpJ9LfiT+C4zeqzVwwsXXQ?=
- =?us-ascii?Q?fd8ZuyrZV6D/T+pHPxXOXG2ivT6yg1AJPXlXmGdlNU02VbIQZQxREexDL1QE?=
- =?us-ascii?Q?IwrtS4exCX6/TBLOYby6AXHK1xJJB6/QXerI4TBxs0ngWy6MahtG0txaZHgP?=
- =?us-ascii?Q?u9QseVS3tOQWK7P2UmPAkYJinI1BptHaEdwKl00iF7kRbkkPlaAfD6A0Nfo4?=
- =?us-ascii?Q?AcYERQx6aY+HBfTcfmrhuPOwDfjLbwGhJeouVuReZYYFWlfZUynfPjY4qDC5?=
- =?us-ascii?Q?yWMz3ipdIIok4oQ8Oh+/wx/BS3dkGwHJl9zr1b9B1MtOym2GenO/lawwBAvK?=
- =?us-ascii?Q?IiVLMoizJY6Ed7Ox9dzf+Lrf+xq51Z6bogrIweGtNHzF/atnjupC51kZuIsz?=
- =?us-ascii?Q?ILU1qVuP59e1qx4BfNqXleEP94UUfJmm+XL6XCKuFeb2jdrI/uqHC3zHH9f+?=
- =?us-ascii?Q?aIDrF1Jx73CvRcpyV1GNsAKIlYoAcrwx2h74KOfNR5lWEi/zdwl4+3qvNLtN?=
- =?us-ascii?Q?jTvAj+YcNm7mWK+xxRin/5wPiRh9UrA4H8eIjPrOq1bLMRXeQZRiRXrUq5ug?=
- =?us-ascii?Q?dcMvGFS/INaTPA/cyghvFq45CxZtTEJ86HxotfFhdzDdJRhhfKYd0bE1Tpa3?=
- =?us-ascii?Q?9/IjdsuRGnwhvF/8H/1nOc5xWuaHGg0bA9da6YIsEbwa69Abtn8AzIT/pRnA?=
- =?us-ascii?Q?lB3dDI/Sz1ne7jBXwvpL+eYAIfbHtD+aGssC+tyfWCF1OywyQfF46urizCQd?=
- =?us-ascii?Q?HHUGqq6NvkiX0BOKkg3OQatCVsbf6RsuhcgzhngBuMXuC4t15IsQ3S61mCWi?=
- =?us-ascii?Q?J7XZWqQHItS03Nwopbs7D+crB5cMD/kjrt1FKNcr6+zVx9JGsAUYZusqRD1T?=
- =?us-ascii?Q?mwthJa9jufeA5FNs6pFf4YFdx5Q+TkpryJAKXyHglcBcJ5d41MR6Jdh4r9oM?=
- =?us-ascii?Q?Qpwj2bMbCKXgLXUx7m/c9fHjU0LpNHeLuzZPGXBCUKPkdnNexVc0LZpOcjvv?=
- =?us-ascii?Q?WWEJJxiHJcFaOmN2eIeNAdVo1scYDbWdwDiq9Gv2YMaX+kwP7s89MOwFKzux?=
- =?us-ascii?Q?yIJJEz2XhBGs0BvQK3VLC1h1dyzSC1fID2060FAKcowWa3uwqybr3zIQum6B?=
- =?us-ascii?Q?LmwT1Z9EvBm28WlaIk36RBomoWU9xNrV7u88BcMyMbTChkR2UGkch4wpfAXW?=
- =?us-ascii?Q?qTup/Aj5+HhI5oyA9gxVxbD0HNOZ8OkFTNOVg7jHPw9ZeN2ZXbGY63tuzvDk?=
- =?us-ascii?Q?wutbeEId7Rd4uTdTsiBscLsbCIkWPMAvNvv14uUk7MYEdrIbVkfJ9hOqBF8b?=
- =?us-ascii?Q?mZkytuTLBl4=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB9443
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM3PEPF0000A78E.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	fb8cfa2c-9e64-4f7b-b949-08ddd5cf4a38
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|35042699022|376014|82310400026|36860700013|14060799003;
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yB1v4R9dvQoQtFJ1don8WLfL5J9B9aaAQYyfmhhWQxqVFBU/kPJnDY3sFUhb?=
- =?us-ascii?Q?7aTSK7JR3h5e6dnblodgMnuNsa775OH0mvGrTTIkXXXBBopcIhK7LJDZB06x?=
- =?us-ascii?Q?ZWFO/fQVRgbQTNk7NbVkCywWj949xhWJaBR10zYQvNvmqE0u60QlIQn/Jd8u?=
- =?us-ascii?Q?S/hcR7GYV5SlLwyyQpUQ7kcGdaZa9f/4bD60xJCCpMTzw/O+6F9t5e36kXb4?=
- =?us-ascii?Q?2OCc7o/k2CKgZleMuFYzPIdU7PAf62uSAURJEtdimbeTBSy/gtlEIo3yqbeS?=
- =?us-ascii?Q?6BcYre6mSoBV6uhs4t9KYrLg55jQkBm1Wz5PjBtXmJJbp70FqL8/fFxkWx+R?=
- =?us-ascii?Q?j9Hd9sSY8m0OiugdVptGfIEiOrKf+pD6edEnaJvAQMNmNvc4OqZhF5MKIkNB?=
- =?us-ascii?Q?eqo4ORSCiKWOMd6GUvyi1IkLE6jIQQDuQxdQnQO+ggRTMN5mgqtlBJfiyO2+?=
- =?us-ascii?Q?f/ZwyhfEM/Pi+EVGd6TtXNkVnxVtthjxKY3fKvNKCGmM8jArj/ErfHYIsgyI?=
- =?us-ascii?Q?hm8nQaO+RoZVmqdBt3iL3o1u1SLyt+lhVjD4pLQC863kiQGZIRI3BI3umVz6?=
- =?us-ascii?Q?sH30b/CYWr/t9eWGWFOQG02CKKj11Yx+SBZ8vQyBGqdn4emZ3T1ZAh824/Jf?=
- =?us-ascii?Q?DFGbBSYtSdSCsyF52k1U5VeoLB7D5/vr5UKJQwiDozwbZzLwA8GvHsGH4gCX?=
- =?us-ascii?Q?GPt0iPHhFIKIrEM+U9+s+G6DSDuhaYOMU7AlJ8LBqHSeZZ7MCa4zLheRD38e?=
- =?us-ascii?Q?8rbGMhDaeq4vARN67D8sXuCjZCuM8sD6Wn0EGrZSQgk9dRT8jsXYGSx0xnv1?=
- =?us-ascii?Q?j80QrE5BLcrtTIRjvsrbhk/tAjvsIMrhAAWuf8VBshhEFeLPod69ghQbOzmD?=
- =?us-ascii?Q?/kUnYSdFGLJrENM7vEr+RakHSNvdBPGOohjSrD/pBWmUnlp2gCPs+ljK5yiV?=
- =?us-ascii?Q?6cgq/DWBPzBs/sY9l+8OFkNW09AWWmRQFcnKpFU5xrOh/rdKOp9hUsX9FU36?=
- =?us-ascii?Q?6wJU+eLRl8oxpyNK7f9IjHSwdGkQ0fx5x/szp2Fez2pYHf7BER2Yaa2Obqpn?=
- =?us-ascii?Q?E2yqrBVY2g9k61Y2IayVd8+0hgP7n4e1oSngxyxN/0Rrqg9B/f/GxSNl2Gwb?=
- =?us-ascii?Q?c4yidCvzKLQarOV3tIbyWfvsnTjV089K5FKh0+1cNlJiVBnHhIY1rWFSqoID?=
- =?us-ascii?Q?rxhy5BHeWXEV0YwJII4SX6DwRpmGL4mpUdJX18JONLKJhsZS5Tp9xl+KpyAu?=
- =?us-ascii?Q?+C4JB3yeeIyv6NTVLN0TEwwEkVEAM+0IbBv/frY4ew/YT7FdIqSA2mtIMeTv?=
- =?us-ascii?Q?XXgzO6jZd0AwuJc+30d0TT0LduCPK8Ts9HxTkS1CYaEHSLA6HgSF8hu+8z0q?=
- =?us-ascii?Q?ylqDA1+qyNSWi93Pj9cKIJrMg68PVrvdyuA3humyn2+Gb6idm9GRFxaBRxtg?=
- =?us-ascii?Q?XxTZdNdzFqsH0YXFC5pLnuJ5UhNx3UUzI3UI2J3QZBYIIFQbIF1tNS/wlK6q?=
- =?us-ascii?Q?ErIyEVX+62ypsEQG7COp5SqdlYwp+lLNWIT9?=
+	=?us-ascii?Q?hwR/f9hOG8/YltcBo/dFEiuivVB89GKk3VG+LWcZqkvy3kKjD22nPwDwYGXC?=
+ =?us-ascii?Q?q+yiV4rHUxilHTPQQshQR40ESEz6rV6+9k97WscoSCp1xdb3ncIxO69M2mO/?=
+ =?us-ascii?Q?9Tdm/silVUjw0qhi2NtoCvlsf0G1Okzh8siZwx0U5zaILV39KK2BugFPn0hD?=
+ =?us-ascii?Q?aO4XUWgfhbyeqYmaaFAQvwtIfbt5V6tZn1ciStFW1mS1FRZogSM++3J2j8zv?=
+ =?us-ascii?Q?1/AsEFh2Uer9iMGl9BjIzcABt5d7hzW+Clil3hhYpXvxpmvT2y9UY+MjCU2b?=
+ =?us-ascii?Q?5huB8fmlO7qAaXLqjplNM9R1IcEvJXgPTKSGNSSjvPBUVcvI/Maz0UgofmcL?=
+ =?us-ascii?Q?k3BlIH1stpATAWFQU1rjk+9wFjt9NsJoQhN8+BdWeUyxwkxM2kD1izPrgpiD?=
+ =?us-ascii?Q?XDjPjyQ/uJOe8knDucwCc5ZoJ7kLf6rygN5a8QMsd5mhkHCPMYBf+y+PTmaH?=
+ =?us-ascii?Q?t8OmxpV3RaEtppPPnr7sF0iuwF2vm4AnOv1Z3zARKOikBXfj0zSTNDK1gtb8?=
+ =?us-ascii?Q?r3DwlHbrJvv3zY+6kNIOYPpDyLURYYOkGbW77RIKCUsgBXynySp9YStwqicd?=
+ =?us-ascii?Q?xZi+5tGdCaPoepnB8nNmmQzHxQIaG0PbXyS/CN57AJqCooFAiuvHmf1/aspZ?=
+ =?us-ascii?Q?p6aMRssmgnGocIvBfIaN2qcXQW6UK+88UbF1I3ZYdW11wV1Jz3pIFljsXhN+?=
+ =?us-ascii?Q?P5AfDjOe/x4bkeMweginZc6oT2BPu5e6QlQvtCZzZSVFLBRtayuc9fAv6kCP?=
+ =?us-ascii?Q?6b1cYHRk/idMuDE+i2ehZM4s76W4219nWXqJeoslc/5u76eEyLBHgqK4UEnf?=
+ =?us-ascii?Q?BKLyKdDJuqKIPDagLbl+7GU+7HF09d2NXUjAC/QSoWsNxF8jty7dSZ82Yqw4?=
+ =?us-ascii?Q?lJTQdWzEsgVX+5VIafBRh6u/d6IHSyawZ5u3Ylz7wWgzqNU919gSOqFtAy5J?=
+ =?us-ascii?Q?LAwzI7t6ZLD+mQeEQw/MSvpQxwaQidSla/jg1FLuccRi3eJp7huR94S3c4tS?=
+ =?us-ascii?Q?WLPj2BTjGKorkMo6UgWhZg6UK1nZZGRteLhMCxhgt5bBfMbp4If6aRcWsrAc?=
+ =?us-ascii?Q?lA6tEMTE5uLN8qXiwsvCRTOc7emNh5voZBtsKR5elRxDqaeyqIRaGDugy4PX?=
+ =?us-ascii?Q?aPdt2PHnsWRgfkSh8+4wDqyADGmyLDclXWQEsImxlW/Goat6B/VARYN2xDTs?=
+ =?us-ascii?Q?ARzwVMBhCOxxYj8wltgIA5i0J+1YXf1h4oA0c5LdlIDUbZ5LWysFquyC5kat?=
+ =?us-ascii?Q?FI9wEw5kkepWNWGJhibYoCHrwAhZoVkkPu393L4o6KZyE+s8c3iKvcJB9GSp?=
+ =?us-ascii?Q?GXthy7/GJqeqZQNuBaJQ88gg9jaU63dKVdVDdfxTRLhnv/SXbbR9cnyZd/93?=
+ =?us-ascii?Q?ytLGb2Fmk1GNGyVO5rAc8lEQR4VyeePcHvdWuLuVTM7xjkpWT3DK4D495aVb?=
+ =?us-ascii?Q?GBqQvVCikUE=3D?=
 X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(35042699022)(376014)(82310400026)(36860700013)(14060799003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 16:27:55.9972
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Txj5P2bn7UZOquphDDP4Nz/tIAECcQhTvgmLMdLF0tJDMBtf62ODpC+w7RyL?=
+ =?us-ascii?Q?SPtCZMe4ExAkszKnSewxkpcbAmGu9tscprvTkKHB10HX3TaP/sPUEghJaDa5?=
+ =?us-ascii?Q?1XlTz8kyoT+Zm/6gnkN4c23ai8b9cRr+HEsOr+dVzZWifzAO3RJcn+VjJdIz?=
+ =?us-ascii?Q?PRMjP9yqQCD6fbXDZj2qEsnuzvAthLSYEqCi0wS6MRIbu3Xo4+cDjuJ4M4oP?=
+ =?us-ascii?Q?Fk0D2Co8WKDlGmEY9oMxcuHRZbnyNSWN/w2EEmcsSETY5KMwLMnPZzJQlMpf?=
+ =?us-ascii?Q?3Tc7Smy+rH7ilQfcdgTAw+zSXykC5aL8P2Mkvb3lxdbn9BwNB95oqsm3SyFg?=
+ =?us-ascii?Q?hCqJ6rn/Wgvr+sh6RTRWhpVYBmwz0w8TjTCenHSJZr//qZnI89xOGyEJscI4?=
+ =?us-ascii?Q?uknH932xzMonGFE5qpEjIA5Qc4Jahl4HxsRVKKs/LS3VQAnGcdDyMa8Nelxo?=
+ =?us-ascii?Q?3xASB4EHrAEnc3LD4WJy4UeVjnZk8eHbIKNqIEZOLtTS0kSL3EtapKYQIkUL?=
+ =?us-ascii?Q?K3ESFtjGxky0pHc2QS2vPo9tJ1aPm7u/fmCwJZcaelu+yBBQl/r0Xde5bcr+?=
+ =?us-ascii?Q?fgIWne3nZxuxK+8Tn+vzcSjCRUyTGKquzt4DyZotQ259/cQzokomjX2Ztdxd?=
+ =?us-ascii?Q?NopeKB5IEJNTzlfmZuMLK+nF+6sndm+QZdPpIP8BlPTG4yyCaPpq6klVwipr?=
+ =?us-ascii?Q?Vy6uskZo1dLodHi84w9przlbua2kmkoCQ+P0ComhjSmnZf1pANyE9op1N5YI?=
+ =?us-ascii?Q?TwSv4iqyAjN65zVYUnI+h2tGfNh0qY5dl2PMsHn3cq5zZyGD0MlkYSVeSB/2?=
+ =?us-ascii?Q?nA2DaAN0tcH8uwCfX9vANnfuVftbh3tEyqMjr/zfNdkZrCftf5YL+Gl7VxH+?=
+ =?us-ascii?Q?C/2TWS3gqxY8X7PV3lML+tDZrI1d53q6ExnEKJeWPNb6aLfbC+D64ggto0M1?=
+ =?us-ascii?Q?x5sRkN2FrgKMZj4KTvSoN1B0UIHH82c3PxPuzQBDb+L0J702iaED8AH/GWdL?=
+ =?us-ascii?Q?ymnMlq4ui6H4OiwmCwzR35ZSrVWQ6/QwH6NOyx2uU09/ewGzew916+1ULKZ6?=
+ =?us-ascii?Q?Nbr1oCYW+72egtlLFOYOtuujLBkoWbavigPAwT4ESuReCuUJysKobYoaHwUa?=
+ =?us-ascii?Q?eqzX3KMnj4f/lqbFI+u8D1HiO/qSsVZh7GK4qAXOjAHZDozDCZZCMpqRDsHL?=
+ =?us-ascii?Q?P4C/x/Ap5jfQgusdgta+q4Hv35weaDAatikQS1tBrTAc/TSEc1/xrsFqel3M?=
+ =?us-ascii?Q?KHGWYYflxaN/F3WZfJcqrEdRUxAjR9MOzz27r5hrS1xvb0sM9iMtE8/HFJnA?=
+ =?us-ascii?Q?TU4W5oyevW2ae7bdnkpee3zO52j33+FB9DvKgVw1zZ5KCywK433iE/QSenSq?=
+ =?us-ascii?Q?qRYSVNZzOh6GKF5t8PXSfajb2mqbpih6f2++R1rkUboxtBcSm5dzmW99zsXi?=
+ =?us-ascii?Q?DJFNBPnBn4gbimZLQHhqAyVfppvZPuSVOGzs+75Ph2UN76t+w1O2bWEUFkTJ?=
+ =?us-ascii?Q?jluC0hIUY8SdJJpXvKgXb9+WssVBkxvVUh19IgNBgkusFoky+cb72gi9qtTD?=
+ =?us-ascii?Q?rhkA2X8O5BDZZtinE2YzhmdtpCvkdoO1jKNLzrvp?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	MNJqaOqMptC91bn253rc+8Pv9QVpV0w13oYnNxSZ+1+rkL1U/YRV8QW5MCpZ76JV8UUXA2RpuoLoEDZMddLtxZevOJ5D6PpFGdDCLhVEqZyXBg/YXfX6uIeSIp/zjNw1ccW55y9D94fXZ30yuy+Sv/TPgOVVF2l4eJerZwG5wBffK4W7VhWEHy+zTUfsg2FlC2CRwpGd/DWQoukybPnlaLwUQFa8N8f8Zsy5DRKsezuqklQqVXAlRwmDiJXZRX/Oewe/IopaFcYXShh9XMPVJoWWL/RhX5CDfyLeUUTahPWjGS+li5ka76iOX/QO/Z3gBVBFaUaG37+nQkoxKmzunyYefCAJxmnBpkYDg6KJa8U9NP32YrSeOLJyAhWPnFrUbifqYfLGxO+bYuog8PDBBjBDb7nO2D0Hf3IcXwKjPUptgYxoxTViFEzbiQHYsXmlFCEhfTCVxoifV2aARUqMGoFCdSwDBpE+z6Mc9jtdYtjiLYyrZuYLF86hVtTiKgvbOoMm2JZausztjNZdI89FtlI+0BOVnBKBE0PWrFN5oc2BPD9Q2XbVgNWcK3SWVD5hBOcxFKdjGZSq+Qg/ay6hplP4m4TY2CVwkJZvwSm29tM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 273a87c4-4eb5-4eb2-0de6-08ddd5cf918a
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2025 16:29:23.5180
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe910b80-ffcb-4032-2a01-08ddd5cf5d8c
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF0000A78E.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB9201
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m8Tr1AxEi0vk2LklzBbHXidtj/flbFXndwl66xM4hx90xFtqUdO/hUho7ul+2LHGQvD6mqjEDWOMN8TjvdgwMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7979
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-07_03,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ spamscore=0 adultscore=0 phishscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2507300000 definitions=main-2508070134
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDEzNCBTYWx0ZWRfX93txX6bSI0vg
+ xrPWz36XkF9KOP6M3yM4+vknUjPYN9cIj6I15VRzowg4fHq15Pjcfe1g9FdZgpDuQUv5UA6vv/q
+ UIULHvhIyLf7fC9pTJE8WOPKuzJ8S3pvb1ZScriLzqOXkVScLXIDWCnpI4XpQUNDgNrkbMAmuZ0
+ Q0gYRpOTM2jbFFl3DQMmbY/5vhs5q8XIzIF7RaV6fuMVF9tHvSpKeIyFOCj1jJEfd7v6XyF0YxT
+ dmponJYIOtV3IfNI5F1pvIAg5phhTv4H++S6CRj2cgSpgRNb/XHlmReXoRCyWOP3wfMO3ih5QFz
+ s0xgZJ08CpvgqEh6NHgQsv0Qfq3tcJHtV2Eri4tVHN8yuUX0SPtiznyw2dlx22poqdnc2J4kjUm
+ gdu2qG3PtOyZWiXu22/Tpx5nvcgv22NZGzgqqj+7pBVuO7FhG1I7fByMzenXhZKpa/6IG4ZU
+X-Authority-Analysis: v=2.4 cv=ApPu3P9P c=1 sm=1 tr=0 ts=6894d468 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=1XWaLZrsAAAA:8 a=TrWHwkQYThArbQDjACMA:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:12069
+X-Proofpoint-ORIG-GUID: zsIDP28sMhBEnhmnHJUHCGFqTqUqoSBh
+X-Proofpoint-GUID: zsIDP28sMhBEnhmnHJUHCGFqTqUqoSBh
 
-This patch adds firmware binary and GPU model naming support for
-Mali-Gx20 and Mali-Gx25 GPUs.
+* Alice Ryhl <aliceryhl@google.com> [250726 09:23]:
+> To support allocation trees, we introduce a new type MapleTreeAlloc for
+> the case where the tree is created using MT_FLAGS_ALLOC_RANGE. To ensure
+> that you can only call mtree_alloc_range on an allocation tree, we
+> restrict thta method to the new MapleTreeAlloc type. However, all
+Typo here  ^
 
-Reviewed-by: Steven Price <steven.price@arm.com>
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-Signed-off-by: Karunika Choo <karunika.choo@arm.com>
----
- drivers/gpu/drm/panthor/panthor_fw.c |  2 ++
- drivers/gpu/drm/panthor/panthor_hw.c | 18 ++++++++++++++++++
- 2 files changed, 20 insertions(+)
+> methods on MapleTree remain accessible to MapleTreeAlloc as allocation
+> trees can use the other methods without issues.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-index fa6e0b48a0b2..9bf06e55eaee 100644
---- a/drivers/gpu/drm/panthor/panthor_fw.c
-+++ b/drivers/gpu/drm/panthor/panthor_fw.c
-@@ -1405,3 +1405,5 @@ MODULE_FIRMWARE("arm/mali/arch10.8/mali_csffw.bin");
- MODULE_FIRMWARE("arm/mali/arch10.10/mali_csffw.bin");
- MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
- MODULE_FIRMWARE("arm/mali/arch11.8/mali_csffw.bin");
-+MODULE_FIRMWARE("arm/mali/arch12.8/mali_csffw.bin");
-+MODULE_FIRMWARE("arm/mali/arch13.8/mali_csffw.bin");
-diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-index 8c041e1074a1..4f2858114e5e 100644
---- a/drivers/gpu/drm/panthor/panthor_hw.c
-+++ b/drivers/gpu/drm/panthor/panthor_hw.c
-@@ -35,6 +35,24 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
- 		fallthrough;
- 	case GPU_PROD_ID_MAKE(11, 3):
- 		return "Mali-G615";
-+	case GPU_PROD_ID_MAKE(12, 0):
-+		if (shader_core_count >= 10 && ray_intersection)
-+			return "Mali-G720-Immortalis";
-+		else if (shader_core_count >= 6)
-+			return "Mali-G720";
-+
-+		fallthrough;
-+	case GPU_PROD_ID_MAKE(12, 1):
-+		return "Mali-G620";
-+	case GPU_PROD_ID_MAKE(13, 0):
-+		if (shader_core_count >= 10 && ray_intersection)
-+			return "Mali-G925-Immortalis";
-+		else if (shader_core_count >= 6)
-+			return "Mali-G725";
-+
-+		fallthrough;
-+	case GPU_PROD_ID_MAKE(13, 1):
-+		return "Mali-G625";
- 	}
- 
- 	return "(Unknown Mali GPU)";
--- 
-2.49.0
+I guess this is for some rust side error translation because the C side
+already returns the error?
 
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/maple_tree.rs | 158 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 158 insertions(+)
+> 
+> diff --git a/rust/kernel/maple_tree.rs b/rust/kernel/maple_tree.rs
+> index c7ef504a9c78065b3d5752b4f5337fb6277182d1..8c025d2c395b6d57f1fb16214b4e87d4e7942d6f 100644
+> --- a/rust/kernel/maple_tree.rs
+> +++ b/rust/kernel/maple_tree.rs
+> @@ -32,6 +32,26 @@ pub struct MapleTree<T: ForeignOwnable> {
+>      _p: PhantomData<T>,
+>  }
+>  
+> +/// A maple tree with `MT_FLAGS_ALLOC_RANGE` set.
+> +///
+> +/// All methods on [`MapleTree`] are also accessible on this type.
+> +#[pin_data]
+> +#[repr(transparent)]
+> +pub struct MapleTreeAlloc<T: ForeignOwnable> {
+> +    #[pin]
+> +    tree: MapleTree<T>,
+> +}
+> +
+> +// Make MapleTree methods usable on MapleTreeAlloc.
+> +impl<T: ForeignOwnable> core::ops::Deref for MapleTreeAlloc<T> {
+> +    type Target = MapleTree<T>;
+> +
+> +    #[inline]
+> +    fn deref(&self) -> &MapleTree<T> {
+> +        &self.tree
+> +    }
+> +}
+> +
+>  #[inline]
+>  fn to_maple_range(range: impl RangeBounds<usize>) -> Option<(usize, usize)> {
+>      let first = match range.start_bound() {
+> @@ -342,6 +362,107 @@ pub fn load(&mut self, index: usize) -> Option<T::BorrowedMut<'_>> {
+>      }
+>  }
+>  
+> +impl<T: ForeignOwnable> MapleTreeAlloc<T> {
+> +    /// Create a new allocation tree.
+> +    pub fn new() -> impl PinInit<Self> {
+> +        let tree = pin_init!(MapleTree {
+> +            // SAFETY: This initializes a maple tree into a pinned slot. The maple tree will be
+> +            // destroyed in Drop before the memory location becomes invalid.
+> +            tree <- Opaque::ffi_init(|slot| unsafe {
+> +                bindings::mt_init_flags(slot, bindings::MT_FLAGS_ALLOC_RANGE)
+> +            }),
+> +            _p: PhantomData,
+> +        });
+> +
+> +        pin_init!(MapleTreeAlloc { tree <- tree })
+> +    }
+> +
+> +    /// Insert an entry with the given size somewhere in the given range.
+> +    ///
+> +    /// The maple tree will search for a location in the given range where there is space to insert
+> +    /// the new range. If there is not enough available space, then an error will be returned.
+> +    ///
+> +    /// The index of the new range is returned.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::maple_tree::{MapleTreeAlloc, AllocErrorKind};
+> +    ///
+> +    /// let tree = KBox::pin_init(MapleTreeAlloc::<KBox<i32>>::new(), GFP_KERNEL)?;
+> +    ///
+> +    /// let ten = KBox::new(10, GFP_KERNEL)?;
+> +    /// let twenty = KBox::new(20, GFP_KERNEL)?;
+> +    /// let thirty = KBox::new(30, GFP_KERNEL)?;
+> +    /// let hundred = KBox::new(100, GFP_KERNEL)?;
+> +    ///
+> +    /// // Allocate three ranges.
+> +    /// let idx1 = tree.alloc_range(100, ten, ..1000, GFP_KERNEL)?;
+> +    /// let idx2 = tree.alloc_range(100, twenty, ..1000, GFP_KERNEL)?;
+> +    /// let idx3 = tree.alloc_range(100, thirty, ..1000, GFP_KERNEL)?;
+> +    ///
+> +    /// assert_eq!(idx1, 0);
+> +    /// assert_eq!(idx2, 100);
+> +    /// assert_eq!(idx3, 200);
+> +    ///
+> +    /// // This will fail because the remaining space is too small.
+> +    /// assert_eq!(
+> +    ///     tree.alloc_range(800, hundred, ..1000, GFP_KERNEL).unwrap_err().cause,
+> +    ///     AllocErrorKind::Busy,
+> +    /// );
+> +    /// # Ok::<_, Error>(())
+> +    /// ```
+> +    pub fn alloc_range<R>(
+> +        &self,
+> +        size: usize,
+> +        value: T,
+> +        range: R,
+> +        gfp: Flags,
+> +    ) -> Result<usize, AllocError<T>>
+> +    where
+> +        R: RangeBounds<usize>,
+> +    {
+> +        let Some((min, max)) = to_maple_range(range) else {
+> +            return Err(AllocError {
+> +                value,
+> +                cause: AllocErrorKind::InvalidRequest,
+> +            });
+> +        };
+> +
+> +        let ptr = T::into_foreign(value);
+> +        let mut index = 0;
+> +
+> +        // SAFETY: The tree is valid, and we are passing a pointer to an owned instance of `T`.
+> +        let res = to_result(unsafe {
+> +            bindings::mtree_alloc_range(
+> +                self.tree.tree.get(),
+> +                &mut index,
+> +                ptr,
+> +                size,
+> +                min,
+> +                max,
+> +                gfp.as_raw(),
+> +            )
+> +        });
+> +
+> +        if let Err(err) = res {
+> +            // SAFETY: As `mtree_alloc_range` failed, it is safe to take back ownership.
+> +            let value = unsafe { T::from_foreign(ptr) };
+> +
+> +            let cause = if err == ENOMEM {
+> +                AllocErrorKind::Nomem
+> +            } else if err == EBUSY {
+> +                AllocErrorKind::Busy
+> +            } else {
+> +                AllocErrorKind::InvalidRequest
+> +            };
+> +            Err(AllocError { value, cause })
+> +        } else {
+> +            Ok(index)
+> +        }
+> +    }
+> +}
+> +
+>  /// Error type for failure to insert a new value.
+>  pub struct InsertError<T> {
+>      /// The value that could not be inserted.
+> @@ -378,3 +499,40 @@ fn from(insert_err: InsertError<T>) -> Error {
+>          Error::from(insert_err.cause)
+>      }
+>  }
+> +
+> +/// Error type for failure to insert a new value.
+> +pub struct AllocError<T> {
+> +    /// The value that could not be inserted.
+> +    pub value: T,
+> +    /// The reason for the failure to insert.
+> +    pub cause: AllocErrorKind,
+> +}
+> +
+> +/// The reason for the failure to insert.
+> +#[derive(PartialEq, Eq, Copy, Clone)]
+> +pub enum AllocErrorKind {
+> +    /// There is not enough space for the requested allocation.
+> +    Busy,
+> +    /// Failure to allocate memory.
+> +    Nomem,
+> +    /// The insertion request was invalid.
+> +    InvalidRequest,
+> +}
+> +
+> +impl From<AllocErrorKind> for Error {
+> +    #[inline]
+> +    fn from(kind: AllocErrorKind) -> Error {
+> +        match kind {
+> +            AllocErrorKind::Busy => EBUSY,
+> +            AllocErrorKind::Nomem => ENOMEM,
+> +            AllocErrorKind::InvalidRequest => EINVAL,
+> +        }
+> +    }
+> +}
+> +
+> +impl<T> From<AllocError<T>> for Error {
+> +    #[inline]
+> +    fn from(insert_err: AllocError<T>) -> Error {
+> +        Error::from(insert_err.cause)
+> +    }
+> +}
+> 
+> -- 
+> 2.50.1.470.g6ba607880d-goog
+> 
 
