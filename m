@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-758845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB4FB1D486
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 11:02:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56636B1F9ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 14:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24018581A1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Aug 2025 09:02:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71557178EF6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 12:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0764624E4B4;
-	Thu,  7 Aug 2025 09:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7142A24886C;
+	Sun, 10 Aug 2025 12:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D+5kI0uf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W13copfP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IQ5gOUvy"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D154F4431;
-	Thu,  7 Aug 2025 09:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7058B24418E
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 12:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754557335; cv=none; b=pih3Hkc2vLrCf6KgbzNZvz8ZO2TSzT4RkPOk/7jPxjUxHWVsvyK76fPTNU7GZ0uejVlh747bOSYRx+4WBkZj95UHlzUUt1whO9FvhnpE0ERTzMGRsYVKagdu5sSrEaeiSS+Hq5/c/rO6UBaewzeW4nBvLQsczYX6JVEMtnfLCKs=
+	t=1754829013; cv=none; b=CFs/jVG84qFSMovVwCDBtKJw9rXOYeiJdHs9vTDMaxh7xkILIKR7iisT2ZqIzAfduqDo3bauLlRnmu4fS3+LEDDrKwyq3ulSXmAxtOj6bqTCrwy8+GsfX7YQUTa32GPCpWvtd86naa3QHM5QmXh3vO7h6mfLzjKPn3CFkQENUQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754557335; c=relaxed/simple;
-	bh=QBUQi59mULcikjW6YDKMPtF01RPmGuFRMpesIoBMKLo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ARZl5x08+hw2heeqsLHn5CDw7LmIdSyY3sEGahi1lagqboyuGDT5wjD4MwkAmnQD/Vk3KsYIfXuEVIkRvyHQlhoWvOeJLxs8KW3D6gWsmp7gpB+0GkmMGhxQxKMuPfQeayiUhZYXrvAAzMgJGVBk8ybW6EEtcSklJ+//Oyc/baQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D+5kI0uf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W13copfP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754557331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QBUQi59mULcikjW6YDKMPtF01RPmGuFRMpesIoBMKLo=;
-	b=D+5kI0ufW2HFn0iQqjkcM48GCwxrDz5bypHeqMk68VNJC+DPWl0MX9lsA8TP6rB70a0FJ0
-	HESqRr1oeOTnqz1JHzgs+VblKNylMDF/hAN5trylpWIOa4Us1kIhKEi7Hfz2oyXlEhKThm
-	5ciQN1qAUEOl6Zj8iQJ2D7N4pk7BbIEsGe9rMUjvqzhBKbL6M5GRVohenswK9idE5td7JO
-	Qv10iKuV8SyeUBqqwhLOEBJ4z/lg2ALrBJjW8y2HWjxHAJguidtymf+U4N/WzkvqojgUGt
-	AjHVQjV2w6zGAmI1ycpgvx+SdeT/ndYecmm6mknLLXuaivbgMebV7Ryw1evdGA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754557331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QBUQi59mULcikjW6YDKMPtF01RPmGuFRMpesIoBMKLo=;
-	b=W13copfPQGGuYWBm+AX2OGBOkLnf2UhH8g0vjg5aVER5d/SsRZuga/ZUTpChEG8M45SEru
-	Dp7+gPnx46bpEMDQ==
-To: Nam Cao <namcao@linutronix.de>, Nirmal Patel
- <nirmal.patel@linux.intel.com>, Jonathan Derrick
- <jonathan.derrick@linux.dev>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan
- Sadhasivam
- <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>, Kenneth Crudup <kenny@panix.com>, Ammar
- Faizi <ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH] PCI: vmd: Fix wrong kfree() in vmd_msi_free()
-In-Reply-To: <20250807063857.2175355-1-namcao@linutronix.de>
-References: <20250807063857.2175355-1-namcao@linutronix.de>
-Date: Thu, 07 Aug 2025 11:02:10 +0200
-Message-ID: <87ectncxnx.ffs@tglx>
+	s=arc-20240116; t=1754829013; c=relaxed/simple;
+	bh=sEDCDrE6UaiWIhMD6cJ0TnbRfom7RnarYsp+lhz57OY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=Mg8uu46ts5oIw015Zke1cfEM+X6iUwtPeXh5zGn01Zz56A9BVi73lRw1UvLAeIODzv1bLYI30qjlLqXz/gKsIf+3mXnxQpz2n570P6lXSez0dr8OiP24iEAJaXzyAraFjW6Y+tO1Iotl6yVormGfDD80LAQeTQwTDop8eTUmH6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IQ5gOUvy; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250810123003epoutp0472da5288536c6f33ce283182e827c01b~aZ65ic5Bd2522625226epoutp04c
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 12:30:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250810123003epoutp0472da5288536c6f33ce283182e827c01b~aZ65ic5Bd2522625226epoutp04c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754829003;
+	bh=sEDCDrE6UaiWIhMD6cJ0TnbRfom7RnarYsp+lhz57OY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IQ5gOUvyFcZGwtSgMbiGJAoyFQo4ikbl2C/3Zdgt3kA1tkgR2apmqhdKWiz8jtkVO
+	 s4RNC0VM/Zy0VFoQRRMZjyKrDCHzx+Nts5DftITYTgAIgmd/f2MR64E8wDCiu4c8xW
+	 inl1fVkfDsa1rY5cqrhQn1PN6NKXoVZ99UdGL5qc=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250810123002epcas5p148fc2b449517f564baddc20b05aa29b4~aZ64j-aql1995119951epcas5p1K;
+	Sun, 10 Aug 2025 12:30:02 +0000 (GMT)
+Received: from epcpadp1new (unknown [182.195.40.141]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4c0HCZ2tRZz2SSKX; Sun, 10 Aug
+	2025 12:30:02 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250807090254epcas5p22d81d318908416ca3d5401b53bb7d2c0~ZcKLNR8ps0698406984epcas5p2K;
+	Thu,  7 Aug 2025 09:02:54 +0000 (GMT)
+Received: from test-PowerEdge-R740xd (unknown [107.99.41.79]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250807090252epsmtip1db8a8d52c1ea56c6cc1cc33ef1833a91~ZcKJXFbU30745807458epsmtip1p;
+	Thu,  7 Aug 2025 09:02:52 +0000 (GMT)
+Date: Thu, 7 Aug 2025 14:32:39 +0530
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
+	<dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, Dave
+	Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, Alison
+	Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	cpgs@samsung.com
+Subject: Re: [PATCH V2 00/20] Add CXL LSA 2.1 format support in nvdimm and
+ cxl pmem
+Message-ID: <1983025922.01754829002385.JavaMail.epsvc@epcpadp1new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20250730121209.303202-1-s.neeraj@samsung.com>
+X-CMS-MailID: 20250807090254epcas5p22d81d318908416ca3d5401b53bb7d2c0
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_76dae_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20250730121221epcas5p3ffb9e643af6b8ae07cfccf0bdee90e37
+References: <CGME20250730121221epcas5p3ffb9e643af6b8ae07cfccf0bdee90e37@epcas5p3.samsung.com>
+	<20250730121209.303202-1-s.neeraj@samsung.com>
 
-On Thu, Aug 07 2025 at 08:38, Nam Cao wrote:
+------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_76dae_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-> vmd_msi_alloc() allocates struct vmd_irq and stashes it into
-> irq_domain->irq-data->chip_data. vmd_msi_free() extracts the pointer by
-> calling irq_get_chip_data() and frees it.
+On 30/07/25 05:41PM, Neeraj Kumar wrote:
+>Introduction:
+>=============
+>CXL Persistent Memory (Pmem) devices region, namespace and content must be
+>persistent across system reboot. In order to achieve this persistency, it
+>uses Label Storage Area (LSA) to store respective metadata. During system
+>reboot, stored metadata in LSA is used to bring back the region, namespace
+>and content of CXL device in its previous state.
+>CXL specification provides Get_LSA (4102h) and Set_LSA (4103h) mailbox
+>commands to access the LSA area. nvdimm driver is using same commands to
+>get/set LSA data.
 >
-> irq_get_chip_data() returns the chip_data of the top interrupt domain. This
-> worked in the past, because VMD's interrupt domain was the top domain.
->
-> But since commit d7d8ab87e3e7 ("PCI: vmd: Switch to
-> msi_create_parent_irq_domain()") changed the interrupt domain hierarchy,
-> VMD's interrupt domain is not the top domain anymore. irq_get_chip_data()
-> now returns the chip_data of the MSI devices' interrupt domain. It is
-> therefore broken for vmd_msi_free() to kfree() this irq_data.
->
-> Fix this issue, correctly extract the chip_data of VMD's interrupt domain.
->
-> Fixes: d7d8ab87e3e7 ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
-> Reported-by: Kenneth Crudup <kenny@panix.com>
-> Closes: https://lore.kernel.org/linux-pci/dfa40e48-8840-4e61-9fda-25cdb3ad81c1@panix.com/
-> Reported-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> Closes: https://lore.kernel.org/linux-pci/ed53280ed15d1140700b96cca2734bf327ee92539e5eb68e80f5bbbf0f01@linux.gnuweeb.org/
-> Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-> Tested-by: Kenneth Crudup <kenny@panix.com>
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Hi Jonathan, Dave and Ira
+
+I have addressed the review comments of V1 patch-set and sent out this
+V2 Patch-set.
+0-Day Kernel Test bot has reported couple of minor issues which I will
+address in next series.
+
+Can you please have a look at this V2 series and let me know your
+feedback.
+
+
+Regards,
+Neeraj
+
+------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_76dae_
+Content-Type: text/plain; charset="utf-8"
+
+
+------CDBSwZz52MZUMeM1Rx6lI.cEW_5b_YZAAzr3v09AM7rvldzc=_76dae_--
+
 
