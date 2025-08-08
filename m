@@ -1,149 +1,251 @@
-Return-Path: <linux-kernel+bounces-759757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E10B1E208
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:14:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C3EB1E212
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7588B7A33BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D366218C39B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D342221F12;
-	Fri,  8 Aug 2025 06:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbT84UQJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BCD21D00D;
+	Fri,  8 Aug 2025 06:17:50 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8893521FF53;
-	Fri,  8 Aug 2025 06:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599FC43146;
+	Fri,  8 Aug 2025 06:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754633675; cv=none; b=hIY1dweeWxz2G8X/FuVjn6cynzdYvALt8w2+c3+QJclcDXyjqS/OtEYuxHIHfTxylLo/1ZZ+4voBDsBDy8h0Hz2RhwLgfbgbYRj2/f7vJtJR7sKZEDlo3JSUJtqZ32bCaE5v2Z+lVeRnd4pMjuzNEdXxg+3/a0WtR191sdBhf4Y=
+	t=1754633869; cv=none; b=s5a/duBrruqam28dc2E8E6Ej6X3j0aH0WcP1KZFYFudMo3NAi2CRqmu4moEPenezmF2QpIwuaLdxh3Ai0tVHe9YOcythoUWrbUIT90+qQiPuCDoRXAgzCtif7S97bqtKpNvcuyvb+gJJhC8eVwK1/IgwqyK3Ehgx/C9ROJLnHpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754633675; c=relaxed/simple;
-	bh=Y/W+sje0EboXCDX6Q4bMj+dHKJHYtmhocoOQxyyA9Pc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rvTdMsIdojOCyLEaTxGCiZsmeD9KiYRsDc+p1OXKzc8yMPIimyunfsdyJ0NcCDiJZ6ymRzO6ukygq2BsxBvKIq9kDG51nelUVT8KASiQiqtHqcYPdmQFQ8ksZW1aqK+xYxZEbT3YWmjq03D8HFmhldeowp+n6uTNapw3CApQdI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbT84UQJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10357C4CEED;
-	Fri,  8 Aug 2025 06:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754633675;
-	bh=Y/W+sje0EboXCDX6Q4bMj+dHKJHYtmhocoOQxyyA9Pc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KbT84UQJHgZo7GwSHXwLy3U6aFaTNupJQy/Kp1aZCNAvC+G+ID/uRR2wWByGWA6/8
-	 JhtVk4p5inYspk1jUGpEuOEySG64iw980qytzKkEel51qpojHDN65Z27riv+L/OnNb
-	 HM5jRMXGhQK812xn9vE+23FowOknc+PSplSApS+NSj3KKhsyUq1y/YT1vY2zMq00dX
-	 02VnTHwe9c1U7d2BrR7Ds473R/asyqvwPgJ8zbuLDSpedGyFdIVaKaXIiPxS04Dj7s
-	 OZL33/ikjaCdnBqYY7phHSCeiseelnEFCtjU5AA2yre6/8gD9dEkybD47kqfnsuSQX
-	 TA40zM+7AzBMQ==
-Message-ID: <14019ad9-0dd3-49f5-948e-5d0330b764c2@kernel.org>
-Date: Fri, 8 Aug 2025 08:14:30 +0200
+	s=arc-20240116; t=1754633869; c=relaxed/simple;
+	bh=cmAsMBvdaiFIRBmsQgKW2WADeetWcA/YHbrfYBriZuU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=R9zEchM0YAh3q4ycLmOhALXAp9ZIoCPq0dFGaz5+EpztT4U4mcOuKJvhwkKIslSM+jlhAVwPlBGQ42z1Loi/zXxIEYcybiAWXuIWSpK8lCxTs5Zi12nVNi1Pbn8wr0wpbEP6hkJdoIdWYyGez3+Jr/v2qDzsjs3JJPddE/cPqes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4byv2t0MHhzYQttR;
+	Fri,  8 Aug 2025 14:17:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A90161A07BB;
+	Fri,  8 Aug 2025 14:17:40 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAHzw+ClpVox_zaCw--.65529S3;
+	Fri, 08 Aug 2025 14:17:40 +0800 (CST)
+Subject: Re: [PATCH v5 11/11] md/md-llbitmap: introduce new lockless bitmap
+To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@lst.de, corbet@lwn.net, song@kernel.org, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, linan122@huawei.com, hare@suse.de,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250801070346.4127558-1-yukuai1@huaweicloud.com>
+ <20250801070346.4127558-12-yukuai1@huaweicloud.com>
+ <CALTww2-FTgDn9pD-Gmh8YKT-fU1ykk_QbB9J2KO8xQzrkAa_Bg@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <e7902d0b-713f-f245-733b-33fd23262496@huaweicloud.com>
+Date: Fri, 8 Aug 2025 14:17:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: qcom,sm8250: Add lemans-evk and
- monaco-evk sound card
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@oss.qualcomm.com
-References: <20250808052939.1130505-1-mohammad.rafi.shaik@oss.qualcomm.com>
- <20250808052939.1130505-2-mohammad.rafi.shaik@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250808052939.1130505-2-mohammad.rafi.shaik@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CALTww2-FTgDn9pD-Gmh8YKT-fU1ykk_QbB9J2KO8xQzrkAa_Bg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHzw+ClpVox_zaCw--.65529S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3WF1kWFy8Cr43JFWUXryxKrg_yoW7Ary8pF
+	WxW3WUGr45JryrXr1UXr97ZF95trs7JwnFqrZ3Aa4rGr1qyrs3Kry8GFyUC34kur97GF1D
+	Za15Gry3uw4rWrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 08/08/2025 07:29, Mohammad Rafi Shaik wrote:
-> Document the bindings for the Qualcomm LEMANS-EVK and MONACO-EVK
-> board specific sound card.
+Hi, Xiao
+
+在 2025/08/07 11:57, Xiao Ni 写道:
+>> +/* set all the bits in the subpage as dirty */
+>> +static void llbitmap_infect_dirty_bits(struct llbitmap *llbitmap,
+>> +                                      struct llbitmap_page_ctl *pctl,
+>> +                                      unsigned int block, unsigned int offset)
+>> +{
+>> +       bool level_456 = raid_is_456(llbitmap->mddev);
+>> +       unsigned int io_size = llbitmap->io_size;
+>> +       int pos;
+>> +
+>> +       for (pos = block * io_size; pos < (block + 1) * io_size; pos++) {
+>> +               if (pos == offset)
+>> +                       continue;
+> It looks like it doesn't need to pass the argument offset to this
+> function. The pctl->state[offset] must be BitDirty or BitNeedSync. So
+> the following switch/case can skip it. So it can save hundreds
+> comparing pos with offset here.
 > 
-> The bindings are the same as for other newer Qualcomm ADSP sound cards,
-> thus keep them in existing qcom,sm8250.yaml file, even though Linux driver
-> is separate.
+Ok.
+>> +
+>> +               switch (pctl->state[pos]) {
+>> +               case BitUnwritten:
+>> +                       pctl->state[pos] = level_456 ? BitNeedSync : BitDirty;
+>> +                       break;
+>> +               case BitClean:
+>> +                       pctl->state[pos] = BitDirty;
+>> +                       break;
+>> +               };
+>> +       }
+>> +
+>> +}
+>> +static void llbitmap_write(struct llbitmap *llbitmap, enum llbitmap_state state,
+>> +                          loff_t pos)
+>> +{
+>> +       unsigned int idx;
+>> +       unsigned int offset;
+> How about change offset to bit?
+
+Yes, and the follong name about bit.
+>> +static void llbitmap_write_page(struct llbitmap *llbitmap, int idx)
+>> +{
+>> +       struct page *page = llbitmap->pctl[idx]->page;
+>> +       struct mddev *mddev = llbitmap->mddev;
+>> +       struct md_rdev *rdev;
+>> +       int bit;
+> It's better to change name "bit" to "block"
+>> +static int llbitmap_init(struct llbitmap *llbitmap)
+>> +{
+>> +       struct mddev *mddev = llbitmap->mddev;
+>> +       sector_t blocks = mddev->resync_max_sectors;
+>> +       unsigned long chunksize = MIN_CHUNK_SIZE;
+>> +       unsigned long chunks = DIV_ROUND_UP(blocks, chunksize);
+>> +       unsigned long space = mddev->bitmap_info.space << SECTOR_SHIFT;
+>> +       int ret;
+>> +
+>> +       while (chunks > space) {
+>> +               chunksize = chunksize << 1;
+>> +               chunks = DIV_ROUND_UP(blocks, chunksize);
+>> +       }
+>> +
+>> +       llbitmap->barrier_idle = DEFAULT_BARRIER_IDLE;
+>> +       llbitmap->chunkshift = ffz(~chunksize);
+>> +       llbitmap->chunksize = chunksize;
+>> +       llbitmap->chunks = chunks;
+>> +       mddev->bitmap_info.daemon_sleep = DEFAULT_DAEMON_SLEEP;
+>> +
+>> +       ret = llbitmap_cache_pages(llbitmap);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       llbitmap_state_machine(llbitmap, 0, llbitmap->chunks - 1, BitmapActionInit);
+>> +       return 0;
+>> +}
+> There is a problem, if array is created with --assume-clean, it
+> doesn't need to start sync. And it doesn't have the chance to sync
+> llbitmap superblock to member disks. So it can't get the right bitmap
+> superblock information which is calculated here after a power off. It
+> needs to sync the superblock here.
 > 
-> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+Yes, you're right. The mdraid bitmap metadata is written by mdadm,
+dm-raid  bitmap metadata is write in kernel by md_update_sb(), llbitmap
+is missing a call to llbitmap_write_sb() after initializing, if
+md_update_sb() is never triggered, the bitmap metadata will be lost.
+
+>> +
+>> +static int llbitmap_create(struct mddev *mddev)
+>> +{
+>> +       struct llbitmap *llbitmap;
+>> +       int ret;
+>> +
+>> +       ret = llbitmap_check_support(mddev);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       llbitmap = kzalloc(sizeof(*llbitmap), GFP_KERNEL);
+>> +       if (!llbitmap)
+>> +               return -ENOMEM;
+>> +
+>> +       llbitmap->mddev = mddev;
+>> +       llbitmap->io_size = bdev_logical_block_size(mddev->gendisk->part0);
+>> +       llbitmap->blocks_per_page = PAGE_SIZE / llbitmap->io_size;
+>> +
+>> +       timer_setup(&llbitmap->pending_timer, llbitmap_pending_timer_fn, 0);
+>> +       INIT_WORK(&llbitmap->daemon_work, md_llbitmap_daemon_fn);
+>> +       atomic_set(&llbitmap->behind_writes, 0);
+>> +       init_waitqueue_head(&llbitmap->behind_wait);
+>> +
+>> +       mutex_lock(&mddev->bitmap_info.mutex);
+>> +       mddev->bitmap = llbitmap;
+>> +       ret = llbitmap_read_sb(llbitmap);
+>> +       mutex_unlock(&mddev->bitmap_info.mutex);
+>> +       if (ret)
+>> +               goto err_out;
+>> +
+>> +       return 0;
+>> +
+>> +err_out:
+>> +       kfree(llbitmap);
+> mddev->bitmap = NULL. If not,
+> md_run->md_bitmap_destroy->llbitmap_destroy will free it again.
+Yes.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> index 5d3dbb6cb1ae..c63bfe031b57 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> @@ -31,6 +31,8 @@ properties:
->            - fairphone,fp4-sndcard
->            - fairphone,fp5-sndcard
->            - qcom,apq8096-sndcard
-> +          - qcom,lemans-evk-sndcard
+>> +static void llbitmap_start_write(struct mddev *mddev, sector_t offset,
+>> +                                unsigned long sectors)
+>> +{
+>> +       struct llbitmap *llbitmap = mddev->bitmap;
+>> +       unsigned long start = offset >> llbitmap->chunkshift;
+>> +       unsigned long end = (offset + sectors - 1) >> llbitmap->chunkshift;
+>> +       int page_start = (start + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
+>> +       int page_end = (end + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
+>> +
+>> +       llbitmap_state_machine(llbitmap, start, end, BitmapActionStartwrite);
+>> +
+>> +
+> Two lines here, just need one.
+>> +/*
+>> + * Force to write all bitmap pages to disk, called when stopping the array, or
+>> + * every daemon_sleep seconds when sync_thread is running.
+>> + */
+>> +static void __llbitmap_flush(struct mddev *mddev)
+>> +{
+>> +       struct llbitmap *llbitmap = mddev->bitmap;
+>> +       struct blk_plug plug;
+>> +       int i;
+>> +
+>> +       blk_start_plug(&plug);
+>> +       for (i = 0; i < llbitmap->nr_pages; i++) {
+>> +               struct llbitmap_page_ctl *pctl = llbitmap->pctl[i];
+>> +
+>> +               /* mark all bits as dirty */
+> "mark all blocks as dirty" is better?
+> 
+>> +static void llbitmap_write_sb(struct llbitmap *llbitmap)
+>> +{
+>> +       int nr_bits = DIV_ROUND_UP(BITMAP_DATA_OFFSET, llbitmap->io_size);
+> s/nr_bits/nr_blocks/g
+> 
+> 
+> 
+> 
 
+Thanks again for the review!
+Kuai
 
-Lemans is already there under one of the QCS cards. I was told it is the
-same, so you do not get a new compatible.
-
-Monaco maybe as well.
-
-We also name standard cards per SoC, not per board, so evk should be
-dropped or commit msg should explain why this is different.
-
-
-Best regards,
-Krzysztof
 
