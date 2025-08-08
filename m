@@ -1,119 +1,209 @@
-Return-Path: <linux-kernel+bounces-760115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D54B1E6BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FF0B1E6C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B8216AA98
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:47:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06266168B3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED9023AB81;
-	Fri,  8 Aug 2025 10:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C83526159E;
+	Fri,  8 Aug 2025 10:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qsb+8VRk"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VbL35Fuy"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B016D5695;
-	Fri,  8 Aug 2025 10:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B58254849
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754650023; cv=none; b=e/Idt7Zsjt7l04F8EJbwF0Vwein81EXjOeDiAMAY95ddJCbg1NjBqTA20yLsyiOaColNIYeNMCQeI0OiPaE+APdIy8kTKD8OaxjXCY77+jXYbasFbgzsuXWe/1qrJNt8kbCXPTvBGjCSM5iCwNVpoJVSIK1/wXIjhn4D8YoD6zY=
+	t=1754650026; cv=none; b=WeUA2I56HnEzhyJzi8y9Fvr6vhzz0OO8DdklYS933wyCB2W45OUt2A+wNqwxKPkc+FqNoZglmv/i6/YKmoSIBTxB/gZSTIBNCJjKn18KePMG+OE6ky7hahmQGmzyrIa+T/+GQiiuLBL0HPPgPOVbxKTkECgyaxs60CIWEH/iBNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754650023; c=relaxed/simple;
-	bh=3ibipzUySSqHmtKXTWb4ha0TMTGI734ck1ABPHtXVpg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jo1b8+wE/djh13uav5wv4flcS+DoHJpiAmJsHgOADmplfmNxxp3zQHfbGPNvsu38G2uVBbAwfbp3r0pPNa0jMFjWtKfTO7Od0/rbcrTKvZyOwyaf9BiG6/BFleia3dSL4hlVerUTAbah57Q27RsTA2CJ5+Or5b06gAwp5CSwacI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qsb+8VRk; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b8de6f7556so1052541f8f.1;
-        Fri, 08 Aug 2025 03:47:01 -0700 (PDT)
+	s=arc-20240116; t=1754650026; c=relaxed/simple;
+	bh=T/9tDEacu9UlvMURMVhrDf6nZJFdlhByYvHn1E0d6ts=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=uH/3awiIR22dl48+4IHxptP3bdqlRFnt4u96sOIc2fQBxmXQW3QyRSmlVSwrfo22V0BnsOqOvDfydkJjY0eASiGXlMACLpLAnN+EZbv8AUWD6HqW6h1Z5Xu+YymuPE2mzAJsZ1GBIr5YtXtCbRRnJ7Cj9AknnrOfhuW1iEk0vXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VbL35Fuy; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso7145a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 03:47:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754650020; x=1755254820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9FTG6NMUrOc/WW0podSvrB6jKWxep/Y5whSGifB9nMY=;
-        b=Qsb+8VRkpCNf9AtoVkKdy1FK/V7E3opyx45Cdjbn/heWk+gPU4Hq+6qstNVrmKZFTu
-         cpOAzd+8nPK2Xb2+ek8cAA1u65KcwI2qotpwTlr8uuFy8ztVRdbCGUKbFS6rUg/rKNO7
-         CmBmhJWxLbafy0uBuXvC8QlfbzJmtO1jlDiLyi+B97d46R9OS7C5vtFyd9g9KsqYG3mL
-         rW8PRGR706Hxh+EjDhiXsytrQSUScNkTth3zheXKhJOhXSahxHnLxJm5lJ36oC0+2zYW
-         8hW7Fchxp/2qOdujjBINHbkMzgeZYgZviuUDCG3CJbqrDK2RMDzzLyBu7BR71HBzhBFr
-         cYIw==
+        d=google.com; s=20230601; t=1754650023; x=1755254823; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T/9tDEacu9UlvMURMVhrDf6nZJFdlhByYvHn1E0d6ts=;
+        b=VbL35FuyVwCwfuBSMi2zWwTJMGndryNlkGlU5yJDfKpcCVQygTy7jhOuKX1gLIlZFv
+         s+JDWeEhvmnj5S+wHA8s8OxDjhNu7aRI2vfQf5pPzytB3FIH9H5VXKfxNObWNmsvWmId
+         N9VzzWL63Uyn8n4V2/0bRCFxeBGhbmjZYrBJjm4LGFgb3ozDKIu86Z3RPSNYsIAYmLrQ
+         ZgugRK7uyElouDS13FduL/NrzGhvGBgzhpcx8Z5ZyR5osRBbYBTVr2xlmSI0eVUCnjYU
+         H1HdPYyRH6BGFhG1GVIsn6EmvwpOjI7KR7OuoQVJoOzC0ITooWDMfjv9mTxQAfG7uqTO
+         NxiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754650020; x=1755254820;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1754650023; x=1755254823;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9FTG6NMUrOc/WW0podSvrB6jKWxep/Y5whSGifB9nMY=;
-        b=uYxw4QfigttdQ5YZuwYtl1l8d9LFQjL6P3YNN7qJXoQdvEIMsF8x7DI/63Jm+ZSmrZ
-         XT1Sei4lQAR2Ia7IgBbvIo3jALW4UwzEvKADyNVEHw2q5HbigpYDOt8XrcvQxUTvDYpm
-         YU2yntoLk8ZvKoUi4XJD4ABs07xAYQtSgy3biXwO8JF7f9YBoaoaE+OywUoUapfdR4aV
-         g+8lHkO1aFGlZWLa1OYwGIp/QrKkKkjdgFbrasEpkKEMfEClyFISTR0rTe1ISTqRxOEd
-         2f+WbAac+vZ8SEkffhLit3FrmOU/HDpLBq8dkpjaGtJ48HSH2cZ9wTzwyzCG44FzMORZ
-         6Ecg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtnFWxFWnH93LyKUBrVA9snMLf7kpRmC5O1ZcDYI9Y1luGhyPYDvjfP7JvJvMDZRdBmQHInQ3Eu/ZU2Xw=@vger.kernel.org, AJvYcCWWjtlos3j1O0vRR8F4VAy5zX7Gmnv4M0sirp55NUzzcQ4KyipbnKNDnLWCZ2RuR4GiHaIb8gVmBlNIucM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwgqDAgHgE4TVYWNRScroSXdl1Hfkv1IF/a8hZOwDgE3kSc2qC
-	L2e1w4U8nATc8zKaecDg3SDOqKifOb422KSlb2c6NfNZ7OeJk0XXGKjmYzCK5m0wcDXWmw==
-X-Gm-Gg: ASbGncsrVZgcTb6HYQoSqTLAwGyGLY74EuL+MfN3XqbWaZBkvgDtOeXYqBcpALuJLrD
-	0am3sY5AunRLCTPls6aEe6qm+brz8V7RYAzlx2rSYwqDQ5WZHx2rVOObWLyoOboeNae/GdZQ0Wp
-	Pk87ZCzmK8Wc574O00FuahsULMgURaeJHdJxx+PfMHCMY7XujTTOTFMNMQmlto7ZsFpFw3UAdeb
-	MEOQIFAJeZ6m2pNeQE6NPtI963Nrzxu4sJA5z8x+QyeXIH21nHKPPQWjvyTT3ogE/Y9hQ83sV7U
-	t6YDtCENAwjZDhqJbSpjw/6DcWNB/lJmz/wn4hlPraoa4R2aNPMCMbZb0cwlxjdCKuGP5lQCGcT
-	LOHbaYaI7nBl4VX8I5ssT
-X-Google-Smtp-Source: AGHT+IEYUwqFOg/SdjZy3Bry6MSmnKWOEJY2K+fn9aIueqnuNBAKZ+hlmkh9LLEtXckFUPI6/qyInA==
-X-Received: by 2002:a05:6000:290a:b0:3b8:fa8c:f1b3 with SMTP id ffacd0b85a97d-3b900b55f36mr2067409f8f.53.1754650019887;
-        Fri, 08 Aug 2025 03:46:59 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c489e81sm30290727f8f.68.2025.08.08.03.46.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 03:46:59 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ALSA: hda: Fix spelling mistake "dismatch" -> "mismatch"
-Date: Fri,  8 Aug 2025 11:46:21 +0100
-Message-ID: <20250808104621.829448-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        bh=T/9tDEacu9UlvMURMVhrDf6nZJFdlhByYvHn1E0d6ts=;
+        b=qEVBjCMfUQ7WzXUwI3EhCvRxWcfHaoZ76VJJ0qRsgYKiriCwMAT2t0N+ekq/9TB6+5
+         cWDGm24hNMTx+7G4tI/jON2b1JoEfgqyfGvHEBWjPPHsv75nmphI1eNTRdEKldz9m1Bk
+         lE+79YFrubqCEOa/OxkOGrLCYnrF4eHsydKEQDP2nXI2RniDucJaeGrtX3Fxtnyaz0pw
+         dF7bD5CCvL/hblHkw/RoOtQx2KJ6Kdd1weJzaJmWmbr3jI+RxUZbaWNMFNVv+4ReoJWy
+         hUgU4OG8vH6hdi7JUt6TRcCVWwL9IyxVIeojK7WmuRrq29BD0guPHggo/7BEoo3sE+zJ
+         o2jQ==
+X-Gm-Message-State: AOJu0YyOjEGNM9y6inqT/oGEi7UCUKhyi76ceI8cDizMM+hAEVPgKQpQ
+	3yxlTOpuLB498TS+/A6jfqZZep76W3QktpIFO+cz6SqQE17UOkJBKz2QLhwh3pz1eNdixIhShvB
+	ANr+A0ReOtKYXXp6t4jYYhtk73KWNeVt2S7S2bZ3p3Is+vCbJCeNhAjxV
+X-Gm-Gg: ASbGnct63Y74/QZCT0Ik2looFwwd7qZ3KfxDkbsKnisr4XHccEO/Nsk9ME3e/c9Kscl
+	o5Fuknu7oiHjlqiEl2GZRytdRqyawPL0RNcR0Yt+FSQ3D7Ai9W5kn3jErsZ1j370Z8mzNGaio+b
+	+e7pfvbNCozIeo5DJBjhX0MQAzTy+4WxqpVknI/EDYOMPUJ0veVn+pHz6mapQCu5QIJPxI1cPKm
+	oDdlnNAZq9MuUeFCk4HkGQI/ptTIpbGWw==
+X-Google-Smtp-Source: AGHT+IFqOmNnaK5hefSrnjtM0v0uNXgTRRJ7WOVrAmeMc2Mba23uf6PFMYJdn94b5J227yyK03JrXiS6iK15JVlPDHg=
+X-Received: by 2002:a50:8ac9:0:b0:615:6167:4835 with SMTP id
+ 4fb4d7f45d1cf-617e4938cc5mr58598a12.7.1754650022459; Fri, 08 Aug 2025
+ 03:47:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: Jann Horn <jannh@google.com>
+Date: Fri, 8 Aug 2025 12:46:26 +0200
+X-Gm-Features: Ac12FXz5MNEBgvVXLpyOXJS0S3xY8nUmV94N9fcForngE0yiRR5U9n3XjTzYizU
+Message-ID: <CAG48ez0ww6FhoidYcBzw-1LOSFr_OW=j5X7ch32Go1dgRo7e2A@mail.gmail.com>
+Subject: abusing CONFIG_RANDOMIZE_KSTACK_OFFSET to assist with exploitation
+To: Kernel Hardening <kernel-hardening@lists.openwall.com>, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Marco Elver <elver@google.com>
+Cc: kernel list <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake (or neologism of dis and match) in a
-dev_err message. Fix it.
+Hi!
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I just published a blogpost
+(https://googleprojectzero.blogspot.com/2025/08/from-chrome-renderer-code-e=
+xec-to-kernel.html)
+about how I wrote a kernel exploit that uses an AF_UNIX bug to go from
+"attacker can run arbitrary native code in a sandboxed Chrome
+renderer" to kernel page table control.
 
-diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-index 45ac5e41bd4f..e1d60da50897 100644
---- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-+++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
-@@ -356,7 +356,7 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
- 	}
- 
- 	if (cd->total_sz != offset) {
--		dev_err(p->dev, "%s: tot_size(%lu) and offset(%u) dismatch\n",
-+		dev_err(p->dev, "%s: tot_size(%lu) and offset(%u) mismatch\n",
- 			__func__, cd->total_sz, offset);
- 		return -EINVAL;
- 	}
--- 
-2.50.1
+One aspect that I think I should call out in particular is that
+CONFIG_RANDOMIZE_KSTACK_OFFSET was actually helpful for this exploit -
+when I was at a point where I already had a (semi-)arbitrary read
+primitive, I could use the combination of
+CONFIG_RANDOMIZE_KSTACK_OFFSET and the read primitive to line up
+things on the stack that would otherwise never have been in the right
+spot.
 
+Quoting two sections from my linked blogpost that are directly
+relevant for CONFIG_RANDOMIZE_KSTACK_OFFSET:
+<<<
+## Finding a reallocation target: The magic of `CONFIG_RANDOMIZE_KSTACK_OFF=
+SET`
+[...] I went looking for some other allocation which would place an
+object such that incrementing the value at address 0x...44 leads to a
+nice primitive. It would be nice to have something there like an
+important flags field, or a length specifying the size of a pointer
+array, or something like that. I spent a lot of time looking at
+various object types that can be allocated on the kernel heap from
+inside the Chrome sandbox, but found nothing great.
+
+Eventually, I realized that I had been going down the wrong path.
+Clearly trying to target a heap object was foolish, because there is
+something much better: It is possible to reallocate the target page as
+the topmost page of a kernel stack!
+
+That might initially sound like a silly idea; but Debian's kernel
+config enables `CONFIG_RANDOMIZE_KSTACK_OFFSET=3Dy` and
+`CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT=3Dy`, **causing each syscall
+invocation to randomly shift the stack pointer down by up to 0x3f0
+bytes, with 0x10 bytes granularity**. That is supposed to be a
+security mitigation, but works to my advantage when I already have an
+arbitrary read: instead of having to find an overwrite target that is
+at a 0x44-byte distance from the preceding 0x100-byte boundary, I
+effectively just have to find an overwrite target that is at a
+0x4-byte distance from the preceding 0x10-byte boundary, and then keep
+doing syscalls and checking at what stack depth they execute until I
+randomly get lucky and the stack lands in the right position.
+
+With that in mind, I went looking for an overwrite target on the
+stack, strongly inspired by [Seth's exploit that overwrote a spilled
+register containing a length used in
+`copy_from_user`](https://googleprojectzero.blogspot.com/2022/12/exploiting=
+-CVE-2022-42703-bringing-back-the-stack-attack.html).
+Targeting a normal `copy_from_user()` directly wouldn't work here - if
+I incremented the 64-bit length used inside `copy_from_user()` by 4
+GiB, then even if the copy failed midway through due to a userspace
+fault, `copy_from_user()` would try to `memset()` the remaining kernel
+memory to zero.
+
+I discovered that, on the codepath `pipe_write -> copy_page_from_iter
+-> copy_from_iter`, the 64-bit length variable `bytes` of
+`copy_page_from_iter()` is stored in register `R14`, which is spilled
+to the stack frame of `copy_from_iter()`; and this stack spill is in a
+stack location where I can clobber it.
+
+When userspace calls `write()` on a pipe, the kernel constructs an
+iterator (`struct iov_iter`) that encapsulates the userspace memory
+range passed to `write()`. (There are different types of iterators
+that can encapsulate a single userspace range, a set of userspace
+ranges, or various types of kernel memory.) Then, `pipe_write()`
+(which is called `anon_pipe_write()` in newer kernels) essentially
+runs a loop which allocates a new `pipe_buffer` slot in the pipe,
+places a new page allocation in this pipe buffer slot, and copies up
+to a page worth of data (`PAGE_SIZE` bytes) from the `iov_iter` to the
+pipe buffer slot's page using `copy_page_from_iter()`.
+`copy_page_from_iter()` effectively receives two length values: The
+number of bytes that fit into the caller-provided page (`bytes`,
+initially set to `PAGE_SIZE` here) and the number of bytes available
+in the `struct iov_iter` encapsulating the userspace memory range
+(`i->count`). The amount of data that will actually be copied is
+limited by both.
+
+If I manage to increment the spilled register `R14` which contains
+`bytes` by 4 GiB while `copy_from_iter()` is busy copying data into
+the kernel, then after `copy_from_iter()` returns,
+`copy_page_from_iter()` will effectively no longer be bounded by
+`bytes`, only by `i->count` (based on the length userspace passed to
+`write()`); so it will do a second iteration, which copies into
+out-of-bounds memory behind the pipe buffer page. If userspace calls
+`write(fd, buf, 0x3000)`, and the overwrite happens in the middle of
+copying bytes 0x1000-0x1fff of the userspace buffer into the second
+pipe buffer page, then bytes 0x2000-0x2fff will be written
+out-of-bounds behind the second pipe buffer page, at which point
+`i->count` will drop to 0, terminating the operation.
+>>>
+
+<<<
+# Takeaway: probabilistic mitigations against attackers with arbitrary read
+
+When faced with an attacker who already has an arbitrary read
+primitive, probabilistic mitigations that randomize something
+differently on every operation can be ineffective if the attacker can
+keep retrying until the arbitrary read confirms that the randomization
+picked a suitable value or even work to the attacker's advantage by
+lining up memory locations that could otherwise never overlap, as done
+here using the kernel stack randomization feature.
+
+Picking per-syscall random stack offsets at boottime might avoid this
+issue, since to retry with different offsets, the attacker would have
+to wait for the machine to reboot or try again on another machine.
+However, that would break the protection for cases where the attacker
+wants to line up two syscalls that use the same syscall number (such
+as different `ioctl()` calls); and it could also weaken the protection
+in cases where the attacker just needs to know what the randomization
+offset for some syscall will be.
+
+Somewhat relatedly,
+[Blindside](https://www.vusec.net/projects/blindside/) demonstrated
+that this style of attack can be pulled off without a normal arbitrary
+read primitive, by =E2=80=9Cexploiting=E2=80=9D a real kernel memory corrup=
+tion bug
+during speculative execution in order to leak information needed for
+subsequently exploiting the same memory corruption bug for real.
+>>>
 
