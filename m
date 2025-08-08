@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-760169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670B9B1E757
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:29:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D693B1E755
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615D6587BC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C5AA18845EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5596F2749E8;
-	Fri,  8 Aug 2025 11:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F5B2749F1;
+	Fri,  8 Aug 2025 11:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EM9N/akd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nhwTd2ed"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A7F27467A;
-	Fri,  8 Aug 2025 11:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2A0256C6F
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652514; cv=none; b=utlfOKeP08TWyoJXnOdMJK2vOuppbsYd6ka/AmRDJVf0Lu/WxsWyM/6LwfDtLec0Df3Pa+KDMY1tFoj166q+rIAj6Edo3PU1lKhk3bl6ylDcI4fXTSu6pk6yQEm6flXB1TBrkiQiZw8fLNkzf9w7f1s0G33D4vGChhiD9WEhFIM=
+	t=1754652558; cv=none; b=HZ0WF3eCrClvcyaE1szeSMfyCeovLfNmJT929kVTyjZZI+XdMEKu1O193FBfKfpyCRlKSiFpVcEYAYEcuKQ1J4xlR0m+oedS3DtboS+b2yP+QT4+UGNOeOalsVdCDiXxelpABamLemNkWp4Bo44wA4Hk32GnOjDjv9g4mFpsU5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652514; c=relaxed/simple;
-	bh=7bjZzLfO9fl1ghbHcTqWmndQHxP4RCvD8GzQZJjMcHE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Uqev8xKZCWQLjq3kRfd/Gm0pAWrPRQAGrljY0j5JYKoDXc/4UqMxvdENFHz8cFO7VlS8JoDsGngLRQZo/p1R2zs/yLGp5r2DfT6l1EuiznQvR4MHPuZZPlT3aczZePN3I2t/VfdTpyXKJ4dLeYMkS3uWAv8DiGtFwr5ErYZ83Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EM9N/akd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D52C4CEED;
-	Fri,  8 Aug 2025 11:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754652514;
-	bh=7bjZzLfO9fl1ghbHcTqWmndQHxP4RCvD8GzQZJjMcHE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=EM9N/akdd5EknCUIRfNSycnmf+GuuLwx9r1iowOgI1VM/jPQJJWuTe2M0lx0BCn62
-	 7ZJZSQ8QPw4PqxA3E7U0+yIrHQZQeATd5AYlunMxnVVvZWTDPCfTicAT0WobVXjfdP
-	 qAaqRL8W/f20T5FDrzmj4TI/NVMtel/Vur+PgekEOSgDoqkTqBWpz3mfJiTtWKT3kK
-	 pRUnPPM6tBDkZBCEfnDCMrAeK5NqhPOWuxZQ+FkxBCvlkPB5K7ZFj5NdL//rfUHp3r
-	 JQSeLsGt2mezuOoIzXIH5b/tSYvkvtRRvvukOVKBp96rhpHiU+4ZKlUa79r0A3m4lW
-	 p+zYV/qcchcFQ==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Mike Rapoport <rppt@kernel.org>,  <oe-lkp@lists.linux.dev>,
-  <lkp@intel.com>,  <linux-kernel@vger.kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Graf <graf@amazon.com>,  Changyuan
- Lyu <changyuanl@google.com>,  Pasha Tatashin <pasha.tatashin@soleen.com>,
-  Pratyush Yadav <pratyush@kernel.org>,  Shuah Khan <shuah@kernel.org>,
-  <kexec@lists.infradead.org>,  <linux-mm@kvack.org>
-Subject: Re: [linus:master] [kho]  b753522bed:
- INFO:trying_to_register_non-static_key
-In-Reply-To: <202508081032.1450e413-lkp@intel.com>
-References: <202508081032.1450e413-lkp@intel.com>
-Date: Fri, 08 Aug 2025 13:28:31 +0200
-Message-ID: <mafs0sei2aw80.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1754652558; c=relaxed/simple;
+	bh=TBJ59euEFZvE5z9IZ8MPSF77dcNwPaN6yTb2xeo5BJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=JnnbN6fNILKnUAgmUE4yUsEScI0zNIjcbgLZ4tX4ew/prh+WoTZKmHTRH4378Y08OMJ2yvfEmoBBUaGcU5k7Xu6LBu2bpv4zuDcNL/cK64gv10aQwYCmBR50VToWBtgs5y5pxSZR3iVpXbVKAv5Yrde0tD7kstCoqXfAOwb675w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nhwTd2ed; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250808112913epoutp0496abfcb1cedec2b4837e67acb8ee3e66~ZxzN9EOWm1603816038epoutp04N
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:29:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250808112913epoutp0496abfcb1cedec2b4837e67acb8ee3e66~ZxzN9EOWm1603816038epoutp04N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754652553;
+	bh=TBJ59euEFZvE5z9IZ8MPSF77dcNwPaN6yTb2xeo5BJc=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=nhwTd2edMbLxPe+E5gCk6fUsXyN52PmqUMpPwRyryDyoXhiMWJDEmOh1VfphwxrWk
+	 YS/TwHqM0TFbnal5t8BcDo47azeCnm6OFZ6fOLa+lL70Feef8VAFhKiXnZL1qbKE/E
+	 3eP7v1Amvf+va5Ddqk9QY1pQaGyP8qOuQxcu5d1I=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250808112913epcas5p4abe581c8ef0c10c7a5cdad9e31e31035~ZxzNcwFlt1928619286epcas5p4N;
+	Fri,  8 Aug 2025 11:29:13 +0000 (GMT)
+Received: from epcas5p1.samsung.com (unknown [182.195.38.90]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bz1yJ26BQz6B9m5; Fri,  8 Aug
+	2025 11:29:12 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250808112911epcas5p19e8d412d90d69c2bbac4fe1b7347343e~ZxzMDNaNF0130801308epcas5p1u;
+	Fri,  8 Aug 2025 11:29:11 +0000 (GMT)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250808112909epsmtip1c5cc52df52ec72f61267b3ccbfd0e1d8~ZxzJ1UsIh2461024610epsmtip1t;
+	Fri,  8 Aug 2025 11:29:09 +0000 (GMT)
+Message-ID: <03f1ab21-3fa7-41b1-a59e-91f1d9dca2f1@samsung.com>
+Date: Fri, 8 Aug 2025 16:59:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: dwc3: Remove WARN_ON for device endpoint
+ command timeouts
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
+	m.grzeschik@pengutronix.de, balbi@ti.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, akash.m5@samsung.com, hongpooh.kim@samsung.com,
+	eomji.oh@samsung.com, shijie.cai@samsung.com, alim.akhtar@samsung.com,
+	muhammed.ali@samsung.com, thiagu.r@samsung.com, stable@vger.kernel.org
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <20250808105218.WmVk--eM@linutronix.de>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250808112911epcas5p19e8d412d90d69c2bbac4fe1b7347343e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250807014905epcas5p13f7d4ae515619e1e4d7a998ab2096c32
+References: <CGME20250807014905epcas5p13f7d4ae515619e1e4d7a998ab2096c32@epcas5p1.samsung.com>
+	<20250807014639.1596-1-selvarasu.g@samsung.com>
+	<20250808090104.RL_xTSvh@linutronix.de>
+	<20c46529-b531-494a-9746-2084a968639e@samsung.com>
+	<20250808105218.WmVk--eM@linutronix.de>
 
-On Fri, Aug 08 2025, kernel test robot wrote:
 
-> Hello,
+On 8/8/2025 4:22 PM, Sebastian Andrzej Siewior wrote:
+> On 2025-08-08 16:07:25 [+0530], Selvarasu Ganesan wrote:
+>> Thank you for pointing out the discrepancy. We will ensure that the
+>> patch submission accurately reflects the authorship.
+>>
+>> Since I, "Selvarasu Ganesan" am the author, I will reorder the sign-offs
+>> to reflect the correct authorship.
+>>
+>> Here is the corrected patch submission:
+>>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+>> Signed-off-by: Akash M <akash.m5@samsung.com>
+>>
+>> Regarding the next steps, I will post a new patchset with the reordered
+>> sign-offs.
+> Your sign-off (as the poster) should come last.
+> What is Akash' role in this?
+
+
+Akash M's role in the patch as a co-contributor.
+Shall i add tag as Co-developed-by: Akash M <akash.m5@samsung.com>?
+
+Cc: stable@vger.kernel.org
+Co-developed-by: Akash M <akash.m5@samsung.com>
+Signed-off-by: Akash M <akash.m5@samsung.com>
+Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+
+
+>> Thanks,
+>> Selva
+> Sebastian
 >
-[...]
 >
->
-> [   59.011407][    T1] INFO: trying to register non-static key.
-> [   59.011783][    T1] The code is fine but needs lockdep annotation, or maybe
-> [   59.011783][    T1] you didn't initialize this object before use?
-> [   59.011783][    T1] turning off the locking correctness validator.
-> [   59.011783][    T1] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G                T   6.16.0-rc5-00079-gb753522bed0b #1 PREEMPT(voluntary)
-> [   59.011783][    T1] Tainted: [T]=RANDSTRUCT
-> [   59.011783][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [   59.011783][    T1] Call Trace:
-
-Pasha, I think your patch [0] fixes this. Perhaps it is a good idea for
-it to land independent of the LUO patches, since those are likely to
-take some more time?
-
-[0] https://lore.kernel.org/lkml/20250807014442.3829950-2-pasha.tatashin@soleen.com/
-
-> [   59.011783][    T1]  <TASK>
-> [ 59.011783][ T1] dump_stack_lvl (lib/dump_stack.c:123) 
-> [ 59.011783][ T1] assign_lock_key (kernel/locking/lockdep.c:988) 
-> [ 59.011783][ T1] register_lock_class (kernel/locking/lockdep.c:?) 
-> [ 59.011783][ T1] __lock_acquire (kernel/locking/lockdep.c:?) 
-> [ 59.011783][ T1] lock_acquire (kernel/locking/lockdep.c:5871) 
-> [ 59.011783][ T1] ? xa_load_or_alloc (include/linux/xarray.h:699 kernel/kexec_handover.c:106) 
-> [ 59.011783][ T1] ? tracer_preempt_off (kernel/trace/trace_irqsoff.c:412) 
-> [ 59.011783][ T1] _raw_spin_lock (include/linux/spinlock_api_smp.h:133 kernel/locking/spinlock.c:154) 
-> [ 59.011783][ T1] ? xa_load_or_alloc (include/linux/xarray.h:699 kernel/kexec_handover.c:106) 
-> [ 59.011783][ T1] xa_load_or_alloc (include/linux/xarray.h:699 kernel/kexec_handover.c:106) 
-> [ 59.011783][ T1] __kho_preserve_order (kernel/kexec_handover.c:156) 
-> [ 59.011783][ T1] kho_test_init (lib/test_kho.c:84) 
-> [ 59.011783][ T1] ? __cfi_kho_test_init (lib/test_kho.c:271) 
-> [ 59.011783][ T1] do_one_initcall (init/main.c:1274) 
-> [ 59.011783][ T1] ? __cfi_kho_test_init (lib/test_kho.c:271) 
-> [ 59.011783][ T1] ? kasan_save_track (arch/x86/include/asm/current.h:25 mm/kasan/common.c:60 mm/kasan/common.c:69) 
-> [ 59.011783][ T1] ? kasan_save_track (mm/kasan/common.c:48 mm/kasan/common.c:68) 
-> [ 59.011783][ T1] ? __kasan_kmalloc (mm/kasan/common.c:398) 
-> [ 59.011783][ T1] ? tracer_hardirqs_off (kernel/trace/trace_irqsoff.c:412) 
-> [ 59.011783][ T1] ? do_initcalls (include/linux/slab.h:909 include/linux/slab.h:1039 init/main.c:1345) 
-> [ 59.011783][ T1] ? kernel_init_freeable (init/main.c:1588) 
-> [ 59.011783][ T1] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:452) 
-> [ 59.011783][ T1] ? tracer_hardirqs_off (kernel/trace/trace_irqsoff.c:412) 
-> [ 59.011783][ T1] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:452) 
-> [ 59.011783][ T1] ? irqentry_exit (kernel/entry/common.c:311) 
-> [ 59.011783][ T1] ? next_arg (lib/cmdline.c:273) 
-> [ 59.011783][ T1] ? parameq (kernel/params.c:91) 
-> [ 59.011783][ T1] ? parse_args (kernel/params.c:?) 
-> [ 59.011783][ T1] do_initcall_level (init/main.c:1335) 
-> [ 59.011783][ T1] do_initcalls (init/main.c:1349) 
-> [ 59.011783][ T1] kernel_init_freeable (init/main.c:1588) 
-> [ 59.011783][ T1] ? __cfi_kernel_init (init/main.c:1466) 
-> [ 59.011783][ T1] kernel_init (init/main.c:1476) 
-> [ 59.011783][ T1] ? __cfi_kernel_init (init/main.c:1466) 
-> [ 59.011783][ T1] ret_from_fork (arch/x86/kernel/process.c:154) 
-> [ 59.011783][ T1] ? __cfi_kernel_init (init/main.c:1466) 
-> [ 59.011783][ T1] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
-> [   59.011783][    T1]  </TASK>
-
--- 
-Regards,
-Pratyush Yadav
 
