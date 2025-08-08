@@ -1,99 +1,82 @@
-Return-Path: <linux-kernel+bounces-759837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310E7B1E388
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:37:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6338CB1E367
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40749584A49
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35875859C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D5D2749CA;
-	Fri,  8 Aug 2025 07:28:29 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE163239E62;
+	Fri,  8 Aug 2025 07:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dayFCIAA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694F7224AF9
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B012264B0;
+	Fri,  8 Aug 2025 07:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638108; cv=none; b=XPK3MC41zfxAyFv7u5ltFAxDmT/xg4x3lDeMUQJaO7DSKywoTSl3XerRvByzSeRGSE/W+ZqQbJqZQvSTupm7awXSreA1Gb0J9w65n6XgfDp5utUD1WA2QWS3UisJVGhzD2W6SCaQfHwmr6b5MW7r7yiWhHKC0PSlDytLi343zjE=
+	t=1754638161; cv=none; b=dvlw6CZcyPeEzyBtjWUwJzmLpHWCmickWjbk0ou1COo99g74FXQelKMV7fAIj2ullYDc9vEtPsXfYhmzhjbYh+kP5q/I+p4cbaMrvJ1L9d5go1oohLyEoqrfBNqUSWnPOTpQlnwKZQuX+959QV6+Y4isMjrtVpmTpWENagqKLs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638108; c=relaxed/simple;
-	bh=WN1V6yRyJ3onv3rvnAMeyzF2zAArTPYEpwhlnOArAmM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WNfGdFygMuDRKvUkCGGV2/rxS/iMKNcVDpxOTQn7pH9TbcGiNuSBNJ9sj83OD6FSPdqkmXCNzpEe/rLbJs4HxvnzJJ8k56jIctGeScRo0ykpsO0+VqkaGFizIaU3k0AEs/HTQ9u2sewJ1uz5bfGn+Ex9gBqzWx0P64BX9Z5y6Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-881776a2c22so403263339f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 00:28:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754638106; x=1755242906;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t/a35FeMXcLyPHOaDsyqFQMi+gYIhEq1it06M3z49ms=;
-        b=gTFDuKvDBeE/+4d+zVHqMM4FCiuZvqmaTXktxPn4+24MEenftkteSAKDEoatabygNV
-         F/YLxS9wKyKNVyZdozIlsS9ToRxrGvA5axOugRrUwXt2HfEk2U3Rd1IoRX5Kfk2yIJ4d
-         2VGVHRnlzt6hclL3rWSZWehuj0C1le0lQG+c9FfbNeNzWaox2FZ9neZvWEK7aEgTulIr
-         7uA93K5d9Tj/rKSsvR3ESe6iLYKXzA12HCTlhrZo777qoWdwC4TsjgCXe4aR2bRoLz6l
-         I8pL1++lYs6wxiTWuMHLaymRBEPZtkNG7h5RHsxxQJL1uP22tDcftVUkqeBz8mjyzlyn
-         Dy7w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/pcRUcvkGJedlO7JdYSzouMuEDZ+Spxtpz9NYOMwLG2c1b8zwFowc3MMr9++pmY6eHyViXKFH4SdhPGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTpy7L9tQt+3F+8uoBTlweyPIm7a4Z4as6acCb/eWwmRWIzqFS
-	lgsRnqu8+v62HzDiXxWdrtNFgesvVphE8wrZPyuH8yjM4k2p3MOl10mwAI86BMgyS1rLkeMqgc9
-	ag7G75dsz9Q5AXtEHWizwVhELgd3vaXjSh8n3EF/NdBubiFfH6u03RK0PosI=
-X-Google-Smtp-Source: AGHT+IEp8c7QV3AN+fKWmFyPuh00UU3Ig82a4VQ9v8HNUDVelYcjEJjN1v5lCDAGIwJaemzQJj7Ran6EEVeqkf75mh7u3cxneHfN
+	s=arc-20240116; t=1754638161; c=relaxed/simple;
+	bh=Mk0AwKBJB1G02alhUoj1s2//Zir6rQq1FnyFyjJ8uug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iYwYSrwBWn0QMQPWJlpcBCYCAo98oZ/Dyu0sI+9ZtSZeVV/zhYP5kmt9Hh/jqOoGsn4/HQdn0aSgNeu9qACtV9cjHaomr1DTgE/gXRU0lr2DZ3nF3iCgwcjzyfCqVvucuOAn6vCAUZwq9edrgED9UoHU7DFYr7iL8qBfRSUwBuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dayFCIAA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD8EC4CEED;
+	Fri,  8 Aug 2025 07:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754638158;
+	bh=Mk0AwKBJB1G02alhUoj1s2//Zir6rQq1FnyFyjJ8uug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dayFCIAABjhGsQl3gRNSkUBbATIoynyV8lNeOkq2M8g/Fb5dIQjUqfOOGXIAwGnDK
+	 uFazo4qToFaLnkYW2gUdxEdtItxXTBkGJvyb4aYsxqRWBYw78mTPQhCtAd/YpJz+44
+	 /p7GvnQWMOI+5MJqS5JcLFH1YuOWr2XECHGWWLzze+p0jH7fmafQ74BfzjaAztJtF3
+	 oPrbthQDpHJ+pe+USD6MC9ldFo9q0vI2BxOzOYWGY70hNtFE/lHYdhD1U9JJcf8TC5
+	 JFfhRN/F8x2GPlrPHfOsOfLxDlodPm8RoVQjiQTXCl1or42JqNWIv/PuoOnB/Jp7B6
+	 lump98/ZfuMKQ==
+Date: Fri, 8 Aug 2025 09:29:16 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, mani@kernel.org, 
+	conor+dt@kernel.org, bvanassche@acm.org, andersson@kernel.org, 
+	neil.armstrong@linaro.org, dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org, 
+	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V1 2/4] arm64: dts: qcom: sm8750: add max-microamp for
+ UFS PHY and PLL supplies
+Message-ID: <20250808-calm-boa-of-swiftness-a4a7ce@kuoka>
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-3-quic_nitirawa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:84c2:0:b0:881:7e3a:4a37 with SMTP id
- ca18e2360f4ac-883f11e38bdmr309075639f.6.1754638106549; Fri, 08 Aug 2025
- 00:28:26 -0700 (PDT)
-Date: Fri, 08 Aug 2025 00:28:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6895a71a.050a0220.7f033.0056.GAE@google.com>
-Subject: [syzbot] Monthly perf report (Aug 2025)
-From: syzbot <syzbot+list72eae33f52f6a337d370@syzkaller.appspotmail.com>
-To: acme@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, mingo@redhat.com, namhyung@kernel.org, 
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250806154340.20122-3-quic_nitirawa@quicinc.com>
 
-Hello perf maintainers/developers,
+On Wed, Aug 06, 2025 at 09:13:38PM +0530, Nitin Rawat wrote:
+> Add `vdda-phy-max-microamp` and `vdda-pll-max-microamp` properties to
+> the UFS PHY node in the device tree.
+> 
+> These properties define the maximum current (in microamps) expected
+> from the PHY and PLL regulators. This allows the PHY driver to
+> configure regulator load accurately and ensure proper regulator
+> mode based on load requirements.
 
-This is a 31-day syzbot report for the perf subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/perf
+That's not the property of phy, but regulator.
 
-During the period, 1 new issues were detected and 1 were fixed.
-In total, 3 issues are still open and 27 have already been fixed.
+Also reasoning is here incomplete - you just post downstream code. :/
 
-Some of the still happening issues:
+Best regards,
+Krzysztof
 
-Ref Crashes Repro Title
-<1> 7542    Yes   WARNING: suspicious RCU usage in get_callchain_entry
-                  https://syzkaller.appspot.com/bug?extid=72a43cdb78469f7fbad1
-<2> 43      Yes   WARNING in __perf_event_overflow (2)
-                  https://syzkaller.appspot.com/bug?extid=2524754f17993441bf66
-<3> 2       No    KASAN: slab-use-after-free Read in __task_pid_nr_ns
-                  https://syzkaller.appspot.com/bug?extid=e0378d4f4fe57aa2bdd0
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
