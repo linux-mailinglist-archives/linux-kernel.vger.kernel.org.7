@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-759802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D27FB1E2E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:12:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33BF5B1E2E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 486C418C1E4D
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADDE13B3530
 	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96AA22172C;
-	Fri,  8 Aug 2025 07:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9F722172C;
+	Fri,  8 Aug 2025 07:12:28 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D29F17AE11
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85902219E8D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754637127; cv=none; b=gU3xjoWi+g8sKVqgMiOR3W6ntpBx6u6jqfDmsDrM6wcWGnd4LtHXxiE15jTnb/2bubYNNdLqrOUiSbFTb8yX4PjKEV7kdR0dWwL/rZ11LmzldhpCruQhzFiuu+FMIYRKWSXiDorX5Fch5J9RtN/YCauQT2QmEL6MHmZaf94qbUk=
+	t=1754637147; cv=none; b=BV094/gIgTZwuD5eK5hpd4UB6LyXEhVcp70byOOA2uA0hROxK/X2a77iaX3SG1VRDwfQfxhTwmeJic5iwoKSG7aSh+5s/O0m4mskiZ7KgnnLgLQDpEtHtnWOftj8b+IhIi/6z8JfH/YZibfxPyRw74bCETH6Sh3kbpUtTOqj9CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754637127; c=relaxed/simple;
-	bh=LXPrHcNG7KlWsHeoL1Cg1zKZCKZbrueHrYOom5thM3U=;
+	s=arc-20240116; t=1754637147; c=relaxed/simple;
+	bh=WlhBPLHkCaYgr93+Mpcjz/yhJYCNVcwJJJ8NEazcIE8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CY407aBHrTAW05Td21vsLpUiJSwxMqLn5F3ob8WGo/TqqKw7G6V0EXHltss0N5eWGoBAd00QGYCxW9iCAvObW6Jo3zdKhk8gPW4TQclr7IAXx0y7ga9YxMkEUg1m0/f1d0HTgdyorooMUJCdj6r8S00ClVDSb4u527Lx9PLLefE=
+	 In-Reply-To:Content-Type; b=biuergyTbpCxwFiIQRvrpslykD8oqn17Yj0ohU8Pq0K/VNaEcEzK/7NYnrI4L2jBx1CwZJatHKiu3WA7Y+jJJ3zTMSJLEX/Ourv6W4Z026YguPwSTrVCpiQnQVkJbUpP8zRxkQyEj7Y1TV6SmdSi+3thQbNn/MWB1MwqAHutf8U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43FB822EA;
-	Fri,  8 Aug 2025 00:11:57 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF13A22EA;
+	Fri,  8 Aug 2025 00:12:17 -0700 (PDT)
 Received: from [10.57.5.99] (unknown [10.57.5.99])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 358A53F673;
-	Fri,  8 Aug 2025 00:12:00 -0700 (PDT)
-Message-ID: <c526e084-dcd3-4117-873e-67c6d9869b8f@arm.com>
-Date: Fri, 8 Aug 2025 08:11:57 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42AB93F673;
+	Fri,  8 Aug 2025 00:12:20 -0700 (PDT)
+Message-ID: <76da7333-6e37-44ad-ab46-8fb4b1c529b4@arm.com>
+Date: Fri, 8 Aug 2025 08:12:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,9 +42,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [RFC PATCH 25/36] arm_mpam: Register and enable IRQs
-To: Ben Horgan <ben.horgan@arm.com>, linux-kernel@vger.kernel.org,
+To: Fenghua Yu <fenghuay@nvidia.com>, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+Cc: Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
+ Rohit Mathew <rohit.mathew@arm.com>,
  Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
  <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
  Carl Worth <carl@os.amperecomputing.com>,
@@ -58,17 +59,17 @@ Cc: Rob Herring <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
  Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
 References: <20250711183648.30766-1-james.morse@arm.com>
  <20250711183648.30766-26-james.morse@arm.com>
- <a8dd0921-9d25-4f57-97ee-9b44b8ff5057@arm.com>
+ <7b909125-103d-41d3-a2ad-5c96a15df672@nvidia.com>
 Content-Language: en-US
 From: James Morse <james.morse@arm.com>
-In-Reply-To: <a8dd0921-9d25-4f57-97ee-9b44b8ff5057@arm.com>
+In-Reply-To: <7b909125-103d-41d3-a2ad-5c96a15df672@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Ben,
+Hi Fenghua,
 
-On 28/07/2025 11:49, Ben Horgan wrote:
-> On 7/11/25 19:36, James Morse wrote:
+On 04/08/2025 17:53, Fenghua Yu wrote:
+> On 7/11/25 11:36, James Morse wrote:
 >> Register and enable error IRQs. All the MPAM error interrupts indicate a
 >> software bug, e.g. out of range partid. If the error interrupt is ever
 >> signalled, attempt to disable MPAM.
@@ -82,39 +83,35 @@ On 28/07/2025 11:49, Ben Horgan wrote:
 >>
 >> Enabling the IRQs in the MSC may involve cross calling to a CPU that
 >> can access the MSC.
->> diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/
->> mpam_devices.c
->> index 145535cd4732..af19cc25d16e 100644
->> --- a/drivers/platform/arm64/mpam/mpam_devices.c
->> +++ b/drivers/platform/arm64/mpam/mpam_devices.c
->> @@ -1548,11 +1638,193 @@ static void mpam_enable_merge_features(struct list_head
 
->> +static int mpam_enable_msc_ecr(void *_msc)
+>> +static int mpam_register_irqs(void)
 >> +{
->> +    struct mpam_msc *msc = _msc;
+>> +    int err, irq, idx;
+>> +    struct mpam_msc *msc;
 >> +
->> +    __mpam_write_reg(msc, MPAMF_ECR, 1);
-> You can use MPAMF_ECR_INTEN.
-
-Sure,
-
-
+>> +    lockdep_assert_cpus_held();
 >> +
->> +    return 0;
->> +}
+>> +    idx = srcu_read_lock(&mpam_srcu);
+>> +    list_for_each_entry_srcu(msc, &mpam_all_msc, glbl_list,
+>> srcu_read_lock_held(&mpam_srcu)) {
+>> +        irq = platform_get_irq_byname_optional(msc->pdev, "error");
+>> +        if (irq <= 0)
+>> +            continue;
+>> +
+>> +        /* The MPAM spec says the interrupt can be SPI, PPI or LPI */
+>> +        /* We anticipate sharing the interrupt with other MSCs */
+>> +        if (irq_is_percpu(irq)) {
+>> +            err = request_percpu_irq(irq, &mpam_ppi_handler,
+>> +                         "mpam:msc:error",
+>> +                         msc->error_dev_id);
+>> +            if (err)
+>> +                return err;
+> But right now mpam_srcu is still being locked. Need to unlock it before return.
 
->> @@ -1644,7 +1939,6 @@ void mpam_enable(struct work_struct *work)
->>       struct mpam_msc *msc;
->>       bool all_devices_probed = true;
->>   -    /* Have we probed all the hw devices? */
-> Stray change. Keep the comment or remove it in the patch that introduced it.
-
-Fixed.
+Yup, Jonathan's srcu guard runes solve that in a future proof way.
 
 
 Thanks,
 
 James
-
-
 
