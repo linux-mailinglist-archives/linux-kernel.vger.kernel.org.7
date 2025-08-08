@@ -1,165 +1,156 @@
-Return-Path: <linux-kernel+bounces-760476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D0DB1EBAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:23:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F12AB1EBCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14B284E496C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:23:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81DDA5A37C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E09283CAA;
-	Fri,  8 Aug 2025 15:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95772868B3;
+	Fri,  8 Aug 2025 15:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=igor.torrente@collabora.com header.b="QuW5yL7w"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="y3rGnWIT"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D692283FD3
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754666499; cv=pass; b=PHj69NdxcEny2LTri2zbGdvrGhDCgHGabX9w6siGbiV2hqbMmwTFX59IzDH+V9pJd0fTaV4fOJR89EOLAnF1SSoYaicYFvIpWMepRk7zdIadMaZ3lxL3et3ZVeYVHR7fPvQLByQYubNWoiMG+f6V/Y4O9GiWzv77D2Rj+LOyKrM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754666499; c=relaxed/simple;
-	bh=mKBzMw8QG8aSq568ciqZDbQ/WAve6Dhv1j4Rn86FiNw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=CTGRDqDf/vxJ6xOohxC8/eMFiXdytN1YI+oxdaZoPoWu8zhN6fir11371BofGt5ocLsHD1p5HUGdEDjXkA1HxpHj8ohe8Bx4DFgPtyLPm1ciBBDsgizfkVAe6PGxVelmRUqSt3awtgmzyhbWI8ifsHSBBhnk9rHdhFktiQSDCcM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=igor.torrente@collabora.com header.b=QuW5yL7w; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754666477; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Rq8B4awTkKUNJWp2w9fSev6iVg3RmS73AMovuUxfGF/5+dj7GFGKn3GErSHu1bD/XG4xocounqpj0r7rFBWR41B58Wbbp3r/CR5eqr7u803OVys1pOASwhuoOYlj9BdYlnGI5WMMveYowps257qQ2Yi4PZ8PLcl8LJLJ0vtzyZ8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754666477; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=gCD2y/rarTOAylxNx5TyooRJWxYNgJq4MFQaefgv8GY=; 
-	b=PT3sDEdHABXsFelVN0lVxsZt+bE2JBPQVb5t85SQ2qqKmkuv5MhMJMm9358r1ueosnxrDp1hbH4RVj636xjdzUCvUcSM3KD0GOQhI17k41CKlkDG1PZHO2ZCXrSPbPeZ4P8XIP1KfDuaxdbPaF7X5I2mmj9HWCXQdiPrPtM8nik=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=igor.torrente@collabora.com;
-	dmarc=pass header.from=<igor.torrente@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754666477;
-	s=zohomail; d=collabora.com; i=igor.torrente@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=gCD2y/rarTOAylxNx5TyooRJWxYNgJq4MFQaefgv8GY=;
-	b=QuW5yL7wR4mHc6TIoqE4HGtOliAOBtCCK2h/3IWD95sOH3Z8ivIeC5Evpt2apfAA
-	hVh9qhZF4MHMXdkjYZyu1GO1Dxwlpih34WJ06NgKi0oQqoMipdKg5TMngWJCV11Jhsk
-	w9tUu8+wnJPGj5bf1pQBFKBDJV1RbFiqSJ4UJmqk=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1754666475761185.0698473179949; Fri, 8 Aug 2025 08:21:15 -0700 (PDT)
-Date: Fri, 08 Aug 2025 12:21:15 -0300
-From: Igor Torrente <igor.torrente@collabora.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: "sami.md.ko" <sami.md.ko@gmail.com>,
-	"virtualization" <virtualization@lists.linux.dev>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"eperezma" <eperezma@redhat.com>,
-	"xuanzhuo" <xuanzhuo@linux.alibaba.com>,
-	"jasowang" <jasowang@redhat.com>,
-	"dmitry.osipenko" <dmitry.osipenko@collabora.com>
-Message-ID: <1988a45a0a2.802c54fc2698695.3285632374822658409@collabora.com>
-In-Reply-To: <20250808072533-mutt-send-email-mst@kernel.org>
-References: <20250807130326.82662-4-igor.torrente@collabora.com> <20250808072533-mutt-send-email-mst@kernel.org>
-Subject: Re: [PATCH v2] Revert "virtio: reject shm region if length is zero"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA04283144;
+	Fri,  8 Aug 2025 15:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754666544; cv=none; b=KZffAS0P/ZIhvNco/U3geh1Aqnp8jOPI6Bib596ifQX56Zsz5g8Vrwj6UU0ebczz3pjiGUXaYR0sPJ2SNgxCjyXSXswgkQla39QpVz2EKtcFb3K1TVlXcuJ2Ezp3+cDTuc+RQmBDAX8UmCXJ+GV8yOwzOeXCGrfhBNYo9au5eXQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754666544; c=relaxed/simple;
+	bh=i2kr/HQIK24dxf5O0tMtSXzbpp9Qo6nlSfXJw6XFFZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXYVVzsR8fLh7d9AdTj0Tdzf277n+U9zxlk0i/KLOkEylkr5L9T53w7+qi7V8zdWWUrTx4LAirvKKqa5xf3GLL7tbQhOg/yjMYT1IJOpmoL7Hwy7jzOnbP2zirMvBjGehcd81tH3FsoZnMhpemTap7z68tQwiNOzkQ5G3wxIMl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=y3rGnWIT; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4bz77F6rS0z9sjF;
+	Fri,  8 Aug 2025 17:22:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1754666538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q3gRAt9b/NMSEnTJ1vf+GRybO7D4JeKjDRvpJL7hBDY=;
+	b=y3rGnWITZpgNlDNf7YB1I96QDjKjY0/T9u/OR6z4NEdX99CRqcrk6GKcHyWOpykvjL+QDJ
+	LiGuEQtBB2RC5AYVeCdTjuCV51nX0DCy9xB+Wdwe5hBgTGk1RmnjYsZGH+UyWP3YzwuLZD
+	yCzz50L9bz54qnrID5/AXkUcfIFWbqu24k5O2MQTkC2Uu1a6VRQmzhdnTIcTzPDGjct2Mb
+	3l1OMvUFuBYfl1jj/Su+5JokcPWD1sIyma82IpuzMJPlr1r4Scs7HW/UTtLQtfthCg+tvb
+	WVpmbPwkNDnx9HITr6bHSOZmfPeQGJ/RMbx1/PZd6kpSbHsJcu1GNetYjxk3hw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Sat, 9 Aug 2025 01:22:03 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 05/11] fsconfig.2: document 'new' mount api
+Message-ID: <2025-08-08.1754666161-creaky-taboo-miso-cuff-mKwsCC@cyphar.com>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-5-558a27b8068c@cyphar.com>
+ <19889fbe690.e80d252e42280.4347614991285137048@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6jhfxn4mikc5fhil"
+Content-Disposition: inline
+In-Reply-To: <19889fbe690.e80d252e42280.4347614991285137048@zohomail.com>
+X-Rspamd-Queue-Id: 4bz77F6rS0z9sjF
+
+
+--6jhfxn4mikc5fhil
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Subject: Re: [PATCH v2 05/11] fsconfig.2: document 'new' mount api
+MIME-Version: 1.0
 
- ---- El vie., 08 ago. 2025 08:26:08 -0300,  Michael S. Tsirkin <mst@redhat=
-.com> escribi=C3=B3 ----=20
- > On Thu, Aug 07, 2025 at 10:03:29AM -0300, Igor Torrente wrote:
- > > The commit 206cc44588f7 ("virtio: reject shm region if length is zero"=
-)
- > > breaks the Virtio-gpu `host_visible` feature.
- > >=20
- > > Right now in the Virtio-gpu code, `host_visible_region.len` is zero be=
-cause
- > > the struct comes directly from the `kzalloc` allocation. And Virtio-gp=
-u
- > > is using the `vm_get_shm_region` (drivers/virtio/virtio_mmio.c:536) to=
- read
- > > the `addr` and `len` from Qemu/Crosvm.
- > >=20
- > > ```
- > > drivers/gpu/drm/virtio/virtgpu_kms.c
- > > 132 vgdev =3D drmm_kzalloc(dev, sizeof(struct virtio_gpu_device), GFP_=
-KERNEL);
- > > [...]
- > > 177 if (virtio_get_shm_region(vgdev->vdev, &vgdev->host_visible_region=
-,
- > > 178                           VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
- > > ```
- > > Now it always fails.
- > >=20
- > > As the Virtio-gpu relies on the previous behavior, this patch reverts
- > > the offending commit.
- > >=20
- > > Fixes: 206cc44588f7 ("virtio: reject shm region if length is zero` bre=
-aks the Virtio-gpu `host_visible")
- > >=20
- > > This reverts commit 206cc44588f72b49ad4d7e21a7472ab2a72a83df.
- > >=20
- > > Signed-off-by: Igor Torrente <igor.torrente@collabora.com>
- >=20
- >=20
- > Fixes has to be adjacent to Signed-off-by.
+On 2025-08-08, Askar Safin <safinaskar@zohomail.com> wrote:
+> Let's consider this example:
+>=20
+>            int fsfd, mntfd, nsfd, nsdirfd;
+>=20
+>            nsfd =3D open("/proc/self/ns/pid", O_PATH);
+>            nsdirfd =3D open("/proc/1/ns", O_DIRECTORY);
+>=20
+>            fsfd =3D fsopen("proc", FSOPEN_CLOEXEC);
+>            /* "pidns" changes the value each time. */
+>            fsconfig(fsfd, FSCONFIG_SET_PATH, "pidns", "/proc/self/ns/pid"=
+, AT_FDCWD);
+>            fsconfig(fsfd, FSCONFIG_SET_PATH, "pidns", "pid", NULL, nsdirf=
+d);
+>            fsconfig(fsfd, FSCONFIG_SET_PATH_EMPTY, "pidns", "", nsfd);
+>            fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
+>            fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+>            mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
+>            move_mount(mntfd, "", AT_FDCWD, "/proc", MOVE_MOUNT_F_EMPTY_PA=
+TH);
+>=20
+> I don't like it. /proc/self/ns/pid is our namespace, which is default any=
+way.
+> I. e. setting pidns to /proc/self/ns/pid is no-op (assuming that "pidns" =
+option is implemented in our kernel, of course).
+> Moreover, if /proc is mounted properly, then /proc/1/ns/pid refers to our=
+ namespace, too!
+> Thus, *all* these fsconfig(FSCONFIG_SET_...) calls are no-op.
+> Thus it is bad example.
+>=20
+> I suggest using, say, /proc/2/ns/pid . It has actual chance to refer to s=
+ome other namespace.
+>=20
+> Also, sentence '"pidns" changes the value each time' is a lie: as I expla=
+ined, all these calls are no-ops,
+> they don't really change anything.
 
-Ohh, I will pay attention to this next time.=20
+Right, I see your point.
 
- > But anyway, I already included v1 in my tree, pls check it out
- > and tell me if more fixes are needed.
+One other problem with this example is that there is no
+currently-existing parameter which accepts all of FSCONFIG_SET_PATH,
+FSCONFIG_SET_PATH_EMPTY, FSCONFIG_SET_FD, and FSCONFIG_SET_STRING so
+this example is by necessity a little contrived. I suspect that it'd be
+better to remove this and re-add it once we actually something that
+works this way...
 
-I tested here your branch, and it's working fine.
+You've replied to the pidns parameter patchset so I shouldn't repeat
+myself here too much, but supporting this completely is my plan for the
+next version I send. It's just not a thing that exists today (ditto for
+overlayfs).
 
-```
-[    0.298365] [drm] pci: virtio-gpu-pci detected at 0000:00:04.0
-[    0.298506] [drm] Host memory window: 0x200000000 +0x200000000
-[    0.298510] [drm] features: +virgl +edid +resource_blob +host_visible
-```
-```
-Linux debian-arm64-vm-chromebook 6.16.0mst_virt_repo_linux-next+ #159 SMP P=
-REEMPT_DYNAMIC Fri Aug  8 11:53:04 -03 2025 aarch64 GNU/Linux
-```
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
 
-Thanks for applying it,
----
-Igor Torrente
+--6jhfxn4mikc5fhil
+Content-Type: application/pgp-signature; name="signature.asc"
 
- >=20
- > > ---
- > > v2: Improve the commit message (Michael S. Tsirkin)
- > >=20
- > >  include/linux/virtio_config.h | 2 --
- > >  1 file changed, 2 deletions(-)
- > >=20
- > > diff --git a/include/linux/virtio_config.h b/include/linux/virtio_conf=
-ig.h
- > > index b3e1d30c765b..169c7d367fac 100644
- > > --- a/include/linux/virtio_config.h
- > > +++ b/include/linux/virtio_config.h
- > > @@ -329,8 +329,6 @@ static inline
- > >  bool virtio_get_shm_region(struct virtio_device *vdev,
- > >                 struct virtio_shm_region *region, u8 id)
- > >  {
- > > -    if (!region->len)
- > > -        return false;
- > >      if (!vdev->config->get_shm_region)
- > >          return false;
- > >      return vdev->config->get_shm_region(vdev, region, id);
- > > --=20
- > > 2.49.0
- >=20
- >=20
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJYWGwAKCRAol/rSt+lE
+b2EsAQD9tz9+Qco8NpwqXkWodBeTDFLFs50YEA3myeSlXFaydAD+Ndr6DDo37Z52
+gdgpboeXnabG/WLHmL9hQnr31W/13gI=
+=sO7Y
+-----END PGP SIGNATURE-----
+
+--6jhfxn4mikc5fhil--
 
