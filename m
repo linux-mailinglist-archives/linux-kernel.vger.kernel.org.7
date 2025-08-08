@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-760658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100D4B1EE4D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62655B1EE51
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281FF5A3C1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CE4258505F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1C5220F48;
-	Fri,  8 Aug 2025 18:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF8F2652B2;
+	Fri,  8 Aug 2025 18:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJavTb8F"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VlRrncev"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79810216E23;
-	Fri,  8 Aug 2025 18:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9841B1DFD96
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 18:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754677173; cv=none; b=PJJeYtyupwOvAtfPfQNIVRlbpvsonpKe7NmrlkuaTgY6gZI3MOn0vzkP1yp80hwvgwV2WktPm5qO+ZR1BoRMK2cqOMW6jFJF/3cib6ZL3NYIprweT/OzX8m3q9WMuM5gCktEniTbZM1323nD5Z58BfEzGCrjiA40UwHlJ5q2zXY=
+	t=1754677380; cv=none; b=kMnL1cEQHJQ//7GLmUNjcXmg4YnQRKGJklIjGT81P57jcsVxo1aaMx11rGWp1Pblx116wjqJ+Vt1SDZikCzimn8KSwQmzeYUdhMw647+whB02F63FFzwEc2z8keh/eH4/q8TvO6MFa2mmRaY/D/EmE1YLzbcDc0NB1mjuFrplqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754677173; c=relaxed/simple;
-	bh=HUdaSvYdQz/Cf1Zjkz8l7fWfolE+877uMvSYaXEl538=;
+	s=arc-20240116; t=1754677380; c=relaxed/simple;
+	bh=6DJGxIZNB0MbLYPgS7uPnOFj4xUSHRfa44MOaAcBXVE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=caP4BtZOdtL58ao95JzZn7h+Ox2gtE69hte6bJbX9OUSEAiniZo9gesi2RAGw3tlzHOm3r2uiPWlHnLKTDZa75SfXlpMEOamM7GGm6BDYmQoMPFt7VtgU/UnO0LrLQjHt99hycHf2v0VmiMv1TSWALQAzA8dK+zkKYaoVA4y1+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJavTb8F; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23ffa7b3b30so22979615ad.1;
-        Fri, 08 Aug 2025 11:19:30 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=DuKRK3bwvTn+6Dr4yYCLHDbVFKpmht4BfgpvdfxS5Edx8oxlt7hJyrg88wHioQTzm/jbdYT+t0Im5t7I4RFWwxGcNjKT1tjY8zqStvPlBTZu5juK7Yh2aD9Vvd26hrBVBwxYCsbA4xlkOfLC9atUJTkHXWWtCka3E5XLSaMCnR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VlRrncev; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-8817b8d2d0eso82493039f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 11:22:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754677170; x=1755281970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=4V/L9rLNg1kMY33SaIHQ54KgyoNy4p5D1r2ZzBM+uRw=;
-        b=PJavTb8F4h4Xaw9ridG4xDbVRBQeMGM0OufJ0H9cxrR4jXw5df1XJ+VzPo0/Q1n2IX
-         OYXPF1Df3inGXXMMl8KjpeMKxXmbkNpX0v2nDT7TvC5ajPTkWRg0EOIQOB1XZecHr5o9
-         Dg77KbmzI7hGsMVwnNa7RbTMzHW7iVmkpl18WypLZnT3QZa6FK7bddPAQuVgNFU3vSka
-         crvfkxLhuki3Sv/f4m6KUXwkBnnhTPlP3CiSQp9gLSTSB4rN7hgE0AkcHmpLuR+8dCUQ
-         izkxEmttCSyVi57dh1fD9UXHb15BEHb5LXjUN0G9Y2LedEiN/J63l9h8zzQ/lY32Q5x1
-         66jg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754677377; x=1755282177; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JZH9CfwqA0hE9fcGIfSzdamQXb+OlOwdY/lyO0/9wlA=;
+        b=VlRrncevT9yfPnvBR/5RmNz8Ns4Tx/jSG5RCkYz/QWGZn+SRUQo2AiLPKjaB9OIuU4
+         IHOHh41tvSKKYsiSwjIaRy4KXBspNTZFj2u14mshE53Y4d1FA6bydyvIIiLowo6rZ4C5
+         wEJh/ftCxIV8cPone+wCA2EMbyNELNWuNYeWPx9G0WKJYxJ++xNzbnCccVGufMMEygCD
+         J/m2vTG3bV/PogjjtIdXndX4xn5cAiVFXwyVcaqIo7xCUyICnkjfWBu0Ghq+UqsXMF62
+         TnnCMLnyQMf4Pnx3CeHDaSJD/lfU+4QxnYSfOCMBGCFUKCFtNERwVk422KEbmuJhjfI9
+         KL6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754677170; x=1755281970;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4V/L9rLNg1kMY33SaIHQ54KgyoNy4p5D1r2ZzBM+uRw=;
-        b=PIeE3SdPtgfmhpOwe0B0UlQCBbyusTItmifRsgZf00RlDkvWr3vaPYrFWES6bI7TRw
-         c7nowLT/pGGnqX5AgMjeAg0n5/h/8ESGRhnGqis+QJMNOdnlqFaHdQjcuxpE56qDeNMc
-         GR3PN/0sEUEm4k5+zdh48CJHjftEqxoAmZHRGy62eAWiX93P8WPnRVVt7cRjd1NExegC
-         aQtnZl37VjLeoDe1BCG/hJkcJmMuxWPrM77inaWuZIK/HzxZjyjz02zasSb6cmQ0QEqd
-         h7sAYza9UtjHTqrHxaoBDXc0vfbPgywPGg0prehNMHcd4h1wdNv7Eo/r3ns9JwXJom0G
-         FX+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/06x6TMi77CTYQYJLlnaSaXFpOZQpFj6pLSUfxAHJ2BikT4llr9q/BTHXVZUEM0L3AbS31w9WdJUz@vger.kernel.org, AJvYcCWlXdsp/6nuGjwXvFNONdPsgHd2iFlfODIfYwTn1Tv8r2a3vUYyJMPAK4gJyVmH8ZCn0OfOs6RYAgTknV6h@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm9at43C6/+XHrdQ4jOlOOuQZu1o516fEfFg7rcOCMRG1Vn3vw
-	uOR402dgBH2GjrjbvP2iOXvnaCppNzIZX5fHbllv+kDn/WrN1TXllyAKHTamzg==
-X-Gm-Gg: ASbGncuMla3a3NKZHyf5v+OF+8GQR6XkRo/JUNpgVVTDjeIyuAmSrY8SAOHPHUy7R5M
-	ip7nrivy877pfhp7hHUnDrvYWdwNuMY6j3otRRkfVddEPrkXERWbOC4ewJt1QlXon26iqA+xA3H
-	3JD14jWzteSWhMs7AIlnlgoXXANxwgmIiHnYGBS44Qp8YcTQnS6tzSnc9cAD27N1LzCi9D+L5pZ
-	gSFxgGinsgVxtjim5GNxdV3JsMVaA+yDmaBiqY1C4ctrmvhZ/wCpVByfBFKd4lGzKEyEgJO4EU3
-	4qVxgyAXIX6x2S/DyvTgF/A+zx/1Vb3qdgynMWGeiGE4yuvF5meTGSgB0Rjnha9+QyjAwm3k9bp
-	bN1m1AV7PXO242vQfXP67wVL3Hw0abSp5Da8XNpbTOEsU0ivX4erPDm4yx2iuj3YcNuWAZeQ=
-X-Google-Smtp-Source: AGHT+IFVe/i6moWtqoWq6jBtlW6sPnaGKOUwILFXQ+AG9WdqP609Q29WzVXEpaXGo1/FJH3OjydAdQ==
-X-Received: by 2002:a17:902:ecd2:b0:240:7753:3bff with SMTP id d9443c01a7336-242c220ad2bmr52843235ad.30.1754677170151;
-        Fri, 08 Aug 2025 11:19:30 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaafefsm216465265ad.160.2025.08.08.11.19.29
+        d=1e100.net; s=20230601; t=1754677377; x=1755282177;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JZH9CfwqA0hE9fcGIfSzdamQXb+OlOwdY/lyO0/9wlA=;
+        b=Y6us5MNL4kfy91Soz/g0QbtxtWDFDTKzBg6pwoBrtPGrDcGnQLldUge+RoYoItKyBw
+         Z9JBFUbVfdmgVIecSKIq8vIaP2dKygP9E8TnCUZUG4fuMLjo4mNsrwkR4BOMBr2ehIrI
+         A1OSh53DjPAMxAAlpYTBv0AjiYgHhhqU0xYP8k+WbSwXQbhl2YrnGQwoJ/Uf+Gt/a0+H
+         6XWo+2t5ZHZdNNXynXUnRQ2QHZl7ag7n40Ext5jgatO3De8lYOsUKl8S8rR3faTv6mTq
+         pMAvHQTAJD9a74k26tB1vyu8o8u28WQZnXsdO7a3Lzql9SoFVqhIMP/71Yur1JefzdWP
+         CNgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTUutoJaLhzQ74fgUcqEh8HtF9XQWyAVxe1kNyTKzyFx89+Y26r1OuVjTcgrJagVsYuUK5aAFIbgwTmKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya8Zall1MpZmL9jhnjy83YHFfK619OezcN9zfkKxSWjOUX4IBs
+	w3ypNSnu1QvEZ5W4+HV4fG45pmporHsgOBunSHrENusxnTUwUWCrdGhHQtimKgjirys=
+X-Gm-Gg: ASbGncs4kU3mmrSpJBBqirCmRAoyWFuf76A7+CQm3i/ZAmDG2EwXozYHLSIpvg9Vahb
+	GJoEi79LN/BWwmyc+VLpBGFCOmy96LhOIQ2xcqtcMOrsdbFG5IMTT9Zzcnd21B80KrxBoaPsRKa
+	rzR/KOoEpie1NRUCsnT6lKMDbbpU4wUSlJ18GRQleblX67YmgUpYINfUcwhnnwxNsvdh3zgXBmX
+	zGwqgyyCyZvXyr/P2xeApvcdn9JAQyhqMJ1g7gInZq6CuGRWGx0xbw8r8Ve60sZX0uS8drFTUBa
+	XWxpg4AXqEvcAH6b+3AamSlyUnBh9hT+f2RVmlp+2zbLFnvsJ0hq/WpqRa7PvuOge/uh2ONWCQt
+	kZhfD2D+M8ojyw/wTNQY=
+X-Google-Smtp-Source: AGHT+IG7sqPk4NgexsHEwfKSDUgxoaY6sX4HssO4A1bOwvoI1qk3OSnmTHvN1PpR3P1Fa+fxWX7d6w==
+X-Received: by 2002:a05:6e02:188f:b0:3e5:29a3:b552 with SMTP id e9e14a558f8ab-3e5330b606cmr75359305ab.3.1754677377222;
+        Fri, 08 Aug 2025 11:22:57 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae9cbb6dasm631298173.95.2025.08.08.11.22.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 11:19:29 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <1e7527ad-acce-4163-8e7c-9d66f17ad926@roeck-us.net>
-Date: Fri, 8 Aug 2025 11:19:28 -0700
+        Fri, 08 Aug 2025 11:22:56 -0700 (PDT)
+Message-ID: <c43ad3c8-0a4c-41c5-9d28-d138b012863b@kernel.dk>
+Date: Fri, 8 Aug 2025 12:22:55 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,69 +81,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: watchdog: Drop duplicate
- moxa,moxart-watchdog.txt
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH] ublk: check for unprivileged daemon on each I/O fetch
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Uday Shankar <ushankar@purestorage.com>
+Cc: Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250807214222.4170236-1-robh@kernel.org>
+References: <20250808155216.296170-1-csander@purestorage.com>
+ <aJY7fPmOLMe7T5A7@dev-ushankar.dev.purestorage.com>
+ <CADUfDZqz1R=aTuyRhsVjpJnoUgXBgsf1Jkg4qX_sn+NtP4TPeQ@mail.gmail.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250807214222.4170236-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CADUfDZqz1R=aTuyRhsVjpJnoUgXBgsf1Jkg4qX_sn+NtP4TPeQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/7/25 14:42, Rob Herring (Arm) wrote:
-> "moxa,moxart-watchdog" is already documented in faraday,ftwdt010.yaml,
-> so drop the old text binding.
+On 8/8/25 12:03 PM, Caleb Sander Mateos wrote:
+> On Fri, Aug 8, 2025 at 2:01?PM Uday Shankar <ushankar@purestorage.com> wrote:
+>>
+>> On Fri, Aug 08, 2025 at 09:52:15AM -0600, Caleb Sander Mateos wrote:
+>>> Commit ab03a61c6614 ("ublk: have a per-io daemon instead of a per-queue
+>>> daemon") allowed each ublk I/O to have an independent daemon task.
+>>> However, nr_privileged_daemon is only computed based on whether the last
+>>> I/O fetched in each ublk queue has an unprivileged daemon task.
+>>> Fix this by checking whether every fetched I/O's daemon is privileged.
+>>> Change nr_privileged_daemon from a count of queues to a boolean
+>>> indicating whether any I/Os have an unprivileged daemon.
+>>>
+>>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+>>> Fixes: ab03a61c6614 ("ublk: have a per-io daemon instead of a per-queue daemon")
+>>
+>> Nice catch!
+>>
+>>> ---
+>>>  drivers/block/ublk_drv.c | 16 +++++++---------
+>>>  1 file changed, 7 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+>>> index 6561d2a561fa..a035070dd690 100644
+>>> --- a/drivers/block/ublk_drv.c
+>>> +++ b/drivers/block/ublk_drv.c
+>>> @@ -233,11 +233,11 @@ struct ublk_device {
+>>>
+>>>       struct ublk_params      params;
+>>>
+>>>       struct completion       completion;
+>>>       unsigned int            nr_queues_ready;
+>>> -     unsigned int            nr_privileged_daemon;
+>>> +     bool                    unprivileged_daemons;
+>>>       struct mutex cancel_mutex;
+>>>       bool canceling;
+>>>       pid_t   ublksrv_tgid;
+>>>  };
+>>>
+>>> @@ -1548,11 +1548,11 @@ static void ublk_reset_ch_dev(struct ublk_device *ub)
+>>>               ublk_queue_reinit(ub, ublk_get_queue(ub, i));
+>>>
+>>>       /* set to NULL, otherwise new tasks cannot mmap io_cmd_buf */
+>>>       ub->mm = NULL;
+>>>       ub->nr_queues_ready = 0;
+>>> -     ub->nr_privileged_daemon = 0;
+>>> +     ub->unprivileged_daemons = false;
+>>>       ub->ublksrv_tgid = -1;
+>>>  }
+>>>
+>>>  static struct gendisk *ublk_get_disk(struct ublk_device *ub)
+>>>  {
+>>> @@ -1978,16 +1978,14 @@ static void ublk_reset_io_flags(struct ublk_device *ub)
+>>>  /* device can only be started after all IOs are ready */
+>>>  static void ublk_mark_io_ready(struct ublk_device *ub, struct ublk_queue *ubq)
+>>>       __must_hold(&ub->mutex)
+>>>  {
+>>>       ubq->nr_io_ready++;
+>>> -     if (ublk_queue_ready(ubq)) {
+>>> +     if (ublk_queue_ready(ubq))
+>>>               ub->nr_queues_ready++;
+>>> -
+>>> -             if (capable(CAP_SYS_ADMIN))
+>>> -                     ub->nr_privileged_daemon++;
+>>> -     }
+>>> +     if (!ub->unprivileged_daemons && !capable(CAP_SYS_ADMIN))
+>>> +             ub->unprivileged_daemons = true;
+>>
+>> Shorter:
+>>
+>> ub->unprivileged_daemons |= !capable(CAP_SYS_ADMIN);
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> I was trying to avoid the capable() call if unprivileged_daemons was
+> already set. But maybe that's not a common case and it's not worth
+> optimizing?
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Definitely worth it, you did the right thing.
 
+-- 
+Jens Axboe
 
