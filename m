@@ -1,270 +1,168 @@
-Return-Path: <linux-kernel+bounces-760570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9034B1ED0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:34:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2730FB1ED13
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848153A9381
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70FB726095
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F5F2874E4;
-	Fri,  8 Aug 2025 16:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538D9287275;
+	Fri,  8 Aug 2025 16:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RVeye/4p";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yKo9boRD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="QE4jaMU3"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC385285044;
-	Fri,  8 Aug 2025 16:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6C725228C;
+	Fri,  8 Aug 2025 16:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754670832; cv=none; b=pyQzGfAe1HjHoaXAqjmgbl0ilu/fvmtgjnFEScHZ8gtVFz4o6OlbT7D6WJsZrkXyMTBVmuAGYLdp3Wcrb4dUUGKLrN09JaDL+SGKN9duoBPCBsEKhsCzAiL92b6Vkhf9L1gG9I14f50cAzvv+ioSD4YvKIUKNEld8Sklu2pwm9I=
+	t=1754671034; cv=none; b=KctjphZyIbo+FFX3jHt8XWGuU7AZ0D01AMSNl4PYX+PCrMB9u6tc6R3I2LXnZ0acfQFxLb3YJJ0f1CbuAdy0VhHjNuoVcvkPI2jpBt5Y2RuPRIMbJVe1NkJnxk0ADXWuQwr7sprLNMzxCWHOeZ2U0MCAoaHG3Cl53HunEqhhF4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754670832; c=relaxed/simple;
-	bh=Pwdx/Tk5p4zqxvPam2CPyrJ36ROrTDvlqkdX+YdUIkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g81wmqgL8QKBmLbf+JeFHqNJTHzdfVtAiPV4vqJXFdqeLsC3MJ6422qBsSkthzSPCuWlXcsl8B71xzEypCgwbWVzPCQh7McIySptRA6gM7CKJwG53o6EPkpgdoLhGPE003ycpv5kx2D3qJ1nboYof1b1KBPcNIX9AGffUG0aaec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RVeye/4p; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yKo9boRD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 8 Aug 2025 18:33:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754670827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JfkgxAstW/grwEhYFrNwo+E5fvmu5YawBnjm5gjeKEk=;
-	b=RVeye/4pqNL2Rxrp4JBr2Wp2ohhSaHCMyzNxVgG/9/7HGPigWp462OiTwF6vHVcrNpbow4
-	7wJkqa21ZP0mippivOz8YAtRyYxkhRuQoubHDzkE7nkMGDOzysQJZJ6GuggbDyo/iEXjvt
-	MIaWoSAL+nhJxyh5JqZmQjP1zRnJ/XlN/DCx2HXJK8+strGVM0pn+xidutZCla8Wlbwo+c
-	iwoGKNWR3rWkqFsN9frsYfPpJq3KmJEFo5bwkkwDnAdbqDfEgsi8l8YBiQ9dOkpIcRYN1F
-	i45zjDg/DIjJcGaGtrKLyDh56EKSEkpSjspVbdcgVfgguHLThjvs/cjlvK0GCg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754670827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JfkgxAstW/grwEhYFrNwo+E5fvmu5YawBnjm5gjeKEk=;
-	b=yKo9boRDg7VkANZpRsdijWOQ+20lswktBfxzUY+LnXAzwElkHvWO+C+9kq+P/A1b/myyUo
-	hVMWnerjXL/uPHAQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Michelle Jin <shjy180909@gmail.com>, linux-kernel@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org,
-	kasan-dev@googlegroups.com, syzkaller@googlegroups.com,
-	linux-usb@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] kcov, usb: Fix invalid context sleep in softirq path on
- PREEMPT_RT
-Message-ID: <20250808163345.PPfA_T3F@linutronix.de>
-References: <20250725201400.1078395-2-ysk@kzalloc.com>
+	s=arc-20240116; t=1754671034; c=relaxed/simple;
+	bh=3Dl6MJPx/URR6SAPv81/CgcJ3/9AtJtJXM6jyyAUvQ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SUlUhSp2wDf7mYlX6BS0aE8vXXnH2QaWPMEyc1Q+8qidosLeogIpPxfbGX8y04KtBwlnhBLvi6/AGYEMGI2uihDdhEIZ56XWmUncMDEb5/SrG1ZtmAW3Jt4Hygin6VshQOPHERqyAMOREQ2OxAFkkNJRvABkjUofJpcWPoF0LWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=QE4jaMU3; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1754671033; x=1786207033;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=VQqGKx8yCcMPM3OfBvB/9sDgA5FM7b1V6O0IxKuT2Ng=;
+  b=QE4jaMU3WQJu27dJJ70cW2zPbIeL8lW6v0pWaPO1rGO9ENfVXdecolw6
+   wPbDLSZb8LknYKmc/s3nNQxeRllxvNi9HRSZpyJo7+7GHYiQ2cv+YTDzx
+   jLXkykwuwJc+5FE5sL7u7AjJbXClF38tMV0yOX1H0ipFaXLRuYoJq/cnF
+   eUzzV4vqZukkXyFuysVrXQwn+AnVKyQsJL7eVOY8MkN+tepKl1hfxo2UN
+   2d0LPFRXB3/ZQFLz2xyVlKRbGEsH8nl8zxPf4CV3VuOwZY5yp6ZZz0K3D
+   cnpxrfH4QGtNnP/8lKpl0qpTscwdN6g8XAQYMGYFegpO+LO27xukbgVt/
+   g==;
+X-IronPort-AV: E=Sophos;i="6.17,274,1747699200"; 
+   d="scan'208";a="746124479"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 16:37:10 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:41049]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.2.11:2525] with esmtp (Farcaster)
+ id d1a47885-9ae3-49af-a06a-0b2fb4acfb5c; Fri, 8 Aug 2025 16:37:09 +0000 (UTC)
+X-Farcaster-Flow-ID: d1a47885-9ae3-49af-a06a-0b2fb4acfb5c
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 8 Aug 2025 16:37:08 +0000
+Received: from dev-dsk-epetron-1c-1d4d9719.eu-west-1.amazon.com
+ (10.253.109.105) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17; Fri, 8 Aug 2025
+ 16:37:06 +0000
+From: Evangelos Petrongonas <epetron@amazon.de>
+To: <ardb@kernel.org>
+CC: Evangelos Petrongonas <epetron@amazon.de>, Alexander Graf
+	<graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, Changyuan Lyu
+	<changyuanl@google.com>, <kexec@lists.infradead.org>,
+	<nh-open-source@amazon.com>, <linux-efi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] efi: Support booting with kexec handover (KHO)
+Date: Fri, 8 Aug 2025 16:36:51 +0000
+Message-ID: <20250808163651.25279-1-epetron@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250725201400.1078395-2-ysk@kzalloc.com>
+X-ClientProxiedBy: EX19D041UWA001.ant.amazon.com (10.13.139.124) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-On 2025-07-25 20:14:01 [+0000], Yunseong Kim wrote:
-> When fuzzing USB with syzkaller on a PREEMPT_RT enabled kernel, following
-> bug is triggered in the ksoftirqd context.
->=20
-=E2=80=A6
-> This issue was introduced by commit
-> f85d39dd7ed8 ("kcov, usb: disable interrupts in kcov_remote_start_usb_sof=
-tirq").
->=20
-> However, this creates a conflict on PREEMPT_RT kernels. The local_irq_sav=
-e()
-> call establishes an atomic context where sleeping is forbidden. Inside th=
-is
-> context, kcov_remote_start() is called, which on PREEMPT_RT uses sleeping
-> locks (spinlock_t and local_lock_t are mapped to rt_mutex). This results =
-in
-> a sleeping function called from invalid context.
->=20
-> On PREEMPT_RT, interrupt handlers are threaded, so the re-entrancy scenar=
-io
-> is already safely handled by the existing local_lock_t and the global
-> kcov_remote_lock within kcov_remote_start(). Therefore, the outer
-> local_irq_save() is not necessary.
->=20
-> This preserves the intended re-entrancy protection for non-RT kernels whi=
-le
-> resolving the locking violation on PREEMPT_RT kernels.
->=20
-> After making this modification and testing it, syzkaller fuzzing the
-> PREEMPT_RT kernel is now running without stopping on latest announced
-> Real-time Linux.
+When KHO (Kexec HandOver) is enabled, it sets up scratch memory regions
+early during device tree scanning. After kexec, the new kernel
+exclusively uses this region for memory allocations during boot up to
+the initialization of the page allocator
 
-This looks oddly familiar because I removed the irq-disable bits while
-adding local-locks.
+However, when booting with EFI, EFI's reserve_regions() uses
+memblock_remove(0, PHYS_ADDR_MAX) to clear all memory regions before
+rebuilding them from EFI data. This destroys KHO scratch regions and
+their flags, thus causing a kernel panic, as there are no scratch
+memory regions.
 
-Commit f85d39dd7ed8 looks wrong not that it shouldn't disable
-interrupts. The statement in the added comment
+Instead of wholesale removal, iterate through memory regions and only
+remove non-KHO ones. This preserves KHO scratch regions while still
+allowing EFI to rebuild its memory map.
 
-| + * 2. Disables interrupts for the duration of the coverage collection se=
-ction.
-| + *    This allows avoiding nested remote coverage collection sections in=
- the
-| + *    softirq context (a softirq might occur during the execution of a w=
-ork in
-| + *    the BH workqueue, which runs with in_serving_softirq() > 0).
+Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
+---
 
-is wrong. Softirqs are never nesting. While the BH workqueue is
-running another softirq does not occur. The softirq is raised (again)
-and will be handled _after_ BH workqueue is done. So this is already
-serialised.
+Reproduction/Verification Steps
+The issue and the fix can be reproduced/verified by booting a VM with
+EFI and attempting to perform a KHO enabled kexec. The fix
+was developed/tested on arm64.
 
-The issue is __usb_hcd_giveback_urb() always invokes
-kcov_remote_start_usb_softirq(). __usb_hcd_giveback_urb() itself is
-invoked from BH context (for the majority of HCDs) and from hardirq
-context for the root-HUB. This gets us to the scenario that that we are
-in the give-back path in softirq context and then invoke the function
-once again in hardirq context.
+ drivers/firmware/efi/efi-init.c | 31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
-I have no idea how kcov works but reverting the original commit and
-avoiding the false nesting due to hardirq context should do the trick,
-an untested patch follows.
-
-This isn't any different than the tasklet handling that was used before
-so I am not sure why it is now a problem.
-
-Could someone maybe test this?
-
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1636,7 +1636,6 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
- 	struct usb_hcd *hcd =3D bus_to_hcd(urb->dev->bus);
- 	struct usb_anchor *anchor =3D urb->anchor;
- 	int status =3D urb->unlinked;
--	unsigned long flags;
-=20
- 	urb->hcpriv =3D NULL;
- 	if (unlikely((urb->transfer_flags & URB_SHORT_NOT_OK) &&
-@@ -1654,14 +1653,13 @@ static void __usb_hcd_giveback_urb(struct urb *urb)
- 	/* pass ownership to the completion handler */
- 	urb->status =3D status;
+diff --git a/drivers/firmware/efi/efi-init.c b/drivers/firmware/efi/efi-init.c
+index a00e07b853f22..2f08b1ab764f6 100644
+--- a/drivers/firmware/efi/efi-init.c
++++ b/drivers/firmware/efi/efi-init.c
+@@ -164,12 +164,35 @@ static __init void reserve_regions(void)
+ 		pr_info("Processing EFI memory map:\n");
+ 
  	/*
--	 * Only collect coverage in the softirq context and disable interrupts
--	 * to avoid scenarios with nested remote coverage collection sections
--	 * that KCOV does not support.
--	 * See the comment next to kcov_remote_start_usb_softirq() for details.
-+	 * This function can be called in task context inside another remote
-+	 * coverage collection section, but kcov doesn't support that kind of
-+	 * recursion yet. Only collect coverage in softirq context for now.
+-	 * Discard memblocks discovered so far: if there are any at this
+-	 * point, they originate from memory nodes in the DT, and UEFI
+-	 * uses its own memory map instead.
++	 * Discard memblocks discovered so far except for KHO scratch regions.
++	 * Most memblocks at this point originate from memory nodes in the DT,
++	 * and UEFI uses its own memory map instead. However, if KHO is enabled,
++	 * scratch regions must be preserved.
  	 */
--	flags =3D kcov_remote_start_usb_softirq((u64)urb->dev->bus->busnum);
-+	kcov_remote_start_usb_softirq((u64)urb->dev->bus->busnum);
- 	urb->complete(urb);
--	kcov_remote_stop_softirq(flags);
-+	kcov_remote_stop_softirq();
-=20
- 	usb_anchor_resume_wakeups(anchor);
- 	atomic_dec(&urb->use_count);
-diff --git a/include/linux/kcov.h b/include/linux/kcov.h
-index 75a2fb8b16c32..0143358874b07 100644
---- a/include/linux/kcov.h
-+++ b/include/linux/kcov.h
-@@ -57,47 +57,21 @@ static inline void kcov_remote_start_usb(u64 id)
-=20
- /*
-  * The softirq flavor of kcov_remote_*() functions is introduced as a temp=
-orary
-- * workaround for KCOV's lack of nested remote coverage sections support.
-- *
-- * Adding support is tracked in https://bugzilla.kernel.org/show_bug.cgi?i=
-d=3D210337.
-- *
-- * kcov_remote_start_usb_softirq():
-- *
-- * 1. Only collects coverage when called in the softirq context. This allo=
-ws
-- *    avoiding nested remote coverage collection sections in the task cont=
-ext.
-- *    For example, USB/IP calls usb_hcd_giveback_urb() in the task context
-- *    within an existing remote coverage collection section. Thus, KCOV sh=
-ould
-- *    not attempt to start collecting coverage within the coverage collect=
-ion
-- *    section in __usb_hcd_giveback_urb() in this case.
-- *
-- * 2. Disables interrupts for the duration of the coverage collection sect=
-ion.
-- *    This allows avoiding nested remote coverage collection sections in t=
-he
-- *    softirq context (a softirq might occur during the execution of a wor=
-k in
-- *    the BH workqueue, which runs with in_serving_softirq() > 0).
-- *    For example, usb_giveback_urb_bh() runs in the BH workqueue with
-- *    interrupts enabled, so __usb_hcd_giveback_urb() might be interrupted=
- in
-- *    the middle of its remote coverage collection section, and the interr=
-upt
-- *    handler might invoke __usb_hcd_giveback_urb() again.
-+ * work around for kcov's lack of nested remote coverage sections support =
-in
-+ * task context. Adding support for nested sections is tracked in:
-+ * https://bugzilla.kernel.org/show_bug.cgi?id=3D210337
-  */
-=20
--static inline unsigned long kcov_remote_start_usb_softirq(u64 id)
-+static inline void kcov_remote_start_usb_softirq(u64 id)
- {
--	unsigned long flags =3D 0;
--
--	if (in_serving_softirq()) {
--		local_irq_save(flags);
-+	if (in_serving_softirq() && !in_hardirq())
- 		kcov_remote_start_usb(id);
--	}
--
--	return flags;
- }
-=20
--static inline void kcov_remote_stop_softirq(unsigned long flags)
-+static inline void kcov_remote_stop_softirq(void)
- {
--	if (in_serving_softirq()) {
-+	if (in_serving_softirq() && !in_hardirq())
- 		kcov_remote_stop();
--		local_irq_restore(flags);
--	}
- }
-=20
- #ifdef CONFIG_64BIT
-@@ -131,11 +105,8 @@ static inline u64 kcov_common_handle(void)
- }
- static inline void kcov_remote_start_common(u64 id) {}
- static inline void kcov_remote_start_usb(u64 id) {}
--static inline unsigned long kcov_remote_start_usb_softirq(u64 id)
--{
--	return 0;
--}
--static inline void kcov_remote_stop_softirq(unsigned long flags) {}
-+static inline void kcov_remote_start_usb_softirq(u64 id) {}
-+static inline void kcov_remote_stop_softirq(void) {}
-=20
- #endif /* CONFIG_KCOV */
- #endif /* _LINUX_KCOV_H */
---=20
-2.50.1
+ 	memblock_dump_all();
+-	memblock_remove(0, PHYS_ADDR_MAX);
++
++	if (IS_ENABLED(CONFIG_MEMBLOCK_KHO_SCRATCH)) {
++		struct memblock_region *reg;
++		phys_addr_t start, size;
++		int i;
++
++		/* Remove all non-KHO regions */
++		for (i = memblock.memory.cnt - 1; i >= 0; i--) {
++			reg = &memblock.memory.regions[i];
++			if (!memblock_is_kho_scratch(reg)) {
++				start = reg->base;
++				size = reg->size;
++				memblock_remove(start, size);
++			}
++		}
++	} else {
++	/*
++	 * KHO is disabled. Discard memblocks discovered so far: if there
++	 * are any at this point, they originate from memory nodes in the
++	 * DT, and UEFI uses its own memory map instead.
++	 */
++		memblock_remove(0, PHYS_ADDR_MAX);
++	}
+ 
+ 	for_each_efi_memory_desc(md) {
+ 		paddr = md->phys_addr;
+-- 
+2.43.0
 
-Sebastian
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
 
