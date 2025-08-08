@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-760655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7F3B1EE43
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:14:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29720B1EE48
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11811188BF95
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:15:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBD627A4564
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60D3215191;
-	Fri,  8 Aug 2025 18:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FCC216E23;
+	Fri,  8 Aug 2025 18:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eO1yzf70"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0ud/DRI"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48F81DA3D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 18:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4421B1E7C18;
+	Fri,  8 Aug 2025 18:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754676879; cv=none; b=Vdb7vgohPcHCGtl+cYdnFr8Gnzj+KMpOabYMUEzIzxKvG8wgFje55/cYd5OeI8607rilv7i+LrTbVYBHR5N7nBOlUWMBV6S9nC7Dtq+eO7HhlttDDP9vn6nAioAKQTW68XNZSZuijoKZ+ilqj/+R8YrZfUogHpUJmM7TJA+Zc1Q=
+	t=1754677109; cv=none; b=gf15FYokEQN1UjWShcp3IVpeUYcyuzLCLkTsdkhg/aHNt+uW6abNkh5mT+R3DLm4yCqDMXAHGX3punYfy/8oYePrQEh8jVy8ic2n4zgaSRcHIwKEXE50NX2nXyo1DPwQIot8C/0KNFrWrfQk8mkaW6gGxdIqsEgYT/wrGka8UbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754676879; c=relaxed/simple;
-	bh=jasLUExJ47MKUq1i0giM8qJ7AngHU2ackEGzfY43fco=;
+	s=arc-20240116; t=1754677109; c=relaxed/simple;
+	bh=ArOUiTIEqxs9S6T1L5MLv90yQBn6hawmKho6rJx2Qwo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDa357hgVTlnDL8vNCa67ZP9ynWidlN5qUOuLzr28QrW2SX1/nS72DSrxBU0HrXsAJU3/Je9ut17wiAQQLE7MwQgKvMOYL7uQwjoAnvy5x5UYBxN+ZcI5uJ+43/r9Ur0CyfBCw6OeEAoirF+L6RTn4KDTBLwSU/Pm7QtAZrSLro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eO1yzf70; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754676878; x=1786212878;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jasLUExJ47MKUq1i0giM8qJ7AngHU2ackEGzfY43fco=;
-  b=eO1yzf70CI11P+gvsIM61TMKIiyhMBpBST7ZFTzDRoIP3haKM6GTIlrO
-   juS7Hh63oRyGsAT4oXdOpubDb1j8O2zHwIho+kUWs1lYCrMrIH7/tYfw/
-   /cwsnNs0MTpj2GPGu7/fvvOkdDDcCzq2eaqhW2M6VwoA/uoMrgQEiGMQU
-   9t/4AGqB/fuGINJeLvnjLQj2uobrDw1yw5E4fBmO6lQMeoEoVgWQFFyPA
-   4dk69ICwbVrQKbRTn62Jx3MHFYf/bzFWdpAKmWaYwVaHryMgvtdizXTuf
-   lD+qYjVlPbQuPbhpHYOSClqycYIdS5ShNtOm3fk7Chwq31swqRFLGFUQp
-   Q==;
-X-CSE-ConnectionGUID: Ck6m0yKARAyciSunR3oYHg==
-X-CSE-MsgGUID: rLgxnVc8RkK5pPUuWmjScg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="57108930"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="57108930"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 11:14:37 -0700
-X-CSE-ConnectionGUID: tGs8YgAcSvikbWwLjq0/wQ==
-X-CSE-MsgGUID: t5/iCW9mReaTpoT5KUD0zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="165797520"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 08 Aug 2025 11:14:34 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ukRbl-0004Bo-2x;
-	Fri, 08 Aug 2025 18:14:28 +0000
-Date: Sat, 9 Aug 2025 02:14:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pranav Tyagi <pranav.tyagi03@gmail.com>, tglx@linutronix.de,
-	mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org,
-	dave@stgolabs.net, andrealmeid@igalia.com,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jann@thejh.net, keescook@chromium.org,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
-	Pranav Tyagi <pranav.tyagi03@gmail.com>
-Subject: Re: [PATCH v3] futex: don't leak robust_list pointer on exec race
-Message-ID: <202508090125.VIm8fAXD-lkp@intel.com>
-References: <20250805154725.22031-1-pranav.tyagi03@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=shSattq0qn4KYJlYPvTdl0dyF8nF3XRCfKU2+CH2L8GkLDjEwCr5LGcXfLRdVU+8HJdu173D9+1KrDLvDmGpeW4AUzgWibapLufiBB8vthxoOv8QUmlLg5JKyAZby6ov4I0pmSo3O3faYYPX6GvSdP8Whwzgxmdv1H7nIp0ISNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0ud/DRI; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2402bbb4bf3so29425745ad.2;
+        Fri, 08 Aug 2025 11:18:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754677106; x=1755281906; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kFLfuaFEybAHsFHCBk/JWdW4OTRk7QE5kqrw1eDTxeM=;
+        b=F0ud/DRI1Z84j20JRtQ8i9KF/E0FJo/DbffoeiYEm8ygEwlKfysb41fazYALEHB5Z1
+         n8HeIddCAF6TOmk/zU3p5MXsl9Ra7IK+ADcLBMo1Ecxt+Em1HaOi79Qvcw4QIW+Gd86L
+         mfYCgZALbpBb+y3fBZnAPF6pzs8CNxH5oSLBZFLug5ApQK82536I0/JVmg3wNVr2HTZL
+         UK2GyxEvxBbxpx6etXta8b2Wnz9vmIV28eEgz1+467PKjuissCRqY669CuVQkJsSObZA
+         Vy+w/soQ8nNm3/Oa8r4NI+FIx2oMmIQX90Hw0kH0ZIVHwm7gaedputHg0PFY0Gom4bSB
+         eU/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754677106; x=1755281906;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kFLfuaFEybAHsFHCBk/JWdW4OTRk7QE5kqrw1eDTxeM=;
+        b=MQFMcw9xqFwtrK8ItA/Gi7RAmUEiiJdARONDm02K/xsmt6LLdXni+kxtpr0uUq9bAK
+         ACfFIEIsLnaPh2ivu2pKSe5QsewVUOcIGC8dHXD1/YKrDSgVTliaUfnmjXDEpjIzXVco
+         t48R+sv0F4sdnZ7dH5EvkU2CRNZK8N8L0yxk2ycdtsAprYPDZyyZqSM3YNOP++vCppET
+         fd2fceHDJnetzSUJpE8cVfIrMXmmogq/uqV502/pljJqi/4KgmLG33yqL60E2rDiwn/e
+         U/bUCHcJYRXIvYrH41r333yBMj+JS6nXZ3N+sBG4D9+uqZlw/KNJzOUwJSzaQUdGSWPS
+         lT7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVY0OCrzcjrinlyU+hW3usNOGiizO3MKF0dDDgBVFeXw+iRU3n1V5vA4qqQ4VKpCNGr4Cra59aA1kM/1g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDMqZOyhj7urxGwH8VyB8LmZvMNly84j8FRaT+eQZowkXE7t8K
+	c99oNUF00PdvOCgFQ1mx5IuwbO9odTjvLaZ7Vu+tBrK+7UWdusQC1C6U
+X-Gm-Gg: ASbGncvymDTaOG0kcoWtSFE0pzbQS++oBMbLTvmIkjYLYeWIxRUo9AOPOhpXTH0aZqk
+	fIRSqhw/WrY7QHJh470zmeFZgV8NEZgNqwBaSx2UP00lguRCRBRh7EJAH5rpv0HsfnM2Vi1rHf3
+	XB5mV8qKi0Gdrulmsw5zqM5nDXPERseQ1vSZje0IBURx5WkcF9XalOA8Qu0Eri02Pd3OrXrU5Hl
+	QysHefygunGlQ8afYgm18AfcLz3zFsp7aTIKA862TrwuklXtpdIW6Gc+Ja4bwh1zT27LiyFPlDS
+	jgQrIRomjkrwHuf9iYCRysJmk/9OB9ZUdAKsEVEbIYHJu8q23oV0QuCznCq7oxk26zljWHDFNii
+	NYgVfs69jSEWMLnj/3XVC1bGwb70TxXoHGEw=
+X-Google-Smtp-Source: AGHT+IGTY5Nj1ElL3ESL9jmIwV+I1va0395QkMsWxWEXqBuRTRvA1OwBz+wJIm0Wuv0/bDEBSX4Wpg==
+X-Received: by 2002:a17:902:e5c7:b0:240:671c:6341 with SMTP id d9443c01a7336-242c21fe648mr66045945ad.26.1754677106380;
+        Fri, 08 Aug 2025 11:18:26 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e897716bsm216551795ad.112.2025.08.08.11.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 11:18:25 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 8 Aug 2025 11:18:24 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Mark coretemp driver as orphaned
+Message-ID: <52f77d72-adb6-4977-a5ad-d6e69945daa6@roeck-us.net>
+References: <20250808173807.96D134EA@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,90 +89,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250805154725.22031-1-pranav.tyagi03@gmail.com>
+In-Reply-To: <20250808173807.96D134EA@davehans-spike.ostc.intel.com>
 
-Hi Pranav,
+On Fri, Aug 08, 2025 at 10:38:07AM -0700, Dave Hansen wrote:
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> This maintainer's email no longer works. Remove it from MAINTAINERS.
+> Also mark the driver as Orphaned for now.
 
-kernel test robot noticed the following build errors:
+Normally we would just remove maintainer entries is such cases, to let
+driver maintenance revert to the subsystem. This is coming from Intel,
+though, so I assume you explicitly want to mark the driver as orphaned.
 
-[auto build test ERROR on tip/locking/core]
-[also build test ERROR on linus/master v6.16 next-20250808]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Applied.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pranav-Tyagi/futex-don-t-leak-robust_list-pointer-on-exec-race/20250806-121303
-base:   tip/locking/core
-patch link:    https://lore.kernel.org/r/20250805154725.22031-1-pranav.tyagi03%40gmail.com
-patch subject: [PATCH v3] futex: don't leak robust_list pointer on exec race
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250809/202508090125.VIm8fAXD-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7b8dea265e72c3037b6b1e54d5ab51b7e14f328b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250809/202508090125.VIm8fAXD-lkp@intel.com/reproduce)
+Thanks,
+Guenter
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508090125.VIm8fAXD-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> kernel/futex/syscalls.c:72:13: error: no member named 'compat_robust_list' in 'struct task_struct'
-      72 |                 head = p->compat_robust_list;
-         |                        ~  ^
-   1 error generated.
-
-
-vim +72 kernel/futex/syscalls.c
-
-    41	
-    42	static void __user *get_robust_list_common(int pid, bool compat)
-    43	{
-    44		struct task_struct *p;
-    45		void __user *head;
-    46		unsigned long ret;
-    47	
-    48		p = current;
-    49	
-    50		scoped_guard(rcu) {
-    51			if (pid) {
-    52				p = find_task_by_vpid(pid);
-    53				if (!p)
-    54					return (void __user *)ERR_PTR(-ESRCH);
-    55			}
-    56			get_task_struct(p);
-    57		}
-    58	
-    59		/*
-    60		 * Hold exec_update_lock to serialize with concurrent exec()
-    61		 * so ptrace_may_access() is checked against stable credentials
-    62		 */
-    63		ret = down_read_killable(&p->signal->exec_update_lock);
-    64		if (ret)
-    65			goto err_put;
-    66	
-    67		ret = -EPERM;
-    68		if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
-    69			goto err_unlock;
-    70	
-    71		if (IS_ENABLED(CONFIG_COMPAT) && compat)
-  > 72			head = p->compat_robust_list;
-    73		else
-    74			head = p->robust_list;
-    75	
-    76		up_read(&p->signal->exec_update_lock);
-    77		put_task_struct(p);
-    78	
-    79		return head;
-    80	
-    81	err_unlock:
-    82		up_read(&p->signal->exec_update_lock);
-    83	err_put:
-    84		put_task_struct(p);
-    85		return (void __user *)ERR_PTR(ret);
-    86	}
-    87	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Jean Delvare <jdelvare@suse.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: linux-hwmon@vger.kernel.org
+> ---
+> 
+>  b/MAINTAINERS |    3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff -puN MAINTAINERS~MAINTAINERS-20250707-2 MAINTAINERS
+> --- a/MAINTAINERS~MAINTAINERS-20250707-2	2025-08-08 10:36:09.028985285 -0700
+> +++ b/MAINTAINERS	2025-08-08 10:36:09.043986599 -0700
+> @@ -6281,9 +6281,8 @@ F:	tools/testing/selftests/cgroup/test_k
+>  F:	tools/testing/selftests/cgroup/test_memcontrol.c
+>  
+>  CORETEMP HARDWARE MONITORING DRIVER
+> -M:	Fenghua Yu <fenghua.yu@intel.com>
+>  L:	linux-hwmon@vger.kernel.org
+> -S:	Maintained
+> +S:	Orphan
+>  F:	Documentation/hwmon/coretemp.rst
+>  F:	drivers/hwmon/coretemp.c
+>  
 
