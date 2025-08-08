@@ -1,81 +1,69 @@
-Return-Path: <linux-kernel+bounces-760230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5992DB1E840
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:25:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751B8B1E842
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E3521891E8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:25:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8051AA2545
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06A927814C;
-	Fri,  8 Aug 2025 12:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D726277CA4;
+	Fri,  8 Aug 2025 12:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMRCOSJ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UP5oxIQa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC1D275B17;
-	Fri,  8 Aug 2025 12:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6103C277029
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754655891; cv=none; b=u0yE5JuwT2LKbzHrIL+aFQdJXRjK1a/ZQEIq54zDrDa7fLDjNpWf9pzKBI83gLkCkFfPWpysZHBKwdSjag/rvquq3W64bCcR1E37sOc5nZa9sH2JXit/qyraHzPbnJaIa7lkUSph07xgatYpXuT0jAgKMfs5WjCg4U+vvRTVLmk=
+	t=1754655947; cv=none; b=NUDhtcR5vxmi9GWjsHkKtVR4XlwTJbndpaC1VbVyHN3d39HyNVoS+0dERWE/QxY/HI5Olr7o1EhnrHRN6m+GY4+pM6lMyAE+JTnMWd0oRocOERQLAD9Z67y2BUmdrASAKRKrCsOsvmR6KuTS97GTlp9W3+0gZu6zRrr2X4eBEEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754655891; c=relaxed/simple;
-	bh=qRjvtQepeMwWQ1iZeyP+WXdo3DOPw4yY3tm/2Jj3ro8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hhuBIGrQG8Pm5YD/j3z5pjrpQSbKAMOvEiP/5AnP3vd2ZJMMe7pXITpmC3chLzsP1NINH88MqeeCNwjDSU8lVC8expx4lzgBbgXgmPiI4Cuf+bkr0YcL6e/LVtF32j+sTUfi/oASXMRB6jCZO0aLbbZWRqLAAuTsjMLACm+yOic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMRCOSJ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01115C4CEED;
-	Fri,  8 Aug 2025 12:24:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754655891;
-	bh=qRjvtQepeMwWQ1iZeyP+WXdo3DOPw4yY3tm/2Jj3ro8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CMRCOSJ4OD4BgEV43QFUeLjx//tVMPcvn1zUTdkz9AEdPWvxToF3CTtrJ1JY/j7FQ
-	 Wafqp+mkl4F+RrKLdpvFkCtYorEJs9Tt6axGTHlEr587xP5Xo0loGlmK2qV8cF6d9p
-	 NmSBZDjZycBiXzMSQy1zA1Ob1jgfjGybkU/W7UHhsItAXGLuyJQCcvBbRVKaPo+3oj
-	 HvW4FB4JncGBNWmwmBjkKKNhjw+tydQpk4wQrQ7Sc5vXhwrwqPZpgVhJgUazpVAPKt
-	 nCXk1XTmrY1dMOqyD13Z5jOxKdhUOOsLFfOP/zTIiXCQhWc3Q9/8G9+QB5lLT2QKeT
-	 MhrbCEVrZ3BPA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  pratyush@kernel.org,
-  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
-  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
-  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com, Hugh Dickins
- <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
-In-Reply-To: <b227482a-31ec-4c92-a856-bd19f72217b7@redhat.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<b227482a-31ec-4c92-a856-bd19f72217b7@redhat.com>
-Date: Fri, 08 Aug 2025 14:24:40 +0200
-Message-ID: <mafs07bzeatmf.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1754655947; c=relaxed/simple;
+	bh=iTfHSUiLfzPC16Po7Brxa3iLH/lCZdsks9A7ncjHzHU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XpFErykZP73/s99VudsOahhWWh0cfdUQeYEBHWOB91ReV7zvygz/H64EHNFpU8NOAEDWU/c+2L8xWw3e7FopfYYIW0WnAwoAXe4FJG7VPpTIdmaSaPp7wlIqU0w09I1ON50prQEemcxXYIS++hl/yKCVx1C189Syt33JHqmOObI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UP5oxIQa; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754655945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iTfHSUiLfzPC16Po7Brxa3iLH/lCZdsks9A7ncjHzHU=;
+	b=UP5oxIQaA5eD7pt15UOKpLxC9ws3vPuIqu8ujZWW8ASoYQDXJTVTbWOm8SMR2CUYoHtGYI
+	e+1FEF9leo/B5kAbShYKmbeOUYs1efAVmFLqJDfopWdzJt8kp1XMDtuusFd4I6SzitsxMM
+	k/yZqHPm7/ioao/TirZRhaxLC9zxHsA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-524-dKrZ9qpfOq-43DYXAVBhTw-1; Fri,
+ 08 Aug 2025 08:25:40 -0400
+X-MC-Unique: dKrZ9qpfOq-43DYXAVBhTw-1
+X-Mimecast-MFC-AGG-ID: dKrZ9qpfOq-43DYXAVBhTw_1754655938
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BBFE319560AE;
+	Fri,  8 Aug 2025 12:25:38 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.74.8])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 838DE180047F;
+	Fri,  8 Aug 2025 12:25:37 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: trondmy@kernel.org, anna@kernel.org, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] NFSv4: fix "prefered"->"preferred"
+Date: Fri, 08 Aug 2025 08:25:35 -0400
+Message-ID: <3BBB1A6E-B7DB-46DC-97EC-3F8BD6EADBA1@redhat.com>
+In-Reply-To: <20250808084103.230483-1-zhao.xichao@vivo.com>
+References: <20250808084103.230483-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,169 +71,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, Aug 08 2025, David Hildenbrand wrote:
+On 8 Aug 2025, at 4:41, Xichao Zhao wrote:
 
-> On 07.08.25 03:44, Pasha Tatashin wrote:
->> This series introduces the LUO, a kernel subsystem designed to
->> facilitate live kernel updates with minimal downtime,
->> particularly in cloud delplyoments aiming to update without fully
->> disrupting running virtual machines.
->> This series builds upon KHO framework by adding programmatic
->> control over KHO's lifecycle and leveraging KHO for persisting LUO's
->> own metadata across the kexec boundary. The git branch for this series
->> can be found at:
->> https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v3
->> Changelog from v2:
->> - Addressed comments from Mike Rapoport and Jason Gunthorpe
->> - Only one user agent (LiveupdateD) can open /dev/liveupdate
->> - Release all preserved resources if /dev/liveupdate closes
->>    before reboot.
->> - With the above changes, sessions are not needed, and should be
->>    maintained by the user-agent itself, so removed support for
->>    sessions.
->> - Added support for changing per-FD state (i.e. some FDs can be
->>    prepared or finished before the global transition.
->> - All IOCTLs now follow iommufd/fwctl extendable design.
->> - Replaced locks with guards
->> - Added a callback for registered subsystems to be notified
->>    during boot: ops->boot().
->> - Removed args from callbacks, instead use container_of() to
->>    carry context specific data (see luo_selftests.c for example).
->> - removed patches for luolib, they are going to be introduced in
->>    a separate repository.
->> What is Live Update?
->> Live Update is a kexec based reboot process where selected kernel
->> resources (memory, file descriptors, and eventually devices) are kept
->> operational or their state preserved across a kernel transition. For
->> certain resources, DMA and interrupt activity might continue with
->> minimal interruption during the kernel reboot.
->> LUO provides a framework for coordinating live updates. It features:
->> State Machine: Manages the live update process through states:
->> NORMAL, PREPARED, FROZEN, UPDATED.
->> KHO Integration:
->> LUO programmatically drives KHO's finalization and abort sequences.
->> KHO's debugfs interface is now optional configured via
->> CONFIG_KEXEC_HANDOVER_DEBUG.
->> LUO preserves its own metadata via KHO's kho_add_subtree and
->> kho_preserve_phys() mechanisms.
->> Subsystem Participation: A callback API liveupdate_register_subsystem()
->> allows kernel subsystems (e.g., KVM, IOMMU, VFIO, PCI) to register
->> handlers for LUO events (PREPARE, FREEZE, FINISH, CANCEL) and persist a
->> u64 payload via the LUO FDT.
->> File Descriptor Preservation: Infrastructure
->> liveupdate_register_filesystem, luo_register_file, luo_retrieve_file to
->> allow specific types of file descriptors (e.g., memfd, vfio) to be
->> preserved and restored.
->> Handlers for specific file types can be registered to manage their
->> preservation and restoration, storing a u64 payload in the LUO FDT.
->> User-space Interface:
->> ioctl (/dev/liveupdate): The primary control interface for
->> triggering LUO state transitions (prepare, freeze, finish, cancel)
->> and managing the preservation/restoration of file descriptors.
->> Access requires CAP_SYS_ADMIN.
->> sysfs (/sys/kernel/liveupdate/state): A read-only interface for
->> monitoring the current LUO state. This allows userspace services to
->> track progress and coordinate actions.
->> Selftests: Includes kernel-side hooks and userspace selftests to
->> verify core LUO functionality, particularly subsystem registration and
->> basic state transitions.
->> LUO State Machine and Events:
->> NORMAL:   Default operational state.
->> PREPARED: Initial preparation complete after LIVEUPDATE_PREPARE
->>            event. Subsystems have saved initial state.
->> FROZEN:   Final "blackout window" state after LIVEUPDATE_FREEZE
->>            event, just before kexec. Workloads must be suspended.
->> UPDATED:  Next kernel has booted via live update. Awaiting restoration
->>            and LIVEUPDATE_FINISH.
->> Events:
->> LIVEUPDATE_PREPARE: Prepare for reboot, serialize state.
->> LIVEUPDATE_FREEZE:  Final opportunity to save state before kexec.
->> LIVEUPDATE_FINISH:  Post-reboot cleanup in the next kernel.
->> LIVEUPDATE_CANCEL:  Abort prepare or freeze, revert changes.
->> v2:
->> https://lore.kernel.org/all/20250723144649.1696299-1-pasha.tatashin@soleen.com
->> v1: https://lore.kernel.org/all/20250625231838.1897085-1-pasha.tatashin@soleen.com
->> RFC v2: https://lore.kernel.org/all/20250515182322.117840-1-pasha.tatashin@soleen.com
->> RFC v1: https://lore.kernel.org/all/20250320024011.2995837-1-pasha.tatashin@soleen.com
->> Changyuan Lyu (1):
->>    kho: add interfaces to unpreserve folios and physical memory ranges
->> Mike Rapoport (Microsoft) (1):
->>    kho: drop notifiers
->> Pasha Tatashin (23):
->>    kho: init new_physxa->phys_bits to fix lockdep
->>    kho: mm: Don't allow deferred struct page with KHO
->>    kho: warn if KHO is disabled due to an error
->>    kho: allow to drive kho from within kernel
->>    kho: make debugfs interface optional
->>    kho: don't unpreserve memory during abort
->>    liveupdate: kho: move to kernel/liveupdate
->>    liveupdate: luo_core: luo_ioctl: Live Update Orchestrator
->>    liveupdate: luo_core: integrate with KHO
->>    liveupdate: luo_subsystems: add subsystem registration
->>    liveupdate: luo_subsystems: implement subsystem callbacks
->>    liveupdate: luo_files: add infrastructure for FDs
->>    liveupdate: luo_files: implement file systems callbacks
->>    liveupdate: luo_ioctl: add userpsace interface
->>    liveupdate: luo_files: luo_ioctl: Unregister all FDs on device close
->>    liveupdate: luo_files: luo_ioctl: Add ioctls for per-file state
->>      management
->>    liveupdate: luo_sysfs: add sysfs state monitoring
->>    reboot: call liveupdate_reboot() before kexec
->>    kho: move kho debugfs directory to liveupdate
->>    liveupdate: add selftests for subsystems un/registration
->>    selftests/liveupdate: add subsystem/state tests
->>    docs: add luo documentation
->>    MAINTAINERS: add liveupdate entry
->> Pratyush Yadav (5):
->>    mm: shmem: use SHMEM_F_* flags instead of VM_* flags
->>    mm: shmem: allow freezing inode mapping
->>    mm: shmem: export some functions to internal.h
->>    luo: allow preserving memfd
->>    docs: add documentation for memfd preservation via LUO
+> Trivial fix to spelling mistake in comment text.
 >
-> It's not clear from the description why these mm shmem changes are buried in
-> this patch set. It's not even described above in the patch description.
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-Patches 26-30 describe the shmem changes in more detail, but you're
-right, it should be mentioned in the cover as well.
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
 
-The idea is, LUO is used to preserve kernel resources across kexec. One
-of the most fundamental resources the kernel has is memory. Since LUO
-does preservation based on file descriptors, memfd is the way to attach
-a FD to memory. So we went with memfd as the first user of LUO. memfd
-can be backed by shmem or hugetlb, but currently only shmem is
-supported. We do plan to support hugetlb as well in the future.
+Ben
 
-The idea is to keep the serialization/live update logic out of the way
-of the main subsystem. So we decided to keep the logic out in a separate
-file.
-
->
-> I suggest sending that part out separately, so Hugh actually spots this.
-> (is he even CC'ed?)
-
-Hmm, none of the shmem maintainers are included. I wonder why. The
-patches do touch shmem.c and shmem_fs.h so the MAINTAINERS entry for
-"TMPFS (SHMEM FILESYSTEM)" should have been hit. My guess is that the
-shmem changes weren't part of the original RFC so perhaps Pasha forgot
-to update the To/Cc list since then?
-
-Either way, I've added Hugh and Baolin to this email. Hugh, Baolin, you
-can find the shmem related patches at [0][1][2][3][4].
-
-Pasha, can you please add them for later versions as well?
-
-And now that I think about it, I suppose patch 29 should also add
-memfd_luo.c under the SHMEM MAINTAINERS entry.
-
-[0] https://lore.kernel.org/lkml/20250807014442.3829950-27-pasha.tatashin@soleen.com/
-[1] https://lore.kernel.org/lkml/20250807014442.3829950-28-pasha.tatashin@soleen.com/
-[2] https://lore.kernel.org/lkml/20250807014442.3829950-29-pasha.tatashin@soleen.com/
-[3] https://lore.kernel.org/lkml/20250807014442.3829950-30-pasha.tatashin@soleen.com/
-[4] https://lore.kernel.org/lkml/20250807014442.3829950-31-pasha.tatashin@soleen.com/
-
--- 
-Regards,
-Pratyush Yadav
 
