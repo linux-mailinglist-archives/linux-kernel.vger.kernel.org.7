@@ -1,179 +1,289 @@
-Return-Path: <linux-kernel+bounces-760364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDC5B1EA33
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:18:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF719B1EA2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E13771AA5EB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:18:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DDC87A680C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4629C27F4D0;
-	Fri,  8 Aug 2025 14:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E89D27A468;
+	Fri,  8 Aug 2025 14:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FNxRUF5u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8iMGdHl"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D985C1482F2
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCFA1482F2;
+	Fri,  8 Aug 2025 14:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754662663; cv=none; b=BhmCdZFnYKRbrroK160UOlcYL3iseEF0d4ZyruvhVdtIlSWA0d5lzTBgBA2ChSX0eM9Ondjye1OV2X/usDte9m9QYJ21rGFNSYJPATb/yjfhXmCfnWBjbv7M5v3J4XX1GoEj/28xM+pO8OpZdoPcOvvq5TkY1Uwk/Avd+VMOCrY=
+	t=1754662656; cv=none; b=F8T2W+arObZa+9GkQKFr5jT3CC+H+ZT6veeLzAKNdWblCFHWoyCIQaLY0/X8CTmdBvCqzhmb5iFCroc4EQn2EYhzX5wSelYvX7OP0YJdUUIoQcO7D8H1C2kdAfa/zz8AtGV0hFt0gz5T1nhR6bh3yAJCUOCLV4qSQ0khNWk+5rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754662663; c=relaxed/simple;
-	bh=eU0T85JhnrkuKCzugihgR5bR47ZxosUPUFmxGIhbaY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CCgGAB0dsISdngB4X0Ww2E/q49tzcy/f5QJlinzN5zdkkpgunmrqxaTUbbxSdr7UiFEOn+IMthfULEiIplo8P0VRjfP6ty62Lodt6lz2UmVpIzHXSaKjcLgUML99qJyB3GziFWi/mYOmlR7Hprb5D6ZFqvQmpfc5On6dzue8Xmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FNxRUF5u; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754662660;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=rHGDMQaKaiIFBdXakruE0SD84ayhWoaiRDliiR2k738=;
-	b=FNxRUF5uECt6eu7+TLyrAS53XX7Ob5i5rikh25gAd0/yCqxKX2j4/lCO+OngD9QBMbbBYo
-	4iVEFpCYGG3CpwmOFLxoK7Q1UdkrB35XsqZsDFY8DJi2Vnrk1avhE/iYtTMYSqayp0pdCZ
-	rwPCD/9PbncSYxVTMlwvxR6TwUxJjPA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-208-glhFCOVgOrCXXpBP6QHyKQ-1; Fri, 08 Aug 2025 10:17:39 -0400
-X-MC-Unique: glhFCOVgOrCXXpBP6QHyKQ-1
-X-Mimecast-MFC-AGG-ID: glhFCOVgOrCXXpBP6QHyKQ_1754662659
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-459db6e35c3so17189425e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 07:17:39 -0700 (PDT)
+	s=arc-20240116; t=1754662656; c=relaxed/simple;
+	bh=18bOJVl3ywIQO+1F9vAxCx3heO57g6E0VCx9+/oiTC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZbA8XLe9qbrl/FKwvDd6/kZCdArV4mkIT5dhEUXvlGvboiJlz0DwsowyRzbUWmyla8TjPx3srWJYdvmXILaYFH1kFqX/FspUhtrvKxMsLRs9Udnaqs0tqnAshmjRZqNkHlgH8x8YphEXA7/+iXvmWS93PI3qSVgndn4s9gi8eGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j8iMGdHl; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-7094f298dc3so18360706d6.2;
+        Fri, 08 Aug 2025 07:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754662654; x=1755267454; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZHkibtg2Q+TrEAqPuIe0syxbU3o+8f5vObMW+NHGo3A=;
+        b=j8iMGdHllRzDTTUcGZL/LYYBxuZqXz7Ag7hNvViXpoRB9xBWkBQsylzZze/h9WL3Vu
+         GXzetyV0phW98a7U/AdTe29BwAz/30E+rmmuRXo3ac3cFGGfb5DyJ5b8k9PHiouZqay2
+         GLt14dmBeBzEdEVHmOvOXLmurUlepS62qFCm1DiLBpIbkdt9bzmU43e83Z3mZVKAUqqt
+         V6/F87mNX4WVA7wGbwQWX3+YRYPi3VonUHgzFf8bBT00RPtsYsa2bhGaOY6RELm/4rmb
+         Yy9jcT9LO5wM9lAmDraLldXDgIHc3EVgSpEZAEZSPy7D7xhdGSvl2jOFG8Vq+F3hqIJp
+         pZpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754662658; x=1755267458;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rHGDMQaKaiIFBdXakruE0SD84ayhWoaiRDliiR2k738=;
-        b=gtmRk/2ZjfQBvLtmvnTAw4yvuXum/1hoNSeXxT3C9vzE0Exj4Q2w0GJm5OgT7f6CWN
-         KqmF7lp8Tqd9ykGBmNjhmvEasC5PLO8D3vZflalJcxHz7nmC1lElYA1jfCThARSkUc+L
-         50H5RZ8VGnCpJMwZRskV1WaCzIILuhhmFDLWwz8ypxkDQa746YrYetARDeWRqnK2ZN/8
-         N3gNrxHHKoiQM3t7CpmWFevuuLAV+h1Z/uFwChbQ0lf5jB7njQ54BOdNnLCrwEv9/QH/
-         VuVVT6DYEOoacZmrzHkOafQAQhyo9nMGPdmfcvT4YEsDHKzP7Z7KokfwM2jpj19l+5MF
-         2Rsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMFGyEfTh1tLE0uVxJ7vDwN7Z7EikCESLdiGDSoqxtRg6+zRC8baIEPZJrYp2fAVv5OiRooKQKVkXUvZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5BQjjhe+Po8uR9zNDNNAVojF7+LhgmrNRC5RrTaGOzBWUOTX/
-	wngMBUNa1mYA103M0dUT9YdpXTqjRWtauhEkj4he9licnXOvwlvofWsm68XQLpmlS3VUQ8PGeWu
-	IdWIIaN0RfIHfU+UOQYvhJIz9KSaFdUygBWp68rCgvm8WEXKCFbY+7kgPnU/dKlHiUw==
-X-Gm-Gg: ASbGncsGAwMmvXZUG+X+yk+TP1Fxu+avR7IWPN13iLN6hqVpSNnQ1gSzHacc5bOushf
-	OHp6nztHh+7bFt4IZNwHrGQP7BKXQVcs/fHpjmwcOfjocrMAT7OER406gX7mTfqU9Uw6XowvvBt
-	SL247+SCoBVzbTKw0aypxJZnGJTodYVRHNKmjyCIsjt9Hyir3zr3O+xYZYKPerVXHEtHFakg2uJ
-	3SLLuGBa7dCpMMyVXvNtYutajpdKSHZmoWSOL1JuLwdbMUm5R/zKJOz3D0eYZerMd3rl7DObJ93
-	UPToNA+aeitqrEkEyeRhoI5EAPsn2mLrHlQBfa8RvlgcynaQuIU1iq6VqA8mJ5bsNS5LypHhucC
-	46MlRPT/0K0V6Oqw/7lThiUykKJTqJGPVDxWVgWunqdRNYYDouLWXCDzdFgkaP2et
-X-Received: by 2002:a05:600c:354a:b0:43c:f8fe:dd82 with SMTP id 5b1f17b1804b1-459f4f0f57fmr31634375e9.18.1754662658472;
-        Fri, 08 Aug 2025 07:17:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEuuPjmx204WPCEocS/DfxSAD79SuYd1SKOzgP0BMmm7YItX5BZc+qOZNBJNJk67SvuvcFlQQ==
-X-Received: by 2002:a05:600c:354a:b0:43c:f8fe:dd82 with SMTP id 5b1f17b1804b1-459f4f0f57fmr31633985e9.18.1754662658070;
-        Fri, 08 Aug 2025 07:17:38 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:900:2e1e:d717:2543:c4d6? (p200300d82f2509002e1ed7172543c4d6.dip0.t-ipconnect.de. [2003:d8:2f25:900:2e1e:d717:2543:c4d6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b866392csm157921635e9.2.2025.08.08.07.17.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 07:17:37 -0700 (PDT)
-Message-ID: <8334f7f9-065f-40b9-9c1e-95223da7980d@redhat.com>
-Date: Fri, 8 Aug 2025 16:17:36 +0200
+        d=1e100.net; s=20230601; t=1754662654; x=1755267454;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZHkibtg2Q+TrEAqPuIe0syxbU3o+8f5vObMW+NHGo3A=;
+        b=oKXJNuah0X/Wi0TDMoKrUMCFHEGB2m+68q2526MAJkCdt/gyjY+5IPeePae1KOEb4b
+         XB/ManUDaBC5hqU6sFQUkrTmbrVqJfZXEke3a1FcPH0NjmIAlT2cLbb5MxtUioSLMES6
+         ePs4mlveIyCkCeOxZjuzKRIfxnH249f2Yefx/TiRS8wt9qm1KSFSxDeHhtU9cYDlc9bI
+         KtC8GPHjQA0sWbWPWFJpx+C3bmKDolxaCSxl6sxkH+WMaRT8gaYeqUOGGifeKyDjAi2i
+         AFa0+GZCS4qDK34uiKeMJg28MwfsizFoYNEYY8+tD9FTTMI1Ozki+5vAdvUOIiPY+WUo
+         WD/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUstG8iHpuAbJpSjwN8e5HbpOGLqLnmXdHekywHLslebGvWGODKK6/SV4wXJMGg6U1i1Ed4PNIMxMKB@vger.kernel.org, AJvYcCVSXeTs7wkaJXZzESo4MixuDy9x2aDpBMOMzr+cHI8HJrGohvQ9GEwrLNm0rJSiwOl6IjWlFFbT/XeW@vger.kernel.org, AJvYcCWDf8zJFdYH7hKsfKAdKVCWEDqvTmpv++Gvq/X4k8Gm6Q4dkSYOSr/WLNgcWVIWTK/4bPwp+Hu8zMyk1tNS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzPtmkeoIolqWYt7r631SlwoHWYsO0z+awhcNCZf1rDfMAH4i6
+	tCCSmIQ73FiCZRU2Nh7c/6xPXLdBXMK1468oLIE0ILfaZwN6tLOH3trekInpn2Xuip2ZeA==
+X-Gm-Gg: ASbGnctDcT49B7GEwzKvPospmdKIBhV6xjjk2oyGzlAVOjlTbgIdRPpSxJc0gHixS/r
+	nr4oxlLha7MiFcjPd+HZ87+UoLuGhS14mugBhJ7bff5/g/yJFlHJJfccqaxh7JxJdMnvxsDwKu1
+	v3ct9i1xZ2EsjgQEcHbh2sVe61zyE2pg9kR0pRyzhZV00LWtJjByQV8gIVYsIk/WNY2Nn814XVa
+	nEddBk76pDFS8NqrtU0j4eM7h7aOdYDXLV4gVavUoKmZDndXIzqTai7CdumCX9gRCRLxN9RpXtF
+	mDXovU2Szt6KzpWKWwFLQdfWgnX0m1Nlk3hJ9hIDVCotPGTagEeAFQvf3PIdiJWpumfkB4o92GB
+	J/Scdc5rbGBrQOg==
+X-Google-Smtp-Source: AGHT+IFJ65VpV6VGkUjkJp0LIBOjHlcR1qJbbBolxVL95tAtZH+4KOH1LX/sxvT4gnS+kDjlfDdn+Q==
+X-Received: by 2002:ad4:5f0e:0:b0:6ff:1548:6f0b with SMTP id 6a1803df08f44-7099a520ef8mr40020316d6.44.1754662653319;
+        Fri, 08 Aug 2025 07:17:33 -0700 (PDT)
+Received: from nsa ([87.249.138.211])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077c716effsm114875346d6.0.2025.08.08.07.17.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 07:17:32 -0700 (PDT)
+Date: Fri, 8 Aug 2025 15:17:47 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] iio: adc: ad7476: Drop convstart chan_spec
+Message-ID: <hugrto5p57yzk6svy36wywkkfftxdnpovpkmw4ocnqvm37hgr6@zyzzm4axofkd>
+References: <cover.1754559149.git.mazziesaccount@gmail.com>
+ <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
+ <tc4od3jtqnj743naxefx5lxkha46wohuuvw46mik6nullvsqbe@knj4t23eaodw>
+ <ngcbj6p7vfakah5fqsxqjlmrcycpg5rxfrbh4s34fll2kb3zq2@eyesluawn5w2>
+ <076b7f07-e755-4fe7-84b1-f3f495978008@gmail.com>
+ <t54tty4xbcsozeouoqmytdw6saedgoxbemnr2azbiv2f4h2wta@rf4fnooawrgs>
+ <62dbfa31-002b-4008-9273-01b161a72cac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] module: Rename EXPORT_SYMBOL_GPL_FOR_MODULES to
- EXPORT_SYMBOL_FOR_MODULES
-To: Vlastimil Babka <vbabka@suse.cz>, Daniel Gomez <da.gomez@samsung.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Matthias Maennich <maennich@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>,
- Peter Zijlstra <peterz@infradead.org>, Shivank Garg <shivankg@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
- 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
- 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
- OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
- kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
- GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
- s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
- Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
- FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
- OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
- NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
- Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
- 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
- /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
- bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
- RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
- m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
- CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
- vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
- WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250808-export_modules-v4-1-426945bcc5e1@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <62dbfa31-002b-4008-9273-01b161a72cac@gmail.com>
 
-On 08.08.25 15:28, Vlastimil Babka wrote:
-> Christoph suggested that the explicit _GPL_ can be dropped from the
-> module namespace export macro, as it's intended for in-tree modules
-> only. It would be possible to restrict it technically, but it was
-> pointed out [2] that some cases of using an out-of-tree build of an
-> in-tree module with the same name are legitimate.
+On Fri, Aug 08, 2025 at 12:09:21PM +0300, Matti Vaittinen wrote:
+> On 08/08/2025 12:00, Nuno Sá wrote:
+> > On Fri, Aug 08, 2025 at 08:37:07AM +0300, Matti Vaittinen wrote:
+> > > On 07/08/2025 16:10, Nuno Sá wrote:
+> > > > On Thu, Aug 07, 2025 at 01:41:31PM +0100, Nuno Sá wrote:
+> > > > > On Thu, Aug 07, 2025 at 12:34:52PM +0300, Matti Vaittinen wrote:
+> > > > > > The ad7476 driver defines separate chan_spec structures for operation
+> > > > > > with and without convstart GPIO. At quick glance this may seem as if the
+> > > > > > driver did provide more than 1 data-channel to users - one for the
+> > > > > > regular data, other for the data obtained with the convstart GPIO.
+> > > > > > 
+> > > > > > The only difference between the 'convstart' and 'non convstart'
+> > > > > > -channels is presence / absence of the BIT(IIO_CHAN_INFO_RAW) in
+> > > > > > channel's flags.
+> > > > > > 
+> > > > > > We can drop the convstart channel spec, and related convstart macro, by
+> > > > > > allocating a mutable per driver instance channel spec an adding the flag
+> > > > > > in probe if needed. This will simplify the driver with the cost of added
+> > > > > > memory consumption.
+> > > > > > 
+> > > > > > Assuming there aren't systems with very many ADCs and very few
+> > > > > > resources, this tradeoff seems worth making.
+> > > > > > 
+> > > > > > Simplify the driver by dropping the 'convstart' channel spec and
+> > > > > > allocating the chan spec for each driver instance.
+> > > > > 
+> > > > > I do not agree with this one. Looking at the diff, code does not look
+> > > > > simpler to me...
+> > > > 
+> > > > Ok, on a second thought I'm ok with this. It makes adding devices easier
+> > > > and (IIUC) for the one you're adding later we only have "convst_channel"
+> > > > channels.
+> > > 
+> > > Yes, that's right. The BD79105 requires the convstart.
+> > > 
+> > > > On comment though...
+> > > > 
+> > > > > 
+> > > > > - Nuno Sá
+> > > > > 
+> > > > > > 
+> > > > > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> > > > > > 
+> > > > > > ---
+> > > > > > Revision history:
+> > > > > >    v1 => v2:
+> > > > > >    - New patch
+> > > > > > 
+> > > > > > I considered squashing this change with the one limiting the chip_info
+> > > > > > scope. Having this as a separate change should help reverting if someone
+> > > > > > complains about the increased memory consumption though.
+> > > > > > ---
+> > > > > >    drivers/iio/adc/ad7476.c | 31 ++++++++++++++++++-------------
+> > > > > >    1 file changed, 18 insertions(+), 13 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> > > > > > index e97742912b8e..a30eb016c11c 100644
+> > > > > > --- a/drivers/iio/adc/ad7476.c
+> > > > > > +++ b/drivers/iio/adc/ad7476.c
+> > > > > > @@ -29,8 +29,6 @@ struct ad7476_state;
+> > > > > >    struct ad7476_chip_info {
+> > > > > >    	unsigned int			int_vref_mv;
+> > > > > >    	struct iio_chan_spec		channel[2];
+> > > > > > -	/* channels used when convst gpio is defined */
+> > > > > > -	struct iio_chan_spec		convst_channel[2];
+> > > > > >    	void (*reset)(struct ad7476_state *);
+> > > > > >    	bool				has_vref;
+> > > > > >    	bool				has_vdrive;
+> > > > > > @@ -41,6 +39,7 @@ struct ad7476_state {
+> > > > > >    	struct gpio_desc		*convst_gpio;
+> > > > > >    	struct spi_transfer		xfer;
+> > > > > >    	struct spi_message		msg;
+> > > > > > +	struct iio_chan_spec		channel[2];
+> > > > > >    	int				scale_mv;
+> > > > > >    	/*
+> > > > > >    	 * DMA (thus cache coherency maintenance) may require the
+> > > > > > @@ -153,24 +152,18 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+> > > > > >    #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+> > > > > >    		BIT(IIO_CHAN_INFO_RAW))
+> > > > > >    #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
+> > > > > > -#define AD7091R_CONVST_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), \
+> > > > > > -		BIT(IIO_CHAN_INFO_RAW))
+> > > > > >    #define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
+> > > > > >    		BIT(IIO_CHAN_INFO_RAW))
+> > > > > >    static const struct ad7476_chip_info ad7091_chip_info = {
+> > > > > >    	.channel[0] = AD7091R_CHAN(12),
+> > > > > >    	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > > > > -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
+> > > > > > -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > > > >    	.reset = ad7091_reset,
+> > > > > >    };
+> > > > > >    static const struct ad7476_chip_info ad7091r_chip_info = {
+> > > > > >    	.channel[0] = AD7091R_CHAN(12),
+> > > > > >    	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > > > > -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
+> > > > > > -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > > > >    	.int_vref_mv = 2500,
+> > > > > >    	.has_vref = true,
+> > > > > >    	.reset = ad7091_reset,
+> > > > > > @@ -282,7 +275,7 @@ static int ad7476_probe(struct spi_device *spi)
+> > > > > >    	const struct ad7476_chip_info *chip_info;
+> > > > > >    	struct ad7476_state *st;
+> > > > > >    	struct iio_dev *indio_dev;
+> > > > > > -	int ret;
+> > > > > > +	int ret, i;
+> > > > > >    	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> > > > > >    	if (!indio_dev)
+> > > > > > @@ -332,16 +325,28 @@ static int ad7476_probe(struct spi_device *spi)
+> > > > > >    	if (IS_ERR(st->convst_gpio))
+> > > > > >    		return PTR_ERR(st->convst_gpio);
+> > > > > > +	/*
+> > > > > > +	 * This will never realize. Unless someone changes the channel specs
+> > > > > > +	 * in this driver. And if someone does, without changing the loop
+> > > > > > +	 * below, then we'd better immediately produce a big fat error, before
+5eefac72163e88cc6697bec77c54e4393788e1bf> > > > > > +	 * the change proceeds from that developer's table.
+> > > > > > +	 */
+> > > > > > +	BUILD_BUG_ON(ARRAY_SIZE(st->channel) != ARRAY_SIZE(chip_info->channel));
+> > > > 
+> > > > I guess it make sense but still looks too fancy for this :)
+> > > 
+> > > Nothing else but a developer's carefulness keeps the number of channels "in
+> > > sync" for these two structs. I was originally doing WARN_ON() - but then I
+> > > thought that it's be even better to catch this at build time. Then I found
+> > > the BUILD_BUG_ON(). I see Andy suggested static_assert() instead - I've no
+> > > idea why one is preferred over other though. Let's see if I get educated by
+> > > Andy :)
+> > > 
+> > > > 
+> > > > > > +	for (i = 0; i < ARRAY_SIZE(st->channel); i++) {
+> > > > > > +		st->channel[i] = chip_info->channel[i];
+> > > > > > +		if (st->convst_gpio)
+> > > > 
+> > > > I would flip this an do:
+> > > > 	if (!st->convst_gpio)
+> > > > 		break;
+> > > 
+> > > To me this would just add an extra line of code, and more complex flow. I
+> > > would definitely agree if there were more operations to be done for the
+> > > 'convstart channels' - but since this is really just "if it's convstart,
+> > > then set a bit" - the
+> > > 
+> > > if (foo)
+> > > 	bar;
+> > > 
+> > > seems simpler than
+> > > 
+> > > if (!foo)
+> > > 	break;
+> > > bar;
+> > 
+> > Yes but in this particular case, you likely would not need to do any
+> > line break afterward because of indentation. Logically it also makes
+> > sense because st->convst_gpio is a device property (not a channel one).
+> > So it makes no sense to check it for all channels (I know we only have two
+> > channels). So if you prefer, you could even do:
+> > 
+> > if (st->convst_gpio) {
+> > 	for (...)
+> > 		__set_bit(...);
+> > }
+> > 
+> > which also would make more sense to me.
+> 
+> I considered this option, but I need to populate all the channels in
+> st->channel with the template data from chip_info->channel anyways. Hence I
+> want to loop through the channels also when the st->convst_gpio is not there
+> :)
 
-I'm wondering if we could revisit that idea later, and have a config 
-option that enables that. The use cases so far were mostly around 
-testing IIRC, where people already run their own debug kernel or sth. 
-like that.
+Ahh right! I completely missed that line:
 
--- 
-Cheers,
+st->channel[i] = chip_info->channel[i];
 
-David / dhildenb
+- Nuno Sá
 
+> 
+> > 
+> > Up to you now :)
+> 
+> Well, I already sent the v3. (Sorry, I should've waited a bit more but
+> wanted to get it out before the weekend). I kept the same logic as in v2.
+> You can still suggest improvements there!
+> 
+> Yours,
+> 	-- Matti
 
