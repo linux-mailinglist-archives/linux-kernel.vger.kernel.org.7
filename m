@@ -1,271 +1,203 @@
-Return-Path: <linux-kernel+bounces-759926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26BDAB1E48B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:40:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B02B1E481
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA4518A32AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:40:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C33E47B2AC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD5F263C9F;
-	Fri,  8 Aug 2025 08:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6000A263F3C;
+	Fri,  8 Aug 2025 08:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="N2LjNYcL";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="r1PoWh6/"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="noGWAzoc"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012035.outbound.protection.outlook.com [52.101.66.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B631A264F8A;
-	Fri,  8 Aug 2025 08:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754642377; cv=none; b=mjoVD51tpIY+MYw2GZJMepGhPe9QmXE609aJmvi1egeOXJehiU/JJQVxt4LP46qGe49g2zz8VXBAWVr0AESHeeq1HgGCLjQ4K7x1uLsk35b6YE23eGhPs7FiQxxyxHuvSe/Fg2G1v9AnqPy9Eve9MQ2vD1vSGhPwIXrWbvZ9m+I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754642377; c=relaxed/simple;
-	bh=C5oQDH2C4AYPc13lRN5KYUvuF+nlKWXe35dAwNKKKQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hxl+Pq26/D1dwPGreWuEUsw4EracSTDbg2r0eqYBD3EFu/nTf2XhA8Zz94ZxJknc2s1MTWf1+wPb/CK42UxVK+/9lDiy/OXMf+1k8Kzyqdupa6ac6ULWaLIXaCDu3GkXSYj56TbSo7BH5w08YJ4qazEQgtKE0nZb/RF+5shQrJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=N2LjNYcL; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=r1PoWh6/; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id C63E912FB458;
-	Fri, 08 Aug 2025 01:39:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1754642373; bh=C5oQDH2C4AYPc13lRN5KYUvuF+nlKWXe35dAwNKKKQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N2LjNYcL9eqKmruQHc21P2hU8hg2IOYCBvjctagJ2Az1XMnr6X1nETA8xEf6cn68q
-	 MgPY5cR99L0oGpWxt4Pv4fXeSjjtE1YVzExFRvkVIIdZ61lBxWpOtrnMl0/rCyasdT
-	 c+Ai+3jh+PASw0+utr1RVGMpTt8trDLutpwblovCkG0yHDTKBekvbs69ibIJ2IcEz2
-	 BLaxkxk2vkzB+efa1tj1e5zWTjfUgqRgjdgNKBOOOQQ87q/vetYpegQKuTuzt5fuZP
-	 CB4UbqLXJq6pzNRckiHoilscaf51nNRl/SXVCgmqLED2JGLVE+b47ND7SAO/pHarW8
-	 3hf3Ae2OwHRzQ==
-X-Virus-Scanned: amavis at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id eWhw2vAtAcjx; Fri,  8 Aug 2025 01:39:29 -0700 (PDT)
-Received: from ketchup (unknown [117.171.65.140])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 3CC5E12FB405;
-	Fri, 08 Aug 2025 01:39:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1754642369; bh=C5oQDH2C4AYPc13lRN5KYUvuF+nlKWXe35dAwNKKKQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r1PoWh6/voAcLo+G3AldL51Mrxwo3fgOzUJ231BYpZMALndqcZt3QlOBSfemJA19H
-	 kwwY2YvN0/GRdNkrZ8jDY+l7vGohCA9EXKtKPKxiqmAUR14LPEekyJcdGlFjSHIxA0
-	 SJMag4t3qxCnJ4iSOBLPoDTHMIHASCtek+9JGfIm6ceErU1zou5T/WXm0/SEN3HkdV
-	 pOzk04iJZC62qCiRkrj1owif8d/dmrNPYYL526bNgqGAIgE3M+g7yn+z68mclJi09s
-	 A6oiDTG5kllPNHkVts88BQMzzCA9LRBnzRda8JMAtBkWi3SKYAf08H/ZnXJpAfJHFq
-	 m50KPmH+j6keA==
-Date: Fri, 8 Aug 2025 08:39:22 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH 2/2] clk: spacemit: introduce i2s pre-clock and fix i2s
- clock
-Message-ID: <aJW3uvqI--Bwrld3@ketchup>
-References: <20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com>
- <20250807-k1-clk-i2s-generation-v1-2-7dc25eb4e4d3@linux.spacemit.com>
- <aJQXKN_ccpWVJ5oZ@ketchup>
- <C7EA7A1D0F9884EB+aJVcqFqix0GF_RnX@LT-Guozexi>
- <aJV2EIC_0E1FQX7L@ketchup>
- <78351F50C5DA0C45+aJWaWKEyO_f2a6Kp@LT-Guozexi>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30F44A06;
+	Fri,  8 Aug 2025 08:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754642299; cv=fail; b=n1L4taecTpoR2R4sxBbvRPRWJWTJK9UNu1jtPquZ2ADCXWl6xnaJDAEzGZwy3qDUir0zmSj+TcMdpf67RvuYNNC2mzPlLxDJf0NPnzQ0KSf/WJ7paBsXy8/1o+RZKmakMnczCNyHeS1VSTFVycIpBUGkdy5laobDJIAtcDnuDBU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754642299; c=relaxed/simple;
+	bh=cnvGE2NcN5LbLr7Gqh995tBW4zCLUMQk2JB/f3B6QjY=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KZK3BzYWca8V1Vfgk/e5zxVjP4B5HmQqPogcAKffLk7xf4jEWe1sfta8tX0gs2IxW7IXMe3C8qNQMsnZOapFcajE+aiSIpyIkBrH/DQwfezTN2aQeEdEmxZzCyRUvmxh++SiAMGj5zyMzd0OgruxwTZJ++tWjjB+MdG70wnnlB4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=noGWAzoc; arc=fail smtp.client-ip=52.101.66.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iZ0yRkzSECOJ/1YRs/9FmbzPHZ/IFts7tWNKeOpWZ5WF2DkU4grqWVI6Ln/WDkIlVXV6cbeOJp0oypoHRnuKZxEiLmBKB0etziMR91ZyBLquneuuPsl8h9SMULoC/WdqCxaZ07RA1U22w4R9J9dXuR+3vjXm6KgxndgqkdwXqggYb16TfkB5goSb9nsgAzAPO24FjGkV//+GZdaj6SNZ/62VT/k+xRxDJA2qwWB/Q9JkPA2EWMsmpIbVc5KjDw4MeipZpgKfUZWNunFnHaB2ozSjffaQBDYQ6TQaAB0iCCkygQ+8fW/gRPmWG4JmWffrhfKSPtXvDJDANq7xdZjQYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8sikPpxhE2pItt29B8ORa5Xfa2iOA6VtGnMVrkiWQNs=;
+ b=Mmz9OJjfXa+pkZiiWL2/MTZnHkXOe2YCuZeoUwPK/70vxRYgu/fvvImixp0Ilf9F1qnQKBfQY3zG0/4df2uo3bftKyoRA1ldF+IoBhRWir5R9RtOGVvKUwL95jxp+xQna9+MC2bcWUmjVKY78N2ySJdGB8/ObeUvWM2uHDJtbSxifLDGOuj51jX/sXMAUvN3Cc2F/0v/sa4LNexk4o9Gu1YKgHLvV20LZgAu4sNQJQfQhHiOOmc1hIqmWbB/sdMgAHlgAa4ztexA/msv4TYazaLWA7H3XJROeH/AICUwY7mqJDRkjpQv7J+QLL9nS4e+DIDGQwylngfQqs3iwbX3GQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8sikPpxhE2pItt29B8ORa5Xfa2iOA6VtGnMVrkiWQNs=;
+ b=noGWAzoc0ESmboRltzN8CO/qanKDL7NGilhYKSsYYkOV5RFfXjrskrwTUvi7LavVi4OrgJGKjGssWll9scm4Mq9/UVGidW1JFKi61fG9BlBbzd2d3aSPhax/CfGrOT39DyldNMARG3gi/bsBbPQRlbxJKGhptvHKNYEetRqp84jg3uI9+HSWi9X6xsFjFsnV38eV0DW6Ar+2CMNKAow2O+20emVDH+y46EofIZcNKZoniCkXQTlSZLuwqjf6x3MiU2UWTgn9XG68fz8eZ90fKwEGqT+M1JXL7JQmCdZ+c64z+zIlgH5JxuH55/qf7jsVFD1CwLEw0BAT8TC0hkew3Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by GVXPR04MB10802.eurprd04.prod.outlook.com (2603:10a6:150:220::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.17; Fri, 8 Aug
+ 2025 08:38:14 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
+ 08:38:14 +0000
+Message-ID: <9dee39f6-797e-4428-9a00-4e7f6d3461bb@nxp.com>
+Date: Fri, 8 Aug 2025 16:39:43 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/7] drm/bridge: dw-hdmi: Add API
+ dw_hdmi_set_sample_iec958() for iec958 format
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ lumag@kernel.org, dianders@chromium.org, cristian.ciocaltea@collabora.com,
+ luca.ceresoli@bootlin.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+ l.stach@pengutronix.de, shengjiu.wang@gmail.com, perex@perex.cz,
+ tiwai@suse.com, linux-sound@vger.kernel.org
+References: <20250808080617.2924184-1-shengjiu.wang@nxp.com>
+ <20250808080617.2924184-5-shengjiu.wang@nxp.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20250808080617.2924184-5-shengjiu.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0002.apcprd02.prod.outlook.com
+ (2603:1096:4:194::22) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <78351F50C5DA0C45+aJWaWKEyO_f2a6Kp@LT-Guozexi>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GVXPR04MB10802:EE_
+X-MS-Office365-Filtering-Correlation-Id: b7ba84c4-1b07-41c5-eabf-08ddd656ea5b
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|19092799006|7416014|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?dTFOZGhoYldZQmdZNkViT3VxcWhROTlVYy9BS1BkczRPenNxN0dnV1VwQ25v?=
+ =?utf-8?B?c3luVHZ5K3M3SXc0bENqMVdOc3pwYk1CYyt0RUtFZ3g2OEUyYVJ0NXJIQjh6?=
+ =?utf-8?B?emNOcDNqTHVxcTNXV1h2ZDJ2cEZmRC95NER6V2FsNGhNbTloUUNPSzI3Ujkr?=
+ =?utf-8?B?MU9keGlteHRISS8zNU8rK3c3d0NDVjVYTTRIY3VyODFWR2phVnRtZ2dILzNx?=
+ =?utf-8?B?UmtVc0kzdUd2Szl2VWdORFRyNUN1Tm4yRTd2OTdESHByUDRNUmk4Zm41MXVD?=
+ =?utf-8?B?VkJvaE5jRjcvR2NOZ0ZwdXFYc1d1QzhHYlMzdGN0OUhQSC9xWGhlY2VFU2pz?=
+ =?utf-8?B?bGgzZTlYenBmMzZSbFFaTmxZQkJIM3FGSmZVTnRvLzZsSFRXN29KaUx0eW1Q?=
+ =?utf-8?B?bzhHQ25jdUp3MmZRL3JFQk5vb1JLcVRJTE40QXFhNHlDYUFhSUFqUXcrM3Fq?=
+ =?utf-8?B?Zm11YkV6VmRPVUVRZm5wUGUvSFBQbGdFcll4a01HdHd3NHRzUDVkSk55aCta?=
+ =?utf-8?B?UHVyeXVla0p3WTdaMXhuQy91Sk55dG81enhEbzdqZEVORDZrVzd4QTBIeXR0?=
+ =?utf-8?B?SW1oZ3lhZHo0eDNyZUpJQ1NIV3N2eHEyVk1ZWUw1Yys5Y2hSMWRoZUl3aEFI?=
+ =?utf-8?B?TnVveDhWUkcxKzRZbHpyR1NZNTVETGhqR2xuUUdlbDRXSGF4SFhoSUVHTk9j?=
+ =?utf-8?B?Y0lxWVVtbEJDd0czVTY3VWdwUkN5TjBWdGhjQk5oUmR0SmxSeEpwT0lXU2F1?=
+ =?utf-8?B?bTIwenV3QjcxU2Rzb01hbzkvRXNkazBPRVBYci8xYndBZGlCTDgvWnBsZmUy?=
+ =?utf-8?B?bGVHUUpuTjJjNDhIWThURk54WEU2aEw2ZFlSdjFNemRZSko2RkRhektQcE0y?=
+ =?utf-8?B?YXVTdVMwZVlyTjYwd3lxbS9kdkhHaUVLbjlreWhFb3NTTnNsbTFJL01VTXE4?=
+ =?utf-8?B?NTJWRk9vbUtNa3NxTXd6STNiZ2lxOVVvVnJvTWpicjlQZ1d3M0NNUHZ4UWVU?=
+ =?utf-8?B?OFU4TWZVYytSbTRzQVk4bGNhTmlsMzhjeEljbm9zdGZqZmJUYmx1ckpPa01Z?=
+ =?utf-8?B?QVdydENWbjV1OHpKNWh3bmNqd2QyWFFHeXlCQWd2WDYvTVc5ZlZXSDk0MHVj?=
+ =?utf-8?B?WTJvalRHTlh5eG5xcFdMZ3RJM0xCbTFsZU91cVpHbW1SNjR2d2RZREJpY3Z2?=
+ =?utf-8?B?VStnbll3NkxHR3JrQXhyVmVuT2F3dzQrdFlqSUtTb3F3WGJOeEhiZFVoRWhG?=
+ =?utf-8?B?RTE0cjVaVTlTSzU5MWJwd21wdUUzdjN4ZENYWDVIQnMvLzhWMGRPNHc3Qmln?=
+ =?utf-8?B?Ni9UVkg4UWxMRXNOVWsvSmxhZUdGL2VwUUY2NFVGbDFOVFlwUjdsRlBvUXI2?=
+ =?utf-8?B?a0R3a1B5enZpTUlrVXhhT2VYTEtsTUNJL1ZkbVVGTGc0Y0JWOEJvQ0V3OGcr?=
+ =?utf-8?B?QWphQTFqNC9sODJWaGMwcVl1WVVsQjc3OFh6TDAwZThudXlDZUFTTDdTeDBn?=
+ =?utf-8?B?TEQ3VlBVOUtzcHMrUkZ4T05KTXk2b2hVaGRMekluZnp0TThDVVJsZGZGRURY?=
+ =?utf-8?B?TEwvOTg4K251L2xGeHVIQ2ljbDlNMmxyMnJoZUs5ZlBIRzQyUjRVYjNQc0k4?=
+ =?utf-8?B?NUo5U0F1bDAvTGF0Y0NCWjdYZG9KUndqTGp5VlJ4QU1RVndlZjlrcGJxaG9h?=
+ =?utf-8?B?NUhlU2Rmbmx0TVNTVGp0Y2VvZjJkeFl4cCtxSXlFelJKVXRhNzM5S21yb2gr?=
+ =?utf-8?B?ZDhUd0FKeGdMc2orTGRQV0wxOUtFY29SdFliWHFjekVLMUcrZ2RtcldCQmFn?=
+ =?utf-8?B?RFA0dzZQajcyVDdHVG5HVkJoYkZ5VGhoZ1VGZlVsQjI1K0kxN3pBS0RkNkF6?=
+ =?utf-8?B?RkVQZ0ZSRklURGI5Y1FWRm1RVjFQUVhMQ2VyMzFYeDRXV1RxWTQ3ZVlTUFAy?=
+ =?utf-8?B?WG53VjJlNlUySFdxNC9pTlB4a1NFT1ZRWmM5MStLdXhzdDVFZ1FMWW16MGJQ?=
+ =?utf-8?B?bDhhVkJGSk9BPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?QXQ0OTc0dHUzMFBsMTIyNjZmbEU1MktpOThQT1ZzUUF3d2RCTFpPVUZ1OHNq?=
+ =?utf-8?B?eUtncnI3THltcnNNd0ZCMDFFSEFiZzBHL2JQQWovOU04V1RDOTNsaFpTREU5?=
+ =?utf-8?B?WXJXdGx2VWJ1K1p6YTg2MWRkUS9YTHdSUkticmlES3RtNnEwdFJUNWU1MzYw?=
+ =?utf-8?B?aVo5YkEyY29MajArQlJHR3habG5BcVVNVDVvcE80VE0zZnFjMjdhd216N0Uv?=
+ =?utf-8?B?VHEzWG40UC9iUUE5MjdKa3hXV1FvOW5oQmFVMjZNd3JTbUx4a0Q3NXFZRHkr?=
+ =?utf-8?B?Ly93ZU0vaWllbFJRTkUvd2prMUt3RSs1S0IvcTBVMHRhQkIwaWtYdkh6SEdU?=
+ =?utf-8?B?SlZxUVZKRnQ4cVE2VHpuRTlQVXJxNUR6MW96WUNjWThJNTd2QitkU0x5dE1h?=
+ =?utf-8?B?KzZQUEM4NDZlNGVNRVdxT2NPMDR3cWlxcnJ5S2hreEN0djhmUXZjTWE3TlhH?=
+ =?utf-8?B?b3dDT3ZvMTZhMXYvbG5WU0FPbDF6amwzcVpqeGk5blpQYUJZTTVOWnVydXEr?=
+ =?utf-8?B?RUZhZEhML0orNHY1QW0raTF1L0JNV1lxT2RyNmFWa05FVVQ1SkR2cExQRk0w?=
+ =?utf-8?B?WEg5QjM4ZlBvUGUyT1h4K3VGRGQ5SHFqbXp4UVJUYlVRTjRVaGl5bnhmdHVQ?=
+ =?utf-8?B?RjJXaDVKaTdPejI2bkp2NjZra0VpS3hBNFg3azZGZDFUdzEvQ1p4b0ZaTFhP?=
+ =?utf-8?B?SEFicVVMcWRNWTZ4cDh4aFNsdWFibTYzNnR5VGw5L0YxQ3k3Mk5wSVJkOHMz?=
+ =?utf-8?B?UG9yd2VXL0lvdWt3KzNqOEx3VlB0TjA5bnlCaW1tOHEzL242NjJTRzRnUnlN?=
+ =?utf-8?B?bjBrcWNQYmFuN3h5U0Y3ZHZIUjB6UkVXVmdoL0luSnVzVEVzUjlabDdNOHpP?=
+ =?utf-8?B?RC9NT0hTZ2xGcUJtSWNhM1hjZGVMQU9LZ080d3lyRkRabkZGbkppN1RpdVh0?=
+ =?utf-8?B?aHFra2VZa3F2SVlsOHBTRDlFSW1GekdGcWhrTWJ4bU9ISGVQMm1GZHdUSTJn?=
+ =?utf-8?B?YTI5RnNXeVgwc2c3Mjd4U2NZMkQ0WUpiNmdtWmU0OGlzUWc3MURTckxpaE1X?=
+ =?utf-8?B?bEVGOVhrWmtyTVFKVFJPaWNySXVaTXRlSjkrS1pFWjZGVlVJMkl1UWFhMnQr?=
+ =?utf-8?B?MDAxRXdWL1R2MHFGY1ZwQ1BiM2VxUktISTVLMUN0WS8yK0oySGFub0xEZTVn?=
+ =?utf-8?B?V0ZMYWs1UnM5YzZ5NEhBNkZ5Ymx0b1gwRm5zZ3UycTlHaTF6Sy80cWh5L0Mw?=
+ =?utf-8?B?WlJuQW1kWXNubTl0KzJXeDViMnVhN1VyTCt6Q0M1UjNsb0d4c1lEV3ViQ2hi?=
+ =?utf-8?B?b012b3pONk5EZUtVbThIc0xzSW96Q3ptbUVNNDRUL0pjRFJsR2VRKzZHMHUy?=
+ =?utf-8?B?ZDlvQks1NHJxSkFkUUlpK0VMVlRqbmQ0bHliU2RWQmFqOURhVGJrSWFoVUNs?=
+ =?utf-8?B?OHR3V2hIa2pVNjZ5RWhmb2VoZHF0cU9qT1F5Mmk1dlpVQjZTOWRWaHdqdzRC?=
+ =?utf-8?B?N1h0U3I2aTJhY2RiY0hTV2oyR2ptQUZNRC8zeEU1V0JYWEQ5SmlpR2kvb2hm?=
+ =?utf-8?B?ZEVsZW9xdEl2NmQ5QUtFandsS2pNSVE1MUZ5bk9ZN290Y2dHc0g2ZURPTVFJ?=
+ =?utf-8?B?S2djeUtJTG9BWFY3cWNPeDlnU091QjdhVHhvOUpZeVlIUU5qQ2xRdVBTU3NN?=
+ =?utf-8?B?dmkvMndNZkZaMHpoZEVEeHp4cDJpWXJzOFpxTFlMRmJmRXV4OTlXaDFpVlBo?=
+ =?utf-8?B?N3Z1czVQcHE2MGlOR0paOW9STlFVb0FuRDdtejlBZTY1OGpMWmtXY3JZVFNz?=
+ =?utf-8?B?NGRzRFhwdDllMnFRSHgxa1VuNVdEbHM2aElPYW91WnRiOEpDaGkzc2RXNjgx?=
+ =?utf-8?B?UkFDay8yZEFWUDRuanFBTVVrYUVPU0pXY0tZeWZ2NEZuend0RTJQVXc2REtZ?=
+ =?utf-8?B?cVY0Z056R0sxamNzd28xQ2pLb1NwbDZuemRqT2pMOEdWVitQMlRQa2VPWkxz?=
+ =?utf-8?B?MWVmM3Z1MHpSdW82YnZuZHB0ZVRhOTI3dC9xbDVaeFpwRi9sdkZ1TS9rTXBY?=
+ =?utf-8?B?Ky9la2pvUXNHOWsvck1qL0dPY1ZseFdjTW5WYmcvNjhsNTF2d2JKcGpoUmdj?=
+ =?utf-8?Q?vJpdVH9lxSmD8/B3WDCuRzUqj?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7ba84c4-1b07-41c5-eabf-08ddd656ea5b
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 08:38:14.6238
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t5IkgUdphl2g8xcCuubwQA6BJewd/eIU5h2HBfUW8hs1lmy36Ls8To+YvLqkweMddi4zrs4kdkg+tnsJ0Eavyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10802
 
-On Fri, Aug 08, 2025 at 02:34:00PM +0800, Troy Mitchell wrote:
-> On Fri, Aug 08, 2025 at 03:59:12AM +0000, Haylen Chu wrote:
-> > On Fri, Aug 08, 2025 at 10:10:48AM +0800, Troy Mitchell wrote:
-> > > Hi, Haylen!
-> > > 
-> > > On Thu, Aug 07, 2025 at 03:02:00AM +0000, Haylen Chu wrote:
-> > > > On Thu, Aug 07, 2025 at 09:30:11AM +0800, Troy Mitchell wrote:
-> > > > > Defining i2s_bclk and i2s_sysclk as fixed-rate clocks is insufficient
-> > > > > for real I2S use cases.
-> > > > 
-> > > > This is a little misleading: they're modeled as gates with fixed-factor
-> > > > for now whose rate is calculated from their parents instead of defined
-> > > > statically. You could avoid possible confusion by replacing "fixed-rate"
-> > > > with "fixed-factor".
-> > > >
-> > > I'll change it in next version.
-> > > 
-> > > > 
-> > > > > Moreover, the current I2S clock configuration does not work as expected
-> > > > > due to missing parent clocks.
-> > > > > 
-> > > > > This patch adds the missing parent clocks, defines i2s_sysclk as
-> > > > > a DDN clock, and i2s_bclk as a DIV clock.
-> > > > > 
-> > > > > The i2s_sysclk behaves as an M/N fractional divider in hardware,
-> > > > > with an additional gate control.
-> > > > > 
-> > > > > To properly model this, CCU_DDN_GATE_DEFINE is introduced.
-> > > > 
-> > > > Could it be represented as a DDN clock taking a gate as parent? Just
-> > > > like what is described in the published clock diagram. Generally I'd
-> > > > like to avoid introducing more clock types, there're already a lot.
-> > > Uh, our new chip(K3) may uses this macro that I introduced..
-> > > so I don't wanna take a gate as parent everywhere..
-> > > how about we leave it? ;)
-> > 
-> > I wasn't proposing a workaround. What will go wrong if a gate is taken
-> > as parent of DDN everywhere? 
-> I think this a bit troublesome...
+On 08/08/2025, Shengjiu Wang wrote:
+> Add API dw_hdmi_set_sample_iec958() for iec958 format because audio device
+> driver needs iec958 information to configure this specific setting.
 
-I don't agree. It just costs one extra line and one extra macro.
+Nit: s/ iec958 / IEC958 /
 
-> > Not to mention this DDN variant actually
-> > duplicates the code in ccu_mix.c.
-> >
-> So I’ve ultimately decided not to introduce DDN_GATE.
-> I’ll change the macro for i2s_sysclk_src from
-> CCU_MUX_DEFINE to CCU_MUX_GATE_DEFINE.
 > 
-> What do you think? From the clock tree perspective, this should be fine.
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi-gp-audio.c |  5 +++++
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          | 12 +++++++++++-
+>  include/drm/bridge/dw_hdmi.h                       |  3 ++-
+>  3 files changed, 18 insertions(+), 2 deletions(-)
 
-Thanks for the change, it's fine for me, too.
-
-> > 
-> > > > 
-> > > > > The original DDN operations applied an implicit divide-by-2, which should
-> > > > > not be a default behavior.
-> > > > > 
-> > > > > This patch removes that assumption, letting each clock define its
-> > > > > actual behavior explicitly.
-> > > > > 
-> > > > > The i2s_bclk is a non-linear, discrete divider clock.
-> > > > > The previous macro only supported linear dividers,
-> > > > > so CCU_DIV_TABLE_GATE_DEFINE is introduced to support
-> > > > > the hardware accurately.
-> > > > 
-> > > > The divider IS linear, from the perspective of functionality, it just
-> > > > implies a 1/2 factor. Could it be represented as an usual divider and a
-> > > > 1/2 fixed factor?
-> > > ditto.
-> > > 
-> > > I know you don't wanna introduce new macro..
-> > 
-> > It's not about new macros. It's about new clock types. And the solution
-> > I proposed for the divider with a factor isn't meant to be a workaround.
-> > 
-> > For the divider's case, I think combining a fixed-factor and a normal
-> > divider looks more clean than introducing a new LUT. It solves the
-> > problem for K1, right?
-> yes, It solves.
-> 
-> > 
-> > > But K3 requires this, so whether it is introduced now or future,
-> > > the final result is the same.
-> > 
-> > Could you please confirm whether K3's dividers requiring this patch are
-> > really non-linear or just imply a fixed-factor?
-> I will confirm this point.
-> 
-> If I send v2 without removing the CCU_DIV_TABLE_GATE_DEFINE macro,
-> that would mean K3 really needs it.
-
-Thanks, this will help.
-
-> > 
-> > > Please leave it..
-> > > > 
-> > > > > The I2S-related clock registers can be found here [1].
-> > > > 
-> > > > So this patch actually does four separate things,
-> > > > 
-> > > > - Introduce a gate-capable variant of DDN clocks
-> > > > - Make the pre-divider of DDN clocks flexible
-> > > > - Support looking up mappings between register values and divisors
-> > > >   through a table when calculating rates of dividers
-> > > > - Fix the definition of i2s_bclk and i2s_sysclk
-> > > > 
-> > > > IMHO it's better to split them into separate patches for clearness.
-> > > Ok, I will split them into separate patches.
-> > 
-> > Thanks, that'll be easier to review.
-> > 
-> > > ...
-> > > > 
-> > > > ...
-> > > > 
-> > > > > diff --git a/include/soc/spacemit/k1-syscon.h b/include/soc/spacemit/k1-syscon.h
-> > > > > index c59bd7a38e5b4219121341b9c0d9ffda13a9c3e2..253db8a602fe43a1109e2ba248af11109c7baa22 100644
-> > > > > --- a/include/soc/spacemit/k1-syscon.h
-> > > > > +++ b/include/soc/spacemit/k1-syscon.h
-> > > > > @@ -29,10 +29,11 @@ to_spacemit_ccu_adev(struct auxiliary_device *adev)
-> > > > >  #define APBS_PLL3_SWCR3			0x12c
-> > > > >  
-> > > > >  /* MPMU register offset */
-> > > > > +#define MPMU_FCCR			0x0008
-> > > > >  #define MPMU_POSR			0x0010
-> > > > > -#define  POSR_PLL1_LOCK			BIT(27)
-> > > > > -#define  POSR_PLL2_LOCK			BIT(28)
-> > > > > -#define  POSR_PLL3_LOCK			BIT(29)
-> > > > > +#define POSR_PLL1_LOCK			BIT(27)
-> > > > > +#define POSR_PLL2_LOCK			BIT(28)
-> > > > > +#define POSR_PLL3_LOCK			BIT(29)
-> > > > 
-> > > > This reformatting doesn't seem related to the patch.
-> > > It's worth that create a new commit to reformatting it?
-> > 
-> > IIRC, the indentation is intended to show the relationship between
-> > register bits and offsets, which seems easier to read for me. 
-> Sry I ignore this..
-> 
-> But isn’t the POSR prefix already sufficient to indicate the relationship?
-
-I think the original form is easier to read, isn't it? Even if you don't
-think so, this change obviously exceeds scope of this patch and please
-separate a series for discussion.
-
-> Have a nice day!
-> 
->                 - Troy
-
-Best regards,
-Haylen Chu
-
-> > Do you
-> > have a good reason to change it?
-> > 
-> > >                 - Troy
-> > > > 
-> > > > >  #define MPMU_SUCCR			0x0014
-> > > > >  #define MPMU_ISCCR			0x0044
-> > > > >  #define MPMU_WDTPCR			0x0200
-> > > > > 
-> > > > > -- 
-> > > > > 2.50.1
-> > > > > 
-> > > > 
-> > > > Best regards,
-> > > > Haylen Chu
-> > > > 
-> > 
-> > Best regards,
-> > Haylen Chu
-> > 
+Not an audio guy, FIWW:
+Acked-by: Liu Ying <victor.liu@nxp.com>
 
