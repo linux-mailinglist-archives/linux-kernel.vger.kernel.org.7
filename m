@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-760389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58016B1EA90
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1299B1EA89
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F75D1C22192
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:44:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 656E2A055C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81503280037;
-	Fri,  8 Aug 2025 14:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A044027FD6E;
+	Fri,  8 Aug 2025 14:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="LUGdjVji"
-Received: from tiger.tulip.relay.mailchannels.net (tiger.tulip.relay.mailchannels.net [23.83.218.248])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S3t7DLtj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94EA227FD6E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.248
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754664265; cv=pass; b=FCjmOu7KyTWTalPzDP6uLlESku8IgwRWzsri7OlBbA7V3F66bEIVizMoIym7cBxDwm0nq98FV8dPY+/1VSNFj0t++Kyjen3R08g6Uknx14TA+TmYhMVZ7URCrB4yHO1unEpeIlnQSuJei/ofneXynmoafPz7O+cfB//XXYFuKDg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754664265; c=relaxed/simple;
-	bh=Jhuqu68AtOFb7ZCOIcLxg14Rhu4Rdm9p1uVHzBmYZS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RcRNdWqUosC+ycbU+TNwI4q3ubB1232605XPh3J6hBMoNj6c8XiCzypYnuELVz4n9CrXXc//0CEcEhjKUm1yKuxHRnrXLvmDOEVWjICPH56jdqeQi4RFxGTc38EK5iG9SWWsv37BdPSCncYAHBjbf8LmatcuP+566o37ntYLZc8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=LUGdjVji; arc=pass smtp.client-ip=23.83.218.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id F1778163C02;
-	Fri,  8 Aug 2025 14:38:37 +0000 (UTC)
-Received: from pdx1-sub0-mail-a287.dreamhost.com (trex-blue-7.trex.outbound.svc.cluster.local [100.96.43.79])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 65F4E163B10;
-	Fri,  8 Aug 2025 14:38:37 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1754663917; a=rsa-sha256;
-	cv=none;
-	b=U5DOtUOe+EXj0k9jC2e2otGFUbw7gtlv5kLVHHvPNLp6s+RFlSsfLZVvOEOl4Qzwsmt22P
-	XnQmDzpAT28DxZcjeSeNSeH0c0ZlIfF63IG9n1yTCzn9HbdCV+9Skru2h9TMHql8etmbDY
-	o1q+L564EQciGjAadK4MGtJv07Ts0xR1bnn5FN2SpAvCE76N6jr2a1XUXQrCtNpWDJT2vU
-	9iTdh6mRLe1f9VivpBxU+2ZZJVZtC7QT228dpQ5Z7FfbN8oIXHJqqM8jn5KgEUrMJtgotq
-	u5Jl5lJATnOtuNuAuZFRc8DBVYjno44c0KzPmb8nePGN7mzvGdSjdcTmlwocQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1754663917;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3B827E04F
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754664086; cv=none; b=flssOo8AsUyek5u19AzRCD23fp7vwhmsWW6aJxMgzYKoYsnjZ249xNIPK6M/A1Bapbk/2ibuQG9eAPCis9044dp3pBtJke06ChDjalFItGiBC5WtYS1EqC6ayDqurcBdtJh6+8qVAc/OHY4e+O9eGTdUKT54j5aTfpWWhqVeHeI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754664086; c=relaxed/simple;
+	bh=qd2MUsflHlZ/tZVMWNcFSyxtl05BNFiVeTGXc3N54Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUxVyrNUHQqYdMdv1G+maPBI/tz/HdyWsApvvG6DSzrcHpscW3watpDlqD5jaU9jGADL4hKGCeeaLwrQdUfXrYhXHC6d0dYuf0H+5D/vjNEYaYb5B3qLJ6ZFU728PQnM/V4wGfqrjHDdFZQFPnXCJ2EFwRmgNdVl3j+sZBM1BGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S3t7DLtj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754664082;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=D1TZb3mxnOhzg2Vdcog/qlZmoNoGc345fnptq8iGJ98=;
-	b=UKj+eOWxtRJ6GoVPm0GBqSteOq42xAYZIkWkyCrZMp26VjsgnkY6zJ3k25FBIm2z6PTJ/A
-	cBhjlNIKSeNYuDBuNui2FLJy4P013s27amVvMu6TXaaCEORtItXQTFaig4Gtr+zEHpan3O
-	8MYVyODQXObrQOk4eHx0ucuA8gho9crgIixUiFFJbrTUCAU/UfykYdSPme1XE9PGjsezBj
-	0Qg8wXOUtzkiv4gMLoFcWoxYueey0lPhex4qLsxEzypSFE5eSJDNa+ANrU75m0Ytfcz8QO
-	Nu7kRWhK9F10NoAfH2cVxmEQUdJfg/vYFRh8holK1ZYCFpQ5qQYMZS2lLAJQgQ==
-ARC-Authentication-Results: i=1;
-	rspamd-64567b6586-ljwq7;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
-X-MailChannels-Auth-Id: dreamhost
-X-Harbor-Wiry: 0facfc34247bd33c_1754663917774_3566483743
-X-MC-Loop-Signature: 1754663917774:4240174711
-X-MC-Ingress-Time: 1754663917774
-Received: from pdx1-sub0-mail-a287.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.96.43.79 (trex/7.1.3);
-	Fri, 08 Aug 2025 14:38:37 +0000
-Received: from [192.168.88.7] (unknown [209.81.127.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 in-reply-to:in-reply-to:references:references;
+	bh=CVbXlbyZjsINekjOptSlbtwiYMjqyKFTkplWxm4uz+w=;
+	b=S3t7DLtjOGhzLQDEj3bfQlRn+9eaI2gPfFugzq3XDT7LP4qg0Pw63c9C81IQ85+SRGRb8F
+	/RcTpKFoTTg3ulwdfslSKl3DWZDcvkjbTiz6ADBoz48ua9YrSh2pPM9ob02aUyspRlWHWR
+	Ga+SjW7tPVpD5JkoIxmW98NiCUunEpY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-raJ6zeyFMcWE-g_6SowfgQ-1; Fri,
+ 08 Aug 2025 10:41:17 -0400
+X-MC-Unique: raJ6zeyFMcWE-g_6SowfgQ-1
+X-Mimecast-MFC-AGG-ID: raJ6zeyFMcWE-g_6SowfgQ_1754664073
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: rob@landley.net)
-	by pdx1-sub0-mail-a287.dreamhost.com (Postfix) with ESMTPSA id 4bz68r5kNFz9g;
-	Fri,  8 Aug 2025 07:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
-	s=dreamhost; t=1754663917;
-	bh=D1TZb3mxnOhzg2Vdcog/qlZmoNoGc345fnptq8iGJ98=;
-	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
-	b=LUGdjVjizdycZ9ufsLErUENC8J5JKfno80ba2VkEv6FonVIrIUMQUH0ZWMbqVNJT/
-	 FONZmqn9ezSC5jqfOxTbj87DJ1iN+Hy6JHBX8+j31Kt9+7VBU3S89jarJXCmiy7r63
-	 liu0qcqQunCYH5sBJR+BJLoo5C87IByykileUb8i/xRUQliUgXsxMAJgoL+oQ1/Nml
-	 kMrpmscYyoFZCIZmTeWbYKUt6QMKI14QoL/I2oNPxK+YLRTzwNnpBrqdnVldZ54pIB
-	 5n41TU0EMjJaHppTNd6ML0lupy/RV8dc8HIAPt1T7i2HU77szYJmvpYdnR321yhUi+
-	 RzXMttc6BtZJg==
-Message-ID: <7cf546fa-d98f-4c9f-92ae-0bd26b9d1178@landley.net>
-Date: Fri, 8 Aug 2025 09:38:36 -0500
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3CA0619560B5;
+	Fri,  8 Aug 2025 14:41:11 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8DD2A180029D;
+	Fri,  8 Aug 2025 14:40:55 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  8 Aug 2025 16:39:59 +0200 (CEST)
+Date: Fri, 8 Aug 2025 16:39:43 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
+	wangfushuai <wangfushuai@baidu.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 5/9] freezer: set default freeze priority for
+ PF_SUSPEND_TASK processes
+Message-ID: <20250808143943.GB21685@redhat.com>
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <20250807121418.139765-6-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: Add 'rootfsflags' to set rootfs mount options
-To: Dave Young <dyoung@redhat.com>, Lichen Liu <lichliu@redhat.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, kexec@lists.infradead.org,
- linux-kernel@vger.kernel.org, weilongchen@huawei.com
-References: <20250808015134.2875430-2-lichliu@redhat.com>
- <CALu+AoTGwZqB28Z+sJ4KW7esNHx8=5kJ6nrMpoQ_rogzSDGwxA@mail.gmail.com>
-Content-Language: en-US
-From: Rob Landley <rob@landley.net>
-In-Reply-To: <CALu+AoTGwZqB28Z+sJ4KW7esNHx8=5kJ6nrMpoQ_rogzSDGwxA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807121418.139765-6-zhangzihuan@kylinos.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 8/7/25 21:30, Dave Young wrote:
-> I do see there are a few similar usages in init/do_mounts.c, probably
-> it is old stuff and it just works.  But I think making rootfs_flags as
-> an array and copying str into it is the right way.
+On 08/07, Zihuan Zhang wrote:
+>
+> --- a/kernel/power/process.c
+> +++ b/kernel/power/process.c
+> @@ -147,6 +147,7 @@ int freeze_processes(void)
+>
+>  	pm_wakeup_clear(0);
+>  	pm_freezing = true;
+> +	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
 
-The lifespan of the string ends before PID 1 gets launched. The copy 
-would be unnecessary and either perform an allocation or impose a 
-gratuitous length limit.
+But why?
 
-Rob
+Again, freeze_task() will return false anyway, this process is
+PF_SUSPEND_TASK.
+
+> @@ -218,6 +219,7 @@ void thaw_processes(void)
+>  	WARN_ON(!(curr->flags & PF_SUSPEND_TASK));
+>  	curr->flags &= ~PF_SUSPEND_TASK;
+>
+> +	freeze_set_default_priority(current, FREEZE_PRIORITY_NORMAL);
+>  	usermodehelper_enable();
+
+What if current->freeze_priority was changed via
+/proc/pid/freeze_priority you add in 9/9 ?
+
+Oleg.
+
 
