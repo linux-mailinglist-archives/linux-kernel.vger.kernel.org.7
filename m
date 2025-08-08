@@ -1,96 +1,157 @@
-Return-Path: <linux-kernel+bounces-760531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681EBB1EC81
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:54:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA22B1EC83
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 388797AB33D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:52:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8B15810CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B0B285CB6;
-	Fri,  8 Aug 2025 15:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3F7285CB6;
+	Fri,  8 Aug 2025 15:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsQ4J6SP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b="cY1qxj6u"
+Received: from m.syntacore.com (m.syntacore.com [178.249.69.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035DF23ABB3;
-	Fri,  8 Aug 2025 15:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDFB285CA2;
+	Fri,  8 Aug 2025 15:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.249.69.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754668455; cv=none; b=MLHvgZw6VHtYOjEbZF4R2pldjE7gCXa3x5zGBEyU8SJhRaerx4kHb0oHIf8j6KGQCtruoKAaKimpI5rqp4Ehfj3d5ANLYMSGTcXim/c0No9O+6AZPcAEBkXUd8XX7a5OPi2duwBAcuXJXHwqqM1X5vI+qvOPyFx3r9tBhBx6rbA=
+	t=1754668483; cv=none; b=YHGge2iOUkEjxn0ynXSR7ZJu/VckEXxkbecVmbPFp3shR5TJH+5eiqMQXmYU7ubAki7Kqf4SuGa5WdKx5rR0yKyPy26llRvOJh6dZZipxRe1AkL7mDLe3+D86NrZomuBzvkZ+UwTl7a/qMuk2y4bREekkGRbun/0N9aYaNGevBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754668455; c=relaxed/simple;
-	bh=QkTBeKjoqiTYtsZj4TAvkNckToe61OoBlX9hB16EcL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZziqER/yImEC/D6DswG7S/9J3WegpNhGOLMIkwIbnZUO0qU1vPGZjnSCbiOvo4VRHY3S5+SeOk0UuYMTvxgHZsy8cla9W5VBRc2PcpVDveLyLoAWbpQaS+aHZTkAJsvqsPoyJ//fO1pBv40wS6CT98ORoiq4thAnI0jI7W9CyTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsQ4J6SP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE23C4CEED;
-	Fri,  8 Aug 2025 15:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754668454;
-	bh=QkTBeKjoqiTYtsZj4TAvkNckToe61OoBlX9hB16EcL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WsQ4J6SPWk8shw4SPDSNN1j4nasGAZUC7D6PsTtOyRs+rN+wfdeW6JPwic5Oa9OVt
-	 e1WiPn4zl6o/+8U7JEXVQhIn+KFIqPUeqpK0hq+zEUwDO8GVtT8PIwxsrX5bVi1Yj/
-	 rXZDYmbpivaBIOigk9DNDpNHE3ukAGg4LMYz/Z36qjRP91sj/aGXnkKl7w+/5UMtQ/
-	 GXNgZSjwqDqAudpB4lvg8lO8C1cCRrHDN176XRECaEURfYrZ9LRpqooi/tLHJONktI
-	 WQ1mPa557qJxSWyX7cEQHacJNBa1y2nzcUi6zO+a6SNBqMFpE6XPeH6Y5kQfLMZQV8
-	 Ls1+lmCWGu9KA==
-Date: Fri, 8 Aug 2025 16:54:07 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Scott Wood <oss@buserror.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] dt-bindings: powerpc: Drop duplicate fsl/mpic.txt
-Message-ID: <20250808-sake-specimen-13313160b9a6@spud>
-References: <20250807214432.4173273-1-robh@kernel.org>
+	s=arc-20240116; t=1754668483; c=relaxed/simple;
+	bh=7WOPIyzEehEJNbU2YvlvCqDUTP5c7rF7fpWyJn2Ujkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UiiOLpwyMNUnUE3zVjLotiwqjHZQvol2u8Tzkb/Yo35QRWsjNDg2GvMlygl+Y5c7FQ2yRLcEaGKMVPrDi598bzHJu766Db+HwdHbrax2za2JpbqaCg0ELZJjqxZIX+UFaky8GUgFHQQiuPCdHKG7p6x5se8pIHv2ZzF77dpxd7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com; spf=pass smtp.mailfrom=syntacore.com; dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b=cY1qxj6u; arc=none smtp.client-ip=178.249.69.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syntacore.com
+Received: from MRN-SC-KSMG-01.corp.syntacore.com (localhost [127.0.0.1])
+	by m.syntacore.com (Postfix) with ESMTP id 6A5741A0005;
+	Fri,  8 Aug 2025 15:54:34 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 m.syntacore.com 6A5741A0005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=syntacore.com; s=m;
+	t=1754668474; bh=Kc+rXQkjUIWlJHfTJTdiMVQq7J3K3zY9PQJSj6n1aPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=cY1qxj6ujcXBoiuVPCl+xltzfS9Mli+br7NY1LQ7Y90FmKAMBaild5S9xJtD1UwL3
+	 rCeoJBbLFG6tWSxbNwIEr/UWXAS9aERBN6cNQ9DOM8DMmxkdygcC+s5udB4H03T4Ma
+	 zHqVGkbJEFzMaTmNqi4SfXObpMVNU9c1ib4KMChRBPLZ36JSZlnEqDN4vi4vSyFGP6
+	 mq58f6e+axpHdDFRM9z4jWo1T5WSoVHBmSujkERo0l/0zui/ydNGuFpQZlU7jUQk9Y
+	 CXQkXjJJDUGknP8UkGrSGa2p+SQEmXSlDCuOkMr0kkdIYNWVBcHfLlp39csWrHwJ/v
+	 /j8jBVf745PtA==
+Received: from S-SC-EXCH-01.corp.syntacore.com (exchange.syntacore.com [10.76.202.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by m.syntacore.com (Postfix) with ESMTPS;
+	Fri,  8 Aug 2025 15:54:32 +0000 (UTC)
+Received: from [10.178.118.36] (10.178.118.36) by
+ S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 8 Aug 2025 18:53:53 +0300
+Message-ID: <2c196c3f-4d49-494c-898e-8a1f6249ce24@syntacore.com>
+Date: Fri, 8 Aug 2025 21:54:30 +0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sKigfMgF1pPea84g"
-Content-Disposition: inline
-In-Reply-To: <20250807214432.4173273-1-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC RESEND] binfmt_elf: preserve original ELF e_flags in core
+ dumps
+To: Kees Cook <kees@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
+	<brauner@kernel.org>, <jack@suse.cz>, <akpm@linux-foundation.org>,
+	<david@redhat.com>, <lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>,
+	<vbabka@suse.cz>, <rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>
+References: <20250806161814.607668-1-svetlana.parfenova@syntacore.com>
+ <202508061152.6B26BDC6FB@keescook>
+ <e9990237-bc83-4cbb-bab8-013b939a61fb@syntacore.com>
+ <202508071414.5A5AB6B2@keescook>
+Content-Language: en-US
+From: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
+In-Reply-To: <202508071414.5A5AB6B2@keescook>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) To
+ S-SC-EXCH-01.corp.syntacore.com (10.76.202.20)
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/08/08 08:14:00 #27646097
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
+On 08/08/2025 03.14, Kees Cook wrote:
+> On Thu, Aug 07, 2025 at 07:13:50PM +0600, Svetlana Parfenova wrote:
+>> On 07/08/2025 00.57, Kees Cook wrote:
+>>> On Wed, Aug 06, 2025 at 10:18:14PM +0600, Svetlana Parfenova
+>>> wrote:
+>>>> Preserve the original ELF e_flags from the executable in the
+>>>> core dump header instead of relying on compile-time defaults
+>>>> (ELF_CORE_EFLAGS or value from the regset view). This ensures
+>>>> that ABI-specific flags in the dump file match the actual
+>>>> binary being executed.
+>>>> 
+>>>> Save the e_flags field during ELF binary loading (in
+>>>> load_elf_binary()) into the mm_struct, and later retrieve it
+>>>> during core dump generation (in fill_note_info()). Use this
+>>>> saved value to populate the e_flags in the core dump ELF
+>>>> header.
+>>>> 
+>>>> Add a new Kconfig option, CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS,
+>>>> to guard this behavior. Although motivated by a RISC-V use
+>>>> case, the mechanism is generic and can be applied to all
+>>>> architectures.
+>>> 
+>>> In the general case, is e_flags mismatched? i.e. why hide this
+>>> behind a Kconfig? Put another way, if I enabled this Kconfig and
+>>> dumped core from some regular x86_64 process, will e_flags be
+>>> different?
+>>> 
+>> 
+>> The Kconfig option is currently restricted to the RISC-V
+>> architecture because it's not clear to me whether other
+>> architectures need actual e_flags value from ELF header. If this
+>> option is disabled, the core dump will always use a compile time
+>> value for e_flags, regardless of which method is selected:
+>> ELF_CORE_EFLAGS or CORE_DUMP_USE_REGSET. And this constant does 
+>> not necessarily reflect the actual e_flags of the running process
+>> (at least on RISC-V), which can vary depending on how the binary
+>> was compiled. Thus, I made a third method to obtain e_flags that
+>> reflects the real value. And it is gated behind a Kconfig option,
+>> as not all users may need it.
+> 
+> Can you check if the ELF e_flags and the hard-coded e_flags actually 
+> differ on other architectures? I'd rather avoid using the Kconfig so
+> we can have a common execution path for all architectures.
+> 
 
---sKigfMgF1pPea84g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I checked various architectures, and most don’t use e_flags in core
+dumps - just zero value. For x86 this is valid since it doesn’t define
+values for e_flags. However, architectures like ARM do have meaningful
+e_flags, yet still they are set to zero in core dumps. I guess the real
+question isn't about core dump correctness, but whether tools like GDB
+actually rely on e_flags to provide debug information. Seems like most
+architectures either don’t use it or can operate without it. RISC-V
+looks like black sheep here ... GDB relies on e_flags to determine the
+ABI and interpret the core dump correctly.
 
-On Thu, Aug 07, 2025 at 04:44:30PM -0500, Rob Herring (Arm) wrote:
-> The chrp,open-pic binding schema already supports the "fsl,mpic"
-> compatible. A couple of properties are missing, so add them and remove
-> fsl/mpic.txt.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+What if I rework my patch the following way:
+- remove Kconfig option;
+- add function/macro that would override e_flags with value taken from
+process, but it would only be applied if architecture specifies that.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Would that be a better approach?
 
---sKigfMgF1pPea84g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJYdnwAKCRB4tDGHoIJi
-0hEfAP9kk4vmVMA5jFwH7XJWvyF6laSF8vCUSKc4JYmZQYyPUgEA746BN1y0RtWR
-PAGQ7h3RQWwh8A9hbpKAfs8O7cY2PAE=
-=QgBv
------END PGP SIGNATURE-----
-
---sKigfMgF1pPea84g--
+-- 
+Best regards,
+Svetlana Parfenova
 
