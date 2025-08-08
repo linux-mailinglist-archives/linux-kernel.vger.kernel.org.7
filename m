@@ -1,241 +1,149 @@
-Return-Path: <linux-kernel+bounces-759756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CCAB1E204
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:14:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E10B1E208
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510755665FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:14:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7588B7A33BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00832222C8;
-	Fri,  8 Aug 2025 06:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D342221F12;
+	Fri,  8 Aug 2025 06:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="dxqFy/+P"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbT84UQJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83355222585;
-	Fri,  8 Aug 2025 06:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8893521FF53;
+	Fri,  8 Aug 2025 06:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754633635; cv=none; b=FZxAQIZNNh26oHT8W2LuoGqNC9/dHdkC0Z16sP5ba7/e4F5yvybvf9S95NLp2TxVg6Fd3YcDa2A+xwa0pwIu+obySf+vjwE4+FyYh0FhkkiLhXRhUFuYvmu2eW5cYA5EgwE3g4gJyURe7nDqflxO4dl/pKWcszWTtT1q+yuZRns=
+	t=1754633675; cv=none; b=hIY1dweeWxz2G8X/FuVjn6cynzdYvALt8w2+c3+QJclcDXyjqS/OtEYuxHIHfTxylLo/1ZZ+4voBDsBDy8h0Hz2RhwLgfbgbYRj2/f7vJtJR7sKZEDlo3JSUJtqZ32bCaE5v2Z+lVeRnd4pMjuzNEdXxg+3/a0WtR191sdBhf4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754633635; c=relaxed/simple;
-	bh=JntV3RGjz1Jbe0FoUMzE5n20T/KBYLOoC0wvMbE0SQA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c/5Knw/n8yzFGWPTwj0OfeRCQbzDRgFNn/rWZn9fULJWbf0QBCErbKw3V/QDdFTy8OXLxirw5/kC3PbiPc/4DISKv79ixR+z4WtJu7ZpE/wrmZFQzc2pg5OyPQMD/1mwYdA3816DGir5hBG0zXyi1rsP09lMC0MPOlGLeLo9CKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=dxqFy/+P; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1754633631; x=1754892831;
-	bh=xrSdxGPnLC2CBHkZSGp5i4YD6BUUlFfg9BJWTFd34G0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=dxqFy/+PkjD1o+TA0cM1CwWEqQvubtgpEPW8WVL3uw/rnyG3NcdGSR0dFjb1h0Wu5
-	 znkAb5aDlzNmXnvq8CGoWo4Uzyp7zNhUZpVcfBRz8bMOWYN0mM3lC/bWySBSRC/2DB
-	 +cJ0z3V/o8UX0j4DER9YkChO+CpJCAl1RLjLCiiEtaRdYLIg3y0wzkjbg64HLOvp5D
-	 UoeiM5t8i+SFcrtcU2KOUWJGY6ri1pwRHLIFBp/blsAZFkZDw9EMIvBN+oQWXJBbxn
-	 WSyzKNu4rnKrjHPVtWMmf9o/gVzzo5x7k9EmFyTV+VN6nhlf5UhbV4Pk3dltOhB5vC
-	 Aoh/NVMZM2wHw==
-Date: Fri, 08 Aug 2025 06:13:45 +0000
-To: linux-input@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, benno.lossin@proton.me, Benjamin Tissoires <benjamin.tissoires@redhat.com>, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org, db48x@db48x.net, gary@garyguo.net, ojeda@kernel.org, tmgross@umich.edu, peter.hutterer@who-t.net, Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Subject: [PATCH v3 RESEND 3/3] rust: hid: Glorious PC Gaming Race Model O and O- mice reference driver
-Message-ID: <20250808061223.3770-4-sergeantsagara@protonmail.com>
-In-Reply-To: <20250808061223.3770-1-sergeantsagara@protonmail.com>
-References: <20250808061223.3770-1-sergeantsagara@protonmail.com>
-Feedback-ID: 26003777:user:proton
-X-Pm-Message-ID: c9bd5a3fc1b9156b0fec7d365b455a8cf514e2b3
+	s=arc-20240116; t=1754633675; c=relaxed/simple;
+	bh=Y/W+sje0EboXCDX6Q4bMj+dHKJHYtmhocoOQxyyA9Pc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rvTdMsIdojOCyLEaTxGCiZsmeD9KiYRsDc+p1OXKzc8yMPIimyunfsdyJ0NcCDiJZ6ymRzO6ukygq2BsxBvKIq9kDG51nelUVT8KASiQiqtHqcYPdmQFQ8ksZW1aqK+xYxZEbT3YWmjq03D8HFmhldeowp+n6uTNapw3CApQdI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KbT84UQJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10357C4CEED;
+	Fri,  8 Aug 2025 06:14:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754633675;
+	bh=Y/W+sje0EboXCDX6Q4bMj+dHKJHYtmhocoOQxyyA9Pc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KbT84UQJHgZo7GwSHXwLy3U6aFaTNupJQy/Kp1aZCNAvC+G+ID/uRR2wWByGWA6/8
+	 JhtVk4p5inYspk1jUGpEuOEySG64iw980qytzKkEel51qpojHDN65Z27riv+L/OnNb
+	 HM5jRMXGhQK812xn9vE+23FowOknc+PSplSApS+NSj3KKhsyUq1y/YT1vY2zMq00dX
+	 02VnTHwe9c1U7d2BrR7Ds473R/asyqvwPgJ8zbuLDSpedGyFdIVaKaXIiPxS04Dj7s
+	 OZL33/ikjaCdnBqYY7phHSCeiseelnEFCtjU5AA2yre6/8gD9dEkybD47kqfnsuSQX
+	 TA40zM+7AzBMQ==
+Message-ID: <14019ad9-0dd3-49f5-948e-5d0330b764c2@kernel.org>
+Date: Fri, 8 Aug 2025 08:14:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: qcom,sm8250: Add lemans-evk and
+ monaco-evk sound card
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@oss.qualcomm.com
+References: <20250808052939.1130505-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <20250808052939.1130505-2-mohammad.rafi.shaik@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250808052939.1130505-2-mohammad.rafi.shaik@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Demonstrate how to perform a report fixup from a Rust HID driver. The mice
-specify the const flag incorrectly in the consumer input report descriptor,
-which leads to inputs being ignored. Correctly patch the report descriptor
-for the Model O and O- mice.
-
-Portions of the HID report post-fixup:
-device 0:0
-...
-0x81, 0x06,                    //  Input (Data,Var,Rel)               84
-...
-0x81, 0x06,                    //  Input (Data,Var,Rel)               112
-...
-0x81, 0x06,                    //  Input (Data,Var,Rel)               140
-
-Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
----
-
-Notes:
-    Changelog:
-   =20
-        v2->v3:
-          * Fixed docstring formatting
-          * Updated MAINTAINERS file based on v1 and v2 discussion
-        v1->v2:
-          * Use vendor id and device id from drivers/hid/hid-ids.h bindings
-          * Make use for dev_err! as appropriate
-
- MAINTAINERS                      |  7 ++++
- drivers/hid/Kconfig              |  8 +++++
- drivers/hid/Makefile             |  1 +
- drivers/hid/hid-glorious.c       |  2 ++
- drivers/hid/hid_glorious_rust.rs | 60 ++++++++++++++++++++++++++++++++
- 5 files changed, 78 insertions(+)
- create mode 100644 drivers/hid/hid_glorious_rust.rs
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6c60765f2aaa..eee9a33914ef 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10200,6 +10200,13 @@ L:=09platform-driver-x86@vger.kernel.org
- S:=09Maintained
- F:=09drivers/platform/x86/gigabyte-wmi.c
-=20
-+GLORIOUS RUST DRIVER [RUST]
-+M:=09Rahul Rameshbabu <sergeantsagara@protonmail.com>
-+L:=09linux-input@vger.kernel.org
-+S:=09Maintained
-+T:=09git git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git rust
-+F:=09drivers/hid/hid_glorious_rust.rs
-+
- GNSS SUBSYSTEM
- M:=09Johan Hovold <johan@kernel.org>
- S:=09Maintained
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index 922e76e18af2..b8ef750fb8b6 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -406,6 +406,14 @@ config HID_GLORIOUS
- =09  Support for Glorious PC Gaming Race mice such as
- =09  the Glorious Model O, O- and D.
-=20
-+config HID_GLORIOUS_RUST
-+=09tristate "Glorious O and O- mice Rust reference driver"
-+=09depends on USB_HID
-+=09depends on RUST_HID_ABSTRACTIONS
-+=09help
-+=09  Support for Glorious PC Gaming Race O and O- mice
-+=09  in Rust.
-+
- config HID_HOLTEK
- =09tristate "Holtek HID devices"
- =09depends on USB_HID
-diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
-index 10ae5dedbd84..bd86b3db5d88 100644
---- a/drivers/hid/Makefile
-+++ b/drivers/hid/Makefile
-@@ -55,6 +55,7 @@ obj-$(CONFIG_HID_FT260)=09=09+=3D hid-ft260.o
- obj-$(CONFIG_HID_GEMBIRD)=09+=3D hid-gembird.o
- obj-$(CONFIG_HID_GFRM)=09=09+=3D hid-gfrm.o
- obj-$(CONFIG_HID_GLORIOUS)  +=3D hid-glorious.o
-+obj-$(CONFIG_HID_GLORIOUS_RUST)=09+=3D hid_glorious_rust.o
- obj-$(CONFIG_HID_VIVALDI_COMMON) +=3D hid-vivaldi-common.o
- obj-$(CONFIG_HID_GOODIX_SPI)=09+=3D hid-goodix-spi.o
- obj-$(CONFIG_HID_GOOGLE_HAMMER)=09+=3D hid-google-hammer.o
-diff --git a/drivers/hid/hid-glorious.c b/drivers/hid/hid-glorious.c
-index 5bbd81248053..d7362852c20f 100644
---- a/drivers/hid/hid-glorious.c
-+++ b/drivers/hid/hid-glorious.c
-@@ -76,8 +76,10 @@ static int glorious_probe(struct hid_device *hdev,
- }
-=20
- static const struct hid_device_id glorious_devices[] =3D {
-+#if !IS_ENABLED(CONFIG_HID_GLORIOUS_RUST)
- =09{ HID_USB_DEVICE(USB_VENDOR_ID_SINOWEALTH,
- =09=09USB_DEVICE_ID_GLORIOUS_MODEL_O) },
-+#endif
- =09{ HID_USB_DEVICE(USB_VENDOR_ID_SINOWEALTH,
- =09=09USB_DEVICE_ID_GLORIOUS_MODEL_D) },
- =09{ HID_USB_DEVICE(USB_VENDOR_ID_LAVIEW,
-diff --git a/drivers/hid/hid_glorious_rust.rs b/drivers/hid/hid_glorious_ru=
-st.rs
-new file mode 100644
-index 000000000000..8cffc1c605dd
---- /dev/null
-+++ b/drivers/hid/hid_glorious_rust.rs
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2025 Rahul Rameshbabu <sergeantsagara@protonmail.com>
-+
-+//! Rust reference HID driver for Glorious Model O and O- mice.
-+
-+use kernel::{self, bindings, device, hid, prelude::*};
-+
-+struct GloriousRust;
-+
-+kernel::hid_device_table!(
-+    HID_TABLE,
-+    MODULE_HID_TABLE,
-+    <GloriousRust as hid::Driver>::IdInfo,
-+    [(
-+        hid::DeviceId::new_usb(
-+            hid::Group::Generic,
-+            bindings::USB_VENDOR_ID_SINOWEALTH,
-+            bindings::USB_DEVICE_ID_GLORIOUS_MODEL_O,
-+        ),
-+        (),
-+    )]
-+);
-+
-+#[vtable]
-+impl hid::Driver for GloriousRust {
-+    type IdInfo =3D ();
-+    const ID_TABLE: hid::IdTable<Self::IdInfo> =3D &HID_TABLE;
-+
-+    /// Fix the Glorious Model O and O- consumer input report descriptor t=
-o use
-+    /// the variable and relative flag, while clearing the const flag.
-+    ///
-+    /// Without this fixup, inputs from the mice will be ignored.
-+    fn report_fixup<'a, 'b: 'a>(hdev: &hid::Device<device::Core>, rdesc: &=
-'b mut [u8]) -> &'a [u8] {
-+        if rdesc.len() =3D=3D 213
-+            && (rdesc[84] =3D=3D 129 && rdesc[85] =3D=3D 3)
-+            && (rdesc[112] =3D=3D 129 && rdesc[113] =3D=3D 3)
-+            && (rdesc[140] =3D=3D 129 && rdesc[141] =3D=3D 3)
-+        {
-+            dev_info!(
-+                hdev.as_ref(),
-+                "patching Glorious Model O consumer control report descrip=
-tor\n"
-+            );
-+
-+            rdesc[85] =3D hid::MAIN_ITEM_VARIABLE | hid::MAIN_ITEM_RELATIV=
-E;
-+            rdesc[113] =3D hid::MAIN_ITEM_VARIABLE | hid::MAIN_ITEM_RELATI=
-VE;
-+            rdesc[141] =3D hid::MAIN_ITEM_VARIABLE | hid::MAIN_ITEM_RELATI=
-VE;
-+        }
-+
-+        rdesc
-+    }
-+}
-+
-+kernel::module_hid_driver! {
-+    type: GloriousRust,
-+    name: "GloriousRust",
-+    authors: ["Rahul Rameshbabu <sergeantsagara@protonmail.com>"],
-+    description: "Rust reference HID driver for Glorious Model O and O- mi=
-ce",
-+    license: "GPL",
-+}
---=20
-2.47.2
+On 08/08/2025 07:29, Mohammad Rafi Shaik wrote:
+> Document the bindings for the Qualcomm LEMANS-EVK and MONACO-EVK
+> board specific sound card.
+> 
+> The bindings are the same as for other newer Qualcomm ADSP sound cards,
+> thus keep them in existing qcom,sm8250.yaml file, even though Linux driver
+> is separate.
+> 
+> Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> index 5d3dbb6cb1ae..c63bfe031b57 100644
+> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+> @@ -31,6 +31,8 @@ properties:
+>            - fairphone,fp4-sndcard
+>            - fairphone,fp5-sndcard
+>            - qcom,apq8096-sndcard
+> +          - qcom,lemans-evk-sndcard
 
 
+Lemans is already there under one of the QCS cards. I was told it is the
+same, so you do not get a new compatible.
+
+Monaco maybe as well.
+
+We also name standard cards per SoC, not per board, so evk should be
+dropped or commit msg should explain why this is different.
+
+
+Best regards,
+Krzysztof
 
