@@ -1,162 +1,203 @@
-Return-Path: <linux-kernel+bounces-759973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 616C0B1E518
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:58:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61878B1E523
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17AB53BCCB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E71516C6DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2502266EFC;
-	Fri,  8 Aug 2025 08:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B04B26B2AC;
+	Fri,  8 Aug 2025 08:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Tej4IWsX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M8iPgaqk"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A6B265CC5
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD2826A0A8
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754643507; cv=none; b=r4X257Z00Kh88/cvR37XlYzFuDOau4cFKUs6NhSlIy7uBwnpKsh8uM9I7lZk0BS9Cz7l4P90U5AYdSqDF3qb6qyHJO6lqz31/mmY9XtdJY3ltxNO1kvkTGImP8ckUm/gOfw2GsEPiO9hSY9kD/P1eKSN5YR/zZ/GRB7pJCLyvMw=
+	t=1754643513; cv=none; b=CNSKkTetpv7PSSzNilpCgD7Y2r45l0lp4xxAz8FkCYtISQUb6dpqzlqjdlGPjzOpTMiYN7cA2vfs5nPihHOC6R6cTaBitmSN/kt9+lI4XZM9pfCvTIChmOpZPxVHsBOOksjGBYLH7DR66t5/8mLjHOBjL7lOgBzTU90VFDZkoZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754643507; c=relaxed/simple;
-	bh=t6DFxcyLHMC844tzFgeCODmtYEMwsh8pJywnazP2Xqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JIgkejmZMqW9zLqKutZIuzmuTWQKZ0MM6nnnh5gOyzapUoljfr/km4m27iCU0IsP10VwVJZxkx4iRzo2quojqU41pQgn2W9aFmYisgIr412kh5KxrCIzTNTTUThwg34J0l/t+kKs4MoQQ0TaLgEVZ4PFytDSi0npAW5jSGbdpvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Tej4IWsX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5787I61N003513
-	for <linux-kernel@vger.kernel.org>; Fri, 8 Aug 2025 08:58:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R6Q9n1VBcmPjQskeZ/W9TfLHZuyYCWbxE9Bhoq5xM3o=; b=Tej4IWsX+JmGeVih
-	QSTcVIuaVYUBxkH2Im54AmnuSffT3Spd1cVyUYPXW8bkSPidIuSLIGmbl0kGo2vz
-	k7soJ6D99KF8nTutfdtUlYm75nq8UFgTkWohLTcaNCLAlll2DDDWrOLmlSZDmwrv
-	ka6YRXkaylQzKU7E4/W3s9GYhOKZ6r45OFhKMgGSJv7mKy50uTpJk3QqPB1Br70m
-	xFqMc+l9ddQW9j0Qb0AuqHqyBmx+AVyjsyDBe4E+a90Gb6qLOZTNEC9OlsjzJ4aB
-	aaaT+xbR7fff7DjR17v6OOexpWHE4KE0HiW4BzLu4HePwZfh+bgjw7IoyHUGSETY
-	sW/bbA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw01kb4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 08:58:24 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f539358795so4827986d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:58:24 -0700 (PDT)
+	s=arc-20240116; t=1754643513; c=relaxed/simple;
+	bh=2Cd3py93CGXf5mOUzpOs5vVjwes2SdDigwaiSPyUqF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rFc4Ye8PGOibvbpzAMGgC9iNkuikNGwwJO4pwFMXEnv0IoTHFBhaGNjwKDpe+ouKpiWWNyAuU/LlZTO6SAbQY0npWULGANhZ0j46cO5bHrJ0HuGVt4fBYFAmXtH3UVRphMe6VDnulPlRoRcu62AGmipG/iXqvNiGb0ukrzltqIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M8iPgaqk; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-459e20ec1d9so18153295e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:58:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754643510; x=1755248310; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lOQVbhQSKupTIDYGcHNIv/5EXRTeGhpJxZzqsjXmSWw=;
+        b=M8iPgaqkss+DKH2EQUlU/8ytVM/eCBYItZh2N8kCndZUrKryObgYTLTi0i0Qk6EdBe
+         h6Zo4XQ8XBNxAeDTG+GYYOan6VGcnoY7C3p6sDLgiBkImDNJmqY0fcsqFJ1ma7trxMfM
+         itf9dcU2rWBcQGTXsFj36ukdfeooZe105uPKYb4Jh1NizP2s0xTX3Rx/CYwOgg/obSeZ
+         wEsqDo5Kt/6MzONNlhYxzU3EVZmsFR0BwOzJ8947OH/lHCccLf2N2mu80FaHUjPxNR15
+         QfdW1WFtfLhDsxY9Qw6agRDuhW0+Hbm7CPl7pJhy1SYOQ1lEL0U2LZ06A04+LAhtZraC
+         VjJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754643504; x=1755248304;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1754643510; x=1755248310;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R6Q9n1VBcmPjQskeZ/W9TfLHZuyYCWbxE9Bhoq5xM3o=;
-        b=qycLycHdLVXO3V7ItMzzMK2JFxiu3nt6K5fPlezcYqwZyq88a/Tkc6n49JeB0qrlvO
-         UjutZ626BqvgntNr3lkclcxbJc2q8Q9/XsfWyE8IyViDGre4eH5gUmMR7vBY+Z0ahsxZ
-         izoXAAa+KzGGCq42lV5xROS94CT16N/arkY3pUEhzyjZOc8n8uxGxWSyjFjK2rS2z62w
-         t/wPBNSdkMxuHElJfrZmwjFcmG80bTtf0r2Qdb9y2T43lqhlgyS5rF25rEG8MM2XUduC
-         As4Vo0xqEXTcFa/vd7GFG/kNOhNsIKGIzeUj99ndS1sX9BD6zQImu5zHr0TfvG+o2Eus
-         g3gA==
-X-Forwarded-Encrypted: i=1; AJvYcCV57jnmB4FWdJ2YVgNHoj684C/aRP/EZdBYbTZbc3PCiE45l0euWfrJx1xYy2aip5MFNKSjRnquf8AEekc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8Nj1wTPMFw/vsaC27wOkt2upu2g0qqTZIMtRmBt0Fp7FitilI
-	EjUQXy3YCF/QYIvIp/f3v6MNycp9Fy07lRC9E0wuodeSIzl/ymRcm5NA+/4TFnbKad/sSo4yP8R
-	HlTfu86jNUrj0pdYcfpDwjo5F4+T5TNicO+1p5sLui+043jj2v4Iku39cOmW5lMRMiVY=
-X-Gm-Gg: ASbGncsjJGJ2/tLrfWz2l7d1dmLxzUI6QuTQxw19n0m0XCG1iNA47DUUdwtoPLobrFV
-	aZjWEyETt6V1RGMUtwNQ1gRHSikvLAo66ndj/N3tdDdkzxQoKxyGzSIm3a3edcTeh/ojCgvWNRq
-	zcnzI0y4t+eD0/9KKHykSRhuY0Her8akAFoD/YcrI9vMNAI4xMjGjw57bN531O2Yo1261NIyxpN
-	IhBUTFVh1xBxfq54+eJlpkjwNSBcV7pA1zdTEmCmq3ntaMt3H1/2XZZ13ikQJx9GQF0CqjtogPB
-	ujmIrgV821K68kpAm0c6ui99IqrwMI0R/ffy3hBXFz/pgTAClFILm6CnNOsFCp3y5qe/6/bNXQ5
-	Uo8F8for216CgKWrBcQ==
-X-Received: by 2002:ac8:7e94:0:b0:4ab:67a3:ec09 with SMTP id d75a77b69052e-4b0aed20c07mr17186281cf.6.1754643503775;
-        Fri, 08 Aug 2025 01:58:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEh16OD+ZoyT6jx0iozIhaDryFGFQR4TtUyX+fYll//iyn3c+QGTMne8GP/ly3AC+UnMV9iww==
-X-Received: by 2002:ac8:7e94:0:b0:4ab:67a3:ec09 with SMTP id d75a77b69052e-4b0aed20c07mr17186061cf.6.1754643503317;
-        Fri, 08 Aug 2025 01:58:23 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a1bf9sm1460998466b.31.2025.08.08.01.58.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 01:58:22 -0700 (PDT)
-Message-ID: <9af71063-0629-4ccc-bc76-3fb588677bf4@oss.qualcomm.com>
-Date: Fri, 8 Aug 2025 10:58:20 +0200
+        bh=lOQVbhQSKupTIDYGcHNIv/5EXRTeGhpJxZzqsjXmSWw=;
+        b=HUYyJkF1mX+K26SU6htXzDQwP3xVirU+b8BIWmf8v8+EZiyuERzalW9mmH6SqqzQhj
+         p1U7g5TvETUKk6f2T/y6fywWhWz1EzL7Y+ATnLXDmI038xK8eaA0d8UnqPAdDKIwu9xX
+         t2BlhBfnPIIxaqnPywFIWt5SpgYy1H/OGfZyyuAbmxfj9QTNZ17PDuSHctz1fd6lx/h7
+         aoDMihPUjfYv38Rgh8g4u3VcJkJo1cpLs9ZrMhStW7oN+F6vz4q5gnyE64VGZZK5wW5S
+         sDTS7aoU4PSCh3dflO5VBhj9n9rUuFMWLkLm6X6g07z1b88wwnc8R975w6EaCzb7sLzv
+         Totg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfSLK1afXEYUUexrYGR4eUSFDiF4KUXQT8rBM9Qlfg/FlYaOm3K4acKJhYVxDbfzDZcktIIOaFmtJpF7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRBCT2mDcv0nVZfiTdQFMzxBAqTZlJYzrSoph49beTQaLflrcM
+	6fNcIcn/Ktft01Fx6pCQEB+acIT48wjpGR4fLnvPoY9RI/7D016h/bY4l2jiuOYrCOI=
+X-Gm-Gg: ASbGncsPoxvPTSdhBue0/J53hj4q6pGczlyXLo0nhzzMekAhMioGqaCVMIBapwn6wTX
+	PryNnxyTgGcVO0U4gC9ZOtgaVf2rS1acTXEeHBC2Y4Mz0L1nHGYjnpkrbnMKsxsAAv7UCfuFAIX
+	GvRyO/se4pO7Ywarm1jAmwNsN0yqu9z76MkZG7sTxWQ5F9F0erO7NU8wz1bALc6ckNFpAo1NHR+
+	gXxngw8SflgblQfzD204Cy5BdzWaG842jdHruV/jbnb4rwhVm6UhbenWkBysIuvExxVKYFlF5aN
+	otnUT9CLaQ7Jxy1+zZZqVGyL5jX/7iOMh6xfyHsCkKm3xARCS2aNMLcTFKTZCk5jIiNAfV6B2gE
+	r+coJctughD4Aauv8tSKmL0T5ZQbHQ4f1HLY=
+X-Google-Smtp-Source: AGHT+IFzVmndy14yZFXdn3AITFDDpuqCDmasSizVoBUj53EPQz0livj4I20cGXLIqIwR20S7zVle5Q==
+X-Received: by 2002:a05:600c:190b:b0:459:e048:af42 with SMTP id 5b1f17b1804b1-459f4fac94amr17073275e9.24.1754643509756;
+        Fri, 08 Aug 2025 01:58:29 -0700 (PDT)
+Received: from localhost (109-81-80-221.rct.o2.cz. [109.81.80.221])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c47ae8esm29556901f8f.61.2025.08.08.01.58.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 01:58:29 -0700 (PDT)
+Date: Fri, 8 Aug 2025 10:58:28 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
+	wangfushuai <wangfushuai@baidu.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
+ address process dependency issues
+Message-ID: <aJW8NLPxGOOkyCfB@tiehlicka>
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <aJSpTpB9_jijiO6m@tiehlicka>
+ <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
+ <aJWglTo1xpXXEqEM@tiehlicka>
+ <ba9c23c4-cd95-4dba-9359-61565195d7be@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/4] arm64: dts: qcom: sm8750: add max-microamp for UFS
- PHY and PLL supplies
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, mani@kernel.org, conor+dt@kernel.org,
-        bvanassche@acm.org, andersson@kernel.org, neil.armstrong@linaro.org,
-        dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
-        krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
- <20250806154340.20122-3-quic_nitirawa@quicinc.com>
- <20250808-calm-boa-of-swiftness-a4a7ce@kuoka>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250808-calm-boa-of-swiftness-a4a7ce@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Q1lCufK0zKTNUxsZ1-46Pz0T_uZ4BFqa
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX0VhPeRzLxmyw
- +KqNilXn0Bp7NAM7NlxBsEyLpkPGurZ2htLV9maKximYId3pf2h1G7gk2vlKOvIFEmXf9Ht08AP
- XU0u+8OmeWcmvOMYw0VnZbNwn1JsvEbEg2FSkuEbNAuJjXTbCLqjvL7+f/DQf3uEYHGh/8AqSkI
- Vy5V7y+HfAQsFhBRhhdIzQA9vtXdxOOXpnARaPD1oMFs25PnYLWD5zfbnUtrzQJCVxG24Lf9red
- +esFW9O915FtqCW4mxpuhmZpdsV8L7wMa57GKVDVdx+5xUh3mzq31VmI6PCNt11/8ltT1gIupFN
- Fvaxps3x0AtYcpgt3bs1iNAqUe54jYyf5leFF2Xm1Nvlbwoy+gdUoXQqNSuOrzy+tinSIZ7Jc4m
- KPkvBMhX
-X-Proofpoint-ORIG-GUID: Q1lCufK0zKTNUxsZ1-46Pz0T_uZ4BFqa
-X-Authority-Analysis: v=2.4 cv=NsLRc9dJ c=1 sm=1 tr=0 ts=6895bc30 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=WmDcBHyyyws--uAXJ9AA:9
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-08_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0
- adultscore=0 malwarescore=0 spamscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba9c23c4-cd95-4dba-9359-61565195d7be@kylinos.cn>
 
-On 8/8/25 9:29 AM, Krzysztof Kozlowski wrote:
-> On Wed, Aug 06, 2025 at 09:13:38PM +0530, Nitin Rawat wrote:
->> Add `vdda-phy-max-microamp` and `vdda-pll-max-microamp` properties to
->> the UFS PHY node in the device tree.
->>
->> These properties define the maximum current (in microamps) expected
->> from the PHY and PLL regulators. This allows the PHY driver to
->> configure regulator load accurately and ensure proper regulator
->> mode based on load requirements.
+On Fri 08-08-25 15:52:31, Zihuan Zhang wrote:
 > 
-> That's not the property of phy, but regulator.
+> 在 2025/8/8 15:00, Michal Hocko 写道:
+> > On Fri 08-08-25 09:13:30, Zihuan Zhang wrote:
+> > [...]
+> > > However, in practice, we’ve observed cases where tasks appear stuck in
+> > > uninterruptible sleep (D state) during the freeze phase  — and thus cannot
+> > > respond to signals or enter the refrigerator. These tasks are technically
+> > > TASK_FREEZABLE, but due to the nature of their sleep state, they don’t
+> > > freeze promptly, and may require multiple retry rounds, or cause the entire
+> > > suspend to fail.
+> > Right, but that is an inherent problem of the freezer implemenatation.
+> > It is not really clear to me how priorities or layers improve on that.
+> > Could you please elaborate on that?
 > 
-> Also reasoning is here incomplete - you just post downstream code. :/
+> Thanks for the follow-up.
+> 
+> From our observations, we’ve seen processes like Xorg that are in a normal
+> state before freezing begins, but enter D state during the freeze window.
+> Upon investigation,
+> 
+> we found that these processes often depend on other user processes (e.g.,
+> I/O helpers or system services), and when those dependencies are frozen
+> first, the dependent process (like Xorg) gets stuck and can’t be frozen
+> itself.
 
-The reason for this change is good, but perhaps not explained clearly
+OK, I see.
 
-All of these values refer to the maximum current draw that needs to be
-allocated on a shared voltage supply for this peripheral (because the
-supply's capabilities change depending on the maximum potential load
-at any given time, which the regulator driver must be aware of)
+> This led us to treat such processes as “hard to freeze” tasks — not because
+> they’re inherently unfreezable, but because they are more likely to become
+> problematic if not frozen early enough.
+> 
+> So our model works as follows:
+>     •    By default, freezer tries to freeze all freezable tasks in each
+> round.
+>     •    With our approach, we only attempt to freeze tasks whose
+> freeze_priority is less than or equal to the current round number.
+>     •    This ensures that higher-priority (i.e., harder-to-freeze) tasks
+> are attempted earlier, increasing the chance that they freeze before being
+> blocked by others.
+> 
+> Since we cannot know in advance which tasks will be difficult to freeze, we
+> use heuristics:
+>     •    Any task that causes freeze failure or is found in D state during
+> the freeze window is treated as hard-to-freeze in the next attempt and its
+> priority is increased.
+>     •    Additionally, users can manually raise/reduce the freeze priority
+> of known problematic tasks via an exposed sysfs interface, giving them
+> fine-grained control.
 
-This is a property of a regulator *consumer*, i.e. if we had a chain
-of LEDs hanging off of this supply, we'd need to specify NUM_LEDS * 
-MAX_CURR under the "led chain" device, to make sure that if the
-aggregated current requirements go over a certain threshold (which is
-unknown to Linux and hidden in RPMh fw), the regulator can be
-reconfigured to allow for a higher current draw (likely at some
-downgrade to efficiency)
+This would have been a very useful information for the changelog so that
+we can understand what you are trying to achieve.
 
-Konrad
+> This doesn’t change the fundamental logic of the freezer — it still retries
+> until all tasks are frozen — but by adjusting the traversal order,
+> 
+>  we’ve observed significantly fewer retries and more reliable success in
+> scenarios where these D state transitions occur.
+ 
+OK, I believe I do understand what you are trying to achieve but I am
+not conviced this is a robust way to deal with the problem. This all
+seems highly timing specific that might work in very specific usecase
+but you are essentially trying to fight tiny race windows with a very
+probabilitistic interface.
+
+Also the interface seems to be really coarse grained and it can easily
+turn out insufficient for other usecases while it is not entirely clear
+to me how this could be extended for those.
+
+I believe it would be more useful to find sources of those freezer
+blockers and try to address those. Making more blocked tasks
+__set_task_frozen compatible sounds like a general improvement in
+itself.
+
+Thanks
+-- 
+Michal Hocko
+SUSE Labs
 
