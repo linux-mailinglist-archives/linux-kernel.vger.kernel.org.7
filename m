@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-760434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE36DB1EB01
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:03:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CE5B1EB12
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FDE13AFAAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:00:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E929A16E8B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891C3283FDD;
-	Fri,  8 Aug 2025 14:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9D228153D;
+	Fri,  8 Aug 2025 14:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bceKjS+t"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WbnCVx14"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A73C283CAA;
-	Fri,  8 Aug 2025 14:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DC827E7FD;
+	Fri,  8 Aug 2025 14:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754664939; cv=none; b=Zts7mdCNFiW3oHBK3jxHi5gCZ0RKLFEl8SyBc3NFTv8iPOuR+W/iD0hBXX0A2nvLAS2vFCRHkTIBeHWlcP8yK/YMq/umnUKSEfMpSy7502F6SeQ6AqLfnxkxAt+f1hV1YEP3HzPPWmoDMsfseuE6f1mBeuIXxIrKmQdCkhiRLB4=
+	t=1754665154; cv=none; b=oXlhsRdrdOpOvx3EuJoeejIxvh4R+CEZ2dL87OY+utaq9+0zOCGYBmqdsrJPhZmt70GKR2a5JY7ObSpJ8s155ysV5wE6e3kooEwASGBOcN3B36NXRG7bHG5F+qLI4tB2YBnWyCWbNV6iQ7soSKAhTz70ZN1Cs69ScCMtBGltGts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754664939; c=relaxed/simple;
-	bh=v9fbRBg7l5OMVUZ8kZnEyBDxLqNXD3ApiEHqSjjdwPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dYOyz2RYdi/KCldtPu/P26fWoYZ3nOgtGxYliQCfDtZkC009krO9djQLPodn+i9bD9aZ2+++Rx3jnPYMfVhf59JE2U0RABnYEOsuIJjmv9awJH5Vy3WoAVyupuZZf7rYfoHSHKnMYSjzMAkIDPK/X4glzjiuZ/tO1/ACiLcavUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bceKjS+t; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-33243562752so15933141fa.3;
-        Fri, 08 Aug 2025 07:55:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754664936; x=1755269736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v9fbRBg7l5OMVUZ8kZnEyBDxLqNXD3ApiEHqSjjdwPE=;
-        b=bceKjS+toT9sHUMIz/Rjg/sh6sqYwd+e4tOnp6rkG1SVHCnxcZUX21otVZuq0c8CHW
-         G6AUqQuQEmTv0Omy78nb0ncthhgjxa4Hqsyo/+3D6+w9V+uOxI2pmToTICUaiGb1cU67
-         PzQsP3lfFPfXs2HoQDrmPr7pJJaLvrr5vqDEmum1g93Ap0nMhXr8aa1sv3I6qFTkhvKv
-         fO/isLyy8L4gYgmvHRc6+cghaXh0EUi5+2q7jDscE7ubkLrlKAen/3Y/NY8On0/7EuEo
-         BWMXbMsv1tUOfbiiw3HcyePg+j6R2nJrAfPRvkneWdzg510ObdsWOVwCrpTR04kgA+zq
-         8HQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754664936; x=1755269736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v9fbRBg7l5OMVUZ8kZnEyBDxLqNXD3ApiEHqSjjdwPE=;
-        b=A11qPAhJLr/eBih3BFGbx7C8a6IL3bM6EtCrt2wqJc8r/nm9rcSAD5W4Lxp0ATBswU
-         B3Oh2csnjJZ8Srx1CLxGy4mIG3IEUOW6xsH8NiXvwDbSSDSZblSyFEcc0EKZfaohnTFH
-         +t/iPVp3w1fysL/ruapktRBSHRfnw6afGuX5DfF6pQAzyXq0EBuWBnopFV+mIhu8sYfX
-         kBvyfTMvwxGBlzg0ysHWyxabO+zWVY5hn09DP1+m1cbiuMPA9tnD0gh//qIYE4F6v3x+
-         ADrVfGvDit9AUjQRiuj9bRFr3gybsXr68xG2AOVwKuUHPsVYaSTyUJCFLElx9bDFahxP
-         RKvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWE+2MMqa9RSSQKUjTzcIsdFXRKy7rU782ZVyYAlu85GXKusZvI5Kd2KS/LssG2MAtTbrXZxUjaEKfjiDQT@vger.kernel.org, AJvYcCWs0GwSmskxOOa0Wu8HNLuzFjte9qpALaCneSdg4ObbPDA4Cf/g1zAKYfFhN5NzlNnRhpMXieE+blA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze83s56GSMQVvH0oBXu1WLqKE/JfuJ1wWuGidrFiTYTqBzKmof
-	shtdfv0Di9sRYwK8Jk2KrbESx14xJV+NkcAtfFU6HYBu/pqrmsXwgZDoyDFhxFi669bdFEYqfL+
-	koeg1JXpBVa9oyGwuaCmuiDFjDA2W1+o=
-X-Gm-Gg: ASbGncubFDrSbnwpzIkd2q/4YxG865uV2sS5hca9wa17umWL52C6jIAGtqSS1m0cyWg
-	JNNbPytvZ23v3vSjvUCB23hrItmUR7n1bU5yjeSDR9S0YZfF5Gr454AY/2uKSpliHgt2Q9mHZD3
-	+7ouFs+rJT32p6LUamjf3QHU0Yl9t78L5JxT3XnNbZnhJ7NjXhg0+mWHge1hAhUNxVzDa7ZrDWQ
-	qSZQ5CM
-X-Google-Smtp-Source: AGHT+IGa6YFA3M+slX7DKOnXD7qWxC7HGStALtX/8gPhFl6R1ZKm9wriP0Orf4AV2gpJcQWnwAiOS2xtMri+s1K8SSs=
-X-Received: by 2002:a05:651c:4110:b0:32b:9220:8020 with SMTP id
- 38308e7fff4ca-333a2268f4amr6707511fa.34.1754664936026; Fri, 08 Aug 2025
- 07:55:36 -0700 (PDT)
+	s=arc-20240116; t=1754665154; c=relaxed/simple;
+	bh=JS5l0JTvxjfWhfOl7mWhGheL2sKK5NX/r1b9XGlPSYQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=S3rkz4XzuXljVCnb00OOF+VBlLuKPg1n7lLPtekzISZefGbDh/2qPnhZQyUwxOTJrwS2FkgRWJQTUDpyUcUwYtMkFaimqxLIA32+ucClQXOpN1DEznPXI1PBxe9h80NZY1HMZCJgj3oaaZYQQv6d9DHMKjq5udBOm+1HGHAQu+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WbnCVx14; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578DVG8N014777;
+	Fri, 8 Aug 2025 16:58:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	NKA5zhqFYGJHApG3LHZ1wsad9XAvKI/FIK3QKmiMCpI=; b=WbnCVx14jjeuJHN6
+	GJIn+Fy7uBInALd0yOmv8xY1N92s1MboPmYDOVGOfKlyJ1dR9TdIdZfZZ4z7u230
+	hOZgX2ZobRFpBIOy2vaW04NBtp7pze1/toMUiVE1RtWulxbwt1s/1hMJbrSvEsKM
+	mv8O0GZCz25MOCQgGka/uT3VEShhKKugQsfHOZnGaYcy6pyoWjDb679PqL8ypGYf
+	RLUCtOMzNsz/XeURNPf+0IqflqC3ZDk4Ifwp9S9Vi0zr9ltkc3dOgbgt3l/YYUuW
+	ArazUWAES+HMyrjVVRVsnQhgUvAFXTm2W7oQM/aPTere3xJqK2sqyKGuQm7MwPo8
+	C4I3tQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48cq00pdk0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 16:58:44 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A8D2340046;
+	Fri,  8 Aug 2025 16:57:20 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D7F79727648;
+	Fri,  8 Aug 2025 16:55:57 +0200 (CEST)
+Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 8 Aug
+ 2025 16:55:54 +0200
+Message-ID: <e7cd764d-bc6d-4e39-aa03-0eee8e30d3e5@foss.st.com>
+Date: Fri, 8 Aug 2025 16:55:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804192513.62799-1-akshayaj.lkd@gmail.com>
- <CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com>
- <CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
- <CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
- <CAE3SzaTq90n3HP6UrtimxqbmhfkxPNBdby0tY9bxbxzc9pqvqQ@mail.gmail.com> <CAHp75VcqBtSfd9=e2=AYnNhYJgWXUA_GFLFpOjKZDS32jNvCaw@mail.gmail.com>
-In-Reply-To: <CAHp75VcqBtSfd9=e2=AYnNhYJgWXUA_GFLFpOjKZDS32jNvCaw@mail.gmail.com>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Fri, 8 Aug 2025 20:25:23 +0530
-X-Gm-Features: Ac12FXzwHmG24LVtBf-tOx2c9swGYiPuZRa_QKsRmjyBUP62LXv6Pv61ps0Nceg
-Message-ID: <CAE3SzaSF0rQNt7iaz3qOa74tHk+tJyenticOzhrVCBazBPFpUg@mail.gmail.com>
-Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
- support in device registration
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Christian Bruel <christian.bruel@foss.st.com>
+Subject: Re: [PATCH v12 2/9] PCI: stm32: Add PCIe host support for STM32MP25
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>
+CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <p.zabel@pengutronix.de>,
+        <johan+linaro@kernel.org>, <cassel@kernel.org>,
+        <shradha.t@samsung.com>, <thippeswamy.havalige@amd.com>,
+        <quic_schintav@quicinc.com>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250807180951.GA56737@bhelgaas>
+Content-Language: en-US
+In-Reply-To: <20250807180951.GA56737@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_04,2025-08-06_01,2025-03-28_01
 
-On Fri, Aug 8, 2025 at 8:04=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Fri, Aug 8, 2025 at 4:24=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail.=
-com> wrote:
-> >
-> > On Tue, Aug 5, 2025 at 6:18=E2=80=AFPM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > Are you sure about the remove stage and how it interacts with runtime
-> > > PM? Please, check how the device driver core manages PM on the remove
-> > > stage.
-> > This driver does not even have support for runtime power management.
->
-> Exactly. And my point is to enable it instead of playing tricks on ->remo=
-ve().
-Got it!!
 
->
-> > Pardon me, but I am not able to see how runtime PM came into picture.
-> > Am I missing something here?
-> >
-> > Code walkthrough says the remove call flows from
-> > driver_unregister------__device_release_driver--------
-> > dev->bus->remove ---- i2c_device_remove-----.remove() callback.
-> >
-> > Request you to correct me here.
->
-> Right, and now find the PM runtime calls there. Put them in the
-> picture and you will see my point.
->
-Thanks Andy, will do that.
 
-Regards,
-Akshay
+On 8/7/25 20:09, Bjorn Helgaas wrote:
+> [+to Linus for pinctrl usage question below]
+> 
+> On Tue, Jun 10, 2025 at 11:07:07AM +0200, Christian Bruel wrote:
+>> Add driver for the STM32MP25 SoC PCIe Gen1 2.5 GT/s and Gen2 5GT/s
+>> controller based on the DesignWare PCIe core.
+>>
+
+>> +
+>> +	return pinctrl_pm_select_sleep_state(dev);
+> 
+> Isn't there some setup required before we can use
+> pinctrl_select_state(), pinctrl_pm_select_sleep_state(),
+> pinctrl_pm_select_default_state(), etc?
+> 
+> I expected something like devm_pinctrl_get() in the .probe() path, but
+> I don't see anything.  I don't know how pinctrl works, but I don't see
+> how dev->pins gets set up.
+
+Linus knows better, but the dev->pins states are attached to the dev 
+struct before probe by the pinctrl driver
+
+/**
+  * pinctrl_bind_pins() - called by the device core before probe
+  * @dev: the device that is just about to probe
+  */
+int pinctrl_bind_pins(struct device *dev)
+
+Christian
 
