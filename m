@@ -1,170 +1,209 @@
-Return-Path: <linux-kernel+bounces-760607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B241DB1EDBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D464B1EDC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C084B3BEF2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8810A067D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86A01DC98C;
-	Fri,  8 Aug 2025 17:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05762877DD;
+	Fri,  8 Aug 2025 17:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="UlNdNllt"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K5J2AzAJ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5D71D7999
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 17:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E40B18871F;
+	Fri,  8 Aug 2025 17:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754673637; cv=none; b=Iv88/NtXdSRKGaf+Qr8sXyGV7FE0ECS+S57Po+hgv/S1QKm1TwdLgZN1e00SK6FeoPS9OpEFrfUKPwwFHvmq4JgzgtTdYZtkiwXQlqsMEodf9qUCFLllWC4er2dJGJpfjM2bpOruiWaVCEYeOPwF6Bji7+3wJUTcOMNAneiYI4M=
+	t=1754673699; cv=none; b=lv4Rx4c93BPWxtYsdg7aRy4059kE2x7B9Oufucy21gXTzW5aaBp6nGTsExTVziQcwMF9Ep5vctTj+OxoI2NVxG5crSD3ZOWegULQFPWdT7oL/j1kNgedZZrVEcatroScsJA6VQXj3xe9Cr62Q50RB70iWlz3hT7oDgb8ghVPm10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754673637; c=relaxed/simple;
-	bh=L7wOxLP5SQDKAk63h8Hs7uu+flv14cbBA7KAL5dj+Qg=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=ZVQIsEf8H8REdljsnKrqwl+R8q49RW2nh7xdtfCT1OcbmDV0ohbYZEHsIBGW0nrH7YKQ/zAceRLcTDJGMQ2LmTANADncszqx6Z7k7c6bbEzxqpHT3vEoonPlpTwrLOXm9/igrr3jefCJ6MceYvFkaZaFkWkUvC9HAhiNPj+UkDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=UlNdNllt; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4233978326so1418365a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 10:20:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1754673635; x=1755278435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u+sIPT2LQsT7fRQnm3CcVOzVxzJQUY6AZ7bd9JG+2fg=;
-        b=UlNdNllt1+s0b+3YDdO1oaAgrXVdrithhUza4gEZrmfgmJPw/kyVh+AUdOLHwJYmRD
-         Bgn5VoKu5qH7KexAviUALfz9UJfEmXeCIgFMUxxpNmEeWafjDQsgvR6XGodINtMr3Ihf
-         aWezxyECKvVAXvka+Xia6lJY0/+YYRIZpdctT4BmZmuAAmrN8NYiPdryw3aJKh6EyyNq
-         nzGeBHaheYAGYbf3UZ1E6ZoZfp1OskkMRPsW2YccJc/rlimmEflqHpk3TxXdWx+uaxjv
-         6wuqXvWwkB9AzfxBWWuc/ykFTJ3RP+jgiLtMaR4+aU/92lTIbCjhrIT/MNrXay5BMjJH
-         Iq0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754673635; x=1755278435;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u+sIPT2LQsT7fRQnm3CcVOzVxzJQUY6AZ7bd9JG+2fg=;
-        b=RIGe1+NYradDtOGj6ZOAWesVN/Tg4RGMPOqTdkt32bA/+KDjH6Rzm4pPlIY1e2frIp
-         mxpViNpc3/4P1MmfzeDz1daBVWWVDRxWJRE8Le659CMi9RW68kxzhCz9PuMVerSxThrh
-         HT18maGfNQ/pdidLO3j8MERwz7U6aDTswZZEfADIZtZLoX/qT1vZPyx2oX/i7bAApnHQ
-         A4aHZFRGP6nVDPv3HuTZwJ3KC896q0C8BpoT91Cfe9pUyP4u04oFGvA19gaCeUctnD1U
-         d7NMxMXCVPqeh7UZ5QuNF/oIRcqisDLp+xea4p+TIMAEcbFg8hBzxoUiel+EGskDvM+c
-         3NDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaD8/Nptd4VxYyVjYP2QCIIm9ysFM9bY1l80SmJhWCmkqv6G+u7RNWDP5XPTqKHPrH6F3nnDfRt3q5PQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRvkVbJ6APTWHoQu/ZqKhlenX0EcKX1devhgrkmc2CMXC8l3t8
-	9yOAiLrc68pfB6T1YyLzxBYkyOggOx6vXei573uRofMnr1ZozyxGhW6hZuDceYTqnmc=
-X-Gm-Gg: ASbGnctjs27+tycYwkBR8VSDCuGFlc+AS2ol6He9PJKm4jiq+zY761gdpG4bpPadt4v
-	YbIWSDojiZ3J9MLEXgbW0q8ogr7fEZ0eUH92n/hwoKzvWTyqxbM99+UkM7EBnoB34C1xsEUzdHA
-	73ixTyMfGS377mOpLOIgnxvBAVrOwL9fZRvEKuUXrf0gTly29IF7cjHKX9Hki5qSQXdZEbLZOLt
-	EqZbafDv0a25kkRFfkRkHrGzCKdj3t7C6xRPDXKlqDZ/EqaqMqluIL6SCyMm5/cnwAkyJn7idj5
-	vC6OSvs2Km6zqx9MDTer1PG/yeFG2FDIT57Xkh3Q5LLofvppXREgAzJ6+J1R1jQzihpFT6TdzDm
-	M6Zy6jNMlmGXavkydSt6gt/OORQ==
-X-Google-Smtp-Source: AGHT+IHOby8czN77FochlczWuhjS0Bun0416YcI1s2pCN6G+dIQPuN7NDLXCjgwz8vlnPi5aoE3BkQ==
-X-Received: by 2002:a17:902:ce91:b0:23f:f96d:7579 with SMTP id d9443c01a7336-242c2206d64mr54001795ad.37.1754673634618;
-        Fri, 08 Aug 2025 10:20:34 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:500::5:6f48])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241d1ef48fbsm214671475ad.36.2025.08.08.10.20.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 10:20:34 -0700 (PDT)
-Date: Fri, 08 Aug 2025 10:20:34 -0700 (PDT)
-X-Google-Original-Date: Fri, 08 Aug 2025 10:20:29 PDT (-0700)
-Subject:     Re: linux-next: manual merge of the mailbox tree with the risc-v tree
-In-Reply-To: <20250808114332.63ec1528@canb.auug.org.au>
-CC: jassisinghbrar@gmail.com, Paul Walmsley <paul@pwsan.com>,
-  apatel@ventanamicro.com, justin.chen@broadcom.com, linux-kernel@vger.kernel.org,
-  linux-next@vger.kernel.org, rpathak@ventanamicro.com
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Message-ID: <mhng-2E4BF257-2676-4F2C-ADAF-8758E88AF34B@palmerdabbelt-mac>
+	s=arc-20240116; t=1754673699; c=relaxed/simple;
+	bh=DBKFYTu5tPuGX9ybLDozeJ5i82kOtDjidng1iB4g6xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JccXSBRoTO9Av7KiD/d3S0BiO2ayZOIwKIm87f7wC/Hj76Ds1c03LdCEdoO4bE0MWoNGRdKm5JkWv4mXIiS6458LqdiZ7J2fHIBWrPqpKwJME0TX1PUFXhfTQ6X8XaacBt7+6FJeIS8l72cvjvwbUE/u7ZSOx3Z+GLSk0wEvET4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K5J2AzAJ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578EVqe4022753;
+	Fri, 8 Aug 2025 17:21:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Ke2ysD
+	bRl8q6joTUOu+MU16x2yWgmGXvnQxWBgQqMZ8=; b=K5J2AzAJbr6j1wVE7r2WCZ
+	eqTkH+QNahoaI/wn8Psq6tEemu90x0/gr1RPOD9AM8Rxf2Jj8ookp5kbaMaTwQeS
+	o2Hhy7fZvogZNoVib1gjYnWX4xKl3knSGj0ed0LJRPPFh9AXl5klylFvexrIn5bE
+	tfRZ4vdxMWnbJhCIrwFy5gxez8wqKSdFTwsu/HEGz5RN7KqEDXWiqb7jndIdTZzb
+	UPYGESswg1VN3vfF9yk4KrRqBbVCRFtjIH71BLlKsif2L7NJ6zlOzfVdtyQAjfHM
+	Smu8S2pLHLC+9j01rXBmkp5SFM8Wl0nkGazzKnXw7l0/YtGz/Uhg/YA2Z9yrq56g
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dk2n8tua-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 17:21:14 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 578EvZbt031326;
+	Fri, 8 Aug 2025 17:21:13 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwnpka9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 17:21:13 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 578HLB2j22085908
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Aug 2025 17:21:11 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D36920040;
+	Fri,  8 Aug 2025 17:21:11 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1B8902004D;
+	Fri,  8 Aug 2025 17:21:09 +0000 (GMT)
+Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.39.29.218])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  8 Aug 2025 17:21:08 +0000 (GMT)
+Date: Fri, 8 Aug 2025 22:51:06 +0530
+From: Amit Machhiwal <amachhiw@linux.ibm.com>
+To: =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>
+Cc: Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
+Message-ID: <20250808224806.09f6d858-1d-amachhiw@linux.ibm.com>
+Mail-Followup-To: =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>, 
+	Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org
+References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
+ <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
+ <dd0b8e6f-1673-49c3-8018-974d1e7f1a54@kaod.org>
+ <20250808205338.dc652e3e-61-amachhiw@linux.ibm.com>
+ <bc7e754f-f414-4c43-8f25-03314b894b34@kaod.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <bc7e754f-f414-4c43-8f25-03314b894b34@kaod.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDE0MSBTYWx0ZWRfX+LTZsfDCvdAS
+ zgJH5N24m4p3Hd0TMlHdhraDi2L6J4fMXCjO17EiVdWhz9L5farTcSVt51IlhCDnEkO3A0liE+l
+ gxX1QcqTVv+AQtkU6oZTlxBaWl7yEy3ipqCmrLDRaNr1n1PvJpQJadBTnLP0pMmOjqhTjUAH1uM
+ T4DGk6SJsmPXYCMyv7xJBz1/onhyDuoleA2i2fCk+cnkSue7oDg4AKgJAbMt/J9PZMtD3IzszgQ
+ 8UGSXM0MIrBkDaVSALNMBWjKc9PLDQuCAc3xM+5bE3dT1JOHRnSi7GV4hTrGm/tUjtcA/tIKoA2
+ 7oAeFuBEklmOCEr/GI4C+OEVwgGPs7e4l/NzdRyaG+dxBMcCUIT1VcKCCSi6pg4L0hRvOdNvl2f
+ 1cMq6blohiFwylb3WPBTvt0yaPslRtECXn+uvQoLu5P8BqWpEHa/5Lfs1tiQQiw+vvTFaCwZ
+X-Proofpoint-GUID: A3HiGeHw8cjSeUofRyC2D-HKmq29oXh6
+X-Proofpoint-ORIG-GUID: A3HiGeHw8cjSeUofRyC2D-HKmq29oXh6
+X-Authority-Analysis: v=2.4 cv=BNWzrEQG c=1 sm=1 tr=0 ts=6896320a cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=FOH2dFAWAAAA:8 a=1rDcQM-rTn2rXFAQwpAA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound
+ score=100 suspectscore=0 lowpriorityscore=0 spamscore=100 bulkscore=0
+ impostorscore=0 phishscore=0 mlxscore=100 clxscore=1015 malwarescore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=-999 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508080141
 
-On Thu, 07 Aug 2025 18:43:32 PDT (-0700), Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the mailbox tree got conflicts in:
->
->   drivers/mailbox/Kconfig
->   drivers/mailbox/Makefile
->
-> between commit:
->
->   81db83e750ca ("mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver")
->
-> from the risc-v tree and commit:
->
->   52436007b862 ("mailbox: Add support for bcm74110")
->
-> from the mailbox tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On 2025/08/08 06:44 PM, Cédric Le Goater wrote:
+> On 8/8/25 17:45, Amit Machhiwal wrote:
+> > Hi Cédric,
+> > 
+> > Please find my comments inline:
+> > 
+> > On 2025/08/08 03:49 PM, Cédric Le Goater wrote:
+> > > Hello Amit,
+> > > 
+> > > On 8/7/25 11:34, Amit Machhiwal wrote:
+> > > > Hello,
+> > > > 
+> > > > On 2025/08/04 12:44 PM, Alex Mastro wrote:
+> > > > > Print the PCI device syspath to a vfio device's fdinfo. This enables tools
+> > > > > to query which device is associated with a given vfio device fd.
+> > > > > 
+> > > > > This results in output like below:
+> > > > > 
+> > > > > $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
+> > > > > vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+> > > > > 
+> > > > > Signed-off-by: Alex Mastro <amastro@fb.com>
+> > > > 
+> > > > I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
+> > > > could see the VFIO device syspath in fdinfo.
+> > > 
+> > > POWER9 running on OPAL FW : I am curious about the software stack.
+> > > 
+> > > I suppose this is the latest upstream kernel ?
+> > 
+> > Yes, I used the latest upstream kernel and applied this patch on top of commit
+> > cca7a0aae895.
+> > 
+> > > Are you using an upstream QEMU to test too ?
+> > 
+> > No, I had used the Fedora 42 distro qemu. The version details are as below:
+> > 
+> >    [root@localhost ~]# qemu-system-ppc64 --version
+> >    QEMU emulator version 9.2.4 (qemu-9.2.4-1.fc42)
+> >    Copyright (c) 2003-2024 Fabrice Bellard and the QEMU Project developers
+> > 
+> > I gave the upstream qemu (HEAD pointing to cd21ee5b27) a try and I see the same
+> > behavior with that too.
+> > 
+> >    [root@localhost ~]# ./qemu-system-ppc64 --version
+> >    QEMU emulator version 10.0.92 (v10.1.0-rc2-4-gcd21ee5b27-dirty)
+> >    Copyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers
+> > 
+> >    [root@localhost ~]# cat /proc/52807/fdinfo/191
+> >    pos:    0
+> >    flags:  02000002
+> >    mnt_id: 17
+> >    ino:    1125
+> >    vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
+> > 
+> > > 
+> > > and which device ?
+> > 
+> > I'm using a Broadcom NetXtreme network card (4-port) and passing through its
+> > fn0.
+> > 
+> >    [root@guest ~]# lspci
+> >    [...]
+> >    0001:00:01.0 Ethernet controller: Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe (rev 01)
+> > 
+> > Please let me know if I may help you with any additional information.
+> 
+> It is good to know that device pass-through still works with upstream on
+> OpenPower servers.
+> 
+> Have you tried VFs ?
 
-Thanks, I think these are all pretty trivial so I was just going to 
-point them out to Linus.  That said, I did pick up the RISC-V mailbox 
-stuff super late so sorry about that -- Anup had asked me to pick it up 
-a month ago, I just forgot.
+I didn't get a chance to try VFs yet, Cédric.
 
->
-> -- 
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/mailbox/Kconfig
-> index aa2c868256d7,02432d4a5ccd..000000000000
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@@ -350,15 -359,14 +359,25 @@@ config CIX_MBO
->             is unidirectional. Say Y here if you want to use the CIX Mailbox
->             support.
->   
->  +config RISCV_SBI_MPXY_MBOX
->  +	tristate "RISC-V SBI Message Proxy (MPXY) Mailbox"
->  +	depends on RISCV_SBI
->  +	default RISCV
->  +	help
->  +	  Mailbox driver implementation for RISC-V SBI Message Proxy (MPXY)
->  +	  extension. This mailbox driver is used to send messages to the
->  +	  remote processor through the SBI implementation (M-mode firmware
->  +	  or HS-mode hypervisor). Say Y here if you want to have this support.
->  +	  If unsure say N.
->  +
-> + config BCM74110_MAILBOX
-> + 	tristate "Brcmstb BCM74110 Mailbox"
-> + 	depends on ARCH_BRCMSTB || COMPILE_TEST
-> + 	default ARCH_BRCMSTB
-> + 	help
-> + 	  Broadcom STB mailbox driver present starting with brcmstb bcm74110
-> + 	  SoCs. The mailbox is a communication channel between the host
-> + 	  processor and coprocessor that handles various power management task
-> + 	  and more.
-> + 
->   endif
-> diff --cc drivers/mailbox/Makefile
-> index 6659499a50db,98a68f838486..000000000000
-> --- a/drivers/mailbox/Makefile
-> +++ b/drivers/mailbox/Makefile
-> @@@ -75,4 -77,4 +77,6 @@@ obj-$(CONFIG_THEAD_TH1520_MBOX)	+= mail
->   
->   obj-$(CONFIG_CIX_MBOX)	+= cix-mailbox.o
->   
->  +obj-$(CONFIG_RISCV_SBI_MPXY_MBOX)	+= riscv-sbi-mpxy-mbox.o
-> ++
-> + obj-$(CONFIG_BCM74110_MAILBOX)	+= bcm74110-mailbox.o
+> 
+> Thanks Amit,
+
+No problem. :)
+
+Thanks,
+Amit
+
+> 
+> C.
+> 
 
