@@ -1,95 +1,107 @@
-Return-Path: <linux-kernel+bounces-760638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37063B1EE0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98187B1EE11
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E24A3BC9A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E44F1C2806B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD441EFFB2;
-	Fri,  8 Aug 2025 17:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5161F4C90;
+	Fri,  8 Aug 2025 17:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mAxBhCKD"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDhSFJA5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879A61E25F2
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 17:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64378199385;
+	Fri,  8 Aug 2025 17:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754675527; cv=none; b=uedZR8RP2oAyxDUEuz0AxlGpvSaOhkteMrhVkYNRGbCMzwOUahCuoij+E0DW/uCy3kwdwg6mSS3yqykmay9JdwFKzpjl4WlcvKHTm8mWdeXMNR7WDvbdwzV40KvYX1SRR7gwnWh8YoUCCM9F3Zt3UFt3VrnTfZO7PJiJwSloYwQ=
+	t=1754675608; cv=none; b=aMiyYbW6VFx6E2X9SFVcVJhpkeGw+n5c/Uqh+M7S+18PLA7QeLi4HnYcpmt6KbhPgvaKEt5bFaQ1Q38NuDQhDpd7ZbuFy36tuR8P1aG9RGYcWvit/gjholnM+FsfXIz34t9bBAKZRYnCzEemrfbHA59fUdhjPwXDGgWKgMgXgg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754675527; c=relaxed/simple;
-	bh=WOFVCvGAkEVEUCqKYOpl/dRyeNlS5UqIk3RBdYGqXz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nm1E+kj4vSOiCvmFu8pnRj69yBwv7B1krvivCIwrJG5n7nKtNRXOGawNoxP65Zz3+SdM7UcIUw+jQ06cE9TMlwlqZnl9Z05Mzarfd8v06AZ4cDTz/xnRKRJxcwB2gMIMpz7lwSD7WfNDMm1gdlwAYk626ViK1+4PBbTdfUkQsRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mAxBhCKD; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754675511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W5zH1D2kwmr8dCpgiqzWF8oQlWdm8uTmQJ1ar/ni0uw=;
-	b=mAxBhCKD4LlUW0eBh/lYzJwUYhgNl3NagukLegOF6BYXBQtSdnjbLzFbp6ITTxiq+WbUtC
-	pyCXzfyapFoD8+jgxbvb7FCWav6HpBU5WkpYT61y0s6TaM8KixWl7TxUCpftElM5l0QzIZ
-	wfFopWdSOyLpS840FuoMTP+dmyKJ6Fo=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Marc Zyngier <maz@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Arnd Bergmann <arnd@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] kvm: arm64: use BUG() instead of BUG_ON(1)
-Date: Fri,  8 Aug 2025 10:51:32 -0700
-Message-Id: <175467548061.670500.14517325210508247749.b4-ty@linux.dev>
-In-Reply-To: <20250807072132.4170088-1-arnd@kernel.org>
-References: <20250807072132.4170088-1-arnd@kernel.org>
+	s=arc-20240116; t=1754675608; c=relaxed/simple;
+	bh=+P4QpmOpqx3Lmn59o8WHoe8drfDVNqCcjJ+/me395jI=;
+	h=Subject:To:Cc:From:Date:Message-Id; b=qxeSlaSIAAkanBC9BjJH3qRHt72fsC3+VpZU2bZQYuUzb9DvtkqrCqBLLyMAP/kzi17lCKE90DUHrdFOAGgW9wJ//tJRTeOq2IlLomyc/wcyqPypJZyR0Xhj9UVJl+xdHRlUHyEMcORFcgUfJCr/u5xuzcDN3ci9eIJ3qpAT96E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDhSFJA5; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754675606; x=1786211606;
+  h=subject:to:cc:from:date:message-id;
+  bh=+P4QpmOpqx3Lmn59o8WHoe8drfDVNqCcjJ+/me395jI=;
+  b=BDhSFJA5bHFGr5qJeBG97rF1gIYfCM9JQp8QfQ8pswU4gT+vWRwjMaw+
+   zD+ehwvJnAEy32eZU/9ms/Fj8VdOPMyr9JZxTQPDGK6DATKblKf7CYyHq
+   9bf2px5E4kWqPW/ho7bjRPEUV+vY9J+pDt+T/grqDxuHUB/BnNk9U4Vc2
+   0tXc/5ai7Qcp4NdwrQlcAGDWoJz9h69OiYHV6BOLQShGBiCWo7O0JAbpZ
+   /ZAtwh7H+kuMeohM8gpSE4oI/zVUQA3KjdabdH9RqWXduVck7y7Nu7Ylg
+   8MMlDR607JGJD9pT5gfOPBxLskH8Ou9uDdheLOnEinot+Q7EC7oL7vmJC
+   w==;
+X-CSE-ConnectionGUID: x/d1AdL3RJmzUKnQa8OIfA==
+X-CSE-MsgGUID: yarfVb1mQw2pevLd+492gA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="57158069"
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="57158069"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 10:53:25 -0700
+X-CSE-ConnectionGUID: xfNexg7aRtu4dKWaSemw+g==
+X-CSE-MsgGUID: LbnFYWgjQgOg1SYrbOtlgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="169588670"
+Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
+  by orviesa003.jf.intel.com with ESMTP; 08 Aug 2025 10:53:25 -0700
+Subject: [PATCH] MAINTAINERS: Mark Intel PTP DFL ToD as orphaned
+To: linux-kernel@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, linux-fpga@vger.kernel.org, netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Tianfei Zhang <tianfei.zhang@intel.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Fri, 08 Aug 2025 10:53:24 -0700
+Message-Id: <20250808175324.8C4B7354@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, 07 Aug 2025 09:21:28 +0200, Arnd Bergmann wrote:
-> The BUG_ON() macro adds a little bit of complexity over BUG(), and in
-> some cases this ends up confusing the compiler's control flow analysis
-> in a way that results in a warning. This one now shows up with clang-21:
-> 
-> arch/arm64/kvm/vgic/vgic-mmio.c:1094:3: error: variable 'len' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
->  1094 |                 BUG_ON(1);
-> 
-> [...]
 
-Applied to fixes, thanks!
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[1/1] kvm: arm64: use BUG() instead of BUG_ON(1)
-      https://git.kernel.org/kvmarm/kvmarm/c/700d6868fee2
+This maintainer's email no longer works. Remove it from MAINTAINERS.
+Also mark the code as an Orphan.
 
---
-Best,
-Oliver
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-fpga@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Tianfei Zhang <tianfei.zhang@intel.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+---
+
+ b/MAINTAINERS |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff -puN MAINTAINERS~MAINTAINERS-20250707-8 MAINTAINERS
+--- a/MAINTAINERS~MAINTAINERS-20250707-8	2025-08-08 10:49:46.807294387 -0700
++++ b/MAINTAINERS	2025-08-08 10:49:46.823295710 -0700
+@@ -12581,10 +12581,9 @@ S:	Supported
+ F:	drivers/cpufreq/intel_pstate.c
+ 
+ INTEL PTP DFL ToD DRIVER
+-M:	Tianfei Zhang <tianfei.zhang@intel.com>
+ L:	linux-fpga@vger.kernel.org
+ L:	netdev@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ F:	drivers/ptp/ptp_dfl_tod.c
+ 
+ INTEL QUADRATURE ENCODER PERIPHERAL DRIVER
+_
 
