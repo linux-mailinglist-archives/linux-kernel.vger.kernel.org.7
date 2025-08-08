@@ -1,358 +1,223 @@
-Return-Path: <linux-kernel+bounces-759852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABB2B1E375
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:34:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A27CB1E379
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5560FA01572
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEF1585DA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E5D222578;
-	Fri,  8 Aug 2025 07:30:18 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476A625CC42;
+	Fri,  8 Aug 2025 07:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QCzzD3i1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CB822DF9E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0108B22A1D5;
+	Fri,  8 Aug 2025 07:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638217; cv=none; b=isFbbGmeZIwGp0hgYf31LpfX57o2wpGQinrBGrryECvqwIBb6kOhVlnI/gRyIIGN9vdq6i+8QRTjnjxL2b1NEgxkLfP3O2pciRAyj1a6sdFjN68pPnj/y15tVIb81CcVgmj2g8gs3SfL170V4l6MeyjNcvPZHtOlktflKkzSWZg=
+	t=1754638251; cv=none; b=XwO1jHQMAPmzk7T8Ft4iQtznGFk4L7BUh3fZGGJ+CASnGhwkMmYG3M5Jy8G5NnNCm29XizmwsEB4+6iLwY87ZEg/+0DkZpvMRG5HJ1xGh1oEf9JxvD53OT+Vg7W+1akcsBmwHk6H9bsEqXSdQLcHsf/pH06lMg3k1QO+RWX5z64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638217; c=relaxed/simple;
-	bh=keg61B/+p9gqufvR1XQ9nMk8GgnCssYJR3R4TSC6mtM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=TzzlD7HkC4jwzImq1DjtHEs0x4k8L2lyJdnuvcp18GHQMB1/CqaWb4+4MrCq+BhrVYazVfyQ7X0X+mPmsCNUqncQa7rV0x1uDLPg+j+FanaER0q9wCrDX1t3Iqt8/+SBeInkpQwqzyQCJ7m83KYFXMe7QuukVfDxIrygMxCBhOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88177d99827so179704039f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 00:30:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754638214; x=1755243014;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8CDXWPKDbSaaWMQnPXOZ1ZyCr/i3dxjvf7dpcEW3T/g=;
-        b=hFVDHS3tc7aW85JRNi2rxzAUV7Y34SzccLZynDE95Xw+qGPl4Hg5KrlEKTSj7ouoFQ
-         AjGtZiaQ5TOgxnQzFfPZiBfACmwMYyXBt+DE2FfoabTW7X8HRXYF6kkj/GHUKVklYuKz
-         7APCDkn4I9HxfSAj3MaANZ663CGm3YqfBKiuf6pOCKZtylTECafLl/pMFFuUBhJjK8oS
-         gjhSnDyf4PWdImjbGaUFwjr2ZpvIND6Jzy1rMJpOSb8sfmGIKOTM26I8sebaNdUNIcUv
-         TdHz0MsTIlV7ybvQ/VmLLVd1cniCnPG8PVbwwt6u11FE3c88rHh6Cf6dD9VpNesYbkCg
-         YPsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoLUEBzEJ4ftp1FMBsyJM/Bh3Ua2g/vVF5hl1UsAtH/cWz82PF7FZ/7P22TdDimiw/fN9L6oorIuu+7TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrjWhU97KYg3aFABJTznXVKUcIUdiH0b+0+ImMZQS6yQUBl/ei
-	L5vXozXzt1Qc73zVC8tbsJxebwkAD8U4nb4dMey23ivRo9WiYXWNN6JnpOSyl2r9kDVA6DQ+L2m
-	/5De5JYOkyAm50Lw6M2HCYobI/DhWO15n1khS81sPsIijbo6aOc/p5i0WZfs=
-X-Google-Smtp-Source: AGHT+IG1vKLXhxfVsTKCbsHjpwNzYcuITkrI472OzzS/qNWdw3Km4FDuLtfxYLpAdcwY9YkMud0p0U5Y6AQ4T6KIbSgUkU0r3tXw
+	s=arc-20240116; t=1754638251; c=relaxed/simple;
+	bh=N93jbXCfcX8tT1d6Si749lOVTvmyst9EjSTFBREX9yk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nruZ3qvapTGs62IZhreh8gMrvQGZErsFNmDD0BMVgUDTPnyc48WRSF4zKLz6ToSLnvijNNXzpo8yd2L53YX5q1IcMK7TIrdgMagoQgFHdeAKWxBZaLt8jDwAFL9INhr+B9NAAXBQOk5WRHP+ej0yvY9UyGkHIM7joKHXMq5jBVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QCzzD3i1; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754638250; x=1786174250;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=N93jbXCfcX8tT1d6Si749lOVTvmyst9EjSTFBREX9yk=;
+  b=QCzzD3i1ZbnrUsaoWeChKbnC1N8x9UaGsrMi70uG1KNUlfB1lk3cxNuS
+   whO1L3uNXl5+RGB1Y7v6FMmYJRN+T82P5XvdT5XHcetVgRyLsuqQxVBnK
+   kiddcc0bzrOtY2oOp/MgLTljAL20f+LLMsKM9f3gyfb5aQASmGFJ2D4Mg
+   Oz3VN6rvs2BhUuHbcMNF0Oljy/N6UmKZGozlCenQgIY04M+Kwg2zC3dvn
+   3ywXd3gIjQe7jnYCFua+3wXRiedRLtBELpnF6dHzzngpPmjVdb3Z/r4Qj
+   3mXRUjDAj9WgTQvUaJxXIo8LkbRIHPWwIZpzTYtMRcdRJtm8Kevhh+xV6
+   g==;
+X-CSE-ConnectionGUID: jCqLyoTHR0eEEdyMNCz5Ig==
+X-CSE-MsgGUID: RwgnHLbQTwiXDxCzctC8nQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56860991"
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="56860991"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 00:30:50 -0700
+X-CSE-ConnectionGUID: nPT+neYWR5ic6FwTvd4gdw==
+X-CSE-MsgGUID: 3HIOr3NzSxqUGeU1ve8zNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="165677254"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 00:30:43 -0700
+Message-ID: <f3e09bef-8bc9-48ac-983e-7a18c2ff4ad2@linux.intel.com>
+Date: Fri, 8 Aug 2025 15:30:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1648:b0:87c:a4e:fc7d with SMTP id
- ca18e2360f4ac-883f1279a2amr449278939f.14.1754638214551; Fri, 08 Aug 2025
- 00:30:14 -0700 (PDT)
-Date: Fri, 08 Aug 2025 00:30:14 -0700
-In-Reply-To: <20250807175032.7381-1-contact@arnaud-lcm.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6895a786.050a0220.7f033.0057.GAE@google.com>
-Subject: [syzbot ci] Re: bpf: refactor max_depth computation in bpf_get_stack()
-From: syzbot ci <syzbot+ci465abfb91e7946e5@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	contact@arnaud-lcm.com, daniel@iogearbox.net, eddyz87@gmail.com, 
-	haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org, 
-	kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
-	sdf@fomichev.me, song@kernel.org, syzbot@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot ci has tested the following series
-
-[v1] bpf: refactor max_depth computation in bpf_get_stack()
-https://lore.kernel.org/all/20250807175032.7381-1-contact@arnaud-lcm.com
-* [PATCH 1/2] bpf: refactor max_depth computation in bpf_get_stack()
-* [PATCH 2/2] bpf: fix stackmap overflow check in __bpf_get_stackid()
-
-and found the following issues:
-* KASAN: stack-out-of-bounds Write in __bpf_get_stack
-* PANIC: double fault in its_return_thunk
-
-Full report is available here:
-https://ci.syzbot.org/series/2af1b227-99e3-4e64-ac23-827848a4b8a5
-
-***
-
-KASAN: stack-out-of-bounds Write in __bpf_get_stack
-
-tree:      bpf-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf-next.git
-base:      f3af62b6cee8af9f07012051874af2d2a451f0e5
-arch:      amd64
-compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-config:    https://ci.syzbot.org/builds/5e5c6698-7b84-4bf2-a1ee-1b6223c8d4c3/config
-C repro:   https://ci.syzbot.org/findings/1355d710-d133-43fd-9061-18b2de6844a4/c_repro
-syz repro: https://ci.syzbot.org/findings/1355d710-d133-43fd-9061-18b2de6844a4/syz_repro
-
-netdevsim netdevsim1 netdevsim0: renamed from eth0
-netdevsim netdevsim1 netdevsim1: renamed from eth1
-==================================================================
-BUG: KASAN: stack-out-of-bounds in __bpf_get_stack+0x54a/0xa70 kernel/bpf/stackmap.c:501
-Write of size 208 at addr ffffc90003655ee8 by task syz-executor/5952
-
-CPU: 1 UID: 0 PID: 5952 Comm: syz-executor Not tainted 6.16.0-syzkaller-11113-gf3af62b6cee8-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- check_region_inline mm/kasan/generic.c:-1 [inline]
- kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:189
- __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
- __bpf_get_stack+0x54a/0xa70 kernel/bpf/stackmap.c:501
- ____bpf_get_stack kernel/bpf/stackmap.c:525 [inline]
- bpf_get_stack+0x33/0x50 kernel/bpf/stackmap.c:522
- ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1835 [inline]
- bpf_get_stack_raw_tp+0x1a9/0x220 kernel/trace/bpf_trace.c:1825
- bpf_prog_4e330ebee64cb698+0x43/0x4b
- bpf_dispatcher_nop_func include/linux/bpf.h:1332 [inline]
- __bpf_prog_run include/linux/filter.h:718 [inline]
- bpf_prog_run include/linux/filter.h:725 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2257 [inline]
- bpf_trace_run10+0x2e4/0x500 kernel/trace/bpf_trace.c:2306
- __bpf_trace_percpu_alloc_percpu+0x364/0x400 include/trace/events/percpu.h:11
- __do_trace_percpu_alloc_percpu include/trace/events/percpu.h:11 [inline]
- trace_percpu_alloc_percpu include/trace/events/percpu.h:11 [inline]
- pcpu_alloc_noprof+0x1534/0x16b0 mm/percpu.c:1892
- fib_nh_common_init+0x9c/0x3b0 net/ipv4/fib_semantics.c:620
- fib6_nh_init+0x1608/0x1ff0 net/ipv6/route.c:3671
- ip6_route_info_create_nh+0x16a/0xab0 net/ipv6/route.c:3892
- ip6_route_add+0x6e/0x1b0 net/ipv6/route.c:3944
- addrconf_add_mroute net/ipv6/addrconf.c:2552 [inline]
- addrconf_add_dev+0x24f/0x340 net/ipv6/addrconf.c:2570
- addrconf_dev_config net/ipv6/addrconf.c:3479 [inline]
- addrconf_init_auto_addrs+0x57c/0xa30 net/ipv6/addrconf.c:3567
- addrconf_notify+0xacc/0x1010 net/ipv6/addrconf.c:3740
- notifier_call_chain+0x1b6/0x3e0 kernel/notifier.c:85
- call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
- call_netdevice_notifiers net/core/dev.c:2281 [inline]
- __dev_notify_flags+0x18d/0x2e0 net/core/dev.c:-1
- netif_change_flags+0xe8/0x1a0 net/core/dev.c:9608
- do_setlink+0xc55/0x41c0 net/core/rtnetlink.c:3143
- rtnl_changelink net/core/rtnetlink.c:3761 [inline]
- __rtnl_newlink net/core/rtnetlink.c:3920 [inline]
- rtnl_newlink+0x160b/0x1c70 net/core/rtnetlink.c:4057
- rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6946
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- __sys_sendto+0x3bd/0x520 net/socket.c:2228
- __do_sys_sendto net/socket.c:2235 [inline]
- __se_sys_sendto net/socket.c:2231 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2231
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fec5c790a7c
-Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-RSP: 002b:00007fff7b55f7b0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007fec5d4e35c0 RCX: 00007fec5c790a7c
-RDX: 0000000000000030 RSI: 00007fec5d4e3610 RDI: 0000000000000006
-RBP: 0000000000000000 R08: 00007fff7b55f804 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000006
-R13: 0000000000000000 R14: 00007fec5d4e3610 R15: 0000000000000000
- </TASK>
-
-The buggy address belongs to stack of task syz-executor/5952
- and is located at offset 296 in frame:
- __bpf_get_stack+0x0/0xa70 include/linux/mmap_lock.h:-1
-
-This frame has 1 object:
- [32, 36) 'rctx.i'
-
-The buggy address belongs to a 8-page vmalloc region starting at 0xffffc90003650000 allocated at copy_process+0x54b/0x3c00 kernel/fork.c:2002
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888024c63200 pfn:0x24c62
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: ffff888024c63200 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_ZERO|__GFP_NOWARN), pid 5845, tgid 5845 (syz-executor), ts 59049058263, free_ts 59031992240
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
- alloc_pages_noprof+0xa9/0x190 mm/mempolicy.c:2507
- vm_area_alloc_pages mm/vmalloc.c:3642 [inline]
- __vmalloc_area_node mm/vmalloc.c:3720 [inline]
- __vmalloc_node_range_noprof+0x97d/0x12f0 mm/vmalloc.c:3893
- __vmalloc_node_noprof+0xc2/0x110 mm/vmalloc.c:3956
- alloc_thread_stack_node kernel/fork.c:318 [inline]
- dup_task_struct+0x3e7/0x860 kernel/fork.c:879
- copy_process+0x54b/0x3c00 kernel/fork.c:2002
- kernel_clone+0x21e/0x840 kernel/fork.c:2603
- __do_sys_clone3 kernel/fork.c:2907 [inline]
- __se_sys_clone3+0x256/0x2d0 kernel/fork.c:2886
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5907 tgid 5907 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
- vfree+0x25a/0x400 mm/vmalloc.c:3434
- kcov_put kernel/kcov.c:439 [inline]
- kcov_close+0x28/0x50 kernel/kcov.c:535
- __fput+0x44c/0xa70 fs/file_table.c:468
- task_work_run+0x1d4/0x260 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x6b5/0x2300 kernel/exit.c:966
- do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
- get_signal+0x1286/0x1340 kernel/signal.c:3034
- arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffffc90003655e00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90003655e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffc90003655f00: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 00 f2 f2
-                                           ^
- ffffc90003655f80: 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3 f3 f3
- ffffc90003656000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 07/44] perf: Add APIs to load/put guest mediated PMU
+ context
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Kan Liang <kan.liang@linux.intel.com>, Yongwei Ma <yongwei.ma@intel.com>,
+ Mingwei Zhang <mizhang@google.com>,
+ Xiong Zhang <xiong.y.zhang@linux.intel.com>,
+ Sandipan Das <sandipan.das@amd.com>
+References: <20250806195706.1650976-1-seanjc@google.com>
+ <20250806195706.1650976-8-seanjc@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250806195706.1650976-8-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-***
+On 8/7/2025 3:56 AM, Sean Christopherson wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+>
+> Add exported APIs to load/put a guest mediated PMU context.  KVM will
+> load the guest PMU shortly before VM-Enter, and put the guest PMU shortly
+> after VM-Exit.
+>
+> On the perf side of things, schedule out all exclude_guest events when the
+> guest context is loaded, and schedule them back in when the guest context
+> is put.  I.e. yield the hardware PMU resources to the guest, by way of KVM.
+>
+> Note, perf is only responsible for managing host context.  KVM is
+> responsible for loading/storing guest state to/from hardware.
+>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> Signed-off-by: Mingwei Zhang <mizhang@google.com>
+> [sean: shuffle patches around, write changelog]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  include/linux/perf_event.h |  2 ++
+>  kernel/events/core.c       | 61 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 63 insertions(+)
+>
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 0958b6d0a61c..42d019d70b42 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -1925,6 +1925,8 @@ extern u64 perf_event_pause(struct perf_event *event, bool reset);
+>  #ifdef CONFIG_PERF_GUEST_MEDIATED_PMU
+>  int perf_create_mediated_pmu(void);
+>  void perf_release_mediated_pmu(void);
+> +void perf_load_guest_context(unsigned long data);
+> +void perf_put_guest_context(void);
+>  #endif
+>  
+>  #else /* !CONFIG_PERF_EVENTS: */
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 6875b56ddd6b..77398b1ad4c5 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -469,10 +469,19 @@ static cpumask_var_t perf_online_pkg_mask;
+>  static cpumask_var_t perf_online_sys_mask;
+>  static struct kmem_cache *perf_event_cache;
+>  
+> +#ifdef CONFIG_PERF_GUEST_MEDIATED_PMU
+> +static DEFINE_PER_CPU(bool, guest_ctx_loaded);
+> +
+> +static __always_inline bool is_guest_mediated_pmu_loaded(void)
+> +{
+> +	return __this_cpu_read(guest_ctx_loaded);
+> +}
+> +#else
+>  static __always_inline bool is_guest_mediated_pmu_loaded(void)
+>  {
+>  	return false;
+>  }
+> +#endif
+>  
+>  /*
+>   * perf event paranoia level:
+> @@ -6379,6 +6388,58 @@ void perf_release_mediated_pmu(void)
+>  	atomic_dec(&nr_mediated_pmu_vms);
+>  }
+>  EXPORT_SYMBOL_GPL(perf_release_mediated_pmu);
+> +
+> +/* When loading a guest's mediated PMU, schedule out all exclude_guest events. */
+> +void perf_load_guest_context(unsigned long data)
 
-PANIC: double fault in its_return_thunk
-
-tree:      bpf-next
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf-next.git
-base:      f3af62b6cee8af9f07012051874af2d2a451f0e5
-arch:      amd64
-compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-config:    https://ci.syzbot.org/builds/5e5c6698-7b84-4bf2-a1ee-1b6223c8d4c3/config
-C repro:   https://ci.syzbot.org/findings/1bf5dce6-467f-4bcd-9357-2726101d2ad1/c_repro
-syz repro: https://ci.syzbot.org/findings/1bf5dce6-467f-4bcd-9357-2726101d2ad1/syz_repro
-
-traps: PANIC: double fault, error_code: 0x0
-Oops: double fault: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5789 Comm: syz-executor930 Not tainted 6.16.0-syzkaller-11113-gf3af62b6cee8-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:its_return_thunk+0x0/0x10 arch/x86/lib/retpoline.S:412
-Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <c3> cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 e9 6b 2b b9 f5 cc
-RSP: 0018:ffffffffa0000877 EFLAGS: 00010246
-RAX: 2161df6de464b300 RBX: 4800be48c0315641 RCX: 2161df6de464b300
-RDX: 0000000000000000 RSI: ffffffff8dba01ee RDI: ffff888105cc9cc0
-RBP: eb7a3aa9e9c95e41 R08: ffffffff81000130 R09: ffffffff81000130
-R10: ffffffff81d017ac R11: ffffffff8b7707da R12: 3145ffff888028c3
-R13: ee8948f875894cf6 R14: 000002baf8c68348 R15: e1cb3861e8c93100
-FS:  0000555557cbc380(0000) GS:ffff8880b862a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffa0000868 CR3: 0000000028468000 CR4: 00000000000006f0
-Call Trace:
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:its_return_thunk+0x0/0x10 arch/x86/lib/retpoline.S:412
-Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <c3> cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 e9 6b 2b b9 f5 cc
-RSP: 0018:ffffffffa0000877 EFLAGS: 00010246
-RAX: 2161df6de464b300 RBX: 4800be48c0315641 RCX: 2161df6de464b300
-RDX: 0000000000000000 RSI: ffffffff8dba01ee RDI: ffff888105cc9cc0
-RBP: eb7a3aa9e9c95e41 R08: ffffffff81000130 R09: ffffffff81000130
-R10: ffffffff81d017ac R11: ffffffff8b7707da R12: 3145ffff888028c3
-R13: ee8948f875894cf6 R14: 000002baf8c68348 R15: e1cb3861e8c93100
-FS:  0000555557cbc380(0000) GS:ffff8880b862a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffa0000868 CR3: 0000000028468000 CR4: 00000000000006f0
-----------------
-Code disassembly (best guess):
-   0:	cc                   	int3
-   1:	cc                   	int3
-   2:	cc                   	int3
-   3:	cc                   	int3
-   4:	cc                   	int3
-   5:	cc                   	int3
-   6:	cc                   	int3
-   7:	cc                   	int3
-   8:	cc                   	int3
-   9:	cc                   	int3
-   a:	cc                   	int3
-   b:	cc                   	int3
-   c:	cc                   	int3
-   d:	cc                   	int3
-   e:	cc                   	int3
-   f:	cc                   	int3
-  10:	cc                   	int3
-  11:	cc                   	int3
-  12:	cc                   	int3
-  13:	cc                   	int3
-  14:	cc                   	int3
-  15:	cc                   	int3
-  16:	cc                   	int3
-  17:	cc                   	int3
-  18:	cc                   	int3
-  19:	cc                   	int3
-  1a:	cc                   	int3
-  1b:	cc                   	int3
-  1c:	cc                   	int3
-  1d:	cc                   	int3
-  1e:	cc                   	int3
-  1f:	cc                   	int3
-  20:	cc                   	int3
-  21:	cc                   	int3
-  22:	cc                   	int3
-  23:	cc                   	int3
-  24:	cc                   	int3
-  25:	cc                   	int3
-  26:	cc                   	int3
-  27:	cc                   	int3
-  28:	cc                   	int3
-  29:	cc                   	int3
-* 2a:	c3                   	ret <-- trapping instruction
-  2b:	cc                   	int3
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	90                   	nop
-  31:	90                   	nop
-  32:	90                   	nop
-  33:	90                   	nop
-  34:	90                   	nop
-  35:	90                   	nop
-  36:	90                   	nop
-  37:	90                   	nop
-  38:	90                   	nop
-  39:	90                   	nop
-  3a:	e9 6b 2b b9 f5       	jmp    0xf5b92baa
-  3f:	cc                   	int3
+nit: the "data" argument is not used in this patch, we may defer to
+introduce it in patch 09/44.
 
 
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+> +{
+> +	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
+> +
+> +	lockdep_assert_irqs_disabled();
+> +
+> +	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
+> +
+> +	if (WARN_ON_ONCE(__this_cpu_read(guest_ctx_loaded)))
+> +		return;
+> +
+> +	perf_ctx_disable(&cpuctx->ctx, EVENT_GUEST);
+> +	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_GUEST);
+> +	if (cpuctx->task_ctx) {
+> +		perf_ctx_disable(cpuctx->task_ctx, EVENT_GUEST);
+> +		task_ctx_sched_out(cpuctx->task_ctx, NULL, EVENT_GUEST);
+> +	}
+> +
+> +	perf_ctx_enable(&cpuctx->ctx, EVENT_GUEST);
+> +	if (cpuctx->task_ctx)
+> +		perf_ctx_enable(cpuctx->task_ctx, EVENT_GUEST);
+> +
+> +	__this_cpu_write(guest_ctx_loaded, true);
+> +}
+> +EXPORT_SYMBOL_GPL(perf_load_guest_context);
+> +
+> +void perf_put_guest_context(void)
+> +{
+> +	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
+> +
+> +	lockdep_assert_irqs_disabled();
+> +
+> +	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
+> +
+> +	if (WARN_ON_ONCE(!__this_cpu_read(guest_ctx_loaded)))
+> +		return;
+> +
+> +	perf_ctx_disable(&cpuctx->ctx, EVENT_GUEST);
+> +	if (cpuctx->task_ctx)
+> +		perf_ctx_disable(cpuctx->task_ctx, EVENT_GUEST);
+> +
+> +	perf_event_sched_in(cpuctx, cpuctx->task_ctx, NULL, EVENT_GUEST);
+> +
+> +	if (cpuctx->task_ctx)
+> +		perf_ctx_enable(cpuctx->task_ctx, EVENT_GUEST);
+> +	perf_ctx_enable(&cpuctx->ctx, EVENT_GUEST);
+> +
+> +	__this_cpu_write(guest_ctx_loaded, false);
+> +}
+> +EXPORT_SYMBOL_GPL(perf_put_guest_context);
+>  #else
+>  static int mediated_pmu_account_event(struct perf_event *event) { return 0; }
+>  static void mediated_pmu_unaccount_event(struct perf_event *event) {}
 
