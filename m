@@ -1,173 +1,149 @@
-Return-Path: <linux-kernel+bounces-760107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50894B1E683
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9183DB1E686
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ECE7586C63
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F80458763E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6DF2749FA;
-	Fri,  8 Aug 2025 10:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE9527465C;
+	Fri,  8 Aug 2025 10:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="gcBjHvan"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ktQke4CX"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F25C2749F4
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A321224D7;
+	Fri,  8 Aug 2025 10:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754649129; cv=none; b=aFB+C6IkY8wIV5YtoVDff62Px7LADcPjJuei32+INsNLf9/VjktCdIF8rqfxnajiLJ87YOdDIYIhjB3iOg5KzGbfccqxAJwG/ciVEB82pTXp6f90jJsJ1CAOvxvdBjpP9874ZyrDlLh+DYmjX8fD0SLi/aoAH1rV/1SlgiY2yQM=
+	t=1754649349; cv=none; b=PjwmU5r5DDyv+2vLOvKM+YH+5FlPXRjdgjRKaUmSx6HnjPr5ZfNZJ8xobmEO3qTfs8lP3HnchoYz74vQKqw/i2j8Tj2djkZqOmkyhUJ2P0KZ9BXh9C+MvEKNlsYXeU6eqT1m+ox5m2VZ0DzGt3Ed2HfJ5va7XZcfQciIpYCYiHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754649129; c=relaxed/simple;
-	bh=iY75W6j7pIHjhmtkbP1Hku/h+iHCAu+MbBXJB1XzJpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AWEVAPJIFJPhWLXc9aTWRvilqZMo6HtQAlFkzpvQlJFvxKogbCCbXii9o/OPvu2aVuD2ZNNcuG9/y3seVGDwmhKKl910TQRZwPTiazNTNZcbY/KbHcX/nvqY7itb61VofxLfkqNe7w+6iCO//10w2lmDbmjfihdWUkR96TMiOqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=gcBjHvan; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6155e75a9acso3123777a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 03:32:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1754649125; x=1755253925; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c6TSWrBncc/Rhuijv2C5MP7HYYUBAQpR0KYcqpwTlxE=;
-        b=gcBjHvan0TL0WQ71RJK73V8Q8fgsp0HctchC6H7lZ5bd7VdlYn81ma8yJLJC5n4yAs
-         CSzfjbU3TQcUn+CCBm4sIkpo0XD1GknuAPd1TwRRyxVNmR0eMGNmBWirm6c/Q7p2WCOp
-         0wXfhK+E0YGdgZCJTeheCbWA59rHrhlZrPSS6btvSNejE/UTY1r7TE0Adp9qsWC6b9Df
-         kObNXWVfC+/iqUSohzbmM4FfyAevE/umFiEMsR0f7gRodjJwARW4ODhw8uzVZva9Ve4D
-         CERAk1oUPR+H427r0hj3BYBM4s+Wwr9UolDPJOL5o8aHNpG5J4dmgIx0ElggQemlzyHy
-         FaWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754649125; x=1755253925;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c6TSWrBncc/Rhuijv2C5MP7HYYUBAQpR0KYcqpwTlxE=;
-        b=k0w4sTaVERA6RUdwHKkQbOm3uySW6bViRtzr8hIqLr3UaLcqhZSkjiDYv1EXjHitlW
-         IN/ME98ial029oXqTTVMNSm6KuQfwS+620GT8iQO0FkvZ/xDFgdZN6MGlXWd5O8UkpBb
-         B8UhtI7mCVM3u1BunRzHPod+lSNwwdcA7F2Z5Hr9kektG8S/IT/ofG1UlZp2OTsmALO7
-         X5cmm4cXxB+aeU9IKVAz6LGjiQgL0a1OgDAIOrkLQeM930X7fVfNS93LuzQEs1wXa4Et
-         DusTB8VI/C6RTjm10+idh0v2fNtvuscwhDdLIN7fHMC2H+ZjxNmblI4r+LuQhN1BdhyG
-         Ok8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUcTaUc2DNOi7t3aqD4NzsfVHvLC1gImPf1u1Pw9X0lDZhP5mk06fCVGK+ODv1z1q3yLoNTuvFA81Zm1V4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJBOMAEFTEnNFqoxItL0F+TTnuptYXdEyokWiE6FpAwKwR/EJi
-	VxJl0Rlzk0jjlVb/ZyxaUJUYC+mTX71h+n6rTidyK4+X36J9DL1GL613ZLVCbUEc5E8=
-X-Gm-Gg: ASbGncs9S9FVkBSRXAi94civZ4BFHAWNJ3IMHqUcCOFC9/W8W0c5d2QLW3oUOX1lyqR
-	4U+FzRL08d5NQ5o3ijLslRRHo0TnpxUpxWQT4H67L1XUBakl448eIpuv1TJPSd1NQMSDb8Co0cp
-	8F5ErK+m5Ez0V3W0HLY/UzFhHVn7nuySZOnCDxUMc/mohSJOtqDLjJCiZHAc4jwYyviwr3LFbRN
-	MuOYNOgiWQuDDcOyVDpTcX2Go8nCTuwtl3XhJS8k6GsMGl/uW+t6kieJ121AcHKUXyoSX/VJspP
-	ukXLitJcm3C4nlXcVsbw99VyXKNmv6/QT7G6/RaZgZqsL894xepugu9UGCr/5DYH7FvBDUZ+LSU
-	5vaOUMXRbDmqjnjf7Z6KSRyG4V+dF/a8=
-X-Google-Smtp-Source: AGHT+IFiaq/Bs2HBuHCkLqYo5m9SoJu+9pxruSdi2P+MSc/rxt4OTN3JPa39G9gTH7FXPIDev3nAkA==
-X-Received: by 2002:a05:6402:5216:b0:612:a86b:ac79 with SMTP id 4fb4d7f45d1cf-617e2b77876mr1905662a12.2.1754649125126;
-        Fri, 08 Aug 2025 03:32:05 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.188])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8eff596sm13341214a12.5.2025.08.08.03.32.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 03:32:04 -0700 (PDT)
-Message-ID: <cbdfa6fd-e65b-45d7-a21f-3bfdd46af332@tuxon.dev>
-Date: Fri, 8 Aug 2025 13:32:03 +0300
+	s=arc-20240116; t=1754649349; c=relaxed/simple;
+	bh=pWahph/BmK2+BKhzM7PR0tujg3En3xybe2SHthvSIsc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NmSNtTMe8/4KmNG7dWliLXFkRRcqgQ+kyO2rNLl/mGDUSoMV2hiJm5oHcQMtRcm+BykvoOFn8U5+jWlIcVclu6mW7H/VyfN7RYi886rvQn2c70Ze8qIxHLhdpi19T9j/5fE2NNObUC/i5I+y/UMhTgfgdKIPVbdHaDJo+aPVDNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ktQke4CX; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7530525D56;
+	Fri,  8 Aug 2025 12:35:46 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Ljm0-CrWkI5d; Fri,  8 Aug 2025 12:35:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1754649345; bh=pWahph/BmK2+BKhzM7PR0tujg3En3xybe2SHthvSIsc=;
+	h=From:To:Cc:Subject:Date;
+	b=ktQke4CXrV26NGfgqQzJgjioG5IzStJmhyz1+rorLbgJEJB6ZhUMLFOtxMZe/YVfq
+	 MnJWzzbP2qlqyvi2IyJXR/4SsMpwcHuOWRsADV5yUoAk8v656/ECU0sXrkdposeWug
+	 +zGrD7BStkPEPPEY+ncEEbtKSOd4X+a5R6FzWlieJHsLjwTEQhSp84mziylJyRTYDS
+	 YpKda4hJdbODKnj6f9fghoO88KLUiqAchPh83++0+5aZ3lzTGxW3A6Nykx6VfkwSXN
+	 ipaZApF0lrcZZmNJWaP7rlVsodGjQtnFEfrjg+qSlQEFtHjiBlSU1LpdeSghPvnYWh
+	 LaIHhxbI86O/A==
+From: Yao Zi <ziyao@disroot.org>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jisheng Zhang <jszhang@kernel.org>
+Cc: nux-riscv@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH net v2] net: stmmac: thead: Enable TX clock before MAC initialization
+Date: Fri,  8 Aug 2025 10:34:48 +0000
+Message-ID: <20250808103447.63146-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/8] soc: renesas: rz-sysc: Add syscon/regmap support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
- yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- John Madieu <john.madieu.xa@bp.renesas.com>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250808061806.2729274-1-claudiu.beznea.uj@bp.renesas.com>
- <20250808061806.2729274-2-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUsFFd+orb17oQqoEidzYWMRjPoqMyzpgrdnicc=MRSYQ@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdUsFFd+orb17oQqoEidzYWMRjPoqMyzpgrdnicc=MRSYQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Geert,
+The clk_tx_i clock must be supplied to the MAC for successful
+initialization. On TH1520 SoC, the clock is provided by an internal
+divider configured through GMAC_PLLCLK_DIV register when using RGMII
+interface. However, currently we don't setup the divider before
+initialization of the MAC, resulting in DMA reset failures if the
+bootloader/firmware doesn't enable the divider,
 
-On 08.08.2025 12:29, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, 8 Aug 2025 at 08:18, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: John Madieu <john.madieu.xa@bp.renesas.com>
->>
->> The RZ/G3E system controller has various registers that control or report
->> some properties specific to individual IPs. The regmap is registered as a
->> syscon device to allow these IP drivers to access the registers through the
->> regmap API.
->>
->> As other RZ SoCs might have custom read/write callbacks or max-offsets,
->> register a custom regmap configuration.
->>
->> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
->> [claudiu.beznea:
->>  - do not check the match->data validity in rz_sysc_probe() as it is
->>    always valid
->>  - dinamically allocate regmap_cfg]
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v4:
->> - adjusted the patch description by dropping "add" from
->>   "add register a custom regmap configuration"
->> - updated the list of changes from Claudiu Beznea
->> - dynamically allocate the regmap_config as proposed at [2]
->> - this patch is needed for proper function of USB (as proposed in this
->>   series) that being the reason it is introduced here, as well
->>
->> [2] https://lore.kernel.org/all/CAMuHMdVyf3Xtpw=LWHrnD2CVQX4xYm=FBHvY_dx9OesHDz5zNg@mail.gmail.com/
-> 
-> Thanks for the update!
-> 
->> --- a/drivers/soc/renesas/rz-sysc.c
->> +++ b/drivers/soc/renesas/rz-sysc.c
-> =
->> @@ -117,7 +125,26 @@ static int rz_sysc_probe(struct platform_device *pdev)
->>                 return PTR_ERR(sysc->base);
->>
->>         sysc->dev = dev;
->> -       return rz_sysc_soc_init(sysc, match);
->> +       ret = rz_sysc_soc_init(sysc, match);
->> +       if (ret)
->> +               return ret;
->> +
->> +       regmap_cfg = devm_kzalloc(dev, sizeof(*regmap_cfg), GFP_KERNEL);
->> +       if (!regmap_cfg)
->> +               return -ENOMEM;
-> 
-> Is there any specific reason you decided to allocate regmap_cfg
-> separately, instead of embedding it into struct rz_sysc?
+[    7.839601] thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
+[    7.938338] thead-dwmac ffe7060000.ethernet eth0: PHY [stmmac-0:02] driver [RTL8211F Gigabit Ethernet] (irq=POLL)
+[    8.160746] thead-dwmac ffe7060000.ethernet eth0: Failed to reset the dma
+[    8.170118] thead-dwmac ffe7060000.ethernet eth0: stmmac_hw_setup: DMA engine initialization failed
+[    8.179384] thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Hw setup failed
 
-Sorry, I missed to mention.
+Let's simply write GMAC_PLLCLK_DIV_EN to GMAC_PLLCLK_DIV to enable the
+divider before MAC initialization. The exact rate doesn't affect MAC's
+initialization according to my test. It's set to the speed required by
+RGMII when the linkspeed is 1Gbps and could be reclocked later after
+link is up if necessary.
 
-I chose to have it like this as the regmap_cfg is not used anywhere else
-(through rz_sysc) except in probe.
+Fixes: 33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
 
-Thank you for your review,
-Claudiu
+Note that the DMA reset failures cannot be reproduced with the vendor
+U-Boot, which always enables the divider, regardless whether the port is
+used[1].
 
-> 
-> The rest LGTM.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+As this scheme (enables the divider first and reclock it later) requires
+access to the APB glue registers, the patch depends on v3 of series
+"Fix broken link with TH1520 GMAC when linkspeed changes"[2] to ensure
+the APB bus clock is ungated.
+
+[1]: https://github.com/revyos/thead-u-boot/blob/93ff49d9f5bbe7942f727ab93311346173506d27/board/thead/light-c910/light.c#L581-L582
+[2]: https://lore.kernel.org/netdev/20250808093655.48074-2-ziyao@disroot.org/
+
+Changed from v1
+- Initialize the divisor to a well-known value (producing the clock rate
+  required by RGMII link at 1Gbps)
+- Write zero to GMAC_PLLCLK_DIV before writing the configuration, as
+  required by the TRM
+- Link to v1: https://lore.kernel.org/netdev/20250801094507.54011-1-ziyao@disroot.org/
+
+ drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+index f2946bea0bc2..50c1920bde6a 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+@@ -152,7 +152,7 @@ static int thead_set_clk_tx_rate(void *bsp_priv, struct clk *clk_tx_i,
+ static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
+ {
+ 	struct thead_dwmac *dwmac = plat->bsp_priv;
+-	u32 reg;
++	u32 reg, div;
+ 
+ 	switch (plat->mac_interface) {
+ 	case PHY_INTERFACE_MODE_MII:
+@@ -164,6 +164,13 @@ static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
+ 	case PHY_INTERFACE_MODE_RGMII_RXID:
+ 	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		/* use pll */
++		div = clk_get_rate(plat->stmmac_clk) / rgmii_clock(SPEED_1000);
++		reg = FIELD_PREP(GMAC_PLLCLK_DIV_EN, 1) |
++		      FIELD_PREP(GMAC_PLLCLK_DIV_NUM, div),
++
++		writel(0, dwmac->apb_base + GMAC_PLLCLK_DIV);
++		writel(reg, dwmac->apb_base + GMAC_PLLCLK_DIV);
++
+ 		writel(GMAC_GTXCLK_SEL_PLL, dwmac->apb_base + GMAC_GTXCLK_SEL);
+ 		reg = GMAC_TX_CLK_EN | GMAC_TX_CLK_N_EN | GMAC_TX_CLK_OUT_EN |
+ 		      GMAC_RX_CLK_EN | GMAC_RX_CLK_N_EN;
+-- 
+2.50.1
 
 
