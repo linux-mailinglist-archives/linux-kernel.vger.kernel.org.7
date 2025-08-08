@@ -1,178 +1,161 @@
-Return-Path: <linux-kernel+bounces-760161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59359B1E738
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:27:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460D3B1E734
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F93E7A1DC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150BB1C20AFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74A327A139;
-	Fri,  8 Aug 2025 11:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIZcQEQm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6152B274FD0;
+	Fri,  8 Aug 2025 11:24:34 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C794C27A123;
-	Fri,  8 Aug 2025 11:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EE2274B56
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652278; cv=none; b=VSHtzwa7FnNyfN5BBOwCl9rqe81Zu1m6XbPefLn9enxAIoKaixv2c+J4459zgIdPsjZz3eWeCWvV0RphV5iRqizm9Ik1wt+oh66KgQg8IhYYrBN32nxaiUqxQ1e61Hi4QmGwlN40z2fKqnXG4paOrAJWDaIUhccdnpLPJUcwQNk=
+	t=1754652273; cv=none; b=f/Vo1T7zjql9viWHVoUdVnLvMQHbtxQ/p+3eo9PUIwNaAU8e8LJ8h6eEoae0wgOOwUgtQWukpIupsRTTGeOajM+JgasZWb5gmDSqSQfGtukdEL82I6eSOr+4U7BP4C0UEINmCB/RAsbTrzuGWlytCqMtezFiEZk6mw+Z4ScfXgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652278; c=relaxed/simple;
-	bh=G8XBDE8Dsdoq13Ly8auEDySbXA8PcvpOjtCB/bcB1Uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uypwYNa0Nge9Nqv+9D5uY02+XNR1kFaVWulbGrNH4ITo3G3zBNs7hEPc7W1z9yzmFMukm0IPHezOawPR1Y7clis8PgrEeJoYXSuvokJt14KEoSy3JGQfEjOEIPFMVxKR8dQMUQcC411M8oE9xM0rvr1k64sqHjklZAiG/lmF77k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIZcQEQm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB49C4CEED;
-	Fri,  8 Aug 2025 11:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754652276;
-	bh=G8XBDE8Dsdoq13Ly8auEDySbXA8PcvpOjtCB/bcB1Uo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sIZcQEQmb2EsfdnJKyBOEKi4tLdQvrZbohWfRHKkpyfRXc8CwqqzT5fVnB7/GxZiE
-	 NqvDvbO4ZofZBESiChq3+nW4tIus+68ZlNH8bsly4+si/u0YfbqkwIBGq8CFCViQo4
-	 /KhACcUbFOa0OD8+hkffDEz53ZtHcRhP1ZcDz+dp9ex6vdXjgiSYUeg08PwL34nuLk
-	 9tr9mKmtKQv+CSfPjHCUgCdqEMwBiuvRTP/4xDR283aGd0217HwI/mLBUEGy0wfAQF
-	 NRZb9J0t9hYHj+70EY/k0GNkk+nHieD6LzEgUR+J5wAHMKByrjlA4gj6Add953CoDc
-	 E6v1BLX2jkjkA==
-Date: Fri, 8 Aug 2025 12:24:29 +0100
-From: Will Deacon <will@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-mm <linux-mm@kvack.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: next-20250729: PREEMPT_RT: rock Pi 4b Internal error Oops
- kmem_cache_alloc_bulk_noprof - kernel locking rtmutex.c at
- __rt_mutex_slowlock_locked
-Message-ID: <aJXebTmgnrWw7Ks4@willie-the-truck>
-References: <CA+G9fYumD2MGjECCv0wx2V_96_FKNtFQpT63qVNrrCmomoPYVQ@mail.gmail.com>
+	s=arc-20240116; t=1754652273; c=relaxed/simple;
+	bh=zmdaemnzI6Dweo/PE+lpJKXaYs9qBfUp7ZJH2qFe46o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LKJHFniqHlAX+cF7CTghFbBHY0gdexuNIFMkPjDlf3HGN/TdYVlJsbx9Y6dosyP4DO0ONuS3ehcNAR041SmL0bA9UUm10ot62hJagvDudJ0ZmQEaPCUtz1A5ASYoacmqaJBsAUAX34ZUkwLOs/GBljVo48zxmllV8FaMoh/FBJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e3f0a3f62aso47002025ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:24:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754652271; x=1755257071;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2uIUGDiVBEDnqS5buaD8/8+TR/c5UVNJJj0BUK+zU5c=;
+        b=KTenDKYdWr1fovzaal2FOzLwMf49gMUrbJxIfCXyBg29PaEks8ObQ9ag0oLQcjfbcG
+         3Z7g/SeZ5fyF7y3RuAS9HwErxuhHIzvrLu+0r42459uA8ebkFgabvsDaoea15W5qkDYN
+         l0RCIBcDqVA5qz+HUBeWEm53fAHFnwCqxZ2znfCQYZoGJhkh6BCsFYbwTtQl7nZO+und
+         7bzQtErGBDxHDjPyKMPbEj3C5pYpOsWJAt6ColMNbyNQMkeYxXveRXnWtTlwQuEdhkle
+         Olqt+/uVv+uxD1OOnYgBNYxNKnBKVf3D05DMReN07Klhe1q8SXD7JW0374z53t9pFJD9
+         eAow==
+X-Forwarded-Encrypted: i=1; AJvYcCW0GvEyFh9vD1xBinVfE7114mTHUXgT3lPohX0tRe25/aBXSN40oV7AwCiP7CQ3QCtlj6WcH8S4ot5ROgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkbKPB1n2B1xnNHpYWTd2vmQfHPImHPvoOAkuVf2bKmTKbY3jj
+	D8XrvT6KXZMbTHdWjxig2AtB9wA8PNBiHKMC5qYqIDhG//FiDL5eEYiyymXo2+CqoyOGQG/Y0i9
+	nd+6R2HpcmemB9eD1C+dT59pZ4Pgvcqy04qR5NNvFfzyI3qxHT1brpMmfvr0=
+X-Google-Smtp-Source: AGHT+IH6IsH6YZeuvtQQE7tRPQJFSp+r4/taKPwvfvWUv2+BNPSKtSSP2mG/JBrssv/9onz01Az0+fpaid1bcPRnSDzs+hdsXdiv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYumD2MGjECCv0wx2V_96_FKNtFQpT63qVNrrCmomoPYVQ@mail.gmail.com>
+X-Received: by 2002:a05:6e02:180a:b0:3e3:d1ef:83f9 with SMTP id
+ e9e14a558f8ab-3e5330abcc0mr42119435ab.6.1754652270983; Fri, 08 Aug 2025
+ 04:24:30 -0700 (PDT)
+Date: Fri, 08 Aug 2025 04:24:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6895de6e.050a0220.7f033.005d.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: ODEBUG bug in __sk_destruct (3)
+From: syzbot <syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Naresh,
+Hello,
 
-On Sat, Aug 02, 2025 at 03:45:51PM +0530, Naresh Kamboju wrote:
-> ## Test log
-> [  527.570253] Unable to handle kernel paging request at virtual
-> address 003f0020f94020a1
-> [  527.570274] Mem abort info:
-> [  527.570277]   ESR = 0x0000000096000004
-> [  527.570282]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [  527.570288]   SET = 0, FnV = 0
-> [  527.570292]   EA = 0, S1PTW = 0
-> [  527.570297]   FSC = 0x04: level 0 translation fault
-> [  527.570302] Data abort info:
-> [  527.570305]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [  527.570310]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [  527.570316]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [  527.570322] [003f0020f94020a1] address between user and kernel address ranges
-> [  527.570330] Internal error: Oops: 0000000096000004 [#1]  SMP
-> [  527.570336] Modules linked in: brcmfmac rockchip_dfi brcmutil
-> cfg80211 snd_soc_hdmi_codec dw_hdmi_i2s_audio dw_hdmi_cec
-> snd_soc_simple_card snd_soc_audio_graph_card hci_uart
-> snd_soc_rockchip_i2s snd_soc_es8316 snd_soc_spdif_tx
-> snd_soc_simple_card_utils btqca rtc_rk808 rockchipdrm btbcm
-> snd_soc_core dw_hdmi_qp bluetooth snd_compress reset_gpio analogix_dp
-> snd_pcm_dmaengine panfrost hantro_vpu dw_mipi_dsi rfkill rockchip_rga
-> drm_shmem_helper drm_dp_aux_bus snd_pcm gpu_sched dw_hdmi pwrseq_core
-> videobuf2_dma_sg v4l2_vp9 snd_timer drm_display_helper v4l2_h264
-> v4l2_jpeg phy_rockchip_pcie snd v4l2_mem2mem cec videobuf2_dma_contig
-> soundcore videobuf2_memops drm_client_lib videobuf2_v4l2
-> drm_dma_helper videobuf2_common rockchip_saradc drm_kms_helper
-> industrialio_triggered_buffer kfifo_buf rockchip_thermal
-> pcie_rockchip_host coresight_cpu_debug fuse drm backlight
-> [  527.570493] CPU: 3 UID: 0 PID: 34254 Comm: mkdir Not tainted
-> 6.16.0-next-20250801 #1 PREEMPT_RT
-> [  527.570502] Hardware name: Radxa ROCK Pi 4B (DT)
-> [  527.570506] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [  527.570512] pc : kmem_cache_alloc_bulk_noprof (mm/slub.c:5343
-> (discriminator 1) mm/slub.c:5403 (discriminator 1))
-> [  527.570527] lr : kmem_cache_alloc_bulk_noprof
-> (include/linux/atomic/atomic-arch-fallback.h:457
-> include/linux/atomic/atomic-instrumented.h:33
-> include/linux/kfence.h:127 mm/slub.c:5307 mm/slub.c:5403)
-> [  527.570533] sp : ffff80008e24b8f0
-> [  527.570536] x29: ffff80008e24b930 x28: 00ff000000584610 x27: ffff800082b30538
-> [  527.570545] x26: ffff8000816b64dc x25: 0000000000000cc0 x24: 0000000000000000
-> [  527.570554] x23: 0000000000000004 x22: ffff0000f7579d20 x21: 0000000000000001
-> [  527.570563] x20: 0000000000000001 x19: ffff000000405b00 x18: ffff80008e24bcd0
-> [  527.570572] x17: 0000000000000000 x16: ffff800081e18420 x15: 0000ffffa2670fff
-> [  527.570582] x14: 0000000000000000 x13: 1fffe000017942e1 x12: 0000ffffa2470fff
-> [  527.570591] x11: ffff00000bca1708 x10: 0000000000000001 x9 : ffff8000816e41a4
-> [  527.570600] x8 : ffff80008e24b850 x7 : fefefefefefefefe x6 : ffff800082b30000
-> [  527.570608] x5 : d63f0020f9402021 x4 : ffff0000f7579d58 x3 : 0000000000000000
-> [  527.570617] x2 : 0000000000000000 x1 : 0000000000000100 x0 : 0000000000000080
-> [  527.570627] Call trace:
-> [  527.570631] kmem_cache_alloc_bulk_noprof (mm/slub.c:5343
-> (discriminator 1) mm/slub.c:5403 (discriminator 1)) (P)
-> [  527.570639] mas_alloc_nodes (lib/maple_tree.c:1278)
-> [  527.570651] mas_node_count_gfp (lib/maple_tree.c:1339)
-> [  527.570661] mas_preallocate (lib/maple_tree.c:5538 (discriminator 1))
-> [  527.570667] __split_vma (mm/vma.c:528 (discriminator 1))
-> [  527.570677] vma_modify (mm/vma.c:1633)
-> [  527.570685] vma_modify_flags (mm/vma.c:1650)
-> [  527.570694] mprotect_fixup (mm/mprotect.c:819)
-> [  527.570704] do_mprotect_pkey (mm/mprotect.c:993)
-> [  527.570713] __arm64_sys_mprotect (mm/mprotect.c:1011)
-> [  527.570722] invoke_syscall (arch/arm64/include/asm/current.h:19
-> arch/arm64/kernel/syscall.c:54)
-> [  527.570731] el0_svc_common.constprop.0
-> (include/linux/thread_info.h:135 (discriminator 2)
-> arch/arm64/kernel/syscall.c:140 (discriminator 2))
-> [  527.570737] do_el0_svc (arch/arm64/kernel/syscall.c:152)
-> [  527.570744] el0_svc (arch/arm64/include/asm/irqflags.h:82
-> (discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
-> 1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
-> arch/arm64/kernel/entry-common.c:169 (discriminator 1)
-> arch/arm64/kernel/entry-common.c:182 (discriminator 1)
-> arch/arm64/kernel/entry-common.c:880 (discriminator 1))
-> [  527.570752] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:899)
-> [  527.570760] el0t_64_sync (arch/arm64/kernel/entry.S:596)
-> [ 527.570772] Code: 1400000c f94002c5 b4000aa5 b9402a60 (f86068a0)
-> All code
-> ========
->    0: 1400000c b 0x30
->    4: f94002c5 ldr x5, [x22]
->    8: b4000aa5 cbz x5, 0x15c
->    c: b9402a60 ldr w0, [x19, #40]
->   10:* f86068a0 ldr x0, [x5, x0] <-- trapping instruction
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0: f86068a0 ldr x0, [x5, x0]
-> [  527.570778] ---[ end trace 0000000000000000 ]---
-> [  527.570800] ------------[ cut here ]------------
+syzbot found the following issue on:
 
-If you're able to repro this, please could you see if the patch below
-helps at all?
+HEAD commit:    7abc678e3084 Merge tag 'pmdomain-v6.16-rc2' of git://git.k..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b0a4f0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12b5044868deb866
+dashboard link: https://syzkaller.appspot.com/bug?extid=d199b52665b6c3069b94
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a20f22580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12af2f22580000
 
-https://lore.kernel.org/r/20250806145611.3962-1-dev.jain@arm.com
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8a9fc2a6bfdf/disk-7abc678e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/29375cef95f6/vmlinux-7abc678e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8148ffc5b47b/bzImage-7abc678e.xz
 
-Cheers,
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com
 
-Will
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object: ffff88807dcf7668 object type: work_struct hint: kcm_tx_work+0x0/0x180 net/kcm/kcmsock.c:-1
+WARNING: CPU: 0 PID: 6293 at lib/debugobjects.c:615 debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
+Modules linked in:
+CPU: 0 UID: 0 PID: 6293 Comm: syz.0.87 Not tainted 6.16.0-rc6-syzkaller-g7abc678e3084 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
+Code: 4c 89 ff e8 e7 b7 5b fd 4d 8b 0f 48 c7 c7 a0 95 e2 8b 48 8b 34 24 4c 89 ea 89 e9 4d 89 f0 41 54 e8 da 93 bd fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 c7 85 db 0a 48 83 c4 08 5b 41 5c 41 5d 41 5e 41
+RSP: 0018:ffffc900021efb30 EFLAGS: 00010296
+RAX: f0e2d1323eb60c00 RBX: dffffc0000000000 RCX: ffff88802699da00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfaa6c R12: ffffffff8a9e4d50
+R13: ffffffff8be29720 R14: ffff88807dcf7668 R15: ffffffff8b89dd60
+FS:  00007f6914e486c0(0000) GS:ffff888125c23000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6914e47f98 CR3: 00000000288b8000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __debug_check_no_obj_freed lib/debugobjects.c:1099 [inline]
+ debug_check_no_obj_freed+0x3a2/0x470 lib/debugobjects.c:1129
+ slab_free_hook mm/slub.c:2312 [inline]
+ slab_free mm/slub.c:4643 [inline]
+ kmem_cache_free+0x113/0x400 mm/slub.c:4745
+ sk_prot_free net/core/sock.c:2284 [inline]
+ __sk_destruct+0x4d2/0x660 net/core/sock.c:2381
+ kcm_release+0x528/0x5c0 net/kcm/kcmsock.c:1731
+ __sock_release net/socket.c:647 [inline]
+ sock_close+0xc0/0x240 net/socket.c:1391
+ __fput+0x44c/0xa70 fs/file_table.c:465
+ fput_close_sync+0x119/0x200 fs/file_table.c:570
+ __do_sys_close fs/open.c:1589 [inline]
+ __se_sys_close fs/open.c:1574 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1574
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6913f8e9a9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6914e48038 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 00007f69141b6160 RCX: 00007f6913f8e9a9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
+RBP: 00007f6914010d69 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f69141b6160 R15: 00007ffe8d790a18
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
