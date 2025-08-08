@@ -1,196 +1,204 @@
-Return-Path: <linux-kernel+bounces-759996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B063DB1E56A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:13:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB791B1E56D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C963A2B17
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9523418C7BD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3B626CE26;
-	Fri,  8 Aug 2025 09:13:09 +0000 (UTC)
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazon11020143.outbound.protection.outlook.com [52.101.225.143])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CDE268C73;
+	Fri,  8 Aug 2025 09:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b1KPXvWK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3436B1E008B;
-	Fri,  8 Aug 2025 09:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.225.143
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754644388; cv=fail; b=WogzwgQBuET35amQXpm2k2049m4UFCEo8DMLuSlQEs5XOr9PkT85uGnyrzmcUs5Q9/dm+xNlICaFuGzePkaJAf4d7Za5XXm99A5FdiO/ERef6gNaWVYoMqg4qq617UoK+Uw5aG0QMCTY2DQflevc/ZlevtK53/zuRuY9jQcg8Zo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754644388; c=relaxed/simple;
-	bh=8167dRj5PqBdt1niuDLwXwRqXxdFDX5alzt+pQP6Dk4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DDCpHGyP/xXeiR0rw1Z9+ZAeYo9EF8CU0BtKKDNhf0HFwj1b+i7LGVeetZhJdU7G4U2gpydqQpRS2iNJbFjZqTNvYv61BcUrhlCPpjZ5/BlT65oC4aotyLpIY4JOa+a66RLHhFGRsDgSOT/A4jBP+05cmj0i+WXryqy2uuQvAxA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.225.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rUR9UAITFExS/g6D/otmKESxvmj9+lVvULTgO+MyioqIHS3q6yTrMq4SQ4j61PRdjSgKoTMU1HfjY00KfwWXJJSjkQYo994k/fHD8UtF9gJTOIoLdv8uo1e46Ufj2uHEhj/0Qbkgnx3NQptZw52aR9xuDWCsydUyzBSRZHSbx+TFd9qKI2u/p7xZKfp5GXJhviQU4j0jHtSL2phzKoc3SJhLdDdsUmXZi8boTbcw86WIDzuyaGc9Qr5XS5cKya/IK/ypj1NdSBQciGAJxvmOZ5d3IRX8aBBwSQboSgQk71kY+gq0M2jOVVHIXjFThQYvSNBvmtG5GYU+nAD3MtDSyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8167dRj5PqBdt1niuDLwXwRqXxdFDX5alzt+pQP6Dk4=;
- b=JfIGWEcCBuNP3TUGuEoIM50Dm99NK9uo7g8b1BsUMnoUe1OQP+77u7AHEHwALmo3JWMWqUT7+skIA7XCgUMgXEKPY2uzCJYtHLyG2PJRJkv7EIJl1H2wfAb9DnwgqtLrt0K7wFIML9G1QEIENR0VpSSoBf1wS179pKgrfoprbJZJKz7xcGbJZzfqbozV/J/WDG09j543dEVD5hpsxkC+CjjZCVJtQAy/Zf6xXU1OlOQy/jIRTAOmMpN62zTJGG8UvqHjuSrsMB3e8epkocAWnx3vADjD5p+5CMbXrnz8VAhwkunF/Qfm36Usp7ot7HXxmv7J/LlyTjK9ujlBIiKfnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:229::21)
- by PN3P287MB1103.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:179::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
- 2025 09:13:01 +0000
-Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
- ([fe80::5c9a:906e:318b:c418]) by PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
- ([fe80::5c9a:906e:318b:c418%6]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
- 09:13:01 +0000
-From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-To: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
-	"kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>
-CC: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho
- Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans
- Verkuil <hverkuil@xs4all.nl>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Ricardo Ribalda <ribalda@chromium.org>, Hans de Goede <hansg@kernel.org>,
-	=?Windows-1252?Q?Andr=E9_Apitzsch?= <git@apitzsch.eu>, Benjamin Mugnier
-	<benjamin.mugnier@foss.st.com>, Tarang Raval
-	<tarang.raval@siliconsignals.io>, Dongcheng Yan <dongcheng.yan@intel.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, Heimir Thor Sverrisson
-	<heimir.sverrisson@gmail.com>, Matthias Fend <matthias.fend@emfend.at>, Arnd
- Bergmann <arnd@arndb.de>, Jim Lai <jim.lai@intel.com>, Jingjing Xiong
-	<jingjing.xiong@intel.com>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 0/2] media: i2c: Add ov2735 camera sensor driver
-Thread-Topic: [PATCH v6 0/2] media: i2c: Add ov2735 camera sensor driver
-Thread-Index: AQHcAeHQHdwfLPTOs0igfNM/aBCf+rRYhMil
-Date: Fri, 8 Aug 2025 09:13:01 +0000
-Message-ID:
- <PN3P287MB3519EB2966DFF198318CC164FF2FA@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-References: <20250731061004.5447-1-hardevsinh.palaniya@siliconsignals.io>
-In-Reply-To: <20250731061004.5447-1-hardevsinh.palaniya@siliconsignals.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3P287MB3519:EE_|PN3P287MB1103:EE_
-x-ms-office365-filtering-correlation-id: 42db6b78-0934-4678-6a88-08ddd65bc66e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?Windows-1252?Q?xBMcFVfUrakVGcQm2JafdEVAZBAE1lTT6VajueKBu7PI+t9Cyoi2VyT4?=
- =?Windows-1252?Q?XIHTmZbAD8OcgIEdHTGsHtTPNPP0qLYMeYlyozx8C0pmUcz4Nz6MwIZl?=
- =?Windows-1252?Q?G68VoMw/D6LWtO2n8CnPws/uL4DQT4qRoMkfYw5v6MyOJKzSdTE/uGe0?=
- =?Windows-1252?Q?9/skac/JPEL0LUXzvyRijYHiD+r5lIsEYnKPxLBoObynrc2BoJlRf1/5?=
- =?Windows-1252?Q?AyqUV4eYNaTV/FSyazLnQgjbF6skFz/akLlGespONoMDoaKrQDkDWwm6?=
- =?Windows-1252?Q?tg0Jihf1nF9g9zEWuF66VjKAuH5FkShtZ1c79hdgfr5PBUKIfQSSYHCG?=
- =?Windows-1252?Q?81SWHcXNivjiuN71SBgNYVHIe/NkaYQL4HO7doTfPx4qtACeN4cT5rmR?=
- =?Windows-1252?Q?wvhbr88+OPrI+U1Gzj2i2aDSMN2t5dTh1FVkwdWP3UVgXHqhUgdvgDCc?=
- =?Windows-1252?Q?SBBchXq3VMqrP4GtZbAiYzu0bbGI8ckt8IOUvbPMsTf0pe7jHBUtzbw3?=
- =?Windows-1252?Q?5Rqu6QOYxCgW3e1vFiwcW9aRqhQv1XEsEkp3l6wTdenSJp+MdjYkdfIO?=
- =?Windows-1252?Q?ArQRZchkVvXaai/GAJgxrgJUtns+Wd0syF3X6ozFJ7PxAVX9cHd4vbBb?=
- =?Windows-1252?Q?wd4WxFWBa3qlKpBMiieUQgtEk8q2Lz16inwNTn+wAL9zGIr4UpIx2LJj?=
- =?Windows-1252?Q?HM8DBbzAGYATwaGCEig4ZPoASrb3fUC3rM2UftFiMKG9UGpC/jmj14C8?=
- =?Windows-1252?Q?AybY3ATIoIm4IIbsVZg1WiTBVIskeZ8ngdVlHJxpUXGuzJtbPEsXH6If?=
- =?Windows-1252?Q?LcHq00mrl5mxF2qUZIBxU91ajZD0M8nMXD2cQJsgtpgExKk8526u+7a/?=
- =?Windows-1252?Q?KPeNIhG5Z/nY7d2o1BI91W9wFloSRFPwtxkgwrDHrfReGAk+dnEEq6Lw?=
- =?Windows-1252?Q?vK5K26aalmA0a5Wb6XGSu4AwXQItn78pVrUID7TseVx+O/EmnMPzjVvk?=
- =?Windows-1252?Q?IaX+m8/ECiHEuf0pSqhbe8ALv/yjakP2rxyNeo1G8ppyqpmjLHPL3qVp?=
- =?Windows-1252?Q?3kIov/r2RpYDPcfZItx1S6ebsf2YPIwb40SNvx2fhDeYLi9bH0Nx1uG5?=
- =?Windows-1252?Q?alCLfH7N/OCHvourXzmxaWxp4W/BY77gE1bZkMU67u/T/HtpNpmNLo7F?=
- =?Windows-1252?Q?PkjSlCCUDFmQ4VvxEXEMw5c7XPYexBHIKeG6Cgz0F+CWzxhYgfP8xPiw?=
- =?Windows-1252?Q?rkCSoxq479YAhUxAGju2IXjNEMevSbC4vb/0VXlWSh/uzKFdwKG8cvCo?=
- =?Windows-1252?Q?2Do+DsKwHGcqS2BJlj07icp+mZY3uBuzuRhep+HzhL2S63ymQHlVp1NJ?=
- =?Windows-1252?Q?1gEIK24/eRTMXjCqQPCeHplE/2oW26eDrs2up+rvWwxSUQ4mzdwigBJX?=
- =?Windows-1252?Q?TjQycEtWT6mnyTjZuvjgUm0RLah/59Uyjayxgvrcc3QRKCYkiyFcfRRm?=
- =?Windows-1252?Q?LE/cfOfvUlGdo3EcSAkgQf36YlmT9/cK2Mp3M+gI5AGjQ67ooj0WGjaH?=
- =?Windows-1252?Q?uYm8jV8HIuTLNO+jW4Rav7eeR+iCcGv8g3OELg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB3519.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?Windows-1252?Q?1IF0Nln4d1boudB6sOiZLG4j8psSxASwiwkL2LC0Q77k9fAvNnR4wppo?=
- =?Windows-1252?Q?OmbFWSOTYO44JATCVFhnnwo4Bz2Wn+qtBRfoyUVUGfQeeEczrVt4oEMY?=
- =?Windows-1252?Q?HKfxFPJHe2olGVHxbT7R9b53nXOQu+hpaCjAuKvFJAZtGZ+l8CaxJ/yQ?=
- =?Windows-1252?Q?RhvcQN53F/b+Vn7Zbkxd8OzSaPcrS7csYgnS0ZAjgv381p5/oxeiEZ59?=
- =?Windows-1252?Q?H5BUMP42OtzeTe3VcxFqi7hNChCkmB12NtC03jdpNdnwplo3UxdjUN1r?=
- =?Windows-1252?Q?GTVHBlWi98p3BIYjrQww4rATPiKau1qe2A4r9wkAqVnQsf6MrIL2siqO?=
- =?Windows-1252?Q?kUC9CZcwsR3fa23qTTZqiHxVQnkDbKTUrmniZbAl7vs1EUEc5+eq5gsA?=
- =?Windows-1252?Q?BI54Y7O23Ix/MogBC2T5eaAhhtfnyi7uIOB1+a7lCYM8EP4A+65R2g57?=
- =?Windows-1252?Q?aMFKpyzrkiHMv6lo0+vkjgyMmi2WErHj3zduN2GVZV2e1DzgsMT6QXnO?=
- =?Windows-1252?Q?FBB0qorEXUvcgLb5mWOQaBdtXNwdmePppZ6gf9ytcb3ThsMyhzk5fXtf?=
- =?Windows-1252?Q?QMkIB76lcty1RvQTJNYYmr8u4B5o8/B/ahEiue+/Xg6W4ZK7AAwRK+tR?=
- =?Windows-1252?Q?Ov1psbJbccoIC+YJBKoz+hWRKxqYaXvy3mDm1iYZSzMBe4YvLKJHsDRt?=
- =?Windows-1252?Q?ZBjYyg/LpLv5fwOw0rqJLWZzNzOqCkuV6wN3ONSF59JpzgxfNf9EUzbA?=
- =?Windows-1252?Q?9kkCAv/JxBxxQi86KNG1mDkUYReo/CpIS26Lkiqm5SFa2cU5+yQd8ybO?=
- =?Windows-1252?Q?8HZ+loT+8V6YXMUQ+l4mYgVnNHbrxTfmZ9xakKlpnniqY5AJbToMAamJ?=
- =?Windows-1252?Q?GMRXNAghxFTjLCmSo3tWvrF42FGd8JFAJsP4PP9RQcLiEMOQ18GLhjT/?=
- =?Windows-1252?Q?S/61fxK64rQ3/tHYHCyZ+EHEQ7FPgO7z61zdSiJpXi9+8QNWKRJBmzw2?=
- =?Windows-1252?Q?edbND/IS3+u5r3W4SpzluJQpAM9qJlqXiMe89pF/LADbNQ7vLuif0Kb4?=
- =?Windows-1252?Q?4NgfZgDd74JrUlYYxz/pXrHN3rvGKh2sUpmoE8I/01L4TVyMsQt6vaV+?=
- =?Windows-1252?Q?KSxg2EwvhsglGohyCe9oIRtDiDKBvOew3RbutRoxP4bzd/Aohxkt77KL?=
- =?Windows-1252?Q?pxKlnd8I8K8R+RHpw6B9+rIZEMLTlbVaeyB83oFcUqmTOHp6L89qNzTk?=
- =?Windows-1252?Q?w5zn19GrQL9x0KVtMuo7bjUV7JecbUa9AdOVP50Cy3lngTo1pwwTLqo6?=
- =?Windows-1252?Q?flb7vmcGacajEaWtn0DhIorhHJ5RxNvxrNaYOLENK+1Cu0KHxVZDQoGr?=
- =?Windows-1252?Q?nfkm9nMyZMnliofjMWu8Wq283Qel/vbdTThF2eW/Te4RHCmao0EgELh2?=
- =?Windows-1252?Q?wpFIuFOLNSdxVfpoIsSbYTMo8RTGR78Eq9VdovJ4ZWb2iY+2yK7DPWZ4?=
- =?Windows-1252?Q?MJMSbpCKvXXPEUcXPQjoEe1l4nviq1ba5j4T70NEPOf4GkhDQDCYK4U6?=
- =?Windows-1252?Q?V6d0Jp0hlZAwbaHXCdmjFi9bSXoqKgXA3Kox0XwkrXFzq+d8pyyC5U0L?=
- =?Windows-1252?Q?zFljtS1oTOItHZ48SR1KLcqDAP7VvVvuIY8U8LABp7HGCrlCFG5xhtJy?=
- =?Windows-1252?Q?Tt47hxP407mG075F59rSQhh3697CbO/VICYSOyBGt7w9viRIepwxmw?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04922356C0;
+	Fri,  8 Aug 2025 09:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754644399; cv=none; b=jCWvqMWY6eoGMPY2zYGmS+QPHXPi/OARfSnHmLW8suRArkpzG8n0kLQxqZ3L/BHHw2lthH08tBBmYccKaWBa74zmlwZbD1nitil/aei5IWsdHe8ZRm9ZPBLfBj+HmfjGfLlzKRK4Aj0c11x9LUdqLIxyqiWxr8wO2zusEQ+PlO8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754644399; c=relaxed/simple;
+	bh=jak3MZp79DWMyM3LRf+gkKinlpgNgSN9X5uunOJiQc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4qbN4VbBhj0k/dyjyKnOi7MpkOSkZKIz6yssF4RCBcl1PeN4qxf9JY34vQhK98ohMKrZCl+wgUPLeKwUjYnrGvzWRgq5Pmf3SIdfPrCUIFXi3vrOu1pdDqI/RH6pjkoJg8cmXc/Z20gLAe0T9qCBxSJVvAc9LFZG7KPmbs7ib0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b1KPXvWK; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754644398; x=1786180398;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jak3MZp79DWMyM3LRf+gkKinlpgNgSN9X5uunOJiQc8=;
+  b=b1KPXvWKWLHMK4nfZVqbK0HeBXq8D0x2YyW3XvbqmZJLHfZLoPsCk53O
+   TU0l7cIWuiEJTldYZ42T2/EWbACGqbIWSAf2+5F7NT+87PsBbBfyRORCe
+   uMScHgm69o+BqaEYaBI4jClUDKUpCgOC1cpLzBRPGaFIPOliyt20ui3F9
+   IANe7xnSynq3WhpduC2qV/Qfre09fWFxcjNXfmkseppeOLwEGnZEFyoRt
+   IojjF/NgqKiu3hxtY0ruiDHAeJJ0cK6YCpDgpEufhNUTR5ITozulH8K1Y
+   0tWxCeXzrfBA3xv5VEI/g2bBpx6vG/aG2j5Bzn15OnWHrFodaTS32ne1G
+   g==;
+X-CSE-ConnectionGUID: lVZt+DeMSuW8EvjCdNA9EQ==
+X-CSE-MsgGUID: z84Hts8oReGUOzL14CaoKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="74443780"
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="74443780"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 02:13:17 -0700
+X-CSE-ConnectionGUID: 0m8LeReFSzieTb2Y6stPaQ==
+X-CSE-MsgGUID: CD1CwIOYQmGVCDGP9ZgWOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="196109753"
+Received: from unknown (HELO black.igk.intel.com) ([10.91.253.5])
+  by fmviesa001.fm.intel.com with ESMTP; 08 Aug 2025 02:13:14 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id 5D8C793; Fri, 08 Aug 2025 11:13:13 +0200 (CEST)
+Date: Fri, 8 Aug 2025 11:13:13 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Mario Limonciello <superm1@kernel.org>,
+	"Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andreas.noever@gmail.com, michael.jamet@intel.com,
+	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
+	Sanath.S@amd.com
+Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
+ dynamically
+Message-ID: <20250808091313.GN476609@black.igk.intel.com>
+References: <59cd3694-c6e5-42c4-a757-594b11b69525@amd.com>
+ <20250806085118.GE476609@black.igk.intel.com>
+ <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
+ <20250806150024.GF476609@black.igk.intel.com>
+ <2025080628-viral-untruth-4811@gregkh>
+ <20250807051533.GG476609@black.igk.intel.com>
+ <2025080758-supervise-craftily-9b7f@gregkh>
+ <17ed42fe-9d8d-46da-8434-f508ec5932fa@kernel.org>
+ <20250808044538.GK476609@black.igk.intel.com>
+ <2025080822-cardboard-aloha-3c5d@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42db6b78-0934-4678-6a88-08ddd65bc66e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2025 09:13:01.5534
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kTiTAP1AWq4SnmxBo+KmyDIaOR528Uyugm0KC/ZvhuMRSNZ5c9DifytxzzJfqw2uXYQ3KA9hJ41iswZ1WDoSdWy9muLxeURaf1Rr2hdvIpXHqV92vEKrNhRqib16jBCe
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1103
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025080822-cardboard-aloha-3c5d@gregkh>
 
-> The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an=0A=
-> active array size of 1920 x 1080.=0A=
-> =0A=
-> The following features are supported:=0A=
-> - Manual exposure an gain control support.=0A=
-> - vblank/hblank control support.=0A=
-> - Test pattern support control.=0A=
-> - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10).=0A=
-> =0A=
-> The driver is tested on mainline branch v6.14-rc6 on IMX8MP Debix Model a=
-.=0A=
- =0A=
-Hi Sakari, Laurent, Kieran,=0A=
- =0A=
-Please let me know if there=92s anything else I should improve or change.=
-=0A=
-If not, I will proceed with sending the next version of this series, =0A=
-including Andy=92s and Krzysztof=92s changes.=0A=
-=0A=
-Best Regards,=0A=
-Hardev=0A=
- =
+On Fri, Aug 08, 2025 at 10:02:08AM +0100, Greg KH wrote:
+> On Fri, Aug 08, 2025 at 06:45:38AM +0200, Mika Westerberg wrote:
+> > On Thu, Aug 07, 2025 at 11:07:39AM -0500, Mario Limonciello wrote:
+> > > On 8/7/25 11:02 AM, Greg KH wrote:
+> > > > On Thu, Aug 07, 2025 at 07:15:33AM +0200, Mika Westerberg wrote:
+> > > > > On Wed, Aug 06, 2025 at 05:58:26PM +0100, Greg KH wrote:
+> > > > > > On Wed, Aug 06, 2025 at 05:00:24PM +0200, Mika Westerberg wrote:
+> > > > > > > On Wed, Aug 06, 2025 at 09:06:30AM -0500, Mario Limonciello wrote:
+> > > > > > > > On 8/6/2025 3:51 AM, Mika Westerberg wrote:
+> > > > > > > > > On Wed, Aug 06, 2025 at 11:46:04AM +0530, Rangoju, Raju wrote:
+> > > > > > > > > > 
+> > > > > > > > > > 
+> > > > > > > > > > On 7/28/2025 12:17 PM, Mika Westerberg wrote:
+> > > > > > > > > > > Hi,
+> > > > > > > > > > > 
+> > > > > > > > > > > On Tue, Jul 22, 2025 at 11:20:23PM +0530, Raju Rangoju wrote:
+> > > > > > > > > > > > This patch series aims to update vendor properties for XDomain
+> > > > > > > > > > > > dynamically for vendors like AMD, Intel and ASMedia.
+> > > > > > > > > > > 
+> > > > > > > > > > > The XDomain properties pretty much describe "software" not the underlying
+> > > > > > > > > > > hardware so I don't understand why this is needed? We could have some USB
+> > > > > > > > > > > IF registered Linux specific ID there but I don't see why this matters at
+> > > > > > > > > > > all.
+> > > > > > > > > > 
+> > > > > > > > > > Currently, it is showing up as "Intel" on AMD host controllers during
+> > > > > > > > > > inter-domain connection. I suppose an alternative is to just call it "Linux"
+> > > > > > > > > > or "Linux Connection Manager" to ensure we accurately represent the
+> > > > > > > > > > connections across different systems.
+> > > > > > > > > > 
+> > > > > > > > > > I appreciate your guidance on this and suggestions you might have.
+> > > > > > > > > 
+> > > > > > > > > Yeah, something like that (I prefer "Linux"). The "ID" still is 0x8086
+> > > > > > > > > though but I don't think that matters. AFAIK we have other "donated" IDs in
+> > > > > > > > > use in Linux. Let me check on our side if that's okay.
+> > > > > > > > 
+> > > > > > > > Having looked through this discussion I personally like "Linux" for this
+> > > > > > > > string too.
+> > > > > > > > 
+> > > > > > > > As for the vendor ID doesn't the LF have an ID assigned already of 0x1d6b?
+> > > > > > > > Would it make sense to use that?
+> > > > > > > 
+> > > > > > > AFAIK that's PCI ID, right? It should be USB IF assigned ID and LF is not
+> > > > > > > here at least:
+> > > > > > > 
+> > > > > > >    https://www.usb.org/members
+> > > > > > > 
+> > > > > > > If it really matters we can sure register one.
+> > > > > > 
+> > > > > > Linux has an official USB vendor id, we use it for when Linux is used as
+> > > > > > a USB gadget device and in a few other places.  If you want to reserve a
+> > > > > > product id from it, just let me know and I can dole it out (the list is
+> > > > > > around here somewhere...)
+> > > > > 
+> > > > > Yes please :) I think this is the right thing to do.
+> > > > 
+> > > > Great, please let me know why you need it and what it will be for and
+> > > > why.  I totally can not figure that out from this thread...
+> > > > 
+> > > > thanks,
+> > > > 
+> > > > greg k-h
+> > > 
+> > > Actually it's a very similar reason for the gadget drivers.  When connected
+> > > to other machines and using the USB4 networking feature (like a host to host
+> > > communication) the Linux kernel will identify itself and the other side will
+> > > show that to a user.
+> > > 
+> > > So right now it's got some hardcoded values.  This thread was prompting to
+> > > change the strings, but it's brought about the realization that we should
+> > > also be using a Linux specific vendor (the one uses in gadget devices) and
+> > > then a Linux specific "device id" which you will allocate.
+> > > 
+> > > Hope that helps!
+> > 
+> > Thanks Mario, yes exactly that :)
+> > 
+> > "Linux USB4 Inter-domain discovery properties" in a nutshell.
+> 
+> Ok, sounds good.  Here's the currently assigned ids that we have so far:
+> 
+> # Linux Foundation USB id list.
+> 1d6b  Linux Foundation
+>         0001  1.1 root hub
+>         0002  2.0 root hub
+>         0003  3.0 root hub
+>         0010  USB Debug Target
+>         0011  USB GDB Target
+>         0100  PTP Gadget
+>         0101  Audio Gadget
+>         0102  EEM Gadget
+>         0103  NCM (Ethernet) Gadget
+>         0104  Multifunction Composite Gadget
+>         0105  FunctionFS Gadget
+>         0106  Composite Gadget: ACM + Mass Storage
+>         0107  Embedded Hub Gadgetg
+>         0200  Qemu Audio Device
+>         0246  BlueZ Host Stack
+>         0247  BlueZ for Android
+> 
+> Any specific number feel drawn toward using?  Would 0004 make sense as this is
+> "USB 4" or should we save that if we ever get a USB 4.0 root hub?
+
+0004 USB4
+
+sounds good to me. In USB4 there is no "root hub". It's called host router
+(but we do have device routers that are called USB4 hubs for added
+confusion ;-).
+
+But I'm fine with other numbers too, does not matter if you want to save it
+for some future USB variant.
 
