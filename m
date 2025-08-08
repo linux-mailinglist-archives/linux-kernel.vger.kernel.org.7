@@ -1,44 +1,62 @@
-Return-Path: <linux-kernel+bounces-760320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9C8B1E980
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:50:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E48FB1E982
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066651C219EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648011C218D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF6613B797;
-	Fri,  8 Aug 2025 13:49:48 +0000 (UTC)
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DF138F80;
+	Fri,  8 Aug 2025 13:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KpOZXcJC"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2FC23741;
-	Fri,  8 Aug 2025 13:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71B229405;
+	Fri,  8 Aug 2025 13:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754660988; cv=none; b=a4y+apl30GhBCUMvAiIX8uXanKUV1LE+egerpq/SpnsbIJt7kStxFaSi/h47dyet3H/89rDwBfkpTQ9vaENjR8mkIiOQ2QkUuGBcgCWwEvI3IEYbdx6K7yNWTOqyIjHV3nr6H7qba/QtsP0ryhu8F4fWW6KoomedDWfuT5ft74s=
+	t=1754661012; cv=none; b=IwfldeZHSomPTX8/M9PMZWhTP5hFZQj3GtPFzFVre2rOf/hJSXJdAr3cUItwdVn8XRsvtFoyIHsTGpyzOO0fYzgf3OcdNRJWS4zZfKftlirTt1qdIcfm+vIgVWkrO2TCDEECdR5RMVjWSjvjJ2XES63iP2c4kPFrSXcwltzC9m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754660988; c=relaxed/simple;
-	bh=B5lDeezqkk5enqfSPL/TI85oGS6wmZYxDK+9tTEhTUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Z8iVD0uOfaiwM5kFeJvYl91LnB4aVM4rK9Bb05ureRKNE2UsUY1FzhnIUCmtgliXeDINVuMmpZR2u/ZPXqrLLlF6ajbVmhYidVpEId+TdyeWM2YhmOoMXIfr0+fc8roLtn/6QZ3iKsYOi5snIsOoAQQjCeyiAfswypFSep+yeQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org; spf=pass smtp.mailfrom=ozlabs.org; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ozlabs.org
-Received: from mail.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-	by gandalf.ozlabs.org (Postfix) with ESMTP id 4bz54N18ktz4wbp;
-	Fri,  8 Aug 2025 23:49:40 +1000 (AEST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bz54J2g4Qz4wbR;
-	Fri,  8 Aug 2025 23:49:36 +1000 (AEST)
-Message-ID: <dd0b8e6f-1673-49c3-8018-974d1e7f1a54@kaod.org>
-Date: Fri, 8 Aug 2025 15:49:33 +0200
+	s=arc-20240116; t=1754661012; c=relaxed/simple;
+	bh=AgeywNMnAFe1Is76lb6QUzcXEbVLjmPSrzKTOO/szFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P1dt8rXET7TuFUNN7K053L1+LniE9GLCrztKCekNs0RKYClspJMCs4P5I01L1lXaol1c0PHK8eXfnxVGWDw0sWvg7NhyIPIqF/M1ZVQyOkXsnX/1m+u5WuINg7eWSKCIDMZpygCzc1rlUDGgSuhWCGGo03dO0pGCRrJh5zCSeSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KpOZXcJC; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 578Do1vZ559922;
+	Fri, 8 Aug 2025 08:50:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754661001;
+	bh=KY24UGFb9u8iBNPpAsvI5S42JTMXlvmtmnVmWqhoT3Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=KpOZXcJC6UI0JMMIQjjzKJFL3DcBMf+ucj7oZ1/1T/+XF1kGHfowUNj1qxMEpxrTW
+	 YK7TH/Ccj3q0zUHj/Qlvwn9olPCyWbOC4oRkB02Rjbs7IyQey/puymev1Za1m/YmRZ
+	 DmA+9MF+Fx9EQjpYOQGxA8XKfweH31IrdTO2afr0=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 578Do19m1624400
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 8 Aug 2025 08:50:01 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 8
+ Aug 2025 08:50:00 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 8 Aug 2025 08:50:01 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 578Do0JB2830670;
+	Fri, 8 Aug 2025 08:50:00 -0500
+Message-ID: <bac04814-ed8a-4dad-b5a3-72d0a2fc5d76@ti.com>
+Date: Fri, 8 Aug 2025 08:50:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,220 +64,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
-To: Alex Mastro <amastro@fb.com>, Alex Williamson
- <alex.williamson@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org
-References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
- <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
-From: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
-Content-Language: en-US, fr
-Autocrypt: addr=clg@kaod.org; keydata=
- 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
-In-Reply-To: <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 1/2] soc: ti: k3-socinfo: Add support for AM62P
+ variants
+To: Judith Mendez <jm@ti.com>, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf
+ Hansson <ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250807225138.1228333-1-jm@ti.com>
+ <20250807225138.1228333-2-jm@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250807225138.1228333-2-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello Amit,
-
-On 8/7/25 11:34, Amit Machhiwal wrote:
-> Hello,
+On 8/7/25 5:51 PM, Judith Mendez wrote:
+> This adds a support for detecting AM62P SR1.0, SR1.1, SR1.2.
 > 
-> On 2025/08/04 12:44 PM, Alex Mastro wrote:
->> Print the PCI device syspath to a vfio device's fdinfo. This enables tools
->> to query which device is associated with a given vfio device fd.
->>
->> This results in output like below:
->>
->> $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
->> vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
->>
->> Signed-off-by: Alex Mastro <amastro@fb.com>
+> On AM62P, silicon revision is discovered with GP_SW1 instead of JTAGID
+> register, so read GP_SW1 to determine SoC revision only on AM62P.
 > 
-> I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
-> could see the VFIO device syspath in fdinfo.
-
-POWER9 running on OPAL FW : I am curious about the software stack.
-
-I suppose this is the latest upstream kernel ?
-Are you using an upstream QEMU to test too ?
-
-and which device ?
-
-Thanks,
-
-C.
-
-
-
-
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+>   drivers/soc/ti/k3-socinfo.c | 27 +++++++++++++++++++++++++--
+>   1 file changed, 25 insertions(+), 2 deletions(-)
 > 
->   Without this patch:
->   -------------------
-> 
->      [root@localhost ~]# cat /proc/7059/fdinfo/188
->      pos:    0
->      flags:  02000002
->      mnt_id: 17
->      ino:    1113
-> 
->   With this patch:
->   ----------------
->      [root@localhost ~]# cat /proc/7722/fdinfo/188
->      pos:    0
->      flags:  02000002
->      mnt_id: 17
->      ino:    2145
->      vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
-> 
-> ..., and the code changes LGTM. Hence,
-> 
-> Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
-> Tested-by: Amit Machhiwal <amachhiw@linux.ibm.com>
-> 
-> Thanks,
-> Amit
-> 
->> ---
->> Changes in v4:
->> - Remove changes to vfio.h
->> - Link to v3: https://lore.kernel.org/r/20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com
->> Changes in v3:
->> - Remove changes to vfio_pci.c
->> - Add section to Documentation/filesystems/proc.rst
->> - Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
->> Changes in v2:
->> - Instead of PCI bdf, print the fully-qualified syspath (prefixed by
->>    /sys) to fdinfo.
->> - Rename the field to "vfio-device-syspath". The term "syspath" was
->>    chosen for consistency e.g. libudev's usage of the term.
->> - Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
->> ---
->>   Documentation/filesystems/proc.rst | 14 ++++++++++++++
->>   drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
->>   2 files changed, 34 insertions(+)
->>
->> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
->> index 2a17865dfe39..fc5ed3117834 100644
->> --- a/Documentation/filesystems/proc.rst
->> +++ b/Documentation/filesystems/proc.rst
->> @@ -2162,6 +2162,20 @@ DMA Buffer files
->>   where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
->>   the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
->>   
->> +VFIO Device files
->> +~~~~~~~~~~~~~~~~
->> +
->> +::
->> +
->> +	pos:    0
->> +	flags:  02000002
->> +	mnt_id: 17
->> +	ino:    5122
->> +	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
->> +
->> +where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
->> +file.
->> +
->>   3.9	/proc/<pid>/map_files - Information about memory mapped files
->>   ---------------------------------------------------------------------
->>   This directory contains symbolic links which represent memory mapped files
->> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
->> index 1fd261efc582..37a39cee10ed 100644
->> --- a/drivers/vfio/vfio_main.c
->> +++ b/drivers/vfio/vfio_main.c
->> @@ -28,6 +28,7 @@
->>   #include <linux/pseudo_fs.h>
->>   #include <linux/rwsem.h>
->>   #include <linux/sched.h>
->> +#include <linux/seq_file.h>
->>   #include <linux/slab.h>
->>   #include <linux/stat.h>
->>   #include <linux/string.h>
->> @@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
->>   	return device->ops->mmap(device, vma);
->>   }
->>   
->> +#ifdef CONFIG_PROC_FS
->> +static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
->> +{
->> +	char *path;
->> +	struct vfio_device_file *df = filep->private_data;
->> +	struct vfio_device *device = df->device;
->> +
->> +	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
->> +	if (!path)
->> +		return;
->> +
->> +	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
->> +	kfree(path);
->> +}
->> +#endif
->> +
->>   const struct file_operations vfio_device_fops = {
->>   	.owner		= THIS_MODULE,
->>   	.open		= vfio_device_fops_cdev_open,
->> @@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
->>   	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
->>   	.compat_ioctl	= compat_ptr_ioctl,
->>   	.mmap		= vfio_device_fops_mmap,
->> +#ifdef CONFIG_PROC_FS
->> +	.show_fdinfo	= vfio_device_show_fdinfo,
->> +#endif
->>   };
->>   
->>   static struct vfio_device *vfio_device_from_file(struct file *file)
->>
->> ---
->> base-commit: 4518e5a60c7fbf0cdff393c2681db39d77b4f87e
->> change-id: 20250801-show-fdinfo-ef109ca738cf
->>
->> Best regards,
->> -- 
->> Alex Mastro <amastro@fb.com>
->>
-> 
+> diff --git a/drivers/soc/ti/k3-socinfo.c b/drivers/soc/ti/k3-socinfo.c
+> index d716be113c84..81d078f15cd2 100644
+> --- a/drivers/soc/ti/k3-socinfo.c
+> +++ b/drivers/soc/ti/k3-socinfo.c
+> @@ -15,6 +15,9 @@
+>   #include <linux/sys_soc.h>
+>   
+>   #define CTRLMMR_WKUP_JTAGID_REG		0
+> +#define CTRLMMR_WKUP_GP_SW1_OFFSET		544
+> +#define GP_SW1_MOD_OPR				16
+> +
+>   /*
+>    * Bits:
+>    *  31-28 VARIANT	Device variant
+> @@ -66,6 +69,10 @@ static const char * const j721e_rev_string_map[] = {
+>   	"1.0", "1.1", "2.0",
+>   };
+>   
+> +static const char * const am62p_gpsw_rev_string_map[] = {
+> +	"1.0", "1.1", "1.2",
+> +};
+> +
+>   static int
+>   k3_chipinfo_partno_to_names(unsigned int partno,
+>   			    struct soc_device_attribute *soc_dev_attr)
+> @@ -83,7 +90,7 @@ k3_chipinfo_partno_to_names(unsigned int partno,
+>   
+>   static int
+>   k3_chipinfo_variant_to_sr(unsigned int partno, unsigned int variant,
+> -			  struct soc_device_attribute *soc_dev_attr)
+> +			  struct soc_device_attribute *soc_dev_attr, u32 gp_sw1)
+>   {
+>   	switch (partno) {
+>   	case JTAG_ID_PARTNO_J721E:
+> @@ -92,6 +99,14 @@ k3_chipinfo_variant_to_sr(unsigned int partno, unsigned int variant,
+>   		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%s",
+>   						   j721e_rev_string_map[variant]);
+>   		break;
+> +	case JTAG_ID_PARTNO_AM62PX:
+> +		/* Always parse AM62P variant from GP_SW1 */
+> +		variant = gp_sw1 % GP_SW1_MOD_OPR;
+> +		if (variant >= ARRAY_SIZE(am62p_gpsw_rev_string_map))
+> +			goto err_unknown_variant;
+> +		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%s",
+> +						   am62p_gpsw_rev_string_map[variant]);
+> +		break;
+>   	default:
+>   		variant++;
+>   		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%x.0",
+> @@ -121,6 +136,7 @@ static int k3_chipinfo_probe(struct platform_device *pdev)
+>   	struct soc_device *soc_dev;
+>   	struct regmap *regmap;
+>   	void __iomem *base;
+> +	u32 gp_sw1_val = 0;
+>   	u32 partno_id;
+>   	u32 variant;
+>   	u32 jtag_id;
+> @@ -163,7 +179,14 @@ static int k3_chipinfo_probe(struct platform_device *pdev)
+>   		goto err;
+>   	}
+>   
+> -	ret = k3_chipinfo_variant_to_sr(partno_id, variant, soc_dev_attr);
+> +	if (partno_id == JTAG_ID_PARTNO_AM62PX) {
+> +		ret = regmap_read(regmap, CTRLMMR_WKUP_JTAGID_REG +
+> +				  CTRLMMR_WKUP_GP_SW1_OFFSET, &gp_sw1_val);
+
+This is wrong, you cannot read from the register GP_SW1 (offset 544). In DT
+the region is 4 bytes long (reg = <0x14 0x4>;).
+
+This only worked in your testing because the above ioremap_resource() has to
+map in page sized(4K) chunks and we didn't set max_register in our regmap_config
+so no bounds checking is done. If we fix either of the above then this read
+will stop working.
+
+So yes you'll have to make DT changes and fight it out with Krzysztof. My
+suggestion is to make a efuse region for the 3 GPSW registers and use a
+phandle from this node to fetch the extra info you need to get revision.
+
+Andrew
+
+> +		if (ret < 0)
+> +			goto err;
+> +	}
+> +
+> +	ret = k3_chipinfo_variant_to_sr(partno_id, variant, soc_dev_attr, gp_sw1_val);
+>   	if (ret) {
+>   		dev_err(dev, "Unknown SoC SR[0x%08X]: %d\n", jtag_id, ret);
+>   		goto err;
 
 
