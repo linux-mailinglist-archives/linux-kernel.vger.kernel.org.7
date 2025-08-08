@@ -1,211 +1,196 @@
-Return-Path: <linux-kernel+bounces-759856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BB8B1E3A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 863DFB1E3AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCBB4169A34
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:38:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A47A116C336
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693F5226D18;
-	Fri,  8 Aug 2025 07:34:31 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED4223770D;
+	Fri,  8 Aug 2025 07:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANxjiPOe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4EB222578;
-	Fri,  8 Aug 2025 07:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2AF222578;
+	Fri,  8 Aug 2025 07:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638470; cv=none; b=uPykSANXrqCkY8mbpNZVFNGeAelItPrCDEcQVfVIuxOTu6XcnOxrfmJ8oZNgyYNheBN/YK1/loIbwKV4CXPlAKf5JxBk7gOTqk9lZRUOX/LDoEv821DpzwmaKgqS+OrGMU0jD/1PuEeDJIWKH/SyhB5EywvtBE0r29gVEdrZfl0=
+	t=1754638497; cv=none; b=IWmsPi3JLXqP2WJSv7YVvyr39WcZmnvJfrTUzO1Bvb/ZjhJyaMFvawSWu8I7UhHZec60Idx6cpDvVCYrRni1mAXa0AgzAr0Ew2vinlLK2jgrTcWiuvBpNMs5RnXZyJBC51jWexS5pZIqo2SAgKzxgfo06+dv0RY3pP0O3CDvAiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638470; c=relaxed/simple;
-	bh=mHA71hlwwplMD+0gYZPE6uPJrM2UMYmAtMyRfhMKcVg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=mN4NhlGGf4XruOb5H1QW4VxXdCsm42PZTaqblDd6YGBIy3i0bfEeK/EPWA8/i6GNnfphWHHywlcLAb3iP+U8hJxyp3WIaMhhxE9o8wkrHQiEyc04TnKhfFjaxE2q82kCpqw6cRDfXy43v4+ooVEYmo2bApVIvZ8XPRUlRybYX+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bywlQ2k1XzKHMlf;
-	Fri,  8 Aug 2025 15:34:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7900F1A018D;
-	Fri,  8 Aug 2025 15:34:25 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgC3MxR_qJVogQjhCw--.38019S3;
-	Fri, 08 Aug 2025 15:34:25 +0800 (CST)
-Subject: Re: [PATCH v2] block: fix kobject double initialization in add_disk
-To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
- zhengqixing@huawei.com, lilingfeng3@huawei.com, nilay@linux.ibm.com,
- dm-devel@lists.linux.dev, mpatocka@redhat.com, snitzer@kernel.org,
- Alasdair Kergon <agk@redhat.com>, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <03fe1a9c-ad5d-5417-9797-25fff9459e03@huaweicloud.com>
-Date: Fri, 8 Aug 2025 15:34:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754638497; c=relaxed/simple;
+	bh=htYYTMvBIoJF3AsCajNAqmICTBXqJVYTEKxD4QMF3D4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6Esjua4Cnr/8+9ANbYc2tfPHS9x3Gos/7dz220THmnX0BtvnLI+xEt17+eG0286M2AYDVDypzcmQqryFKpUWfz34oEwBrewtgvHUVFkM5IekTxPSc9O5/lEe1eyDTfjb3aa8PeBuOZfiFTZge9cb47kU6f2Pf15euJII09Vapc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANxjiPOe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB82C4CEED;
+	Fri,  8 Aug 2025 07:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754638496;
+	bh=htYYTMvBIoJF3AsCajNAqmICTBXqJVYTEKxD4QMF3D4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ANxjiPOewS3527iiBY1Trtv9QJ/OmWTljS3mBn4JNASVq1ZMOxzVTWGSS+spxi8O/
+	 bJKqyUNR9Bfs/23ShbX4Zitb0Uollq10bGEygmjL0K/JfHRE1j1xSoX9r5GsoXt5CF
+	 FrHsHcd9Z7gqNmYa7wSJXIk92MSMx15EYPaL8ZOFDQfSrn0Hl8dKfdTTIZQoNraF6W
+	 vw9MUHVy4A6XNzl6fvrtbp1I6FzyeK0P8ao3L0QJuy5wNmj0qXlWxM0xxowolkFUYD
+	 h6O+02wMdAm032dr7mnIApf41xcyr20RtNTlFQE8RD0gTTVmNwJ6xDzc+N8wymXp7P
+	 cR8JYDBFoLRHw==
+Date: Fri, 8 Aug 2025 09:34:54 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, David Wronek <david@mainlining.org>, 
+	Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH RFC 2/5] dt-bindings: power: Add Marvell PXA1908 domains
+Message-ID: <20250808-portable-expert-turkey-4f8f19@kuoka>
+References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
+ <20250806-pxa1908-genpd-v1-2-16409309fc72@dujemihanovic.xyz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3MxR_qJVogQjhCw--.38019S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr47Wr1Duw15WFW8try7ZFb_yoWrZw1Dpr
-	W5Jw47K3y8Kr4xW3y7A3W7ZFyxWws5Wr1xCrs3Kr9avrZIvrnIga1UGFy8ZF48Jr93uF4I
-	qF4jqFZ8Kr18GrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250806-pxa1908-genpd-v1-2-16409309fc72@dujemihanovic.xyz>
 
-+CC device mappper, since this is a regerssion in this driver.
-
-ÔÚ 2025/08/08 13:36, Zheng Qixing Ð´µÀ:
-> From: Zheng Qixing <zhengqixing@huawei.com>
-> 
-> Device-mapper can call add_disk() multiple times for the same gendisk
-> due to its two-phase creation process (dm create + dm load). This leads
-> to kobject double initialization errors when the underlying iSCSI devices
-> become temporarily unavailable and then reappear.
-> 
-> However, if the first add_disk() call fails and is retried, the queue_kobj
-> gets initialized twice, causing:
-> 
-> kobject: kobject (ffff88810c27bb90): tried to init an initialized object,
-> something is seriously wrong.
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x5b/0x80
->    kobject_init.cold+0x43/0x51
->    blk_register_queue+0x46/0x280
->    add_disk_fwnode+0xb5/0x280
->    dm_setup_md_queue+0x194/0x1c0
->    table_load+0x297/0x2d0
->    ctl_ioctl+0x2a2/0x480
->    dm_ctl_ioctl+0xe/0x20
->    __x64_sys_ioctl+0xc7/0x110
->    do_syscall_64+0x72/0x390
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> Fix this by separating kobject initialization from sysfs registration:
->   - Initialize queue_kobj early during gendisk allocation
->   - add_disk() only adds the already-initialized kobject to sysfs
->   - del_gendisk() removes from sysfs but doesn't destroy the kobject
->   - Final cleanup happens when the disk is released
-> 
-> Fixes: 2bd85221a625 ("block: untangle request_queue refcounting from sysfs")
-> Reported-by: Li Lingfeng <lilingfeng3@huawei.com>
-> Closes: https://lore.kernel.org/all/83591d0b-2467-433c-bce0-5581298eb161@huawei.com/
-> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+On Wed, Aug 06, 2025 at 07:33:21PM +0200, Duje Mihanovi=C4=87 wrote:
+> Add device tree bindings for Marvell PXA1908's power domains.
+>=20
+> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
 > ---
->   block/blk-sysfs.c | 12 +++++-------
->   block/blk.h       |  1 +
->   block/genhd.c     |  2 ++
->   3 files changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-> index 396cded255ea..c5cf79a20842 100644
-> --- a/block/blk-sysfs.c
-> +++ b/block/blk-sysfs.c
-> @@ -847,7 +847,7 @@ static void blk_queue_release(struct kobject *kobj)
->   	/* nothing to do here, all data is associated with the parent gendisk */
->   }
->   
-> -static const struct kobj_type blk_queue_ktype = {
-> +const struct kobj_type blk_queue_ktype = {
->   	.default_groups = blk_queue_attr_groups,
->   	.sysfs_ops	= &queue_sysfs_ops,
->   	.release	= blk_queue_release,
-> @@ -875,15 +875,14 @@ int blk_register_queue(struct gendisk *disk)
->   	struct request_queue *q = disk->queue;
->   	int ret;
->   
-> -	kobject_init(&disk->queue_kobj, &blk_queue_ktype);
->   	ret = kobject_add(&disk->queue_kobj, &disk_to_dev(disk)->kobj, "queue");
->   	if (ret < 0)
-> -		goto out_put_queue_kobj;
-> +		return ret;
->   
->   	if (queue_is_mq(q)) {
->   		ret = blk_mq_sysfs_register(disk);
->   		if (ret)
-> -			goto out_put_queue_kobj;
-> +			goto out_del_queue_kobj;
->   	}
->   	mutex_lock(&q->sysfs_lock);
->   
-> @@ -934,8 +933,8 @@ int blk_register_queue(struct gendisk *disk)
->   	mutex_unlock(&q->sysfs_lock);
->   	if (queue_is_mq(q))
->   		blk_mq_sysfs_unregister(disk);
-> -out_put_queue_kobj:
-> -	kobject_put(&disk->queue_kobj);
-> +out_del_queue_kobj:
-> +	kobject_del(&disk->queue_kobj);
->   	return ret;
->   }
->   
-> @@ -986,5 +985,4 @@ void blk_unregister_queue(struct gendisk *disk)
->   		elevator_set_none(q);
->   
->   	blk_debugfs_remove(disk);
-> -	kobject_put(&disk->queue_kobj);
->   }
-> diff --git a/block/blk.h b/block/blk.h
-> index 0a2eccf28ca4..46f566f9b126 100644
-> --- a/block/blk.h
-> +++ b/block/blk.h
-> @@ -29,6 +29,7 @@ struct elevator_tags;
->   /* Max future timer expiry for timeouts */
->   #define BLK_MAX_TIMEOUT		(5 * HZ)
->   
-> +extern const struct kobj_type blk_queue_ktype;
->   extern struct dentry *blk_debugfs_root;
->   
->   struct blk_flush_queue {
-> diff --git a/block/genhd.c b/block/genhd.c
-> index c26733f6324b..9bbc38d12792 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -1303,6 +1303,7 @@ static void disk_release(struct device *dev)
->   	disk_free_zone_resources(disk);
->   	xa_destroy(&disk->part_tbl);
->   
-> +	kobject_put(&disk->queue_kobj);
->   	disk->queue->disk = NULL;
->   	blk_put_queue(disk->queue);
->   
-> @@ -1486,6 +1487,7 @@ struct gendisk *__alloc_disk_node(struct request_queue *q, int node_id,
->   	INIT_LIST_HEAD(&disk->slave_bdevs);
->   #endif
->   	mutex_init(&disk->rqos_state_mutex);
-> +	kobject_init(&disk->queue_kobj, &blk_queue_ktype);
->   	return disk;
->   
->   out_erase_part0:
-> 
+>  .../power/marvell,pxa1908-power-controller.yaml    | 105 +++++++++++++++=
+++++++
+>  include/dt-bindings/power/marvell,pxa1908-power.h  |  17 ++++
+>  2 files changed, 122 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/power/marvell,pxa1908-powe=
+r-controller.yaml b/Documentation/devicetree/bindings/power/marvell,pxa1908=
+-power-controller.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1cf3a45d56cbb7b75f7204d65=
+6016a9a569da186
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/marvell,pxa1908-power-contr=
+oller.yaml
+> @@ -0,0 +1,105 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/marvell,pxa1908-power-controlle=
+r.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Marvell PXA1908 Power Domain Controller
+> +
+> +maintainers:
+> +  - Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+> +
+> +description: |
+> +  The Marvell PXA1908 SoC includes multiple power domains which can be p=
+owered
+> +  on/off to save power when different IP cores are not in use.
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: '^power-controller$'
+> +
+> +  compatible:
+> +    const: marvell,pxa1908-power-controller
+> +
+> +  '#power-domain-cells':
+> +    const: 1
 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+So this is power domain controller?
+
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^power-domain@[0-9a-f]+$":
+> +    type: object
+
+And this is as well?
+
+You duplicated them.
+
+> +
+> +    description: |
+> +      Represents a power domain within the power controller node as docu=
+mented
+> +      in Documentation/devicetree/bindings/power/power-domain.yaml.
+
+We do not represent individual power domains, just like we do not
+represent individual clocks.
+
+
+
+> +
+> +    properties:
+> +      reg:
+> +        description: |
+> +          Power domain index. Valid values are defined in:
+> +              "include/dt-bindings/power/marvell,pxa1908-power.h"
+> +        maxItems: 1
+
+So no address space, thus this is not a separate device node.
+
+> +
+> +      clocks:
+> +        description: |
+
+Drop everywhere |
+
+> +          A number of phandles to clocks that need to be enabled during =
+domain
+> +          power up.
+
+This does not exist in your example, so it is just confusing.
+
+> +
+> +      '#power-domain-cells':
+> +        const: 0
+> +
+> +    required:
+> +      - reg
+> +
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/power/marvell,pxa1908-power.h>
+> +
+> +    clock-controller@d4282800 {
+> +      compatible =3D "marvell,pxa1908-apmu", "simple-mfd", "syscon";
+> +      reg =3D <0xd4282800 0x400>;
+> +      #clock-cells =3D <1>;
+> +
+> +      power-controller {
+> +        compatible =3D "marvell,pxa1908-power-controller";
+
+No address space, so this should be folded into the parent.
+
+Best regards,
+Krzysztof
 
 
