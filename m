@@ -1,168 +1,116 @@
-Return-Path: <linux-kernel+bounces-760546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11963B1ECB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:00:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4249B1ECBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF1F2AA2F60
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:00:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9960A188C494
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E8328540B;
-	Fri,  8 Aug 2025 16:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E322868B2;
+	Fri,  8 Aug 2025 16:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gD/3pnI8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="AFV8y+Mz"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC7B286416
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 16:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C65019DF9A;
+	Fri,  8 Aug 2025 16:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754668804; cv=none; b=SD7KceFTnQWwG3tIPZoT5aCiqTFT9lESStL5gXBTVIH39rUyveQl23mIYLLP/91gtqlmgZ3yxBdG83uh/4NZpv56IH0ISTd6KdCPSGfbfV4qcdgf3rxRwEZ19ek9e7tBFUjoWMsVL5wf+Zvnl20nqw7aYN4u7Cwhkl3CbQNKNSA=
+	t=1754668903; cv=none; b=SVvbcbojSS6mE+BcefFHbpRf1607TZTwuP8R7gQJvVgWcAMloW0t2ZLJXVcfcaqTvrBbecci8z2ZqbuTO5rfL9GEkmpUIRbVH5cuoMRx/oDN87COOwonNL/9R45NCt8Flg82bU4CJaB2Iph19ASDVwHykLQpZeMDMRWJ+tsB9KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754668804; c=relaxed/simple;
-	bh=WKHcd03Cr9GxBWo6yqcOzEqx/3q8PlcHLVjcF+AwmDM=;
+	s=arc-20240116; t=1754668903; c=relaxed/simple;
+	bh=4wpl5kISI8+f2W8s1bQPKbUJjQqqP5TkAhzHBAkm0oU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GoYVTG/qSCeEsMNjsqzp1eaccf1mM7B5zAeU3dc3fQ8IzOVcv9LXggMiN1bsrInN3CTdq/ktQwuHGiax7YFjy5j7ccM88+uEfFEysL0ksTbdxZ2eRTbaxkHQUgSwwL+VGpw7kqEb0kQtyNGWulHHAw0ZQYPbtXMwsjbcxHtFqUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gD/3pnI8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754668801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YGK9n6dq7VxCb/OM51wQ3RDMD15RnRtHlU5OclWuDJs=;
-	b=gD/3pnI8BT2u2+ivalqIr7x9EkaWhr5nbGvNEV2mRgSgJqruhHAvFEvKtPApB8Q+wHN8WL
-	fTScsNY3KLjiMLxzBF75JEdtw1b9lt1Qb9LAOFzHNslEalF2TzSKS3Wc6v/ROq4DZwtzJ4
-	9PzkithKD/r1wEO0Hm3aJS1lNf8r8Rc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-203-wt4H8Zk0P262tjW9FjN_lw-1; Fri,
- 08 Aug 2025 11:59:56 -0400
-X-MC-Unique: wt4H8Zk0P262tjW9FjN_lw-1
-X-Mimecast-MFC-AGG-ID: wt4H8Zk0P262tjW9FjN_lw_1754668794
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E6256195608B;
-	Fri,  8 Aug 2025 15:59:53 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.126])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 54FE0300145A;
-	Fri,  8 Aug 2025 15:59:51 +0000 (UTC)
-Date: Fri, 8 Aug 2025 23:59:46 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com,
-	andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com,
-	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 4/4] mm/kasan: make kasan=on|off take effect for all
- three modes
-Message-ID: <aJYe8rAa3lIe4Nat@MiWiFi-R3L-srv>
-References: <20250805062333.121553-1-bhe@redhat.com>
- <20250805062333.121553-5-bhe@redhat.com>
- <CACzwLxivXFYXuF1OkqcP9THar7UGQ3VVAQgQm=PU9Tohb8hnRQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pXPVOOgQ8gc+ZlUQIVfr0F6VeBV1TrN/sWFm8m8PMZrGBUChedxx5QmNMqFLKMyaSuhV1n/GA4sS+x9bLHk7BV0Ea/Izfg/A/uXVJUr5BLowfwWffRDNbm7iBut0uje5OH1XapahDw8peGJhPspjxCiyNDwM3mXOungzeUAFw1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=AFV8y+Mz; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=Pa6ymjaf+laIWDGL7nQvdthJC62smmHhReHlABClzRc=; b=AFV8y+MzC2v3/m2A
+	tP1s6C5vKN1CJu/UeZkpAky9muwA4QZMopqa0F0/pkfFLF7PEZGRMLxdVGBiINmC3Hdxs9EygoOyW
+	DJjjTwXsc3nKtrV6rqV9bgk/cPho/zOHP86LPcYcSyc3FdGBP5QmByCQRTz+eGMD/W7M+OyaYZKWU
+	bdIqcLV7RYmSjZ+MR1F7Pv7jKOfy0fh6P/mWDN65pFqU8ZDlONdqsHFH7BFZNHT8D/dqN0BK6b/Rm
+	OqeFChZjD46zgsk7IV1T3U2xYtx0XHBasJwke3smi8+N9ImCCQGhqSfnFnvfqPmBqBL0bHZKrvNmS
+	Q86C2IzA8QEkZb2yyg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1ukPX7-002mNU-36;
+	Fri, 08 Aug 2025 16:01:29 +0000
+Date: Fri, 8 Aug 2025 16:01:29 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Lee Jones <lee@kernel.org>, arnd@arndb.de, mchehab@kernel.org,
+	lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+	tiwai@suse.com, linux-media@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/4] Remove the wl1273 FM Radio
+Message-ID: <aJYfWQg-B_GQtF0n@gallifrey>
+References: <20250625133258.78133-1-linux@treblig.org>
+ <175137646300.2319882.12045106011003909576.b4-ty@kernel.org>
+ <20250808155133.GC23187@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACzwLxivXFYXuF1OkqcP9THar7UGQ3VVAQgQm=PU9Tohb8hnRQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20250808155133.GC23187@pendragon.ideasonboard.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 16:01:15 up 103 days, 14 min,  1 user,  load average: 0.02, 0.03,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 08/06/25 at 11:24pm, Sabyrzhan Tasbolatov wrote:
-> On Tue, Aug 5, 2025 at 11:34 AM Baoquan He <bhe@redhat.com> wrote:
-> >
-> > Now everything is ready, set kasan=off can disable kasan for all
-> > three modes.
-> >
+* Laurent Pinchart (laurent.pinchart@ideasonboard.com) wrote:
+> Hi Lee,
 > 
-> Hello,
+> On Tue, Jul 01, 2025 at 02:27:43PM +0100, Lee Jones wrote:
+> > On Wed, 25 Jun 2025 14:32:54 +0100, linux@treblig.org wrote:
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > 
+> > > I noticed that the wl1273 radio had an unused symbol, but then noticed
+> > > it is on Arnd's unused driver list:
+> > >   https://lore.kernel.org/lkml/a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com/
+> > > 
+> > > So, delete it.
+> > > The components seem pretty separable, except for Kconfig dependencies.
+> > > 
+> > > [...]
+> > 
+> > Applied, thanks!
+> > 
+> > [3/4] mfd: wl1273-core: Remove
+> >       commit: efddd98938400a570bde5bc69b5ecc7e76cacbe1
+> > [4/4] mfd: wl1273-core: Remove the header
+> >       commit: d356033e7b1e94e0187bb0651f4a066a4646fbb9
 > 
-> I've been working on this already and a different approach
-> with the Kconfig ARCH_DEFER_KASAN has been proposed.
+> Ah, that may answer the question I just posted in another reply to the
+> cover letter.
+> 
+> I think patch 4/4 will break build in -next until patches 1/4 and 2/4
+> get merged too. Should we get 1/4 and 2/4 merged in the media and sound
+> trees ASAP, or would you prefer a different option ?
 
-Thanks for telling, I don't always watch MM mailing list, so missed your
-earlier posting. 
+That makes sense to me.
 
-I went through your v5 series, we are doing different work. I am adding
-kasan=on|off to generic/sw_tags, and have added kasan_enabled() to needed
-places. In fact, based on this patchset, we can remove
-kasan_arch_is_ready() more easily since in all places kasan_enabled() has
-been added there. Before seeing your patches, this is what I planned to
-do to remove kasan_arch_is_ready(). I will see what can be done better.
-Maybe I can carry your patch in v2. I will try tomorrow.
+Dave
 
 > 
-> Please see v4 thread.
-> https://lore.kernel.org/all/20250805142622.560992-1-snovitoll@gmail.com/
+> -- 
+> Regards,
 > 
-> It also covers the printing in a single KASAN codebase, instead of
-> printing "KASAN intiilaized" in arch/* code.
-> Also covers the enabling KASAN via kasan_enable() for all 3 modes.
-> 
-> It's up to KASAN maintainers to choose either version.
-> I just need the confirmation now if I should proceed with v5,
-> or your version if it covers all arch and cases should be picked up.
-> 
-> Thanks
-> 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  include/linux/kasan-enabled.h | 11 +----------
-> >  1 file changed, 1 insertion(+), 10 deletions(-)
-> >
-> > diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enabled.h
-> > index 32f2d19f599f..b5857e15ef14 100644
-> > --- a/include/linux/kasan-enabled.h
-> > +++ b/include/linux/kasan-enabled.h
-> > @@ -8,30 +8,21 @@ extern bool kasan_arg_disabled;
-> >
-> >  DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
-> >
-> > -#ifdef CONFIG_KASAN_HW_TAGS
-> > -
-> >  static __always_inline bool kasan_enabled(void)
-> >  {
-> >         return static_branch_likely(&kasan_flag_enabled);
-> >  }
-> >
-> > +#ifdef CONFIG_KASAN_HW_TAGS
-> >  static inline bool kasan_hw_tags_enabled(void)
-> >  {
-> >         return kasan_enabled();
-> >  }
-> > -
-> >  #else /* CONFIG_KASAN_HW_TAGS */
-> > -
-> > -static inline bool kasan_enabled(void)
-> > -{
-> > -       return IS_ENABLED(CONFIG_KASAN);
-> > -}
-> > -
-> >  static inline bool kasan_hw_tags_enabled(void)
-> >  {
-> >         return false;
-> >  }
-> > -
-> >  #endif /* CONFIG_KASAN_HW_TAGS */
-> >
-> >  #endif /* LINUX_KASAN_ENABLED_H */
-> > --
-> > 2.41.0
-> >
-> >
-> 
-
+> Laurent Pinchart
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
