@@ -1,132 +1,230 @@
-Return-Path: <linux-kernel+bounces-760664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E41B1EE62
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CCEB1EE74
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A931C24B7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B396BA060B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C365D1F55F8;
-	Fri,  8 Aug 2025 18:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721F5220F52;
+	Fri,  8 Aug 2025 18:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aj150tUY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghruLc0N"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2011DA3D;
-	Fri,  8 Aug 2025 18:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0907D1F4C84;
+	Fri,  8 Aug 2025 18:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754678109; cv=none; b=brPNWWYBT0lrhAT8TSC0hCKoarx1IfxpFum80pwMf0ztS2q5IzfxkHX4jTF9GaEGK7BGLK6WzClTn+5EefLeCspILYs5PTBzwoVjlB10z9YDva/I45EwLxUjUdh/Nnlt8PlILAarE9kn92UxfGg6Hk6+7vw6/QdFI9DDe8LAqjw=
+	t=1754678342; cv=none; b=Rh8oPgGd3EuangGcd1+I2TFEArkypvtq+uMEtmo5rjavVc9P3FuiLyPGKAGgBywWxoeNcNF6vdhCPmzfY3DBnUmW3YTYQ5cV1U/8SLPyiqsCvgomir3bUrhaikSYRlV1eL4qRJU0ToBJb/cB0PiO101mbqipVoc+OeM+PQjXI4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754678109; c=relaxed/simple;
-	bh=IuzZbZWTiLTP8JAcrSypnqpsNPXBmkeURPbqf/T1pqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qVCjRDyJSTlDaCU0F5ujmxneql7K/pjkP+Mmd6W6CI9bE8/x1fIKPATVi/ssfXGA9EpWUE69f8G1j3ouHpGprgII2qxt9HXvdH7wZ44YftQPHpho+s/rK61WrzVwuKP6f1lX+F9VxkkhRErQDvF/ta3Up0EB+56/MDX4OuffIfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aj150tUY; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754678108; x=1786214108;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IuzZbZWTiLTP8JAcrSypnqpsNPXBmkeURPbqf/T1pqg=;
-  b=aj150tUYP3QUDOc8QZcpLqwikKxFWKK85cVAHAhw8xOdpC/TzwoxFeWk
-   addb0s3/m2XgMGfEnWYrzObFLtzCzw3OiohBqdcGiqPA+lVM/bR/TNx/2
-   J/o1Gf+D02hZ3p6NM/PJxrVQhnHsrBmHUixF3N2eC5xRBEiGzVQVIQ2x0
-   VTEvLbFnZzFHPkvAXdrerkJRFNVDu+OH3tW51c6HXTC4NffgCiCiLUCGC
-   2iPR6jVC2tUlJ7BNxH6jMxZuFlG+OewN3+8R/SEAAcviHkRiO+Gcidd4K
-   zXuv8y1xJlcBlh+waKXUjKSRqpv81cZ9L59BgFPCyJ34sf7Yv4LIj7K/O
-   w==;
-X-CSE-ConnectionGUID: cOvUCSwmSAaVUgYoh4aNZQ==
-X-CSE-MsgGUID: RyFER95FSeCxaFfgI1bQJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="68400464"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="68400464"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 11:35:07 -0700
-X-CSE-ConnectionGUID: MZ+FFlTeRZ6kYAn0hyy7QQ==
-X-CSE-MsgGUID: DTLv6gHzQgq5nxzPBm689Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="164619312"
-Received: from tcingleb-desk1.amr.corp.intel.com (HELO [10.125.110.236]) ([10.125.110.236])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 11:35:06 -0700
-Message-ID: <5975a032-af5c-49e9-9c85-9fed941658fd@intel.com>
-Date: Fri, 8 Aug 2025 11:35:05 -0700
+	s=arc-20240116; t=1754678342; c=relaxed/simple;
+	bh=wTcaw0dDssgCkxpjul2gQBoQ/cKBTeFMxCtlAzWgAfQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Im/xgt404gQs4t6zgoF/pSc1EtJURw0Pg9PrnyF1X19zl5gLqWn3midRt+QAlRGEc0Uoog3w/dZ/gWfiWkISrH18OsbpwEgQdkNjvhS/4kb0N4M22h9+xkfXzoqk7x04O5ESDVJEcIczQy7HNw5rzZj4Yv0jxUhtmLXYwXZxHEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghruLc0N; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af94e75445dso454790566b.0;
+        Fri, 08 Aug 2025 11:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754678339; x=1755283139; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7gWwtBN6ebQOcOxsCD+ybzhCBORN9wnDQdVJlpxrz/s=;
+        b=ghruLc0N4uuMhjZQZ3iSHrp2Xr79Zysue/DK4it3qA8GyN0JXxB5xgva7FJ1IGxocP
+         fbVU+28wOFRnPZ0KHgjHs2QObUAfO1wYJJFhhcP6Onizbarc6532o0H9RwDQnhnGlFyr
+         qDmHwaYIt3ZHhQtw4937GfsfGG4Inl9GUc7Mhv0YYjEBfWGcQeSB/CrxQxXLW8HlfgDn
+         pd57ilpcHKcgdZ1YxaSabQtgJFs3EwU/zJXWJIlXZVXDbOinC2pDqBF+E3tSq4t8/6N4
+         BWqcUi10hSL6oi4ZQEMV6bDyvnFuqvKrgcihlTfBPIICXa/5p22CYsqZrpeLHWumTy36
+         ptfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754678339; x=1755283139;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7gWwtBN6ebQOcOxsCD+ybzhCBORN9wnDQdVJlpxrz/s=;
+        b=jW9KeYMeTeMgk8QeY4uH7duhFsPNooaiCHuFWuYryGuH3O++Fu6NqS8to6TiZPsdkH
+         SUZYhrhj361v5eIig3T9Ka31lOJmndUCgxFf0p+VbMtb1e03UV3CuyoN0c09L3p+cHPE
+         KFJKGrufyeuXrvBvFtbp+41pmh00rsJQpsnfi1u1YRl8OlCuY02lEu6vFDr2vs8EE3cx
+         DGxohu4aeI3IYtWoCT8NkQfg0MAHOW3YYbTHBhr0B9kkfElxuKhmamQAQcv2Q7+mw+/+
+         vN+IptD0dMjbEVC5rPDB0HcNI72jlF8dGWidrdHP/ax/yjzPnbEzWUfMQQn9DTBHZGzN
+         tnzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUexm5nWDcIsrwoLT+bLMs3TLVwO5T670wSYCF6R/OqvoPjuv67Hfu3t/xDZZlPU3MIsqE=@vger.kernel.org, AJvYcCUgB02T/X4F/Kqx2KETmo0rsq36b7dNiLifPRhdWU7QbWzK1lBKOgbRgZ/L1xITkkUX9Ek718V5dw5acMsQY/CC2YoX@vger.kernel.org, AJvYcCXaxeH4ukZwDy1mBMy3g9AuI6BIfpBVFeSQSh9c29JYxXVDeNYbdZuTfpg3e1NP8oBuL6jqjeRHPwTuEfQR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS/M747Pkwb9OoJ5fgPihiA6cZcLwK+N5nF5GiBZSrUrdF18cK
+	USBLU/MO2fc9Aui2eNBLU5ZZKW+o2noLcc9CDCGATijZn0cAQrBg3Gea
+X-Gm-Gg: ASbGncukDdL8mlYp1rDx8NnU1M5qe6clar4CX9o4HeXLft7ylYe5WyRVkRQ/Ek5CU6o
+	taLxHo4YxV2NOG5L8qEfsJFMXfU4zIbCoAki7gti0va2WxMTDUAMd0NFU8iC1wbvzaRGgpDFLc1
+	Mb7++7Qnvq2kOxeoEADUB4wbLQvCxnxig+pTHeq5dgkgm+5j+1EllBusSyNN/svvEiKRqpGsurx
+	GTlYhgFRetAhuirKFPd33hMiQ/kD39XcJo8B80ORupkZfZKcZMiO1nB4MmPSEa/QsSnuXpRBcTJ
+	NtnFFX1yCHAtrPt1e6lhrODqtsIqLqMSYvjBYVV7Wgo5UhmD9FpOe1t05pKXmYyddezaRHjD+uT
+	CNrvT8yaboAbYjw==
+X-Google-Smtp-Source: AGHT+IHm4FM+H2cY+xcahr29t1p51xqTQjA9Z1EzXFR/hkulXj4tdkM3UyPID6AE1hwChDqdy2Ks4Q==
+X-Received: by 2002:a17:907:8691:b0:ae1:c79f:2b2e with SMTP id a640c23a62f3a-af9c6540d48mr356899166b.40.1754678339050;
+        Fri, 08 Aug 2025 11:38:59 -0700 (PDT)
+Received: from krava ([2a00:102a:406f:c1c4:19f6:67fa:c879:8862])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a219ecfsm1532455666b.94.2025.08.08.11.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 11:38:58 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 8 Aug 2025 20:38:56 +0200
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC 1/4] uprobe: Do not emulate/sstep original instruction when
+ ip is changed
+Message-ID: <aJZEQDgIPr9wVUWP@krava>
+References: <20250801210238.2207429-1-jolsa@kernel.org>
+ <20250801210238.2207429-2-jolsa@kernel.org>
+ <20250802103426.GC31711@redhat.com>
+ <aJBrXwHESPRTpwYa@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Update max30208 for bouncing maintainer
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
- David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>,
- linux-iio@vger.kernel.org, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-References: <20250808174901.4556B33A@davehans-spike.ostc.intel.com>
- <aJZBvi2cXN6LZEFb@debian-BULLSEYE-live-builder-AMD64>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <aJZBvi2cXN6LZEFb@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJBrXwHESPRTpwYa@krava>
 
-On 8/8/25 11:28, Marcelo Schmitt wrote:
-> I'd like to take maintainership of that one.
+On Mon, Aug 04, 2025 at 10:12:15AM +0200, Jiri Olsa wrote:
+> On Sat, Aug 02, 2025 at 12:34:27PM +0200, Oleg Nesterov wrote:
+> > On 08/01, Jiri Olsa wrote:
+> > >
+> > > If uprobe handler changes instruction pointer we still execute single
+> > > step) or emulate the original instruction and increment the (new) ip
+> > > with its length.
+> > 
+> > Yes... but what if we there are multiple consumers? The 1st one changes
+> > instruction_pointer, the next is unaware. Or it may change regs->ip too...
+> 
+> right, and I think that's already bad in current code
+> 
+> how about we dd flag to the consumer that ensures it's the only consumer
+> on the uprobe.. and we would skip original instruction execution for such
+> uprobe if its consumer changes the regs->ip.. I'll try to come up with the
+> patch
 
-Great! So I think the best thing for you to do would be send a fresh
-patch to the same folks that I sent my patch, along with a proper
-changelog and Signed-off-by: you.
+how about something like below?
+
+jirka
+
+
+---
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 516217c39094..b2c49a2d5468 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -59,6 +59,7 @@ struct uprobe_consumer {
+ 	struct list_head cons_node;
+ 
+ 	__u64 id;	/* set when uprobe_consumer is registered */
++	bool is_unique; /* the only consumer on uprobe */
+ };
+ 
+ #ifdef CONFIG_UPROBES
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index f774367c8e71..b317f9fbbf5c 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1014,14 +1014,32 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
+ 	return uprobe;
+ }
+ 
+-static void consumer_add(struct uprobe *uprobe, struct uprobe_consumer *uc)
++static bool consumer_can_add(struct list_head *head, struct uprobe_consumer *uc)
++{
++	/* there's no consumer, free to add one */
++	if (list_empty(head))
++		return true;
++	/* uprobe has consumer(s), can't add unique one */
++	if (uc->is_unique)
++		return false;
++	/* uprobe has consumer(s), we can add one only if it's not unique consumer */
++	return !list_first_entry(head, struct uprobe_consumer, cons_node)->is_unique;
++}
++
++static int consumer_add(struct uprobe *uprobe, struct uprobe_consumer *uc)
+ {
+ 	static atomic64_t id;
++	int ret = -EBUSY;
+ 
+ 	down_write(&uprobe->consumer_rwsem);
++	if (!consumer_can_add(&uprobe->consumers, uc))
++		goto unlock;
+ 	list_add_rcu(&uc->cons_node, &uprobe->consumers);
+ 	uc->id = (__u64) atomic64_inc_return(&id);
++	ret = 0;
++unlock:
+ 	up_write(&uprobe->consumer_rwsem);
++	return ret;
+ }
+ 
+ /*
+@@ -1410,7 +1428,12 @@ struct uprobe *uprobe_register(struct inode *inode,
+ 		return uprobe;
+ 
+ 	down_write(&uprobe->register_rwsem);
+-	consumer_add(uprobe, uc);
++	ret = consumer_add(uprobe, uc);
++	if (ret) {
++		put_uprobe(uprobe);
++		up_write(&uprobe->register_rwsem);
++		return ERR_PTR(ret);
++	}
+ 	ret = register_for_each_vma(uprobe, uc);
+ 	up_write(&uprobe->register_rwsem);
+ 
+@@ -2522,7 +2545,7 @@ static bool ignore_ret_handler(int rc)
+ 	return rc == UPROBE_HANDLER_REMOVE || rc == UPROBE_HANDLER_IGNORE;
+ }
+ 
+-static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
++static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs, bool *is_unique)
+ {
+ 	struct uprobe_consumer *uc;
+ 	bool has_consumers = false, remove = true;
+@@ -2536,6 +2559,8 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+ 		__u64 cookie = 0;
+ 		int rc = 0;
+ 
++		*is_unique |= uc->is_unique;
++
+ 		if (uc->handler) {
+ 			rc = uc->handler(uc, regs, &cookie);
+ 			WARN(rc < 0 || rc > 2,
+@@ -2685,6 +2710,7 @@ static void handle_swbp(struct pt_regs *regs)
+ {
+ 	struct uprobe *uprobe;
+ 	unsigned long bp_vaddr;
++	bool is_unique = false;
+ 	int is_swbp;
+ 
+ 	bp_vaddr = uprobe_get_swbp_addr(regs);
+@@ -2739,7 +2765,10 @@ static void handle_swbp(struct pt_regs *regs)
+ 	if (arch_uprobe_ignore(&uprobe->arch, regs))
+ 		goto out;
+ 
+-	handler_chain(uprobe, regs);
++	handler_chain(uprobe, regs, &is_unique);
++
++	if (is_unique && instruction_pointer(regs) != bp_vaddr)
++		goto out;
+ 
+ 	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+ 		goto out;
 
