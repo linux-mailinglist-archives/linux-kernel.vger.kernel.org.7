@@ -1,226 +1,275 @@
-Return-Path: <linux-kernel+bounces-760456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C83B1EB6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:18:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACA3B1EB79
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E5087B24BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:16:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21A104E3C5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BFA283689;
-	Fri,  8 Aug 2025 15:17:51 +0000 (UTC)
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023072.outbound.protection.outlook.com [52.101.127.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874E6283FE1;
+	Fri,  8 Aug 2025 15:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEKu1+Qa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DEA23741;
-	Fri,  8 Aug 2025 15:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754666270; cv=fail; b=IuqWSbAwHae+IRVp1zvvIBcQnmY1UL14ddvEA/FUV2fqXXfs8rYsYBp+dYDZ4SbMsVeH9UpH3F6dSykpSkhr7t9nMuyzjydz89ioFzmEzERsAvqRXhNw8E1gnJZO6diak3hTR+44dcNxdQsK1N+RznEfufcZzG9aC7gjAMV5D/w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754666270; c=relaxed/simple;
-	bh=3V5a2n8uXnbEpisPB/uI7+rsDpwoRZ5rAiPGp+WTclE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J9MwG9PEUIlRrgpf56PwfxRCcr/xqiKzKvKBa3et40K91uwMP+rsAtrVePoB1v7FyC9KmGc0Fq1EsiiEZjKCxV8a3cNCRGGFuYHiV8PNr92ok8UZwPaVtgdpn9HuVbBBmn8afjXtmQbBzpCAGhRm7fpMSuoHQVgo8YA9/PtFmD4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u6hYSv+Xqy8ziRAWvRkr8/h/pMs5kFieM5Wft+p6yAgCnTKVtJXS66Pd1vxI68rzCBbe5jQOb9zaZWhYJemANv1wuHPSS6GaPYoVTQlROvZqAjdHV1OJEaRRZuFKvoc2eHAQ2phK5ORXkIzolnCoLfgPx1e6qQLBiMfp1U+W9fALKCGa6LyzWE4dmOzahQ9GrTuBZNvxgY3yAxnGW7XEDPhSQ+yIih2chteMtEEKkOZys+cb2t6w3h0GjuYpo1cotC4iEzObAWb0vdydWhSdbnnLXc8jVqmIc9XSSRGt8PgXtZXTNkIsOfP8TV93hwHwJjQHqv6ruarCHdrPrSTkeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jAbSI6+6aomTRZ2qu5ibQKfPHNwjG5s9XEIsrYbF2eM=;
- b=iCZN/CDn1GPdHvvLAG0lRzwo7NI6/fqLbZ+Xql95kjfg6cA1rshzaxH0B4RTAWjFAcsnWA1DBs8dnoYtlYdl6hOoTlQLbYDLA5Y+nfN67kob0KaJU2YCFA6UptU9o2yQrB5itOHwsvFOQwz3hooAIbKAnlBEIyItxCr68aB1is5JPlCdpjxz5Nku/glDW++zE0kKw33FqZtZb8AWG+BnliHX4Tw8F1pFuCSA6uxFNPouLwlgT4+Dq3z2Hz4/4T08RaoEP+c+NUp/tV55pbPuIegN7Ef+/7gSdXnrWb3NGrNvSDz93vjzKdMB4UAvxr00kVFNUd3xnMLXGcnWKmY9zA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SG2PR02CA0082.apcprd02.prod.outlook.com (2603:1096:4:90::22) by
- TYUPR06MB6052.apcprd06.prod.outlook.com (2603:1096:400:354::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.15; Fri, 8 Aug 2025 15:17:40 +0000
-Received: from SG1PEPF000082E6.apcprd02.prod.outlook.com
- (2603:1096:4:90:cafe::96) by SG2PR02CA0082.outlook.office365.com
- (2603:1096:4:90::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.16 via Frontend Transport; Fri,
- 8 Aug 2025 15:17:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG1PEPF000082E6.mail.protection.outlook.com (10.167.240.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.8 via Frontend Transport; Fri, 8 Aug 2025 15:17:38 +0000
-Received: from [172.16.64.208] (unknown [172.16.64.208])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 145DA40A12CE;
-	Fri,  8 Aug 2025 23:17:33 +0800 (CST)
-Message-ID: <296c1f17-999e-4117-9f09-5f2e844c4bdd@cixtech.com>
-Date: Fri, 8 Aug 2025 23:17:31 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68188645;
+	Fri,  8 Aug 2025 15:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754666350; cv=none; b=d/qNzJTtFz9c6cgj0aU/25vaDo+9LHMBs4Q0FASsCap1QV/p8zm1fu1w8XEIK7vr0zOEjSqjPdLmFWj7ijEYBmbihd2Ya9yawV2AZyZZ3QjQioGZkN10bHldrUQIuKUmfJSI1PDX6Sbr92Ag4xVvrLOK3MVYB9ZqxiRkTj4pquo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754666350; c=relaxed/simple;
+	bh=tsdeCPIPkX+wdlJnsaj55GinnOFi+s4xef6Bgzt4ay4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=AmKyVvIKw95CU5dFGVPeMHqMJKyY00nyqTtIAOLCVgykrovIj/Ls3VRWfv1+EneRS24bLlgFSppVkQQNmUO5p8TERLAbRgK+7EJ+XdS1Twl7/WCpbQUCfbunI+rLlJHLH+niBQinFM61pgSfNHmROLIum4rtVx2Hb4Ch93oqjfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEKu1+Qa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA27C4CEED;
+	Fri,  8 Aug 2025 15:18:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754666350;
+	bh=tsdeCPIPkX+wdlJnsaj55GinnOFi+s4xef6Bgzt4ay4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jEKu1+QacMpqQYXBXccohR6zFIE5s3psXsmyHRGVtrVZ0pnr1KmEtw/7ur1/cNOIW
+	 7yaC0tT7pE/PEjOsCREluDbIOYElxV91R5zU3GXDduQNPG8iQNtdKgQXXVLW71gXl5
+	 fRmW8W+WmqtOuYX/bt+7acRqoQOvMWs/tb/l9dLqifK5e8D6y8omqS0IUDwTvWnmUF
+	 1F33T1JsWwfXSls+ht4OCwM/ynfr2/txGMl1BZG+D42MTMRH6wjt8FtNVLI5StDKkm
+	 cyfFCwSelTNh5o5BUDnQ68xW+NwKXbG9KE6xPzchGCg1TuE5BEY10KBkXbjn1Yy2DL
+	 MtO6m2yoXCqug==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath10k@lists.infradead.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 00/21] gpiolib: fence off legacy interfaces
+Date: Fri,  8 Aug 2025 17:17:44 +0200
+Message-Id: <20250808151822.536879-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 07/12] dt-bindings: PCI: Add CIX Sky1 PCIe Root Complex
- bindings
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, guoyin.chen@cixtech.com,
- krzk+dt@kernel.org, cix-kernel-upstream@cixtech.com, conor+dt@kernel.org,
- mani@kernel.org, linux-pci@vger.kernel.org, peter.chen@cixtech.com,
- devicetree@vger.kernel.org, mpillai@cadence.com,
- linux-kernel@vger.kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
- fugang.duan@cixtech.com
-References: <20250808072929.4090694-1-hans.zhang@cixtech.com>
- <20250808072929.4090694-8-hans.zhang@cixtech.com>
- <175465973854.5889.2255011303498628193.robh@kernel.org>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <175465973854.5889.2255011303498628193.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E6:EE_|TYUPR06MB6052:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e4dbec2-d73b-442f-a6ee-08ddd68eb665
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|376014|82310400026|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UVhJd0dmMURRVThPRGdUcnZZWUp1dHd6TEJ5Q015U01NQXJXQS9YbXZDUzA0?=
- =?utf-8?B?czFsTElNSU11Wks5Ri9HenhnazFVdjBtQ2ZUR05SdTJKVElCK0VTRUVSL2Nl?=
- =?utf-8?B?dDRRK0VzV01QZkQ3NjYvRnkrd0g2aWRJbTgxSUxsSEptcjE2Qjloczd0Q29K?=
- =?utf-8?B?Zkxram9kYkoxcHdUSmNNQTUzTkZ3ZjVPMlRCNjdGSEM4RzBqTzlDcTM2UGUx?=
- =?utf-8?B?MU5ueXg0alRxZy8yb2ZUVk5TVVJXeEVqdzdNU3FCcjlST0dHRHBIbkdBZFIz?=
- =?utf-8?B?YnRDKzA5T2xGMXBVV2lJWURrZmZNNTd0ZHNkek96bjNKM0JqR3hrdGFXT2dv?=
- =?utf-8?B?K2w0WDFtTlRWeTd1K1lTM28yc0F0SjJybE1lQlUyc3J6R3AxdzliRVlNWEpz?=
- =?utf-8?B?OTNWd1Q2a3pMV2YzSmpjbEFZVGN1ZXZWNnlKcHlZbWVKTE1lcmJMZzVmMzdJ?=
- =?utf-8?B?bU1IWHVlRlBJSExKVGlpQjRPVC9sZ2NlakpPWWk3U1BBa20vZjFmSkxDY0lZ?=
- =?utf-8?B?YmtXUEFqNzd1aWp2RDhVV25WM2t1MHM4Qi9RZ1U1Ri83Njh1bzdWdTdVNEQy?=
- =?utf-8?B?Y2tRdHB6NGVNOFJQSXhScWFFUml5b2x2c3AzY2QvelZhY3BQdWRoMHF5NTZm?=
- =?utf-8?B?OUFDVnFGaERjMGtGRk9OaFVkZWpjQkNENnAvNTRBbmpJWnJDZFFDNDd3TG1r?=
- =?utf-8?B?Z0QzS2Z6K3hqckpoWEFWNDBHZDRucXowRmZuRTg1MmR3QjE1Vnh4K2c0SXdn?=
- =?utf-8?B?azIvY3NnbWRjRTZLUlNRcVJGaVVZTGwxWWlPcS9mRWhHdjVKQnVrYWRTSm9r?=
- =?utf-8?B?dUN2QTc2d3VxYUNyOGh6M3pvQXhMZUhBb3dnTkQ2djJEVVdXSjBkSDdQdEVn?=
- =?utf-8?B?bUJkZWE0QU04VDNPY3QvdGdlSGZTM0ZlS1MrTVp2cm5HTlJXL245Y0ErK2tB?=
- =?utf-8?B?aEFLSXFzelE2dlEyMkxteVVNZEVWckZVQkhlZ1JSejErTklrSHNTVFF3c0dF?=
- =?utf-8?B?VkRjcW5sdHB3OVhnalhJWHNCdGUxVVVmakJNeUJ2bjl3eHUzYUJ6RHAxbDVj?=
- =?utf-8?B?TlBDcVN3TWVONWFvUDczNHpmSWdVbVB2Z09PTGpaOVlxZ29ZRGJPVTZXVjM5?=
- =?utf-8?B?Z3BHU1VKbGhwU2lYRUJNdnE0clY5MHhzYytFcGR2MmZhL1NYcmhuWFJ3U2tD?=
- =?utf-8?B?cGJVbi9vRnBOdk9jZit1VnF3a3ROczl4c2NEWWJUeEU2c08vMFc0Y2JKZHJs?=
- =?utf-8?B?RllvZjVpUXh1ZkVselozaGRxV3JaYVh5Unk0S1oxQU1qTHR6bVJINXh1Q3dC?=
- =?utf-8?B?MHRNWmZaeGdVcDVRMkhZWFZ5VFlTRzY4THpuRHg2MlZaaWZlMkQ0N2VwM2lP?=
- =?utf-8?B?c2h6ZWRoZDVPVzJQaEZkQUs2ZkphcHdCamQraWRIaEdYdU5SNDZOZ1l3aVpO?=
- =?utf-8?B?MDgwblZSdWhPcUtHdk9TL1dPQjdJZnovcEFoS1NKRlpFWElId2hRbnB6aGFR?=
- =?utf-8?B?bGdaUFdDSUhyN0pMcG9YbHlodk1GcTZnOGdkb25GQmRZZDFrTUlUZTZHUVhW?=
- =?utf-8?B?NUYzY1J5Qis1RjdlNmdGcUNMeEJvZThQS2RtMWJlcGFETElhY2FiMGk4akg1?=
- =?utf-8?B?U2xMN3A3cTNjbzZBaUNSMjdvc3E4bi83THdpZGlIaDFqNEE0SUw3dk1iYzVy?=
- =?utf-8?B?KysrN0ZHd25VRzBnaWF1VFJxaVFoeDVTTnU3eGRBZitTazdMaWJvMndUOENu?=
- =?utf-8?B?Z2pBbXZtL3c5SjVKdE9Rc2dXdVh0WjZZSFVBSUZ5azdFNTE1UzYyQjg4Zmtz?=
- =?utf-8?B?anVLWkRUMkU2c1BYYzBXd0JORk1hM2FBUUlJYWJ0N2FhekVYZEhEY0NJTTNt?=
- =?utf-8?B?SlJoRVFyRUxaa3FkZ0FMZFVyUms2Zmp4NnFEZGFiL3p3ak1SU0RsWUtSejdG?=
- =?utf-8?B?cmY4bStqeVNqMitLN2UzSVNEZE5KcHkrbHRpN1JYdnBzc0VuN0V2UUMvRTll?=
- =?utf-8?B?bEhtd0c1ZG1RPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 15:17:38.8515
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e4dbec2-d73b-442f-a6ee-08ddd68eb665
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E6.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR06MB6052
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Arnd Bergmann <arnd@arndb.de>
 
+Commit 678bae2eaa81 ("gpiolib: make legacy interfaces optional") was
+merged for linux-6.17, so now it is possible to use the legacy interfaces
+conditionally and eventually have the support left out of the kernel
+whenever it is not needed.
 
-On 2025/8/8 21:28, Rob Herring (Arm) wrote:
-> EXTERNAL EMAIL
-> 
-> On Fri, 08 Aug 2025 15:29:24 +0800, hans.zhang@cixtech.com wrote:
->> From: Hans Zhang <hans.zhang@cixtech.com>
->>
->> Document the bindings for CIX Sky1 PCIe Controller configured in
->> root complex mode with five root port.
->>
->> Supports 4 INTx, MSI and MSI-x interrupts from the ARM GICv3 controller.
->>
->> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
->> ---
->>   .../bindings/pci/cix,sky1-pcie-host.yaml      | 73 +++++++++++++++++++
->>   1 file changed, 73 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
->>
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml: properties:compatible:oneOf: [{'const': 'cix,sky1-pcie-host'}] should not be valid under {'items': {'propertyNames': {'const': 'const'}, 'required': ['const']}}
->          hint: Use 'enum' rather than 'oneOf' + 'const' entries
->          from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-> Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dts:27.13-29.83: Warning (ranges_format): /example-0/pcie@a010000:ranges: "ranges" property has invalid length (84 bytes) (parent #address-cells == 1, child #address-cells == 3, #size-cells == 2)
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: pcie@a010000 (cix,sky1-pcie-host): ranges: 'oneOf' conditional failed, one must be fixed:
->          [[16777216, 0, 1611661312, 0, 1611661312, 0], [1048576, 33554432, 0, 1612709888, 0, 1612709888], [0, 534773760, 1124073472, 24, 0, 24], [0, 4, 0]] is not of type 'boolean'
->          1048576 is not one of [16777216, 33554432, 50331648, 1107296256, 1124073472, 2164260864, 2181038080, 2197815296, 3254779904, 3271557120]
->          0 is not one of [16777216, 33554432, 50331648, 1107296256, 1124073472, 2164260864, 2181038080, 2197815296, 3254779904, 3271557120]
->          [0, 4, 0] is too short
->          from schema $id: http://devicetree.org/schemas/pci/cix,sky1-pcie-host.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: pcie@a010000 (cix,sky1-pcie-host): reg: [[0, 167837696], [0, 65536], [0, 738197504], [0, 67108864], [0, 167772160], [0, 65536], [0, 1610612736], [0, 1048576]] is too long
->          from schema $id: http://devicetree.org/schemas/pci/cix,sky1-pcie-host.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: pcie@a010000 (cix,sky1-pcie-host): Unevaluated properties are not allowed ('#address-cells', '#interrupt-cells', '#size-cells', 'bus-range', 'device_type', 'interrupt-map', 'interrupt-map-mask', 'msi-map', 'ranges', 'reg' were unexpected)
->          from schema $id: http://devicetree.org/schemas/pci/cix,sky1-pcie-host.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: pcie@a010000 (cix,sky1-pcie-host): ranges: 'oneOf' conditional failed, one must be fixed:
->          [[16777216, 0, 1611661312, 0, 1611661312, 0], [1048576, 33554432, 0, 1612709888, 0, 1612709888], [0, 534773760, 1124073472, 24, 0, 24], [0, 4, 0]] is not of type 'boolean'
->          1048576 is not one of [16777216, 33554432, 50331648, 1107296256, 1124073472, 2164260864, 2181038080, 2197815296, 3254779904, 3271557120]
->          0 is not one of [16777216, 33554432, 50331648, 1107296256, 1124073472, 2164260864, 2181038080, 2197815296, 3254779904, 3271557120]
->          [0, 4, 0] is too short
->          from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250808072929.4090694-8-hans.zhang@cixtech.com
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
+I created six patches to force-enable CONFIG_GPIOLIB_LEGACY on the
+few (mostly ancient) platforms that still require this, plus a set of
+patches to either add the corresponding Kconfig dependencies that make
+the device drivers conditional on that symbol, or change them to no
+longer require it.
 
+The final patch ends up turning the Kconfig symbol off by default,
+which of course depends on everything else getting merged first to avoid
+build errors.
 
-Dear Rob,
+I would suggest that patches 1-20 can just get merged through the
+respective maintainer trees independently when they are deemed ready,
+and the final patch can wait another merge window.
 
+     Arnd
 
-Thank you very much for your reply and reminder.
+Arnd Bergmann (21):
+  ARM: select legacy gpiolib interfaces where used
+  m68k: coldfire: select legacy gpiolib interface for mcfqspi
+  mips: select legacy gpiolib interfaces where used
+  sh: select legacy gpiolib interface
+  x86/platform: select legacy gpiolib interfaces where used
+  x86/olpc: select GPIOLIB_LEGACY
+  mfd: wm8994: remove dead legacy-gpio code
+  ASoC: add GPIOLIB_LEGACY dependency where needed
+  input: gpio-keys: make legacy gpiolib optional
+  leds: gpio: make legacy gpiolib interface optional
+  media: em28xx: add special case for legacy gpiolib interface
+  mfd: arizona: make legacy gpiolib interface optional
+  mfd: si476x: add GPIOLIB_LEGACY dependency
+  mfd: aat2870: add GPIOLIB_LEGACY dependency
+  dsa: b53: hide legacy gpiolib usage on non-mips
+  ath10k: remove gpio number assignment
+  nfc: marvell: convert to gpio descriptors
+  nfc: s3fwrn5: convert to gpio descriptors
+  usb: udc: pxa: remove unused platform_data
+  ASoC: pxa: add GPIOLIB_LEGACY dependency
+  gpiolib: turn off legacy interface by default
 
-I executed the following two inspection commands. I overlooked checking 
-the yaml file, and I'm very sorry for that.
-make O=$OUTKNL dt_binding_check DT_SCHEMA_FILES=arm/cix.yaml
-make O=$OUTKNL CHECK_DTBS=y W=1 cix/sky1-orion-o6.dtb
+ arch/arm/mach-mv78xx0/Kconfig                 |  1 +
+ arch/arm/mach-orion5x/Kconfig                 |  1 +
+ arch/arm/mach-pxa/Kconfig                     |  1 +
+ arch/arm/mach-pxa/devices.c                   |  7 --
+ arch/arm/mach-pxa/gumstix.c                   |  1 -
+ arch/arm/mach-pxa/udc.h                       |  8 --
+ arch/arm/mach-s3c/Kconfig.s3c64xx             |  1 +
+ arch/arm/mach-sa1100/Kconfig                  |  1 +
+ arch/m68k/Kconfig.cpu                         |  1 +
+ arch/mips/Kconfig                             |  5 +
+ arch/mips/alchemy/Kconfig                     |  1 -
+ arch/mips/txx9/Kconfig                        |  1 +
+ arch/sh/Kconfig                               |  1 +
+ arch/sh/boards/Kconfig                        |  8 ++
+ arch/sh/boards/mach-highlander/Kconfig        |  1 +
+ arch/sh/boards/mach-rsk/Kconfig               |  3 +
+ arch/x86/Kconfig                              |  1 +
+ drivers/gpio/Kconfig                          | 11 ++-
+ drivers/input/keyboard/gpio_keys.c            |  5 +-
+ drivers/input/keyboard/gpio_keys_polled.c     |  2 +
+ drivers/input/misc/Kconfig                    |  3 +
+ drivers/leds/leds-gpio.c                      |  8 +-
+ drivers/media/usb/em28xx/Kconfig              |  1 +
+ drivers/media/usb/em28xx/em28xx-dvb.c         |  4 +-
+ drivers/mfd/Kconfig                           |  2 +
+ drivers/mfd/arizona-irq.c                     |  5 +-
+ drivers/mfd/rohm-bd71828.c                    |  2 +
+ drivers/mfd/rohm-bd718x7.c                    |  2 +
+ drivers/mfd/wm8994-irq.c                      | 94 +------------------
+ drivers/net/dsa/b53/b53_common.c              | 17 +---
+ drivers/net/dsa/b53/b53_priv.h                | 24 +++--
+ drivers/net/wireless/ath/ath10k/leds.c        |  3 +-
+ drivers/nfc/nfcmrvl/main.c                    | 47 +++-------
+ drivers/nfc/nfcmrvl/nfcmrvl.h                 |  5 +-
+ drivers/nfc/nfcmrvl/uart.c                    |  5 -
+ drivers/nfc/nfcmrvl/usb.c                     |  1 -
+ drivers/nfc/s3fwrn5/i2c.c                     | 42 +++------
+ drivers/nfc/s3fwrn5/phy_common.c              | 12 +--
+ drivers/nfc/s3fwrn5/phy_common.h              |  4 +-
+ drivers/nfc/s3fwrn5/uart.c                    | 30 ++----
+ drivers/platform/x86/Kconfig                  |  3 +
+ .../platform/x86/x86-android-tablets/Kconfig  |  1 +
+ drivers/usb/gadget/udc/pxa25x_udc.c           | 41 +++-----
+ drivers/usb/gadget/udc/pxa25x_udc.h           |  2 +-
+ drivers/usb/gadget/udc/pxa27x_udc.c           | 35 +------
+ drivers/usb/gadget/udc/pxa27x_udc.h           |  2 -
+ include/linux/gpio_keys.h                     |  2 +
+ include/linux/leds.h                          |  2 +
+ include/linux/mfd/arizona/pdata.h             |  6 ++
+ include/linux/mfd/wm8994/pdata.h              |  5 -
+ include/linux/platform_data/pxa2xx_udc.h      | 15 ---
+ sound/pci/Kconfig                             |  1 +
+ sound/soc/codecs/Kconfig                      |  4 +
+ sound/soc/codecs/arizona-jack.c               | 17 +++-
+ sound/soc/pxa/Kconfig                         |  4 +-
+ 55 files changed, 192 insertions(+), 320 deletions(-)
+ delete mode 100644 arch/arm/mach-pxa/udc.h
 
-After the release of v6.17 RC1, I will resubmit the patch.
+-- 
+2.39.5
 
-Best regards,
-Hans
+Cc: Linus Walleij <linus.walleij@linaro.org> (maintainer:GPIO SUBSYSTEM,commit_signer:1/2=50%)
+Cc: Bartosz Golaszewski <brgl@bgdev.pl> (maintainer:GPIO SUBSYSTEM,commit_signer:1/7=14%,commit_signer:1/2=50%)
+Cc: linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM)
+
+Cc: Andrew Lunn <andrew@lunn.ch> (maintainer:ARM/Marvell Dove/MV78xx0/Orion SOC support)
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com> (maintainer:ARM/Marvell Dove/MV78xx0/Orion SOC support)
+Cc: Gregory Clement <gregory.clement@bootlin.com> (maintainer:ARM/Marvell Dove/MV78xx0/Orion SOC support)
+Cc: Russell King <linux@armlinux.org.uk> (maintainer:ARM PORT)
+Cc: Daniel Mack <daniel@zonque.org> (maintainer:PXA2xx/PXA3xx SUPPORT)
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com> (maintainer:PXA2xx/PXA3xx SUPPORT)
+Cc: Robert Jarzmik <robert.jarzmik@free.fr> (maintainer:PXA2xx/PXA3xx SUPPORT)
+Cc: Krzysztof Kozlowski <krzk@kernel.org> (maintainer:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES,commit_signer:1/2=50%)
+Cc: Alim Akhtar <alim.akhtar@samsung.com> (reviewer:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
+Cc: Geert Uytterhoeven <geert@linux-m68k.org> (maintainer:M68K ARCHITECTURE,commit_signer:1/4=25%,authored:1/4=25%,added_lines:2/13=15%,removed_lines:2/6=33%)
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de> (maintainer:MIPS)
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp> (maintainer:SUPERH)
+Cc: Rich Felker <dalias@libc.org> (maintainer:SUPERH)
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> (maintainer:SUPERH,commit_signer:2/4=50%)
+Cc: Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT),added_lines:4/36=11%,removed_lines:6/49=12%)
+Cc: Ingo Molnar <mingo@redhat.com> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Cc: Borislav Petkov <bp@alien8.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Cc: Dave Hansen <dave.hansen@linux.intel.com> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Cc: x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Cc: "H. Peter Anvin" <hpa@zytor.com> (reviewer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com> (maintainer:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...,commit_signer:5/7=71%,authored:1/7=14%,added_lines:17/36=47%,removed_lines:27/49=55%,commit_signer:1/2=50%,commit_signer:3/5=60%)
+Cc: Lee Jones <lee@kernel.org> (maintainer:LED SUBSYSTEM,commit_signer:2/5=40%)
+Cc: Pavel Machek <pavel@kernel.org> (maintainer:LED SUBSYSTEM)
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org> (maintainer:EM28XX VIDEO4LINUX DRIVER)
+Cc: Matti Vaittinen <mazziesaccount@gmail.com> (maintainer:ROHM POWER MANAGEMENT IC DEVICE DRIVERS)
+Cc: Florian Fainelli <florian.fainelli@broadcom.com> (maintainer:BROADCOM B53/SF2 ETHERNET SWITCH DRIVER)
+Cc: Jeff Johnson <jjohnson@kernel.org> (maintainer:QUALCOMM ATHEROS ATH10K WIRELESS DRIVER)
+Cc: Hans de Goede <hansg@kernel.org> (maintainer:X86 PLATFORM DRIVERS,commit_signer:1/7=14%)
+Cc: "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com> (maintainer:X86 PLATFORM DRIVERS)
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org> (maintainer:USB SUBSYSTEM)
+Cc: Jaroslav Kysela <perex@perex.cz> (maintainer:SOUND)
+Cc: Takashi Iwai <tiwai@suse.com> (maintainer:SOUND,commit_signer:1/3=33%,authored:1/3=33%,removed_lines:2/2=100%)
+Cc: Liam Girdwood <lgirdwood@gmail.com> (maintainer:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...)
+Cc: Mark Brown <broonie@kernel.org> (maintainer:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...,commit_signer:26/29=90%,commit_signer:1/3=33%)
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com> (authored:1/7=14%,added_lines:4/36=11%,removed_lines:6/49=12%,commit_signer:1/2=50%,authored:1/2=50%,added_lines:5/7=71%,removed_lines:7/7=100%,added_lines:7/7=100%,removed_lines:2/7=29%)
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org> (commit_signer:1/5=20%,authored:1/5=20%,removed_lines:7/10=70%)
+Cc: linux-arm-kernel@lists.infradead.org (moderated list:ARM/Marvell Dove/MV78xx0/Orion SOC support)
+Cc: linux-kernel@vger.kernel.org (open list)
+Cc: linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
+Cc: linux-m68k@lists.linux-m68k.org (open list:M68K ARCHITECTURE)
+Cc: linux-mips@vger.kernel.org (open list:MIPS)
+Cc: linux-sh@vger.kernel.org (open list:SUPERH)
+Cc: linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...)
+Cc: linux-leds@vger.kernel.org (open list:LED SUBSYSTEM)
+Cc: linux-media@vger.kernel.org (open list:EM28XX VIDEO4LINUX DRIVER)
+Cc: patches@opensource.cirrus.com (open list:WOLFSON MICROELECTRONICS DRIVERS)
+Cc: netdev@vger.kernel.org (open list:BROADCOM B53/SF2 ETHERNET SWITCH DRIVER)
+Cc: linux-wireless@vger.kernel.org (open list:QUALCOMM ATHEROS ATH10K WIRELESS DRIVER)
+Cc: ath10k@lists.infradead.org (open list:QUALCOMM ATHEROS ATH10K WIRELESS DRIVER)
+Cc: platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS)
+Cc: linux-usb@vger.kernel.org (open list:USB SUBSYSTEM)
+Cc: linux-sound@vger.kernel.org (open list:SOUND)
 
