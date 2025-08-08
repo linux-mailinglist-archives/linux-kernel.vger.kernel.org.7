@@ -1,162 +1,150 @@
-Return-Path: <linux-kernel+bounces-759602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C8A5B1DFF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A21CFB1DFFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AFB18C05AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EBAD18C02EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0AD18B0F;
-	Fri,  8 Aug 2025 00:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5475B1F5F6;
+	Fri,  8 Aug 2025 00:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OiFOhO6t"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eJxo1bgi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC79D20E6;
-	Fri,  8 Aug 2025 00:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE120CA52;
+	Fri,  8 Aug 2025 00:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754613400; cv=none; b=uZ1gv0DvCzvftCm3Iin2msQ2q7QUvHTOZKOtIvcMJ6fn+oFz/aPqTnS7TpawPRYcywVhxelfiOCCvKVIgT8hFeNxH2Vb5lfQWUtGFR4tyn3pdICG/pU41QV3x6WO2sbQx23ADnRuxZF8viKQtTZZtizK70EE7Q2TFY6eLoBaMYY=
+	t=1754613763; cv=none; b=avtb+2Yu2pN0CYKJc6Xo7ukTBgIVMRr3doGN8209iXBo/ppQbzS3wMA6FMn8RK88SZrmvlAVfdDPNRKW1xiQmGIjgwAnJC1oFHRVsVJuTg1FHustyDMan0FZ/Lt23sNeQY3R7CFhrC3OI82zbmnZrtPzfru5GFZe7XDWPVd55XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754613400; c=relaxed/simple;
-	bh=EGePS9JGcg7idFVyEz+0PCZSpTmlbrDjpLn+UMJIt10=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=t+C4fQCNRx5ekTRu+HuVqmkLdImafqyp4p0AQ/RrC7KvKPqgVIw3+LCZ+vFBx4GBZmYgxoMtPY62dgbzOIvpxG6fNJN5DYKFYnt6VlnlTq92QQvWEl2knsOAw+RCxlmkqHKY4gNUXX+XM3pH1J5Q7/qr5kJNZBc8UyJ4SMVX4YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OiFOhO6t; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754613395;
-	bh=dWEsrAQt6ieME3mdr/7k8jbPePRkGgqXjxMEQZUGcVw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OiFOhO6t10XYvR54hTbvjeimkvCD/AKSxSEaMRXoI9xMTwWVdZ31YtYNW5KrdXJUI
-	 dAJIcJdesgvxcVmZIZFD9LivdVNVJ6ShVkMnoGS91MKIEup6zZBjrpO24mPmz4clJS
-	 9VCMzxzha5tmE9I2HJDZsCAxg7MgXQpzavAwBPHwRvhPO78re4SKe5Z1OvX35ltNAg
-	 xmIbku8VZj8ulHVtRHho7AHnUAVKzK5Ufb2OQqEjxs3Rl269JKcK2hYLZBU0UDI9ey
-	 aWL2F6YKRduNjWfhOgoi/m4XcvDuFBpjSWT6mB6Ih84Qr9VBUglZmku+hNgfHPqF22
-	 ySXeurFJ0K/Lw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bylTG69d8z4wd0;
-	Fri,  8 Aug 2025 10:36:34 +1000 (AEST)
-Date: Fri, 8 Aug 2025 10:36:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
-Cc: Anup Patel <apatel@ventanamicro.com>, Arnd Bergmann <arnd@arndb.de>,
- Gary Yang <gary.yang@cixtech.com>, Guomin Chen <Guomin.Chen@cixtech.com>,
- Lihua Liu <Lihua.Liu@cixtech.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Peter Chen <peter.chen@cixtech.com>, Rahul
- Pathak <rpathak@ventanamicro.com>
-Subject: linux-next: manual merge of the risc-v tree with Linus' tree
-Message-ID: <20250808103634.6679cdcd@canb.auug.org.au>
+	s=arc-20240116; t=1754613763; c=relaxed/simple;
+	bh=1MvbBp80QkZN36I+UxRaDpB80kdDaaYXnX5v0pxZ4F4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d2R9d6P7CKsxIiNLsJCOWfjmIYRNpvTIEAYDNVVkbgG9Lz5eyGq3qsQ1pPwJr/ngv5KMtIYSgggd2WeKShri/lvJqMkNvHXGPxooMTZiS0SlwtZ0YA4zF+7xslLjJd/BJV21W7ZklrtDPl6g0M+zPVecd60JRLfzY0S/uBc9dcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eJxo1bgi; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754613763; x=1786149763;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1MvbBp80QkZN36I+UxRaDpB80kdDaaYXnX5v0pxZ4F4=;
+  b=eJxo1bgia2HCCd4eAbWnV4wzOi+KgytLslKATRMmSIOXgydFVKsqnFuC
+   xO1jFeD/MEQPONRxOYKjDFpng7BUFW8jjMP9hX5mNFrjcn1tb10HMA8lH
+   2U7OLXmhFnjqSSHsmw/XzDhvVzuOd8kc7+1wPEyXmNrQJ6+Smm5lCO+H6
+   q2hT7DSWWLnSjxoeKnSOQ91W3qrjk0QlP0gdQ56crGgV9EmaDSAZPzg1M
+   l9ELepg0+wskmRlmNALlihhRbcNmOUFrtzCMQVwIg3ZxOSgXq++kT6gbU
+   djnDWjLlVmn21SwP0G0r5tcZ0ErjK+qbrautaStINIVyjDskHaRaYqdcR
+   A==;
+X-CSE-ConnectionGUID: e6MTTjT0T3Of1VAgMiRWqw==
+X-CSE-MsgGUID: ZKej627dRRK7wxvDSYDmZg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="57039859"
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="57039859"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 17:42:38 -0700
+X-CSE-ConnectionGUID: W0QJHt5+SMa9Ja0G2H0srw==
+X-CSE-MsgGUID: Kw2IR14bRs2kMtlQn0HciQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="165995299"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 17:42:36 -0700
+Message-ID: <ab2295fa-4c98-480c-a669-dcff3b28e447@linux.intel.com>
+Date: Fri, 8 Aug 2025 08:42:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/8smt1qNLNVfKG2T+Rd7sKM0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/18] KVM: x86: Push acquisition of SRCU in fastpath into
+ kvm_pmu_trigger_event()
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>,
+ Sandipan Das <sandipan.das@amd.com>
+References: <20250805190526.1453366-1-seanjc@google.com>
+ <20250805190526.1453366-18-seanjc@google.com>
+ <e64951b0-4707-42ed-abf4-947def74ea34@linux.intel.com>
+ <aJOR4Bk3DwKSVdQV@google.com>
+ <515a5221-dbcd-45cc-bc55-887ae70b63db@linux.intel.com>
+ <aJSqlMViOHAHHyCq@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aJSqlMViOHAHHyCq@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/8smt1qNLNVfKG2T+Rd7sKM0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 8/7/2025 9:31 PM, Sean Christopherson wrote:
+> On Thu, Aug 07, 2025, Dapeng Mi wrote:
+>> On 8/7/2025 1:33 AM, Sean Christopherson wrote:
+>>> On Wed, Aug 06, 2025, Dapeng Mi wrote:
+>>>> On 8/6/2025 3:05 AM, Sean Christopherson wrote:
+>>>>> Acquire SRCU in the VM-Exit fastpath if and only if KVM needs to check the
+>>>>> PMU event filter, to further trim the amount of code that is executed with
+>>>>> SRCU protection in the fastpath.  Counter-intuitively, holding SRCU can do
+>>>>> more harm than good due to masking potential bugs, and introducing a new
+>>>>> SRCU-protected asset to code reachable via kvm_skip_emulated_instruction()
+>>>>> would be quite notable, i.e. definitely worth auditing.
+>>>>>
+>>>>> E.g. the primary user of kvm->srcu is KVM's memslots, accessing memslots
+>>>>> all but guarantees guest memory may be accessed, accessing guest memory
+>>>>> can fault, and page faults might sleep, which isn't allowed while IRQs are
+>>>>> disabled.  Not acquiring SRCU means the (hypothetical) illegal sleep would
+>>>>> be flagged when running with PROVE_RCU=y, even if DEBUG_ATOMIC_SLEEP=n.
+>>>>>
+>>>>> Note, performance is NOT a motivating factor, as SRCU lock/unlock only
+>>>>> adds ~15 cycles of latency to fastpath VM-Exits.  I.e. overhead isn't a
+>>>>> concern _if_ SRCU protection needs to be extended beyond PMU events, e.g.
+>>>>> to honor userspace MSR filters.
+>>>>>
+>>>>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+>>>>> ---
+>>> ...
+>>>
+>>>>> @@ -968,12 +968,14 @@ static void kvm_pmu_trigger_event(struct kvm_vcpu *vcpu,
+>>>>>  			     (unsigned long *)&pmu->global_ctrl, X86_PMC_IDX_MAX))
+>>>>>  		return;
+>>>>>  
+>>>>> +	idx = srcu_read_lock(&vcpu->kvm->srcu);
+>>>> It looks the asset what "kvm->srcu" protects here is
+>>>> kvm->arch.pmu_event_filter which is only read by pmc_is_event_allowed().
+>>>> Besides here, pmc_is_event_allowed() is called by reprogram_counter() but
+>>>> without srcu_read_lock()/srcu_read_unlock() protection.
+>>> No, reprogram_counter() is only called called in the context of KVM_RUN, i.e. with
+>>> the vCPU loaded and thus with kvm->srcu already head for read (acquired by
+>>> kvm_arch_vcpu_ioctl_run()).
+>> Not sure if I understand correctly, but KVM_SET_PMU_EVENT_FILTER ioctl is a
+>> VM-level ioctl and it can be set when vCPUs are running. So assume
+>> KVM_SET_PMU_EVENT_FILTER ioctl is called at vCPU0 and vCPU1 is running
+>> reprogram_counter(). Is it safe without srcu_read_lock()/srcu_read_unlock()
+>> protection?
+> No, but reprogram_counter() can be reached if and only if the CPU holds SRCU.
+>
+>   kvm_arch_vcpu_ioctl_run() => 	kvm_vcpu_srcu_read_lock(vcpu);
+>   |
+>   -> vcpu_run()
+>      |
+>      -> vcpu_enter_guest()
+>         |
+>         -> kvm_pmu_handle_event()
+>            |
+>            -> reprogram_counter()
 
-Today's linux-next merge of the risc-v tree got conflicts in:
+oh, yes. I missed it. Thanks for explaining. 
 
-  drivers/mailbox/Kconfig
-  drivers/mailbox/Makefile
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-between commit:
 
-  fe2aa2361ddb ("mailbox: add CIX mailbox driver")
-
-from Linus' tree and commit:
-
-  81db83e750ca ("mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox=
- driver")
-
-from the risc-v tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/mailbox/Kconfig
-index 4fef4797b110,eb5e0384fec6..000000000000
---- a/drivers/mailbox/Kconfig
-+++ b/drivers/mailbox/Kconfig
-@@@ -340,14 -340,15 +340,25 @@@ config THEAD_TH1520_MBO
-  	  kernel is running, and E902 core used for power management among other
-  	  things.
- =20
- +config CIX_MBOX
- +        tristate "CIX Mailbox"
- +        depends on ARCH_CIX || COMPILE_TEST
- +        depends on OF
- +        help
- +          Mailbox implementation for CIX IPC system. The controller suppo=
-rts
- +          11 mailbox channels with different operating mode and every cha=
-nnel
- +          is unidirectional. Say Y here if you want to use the CIX Mailbox
- +          support.
- +
-+ config RISCV_SBI_MPXY_MBOX
-+ 	tristate "RISC-V SBI Message Proxy (MPXY) Mailbox"
-+ 	depends on RISCV_SBI
-+ 	default RISCV
-+ 	help
-+ 	  Mailbox driver implementation for RISC-V SBI Message Proxy (MPXY)
-+ 	  extension. This mailbox driver is used to send messages to the
-+ 	  remote processor through the SBI implementation (M-mode firmware
-+ 	  or HS-mode hypervisor). Say Y here if you want to have this support.
-+ 	  If unsure say N.
-+=20
-  endif
-diff --cc drivers/mailbox/Makefile
-index 786a46587ba1,46689c1277f8..000000000000
---- a/drivers/mailbox/Makefile
-+++ b/drivers/mailbox/Makefile
-@@@ -73,4 -73,4 +73,6 @@@ obj-$(CONFIG_QCOM_IPCC)		+=3D qcom-ipcc.
- =20
-  obj-$(CONFIG_THEAD_TH1520_MBOX)	+=3D mailbox-th1520.o
- =20
- +obj-$(CONFIG_CIX_MBOX)	+=3D cix-mailbox.o
-++
-+ obj-$(CONFIG_RISCV_SBI_MPXY_MBOX)	+=3D riscv-sbi-mpxy-mbox.o
-
---Sig_/8smt1qNLNVfKG2T+Rd7sKM0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiVRpIACgkQAVBC80lX
-0GzJ6gf+J5gnb9GdX6RvzrHfFMlrGQNOz88efO8KvLZkVFZXLYWYQ9NKZ+/DOGUc
-rVXG/d9ched1mQYdy3mgRGanPCqxhoCiL/bTr8WLHbZofWiKVo0jamKRKpn5riFQ
-8e42/TFdKFl0H+UFRRRncWD2bGD2WZJK7GPyT0hu4RsDlnN7qtNVMmBCRmAsWGA7
-9rLUwCanieC+xnaThkm+Hh6uRPiacSeltRBiOfyRMIgRLaSVZRBDCal5r2Mw4O5Q
-4LBZ7QcoJN8rcnRHoIx0xizYf6phWGBUdqfU3szjs1KUnicoLW5eshJHk8aHlPAv
-VIT+veGCvyrTKzZ/Sqk8KtddcJ6gag==
-=ioqB
------END PGP SIGNATURE-----
-
---Sig_/8smt1qNLNVfKG2T+Rd7sKM0--
+>
 
