@@ -1,95 +1,202 @@
-Return-Path: <linux-kernel+bounces-760825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FFEB1F0B2
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 00:37:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B3BB1F0B4
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 00:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABDED5609AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:36:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D5A1C80557
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F4D28AAF9;
-	Fri,  8 Aug 2025 22:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9291628B3E7;
+	Fri,  8 Aug 2025 22:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QX4PjWPZ"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcsyL1bK"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E25828A707;
-	Fri,  8 Aug 2025 22:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0101E28A73B;
+	Fri,  8 Aug 2025 22:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754692609; cv=none; b=HzI4PX6ct/hL04Ci8DMEcyZ3i5ObrwbZte6LWF7PBgAxxh5GxKGe9kLWlepVQprVs9OCDigXqrtlQXwrS8q9dc22YaDjHhck9LiuqRA9Dxyf+ckiuZc92Gh591g2yzGRHnp8AjHP0oLKOjjiGhGxd//p61IPjvQ27ok0N+QpvNo=
+	t=1754692637; cv=none; b=kxL8C9ThMVlHi3ZZqQcZKTsIZZGHYT4DujH9Z5ZnAUEDq++7mNi/RNIwlQucPcXqeAa8lDM1AZMa/mkBG3Ki4Oa+AxV4cIWOE+RNYNLSuQaZadtzWqbUCmUF3om29GEOrj2BSDnjKoAi8Sm/+dXIdIz8Xj73y6QLege3YEG+/bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754692609; c=relaxed/simple;
-	bh=FwS3PinrPKUfvFRBjrw/J/V0dYO5TbmhMhKrOf2xTcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ke6P5Y9mg5zN86MbLF79TXaJTU5Bjg/1Ijd3iZTXZ1jYg+VQ4dnGC1dWaRQLNCDpRIwEZo97AcwSw3rrsosdBHYN9Od2w2tEvbJ6gXV3lfLRvK3LLPtujgGSKSzkDuIWs3X3lub+be2aeXiwjlz1dU5dmUROxMdjsxDLYF/KIfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QX4PjWPZ; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rZJ6sUI0VPGHKYwEWcMIEXdAhnlLGneT2c1oC2ZqANk=; b=QX4PjWPZtc0EbjsAcKd+eIr5KK
-	DcAgU2OlKpOuRkVSV3YbK7+mvbVYXn0ZTMcQjsd0YOysA8R1wP+wNov+mC8aThJsuzDOSkW81NNDk
-	AzTcWFb74xTSfmSF97QI7zg5cWFMb+iqneNx+F+3NH7BEQuMjEh6czUt4Hw9UDBTe5wEBftBooSdt
-	bJ99bMSTh4b+6jqE8Oq8y2ySA2gbIS44Zz9206fPQEx8bI4sbGKSN/dHRJ42s6ZYWcXDmSIIEPDOa
-	tYz+BJJMBzNlkXD/ewjpndyV1oaQyia0LDOPPEiGuwR5Jx0Gh/Fq2CocNJf4GeMySf15q3WPglXds
-	WvC+yU/Q==;
-Received: from [152.250.7.37] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1ukVhH-00Bkmi-C8; Sat, 09 Aug 2025 00:36:23 +0200
-Message-ID: <11620764-a95a-40dc-97be-ba6a9a39e71c@igalia.com>
-Date: Fri, 8 Aug 2025 19:36:19 -0300
+	s=arc-20240116; t=1754692637; c=relaxed/simple;
+	bh=eyTpBn+/UsLCK9d42tdanu30au/6f7TC4NaT+cwdwaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IvhYPKGOV0ISDc2o5nlERGwrZ8DSPgpfLnWgZHuXygL560EBOmQRFSDkhtg9ecyU8eqAetVqUd9gj4n46ezD288TDIPXtbVnQygQ+OcjXp5hkaUJeDnyTJHoUjRdGDmIhZdU+/B5ZDa6+7ma5f7cuptkLDI+wtfDEdDpxITiq2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcsyL1bK; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e8fed231c24so418216276.3;
+        Fri, 08 Aug 2025 15:37:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754692635; x=1755297435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u8PcdViVM9JE8IbZsZm/xllXdMrlzsbljuByQCZPh34=;
+        b=LcsyL1bKiuZa3/d7fTIB0WXeFYJ3fq3Yj5XCqNrp/t4H05cHoSHflRVoD+UOSVbGok
+         Ne2H3L3d0HBIOtCVzct2ZvldMc7VlZqjeigPa1ORwoLpjbsgKYLT6J9M6SuBvLBR/Lml
+         V4P5WWPWnxcPck+2b+RG+z7szR3vJQBsEBnMuRhL0hrWI6ZhFi4RebKgUnMCkMq3CKeF
+         YNlmzNf6kVbHqUSAVALFYKCrhmPCASHNownl2UB7FhUat6T/hSClXlwK33td1W3MzbdM
+         afjl2p62w6koyIsBFNALu8ZYDVGAuV9R1CjE9aHIgoc29SWKAVpjlRy4scTMUydWtODN
+         o4Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754692635; x=1755297435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u8PcdViVM9JE8IbZsZm/xllXdMrlzsbljuByQCZPh34=;
+        b=aRUcywmf1Qc+b6twWJx0291LuJiAwDL00NIJyP+KRxUex7dpcR6gDQdmC5EBrTrwJX
+         59kQFCIM4bimY8ZsKNYelfVFc0dE2qCKH2c7lHxKx519gHavhiOB82GnWcPI+Gj5WaNR
+         2fsJLdXD+WLWS7WmJgYcys3laNn2CkQEjv/GPvo5u+v7sU2YrZqgH+9mfU0/cnKwtgwE
+         XRIhQ+ASdfL/cxgOIHKkw1uto/cu3VhBh3fJ7oEWy2ShTf1jU17itg77V1Hy33n8zkfF
+         gIzme83nB1yVCAVKj+L3L+EwYmPiJk7BbGMKT4rvgUFMXA740WQyOc8ceuUqJFKoSQX2
+         HWCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ2pi1clbgwuu0hYVMgeGFa/4/uOxnL4Hvf3yredZ9yeBbmcG3Nw27hA6tBQ2QxB/nttKE47l2ALEcZm4=@vger.kernel.org, AJvYcCVHfChcQGNHqLUZO/vbsZRswfEyxGi0dZFLYFshWO8IDdO68vEDmVLYy04qroRi39CG+wCaBeRq2NzO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz17q0bbxnUIhTqKp+17FplAJ4pcZ/auAIbxZx2MgInZxdYxp8K
+	cX5iRJr7eH0enn0WG34ZllS55rT17HEYNVUB57DMxhFHljZo9sjn2LQKlugZQb1zzZjeBqQfOC9
+	r635NnFsWcTii/cCs6P+QXORDvBXcw5w=
+X-Gm-Gg: ASbGncvyVuS4WnaEK0Z1kIqx1F+bmRVo6wt+d+xZkY0ku0RXnzuVSqznsRMjWDJ7Nv1
+	jAOh59Uc4SzpW9sozpa2Gx7fHDG1E+GRmsrOcvICiIx+o2oV1qbYaXqa0cbbc8id8OVEDaEGpBV
+	PZP5inZlGER4hOd2wqs/tbETkT5s3ewCgFUGsB/2qPl7dQnI9SOuOMAcpYFENm+J74jSMWsFC/k
+	0ZrdEo=
+X-Google-Smtp-Source: AGHT+IH/XOBhWDGZF7tzd1bJiHZgTVQajMTE0Df6YY0Q1oHeFqhiksv2ysGW44ElsIxDlyJzzEz12bHe8e1R0ERq4zA=
+X-Received: by 2002:a05:690c:6c87:b0:71a:2d5f:49d8 with SMTP id
+ 00721157ae682-71c0830fb07mr3640127b3.3.1754692634671; Fri, 08 Aug 2025
+ 15:37:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/futex: Skip futex_waitv tests if ENOSYS
-To: Wake Liu <wakel@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Shuah Khan <shuah@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20250807145550.1837846-1-wakel@google.com>
- <20250808071540.2122553-1-wakel@google.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20250808071540.2122553-1-wakel@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250804154750.28249-1-l.rubusch@gmail.com> <20250804154750.28249-2-l.rubusch@gmail.com>
+ <20250804213213d4844d4e@mail.local> <CAFXKEHZn0XQMe6RBHDJzcGZy+JPpNpfidD1mT2MBmZ_WamFQKQ@mail.gmail.com>
+ <202508052224366c9bb920@mail.local>
+In-Reply-To: <202508052224366c9bb920@mail.local>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Sat, 9 Aug 2025 00:36:38 +0200
+X-Gm-Features: Ac12FXwrj9u2mr9B3E8JKtkTjq0XV8wLc19QmZz6-lCwcXpxcioBMrR874zHxXU
+Message-ID: <CAFXKEHZee0c4=ETwA=P_MP2+O+01s0dwS=5EjeK1Gkk3PRDNHg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] rtc: zynqmp: ensure correct RTC calibration
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: michal.simek@amd.com, srinivas.neeli@xilinx.com, linux-rtc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Ivan Vera <ivan.vera@enclustra.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wake Liu,
+On Wed, Aug 6, 2025 at 12:24=E2=80=AFAM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+> On 05/08/2025 23:56:46+0200, Lothar Rubusch wrote:
+> > On Mon, Aug 4, 2025 at 11:32=E2=80=AFPM Alexandre Belloni
+> > <alexandre.belloni@bootlin.com> wrote:
+> > >
+> > > On 04/08/2025 15:47:50+0000, Lothar Rubusch wrote:
+> > > > From: Ivan Vera <ivan.vera@enclustra.com>
+> > (...)
+> > > > diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
+> > > > index f39102b66eac..0c063c3fae52 100644
+> > > > --- a/drivers/rtc/rtc-zynqmp.c
+> > > > +++ b/drivers/rtc/rtc-zynqmp.c
+> > > > @@ -331,9 +331,9 @@ static int xlnx_rtc_probe(struct platform_devic=
+e *pdev)
+> > > >               if (ret)
+> > > >                       xrtcdev->freq =3D RTC_CALIB_DEF;
+> > > >       }
+> > > > -     ret =3D readl(xrtcdev->reg_base + RTC_CALIB_RD);
+> > > > -     if (!ret)
+> > > > -             writel(xrtcdev->freq, (xrtcdev->reg_base + RTC_CALIB_=
+WR));
+> > > > +
+> > > > +     /* Enable unconditional re-calibration to RTC_CALIB_DEF or DT=
+B entry. */
+> > > > +     writel(xrtcdev->freq, xrtcdev->reg_base + RTC_CALIB_WR);
+> > >
+> > > Doesn't this forcefully overwrite the proper value that has been set
+> > > from userspace and so trashes the time at each reboot?
+> > >
+> > Yes, it overwrites the calibration, i.e. counting 1sec in about 1sec.
+> > No, the time/date is not actually "trashed" (I double-checked that
+> > with timesyncd disabled, having and not having register content and
+> > over several reboots keeping a bogus date/time - it psersistet in the
+> > same time space. The current patch always overwrites the calib
+> > register content. So, a manual userspace setting will be lost after
+> > reboot. That's true.
+>
+> It is about 1sec on your platform because it didn't deviate too much
+> from the expected value but what if another platform needs a way
+> different value? Then you are introducing the same issue as the one you
+> are trying to fix but it will have it at each reboot.
+>
+I guess you missunderstood me here a bit. I understand that every
+scenario will need individual calibration especially over time.
 
-Em 08/08/2025 04:15, Wake Liu escreveu:
-> The futex_waitv() syscall was introduced in Linux 5.16. The existing
-> test in futex_wait_timeout.c will fail on kernels older than 5.16
-> due to the syscall not being implemented.
-> 
-> Modify the test_timeout() function to check if the error returned
-> is ENOSYS. If it is, skip the test and report it as such, rather than
-> failing. This ensures the selftests can be run on a wider range of
-> kernel versions without false negatives.
-> 
-> Signed-off-by: Wake Liu <wakel@google.com>
-> ---
->   .../selftests/futex/functional/futex_wait_timeout.c    | 10 +++++++---
->   tools/testing/selftests/futex/functional/futex_waitv.c |  8 ++++++++
+> >
+> > Would it rather make sense to extend it, say, instead of merely
+> > checking whether the calibration register contains any data - which
+> > could potentially be incorrect - also check for the presence of a
+> > calibration property in the devicetree (or a similar property, since
+> > 'calibration' may be deprecated)? If such a property exists, perform a
+> > re-calibration based on the devicetree at every reboot. Otherwise,
+> > retain the current behavior of checking whether the register is empty?
+> >
+> > > Isn't the proper way to reset it to simply set the offset from usersp=
+ace
+> > > again?
+> > >
+> > Hm.. I'm unsure if I understood you correctly. You mean the way as
+> > described in AMD's link to perform the reset by executing the devmem
+> > from Linux manually? If so, why is it preferable to adjust the RTC
+> > calibration manually every time this happens, rather than to simply
+> > put a correction value into the devicetree properties for problematic
+> > setups? Or do I miss something, is there a config file for RTC
+> > calibration for doing this persistently from Linux, that I'm not aware
+> > of?
+> >
+> > Before, the devicetree properties seemed to have generally priority
+> > over userspace settings. Now, after the calibration rework, this
+> > priorization seems to have changed and a devicetree calib correction
+> > for such problematic cases will generally be ignored, with a
+> > recommendation by Xilinx/AMD (see link in cover letter) to execute a
+> > devmem command from off Linux (...). I mean, can't this be elaborated
+> > a bit more to allow for a persistent correction method?
+>
+> The value depends on each manufactured machine/board as it is supposed
+> to correct for imprecision on the input clock which is either a crystal
+> or derived from a crystal. This crystal may be more or less accurate and
+> its accuracy will change over time notably because of temperature
+> changes or simply because it is aging. Having the value in the device
+> tree is as good as having it hardcoded in the driver which is not far
+> from what your are doing here. It makes the feature useless.
+>
+Yes, I see your point.
 
-tools/testing/selftests/futex/functional/futex_wait_wouldblock.c also 
-have a call for futex_waitv().
+> What I was suggesting is simply to do the right thing, compute the
+> inaccuracy and correct it from userspace, using the proper interface
+> that is sysfs or the RTC_PARAM_SET ioctl for RTC_PARAM_CORRECTION
+> This has to be done regularly anyway so I guess it would catch and
+> correct any corrupted value in the register.
+>
+The degradation over time and or temperature does not match the static
+approach we took of our v1 patch. I modified it still a bit to keep userspa=
+ce
+configurations, and use the optional devicetree property for a correction. =
+But
+this does not cancel out your argumentation, since the approach is still st=
+atic.
+So, I have to agree, thanks.
 
-Apart from that, futex2_wait() and futex2_wake() syscalls may need 
-something similar?
+Best,
+L
 
+> --
+> Alexandre Belloni, co-owner and COO, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
