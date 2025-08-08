@@ -1,191 +1,89 @@
-Return-Path: <linux-kernel+bounces-760048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24D0B1E5F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:53:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BE6B1E5F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E2318C7822
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB7B21686A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95353270EDD;
-	Fri,  8 Aug 2025 09:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D41270EDD;
+	Fri,  8 Aug 2025 09:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="KvU40ydH"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rA5VZvP4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE24270569
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 09:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184171A2381;
+	Fri,  8 Aug 2025 09:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754646805; cv=none; b=q8RREy9NQdxI+Kgsd8/Zy5jUX2VKJ1QjXTDjR4eCDA1ayewD4oc8Rlx7ArmDE3BqY0T4wW+cJh+bL6MF+BbvP0vUSSAN/92Wxhp8YbVXWq+d2LnEfraayFmkNSPlAFXb1+qEj+VUo2cZQQPlIkUg5C6OD5Le8ASguAcDV5Av/5I=
+	t=1754646789; cv=none; b=E/8Ad44BPQaKqSXGZqARFlj2db2kNTpyg6GIVrdArS11XLCi30RiW9m3DliRhjp6eup03MqaifJNXJM8MOOUu6cUjVl4Xm9K4fMx9zX4Lz/l1SR0wguVGiumRCaSIXvkh9tdn//xXiVHzY3ALNrtbacAeNE7eZVL8A55jVjX89U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754646805; c=relaxed/simple;
-	bh=9Nlj78aB+Ys++ADXpttgaBsciQuo8MykUNXVf3a7maI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A892oQSzy0ZNqA8LmyS0es5RYi6RHtAAXRNgiwjhEgWq5je8gJWPz58V+b12tBttyk9PVpoAHnEqVno5jAWSMiaurOOk8o1cSTerXGTIVisNOghWVQvXYmbzlDkP0QJZADnc665dYBLWwiLbPx7hC3iMqw6jy1TfkQmQJANcDI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=KvU40ydH; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
-Date: Fri, 8 Aug 2025 11:52:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1754646790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=axyrifqNPjr8C6r1QvIN7+JuBjVLsnAazuNCWOgONBA=;
-	b=KvU40ydHKE0w7RhnYkcl2Fb4yOKj1J3yckXJpVjWfImCkk+Xyt2kBF+g+usQem2sMRyzPq
-	z0/rFqabrKERJFwUjlJGQqVdvN+RUzp42rml2K0b5dyQO8NgVWSS0P310wexL16Bp4tERl
-	3gj5fe514/cWTRE8Pz9+Ji8IPg/B5hY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com
-Subject: Re: [PATCH v2 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-Message-ID: <20250808095259.GA31443@grimfrac.localdomain>
-References: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
- <20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
- <ldhyfuczwtwydwnvno4xn6ppjtt7mtcj35fp52xrqaajtfbtpb@2pgkytczb5k5>
+	s=arc-20240116; t=1754646789; c=relaxed/simple;
+	bh=yFosrKiB0Ggl9SeGRAA4tB3TRCyF7iVganwUh+tAw6s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iYI1lUVvyS3l/N1RSPDqExwubeFDonj/CmQt8Tc5o63b0cH3NpXnSHJsf6eIUwYs/qYDyzwO2nbmf13u3zYokkxchAP3axS4WYnFH5hRfEag9d0iBzcKEA7zx9OIJVqEUuLo+HCboRd+2hNjOerjfa6Pt7MC8RS1xvnKUJPHCvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rA5VZvP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB736C4CEED;
+	Fri,  8 Aug 2025 09:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754646788;
+	bh=yFosrKiB0Ggl9SeGRAA4tB3TRCyF7iVganwUh+tAw6s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=rA5VZvP4xUl4hsOhDnyn3wZhBLG1E6euyWLD9AHobBOij13EUhVfU0ILTXPdcgNBH
+	 UW+1hKLegM7mTmVxAQpeAfGO3WbmSdr7/4lI1vvBahsBVYefb2ESDug+hCQbTse226
+	 YhYTK5k78V2jgFDR5T1g6QqgH6+O2tLxo1bJ3LsIUne4Fd6pg1LqZ05kePl7neYKPd
+	 jbgkgRVd5SOyjiWb2fuK6P1Y6vhAWvOBPLYaws4CrbVTQKxqrFlJqgPt4GUpLmOPQ1
+	 TbpgspnH/UGcApCNBwXZg+8zlhKPEpSWXvF2pd/8MTCfTF0oW/Blm19cJ62pJUYwO+
+	 kBLHR2ye1bh5g==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Shankari Anand <shankari.ak0208@gmail.com>, Jens Axboe
+ <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, Shankari Anand
+ <shankari.ak0208@gmail.com>
+Subject: Re: [PATCH 1/7] rust: block: update ARef and AlwaysRefCounted
+ imports from sync::aref
+In-Reply-To: <20250716090712.809750-1-shankari.ak0208@gmail.com>
+References: <KnSfzGK6OiA0mL5BZ32IZgEYWCuETu6ggzSHiqnzsYBLsUHWR5GcVRzt-FSa8sCXmYXz_jOKWGZ6B_QyeTZS2w==@protonmail.internalid>
+ <20250716090712.809750-1-shankari.ak0208@gmail.com>
+Date: Fri, 08 Aug 2025 11:53:00 +0200
+Message-ID: <87cy965edf.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ldhyfuczwtwydwnvno4xn6ppjtt7mtcj35fp52xrqaajtfbtpb@2pgkytczb5k5>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-Hi Dmitry,
+"Shankari Anand" <shankari.ak0208@gmail.com> writes:
 
-On Sun, Jul 27, 2025 at 08:07:37PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Jul 24, 2025 at 08:50:53PM +0200, Henrik Grimler wrote:
-> > To use MHL we currently need the MHL chip to be permanently on, which
-> > consumes unnecessary power. Let's use extcon attached to MUIC to enable
-> > the MHL chip only if it detects an MHL cable.
-> 
-> Does HPD GPIO reflect the correct state of the cable?
+> Update call sites in the block subsystem to import `ARef` and
+> `AlwaysRefCounted` from `sync::aref` instead of `types`.
+>
+> This aligns with the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to sync.
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
 
-Yes, the HPD gpio pin changes state from low to high when a mhl cable is
-connected:
+Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-$ sudo cat /sys/kernel/debug/gpio|grep gpio-755
- gpio-755 (                    |hpd                 ) in  lo IRQ
-$ sudo cat /sys/kernel/debug/gpio|grep gpio-755
- gpio-755 (                    |hpd                 ) in  hi IRQ
-
-so that is described correctly.
-
-> What is the order of events in such a case?
-
-Order of events as in function tracing log? I enabled function tracing
-with these filters:
-
-  'max77693_muic_*' 'samsung_dsim_*' 'drm_bridge_*'
-  'drm_atomic_bridge_*' 'exynos_irq_*' 'hdmi*' 'sii9234_*'
-
-and captured the calls when I connect cable. dmesg with debug output
-at the same time gives:
-
-[ 6568.462521] max77693-muic max77693-muic: external connector is attached (adc:0x00, prev_adc:0x0)
-[ 6568.470575] max77693-charger max77693-charger: not charging. connector type: 13
-[ 6568.491722] sii9234 15-0039: sii9234: detection started d3
-[ 6569.398148] i2c i2c-15: sendbytes: NAK bailout.
-[ 6569.401477] sii9234 15-0039: writebm:  TPI[0x3d] <- 0x3e
-[ 6569.408403] max77693-muic max77693-muic: external connector is attached (adc:0x00, prev_adc:0x0)
-[ 6569.422638] max77693-charger max77693-charger: not charging. connector type: 13
-[ 6569.570615] sii9234 15-0039: sii9234_irq_thread
-[ 6569.622846] sii9234 15-0039: irq 00/00 42/5c 00/00
-[ 6569.626182] sii9234 15-0039: RGND_READY_INT
-[ 6570.592367] sii9234 15-0039: sii9234_irq_thread
-[ 6570.644626] sii9234 15-0039: irq 00/60 40/5c 00/00
-[ 6570.656185] sii9234 15-0039: RGND 1K!!
-[ 6570.937165] sii9234 15-0039: sii9234_irq_thread
-[ 6570.989467] sii9234 15-0039: irq 20/60 00/5c 00/0c
-[ 6571.000986] sii9234 15-0039: MHL cable connected.. RSEN High
-[ 6571.222655] sii9234 15-0039: sii9234_irq_thread
-[ 6571.274884] sii9234 15-0039: irq 00/60 04/5c 00/04
-[ 6571.278219] sii9234 15-0039: mhl est interrupt
-[ 6571.408117] sii9234 15-0039: sii9234_irq_thread
-[ 6571.460346] sii9234 15-0039: irq 40/60 00/5c 00/04
-
-and in captured trace I see that on cable connect we get an irq that
-is handled through:
-1. max77693_muic_irq_handler
-2. max77693_muic_irq_work
-3. max77693_muic_adc_handler
-4. sii9234_extcon_notifier
-5. sii9234_extcon_work
-6. sii9234_cable_in
-7. hdmi_irq_thread
-
-Raw captured trace dat file can be found here:
-https://grimler.se/files/sii9234-mhl-connect-trace.dat
-
-Maybe you were asking for some other type of order of events log
-though, please let me know if I misunderstand.
-
-> Should the sii9234 signal to Exynos HDMI that the link is established?
-
-Maybe.. Sorry, I do not know enough about extcon and drm yet. I assume
-you mean through drm_helper_hpd_irq_event() and
-drm_bridge_hpd_notify(), I will experiment a bit and add it to the
-driver and see if this improves it.
-
-There is currently (as I wrote to Marek Szyprowski in a response in
-v1) an issue where device screen stops working if cable is connected
-when device screen is off, maybe proper notification would help..
-
-> > Signed-off-by: Henrik Grimler <henrik@grimler.se>
-> > ---
-> > v2: add dependency on extcon. Issue reported by kernel test robot
-> >     <lkp@intel.com>
-> > ---
-> >  drivers/gpu/drm/bridge/Kconfig   |  1 +
-> >  drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
-> >  2 files changed, 87 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> > index b9e0ca85226a603a24f90c6879d1499f824060cb..f18a083f6e1c6fe40bde5e65a1548acc61a162ae 100644
-> > --- a/drivers/gpu/drm/bridge/Kconfig
-> > +++ b/drivers/gpu/drm/bridge/Kconfig
-> > @@ -303,6 +303,7 @@ config DRM_SII902X
-> >  config DRM_SII9234
-> >  	tristate "Silicon Image SII9234 HDMI/MHL bridge"
-> >  	depends on OF
-> > +	select EXTCON
-> 
-> Either this or 'depends on EXTCON || !EXTCON'
-
-Feels like depends is a better description so will change to it,
-thanks!
 
 Best regards,
-Henrik Grimler
+Andreas Hindborg
 
-> >  	help
-> >  	  Say Y here if you want support for the MHL interface.
-> >  	  It is an I2C driver, that detects connection of MHL bridge
-> 
-> -- 
-> With best wishes
-> Dmitry
-> 
+
+
 
