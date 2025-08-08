@@ -1,318 +1,733 @@
-Return-Path: <linux-kernel+bounces-759706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB50BB1E17A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:03:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B77B1E19E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DBD518A64D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2E80160559
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15042629D;
-	Fri,  8 Aug 2025 05:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jNzASWSI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323252E36E2;
-	Fri,  8 Aug 2025 05:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754629412; cv=fail; b=Ge7OrlhNXEWW8c3iY6rs94xgwmqOAahy3QTVrxNO3OzPXnHoToEVfypYUUzFTUO5WZGZGJgcSdMViQ2wESnOd9mtZOiIDAKTMw7iyjrWaoVt5bW+kQ5bse7ZpDQ+vltsJRM1Ulf9UuCNnm2r86neQRe1KrJJfXbRyrN/tMlzsBQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754629412; c=relaxed/simple;
-	bh=k89OAf9cnUHDq2dyfSjzC8iNlC1DQ0r99l5i3cfxpV4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=i+fY1AFtxb6pjfbfNr7sFisxeeV/GKMDbG+Z2wGDoj89zDaNsfCHyIfVe1Ztz+l5eH3LaQ3KGPSjX9xzx/wwR+6L71TTHLCIf7G6MVuSIMnW7s3S0JVnXVh1aqCBSEbGffqQjFFNa/fqUbWZlU1Eg/m05vE9gHATZ0nrQxPhVdg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jNzASWSI; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754629411; x=1786165411;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=k89OAf9cnUHDq2dyfSjzC8iNlC1DQ0r99l5i3cfxpV4=;
-  b=jNzASWSIzUjXtrhvjCMc4Bksl60CUpHR+nyQbPdD25+l+2AtfS9yz3Ga
-   CgVgWlT3MGE9wHEmEyJWNLvwChJIn9LydLisy4oT9xaDQ8dKo186K5NSU
-   sziqDLz5U0kG/V3yo5EYgdUM35hj/asBh16uxHzqy7MT9UTyjtqDQTa+1
-   d4WrOQQZDyBSADaVckjkHM3vSMXxSONo/5cp4DXKC8qxYv3mSJVQjNfLW
-   X2us2aODLSNyqcETa/VKujAgMXCwxgQk2Xj4xPezu0u3HIc3JQc3isf/O
-   I4cJioxlpPkFxZhJyG915m/t2a+L4X+ZrNRsQQ7DLIFfMHgM2icXsPAtA
-   w==;
-X-CSE-ConnectionGUID: KbM/355ST4CPqq3iPlFSNQ==
-X-CSE-MsgGUID: FBhmWMe2TIKq/Mp/7zkdfw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="57105527"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="57105527"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 22:03:30 -0700
-X-CSE-ConnectionGUID: FfT7pEJvQAGVkit2dZszuQ==
-X-CSE-MsgGUID: 7gStdni1RoOiqGgYSlXeTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="169699406"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 22:03:30 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 7 Aug 2025 22:03:29 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 7 Aug 2025 22:03:29 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.54)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 7 Aug 2025 22:03:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GO1OghH4oU/LD7yU28GUoQECjhOw0WLV8pp+4gDFCbobxPBO4RmXrwwaZQMj2RIxAXWDM87W5a0M6nAWFliqg96IV4A6L6o+hwXO2Wxvs+ylYzR//6v+eOVEPrqnuGNd1++5avYzKXy1NZSSNBOICUDtLYH+RIR7wJzHO+N3n3MCsAYATFLxMBmE6ThuBIlLAEnuCcgir16LXrGSlCai1qzuD3ZSgU3w4Pu60Zis2ez/QyAWOF3NHDi8rvVPIJcrqPgL1OQg5cYdOOdQxjoxez2kXTHOPHR7M9jELifWUTyLW7/Z3JymABR9ph09yiE3zoPUrJudeGLdq2FMYhEZ8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k89OAf9cnUHDq2dyfSjzC8iNlC1DQ0r99l5i3cfxpV4=;
- b=icbsb+VqrIQoa2fjBAepNowusDsD+812GaPuAMq+M9jaRFc3RBgh06YCArncuoAvXKqKkBu5Ie3Mq1b4cDLFFTP4wKewvqcDXwK7WaqYQJf693+KccuyQic4TVQ3LdsfvC73lrsLmyIS3o3Rv+f/N8vJzDR6lFh2KdUXyNrh57jNKnDS33jPp6tiY25kzgrrg7yIuG5azQ9/jJPI1eEU5i6zjgIUobHF3NUhU02bFu+IGtU5pwwaVprXsIGTzFZTDMCNSpgLQNbTpdIdQpGP7bI6etvdWVzUHY0xFMMzh/b3MNBL6DeXXJ5bThNMGiLhUx5uIIqalCGrvF36rVgg8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
- (2603:10b6:f:fc00::f13) by LV1PR11MB8819.namprd11.prod.outlook.com
- (2603:10b6:408:2b3::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
- 2025 05:03:26 +0000
-Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
- ([fe80::76e3:aa2a:a205:819f]) by DM3PPF208195D8D.namprd11.prod.outlook.com
- ([fe80::76e3:aa2a:a205:819f%7]) with mapi id 15.20.9009.016; Fri, 8 Aug 2025
- 05:03:26 +0000
-From: "Kandpal, Suraj" <suraj.kandpal@intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Harry Wentland <harry.wentland@amd.com>, "Leo
- Li" <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>, "Alex
- Deucher" <alexander.deucher@amd.com>, =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?=
-	<christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Clark
-	<robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, "Abhinav
- Kumar" <abhinav.kumar@linux.dev>, Jessica Zhang
-	<jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
-	<marijn.suijten@somainline.org>, Laurent Pinchart
-	<laurent.pinchart+renesas@ideasonboard.com>, Tomi Valkeinen
-	<tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham
-	<kieran.bingham+renesas@ideasonboard.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "Dave
- Stevenson" <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJhIENhbmFs?=
-	<mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
-	<kernel-list@raspberrypi.com>
-CC: "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 7/8] drm: writeback: drop excess connector initialization
- functions
-Thread-Topic: [PATCH 7/8] drm: writeback: drop excess connector initialization
- functions
-Thread-Index: AQHcAutr9HenA3S/zE2ohrLEHk85MbRYPaSA
-Date: Fri, 8 Aug 2025 05:03:26 +0000
-Message-ID: <DM3PPF208195D8D4ADC3C62D015D08F6C9CE32FA@DM3PPF208195D8D.namprd11.prod.outlook.com>
-References: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
- <20250801-wb-drop-encoder-v1-7-824646042f7d@oss.qualcomm.com>
-In-Reply-To: <20250801-wb-drop-encoder-v1-7-824646042f7d@oss.qualcomm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM3PPF208195D8D:EE_|LV1PR11MB8819:EE_
-x-ms-office365-filtering-correlation-id: 83f17565-54e0-4d63-ed71-08ddd638e8cf
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018|921020;
-x-microsoft-antispam-message-info: =?utf-8?B?eW5HeHFFdXE0bDEvcS9Ed2ZUQkVOTUxSbEhHZUFqUHhmOUVtR2xoa1V5aUtu?=
- =?utf-8?B?Mk56Q0FidkIwTnJvZFFiUEJvTlJILyt2YkgvcDNlNC85TUZMcWFBbmJhbTNw?=
- =?utf-8?B?MGRRWm5YaFhQTDB0RzNhZEhSQUdDV1V2Smh0YnJnMStkUk9mcHh4UEFvek9I?=
- =?utf-8?B?R0NYNlRsaE9NUnBjTVJhL2daQ3hwVWNRVW5KT1lhYW5yUS96S0hLNXlWU3py?=
- =?utf-8?B?bUl6OURqWmljVTB0VmtFRE1zL09DeUF3TmUxT1pHeGZ3MTB5MFhielVsbGh0?=
- =?utf-8?B?Y21sSGRoaUxiS3pTYjFFUnhTNENyNVU1cHJ1MHJKaVBpazRPZC9SRFpPeXEw?=
- =?utf-8?B?bWhEaEtzbFo4Mk9lR05PdzM1ejA5RmUrLyszRS95T1k1LzFQVmN4UTdubDdN?=
- =?utf-8?B?VjFCNng3U0x5YzJRZHlMUXpIdlpmNXU4aHl6aU9ncWxRNGFYRWMxbEIzTFlv?=
- =?utf-8?B?aUsvamxTSEJnNmdBdHBoaStPTy90ZldUSVlBWGQ2TGd2SUtva0pnMG5ETzBx?=
- =?utf-8?B?ZEE0NUpRZmN6elFIUm1xNklORDdHOHZwTFdWMHZTMC9hVEFBWHB2ZXM0OFJQ?=
- =?utf-8?B?REd1eU4ydkZHSUd1YkI1MHMwdmlYWWo4ZmpyNHlISXVGRkxIUjFqRURjcnlt?=
- =?utf-8?B?MEJXYXo0R25kcC9YZHFycEtzcGxTa1lTQncycWJ6ZUd6aHQ4UWlja2tCVVJH?=
- =?utf-8?B?U2xhUzR5T0JCd0ZmRERnbjQ2NEtJMERxUzI5SGxuYWV0ZUE0Y3dDZjZsZ0pm?=
- =?utf-8?B?WThqajNueU1aUHZGMytXNHBlYmJDUWdjKzFOemU1ZWVGNk9KZm1QZnJWU3d3?=
- =?utf-8?B?ckhaQjVpYnduWWx6bTN5T2ozQUdta1orOTdHbmNScXl5Z1dFQzZWOXFzQjFi?=
- =?utf-8?B?RStzSzJxOHJzMVNOSEdJcXZRV3hZWnpPNDhQcGNIL0M1U3BYR1VsVXo2cEVM?=
- =?utf-8?B?OXk1S3d4emxTaytCbTE1UVFKZjAwSUlkZ0JiR1FrQzZYS0VwTTZhWkhGNlF5?=
- =?utf-8?B?WTdSZzZIM2Fuc3BnVHpHdTFzOWhUZWFCZldScjI1REpFUEs0eisvdzdGOFEz?=
- =?utf-8?B?UGFYRmhOOXBTVjRwQytlekIrSkpqdkZzSWlzY3pkMytTdlFYc1hnc2p4QkhZ?=
- =?utf-8?B?REd4T0ZvS0EvZmZqOFdwaW5UVVZMNXFENXgveDlSVW5BVnN3MEZ1amp2ZXdB?=
- =?utf-8?B?dUtEcjFQVUw5cWpoVm4rRTRHaVpBcWFMN0dBbG9jeXB6SjI5ZGtJa0pJc1dw?=
- =?utf-8?B?Nld6ZnJVUk15NGU1ZEs2M1pGNHVuWGNCVlZ1YW93TEx2dVdadEZVeEZuUWFX?=
- =?utf-8?B?V05vR0c2VUE2aTBXaGIrS0VFTy9EZ2hKRjY5UDBBcFd4cFhnNDdmSWl6TUgz?=
- =?utf-8?B?eUxrOEJwVm4zaXovREZ6cGJNd3hqaE9TZUREVHpqYUZONVdseStkalBmK1pr?=
- =?utf-8?B?SnpIUGUzaUhUaG1SRTU0cmJBanEwYzBjN0E3RktNRkV6clNPQVRpbGhRMXUz?=
- =?utf-8?B?Zlg2aDM0TWI2dGxUSlhuQjFhMFlqMTJlSlE3UFRGUlFmeDQxaXRhSW11dDI4?=
- =?utf-8?B?dzVLQlByUDhpODlHTWJIOVJIMzM5M3Q4YjY4TW5lMEx6UzhxVlFNVHBVV1Rz?=
- =?utf-8?B?S3JrWVdVZ2VLQ01PNFgwbExNTDFvVlBYT3QyaVREM0hmNEVZd2JLODlhcUJM?=
- =?utf-8?B?TDFpUjFiRDJQRGJzaGZNaDZFa3RxaitNK3ZzMkN0K2s1cTRKcXUvaytESytT?=
- =?utf-8?B?S2s0MWkzUmloYlk5Rm9ydFZGeC9QVkZ1N1lUaVVUc3F2NXNUTFM3S2FaY0Q5?=
- =?utf-8?B?RitMcStaMmNRd000bnhVczZvZ3lGdEFIamtaUFduQW1ubXAyeHY1QmhISlYx?=
- =?utf-8?B?aWJ6T1h4Mkk1R0ZTNzd2TVRWek9PME1IeFpGaGxIS01yQ1dLajNmdnVDd043?=
- =?utf-8?B?U1JZSzlEeEYvUE10YWFwMHVhbktFYUlGV3dBUG5sZVkvL1JXK1g3TWhHVU5G?=
- =?utf-8?Q?QYl1CJKV8SMdRPHZfOwHOvRe4r87MU=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PPF208195D8D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UmVjbmprUFNqa0ZnYWZUQk41VmJzSVp0dVQzUnM4bEQ5bGlQUFlCRzExNHlT?=
- =?utf-8?B?bnQ3Wi9zN1ZnaGVRMnJicmt1Rm5xUnVEOWhYS0ttNjlFa3RGdEJ2c0Z6MXRl?=
- =?utf-8?B?THpQc3hKb3YzcTgrMzU5UFV4M3J6dmtwL0RaQUlHNEpaSG5nVW1iRTVXTTRx?=
- =?utf-8?B?RDRocFNVS291L0k3Z1E2c3FsUXlZVU1jYlhPSHp4ektYWE9xcjVvU3NzRWdJ?=
- =?utf-8?B?Z0VvUVdxdDZCSHJ1RmRVaEZEaUNWN1RoM1AyeXhBZldaZFlZbitiK0lWNnFQ?=
- =?utf-8?B?MUZDWFRtUE1BKy92YnRYcVNqZDRhTDYzeVJGSUwyNm5YVHpzeFRCUlpTbGtZ?=
- =?utf-8?B?bVFraS9XMnpBNGhxS2Y3bGhSLys4RDlPeU5HeEpaT1QwWnE1QzNiUkVyMTl1?=
- =?utf-8?B?ZG9odnhOWjNwSlQ0WEdJS3l6T3ZjRjA4V3JKWmloY1MzckI4UmhWQnROUEh0?=
- =?utf-8?B?V0RvaUJYdjNyendPSmozZ2FSTEpqd25GdTkrSUVvWTI0WnZQQ2oyajlKMm5k?=
- =?utf-8?B?d2VVaEZtV01HUHNCeU16cjZCT0lNWVZaZ0dXa0s5NVNNWko3REhHS0YxSm94?=
- =?utf-8?B?UXZYNUFEZk1veDREditnRHRiTWdsZTlSOUd5d1lNVHY4ZERyVndqTFJZU2Q5?=
- =?utf-8?B?WmV4VVIxVXVoWm9zbUN6aExUNStSMXZVUXhscGFsemx2a3JPZjFoSlhXYmpM?=
- =?utf-8?B?aG94ZE1JVTVxaEkvZVFBRnE5L3VlSEdjb3BybmpDenYzYXFhMSs3SWVoSkV2?=
- =?utf-8?B?KzZMaVhPS0xGTXF6S0tXY000VGFSNlo0ZkZ2SFlqUlU0NEl6NmtzNkFnZURX?=
- =?utf-8?B?Z2JnZU9IOUJmMUJDY2RQZnNiOXRGbTFUcSs4UmtrOFMrWjVXTE9uTjc3NnlS?=
- =?utf-8?B?MFAzZnFNRWVKV0ZTR1NyRWVLcDdjbXhweFhia1pyV2pWM1ZtejhlTGQ3ai9P?=
- =?utf-8?B?ZDlpa1E3dWlXbENpTi9nZ0Z5SEcvbmsyeXBIMVBucm43QlphREJzSnNsaXph?=
- =?utf-8?B?MmJCR1ZreFJtK1REaHF3YnZyWlBFSFNEVkJKQmx3c1lmU2N1dm5jaVV6L0Qx?=
- =?utf-8?B?clY3RzBqY0p6RW5ZMXpGamZnamg4b21RWlJicjJ3bUI3SnB3aEQrU1RQMVhx?=
- =?utf-8?B?dkUrcFliT3llY09ic3oxcCtYMC96aHZSYndIaFNDNGp1b212eGJmblV4MnJT?=
- =?utf-8?B?Q1hKVGtVOHpMVEhHMERXNTk4ZDZ0bjNSSHI4azRZOHFHOHEzK2tjaEo1Vkw5?=
- =?utf-8?B?d1VQdjRyWmM0cEVwdGRJcUJCRzZDeE0wSkZBem56WjdFdFF0UW5oR3hkOFdP?=
- =?utf-8?B?WEdad0Y2N2tyMkdDK2ZBUGxpaVlSaTJNcjNCR0ZsQnJrUGxrK3puTm03Ujhp?=
- =?utf-8?B?STNTTFl0OU0vSUMxZDF2RGRUUnRSYVQzTTBJZEhPWVZubGFIMVhXeVpFakZW?=
- =?utf-8?B?WS85V1YvTFZXRXFuUTVnWmZvRGhqaHNXa0ZpRHo1VWF3KzJsNUU3SWtVQkRk?=
- =?utf-8?B?N1NMWExxbitscTNmRzROM2xjUEFFaEptZSthWDZTUXZkQUNJbEIzeERwZmJG?=
- =?utf-8?B?K2xxVlo4MFlGMitncERRdnJFcjFlZEE3OHhZank1a0lPOHBQODgzb3piUDZC?=
- =?utf-8?B?THdZTjhEUWNmYkNMRWozdnZhbVBPMjNzT2VOeTJkNnZNVkl3cjFBWHgxVTlw?=
- =?utf-8?B?ek1WY2RMNERKQitXRCt2QkRQbWlUTUpOUzdybTFPSTlLV3lacU1ZT0ZNZm1C?=
- =?utf-8?B?cERCWU5pdFJmSDk0R1lQK2tEVjN3V1Y5Y3NJYmE5YmFKbUM2WmxFUDhyWXNZ?=
- =?utf-8?B?L2VIWTVUYnBtZW5NZGNiYmVBdGdvRitaekNLQ3ZiWWhCazEyZzhRREcvbDNL?=
- =?utf-8?B?TXhIc1Q0SWtLNXBDWG43N1FDNmlock1YRjVMcGdmMXQ4cTgvZUUvc21uOWtP?=
- =?utf-8?B?MTAzYzQ3YmpzV2QzOFZLMGwzMEJ1a1VUb0IvTG1tM2RycFpCZ0t1RTlQKzM5?=
- =?utf-8?B?RDVPU2plYTFRT1JyaWQxR3pScDVNdEpEbU8xL3NFbUh0NHhSUE9RKzB6KzAx?=
- =?utf-8?B?dFZlWk5lck52emRvamZDZEpaMFN2ZmE4YjF0VUNMSldqdmJBVGw4dWcxekxP?=
- =?utf-8?Q?JqdQ+CMX5ByEvJGjRvx4Vg3Ee?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBE31E32DB;
+	Fri,  8 Aug 2025 05:20:42 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74801F1538;
+	Fri,  8 Aug 2025 05:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754630441; cv=none; b=bCN39g+qiY1qdoiSLqUrfXs/almuwMHfRMWXkceNj1bIHpmo2RkvlJs2hAplIxRmHYCFoC9bEY8e7eoLwu4EQBALzRmS2vmhXOWNeikvm+3FxgO1lWC/+aB8Yh1dWUJOchTkY6irJz5QHR1HQ1snu1Eii+cSJE9GBEpbZELVUsg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754630441; c=relaxed/simple;
+	bh=hwDPGvvc6J07dPrLlCk8kKng2X88oGfE7MRjDeF9pkE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=C2Lk+nRkftg+j6J7mPMn7CjsBrqqVkZ7yE5VD7S01nDeTQ7OWb3eUG50dN26MCaZSEUuVmETHWMVomwGq5KG1xxUJTS6d+yxuLP7L59OaxmejkZUup8PZQfG+cvbRUhmm2bhm2Uwkh1EqCYAzRQUAxJoJbi+rVTA2H7CmNDvB9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4bysPb666kz9sRh;
+	Fri,  8 Aug 2025 07:03:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id NPRzRiZI-1g4; Fri,  8 Aug 2025 07:03:47 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4bysPb4XhLz9sRg;
+	Fri,  8 Aug 2025 07:03:47 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8404F8B770;
+	Fri,  8 Aug 2025 07:03:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id MjCrGDNZuzXc; Fri,  8 Aug 2025 07:03:47 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3CC658B763;
+	Fri,  8 Aug 2025 07:03:45 +0200 (CEST)
+Message-ID: <22872a3f-85dc-4740-b605-ba80b5a3b1bc@csgroup.eu>
+Date: Fri, 8 Aug 2025 07:03:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM3PPF208195D8D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83f17565-54e0-4d63-ed71-08ddd638e8cf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2025 05:03:26.8324
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JANGHnYmXcTfSlr8tnyWwm4iANDfJCtj2Eq0j5qTsr7esi81NyNREKb47jwWCeeSnV5WTOmIw0buMycRIzMUXA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV1PR11MB8819
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH v5 1/2] kasan: introduce ARCH_DEFER_KASAN and unify static
+ key across modes
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
+ bhe@redhat.com, hca@linux.ibm.com, andreyknvl@gmail.com,
+ akpm@linux-foundation.org, zhangqing@loongson.cn, chenhuacai@loongson.cn,
+ davidgow@google.co, glider@google.com, dvyukov@google.com
+Cc: alex@ghiti.fr, agordeev@linux.ibm.com, vincenzo.frascino@arm.com,
+ elver@google.com, kasan-dev@googlegroups.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-mm@kvack.org
+References: <20250807194012.631367-1-snovitoll@gmail.com>
+ <20250807194012.631367-2-snovitoll@gmail.com>
+Content-Language: fr-FR
+In-Reply-To: <20250807194012.631367-2-snovitoll@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-PiBTdWJqZWN0OiBbUEFUQ0ggNy84XSBkcm06IHdyaXRlYmFjazogZHJvcCBleGNlc3MgY29ubmVj
-dG9yIGluaXRpYWxpemF0aW9uDQo+IGZ1bmN0aW9ucw0KPiANCj4gTm93IGFzIGFsbCBkcml2ZXJz
-IGhhdmUgYmVlbiBjb252ZXJ0ZWQgdG8gZHJtbV93cml0ZWJhY2tfY29ubmVjdG9yX2luaXQoKSwN
-Cj4gZHJvcCBkcm1fd3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0KCkgYW5kIGRybV93cml0ZWJhY2tf
-Y29ubmVjdG9yOjplbmNvZGVyDQo+IGZpZWxkLCB0aGV5IGFyZSB1bnVzZWQgbm93Lg0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogRG1pdHJ5IEJhcnlzaGtvdiA8ZG1pdHJ5LmJhcnlzaGtvdkBvc3MucXVh
-bGNvbW0uY29tPg0KDQpMR1RNLA0KUmV2aWV3ZWQtYnk6IFN1cmFqIEthbmRwYWwgPHN1cmFqLmth
-bmRwYWxAaW50ZWwuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL2RybV93cml0ZWJh
-Y2suYyB8IDU1IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICBp
-bmNsdWRlL2RybS9kcm1fd3JpdGViYWNrLmggICAgIHwgMTggLS0tLS0tLS0tLS0tLS0NCj4gIDIg
-ZmlsZXMgY2hhbmdlZCwgNzMgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL2RybV93cml0ZWJhY2suYw0KPiBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fd3JpdGVi
-YWNrLmMgaW5kZXgNCj4gOTViOGEyZTRiZGE2OTIzMDU5MWI1MGJlMTVkMTRkMGIzNjkyMzczYi4u
-MWEwMWRmOTFiMmM1ODY4ZTE1OGQ0ODkNCj4gYjc4MmY0YzU3YzYxYTI3MmMgMTAwNjQ0DQo+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fd3JpdGViYWNrLmMNCj4gKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2RybV93cml0ZWJhY2suYw0KPiBAQCAtMTQyLDYxICsxNDIsNiBAQCBzdGF0aWMgaW50IGNy
-ZWF0ZV93cml0ZWJhY2tfcHJvcGVydGllcyhzdHJ1Y3QNCj4gZHJtX2RldmljZSAqZGV2KQ0KPiAg
-CXJldHVybiAwOw0KPiAgfQ0KPiANCj4gLXN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2VuY29kZXJf
-ZnVuY3MgZHJtX3dyaXRlYmFja19lbmNvZGVyX2Z1bmNzID0gew0KPiAtCS5kZXN0cm95ID0gZHJt
-X2VuY29kZXJfY2xlYW51cCwNCj4gLX07DQo+IC0NCj4gLS8qKg0KPiAtICogZHJtX3dyaXRlYmFj
-a19jb25uZWN0b3JfaW5pdCAtIEluaXRpYWxpemUgYSB3cml0ZWJhY2sgY29ubmVjdG9yIGFuZCBp
-dHMNCj4gcHJvcGVydGllcw0KPiAtICogQGRldjogRFJNIGRldmljZQ0KPiAtICogQHdiX2Nvbm5l
-Y3RvcjogV3JpdGViYWNrIGNvbm5lY3RvciB0byBpbml0aWFsaXplDQo+IC0gKiBAY29uX2Z1bmNz
-OiBDb25uZWN0b3IgZnVuY3MgdnRhYmxlDQo+IC0gKiBAZW5jX2hlbHBlcl9mdW5jczogRW5jb2Rl
-ciBoZWxwZXIgZnVuY3MgdnRhYmxlIHRvIGJlIHVzZWQgYnkgdGhlIGludGVybmFsDQo+IGVuY29k
-ZXINCj4gLSAqIEBmb3JtYXRzOiBBcnJheSBvZiBzdXBwb3J0ZWQgcGl4ZWwgZm9ybWF0cyBmb3Ig
-dGhlIHdyaXRlYmFjayBlbmdpbmUNCj4gLSAqIEBuX2Zvcm1hdHM6IExlbmd0aCBvZiB0aGUgZm9y
-bWF0cyBhcnJheQ0KPiAtICogQHBvc3NpYmxlX2NydGNzOiBwb3NzaWJsZSBjcnRjcyBmb3IgdGhl
-IGludGVybmFsIHdyaXRlYmFjayBlbmNvZGVyDQo+IC0gKg0KPiAtICogVGhpcyBmdW5jdGlvbiBj
-cmVhdGVzIHRoZSB3cml0ZWJhY2stY29ubmVjdG9yLXNwZWNpZmljIHByb3BlcnRpZXMgaWYgdGhl
-eQ0KPiAtICogaGF2ZSBub3QgYmVlbiBhbHJlYWR5IGNyZWF0ZWQsIGluaXRpYWxpemVzIHRoZSBj
-b25uZWN0b3IgYXMNCj4gLSAqIHR5cGUgRFJNX01PREVfQ09OTkVDVE9SX1dSSVRFQkFDSywgYW5k
-IGNvcnJlY3RseSBpbml0aWFsaXplcyB0aGUNCj4gcHJvcGVydHkNCj4gLSAqIHZhbHVlcy4gSXQg
-d2lsbCBhbHNvIGNyZWF0ZSBhbiBpbnRlcm5hbCBlbmNvZGVyIGFzc29jaWF0ZWQgd2l0aCB0aGUN
-Cj4gLSAqIGRybV93cml0ZWJhY2tfY29ubmVjdG9yIGFuZCBzZXQgaXQgdG8gdXNlIHRoZSBAZW5j
-X2hlbHBlcl9mdW5jcyB2dGFibGUNCj4gZm9yDQo+IC0gKiB0aGUgZW5jb2RlciBoZWxwZXIuDQo+
-IC0gKg0KPiAtICogRHJpdmVycyBzaG91bGQgYWx3YXlzIHVzZSB0aGlzIGZ1bmN0aW9uIGluc3Rl
-YWQgb2YgZHJtX2Nvbm5lY3Rvcl9pbml0KCkgdG8NCj4gLSAqIHNldCB1cCB3cml0ZWJhY2sgY29u
-bmVjdG9ycy4NCj4gLSAqDQo+IC0gKiBSZXR1cm5zOiAwIG9uIHN1Y2Nlc3MsIG9yIGEgbmVnYXRp
-dmUgZXJyb3IgY29kZQ0KPiAtICovDQo+IC1pbnQgZHJtX3dyaXRlYmFja19jb25uZWN0b3JfaW5p
-dChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LA0KPiAtCQkJCSBzdHJ1Y3QgZHJtX3dyaXRlYmFja19j
-b25uZWN0b3INCj4gKndiX2Nvbm5lY3RvciwNCj4gLQkJCQkgY29uc3Qgc3RydWN0IGRybV9jb25u
-ZWN0b3JfZnVuY3MNCj4gKmNvbl9mdW5jcywNCj4gLQkJCQkgY29uc3Qgc3RydWN0IGRybV9lbmNv
-ZGVyX2hlbHBlcl9mdW5jcw0KPiAqZW5jX2hlbHBlcl9mdW5jcywNCj4gLQkJCQkgY29uc3QgdTMy
-ICpmb3JtYXRzLCBpbnQgbl9mb3JtYXRzLA0KPiAtCQkJCSB1MzIgcG9zc2libGVfY3J0Y3MpDQo+
-IC17DQo+IC0JaW50IHJldCA9IDA7DQo+IC0NCj4gLQlkcm1fZW5jb2Rlcl9oZWxwZXJfYWRkKCZ3
-Yl9jb25uZWN0b3ItPmVuY29kZXIsDQo+IGVuY19oZWxwZXJfZnVuY3MpOw0KPiAtDQo+IC0Jd2Jf
-Y29ubmVjdG9yLT5lbmNvZGVyLnBvc3NpYmxlX2NydGNzID0gcG9zc2libGVfY3J0Y3M7DQo+IC0N
-Cj4gLQlyZXQgPSBkcm1fZW5jb2Rlcl9pbml0KGRldiwgJndiX2Nvbm5lY3Rvci0+ZW5jb2RlciwN
-Cj4gLQkJCSAgICAgICAmZHJtX3dyaXRlYmFja19lbmNvZGVyX2Z1bmNzLA0KPiAtCQkJICAgICAg
-IERSTV9NT0RFX0VOQ09ERVJfVklSVFVBTCwgTlVMTCk7DQo+IC0JaWYgKHJldCkNCj4gLQkJcmV0
-dXJuIHJldDsNCj4gLQ0KPiAtCXJldCA9IGRybV93cml0ZWJhY2tfY29ubmVjdG9yX2luaXRfd2l0
-aF9lbmNvZGVyKGRldiwNCj4gd2JfY29ubmVjdG9yLCAmd2JfY29ubmVjdG9yLT5lbmNvZGVyLA0K
-PiAtCQkJY29uX2Z1bmNzLCBmb3JtYXRzLCBuX2Zvcm1hdHMpOw0KPiAtDQo+IC0JaWYgKHJldCkN
-Cj4gLQkJZHJtX2VuY29kZXJfY2xlYW51cCgmd2JfY29ubmVjdG9yLT5lbmNvZGVyKTsNCj4gLQ0K
-PiAtCXJldHVybiByZXQ7DQo+IC19DQo+IC1FWFBPUlRfU1lNQk9MKGRybV93cml0ZWJhY2tfY29u
-bmVjdG9yX2luaXQpOw0KPiAtDQo+ICBzdGF0aWMgdm9pZCBkZWxldGVfd3JpdGViYWNrX3Byb3Bl
-cnRpZXMoc3RydWN0IGRybV9kZXZpY2UgKmRldikgIHsNCj4gIAlpZiAoZGV2LT5tb2RlX2NvbmZp
-Zy53cml0ZWJhY2tfcGl4ZWxfZm9ybWF0c19wcm9wZXJ0eSkgeyBkaWZmIC0tZ2l0DQo+IGEvaW5j
-bHVkZS9kcm0vZHJtX3dyaXRlYmFjay5oIGIvaW5jbHVkZS9kcm0vZHJtX3dyaXRlYmFjay5oIGlu
-ZGV4DQo+IGMzODBhN2I4ZjU1YTM2MTZmYTA3MGMwMzdkNWNjNjUzYjAwNjFmZTYuLjg3OWNhMTAz
-MzIwY2MyMjVmZmIzNjg3NDE5MA0KPiA4ODM2MTMxNTUzNWZjIDEwMDY0NA0KPiAtLS0gYS9pbmNs
-dWRlL2RybS9kcm1fd3JpdGViYWNrLmgNCj4gKysrIGIvaW5jbHVkZS9kcm0vZHJtX3dyaXRlYmFj
-ay5oDQo+IEBAIC0yNCwxNyArMjQsNiBAQCBzdHJ1Y3QgZHJtX3dyaXRlYmFja19jb25uZWN0b3Ig
-ew0KPiAgCSAqLw0KPiAgCXN0cnVjdCBkcm1fY29ubmVjdG9yIGJhc2U7DQo+IA0KPiAtCS8qKg0K
-PiAtCSAqIEBlbmNvZGVyOiBJbnRlcm5hbCBlbmNvZGVyIHVzZWQgYnkgdGhlIGNvbm5lY3RvciB0
-byBmdWxmaWxsDQo+IC0JICogdGhlIERSTSBmcmFtZXdvcmsgcmVxdWlyZW1lbnRzLiBUaGUgdXNl
-cnMgb2YgdGhlDQo+IC0JICogQGRybV93cml0ZWJhY2tfY29ubmVjdG9yIGNvbnRyb2wgdGhlIGJl
-aGF2aW91ciBvZiB0aGUgQGVuY29kZXINCj4gLQkgKiBieSBwYXNzaW5nIHRoZSBAZW5jX2Z1bmNz
-IHBhcmFtZXRlciB0bw0KPiBkcm1fd3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0KCkNCj4gLQkgKiBm
-dW5jdGlvbi4NCj4gLQkgKiBGb3IgdXNlcnMgb2YgZHJtX3dyaXRlYmFja19jb25uZWN0b3JfaW5p
-dF93aXRoX2VuY29kZXIoKSwgdGhpcw0KPiBmaWVsZA0KPiAtCSAqIGlzIG5vdCB2YWxpZCBhcyB0
-aGUgZW5jb2RlciBpcyBtYW5hZ2VkIHdpdGhpbiB0aGVpciBkcml2ZXJzLg0KPiAtCSAqLw0KPiAt
-CXN0cnVjdCBkcm1fZW5jb2RlciBlbmNvZGVyOw0KPiAtDQo+ICAJLyoqDQo+ICAJICogQHBpeGVs
-X2Zvcm1hdHNfYmxvYl9wdHI6DQo+ICAJICoNCj4gQEAgLTE0OCwxMyArMTM3LDYgQEAgZHJtX2Nv
-bm5lY3Rvcl90b193cml0ZWJhY2soc3RydWN0IGRybV9jb25uZWN0b3INCj4gKmNvbm5lY3RvcikN
-Cj4gIAlyZXR1cm4gY29udGFpbmVyX29mKGNvbm5lY3Rvciwgc3RydWN0IGRybV93cml0ZWJhY2tf
-Y29ubmVjdG9yLCBiYXNlKTsNCj4gfQ0KPiANCj4gLWludCBkcm1fd3JpdGViYWNrX2Nvbm5lY3Rv
-cl9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsDQo+IC0JCQkJIHN0cnVjdCBkcm1fd3JpdGVi
-YWNrX2Nvbm5lY3Rvcg0KPiAqd2JfY29ubmVjdG9yLA0KPiAtCQkJCSBjb25zdCBzdHJ1Y3QgZHJt
-X2Nvbm5lY3Rvcl9mdW5jcw0KPiAqY29uX2Z1bmNzLA0KPiAtCQkJCSBjb25zdCBzdHJ1Y3QgZHJt
-X2VuY29kZXJfaGVscGVyX2Z1bmNzDQo+ICplbmNfaGVscGVyX2Z1bmNzLA0KPiAtCQkJCSBjb25z
-dCB1MzIgKmZvcm1hdHMsIGludCBuX2Zvcm1hdHMsDQo+IC0JCQkJIHUzMiBwb3NzaWJsZV9jcnRj
-cyk7DQo+IC0NCj4gIGludCBkcm1fd3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0X3dpdGhfZW5jb2Rl
-cihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LA0KPiAgCQkJCXN0cnVjdCBkcm1fd3JpdGViYWNrX2Nv
-bm5lY3Rvcg0KPiAqd2JfY29ubmVjdG9yLA0KPiAgCQkJCXN0cnVjdCBkcm1fZW5jb2RlciAqZW5j
-LA0KPiANCj4gLS0NCj4gMi4zOS41DQoNCg==
+
+
+Le 07/08/2025 à 21:40, Sabyrzhan Tasbolatov a écrit :
+> Introduce CONFIG_ARCH_DEFER_KASAN to identify architectures [1] that need
+> to defer KASAN initialization until shadow memory is properly set up,
+> and unify the static key infrastructure across all KASAN modes.
+
+That probably desserves more details, maybe copy in informations from 
+the top of cover letter.
+
+I think there should also be some exeplanations about 
+kasan_arch_is_ready() becoming kasan_enabled(), and also why 
+kasan_arch_is_ready() completely disappear from mm/kasan/common.c 
+without being replaced by kasan_enabled().
+
+> 
+> [1] PowerPC, UML, LoongArch selects ARCH_DEFER_KASAN.
+> 
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217049
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> ---
+> Changes in v5:
+> - Unified patches where arch (powerpc, UML, loongarch) selects
+>    ARCH_DEFER_KASAN in the first patch not to break
+>    bisectability
+> - Removed kasan_arch_is_ready completely as there is no user
+> - Removed __wrappers in v4, left only those where it's necessary
+>    due to different implementations
+> 
+> Changes in v4:
+> - Fixed HW_TAGS static key functionality (was broken in v3)
+> - Merged configuration and implementation for atomicity
+> ---
+>   arch/loongarch/Kconfig                 |  1 +
+>   arch/loongarch/include/asm/kasan.h     |  7 ------
+>   arch/loongarch/mm/kasan_init.c         |  8 +++----
+>   arch/powerpc/Kconfig                   |  1 +
+>   arch/powerpc/include/asm/kasan.h       | 12 ----------
+>   arch/powerpc/mm/kasan/init_32.c        |  2 +-
+>   arch/powerpc/mm/kasan/init_book3e_64.c |  2 +-
+>   arch/powerpc/mm/kasan/init_book3s_64.c |  6 +----
+>   arch/um/Kconfig                        |  1 +
+>   arch/um/include/asm/kasan.h            |  5 ++--
+>   arch/um/kernel/mem.c                   | 10 ++++++--
+>   include/linux/kasan-enabled.h          | 32 ++++++++++++++++++--------
+>   include/linux/kasan.h                  |  6 +++++
+>   lib/Kconfig.kasan                      |  8 +++++++
+>   mm/kasan/common.c                      | 17 ++++++++++----
+>   mm/kasan/generic.c                     | 19 +++++++++++----
+>   mm/kasan/hw_tags.c                     |  9 +-------
+>   mm/kasan/kasan.h                       |  8 ++++++-
+>   mm/kasan/shadow.c                      | 12 +++++-----
+>   mm/kasan/sw_tags.c                     |  1 +
+>   mm/kasan/tags.c                        |  2 +-
+>   21 files changed, 100 insertions(+), 69 deletions(-)
+> 
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index f0abc38c40a..cd64b2bc12d 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -9,6 +9,7 @@ config LOONGARCH
+>   	select ACPI_PPTT if ACPI
+>   	select ACPI_SYSTEM_POWER_STATES_SUPPORT	if ACPI
+>   	select ARCH_BINFMT_ELF_STATE
+> +	select ARCH_DEFER_KASAN if KASAN
+
+Instead of adding 'if KASAN' in all users, you could do in two steps:
+
+Add a symbol ARCH_NEEDS_DEFER_KASAN.
+
++config ARCH_NEEDS_DEFER_KASAN
++	bool
+
+And then:
+
++config ARCH_DEFER_KASAN
++	def_bool
++	depends on KASAN
++	depends on ARCH_DEFER_KASAN
++	help
++	  Architectures should select this if they need to defer KASAN
++	  initialization until shadow memory is properly set up. This
++	  enables runtime control via static keys. Otherwise, KASAN uses
++	  compile-time constants for better performance.
+
+
+
+>   	select ARCH_DISABLE_KASAN_INLINE
+>   	select ARCH_ENABLE_MEMORY_HOTPLUG
+>   	select ARCH_ENABLE_MEMORY_HOTREMOVE
+> diff --git a/arch/loongarch/include/asm/kasan.h b/arch/loongarch/include/asm/kasan.h
+> index 62f139a9c87..0e50e5b5e05 100644
+> --- a/arch/loongarch/include/asm/kasan.h
+> +++ b/arch/loongarch/include/asm/kasan.h
+> @@ -66,7 +66,6 @@
+>   #define XKPRANGE_WC_SHADOW_OFFSET	(KASAN_SHADOW_START + XKPRANGE_WC_KASAN_OFFSET)
+>   #define XKVRANGE_VC_SHADOW_OFFSET	(KASAN_SHADOW_START + XKVRANGE_VC_KASAN_OFFSET)
+>   
+> -extern bool kasan_early_stage;
+>   extern unsigned char kasan_early_shadow_page[PAGE_SIZE];
+>   
+>   #define kasan_mem_to_shadow kasan_mem_to_shadow
+> @@ -75,12 +74,6 @@ void *kasan_mem_to_shadow(const void *addr);
+>   #define kasan_shadow_to_mem kasan_shadow_to_mem
+>   const void *kasan_shadow_to_mem(const void *shadow_addr);
+>   
+> -#define kasan_arch_is_ready kasan_arch_is_ready
+> -static __always_inline bool kasan_arch_is_ready(void)
+> -{
+> -	return !kasan_early_stage;
+> -}
+> -
+>   #define addr_has_metadata addr_has_metadata
+>   static __always_inline bool addr_has_metadata(const void *addr)
+>   {
+> diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_init.c
+> index d2681272d8f..170da98ad4f 100644
+> --- a/arch/loongarch/mm/kasan_init.c
+> +++ b/arch/loongarch/mm/kasan_init.c
+> @@ -40,11 +40,9 @@ static pgd_t kasan_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>   #define __pte_none(early, pte) (early ? pte_none(pte) : \
+>   ((pte_val(pte) & _PFN_MASK) == (unsigned long)__pa(kasan_early_shadow_page)))
+>   
+> -bool kasan_early_stage = true;
+> -
+>   void *kasan_mem_to_shadow(const void *addr)
+>   {
+> -	if (!kasan_arch_is_ready()) {
+> +	if (!kasan_enabled()) {
+>   		return (void *)(kasan_early_shadow_page);
+>   	} else {
+>   		unsigned long maddr = (unsigned long)addr;
+> @@ -298,7 +296,8 @@ void __init kasan_init(void)
+>   	kasan_populate_early_shadow(kasan_mem_to_shadow((void *)VMALLOC_START),
+>   					kasan_mem_to_shadow((void *)KFENCE_AREA_END));
+>   
+> -	kasan_early_stage = false;
+> +	/* Enable KASAN here before kasan_mem_to_shadow(). */
+> +	kasan_init_generic();
+>   
+>   	/* Populate the linear mapping */
+>   	for_each_mem_range(i, &pa_start, &pa_end) {
+> @@ -329,5 +328,4 @@ void __init kasan_init(void)
+>   
+>   	/* At this point kasan is fully initialized. Enable error messages */
+>   	init_task.kasan_depth = 0;
+> -	pr_info("KernelAddressSanitizer initialized.\n");
+>   }
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 93402a1d9c9..a324dcdb8eb 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -122,6 +122,7 @@ config PPC
+>   	# Please keep this list sorted alphabetically.
+>   	#
+>   	select ARCH_32BIT_OFF_T if PPC32
+> +	select ARCH_DEFER_KASAN			if KASAN && PPC_RADIX_MMU
+>   	select ARCH_DISABLE_KASAN_INLINE	if PPC_RADIX_MMU
+>   	select ARCH_DMA_DEFAULT_COHERENT	if !NOT_COHERENT_CACHE
+>   	select ARCH_ENABLE_MEMORY_HOTPLUG
+> diff --git a/arch/powerpc/include/asm/kasan.h b/arch/powerpc/include/asm/kasan.h
+> index b5bbb94c51f..957a57c1db5 100644
+> --- a/arch/powerpc/include/asm/kasan.h
+> +++ b/arch/powerpc/include/asm/kasan.h
+> @@ -53,18 +53,6 @@
+>   #endif
+>   
+>   #ifdef CONFIG_KASAN
+> -#ifdef CONFIG_PPC_BOOK3S_64
+> -DECLARE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
+> -
+> -static __always_inline bool kasan_arch_is_ready(void)
+> -{
+> -	if (static_branch_likely(&powerpc_kasan_enabled_key))
+> -		return true;
+> -	return false;
+> -}
+> -
+> -#define kasan_arch_is_ready kasan_arch_is_ready
+> -#endif
+>   
+>   void kasan_early_init(void);
+>   void kasan_mmu_init(void);
+> diff --git a/arch/powerpc/mm/kasan/init_32.c b/arch/powerpc/mm/kasan/init_32.c
+> index 03666d790a5..1d083597464 100644
+> --- a/arch/powerpc/mm/kasan/init_32.c
+> +++ b/arch/powerpc/mm/kasan/init_32.c
+> @@ -165,7 +165,7 @@ void __init kasan_init(void)
+>   
+>   	/* At this point kasan is fully initialized. Enable error messages */
+>   	init_task.kasan_depth = 0;
+> -	pr_info("KASAN init done\n");
+> +	kasan_init_generic();
+>   }
+>   
+>   void __init kasan_late_init(void)
+> diff --git a/arch/powerpc/mm/kasan/init_book3e_64.c b/arch/powerpc/mm/kasan/init_book3e_64.c
+> index 60c78aac0f6..0d3a73d6d4b 100644
+> --- a/arch/powerpc/mm/kasan/init_book3e_64.c
+> +++ b/arch/powerpc/mm/kasan/init_book3e_64.c
+> @@ -127,7 +127,7 @@ void __init kasan_init(void)
+>   
+>   	/* Enable error messages */
+>   	init_task.kasan_depth = 0;
+> -	pr_info("KASAN init done\n");
+> +	kasan_init_generic();
+>   }
+>   
+>   void __init kasan_late_init(void) { }
+> diff --git a/arch/powerpc/mm/kasan/init_book3s_64.c b/arch/powerpc/mm/kasan/init_book3s_64.c
+> index 7d959544c07..dcafa641804 100644
+> --- a/arch/powerpc/mm/kasan/init_book3s_64.c
+> +++ b/arch/powerpc/mm/kasan/init_book3s_64.c
+> @@ -19,8 +19,6 @@
+>   #include <linux/memblock.h>
+>   #include <asm/pgalloc.h>
+>   
+> -DEFINE_STATIC_KEY_FALSE(powerpc_kasan_enabled_key);
+> -
+>   static void __init kasan_init_phys_region(void *start, void *end)
+>   {
+>   	unsigned long k_start, k_end, k_cur;
+> @@ -92,11 +90,9 @@ void __init kasan_init(void)
+>   	 */
+>   	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+>   
+> -	static_branch_inc(&powerpc_kasan_enabled_key);
+> -
+>   	/* Enable error messages */
+>   	init_task.kasan_depth = 0;
+> -	pr_info("KASAN init done\n");
+> +	kasan_init_generic();
+>   }
+>   
+>   void __init kasan_early_init(void) { }
+> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+> index 9083bfdb773..a12cc072ab1 100644
+> --- a/arch/um/Kconfig
+> +++ b/arch/um/Kconfig
+> @@ -5,6 +5,7 @@ menu "UML-specific options"
+>   config UML
+>   	bool
+>   	default y
+> +	select ARCH_DEFER_KASAN if STATIC_LINK
+
+No need to also verify KASAN here like powerpc and loongarch ?
+
+>   	select ARCH_WANTS_DYNAMIC_TASK_STRUCT
+>   	select ARCH_HAS_CACHE_LINE_SIZE
+>   	select ARCH_HAS_CPU_FINALIZE_INIT
+> diff --git a/arch/um/include/asm/kasan.h b/arch/um/include/asm/kasan.h
+> index f97bb1f7b85..b54a4e937fd 100644
+> --- a/arch/um/include/asm/kasan.h
+> +++ b/arch/um/include/asm/kasan.h
+> @@ -24,10 +24,9 @@
+>   
+>   #ifdef CONFIG_KASAN
+>   void kasan_init(void);
+> -extern int kasan_um_is_ready;
+>   
+> -#ifdef CONFIG_STATIC_LINK
+> -#define kasan_arch_is_ready() (kasan_um_is_ready)
+> +#if defined(CONFIG_STATIC_LINK) && defined(CONFIG_KASAN_INLINE)
+> +#error UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
+>   #endif
+>   #else
+>   static inline void kasan_init(void) { }
+> diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
+> index 76bec7de81b..261fdcd21be 100644
+> --- a/arch/um/kernel/mem.c
+> +++ b/arch/um/kernel/mem.c
+> @@ -21,9 +21,9 @@
+>   #include <os.h>
+>   #include <um_malloc.h>
+>   #include <linux/sched/task.h>
+> +#include <linux/kasan.h>
+>   
+>   #ifdef CONFIG_KASAN
+> -int kasan_um_is_ready;
+>   void kasan_init(void)
+>   {
+>   	/*
+> @@ -32,7 +32,10 @@ void kasan_init(void)
+>   	 */
+>   	kasan_map_memory((void *)KASAN_SHADOW_START, KASAN_SHADOW_SIZE);
+>   	init_task.kasan_depth = 0;
+> -	kasan_um_is_ready = true;
+> +	/* Since kasan_init() is called before main(),
+> +	 * KASAN is initialized but the enablement is deferred after
+> +	 * jump_label_init(). See arch_mm_preinit().
+> +	 */
+
+Format standard is different outside network, see: 
+https://docs.kernel.org/process/coding-style.html#commenting
+
+>   }
+>   
+>   static void (*kasan_init_ptr)(void)
+> @@ -58,6 +61,9 @@ static unsigned long brk_end;
+>   
+>   void __init arch_mm_preinit(void)
+>   {
+> +	/* Safe to call after jump_label_init(). Enables KASAN. */
+> +	kasan_init_generic();
+> +
+>   	/* clear the zero-page */
+>   	memset(empty_zero_page, 0, PAGE_SIZE);
+>   
+> diff --git a/include/linux/kasan-enabled.h b/include/linux/kasan-enabled.h
+> index 6f612d69ea0..9eca967d852 100644
+> --- a/include/linux/kasan-enabled.h
+> +++ b/include/linux/kasan-enabled.h
+> @@ -4,32 +4,46 @@
+>   
+>   #include <linux/static_key.h>
+>   
+> -#ifdef CONFIG_KASAN_HW_TAGS
+> -
+> +#if defined(CONFIG_ARCH_DEFER_KASAN) || defined(CONFIG_KASAN_HW_TAGS)
+> +/*
+> + * Global runtime flag for KASAN modes that need runtime control.
+> + * Used by ARCH_DEFER_KASAN architectures and HW_TAGS mode.
+> + */
+>   DECLARE_STATIC_KEY_FALSE(kasan_flag_enabled);
+>   
+> +/*
+> + * Runtime control for shadow memory initialization or HW_TAGS mode.
+> + * Uses static key for architectures that need deferred KASAN or HW_TAGS.
+> + */
+>   static __always_inline bool kasan_enabled(void)
+>   {
+>   	return static_branch_likely(&kasan_flag_enabled);
+>   }
+>   
+> -static inline bool kasan_hw_tags_enabled(void)
+> +static inline void kasan_enable(void)
+>   {
+> -	return kasan_enabled();
+> +	static_branch_enable(&kasan_flag_enabled);
+>   }
+> -
+> -#else /* CONFIG_KASAN_HW_TAGS */
+> -
+> -static inline bool kasan_enabled(void)
+> +#else
+> +/* For architectures that can enable KASAN early, use compile-time check. */
+> +static __always_inline bool kasan_enabled(void)
+>   {
+>   	return IS_ENABLED(CONFIG_KASAN);
+>   }
+>   
+> +static inline void kasan_enable(void) {}
+> +#endif /* CONFIG_ARCH_DEFER_KASAN || CONFIG_KASAN_HW_TAGS */
+> +
+> +#ifdef CONFIG_KASAN_HW_TAGS
+> +static inline bool kasan_hw_tags_enabled(void)
+> +{
+> +	return kasan_enabled();
+> +}
+> +#else
+>   static inline bool kasan_hw_tags_enabled(void)
+>   {
+>   	return false;
+>   }
+> -
+>   #endif /* CONFIG_KASAN_HW_TAGS */
+>   
+>   #endif /* LINUX_KASAN_ENABLED_H */
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index 890011071f2..51a8293d1af 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -543,6 +543,12 @@ void kasan_report_async(void);
+>   
+>   #endif /* CONFIG_KASAN_HW_TAGS */
+>   
+> +#ifdef CONFIG_KASAN_GENERIC
+> +void __init kasan_init_generic(void);
+> +#else
+> +static inline void kasan_init_generic(void) { }
+> +#endif
+> +
+>   #ifdef CONFIG_KASAN_SW_TAGS
+>   void __init kasan_init_sw_tags(void);
+>   #else
+> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+> index f82889a830f..38456560c85 100644
+> --- a/lib/Kconfig.kasan
+> +++ b/lib/Kconfig.kasan
+> @@ -19,6 +19,14 @@ config ARCH_DISABLE_KASAN_INLINE
+>   	  Disables both inline and stack instrumentation. Selected by
+>   	  architectures that do not support these instrumentation types.
+>   
+> +config ARCH_DEFER_KASAN
+> +	bool
+> +	help
+> +	  Architectures should select this if they need to defer KASAN
+> +	  initialization until shadow memory is properly set up. This
+> +	  enables runtime control via static keys. Otherwise, KASAN uses
+> +	  compile-time constants for better performance.
+> +
+>   config CC_HAS_KASAN_GENERIC
+>   	def_bool $(cc-option, -fsanitize=kernel-address)
+>   
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index 9142964ab9c..d9d389870a2 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -32,6 +32,15 @@
+>   #include "kasan.h"
+>   #include "../slab.h"
+>   
+> +#if defined(CONFIG_ARCH_DEFER_KASAN) || defined(CONFIG_KASAN_HW_TAGS)
+> +/*
+> + * Definition of the unified static key declared in kasan-enabled.h.
+> + * This provides consistent runtime enable/disable across KASAN modes.
+> + */
+> +DEFINE_STATIC_KEY_FALSE(kasan_flag_enabled);
+> +EXPORT_SYMBOL(kasan_flag_enabled);
+
+Shouldn't new exports be GPL ?
+
+> +#endif
+> +
+>   struct slab *kasan_addr_to_slab(const void *addr)
+>   {
+>   	if (virt_addr_valid(addr))
+> @@ -246,7 +255,7 @@ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
+>   bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+>   				unsigned long ip)
+>   {
+> -	if (!kasan_arch_is_ready() || is_kfence_address(object))
+> +	if (is_kfence_address(object))
+
+Here and below, no need to replace kasan_arch_is_ready() by 
+kasan_enabled() ?
+
+>   		return false;
+>   	return check_slab_allocation(cache, object, ip);
+>   }
+> @@ -254,7 +263,7 @@ bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+>   bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
+>   		       bool still_accessible)
+>   {
+> -	if (!kasan_arch_is_ready() || is_kfence_address(object))
+> +	if (is_kfence_address(object))
+>   		return false;
+>   
+>   	/*
+> @@ -293,7 +302,7 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
+>   
+>   static inline bool check_page_allocation(void *ptr, unsigned long ip)
+>   {
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return false;
+>   
+>   	if (ptr != page_address(virt_to_head_page(ptr))) {
+> @@ -522,7 +531,7 @@ bool __kasan_mempool_poison_object(void *ptr, unsigned long ip)
+>   		return true;
+>   	}
+>   
+> -	if (is_kfence_address(ptr) || !kasan_arch_is_ready())
+> +	if (is_kfence_address(ptr))
+>   		return true;
+>   
+>   	slab = folio_slab(folio);
+> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> index d54e89f8c3e..b413c46b3e0 100644
+> --- a/mm/kasan/generic.c
+> +++ b/mm/kasan/generic.c
+> @@ -36,6 +36,17 @@
+>   #include "kasan.h"
+>   #include "../slab.h"
+>   
+> +/*
+> + * Initialize Generic KASAN and enable runtime checks.
+> + * This should be called from arch kasan_init() once shadow memory is ready.
+> + */
+> +void __init kasan_init_generic(void)
+> +{
+> +	kasan_enable();
+> +
+> +	pr_info("KernelAddressSanitizer initialized (generic)\n");
+> +}
+> +
+>   /*
+>    * All functions below always inlined so compiler could
+>    * perform better optimizations in each of __asan_loadX/__assn_storeX
+> @@ -165,7 +176,7 @@ static __always_inline bool check_region_inline(const void *addr,
+>   						size_t size, bool write,
+>   						unsigned long ret_ip)
+>   {
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return true;
+>   
+>   	if (unlikely(size == 0))
+> @@ -193,7 +204,7 @@ bool kasan_byte_accessible(const void *addr)
+>   {
+>   	s8 shadow_byte;
+>   
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return true;
+>   
+>   	shadow_byte = READ_ONCE(*(s8 *)kasan_mem_to_shadow(addr));
+> @@ -495,7 +506,7 @@ static void release_alloc_meta(struct kasan_alloc_meta *meta)
+>   
+>   static void release_free_meta(const void *object, struct kasan_free_meta *meta)
+>   {
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return;
+>   
+>   	/* Check if free meta is valid. */
+> @@ -562,7 +573,7 @@ void kasan_save_alloc_info(struct kmem_cache *cache, void *object, gfp_t flags)
+>   	kasan_save_track(&alloc_meta->alloc_track, flags);
+>   }
+>   
+> -void kasan_save_free_info(struct kmem_cache *cache, void *object)
+> +void __kasan_save_free_info(struct kmem_cache *cache, void *object)
+>   {
+>   	struct kasan_free_meta *free_meta;
+>   
+> diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
+> index 9a6927394b5..c8289a3feab 100644
+> --- a/mm/kasan/hw_tags.c
+> +++ b/mm/kasan/hw_tags.c
+> @@ -45,13 +45,6 @@ static enum kasan_arg kasan_arg __ro_after_init;
+>   static enum kasan_arg_mode kasan_arg_mode __ro_after_init;
+>   static enum kasan_arg_vmalloc kasan_arg_vmalloc __initdata;
+>   
+> -/*
+> - * Whether KASAN is enabled at all.
+> - * The value remains false until KASAN is initialized by kasan_init_hw_tags().
+> - */
+> -DEFINE_STATIC_KEY_FALSE(kasan_flag_enabled);
+> -EXPORT_SYMBOL(kasan_flag_enabled);
+> -
+>   /*
+>    * Whether the selected mode is synchronous, asynchronous, or asymmetric.
+>    * Defaults to KASAN_MODE_SYNC.
+> @@ -260,7 +253,7 @@ void __init kasan_init_hw_tags(void)
+>   	kasan_init_tags();
+>   
+>   	/* KASAN is now initialized, enable it. */
+> -	static_branch_enable(&kasan_flag_enabled);
+> +	kasan_enable();
+>   
+>   	pr_info("KernelAddressSanitizer initialized (hw-tags, mode=%s, vmalloc=%s, stacktrace=%s)\n",
+>   		kasan_mode_info(),
+> diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+> index 129178be5e6..8a9d8a6ea71 100644
+> --- a/mm/kasan/kasan.h
+> +++ b/mm/kasan/kasan.h
+> @@ -398,7 +398,13 @@ depot_stack_handle_t kasan_save_stack(gfp_t flags, depot_flags_t depot_flags);
+>   void kasan_set_track(struct kasan_track *track, depot_stack_handle_t stack);
+>   void kasan_save_track(struct kasan_track *track, gfp_t flags);
+>   void kasan_save_alloc_info(struct kmem_cache *cache, void *object, gfp_t flags);
+> -void kasan_save_free_info(struct kmem_cache *cache, void *object);
+> +
+> +void __kasan_save_free_info(struct kmem_cache *cache, void *object);
+> +static inline void kasan_save_free_info(struct kmem_cache *cache, void *object)
+> +{
+> +	if (kasan_enabled())
+> +		__kasan_save_free_info(cache, object);
+> +}
+>   
+>   #ifdef CONFIG_KASAN_GENERIC
+>   bool kasan_quarantine_put(struct kmem_cache *cache, void *object);
+> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+> index d2c70cd2afb..2e126cb21b6 100644
+> --- a/mm/kasan/shadow.c
+> +++ b/mm/kasan/shadow.c
+> @@ -125,7 +125,7 @@ void kasan_poison(const void *addr, size_t size, u8 value, bool init)
+>   {
+>   	void *shadow_start, *shadow_end;
+>   
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return;
+>   
+>   	/*
+> @@ -150,7 +150,7 @@ EXPORT_SYMBOL_GPL(kasan_poison);
+>   #ifdef CONFIG_KASAN_GENERIC
+>   void kasan_poison_last_granule(const void *addr, size_t size)
+>   {
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return;
+>   
+>   	if (size & KASAN_GRANULE_MASK) {
+> @@ -390,7 +390,7 @@ int kasan_populate_vmalloc(unsigned long addr, unsigned long size)
+>   	unsigned long shadow_start, shadow_end;
+>   	int ret;
+>   
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return 0;
+>   
+>   	if (!is_vmalloc_or_module_addr((void *)addr))
+> @@ -560,7 +560,7 @@ void kasan_release_vmalloc(unsigned long start, unsigned long end,
+>   	unsigned long region_start, region_end;
+>   	unsigned long size;
+>   
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return;
+>   
+>   	region_start = ALIGN(start, KASAN_MEMORY_PER_SHADOW_PAGE);
+> @@ -611,7 +611,7 @@ void *__kasan_unpoison_vmalloc(const void *start, unsigned long size,
+>   	 * with setting memory tags, so the KASAN_VMALLOC_INIT flag is ignored.
+>   	 */
+>   
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return (void *)start;
+>   
+>   	if (!is_vmalloc_or_module_addr(start))
+> @@ -636,7 +636,7 @@ void *__kasan_unpoison_vmalloc(const void *start, unsigned long size,
+>    */
+>   void __kasan_poison_vmalloc(const void *start, unsigned long size)
+>   {
+> -	if (!kasan_arch_is_ready())
+> +	if (!kasan_enabled())
+>   		return;
+>   
+>   	if (!is_vmalloc_or_module_addr(start))
+> diff --git a/mm/kasan/sw_tags.c b/mm/kasan/sw_tags.c
+> index b9382b5b6a3..c75741a7460 100644
+> --- a/mm/kasan/sw_tags.c
+> +++ b/mm/kasan/sw_tags.c
+> @@ -44,6 +44,7 @@ void __init kasan_init_sw_tags(void)
+>   		per_cpu(prng_state, cpu) = (u32)get_cycles();
+>   
+>   	kasan_init_tags();
+> +	kasan_enable();
+>   
+>   	pr_info("KernelAddressSanitizer initialized (sw-tags, stacktrace=%s)\n",
+>   		str_on_off(kasan_stack_collection_enabled()));
+> diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
+> index d65d48b85f9..b9f31293622 100644
+> --- a/mm/kasan/tags.c
+> +++ b/mm/kasan/tags.c
+> @@ -142,7 +142,7 @@ void kasan_save_alloc_info(struct kmem_cache *cache, void *object, gfp_t flags)
+>   	save_stack_info(cache, object, flags, false);
+>   }
+>   
+> -void kasan_save_free_info(struct kmem_cache *cache, void *object)
+> +void __kasan_save_free_info(struct kmem_cache *cache, void *object)
+>   {
+>   	save_stack_info(cache, object, 0, true);
+>   }
+
 
