@@ -1,187 +1,251 @@
-Return-Path: <linux-kernel+bounces-760803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83DBCB1F056
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:45:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4567DB1F05C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB90018948CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:45:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD4B7B2A1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7253428935F;
-	Fri,  8 Aug 2025 21:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE9C26AAB5;
+	Fri,  8 Aug 2025 21:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="F4Xk9FmS"
-Received: from mail-yb1-f226.google.com (mail-yb1-f226.google.com [209.85.219.226])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4dAYZB7"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08FBDDAD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 21:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794A81B2186;
+	Fri,  8 Aug 2025 21:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754689497; cv=none; b=oWR0dVVUginbCMxn8GoPH/BcuU9dXQu78I+Q7KLfL03ul4qkG0/kNaz0fLY+2xKzf/un/33zIVIeACm0JcatQsRGd8702LZIJkMiBcHlb/72TrkzXf5o2eo2C1ie6/IjrOJH3S9S1rmq5GN9A/8chP3VLNzPSrDY9h8mGn8K3R4=
+	t=1754689907; cv=none; b=Fc2yc/F8CNQQNxFnJqjCWKwcOx9ttC04yIlS5bfmP/PEExTBnkRS/cGHn6uFRo37o+u/6HOauKM2/7t1DEwO4dDx6rYeDJREb6t0R6Dfab4T4U1j3wJYg7ekRIO67uTfw7iZ59TBeTrDgVRo28HGL7sF13x3Dne1sPn/k88amPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754689497; c=relaxed/simple;
-	bh=Psiyix0cybmLPw2qvgnpcPuv24hLwDnQg8oW0/Ayuok=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QqPj2MRijlACHB1kYnDA5ExCArBPgpuAl2RR5jAUmdHX21+L30gmOES+mL5IKMJhOFhgD7Tg7f8ohBPQ2c4bgxFTikckXDF9jNtp6xTkyCtoZEBKj1cJU7Anc5yF5QHa6VjkOZ/s7i+Nlxb2FLzrCwilljVrVwX+tiq9cv+Ysiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=F4Xk9FmS; arc=none smtp.client-ip=209.85.219.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-yb1-f226.google.com with SMTP id 3f1490d57ef6-e904f863fb6so809583276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 14:44:55 -0700 (PDT)
+	s=arc-20240116; t=1754689907; c=relaxed/simple;
+	bh=IHAy7AaeMIszNJS4IIADYjNTFeBM/u2+DaJOBi+KNm4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dJ2ErQVzdAe3Thp0bwOkUEnjgFP8y6GBhbC8xXcki94jWFDirBHrjAtoraXv3ydye3PhFHC9yx/I617Mxn1rrazd803gf7AO/3qG5ez/cLd16Noj7xDRVW7vAkF+98L+QKJBUfZ+s3XDcRNMuJLYil/OSI2L87tQjrX/tNQ8mRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4dAYZB7; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3322d10e29dso20754391fa.0;
+        Fri, 08 Aug 2025 14:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1754689495; x=1755294295; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q6B6X3LEogA2yB8U1J4u8F6lwwIO7b99mUj1gg85SlI=;
-        b=F4Xk9FmSEwx+yG3/DxlqYzrp+Pu1VRW6nBpAwv+eGu+sj8lHFp21Dr4jE2lPIVfhhG
-         kA6FfoBc85TokJ3/M/T1YRrEnYBZFHkAQO7IBHJAdv2FRJnkuB1uizpA5cwqQ8zwVJbA
-         wxK+z2+G6gbS9GAbQ8po6kdfKbpRNvyjLlJmjA+7HO8RYQtVpa/lrgDeIPtTq+4DOpFR
-         MyRxsGAC1gP03bz6uqjmXfQHOr8FmtKetI5KxvLUwKQmhy+/2Gb6NweOCt/8xw8Imf+4
-         h8ungFHo6Y+4wVdi7BPlGDhEryj8pXase1TTC3Pg0eIIyWHSL1qxZmV4SYEdWVRerXdO
-         6mtA==
+        d=gmail.com; s=20230601; t=1754689903; x=1755294703; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vh0hYmIyP9DucyE/TOBInzLUx2edmySooLyN+uuo3zQ=;
+        b=f4dAYZB74f2J1LzqPkWvbuw6AnIVNzaaR4Y+wPQ8byH8hroJ3qp0bPRlxYWt67+z4M
+         UH6tEV8pSNV9tRCrwLHfysweLP/9XMrDtYHGz8wUU1maNCvnvDOOr1phcqL9odZ8zTxY
+         XsFWJWA9LlGFWnyoJF+O6pbInlxJd89uHGRjTkDOq8B4TW6oo5gKKz7NwESat66h5rB4
+         BGvxUfFoSgALSNUYWu9WrQIcTlYapRZMQNYOfzqfw7EYjDxD6d1Igze3vngzTFKcb/Cq
+         XxPBXWKrLhyIzE0rHD7SgqBqxDsYmGbxoLsscjRJMS4qqaBMFH4xfc5Kh07Nj5pH0srO
+         qLdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754689495; x=1755294295;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q6B6X3LEogA2yB8U1J4u8F6lwwIO7b99mUj1gg85SlI=;
-        b=fXi3miyozW6MlLfG7w96QA6XSQ1dMuRTeTrZCX1sthWJU30qDNcrFrA9l/5kpZjUhj
-         ELjU369hMmG7vqs5n0GWdTDC7Kaac8phH1DEJ/tLo0C8bXCCJ4DLDFH4QQ9IFN3t/uFd
-         h259hOz44DJViNh0eoS7Wl9sbMxEgt5f8eE6/Wz6PhlL8buhNA++4BjFpVnVcMsR7l1l
-         PqaTLxyJzwXEFAIXjKxNxmEA9GjUgOMtmlPjS/T6dtUOh8Y/RZQJoHoHXhMRmhrMf4xW
-         /WKggI4Dbj9GrWLcM7260Tew88jexViJrotTLBUgYWu7LvAYJXYf1boAEug9hoVUI1dz
-         nv6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVKElw5MZVe/RPpak7pHmlJXDZhi3lpmx6+SU13k3ldBatiDVznigdVhkmMBg8yiaJu1WL1G5aMPrhn6/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw60Oa9GsgCYHYWU7n5gnK1ojbE2eVmhe0Mob0vjasAlMwZLhXf
-	x7YdB7S/KElWcFN6UO63UHxCGjSyG6HFLXgs7Ep9VPTwPYxoSpXhy/HxK3THlp/2okaGcK48TWq
-	zrmROoTmCMNNsf2ZUmrBhHoM756VNOxWBntKU
-X-Gm-Gg: ASbGncsRgwoxb2DVp3KiFdV8R2PPUQflLWgurXhWWxkMwYwNEu11W8X9Lq4aLNc73fw
-	7VUt4dpo6G2SX3EgL8+TC2hBiSHcYIX01z5Sk61nJZUQK+l+WjXuRvVH2JUU2jDEakSuhY5ELGX
-	T+bcC0VOw2M5ieqCbJndDBpkJqBQAgdwWnLuEAHkgmZ0kBOCOsEJCkywb1akCwCHG6Mu3x9Y2ot
-	09SocJqHoeCmQ/48nuulEmj9ErlVfRrH1fbxvxomPoP7KrmJixf+jAAVP+xKAyAMsmc8zU+zAl5
-	3DA8LnBMvhxotwsS5Tubyav22I2KlNJ+ap4LsIjYEiorNVfhe9pCHum3BhRBxWChrQPODc7nmw=
-	=
-X-Google-Smtp-Source: AGHT+IEUsFB/3InQf9mBgnCvVVgl2Kn5BSU+C88gAveLZqjCjYTBqHfERzpLfFiBAunx9a7IefUfsmoHoLFB
-X-Received: by 2002:a05:6902:6d15:b0:e8b:7bac:2254 with SMTP id 3f1490d57ef6-e904b5a0f0bmr5652333276.33.1754689494587;
-        Fri, 08 Aug 2025 14:44:54 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
-        by smtp-relay.gmail.com with ESMTPS id 3f1490d57ef6-e904d6efc19sm153888276.1.2025.08.08.14.44.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 14:44:54 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id B5985340237;
-	Fri,  8 Aug 2025 15:44:53 -0600 (MDT)
-Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
-	id 81FC1E53908; Fri,  8 Aug 2025 15:44:53 -0600 (MDT)
-From: Uday Shankar <ushankar@purestorage.com>
-Date: Fri, 08 Aug 2025 15:44:43 -0600
-Subject: [PATCH] ublk: don't quiesce in ublk_ch_release
+        d=1e100.net; s=20230601; t=1754689903; x=1755294703;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vh0hYmIyP9DucyE/TOBInzLUx2edmySooLyN+uuo3zQ=;
+        b=TH0izFEHgqit7ErQgQFRcZbtQPWqDg3IW0nr+eLYpq/FwME/DTxzLe5/uj8llGrrgb
+         ZwjYmmaU2BR1avcrFTeDPbQ8reiTTv1DINrEtZlc6BmAS/P7w1xKLE3Sn/qXy/UrWQE3
+         Z2S5MNte0z6XzSSlaBHaEyDinLgZ4a0S3OIoE8FNgom7YzLh8gOlzIzwv0BdP2kYuH18
+         u2AE96U1IrM2VNUY+I52VBvQao8BuARveq9DzwewxzA3bwsWaAJPtnqLl0Tuj/OTDMvr
+         HR7hvECB3YYD51lA6vAFySZtXaVcWuszzwt9d0p+jk2m4sj+gMLBwhWUzAEY/P4fm/6s
+         64aw==
+X-Gm-Message-State: AOJu0YwXKTFYlRjawTT6askP3tIIYncsvHaeGhPcqdP0Dwco8bApjUkL
+	ZHHDl09rjZKjKvZv5z9qBV94ZN65EBuH4qhnGjHdokhxZUE+VSMTlyGRvCN6q4QhwA7pSXu7paF
+	aX4/mKPKFgWxbpYSJet4m0SolVO4g/5E7nyPv
+X-Gm-Gg: ASbGncsNgJIvVMS/dzrX5h+4Df4Q/xiFYsTCEtrP4YSDUm0U5iOVKEUq25Jy9s9iVp7
+	kNECK9C7qDMacxycvd58ugaxnhbNxDDkLqTLdbYdr8y0Q3yQ/QcK0z7jkTj9M5QH+STlcJe9SVB
+	YLmwU8BzeTGYXfzXE1t33ZsZptax4k5pWmcCXX/bLck+3qBdFu3+GlD2Y78206C4WfZEhJPnMQx
+	/ho5+FEAy+R9Lwr36AFMyTzuwem5mlC/1UaDUAY
+X-Google-Smtp-Source: AGHT+IGdnTIiAb+3CdfqC7q+bJPuWbS3Q+yNO0ZL2bjpWrv3rAAp3foHCxrvUkjwQh/4OnVjY567MKwLIfNi4Xx0CTM=
+X-Received: by 2002:a2e:a553:0:b0:32a:739d:fac with SMTP id
+ 38308e7fff4ca-333a22f6e43mr13654851fa.36.1754689902354; Fri, 08 Aug 2025
+ 14:51:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-ublk_quiesce2-v1-1-f87ade33fa3d@purestorage.com>
-X-B4-Tracking: v=1; b=H4sIAMtvlmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCwML3dKknOz4wlKgnuRUI92k5OTkFENDs8QUA1MloJ6CotS0zAqwedG
- xtbUA7+L4t18AAAA=
-X-Change-ID: 20250808-ublk_quiesce2-bcccd116ad05
-To: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Uday Shankar <ushankar@purestorage.com>
-X-Mailer: b4 0.14.2
+From: AI talking about AI <aitalkingai@gmail.com>
+Date: Fri, 8 Aug 2025 18:51:30 -0300
+X-Gm-Features: Ac12FXxvzVSAPhLjX-LhvAo3Q5tvcDsmDYvJJpIgA5Jh0mJUP8RnVOVNruf43wI
+Message-ID: <CADFcE6_MYVLNFDyYJtyyjtHW8QpisQ8q2+2DyoNCmknV35rfBw@mail.gmail.com>
+Subject: [PATCH v2] Rust: kernel patch submission
+To: rust-for-linux@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="00000000000052bc61063be1948b"
 
-ublk_ch_release currently quiesces the device's request_queue while
-setting force_abort/fail_io.  This avoids data races by preventing
-concurrent reads from the I/O path, but is not strictly needed - at this
-point, canceling is already set and guaranteed to be observed by any
-concurrently executing I/Os, so they will be handled properly even if
-the changes to force_abort/fail_io propagate to the I/O path later.
-Remove the quiesce/unquiesce calls from ublk_ch_release. This makes the
-writes to force_abort/fail_io concurrent with the reads in the I/O path,
-so make the accesses atomic.
+--00000000000052bc61063be1948b
+Content-Type: multipart/alternative; boundary="00000000000052bc5f063be19489"
 
-Before this change, the call to blk_mq_quiesce_queue was responsible for
-most (90%) of the runtime of ublk_ch_release. With that call eliminated,
-ublk_ch_release runs much faster. Here is a comparison of the total time
-spent in calls to ublk_ch_release when a server handling 128 devices
-exits, before and after this change:
+--00000000000052bc5f063be19489
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-before: 1.11s
-after: 0.09s
+Hi all,
 
-Signed-off-by: Uday Shankar <ushankar@purestorage.com>
----
- drivers/block/ublk_drv.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+This is a two-patch series for the Rust-for-Linux tree:
 
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 6561d2a561fa7ea570475494f0ed68d9ca85989a..6b95cf48ae77fff5661f9a7a2c7efdbcbcff7493 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -1389,7 +1389,7 @@ static blk_status_t ublk_prep_req(struct ublk_queue *ubq, struct request *rq,
- {
- 	blk_status_t res;
- 
--	if (unlikely(ubq->fail_io))
-+	if (unlikely(READ_ONCE(ubq->fail_io)))
- 		return BLK_STS_TARGET;
- 
- 	/* With recovery feature enabled, force_abort is set in
-@@ -1401,7 +1401,8 @@ static blk_status_t ublk_prep_req(struct ublk_queue *ubq, struct request *rq,
- 	 * Note: force_abort is guaranteed to be seen because it is set
- 	 * before request queue is unqiuesced.
- 	 */
--	if (ublk_nosrv_should_queue_io(ubq) && unlikely(ubq->force_abort))
-+	if (ublk_nosrv_should_queue_io(ubq) &&
-+	    unlikely(READ_ONCE(ubq->force_abort)))
- 		return BLK_STS_IOERR;
- 
- 	if (check_cancel && unlikely(ubq->canceling))
-@@ -1644,7 +1645,6 @@ static int ublk_ch_release(struct inode *inode, struct file *filp)
- 	 * Transition the device to the nosrv state. What exactly this
- 	 * means depends on the recovery flags
- 	 */
--	blk_mq_quiesce_queue(disk->queue);
- 	if (ublk_nosrv_should_stop_dev(ub)) {
- 		/*
- 		 * Allow any pending/future I/O to pass through quickly
-@@ -1652,8 +1652,7 @@ static int ublk_ch_release(struct inode *inode, struct file *filp)
- 		 * waits for all pending I/O to complete
- 		 */
- 		for (i = 0; i < ub->dev_info.nr_hw_queues; i++)
--			ublk_get_queue(ub, i)->force_abort = true;
--		blk_mq_unquiesce_queue(disk->queue);
-+			WRITE_ONCE(ublk_get_queue(ub, i)->force_abort, true);
- 
- 		ublk_stop_dev_unlocked(ub);
- 	} else {
-@@ -1663,9 +1662,8 @@ static int ublk_ch_release(struct inode *inode, struct file *filp)
- 		} else {
- 			ub->dev_info.state = UBLK_S_DEV_FAIL_IO;
- 			for (i = 0; i < ub->dev_info.nr_hw_queues; i++)
--				ublk_get_queue(ub, i)->fail_io = true;
-+				WRITE_ONCE(ublk_get_queue(ub, i)->fail_io, true);
- 		}
--		blk_mq_unquiesce_queue(disk->queue);
- 	}
- unlock:
- 	mutex_unlock(&ub->mutex);
+  1) rust: mark CStr::to_str #[must_use] and update docs
+     - Adds an "# Errors" section explaining UTF-8 failure modes
+     - Prevents silent ignores by marking to_str() as #[must_use]
+     - Documents safety preconditions on as_str_unchecked()
 
----
-base-commit: 45fa9f97e65231a9fd4f9429489cb74c10ccd0fd
-change-id: 20250808-ublk_quiesce2-bcccd116ad05
+  2) rust: clarify safety comments in workqueue.rs
+     - Replaces generic SAFETY: TODO with detailed invariants
+       for RawWorkItem::__enqueue and WorkItemPointer::run
 
-Best regards,
--- 
-Uday Shankar <ushankar@purestorage.com>
+Please let me know if you=E2=80=99d like any tweaks.
 
+Thanks,
+=E2=80=94Slopisgood
+
+--00000000000052bc5f063be19489
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi all,<br><br>This is a two-patch series for the Rust-for=
+-Linux tree:<br><br>=C2=A0 1) rust: mark CStr::to_str #[must_use] and updat=
+e docs<br>=C2=A0 =C2=A0 =C2=A0- Adds an &quot;# Errors&quot; section explai=
+ning UTF-8 failure modes<br>=C2=A0 =C2=A0 =C2=A0- Prevents silent ignores b=
+y marking to_str() as #[must_use]<br>=C2=A0 =C2=A0 =C2=A0- Documents safety=
+ preconditions on as_str_unchecked()<br><br>=C2=A0 2) rust: clarify safety =
+comments in <a href=3D"http://workqueue.rs">workqueue.rs</a><br>=C2=A0 =C2=
+=A0 =C2=A0- Replaces generic SAFETY: TODO with detailed invariants<br>=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0for RawWorkItem::__enqueue and WorkItemPointer::run=
+<br><br>Please let me know if you=E2=80=99d like any tweaks.<br><br>Thanks,=
+<br>=E2=80=94Slopisgood<br><br></div>
+
+--00000000000052bc5f063be19489--
+--00000000000052bc61063be1948b
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0002-rust-clarify-safety-comments-in-workqueue.rs.patch"
+Content-Disposition: attachment; 
+	filename="0002-rust-clarify-safety-comments-in-workqueue.rs.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_me3d1j3o0>
+X-Attachment-Id: f_me3d1j3o0
+
+RnJvbSBkNjYzODQ1MTRmMTJiZjc2MDdmYmI0NTE4NWJjNjY2OTllNmNiZjQ4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBzbG9waXNnb29kIDxhaXRhbGtpbmdhaUBnbWFpbC5jb20+CkRh
+dGU6IFRodSwgNyBBdWcgMjAyNSAwNzo1NDowMCAtMDcwMApTdWJqZWN0OiBbUEFUQ0ggMi8yXSBy
+dXN0OiBjbGFyaWZ5IHNhZmV0eSBjb21tZW50cyBpbiB3b3JrcXVldWUucnMKClJlcGxhY2UgcGxh
+Y2Vob2xkZXIgYFNBRkVUWTogVE9ET2AgY29tbWVudHMgaW4gcnVzdC9rZXJuZWwvd29ya3F1ZXVl
+LnJzIHdpdGggZGV0YWlsZWQgZXhwbGFuYXRpb25zIG9mIHNhZmV0eSBpbnZhcmlhbnRzIGZvciBS
+YXdXb3JrSXRlbSBhbmQgV29ya0l0ZW1Qb2ludGVyLCBmb2xsb3dpbmcgcnVzdCBrZXJuZWwgZ3Vp
+ZGVsaW5lcy4KClNpZ25lZC1vZmYtYnk6IHNsb3Bpc2dvb2QgPGFpdGFsa2luZ2FpQGdtYWlsLmNv
+bT4KLS0tCiBydXN0L2tlcm5lbC93b3JrcXVldWUucnMgfCAyOSArKysrKysrKysrKysrKysrKysr
+KysrKysrKystLQogMSBmaWxlIGNoYW5nZWQsIDI3IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
+KC0pCgpkaWZmIC0tZ2l0IGEvcnVzdC9rZXJuZWwvd29ya3F1ZXVlLnJzIGIvcnVzdC9rZXJuZWwv
+d29ya3F1ZXVlLnJzCmluZGV4IGI5MzQzZDUuLjRhMzQ2NTEgMTAwNjQ0Ci0tLSBhL3J1c3Qva2Vy
+bmVsL3dvcmtxdWV1ZS5ycworKysgYi9ydXN0L2tlcm5lbC93b3JrcXVldWUucnMKQEAgLTg4MSw3
+ICs4ODEsMTkgQEAgd2hlcmUKIHsKIH0KIAotLy8gU0FGRVRZOiBUT0RPLgorICAgIC8vIFNBRkVU
+WToKKyAgICAvLworICAgIC8vIFRoZSBbYHJ1bmBdKFdvcmtJdGVtUG9pbnRlcjo6cnVuKSBmdW5j
+dGlvbiBwb2ludGVyIHN0b3JlZCBpbiB0aGUgYHdvcmtfc3RydWN0YCBhbHdheXMKKyAgICAvLyBv
+cmlnaW5hdGVzIGZyb20gYSBwcmlvciBjYWxsIHRvIFtgX19lbnF1ZXVlYF0oUmF3V29ya0l0ZW06
+Ol9fZW5xdWV1ZSkgb24gYQorICAgIC8vIGBQaW48S0JveDxUPj5gLiAgQSBgUGluPEtCb3g8VD4+
+YCBvd25zIGl0cyBoZWFwIGFsbG9jYXRpb24gYW5kLCBieSB2aXJ0dWUgb2YgYmVpbmcKKyAgICAv
+LyBwaW5uZWQsIGd1YXJhbnRlZXMgdGhhdCBpdHMgY29udGVudHMgd2lsbCBub3QgYmUgbW92ZWQu
+ICBXaGVuIHRoZSBDIHNpZGUgb2YgdGhlCisgICAgLy8gd29ya3F1ZXVlIGludm9rZXMgdGhlIGZ1
+bmN0aW9uIHBvaW50ZXIsIGl0IHBhc3NlcyBiYWNrIHRoZSBzYW1lIGB3b3JrX3N0cnVjdGAKKyAg
+ICAvLyBwb2ludGVyIHRoYXQgd2FzIHByb2R1Y2VkIGJ5IGBfX2VucXVldWVgLiAgVGhpcyBpbXBs
+ZW1lbnRhdGlvbiBjb21wdXRlcyB0aGUKKyAgICAvLyBvcmlnaW5hbCBgS0JveGAgZnJvbSB0aGF0
+IHBvaW50ZXIgdmlhIGB3b3JrX2NvbnRhaW5lcl9vZmAgYW5kIGNvbnZlcnRzIGl0IGJhY2sKKyAg
+ICAvLyBpbnRvIGEgcGlubmVkIGJveCwgd2hpY2ggaXMgc2FmZSBiZWNhdXNlIG93bmVyc2hpcCBp
+cyB0cmFuc2ZlcnJlZCBiYWNrIGZyb20gdGhlCisgICAgLy8ga2VybmVsLiAgVGhlcmVmb3JlLCB0
+aGUgcG9pbnRlciBwYXNzZWQgdG8gYHJ1bmAgaXMgYWx3YXlzIHZhbGlkIGZvciB0aGUKKyAgICAv
+LyBkdXJhdGlvbiBvZiB0aGUgY2FsbCwgYW5kIGRlcmVmZXJlbmNpbmcgaXQgaXMgc291bmQuCisK
+IHVuc2FmZSBpbXBsPFQsIGNvbnN0IElEOiB1NjQ+IFdvcmtJdGVtUG9pbnRlcjxJRD4gZm9yIFBp
+bjxLQm94PFQ+Pgogd2hlcmUKICAgICBUOiBXb3JrSXRlbTxJRCwgUG9pbnRlciA9IFNlbGY+LApA
+QCAtOTAxLDcgKzkxMywyMCBAQCB3aGVyZQogICAgIH0KIH0KIAotLy8gU0FGRVRZOiBUT0RPLgor
+ICAgIC8vIFNBRkVUWToKKyAgICAvLworICAgIC8vIFRoZSBpbXBsZW1lbnRhdGlvbiBvZiBbYFJh
+d1dvcmtJdGVtOjpfX2VucXVldWVgXSBmb3IgYFBpbjxLQm94PFQ+PmAgYWxsb2NhdGVzIGEKKyAg
+ICAvLyBuZXcgYFdvcms8VCwgSUQ+YCBhbmQgb2J0YWlucyBhIHJhdyBwb2ludGVyIHRvIGl0cyBl
+bWJlZGRlZCBgd29ya19zdHJ1Y3RgIHZpYQorICAgIC8vIFtgcmF3X2dldF93b3JrYF0oV29yazo6
+cmF3X2dldCkuICBJdCB0aGVuIHBhc3NlcyB0aGF0IHBvaW50ZXIgdG8gdGhlIHByb3ZpZGVkCisg
+ICAgLy8gY2xvc3VyZS4gIFRoZSBgUGluPEtCb3g8VD4+YCBpcyBmcmVzaGx5IGFsbG9jYXRlZCBh
+bmQgYnkgdHlwZSBpbnZhcmlhbnRzIGNhbm5vdAorICAgIC8vIGFscmVhZHkgYmUgZW5xdWV1ZWQs
+IHNvIHRoZSBjbG9zdXJlIG11c3QgcmV0dXJuIGB0cnVlYC4gIElmIGl0IHdlcmUgdG8gcmV0dXJu
+CisgICAgLy8gYGZhbHNlYCwgdGhlIGltcGxlbWVudGF0aW9uIGludm9rZXMgYHVucmVhY2hhYmxl
+X3VuY2hlY2tlZCgpYCwgd2hpY2ggaXMgbmV2ZXIKKyAgICAvLyByZWFjaGVkIGluIHZhbGlkIHVz
+YWdlLiAgV2hlbiB0aGUgY2xvc3VyZSByZXR1cm5zIGB0cnVlYCB0aGUgQyB3b3JrcXVldWUKKyAg
+ICAvLyBzdWJzeXN0ZW0gdGFrZXMgb3duZXJzaGlwIG9mIHRoZSBgd29ya19zdHJ1Y3RgIGFuZCB3
+aWxsIGV2ZW50dWFsbHkgY2FsbCBiYWNrCisgICAgLy8gaW50byBbYFdvcmtJdGVtUG9pbnRlcjo6
+cnVuYF0sIGF0IHdoaWNoIHBvaW50IHRoZSBib3ggaXMgcmVjb3ZlcmVkIGFuZAorICAgIC8vIGRy
+b3BwZWQuICBUaHJvdWdob3V0IHRoaXMgcHJvY2VzcyB0aGUgcmF3IHBvaW50ZXIgcGFzc2VkIHRv
+IHRoZSBjbG9zdXJlCisgICAgLy8gcmVtYWlucyB2YWxpZCBmb3IgdGhlIGR1cmF0aW9uIHNwZWNp
+ZmllZCBpbiBbYFJhd1dvcmtJdGVtYF0ncyBzYWZldHkgY29udHJhY3QuCisKIHVuc2FmZSBpbXBs
+PFQsIGNvbnN0IElEOiB1NjQ+IFJhd1dvcmtJdGVtPElEPiBmb3IgUGluPEtCb3g8VD4+CiB3aGVy
+ZQogICAgIFQ6IFdvcmtJdGVtPElELCBQb2ludGVyID0gU2VsZj4sCi0tIAoyLjM5LjUKCg==
+--00000000000052bc61063be1948b
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-rust-mark-CStr-to_str-must_use-and-update-docs.patch"
+Content-Disposition: attachment; 
+	filename="0001-rust-mark-CStr-to_str-must_use-and-update-docs.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_me3d1j4r1>
+X-Attachment-Id: f_me3d1j4r1
+
+RnJvbSAyMWEzZDJhMmRjZmYxM2Y0NDU5MTU2MDJjMDZhMTdhZjA3ODM1ZWU3IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBzbG9waXNnb29kIDxhaXRhbGtpbmdhaUBnbWFpbC5jb20+CkRh
+dGU6IFRodSwgNyBBdWcgMjAyNSAwNzo1Mzo1NiAtMDcwMApTdWJqZWN0OiBbUEFUQ0ggMS8yXSBy
+dXN0OiBtYXJrIENTdHI6OnRvX3N0ciAjW211c3RfdXNlXSBhbmQgdXBkYXRlIGRvY3MKCkFkZCBl
+eHBsYW5hdGlvbiBhYm91dCBoYW5kbGluZyBVVEYtOCBlcnJvcnMgYW5kIG1hcmsgQ1N0cjo6dG9f
+c3RyIGFzICNbbXVzdF91c2VdIHRvIHByZXZlbnQgc2lsZW50IGVycm9yIGlnbm9yaW5nLiBBbHNv
+IGRvY3VtZW50IHNhZmV0eSByZXF1aXJlbWVudHMgb2YgYXNfc3RyX3VuY2hlY2tlZC4KClNpZ25l
+ZC1vZmYtYnk6IHNsb3Bpc2dvb2QgPGFpdGFsa2luZ2FpQGdtYWlsLmNvbT4KLS0tCiBydXN0L2tl
+cm5lbC9zdHIucnMgfCAyOSArKysrKysrKysrKysrKysrKysrKystLS0tLS0tLQogMSBmaWxlIGNo
+YW5nZWQsIDIxIGluc2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvcnVz
+dC9rZXJuZWwvc3RyLnJzIGIvcnVzdC9rZXJuZWwvc3RyLnJzCmluZGV4IDZjODkyNTUuLjI5MDAz
+MWIgMTAwNjQ0Ci0tLSBhL3J1c3Qva2VybmVsL3N0ci5ycworKysgYi9ydXN0L2tlcm5lbC9zdHIu
+cnMKQEAgLTM3LDEyICszNyw4IEBAIGltcGwgQlN0ciB7CiAgICAgLy8vICMgRXhhbXBsZXMKICAg
+ICAvLy8KICAgICAvLy8gYGBgCi0gICAgLy8vICMgdXNlIGtlcm5lbDo6Yl9zdHI7Ci0gICAgLy8v
+IGFzc2VydF9lcSEoU29tZShiX3N0ciEoImJhciIpKSwgYl9zdHIhKCJmb29iYXIiKS5zdHJpcF9w
+cmVmaXgoYl9zdHIhKCJmb28iKSkpOwotICAgIC8vLyBhc3NlcnRfZXEhKE5vbmUsIGJfc3RyISgi
+Zm9vYmFyIikuc3RyaXBfcHJlZml4KGJfc3RyISgiYmFyIikpKTsKLSAgICAvLy8gYXNzZXJ0X2Vx
+IShTb21lKGJfc3RyISgiZm9vYmFyIikpLCBiX3N0ciEoImZvb2JhciIpLnN0cmlwX3ByZWZpeChi
+X3N0ciEoIiIpKSk7Ci0gICAgLy8vIGFzc2VydF9lcSEoU29tZShiX3N0ciEoIiIpKSwgYl9zdHIh
+KCJmb29iYXIiKS5zdHJpcF9wcmVmaXgoYl9zdHIhKCJmb29iYXIiKSkpOwotICAgIC8vLyBgYGAK
+KworLy8vCiAgICAgcHViIGZuIHN0cmlwX3ByZWZpeCgmc2VsZiwgcGF0dGVybjogaW1wbCBBc1Jl
+ZjxTZWxmPikgLT4gT3B0aW9uPCZCU3RyPiB7CiAgICAgICAgIHNlbGYuZGVyZWYoKQogICAgICAg
+ICAgICAgLnN0cmlwX3ByZWZpeChwYXR0ZXJuLmFzX3JlZigpLmRlcmVmKCkpCkBAIC0zNDYsNyAr
+MzQyLDcgQEAgaW1wbCBDU3RyIHsKICAgICAvLy8KICAgICAvLy8gSWYgdGhlIGNvbnRlbnRzIG9m
+IHRoZSBbYENTdHJgXSBhcmUgdmFsaWQgVVRGLTggZGF0YSwgdGhpcwogICAgIC8vLyBmdW5jdGlv
+biB3aWxsIHJldHVybiB0aGUgY29ycmVzcG9uZGluZyBbYCZzdHJgXSBzbGljZS4gT3RoZXJ3aXNl
+LAotICAgIC8vLyBpdCB3aWxsIHJldHVybiBhbiBlcnJvciB3aXRoIGRldGFpbHMgb2Ygd2hlcmUg
+VVRGLTggdmFsaWRhdGlvbiBmYWlsZWQuCisgICAgLy8vIGl0IHdpbGwgcmV0dXJuIGFuIFtgRXJy
+YF0gd2l0aCBkZXRhaWxzIG9mIHdoZXJlIFVURi04IHZhbGlkYXRpb24gZmFpbGVkLgogICAgIC8v
+LwogICAgIC8vLyAjIEV4YW1wbGVzCiAgICAgLy8vCkBAIC0zNTYsNyArMzUyLDIxIEBAIGltcGwg
+Q1N0ciB7CiAgICAgLy8vIGFzc2VydF9lcSEoY3N0ci50b19zdHIoKSwgT2soImZvbyIpKTsKICAg
+ICAvLy8gIyBPazo6PCgpLCBrZXJuZWw6OmVycm9yOjpFcnJvcj4oKCkpCiAgICAgLy8vIGBgYAor
+CisgICAgLy8vCisgICAgLy8vICMgRXJyb3JzCisgICAgLy8vCisgICAgLy8vIFRoaXMgZnVuY3Rp
+b24gcmV0dXJucyBhbiBbYEVycmBdIHdoZW4gdGhlIHVuZGVybHlpbmcgYnl0ZXMgYXJlIG5vdAor
+ICAgIC8vLyB2YWxpZCBVVEYtOC4gVGhlIFtgRXJyYF0gbXVzdCBiZSBoYW5kbGVkOyBpdCBjYW5u
+b3QgYmUgZGlzY2FyZGVkLAorICAgIC8vLyBhcyBpbmRpY2F0ZWQgYnkgdGhlIGAjW211c3RfdXNl
+XWAgYW5ub3RhdGlvbiBvbiB0aGlzIG1ldGhvZC4KKyAgICAvLy8KKyAgICAvLy8gVGhpcyBtZXRo
+b2QgcmV0dXJucyBhIFtgUmVzdWx0YF0gYmVjYXVzZSBub3QgYWxsIEMgc3RyaW5ncyBjb250YWlu
+CisgICAgLy8vIHZhbGlkIFVURi04LiBUbyBhdm9pZCBhY2NpZGVudGFsbHkgaWdub3JpbmcgYSBm
+YWlsZWQgY29udmVyc2lvbiwKKyAgICAvLy8gdGhlIHJldHVybiB0eXBlIGlzIG1hcmtlZCBgI1tt
+dXN0X3VzZV1gLiBDb2RlIHRoYXQgY2FsbHMgdGhpcworICAgIC8vLyBmdW5jdGlvbiBzaG91bGQg
+aGFuZGxlIHRoZSBlcnJvciBjYXNlIGV4cGxpY2l0bHkgKGUuZy4gYnkgbG9nZ2luZyBvcgorICAg
+IC8vLyBwcm9wYWdhdGluZyBpdCksIHJhdGhlciB0aGFuIHNpbGVudGx5IGRpc2NhcmRpbmcgaXQu
+CiAgICAgI1tpbmxpbmVdCisgICAgI1ttdXN0X3VzZV0KICAgICBwdWIgZm4gdG9fc3RyKCZzZWxm
+KSAtPiBSZXN1bHQ8JnN0ciwgY29yZTo6c3RyOjpVdGY4RXJyb3I+IHsKICAgICAgICAgY29yZTo6
+c3RyOjpmcm9tX3V0Zjgoc2VsZi5hc19ieXRlcygpKQogICAgIH0KQEAgLTM4MCw3ICszOTAsMTAg
+QEAgaW1wbCBDU3RyIHsKICAgICAvLy8gYGBgCiAgICAgI1tpbmxpbmVdCiAgICAgcHViIHVuc2Fm
+ZSBmbiBhc19zdHJfdW5jaGVja2VkKCZzZWxmKSAtPiAmc3RyIHsKLSAgICAgICAgLy8gU0FGRVRZ
+OiBUT0RPLgorICAgICAgICAvLyBTQUZFVFk6IFRoZSBkYXRhIGJlaGluZCBgc2VsZmAgYXJlIGJ5
+dGVzIGZyb20gYSBgQ1N0cmAsIGkuZS4gYSBOVUwtdGVybWluYXRlZCBzZXF1ZW5jZQorICAgICAg
+ICAvLyBvZiB1OCB2YWx1ZXMuIGBmcm9tX3V0ZjhfdW5jaGVja2VkYCByZXF1aXJlcyB0aGF0IHRo
+ZSBieXRlIHNsaWNlIGJlIHZhbGlkIFVURi04OyB0aGUKKyAgICAgICAgLy8gY2FsbGVyIG9mIHRo
+aXMgbWV0aG9kIG11c3QgdGhlcmVmb3JlIGd1YXJhbnRlZSB0aGF0IHRoZSBgQ1N0cmAgY29udGFp
+bnMgdmFsaWQgVVRGLTgKKyAgICAgICAgLy8gZGF0YSBiZWZvcmUgY2FsbGluZyB0aGlzIGZ1bmN0
+aW9uLiBTZWUgW2B0b19zdHJgXSBmb3IgYSBjaGVja2VkIHZlcnNpb24uCiAgICAgICAgIHVuc2Fm
+ZSB7IGNvcmU6OnN0cjo6ZnJvbV91dGY4X3VuY2hlY2tlZChzZWxmLmFzX2J5dGVzKCkpIH0KICAg
+ICB9CiAKLS0gCjIuMzkuNQoK
+--00000000000052bc61063be1948b--
 
