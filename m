@@ -1,96 +1,148 @@
-Return-Path: <linux-kernel+bounces-760037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883A2B1E5DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC796B1E5C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE31567DD1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:45:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45051726FDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06ACF273D94;
-	Fri,  8 Aug 2025 09:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8Wk8yjs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2ACF26FD88;
+	Fri,  8 Aug 2025 09:43:31 +0000 (UTC)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBE9271456;
-	Fri,  8 Aug 2025 09:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C5A26A1A8;
+	Fri,  8 Aug 2025 09:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754646274; cv=none; b=NQ2yPiVARP1Shz+J+d8p/ypAo0lXGmoIosDFqL5spszwlufpiIh+K4DvZmHMUo79xB2S4cJBVVoTK9vLzL54pXqHZpfUgpI83hgb4HpIWG77PX2LM/8n2zU/azi/3EFY0/ASZc82Mbv+1mguyhA9e5kjYXEBuFpK8n9sZ9OzpTY=
+	t=1754646211; cv=none; b=hBj91xEtxb8eqB+SHgIvodCmfl93tg4LoBuU7aYAKHrqF7ZfYg0qTayKOsvh0FkzFbMZ4yLBarTBFfREkZIa8L0lkLcznqaZ1ROYBc9uzUpQR/XdmGz8rvo7wap1FcJliN008ZdReap5ff86OwqOnM29LRVTD+PoAUFMHaHFUd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754646274; c=relaxed/simple;
-	bh=1ZJ4ldKCI69qLoYIh53Dk0H49HJT6go1Z5K0fsK0RZ4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gobD1HxY5mnZ+YajpDq9W6+LfRnjHmxDam78O0d5gxNto8lv+iP4CZz9rKLGqRaAh3K1v0PBdGjgSdBTmdcRgt7hYmBb5SyIqJ60m1Zws6USOSMbEyq0rP2SRMoSf0hsJTbXLmLWGFjJVVz6H7f/SEJ32/B7AdiP0H7vgX+VfFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8Wk8yjs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34FFC4CEF0;
-	Fri,  8 Aug 2025 09:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754646273;
-	bh=1ZJ4ldKCI69qLoYIh53Dk0H49HJT6go1Z5K0fsK0RZ4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=X8Wk8yjsDVhHaE+xDTYwLqOPyG3wua/VBoVf9vdxy9oBl1IMu5AJ8JzSVtypG5WB+
-	 0p7ejSOBEWIF1xbm8CbTz4nWhFT/d/a4173pcy8rAJ4Bg4PHOxvJnAb7VUGHQYBpgP
-	 5LlPLtJ81G39HmPGI8VnPhVcIFYMqM6SD5oSaSSu9uV7J5s6Ic+UnC/I+8NomGuZ44
-	 vtwJ8gsijjJqqpBx0zq+pE8iPnFON6RS+GAywviYw9iN5ed2DD/ecS06xQUsIF8keF
-	 9AkDCrMacaon6Ui/LmmO0gq/wSrRDaX+g3k5+yGPY0QGYpMtknXxOeC3yyBg3TFUrY
-	 Lz4xdRAQY4P6g==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Miguel
- Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn?=
- Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Jens
- Axboe <axboe@kernel.dk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins
- <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar
- <rmoar@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>
-Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com, Tamir Duberstein <tamird@gmail.com>
-Subject: Re: [PATCH v2 3/8] rust: block: use `kernel::{fmt,prelude::fmt!}`
-In-Reply-To: <20250719-core-cstr-fanout-1-v2-3-1ab5ba189c6e@gmail.com>
-References: <20250719-core-cstr-fanout-1-v2-0-1ab5ba189c6e@gmail.com>
- <gRsj-X3HsgPY0RHRFi_436uiCVwsW6_foevaDuyAYA05QfuGKU-LNQcofLAG8W-PBuuU1cZtSvkcI7gijo5vVw==@protonmail.internalid>
- <20250719-core-cstr-fanout-1-v2-3-1ab5ba189c6e@gmail.com>
-Date: Fri, 08 Aug 2025 11:43:11 +0200
-Message-ID: <87ikiy5ets.fsf@kernel.org>
+	s=arc-20240116; t=1754646211; c=relaxed/simple;
+	bh=oeEwC4ZDaAQgoo6SqMA1EuL7WIKD8dRERWoDKgxJRt4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DNIaRLI/qK9fRCKYwrzuhJPObNwXThG/Vqmtyv0lNw2g0K1mFj3tL+DzIHQSr0y6kRvIc1fhyudtzlSlsOzrK65Glj1CMfTKceodZzKdEwblZPteBR//JFzg/kI+qQxIyFV3tVRro+1Sw+aN6cHdtv5MJBJ0J9lpljBg12Ze8hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-504dd871d70so614612137.0;
+        Fri, 08 Aug 2025 02:43:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754646208; x=1755251008;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FHWNDK3s9P7e7V2iAmBr/rqn1vtS3VyQHGTysnO++tw=;
+        b=Lx1UC0CGh5vAePtsi31gTnOozo/nuOOtb9HfyyuE1do1XT3UlHLftJtRyE1cTJQVqm
+         IpsWxvksj8xqg4Klc8tX7CWXeh5HRQ/Y8HcUa3Vbued6A33ZVjyDqgAOCKidCgMsEWct
+         if8UzIDunuJvz+yQYQQcybHcrF7z9hcPv41XT5rzosh7NRr+AdUT4qHPPuMvgDzGInPM
+         +nL7kWy0kbflwLd36J9g4jo/ITEofyIR+Fy08q/JH8eO7gDdSwRyZ4v015A9Q8lSfggu
+         ilOEqVJ/22dWlKa0zkAl26Y+vGV4uJ7dNK0en3m8sCyFYXMBSK04eQBaF6B5wxJmmM9M
+         JKoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWo46jdc1upAKUWSN24OB6GicdOVRQ3HVQx0JLbd7ibCZrExyr47zKBNTKEmQENcdS1vy3Hn9xtNkStyU=@vger.kernel.org, AJvYcCWd6Sn2tbKmNe1gXm0UUaCdoiM/IfiMHl5PFqCop3/tndrjwcLs2qO8XQoXS3mqLcJTG9bn9uUCMGJoPw==@vger.kernel.org, AJvYcCXY0lYeL+o8UEqFb08TUgvMcy80KXniwS3gcezGvUSOArLTP8GmnqUCFJC2j9NlzEgFtf1owOi73ykn/WequqZqGJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxloX//3CdVK9x5sOAWYOTzncf2Y9C4ZMjhqarrXYDI0/0lP37n
+	egMqr/SDi5xgWpGsnUmBR/UMyq3kg6Ujtj41AOC0v57rfMQgZu8SVk/+mNcvUiop
+X-Gm-Gg: ASbGncvOEJtwQqIG/UvuVH72ztAV4/M7KXLdpwS+UjycWpWZJ5GJoiC7vYmx5DBVOu/
+	fFqFtCQWOaKNuYbBxuFD3ZsFGhseMvxSPAefC0ML4VKo3uDjXUHuo+IC+15D5qADDptAzNVEY7x
+	/fm7ZrPLKuFCJv6GsyYiy7Fjd9n4PRanYDrgy8y8juaMQ0CzVWfzrlakwOlTuuWdXlAgMT8dR4T
+	ADugCJ+p7z5gXWoQH/+ZZw91aWz24O36bzY6qmAfT4HHi8qOaslPew1/7UWeDVbOkUNC2/nxy53
+	0onEQ5dNLclCtEDiItLt0cUVJtyNS1VaaRBQGyoX621h115V0/BAd5fLL2eykpzfU7NATvUSl7k
+	9V9kOnSXx8iAoylA4nm4zGChDyUIIXXRDWzlHbE4cuaCXhjTgFbvXLE3sSVU/
+X-Google-Smtp-Source: AGHT+IH3kknl0Ndhe1PRTZCDkJS4dC15IakYyDFKi5Ct400Do5t2d7MQkFk9aFG8jmjIc3p9CnwUig==
+X-Received: by 2002:a05:6102:dc6:b0:4fc:1484:5500 with SMTP id ada2fe7eead31-5060f0cccf0mr743441137.21.1754646208038;
+        Fri, 08 Aug 2025 02:43:28 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5062bd4c2f1sm296320137.18.2025.08.08.02.43.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 02:43:27 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4fbfbda957fso650368137.2;
+        Fri, 08 Aug 2025 02:43:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUN4f+cr39mbe39epuGS4r6038dBHxJNzsVmuQMH3LUX5mQQ0udnyh5qH2pA7W1dA7nbHVKgzTBzspTHB4mfddig8A=@vger.kernel.org, AJvYcCUaYW66pPiwEEtPXaaJSoqVeoCMhFp8FJIWpGytcyMe+nWRR+ZvgeQA5Oiwk9XtBBJTaNiHOkP6WtsdpFE=@vger.kernel.org, AJvYcCWuvoq5Xl89gRBkefb6gkt3IRHCjgFtjD2QsysNgMSfoR3aIpjwiW+VCAY9ujUj9Q7oyuzpV50Rn8A3Cg==@vger.kernel.org
+X-Received: by 2002:a05:6102:32cb:b0:4e5:8b76:44c5 with SMTP id
+ ada2fe7eead31-5060f0cc794mr693639137.22.1754646207387; Fri, 08 Aug 2025
+ 02:43:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250807043456.1624-2-wsa+renesas@sang-engineering.com> <2025080720214218750df5@mail.local>
+In-Reply-To: <2025080720214218750df5@mail.local>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 8 Aug 2025 11:43:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUwC=TNvvwf0_sgSSYTBGeq8UX5kRFN5kg3mFJ7wVA3kw@mail.gmail.com>
+X-Gm-Features: Ac12FXzrLiEtwQSwABN_PovuC7CdyhBuG0HPwAa8_g9H9GakHs5gEOATJhO9jEM
+Message-ID: <CAMuHMdUwC=TNvvwf0_sgSSYTBGeq8UX5kRFN5kg3mFJ7wVA3kw@mail.gmail.com>
+Subject: Re: [PATCH] i3c: remove 'const' from FIFO helpers
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, Frank Li <Frank.Li@nxp.com>, 
+	Jorge Marques <jorge.marques@analog.com>, linux-i3c@lists.infradead.org, 
+	sparclinux <sparclinux@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
+CC sparclinux, arnd
 
-> Reduce coupling to implementation details of the formatting machinery by
-> avoiding direct use for `core`'s formatting traits and macros.
+On Fri, 8 Aug 2025 at 01:09, Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> On 07/08/2025 06:31:24+0200, Wolfram Sang wrote:
+> > As buildbot reports, some architectures do not want const pointers.
+> >
+> > Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202508070438.TZZA3f2S-lkp@intel.com/
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > ---
+> >
+> > I still wonder why SPARC discards the const but since nobody seems to be
+> > commenting on that, I guess the fastest way to get the build error out
+> > of Linus' tree is to adapt the usage in I3C.
 >
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/topic/Custom.20formatting/with/516476467
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> My plan was to let sparc people handle their mess, there is no reason
+> const should be discarded.
 
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+Fully agreed.
 
+Note that it is not just the const keyword that is missing from the
+SPARC implementation, but also the volatile keyword.
 
-Best regards,
-Andreas Hindborg
+> > --- a/drivers/i3c/internals.h
+> > +++ b/drivers/i3c/internals.h
+> > @@ -30,8 +30,7 @@ void i3c_dev_free_ibi_locked(struct i3c_dev_desc *dev);
+> >   * @buf: Pointer to the data bytes to write
+> >   * @nbytes: Number of bytes to write
+> >   */
+> > -static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
+> > -                                int nbytes)
+> > +static inline void i3c_writel_fifo(void __iomem *addr, void *buf, int nbytes)
+> >  {
+> >       writesl(addr, buf, nbytes / 4);
+> >       if (nbytes & 3) {
+> > @@ -48,8 +47,7 @@ static inline void i3c_writel_fifo(void __iomem *addr, const void *buf,
+> >   * @buf: Pointer to the buffer to store read bytes
+> >   * @nbytes: Number of bytes to read
+> >   */
+> > -static inline void i3c_readl_fifo(const void __iomem *addr, void *buf,
+> > -                               int nbytes)
+> > +static inline void i3c_readl_fifo(void __iomem *addr, void *buf, int nbytes)
+> >  {
+> >       readsl(addr, buf, nbytes / 4);
+> >       if (nbytes & 3) {
+> > --
+> > 2.47.2
 
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
