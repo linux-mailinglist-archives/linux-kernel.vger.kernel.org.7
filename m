@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-760639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98187B1EE11
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:53:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E04B1EE13
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E44F1C2806B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:53:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A518E1C27939
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5161F4C90;
-	Fri,  8 Aug 2025 17:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8781FC109;
+	Fri,  8 Aug 2025 17:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDhSFJA5"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Runls5qk"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64378199385;
-	Fri,  8 Aug 2025 17:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CC5199385;
+	Fri,  8 Aug 2025 17:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754675608; cv=none; b=aMiyYbW6VFx6E2X9SFVcVJhpkeGw+n5c/Uqh+M7S+18PLA7QeLi4HnYcpmt6KbhPgvaKEt5bFaQ1Q38NuDQhDpd7ZbuFy36tuR8P1aG9RGYcWvit/gjholnM+FsfXIz34t9bBAKZRYnCzEemrfbHA59fUdhjPwXDGgWKgMgXgg0=
+	t=1754675763; cv=none; b=sEnGNu/EvCI9xNzwta2jqybwToD85UtxbQn1giDX5hmE02vu/RC7o8wSpxY26PbHASuxa2VOnZ6n4BCCN+neLIQ3DuM/8Eb1IWtyObDcTUuMGZ89iWseU4EqXLQlfbZIpU6j6ATUPAsVZcGY6IIRWY0N11frmDPsRWAwrglk0BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754675608; c=relaxed/simple;
-	bh=+P4QpmOpqx3Lmn59o8WHoe8drfDVNqCcjJ+/me395jI=;
-	h=Subject:To:Cc:From:Date:Message-Id; b=qxeSlaSIAAkanBC9BjJH3qRHt72fsC3+VpZU2bZQYuUzb9DvtkqrCqBLLyMAP/kzi17lCKE90DUHrdFOAGgW9wJ//tJRTeOq2IlLomyc/wcyqPypJZyR0Xhj9UVJl+xdHRlUHyEMcORFcgUfJCr/u5xuzcDN3ci9eIJ3qpAT96E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDhSFJA5; arc=none smtp.client-ip=192.198.163.15
+	s=arc-20240116; t=1754675763; c=relaxed/simple;
+	bh=iN+YoE1bEbQcPyDomXc1G20kXSx/6CPo3b6DBfTTkJs=;
+	h=Subject:To:Cc:From:Date:Message-Id; b=KHFAG0OAK3Roc7PFFyipJAO/P8ylS0YHGELIerT0aSRk5fC2a3iG+fCaVt8Xih174iP92TF3S5swDz5Gk545gTKhMxe03QrdXc1hliQs7fXJr1V7GlDIz2VH5KhCLMVlSfXsv+Jr8AV/QqY27dPUw2RbbvfZjOdiKIK+TsBpCII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Runls5qk; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754675606; x=1786211606;
+  t=1754675762; x=1786211762;
   h=subject:to:cc:from:date:message-id;
-  bh=+P4QpmOpqx3Lmn59o8WHoe8drfDVNqCcjJ+/me395jI=;
-  b=BDhSFJA5bHFGr5qJeBG97rF1gIYfCM9JQp8QfQ8pswU4gT+vWRwjMaw+
-   zD+ehwvJnAEy32eZU/9ms/Fj8VdOPMyr9JZxTQPDGK6DATKblKf7CYyHq
-   9bf2px5E4kWqPW/ho7bjRPEUV+vY9J+pDt+T/grqDxuHUB/BnNk9U4Vc2
-   0tXc/5ai7Qcp4NdwrQlcAGDWoJz9h69OiYHV6BOLQShGBiCWo7O0JAbpZ
-   /ZAtwh7H+kuMeohM8gpSE4oI/zVUQA3KjdabdH9RqWXduVck7y7Nu7Ylg
-   8MMlDR607JGJD9pT5gfOPBxLskH8Ou9uDdheLOnEinot+Q7EC7oL7vmJC
+  bh=iN+YoE1bEbQcPyDomXc1G20kXSx/6CPo3b6DBfTTkJs=;
+  b=Runls5qkQdXpaB7V3xnUbL6wFmkrwmjAZyu/ZD4aqjw6JanpX67thY2H
+   Q2KcSmJlKYZlXzhI0ljr/u36WXrYDPmD3UNqA0dS7qiENxnFzLGSvycra
+   m0Z2ZB7FEdc7L91r6sGfNw1Dl5qyyFur11T/moPiuMHFnvF6QQm9WSMzm
+   b8vuh0gpslLvQtDSloPlCeX6gyevn5TP/P0U+GN39s5jyx9hkYtynRsA8
+   qS+RNiyD78MrZBP+JdmKHwjh/HvtePmTBSyz7NmOnU/BTLOZC9YnLzw9H
+   U4CUI3z5D9LQ4Y7K+CaNbNK8yMyh6PX34scpdIW/+kSb3A/xGuxSva+m1
    w==;
-X-CSE-ConnectionGUID: x/d1AdL3RJmzUKnQa8OIfA==
-X-CSE-MsgGUID: yarfVb1mQw2pevLd+492gA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="57158069"
+X-CSE-ConnectionGUID: la02I+W7TyO+x9Exa7JvxA==
+X-CSE-MsgGUID: Fnyy1lwsRhC6FCBTsuwN6g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="57158182"
 X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="57158069"
+   d="scan'208";a="57158182"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 10:53:25 -0700
-X-CSE-ConnectionGUID: xfNexg7aRtu4dKWaSemw+g==
-X-CSE-MsgGUID: LbnFYWgjQgOg1SYrbOtlgA==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 10:56:01 -0700
+X-CSE-ConnectionGUID: MaE//Ts/StucasKqQV+EMQ==
+X-CSE-MsgGUID: +a3tf5ozT+el1aZdaeLFxg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="169588670"
+   d="scan'208";a="169588935"
 Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by orviesa003.jf.intel.com with ESMTP; 08 Aug 2025 10:53:25 -0700
-Subject: [PATCH] MAINTAINERS: Mark Intel PTP DFL ToD as orphaned
+  by orviesa003.jf.intel.com with ESMTP; 08 Aug 2025 10:56:01 -0700
+Subject: [PATCH] MAINTAINERS: Remove bouncing irdma maintainer
 To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, linux-fpga@vger.kernel.org, netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Tianfei Zhang <tianfei.zhang@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-rdma@vger.kernel.org, Tatyana Nikolova <tatyana.e.nikolova@intel.com>
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 08 Aug 2025 10:53:24 -0700
-Message-Id: <20250808175324.8C4B7354@davehans-spike.ostc.intel.com>
+Date: Fri, 08 Aug 2025 10:56:01 -0700
+Message-Id: <20250808175601.EF0AF767@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,37 +71,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
 This maintainer's email no longer works. Remove it from MAINTAINERS.
-Also mark the code as an Orphan.
+
+This still leaves one maintainer for the driver.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-fpga@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Tianfei Zhang <tianfei.zhang@intel.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
+Cc: linux-rdma@vger.kernel.org
 ---
 
- b/MAINTAINERS |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ b/MAINTAINERS |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff -puN MAINTAINERS~MAINTAINERS-20250707-8 MAINTAINERS
---- a/MAINTAINERS~MAINTAINERS-20250707-8	2025-08-08 10:49:46.807294387 -0700
-+++ b/MAINTAINERS	2025-08-08 10:49:46.823295710 -0700
-@@ -12581,10 +12581,9 @@ S:	Supported
- F:	drivers/cpufreq/intel_pstate.c
+diff -puN MAINTAINERS~MAINTAINERS-20250707-9 MAINTAINERS
+--- a/MAINTAINERS~MAINTAINERS-20250707-9	2025-08-08 10:53:33.324188022 -0700
++++ b/MAINTAINERS	2025-08-08 10:53:33.340189367 -0700
+@@ -12279,7 +12279,6 @@ F:	include/linux/avf/virtchnl.h
+ F:	include/linux/net/intel/*/
  
- INTEL PTP DFL ToD DRIVER
--M:	Tianfei Zhang <tianfei.zhang@intel.com>
- L:	linux-fpga@vger.kernel.org
- L:	netdev@vger.kernel.org
--S:	Maintained
-+S:	Orphan
- F:	drivers/ptp/ptp_dfl_tod.c
- 
- INTEL QUADRATURE ENCODER PERIPHERAL DRIVER
+ INTEL ETHERNET PROTOCOL DRIVER FOR RDMA
+-M:	Mustafa Ismail <mustafa.ismail@intel.com>
+ M:	Tatyana Nikolova <tatyana.e.nikolova@intel.com>
+ L:	linux-rdma@vger.kernel.org
+ S:	Supported
 _
 
