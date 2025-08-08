@@ -1,242 +1,197 @@
-Return-Path: <linux-kernel+bounces-759784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B6AB1E278
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:45:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57236B1E27A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9C5C188EF42
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:46:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242EF188DB11
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C19D217648;
-	Fri,  8 Aug 2025 06:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7F31D54C2;
+	Fri,  8 Aug 2025 06:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Blsx2CPr"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=analogixsemi.com header.i=@analogixsemi.com header.b="XqTOPM7Q"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2125.outbound.protection.outlook.com [40.107.102.125])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2522C14884C;
-	Fri,  8 Aug 2025 06:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754635542; cv=none; b=hCwrQlKROZgFUCaOf1X7J7OI7Gn3EXbDMFYtGrKFnG9q6SUhkF+fJI8kfsBAg4H3E6Z12WuItQ6noJan7jN30lVKm5bjFK1EgM9cVcu4+4yrLocpKTI4cjh9HEvwI0VA8Stv2HGCXOjyTdM4T740Nysr9au6i1jcNwDTAsUnY1Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754635542; c=relaxed/simple;
-	bh=fkDvAtV8BZIVDCieQAMgEDbm9mU+jLGHu3DvNvO2ZKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l7M0qRY0djcuuYI8GwGTBGsTlfzMXd0c/TEAu+bjiDeUWVpEq0tMmQRDBu4NoVRo0xRAdhf/zDA0Ot3pxMbss5lcNEedXytmqsxvRExxIAO6IwpfwQVvxjU4asR9sl89T1ZZkZJlhI6Hrhv72sEWsSc9wBfg/gG9sE5ERpzUE+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Blsx2CPr; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3e40d006105so11346145ab.3;
-        Thu, 07 Aug 2025 23:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754635540; x=1755240340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VfJ96l0L79uC3QqMW/tKUozVfcbzbbqgdHMrzI/pgq0=;
-        b=Blsx2CPrPLKZlHtNoKCKJ11fUpk2tqFTc4G5PMcDVeCwE/S7iUyChvaZtgetP7MVUJ
-         YwYDRulSIjPOivN5cbBIozHXHy/9sFEEWu7wq3Q4rDH9OGPIV8rPTAH13Rzp0J1O21IS
-         4ZmUtZFFE+9ETg1McKi0m72Ycb7chgIZnoY0YOF0ayZ9IxyTfnDWannaG0c4UGcjEGcL
-         bAXiOHajupwVKPXEXFMhLm29q+t5MfdYM5GngKQ5I2ugNjqkJr3zWVN2hTP4H8XvLsmD
-         69jEI+FYQBlqpKp2iEtGMBCJ4BnA6SS2QxEZqkslZ6kGYqFOIsnDytKzVJR/HMxEhWOI
-         1xIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754635540; x=1755240340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VfJ96l0L79uC3QqMW/tKUozVfcbzbbqgdHMrzI/pgq0=;
-        b=fOveYp8mH3Uv0UfYg08ZGb5x71wD5OgOmFmmiCK/UAKI6A89AjG0vZQphNy5Qg2Twx
-         KlJOUgyxZVtNx2D7rzQB+Y/FMkC6JzRlGC3sYDCxuBde42/M67u5jX93uT/RzkrcSR1S
-         yN/nqrFXOR6Tkqy6SJ8cXTwrFOZyiNvgMxc/V20qLws/jC2AvrU6QzFlDEVhkyUBVMEt
-         0sI3B5pPrAaHlcC6pUsFs1O2dCNeZCsaXm4WPVmFLaR1+qXnwaaeMhfwcIRxAO11/+uc
-         0Hret7Z9886wpEaqHMjpn0mNivFfSQmGYT6wcAiKuF3aG0sAeP5MxOglCY0iXtVlbnSI
-         d1tw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1D8NplORfBm+//YbeazeujZOCu5IWEqeqOBjl1mOvdi/Zv1cvUTRvrh6J3iMrSY/FF/Zrew/XA6xU2w6G@vger.kernel.org, AJvYcCV3t99jg1nH7tudZYReyyBK+KlrZD+Bhp9CeHL8VOpj1C9Cj8G7dsfnmcT4zzsL9QXpvD+WDOev36Sqq78=@vger.kernel.org, AJvYcCWVXmLdldexfsMBgQrpHkm7qBKgcPxq9WvbkJMdDoxL3sPJS64TZTXilz/wMY78Xz1a4B0TGp1HQL/O@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8s5yjFhiBTLAC04HW7XG2Pzlte8kOlUy7w2F0ZowCl2AQTp+j
-	HYTB2MDBQMX76aG3iRCtG+W5FE1Ls/YzrGwE5PAo5liLuD7Dr8GX+gMH6hdGLFDhEwN6qTbabzx
-	POOEHOuIfZIvgTPBTun+BP11jZ2+ZX0g=
-X-Gm-Gg: ASbGncuM0M3IPV1SYxYeKzcUnMKqWsuoDIId2yyOs8mcltwcRVjaajTenPzk5c4CLoG
-	t/u9Nxj1J86zHJlft32REjnrO87JTclNCfFeheFO3lQnOqnFcMm9Lc9dZ2vkY+oK9n1/ou+VMJg
-	qHyLJG8USOb6sED/xBVWvwd4+OYREGu9afJ5xaEMT1dBNq0dSKx3W5+fYwS4HDuF/873wQno1M4
-	Gk14ME=
-X-Google-Smtp-Source: AGHT+IGltElZVlwhxw9uDPM97pmJeDSJgwVBwjLX4g172vFNLkOj72zAp9AwhEXJbpTGZUTj/wZcUv/NAwx9DgBOto4=
-X-Received: by 2002:a05:6e02:1a07:b0:3e3:a49a:917b with SMTP id
- e9e14a558f8ab-3e53306e84fmr37599135ab.2.1754635540083; Thu, 07 Aug 2025
- 23:45:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C00A38DD8
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 06:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.125
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754635594; cv=fail; b=FDj+O/vXRpBaZXCh24+kLyvdsXFYITgM1wbcdLA5bDL6vUWpNrlX7fY6QhUc5WRPc+ULbhZSWqoAx3ydAycE8Ee6PYR+irze3KbRj4R5dGPdaUiRzbZCY0HDfVh64PJZ2Z7JV//K9udm/vehTIhlloadaN/IRxuP1eihtaIJIxU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754635594; c=relaxed/simple;
+	bh=tjLH/0v/UOQtf+e/7X5m5QpTjAhorsfGgLutR6TpLUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=BVPjsbgD7bi46Qld4BzMjKLYr09Ihj5rnbjAIL6/gVMy7PfZBGfEqLXJQ/TllM347NVMgcNIBzYcp6EzfYz+Kft1GwwxW2bpk6N1Pu5BEVcFB8MDFAxTkVRdszgVY3ROZ3N7sD7J2QilGXsdmCT+jvxPyxcPR2AaTuZhvdQjgJ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analogixsemi.com; spf=pass smtp.mailfrom=analogixsemi.com; dkim=pass (1024-bit key) header.d=analogixsemi.com header.i=@analogixsemi.com header.b=XqTOPM7Q; arc=fail smtp.client-ip=40.107.102.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analogixsemi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analogixsemi.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J1qu5toB9q0GT7ToMzDpixFlIB4TqEu4p7I1UrrLO8lMUu6hK4KeNxMTtAFtXo+9n/GdjxBEQrptVdOSTWOwGUSopG94VFRrevHAr/8NVdUVpsO6Njccy1iUdbRZvYiHRkjBVkqgpetyggv0TxiRllsXJW4E/kEH0s8cQMU61nV6HDmlqZ3JjwtawHpfJkCHmrWvXmu0Yftepikmd2qv7HqNrIzsnKQH1oh89HHDPxE6hwPsCACuL+CsQNMijKVM75pyyxoAnjqqcv/GcNU0vntFK7W/o5aRabkryYKAZCWphSjW6q40IxWqoVuq/eOrvHjc77uJKkDdfoNtA2bDig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V4kE+oJhE3W0RSbALcNa3aimAR88EpxIl0EMD7HUpkQ=;
+ b=xbOeRyD9EU8yYUQX0bJ8OmDts7Izg8of8U2i7fYM3QtXgZ3Nq/WIn7pdxOATgmlNJKl6ucNefz7QO6NX9K8002TLLoQ6YVJZpaNJgBHu/9TAfW4LFeS7Ft377olB4fIPZQiFCfrDeyjivuPi2KyGxnX2PvGvbEGRPfaiXb9iuManCjxS3eAubWxkul+cWLLgoq2OJDS9FFIGt7xyR6EMGriPj+LtJMI8wf7FoZPm2ayYVnAwM+95tIXnGOm3vMQ8bHzsPgs+yh/wFcFfSKdG0mZcP0TUk2CjMrR4ZsaKCxaZhZIkQPSKiNBUQAd6YeaO5x7zEsRNNLeY/Ax4tNf03Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analogixsemi.com; dmarc=pass action=none
+ header.from=analogixsemi.com; dkim=pass header.d=analogixsemi.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analogixsemi.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V4kE+oJhE3W0RSbALcNa3aimAR88EpxIl0EMD7HUpkQ=;
+ b=XqTOPM7QV9kIUMscWPBNoeQ4F07zKUfUOy1ftwFYGiQ2Y1yt1VAs1FWIIWhLOoXlVUeeOF9iKQPQlzOra0DHlQPhBuqQO5GyWOiJ9ha0+Q/X3aW8JmgzGqTBjlaPg57l0CEGnPR3O15rWlAdn8vlerXK0B14X4q/UyNXypDUwHQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=analogixsemi.com;
+Received: from BY5PR04MB6739.namprd04.prod.outlook.com (2603:10b6:a03:229::8)
+ by CO1PR04MB8220.namprd04.prod.outlook.com (2603:10b6:303:163::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
+ 2025 06:46:27 +0000
+Received: from BY5PR04MB6739.namprd04.prod.outlook.com
+ ([fe80::5a7e:9e8c:138f:1815]) by BY5PR04MB6739.namprd04.prod.outlook.com
+ ([fe80::5a7e:9e8c:138f:1815%7]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
+ 06:46:26 +0000
+From: Xin Ji <xji@analogixsemi.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@intel.com>
+Cc: bliang@analogixsemi.com,
+	qwen@analogixsemi.com,
+	treapking@chromium.org,
+	jason-jh.lin@mediatek.corp-partner.google.com,
+	Xin Ji <xji@analogixsemi.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/bridge: anx7625: Fix EDID block size at drm_edid_alloc() calling
+Date: Fri,  8 Aug 2025 14:46:13 +0800
+Message-Id: <20250808064613.2623732-1-xji@analogixsemi.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR06CA0010.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::23) To BY5PR04MB6739.namprd04.prod.outlook.com
+ (2603:10b6:a03:229::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804104722.601440-1-shengjiu.wang@nxp.com>
- <20250804104722.601440-6-shengjiu.wang@nxp.com> <fa455148-a071-4433-8c9c-26add3872604@nxp.com>
- <CAA+D8AN4n0H6M_0EqX4z_37ViSCyThKbmtMgqPmipintJ8Wtwg@mail.gmail.com>
- <ba02693b-8ad2-4297-ab89-5b39d5c4315f@nxp.com> <CAA+D8AN3VzFx1g=8wyxJROw96xS2-qoVs3X4vUfFnJtUCqFj_w@mail.gmail.com>
- <481c4a38-e638-49ea-88d4-765e581afca7@nxp.com>
-In-Reply-To: <481c4a38-e638-49ea-88d4-765e581afca7@nxp.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Fri, 8 Aug 2025 14:45:26 +0800
-X-Gm-Features: Ac12FXwPBbMoH09jFjYWwfKVloaD-hbqz3Zq3uo6wZJ3wJC3FWnXebP2M-e4hG8
-Message-ID: <CAA+D8AMmQo=TgaJTubLL6xRp0NV3GpeE0JKwhBjmhZjtBnBQjA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] drm/bridge: imx: add driver for HDMI TX Parallel
- Audio Interface
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	p.zabel@pengutronix.de, devicetree@vger.kernel.org, l.stach@pengutronix.de, 
-	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR04MB6739:EE_|CO1PR04MB8220:EE_
+X-MS-Office365-Filtering-Correlation-Id: 544cb6e9-0ee7-49dc-0bd7-08ddd6474c2c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bg44ELGIQIJdV0owUlAvkJEiQTJlxa5dram7DDmDW7qYa1W0mp1843RLZhkc?=
+ =?us-ascii?Q?gqfg9uAGDGb6Xpk0Re3hDuX9rtoinA2lOAsPkCYPZaxZkX5kOn/AjGA+Fe25?=
+ =?us-ascii?Q?2jGtWWycpJdUXOJ7dEcnKwdyjURZm+ZDE/I6qwgcoroaQfw/1UFXYsN/7S2e?=
+ =?us-ascii?Q?A5j/C9UmzKtwUZ7IdnU4I4l9Ez7NS+eZb04dXSHAwBNcETvUMApocdU4UHM9?=
+ =?us-ascii?Q?LfMfIcG9Own1WYBWZrn1Ttb04qdMekj7zsTOZkdNeeLgclaIcecTVi1RPklz?=
+ =?us-ascii?Q?cJvvxY9Ed7n7TR9yIoNwvC0v6FlGc+jrr8hJeFfUOtA1vU3y62ebynsp3hOZ?=
+ =?us-ascii?Q?QBn1cussJY+NmryRHbCrUZmFmFvUkBqCMrojKCIDLPzHMTGfSBDUd0Jb1xwP?=
+ =?us-ascii?Q?DWC74QY7yqd+yRfe31h/P9oBA8dK7X06uVmUA6gweJkSVZeN53vn3TgojGrd?=
+ =?us-ascii?Q?2DbIv7L78fkMp4IQVe2RFuoarBF2GbADgQpjynOy6jBwz1bEYsQQrIOONKCy?=
+ =?us-ascii?Q?ygfq033aSnvYqadn47qm+DkWmfrpD1Kh29+12SHJ/xLm6bH59bzfEnBpJDQ8?=
+ =?us-ascii?Q?ckf/V0+JOyi/gl+S3RkAeeLCZ3Q5h58e2lFwm7uoFiZGDYwwwA8FurXYMP2n?=
+ =?us-ascii?Q?lh8rHYSw7xYOYY2gvR6qQhHfLgVrFPXrsLrkkQ1jHUcSlhbr0m6arMlaO8Bo?=
+ =?us-ascii?Q?mLl7t0wfgp6F2PjsoEREWjomXA2SHZbXttqs767QsOuVgeeCRVkz+dvz8lAV?=
+ =?us-ascii?Q?THTddNfy174dMmXA9ZSW9jcuQd3Q4E514rvWYHdr93+B4hGGQaI8rN4IyQ/o?=
+ =?us-ascii?Q?YDjUje/YbmzXUaUgrbx4HvfiaJOJFZjnTT1+nvG9HT9AW2KeB76qr4jM4yTn?=
+ =?us-ascii?Q?r8fTl0W8BCuT9G/lkPfiD9fMYUNOYK3Vwd0gx592kTh9c1cn+hkDr+Ld90DQ?=
+ =?us-ascii?Q?7Uq/h3yY5MMTlNt+gu72zlMfAWu+3q83GhUscoWXf3GfvDZw2YJb6Az6WB/f?=
+ =?us-ascii?Q?zEbJfKHT6VZOmh79J7Ez6MDEyskrHXCO5JP6Sb0StePSF8TXEzBaPcqtJxgf?=
+ =?us-ascii?Q?LLKGs32y3fg28NYtSSbR65R5ISkJ4OfcDIr/C2PRrR3ae9YEJJCzGXS7Re7r?=
+ =?us-ascii?Q?+RcsizSi5YsllSnZB0hj85lFAC8e/2xdTJnhs86Dwe7E763dVTJcyVS6oJQR?=
+ =?us-ascii?Q?n8WitBN/Q3gBtQsoZhbLIdxBH0xBYVxRbFW02bYmjNew/etqKoQ1q/zyBHby?=
+ =?us-ascii?Q?jXuucZ0qpGcU3wn+xnNZW8NnkqTaY22H76B9qaL4oUBpigMHcxAPMfMq22JE?=
+ =?us-ascii?Q?DLE/JfVG5RIIvd4tIpzdYJekkNUElwQZ9wpk7wW9HEHvch4WRoPoRW3HR2Q4?=
+ =?us-ascii?Q?bMdu0S2e6fWEpt43cHbc4PPUMwsRieXg+vokRolIST40NNYiz2x9YdWfqjVu?=
+ =?us-ascii?Q?NI/u3amd/kVYtsPGiK/m5f6RSUmRWBGkdAIUlJS6BtyIMhXmSqtnkFHvzCar?=
+ =?us-ascii?Q?XxgFvzf7O2vV7F8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR04MB6739.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gXmgSW1p1KvhkpuiWQVZoJ6HL33SIgGkpC3Rf9DbsMCIpGGp9cKC3XpBFCI2?=
+ =?us-ascii?Q?OQkhnJm8IwBLkafSx5ETd4+NIr0grTqamCL3/yzICcA7OC/KJUfDyhUKNFsc?=
+ =?us-ascii?Q?sD6IZTVpjOmEQ7i8i9Cvj8DD4lpH5MjRxm41FxoareFFQ71TJ+HJ8Lp6ON1C?=
+ =?us-ascii?Q?ODDdXPcxiFTgqaBmZvkTUuHU5kK2r4BwJbQt8cGQmA4cItp3nyNsL0/TGb1u?=
+ =?us-ascii?Q?Zr1truCsxIB72QYVlPQ+g43ZJ5XVzE36B+3gGY/oUs03fvcB5dRBYQxDOBN9?=
+ =?us-ascii?Q?PjB+ikKLHRozsAPKY8lcHZO4djUnaEz6OFtPw8lsA3Z9EjDy1zqn5bC0+vHR?=
+ =?us-ascii?Q?MVPYZa7AmJjX+CYeu1nq4gkIRQww7zyTfU86D0Xqod+3LwxiMsWkSA1hjhCj?=
+ =?us-ascii?Q?dS9yfnGZPEo+kSW471SMP3qOb6ovRdrivmfSwS+T7Dvb0WAsXvePemCg1awJ?=
+ =?us-ascii?Q?1rgLPmm4R74clYxJedGoU0cH35vz5m4mWKwTOv5Mp4J0L8Z64lwITqkEdNVx?=
+ =?us-ascii?Q?egR/tNWEVO2UcYOVUn/hLvZKYFqXW3XbcZmLSnipRUwct2ZQ6rQwb6eiSSKL?=
+ =?us-ascii?Q?tri8S1f2EWIYskPwT6JBkl8tlMHPGg9Y9ACFB/KrAFb7fjmjOWAKNJ6n5VDz?=
+ =?us-ascii?Q?xLUkGT328N8TnmljXizEtsXlRBy3hLVvTXyfVA0Ows8AEGjoX2VBKPoi5Ap8?=
+ =?us-ascii?Q?b3FyCHlfZtbGw84DTCz7aBIArXcBG9pzEEGDxxAYte39Al3gL/oc89yKNHkE?=
+ =?us-ascii?Q?4v86A07+evGRPaRcMMe076LeV1PXEJjsAg0VcqnDmUJVDJCKMgBbU2U/Iedi?=
+ =?us-ascii?Q?QyhiGCnuU+kElrwdYKTg6gWa7YFMTNRkCG6owqK2AMjvibMxZxEleUVjyDzo?=
+ =?us-ascii?Q?/JLQ9q93J8hJWVaUxbvvGtptmID72oW4IReOrpnF3Z6snlJ6j7opw7ag4C69?=
+ =?us-ascii?Q?0gRqMjIAtcX6KFg4XCPC55hdsbIl/QNTBcqZ2rVI3xnVMplIjngt6QYgkpV0?=
+ =?us-ascii?Q?/1Erye04xprDSIks+mvcfhwTP1Le8z3R9JmE0RykzLVgXMpxSQqXXU12p4PY?=
+ =?us-ascii?Q?lYejim8iBcfwSbb4Ynt9M3KhPybPtgNf9Kj8bkqJm40bSorGal9xNXF+oUpG?=
+ =?us-ascii?Q?8OyfnkAI7HDWCAGdQbAXmDIhmc/MZu55WR1W57n0irTUNhTgm48gMI3oV/oG?=
+ =?us-ascii?Q?IRQb5ySBRpKdYgk1sMdgOReV2142r3Uyu53EEJPBu7FWblc2RBy0P8o7n2pF?=
+ =?us-ascii?Q?xdDkJbyLnXq1m8qmwpDfJ+7i0D1hebXm0pthJxDvYjkqDW1+vtbr7Q6JKPKi?=
+ =?us-ascii?Q?QghxaKQ42nwVP514U6Qf3EyyusfSoOE0H5j7Uva4eAamu+PRQtsnjkHb3Txb?=
+ =?us-ascii?Q?XEeQKKOliQtsGcvHvYJTkuLPpA0grFejltNvMyfQryJjpz5tczp6khK5dkti?=
+ =?us-ascii?Q?S73cy9kmrzxQNFFssINOkxtqttNHYJaTAM7e4KLfqafAn5YBeeyJ78pNM2EJ?=
+ =?us-ascii?Q?u+9qxLf9ayoWuAt8Y2qrqh0g0dxc96Z2xo9dmLb8MA5jiN7UK5gr+AVn8lTQ?=
+ =?us-ascii?Q?+ur7Xo+rmQjFIPrnYfFF7W2dzXmtX0mzAtrdgr/R?=
+X-OriginatorOrg: analogixsemi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 544cb6e9-0ee7-49dc-0bd7-08ddd6474c2c
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR04MB6739.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 06:46:26.7010
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /H8XsLZEV88p4a1/NUGC6SCI6frSES3ld7WtjpN8hpW0WqJXMhCAYLf010rRWgCeLSuB/e7lZy5fdUctz/JHeA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR04MB8220
 
-On Fri, Aug 8, 2025 at 2:32=E2=80=AFPM Liu Ying <victor.liu@nxp.com> wrote:
->
-> On 08/07/2025, Shengjiu Wang wrote:
-> > On Wed, Aug 6, 2025 at 2:52=E2=80=AFPM Liu Ying <victor.liu@nxp.com> wr=
-ote:
-> >>
-> >> On 08/06/2025, Shengjiu Wang wrote:
-> >>> On Tue, Aug 5, 2025 at 4:55=E2=80=AFPM Liu Ying <victor.liu@nxp.com> =
-wrote:
-> >>>>
-> >>>> On 08/04/2025, Shengjiu Wang wrote:
-> >>
-> >> [...]
-> >>
-> >>>>> +static int imx8mp_hdmi_pai_bind(struct device *dev, struct device =
-*master, void *data)
-> >>>>> +{
-> >>>>> +     struct dw_hdmi_plat_data *plat_data =3D (struct dw_hdmi_plat_=
-data *)data;
-> >>>>> +     struct imx8mp_hdmi_pai *hdmi_pai;
-> >>>>> +
-> >>>>> +     hdmi_pai =3D dev_get_drvdata(dev);
-> >>>>> +
-> >>>>> +     plat_data->enable_audio =3D imx8mp_hdmi_pai_enable;
-> >>>>> +     plat_data->disable_audio =3D imx8mp_hdmi_pai_disable;
-> >>>>> +     plat_data->priv_audio =3D hdmi_pai;
-> >>>>> +
-> >>>>> +     return 0;
-> >>>>> +}
-> >>>>> +
-> >>>>> +static void imx8mp_hdmi_pai_unbind(struct device *dev, struct devi=
-ce *master, void *data)
-> >>>>> +{
-> >>>>> +     struct dw_hdmi_plat_data *plat_data =3D (struct dw_hdmi_plat_=
-data *)data;
-> >>>>> +
-> >>>>> +     plat_data->enable_audio =3D NULL;
-> >>>>> +     plat_data->disable_audio =3D NULL;
-> >>>>> +     plat_data->priv_audio =3D NULL;
-> >>>>
-> >>>> Do you really need to set these ptrs to NULL?
-> >>>
-> >>> yes.  below code in dw-hdmi.c use the pdata->enable_audio as conditio=
-n.
-> >>
-> >> Note that this is all about tearing down components.
-> >> If this is done properly as the below snippet of pseudo-code, then
-> >> hdmi->{enable,disable}_audio() and pdata->{enable,disable}_audio() won=
-'t be
-> >> called after audio device is removed by dw_hdmi_remove().  So, it's un=
-necessary
-> >> to set these pointers to NULL here.
-> >>
-> >> imx8mp_dw_hdmi_unbind()
-> >> {
-> >>    dw_hdmi_remove(); // platform_device_unregister(hdmi->audio);
-> >>    component_unbind_all(); //imx8mp_hdmi_pai_unbind()
-> >> }
-> >>
-> >> BTW, I suggest the below snippet[1] to bind components.
-> >>
-> >> imx8mp_dw_hdmi_bind()
-> >> {
-> >>    component_bind_all(); // imx8mp_hdmi_pai_bind()
-> >>                          //   set pdata->{enable,disable}_audio
-> >>    dw_hdmi_probe(); // hdmi->audio =3D platform_device_register_full(&=
-pdevinfo);
-> >> }
-> >
-> > Looks like we should use dw_hdmi_bind() here to make unbind -> bind wor=
-k.
->
-> I don't get your idea here.
->
-> What are you trying to make work?
-> Why dw_hdmi_probe() can't be used?
-> How does dw_hdmi_bind() help here?
+Since DRM validates the all of EDID blocks, allocates drm_edid data
+structure based on the actually block count returned by the sink
+monitor at drm_edid_alloc() calling.
 
-bind() is ok.  but unbind(),  then bind() there is an issue.
+Fixes: 7c585f9a71aa ("drm/bridge: anx7625: use struct drm_edid more")
 
->
-> > But can't get the encoder pointer.  the encoder pointer is from lcdif_d=
-rv.c,
-> > the probe sequence of lcdif, pvi, dw_hdmi should be dw_hdmi first, then=
- pvi,
-> > then lcdif, because current implementation in lcdif and pvi driver.
->
-> We use deferral probe to make sure the probe sequence is
-> DW_HDMI -> PVI -> LCDIF.
->
-> LCDIF driver would call devm_drm_of_get_bridge() to get the next bridge P=
-VI
-> and it defers probe if devm_drm_of_get_bridge() returns ERR_PTR(-EPROBE_D=
-EFER).
-> Same to PVI driver, it would call of_drm_find_bridge() to get the next br=
-idge
-> DW_HDMI and defers probe if needed.
+Signed-off-by: Xin Ji <xji@analogixsemi.com>
+---
+ drivers/gpu/drm/bridge/analogix/anx7625.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-right, probe is no problem,  but after probe,  if unbind pai, hdmi_tx,
- then bind
-them again,  there is a problem,  because no one call the
-drm_bridge_attach() again.
+diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
+index c0ad8f59e483..4b5a74e9785e 100644
+--- a/drivers/gpu/drm/bridge/analogix/anx7625.c
++++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+@@ -1801,7 +1801,7 @@ static const struct drm_edid *anx7625_edid_read(struct anx7625_data *ctx)
+ 		return NULL;
+ 	}
+ 
+-	ctx->cached_drm_edid = drm_edid_alloc(edid_buf, FOUR_BLOCK_SIZE);
++	ctx->cached_drm_edid = drm_edid_alloc(edid_buf, edid_num * EDID_LENGTH);
+ 	kfree(edid_buf);
+ 
+ out:
+-- 
+2.25.1
 
->
-> >
-> > Should the lcdif and pvi driver be modified to use component helper?
->
-> Why should they use component helper?
->
-> BTW, I've tried testing the snippets suggested by me on i.MX8MP EVK and
-> the components bind successfully:
-
-right, probe is no problem. but if try to unbind() then bind, there is issu=
-e.
-
-best regards
-shengjiu Wang
->
-> cat /sys/kernel/debug/device_component/32fd8000.hdmi
-> aggregate_device name                                            status
-> -----------------------------------------------------------------------
-> 32fd8000.hdmi                                                     bound
->
-> device name                                                      status
-> -----------------------------------------------------------------------
-> 32fc4800.audio-bridge                                             bound
->
-> > This seems out of the scope of this patch set.
-> >
-> > Best regards
-> > Shengjiu Wang
->
-> [...]
->
-> --
-> Regards,
-> Liu Ying
 
