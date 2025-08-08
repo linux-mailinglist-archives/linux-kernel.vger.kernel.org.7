@@ -1,68 +1,75 @@
-Return-Path: <linux-kernel+bounces-760260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55B3B1E897
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:44:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AA6B1E893
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212A916FB92
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7833E1729F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F5327A10F;
-	Fri,  8 Aug 2025 12:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EF3279DAD;
+	Fri,  8 Aug 2025 12:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGNavPnY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R/cY0/gx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eMzECyh+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976A42798E5;
-	Fri,  8 Aug 2025 12:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5F12797AC;
+	Fri,  8 Aug 2025 12:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754657036; cv=none; b=iu05ZC1DYJPBSVWnLSF8akikSSdfTsnm9eiuuoxXzJrqKn+qnSrKdeNYkLhCdumAH6IPLr95xdZXsUcTvG6loOSajo2ywYNlM+foEb1ZOh3BbUOCIKSv4WgjvS/lKvb+pShUrs7MMYUuUqUnfo+wcTr6aukanc9K/NLFBts4Veg=
+	t=1754657032; cv=none; b=AuCZdUvw4I4DTF8mVAkgAge01U6qELXWecf+IioLCkeH9NUeuOa1RoPxqlgnMVpOpjccdFcvYYt5frwgtjlAKEtAZt4H6k2hg/lQ7cy4cKKog7E0pTTlrtvmbuerpuDpQfz0eyzR0u19I3Jp5hGKYZRwRSmI4T6nCVbElAXaY0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754657036; c=relaxed/simple;
-	bh=tsejBiC+/oFFTRAIabIuUh+wHi8GC0uRJVghpAoYPiQ=;
+	s=arc-20240116; t=1754657032; c=relaxed/simple;
+	bh=/z2YjLOciPl+9umgiRRA8s3FvvuMbwucT1pgvC4lh6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ANEBpvl/D1YCszpRIFNdavoHJFaMJK6hAtYaVpa7soRdGQIyo7M5qvdutdph77vxjHvqZp301HkczEaIoTbCwpnKm14zXn60EuYtLesO5cleHUHA+89hUQ9k3LySNz/je/+hByMeQHKDEFI6txGAOvwWPKF19RCC2LDza0Tr2qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGNavPnY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2853BC4CEED;
-	Fri,  8 Aug 2025 12:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754657036;
-	bh=tsejBiC+/oFFTRAIabIuUh+wHi8GC0uRJVghpAoYPiQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HGNavPnYc0BaIr4fEo7cDVyDXtlCaQML0x1+CLofQxH/7GBarUOAKyv10skBzgOgK
-	 oBVGlbo+qxNsKBCaltiF/bCMzTBM+JS4FArltyTTfnjQ0UZzWwTvC5Z4fjVOozD7ZS
-	 JQBbJfCugPeUJjdCovt0G2nAeOFRkzF2ecSo7UyiTk/Pksf1f3eKrhbfIpBuFzLAEx
-	 QclWPJs8EPUYzB93ylVucyqZE1nMpRAMkuM74f/8W99rRj70YM8rC+0ZgZSbBEtuVJ
-	 FPeW/jISkY1HYxlyyC8Mh2JyQuSegx01BsKlsUUy1Qsn0Gqy4ocgYNHR4fBT6G/d6D
-	 g+NePeMF1zeZA==
-Date: Fri, 8 Aug 2025 18:13:41 +0530
-From: 'Manivannan Sadhasivam' <mani@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>, 
-	'Krzysztof Kozlowski' <krzk@kernel.org>, 'Ram Kumar Dwivedi' <quic_rdwivedi@quicinc.com>, 
-	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, agross@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-Message-ID: <fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
-References: <061c01dc062f$70ec34b0$52c49e10$@samsung.com>
- <87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
- <061d01dc0631$c1766c00$44634400$@samsung.com>
- <3cd33dce-f6b9-4f60-8cb2-a3bf2942a1e5@oss.qualcomm.com>
- <06d201dc0689$9f438200$ddca8600$@samsung.com>
- <wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
- <06f301dc0695$6bf25690$43d703b0$@samsung.com>
- <CGME20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60@epcas5p1.samsung.com>
- <nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
- <0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqerkzZCfjIGrkriydSxWAjXodNROp2SCLIOGWy9etfjt+lB52z0VjcKkOu626wNzWuzYxU8TCAiy+uy8T28T9uGIkuYtRxESZH0MYGXzsGwj8hs6dH7CEP+IrfjTNta5VNUb3jKRbW9nN2HdlwjMWVjd6UQ+yume8ElXHzB3KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R/cY0/gx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eMzECyh+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 8 Aug 2025 14:43:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754657028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=upHZ6ikXZvk61fIczNyLhwKfdfn3DW4J/lUTfCMvi2U=;
+	b=R/cY0/gxvGxcP6o7RDpxgxYPKeymBdnlcHxMZfbQW5SaSUJexuHzgWtc/UPPEfl9LAABhq
+	meRz4yKQq8qnv3XJ4TqedNTjiZWX3ZkX+d3YMpxlgjlN2Vayjpm/+Sg1GdzVxsr0ju8t5w
+	s57fbSDhlI2XvhgXrfYx03IXYh+Eo3szVcN8SPlusGOWziLCf4AJN3zSAdDdzddoP4ucCf
+	v9YgLlvCmiqdaGH1xeHI6F0hcNCkF6r/g568Ty2UZzZ6AGgi0+BB9XHyJvySyqTR4Z03oL
+	NiWOdXqL4yorpekvVYj9hVx9PAj+AImxLaxdhnWP6x346om4Rt/QScvx0+labw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754657028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=upHZ6ikXZvk61fIczNyLhwKfdfn3DW4J/lUTfCMvi2U=;
+	b=eMzECyh+ef/W1yY2krbzpEudY+Ag9cCPeGw4fcadileBXR3oRK8b9+xLSRhPB0d7OypWzs
+	zWhKeUTjPW/PrLAw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Selvarasu Ganesan <selvarasu.g@samsung.com>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
+	m.grzeschik@pengutronix.de, balbi@ti.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, akash.m5@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com,
+	shijie.cai@samsung.com, alim.akhtar@samsung.com,
+	muhammed.ali@samsung.com, thiagu.r@samsung.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb: dwc3: Remove WARN_ON for device endpoint command
+ timeouts
+Message-ID: <20250808124346.ynoPIlpX@linutronix.de>
+References: <CGME20250807014905epcas5p13f7d4ae515619e1e4d7a998ab2096c32@epcas5p1.samsung.com>
+ <20250807014639.1596-1-selvarasu.g@samsung.com>
+ <20250808090104.RL_xTSvh@linutronix.de>
+ <20c46529-b531-494a-9746-2084a968639e@samsung.com>
+ <20250808105218.WmVk--eM@linutronix.de>
+ <03f1ab21-3fa7-41b1-a59e-91f1d9dca2f1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,107 +78,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
+In-Reply-To: <03f1ab21-3fa7-41b1-a59e-91f1d9dca2f1@samsung.com>
 
-On Thu, Aug 07, 2025 at 10:08:32PM GMT, Alim Akhtar wrote:
+On 2025-08-08 16:59:08 [+0530], Selvarasu Ganesan wrote:
+> >> Here is the corrected patch submission:
+> >>
+> >> Cc: stable@vger.kernel.org
+> >> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+> >> Signed-off-by: Akash M <akash.m5@samsung.com>
+> >>
+> >> Regarding the next steps, I will post a new patchset with the reordered
+> >> sign-offs.
+> > Your sign-off (as the poster) should come last.
+> > What is Akash' role in this?
 > 
 > 
-> > -----Original Message-----
-> > From: 'Manivannan Sadhasivam' <mani@kernel.org>
-> > Sent: Wednesday, August 6, 2025 4:56 PM
-> > To: Alim Akhtar <alim.akhtar@samsung.com>
-> > Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>; 'Krzysztof
-> [...]
+> Akash M's role in the patch as a co-contributor.
+> Shall i add tag as Co-developed-by: Akash M <akash.m5@samsung.com>?
 > 
-> > > >
-> > > > On Wed, Aug 06, 2025 at 09:51:43AM GMT, Alim Akhtar wrote:
-> > > >
-> > > > [...]
-> > > >
-> > > > > > >> Introducing generic solutions preemptively for problems that
-> > > > > > >> are simple in concept and can occur widely is good practice
-> > > > > > >> (although it's sometimes hard to gauge whether this is a
-> > > > > > >> one-off), as if the issue spreads a generic solution will
-> > > > > > >> appear at some point, but we'll have to keep supporting the
-> > > > > > >> odd ones as well
-> > > > > > >>
-> > > > > > > Ok,
-> > > > > > > I would prefer if we add a property which sounds like "poor
-> > > > > > > thermal dissipation" or "routing channel loss" rather than
-> > > > > > > adding limiting UFS gear
-> > > > > > properties.
-> > > > > > > Poor thermal design or channel losses are generic enough and
-> > > > > > > can happen
-> > > > > > on any board.
-> > > > > >
-> > > > > > This is exactly what I'm trying to avoid through my suggestion -
-> > > > > > one board may have poor thermal dissipation, another may have
-> > > > > > channel losses, yet another one may feature a special batch of
-> > > > > > UFS chips that will set the world on fire if instructed to
-> > > > > > attempt link training at gear 7 - they all are causes, as
-> > > > > > opposed to describing what needs to happen (i.e. what the
-> > > > > > hardware must be treated as - gear N incapable despite what can
-> > > > > > be discovered at runtime), with perhaps a comment on the side
-> > > > > >
-> > > > > But the solution for all possible board problems can't be by
-> > > > > limiting Gear
-> > > > speed.
-> > > >
-> > > > Devicetree properties should precisely reflect how they are relevant
-> > > > to the hardware. 'limiting-gear-speed' is self-explanatory that the
-> > > > gear speed is getting limited (for a reason), but the devicetree
-> > > > doesn't need to describe the
-> > > > *reason* itself.
-> > > >
-> > > > > So it should be known why one particular board need to limit the gear.
-> > > >
-> > > > That goes into the description, not in the property name.
-> > > >
-> > > > > I understand that this is a static configuration, where it is
-> > > > > already known
-> > > > that board is broken for higher Gear.
-> > > > > Can this be achieved by limiting the clock? If not, can we add a
-> > > > > board
-> > > > specific _quirk_ and let the _quirk_ to be enabled from vendor
-> > > > specific hooks?
-> > > > >
-> > > >
-> > > > How can we limit the clock without limiting the gears? When we limit
-> > > > the gear/mode, both clock and power are implicitly limited.
-> > > >
-> > > Possibly someone need to check with designer of the SoC if that is possible
-> > or not.
-> > 
-> > It's not just clock. We need to consider reducing regulator, interconnect
-> > votes also. But as I said above, limiting the gear/mode will take care of all
-> > these parameters.
-> > 
-> > > Did we already tried _quirk_? If not, why not?
-> > > If the board is so poorly designed and can't take care of the channel
-> > > loses or heat dissipation etc, Then I assumed the gear negotiation
-> > > between host and device should fail for the higher gear and driver can have
-> > a re-try logic to re-init / re-try "power mode change" at the lower gear. Is
-> > that not possible / feasible?
-> > >
-> > 
-> > I don't see why we need to add extra logic in the UFS driver if we can extract
-> > that information from DT.
-> > 
-> You didn’t answer my question entirely, I am still not able to visualised how come Linkup is happening in higher gear and then 
-> Suddenly it is failing and we need to reduce the gear to solve that?
+> Cc: stable@vger.kernel.org
+> Co-developed-by: Akash M <akash.m5@samsung.com>
+> Signed-off-by: Akash M <akash.m5@samsung.com>
+> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
 
-Oh well, this is the source of confusion here. I didn't (also the patch) claim
-that the link up will happen with higher speed. It will most likely fail if it
-couldn't operate at the higher speed and that's why we need to limit it to lower
-gear/mode *before* bringing the link up.
+Yes. This looks good now.
 
-As you can see, the driver patch is parsing the limits in its
-ufs_hba_variant_ops::init() callback, which gets called during
-ufshcd_hba_init().
+> >> Thanks,
+> >> Selva
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Sebastian
 
