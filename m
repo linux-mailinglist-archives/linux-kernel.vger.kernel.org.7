@@ -1,141 +1,259 @@
-Return-Path: <linux-kernel+bounces-759927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4232DB1E48E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:40:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED17B1E488
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BF064E3CDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A72188F6F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E4F2652B0;
-	Fri,  8 Aug 2025 08:40:30 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F7C264638;
+	Fri,  8 Aug 2025 08:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nf2bBQj9"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010045.outbound.protection.outlook.com [52.101.84.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53061222565;
-	Fri,  8 Aug 2025 08:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754642430; cv=none; b=FYuestNGyZLqTGKHXQym/72/M5JLjzjwJS/FHx+8oFccffELGroEd7jBlIoRXNPk6+/nvZTAUp/CGtaQoBi/y9cW0dcY7jvzfsXVO/Ly3aV6p4D84phHftmWUAWkDNgHQgdSb+aotARwty2ZNJTF/QlQOnfrfDMlFMsXzKo0cGc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754642430; c=relaxed/simple;
-	bh=junXdwx0TkSI7LNOYjpb9IXp+ymJxIevkjGvsBY0XJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JJMJjY60nh64Tq8BFfuztH4qfJbk1EqbcjhcDFqUE1YygZXIJBqAGQ7Dd0vQ6D6fYFrQtnxyyzscFbcqXcJHJxilVKFVtIaCUFHK8uFomKtxlFay6PbXUXRDP51mXdg2mDHl9kxGAZO+8y4kAMqbB3G4rpWdv8LzkvrIMvA50gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4f9d64ec743311f0b29709d653e92f7d-20250808
-X-CID-CACHE: Type:Local,Time:202508081552+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:e0211e39-915b-47f5-8269-b2a5fc39732d,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:12be9df259196fe631b2eedfa1e50959,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 4f9d64ec743311f0b29709d653e92f7d-20250808
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 516528990; Fri, 08 Aug 2025 16:40:17 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 29FF3E01A759;
-	Fri,  8 Aug 2025 16:40:17 +0800 (CST)
-X-ns-mid: postfix-6895B7F0-853165559
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 3E5B8E0000B0;
-	Fri,  8 Aug 2025 16:40:10 +0800 (CST)
-Message-ID: <4644c5ec-b74b-4428-bd14-7b50dbd22397@kylinos.cn>
-Date: Fri, 8 Aug 2025 16:40:09 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8B9254845;
+	Fri,  8 Aug 2025 08:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754642372; cv=fail; b=tdig4VWYklI5iO7cUXk0rSZ+qr/bXYhSJtgLmVLcns3hDX2LDcpj1L92BAplvyM0tvz3xwZKIt12K4YWyoLNDdbCgrFQr+k3+j6FLiM3RssqT+mAExs42J7u98+eSGcBJ0EbaE1DpXkER4tK5HXUvQosOvpsJYlFrVISwA023SE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754642372; c=relaxed/simple;
+	bh=H5GK0m5bsolw8APiY4ht3symfvxZEsP11CQhBS72H1g=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=j6bGVawxktCrvCDU93xLacw4406bmd59S0pNA02wmj/mtEzpmRoOU8cPIr3Cjjv99GPVqEcYTO9mGEPZMz3HJB9RSNSg3N20Wa5acHEoM57i4TFTw0Trh0H1/SgeytZYWsm0+KdfZLWENzrC8E5F/Mx5P00bcVOod5s6gMiDJdU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nf2bBQj9; arc=fail smtp.client-ip=52.101.84.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ooGDl+GWRShi53x6aovqvngJqefdh5Jnz6F4mM56vP9p0E4a+yWVN5308KhorMPCmWtkTUbYOtMZGk/4Vw4J24HeRiSDkOrBlcjbWdaGnH1gvIuXJ68l0DQvgBRHGgXwWULWVATzSPKW8fwnaF5mhK9MyTqbfkOcCIxQVUXpCofwljaK8ktZbshuXiRugQGJJGM3EHT0AATIog5NzgNu6yXTY3xwoFIrvHe9fXJgiZV+9fCFrZhaBPyhCp3SeKSMC/eL6oPePCeSTzAfJpzz3qb0ZFLjZWp4gUqzIFIqZ+3jnh9nltVL4Bw1RWCMeDkIveNsjqTm7lxe7oU+n4Dq2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=20/z/DYZAbFqNRAJnWhszUBcApa7H8SN1LKIloreMsQ=;
+ b=TJdo2aH83pJ+leV9vQbJ+hm1sEirkPSyB/Y7VyXQ/TVvK/58p2xdXQDdKhoa/QyAM3lZcCHaTIj+XBCFklgemXxUAldKJyOc5O+7GCZ5Mflp8GUY5nMJAGQBE3PqiYhDObIUmkFUNkSVkwqRs8RUg3xbsXIqGj5lI+OHdem7AsSAJ8c/BO5DVuTEdMCtzdjVn5SmKi50Ghwp17Yg1oNg0ysw21A4uLNRtRzI3a42zywnYnedvxYmNBMzAvSOPucLcQOhgdW/LyjGz//+GZli/eJNjS+6pSZIYJ/LbRBL3QbSA+9p0qyNFJ894jToZMYh6eKX3tgVqVBLa+Qlk2besA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=20/z/DYZAbFqNRAJnWhszUBcApa7H8SN1LKIloreMsQ=;
+ b=nf2bBQj97qgnFcPifvjfddxWD2+EghqgcAw6UmxDcX9dWPq2gwN3xNaQiTH5uxskZTFLHCi0/npB25WoqZP/tFmbvguH11EgLF/dAJmfKCcbjv6+J57SNZC/0I9nsWwBVtrvIcod4ceHVAeD77nQzuwAhqhuP2+kdqiT88metPIoBriL/t/ujK8oChFzF3K3uUnKO4SxKhdDWs+wELKv/rny5aLn4zcS9w1yqIcPy9TTj3KRYpQwhZawIuENO3B6CiIvCoyTz/nvtDD2g01OJaBAFRh/6uwG+gL2NmVnnWoh2/fiVIJEVFgZRq2lod+qViINASyeBfuM0rTyBLST/A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by GVXPR04MB10802.eurprd04.prod.outlook.com (2603:10a6:150:220::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.17; Fri, 8 Aug
+ 2025 08:39:26 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%5]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
+ 08:39:26 +0000
+Message-ID: <86249350-10bf-4bdd-a154-60b6aec59c0f@nxp.com>
+Date: Fri, 8 Aug 2025 16:40:55 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/7] arm64: dts: imx8mp: Add hdmi parallel audio
+ interface node
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ lumag@kernel.org, dianders@chromium.org, cristian.ciocaltea@collabora.com,
+ luca.ceresoli@bootlin.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+ l.stach@pengutronix.de, shengjiu.wang@gmail.com, perex@perex.cz,
+ tiwai@suse.com, linux-sound@vger.kernel.org
+References: <20250808080617.2924184-1-shengjiu.wang@nxp.com>
+ <20250808080617.2924184-7-shengjiu.wang@nxp.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20250808080617.2924184-7-shengjiu.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0015.apcprd02.prod.outlook.com
+ (2603:1096:4:194::16) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
- address process dependency issues
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, David Hildenbrand <david@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
- Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
- xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
- Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
- <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <aJSpTpB9_jijiO6m@tiehlicka>
- <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
- <20250808075753.GB29612@redhat.com>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <20250808075753.GB29612@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GVXPR04MB10802:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32d109d9-7625-4fdf-3f8f-08ddd6571567
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|19092799006|7416014|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?c05xK2JDd2cvZ1lwd0J3WDdHYjVIM1pWbDcxVU9yN1V0SHNKc05QSTN2ZHVo?=
+ =?utf-8?B?TjBjSkRmeDhPaXpIT1NrcStHcllvN283RWh3WDZNUmszejUwMGZTZ0E5L2Yy?=
+ =?utf-8?B?VWRrOWJKR1FjeTFCVlJ1ZWJsbFJWdkRXK21uZnlpL0s3Y2prNEdsb2FSc25P?=
+ =?utf-8?B?RnJ1d0daNlRmcTdxclhUbXJ4NDdlSVFOZzdoQkk3UDRrc2h5dVd4QXhmMHl5?=
+ =?utf-8?B?djAwYXFyS1FFOFpTcmVuRWFLSW9mWENJYTFUMTZlbUcyTnJvRFZHRTFvMHNL?=
+ =?utf-8?B?NU9zck9HRFY0ejlJOUhlMXEvbitNV3FmUWtpWDlGWkppM1Bra2JRMzR3S1Zz?=
+ =?utf-8?B?UHo3NVpaN3JvR0luMHpPM2JQcm5MZzVFRFBQMTVBMnp3MnIzM00zbWhncVNl?=
+ =?utf-8?B?L0t0WDBUZE1nUFNtS1ZNVVFYSUdYd3FpSUhyRkMzSWRhNlpyK3ZkU2pkMVM5?=
+ =?utf-8?B?dlZrcHJRRHV5QUhsaUE2MmZGY0FkRzU1bVpOOVZOQVdIdjZEeDJLY2RNVmVE?=
+ =?utf-8?B?VkhQa01pcDg3a1grcGZRNkE1Tm50YTFLT1R2aTgzeUNOM2ZnVzROVXdZL1pt?=
+ =?utf-8?B?U2ZhKzF6VmxTNjRaaWNoZ0ErTUpmVW9xV2MvVlpkOVdreHY5amtWL1ZnaFRL?=
+ =?utf-8?B?Ynh0Z3p3bkJKck44M1U1c29XVGpnOGpTWSt1M2lxbHA3eTVIeUt5OVNHVjFW?=
+ =?utf-8?B?Y3pCVEVicktHK3pCZ1VoMkNpQkRXMFJCeEZJSXJjTjA4MTIzQnhBbnJaTDU1?=
+ =?utf-8?B?L1FUWFR1RGcyaVh1aWJpbE5nTU12UEFIOG9vUGZYUWd2ZGU3bUl2U1dneGI1?=
+ =?utf-8?B?anRlRTVEUE9MbDVVZUR0S0VjazhwV1NEYXhzNTVnZDRaZndQL1FoMXRnSnFz?=
+ =?utf-8?B?MGMrOWRCdTNWcnhDTVd2YzJsMFNYbWpmNmtiMFFsNXF2WUd4Uml2YjRMUTlH?=
+ =?utf-8?B?Tm5XdFBVWTN5Sm1Gb0QzMEtucmQ3TWh5amZpNXZMQUhGcDBkT2k0U3lLZElM?=
+ =?utf-8?B?YTRHZVo1Szd0b2FDQlROVmpKTWNiRlpINzErZ2ZwSDgzVjZYWDg1SUV0Q3Zu?=
+ =?utf-8?B?MGRYR0picG94TytwV3pFNnNiMGQ2MHNpSXVlNlJSQmdsc2hLT1ArSFdnTDZn?=
+ =?utf-8?B?bzZ6L1FTVk9UZTQrNGcwcDZHM28zVzU3RTE5cm05NDRQbmRWQWFYSWY2S3B4?=
+ =?utf-8?B?TDZlQndtQXp6NFhBWjhjY1NOZXBXYUt0alhMMnRuV3Z0N0FKMkZPMXE5dGkx?=
+ =?utf-8?B?cVZHVVNXbE9LMlhvWFgzdTZhYkY3RkprYThDZlhKWmp6UW9Fc0xpenc5d3Rv?=
+ =?utf-8?B?STRlays1eTJ1Y1gyeHFEREhyNmxhYTRqWFhYQ3Y3NnVQV29OUFk1bHMzSnFm?=
+ =?utf-8?B?cjJCSVVIRFhiRmtMdGtRalp5WmsyTFBITE5SVElnOUV3Y3gxME5qSFh0V0tC?=
+ =?utf-8?B?TzFSU1c5dkxMSjJsNkFsZ0lvY0JWZlk0dTNGVzN4S0FGS2JVUzFoVnVXVWxY?=
+ =?utf-8?B?a1NZREtRa1BjVGhOV2dmem8yS242cW9oSGVTTFVxVWtNZ1lsV3psMEhuSjUv?=
+ =?utf-8?B?MVpXa0U4Y2hHTHVveDI4SEZlT2lDcjlVN292TzdkeGx1M213NXpjU1E5dEFI?=
+ =?utf-8?B?UmJRazR4OTM1R3BPcU82S3p4ODFMWHNRaTJ4RXROcUdRN040bEYzWlZVdlJY?=
+ =?utf-8?B?N2lTVHdtcEpheG8vMjhUdGpmSytSdldwRmNlcXZvclV2MHBwMXpFaDgrVXBN?=
+ =?utf-8?B?ZWF2K0I2eVNMcHVNNkZaM3FFd1YrRFgzdFZJaWtDK2JIWEVZbHdheGdQRm1O?=
+ =?utf-8?B?L2xhZnV2c3UzOFhtTDBRUDdwaDB1OFVLL3pCYTJ5K3dleVFUQmRlWUw1K0FW?=
+ =?utf-8?B?QlluTFRSODJsUUF1T3MvaGlqdjVhN2s2VUhVR2gzNHAyanA0bjl2RnJNTlpT?=
+ =?utf-8?B?SWtFQ1hZbk41STlJZE9rVmRUKzM4ZHJwNmJiT3dxMVZBeEVudTRZL0ZIUHNz?=
+ =?utf-8?B?ZUJDT3BSOU5nPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?VkoxZFhqRUhZZ3kxWXhqb1MyTk5ITEcvcmhtYzVTcGRIVGJldytqVEdWSmtv?=
+ =?utf-8?B?WHJ6TVB5YnZYQ21odUxyaGdWK2lVSk85dHFDWW1ET1BJdS91akhaV2xiWXNk?=
+ =?utf-8?B?THQweXNIU2h5b3dwRjB6KzUrT2p2eE9Vay83TGN4bENUNzk1UnpKTVNQSW5I?=
+ =?utf-8?B?RnRaUnloL0ZMWVcydlRPMXJPbnFVaDdvb0ZUUnJsT2h5NExEMFJ6Sm5ZeGp3?=
+ =?utf-8?B?M3V3ZjkrMnpFTk5IUk52RnhmTjd6RXQ3dXZCaVA3TDhTcnUrUlNPN0Y3Y0ZY?=
+ =?utf-8?B?Nm8xOTFQaUdjZUgvWHI2NUNGbk53TFNKendQTFdTTjdUWHdxSWNFOEpmU1BF?=
+ =?utf-8?B?Q2Z4VmFWWm5QK0preDV0akdXYW5PUDFhU29qNjRqS1dWdCs1cHZUSXg3S1Zk?=
+ =?utf-8?B?R0dtQ3ZDRTkybUpBVUhKNkkxYUExQlJ2Y044NnpLUkJuZHJJTzB5LzVrN2pP?=
+ =?utf-8?B?azY5ODhVL0RRazFPWi8zTkJNZnlLOVNmU3JhdmlObWVTY3dreTZERTNtMmw5?=
+ =?utf-8?B?RWhtVjFRQU9OcGx6RnRKLy9zdTg2aUhGVmRIckhMQmxlNVZ6d3MxdXVCcmlM?=
+ =?utf-8?B?RWdsSkRDQ1hHRGdFQkFHcjNFcjJ0Q0J5Y1FiOHhrdHEwdVBtZnFHbjdQRWsr?=
+ =?utf-8?B?d1NnRjc5dkFWSysydjVycFcyTWxxZ2Q0N0tXOUI5R0dLUUp1YVlTNnpKTUFw?=
+ =?utf-8?B?cmJHSmlFS1RacVUwaC9PZ0RvTTVYV2x0OVdPdXBMcUlJTWdpNWh5TTVFQ1M3?=
+ =?utf-8?B?ZVhOV1dYM0RGYjBqUWViZjd0U3pnZGRWbi80NjRMOUlOWW1LNWxKK09ZVkNi?=
+ =?utf-8?B?U2xDTlZXYXhXUXRHS0crUlg4Mzdmc09XQU8ya1JDaGZLaVEwU2YxVjV4ZUVU?=
+ =?utf-8?B?VzFmVlBWd1Z0TEpibm4rZXV2ZzFYSUtsaEIzb1hoUVM3SXNhUzFwVTNySFla?=
+ =?utf-8?B?cTNzTmNWcTFjYjc3SzhuZTEvd0U1WmZyVTZTRXQyLyttYlF6TG9mbk45T3k1?=
+ =?utf-8?B?WCt4dDNnUm9FMzNtdG04ODRqbXV3MEtac3BEK0liZVhVZUJoZnpnMFZvMzUw?=
+ =?utf-8?B?cUlnaHV4dGJtRmpXRGNESGwrTnhKV3BUZWNvUXA4bTFENzk5OEVvU1FxNVZ4?=
+ =?utf-8?B?bUYzT1hCOE5QcEIvWDkvOFZXc3dIY0lYVHFkY2J3YzFMdC80QXI1WFBad0xC?=
+ =?utf-8?B?YUM1K0dzVTRPNGIzbkFVaGZFVytmaGZaSFlnYTcyTDYrM2tZZGM2K2xSQVFt?=
+ =?utf-8?B?dmt4bFNqS0d2M1RtSUszc1BRdUhOY1VBbS9PbWZ2NC9ST1ppTlVsVVJEK04v?=
+ =?utf-8?B?N1Y2eVpZWktPVmtzemN1UHRwWDZQWklFQ0xKYkxCUFpyekRaK2I2eGxaM2kv?=
+ =?utf-8?B?S1VYNWp3d3AvRUgzVjI0dEFKbWNqZlA3dmFOZXZxcHd5bnVyY2hlbHRpUE9k?=
+ =?utf-8?B?dXB3eFZsWTNsd0xDK1RMY1Z5eDRTSmU3VnlDclpodmVLaW9RdFJlRmVmOTJk?=
+ =?utf-8?B?Z3hjS0RvSnpXRkVJQ3VBeUtiZmcwYk5OR3g5c1dMU3lqTFhvM3k1bk5rbE9K?=
+ =?utf-8?B?MWRIZWRxcHJVdTVRdi9TY3RXZVZaZDZhR0g4aGxpSU1UOGY3Y2UyRFIxc1BD?=
+ =?utf-8?B?SG9KM2FIenB5a3Z3L0hTR05sSHNyWGt0bFRFUjdnckVRcG9CUHdWMVZ4aWZ2?=
+ =?utf-8?B?aCtaQ21YRlE5ZmxOUTAyc1E0bUczcG9SbGlRUGFHRkhmS0RDTlJDRXZpQWVP?=
+ =?utf-8?B?QTlqNE1XdUdTNUtWYmppK1NxVFErWkVzUVZqSmNDMWtOb3RxdzZYT2doTVhW?=
+ =?utf-8?B?dlppUTlmTExTekdiWHZLeE1OZkVmMFhJalc1NklISTZWTnZJNGZMYTZPSkl6?=
+ =?utf-8?B?WWgxTEZza3RWUmFrYVZ6dWxtR01qVmtPZVhqenpORi9ybCtEN2xnUStUZTN2?=
+ =?utf-8?B?ZkIvVHNUcnRvVC9DNTFYVlFYNWYwMFdVOUhsanVqb0VybmFaOVA0aHVrVEdr?=
+ =?utf-8?B?eWhPdmxPWEhNeWxvTlBkeUhGUHduTFJyemQ3OCtKTzRaNTZWait3dXZMSHNu?=
+ =?utf-8?B?SXN0VEtzMGhuUFZVeVBhVlhqeFBSQ2RxZDlmS1BzV0lMamp3cGdXRmNKY2tl?=
+ =?utf-8?Q?U4v5kCHwXkUiCYniw4QmjCvo6?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32d109d9-7625-4fdf-3f8f-08ddd6571567
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 08:39:26.7455
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qFf08Kf3BNYdTw5M70VvizUO8nkGLuqeZVWM+7x4uhG9UrrHyCIVN9506nx8JMcSt8wJgQa2igd58k1iS8E3lg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10802
 
-Hi,
+On 08/08/2025, Shengjiu Wang wrote:
+> The HDMI TX Parallel Audio Interface (HTX_PAI) is a bridge between the
+> Audio Subsystem to the HDMI TX Controller.
+> 
+> Shrink register map size of hdmi_pvi to avoid overlapped hdmi_pai device.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 28 ++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> index 841d155685ee..00d8474bd1b1 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -2066,7 +2066,7 @@ irqsteer_hdmi: interrupt-controller@32fc2000 {
+>  
+>  			hdmi_pvi: display-bridge@32fc4000 {
+>  				compatible = "fsl,imx8mp-hdmi-pvi";
+> -				reg = <0x32fc4000 0x1000>;
+> +				reg = <0x32fc4000 0x800>;
+>  				interrupt-parent = <&irqsteer_hdmi>;
+>  				interrupts = <12>;
+>  				power-domains = <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PVI>;
+> @@ -2092,6 +2092,24 @@ pvi_to_hdmi_tx: endpoint {
+>  				};
+>  			};
+>  
+> +			hdmi_pai: audio-bridge@32fc4800 {
+> +				compatible = "fsl,imx8mp-hdmi-pai";
+> +				reg = <0x32fc4800 0x800>;
+> +				interrupt-parent = <&irqsteer_hdmi>;
+> +				interrupts = <14>;
+> +				clocks = <&clk IMX8MP_CLK_HDMI_APB>;
+> +				clock-names = "apb";
+> +				power-domains = <&hdmi_blk_ctrl IMX8MP_HDMIBLK_PD_PAI>;
+> +				status = "disabled";
+> +
+> +				port {
+> +
 
-=E5=9C=A8 2025/8/8 15:57, Oleg Nesterov =E5=86=99=E9=81=93:
-> On 08/08, Zihuan Zhang wrote:
->> =E5=9C=A8 2025/8/7 21:25, Michal Hocko =E5=86=99=E9=81=93:
->>> If they are running in the userspace and e.g. sleeping while not
->>> TASK_FREEZABLE then priority simply makes no difference. And if they =
-are
->>> TASK_FREEZABLE then the priority doens't matter either.
->>>
->>> What am I missing?
-> I too do not understand how can this series improve the freezer.
+Nit: Drop this blank line.
 
-Thanks for your question =E2=80=94 actually, I just replied to Michal wit=
-h a=20
-similar explanation, but I really appreciate you raising the same point,=20
-so let me add a bit more context here.
+> +					pai_to_hdmi_tx: endpoint {
+> +						remote-endpoint = <&hdmi_tx_from_pai>;
+> +					};
+> +				};
+> +			};
+> +
+>  			lcdif3: display-controller@32fc6000 {
+>  				compatible = "fsl,imx8mp-lcdif";
+>  				reg = <0x32fc6000 0x1000>;
+> @@ -2143,6 +2161,14 @@ port@1 {
+>  						reg = <1>;
+>  						/* Point endpoint to the HDMI connector */
+>  					};
+> +
+> +					port@2 {
+> +						reg = <2>;
+> +
+> +						hdmi_tx_from_pai: endpoint {
+> +							remote-endpoint = <&pai_to_hdmi_tx>;
+> +						};
+> +					};
+>  				};
+>  			};
+>  
 
-Right now, we're trying to address the case where certain tasks fail to=20
-freeze (often due to short-lived D-state issues). Our current workaround=20
-is to increase the number of freeze iterations in the next suspend=20
-attempt for those tasks.
 
-While this isn't a perfect solution, the overhead of a few extra=20
-iterations is minimal compared to the cost of retrying the whole suspend=20
-cycle due to a stuck D-state task. So for now, we believe this is a=20
-reasonable tradeoff until we find a more deterministic way to=20
-preemptively detect and prioritize problematic tasks.
-
-Happy to hear your thoughts or suggestions if you think there's a better=20
-direction to explore.
-
->> under ideal conditions, if a userspace task is TASK_FREEZABLE, receive=
-s the
->> freezing() signal, and enters the refrigerator in a timely manner,
-> Note that __freeze_task() won't even send a signal to a sleeping
-> TASK_FREEZABLE task, __freeze_task() will just change its state to
-> TASK_FROZEN.
->
-> Oleg.
->
-You are right.
+-- 
+Regards,
+Liu Ying
 
