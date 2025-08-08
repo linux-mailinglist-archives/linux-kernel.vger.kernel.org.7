@@ -1,220 +1,130 @@
-Return-Path: <linux-kernel+bounces-759600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16136B1DFEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:28:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E10AB1DFF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30C29582A40
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:28:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B45D1AA2205
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD36DA945;
-	Fri,  8 Aug 2025 00:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517A012B73;
+	Fri,  8 Aug 2025 00:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kcBuOxtQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mAHbnh5+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637C37FD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 00:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC4D645;
+	Fri,  8 Aug 2025 00:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754612880; cv=none; b=m1W3dzixEoavOgmYRLxdYk0cza9S2RLfAN4RoQaFLtmCVTBrO7BqGDMEuYU3lzLqS+7DshxXahskA6NdqH4uxmBkbdFuZy5WB2w57YUi/VAcgjXgGjnpcvvRX3LDsj1GmI8VEgHO+VvsBB4GQ1Wy3AJd7gatrnCY0ph8NIhPtz0=
+	t=1754613213; cv=none; b=NCbdhpJLM7vem4r6VazXwxEmJAJC7wfhT2ntBidyenndsK/nCDgxWe6R/90KrUUwIan5MsQWicl0zA345zqW6df3K6ChnDfpM6c7ocNSKbZTtr8/NuQhQ1+3JtMlBW469pFpcufGLvIng2RE50bufCZ4byrd/Jlw429UfybaSWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754612880; c=relaxed/simple;
-	bh=3adHooY3+sv7PxITm3GCgvrTob08qaA/gu/g+PRds3c=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=qWVH6zSg0FjipbebLueqz/pduRsCNcg88cDU4ZtGiHovFi8Ov/C6lIk1kHNnX1vuEqCE1+dGHjWcWj8d2ffmfMosOMZyk5CzgakQB3IhddnTPcvEryPOxgU1KkC5BKVpko99XGShE+rMEsW3Np7wQ3t4CvtxFvSeHb3MK7knaoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kcBuOxtQ; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754612879; x=1786148879;
-  h=date:from:to:cc:subject:message-id;
-  bh=3adHooY3+sv7PxITm3GCgvrTob08qaA/gu/g+PRds3c=;
-  b=kcBuOxtQqUdUx9uosRbfGL1VFJOGSS5F6mETny1RGpyJKaALCF0fEz3p
-   osKz2YrqIedKFkCQ123wa/ktPZE8omwW29dvMuT6BRK+WGRIeO7VH+BdH
-   SfFywjJPUZqlLQ9LgHFh3e9GVYhzhqUg/RPfH7O05IDMtsQC3Nuwhx6n/
-   aaOgedit+mMOnor1ii70m7YZWZZvOghDAsGdIHiRoKxyGOqkiCgSg3C8u
-   cPD3hzp8TTL/mLEIPxAEdUab6NaDu23zDxvhCznbgDuDsOGquXUH9IGoa
-   X1Vm6FLmEoChxKd2SlnZegzvVNPu+0dcfxnkCPao3nujskkf25iDQ02tf
-   Q==;
-X-CSE-ConnectionGUID: DCbPZPC+SRODhAFozFtbrw==
-X-CSE-MsgGUID: 1FcxWLOkR/ixMNdoXIKeMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="57039164"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="57039164"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 17:27:58 -0700
-X-CSE-ConnectionGUID: Kltqm1ShR4WoiKzK5se0sg==
-X-CSE-MsgGUID: dT7gKsDFQC+V7uMA1VF8oA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="164861876"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 07 Aug 2025 17:27:57 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ukAxe-0003OS-1c;
-	Fri, 08 Aug 2025 00:27:54 +0000
-Date: Fri, 08 Aug 2025 08:27:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD REGRESSION
- f31b0ec5758022cf4ad4a81232be289df9bbbbff
-Message-ID: <202508080808.7Gqd5PUj-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1754613213; c=relaxed/simple;
+	bh=mn9S2PZM3RptPXvkB5BcFO+v5Fgw8g2XCTAZDCSVfO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jQf6YfB8DhQUfwxQcZ44lTNWL5BTdUvFvC3bAdZXDBgnjHr3zcokurR4vZYVWPnC5VYxzcSHCSdl7lhS+vDpwoJr4H8AFJrf/iaE8YPY5yHkvMV2+mkhJiwliF9j+we+sOspE58/NmlRfH+5r1XxPktgOBxA/Ut8rU7IqWEfMoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mAHbnh5+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754613204;
+	bh=6lQ8aIPD8+gsycBvB6j/x1EuMLfjRsG1yevtDuQqcNs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mAHbnh5+uKm8Lc4AsNXfmG0o0yH2o+ZFgQuVu5ULGIAnX/IVEyoo17Phng0EuDj6F
+	 l2nONm2dGxfovWB1eLgj5dCKdWsykSIA1UKZ/mUe9kGJsi8BSQBFW6s8z144xYWWqq
+	 VpHGrhCTniHrjzKyh80IpIN/sZJxdae5QWf0uTQeh1HIOLQEKZfntTzetglGJ3w4qI
+	 pED4yAJSAGwciBsJ8Co2tZBeJd+bAeeLYnl2k6B0vY+mACSaZ0K5DM69TMI3/zWX8j
+	 emn43qS5QS5xocdXVDW63pCYsxI9fTsO5Br0fiJlyWDFzW5v5dbsxKl+Xnorkk72iK
+	 ZxzX4Wf4lhq5Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bylPZ6hmGz4wbp;
+	Fri,  8 Aug 2025 10:33:22 +1000 (AEST)
+Date: Fri, 8 Aug 2025 10:33:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>, Anup Patel
+ <apatel@ventanamicro.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Rahul Pathak <rpathak@ventanamicro.com>
+Subject: linux-next: manual merge of the risc-v tree with Linus' tree
+Message-ID: <20250808103321.49fdf504@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/l+_oaGtb/b15xpRr+OMOJ_v";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: f31b0ec5758022cf4ad4a81232be289df9bbbbff  Merge branch into tip/master: 'timers/clocksource'
+--Sig_/l+_oaGtb/b15xpRr+OMOJ_v
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Unverified Error/Warning (likely false positive, kindly check if interested):
+Hi all,
 
-    ERROR: modpost: __ex_table+0x1584 references non-executable section '.rodata.ks8851_get_drvinfo.str1.4'
-    ERROR: modpost: __ex_table+0x1588 references non-executable section '.rodata.ks8851_net_open.str1.4'
-    ERROR: modpost: __ex_table+0x1590 references non-executable section '.rodata.ks8851_probe_common.str1.4'
-    ERROR: modpost: __ex_table+0x159c references non-executable section '.rodata.ks8851_match_table'
+Today's linux-next merge of the risc-v tree got a conflict in:
 
-Error/Warning ids grouped by kconfigs:
+  drivers/clk/Makefile
 
-recent_errors
-`-- riscv-randconfig-002-20250807
-    |-- ERROR:__ex_table-references-non-executable-section-.rodata.ks8851_get_drvinfo.str1.
-    |-- ERROR:__ex_table-references-non-executable-section-.rodata.ks8851_match_table
-    |-- ERROR:__ex_table-references-non-executable-section-.rodata.ks8851_net_open.str1.
-    `-- ERROR:__ex_table-references-non-executable-section-.rodata.ks8851_probe_common.str1.
+between commit:
 
-elapsed time: 954m
+  6486341721a2 ("clk: rp1: Add support for clocks provided by RP1")
 
-configs tested: 115
-configs skipped: 3
+from Linus' tree and commit:
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250807    gcc-13.4.0
-arc                   randconfig-002-20250807    gcc-12.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                   randconfig-001-20250807    clang-22
-arm                   randconfig-002-20250807    gcc-10.5.0
-arm                   randconfig-003-20250807    clang-22
-arm                   randconfig-004-20250807    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250807    gcc-8.5.0
-arm64                 randconfig-002-20250807    gcc-8.5.0
-arm64                 randconfig-003-20250807    clang-22
-arm64                 randconfig-004-20250807    gcc-14.3.0
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250807    gcc-15.1.0
-csky                  randconfig-002-20250807    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250807    clang-22
-hexagon               randconfig-002-20250807    clang-22
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250807    clang-20
-i386        buildonly-randconfig-002-20250807    clang-20
-i386        buildonly-randconfig-003-20250807    gcc-12
-i386        buildonly-randconfig-004-20250807    gcc-11
-i386        buildonly-randconfig-005-20250807    gcc-12
-i386        buildonly-randconfig-006-20250807    gcc-12
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250807    clang-22
-loongarch             randconfig-002-20250807    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                 randconfig-001-20250807    gcc-11.5.0
-nios2                 randconfig-002-20250807    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                randconfig-001-20250807    gcc-8.5.0
-parisc                randconfig-002-20250807    gcc-11.5.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc               randconfig-001-20250807    gcc-12.5.0
-powerpc               randconfig-002-20250807    gcc-10.5.0
-powerpc               randconfig-003-20250807    gcc-11.5.0
-powerpc64             randconfig-001-20250807    gcc-11.5.0
-powerpc64             randconfig-002-20250807    clang-22
-powerpc64             randconfig-003-20250807    gcc-13.4.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250807    gcc-12.5.0
-riscv                 randconfig-002-20250807    gcc-8.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250807    clang-22
-s390                  randconfig-002-20250807    clang-22
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250807    gcc-14.3.0
-sh                    randconfig-002-20250807    gcc-9.5.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                 randconfig-001-20250807    gcc-14.3.0
-sparc                 randconfig-002-20250807    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250807    clang-22
-sparc64               randconfig-002-20250807    clang-22
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250807    gcc-12
-um                    randconfig-002-20250807    gcc-11
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250807    clang-20
-x86_64      buildonly-randconfig-002-20250807    gcc-12
-x86_64      buildonly-randconfig-003-20250807    clang-20
-x86_64      buildonly-randconfig-004-20250807    clang-20
-x86_64      buildonly-randconfig-005-20250807    gcc-11
-x86_64      buildonly-randconfig-006-20250807    gcc-12
-x86_64                              defconfig    gcc-11
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250807    gcc-15.1.0
-xtensa                randconfig-002-20250807    gcc-8.5.0
+  f10b3b886a26 ("clk: Add clock driver for the RISC-V RPMI clock service gr=
+oup")
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+from the risc-v tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/clk/Makefile
+index 18ed29cfdc11,48866e429a40..000000000000
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@@ -85,7 -84,7 +85,8 @@@ obj-$(CONFIG_CLK_LS1028A_PLLDIG)	+=3D clk
+  obj-$(CONFIG_COMMON_CLK_PWM)		+=3D clk-pwm.o
+  obj-$(CONFIG_CLK_QORIQ)			+=3D clk-qoriq.o
+  obj-$(CONFIG_COMMON_CLK_RK808)		+=3D clk-rk808.o
+ +obj-$(CONFIG_COMMON_CLK_RP1)            +=3D clk-rp1.o
++ obj-$(CONFIG_COMMON_CLK_RPMI)		+=3D clk-rpmi.o
+  obj-$(CONFIG_COMMON_CLK_HI655X)		+=3D clk-hi655x.o
+  obj-$(CONFIG_COMMON_CLK_S2MPS11)	+=3D clk-s2mps11.o
+  obj-$(CONFIG_COMMON_CLK_SCMI)           +=3D clk-scmi.o
+
+--Sig_/l+_oaGtb/b15xpRr+OMOJ_v
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiVRdEACgkQAVBC80lX
+0GyjBAf/dXz8H0uoaCcDuvn3sbZZBQeq/VzYvEj5Xjkg+F198zZwLPBw6GAF9zw3
+DuP8Y6lUOeyIBrSKs9ex4MVc5wjifdEbGlimrAUeEBCJbWY35G7lPmPe7Syq8OuZ
+DdnfE1jculLrBrYEV3fjEim0iVCVyf1HTAIj9okOARJ4pUA1+W7BV2MkKj5qsJwE
+lpGBaoQiT0Jx+iP6WGqCP2l8XYqicKX72ROvHHJxhLm6O91hAq8TzFRM+qbZAibY
+MxE9PfgcApmjHWkkUPjtYLziVFfYS6+e4bDd6ynlBFaO5yFrmvXag/VBYc7dyXM6
+GWjsfU1QT39w/whL0FXRzS8PjHNeig==
+=Haka
+-----END PGP SIGNATURE-----
+
+--Sig_/l+_oaGtb/b15xpRr+OMOJ_v--
 
