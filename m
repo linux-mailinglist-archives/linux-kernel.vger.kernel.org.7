@@ -1,199 +1,88 @@
-Return-Path: <linux-kernel+bounces-760608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D04B1EDBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:20:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32979B1EDA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD072567C89
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380ED1AA83D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560652877E3;
-	Fri,  8 Aug 2025 17:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C470C1DED70;
-	Fri,  8 Aug 2025 17:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129962877C6;
+	Fri,  8 Aug 2025 17:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YR9VK3pB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CB423AB8A;
+	Fri,  8 Aug 2025 17:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754673637; cv=none; b=IM5uCw+dGeNDKnX+sLcjU7sNdn8EeNMBWCNcuVz973BPMfn3S79nAlDc2zBggF+NAL1H8yAN9jDuYrE1Fw1VXIOsB3OBXe5JU7nvbZvwzTk47ihW5Re/Nx9ow32vpiExPKwdU+kGfKq1z8I1v4MM3jHbtxt1OOFE3BOmvH4duRs=
+	t=1754673242; cv=none; b=R+6nTBpTUiycnhGPpgSb0Pjmj13fqXyPfZExkmojogj1DLYnUhaHN1Wn5hoDldnhbDVU2jlsIDoJ7VEB/n6x1ye+6Cmj8Sve9q4gVVE1KgKOuzCiULE2bC/UqpuNbW6rUOuy62IEWF/U/U6+ImfnrKA2YUpkhMXdJbUFTY2YvsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754673637; c=relaxed/simple;
-	bh=iD7fszDVOfvNGAR45L+YflGQxZ3kkSiCUF5Sy7HR4T8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GWf77OHZD+nYpv56UWeojKTaOIduQuqesZ2xm2+YpcU0dIRXFD1mQF6B2qqeBTAn45Zkj6Okb8aMyykCBWnSD1g3XygmqNgEbiw+si1nmgrva5g4jzqPpisv91TsUkNjPk26VfbpfKovB4DcaojHqVzxrVbLcHhkjRUQ4Qfflww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4bz9NX4Hmyz9sSb;
-	Fri,  8 Aug 2025 19:03:56 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 4LtEzBBocysS; Fri,  8 Aug 2025 19:03:56 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4bz9NX36z3z9sSZ;
-	Fri,  8 Aug 2025 19:03:56 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 55AF68B770;
-	Fri,  8 Aug 2025 19:03:56 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Z2c0fwWGRIPg; Fri,  8 Aug 2025 19:03:56 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 20F878B763;
-	Fri,  8 Aug 2025 19:03:55 +0200 (CEST)
-Message-ID: <af677847-e625-43d7-8750-b2ce4ba9626c@csgroup.eu>
-Date: Fri, 8 Aug 2025 19:03:54 +0200
+	s=arc-20240116; t=1754673242; c=relaxed/simple;
+	bh=rQmwMDzWQz54H7vq9OiRnnWfOYUPtrw0kcRO5kw4zMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KRyicUQrAjx7Pg6AFk/rpDnxoZESysiVSeYZoaw7V98uFwuVT+/0tFYskNs+sj0V2QNQ/ahADoXEVZ4uHbr0tvA4TcajSoat61Q6fCTjvb+aZPbEi4QK+uP/G4afEYZfKqhTUZiKibnBEycl7eBzanqXXwt0yk76ptCNw7VBi0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YR9VK3pB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D28C4CEED;
+	Fri,  8 Aug 2025 17:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754673241;
+	bh=rQmwMDzWQz54H7vq9OiRnnWfOYUPtrw0kcRO5kw4zMY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YR9VK3pBsVfgBT3KUONo8ZIarEnM8VKSDuNmeLlb4weXWZHcbDCiiNWjMZq3UKCGx
+	 oQohy63p3T6kFqzb7uncT2W6i75bo1a8J8v7Fl76qkreRqdoHBP2g7f5Rg91b5cEzz
+	 +yZ5DvdjlyyG945gWVkObiG9eCzBzNHEqrfDYTy/CDnOTmve1SJEx5gelv9foXSq4f
+	 OdFCPtjVOxJA0dDCbwD+7orIsDjupGcJoyOHd/pW3k+4JyzmiasW8CFFnL0/2hCeR0
+	 x0IFSZR/SmuFAxKX1dwH970JH+2XLKD2yrhLQgccLvwAZseKSKK4oZ/1f8KyA8iozT
+	 mu2RVXjOGiluQ==
+Date: Fri, 8 Aug 2025 12:14:00 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Nam Cao <namcao@linutronix.de>, Kenneth Crudup <kenny@panix.com>,
+	Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jinjie Ruan <ruanjinjie@huawei.com>
+Subject: [GIT PULL] PCI fixes for v6.17
+Message-ID: <20250808171400.GA95044@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] kasan: introduce ARCH_DEFER_KASAN and unify static
- key across modes
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: ryabinin.a.a@gmail.com, bhe@redhat.com, hca@linux.ibm.com,
- andreyknvl@gmail.com, akpm@linux-foundation.org, zhangqing@loongson.cn,
- chenhuacai@loongson.cn, davidgow@google.co, glider@google.com,
- dvyukov@google.com, alex@ghiti.fr, agordeev@linux.ibm.com,
- vincenzo.frascino@arm.com, elver@google.com, kasan-dev@googlegroups.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-um@lists.infradead.org, linux-mm@kvack.org
-References: <20250807194012.631367-1-snovitoll@gmail.com>
- <20250807194012.631367-2-snovitoll@gmail.com>
- <22872a3f-85dc-4740-b605-ba80b5a3b1bc@csgroup.eu>
- <CACzwLxjnofD0EsxrtgbG3svXHL+TpYcio4B67SCY9Mi3C-jdsQ@mail.gmail.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <CACzwLxjnofD0EsxrtgbG3svXHL+TpYcio4B67SCY9Mi3C-jdsQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+The following changes since commit 0bd0a41a5120f78685a132834865b0a631b9026a:
 
+  Merge tag 'pci-v6.17-changes' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci (2025-08-01 13:59:07 -0700)
 
-Le 08/08/2025 à 17:33, Sabyrzhan Tasbolatov a écrit :
-> On Fri, Aug 8, 2025 at 10:03 AM Christophe Leroy
-> <christophe.leroy@csgroup.eu> wrote:
->>
->>
->>
->> Le 07/08/2025 à 21:40, Sabyrzhan Tasbolatov a écrit :
->>> Introduce CONFIG_ARCH_DEFER_KASAN to identify architectures [1] that need
->>> to defer KASAN initialization until shadow memory is properly set up,
->>> and unify the static key infrastructure across all KASAN modes.
->>
->> That probably desserves more details, maybe copy in informations from
->> the top of cover letter.
->>
->> I think there should also be some exeplanations about
->> kasan_arch_is_ready() becoming kasan_enabled(), and also why
->> kasan_arch_is_ready() completely disappear from mm/kasan/common.c
->> without being replaced by kasan_enabled().
->>
->>>
->>> [1] PowerPC, UML, LoongArch selects ARCH_DEFER_KASAN.
->>>
->>> Closes: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fbugzilla.kernel.org%2Fshow_bug.cgi%3Fid%3D217049&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cfe4f5a759ad6452b047408ddd691024a%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638902640503259176%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=UM4uvQihJdeWwcC6DIiJXbn4wGsrijjRcHc55uCMErI%3D&reserved=0
->>> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
->>> ---
->>> Changes in v5:
->>> - Unified patches where arch (powerpc, UML, loongarch) selects
->>>     ARCH_DEFER_KASAN in the first patch not to break
->>>     bisectability
->>> - Removed kasan_arch_is_ready completely as there is no user
->>> - Removed __wrappers in v4, left only those where it's necessary
->>>     due to different implementations
->>>
->>> Changes in v4:
->>> - Fixed HW_TAGS static key functionality (was broken in v3)
->>> - Merged configuration and implementation for atomicity
->>> ---
->>>    arch/loongarch/Kconfig                 |  1 +
->>>    arch/loongarch/include/asm/kasan.h     |  7 ------
->>>    arch/loongarch/mm/kasan_init.c         |  8 +++----
->>>    arch/powerpc/Kconfig                   |  1 +
->>>    arch/powerpc/include/asm/kasan.h       | 12 ----------
->>>    arch/powerpc/mm/kasan/init_32.c        |  2 +-
->>>    arch/powerpc/mm/kasan/init_book3e_64.c |  2 +-
->>>    arch/powerpc/mm/kasan/init_book3s_64.c |  6 +----
->>>    arch/um/Kconfig                        |  1 +
->>>    arch/um/include/asm/kasan.h            |  5 ++--
->>>    arch/um/kernel/mem.c                   | 10 ++++++--
->>>    include/linux/kasan-enabled.h          | 32 ++++++++++++++++++--------
->>>    include/linux/kasan.h                  |  6 +++++
->>>    lib/Kconfig.kasan                      |  8 +++++++
->>>    mm/kasan/common.c                      | 17 ++++++++++----
->>>    mm/kasan/generic.c                     | 19 +++++++++++----
->>>    mm/kasan/hw_tags.c                     |  9 +-------
->>>    mm/kasan/kasan.h                       |  8 ++++++-
->>>    mm/kasan/shadow.c                      | 12 +++++-----
->>>    mm/kasan/sw_tags.c                     |  1 +
->>>    mm/kasan/tags.c                        |  2 +-
->>>    21 files changed, 100 insertions(+), 69 deletions(-)
->>>
->>> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
->>> index f0abc38c40a..cd64b2bc12d 100644
->>> --- a/arch/loongarch/Kconfig
->>> +++ b/arch/loongarch/Kconfig
->>> @@ -9,6 +9,7 @@ config LOONGARCH
->>>        select ACPI_PPTT if ACPI
->>>        select ACPI_SYSTEM_POWER_STATES_SUPPORT if ACPI
->>>        select ARCH_BINFMT_ELF_STATE
->>> +     select ARCH_DEFER_KASAN if KASAN
->>
->> Instead of adding 'if KASAN' in all users, you could do in two steps:
->>
->> Add a symbol ARCH_NEEDS_DEFER_KASAN.
->>
->> +config ARCH_NEEDS_DEFER_KASAN
->> +       bool
->>
->> And then:
->>
->> +config ARCH_DEFER_KASAN
->> +       def_bool
->> +       depends on KASAN
->> +       depends on ARCH_DEFER_KASAN
->> +       help
->> +         Architectures should select this if they need to defer KASAN
->> +         initialization until shadow memory is properly set up. This
->> +         enables runtime control via static keys. Otherwise, KASAN uses
->> +         compile-time constants for better performance.
->>
-> 
-> Actually, I don't see the benefits from this option. Sorry, have just
-> revisited this again.
-> With the new symbol, arch (PowerPC, UML, LoongArch) still needs select
-> 2 options:
-> 
-> select ARCH_NEEDS_DEFER_KASAN
-> select ARCH_DEFER_KASAN
+are available in the Git repository at:
 
-Sorry, my mistake, ARCH_DEFER_KASAN has to be 'def_bool y'. Missing the 
-'y'. That way it is automatically set to 'y' as long as KASAN and 
-ARCH_NEEDS_DEFER_KASAN are selected. Should be:
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.17-fixes-1
 
-config ARCH_DEFER_KASAN
-	def_bool y
-	depends on KASAN
-	depends on ARCH_NEEDS_DEFER_KASAN
+for you to fetch changes up to d5c647b08ee02cb7fa50d89414ed0f5dc7c1ca0e:
 
+  PCI: vmd: Fix wrong kfree() in vmd_msi_free() (2025-08-07 11:30:12 -0500)
 
-> 
-> and the oneline with `if` condition is cleaner.
-> select ARCH_DEFER_KASAN if KASAN
-> 
+----------------------------------------------------------------
 
-I don't think so because it requires all architectures to add 'if KASAN' 
-which is not convenient.
+- Fix vmd MSI interrupt domain restructure that caused crash early in boot
+  (Nam Cao)
 
-Christophe
+----------------------------------------------------------------
+Nam Cao (1):
+      PCI: vmd: Fix wrong kfree() in vmd_msi_free()
+
+ drivers/pci/controller/vmd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
