@@ -1,243 +1,267 @@
-Return-Path: <linux-kernel+bounces-759657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49C9B1E0BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:58:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526FCB1E0C0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C52518A0421
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:58:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646DB5622DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0ED91922C0;
-	Fri,  8 Aug 2025 02:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5903190676;
+	Fri,  8 Aug 2025 02:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lOsFqKfy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gD6OD3f2"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2266C129A78;
-	Fri,  8 Aug 2025 02:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754621872; cv=fail; b=HcgHPCyh1E1UxiLbgbQBMaS3KzUclD+dXN8czQXsge9Fp1ilSneOFSOZqwYt/r+36cvcYXoaYkWSylSmPuzNd73dKHWi06gj2ErnVl/to8lTdcGNss1e316O1ykAqywh7vCGRxPPVBY7wXKKjOxhVH/W389pP1qboOwnP0hZ09g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754621872; c=relaxed/simple;
-	bh=+217jMVcQUv4wSCdXV2CoYt4xs7Rcl2bD/80HS6JhMY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fUKqQiQJpdcimDC2yiMz2G6f2RvaWS1KULG3FN1eD47eAOtE612T+lxsDfKftDvHi0Hv50K7paacKOFyEX3jY92FlUgU+mjSL8RVVQOKglYNtWgsHDBaPSYQAxvcwU2UFrrNM0ozdnzP2Kgs+mFTaEEmg4XaK5p9W/G9yaP7888=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lOsFqKfy; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754621871; x=1786157871;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+217jMVcQUv4wSCdXV2CoYt4xs7Rcl2bD/80HS6JhMY=;
-  b=lOsFqKfy7VhVjFfbmoDcT/vyzcO1TeyNY68Bd2dsMpbivOD7KxQysrcr
-   YG0fD8gKNzPL4W6JeEKJ+nMQS4yP4ks/iAUjZ4RwrZ2xk+ebC9Ia5O9rY
-   aAmOuFDqVO6zJRqqMM1LDO4PgMJhGFvruGo+MZt+4ofIuc+XMqnOUBP+a
-   n7lEKkIg95GqQO1uJ+/7Hom//M2zAG8fHIN5VlfFvfIlb0y3GMI0xbJHs
-   /BffUMzWFUF/1r+myE8Vj2dhI5I3ElkIvSQ/Iw4+pK7ZDuqn/wgu6Cj1Z
-   E9oqk2qnfpNvUjx2tyxIFvPbRfBCWOgQlKbDilgMfQIhOOb0nyrzN9dqK
-   w==;
-X-CSE-ConnectionGUID: WKHmHYxoR6GhdKEh0ff1LA==
-X-CSE-MsgGUID: twY6C8R9SfCMA4jLcw26cg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56684482"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="56684482"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 19:57:50 -0700
-X-CSE-ConnectionGUID: 2IOcvw+1St6vK1d4+C0m+w==
-X-CSE-MsgGUID: WLFQyVjhSgG9PIAit5UtXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="165607470"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 19:57:50 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 7 Aug 2025 19:57:50 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 7 Aug 2025 19:57:50 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.65)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 7 Aug 2025 19:57:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wfbigzE2lGTL2X5JCUCNcGLhtTxeGXaGBP6N6g1tLx149jvt+AqFv7NBzwq4m7P0JHaOJ3jTel+kJsz4VSS5+Z1XNjVs2/I/nux6IeiBhkAqQWlB0SszKl3aUQ/lWq6+OmQ88Gw78sfx3lvVovkdkqPqRad2xOMfmIp9lgQH1UJJlOpB74o5eiF7t+Sv+U9Sg2QqA2Scyb9UyfB5hbceOVbhQzU8yqt2pDr87Iz5GYLkcrpjUJ+HHfaSz8gs8fI1vJ2D00RvOzlmszw3E75yIChtssrJWfFQ+4nNzCU5+vxXcTNQo1gsH8BTwH/hIhhENyS4PQcC2TefblMzsd4Vvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LBpLBGnJeScH8/0TFLy6v2nZbreQb7bcHRGBDo/0m2Y=;
- b=OsNZWmzU6NlryQx4Yf1+PbgexTVE0c0gB4aiYMetq/N2aHdTR7Ni5oy5sfKxj9vsq5Vc1tohwbJAgTS9jbbHNHspVQ1mPmJsSXpwKv1VhpUPo6FCyh/NK9RUgTHHj3oicEg3WSqVm+ZWEzalk/tlQfagIFt8wCbHtGnNgMlCUhPmze8un6GBnYMuocyuj1ostdcWZHhgqMWEtZHBJM8DO+isRA9olwcGNBhmwKL5qoW/6K04kauHHHYX4Es8ELIV75nj58aNEJBKRC81IPVfCNivCOjcKQfalvRqWts6j1Hfi5QsqtFULQ+D+2maEzB39CWwiavvQr3XpJPL8Lokyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by DM4PR11MB8226.namprd11.prod.outlook.com (2603:10b6:8:182::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
- 2025 02:57:47 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%4]) with mapi id 15.20.9009.016; Fri, 8 Aug 2025
- 02:57:46 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>, Baolu Lu <baolu.lu@linux.intel.com>
-CC: "Hansen, Dave" <dave.hansen@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jann Horn
-	<jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple
-	<apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki
-	<urezki@gmail.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>, "Andy
- Lutomirski" <luto@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "security@kernel.org"
-	<security@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-Thread-Topic: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-Thread-Index: AQHcBpLRgrfnVjVEu0GV5qP87jgc6rRVuXIAgAANmoCAAANigIAAAUgAgAAHBQCAAXKbgIAAVvcAgABvkhA=
-Date: Fri, 8 Aug 2025 02:57:46 +0000
-Message-ID: <BN9PR11MB52762A47B347C99F0C0E4C288C2FA@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <20250807195154.GO184255@nvidia.com>
-In-Reply-To: <20250807195154.GO184255@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DM4PR11MB8226:EE_
-x-ms-office365-filtering-correlation-id: 3298d24b-d6c1-4ae2-e2ca-08ddd6275a86
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?KIkNpDOq/KDJuJxhP3gwCeYyB+KpW2r8bMaYt0BqYYAzuSVjZOgK+uPowK4F?=
- =?us-ascii?Q?cZpQjVeQ9tXvVyGBEaWU9BamW4dBTiz+GoFPpnDm2G6bumYeGaetxkFhMZmG?=
- =?us-ascii?Q?aiXRw6BYJN3Xl0SVWDuK+lRzyZY5JWTDOaeQA0QFIr1hWHLFvtGxuZTEjVm2?=
- =?us-ascii?Q?vatCZwkI5TLdKBi1rJWmfbhbqUdfa5iLOLTz9iiDMKABRq5Ftt30/VN133yi?=
- =?us-ascii?Q?lzydTMVLjIFBVSrqVlAQ5dTmoqixdERc388rioN0GjKUeKtjPYC8qqIddpP+?=
- =?us-ascii?Q?9V048E+6N5MlgEu4Pc26HW9IpQ+ZKudQJ66RkjiOQC/RQj+/dP5BEkgdxCPp?=
- =?us-ascii?Q?RkCI85JmS6o5Fs6ZP3YMAzZX9xr3daU3Qv3a4i3FSyM+O8Ijo6kAgBj1Wy6t?=
- =?us-ascii?Q?1bQ2QZzAMjlzYNcvvhONqDx6d7dXPi6JWwh7atxVI3lEcp9soKsoTaEdaLw2?=
- =?us-ascii?Q?gdUwLRMQP2wuwp+IhMrUQB4anQBs7586oww3BHtmb4ckBEHZdKN++IFpNOV1?=
- =?us-ascii?Q?mH7RLWGeJJx/G6bE1fdJxDtFy/zpDQky1Dyzdv3+/09o92IYcLFKg+zRILRg?=
- =?us-ascii?Q?ss0mEek15eVYCAOx9a/F+uxZFNL/LtFmwOA7pfbdE88TOs/gsukgO9gDdCaM?=
- =?us-ascii?Q?uKoZahM2YCh/px2W54OVCxmCxlFGi4jod42o1IVt7u3g0UYcTeJx8P4vucx+?=
- =?us-ascii?Q?lYjhs8UVxzxWSedvcN8gWGMCmn0ZEyDIqAIcra2dYKnS32j9fexu1OmuSs6V?=
- =?us-ascii?Q?yzkhg7j7+5HtK/Fmr9WyP9d1YMUR1wkaALuYEGOlpS+kBo8stepgb+Et+Ujx?=
- =?us-ascii?Q?JnZI6qmO2g2NTohyUBoIdm4tV70deWAW79oOON39wwbYMv3ENSD1aKpCLpJ6?=
- =?us-ascii?Q?0HiG4jnxrI/NvZ7dNbBtYJPzHlSlOQuUsK+zzcT7TTW+O5wZtINtjnIu4EOi?=
- =?us-ascii?Q?ik/v9h3o4DGwLG9UDvvIQ7QNhr79VpZXC91Nh6/5l5qB+MgAJOAbX2fQLLeK?=
- =?us-ascii?Q?x7oMHTcDe62/8Gb7fU9yeaTWFTPltINnOZdFJeuhhdxdwALtLmXd0QM9FXAr?=
- =?us-ascii?Q?K400hP+ed26POsNVi2s+NIQH1A2CwwzY8NsMCTCpLEf3bjfkQOAzN/FbppBp?=
- =?us-ascii?Q?wmhyKgWElbdjqu0/ArK5tGp9yYgY5OQJMrgX/9iaU0lReumRItCube6BEoP6?=
- =?us-ascii?Q?T14Gn1zqPs4n02uQPpo6c2TCjfdDHR6IMxhjfQbLA3RMUMGLgTi4Gw9HjrU/?=
- =?us-ascii?Q?fs49S/GCeRj5OVMxgFCCpzDLIMJ9u6LCBbP1EXS5f9dqiXOxbeSEx99dg3OE?=
- =?us-ascii?Q?cC1vbyAX/kE21w33tQSx6zwnB000lJzhx9Jrtxc0NBxCrauW3xUsXn/1LT9A?=
- =?us-ascii?Q?qmMi02P+BNIwml3Z9sXKYrBGV0lRwxrVj6DjK/vO//jbMGbOdgghxTzKhlGt?=
- =?us-ascii?Q?gvbygr8Y7YMPMccqMkfjY2i/ZcKO0zSzIEhXG4GsGjxpFxIjYQa6zw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?fz41gr2JaZd3LfJJ3CGYNdNXXd55gZf8DzYi9N0Iwehx93jGMgc29UL/SdqT?=
- =?us-ascii?Q?+udYm1LfKmbHia9Zx06MC3m2mrxTCV4VS2J2zGmzu0BdaLS98E91uVhWphLr?=
- =?us-ascii?Q?m5T5UIIn1hfmiP7Z/HqGWSqjCz39CflTWVgJ7Az7rVJz66eaC62XEOfaa/gb?=
- =?us-ascii?Q?Tg4/gQ9fuz1tTcKw3At1XkCMrsi9ezw56Pj2HSdnVtTHcmEsuy+jY86GeNOz?=
- =?us-ascii?Q?shaoYQprlERIN9XjwK9WF6WfF7cBGTFgjYqZa8dORYVQ/KkFzxYFdNi7zZPI?=
- =?us-ascii?Q?lfE/2r1vJsHkJ2oLFdGH9T9fq+8akqiSUSm8GjItNK/GJwDhzj/tbV1hROZr?=
- =?us-ascii?Q?916Wr28WqBbdFEk1BYOi48ON9GeXA3sDleeLVFcNGfSHtyEAac475NLd5/kT?=
- =?us-ascii?Q?utwt7LVdACWeUc5gZZKwIlhDwVlqM9qtg7gmJ8XT7nAHdCnlZ+jE3zZAxsvV?=
- =?us-ascii?Q?EA25vnYRfn4M7xcMV8YX3SLh3u59LZ+MXQ1aoyXxDRMU6SXL1wy4Xk4fGP9Q?=
- =?us-ascii?Q?6gGo6KM5+vZzHrMt4d4VGXJXrF/MPtC0W7RaDoRVZMifluNJflhdn50++TOX?=
- =?us-ascii?Q?9aHtBK8CyEAGnhuK+xG7aZKQUzGn2dFL6shL7yOYTmsMXJ6cszl7+tRWE1FA?=
- =?us-ascii?Q?XE9gO5kT7NUrX8Gzf4moOraIc5Qodl1Daq8LVae01JzNpovp1Nvww0nEg/Fz?=
- =?us-ascii?Q?Sg+67vrL6HHqGZAQfpdo1/Oqm6QbU1+n4DEYIb2plIwVHkzKL6hBcXlUlvxM?=
- =?us-ascii?Q?DcW4Co3tUkUNkXac+z4D4ynFkOtj64ne/ibrjTVbTEjDK9a13Hid4tU1vQhw?=
- =?us-ascii?Q?x6ry2EH7u0GKbBNB1oTl/DmMLkT0xZZo4C7p1FHwIvIJ/bzxE6RzBHkHGJ2p?=
- =?us-ascii?Q?Koyh49MLEBw2tgOvCNE1LMB9etSrvmamY3lFDVez9JWKdGSJuAm0plvK8roz?=
- =?us-ascii?Q?u9oeFSGalLq1/2kD7VHw/oGOd4LoCO6nMlXzHyho4woE2ggyIsYouV/qIgIt?=
- =?us-ascii?Q?aK8QU5jmtEb4TteRfBsbeZY+WVBIBQIt+p1OtKvZgj885SUiCBmB1OI9qGBe?=
- =?us-ascii?Q?zrRj0nR+Ve3iR+iqZst+NxgZxoc16Rq7gU7Rt/DqQ6jxkzKsRNH3lhiuy1VE?=
- =?us-ascii?Q?7LbURGp1ujQZpa90qbpnnfHWfptwzHhwRFZPikTUf5Ulu/YXW1irNjLMfCrH?=
- =?us-ascii?Q?iHccAG9KfNfVxyuw2OCHoLL9o/beEUSvY5BjxGvnG2D/KEFLVEm0+TMS8MeV?=
- =?us-ascii?Q?zxfdq6vSH3bFxzLpXos81bgiZlC3aGa+BK46YY4c0Irr6+SjkrIfySkBc2QV?=
- =?us-ascii?Q?Kz6yYaCh8YTtqkZGn+Bfk5UT3J1ansprVWgTyYxZdMajigH8y4OO/Qw+vb8v?=
- =?us-ascii?Q?ctF8uuP1EqOaMqw/o+U0cwEpgeqxDHZfGyERTw6p2J5DEy3Ep3r+ul7fy+yS?=
- =?us-ascii?Q?nIx5a0k9KiyOCOcReS2h1tRzrYUO6Yav/fp0gE8wBmcAn4C1SDJbV9WV7Gqb?=
- =?us-ascii?Q?Xe9oxo98IqfcQRO95qml3Vdxm5J/nV3YICWyDpqNI5DGeWhDYqW5ivLJIN06?=
- =?us-ascii?Q?eysGpD2FxfpiCe2rSDh98Mmby8WfTME6QFUBNRTq?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03510AD5A;
+	Fri,  8 Aug 2025 02:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754621889; cv=none; b=NHR2Vi0XGnsgAGR0KiUd47E8xmEjuQQJsmQG0h7SFK7N/ysRu/34HtttfRNGnRhwPk0L+13lCzG5nhar06v+yQ8ot4twhTO+/q485NFJE/llmF3BM4gaJ6NQxmVl9B6SHiGQwYMzuYBuQY5/Y13J71MYi51UYfQ/01WQh1N4apY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754621889; c=relaxed/simple;
+	bh=1lMWAj6KJL4kWGPO92xUuoc17e21mm2z5FWY2p33n84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q6sGxrJzG0de0FOiNZwN2AMArrLOOjoBRs5FVa+VUmUes/cQGcB2ViCTR0IJTm/OL6xeXUUK6CJyDDc2hC8clVUICFC3pu7zvJ+FWfxQRK/0+t+zmd12ZVJIXQrY5qNRRBfpnHKgDBjUg/3/oe8XYjUtrrKMLz8sgua05lf12WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gD6OD3f2; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-615d0b11621so4557522a12.1;
+        Thu, 07 Aug 2025 19:58:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754621886; x=1755226686; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=InFnfUjyzfpsp+W5R8piC/DqY1LG1vw1ztQP90OY3GA=;
+        b=gD6OD3f2PvocIfHC1PRo0XKzSkiRMA80j38/0yhjfuRtXKNNGCasG6zbpo4J3VEzYp
+         HZ21FxjBMd6+JcuAqbHpgu2dbiC2RrBqOvkoxUSg6Q00HSYSLnp88mMQu60d2uEA4mY6
+         JJajRei0Yu15twjG9II9Vjyon9vTsZR48WagbYE+cYL/r/XmZqJ76auFyPm7njDajun9
+         9CJkdnu6jGTtygAtBAUKdBgswATL4ENL0IqrmkBq2I/C4RnuTeDhdXre2an1IAQjrgFn
+         l/UI8hps4BCUC4SgLuXdRCcgutSdfr7W/y6YdlsCiJMWDQr8lFTh7tAQK6KHPsVheVy6
+         O88Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754621886; x=1755226686;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=InFnfUjyzfpsp+W5R8piC/DqY1LG1vw1ztQP90OY3GA=;
+        b=SkXvAGpkja96y1/WvIxVnaKCGMw83WCDaRCYq6ixdCjlMoDpnQBSx6mkvfprZVXZ1Z
+         ZLUXrxRVBNBbHncTCfP7MGAGcV7y9ZimkZ9EFFmgoGxaGNdEE4v3CqD+P3gHAB+cO5UB
+         N1c7rj6/tKeuWujC9MRnkPgQc+RHqFDylfhyjJZbyunXC00W2SisU23iS/M6OyuYyyvW
+         RIJQdXR1mhGIkbQp7LhHOUz6XVIyS84Tt7DkXioIIYHd9HcjScxFVSA4/EoOFabyRar7
+         7s7nWPKNRanv0Q2dZCfshKlNi+YGh3Qwwmk+sLF3a8MX/njcEkdn2D8t0/ajrSTvW8dh
+         y1fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFZnTz7/k5JeBtOXPIpX8i5tVGE+sLprb3tBWGpIksowRVxodr7L4ESlKwQyW3fe5Q1+FZIVaGF5v/Yok=@vger.kernel.org, AJvYcCX41D76vMlM4krmDpHDEW5JJGhIkIQKaNu/WwdvphSlEeIDv98+TrxMlfrof35spLc6lYK9VVRnOZEQcD6LLcLA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBJ3vKKCS1v5L4XMtpxjQTutJGcuRdOUUgeECXpFjnMP4BnBZb
+	awcAMPcPUhNVIINO1PsS0PsBMqcRAYNdO16pXVeICbSoWhrfYbTwEDfQ
+X-Gm-Gg: ASbGncvL5yWMButPWq83uc6rk6tUr0pXGBVkvBQc+ydXiiPb+n5YCTFKA0gqvLTxqAE
+	1zccxYtSEtyIbvXHgNMc35lYdXaIMhx0xgR/FpqFcfANli2fwOL2uI16PSMBioOSBWeeky7k9Kc
+	AbljhaJVZZPYxcOauVh0by6oQnezyXZDaxqYjp/6aYr7C4XalXyoDJWjwn32w5GLOaTbwlVStsA
+	MP2qOs7bIlogEaGkZtLfG92lhbZpvgn5SO0Q+D1uhrQJt6zJYSJ+YAboLthG0qCI2rtip5hu0mt
+	JPDKODMtlHpejj4Ns/EpDJM/suTBg4/2+54QCaIn+GGwx1HNGIZhxVksjFP36uAACG08ABhkErg
+	ZDFtBbRSFOA0Bgx7QW0/bSw==
+X-Google-Smtp-Source: AGHT+IEvl6ZdfxAsRS1F4iXaUsO8JqUXfeEwT1NP8Lupi7iF8ZO/CuT92uX1OKdhIEIS8t0JwYzAlg==
+X-Received: by 2002:a17:907:d0b:b0:af9:3f99:1422 with SMTP id a640c23a62f3a-af9a3c59269mr590769066b.5.1754621886013;
+        Thu, 07 Aug 2025 19:58:06 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af9215cdc53sm1365718666b.78.2025.08.07.19.58.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Aug 2025 19:58:05 -0700 (PDT)
+Date: Fri, 8 Aug 2025 02:58:04 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Donet Tom <donettom@linux.ibm.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+	Aboorva Devarajan <aboorvad@linux.ibm.com>,
+	akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
+	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	baohua@kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ritesh.list@gmail.com
+Subject: Re: [PATCH v3 3/7] selftest/mm: Fix ksm_funtional_test failures
+Message-ID: <20250808025804.b7cv47gcq2yscka7@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
+ <20250729053403.1071807-4-aboorvad@linux.ibm.com>
+ <20250804091141.ifwryfmgjepwrog4@master>
+ <20fb853c-7d79-4d26-9c8a-f6ce9367d424@linux.ibm.com>
+ <20250805170353.6vlbyg6qn5hv4yzz@master>
+ <e9079694-1e30-46b6-97e7-b79be01c65a6@linux.ibm.com>
+ <20250806145432.nygrslkiyvzulujn@master>
+ <111d2351-3fb7-4011-af07-78b40874d956@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3298d24b-d6c1-4ae2-e2ca-08ddd6275a86
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2025 02:57:46.7295
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: y7dtr8JTvvRtC8njoP45GQNzfEM41svm1bX45AATWFerxFVqI4CCXhKgZSxfP49eO3x53L7W7tP+UV724pjrqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8226
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <111d2351-3fb7-4011-af07-78b40874d956@linux.ibm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-> From: Jason Gunthorpe <jgg@nvidia.com>
-> Sent: Friday, August 8, 2025 3:52 AM
->=20
-> On Thu, Aug 07, 2025 at 10:40:39PM +0800, Baolu Lu wrote:
-> > +static void kernel_pte_work_func(struct work_struct *work)
-> > +{
-> > +	struct page *page, *next;
-> > +
-> > +	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
-> > +
-> > +	guard(spinlock)(&kernel_pte_work.lock);
-> > +	list_for_each_entry_safe(page, next, &kernel_pte_work.list, lru) {
-> > +		list_del_init(&page->lru);
->=20
-> Please don't add new usages of lru, we are trying to get rid of this. :(
->=20
-> I think the memory should be struct ptdesc, use that..
->=20
+On Thu, Aug 07, 2025 at 02:56:28PM +0530, Donet Tom wrote:
+>
+>On 8/6/25 8:24 PM, Wei Yang wrote:
+>> On Wed, Aug 06, 2025 at 06:30:37PM +0530, Donet Tom wrote:
+>> [...]
+>> > > Child process inherit the ksm_merging_pages from parent, which is reasonable
+>> > > to me. But I am confused why ksm_unmerge() would just reset ksm_merging_pages
+>> > > for parent and leave ksm_merging_pages in child process unchanged.
+>> > > 
+>> > > ksm_unmerge() writes to /sys/kernel/mm/ksm/run, which is a system wide sysfs
+>> > > interface. I expect it applies to both parent and child.
+>> > I am not very familiar with the KSM code, but from what I understand:
+>> > 
+>> > The ksm_merging_pages counter is maintained per mm_struct. When
+>> > we write to /sys/kernel/mm/ksm/run, unmerging is triggered, and the
+>> > counters are updated for all mm_structs present in the ksm_mm_slot list.
+>> > 
+>> > A mm_struct gets added to this list  when MADV_MERGEABLE is called.
+>> > In the case of the child process, since MADV_MERGEABLE has not been
+>> > invoked yet, its mm_struct is not part of the list. As a result,
+>> > its ksm_merging_pages counter is not reset.
+>> > 
+>> Would this flag be inherited during fork? VM_MERGEABLE is saved in related vma
+>> I don't see it would be dropped during fork. Maybe missed.
+>> 
+>> > > > value remained unchanged. That’s why get_my_merging_page() in the child was
+>> > > > returning a non-zero value.
+>> > > > 
+>> > > I guess you mean the get_my_merging_page() in __mmap_and_merge_range() return
+>> > > a non-zero value. But there is ksm_unmerge() before it. Why this ksm_unmerge()
+>> > > couldn't reset the value, but a ksm_unmerge() in parent could.
+>> > > 
+>> > > > Initially, I fixed the issue by calling ksm_unmerge() before the fork(), and
+>> > > > that
+>> > > > resolved the problem. Later, I decided it would be cleaner to move the
+>> > > > ksm_unmerge() call to the test cleanup phase.
+>> > > > 
+>> > > Also all the tests before test_prctl_fork(), except test_prctl(), calls
+>> > > 
+>> > >     ksft_test_result(!range_maps_duplicates());
+>> > > 
+>> > > If the previous tests succeed, it means there is no duplicate pages. This
+>> > > means ksm_merging_pages should be 0 before test_prctl_fork() if other tests
+>> > > pass. And the child process would inherit a 0 ksm_merging_pages. (A quick test
+>> > > proves it.)
+>> > 
+>> > If I understand correctly, all the tests are calling MADV_UNMERGEABLE,
+>> > which internally calls break_ksm() in the kernel. This function replaces the
+>> > KSM page with an exclusive anonymous page. However, the
+>> > ksm_merging_pages counters are not updated at this point.
+>> > 
+>> > The function range_maps_duplicates(map, size) checks whether the pages
+>> > have been unmerged. Since break_ksm() does perform the unmerge, this
+>> > function returns false, and the test passes.
+>> > 
+>> > The ksm_merging_pages update happens later via the ksm_scan_thread().
+>> > That’s why we observe that ksm_merging_pages values are not reset
+>> > immediately after the test finishes.
+>> > 
+>> Not familiar with ksm internal. But the ksm_merging_pages counter still has
+>> non-zero value when all merged pages are unmerged makes me feel odd.
+>> 
+>> > If we add a sleep(1) after the MADV_UNMERGEABLE call, we can see that
+>> > the ksm_merging_pages values are reset after the sleep.
+>> > 
+>> > Once the test completes successfully, we can call ksm_unmerge(), which
+>> > will immediately reset the ksm_merging_pages value. This way, in the fork
+>> > test, the child process will also see the correct value.
+>> > > So which part of the story I missed?
+>> > > 
+>> > So, during the cleanup phase after a successful test, we can call
+>> > ksm_unmerge() to reset the counter. Do you see any issue with
+>> > this approach?
+>> > 
+>> It looks there is no issue with an extra ksm_unmerge().
+>> 
+>> But one more question. Why an extra ksm_unmerge() could help.
+>> 
+>> Here is what we have during test:
+>> 
+>> 
+>>    test_prot_none()
+>>        !range_maps_duplicates()
+>>        ksm_unmerge()                  1) <--- newly add
+>>    test_prctl_fork()
+>>        >--- in child
+>>        __mmap_and_merge_range()
+>>            ksm_unmerge()              2) <--- already have
+>> 
+>> As you mentioned above ksm_unmerge() would immediately reset
+>> ksm_merging_pages, why ksm_unmerge() at 2) still leave ksm_merging_pages
+>> non-zero? And the one at 1) could help.
+>
+>
+>From the debugging, what I understood is:
+>
+>When we perform fork(), MADV_MERGEABLE, or PR_SET_MEMORY_MERGE, the
+>mm_struct of the process gets added to the ksm_mm_slot list. As a
+>result, both the parent and child processes’ mm_struct structures
+>will be present in ksm_mm_slot.
+>
+>When KSM merges the pages, it creates a ksm_rmap_item for each page,
+>and the ksm_merging_pages counter is incremented accordingly.
+>
+>Since the parent process did the merge, its mm_struct is present in
+>ksm_mm_slot, and ksm_rmap_item entries are created for all the merged
+>pages.
+>
+>When a process is forked, the child’s mm_struct is also added to
+>ksm_mm_slot, and it inherits the ksm_merging_pages count. However,
+>no ksm_rmap_item entries are created for the child process because it
+>did not do any merge.
+>
+>When ksm_unmerge() is called, it iterates over all processes in
+>ksm_mm_slot. In our case, both the parent and child are present. It
+>first processes the parent, which has ksm_rmap_item entries, so it
+>unmerges the pages and resets the ksm_merging_pages counter.
+>
+>For the child, since it did not perform any actual merging, it does not
+>have any ksm_rmap_item entries. Therefore, there are no pages to unmerge,
+>and the counter remains unchanged.
+>
 
-btw with this change we should also defer free of the pmd page:
+Thanks for the detailed analysis.
 
-pud_free_pmd_page()
-	...
-	for (i =3D 0; i < PTRS_PER_PMD; i++) {
-		if (!pmd_none(pmd_sv[i])) {
-			pte =3D (pte_t *)pmd_page_vaddr(pmd_sv[i]);
-			pte_free_kernel(&init_mm, pte);
-		}
-	}
+So the key is child has no ksm_rmap_item which will not clear ksm_merging_page
+on ksm_unmerge().
 
-	free_page((unsigned long)pmd_sv);
+>So, only processes that performed KSM merging will have their counters
+>updated during ksm_unmerge(). The child process, having not initiated any
+>merging, retains the inherited counter value without any update.
+>
+>So from a testing point of view, I think it is better to reset the
+>counters as part of the cleanup code to ensure that the next tests do
+>not get incorrect values.
+>
 
-Otherwise the risk still exists if the pmd page is repurposed before the
-pte work is scheduled.
+Hmm... I agree from the test point of view based on current situation.
 
-another observation - pte_free_kernel is not used in remove_pagetable ()
-and __change_page_attr(). Is it straightforward to put it in those paths
-or do we need duplicate some deferring logic there?=20
+While maybe this is also a check point for later version.
+
+>The question I have is: is it correct to keep the inherited
+>|ksm_merging_page|
+>value in the child or Should we reset it to 0 during |ksm_fork()|?
+>
+
+Very good question. There looks to be something wrong, but I am not sure this
+is the correct way.
+
+>> 
+>> Or there is still some timing issue like sleep(1) you did?
+>> 
+
+-- 
+Wei Yang
+Help you, Help me
 
