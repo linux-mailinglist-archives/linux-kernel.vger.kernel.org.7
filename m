@@ -1,144 +1,212 @@
-Return-Path: <linux-kernel+bounces-759814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759B9B1E32A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18282B1E32F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36F216B7E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB66C582F83
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B10224AF9;
-	Fri,  8 Aug 2025 07:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417D023AE79;
+	Fri,  8 Aug 2025 07:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oqxOMYz3"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ckl44kHL"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFB9221558
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3380221558;
+	Fri,  8 Aug 2025 07:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754637348; cv=none; b=Bgk/XkQ1PIGa/4U9/jLXZB7RMl5WqiI2TqioDx0rUNSQTz+6KFaOQ0I7OdvB9EXmfwAvE5mVtKrS3W5qoxa5pmUP88TnOfmX4YdA9JR7wWSbB1PeXFyQTVjbJZ1sHT7rsgs7mOPlqY5pW+2l4FQlhkUBrGS3yM2FzslArQGN3Ac=
+	t=1754637376; cv=none; b=El9UzyTkrUcKJgnp5oMSM1QhlKCrvngFGx2jUCStrG61XOG05QJdvUtmPAu1BMDuxHMaP1CQ4zyFm++LD5a+qIGXQSyo7/I4JaOmEvXmpxJkbMmLxIYQUROsaE6Y3ct4v2YWpMCaClCI5DKzbgOwDHm6hcNzJyUc0SlXktBthGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754637348; c=relaxed/simple;
-	bh=ASmrmMaSkJvkmKNln9No2+QIjBIVmTkBBgLR/juMZCw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=V4BJpUgq1fnPJ4RArHq3/3/mIXypRWpSt4GxPvjqqTM35pkDM7McLY77R9VT1ZxLev2PvPFxMWZX0h5EckBQsCj5iM2VMtQIYAGZj8r7HmWbxA4ZxfrBt1UEa1R28iwbk06ZikTl638fTbZgCGXeyJwJ9oTcQu1ShMVOjgZHhBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oqxOMYz3; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b42aeac2d75so362352a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 00:15:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754637346; x=1755242146; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3F9gUOy2pnJ9oY/QGBIv1m9C3L0DkpYmKEr0a26plgw=;
-        b=oqxOMYz3iCnVNOjpCKZPDKpRc/eflJKnoYELihe36uyVQ+mDBVgfCU6vKaZ/+ZYr3T
-         rYHqJBsWPCblhY70fLrLyowiPPh59wBptOIFbaqEECbzKo0HrHfItc5e1BvIWqgpKhbz
-         LNe5Pj9AoK0hV88iBaUPOyDhQIzE3GkuvLNMO8i3fZzU9IeHWJY6mrGbwdTsR1CmnDL3
-         ZR2TuM8Yw6VAp6q/qK9yiujmRGqz11wFpC5VR9wxjB0jD+zQ1actAMKbbHq9YkHNBkx0
-         ckO+rV70ll6yQFAPryqChDO8bvSK6XHVReY5z/oZrndwACJmEdlXEbjvlLimtxeP3X8i
-         AsQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754637346; x=1755242146;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3F9gUOy2pnJ9oY/QGBIv1m9C3L0DkpYmKEr0a26plgw=;
-        b=CbwWFCNXXonC0WAfwbA7h+Px0zGHgDn8EXsax0Fos04HQ1BVjMqFeb27KIp0xDa5B9
-         MFSkNzhDTHHwbWhz3fAR90jlKADQyWHHre42EU4mg8unvIUIC3WdCf4phDwshEtJEO5+
-         Ti0byurUF2xEtxq0dsNYUd7Zg2PiTfG6izCbA13AKKUjrWbiuVOoqV0FSdq1IBG6EGjD
-         NQkQogmmCrcoVXUfJ1M8nLuQOuVDM0nDTUYVm1v9s6M5JXiSB/1KvXqGxwEjM4ZzAStn
-         TBjldr8MoZcZS8RcwMF71ooAx2cWVNrVpN24H5uKBTP3HmEbjQvTGW3aBFDsQozkx789
-         uDZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9hnwrdMAw2tKFbx1IEcIi3vjqVg/pPsTCpGCm8Er7mzKjuEXLr277WBipiYmlsqKFHuDJ97zZvXU+gTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+fsPRV47Q1VScLF4h+ZSZc93aRw04jEPwM3DwFNpRr6o2Hm7Q
-	6nCKOptft857vMfMvcP9hx4nIyBikpeVQKG0orz8QidXMXSfm71HXgdCxmZCij934gST3Gyhpz3
-	mEA==
-X-Google-Smtp-Source: AGHT+IHQJ0qyd4BoPgvRMKVVHm80mILibnDe0FalsXDK6EDDsdXNkbWMCbSLvKpkWdgLewvq69rS+H25aQ==
-X-Received: from pgbfq1.prod.google.com ([2002:a05:6a02:2981:b0:b42:87c7:df5b])
- (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:258e:b0:240:1d4f:720b
- with SMTP id adf61e73a8af0-240551ad061mr2990006637.23.1754637345935; Fri, 08
- Aug 2025 00:15:45 -0700 (PDT)
-Date: Fri,  8 Aug 2025 15:15:40 +0800
-In-Reply-To: <20250807145550.1837846-1-wakel@google.com>
+	s=arc-20240116; t=1754637376; c=relaxed/simple;
+	bh=KgDhuu6by5SCsNCyVw7SHLvGFDEMJx7iqHyRlOydBSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TwG96oTxG/sowPX6WbxGaOaEn9Tn3w25SB8CPAUsRSQrPN/fJMBOoobUt2uWeOnKlfDUbLGWOZIX0c4jp0FbOu0dLBsiuBv8PU4t83XKpOfPruJv3LLZIUtoHaXrhsQ9LF4T0tfLpbVSlqz83n15ikS7Qcf82MxVsGkAbuMEuwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ckl44kHL; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 577JtULI017807;
+	Fri, 8 Aug 2025 07:15:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Dob1tp
+	VpygO+cDGyRJUKD7KIDfz80MrF/Lt3AXcIbDk=; b=ckl44kHLqOm72AuUD9kmn2
+	931Rgjfo6QBjXDmikn72kAcfwzfpyU8Z3wVSAMdndUcp1CzpeERXR/FVr0Yda/mp
+	zemGsXljNAH7QY19FDeDQax02yOsittXggAKyFgVuuazjpe05VBI18YgqVEmpEMH
+	ShM0ixND+0fF+NdO7cO6mOY8eU+OpIHR+nuWYQWpJ/O2AEU7ubZu7rormnMVNCoD
+	cZA5svT9PuLhJMLgr24+mkygc1ewthMsPK33CTqq0bCqIQLeWIkeqL6gFOC73qV/
+	bHdd82qUxQqOHJJf1BJ64L4MPYc9w8kci+qOIjGE2bz1iB2dyPFnZ7wS6XbGdq1Q
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63xnxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 07:15:46 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5786FVfF020606;
+	Fri, 8 Aug 2025 07:15:46 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48bpwn4hv3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 07:15:46 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5787Fj3p8782244
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Aug 2025 07:15:45 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C814E58054;
+	Fri,  8 Aug 2025 07:15:45 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5040858055;
+	Fri,  8 Aug 2025 07:15:42 +0000 (GMT)
+Received: from [9.61.149.61] (unknown [9.61.149.61])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  8 Aug 2025 07:15:41 +0000 (GMT)
+Message-ID: <c959d486-57d9-4fec-abab-0a7172dbfd32@linux.ibm.com>
+Date: Fri, 8 Aug 2025 12:45:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807145550.1837846-1-wakel@google.com>
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250808071540.2122553-1-wakel@google.com>
-Subject: [PATCH v2] selftests/futex: Skip futex_waitv tests if ENOSYS
-From: Wake Liu <wakel@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, 
-	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Wake Liu <wakel@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] block: fix kobject double initialization in add_disk
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        houtao1@huawei.com, zhengqixing@huawei.com, lilingfeng3@huawei.com
+References: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDA1NSBTYWx0ZWRfXyx2E3WpqY5Ft
+ 92g1xe70XNsWanTi+qIE0HzVeLwzrBu/S9RGK2Chq84fVXMRcAcpscfkxmQyqkY1BpgqS2rKCcF
+ hFJZzOOM16uR7iHENfj9sE7fDxHq8VdJ6c+ntmM+4EsjWI+zdtCd4KywT88SqTaA7uCJtqu6e/Y
+ hObrguKIZQMmkrw3IZDxtzjX1x0LWGaL9f5+U6ppvEvxOJtb1BLR6/ijiP35OH49hCm3+JrZXKT
+ GSf1/7FZRlbrJuERIQ5QzW039HGX1jfP0mcxNK2esZWYP11WkUo44XV8necAXY9w9Avr7AjV6ZD
+ OIh0I/QfPgcFJKy96sVZR2De6R9aKdNtV9TZwlKFviR18uZvpsFwZ0YbCfcxhTXNC+5+N2tPFBp
+ 3EyHPlsrJavIfWsJCEGdA/KFfRDP1U2fyYa767KDG5ih/sCwszVgOLskRo2km7ZmPZWTIOPa
+X-Proofpoint-ORIG-GUID: uklbmKmKKepFh_BRF0x8SFcbWhKnrqUt
+X-Authority-Analysis: v=2.4 cv=LreSymdc c=1 sm=1 tr=0 ts=6895a422 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8
+ a=9IXjlSgd8CJL-Pz1-EkA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: uklbmKmKKepFh_BRF0x8SFcbWhKnrqUt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508080055
 
-The futex_waitv() syscall was introduced in Linux 5.16. The existing
-test in futex_wait_timeout.c will fail on kernels older than 5.16
-due to the syscall not being implemented.
 
-Modify the test_timeout() function to check if the error returned
-is ENOSYS. If it is, skip the test and report it as such, rather than
-failing. This ensures the selftests can be run on a wider range of
-kernel versions without false negatives.
 
-Signed-off-by: Wake Liu <wakel@google.com>
----
- .../selftests/futex/functional/futex_wait_timeout.c    | 10 +++++++---
- tools/testing/selftests/futex/functional/futex_waitv.c |  8 ++++++++
- 2 files changed, 15 insertions(+), 3 deletions(-)
+On 8/8/25 11:06 AM, Zheng Qixing wrote:
+> From: Zheng Qixing <zhengqixing@huawei.com>
+> 
+> Device-mapper can call add_disk() multiple times for the same gendisk
+> due to its two-phase creation process (dm create + dm load). This leads
+> to kobject double initialization errors when the underlying iSCSI devices
+> become temporarily unavailable and then reappear.
+> 
+> However, if the first add_disk() call fails and is retried, the queue_kobj
+> gets initialized twice, causing:
+> 
+> kobject: kobject (ffff88810c27bb90): tried to init an initialized object,
+> something is seriously wrong.
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x5b/0x80
+>   kobject_init.cold+0x43/0x51
+>   blk_register_queue+0x46/0x280
+>   add_disk_fwnode+0xb5/0x280
+>   dm_setup_md_queue+0x194/0x1c0
+>   table_load+0x297/0x2d0
+>   ctl_ioctl+0x2a2/0x480
+>   dm_ctl_ioctl+0xe/0x20
+>   __x64_sys_ioctl+0xc7/0x110
+>   do_syscall_64+0x72/0x390
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> Fix this by separating kobject initialization from sysfs registration:
+>  - Initialize queue_kobj early during gendisk allocation
+>  - add_disk() only adds the already-initialized kobject to sysfs
+>  - del_gendisk() removes from sysfs but doesn't destroy the kobject
+>  - Final cleanup happens when the disk is released
+> 
+> Fixes: 2bd85221a625 ("block: untangle request_queue refcounting from sysfs")
+> Reported-by: Li Lingfeng <lilingfeng3@huawei.com>
+> Closes: https://lore.kernel.org/all/83591d0b-2467-433c-bce0-5581298eb161@huawei.com/
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> ---
+>  block/blk-sysfs.c | 12 +++++-------
+>  block/blk.h       |  1 +
+>  block/genhd.c     |  2 ++
+>  3 files changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+> index 396cded255ea..c5cf79a20842 100644
+> --- a/block/blk-sysfs.c
+> +++ b/block/blk-sysfs.c
+> @@ -847,7 +847,7 @@ static void blk_queue_release(struct kobject *kobj)
+>  	/* nothing to do here, all data is associated with the parent gendisk */
+>  }
+>  
+> -static const struct kobj_type blk_queue_ktype = {
+> +const struct kobj_type blk_queue_ktype = {
+>  	.default_groups = blk_queue_attr_groups,
+>  	.sysfs_ops	= &queue_sysfs_ops,
+>  	.release	= blk_queue_release,
+> @@ -875,15 +875,14 @@ int blk_register_queue(struct gendisk *disk)
+>  	struct request_queue *q = disk->queue;
+>  	int ret;
+>  
+> -	kobject_init(&disk->queue_kobj, &blk_queue_ktype);
+>  	ret = kobject_add(&disk->queue_kobj, &disk_to_dev(disk)->kobj, "queue");
+>  	if (ret < 0)
+> -		goto out_put_queue_kobj;
+> +		return ret;
+>  
+>  	if (queue_is_mq(q)) {
+>  		ret = blk_mq_sysfs_register(disk);
+>  		if (ret)
+> -			goto out_put_queue_kobj;
+> +			goto out_del_queue_kobj;
+>  	}
+>  	mutex_lock(&q->sysfs_lock);
+>  
+> @@ -934,8 +933,8 @@ int blk_register_queue(struct gendisk *disk)
+>  	mutex_unlock(&q->sysfs_lock);
+>  	if (queue_is_mq(q))
+>  		blk_mq_sysfs_unregister(disk);
+> -out_put_queue_kobj:
+> -	kobject_put(&disk->queue_kobj);
+> +out_del_queue_kobj:
+> +	kobject_del(&disk->queue_kobj);
+>  	return ret;
+>  }
+>  
+> @@ -986,5 +985,4 @@ void blk_unregister_queue(struct gendisk *disk)
+>  		elevator_set_none(q);
+>  
+>  	blk_debugfs_remove(disk);
+> -	kobject_put(&disk->queue_kobj);
+>  }
+Shouldn't we replace kobject_put() with kobject_del() here in 
+blk_unregister_queue()? 
 
-diff --git a/tools/testing/selftests/futex/functional/futex_wait_timeout.c b/tools/testing/selftests/futex/functional/futex_wait_timeout.c
-index d183f878360b..8a48cf5d235f 100644
---- a/tools/testing/selftests/futex/functional/futex_wait_timeout.c
-+++ b/tools/testing/selftests/futex/functional/futex_wait_timeout.c
-@@ -64,9 +64,13 @@ void *get_pi_lock(void *arg)
- static void test_timeout(int res, int *ret, char *test_name, int err)
- {
- 	if (!res || errno != err) {
--		ksft_test_result_fail("%s returned %d\n", test_name,
--				      res < 0 ? errno : res);
--		*ret = RET_FAIL;
-+		if (errno == ENOSYS) {
-+			ksft_test_result_skip("%s: %m\n", test_name);
-+		} else {
-+			ksft_test_result_fail("%s returned %d\n", test_name,
-+					      res < 0 ? errno : res);
-+			*ret = RET_FAIL;
-+		}
- 	} else {
- 		ksft_test_result_pass("%s succeeds\n", test_name);
- 	}
-diff --git a/tools/testing/selftests/futex/functional/futex_waitv.c b/tools/testing/selftests/futex/functional/futex_waitv.c
-index 034dbfef40cb..2a86fd3ea657 100644
---- a/tools/testing/selftests/futex/functional/futex_waitv.c
-+++ b/tools/testing/selftests/futex/functional/futex_waitv.c
-@@ -59,6 +59,14 @@ void *waiterfn(void *arg)
- 
- int main(int argc, char *argv[])
- {
-+	if (!ksft_min_kernel_version(5, 16)) {
-+		ksft_print_header();
-+		ksft_set_plan(0);
-+		ksft_print_msg("%s: FUTEX_WAITV not implemented until 5.16\n",
-+			       basename(argv[0]));
-+		ksft_print_cnts();
-+		return KSFT_SKIP;
-+	}
- 	pthread_t waiter;
- 	int res, ret = RET_PASS;
- 	struct timespec to;
--- 
-2.50.1.703.g449372360f-goog
-
+Thanks,
+--Nilay
 
