@@ -1,300 +1,289 @@
-Return-Path: <linux-kernel+bounces-759834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C015DB1E383
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99142B1E37C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33BC51890B28
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60CDF5850FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EF6273D65;
-	Fri,  8 Aug 2025 07:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C4126E17D;
+	Fri,  8 Aug 2025 07:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ4rHLQ8"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VvtFYjcH"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C84227B8C;
-	Fri,  8 Aug 2025 07:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B76C2253EB;
+	Fri,  8 Aug 2025 07:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754637983; cv=none; b=fnop95qKc017sgb3G25wPgaHUErSSnFtw1XtWVV3D+ROdnRvufvJzBQF39TxLlCZF+3uYf2GxWhzx0m43zpObSwXpy45IYBDQnGYfS78gCtOsBmhfjlGx4VIV0KGnQ0qhudHjBkK6DfVzP+0WkliPauU9bCXMomvpGrdyX9P74w=
+	t=1754637872; cv=none; b=pxfCcBPMikAKRYXeXAFHsdfuR3dIqxRQIWt1KQvni4WxSVAxP0cvDInYolIzJWu7VptexoinGLXaZeZpUkGXv3TqZWvVLM8rsHw8dAINEL/OvwxP4NiZBTLO8va6Hyl/fCHqVWuLjQ3iBZhA/NYEQNCnfXOylcfBAgWKO6WOX2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754637983; c=relaxed/simple;
-	bh=bTW6AmC5c7gOdIhkD5QyPjS5NYHKojLOvV6+qOVYeOU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ejQNXSiNUMmR5ixBmHHTpLdBw+W4xyVScShfGGwCOu2YBPXFT4NDqSOgbh7hfWiVLOwHB2I7/Fwo+W+3gOzlwuR+0VmaDAQOladm8PGn46JN+2wIM+VcH2j6C91b7hDwqKOAxMwILZy9eltlv5RcptRMMYIxQslzaXvN17cTBWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ4rHLQ8; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1754637872; c=relaxed/simple;
+	bh=CoyAj5ykzX0RsUkQzxfR9fWF0JGaTLnIfiCV/+2rXAI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ODhJeTlfsLzOvmMeskS6wBCgSdosjY4l+Svdvzz2WNsgqUNW6VCixbQM9cLiPcEye/wJ00+kMl/7Q/OQTmThUZcNFJXTJo3XpUG5xtsSqRySgCJ6dGfqEfC4l582tl+r6C/djCFLC/+abHlVXcVZX+Fm0sZ+vXDSLT0cZj3uFN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VvtFYjcH; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2402b5396cdso11962205ad.2;
-        Fri, 08 Aug 2025 00:26:21 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-31ece02ad92so1524447a91.2;
+        Fri, 08 Aug 2025 00:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754637981; x=1755242781; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754637870; x=1755242670; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3Y4ayNTu6yezCxVLa6u9JCyNf94KaDdFdQJuTS0HgYw=;
-        b=UQ4rHLQ8TC7ITLv5eNc6JGKWTTQH75TzeLn6+MFZC1Hz/ceEvxbaB/HSAE9fTrurN5
-         83vI3sX+j8Wa7jp9v2BbivvocFu7cAA9eghgv+7TUSu4V/VSnmPfkBle5HISXUfcQQtV
-         D/3dEwejQWiNiau4BzhjWZRZlPuGumkyCsT7blbGdvFmRFxmMPjUQiG2xJ1Pfnq/06RA
-         943zkFol/cYPvESjHmGlTAzGVBGsXj5HSuRCZbupemy7lPiHfyc27PMXHgCJTyXG1uRy
-         /iBb/U6tTn+LIDI70iBsE5KoqsFBZcpfSeQdC5kcONiuYfXxkAWau1H8KOEQCbHT4BwP
-         //IQ==
+        bh=8kq6jfnH6Ny9gPRgiG3cjYrW5tpA/eQz2qFEMu+Bkk8=;
+        b=VvtFYjcH7q5tky4rWqWBmWe0RmTACIuSC7e1+wWJOiz5agrdK/d7SuBofpeEfzsQy7
+         xmUY+RTPUKBlFtMybjDlNc49rkR8sfPVW3ds59gsNNbw4syYrVMiw1dy4IhUwKhlNEOn
+         sylGfMrrOJGMpqkcbcQxBz55qibnqS11s/zaFHmtuaKY2FayVvLGET6lCxGHiXo457Z3
+         EimbotL3tInC7ZhmkkG0X+PlFYzgrqArFgE3o5SL5+FJv7MVNgF+u9IFMdKd/xO38KE8
+         QPEishWGCORMvsntMt3F5BvcxeF6ZWvpU7+YBREXFKXeUMG8ZGPPYVmh8ygSpXdOOQYh
+         vUQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754637981; x=1755242781;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1754637870; x=1755242670;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3Y4ayNTu6yezCxVLa6u9JCyNf94KaDdFdQJuTS0HgYw=;
-        b=GPK+hhJjVwU4Cvn6a6SQRTIZmvzi6+oclw+IFDRCcni2Io6lpE+bYRBt3GVNgaqD6Z
-         YybkOEpoigdqFeZuY8tZ1XV4BrvHPe/NI2cJAYcigVqjwWmBX69Wnzp6aL1N4v88Zttw
-         X5AVysG3OoJCthx6/a+Glg4Gw9tXc2KjNBsVVB+AC+Cio9xZEdjbe8b4Agz84VStuyCT
-         uZYAuwndWdQCLs5CFw5pc3xv5S+dJCbaaIfGrxYVdnE+KA97h2gFep7IYsRsI1EidCtg
-         H/QDusgEJGNXwkh+uDeg1E1MtxcXQoGa+eyyoZLniped+iUTXQUriUOZLFWNMpck9Cyb
-         38sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZqECVWxhgTSbRXH/tR/fA1GOPat8xbOxbf6w5RX6nfl0aP+Tr7iZzMU5rtseXSa4jA2M6Wn8O8gN5iSo=@vger.kernel.org, AJvYcCX1s9AVSWrQpfJYoHcYvJ7PkRCDpmS/reyFgqFMRqdOzhrlZZ/w+yUZuXxk7IF5feqkAeDB5JhG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzogXz+QbF2ft9PQFAOiTXqAwyFR0wMEuLuuchFCrM+jX7mis7X
-	JbGQul7S3NCIPArq5SpnkxIgSa6SWsCGIKJO1LvcfrHg6a+wJueD/j9q
-X-Gm-Gg: ASbGnctz617LB7zPlpLdbDH2cL36MIKzY7OnY+PJ0RbFaKziyb4Euq+j3S6e8hkrWBG
-	Z0TCrbtrXCjjXc9u0zVvvWSBZ76VR9BJNH1LauoioNQXCCe+KIpRjadvNcd3KTEeofwgZaH+Duq
-	jlhRttQHkGKuMPc/cD2cfuq2pKCJTVnb0rNWrIIBGuyjtlEVey2ryKYxEpyVvjHXA3VQh7gAHm3
-	/4leag7pSxAyFmgKJxpvBvGl0BVfsrb0jBDt9KcAOw87NDAUKbQOH9ilJeh9qQmv9ET0acbCvq7
-	L5JoqR01W7cQQP9GnyOehgkgjGTRzm2XdduIg6XRq968PccmQIZi3zVLOE1reysCeCzzgVBXzY1
-	vSrykEd897JOXFZTvNbXeATBQ2A==
-X-Google-Smtp-Source: AGHT+IGflRqKZEJeTlZ+3G18yZXjIctHwjF5xth0gKvqXF8D+64xqjeuX6ZXwpFG7i6RdN2TJ8I7Dg==
-X-Received: by 2002:a17:902:c94b:b0:240:b28:22a3 with SMTP id d9443c01a7336-242c21e088bmr30761125ad.29.1754637981186;
-        Fri, 08 Aug 2025 00:26:21 -0700 (PDT)
-Received: from fedora ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24218d8413asm186893565ad.63.2025.08.08.00.26.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 00:26:20 -0700 (PDT)
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: chuck.lever@oracle.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	donald.hunter@gmail.com,
-	borisp@nvidia.com,
-	john.fastabend@gmail.com
-Cc: alistair.francis@wdc.com,
-	dlemoal@kernel.org,
-	kernel-tls-handshake@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wilfred Mallawa <wilfred.mallawa@wdc.com>
-Subject: [RFC v2 1/1] net/tls: allow limiting maximum record size
-Date: Fri,  8 Aug 2025 17:24:01 +1000
-Message-ID: <20250808072358.254478-5-wilfred.opensource@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250808072358.254478-3-wilfred.opensource@gmail.com>
-References: <20250808072358.254478-3-wilfred.opensource@gmail.com>
+        bh=8kq6jfnH6Ny9gPRgiG3cjYrW5tpA/eQz2qFEMu+Bkk8=;
+        b=GvPKOtWmuBU+17NyDuXEtVNTCGVIoQ2Iagq0rLH5sKItGKbqpbeBz5uBDNYAXyHqW9
+         aVfRIh0BJOBU0/9Od4/VrYGydofj92+Ea2Oi71sT/wbLtmv/gxC5MaK15eKUEsstSlD3
+         QoBhoj9zdhHxyas7RW/zcBjK551WMBmIvxhM6QgmsMqWoUwflnu0w+4lrH+M94R56F/9
+         AJ2URoCVTuX4xVT//ScieCGI3GcdSmHvPVG7l0WdBwKEDQaf92qfxvIX2M5MU4bUokRL
+         5TaXx56B40y9NgcJNJgaCPGkMfeClBEEQdCMXHhhQMRogh5AZxRTCLkUl42lBX04nhMi
+         uTOw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4yjJE65ba0mKO/PuiUzV/iRnkvu17G+MNcZ/e95A4+CNYkqnm1zrAMnjbWvWpaClXCZgzuJBmp022U0a5@vger.kernel.org, AJvYcCX3vGlDTzHTCruhp5q3nDQe62Xbzei+wdkx8+yLpTXN8QqwaTYuh0IDKsC4Q41gXi87XuqGt5cVvuyETuJmrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVZtNjOwXxcEwI4dwvWizIKRLjjnioYE4LH2uY8Qq2v7lsa9we
+	kYUpiPwnSoU5DXihvw6xg/2wqLhVQR/8uzJdVF9NEJjVGrvvsrkVhgwM
+X-Gm-Gg: ASbGncuyBOq4JSFiD5WWGYc9xlWnarLX+EKSzZymAqMEf43/HHhaGQpLjNEs2uUdned
+	V+e6cfH6H493qgiQY3cFfTj741dhWevwl1g5SIP8WYsZyrTBKylTUuN+K6PzmdIeWADYZOlcGu0
+	8utWuo3mVFT2AxR433nYmBSFPNIzO8vPsJR4lD7jRyN0OhOx8fIVKRL/5bbF031FkXW/Ji/JUZc
+	l326GBqkAlN74o/VT5ys5gWtxeAf/XUch8yvwwNw6fC1rFymSpUATLRwJdmb2RSsWbvOPE1a+7y
+	CT4mRW+pWtJ8h+7UTQ/1EuJa0E30K+OBV6G0+6fcs9qyKVG13hzv0ga1YPPeIdppddiMHWnQutU
+	ySMIHZnTdPW4jz9eT
+X-Google-Smtp-Source: AGHT+IGJsxvBasl+HRN4thk+yxnR9s6JRomaZlNIoO0K+w92vAXmpA79Cm8QdXqYOdzpt7F6+Lv8sw==
+X-Received: by 2002:a17:90b:2685:b0:2fa:157e:c790 with SMTP id 98e67ed59e1d1-321839d6666mr3234299a91.5.1754637869597;
+        Fri, 08 Aug 2025 00:24:29 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63dc4ef0sm24164488a91.14.2025.08.08.00.24.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Aug 2025 00:24:29 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [syzbot] [bcachefs?] possible deadlock in trans_set_locked
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <6749f54c.050a0220.253251.00bc.GAE@google.com>
+Date: Fri, 8 Aug 2025 15:24:13 +0800
+Cc: kent.overstreet@linux.dev,
+ linux-bcachefs@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <80513B36-FAE6-4CB6-855B-029E2CAE235B@gmail.com>
+References: <6749f54c.050a0220.253251.00bc.GAE@google.com>
+To: syzbot <syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
 
-From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+On Nov 30, 2024, at 01:09, syzbot =
+<syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com> wrote:
+>=20
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch =
+'iommu/arm/smmu'..
+> git tree:       =
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git =
+for-kernelci
+> console output: =
+https://syzkaller.appspot.com/x/log.txt?x=3D17d6af78580000
+> kernel config:  =
+https://syzkaller.appspot.com/x/.config?x=3D9bc44a6de1ceb5d6
+> dashboard link: =
+https://syzkaller.appspot.com/bug?extid=3D78f4eb354f5ca6c1e6eb
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
+Debian) 2.40
+> userspace arch: arm64
+> syz repro:      =
+https://syzkaller.appspot.com/x/repro.syz?x=3D107bdf5f980000
+> C reproducer:   =
+https://syzkaller.appspot.com/x/repro.c?x=3D13ae49e8580000
+>=20
+> Downloadable assets:
+> disk image: =
+https://storage.googleapis.com/syzbot-assets/4d4a0162c7c3/disk-7b1d1d4c.ra=
+w.xz
+> vmlinux: =
+https://storage.googleapis.com/syzbot-assets/a8c47a4be472/vmlinux-7b1d1d4c=
+.xz
+> kernel image: =
+https://storage.googleapis.com/syzbot-assets/0e173b91f83e/Image-7b1d1d4c.g=
+z.xz
+> mounted in repro #1: =
+https://storage.googleapis.com/syzbot-assets/5ab7b24d2900/mount_0.gz
+> mounted in repro #2: =
+https://storage.googleapis.com/syzbot-assets/fbfbb60588c1/mount_2.gz
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the =
+commit:
+> Reported-by: syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> WARNING: possible circular locking dependency detected
+> 6.12.0-syzkaller-g7b1d1d4cfac0 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor203/6432 is trying to acquire lock:
+> ffff0000da100128 (bcachefs_btree){+.+.}-{0:0}, at: =
+trans_set_locked+0x5c/0x21c fs/bcachefs/btree_locking.h:193
+>=20
+> but task is already holding lock:
+> ffff0000dc661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: =
+__bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+>=20
+> which lock already depends on the new lock.
+>=20
+>=20
+> the existing dependency chain (in reverse order) is:
+>=20
+> -> #1 (&c->fsck_error_msgs_lock){+.+.}-{3:3}:
+>       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>       __mutex_lock kernel/locking/mutex.c:752 [inline]
+>       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+>       __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+>       bch2_check_alloc_hole_freespace+0x5fc/0xd74 =
+fs/bcachefs/alloc_background.c:1278
+>       bch2_check_alloc_info+0x1174/0x26f8 =
+fs/bcachefs/alloc_background.c:1547
+>       bch2_run_recovery_pass+0xe4/0x1d4 =
+fs/bcachefs/recovery_passes.c:191
+>       bch2_run_online_recovery_passes+0xa4/0x174 =
+fs/bcachefs/recovery_passes.c:212
+>       bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
+>       thread_with_stdio_fn+0x64/0x134 =
+fs/bcachefs/thread_with_file.c:298
+>       kthread+0x288/0x310 kernel/kthread.c:389
+>       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+>=20
+> -> #0 (bcachefs_btree){+.+.}-{0:0}:
+>       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>       validate_chain kernel/locking/lockdep.c:3904 [inline]
+>       __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
+>       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
+>       trans_set_locked+0x88/0x21c fs/bcachefs/btree_locking.h:194
+>       __bch2_trans_relock+0x2a0/0x394 fs/bcachefs/btree_locking.c:785
+>       bch2_trans_relock+0x24/0x34 fs/bcachefs/btree_locking.c:793
+>       __bch2_fsck_err+0x1664/0x2544 fs/bcachefs/error.c:363
+>       bch2_check_alloc_hole_freespace+0x5fc/0xd74 =
+fs/bcachefs/alloc_background.c:1278
+>       bch2_check_alloc_info+0x1174/0x26f8 =
+fs/bcachefs/alloc_background.c:1547
+>       bch2_run_recovery_pass+0xe4/0x1d4 =
+fs/bcachefs/recovery_passes.c:191
+>       bch2_run_online_recovery_passes+0xa4/0x174 =
+fs/bcachefs/recovery_passes.c:212
+>       bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
+>       thread_with_stdio_fn+0x64/0x134 =
+fs/bcachefs/thread_with_file.c:298
+>       kthread+0x288/0x310 kernel/kthread.c:389
+>       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+>=20
+> other info that might help us debug this:
+>=20
+> Possible unsafe locking scenario:
+>=20
+>       CPU0                    CPU1
+>       ----                    ----
+>  lock(&c->fsck_error_msgs_lock);
+>                               lock(bcachefs_btree);
+>                               lock(&c->fsck_error_msgs_lock);
+>  lock(bcachefs_btree);
+>=20
+> *** DEADLOCK ***
+>=20
+> 3 locks held by syz-executor203/6432:
+> #0: ffff0000dc600278 (&c->state_lock){++++}-{3:3}, at: =
+bch2_run_online_recovery_passes+0x3c/0x174 =
+fs/bcachefs/recovery_passes.c:204
+> #1: ffff0000dc604398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: =
+srcu_lock_acquire+0x18/0x54 include/linux/srcu.h:150
+> #2: ffff0000dc661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: =
+__bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
+>=20
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 6432 Comm: syz-executor203 Not tainted =
+6.12.0-syzkaller-g7b1d1d4cfac0 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, =
+BIOS Google 09/13/2024
+> Call trace:
+> show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:484 (C)
+> __dump_stack lib/dump_stack.c:94 [inline]
+> dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+> dump_stack+0x1c/0x28 lib/dump_stack.c:129
+> print_circular_bug+0x154/0x1c0 kernel/locking/lockdep.c:2074
+> check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2206
+> check_prev_add kernel/locking/lockdep.c:3161 [inline]
+> check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+> validate_chain kernel/locking/lockdep.c:3904 [inline]
+> __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
+> lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
+> trans_set_locked+0x88/0x21c fs/bcachefs/btree_locking.h:194
+> __bch2_trans_relock+0x2a0/0x394 fs/bcachefs/btree_locking.c:785
+> bch2_trans_relock+0x24/0x34 fs/bcachefs/btree_locking.c:793
+> __bch2_fsck_err+0x1664/0x2544 fs/bcachefs/error.c:363
+> bch2_check_alloc_hole_freespace+0x5fc/0xd74 =
+fs/bcachefs/alloc_background.c:1278
+> bch2_check_alloc_info+0x1174/0x26f8 =
+fs/bcachefs/alloc_background.c:1547
+> bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:191
+> bch2_run_online_recovery_passes+0xa4/0x174 =
+fs/bcachefs/recovery_passes.c:212
+> bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
+> thread_with_stdio_fn+0x64/0x134 fs/bcachefs/thread_with_file.c:298
+> kthread+0x288/0x310 kernel/kthread.c:389
+> ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>=20
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>=20
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before =
+testing.
+>=20
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>=20
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>=20
+> If you want to undo deduplication, reply with:
+> #syz undup
+>=20
 
-During a handshake, an endpoint may specify a maximum record size limit.
-Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
-maximum record size. Meaning that, the outgoing records from the kernel
-can exceed a lower size negotiated during the handshake. In such a case,
-the TLS endpoint must send a fatal "record_overflow" alert [1], and
-thus the record is discarded.
-
-This patch adds support for retrieving the negotiated record size limit
-during a handshake, and enforcing it at the TLS layer such that outgoing
-records are no larger than the size negotiated. This patch depends on
-the respective userspace support in tlshd [2] and GnuTLS [3].
-
-[1] https://www.rfc-editor.org/rfc/rfc8449
-[2] https://github.com/oracle/ktls-utils/pull/112
-[3] https://gitlab.com/gnutls/gnutls/-/merge_requests/2005
-
-Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
----
- Documentation/netlink/specs/handshake.yaml |  3 +++
- include/net/tls.h                          |  2 ++
- include/uapi/linux/handshake.h             |  1 +
- net/handshake/genl.c                       |  5 ++--
- net/handshake/tlshd.c                      | 29 +++++++++++++++++++++-
- net/tls/tls_sw.c                           |  6 ++++-
- 6 files changed, 42 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/netlink/specs/handshake.yaml b/Documentation/netlink/specs/handshake.yaml
-index b934cc513e3d..4e6bc348f1fd 100644
---- a/Documentation/netlink/specs/handshake.yaml
-+++ b/Documentation/netlink/specs/handshake.yaml
-@@ -84,6 +84,9 @@ attribute-sets:
-         name: remote-auth
-         type: u32
-         multi-attr: true
-+      -
-+          name: record-size-limit
-+          type: u32
- 
- operations:
-   list:
-diff --git a/include/net/tls.h b/include/net/tls.h
-index 857340338b69..02e7b59fcc30 100644
---- a/include/net/tls.h
-+++ b/include/net/tls.h
-@@ -250,6 +250,8 @@ struct tls_context {
- 			       */
- 	unsigned long flags;
- 
-+	u32 tls_record_size_limit;
-+
- 	/* cache cold stuff */
- 	struct proto *sk_proto;
- 	struct sock *sk;
-diff --git a/include/uapi/linux/handshake.h b/include/uapi/linux/handshake.h
-index 3d7ea58778c9..0768eb8eb415 100644
---- a/include/uapi/linux/handshake.h
-+++ b/include/uapi/linux/handshake.h
-@@ -54,6 +54,7 @@ enum {
- 	HANDSHAKE_A_DONE_STATUS = 1,
- 	HANDSHAKE_A_DONE_SOCKFD,
- 	HANDSHAKE_A_DONE_REMOTE_AUTH,
-+	HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
- 
- 	__HANDSHAKE_A_DONE_MAX,
- 	HANDSHAKE_A_DONE_MAX = (__HANDSHAKE_A_DONE_MAX - 1)
-diff --git a/net/handshake/genl.c b/net/handshake/genl.c
-index f55d14d7b726..44c43ce18361 100644
---- a/net/handshake/genl.c
-+++ b/net/handshake/genl.c
-@@ -16,10 +16,11 @@ static const struct nla_policy handshake_accept_nl_policy[HANDSHAKE_A_ACCEPT_HAN
- };
- 
- /* HANDSHAKE_CMD_DONE - do */
--static const struct nla_policy handshake_done_nl_policy[HANDSHAKE_A_DONE_REMOTE_AUTH + 1] = {
-+static const struct nla_policy handshake_done_nl_policy[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT + 1] = {
- 	[HANDSHAKE_A_DONE_STATUS] = { .type = NLA_U32, },
- 	[HANDSHAKE_A_DONE_SOCKFD] = { .type = NLA_S32, },
- 	[HANDSHAKE_A_DONE_REMOTE_AUTH] = { .type = NLA_U32, },
-+	[HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT] = { .type = NLA_U32, },
- };
- 
- /* Ops table for handshake */
-@@ -35,7 +36,7 @@ static const struct genl_split_ops handshake_nl_ops[] = {
- 		.cmd		= HANDSHAKE_CMD_DONE,
- 		.doit		= handshake_nl_done_doit,
- 		.policy		= handshake_done_nl_policy,
--		.maxattr	= HANDSHAKE_A_DONE_REMOTE_AUTH,
-+		.maxattr	= HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT,
- 		.flags		= GENL_CMD_CAP_DO,
- 	},
- };
-diff --git a/net/handshake/tlshd.c b/net/handshake/tlshd.c
-index d6f52839827e..f4e793f6288d 100644
---- a/net/handshake/tlshd.c
-+++ b/net/handshake/tlshd.c
-@@ -19,6 +19,7 @@
- #include <net/handshake.h>
- #include <net/genetlink.h>
- #include <net/tls_prot.h>
-+#include <net/tls.h>
- 
- #include <uapi/linux/keyctl.h>
- #include <uapi/linux/handshake.h>
-@@ -37,6 +38,8 @@ struct tls_handshake_req {
- 	key_serial_t		th_certificate;
- 	key_serial_t		th_privkey;
- 
-+	struct socket		*th_sock;
-+
- 	unsigned int		th_num_peerids;
- 	key_serial_t		th_peerid[5];
- };
-@@ -52,6 +55,7 @@ tls_handshake_req_init(struct handshake_req *req,
- 	treq->th_consumer_data = args->ta_data;
- 	treq->th_peername = args->ta_peername;
- 	treq->th_keyring = args->ta_keyring;
-+	treq->th_sock = args->ta_sock;
- 	treq->th_num_peerids = 0;
- 	treq->th_certificate = TLS_NO_CERT;
- 	treq->th_privkey = TLS_NO_PRIVKEY;
-@@ -85,6 +89,27 @@ static void tls_handshake_remote_peerids(struct tls_handshake_req *treq,
- 	}
- }
- 
-+static void tls_handshake_record_size(struct tls_handshake_req *treq,
-+				      struct genl_info *info)
-+{
-+	struct tls_context *tls_ctx;
-+	struct nlattr *head = nlmsg_attrdata(info->nlhdr, GENL_HDRLEN);
-+	struct nlattr *nla;
-+	u32 record_size_limit;
-+	int rem, len = nlmsg_attrlen(info->nlhdr, GENL_HDRLEN);
-+
-+	nla_for_each_attr(nla, head, len, rem) {
-+		if (nla_type(nla) == HANDSHAKE_A_DONE_RECORD_SIZE_LIMIT) {
-+			record_size_limit = nla_get_u32(nla);
-+			if (treq->th_sock) {
-+				tls_ctx = tls_get_ctx(treq->th_sock->sk);
-+				tls_ctx->tls_record_size_limit = record_size_limit;
-+			}
-+			break;
-+		}
-+	}
-+}
-+
- /**
-  * tls_handshake_done - callback to handle a CMD_DONE request
-  * @req: socket on which the handshake was performed
-@@ -98,8 +123,10 @@ static void tls_handshake_done(struct handshake_req *req,
- 	struct tls_handshake_req *treq = handshake_req_private(req);
- 
- 	treq->th_peerid[0] = TLS_NO_PEERID;
--	if (info)
-+	if (info) {
- 		tls_handshake_remote_peerids(treq, info);
-+		tls_handshake_record_size(treq, info);
-+	}
- 
- 	if (!status)
- 		set_bit(HANDSHAKE_F_REQ_SESSION, &req->hr_flags);
-diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
-index fc88e34b7f33..70ffc4f5e382 100644
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -1024,6 +1024,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
- 	ssize_t copied = 0;
- 	struct sk_msg *msg_pl, *msg_en;
- 	struct tls_rec *rec;
-+	u32 tls_record_size_limit;
- 	int required_size;
- 	int num_async = 0;
- 	bool full_record;
-@@ -1045,6 +1046,9 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
- 		}
- 	}
- 
-+	tls_record_size_limit = min_not_zero(tls_ctx->tls_record_size_limit,
-+					     TLS_MAX_PAYLOAD_SIZE);
-+
- 	while (msg_data_left(msg)) {
- 		if (sk->sk_err) {
- 			ret = -sk->sk_err;
-@@ -1066,7 +1070,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
- 		orig_size = msg_pl->sg.size;
- 		full_record = false;
- 		try_to_copy = msg_data_left(msg);
--		record_room = TLS_MAX_PAYLOAD_SIZE - msg_pl->sg.size;
-+		record_room = tls_record_size_limit - msg_pl->sg.size;
- 		if (try_to_copy >= record_room) {
- 			try_to_copy = record_room;
- 			full_record = true;
--- 
-2.50.1
+#syz fix: bcachefs: bch2_trans_relock() is trylock for lockdep
 
 
