@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-760314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1E1B1E95B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:38:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D26B6B1E95D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BFC616B6A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2BEA05146
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099DD27EC7C;
-	Fri,  8 Aug 2025 13:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3728A27E05F;
+	Fri,  8 Aug 2025 13:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D3utI2E5"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYfqvPRp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0703347C7;
-	Fri,  8 Aug 2025 13:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8096D27CB31;
+	Fri,  8 Aug 2025 13:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754660299; cv=none; b=b5ogZWdrn0CFuMYgrAz/DLpNYxpBnwllE+Y2FNbP6dn02adl+1PKpFSbBeNebr03ywYULKPr7cHyX9CAGthV9UjuFKoYlihae1QmzRZrAFtnjDtnnrSJKpZJmevSYu1IPEgmraCuIq71jnAJtm+jRxZSfQDjRyg4BjCUtxvnRZk=
+	t=1754660319; cv=none; b=uLtABjYdX1AII76RPCpqa2KWp6satLmKe+2e98iNxrCX7rTpx/qOBhc+6X8Tbifb86u8L2IdcpmmtSSxSF0/i9mB07Jn+bP2v0g67qjzVoRtE236gPeKacWsyIecqq5XjSQ6QuJ08Q9XikAFsl8wGd0J7XthiAMH/zYECZ9lemI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754660299; c=relaxed/simple;
-	bh=c5lrnUgwIG/rNRAu0GC1hkwAXsNvrmjR7WDCjDn8UKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZpN+07sqQnjLQz7pYdwQ7HB/Ev+4yRWXIZQMbcmLRNiiqYEEk4DmxSgeY3vI/EIBA/4ydvRE2ZNUPTTcJNUi4BVVn0tyF6kDHX43NzU39JXmJjk5uxBVlanUVZe9kxtjuGiYG7/yESefohCX1evxC5f5cjVGqFaQL2e7HZpVHU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D3utI2E5; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 578Dc9A8991745;
-	Fri, 8 Aug 2025 08:38:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754660289;
-	bh=fY6ITv0IOCwAWvbopI78ay0Ho+0F53h/qZ6BsbQ7c3Q=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=D3utI2E5WFPqamVWrVO4a81tSwdLi0z6mOuyh7BD0sJ/1z2h91QIRwCJetoQbOosH
-	 0wNxxvKkaMDf1KPSgEy9X/7q+tIxDvs/w7brC8w/24O0bu6gQY4ANOJWLgEqJ1r28Q
-	 rVJIMxchuHyliXWThmBJRm4QQK97skudF8D4IpeA=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 578Dc91U520915
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 8 Aug 2025 08:38:09 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 8
- Aug 2025 08:38:09 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 8 Aug 2025 08:38:08 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 578Dc8OD3118894;
-	Fri, 8 Aug 2025 08:38:09 -0500
-Message-ID: <16fac32a-a42a-4ec8-b0a2-3efe785af728@ti.com>
-Date: Fri, 8 Aug 2025 08:38:08 -0500
+	s=arc-20240116; t=1754660319; c=relaxed/simple;
+	bh=xNNphpZVuuV6U/Jc9k5AyTfzIpZRp1BJyfmovI8qRz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K6LrWFmsIdCHafkwd6vTE5oHpDJzCs0zYSDMLVNYzlPrImUiofone2F+akr/BtvGn4AAPF25K6MkPY26KeIQT2V/Jbrqbtk647ezrSWrRWOzZINqTk9U36y48EZyQ599i+ogUTd/GGr5fFW0DZbxadP0Lwnin77elR92xQZ28PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYfqvPRp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 408EEC4CEED;
+	Fri,  8 Aug 2025 13:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754660318;
+	bh=xNNphpZVuuV6U/Jc9k5AyTfzIpZRp1BJyfmovI8qRz0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fYfqvPRpqL9tPn1XlTBGjZCrl23fSZnBBxWkK3d0SLIQYUv1mTmhtGw+SYAOZFsEc
+	 8jGV1OPcY71+2hanQRPlvCztRXRtCZrg+TDzTXOraT0FFPKC9LFc01OerloGi3BDR+
+	 rOsK+gTRzCfS7yG6KxwdXCfEG/57frdX+ARcwKa+ehuqlHoqK5po3JAlHypiLQoM9n
+	 akslpsAr4M7T6RjNxYjsa542e3DHK5aLxAVffmPIxCDb5PEfb/kLjhGgl6latNHpa5
+	 VFLIpcR2UIWUe4vX+MODn1F0r/OAqHW3lJIfHuFC0ESRh3oleZ9Hfg6qj8eA+Int1I
+	 XFgAP/0KswDiw==
+Message-ID: <4786fbb9-5d25-4d86-b902-61cc78a9b138@kernel.org>
+Date: Fri, 8 Aug 2025 22:38:37 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,69 +49,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mmc: sdhci_am654: Disable HS400 for AM62P SR1.0
- and SR1.1
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar
-	<ssantosh@kernel.org>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Andrew Davis <afd@ti.com>
-References: <20250807225138.1228333-1-jm@ti.com>
- <20250807225138.1228333-3-jm@ti.com>
+Subject: Re: [PATCH v2] scsi: sd: Fix build warning in sd_revalidate_disk()
+To: Abinash Singh <abinashsinghlalotra@gmail.com>
+Cc: James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org, martin.petersen@oracle.com
+References: <5cfefec0-b64b-4f96-a943-4de3205d3c50@kernel.org>
+ <20250808113019.20177-1-abinashsinghlalotra@gmail.com>
 Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <20250807225138.1228333-3-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250808113019.20177-1-abinashsinghlalotra@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi all,
-
-On 8/7/25 5:51 PM, Judith Mendez wrote:
-> This adds SDHCI_AM654_QUIRK_DISABLE_HS400 quirk which shall be used
-> to disable HS400 support. AM62P SR1.0 and SR1.1 do not support HS400
-> due to errata i2458 [0] so disable HS400 for these SoC revisions.
+On 8/8/25 20:30, Abinash Singh wrote:
+> A build warning was triggered due to excessive stack usage in
+> sd_revalidate_disk():
 > 
-> [0] https://www.ti.com/lit/er/sprz574a/sprz574a.pdf
-> Signed-off-by: Judith Mendez <jm@ti.com>
+> drivers/scsi/sd.c: In function ‘sd_revalidate_disk.isra’:
+> drivers/scsi/sd.c:3824:1: warning: the frame size of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> 
+> This is caused by a large local struct queue_limits (~400B) allocated
+> on the stack. Replacing it with a heap allocation using kmalloc()
+> significantly reduces frame usage. Kernel stack is limited (~8 KB),
+> and allocating large structs on the stack is discouraged.
+> As the function already performs heap allocations (e.g. for buffer),
+> this change fits well.
+> 
+> Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
 > ---
->   drivers/mmc/host/sdhci_am654.c | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
 > 
-> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-> index e4fc345be7e5..dc4975514847 100644
-> --- a/drivers/mmc/host/sdhci_am654.c
-> +++ b/drivers/mmc/host/sdhci_am654.c
-> @@ -156,6 +156,7 @@ struct sdhci_am654_data {
->   
->   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
->   #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
-> +#define SDHCI_AM654_QUIRK_DISABLE_HS400 BIT(2)
->   };
->   
->   struct window {
-> @@ -765,6 +766,7 @@ static int sdhci_am654_init(struct sdhci_host *host)
->   {
->   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->   	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-> +	struct device *dev = mmc_dev(host->mmc);
->   	u32 ctl_cfg_2 = 0;
->   	u32 mask;
->   	u32 val;
-> @@ -820,6 +822,12 @@ static int sdhci_am654_init(struct sdhci_host *host)
->   	if (ret)
->   		goto err_cleanup_host;
->   
-> +	if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_DISABLE_HS400 &&
-> +	    host->mmc->caps2 & (MMC_CAP2_HS400 | MMC_CAP2_HS400_ES)) {
-> +		dev_err(dev, "Disable descoped HS400 mode for this silicon revision\n");
+> Hi,
+> 
+> Thank you very much for your comments.
+> I have addressed all your suggestions from v1.
+> 
+> As you mentioned concerns regarding the readability of
+> the __free(kfree) attribute, I have used the classic
+> approach in v2. Additionally, I will also send v3
+> where the __free() attribute is used instead.
+> 
+> We can proceed with patch version you
+> find more suitable, and do let me know if you have
+> any further feedback.
+> 
+> changelog v1->v2:
+> 	moved declarations together
+> 	avoided "unreadable" cleanup attribute
+> 	splited long line
+> 	changed the log message to diiferentiate with buffer allocation
+> 
+> Thanks,
+> 
+> ---
+>  drivers/scsi/sd.c | 49 +++++++++++++++++++++++++++++------------------
+>  1 file changed, 30 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 4a68b2ab2804..f5ab2a422df6 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -3696,7 +3696,7 @@ static int sd_revalidate_disk(struct gendisk *disk)
+>  	struct scsi_disk *sdkp = scsi_disk(disk);
+>  	struct scsi_device *sdp = sdkp->device;
+>  	sector_t old_capacity = sdkp->capacity;
+> -	struct queue_limits lim;
+> +	struct queue_limits *lim;
+>  	unsigned char *buffer;
+>  	unsigned int dev_max;
+>  	int err;
 
-Forgot to switch to dev_info, so will respin the series one more time.
+If you change this to "int err = 0", then...
 
-Sorry for the noise.
+> @@ -3711,23 +3711,30 @@ static int sd_revalidate_disk(struct gendisk *disk)
+>  	if (!scsi_device_online(sdp))
+>  		goto out;
+>  
+> +	lim = kmalloc(sizeof(*lim), GFP_KERNEL);
+> +	if (!lim) {
+> +		sd_printk(KERN_WARNING, sdkp,
+> +			"sd_revalidate_disk: Disk limit allocation failure.\n");
+> +		goto out;
+> +	}
+> +
+>  	buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
+>  	if (!buffer) {
+>  		sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory "
+>  			  "allocation failure.\n");
+> -		goto out;
+> +		goto free_lim;
 
-~ Judith
+Yout can do a "goto out" here...
 
+>  	}
+>  
+
+[...]
+
+>  	set_capacity_and_notify(disk, logical_to_sectors(sdp, sdkp->capacity));
+> -	sd_config_write_same(sdkp, &lim);
+> +	sd_config_write_same(sdkp, lim);
+>  	kfree(buffer);
+
+Move this line after the "out" label...
+
+>  
+> -	err = queue_limits_commit_update_frozen(sdkp->disk->queue, &lim);
+> -	if (err)
+> +	err = queue_limits_commit_update_frozen(sdkp->disk->queue, lim);
+> +	if (err) {
+
+just do a goto out here...
+
+> +		kfree(lim);
+>  		return err;
+> +	}
+>  
+>  	/*
+>  	 * Query concurrent positioning ranges after
+> @@ -3819,6 +3828,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
+>  	if (sd_zbc_revalidate_zones(sdkp))
+>  		set_capacity_and_notify(disk, 0);
+>  
+> + free_lim:
+> +	kfree(lim);
+>   out:
+
+And this becomes:
+
+ out:
+	kfree(lim);
+	kfree(buffer)
+
+	return err;
+
+Much cleaner :)
+
+>  	return 0;
+>  }
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
