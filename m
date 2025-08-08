@@ -1,236 +1,188 @@
-Return-Path: <linux-kernel+bounces-760441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CDAB1EB24
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:08:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D786B1EB28
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27357A07BD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:08:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E50817C475
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5799D281341;
-	Fri,  8 Aug 2025 15:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EFF280CFB;
+	Fri,  8 Aug 2025 15:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YeblZxfC"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NY2n6gWx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526CA27F73E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C9027F75F
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754665699; cv=none; b=caEgNexiM8Bd0fZIl6THqLjFyAIQ1EKSVDZH1T9X7nze+TNMB/sGL1xqMXRJ4mtGEe8bWAgaFHpby1EoJLinWoNX1IaenoKlbkqU2o21XOlilXZn/9FtmSdh3m6tSIEuNf6VGQN5ruUlG9vVewIL7IB3nGGpF64+zDHdJBj48Bg=
+	t=1754665825; cv=none; b=ojfgOE94mGHlvwOd5FKqFPz4VQb4y/eb9bHpMGkAnBmkWOGTSPtIZYfnoHesNzKLTsxPBWAoMSFeW4Uw77dXzbPkOZ9DP8oRMGQdHdRZnVu5bVh2K4SZ+opnakYP8KMXLJ6we0FUWA3JrztaIx5vKAxw4qGFoZnahXUas/wo/u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754665699; c=relaxed/simple;
-	bh=KbyBa2RMxGvUa2qTjS8DYpX+dKFyENEXQ3F7PVCsezM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=iYBY0VdxNbImQBsA39zTMLyZGmOqKPrGcr2QkdNhw/m9KBcrUtCexD43QoY8UbYcrvtcWRM3NEdNvHR7U7D4bQGfMHuLZERBjf9xFJ+RZOq4j1PtyTfYsHg1Mc9+z22ryGyWuokUxHDbo7kzXvqDbvg8YocghTXzcUH0QAUzMgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YeblZxfC; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250808150815epoutp044b2e9981a7faded257d3d9cc9d23e5e9~Z0ydIZ8HH3138531385epoutp040
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:08:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250808150815epoutp044b2e9981a7faded257d3d9cc9d23e5e9~Z0ydIZ8HH3138531385epoutp040
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754665695;
-	bh=KbyBa2RMxGvUa2qTjS8DYpX+dKFyENEXQ3F7PVCsezM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=YeblZxfCRgVAJ8Yhk6OeVGS4jBSJVQgSw4NoEDq8vypGi4G2OIvH2FK8R3EIsbqW0
-	 G0LfWv9ovZUUVCvze7Y/PaFncOSoG0USMMFQ8E4IulrWrPa+MBCmsy7axwL2pW/jBl
-	 FPwN/1wvT/oa73OJ5G5pzr6sEWjKivAIMB+0Xn0w=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20250808150814epcas5p1819cab380f954c265dfc00d7557e35e9~Z0ycfsPfM2113721137epcas5p1t;
-	Fri,  8 Aug 2025 15:08:14 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bz6q20zKBz3hhT3; Fri,  8 Aug
-	2025 15:08:14 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250808150813epcas5p3eb081f2f6e90a15593e545ced68435f1~Z0ya_Ijdo2389323893epcas5p3J;
-	Fri,  8 Aug 2025 15:08:13 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250808150810epsmtip1f6ba1f6f143b53b5c12bf28410693323~Z0yYxxj3c1978819788epsmtip1Y;
-	Fri,  8 Aug 2025 15:08:10 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Manivannan Sadhasivam'" <mani@kernel.org>
-Cc: "'Konrad Dybcio'" <konrad.dybcio@oss.qualcomm.com>, "'Krzysztof
- Kozlowski'" <krzk@kernel.org>, "'Ram Kumar Dwivedi'"
-	<quic_rdwivedi@quicinc.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<andersson@kernel.org>, <konradybcio@kernel.org>,
-	<James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-	<agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
-Subject: RE: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-Date: Fri, 8 Aug 2025 20:38:09 +0530
-Message-ID: <0f8c01dc0876$427cf1c0$c776d540$@samsung.com>
+	s=arc-20240116; t=1754665825; c=relaxed/simple;
+	bh=umcvyVklicbzq/kBy0WmrsbaWF0kIcR+4L2lO8UDxYY=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Hd5l2A8gojdACquyS90mZ/06HCl63OnkC7VeA+grihjgmUFbJ48sGLzPp5NG22F4miCxntM2f2muaQ5zsa/SCkSw/HpMfuSR36XT8SGIvNi9HJXs+q1N9mc80Ht3OTLdjSTJfpalj9ToHmkwHz3CIvQlC+h3+7sLXTojnDsF/IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NY2n6gWx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754665823;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sb1xY4mkvRwciVCfa3SBcbz2VY+53NejsonXd/nwxL4=;
+	b=NY2n6gWxzaVD375eEunpqnxyY0jebQr8IKLeFeTVYYLiVlfmLV5OgZPRDAeneic7kGzOvo
+	Xq7hnESroGaP2/jc/Lju5S6qzWfu39cBdLZ2gR1tZV+DqSFNlQ0ef3di/tVQ32DD0Xmn7w
+	S57ztnHECteTp5SClnav5mjyEV336xE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-347-0hywt-IUNPy6Fruejruu2w-1; Fri,
+ 08 Aug 2025 11:10:18 -0400
+X-MC-Unique: 0hywt-IUNPy6Fruejruu2w-1
+X-Mimecast-MFC-AGG-ID: 0hywt-IUNPy6Fruejruu2w_1754665816
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FE8F18003FD;
+	Fri,  8 Aug 2025 15:10:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.17])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 28773180029B;
+	Fri,  8 Aug 2025 15:10:11 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <zt6f2jl6y5wpiuchryc2vdsmtkiia7s5mligm7helffkanxe3o@2f2ksngn5ekk>
+References: <zt6f2jl6y5wpiuchryc2vdsmtkiia7s5mligm7helffkanxe3o@2f2ksngn5ekk> <20250806203705.2560493-1-dhowells@redhat.com> <20250806203705.2560493-25-dhowells@redhat.com>
+To: Enzo Matsumiya <ematsumiya@suse.de>
+Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
+    Paulo Alcantara <pc@manguebit.org>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Wang Zhaolong <wangzhaolong@huaweicloud.com>,
+    Stefan Metzmacher <metze@samba.org>,
+    Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org,
+    linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 24/31] cifs: Convert SMB2 Negotiate Protocol request
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2926139.1754665810.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQEJQrUlLhd2k13YhwqtNcYaDataOQJtFIHyAldjN/MB24cyRgGnpjwRAmX4p5MB936htgLh1QaLARPOx0QCD7g8CwGFQGz5tVzi6iA=
-X-CMS-MailID: 20250808150813epcas5p3eb081f2f6e90a15593e545ced68435f1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60
-References: <061c01dc062f$70ec34b0$52c49e10$@samsung.com>
-	<87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
-	<061d01dc0631$c1766c00$44634400$@samsung.com>
-	<3cd33dce-f6b9-4f60-8cb2-a3bf2942a1e5@oss.qualcomm.com>
-	<06d201dc0689$9f438200$ddca8600$@samsung.com>
-	<wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
-	<06f301dc0695$6bf25690$43d703b0$@samsung.com>
-	<CGME20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60@epcas5p1.samsung.com>
-	<nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
-	<0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
-	<fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
+Date: Fri, 08 Aug 2025 16:10:10 +0100
+Message-ID: <2926140.1754665810@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+Enzo Matsumiya <ematsumiya@suse.de> wrote:
 
+> On 08/06, David Howells wrote:
+> > ...
+> > -static unsigned int
+> >-build_netname_ctxt(struct smb2_netname_neg_context *pneg_ctxt, char *h=
+ostname)
+> >+static size_t smb2_size_netname_ctxt(struct TCP_Server_Info *server)
+> > {
+> >+	size_t data_len;
+> >+
+> >+#if 0
+> > 	struct nls_table *cp =3D load_nls_default();
+> >+	const char *hostname;
+> >
+> >-	pneg_ctxt->ContextType =3D SMB2_NETNAME_NEGOTIATE_CONTEXT_ID;
+> >+	/* Only include up to first 100 bytes of server name in the NetName
+> >+	 * field.
+> >+	 */
+> >+	cifs_server_lock(pserver);
+> >+	hostname =3D pserver->hostname;
+> >+	if (hostname && hostname[0])
+> >+		data_len =3D cifs_size_strtoUTF16(hostname, 100, cp);
+> >+	cifs_server_unlock(pserver);
+> >+#else
+> >+	/* Now, we can't just measure the length of hostname as, unless we ho=
+ld
+> >+	 * the lock, it may change under us, so allow maximum space for it.
+> >+	 */
+> >+	data_len =3D 400;
+> >+#endif
+> >+	return ALIGN8(sizeof(struct smb2_neg_context) + data_len);
+> >+}
+> =
 
-> -----Original Message-----
-> From: 'Manivannan Sadhasivam' <mani=40kernel.org>
-> Sent: Friday, August 8, 2025 6:14 PM
-> To: Alim Akhtar <alim.akhtar=40samsung.com>
-> Cc: 'Konrad Dybcio' <konrad.dybcio=40oss.qualcomm.com>; 'Krzysztof
-> Kozlowski' <krzk=40kernel.org>; 'Ram Kumar Dwivedi'
-> <quic_rdwivedi=40quicinc.com>; avri.altman=40wdc.com;
-> bvanassche=40acm.org; robh=40kernel.org; krzk+dt=40kernel.org;
-> conor+dt=40kernel.org; andersson=40kernel.org; konradybcio=40kernel.org;
-> James.Bottomley=40hansenpartnership.com; martin.petersen=40oracle.com;
-> agross=40kernel.org; linux-arm-msm=40vger.kernel.org; linux-
-> scsi=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and rate =
-limit
-> properties to UFS
->=20
-> On Thu, Aug 07, 2025 at 10:08:32PM GMT, Alim Akhtar wrote:
+> Why was this commented out?  Your comment implies that you can't hold
+> the lock anymore there, but I couldn't find out why (with your patches
+> applied).
+
+The problem is that the hostname may change - and there's a spinlock to
+protect it.  However, now that I'm working out the message size before the
+allocation, I need to find the size of the host name, do the alloc and the=
+n
+copy the hostname in - but I can't hold the spinlock across the alloc, so =
+the
+hostname may change whilst the lock is dropped.
+
+The obvious solution is to just allocate the maximum size for it.  It's no=
+t
+that big and this command isn't used all that often.
+
+Remember that this is a work in progress, so you may find bits like this w=
+here
+I may need to reconsider what I've chosen.
+
+> >-static void
+> >-assemble_neg_contexts(struct smb2_negotiate_req *req,
+> >-		      struct TCP_Server_Info *server, unsigned int *total_len)
+> >+static size_t smb2_size_neg_contexts(struct TCP_Server_Info *server,
+> >+				     size_t offset)
+> > {
+> >-	unsigned int ctxt_len, neg_context_count;
+> > 	struct TCP_Server_Info *pserver;
+> >-	char *pneg_ctxt;
+> >-	char *hostname;
+> >-
+> >-	if (*total_len > 200) {
+> >-		/* In case length corrupted don't want to overrun smb buffer */
+> >-		cifs_server_dbg(VFS, "Bad frame length assembling neg contexts\n");
+> >-		return;
+> >-	}
 > >
+> > 	/*
+> > 	 * round up total_len of fixed part of SMB3 negotiate request to 8
+> > 	 * byte boundary before adding negotiate contexts
+> > 	 */
+> >-	*total_len =3D ALIGN8(*total_len);
+> >+	offset =3D ALIGN8(offset);
+> >+	offset +=3D ALIGN8(sizeof(struct smb2_preauth_neg_context));
+> >+	offset +=3D ALIGN8(sizeof(struct smb2_encryption_neg_context));
 > >
-> > > -----Original Message-----
-> > > From: 'Manivannan Sadhasivam' <mani=40kernel.org>
-> > > Sent: Wednesday, August 6, 2025 4:56 PM
-> > > To: Alim Akhtar <alim.akhtar=40samsung.com>
-> > > Cc: 'Konrad Dybcio' <konrad.dybcio=40oss.qualcomm.com>; 'Krzysztof
-> > =5B...=5D
-> >
-> > > > >
-> > > > > On Wed, Aug 06, 2025 at 09:51:43AM GMT, Alim Akhtar wrote:
-> > > > >
-> > > > > =5B...=5D
-> > > > >
-> > > > > > > >> Introducing generic solutions preemptively for problems
-> > > > > > > >> that are simple in concept and can occur widely is good
-> > > > > > > >> practice (although it's sometimes hard to gauge whether
-> > > > > > > >> this is a one-off), as if the issue spreads a generic
-> > > > > > > >> solution will appear at some point, but we'll have to
-> > > > > > > >> keep supporting the odd ones as well
-> > > > > > > >>
-> > > > > > > > Ok,
-> > > > > > > > I would prefer if we add a property which sounds like
-> > > > > > > > =22poor thermal dissipation=22 or =22routing channel loss=
-=22
-> > > > > > > > rather than adding limiting UFS gear
-> > > > > > > properties.
-> > > > > > > > Poor thermal design or channel losses are generic enough
-> > > > > > > > and can happen
-> > > > > > > on any board.
-> > > > > > >
-> > > > > > > This is exactly what I'm trying to avoid through my
-> > > > > > > suggestion - one board may have poor thermal dissipation,
-> > > > > > > another may have channel losses, yet another one may feature
-> > > > > > > a special batch of UFS chips that will set the world on fire
-> > > > > > > if instructed to attempt link training at gear 7 - they all
-> > > > > > > are causes, as opposed to describing what needs to happen
-> > > > > > > (i.e. what the hardware must be treated as - gear N
-> > > > > > > incapable despite what can be discovered at runtime), with
-> > > > > > > perhaps a comment on the side
-> > > > > > >
-> > > > > > But the solution for all possible board problems can't be by
-> > > > > > limiting Gear
-> > > > > speed.
-> > > > >
-> > > > > Devicetree properties should precisely reflect how they are
-> > > > > relevant to the hardware. 'limiting-gear-speed' is
-> > > > > self-explanatory that the gear speed is getting limited (for a
-> > > > > reason), but the devicetree doesn't need to describe the
-> > > > > *reason* itself.
-> > > > >
-> > > > > > So it should be known why one particular board need to limit th=
-e
-> gear.
-> > > > >
-> > > > > That goes into the description, not in the property name.
-> > > > >
-> > > > > > I understand that this is a static configuration, where it is
-> > > > > > already known
-> > > > > that board is broken for higher Gear.
-> > > > > > Can this be achieved by limiting the clock? If not, can we add
-> > > > > > a board
-> > > > > specific _quirk_ and let the _quirk_ to be enabled from vendor
-> > > > > specific hooks?
-> > > > > >
-> > > > >
-> > > > > How can we limit the clock without limiting the gears? When we
-> > > > > limit the gear/mode, both clock and power are implicitly limited.
-> > > > >
-> > > > Possibly someone need to check with designer of the SoC if that is
-> > > > possible
-> > > or not.
-> > >
-> > > It's not just clock. We need to consider reducing regulator,
-> > > interconnect votes also. But as I said above, limiting the gear/mode
-> > > will take care of all these parameters.
-> > >
-> > > > Did we already tried _quirk_? If not, why not?
-> > > > If the board is so poorly designed and can't take care of the
-> > > > channel loses or heat dissipation etc, Then I assumed the gear
-> > > > negotiation between host and device should fail for the higher
-> > > > gear and driver can have
-> > > a re-try logic to re-init / re-try =22power mode change=22 at the low=
-er
-> > > gear. Is that not possible / feasible?
-> > > >
-> > >
-> > > I don't see why we need to add extra logic in the UFS driver if we
-> > > can extract that information from DT.
-> > >
-> > You didn=E2=80=99t=20answer=20my=20question=20entirely,=20I=20am=20stil=
-l=20not=20able=20to=0D=0A>=20>=20visualised=20how=20come=20Linkup=20is=20ha=
-ppening=20in=20higher=20gear=20and=20then=20Suddenly=0D=0A>=20it=20is=20fai=
-ling=20and=20we=20need=20to=20reduce=20the=20gear=20to=20solve=20that?=0D=
-=0A>=20=0D=0A>=20Oh=20well,=20this=20is=20the=20source=20of=20confusion=20h=
-ere.=20I=20didn't=20(also=20the=20patch)=20claim=0D=0A>=20that=20the=20link=
-=20up=20will=20happen=20with=20higher=20speed.=20It=20will=20most=20likely=
-=20fail=20if=20it=0D=0A>=20couldn't=20operate=20at=20the=20higher=20speed=
-=20and=20that's=20why=20we=20need=20to=20limit=20it=20to=0D=0A>=20lower=20g=
-ear/mode=20*before*=20bringing=20the=20link=20up.=0D=0A>=20=0D=0ARight,=20t=
-hat's=20why=20a=20re-try=20logic=20to=20negotiate=20a=20__working__=20power=
-=20mode=20change=20can=20help,=20instead=20of=20introducing=20new=20binding=
-=20for=20this=20case.=0D=0AAnd=20that=20approach=20can=20be=20useful=20for=
-=20many=20platforms.=0D=0AAnyway=20coming=20back=20with=20the=20same=20poin=
-t=20again=20and=20again=20is=20not=20productive.=0D=0AI=20gave=20my=20opini=
-on=20and=20suggestions.=20Rest=20is=20on=20the=20maintainers.=0D=0A=0D=0A>=
-=20As=20you=20can=20see,=20the=20driver=20patch=20is=20parsing=20the=20limi=
-ts=20in=20its=0D=0A>=20ufs_hba_variant_ops::init()=20callback,=20which=20ge=
-ts=20called=20during=0D=0A>=20ufshcd_hba_init().=0D=0A>=20=0D=0A>=20-=20Man=
-i=0D=0A>=20=0D=0A>=20--=0D=0A>=20=E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=
-=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=E0=AF=8D=20=E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=
-=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=E0=AF=8D=0D=0A=0D=0A
+> >-	pneg_ctxt =3D (*total_len) + (char *)req;
+> >-	req->NegotiateContextOffset =3D cpu_to_le32(*total_len);
+> >+	/*
+> >+	 * secondary channels don't have the hostname field populated
+> >+	 * use the hostname field in the primary channel instead
+> >+	 */
+> >+	pserver =3D SERVER_IS_CHAN(server) ? server->primary_server : server;
+> >+	offset +=3D smb2_size_netname_ctxt(pserver);
+> =
+
+> If you're keeping data_len=3D400 above, you could just drop
+> smb2_size_netname_ctxt() altogether and use
+> "ALIGN8(sizeof(struct smb2_neg_context) + 400)" directly here.
+
+Yeah.  Probably would make sense to do that with a comment saying why 400.
+
+David
+
 
