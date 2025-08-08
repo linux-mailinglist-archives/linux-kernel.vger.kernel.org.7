@@ -1,217 +1,129 @@
-Return-Path: <linux-kernel+bounces-760686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE514B1EED0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:23:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1ABB1EED3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E44CAA2432
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:23:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE64F1AA7A69
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E90026560A;
-	Fri,  8 Aug 2025 19:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4720F276030;
+	Fri,  8 Aug 2025 19:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="plzMRfoK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="uaPzr9SV"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD61B35948;
-	Fri,  8 Aug 2025 19:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0BA35948;
+	Fri,  8 Aug 2025 19:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754681016; cv=none; b=q+4WZixG3/KmjwgpVRj1r1726U/Hcl76AyKeJlfO5rNuX+CbVogwYhOkNIb7rbvA+GaacBE+IyLONfX0Pai3+6DSOybi87KSBy1EcQs7Q1NME0UmeQmW21l2K6WvpkWtKIOuETL6mrwtwoWtZec1XV0JIka3Kg0udyJ7f/w0LAk=
+	t=1754681173; cv=none; b=Sj2nv4dN+bQPVoE2uFjf9d2FZWtc7PjNqBzp5h1OrLhQqj+73idlCWD+rydry5vfpW3vsrv1LxdLQyJMTXHQwdLE4eRiM/AGKDCTsmJdBEDboMDq2X3VWQpWCnp0Ft9jzwZb5LU9HDjNvZppZEequLhwVwPORwdqMdVszSEKn38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754681016; c=relaxed/simple;
-	bh=6Ofhmtq8iEsDzcVOKThUvKTpA7BPiY9F0Z4vOfmDs2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ERExv9z7O6cRMp8lFGZFD8CY43y9MWTSBIeoXD7F+LMdf4QfN+GjUvBk4RJMDn9teNRIpgHddE5+P+V2DLsUdmJtPq1C6hG0WjQGhNAe5giWVFdBdoBSzoCZDhAutUQHj+1AIm525NafxYspMk6vEAeyVoXAIikpEGP0aBtV/N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=plzMRfoK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD915C4CEED;
-	Fri,  8 Aug 2025 19:23:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754681016;
-	bh=6Ofhmtq8iEsDzcVOKThUvKTpA7BPiY9F0Z4vOfmDs2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=plzMRfoKKj00EHCjizTYsC0QXluoZRkzypvA7ufuitDfDkZ6MGRkC7gOi3AXjBoas
-	 eEApQWJjhzAioABwm7WoQlqDhXwbDQQ7ryUBVmTrq2UamZ5gJtf1ohYIh2Il8qxTyU
-	 114plSjiThETFJqoN2ERa/x2v/Yj5q3M1eRMq9PHqZQ7Rof/JUrprBsngnGCBBadq5
-	 qNtu1kdm26HoxIRJ99herUmnwGqx4T+WQNFiKRdTNwmPrYcacXydZSGwgdOOoQN/24
-	 HxVzdeXhtZsUZ/4xJLOmzkU5+/LUO85ym4ChIRfyGXMh0t9UIkJhXnenugWniH4l26
-	 qgP3FhvwPNayA==
-Date: Fri, 8 Aug 2025 14:23:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Lakshay Piplani <lakshay.piplani@nxp.com>
-Cc: alexandre.belloni@bootlin.com, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	vikash.bansal@nxp.com, priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com
-Subject: Re: [PATCH 1/2] rtc: pcf85363: add support for timestamp and watchdog
-Message-ID: <20250808152900.GA125413-robh@kernel.org>
-References: <20250808112246.4169280-1-lakshay.piplani@nxp.com>
+	s=arc-20240116; t=1754681173; c=relaxed/simple;
+	bh=jSHJ5Igu+EfYrB7/7crOIwWZ2z5j2gFmGxNzvUcT95Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XjD0gBMx6xkzn0HI8tA9ZBLUKFnhy9cZh5uWvI4WgQmpunLXwprH5j0afId1aWF41v5YGBXzDp0Jz1uTFHzL4VDYJM99G4O3uuiVleP36BMl230i8T2ctpDI2jAWFExKxqPPZZnMOEasvu9aLM6r4Zt5EHkCWSuYoHCnbKhXiWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=uaPzr9SV; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bzDXX1mdVzlgqTr;
+	Fri,  8 Aug 2025 19:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1754681162; x=1757273163; bh=+WqddrqesMHWRXYIHDcFITv9
+	cz7wR/vZjFGcvozYkb4=; b=uaPzr9SV2UC1I7yqmKIgrlq57yCPM9ffxkxylJuk
+	OGxuPKX6z0qMbuUKYRNv33UVz3etTy7CA4QzCg5HMDy+0UT5xru+v2Z8XeTWn+R9
+	TXjuQuA1OoUf0BlrXqyKlLv6lqNkK4Q2CyAuxGLwquE9QfiCXdRNVbxtbh2BkbkY
+	uI7his+JPyiVrMqEmIyKTj6Wp0QmeBaoC3XAs07hUTw/sEa0a0yXU/9/K6VuepY9
+	0jpv/G02JFqTB3FrsthyQG4KbuTc9EtuY4GSlQRTPTTMcofkOojHbgIKcyLodoqJ
+	8lQ8TPzxsMVknbXIpo0W3+MmVExwXu3Dv/99b+clFIzeqw==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id NWp-P6Sw4AXp; Fri,  8 Aug 2025 19:26:02 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bzDXQ469KzlgqTq;
+	Fri,  8 Aug 2025 19:25:57 +0000 (UTC)
+Message-ID: <411260ff-d5c7-4f82-8c47-e66e4828c2b1@acm.org>
+Date: Fri, 8 Aug 2025 12:25:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808112246.4169280-1-lakshay.piplani@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] scsi: sd: Fix build warning in sd_revalidate_disk()
+To: Abinash Singh <abinashsinghlalotra@gmail.com>, dlemoal@kernel.org
+Cc: James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org, martin.petersen@oracle.com
+References: <4786fbb9-5d25-4d86-b902-61cc78a9b138@kernel.org>
+ <20250808182807.12625-1-abinashsinghlalotra@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250808182807.12625-1-abinashsinghlalotra@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 08, 2025 at 04:52:45PM +0530, Lakshay Piplani wrote:
-> Extend the device tree binding for NXP PCF85263/PCF85363 RTC with:
-> - Timestamp mode configuration
-> - Watchdog timer configuration
+On 8/8/25 11:28 AM, Abinash Singh wrote:
+> A build warning was triggered due to excessive stack usage in
+> sd_revalidate_disk():
+ > [ ... ]
 
-The subject should match the subsystem. So:
+New versions of a patch should be posted as a new email thread instead
+of a reply. Otherwise there is a significant chance that the new version
+gets overlooked.
 
-"dt-bindings: rtc: nxp,pcf85363: ..."
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index 4a68b2ab2804..c7fbfb801b40 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -3696,10 +3696,10 @@ static int sd_revalidate_disk(struct gendisk *disk)
+>   	struct scsi_disk *sdkp = scsi_disk(disk);
+>   	struct scsi_device *sdp = sdkp->device;
+>   	sector_t old_capacity = sdkp->capacity;
+> -	struct queue_limits lim;
+> -	unsigned char *buffer;
+> +	struct queue_limits *lim = NULL;
+> +	unsigned char *buffer = NULL;
+>   	unsigned int dev_max;
+> -	int err;
+> +	int err = 0;
+>   
+>   	SCSI_LOG_HLQUEUE(3, sd_printk(KERN_INFO, sdkp,
+>   				      "sd_revalidate_disk\n"));
+> @@ -3711,6 +3711,13 @@ static int sd_revalidate_disk(struct gendisk *disk)
+>   	if (!scsi_device_online(sdp))
+>   		goto out;
+>   
+> +	lim = kmalloc(sizeof(*lim), GFP_KERNEL);
+> +	if (!lim) {
+> +		sd_printk(KERN_WARNING, sdkp,
+> +			"sd_revalidate_disk: Disk limit allocation failure.\n");
+> +		goto out;
+> +	}
 
-> 
-> Also introduce a new header 'pcf85363-tsr.h' to expose
-> macros for timestamp mode fields, improving readability
-> of device tree file.
-> 
-> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
-> ---
->  .../devicetree/bindings/rtc/nxp,pcf85363.yaml | 44 ++++++++++++++++++-
->  include/dt-bindings/rtc/pcf85363-tsr.h        | 28 ++++++++++++
->  2 files changed, 71 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/rtc/pcf85363-tsr.h
-> 
-> diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85363.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf85363.yaml
-> index 52aa3e2091e9..2d2b52f7a9ba 100644
-> --- a/Documentation/devicetree/bindings/rtc/nxp,pcf85363.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85363.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/rtc/nxp,pcf85363.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Philips PCF85263/PCF85363 Real Time Clock
-> +title: NXP PCF85263/PCF85363 Real Time Clock
->  
->  maintainers:
->    - Alexandre Belloni <alexandre.belloni@bootlin.com>
-> @@ -39,6 +39,41 @@ properties:
->    start-year: true
->    wakeup-source: true
->  
-> +  nxp,timestamp-mode:
-> +    description: |
-> +      Defines timestamp modes for TSR1, TSR2, and TSR3.
+Returning a negative value for some errors and zero in case of success
+or in case of memory allocation failure is confusing.
 
-You need to define what timestamp mode is.
+Since none of the sd_revalidate_disk() callers care about the value
+returned by this function, please change the return type of this
+function into 'void'. Since that change is logically independent of 
+allocating 'lim' dynamically, that change probably should be a patch on
+its own.
 
-> +      Use macros from `dt-bindings/rtc/pcf85363-tsr.h`.
-> +    items:
-> +      - description: TSR1 mode (e.g., PCF85363_TSR1_FE)
-> +      - description: TSR2 mode (e.g., PCF85363_TSR2_LB)
-> +      - description: TSR3 mode (e.g., PCF85363_TSR3_LV)
-> +
-> +  nxp,enable-watchdog:
-> +    type: boolean
-> +    description: |
-> +      If present, the RTC watchdog timer is enabled and integrated with Linux watchdog subsystem.
+Thanks,
 
-This is OS policy and doesn't belong in DT. If it did, nothing NXP 
-specific about it.
-
-You don't need '|' when there is no formatting to preserve, and lines 
-should wrap at 80 char.
-
-> +
-> +  nxp,watchdog-timeout:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 31
-> +    default: 10
-> +    description: |
-> +      Watchdog timeout value in seconds. Allowed values range from 1 to 31.
-
-There's already a standard property for this.
-
-> +
-> +  nxp,watchdog-stepsize:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 3
-> +    default: 0
-> +    description: |
-> +      Watchdog step size select: 0=0.25Hz, 1=1Hz, 2=4Hz, 3=16Hz.
-
-What's step size? This is counter resolution. Shouldn't this just be the 
-best value based on the timeout period.
-
-> +
-> +  nxp,watchdog-repeat:
-> +    type: boolean
-> +    description: |
-> +      If present, sets the watchdog to repeat mode. If omitted, watchdog runs in one-shot mode.
-
-Also seems like OS policy.
-
-> +
->  required:
->    - compatible
->    - reg
-> @@ -47,6 +82,7 @@ additionalProperties: false
->  
->  examples:
->    - |
-> +    #include <dt-bindings/rtc/pcf85363-tsr.h>
->      i2c {
->          #address-cells = <1>;
->          #size-cells = <0>;
-> @@ -56,5 +92,11 @@ examples:
->              reg = <0x51>;
->              #clock-cells = <0>;
->              quartz-load-femtofarads = <12500>;
-> +            wakeup-source;
-> +            nxp,timestamp-mode = <PCF85363_TSR1_FE PCF85363_TSR2_LB PCF85363_TSR3_LV>;
-> +            nxp,enable-watchdog;
-> +            nxp,watchdog-timeout = <10>;
-> +            nxp,watchdog-stepsize = <0>;
-> +            nxp,watchdog-repeat;
->          };
->      };
-> diff --git a/include/dt-bindings/rtc/pcf85363-tsr.h b/include/dt-bindings/rtc/pcf85363-tsr.h
-> new file mode 100644
-> index 000000000000..1fb5b9b3601e
-> --- /dev/null
-> +++ b/include/dt-bindings/rtc/pcf85363-tsr.h
-> @@ -0,0 +1,28 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +/*
-> + * Copyright 2025 NXP
-> + */
-> +
-> +#ifndef _DT_BINDINGS_RTC_PCF85363_TSR_H
-> +#define _DT_BINDINGS_RTC_PCF85363_TSR_H
-> +
-> +/* TSR1 modes */
-> +#define PCF85363_TSR1_NONE 0x00
-> +#define PCF85363_TSR1_FE 0x01
-> +#define PCF85363_TSR1_LE 0x02
-> +
-> +/* TSR2 modes */
-> +#define PCF85363_TSR2_NONE 0x00
-> +#define PCF85363_TSR2_FB 0x01
-> +#define PCF85363_TSR2_LB 0x02
-> +#define PCF85363_TSR2_LV 0x03
-> +#define PCF85363_TSR2_FE 0x04
-> +#define PCF85363_TSR2_LE 0x05
-> +
-> +/* TSR3 modes */
-> +#define PCF85363_TSR3_NONE 0x00
-> +#define PCF85363_TSR3_FB 0x01
-> +#define PCF85363_TSR3_LB 0x02
-> +#define PCF85363_TSR3_LV 0x03
-> +
-> +#endif /* _DT_BINDINGS_RTC_PCF85363_TSR_H */
-> -- 
-> 2.25.1
-> 
+Bart.
 
