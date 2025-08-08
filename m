@@ -1,129 +1,350 @@
-Return-Path: <linux-kernel+bounces-759937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1058CB1E4AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:49:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C01B1E4B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBE894E3CBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:49:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1661886D38
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8397B266565;
-	Fri,  8 Aug 2025 08:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B3C265CDD;
+	Fri,  8 Aug 2025 08:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXqaUEzE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CuhsXjoI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D0E1BC5C;
-	Fri,  8 Aug 2025 08:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DCE199BC
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754642957; cv=none; b=LaQiL1+hG/G1go7mAx4CMLBK4LoXNdQufyDizS+akyvOxy99uKBIxtrCeD2fTueYX6E5CtxOHZ3euz6XA+bIrNocRu5HVzK4NXbFHrvJId8UrwCy31he/Eeu5n0WGnZiDFzp7fJOjRB/pdNFH/sBnybwPcv14mC33AMmctgiDtQ=
+	t=1754642973; cv=none; b=UnpYY2PkEEi5/AqG7k4XNwM5IBbR/aRRxqw6x4DSlA8gB4PTdsdOhWJ0sXBubJcube9Aitr0X8ILOo0a/WURd7eoqhn53+tcsn/IpKV0SQN3qzA0GTfIK8RbO55hYWjq/ds3MSnXOspmohwXkq5hike29nrVh+NjCQhMGbRYrsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754642957; c=relaxed/simple;
-	bh=eLQfRVKg5seqR9xZt6I+jvxaFNgVZxZH7nAhxSwK5+k=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=cqGHJgZGkXl5IwXUlHJZYuRQObzJhHh3niuBG/SwI+b4E8chJdD6k8nbxcyuWYY6Pkk99aM0d/go3iIrNfZj7h0o2dtYTJlL/DfoQz1PDt+sGp5EJX5VWdQAysoZBTabkZz6H7tmU4kA4A6plDRSIpd61dpZ3HZPyUFZFjAoWSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXqaUEzE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800F0C4CEED;
-	Fri,  8 Aug 2025 08:49:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754642957;
-	bh=eLQfRVKg5seqR9xZt6I+jvxaFNgVZxZH7nAhxSwK5+k=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=tXqaUEzEEoOW33P+l5GqaAIG/jRdBdurHU7hcVueCFOIPOnRZrQjJbmu8oj85R4Ju
-	 0Nsy8mKv2UUMipDbNPfrrQTxL+fGAlXwJyXQYWG1eHIs0nYNZv/1L/OgsnYH/Xq8gX
-	 iVBoWaVZ6NkQqfnDoxVosy3PMKOTRNIIj3yXmDro+O+ViQ8PNfRSRu6s/0qGxCrYKq
-	 ko9J0Fuo7dyPJaM1KG3WZoC+ENljjU90zMPS6o2Aj1BE1Od6Zyer/YgenSFkLowu+h
-	 +sZDx2fZwY2FqkCGqYPrlxu5Hum6lxsE1XqR/Z6ThAnyb0FmLoQk9Ge6EZLfVjrn3z
-	 RWZEgnOJNNFYA==
+	s=arc-20240116; t=1754642973; c=relaxed/simple;
+	bh=6O42uKzCpFUcbZlQ1jvgGj5DaA5oBnfRdxf/QpDlDaY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qb0RFifp2BEfnJXaRTOmtHBCyVp2poBse/EoeInmuE+Yt7t3fpsLIFbJBP+D5LRFR69ozCTKSgu6C/A5OZKVgGSQ7e9FYGHSL473zOSO5ip001XJQbQ95LG/arheGO01DCrYmax/gQiJyZJPvIGA7Ey31UlBTfuP7GUbblCmyYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CuhsXjoI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5787IYEJ008394
+	for <linux-kernel@vger.kernel.org>; Fri, 8 Aug 2025 08:49:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=3pf9UTCiEkFRvJbDF6ygTn3PiVAo7h2wmqA
+	MX1iZ5fA=; b=CuhsXjoIW/6uSAFp3fWT/Gz8WCv9/8U7MknFmkB5Osc0QprLUEs
+	N1JYseWgGPxCFd3268suDsw7pZzk6VSyAwmFv+fkm5Vh9de/cBy1arlhWajfqX8x
+	Z68VnQ1ejwKmdKDJB4/y6toKLP1HG4NC+9k7XFjWek9XtuxhYkHh2lbFtCpYlPwJ
+	YPsAjfPfnd31U6MG89a/1YBnEMRLJIiZSZgt3ED2EwajLe5obn3XjSJOgZ3Lu5Il
+	2LxJTCKv9ChIwjESRv5sftbxF1Mv7O7qFdIowV4+MtfRtWshWaVYvKca4P7Wm8/y
+	Cbczt/wEaNmJbFXXHf9QFhEZ8cy5T23ewUg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c8u26crx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 08:49:30 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b096d8fc3bso43036321cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:49:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754642969; x=1755247769;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3pf9UTCiEkFRvJbDF6ygTn3PiVAo7h2wmqAMX1iZ5fA=;
+        b=Y069iz2WVLI5Q6uSzX6S1+UaYH0zet7dNEKUC8BBq+NkfRgKl7JZJayaKwTnWg+LO8
+         otiyMjwXSV9ooSo09qpRO+Zz6J3p9nnZ3oTlmI8nL4yGdjcWoGmuxqwersQBIJoMINp7
+         xcNi4tnWLFmFNDYYL67DkxEAz1RfRpRlHDg4TQpqu5ZSbaxxeRnnoP+ejCvscBV34YDr
+         90ydxtawqBK88lDm24cjVXvV40M/4waEaljGLtm9g3QRHPgfqqq/f2rMQasy7+AhUBA+
+         HRn4B7jMxdQjHW9wvoHAq3/tMX5TWDoLjBJOWoj6Fd34QAM5xnG5vzEF+OrLp/yl9JWX
+         dfmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvjxELsO0lPVF5mYd66Mj/Dl2+TGaO32bJXxbJy3nwZ/Z4ecbAv0kp49/arKO7MlqCmcPBFVHB7I9tZKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4JFVvmlrVAjHEOg1veCHroyqS+lj5TL/cuxvQsPc+3BqzYQVX
+	7aRIGPDjVVa9UCqKAtB33MS3XwUfnPLuAP2rJARHjcp5e4eWJGlvOZ5UIgbkJLb3uKDaDZOd3GO
+	a6Xv2++DKylqJu6eqg2jmp7JqF7DRalCahQboJk7uSf5RggoudJj83vUlDQA8wjRXO04=
+X-Gm-Gg: ASbGncs9FA4Fh2A105g0SK6tdwkqlBomQXQGFhm1TRPjOIb/mHouI6RhfMFLbjiIx+J
+	mf6c0gOlKTIAkEyOyymQnzOTcivTdpNCLG9ySW6swmt0HnwsFWwDKpcjLlJP9KKXJsGmDCpJd1T
+	3qrwCSeonQgTW29XFhap20Qi4w8tszYqP9KH3JKAOmX3DiiNUWuHhkTtwpjrdb5zoOxD6scKNi/
+	crm5dfzST2KZ3KYgiWtVCT5bBoyO68/Y3HBHdts2mzE9i1uDnkb9OkkviesT15mJJBY3FSxVlbD
+	KbhEfDlCahdjbOavpJHD4VEj18ETJiGdChfqSGNhpu7hP7L8WWwoLJYlsqWInNRDaFFc5Zx3efO
+	4ZB8EYQelTEX/
+X-Received: by 2002:a05:622a:342:b0:4af:1b9e:e691 with SMTP id d75a77b69052e-4b0aed33436mr34723411cf.19.1754642968721;
+        Fri, 08 Aug 2025 01:49:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEIUUbriU8eW0Fd6MRXfeztAkECBAJPpSASXXP0h8u2ADULS8/UurC5WxuaoDHEOIf/o0x9UA==
+X-Received: by 2002:a05:622a:342:b0:4af:1b9e:e691 with SMTP id d75a77b69052e-4b0aed33436mr34723221cf.19.1754642968198;
+        Fri, 08 Aug 2025 01:49:28 -0700 (PDT)
+Received: from trex.. (205.red-83-60-94.dynamicip.rima-tde.net. [83.60.94.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e58400f5sm122904295e9.2.2025.08.08.01.49.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 01:49:27 -0700 (PDT)
+From: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+To: jorge.ramirez@oss.qualcomm.com, quic_vgarodia@quicinc.com,
+        quic_dikshita@quicinc.com, bryan.odonoghue@linaro.org,
+        krzk+dt@kernel.org, konradybcio@kernel.org,
+        dmitry.baryshkov@oss.qualcomm.com, mchehab@kernel.org, robh@kernel.org,
+        andersson@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/8] media: venus: Add QCM2290 support with AR50_LITE core
+Date: Fri,  8 Aug 2025 10:49:15 +0200
+Message-Id: <20250808084923.1402617-1-jorge.ramirez@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 08 Aug 2025 10:49:14 +0200
-Message-Id: <DBWX0L4LIOF6.1AVJJV0SMDQ3P@kernel.org>
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
- for io-uring cmd
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Sidong Yang" <sidong.yang@furiosa.ai>
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Caleb Sander Mateos"
- <csander@purestorage.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Arnd
- Bergmann" <arnd@arndb.de>, "Jens Axboe" <axboe@kernel.dk>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <io-uring@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
- <20250727150329.27433-3-sidong.yang@furiosa.ai>
- <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
- <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
- <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
- <DBVDWWHX8UY7.TG5OHXBZM2OX@kernel.org>
- <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
-In-Reply-To: <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: fgjLPXacrOZtS8jJMOuI3scAFN-1npSt
+X-Authority-Analysis: v=2.4 cv=Q/TS452a c=1 sm=1 tr=0 ts=6895ba1a cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=Rr2dNH5/fcnoRoBmcVUeRg==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=vaIsIKZIAAAA:8
+ a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=fiKrxSy_4L_ZQUeM1s4A:9
+ a=dawVfQjAaf238kedN5IG:22 a=rh-XPM1-DYv4t-UOgbwD:22 a=cvBusfyB2V15izCimMoJ:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: fgjLPXacrOZtS8jJMOuI3scAFN-1npSt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA5MCBTYWx0ZWRfX6cVAvuutE7ct
+ 03Ds1uW6sEujykJbda2kWpA3QU6LkTBgLskMmwZjbjBCJrHdLXqopbzt6OWbqh3gyBYFVkGI63A
+ tnHPRhyYG+WSHppPbeGU301WyW9Ao5kyrkhLhgHwX5H63ac6aXL5p4q7eiDiT2CDWgSRtcM6MMO
+ TG1wQO5dTx+P9UBQO0H14KQQjoARyqw8Oh7JXj/PzN68OdEJWT7hW8uQChVF00wqA9fA84C9fP2
+ drXCc8Pd4hyqS1cfU5c5wfo8r0wcSvyUF6hbokkvsGeflDKtHfI93yc8Iu1z87A6vMZY8vt53rp
+ c7QXJP1eWCK7vYIGigfsQ5Zo1zbpGw2HGaWE5dvfQa9IbEzaZ/yGVQX0ANZ5iyidTvkIeEdhUZT
+ t5OlTsxw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060090
 
-On Fri Aug 8, 2025 at 8:56 AM CEST, Sidong Yang wrote:
-> On Wed, Aug 06, 2025 at 03:38:24PM +0200, Benno Lossin wrote:
->> On Wed Aug 6, 2025 at 2:38 PM CEST, Daniel Almeida wrote:
->> > Hi Benno,
->> >
->> >> On 2 Aug 2025, at 07:52, Benno Lossin <lossin@kernel.org> wrote:
->> >>=20
->> >> On Fri Aug 1, 2025 at 3:48 PM CEST, Daniel Almeida wrote:
->> >>>> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrot=
-e:
->> >>>> +    #[inline]
->> >>>> +    pub fn pdu(&mut self) -> &mut MaybeUninit<[u8; 32]> {
->> >>>=20
->> >>> Why MaybeUninit? Also, this is a question for others, but I don=C2=
-=B4t think
->> >>> that `u8`s can ever be uninitialized as all byte values are valid fo=
-r `u8`.
->> >>=20
->> >> `u8` can be uninitialized. Uninitialized doesn't just mean "can take =
-any
->> >> bit pattern", but also "is known to the compiler as being
->> >> uninitialized". The docs of `MaybeUninit` explain it like this:
->> >>=20
->> >>    Moreover, uninitialized memory is special in that it does not have=
- a
->> >>    fixed value ("fixed" meaning "it won=C2=B4t change without being w=
-ritten
->> >>    to"). Reading the same uninitialized byte multiple times can give
->> >>    different results.
->> >>=20
->> >> But the return type probably should be `&mut [MaybeUninit<u8>; 32]`
->> >> instead.
->> >
->> >
->> > Right, but I guess the question then is why would we ever need to use
->> > MaybeUninit here anyways.
->> >
->> > It's a reference to a C array. Just treat that as initialized.
->>=20
->> AFAIK C uninitialized memory also is considered uninitialized in Rust.
->> So if this array is not properly initialized on the C side, this would
->> be the correct type. If it is initialized, then just use `&mut [u8; 32]`=
-.
->
-> pdu field is memory chunk for driver can use it freely. The driver usuall=
-y
-> saves a private data and read or modify it on the other context. using
-> just `&mut [u8;32]` would be simple and easy to use.
+Changes since v8:
+  v8: https://lore.kernel.org/all/20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com/
+-  patch 1/8: Add qcm2290 dt schema
+  - no change
+- patch 2/8: media: venus: Define minimum valid firmware version
+  - dev_err on failure
+- patch 3/8: Add framework to support for AR50 LITE video core
+  - pass core rather than the lite property to the hfi platform
+  - remove warnings
+- patch 4/8: HFI platform V4 capabilities
+  -no change
+- patch 5/8: Sort dt_match alphabetically
+  - new
+- patch 6/8: Add DT compatible and capabilities
+  - sort dt_match alphabetically
+- patch 7/8: Add Venus video node for 2290
+  - Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+- patch 8/8: Enable Venus on 2210 RB1 board
+  - Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-Private data is usually handled using `ForeignOwnable` in Rust. What
-kind of data would be stored there? If it's a pointer, then `&mut [u8;
-32]` would not be the correct choice.
+Changes since v7:
+  v7: https://lore.kernel.org/all/20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com/
+-  patch 1/7: Add qcm2290 dt schema
+  - extend commit message to cover IOMMU order, remove iommus minItems, alphabetic order for includes
+  - added myself as the file maintainer
+-  patch 2/7: media: venus: Define minimum valid firmware version
+  - Replaces previous patch that was able to distinguish encoder vs decoder firmware version support
+  - Now it is an all or nothing implementation (the firmware either support enc and dec or it doesn't)
+- patch 3/7: Add Support for AR50 LITE video core
+  - remove EOS support for older firmwares since we will drop support for fw < 6.0.55
+- patch 4/7: HFI platform V4 capabilities
+  - remove some hardcoded values and some ternary operations
+  - added reviewed by Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+- patch 5/7: Add DT compatible and capabilities
+  - only min_fw now required since we dont support encode/decode indepedently after 2/7
+  - added reviewed by Dikshita Agarwal <quic_dikshita@quicinc.com>
+- patch 6/7: Add Venus video node for 2290
+  - no change
+- patch 7/7: Enable Venus on 2210 RB1 board
+  - fix alphabetical order
+
+Changes since v6:
+  v6: https://lore.kernel.org/all/20250708180530.1384330-1-jorge.ramirez@oss.qualcomm.com/
+- patch 1/7: Add qcm2290 dt schema
+  - no change
+- patch 2/7: Conditionally register video nodes
+  - fixed potential NULL dereference on handling firmware errors when the encoder is not present.
+- patch 3/7: Add Support for AR50 LITE video core
+  - applied Dikshita Agarwal review comments: do not handle no-tz case, fix WD mask
+  - replaced EOS buffers for a work around (firmware should not access the eos buffers)
+     renamed venus_helper_alloc_eos_buf to venus_helper_prepare_eos_data
+- patch 4/7: HFI platform V4 capabilities
+  - removed 10 bit encoder support as per Dikshita Agarwal review
+- patch 5/7: Add DT compatible and capabilities
+  - removed frequency table as per Konrad Dybcio review (driver now uses opp)
+  - fixed bw_tables for the supported loads (remove 10 bit support)
+- patch 6/7: Add Venus video node for 2290
+  - no change
+- patch 7/7: Enable Venus on 2210 RB1 board
+  - no change
+
+Changes since v5:
+  Two additional new patches added to the set to support video encoding.
+
+- patch 1/7: Add qcm2290 dt schema
+  - added reviewed by: Bryan O'Donoghue
+  - added reviewed by: Krzysztof Kozlowski
+- patch 2/7: Conditionally register video nodes
+  - new functionality required to support AR50_LITE
+- patch 3/7: Add Support for AR50 LITE video core
+  - completely rewritten - lite platforms are extensions of previous HFI_XXX
+- patch 4/7: HFI platform V4 capabilities
+  - use HFI 4XX instead of HFI 6XX as per review
+- patch 5/7: Add DT compatible and capabilities
+  - added reviewed by: Bryan O'Donoghue
+  - enabled new option min_fw_version
+- patch 6/7: Add Venus video node for 2290
+  - added reviewed by: Konrad Dybcio
+  - removed status property
+- patch 7/7: Enable Venus on 2210 RB1 board
+  - new
+
+Changes since v4:
+- patch 1/5:
+  - added reviewed by: Krzysztof Kozlowski
+  - updated example section
+- patch 2/5:
+  - added reviewed by: Bryan O'Donoghue
+  - Fixed Co-developed-by order
+- patch 3/5:
+- patch 4/5:
+ - removed encode-node (userspace exposure)
+ - fixed Co-developed-by order
+- patch 5/5:
+ - fixed venus register region
+ - power-domain-names: one per line
+ - clock-names: one per line
+ - fixed interconnect tags
+ - empty line before subnode
+ - enable the venus node
+
+Changes since v3:
+- Fixed schema commit subject.
+
+Changes since v2:
+- Removed IS_HFI/IS_VPU macros
+- checkpatch.pl --strict fixes:
+  - convert macro to static inline to avoid argument reuse side effect
+
+Changes since v1:
+- Added IS_HFI macro usage
+- Moved schema patch to top
+- Fixed commit messages
+
+This patch series adds support for the Venus video decoder/encoder block
+present on the Qualcomm QCM2290.
+
+This series functionally depends on the following patch:
+
+  clk: qcom: gcc-qcm2290: Set HW_CTRL_TRIGGER for video GDSC
+  https://lore.kernel.org/all/20250613102245.782511-1-loic.poulain@oss.qualcomm.com/
+
+Please ensure the above patch is applied before this series.
+
+The QCM2290 integrates an AR50_LITE core, a low-power implementation of
+Venus supporting H.264, HEVC (H.265), and VP9 decoding as well as H.264
+and H.265 encoding.
+
+The series includes:
+  - DT binding schema for qcom,qcm2290-venus
+  - SoC integration via qcm2290.dtsi
+  - Resource table definitions and frequency scaling
+  - Platform capability registration for the AR50_LITE core decoding block.
+
+Limitations:
+  - The hardware does not support concurrent operation at FullHD.
+  - Encoding is not supported in firmware version before 6.0.54
+
+Firmware:
+  - This code has been tested with 6.0.52, 6.0.53, 6.0.54-PRERELEASE
+
+Some basic Tests:
+
+Decoding and Encoding were verified on the QCOM RB1 platform using
+GStreamer with V4L2-based decode plugins.
+
+The following pipelines were used for playback 1280x720 and 1920x1080
+H.264, HEVC and VP9 videos from https://www.elecard.com/videos.
+
+Decoding:
+[H.264]
+gst-launch-1.0 filesrc location=videos/xxxxx.mp4 \
+  ! qtdemux name=demux demux.video_0 ! queue ! h264parse ! v4l2h264dec \
+  ! videoconvert ! autovideosink
+
+[H.265]
+gst-launch-1.0 filesrc location=videos/xxxxx.mp4 \
+  ! qtdemux name=demux demux.video_0 ! queue ! h265parse ! v4l2h265dec \
+  ! videoconvert ! autovideosink
+
+[VP9]
+gst-launch-1.0 filesrc location=videos/xxxxx.webm \
+  ! matroskademux ! queue ! v4l2vp9dec \
+  ! videoconvert ! autovideosink
+
+Encoding:
+[H.264]
+gst-launch-1.0 videotestsrc num-buffers=30 \
+  ! video/x-raw,width=1280,height=720,framerate=30/1 \
+  ! v4l2h264enc ! h264parse ! mp4mux ! filesink location=/tmp/output.mp4
+
+[H.265]
+gst-launch-1.0 videotestsrc num-buffers=30 \
+  ! video/x-raw,width=1920,height=1080,framerate=30/1 \
+  ! v4l2h265enc ! h265parse ! mp4mux ! filesink location=/tmp/output.mp4
+
+Concurrency:
+gst-launch-1.0 -v videotestsrc num-buffers=1000 \
+  ! video/x-raw,format=NV12,width=1280,height=720,framerate=30/1 \
+  ! v4l2h264enc capture-io-mode=4 output-io-mode=2 ! h264parse \
+  ! v4l2h264dec capture-io-mode=4 output-io-mode=2 ! videoconvert \
+  ! autovideosink
+
+[Fluster]
+The H.264 decoder was also tested using the Fluster test suite
+(version: v0.4.0-12-g33566abd0964).
+ Target: GStreamer-H.264-V4L2-Gst1.0, Test Suite: JVT-AVC_V1
+ Result: 126/135 tests passed
+ Failures:
+ FM1_BT_B, FM1_FT_E, FM2_SVA_C, BA3_SVA_C, SP1_BT_A,
+ SP2_BT_B, MR6_BT_B, MR7_BT_B, MR8_BT_B
 
 ---
-Cheers,
-Benno
+
+Jorge Ramirez-Ortiz (8):
+  media: dt-bindings: venus: Add qcm2290 dt schema
+  media: venus: Define minimum valid firmware version
+  media: venus: Add framework support for AR50_LITE video core
+  media: venus: hfi_plat_v4: Add capabilities for the 4XX lite core
+  media: venus: core: Sort dt_match alphabetically.
+  media: venus: core: Add qcm2290 DT compatible and resource data
+  arm64: dts: qcom: qcm2290: Add Venus video node
+  arm64: dts: qcom: qrb2210-rb1: Enable Venus
+
+ .../bindings/media/qcom,qcm2290-venus.yaml    | 130 ++++++++++++
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi         |  55 +++++
+ arch/arm64/boot/dts/qcom/qrb2210-rb1.dts      |   4 +
+ drivers/media/platform/qcom/venus/core.c      | 109 +++++++---
+ drivers/media/platform/qcom/venus/core.h      |  18 +-
+ drivers/media/platform/qcom/venus/firmware.c  |  30 +++
+ drivers/media/platform/qcom/venus/firmware.h  |   2 +
+ drivers/media/platform/qcom/venus/helpers.c   |  12 +-
+ .../media/platform/qcom/venus/hfi_parser.c    |   2 +-
+ .../media/platform/qcom/venus/hfi_platform.c  |  23 ++-
+ .../media/platform/qcom/venus/hfi_platform.h  |  34 ++--
+ .../platform/qcom/venus/hfi_platform_v4.c     | 188 ++++++++++++++++--
+ .../platform/qcom/venus/hfi_platform_v6.c     |  33 ++-
+ drivers/media/platform/qcom/venus/hfi_venus.c |  25 ++-
+ .../media/platform/qcom/venus/hfi_venus_io.h  |   4 +
+ .../media/platform/qcom/venus/pm_helpers.c    |   2 +-
+ 16 files changed, 582 insertions(+), 89 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
+
+-- 
+2.34.1
+
 
