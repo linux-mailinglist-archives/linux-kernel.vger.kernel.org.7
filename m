@@ -1,507 +1,225 @@
-Return-Path: <linux-kernel+bounces-760163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE842B1E73C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:27:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51B6B1E747
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E7497B198F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:26:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B09A7A2FF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA89275AE3;
-	Fri,  8 Aug 2025 11:25:38 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737A2276045;
+	Fri,  8 Aug 2025 11:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="B4ST1Bxh"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629B12749DB
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93605276031
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652336; cv=none; b=qhtZDZXwKvFWh2qdk6UVZ0B3TSFxMBXv1YY8zK8xHbhTtLC7q89kKyAJvSV1buSf5wzxOf8bOklwCCVFZn0HDJQSYqRVf3kkOThbJ+bjDhcKxs7Mi7QIv/N+BDFQMRbYLAR3TFXiYr6tP9TWzxEwb+DcTTO0Ztaq1RJ6jCC09sE=
+	t=1754652349; cv=none; b=hicJ8C0Bx8qfVuo6xA9Rb+Dup4o7L3falMgrF+7mxzpN89OsO2H4uagSqCbaYfPq0f7BCwdD7Gz+fZNOaWD41RgGRDMiLmFtufyypAREO+Zj0XcTAGFl86cczbyEiOvYMyg5mXIZLLBtfmN/Fqf6XEhT21OydjBu9RKLuL5QRVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652336; c=relaxed/simple;
-	bh=KjRp50QOqJEYCucJ6EVn8veKXTqYz8rfmFK93Fs13P8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gXq2zX2LCGgi3DzmKjJfyYBK5ed/Ew4NNteU2t9kD47NVhTOYs2gVe6b2yTAoQgRmuEJGO9S4mEQELgSEvG//q2SVhO6BMuRRP8PAQU+CZ0S2B1q5hz+Uis3zmEP1C2coVblo0Gs7NjO2B0sleghJUWvUNklQ+HM5F1X8DoE13c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-881776a2c22so446599839f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:25:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754652333; x=1755257133;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1754652349; c=relaxed/simple;
+	bh=QA+SPUv+ZJM564GNbwnCFpJZjmCakzVI2B7d0dDz/P0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kj2c1CQlZK6fj+VVG2RQw06HXYbd9dhTzmWptmloG+t2OB6s5TiTj874uBIuiFeJU8gxuaVqdLH5vNcKH8RpyiXZXIViSxxufV/gwVQqV9PgUnG9FIktfQTzN2O2dRBIwmd+vkaphnJG5YzuQzzFqwdRL/sRPRpjAFsCWMdOgjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=B4ST1Bxh; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b78310b296so987828f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1754652345; x=1755257145; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=G9SKkmJQ0vqUohZuxkSO54a/10/2pDw6PsRf0BM7Caw=;
-        b=iZEyZcVhcCW/W3sgYutYxW+plnZhj3vkbx+AK8qhYGeoJ8+Il44LdC7p7wEQ46jr9n
-         yRRH/R6wyxriuPdd86+se9sYbhWBowzQnz7qY6SP+ZfQJereNGlUHoOuRJi//EVfhr3j
-         fi/qwvpq1KAVEIaVQRnwx/tqnZ+smN7UQmAwX18hX1XXQu5P2mEAJNJlCDlnTmbSYhb5
-         FGVn33sZ8RUu7CdGMav8fM4HBD23E3r2D6dvoLfgWoAlmeL2Tmj9195Sb8yz5JQ+/JY7
-         rCmDPy0+qdRlLfD6lGiBRNBd0c4BJlGB7YtrY1mWKDDCB+CIeZkyy05niIoQrsAxPueA
-         rIJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyiXxznzhtmQzqKgQXwszUkbnRWZrxdJ43IAvdc/VPzEKczpZGIJdVTg/KE+yYCQoSLxrolgoUQ/H2de4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+E8UD2E76GOi6OppyBxqi/mSlFw0YEHtW0esSmih59IK/tSFF
-	QEkb6s6GAoUsbKmAV6YY/cd4m6kiOKDq5PfvVPBGC8IwCbMqDZrjJak9m1TFPNz+gakfNZXrjnq
-	mkEJmxzTiai++NRLaLTTBS40KWNv6a5hfi5xIEwYm43qG2qUWgqBTKtg1ttM=
-X-Google-Smtp-Source: AGHT+IGOxkmPUhxv9Loki8lNbPNo6ZocbqH7QboraFb8YpKmID8NCAHd7Xu/bZ2m0lBQYRKpTRgKOhnlAmJuarcDxPUAb1BBkOLn
+        bh=1f6xy+aBOaPKs56VR9kjp6cxPwtioSpnzbBMEVe8kGI=;
+        b=B4ST1BxhwH48Z49rewmBOYuuKHqK7zc55gHqNZJJXhgFp+EHc+tKNMkCOtWvF9AWpe
+         9mmhjj/RhsSRMqZ0MSvotKyPi5Lfm3EMVWkVKE8nVKgZfFlsfGGpAkBonRcFvnInGI8Z
+         G5BgYHruv8iZCoWdS2iwvfzDF78EBuZ7YwHRfhawXE6cA2gaJQ0XECZCrUtvjIPt4OTT
+         dTo+GO7MCI70U/tuai1oAFZSUI2z5eg3KUcZeYRV3rnHigrISuz7ZRReuSuAVI8oVDfq
+         p7mIZl5brtJ3heD2P6idvBH6ItqWyjC3126U1bqz5qwqOueg09x487B1QVX5ps/qMovM
+         r4xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754652345; x=1755257145;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1f6xy+aBOaPKs56VR9kjp6cxPwtioSpnzbBMEVe8kGI=;
+        b=DUohAMTo6bLGH68JgeX/RmkhjHGYFq3F+xk9Fcql+9POGsRQPgyCf96Y8ohI7l6En6
+         Lbzsio8GSasPMAw0Sky3po7O8qNNUpDcGQq+++8gs08pIWSlWc1AWRXKrB+wqhsoXvJ4
+         GDepLH0tooQYw+3tHtPMFgs/BiDEX0mvYETJCj/S4Ecp9nuPlbPrGHNesOrpSQAjsTvm
+         g3U6BgyHXlPD4MCpZ8/UXlZid9+k6amrv3GUlB2w33lEHzq/ze6ajzzQNNjZ7aTGbjFc
+         RivxKptqSWnwmDuSxNqOljyI6PnHHg3mh51ueWQ6ADfs1KnUNe32NkICllk/nv7HMqIU
+         o+vg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQg0i+j+arGkXA+9ntgz0au3INecuq2n+Uw3g7zhud+MDwCYwkRkE/yQ2meqHGqWUSvFLe+H4eTfXcZK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5lpjPrQlX/2VdvDrKbqLh7mIyCnH6j5X2WzDI/23dZUZAdoWY
+	sY22iAoHXojOalnUK6xO1E+x4EAhICnOYQ2+/ov4AZ6YuG/IkST3HASrMqYwJjtnuOs=
+X-Gm-Gg: ASbGncuwHqMgJP30YEh1MKFgKINxhsIyhONJ0fqJM/KBqk8zB/3KWHC3SBjE9kNeEbZ
+	unTw7T8bZnMOWCY/1cmxtBRMVsUTCemn13/dGwOSIfzr1NSuhN0BPIb8BeKH2ZVbfIA5R1CUb6B
+	rxrTQnhmjcX7xXD8zwGlaBGxjIpfWc/R6InSIoVSBaUNbm5+VAi2mSII+M64zVRCGLXxfX0g+X9
+	co3kINM/6FUwJ8aFlB2TFQuaftNAQLZ8bBnTVjveytOlEJ3tmkoS/3yHa2ZC4racS/6tU2rCMup
+	Y2mF//Rd5YWo38Ec6p4z8v4ccUUBchVpTHxiiIHSenZDvMCIrEgKmOy4JBMHjlNJecyVQJKo8wj
+	0lSsG4fkScD1+H3G/thvLlo5BFQZg5TvQDboudH6PyQ==
+X-Google-Smtp-Source: AGHT+IG+d+QVEEJZwj2dMpvlEXKWBGDwCt68UnmyWGJ/cwYSS+LXI8Tj/fvC7ktt2tblrQA7hmZ3Sw==
+X-Received: by 2002:a05:6000:24c5:b0:3b7:8f49:94f7 with SMTP id ffacd0b85a97d-3b900b4d8b6mr2051559f8f.31.1754652344801;
+        Fri, 08 Aug 2025 04:25:44 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.188])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e58553f8sm141920125e9.14.2025.08.08.04.25.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 04:25:44 -0700 (PDT)
+Message-ID: <71d109a1-211a-45ee-8525-03f1859b789a@tuxon.dev>
+Date: Fri, 8 Aug 2025 14:25:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:84c2:0:b0:881:7e3a:4a37 with SMTP id
- ca18e2360f4ac-883f11e38bdmr399945939f.6.1754652333610; Fri, 08 Aug 2025
- 04:25:33 -0700 (PDT)
-Date: Fri, 08 Aug 2025 04:25:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6895dead.050a0220.7f033.005e.GAE@google.com>
-Subject: [syzbot] [cgroups?] possible deadlock in console_flush_all (4)
-From: syzbot <syzbot+d10e9d53059eb8aed654@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
-	mkoutny@suse.com, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/9] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
+ documentation for the PCIe IP on Renesas RZ/G3S
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
+ will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250708163407.GA2149616@bhelgaas>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250708163407.GA2149616@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi, Bjorn,
 
-syzbot found the following issue on:
+On 08.07.2025 19:34, Bjorn Helgaas wrote:
+> On Fri, Jul 04, 2025 at 07:14:04PM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
+>> Base Specification 4.0. It is designed for root complex applications and
+>> features a single-lane (x1) implementation. Add documentation for it.
+> 
+>> +++ b/Documentation/devicetree/bindings/pci/renesas,r9a08g045s33-pcie.yaml
+> 
+> The "r9a08g045s33" in the filename seems oddly specific.  Does it
+> leave room for descendants of the current chip that will inevitably be
+> added in the future?  Most bindings are named with a fairly generic
+> family name, e.g., "fsl,layerscape", "hisilicon,kirin", "intel,
+> keembay", "samsung,exynos", etc.
+> 
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    bus {
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +
+>> +        pcie@11e40000 {
+>> +            compatible = "renesas,r9a08g045s33-pcie";
+>> +            reg = <0 0x11e40000 0 0x10000>;
+>> +            ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x8000000>;
+>> +            dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0 0x38000000>;
+>> +            bus-range = <0x0 0xff>;
+>> +            clocks = <&cpg CPG_MOD R9A08G045_PCI_ACLK>,
+>> +                     <&cpg CPG_MOD R9A08G045_PCI_CLKL1PM>;
+>> +            clock-names = "aclk", "pm";
+>> +            resets = <&cpg R9A08G045_PCI_ARESETN>,
+>> +                     <&cpg R9A08G045_PCI_RST_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_GP_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_PS_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_RSM_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_CFG_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_LOAD_B>;
+>> +            reset-names = "aresetn", "rst_b", "rst_gp_b", "rst_ps_b",
+>> +                          "rst_rsm_b", "rst_cfg_b", "rst_load_b";
+>> +            interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>,
+>> +                         <GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH>;
+>> +            interrupt-names = "serr", "serr_cor", "serr_nonfatal",
+>> +                              "serr_fatal", "axi_err", "inta",
+>> +                              "intb", "intc", "intd", "msi",
+>> +                              "link_bandwidth", "pm_pme", "dma",
+>> +                              "pcie_evt", "msg", "all";
+>> +            #interrupt-cells = <1>;
+>> +            interrupt-controller;
+>> +            interrupt-map-mask = <0 0 0 7>;
+>> +            interrupt-map = <0 0 0 1 &pcie 0 0 0 0>, /* INT A */
+>> +                            <0 0 0 2 &pcie 0 0 0 1>, /* INT B */
+>> +                            <0 0 0 3 &pcie 0 0 0 2>, /* INT C */
+>> +                            <0 0 0 4 &pcie 0 0 0 3>; /* INT D */
+> 
+> The spec styles these closed up: "INTA", "INTB", etc.
 
-HEAD commit:    d9104cec3e8f Merge tag 'bpf-next-6.17' of git://git.kernel..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14464ea2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ac0888b9ad46cd69
-dashboard link: https://syzkaller.appspot.com/bug?extid=d10e9d53059eb8aed654
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140a62f0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120a62f0580000
+I'll update it.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ed717a4a878a/disk-d9104cec.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/08035d746f31/vmlinux-d9104cec.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7b5bf8caca80/bzImage-d9104cec.xz
+> 
+>> +            device_type = "pci";
+>> +            num-lanes = <1>;
+>> +            #address-cells = <3>;
+>> +            #size-cells = <2>;
+>> +            power-domains = <&cpg>;
+>> +            vendor-id = <0x1912>;
+>> +            device-id = <0x0033>;
+> 
+> Some of this is specific to a Root Port, not to the Root Complex as a
+> whole.  E.g., device-type = "pci", num-lanes, vendor-id, device-id,
+> are Root Port properties.  Some of the resets, clocks, and interrupts
+> might be as well.
+> 
+> I really want to separate those out because even though this
+> particular version of this PCIe controller only supports a single Root
+> Port, there are other controllers (and possibly future iterations of
+> this controller) that support multiple Root Ports, and it makes
+> maintenance easier if the DT bindings and the driver structures are
+> similar.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d10e9d53059eb8aed654@syzkaller.appspotmail.com
+I'll ask the Renesas HW team about the resets and clocks as the HW manual
+don't offer any information about this.
 
-FAULT_INJECTION: forcing a failure.
-name fail_usercopy, interval 1, probability 0, space 0, times 1
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-syzkaller-06574-gd9104cec3e8f #0 Not tainted
-------------------------------------------------------
-syz-executor502/5847 is trying to acquire lock:
-ffffffff8e130720 (console_owner){....}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:336 [inline]
-ffffffff8e130720 (console_owner){....}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:346 [inline]
-ffffffff8e130720 (console_owner){....}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:288 [inline]
-ffffffff8e130720 (console_owner){....}-{0:0}, at: console_flush_all+0x13a/0xc40 kernel/printk/printk.c:3203
+If they will confirm some of the clocks and/or resets could be controlled
+as part of a port then patch 3/9 "PCI: of_property: Restore the arguments
+of the next level parent" in this series will not be needed anymore. Would
+you prefer me to abandon it or post it as individual patch, if any?
 
-but task is already holding lock:
-ffff8880b8739f58 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:636
+> 
+> This email includes pointers to sample DT bindings and driver code
+> that is structured to allow multiple Root Ports:
+> 
+>   https://lore.kernel.org/linux-pci/20250625221653.GA1590146@bhelgaas/
 
-which lock already depends on the new lock.
+Thank you for this!
 
+And, thank you for your review,
+Claudiu
 
-the existing dependency chain (in reverse order) is:
+> 
+> Bjorn
 
--> #4 (&rq->__lock){-.-.}-{2:2}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       _raw_spin_lock_nested+0x32/0x50 kernel/locking/spinlock.c:378
-       raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:636
-       raw_spin_rq_lock kernel/sched/sched.h:1522 [inline]
-       task_rq_lock+0xbc/0x470 kernel/sched/core.c:736
-       cgroup_move_task+0x92/0x2a0 kernel/sched/psi.c:1174
-       css_set_move_task+0x658/0x9e0 kernel/cgroup/cgroup.c:918
-       cgroup_post_fork+0x1ef/0x790 kernel/cgroup/cgroup.c:6759
-       copy_process+0x3862/0x3c00 kernel/fork.c:2416
-       kernel_clone+0x21e/0x840 kernel/fork.c:2602
-       user_mode_thread+0xdd/0x140 kernel/fork.c:2680
-       rest_init+0x23/0x300 init/main.c:709
-       start_kernel+0x3a9/0x410 init/main.c:1097
-       x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
-       x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
-       common_startup_64+0x13e/0x147
-
--> #3 (&p->pi_lock){-.-.}-{2:2}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
-       class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:557 [inline]
-       try_to_wake_up+0x6e/0x1290 kernel/sched/core.c:4210
-       __wake_up_common kernel/sched/wait.c:90 [inline]
-       __wake_up_common_lock+0x137/0x1f0 kernel/sched/wait.c:107
-       tty_port_default_wakeup+0xa2/0xf0 drivers/tty/tty_port.c:69
-       serial8250_tx_chars+0x72e/0x970 drivers/tty/serial/8250/8250_port.c:1728
-       serial8250_handle_irq+0x633/0xbb0 drivers/tty/serial/8250/8250_port.c:1836
-       serial8250_default_handle_irq+0xbf/0x1e0 drivers/tty/serial/8250/8250_port.c:1856
-       serial8250_interrupt+0x8d/0x160 drivers/tty/serial/8250/8250_core.c:82
-       __handle_irq_event_percpu+0x289/0x980 kernel/irq/handle.c:158
-       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
-       handle_irq_event+0x8b/0x1e0 kernel/irq/handle.c:210
-       handle_edge_irq+0x23b/0x9f0 kernel/irq/chip.c:849
-       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
-       handle_irq arch/x86/kernel/irq.c:254 [inline]
-       call_irq_handler arch/x86/kernel/irq.c:266 [inline]
-       __common_interrupt+0x143/0x250 arch/x86/kernel/irq.c:292
-       common_interrupt+0xb6/0xe0 arch/x86/kernel/irq.c:285
-       asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-       native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-       pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:81
-       arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
-       default_idle+0x13/0x20 arch/x86/kernel/process.c:757
-       default_idle_call+0x74/0xb0 kernel/sched/idle.c:122
-       cpuidle_idle_call kernel/sched/idle.c:190 [inline]
-       do_idle+0x1e8/0x510 kernel/sched/idle.c:330
-       cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:428
-       rest_init+0x2de/0x300 init/main.c:744
-       start_kernel+0x3a9/0x410 init/main.c:1097
-       x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
-       x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
-       common_startup_64+0x13e/0x147
-
--> #2 (&tty->write_wait){-.-.}-{3:3}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
-       __wake_up_common_lock+0x2f/0x1f0 kernel/sched/wait.c:106
-       tty_port_default_wakeup+0xa2/0xf0 drivers/tty/tty_port.c:69
-       serial8250_tx_chars+0x72e/0x970 drivers/tty/serial/8250/8250_port.c:1728
-       serial8250_handle_irq+0x633/0xbb0 drivers/tty/serial/8250/8250_port.c:1836
-       serial8250_default_handle_irq+0xbf/0x1e0 drivers/tty/serial/8250/8250_port.c:1856
-       serial8250_interrupt+0x8d/0x160 drivers/tty/serial/8250/8250_core.c:82
-       __handle_irq_event_percpu+0x289/0x980 kernel/irq/handle.c:158
-       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
-       handle_irq_event+0x8b/0x1e0 kernel/irq/handle.c:210
-       handle_edge_irq+0x23b/0x9f0 kernel/irq/chip.c:849
-       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
-       handle_irq arch/x86/kernel/irq.c:254 [inline]
-       call_irq_handler arch/x86/kernel/irq.c:266 [inline]
-       __common_interrupt+0x143/0x250 arch/x86/kernel/irq.c:292
-       common_interrupt+0xb6/0xe0 arch/x86/kernel/irq.c:285
-       asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-       native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-       pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:81
-       arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
-       default_idle+0x13/0x20 arch/x86/kernel/process.c:757
-       default_idle_call+0x74/0xb0 kernel/sched/idle.c:122
-       cpuidle_idle_call kernel/sched/idle.c:190 [inline]
-       do_idle+0x1e8/0x510 kernel/sched/idle.c:330
-       cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:428
-       rest_init+0x2de/0x300 init/main.c:744
-       start_kernel+0x3a9/0x410 init/main.c:1097
-       x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
-       x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
-       common_startup_64+0x13e/0x147
-
--> #1 (&port_lock_key){-.-.}-{3:3}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0xa7/0xf0 kernel/locking/spinlock.c:162
-       uart_port_lock_irqsave include/linux/serial_core.h:717 [inline]
-       serial8250_console_write+0x17e/0x1ba0 drivers/tty/serial/8250/8250_port.c:3355
-       console_emit_next_record kernel/printk/printk.c:3138 [inline]
-       console_flush_all+0x728/0xc40 kernel/printk/printk.c:3226
-       __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
-       console_unlock+0xc4/0x270 kernel/printk/printk.c:3325
-       vprintk_emit+0x5b7/0x7a0 kernel/printk/printk.c:2450
-       _printk+0xcf/0x120 kernel/printk/printk.c:2475
-       register_console+0xa8b/0xf90 kernel/printk/printk.c:4125
-       univ8250_console_init+0x3a/0x70 drivers/tty/serial/8250/8250_core.c:516
-       console_init+0x10e/0x430 kernel/printk/printk.c:4323
-       start_kernel+0x254/0x410 init/main.c:1035
-       x86_64_start_reservations+0x24/0x30 arch/x86/kernel/head64.c:307
-       x86_64_start_kernel+0x143/0x1c0 arch/x86/kernel/head64.c:288
-       common_startup_64+0x13e/0x147
-
--> #0 (console_owner){....}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       console_lock_spinning_enable kernel/printk/printk.c:1924 [inline]
-       console_emit_next_record kernel/printk/printk.c:3132 [inline]
-       console_flush_all+0x6d2/0xc40 kernel/printk/printk.c:3226
-       __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
-       console_unlock+0xc4/0x270 kernel/printk/printk.c:3325
-       vprintk_emit+0x5b7/0x7a0 kernel/printk/printk.c:2450
-       _printk+0xcf/0x120 kernel/printk/printk.c:2475
-       fail_dump lib/fault-inject.c:66 [inline]
-       should_fail_ex+0x3f5/0x560 lib/fault-inject.c:174
-       strncpy_from_user+0x36/0x290 lib/strncpy_from_user.c:118
-       strncpy_from_user_nofault+0x72/0x150 mm/maccess.c:193
-       bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
-       ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:310 [inline]
-       bpf_probe_read_compat_str+0xe2/0x180 kernel/trace/bpf_trace.c:306
-       bpf_prog_56079403e473c493+0x70/0x76
-       bpf_dispatcher_nop_func include/linux/bpf.h:1322 [inline]
-       __bpf_prog_run include/linux/filter.h:718 [inline]
-       bpf_prog_run include/linux/filter.h:725 [inline]
-       __bpf_trace_run kernel/trace/bpf_trace.c:2257 [inline]
-       bpf_trace_run2+0x281/0x4b0 kernel/trace/bpf_trace.c:2298
-       __bpf_trace_tlb_flush+0xf5/0x150 include/trace/events/tlb.h:38
-       __traceiter_tlb_flush+0x76/0xd0 include/trace/events/tlb.h:38
-       __do_trace_tlb_flush include/trace/events/tlb.h:38 [inline]
-       trace_tlb_flush+0x115/0x140 include/trace/events/tlb.h:38
-       switch_mm_irqs_off+0x53e/0x7a0 arch/x86/mm/tlb.c:-1
-       context_switch kernel/sched/core.c:5335 [inline]
-       __schedule+0x109d/0x4d30 kernel/sched/core.c:6954
-       preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7281
-       irqentry_exit+0x6f/0x90 kernel/entry/common.c:196
-       asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-       lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5872
-       fs_reclaim_acquire+0x99/0x100 mm/page_alloc.c:4062
-       might_alloc include/linux/sched/mm.h:318 [inline]
-       slab_pre_alloc_hook mm/slub.c:4099 [inline]
-       slab_alloc_node mm/slub.c:4177 [inline]
-       kmem_cache_alloc_lru_noprof+0x49/0x3d0 mm/slub.c:4216
-       __d_alloc+0x36/0x7a0 fs/dcache.c:1690
-       d_alloc_pseudo+0x21/0xc0 fs/dcache.c:1821
-       alloc_path_pseudo fs/file_table.c:363 [inline]
-       alloc_file_pseudo+0xcc/0x210 fs/file_table.c:379
-       __anon_inode_getfile fs/anon_inodes.c:166 [inline]
-       __anon_inode_getfd fs/anon_inodes.c:291 [inline]
-       anon_inode_getfd+0xca/0x1b0 fs/anon_inodes.c:326
-       bpf_enable_runtime_stats kernel/bpf/syscall.c:5829 [inline]
-       bpf_enable_stats+0xdc/0x140 kernel/bpf/syscall.c:5850
-       __sys_bpf+0x325/0x870 kernel/bpf/syscall.c:6105
-       __do_sys_bpf kernel/bpf/syscall.c:6132 [inline]
-       __se_sys_bpf kernel/bpf/syscall.c:6130 [inline]
-       __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6130
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  console_owner --> &p->pi_lock --> &rq->__lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&rq->__lock);
-                               lock(&p->pi_lock);
-                               lock(&rq->__lock);
-  lock(console_owner);
-
- *** DEADLOCK ***
-
-7 locks held by syz-executor502/5847:
- #0: ffffffff8e1bb9c8 (bpf_stats_enabled_mutex){+.+.}-{4:4}, at: bpf_enable_runtime_stats kernel/bpf/syscall.c:5821 [inline]
- #0: ffffffff8e1bb9c8 (bpf_stats_enabled_mutex){+.+.}-{4:4}, at: bpf_enable_stats+0x94/0x140 kernel/bpf/syscall.c:5850
- #1: ffffffff8e243360 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:318 [inline]
- #1: ffffffff8e243360 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:4099 [inline]
- #1: ffffffff8e243360 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:4177 [inline]
- #1: ffffffff8e243360 (fs_reclaim){+.+.}-{0:0}, at: kmem_cache_alloc_lru_noprof+0x49/0x3d0 mm/slub.c:4216
- #2: ffffffff8e255260 (mmu_notifier_invalidate_range_start){+.+.}-{0:0}, at: fs_reclaim_acquire+0x7d/0x100 mm/page_alloc.c:4062
- #3: ffff8880b8739f58 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:636
- #4: ffffffff8e13c4e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #4: ffffffff8e13c4e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #4: ffffffff8e13c4e0 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2256 [inline]
- #4: ffffffff8e13c4e0 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run2+0x186/0x4b0 kernel/trace/bpf_trace.c:2298
- #5: ffffffff8e130780 (console_lock){+.+.}-{0:0}, at: _printk+0xcf/0x120 kernel/printk/printk.c:2475
- #6: ffffffff8e018050 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:336 [inline]
- #6: ffffffff8e018050 (console_srcu){....}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:346 [inline]
- #6: ffffffff8e018050 (console_srcu){....}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:288 [inline]
- #6: ffffffff8e018050 (console_srcu){....}-{0:0}, at: console_flush_all+0x13a/0xc40 kernel/printk/printk.c:3203
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5847 Comm: syz-executor502 Not tainted 6.16.0-syzkaller-06574-gd9104cec3e8f #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- console_lock_spinning_enable kernel/printk/printk.c:1924 [inline]
- console_emit_next_record kernel/printk/printk.c:3132 [inline]
- console_flush_all+0x6d2/0xc40 kernel/printk/printk.c:3226
- __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
- console_unlock+0xc4/0x270 kernel/printk/printk.c:3325
- vprintk_emit+0x5b7/0x7a0 kernel/printk/printk.c:2450
- _printk+0xcf/0x120 kernel/printk/printk.c:2475
- fail_dump lib/fault-inject.c:66 [inline]
- should_fail_ex+0x3f5/0x560 lib/fault-inject.c:174
- strncpy_from_user+0x36/0x290 lib/strncpy_from_user.c:118
- strncpy_from_user_nofault+0x72/0x150 mm/maccess.c:193
- bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
- ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:310 [inline]
- bpf_probe_read_compat_str+0xe2/0x180 kernel/trace/bpf_trace.c:306
- bpf_prog_56079403e473c493+0x70/0x76
- bpf_dispatcher_nop_func include/linux/bpf.h:1322 [inline]
- __bpf_prog_run include/linux/filter.h:718 [inline]
- bpf_prog_run include/linux/filter.h:725 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2257 [inline]
- bpf_trace_run2+0x281/0x4b0 kernel/trace/bpf_trace.c:2298
- __bpf_trace_tlb_flush+0xf5/0x150 include/trace/events/tlb.h:38
- __traceiter_tlb_flush+0x76/0xd0 include/trace/events/tlb.h:38
- __do_trace_tlb_flush include/trace/events/tlb.h:38 [inline]
- trace_tlb_flush+0x115/0x140 include/trace/events/tlb.h:38
- switch_mm_irqs_off+0x53e/0x7a0 arch/x86/mm/tlb.c:-1
- context_switch kernel/sched/core.c:5335 [inline]
- __schedule+0x109d/0x4d30 kernel/sched/core.c:6954
- preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7281
- irqentry_exit+0x6f/0x90 kernel/entry/common.c:196
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5872
-Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 cb 8e fc 10 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
-RSP: 0018:ffffc90003d4fa68 EFLAGS: 00000206
-RAX: e3643158a89e2500 RBX: 0000000000000000 RCX: e3643158a89e2500
-RDX: 0000000000030000 RSI: ffffffff8db65e8b RDI: ffffffff8be30a00
-RBP: ffffffff8215895d R08: ffffc90003d4f888 R09: 0000000000000020
-R10: 00000000b2b5dd6f R11: ffffffff819de180 R12: 0000000000000000
-R13: ffffffff8e255260 R14: 0000000000000001 R15: 0000000000000246
- fs_reclaim_acquire+0x99/0x100 mm/page_alloc.c:4062
- might_alloc include/linux/sched/mm.h:318 [inline]
- slab_pre_alloc_hook mm/slub.c:4099 [inline]
- slab_alloc_node mm/slub.c:4177 [inline]
- kmem_cache_alloc_lru_noprof+0x49/0x3d0 mm/slub.c:4216
- __d_alloc+0x36/0x7a0 fs/dcache.c:1690
- d_alloc_pseudo+0x21/0xc0 fs/dcache.c:1821
- alloc_path_pseudo fs/file_table.c:363 [inline]
- alloc_file_pseudo+0xcc/0x210 fs/file_table.c:379
- __anon_inode_getfile fs/anon_inodes.c:166 [inline]
- __anon_inode_getfd fs/anon_inodes.c:291 [inline]
- anon_inode_getfd+0xca/0x1b0 fs/anon_inodes.c:326
- bpf_enable_runtime_stats kernel/bpf/syscall.c:5829 [inline]
- bpf_enable_stats+0xdc/0x140 kernel/bpf/syscall.c:5850
- __sys_bpf+0x325/0x870 kernel/bpf/syscall.c:6105
- __do_sys_bpf kernel/bpf/syscall.c:6132 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6130 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6130
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe51845c8d9
-Code: Unable to access opcode bytes at 0x7fe51845c8af.
-RSP: 002b:00007ffe3c17a318 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007ffe3c17a330 RCX: 00007fe51845c8d9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000020
-RBP: 0000000000000001 R08: 00007ffe3c17a0b7 R09: 0000000000000140
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-CPU: 1 UID: 0 PID: 5847 Comm: syz-executor502 Not tainted 6.16.0-syzkaller-06574-gd9104cec3e8f #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- fail_dump lib/fault-inject.c:73 [inline]
- should_fail_ex+0x414/0x560 lib/fault-inject.c:174
- strncpy_from_user+0x36/0x290 lib/strncpy_from_user.c:118
- strncpy_from_user_nofault+0x72/0x150 mm/maccess.c:193
- bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
- ____bpf_probe_read_compat_str kernel/trace/bpf_trace.c:310 [inline]
- bpf_probe_read_compat_str+0xe2/0x180 kernel/trace/bpf_trace.c:306
- bpf_prog_56079403e473c493+0x70/0x76
- bpf_dispatcher_nop_func include/linux/bpf.h:1322 [inline]
- __bpf_prog_run include/linux/filter.h:718 [inline]
- bpf_prog_run include/linux/filter.h:725 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2257 [inline]
- bpf_trace_run2+0x281/0x4b0 kernel/trace/bpf_trace.c:2298
- __bpf_trace_tlb_flush+0xf5/0x150 include/trace/events/tlb.h:38
- __traceiter_tlb_flush+0x76/0xd0 include/trace/events/tlb.h:38
- __do_trace_tlb_flush include/trace/events/tlb.h:38 [inline]
- trace_tlb_flush+0x115/0x140 include/trace/events/tlb.h:38
- switch_mm_irqs_off+0x53e/0x7a0 arch/x86/mm/tlb.c:-1
- context_switch kernel/sched/core.c:5335 [inline]
- __schedule+0x109d/0x4d30 kernel/sched/core.c:6954
- preempt_schedule_irq+0xb5/0x150 kernel/sched/core.c:7281
- irqentry_exit+0x6f/0x90 kernel/entry/common.c:196
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x175/0x360 kernel/locking/lockdep.c:5872
-Code: 00 00 00 00 9c 8f 44 24 30 f7 44 24 30 00 02 00 00 0f 85 cd 00 00 00 f7 44 24 08 00 02 00 00 74 01 fb 65 48 8b 05 cb 8e fc 10 <48> 3b 44 24 58 0f 85 f2 00 00 00 48 83 c4 60 5b 41 5c 41 5d 41 5e
-RSP: 0018:ffffc90003d4fa68 EFLAGS: 00000206
-RAX: e3643158a89e2500 RBX: 0000000000000000 RCX: e3643158a89e2500
-RDX: 0000000000030000 RSI: ffffffff8db65e8b RDI: ffffffff8be30a00
-RBP: ffffffff8215895d R08: ffffc90003d4f888 R09: 0000000000000020
-R10: 00000000b2b5dd6f R11: ffffffff819de180 R12: 0000000000000000
-R13: ffffffff8e255260 R14: 0000000000000001 R15: 0000000000000246
- fs_reclaim_acquire+0x99/0x100 mm/page_alloc.c:4062
- might_alloc include/linux/sched/mm.h:318 [inline]
- slab_pre_alloc_hook mm/slub.c:4099 [inline]
- slab_alloc_node mm/slub.c:4177 [inline]
- kmem_cache_alloc_lru_noprof+0x49/0x3d0 mm/slub.c:4216
- __d_alloc+0x36/0x7a0 fs/dcache.c:1690
- d_alloc_pseudo+0x21/0xc0 fs/dcache.c:1821
- alloc_path_pseudo fs/file_table.c:363 [inline]
- alloc_file_pseudo+0xcc/0x210 fs/file_table.c:379
- __anon_inode_getfile fs/anon_inodes.c:166 [inline]
- __anon_inode_getfd fs/anon_inodes.c:291 [inline]
- anon_inode_getfd+0xca/0x1b0 fs/anon_inodes.c:326
- bpf_enable_runtime_stats kernel/bpf/syscall.c:5829 [inline]
- bpf_enable_stats+0xdc/0x140 kernel/bpf/syscall.c:5850
- __sys_bpf+0x325/0x870 kernel/bpf/syscall.c:6105
- __do_sys_bpf kernel/bpf/syscall.c:6132 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6130 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6130
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe51845c8d9
-Code: Unable to access opcode bytes at 0x7fe51845c8af.
-RSP: 002b:00007ffe3c17a318 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007ffe3c17a330 RCX: 00007fe51845c8d9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000020
-RBP: 0000000000000001 R08: 00007ffe3c17a0b7 R09: 0000000000000140
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	00 00                	add    %al,(%rax)
-   2:	00 00                	add    %al,(%rax)
-   4:	9c                   	pushf
-   5:	8f 44 24 30          	pop    0x30(%rsp)
-   9:	f7 44 24 30 00 02 00 	testl  $0x200,0x30(%rsp)
-  10:	00
-  11:	0f 85 cd 00 00 00    	jne    0xe4
-  17:	f7 44 24 08 00 02 00 	testl  $0x200,0x8(%rsp)
-  1e:	00
-  1f:	74 01                	je     0x22
-  21:	fb                   	sti
-  22:	65 48 8b 05 cb 8e fc 	mov    %gs:0x10fc8ecb(%rip),%rax        # 0x10fc8ef5
-  29:	10
-* 2a:	48 3b 44 24 58       	cmp    0x58(%rsp),%rax <-- trapping instruction
-  2f:	0f 85 f2 00 00 00    	jne    0x127
-  35:	48 83 c4 60          	add    $0x60,%rsp
-  39:	5b                   	pop    %rbx
-  3a:	41 5c                	pop    %r12
-  3c:	41 5d                	pop    %r13
-  3e:	41 5e                	pop    %r14
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
