@@ -1,354 +1,207 @@
-Return-Path: <linux-kernel+bounces-760793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D8AB1F032
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:14:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B427B1F038
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF38A07FE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3C51C26303
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBF0262FCD;
-	Fri,  8 Aug 2025 21:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79AE261593;
+	Fri,  8 Aug 2025 21:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lx1n3RPn"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcBwV2jw"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756D1230D08;
-	Fri,  8 Aug 2025 21:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEFD19DF9A;
+	Fri,  8 Aug 2025 21:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754687637; cv=none; b=Ln+u4YelIPyB/oWagXn2QwUMG/BtozEuIQKKXKzB9xwMVIJ42O5f7jxnc2xtMeLoVZR4qO5hGWyhh7jlxiOp15uV6WbtjNM4lW53RA1rzhdFqKFKmoRHsZ4G0IhoUB8iX0jCiEx9GVFPvb72UQ5ZjawOxE7+C4Ua9EKzOq6bx2o=
+	t=1754688132; cv=none; b=FpaBJmvo5sBWWKiK34btYiKEoPqOrHnWb+IR+W4bZ29KBf/IClzsf3DkTTgPYrPKn6LUHQRGRAnGuj9TJZ5V+pdXdVurSZ5NYGX+9y72Y741xqUmRha72C/VoNLCgh631Qhhcj0U2TxX89n249SNPAxyWc8sMTvG4FPes5A5IOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754687637; c=relaxed/simple;
-	bh=mRuCtcvgDwL/i8mQeda3yTLf+hBviZW7cVtfbYoeA7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lxGjiEzvhOCqAAkS2taVVLfEYGHLnz+61yUDUWQFZ9EjL59DQo4sOCmwOlmom8LBYs9BzgD12UAR+O6yK+otv/WbTIpDR24GRw3LMFa8NLFtKo3ZvOIeAI0+0Qn6rCgWFZVsGiQAjFFDhk6epjztjH0NVriYBTSl5ishY+qeoz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lx1n3RPn; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1754688132; c=relaxed/simple;
+	bh=bLJhCgnltVB7EE4FmIRKXg3wsdMKApA9ExHW3A1d7WI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=IbwfGGA+YUxoIv7kYkDDOQxoVIALgb/zHVljKjgF2h4AtHOvOcqq3KVDEHKP/4uvkOaeZNgUuIoOxRW3D9OQzYCtqNh3GZKzwSltYHdK4eH3hCNzXM8KaSrOsZZRZ/FsXXl9rXFAYWU+GJJV1y+zqmv86X6ghDnnmUNPkiiqA0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcBwV2jw; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-459e1338565so23871785e9.2;
-        Fri, 08 Aug 2025 14:13:55 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b070e57254so28131111cf.3;
+        Fri, 08 Aug 2025 14:22:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754687634; x=1755292434; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tp3+FIllYsWJUlYv0jAaKS6vHtG9mL5wynm3GQy29D4=;
-        b=Lx1n3RPnk9a4g4bGgkk9ojAGSI/EdzzB+k9BlPOwpNW/WxhRpAYIOaG7y7PMlQhmAS
-         aa4MPuQHFgy9fu+ZfY7PCOyNy2aObDE4f/c7Uiibcqdmi0FnEGVyKy8ySa/qvwlBECcU
-         +vJCsHOHQ3f3AnQR7O2cSJvM+uC8PIF0p/7ZST+l224I22FahbvbR/jF65EtlTvh6ka2
-         4UlZIknCj6lpbuXVtTSSW2PWQUpTj896bu7qZEB6wtOfnbQtnLKh3lKURCtxpl3xLC5C
-         mZWSqTHdau8ArvD7XrukkMPLjaRwuE1xh067DxWnzTjUqb+ZeZxXi0Fyc0ofYgtquORk
-         RCwg==
+        d=gmail.com; s=20230601; t=1754688129; x=1755292929; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7ORL7KqSf3Snq5ilYE9ydZ56m+WfiWfk8qGevFR6BwM=;
+        b=bcBwV2jwuaWplAftPDXmEGL9M+iiAdF1oW+FmiSE9po7PBw+BB0qkNRLehMpfKEjyf
+         64rrjDzzatPYUZk8YC7j2doYMK1duMFbknLNpx1nqekV5a1MCaFRCrCZ6hzE28iXI+NN
+         9+eCChI9xuAY79iKiFFSIkkKngrOTQG9dbjwX2e3VaKDFeEmsM2Mj7X8BOsg4XN4qIxw
+         wtvG7GsmoiWVbvLSGO43AfDo4ewadTsY7wanbUmriTD+K0NerXsC2fWYh7cfyTa2eCLd
+         uGgT4c3DjmWc3p6X254pzRyz8DkA//HhBiXP2+G2UGi5/IyqF25nS9TfF4DaOqyB5f9a
+         WCgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754687634; x=1755292434;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tp3+FIllYsWJUlYv0jAaKS6vHtG9mL5wynm3GQy29D4=;
-        b=N5W4JAufHPfufqJvG5dVqKu4Yx4Z1D0bLYp1a2znfLZGz7dQZilu3dgux6suzo12Nd
-         74AEx3S9aQG0xqJeX5Or/o3OLHRRKhotwYJTfO5L3LNA1NVsnnX5mAo/NNwN2KIED/l6
-         JGQxUrZrMBbMevh+5L+luwKq6RmNG/dxch7g06CKCWbn57RK4Jrc6IQPkDyCzMAKI8Xy
-         JpV/alZfnUw8o9Hr2jk7f3L9Vp+TTXnAjquP1V4F57bSZqE1rS0o70CZOpJZqY/rFOsE
-         tvzwxZ75ERDm+u8R+4b1NFm/WoqgVJrCXeG5BKO9kkGuWuFF8UgQC3el40LqcOVYpNM3
-         l0/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdZ3Mu5K42QHJgJlP4Opoaw9IniOYCPG47WbYqs8rVnXNKzPRbq3neDb2f18Yjkzj7Divo3eME4kzVlGCt@vger.kernel.org, AJvYcCVRGrMT5+Ap4Qn0fIMiqerOHLfM8olwRMNq0XC7ZoPR5EjwtEoVBWG+wVIoNVx/qzUvexWoQwUcDgigNg==@vger.kernel.org, AJvYcCWT/qxlhkOJcNCaipNfnSkStPU/aDRDwZ8DDlTqn4vMEh+q2/MZiydkJGuU3AqkambI/ozHrEnoSCXW@vger.kernel.org, AJvYcCWeirXFcwl3cKE7cGMiipqiug4DGgF/sySTj8tWDlLiNt299OLflXdPRycR/Z3azZCRzC51eq7oo+gEyYEprIIEJac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTjigs6EiUqktDqEcNLW7lu7DjgNMJtfbJgbGKxevngHt2Y7t4
-	INCUYvbQLYUBYf/7ZftyJZhMdmF9ObAfPHhAVjgfH8BYZvUl8ZM2+v2/9czUSFqN+Z9XO70kOxp
-	4cgF3VsNlda0vtbGJUWKus2qGX93TEwk=
-X-Gm-Gg: ASbGnctSlwt50nB/eHst299CGwjQHuH9ODD1/4y52qF0EJEnAY+iGaSYhcW1nMoID3S
-	DQIeT+51BdCyt83yCOcfe2rxuHsV2zgL/ordN5Z3QRJe26sLBWxdz4uKR/J85e920B2moDrrBVl
-	ZYfieczG1xIDY+uuxyTOZNfz/LHzvWEqaHI9XoQ9uqRPZ3xu4zZIJyU8FT45KLuweLc1AufbZdn
-	MOCUfUlVgGl8NnN
-X-Google-Smtp-Source: AGHT+IG8woTmUyThhcGiDjaAjZYzzo4aJ2GfJ4j2sp6SNmByrXFVMEhoU5BL7fQy/oyGmdlzP66K1NMKCtWfc/a6Fjs=
-X-Received: by 2002:a05:6000:310b:b0:3a4:fea6:d49f with SMTP id
- ffacd0b85a97d-3b900b7a325mr3724851f8f.49.1754687633270; Fri, 08 Aug 2025
- 14:13:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754688129; x=1755292929;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7ORL7KqSf3Snq5ilYE9ydZ56m+WfiWfk8qGevFR6BwM=;
+        b=NIkd7mo9EEOA1APLPtlMqsmg5BXoWcAzQ6rMAW3c8/DFMtAJdephcKme5kxO/Db5uJ
+         ia28Suo180L/Fnn2NKgjUWYT+EUABiplQJ3WKMBvJJYHoLsJcvEWhz21MpVSbnE1FTm7
+         wFbsDOmEwUImKI31u2pRNNSpRVHK1uazmthxcyvM+0MiE1mnYrY5rdp5+pXWDJLWf8dN
+         8OtbSNtjzLX7IVn5ZtvgmfTYQDIGXWlmh8ZyYwrgcXfiRGrYof6MeDZ5NDCah4tDOC0b
+         rXvS1tw9U6QGAbc8blQJX1LV3zpGETYiF4wN6iFk8h2hhbvAOgfda44idXJ2dwFyvb0E
+         H7cA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0YsULl+WHmcD/EdTbIcxT0KUiEU9QxCuezWEAh+W8VVIIu4X71MitchN1SdikG7VGsXtpgsJkSi6O@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3vlphTIi6JD4P1O5bCNcsxxI4iwzEn82Z0bxzUkQNa1FJumye
+	Hsws20UQzI2R4LRrAZ9MOFT0YMKBAn4f2szHtsF/iU2qLf08IAomDYIkrAANOAme9EK5lvP5M3z
+	E+9T2JeiAzGTQV5YsAEI8YyD33SNnD2iOebuB
+X-Gm-Gg: ASbGncuDc37aVWo0UPQCE+vpUjrxoPdoPd/J6W5zffIWa/65GMJb/VYoJrya14W3EN7
+	uFfCxua5REnWaYYU1zkBZhlx8NkQY5oWIA3gbS5xOtEFZ5qtLcoPTUG/tY7cSQaNY0IswXTTGH3
+	whMwlT6i1xyuguQbFlU9hOkj67z3txQdapsI2dG8Ay1/eKzRkG30cIxJ/fYG90uj7pFbcj3kxZz
+	kDw5LtKfwjWZ9KnyoW9xWCKoasj45xSJi3sx2B6
+X-Google-Smtp-Source: AGHT+IGXx6lz7GgPsAz1oQB7YaDnoIO7s26PuCVxcJGGG2ZczK9V5S/QvllyBhHkyI60vwQFiGIxgAQaYbQibQR9Uws=
+X-Received: by 2002:ac8:588d:0:b0:4b0:61bf:c2b with SMTP id
+ d75a77b69052e-4b0aedfe308mr62314831cf.42.1754688129158; Fri, 08 Aug 2025
+ 14:22:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801154550.3898494-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250801154550.3898494-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWApWhAzjJ9K9-SFvZYtPArZ9aFQJvMdMyW=ke+1sj5CA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWApWhAzjJ9K9-SFvZYtPArZ9aFQJvMdMyW=ke+1sj5CA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 8 Aug 2025 22:13:26 +0100
-X-Gm-Features: Ac12FXzA-p2NBSMp2Ye_voip0aySzQE6rZqoL7WDMXbODc7_TBLnX-TEiOKaE5U
-Message-ID: <CA+V-a8u0GkeFS+t_GDj1ku9rqjH_oGhJ19=EkNGP0m-vzAD=fg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: renesas: document RZ/T2H and
- RZ/N2H SoCs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 8 Aug 2025 16:21:57 -0500
+X-Gm-Features: Ac12FXw_2JmezpLxO7RxpWZFgcfSZ0bBTYxxgN-09mMMqx4opUQGBT35y5vf3fU
+Message-ID: <CAH2r5mtLo02s=t_PUh99CniXe3qLaWBypkxqJO8gj1zqwyUoXA@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Please pull the following changes since commit
+db68e4c80d995b67a92460711038b9223166bda7:
 
-Thank you for the review.
+  Merge tag 'v6.17-rc-part1-smb3-client-fixes' of
+git://git.samba.org/sfrench/cifs-2.6 (2025-07-31 21:22:04 -0700)
 
-On Fri, Aug 8, 2025 at 8:51=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, 1 Aug 2025 at 17:46, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Document the pin and GPIO controller IP for the Renesas RZ/T2H
-> > (R9A09G077) and RZ/N2H (R9A09G087) SoCs, and add the shared DTSI
-> > header file used by both the bindings and the driver.
-> >
-> > The RZ/T2H SoC supports 729 pins, while the RZ/N2H supports 576 pins.
-> > Both share the same controller architecture; separate compatible
-> > strings are added for each SoC to distinguish them.
-> >
-> > Co-developed-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> > Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v3->v4:
-> > - Used patternProperties for pin configuration nodes
-> > - Expanded example nodes
->
-> Thanks for the update!
->
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzt2h-pinctrl.y=
-aml
-> > @@ -0,0 +1,177 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pinctrl/renesas,rzt2h-pinctrl.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Renesas RZ/T2H Pin and GPIO controller
-> > +
-> > +maintainers:
-> > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > +
-> > +description:
-> > +  The Renesas RZ/T2H SoC features a combined Pin and GPIO controller.
-> > +  Pin multiplexing and GPIO configuration is performed on a per-pin ba=
-sis.
-> > +  Each port features up to 8 pins, each of them configurable for GPIO =
-function
-> > +  (port mode) or in alternate function mode.
-> > +  Up to 8 different alternate function modes exist for each single pin=
-.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - renesas,r9a09g077-pinctrl # RZ/T2H
-> > +      - renesas,r9a09g087-pinctrl # RZ/N2H
-> > +
-> > +  reg:
-> > +    minItems: 1
-> > +    items:
-> > +      - description: Non-safety I/O Port base
-> > +      - description: Safety I/O Port safety region base
-> > +      - description: Safety I/O Port Non-safety region base
-> > +
-> > +  reg-names:
-> > +    minItems: 1
-> > +    items:
-> > +      - const: nsr
-> > +      - const: srs
-> > +      - const: srn
-> > +
-> > +  gpio-controller: true
-> > +
-> > +  '#gpio-cells':
-> > +    const: 2
-> > +    description:
-> > +      The first cell contains the global GPIO port index, constructed =
-using the
-> > +      RZT2H_GPIO() helper macro from <dt-bindings/pinctrl/renesas,r9a0=
-9g077-pinctrl.h>
-> > +      (e.g. "RZT2H_GPIO(3, 0)" for P03_0). The second cell represents =
-the consumer
-> > +      flag. Use the macros defined in include/dt-bindings/gpio/gpio.h.
-> > +
-> > +  gpio-ranges:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +definitions:
-> > +  renesas-rzt2h-n2h-pins-node:
-> > +    type: object
-> > +    allOf:
-> > +      - $ref: pincfg-node.yaml#
-> > +      - $ref: pinmux-node.yaml#
-> > +    properties:
-> > +      pinmux:
-> > +        description:
-> > +          Values are constructed from I/O port number, pin number, and
-> > +          alternate function configuration number using the RZT2H_PORT=
-_PINMUX()
-> > +          helper macro from <dt-bindings/pinctrl/renesas,r9a09g077-pin=
-ctrl.h>.
-> > +      pins: true
-> > +      phandle: true
-> > +      input: true
-> > +      input-enable: true
-> > +      output-enable: true
-> > +    oneOf:
-> > +      - required: [pinmux]
-> > +      - required: [pins]
-> > +    additionalProperties: false
-> > +
-> > +patternProperties:
-> > +  # Grouping nodes: allow multiple "-pins" subnodes within a "-group"
-> > +  '.*-group$':
-> > +    type: object
-> > +    description:
-> > +      Pin controller client devices can organize pin configuration ent=
-ries into
-> > +      grouping nodes ending in "-group". These group nodes may contain=
- multiple
-> > +      child nodes each ending in "-pins" to configure distinct sets of=
- pins.
-> > +    additionalProperties: false
-> > +    patternProperties:
-> > +      '-pins$':
-> > +        $ref: '#/definitions/renesas-rzt2h-n2h-pins-node'
-> > +
-> > +  # Standalone "-pins" nodes under client devices or groups
-> > +  '-pins$':
-> > +    $ref: '#/definitions/renesas-rzt2h-n2h-pins-node'
-> > +
-> > +  '-hog$':
-> > +    type: object
-> > +    description: GPIO hog node
-> > +    properties:
-> > +      gpio-hog: true
-> > +      gpios: true
-> > +      input: true
-> > +      output-high: true
-> > +      output-low: true
-> > +      line-name: true
-> > +    required:
-> > +      - gpio-hog
-> > +      - gpios
-> > +    additionalProperties: false
-> > +
-> > +allOf:
-> > +  - $ref: pinctrl.yaml#
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - reg-names
-> > +  - gpio-controller
-> > +  - '#gpio-cells'
-> > +  - gpio-ranges
-> > +  - clocks
-> > +  - power-domains
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
-> > +    #include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
-> > +
-> > +    pinctrl@802c0000 {
-> > +        compatible =3D "renesas,r9a09g077-pinctrl";
-> > +        reg =3D <0x802c0000 0x2000>,
-> > +              <0x812c0000 0x2000>,
-> > +              <0x802b0000 0x2000>;
-> > +        reg-names =3D "nsr", "srs", "srn";
-> > +        clocks =3D <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
-> > +        gpio-controller;
-> > +        #gpio-cells =3D <2>;
-> > +        gpio-ranges =3D <&pinctrl 0 0 288>;
-> > +        power-domains =3D <&cpg>;
-> > +
-> > +        serial0-pins {
-> > +            pinmux =3D <RZT2H_PORT_PINMUX(38, 0, 1)>, /* Tx */
-> > +                     <RZT2H_PORT_PINMUX(38, 1, 1)>; /* Rx */
-> > +        };
-> > +
-> > +        sd1-pwr-en-hog {
-> > +            gpio-hog;
-> > +            gpios =3D <RZT2H_GPIO(39, 2) 0>;
-> > +            output-high;
-> > +            line-name =3D "sd1_pwr_en";
-> > +        };
-> > +
-> > +        i2c0-pins {
-> > +            pins =3D "RIIC0_SDA", "RIIC0_SCL";
-> > +            input-enable;
-> > +        };
-> > +
-> > +        sdhi0_sd_pins: sd0-sd-group {
->
-> No need for unused labels in examples.
->
-Agreed, I will drop it.
-> > +            sd0-sd-ctrl-pins {
->
-> Drop the "sd0-sd-" prefix?
->
-ditto.
+are available in the Git repository at:
 
-> > +                pinmux =3D <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CL=
-K */
-> > +                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD =
-*/
-> > +            };
-> > +
-> > +            sd0-sd-data-pins {
->
-> Likewise.
->
-ditto.
+  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.17rc-part2-SMB3-client-fixes
 
-> > +                pinmux =3D <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CL=
-K */
-> > +                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD =
-*/
-> > +            };
-> > +
-> > +            sd0-sd-tmp-pins {
-> > +                pins =3D "RIIC0_SDA", "RIIC0_SCL";
-> > +                input-enable;
-> > +            };
->
-> Please drop this subnode? It totally confuses me ;-)
->
-I did drop this in the v5 series [0].
+for you to fetch changes up to dfe6f14aedbf59bfb7145de5c7da908583ae50fd:
 
-https://lore.kernel.org/all/20250808133017.2053637-2-prabhakar.mahadev-lad.=
-rj@bp.renesas.com/
+  smb: client: only use a single wait_queue to monitor smbdirect
+connection status (2025-08-07 12:40:11 -0500)
 
-> > +        };
-> > +    };
->
-> The rest LGTM, so with the above fixed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
+----------------------------------------------------------------
+33 smb3/cifs client changesets, mostly smbdirect cleanup
 
-Cheers,
-Prabhakar
+Eight non-smbdirect fixes
+ - Fix null ptr deref caused by delay in global spinlock initialization
+ - Two fixes for native symlink creation with SMB3.1.1 POSIX Extensions
+ - Fix for socket special file creation with SMB3.1.1 POSIX Exensions
+ - Reduce lock contention by splitting out mid_counter_lock
+    - move SMB1 transport code to separate file to reduce module size
+      when support for legacy servers is disabled
+ - Two cleanup patches: rename mid_lock to make it clearer what it protects
+   and one to convert mid flags to bool to make clearer
+
+Twenty five smbdirect/RDMA restructuring patches and fixes
+ - Fix for error handling in send done
+ - Remove unneeded empty packet queue
+ - Fix put_receive_buffer error path
+ - Two fixes to recv_done error paths
+ - Remove unused variable
+ - Improve response and recvmsg type handling
+ - Fix handling of incoming message type
+ - Two cleanup fixes for better handling smbdirect recv io
+ - Two cleanup fixes for socket spinlock
+ - Two patches that add socket reassembly struct
+ - Remove unused connection_status enum
+ - Use flag in common header for SMBDIRECT_RECV_IO_MAX_SGE
+ - Two cleanup patches to introduce and use smbdirect send io
+ - Two cleanup patches to introduce and use smbdirect send_io struct
+ - Fix to return error if rdma connect takes longer than 5 seconds
+ - Error logging improvements
+ - Fix redundand call to init_waitqueue_head
+ - Remove unneeded wait queue
+----------------------------------------------------------------
+Paulo Alcantara (3):
+      smb: client: set symlink type as native for POSIX mounts
+      smb: client: default to nonativesocket under POSIX mounts
+      smb: client: fix creating symlinks under POSIX mounts
+
+Stefan Metzmacher (25):
+      smb: client: let send_done() cleanup before calling
+smbd_disconnect_rdma_connection()
+      smb: client: remove separate empty_packet_queue
+      smb: client: make sure we call ib_dma_unmap_single() only if we
+called ib_dma_map_single already
+      smb: client: let recv_done() cleanup before notifying the callers.
+      smb: client: let recv_done() avoid touching data_transfer after
+cleanup/move
+      smb: client: remove unused smbd_connection->fragment_reassembly_remaining
+      smb: smbdirect: introduce smbdirect_socket.recv_io.expected
+      smb: client: make use of smbdirect_socket->recv_io.expected
+      smb: smbdirect: introduce struct smbdirect_recv_io
+      smb: client: make use of struct smbdirect_recv_io
+      smb: smbdirect: introduce smbdirect_socket.recv_io.free.{list,lock}
+      smb: client: make use of smb: smbdirect_socket.recv_io.free.{list,lock}
+      smb: smbdirect: introduce smbdirect_socket.recv_io.reassembly.*
+      smb: client: make use of smbdirect_socket.recv_io.reassembly.*
+      smb: client: remove unused enum smbd_connection_status
+      smb: smbdirect: add SMBDIRECT_RECV_IO_MAX_SGE
+      smb: client: make use of SMBDIRECT_RECV_IO_MAX_SGE
+      smb: smbdirect: introduce struct smbdirect_send_io
+      smb: client: make use of struct smbdirect_send_io
+      smb: smbdirect: add smbdirect_socket.{send,recv}_io.mem.{cache,pool}
+      smb: client: make use of smbdirect_socket.{send,recv}_io.mem.{cache,pool}
+      smb: client: return an error if rdma_connect does not return
+within 5 seconds
+      smb: client: improve logging in smbd_conn_upcall()
+      smb: client: don't call init_waitqueue_head(&info->conn_wait)
+twice in _smbd_get_connection
+      smb: client: only use a single wait_queue to monitor smbdirect
+connection status
+
+Steve French (1):
+      cifs: Move the SMB1 transport code out of transport.c
+
+Wang Zhaolong (3):
+      smb: client: rename server mid_lock to mid_queue_lock
+      smb: client: add mid_counter_lock to protect the mid counter counter
+      smb: client: smb: client: eliminate mid_flags field
+
+Yunseong Kim (1):
+      cifs: Fix null-ptr-deref by static initializing global lock
+
+ fs/smb/client/Makefile                     |   2 +-
+ fs/smb/client/cifs_debug.c                 |  24 +-
+ fs/smb/client/cifsfs.c                     |   8 +-
+ fs/smb/client/cifsglob.h                   |  23 +-
+ fs/smb/client/cifsproto.h                  |  15 +
+ fs/smb/client/cifssmb.c                    |   4 +-
+ fs/smb/client/cifstransport.c              | 566 +++++++++++++++++++++++++++
+ fs/smb/client/connect.c                    |  35 +-
+ fs/smb/client/fs_context.c                 |  19 +-
+ fs/smb/client/fs_context.h                 |  18 +-
+ fs/smb/client/link.c                       |  13 +-
+ fs/smb/client/reparse.c                    |   2 +-
+ fs/smb/client/smb1ops.c                    |  19 +-
+ fs/smb/client/smb2inode.c                  |   5 +-
+ fs/smb/client/smb2ops.c                    |  63 ++-
+ fs/smb/client/smb2transport.c              |   4 +-
+ fs/smb/client/smbdirect.c                  | 465 +++++++++++-----------
+ fs/smb/client/smbdirect.h                  |  92 +----
+ fs/smb/client/transport.c                  | 602 ++---------------------------
+ fs/smb/common/smbdirect/smbdirect_socket.h | 118 ++++++
+ 20 files changed, 1066 insertions(+), 1031 deletions(-)
+ create mode 100644 fs/smb/client/cifstransport.c
+
+--
+Thanks,
+
+Steve
 
