@@ -1,108 +1,179 @@
-Return-Path: <linux-kernel+bounces-760216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDE5B1E804
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE63B1E806
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F033F7AA514
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF81E18C820E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BAA276033;
-	Fri,  8 Aug 2025 12:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48F4276026;
+	Fri,  8 Aug 2025 12:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QW/bLZ98"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="aW9VOXyk"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB78B1E51E1;
-	Fri,  8 Aug 2025 12:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8113B275B16
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754655029; cv=none; b=rZFDkcC16bdC3VqKdhdrxUdoBC82CgLcE2Vk3v+c2oGf3yxPmVHaRN15gt/Ws8iIdEBVmn0l6ftozRGNA+VMQDPiN3HKwoiLbWtu6YvOeRFQS/dSx8b/Z2lyE22QWde3a+2hGLlOkJBVeF67Awj+62GuKA+sQreNi40vMp2nT38=
+	t=1754655067; cv=none; b=fyBvb+7eJdRoSaRM817cLpfNSUoCCrAe56/4/QYqqAYdcUfs+yrSTxH9VBVKhEzFAoHR6kn17O72R4fCVhF+/PvSd+5MBCizvyY9pkd1EvCBXXpM50lvmw5kbNWGDFAqFDlYAMKlSdCykZX/3Coapp8xr97Qs3qM2GUBFPlTx/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754655029; c=relaxed/simple;
-	bh=hp4rqAiFCt5lwwd25Hgflr1TBa/scWIpW6Aj/Q47xZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQRwUL+E19z69QqnfT/KFe3CqHYC2ULOXGO8aMoYWdV9YM9E9eYJOBjYX4J2Eph34nsQBrXQO6dnHlLRNny+NNnbul4btLZt9bO0UFraNz4+L/lUG2tFc9mC2Ju9iRy5sfiYEwFHR6vHdXsnipWv++2ePIxBNQZwMVgf75cQW8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QW/bLZ98; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDDFC4CEED;
-	Fri,  8 Aug 2025 12:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754655029;
-	bh=hp4rqAiFCt5lwwd25Hgflr1TBa/scWIpW6Aj/Q47xZg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QW/bLZ98labLEvtZ64TZa4BtaafaQTPq0BAzENHzPEBRm8ib5q5ADzEWfHrd+WXIg
-	 knEO6UyrH7NrX1fXgotpITtFeOblo7y5JpfWUSGJBT8q7fs8wbfo19ly2iUAUnEjgI
-	 v57Zm2XygywYmDYL424Celb4Z+RCBAl5T/9Z3vIIE4kkjvwz7es6F7kOE5vnHEn1+1
-	 YFcL5OgZlAzlCvBSH0FHIAF32PHs4wZbwRq3LBmG24MYsljwg8rZiraYtbWd1iz8HD
-	 nfAH03xnV2nmj4jYbbyWtd7Hhcc47bdfdk2q6rSUy45Lmts+9az8dXDWToxiiaSxRy
-	 9H60uLKbRnOzg==
-Date: Fri, 8 Aug 2025 13:10:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc: Kiseok Jo <kiseok.jo@irondevice.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ASoC: codec: sma1307: replace spelling mistake
- with new error message
-Message-ID: <91c874a0-5897-4019-ac35-e34187382061@sirena.org.uk>
-References: <20250808105324.829883-1-colin.i.king@gmail.com>
- <f646f36e-7835-415d-8da7-fc632c57e4e2@sirena.org.uk>
- <bb06d3bf-684b-4479-8b86-72aed622e453@gmail.com>
+	s=arc-20240116; t=1754655067; c=relaxed/simple;
+	bh=jrIEWBRIyno6UVI34k6pRfIfKxlL/J2GMbRuz4wtFbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Na+QyUw6nKjwUURt26jIiy45WCz8cH7ZCnXsJz+ixLPR/Xidf2oxOWJpnQJpig6gXjQWJWHlsbC3lX76PACrx96mI28FY5YCuL9HzyDfN8ipBjOuMDDdlAgK+MSNjTmp+WGPD9UZeDiJgZloe6qpBlyIPcXbPMHgj/pa65nHAnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=aW9VOXyk; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-af66d49daffso361172366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 05:11:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1754655064; x=1755259864; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7H80wazDhrSZXsCUSdHhSJpvhnQo21M43h8Ky6/QQsc=;
+        b=aW9VOXykFy9EaBOjw1ysCPG1AnI8CFQy/n356NjYz32dkx1PLLCAk2gApqd7i72Pg9
+         VIsJzv28lD/BbBgPN7xDEKu97+Y5PfQ5FcW8KoUqn/3akJRGQe/+yFytMjm4XPQH8R2p
+         TPdg8WPTLDkfCLpjg6w9860Au8oQvWtZikzTFvXQvMOMnqgMMg5TLcfOmwVHXDxPe0sL
+         JKttD5Ooy4/O7oZiHiRmn7+jq5Kpp99i59tjfrYpOEZPXbaif9sXNpxSgtwqflifxqy3
+         9bgeCh/dYImGSAy6sPjIFy6w86r0nWOBfigRKkRZrqT4ObZZdnqSpibsys+MMcr8jJCj
+         A4VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754655064; x=1755259864;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7H80wazDhrSZXsCUSdHhSJpvhnQo21M43h8Ky6/QQsc=;
+        b=cKO1L2VO4Ox+7WBZ+iwv9OMUQqsdBsVery5DKXvjPE5Qfn8Cz2yTxZE144zEgVliMS
+         +eH1szkGWjuS/WRTjfnILVo2OX2kCRZ1liTokizQQ/b7qsKfP/fJRUCCzXykg5QJQUMb
+         cHsVXkFewq1lmFP8JUfCSZhgZq6ZDqlZ6sLY4QwhAFdbEfV2vr6GEGPScFETbE/M9bkZ
+         xY/1F6N5NvLKUhHjpDTl6/dOclrplLVN8BA/516FDm96EPEZUgWgXP7HCgfHM9GalFKR
+         vaeIl4WLkdx2kYLtxwZfNl+4yMQoWlM8TSe7auMSmlUCjQt//6WW4ZWl6KIB2Uughhso
+         +x3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXk6/DsDi6ngAGOjOhaytcNavChlZZLNe8iSF+EAhok1P7g0rne36C40fgs+y6zYOaH2ZXC9gM1xqJAMCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf1wx9P/8XzzjKMXpoV/Uy92HYyGqVMLK75PFNXyRYZBqDMexT
+	SdngA2afSrMVyXtrrZLMFn4XkScFMpPGPpj9U9YymPhuO6JSMGjI+wT1hibgOyTl2tM=
+X-Gm-Gg: ASbGncspndDA+/z06/zIKequ1zj3yR+d7oBBttBBaQETumNpej1xxmNJuC3GU2RTF7Q
+	yLjku+1Q5tmWK2S46Y65qJnLOSIQXETO/3NK0UirB53S4YPkNiZH9L67GerfhkembYpd5lfNvWt
+	P3gjAfOhEzN2V4RknLKCzwaX7PTKVRYDh6LAWP8Tk+WY56ReIoUMBAxlZKtbs6rjQ5cfi0osyPC
+	+BNPXg0jBx5oZ7xAYY+kc+KPnT1Axv4fyapU2XheTtxPTMN9/vMXnozpu4ZMV79+vO+n3Z8Mxgx
+	efuNAlh1YiVA9WH+y+0zu6UVHjjUbQbEKjZNOj8FFGP9ZfY/5iPaaK+Hl2o3fRTidbRYeqXa10/
+	wPZW8gj/Vl/GiVew2Wi6sNY74TyfCF5M=
+X-Google-Smtp-Source: AGHT+IEP1hKdTSLFyfN0oVcI9oj4h90fVgoQ1FAVba1VNEavj2ZZMm/pymmutdkY8hgx8gRVclajEQ==
+X-Received: by 2002:a17:907:7fab:b0:ad8:a935:b908 with SMTP id a640c23a62f3a-af9c64fba5amr264177766b.30.1754655063505;
+        Fri, 08 Aug 2025 05:11:03 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.188])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3375sm1485634566b.41.2025.08.08.05.11.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 05:11:03 -0700 (PDT)
+Message-ID: <277ca37d-e304-4d78-bfd9-b1fa222fd0f3@tuxon.dev>
+Date: Fri, 8 Aug 2025 15:11:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FpBC8UcrkcOVUKr5"
-Content-Disposition: inline
-In-Reply-To: <bb06d3bf-684b-4479-8b86-72aed622e453@gmail.com>
-X-Cookie: What an artist dies with me!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/8] soc: renesas: rz-sysc: Add syscon/regmap support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ John Madieu <john.madieu.xa@bp.renesas.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250808061806.2729274-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250808061806.2729274-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUsFFd+orb17oQqoEidzYWMRjPoqMyzpgrdnicc=MRSYQ@mail.gmail.com>
+ <cbdfa6fd-e65b-45d7-a21f-3bfdd46af332@tuxon.dev>
+ <CAMuHMdXM=Mu+vJ6n3spj7Dd+8boLXEpcSn0M1KB8OwPijqq4aw@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdXM=Mu+vJ6n3spj7Dd+8boLXEpcSn0M1KB8OwPijqq4aw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Geert,
 
---FpBC8UcrkcOVUKr5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 08.08.2025 14:36, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Fri, 8 Aug 2025 at 12:32, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 08.08.2025 12:29, Geert Uytterhoeven wrote:
+>>> On Fri, 8 Aug 2025 at 08:18, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>> From: John Madieu <john.madieu.xa@bp.renesas.com>
+>>>>
+>>>> The RZ/G3E system controller has various registers that control or report
+>>>> some properties specific to individual IPs. The regmap is registered as a
+>>>> syscon device to allow these IP drivers to access the registers through the
+>>>> regmap API.
+>>>>
+>>>> As other RZ SoCs might have custom read/write callbacks or max-offsets,
+>>>> register a custom regmap configuration.
+>>>>
+>>>> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+>>>> [claudiu.beznea:
+>>>>  - do not check the match->data validity in rz_sysc_probe() as it is
+>>>>    always valid
+>>>>  - dinamically allocate regmap_cfg]
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>
+>>>> Changes in v4:
+>>>> - adjusted the patch description by dropping "add" from
+>>>>   "add register a custom regmap configuration"
+>>>> - updated the list of changes from Claudiu Beznea
+>>>> - dynamically allocate the regmap_config as proposed at [2]
+>>>> - this patch is needed for proper function of USB (as proposed in this
+>>>>   series) that being the reason it is introduced here, as well
+>>>>
+>>>> [2] https://lore.kernel.org/all/CAMuHMdVyf3Xtpw=LWHrnD2CVQX4xYm=FBHvY_dx9OesHDz5zNg@mail.gmail.com/
+>>>
+>>>> --- a/drivers/soc/renesas/rz-sysc.c
+>>>> +++ b/drivers/soc/renesas/rz-sysc.c
+>>> =
+>>>> @@ -117,7 +125,26 @@ static int rz_sysc_probe(struct platform_device *pdev)
+>>>>                 return PTR_ERR(sysc->base);
+>>>>
+>>>>         sysc->dev = dev;
+>>>> -       return rz_sysc_soc_init(sysc, match);
+>>>> +       ret = rz_sysc_soc_init(sysc, match);
+>>>> +       if (ret)
+>>>> +               return ret;
+>>>> +
+>>>> +       regmap_cfg = devm_kzalloc(dev, sizeof(*regmap_cfg), GFP_KERNEL);
+>>>> +       if (!regmap_cfg)
+>>>> +               return -ENOMEM;
+>>>
+>>> Is there any specific reason you decided to allocate regmap_cfg
+>>> separately, instead of embedding it into struct rz_sysc?
+>>
+>> Sorry, I missed to mention.
+>>
+>> I chose to have it like this as the regmap_cfg is not used anywhere else
+>> (through rz_sysc) except in probe.
+> 
+> OK.  Upon closer look, devm_regmap_init_mmio() does not save the
+> regmap_cfg pointer for later use, so it can be allocated using kzalloc()
+> instead, and freed immediately after calling devm_regmap_init_mmio().
 
-On Fri, Aug 08, 2025 at 12:35:40PM +0100, Colin King (gmail) wrote:
-> On 08/08/2025 12:30, Mark Brown wrote:
-> > On Fri, Aug 08, 2025 at 11:53:24AM +0100, Colin Ian King wrote:
+You're right, I forgot this. I'll update it this way.
 
-> > > -		dev_err(sma1307->dev, "%s: failed by dismatch \"%s\"\n",
-> > > +		dev_err(sma1307->dev, "%s: checksum failed \"%s\"\n",
+Thank you,
+Claudiu
 
-> > It's definitely an unusual term and the reword makes sense but that does
-> > make sense to me as a word, I don't think it's a spelling error as such.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
-> "Dismatch" is not a standard English word. It's likely a misspelling of
-> "mismatch" or a neologism formed by adding the prefix "dis-" to "match". I
-> understand it a niche term, I just think it is preferable not to use it for
-> folk who's first language isn't English.
-
-My comment was specifically that it doesn't look like a spelling
-mistake.
-
---FpBC8UcrkcOVUKr5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiV6TAACgkQJNaLcl1U
-h9ALFwf7BOQLzGyGmC7ql9p2Hv+cCvogsAj4/l63KRNHa6nBFzvVJUzZ/hOYyTFh
-PznPBbm3e23txYD/QhpcYcrE1ShiFxkWwNYuNGC9saqDl7rgUO5m58TPCWHPLmcS
-LxzY9PX4bvAKamrCdO/yF1iPc9L1q++ciBbvTP8mWmpn0hv1Pa8FPedoO2a6OUW3
-KfWfwmo1Mcb1fukV3xiJKfrqiCeKU5F2GjbWiaRELFZ1MkOqM6jrL5LqSkuaQG3y
-I67TyHJNsVqXbcB4b9WDM8bmwli10GHpbRHoiBXeQkM1npbjB2MeC8VLW3lzJZIA
-ZTRKqcmCp1oWJ8rTafO/EJ6JvYwIMQ==
-=+4nP
------END PGP SIGNATURE-----
-
---FpBC8UcrkcOVUKr5--
 
