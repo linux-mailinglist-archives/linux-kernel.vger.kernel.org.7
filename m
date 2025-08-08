@@ -1,136 +1,183 @@
-Return-Path: <linux-kernel+bounces-760305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0218AB1E93A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:30:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 735BBB1E93F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9213B8BDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED5D3BFDA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55FA27E077;
-	Fri,  8 Aug 2025 13:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F0B279DA0;
+	Fri,  8 Aug 2025 13:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnQmdluM"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpFuo+rV"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A39A27E04B;
-	Fri,  8 Aug 2025 13:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E70277008;
+	Fri,  8 Aug 2025 13:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754659804; cv=none; b=R9OdKISomPjDqC6OHaUlanNwQMqIYhZ2mJIaw+oSXgw6H3VxxJwGcrDn4oz9LHmpcKvfnQiiiF/KyQmOQG9bL9pr2QeSlggjAaHaaG2y/7U8zqi8F27WStqsVlw+C0VZ08hIvWCrMTbuM45MvyszRf0JsRF9LBCkg4Y8yeh2RQA=
+	t=1754659830; cv=none; b=caZsWOdREgP2JLRfnQ3PVmiALDf/eqYfKGdy0XIDYr8KbCGo4MlRW4X9WLM9W7kv2KE4AX4XFGDBFjBYYmdYKZR6H3k6sTkdOmkTQDbaAbokO0In1WINjJNpdCeIiDJaxiVHkZFXiOwqEszEiHH0zRaX6FEdK5fQG5QNWAiot8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754659804; c=relaxed/simple;
-	bh=JqsBT8kxVG4Y6VR+PJMqNSKguUADLGMymL7/0TC0vlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cA3NP43LddM+x58TV4k/C5wAeggS+3fEGhTsnDZXGUvsEnJLPt5gtTD5qux6/9efA/VNyqcqhEZn7ehYa8sq+TtQ+BmDKfP1YnGFxS6rtefokMIXss5rLxFZgesFSHyWgsX7jtmoJbhBHu7ptXmjCLgjjF4rPgFtQM/WkdgIhU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OnQmdluM; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1754659830; c=relaxed/simple;
+	bh=vaEY+BmFiOXjdWpT0qSy6urLO/5nt6n1iSwLDhDQoXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uPnBIz9SCHAs1AkNZGq+Lnl5qLW5ME2S013tJzYSIlUepSQ0B9MVSpxRkm2s+cMAP3+Ea4u9VuXfNO4uWdg/CDGnXf2Eqf5lH7gwK+Qyowrud8sf9XWRH11FkfU1l35/W2pZ0W+vwrA/tFcDDLkDiIDi9OOooanvIO/iyvfHwsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpFuo+rV; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-33243562752so15254461fa.3;
-        Fri, 08 Aug 2025 06:30:02 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b78310b296so1057449f8f.2;
+        Fri, 08 Aug 2025 06:30:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754659800; x=1755264600; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3ukWaxOm7+Q7x1oCnPSznQeQZdoQjCmG1PbzKJVPZIg=;
-        b=OnQmdluM9ooGDXDoX+lrN0R9Zhevqj+BFTFvpL564TYvCAM24Hm9lZTo6GROkUoqtQ
-         k2JGRcu9cP9AoHYg1hHEFZnVDZdwVSpMZe7sryJTQ+uyIDXUcKVhOW6CtMSAGVULHLgQ
-         vtXFM7z6L0Ib5+qq2KUKi70/iQMywux0nE5c1cThioZkZYkkgtGenS61UY7+OFx75MjS
-         WO0sbckJlDWRHVLBziLb3zAr2rVucGVigNdoqWbBtRFnQC5lIUlOYuMYpfOrorVVI/uw
-         LSKXRLzvK5laQsbfwRNaKqqLmr+W1gcqoxUNUVN0xT72J3/BopLcJWtmINSs3DP1sgzB
-         LJoA==
+        d=gmail.com; s=20230601; t=1754659826; x=1755264626; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OSPQlhFp9J6rhxGGLDY9Xj8C7mWGfjR96GY1FwNJsRg=;
+        b=bpFuo+rVm85le7uI3jCwlfxrGnYMnqeuhK8UTNJKn5segUvfSUaz+cyaVcAMYe5Ife
+         LuP3R0AOtQo5oeAIUykfq9kN6QYbuya23IZQyjtnrwe4tF/IbD88R+tXNJqrQuUypvx+
+         syc3aUNoarMwpYc5klZlpGefFKcKMRRG3/Y0XDCGmMqVKWm4Mx0Mj2DUBKFXJ0CT4ROA
+         0DyMRH9Px/cOy3arzqiWikrcDu4RZ9BbkaSnmKwere5tmaGyENTUVWIZxpJYLwSQh2ns
+         g7oMlWQexSMh/Lj9StQPCYBBatcmB3AJ559wGSmELQP+g/9P61U+/G4Z1p/YrJSWxdqK
+         rlAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754659800; x=1755264600;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ukWaxOm7+Q7x1oCnPSznQeQZdoQjCmG1PbzKJVPZIg=;
-        b=mrOInZynUMvP25xHol9fuBTclijvjRsnKFqAB7Ye3SZZeeX2v2RPoW42kTjnQQnzFN
-         Xeclptbkmq2shBrkmDz3lfEk+pLroP8rWMtx8rdFjQpBlOdYmml1YlSc7WG4kIDehDWt
-         hTik9+gRuPVbmojZTJoSHdHX4MGcwR8OppRQGOAByldvTu15j+Iq8sxlH1UQu44FRntZ
-         lOy9mVS9MuZ5wxof6xJ+GJI5SFxpqlJgF4bLdoQ2lYlwcWYrt2vQbClLBSuhXoA1h8ax
-         jtYUJRrllCFcj7gGgIQ/UUpHfV+pWiFRJnukt/K1eR6sPxX/XxrzvLVIO1ZFyyI48uXS
-         l4wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyrznwGe3J/yU0B++il6UQlpvA2A1awVuDqR4KedPz6lU3XcEyXXCIfng+qPrvwBlztG/AcxLBU+UNYTQq@vger.kernel.org, AJvYcCWlHHOaTfLLavLjRBz1WwQDeFSYgP78GlBGihr5H9pGd4mr6T7W7x2vIcWeeys03LUQ30kYvS2cfnzJ@vger.kernel.org, AJvYcCWuOpq/ypqpRu0QunXn10Ul8LpPu7BKcZ4RsMEuUBEa0TTY90OSpyzPx4QkqkdhMkszhgFtKq6U+VOL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdS/lOhkGvYlfTUOkt6tbsNz1htTtrEzvCvMqYE9Pft6zzup+x
-	JYRHexX63O04Diuo7We/3zdKm+bhS0J+AAaHabGZ2mUQ16yJ3GhZfi/iyLuv0A==
-X-Gm-Gg: ASbGncvE5YSjm/9Su7WCkuizSYmpXLtC1NU1qtLd5SN6YI8CPq7Xq8R5xaOdxHikTPF
-	hZnZfn/oaKxJmKK93NO+j7oE8QguATuVyd8hooXDXxwl4hsSyjF0tkNk27pOMCtA5rvX3LCeiYl
-	nzzSdMnp1lFOvHrSB8wG7cvamPe8XwbDmq7cTAWG9XrMZqFs4FFUMrzbucCRWmM4GhO91LuKIL9
-	lxKk5BZ8wdkt9rbioFJdCL+AgOMUNCqWBrURMfOwb6xAnHSYMQ3ml2fg8CpJzL4UJboRAhpFUvE
-	eMeWkUqodNzq0BSKj1eVwAwLtEaCJkNIoN1IcYE2LGnIZrT24UWbprMmPO67vT+0jsfyRy8Fk5D
-	SDJvtQ1nF3Wq0GrZcj9oO/MwgMgGq32wjF42BLX2a2GGvCOWEVzN9JLQ/C1RSHBIgk+IhxepNU4
-	uc6Js=
-X-Google-Smtp-Source: AGHT+IGnVEHz2x7KszxqBnowaQifC0d3brGp2Mm1k/bgJTaibOBNdZDQB6pGiCRUPryrXaeg+0/gIA==
-X-Received: by 2002:a05:6512:3408:b0:55b:5b33:bc09 with SMTP id 2adb3069b0e04-55cc012a3cemr972573e87.28.1754659800120;
-        Fri, 08 Aug 2025 06:30:00 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88cae595sm3048678e87.155.2025.08.08.06.29.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 06:29:59 -0700 (PDT)
-Message-ID: <83a6949b-6e84-4a0d-9a95-a9f45f62e84e@gmail.com>
-Date: Fri, 8 Aug 2025 16:29:58 +0300
+        d=1e100.net; s=20230601; t=1754659826; x=1755264626;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OSPQlhFp9J6rhxGGLDY9Xj8C7mWGfjR96GY1FwNJsRg=;
+        b=MWJmIxXdqibAddCYdAiQBc8PLclHJ2uLaQaVTtkRl7prDd+63Z+R9F5lAn43qmFAPj
+         LFZJi/PvdAi357DALviAVcPl/weVQZLwRz19UXh+D4a0A+FOktcPWg+mEPEJBjy2I1kC
+         dtlOf5xl35LhHuuOQ90tQdUEpu1RNi5lMnaUBo/Eqaml/v4nmmpRHFv6eSfHcqhk3oYL
+         7WkhGXIFjUZcTLWdWGGQ465K+GMQEbC37HxzLPXkNJ/Y/OulaQD5IiXJWZJhTub22wG7
+         jrYWMNpjlCki63N8dO1OTsiVCgz7cLA27iRHjaEQoSZi0Cwic2cZezYUZVI3c+HvMpkD
+         jYiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHa311UUtm9LQqZmx6hK297sCjSMhc+D1OLORVi4L2++akX+zAsu6DUi48fLH6qQFPHFG1c7eC939mOg==@vger.kernel.org, AJvYcCVSQaPL7AR7Bp6PuOGSaBSdjFnR0Z6HatmD31YcrNK7JuhN2IhjE8n9MPjURiJBac0nAb0GJDn2Dkdc@vger.kernel.org, AJvYcCVhNivg8E5rrwbAIPN5iWyOqyf8Yt4EQxRjVxQOY9S/JkVhY4qkzZ+yyUfKjKS/MntTzFYiDo3AW7G2FJpp@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJaaMuM7A3GrXLtNamjsEZVX3d+RYpoVgbL+0xZ2xWdXeixM7V
+	cG8J8HYm6nQ5cSDbleFuh/0OiAekJLdDa+Mpns0xXmWS0bpgUVN4YJqx
+X-Gm-Gg: ASbGncsj0oi4siqGVgKqmvxSFQZCptYt5h6tgb59a0p3DiXJskC/O20ZITq7K3OKBZu
+	xSFYxjOxxxzhPf/Ep8eykIYAJq8Vq+bVSACs4BGPUKqG/nfkiy7AKPWMR7a5ERkXvv7zHR/zPLM
+	7OxROYrh8PLE8kOUcFSBMRuBOCaSqWN3KN3vAc139yHXcu8xkxAde7GWlAcZqy1PTRMKhpyGi6F
+	ySt3C2Lgc31Eh0XC2+I8lB9MLthTw8vUAGa+Amexz9yjb2Gv7GTsVjFB7CH6zsQ5WWtHMvagpxG
+	vyuzEzIoBOzvub6JMjm+SeyJ9RJJTQDSLQBYcvd7M2sbu6XBaYeHo1QcH98AtZs26QUKYfqxFzM
+	HQ9psLDaexTJ/kW8MtYedV1sAOfA4Uu+7bfe+k+ATQPIIzPfxqkICt/x2nhTA9D2XeMj3XkYGrV
+	sBLka0jbg=
+X-Google-Smtp-Source: AGHT+IET4VmkoACh+hHG9EeFTPuM9uUSbhSy5TObg2EXstp0s2Cl3dSLsKTuKFqqeJHBhzUAASnTsA==
+X-Received: by 2002:a05:6000:4310:b0:3b7:8410:22b6 with SMTP id ffacd0b85a97d-3b90092c99fmr2595874f8f.6.1754659825950;
+        Fri, 08 Aug 2025 06:30:25 -0700 (PDT)
+Received: from iku.example.org (97e54365.skybroadband.com. [151.229.67.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a2187sm31527769f8f.70.2025.08.08.06.30.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 06:30:25 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v5 0/3] Add pinctrl driver for RZ/T2H and RZ/N2H SoCs
+Date: Fri,  8 Aug 2025 14:30:14 +0100
+Message-ID: <20250808133017.2053637-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/10] iio: adc: ad7476: Drop convstart chan_spec
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1754559149.git.mazziesaccount@gmail.com>
- <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
- <CAHp75VcHR78Uwgo74n-i3a1sSfDxBwVKWihcnFp5x3d=puAySQ@mail.gmail.com>
- <13505077-fb36-4126-9767-fead98e01009@gmail.com>
- <CAHp75Vf7PbHPFuVjmK1xPMZxotc81S6FAQkgZ0ETNXSWozaUQw@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAHp75Vf7PbHPFuVjmK1xPMZxotc81S6FAQkgZ0ETNXSWozaUQw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 08/08/2025 15:52, Andy Shevchenko wrote:
-> On Fri, Aug 8, 2025 at 7:38 AM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->> On 08/08/2025 00:16, Andy Shevchenko wrote:
->>> On Thu, Aug 7, 2025 at 11:35 AM Matti Vaittinen
->>> <mazziesaccount@gmail.com> wrote:
-> 
-> ...
-> 
->>>> +       BUILD_BUG_ON(ARRAY_SIZE(st->channel) != ARRAY_SIZE(chip_info->channel));
->>>
->>> We have static_assert(). Why can't it be used?
->>
->> Don't know. Can you please enlighten me why one is preferred over the other?
-> 
-> Despite already made changes, I answer to this. The static_assert()
-> has at least two benefits over BUILD_BUG_ON():
-> - it can be declared in a global scope
-> - it produces more condensed (to the point) error message
-> 
-> That's why in general it's preferable over BUILD_BUG_ON().
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks. It's always good to learn something new. One of the great things 
-when working upstream :) (Although neither of those points seem to make 
-a big difference here. Oh, and AFAIR, there was a variant of 
-BUILD_BUG_ON which allows you to add a message(?))
+Hi All,
 
-Yours,
-	-- Matti
+Add pinctrl driver support for the Renesas RZ/T2H and RZ/N2H SoCs. The
+RZ/T2H SoC supports 729 pins, while the RZ/N2H supports 576 pins. Both
+share the same controller architecture, and the series includes
+documentation, device tree bindings, and the driver implementation.
+
+v4->v5:
+- Renamed DT binding file from renesas,rzt2h-pinctrl.yaml to
+  renesas,r9a09g077-pinctrl.yaml
+- Updated the title and description to include RZ/N2H SoC
+- Updated description, fixing the information about mux functions
+- Dropped sd0-sd-tmp-pins sub node from sdhi0_sd_pins in the example node
+- Added reviewed-by tag from Rob for patch 1/3
+- Updated Kconfig description to include RZ/N2H SoC
+- Grouped PM_* macros
+- Made use of BIT() macro for PM_INPUT/OUTPUT
+- Added necessary new lines for readability
+- Dropped port_pins from struct rzt2h_pinctrl_data and
+  made use of rzt2h_gpio_names directly
+- Added comment for mutex and lock in struct rzt2h_pinctrl
+  to clarify its use
+- Replaced u16 to unsigned in rzt2h_pinctrl_write*/rzt2h_pinctrl_read*
+- Updated rzt2h_validate_pin() to make used of BIT() macro instead of
+  open coding (1 << pin)
+- Added consistent spacing around colons
+- Inverted the logic to reduce indentation
+- Updated if checks to use `reg & PM_OUTPUT/INPUT` instead of
+  `reg == PM_OUTPUT/INPUT`
+- Dropped assigning drv_data for individual pins
+- Opencoded devm_platform_ioremap_resource_byname() for "srs" resource
+  to avoid error message print as the resource is optional
+- Replaced set_rv with set
+- Added RZT2H_GET_BASE() macro and simplified
+  rzt2h_pinctrl_write*/rzt2h_pinctrl_read* macros
+- Moved rzt2h_gpio_direction_output() below rzt2h_gpio_direction_input()
+- Used consistent name ie reg64/reg16 in rzt2h_pinctrl_set_pfc_mode()
+- Dropped updating Kconfig help string as that was done in patch 2/3
+- Used 0xXX for consistent formatting in r9a09g087_gpio_configs
+- Added reviewed-by tag from Geert for patch 3/3
+
+v3->v4:
+- Used patternProperties for pin configuration nodes
+- Expanded example nodes
+
+v2->v3:
+- Fixed Kconfig dependency
+- Added dependency for 64bit to avoid build errors on 32bit systems
+- Dropped refference to gpio.txt in the binding file
+- Added missing include for bitfield.h in the driver
+
+v1->v2:
+- Added a new DT binding file
+- Added support for RZ/N2H SoC
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  dt-bindings: pinctrl: renesas: document RZ/T2H and RZ/N2H SoCs
+  pinctrl: renesas: rzt2h: Add support for RZ/N2H SoC
+
+Thierry Bultel (1):
+  pinctrl: renesas: Add support for RZ/T2H
+
+ .../pinctrl/renesas,r9a09g077-pinctrl.yaml    | 172 ++++
+ drivers/pinctrl/renesas/Kconfig               |  13 +
+ drivers/pinctrl/renesas/Makefile              |   1 +
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c       | 813 ++++++++++++++++++
+ .../pinctrl/renesas,r9a09g077-pinctrl.h       |  22 +
+ 5 files changed, 1021 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,r9a09g077-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/renesas/pinctrl-rzt2h.c
+ create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
+
+-- 
+2.50.1
+
 
