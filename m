@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-760379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963FCB1EA5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:26:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0279AB1EA63
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FAAD1C25A95
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:27:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF6C14E26E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2C627F74C;
-	Fri,  8 Aug 2025 14:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC2127877D;
+	Fri,  8 Aug 2025 14:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UlGv3uvL"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VXscEBHZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB73F27F19F
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCA72E36E7
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754663213; cv=none; b=h7LHYtk7i4p2vAPkJvtymkynPefZLPY6EzkfmTjb4pblSCZTHbL4TrjEWNb51qcDbwyKOppZg7eNlkCEw9Rpz0UEpUCjiRtvWdP1QCyc8SvTl9qSKmdHXKeL2cGk6cOtid+S3IxV28Z/c4SRP7aSo2VzULER/9ViL/VfLD65ULo=
+	t=1754663492; cv=none; b=mnyt9z7O2jHrlBtgyyyKyp+Pwt+rfcWCGoCdXXLuFWN8KdBGsryOTXSqJKkNFHE5B8t2c3tEDLoU+0cUI2D8c5xzpXmcwt+LJd7VckNABhqW3zAhoc7cxNclP9aPQe/Z4OfXSDct0PljCqscR9ODmQeZqIm+WXPhOyOnq72x65o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754663213; c=relaxed/simple;
-	bh=p7NGNoPoaufz8nce702zKF8yTvc4ZU0Qw0BABs6W604=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H0JTcS2kv9NijdfsoyZoS+99+0sElllm/7oVyoa1c8q+Eb9PB1MppIGS+z3JBDvuVfpr1M8WF8no4HOaDR4kSLDrK2xrQk+Nn3FJer3OfYWL0AHv6RGCr6J0M0coIe0Wh7hH/jrLPEwR5Cjb+lJdNqr/BY7kDbLUMGhiE9My24U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UlGv3uvL; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-717b580ff2aso21508237b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 07:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754663210; x=1755268010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5WDyJ4waytAxtZpeOUkPDIPxeUnmaidLETwAZBBpWqI=;
-        b=UlGv3uvLYI42kfDQxeZAbDbVNxF9MfIq6oxhTi2dqjQ6FTm8m4m0vEZGm8UPIGu7uU
-         lg6Q2T19cr15vRzHfM329mf6coaZy8+Q3T7lAcA/+qU5WmByb/6U43OtlBFhvtL8ftJ0
-         sWKmb69Gif6V+xZPg18AdZOJL2WtIN852gy7IONhrcrq/Ue2h7cy/agv13cxWukvJJBC
-         Krr+MIpFaPe4Ln06y8FE8kSGukCEYgjOJWo5j9rLigx81ESZl3KW6lh2f4uge/nBuUFh
-         A+MTMnaUGNjwoWB2rThXw4G31K6vtBdvSxzTCmwauFLdbUVfPLOY+jbUA+bUyeSUERog
-         a2+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754663210; x=1755268010;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5WDyJ4waytAxtZpeOUkPDIPxeUnmaidLETwAZBBpWqI=;
-        b=BzmkFWt0FPloP5+FUoJ4YA/qBVeJDs1O2tPR/nk36artAhgNWMs2fyAfY+5Ntaezg5
-         /mCjH4uo4QtSKTcpA3PInd2T+/kz65nchOq5Vuu4UmM8lJO1swJpWvVtHOxUxLY7nqM5
-         7mj6J28/wtaa5pfc3yBhYwMfOi+F9WXLOlqOkPDXstX4o+Uzavf4llmooGrryGAVEk/5
-         WiVlk4OCzuxtitWRxuPcbhTeMVIqQVN+kcO/HSDaNLQ5qCBOEwGHN7lvzluacWH8zhJK
-         POaHQzC+HOI09Ktluh+eXFKUwrZrLYSn2DdpC8nvCM3ZF4Ged67kaDdzSWNmgL7mGLoN
-         ZncA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRfHX5I4HT7VFZscZmaJoAt2OSHxFk4RdrGJA4ciIY42E7tV9ffbxW+Je8dCA9xApm3iQDlX9vIq5h9iQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi5VBK8yeLurvWzAh7EmJe1qQ+QzlQbA011UZua+ArVfea6I6M
-	JkObxeyj0PBzT6UiiYQBpoI1poHi/odZa9iYrTctYQ2UD0lUeytWr/r01ocaVg==
-X-Gm-Gg: ASbGncsF7DE5c6AMdeXu5LzpY6jEaww3OiDjXbmRom+V8GuyvtWzDXPuU3BLgS6P2Jr
-	pGTk+dx2PczYjlBinItTFmfB2FDRGXWtTfSxgiG/dKZVTtQJAbZ8FXF0OBoIdDkZBLDhr6ghDoI
-	rFS8mTyu86KjpVLbXG9aAAlixJHj/AJ93h1YoSO0SwaQ46llB77DmxRIsyx9T9gZ4CJ84Max91B
-	8n+mJAQQoLVA3ZzBfSBJFFmCnFGIRWdlZn/M9oLxmjn77HcO3PSmVA6oeneUoRFs0ikUq+uGyhM
-	xWdrqzzlFk7QrdkgWZnFh/ZHTtl1wPwKJtbwPPjoVTf1s+6Fyw+VsK+3oKy/QDjC7LG3DuaZNUG
-	oQXdsU556JLJYkeXr4JxdjQ==
-X-Google-Smtp-Source: AGHT+IFqxRV9qk9+Bgt1zIqDMjDP3x3ye9NX+PiP0o9Tsc9GXQ5uZfQ45/JcvIFJMh/gkpSCcv9iew==
-X-Received: by 2002:a05:690c:6213:b0:71b:7043:21af with SMTP id 00721157ae682-71bf0f9a20emr39182247b3.42.1754663210429;
-        Fri, 08 Aug 2025 07:26:50 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:5c::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a5988f0sm52671287b3.52.2025.08.08.07.26.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 07:26:50 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: pratyush.brahma@oss.qualcomm.com
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/numa_memblks: Use pr_debug instead of printk(KERN_DEBUG)
-Date: Fri,  8 Aug 2025 07:26:47 -0700
-Message-ID: <20250808142648.254205-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250808-numa-dbg-v1-1-2ddd1ec634aa@oss.qualcomm.com>
-References: 
+	s=arc-20240116; t=1754663492; c=relaxed/simple;
+	bh=6h331knxWWLi5xlaD04ppqmYxJqO9T/0v1OIGs3CC2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mONilVYBkrFzLxV9HKwnZzIFA6u9FCtMQ5Mz2MKMQOwoAfVn66ljMn8jj+vtpb0/BRzpzw5g11eGo08Xv7PmjQINLgQlifq3TS5ZPzvZlP+2Vm8LeN2IPezXO8K6X+PST3NPWdOW7K3HT133HamvlOaqkyVj0leDYh2pIKjIWw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VXscEBHZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754663489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pVhHzmrsz3RzEJrixBNs+yxJAkbGyaM42AxRbLiYFUU=;
+	b=VXscEBHZUssZg+4S+WxTbdJFjVGET1123F2CJI8Hj54mqyEvJ+JKd0tfZdXw6pKKg6M03p
+	DqWE0A6jVBCeiriM6TFG7h2HIoVXTVaEEPvpnFvFJIgV9NWaCAWrfs1JO+tckg730Yd1n7
+	rcvnAfE7HbKVfV788WHaoKxcoTPxtjU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-484-DJbDAkNNMHyGQLED60pccg-1; Fri,
+ 08 Aug 2025 10:31:28 -0400
+X-MC-Unique: DJbDAkNNMHyGQLED60pccg-1
+X-Mimecast-MFC-AGG-ID: DJbDAkNNMHyGQLED60pccg_1754663484
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07B30180035D;
+	Fri,  8 Aug 2025 14:31:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1177A1800446;
+	Fri,  8 Aug 2025 14:31:01 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  8 Aug 2025 16:30:10 +0200 (CEST)
+Date: Fri, 8 Aug 2025 16:29:49 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
+	wangfushuai <wangfushuai@baidu.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 6/9] freezer: Set default freeze priority for
+ zombie tasks
+Message-ID: <20250808142948.GA21685@redhat.com>
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <20250807121418.139765-7-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807121418.139765-7-zhangzihuan@kylinos.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, 08 Aug 2025 17:42:22 +0530 pratyush.brahma@oss.qualcomm.com wrote:
+On 08/07, Zihuan Zhang wrote:
+>
+> @@ -6980,6 +6981,7 @@ void __noreturn do_task_dead(void)
+>  	current->flags |= PF_NOFREEZE;
+>
+>  	__schedule(SM_NONE);
+> +	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
+>  	BUG();
 
-> From: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
+But this change has no effect?
 
-Hi Pratyush,
+Firstly, this last __schedule() should not return, note the BUG() we have.
 
-Thank you for this patch!
+Secondly, this zombie is already PF_NOFREEZE, freeze_task() will return
+false anyway.
 
-> Replace the direct usage of printk(KERN_DEBUG ...) with pr_debug(...) to
-> align with the consistent `pr_*` API usage within the file.
+Oleg.
 
-This change makes sense to me. Also, I think this patch gets rid of the last
-caller of printk. Should we also remove the #include <linux/printk.h>?
-
-With that change, please feel free to add my review tag. Have a great day!
-Joshua
-
-Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-
-> Signed-off-by: Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-> ---
->  mm/numa_memblks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/numa_memblks.c b/mm/numa_memblks.c
-> index 541a99c4071a67e5b0ef66f4136dee268a880003..de626525a87c3ed54d31695e86f18c980c084558 100644
-> --- a/mm/numa_memblks.c
-> +++ b/mm/numa_memblks.c
-> @@ -76,7 +76,7 @@ static int __init numa_alloc_distance(void)
->  		for (j = 0; j < cnt; j++)
->  			numa_distance[i * cnt + j] = i == j ?
->  				LOCAL_DISTANCE : REMOTE_DISTANCE;
-> -	printk(KERN_DEBUG "NUMA: Initialized distance table, cnt=%d\n", cnt);
-> +	pr_debug("NUMA: Initialized distance table, cnt=%d\n", cnt);
->  
->  	return 0;
->  }
-> 
-> ---
-> base-commit: 479058002c32b77acac43e883b92174e22c4be2d
-> change-id: 20250808-numa-dbg-62a8b2092c56
-> 
-> Best regards,
-> -- 
-> Pratyush Brahma <pratyush.brahma@oss.qualcomm.com>
-
-Sent using hkml (https://github.com/sjp38/hackermail)
 
