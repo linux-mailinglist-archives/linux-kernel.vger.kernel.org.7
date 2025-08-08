@@ -1,116 +1,228 @@
-Return-Path: <linux-kernel+bounces-760547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4249B1ECBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5B3B1ECBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9960A188C494
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:02:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 439E21890F71
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E322868B2;
-	Fri,  8 Aug 2025 16:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B3228640F;
+	Fri,  8 Aug 2025 16:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="AFV8y+Mz"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FIQQWX9E"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C65019DF9A;
-	Fri,  8 Aug 2025 16:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F42281375
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 16:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754668903; cv=none; b=SVvbcbojSS6mE+BcefFHbpRf1607TZTwuP8R7gQJvVgWcAMloW0t2ZLJXVcfcaqTvrBbecci8z2ZqbuTO5rfL9GEkmpUIRbVH5cuoMRx/oDN87COOwonNL/9R45NCt8Flg82bU4CJaB2Iph19ASDVwHykLQpZeMDMRWJ+tsB9KM=
+	t=1754668919; cv=none; b=UAzifz2rtyCP+0ME6oa4lK50GiO8I7mMluBo7tXQoXac2immT9tt1rnfgesB4ayGIn9SQdtUjhs9gqvKh8Q9umjf7/o596iQdEcz8hjElI/tr7OjINIyKlagVg7RCky4UUozWEBzI1+ghVQURWpCCL3iEo6TqHr6V1f4284OtLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754668903; c=relaxed/simple;
-	bh=4wpl5kISI8+f2W8s1bQPKbUJjQqqP5TkAhzHBAkm0oU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXPVOOgQ8gc+ZlUQIVfr0F6VeBV1TrN/sWFm8m8PMZrGBUChedxx5QmNMqFLKMyaSuhV1n/GA4sS+x9bLHk7BV0Ea/Izfg/A/uXVJUr5BLowfwWffRDNbm7iBut0uje5OH1XapahDw8peGJhPspjxCiyNDwM3mXOungzeUAFw1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=AFV8y+Mz; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=Pa6ymjaf+laIWDGL7nQvdthJC62smmHhReHlABClzRc=; b=AFV8y+MzC2v3/m2A
-	tP1s6C5vKN1CJu/UeZkpAky9muwA4QZMopqa0F0/pkfFLF7PEZGRMLxdVGBiINmC3Hdxs9EygoOyW
-	DJjjTwXsc3nKtrV6rqV9bgk/cPho/zOHP86LPcYcSyc3FdGBP5QmByCQRTz+eGMD/W7M+OyaYZKWU
-	bdIqcLV7RYmSjZ+MR1F7Pv7jKOfy0fh6P/mWDN65pFqU8ZDlONdqsHFH7BFZNHT8D/dqN0BK6b/Rm
-	OqeFChZjD46zgsk7IV1T3U2xYtx0XHBasJwke3smi8+N9ImCCQGhqSfnFnvfqPmBqBL0bHZKrvNmS
-	Q86C2IzA8QEkZb2yyg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1ukPX7-002mNU-36;
-	Fri, 08 Aug 2025 16:01:29 +0000
-Date: Fri, 8 Aug 2025 16:01:29 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Lee Jones <lee@kernel.org>, arnd@arndb.de, mchehab@kernel.org,
-	lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-	tiwai@suse.com, linux-media@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/4] Remove the wl1273 FM Radio
-Message-ID: <aJYfWQg-B_GQtF0n@gallifrey>
-References: <20250625133258.78133-1-linux@treblig.org>
- <175137646300.2319882.12045106011003909576.b4-ty@kernel.org>
- <20250808155133.GC23187@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1754668919; c=relaxed/simple;
+	bh=fOCPFct5dntu5BfK1uh1Yv404lDPZaFUdyrSLT2qihU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gn0EFRtiO3b+hpLfWCQOapIgwEPbh12QU/XXRaJwlc/XOs9d3mYKqA1jj57HjzK1DNa5Pkwo/ouqz9JsDpRpkKFxPRbx6I3Gk2pgAHkVn52uMwJRlqRUHtpF987TYkliIKnO9qryfamtB5PGKGFUj4291z3GRsdCM4bwSbFe+u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FIQQWX9E; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754668916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3KpHIwQXQzl79XB+0YP8dsHS09QW65wqook1xDj3rA8=;
+	b=FIQQWX9EXxpTau35HCPNTS+sjOeifJw20aiAFuE85OyeuktyiIEehZhS6UELwDsmDz62ag
+	SuqidZE7X/DIgXrUEGRPpzFZ8pgas/uE7BOa2YYvRmr20aOH9jzB558wJ9NEg9XCEUekEv
+	IHRgZTFSHCh8Pej5qXh/o28amp1txFg=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-557-3m4R_eY0OLq95of_sCQrIQ-1; Fri,
+ 08 Aug 2025 12:01:52 -0400
+X-MC-Unique: 3m4R_eY0OLq95of_sCQrIQ-1
+X-Mimecast-MFC-AGG-ID: 3m4R_eY0OLq95of_sCQrIQ_1754668911
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40D271800359;
+	Fri,  8 Aug 2025 16:01:51 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.224.121])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2FC9819560AD;
+	Fri,  8 Aug 2025 16:01:47 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH v11 0/8] timers: Exclude isolated cpus from timer migration
+Date: Fri,  8 Aug 2025 18:01:34 +0200
+Message-ID: <20250808160142.103852-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20250808155133.GC23187@pendragon.ideasonboard.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
-X-Uptime: 16:01:15 up 103 days, 14 min,  1 user,  load average: 0.02, 0.03,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-* Laurent Pinchart (laurent.pinchart@ideasonboard.com) wrote:
-> Hi Lee,
-> 
-> On Tue, Jul 01, 2025 at 02:27:43PM +0100, Lee Jones wrote:
-> > On Wed, 25 Jun 2025 14:32:54 +0100, linux@treblig.org wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > I noticed that the wl1273 radio had an unused symbol, but then noticed
-> > > it is on Arnd's unused driver list:
-> > >   https://lore.kernel.org/lkml/a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com/
-> > > 
-> > > So, delete it.
-> > > The components seem pretty separable, except for Kconfig dependencies.
-> > > 
-> > > [...]
-> > 
-> > Applied, thanks!
-> > 
-> > [3/4] mfd: wl1273-core: Remove
-> >       commit: efddd98938400a570bde5bc69b5ecc7e76cacbe1
-> > [4/4] mfd: wl1273-core: Remove the header
-> >       commit: d356033e7b1e94e0187bb0651f4a066a4646fbb9
-> 
-> Ah, that may answer the question I just posted in another reply to the
-> cover letter.
-> 
-> I think patch 4/4 will break build in -next until patches 1/4 and 2/4
-> get merged too. Should we get 1/4 and 2/4 merged in the media and sound
-> trees ASAP, or would you prefer a different option ?
+The timer migration mechanism allows active CPUs to pull timers from
+idle ones to improve the overall idle time. This is however undesired
+when CPU intensive workloads run on isolated cores, as the algorithm
+would move the timers from housekeeping to isolated cores, negatively
+affecting the isolation.
 
-That makes sense to me.
+Exclude isolated cores from the timer migration algorithm, extend the
+concept of unavailable cores, currently used for offline ones, to
+isolated ones:
+* A core is unavailable if isolated or offline;
+* A core is available if non isolated and online;
 
-Dave
+A core is considered unavailable as isolated if it belongs to:
+* the isolcpus (domain) list
+* an isolated cpuset
+Except if it is:
+* in the nohz_full list (already idle for the hierarchy)
+* the nohz timekeeper core (must be available to handle global timers)
 
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+CPUs are added to the hierarchy during late boot, excluding isolated
+ones, the hierarchy is also adapted when the cpuset isolation changes.
+
+Due to how the timer migration algorithm works, any CPU part of the
+hierarchy can have their global timers pulled by remote CPUs and have to
+pull remote timers, only skipping pulling remote timers would break the
+logic.
+For this reason, prevent isolated CPUs from pulling remote global
+timers, but also the other way around: any global timer started on an
+isolated CPU will run there. This does not break the concept of
+isolation (global timers don't come from outside the CPU) and, if
+considered inappropriate, can usually be mitigated with other isolation
+techniques (e.g. IRQ pinning).
+
+This effect was noticed on a 128 cores machine running oslat on the
+isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
+and the CPU with lowest count in a timer migration hierarchy (here 1
+and 65) appears as always active and continuously pulls global timers,
+from the housekeeping CPUs. This ends up moving driver work (e.g.
+delayed work) to isolated CPUs and causes latency spikes:
+
+before the change:
+
+ # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+ ...
+  Maximum:     1203 10 3 4 ... 5 (us)
+
+after the change:
+
+ # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+ ...
+  Maximum:      10 4 3 4 3 ... 5 (us)
+
+The first 5 patches are preparatory work to change the concept of
+online/offline to available/unavailable, keep track of those in a
+separate cpumask cleanup the setting/clearing functions and change a
+function name in cpuset code.
+
+Patch 6 and 7 adapt isolation and cpuset to prevent domain isolated and
+nohz_full from covering all CPUs not leaving any housekeeping one. This
+can lead to problems with the changes introduced in this series because
+no CPU would remain to handle global timers.
+
+Patch 8 extends the unavailable status to domain isolated CPUs, which
+is the main contribution of the series.
+
+Changes since v10:
+* Simplify housekeeping conflict condition
+* Reword commit (Frederic Weisbecker)
+
+Changes since v9:
+* Fix total housekeeping enforcement to focus only on nohz and domain
+* Avoid out of bound access in the housekeeping array if no flag is set
+* Consider isolated_cpus while checking for nohz conflicts in cpuset
+* Improve comment about why nohz CPUs are not excluded by tmigr
+
+Changes since v8 [1]:
+* Postpone hotplug registration to late initcall (Frederic Weisbecker)
+* Move main activation logic in _tmigr_set_cpu_available() and call it
+  after checking for isolation on hotplug and cpusets changes
+* Call _tmigr_set_cpu_available directly to force enable tick CPU if
+  required (this saves checking for that on every hotplug change).
+
+Changes since v7:
+* Move tmigr_available_cpumask out of tmc lock and specify conditions.
+* Initialise tmigr isolation despite the state of isolcpus.
+* Move tick CPU check to condition to run SMP call.
+* Fix descriptions.
+
+Changes since v6 [2]:
+* Prevent isolation checks from running during early boot
+* Prevent double (de)activation while setting cpus (un)available
+* Use synchronous smp calls from the isolation path
+* General cleanup
+
+Changes since v5:
+* Remove fallback if no housekeeping is left by isolcpus and nohz_full
+* Adjust condition not to activate CPUs in the migration hierarchy
+* Always force the nohz tick CPU active in the hierarchy
+
+Changes since v4 [3]:
+* use on_each_cpu_mask() with changes on isolated CPUs to avoid races
+* keep nohz_full CPUs included in the timer migration hierarchy
+* prevent domain isolated and nohz_full to cover all CPUs
+
+Changes since v3:
+* add parameter to function documentation
+* split into multiple straightforward patches
+
+Changes since v2:
+* improve comments about handling CPUs isolated at boot
+* minor cleanup
+
+Changes since v1 [4]:
+* split into smaller patches
+* use available mask instead of unavailable
+* simplification and cleanup
+
+[1] - https://lore.kernel.org/lkml/20250714133050.193108-9-gmonaco@redhat.com
+[2] - https://lore.kernel.org/lkml/20250530142031.215594-1-gmonaco@redhat.com
+[3] - https://lore.kernel.org/lkml/20250506091534.42117-7-gmonaco@redhat.com
+[4] - https://lore.kernel.org/lkml/20250410065446.57304-2-gmonaco@redhat.com
+
+Frederic Weisbecker (1):
+  timers/migration: Postpone online/offline callbacks registration to
+    late initcall
+
+Gabriele Monaco (7):
+  timers: Rename tmigr 'online' bit to 'available'
+  timers: Add the available mask in timer migration
+  timers: Use scoped_guard when setting/clearing the tmigr available
+    flag
+  cgroup/cpuset: Rename update_unbound_workqueue_cpumask() to
+    update_exclusion_cpumasks()
+  sched/isolation: Force housekeeping if isolcpus and nohz_full don't
+    leave any
+  cgroup/cpuset: Fail if isolated and nohz_full don't leave any
+    housekeeping
+  timers: Exclude isolated cpus from timer migration
+
+ include/linux/timer.h                  |   9 ++
+ include/trace/events/timer_migration.h |   4 +-
+ kernel/cgroup/cpuset.c                 |  72 +++++++++-
+ kernel/sched/isolation.c               |  23 ++++
+ kernel/time/timer_migration.c          | 182 ++++++++++++++++++++-----
+ kernel/time/timer_migration.h          |   2 +-
+ 6 files changed, 248 insertions(+), 44 deletions(-)
+
+
+base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.50.1
+
 
