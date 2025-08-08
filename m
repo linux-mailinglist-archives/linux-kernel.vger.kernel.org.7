@@ -1,81 +1,85 @@
-Return-Path: <linux-kernel+bounces-759998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E343B1E56F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:13:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF69B1E572
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEDED720B8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:13:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A59537A6B93
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AD725A353;
-	Fri,  8 Aug 2025 09:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E9A26CE39;
+	Fri,  8 Aug 2025 09:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e8j0u1QF"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="aqFUNBLt"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013013.outbound.protection.outlook.com [52.101.83.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195F926C38C;
-	Fri,  8 Aug 2025 09:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3632F268C73;
+	Fri,  8 Aug 2025 09:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754644428; cv=fail; b=ILTiXiZ36Fm8z3nfyk5+8dJiQ54ZfICRvYiRaQwojDqmeCh04qPTZJfeMWb9WYKM6uUBQhGkXlPnYWj8PoON5hJzFxCQWdhtjuw7V75i3RALJHQ8NKc5wCM5IDoVOYUZBDJ12Z5nbhS/ncI+3BzcgCz4l0EGgiS1qJIG5hPF7oA=
+	t=1754644451; cv=fail; b=OguGJksYD9I8jXiJ0z2Zz+MJa9UgoWOkCH49zf8ljKZ5yJ8+Txc823sREoSLaQPICOQzr/sbBduEWv3BpYrEAeXSNjnig5DC1zsRuq3pbxX6iuKdWstxUr/w/e+pQPTCabItN7UnAjPEALWjEVA+zOlz/vvs8P6ixNwxVwfF4zM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754644428; c=relaxed/simple;
-	bh=7LgWPijuJSAI/NN/2aWzjTyLt/KV5fvRlWhUR3vrYu0=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=cV2iPkb59Ys6Eq124QLE3uyJ20tcjdbUnUQuMvRbdlDleksaRb20nOmM0xEBJrOLvzLJRGc/8sISQ5/CWt1IO6gGdm+Hbc5XZ7t/iUVDe3aE1PGI5ZMoI1QrwpaUaroIldK7SZPmYIu0FCUJgXqSjog9RjvJQkl5G+mdXzkqvgA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e8j0u1QF; arc=fail smtp.client-ip=40.107.94.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1754644451; c=relaxed/simple;
+	bh=DaKKynti8A6ES0bLSnhq+2iNxQ/we/r4mteI6gwNVn8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q5v3XcBkGMDodX4iNoxkJ/LLritZPOHh2oWsO5GOsvoTIJFvP+u/ZtE0P2bj5VAoaefBUowZDVu0sI3CKXkWTPunUP6FAs2RvR2mfn22XaiQsX1iMV9LLXQDSr4yNyuDpbhrYf+Ytgn6/AS2a6r9BV4s8vmsxjw8InkAmkH4PTc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=aqFUNBLt; arc=fail smtp.client-ip=52.101.83.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y3ao/qd+2QIHT69m5CgYIN0hitareg0hA/nnnO7ORFR7cy5i9oXHi0l3svNnyFvaYDfeaiwJQGWlbh1ckNNgys79xwtCKtBMunwrnMeD71L2VGMigPUnsIYsrRHDV+5EZolwxqJwafCbIM8S8pzb2xiVxNr6vGRC/c1c6Pq1fFRC8WVxaEqdgDTZR8a5xWqzZ+GHSE7sAMNYyZlvFV8KVq7dhbitHnGTMQz8nzO/oMrr3i28kKjN7OOeRP9h2V3QpQ24xCfkTcbaeMxhaWmp3XoxXlPMQGa25d1mRL75nyGjmfqywQe8acTDe9iZ9AR77/um56nBJLwTjANiqm7WZQ==
+ b=jGswqXq1IFwQmXlW9xRj6jwdNavXxa1JbFg39KBrswo93TkgVz0CqUOgRxU/9hyW30meI+Gvv2yZUgJ7dbfbuv+hpmhaI+pB16z/c8EhwFsNsuMpCDHvbMQRK6Xgcl/h1NYO0WKRQpFHh+uBuFXnOvn5J4K3rG9Fc3CqqeklyhOCE9prOeU+kOokkjKC75jTXfbqjMgUnHL8RS1EPFNxew+Mvvmog9dOPtZoKtrKe2Ah2/kNlhrNVlFIZyjx8fCnK3Q9VGeZKtqyt7lMxqX0h5DGb8N1oFBCkQwzHPfsMdW844RwSv/xBzBc4OFwm6mw+MpduxqBp/E1fDXmRIzRlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7LgWPijuJSAI/NN/2aWzjTyLt/KV5fvRlWhUR3vrYu0=;
- b=iyBjJv4UW8J/8Ovbj1iY2FcfcmRwFrjnRa3naVxx3EzvP8Qph0kJXG8WCI6LVAAJaXztbLvQUa04qwqmeJU1+xertWbNTOghXdS4xYjGtosXjMPRPt9tvZRzVu88nZeX9m1/WWVyN46vw6sLJblALZ/+Aume04pXmUaCvnU3l6cukaNHHC0F4/zZ4EWK/6H1eKD2sSZXQNE72UVRfls3JhlgTih5wauBDKj7+0FRfDz1Fi90I5p7R2gzjGhQ5gOP+xDqBqXGv4g33SYkaJ6pDLuexwNQXnKUAUxg55QNe3qcdBj8mXlJZQu/2tpeqMXbjM6hz0QYqxLgc4ulkaB1cQ==
+ bh=er6xrq5GCC9/OyJ3Z6QAreldlhsmFbwI09W/GWIaiZA=;
+ b=KSfnMUW8GxOXOkTeRmAMh7bvbgm8p9KU6E1/VP/oqhOKPD5SstSe59bPfoP28fTXfyzsblhu/UVdAKt4gSsugHT3dGyKtvnVgFT+FzRSwaH0pqZLPwx5UOXeBWjdDsAYQIF6rpTAoyLB+ocV1YoBeFfSP/CR9tGMVLB65NEZUedJH2WdF4T27ErybJy73uYlsqTumelxi/B9IkErHrs8l8l5prAUbnhYlcfazbljSfKYpL1mYnNCXOG5EfD+EIBIafPkvc6vj6/nHNXkfokxAzo6QqI/2yu3tTFSkZjDbxKAtq20d22hNE80dzDGKNhZLyvt9iCNhByPioiDuQ4h4A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
+ dkim=pass header.d=axis.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7LgWPijuJSAI/NN/2aWzjTyLt/KV5fvRlWhUR3vrYu0=;
- b=e8j0u1QFW5kQSIObk5A1cijT0sqce4H/ykNl6Dj9/lty4IFnm3Fm9yVlzoLisR/B5Hv8ojaf+HIHJ5VXFbLpOeKjEJVe6b5q1g5cQ0zimjK0IwV0PFswZqErO7Q+caJlivYHCJP2BNP759JaPjHJISFEEgxlJULG5klFJKr2APSmbmJQ9UJUdU/A7uLivmAZcQC4B7YORw/94RS3+4HAwqQ2HUh3NsgPrTh8alBv4JGW7EJotNfToBdB8n3B7WGQq5Gcqt206u6cyHnUzAeVUyatIpDa8L3dqGmOyJQAa/iOPRkmYUPGaT01jj7oJP5lLLw9JzXXybBVR0uFwUtYOw==
+ bh=er6xrq5GCC9/OyJ3Z6QAreldlhsmFbwI09W/GWIaiZA=;
+ b=aqFUNBLt/znhNZI1dvdK8iBck5hU86Uo0PfS/9MN20nL+jsXF5ma7LMD7frrAdEs/3aAE4kNzBX8yTLcqxnfYDM9A8OVvA5oa/Gw3OU3v3f/MpAf/Ttvn4CSJpA6Q5zIK1bFaq3br/5NGdqPQnC0UyoPZYnFrIRZmrGzsqzHQAw=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SA1PR12MB8118.namprd12.prod.outlook.com (2603:10b6:806:333::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.17; Fri, 8 Aug
- 2025 09:13:44 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
- 09:13:43 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 08 Aug 2025 18:13:39 +0900
-Message-Id: <DBWXJA6XF1VS.3PNHRWH030H0J@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH 0/4] rust: add `TryFrom` and `Into` derive macros
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Jesung Yang" <y.j3ms.n@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <cover.1754228164.git.y.j3ms.n@gmail.com>
-In-Reply-To: <cover.1754228164.git.y.j3ms.n@gmail.com>
-X-ClientProxiedBy: TYWPR01CA0025.jpnprd01.prod.outlook.com
- (2603:1096:400:aa::12) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+ header.d=none;dmarc=none action=none header.from=axis.com;
+Received: from VI1PR02MB10076.eurprd02.prod.outlook.com
+ (2603:10a6:800:1c2::19) by GV4PR02MB11326.eurprd02.prod.outlook.com
+ (2603:10a6:150:296::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
+ 2025 09:14:06 +0000
+Received: from VI1PR02MB10076.eurprd02.prod.outlook.com
+ ([fe80::869a:7318:e349:822d]) by VI1PR02MB10076.eurprd02.prod.outlook.com
+ ([fe80::869a:7318:e349:822d%5]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
+ 09:14:05 +0000
+Message-ID: <1aec872a-f1fb-4302-b346-08992ab19276@axis.com>
+Date: Fri, 8 Aug 2025 17:13:55 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] power: supply: bq27xxx: fix error return in case of no
+ bq27000 hdq battery
+To: "H. Nikolaus Schaller" <hns@goldelico.com>, Jerry Lv <Jerry.Lv@axis.com>
+Cc: Sebastian Reichel <sre@kernel.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
+ <pali@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "letux-kernel@openphoenux.org" <letux-kernel@openphoenux.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ "kernel@pyra-handheld.com" <kernel@pyra-handheld.com>,
+ "andreas@kemnade.info" <andreas@kemnade.info>,
+ Hermes Zhang <Hermes.Zhang@axis.com>
+References: <bc405a6f782792dc41e01f9ddf9eadca3589fcdc.1753101969.git.hns@goldelico.com>
+ <VI1PR02MB10076D58D8B86F8FB50E59AADF422A@VI1PR02MB10076.eurprd02.prod.outlook.com>
+ <2437B077-0F51-4724-8861-7E0BEE9DB5F0@goldelico.com>
+Content-Language: en-US
+From: Jerry Lv <jerrylv@axis.com>
+In-Reply-To: <2437B077-0F51-4724-8861-7E0BEE9DB5F0@goldelico.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYCP286CA0201.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:385::15) To VI1PR02MB10076.eurprd02.prod.outlook.com
+ (2603:10a6:800:1c2::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,133 +87,267 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB8118:EE_
-X-MS-Office365-Filtering-Correlation-Id: 880719bc-f88e-40ad-2eb3-08ddd65bdf05
+X-MS-TrafficTypeDiagnostic: VI1PR02MB10076:EE_|GV4PR02MB11326:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6dcd1a62-571b-439a-dd33-08ddd65bec6c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|10070799003|376014|7416014|921020|7053199007;
+	BCL:0;ARA:13230040|1800799024|376014|42112799006|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U25sRzNTQUh1cysvZldWUEozYTFqYTd0TXB4R1lZTnB4UlhYTDZLVDdKbG1U?=
- =?utf-8?B?ZE5lKzVoNHBERzl1MTJRQ0s5ZkZndmEzOTJUaFlKVERkK3dOdVZTQUttVEpu?=
- =?utf-8?B?QTBMYTU4b2JObVdnT3F3RHhFdVJrbE11OW1xeXFBVVI3dmJDak5Yc091SHgw?=
- =?utf-8?B?OVpISDJMSTBXRlhFTzRoSU0xWGhnS0FBci9EbUJ6ZUkzQTZIWnFXQnhtb2xn?=
- =?utf-8?B?c0FYUEJJTnVDbFh0TFBkelNUSlo2dk1uY2R5N0dtMnlXMFhuczRNbVFWQXE5?=
- =?utf-8?B?ZTZaOXNnZ1UraEN6cUFuOFB1cW5xSWU2WWhBU05QNU1kLytmUGpWNmRPaFBt?=
- =?utf-8?B?NzdJeldzNmMwSW9PV1RsTEVDWVRlMTNmcWlZVzNMaklDbUZmei80WW8yUjl2?=
- =?utf-8?B?ZSttZ29BMktLTHRBVzBsaXJrNEVHbDJlQjFkVXZ2SUM1WkVnRXhLZ0JOMXR4?=
- =?utf-8?B?MWFWeWp4ajdRQlhDa09KM3RIOE9WSm9Sc1RyQjhxNy9oUTdaVzdGaHJDellW?=
- =?utf-8?B?VHkycEdjY25UMzJsZXhKVDl3NHVNaEFsSFo0ME9jSW1yQXhOYTNXenhvQ3Zx?=
- =?utf-8?B?dTBSUWgrV0dPczVPZDlySEtYR1B4VDFrNE1wZDY5UERkclpwdnRsZkRnVkJy?=
- =?utf-8?B?OVVjTG9yeHlXMHhMZVROQittRllzZlhmZS9PK2xJOGd6TzBwYUkzUlc3K3Zj?=
- =?utf-8?B?L2dHQ0REeTNRbG45M2QxNDZQNEpRdGxrQWt6RjNmWTkyeVd2ZTgyRzNvUm9z?=
- =?utf-8?B?YTg5Wi9BeThhNERwVWxRUThSQWRmZVNoS20xeFppZVJrdEE2clpUNkJiRnI1?=
- =?utf-8?B?MDVrRkdieXhMQVJ0MUJMaUc4UFV3WG9ZbkZKVXpGcU10M3dEVldZSTF2NjZV?=
- =?utf-8?B?aEQ3bDhCYklBUjlUT09NZDZWYS92cHpJaDljMWR0MnZuWFpKZSt5bjlEOTYv?=
- =?utf-8?B?Z3lzS1R1WlJJRldHVDh0dHNPNHdhUnlmcG5zVldiYmxVVG92dnBwN0ZrN0pC?=
- =?utf-8?B?eEFJamd6Rm5NeTJ2aEdhMXFValRKV3JDZnNrcEJTdTJnWDh1MmNVVU5TMlpt?=
- =?utf-8?B?Q1lQN1BwZ1dzM3RHQlowMURHeEh5N210QWs3M0M4dTlhNEo1NU9EbkRzeTVJ?=
- =?utf-8?B?SUNiazAyYkY1ZzFMdkQyYjJpQ3JKblljSjVoOFpoK1kyYU5YK1FheTFiZnRR?=
- =?utf-8?B?NmI2bUpvckdBRGRESUF0TklOOTN6eDROa3I1cUJHSnZtVFNoMk4vMjhPaVha?=
- =?utf-8?B?Y1FZWTVuR0VtMll4YUtGVEREd1RrckpTRStXSGZiNTMwTGVvZGVUcnNuajdn?=
- =?utf-8?B?UU11OE9QemNJL0dIQ0JIaEVpeVFUang1YmRURGNXditrREFkMklYVlhET1o4?=
- =?utf-8?B?cUNJK1RJMkFJRHZvVGMxdGdiR0EyNnBEekRBNWxsKzRXZkRaU1dOaXUzRE44?=
- =?utf-8?B?MnlaM0NpRjJmVmZzZXREa01nNWo1WjUwRWdQZkQxNzR1eG0vYWxGQkloVTBa?=
- =?utf-8?B?VFdyUjVsQVV2eWNCMkVCbHdSd1RKZzdhTWxueTJTUGo0SnlxbmdSdkZlZ0xW?=
- =?utf-8?B?dnJVdzluL3J3NGR4RXFhNURQa2VsOFBqdjNXblBJNmZKYnVKWG4yMzF5VHdw?=
- =?utf-8?B?cituK0wvSEY2MTdtTERBU3BGZG81OEZSaUQzVmxJd0YrMFRXQXNrYTdybTVy?=
- =?utf-8?B?aHVwYjNWUVNVZ3I5bDVOSnRzRU8zOHV1b0Y2U2hwN0V6YlJEemdVTmFDcXpj?=
- =?utf-8?B?aUpDajA2Sll5TEhXYmxmN2JDdzlaQk1aaU1FOVRBakkwcEh6UUVxcVdSM2FW?=
- =?utf-8?B?NjBTVjBXU0NDNkVSd3dqV3VzTG0ybmhEK1QwYUtHcHBjcFU2QTlZamFBWmJh?=
- =?utf-8?B?VWlBbzJIOVdPTGgvNmhvMGNua1dVUzdTR09DcnNCMTIxaWRnRlg2aU9GMVdm?=
- =?utf-8?B?NzF5RXNrN1p1RVJTWGZuM0NDd3VnVGorakhKemp3OWpQckJQRU5LSFZkcExD?=
- =?utf-8?B?UmZSSHRIUFlBPT0=?=
+	=?utf-8?B?TnRmb3JtM0hxckFlRHpSZXBtOWo1Sld1K09OV0oyQ1JKSnUxODhmbEJ1VDRR?=
+ =?utf-8?B?V0IrOEw1cm1hWm9VdFJ6WFNHT1NWR3lZSDdUS25QT1daQi92UTc4UEhPaUNZ?=
+ =?utf-8?B?RE82UXhqajlQdUV0REZEUFZRVnhpQ3pTTzl6UzlDSys4aTdlenZXUGxqdW9M?=
+ =?utf-8?B?bXZpell4MW1Gd2RDbDBEa0RqRTM0TE1SbFB0aUhCdGZGT0hCaHFGUGZFNGVz?=
+ =?utf-8?B?Sjl4QmVzbVFIaXdvOG4wQW50RDd0RmlqdGtwTVFKNGZYTkpjWEpLRVlzeGhp?=
+ =?utf-8?B?Z2dOekhBZEhKQWhSSkx4Q29BbHRBbVdkcW13RlRIRVJVUmtHTUd1MWF3UDBP?=
+ =?utf-8?B?b2ZxbFRMbVpBbHpHTzVSNG1uYy9QVGRLYlJyNXFRVlFCSHdKb25rUVp0b0gz?=
+ =?utf-8?B?SyszZzVGMWxkVE9ZRDlhL2JxQmxVN2lOelRxa1dYR24rRTFCdUJGazdFdWM1?=
+ =?utf-8?B?MnlHN2l5NGVRUTBLVlZsY01MaWVLaXZ2QjIvaWpkUWhZOWQra1kyNmhscUlB?=
+ =?utf-8?B?NXR5WXFQUmtCVGV6Y0d4UXI0cTlNZVZnbFJLbW9YZTFiL2F3anpQRnA5YW5I?=
+ =?utf-8?B?eisxbm1YNmNCMW9LMFVUN0RJSjlJR2VjVkZLV3RyODRlMkl5dkQzU3F2Tktx?=
+ =?utf-8?B?NTNsbUtIT0ttaERwZnpyeFU4U0ZoSHhlZzNJazAxRW1VRUpybllndHR4TVRv?=
+ =?utf-8?B?YkR3SnFHaHF2SjlwMGtibkpEYjRMUXhrZUhZNVhnK0tkS1VyM2loVmErZ01M?=
+ =?utf-8?B?aHlpdVNlRDBmR0dQMDJtd3l4YmV4WlI3TXdxc1VOTW5MYThmeU5jcWtMaitG?=
+ =?utf-8?B?Rk5NakVONldERWxvL3ZUN284S3RwWU80M1Jsamc5eTV1VldTd0cybnloMVhV?=
+ =?utf-8?B?L3Irb29mVTdyR08zUXd4ZjUvbm9vNkVLa2Q3cDhWZjFVR1ViMGZJZHFaNVZT?=
+ =?utf-8?B?c0FGeWJHTllYREFCK2FTeXYzaEcrS2ZQQ0YrTUp4WnZSWVNqaDI2UUt6Q0NZ?=
+ =?utf-8?B?emtRQzc1aXBCUWJDamxxdyt3NkhRSWUweVRBdldYMGhJUnNtbXZKMUcrQjA3?=
+ =?utf-8?B?RzBlN1hORlIwNDd1bGVVQU96Yi9URTV1TWZYL2VQWWNzMmVQd0ZCTndUTk9Q?=
+ =?utf-8?B?NUtXdmFxRXVYWU9nNTZsK25hdVFUWTczMStSMlFPUER1cStETjVzaFkzTkhL?=
+ =?utf-8?B?MGdpeEdIQnYyenZaS2d6Y3pYT0xNc0ppMkFiWDd3WjkwSVp4UXIrR3krdEFG?=
+ =?utf-8?B?ckk3WFlERzVEcFJZY2pTM3VycmhRQlRELzd6SkVEYUlWYklrclEzZ2ZGUFZu?=
+ =?utf-8?B?SFRDZVdFc0NRNzN3eFluVG54Zk83TkRnaGh6MCtEUmRYZEN1WVIwVWVHMURZ?=
+ =?utf-8?B?S2tUQzMvMUtZaU5Ha3NIK21HMi9XdHBVUDQ5Q1pBclVVOERmQ3VzSkNXRXR0?=
+ =?utf-8?B?bDZLaTBiWUpTUnp4QjNOVEFJSVNNbnUxNWJQOHArWWhKNmRiUG50Lzd5c2xO?=
+ =?utf-8?B?NXUrREZVMHhIWlZvY2UzcjR1SzBMOHVhUWhaTGVoYWZwUHZPS1VlOVZHVEpn?=
+ =?utf-8?B?cFRaZ1V2a2g0M1JPcGRDWEQ1NmVwemwxQTRDcmZmR3d0VGU2d2JDOU0rSEtl?=
+ =?utf-8?B?U0twbEsxZnp6RStBRG9hUXVwQ1MrN0txT3d4VmthM0VPUW9ZNm4ybUJyZVZj?=
+ =?utf-8?B?c1FQSmZmWDBkZU5Jc05CblRNem8zQzdBanMzZndBdnAydVpDTXpaSk5meFJt?=
+ =?utf-8?B?KzR6WVpVK29sSVBRNmZYOVRpTmRNNytxUXpHZVlHeEdvdzlJSFVPRk5KcEhH?=
+ =?utf-8?B?OVpQOEhFdmlOb0tNZitzK2NJWEpmeUpydUZKdmlQdlB3UlVKcVNNQktZY3F2?=
+ =?utf-8?B?Tks4aE52OHhFOXFOYUwxOE9jaHFURFJoY2UwRzk0NXhlV2o5QldnME1FYlhq?=
+ =?utf-8?Q?iM11fYVpWcY=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(376014)(7416014)(921020)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR02MB10076.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(42112799006)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U3N4MXRHUjNFR1lyWEJNV3pSMUVxM0I3ZkZwM3h5eGJuSjdhK0ZkR3oyL1Na?=
- =?utf-8?B?aW9LQVVkakVPdXc4L2dVdHg2Si84NlE1c1pKd09SSzg4L0t6UkFZbmZuWHRM?=
- =?utf-8?B?QVI1bHFuc3RueFdZNHhnOHFRL25KdDlnR3NMR2thMUl3ek96eUF1eDVZbkVL?=
- =?utf-8?B?TzBvTlkxbUFwQjZiQzdzRS9nTzZ6REFScjZqZk03MVFKeWJhT2dpTVBtL0pp?=
- =?utf-8?B?R2ZNVTcwaGxZVzBudXNldzB0cnR6Mk02S0xKTDNXR0M2ZU5ndTltNldlQ2c0?=
- =?utf-8?B?cEdWWTMyekVRLzVZby9WdExiOWk5dkErN1JmMWxKM1lRd3JBeWpQMXZyZ2Nn?=
- =?utf-8?B?M2JRUS94QW03N0kyV1NWVktmbVdGSi9OS3hybEkreXFrczdlR1RnZnlFNyt2?=
- =?utf-8?B?dXEyUnFMU3NTZVdJYnQxRjEzOWREeWtMblo1eVhRbXZMTlRrZWZnRnlTeTZw?=
- =?utf-8?B?ZUI2NkZ1ZVRHZDd0RkJOYnBTNklXYnNZUTZnTTF5QXdQd1ErV2laa3pJMEhl?=
- =?utf-8?B?dDZUWWpoNzhSTzN4MTRsUEhWaHMvdnpWTGVFcTBOS3hpM3FtbVJ4NWNLaXhF?=
- =?utf-8?B?LzFqcnZGV3hySVhNMkg4MzVqNzE2QTBQZHFEYmptOTQrWFBQZFY0MUtaU1pG?=
- =?utf-8?B?Q0lVUkc0K1dKV0tzTDFQc3Y1UjRjb0Rva0QvYmZubGNTcU5XWGZydFZZR3pR?=
- =?utf-8?B?Z09MeFRQaGs3NVhVYlpTbDNhQUY3eURzTnQyMEdLMUgveW0zMmtGeG5HT1Jq?=
- =?utf-8?B?U2J4dmtEUkFzNVNTT1kyT3lMYkVzYVpBNm92V054d3JYV3NKWHhEMzVmM2Y3?=
- =?utf-8?B?S3kySGhLQ0d2NWxqQVZiWEpObmFRY1lSN0c4UmdReFRFZmtkOGs1Rk5sWEFY?=
- =?utf-8?B?MURqL3IxRzk1WER2NnYvT3NzQzB3MW5jWEsycis3VVhHV3I4ck1SNGFtVDY5?=
- =?utf-8?B?bmZXRGRrNU15UDFVYSttTU5jR3J1ZTIzdzMrb1YzeWl5by9YQTczaEp1Z2tw?=
- =?utf-8?B?Zyt0YjZhMEgybnAvaithT3lUTjhTZnFpQ2VOUkhYU3ZrK2xaWDNNRXRnc1Uw?=
- =?utf-8?B?Q2dWbzNzM2J0djBBMEh3UU1DR0VqejVNMkVDNk9ranpMTHh6ZVZDUjZ4ZlF6?=
- =?utf-8?B?Nk13ZVpxd2xnbkcvay91SDMwVEQyTHcyaEthL1h2a0h1Ylp0YWJSbVRPTldl?=
- =?utf-8?B?b2xRc0syUytMa1pITVFKNzhiNGFKMGtvVXhERnJUVGkrM1NjSXZKZm9mcFFT?=
- =?utf-8?B?anNWR2ZHeW1KZDVyWVJQT0xVZGtFNHBiZWEyaWdKSlZlOVdPaCtCZmJFUXN4?=
- =?utf-8?B?cDlvUUtsVlQrdjVuYjJpbGc0bG04RGdoaVZFSjliWXAwM0FGSEU0ZEx0MXFF?=
- =?utf-8?B?VHlScGhaYmpvL2JvWkdGN0F4cUk5UFVzZ3RxKzQ4Ykd0KzNNTXloZGtZVDgy?=
- =?utf-8?B?MFhHbVF5YlIrM0RqQ3dHa1lsKytTVFA1RWZCUXlKL2dGOElteG1GWU9zQ2ow?=
- =?utf-8?B?WUg2VWJwQnQ4SDJnc1lTdDlYMTBadmlqSXA5Rldma2VWelBVU250cUlrdVdC?=
- =?utf-8?B?dlRYT0RRMWJrRWgyT3ZJTFVGSDJpTVZHUER6cStvSTZTU2lWVmxtWXY5QWRQ?=
- =?utf-8?B?ZDVuV2dVSktEcUVBZ3k0dTdhNzlTVzVJS3Bsa2NINXA5SU8rd0NPVFQ0Qk5T?=
- =?utf-8?B?QW5COXU2VlkxS2x0Zm9kZ3RZU3l3bDZQcGdWVkFOTEViM1VSVWRxV3BScUNI?=
- =?utf-8?B?SVdqd08yaGQvWStPaEczM000Zm5lUFlsU09uWjNiODZVOGZkNUtIYVhVUkw1?=
- =?utf-8?B?OTZDYkFieUdrMElFK3FlSEcxSHJvZ2UvZGMyeUdFK205S0VSVDdsN0VZMzFX?=
- =?utf-8?B?cVRYWFAvdFV0MGh5bzBsVmtmTm42WjRSbVo0V25hVFVsaHo2eXRkeHRFRjVC?=
- =?utf-8?B?anJrUU1QWnB4Sk5tZU1kK2NlaitYZ3BIbGgwMkZ5aUdIQlVzM1lIaXVvemF5?=
- =?utf-8?B?aDRqSGJlU3FJVlBmTVZTQTBBUjZaYTlrblcxSm1xQyttUlBVTEVnSTNPZGFT?=
- =?utf-8?B?L3dNTFZqS3N6eGtrb0pzaWVGUFgvcWx5R1ZidFo4TWhFRkFhYWR2SHNoRlAz?=
- =?utf-8?B?TkZRSG5FVDlSUW9Yc1JiTXZkOElFZVVyUEU5RHpEd0VwTlpEUXhuajAwRWov?=
- =?utf-8?Q?6T1Yf2xCXKH9NVK1fBh3CiQdQvjERq433B3WgofPRg/3?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 880719bc-f88e-40ad-2eb3-08ddd65bdf05
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+	=?utf-8?B?YTZmRWpkckVadkFCL053aU1DYmRUYW9BWWNiZzl6QUNuMDBtZ0pwOG1HVlkw?=
+ =?utf-8?B?bXZ1SEdTd1JCTGZUNGYyVVd2LzdhZ0Q5OFBBWkhZWEwrUWkxMWRxYTc3dFVC?=
+ =?utf-8?B?eEhUM3Z0Nnd4dlNSdmJuRmhVSk9NNzlkSFZ3bzhrZTd5Uy8yb3dHZllmeTM4?=
+ =?utf-8?B?eTF0YWtNQVM0OFJsRE1ZS0NyalE3ZnlVZHBZY2lZSitBYnZQWGttVTdGZ1Fx?=
+ =?utf-8?B?WTJ2Q3dSVWRvTmVVVHZzeEJ1TEQ2ZzdhWFJpQlF3ZTVTVnY5UUcvZytFKzU3?=
+ =?utf-8?B?VkllOE9ENThoYU5CWTVyUk1pWUJxRzUyQzNmTnU0Y3FVcm1telpqV3kzUit0?=
+ =?utf-8?B?M2M3Z0FKb1U3V3VqZ1Bma0haYjB5b2FwRUw3MGdQKzQvcGJlem1Id3RGdkk5?=
+ =?utf-8?B?V0h4NWhSM0tPbWRUV0Nqb2FYWFJmMnlOZExHRzZnZ0d3TG1hZE5BbFg5N3ZK?=
+ =?utf-8?B?UVhNMVRVNnNPTjNNVGpTZmJRRGsyVHVoNUVsS0c2YXYvVXJibGl3QkxkMjBY?=
+ =?utf-8?B?T0s5VzkzOHVteVZSVXMrdUtDV1dSVVRCK2diRWRHSHZNUWowU2JJZU1BVUx1?=
+ =?utf-8?B?SGJRQ2pKMHNNYmJzUVh0VjVDWTlJUk9VaWFwckZjcmRkNUJXZ0dLS1kzUlhQ?=
+ =?utf-8?B?U3R6czhYV1YrZU4yR2NUSnVFcjB3YUZrK3U2eHc2Vm8xbW5TdnBNVW5udm5R?=
+ =?utf-8?B?L2JySzFZOWZiRm9tQW5zY253RVo5SWpOMWw2ZUxFdVY5OW1qYXhrN3Y3ZDIz?=
+ =?utf-8?B?VzRpdCtpZUp2eEtqc29yNmhBL3hVVmtLQzVCdlA4QzM1cGF1bEYzMzMwNWhM?=
+ =?utf-8?B?MTFGL0VzeU16THdvd1VEbkZab2wwN0JjbWY5Rjk2RHkrb3RVTmllYkV2eWpv?=
+ =?utf-8?B?WFJpUUd4Q3c4c3dHa0xHaEI2MVJtSWJwejBVZ0xwNk5DdDVXaUQxc2xNOW0r?=
+ =?utf-8?B?QXBUd3hhLzJ5VWVXZ29zMkFhbWJwQTJCVFJYWVZMNEVtUEkrWkRnYlJrd09r?=
+ =?utf-8?B?SkxWUjV1YlFDQlArMWlZTXpzSUZ0cElMZE5rTWV0MVZIbUttNFJ1RkZ0SEFS?=
+ =?utf-8?B?dEFzNElLYURjcGlUbE15Mm9RL2JxWnZGYmFZdmkwOGIzZmhXMFh4UUN2dFdx?=
+ =?utf-8?B?VTdzVUg4c2prRjhxYmFIZkdxN1lJUE9QNW9YUWtXbjRuYUVkNHY0N2FYWTB6?=
+ =?utf-8?B?SGF5MysxUWlOT3hjOTJSTXpIYkMzeVI1clhxZTdvVVpjZk5YMnM2UXJxd1ZC?=
+ =?utf-8?B?a2RwQWdZSTFkOTJtZDBpakdLQjRuRGhDU0owRXBMNHg1cVpseE1ZcmU3ZzBK?=
+ =?utf-8?B?Y25NSmFuS2lmZXh1YU5saUtNWHJaUmgwR2l6QWhrWnhCbWhCaHYyYU9jMDRy?=
+ =?utf-8?B?R1hteDNQQ0F1QmZiWHV0dmxqRGY5SzlxQnpRMnM5Y1VVVHA4aUYxVzdDUVRR?=
+ =?utf-8?B?WWJzNThpajFLQWg5NklCRUw2dE5LMDFSSmlTaGNQU1BYMHkxclg4RVhLczJo?=
+ =?utf-8?B?QjFYblRJVDJycFdqNVNmT1Fyelg0WkZQTHNDeThnanhSQmxzRlFCalpwR0Fs?=
+ =?utf-8?B?R2ZiZnppZUJjUjNXVDMzRXpTR3FHMzZMY1NXRnZDc2NYZmowSzYzeEpacnht?=
+ =?utf-8?B?THBmMUZVenA3R3loa000eUJ4SUpPNmFqb0w3ZjQ5ZG1ESXNlaWpTdEdZZk1Y?=
+ =?utf-8?B?K0tJblZuOCt6NkEySy90d2E2eVR1aks3YTBDWDVENkNMaXMreVBCMGZ2SHVN?=
+ =?utf-8?B?KzBwMWVURTErK2cya05XZ0UwdkdhZU1Qek1EWWQyamtxK0FmS0RjOWJxZHds?=
+ =?utf-8?B?MVo4UFdBT1QzYVl6elBTOUlZaDNXUVUydmJHNXkxN2F6UGVnNGN5WnJ6Zkp2?=
+ =?utf-8?B?N0Q5Kzg0MXVNMFFUdmZ2S3VWV3Z4SG0ya0FJSTdNTHZ5ZU5nS2FtQ0M1YWky?=
+ =?utf-8?B?bzRTUDhXK2ZCeWZmczBzbmx5aVBMNUtRQmJUSzYwa1ZZVTR5bEVXeVVKY25D?=
+ =?utf-8?B?WmcvV0JoMWtHY0VEV2JEdnR0VzdHYWRjazlxdnZvUFVlbWlzbTRGNkVBU1RV?=
+ =?utf-8?B?QWx0aTA0U2NFVkVvay9TNVo2ZFQ3MDFocGxwQUpQZVpBdXltTUk3SUh0R0Zp?=
+ =?utf-8?Q?1aJPPKwbZHr5DXcQemH/LHXiq?=
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6dcd1a62-571b-439a-dd33-08ddd65bec6c
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR02MB10076.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 09:13:43.2203
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 09:14:05.7152
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z75w/1bQUTzjb/iJJ2wFwHfjBujIvyKwI3XPtBMVxRcPYTZBYTGlPUtpY2EH5rYFMM0HN0lFl5ZCc23VzPqnTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8118
+X-MS-Exchange-CrossTenant-UserPrincipalName: pK4+9bIeB+5ZxIHnjUBlEwbdEbgaKBikIEESd4S0bf6rYR79PbzE1H8FaezEvj6XLngIWgi2F2PKaYyyPSuJgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR02MB11326
 
-On Sun Aug 3, 2025 at 11:20 PM JST, Jesung Yang wrote:
-> This patch series introduces derive macros for `TryFrom` and `Into`
-> traits.
+Hello Nikolaus,
+
+On 8/5/2025 5:28 PM, H. Nikolaus Schaller wrote:
+> Hi Jerry,
 >
-> A few enhancements were made to the custom `quote!()` macro to write
-> the derive macro. These include support for additional punctuation
-> tokens and a fix for an unused variable warning when quoting simple
-> forms. Detailed information about these enhancements is provided in the
-> relevant patches.
+>> Am 05.08.2025 um 10:53 schrieb Jerry Lv <Jerry.Lv@axis.com>:
+>>
+>>
+>>
+>>
+>> ________________________________________
+>> From: H. Nikolaus Schaller <hns@goldelico.com>
+>> Sent: Monday, July 21, 2025 8:46 PM
+>> To: Sebastian Reichel; Jerry Lv
+>> Cc: Pali Rohár; linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; letux-kernel@openphoenux.org; stable@vger.kernel.org; kernel@pyra-handheld.com; andreas@kemnade.info; H. Nikolaus Schaller
+>> Subject: [PATCH] power: supply: bq27xxx: fix error return in case of no bq27000 hdq battery
+>>
+>> [You don't often get email from hns@goldelico.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> Since commit
+>>
+>> commit f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when busy")
+>>
+>> the console log of some devices with hdq but no bq27000 battery
+>> (like the Pandaboard) is flooded with messages like:
+>>
+>> [   34.247833] power_supply bq27000-battery: driver failed to report 'status' property: -1
+>>
+>> as soon as user-space is finding a /sys entry and trying to read the
+>> "status" property.
+>>
+>> It turns out that the offending commit changes the logic to now return the
+>> value of cache.flags if it is <0. This is likely under the assumption that
+>> it is an error number. In normal errors from bq27xxx_read() this is indeed
+>> the case.
+>>
+>> But there is special code to detect if no bq27000 is installed or accessible
+>> through hdq/1wire and wants to report this. In that case, the cache.flags
+>> are set (historically) to constant -1 which did make reading properties
+>> return -ENODEV. So everything appeared to be fine before the return value was
+>> fixed. Now the -1 is returned as -ENOPERM instead of -ENODEV, triggering the
+>> error condition in power_supply_format_property() which then floods the
+>> console log.
+>>
+>> So we change the detection of missing bq27000 battery to simply set
+>>
+>>         cache.flags = -ENODEV
+>>
+>> instead of -1.
+>>
+>> Fixes: f16d9fb6cf03 ("power: supply: bq27xxx: Retrieve again when busy")
+>> Cc: Jerry Lv <Jerry.Lv@axis.com>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>> ---
+>> drivers/power/supply/bq27xxx_battery.c | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+>> index 93dcebbe11417..efe02ad695a62 100644
+>> --- a/drivers/power/supply/bq27xxx_battery.c
+>> +++ b/drivers/power/supply/bq27xxx_battery.c
+>> @@ -1920,7 +1920,7 @@ static void bq27xxx_battery_update_unlocked(struct bq27xxx_device_info *di)
+>>
+>>         cache.flags = bq27xxx_read(di, BQ27XXX_REG_FLAGS, has_singe_flag);
+>>         if ((cache.flags & 0xff) == 0xff)
+>> -               cache.flags = -1; /* read error */
+>> +               cache.flags = -ENODEV; /* read error */
+>>         if (cache.flags >= 0) {
+>>                 cache.capacity = bq27xxx_battery_read_soc(di);
+>>
+>> --
+>> 2.50.0
+>>
+>>
+>>
+>> In our device, we use the I2C to get data from the gauge bq27z561.
+>> During our test, when try to get the status register by bq27xxx_read() in the bq27xxx_battery_update_unlocked(),
+>> we found sometimes the returned value is 0xFFFF, but it will update to some other value very quickly.
+> Strange. Do you have an idea if this is an I2C communication effect or really reported from the bq27z561 chip?
+It's the data returned by i2c_transfer(). I have reported this issue to 
+TI, and wait for their further investigation.
+Not sure whether other gauges behave like this or not.
+>> So the returned 0xFFFF does not indicate "No such device", if we force to set the cache.flags to "-ENODEV" or "-1" manually in this case,
+>> the bq27xxx_battery_get_property() will just return the cache.flags until it is updated at lease 5 seconds later,
+>> it means we cannot get any property in these 5 seconds.
+> Ok I see. So there should be a different rule for the bq27z561.
+This is not only for bq27z561, it's the general mechanism in the driver 
+bq27xxx_battery.c for all gauges:
+
+        static int bq27xxx_battery_get_property() {
+
+       ...
+
+       if (psp != POWER_SUPPLY_PROP_PRESENT && di->cache.flags < 0)
+
+             return di->cache.flags;
+
+       }
+
+>> In fact, for the I2C driver, if no bq27000 is installed or accessible,
+>> the bq27xxx_battery_i2c_read() will return "-ENODEV" directly when no device,
+>> or the i2c_transfer() will return the negative error according to real case.
+> Yes, that is what I2C can easily report. But for AFAIK for HDQ there is no -ENODEV
+> detection in the protocol. So the bq27000 has this special check.
+Since this is the special check only needed for bq27000,
+
+suggest to check the chip type before changing the cache.flags to 
+-ENODEV manually, see my comments in later part.
+
 >
-> This series builds on the previous work [1], where the `FromPrimitive`
-> trait was considered too heavy for the current use cases. In response
-> to the emerging need for functionality similar to `ToPrimitive`, this
-> series also implements the `Into` derive macro.
+>>         bq27xxx_battery_i2c_read() {
+>>                 ...
+>>         if (!client->adapter)
+>>          return -ENODEV;
+>>                 ...
+>>                 ret = i2c_transfer(client->adapter, msg, ARRAY_SIZE(msg));
+>>                 ...
+>>                 if (ret < 0)
+>>         return ret;
+>>                 ...
+>>         }
+>>
+>> But there is no similar check in the bq27xxx_battery_hdq_read() for the HDQ/1-wire driver.
+>>
+>> Could we do the same check in the bq27xxx_battery_hdq_read(),
+>> instead of changing the cache.flags manually when the last byte in the returned data is 0xFF?
+> So your suggestion is to modify bq27xxx_battery_hdq_read to check for BQ27XXX_REG_FLAGS and
+> value 0xff and convert to -ENODEV?
 >
-> The original discussion can be found on Zulip [2].
+> Well, it depends on the data that has been successfully reported. So making bq27xxx_battery_hdq_read()
+> have some logic to evaluate the data seems to just move the problem to a different place.
+> Especially as this is a generic function that can read any register it is counter-intuitive to
+> analyse the data.
 >
-> [1] https://lore.kernel.org/rust-for-linux/cover.1750689857.git.y.j3ms.n@=
-gmail.com/
-> [2] https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic/x/n=
-ear/524335626
+>> Or could we just force to set the returned value to "-ENODEV" only when the last byte get from bq27xxx_battery_hdq_read() is 0xFF?
+> In summary I am not sure if that improves anything. It just makes the existing code more difficult
+> to understand.
+>
+> What about checking bq27xxx_battery_update_unlocked() for
+>
+>         if (!(di->opts & BQ27Z561_O_BITS) && (cache.flags & 0xff) == 0xff)
+>
+> to protect your driver from this logic?
+>
+> This would not touch or break the well tested bq27000 logic and prevent the new bq27z561
+> driver to trigger a false positive?
+This change works for my device, but just as you said, this change makes 
+the existing code more difficult to understand.
 
-I have tried this series on nova-core and it allowed me to remove 150
-lines of boiletplate just like that. As far as nova-core is concerned,
-this is a perfect fit.
+Since changing the cache.flags to -ENODEV manually is only needed for 
+the bq27000 with the HDQ driver,
 
-For the larger kernel, where using the right type is essential and where
-we want to avoid error paths whenever possible, I also feel like this is
-a much better fit than the initial `FromPrimitive`. But it would be nice
-to hear other opinions on the matter.
+suggest to check the chip type first like below:
 
-I will try to review as much as my proc-macro knowledge allows me to,
-but for now:
+        if ((di->chip == BQ27000) && (cache.flags & 0xff) == 0xff)
 
-Tested-by: Alexandre Courbot <acourbot@nvidia.com>
+              cache.flags = -ENODEV; /* read error */
+
+
+This will not break the well tested bq27000 logic, and also works fine 
+with other gauges, and it's more easy to understand.
+What's your opinion?
+>
+> BR and thanks,
+> Nikolaus
+>
+Best Regards,
+
+Jerry Lv
+
 
