@@ -1,265 +1,253 @@
-Return-Path: <linux-kernel+bounces-759598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC66B1DFEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:16:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC5DB1DFED
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 736BE4E1080
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:16:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C913A01CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7929476;
-	Fri,  8 Aug 2025 00:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2826DA945;
+	Fri,  8 Aug 2025 00:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8vdlzST"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="coLwHxB8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A137FD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 00:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754612202; cv=none; b=Dbx3Jx/d6+BEo1+je5OUIE0SCj4YRif0ZagRqWxZ6S3+cAT+rlzFHEQYCro11wSskF4nFYJMvUPhg0my1ePI8Yvy47/SJk/sfkVtsxIqlWogfDUhRlfZv+gkXWEIdX3pKTPSC4bd5OqBaAJaVIOcN6Usc1UkhSrYEwsZ0hECXJ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754612202; c=relaxed/simple;
-	bh=wiJnSxlPA+Ee7U2fDxGRvbShACZ7rZiOfBIpjX3cBAI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WprxS/SOUm0RaefSR+IzW/vRBBh5rU6oWvwZGrhdnIw4GsErRpTykn27zG0SoJpC19mMXdxqdpYyPyjEcZ52fQca8r0NbO6FTYyr+2h4MNd0c+iEq+Miza6guK2peD5gM4rKfNSUk7kU98OfvWEkl0goh0R6qb920+ck2bN94nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8vdlzST; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61592ff5df8so2012033a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 17:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754612199; x=1755216999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xPZdVNrW41q7DAUdB/VwINcIYpzwK89g+W8F6J/ucRg=;
-        b=G8vdlzSTVNG+7kILfl3vPAVwxP7E/A9zXzJpngDs1QEwDc6JeWl6jNCP5aGvOq8hml
-         Tz+FLzt8IuhYULuTCabnWUkLCaepnLDKLZhxiu+qJeuMG9pVNNSqJBbLEG/096Oc7w/I
-         ABASoufUjY0YnDRkmsaB2dZJuzTHC1Eoo696ths0toXl7DDIocN9lmgW3gxALYlYduGU
-         oB9ceIgAprvJcDyhVoXQ9k5s1FE+WOFpVHNLl5OsvqmslQe5K+cCFlsgoUgMcT7QyNMV
-         pSu/wmZ7oMwxoIPIa5OC+wSsbmSaeOQ2whxoHlm96o0IHUEOdK2Hurp9WsVDMrYsL5JJ
-         88QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754612199; x=1755216999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xPZdVNrW41q7DAUdB/VwINcIYpzwK89g+W8F6J/ucRg=;
-        b=Z3ckJRMi6yjFJvGOM80INkyvGFHe1L58evjg2tkk8vde0xmGlcOZ/oqj3IRUlq6K5x
-         ywWLwgPpdYmpt8FtA3oi0SVNBXIIGgqJnYrMBHmRpacvTihFj4/v7UviR5Z+PQhujFda
-         ALgTSj/ImX9axpkL8le18fVaHV0qwAqcvfNTgDiGfCIkTjqny0hog1mchURSMnbfZEqz
-         6hF7mgWlOZDhIsipyAvl4PouzNivCjTLT/2b4qcZFdWkOlv1IM9t0p/qXKGSOrSiXL61
-         y9ebtLGYRwax2cZ3Cc+yu+kJASNQFSiWHu/QGLoPROVr5GZUynHSVmDPNNWOlchbx8uy
-         FcIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwJv2Z+5MBOCNYtgrJPRfKnsI1iG3leDyFXCBvBmjQaYnzEPXsM0onnWZPle0CvfchnKLOVp2goMfzmfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFPb78Rr/QaTLtfpRhXPBfdYb/L5t22iNCBcVbXwVWllEnofMA
-	Tt0SAf49I1JaAGhx/HhzmBAk+GYBwLQ1Sh0J7Hi4GFOvTq7DZIeR8LO10xZ8McOT3MBw1m6chHb
-	PdgvnI3Q+xjDVShoakJ+aKCUq9zPdpGyGH+R1
-X-Gm-Gg: ASbGncuoesYf4RVG2P53HmrpGla1Fzs9oIbcKw2+xVMqpIRfCfuJ5SvkpXpxINzJTct
-	CsS2eEfiRDt8bOUdWahzEL9SwDcUfTYaUdQko4R1VV0A6/vltg4Dx+DoE4rGeCOm7VUHMhfuWDq
-	Ook5KIFhU5qVHdcvh1B3NodyKIRmrEcAbA+Ehybv/dH9Qx0vexLxr9Lm7AvlS27xwXI5uuThp1P
-	S9YJfE=
-X-Google-Smtp-Source: AGHT+IErqhWifOxmRixsHlVmwEN0sUCALdizsuJhfaUdm/bGCaRd6+b2LkZMY91Lo/KMC85PC1FvmDekjDKHl83jpZY=
-X-Received: by 2002:a17:907:2d0f:b0:ae3:75e5:ff7a with SMTP id
- a640c23a62f3a-af9c645ebe4mr74395166b.19.1754612198377; Thu, 07 Aug 2025
- 17:16:38 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EB47FD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 00:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754612514; cv=fail; b=EgqYEKreSwhCGB8RnVvN/plIn4Qx41vfC31eblBX0/uS0YbOw942eD3n78cVbJDa1HXFhaqNruQJ2Y5RNDz12ODfkfYxb3JQbrEwZR/kQlnMbTtSZStpBoFk1H7o1Vi9Pxy11xOCV7ArX/FbJvc76Tkn78MvqlC4fJt/rZi0j/A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754612514; c=relaxed/simple;
+	bh=te/dUd1OcVP2mdN81NEW3ytKiLNM1vRGSyiOEyAq3yE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=pm/X/cIHf1CKKIMLqVGU5nXSWZmr3Y6cUAno4ALHhOsxF8nqP0YSEyiXYL+SHx9SjI9aG/H3PbzJbY7xY/h1gVHOe5INinaGty5s07H/zRNCZBpAfXOWIESxaYgSql1sWx3iT382yM8pn5mypTgDQpPLDrrP5agvIIRDM7JU2x4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=coLwHxB8; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754612512; x=1786148512;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=te/dUd1OcVP2mdN81NEW3ytKiLNM1vRGSyiOEyAq3yE=;
+  b=coLwHxB8g0tNcl2sAiyESLgQ15M8IcxZ4wS+QmpK6lJfrbymuKb3JKgw
+   pany6+PF3MwUV59BahTTZrxTrDAKQ+/jS7cTKuGERc58Ji8YVLR/7U0xD
+   rdktAMWjUsn964RI4r29YfVjlPfPxkpIYpIjOadArBNj1cGVPLu+HGKpQ
+   uSBhyi/YXXD3AC9SISolKeWQUzOR1HY98dUVoxlxiylxse9C42g+8h/EL
+   Hu8li+QZalH/9nSp1iVVSDcZXHFyZqHBrqIMlmuYEEuCU1ljlzs6iu1HA
+   3X7ps26leEZSiOhze9/9piDXHRHtamRSSrinqPBx2QhvFR7SwWuL+5xbT
+   Q==;
+X-CSE-ConnectionGUID: 01KLhTMsTdK/RDNNieP87w==
+X-CSE-MsgGUID: /C9uBm5aRfGY6Dhz99FMaw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="67227093"
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="67227093"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 17:21:52 -0700
+X-CSE-ConnectionGUID: 93Og9n89STqsgv3fTjEZwA==
+X-CSE-MsgGUID: EmlnImYGQeqYREoFeOnjmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="169655498"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 17:21:52 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 7 Aug 2025 17:21:51 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 7 Aug 2025 17:21:51 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.75)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 7 Aug 2025 17:21:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jClYqPYyAYs6I8PsuvYHPLeqmRjifloAR0zrWNgURdD0njR8nAcpgpFq/OumKVgF5IXZaEG9gMJGEY8PUQyRbm9riHh3GeEC6i7h9yllGr9yhBmDtJaLW+poPAuydsV6k1Q++DTmYME1W1FwVrrsGVqWjNHgwwKr6q1cdWh7VHVgyKQyx8HbvCuufHKim/ZN4MeUJ6YxGzRkzOXQNg8RoAbOLJ+pwGHTebzGXpHgYOqipwNhVoZXOFD7Ek2KHX6ahKnLWJn5j0J2THUP69HAsj+nJ5Nqbu4Pa2jIWLUS88iT+0/Os52Fa5DIkCGALVAWd9LB4HezXx42VJsEtl6Khg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J2SaOtUC6V6cEAw06zeUq6j5F9df9SNeFttF+xxsRFs=;
+ b=ACwrW87mpHR0i/jhm0/vgcKscXf7ME9KDZ/2AkkMtt4pnmEzbcfSqyYcumyfPSC0A3YMVkZHiqZlryL6f5qqr0MI9hXLQ+2hgmqmeUb8eqF8JEvH9VpWHHgKChnDABxLrjEuKJgpnIuLzOXu6wmhZh09HPOmDSrXOF/LEv+0JDNN9yqh5XefDoRqrETRxjvW71KhZj4muUd8X4x+OMN3w6hEQErwBboEZNr6082B3Hd9fNtLnZr6j3JN6S7/orMJqX3BjaW5DN1IW3SqWTWVWNBQcSYR1xk6YlVdcsIrcCbLVSI9FrqaR1vLPkv5QIUNEoinILCsJ4aCUJNbq0GD6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by SA3PR11MB8119.namprd11.prod.outlook.com (2603:10b6:806:2f2::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Fri, 8 Aug
+ 2025 00:21:49 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%4]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
+ 00:21:48 +0000
+Date: Thu, 7 Aug 2025 17:21:45 -0700
+From: Matthew Brost <matthew.brost@intel.com>
+To: Francois Dugast <francois.dugast@intel.com>
+CC: <balbirs@nvidia.com>, <airlied@gmail.com>, <akpm@linux-foundation.org>,
+	<apopple@nvidia.com>, <baohua@kernel.org>, <baolin.wang@linux.alibaba.com>,
+	<dakr@kernel.org>, <david@redhat.com>, <donettom@linux.ibm.com>,
+	<jane.chu@oracle.com>, <jglisse@redhat.com>, <kherbst@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <lyude@redhat.com>,
+	<peterx@redhat.com>, <ryan.roberts@arm.com>, <shuah@kernel.org>,
+	<simona@ffwll.ch>, <wangkefeng.wang@huawei.com>, <willy@infradead.org>,
+	<ziy@nvidia.com>
+Subject: Re: [PATCH] mm/hmm: Do not fault in device private pages owned by
+ the caller
+Message-ID: <aJVDGSUzuKgy0PtK@lstrano-desk.jf.intel.com>
+References: <9ae3e014-c7d0-4d58-af0e-925bcd9e4cfd@nvidia.com>
+ <20250722193445.1588348-1-francois.dugast@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250722193445.1588348-1-francois.dugast@intel.com>
+X-ClientProxiedBy: MW2PR16CA0057.namprd16.prod.outlook.com
+ (2603:10b6:907:1::34) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 8 Aug 2025 10:16:27 +1000
-X-Gm-Features: Ac12FXzHyEAjfibVQ_rlFFljGomoJYSyp-4Yp7BFpHsG5N6OKVX7Q0fCwHzbdYw
-Message-ID: <CAPM=9tzJAoCXiwvR6tpSv5QctkKu+JAbKZBEbM+M+z+fZOkAOw@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.17-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SA3PR11MB8119:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb7b5fc0-9e4e-4403-c51e-08ddd6119096
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?niYZNoe5NIybBUfV/ef7SM/LtIGMvvzxsk+ENGe7Rh6vIrcuhd96GoNVL5Md?=
+ =?us-ascii?Q?0hhHMBCjUPycDIhTFlKNsL/W3LosJ3U5Lku1+T6gk/TEmpvEH/zFYTWDaUJi?=
+ =?us-ascii?Q?yOY9RJYVPfdzQglODJajjF8qok0z+gtfwAobtyo/GF+RO+Q1y6Aw69Izl210?=
+ =?us-ascii?Q?6JISwnWaV7jDMjz83SAH/rlaGxAK9gizrMGrDsHT+SMwpRWZ5ov3kX0Klls1?=
+ =?us-ascii?Q?ZFZP4wBh1Tee+C4rNVsWiyJHSKFOKJR60kyC4wAE1xOrhnlou2qscL9HLjHg?=
+ =?us-ascii?Q?GbL68ytawZlBaJbpN3knplrqMRXvYUVkL/9VCcBVmbHBvWVVcYOejy4ZoM+T?=
+ =?us-ascii?Q?d6tvDfI8t4RB0B7yAASYiOWBERXPfD4Q2W0rwnjSGb09zrzqQNO/8WDLvcuU?=
+ =?us-ascii?Q?Y/6Ee/pE3Qr3oav2s/MrovYe7N/5w2a/vWsLkdEQeQpvCOcWTAWo+t2oNctC?=
+ =?us-ascii?Q?mVSErCpoC5MHHuxqKHz/d1WSwMsvq+Y8MYIH2ixfMYMX1Sq3uErByn0NxGiC?=
+ =?us-ascii?Q?ngudDguTONUl6LK6xoq91uHOlfqsZWnyTWGcsxJWCq0h5GkHIoEOyqG+9cTq?=
+ =?us-ascii?Q?6rSaWlcufMbWYrIIZe2OPwaYqJhZ5qvm7tM5W4q6nwWYfz6jdbiKu66n20iy?=
+ =?us-ascii?Q?r25zXTAiOrpxeERkRUUvYwnx0Y+tYXQTFPsFItmVip9xkspfn5/tk/RYngZ6?=
+ =?us-ascii?Q?RovUQi7bb4ZpMVja2Kh+MuhSEARIKSYtKv+4YyUlkkFfayJ4AFsL/UGSUsdE?=
+ =?us-ascii?Q?c9zh1+MbtXInNcg2q1nSYsRLQC/aJ3n7AMYdkBcdKcSTwJgDM/kif/rYt9sd?=
+ =?us-ascii?Q?jktac0gzutQTG8S96UH4P/MQR3f3G2hZB5NDvKZAvhLehX+4TxDE5BMhLAeg?=
+ =?us-ascii?Q?X5K2EgPOx5Ncty0TehATFWtxUQu9wvYWxheq7WMU/3xB5xMqb40LQIk4LlIf?=
+ =?us-ascii?Q?2w3D2QFR0Yo+nwTg1GXYXQRuaqiqtYAtGCCwaOnsewb+sZiDkCvmrxHgR6G6?=
+ =?us-ascii?Q?1ZYBkjz741R9yKj7+WmH4sm4HKEMLKYc63wjiTtUt8YcQ6K/196GCOHDU7qu?=
+ =?us-ascii?Q?7tBvzgtbonqy4K/gHgVP6fyOyxXAMyx4ptV2Mdm9GzmgUA77f+HucJA6qpwt?=
+ =?us-ascii?Q?Ulb24EwKAVhmceSome4L6RJl9y3KJS2lVOPafrBkCThOb23wk3Ykdjy5Fb38?=
+ =?us-ascii?Q?rdIjequo1tmRQ2Ps4KO4PX8zsQlA/sbsnCVSCnWalFIAtjF9MDdMKiF5u2sn?=
+ =?us-ascii?Q?pvTPet1zIXf5zZFk+dDtMJaW27An7Uvz+3JJr3/tRDm+a2k6L0FWDXgBlNWs?=
+ =?us-ascii?Q?4YT5uQmO8+toAkA0WIKZMqjr5LLwQqaxkskgq1yl0HWDJ8g8wt/KA0OAUrGD?=
+ =?us-ascii?Q?AcqnsnfgmzZ5L0zZ3/m/0qbDj7nDlRe1d8nFTRIgh4F536tcBQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SgsConv8imkP2Wonj8PsFqNmMjhFEea2QexfxLdkONgeprNJIJc8QTR69ahp?=
+ =?us-ascii?Q?+Qozu2gugzcGEtxorT2T/A8PSVKu5uuQMstV6vIsAguygIjTLUl4IR2xyfO9?=
+ =?us-ascii?Q?AdHqq22BVm0jgsKNa1G8rHjTd++jl9RSmeOvKjpUKqzt8LzC2uMlKqDb5jSU?=
+ =?us-ascii?Q?EpuKvnzDREiOV1c+Ven9yXbwtaN2e3wvmYA1jv5rjaylIR5H+YTVS6luXXGM?=
+ =?us-ascii?Q?9jXP0TeNx0zbqSyb3NJESjaMHsVZb1DI5PhSTOuKrk3qqWbD4Ao8BkjQK9y8?=
+ =?us-ascii?Q?yzayx37KKN41VabR+c7o//NRoxtBAmEzbgpeCotodfbYRA+LDSQxZan+K2RJ?=
+ =?us-ascii?Q?BACWAcr32WaM5WFOC862nl8xK5pmKURcRKWRT+T1SY0hq9syFL2DR588smrI?=
+ =?us-ascii?Q?TCo3Ua7mvQNFurjisWMMZYqMYnw7W9A4NxwOr2+vxld0qTH0R8i7UKK1HIX+?=
+ =?us-ascii?Q?AQM82GA6jv5HU1rtUN6wQVSPO9IDSnSlfdZsl8FpQtJVxs3AMqcgESiOloLW?=
+ =?us-ascii?Q?onX38ViCjWd49rRu3MA0H6QqRITlga10ckogJ2ckS8MIYa4glkZMezPUjvzE?=
+ =?us-ascii?Q?nr6frdEf7ckN+Tg7EBu4gGq9uc+nTGk4D/poL2OrM/q/ToQMslBpZ5eU0jUh?=
+ =?us-ascii?Q?IO0V4V7UiuFEBhWGz1ccZRDSw2kz9dMC4UkxzOcbBCztywC1psiE84Oj1Nb6?=
+ =?us-ascii?Q?F7JElHlz8xRhU1w0xQtPv50ll/M9U61Cs2AvAgpWf3axRjw8WxMIcwVzYLEU?=
+ =?us-ascii?Q?P7qS5TnATDD5DvXQ8d1l8yLkU9v128/O/MnIaXXQoZhtrhzRfBaq8eAEtxH2?=
+ =?us-ascii?Q?C+HVKjNHhMgC5ImMJvd0xEo+RkL5l73hJPtu7zHgy3Fijo5/bdW8v4WZUXGg?=
+ =?us-ascii?Q?kFLi6vgpuM5s2C/OU7ALSXo/K6y1sndk7IWxHzxYpBjhm24tiLsB0ZsiMDBw?=
+ =?us-ascii?Q?k2NmUvACGLCjnGk6NWpc8E6okUk7m4nvjbPc2QYDYCIaNN2Lt+NIw71gaSCZ?=
+ =?us-ascii?Q?czYWbzHuUmPcPfmJE+HkQLSDwe/Y1fg5/xg5ioB8SS1bh/QeIXFuz37HJi0y?=
+ =?us-ascii?Q?lXz4K+HZ9+4O7c/EhckhJYwWB5dAIo70idQhn/zsGIuzsbjjk6Sv2cpBj0bf?=
+ =?us-ascii?Q?Eka2NY9McTdss6xZgsnkvaNwAjGnNhmSWH0Mz7X8w4lEAZyY4bm4cVJTKOAY?=
+ =?us-ascii?Q?5QNUnwQzvS7UfSrDvQfXp/3Bjcb6HDICicrI6Q/Tj3QRqljPf3LQLVE9xZwB?=
+ =?us-ascii?Q?4LdTBJWBRE2VNNxvo21uYVVxIX7q+ue1ST7RnaNzaZWnYO5fbnqqHbwA8zfZ?=
+ =?us-ascii?Q?DbkDPLyttf49VXIXiKIcqFncBmgPXf4EfIl3kHbwMUt0BhBzDGEB8/Yj8fq0?=
+ =?us-ascii?Q?Qju18q7dVWbUWg1TzkdNd0B0kIlX8J0wcO3VeyVTK7bsD//xncIZlV+22vyr?=
+ =?us-ascii?Q?hfkupay8YGZfQIEUlH4t0RvsklFZjMtNtajC6vVs0YhgfpA6vGMRGmOiBkWD?=
+ =?us-ascii?Q?ZXvoCpgyw8WPs84mfnNu/JTCA/sjmIdMowBs7xmSDxJD+6rhexetOXC8vMmU?=
+ =?us-ascii?Q?/WBwXV/JImYGQGHv7VrldE2imbm2QNboTPyCw6I/ZYjz7NF9v+Jn2H6bLwgq?=
+ =?us-ascii?Q?Hw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb7b5fc0-9e4e-4403-c51e-08ddd6119096
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 00:21:48.7695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tl9owmJ8hNHirfVTB160XFiz9SHIWXgdKt0DV7sXuyaQfb94SGlXR7TY5nXlwLnMPKR8LOdHBtNXHTYsDkg9UQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB8119
+X-OriginatorOrg: intel.com
 
-Hey Linus,
+On Tue, Jul 22, 2025 at 09:34:45PM +0200, Francois Dugast wrote:
+> When the PMD swap entry is device private and owned by the caller,
+> skip the range faulting and instead just set the correct HMM PFNs.
+> This is similar to the logic for PTEs in hmm_vma_handle_pte().
+> 
+> For now, each hmm_pfns[i] entry is populated as it is currently done
+> in hmm_vma_handle_pmd() but this might not be necessary. A follow-up
+> optimization could be to make use of the order and skip populating
+> subsequent PFNs.
+> 
+> Signed-off-by: Francois Dugast <francois.dugast@intel.com>
+> ---
+>  mm/hmm.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index f2415b4b2cdd..63ec1b18a656 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -355,6 +355,31 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+>  	}
+>  
+>  	if (!pmd_present(pmd)) {
+> +		swp_entry_t entry = pmd_to_swp_entry(pmd);
+> +
+> +		/*
+> +		 * Don't fault in device private pages owned by the caller,
+> +		 * just report the PFNs.
+> +		 */
+> +		if (is_device_private_entry(entry) &&
+> +		    pfn_swap_entry_folio(entry)->pgmap->owner ==
+> +		    range->dev_private_owner) {
+> +			unsigned long cpu_flags = HMM_PFN_VALID |
+> +				hmm_pfn_flags_order(PMD_SHIFT - PAGE_SHIFT);
+> +			unsigned long pfn = swp_offset_pfn(entry);
+> +			unsigned long i;
+> +
+> +			if (is_writable_device_private_entry(entry))
+> +				cpu_flags |= HMM_PFN_WRITE;
+> +
+> +			for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++) {
+> +				hmm_pfns[i] &= HMM_PFN_INOUT_FLAGS;
+> +				hmm_pfns[i] |= pfn | cpu_flags;
+> +			}
+> +
+> +			return 0;
+> +		}
+> +
+>  		if (hmm_range_need_fault(hmm_vma_walk, hmm_pfns, npages, 0))
+>  			return -EFAULT;
 
-This is the fixes that built up in the merge window, mostly amdgpu and
-xe with one i915 display fix, seems like things are pretty good for
-rc1.
+I think here if this is a is_device_private_entry(entry), we need to
+call hmm_vma_fault.
 
-Regards,
-Dave.
+Matt
 
-drm-next-2025-08-08:
-drm fixes for 6.17-rc1
-
-i915:
-- DP LPFS fixes
-
-xe:
-- SRIOV: PF fixes and removal of need of module param
-- Fix driver unbind around Devcoredump
-- Mark xe driver as BROKEN if kernel page size is not 4kB
-
-amdgpu:
-- GC 9.5.0 fixes
-- SMU fix
-- DCE 6 DC fixes
-- mmhub client ID fixes
-- VRR fix
-- Backlight fix
-- UserQ fix
-- Legacy reset fix
-- Misc fixes
-
-amdkfd:
-- CRIU fix
-- Debugfs fix
-The following changes since commit 6531a2cf07ef156956840853692755cc7e1621b7=
-:
-
-  Merge tag 'drm-xe-next-fixes-2025-07-31' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-next (2025-08-01
-07:09:16 +1000)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2025-08-08
-
-for you to fetch changes up to 64c627519474e687b876e6e50cc28ece16d10564:
-
-  Merge tag 'amd-drm-fixes-6.17-2025-08-07' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-next (2025-08-08
-08:17:13 +1000)
-
-----------------------------------------------------------------
-drm fixes for 6.17-rc1
-
-i915:
-- DP LPFS fixes
-
-xe:
-- SRIOV: PF fixes and removal of need of module param
-- Fix driver unbind around Devcoredump
-- Mark xe driver as BROKEN if kernel page size is not 4kB
-
-amdgpu:
-- GC 9.5.0 fixes
-- SMU fix
-- DCE 6 DC fixes
-- mmhub client ID fixes
-- VRR fix
-- Backlight fix
-- UserQ fix
-- Legacy reset fix
-- Misc fixes
-
-amdkfd:
-- CRIU fix
-- Debugfs fix
-
-----------------------------------------------------------------
-Alex Deucher (4):
-      drm/amdgpu: update mmhub 3.0.1 client id mappings
-      drm/amdgpu: update mmhub 3.3 client id mappings
-      drm/amdgpu/discovery: fix fw based ip discovery
-      drm/amdgpu: add missing vram lost check for LEGACY RESET
-
-Amber Lin (1):
-      drm/amdkfd: Destroy KFD debugfs after destroy KFD wq
-
-Balasubramani Vivekanandan (1):
-      drm/xe/devcoredump: Defer devcoredump initialization during probe
-
-Dave Airlie (3):
-      Merge tag 'drm-intel-next-fixes-2025-08-05' of
-https://gitlab.freedesktop.org/drm/i915/kernel into drm-next
-      Merge tag 'drm-xe-next-fixes-2025-08-06' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-next
-      Merge tag 'amd-drm-fixes-6.17-2025-08-07' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-next
-
-David Yat Sin (1):
-      drm/amdkfd: Fix checkpoint-restore on multi-xcc
-
-Jesse.Zhang (1):
-      drm/amdgpu: Update SDMA firmware version check for user queue support
-
-Jouni H=C3=B6gander (4):
-      drm/i915/display: Write PHY_CMN1_CONTROL only when using AUXLess ALPM
-      drm/i915/display: Avoid unnecessarily calling
-intel_cx0_get_owned_lane_mask
-      drm/i915/display: Ensure phy is accessible on lfps configuration
-      drm/i915/display: Set C10_VDR_CTRL_MSGBUS_ACCESS before phy reg read
-
-Lijo Lazar (3):
-      drm/amdgpu: Update supported modes for GC v9.5.0
-      drm/amdgpu: Update external revid for GC v9.5.0
-      drm/amdgpu: Add NULL check for asic_funcs
-
-Mario Limonciello (3):
-      drm/amd: Restore cached power limit during resume
-      drm/amd: Restore cached manual clock settings during resume
-      drm/amd/display: Revert "drm/amd/display: Fix AMDGPU_MAX_BL_LEVEL val=
-ue"
-
-Michal Wajdeczko (3):
-      drm/xe/pf: Enable SR-IOV PF mode by default
-      drm/xe/pf: Disable PF restart worker on device removal
-      drm/xe/pf: Make sure PF is ready to configure VFs
-
-Michel D=C3=A4nzer (1):
-      drm/amd/display: Add primary plane to commits for correct VRR handlin=
-g
-
-Simon Richter (1):
-      Mark xe driver as BROKEN if kernel page size is not 4kB
-
-Siyang Liu (1):
-      drm/amd/display: fix a Null pointer dereference vulnerability
-
-Timur Krist=C3=B3f (2):
-      drm/amd/display: Don't overwrite dce60_clk_mgr
-      drm/amd/display: Fix DCE 6.0 and 6.4 PLL programming.
-
-Xaver Hugl (1):
-      amdgpu/amdgpu_discovery: increase timeout limit for IFWI init
-
-YuanShang (1):
-      drm/amdgpu: Retain job->vm in amdgpu_job_prepare_job
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |   6 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c      |  76 +++++++------
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c            |   7 --
- drivers/gpu/drm/amd/amdgpu/amdgpu_nbio.c           |   3 +-
- drivers/gpu/drm/amd/amdgpu/aqua_vanjaram.c         |   5 +-
- drivers/gpu/drm/amd/amdgpu/mmhub_v3_0_1.c          |  57 +++++-----
- drivers/gpu/drm/amd/amdgpu/mmhub_v3_3.c            | 121 +++++++++++++++++=
-++--
- drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/soc15.c                 |   2 +
- .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  |   2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_module.c            |   2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c    |  61 +++++++++--
- .../gpu/drm/amd/amdkfd/kfd_process_queue_manager.c |  20 +++-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |   8 +-
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c |   9 ++
- drivers/gpu/drm/amd/display/dc/clk_mgr/clk_mgr.c   |   1 -
- .../amd/display/dc/clk_mgr/dce100/dce_clk_mgr.c    |   5 +
- drivers/gpu/drm/amd/display/dc/core/dc.c           |  19 ++--
- .../amd/display/dc/resource/dce60/dce60_resource.c |  34 +++---
- drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c          |  16 +++
- drivers/gpu/drm/i915/display/intel_cx0_phy.c       |  21 +++-
- drivers/gpu/drm/xe/Kconfig                         |   1 +
- drivers/gpu/drm/xe/xe_device.c                     |   8 +-
- drivers/gpu/drm/xe/xe_gt_sriov_pf.c                |  57 +++++++++-
- drivers/gpu/drm/xe/xe_gt_sriov_pf.h                |   1 +
- drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c        |   4 +-
- drivers/gpu/drm/xe/xe_guc_capture.c                |   6 +
- drivers/gpu/drm/xe/xe_module.c                     |   8 +-
- drivers/gpu/drm/xe/xe_pci_sriov.c                  |   7 +-
- drivers/gpu/drm/xe/xe_sriov_pf.c                   |  27 +++++
- drivers/gpu/drm/xe/xe_sriov_pf.h                   |   1 +
- 31 files changed, 456 insertions(+), 141 deletions(-)
+>  		return hmm_pfns_fill(start, end, range, HMM_PFN_ERROR);
+> -- 
+> 2.43.0
+> 
 
