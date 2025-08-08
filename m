@@ -1,174 +1,206 @@
-Return-Path: <linux-kernel+bounces-760682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779AFB1EEC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:08:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1120BB1EECD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33ED53B57CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:08:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A29407A6EE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9A1286416;
-	Fri,  8 Aug 2025 19:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439E726463B;
+	Fri,  8 Aug 2025 19:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="DDNcni97"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X818RuSs"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FCB13790B;
-	Fri,  8 Aug 2025 19:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0210A78F20;
+	Fri,  8 Aug 2025 19:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754680082; cv=none; b=s8rVMaVslwwMdne1QM0YEiNLJIAS7kuZ2Jj33lUz7Cvw9ej4c4qgQlbn8T8u7rOHg0xpoKfGjwTdXP8IKz6CMnp4QQksXwEIXZ7d3ghCp3UPRgoGTWozETIYXu9jCNxs43F4DLM0MSte4JU94XIl3pbWezhtR0XBD8auCie2Duc=
+	t=1754680805; cv=none; b=AeARn3qO6csJ70iKR5nqlrolYKqvcsrU1o89HlwYA5O/6wSsM1DoacPK+KiA3oHjc3aQ5vTbCZhU/Qv/3WaCb+kE7Q9wvEfH00ckG3QXYVHpRaTO+DTb3PyRI2Q3Jue1hFqarHnUn4QJ7wv8sYnM1ar3XehNUEUgVxXfLS7NhWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754680082; c=relaxed/simple;
-	bh=v90Z/z9h4SuuSRtazOa+PB8Cn9ZuFoeC1O34f0jk86s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqwKlWJnrrEMhmp6fH9iZiEv0U6vF38qCeVPjECvh5LaQPOxHveesYWlxdK57zs/PM3rjDeJb9iTSf7/C2O0rAtcsNcfzG7u/15Bpy6pImNcYxsJJe7yi9NsCo2LU6rigLQI3GGlTPRYkzZIMzJZzwEEuhpxFV1xAQoYTg32kC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=DDNcni97; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bzD7b5SQHz9svT;
-	Fri,  8 Aug 2025 21:07:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754680075;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YZ2Bfu9wA7mUyzKiz143rWYgufUqFCbjKIcINHsYjf8=;
-	b=DDNcni97QGO1rwlh61XyuEouz6fLhIGe8Nbw/FVqPQgBQDOdAG7y5B6cSfVlEbfJLwlsUt
-	pelgbA+icyy9+8+smKZB0WduFzmca1ySTvDtCJ/1ppxkeD31X47SEn5CuDAUqdzpqmlcB1
-	9ZVlJGlXtCmNHZfen5qLy99IpAv0C2E7iNgHKdCPiHixgfmiL74OcodTbRoVppWZjB0fg/
-	42fzmquvAuB5w6JlBkdtczklL8yCsfBiiQOytjXYXk5HVlrjAqJ7dQvF4Nc81dSsIep6xl
-	MICfP3pDTAvX/na3Ip2ogMbR3t2QBKROj7aAkcSe1mShvrQ4tqH3kLCHTGVS8w==
-Date: Sat, 9 Aug 2025 05:07:41 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 05/11] fsconfig.2: document 'new' mount api
-Message-ID: <2025-08-08.1754679911-hidden-varsity-charts-ragweed-wIijBm@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-5-558a27b8068c@cyphar.com>
- <19889fbe690.e80d252e42280.4347614991285137048@zohomail.com>
- <2025-08-08.1754666161-creaky-taboo-miso-cuff-mKwsCC@cyphar.com>
+	s=arc-20240116; t=1754680805; c=relaxed/simple;
+	bh=rEXSqhIYJL8RL0GStTLtjvpF5obfmNTaeHoupqhYEkA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QMZll3FlCgTXx7ZhJYWh4tFG1VpV5ABwx8HsJBdYTDSg4mkrJ/W1j/rVVxJ6r/HyT1WV7PEk2eCyc/GxDuzWOEUySSXADEop3Ye5NhiVdSrc6USmsWg7YVgiumNfxm3aIFDgc6BLXRGiK/ckQrCBzT/4Bur4mJqK5JEEbfedAp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X818RuSs; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76bd6e84eddso3331936b3a.0;
+        Fri, 08 Aug 2025 12:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754680803; x=1755285603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkk0FV59gE6/32qGCCqmE3gD2QpzFpo2afaJLYq6+rU=;
+        b=X818RuSsETot88DWKj8sq2HkF8b/9tWHsJFMJmhUEOjHU1X16BAKbgBgnGrQn7ewCy
+         DK4CIcRse/55nn0M7ItRp9ikHkGcCYrpt0Tc3p4vUNfxCn+f18987enEXxHe3S6t+tyN
+         ZEAuWVnKVeaTo4VPmTvkEdqWIM52y0tDNzo76XXvJY8qTeQzjAIs872uCUBe0Zku5Msp
+         XcvzeTWLfxxP0lRBGwwjCbdDWAV5t3vhegkvp6I93dOHbS3QNzS9vWJQ9zi3tFzuFuyJ
+         TlSyaMVG+tGEqy72zRmL1hm6stQp1pJR/tfBBCwY83tdRkJ8L4W+Pjur3jYLZH9nGLAM
+         9DXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754680803; x=1755285603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rkk0FV59gE6/32qGCCqmE3gD2QpzFpo2afaJLYq6+rU=;
+        b=JjI2Xq2bdP/N4/URu3RPgoaAzryUiJNemgvq3clSREoVAoL03+anGVxCE4oqLwkyb7
+         jxdQywEkfhhMLI95zw/r2xXHUyNKU8CjsBFIlY4Wi+MAz8zlw50c9SXPiMsg9oN+f2HR
+         zmdvADFeTQ4bQf61J9b6/3R8KhlcY8FFFsR/FyoAnH+jfFmqpJz4MUiUOPC1pK6AsSy1
+         0d0syLPcwFvXG5A0xyKYcZAElvaXAt0RRhEfXxIveLgAhEwuhZh0JmwFtQNaFIq2or31
+         tEvbQneS1e4E1EXY1iaFoP4eQXER28ZT6hZvQs4/XUqNf3IxGEECIydwveKgw9Dyvloi
+         nXXw==
+X-Forwarded-Encrypted: i=1; AJvYcCViDwucxIaMTR9Jhe6/sHj0Zy4HbCNYCKbKyZQaL3qdyJxLr1bgd8GgKerWo3EWSD1fUNKNkCny/pAUpA4k4A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybm6BfYrTJ5/vCeq3JJL2jpgL/SiorD/i4Q1XwI51A3erm2s70
+	cVghpUS9jh51LoBYxg2AKWkT++ce8jEvOoXSmu4Lht219DssUZk1Dc99
+X-Gm-Gg: ASbGncv6yulhv6Yc3bkY+20/I1uyCl7xEImNwiCjj9y6hCSTRB23DVD0kXYfcfRt61K
+	uqCgAmhHmq2EBDtUDpJThRYAi+XV+nl9fz0W9RNEk3ltWcwiMSk7Bq8uagmBZ+xdAbtj/MpWz58
+	68u5/CRfMoLuHtTUu0ilPdo4jd0b3tmB3atYftaH/OlQQa6kJzmz3yGDe3jIoAkzu7w1rPzHO0a
+	RbbuZLGaLi8H2f/NyGlbGOs3x6dIx483RJyh7Y9xioLJXX2O4Dp9j0cxs+ZcUdHql1+NanUz3IU
+	5zvZcGmxAHa2ItNj/oJQ0ceRfVNt9ntxS9V6yYyxdAXue4xI3FRlB362OZYEqcOM8xIDuO29tOS
+	dQh6Fm3YGSCO6o1s=
+X-Google-Smtp-Source: AGHT+IFWT1quZkc+Wym8Obb3ixgTPzjdxARDcTVN3LXG3Jsel/sTqKb74sGawQGdtqMXqIvwa+bwYA==
+X-Received: by 2002:a05:6a20:4304:b0:231:acae:1983 with SMTP id adf61e73a8af0-2405501a3cdmr6537222637.3.1754680803161;
+        Fri, 08 Aug 2025 12:20:03 -0700 (PDT)
+Received: from fedora ([49.36.193.217])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422b7d9e30sm18144995a12.25.2025.08.08.12.19.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 12:20:02 -0700 (PDT)
+From: Ritvik Gupta <ritvikfoss@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH v4] rust: kernel: introduce `unsafe_precondition_assert!` macro
+Date: Sat,  9 Aug 2025 00:47:49 +0530
+Message-ID: <20250808192005.209188-1-ritvikfoss@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jrcgfz2nxvhfj7eo"
-Content-Disposition: inline
-In-Reply-To: <2025-08-08.1754666161-creaky-taboo-miso-cuff-mKwsCC@cyphar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Introduce a new `safety` module containing `unsafe_precondition_assert!`
+macro. It is a wrapper around `debug_assert!`, intended for validating
+pre-conditions of unsafe function.
 
---jrcgfz2nxvhfj7eo
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 05/11] fsconfig.2: document 'new' mount api
-MIME-Version: 1.0
+When `CONFIG_RUST_DEBUG_ASSERTIONS` flag is enabled, this macro performs
+runtime checks to ensure that the preconditions for unsafe function hold.
+Otherwise, the macro is a no-op.
 
-On 2025-08-09, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2025-08-08, Askar Safin <safinaskar@zohomail.com> wrote:
-> > Let's consider this example:
-> >=20
-> >            int fsfd, mntfd, nsfd, nsdirfd;
-> >=20
-> >            nsfd =3D open("/proc/self/ns/pid", O_PATH);
-> >            nsdirfd =3D open("/proc/1/ns", O_DIRECTORY);
-> >=20
-> >            fsfd =3D fsopen("proc", FSOPEN_CLOEXEC);
-> >            /* "pidns" changes the value each time. */
-> >            fsconfig(fsfd, FSCONFIG_SET_PATH, "pidns", "/proc/self/ns/pi=
-d", AT_FDCWD);
-> >            fsconfig(fsfd, FSCONFIG_SET_PATH, "pidns", "pid", NULL, nsdi=
-rfd);
-> >            fsconfig(fsfd, FSCONFIG_SET_PATH_EMPTY, "pidns", "", nsfd);
-> >            fsconfig(fsfd, FSCONFIG_SET_FD, "pidns", NULL, nsfd);
-> >            fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> >            mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
-> >            move_mount(mntfd, "", AT_FDCWD, "/proc", MOVE_MOUNT_F_EMPTY_=
-PATH);
-> >=20
-> > I don't like it. /proc/self/ns/pid is our namespace, which is default a=
-nyway.
-> > I. e. setting pidns to /proc/self/ns/pid is no-op (assuming that "pidns=
-" option is implemented in our kernel, of course).
-> > Moreover, if /proc is mounted properly, then /proc/1/ns/pid refers to o=
-ur namespace, too!
+Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1162
+Link: https://rust-for-linux.zulipchat.com/#narrow/channel/291566-Library/topic/.60unsafe_precondition_assert.60.20macro/with/528457452
+Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
+---
 
-This slightly depends on what you mean by "properly". If you deal with
-namespaces a lot, running into a situation whether the current process's
-pidns doesn't match /proc is quite common (we run into it with container
-runtimes all the time).
+Changes in v4:
+ - Change doc example
+ - Add `no_run` attribute to the doc example
+ - Link to v3: https://lore.kernel.org/rust-for-linux/20250731111234.28602-1-ritvikfoss@gmail.com/
 
-A proper example with provably different pidns values (such as the
-selftests for the pidns parameter) would make for a very lengthy example
-program with very little use for readers.
+Changes in v3:
+ - Change doc example
+ - Link to v2: https://lore.kernel.org/all/20250730181420.6979b4f1@eugeo/T/#m9cd35a8fc02a18bd03934c7ecdcffe8667b5fbbd
 
-I'm tempted to just delete this example.
+Changes in v2:
+ - Wrap `debug_assert!` internally instead of using `pr_err!` with `assert!` + `cfg!(debug_assertions)
+ - Print “unsafe precondition(s) violated” only on assertion failure (no longer always printed)
+ - Use `# Safety` section instead of comment in the example
+ - Rename module-level doc
+ - Link to v1: https://lore.kernel.org/rust-for-linux/20250716045957.39732-1-ritvikfoss@gmail.com/
 
-> > Thus, *all* these fsconfig(FSCONFIG_SET_...) calls are no-op.
-> > Thus it is bad example.
-> >=20
-> > I suggest using, say, /proc/2/ns/pid . It has actual chance to refer to=
- some other namespace.
-> >=20
-> > Also, sentence '"pidns" changes the value each time' is a lie: as I exp=
-lained, all these calls are no-ops,
-> > they don't really change anything.
->=20
-> Right, I see your point.
->=20
-> One other problem with this example is that there is no
-> currently-existing parameter which accepts all of FSCONFIG_SET_PATH,
-> FSCONFIG_SET_PATH_EMPTY, FSCONFIG_SET_FD, and FSCONFIG_SET_STRING so
-> this example is by necessity a little contrived. I suspect that it'd be
-> better to remove this and re-add it once we actually something that
-> works this way...
->=20
-> You've replied to the pidns parameter patchset so I shouldn't repeat
-> myself here too much, but supporting this completely is my plan for the
-> next version I send. It's just not a thing that exists today (ditto for
-> overlayfs).
->=20
-> --=20
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> https://www.cyphar.com/
+---
+ rust/kernel/lib.rs    |  1 +
+ rust/kernel/safety.rs | 48 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 49 insertions(+)
+ create mode 100644 rust/kernel/safety.rs
 
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index ed53169e795c..5eb301685ce8 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -113,6 +113,7 @@
+ pub mod rbtree;
+ pub mod regulator;
+ pub mod revocable;
++pub mod safety;
+ pub mod security;
+ pub mod seq_file;
+ pub mod sizes;
+diff --git a/rust/kernel/safety.rs b/rust/kernel/safety.rs
+new file mode 100644
+index 000000000000..880307a5fbf4
+--- /dev/null
++++ b/rust/kernel/safety.rs
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Safety related APIs.
++
++/// Checks that preconditions of an unsafe function are followed.
++///
++/// The check is enabled at runtime if debug assertions (`CONFIG_RUST_DEBUG_ASSERTIONS`)
++/// are enabled. Otherwise, this macro is no-op.
++///
++/// # Examples
++///
++/// ```no_run
++/// # use kernel::unsafe_precondition_assert;
++/// # use kernel::cpu::{nr_cpu_ids, CpuId};
++/// /// Creates a [`CpuId`] from the given `id` without bound checks.
++/// ///
++/// /// # Safety
++/// ///
++/// /// The caller must ensure that `id` is a valid CPU ID (i.e, `0 <= id < nr_cpu_ids()`).
++/// unsafe fn new_cpu_id_unchecked(id: i32) -> CpuId {
++///     let max_cpus = nr_cpu_ids();
++///
++///     unsafe_precondition_assert!(id >= 0, "id ({}) must be positive", id);
++///
++///     unsafe_precondition_assert!(
++///         id < max_cpus, "id ({}) must be less than total CPUs ({})", id, max_cpus
++///     );
++///
++///     CpuId(id)
++/// }
++/// ```
++///
++/// # Panics
++///
++/// Panics if the expression is evaluated to `false` at runtime.
++#[macro_export]
++macro_rules! unsafe_precondition_assert {
++    ($cond:expr $(,)?) => {
++        $crate::unsafe_precondition_assert!(@inner $cond, ::core::stringify!($cond))
++    };
++
++    ($cond:expr, $($arg:tt)+) => {
++        $crate::unsafe_precondition_assert!(@inner $cond, ::core::format_args!($($arg)+))
++    };
++
++    (@inner $cond:expr, $msg:expr) => {
++        ::core::debug_assert!($cond, "unsafe precondition(s) violated: {}", $msg) };
++}
 
+base-commit: 37816488247ddddbc3de113c78c83572274b1e2e
+-- 
+2.50.1
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---jrcgfz2nxvhfj7eo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJZK/QAKCRAol/rSt+lE
-b+/iAQDQhXvntGxO/K+rTCZQBBOfgc9JQ7KeTbPVMY04ldZghQEAgKQDzFjsiFpR
-FkCNDr4PJBoMmWGd6LUiPPR0hlXU4ws=
-=W/yu
------END PGP SIGNATURE-----
-
---jrcgfz2nxvhfj7eo--
 
