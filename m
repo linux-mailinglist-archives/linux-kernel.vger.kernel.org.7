@@ -1,198 +1,223 @@
-Return-Path: <linux-kernel+bounces-760647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0B8B1EE2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:04:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8E6B1EE34
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9281C2808C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC9533A8B93
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008C8215191;
-	Fri,  8 Aug 2025 18:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBE325C706;
+	Fri,  8 Aug 2025 18:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="MLHY0T9Q"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxwLTw4/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85B81C84D6
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 18:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170311E5B91;
+	Fri,  8 Aug 2025 18:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754676251; cv=none; b=k/XtWtMZfUsAV29Rmmv0aEMvoSTpv+VWICaDR9uD2LvXN2VzkDEJcLt8P2jSrDNE9V9lMNPIkj61JfLLIVW1df/cfUSKcFPFO+pLzIkIXO0nGVLI3s5xGQATV4RpoYRRpB0yGdEqHEozqeMHazRpRSvBXW+x+mQbNHUjck2U0wE=
+	t=1754676412; cv=none; b=eS+KXCzq7eFJqPO3y4k26pd/D/dN2sluJpnNgz5yCgfm35vVgT9mGy94qfEkcbcZEa+aXxEXqHwHA+J429SGCZSTP9T1y0Vwh6A5FJ24BoLXy82Hh+MiCR2+mcUHJKoAV6StAQGd0FnRR4mNI3cOk8kkAE7uBT3WSw/ZorsrLAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754676251; c=relaxed/simple;
-	bh=S8Tu0zazISBc4SKdYPPuzDxu1aVvArA/JTP2EOFHPQI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UzFwRb/bl+0gxGMFq0IovrrDf2PJpvG/tj256s6yJFBGCInLVLl/8YkJllqxanYAxvCLozOcWPdc6m7SL6fBaZ7bgab+mV1kJxx8MuWE99XbGRyODfZh2C2buKrggbGrC6GrlM1Vm9LvuTz7A3YIs9IeUdcFoM4EKYloU1Z9/f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=MLHY0T9Q; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2400145aa5aso3366905ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 11:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1754676249; x=1755281049; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=evY4+eDXJzJxiwKDLdddSuNC/hZO/qDyeUCoXab8qto=;
-        b=MLHY0T9QY7O+vT21bkLAa1QuWiZmr3BSo6LgUb7ADRUla1Z4DWPTBQI+GbTh5AezA0
-         Tl585wlJw+7Nw67LFo9ITyoRpoX6VoZM9J31VVwJU61Z4Rb52ig1v7WHQoAEvqJOycHO
-         Ko3P1bf1wscoXSxzsY1gKN8/W/wjRLcykJrK9kYRWwjO9oKtL1Ms2nyXswQJR/DZ0QUc
-         umwJ1R3SB7DYQlUugf8FqZHDJvsiWQ1TL9ikPe/VdW008nMofyPlviYKw3+j3EWIXv4y
-         aUxa3lBBPkrzdskBDONNZfefHE2cU9AfSRoFnzJLDpgariA9f2FBtnl6EDTVo1/nuDfP
-         YcOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754676249; x=1755281049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=evY4+eDXJzJxiwKDLdddSuNC/hZO/qDyeUCoXab8qto=;
-        b=PJj2AeiwvPRn9rvY/XnBfNagQeKDrheXtM9Cf5kg8kXZrkKoFneeB86iCoV6Pwc8WT
-         6wXB8aFjV+i8xAPBSAVwn+ejbPTlgNYJH7XalxArR+YlUuaCoE71/J7QQhv+nAy6nI2f
-         /upSN0u6pqTcN/U3kKebusguRhhMc3UHz0hG/GKwD8H5vG22YMWM3WDSciNs/eq6IzHF
-         8Jl7EWaAAVjQdQjmqkeom7fQ7H3pKLz8+9LxUWomm7iALagEjVyqZBcbVfzkP5VOf24S
-         bKmze7MSpzM48rnmB1X4d0DIP+2CKxXkY1/hVNLRYXfGKeSRjm8HLlyJZoWb4pnsD+SO
-         M/iA==
-X-Forwarded-Encrypted: i=1; AJvYcCUb0M1e+hopKunBXhMwqxJFhPoyUpkkeoFEhsvv7ZNY0fbWatoWkUzFc1T1xdCUb8Ke1chPKogVQiPXWWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrKALSmCHGDyU1P5k4e2ZWFyfHBJjM1DMQkt50RSWKMaueVmBm
-	Z5UIiLg76mwmgYjTO5PNwrIzSkaWzvukgyy3fDXDF0cnjVlPAXwuFN9an27jrymNupEHYb7mNbc
-	/TrNnesOa6kskE3aibP1zeUBho7+GQWAcwjI09cdeFg==
-X-Gm-Gg: ASbGncsP/gK4aHFL1Sp8K5LLck1q4rvLq34WOe0A58Dt+dIO100++wczN21e+sInoPr
-	qfFt1jn2Pow+eeRKgETezbTfNEMclc7kAd8W66t7A+9kfrWqKkxQBjpyyCGnujxs2l79zT8JuxS
-	NpbdqOsfj0wPaSu1DUIfW6HbqQpfcla5LWnDrUz02cQ89NlAZNJ4SfettAAcYKQedhWTUba3n9P
-	NBlNw==
-X-Google-Smtp-Source: AGHT+IGVxnKjIynfdZLWqtSh9fHzYltbcrWG6UxwdhrKSSzs1MbOC7aPSN3TBrYKqGm6MtfCPX3BJLY6GvVEfO22dA0=
-X-Received: by 2002:a17:902:fc48:b0:240:1879:c2fd with SMTP id
- d9443c01a7336-242c25a352dmr28055195ad.2.1754676249124; Fri, 08 Aug 2025
- 11:04:09 -0700 (PDT)
+	s=arc-20240116; t=1754676412; c=relaxed/simple;
+	bh=Xlb6GlM1jikm1KAnIiq6BWNyPUh3O/ufUGpGhV+m/jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqZc2ZXxNbqpQqgBr3PO3l7M+vOtji0/Mv39mX3SmPqQEDfHqvw9/GssfStwuD1ZQHrkS9+5Z0u7DSj2PL4gogecyo2hhYcCS0zzjiN28peIyIeamQy0S9HfQFV0UtncjK+xWt6SPG+GeIiYMnzJLF1dwd9eUUI3pTdcZzpKwQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gxwLTw4/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C1EC4CEED;
+	Fri,  8 Aug 2025 18:06:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754676411;
+	bh=Xlb6GlM1jikm1KAnIiq6BWNyPUh3O/ufUGpGhV+m/jo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gxwLTw4/P9blEJzA0NeI3VVQbvvogs/jKUkp1iwYTHHSGUM804PVH79cOqYwy09iE
+	 awuPFvEMVSoXT+AjyvUQ3qcGwltUw/yP/7k+aryoRr0vcLhPx2gFO8dWGfnnrkqZQD
+	 f0ZSizK/wCc7vY7mJ/LHyWNTjZmICn6D5KAH5Y2sWYxuSi8nBIX1ENZG6vkytJXRyP
+	 BTph3EjXTdPYlc/Vpy5gp4mkQPsQvP1LMBIpCeVUIuu4DrZlO3YKzQoJ2XDVp+QPB2
+	 KHxY5krriR4lcHJsErKEieb1GVPd9uNR5XzbsmSyQA+ZV4SrdsTn4m0GyoIT91slwV
+	 HciWeQ0kFikgw==
+Date: Fri, 8 Aug 2025 23:36:40 +0530
+From: 'Manivannan Sadhasivam' <mani@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>, 
+	'Krzysztof Kozlowski' <krzk@kernel.org>, 'Ram Kumar Dwivedi' <quic_rdwivedi@quicinc.com>, 
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, agross@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+Message-ID: <xqynlabahvaw4cznbofkkqjr4oh7tf6crlnxoivhpadlymxg5v@a4b5fgf55nqw>
+References: <061d01dc0631$c1766c00$44634400$@samsung.com>
+ <3cd33dce-f6b9-4f60-8cb2-a3bf2942a1e5@oss.qualcomm.com>
+ <06d201dc0689$9f438200$ddca8600$@samsung.com>
+ <wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
+ <06f301dc0695$6bf25690$43d703b0$@samsung.com>
+ <CGME20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60@epcas5p1.samsung.com>
+ <nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
+ <0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
+ <fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
+ <0f8c01dc0876$427cf1c0$c776d540$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808155216.296170-1-csander@purestorage.com> <aJY7fPmOLMe7T5A7@dev-ushankar.dev.purestorage.com>
-In-Reply-To: <aJY7fPmOLMe7T5A7@dev-ushankar.dev.purestorage.com>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 8 Aug 2025 14:03:57 -0400
-X-Gm-Features: Ac12FXyvrSy6RuKGNG4Qv3aEGNsmQMPDvbbXUgyu660PYbxlVuK2l0QXeKWdURI
-Message-ID: <CADUfDZqz1R=aTuyRhsVjpJnoUgXBgsf1Jkg4qX_sn+NtP4TPeQ@mail.gmail.com>
-Subject: Re: [PATCH] ublk: check for unprivileged daemon on each I/O fetch
-To: Uday Shankar <ushankar@purestorage.com>
-Cc: Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0f8c01dc0876$427cf1c0$c776d540$@samsung.com>
 
-On Fri, Aug 8, 2025 at 2:01=E2=80=AFPM Uday Shankar <ushankar@purestorage.c=
-om> wrote:
->
-> On Fri, Aug 08, 2025 at 09:52:15AM -0600, Caleb Sander Mateos wrote:
-> > Commit ab03a61c6614 ("ublk: have a per-io daemon instead of a per-queue
-> > daemon") allowed each ublk I/O to have an independent daemon task.
-> > However, nr_privileged_daemon is only computed based on whether the las=
-t
-> > I/O fetched in each ublk queue has an unprivileged daemon task.
-> > Fix this by checking whether every fetched I/O's daemon is privileged.
-> > Change nr_privileged_daemon from a count of queues to a boolean
-> > indicating whether any I/Os have an unprivileged daemon.
-> >
-> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > Fixes: ab03a61c6614 ("ublk: have a per-io daemon instead of a per-queue=
- daemon")
->
-> Nice catch!
->
-> > ---
-> >  drivers/block/ublk_drv.c | 16 +++++++---------
-> >  1 file changed, 7 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-> > index 6561d2a561fa..a035070dd690 100644
-> > --- a/drivers/block/ublk_drv.c
-> > +++ b/drivers/block/ublk_drv.c
-> > @@ -233,11 +233,11 @@ struct ublk_device {
-> >
-> >       struct ublk_params      params;
-> >
-> >       struct completion       completion;
-> >       unsigned int            nr_queues_ready;
-> > -     unsigned int            nr_privileged_daemon;
-> > +     bool                    unprivileged_daemons;
-> >       struct mutex cancel_mutex;
-> >       bool canceling;
-> >       pid_t   ublksrv_tgid;
-> >  };
-> >
-> > @@ -1548,11 +1548,11 @@ static void ublk_reset_ch_dev(struct ublk_devic=
-e *ub)
-> >               ublk_queue_reinit(ub, ublk_get_queue(ub, i));
-> >
-> >       /* set to NULL, otherwise new tasks cannot mmap io_cmd_buf */
-> >       ub->mm =3D NULL;
-> >       ub->nr_queues_ready =3D 0;
-> > -     ub->nr_privileged_daemon =3D 0;
-> > +     ub->unprivileged_daemons =3D false;
-> >       ub->ublksrv_tgid =3D -1;
-> >  }
-> >
-> >  static struct gendisk *ublk_get_disk(struct ublk_device *ub)
-> >  {
-> > @@ -1978,16 +1978,14 @@ static void ublk_reset_io_flags(struct ublk_dev=
-ice *ub)
-> >  /* device can only be started after all IOs are ready */
-> >  static void ublk_mark_io_ready(struct ublk_device *ub, struct ublk_que=
-ue *ubq)
-> >       __must_hold(&ub->mutex)
-> >  {
-> >       ubq->nr_io_ready++;
-> > -     if (ublk_queue_ready(ubq)) {
-> > +     if (ublk_queue_ready(ubq))
-> >               ub->nr_queues_ready++;
-> > -
-> > -             if (capable(CAP_SYS_ADMIN))
-> > -                     ub->nr_privileged_daemon++;
-> > -     }
-> > +     if (!ub->unprivileged_daemons && !capable(CAP_SYS_ADMIN))
-> > +             ub->unprivileged_daemons =3D true;
->
-> Shorter:
->
-> ub->unprivileged_daemons |=3D !capable(CAP_SYS_ADMIN);
+On Fri, Aug 08, 2025 at 08:38:09PM GMT, Alim Akhtar wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: 'Manivannan Sadhasivam' <mani@kernel.org>
+> > Sent: Friday, August 8, 2025 6:14 PM
+> > To: Alim Akhtar <alim.akhtar@samsung.com>
+> > Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>; 'Krzysztof
+> > Kozlowski' <krzk@kernel.org>; 'Ram Kumar Dwivedi'
+> > <quic_rdwivedi@quicinc.com>; avri.altman@wdc.com;
+> > bvanassche@acm.org; robh@kernel.org; krzk+dt@kernel.org;
+> > conor+dt@kernel.org; andersson@kernel.org; konradybcio@kernel.org;
+> > James.Bottomley@hansenpartnership.com; martin.petersen@oracle.com;
+> > agross@kernel.org; linux-arm-msm@vger.kernel.org; linux-
+> > scsi@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+> > properties to UFS
+> > 
+> > On Thu, Aug 07, 2025 at 10:08:32PM GMT, Alim Akhtar wrote:
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: 'Manivannan Sadhasivam' <mani@kernel.org>
+> > > > Sent: Wednesday, August 6, 2025 4:56 PM
+> > > > To: Alim Akhtar <alim.akhtar@samsung.com>
+> > > > Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>; 'Krzysztof
+> > > [...]
+> > >
+> > > > > >
+> > > > > > On Wed, Aug 06, 2025 at 09:51:43AM GMT, Alim Akhtar wrote:
+> > > > > >
+> > > > > > [...]
+> > > > > >
+> > > > > > > > >> Introducing generic solutions preemptively for problems
+> > > > > > > > >> that are simple in concept and can occur widely is good
+> > > > > > > > >> practice (although it's sometimes hard to gauge whether
+> > > > > > > > >> this is a one-off), as if the issue spreads a generic
+> > > > > > > > >> solution will appear at some point, but we'll have to
+> > > > > > > > >> keep supporting the odd ones as well
+> > > > > > > > >>
+> > > > > > > > > Ok,
+> > > > > > > > > I would prefer if we add a property which sounds like
+> > > > > > > > > "poor thermal dissipation" or "routing channel loss"
+> > > > > > > > > rather than adding limiting UFS gear
+> > > > > > > > properties.
+> > > > > > > > > Poor thermal design or channel losses are generic enough
+> > > > > > > > > and can happen
+> > > > > > > > on any board.
+> > > > > > > >
+> > > > > > > > This is exactly what I'm trying to avoid through my
+> > > > > > > > suggestion - one board may have poor thermal dissipation,
+> > > > > > > > another may have channel losses, yet another one may feature
+> > > > > > > > a special batch of UFS chips that will set the world on fire
+> > > > > > > > if instructed to attempt link training at gear 7 - they all
+> > > > > > > > are causes, as opposed to describing what needs to happen
+> > > > > > > > (i.e. what the hardware must be treated as - gear N
+> > > > > > > > incapable despite what can be discovered at runtime), with
+> > > > > > > > perhaps a comment on the side
+> > > > > > > >
+> > > > > > > But the solution for all possible board problems can't be by
+> > > > > > > limiting Gear
+> > > > > > speed.
+> > > > > >
+> > > > > > Devicetree properties should precisely reflect how they are
+> > > > > > relevant to the hardware. 'limiting-gear-speed' is
+> > > > > > self-explanatory that the gear speed is getting limited (for a
+> > > > > > reason), but the devicetree doesn't need to describe the
+> > > > > > *reason* itself.
+> > > > > >
+> > > > > > > So it should be known why one particular board need to limit the
+> > gear.
+> > > > > >
+> > > > > > That goes into the description, not in the property name.
+> > > > > >
+> > > > > > > I understand that this is a static configuration, where it is
+> > > > > > > already known
+> > > > > > that board is broken for higher Gear.
+> > > > > > > Can this be achieved by limiting the clock? If not, can we add
+> > > > > > > a board
+> > > > > > specific _quirk_ and let the _quirk_ to be enabled from vendor
+> > > > > > specific hooks?
+> > > > > > >
+> > > > > >
+> > > > > > How can we limit the clock without limiting the gears? When we
+> > > > > > limit the gear/mode, both clock and power are implicitly limited.
+> > > > > >
+> > > > > Possibly someone need to check with designer of the SoC if that is
+> > > > > possible
+> > > > or not.
+> > > >
+> > > > It's not just clock. We need to consider reducing regulator,
+> > > > interconnect votes also. But as I said above, limiting the gear/mode
+> > > > will take care of all these parameters.
+> > > >
+> > > > > Did we already tried _quirk_? If not, why not?
+> > > > > If the board is so poorly designed and can't take care of the
+> > > > > channel loses or heat dissipation etc, Then I assumed the gear
+> > > > > negotiation between host and device should fail for the higher
+> > > > > gear and driver can have
+> > > > a re-try logic to re-init / re-try "power mode change" at the lower
+> > > > gear. Is that not possible / feasible?
+> > > > >
+> > > >
+> > > > I don't see why we need to add extra logic in the UFS driver if we
+> > > > can extract that information from DT.
+> > > >
+> > > You didn’t answer my question entirely, I am still not able to
+> > > visualised how come Linkup is happening in higher gear and then Suddenly
+> > it is failing and we need to reduce the gear to solve that?
+> > 
+> > Oh well, this is the source of confusion here. I didn't (also the patch) claim
+> > that the link up will happen with higher speed. It will most likely fail if it
+> > couldn't operate at the higher speed and that's why we need to limit it to
+> > lower gear/mode *before* bringing the link up.
+> > 
+> Right, that's why a re-try logic to negotiate a __working__ power mode change can help, instead of introducing new binding for this case.
 
-I was trying to avoid the capable() call if unprivileged_daemons was
-already set. But maybe that's not a common case and it's not worth
-optimizing?
+Retry logic is already in place in the ufshcd core, but with this kind of signal
+integrity issue, we cannot guarantee that it will gracefully fail and then we
+could retry. The link up *may* succeed, then it could blow up later also (when
+doing heavy I/O operations etc...). So with this non-deterministic behavior, we
+cannot rely on this logic.
 
-Best,
-Caleb
+> And that approach can be useful for many platforms.
 
->
-> >
-> >       if (ub->nr_queues_ready =3D=3D ub->dev_info.nr_hw_queues) {
-> >               /* now we are ready for handling ublk io request */
-> >               ublk_reset_io_flags(ub);
-> >               complete_all(&ub->completion);
-> > @@ -2878,12 +2876,12 @@ static int ublk_ctrl_start_dev(struct ublk_devi=
-ce *ub,
-> >       ub->dev_info.ublksrv_pid =3D ublksrv_pid;
-> >       ub->ub_disk =3D disk;
-> >
-> >       ublk_apply_params(ub);
-> >
-> > -     /* don't probe partitions if any one ubq daemon is un-trusted */
-> > -     if (ub->nr_privileged_daemon !=3D ub->nr_queues_ready)
-> > +     /* don't probe partitions if any daemon task is un-trusted */
-> > +     if (ub->unprivileged_daemons)
-> >               set_bit(GD_SUPPRESS_PART_SCAN, &disk->state);
-> >
-> >       ublk_get_device(ub);
-> >       ub->dev_info.state =3D UBLK_S_DEV_LIVE;
-> >
-> > --
-> > 2.45.2
-> >
+Other platforms could also reuse the same DT properties to workaround similar
+issues.
+
+> Anyway coming back with the same point again and again is not productive.
+> I gave my opinion and suggestions. Rest is on the maintainers.
+
+Suggestions are always welcomed. It is important to have comments to try out
+different things instead of sticking to the proposed solution. But in my
+opinion, the retry logic is not reliable in this case. Moreover, we do have
+similar properties for other peripherals like PCIe, MMC, where the vendors would
+use DT properties to limit the speed to workaround the board issues. So we are
+not doing anything insane here.
+
+If there are better solutions than what is proposed here, we would indeed like
+to hear.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
