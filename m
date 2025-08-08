@@ -1,228 +1,195 @@
-Return-Path: <linux-kernel+bounces-759669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D25B1E0E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:20:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AEAB1E0E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E591F18A556F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD64918A5A74
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2301ACEDE;
-	Fri,  8 Aug 2025 03:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71B51AA786;
+	Fri,  8 Aug 2025 03:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qRcLvM+f"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2042.outbound.protection.outlook.com [40.107.236.42])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hBeUB1A8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66023FE4;
-	Fri,  8 Aug 2025 03:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754623216; cv=fail; b=SKI4QuX6VTyGlQZOrJ7TbW0RTXZB63PXorLm0gDe9/nAhKPv8HB/K9CKhUCh5z8jIXbuvA1+eGHHrM4yH4CstFBJ35jeLaIt33e+QezqR3w2WV246s5P0kchSm+kx6V7bxYXthkrXPHiXPsPc3e7moCP0mmA4zpZbq9GmxYFmUA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754623216; c=relaxed/simple;
-	bh=DHlhsRD2hJ6Jv8dv69/ZTW3PpumZ2q4Yn3v5ghB7aSQ=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
-	 In-Reply-To:MIME-Version; b=qB0nHJv4J6t/DMh6ISnMVCszVBSjOaPOAn6TdOOefkyNVRN1dz+CPmmQqnsJHSuhYxMv5p2Bt+8QP+sRIm3xsf3v+iEsxuWHHicJVogXhgeDXO11vTqX5O/qBm3tDjD3vlR7v9bo/IB0tb9b+2aWZVP1xy1OcsD6GO858TxqRa4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qRcLvM+f; arc=fail smtp.client-ip=40.107.236.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f8MSXMiOQodKPkn1SaFGsfjEwyMk+7xf/Dy1ha7ArHlD7XAJt7nfuP20ctEvW6ICtawy9uZLAPgpUQcoKeuXFbzmQocQl046+YVobarkl+N9r+ROIAx3PKRljg3r/VZZhLiYLZx6cV6OmiOnbNTuX8BmwilZxgZcqjEiuBzNIM58n9Fo/bYuhBP1DeLIkuWybAT6AMLc/nJOiDmd02esiXKOf2VZMybdSqAJk1tqfkHVr8vlLvjIDxdqmW4sA9DxqJUVYPTu9gJQHR2V2REyMh3C22IFahYJN0ZULAZ3zg1c559fKW/OYJy/zjwnCKehtFnbRUQSGvpQlpPEOJsPhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H5kAVVwj/mKrxY73WwNXRL8xjJ6l1q8XtsCg23tXXDs=;
- b=mMKNonUl+gQBDk7fq5vdgxbs4Ej7TU7HAJXAOB1QdpROMGgc5HyWyqzf2CWwXFBwCifX9u83n7IK8OEXpaTHs0s7YSbMLxWCrT3F4pzk4MxuaXmAh3WJRW/hdgaJJla349EkkrVSu3eOFBWJ1lr4HfR9bWe+cBCcFMygoJaYAxCohUQGt9/cgs9blozj7vp051s0/sHbFkyhQFozCx5iPvltqZ0Lkr8nI/UhWzitg84DadTVGvLVaPrLGLS5uFllgJxFvggty+TT0y6PRTjJcC1pyDNwxKIUxMSteiVVU3lNtm4PWa37Sow7Ha4z3Bz7ejxKNFpMr5ej1OBVI3E2/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H5kAVVwj/mKrxY73WwNXRL8xjJ6l1q8XtsCg23tXXDs=;
- b=qRcLvM+fXMeYzIWu13Pc5Xu8OhwF7jATnKswWqK0HIVDfPg8eVxTKrjOyNKXOX5sBZG/rkLwefpFooMrdxlWYgqDer9IfLfun/AMOMBuuQdBKD4/aMwxbJ8Yx/WfULAU5hrDnLtCgF9SqG8GV+jdjo+xhu+UZC91/pTw4GQNSlyV/1ansSw4ni6vtjPDT7IVCsrmojl7PSS4O86EaAB2pdsvzK8Y42EDbC2OfT/cr9RdFwnGIak//6d84Xaan0IbJxb8nBmzx4CixRKZjeZ1WAEWbzlTSHKTPWKBnu/Q8cylu2BmFoNP0zAq4YXC+ildIe8GSGFHuLywPbsuZdtnDw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by BL4PR12MB9506.namprd12.prod.outlook.com (2603:10b6:208:590::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Fri, 8 Aug
- 2025 03:20:09 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
- 03:20:09 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 08 Aug 2025 12:20:05 +0900
-Message-Id: <DBWQ0KSI65TR.1X7XT05QCGQXZ@nvidia.com>
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Benno Lossin" <lossin@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, "Shankari Anand"
- <shankari.ak0208@gmail.com>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rust: sync: extend module documentation of aref
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250722121441.224439-1-lossin@kernel.org>
-In-Reply-To: <20250722121441.224439-1-lossin@kernel.org>
-X-ClientProxiedBy: TY4PR01CA0079.jpnprd01.prod.outlook.com
- (2603:1096:405:36c::14) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA323FE4
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 03:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754623327; cv=none; b=GZ3vycWBtnVbT9vrLMD6WeQM4narRPMlgk7JuQzbRElCvPgYRTtUqkkGk5BgkFYZI8IXRlcjDjH4ra6VYxxz44+ab5lLAb2yrTIK0As8uYo8LmchjzGqcVbFQZusUeKSLc5m/RsLz21ge4WP9irqN8cLvpxNOzaKVtrtoUdnTiI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754623327; c=relaxed/simple;
+	bh=lfIMMyzeD6noIh0v2rBCHEY2M8+GwSQ8fOZxz2hGF3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFbJOrjR27H93pMRuUqPEoAADuUy7WRzDl1mpHU2GSDgwG7NgETSNRP26UAd8k7p3CnmifZNWytC84BvwixQFA1KIBsGrqsTjCFXn1DP++8IdNhjTP3DavpFJCET/sk1FI8XBz4tE/ZZKTxrLzrccrsz3F8NWIYaH1Th0Xe6LoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hBeUB1A8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754623323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9v/VfxV4WcSv8mLKBf97De83PUNubQY/hyRrkNkUdjA=;
+	b=hBeUB1A8AlxJwmV2IPATyHI+29DfY6PXbvZJsaaeJzbeNC1Sbq66WfL9KZ8St8NBccrDuC
+	8VOc9JZxqenHYFXEPFTfO8/QFetaPF92+pa07t2hbSrhcrVAgYrDnylFe7DYn0vRppmYGP
+	pG9XM+tcIbvWb8yZCsfzyMXJ3p+ubhA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-477-CQ50kHbEPO-N047aktSPjQ-1; Thu,
+ 07 Aug 2025 23:22:00 -0400
+X-MC-Unique: CQ50kHbEPO-N047aktSPjQ-1
+X-Mimecast-MFC-AGG-ID: CQ50kHbEPO-N047aktSPjQ_1754623318
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8CBDA18004D4;
+	Fri,  8 Aug 2025 03:21:57 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.126])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 699EB19560AD;
+	Fri,  8 Aug 2025 03:21:55 +0000 (UTC)
+Date: Fri, 8 Aug 2025 11:21:50 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Marco Elver <elver@google.com>
+Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com,
+	andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 0/4] mm/kasan: make kasan=on|off work for all three modes
+Message-ID: <aJVtTjRUXqWePva0@MiWiFi-R3L-srv>
+References: <20250805062333.121553-1-bhe@redhat.com>
+ <CANpmjNP-29cuk+MY0w9rvLNizO02yY_ZxP+T0cmCZBi+b5tDTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BL4PR12MB9506:EE_
-X-MS-Office365-Filtering-Correlation-Id: b23299aa-472f-4623-b4dc-08ddd62a7a57
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|10070799003|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NExtVkhiZUgyZUY0cytDNmc3MDVucUhMd3RkYllRZlhlRjF0U3Q3aUhKVFJw?=
- =?utf-8?B?UkhkbXZITk1ubXlBZkI3Qms1Q3FBakhLN2plbVd5L3RZak1JSG56WitZZSs3?=
- =?utf-8?B?ZGlLWStScUczS2F2Y2lMcDRpSkx3aHZGTnYxaFRMSi90cmF3VzRnQ29wWGZk?=
- =?utf-8?B?dGpsdDhUUDNlQWovNTRNWmJGV0xUcnMwRUxLN3dad0pLN2dPTmkzUUlMblpa?=
- =?utf-8?B?WWZYdHQ4QWQxNllWcjRYanF6S3Z6QjdHdU5qTklGVC8zTENPU0NZVjNlWkN6?=
- =?utf-8?B?WXlNWmF1QzF1SnVkRVQzRjVBREtCUFYzL0QvM2V4WnM2NHJIV2NlYjRQSUs5?=
- =?utf-8?B?VVhEbmhlaDRzajBqdmhCNy9Tc09jeGszQjZ5VnkxZFNQREpaM3cxZnc1Ynh3?=
- =?utf-8?B?RDJaOGxtRUF6M25KWFFyTVhzeThGVXVaTm82eTVQRGZlVzFPaWtSMFhjZVZX?=
- =?utf-8?B?dVhvbllTbmFMbC9KMHlEV0JCbjROdTdOaXBEcmxOM21TTzRENHNIQ1BGQjB4?=
- =?utf-8?B?SGRjOXBrTFpJUk9sS3NYdGNOZWFXNmRqR1VzOGNIaU5wTVQySHBVd1FtbTdN?=
- =?utf-8?B?Q1QwajRkTTVRVDFqUlBTWjlxa0gvNmp1cU90dTRmNWZNQ2ZvdloxcUhZKzU5?=
- =?utf-8?B?bHBlc3hCSVB1ZXNOSFhENVFEZk8zMjVGajZGSGpEYXprS2pmeC9hVXIwUFRR?=
- =?utf-8?B?cXJkYTdaYVNFLzhvRXhSc04rVXZMdGtxTjFzemRMVHgwMnRkTWlWdDhidmZh?=
- =?utf-8?B?bXlyNWh4eFZuYkRvRTljNWN3azQ0dndiS05RUmxzTStXZTUycjR1RGFnUWVS?=
- =?utf-8?B?dFNWNFdlVDdZUFFhRnpPM1dJMmRGU3FTYlVrYXkzaCtxQjVwQWRoUUZGWUxm?=
- =?utf-8?B?eU53TFpUZ2RjVlZJa04zOGkwekZEYktlUkFZNk5rY01TcnFVUU51WkhqNnBi?=
- =?utf-8?B?OW02NjNlaVJGcm5yQk81OUIzTGd1eGRZYjdlNytjeGg4NHZjeU1YK1dhbmgz?=
- =?utf-8?B?WE5XYXFST2ZXYXF6WXZHVXBvZ1VCc0JMQTVDWEJOekx0dHMxcHBWckd4bUx5?=
- =?utf-8?B?R1BSQ2ppalM5UVBZeG5XUHpaMytxcUJRemJqcmdpTHBIK0pQbUcwVERVdWJJ?=
- =?utf-8?B?UlNIL0pCUVBMU2Z4bCtpYitaS3h3MG9HQVNyN3I4bUdNQXNtdjRXQm9uYXdJ?=
- =?utf-8?B?TnpjVVl2NWhROGh2V2htOFlpc1ozVlU4VjVIMkdjb3pkSlNWZ0hSNTEzM1hj?=
- =?utf-8?B?RTBYT3RwMERUcG1zMm1QRHVtYnVqcU5iTldJaFlZNDhyb0x4VU1HOFkrZmZV?=
- =?utf-8?B?WVdraVNSQnZibHF1Z1RzNmIrbXBQbnVDSWcybFNjN1NXeEJIam9ldUNmTm0w?=
- =?utf-8?B?c1ZaeU9GamhJR1R5S2RYcFp1aTgzU0pOcEp0YzhJWlo5ZFBzTXRJdXVQelo0?=
- =?utf-8?B?OUhqeWxTVGJqdy8zbFBOMlgyditGeWVmb1JKRnFFdzcwRng5WG5UcHFDL0Mx?=
- =?utf-8?B?cHkwZnk2L3F3cktUMGlyUVcrVm0rRWs0anptNFVwS0ZWdFRReU93ZFJFWFJ3?=
- =?utf-8?B?ZkIyZ0Q0N1BhR0hlc1FBQTM5QTQ3MWpPZ2ttTzlkRDJjc3pWTlVLK3ZlNjF0?=
- =?utf-8?B?eG9zM25LU08yVXBhRDVFTXVyclE1clZ0YkJNUEtJYXRQRnhydUgyeTNrb3lK?=
- =?utf-8?B?NHpVZzNzZXdWUnpZeTYxTFdzcUZVU1Z1dnc4MUZrU2tXNWRIN3A1OStKQWgr?=
- =?utf-8?B?cU14MVZFMGdWRmRIclIwZXM2Wll5RUozVUFGMUZIcEcxeEE3cjNXVFBlRVZ4?=
- =?utf-8?B?eHhwS2xoK1hOWCtpZVFkQUdPSm8vSXFEU2xwUEJmZkg5OHdZenJHTW1VSzVP?=
- =?utf-8?B?RU14b0I0cmY1TUJnc1VybGN0d1NDcStOZHZ6cjV1ZGF0OWRDTTZaVnovdEZu?=
- =?utf-8?B?TndidDBza2hHWlRvZXVWeGpKUnhtTjVCdEpPVVJlUUlsR0FXN29uc1ZJZUVx?=
- =?utf-8?B?TFBUdEt2MjhRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(10070799003)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RWFzQnRoNWV3NHJIQStPeVcyYlp2L0JVaTM5U0p1SXZFemZYZUk0RkQzMUpS?=
- =?utf-8?B?cmJsOVNZQ3FmZlkxR2tmSnRvRjR2eUlJcE91dWZJeTZLclpJYU0yUXJMbXdV?=
- =?utf-8?B?ZGhSRm1DenBoOXIzTkdHaDBVOHRrQzFjN2c0ekJVbmR4WVFlSEI2cGZNRjl1?=
- =?utf-8?B?NVd4cFZ6SFlHSHM2VWlEdkI0UVA3d2NpRVlGRG8yeTZUUjhoUS9jYUpad044?=
- =?utf-8?B?TkNCM1JPOXZBYjJvczdhVHI3NVM2YWxZWFJqdmRVQjU5d1l0Ri9Cb3BtUTdH?=
- =?utf-8?B?U1ZBVzFRWlBoTTNBbDJJYkl5Z0lkVTYrNzF6SnR5TklLWGozclJQVkVjN0V3?=
- =?utf-8?B?bXNoU0xoUXR1Y2dBVGJPcVhBcEdOQjN5dDJ4NnFVMjdOQk9ZdEVWMnduOU9o?=
- =?utf-8?B?bGw2QXZXTitGVzRoWm0vTEJweFpJOWJkRXp0d2FjTGJJMkZvVEYwbGlhclJu?=
- =?utf-8?B?MXc1UDY4b0N1NlYwVDNCYUxUMEl1bTh2L2w1WUZ3WEtXdTlzbStyeEx2TUE2?=
- =?utf-8?B?aUdjei9YYmZOS3VQN0NWU041c0VHZ3A4ZFR3dW52R2VxNmUvL3V2dGlqY3ZX?=
- =?utf-8?B?RnV4L09xL1FRdGRCcUgwYW9kclZTTU9EVk1NT1E2ZFJTNHhWZSs4ZTNpQ1RR?=
- =?utf-8?B?K2Z5OStSTWZFWVh0RGVuYzBGK1l0RXFzRllpMHl3VnJ6Q1paN2VadDhGTWZB?=
- =?utf-8?B?ZFFOZVBLd0dwWWN4RHJ5Tlp1Z2JLdVhEdnI0em1qS21hTENRSlpySEc3bWpK?=
- =?utf-8?B?bTFtcW0yWC9YK0E3bmlIT1AyTVBpaTYxL3VtdDJ3ajVWUHJyWTVIbHZkRXFP?=
- =?utf-8?B?VHdWdUVOZTZydzlxRisvYXJoZW4zWnNLTFpTcmpZYWtsSDBJRmZWdjd4WTFu?=
- =?utf-8?B?VW5VSjh4WVB3YkI5RWY1bi9pUjE1VUJEQ2hMTDVNVzhvYk5HbURXUHc1dzVZ?=
- =?utf-8?B?dkVucnNibURkN3hiUHN5dXRjVWxmYzgwY2JWVzB0K2UrUVh1NURKaUVxU0lZ?=
- =?utf-8?B?SUpSZzdRc21YSU54QUZieUxGQ3JRS0hUVVM3SUtpUVJkZ1E3QU94bkZtYzNZ?=
- =?utf-8?B?N0dKb3FUdlZobzBnM3k0QzRDWGdzTFpTWlNQNC9hTzZUdGpSWnlkNW9ObE12?=
- =?utf-8?B?QmVVSEw4Q0pQK3RFS1lmbWFaVjB0V2Q3bTB4djZTcXJJOEswTXRNTnF4UW9x?=
- =?utf-8?B?TThjbDNqMG1EaitpcVJrMHdHZzR4UC9oazhoWlRRNkVRZjZkWW9ZWEIyazlN?=
- =?utf-8?B?S0R0aS9mVnhZUzhSNm1FUFVXUnZFZTBHNlRucW01Wm5LVEJoUytOQlVVWmtK?=
- =?utf-8?B?bzB5eVpFSTFpVW12dVRzeUhmZlI2Y2xuTjFDNzdiMWxIajFQNURYb2ZhQVdo?=
- =?utf-8?B?Uk9WOE1GOHhab3oveGR4NitEcHNaZmZ5VG9IZ3ZmRGpMbFFTQ1RueEE2OHJl?=
- =?utf-8?B?WXlieTh2dFhrcGs5V3ErY1NKM1BpYmdHbDJ6REdoOGRqQVNMcEJ2MmVQaW81?=
- =?utf-8?B?Q3oxZ0o2eGl0MDliakpKSTc1SUdXMjd1SVNwalRCUWpzbmQ1ZVdESWFxNlIx?=
- =?utf-8?B?Vmg3M1o2UTJocVNkbjVXWEkxczBKdDZFa1RXUDhwT3FuUGNMSW1mNFNRZ01H?=
- =?utf-8?B?OXVJRXVTZ2UvRnR1NW45OXpkbnlibDljRDIyb1p0Z0R5SHpUdHhtQUdvdnY4?=
- =?utf-8?B?anRaZW8xQ2F5SENzTjRWV2pMMmVlcTJhVTdGUW1RRDhEQjNqN095Uy8wbEkw?=
- =?utf-8?B?MCtPNk15ZE1rc2tMcmk4M0NjV1V2bUtzRHZCSnFlK05pb1BaWGRzbXV2VnYr?=
- =?utf-8?B?MWlWZDdoSTZFYlB4blV0aGcwR2VjNHE5emJRQ3JNeElvSllhcXhRbElORzlS?=
- =?utf-8?B?VFFDMDBOYXlPS1FTTVNpa1BpTUFtREtjL2N2djhwTlpWQXlaZXZmRGlJREFo?=
- =?utf-8?B?TVY3V01Sa09yalkwTlhZcWs4aDBsQmRxeGlJdnkybXhwVXZEd0hjbnFUSzIz?=
- =?utf-8?B?YUdqS3MvUU4rU2lzS1BUbTBPcjBxd00zbWIvL1F0WUlJSXJUanQrVk0rRk9y?=
- =?utf-8?B?TGdiNTVDTU1WTm5WVjNmTTNFUkh2L0c0aXVHYkZsR0s2NiswZzUwd3JOZHhj?=
- =?utf-8?B?UTN3cG5BU0JWaURKRlFpYldVYUl1RTVvOC9GL24zZHgycjI1Qk9Qbm03QjZp?=
- =?utf-8?Q?VHXkx6Be7FS9FhldOY2cKMsFJwFqiXsdninfJ2JX3Rv1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b23299aa-472f-4623-b4dc-08ddd62a7a57
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 03:20:08.9489
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /jMO2oVrO2ntBKxx+3wP6ueFBTG9h1OtEpwwCbe31pkniFgo8B0QGsvsnz77JhmN3gcjUcIWnDA87tayYwK9Mw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR12MB9506
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNP-29cuk+MY0w9rvLNizO02yY_ZxP+T0cmCZBi+b5tDTQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue Jul 22, 2025 at 9:14 PM JST, Benno Lossin wrote:
-> Commit 07dad44aa9a9 ("rust: kernel: move ARef and AlwaysRefCounted to
-> sync::aref") moved `ARef` and `AlwaysRefCounted` into their own module.
-> In that process only a short, single line description of the module was
-> added. Extend the description by explaining what is meant by "internal
-> reference counting", the two items in the trait & the difference to
-> `Arc`.
->
-> Signed-off-by: Benno Lossin <lossin@kernel.org>
-> ---
->  rust/kernel/sync/aref.rs | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
-> index dbd77bb68617..1c212238c0e5 100644
-> --- a/rust/kernel/sync/aref.rs
-> +++ b/rust/kernel/sync/aref.rs
-> @@ -1,6 +1,21 @@
->  // SPDX-License-Identifier: GPL-2.0
-> =20
->  //! Internal reference counting support.
-> +//!
-> +//! Many C types already have their own reference counting mechanism (e.=
-g. by storing a
-> +//! `refcount_t`). This module provides support for directly using their=
- internal reference count
-> +//! from Rust; instead of making users have to use an additional Rust-re=
-ference count in the form of
-> +//! [`Arc`].
-> +//!
-> +//! The smart pointer [`ARef<T>`] acts similarly to [`Arc<T>`] in that i=
-t holds a refcount on the
-> +//! underlying object, but this refcount is internal to the object. It e=
-ssentially is a Rust
-> +//! implementation of the `get_` and `put_` pattern used in C for refere=
-nce counting.
-> +//!
-> +//! To make use of [`ARef<MyType>`], `MyType` needs to implement [`Alway=
-sRefCounted`]. It is a trait
-> +//! for accessing the internal reference count of an object of the `MyTy=
-pe` type.
-> +//!
-> +//! [`Arc`]: crate::sync::Arc
-> +//! [`Arc<T>`]: crate::sync::Arc
+On 08/06/25 at 09:16am, Marco Elver wrote:
+> On Tue, 5 Aug 2025 at 08:23, 'Baoquan He' via kasan-dev
+> <kasan-dev@googlegroups.com> wrote:
+> >
+> > Currently only hw_tags mode of kasan can be enabled or disabled with
+> > kernel parameter kasan=on|off for built kernel. For kasan generic and
+> > sw_tags mode, there's no way to disable them once kernel is built.
+> > This is not convenient sometime, e.g in system kdump is configured.
+> > When the 1st kernel has KASAN enabled and crash triggered to switch to
+> > kdump kernel, the generic or sw_tags mode will cost much extra memory
+> > for kasan shadow while in fact it's meaningless to have kasan in kdump
+> > kernel.
+> 
+> Are you using KASAN generic or SW-tags is production?
+> If in a test environment, is the overhead of the kdump kernel really
+> unacceptable?
 
-Very useful explanation IMHO.
+Thanks for checking this.
 
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+I don't use KASAN in production environment. But in Redhat, our CI will
+run test cases on debug kernel with KASAN enabled by default. Then the
+crashkernel setting will be uncertain. E.g usually crashkernel=256M is
+enough for most of system. However, KASAN would make the crashkernel
+reservation need to reach to 768M on one ampere arm64 system. This is
+not the extra 1/8 of system ram as we expected because we have vmalloc
+mapping to create shaddow too. In this case, QE or other kernel
+developer who is not familiar with KASAN may need spend time to dig out
+what's going on here. And they may need adjust crashkernel= value to get
+an appropriate one to make system work. This is not good because we
+don't need KASAN feature in kdump kernel at all while we need tackle the
+unexpected crashkernel= setting.
+
+This can be fixed with a very easy way, a knob to disable kasan in kdump
+kernel can perfectly handle it.
+
+> 
+> > So this patchset moves the kasan=on|off out of hw_tags scope and into
+> > common code to make it visible in generic and sw_tags mode too. Then we
+> > can add kasan=off in kdump kernel to reduce the unneeded meomry cost for
+> > kasan.
+> >
+> > Test:
+> > =====
+> > I only took test on x86_64 for generic mode, and on arm64 for
+> > generic, sw_tags and hw_tags mode. All of them works well.
+> 
+> Does it also work for CONFIG_KASAN_INLINE?
+
+Yes, Andrey said in reply, I did investigation. You can see that
+KASAN_INLINE will bloat vmlinux by ~30M. This is not a big problem of
+kdump kernel.
+
+CONFIG_KASAN_OUTLINE=y
+[root@ampere-mtsnow-altra-08 linux]# ll vmlinux
+-rwxr-xr-x. 1 root root 124859016 Aug  6 06:08 vmlinux
+[root@ampere-mtsnow-altra-08 linux]# ll /boot/vmlinuz-*
+-rwxr-xr-x. 1 root root 15938048 Aug  3 00:15 /boot/vmlinuz-0-rescue-f81ab6a509e444e3857153cfa3fc6497
+-rwxr-xr-x. 1 root root 15938048 Jul 23 20:00 /boot/vmlinuz-6.15.8-200.fc42.aarch64
+-rwxr-xr-x. 1 root root 20644352 Aug  6 06:11 /boot/vmlinuz-6.16.0+
+
+CONFIG_KASAN_INLINE=y
+[root@ampere-mtsnow-altra-08 linux]# ll vmlinux
+-rwxr-xr-x. 1 root root 150483592 Aug  6 10:53 vmlinux
+[root@ampere-mtsnow-altra-08 linux]# ll /boot/vmlinuz-* 
+-rwxr-xr-x. 1 root root  15938048 Aug  3 00:15 /boot/vmlinuz-0-rescue-f81ab6a509e444e3857153cfa3fc6497
+-rwxr-xr-x. 1 root root  15938048 Jul 23 20:00 /boot/vmlinuz-6.15.8-200.fc42.aarch64
+-rwxr-xr-x. 1 root root  27779584 Aug  6 10:55 /boot/vmlinuz-6.16.0+
+
+> 
+> > However when I tested sw_tags on a HPE apollo arm64 machine, it always
+> > breaks kernel with a KASAN bug. Even w/o this patchset applied, the bug
+> > can always be seen too.
+> >
+> > "BUG: KASAN: invalid-access in pcpu_alloc_noprof+0x42c/0x9a8"
+> >
+> > I haven't got root cause of the bug, will report the bug later in
+> > another thread.
+> > ====
+> >
+> > Baoquan He (4):
+> >   mm/kasan: add conditional checks in functions to return directly if
+> >     kasan is disabled
+> >   mm/kasan: move kasan= code to common place
+> >   mm/kasan: don't initialize kasan if it's disabled
+> >   mm/kasan: make kasan=on|off take effect for all three modes
+> >
+> >  arch/arm/mm/kasan_init.c               |  6 +++++
+> >  arch/arm64/mm/kasan_init.c             |  7 ++++++
+> >  arch/loongarch/mm/kasan_init.c         |  5 ++++
+> >  arch/powerpc/mm/kasan/init_32.c        |  8 +++++-
+> >  arch/powerpc/mm/kasan/init_book3e_64.c |  6 +++++
+> >  arch/powerpc/mm/kasan/init_book3s_64.c |  6 +++++
+> >  arch/riscv/mm/kasan_init.c             |  6 +++++
+> >  arch/um/kernel/mem.c                   |  6 +++++
+> >  arch/x86/mm/kasan_init_64.c            |  6 +++++
+> >  arch/xtensa/mm/kasan_init.c            |  6 +++++
+> >  include/linux/kasan-enabled.h          | 11 ++------
+> >  mm/kasan/common.c                      | 27 ++++++++++++++++++++
+> >  mm/kasan/generic.c                     | 20 +++++++++++++--
+> >  mm/kasan/hw_tags.c                     | 35 ++------------------------
+> >  mm/kasan/init.c                        |  6 +++++
+> >  mm/kasan/quarantine.c                  |  3 +++
+> >  mm/kasan/shadow.c                      | 23 ++++++++++++++++-
+> >  mm/kasan/sw_tags.c                     |  9 +++++++
+> >  18 files changed, 150 insertions(+), 46 deletions(-)
+> >
+> > --
+> > 2.41.0
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> > To view this discussion visit https://groups.google.com/d/msgid/kasan-dev/20250805062333.121553-1-bhe%40redhat.com.
+> 
+
 
