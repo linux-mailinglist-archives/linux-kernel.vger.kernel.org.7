@@ -1,198 +1,308 @@
-Return-Path: <linux-kernel+bounces-759845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C053DB1E373
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:34:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23E1B1E368
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD521AA2C32
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:33:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F8D218C2F6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCAD275B02;
-	Fri,  8 Aug 2025 07:29:48 +0000 (UTC)
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022111.outbound.protection.outlook.com [40.107.75.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FF225742F;
+	Fri,  8 Aug 2025 07:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="HcqOVv/A"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013039.outbound.protection.outlook.com [40.107.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2554723C4FC;
-	Fri,  8 Aug 2025 07:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ED622F76C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.39
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638184; cv=fail; b=TAjyQRmbUTx/IZQN/zsSrjM1gzA4vDNffP5iKUVEIWspG7x7MUDN3t/HydNPT+u5BvL+AR/hJuMquDe9jW0m4nFIWd2YGviNOfkO7FfuEYp60ao5ELJvr44IdtUidERm74Vmagxqbx6PXw2+AWjgoXDQTF6E/IkfdK2HzxbHUs4=
+	t=1754638236; cv=fail; b=VC4iDIbpM+4kl3fynBgTFMM7CHpJMGB4nFuo4ra+pB5/hg/oUvH1PxqWAPuZlIjpfjQCvzptJMai9N3B65DLILhEwLsz/aEfIfkC98esC60prqBlY/L6aFF2AvKmMi0jr0Hv+Z7VghHzwgrtuSQRxDSS8R5vjXw/m0GJINEnWwc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638184; c=relaxed/simple;
-	bh=r+Qkefs47oY6jF0PEqr2QE+PsGCgJIkkgwfbMofRvbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TQptFq6SAdG4xkuou2veWf//Cg4mVZ4WCHnLiOg7WIBXWvbeWDha9Jpcck5Yz09nB2U1k/VAba5t+BDZk9o/XCRyz8GsioHH+anr91Y1VQdLRqW8Jd7jYuEHrETqnrF1sKdORoZ8s8JSYYYY5s53pe2RjsZkk5VjmRkDun9fwuk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+	s=arc-20240116; t=1754638236; c=relaxed/simple;
+	bh=ARzQ//8rZRtMJOG6KUwwJRzcx2dJzcB6gOEkcF9+ou0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pN0ciN4h64RVy2fo+WuZKBxDyjEQMPnkjbnNA6/VUewjJ3DEugQn75mHwEnCqjJZSqwDuPjki/jYA8C5m9VJ6y6KZrL9uusH6pJA+aWlv3MV7EF9efZQ4jZIVS4OtqHC6sX5c19CiJX+HnPcjoHS90bNtwbBUEqwPC98AnhQaco=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=HcqOVv/A; arc=fail smtp.client-ip=40.107.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eker2cvojW5An/e3aYoALn3PCbpj842QLnxOGLp/hQ6HoJhEfMA+gY3qOR5rdAKqkd+WKDlJ+EOyv51yOkZ040WQ720CGhODMn5NsrIJGDDfhhc6Ez0xLSh0ZrIScpO2gIEJ22v0xhq0OENG/U2lcGIOjFw1ga8ljqZdRVcuVZR8EH/bAUeqBTh6ZLSSLl0oY4EP/VuJ2Pnu5NaswSL7vFti8BnzzvurfRklm0fjInWj03kI0G/mdf9FuVFLLRecxkasel6hjVDRNUtCiEE1EpJDEqxrYQW+RLl8VqxL5i9L7GOWG0YFTuEepO/ibKR61h0uqVPW7VurNZ8CweAX8g==
+ b=M1uLObbzSaPakkcuqvYXHm4hxnnPbilgJbKCRQAm1j3ezCSFgijGpasJePCzDpCWjXwzEX7jbMrTzl0fmgkrhL4j37keY+kKlqXvEWtp0eHtMcv285m3ZL3h6t5z6bFeRXr9ESQoEQfychQANg/sNR8RLXOR/Z5BauZj+QecI4zrDYpWWrXCccJDh+njfwNfZ59EHsiEVTEVGeHc8zWdYrB92Ekj+Gdvntm+OHUM1I5siEx6NuGg7e12vOhWOYHynmdMkyzAij/zl0GhPH07g7o9RWwAkfpeSN1MwxUDuuk7IFWN4oIxkHuBibf4d8a3MErBF60SdbVEWhio6DGzFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M+5ibsszrIdg2MynYFSRWpz2hkTGEqoGCPPfJGeKGNk=;
- b=Xhl9Kfc2uC3yxihlojRBQU1Tu50ShDZdzDu08aVryegXcn/X0lgbarcvXu02+3Bqe0B7lXu1N5a8tz54pvidCKCoR93hmKS6q0nCBCm93QWfFB++NOtPH41T0igI96x1CgRX13aarkeycVLyqFVFdeVW0s0KN4qbEJS0/0009qteegbGeQIjVYmz8MwkaApmkqYuiNZd/SsML1zwBDJ1J3dQZQgsZpFkLAYKspcjFObes+piKxroD1G2Tlzc34bS9o5iHgbRJm934aEjGsldUZ3IWRGGvPsqa1L4KaGDghDgozrJpWA7woD/eZE3mXZcsu8lGvi2YbIX/fCU5GlUAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SI2P153CA0001.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::7) by
- TYZPR06MB6914.apcprd06.prod.outlook.com (2603:1096:405:41::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.15; Fri, 8 Aug 2025 07:29:38 +0000
-Received: from SG1PEPF000082E8.apcprd02.prod.outlook.com
- (2603:1096:4:140:cafe::d5) by SI2P153CA0001.outlook.office365.com
- (2603:1096:4:140::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.9 via Frontend Transport; Fri, 8
- Aug 2025 07:29:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG1PEPF000082E8.mail.protection.outlook.com (10.167.240.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.8 via Frontend Transport; Fri, 8 Aug 2025 07:29:36 +0000
-Received: from hans.. (unknown [172.16.64.208])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id AAE9F4160511;
-	Fri,  8 Aug 2025 15:29:31 +0800 (CST)
-From: hans.zhang@cixtech.com
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	mani@kernel.org,
-	robh@kernel.org,
-	kwilczynski@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: mpillai@cadence.com,
-	fugang.duan@cixtech.com,
-	guoyin.chen@cixtech.com,
-	peter.chen@cixtech.com,
-	cix-kernel-upstream@cixtech.com,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
+ bh=SndbL3COsT8obWCy+h9dUbENPsro17P8/mJMILvv/3E=;
+ b=ZHScRMRiK1/mzsGYlQA9BQ2h7d2taGpvM8SXpCWawlt6fsvmq3ddcG8NMTdBhKYTKA2l2oJmaku7LjjVxaoFCz6ne4Voh2+ZDlz88kxvvY1xYMwamsVr2J7hPTM/km/1hD8VRJVmsB/zOVmuRhd35R3nPIrjFznD1Ja0BQz4Q7LxfF4udJK2GlVF3SwSbEUikED+P/71nob+T/U7gQ2l6yJhcRljiXpfjT1vC4Mn9Lb8hciymfJaXQMwGy2YgD4gfiNZpbVRPCXePSH5vawIXh5T8uhYOqtFoF0HavZlCd4/Jwns5KI/JsALaFwRPBPrEZjI3/N3Vu3CMytXS7JkeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SndbL3COsT8obWCy+h9dUbENPsro17P8/mJMILvv/3E=;
+ b=HcqOVv/A4l6z6zOEaYCKHQgJmPGVowqM0h5xO5XriKPjT7mejLeOiPxkr4oBwyMc28nWJbIOCQWRiGmLnDAbqeMlK+7kRcao/uJTSvUDaLA3/wudhIgJW6LjgYF0UpznseieyAu3NlilbT7yFHiuHh87j2fpSVCeKJw3XfJc0+QsbFZK15Btq5d1jZy9xWKm9Fqn9KOgVpMwRGKTubt72xjtcJ/Y0oK8Ibi5n/e4+DP7a6Tw+uDhQp005PntnM4tnYiJr1kdEtZScK5+kxZAn8vLvqyVRhSLuNXRLkAbUYy6XBw1ZvLmwMVenKVYMb0EzrQQLjVFhFQ/LGrY87SnIw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TY0PR06MB5579.apcprd06.prod.outlook.com (2603:1096:400:32f::14)
+ by JH0PR06MB7178.apcprd06.prod.outlook.com (2603:1096:990:9d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Fri, 8 Aug
+ 2025 07:30:28 +0000
+Received: from TY0PR06MB5579.apcprd06.prod.outlook.com
+ ([fe80::4f2:e048:7c93:f263]) by TY0PR06MB5579.apcprd06.prod.outlook.com
+ ([fe80::4f2:e048:7c93:f263%5]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
+ 07:30:28 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
-	Hans Zhang <hans.zhang@cixtech.com>
-Subject: [PATCH v6 12/12] arm64: dts: cix: Enable PCIe on the Orion O6 board
-Date: Fri,  8 Aug 2025 15:29:29 +0800
-Message-ID: <20250808072929.4090694-13-hans.zhang@cixtech.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250808072929.4090694-1-hans.zhang@cixtech.com>
-References: <20250808072929.4090694-1-hans.zhang@cixtech.com>
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH v4] f2fs: Add bggc_block_io to adjust the priority of BG_GC when issuing IO
+Date: Fri,  8 Aug 2025 15:29:39 +0800
+Message-Id: <20250808072939.202357-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0322.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3b7::11) To TY0PR06MB5579.apcprd06.prod.outlook.com
+ (2603:1096:400:32f::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E8:EE_|TYZPR06MB6914:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: fccb934d-03f4-4614-5c0b-08ddd64d5430
+X-MS-TrafficTypeDiagnostic: TY0PR06MB5579:EE_|JH0PR06MB7178:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9476d7a-5dcf-4e56-6dde-08ddd64d726c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
+	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?c9HPCUoYmIMdzr/E0ep7ItL0yh6PeoVQrt2Y+kduHz0eIhNjMAh1kuNDrY/1?=
- =?us-ascii?Q?lelv0E3JU3+81BTl2I0CQK7zOQEPt7OIBQlhbECKd2XKyT/r+UNoOLs/eaQV?=
- =?us-ascii?Q?Ksd7C9j1AvicJmmnknWVo7LNjD51SVKxtpGIJou2GcDX6zvZma2nG4Zkn+ZJ?=
- =?us-ascii?Q?iow5HE0oKfyd17LSFPW6zFGdBW4j0MkQgtXA863d6FKEerAXVqU1kvy6vsnh?=
- =?us-ascii?Q?Tk5THiJKqCyQQm4koVZmX0gaK1ez4irdDFh9t8Ij7z9xEEk5X1VR8mRRhHxa?=
- =?us-ascii?Q?Zwq1FdUjXDehsNcWQ3wDFfCLoeQ07GOlKbGwHuloSDvGKSLj0mCisXudjqko?=
- =?us-ascii?Q?SOT2b+XU2tdn4AP9MY7oQBEh/A3BZLovYP0XasYpP0ThbR1kwCndbc3PNxNU?=
- =?us-ascii?Q?UyFVaZep+NB8uZmwlACEvRgffKbwabX1AwOb65KJVFMYBwnq21PJMKIxGbID?=
- =?us-ascii?Q?O/5EIDQBqnZs3Syz9DwNAZd8yUFkJVs2t8u5UcYNK6x3I8U71nBX7bpAB/Cp?=
- =?us-ascii?Q?4sP0tlhB6pFmi88u1t57UVo5KaDn1oMrruja+LpYm1KUy5M94v8/J9E45s8z?=
- =?us-ascii?Q?4XgjX1tt8AW3+mVdTLe7/2zFPFzozeiyrAjahAK9aCcofT02Pf2xoOpTCsLm?=
- =?us-ascii?Q?NaeNMPaMmBszxzEfSvrcWcboIHehEa1shtFZG37pGRcbDnD3aqC23urz60Ub?=
- =?us-ascii?Q?TjsDas1BApAgVi7xy/d5qvsdG5OsgRjX1/Z0qShwjymShfMcoaJRKMtc5cFQ?=
- =?us-ascii?Q?uGQrbSsOfTwx8zoWbXbiki+JBzDkK++RP5Kp7lYnksUQJWDox4t24VH6L2WZ?=
- =?us-ascii?Q?4bIw7Uw+7SG+eB31aLPv/fjZ+cdb98l84xFULb5g3X9XkYppwoz+eIqn8WDW?=
- =?us-ascii?Q?f+C5kQgWkYw6hS5sIFCwJ6b39WbYv9n0l+Xp8FDIz7rW4iVcpMFlcWs9lnsp?=
- =?us-ascii?Q?AHC3/Hx8Yo1kNVLWVOF2xYCrW9k2fHTlFcl20L3ylrtbR5FPDMmnh4p0O54F?=
- =?us-ascii?Q?K/vZ+gUh5EkLM53cMWM80TUsTZW4Sv+xEmLPUau8D3rdkvym2p54c0tPjYjw?=
- =?us-ascii?Q?tdilTLTlJb151xm/XQEzFPUkyLfUzU/zA3oRuOCGFrWmUxzXVZnRTlma9uEc?=
- =?us-ascii?Q?uUzY9BIKyboaB06GFgABFf25N2Shto0QaNi8vFShG+lqlplTyXfMUiIA/7BI?=
- =?us-ascii?Q?pBkHbCjrv95luFaKYYcQEIu+5/XdBspipTxoTD8R5WtOM+sjpB7oCGOXdM4J?=
- =?us-ascii?Q?wyotAYnWDWVbwcFcLatHKr2yIxvcSdnhBONxEj0NNydKeirJsp0UGfImn3Ob?=
- =?us-ascii?Q?hVdg+pUp0xciPsBLP+j5zmbKN1ZxYWLg6Bfz5jBDQOe7gDE2DoSsVnGvEqSw?=
- =?us-ascii?Q?+4V7Vq9mzAqrfCN+u6tgadXrGvzrKAP/OvsoKmAZ4EjqW9nQ1xKQCG7mFzZ/?=
- =?us-ascii?Q?beQtHkZd22maQAGbaadb6YIXNJAnsXZQJKiwX2M6OwNfUd5lXDZNPX10qIjr?=
- =?us-ascii?Q?CgRF3eyg7Ly5ZKwQ5uM+kIwUYhdEhnD69p4D?=
+	=?us-ascii?Q?drcmGJTT+szd4MefDyInfFySonkV3J4xK+gpCao3FL4oDHBRlJnvljouAuCd?=
+ =?us-ascii?Q?nEcT9qQlRyXSxsVxiJU6vzHaeVrb7kos7CYElT4ryX5MkrQgs6yJBr9mMff+?=
+ =?us-ascii?Q?ecOzhrotxGiB/U22BUVyUCw7lLCiA+spTCZL6g6eprR1JgppuZE9tfeU7miC?=
+ =?us-ascii?Q?LSFzZWfrpuzJnj/jpdPHZ/FCP0NHiKz/wuCryVRbihP0J0qrw01QE9f8rG3e?=
+ =?us-ascii?Q?bU0NSNw0e9OPkr81nd8XBlp/m3+Ej9F8c10kLiECRqVghVpL0PcHnvufhWNk?=
+ =?us-ascii?Q?IPeGfYk1+oKejCwS7nkquFlqVWSSNJaN23MHJKI3fhzXUwjYG1z/NpRsAFHe?=
+ =?us-ascii?Q?2M9ZWL/gNjYVoJ2hmIVy79D7cG6PiXfGyvvhPozQIRsP6OqFQvhk/j1XOYTW?=
+ =?us-ascii?Q?g4NEgIH+6i1WSaLmV2KEg4Y2AbkX12rMVV+BGA/P6A7kWBMy/ntUyitbl/bJ?=
+ =?us-ascii?Q?E0V9eCzMC7zk5Abdl8dT2I3U4w23NBeDf+a3jba+Rfz4IJk6TlgsLF+YH1pe?=
+ =?us-ascii?Q?AYthzqnXTCmU27l+m7u7H4ALHfIMSqunXwdygpiVknwb7KYDhBprRbf+7Sov?=
+ =?us-ascii?Q?qcP7E8A4kMdQOcWGFrKEUYQ+SiGhzz9+0PQ0Y3mPr9d5pr0Qa2y5WlaD8Rzd?=
+ =?us-ascii?Q?BsIWm6V9QkXp6jYDEgoB3+pq6eV0x0tfdrLcYhdOJAHf0Qnn56+jHJZZUV9C?=
+ =?us-ascii?Q?4KSoZlqAWlLQrtfYkCPTTKu9Ckp/w+/tY7sz8+2ni8X5P93lJ2IiswylLCP/?=
+ =?us-ascii?Q?VKTR2xFfdocsqxI7d8DTnfwlhsGlb84GmuKWUYlMfs4Lmcs8nTOj1cbWNc+B?=
+ =?us-ascii?Q?IuiuvP78H7QDQJ9Dq3WoIiB2fb+z0oAtAST96C7GiHWtrCcTlMFI/94raDNO?=
+ =?us-ascii?Q?et6VuLptN8YnReD3IYQv7JG9Au7PwDGX0C6b2HlCQwvdIQ7pNmGiKG+1yctT?=
+ =?us-ascii?Q?9YBUxB2VTpe/z/qpOIp6RJP6aSaRdOt+lrw/BlVBaptIwsi4BCrUfgr3KKC2?=
+ =?us-ascii?Q?ScMLQtXIWn7Pk4owBg5F08MUOj4muwJqfBA8QHEBg/4UkhIwCBjDsWVs/Y+D?=
+ =?us-ascii?Q?T/bPbbRT3D1upz1zBzjm/DYHSVERSI+hDjHyZKu7rOw7g6atRCqE/wfQRpjB?=
+ =?us-ascii?Q?S8ry47JcoNaLn8U3HoRUhaftCHB4tqmZ8s4s/56LC/eQpXFN3hkB6LPLE3A8?=
+ =?us-ascii?Q?9YKDng5f8AS7m/hJXSHCVt54SqLA+fVgW3gUU1oiCuJJLMJ/W4O94dF4oyqh?=
+ =?us-ascii?Q?2qhyrjrTgVoHhQhSiSRTxczySOLvOvagE9T9ewQP6+LmDQY/3WvGIosf6j+V?=
+ =?us-ascii?Q?/+BUleXT+K/SAZ3wsDvqshhYh/Ay5GFNnH9XoTet8j9gzjbsx7/iD8cKWR/l?=
+ =?us-ascii?Q?5bm5pkBXyqdBB2xCjvbjBDwVM9qj83KkaGonH7OzxCwA+G9VnSEZN9V/UvZB?=
+ =?us-ascii?Q?i/dEy8YZqAujLYVNR2AURnYwN7B21FV2u9F7V6dhkodKc3hekmTFeg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 07:29:36.2956
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR06MB5579.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?F9osMbKcSSyODiQc7wc+I2GbOPKeUUU/Ko90AWNHFbpSEZlTBTY1CZDl5Tn6?=
+ =?us-ascii?Q?n5iVxPVoLet6C/oGoFEWdufoUIQHS6PNyJzKixvi5FhdJ7/KbeDyJcUCSX/3?=
+ =?us-ascii?Q?hfJ7bSetkL3rwu2d081q3avwBcZQ1PiwP3SgZeHRaACJge+7ySI24SJJ36tK?=
+ =?us-ascii?Q?2N2YZ0DWZofeEJlGlMo0CfJIh+4SR7G3Mr/kEQR7WCKfIwIOhOIZExH/p3Nj?=
+ =?us-ascii?Q?ubGlnKJoWWn+pmmnfs2P9Z/y0QYUHhD7ozivTexl2AjbVCn2G8Xm7NcoRPEJ?=
+ =?us-ascii?Q?aYDJ8BJ95h8B4ENUF2BQO3X65thWkH5Af4DDjmETp9huoITOX6mbpmzVr2TG?=
+ =?us-ascii?Q?5GBw2JSfTXF+xm+D7iggSAln1XsDn6JHrtmw/GwLB/3+5a8aOSuKm1Tzwrxo?=
+ =?us-ascii?Q?Oz95WsvhiNj7NVeZjODqIKNm+zVf8om2KoRRTvW5jJF86PkYAdwFm8nRdsYC?=
+ =?us-ascii?Q?1pskhNGS6Ye9D+hTy/uKbAbPWtqfO540XeNaIQ5lf5YT6D18pJKd0KZDHpKV?=
+ =?us-ascii?Q?Tw6/AWreYd9Utqup2fmkpO4WNaOSjV+sMMa/iyn/CxnXnzvDAt9IiysFJvsr?=
+ =?us-ascii?Q?HjVLfGzinIJkzmNaKFBm1HlkGiVXziJrrs6Cteh4+dxnY8elng8iMkV9V3xc?=
+ =?us-ascii?Q?cvIwx3ly4NRV2z9eXYXJaRxIvAeryatZTZfWf5QL2FTiCdnfN/M+luOIenSk?=
+ =?us-ascii?Q?9hIRkUgMTn8Pa29JSX9R1i2oRgteG2tMxYZEWQcKv0cIsm4PoeMMHf8bHhUF?=
+ =?us-ascii?Q?Wrd71Px028Vu+ZIXdNkCV/e4FImqf21tJewm8yHMTgE868owM0vbrB/MQ7km?=
+ =?us-ascii?Q?i69UC/QmaMBxGN2rU9jtWki7b71odQPqlp3/w7LgjzWn+CBEIE6Gp8isyJvE?=
+ =?us-ascii?Q?JDEoM68FcG/k8TUdQRsJuji6eZdp6wO/sMtRrd41wrahaEak+FMLniFuOUEj?=
+ =?us-ascii?Q?tNG5+GED+eeMauNF9WAPlGpDY0L7wmtyYuyGeD2OiqJ+TXam2FYuZsoG49xZ?=
+ =?us-ascii?Q?HO+WsbR+UAufuIN2vjPHPyfnJlGh4easc1OgS/n7+iGZ+qvyOxKqZOHUgwqP?=
+ =?us-ascii?Q?cgMLse3azXVr8I/mYNM3kD8FRc6jgOeeOfix5/rlxPge4GqdXpUepqyDWcdO?=
+ =?us-ascii?Q?Ptytnteg9smTrP+opVYqq1x/0wBp+vLxh/0nWq4pkxPVnNb621RdHscPLOjj?=
+ =?us-ascii?Q?UohaI3mWSGvik7Cmcvp4/s+2ZsA5u2BQH/XCRB0PMYrW9S3wpJr16d7ZZeCI?=
+ =?us-ascii?Q?3kw7KZWXH4tv9pBNcz6ym+LXUN1CysN1RuoPksp0fVL/YIHylMspCEgylY5J?=
+ =?us-ascii?Q?7S5XUMH/CGLOZlM68pNj7Ogn8V6f8iJqfRMua2Na3K3z1HdYpthekmR6/jG3?=
+ =?us-ascii?Q?HsVTdopeaSriKzFatTJ1JR7wkBJ6O4bmFQlIhJzWbm/WWpKu4cMA9+SYS4Ip?=
+ =?us-ascii?Q?Cz90cyzG+GJI4+W6UH1Bj/SWhwmippMaFV1UK2QHLM6296LxFIosMXina7Kk?=
+ =?us-ascii?Q?ZqucJgilpT5wKQXcps6VOc4CerPMr4hyAt1taEXmMa8GV0qyCZW4icgj181w?=
+ =?us-ascii?Q?jAf0oVK8Vzep3wvZXs1uEqw3A1mwfa1Ro4kDHchj?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9476d7a-5dcf-4e56-6dde-08ddd64d726c
+X-MS-Exchange-CrossTenant-AuthSource: TY0PR06MB5579.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 07:30:27.9180
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fccb934d-03f4-4614-5c0b-08ddd64d5430
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E8.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6914
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dE3b8dLmX7HsE3aZAYalEIQRcLLtonK5vXS9T5frpiqDbsCATPWN02fJJVIhd7UNx5QtKwDD5K8rkXuitgLOAQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7178
 
-From: Hans Zhang <hans.zhang@cixtech.com>
+Currently, we have encountered some issues while testing ZUFS. In
+situations near the storage limit (e.g., 50GB remaining), and after
+simulating fragmentation by repeatedly writing and deleting data, we found
+that application installation and startup tests conducted after idling for
+a few minutes take significantly longer several times that of traditional
+UFS. Tracing the operations revealed that the majority of I/Os were issued
+by background GC, which blocks normal I/O operations.
 
-Add PCIe RC support on Orion O6 board.
+Under normal circumstances, ZUFS indeed requires more background GC and
+employs a more aggressive GC strategy. However, I aim to find a way to
+minimize the impact on regular I/O operations under these near-limit
+conditions. To address this, I have introduced a bggc_block_io feature,
+which controls the prioritization of background GC in the presence of I/Os.
+This switch can be adjusted at the framework level to implement different
+strategies. If set to ALL_IO_PRIOR, all background GC operations will be
+skipped during active I/O issuance. The default option remains consistent
+with the current strategy, ensuring no change in behavior.
 
-Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 ---
-Dear Krzysztof,
+Changes in v4:
+	Adjust the default policy ALL_IO_PRIOR to 0 and modify the description to
+	match this change
 
-Due to the fact that the GPIO, PINCTRL and other modules of our platform are
-not yet ready for upstream. Attributes that PCIe depends on, such as reset-gpios
-and pinctrl*, have not been added for the time being. It will be added gradually
-in the future.
+Changes in v3:
+	Modified the issue where it does not work after closing
+	CONFIG_BLK_DEV_ZONED.
 
-The following are Arnd's previous comments. We can go to upsteam separately.
-https://lore.kernel.org/all/422deb4d-db29-48c1-b0c9-7915951df500@app.fastmail.com/
+Changes in v2:
+	Non ZUFS can also be adjusted through this option.
 ---
- arch/arm64/boot/dts/cix/sky1-orion-o6.dts | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 13 +++++++++++++
+ fs/f2fs/f2fs.h                          | 18 +++++++++++-------
+ fs/f2fs/super.c                         |  2 ++
+ fs/f2fs/sysfs.c                         |  9 +++++++++
+ 4 files changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
-index d74964d53c3b..be3ec4f5d11e 100644
---- a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
-+++ b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
-@@ -34,6 +34,26 @@ linux,cma {
- 
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index bc0e7fefc39d..21e6951919de 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -883,3 +883,16 @@ Date:		June 2025
+ Contact:	"Daeho Jeong" <daehojeong@google.com>
+ Description:	Control GC algorithm for boost GC. 0: cost benefit, 1: greedy
+ 		Default: 1
++
++What:		/sys/fs/f2fs/<disk>/bggc_block_io
++Date:		August 2025
++Contact:	"Liao Yuanhong" <liaoyuanhong@vivo.com>
++Description:	Used to adjust the BG_GC priority when issuing IO, with a default value
++		of 0. Specifically, for ZUFS, the default value is 1.
++
++		==================  =============================================
++		value				description
++		bggc_block_io = 0   Stop background GC when issuing I/O
++		bggc_block_io = 1   Stop background GC only when issuing read I/O
++		bggc_block_io = 2   Prioritize background GC
++		==================  =============================================
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 46be7560548c..440542ea0646 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -155,6 +155,12 @@ enum blkzone_allocation_policy {
+ 	BLKZONE_ALLOC_PRIOR_CONV,	/* Prioritize writing to conventional zones */
  };
  
-+&pcie_x8_rc {
-+	status = "okay";
++enum bggc_block_io_policy {
++	ALL_IO_PRIOR,
++	READ_IO_PRIOR,
++	BGGC_PRIOR,
 +};
 +
-+&pcie_x4_rc {
-+	status = "okay";
-+};
+ /*
+  * An implementation of an rwsem that is explicitly unfair to readers. This
+  * prevents priority inversion when a low-priority reader acquires the read lock
+@@ -1804,6 +1810,7 @@ struct f2fs_sb_info {
+ 	spinlock_t dev_lock;			/* protect dirty_device */
+ 	bool aligned_blksize;			/* all devices has the same logical blksize */
+ 	unsigned int first_seq_zone_segno;	/* first segno in sequential zone */
++	unsigned int bggc_block_io;		/* For adjust the BG_GC priority when issuing IO */
+ 
+ 	/* For write statistics */
+ 	u64 sectors_written_start;
+@@ -2998,13 +3005,10 @@ static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
+ 	if (sbi->gc_mode == GC_URGENT_HIGH)
+ 		return true;
+ 
+-	if (zoned_gc) {
+-		if (is_inflight_read_io(sbi))
+-			return false;
+-	} else {
+-		if (is_inflight_io(sbi, type))
+-			return false;
+-	}
++	if (sbi->bggc_block_io == READ_IO_PRIOR && is_inflight_read_io(sbi))
++		return false;
++	if (sbi->bggc_block_io == ALL_IO_PRIOR && is_inflight_io(sbi, type))
++		return false;
+ 
+ 	if (sbi->gc_mode == GC_URGENT_MID)
+ 		return true;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index e16c4e2830c2..a21cecc5424e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4629,9 +4629,11 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 
+ 	logical_blksize = bdev_logical_block_size(sbi->sb->s_bdev);
+ 	sbi->aligned_blksize = true;
++	sbi->bggc_block_io = ALL_IO_PRIOR;
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	sbi->max_open_zones = UINT_MAX;
+ 	sbi->blkzone_alloc_policy = BLKZONE_ALLOC_PRIOR_SEQ;
++	sbi->bggc_block_io = READ_IO_PRIOR;
+ #endif
+ 
+ 	for (i = 0; i < max_devices; i++) {
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index f736052dea50..1b587908f049 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -866,6 +866,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 		return count;
+ 	}
+ 
++	if (!strcmp(a->attr.name, "bggc_block_io")) {
++		if (t < ALL_IO_PRIOR || t > BGGC_PRIOR)
++			return -EINVAL;
++		sbi->bggc_block_io = t;
++		return count;
++	}
 +
-+&pcie_x2_rc {
-+	status = "okay";
-+};
-+
-+&pcie_x1_0_rc {
-+	status = "okay";
-+};
-+
-+&pcie_x1_1_rc {
-+	status = "okay";
-+};
-+
- &uart2 {
- 	status = "okay";
- };
+ 	*ui = (unsigned int)t;
+ 
+ 	return count;
+@@ -1175,6 +1182,7 @@ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
+ F2FS_SBI_GENERAL_RW_ATTR(carve_out);
+ F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
++F2FS_SBI_GENERAL_RW_ATTR(bggc_block_io);
+ 
+ /* STAT_INFO ATTR */
+ #ifdef CONFIG_F2FS_STAT_FS
+@@ -1303,6 +1311,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(discard_idle_interval),
+ 	ATTR_LIST(gc_idle_interval),
+ 	ATTR_LIST(umount_discard_timeout),
++	ATTR_LIST(bggc_block_io),
+ #ifdef CONFIG_F2FS_IOSTAT
+ 	ATTR_LIST(iostat_enable),
+ 	ATTR_LIST(iostat_period_ms),
 -- 
-2.49.0
+2.34.1
 
 
