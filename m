@@ -1,188 +1,252 @@
-Return-Path: <linux-kernel+bounces-760442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D786B1EB28
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 989C5B1EB2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E50817C475
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED17586A07
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EFF280CFB;
-	Fri,  8 Aug 2025 15:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8051281370;
+	Fri,  8 Aug 2025 15:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NY2n6gWx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jLyZNXvQ"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C9027F75F
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6BE14BFA2
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754665825; cv=none; b=ojfgOE94mGHlvwOd5FKqFPz4VQb4y/eb9bHpMGkAnBmkWOGTSPtIZYfnoHesNzKLTsxPBWAoMSFeW4Uw77dXzbPkOZ9DP8oRMGQdHdRZnVu5bVh2K4SZ+opnakYP8KMXLJ6we0FUWA3JrztaIx5vKAxw4qGFoZnahXUas/wo/u0=
+	t=1754665917; cv=none; b=D7JRQBU3qh5iNrLxnhcEvic077FE5W4P4oRJ82HyE4pKM8lJD3uu3Qr3RqWu3CQwvUAjd0/T6dlakPqoy5LYjoh0JdwPmnbBvSLA+2TjqcQlLhb1IqDhkgk6nlQ26DssLX6zCgH9ftMotoNpoeII0y5mQWs6lZZeMbwd7bfSobY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754665825; c=relaxed/simple;
-	bh=umcvyVklicbzq/kBy0WmrsbaWF0kIcR+4L2lO8UDxYY=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=Hd5l2A8gojdACquyS90mZ/06HCl63OnkC7VeA+grihjgmUFbJ48sGLzPp5NG22F4miCxntM2f2muaQ5zsa/SCkSw/HpMfuSR36XT8SGIvNi9HJXs+q1N9mc80Ht3OTLdjSTJfpalj9ToHmkwHz3CIvQlC+h3+7sLXTojnDsF/IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NY2n6gWx; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1754665917; c=relaxed/simple;
+	bh=F8nbBLRNaq9ZRHK52cEhX8v06L1MGtyHCKna3p5NPhQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ca6KM+L+i/eW16cKiqHlZ/72vNCMA1zI3eefNpCgICl8YPaIM+1Ie3OTHLuyepA+tw3C1g+qwq+VEiIn0O9sRQgo4IYeJGKikGzT6AB5CADYGa3dWLYkxQMsAH+7TLvODFiKiQzKu55yvFul4OBytPV09klxZLXJeapHOLmIn5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jLyZNXvQ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754665823;
+	s=mimecast20190719; t=1754665914;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sb1xY4mkvRwciVCfa3SBcbz2VY+53NejsonXd/nwxL4=;
-	b=NY2n6gWxzaVD375eEunpqnxyY0jebQr8IKLeFeTVYYLiVlfmLV5OgZPRDAeneic7kGzOvo
-	Xq7hnESroGaP2/jc/Lju5S6qzWfu39cBdLZ2gR1tZV+DqSFNlQ0ef3di/tVQ32DD0Xmn7w
-	S57ztnHECteTp5SClnav5mjyEV336xE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=A3OeAL2hH5pGYTkgLU0jvPwLfGPcXeQXo67V4spjwz8=;
+	b=jLyZNXvQLir59HfHJ5x//2Gk/brDZT6nOyb6Uxkih9e31ruRNICARV8lTjLLgYkI02hm4U
+	mnTC0BrHOop0am7CbKMtQ6BFwBwnwWq/64PVDAHQANd4RoHkO22y+EoTGsX2Ng38JxmQEl
+	TnCVYhd0Gtm7paj8O6GSuZmyymzpFHM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-347-0hywt-IUNPy6Fruejruu2w-1; Fri,
- 08 Aug 2025 11:10:18 -0400
-X-MC-Unique: 0hywt-IUNPy6Fruejruu2w-1
-X-Mimecast-MFC-AGG-ID: 0hywt-IUNPy6Fruejruu2w_1754665816
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-387-5ZhcPWNMNyCCkbSwF1SfqQ-1; Fri,
+ 08 Aug 2025 11:11:50 -0400
+X-MC-Unique: 5ZhcPWNMNyCCkbSwF1SfqQ-1
+X-Mimecast-MFC-AGG-ID: 5ZhcPWNMNyCCkbSwF1SfqQ_1754665907
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FE8F18003FD;
-	Fri,  8 Aug 2025 15:10:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.17])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 28773180029B;
-	Fri,  8 Aug 2025 15:10:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <zt6f2jl6y5wpiuchryc2vdsmtkiia7s5mligm7helffkanxe3o@2f2ksngn5ekk>
-References: <zt6f2jl6y5wpiuchryc2vdsmtkiia7s5mligm7helffkanxe3o@2f2ksngn5ekk> <20250806203705.2560493-1-dhowells@redhat.com> <20250806203705.2560493-25-dhowells@redhat.com>
-To: Enzo Matsumiya <ematsumiya@suse.de>
-Cc: dhowells@redhat.com, Steve French <sfrench@samba.org>,
-    Paulo Alcantara <pc@manguebit.org>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Wang Zhaolong <wangzhaolong@huaweicloud.com>,
-    Stefan Metzmacher <metze@samba.org>,
-    Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org,
-    linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 24/31] cifs: Convert SMB2 Negotiate Protocol request
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 58C06195608F;
+	Fri,  8 Aug 2025 15:11:46 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.65.37])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 077AB1954196;
+	Fri,  8 Aug 2025 15:11:38 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Phil Auld <pauld@redhat.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Cestmir Kalina <ckalina@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [RFC PATCH 00/18] cgroup/cpuset: Enable runtime modification of
+Date: Fri,  8 Aug 2025 11:10:44 -0400
+Message-ID: <20250808151053.19777-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2926139.1754665810.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 08 Aug 2025 16:10:10 +0100
-Message-ID: <2926140.1754665810@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Enzo Matsumiya <ematsumiya@suse.de> wrote:
+The "nohz_full" and "rcu_nocbs" boot command parameters can be used to
+remove a lot of kernel overhead on a specific set of isolated CPUs which
+can be used to run some latency/bandwidth sensitive workloads with as
+little kernel disturbance/noise as possible. The problem with this mode
+of operation is the fact that it is a static configuration which cannot
+be changed after boot to adjust for changes in application loading.
 
-> On 08/06, David Howells wrote:
-> > ...
-> > -static unsigned int
-> >-build_netname_ctxt(struct smb2_netname_neg_context *pneg_ctxt, char *h=
-ostname)
-> >+static size_t smb2_size_netname_ctxt(struct TCP_Server_Info *server)
-> > {
-> >+	size_t data_len;
-> >+
-> >+#if 0
-> > 	struct nls_table *cp =3D load_nls_default();
-> >+	const char *hostname;
-> >
-> >-	pneg_ctxt->ContextType =3D SMB2_NETNAME_NEGOTIATE_CONTEXT_ID;
-> >+	/* Only include up to first 100 bytes of server name in the NetName
-> >+	 * field.
-> >+	 */
-> >+	cifs_server_lock(pserver);
-> >+	hostname =3D pserver->hostname;
-> >+	if (hostname && hostname[0])
-> >+		data_len =3D cifs_size_strtoUTF16(hostname, 100, cp);
-> >+	cifs_server_unlock(pserver);
-> >+#else
-> >+	/* Now, we can't just measure the length of hostname as, unless we ho=
-ld
-> >+	 * the lock, it may change under us, so allow maximum space for it.
-> >+	 */
-> >+	data_len =3D 400;
-> >+#endif
-> >+	return ALIGN8(sizeof(struct smb2_neg_context) + data_len);
-> >+}
-> =
+There is always a desire to enable runtime modification of the number
+of isolated CPUs that can be dedicated to this type of demanding
+workloads. This patchset is an attempt to do just that with an amount of
+CPU isolation close to what can be done with the nohz_full and rcu_nocbs
+boot kernel parameters.
 
-> Why was this commented out?  Your comment implies that you can't hold
-> the lock anymore there, but I couldn't find out why (with your patches
-> applied).
+This patch series provides the ability to change the set of housekeeping
+CPUs at run time via the cpuset isolated partition functionality.
+Currently, the cpuset isolated partition is able to disable scheduler
+load balancing and the CPU affinity of the unbound workqueue to avoid the
+isolated CPUs. This patch series will extend that with other kernel noises
+associated with the nohz_full boot command line parameter which has the
+following sub-categories:
+  - tick
+  - timer
+  - RCU
+  - MISC
+  - WQ
+  - kthread
 
-The problem is that the hostname may change - and there's a spinlock to
-protect it.  However, now that I'm working out the message size before the
-allocation, I need to find the size of the host name, do the alloc and the=
-n
-copy the hostname in - but I can't hold the spinlock across the alloc, so =
-the
-hostname may change whilst the lock is dropped.
+The rcu_nocbs is actually a subset of nohz_full focusing just on the
+RCU part of the kernel noises. The WQ part has already been handled by
+the current cpuset code.
 
-The obvious solution is to just allocate the maximum size for it.  It's no=
-t
-that big and this command isn't used all that often.
+This series focuses on the tick and RCU part of the kernel noises by
+actively changing their internal data structures to track changes in
+the list of isolated CPUs used by cpuset isolated partitions.
 
-Remember that this is a work in progress, so you may find bits like this w=
-here
-I may need to reconsider what I've chosen.
+The dynamic update of the lists of housekeeping CPUs at run time will
+also have impact on the other part of the kernel noises that reference
+the lists of housekeeping CPUs at run time.
 
-> >-static void
-> >-assemble_neg_contexts(struct smb2_negotiate_req *req,
-> >-		      struct TCP_Server_Info *server, unsigned int *total_len)
-> >+static size_t smb2_size_neg_contexts(struct TCP_Server_Info *server,
-> >+				     size_t offset)
-> > {
-> >-	unsigned int ctxt_len, neg_context_count;
-> > 	struct TCP_Server_Info *pserver;
-> >-	char *pneg_ctxt;
-> >-	char *hostname;
-> >-
-> >-	if (*total_len > 200) {
-> >-		/* In case length corrupted don't want to overrun smb buffer */
-> >-		cifs_server_dbg(VFS, "Bad frame length assembling neg contexts\n");
-> >-		return;
-> >-	}
-> >
-> > 	/*
-> > 	 * round up total_len of fixed part of SMB3 negotiate request to 8
-> > 	 * byte boundary before adding negotiate contexts
-> > 	 */
-> >-	*total_len =3D ALIGN8(*total_len);
-> >+	offset =3D ALIGN8(offset);
-> >+	offset +=3D ALIGN8(sizeof(struct smb2_preauth_neg_context));
-> >+	offset +=3D ALIGN8(sizeof(struct smb2_encryption_neg_context));
-> >
-> >-	pneg_ctxt =3D (*total_len) + (char *)req;
-> >-	req->NegotiateContextOffset =3D cpu_to_le32(*total_len);
-> >+	/*
-> >+	 * secondary channels don't have the hostname field populated
-> >+	 * use the hostname field in the primary channel instead
-> >+	 */
-> >+	pserver =3D SERVER_IS_CHAN(server) ? server->primary_server : server;
-> >+	offset +=3D smb2_size_netname_ctxt(pserver);
-> =
+The pending patch series on timer migration[1], when properly integrated
+will support the timer part too.
 
-> If you're keeping data_len=3D400 above, you could just drop
-> smb2_size_netname_ctxt() altogether and use
-> "ALIGN8(sizeof(struct smb2_neg_context) + 400)" directly here.
+The CPU hotplug functionality of the Linux kernel is used to facilitate
+the runtime change of the nohz_full isolated CPUs with minimal code
+changes. The CPUs that need to be switched from non-isolated to
+isolated or vice versa will be brought offline first, making the
+necessary changes and then brought back online afterward.
 
-Yeah.  Probably would make sense to do that with a comment saying why 400.
+The use of CPU hotplug, however, does have a slight drawback of
+freezing all the other CPUs in part of the offlining process using
+the stop machine feature of the kernel. That will cause a noticeable
+latency spikes in other running applications which may be significant
+to sensitive applications running on isolated CPUs in other isolated
+partitions at the time. Hopefully we can find a way to solve this
+problem in the future.
 
-David
+One possible workaround for this is to reserve a set of nohz_full
+isolated CPUs at boot time using the nohz_full boot command parameter.
+The bringing of those nohz_full reserved CPUs into and out of isolated
+partitions will not invoke CPU hotplug and hence will not cause
+unexpected latency spikes. These reserved CPUs will only be needed
+if there are other existing isolated partitions running critical
+applications at the time when an isolated partition needs to be created.
+
+Patches 1-4 updates the CPU isolation code at kernel/sched/isolation.c
+to enable dynamic update of the lists of housekeeping CPUs.
+
+Patch 5 introduces a new cpuhp_offline_cb() API for shutting down the
+given set of CPUs, running the given callback method and then bringing
+those CPUs back online again. This new API will block any incoming
+hotplug events from interfering this operation.
+
+Patches 6-9 updates the cpuset partition code to use the new cpuhp API
+to shut down the affect CPUs, making changes to the housekeeping
+cpumasks and then bring those CPUs online afterward.
+
+Patch 10 works around an issue in the DL server code that block the
+hotplug operation under certain configurations.
+
+Patch 11-14 updates the timer tick and related code to enable proper
+updates to the set of CPUs requiring nohz_full dynticks support.
+
+Patch 15 enables runtime modification to the set of isolated CPUs
+requiring RCU NO-CB CPU support with minor changes to the RCU code.
+
+Patches 16-18 includes other miscellaneous updates to cpuset code and
+documentation.
+
+This patch series is applied on top of some other cpuset patches[1]
+posted upstream recently.
+
+[1] https://lore.kernel.org/lkml/20250806093855.86469-1-gmonaco@redhat.com/
+[2] https://lore.kernel.org/lkml/20250806172430.1155133-1-longman@redhat.com/
+
+Waiman Long (18):
+  sched/isolation: Enable runtime update of housekeeping cpumasks
+  sched/isolation: Call sched_tick_offload_init() when
+    HK_FLAG_KERNEL_NOISE is first set
+  sched/isolation: Use RCU to delay successive housekeeping cpumask
+    updates
+  sched/isolation: Add a debugfs file to dump housekeeping cpumasks
+  cpu/hotplug: Add a new cpuhp_offline_cb() API
+  cgroup/cpuset: Introduce a new top level isolcpus_update_mutex
+  cgroup/cpuset: Allow overwriting HK_TYPE_DOMAIN housekeeping cpumask
+  cgroup/cpuset: Use CPU hotplug to enable runtime nohz_full
+    modification
+  cgroup/cpuset: Revert "Include isolated cpuset CPUs in
+    cpu_is_isolated() check"
+  sched/core: Ignore DL BW deactivation error if in
+    cpuhp_offline_cb_mode
+  tick/nohz: Make nohz_full parameter optional
+  tick/nohz: Introduce tick_nohz_full_update_cpus() to update
+    tick_nohz_full_mask
+  tick/nohz: Allow runtime changes in full dynticks CPUs
+  tick: Pass timer tick job to an online HK CPU in tick_cpu_dying()
+  cgroup/cpuset: Enable RCU NO-CB CPU offloading of newly isolated CPUs
+  cgroup/cpuset: Don't set have_boot_nohz_full without any boot time
+    nohz_full CPU
+  cgroup/cpuset: Documentation updates & don't use CPU 0 for isolated
+    partition
+  cgroup/cpuset: Add pr_debug() statements for cpuhp_offline_cb() call
+
+ Documentation/admin-guide/cgroup-v2.rst       |  33 +-
+ .../admin-guide/kernel-parameters.txt         |  19 +-
+ include/linux/context_tracking.h              |   8 +-
+ include/linux/cpuhplock.h                     |   9 +
+ include/linux/cpuset.h                        |   6 -
+ include/linux/rcupdate.h                      |   2 +
+ include/linux/sched/isolation.h               |   9 +-
+ include/linux/tick.h                          |   2 +
+ kernel/cgroup/cpuset.c                        | 344 ++++++++++++------
+ kernel/context_tracking.c                     |  21 +-
+ kernel/cpu.c                                  |  47 +++
+ kernel/rcu/tree_nocb.h                        |   7 +-
+ kernel/sched/core.c                           |   8 +-
+ kernel/sched/debug.c                          |  32 ++
+ kernel/sched/isolation.c                      | 151 +++++++-
+ kernel/sched/sched.h                          |   2 +-
+ kernel/time/tick-common.c                     |  15 +-
+ kernel/time/tick-sched.c                      |  24 +-
+ .../selftests/cgroup/test_cpuset_prs.sh       |  15 +-
+ 19 files changed, 583 insertions(+), 171 deletions(-)
+
+-- 
+2.50.0
 
 
