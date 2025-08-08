@@ -1,119 +1,170 @@
-Return-Path: <linux-kernel+bounces-760402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CB5B1EAB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:51:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2EFB1EAB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC4A1AA0A68
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 796C1AA1781
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B473284681;
-	Fri,  8 Aug 2025 14:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A51928152B;
+	Fri,  8 Aug 2025 14:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="STKNxnj8"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b="itU+IMFd"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631B2283FFC
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220EA281378;
+	Fri,  8 Aug 2025 14:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754664595; cv=none; b=i5ZUDwnXr9smbd0TRX/OMGL0WqNJN/3ZD/TTRbHM3Uyl7Jb+0Sc43FGnOfEGaf0QCf08npwLFWlTcsNGgXR1QAO045FWDNa5hVP8Z3PJlWy1if7XMMEk31T48dmek3f1Z4MQ5lS4/dBSYvd/IxB4NMbII4GaUwznDqvU+V34u9M=
+	t=1754664614; cv=none; b=HtF8/03wDuJAFPiKI0XmmPWg9/iyfPueelFeoKldWTov3sffL/FukUBQsqUoTOgT4nqJAVgxJzhrz7v+JdfRlfP6CN2X3+6Fnfkzb0/usteATCRll1RbFWoR3q2FwNseXVnxg6DynST9iaaVmqFCiKNN2I5ekfzfXvgmg7rNdCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754664595; c=relaxed/simple;
-	bh=vzTXPFiaCfHK9nSqz15wssha4YOhs9UOcmrHp2JSAW4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UDJRzEtouT0ghsHS66L42I6nNI2zi67LZAv/9P8OBsdW94LK9iLKeIqS2NHWN9op/MzPdkJo2WWCOXxcRbOJS9v3Dur/pBiTbIMxzWpeGIUQF9iN3epGHYzSs0TPgc5WcXGn4LHkFyrwHQBThmQzpSLvXhAU1g21qMmr/7C/Q2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=STKNxnj8; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9BD3443986;
-	Fri,  8 Aug 2025 14:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754664591;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gYn1Rc8HkKQf4J/p8AgwWmzwMMTkHWwwAtY/ky/WmUs=;
-	b=STKNxnj8O3ZJTnpI/tmsjJQ2RmUajd8YJoLSUKm4L8GwzTGWQo60YtjGyws2ORzOF6n8Gh
-	ikTG2wm+8rud/5F5oTilBUXrlbDwo7xHE8ZW/osFQhkBGQr0PkgIlOXvvsws8xpthGYlQH
-	Z0zQrYKiRV6cpzNgBX7wYG0Jo20YqnowoniVi2o2GVVla79SXF0rXLL6DIQyslRsvhOqCG
-	AVtf3ZOyk+O2YgB5nGEdyUrhLdKCw2TvnAQqiTQ0b0IqM+RXgP0oVEjfXf4XMG/1k/8/ib
-	yPG1g8kBCESxSStJWIeOTmo3tDQE77M74OoPxsgRk8GtNb34A4CyfOpirIYHmQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 08 Aug 2025 16:49:16 +0200
-Subject: [PATCH v2 9/9] drm/omap: use drm_for_each_bridge_in_chain_from()
+	s=arc-20240116; t=1754664614; c=relaxed/simple;
+	bh=erL4d3pAzIMI/Ij8lqJws1gUl8F+7BHlqfHFZpF6o24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NAxtbjbqxjJrrWDE0h1UKIeMOj2qyl0ns4dED6XOqFs1znw6A2ICXWX9N487YP/L6HEzgt/JYBGr3mNwHLMPQH0P2xi+On7jPVGXOBrncp8+n8T7kUufpeAHg0oRTJNoMtj0JMpwiyJVSDchNeKOcHXyXNYdDxvLsPSPYwb7O0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=runbox.com; spf=pass smtp.mailfrom=runbox.com; dkim=pass (2048-bit key) header.d=runbox.com header.i=@runbox.com header.b=itU+IMFd; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=runbox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=runbox.com
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <fstuyk@runbox.com>)
+	id 1ukOPz-003idz-0n; Fri, 08 Aug 2025 16:50:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=runbox.com;
+	 s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=UkHUDmy0YLHv8qOUJEZC4ozgz8gskQrFknr7vrbeboU=; b=itU+IMFdlFeB5qKzE/h5ql06ro
+	U91i3FCudlbMELCRFYjfOMYjZCDaz81MnhaCtr2vdROevdaVii07+kb3+VOWWHiRPiefPGSP/f4og
+	Ye1g6aMpJyulPee9pYler5o3elboUyO3txrWhoaI7YEUB7tXdIOz32t5mVvsqBV0Au5d8LeGWOCqo
+	ldMbh659FMtbsugp7u2idbcIrP/Y7duPd6umVyQqej7l0K9twWiufY1UoNNP01TDW4KYDfFEcJu+v
+	9iSAFZ38W41n6hYPb7LxU59aypegtcTipzvrAW83tu8qRgzoGTPu088h7I6ZIjsNvGVayk8JpVKXt
+	NWluXNMA==;
+Received: from [10.9.9.72] (helo=submission01.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <fstuyk@runbox.com>)
+	id 1ukOPy-0001V5-HV; Fri, 08 Aug 2025 16:50:02 +0200
+Received: by submission01.runbox with esmtpsa  [Authenticated ID (906372)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1ukOPf-007vis-DZ; Fri, 08 Aug 2025 16:49:43 +0200
+Message-ID: <6822be3e-630c-4c21-a2c5-6e49109b0712@runbox.com>
+Date: Fri, 8 Aug 2025 16:49:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-9-edb6ee81edf1@bootlin.com>
-References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
-In-Reply-To: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdegtdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepjeekrddvuddvrddvjedrudduheenucevlhhushhtvghrufhiiigvpeeknecurfgrrhgrmhepihhnvghtpeejkedrvdduvddrvdejrdduudehpdhhvghloheplgdujedvrdduiedrtddrudgnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdehpdhrtghpthhtohepnhhitghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdprhgtphhtthhopehmohhrsghosehgohhoghhlvgdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghin
- hgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+User-Agent: Betterbird (Linux)
+Subject: Re: [BUG] OV02C10: image upside down in kernel 6.16
+To: Bryan O'Donoghue <bod@kernel.org>, hansg@kernel.org
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <7d38cf46-670e-462e-b7c2-78f9aaa9eb43@runbox.com>
+ <4d193kdY6jzaUWpsKVleAVgwUkBkmgx2garx3qWBKFjDuJU0LxENQpBpuvRIXGVoTLPiswDorAZVEG2wy-qjRA==@protonmail.internalid>
+ <b6df9ae7-ea9f-4e5a-8065-5b130f534f37@runbox.com>
+ <fb156b5c-c83c-4d33-86bb-f3cc4cf39ada@kernel.org>
+ <bf53e762-883d-4e14-bf84-355ec9ed7ad3@kernel.org>
+Content-Language: en-US, fr
+From: Frederic Stuyk <fstuyk@runbox.com>
+In-Reply-To: <bf53e762-883d-4e14-bf84-355ec9ed7ad3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Use drm_for_each_bridge_in_chain_from _scoped() instead of an open-coded
-loop based on drm_bridge_get_next_bridge() to ensure the bridge being
-looped on is refcounted and simplify the driver code.
+Hi Bryan,
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/omapdrm/omap_encoder.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Based on your answer below, I tested the following minimal patch on 
+kernel 6.16 and confirmed it fixes the image orientation on my laptop 
+(Lenovo ThinkBook 13x G4 IMH):
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_encoder.c b/drivers/gpu/drm/omapdrm/omap_encoder.c
-index 4dd05bc732daebcedbfcbbc9ba7dffee7415bdfc..195715b162e38ea0cd0870f3dd79342a8cbf218b 100644
---- a/drivers/gpu/drm/omapdrm/omap_encoder.c
-+++ b/drivers/gpu/drm/omapdrm/omap_encoder.c
-@@ -77,7 +77,6 @@ static void omap_encoder_mode_set(struct drm_encoder *encoder,
- 	struct omap_dss_device *output = omap_encoder->output;
- 	struct drm_device *dev = encoder->dev;
- 	struct drm_connector *connector;
--	struct drm_bridge *bridge;
- 	struct videomode vm = { 0 };
- 	u32 bus_flags;
- 
-@@ -97,8 +96,7 @@ static void omap_encoder_mode_set(struct drm_encoder *encoder,
- 	 *
- 	 * A better solution is to use DRM's bus-flags through the whole driver.
- 	 */
--	for (bridge = output->bridge; bridge;
--	     bridge = drm_bridge_get_next_bridge(bridge)) {
-+	drm_for_each_bridge_in_chain_from(output->bridge, bridge) {
- 		if (!bridge->timings)
- 			continue;
- 
+--- a/drivers/media/i2c/ov02c10.c
++++ b/drivers/media/i2c/ov02c10.c
+@@ -107,7 +107,7 @@ static const struct reg_sequence 
+sensor_1928x1092_30fps_setting[] = {
+      {0x3816, 0x01},
+      {0x3817, 0x01},
 
--- 
-2.50.1
+-    {0x3820, 0xb0},
++    {0x3820, 0xa8},
+      {0x3821, 0x00},
+      {0x3822, 0x80},
+      {0x3823, 0x08},
+
+
+Tested ok with gnome camera, qcam & firefox.
+
+Would it make sense to add a quirk specific to this laptop model?
+
+Also, the image appears heavily blue-ish under normal lighting 
+conditions, regardless of the application used. It's a different topic, 
+but I thought it was worth mentioning.
+
+Let me know if there's anything else I can try or information to provide.
+
+Best regards,
+Frederic
+
+
+
+
+On 08/08/2025 11:33, Bryan O'Donoghue wrote:
+> On 08/08/2025 10:27, Bryan O'Donoghue wrote:
+>> On 08/08/2025 10:03, Frederic Stuyk wrote:
+>>> Querying the sensor orientation metadata shows:
+>>>
+>>>       $ v4l2-ctl -d /dev/v4l-subdev6 -C camera_sensor_rotation
+>>>       camera_sensor_rotation: 0
+>>>
+>>> This control is read-only and cannot be changed.
+>>
+>> Register is defined but not used.
+>>
+>> deckard$ grep ROT drivers/media/i2c/ov02c10.c
+>> #define OV02C10_ROTATE_CONTROL        CCI_REG8(0x3820)
+>> #define OV02C10_CONFIG_ROTATE        0x18
+>>
+>> ::set_ctrl()
+>> case V4L2_CID_HFLIP:
+>> case V4L2_CID_VFLIP:
+>> cci_write(ov02c10->regmap, OV02C10_ROTATE_CONTROL,
+>>            ov02c10->hflip->val | ov02c10->vflip->val << 1, &ret);
+>>
+>> ::init_controls()
+>>
+>> ov02c10->hflip = v4l2_ctrl_new_std(ctrl_hdlr, &ov02c10_ctrl_ops,
+>>                                     V4L2_CID_HFLIP, 0, 1, 1, 0);
+>> if (ov02e10->hflip)
+>>          ov02e10->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+>>
+>> ov02c10->vflip = v4l2_ctrl_new_std(ctrl_hdlr, &ov02c10_ctrl_ops,
+>>                                     V4L2_CID_VFLIP, 0, 1, 1, 0);
+>> if (ov02c10->vflip)
+>>          ov02c10->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+>>
+>> Something like that should work.
+>>
+>> I think Hans said the ACPI tables provide the orientation for the 
+>> sensor.
+>>
+>> ---
+>> bod
+>
+> 0x3820: default 0xa0
+>
+> bit5: vflip_blc_0
+> bit4: vflip_0
+> bit3: hmirror_0
+> bit2: hbin4_0
+> bit1: hbin2_0
+> bit0: vbinf_0
+>
+> So you want to set bit3 = 0x08
+>
+> ---
+> bod
 
 
