@@ -1,128 +1,139 @@
-Return-Path: <linux-kernel+bounces-760200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D923B1E7B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C1AB1E7BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2821A3BA298
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A27D3B0568
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9FF27585D;
-	Fri,  8 Aug 2025 11:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B50F275855;
+	Fri,  8 Aug 2025 11:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlH2z2/S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKJb3NtR"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E27125C827;
-	Fri,  8 Aug 2025 11:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769462750EC
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754653725; cv=none; b=rb2vZ8Qjl9+1/jnZNdtdPz/xxc8R5nM0ulPP6lHHfXIa5rdKJImSQAvTEmPPzEWYXcbi7XXfxmsmUJFvkiCFpA8XiDuW/ohp5PBN1ADC/RyHp0vk0HGZBOGmIladYIpl3k4vz2gVjgSPHnzBdxpuaiIM1emfVc6KkcEgz52lEYw=
+	t=1754653800; cv=none; b=if8WaT9Kr86Qs4U4RreUmIfbt0j/KU+uy9LIgR2R+hjmP1NtGZaJSHtUL6Lu/FhigmacJ6VJ95AqEOmVT+aBHTwI01OxKXLoLr4CAigV5J2iaOUIOScD1Qz951wqFBHRM57kThwdQNtSybEa9zSFB69nlxWkMU9TwjYiTVdPNRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754653725; c=relaxed/simple;
-	bh=FUx4gUgdyZ2ZZBXuzAMKD50bvkFnEcWtdMYMuJy1cVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGwE/Z/fk7JD4UrBrzwpoch3JP8/PAbCDAJNWqm/HCmCeLY0Oos1nEKnmv69TNbH4yZVMTLWjbHRdmSea5O33HuOI4nO4xjqC992KoaNFgeaW+taVbZNcomiYrVMFTMsCsFEfdvQJx2fPAXxUt8kKE1XKBxpsHnWw0AhqS415OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlH2z2/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFFEC4CEF1;
-	Fri,  8 Aug 2025 11:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754653724;
-	bh=FUx4gUgdyZ2ZZBXuzAMKD50bvkFnEcWtdMYMuJy1cVM=;
-	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To:From;
-	b=KlH2z2/SRGW4K4fN/lCfwfHAWCLsioLuNXYi0U8bGmXfTGaqjSCRwOhCs4s6TOA0J
-	 7X5PzrzWTGmySfiKXxgGxB0TXo1/sEh2IwxOimdqCIM5itio7QuZye5qUFhTiowsro
-	 g9QGixSNwxKrLcq5ITi3jqk67TuJhrezSoeLBNFz3QMy7WAmsXR3PnPszSWAp/YNRf
-	 EpX42Uy/odYqRyAa1Gq9Pu3xMZtrRg9Wroqn8PxqGIn7GoY01TQOQU0yKZO8i1uzel
-	 dv/TdTFEOVjWt68sUn36VVGp+5yBeS/m5Bp5b7ElzfFVkSOFUCDepl9vRLQpiKGtKo
-	 ASrYLKLOSRMsg==
-Date: Fri, 8 Aug 2025 12:48:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: patchwork-bot+linux-riscv@kernel.org, linux-riscv@lists.infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	akpm@linux-foundation.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, conor@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, arnd@arndb.de,
-	brauner@kernel.org, peterz@infradead.org, oleg@redhat.com,
-	ebiederm@xmission.com, kees@kernel.org, corbet@lwn.net,
-	shuah@kernel.org, jannh@google.com, conor+dt@kernel.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
-	aliceryhl@google.com, tmgross@umich.edu, lossin@kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, devicetree@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com,
-	richard.henderson@linaro.org, jim.shu@sifive.com,
-	andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
-	atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
-	alexghiti@rivosinc.com, samitolvanen@google.com,
-	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
-	zong.li@sifive.com, david@redhat.com
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-Message-ID: <09081487-89ac-4f8d-b9fc-e563f09726d2@sirena.org.uk>
-References: <20250731-v5_user_cfi_series-v19-0-09b468d7beab@rivosinc.com>
- <175450053775.2863135.11568399057706626223.git-patchwork-notify@kernel.org>
- <db4eb976-693c-426c-a867-66cadd3dd7d8@sirena.org.uk>
- <aJWz82F21pVTSVJi@debug.ba.rivosinc.com>
+	s=arc-20240116; t=1754653800; c=relaxed/simple;
+	bh=eb4KMTW4r4qu3P/OqFSHIaMxQVsV3NPVz2+32AfZSlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eHZ9XXK9tY28jTYn1Da/Bmh2gtih3V2DerM3bH4yFhY+9op1faWu2aRcUaAbCto8YK1jDJR65JUV68RJzgd+Xk0A+74G0dI/HgQu3PTZZzHMOubE7WAn7BIiXplq3h8zsjzjPP9V/PpokOS+ZtKBzVA3Z9FNAPLUsz7ZKi5o5UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eKJb3NtR; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2401b855635so15151455ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:49:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754653799; x=1755258599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y4U8t1hCYMmSASvz9snQHZPW7Ew1JL75mQvLxEN50nE=;
+        b=eKJb3NtRsLrZpolYg+MG0qiiT9EHhctSscIAe2Xubyv3GTfw5liJLtXmbzSHqoMXOB
+         sVSdFoF6szohxEb95N4T1KE1vYNBVQzTgantkMFNghErmFc3BlFI49KhOOGNi31somVk
+         7z+J1DCOuWF1Nq1FIi9iHTl1nYytCSJYlJkTj2bVtNGFrLv1uplrERzf5zcNuPs+mGwB
+         VQHnzLcLrFERS354cT7pZKD/3vBYUiM4eO/C1HDyRh/ST6wRzcrZPAiGMbcDMrpPOYrs
+         IP8ZsZH4LGZFjJZ2+2Og/4hDZW2gcJvENY9dbYjvC/GJOXv2LqZ6RH5pHLQaGunydTKr
+         o9WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754653799; x=1755258599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y4U8t1hCYMmSASvz9snQHZPW7Ew1JL75mQvLxEN50nE=;
+        b=QBbVDU50SbKJvf4ZU5IGkUUAbp2AGmMCJLuJ7VX3JO47x4RWIHz2tuE3iVFaBcMwH3
+         bvsKHJ6G7SoQYDaF5qri335e2//yyWHmfc8Pmm5LG6P0t7pZAaNT5k7NCVkau5UXDrmo
+         V0acD1LINc3Hm76fAu52v3Y1wQ6cAFKhnVbdvWUe72g4xN/wV1ih7wcS9KYBa2ssl2QK
+         iADNNVZzewI2A70PT6pKr0N/80Smlz6AjlvmRaBHuPvuqWyOGp6f94HILMC/BnwwcT24
+         n2wlSdCnViEMWZI3gSoBGIAXkaw5ux8edc/qDJokfdjUpWyKceeLorEaivTqrJ+u9AXJ
+         tf/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUCVUVj8iJ9ZkSx6jnfjap9eqSrylVtsFk7NjW+Qr3er5pkcqvLjtBohDoVDWcQSTQoVlmzc0aRhj+rKgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGGYmfOp3Pzj0UgSDxd8DjoIZA/FQ4KfRPaJQVIF9AU63dlT+D
+	kIzCuh7R/1OHhsLoKpRpVapokmpADSIRK4uKKYS2Dqf5SJt4T2NPGlmoeZsiQ/nK0GxP+o4kwZt
+	vHx4bLfwqbuBz9r5OfTvH+tUjNc52612szUdd
+X-Gm-Gg: ASbGncuJYi3SwSLDApsYNG0/PzFTE4dgcWJedadbZJxTH16/fGx++8Rufcv1qF7LdwM
+	Qm9wc0RrGWJ0BcYaRELL8gkT1DShJFe3HirgzpmWcd5+DF6v8AaQ7A1g44TaGKpnD9pDIBOyXzE
+	xEE9A0Og5h4LfveSF6WL5Mu4D+qiQR1ePDJhbhK/r/o00aLUkBy8DtiPcC28Lo5fJKCCwLziqeH
+	VaXzJgDy9JOH8u4
+X-Google-Smtp-Source: AGHT+IH0s9s6aEdmFhMvXZ4jC3JQQ+y7jerlRSgp7hlj83FuNqzsn0TqKg9ZFWYeqJAVpEDhAQfMyUTG7SsgXKTpfiI=
+X-Received: by 2002:a17:903:b0e:b0:235:1b91:90a3 with SMTP id
+ d9443c01a7336-242c1fdb197mr41704705ad.7.1754653798769; Fri, 08 Aug 2025
+ 04:49:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="D45dRbRxMwDeSA/W"
-Content-Disposition: inline
-In-Reply-To: <aJWz82F21pVTSVJi@debug.ba.rivosinc.com>
-X-Cookie: What an artist dies with me!
+References: <20250808095503.906244-1-linchengming884@gmail.com>
+ <20250808095503.906244-3-linchengming884@gmail.com> <87zfca9kur.fsf@bootlin.com>
+In-Reply-To: <87zfca9kur.fsf@bootlin.com>
+From: Cheng Ming Lin <linchengming884@gmail.com>
+Date: Fri, 8 Aug 2025 19:49:49 +0800
+X-Gm-Features: Ac12FXy4tzXGUM6oD18C6VZVKs6r2WLP8uQSAD1KjLa_SaRxd-7zezNNfL7wkKs
+Message-ID: <CAAyq3SZC2R_9_CVJURAvhZe8_-iE6t8ErGBV16vKPbgVsOhbbg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mtd: spi-nand: macronix: Add randomizer support
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw, 
+	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Miquel,
 
---D45dRbRxMwDeSA/W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2025=E5=B9=B48=E6=9C=88=
+8=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=886:19=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> On 08/08/2025 at 17:55:03 +08, Cheng Ming Lin <linchengming884@gmail.com>=
+ wrote:
+>
+> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+> >
+> > Enable randomizer function by specific flowchart to set the default val=
+ue
+> > of RANDEN to 1.
+> >
+> > Randomizer introduces two new DT properties for child nodes to configur=
+e
+> > the randomizer functionality and coverage options.
+> >  - mxic,enable-randomizer-otp: Specify whether to activate the randomiz=
+er
+> >                                feature.
+> >  - mxic,randopt: Define the randomizer area per page.
+>
+> Can we create a global NAND DT property for that? Enabling a randomizer
+> is quite a generic step.
 
-On Fri, Aug 08, 2025 at 01:23:15AM -0700, Deepak Gupta wrote:
-> On Thu, Aug 07, 2025 at 01:28:36PM +0100, Mark Brown wrote:
+Sure, I agree. I=E2=80=99ll update it to use a global NAND DT property.
 
-> > Do you have an update for my clone3() shadow
+>
+> > The penalty of randomizer are subpage accesses prohibited and more time
+> > period is needed in program operation and entering deep power-down mode=
+.
+> > i.e., tPROG 320us to 360us (randomizer enabled).
+>
+> Do you want to share what is the added value in terms of lifetime to
+> enable the randomizer, given the drawbacks which are significant?
 
-> No I don't.
+Thanks for the question. I=E2=80=99ll describe the benefits once I=E2=80=99=
+ve finished
+organizing and reviewing our data.
 
-> > stack series that I could roll in for when I repost that after the merge
-> > window, and/or instructions for how to run this stuff for RISC-V on some
-> > emulated platform?
+>
+> Thanks,
+> Miqu=C3=A8l
 
-> I would want to write-up instructions. But I don't want you to go through
-> a lot of hassle of building toolchain and bunch of other stuff.
-> Let me see how I can make it easy for you. Will report back.
-
-Thanks.  FWIW I should already be sorted for the kernel build, unless
-there's a super new or specialist toolchain required for this feature
-(I'd guess I should be fine for the shadow stacks bit?) - it's userspace
-and emulation for the extension I'm missing.
-
---D45dRbRxMwDeSA/W
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiV5A4ACgkQJNaLcl1U
-h9BR4gf/Yvc9us1uldFqSA9g7p+0bzU3IY/RfdDdME4qVGVWWXybW7b1P+6OdvKr
-lRLLeAJQkpEzhtLNeXXTVgRijmaDgccqM2d2Vkehw9qrW1+pwA56PX8PQPBtJsGL
-riODDRX0jZSrSVAPE/mwrQRc97vY83Tme2w2Psah2FzICcRcLdsC9vz3BIsquWgp
-5LbvWFyIS7PraLBoSkO76qBYDtRwjw3LzoANXm5rYo9QKsT48UPgjfvmzxLqTSxT
-oDMob4PjC2+1FU6Q1yzo5CUyK+aX58BM0OGwWEq4DDOCu5kd0ltVJen8HWszpfVz
-YgUpgySyAiGsfZTi1JBRv158syBsdQ==
-=5/MC
------END PGP SIGNATURE-----
-
---D45dRbRxMwDeSA/W--
+Thanks,
+Cheng Ming Lin
 
