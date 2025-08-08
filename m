@@ -1,194 +1,139 @@
-Return-Path: <linux-kernel+bounces-760188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569D5B1E791
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:43:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A693FB1E792
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B2F4171A76
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:43:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999461AA5AF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7521A3154;
-	Fri,  8 Aug 2025 11:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08382749F4;
+	Fri,  8 Aug 2025 11:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thXbzi8U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0wzk0Nz"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F136526A08D;
-	Fri,  8 Aug 2025 11:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00F126FA4E
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754653353; cv=none; b=QcChV/Xh3pLwoJki2hZ7k8OxdnxdEtZ454vAKloriTB3WdJ7xq4rY6xfdFHk4G0o8ML7+BRX/nSw59Xy+919L9c76YaiwrDRZGT9zRHVCZIzW1n0djzpdVxfvSWJkd5aBDWHdiRGZo01mevoZTP34ErVdSBXIPRVCCop0ustjCU=
+	t=1754653379; cv=none; b=AEUoCfG+ewc8bpcFBUAkzMIMrgVNeIXf/22o6CZXc4+TUW99rH3DrJV3//OI5ylz9zL4lcAC4aY22uiifALw49Un5c2J9IXENEWEYrtVRLcp1al+nWrtTsJUzLiULNFp8c+Mlf3Cs8EVkwwF7sWe9B1TS9/1AMarI7XaPl7vSek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754653353; c=relaxed/simple;
-	bh=+EXwIQbDINd7zs+mcit0rAyRB8QW/lOaVnLZfgR3OU4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qpvyoAFN48+Sjc9MSla/10NG90t1jZ9wdmjOJZN1PVycl5eCbi78D5mC0Pz5k46aQ1k1PwORT48zjiRS3tb1DZRONCxjSlLF4MC9fRzR0TrO+AJVAqWd4STS/cf+HASs2gOg9dM29ratr/ucq9QDGzZJ1HkuySX2A9sZ0XLWTl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thXbzi8U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F953C4CEED;
-	Fri,  8 Aug 2025 11:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754653352;
-	bh=+EXwIQbDINd7zs+mcit0rAyRB8QW/lOaVnLZfgR3OU4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=thXbzi8UdXsRGC6Qoy3VJbFEU21MkSCOaDClxHC2JK1GJZt0rBKoB1Jn+AH6aCiwi
-	 b0g+JiFxsmHtOPyVLLIP38MuvNDBW1mHFNFAITJGNoRqJtYvVjkmjm6acnUCnynowh
-	 g6z3N7QQLflKhYJYtEJiZG04QlZIGfT09dmtF5670e5T2hm26OfS1CsXEtZzvJw83I
-	 w4zxtBzNlzwxi8sqj1C4dwf2LcZKCFKEp9F5c+F6rW5KqqUC9HWONnn97gcslfc0VX
-	 +QP/gzK0YMadigtYGs3vb06wIiT9fNCYpkbZ5lkp5/VOcN1BNMPTw9E1lQThAMnU6l
-	 PgoVhAgaXBGyg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 01/30] kho: init new_physxa->phys_bits to fix lockdep
-In-Reply-To: <20250807014442.3829950-2-pasha.tatashin@soleen.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-2-pasha.tatashin@soleen.com>
-Date: Fri, 08 Aug 2025 13:42:22 +0200
-Message-ID: <mafs0o6sqavkx.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1754653379; c=relaxed/simple;
+	bh=qX+LpjVZh0qEROmGxtkt8MIJA9NuhroZnV9RgYsM2yU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gcFUBNKxAC+kYT+tJWvSV9MvewfzpgnKYJ4Auox892d0DFNE4yTNzuzJK8/ae2V5Aq5mvduGvtXtL7vpSGfVAekyNyiTOzW+lPqDQb6KRJC//VbVuZPBaOWN1fT4sf+ty4T1CmQHxOyedQi6QMVdsHfLi0LAmrOWP9jLyI+F/gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E0wzk0Nz; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76c18568e5eso2300511b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754653377; x=1755258177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o7xUPNwQOFnyirYLWGjYwUUNSfoUAUIHKisZZ79re2o=;
+        b=E0wzk0NzOO2KRvt69o7lj8YaWud2+TPPWU/phHrFxad09B0afPFqL6UrFReEgUiIcE
+         0zzImXY+cYrDWpAwfQhCOr5TyGJTU06ptGRgTsWyjD0ctxGEyTtem1gxw1hHFUNxgIs1
+         UqlKvT+xLixEQ8sSOyGgdwdNDXy/hxNro5xt0g0qGRt38N++F6S15YQnB9mnM7MIE1od
+         WpyNQeeg9sQD+qX+cE07BFyRsmoKwTnQgt0gb7+unOKUkEuz4ZPXPrOvhR46RXuePfHK
+         pnts2eQqyqtpwZMmEdqgWe+y8ibWdfGEd/vO1EqGZIu17yEDsbAOarYe8qFLot58Io4E
+         trsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754653377; x=1755258177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o7xUPNwQOFnyirYLWGjYwUUNSfoUAUIHKisZZ79re2o=;
+        b=ZdPk7UxVdzPWb23fw5avxK/sMfPfW6+ianxj14InSQJ7TsV3Vsb2d27ifJfCGeqr/n
+         4T+pbuoeXdQs6r0OTJZq6QujYCbqKsnJaEWw2hXNIhmWFr5dKPYrjbQmG6ytltEf62l0
+         ENwK34K3sfwzFBJ9KUBKj9imQPcPdb7q0MyeSxmKVvdmmskIattwt78w/kjtw3/jiry5
+         pQxWtbSd1x+jF6eozHCIitNXlcD2R8C8LXLpaE0qib+43crWxkWYSQeF5aUHciHv6Ad7
+         WV0xFTwDTq97qPNkIX8+O56fUCoilaZQh/qyXgH4ipSKuGP/rsjTcnG4tMJklV++uItR
+         qEWg==
+X-Gm-Message-State: AOJu0YwTZVjTg1OuBpJhhBaztWrGiLvvYVT/jjGfH6CGeTFeS4ysh7ig
+	jI4pjDuorzA6cXZ0OqrmFjws2RrmjJXDJNDmgh4xsnikZddW9lUbj3NJPdPfCBfC
+X-Gm-Gg: ASbGncsZ4Vh/DZSTs8qhUh9KW0AUbmfw5Y2ZJLkvuM+3ZBceXaiirM5tiT5i2L9YD5n
+	3PFRJ3mm4wZaxnTsiaf59zgxKPBDPqaqAjimXZQnPUaTq2WKWE/DiJWjXpYw9gkhlc1GCDP4Put
+	VUNzE0bQzA1nc7ojjuTIlkdeYilxvVuBoj6WNiMBooAQiNwYCRdOzRKaCKynRlSn/2Em8dJL4P/
+	bT+zoai43OUMVi3Z/8yHNN2p+TzibQJzIaSXaYQdLBEeoRJ6aELSprHIPJUODkXzZRAt7dypaYf
+	PP1kYTa8HQ5SYBWfI/JuerYqNpXDuYsdXyhc5VbpxMom3TY0qLZ8zpLBsLWSTVb32J9FQy+f0VI
+	8uC6OzeQEK/8kX1mO7vHwY9SIIWaF
+X-Google-Smtp-Source: AGHT+IHUrIRgJfgPzn6I/QXdMqQD90NBRHem8l+UVj8ybSE5mceU0ZyoTf8lEnNqqHWX/jkZT8zmvg==
+X-Received: by 2002:a05:6a20:3d8b:b0:240:6dc:9164 with SMTP id adf61e73a8af0-2405502ffeamr5164585637.15.1754653376847;
+        Fri, 08 Aug 2025 04:42:56 -0700 (PDT)
+Received: from octofox.metropolis ([175.223.27.3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bac0391sm17217182a12.37.2025.08.08.04.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 04:42:56 -0700 (PDT)
+From: Max Filippov <jcmvbkbc@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PULL 0/2] xtensa updates for v6.17
+Date: Fri,  8 Aug 2025 04:42:40 -0700
+Message-Id: <20250808114240.2720491-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Hi Pasha,
+Hi Linus,
 
-On Thu, Aug 07 2025, Pasha Tatashin wrote:
+please pull the following updates for the Xtensa architecture.
 
-> Lockdep shows the following warning:
->
-> INFO: trying to register non-static key.
-> The code is fine but needs lockdep annotation, or maybe
-> you didn't initialize this object before use?
-> turning off the locking correctness validator.
->
-> [<ffffffff810133a6>] dump_stack_lvl+0x66/0xa0
-> [<ffffffff8136012c>] assign_lock_key+0x10c/0x120
-> [<ffffffff81358bb4>] register_lock_class+0xf4/0x2f0
-> [<ffffffff813597ff>] __lock_acquire+0x7f/0x2c40
-> [<ffffffff81360cb0>] ? __pfx_hlock_conflict+0x10/0x10
-> [<ffffffff811707be>] ? native_flush_tlb_global+0x8e/0xa0
-> [<ffffffff8117096e>] ? __flush_tlb_all+0x4e/0xa0
-> [<ffffffff81172fc2>] ? __kernel_map_pages+0x112/0x140
-> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-> [<ffffffff81359556>] lock_acquire+0xe6/0x280
-> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-> [<ffffffff8100b9e0>] _raw_spin_lock+0x30/0x40
-> [<ffffffff813ec327>] ? xa_load_or_alloc+0x67/0xe0
-> [<ffffffff813ec327>] xa_load_or_alloc+0x67/0xe0
-> [<ffffffff813eb4c0>] kho_preserve_folio+0x90/0x100
-> [<ffffffff813ebb7f>] __kho_finalize+0xcf/0x400
-> [<ffffffff813ebef4>] kho_finalize+0x34/0x70
->
-> This is becase xa has its own lock, that is not initialized in
-> xa_load_or_alloc.
->
-> Modifiy __kho_preserve_order(), to properly call
-> xa_init(&new_physxa->phys_bits);
->
-> Fixes: fc33e4b44b27 ("kexec: enable KHO support for memory preservation")
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  kernel/kexec_handover.c | 29 +++++++++++++++++++++++++----
->  1 file changed, 25 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index e49743ae52c5..6240bc38305b 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -144,14 +144,35 @@ static int __kho_preserve_order(struct kho_mem_track *track, unsigned long pfn,
->  				unsigned int order)
->  {
->  	struct kho_mem_phys_bits *bits;
-> -	struct kho_mem_phys *physxa;
-> +	struct kho_mem_phys *physxa, *new_physxa;
->  	const unsigned long pfn_high = pfn >> order;
->  
->  	might_sleep();
->  
-> -	physxa = xa_load_or_alloc(&track->orders, order, sizeof(*physxa));
-> -	if (IS_ERR(physxa))
-> -		return PTR_ERR(physxa);
-> +	physxa = xa_load(&track->orders, order);
-> +	if (!physxa) {
-> +		new_physxa = kzalloc(sizeof(*physxa), GFP_KERNEL);
-> +		if (!new_physxa)
-> +			return -ENOMEM;
-> +
-> +		xa_init(&new_physxa->phys_bits);
-> +		physxa = xa_cmpxchg(&track->orders, order, NULL, new_physxa,
-> +				    GFP_KERNEL);
-> +		if (xa_is_err(physxa)) {
-> +			int err = xa_err(physxa);
-> +
-> +			xa_destroy(&new_physxa->phys_bits);
-> +			kfree(new_physxa);
-> +
-> +			return err;
-> +		}
-> +		if (physxa) {
-> +			xa_destroy(&new_physxa->phys_bits);
-> +			kfree(new_physxa);
-> +		} else {
-> +			physxa = new_physxa;
-> +		}
+The following changes since commit 0ff41df1cb268fc69e703a08a57ee14ae967d0ca:
 
-I suppose this could be simplified a bit to:
+  Linux 6.15 (2025-05-25 16:09:23 -0700)
 
-	err = xa_err(physxa);
-        if (err || physxa) {
-        	xa_destroy(&new_physxa->phys_bits);
-                kfree(new_physxa);
+are available in the Git repository at:
 
-		if (err)
-                	return err;
-	} else {
-        	physxa = new_physxa;
-	}
+  https://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20250808
 
-No strong preference though, so fine either way. Up to you.
+for you to fetch changes up to 44a4ef59d5506c6dc7599d876a3a1014697ec480:
 
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+  xtensa: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers (2025-06-06 01:03:35 -0700)
 
-> +	}
->  
->  	bits = xa_load_or_alloc(&physxa->phys_bits, pfn_high / PRESERVE_BITS,
->  				sizeof(*bits));
+----------------------------------------------------------------
+Xtensa updates for v6.17
+
+- replace __ASSEMBLY__ with __ASSEMBLER__ in arch headers
+
+----------------------------------------------------------------
+Thomas Huth (2):
+      xtensa: Replace __ASSEMBLY__ with __ASSEMBLER__ in uapi headers
+      xtensa: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi headers
+
+ arch/xtensa/include/asm/bootparam.h      | 2 +-
+ arch/xtensa/include/asm/cmpxchg.h        | 4 ++--
+ arch/xtensa/include/asm/coprocessor.h    | 8 ++++----
+ arch/xtensa/include/asm/current.h        | 2 +-
+ arch/xtensa/include/asm/ftrace.h         | 8 ++++----
+ arch/xtensa/include/asm/initialize_mmu.h | 4 ++--
+ arch/xtensa/include/asm/jump_label.h     | 4 ++--
+ arch/xtensa/include/asm/kasan.h          | 2 +-
+ arch/xtensa/include/asm/kmem_layout.h    | 2 +-
+ arch/xtensa/include/asm/page.h           | 4 ++--
+ arch/xtensa/include/asm/pgtable.h        | 8 ++++----
+ arch/xtensa/include/asm/processor.h      | 4 ++--
+ arch/xtensa/include/asm/ptrace.h         | 6 +++---
+ arch/xtensa/include/asm/signal.h         | 4 ++--
+ arch/xtensa/include/asm/thread_info.h    | 8 ++++----
+ arch/xtensa/include/asm/tlbflush.h       | 4 ++--
+ arch/xtensa/include/uapi/asm/ptrace.h    | 2 +-
+ arch/xtensa/include/uapi/asm/signal.h    | 6 +++---
+ arch/xtensa/include/uapi/asm/types.h     | 4 ++--
+ 19 files changed, 43 insertions(+), 43 deletions(-)
 
 -- 
-Regards,
-Pratyush Yadav
+Thanks.
+-- Max
 
