@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-760622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2FCB1EDDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:38:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E42AB1EDE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160981AA8565
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:38:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC32E188C2C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96A21DED5B;
-	Fri,  8 Aug 2025 17:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0939C1E5B91;
+	Fri,  8 Aug 2025 17:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NqnHCAKi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ejc3VpI2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F3A199385;
-	Fri,  8 Aug 2025 17:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C023199385;
+	Fri,  8 Aug 2025 17:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754674693; cv=none; b=HRQpSNdg2BwNu5FJ3sqzt2lWs+JneV7fjqmmPNZo2f0fp7upUUJ/Pg/JxqG0aZTNA3on9ujyRtTiWQnPbfaK8Pl+uTJTq/FZ3r6LV91JpRI/uGXSzfnXRnlf7Tai8gcjGdCzYgyGPpN8vmhc7GjTYJQr3ngrVsy1jGfyazduI1g=
+	t=1754674792; cv=none; b=T3BIjZ+Fil3Fyl9bgV/HLyshJC+sfygP+RcI8J6AARl6FusL/1Km+adBGxQAt82OjiCFHLlK4G32mtUFWUIbR2A1CfCE+VBN9O0RYbrY7F2uVomjXv+cuC3Cq4AkCiO0VPolIQkZNrc6dMMC1o1uJ0BiUdwbvELXheH3mxvcO/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754674693; c=relaxed/simple;
-	bh=KCrE/1vxbVTmZFIhx+r1KO8dpf7FoCmwnT1AoeihBWQ=;
-	h=Subject:To:Cc:From:Date:Message-Id; b=L57k0yXaIllIEz9PBcilHnxCsemrMAg6v2CQ3MWcRB5Pr+2FFTmYmfWsZVp3apWlVY15HLCh+MCMEB9wNhX58FBSdXDn2XFlAvRaon5o4v+R4f4isdjuj7ctNND2XbbfrdYUwvbCHbklaleanMtEpn4BecoIMAfRPD5A/uP6JC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NqnHCAKi; arc=none smtp.client-ip=192.198.163.9
+	s=arc-20240116; t=1754674792; c=relaxed/simple;
+	bh=+k9c7Cb/QVIWMb4JvwihS38V1NqKDT4MgVlpqaS/Muo=;
+	h=Subject:To:Cc:From:Date:Message-Id; b=cMhlDiZ7yyoXGr85xIZ8S6cCezILfxyvJF/XEhvgmykovU5YLrhLiVIFzg6J8mw6pDnp5H4UTE6pAqAaM84NwylIA4WhoNzbnCyhiPysNKXsrn2+LSQAZC7F0w2EDbKhkNaq4merJzdSaO+icC6ynXHqkVabBgHI71P1DbnD16o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ejc3VpI2; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754674691; x=1786210691;
+  t=1754674791; x=1786210791;
   h=subject:to:cc:from:date:message-id;
-  bh=KCrE/1vxbVTmZFIhx+r1KO8dpf7FoCmwnT1AoeihBWQ=;
-  b=NqnHCAKiJE/2gYuvZDDdTF4JbruJZvb2/0DZq80UIVzuWiAptTOkuaRL
-   rbqM16S1E/f/VJixjxJKYhBuribnrAPzHA5TNrgOaHAWoEpo2YhDAaL1t
-   pk7Z5N9Ar9AJQUb88Ge+yf0Y38a8AtQTHcijp+DsQV9jjrchTTu9afrdg
-   ZFbhev174E+pLdRxca4jhgFnSxRJ8YG+KTthgEFkCKb0rOGj7IH4OiZxI
-   s+++UdoMyIDS/XaqR8LQJBv2XhGdYnJ/vE7rAItGU87S4yahX8sm+wPGe
-   NcFOJgAw5jWIQ+9Vte4rESe68RD/gPZghiKGdzqw9XNzLhHekKDZcrV7D
-   A==;
-X-CSE-ConnectionGUID: 4ow6kE+vSCGwEf6+GGlj5Q==
-X-CSE-MsgGUID: 3F1TGJhmRXq4ToYbdmOLog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="67730621"
+  bh=+k9c7Cb/QVIWMb4JvwihS38V1NqKDT4MgVlpqaS/Muo=;
+  b=Ejc3VpI2y6X8GYVKKsWKz3dg5jxdLo4dRKZVeQr7Zk7wa8tpNwtEhDix
+   yc2UmyhzILMg0uElsAI0tIomIuf7+korGZOFmmmTb1zbZ1FsGj2NgiHvE
+   kTxPeepOZLgz+r9Q+yq8OwfKsBHeIlDr5hN85bAxaaKofo0Gg2qPiU1Jb
+   MaOeY3HoZ4frW325HMSa3o7SFSr8kWc/iQPJC2M42EC5/UwWoZXCA38ov
+   FQ6HTboNXXq4t1UdyiB5RcD3mKe9elaaM3d4ET2UK5UZ0yAN3JMHYGV0j
+   vz6c1jknzDFzS5aSBxzaAb+PyI9IrfhHSkqssNGZUz09BcCrh0oTAhf8j
+   Q==;
+X-CSE-ConnectionGUID: S+v/tMpxS3C40uKQK+rRug==
+X-CSE-MsgGUID: /jL8u7rJTcaATefMfWLfVg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="56062901"
 X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="67730621"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 10:38:08 -0700
-X-CSE-ConnectionGUID: dcyHzB4zQ3ui1GGBd+1Ckg==
-X-CSE-MsgGUID: L2v+Bpk9RwKcrXFUygimzw==
+   d="scan'208";a="56062901"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 10:39:26 -0700
+X-CSE-ConnectionGUID: LTFjkgePQNiyogW7vMeOWA==
+X-CSE-MsgGUID: ty/ZeoGMREuU+gH39245sw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="196357205"
+   d="scan'208";a="202565003"
 Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by orviesa002.jf.intel.com with ESMTP; 08 Aug 2025 10:38:06 -0700
-Subject: [PATCH] MAINTAINERS: Mark coretemp driver as orphaned
+  by orviesa001.jf.intel.com with ESMTP; 08 Aug 2025 10:39:25 -0700
+Subject: [PATCH] MAINTAINERS: Remove bouncing T7XX reviewer
 To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>, Liu Haijun <haijun.liu@mediatek.com>, netdev@vger.kernel.org, Ricardo Martinez <ricardo.martinez@linux.intel.com>
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 08 Aug 2025 10:38:07 -0700
-Message-Id: <20250808173807.96D134EA@davehans-spike.ostc.intel.com>
+Date: Fri, 08 Aug 2025 10:39:25 -0700
+Message-Id: <20250808173925.FECE3782@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,31 +70,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-This maintainer's email no longer works. Remove it from MAINTAINERS.
-Also mark the driver as Orphaned for now.
+This reviewer's email no longer works. Remove it from MAINTAINERS.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org
+Cc: Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>
+Cc: Liu Haijun <haijun.liu@mediatek.com>
+Cc: Ricardo Martinez <ricardo.martinez@linux.intel.com>
+Cc: netdev@vger.kernel.org
 ---
 
- b/MAINTAINERS |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ b/MAINTAINERS |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff -puN MAINTAINERS~MAINTAINERS-20250707-2 MAINTAINERS
---- a/MAINTAINERS~MAINTAINERS-20250707-2	2025-08-08 10:36:09.028985285 -0700
-+++ b/MAINTAINERS	2025-08-08 10:36:09.043986599 -0700
-@@ -6281,9 +6281,8 @@ F:	tools/testing/selftests/cgroup/test_k
- F:	tools/testing/selftests/cgroup/test_memcontrol.c
- 
- CORETEMP HARDWARE MONITORING DRIVER
--M:	Fenghua Yu <fenghua.yu@intel.com>
- L:	linux-hwmon@vger.kernel.org
--S:	Maintained
-+S:	Orphan
- F:	Documentation/hwmon/coretemp.rst
- F:	drivers/hwmon/coretemp.c
- 
+diff -puN MAINTAINERS~MAINTAINERS-20250707-4 MAINTAINERS
+--- a/MAINTAINERS~MAINTAINERS-20250707-4	2025-08-08 10:38:10.580631443 -0700
++++ b/MAINTAINERS	2025-08-08 10:38:10.592632494 -0700
+@@ -15671,7 +15671,6 @@ F:	net/dsa/tag_mtk.c
+ MEDIATEK T7XX 5G WWAN MODEM DRIVER
+ M:	Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>
+ R:	Liu Haijun <haijun.liu@mediatek.com>
+-R:	M Chetan Kumar <m.chetan.kumar@linux.intel.com>
+ R:	Ricardo Martinez <ricardo.martinez@linux.intel.com>
+ L:	netdev@vger.kernel.org
+ S:	Supported
 _
 
