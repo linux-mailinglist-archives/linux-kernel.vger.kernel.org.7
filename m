@@ -1,108 +1,120 @@
-Return-Path: <linux-kernel+bounces-760633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F54AB1EE01
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:45:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017CAB1EE03
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552F81C241E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287D7170ECC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD461FC109;
-	Fri,  8 Aug 2025 17:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33051E9B2D;
+	Fri,  8 Aug 2025 17:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U5t870wP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="P2izBx7a"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43541E1E19;
-	Fri,  8 Aug 2025 17:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D541110F1;
+	Fri,  8 Aug 2025 17:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754675117; cv=none; b=ZVhblmz1qcjlVqFauBeoVTnnua3o/jNhVxKY0zmdSIrtkY0F7JSa0fcsg1zcrRtcNiBrq0pgj1sHVFniDMP3Pf8kwck0+lADBSTHnGtpIbIVMWLLMxZRnPw7u/uCsyT17SFjjWaPUIKqkQHRvf44a1N4sc2CsPP1Qq319qkPT1M=
+	t=1754675156; cv=none; b=f7yld/fwcc+UhoT5BbLAhGy6ufeHhc73UN6DADhbmSfKcfzp0YwerLVlA2uAUo5CR0JcCIAAqlYetVfy7cmmPF8mzcYPbROYLcYY3bkQyxdI/O7xnOWqcMEm6z7FFBF4FyQifstmM8H2HbNaYid454Bk5fT/DWc6aHvlSzNuYdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754675117; c=relaxed/simple;
-	bh=UVukXqaBHBLJSuReTQ6CWOB4K+vGCgV0gGvwymfp5kg=;
-	h=Subject:To:Cc:From:Date:Message-Id; b=Z8XpBjpBqYVHRr19UYqpybcFURNb7UUJuFIAK2OTsZBJFPZBhspkIuoXM5Qk1nSgi3RspE25bjZU0Ib3IG+I4cLAGfUdRbQDv+XXIWRJLVnxXD7Vmf0cvVAy/MdHJ/v8v2SDm+Vr77uL+H40iRKUx6M4zJqCtsDt/51Va4fsH7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U5t870wP; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754675116; x=1786211116;
-  h=subject:to:cc:from:date:message-id;
-  bh=UVukXqaBHBLJSuReTQ6CWOB4K+vGCgV0gGvwymfp5kg=;
-  b=U5t870wPq0IXa7LJTqLEcZxx52bCxxSGZoHnqfcEw69xVS5APj0blTYy
-   eAYR8SS4/Jq0ixajkAxFWjAgAglQ4EracGgGBRcGUav1SE9HwHz+ekZ0N
-   OBv8C4eLEluww5OBQDBpiPXpkHwopqtAnVd5GE3aPN6i4sV+lpm9iSJuJ
-   5UoElXfieiKgqm7UjIQVDqoXpwuB7P611Bs+oYPU+P2hSbCXV1bIjD+oA
-   o95sm3ihxagsZ00pxw5S/3YuWj0u4fzz/SSPz8roRCApqWHgi6ukVg/yQ
-   JUYtL6HoqxlvKnalycAwXiYdSJgQ50CpR443HvfryZ8OQyQU4Mjj2HJ+c
-   w==;
-X-CSE-ConnectionGUID: ZQpU4ZprQf+3l9jf//EL2A==
-X-CSE-MsgGUID: oQYdc7azQIebBmTDIgdIlw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="56063838"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="56063838"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 10:45:12 -0700
-X-CSE-ConnectionGUID: KGThBB1MTaSUiBXU8o2YZQ==
-X-CSE-MsgGUID: /PEAKnKnQIKNHm2+tWd+KQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="202566839"
-Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by orviesa001.jf.intel.com with ESMTP; 08 Aug 2025 10:45:05 -0700
-Subject: [PATCH] MAINTAINERS: Mark Intel WWAN IOSM driver as orphaned
-To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, Loic Poulain <loic.poulain@oss.qualcomm.com>, netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>, Sergey Ryazanov <ryazanov.s.a@gmail.com>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 08 Aug 2025 10:45:05 -0700
-Message-Id: <20250808174505.C9FF434F@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1754675156; c=relaxed/simple;
+	bh=cMPX83TXW5WS1B/djWZ1BWLuRX2sVxKhO971mWW3Bbc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QSTbH4ykN7Bj0Ik0PHNwqbXQc6Q+/T+ygc6PSsr3f/dQXqWr5xSUo3WKKDMxtK3TYDk3O5uxV0Ty0YBgUIc7V8yMlKJJIRW6xigFdpMrJ6LLwC7+wzTK69f+QDQ28aE92yTpRfrADOWhSSlYfAnl42GyuA5CMxneq+ieNN0Ulr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=P2izBx7a; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1754675145;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fpm+EefCxsK9ltMIu4skM6GdnS0CE2R/LNLTBMAwR+8=;
+	b=P2izBx7a6ckvP7R/lUPQJzhhq9+t2zVzBAI6BrFG/Ysh4FecA58vIyvKAYaWw9b4GEwyMd
+	2nLUt2kwdNAOntXzq6LCjDeZVPBQv5UYiIPxFfU3gIymSLy7iIc3FItFhiwHsDNFizGpZL
+	2nA9I426y1rtUbKmifX/URbO3d/2YvU=
+From: Sven Eckelmann <sven@narfation.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: chris.packham@alliedtelesis.co.nz, Alex Guo <alexguo1023@gmail.com>,
+ andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH] i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
+Date: Fri, 08 Aug 2025 19:45:39 +0200
+Message-ID: <10749199.nUPlyArG6x@sven-desktop>
+In-Reply-To: <aJB6u1WoNjiE-tZz@shikoro>
+References:
+ <20250615235248.529019-1-alexguo1023@gmail.com> <4670491.LvFx2qVVIh@ripper>
+ <aJB6u1WoNjiE-tZz@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart2364835.iZASKD2KPV";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+
+--nextPart2364835.iZASKD2KPV
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Fri, 08 Aug 2025 19:45:39 +0200
+Message-ID: <10749199.nUPlyArG6x@sven-desktop>
+In-Reply-To: <aJB6u1WoNjiE-tZz@shikoro>
+MIME-Version: 1.0
+
+On Monday, 4 August 2025 11:17:47 CEST Wolfram Sang wrote:
+> Yes, we can do that. In general, it doesn't make sense to add this check
+> when the ultimate goal is to support SMBus v3 which doesn't need the
+> check anymore. But if it is blocking further development, we can apply
+> this. The check will be removed when SMBus v3 support comes in.
+
+Yes, when I2C_SMBUS_BLOCK_MAX becomes >= 255 bytes, such a check would not 
+be necessary. But this driver is already in Linux 6.13 - and in this version, 
+I2C_SMBUS_BLOCK_MAX is just 32 bytes. So, just from the code perspective, it 
+would be interesting for Linux stable to get this fixed in longterm kernel 
+6.15 (and also the most recent Linux 6.16.y).
+
+If you want to have an argument against this patch then it would be the the 
+hardware limitation of this i2c host controller. It only allows to transfer up 
+to 16 bytes. But then you could also argue that there might be variants which 
+will not have this limitation anymore. And Jonas is already trying to make the 
+driver more flexible [1] - the future will only show whether this will ever be 
+a relevant check (before I2C_SMBUS_BLOCK_MAX is large enough to make this 
+check obsolete).
+
+Btw. I've already picked it up in my patchset [2] to avoid conflicts with this 
+patch. And since they (2-4) fix broken functionality in Linux 6.13, this patch 
+becomes a requirement for backporting those fixes to the stable kernels.
+
+Kind regards,
+	Sven
+
+[1] https://lore.kernel.org/r/20250729075145.2972-1-jelonek.jonas@gmail.com
+[2] https://lore.kernel.org/r/20250804-i2c-rtl9300-multi-byte-v3-0-e20607e1b28c@narfation.org
+--nextPart2364835.iZASKD2KPV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaJY3wwAKCRBND3cr0xT1
+y93kAPwNyB6o77zkG3AMKPTc4CK5HZntt58sAq5BoD7c205gSAEAxbybkLWRb6n9
+29KQvlkpHYwO0+DMtzCL8HSeI5g7qg4=
+=XPxz
+-----END PGP SIGNATURE-----
+
+--nextPart2364835.iZASKD2KPV--
 
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
 
-This maintainer's email no longer works. Remove it from MAINTAINERS.
-
-I've been unable to locate a new maintainer for this at Intel. Mark
-the driver as Orphaned.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org
----
-
- b/MAINTAINERS |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff -puN MAINTAINERS~MAINTAINERS-20250707-5 MAINTAINERS
---- a/MAINTAINERS~MAINTAINERS-20250707-5	2025-08-08 10:39:37.235217068 -0700
-+++ b/MAINTAINERS	2025-08-08 10:39:37.253218644 -0700
-@@ -12722,9 +12722,8 @@ S:	Maintained
- F:	drivers/platform/x86/intel/wmi/thunderbolt.c
- 
- INTEL WWAN IOSM DRIVER
--M:	M Chetan Kumar <m.chetan.kumar@intel.com>
- L:	netdev@vger.kernel.org
--S:	Maintained
-+S:	Orphan
- F:	drivers/net/wwan/iosm/
- 
- INTEL(R) FLEXIBLE RETURN AND EVENT DELIVERY
-_
 
