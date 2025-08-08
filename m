@@ -1,209 +1,222 @@
-Return-Path: <linux-kernel+bounces-759873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D4EB1E3C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D872BB1E3C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B4E3A79BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:47:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93BD53AFFDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF9B2222C8;
-	Fri,  8 Aug 2025 07:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4614217709;
+	Fri,  8 Aug 2025 07:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cu6dOfSK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKmjlGP4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D002A8F6E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6CD21D599
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754639266; cv=none; b=Dv7456Uf9GtG0Cke18RmkVxwOMK9g3IUz5bDcnT98p4+33vlmukQAXayTSa2DMwh8joB+7RQX68EW4CjizdM6hmHuRONMY7mklgeizOhX0qZufSi8TOhpv8a4aMGFEJV1rXx1KdJW1WUq6ZiSN5aENsnVB4ydC9Y6fb6fooigOU=
+	t=1754639303; cv=none; b=NQ1YclGW8aPFKXjvn+EjaguNeJVqQD6AR+WDqbfbLHA4FcfWM1Uzl5kmzWdWvhkZ0TNt26ny/8uFx2Vu8K6hY34eyCl1LdbdpKZww7T6YEcW6eF76PzkkC9zVTHTL/Vj7+WaS1oFXLiRAJdF+5an3wSFIHMOTaAulupOOpOeSkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754639266; c=relaxed/simple;
-	bh=AKeo2sd5swEgX4Q2i5QLzi6U9GgVahrKWPaX3AstgMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dO2wOukc8lT0H54QsRXwhy2lKI0uAEftC0dTGyLj/6fHvN43QG5v6Y/G8VqJU7DrJYK4/IuQN+soAgW84lghQTfspZxb3dWa1DXqp0w9//uLDYGmdVqqEqgcMXaTXWAYWTaHDWskgsTz4dskopEOgg0lf8Xtk9FktcE+gYalhhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cu6dOfSK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754639262;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9z92Cgx46Jeef+FwLHmeK77VJYJkUePJFOt0Vz3vqio=;
-	b=Cu6dOfSKQTcSf4J0HtPxi18Kc5LoZzpF3HNtIJgxpn4ibAPS7CD6UhM5hty7OGsTQFrRI1
-	KwyVLKhdyLhQnmA7JVWwlPUpbaMk+ErsDSEQeS/t7p2Nf5X2G5BSqqW3SmCRR5OFgIuMoh
-	unFRelhrBGknxu+108bZgLm3wPkfSnc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-571-fYcNuUheMN-MtHdaiXPtsQ-1; Fri,
- 08 Aug 2025 03:46:31 -0400
-X-MC-Unique: fYcNuUheMN-MtHdaiXPtsQ-1
-X-Mimecast-MFC-AGG-ID: fYcNuUheMN-MtHdaiXPtsQ_1754639190
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A8E518002A1;
-	Fri,  8 Aug 2025 07:46:29 +0000 (UTC)
-Received: from [10.44.22.5] (unknown [10.44.22.5])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62D43180047F;
-	Fri,  8 Aug 2025 07:46:25 +0000 (UTC)
-Message-ID: <cb43b303-0f8b-411f-bbae-a98f0dd37d2e@redhat.com>
-Date: Fri, 8 Aug 2025 09:46:22 +0200
+	s=arc-20240116; t=1754639303; c=relaxed/simple;
+	bh=BZTS7frkKfJe2pCWHUR6QsakG7KU7hU/moSvHgaur8c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hFdm+2L2ePqLTN9z3eukSir2SOX+rI/PG86lczCuwVIkUpjrmUjDqBpRxzcwHyz4v5+OxqSRdj3gZXdoNiDOciAxNTlNe5S4OMdWkPQxMcleHJIrX5S7sEnSz177Jco2vZJuJGk3lvmRjf9Y12Eq5wwAYSIBL9POzDfH+Uk/Bn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKmjlGP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80CB1C4CEED;
+	Fri,  8 Aug 2025 07:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754639302;
+	bh=BZTS7frkKfJe2pCWHUR6QsakG7KU7hU/moSvHgaur8c=;
+	h=From:Date:Subject:To:Cc:From;
+	b=DKmjlGP4PMaY9KwqezPx/6JgMyFPINxmOPo89ZH3FEh8W2kzW9iHe5AE8IBbhHnwY
+	 LgjcDN1pRkJaKpEH+vpGOzfwgp+3Ei2UI6meqfVBY6sfLGH064+dS4RLxZjHF6J4Zt
+	 M9DnV38O61FK9gLNJnj5oSF3kzGs8/W/CGdH7B2DJIwM/QBBYDn5F/z4dqjp5E/17S
+	 p8HXM586tUa9DWMqV5Wsj97I1hMDZyi5XnMRVU1bhZfAbJiNFKK4lDZZQ0wp/U+upY
+	 1CKvQchEAlhY4KTIwEGb8AllGWjFbFIP54Ke7olLshkj14lcFBiBaY8ntGJ5Ajk+01
+	 dbWE2P3f08aog==
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 08 Aug 2025 00:48:19 -0700
+Subject: [PATCH v2] mm/swapfile.c: introduce function
+ alloc_swap_scan_list()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 2/7] vduse: add vq group support
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- "Michael S . Tsirkin" <mst@redhat.com>
-Cc: Cindy Lu <lulu@redhat.com>, Yongji Xie <xieyongji@bytedance.com>,
- Stefano Garzarella <sgarzare@redhat.com>, virtualization@lists.linux.dev,
- Laurent Vivier <lvivier@redhat.com>, linux-kernel@vger.kernel.org,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, jasowang@redhat.com,
- Maxime Coquelin <mcoqueli@redhat.com>
-References: <20250807115752.1663383-1-eperezma@redhat.com>
- <20250807115752.1663383-3-eperezma@redhat.com>
-Content-Language: en-US
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250807115752.1663383-3-eperezma@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250808-swap-scan-list-v2-1-d50e4758ecee@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMKrlWgC/3WMQQ6CMBBFr0Jm7ZgyFAOuvIdhUWCAiaQlraka0
+ rtb2bt8P/+9HQJ74QDXYgfPUYI4m4FOBQyLsTOjjJmBFNWqURcML7NhGIzFVcITqW9arjTpXhn
+ I0uZ5kvcRvHeZl3xy/nP0Y/lb/6ZiiSWaemIa20orQ7cHe8vr2fkZupTSFxKlv9KtAAAA
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+ Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
+ Barry Song <baohua@kernel.org>, 
+ "Huang, Ying" <ying.huang@linux.alibaba.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Chris Li <chrisl@kernel.org>
+X-Mailer: b4 0.13.0
 
+This the alloc_swap_scan_list() will scan the whole list or the first
+cluster.
 
+This reduces the repeat patterns of isolating a cluster then scanning
+that cluster. As a result, cluster_alloc_swap_entry() is shorter and shallower.
 
-On 8/7/25 1:57 PM, Eugenio Pérez wrote:
-> diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
-> index 9a56d0416bfe..b4b139dc76bb 100644
-> --- a/include/uapi/linux/vduse.h
-> +++ b/include/uapi/linux/vduse.h
-> @@ -31,6 +31,7 @@
->    * @features: virtio features
->    * @vq_num: the number of virtqueues
->    * @vq_align: the allocation alignment of virtqueue's metadata
-> + * @ngroups: number of vq groups that VDUSE device declares
->    * @reserved: for future use, needs to be initialized to zero
->    * @config_size: the size of the configuration space
->    * @config: the buffer of the configuration space
-> @@ -45,7 +46,8 @@ struct vduse_dev_config {
->   	__u64 features;
->   	__u32 vq_num;
->   	__u32 vq_align;
-> -	__u32 reserved[13];
-> +	__u32 ngroups; /* if VDUSE_API_VERSION >= 1 */
-> +	__u32 reserved[12];
->   	__u32 config_size;
->   	__u8 config[];
->   };
-> @@ -160,6 +162,16 @@ struct vduse_vq_state_packed {
->   	__u16 last_used_idx;
->   };
->   
-> +/**
-> + * struct vduse_vq_group - virtqueue group
-> + * @num: Index of the virtqueue group
-> + * @num: Group
-> + */
-> +struct vduse_vq_group {
-> +	__u32 index;
-> +	__u32 num;
-> +};
-> +
->   /**
->    * struct vduse_vq_info - information of a virtqueue
->    * @index: virtqueue index
-> @@ -182,6 +194,7 @@ struct vduse_vq_info {
->   	union {
->   		struct vduse_vq_state_split split;
->   		struct vduse_vq_state_packed packed;
-> +		struct vduse_vq_group group;
->   	};
->   	__u8 ready;
->   };
-> @@ -274,6 +287,8 @@ enum vduse_req_type {
->   	VDUSE_GET_VQ_STATE,
->   	VDUSE_SET_STATUS,
->   	VDUSE_UPDATE_IOTLB,
-> +	VDUSE_GET_VQ_GROUP,
-> +	VDUSE_GET_VRING_DESC_GROUP,
->   };
->   
->   /**
-> @@ -328,6 +343,7 @@ struct vduse_dev_request {
->   		struct vduse_vq_state vq_state;
->   		struct vduse_dev_status s;
->   		struct vduse_iova_range iova;
-> +		struct vduse_vq_group vq_group; /* Only if vduse api version >= 1 */
->   		__u32 padding[32];
->   	};
->   };
-> @@ -350,6 +366,7 @@ struct vduse_dev_response {
->   	__u32 reserved[4];
->   	union {
->   		struct vduse_vq_state vq_state;
-> +		struct vduse_vq_group vq_group; /* Only if vduse api version >= 1 */
->   		__u32 padding[32];
->   	};
->   };
+No functional change.
 
-Same comment as for patch 5, padding should be updated.
+Signed-off-by: Chris Li <chrisl@kernel.org>
+---
+This patch goes on top of Kairui's swap improve cluster scan series:
+https://lore.kernel.org/linux-mm/20250806161748.76651-1-ryncsn@gmail.com/
+---
+Changes in v2:
+- Adjust change base on Andrew's feedback on int type and break out of
+  loop.
+- Link to v1: https://lore.kernel.org/r/20250806-swap-scan-list-v1-1-a5fe2d9340a2@kernel.org
+---
+ mm/swapfile.c | 86 ++++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 47 insertions(+), 39 deletions(-)
 
-Regards,
-Maxime
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 4a0cf4fb348d..f26678d68874 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -820,6 +820,29 @@ static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si,
+ 	return found;
+ }
+ 
++static unsigned int alloc_swap_scan_list(struct swap_info_struct *si,
++					 struct list_head *list,
++					 unsigned int order,
++					 unsigned char usage,
++					 bool scan_all)
++{
++	unsigned int found = SWAP_ENTRY_INVALID;
++
++	do {
++		struct swap_cluster_info *ci = isolate_lock_cluster(si, list);
++		unsigned long offset;
++
++		if (!ci)
++			break;
++		offset = cluster_offset(si, ci);
++		found = alloc_swap_scan_cluster(si, ci, offset, order, usage);
++		if (found)
++			break;
++	} while (scan_all);
++
++	return found;
++}
++
+ static void swap_reclaim_full_clusters(struct swap_info_struct *si, bool force)
+ {
+ 	long to_scan = 1;
+@@ -913,32 +936,24 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+ 	 * to spread out the writes.
+ 	 */
+ 	if (si->flags & SWP_PAGE_DISCARD) {
+-		ci = isolate_lock_cluster(si, &si->free_clusters);
+-		if (ci) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							order, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->free_clusters, order, usage,
++					     false);
++		if (found)
++			goto done;
+ 	}
+ 
+ 	if (order < PMD_ORDER) {
+-		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[order]))) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							order, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->nonfull_clusters[order],
++					     order, usage, 0);
++		if (found)
++			goto done;
+ 	}
+ 
+ 	if (!(si->flags & SWP_PAGE_DISCARD)) {
+-		ci = isolate_lock_cluster(si, &si->free_clusters);
+-		if (ci) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							order, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->free_clusters, order, usage,
++					     false);
++		if (found)
++			goto done;
+ 	}
+ 
+ 	/* Try reclaim full clusters if free and nonfull lists are drained */
+@@ -952,13 +967,10 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+ 		 * failure is not critical. Scanning one cluster still
+ 		 * keeps the list rotated and reclaimed (for HAS_CACHE).
+ 		 */
+-		ci = isolate_lock_cluster(si, &si->frag_clusters[order]);
+-		if (ci) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							order, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->frag_clusters[order], order,
++					     usage, true);
++		if (found)
++			goto done;
+ 	}
+ 
+ 	/*
+@@ -977,19 +989,15 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+ 		 * Clusters here have at least one usable slots and can't fail order 0
+ 		 * allocation, but reclaim may drop si->lock and race with another user.
+ 		 */
+-		while ((ci = isolate_lock_cluster(si, &si->frag_clusters[o]))) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							0, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->frag_clusters[o],
++					     0, usage, true);
++		if (found)
++			goto done;
+ 
+-		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[o]))) {
+-			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+-							0, usage);
+-			if (found)
+-				goto done;
+-		}
++		found = alloc_swap_scan_list(si, &si->nonfull_clusters[o],
++					     0, usage, true);
++		if (found)
++			goto done;
+ 	}
+ done:
+ 	if (!(si->flags & SWP_SOLIDSTATE))
+
+---
+base-commit: f89484324d5876ee10765fa61da0332899fa1a6a
+change-id: 20250806-swap-scan-list-2b89e3424b0a
+
+Best regards,
+-- 
+Chris Li <chrisl@kernel.org>
 
 
