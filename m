@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-760253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF82DB1E882
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:39:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D12CB1E886
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F2807B3116
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0FCB16EA03
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6ED827978D;
-	Fri,  8 Aug 2025 12:39:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127661DFF7;
-	Fri,  8 Aug 2025 12:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA242797A0;
+	Fri,  8 Aug 2025 12:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxSs+j5f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE24F1CAB3;
+	Fri,  8 Aug 2025 12:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754656757; cv=none; b=R0uvaOdC7I7ENsykAnZcZZA+yNVGauUQkFeYJknM/Z9JIVj5ivl3yI+yTw0B9sQRMSHwMQq7KO/Q5FcUwDVS6huEVriSYWfHlMsyC/AQ7z6JuuCsZs0LSFz40sngeqV9G8fjDMOl6tUg5X3UinLtfLn0sh6lyiu4oqXqz7utGSc=
+	t=1754656881; cv=none; b=h4dsQpu0ss1bXDhWxlyMj3bQmObU17DsSwfa8BfUBIqVuYzQMg6RZ83tMgux/8cTOZ91egH2/d5hDTkyE0tCocMTCdNtvGxIctCiK7bSmFT3O0dbZkUvmFYdzY7RcUlzfpzx2YOlmvnshB2t80xhNf17RjfQ6li17zUS4V5Yvt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754656757; c=relaxed/simple;
-	bh=ln1HNCzo9RIwrwVk2B7h9hUQxMxOLo8AM0M6ecxItZY=;
+	s=arc-20240116; t=1754656881; c=relaxed/simple;
+	bh=zlgu9JSVlseeLyVrq6HQ3TQhoDjjj/5JeROwbBJkVLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ak9APO6HQm9i/o4q9p8wpuHtOY0A0Pgis4UDecMMC305Fzvu60xB6FGEHwkJySHSwfqwV5NWlJBQM1tpk0D3eI+sAZ2a41NEOzUoQqCk9ghVbzvtFt3UzRrXWSSP9webm8dUwCaniBkMWLuhLhDAKhElx2v762kAF5MJDItHG+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 568FF16F8;
-	Fri,  8 Aug 2025 05:39:07 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C25D3F738;
-	Fri,  8 Aug 2025 05:39:15 -0700 (PDT)
-Date: Fri, 8 Aug 2025 13:39:13 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5/xdB/yreciagC6SZTSg6DB3y+MOevVzMiX6N1dIAchMlYOF1lkrQtX05CsJXwB6u1OvXCi3FIO1Yo1etUCTlbDaIPwGXnCjXFNT7OmWbPlRZ4G5Jf71B0Qtph/dY/0Fg/kRTTej83CbilfdU/szH4xx1WemycRIeqKq3ydKio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxSs+j5f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2220EC4CEF4;
+	Fri,  8 Aug 2025 12:41:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754656881;
+	bh=zlgu9JSVlseeLyVrq6HQ3TQhoDjjj/5JeROwbBJkVLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GxSs+j5ft/UKaggtneb1Y+z4+vN3e+LSz3cz+zbyVrW5boZXsOxE+cbnxfX3HQwT8
+	 7PH6nay715b1YnyU66BVfb4FXTAf39zoaj/CmtElLTUmgzMdqRxmtUx7hXZI+nMdTp
+	 iu4eMTQDTGR6ZMHSfMx7RFwGKeH84QQPfEXKnNnLPTvUWnhijvSsLDTXX/yf2lFy2y
+	 agqiFdLEJWZC21Q84CdXd7ebBcWrNJpH5NazkrF7ca0DJeEYZX0m+CsIqUOTJkM6AI
+	 jVsWYUw7BMmc7giBmlVy7AWxXBDM9ssqvVzAPbzsDUyzIzZ3a1LlSFxz0l0xwjg9+e
+	 0V5esqtG6Balg==
+Date: Fri, 8 Aug 2025 13:41:14 +0100
+From: Will Deacon <will@kernel.org>
+To: perlarsen@google.com
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
 	Joey Gouly <joey.gouly@arm.com>,
 	Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Zenghui Yu <yuzenghui@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v6 00/12] perf: arm_spe: Armv8.8 SPE features
-Message-ID: <20250808123913.GD3420125@e132581.arm.com>
-References: <20250808-james-perf-feat_spe_eft-v6-0-6daf498578c8@linaro.org>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, arve@android.com, ayrton@google.com,
+	qperret@google.com, sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v9 4/6] KVM: arm64: Mark optional FF-A 1.2 interfaces as
+ unsupported
+Message-ID: <aJXwan8iMtRBkiPX@willie-the-truck>
+References: <20250730-virtio-msg-ffa-v9-0-7f1b55c8d149@google.com>
+ <20250730-virtio-msg-ffa-v9-4-7f1b55c8d149@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,24 +66,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250808-james-perf-feat_spe_eft-v6-0-6daf498578c8@linaro.org>
+In-Reply-To: <20250730-virtio-msg-ffa-v9-4-7f1b55c8d149@google.com>
 
-On Fri, Aug 08, 2025 at 12:22:57PM +0100, James Clark wrote:
-> Support 3 new SPE features: FEAT_SPEv1p4 filters, FEAT_SPE_EFT extended
-> filtering, and SPE_FEAT_FDS data source filtering. The features are
-> independent can be applied separately:
+On Wed, Jul 30, 2025 at 09:15:07PM +0000, Per Larsen via B4 Relay wrote:
+> From: Per Larsen <perlarsen@google.com>
 > 
->   * Prerequisite sysreg changes - patch 1
->   * FEAT_SPEv1p4 - patches 2 - 3
->   * FEAT_SPE_EFT - patch 4
->   * FEAT_SPE_FDS - patches 5 - 9
->   * FEAT_SPE_FDS Perf tool changes - patches 10 - 12
+> Mark FF-A 1.2 interfaces as unsupported lest they get proxied. Also mark
+> FFA_EL3_INTR_HANDLE as unsupported as it is only valid for physical
+> instances.
 > 
-> The first two features will work with old Perfs but a Perf change to
-> parse the new config4 is required for the last feature.
+> Signed-off-by: Per Larsen <perlarsen@google.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 48183fa78014e420372c4fb5e489519bc652bf53..7fe96fe626d630a9009551e8dec1683617acafbd 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -674,6 +674,13 @@ static bool ffa_call_supported(u64 func_id)
+>  	case FFA_NOTIFICATION_SET:
+>  	case FFA_NOTIFICATION_GET:
+>  	case FFA_NOTIFICATION_INFO_GET:
+> +	/* Optional interfaces added in FF-A 1.2 */
+> +	case FFA_MSG_SEND_DIRECT_REQ2:		/* Optional per 7.5.1 */
+> +	case FFA_MSG_SEND_DIRECT_RESP2:		/* Optional per 7.5.1 */
+> +	case FFA_CONSOLE_LOG:			/* Optional per 13.1: not in Table 13.1 */
+> +	case FFA_PARTITION_INFO_GET_REGS:	/* Optional for virtual instances per 13.1 */
+> +	/* Unsupported interfaces added in FF-A 1.2 */
+> +	case FFA_EL3_INTR_HANDLE:		/* Only valid for secure physical instances */
 
-I tested FEAT_SPE_EFT (xxx_filter_mask), inv_data_src_filter
-and inv_event_filter, all of them work as expected.
+Shouldn't the secure side be rejecting that one for us, then?
 
-Tested-by: Leo Yan <leo.yan@arm.com>
+>  		return false;
+>  	}
+
+Regardless,
+
+Acked-by: Will Deacon <will@kernel.org>
+
+Will
 
