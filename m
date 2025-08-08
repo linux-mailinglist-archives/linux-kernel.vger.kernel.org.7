@@ -1,307 +1,112 @@
-Return-Path: <linux-kernel+bounces-760228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3145FB1E838
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:20:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2EAB1E83B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D311AA5C70
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF7D3AD40B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4E527781D;
-	Fri,  8 Aug 2025 12:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2191B277CBB;
+	Fri,  8 Aug 2025 12:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TMB42hKl"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dPzZMBIV"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EED2686A0
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0F4266EE7;
+	Fri,  8 Aug 2025 12:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754655639; cv=none; b=b0WKtw4vvJWrpyAo7o0xJnu7cqqJNaceO88o0FyckxAPWT2llbKle4hZboSylvkpBYaoAXJHe/aS9SBsqXmns9cz/QAp9xJoViwnDckgCKlTf38gCLRDokBlonwAuWOlddCdfLeF50FSNklNhADBW0lpsju1BkpIKjoXDBuRj34=
+	t=1754655682; cv=none; b=fECgd9HISwa0zUfgO2R8v5ADPb5NijnnLSh2G71fuCzQsCQ7JYXN+4MyzxsiycsA2HUPHLVL8Nx2dRd0jjN0eCbgYbxJCuI3gvecLa31wTdknzEp3eJ/z1Z3RC+hBCsTbp9dJbJdOBDBRFogTo//s7ca4xSIRVslgv0O480Qx3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754655639; c=relaxed/simple;
-	bh=d/HSvy18/PzpVXX8m8PFtvvfHgZD6mp8P9B6y9ruRS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H5ACGzBdF+TZcABq3jHG5yCpVFJteYCZNdcgITpq2poHcPacGubmpOkmHYrsJZGpGaa89t4IYzQdjqsmirbayiK4YCFi/Aokr+B9SHomMgw6KvjDVrFHWEZg9i7pVCpzpX0PiH60qIzZrWvJUPLrjkZkkbdldgs46Vq0/8Ad8sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TMB42hKl; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61543b05b7cso10796a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 05:20:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754655634; x=1755260434; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3rzYVptOKE6RcZ0qvjvmsPnga1215NKTSv+ot9kbgm8=;
-        b=TMB42hKlSxywBDWCtomYtx+3BAEn++e/9EH//w5NhDkzOLk/PShUFSIqWRjwI5uKi/
-         Hc/fR9dz5Q7iR9VC1qlp2UXCU9FnNVBczck8mVhVO5rGO02DZKSNwO1PTUx+THsQ/NxR
-         Z3DGdxE7E/u97GrzUVAFtupsmcqH9eZ1uKQcu4Uh2dnNhNsjwMP9+DHfxMsVxhQy2mZx
-         otyNuQovP6Vgw+sY7RWKNZlpxy1ZjBf6ZGoYpE7Gq3LRHPxRAEu4q7ZQt7mYleK8Tfh0
-         JBXVPLyy+NlpqWhB8S5PWN/ZbztjTlkOtJZHSJMBfJhKEw1nyHzEzcYsG4/o+rHxYIYv
-         tufw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754655634; x=1755260434;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3rzYVptOKE6RcZ0qvjvmsPnga1215NKTSv+ot9kbgm8=;
-        b=vnc72Y8T/N2K5pf1Px0MY9kc6gy2L7044Z0umRA+LBcNrvi4lF1ATl1wpetyhUtNrJ
-         9jveD4RBH78kxlq6CDObgdYSBDUzqCIiXD59iJmqf3fF7pSJXqB/XXZB7VovVB2qyhYV
-         TmNk2QW5Nt9FwdJqCFOJ8AzDQADOHwnC5JbWGkDAlMla3CFmNvUMOs8CKIzhIWl9gUns
-         usC/WNShTjOboA+cQjoR9MSoPDCmaKnhyEJ4lMGk6FK33wsCMy+XOGYlt7Gzy1fB5ji5
-         ycSRXaXW394pOnhTkPYhzPVoAK68UONMHjYsTvEmXjQf1uroE5akMzPGDXWZ63Fi4FkK
-         woiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWJLK4jrTVS37m9MIp0Rpv5uOpIOn7ZFLJe0fFox1hEo65CDIlx357R6/u/0ncJC8C4qwD6zfQGmjOqio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdKepFug1u67O/iIHigGRSEfz0/sMwJDeLHAc4JvgUoKCis62B
-	T/UT9dE5QtQ+l0wF2hJcSj2F0iGlUoxYGoRzdo7RGt5yG2TGIfBjmBjzbrj3blHPudoKLf05YoR
-	bWRdeBd8rcMNK2N9a6vWLeSWqyZXGQYQSHVLZdYSk
-X-Gm-Gg: ASbGnculeRDJq1EhHb0VO9oqzamB3NQDMmOLPeRfwQI0Q/9khQw82qZ8kGT4IQ7GCyd
-	1wbqYacFxiRRii+1NESR5BKKfN1GVc262LPCA2wO282xo1kTDxKR/pRUL1xld5ZeozK+qUkCeD2
-	i0bWvfc190cqNyL4jpakG3LRPSSiC9cdHc6j7UZ2tKHGHcUPBI9EJYNMudcn3K4yVWldcdr8cZn
-	Rv3LLTH
-X-Google-Smtp-Source: AGHT+IG4063AzftLr2nNg6LP2eisixxrOm1cn9iuvLVn3oLVwkWGVefZC3UWEn6Yr/d0q/zLPSnZ+hF/HN7uvjRhvSY=
-X-Received: by 2002:a50:9351:0:b0:615:60d2:c013 with SMTP id
- 4fb4d7f45d1cf-617e48ffd8cmr60281a12.3.1754655633629; Fri, 08 Aug 2025
- 05:20:33 -0700 (PDT)
+	s=arc-20240116; t=1754655682; c=relaxed/simple;
+	bh=pQKEY9HKOjJeHrE/3Jam+y7lJIQyCzEeJAN2hxtlJ8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sgYD7NdnVHyd8+zkGEgvW24HPbjneN3k3RuRqLZukvVURNzFP978T6ZMDLVuQWXEREIvJxz9+DZEeaOctrFnV9hcTDfURNoo9tuo+qxXH4q6LMWk674Ry93XPBqfH+lYYHkxtV3OUve7tp+puArg2+6VZjqtRRf+C7tZFbVTqnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dPzZMBIV; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 516CA42D0;
+	Fri,  8 Aug 2025 14:20:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754655628;
+	bh=pQKEY9HKOjJeHrE/3Jam+y7lJIQyCzEeJAN2hxtlJ8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dPzZMBIV5toDL6OezANTsT31Znty5c+FMBEc/jrycgU2PKmGKMGcUmX8BzAMjd6U+
+	 N6zbUDa7UvNy//cOwdVhSXx1QnSXblG2Yn/yk0AjycwIv8jSwnZVJD0V/KHI3xS4fO
+	 66ijSLgLCgyFCKYvBbRnhpTtY9HMkTdCKd1d5TXQ=
+Date: Fri, 8 Aug 2025 15:21:03 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+	"kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Hans de Goede <hansg@kernel.org>,
+	=?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Tarang Raval <tarang.raval@siliconsignals.io>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Matthias Fend <matthias.fend@emfend.at>,
+	Arnd Bergmann <arnd@arndb.de>, Jim Lai <jim.lai@intel.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 0/2] media: i2c: Add ov2735 camera sensor driver
+Message-ID: <20250808122103.GC7299@pendragon.ideasonboard.com>
+References: <20250731061004.5447-1-hardevsinh.palaniya@siliconsignals.io>
+ <PN3P287MB3519EB2966DFF198318CC164FF2FA@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729193647.3410634-1-marievic@google.com> <20250729193647.3410634-2-marievic@google.com>
- <CA+GJov4BQ1mRa-JaHoML+gF7rk=XY=hCRL+Shag6Aj6VbUgUeg@mail.gmail.com>
-In-Reply-To: <CA+GJov4BQ1mRa-JaHoML+gF7rk=XY=hCRL+Shag6Aj6VbUgUeg@mail.gmail.com>
-From: Marie Zhussupova <marievic@google.com>
-Date: Fri, 8 Aug 2025 08:20:20 -0400
-X-Gm-Features: Ac12FXxk_i-p3y5IMbqA_cUeg1wd-aJHm01gFGsskeUDN6bJI53lY7PD-TwOzYw
-Message-ID: <CAAkQn5JNmbuv=nj3Z5hDQNE0sAzrRNE_rJXrZVN4EqUDikV9=Q@mail.gmail.com>
-Subject: Re: [PATCH 1/9] kunit: Add parent kunit for parameterized test context
-To: Rae Moar <rmoar@google.com>
-Cc: davidgow@google.com, shuah@kernel.org, brendan.higgins@linux.dev, 
-	elver@google.com, dvyukov@google.com, lucas.demarchi@intel.com, 
-	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN3P287MB3519EB2966DFF198318CC164FF2FA@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
 
-On Tue, Aug 5, 2025 at 11:17=E2=80=AFAM Rae Moar <rmoar@google.com> wrote:
->
-> On Tue, Jul 29, 2025 at 3:37=E2=80=AFPM Marie Zhussupova <marievic@google=
-.com> wrote:
-> >
-> > Currently, KUnit parameterized tests lack a mechanism
-> > to share resources across individual test invocations
-> > because the same `struct kunit` instance is reused for
-> > each test.
-> >
-> > This patch refactors kunit_run_tests() to provide each
-> > parameterized test with its own `struct kunit` instance.
-> > A new parent pointer is added to `struct kunit`, allowing
-> > individual parameterized tests to reference a shared
-> > parent kunit instance. Resources added to this parent
-> > will then be accessible to all individual parameter
-> > test executions.
-> >
-> > Signed-off-by: Marie Zhussupova <marievic@google.com>
->
-> Hello!
->
-> Thank you so much for sending out this series. I have wanted to see an
-> update of our parameterized test framework for a while. I have a few
-> comments below for this patch. But otherwise it is looking good.
->
-> Reviewed-by: Rae Moar <rmoar@google.com>
->
-> Thanks!
-> -Rae
->
-> > ---
-> >  include/kunit/test.h | 12 ++++++++++--
-> >  lib/kunit/test.c     | 32 +++++++++++++++++++-------------
-> >  2 files changed, 29 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/include/kunit/test.h b/include/kunit/test.h
-> > index 39c768f87dc9..a42d0c8cb985 100644
-> > --- a/include/kunit/test.h
-> > +++ b/include/kunit/test.h
-> > @@ -268,14 +268,22 @@ struct kunit_suite_set {
-> >   *
-> >   * @priv: for user to store arbitrary data. Commonly used to pass data
-> >   *       created in the init function (see &struct kunit_suite).
-> > + * @parent: for user to store data that they want to shared across
-> > + *         parameterized tests.
-> >   *
->
-> As David mentioned, I would also prefer that this provides a more
-> general description of the @parent field here. Although this is
-> currently only used for parameterized tests, it could have other use
-> cases in the future.
->
+Hi Hardevsinh,
 
-Will edit this in v2.
+On Fri, Aug 08, 2025 at 09:13:01AM +0000, Hardevsinh Palaniya wrote:
+> > The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an
+> > active array size of 1920 x 1080.
+> > 
+> > The following features are supported:
+> > - Manual exposure an gain control support.
+> > - vblank/hblank control support.
+> > - Test pattern support control.
+> > - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10).
+> > 
+> > The driver is tested on mainline branch v6.14-rc6 on IMX8MP Debix Model a.
+>  
+> Hi Sakari, Laurent, Kieran,
+>  
+> Please let me know if there’s anything else I should improve or change.
+> If not, I will proceed with sending the next version of this series, 
+> including Andy’s and Krzysztof’s changes.
 
-> >   * Used to store information about the current context under which the=
- test
-> >   * is running. Most of this data is private and should only be accesse=
-d
-> > - * indirectly via public functions; the one exception is @priv which c=
-an be
-> > - * used by the test writer to store arbitrary data.
-> > + * indirectly via public functions; the two exceptions are @priv and @=
-parent
-> > + * which can be used by the test writer to store arbitrary data or dat=
-a that is
-> > + * available to all parameter test executions, respectively.
->
-> In addition, I would prefer that the call out to @parent here is also
-> changed to a more general description of the @parent field. However,
-> feel free to also include the description of the use case for the
-> parameterized tests.
->
+I'm quite busy at the moment and won't have time to review the driver
+until after the OSS Europe conference.
 
-I will edit this in v2, as well.
+-- 
+Regards,
 
-> >   */
-> >  struct kunit {
-> >         void *priv;
-> > +       /*
-> > +        * Reference to the parent struct kunit for storing shared reso=
-urces
-> > +        * during parameterized testing.
-> > +        */
->
-> I am more 50/50 on changing this description. Could change it just to:
-> "Reference to the parent struct kunit for storing shared resources."
-
-Thank you for the suggestion! The description would sound good.
-
->
-> > +       struct kunit *parent;
-> >
-> >         /* private: internal use only. */
-> >         const char *name; /* Read only after initialization! */
-> > diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-> > index f3c6b11f12b8..4d6a39eb2c80 100644
-> > --- a/lib/kunit/test.c
-> > +++ b/lib/kunit/test.c
-> > @@ -647,6 +647,7 @@ int kunit_run_tests(struct kunit_suite *suite)
-> >         struct kunit_case *test_case;
-> >         struct kunit_result_stats suite_stats =3D { 0 };
-> >         struct kunit_result_stats total_stats =3D { 0 };
-> > +       const void *curr_param;
-> >
-> >         /* Taint the kernel so we know we've run tests. */
-> >         add_taint(TAINT_TEST, LOCKDEP_STILL_OK);
-> > @@ -679,36 +680,39 @@ int kunit_run_tests(struct kunit_suite *suite)
-> >                 } else {
-> >                         /* Get initial param. */
-> >                         param_desc[0] =3D '\0';
-> > -                       test.param_value =3D test_case->generate_params=
-(NULL, param_desc);
-> > +                       /* TODO: Make generate_params try-catch */
-> > +                       curr_param =3D test_case->generate_params(NULL,=
- param_desc);
-> >                         test_case->status =3D KUNIT_SKIPPED;
-> >                         kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDEN=
-T KUNIT_SUBTEST_INDENT
-> >                                   "KTAP version 1\n");
-> >                         kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDEN=
-T KUNIT_SUBTEST_INDENT
-> >                                   "# Subtest: %s", test_case->name);
-> >
-> > -                       while (test.param_value) {
-> > -                               kunit_run_case_catch_errors(suite, test=
-_case, &test);
-> > +                       while (curr_param) {
-> > +                               struct kunit param_test =3D {
-> > +                                       .param_value =3D curr_param,
-> > +                                       .param_index =3D ++test.param_i=
-ndex,
-> > +                                       .parent =3D &test,
-> > +                               };
-> > +                               kunit_init_test(&param_test, test_case-=
->name, test_case->log);
-> > +                               kunit_run_case_catch_errors(suite, test=
-_case, &param_test);
-> >
-> >                                 if (param_desc[0] =3D=3D '\0') {
-> >                                         snprintf(param_desc, sizeof(par=
-am_desc),
-> >                                                  "param-%d", test.param=
-_index);
->
-> This probably doesn't matter too much either way but should this be
-> param_test.param_index instead? This would cover the case where the
-> param_index is changed during the test run even though it shouldn't.
->
-
-Thank you for catching this!
-
-> >                                 }
-> >
-> > -                               kunit_print_ok_not_ok(&test, KUNIT_LEVE=
-L_CASE_PARAM,
-> > -                                                     test.status,
-> > -                                                     test.param_index =
-+ 1,
-> > +                               kunit_print_ok_not_ok(&param_test, KUNI=
-T_LEVEL_CASE_PARAM,
-> > +                                                     param_test.status=
-,
-> > +                                                     param_test.param_=
-index,
-> >                                                       param_desc,
-> > -                                                     test.status_comme=
-nt);
-> > +                                                     param_test.status=
-_comment);
-> >
-> > -                               kunit_update_stats(&param_stats, test.s=
-tatus);
-> > +                               kunit_update_stats(&param_stats, param_=
-test.status);
-> >
-> >                                 /* Get next param. */
-> >                                 param_desc[0] =3D '\0';
-> > -                               test.param_value =3D test_case->generat=
-e_params(test.param_value, param_desc);
-> > -                               test.param_index++;
-> > -                               test.status =3D KUNIT_SUCCESS;
-> > -                               test.status_comment[0] =3D '\0';
-> > -                               test.priv =3D NULL;
-> > +                               curr_param =3D test_case->generate_para=
-ms(curr_param, param_desc);
-> >                         }
-> >                 }
-> >
-> > @@ -723,6 +727,8 @@ int kunit_run_tests(struct kunit_suite *suite)
-> >
-> >                 kunit_update_stats(&suite_stats, test_case->status);
-> >                 kunit_accumulate_stats(&total_stats, param_stats);
-> > +               /* TODO: Put this kunit_cleanup into a try-catch. */
-> > +               kunit_cleanup(&test);
->
-> I might be missing something here but why not do this cleanup before
-> the printing stage and only if the test was a parent param test?
->
-
-Thank you for catching this too, it should be only for the parent param tes=
-t.
-
->
->
-> >         }
-> >
-> >         if (suite->suite_exit)
-> > --
-> > 2.50.1.552.g942d659e1b-goog
-> >
+Laurent Pinchart
 
