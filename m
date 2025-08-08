@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-760111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4733B1E689
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:37:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE80B1E688
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9376162FBE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:37:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A25D91AA78DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF842749E6;
-	Fri,  8 Aug 2025 10:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07F0273D6C;
+	Fri,  8 Aug 2025 10:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LeERSM+N"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOku1agH"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A168B274677
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071E223C38C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754649457; cv=none; b=hmbXHL4E/W4L4VcpruqFuCE8IYSPV58djd+6e42Z1fNvGHrl1oE32s0aw1WfMMyjcPMgB50atWfTI5y4d9seMtN0M1iP9gXVGKfENl8vmv/gAgivjI6ZOUsHl0xeojmXKmSuAkjokhTSPASeBIVMy7V6UdpfU0CGXogD+kdOuFk=
+	t=1754649453; cv=none; b=jW+JDW4xV1WtvVmkHcsjRHb8uReEab+bbQ1SVUWt/gU704a4WFO8+H+wKqzPGUFHrYtGGDHpO2ipFu4m8ZvbktDhHvsWcmYcM/HX68Dsvb472Q4ouUyDgzhetobxqn2E6hfS8/JAIC4ZpfV1nX3i/Lx0sVngmygopmQIL9dTNlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754649457; c=relaxed/simple;
-	bh=DFbbcOY5/H6JQUuqXssqjAboCnz4I7riuC1BUqvx8I8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Hdbsl3CITdfYugxrz4ayzjtjdxEuADpNk3QMDjZnbMYFZQA6kvIMgGJ1/jhY+tdxCzwg9S1iFb/H3zPP2rpqmqwa396PXrGLZIw4MtddrUT2l3+4GPHB269tat4UzcWFw9gdnJa3GVcXIkEN444KqjiQ+jbmnHbL5v9jNyCTEYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LeERSM+N; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250808103732epoutp039953c115b2a71e17e4a6502102fbe61a~ZxGFwd1Pp1450814508epoutp03a
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:37:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250808103732epoutp039953c115b2a71e17e4a6502102fbe61a~ZxGFwd1Pp1450814508epoutp03a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754649452;
-	bh=tLJrRsEUYFZQp0Y/N/m+w0KFJz0WpXhgSYsFbM+cppE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=LeERSM+NFvK0LFy3CVkt5qlLAvxVClwd4M1B+gSKyvYgBM3K6IDoV9TgVfvAfX4Q6
-	 5ypuWvWqPbiH4VpUVyt4Hs2jp9zDfQLiP7PTmLzJbhxdPSR9UzQuPOuI/HnI77+R6M
-	 X1sAw1viKdEUo0hPeB30iR1MAEDo80MM+S4ln6lU=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250808103731epcas5p3c595d52fb1122012d3c3fae458d7c41c~ZxGEv5IHN1782717827epcas5p3X;
-	Fri,  8 Aug 2025 10:37:31 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.88]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bz0pf3qFnz6B9m9; Fri,  8 Aug
-	2025 10:37:30 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250808103729epcas5p1a2c83cd71d7e679a6143a3fbfada21a2~ZxGC4inVW0858808588epcas5p1w;
-	Fri,  8 Aug 2025 10:37:29 +0000 (GMT)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250808103727epsmtip152847a552a5351517eaba2de9014408b~ZxGAlndIJ2810828108epsmtip1F;
-	Fri,  8 Aug 2025 10:37:26 +0000 (GMT)
-Message-ID: <20c46529-b531-494a-9746-2084a968639e@samsung.com>
-Date: Fri, 8 Aug 2025 16:07:25 +0530
+	s=arc-20240116; t=1754649453; c=relaxed/simple;
+	bh=LlgSNxTwWrMNST7nzn55bHW5wW6rBXYYm5dJqlOLHEE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmNieVxdhIn9X7Jcjp5ovz0jgsC1LJGWOow/yuM2pw04AjJ39fkpVQpPgvvfDvHsdsO+Gr0fy9Wh6wfI5Z5SUHR8/mS9UuhS2ZOcbreyhhXK2c8aEf8RVFdZP74l2kxUJsIf6Jrt2exr6UgN//MYa6JsufCIShCiSxP4NwkBZL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOku1agH; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3325cb38a78so17741551fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 03:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754649449; x=1755254249; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tivFsmlGRlUC+/lbvStJvCaC7HPoVZahlLXTN48EL6E=;
+        b=HOku1agH3fz89RZG/l8RpXz2QKU9mVJwHzzb0+cA1kzzCUTjoz5O56l8E7fNm7+fS9
+         d7g9TGAmiaTR97pxznLAbSaObFT6Mb59mDdAgbkFy/kv54hrhRnsG1h+krP0E4w3s1IR
+         P0zcRBZr01xcKigiKCoCrTifWYVG34e0GyPAdw82hv2okd+8qC/TUOqiwSKhjsm419Ch
+         l3p8wzEnA/fye1F2rJnXWLkDeFEbE1pl6wo/Gyr0EOIpbHyZnUzTLKn4GW5qVHIxZkOZ
+         9WIVY9Fjzt4Zo5VtBYfn7EC0XteBe4q3RPNSP5MVGDpJXWamNT7ENdHWsDLDOsQik2+E
+         WoWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754649449; x=1755254249;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tivFsmlGRlUC+/lbvStJvCaC7HPoVZahlLXTN48EL6E=;
+        b=wEtfhAwHouae2lMP3W0HxIKTrYy8jr88BjpOohM3dVzw/0AQBhTOaMWp3b3EROZvcX
+         4uKVQ7yBa1OuAUnm56Jne3v9NahXiYbTn0BErfQdUWa7YeZ+x2k4KoYhoifiS1XqP4b3
+         ny8MnV88UaXcwViRwVgNDcxP8gVq53xHTELM78H2YbvNuBfBwtKZs+PYNg6iaJHKjiK1
+         lxH2oy2x47oF95UVWudrlV/nx/f73xIQF4W7rR7s5qZNNSXJdXxrtvEASkS7NMbR+l29
+         BDncJTZPzrw+rqGFyfKDjh4UUx6h3rXXSpuYwQjFB0FuNmW6Jukd1PcldhQM8IUmmUTY
+         KO/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWRzmyHgpIuFDSEDpRQOoNjhIKZWqLJVsWQNW4rfDWRP9WWNhHIuUcptwKPL3xSc7Gq0c8QQ55D4jSZm3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/pTZ/8N2VKju3OQyf4MMFVb4oUTLeGo0LwX5iIqO7krPQmPYm
+	vcbfhVm+oiP/lIEofE6XOkxEq3uyEdHStmvmF22h5tyi4XdR6/AggQKJ
+X-Gm-Gg: ASbGncsCwi/LkpelBvfi8voFECcEsSQhYI8sl33SXuqPWPSaKEUefGp4WCukOShwDMU
+	5KFHIuRqTyDnzVotjm7Aq3omyW8Wwh/iV9+1srVXKlMokoafB5MrBZ13CA03/W8f5vfzlYwQaTg
+	YGCaxo4dTpPDDbrtHf4aC6pyyYZT3cJ9bcLCac3VCpzqto3YQTDYqVEhbzxGoKoOXsRz4q1yK+F
+	SnClXc3SoRzG5fq0fSeBbECUMmLdnxk5g0TRZaSjKeLcEcu0f1aoAB5oUWZX4p8jf7kmIzmYP9N
+	6b5aS72tw/tbV9c8UAwzhVmcIx5WF5MYhBCtmWKO//VRCJplzQAeRXZqnn2r6G9L0MtBJDassDM
+	OPIBl9e3LTNDXK7gyJxf7HVFPyPWJORBchBlvFYmmpVVV6TcIAg==
+X-Google-Smtp-Source: AGHT+IGNPK/qZH+sTZpLkeVRCl0hK0nwxTZO2ywKJOBNHZUofU093y94ClyRD93Q0Qu6fX0gT++vdA==
+X-Received: by 2002:a05:6512:4021:b0:553:a30b:ee04 with SMTP id 2adb3069b0e04-55cc00ea59fmr619925e87.14.1754649448954;
+        Fri, 08 Aug 2025 03:37:28 -0700 (PDT)
+Received: from pc636 (host-90-233-217-11.mobileonline.telia.com. [90.233.217.11])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88ca3327sm2957802e87.127.2025.08.08.03.37.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 03:37:28 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 8 Aug 2025 12:37:26 +0200
+To: Michal Hocko <mhocko@suse.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/8] mm/vmalloc: Defer freeing partly initialized
+ vm_struct
+Message-ID: <aJXTZv5axtX08qnT@pc636>
+References: <20250807075810.358714-1-urezki@gmail.com>
+ <20250807075810.358714-7-urezki@gmail.com>
+ <aJSNDcMxE5BVl6or@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb: dwc3: Remove WARN_ON for device endpoint
- command timeouts
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
-	m.grzeschik@pengutronix.de, balbi@ti.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, akash.m5@samsung.com, hongpooh.kim@samsung.com,
-	eomji.oh@samsung.com, shijie.cai@samsung.com, alim.akhtar@samsung.com,
-	muhammed.ali@samsung.com, thiagu.r@samsung.com, stable@vger.kernel.org
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <20250808090104.RL_xTSvh@linutronix.de>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250808103729epcas5p1a2c83cd71d7e679a6143a3fbfada21a2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250807014905epcas5p13f7d4ae515619e1e4d7a998ab2096c32
-References: <CGME20250807014905epcas5p13f7d4ae515619e1e4d7a998ab2096c32@epcas5p1.samsung.com>
-	<20250807014639.1596-1-selvarasu.g@samsung.com>
-	<20250808090104.RL_xTSvh@linutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJSNDcMxE5BVl6or@tiehlicka>
 
+On Thu, Aug 07, 2025 at 01:25:01PM +0200, Michal Hocko wrote:
+> On Thu 07-08-25 09:58:08, Uladzislau Rezki wrote:
+> > __vmalloc_area_node() may call free_vmap_area() or vfree() on
+> > error paths, both of which can sleep. This becomes problematic
+> > if the function is invoked from an atomic context, such as when
+> > GFP_ATOMIC or GFP_NOWAIT is passed via gfp_mask.
+> > 
+> > To fix this, unify error paths and defer the cleanup of partly
+> > initialized vm_struct objects to a workqueue. This ensures that
+> > freeing happens in a process context and avoids invalid sleeps
+> > in atomic regions.
+> > 
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> 
+> LGTM
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Thanks!
+> 
+Thanks, applied Acked-by.
 
-On 8/8/2025 2:31 PM, Sebastian Andrzej Siewior wrote:
-> On 2025-08-07 07:16:31 [+0530], Selvarasu Ganesan wrote:
->> This commit addresses a rarely observed endpoint command timeout
-> …
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Akash M <akash.m5@samsung.com>
->> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
-> The Author is Selvarasu Ganesan <selvarasu.g@samsung.com> while the
-> first sign-off is Akash M <akash.m5@samsung.com>. If Akash is the Author
-> and you are sending it then the patch body has to start with From: line
-> to credit this.
->
-> Please see
-> https://origin.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
-> and https://origin.kernel.org/doc/html/latest/process/submitting-patches.html#from-line
->
-> Sebastian
-
-
-Hi Sebastian,
-
-Thank you for pointing out the discrepancy. We will ensure that the 
-patch submission accurately reflects the authorship.
-
-Since I, "Selvarasu Ganesan" am the author, I will reorder the sign-offs 
-to reflect the correct authorship.
-
-Here is the corrected patch submission:
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Signed-off-by: Akash M <akash.m5@samsung.com>
-
-Regarding the next steps, I will post a new patchset with the reordered 
-sign-offs.
-
-Thanks,
-Selva
+--
+Uladzislau Rezki
 
