@@ -1,342 +1,311 @@
-Return-Path: <linux-kernel+bounces-759793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F403B1E2B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:00:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20DF7B1E2CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E996218845CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:00:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFEF372160D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47F023A9AD;
-	Fri,  8 Aug 2025 06:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFC922A4F6;
+	Fri,  8 Aug 2025 07:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Zrngm2CV"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YoWPAYhL";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tMaKHHOZ"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E75923770D;
-	Fri,  8 Aug 2025 06:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351317AE11;
+	Fri,  8 Aug 2025 07:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754636361; cv=fail; b=fZKHVelPXOc+Fb0ppmIqMR0O+F5TN2Xz0lZMtTuejO3isYZ1a21btjBV3LP18ls6k67/U7FDVOkdpQ8lXmigpXqwAj/1Gd9A2b0vFsL0VcB0cRWIXXU4Fm7WDmPl7EQQb68kR4S7o2fJi+8/XZnBUpbBfuaKSZ3ITg0ifB7fCac=
+	t=1754636490; cv=fail; b=X7BiM5mC8AYdPkg4PFPYUNxhfovEY/ZBGOtooNkOHg4H+m49MCn+OnNa6+ADRpNqzY6z8aDgH/AyElkgUfvHhvbSZ2RiNIhZcdoChQwhSFMREN/GLwtCE+nHEVuMCxU4dAGqzgZj02sYkmoxQ7hn8anThkL2rEepbikkFW2hZW4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754636361; c=relaxed/simple;
-	bh=yUjHRaLzb4v9YQiOq4kTCaHKrn2rOTnNcFvV7j7St2c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QDBcDS68JqsIZeAxEyZdf7GzNLdxWNvvPm1P+bQzuh+Ubj60JQ6gdOxfqE0ifZt8UMUC/E+QoDerk67Rny7ot/FSCmn/lMApuIICwEQ1u8Vc4fjWYt4rCgF5Stkdu1bVTg6pS6EnJ/wZPR/K/0LZxaAo3gcMCmNPmWImRF9YYtQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Zrngm2CV; arc=fail smtp.client-ip=40.107.94.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1754636490; c=relaxed/simple;
+	bh=6XEfeseWwMjzREhoAfpFb49w4Kop6gOQ2ahmD0/0ioU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=AtIznP9W4U2FkU8ZiFwvoKqPJNQgaQTr2JMkEfIRwNwccp1IOSnT5wQRTMSQBi0VhZ7c2ulhjxucmD0PQEaWhY5wsNhKK0LCMB02w2GlSGCon6ItpMM+V8YYyPW+U2VAhCSTRT1Pj3WizKl/DtLA/Wx807s+QGZNbE7sg0pXXeg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=YoWPAYhL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tMaKHHOZ; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5786YL33032090;
+	Fri, 8 Aug 2025 07:00:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=FZm8RV2z/uG0ce0nY2oaha5WoAhCb77PclmvY2hA6e4=; b=
+	YoWPAYhLDvPP1szLns1HIb6rlIaNUyHHDPb8ArflDSnngPGMKMfjr49JAvWXe5Sw
+	6F4nD3oefK5kuCS6JCmbgzu5+QvsY7uTed/18C0RSglSosCIkJvNgJn0lo2Zi/sF
+	k2TCN93kmesHXdu6yo4uQXKugt3du6HyOXUUBLm0x7kIWiEFX6Bc6ZGweWeuH3UD
+	qAnUKn5ANSaii8o/INvrUwfAqblEV0b5uyiyFKMErVXyN8+Db2HM2X2nbDkwp/6f
+	GFrnlykfi/XzXH2wAQ+M0jEWa51DmYxxafo8x02foS7/eCSljyuPqT8BftLKPonj
+	14yoDrdkcyNKC2HSE+5+YQ==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48bpvjwjk3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 08 Aug 2025 07:00:45 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5785wZ99005726;
+	Fri, 8 Aug 2025 07:00:44 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48bpx0e8ja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 08 Aug 2025 07:00:44 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fnQuSBpFZbuXIZH4blx/Hl7j/l37w0sTAeaHuYmYu+Y4oFqgJtQWM9SKUx5G66YyaT/d+DnGJon3O5Nnt2sjN9WDyXgMrO1EJ4TRRfXC7rU+itlOuSKEZklUVcKdEol4j9IdyPqITF6YQdkoRcju9ZWTZBWryo/FJSVBk+N22bLIfPkQMDRumG10Iqf3mfYO5vORHrW9ZfICsG4+Ym8rqDHNd3G3/Xow9wQAQxYsLJtNtdIq4L/vOso0KZavupGYRtqcyyxf6YCqccIPjqgObasuGL7xO+Sb7qqBv7zXjwBPwvTjoYnVHc0/nyrxULIJQ7jnURe8hX1gHfvdvVJWqQ==
+ b=GUGxRPah4FVJb4hvKrmWcdMe795YW8Bp8+Yaak3OKZ8aWzwBsj+ltu1D4JPPwgOPU2+6LWumaf676tNX5SIde1QRbPIO9Mrt+RfTNo++fiPzYSIB7a5Y1gEMYZK41ah9wII2+3fBWZn0qFs4OVf7CFfitCXz+sTC39CCsVgb3rQSw7PpqXIKBVisuBt2jxYcGRLJ3IGOKkwU+ZN1yBZvt5UvHZPLadApPcM6Fz8oW3FrF7ft+nj2oyBrbQCmh11lF+qb+D+LgAVhmdRCPUdYhWE5vp/NYc5MK2TnsZSO0Oggb8IKzB7dCU9v6z9veODqTqwHOHR4YvoAuX8Koa7Fdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OpQ5PvmqGfgKtLR2AhW2foSb0ls0tnmvd1umz4XArUc=;
- b=gXMXCSVtene60SyiPrIXSbRVL6w3PjefUyZEX+mfScZXUNubtOUl2U0+sKZ81/jS34F1Y7Zy3nPnUOIWI6BxgxXoMQATXDCEk9dVbryIRil74Z7nTcZe0EVeIo7EG9/X8/0LksAnyyEMGPcj+70LXKpxRyxhKv9uVN685dWEm/+6Mezi1iPFTUj4Hfwat3dGmLWnSOprYHFEBrh3TwaxxqEIPUej30labYtztDax5orOo/bYtKToUeGnHvolFP6zeHErnLLQdVN5fbvp0IKRXAIHSSlgHZ83CM6St/CGCgVg6TzhBUUptm6VPsh+PVkhJLNq1TZPsKwC40wCUWiV4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=FZm8RV2z/uG0ce0nY2oaha5WoAhCb77PclmvY2hA6e4=;
+ b=YJfPWpqSTNut7F2dY/4T5PSwkf+XC+YbMDeHDdE4PPbpg+JqNW4XqUfM7CVQAqnlliajqHw+eRzxXBJEgQSGge4KIMNGcimZAUkJPTo0+D2u4CUeJn0L4aUeVN6Qp9/hO6DojkgfWTtSoQgKnmqltzadbUbmsUIt0+CS5Bao1OZojVOtVhuxYnNTH0vTJbAcuqqpaBtsJNVbsClsX/SVc0MIhsQpPKVHhvRXjRS6lD72rNSlWnCL126RWXO9Kw8cs32/xHc4LIkR1kUj8AdB1nYHsNpz5AkZ1pGtakLvDo5AgKNyhAgcDHV3Dn+AV5lI6jCrCI+kb4dH1XzQ9Nyi5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OpQ5PvmqGfgKtLR2AhW2foSb0ls0tnmvd1umz4XArUc=;
- b=Zrngm2CVnv7MQcNWrCUvBa6NchnB1tQ6+QebYh6bE9UWj9sTTD4TMGGB/bduf4DcKRTMZn0UEtt6rsL28AfYHIiWI+h/BYuDObx6PQn37cUoeEmHjXgtj+E0Wqy8oyR5Xw8BPcKJU2bXV1AhleRzlKhUHhNoYnV9+5G3TTwkkEHttDJMpXwwrsCDYTVwYg850UskOzf2Skxfzo5oUnubGVOGJig0882hY5i9LWjMwc0HRB8chNLzII6Jkve9nErFzye4sZxs2Hb0onStxOuBcFZbEH9siTu2VkwqFbYrlLE1OIMqO7EpX8kwgcpJTe253EZQJ0GYqCc52ixgI4XfXw==
-Received: from MW4PR04CA0300.namprd04.prod.outlook.com (2603:10b6:303:89::35)
- by CYXPR12MB9427.namprd12.prod.outlook.com (2603:10b6:930:d6::8) with
+ bh=FZm8RV2z/uG0ce0nY2oaha5WoAhCb77PclmvY2hA6e4=;
+ b=tMaKHHOZWwkA3sHWsVzpQAlte1lEDa73x+Z/dGluOpFaqye9b6QIz+C5XIizSTCoZ7Ipif294C6TNR0yaX62sY383JXDIZXnoR+UryyixAyAyECPZAh2dGsGNnCmgwS/fxI/z4q/RJNrRx7G4QMwBLn+zAeygJrEvy0a4Htja5Q=
+Received: from CY5PR10MB6165.namprd10.prod.outlook.com (2603:10b6:930:33::15)
+ by DS0PR10MB6798.namprd10.prod.outlook.com (2603:10b6:8:13c::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
- 2025 06:59:16 +0000
-Received: from CO1PEPF000066EC.namprd05.prod.outlook.com
- (2603:10b6:303:89:cafe::d3) by MW4PR04CA0300.outlook.office365.com
- (2603:10b6:303:89::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.15 via Frontend Transport; Fri,
- 8 Aug 2025 06:59:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000066EC.mail.protection.outlook.com (10.167.249.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.8 via Frontend Transport; Fri, 8 Aug 2025 06:59:15 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 7 Aug
- 2025 23:59:03 -0700
-Received: from 553356c-lcelt.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 7 Aug 2025 23:58:58 -0700
-From: Haotien Hsu <haotienh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "Jonathan
- Hunter" <jonathanh@nvidia.com>, Mathias Nyman <mathias.nyman@intel.com>,
-	"Brad Griffis" <bgriffis@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
-	"Vedant Deshpande" <vedantd@nvidia.com>, Akhil R <akhilrajeev@nvidia.com>,
-	Jinjie Ruan <ruanjinjie@huawei.com>, <linux-usb@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Haotien Hsu <haotienh@nvidia.com>, Henry Lin <henryl@nvidia.com>, "Jui
- Chang Kuo" <jckuo@nvidia.com>, Wayne Chang <waynec@nvidia.com>, WK Tsai
-	<wtsai@nvidia.com>
-Subject: [PATCH v2 4/4] usb: xhci: tegra: Support USB wakeup function for Tegra234
-Date: Fri, 8 Aug 2025 14:57:33 +0800
-Message-ID: <20250808065733.347264-5-haotienh@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250808065733.347264-1-haotienh@nvidia.com>
-References: <20250808065733.347264-1-haotienh@nvidia.com>
+ 2025 07:00:42 +0000
+Received: from CY5PR10MB6165.namprd10.prod.outlook.com
+ ([fe80::7213:6bdc:800d:d019]) by CY5PR10MB6165.namprd10.prod.outlook.com
+ ([fe80::7213:6bdc:800d:d019%4]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
+ 07:00:41 +0000
+Message-ID: <84125c5e-ed99-4158-9a59-e1a97435c626@oracle.com>
+Date: Fri, 8 Aug 2025 12:30:32 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: BPF selftest: mptcp subtest failing
+To: Matthieu Baerts <matttbe@kernel.org>,
+        Mat Martineau
+ <martineau@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>
+Cc: Geliang Tang <geliang@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, mptcp@lists.linux.dev,
+        bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org
+References: <b1f933f6-545d-4f2e-a006-4e5568656c38@oracle.com>
+ <da46ad00-910f-4eb1-9b74-14bd76fc8910@kernel.org>
+Content-Language: en-US
+From: Harshvardhan Jha <harshvardhan.j.jha@oracle.com>
+In-Reply-To: <da46ad00-910f-4eb1-9b74-14bd76fc8910@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0115.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:11d::13) To CY5PR10MB6165.namprd10.prod.outlook.com
+ (2603:10b6:930:33::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066EC:EE_|CYXPR12MB9427:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0290d2a4-136c-4c30-0c4d-08ddd64916b8
+X-MS-TrafficTypeDiagnostic: CY5PR10MB6165:EE_|DS0PR10MB6798:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3485d772-38a2-4eef-2c84-08ddd64949a9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|7416014|376014|1800799024|921020;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?87viEY9OpdIVEb+jql5Qg2bxLkMgq1cSSvB5UI/gQeARt6o8FpRh81G5uDmP?=
- =?us-ascii?Q?OOK2dRwQsyOn9eby/QB8ipUQIoGscnj3k4HtytwN5shUsCaYtWc5T4Zic2/x?=
- =?us-ascii?Q?LcLwIkYPs6AA2Cwlm6swYz3stq6NnH0kh+IMl30FKRq8qC+dq+qO67Dh9nwk?=
- =?us-ascii?Q?JLz21+PtN+2BIfPEw8W7ra1H9y/0XFcgQfMVOy1R4fQUg8vpnuyuP4J/9Yzp?=
- =?us-ascii?Q?a4Ve8v18nqs/sQfzbggMdxzb7iqWyvqwXQo5TPGHHSecsUIz62RippR0LBQ8?=
- =?us-ascii?Q?kbLQAQEU+qLtD8QE37JDLLge+MoT5cQI8zzk+DcVuLX0l1pQiPYSY1iW48pa?=
- =?us-ascii?Q?/UXeWNX63IjzV03OH9jgyadDIdfgE6ikDLrLhdy3ITXgKmCN4HTAv4W6FqDI?=
- =?us-ascii?Q?9/nLqECA8+BKV2qNyFH1diM4DHiCKQWxd34S8JYvuzLvkAnJywI6K1pw+BlX?=
- =?us-ascii?Q?MnSm/8So5gv3u3/pTbDfkZLGsCc68Tyz/1ZqJn0iKqDowXbnBn4FUj2+f7k1?=
- =?us-ascii?Q?NsK4RtfWgJrq8fHdj92KaILOV6frU/zOg9lIGvUJ++pHqSXx6Yw8PrESQ9Nr?=
- =?us-ascii?Q?Od1PZ7mB7kP8UE96vVbEilgirTiUmML/bNJO3mVJIZ6Yemkpdmcqq4ndWSt5?=
- =?us-ascii?Q?LydKrOt8VG0G2B2/1EXmZyvxuEV0Vx+mmWGQLK+FHyswyFD6ePlp4cmtv6ak?=
- =?us-ascii?Q?88sfCBvn6GkWVVUigUpIPCgzywl+SoMYxODuqk1edfOri9IpPz7w7HswiIEv?=
- =?us-ascii?Q?NNuNQM9Kqgy/CYNGldJ+q1c9T4YjOSS6cRXkoLNJpSEDLXvErFIRQEL/lJvd?=
- =?us-ascii?Q?z+ziueqbbMtauL2tQzWbabnBaCO3HSN4XnH59PZM+JapELNtpmh3ED2/cFLc?=
- =?us-ascii?Q?hZHYg8zj37BiyEre5er7jn56aAo/fWUTVs2tBCZ0IPk/eVqhXubA8D6tSD3T?=
- =?us-ascii?Q?FN//gQxju41EzMo56+idYRLtO34SZu+WuBW4ugn/lOV27N/ZqW88qu4fwDac?=
- =?us-ascii?Q?G0PdwFW7HAC+Hm4kLQwA15Q9BIVvGdi9EkPDloXvMI9xs9YP9mx1P9IauENm?=
- =?us-ascii?Q?tYx3nzWTtbGmB6gLCC0TLshC9zJ7Ue9g2aGWyQP2OLhPjax9gfDrfpBYgU/v?=
- =?us-ascii?Q?V9ISw7pdTjpanPorOkLQrTtyHqjp9Ahoggs1jwuMw53nOV5Ccqc/1IMXCvv3?=
- =?us-ascii?Q?5lunbxPsbRZ/jQt1cSdFMBXQyybt6K+Ddl+o/1Ou+TeUX45ohhVDoK7DZOaZ?=
- =?us-ascii?Q?rFJA/axS3MUAtO2ryG0aNZBl89xOi2o+9Z0WdzXfcRiP4vEnvjuDFz9XE6S4?=
- =?us-ascii?Q?d7eNawhHC475OzpA/FV1KFn7L8wbIEB/+CzGX2oN8DjyG91JAQTzOr5jtzTR?=
- =?us-ascii?Q?/EangS8ofqhgCQ1xN6EN9oQTUYiG5UldPgQ62mebkrkAMJsFnFvr7vYyiUgI?=
- =?us-ascii?Q?Q04RYmNOD6X1muYuS2pwbKoeqNArC5m3impoADvi1FB97sGUd19vkdlso1ng?=
- =?us-ascii?Q?XFcXAvNwCm+NJKYbS+kyqvATqZmA7jKO06qtkYsY+YQLDhvSfMOoHy6GNw?=
- =?us-ascii?Q?=3D=3D?=
+	=?utf-8?B?dzBaSk9OZHdXYXlNZUVDZlI3YWV6NzdrMGRRSkZaTXVNOXN5RWZaejlrTVRv?=
+ =?utf-8?B?Mnl2VHNVZWwrK2VUbjBtZ1lGQU9wVlBMdkoyUTFVNVMyY0hxd1NHb3hsWkVo?=
+ =?utf-8?B?cndqa1hyN0RNbHlDR1BNWnIyZDMzTThKanBzdGtFcUtEWFZUVnM3eFpvbm5n?=
+ =?utf-8?B?K2NhSDNZL20yeWpuUHp2QlJTMnhZL0dUODEyWUNidzg2OERybmdNbmFVOGUy?=
+ =?utf-8?B?VVZkVEwyUnpDZWxmZzgvVEkrbkIwUXB5Tnk4OTlXUHhhTlZuYVd6VXFuVkpU?=
+ =?utf-8?B?djhuOEx1S1ZkcjhvQXpJcnZaa0kvdExuUXNlTkJJOGIxWEdFQjRyOFRXL21N?=
+ =?utf-8?B?bW83WXhQenNOQ0pKU1hhZ05CMW5MVitTcHFtTWRlNHczRDR3anEzQUpMT3Vw?=
+ =?utf-8?B?N3FKcmpDZzRENlFnQ1NzMGlzWmdleHpIUjJRZ3ZLWUs5VUI1VHd0ckUrZEtt?=
+ =?utf-8?B?UzBCdjM3d2V5VVpiVVdCMVdiNXlCaFQraTQyYkxGbnVnUk00Y3JBd05xSXFT?=
+ =?utf-8?B?RXFtaFJpdE15SHpscmZCNytaNzUzMktleTc5U1huc1FrcVFKKzB2QzhTRFpp?=
+ =?utf-8?B?d3lQSWIvZjJzS1RkTzRoaEdIdHlYTnRUQllOSnBySnNZSHR4eWdMdC9uN2Vx?=
+ =?utf-8?B?Um1VMUlXS2Y2eFFNUFY2cndjT2FBV1ZiNVRnUEpWaDFFQUUxRnR1Y3gxUEti?=
+ =?utf-8?B?RzJLS0IvWEJwV0dUdWo2QnBpSEd2TUpyYWVxTkhBNTBtL01zSCtvUWVjL1Vm?=
+ =?utf-8?B?RWpCbVhhbjRhaHY1OVRJaW54c3NKMXJ1QkpEZjVNdGdwdU9PY01kanFBNzRF?=
+ =?utf-8?B?WW5nTmVDTCtETmh0c3pMTlVZMHVXRVFJSjMxWjNiYVZ5OElSbzBwN0VTNTVP?=
+ =?utf-8?B?SmRMM2liRHFFTjk1VG1WcFU3TFh3bmpYY2NWV0Qza2FhQ2NEeThnQXc0eStl?=
+ =?utf-8?B?VHhUNCtFTlZidG5ZWXMwT2xYOE5qRmdsSDM0bitsOXRCRFlsNDk0UGl6eEJ5?=
+ =?utf-8?B?aC9qRjNmMUNRRzY0Vk5MUnVhK3BUUDNWQk9OQm1Kd0Rac0FVWEtXZGtoWWs2?=
+ =?utf-8?B?M1BEcDhzZ0pxTUlhL3k4SWVFdm9CbGNKTXRQT2VJRVRScnZ2UDI1QWR0ZVJv?=
+ =?utf-8?B?TjNOTkpsa0ZvU0RrajJ2WjlPTjU5WE1KSStrU3c1ZTZ0MldjYXVXaHgyUEJZ?=
+ =?utf-8?B?QWxCY0NackpZMXpvaDB5UHZhSkdjZFFmRTdsZmRpQk8ybTk1RW01aGthV2h5?=
+ =?utf-8?B?MmdERUNKRTlMY2ZTTHZtZ0lZb2JtSWNaMEppMXpoUURwZkRlU0g4NWR1eXdE?=
+ =?utf-8?B?bmtKWHVTTzJENUZIaldWLzhXM0d6UnVrdElEb082VDRDc2dOaUV0UjBkODV6?=
+ =?utf-8?B?a0tzMWtaQlY2VGpzM3VNVHprcjBJZmxDZFE3dzRqS0xicWRWalkrRUZHRE83?=
+ =?utf-8?B?SkRCbzVldU5FVEp5NnN1cGVHWTdWRWJBbkRrQldEQ2MvVmR3MDMreEtNNWJ1?=
+ =?utf-8?B?SkM4a2dKeDljdElsK1ovTklmVmVVUlYzS2lIRGp2bGJPR3dDaG1FTVVhL3d2?=
+ =?utf-8?B?U1VQZC9FL3lCQTBvQVJKQUdlZHNjUVJHVFA5S2RKRDNTQUVWZTE5S3lwamVr?=
+ =?utf-8?B?RVFsRHFFcUsrM2NmVlV1NEtwTzVoMHkvVTNRY3JQVk9vZEZncHFDR2owTTJo?=
+ =?utf-8?B?TEEvazVkTTd1bHN4dFA2L2VjZmZTL2xLUS9ZclBQbVhHRXMxcGFnNHBRSlMx?=
+ =?utf-8?B?Zm4yTytyczVtQ0ROWU1jVU5EQ0NNZkRadTJZeDdjV3RvSllxS1Z4dUdwUkdP?=
+ =?utf-8?B?YmFRRTZIdjN1QkVYNGVUUHB5U2tmK0M4RXNWR3lEcXZOdWxJM1A5VzVmTkFQ?=
+ =?utf-8?B?NkxkYjdwejFyVHVGTGVDTVBRbm53ZWpwU2cxV25oWmtvVzROY1ZnWmJGbFdZ?=
+ =?utf-8?Q?wVV3BeSSBV4=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 06:59:15.7618
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR10MB6165.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?alRDeS82Mkt3eVdWbksrOXVuLzJSZW1pM2hNRG9EMEdqdmlQNnkxSEdvNzZJ?=
+ =?utf-8?B?T1BManlBZlRuMXluVElucEQ4RjFGSFdRVFRiRnZpUmx5amJHRjFyZlRLM3dW?=
+ =?utf-8?B?b0pKK1lDdUpzZHVDODRNWHIwZWJiWDdaVnFzN2prZ254VVYrVDJMRzlMbUdi?=
+ =?utf-8?B?MWN1Ri82MUFTQlJTVTJGemNhVi9oRVJPcGd4RWpQb3FGcTRFV3lFVHhQR2Q0?=
+ =?utf-8?B?S2g4Q1lud2N6aTcyMGFON0NQK0xqZ3QzaXZ0YWc3Z1NqN3lQWG1ZYVBHS0lQ?=
+ =?utf-8?B?RmtrNU1Hc1hvOUszK2pPUW5mOC9kclU1QkgyY3NIamlTV3lXMWxjRkRnOWwv?=
+ =?utf-8?B?ai9CWFFtY2NieU9GNFpYcDJ4U2M4aVZkWlVKT3BqZUREQXJVV1VWZFVuOVB3?=
+ =?utf-8?B?ZlZWTjFKZnBKSkdDYmNqekpYdXdROE0wK1lRalpwaUhRKzFXSWJnc2hmY1BZ?=
+ =?utf-8?B?U1dGWWMrMS9GcFY0blNKMmp2dkZKNy8zYjhrRjNZUEJHcW5BRHg4aS9aOXdG?=
+ =?utf-8?B?b3BUcnRydUFHRTRZV0xnNWY0cThzd1BRSW1lVXBtLzNuU1NTTUdVcFJ3ckU0?=
+ =?utf-8?B?UFRHRHZtS0FMaThwT095RWVPNnJ3ODd5STJGd2I1ZVV3ckdRUkNkUzRIZDF6?=
+ =?utf-8?B?U3JnNXlGZ0xKdEx3ZzlUb1hvZDl3bHFLWW1NMVUzZUdaN1Y0SGFnZkluanBI?=
+ =?utf-8?B?OVJZODZEUmY4ZlY3M3d4UVVBd1Y3eFBVUDZYSUIrWkZvejJ2UG5KM1ZjdXVu?=
+ =?utf-8?B?eExmY245SnhTNHJ2VXdwRllyRUt0d2tFcEtXS1l1OTJDcVNyU1p1Mk1qL1Zi?=
+ =?utf-8?B?RGwzNmx6dlRmb3QrZFJvSDFrWm5nT0VOdHp1QTdrYnEyQmdqL0tnalNnY0NT?=
+ =?utf-8?B?NlhWY2RSQTJWY2JnVFJDaWkyNXgwN0pacEl1T1habWhnMXJtU3ZMSkVkcUJZ?=
+ =?utf-8?B?SVZMT0s5dmRsQ2RBRHRGQWJLNEJST2pXTHZrUmlyNVZRM0tTLytTSkQ4bFdw?=
+ =?utf-8?B?anh3VE4zR2NMandrTXhwTHBaRTVZTklGaGpTdFV2V0tPNU9kdlFwRDhIM3pT?=
+ =?utf-8?B?dFJCeWVBQ1lhMGxVb0phS1VZU2M5K1ZERlQ1WmVSREVVOGl6cUx1SVpreE1G?=
+ =?utf-8?B?VlNGZ013K0RLV2czbnhya0c2Z0JBVFY2WTNtMHBjRzhjMFErZ3JwT3pLclJN?=
+ =?utf-8?B?MlhCZ0RXOXhNeUxEQldCVXNjcFozSWw2eDZ2MW8rUWxPMXFmdmRoWHlSeWdt?=
+ =?utf-8?B?REI0RXRTb3lEM2MxY0NDc0lVY1RoWVB4endzbzhxODVqQ1o0ekNla0pHMlFK?=
+ =?utf-8?B?d1ZKbVplejdMeWE1b2tVcWFjTVBmc25sUlhmMlc3Qll1dlcxVkFodWcvWVFu?=
+ =?utf-8?B?bUhaZWZvTGVvZWc4c1JmYlRxN29XT3FtMTR5a0JQRExRN0tGb3FqckF2OXZv?=
+ =?utf-8?B?Ynp5a0c0WjVDRjM1UEp0WU9hMkJXK1ZoVU83Y2REeWtkRW92cklIeG1Gc2lp?=
+ =?utf-8?B?bnl2MnpQZUV0WWNackdJVEQ1dmVYbnBWbmVacGZubmV1aXlaWU5yR2hZanhP?=
+ =?utf-8?B?WVRrY3I5TUdiRVhDVm9Kb1c2Qmdiamp2L0lzMjlYckk0M2VnNnh6SXQ4clVi?=
+ =?utf-8?B?UXFGbHdxazNUTzRRUm1ERUZTa2RpWnhndkJnZjlvQ2tudWR3UlVQcVpmZ1Ja?=
+ =?utf-8?B?dzdKcE94UDJxN09seVRoVWlZdWRkMzBFTUM2b3lHZjdMTmV6MGpaemE5Uk9o?=
+ =?utf-8?B?YXJlSzlpNkQ2MDNBYzcvSFRXUXNkQ0tjYjAxTnlqT21mUCtza0Vqc09iWUNp?=
+ =?utf-8?B?SElQcVR0WVZGa0hkNTNvR3RteWpJbHdiS3hodHNTTFdNaWxlMlduMFlKSnQ0?=
+ =?utf-8?B?ODJheVJmcXluRmFNNzdiQTZPZjB6UjFWQXlJQjNIM2lmbjNmL1ZoeHZJZnNQ?=
+ =?utf-8?B?a2JWeWFqVUZaRVZUSXBRSmJjLzhmbnZ2V3BTRHRMM1JwNEFIV2hIVHFEN1k0?=
+ =?utf-8?B?MGVUUk9PY0FLQ3IxQWora0NJM3JRU3NraDBUUVZvUU1sQmxrNkU1RWY0UDNn?=
+ =?utf-8?B?a1JSOUhrZEx0dmpGaVZQM2ZmQm5XY0xjK2lSZmI1VVhpY0VEaG8xZGFFR0JB?=
+ =?utf-8?B?WEYvV3J5M1FRVEQxc2laeGNhRXp5YXpGTkVBb0YreVZMZWJhUFNSSWhOQ1FR?=
+ =?utf-8?B?VWc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	4MPBzQUmlcDZ9F5NTUGguqlFO2uzzualpPqPil4Nu9U4gp4WPlJhMV0idJ8hdTPTSBCzYFH5veiRFn4FG1jk0hXGY20wLemLiRwGxtulcNL61lnVTZWl0vaeX0kpog4Hu8nNK34ncdZgMNqhgmkT8yoOE+I9n2+Y9zqi1yqlZifSLRfadH8r2VKrflabcZuRYlXh3XGsuA8LheBT58/4WST8FwuuR/Mh2INEfhztYTErGDlwLat6oxK/uMauvVm91xAq1kWxtZe6Oph8WZ4gnY78mqX+ODQUwYFL4DH0Ty04zrDxvpA286RYk8Q+56QCPWM0b2lgDimnVr+AbWnfXy0uMLqwYExMRHltCwMctjR52MKDRZD/MKlQn8MhMrJGnzc18rHrTcYpyy7FG2MguHtsBXWgw0auGtJFJKlWXmNRaIKYS1vHxo0nxClwHXyn6p3VdcFPhlgXlQeTM01u3wPlLUN4y8XLem5/02AfaiKt1h3fttBlSjxhXsIXKP2aQoVKuMbFaKyWOC1Q4WDchRPIKb0kVPh5+euwVSPtCU8HZGIa2WyuWbXAlUqxRpcvu8OraY7KeJkwyKwsM37b1OWkpyKBfCKs7j8+TK6ACTs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3485d772-38a2-4eef-2c84-08ddd64949a9
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR10MB6165.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 07:00:41.7673
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0290d2a4-136c-4c30-0c4d-08ddd64916b8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066EC.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9427
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gG1NkoS8QmgxW6y/vzuasEoZdzBVY/HvuaqzFiLNHq9l2JWD5la1lYDGOBYBNrkwE5aHuQJDZVEfkKDE6p0nCwQWdYUfiUlMxXIgn5KEVLE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6798
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ spamscore=0 adultscore=0 phishscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2507300000 definitions=main-2508080056
+X-Proofpoint-ORIG-GUID: dbSMd-74vdTMiJE-k7Rht24vxNTgZ6mb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDA1NiBTYWx0ZWRfXyJTBQxelYffU
+ 7mBrFIXlopWdNpxYnbSw+Hd8EGOokPnaqUW0UqZvZrJurSibtNnlMG6mxi6d6yu/ywjT3QSzDJw
+ qzqqj9jgq0vH7LEgnvW7DduJ6DXuMOdgfqq15D4Cm/NC6cFDHN+1Dm9SN8sfw8B9CTf3yH4/LqU
+ Crf243SmHs4FQj46JR/VvsEpwcZmL6xgON8TPY56x52oSCiMiCmxcCUEds+Or4vzBn4WG85ge9e
+ HAQ9XpLBRGEdA+zvbXx3N+GQMxEtAZJTLa5G8Kto7Yyh9561XGvqUCjGACcGPKsdhti87WJHFvF
+ n4KWfev9ouPqUhWiIHXz+3zzU1JJc7C5lt9t/SrXKs9qe7vfYuWAH2EPAabXb8U3snF7fhtH1dx
+ gJUZwbOmspg+VhRypT5Qk1UzfbyaRNXbcoiAkgehzhntmXRP8hKclHHtQdpsfCmEW/dUgoOz
+X-Authority-Analysis: v=2.4 cv=dobbC0g4 c=1 sm=1 tr=0 ts=6895a09d b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=TzAkpwrEl9VEWiPdL90A:9
+ a=QEXdDO2ut3YA:10 cc=ntf awl=host:12069
+X-Proofpoint-GUID: dbSMd-74vdTMiJE-k7Rht24vxNTgZ6mb
 
-When the system is suspended, USB hot-plugging/unplugging can trigger
-wake events of the Tegra USB host controller.
-Enable support for USB wake-up events by parsing device-tree to see if
-the interrupts for the wake-up events are present and if so configure
-those interrupts. Note that if wake-up events are not present, still
-allow the USB host controller to probe as normal.
+Hi Matthieu,
 
-Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
----
-V1->V2
-- Fix the -Wunused-variable warning in xhci-tegra.c.
----
- drivers/usb/host/xhci-tegra.c | 82 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 80 insertions(+), 2 deletions(-)
+On 07/08/25 7:51 PM, Matthieu Baerts wrote:
+> Hi Harshvardhan,
+>
+> On 07/08/2025 05:50, Harshvardhan Jha wrote:
+>> Hi there,
+>> I have explicitly disabled mptpcp by default on my custom kernel and
+>> this seems to be causing the test case to fail. Even after enabling
+>> mtpcp via sysctl command or adding an entry to /etc/sysctl.conf this
+>> fails. I don't think this test should be failing and should account for
+>> cases where mptcp has not been enabled by default?
+> It looks like the test is failing because it expects MPTCP to be enabled
+> by default. Or, said differently, it doesn't expect the kernel to be
+> modified without adapting the corresponding tests :)
+>
+>> This is the custom patch I had applied on the LTS v6.12.36 kernel and
+>> tested it:
+>>
+>> diff --git a/net/mptcp/ctrl.c b/net/mptcp/ctrl.c
+>> index dd595d9b5e50c..bdcc4136e92ef 100644
+>> --- a/net/mptcp/ctrl.c
+>> +++ b/net/mptcp/ctrl.c
+>> @@ -89,7 +89,7 @@ const char *mptcp_get_scheduler(const struct net *net)
+>>  
+>>  static void mptcp_pernet_set_defaults(struct mptcp_pernet *pernet)
+>>  {
+>> -	pernet->mptcp_enabled = 1;
+>> +	pernet->mptcp_enabled = 0;
+>>  	pernet->add_addr_timeout = TCP_RTO_MAX;
+>>  	pernet->blackhole_timeout = 3600;
+>>  	atomic_set(&pernet->active_disable_times, 0);
+> First, I have the same question as the one I asked to RedHat devs: do
+> you still need to keep MPTCP disabled by default? If I remember well, on
+> RHEL side, they started to do that when they backported MPTCP on a
+> previous stable version, as an experimental feature. They left it like
+> that later mostly for internal process reasons I think. But honestly,
+> today, it no longer makes sense to do that and annoys users: all other
+> Linux distributions enable MPTCP by default without patching the kernel
+> like you did.
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index b5c362c2051d..b419f0917feb 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -155,6 +155,8 @@
- #define FW_IOCTL_TYPE_SHIFT			24
- #define FW_IOCTL_CFGTBL_READ		17
- 
-+#define WAKE_IRQ_START_INDEX			2
-+
- struct tegra_xusb_fw_header {
- 	__le32 boot_loadaddr_in_imem;
- 	__le32 boot_codedfi_offset;
-@@ -228,6 +230,7 @@ struct tegra_xusb_soc {
- 	unsigned int num_supplies;
- 	const struct tegra_xusb_phy_type *phy_types;
- 	unsigned int num_types;
-+	unsigned int max_num_wakes;
- 	const struct tegra_xusb_context_soc *context;
- 
- 	struct {
-@@ -263,6 +266,7 @@ struct tegra_xusb {
- 	int xhci_irq;
- 	int mbox_irq;
- 	int padctl_irq;
-+	int *wake_irqs;
- 
- 	void __iomem *ipfs_base;
- 	void __iomem *fpci_base;
-@@ -313,6 +317,7 @@ struct tegra_xusb {
- 	bool suspended;
- 	struct tegra_xusb_context context;
- 	u8 lp0_utmi_pad_mask;
-+	int num_wakes;
- };
- 
- static struct hc_driver __read_mostly tegra_xhci_hc_driver;
-@@ -1534,6 +1539,58 @@ static void tegra_xusb_deinit_usb_phy(struct tegra_xusb *tegra)
- 			otg_set_host(tegra->usbphy[i]->otg, NULL);
- }
- 
-+static int tegra_xusb_setup_wakeup(struct platform_device *pdev, struct tegra_xusb *tegra)
-+{
-+	unsigned int i;
-+
-+	if (tegra->soc->max_num_wakes == 0)
-+		return 0;
-+
-+	tegra->wake_irqs = devm_kcalloc(tegra->dev,
-+					tegra->soc->max_num_wakes,
-+					sizeof(*tegra->wake_irqs), GFP_KERNEL);
-+	if (!tegra->wake_irqs)
-+		return -ENOMEM;
-+
-+	/*
-+	 * USB wake events are independent of each other, so it is not necessary for a platform
-+	 * to utilize all wake-up events supported for a given device. The USB host can operate
-+	 * even if wake-up events are not defined or fail to be configured. Therefore, we only
-+	 * return critical errors, such as -ENOMEM.
-+	 */
-+	for (i = 0; i < tegra->soc->max_num_wakes; i++) {
-+		struct irq_data *data;
-+
-+		tegra->wake_irqs[i] = platform_get_irq(pdev, i + WAKE_IRQ_START_INDEX);
-+		if (tegra->wake_irqs[i] < 0)
-+			break;
-+
-+		data = irq_get_irq_data(tegra->wake_irqs[i]);
-+		if (!data) {
-+			dev_warn(tegra->dev, "get wake event %d irq data fail\n", i);
-+			irq_dispose_mapping(tegra->wake_irqs[i]);
-+			break;
-+		}
-+
-+		irq_set_irq_type(tegra->wake_irqs[i], irqd_get_trigger_type(data));
-+	}
-+
-+	tegra->num_wakes = i;
-+	dev_dbg(tegra->dev, "setup %d wake events\n", tegra->num_wakes);
-+
-+	return 0;
-+}
-+
-+static void tegra_xusb_dispose_wake(struct tegra_xusb *tegra)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < tegra->num_wakes; i++)
-+		irq_dispose_mapping(tegra->wake_irqs[i]);
-+
-+	tegra->num_wakes = 0;
-+}
-+
- static int tegra_xusb_probe(struct platform_device *pdev)
- {
- 	struct tegra_xusb *tegra;
-@@ -1584,9 +1641,15 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	if (tegra->mbox_irq < 0)
- 		return tegra->mbox_irq;
- 
-+	err = tegra_xusb_setup_wakeup(pdev, tegra);
-+	if (err)
-+		return err;
-+
- 	tegra->padctl = tegra_xusb_padctl_get(&pdev->dev);
--	if (IS_ERR(tegra->padctl))
--		return PTR_ERR(tegra->padctl);
-+	if (IS_ERR(tegra->padctl)) {
-+		err = PTR_ERR(tegra->padctl);
-+		goto dispose_wake;
-+	}
- 
- 	np = of_parse_phandle(pdev->dev.of_node, "nvidia,xusb-padctl", 0);
- 	if (!np) {
-@@ -1910,6 +1973,8 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- put_padctl:
- 	of_node_put(np);
- 	tegra_xusb_padctl_put(tegra->padctl);
-+dispose_wake:
-+	tegra_xusb_dispose_wake(tegra);
- 	return err;
- }
- 
-@@ -1942,6 +2007,8 @@ static void tegra_xusb_remove(struct platform_device *pdev)
- 	if (tegra->padctl_irq)
- 		pm_runtime_disable(&pdev->dev);
- 
-+	tegra_xusb_dispose_wake(tegra);
-+
- 	pm_runtime_put(&pdev->dev);
- 
- 	tegra_xusb_disable(tegra);
-@@ -2352,8 +2419,13 @@ static __maybe_unused int tegra_xusb_suspend(struct device *dev)
- 		pm_runtime_disable(dev);
- 
- 		if (device_may_wakeup(dev)) {
-+			unsigned int i;
-+
- 			if (enable_irq_wake(tegra->padctl_irq))
- 				dev_err(dev, "failed to enable padctl wakes\n");
-+
-+			for (i = 0; i < tegra->num_wakes; i++)
-+				enable_irq_wake(tegra->wake_irqs[i]);
- 		}
- 	}
- 
-@@ -2381,8 +2453,13 @@ static __maybe_unused int tegra_xusb_resume(struct device *dev)
- 	}
- 
- 	if (device_may_wakeup(dev)) {
-+		unsigned int i;
-+
- 		if (disable_irq_wake(tegra->padctl_irq))
- 			dev_err(dev, "failed to disable padctl wakes\n");
-+
-+		for (i = 0; i < tegra->num_wakes; i++)
-+			disable_irq_wake(tegra->wake_irqs[i]);
- 	}
- 	tegra->suspended = false;
- 	mutex_unlock(&tegra->lock);
-@@ -2633,6 +2710,7 @@ static const struct tegra_xusb_soc tegra234_soc = {
- 	.num_supplies = ARRAY_SIZE(tegra194_supply_names),
- 	.phy_types = tegra194_phy_types,
- 	.num_types = ARRAY_SIZE(tegra194_phy_types),
-+	.max_num_wakes = 7,
- 	.context = &tegra186_xusb_context,
- 	.ports = {
- 		.usb3 = { .offset = 0, .count = 4, },
--- 
-2.34.1
+We had observed issues with mptcpd daemon failing before when we had
+this enabled by default.
+The mtpcpd userspace fix is yet to be integrated. However, shouldn't the
+testcase be robust enough to handle that scenario regardless?
+
+>
+> If you don't want to revert this patch, I guess you can modify the BPF
+> selftests in 'prog_tests/mptcp.c' to set 'sysctl net.mptcp.enabled=1' in
+> each netns created by the test. But again, not changing the default
+> kernel behaviour sounds like a better solution.
+
+Even after changing /etc/sysctl.conf which is supposed to keep mptcp
+enabled across reboots this issue occurs.
+I agree with what you have stated, mptcp should be enabled by default
+and the userspace fix should be incorporated ideally, however I still
+believe that the test case shouldn't be giving a false negative as it is
+in this case.
+
+The false negatives seem to be occurring since this commit I believe:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=df8d3ba55b4fa1d6aed8449971ee50757cb0732f
+This does the opposite of you have mentioned in certain functions. I
+suppose adding all these lines back might do the trick:
+
+ip netns exec $netns sysctl -q net.mptcp.enabled=1
+
+>
+> Cheers,
+> Matt
+
+Thanks & Regards,
+Harshvardhan
 
 
