@@ -1,105 +1,201 @@
-Return-Path: <linux-kernel+bounces-759710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07917B1E18B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:07:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3238DB1E19C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAAF918A2973
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BFB45801B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9621DED52;
-	Fri,  8 Aug 2025 05:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NUVCZj58"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D84A2E36E2;
-	Fri,  8 Aug 2025 05:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EDA1E8328;
+	Fri,  8 Aug 2025 05:20:36 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189523C17;
+	Fri,  8 Aug 2025 05:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754629668; cv=none; b=JWTX1zWcbiIclzgw16eLxk2ATYpf2ddkg9jO5AlJiTcIrGKnfUHapPghAKi2ETYbowpieiPpzvbI5EDrGyF7PNJCdULSlDGa0XfbTeLzCv4NCbr9Ym5ty/Yiy+lJLT+jVZw51XOtHOU8s+VDjlDA6iXEoCPhZypDz29S1hqvib0=
+	t=1754630436; cv=none; b=hOlyT+YAvSnE8QQGWeIx+f0KhxlV2f37xwdSL9Xl5lcU7n1Gw5mX016d0gk9dEs+wAIUh+DvieS+luCW/ukgJZ8CVr1qwmxzA4cuegY1P7Hj6gUDxmfdC8+p+UgQfzT1/V1zx6VY8lkEdRhyyGrbp8lE0u0HPeeY0A9A91g4XHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754629668; c=relaxed/simple;
-	bh=F6fLKbm9r4rCivnHXjZiFWuJSTvhJ9oWcJCJJoy5myI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kL7bLLqEItkNLZWwDqt8tb9rA22SVN86Kfz2MXFJykF6KZUj0Uv3lEemfzF43nGXKQ8s6nec8A028uTLHAwj0kNxqJHXbIGGvjfP8Wpm0YNRbx31kR2ZwaKNcEDxg9ul25W0o8dtF41g48YsECRWZM8gRVJuCfFCF9YZkVhjtI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NUVCZj58; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=WE
-	guBV9Nj+AlQ84hzfe3or4aV3V5DdYCSGiUDvr1ZWM=; b=NUVCZj58DeeWwV9BeJ
-	0aetTPkWfPjhkyaM7Op8bRLDiLEMQorfTXDZkO31qkdAb7bFxxpSXC3uUvQB9hXN
-	o1CHdsI8rSHLWTFJXNdw/E1VwLfJkGw4WfnSifgaDAOneeRquPYeyt2XikrAaZ8F
-	YaeOYNmPrq7Ozell3aLSHsYCU=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgBHnjXjhZVoPft6AQ--.55044S2;
-	Fri, 08 Aug 2025 13:06:43 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: af_packet: add af_packet hrtimer mode
-Date: Fri,  8 Aug 2025 13:06:43 +0800
-Message-Id: <20250808050643.107481-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754630436; c=relaxed/simple;
+	bh=X5n4kFa1Y07R3QNafbd9SAyDbCqixtJlEuzExt4eaXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oJsKmM/7HD6Kuaa/3D9TTG0TQG0hAVWQ4/MM1kxepatO0JhV6zgdZKBJonX1Xz8mnEckh3Ex4RGFYQsn8rfx7lKqnuv79jHRsHiqX1Nu93AhezeNMjY/BZwpFghNtCEcbi0G+tifGtQfYZ1CB8w1OEXxXbB/yKlJtVRZVLadBfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4bysTv1SGvz9sRs;
+	Fri,  8 Aug 2025 07:07:31 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 136VSEc6Znrg; Fri,  8 Aug 2025 07:07:31 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4bysTv0NP1z9sRk;
+	Fri,  8 Aug 2025 07:07:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E9F118B770;
+	Fri,  8 Aug 2025 07:07:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id ibwVE1n70MLp; Fri,  8 Aug 2025 07:07:30 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E61968B763;
+	Fri,  8 Aug 2025 07:07:28 +0200 (CEST)
+Message-ID: <07ffb27c-3416-43c9-a50a-164a76e5ab60@csgroup.eu>
+Date: Fri, 8 Aug 2025 07:07:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] kasan: call kasan_init_generic in kasan_init
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com,
+ bhe@redhat.com, hca@linux.ibm.com, andreyknvl@gmail.com,
+ akpm@linux-foundation.org, zhangqing@loongson.cn, chenhuacai@loongson.cn,
+ davidgow@google.co, glider@google.com, dvyukov@google.com
+Cc: alex@ghiti.fr, agordeev@linux.ibm.com, vincenzo.frascino@arm.com,
+ elver@google.com, kasan-dev@googlegroups.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-mm@kvack.org,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+References: <20250807194012.631367-1-snovitoll@gmail.com>
+ <20250807194012.631367-3-snovitoll@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250807194012.631367-3-snovitoll@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgBHnjXjhZVoPft6AQ--.55044S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw4rGry5Wr4kXrW3uFW8tFb_yoW8XF47pF
-	Z8ZrnrKwnrJasrJrZ7A3WkXayIvr1rCr45Jrn5JF90ya9xCFyrtr4aqw4ruFZF9wsYv3ZI
-	vw40yF4rCw1kA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UnJ5rUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRxejCmiVfm2PowAAs7
 
-On Wed, 2025-08-06 at 16:51 +0800, Ferenc wrote:
 
-> I doubt we need another CONFIG option ?
+
+Le 07/08/2025 à 21:40, Sabyrzhan Tasbolatov a écrit :
+> Call kasan_init_generic() which handles Generic KASAN initialization.
+> For architectures that do not select ARCH_DEFER_KASAN,
+> this will be a no-op for the runtime flag but will
+> print the initialization banner.
 > 
-> Also this seems to be beneficial for HZ=100 or HZ=250 configuration,
-> maybe worth mentioning in the changelog.
+> For SW_TAGS and HW_TAGS modes, their respective init functions will
+> handle the flag enabling, if they are enabled/implemented.
 > 
-> But more importantly, I think you should explain what difference this
-> really makes,
-> in which circumstances this timer needs to fire...
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217049
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+> Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
+> Acked-by: Alexander Gordeev <agordeev@linux.ibm.com> # s390
+> ---
+> Changes in v5:
+> - Unified arch patches into a single one, where we just call
+> 	kasan_init_generic()
+> - Added Tested-by tag for riscv (tested the same change in v4)
+> - Added Acked-by tag for s390 (tested the same change in v4)
+> ---
+>   arch/arm/mm/kasan_init.c    | 2 +-
+>   arch/arm64/mm/kasan_init.c  | 4 +---
+>   arch/riscv/mm/kasan_init.c  | 1 +
+>   arch/s390/kernel/early.c    | 3 ++-
+>   arch/x86/mm/kasan_init_64.c | 2 +-
+>   arch/xtensa/mm/kasan_init.c | 2 +-
+>   6 files changed, 7 insertions(+), 7 deletions(-)
 > 
-> If real-time is a concern, maybe using a timer to perform GC-style operation
-> is a no go anyway...
+> diff --git a/arch/arm/mm/kasan_init.c b/arch/arm/mm/kasan_init.c
+> index 111d4f70313..c6625e808bf 100644
+> --- a/arch/arm/mm/kasan_init.c
+> +++ b/arch/arm/mm/kasan_init.c
+> @@ -300,6 +300,6 @@ void __init kasan_init(void)
+>   	local_flush_tlb_all();
+>   
+>   	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+> -	pr_info("Kernel address sanitizer initialized\n");
+>   	init_task.kasan_depth = 0;
+> +	kasan_init_generic();
+>   }
+> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
+> index d541ce45dae..abeb81bf6eb 100644
+> --- a/arch/arm64/mm/kasan_init.c
+> +++ b/arch/arm64/mm/kasan_init.c
+> @@ -399,14 +399,12 @@ void __init kasan_init(void)
+>   {
+>   	kasan_init_shadow();
+>   	kasan_init_depth();
+> -#if defined(CONFIG_KASAN_GENERIC)
+> +	kasan_init_generic();
+>   	/*
+>   	 * Generic KASAN is now fully initialized.
+>   	 * Software and Hardware Tag-Based modes still require
+>   	 * kasan_init_sw_tags() and kasan_init_hw_tags() correspondingly.
+>   	 */
+> -	pr_info("KernelAddressSanitizer initialized (generic)\n");
+> -#endif
+>   }
+>   
+>   #endif /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
+> diff --git a/arch/riscv/mm/kasan_init.c b/arch/riscv/mm/kasan_init.c
+> index 41c635d6aca..ba2709b1eec 100644
+> --- a/arch/riscv/mm/kasan_init.c
+> +++ b/arch/riscv/mm/kasan_init.c
+> @@ -530,6 +530,7 @@ void __init kasan_init(void)
+>   
+>   	memset(kasan_early_shadow_page, KASAN_SHADOW_INIT, PAGE_SIZE);
+>   	init_task.kasan_depth = 0;
+> +	kasan_init_generic();
 
-Dear Eric,
+I understood KASAN is really ready to function only once the csr_write() 
+and local_flush_tlb_all() below are done. Shouldn't kasan_init_generic() 
+be called after it ?
 
-I've thought about it, and I really didn't foresee any obvious drawbacks
-after switching to hrtimer, so in PATCH v1, I removed that config and directly
-changed it to hrtimer.
-As you mentioned, this issue is indeed more pronounced on systems with HZ=250
-or HZ=100. Our testing environment was also based on a system with HZ=250, 
-which is still quite common in embedded systems.
-
-Regarding the benefits of using hrtimer, I already provided the test data and
-testing environment in my previous reply to Ferenc, and the improvements are
-quite significant.
-
-As for when the retire timer expires, I've reviewed this logic. From my
-perspective, the existing mechanism in AF_PACKET is complete. In the
-prb_retire_rx_blk_timer_expired function, there is a check to see if there are
-any packets in the current block. If there are packets, the status will be
-reported to user space. By switching to hrtimer, I aimed to ensure that the
-timeout handling in the prb_retire_rx_blk_timer_expired function can be
-executed in a more timely manner.
-
-Thanks
-Xin Zhao
+>   
+>   	csr_write(CSR_SATP, PFN_DOWN(__pa(swapper_pg_dir)) | satp_mode);
+>   	local_flush_tlb_all();
+> diff --git a/arch/s390/kernel/early.c b/arch/s390/kernel/early.c
+> index 9adfbdd377d..544e5403dd9 100644
+> --- a/arch/s390/kernel/early.c
+> +++ b/arch/s390/kernel/early.c
+> @@ -21,6 +21,7 @@
+>   #include <linux/kernel.h>
+>   #include <asm/asm-extable.h>
+>   #include <linux/memblock.h>
+> +#include <linux/kasan.h>
+>   #include <asm/access-regs.h>
+>   #include <asm/asm-offsets.h>
+>   #include <asm/machine.h>
+> @@ -65,7 +66,7 @@ static void __init kasan_early_init(void)
+>   {
+>   #ifdef CONFIG_KASAN
+>   	init_task.kasan_depth = 0;
+> -	pr_info("KernelAddressSanitizer initialized\n");
+> +	kasan_init_generic();
+>   #endif
+>   }
+>   
+> diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
+> index 0539efd0d21..998b6010d6d 100644
+> --- a/arch/x86/mm/kasan_init_64.c
+> +++ b/arch/x86/mm/kasan_init_64.c
+> @@ -451,5 +451,5 @@ void __init kasan_init(void)
+>   	__flush_tlb_all();
+>   
+>   	init_task.kasan_depth = 0;
+> -	pr_info("KernelAddressSanitizer initialized\n");
+> +	kasan_init_generic();
+>   }
+> diff --git a/arch/xtensa/mm/kasan_init.c b/arch/xtensa/mm/kasan_init.c
+> index f39c4d83173..0524b9ed5e6 100644
+> --- a/arch/xtensa/mm/kasan_init.c
+> +++ b/arch/xtensa/mm/kasan_init.c
+> @@ -94,5 +94,5 @@ void __init kasan_init(void)
+>   
+>   	/* At this point kasan is fully initialized. Enable error messages. */
+>   	current->kasan_depth = 0;
+> -	pr_info("KernelAddressSanitizer initialized\n");
+> +	kasan_init_generic();
+>   }
 
 
