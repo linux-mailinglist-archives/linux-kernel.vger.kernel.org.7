@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-760573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CEF7B1ED1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:41:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3391B1ED23
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B7117260CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:41:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1D565A3138
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C129F28750A;
-	Fri,  8 Aug 2025 16:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9563E28751D;
+	Fri,  8 Aug 2025 16:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HnR11wvY"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLVfNRp/"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9506827FB07
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 16:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D93627FB07;
+	Fri,  8 Aug 2025 16:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754671303; cv=none; b=Xvw/hfUQYdD4ATYPgM6gjlwCA0RWkItq2OAKYw4qWkIv8zPuzQXi4YLnASNynTy193c+nPmCH1QUu2llujqDlfnZXsljar7sjjsWrmfLGoiyDpo7Bx3b3xFOAOjLv7xDDcq7w4DdnJh9Pi3Zsady3jv8k2KHiQpvPKvKH5zBpgg=
+	t=1754671390; cv=none; b=VPZ0iQYm70gdUPA94j8wPiX/NVGtUGQ3WNEczxt2F4n90hNKzd6zTmk1CGzY0pn+n2UTKLaz/3Obh/Wu3QMuc1NRqQWGdU38jqVtrtuVlgZQ9o2ePzLPvF5FQE7/z7deI/w5TFF4TW+CtMrropE4P5o5Y50HO++EbJ9aIiAiyiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754671303; c=relaxed/simple;
-	bh=dfdUfMqWlDOmJex++lFk1qO6nnIBP0OFGSpkvrWBx0w=;
+	s=arc-20240116; t=1754671390; c=relaxed/simple;
+	bh=hBz7QODq6cwIwzLsI0Vrawc39RQX3Q+gtmpK3tbIgsw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kotS4aAcE1poYweyooDNEUZiALk3j1iJtdUEln9HXUkDxpFzJjXZLwIYJLjgH1lNJ/v3CNiZqh89A1roMaVaHkQsSH7SwPW1982f7jqgvp8s4Q7KMolvp2lf+G2k0KRKqqMVKM7gcEbZN05xqwN/cbD1nlqR0DJ8rKB4R3LrdIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HnR11wvY; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-617ff2c8e5dso190a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 09:41:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=EwEmbFDpdTejkK1H/nbjMylutDrK220EV3n/ApdhIdJN44b91q8uiPFdyr2KlJhbQ+VZHuL6skTcGwiUxPPjSI49BOGBNfgrBnDBZX5i9ptizs4YulDHJjdKXENpoyQh6PDShnBVp27cxr2H09bpqzqsFlOqBbLTiipaLEiR+h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLVfNRp/; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b780bdda21so1771263f8f.3;
+        Fri, 08 Aug 2025 09:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754671300; x=1755276100; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754671387; x=1755276187; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dfdUfMqWlDOmJex++lFk1qO6nnIBP0OFGSpkvrWBx0w=;
-        b=HnR11wvY6e5RayQ8PnrBK2z3ioLRS0b45qVxBoXlHm6aWGOoKeQe93gIoC7yYzhcGO
-         vJ81mSoZ3cV1WoF7y6AksdcXOwPU/JfOCe2nqTovi3k8L9i0cle+ucgUl3QhJHW4MxkW
-         KFY28vu2FgOTXdrju9DmvhjIunz08JnYaRJD+QaXXaoB6Yqr6kHjfVc9MQC+EWmze1ly
-         gi188OIy6WKXKtgW+5aNaxb9jwaQXgQNMbYapC8/rl6CEyMoJ/xWBcuANouT0ER+1TYr
-         Dx0b+H0UghQOHNAH7jujmBnrUe7XRm5oZc5ETP/MIDLIJqef1Y8Y4ZJrAZZXEPmupsIF
-         GE8A==
+        bh=hBz7QODq6cwIwzLsI0Vrawc39RQX3Q+gtmpK3tbIgsw=;
+        b=eLVfNRp/0C0kMs4BB1G2sqSdSXnoKcLdY3Uh4h1+DVoGEfVY8hQ7YWj/QGfqiWhrlp
+         teL3FFcCq3tNXl+qxHBpopgYyo6qfjoShBBeQlGkYgsqPgv0Y65O4jKlISgffacYvs4F
+         2xIouW+0iO3VS/8Y/vBwMgezlvcLKwlvv7x0mcj0/kSVEgOF13QsK50gWRtsdGSmPFif
+         O2fbTedUPGpskgapE408O0+ybt+m04MD+LN/iMf5n7MvIE6R83LvOBWz4AIHIkEmcC7O
+         A3WlysVRKxWrAuOgSe/A37gvCZQfFqmZ410Jwg2YoWT1KaahP03yRNmW2xbkWDZEhSeq
+         aVdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754671300; x=1755276100;
+        d=1e100.net; s=20230601; t=1754671387; x=1755276187;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dfdUfMqWlDOmJex++lFk1qO6nnIBP0OFGSpkvrWBx0w=;
-        b=GnrZ/XsrCE7/YNPFbz1oAVBMKhgkxMypO/3HT4CpRTLlG+m4gA7phsowzvZgcRtYG8
-         03GRA6jzoM7NKtt7oNvJCt8pH051rUV9vBzhP4f8Dycegd/QHCGzXVgqf82ktljtaXHm
-         MTppJcKJwEkR0DPYbQ//NKp2KE9wbSb29ZZibsDpJN4EANaiFYDiK7adWo2g2uN3eaih
-         FbECaxlmh3jwHBODTGGow/C5+4hqTcsWbSlJmlOELc/mnBLhC+cLB9CYc/ouqsjdOROL
-         TbHmNCcAkX07o9caBkz4PXNu4gqjh3uxAuF3f/WCU8VbD+uJxnoctf2ajpTAImEIdUoJ
-         aKIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHFy4nNC1OK9zWfYy4PopaKsij53rNEQhvnI3XlUPuHm0UU2jEgNfAbZAbb4eg1eNBlEDV2N+I/nNAEvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZOoCg9FNRPctNH72EY54HC3d1rEWQ5BxnIv/gUe4EPMW/QEHM
-	Hvpht7YiJe5uGmMh0Rz2CEkDuGV+1ONQjPbd77ooygyFbEKsGUVXIivy1nNLotXdxCxurRXnYQD
-	pvPAqu+pix3TTP4E85BV4ZngScr1YkdIqxSTRUThH
-X-Gm-Gg: ASbGncsytTZ6NiGTxVlsei7mBsCyNzB/l5DSbKaRfG05kNsRV0pF4YJ8HMO3XhzFR6g
-	VJKfdIrKVyVa79kA6x9YTtbqEXkYCYKQafD/HaYF1hexQaPHkKdhKUbnChwMni0gkgTH3tEZdar
-	BGgZOOmcORBs2qr73vAdQwCbBOMoDZM490dJ63/fmcc4XqM3iVkYiylnXa9HT7F2sFqeufVczEy
-	YondlFq8EU8XmlGv3E5KSC6nMTs6mpsdD83SGPFtg==
-X-Google-Smtp-Source: AGHT+IGcT1Fa1wAmQd/OSoCSWiqxxrHCCt8PYFL+Ygdztx19r9wleJKk1M6kSna+PxJBsaxfyKbUlyZTlO/6NquFBsE=
-X-Received: by 2002:a50:d516:0:b0:617:9274:5bb0 with SMTP id
- 4fb4d7f45d1cf-617e48fefe6mr91904a12.3.1754671299708; Fri, 08 Aug 2025
- 09:41:39 -0700 (PDT)
+        bh=hBz7QODq6cwIwzLsI0Vrawc39RQX3Q+gtmpK3tbIgsw=;
+        b=flsbYclaPz/1K40iHQdYqMzhnQtlGilBn3nAgWE9Ixzoms+NvDkkJ5CDjfPYQ6aeLA
+         eqhJ0ORUvTc6hkKzjfXCM7FCsg7JtSSdbf4LSIkUpzT3tWq3lIXc6iSFDg13GVwXa2Ef
+         OvR1e9LjvDoYbRr4wbV9uYwUjYE87vE/VunkCUo1ya2lbqzkFaL40zDsDorUMt0hNf7d
+         vtSoN1IrwvaI6ukAuKMId+KiE7Ne2LdRvQPRK3WzTG8W/BcUcenyF++xahNmTsE6FBKL
+         HPg/vZt2/x+WvKLePey09H7/HUsZ0wTEbUZSUS0tdp86nF9rsilbivlgXDzXNLTimsJu
+         a3eg==
+X-Forwarded-Encrypted: i=1; AJvYcCULCQmyzcyOQrTjJUZdLa+yJ8b18BnzKncJCZxHiHUL6jZUqwKK2brhc3asKccgqCHr7H8rRExv@vger.kernel.org, AJvYcCUtp664MMVv0JmWuoeD3KU+3aQKyozIeqZlVT5o+pEMsZT8GQBetpyEUD2GRuco7vDvDKrDi9NRiv58m8c7@vger.kernel.org, AJvYcCVA7k9EuaCBEccShRO10wGFqWOjUZYAGpQeYRw7MQoBOMirtZAQdHTkXlkvbTqkUG+RJhk=@vger.kernel.org, AJvYcCW53DKtIBTf7PRLyWEFLuE7c8K3ORBRqZaZXwWQRSEzGtlY2XYh7aiCG24WwsKVfqlIXatkay9bQYDyAyb0VgNR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTPUd2lVM+V0lY9ViTK0pwGAfl6VqS7O+DRmb4ffWYmT5E1FLG
+	x+byzohzCf47qUdjAYTg9W7LUT5PdKdbGbHNzK8s7f++9HdukCnmczfA6mEZxZrXEil4iYBznFB
+	Sre9X+yu/ZHdkpjbJfGT7F9qyhdNtJkM=
+X-Gm-Gg: ASbGncuCY7VlUQFHRiJ6FJIKZ5YDzxVgOvuVPUSru3AImIUadwP4jfRznjW5fSZSfBg
+	ZrWuAeBGhgAE7QJjUuQ+6jvxT3OWENSOCkC3WYub0U/sg6deJ/9Qodc1ehQq0N2ozrr6Fjb5FV7
+	SFWNeNLFbxUgdCQO1M/QK9wM1/ui2jDJiS5Y9BEZ7FvxTOUeGr8jGEObZ80QRxXolxliTzv7App
+	mi1C9sFbW6itPZ/g6ULaweP4eCuKe+kPeMR
+X-Google-Smtp-Source: AGHT+IEH7Bh5BxabsxIyC+T8pE/X/o2EhezxEecYjJXKK56oTvG/5namA7BuNEyyuFoXRZlLz4c3lWwM+Tolix0kpVI=
+X-Received: by 2002:a05:6000:3104:b0:3b7:9dc1:74a5 with SMTP id
+ ffacd0b85a97d-3b900b80561mr2646170f8f.52.1754671386463; Fri, 08 Aug 2025
+ 09:43:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807103902.2242717-1-lokeshgidra@google.com>
- <aJT7qQzEs_p36yfI@x1.local> <20250807155401.683c77b0d0cb5c9ec88089e6@linux-foundation.org>
-In-Reply-To: <20250807155401.683c77b0d0cb5c9ec88089e6@linux-foundation.org>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Fri, 8 Aug 2025 09:41:26 -0700
-X-Gm-Features: Ac12FXyfe3klaRIC0BNFV6P8qrkr_FZHrNFM2dPy8TEb4JRfxMOXo149i-LIVQQ
-Message-ID: <CA+EESO4zWAo=AwohgsGdHNmuLOiuPs1C-FOg4FHrtqiUTdY84g@mail.gmail.com>
-Subject: Re: [PATCH v3] userfaultfd: opportunistic TLB-flush batching for
- present pages in MOVE
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>, aarcange@redhat.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, 21cnbao@gmail.com, ngeoffray@google.com, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>
+References: <20250722150152.1158205-1-matt@readmodwrite.com>
+ <CAADnVQ+rLJwKVbhd6LyGxDQwGUfg9EANcA5wOpA3C3pjaLdRQw@mail.gmail.com>
+ <CAENh_SS2R3aQByV_=WRCO=ZHknk_+pV7RhXA4qx5OGMBN1SnOA@mail.gmail.com>
+ <CAADnVQLnicTicjJhH8gUJK+mpngg5rVoJuQGMiypwtmyC01ZOw@mail.gmail.com> <CAENh_SRxK56Xr1=4MX4GhZuc0GF4z5+Q8VueTK0LDLj3wg_zXg@mail.gmail.com>
+In-Reply-To: <CAENh_SRxK56Xr1=4MX4GhZuc0GF4z5+Q8VueTK0LDLj3wg_zXg@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 8 Aug 2025 09:42:55 -0700
+X-Gm-Features: Ac12FXzI0SWIjlbuRKix9JN42rScdnLLmM34XmBImN01moHmeqq6Q4_oGi5PqHM
+Message-ID: <CAADnVQ+Q6qqz_kCibF6MGCOWAH4WH6XypYSCZjQzW7SP2yyodA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3] selftests/bpf: Add LPM trie microbenchmarks
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	kernel-team <kernel-team@cloudflare.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, Network Development <netdev@vger.kernel.org>, 
+	Matt Fleming <mfleming@cloudflare.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 7, 2025 at 3:54=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
+On Fri, Aug 8, 2025 at 7:21=E2=80=AFAM Matt Fleming <matt@readmodwrite.com>=
+ wrote:
 >
-> On Thu, 7 Aug 2025 15:16:57 -0400 Peter Xu <peterx@redhat.com> wrote:
->
-> > Hi, Lokesh,
+> On Thu, Jul 31, 2025 at 5:41=E2=80=AFPM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
 > >
-> > On Thu, Aug 07, 2025 at 03:39:02AM -0700, Lokesh Gidra wrote:
-> > > MOVE ioctl's runtime is dominated by TLB-flush cost, which is require=
-d
-> > > for moving present pages. Mitigate this cost by opportunistically
-> > > batching present contiguous pages for TLB flushing.
-> > >
-> > > Without batching, in our testing on an arm64 Android device with UFFD=
- GC,
-> > > which uses MOVE ioctl for compaction, we observed that out of the tot=
-al
-> > > time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), an=
-d
-> > > ~20% in vm_normal_folio().
-> > >
-> > > With batching, the proportion of vm_normal_folio() increases to over
-> > > 70% of move_pages_pte() without any changes to vm_normal_folio().
+> > well, random-key update when the map is full is also quite different fr=
+om
+> > random-key update when the map is empty.
 > >
-> > Do you know why vm_normal_folio() could be expensive? I still see quite
-> > some other things this path needs to do.
+> > Instead doing an update from user space do timed ops:
+> > 1 start with empty map, update (aka insert) all keys sequentially
+> > 2 lookup all sequentially
+> > 3 delete all sequentially
+> > 4 update (aka insert) all sequentially
+> > 5 lookup random
+> > 6 update random
+> > 7 delete all random
+> >
+> > The elapsed time for 1 and 4 should be exactly the same.
+> > While all others might have differences,
+> > but all can be compared to each other and reasoned about.
 >
-> Maybe as explained here?
-> https://lkml.kernel.org/r/20250807185819.199865-1-lorenzo.stoakes@oracle.=
-com
+> Having both sequential and random access for the benchmarks is fine,
+> but as far as I can tell the scheme you propose is not how the bpf
+> bench framework is implemented.
 >
-Thanks for sharing this, Andrew. IMHO, this seems like the most likely
-reason to me. There is nothing there other than a cold access to the
-page struct.
+> Plus, handing off a map between subtests is brittle and prone to
+> error. What if I just want to investigate the sequential access update
+> time? The cost of the most expensive op (probably delete) is going to
+> dwarf all over timings making it difficult to separate them and this
+> scheme is going to be susceptible to noise if I can't crank up the
+> number of iterations without altering the number of entries in the
+> map. Microbenchmarks mitigate noise/run-to-run variance by doing a
+> single op over and over again.
 
->
+The bench has to repeat the operation obviously.
+The point is that it cannot benchmark 'delete' in isolation.
+And it cannot benchmark 'update of empty aka insert' in isolation.
+So some operations have to be paired and when another one
+can be done standalone then the delta is the performance for the other.
+In the above 2,5,6 are repeatable. The others need to be paired.
+
+7 with pure random is probably not a good idea, since it will
+try to delete some keys that were already deleted and will skew the numbers=
+.
 
