@@ -1,337 +1,178 @@
-Return-Path: <linux-kernel+bounces-760798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F115B1F047
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:33:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBB5B1F03F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4621C2666F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E790565CF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A204289E23;
-	Fri,  8 Aug 2025 21:32:44 +0000 (UTC)
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD30244E8C;
+	Fri,  8 Aug 2025 21:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WvkJF2MV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1/9xl/VC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VlFEcN1+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="V21WGjzr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4870C213E85;
-	Fri,  8 Aug 2025 21:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B54321ADB9
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 21:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754688763; cv=none; b=pPkH83AbQ0OP5OUUBR8puLSB3X1xvRdGuoLwhp9IaBRMHqCAt8ZipkAamEaWWAq0+/uF9LzTS8+hwJUOWrejzL68uHG8Eplpx6VcV8rM7vSg+Qc6uV567XW+xgqR/rbOZr9Netc5SK378KSqxPnlJuQb/dHxulJL1EYTEXEvsyI=
+	t=1754688725; cv=none; b=mb2gR3L7eTtThLyOgs/LNCkDmx8eTLpRNKr8RnwY6AbtjNftFJE6Ow4NXhTGwjwTv42wEVZBexQMR5+Y8kj3N5CbwFhJm86iVtX4pOV+e9TiNTng4RofRrf4fNQ5AJw0NWr7VKcLVFoCMt03d0uKHZwZYuYMCAh9+TZONHd7U5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754688763; c=relaxed/simple;
-	bh=AA+L4VD9pvKljjMpU0c3SBNyWo90yERF+Mm3PryYPuk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pDRRZReJffpOeCllKhMJqUTx5Uv8g1ZKuh6gDnubLSbzf8N3+5bctx6qy5Gk0oR3l+YOaUMNX1cVrYFXxJPETGWrS0qZglE7kijcOH3rYa9He/RvfchtJLLZKlU2Lo6n7sTTmR/kazRZvtDLNKaR4kwPVs5O0CFrry2DJnlZGCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	s=arc-20240116; t=1754688725; c=relaxed/simple;
+	bh=KD6MyFkEfBenKf/K2EH/YSf7Qowxg5WV6+qQzc7Km0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LXP2iLJiaa5lFOHreSyIJPR5HzCykQJh66P2MjMvIFekyxcfA45W4eyr/t1Yfwu1wnGNMTrYXhAtH5kerDS92ahYvZQ8IN8yPGGK0bQNXAlwTigscxX+aDEEZ2IP0wbSoZMjStsWUbW0a18WPfLwafQaQjBZKAGij2ARgH7SUAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WvkJF2MV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1/9xl/VC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VlFEcN1+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=V21WGjzr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bzHLY4jQYz9tDq;
-	Fri,  8 Aug 2025 23:32:37 +0200 (CEST)
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of linux@timmermann.space designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=linux@timmermann.space
-From: Lukas Timmermann <linux@timmermann.space>
-To: lee@kernel.org,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@timmermann.space
-Subject: [PATCH v8 2/2] leds: as3668: Driver for the ams Osram 4-channel i2c LED driver
-Date: Fri,  8 Aug 2025 23:31:43 +0200
-Message-ID: <20250808213143.146732-3-linux@timmermann.space>
-In-Reply-To: <20250808213143.146732-1-linux@timmermann.space>
-References: <20250808213143.146732-1-linux@timmermann.space>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EEDDE5BE9D;
+	Fri,  8 Aug 2025 21:31:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754688720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ozpPeuGz/5jR8RvrsN+ym3S5Zd0rR0WHaXf/FgJQh6A=;
+	b=WvkJF2MV28XaR7NjO9JlgURbxOnMk04dnMp3rU4DB+pvF138qC1HM2dOGur2+tvInHtwhn
+	jfNI+6dwVILpfddZ5FmtdADWInRef0Aa4aDmpkDE8OeG6hXziJoFvpb5otsMlx91lJkn9p
+	2m/F5CAyCG+GyMGd/F8hyoXHpYBBgLk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754688720;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ozpPeuGz/5jR8RvrsN+ym3S5Zd0rR0WHaXf/FgJQh6A=;
+	b=1/9xl/VCICqUNFJtiSIuAX5jSdnseyst7G72Zy0fJ2FKOjxsvcQ5ttp93n869MszjrK2oR
+	zLat/mG/+eJP8NBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754688719; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ozpPeuGz/5jR8RvrsN+ym3S5Zd0rR0WHaXf/FgJQh6A=;
+	b=VlFEcN1+KLihWbtuyRDQBtfXWzk0WoralxzzPCXwgLkywvuLnKCdmwApiPQcdkM4PbR3GB
+	DzsEFBuBRWQ/HbMHepl0O+uKty1mFsgMInZlfJW4cQ21pnxwft9x75plbp0d6nKcdj42kS
+	7U5Fal2G9obLQfUOO5e1J4/vZjHztUY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754688719;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ozpPeuGz/5jR8RvrsN+ym3S5Zd0rR0WHaXf/FgJQh6A=;
+	b=V21WGjzrpRzk35KZ/w/wPCKv/uza/4Jmfd/mwutbrrQnlrPEXgiG0XLJYDwrNWrx1hWeLe
+	AJjdavret2ktQQAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A2261392A;
+	Fri,  8 Aug 2025 21:31:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZjKwBs9slmgRHgAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 08 Aug 2025 21:31:59 +0000
+Date: Fri, 8 Aug 2025 22:32:01 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: kernel test robot <lkp@intel.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Linux Memory Management List <linux-mm@kvack.org>, 
+	Suren Baghdasaryan <surenb@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	linux-riscv@lists.infradead.org, llvm@lists.linux.dev
+Subject: Re: ld.lld: error: Function Import: link error: linking module flags
+ 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at
+ 1229286), and 'i32 1' from vmlinux.a(vma_exec.o at 1246866)
+Message-ID: <j6pxm4n2n3tnan22x73ff3ku6dwr6e65mi4tafjmlyoicbpygi@vbjbioh7p5fx>
+References: <202508082339.sjRnzZrX-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bzHLY4jQYz9tDq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508082339.sjRnzZrX-lkp@intel.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-Since there were no existing drivers for the AS3668 or related devices,
-a new driver was introduced in a separate file. Similar devices were
-reviewed, but none shared enough characteristics to justify code reuse.
-As a result, this driver is written specifically for the AS3668.
+This doesn't look particularly mm related, CC'd riscv and kernel llvm lists.
 
-Signed-off-by: Lukas Timmermann <linux@timmermann.space>
----
- MAINTAINERS                |   1 +
- drivers/leds/Kconfig       |  13 +++
- drivers/leds/Makefile      |   1 +
- drivers/leds/leds-as3668.c | 202 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 217 insertions(+)
- create mode 100644 drivers/leds/leds-as3668.c
+On Sat, Aug 09, 2025 at 12:09:05AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   37816488247ddddbc3de113c78c83572274b1e2e
+> commit: dd7a6246f4fd6e8a6dcb08f1f51c899f3e0d3b83 mm: abstract initial stack setup to mm subsystem
+> date:   3 months ago
+> config: riscv-randconfig-r071-20250729 (https://download.01.org/0day-ci/archive/20250808/202508082339.sjRnzZrX-lkp@intel.com/config)
+> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 1b4db78d2eaa070b3f364a2d2b2b826a5439b892)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250808/202508082339.sjRnzZrX-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202508082339.sjRnzZrX-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(core.o at 1243626)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(ring_buffer.o at 1239546)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(vmalloc.o at 1246746)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(memory.o at 1246026)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(main.o at 1225686)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(output.o at 1404306)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(mmap.o at 1246206)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(vma.o at 1246806)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(drm_gem.o at 1315866)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(drm_gem_shmem_helper.o at 1317846)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(virtgpu_vram.o at 1327806)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 1' from vmlinux.a(alternative.o at 1226286), and 'i32 3' from vmlinux.a(init.o at 1229286)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(direct-io.o at 1251666)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(debug_vm_pgtable.o at 1247886)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(drm_gem_dma_helper.o at 1317726)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(blk-lib.o at 1282566)
+> >> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(vma_exec.o at 1246866)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(context.o at 1229706)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(setup.o at 1226826)
+>    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(physaddr.o at 1229886)
+>    ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 091206c54c63..945d78fef380 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3511,6 +3511,7 @@ M:	Lukas Timmermann <linux@timmermann.space>
- L:	linux-leds@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/leds/ams,as3668.yaml
-+F:	drivers/leds/leds-as3668.c
- 
- ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
- M:	Tianshu Qiu <tian.shu.qiu@intel.com>
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a104cbb0a001..8cfb423ddf82 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -100,6 +100,19 @@ config LEDS_ARIEL
- 
- 	  Say Y to if your machine is a Dell Wyse 3020 thin client.
- 
-+config LEDS_AS3668
-+	tristate "LED support for AMS AS3668"
-+	depends on LEDS_CLASS
-+	depends on I2C
-+	help
-+	  This option enables support for the AMS AS3668 LED controller.
-+	  The AS3668 provides up to four LED channels and is controlled via
-+	  the I2C bus. This driver offers basic brightness control for each
-+	  channel, without support for blinking or other advanced features.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-as3668.
-+
- config LEDS_AW200XX
- 	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 2f170d69dcbf..983811384fec 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
- obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
- obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
- obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
-+obj-$(CONFIG_LEDS_AS3668)		+= leds-as3668.o
- obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
- obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
- obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
-diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
-new file mode 100644
-index 000000000000..0cfd3b68f90c
---- /dev/null
-+++ b/drivers/leds/leds-as3668.c
-@@ -0,0 +1,202 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ *  Osram AMS AS3668 LED Driver IC
-+ *
-+ *  Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/i2c.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/uleds.h>
-+
-+#define AS3668_MAX_LEDS 4
-+#define AS3668_EXPECTED_I2C_ADDR 0x42
-+
-+/* Chip Ident */
-+
-+#define AS3668_CHIP_ID1_REG 0x3e
-+#define AS3668_CHIP_ID2_REG 0x3f
-+#define AS3668_CHIP_ID1_EXPECTED_IDENTIFIER 0xa5
-+#define AS3668_CHIP_ID2_SERIAL_MASK GENMASK(7, 4)
-+#define AS3668_CHIP_ID2_REV_MASK GENMASK(3, 0)
-+
-+/* Current Control */
-+
-+#define AS3668_CURRX_CONTROL_REG 0x01
-+#define AS3668_CURR1_REG 0x02
-+#define AS3668_CURR2_REG 0x03
-+#define AS3668_CURR3_REG 0x04
-+#define AS3668_CURR4_REG 0x05
-+#define AS3668_CURRX_MODE_ON 0x1
-+#define AS3668_CURRX_CURR1_MASK GENMASK(1, 0)
-+#define AS3668_CURRX_CURR2_MASK GENMASK(3, 2)
-+#define AS3668_CURRX_CURR3_MASK GENMASK(5, 4)
-+#define AS3668_CURRX_CURR4_MASK GENMASK(7, 6)
-+
-+struct as3668_led {
-+	struct led_classdev cdev;
-+	struct as3668 *chip;
-+	struct fwnode_handle *fwnode;
-+
-+	int led_id;
-+};
-+
-+struct as3668 {
-+	struct i2c_client *client;
-+	struct as3668_led leds[AS3668_MAX_LEDS];
-+};
-+
-+static enum led_brightness as3668_brightness_get(struct led_classdev *cdev)
-+{
-+	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
-+
-+	return i2c_smbus_read_byte_data(led->chip->client, AS3668_CURR1_REG + led->led_id);
-+}
-+
-+static void as3668_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
-+{
-+	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
-+
-+	int err = i2c_smbus_write_byte_data(led->chip->client,
-+					    AS3668_CURR1_REG + led->led_id,
-+					    brightness);
-+
-+	if (err)
-+		dev_err(&led->chip->client->dev, "error writing to reg 0x%02x, returned %d\n",
-+			AS3668_CURR1_REG + led->led_id, err);
-+}
-+
-+static int as3668_dt_init(struct as3668 *as3668)
-+{
-+	struct device *dev = &as3668->client->dev;
-+	struct as3668_led *led;
-+	struct led_init_data init_data = {};
-+	int err;
-+	u32 reg;
-+
-+	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
-+		err = of_property_read_u32(child, "reg", &reg);
-+		if (err)
-+			return dev_err_probe(dev, err, "'reg' property missing from %s\n",
-+					     child->name);
-+
-+		if (reg < 0 || reg > AS3668_MAX_LEDS)
-+			return dev_err_probe(dev, -EOPNOTSUPP,
-+					     "'reg' property in %s is out of scope: %d\n",
-+					     child->name, reg);
-+
-+		led = &as3668->leds[reg];
-+		led->fwnode = of_fwnode_handle(child);
-+
-+		led->led_id = reg;
-+		led->chip = as3668;
-+
-+		led->cdev.max_brightness = U8_MAX;
-+		led->cdev.brightness_get = as3668_brightness_get;
-+		led->cdev.brightness_set = as3668_brightness_set;
-+
-+		init_data.fwnode = led->fwnode;
-+		init_data.default_label = ":";
-+
-+		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
-+		if (err)
-+			return dev_err_probe(dev, err, "failed to register LED %d\n", reg);
-+	}
-+
-+	return 0;
-+}
-+
-+static int as3668_probe(struct i2c_client *client)
-+{
-+	struct as3668 *as3668;
-+	int err;
-+	u8 chip_ident, chip_subident, chip_serial, chip_rev;
-+
-+	/* Check for sensible i2c address */
-+	if (client->addr != AS3668_EXPECTED_I2C_ADDR)
-+		return dev_err_probe(&client->dev, -EFAULT,
-+				     "expected i2c address 0x%02x, got 0x%02x\n",
-+				     AS3668_EXPECTED_I2C_ADDR, client->addr);
-+
-+	/* Read identifier from chip */
-+	chip_ident = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID1_REG);
-+
-+	if (chip_ident != AS3668_CHIP_ID1_EXPECTED_IDENTIFIER)
-+		return dev_err_probe(&client->dev, -ENODEV,
-+				     "expected chip identifier 0x%02x, got 0x%02x\n",
-+				     AS3668_CHIP_ID1_EXPECTED_IDENTIFIER, chip_ident);
-+
-+	chip_subident = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID2_REG);
-+	chip_serial = FIELD_GET(AS3668_CHIP_ID2_SERIAL_MASK, chip_subident);
-+	chip_rev = FIELD_GET(AS3668_CHIP_ID2_REV_MASK, chip_subident);
-+
-+	/* Print out information about the chip */
-+	dev_dbg(&client->dev,
-+		"chip_ident: 0x%02x | chip_subident: 0x%02x | chip_serial: 0x%02x | chip_rev: 0x%02x\n",
-+		chip_ident, chip_subident, chip_serial, chip_rev);
-+
-+	as3668 = devm_kzalloc(&client->dev, sizeof(*as3668), GFP_KERNEL);
-+	if (!as3668)
-+		return -ENOMEM;
-+
-+	as3668->client = client;
-+
-+	err = as3668_dt_init(as3668);
-+	if (err)
-+		return err;
-+
-+	/* Set all four channel modes to 'on' */
-+	err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG,
-+					FIELD_PREP(AS3668_CURRX_CURR1_MASK, AS3668_CURRX_MODE_ON) |
-+					FIELD_PREP(AS3668_CURRX_CURR2_MASK, AS3668_CURRX_MODE_ON) |
-+					FIELD_PREP(AS3668_CURRX_CURR3_MASK, AS3668_CURRX_MODE_ON) |
-+					FIELD_PREP(AS3668_CURRX_CURR4_MASK, AS3668_CURRX_MODE_ON));
-+
-+	/* Set initial currents to 0mA */
-+	err |= i2c_smbus_write_byte_data(client, AS3668_CURR1_REG, 0);
-+	err |= i2c_smbus_write_byte_data(client, AS3668_CURR2_REG, 0);
-+	err |= i2c_smbus_write_byte_data(client, AS3668_CURR3_REG, 0);
-+	err |= i2c_smbus_write_byte_data(client, AS3668_CURR4_REG, 0);
-+
-+	if (err)
-+		return dev_err_probe(&client->dev, -EIO, "error during hardware initialization\n");
-+
-+	return 0;
-+}
-+
-+static void as3668_remove(struct i2c_client *client)
-+{
-+	int err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG, 0);
-+
-+	if (err)
-+		dev_err(&client->dev, "couldn't deinit device\n");
-+}
-+
-+static const struct i2c_device_id as3668_idtable[] = {
-+	{ "as3668" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, as3668_idtable);
-+
-+static const struct of_device_id as3668_match_table[] = {
-+	{ .compatible = "ams,as3668" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, as3668_match_table);
-+
-+static struct i2c_driver as3668_driver = {
-+	.driver = {
-+		.name = "leds_as3668",
-+		.of_match_table = as3668_match_table,
-+	},
-+	.probe = as3668_probe,
-+	.remove = as3668_remove,
-+	.id_table = as3668_idtable,
-+};
-+module_i2c_driver(as3668_driver);
-+
-+MODULE_AUTHOR("Lukas Timmermann <linux@timmermann.space>");
-+MODULE_DESCRIPTION("AS3668 LED driver");
-+MODULE_LICENSE("GPL");
 -- 
-2.50.1
-
+Pedro
 
