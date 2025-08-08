@@ -1,230 +1,93 @@
-Return-Path: <linux-kernel+bounces-760665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CCEB1EE74
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:39:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86983B1EE79
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B396BA060B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844CC18C4257
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721F5220F52;
-	Fri,  8 Aug 2025 18:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0F926560A;
+	Fri,  8 Aug 2025 18:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghruLc0N"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbIAef7r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0907D1F4C84;
-	Fri,  8 Aug 2025 18:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A498B1361;
+	Fri,  8 Aug 2025 18:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754678342; cv=none; b=Rh8oPgGd3EuangGcd1+I2TFEArkypvtq+uMEtmo5rjavVc9P3FuiLyPGKAGgBywWxoeNcNF6vdhCPmzfY3DBnUmW3YTYQ5cV1U/8SLPyiqsCvgomir3bUrhaikSYRlV1eL4qRJU0ToBJb/cB0PiO101mbqipVoc+OeM+PQjXI4w=
+	t=1754678891; cv=none; b=OyH/XavRrb6YvmVx4OTT7LjZib4VorH1FzJvP5EUiu1e/CPGZPLcK97OVpp7EIGboL4vJGijPJNrAcNy0B8XIZOj0qAGGWMfr4x3yTvgszZyhlO4kd/pH8fQxCJg0UUfBEjt3pdvblF2Tfp0KD0TjSjl+JMtdHRDM4fmRZ1BiEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754678342; c=relaxed/simple;
-	bh=wTcaw0dDssgCkxpjul2gQBoQ/cKBTeFMxCtlAzWgAfQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Im/xgt404gQs4t6zgoF/pSc1EtJURw0Pg9PrnyF1X19zl5gLqWn3midRt+QAlRGEc0Uoog3w/dZ/gWfiWkISrH18OsbpwEgQdkNjvhS/4kb0N4M22h9+xkfXzoqk7x04O5ESDVJEcIczQy7HNw5rzZj4Yv0jxUhtmLXYwXZxHEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghruLc0N; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af94e75445dso454790566b.0;
-        Fri, 08 Aug 2025 11:39:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754678339; x=1755283139; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7gWwtBN6ebQOcOxsCD+ybzhCBORN9wnDQdVJlpxrz/s=;
-        b=ghruLc0N4uuMhjZQZ3iSHrp2Xr79Zysue/DK4it3qA8GyN0JXxB5xgva7FJ1IGxocP
-         fbVU+28wOFRnPZ0KHgjHs2QObUAfO1wYJJFhhcP6Onizbarc6532o0H9RwDQnhnGlFyr
-         qDmHwaYIt3ZHhQtw4937GfsfGG4Inl9GUc7Mhv0YYjEBfWGcQeSB/CrxQxXLW8HlfgDn
-         pd57ilpcHKcgdZ1YxaSabQtgJFs3EwU/zJXWJIlXZVXDbOinC2pDqBF+E3tSq4t8/6N4
-         BWqcUi10hSL6oi4ZQEMV6bDyvnFuqvKrgcihlTfBPIICXa/5p22CYsqZrpeLHWumTy36
-         ptfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754678339; x=1755283139;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7gWwtBN6ebQOcOxsCD+ybzhCBORN9wnDQdVJlpxrz/s=;
-        b=jW9KeYMeTeMgk8QeY4uH7duhFsPNooaiCHuFWuYryGuH3O++Fu6NqS8to6TiZPsdkH
-         SUZYhrhj361v5eIig3T9Ka31lOJmndUCgxFf0p+VbMtb1e03UV3CuyoN0c09L3p+cHPE
-         KFJKGrufyeuXrvBvFtbp+41pmh00rsJQpsnfi1u1YRl8OlCuY02lEu6vFDr2vs8EE3cx
-         DGxohu4aeI3IYtWoCT8NkQfg0MAHOW3YYbTHBhr0B9kkfElxuKhmamQAQcv2Q7+mw+/+
-         vN+IptD0dMjbEVC5rPDB0HcNI72jlF8dGWidrdHP/ax/yjzPnbEzWUfMQQn9DTBHZGzN
-         tnzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUexm5nWDcIsrwoLT+bLMs3TLVwO5T670wSYCF6R/OqvoPjuv67Hfu3t/xDZZlPU3MIsqE=@vger.kernel.org, AJvYcCUgB02T/X4F/Kqx2KETmo0rsq36b7dNiLifPRhdWU7QbWzK1lBKOgbRgZ/L1xITkkUX9Ek718V5dw5acMsQY/CC2YoX@vger.kernel.org, AJvYcCXaxeH4ukZwDy1mBMy3g9AuI6BIfpBVFeSQSh9c29JYxXVDeNYbdZuTfpg3e1NP8oBuL6jqjeRHPwTuEfQR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS/M747Pkwb9OoJ5fgPihiA6cZcLwK+N5nF5GiBZSrUrdF18cK
-	USBLU/MO2fc9Aui2eNBLU5ZZKW+o2noLcc9CDCGATijZn0cAQrBg3Gea
-X-Gm-Gg: ASbGncukDdL8mlYp1rDx8NnU1M5qe6clar4CX9o4HeXLft7ylYe5WyRVkRQ/Ek5CU6o
-	taLxHo4YxV2NOG5L8qEfsJFMXfU4zIbCoAki7gti0va2WxMTDUAMd0NFU8iC1wbvzaRGgpDFLc1
-	Mb7++7Qnvq2kOxeoEADUB4wbLQvCxnxig+pTHeq5dgkgm+5j+1EllBusSyNN/svvEiKRqpGsurx
-	GTlYhgFRetAhuirKFPd33hMiQ/kD39XcJo8B80ORupkZfZKcZMiO1nB4MmPSEa/QsSnuXpRBcTJ
-	NtnFFX1yCHAtrPt1e6lhrODqtsIqLqMSYvjBYVV7Wgo5UhmD9FpOe1t05pKXmYyddezaRHjD+uT
-	CNrvT8yaboAbYjw==
-X-Google-Smtp-Source: AGHT+IHm4FM+H2cY+xcahr29t1p51xqTQjA9Z1EzXFR/hkulXj4tdkM3UyPID6AE1hwChDqdy2Ks4Q==
-X-Received: by 2002:a17:907:8691:b0:ae1:c79f:2b2e with SMTP id a640c23a62f3a-af9c6540d48mr356899166b.40.1754678339050;
-        Fri, 08 Aug 2025 11:38:59 -0700 (PDT)
-Received: from krava ([2a00:102a:406f:c1c4:19f6:67fa:c879:8862])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a219ecfsm1532455666b.94.2025.08.08.11.38.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 11:38:58 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 8 Aug 2025 20:38:56 +0200
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [RFC 1/4] uprobe: Do not emulate/sstep original instruction when
- ip is changed
-Message-ID: <aJZEQDgIPr9wVUWP@krava>
-References: <20250801210238.2207429-1-jolsa@kernel.org>
- <20250801210238.2207429-2-jolsa@kernel.org>
- <20250802103426.GC31711@redhat.com>
- <aJBrXwHESPRTpwYa@krava>
+	s=arc-20240116; t=1754678891; c=relaxed/simple;
+	bh=hyBvZwGcxhxV1L8C60kPaohAML2mGrY2ZK5limPy77A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SBukrKPsH3JujVdr7CQ4vR0OrffzWtjFlIdjoEpspsd0nfhNN54QHfD0BVQ6isE+lbb7E2Esk5OX2G6R6QKtSQ6oym+x8B64bi6DDZnX+u/odP4H8Rq8D2RD6SA5YOO+qxvDrg7gHn0MlutEhLeByP9zhpsr3DcYWmveLNDQaiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbIAef7r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5617C4CEED;
+	Fri,  8 Aug 2025 18:48:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754678890;
+	bh=hyBvZwGcxhxV1L8C60kPaohAML2mGrY2ZK5limPy77A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gbIAef7rOE+RfpOUvbgaPPfB2chDrtUcB85xtoDL1B6wmN2X3JKd5u+oyUxBzTgHx
+	 7zAhsGp2w2tCcT8WGOpkhHp4BqHqe1yJODwvUawF06JPMTGREh/7OQhF72+sgP4flR
+	 0NR8TKh/Rmu6pzOFRkkkihXHlEolyPzNKMEv9jW5vT/96au6aVT4lygp7B2vxCiMjC
+	 wKr9+aNoMKWjf+GTR92TSJi5l4DJmusTckZoosP11Ha/K8Et2sPPQeusMReU3KvYTo
+	 wXBsnNyCYWvttQv2mJ1GQfdN3CaFhkX28cVZ+hrO7JXGLRVuAyZF8xEoTn14k6sjiy
+	 IEgOEckOi59ng==
+Date: Fri, 8 Aug 2025 11:48:09 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Frank <Frank.Sae@motor-comm.com>, Andrew Lunn <andrew@lunn.ch>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: motorcomm: make const array mac_addr_reg
+ static
+Message-ID: <20250808114809.1035a3a1@kernel.org>
+In-Reply-To: <20250807131504.463704-1-colin.i.king@gmail.com>
+References: <20250807131504.463704-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJBrXwHESPRTpwYa@krava>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 04, 2025 at 10:12:15AM +0200, Jiri Olsa wrote:
-> On Sat, Aug 02, 2025 at 12:34:27PM +0200, Oleg Nesterov wrote:
-> > On 08/01, Jiri Olsa wrote:
-> > >
-> > > If uprobe handler changes instruction pointer we still execute single
-> > > step) or emulate the original instruction and increment the (new) ip
-> > > with its length.
-> > 
-> > Yes... but what if we there are multiple consumers? The 1st one changes
-> > instruction_pointer, the next is unaware. Or it may change regs->ip too...
+On Thu,  7 Aug 2025 14:15:04 +0100 Colin Ian King wrote:
+> Don't populate the const read-only arrays mac_addr_reg on the stack at
+> run time, instead make them static, this reduces the object code size.
 > 
-> right, and I think that's already bad in current code
+> Size before:
+>    text	   data	    bss	    dec	    hex	filename
+>   65066	  11352	      0	  76418	  12a82	drivers/net/phy/motorcomm.o
 > 
-> how about we dd flag to the consumer that ensures it's the only consumer
-> on the uprobe.. and we would skip original instruction execution for such
-> uprobe if its consumer changes the regs->ip.. I'll try to come up with the
-> patch
+> Size after:
+>    text	   data	    bss	    dec	    hex	filename
+>   64761	  11512	      0	  76273	  129f1	drivers/net/phy/motorcomm.o
 
-how about something like below?
+## Form letter - net-next-closed
 
-jirka
+We have already submitted our pull request with net-next material for v6.17,
+and therefore net-next is closed for new drivers, features, code refactoring
+and optimizations. We are currently accepting bug fixes only.
 
+Please repost when net-next reopens after Aug 11th.
 
----
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 516217c39094..b2c49a2d5468 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -59,6 +59,7 @@ struct uprobe_consumer {
- 	struct list_head cons_node;
- 
- 	__u64 id;	/* set when uprobe_consumer is registered */
-+	bool is_unique; /* the only consumer on uprobe */
- };
- 
- #ifdef CONFIG_UPROBES
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index f774367c8e71..b317f9fbbf5c 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1014,14 +1014,32 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
- 	return uprobe;
- }
- 
--static void consumer_add(struct uprobe *uprobe, struct uprobe_consumer *uc)
-+static bool consumer_can_add(struct list_head *head, struct uprobe_consumer *uc)
-+{
-+	/* there's no consumer, free to add one */
-+	if (list_empty(head))
-+		return true;
-+	/* uprobe has consumer(s), can't add unique one */
-+	if (uc->is_unique)
-+		return false;
-+	/* uprobe has consumer(s), we can add one only if it's not unique consumer */
-+	return !list_first_entry(head, struct uprobe_consumer, cons_node)->is_unique;
-+}
-+
-+static int consumer_add(struct uprobe *uprobe, struct uprobe_consumer *uc)
- {
- 	static atomic64_t id;
-+	int ret = -EBUSY;
- 
- 	down_write(&uprobe->consumer_rwsem);
-+	if (!consumer_can_add(&uprobe->consumers, uc))
-+		goto unlock;
- 	list_add_rcu(&uc->cons_node, &uprobe->consumers);
- 	uc->id = (__u64) atomic64_inc_return(&id);
-+	ret = 0;
-+unlock:
- 	up_write(&uprobe->consumer_rwsem);
-+	return ret;
- }
- 
- /*
-@@ -1410,7 +1428,12 @@ struct uprobe *uprobe_register(struct inode *inode,
- 		return uprobe;
- 
- 	down_write(&uprobe->register_rwsem);
--	consumer_add(uprobe, uc);
-+	ret = consumer_add(uprobe, uc);
-+	if (ret) {
-+		put_uprobe(uprobe);
-+		up_write(&uprobe->register_rwsem);
-+		return ERR_PTR(ret);
-+	}
- 	ret = register_for_each_vma(uprobe, uc);
- 	up_write(&uprobe->register_rwsem);
- 
-@@ -2522,7 +2545,7 @@ static bool ignore_ret_handler(int rc)
- 	return rc == UPROBE_HANDLER_REMOVE || rc == UPROBE_HANDLER_IGNORE;
- }
- 
--static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
-+static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs, bool *is_unique)
- {
- 	struct uprobe_consumer *uc;
- 	bool has_consumers = false, remove = true;
-@@ -2536,6 +2559,8 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
- 		__u64 cookie = 0;
- 		int rc = 0;
- 
-+		*is_unique |= uc->is_unique;
-+
- 		if (uc->handler) {
- 			rc = uc->handler(uc, regs, &cookie);
- 			WARN(rc < 0 || rc > 2,
-@@ -2685,6 +2710,7 @@ static void handle_swbp(struct pt_regs *regs)
- {
- 	struct uprobe *uprobe;
- 	unsigned long bp_vaddr;
-+	bool is_unique = false;
- 	int is_swbp;
- 
- 	bp_vaddr = uprobe_get_swbp_addr(regs);
-@@ -2739,7 +2765,10 @@ static void handle_swbp(struct pt_regs *regs)
- 	if (arch_uprobe_ignore(&uprobe->arch, regs))
- 		goto out;
- 
--	handler_chain(uprobe, regs);
-+	handler_chain(uprobe, regs, &is_unique);
-+
-+	if (is_unique && instruction_pointer(regs) != bp_vaddr)
-+		goto out;
- 
- 	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
- 		goto out;
+RFC patches sent for review only are obviously welcome at any time.
+
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+-- 
+pw-bot: defer
+pv-bot: closed
+
 
