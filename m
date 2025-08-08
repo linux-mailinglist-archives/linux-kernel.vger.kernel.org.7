@@ -1,168 +1,149 @@
-Return-Path: <linux-kernel+bounces-760758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A34B1EFD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE839B1EFAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE270AA1074
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C1483A4C0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD7A28A405;
-	Fri,  8 Aug 2025 20:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="nfmdhOZO"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EB6288C0F;
+	Fri,  8 Aug 2025 20:40:50 +0000 (UTC)
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9826289E3C;
-	Fri,  8 Aug 2025 20:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBBF24A046;
+	Fri,  8 Aug 2025 20:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754685685; cv=none; b=o8Y6sNlQhDakdCu/L96E+wab7RgmVyOx/IRNkNebZSO1K98SOMBGpG2xzzX8iSutFlUccs2Q9aasFbPduXUr1OThIPQLOWIkQN1XAgyHdxw9d9Wt/AaP0bjr4L6hFcvNm3VxiJcWQzUsDVmNEH/1RxFoSPBDyucoxMt4R9jrbdM=
+	t=1754685650; cv=none; b=jh4+dxF3Vbsud5YZWrp/jnCmyEJ8B9DTcf4SnWJ2J6iRVgfpwLwnTAOy2GdXeNXPTkBRxUMCP7jAHiizXQ+ITKhV1zcI+D9LZ9dcyp8qRO9LP9/FsFlIq8kc9gxmlzPSC6MC6ofh7azQkKTR7VaXsgaN4i78thxKPZYKBpr7/J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754685685; c=relaxed/simple;
-	bh=kYsKPddX805RzOw4SP5aC06jULGnc9Yib7S66nFHI4k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Qj5GID6pGIikJLOVg62Urub12QEW1M9JKu6k55MTOnhPZ/Ic7riZDN61A+VsezsaS/fzpQr0Slisp/3XYC6KMGqX99a/m6DW0vyyVTzSZ8vW/xl0AaXw/1e4xJLgWk1dkSBjL5VaUoU+ftsyqyKOQ//OezD/NSVEDJk29ZmRuZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=nfmdhOZO; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bzGCM1f4lz9sc4;
-	Fri,  8 Aug 2025 22:41:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754685679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bGPumx2Rqm3p1S+Eay5H6awP7U7X//hs66pgfwkfArc=;
-	b=nfmdhOZONZIqDdp2LMPb/i11Lmd7BC5zLRjXgy7cdKTk+PfUT+nNdMnwA0DYGSsoUtg4Ng
-	EJWmJp7VLE4GetNpIwiS68Xf5E3x8BQAS5/UjpCGsMws+quTJe2nBuIimRRhjqk0fLynYA
-	/Uir3/CIU207a2mMOKpVgNZYAoQoEgf6iS6VrEAfajgaD5iGZjVmmXTSvrbjvxpv/bZtrN
-	UpLRU/6LWMhxpMAObWDBxUS2ottC22sh5k7BCLpV9zeHQeiNdysLjBcZBPFNbj1iE8eD29
-	YEvna1o6ttRk47daFZpxxj7NuWc6lUahSsg7oi1feEodBxAyh+eCDWF8+qhbZA==
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Sat, 09 Aug 2025 06:39:56 +1000
-Subject: [PATCH v3 12/12] man/man2/{fsconfig,mount_setattr}.2: add note
- about attribute-parameter distinction
+	s=arc-20240116; t=1754685650; c=relaxed/simple;
+	bh=d+2deDs4I0RozflNuTYq3IsOK0UF5nO2CS74lt/7woc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fAPe9lYG8fG6w/YNdXIqYeRE/QAS6Ah+iZGO6YmyBb1UBa3izLU4WXdyjKbq/v68ryRi8x23nh1Tz+YgMRt41Kca0V4uBVo9SJ1PEfXTQKnrkGw1v1SL7ABR7X+5mXh5bDUdOwBjhjbUH89UPNqwP9dtixcOaHuZy+tG7AW0krY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-af95d5c0736so407477866b.2;
+        Fri, 08 Aug 2025 13:40:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754685646; x=1755290446;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AbVQ/O5v+3RgZgLXM+REiGbF7/qp5Rn2INVTmCn1Vcs=;
+        b=wsqVIbLNAlmYvwTei2uoAk91OKOBXozVQ3BqM//HZ2A/oT/QIOXt3waJ6lUQH3svze
+         kHRIYlgm2iaV7eJggbo/O7T1jm6n8VfS40FRr8vmWcEuAtfuYsNC98FBRIrcnC9wt0Lo
+         DGLdgHYd1aACvBa/GfQ+p4LSlMCuzcHIlxk2yko7xqsQwMIDs8EmX4Jrm3UGBc66Q4oL
+         lnTfavUzWlozGG+/UfXeyWxKtTpkr41p0vCagLWiZfOOrKJmSRc0bEvOSH+v88cv8oMB
+         m1FRPAKYJVa9AMlfMnOQ3QwBt4iXw9wYnTwmwiVC6xLvC+AUHor0SgqcgOU6uWTyQSnQ
+         qGKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXA/jNf/cT3JxRxZ0fkhPg43AKXQ00pJiEcpqDGdZWHaZ6gx06wMsfB3Vga4c/k1QS+xhEHBIQG@vger.kernel.org, AJvYcCXUMgfP8b60drl1rN48lIM6UbplQOrrkvE1T+HbWdIVuocch5a+JErTQ7AmHvbfv7amJQxO8thGosZdidI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3CXdrrEJ9+loyPXPPX0pOlvdx09HC8aW+utaLj6WAqkFhXx8s
+	3UaeXwh28zGogyV1/Cmo1oFG2lF0UUSM9F/RltYu3BYelXda23o+xFZs
+X-Gm-Gg: ASbGncvzY+wYjlKB28l0SREvVOUgxzQUlbn7kTpXUIQn4yaq0rgFcMWWHUpK8dJZ1AI
+	DsnFi1ZjbxzsBeQnsg1+B2HamGaYm0wD8EFf6yI1QnQB3K4BTauhKgBk58S47LUik/SD+FJ0wGM
+	ZS/I0l6P9Lwai89GajJoQo9k3uqtyN21SB/xgOG3WKT72xqnuphaFCRvT7mBhQc6oi1i1n1zVCS
+	0sn+uXAaSoWXDbQjIw+bsGamiSCqVuCdcjz7cPARAB68P92Pq1j2EidMXAxARdITCRXZIPjzyCL
+	Xj+WTJ01teaj4xI9YJQGC7cLxOirpY4qn1YZsx8IgEgGRBD4dxHtmI2wgusEgSmWIFx2oHSbrO6
+	kac4ioX3ok+e7n0UOMEZi4jAz4TIWpZYXbeEnXahuk8zotCFzMgzMcVtjbE2Rcg==
+X-Google-Smtp-Source: AGHT+IHi5F9XT/jnFTQE6og/i5LhYBEoNQ//ZSY++LklDtkb3M25B7iYOPrX+fWn1FqjLQs50TiDXw==
+X-Received: by 2002:a17:907:3d50:b0:ae7:cb7:9005 with SMTP id a640c23a62f3a-af9c64bf036mr356039866b.35.1754685646047;
+        Fri, 08 Aug 2025 13:40:46 -0700 (PDT)
+Received: from [192.168.88.248] (89-24-35-28.nat.epc.tmcz.cz. [89.24.35.28])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61802debec7sm188198a12.9.2025.08.08.13.40.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 13:40:45 -0700 (PDT)
+Message-ID: <80f40620-e5f4-4238-995a-f9d348fb1b4b@ovn.org>
+Date: Fri, 8 Aug 2025 22:40:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [netdev] htb_qlen_notify warning triggered after
+ qdisc_tree_reduce_backlog change
+To: Jakub Kicinski <kuba@kernel.org>,
+ "He, Guocai (CN)" <Guocai.He.CN@windriver.com>
+Cc: Lion Ackermann <nnamrec@gmail.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "ovs-discuss@openvswitch.org" <ovs-discuss@openvswitch.org>,
+ i.maximets@ovn.org
+References: <CO6PR11MB5586DF80BE9D06569A79ECB2CD2DA@CO6PR11MB5586.namprd11.prod.outlook.com>
+ <20250808132915.7f6c8678@kernel.org>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <20250808132915.7f6c8678@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250809-new-mount-api-v3-12-f61405c80f34@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
-In-Reply-To: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Askar Safin <safinaskar@zohomail.com>, 
- "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
- linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2776; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=kYsKPddX805RzOw4SP5aC06jULGnc9Yib7S66nFHI4k=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWRMS5hxnHdanKCNzTLp9dW6i3QShXrV9rXotXxZE9wZ9
- /jD9RT5jlIWBjEuBlkxRZZtfp6hm+YvvpL8aSUbzBxWJpAhDFycAjCRcgFGhj3v50lNnc4+SW65
- qMPpBaE+K/NOt2X0nXrUaGKwrc3D/BzDf5+ICYGL2Tm+eE6+mL+7/ry5x8frldXMfLs2Nwfefiq
- nxwMA
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
 
-This was not particularly well documented in mount(8) nor mount(2), and
-since this is a fairly notable aspect of the new mount API, we should
-probably add some words about it.
+On 8/8/25 10:29 PM, Jakub Kicinski wrote:
+> On Wed, 6 Aug 2025 08:29:34 +0000 He, Guocai (CN) wrote:
+>> ### Environment
+>> - Kernel version: 5.15.189-rt76-yocto-preempt-rt
+>> - Open vSwitch version: 2.17.9
+>     
+>> ### Issue
+>> After applying the QoS configuration, the following warning appears in dmesg:
+>> [73591.168117] WARNING: CPU: 6 PID: 61296 at net/sched/sch_htb.c:609 htb_qlen_notify+0x3a/0x40 [sch_htb]
+> 
+> Is the issue easily reproducible ?
+> Could you try your reproducer on the latest upstream kernel ?
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- man/man2/fsconfig.2      | 11 +++++++++++
- man/man2/mount_setattr.2 | 37 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+FWIW, the issue is likely the same as this one:
+  https://lore.kernel.org/netdev/779ce04d-2053-4196-b989-f801720e65bc@hauke-m.de/
+Caused by missing backports in the 5.15 tree.
 
-diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
-index 97c9aff0e0c195e6028e1c7bd70e40905ba9f994..a7642e1633541bf8f5cd537db22987a4ec70da06 100644
---- a/man/man2/fsconfig.2
-+++ b/man/man2/fsconfig.2
-@@ -522,6 +522,17 @@ .SS Generic filesystem parameters
- Linux Security Modules (LSMs)
- are also generic with respect to the underlying filesystem.
- See the documentation for the LSM you wish to configure for more details.
-+.SS Mount attributes and filesystem parameters
-+Some filesystem parameters
-+(traditionally associated with
-+.BR mount (8)-style
-+options)
-+are also mount attributes.
-+.P
-+For a description of the distinction between
-+mount attributes and filesystem parameters,
-+see the "Mount attributes and filesystem parameters" subsection of
-+.BR mount_setattr (2).
- .SH CAVEATS
- .SS Filesystem parameter types
- As a result of
-diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-index d98e7d70870c082144dfa47e31ddf091c8545e4f..2927b012eed1569e0d78a2fb91815f364fca124d 100644
---- a/man/man2/mount_setattr.2
-+++ b/man/man2/mount_setattr.2
-@@ -790,6 +790,43 @@ .SS ID-mapped mounts
- .BR chown (2)
- system call changes the ownership globally and permanently.
- .\"
-+.SS Mount attributes and filesystem parameters
-+Some mount attributes
-+(traditionally associated with
-+.BR mount (8)-style
-+options)
-+are also filesystem parameters.
-+For example, the
-+.I -o ro
-+option to
-+.BR mount (8)
-+can refer to the
-+"read-only" filesystem parameter,
-+or the "read-only" mount attribute.
-+.P
-+The distinction between these two kinds of option is that
-+mount object attributes are applied per-mount-object
-+(allowing different mount objects
-+derived from a given filesystem instance
-+to have different attributes),
-+while filesystem instance parameters
-+("superblock flags" in kernel-developer parlance)
-+apply to all mount objects
-+derived from the same filesystem instance.
-+.P
-+When using
-+.BR mount (2),
-+the line between these two types of mount options was blurred.
-+However, with
-+.BR mount_setattr ()
-+and
-+.BR fsconfig (2),
-+the distinction is made much clearer.
-+Mount attributes are configured with
-+.BR mount_setattr (),
-+while filesystem parameters can be configured using
-+.BR fsconfig (2).
-+.\"
- .SS Extensibility
- In order to allow for future extensibility,
- .BR mount_setattr ()
-
--- 
-2.50.1
-
+Best regards, Ilya Maximets.
 
