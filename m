@@ -1,201 +1,113 @@
-Return-Path: <linux-kernel+bounces-759829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3136BB1E37B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:35:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34ABB1E37A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2C1586076
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:34:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25661AA41A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBB126C38C;
-	Fri,  8 Aug 2025 07:23:51 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98A62253EB;
-	Fri,  8 Aug 2025 07:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD3A26D4D5;
+	Fri,  8 Aug 2025 07:24:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313142253EB
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754637831; cv=none; b=TnMsCMulVArJUTnMY3AeOk0aXP7CamzmoAOxPqvWJGYfLfJ4Lx6h06fzcXAwufZEUOaz8s/pXIDy3mNRQMHT1g2IPRbh0O56N4iVCELl+d4HaLAuDQNIiV/V8kMHk38cCtr2ypQ80Xf6kU7TVUAr73We7B0+gOvmaxQaNOYywr4=
+	t=1754637842; cv=none; b=TghMrEDbunM0feod4yO+rtDPhQ1Ezoq5t7uoXJ8fYVWtTUX0rqP3/MvTNQ5quAtYOCr/5PqCQd8mNPleHQXlBxbt8ZmzJhlClVaETkLYTL6vrTAQAY0O+kBzgKker3qc76v4NTy6NN6mKPxc0NWNmyWyhUdrMbVoBH7X6vmfeF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754637831; c=relaxed/simple;
-	bh=s3dKWNwj6+SMvIgm3FlLiPEHpxfu2LiT56CcnRGoSn8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=H+ckCM3ndFYtGOAVMK8f/icQgTY9yN4fKcZCRrkPMWeX/5wWz0vQCBhBhBD7CpzgoMYMWlM2aaLTkRdaUx12xM7ffbPGdAAmdgechwukKipAcC1tlSPCLKaKufujddg2ccCaN56RVL/bdZ7/LoyrVZFReaNs8H595mm6UmnIQQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bywW24KvKzKHMny;
-	Fri,  8 Aug 2025 15:23:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B317C1A0D00;
-	Fri,  8 Aug 2025 15:23:41 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDXUxT5pZVoXy3gCw--.36715S3;
-	Fri, 08 Aug 2025 15:23:39 +0800 (CST)
-Subject: Re: [PATCH v2] block: fix kobject double initialization in add_disk
-To: Nilay Shroff <nilay@linux.ibm.com>,
- Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
- zhengqixing@huawei.com, lilingfeng3@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250808053609.3237836-1-zhengqixing@huaweicloud.com>
- <c959d486-57d9-4fec-abab-0a7172dbfd32@linux.ibm.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <864cbfad-a8bf-0ce4-1e21-6b079cc017fd@huaweicloud.com>
-Date: Fri, 8 Aug 2025 15:23:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754637842; c=relaxed/simple;
+	bh=JeQT9rbgdoxHCmmrTlM2nMo9QQ4ZV8FDRonTXTosv+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DOUdYInNVkvbu+DZerovr71OBFvpeBZi0q7w8kUj2gviGqvNmZvzYkTOC18lnz5mFhHOIITCiZuMlVFGhZT4ytql0aZqWIROQ7d611TKFX5ifpvolg9vvOvqyLivYRiEZPRnfruSy+oqqU4OkimMBwH4v7RYefGPlomxwvwh8cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A21B22EA;
+	Fri,  8 Aug 2025 00:23:52 -0700 (PDT)
+Received: from [10.57.5.99] (unknown [10.57.5.99])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30E133F673;
+	Fri,  8 Aug 2025 00:23:54 -0700 (PDT)
+Message-ID: <7f2b31e1-34ea-4207-bbdb-e83f7a147107@arm.com>
+Date: Fri, 8 Aug 2025 08:23:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c959d486-57d9-4fec-abab-0a7172dbfd32@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXUxT5pZVoXy3gCw--.36715S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr1UArWDXw15Kw4xZFW8JFb_yoWrXrW3pr
-	W5Xa17K3y0qr4xuwsru3ZxWr1Igrs5Wrn7Ars3Kr9avrZ2vrnIgr4UKFy8ZF48Arn3CF4I
-	qF4UJFZxKr18GFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 00/36] arm_mpam: Add basic mpam driver
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
+ Rohit Mathew <rohit.mathew@arm.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
+ <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+ Carl Worth <carl@os.amperecomputing.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+ <20250801170930.000051fe@huawei.com>
+Content-Language: en-US
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <20250801170930.000051fe@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi Jonathan,
 
-在 2025/08/08 15:15, Nilay Shroff 写道:
+On 01/08/2025 17:09, Jonathan Cameron wrote:
+> On Fri, 11 Jul 2025 18:36:12 +0000
+> James Morse <james.morse@arm.com> wrote:
+>> This is just enough MPAM driver for the ACPI and DT pre-requisites.
+>> It doesn't contain any of the resctrl code, meaning you can't actually drive it
+>> from user-space yet.
+
+[..]
+
+> Whilst I get that this is minimal, I was a bit surprised that it doesn't
+> contain enough to have the driver actually bind to the platform devices
+> I think that needs the CPU hotplug handler to register a requester.
+> So about another 4 arch patches from your tree.  Maybe you can shuffle
+> things around to help with that.
+
+Ah, I hadn't spotted that. The register-requestor code should only serve to
+reduce the available PARTID - just in case the CPUs support less than the
+cache hierarchy.
+It's likely its the 'system_supports_mpam()' that prevents the driver being
+registered. I'll move that into the arm64 patches - its needed so any id
+register overrides in the CPU knock out the driver too.
+
+
+> That makes this a pain to test in isolation.
 > 
+> Given desire to poke the corners, I'm rebasing the old QEMU emulation and
+> will poke it some more.  Now we are getting close to upstream kernel support
+> maybe I'll even clean that up for potential upstream QEMU.
 > 
-> On 8/8/25 11:06 AM, Zheng Qixing wrote:
->> From: Zheng Qixing <zhengqixing@huawei.com>
->>
->> Device-mapper can call add_disk() multiple times for the same gendisk
->> due to its two-phase creation process (dm create + dm load). This leads
->> to kobject double initialization errors when the underlying iSCSI devices
->> become temporarily unavailable and then reappear.
->>
->> However, if the first add_disk() call fails and is retried, the queue_kobj
->> gets initialized twice, causing:
->>
->> kobject: kobject (ffff88810c27bb90): tried to init an initialized object,
->> something is seriously wrong.
->>   Call Trace:
->>    <TASK>
->>    dump_stack_lvl+0x5b/0x80
->>    kobject_init.cold+0x43/0x51
->>    blk_register_queue+0x46/0x280
->>    add_disk_fwnode+0xb5/0x280
->>    dm_setup_md_queue+0x194/0x1c0
->>    table_load+0x297/0x2d0
->>    ctl_ioctl+0x2a2/0x480
->>    dm_ctl_ioctl+0xe/0x20
->>    __x64_sys_ioctl+0xc7/0x110
->>    do_syscall_64+0x72/0x390
->>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>
->> Fix this by separating kobject initialization from sysfs registration:
->>   - Initialize queue_kobj early during gendisk allocation
->>   - add_disk() only adds the already-initialized kobject to sysfs
->>   - del_gendisk() removes from sysfs but doesn't destroy the kobject
->>   - Final cleanup happens when the disk is released
->>
->> Fixes: 2bd85221a625 ("block: untangle request_queue refcounting from sysfs")
->> Reported-by: Li Lingfeng <lilingfeng3@huawei.com>
->> Closes: https://lore.kernel.org/all/83591d0b-2467-433c-bce0-5581298eb161@huawei.com/
->> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
->> ---
->>   block/blk-sysfs.c | 12 +++++-------
->>   block/blk.h       |  1 +
->>   block/genhd.c     |  2 ++
->>   3 files changed, 8 insertions(+), 7 deletions(-)
->>
->> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
->> index 396cded255ea..c5cf79a20842 100644
->> --- a/block/blk-sysfs.c
->> +++ b/block/blk-sysfs.c
->> @@ -847,7 +847,7 @@ static void blk_queue_release(struct kobject *kobj)
->>   	/* nothing to do here, all data is associated with the parent gendisk */
->>   }
->>   
->> -static const struct kobj_type blk_queue_ktype = {
->> +const struct kobj_type blk_queue_ktype = {
->>   	.default_groups = blk_queue_attr_groups,
->>   	.sysfs_ops	= &queue_sysfs_ops,
->>   	.release	= blk_queue_release,
->> @@ -875,15 +875,14 @@ int blk_register_queue(struct gendisk *disk)
->>   	struct request_queue *q = disk->queue;
->>   	int ret;
->>   
->> -	kobject_init(&disk->queue_kobj, &blk_queue_ktype);
->>   	ret = kobject_add(&disk->queue_kobj, &disk_to_dev(disk)->kobj, "queue");
->>   	if (ret < 0)
->> -		goto out_put_queue_kobj;
->> +		return ret;
->>   
->>   	if (queue_is_mq(q)) {
->>   		ret = blk_mq_sysfs_register(disk);
->>   		if (ret)
->> -			goto out_put_queue_kobj;
->> +			goto out_del_queue_kobj;
->>   	}
->>   	mutex_lock(&q->sysfs_lock);
->>   
->> @@ -934,8 +933,8 @@ int blk_register_queue(struct gendisk *disk)
->>   	mutex_unlock(&q->sysfs_lock);
->>   	if (queue_is_mq(q))
->>   		blk_mq_sysfs_unregister(disk);
->> -out_put_queue_kobj:
->> -	kobject_put(&disk->queue_kobj);
->> +out_del_queue_kobj:
->> +	kobject_del(&disk->queue_kobj);
->>   	return ret;
->>   }
->>   
->> @@ -986,5 +985,4 @@ void blk_unregister_queue(struct gendisk *disk)
->>   		elevator_set_none(q);
->>   
->>   	blk_debugfs_remove(disk);
->> -	kobject_put(&disk->queue_kobj);
->>   }
-> Shouldn't we replace kobject_put() with kobject_del() here in
-> blk_unregister_queue()?
+> For bonus points I 'could' hook it up to the cache simulator and actually
+> generate real 'counts' but that's probably more for fun than because it's
+> useful. Fake numbers are a lot cheaper to get.
 
-Looks like you missed that kobject_del() is called before the
-kobject_put().
+I've not found a good source of fake numbers to use. Ideally it would just
+increment whenever the task was scheduled - but I've found that hard to hack
+that up in linux.
+I fall back to reading the counters instead of the MPAM registers ... but its
+hard to test for overflow or double counting with that.
 
-         /* Now that we've deleted all child objects, we can delete the 
-queue. */
-         kobject_uevent(&disk->queue_kobj, KOBJ_REMOVE);
-         kobject_del(&disk->queue_kobj);
 
-         if (queue_is_mq(q))
-                 elevator_set_none(q);
+Thanks,
 
-         blk_debugfs_remove(disk);
-         kobject_put(&disk->queue_kobj);
-
-> 
-> Thanks,
-> --Nilay
-> .
-> 
-
+James
 
