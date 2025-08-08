@@ -1,77 +1,82 @@
-Return-Path: <linux-kernel+bounces-760611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9485B1EDCA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:24:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFB8B1EDCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B445F7A3D06
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:22:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8731C242E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1D61E2606;
-	Fri,  8 Aug 2025 17:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83D52882A5;
+	Fri,  8 Aug 2025 17:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1wNOS2c6"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RVsA/xRt"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9E035948
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 17:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2A71DED70
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 17:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754673842; cv=none; b=KAhJz6cX7JwHzh2sUpFWqsECnNZyKhCe9lB9BfGnvASgl0YRTL+arJXl/4mH990W1IQupKDmYz1y+GO8OjQ4QKjDxQMfzHhMTeQfb/EPohkjBigufPlih8wEdDc+mbY4ju12MhLgt8O6b+xqpXnHE/2AGTiLKxGDhw6KYLxdWY4=
+	t=1754673844; cv=none; b=uQR9vmYvkNkI95h/ppMXZZ27kDuRxwCJ+5h7iXHdSwi4VRmTN80aquI0Resi/i87LCMQ1I3p8VgPKfojhNmdoPBcuXo/Q7VNK4FtR5kv4Z9FVSVYftNAoTaRQjrLSx/Cyu/3RZ1jKbz+C9MFn3lyEqHHkDjcMYcOrpgLZtMSaC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754673842; c=relaxed/simple;
-	bh=iqTHpVd2oTejbN5RDuM6RDH05bJWkqJjH51xvxKQFkk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WqTIfDX0QTE0p1WYAQe+Nmn5rFF8Mb+d/dOUgVMkI8fzqAZ/DGWao+qFIIOJ68QsaO1LcqTbXffX6XVyAMa3RPa1tAOGBxjLPlda0mp7zgEgZ6/eZpyQKaKohDp5p6wGLELBe6zXsI8ph8l7r8l9McVt79bloEkDMdd6Wp11Fdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1wNOS2c6; arc=none smtp.client-ip=209.85.216.73
+	s=arc-20240116; t=1754673844; c=relaxed/simple;
+	bh=gzqa0oYDTq4QSBhPVGrYOEhr4pVNkqqBjVSLygilPrE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=e/Z2yHn2IVGAvnEpuA/dvIrAwh6O13o+MpvO18LxEVvczusc8mMlogh6F0TYTcwCPDMNsjz1qGRCRjDqcb7Eil4oEcQ491h31yb5nT8FNO7bSjEX8KQKkbsrhmH09kyvQOjp1J33zee4ZU2a5xYGeGDfxoiy1ZQ/s8zyYepxKYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RVsA/xRt; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31f5f70a07bso3646032a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 10:24:01 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76be4422a36so2787456b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 10:24:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754673840; x=1755278640; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QWp4LU+wr57td3zlCeBR2Ed4JiE6MBpWujRDgBGE9sA=;
-        b=1wNOS2c6QZM+lSVD6xgFBMRStq57+Z953EbmxVBSu14565aR8o8BI3ZH8S+3d+9aX4
-         FUqDAnkxq6m5r3IhrbdVp0+mIwRVUNwITCTOfcpjAL6ZpwzS5O65Dy/9MURgJQFDu0l+
-         yQ0nVrSnN72JhaHSVph9RqI0RxtMQkzKPOrDy7iJuLi0fjot7Ck5/bswG5WHIoK1B0Xb
-         8Bi29REMBNifeMDLUqMTae+nbJKz4XHU06/GtRBVxI6CNivz8cUrgGe6OW+AjUj0akNr
-         w4lWreba/BlAomd6CcQaxAEkZOlunPbEpb3QwULHLu4rARS24nP7wkiBQFeh4OJB+s6f
-         hohw==
+        d=google.com; s=20230601; t=1754673842; x=1755278642; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=YR69daxWwAlMu324Pv5313yogBDr/+ov0IBivIzem1I=;
+        b=RVsA/xRtg7sV7rrp+ASSYrsPj+tbIBXvvB0k0Vxbni1ldni/5M5hisdnOsuFadlkw3
+         FW26ftvCCPIW4Sk3WgdEjIRJFfANsb2GArOsFaV2CW683971kCKI7XcU/z76+D4EAv8q
+         uc2FFKt1c1y+ffDmhhLb/eVh8DxEL0QSKoBU/bnkesP979dcGr7loAMsjnuqgVz0sjsO
+         Ljvj37Lc4So8wy3/x5zz23oLV2FROLQQR56/Wd6flqaDtzYcDQwAc4DM8MS2OyxolZLF
+         s8RuJPiLNtBn5t5nv5TZ0lclYbqLtH3lC8pTCgm52rqAIzcdYSgZkGJkWMwyWs+kavy3
+         CAIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754673840; x=1755278640;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QWp4LU+wr57td3zlCeBR2Ed4JiE6MBpWujRDgBGE9sA=;
-        b=FZJTe7iIWYX13GSOOYUphQ/2oQHiLxi8xkXFF/B6wSjyezQx7L+LBABWguuZfQ0jsV
-         rKoBE2+8jh1VP2jlZn85sHsNzb5wqhaFR5Vm5QyPNyha1z8MXL858AVPhnh0/h1+nNaT
-         Ib3JJ+SjyOprqvFJf3+PSqAX99DTlVWF+hDj4hMdbyrPvFdzmdG3W+bUf1Nnfd7SCjde
-         /evNDzA5a59SLkSfhws6tCzCydZlKvf97B2KiaeZhnT5FlYfLs6vSeDsVPyDw/qlOGPR
-         OmNQm6HfcfTkArzy7x9ndza/6rRHau/2gTSpmYlNdoZg9wa691DLEc51TpF4RvAumUnx
-         Kj3Q==
-X-Gm-Message-State: AOJu0YwfQkG7Pbu15B93vX7QN/a5Yp5RYidAhgBnpwiJcKyqj/Tji2eX
-	a7uTEh8OvBrrwNlp1SZb3gm9DWrDrkWecF05avhWnzwsH7weq7QjgVw2VGMq+TZ2iIDw+U0w1Wk
-	OJAccwg==
-X-Google-Smtp-Source: AGHT+IGm54XdGwmTSEalblCWq6fy+YAzoGDTzh/Y+yTUi8vGvPgFsPJdc9tP6w/Tz5VBMa/BZiDY1xmwmz8=
-X-Received: from pjmm7.prod.google.com ([2002:a17:90b:5807:b0:31f:210e:e35d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c0f:b0:31f:1db2:69b1
- with SMTP id 98e67ed59e1d1-32183b3f161mr7155636a91.18.1754673840563; Fri, 08
- Aug 2025 10:24:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754673842; x=1755278642;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YR69daxWwAlMu324Pv5313yogBDr/+ov0IBivIzem1I=;
+        b=m55oqCVtw1gSFPjwxNCTEoCGNBkliHyl/MHSpTLoOfhWl2GVBUb0GFXDEGmCI0f2hy
+         HOe45txPWfcANrdDksQnqzLZuZdt8vnaSG5eTTrQ0SYEVxSc9FrpzYKJRvANPGCuQjlT
+         RAaXRRtQXMcvU2zRLZ+sw/dPB1k+oZNpTAz8Q32/Uge2gm8pgrZCmxQpHb1rb0jMcKnL
+         o6YgHLiZz3EaRE4vsdaM0ILftzogfrITo/3/dQE1liOJ2fUlgqYsFI70iNP5aXmpY7KI
+         jCn9tMkykaXJjquT3hk+7f1BKVmj7j32lbZsipKLckxgrquimrhZpTCn6gfzuqBzr0X4
+         /rlQ==
+X-Gm-Message-State: AOJu0Yyimduipvph2JQKTJcj7PPVNcSZ6G8rJFzQcus4I9zGu9T9d/0x
+	E/YSLcxk3hez24Jo4ESGyb4QNhJv5tiYWd46hRXs8etQ/ZlT4wwuA3UEgvNg31GafNFel3kOsqH
+	19/+BUQ==
+X-Google-Smtp-Source: AGHT+IE36pgE8cPg5q7Ma91rK5Y/o9PvbENYaPLhaJaQD/Ytgrq3X3ozdZzGnMgQB14BhjDKyLeZbwi5Fcg=
+X-Received: from pgjn6.prod.google.com ([2002:a63:e046:0:b0:b42:99d6:6bf])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d06:b0:240:1e4a:64cc
+ with SMTP id adf61e73a8af0-240412d422amr12429082637.12.1754673842081; Fri, 08
+ Aug 2025 10:24:02 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  8 Aug 2025 10:23:55 -0700
+Date: Fri,  8 Aug 2025 10:23:56 -0700
+In-Reply-To: <20250808172358.1938974-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250808172358.1938974-1-seanjc@google.com>
 X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250808172358.1938974-1-seanjc@google.com>
-Subject: [PATCH 0/3] x86/umip: Fix UMIP insn decoder false positives
+Message-ID: <20250808172358.1938974-2-seanjc@google.com>
+Subject: [PATCH 1/3] x86/umip: Check that the instruction opcode is at least
+ two bytes
 From: Sean Christopherson <seanjc@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
@@ -79,25 +84,51 @@ Cc: linux-kernel@vger.kernel.org, Dan Snyder <dansnyder@google.com>,
 	Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Fix two false positives scenarios where the UMIP #GP logic will incorrectly
-trigger emulation, e.g. due to a partially decoded instruction, or on
-instructions like VMLAUNCH that usurp the register form of '0f 01'.
+When checking for a potential UMIP violation on #GP, verify the decoder
+found at least two opcode bytes to avoid false positives when the kernel
+encounters an unknown instruction that starts with 0f.  Because the array
+of opcode.bytes is zero-initialized by insn_init(), peeking at bytes[1]
+will misinterpret garbage as a potential SLDT or STR instruction, and can
+incorrectly trigger emulation.
 
-Tested with the hack-a-test patch at the end, but I haven't done any testing
-using a real userspace (neither positive nor negative testing).
+E.g. if a vpalignr instruction
 
-Sean Christopherson (3):
-  x86/umip: Check that the instruction opcode is at least two bytes
-  x86/umip: Fix decoding of register forms of 0F 01 (SGDT and SIDT
-    aliases)
-  *** DO NOT MERGE *** x86/umip: Lazy person's KUnit test for UMIP
-    emulation
+   62 83 c5 05 0f 08 ff     vpalignr xmm17{k5},xmm23,XMMWORD PTR [r8],0xff
 
- arch/x86/kernel/umip.c | 71 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 69 insertions(+), 2 deletions(-)
+hits a #GP, the kernel emulates it as STR and squashes the #GP (and
+corrupts the userspace code stream).
 
+Arguably the check should look for exactly two bytes, but no three byte
+opcodes use '0f 00 xx' or '0f 01 xx' as an escape, i.e. it should be
+impossible to get a false positive if the first two opcode bytes match
+'0f 00' or '0f 01'.  Go with a more conservative check with respect to the
+existing code to minimize the chances of breaking userspace, e.g. due to
+decoder weirdness.
 
-base-commit: ce0b5eedcb753697d43f61dd2e27d68eb5d3150f
+Fixes: 1e5db223696a ("x86/umip: Add emulation code for UMIP instructions")
+Reported-by: Dan Snyder <dansnyder@google.com>
+Analyzed-by; Nick Bray <ncbray@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kernel/umip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
+index 5a4b21389b1d..406ac01ce16d 100644
+--- a/arch/x86/kernel/umip.c
++++ b/arch/x86/kernel/umip.c
+@@ -156,8 +156,8 @@ static int identify_insn(struct insn *insn)
+ 	if (!insn->modrm.nbytes)
+ 		return -EINVAL;
+ 
+-	/* All the instructions of interest start with 0x0f. */
+-	if (insn->opcode.bytes[0] != 0xf)
++	/* The instructions of interest have 2-byte opcodes: 0F 00 or 0F 01. */
++	if (insn->opcode.nbytes < 2 || insn->opcode.bytes[0] != 0xf)
+ 		return -EINVAL;
+ 
+ 	if (insn->opcode.bytes[1] == 0x1) {
 -- 
 2.50.1.703.g449372360f-goog
 
