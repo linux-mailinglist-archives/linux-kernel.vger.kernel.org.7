@@ -1,94 +1,62 @@
-Return-Path: <linux-kernel+bounces-760313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13846B1E959
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:38:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1E1B1E95B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C979D7A0673
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:36:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BFC616B6A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F2E27BF99;
-	Fri,  8 Aug 2025 13:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099DD27EC7C;
+	Fri,  8 Aug 2025 13:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jLF+N0aw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CFsAjIL4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wf9oqIf4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HmOZJJv8"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D3utI2E5"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3515D347C7
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0703347C7;
+	Fri,  8 Aug 2025 13:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754660292; cv=none; b=hqnew67TqcgihsI9B2NddMaTT4s/LPc8ti1bMEh81bwB/2KZDqQroTdc9QnZPaeyo/XzrMMCx2/GQ12E2UY1lu0fdbKEHbgPtV64xZeOCQDmMYp6z3fGJs+k7xgkLpojdO3QTunyxy7N1gQ8AeUHMx0J28ek2M3HFNczveXH/wA=
+	t=1754660299; cv=none; b=b5ogZWdrn0CFuMYgrAz/DLpNYxpBnwllE+Y2FNbP6dn02adl+1PKpFSbBeNebr03ywYULKPr7cHyX9CAGthV9UjuFKoYlihae1QmzRZrAFtnjDtnnrSJKpZJmevSYu1IPEgmraCuIq71jnAJtm+jRxZSfQDjRyg4BjCUtxvnRZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754660292; c=relaxed/simple;
-	bh=kSLHC9axIk6gpHeD5+Ar5IeslvLP3AcQ4iQ4pjdyeXE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=imTwHDNfe75QfQ/Kn7RCzBjeg5dxvl8dpGH732llicmJHdGWHqHhas8i0IhNkxLIzHK/dEYxkFLnyxDcQDPFS4ZSZTn2cFqAP+QB1yvI0mlz7c1YVajPm5kXSR5n+MF051a1qyNcbBFA0GQZ7H0kdOM0bOcFlYAaSlKBazwdFWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jLF+N0aw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CFsAjIL4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wf9oqIf4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HmOZJJv8; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 77BD55BDEE;
-	Fri,  8 Aug 2025 13:38:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754660288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Cf1tw1RRJzo2VbFxxZUkyEDgUrYDcKWwz8TA4er43A0=;
-	b=jLF+N0awpVsAV6SbqvZF2hrBhyyWoPSEb8cKKnjxIYZJk584zY5HG2mp3YeB8kE4mbWzY/
-	cEBbHcWDPR+gNrNSvjx9nGANVDOmTZOdvaD7s9NMlGihOE6AMyThD2isID53gA/Rom2hkt
-	HBtTZF1vt4IAojtVwGQTtpM1J4ZuyMQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754660288;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Cf1tw1RRJzo2VbFxxZUkyEDgUrYDcKWwz8TA4er43A0=;
-	b=CFsAjIL43c2pVTHHzdlPa1ra72EBApokvtjBoAqwX4jQ4KpquAmf1ZwvBfQ3qbBFluoi9R
-	0Y4kjGBPqJwtvzCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754660287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Cf1tw1RRJzo2VbFxxZUkyEDgUrYDcKWwz8TA4er43A0=;
-	b=Wf9oqIf4rX0b4fPxCR/Y5Cu4kZh3o8CFQlRY9F+8kFJZZkPS4M8oMnEoWIKy73mZgcuhEk
-	PGYieFJMl3lkrwIBiLDhi24AKA4gAgL1bAjPCxBas36yJZnIJwQA38J3UiBnRvW0YSx8Ir
-	9zRJsLSpCFFnPXTfNtwQ+vhFizMOXEg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754660287;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Cf1tw1RRJzo2VbFxxZUkyEDgUrYDcKWwz8TA4er43A0=;
-	b=HmOZJJv8MYRl5yvrO9mE/tL0w14AfPfT9HGHuKr9pR4kp4bgkfTgNvlUqLjhBFvh8Rbq4x
-	WD5OJWSFdFzKS2Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 54C151392A;
-	Fri,  8 Aug 2025 13:38:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e9BZFL/9lWgMJgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 08 Aug 2025 13:38:07 +0000
-Message-ID: <c6240860-6e2e-41bf-8e9e-eebbd86ca9fc@suse.cz>
-Date: Fri, 8 Aug 2025 15:38:07 +0200
+	s=arc-20240116; t=1754660299; c=relaxed/simple;
+	bh=c5lrnUgwIG/rNRAu0GC1hkwAXsNvrmjR7WDCjDn8UKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZpN+07sqQnjLQz7pYdwQ7HB/Ev+4yRWXIZQMbcmLRNiiqYEEk4DmxSgeY3vI/EIBA/4ydvRE2ZNUPTTcJNUi4BVVn0tyF6kDHX43NzU39JXmJjk5uxBVlanUVZe9kxtjuGiYG7/yESefohCX1evxC5f5cjVGqFaQL2e7HZpVHU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D3utI2E5; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 578Dc9A8991745;
+	Fri, 8 Aug 2025 08:38:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754660289;
+	bh=fY6ITv0IOCwAWvbopI78ay0Ho+0F53h/qZ6BsbQ7c3Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=D3utI2E5WFPqamVWrVO4a81tSwdLi0z6mOuyh7BD0sJ/1z2h91QIRwCJetoQbOosH
+	 0wNxxvKkaMDf1KPSgEy9X/7q+tIxDvs/w7brC8w/24O0bu6gQY4ANOJWLgEqJ1r28Q
+	 rVJIMxchuHyliXWThmBJRm4QQK97skudF8D4IpeA=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 578Dc91U520915
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 8 Aug 2025 08:38:09 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 8
+ Aug 2025 08:38:09 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 8 Aug 2025 08:38:08 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 578Dc8OD3118894;
+	Fri, 8 Aug 2025 08:38:09 -0500
+Message-ID: <16fac32a-a42a-4ec8-b0a2-3efe785af728@ti.com>
+Date: Fri, 8 Aug 2025 08:38:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,125 +64,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.17 1/3] mm/mremap: allow multi-VMA move when filesystem
- uses thp_get_unmapped_area
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
- <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- David Hildenbrand <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1754218667.git.lorenzo.stoakes@oracle.com>
- <4f2542340c29c84d3d470b0c605e916b192f6c81.1754218667.git.lorenzo.stoakes@oracle.com>
+Subject: Re: [PATCH v2 2/2] mmc: sdhci_am654: Disable HS400 for AM62P SR1.0
+ and SR1.1
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar
+	<ssantosh@kernel.org>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Andrew Davis <afd@ti.com>
+References: <20250807225138.1228333-1-jm@ti.com>
+ <20250807225138.1228333-3-jm@ti.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <4f2542340c29c84d3d470b0c605e916b192f6c81.1754218667.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20250807225138.1228333-3-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 8/3/25 13:11, Lorenzo Stoakes wrote:
-> We currently restrict multi-VMA move to avoid filesystems or drivers which
-> provide a custom f_op->get_unmapped_area handler unless it is known to
-> correctly handle MREMAP_FIXED.
-> 
-> We do this so we do not get unexpected result when moving from one area to
-> another (for instance, if the handler would align things resulting in the
-> moved VMAs having different gaps than the original mapping).
-> 
-> More and more filesystems are moving to using large folios, and typically
-> do so (in part) by setting f_op->get_unmapped_area to
-> thp_get_unmapped_area.
-> 
-> When mremap() invokes the file system's get_unmapped MREMAP_FIXED, it does
-> so via get_unmapped_area(), called in vrm_set_new_addr(). In order to do
-> so, it converts the MREMAP_FIXED flag to a MAP_FIXED flag and passes this
-> to the unmapped area handler.
-> 
-> The __get_unmapped_area() function (called by get_unmapped_area()) in turn
-> invokes the filesystem or driver's f_op->get_unmapped_area() handler.
-> 
-> Therefore this is a point at which thp_get_unmapped_area() may be called
-> (also, this is the case for anonymous mappings where the size is huge page
-> aligned).
-> 
-> thp_get_unmapped_area() calls thp_get_unmapped_area_vmflags() and
-> __thp_get_unmapped_area() in turn (falling back to
-> mm_get_unmapped_area_vm_flags() which is known to handle MAP_FIXED
-> correctly).
-> 
-> The __thp_get_unmapped_area() function in turn does nothing to change the
-> address hint, nor the MAP_FIXED flag, only adjusting alignment
-> parameters. It hten calls mm_get_unmapped_area_vmflags(), and in turn
-> arch-specific unmapped area functions, all of which honour MAP_FIXED
-> correctly.
-> 
-> Therefore, we can safely add thp_get_unmapped_area to the known-good
-> handlers.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hi all,
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+On 8/7/25 5:51 PM, Judith Mendez wrote:
+> This adds SDHCI_AM654_QUIRK_DISABLE_HS400 quirk which shall be used
+> to disable HS400 support. AM62P SR1.0 and SR1.1 do not support HS400
+> due to errata i2458 [0] so disable HS400 for these SoC revisions.
+> 
+> [0] https://www.ti.com/lit/er/sprz574a/sprz574a.pdf
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+>   drivers/mmc/host/sdhci_am654.c | 18 ++++++++++++++++++
+>   1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
+> index e4fc345be7e5..dc4975514847 100644
+> --- a/drivers/mmc/host/sdhci_am654.c
+> +++ b/drivers/mmc/host/sdhci_am654.c
+> @@ -156,6 +156,7 @@ struct sdhci_am654_data {
+>   
+>   #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
+>   #define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
+> +#define SDHCI_AM654_QUIRK_DISABLE_HS400 BIT(2)
+>   };
+>   
+>   struct window {
+> @@ -765,6 +766,7 @@ static int sdhci_am654_init(struct sdhci_host *host)
+>   {
+>   	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>   	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
+> +	struct device *dev = mmc_dev(host->mmc);
+>   	u32 ctl_cfg_2 = 0;
+>   	u32 mask;
+>   	u32 val;
+> @@ -820,6 +822,12 @@ static int sdhci_am654_init(struct sdhci_host *host)
+>   	if (ret)
+>   		goto err_cleanup_host;
+>   
+> +	if (sdhci_am654->quirks & SDHCI_AM654_QUIRK_DISABLE_HS400 &&
+> +	    host->mmc->caps2 & (MMC_CAP2_HS400 | MMC_CAP2_HS400_ES)) {
+> +		dev_err(dev, "Disable descoped HS400 mode for this silicon revision\n");
+
+Forgot to switch to dev_info, so will respin the series one more time.
+
+Sorry for the noise.
+
+~ Judith
 
 
