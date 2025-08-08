@@ -1,95 +1,159 @@
-Return-Path: <linux-kernel+bounces-759618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B85B1E037
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:43:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA2DB1E039
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FB3118A4D5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:44:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4F1566B0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2764812C499;
-	Fri,  8 Aug 2025 01:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314B1129A78;
+	Fri,  8 Aug 2025 01:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="FHNEVcw7"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f8SaSbUi"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D18125D6;
-	Fri,  8 Aug 2025 01:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE941125D6;
+	Fri,  8 Aug 2025 01:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754617414; cv=none; b=BMdUiG6ZPvZv8BlNB8tH0u49wo60HQnzi5yYKow7SchxzHi28SN+DRtKdx3FZYx0dZ0ABjjAeLD1isSzGZq4LDXaAtAEU4CJJLQ5iOfVfsqLR0rcQUreP4OHk4hedwG53e9fJfCZ1XLlwpeHLrpwv9WlNHtKR9LoB8BVXIgPncs=
+	t=1754617429; cv=none; b=ZNNpdT9phHIUG3TDeiJEpSmVik0LsUu+bRqMUljvaNEdl3T0mfIdZ9dpxR/2c47BySOaIZnAOJ0beSr4qrpBgdXNXCjHGmcGiQkikPZw5J0wKEUOb7JFxzsegTVe/jLn1TWhg9jzCvr7klPYoE/TsF/92wa0FMNngmDHPbGnKI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754617414; c=relaxed/simple;
-	bh=Ts1zobpCK/euzxoCBpLogZaK0KIVWRAOk6N20EwhcMI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yx4GFF+9IkYIov6MRbO+SwcLDTsGoPaJ6nozuID5MAdMC1ubDSuLSGDGi5RQ7dMUfRuWPjfrqE9bcF10IO3iEpY7cGUQ25ZA0TBw/C5QtLih5msE1uuCtzLiRGoALhThapMxQBy4ND9Ftswynbg+LiP3A8FEBtUnc+MedA9ZwrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=FHNEVcw7; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1754617407;
-	bh=Ts1zobpCK/euzxoCBpLogZaK0KIVWRAOk6N20EwhcMI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=FHNEVcw7jWORt5mo5EgNeEBRd3dIcoL/5kB5U83zUl1HwD6KeiVLYcBokMPbHCaRg
-	 6ou1vmExWaWE4rBAJGHNlNxdP3/FMMFy90TxLwoalnTh6qt5N5xhvfW772Dm9NGC9d
-	 LUBTPFp8nDLlQHHPmoJM6lu+4PIc3rxgXNdLYBdqWwaUEtNqZ5Qo3eVBeffXksgC3F
-	 0Z2/E8U0GKsbHniDdgYZF/c7JarjK8Tjz6YjeeEOiJ8RpiJRu2c+un7bYjU2vKKh+j
-	 pEgcpXsLnrXnhuezZEdoX5wCWvLrAPO1L03W15Rq/jxkmRhcasVvZp19MKTZiLKvHc
-	 +iHss2W0MA6DA==
-Received: from [192.168.68.112] (unknown [180.150.112.70])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8234A6AF39;
-	Fri,  8 Aug 2025 09:43:22 +0800 (AWST)
-Message-ID: <f1aaeb371eb0c753e6ace45e5e1ce5ccd73a0f76.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v10 0/3] ARM: dts: Add support for Meta Clemente BMC
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Leo Wang <leo.jt.wang@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Kees Cook
- <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,  "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
- Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	leo.jt.wang@fii-foxconn.com, george.kw.lee@fii-foxconn.com, 
-	bruce.jy.hung@fii-foxconn.com, Conor Dooley <conor.dooley@microchip.com>
-Date: Fri, 08 Aug 2025 11:13:21 +0930
-In-Reply-To: <20250801-add-support-for-meta-clemente-bmc-v10-0-c1c27082583d@fii-foxconn.com>
-References: 
-	<20250801-add-support-for-meta-clemente-bmc-v10-0-c1c27082583d@fii-foxconn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1754617429; c=relaxed/simple;
+	bh=YlpfhaSPeXJORGKJ3BsKqRFKyzQVRrvpIesvJ5+wgM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZMOwaMtRpFyV+x8EZpeet/bM1uU6Adn8T0CVGQfwCgJIqcLysL6RoIPITsuUwoeTDOIYbOVbKdEdcn9cFxNpTQ/Wkj7H2GlIT0sIHfJfAghaUwKLNV/iZqDB/sLwzYKxLp0XUfajey/CXPJZAchYqYVnTUCSXwOBLO6xTe74j5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=f8SaSbUi; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754617414;
+	bh=tNosh8i/c1KjXiiYC5cKA3n7elWrTGlat3J5oyYoucs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=f8SaSbUi87yjyWOIZVvplPSR0posVopJzil59ALeyquzBzxuhULTyEASQf3yjZmem
+	 ETnCiR7NmsH4cmwNg6Cj2fjOrlZyOZ48NoDFzzOxqrIobXkurubtc78HcyBs0iVaTz
+	 4a//ZJQwOavHOSFiaVAwlLDfyWhM1Sw7O6Euxhhmk5+MWE33QBJXCaK+3v/67GvXsV
+	 IsJrCTYhGYY2HYlh1XFOKsoiiLPQ6ZjyGOKUW+1MWTCg/SL00+M0KWOWXpuXMV/ppo
+	 WV6cePkEYaQRYbXXyeGOnDUW9Li5oDRzDmsH5fqq3bqiTRtV3DbLHGOy8rVgNnQvgU
+	 kZFwO+FlIPBUQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bymyY4qHRz4xWD;
+	Fri,  8 Aug 2025 11:43:33 +1000 (AEST)
+Date: Fri, 8 Aug 2025 11:43:32 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
+Cc: Anup Patel <apatel@ventanamicro.com>, Justin Chen
+ <justin.chen@broadcom.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Rahul Pathak <rpathak@ventanamicro.com>
+Subject: linux-next: manual merge of the mailbox tree with the risc-v tree
+Message-ID: <20250808114332.63ec1528@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/fLvmC1lAeB7FkCqiIIcUQdo";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Leo,
+--Sig_/fLvmC1lAeB7FkCqiIIcUQdo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2025-08-01 at 16:22 +0800, Leo Wang wrote:
-> This series adds initial support for the Meta Clemente BMC based on
-> the
-> ASPEED AST2600 SoC.
->=20
-> Patch 1 documents the compatible string.
-> Patch 2 adds the device tree for the board.
+Hi all,
 
-There are now three patches :)
+Today's linux-next merge of the mailbox tree got conflicts in:
 
-However, the main concern is that these do not apply without fuzz.
+  drivers/mailbox/Kconfig
+  drivers/mailbox/Makefile
 
-Can you please rebase them on the following branch and re-send?
+between commit:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git aspeed/dt
+  81db83e750ca ("mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox=
+ driver")
 
-Thanks,
+from the risc-v tree and commit:
 
-Andrew
+  52436007b862 ("mailbox: Add support for bcm74110")
+
+from the mailbox tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/mailbox/Kconfig
+index aa2c868256d7,02432d4a5ccd..000000000000
+--- a/drivers/mailbox/Kconfig
++++ b/drivers/mailbox/Kconfig
+@@@ -350,15 -359,14 +359,25 @@@ config CIX_MBO
+            is unidirectional. Say Y here if you want to use the CIX Mailbox
+            support.
+ =20
+ +config RISCV_SBI_MPXY_MBOX
+ +	tristate "RISC-V SBI Message Proxy (MPXY) Mailbox"
+ +	depends on RISCV_SBI
+ +	default RISCV
+ +	help
+ +	  Mailbox driver implementation for RISC-V SBI Message Proxy (MPXY)
+ +	  extension. This mailbox driver is used to send messages to the
+ +	  remote processor through the SBI implementation (M-mode firmware
+ +	  or HS-mode hypervisor). Say Y here if you want to have this support.
+ +	  If unsure say N.
+ +
++ config BCM74110_MAILBOX
++ 	tristate "Brcmstb BCM74110 Mailbox"
++ 	depends on ARCH_BRCMSTB || COMPILE_TEST
++ 	default ARCH_BRCMSTB
++ 	help
++ 	  Broadcom STB mailbox driver present starting with brcmstb bcm74110
++ 	  SoCs. The mailbox is a communication channel between the host
++ 	  processor and coprocessor that handles various power management task
++ 	  and more.
++=20
+  endif
+diff --cc drivers/mailbox/Makefile
+index 6659499a50db,98a68f838486..000000000000
+--- a/drivers/mailbox/Makefile
++++ b/drivers/mailbox/Makefile
+@@@ -75,4 -77,4 +77,6 @@@ obj-$(CONFIG_THEAD_TH1520_MBOX)	+=3D mail
+ =20
+  obj-$(CONFIG_CIX_MBOX)	+=3D cix-mailbox.o
+ =20
+ +obj-$(CONFIG_RISCV_SBI_MPXY_MBOX)	+=3D riscv-sbi-mpxy-mbox.o
+++
++ obj-$(CONFIG_BCM74110_MAILBOX)	+=3D bcm74110-mailbox.o
+
+--Sig_/fLvmC1lAeB7FkCqiIIcUQdo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiVVkQACgkQAVBC80lX
+0GwmewgAgE8wMW7HYFIO+FotWmVREPjdakRkm3eVy6gcnBQJiEAFCeoPk1c/NHgo
+j5P6k6yk3Z1KIbRgBJif3wlotrdEt08UBTRMh8uMg2xXx9ndEY7uhs6b5ThG/2DE
+yYHHKwvf5+HQ8TcDDzvA8QqeGD1bfwL+/fI3IoBAoZe8SnB+P5heEfo6gkxxE2n1
+HFQnTWygE7rze9sLdfSorC5L2IaSw7sL9rrsZadEJ43VkEiKCEM5MzXVM6DdPFx4
+rsmC/xOh2dkgufs4ibijpoAe0ofSD4UN7pym/Sqb8Ebm81VRyS7bQJpQHMGGC8nV
+AtCVgwzXzRgk2DPrRVIPQwz5gzH/hg==
+=6gs9
+-----END PGP SIGNATURE-----
+
+--Sig_/fLvmC1lAeB7FkCqiIIcUQdo--
 
