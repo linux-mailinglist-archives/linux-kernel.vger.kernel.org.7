@@ -1,225 +1,154 @@
-Return-Path: <linux-kernel+bounces-760165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51B6B1E747
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:28:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B26FB1E748
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B09A7A2FF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA3C1C211B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737A2276045;
-	Fri,  8 Aug 2025 11:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E5E276030;
+	Fri,  8 Aug 2025 11:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="B4ST1Bxh"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sz7FmYUo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93605276031
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C1227465B
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652349; cv=none; b=hicJ8C0Bx8qfVuo6xA9Rb+Dup4o7L3falMgrF+7mxzpN89OsO2H4uagSqCbaYfPq0f7BCwdD7Gz+fZNOaWD41RgGRDMiLmFtufyypAREO+Zj0XcTAGFl86cczbyEiOvYMyg5mXIZLLBtfmN/Fqf6XEhT21OydjBu9RKLuL5QRVc=
+	t=1754652380; cv=none; b=TWmgX5TebLfiAd8N907bQFI7ymN+OfFjRDGIwXF8ItU2mUbh9gBVmACASoT7aLfqH0ZHVn0+yQ3zJfW8kiITpb2/MFK/rYLn1joy7WFo5meSqJe/Keoysc8awbO2ytygPbPYZDbaIjCQEn/uRldFJrbfzi+tljXV9tc32zTSAGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652349; c=relaxed/simple;
-	bh=QA+SPUv+ZJM564GNbwnCFpJZjmCakzVI2B7d0dDz/P0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kj2c1CQlZK6fj+VVG2RQw06HXYbd9dhTzmWptmloG+t2OB6s5TiTj874uBIuiFeJU8gxuaVqdLH5vNcKH8RpyiXZXIViSxxufV/gwVQqV9PgUnG9FIktfQTzN2O2dRBIwmd+vkaphnJG5YzuQzzFqwdRL/sRPRpjAFsCWMdOgjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=B4ST1Bxh; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b78310b296so987828f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1754652345; x=1755257145; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1f6xy+aBOaPKs56VR9kjp6cxPwtioSpnzbBMEVe8kGI=;
-        b=B4ST1BxhwH48Z49rewmBOYuuKHqK7zc55gHqNZJJXhgFp+EHc+tKNMkCOtWvF9AWpe
-         9mmhjj/RhsSRMqZ0MSvotKyPi5Lfm3EMVWkVKE8nVKgZfFlsfGGpAkBonRcFvnInGI8Z
-         G5BgYHruv8iZCoWdS2iwvfzDF78EBuZ7YwHRfhawXE6cA2gaJQ0XECZCrUtvjIPt4OTT
-         dTo+GO7MCI70U/tuai1oAFZSUI2z5eg3KUcZeYRV3rnHigrISuz7ZRReuSuAVI8oVDfq
-         p7mIZl5brtJ3heD2P6idvBH6ItqWyjC3126U1bqz5qwqOueg09x487B1QVX5ps/qMovM
-         r4xA==
+	s=arc-20240116; t=1754652380; c=relaxed/simple;
+	bh=k0A8SEwr9YEM82RQSEfv6eQV60PVVOgkI3XkiazoVq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cr3uC7yAkH7pBFz+5ypWaOJM6enMIsYRABh3b+uULaudft6vrC+YVI5TI8ddZ2RCO9o40EkVBpOjIcp4oIxjJ8MT8YMEkkrLt7lCuqfmsmB9qwLUu1A89VktjzHZLwDtLvGXjxpaxjes957oiJLpvk3yHvwHFsS2kP4TL5Edp5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sz7FmYUo; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754652375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EQ07bfQKJ55z5/ZFRW4FDXltPPcwKKigW3feHNbRLXM=;
+	b=Sz7FmYUovTtP/lqsoCCwh1IHCU5VUlo03QyKBH9PgkK3fWIR5inHUpNwSNNez+go8A+6op
+	59c3Oj9h28vUkZcSiJwvQLwnX4+Fd4/VuLWR7FZaG7//LmoGBhAxZiu597MQM3qC9ACF2e
+	dJiWLcngWV83Ya3xy6OidtAI1EB/yM0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-18-2urKFeSxNomhd68wOXXldg-1; Fri, 08 Aug 2025 07:26:14 -0400
+X-MC-Unique: 2urKFeSxNomhd68wOXXldg-1
+X-Mimecast-MFC-AGG-ID: 2urKFeSxNomhd68wOXXldg_1754652373
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-459db6e35c3so15906475e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:26:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754652345; x=1755257145;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1f6xy+aBOaPKs56VR9kjp6cxPwtioSpnzbBMEVe8kGI=;
-        b=DUohAMTo6bLGH68JgeX/RmkhjHGYFq3F+xk9Fcql+9POGsRQPgyCf96Y8ohI7l6En6
-         Lbzsio8GSasPMAw0Sky3po7O8qNNUpDcGQq+++8gs08pIWSlWc1AWRXKrB+wqhsoXvJ4
-         GDepLH0tooQYw+3tHtPMFgs/BiDEX0mvYETJCj/S4Ecp9nuPlbPrGHNesOrpSQAjsTvm
-         g3U6BgyHXlPD4MCpZ8/UXlZid9+k6amrv3GUlB2w33lEHzq/ze6ajzzQNNjZ7aTGbjFc
-         RivxKptqSWnwmDuSxNqOljyI6PnHHg3mh51ueWQ6ADfs1KnUNe32NkICllk/nv7HMqIU
-         o+vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQg0i+j+arGkXA+9ntgz0au3INecuq2n+Uw3g7zhud+MDwCYwkRkE/yQ2meqHGqWUSvFLe+H4eTfXcZK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5lpjPrQlX/2VdvDrKbqLh7mIyCnH6j5X2WzDI/23dZUZAdoWY
-	sY22iAoHXojOalnUK6xO1E+x4EAhICnOYQ2+/ov4AZ6YuG/IkST3HASrMqYwJjtnuOs=
-X-Gm-Gg: ASbGncuwHqMgJP30YEh1MKFgKINxhsIyhONJ0fqJM/KBqk8zB/3KWHC3SBjE9kNeEbZ
-	unTw7T8bZnMOWCY/1cmxtBRMVsUTCemn13/dGwOSIfzr1NSuhN0BPIb8BeKH2ZVbfIA5R1CUb6B
-	rxrTQnhmjcX7xXD8zwGlaBGxjIpfWc/R6InSIoVSBaUNbm5+VAi2mSII+M64zVRCGLXxfX0g+X9
-	co3kINM/6FUwJ8aFlB2TFQuaftNAQLZ8bBnTVjveytOlEJ3tmkoS/3yHa2ZC4racS/6tU2rCMup
-	Y2mF//Rd5YWo38Ec6p4z8v4ccUUBchVpTHxiiIHSenZDvMCIrEgKmOy4JBMHjlNJecyVQJKo8wj
-	0lSsG4fkScD1+H3G/thvLlo5BFQZg5TvQDboudH6PyQ==
-X-Google-Smtp-Source: AGHT+IG+d+QVEEJZwj2dMpvlEXKWBGDwCt68UnmyWGJ/cwYSS+LXI8Tj/fvC7ktt2tblrQA7hmZ3Sw==
-X-Received: by 2002:a05:6000:24c5:b0:3b7:8f49:94f7 with SMTP id ffacd0b85a97d-3b900b4d8b6mr2051559f8f.31.1754652344801;
-        Fri, 08 Aug 2025 04:25:44 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e58553f8sm141920125e9.14.2025.08.08.04.25.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 04:25:44 -0700 (PDT)
-Message-ID: <71d109a1-211a-45ee-8525-03f1859b789a@tuxon.dev>
-Date: Fri, 8 Aug 2025 14:25:42 +0300
+        d=1e100.net; s=20230601; t=1754652373; x=1755257173;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EQ07bfQKJ55z5/ZFRW4FDXltPPcwKKigW3feHNbRLXM=;
+        b=EIJaSOUae8rMY6qV00YKFmMIgh/77AVae7o67tB8MplsYL8MisVXfjUzt9nHDAGard
+         aJdHWsZ5bcr5VC9GSSZOVRsG2CSBzOctTY3yzaJWH3hQnRmeXTu+c66Rch6w8Q4n4y4Z
+         LJhSLDV0PloRBVK18RXt2guxz786ZcrPKP31kkMWhdytSxSiS6KNuVbVQ9dPcnJxtN/u
+         NjRgElRgKEDQE/VaXg4k7I8G+D8zxC4hAOc2P1Dp6CM3VP9+um2bJKJTtBEe8nls2LcA
+         hSAr6x6xRD5QcAlde6ULqexAmm4sA9PvIILXLXjdhebPnpyPNnbH01+qfJA1O5MLHAbA
+         10Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWznQieD3mYdcPGna1b4kjUao41QMIoxGCxC7IdHwJTSULrIj6B+p95khygb3vOwSM/mK+4QmQp8c0wCDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpw7JjjczDUaZfOi01+9AzeWDi7ECj9HAf30RfYQyvZMM/aeqE
+	cfJz+VYY5VTYltfzGZJJomc5jyzuULsHJiP1XVVBftKnbHPEMEbfB0tUMLdrbzyPONixH42Tpt8
+	8LUItdORVJGlS6HXHMDZkwmg+VhtfDprkrWmPzWmKJ8OWY6Y8V4kVivN342B1uweclQ==
+X-Gm-Gg: ASbGncv4uQgBnJAdZY0FN/iV7PhNZFfz8KZmjV2lI6ozQAjVdyW+aDv0BMvrurGvpRY
+	T/14Qcaar9qcJFDVm2phlL9jTAd2gHxyobt5EYgtaDZUHdGIfycbHd487eADzvkWqwIO+M15zIx
+	7iYx1GpqHiMpP0ocvua6lM2ObOLIo7uFdqTFvmesKhKtrfwqT+4OCpa7u2emcOIZkV5WDMhlwgV
+	K3FSdwVC1bNktzkUnm46HaKXfxC2YkIiTyjOSVXI6+/1hz/p1fjfdJ2PprrslcvH9SL9j0eZpAB
+	V++IxkTOOK69xqTMyg3GHBfYMkUkqYG7
+X-Received: by 2002:a05:6000:26c8:b0:3a5:8d08:6239 with SMTP id ffacd0b85a97d-3b900b4d3d3mr2056915f8f.21.1754652372841;
+        Fri, 08 Aug 2025 04:26:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGA9/k3yhh1VIv9RCtmLiti9qOFoG49fzaTwYSvxJDxAb5Rj0fU3D0pOzBQfzEMDyq3eal5Og==
+X-Received: by 2002:a05:6000:26c8:b0:3a5:8d08:6239 with SMTP id ffacd0b85a97d-3b900b4d3d3mr2056896f8f.21.1754652372421;
+        Fri, 08 Aug 2025 04:26:12 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1515:7300:62e6:253a:2a96:5e3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e0a24bf1sm158780705e9.1.2025.08.08.04.26.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 04:26:11 -0700 (PDT)
+Date: Fri, 8 Aug 2025 07:26:08 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Igor Torrente <igor.torrente@collabora.com>
+Cc: sami.md.ko@gmail.com, virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org, eperezma@redhat.com,
+	xuanzhuo@linux.alibaba.com, jasowang@redhat.com,
+	dmitry.osipenko@collabora.com
+Subject: Re: [PATCH v2] Revert "virtio: reject shm region if length is zero"
+Message-ID: <20250808072533-mutt-send-email-mst@kernel.org>
+References: <20250807130326.82662-4-igor.torrente@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/9] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
- documentation for the PCIe IP on Renesas RZ/G3S
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
- will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250708163407.GA2149616@bhelgaas>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250708163407.GA2149616@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807130326.82662-4-igor.torrente@collabora.com>
 
-Hi, Bjorn,
+On Thu, Aug 07, 2025 at 10:03:29AM -0300, Igor Torrente wrote:
+> The commit 206cc44588f7 ("virtio: reject shm region if length is zero")
+> breaks the Virtio-gpu `host_visible` feature.
+> 
+> Right now in the Virtio-gpu code, `host_visible_region.len` is zero because
+> the struct comes directly from the `kzalloc` allocation. And Virtio-gpu
+> is using the `vm_get_shm_region` (drivers/virtio/virtio_mmio.c:536) to read
+> the `addr` and `len` from Qemu/Crosvm.
+> 
+> ```
+> drivers/gpu/drm/virtio/virtgpu_kms.c
+> 132 vgdev = drmm_kzalloc(dev, sizeof(struct virtio_gpu_device), GFP_KERNEL);
+> [...]
+> 177 if (virtio_get_shm_region(vgdev->vdev, &vgdev->host_visible_region,
+> 178                           VIRTIO_GPU_SHM_ID_HOST_VISIBLE)) {
+> ```
+> Now it always fails.
+> 
+> As the Virtio-gpu relies on the previous behavior, this patch reverts
+> the offending commit.
+> 
+> Fixes: 206cc44588f7 ("virtio: reject shm region if length is zero` breaks the Virtio-gpu `host_visible")
+> 
+> This reverts commit 206cc44588f72b49ad4d7e21a7472ab2a72a83df.
+> 
+> Signed-off-by: Igor Torrente <igor.torrente@collabora.com>
 
-On 08.07.2025 19:34, Bjorn Helgaas wrote:
-> On Fri, Jul 04, 2025 at 07:14:04PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
->> Base Specification 4.0. It is designed for root complex applications and
->> features a single-lane (x1) implementation. Add documentation for it.
-> 
->> +++ b/Documentation/devicetree/bindings/pci/renesas,r9a08g045s33-pcie.yaml
-> 
-> The "r9a08g045s33" in the filename seems oddly specific.  Does it
-> leave room for descendants of the current chip that will inevitably be
-> added in the future?  Most bindings are named with a fairly generic
-> family name, e.g., "fsl,layerscape", "hisilicon,kirin", "intel,
-> keembay", "samsung,exynos", etc.
-> 
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    bus {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        pcie@11e40000 {
->> +            compatible = "renesas,r9a08g045s33-pcie";
->> +            reg = <0 0x11e40000 0 0x10000>;
->> +            ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x8000000>;
->> +            dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0 0x38000000>;
->> +            bus-range = <0x0 0xff>;
->> +            clocks = <&cpg CPG_MOD R9A08G045_PCI_ACLK>,
->> +                     <&cpg CPG_MOD R9A08G045_PCI_CLKL1PM>;
->> +            clock-names = "aclk", "pm";
->> +            resets = <&cpg R9A08G045_PCI_ARESETN>,
->> +                     <&cpg R9A08G045_PCI_RST_B>,
->> +                     <&cpg R9A08G045_PCI_RST_GP_B>,
->> +                     <&cpg R9A08G045_PCI_RST_PS_B>,
->> +                     <&cpg R9A08G045_PCI_RST_RSM_B>,
->> +                     <&cpg R9A08G045_PCI_RST_CFG_B>,
->> +                     <&cpg R9A08G045_PCI_RST_LOAD_B>;
->> +            reset-names = "aresetn", "rst_b", "rst_gp_b", "rst_ps_b",
->> +                          "rst_rsm_b", "rst_cfg_b", "rst_load_b";
->> +            interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH>;
->> +            interrupt-names = "serr", "serr_cor", "serr_nonfatal",
->> +                              "serr_fatal", "axi_err", "inta",
->> +                              "intb", "intc", "intd", "msi",
->> +                              "link_bandwidth", "pm_pme", "dma",
->> +                              "pcie_evt", "msg", "all";
->> +            #interrupt-cells = <1>;
->> +            interrupt-controller;
->> +            interrupt-map-mask = <0 0 0 7>;
->> +            interrupt-map = <0 0 0 1 &pcie 0 0 0 0>, /* INT A */
->> +                            <0 0 0 2 &pcie 0 0 0 1>, /* INT B */
->> +                            <0 0 0 3 &pcie 0 0 0 2>, /* INT C */
->> +                            <0 0 0 4 &pcie 0 0 0 3>; /* INT D */
-> 
-> The spec styles these closed up: "INTA", "INTB", etc.
 
-I'll update it.
+Fixes has to be adjacent to Signed-off-by.
+But anyway, I already included v1 in my tree, pls check it out
+and tell me if more fixes are needed.
 
+> ---
+> v2: Improve the commit message (Michael S. Tsirkin)
 > 
->> +            device_type = "pci";
->> +            num-lanes = <1>;
->> +            #address-cells = <3>;
->> +            #size-cells = <2>;
->> +            power-domains = <&cpg>;
->> +            vendor-id = <0x1912>;
->> +            device-id = <0x0033>;
+>  include/linux/virtio_config.h | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> Some of this is specific to a Root Port, not to the Root Complex as a
-> whole.  E.g., device-type = "pci", num-lanes, vendor-id, device-id,
-> are Root Port properties.  Some of the resets, clocks, and interrupts
-> might be as well.
-> 
-> I really want to separate those out because even though this
-> particular version of this PCIe controller only supports a single Root
-> Port, there are other controllers (and possibly future iterations of
-> this controller) that support multiple Root Ports, and it makes
-> maintenance easier if the DT bindings and the driver structures are
-> similar.
-
-I'll ask the Renesas HW team about the resets and clocks as the HW manual
-don't offer any information about this.
-
-If they will confirm some of the clocks and/or resets could be controlled
-as part of a port then patch 3/9 "PCI: of_property: Restore the arguments
-of the next level parent" in this series will not be needed anymore. Would
-you prefer me to abandon it or post it as individual patch, if any?
-
-> 
-> This email includes pointers to sample DT bindings and driver code
-> that is structured to allow multiple Root Ports:
-> 
->   https://lore.kernel.org/linux-pci/20250625221653.GA1590146@bhelgaas/
-
-Thank you for this!
-
-And, thank you for your review,
-Claudiu
-
-> 
-> Bjorn
+> diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+> index b3e1d30c765b..169c7d367fac 100644
+> --- a/include/linux/virtio_config.h
+> +++ b/include/linux/virtio_config.h
+> @@ -329,8 +329,6 @@ static inline
+>  bool virtio_get_shm_region(struct virtio_device *vdev,
+>  			   struct virtio_shm_region *region, u8 id)
+>  {
+> -	if (!region->len)
+> -		return false;
+>  	if (!vdev->config->get_shm_region)
+>  		return false;
+>  	return vdev->config->get_shm_region(vdev, region, id);
+> -- 
+> 2.49.0
 
 
