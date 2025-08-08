@@ -1,160 +1,116 @@
-Return-Path: <linux-kernel+bounces-760143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A608EB1E70E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:19:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66E7B1E70C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 493FB7A8C99
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:18:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901C7189960B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020F12741CB;
-	Fri,  8 Aug 2025 11:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5069526463B;
+	Fri,  8 Aug 2025 11:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LNYvvmMB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AfRLLUeP"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="irMnbYA3"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486D94430;
-	Fri,  8 Aug 2025 11:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546881D5CDE;
+	Fri,  8 Aug 2025 11:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754651963; cv=none; b=QMqHADRGtjQaBzP6L4U4je1zrGm4MOYgjLcUUEJCQ6yE74HKlAWZGofTb1puwocOK/Q+AIBgCP872u39lvyVh/GPEpiCksSSNTVVpKkFoHE/GyLf8Wy2DU3g5DpPh2t/WEDlioWKkGdbXPwcb24WltS1VFruQbxnTAddaOsAe4E=
+	t=1754651962; cv=none; b=bZsUpU7vCwVp66Z6sV61WNiIBnYTiR8sNB096Ktag+G4zcR6Jx2LfUx569C8Xz4QOXQHte4PZBhGZJYaG0/JB9O8TebJlDqZFrZKptekud3pl4ce/tt9+mAz5jqp4GD7dO+EnSwpZPWr/w5gbUqq+sjtjWUl3SJAf1FcI16wZxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754651963; c=relaxed/simple;
-	bh=MDBPQc8k1HLpzLIRsReq/HTSulDYSclhSiyijZTD3bA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pzt6N4YciONuXqzxvzdRBAnrf+UWk1T7wpntMGwoT2sK03f9WZuXgcvtFeLo43a+VlLbp4PDBnPWhQ+JA2XKsrES0s4bWT/pUI/XgGqzlv1l4N+yGX905i4ptye1DZOxf/2MaimH/jYg6dpCtUjxiKfRBxvs3KIEYScaPHg3BAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LNYvvmMB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AfRLLUeP; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4509214000B9;
-	Fri,  8 Aug 2025 07:19:17 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 08 Aug 2025 07:19:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1754651957;
-	 x=1754738357; bh=kXnaAaU+jsKKyacddE7SAVJoi6NjE3zSqJlFeFvTb4k=; b=
-	LNYvvmMBTbBeWybL2Kw3FSzKsPy4pv7dV+0OPrALMLQ5L6iMSA3+lRgwslnixhax
-	g5eKgbkpqRrXO+Zj14F7Mlp8Q/oHT1a74HIQO6LUuowcyoNKYb6KjCj3r/NDO7qT
-	e7lZKYFPFzVoengOrfm2pba3TmMQtu62iJTN/e3i+iA5L5fwK+SafzQPKrV1OacK
-	z0w8NSN7F2x1V1GtVc/nKvslXjbFneYrItx9oH39GrBoE3hfB5fOZb9z4uE30q/4
-	zyFgzoEzkA4pyBRONSkSocWarJeAcd7xAL1WunzeiJuMYGALSq4TpFPtIWBshVED
-	Mv0kXNuSusgbGPxPJGdRoA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754651957; x=
-	1754738357; bh=kXnaAaU+jsKKyacddE7SAVJoi6NjE3zSqJlFeFvTb4k=; b=A
-	fRLLUePzBr/jPMssVbEwp0dBTQYQ1tculYdxIbN6YKZ36tPwK09We8z+SB9zrKLU
-	wTRJHVKNG3iH9ZNR0fm2Dk7h+qrd+0eYpPffK6JczCxpXDGu9q2g2xkqG1TrW0/n
-	kw5/P5E5QCp5RpNRuoRsFBB/n/fSa0xpTO+cphBiwMow3oZ35vZ48mszXkiFsC4b
-	2Zxnml0aVz8oA58gcrEbfShtV67vntn7bFkpl6Jv12k7COGJI0nDtjj32TMGWaMF
-	GWVOlSjN4zdCR8jT+pedsZfNL+jv85LCv3b+uvNkVaUtqJsePruRpedtuEESIuX/
-	KJEZG3c8u458aY0Lp6wOA==
-X-ME-Sender: <xms:NN2VaAkTOPtl1Duy_rFCVmo8eWnDDMUMAJEHjslptaCxo0AjRvgptQ>
-    <xme:NN2VaP1MPPpfhGosr1JQYolixELj161s6ssdj41Ld3uM-0ThcYPXaSupNBGZFQfHA
-    bJBXc_9MGuBsDyeDTI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdefieejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehjohhrghgvrdhmrghrqhhuvghssegrnhgrlhhoghdrtghomhdprh
-    gtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhm
-    pdhrtghpthhtoheplhhkphesihhnthgvlhdrtghomhdprhgtphhtthhopehgvggvrhhtse
-    hlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhifegtsehlihhs
-    thhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfhhrrghnkhdrlhhisehngi
-    hprdgtohhmpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhn
-    vggvrhhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshho
-    tgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:NN2VaPfKzLey5jIWnTY5EzywwVvpYHHqb1F_6ar5MG7mOcrkgHoVCw>
-    <xmx:NN2VaN2YjoUMs2-cilwrnn7HNjvsBmddt6wl30xOzVchbWImC9DGkg>
-    <xmx:NN2VaP92roOkzkNrIDCWAj-jtFgv8XnBeuKYthWiHezMZr1uSRem5g>
-    <xmx:NN2VaK7fEHW_m1sP-CL54WPfy6aS3HhRVzEG4ki90w88LkHXPN-9vw>
-    <xmx:Nd2VaOjkbVEo_yK3_kGPZZVhO_tpqTL1y8bh4a51LdkjOzE6SpJmbaef>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6D27E700065; Fri,  8 Aug 2025 07:19:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1754651962; c=relaxed/simple;
+	bh=EHPOAR8DTtu9w2Af/wfaGurTsRHP2TwyamQVwE8bsFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDdHfqyWog2dVdzgnfL43FamILLDKiRa+BOj1+m9klHQKoloxK9GS96wSAMO/tnAQblopU3jYoFhW49//dX93du7rnrAEXLs8xuDWOY3dfrwelFD5jP0kUZNGOcOyOK3PuwSr4ltVF4GZ9TjWOElD2q0dBI5CSKQ87XXdeXyUNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=irMnbYA3; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1754651958;
+	bh=EHPOAR8DTtu9w2Af/wfaGurTsRHP2TwyamQVwE8bsFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=irMnbYA3tYbC8cohCWgGIF4o+cZD5mvDISSTHODIoofIy8JjHUtXuMfTfL065gdxU
+	 4lmqgu3uHGR+ZTMZ7pDlQJo31dpJca+mzGiYQESg2NwcyIJ2PP6p33PZqILAXJVANW
+	 pMv8w18fx5EbLCrfDp64rDQHGEBc1jacd6Fgl0oX2eD7nXZE5QLa1xbNP2fmlrPzyK
+	 XvB/b4zpM5cJAvLDlj0hloj6Y+PmUldaqmmda3w4Y1t93mi9CsXTpGj0fvkkhRmgsO
+	 h+lkzbVYlhADS+g3uEj3srKhWfNWp0X0ITf9w3/cEYmusiCbaEjPYrhHT3MILjEpuf
+	 AsKpj6QuhSsJQ==
+Received: from linux.gnuweeb.org (unknown [182.253.126.185])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 7B3053127DA6;
+	Fri,  8 Aug 2025 11:19:15 +0000 (UTC)
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Fri, 8 Aug 2025 18:19:12 +0700
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux PCI Mailing List <linux-pci@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof Wilczynski <kwilczynski@kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>,
+	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	gwml@vger.gnuweeb.org
+Subject: Re: [GIT PULL v2] PCI changes for v6.17
+Message-ID: <aJXdMPW4uQm6Tmyx@linux.gnuweeb.org>
+References: <20250801142254.GA3496192@bhelgaas>
+ <175408424863.4088284.13236765550439476565.pr-tracker-bot@kernel.org>
+ <ed53280ed15d1140700b96cca2734bf327ee92539e5eb68e80f5bbbf0f01@linux.gnuweeb.org>
+ <aJQi3RN6WX6ZiQ5i@wunner.de>
+ <aJQxdBxcx6pdz8VO@linux.gnuweeb.org>
+ <20250807050350.FyWHwsig@linutronix.de>
+ <aJQ19UvTviTNbNk4@linux.gnuweeb.org>
+ <aJXYhfc/6DfcqfqF@linux.gnuweeb.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T0d336f21a661302d
-Date: Fri, 08 Aug 2025 13:18:46 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>
-Cc: "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- linux-kernel@vger.kernel.org, "kernel test robot" <lkp@intel.com>,
- "Frank Li" <Frank.Li@nxp.com>, "Jorge Marques" <jorge.marques@analog.com>,
- "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
- sparclinux <sparclinux@vger.kernel.org>
-Message-Id: <b7cf1db6-317a-453b-a605-adec7e126fc6@app.fastmail.com>
-In-Reply-To: 
- <CAMuHMdUwC=TNvvwf0_sgSSYTBGeq8UX5kRFN5kg3mFJ7wVA3kw@mail.gmail.com>
-References: <20250807043456.1624-2-wsa+renesas@sang-engineering.com>
- <2025080720214218750df5@mail.local>
- <CAMuHMdUwC=TNvvwf0_sgSSYTBGeq8UX5kRFN5kg3mFJ7wVA3kw@mail.gmail.com>
-Subject: Re: [PATCH] i3c: remove 'const' from FIFO helpers
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJXYhfc/6DfcqfqF@linux.gnuweeb.org>
+X-Machine-Hash: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
 
-On Fri, Aug 8, 2025, at 11:43, Geert Uytterhoeven wrote:
-> On Fri, 8 Aug 2025 at 01:09, Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
->> On 07/08/2025 06:31:24+0200, Wolfram Sang wrote:
->> >
->> > I still wonder why SPARC discards the const but since nobody seems to be
->> > commenting on that, I guess the fastest way to get the build error out
->> > of Linus' tree is to adapt the usage in I3C.
->>
->> My plan was to let sparc people handle their mess, there is no reason
->> const should be discarded.
->
-> Fully agreed.
->
-> Note that it is not just the const keyword that is missing from the
-> SPARC implementation, but also the volatile keyword.
+On Fri, Aug 08, 2025 at 05:59:23PM +0700, Ammar Faizi wrote:
+> On Thu, Aug 07, 2025 at 12:13:37PM +0700, Ammar Faizi wrote:
+> > On Thu, Aug 07, 2025 at 07:03:50AM +0200, Nam Cao wrote:
+> > > Does the diff below help?
+> > 
+> > Yes, it works.
+> 
+> So today, I synced with Linus' master branch again:
+> 
+>   37816488247d ("Merge tag 'net-6.17-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
+> 
+> and applied your fix on top of it.
+> 
+> I can boot, but I get this splat. Looking at the call trace, it seems
+> it's still related to pci, but different issue. The call trace is also
+> different from the previous one.
 
-The last time this came up, I actually tried doing a patch to
-remove the 'volatile' keywords from all asm/io.h on all
-architectures, and from all drivers that currently pass it,
-as I don't think it has any effect other than avoid build
-warnings for some prehistoric drivers.
+It'll be a bit tricky to bisect this one. Because if I step back to
+a bad commit post:
 
-On a related note, I'm fairly sure the i3c_readl_fifo() function
-is not portable and breaks on most big-endian platforms: The 
-readsl() implementation on big-endian targets usually skips the
-implied byteswap from readl() since it is writing a bytestream,
-but then the final readl() is defined as reading a four-byte
-little-endian word, which tends to require an explicit swap
-on big-endian targets. (there are some exceptions where the
-PCI host bridge adds an extra byteswap, or where the CPU swaps
-everything on 32-bit boundaries, rather than the unit of the
-access).
+   d7d8ab87e3e ("PCI: vmd: Switch to msi_create_parent_irq_domain()")
 
-I think using 
+I won't be able to boot to reach this new splat :/
 
-    readsl(addr, &tmp, 1);
+I guess I need to apply the fix dirty for each bisection step. But I'll
+also need to make sure the current step has the d7d8ab87e3e commit
+anchestor before applying.
 
-instead of the final readl() should be portable here.
-Same for the writel() of course.
+-- 
+Ammar Faizi
 
-     Arnd
 
