@@ -1,175 +1,125 @@
-Return-Path: <linux-kernel+bounces-760267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25573B1E8B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 959FBB1E8C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C59558458D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:55:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46355A0FE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C2C27AC21;
-	Fri,  8 Aug 2025 12:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E3927A909;
+	Fri,  8 Aug 2025 12:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZIcQ8Xjl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IEw726aU"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3FC27A12C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670C227A90F
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754657710; cv=none; b=UcryfY2xFTG32ruC3gEo4MajH/H0lzZ3OvqDlM4aSPEfNqfsTGLHpNgAIpNULAQvHB23hFgUEd6rVZpNs9bJmNFAoWpKjmMlG8t9ixgKfil1n9sYOEAoS3s31HeC6J7LuwBoaHquDKQFJMgT1JZOErEvRuOQauVtR2MjvSB3Bew=
+	t=1754657880; cv=none; b=HDH5poDEIR9yNp5lfUBHZbwIwl0Xm5i0Zh2HygkkdCU+u0G5IvRW9qHlFpzzINPZQ9qYeKIPqx5tSfdyLufJEcW7y+513GwGbiH1bR8CGGBicIpmR0bp9xxZ0efMlGqDt/8056VQc8ZT2SqnRNDyv1dz/vdfddW7S9L8x8WcV8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754657710; c=relaxed/simple;
-	bh=ACUK4qgqm3ftNNEGB9p2GKz/5T/Q8TaeMNYmr6hRbJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFmBDgPftx6awS2D3XYrkBsrLWqeAZpoktxEZGsAQQvLXM5oBNjCZ3mhJ/4v7DbZLCe9EaLlJwVufe5829y1nBXHLft6l4PC2SqP82YXIkWHLB6Ja2z0iWOa+3zbUivt45Dr7eFc4pR3x7DoxAooO/lHEq25C1fs+/wFWmvGY0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZIcQ8Xjl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754657707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=735MKqTpVsLiwF08r9eYm/WhPdFnfobFmT9GhcsZRXQ=;
-	b=ZIcQ8XjlH+lc9gWTtRvhOXZ34xKfmRzE9NFRXErYoP7hifsqi+D5/SDRmTrnce17Xtmp+f
-	u+Ls84ZB0wLX5Mb1htEAAzQ1fHnaEFzIWntxhXR6L83ScTOJyzLDD19sfPkHxrv11U52GV
-	fJSIKW/+xDNbG8lTrS0cpE0AWBexLuo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-JSQNINiVOQuzqBr7vxM5Mg-1; Fri,
- 08 Aug 2025 08:55:02 -0400
-X-MC-Unique: JSQNINiVOQuzqBr7vxM5Mg-1
-X-Mimecast-MFC-AGG-ID: JSQNINiVOQuzqBr7vxM5Mg_1754657700
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5804B180036E;
-	Fri,  8 Aug 2025 12:55:00 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.126])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3F3B180047F;
-	Fri,  8 Aug 2025 12:54:57 +0000 (UTC)
-Date: Fri, 8 Aug 2025 20:54:53 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: linux-mm@kvack.org, glider@google.com, andreyknvl@gmail.com,
-	dvyukov@google.com, vincenzo.frascino@arm.com,
-	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 0/4] mm/kasan: make kasan=on|off work for all three modes
-Message-ID: <aJXznYlO7dpY+p7D@MiWiFi-R3L-srv>
-References: <20250805062333.121553-1-bhe@redhat.com>
- <69b4f07d-b83d-4ead-b3f1-1e42b2dca9c2@gmail.com>
+	s=arc-20240116; t=1754657880; c=relaxed/simple;
+	bh=IQvfIcQl6e0vjED1LXORhgHmqLUoE6bjXWpaqRkbHQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Ad7e1tu24l19mZzvdAlLTYOOyKKHmC6u0VBzP3Se3cplh9bq0AjbU1hPRYBdSnBxl96DGbiX7y8hixSgXj7+CpQuV5VXlSbHWbmyGLsr1qA4IvK3LJMHDOPKdGtreZuNyon8KYjqDU3k8pxRWu8rwxoWNrWVQ0eMJKEpI/3VDWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IEw726aU; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250808125756epoutp02f2a3d22284c3dd4f2b9dcc48acc05230~ZzAq7rauz1007510075epoutp02-
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:57:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250808125756epoutp02f2a3d22284c3dd4f2b9dcc48acc05230~ZzAq7rauz1007510075epoutp02-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754657876;
+	bh=IQvfIcQl6e0vjED1LXORhgHmqLUoE6bjXWpaqRkbHQ8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=IEw726aUID6zYxZtwGVTLBxqgQ8FIpCR7zB3jBR0wANRH8SLFrjbC7BAHSg9niWVF
+	 ji2b2qwOo9+JSWGi62COSHDvQgMgdwsMFU8xUWQ2R3ugJA/d/vpzn5ZGICkrK28VF3
+	 fDRIoa5EIvaJXwkfnBGAac+O3KBRjo/2WHqAFLPs=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250808125755epcas5p3b9a4febf60b8148ebeab4cb75e654e5d~ZzAqVPJ2G2260122601epcas5p3j;
+	Fri,  8 Aug 2025 12:57:55 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bz3wf4yBGz6B9m4; Fri,  8 Aug
+	2025 12:57:54 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250808125753epcas5p4900526c630142d68a53dbd36ee8735b5~ZzAovfX6_1320613206epcas5p4I;
+	Fri,  8 Aug 2025 12:57:53 +0000 (GMT)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250808125751epsmtip255feeda4d4f6029bbfa56a48fc0d9527~ZzAmfS8DY0613706137epsmtip2M;
+	Fri,  8 Aug 2025 12:57:51 +0000 (GMT)
+Message-ID: <f0a31913-a019-4f06-b1e7-fbe857cf136e@samsung.com>
+Date: Fri, 8 Aug 2025 18:27:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69b4f07d-b83d-4ead-b3f1-1e42b2dca9c2@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: dwc3: Remove WARN_ON for device endpoint
+ command timeouts
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
+	m.grzeschik@pengutronix.de, balbi@ti.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, akash.m5@samsung.com, hongpooh.kim@samsung.com,
+	eomji.oh@samsung.com, shijie.cai@samsung.com, alim.akhtar@samsung.com,
+	muhammed.ali@samsung.com, thiagu.r@samsung.com, stable@vger.kernel.org
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <20250808124346.ynoPIlpX@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250808125753epcas5p4900526c630142d68a53dbd36ee8735b5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250807014905epcas5p13f7d4ae515619e1e4d7a998ab2096c32
+References: <CGME20250807014905epcas5p13f7d4ae515619e1e4d7a998ab2096c32@epcas5p1.samsung.com>
+	<20250807014639.1596-1-selvarasu.g@samsung.com>
+	<20250808090104.RL_xTSvh@linutronix.de>
+	<20c46529-b531-494a-9746-2084a968639e@samsung.com>
+	<20250808105218.WmVk--eM@linutronix.de>
+	<03f1ab21-3fa7-41b1-a59e-91f1d9dca2f1@samsung.com>
+	<20250808124346.ynoPIlpX@linutronix.de>
 
-On 08/07/25 at 06:34pm, Andrey Ryabinin wrote:
-> 
-> 
-> On 8/5/25 8:23 AM, Baoquan He wrote:
-> > Currently only hw_tags mode of kasan can be enabled or disabled with
-> > kernel parameter kasan=on|off for built kernel. For kasan generic and
-> > sw_tags mode, there's no way to disable them once kernel is built. 
-> > This is not convenient sometime, e.g in system kdump is configured.
-> > When the 1st kernel has KASAN enabled and crash triggered to switch to
-> > kdump kernel, the generic or sw_tags mode will cost much extra memory
-> > for kasan shadow while in fact it's meaningless to have kasan in kdump
-> > kernel.
-> > 
-> 
-> Ideally this problem should be solved by having kdump kernel with different
-> config. Because if we want only reliably collect crash dumps, than we probably
-> don't want other debug features, e.g. like VM_BUG_ON() crashing our kdump kernel.
 
-Yeah, we have done that in Redhat's internal CI testing. While we still
-want to switch back to let kdump take the same kernel as the 1st kernel.
-Like this, we have chance to test debug kernel for vmcore dumping. In
-this case, KASAN is the main barrier. For other debug features,
-VM_BUG_ON() should be captured in 1st kernel's running, we won't wait to
-run kdump kernel to catch it. I am planning to check and adding feature
-switch for kdump to disable if it's not needed in kdump kernel. E.g I
-have done in ima=on|off, and the existing 'kfence.sample_interval=0' for
-kfence.
-
-And the public kasan=on|off kernel parameter can make kasan feature more
-flexible. It can be used in production environment with kasan=off, and
-can switch to the same kernel to catch issues easily by stripping the
-cmdline setting. As adding a cmdline is much easier than setting kernel
-config and rebuild kernel.
-
-Besides, based on this patchset, we can easily remove
-kasan_arch_is_ready() by detecting the arch's support and disable
-kasan_flag_enabled. And when I testing generic/sw_tags/hw_tags on arm64,
-I feel if adding a kernel parameter for choosing different KASAN mode is
-much more convenient than changing kernel config and rebuild. If we
-choose to KASAN_OUTLINE, this even doesn't impact much in production
-environment. I would like to hear your suggestion.
-
-Thanks
-Baoquan
-> 
-> 
-> > So this patchset moves the kasan=on|off out of hw_tags scope and into
-> > common code to make it visible in generic and sw_tags mode too. Then we
-> > can add kasan=off in kdump kernel to reduce the unneeded meomry cost for
-> > kasan.
-> > 
-> > Test:
-> > =====
-> > I only took test on x86_64 for generic mode, and on arm64 for
-> > generic, sw_tags and hw_tags mode. All of them works well.
-> > 
-> > However when I tested sw_tags on a HPE apollo arm64 machine, it always
-> > breaks kernel with a KASAN bug. Even w/o this patchset applied, the bug 
-> > can always be seen too.
-> > 
-> > "BUG: KASAN: invalid-access in pcpu_alloc_noprof+0x42c/0x9a8"
-> > 
-> > I haven't got root cause of the bug, will report the bug later in
-> > another thread.
-> > ====
-> > 
-> > Baoquan He (4):
-> >   mm/kasan: add conditional checks in functions to return directly if
-> >     kasan is disabled
-> >   mm/kasan: move kasan= code to common place
-> >   mm/kasan: don't initialize kasan if it's disabled
-> >   mm/kasan: make kasan=on|off take effect for all three modes
-> > 
-> >  arch/arm/mm/kasan_init.c               |  6 +++++
-> >  arch/arm64/mm/kasan_init.c             |  7 ++++++
-> >  arch/loongarch/mm/kasan_init.c         |  5 ++++
-> >  arch/powerpc/mm/kasan/init_32.c        |  8 +++++-
-> >  arch/powerpc/mm/kasan/init_book3e_64.c |  6 +++++
-> >  arch/powerpc/mm/kasan/init_book3s_64.c |  6 +++++
-> >  arch/riscv/mm/kasan_init.c             |  6 +++++
-> >  arch/um/kernel/mem.c                   |  6 +++++
-> >  arch/x86/mm/kasan_init_64.c            |  6 +++++
-> >  arch/xtensa/mm/kasan_init.c            |  6 +++++
-> >  include/linux/kasan-enabled.h          | 11 ++------
-> >  mm/kasan/common.c                      | 27 ++++++++++++++++++++
-> >  mm/kasan/generic.c                     | 20 +++++++++++++--
-> >  mm/kasan/hw_tags.c                     | 35 ++------------------------
-> >  mm/kasan/init.c                        |  6 +++++
-> >  mm/kasan/quarantine.c                  |  3 +++
-> >  mm/kasan/shadow.c                      | 23 ++++++++++++++++-
-> >  mm/kasan/sw_tags.c                     |  9 +++++++
-> >  18 files changed, 150 insertions(+), 46 deletions(-)
-> > 
-> 
-
+On 8/8/2025 6:13 PM, Sebastian Andrzej Siewior wrote:
+> On 2025-08-08 16:59:08 [+0530], Selvarasu Ganesan wrote:
+>>>> Here is the corrected patch submission:
+>>>>
+>>>> Cc: stable@vger.kernel.org
+>>>> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+>>>> Signed-off-by: Akash M <akash.m5@samsung.com>
+>>>>
+>>>> Regarding the next steps, I will post a new patchset with the reordered
+>>>> sign-offs.
+>>> Your sign-off (as the poster) should come last.
+>>> What is Akash' role in this?
+>>
+>> Akash M's role in the patch as a co-contributor.
+>> Shall i add tag as Co-developed-by: Akash M <akash.m5@samsung.com>?
+>>
+>> Cc: stable@vger.kernel.org
+>> Co-developed-by: Akash M <akash.m5@samsung.com>
+>> Signed-off-by: Akash M <akash.m5@samsung.com>
+>> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+> Yes. This looks good now.
+Ok. Thanks for the confirmation.
+>
+>>>> Thanks,
+>>>> Selva
+> Sebastian
+>
+>
 
