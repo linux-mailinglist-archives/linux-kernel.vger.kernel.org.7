@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-760323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62730B1E986
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:51:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349B9B1E98C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD2A3BDEEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEE08567DB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A673126C03;
-	Fri,  8 Aug 2025 13:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33D71482F2;
+	Fri,  8 Aug 2025 13:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CvVs8Zf1"
-Received: from mail-06.mail-europe.com (mail-06.mail-europe.com [85.9.210.45])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldLbuBxl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C4235961
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FAA1B7F4;
+	Fri,  8 Aug 2025 13:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754661059; cv=none; b=RJnUCLvydnLV2WA3qnUcjLbE5B5+Y/uvoOeaR4JlE0Fv0ZOoVYJnpJzd+JB6BwaHUuRPqpD7b86wZb2R9aN0YzFHyI/yce7dfBF+MQ+MA5wUsPr+SD34zyJPpwqgySE6U/jV5H5B1GswAv/lPmWWNHtcs5zanNLYpZSqL9fnIRA=
+	t=1754661126; cv=none; b=UDvhbf3lcpxCHvY760K1Pe+ipI5bWiPGBN7flSUmriFthJJr4DzXXHeEDUu9BHsD0L81af+aavR1wtwU2+QzTFpFckRE342po7M+2YAnv8/yXo3J57QQzeOpoLjAeGfywJOeEA2nMnV+NNjKdus7vgBQh5nooQ4dtG486A1I7rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754661059; c=relaxed/simple;
-	bh=eBlzYYEDKZ/bzHpdPUPduwb/0YYIgOgqFczneNMpEPg=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kmEj9RJdJLudRYJNuIT3z/mlmN8IXR4OXu+tIUdEmaZuQqSUdfFj1tszglkxg6nqDwWJcJ/U3dAmhX/EKLr2Nu7GVdRJpCXhRvz8upOF/+bAVGDRnyoMI7c0GLseJmMOhydLAVCg8jSJfYcCW7ET8IrO/vgp0ztHyLQcjhOmXWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CvVs8Zf1; arc=none smtp.client-ip=85.9.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1754661047; x=1754920247;
-	bh=eBlzYYEDKZ/bzHpdPUPduwb/0YYIgOgqFczneNMpEPg=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=CvVs8Zf1mJoqPSuny+QGAGtESMBnGlP9C+jSMxMI45aVpHwKaG+uxdO/3+MHodj0N
-	 uBQ2iz0d3IlTJAuYkxr1oTlmgGJNvgsrijwuQBwBHUXoBIYHY3s+NzCyora5xmOtoS
-	 Y/XniAYd3Siz/OwmJxXkGGzx/MNl5HGn5pQXzMA/Z2KE5aorOE1/zKRd5/Tf7YPVue
-	 KUuwwYFhsJebQvAAS/kz44SLzQC8M6do3UcUV2MU2PJXUsh6uSf8wkZ/sGr0ID8/Pz
-	 xsj01LcWY17gOAayODe7aoU4jHRYzLiFl2aFgHVopXIQlgKcnNHJ4wAvq1jV35q6zs
-	 3YLOeVmzIMk+A==
-Date: Fri, 08 Aug 2025 13:50:44 +0000
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux1394-devel@lists.sourceforge.net" <linux1394-devel@lists.sourceforge.net>
-From: "edmund.raile" <edmund.raile@proton.me>
-Subject: Re: [GIT PULL] firewire updates for v6.17 kernel
-Message-ID: <pTURxXSK4yF5-FlMBbpWLMW5JUC2s1BvSYdYGKBAgEOpI9z4RhnQsLrrRj7E2Iu02sOznG5ysKRVpXR4ZWFp-CSeSebIP1YGQl7gbFLGeEo=@proton.me>
-In-Reply-To: <20250802054917.GA127374@workstation.local>
-References: <20250802054917.GA127374@workstation.local>
-Feedback-ID: 45198251:user:proton
-X-Pm-Message-ID: 32ba37d8ef6a000a2834e8cb5f0b03366b7e1299
+	s=arc-20240116; t=1754661126; c=relaxed/simple;
+	bh=+89FbzoXzbeBFvgwfAw8UlIb8w1o2l86DsH+uTjvG9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o79AjJdAVxOyWRT73OJI6ODOGJWmRZSHcDNjnyeTcfvww5qkdJyS3RHVrkUNYSCx+LzoJNvZQfoI9HEQV1dX1ysp5LetOCTcjkd68r4i+b68pEJmiPGDbuSABCu3L35ICdiE8oXf3mCHldJKjFvUw00oeGoklcyLIFr/7ZAtqTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldLbuBxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88941C4CEED;
+	Fri,  8 Aug 2025 13:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754661125;
+	bh=+89FbzoXzbeBFvgwfAw8UlIb8w1o2l86DsH+uTjvG9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ldLbuBxlhKi8JUBDf6G3L/Y+wnIU5DwrlHdrbWDdl5iMLBl04MWlZufA487rSlUPn
+	 8FGYNe+44rTxfd1l7lbbYnUsK+jHPtr1bkWH09QNW1b7fSArFu+KHm5nqA9RXmfz/S
+	 Pya7S/u5PWHaUznf79abzAsPBz4o7SyiIGEVh9riD4X8qEPueChLC7AKh4ODZTD1Th
+	 iqcfLZLtjINdpqRWlWC2Inze+2+BcCSRXxS89RJlChiZoiexAgPIPnE3ZNjebk4ttb
+	 SFsjc/b17vPCLU/tdYaw67pYibrl4ZB/kPDx4ITRfjSMtJYYgHIhRqDVIjUUglSRLO
+	 KaRAwfNxc94cA==
+Date: Fri, 8 Aug 2025 15:52:01 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>, 
+	David Howells <dhowells@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] fscontext: do not consume log entries when
+ returning -EMSGSIZE
+Message-ID: <20250808-notieren-abwaschen-cc01d21dd933@brauner>
+References: <20250807-fscontext-log-cleanups-v3-0-8d91d6242dc3@cyphar.com>
+ <20250807-fscontext-log-cleanups-v3-1-8d91d6242dc3@cyphar.com>
+ <20250806190751.GG222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,28 +59,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20250806190751.GG222315@ZenIV>
 
-Dear Mr. Sakamoto,
-thank you for including me in the pull request, I am honored!
+On Wed, Aug 06, 2025 at 08:07:51PM +0100, Al Viro wrote:
+> On Thu, Aug 07, 2025 at 03:55:23AM +1000, Aleksa Sarai wrote:
+> 
+> > -		goto err_free;
+> > -	ret = -EFAULT;
+> > -	if (copy_to_user(_buf, p, n) != 0)
+> > -		goto err_free;
+> > +	if (copy_to_user(_buf, p, n))
+> > +		n = -EFAULT;
+> >  	ret = n;
+> > -
+> > -err_free:
+> >  	if (need_free)
+> >  		kfree(p);
+> >  	return ret;
+> 
+> Minor nit: seeing that there's only one path to that return, I would
+> rather turn it into
+> 	return n;
+> and dropped the assignment to ret a few lines above.  Anyway, that's
+> trivially done when applying...
+> 
+> Anyway, who's carrying fscontext-related stuff this cycle?  I've got
+> a short series in that area, but there won't be much from me around
+> there - a plenty of tree-in-dcache stuff, quite a bit of mount-related
+> work, etc., but not a lot around the options-parsing machinery.
+> 
+> Christian, do you have any plans around that area?
 
-I tested the combination of this pull request and your fix patches [1]
-on arch 6.16.0-1-mainline (based on "Linux 6.16" 038d61fd6422)
-with TI XIO2213B and RME FireFace 800.
-
-[1] https://lore.kernel.org/lkml/20250728015125.17825-1-o-takashi@sakamocch=
-i.jp/
-
-So far audio playback seems perfectly stable:
-days with varying CPU load, compiles, even mprime.
-Suspend also seems fine, even without first powering down / disconnecting
-the FireFace.
-Direct ALSA streaming or pipewire, no issues so far.
-
-Tested-by: Edmund Raile (edmund.raile@proton.me)
-
-Thank you for keeping FireWire alive and even developing it!
-
-Kind regards,
-Edmund Raile
+I've got a tree for that already and have applied related stuff there.
+I've fixed up the comments from this thread.
 
