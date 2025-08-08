@@ -1,173 +1,263 @@
-Return-Path: <linux-kernel+bounces-759887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B3CB1E3FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E718CB1E3FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607D13A7F09
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:02:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04F67565F88
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020F123F40A;
-	Fri,  8 Aug 2025 08:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8F2253B40;
+	Fri,  8 Aug 2025 08:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZx9NoVF"
-Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DhU3L+cs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDA84AEE2
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507E025179A
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754640120; cv=none; b=r6kWW2WVylDAtrkq19WbEHLwgvCfcRpcJCA37NQGjVLjufIf1odFRnBYN14ByzpFuW53hKVR+yZZLUZy5UiJP8mE5DoqVacBYUnv0sIzcYTRrWyMYolrknUKxFQynrIygn/eTqxXi1+vtUbkEd0sT6tZpiUxgqRP1XpS6iOVi9s=
+	t=1754640139; cv=none; b=FQr6eY6V0qrmCRfRsa6cZHKF7EekYy9GSDx7OWL3uYYqK4R0ZfYsowrpUfYCY6N7aaDm22/LOXCwC2/PP8OJJgvXY41n2WJRRJOZJvo7pM0YEpdRljb412SrYWH4CziGI6uGJ98plnk91mQo0RRNDPPTnwjSwXI3eXGpIHKTG9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754640120; c=relaxed/simple;
-	bh=7oyJJ3eAXJRwGcVTY8F95qK1JKOI+/WBg933hpV9mrc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=uoWK2486QBHw7VyFw4XQdSiqC60UOtucZYt27HgA6F7OA3tVB4KUFa/UplSCMcDiSdE42sBiCS+pvWaB1fGsX8qAAq+IaUbLx3ldcaKI2ZDa0m0iL6eW8c2woU7puoD4MjOulP0/uhiEVU9RsPD1/7zDBO9xG+aya/RCxm0x0ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZx9NoVF; arc=none smtp.client-ip=209.85.219.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-e8da1fd7b6bso1675610276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:01:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754640118; x=1755244918; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MWJMHho/a9SJWI4X4vVnP0p90321hImD1R14P1yKy40=;
-        b=WZx9NoVFIX/tYcwPFB5dulWjSxmNYnQu6hfCA3nGwEypltg+s6VVgjNIzZUSTC0p3y
-         o10ohrzosLsJI8JEB+tGS2XrMBTUJqGn30JFXIyg88dVvgeKsqGpKam3Kncibof0tkgj
-         Y0vB0B9gpSOAQsEdDO8H5F822N51zgeiK2twAIEO06rfaxJRPpY/hzdlngzWFxY1+i/K
-         1DBTI5mIZIthKl9myDcQAJ9GAlRmMuEmLtFziGzJacfzy3zJUrbYyVu/kam8KTjK5xod
-         cwuQ+nBJC5vKXj//cSd/WKvZ1i6XVjMsIcv4xv7Dspmp8aZj4ySS6PDVXtza7COVaJj3
-         MBzw==
+	s=arc-20240116; t=1754640139; c=relaxed/simple;
+	bh=jMSpEBEGrlHFEXytlN1Vqldbpo66hRZEypVpxIN5KOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I0ece6Tl0YTTdXG3hObUwaMymwvzm8eUJYv9kXcmAIlcSrXkrFAk1tmHnJtBiRJZgn7rsR7pyHNqWWG1xIuMXRHcmSqNIhkZMA///+d27WZ7OGqGBUcgAjONVl6Uh9yr0TleBSb14GD7mDd43LieICTyXL0ZmCgP3DuraaYYeD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DhU3L+cs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754640135;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BAno96tpxFYMgcAPgmjun2K1NToihw19tP0g9bAlXR0=;
+	b=DhU3L+cs20EatGgmoHS98zCNpLhmWN3jyCppMbwlGztL0XKXCu8d1u6LYQx17TUJvTGHqi
+	Wjg5IAMLNrvMP5hZvHphyVXlNm0uXSA9K4/Fb1oGpvtdys2v/1E5sbgnmX+CZxrs5Vynrv
+	ieDGc9Tc6M6Qsjz9S1+S0J0bMhuO1Vg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-160-Cy7Wxl7FMOGEwd30LmNYXg-1; Fri, 08 Aug 2025 04:02:13 -0400
+X-MC-Unique: Cy7Wxl7FMOGEwd30LmNYXg-1
+X-Mimecast-MFC-AGG-ID: Cy7Wxl7FMOGEwd30LmNYXg_1754640132
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-459d7ed90baso13047575e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:02:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754640118; x=1755244918;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MWJMHho/a9SJWI4X4vVnP0p90321hImD1R14P1yKy40=;
-        b=UiTnXvNMYkEbM+QGGgm8djyIGMMQGr4mojsaX2hg5SNWiR6C4g3jDcleesxtHFO96J
-         GhDJBGSsZFNqpb1PCHHPwpl2bYww4tapktjgK4EyOvgXPjnQBxOyydB3W96UX4AQxFt7
-         /acVBv/p7OtEFOXiyI35gaHhLjDAtDpcdZYUm5ChFrndG/JYZZfjNs8lRP7WipuJZehr
-         IH3WH9zBFLZaSVWgUkNA2gpWzfrywz/4Apxsxk7sKOqbDH42yA2WdGIC9wtesCaGUqf8
-         Eq/dVbfaslevycvPus294+cKhpZO0anKwoRZMTt5CyX/44PMdhnpuhLQoItYnumJWcwj
-         lzwg==
-X-Gm-Message-State: AOJu0Yw0PGFQm0lTm651QEucROcjIypSO+rBG4DmLqU2ry1sCF/K9TVO
-	afUQatwQcwJZqmke4r4ZjS1yn4mSFFhDhqzFy4DXDSjFhqa+PvmPD3CFYxSr6VM5dbHvB85ejMG
-	BERfluGzkDiVSEtp/a1BBPZOsIthiIr+2i7uWgC4=
-X-Gm-Gg: ASbGnctaRIORujgFzpdvJkQIo05OC3jbw4a2e11QYKLWWTnPhZkuJDhBUEew7wzJ7Lt
-	+mE8gCDhiV8jsTASvUG09X5v5Yr7p6NAoWz2ZvI620OhSziQgajr+l87u5D/tYj7P8D2Z5WNbNM
-	Gsngj5itI1+ees/POSpMjz8aape1hg4Tx2HZF7zwSBEtK9Q3xOEo28OjdSk2gdtv9Wmtp/DZN5E
-	OnchrvZ2IAUH82lU71W9rIEoZhiwdgiexystkjawDKLwwe4NHs2
-X-Google-Smtp-Source: AGHT+IE73fjllbl+mmjrUZeCbrVPwf0Dz0AIssUI9Fpy4fJnW2YQVOXCqQCYTjzYXk8xyyhfO2RGqjqH1mMYmnuExOs=
-X-Received: by 2002:a05:690c:8685:10b0:71b:f4b7:181b with SMTP id
- 00721157ae682-71bf4b725dcmr9136197b3.34.1754640117764; Fri, 08 Aug 2025
- 01:01:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754640132; x=1755244932;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BAno96tpxFYMgcAPgmjun2K1NToihw19tP0g9bAlXR0=;
+        b=JuYDy/U2XV8JfNXbcrfuIgapPW3658k+g2hlaMwaVK76abshRYHHFfi1UrGpfp+kNB
+         +Li2bZPloA75HrARW+5wrvTEA7/E8EgnSfTzyO6IqEFWWjfSg85xm9gqHg8MODrc4scl
+         jHY1FXMLpTNpJSnH00CcDPssmmNQ/on082/T/7zGxk2g1NlrVGR2DwaMvB6A8vz+8018
+         EbpvYaptEMHot5jvyjipCYYFvmEJdyWJNBtqvSNfr9+hfIU8t2XBzIo1Ek6P+wSQngPT
+         EqdvM118OrTCqNXWXucerlI9NBchDGdr9OuXh16+jQvabhl5Rg+wW+1d0CBfIJbI2Q/W
+         2Nqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnRqKmOXPYrKz8yJorkuof/oPEASdJj4n8rcZrqHNdYoUufCGMjf9RV/lR7FYwyFOnWA8pBe78qdU/bho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxudlpNWhTHk351D+EIAPu3Ek9c5QN8z/gU2utYd5qvdb3UG+h4
+	my3vFhaEnl0Uu8pw/IXIPcsD3iG9vWvrMafAbbM+HZBZYx+tzECI1cItzQXqs6J2ptqquTDZm7W
+	xwpSMh7GJCjC/YAaC6XUsd/6uVfb+GnjFCTD3CJXyu8fVQp0IPx3Mz4Qw8bX95KIIRw==
+X-Gm-Gg: ASbGncsnd6OwgJmjrmUvjy/EuJi0A8RO01wIrKlOzeW0UAmxRL9sY04rC2SQfpcoHnx
+	5OxXk2chtNUkoQRz30nD+g45RFU1zqX9oAiQkrEeOJ9RylCNBecxkU4MXq+N9YdIp6OC5tyvVHI
+	E+kAEAE0RbUsxRejilxgPf/uD+8exijbkY2S+ao8XxTcdqb9Z4Wt3apflfBBJFWrJ0Ye6bkf9Ou
+	YW4KCkqEKmvhXHUtPkSJR7nkHuZJ6KZ9znVYVjPj0R7cerCnpnpafWKWe2ZjeaRe1LDOnMkJGjx
+	RmOKtlv6eoXamz1q5J5gAE1UHyywUYwEEFofMrgamyZGsW2h33GB6fzsHvjM81ypoHrs1dk=
+X-Received: by 2002:a05:600c:3b0c:b0:456:43d:1198 with SMTP id 5b1f17b1804b1-459f4f2d990mr13934505e9.32.1754640131831;
+        Fri, 08 Aug 2025 01:02:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgZzUg3wr1SifXE4t4yhDMq7cAU5j7L/vtRZVGMfKFh0NEsEhGPcGUTafUnKO5iZcAXqC1uw==
+X-Received: by 2002:a05:600c:3b0c:b0:456:43d:1198 with SMTP id 5b1f17b1804b1-459f4f2d990mr13934055e9.32.1754640131356;
+        Fri, 08 Aug 2025 01:02:11 -0700 (PDT)
+Received: from [192.168.3.141] (p57a1a580.dip0.t-ipconnect.de. [87.161.165.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5862be7sm133209415e9.15.2025.08.08.01.02.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 01:02:10 -0700 (PDT)
+Message-ID: <5b9c775c-35a1-4cd6-8387-00198e768b9a@redhat.com>
+Date: Fri, 8 Aug 2025 10:02:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Amit <amitchoudhary0523@gmail.com>
-Date: Fri, 8 Aug 2025 13:31:46 +0530
-X-Gm-Features: Ac12FXzJL-tOkPc7YE3pa3weAVrS_OLBQw85H7ZXJqrK1n-X19Rfl2jygbcIHwI
-Message-ID: <CAFf+5ziTOmMxKky9T+hb=zjWdD2OfLpS2s7FEn81r4tT-tG2gA@mail.gmail.com>
-Subject: List of string functions that are not present in the standard C library.
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
+ entries
+To: Sasha Levin <sashal@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, peterx@redhat.com,
+ aarcange@redhat.com, surenb@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250630031958.1225651-1-sashal@kernel.org>
+ <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
+ <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com> <aG06QBVeBJgluSqP@lappy>
+ <a8f863b1-ea06-4396-b4da-4dca41e3d9a5@redhat.com> <aItjffoR7molh3QF@lappy>
+ <214e78a0-7774-4b1e-8d85-9a66d2384744@redhat.com> <aIzAj9xUOPCsmZEG@lappy>
+ <593b222e-1a62-475c-9502-76e128d3625d@redhat.com> <aIzPPWTaf_88i8-a@lappy>
+ <aJUDqqjCycGDn1Wg@lappy>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <aJUDqqjCycGDn1Wg@lappy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-------------------------------------------------------------------------
-List of string functions that are not present in the standard C library.
-------------------------------------------------------------------------
+On 07.08.25 21:51, Sasha Levin wrote:
+> On Fri, Aug 01, 2025 at 10:29:17AM -0400, Sasha Levin wrote:
+>> On Fri, Aug 01, 2025 at 04:06:14PM +0200, David Hildenbrand wrote:
+>>> Sure, if it's prechecked by you no problem.
+>>
+>> Yup. Though I definitely learned a thing or two about Coccinelle patches
+>> during this experiment.
+> 
+> Appologies if it isn't the case, but the two patches were attached to
+> the previous mail and I suspect they might have been missed :)
 
-** Many of the following functions take an argument (int case_insensitive) for
-   doing either case-sensitive or case-insensitive op.
+Whoop's not used to reviewing attachments. I'll focus on the loongarch patch.
 
-* get_input_from_stdin_and_discard_extra_characters()
-* discard_all_characters_from_stdin()
+ From a547687db03ecfe13ddc74e452357df78f880255 Mon Sep 17 00:00:00 2001
+From: Sasha Levin <sashal@kernel.org>
+Date: Fri, 1 Aug 2025 09:17:04 -0400
+Subject: [PATCH 2/2] LoongArch: fix kmap_local_page() LIFO ordering in
+  copy_user_highpage()
 
-* is_str_ascii()
-* is_str_spaces_only()
-* is_str_whitespaces_only()
-* is_str_integer()
-* is_str_long()
-* is_str_float()
-* is_str_double()
+The current implementation violates kmap_local_page()'s LIFO ordering
+requirement by unmapping the pages in the same order they were mapped.
 
-* str_regex_match()
+This was introduced by commit 477a0ebec101 ("LoongArch: Replace
+kmap_atomic() with kmap_local_page() in copy_user_highpage()") when
+converting from kmap_atomic() to kmap_local_page(). The original code
+correctly unmapped in reverse order, but the conversion swapped the
+mapping order while keeping the unmapping order unchanged, resulting
+in a LIFO violation.
 
-* str_split()
-* str_split_regex()
-* str_join()
-* substr()
-* substr_regex()
+kmap_local_page() requires unmapping to be done in reverse order
+(Last-In-First-Out). Currently we map vfrom and then vto, but unmap
+vfrom and then vto, which is incorrect. This patch corrects it to
+unmap vto first, then vfrom.
 
-* str_trim_leading_spaces()
-* str_trim_leading_whitespaces()
-* str_trim_trailing_spaces()
-* str_trim_trailing_whitespaces()
-* str_trim_spaces()
-* str_trim_whitespaces()
+This issue was detected by the kmap_local_lifo.cocci semantic patch.
 
-* convert_num_to_usa_format()
+Fixes: 477a0ebec101 ("LoongArch: Replace kmap_atomic() with kmap_local_page() in copy_user_highpage()")
+Co-developed-by: Claude claude-opus-4-20250514
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+  arch/loongarch/mm/init.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-* compare_chars_case_insensitive()
+diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
+index c3e4586a7975..01c43f455486 100644
+--- a/arch/loongarch/mm/init.c
++++ b/arch/loongarch/mm/init.c
+@@ -47,8 +47,8 @@ void copy_user_highpage(struct page *to, struct page *from,
+  	vfrom = kmap_local_page(from);
+  	vto = kmap_local_page(to);
+  	copy_page(vto, vfrom);
+-	kunmap_local(vfrom);
+  	kunmap_local(vto);
++	kunmap_local(vfrom);
+  	/* Make sure this page is cleared on other CPU's too before using it */
+  	smp_wmb();
+  }
+-- 
+2.39.5
 
-* str_starts_with()
-* str_starts_with_regex()
-* str_ends_with()
-* str_ends_with_regex()
 
-* str_replace_char_first_match()
-* str_replace_char_last_match()
-* str_replace_char_all()
-* str_replace_str_first_match()
-* str_replace_str_last_match()
-* str_replace_str_all()
-* str_replace_regex_first_match()
-* str_replace_regex_last_match()
-* str_replace_regex_all()
+So, loongarch neither supports
 
-* str_delete_char_first_match()
-* str_delete_char_last_match()
-* str_delete_char_all()
-* str_delete_str_first_match()
-* str_delete_str_last_match()
-* str_delete_str_all()
-* str_delete_regex_first_match()
-* str_delete_regex_last_match()
-* str_delete_regex_all()
+a) Highmem
 
-* str_insert_char()
-* str_insert_str()
+nor
 
-* str_compare_range()
-* str_replace_range()
-* str_delete_range()
+b) ARCH_SUPPORTS_KMAP_LOCAL_FORCE_MAP, disabling DEBUG_KMAP_LOCAL_FORCE_MAP
 
-* str_left_pad_char()
-* str_right_pad_char()
+Consequently __kmap_local_page_prot() will not do anything:
 
-* get_random_char()
-* get_random_char_in_range()
-* get_random_str()
-* get_random_str_in_range()
+	if (!IS_ENABLED(CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP) && !PageHighMem(page))
+		return page_address(page);
 
-* str_sort_ascending()
-* str_sort_descending()
 
-* convert_str_to_lowercase()
-* convert_str_to_uppercase()
+So there isn't anything to fix here and the whole patch subject+description should be
+rewritten to focus on this being purely a cleanup -- unless I am missing
+something important.
 
-* condense_consecutive_spaces()
-* condense_consecutive_whitespaces()
-* capitalize_first_char()
+Also, please reduce the description to the absolute minimum, nobody wants to read the
+same thing 4 times using slightly different words.
 
-* str_hash_code()
+"LIFO ordering", "LIFO ordering", "unmapped in reverse order ... LIFO violation" ...
+"reverse order (Last-In-First-Out)"
 
-* strtok_dm() // dm means don't modify string
 
-----
+More importantly: is the LIFO semantics clearly documented somewhere? I read
+Documentation/mm/highmem.rst
+
+   Nesting kmap_local_page() and kmap_atomic() mappings is allowed to a certain
+   extent (up to KMAP_TYPE_NR) but their invocations have to be strictly ordered
+   because the map implementation is stack based. See kmap_local_page() kdocs
+   (included in the "Functions" section) for details on how to manage nested
+   mappings.
+
+and that kind-of spells that out (strictly order -> stack based). I think one could
+have clarified that a bit further.
+
+Also, I would expect this to be mentioned in the docs of the relevant kmap functions,
+and the pte map / unmap functions.
+
+Did I miss that part or could we extend the function docs to spell that out?
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
