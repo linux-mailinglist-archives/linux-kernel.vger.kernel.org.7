@@ -1,140 +1,98 @@
-Return-Path: <linux-kernel+bounces-760247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E4CB1E877
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:36:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131E5B1E874
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 432BC7B1ABA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C31C5A0642D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3A7279DA9;
-	Fri,  8 Aug 2025 12:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J/8chpXv"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138FE27932D;
+	Fri,  8 Aug 2025 12:35:34 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC041FBEB6;
-	Fri,  8 Aug 2025 12:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588402609D9
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754656541; cv=none; b=WOK7fn794v74ttpmN7edktqxct0f7c0iu6RigmPiB8gJVUam3UfluCzmaZ5MIZLGUuNcPmzxrwDpnW22OXWclnpbJeZGfCJUWmkISa+rhmqPren64cxrvaGNn7GHh9y+wG+7XlhfGsHUgQjnOLt3CodZMfPQkC229Al7pRYZiJs=
+	t=1754656533; cv=none; b=lpBdY/jabMyuX890y/MrCJaVNnH9Npd/ywVrpBmX5MFWBI8tyua4Uorm08qTjAtBLRB82/ZGHIjz5eP8gI9MACqaaRZaLNcVdq5vfhWBC5pDSzkWDWMrlcK5r60yKzHC2oWwHMGSYwdjuDhCRJ0rlOMIED9WSp8YHGeZHGy+Xz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754656541; c=relaxed/simple;
-	bh=DBUrRohCnAaDgN3a8rl0rDSbV3emnKD9qv2m8fLMOZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kFW70538TWxdutokY/CzIJwQB5IWql5ipSxtW3qUQD1RaOwAN5mgwBEWE8oePr7hg9FLoGQFfRFynAXlLOeqaaGoFdOgij4mLpZtLa3AePEoKjgmBURh6i2o8pdUklTDuE2Eb+X8wCmgtdS8xrY83lgnGu6ox0w6BWoaIoUAb4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J/8chpXv; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6156463fae9so5062637a12.0;
-        Fri, 08 Aug 2025 05:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754656538; x=1755261338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fDSYh5lya2y6QD4ijxMsZsR33rbgiCTEcFPK31qmRrs=;
-        b=J/8chpXv6fJQmaRLLZS5L+wrE3ctf88r7aIyGxXwyJN+Uu+QD2ForxkF4LeHJJJUeF
-         guxZOrZld8I8SHNaTssLVYxoMEgbo3H00w0AkqoKRUjbeurMsi9BLofnJPM4B1hHhtI+
-         hcZN2ydOaS5vgBYORjJAhlmyfx09FGzOsHt4zAtn8nKL0nAv6qX8cS5HdI4u0yjR4/Wl
-         2H5MAudHKbVpIwtubQWaSoAfpK9N7f0He08Sepd56UmByR9t7IGdCNka9CzihY6EpDgj
-         UpuS4PPVg/W59jtChiecHP8mODKzq6QqEWan4VB1fjE4apLnOFqswAqUsZPRjFZKZxOD
-         UtSA==
+	s=arc-20240116; t=1754656533; c=relaxed/simple;
+	bh=mLWT6GfB0u+D2py9bwCzhfGMwpw5oNOEPQ2NU0v4Y0E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SFrYsyaEFAjDwm17mlPg4Vdr3HrBIuSnRJ85T9ZVI6KFAYOVcIzXuZp7VZcckFILVEYE7/smWPuvFukcVBDXulor9+ipuLyo/KJUYmqPqAXGVBIluidqqaRgBc8JtfdLxiaBZvyyIhu0TbgEkwl6iL+D+LzP31PNtfz6TiwdVIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-881b5e2172bso168800439f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 05:35:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754656538; x=1755261338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fDSYh5lya2y6QD4ijxMsZsR33rbgiCTEcFPK31qmRrs=;
-        b=sTaPT23nlxrhhW1LrbDOS7ZyxWWzWPppZGolEBAf1nCsBJC8h9j+I5xjcceugvpxDT
-         O1srwMWJVnSrt3MQTqVV0x5I7KG9n45nwNg1mIl+MERvMpfXkaXzKCwcZegjzX5Zym1k
-         IQjzccWj9bpB7E9fsN5L3KtVjVLFihx5rqCJF/dZqsm9TrEcq4NGJO7XGOrlnqf/Pin0
-         inK4C37JvZ14MolEpKSfKg2yAMOe5F1gIMZV6jt2VoF+HGwpV2fUZHX+TUQjWqZJjzp6
-         q5SnJZimRkEJJa7Cmj68W2QVkCDZnw6SzE5pTc/FigwICFHSZSTJF4iCuw6gEZmC7iHH
-         Zpbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEC8SwXzWG6TXxCrTcZ+3+jZXWOtmJx/8tLoN5N8FJOVUMmNvXJa/s1ASVJ5vTIFql/uAJInY5iDmF6mLe@vger.kernel.org, AJvYcCXKxM/TdVU05HwDl02KsxQdlGI+Gs7gugze5+FapCBbS/YhgljPL40RLhjU3uiraTr0hWB15kmS4Qo=@vger.kernel.org, AJvYcCXLwWtT25X0wb3oAPSyrZ5eOU5wncTHuHqkzJrNNG7KFu1XQhSw9nl7bPSmOcFDtwybLlPlIOQh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgkFwE2CW8mlpw0OJJJsQGwu9LF4TI/LUY+V8Us+fTDXf4hu5B
-	zRn7utn4eG3f3WBF7nl7MC1EMfNZoA9GvK2ebkLmaBPIDSVnxdtTt/DKUOlw8ck+6P+Cxv01A2l
-	dHgVGG3Rvp4+ztlaoQmD7oWTZzvJ04r4=
-X-Gm-Gg: ASbGnctJ4OwRfHxbXsCQmrCAYjM01IvshKIl93UXrCgjB5f8d2XLdbsUbb6AmoRysFL
-	mBQy6VU0URfWJmv7FvIc3fzvzNklJFOHQVyd6PBDWcjQZBmKdgVSYVQuZIBje2omkePTDEC0u9s
-	jA9kaUIni6A13NLTsjSFMDZr7hFU9p0r2HRJOaR4V3GpcWinmPJsxNy2iiWNPe7Orkco20wq28d
-	AqpMJxpRQ==
-X-Google-Smtp-Source: AGHT+IH32kHNPZMnPqhCs9ebrCdy5MTCTTWaqqRa76UGtZ3/T38hE/+4EwwwkIQ1oM6LDdnK/9b2jIKB3o5mmZTsJf8=
-X-Received: by 2002:a17:907:1c28:b0:ae3:ee3a:56ee with SMTP id
- a640c23a62f3a-af9c6e2731dmr277972366b.3.1754656537579; Fri, 08 Aug 2025
- 05:35:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754656531; x=1755261331;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IkINT0Y9c0Hnv3yIkXo95dp5zJJHuDi6r/Kkwyne1Uc=;
+        b=EZV9HVwdJIxHKkIzNFjAN56iwU+cICdWgDRWoujxlF1nJsVdt56Fs/s2wg0mu25GQ8
+         TT+r0PZnlYw8XFIkTwpQY7Z4TkZRfnyS7CFRRa9/Li+c5WjquqP9PJDbQk6UZsw8N87q
+         hPFQwC+RF0yymcalyNHRH6mrJUNXEidF6ZDjUKTFg6c8Jbzo+3GrNGGL4arq1cRuyLMG
+         XOu+g8G6yCk7qALmVsdPQzVqW/1mHbCJ2mZQZ9ANkD73NTE9TwZMYQlVg55QMmtBqMSP
+         ob3V7cVc5W1OA1edCbXvyIqa+xWeasr0pUUym5KT4xsOqoNFLTBT+aZZLJtAsIQUK3rw
+         RgbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdyFU2wFD/G2y5iTe6NWPqHUK6k36CX7M+jFhdWd2bN5V6bm5in2u53m7hjg0suQpZJm59bILBWL2L1VU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVckYRLencMBX1QXoOUBnp1J3UtbMaIV9fzCZ5Dr0JQcyPl4rP
+	ji89/JtRg/eQrlQbKeMELdieXOakuNxYeFqChegSBhRaq0NeRSGOd4ZPrHDQtD2yae12JgY7Lz2
+	zLx5w2/4jkaoe/QpZ6vcYyzdTcy08QcK7Z1TMCj/ANDft6+/3NM5UYMir1iY=
+X-Google-Smtp-Source: AGHT+IGUZ8Ht884aEeUTYVeEe2MqsVO/6u1dp8PISpfM1R+i6QN16MXQTuLiaSEKQ77YDUKMvDvv3vrYkrpfc+9ygLbwyBGFmQVC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808-inv-icm42600-change-temperature-error-code-v1-1-986fbf63b77d@tdk.com>
-In-Reply-To: <20250808-inv-icm42600-change-temperature-error-code-v1-1-986fbf63b77d@tdk.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 8 Aug 2025 14:35:00 +0200
-X-Gm-Features: Ac12FXyUIPj4_cHk-J2g6XoI9XXAOYyAwh9-yx6DvxsNiVg9fEZXdZq1W3bA-mM
-Message-ID: <CAHp75Vcw5Q_ENzEJvH2+xHmPD-DUPAEaOOD2QoiCXoh7UiQJxQ@mail.gmail.com>
-Subject: Re: [PATCH] iio: imu: inv_icm42600: change invalid data error to EBUSY
-To: jean-baptiste.maneyrol@tdk.com
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+X-Received: by 2002:a05:6602:1686:b0:87c:2f66:70f9 with SMTP id
+ ca18e2360f4ac-883f10e2396mr586699739f.0.1754656531574; Fri, 08 Aug 2025
+ 05:35:31 -0700 (PDT)
+Date: Fri, 08 Aug 2025 05:35:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6895ef13.050a0220.7f033.0062.GAE@google.com>
+Subject: [syzbot] Monthly nfc report (Aug 2025)
+From: syzbot <syzbot+listbabfe0cb0f5b4dc95616@syzkaller.appspotmail.com>
+To: krzk@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 8, 2025 at 9:40=E2=80=AFAM Jean-Baptiste Maneyrol via B4 Relay
-<devnull+jean-baptiste.maneyrol.tdk.com@kernel.org> wrote:
->
-> Temperature sensor returns the temperature of the mechanical parts
-> of the chip. If both accel and gyro are off, temperature sensor is
+Hello nfc maintainers/developers,
 
-the temperature
+This is a 31-day syzbot report for the nfc subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/nfc
 
-> also automatically turned off and return invalid data.
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 27 have already been fixed.
 
-returns
+Some of the still happening issues:
 
-> In this case, returning EBUSY error code is better then EINVAL and
+Ref Crashes Repro Title
+<1> 489     Yes   INFO: task hung in nfc_rfkill_set_block
+                  https://syzkaller.appspot.com/bug?extid=3e3c2f8ca188e30b1427
+<2> 333     Yes   INFO: task hung in rfkill_unregister (3)
+                  https://syzkaller.appspot.com/bug?extid=bb540a4bbfb4ae3b425d
+<3> 83      Yes   KMSAN: uninit-value in nci_ntf_packet (3)
+                  https://syzkaller.appspot.com/bug?extid=3f8fa0edaa75710cd66e
 
--EBUSY
-than
--EINVAL
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> indicates userspace that it needs to retry reading temperature in
-> another context.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-...
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-> +       /*
-> +        * Temperature data is invalid if both accel and gyro are off.
-> +        * Return EBUSY in this case.
-
--EBUSY
-
-> +        */
->         if (*temp =3D=3D INV_ICM42600_DATA_INVALID)
-> -               ret =3D -EINVAL;
-> +               ret =3D -EBUSY;
->
->  exit:
->         mutex_unlock(&st->lock);
-
-...
-
-No need to resend just for the above, I hope Jonathan tweaks this
-whilst applying.
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-(assuming typos and signs are fixed)
-
---=20
-With Best Regards,
-Andy Shevchenko
+You may send multiple commands in a single email message.
 
