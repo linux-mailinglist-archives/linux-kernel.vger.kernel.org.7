@@ -1,100 +1,105 @@
-Return-Path: <linux-kernel+bounces-759709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFDCB1E188
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:06:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07917B1E18B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 158367B1A9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAAF918A2973
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8D11CBA02;
-	Fri,  8 Aug 2025 05:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9621DED52;
+	Fri,  8 Aug 2025 05:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGwXVSSU"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC7E2E36E2;
-	Fri,  8 Aug 2025 05:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NUVCZj58"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D84A2E36E2;
+	Fri,  8 Aug 2025 05:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754629607; cv=none; b=F5p41QuLvyM6RSjgcnfiA3iUCZiCw6EwJs4avArp+mopUDz9US+ydyNuwVG+1dWifUwTf6oTbmMoZtURB4JM2MZu8sPqyAXxPB5+hhoydj4R/araIf/jc/4FTb0TbqLzeqS4dM6w/EHXY9Hp9YQWUsnrC99sKLrpQ9ytFyeAbsQ=
+	t=1754629668; cv=none; b=JWTX1zWcbiIclzgw16eLxk2ATYpf2ddkg9jO5AlJiTcIrGKnfUHapPghAKi2ETYbowpieiPpzvbI5EDrGyF7PNJCdULSlDGa0XfbTeLzCv4NCbr9Ym5ty/Yiy+lJLT+jVZw51XOtHOU8s+VDjlDA6iXEoCPhZypDz29S1hqvib0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754629607; c=relaxed/simple;
-	bh=suTlc4sym3MBM4sSUhPV2lEgazAht8TISNbm4YjTQbc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=V7yqUXb/eIsZ+Hk39Lcf9Tm9DM+u3r8aUB+ldrXqrxdeYana/T2259AfS4J+/qI7cn18V8rr38k1r68Qvjx2Yirk66ALshLbZQP4H+T1hSFx8D6tvXITpt6h/ZuXU+iXjJrior8jU7Dqzaoy5ygnxjA4KzO9/cEv7VXJo39ELIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZGwXVSSU; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-33275f235ffso25075341fa.0;
-        Thu, 07 Aug 2025 22:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754629604; x=1755234404; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=suTlc4sym3MBM4sSUhPV2lEgazAht8TISNbm4YjTQbc=;
-        b=ZGwXVSSU2ZeWFojZKI/UNv2hndLxsnt8StYPSrMg1T75qQLv7KC2wKAHnYHxuigj2+
-         xHYO3Fye6J4Yp9q7CiGh3PBS3C9/ueHwGHz2WCIENGrHlefYBV4mUec9DEJpgcqEmJu5
-         25UACSzm7FaSZ2O1uhrgBkltQanzDjgNw4arJtztdFcAvF3htgNpwFKnOEJKwp6EaC49
-         YF0TupJ3jIxE+/VzNuszpG+XgoDvutwLMNOBknttdcfPFXkmk9lWhEx4TzYoBwt1TLcv
-         tlm/dsYz/Z93OFaP1E0TVqxbl7s9P/WeMWk1g4XYV8SjJUS+XLm1jRzeU+VJXFejQt2l
-         YkyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754629604; x=1755234404;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=suTlc4sym3MBM4sSUhPV2lEgazAht8TISNbm4YjTQbc=;
-        b=cn4bkmigoa3fEF2yb+NRhArkCsLHDUMwyM5fLrISx4rwEznuJW8En07j264oJePH8/
-         V46yrBucUtZwEsn7wNWktrvRVilV+53Lut27+kRYgaLWAPW5l8nqVIDbIgh6AjA3wUoH
-         V4VUkIq/MaSpS1t7aiXFrK8tTmIySZWzMuVJlQNYeAATvCF1/gjZWeSYPVLAegrxjdU/
-         CmS4g8x8yi3mJ2B0VA9MvxwjjZaPzrrzIodZi3BobvshTlh3mVCO5NtvVX9GLZVyjXwF
-         W+xC8iii6Cx9qF+FUj//XGrlC8aEfnUnbBz2mUgOY2nFqduscqge5cMC21VfVVHCsqaY
-         DKlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMGUacjd0CdSiWpAmB/C3DUHcKtbKxZHWZnruE1yUwkHdNmGTVf4PCkcY9Zj4+zPk0psbB3czOPfCmm2ZH@vger.kernel.org, AJvYcCWK/vGVqI4q+I4Xp3J6HK2b4nYCjX63itaRH54X1JPY99CUlwgOmuF7vKoHGbk2COnLUggtLzKVAc0Eu6A/Rw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7SVMfoOCFGRazPvaoaAWiNcr/SAVJiWd1hw8IuJpFqqMNDuNw
-	D6tRoN55lVPD2kqJ5WpYltWVvVrLQZtZNBUu/+oenQbb+LLDDXt3NPpDXZG8dNcvVRcDdETNnyN
-	5zg1q0B8OpPBPVtLS1yhcFODkpHsecXi3cMQYF5CIoQ==
-X-Gm-Gg: ASbGncuOlvHHANcUAHbXy5iR1uDElKvTjY09ccYffimFkMsYVO2GQefh2HnRaW2/82X
-	KK7D1oJdjvijv2EE+W21xd2PL2gixrLBOSaipNG6vP71ayoUEL05tuj+06qPXnrHWZmy60wCYvQ
-	oaGuVRx53Pnafk5Ml6/dZZIpXp7Oz1s9CzyjQZ/8EyyQAf8SNMHJMZH9mGJ6bkziezXwTsam/0j
-	4LSzc4=
-X-Google-Smtp-Source: AGHT+IEyi97kyr5yrQuAHhluU2zRN3nY6mmZB0YSjcm6IZshIwPDV9iTEiqw9cDcrERMXEvqeXqD0ktBb2ohRaWvPnM=
-X-Received: by 2002:a2e:b88c:0:b0:332:1d26:b20c with SMTP id
- 38308e7fff4ca-333a2539a85mr3368591fa.4.1754629604023; Thu, 07 Aug 2025
- 22:06:44 -0700 (PDT)
+	s=arc-20240116; t=1754629668; c=relaxed/simple;
+	bh=F6fLKbm9r4rCivnHXjZiFWuJSTvhJ9oWcJCJJoy5myI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kL7bLLqEItkNLZWwDqt8tb9rA22SVN86Kfz2MXFJykF6KZUj0Uv3lEemfzF43nGXKQ8s6nec8A028uTLHAwj0kNxqJHXbIGGvjfP8Wpm0YNRbx31kR2ZwaKNcEDxg9ul25W0o8dtF41g48YsECRWZM8gRVJuCfFCF9YZkVhjtI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NUVCZj58; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=WE
+	guBV9Nj+AlQ84hzfe3or4aV3V5DdYCSGiUDvr1ZWM=; b=NUVCZj58DeeWwV9BeJ
+	0aetTPkWfPjhkyaM7Op8bRLDiLEMQorfTXDZkO31qkdAb7bFxxpSXC3uUvQB9hXN
+	o1CHdsI8rSHLWTFJXNdw/E1VwLfJkGw4WfnSifgaDAOneeRquPYeyt2XikrAaZ8F
+	YaeOYNmPrq7Ozell3aLSHsYCU=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgBHnjXjhZVoPft6AQ--.55044S2;
+	Fri, 08 Aug 2025 13:06:43 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: af_packet: add af_packet hrtimer mode
+Date: Fri,  8 Aug 2025 13:06:43 +0800
+Message-Id: <20250808050643.107481-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Alex Galvin <alex.v.galvin@gmail.com>
-Date: Fri, 8 Aug 2025 01:06:32 -0400
-X-Gm-Features: Ac12FXzehAvwEj5d_2kpDBXoG4WlzF9REUVsSx3X8ZJPRidjHFbi4uNda_-C31U
-Message-ID: <CAOaPw=i_4s_OPuSqZiKqWNXq19H3K6U24o9fn_m71CT+a35DOQ@mail.gmail.com>
-Subject: Bcachefs plans for the future
-To: torvalds@linux-foundation.org
-Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgBHnjXjhZVoPft6AQ--.55044S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw4rGry5Wr4kXrW3uFW8tFb_yoW8XF47pF
+	Z8ZrnrKwnrJasrJrZ7A3WkXayIvr1rCr45Jrn5JF90ya9xCFyrtr4aqw4ruFZF9wsYv3ZI
+	vw40yF4rCw1kA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UnJ5rUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRxejCmiVfm2PowAAs7
 
-Hi Linus,
+On Wed, 2025-08-06 at 16:51 +0800, Ferenc wrote:
 
-You've stated that you and Kent Overstreet will "be parting ways" in
-this kernel release. I understand your words to mean that you will not
-be accepting PRs from him starting in this release cycle, with the ban
-continuing indefinitely into the future. Please correct me if I am
-wrong.
+> I doubt we need another CONFIG option ?
+> 
+> Also this seems to be beneficial for HZ=100 or HZ=250 configuration,
+> maybe worth mentioning in the changelog.
+> 
+> But more importantly, I think you should explain what difference this
+> really makes,
+> in which circumstances this timer needs to fire...
+> 
+> If real-time is a concern, maybe using a timer to perform GC-style operation
+> is a no go anyway...
 
-Could you clarify what you will be doing with the code that is
-currently in mainline? If it is not removed, would you still merge
-bcachefs code that was sent to the mailing list by someone else? Would
-you accept that code even if it was written by Kent, so long as
-someone else made the pull request?
+Dear Eric,
 
-Thanks,
-Alex
+I've thought about it, and I really didn't foresee any obvious drawbacks
+after switching to hrtimer, so in PATCH v1, I removed that config and directly
+changed it to hrtimer.
+As you mentioned, this issue is indeed more pronounced on systems with HZ=250
+or HZ=100. Our testing environment was also based on a system with HZ=250, 
+which is still quite common in embedded systems.
+
+Regarding the benefits of using hrtimer, I already provided the test data and
+testing environment in my previous reply to Ferenc, and the improvements are
+quite significant.
+
+As for when the retire timer expires, I've reviewed this logic. From my
+perspective, the existing mechanism in AF_PACKET is complete. In the
+prb_retire_rx_blk_timer_expired function, there is a check to see if there are
+any packets in the current block. If there are packets, the status will be
+reported to user space. By switching to hrtimer, I aimed to ensure that the
+timeout handling in the prb_retire_rx_blk_timer_expired function can be
+executed in a more timely manner.
+
+Thanks
+Xin Zhao
+
 
