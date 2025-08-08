@@ -1,222 +1,116 @@
-Return-Path: <linux-kernel+bounces-759874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D872BB1E3C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:48:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CE9CB1E3D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93BD53AFFDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4106618970C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4614217709;
-	Fri,  8 Aug 2025 07:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAC522F77E;
+	Fri,  8 Aug 2025 07:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKmjlGP4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i+FiJUqR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6CD21D599
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B49E8F6E
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754639303; cv=none; b=NQ1YclGW8aPFKXjvn+EjaguNeJVqQD6AR+WDqbfbLHA4FcfWM1Uzl5kmzWdWvhkZ0TNt26ny/8uFx2Vu8K6hY34eyCl1LdbdpKZww7T6YEcW6eF76PzkkC9zVTHTL/Vj7+WaS1oFXLiRAJdF+5an3wSFIHMOTaAulupOOpOeSkU=
+	t=1754639480; cv=none; b=kokCRRBBBLVTI8vUL9BWq06cVK/OGVEMv+KCKmO3AAwxnaX/N+CfN19vkPNNMN9qBu4ZbDOBtzX/gxHBae8pQyJpOhW7MuDEO5xcC+kbLRPe5rKECohF7jMvxzQCGpuNeUC4I8V16pUf0xtNUiqQvyEfyfHkwWJsStB3ttF7xws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754639303; c=relaxed/simple;
-	bh=BZTS7frkKfJe2pCWHUR6QsakG7KU7hU/moSvHgaur8c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hFdm+2L2ePqLTN9z3eukSir2SOX+rI/PG86lczCuwVIkUpjrmUjDqBpRxzcwHyz4v5+OxqSRdj3gZXdoNiDOciAxNTlNe5S4OMdWkPQxMcleHJIrX5S7sEnSz177Jco2vZJuJGk3lvmRjf9Y12Eq5wwAYSIBL9POzDfH+Uk/Bn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKmjlGP4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80CB1C4CEED;
-	Fri,  8 Aug 2025 07:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754639302;
-	bh=BZTS7frkKfJe2pCWHUR6QsakG7KU7hU/moSvHgaur8c=;
-	h=From:Date:Subject:To:Cc:From;
-	b=DKmjlGP4PMaY9KwqezPx/6JgMyFPINxmOPo89ZH3FEh8W2kzW9iHe5AE8IBbhHnwY
-	 LgjcDN1pRkJaKpEH+vpGOzfwgp+3Ei2UI6meqfVBY6sfLGH064+dS4RLxZjHF6J4Zt
-	 M9DnV38O61FK9gLNJnj5oSF3kzGs8/W/CGdH7B2DJIwM/QBBYDn5F/z4dqjp5E/17S
-	 p8HXM586tUa9DWMqV5Wsj97I1hMDZyi5XnMRVU1bhZfAbJiNFKK4lDZZQ0wp/U+upY
-	 1CKvQchEAlhY4KTIwEGb8AllGWjFbFIP54Ke7olLshkj14lcFBiBaY8ntGJ5Ajk+01
-	 dbWE2P3f08aog==
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 08 Aug 2025 00:48:19 -0700
-Subject: [PATCH v2] mm/swapfile.c: introduce function
- alloc_swap_scan_list()
+	s=arc-20240116; t=1754639480; c=relaxed/simple;
+	bh=0QLwtbRzFV58pFlPSJRDjmlR7W/42FR+HCLIrKtftm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lx3obm1qJtFtlIlZKpaz5BDwMHoIRyTTbvhKDRMg5Pyqa7eh1JfMhz5e17Qy9rYlP8RiU7ywgcdzE4Ne0sv7E7fJVcDldWFUVweBJ2yYnC1ej+kHjVHViOnoLJ5Jo9zWP1LlOP8ImENpZDovqDKHJGT934XcLyGwjzpEV7URY1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i+FiJUqR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754639478;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NqxpoSFTAw99qFiBK7bf39dLBYitOviBnTDNGtjPZYE=;
+	b=i+FiJUqRCApg1HRP6taJqap3HmdPB35UBI7qtOGR8r4af5fh8HzPxBfiYkqe9XMLkQfKb7
+	yIO+RHrkW4AcvlO4AJfNiVWrRkUiQe3U7MJ2p5icWBvWcEBrZUy9z3LZ6Y1CDd5Z9Yrzj1
+	8rrcBfOUmRCPvdtsexRjtvV2x+62qQY=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-PBZfBMiMM92Rl-9tBR50_Q-1; Fri,
+ 08 Aug 2025 03:51:13 -0400
+X-MC-Unique: PBZfBMiMM92Rl-9tBR50_Q-1
+X-Mimecast-MFC-AGG-ID: PBZfBMiMM92Rl-9tBR50_Q_1754639470
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 21A3D180044F;
+	Fri,  8 Aug 2025 07:51:09 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 589E230002C0;
+	Fri,  8 Aug 2025 07:51:01 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  8 Aug 2025 09:49:57 +0200 (CEST)
+Date: Fri, 8 Aug 2025 09:49:48 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Sohil Mehta <sohil.mehta@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vignesh Balasubramanian <vigbalas@amd.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	"Chang S . Bae" <chang.seok.bae@intel.com>,
+	Brian Gerst <brgerst@gmail.com>, Eric Biggers <ebiggers@google.com>,
+	Kees Cook <kees@kernel.org>, Chao Gao <chao.gao@intel.com>,
+	Fushuai Wang <wangfushuai@baidu.com>, linux-kernel@vger.kernel.org,
+	yi1.lai@intel.com
+Subject: Re: [PATCH v3 2/2] x86/fpu: Update the debug flow for x86_task_fpu()
+Message-ID: <20250808074948.GA29612@redhat.com>
+References: <20250724013422.307954-1-sohil.mehta@intel.com>
+ <20250724013422.307954-2-sohil.mehta@intel.com>
+ <aJVuZZgYjEMxiUYq@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-swap-scan-list-v2-1-d50e4758ecee@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMKrlWgC/3WMQQ6CMBBFr0Jm7ZgyFAOuvIdhUWCAiaQlraka0
- rtb2bt8P/+9HQJ74QDXYgfPUYI4m4FOBQyLsTOjjJmBFNWqURcML7NhGIzFVcITqW9arjTpXhn
- I0uZ5kvcRvHeZl3xy/nP0Y/lb/6ZiiSWaemIa20orQ7cHe8vr2fkZupTSFxKlv9KtAAAA
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
- Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
- Barry Song <baohua@kernel.org>, 
- "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- Chris Li <chrisl@kernel.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJVuZZgYjEMxiUYq@ly-workstation>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-This the alloc_swap_scan_list() will scan the whole list or the first
-cluster.
+On 08/08, Lai, Yi wrote:
+>
+> [   17.474769] WARNING: CPU: 1 PID: 731 at arch/x86/kernel/fpu/core.c:61 x86_task_fpu+0x76/0x90
 
-This reduces the repeat patterns of isolating a cluster then scanning
-that cluster. As a result, cluster_alloc_swap_entry() is shorter and shallower.
+...
 
-No functional change.
+> [   17.481244]  xfpregs_get+0x9c/0x1e0
 
-Signed-off-by: Chris Li <chrisl@kernel.org>
----
-This patch goes on top of Kairui's swap improve cluster scan series:
-https://lore.kernel.org/linux-mm/20250806161748.76651-1-ryncsn@gmail.com/
----
-Changes in v2:
-- Adjust change base on Andrew's feedback on int type and break out of
-  loop.
-- Link to v1: https://lore.kernel.org/r/20250806-swap-scan-list-v1-1-a5fe2d9340a2@kernel.org
----
- mm/swapfile.c | 86 ++++++++++++++++++++++++++++++++---------------------------
- 1 file changed, 47 insertions(+), 39 deletions(-)
+...
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 4a0cf4fb348d..f26678d68874 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -820,6 +820,29 @@ static unsigned int alloc_swap_scan_cluster(struct swap_info_struct *si,
- 	return found;
- }
- 
-+static unsigned int alloc_swap_scan_list(struct swap_info_struct *si,
-+					 struct list_head *list,
-+					 unsigned int order,
-+					 unsigned char usage,
-+					 bool scan_all)
-+{
-+	unsigned int found = SWAP_ENTRY_INVALID;
-+
-+	do {
-+		struct swap_cluster_info *ci = isolate_lock_cluster(si, list);
-+		unsigned long offset;
-+
-+		if (!ci)
-+			break;
-+		offset = cluster_offset(si, ci);
-+		found = alloc_swap_scan_cluster(si, ci, offset, order, usage);
-+		if (found)
-+			break;
-+	} while (scan_all);
-+
-+	return found;
-+}
-+
- static void swap_reclaim_full_clusters(struct swap_info_struct *si, bool force)
- {
- 	long to_scan = 1;
-@@ -913,32 +936,24 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 	 * to spread out the writes.
- 	 */
- 	if (si->flags & SWP_PAGE_DISCARD) {
--		ci = isolate_lock_cluster(si, &si->free_clusters);
--		if (ci) {
--			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							order, usage);
--			if (found)
--				goto done;
--		}
-+		found = alloc_swap_scan_list(si, &si->free_clusters, order, usage,
-+					     false);
-+		if (found)
-+			goto done;
- 	}
- 
- 	if (order < PMD_ORDER) {
--		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[order]))) {
--			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							order, usage);
--			if (found)
--				goto done;
--		}
-+		found = alloc_swap_scan_list(si, &si->nonfull_clusters[order],
-+					     order, usage, 0);
-+		if (found)
-+			goto done;
- 	}
- 
- 	if (!(si->flags & SWP_PAGE_DISCARD)) {
--		ci = isolate_lock_cluster(si, &si->free_clusters);
--		if (ci) {
--			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							order, usage);
--			if (found)
--				goto done;
--		}
-+		found = alloc_swap_scan_list(si, &si->free_clusters, order, usage,
-+					     false);
-+		if (found)
-+			goto done;
- 	}
- 
- 	/* Try reclaim full clusters if free and nonfull lists are drained */
-@@ -952,13 +967,10 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 		 * failure is not critical. Scanning one cluster still
- 		 * keeps the list rotated and reclaimed (for HAS_CACHE).
- 		 */
--		ci = isolate_lock_cluster(si, &si->frag_clusters[order]);
--		if (ci) {
--			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							order, usage);
--			if (found)
--				goto done;
--		}
-+		found = alloc_swap_scan_list(si, &si->frag_clusters[order], order,
-+					     usage, true);
-+		if (found)
-+			goto done;
- 	}
- 
- 	/*
-@@ -977,19 +989,15 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 		 * Clusters here have at least one usable slots and can't fail order 0
- 		 * allocation, but reclaim may drop si->lock and race with another user.
- 		 */
--		while ((ci = isolate_lock_cluster(si, &si->frag_clusters[o]))) {
--			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							0, usage);
--			if (found)
--				goto done;
--		}
-+		found = alloc_swap_scan_list(si, &si->frag_clusters[o],
-+					     0, usage, true);
-+		if (found)
-+			goto done;
- 
--		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[o]))) {
--			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--							0, usage);
--			if (found)
--				goto done;
--		}
-+		found = alloc_swap_scan_list(si, &si->nonfull_clusters[o],
-+					     0, usage, true);
-+		if (found)
-+			goto done;
- 	}
- done:
- 	if (!(si->flags & SWP_SOLIDSTATE))
+> [   17.485304]  do_coredump+0x370e/0x5060
 
----
-base-commit: f89484324d5876ee10765fa61da0332899fa1a6a
-change-id: 20250806-swap-scan-list-2b89e3424b0a
+Damn, I was going to check the ptrace / coredump paths but didn't have
+time and then forgot :/
 
-Best regards,
--- 
-Chris Li <chrisl@kernel.org>
+For now, I think we need to remove PF_USER_WORKER from x86_task_fpu().
+Then, we add it back later.
+
+It is not clear what should we do if debugger does xfpregs_set()...
+
+Oleg.
 
 
