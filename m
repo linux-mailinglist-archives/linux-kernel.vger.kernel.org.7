@@ -1,145 +1,150 @@
-Return-Path: <linux-kernel+bounces-760577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC40AB1ED2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:44:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4024B1ED2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC855A348F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:44:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63CA57B1F6F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855F82877DC;
-	Fri,  8 Aug 2025 16:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FF92882A3;
+	Fri,  8 Aug 2025 16:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CaN/y/in"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9FCslnr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1D52877D7;
-	Fri,  8 Aug 2025 16:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58712877E2;
+	Fri,  8 Aug 2025 16:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754671484; cv=none; b=mvxzdotwC7PsOqyLkxs3YCAIpGn2pI1hCmy6xVhuiW+rf8w3TnF6XgHJ5FDRA33mI+EKB3JTjDNcLADishcOfVmVtRpZtLIEWqyDdsDJG0lvMOzQ39dkZ1VAAjRBfS+MOAVXHacSL0jjc04GtGCcD5xxXsZcoOakPgDkLFY+8lE=
+	t=1754671512; cv=none; b=YHGz5eyw/VTkw2LDNRDyMxuiLVFec2p/vEeFv48slcjD4R0slwbrL7aqX9xfaIoQ9qzcQ1raBhTYAddBXPT1ArZFK5rIEAbh0LRock19VRvi+q8iMPWJbWWjoiHkAJmIgJNDyI2J47fDtBF0JfDociwLqDsNdhb9BNNrPBKQRBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754671484; c=relaxed/simple;
-	bh=zkplb0eWB8LrrJ2RyDeHCQPrbTl/OVBi8BtHMgl6v7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qruMb2vFG5PgU9y/M76izAORdywPJtCsszqIKufuQ/DvGTeBFtR7J/HPhkFrEL2G44vyZk6gg77k16ZZZWDDgiWqwj+RSvqjTT3PWpf3w0ETa+bDzgauhYYgSd+c8hgueKC2l9tkfLVGGema/SmiG6/KhoSzCKGUVe+mP/XHn4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CaN/y/in; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754671483; x=1786207483;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zkplb0eWB8LrrJ2RyDeHCQPrbTl/OVBi8BtHMgl6v7k=;
-  b=CaN/y/inU/uSlq5m2EplXwWoEPBmeECeGP+9AjFMTGyQsyOErxojnm7Y
-   bJPG8Xzh7kTM51RwjncW537wGxLm1XWKto6DF+ITvxMswrt2x3B1bQeGw
-   ve9bMdT9/Tk2EK39fUYXyDKxIwq4UhO4l/l3uCND63w7/ClBOnSIr8ek8
-   o2FdM7Z1kO73HOPw5JlgntMpEBTacbG/uehHMAnFkwakhc+9cLWbzRFD3
-   60pxZY7OZzjfVyFhzq+QrO/iuVB8HRS09393izVOjViwHAtJw0FRU1165
-   Jg6VrRIzVYubjU7N4U9dW9OPjjw/Z38HJORKSXYC9WxKkRaTPafB1oEFd
-   A==;
-X-CSE-ConnectionGUID: fObBOhKxRV6umedfmB0VhA==
-X-CSE-MsgGUID: GHcDQ4bnQd+4/kNQDyBtvg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="67615331"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="67615331"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 09:44:43 -0700
-X-CSE-ConnectionGUID: Z5t9gd0VQs+JCnOCWRTlhg==
-X-CSE-MsgGUID: Z52DjJtgTGSiikC4nQXZ9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="165691937"
-Received: from tcingleb-desk1.amr.corp.intel.com (HELO [10.125.110.236]) ([10.125.110.236])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 09:44:42 -0700
-Message-ID: <a3a3a0dd-e7b5-4827-9c8e-57485949fb13@intel.com>
-Date: Fri, 8 Aug 2025 09:44:42 -0700
+	s=arc-20240116; t=1754671512; c=relaxed/simple;
+	bh=I+vY0WeG46FeBW4Q0FSDLAP9663F3VLOjnmkn2wPUeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ueofTkYmJyAVM+bd7Ab740Lp9Oaw/1Nt9ojze0XqylP8wduKFHVjZJGe6rOw8lzJYt3Gpchyq7W0EM3h9wSM3gww8xfZXF1xa+obkf5XzPfn6+B8d3KIMqjE/w2UmWDjZsY5kP1jkxLl/XGPtq/mi6umGSmLJEbYXMhWs5SrdUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9FCslnr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F1CC4CEED;
+	Fri,  8 Aug 2025 16:45:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754671512;
+	bh=I+vY0WeG46FeBW4Q0FSDLAP9663F3VLOjnmkn2wPUeU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u9FCslnrJMy5Bf6rgUmtlQF5NKCnnMVMF9APEjIA+O9URbWlBd+QeAQVdU7gZmKwj
+	 Qgyns8y/3iQhQZNPFO1hW+KoNf0q3FBW8r0xBEaeBZEf+Qb1iiJV1wjAv5btr6tZlf
+	 tl0cx20DrKAA92sP3ZrC9GgAayOcrDs7my12E8R6AR5UYRKrBbN55bzJ15EHVttA58
+	 28V1SrHIKlH0K5YvuwHvbUEAf2iGPh6mbhvw4kqlC25z1JO4SK4eYeNp+pcj8+uZ6s
+	 mMzDabXAgMgBYnUYg2DOTe6hZjZNoszqq9/915R2z0+9Npjn/DjVjvuvygLUGwgW12
+	 YQ5t7sJQWovBg==
+Date: Fri, 8 Aug 2025 11:45:11 -0500
+From: Rob Herring <robh@kernel.org>
+To: Haotien Hsu <haotienh@nvidia.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Brad Griffis <bgriffis@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
+	Vedant Deshpande <vedantd@nvidia.com>,
+	Akhil R <akhilrajeev@nvidia.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Henry Lin <henryl@nvidia.com>,
+	Jui Chang Kuo <jckuo@nvidia.com>, Wayne Chang <waynec@nvidia.com>,
+	WK Tsai <wtsai@nvidia.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: usb: Add wake-up support for
+ Tegra234 XUSB host controller
+Message-ID: <20250808164511.GA340427-robh@kernel.org>
+References: <20250808065733.347264-1-haotienh@nvidia.com>
+ <20250808065733.347264-2-haotienh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 4/5] x86/sgx: Implement ENCLS[EUPDATESVN]
-To: "Reshetova, Elena" <elena.reshetova@intel.com>,
- "Huang, Kai" <kai.huang@intel.com>
-Cc: "seanjc@google.com" <seanjc@google.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "Scarlata, Vincent R" <vincent.r.scarlata@intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "jarkko@kernel.org" <jarkko@kernel.org>,
- "Annapurve, Vishal" <vannapurve@google.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Mallick, Asit K" <asit.k.mallick@intel.com>,
- "Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
- "Bondarevska, Nataliia" <bondarn@google.com>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "Raynor, Scott" <scott.raynor@intel.com>
-References: <20250806081344.404004-1-elena.reshetova@intel.com>
- <20250806081344.404004-5-elena.reshetova@intel.com>
- <010d5bdbbeabbb37f822e30a2451df7feedf051e.camel@intel.com>
- <DM8PR11MB57503CDDEA0D6BB5913E9CC1E72FA@DM8PR11MB5750.namprd11.prod.outlook.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <DM8PR11MB57503CDDEA0D6BB5913E9CC1E72FA@DM8PR11MB5750.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808065733.347264-2-haotienh@nvidia.com>
 
-On 8/8/25 03:59, Reshetova, Elena wrote:
->> I am not sure whether this is needed.  Wouldn't the ENCLS_WARN() at the
->> end catch this case and the user is able to figure out what went wrong
->> from the error code?
-> Dave has made a suggestion to include this check, so I have added it. 
+On Fri, Aug 08, 2025 at 02:57:30PM +0800, Haotien Hsu wrote:
+> Populate USB wake events for Tegra234 XUSB host controller.
+> These wake-up events are optional to maintain backward compatibility and
+> because the USB controller does not require them for normal operation.
+> 
+> Signed-off-by: Haotien Hsu <haotienh@nvidia.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> V1->V2
+> - Add the Acked-by tag to the commit message.
+> ---
+>  .../bindings/usb/nvidia,tegra234-xusb.yaml    | 28 +++++++++++++++++--
+>  1 file changed, 26 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+> index db761dcbf72a..6365c6647cd7 100644
+> --- a/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra234-xusb.yaml
+> @@ -32,9 +32,32 @@ properties:
+>        - const: bar2
+>  
+>    interrupts:
+> +    minItems: 2
+>      items:
+>        - description: xHCI host interrupt
+>        - description: mailbox interrupt
+> +      - description: USB wake event 0
+> +      - description: USB wake event 1
+> +      - description: USB wake event 2
+> +      - description: USB wake event 3
+> +      - description: USB wake event 4
+> +      - description: USB wake event 5
+> +      - description: USB wake event 6
+> +    description: |
+> +      The first two interrupts are required for the USB host controller. The remaining USB wake
 
-If it's important enough to write a comment for it, it's important
-enough to write a line of code for it.
+Wrap lines at <80 chars.
 
+> +      event interrupts are optional. Each USB wake event is independent; it is not necessary to use
+> +      all of these events on a platform. The USB host controller can function even if no wake-up
+> +      events are defined. The USB wake event interrupts are handled by the Tegra PMC; hence, the
+> +      interrupt controller for these is the PMC and the interrupt IDs correspond to the PMC wake
+> +      event IDs. A complete list of wake event IDs is provided below, and this information is also
+> +      present in the Tegra TRM document.
+
+blank line
+
+> +      PMC wake-up 76 for USB3 port 0 wakeup
+> +      PMC wake-up 77 for USB3 port 1 wakeup
+> +      PMC wake-up 78 for USB3 port 2 and port 3 wakeup
+> +      PMC wake-up 79 for USB2 port 0 wakeup
+> +      PMC wake-up 80 for USB2 port 1 wakeup
+> +      PMC wake-up 81 for USB2 port 2 wakeup
+> +      PMC wake-up 82 for USB2 port 3 wakeup
+
+indent lists.
+
+>  
+>    clocks:
+>      items:
+> @@ -127,8 +150,9 @@ examples:
+>                <0x03650000 0x10000>;
+>          reg-names = "hcd", "fpci", "bar2";
+>  
+> -        interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> -                     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupts-extended = <&gic GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> +                              <&gic GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> +                              <&pmc 76 IRQ_TYPE_LEVEL_HIGH>;
+>  
+>          clocks = <&bpmp TEGRA234_CLK_XUSB_CORE_HOST>,
+>                   <&bpmp TEGRA234_CLK_XUSB_FALCON>,
+> -- 
+> 2.34.1
+> 
 
