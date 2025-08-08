@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-759713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC41B1E192
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:10:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71DBB1E18D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4255856791F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D70E3A8C9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA951DF974;
-	Fri,  8 Aug 2025 05:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869F41DF75A;
+	Fri,  8 Aug 2025 05:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jbq910QD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dDwFfJdz"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FBB2E36E2;
-	Fri,  8 Aug 2025 05:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11B719D09C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 05:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754629845; cv=none; b=jonWuhEbjEyv8caxP0IQ2eNDySHlwaZ/R0wfXpJ5+kXwmI9R3O5BiH0iz3O0qjD9Nn7rL2XijdipN7JHAuMXYSGct1jAcxe5Od6haK2YBoNUp09V76dNzgIdYzByhSwXT4HzRUKyuaWevQGmdmivVpG0wK7JxHJogSoSrI6nPRI=
+	t=1754629745; cv=none; b=eGSJ2KzENmv53rKKv167FJmYOhkct81b2Khct1fc+Qyp66MXNUmEnhsozttsCyeedRm60XsVsjfr/KeYQW4DIqqeGlF66I+0ySE6pbRIkFCW7JPBwwcDcW/TdXaBYps3NwnopTOMXtqtYALLh0yPSA1rX8UsCcYa4uFmUiMT9x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754629845; c=relaxed/simple;
-	bh=uNw/OYoOb46HSc9atpLRRzTZoGRK6zgt66qjXQVDJ5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kKpLdJSHlpLCmUIC7+xRCOw/GeQqfqQJUm1YJgFC08BVLw4DNABh59M5EM1ZxFfupOQ8ZEUTS77vezgPk25O5SRJj6TXRqNNuOs2+4cEo/m3VJDJk9c836eMQd0PDaB6I20l00nocGX5hphXmVWdd8zd3KlGZcy+Ypo38cKar4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jbq910QD; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754629844; x=1786165844;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=uNw/OYoOb46HSc9atpLRRzTZoGRK6zgt66qjXQVDJ5o=;
-  b=jbq910QDyKzh0J1Xs8+41ONTYjNAdjwdHTGmxUkLBAe2T7BwjR7wc0w7
-   dNf/UL5xP5qOiu17GxzbsL0XE7sLHx85p/X797aHovxKarEIptTtcjgxr
-   yOL+0IrneFPUcFWvdG8xyOLGMKg7rlDcCkCZBDpQFTNRwt10MXmx2bEoy
-   bQ5NaP7moxPXO8tfairiXqBFLbbn7zlF95bms/6jJ4JBW0mF5PlRhpmOm
-   Y10fVWJW6fpF/+/L/d/kkmoGQnjrmmd4aAFPYR5L1VfYWPrdiKvNKihA5
-   KgOIaLNEVRMuPQuZqA8bj3JOlIvX3QbA3tC9Xu5CbN08JcrYV4UT4mVbZ
-   A==;
-X-CSE-ConnectionGUID: obBRA/1BSVuG7QraTpozqQ==
-X-CSE-MsgGUID: 9iAk2sDoS9qzkp31VUgf8A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="79531198"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="79531198"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 22:10:43 -0700
-X-CSE-ConnectionGUID: rKySfyU8QPqHoTFM0Uo4ew==
-X-CSE-MsgGUID: cjgfi0dCRTWDpnjcWBq+MQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="169363203"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 22:10:39 -0700
-Message-ID: <51ac107b-a1fa-4847-9f54-65194024462c@linux.intel.com>
-Date: Fri, 8 Aug 2025 13:08:45 +0800
+	s=arc-20240116; t=1754629745; c=relaxed/simple;
+	bh=YsLMrkf+1ivzC8WoJA/+R7/IB2icXE+D3ZYrrS1/KPI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=VLkdNSAkphCDR8TGd94sIsV/jXHY9Wo3M4rR5QzyURxDJAykbln7/s4XnAVKhNqEOeTMSVSd6QLNTy18K+I9Upe8WGC9Ku+cVURzGXAT6HQZdhLr4QLmJ6V5N/xKAQAlTFTsjjS10rRhV16+Y0Dpkb/vvofEKVLXf1XK5/HDiQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dDwFfJdz; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250808050854epoutp034cb748db63862a1db2df77cbb09b069c~ZsnJ4NaUb1718517185epoutp03D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 05:08:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250808050854epoutp034cb748db63862a1db2df77cbb09b069c~ZsnJ4NaUb1718517185epoutp03D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754629734;
+	bh=u3huiNdu0rRAya2M/kre/HuzuylCu0m0RuGmkyeYlU4=;
+	h=From:To:Subject:Date:References:From;
+	b=dDwFfJdznR7YeHoHrN0tY0n4xOehu7TNaS/C1Krg+K/mam2WC2hxeImS6gc5wxpih
+	 mzW522mqaPZANzADwhgE5rXQjouEQMIzu2Br1fXwng6mHB8fXmWs+nyfQWEU1mKU5y
+	 k04L8FnZUu5dMdiAHKoJXbJJwPTz/V7jnkz/1eCw=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250808050854epcas2p2df1b856b6a98c0feaced3206054adf63~ZsnJXsUMd3201832018epcas2p2W;
+	Fri,  8 Aug 2025 05:08:54 +0000 (GMT)
+Received: from epcas2p1.samsung.com (unknown [182.195.36.89]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4bysWT2W8fz2SSKY; Fri,  8 Aug
+	2025 05:08:53 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250808050852epcas2p41faca5b3fd8a7bc18cc173ce44650bff~ZsnIKI84i0265402654epcas2p4F;
+	Fri,  8 Aug 2025 05:08:52 +0000 (GMT)
+Received: from KORCO118546 (unknown [12.36.150.57]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250808050852epsmtip12823c61b1c9681d1f46a0d01cd41bd14~ZsnIFlj6d1991519915epsmtip1D;
+	Fri,  8 Aug 2025 05:08:52 +0000 (GMT)
+From: "hoyoung seo" <hy50.seo@samsung.com>
+To: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <jejb@linux.ibm.com>,
+	<martin.petersen@oracle.com>, <beanhuo@micron.com>, <bvanassche@acm.org>,
+	<kwangwon.min@samsung.com>, <kwmad.kim@samsung.com>, <cpgs@samsung.com>,
+	<h10.kim@samsung.com>, <linux-fsdevel@vger.kernel.org>, <hch@infradead.org>
+Subject: Questions about dquota write by writeback in the context of storage
+ shortage
+Date: Fri, 8 Aug 2025 14:08:52 +0900
+Message-ID: <000001dc0822$886fc990$994f5cb0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <20250807195154.GO184255@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250807195154.GO184255@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdwIIoPDH3+1YAVzRxe4KvlMHLhSQA==
+Content-Language: ko
+X-CMS-MailID: 20250808050852epcas2p41faca5b3fd8a7bc18cc173ce44650bff
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250808050852epcas2p41faca5b3fd8a7bc18cc173ce44650bff
+References: <CGME20250808050852epcas2p41faca5b3fd8a7bc18cc173ce44650bff@epcas2p4.samsung.com>
 
-On 8/8/25 03:51, Jason Gunthorpe wrote:
-> On Thu, Aug 07, 2025 at 10:40:39PM +0800, Baolu Lu wrote:
->> +static void kernel_pte_work_func(struct work_struct *work)
->> +{
->> +	struct page *page, *next;
->> +
->> +	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
->> +
->> +	guard(spinlock)(&kernel_pte_work.lock);
->> +	list_for_each_entry_safe(page, next, &kernel_pte_work.list, lru) {
->> +		list_del_init(&page->lru);
-> Please don't add new usages of lru, we are trying to get rid of this. 🙁
-> 
-> I think the memory should be struct ptdesc, use that..
+Hi,
 
-Yes, sure.
+When the storage usage was full(99%), the following panic_on_warm occurred.
 
-Thanks,
-baolu
+In this case, wb_writeback function used writeback workqeue included WQ_MEM=
+_RECLAIM flag.
+And wb_writeback function called f2fs_write_single_data_page for updating d=
+quot(Write checkpoint to reclaim prefree segments)
+In this case, dquot_writback_dquots function use events_unbound workqueue.
+It is not include WQ_MEM_RECLAIM flag.
+So occurred this problem.
+First of all, I don't think this situation should be created, but I don't k=
+now why it's like this
+So I guess quota_release_workfn function should use workqueue with WQ_MEM_R=
+ECLAIM flag, but is this the right solution?
+
+
+workqueue: WQ_MEM_RECLAIM writeback:wb_workfn is flushing =21WQ_MEM_RECLAIM=
+ events_unbound:quota_release_workfn
+Call trace:
+  check_flush_dependency+0x160/0x16c
+  __flush_work+0x168/0x738
+  flush_delayed_work+0x58/0x70
+  dquot_writeback_dquots+0x90/0x4bc
+  f2fs_do_quota_sync+0x120/0x284
+  f2fs_write_checkpoint+0x58c/0xe18
+  f2fs_gc+0x3e8/0xd78
+  f2fs_balance_fs+0x204/0x284
+  f2fs_write_single_data_page+0x700/0xaf0
+  f2fs_write_data_pages+0xe94/0x15bc
+  do_writepages+0x170/0x3f8
+  __writeback_single_inode+0xa0/0x8c4
+  writeback_sb_inodes+0x2ac/0x708
+  __writeback_inodes_wb+0xc0/0x118
+  wb_writeback+0x1f4/0x664
+  wb_workfn+0x62c/0x900
+
+Thanks.
+
 
