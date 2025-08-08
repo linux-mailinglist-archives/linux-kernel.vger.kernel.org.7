@@ -1,184 +1,254 @@
-Return-Path: <linux-kernel+bounces-759872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2E5B1E3C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:46:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2B5B1E3C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389CB3B8BEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:46:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF2327B129F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936D225392A;
-	Fri,  8 Aug 2025 07:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB0F248166;
+	Fri,  8 Aug 2025 07:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="p2bKavNs"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013033.outbound.protection.outlook.com [40.107.44.33])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JkLp3nVF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1668324679F;
-	Fri,  8 Aug 2025 07:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754639148; cv=fail; b=qJRFFEpQsAH1yKYNJIjLaPiqniKH8/ZwgzSzd9lLc6t9c0lGaWmsCArGWgsJybUgjdGgfGxLQ+uC70TDJAd0JstG9601RuzGn2SqRz1pUqlnngKiSLCZTqaH8hyY4KFr//6Q0Svy4zkENnt3wTGzIgjPNkiq+B9ULzzxDzeHXe8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754639148; c=relaxed/simple;
-	bh=zmXJIJZLPIJkB3Qv+fnnp7ZQ4ZndEmnqw3E+n4vvIqA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=SEKPsVsovJpTioHLHEALUmZqo4CqBCyVBHKDdtzWTOgpnCvilpmlw5Jnu/yBBriLje57p/nG+zYBfO0xymCVT7zpFbwwRhFFjobRT5m9yisxjEZxqwCSs8PaQdSO4QcRLnku5VL/p51Rw0qbjzN7DRQ/HI/Vph3hnRGPrbIkwEw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=p2bKavNs; arc=fail smtp.client-ip=40.107.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tFz1/3BQmaAopUs8zqQ6YSQI61hbFJHJ3FGiXo2p8nCNCsRE+jVofHdSxRrdduhkhfFcl9XmlkWdmUMi9r4USXIIGzt2xUP20+hYB/sAiC4E82K4fvKOEUwm75Xoi2pJcSU+vCl4sVF7igYNLQQYk8mqZmjl4AEB9KhgP1Dxw+ZFMnI5VWgcbc5uQrpNhahFcOjKiGwy7lhQvE4zaUn50z49vcMWq+kalOggOq3GFUyHrF2Mny+dfxEsq1GVQuPqK93BeJYeXGDf+38TahwEXa3fwkfIiY3QE7FExLmlApljl/M6nBS5vLflIwUblof5z0lfOiOLuCwtwLZqpI4tgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5vAtWBl7/l81mQX7D0RScC2YnqR0SXdwPI7Ga+eS5NE=;
- b=Iavg19rLHH84jMe8RLknBm9l+hJE6BK1gKhlslN3CswdDWwiO0SQ1lrMH9b1FRM+h8xx1DOg1AeJWFtfUA3YzVvntRlos+hOdl9phXoKHFgp1PQOzuEVwknLzCEoNidJzvqR2g39ywi2TUXRoPRz2RVA+ufM94EZsvKY3/pKOHSH6QnC5451EquKP0hEE/hX8mTeuaUwG4ubO2RqPhnlkoVs4wmc+V8AA732nawdkH8F8hX8d18V9c3DRCtW79Ckgp0RZyVx1hmnhqd1s4dRSL6uYuinIlXqct8edhurjBUg8bla1ZjyTZO5YuZk/R/yN7zKKLHQdI8ngclXax/95A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5vAtWBl7/l81mQX7D0RScC2YnqR0SXdwPI7Ga+eS5NE=;
- b=p2bKavNs5rYePvqD2nuRCGG8Vg9dS6XjVgYvdxTBq8S5A4QfdubdcszDRMtumEymJ3dpnqg5pg3igCk/HTTtBqOI0/1OhKE9kXDlRsdjac9NZUrmuN7rZ06s8OnJB4ygjCAuJ7eMISBkWQVxluNfgcx8UnpTRtBBKrfGtCZ2a+sraUs2cpsIc0Nn7rKNEkCj00yu+3oxvdSgPL6CBU++WsZTaV5aBNy4o1qiOhfoOE2b+6SpxxY32LpYGRIelek+oXxhI51tD3P6IIWIS/qjp63A8QEyWWjPK7aEPJwQ82wLc0OFdFrcgIxGjpQSxVoB37xUfPGmM+kp2g93nRJUAA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- PUZPR06MB5586.apcprd06.prod.outlook.com (2603:1096:301:e8::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.18; Fri, 8 Aug 2025 07:45:43 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
- 07:45:43 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] KVM: TDX: Remove redundant __GFP_ZERO
-Date: Fri,  8 Aug 2025 15:45:32 +0800
-Message-Id: <20250808074532.215098-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY4PR01CA0079.jpnprd01.prod.outlook.com
- (2603:1096:405:36c::14) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093F323770D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754639146; cv=none; b=FnNDdicYliP0613aKNCud12qBG838kLRqEnfFpVnrndt3WyUe+IOBgS73b1f3JZQxRHi6qE0SrlJREGx3vZIBiGAOT+qa932DDWYh4+vEjdCIoU5bEoZR6bexRlEv3oU2bxBBZFu/qsyunxNYMQnfC774/t6ec/llt1YicNjWAA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754639146; c=relaxed/simple;
+	bh=a8oH4vc72EwOVQxEOxMgSpHCC375o9rsk/WFcT5M9JA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kg2ic1mdzUiritpOmKWWocriLTMeHB0gQUARGejxDsGQxVCHrKaF3MNOf8tESev4suLv/mP7u2p94nECYMT6It9lX4mT3FLQWLVP6b9K81H7wEOBOf/gx8/gG+QDxWTlBn5oujLl/rUAyuSvLn8eI0/B9Q+EPqRzDyWzc706kC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JkLp3nVF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754639143;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=off+V+WfSdu6BkP2pk0d17xfYRqm/hECfoU7LMpjnbw=;
+	b=JkLp3nVFurY3e8aoCKVQS3QavvwEGvi5xdEMWYL3b//5qcFWcyV8QD3gARAZ3KhbXEHrSo
+	mUSUCMrBDdZsG8EtfmDf27AczyLXMiULDaNY8DguKa0Fc0ib4ssgWyiojRqcZcQrvQkgYH
+	L0H85zUOP87cRYCCYmJzAAahrAiU1oU=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-634-aj8zoxKFMqWJ9mO_DIFCIg-1; Fri, 08 Aug 2025 03:45:42 -0400
+X-MC-Unique: aj8zoxKFMqWJ9mO_DIFCIg-1
+X-Mimecast-MFC-AGG-ID: aj8zoxKFMqWJ9mO_DIFCIg_1754639141
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-459d665a87aso13635855e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 00:45:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754639141; x=1755243941;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=off+V+WfSdu6BkP2pk0d17xfYRqm/hECfoU7LMpjnbw=;
+        b=kAimC3Xi3YWqT2SLg9pxhoXw4e+Ltnb+4m7yW93msyt0frS6YqdqiTs8+/eyJGmwd7
+         uI+5VW0G+0viucUnbsqf0gC3uJTSWx2U7YlV9B2EYAVBvhHMLR4qkZYZRUa7iJxfzF4g
+         W1QrDIB/JXJtLjOLECpstxg8Ca/UhpgAUifZlZutp64zZQltWPkwJr1fC/3LFRMWgPmT
+         To0XTiTqjIyOt+6HPDDTDCffFIq0kCsDyT5FzSFC1IPIQoGCObKIMhRDD4nlB8tiJaXj
+         w+lZaeRwQr/kWZPTnPjI7IBT8g2HYtTY2SDWuaaz7+23fd7wktUkY0SRHAPYojDRuEDi
+         c1Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdbTD3GCRbbwqhduNMT5aJuEIGE5/N1W7tc8uoKmI1Iaps7+GtS1SGt0CC5lOKNcHQ/smbL27ZLbN893k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU3kfuMqhxW//M/pYVfZrt3wCQ2UXgEkZlOh3AEF+eg+34KgNc
+	dNrtwk1bJKfmMcIzkid7gMzFhNKgXsVE6Vd2T6l4CETImLV8t1C4BLlC7aqLgv3bVQ0DKFMCQex
+	SZr+hChc8rjSFLKP1AjyD6uxcH9neUXktMmCpHA1ZOFgMS8HsqD5eyOmxjZ0wSJlaHw==
+X-Gm-Gg: ASbGncvqo8vNdmpDWauIJVCBLSpRFb+keosLpOTspmrymO4OuDxUy3Kh1MxQz8fQZ1F
+	FSjdo6zine7u58hRYEk7GMFuF42rxoyrFIuNFRdgX/7f84O3i2PCT27y/XOI6fbX7DIYYZE6MGB
+	g3XI6XmJ6rEHbcazmpee4doP4ZHlhtpthcvP7X49yj5jEpzHqK3YUHaVSXEU8RhLEUrgNljRlAK
+	p6CSi6QLJkGfnh49jag1YYI/HGFAkvAoRTxWviMnf+srmbVq3KTdlrSfookHq4dmPjPsyIb4Vbo
+	mx3PvkK5dZJ/V4ABV9sGpW+Nweb6ihAW4pZcAdHEL+hQC/St1e7oVMBnAxR8GiGO2w/evwSGCkt
+	glCZMCBTIFX5qw1D/eY2Do2AGvD6kURcew38iFW2UMG1umQUYG/TgHcuTtBc0UtdN
+X-Received: by 2002:a05:6000:290c:b0:3b7:94a2:87e8 with SMTP id ffacd0b85a97d-3b900b4db70mr1365790f8f.18.1754639141345;
+        Fri, 08 Aug 2025 00:45:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSQyZ6srhCQNBWcyjP7G0L44E2w5msI6TiW+KZd297AXzK4cJgdtoPU5jB4A7wacNHhMiWvg==
+X-Received: by 2002:a05:6000:290c:b0:3b7:94a2:87e8 with SMTP id ffacd0b85a97d-3b900b4db70mr1365770f8f.18.1754639140894;
+        Fri, 08 Aug 2025 00:45:40 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f25:900:2e1e:d717:2543:c4d6? (p200300d82f2509002e1ed7172543c4d6.dip0.t-ipconnect.de. [2003:d8:2f25:900:2e1e:d717:2543:c4d6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3bf956sm30052328f8f.24.2025.08.08.00.45.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 00:45:40 -0700 (PDT)
+Message-ID: <b0d257a4-a37d-41da-92f9-4d1c0a11c30c@redhat.com>
+Date: Fri, 8 Aug 2025 09:45:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|PUZPR06MB5586:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5881e147-7541-4f27-fb53-08ddd64f9413
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VhlnhgZkY+ZSkTFtGMbp0wd+NvlgaYri8rVueywIJQONqPY2YUQXQsnrHIxa?=
- =?us-ascii?Q?r6KuSfr1UTPP8Q6zejVGHqFX6HCkYzX6xrmGhWrEPPYNKykDomNn5SUBKbG3?=
- =?us-ascii?Q?QV2PSRfYVmh0wZyoRTIuFF628SeLnwZywvh/+ZM3QBeC+Q/f4bCc7I7pCIN+?=
- =?us-ascii?Q?ZZ0BA6/obRsu9cmDFnOToaQ0Px0WkteegYA5uJI7Lo7z7pkldwHpzW1nVkap?=
- =?us-ascii?Q?1V8f6n/diuCvYjkpFnODrJe4tUHcDUn3+SQpJUA1QJaQ8Z3SnWu4XwIs6DTv?=
- =?us-ascii?Q?jzU8GScYhKsZlBbuZJ8uuMh2fmpdl/lOujQV9/0+8UxXMgOB4xzLl3Pql6DK?=
- =?us-ascii?Q?nb4txKir8IFb5s5iF1NVFHO71lEKgeqWiqWI8HNdQboYh26NSEiHFUk9Brib?=
- =?us-ascii?Q?42+I8UCFV/ad6s9rAR+LnJCBbSi6GvB446SKVDHGmEemxVQy8AA7P8zRTOA3?=
- =?us-ascii?Q?U70H9OZP6Ps8y37sMOTaTqVdy2bGIX7PmcRNOe9oLggUjMu5ptl42brHzKfT?=
- =?us-ascii?Q?hxYb5nDTUUlVydhk+6+2qnheqycB9cVcDziOoVLGN43cdMgfuu85VOUHmpci?=
- =?us-ascii?Q?iM6ENbfRkn+MCF4aR8Q4X+J/8uQyTnWUidqhGtTUQ67WZLEFLV+xRSjIxhvw?=
- =?us-ascii?Q?IBlYdlKrncwnJZOPXmM8jWGeELwo93EmuTSZEMBgwWTw/ketsZs6Rjo06lUf?=
- =?us-ascii?Q?Dl3dpW9mScN2Kv+JOjByRwWjDOi61jTbnMKyY0sQUYYI6AQSfeCQKu69tN1S?=
- =?us-ascii?Q?zR/+4wJAv+jLEcBNt/jxNatNdBsCmj/I6KWWe8LT1yfWZ2tpiA4FjjgiOPw+?=
- =?us-ascii?Q?UQxczfawKXtFcV1dheqLBi6/jjFIEDwaRJ8wD5qxm4j8Nxk1fAjSJZOQ9aII?=
- =?us-ascii?Q?Lcft0KBsBYoD5ci2bP/ykevzS3FR5r/YBXmUV/HFzbffiOJLst0Z2iG1IDvi?=
- =?us-ascii?Q?kSXnMb9Fsd2+Wt0YgV+lmtbw6kSeQ7/+o/AEfOG8yoQ54sIWxoH9DH59rw9U?=
- =?us-ascii?Q?wYTUDV4NWKmktg0nse1DALz7LTfNJDdLmHgPA/2xWnOrRcDjvgHXeXNK3e++?=
- =?us-ascii?Q?cQHuOKmgCQbFWmOekEJK3NbOrbYd36t34cjWNlb2G5jzO0opuKBz8D4yeO3t?=
- =?us-ascii?Q?IlnGZvVEdHoHJzBNa35bM1wHhaaIyfMuKV4WVUgyIG3xF9cX3S5NPkXbtOlI?=
- =?us-ascii?Q?5emsgZKsms5efXHN9776ZrSQimFcBgaV8g/ao4c2mRwfHdL2h0TxLVQTNRlx?=
- =?us-ascii?Q?JsUavGT3odJH8FTNDqAMnm5rONH5gM4t1MPWLESi+JYw1aD+GsKFK6rhIFQc?=
- =?us-ascii?Q?hsQ0M0AyWKFcC5iIp/85/b2c7dSX2TGVkKEonOO3I0Uijc42rNjvw3ZY6WMu?=
- =?us-ascii?Q?g/fRLPUp7KrPiCsVbnv94xBuMAx6ib0c5wKqERNM+aFaxRfmrO4sovz/Rbn/?=
- =?us-ascii?Q?QkrUe3z4i1ZTbdYjiKhq4pP92AIQZGu+39ntjZcEzbtPIVX9rKcvnoqWI6oi?=
- =?us-ascii?Q?bmB4KgrVsnxPy4k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?c1IILCU50jCMGPpilmTwufXxWh0BFVa49QTGxqK/ISPEzwzw3w11jpBb0+OD?=
- =?us-ascii?Q?ixHynl/RZvL1nu94x4Q8dKzotBepZKJ+bkuGSnqIW3ue9/P3+1hMdLntMuxG?=
- =?us-ascii?Q?TeiutBhEVPkwDE4DzOF8dCkl0sFYl3IwWmvx2nGs8Zb7P1vPFq0G0yWBA0Yg?=
- =?us-ascii?Q?eBj/w/+eSOV+nhmW7ew4x2tYt2PmttApDP97YH2MFBYVrnbEqZQbMZqzePH3?=
- =?us-ascii?Q?1THXficJG2Kog0gsv8SmTUB4vQyg1RjnHFLbEqTOhVeEEQUX04WCDJPq276f?=
- =?us-ascii?Q?/Mut6ZcNO3Nv/lAD7ckKCdAvKPm6WLcFIyLyzWpSHRf1PayAFl0SXCcZ8R/W?=
- =?us-ascii?Q?U2tn5qC0WNkMaG4gGRfk0rgrLAXY9RE6MZ1tB6BXu2+JVZm3GTO5gVvoKPWO?=
- =?us-ascii?Q?YCE2wZBbYH6X14BYvOgt9CFZqfDaqpD4gxmzeIPtCczXUWMaUqKAe6cuXuaX?=
- =?us-ascii?Q?0Whba61xzpP6iW8v3JzMH+IkP2puzf+MAbcIQZ5WqQ/YKBDbi8eFhP418eLc?=
- =?us-ascii?Q?XwQ/hT+jglfcL9UmFKkvqve807VsiQoZrZ3LeADlj45uI8P+VYZngK2Wb3P6?=
- =?us-ascii?Q?UsanxcergGPBxq62pidhFQ/bRTVxcu3pOXHEfPAETFodvsfK2JxR/iTAX47G?=
- =?us-ascii?Q?7J8iJis9hOn/InelKyOeJJ51i+VVXBsxrPfmlqbCzGiWt8yPLeAMN7YSbGK7?=
- =?us-ascii?Q?6cn+1Dg73okmSQBEA9wYEGayz5EkkzwxY68uobV/h/nugJKu4pKz6xfTCsJ8?=
- =?us-ascii?Q?VMTBJE5k9ONLjYhGZM1Bds3oSxwmuonNlRD6fDue1KHQZ/XVK0PJ27gvL2wy?=
- =?us-ascii?Q?2iUVw26qelWQx6YRJYO921iY9nV+EPbfwSw41KbmRXVspRcCNXsAdJ9HjWoF?=
- =?us-ascii?Q?6MSwttam5NcU5OnP7VUkFQ4OED+x4ZGXpltaTCkcvhyGKQ1Hxi3XjT+pmw18?=
- =?us-ascii?Q?FzVtJ+fLr4QOhtUKkJZ5+Up4TEfg6iORgUl2lFlR4Ntd7/aBk2om83Tabwzd?=
- =?us-ascii?Q?75jemhMz7zjeIcer5ujizuGDkwoMYxrFZ0EAVTdXhpwgKcyR7AxBbW3D2fyK?=
- =?us-ascii?Q?OJY7+Ed00N33nmZ972ebZLCVVyj2oPv5AU8C3MuKG5VdJZxo06ww9sjnmhbZ?=
- =?us-ascii?Q?dwjCKwDTUKlL0A8sXzOfaEt94ECFL1psxlF7Ferk4pYVP3reRo6P8Nclh6TY?=
- =?us-ascii?Q?P+B4Rz4v1viFu5z+g2U91nUnDOfS7KDXGpKBwU5gbIBAXvhTVs5IcA6vGmq+?=
- =?us-ascii?Q?LJm2HX9zUxSY3WAJvcb5FOqvO2U9u3WOu71iFcQ5LawuoFsxXe3rTcYgjuRD?=
- =?us-ascii?Q?BRpT58Ib9/t3yqxIbLXtTp9UfQfR0vF2xLfCrbPkaaU/QvK2YexuHIVFeGqP?=
- =?us-ascii?Q?aWVCsO8EH/BPQAdGD4Npe4ugameI+PZzqRHlGklGR9yfVvFnd3x3bMFKt4o7?=
- =?us-ascii?Q?Nkt+7ZoNV/Re0/UJdszmbMYcf5puRBYFC/r6UQ3mEPEsmM8jkzCucEG87OTB?=
- =?us-ascii?Q?gRIGg62YDbBpYSzN0UbUG2hgO2Wl82Idmr79zu8gphBrAbyP6yOnFdWNfqyN?=
- =?us-ascii?Q?6lp4A6oaShu2d3NB2c6jgY6hGMxMBY/GPOOTrO9m?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5881e147-7541-4f27-fb53-08ddd64f9413
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 07:45:43.3730
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tb0poGNs7seT68NDaCXcsBCavX0pKGmZkouQAG5sQwQA/W9cYtuuuzcOxHQ91u7/Mgdzppc9CkV/nW7JEMtr5A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5586
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH HOTFIX 6.17] mm/mremap: avoid expensive folio lookup on
+ mremap folio pte batch
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Barry Song <baohua@kernel.org>,
+ Dev Jain <dev.jain@arm.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
+ <158e6422-fc82-4d6c-a442-2ebe956a66da@redhat.com>
+ <3fc75720-8da7-4f6c-bdce-1e1280b8e28f@lucifer.local>
+ <6870e24f-dda6-421c-8df8-58294927b62d@arm.com>
+ <ae01c6bc-019a-4263-8083-8ab073e72729@lucifer.local>
+ <303b1764-6471-421f-b4c3-6a2585cee2ae@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
+ 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
+ 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
+ OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
+ kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
+ GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
+ s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
+ Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
+ FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
+ OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
+ NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
+ Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
+ 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
+ /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
+ bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
+ RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
+ m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
+ CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
+ vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
+ WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <303b1764-6471-421f-b4c3-6a2585cee2ae@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Remove the redundant __GFP_ZERO flag from kcalloc() since kcalloc()
-inherently zeroes memory.
+> 
+> Not sure if some sleep has changed your mind on what "hint" means? I'm pretty
+> sure David named this function, but for me the name makes sense. The arch is
+> saying "I know that the pte batch is at least N ptes. It's up to you if you use
+> that information. I'll still work correctly if you ignore it".
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- arch/x86/kvm/vmx/tdx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The last one is the important bit I think.
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 573d6f7d1694..c44c8f0a4190 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -2483,7 +2483,7 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
- 	/* TDVPS = TDVPR(4K page) + TDCX(multiple 4K pages), -1 for TDVPR. */
- 	kvm_tdx->td.tdcx_nr_pages = tdx_sysinfo->td_ctrl.tdvps_base_size / PAGE_SIZE - 1;
- 	tdcs_pages = kcalloc(kvm_tdx->td.tdcs_nr_pages, sizeof(*kvm_tdx->td.tdcs_pages),
--			     GFP_KERNEL | __GFP_ZERO);
-+			     GFP_KERNEL);
- 	if (!tdcs_pages)
- 		goto free_tdr;
- 
+> 
+> For me, your interpretation of 'the most number of PTEs that _might_ coalesce'
+> would be a guess, not a hint.
+
+I'm not a native speaker, so I'll let both of you figure that out. To me 
+it makes sense as well ... but well, I was involved when creating that 
+function. :)
+
+> 
+>>
+>> I understand the con PTE bit is a 'hint' but as I recall you saying at
+>> LSF/MM 'modern CPUs take the hint'. Which presumably is where this comes
+>> from, but that's kinda deceptive.
+>>
+>> Anyway the reason I was emphatic here is on the basis that I believe I had
+>> this explained to met his way, which obviously I or whoever it was (don't
+>> recall) must have misunderstood. Or perhaps I hallucinated it... :)
+> 
+> FWIW, this is the documentation for the function:
+> 
+> /**
+>   * pte_batch_hint - Number of pages that can be added to batch without scanning.
+>   * @ptep: Page table pointer for the entry.
+>   * @pte: Page table entry.
+>   *
+>   * Some architectures know that a set of contiguous ptes all map the same
+>   * contiguous memory with the same permissions. In this case, it can provide a
+>   * hint to aid pte batching without the core code needing to scan every pte.
+>   *
+>   * An architecture implementation may ignore the PTE accessed state. Further,
+>   * the dirty state must apply atomically to all the PTEs described by the hint.
+>   *
+>   * May be overridden by the architecture, else pte_batch_hint is always 1.
+>   */
+
+It's actually ... surprisingly good after reading it again after at 
+least a year.
+
+> 
+>>
+>> I see that folio_pte_batch() can get _more_, is this on the basis of there
+>> being adjacent, physically contiguous contPTE entries that can also be
+>> batched up?
+
+[...]
+
+>>>>
+>>>>>
+>>>>>
+>>>>> Not sure if that was discussed at some point before we went into the
+>>>>> direction of using folios. But there really doesn't seem to be anything
+>>>>> gained for other architectures here (as raised by Jann).
+>>>>
+>>>> Yup... I wonder about the other instances of this... ruh roh.
+>>>
+>>> IIRC prior to Dev's mprotect and mremap optimizations, I believe all sites
+>>> already needed the folio. I haven't actually looked at how mprotect ended up,
+>>> but maybe worth checking to see if it should protect with pte_batch_hint() too.
+>>
+>> mprotect didn't? I mean let's check.
+> 
+> I think for mprotect, the folio was only previously needed for the numa case. I
+> have a vague memory that either Dev of I proposed wrapping folio_pte_batch() to
+> only get the folio and call it if the next PTE had an adjacent PFN (or something
+> like that). But it was deemed to complex. I might be misremembering... could
+> have been an internal conversation. I'll chat with Dev about it and revisit.
+> 
+
+I am probably to blame here, because I think I rejected early to have 
+arm64-only optimization, assuming other arch could benefit here as well 
+with batching. But as it seems, batching in mremap() code really only 
+serves the cont-pte managing code, and the folio_pte_batch() is really 
+entirely unnecessary.
+
+In case of mprotect(), I think really only (a) NUMA and (b) anon-folio 
+write-upgrade required the folio. So it's a bit more tricky than 
+mremap() here where ... the folio is entirely irrelevant.
+
+One could detect the "anon write-upgrade possible" case early as well, 
+and only lookup the folio in that case, otherwise use the straight pte hint.
+
+So I think there is some room for further improvement.
+
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
