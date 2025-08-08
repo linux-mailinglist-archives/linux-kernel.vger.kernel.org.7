@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-760055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20F1B1E606
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:57:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3B8B1E607
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF313B60BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:57:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D69581003
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D232737E2;
-	Fri,  8 Aug 2025 09:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFFD273807;
+	Fri,  8 Aug 2025 09:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2plU9F1"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JL6wxaE0"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572C2271461
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D9B2727ED
 	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 09:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754647029; cv=none; b=W5ydFSyWCvwLRbUwvePl3h9HqVJoIvDc3ohuVlv/x03ciK0QLrkhUjhF5pdjHFaiYq9DKd6a75l8t+TxUwcfFeFs8PCy1i3GGHYP6gu1n22DhgkixjkOVSmGjHQQBUBHOvGdePS9unROgkg0rQifWDlhzLFjzl3phGm7cuUvK3I=
+	t=1754647030; cv=none; b=eAyOQ+JJ5qhvOVlZfciZB+1baq0nii1Bkh4DBZgRFb0JqigbwOopv3ZNjWwZ1ttucUhSEbczWuvsvZgR5CMC+t3yrFP4FGJV97ujj2NrdHFFUQWHf0GTqAG8EEgDMyOrw7CLj2ies/A0v95SXlmah67iye/QchX0Y9UFIc/zsag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754647029; c=relaxed/simple;
-	bh=C1r3EKrTI4TM+yz3sBubMp/hyIBwBzrkqdbuygd1ius=;
+	s=arc-20240116; t=1754647030; c=relaxed/simple;
+	bh=eeG6d04011rqqI+2wtjwbj8MuDRIjUrk7KtPBw6w7dE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N42Ky6nolfH6qQxVHwJYdLPEUtLokXWuysSytWxWr+LFjgVntMsk6KOK6TwO3n8rDZ4R1MdHU4HHT4KNBluGuqQy3l0KinGBQ0+zhLzTBgoU2zBJT32Xn0OYH75Ij8R1JATvryTvSBhUQraW3gSQ052sZxBwEy8jAdtJdUnD+5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U2plU9F1; arc=none smtp.client-ip=209.85.210.179
+	 MIME-Version; b=Z52Qedy70hiIaFpITvmjsmrKK3s4jDdFuHoPnaYL+biA1DOCc81WxH4xb3o4cYTR0nL+YIgiJERCn4zop/4O4hoMovpALS3IHPBAK9CAPh+1R3QCXrnnL1Og/VzVDdLBX5EWOhwSQgufGKJWrNl/bC5oNu0l20kxL+4KcyOl31M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JL6wxaE0; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76b8d289f73so1934134b3a.1
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-313bb9b2f5bso2324658a91.3
         for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 02:57:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1754647028; x=1755251828; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8vmKjWW1myNVQEZSQomIGtvbv8eIPEiLrdMSovGeNIY=;
-        b=U2plU9F1VaevfzYWjDN2pNYQISv8PH76QaL7j4/3knIPc0kGI+1L+SRAqh+Q1rcd9H
-         GCGRHIIXT0qQqSGrRTMmZiAMpvB0cvvdNVoIBPrErtknZ109bFZXLmd9BxnkTr/9H7PD
-         i1kQcT1kEB5BXwi1VkzSgZ5p8zp3r+LpHAFcQ2BVUyJPXonb1Ch30WXPYssL+D91x4jW
-         yMl0Q3cl0tqXpk+SaljuDFVww+LDmRxU+X4DhA6+cVL5LdUd3DwYrXQ+33PO79uNvez8
-         Z+YmnOiMrkIecnNhEmg1h9e2dqOL7/+EINMyy2Zh6865HJV843hBK4q50zdr1ambZi/m
-         Y+FQ==
+        bh=7OVTgABZH1eW9cOhxAzGHFpTTStHmIxA1l5/HnxfnLs=;
+        b=JL6wxaE0kMP7Fy/zPUDl8QIdxV2bPCM3aOWC9m9UMda+CH9J3H5Rn3RBxcmjPDT6Jv
+         uPfXN06LSLWCrG3nHm0GF8JYZMB7Pn+5K+XI0DZYT6wgtkyYWuVqkHAsZUNnC668Lf0u
+         wLrzZzt3QGFE+xer7R5bFbJYXyfCXvPi4P9Dsn4OqD9fyMP9po1vKRPSu7gHV8bhWHKH
+         C2SB2lnwlsAbnRpm2l8bDr2P2uJIshYCVjdVzMmAAmBmp9OkuFyJdn+PZ4M2znrEo4lj
+         EIR2RBwukAceS6aoIOa2RQIeUlTzCq/RVG+/TbQwa2YwSNHyCxq40JF9uq2uV2q9KgbF
+         1kPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1754647028; x=1755251828;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8vmKjWW1myNVQEZSQomIGtvbv8eIPEiLrdMSovGeNIY=;
-        b=i/ZKSXA96gqWr8Jt+KZO65ypz7ZBBWQNxwwtnu/P1C1J1euEVt7wTslIjgmpUWFmAX
-         z7s47yIXQYp3QnK1b1x5n2vnJJq8cWU7zncoO5KgN7BLVgp3UUj8jOnFCg/AK07luMLK
-         ShJoqRP7zWM5HzU2no/VY1EAcehYuJyVKvUgPUKe6leMN3SoElgGdL103NfgIiwmBELD
-         MNTaCCjD+uh9Oq1auKG1AiSnTTYx0L11K3pCLmDV1Vzdz57eydCIqAxTaQ/CFSPWhEA3
-         N2vaYdGnte0SHrlrLtvEQ7JC1kmTi1VLyMn3Apc/6epG8VtwckGOsOM+t9wbaBw4FDKu
-         1Wkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZA1JVeCi5CxVuGmWNhN3SWmLONEP/aq7+Wf5hkZqFcVB8LK/HrhyUHWI55oDQM0++jo9l8trTp2Eqz9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHooy2CyYn9AWW3NOZDj2Q2+J+B4wY3bhOgjFy1K/uxid8Cz/t
-	YPIXhVQHrXQLn3KwMvNAfCAiBKiVz9FkNCjukcnJaGM968vtk5qojItz
-X-Gm-Gg: ASbGnct2W1XphYoqUa8z7wyb04rQiu42nZ+9FoFvJjTqm/MP58fCJhaaZtvqHfZ4xte
-	Ds+gkCoWFSjQgHbYdT9zixMDkBkF4+Up3ULa5fg59PFq7Rog3inYYJeAx8/FBwGnRHAGZQEV3UP
-	blR6ZtR/JRuzuhdsTvCCxACDVeUQhdsQhBPhnEopxJ1h236ED43bZNwvrIUv410WyiwG9rVqvAz
-	2SBu/AS5lblgpvBy/2UJA2c4wOfIEaFBfMZqp63KhOjQqY2bpLTb0q6gE+2qUiFpSU9QiCtXNOr
-	yeu/qv3nOpU3LSJolcyBepim9Uwl+pF2oWjL7ED07xNimk8yoTFCLCyxpnxzxkfOYytBjQwzf1E
-	OTIElhwXL5DoXmsVLnZaW5NdSva44xA8q/FKyhfseXIIWKNtJ5F9dLADj
-X-Google-Smtp-Source: AGHT+IFxSlFjgGlX3SR7lGGDbtjjgA3/KdcOW6YRHUwFy2xGZWAKh00xM2XD3tfIzpmP6ms02kZyfw==
-X-Received: by 2002:a17:902:f790:b0:240:71ad:a454 with SMTP id d9443c01a7336-242c1fd9671mr37529925ad.1.1754647027481;
+        bh=7OVTgABZH1eW9cOhxAzGHFpTTStHmIxA1l5/HnxfnLs=;
+        b=LcaPYG/Xa5JXR3ZILC7XhKJhh/Ev5PuqCkBG0ubpzM036BKfiHZaFGb1906t5ALP0N
+         o2lM18QOEFdVoC9aWUCa8EA5gTieIC7Qe7fpAu79g/LqYaZrktsbY2jwinQ8TRF3W/48
+         Drn+9FGfmDEcYh/S6XvANgQmudjLqnJqYtYDMc8NQZ3LJclQEVaMQ7pTO9g+lmjgUcU9
+         Do60XDxmJK2208QRrGopTpTKLdO81z5dJE2BZIR1PdQQnuCSeYka8qMijw8vsi1rwsEc
+         oCEiJMfHqaSWd56H39FS9yL3hXmVwnsOEaLQJPJIiGdjv4pOepJNKwkAjPq20Nq01Zb4
+         1ihw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTt0cL7aoQ11RfmDvrP7pTWDfrYAmEtc6YFAMMbIqISYKD6iSrwB7y+b4pHgF/Iu/UQC6ZkiUNHqSxrYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG6LY+XqBfDzFK2j8w5VgkPGiiR5/Hn5T6AugFnmhhUJByi/TN
+	DLCoiZuf6Q6OPtqeO6UG67SgQBJWkzMFvZYjIIkPJ/dLzfw0nsjnon4l
+X-Gm-Gg: ASbGncvP+N7++bJVVO84jdbzHD7c+i9hmQUpmpncfBqsC93iLp8pku/AOj2Nw+4Upaq
+	8BRV3eLpnUy9L8Pg4BDJ/irm46QAZUm7PvLwwkpOh5LLWU8vxz/4bSVBPJ/Ywt8R0Nk4TuteNVr
+	h8Rb0NF18lGz/0JQZkKKsx+mbMLaOqMaZvkOyDPeVI1rjS3FfRPZZqj+1j2HTlO30uELe5PgCt/
+	7MsH8OacypjdVI0C6aqz+qd6TV7wkpEQTmD9e97Q+jPt0xheUYNFzFR2tfbCrwKnvNLMOSbjXeI
+	so0Mqp7AAYcde9EGjlXUVr+HG5YE1BaIsY6l0SmY8ODdHJpGO6Tu96c93Uku6NpIUd9wClxgMho
+	9WZAWFWdUZhX/89eiBfl+Pf65rv3kAnTs6DFXBq48KeojJLPmc1A=
+X-Google-Smtp-Source: AGHT+IGDJdzPEqI+NrI+BZKZRyH15rqS8CWsZNaelZV3fAi4K16ew+DBUD9XLeBVmI1G95AZ80Oh1Q==
+X-Received: by 2002:a17:90b:5104:b0:31e:998f:7b75 with SMTP id 98e67ed59e1d1-321839e51c9mr3522987a91.9.1754647027985;
         Fri, 08 Aug 2025 02:57:07 -0700 (PDT)
 Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef66efsm204467915ad.32.2025.08.08.02.57.07
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bacbb74sm17375439a12.42.2025.08.08.02.57.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 08 Aug 2025 02:57:07 -0700 (PDT)
 Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 38A28801D4;
-	Fri,  8 Aug 2025 18:02:36 +0800 (CST)
+	by twhmp6px (Postfix) with ESMTPS id 11509804B8;
+	Fri,  8 Aug 2025 18:02:37 +0800 (CST)
 From: Cheng Ming Lin <linchengming884@gmail.com>
 To: miquel.raynal@bootlin.com,
 	vigneshr@ti.com,
@@ -84,9 +84,9 @@ Cc: richard@nod.at,
 	alvinzhou@mxic.com.tw,
 	leoyu@mxic.com.tw,
 	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH 1/2] mtd: spi-nand: Add support for randomizer
-Date: Fri,  8 Aug 2025 17:55:02 +0800
-Message-Id: <20250808095503.906244-2-linchengming884@gmail.com>
+Subject: [PATCH 2/2] mtd: spi-nand: macronix: Add randomizer support
+Date: Fri,  8 Aug 2025 17:55:03 +0800
+Message-Id: <20250808095503.906244-3-linchengming884@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250808095503.906244-1-linchengming884@gmail.com>
 References: <20250808095503.906244-1-linchengming884@gmail.com>
@@ -100,106 +100,206 @@ Content-Transfer-Encoding: 8bit
 
 From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-Add randomizer operation support for user data scrambling.
+Enable randomizer function by specific flowchart to set the default value
+of RANDEN to 1.
 
-For more high-reliability concern, if subpage write not available with
-hardware ECC and then to enable randomizer is recommended by default.
+Randomizer introduces two new DT properties for child nodes to configure
+the randomizer functionality and coverage options.
+ - mxic,enable-randomizer-otp: Specify whether to activate the randomizer
+                               feature.
+ - mxic,randopt: Define the randomizer area per page.
+
+The penalty of randomizer are subpage accesses prohibited and more time
+period is needed in program operation and entering deep power-down mode.
+i.e., tPROG 320us to 360us (randomizer enabled).
 
 Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
 ---
- drivers/mtd/nand/spi/core.c | 18 ++++++++++++++++++
- include/linux/mtd/spinand.h |  7 +++++++
- 2 files changed, 25 insertions(+)
+ drivers/mtd/nand/spi/macronix.c | 94 +++++++++++++++++++++++++++++----
+ 1 file changed, 84 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index b0898990b2a5..43ed5de282c5 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -854,6 +854,19 @@ static void spinand_cont_read_init(struct spinand_device *spinand)
- 	}
+diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
+index edf63b9996cf..5354b1894bb4 100644
+--- a/drivers/mtd/nand/spi/macronix.c
++++ b/drivers/mtd/nand/spi/macronix.c
+@@ -14,6 +14,10 @@
+ #define MACRONIX_ECCSR_BF_LAST_PAGE(eccsr) FIELD_GET(GENMASK(3, 0), eccsr)
+ #define MACRONIX_ECCSR_BF_ACCUMULATED_PAGES(eccsr) FIELD_GET(GENMASK(7, 4), eccsr)
+ #define MACRONIX_CFG_CONT_READ         BIT(2)
++#define MACRONIX_CFG_ENPGM BIT(0)
++#define MACRONIX_CFG_RANDEN BIT(1)
++#define MACRONIX_CFG_RANDOPT BIT(2)
++#define MACRONIX_FEATURE_ADDR_RANDOMIZER 0x10
+ #define MACRONIX_FEATURE_ADDR_READ_RETRY 0x70
+ #define MACRONIX_NUM_READ_RETRY_MODES 5
+ 
+@@ -155,6 +159,66 @@ static int macronix_set_read_retry(struct spinand_device *spinand,
+ 	return spi_mem_exec_op(spinand->spimem, &op);
  }
  
-+static int spinand_randomizer_init(struct spinand_device *spinand)
++static int macronix_set_randomizer(struct spinand_device *spinand)
 +{
-+	int ret;
++	struct spi_mem_op exec_op = SPINAND_PROG_EXEC_1S_1S_0_OP(0);
++	struct mtd_info *mtd = spinand_to_mtd(spinand);
++	struct nand_device *nand = mtd_to_nanddev(mtd);
++	struct device_node *dn = nanddev_get_of_node(nand);
++	int rand_dt, randopt, ret;
++	u8 cfg, status, check;
 +
-+	if (spinand->set_randomizer) {
-+		ret = spinand->set_randomizer(spinand);
-+		if (ret)
-+			return ret;
-+	}
++	rand_dt = of_property_read_bool(dn, "mxic,enable-randomizer-otp");
++	if (!rand_dt)
++		return 0;
++
++	ret = spinand_read_reg_op(spinand, MACRONIX_FEATURE_ADDR_RANDOMIZER, &cfg);
++	if (ret)
++		return ret;
++	if (cfg)
++		return 0;
++
++	cfg = MACRONIX_CFG_ENPGM | MACRONIX_CFG_RANDEN;
++	randopt = of_property_read_bool(dn, "mxic,randopt");
++	if (randopt)
++		cfg |=  MACRONIX_CFG_RANDOPT;
++
++	ret = spinand_write_reg_op(spinand, MACRONIX_FEATURE_ADDR_RANDOMIZER, cfg);
++	if (ret)
++		return ret;
++
++	ret = spinand_write_enable_op(spinand);
++	if (ret)
++		return ret;
++
++	ret = spi_mem_exec_op(spinand->spimem, &exec_op);
++	if (ret)
++		return ret;
++
++	ret = spinand_wait(spinand,
++			   SPINAND_WRITE_INITIAL_DELAY_US,
++			   SPINAND_WRITE_POLL_DELAY_US,
++			   &status);
++	if (ret)
++		return ret;
++
++	if (status & STATUS_PROG_FAILED)
++		return -EIO;
++
++	ret = spinand_read_reg_op(spinand, MACRONIX_FEATURE_ADDR_RANDOMIZER, &check);
++	if (ret)
++		return ret;
++	if (check != cfg)
++		return -EIO;
++
++	cfg &= ~MACRONIX_CFG_ENPGM;
++	ret = spinand_write_reg_op(spinand, MACRONIX_FEATURE_ADDR_RANDOMIZER, cfg);
++	if (ret)
++		return ret;
 +
 +	return 0;
 +}
 +
- static bool spinand_use_cont_read(struct mtd_info *mtd, loff_t from,
- 				  struct mtd_oob_ops *ops)
- {
-@@ -1366,6 +1379,7 @@ int spinand_match_and_init(struct spinand_device *spinand,
- 		spinand->user_otp = &table[i].user_otp;
- 		spinand->read_retries = table[i].read_retries;
- 		spinand->set_read_retry = table[i].set_read_retry;
-+		spinand->set_randomizer = table[i].set_randomizer;
- 
- 		op = spinand_select_op_variant(spinand,
- 					       info->op_variants.read_cache);
-@@ -1543,6 +1557,10 @@ static int spinand_init(struct spinand_device *spinand)
- 	 */
- 	spinand_cont_read_init(spinand);
- 
-+	ret = spinand_randomizer_init(spinand);
-+	if (ret)
-+		goto err_cleanup_ecc_engine;
-+
- 	mtd->_read_oob = spinand_mtd_read;
- 	mtd->_write_oob = spinand_mtd_write;
- 	mtd->_block_isbad = spinand_mtd_block_isbad;
-diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-index 27a45bdab7ec..80a5c6ac6cc5 100644
---- a/include/linux/mtd/spinand.h
-+++ b/include/linux/mtd/spinand.h
-@@ -499,6 +499,7 @@ struct spinand_user_otp {
-  * @user_otp: SPI NAND user OTP info.
-  * @read_retries: the number of read retry modes supported
-  * @set_read_retry: enable/disable read retry for data recovery
-+ * @set_randomizer: enable randomizer
-  *
-  * Each SPI NAND manufacturer driver should have a spinand_info table
-  * describing all the chips supported by the driver.
-@@ -525,6 +526,7 @@ struct spinand_info {
- 	unsigned int read_retries;
- 	int (*set_read_retry)(struct spinand_device *spinand,
- 			     unsigned int read_retry);
-+	int (*set_randomizer)(struct spinand_device *spinand);
- };
- 
- #define SPINAND_ID(__method, ...)					\
-@@ -578,6 +580,9 @@ struct spinand_info {
- 	.read_retries = __read_retries,					\
- 	.set_read_retry = __set_read_retry
- 
-+#define SPINAND_RANDOMIZER(__set_randomizer)				\
-+	.set_randomizer = __set_randomizer
-+
- #define SPINAND_INFO(__model, __id, __memorg, __eccreq, __op_variants,	\
- 		     __flags, ...)					\
- 	{								\
-@@ -633,6 +638,7 @@ struct spinand_dirmap {
-  * @user_otp: SPI NAND user OTP info.
-  * @read_retries: the number of read retry modes supported
-  * @set_read_retry: Enable/disable the read retry feature
-+ * @set_randomizer: Enable the randomizer feature
-  */
- struct spinand_device {
- 	struct nand_device base;
-@@ -673,6 +679,7 @@ struct spinand_device {
- 	unsigned int read_retries;
- 	int (*set_read_retry)(struct spinand_device *spinand,
- 			     unsigned int retry_mode);
-+	int (*set_randomizer)(struct spinand_device *spinand);
- };
- 
- /**
+ static const struct spinand_info macronix_spinand_table[] = {
+ 	SPINAND_INFO("MX35LF1GE4AB",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x12),
+@@ -213,7 +277,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35LF2G24AD",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x24, 0x03),
+ 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
+@@ -225,7 +290,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35LF2G24AD-Z4I8",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x64, 0x03),
+ 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
+@@ -236,7 +302,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35LF4G24AD",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x35, 0x03),
+ 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 2, 1, 1),
+@@ -248,7 +315,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35LF4G24AD-Z4I8",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x75, 0x03),
+ 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
+@@ -259,7 +327,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX31LF1GE4BC",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x1e),
+ 		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
+@@ -305,7 +374,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     macronix_ecc_get_status),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35UF4G24AD-Z4I8",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xf5, 0x03),
+ 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
+@@ -317,7 +387,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     macronix_ecc_get_status),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35UF4GE4AD",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb7, 0x03),
+ 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
+@@ -355,7 +426,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     macronix_ecc_get_status),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35UF2G24AD-Z4I8",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xe4, 0x03),
+ 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
+@@ -367,7 +439,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     macronix_ecc_get_status),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35UF2GE4AD",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa6, 0x03),
+ 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
+@@ -413,7 +486,8 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
+ 				     macronix_ecc_get_status),
+ 		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
+-					macronix_set_read_retry)),
++					macronix_set_read_retry),
++			 SPINAND_RANDOMIZER(macronix_set_randomizer)),
+ 	SPINAND_INFO("MX35UF1GE4AD",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x96, 0x03),
+ 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
 -- 
 2.25.1
 
