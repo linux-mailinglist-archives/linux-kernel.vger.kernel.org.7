@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-760251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1EAB1E87D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 461DCB1E87F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6500B1AA471D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 198F91C23754
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16182797AD;
-	Fri,  8 Aug 2025 12:38:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00525279798;
+	Fri,  8 Aug 2025 12:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AgacXeh2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193D7219E8
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61278278E42
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754656685; cv=none; b=DsuPQOKCS9qvlgBm2MA/7C2rWK0G7SIh1fF5gWWYqJjrDsFJp+wy/1h7E+KJdAPwTs9uqnADGAKMYxriIf5yXALG5TbN/d/vN5tdIUxYwmF+NAmeTIyUILBCI/NTAJ7WYT4VJww4w+yng65R9ZM3k0IBNLxinYbslx5efZi4Irw=
+	t=1754656713; cv=none; b=hut/YMdiM4gDOmqNb25Pr/yxI0BzxxDKRJzp2C4EBrkiMm8n5I60BZH5Ga9vTqWPucIEBo09ZYI+gFevRhp7aMrFPLDZxKuiHD2s0p/Y+qSJq7DxAtC2GmwXVDxsLPbgGi1jiUpOYsAVoix28smZJuRqrvKg4tZByc7Yt+6QVBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754656685; c=relaxed/simple;
-	bh=MQF7QyOgSa+2BXdyyStEjlrYVR7UqSRX6YiqJl/QaFw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=a3tMIjQQdDdpC+rZswlbEmaPNN0pNNcnf5002YYRwMSibrfB+fwETm8Lgv/yhk9YFKUQCBLg73A1meBfxZ22IfyT05R9cEWg5kYXaLFue20iavFPCDUxbchXWDfys2gZtaMztAalGPW+Y2wh9l/q66IdIP4JpnXqXa7l9L9FbI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88177c70d63so211678239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 05:38:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754656683; x=1755261483;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L2nN6/Vrn1CTTUYbb30bQYJ4+V55aZvqm3UjxERjUs4=;
-        b=DPL337sDjz75MVZnzit1oftCa443LKsTeHiW5LzU+YPyeOyKmp0toNGyZdWnUK3ilb
-         cUsS/WyM9vGmo1eyzoTpdPq3HUwQTkMmf5XS/eG69hCTo2LlXspSwAq8GsXjk3wo5UNx
-         CHQXBUt6gqos9+1ZfzQnckst2vVUM/9UIRQCDHI5wG8PsI6bNbTGPtn9TnTfUUnQ9NBz
-         cRhDCU4TA4R3MpF3Kpy8N+MBda6vEmNZpZP5IznLZAqyaAwbdD/t8PUdqNhg/f6z314m
-         NX94u4rsHGRgu8T7D0+rAZs5BhQhy/VzMpGfW9lwXFnyVHFjMYysNgXTCUVZkLdM0mfe
-         b+rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ1ZffP5c8kS5KKa3icUHS+/vrniitkIjjD43KuATyTCXs0VcGSywCbVk8GwMrHuONHB5CQ9qljZGR0+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYq1HtahJQj+zT/cevf/mNcks9htVMPQmyDTDdX0Qx4qzIkNmN
-	+sQ1TSkF/C9QX2ZhfSBLn3bVcri7+L554GuNJ+rs3l34UJr9ESaHY++8sGISfZmUGDvbAx1ax2f
-	3pLFJqxuB8ByqvdW7sqgOJG5yZo5x00imw1aUYLQFCPvYsjQ+2ePzLb/im0c=
-X-Google-Smtp-Source: AGHT+IG+DZJpNS408k3+BBE9D+TBgofSkxsBw3hgke++VWUqClU2Hm07u+NviVTHRUE5LaenWKhGjmxjPAktEbdZ0kEcB/dNZBy1
+	s=arc-20240116; t=1754656713; c=relaxed/simple;
+	bh=+z1SARUox8cV+m8+0oqKQI8N2ni6j8C28ZvZfwIMiVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fRjHq6HGteXGtnslUTSa/aSAqevM0Et3OrWYeQBgxCvVuPDYIp2cGWMZZmLotdyTJz7LzHiCwd8kI6227IV1BLNPG8K6DseM95ilLkuel0TKmE7txrIuR6ZoSwlwxlgkwVMRXS8X2An7MQR3KBI2kdYYMqjlYpCrma82NcCHNS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AgacXeh2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754656710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2c5qQSEQJ04PpUTVBYvGevi1pSNfV7Q71bDlXVhAWyw=;
+	b=AgacXeh2Bp8yo9/gEJJ+qyJbf3bCh8rS9m0kZ0rE35V37uO1k7wa+4Y2o3sWGFvHBcIxoU
+	lgPSR+oyqGL7RzrsucKkvNKKu43teTa27GFyWtgbTBayJASJUqrOJr4afxxM6OV4u+xGv9
+	DFhxrDE2pKbUhorFGla+ZvTELTLdWcU=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-Lvq33mHbNX2NeCDMkBqKYQ-1; Fri,
+ 08 Aug 2025 08:38:28 -0400
+X-MC-Unique: Lvq33mHbNX2NeCDMkBqKYQ-1
+X-Mimecast-MFC-AGG-ID: Lvq33mHbNX2NeCDMkBqKYQ_1754656707
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D6AE1800561;
+	Fri,  8 Aug 2025 12:38:27 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.74.8])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7488930002C0;
+	Fri,  8 Aug 2025 12:38:26 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] nfs: more client side tracepoints in write and
+ writeback codepaths
+Date: Fri, 08 Aug 2025 08:38:24 -0400
+Message-ID: <620922BE-915F-4987-8AD6-3D62D4749FB6@redhat.com>
+In-Reply-To: <20250808-nfs-tracepoints-v1-0-f8fdebb195c9@kernel.org>
+References: <20250808-nfs-tracepoints-v1-0-f8fdebb195c9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1591:b0:87c:72f3:d5d7 with SMTP id
- ca18e2360f4ac-883f1268931mr550396739f.13.1754656683260; Fri, 08 Aug 2025
- 05:38:03 -0700 (PDT)
-Date: Fri, 08 Aug 2025 05:38:03 -0700
-In-Reply-To: <c04ad55a-7c66-4e30-bc22-e05682eeb10e@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6895efab.050a0220.7f033.0063.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] WARNING in __vmap_pages_range_noflush
-From: syzbot <syzbot+23727438116feb13df15@syzkaller.appspotmail.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-> On 8/8/25 6:34 AM, syzbot wrote:
->>> On 8/8/25 2:17 AM, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following issue on:
->>>>
->>>> HEAD commit:    6e64f4580381 Merge tag 'input-for-v6.17-rc0' of git://git...
->>>> git tree:       upstream
->>>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=166ceea2580000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=5549e3e577d8650d
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=23727438116feb13df15
->>>> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10202ea2580000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140a9042580000
->>>
->>> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git> 
->> 
->> want either no args or 2 args (repo, branch), got 5
->
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+On 8 Aug 2025, at 7:40, Jeff Layton wrote:
 
-want either no args or 2 args (repo, branch), got 5
-
+> This is a pile of tracepoint additions and cleanups. Most of these I
+> plumbed in while tracking down the recent client-side corruption I've
+> been hunting. Please consider for v6.18.
 >
+> Thanks,
 >
-> diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-> index 725dc0bec24c..2e99dffddfc5 100644
-> --- a/io_uring/memmap.c
-> +++ b/io_uring/memmap.c
-> @@ -156,7 +156,7 @@ static int io_region_allocate_pages(struct io_ring_ctx *ctx,
->  				    unsigned long mmap_offset)
->  {
->  	gfp_t gfp = GFP_KERNEL_ACCOUNT | __GFP_ZERO | __GFP_NOWARN;
-> -	unsigned long size = mr->nr_pages << PAGE_SHIFT;
-> +	size_t size = (size_t) mr->nr_pages << PAGE_SHIFT;
->  	unsigned long nr_allocated;
->  	struct page **pages;
->  	void *p;
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> Jeff Layton (5):
+>       nfs: remove trailing space from tracepoint
+>       nfs: add tracepoints to nfs_file_read() and nfs_file_write()
+>       nfs: new tracepoints around write handling
+>       nfs: more in-depth tracing of writepage events
+>       nfs: add tracepoints to nfs_writepages()
 >
+>  fs/nfs/file.c     |  20 ++++++--
+>  fs/nfs/nfstrace.h | 135 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  fs/nfs/write.c    |  22 +++++++--
+>  3 files changed, 168 insertions(+), 9 deletions(-)
+> ---
+> base-commit: 0919a5b3b11c699d23bc528df5709f2e3213f6a9
+> change-id: 20250807-nfs-tracepoints-f1d84186564d
+>
+> Best regards,
 > -- 
-> Jens Axboe
+> Jeff Layton <jlayton@kernel.org>
+
+
+These look great.
+
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+
+Ben
+
 
