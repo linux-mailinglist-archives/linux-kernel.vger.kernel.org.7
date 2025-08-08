@@ -1,757 +1,196 @@
-Return-Path: <linux-kernel+bounces-760145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA07B1E714
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:23:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3CFB1E718
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F5817A080B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D0B0727FC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38802749FA;
-	Fri,  8 Aug 2025 11:23:03 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EE7273D6C;
+	Fri,  8 Aug 2025 11:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ep0V4Rb3"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687521DC9B3;
-	Fri,  8 Aug 2025 11:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4033273816
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652183; cv=none; b=d6RchJClGICBvYvuJFjMrzWSkyviZa9cDpR00w+/XhKuVEXMVUf/B27xcmFSNoie1pZ6MA+ugK5rq9aGU0ngzkWozrCaN5ldm2hqu67kX4v2VOZwGm2sMhYjZ35Sjt1husmi4+9wHeyt4YqJbZesKnwEN1xdx+tErOs0LZZYpEU=
+	t=1754652227; cv=none; b=C3yvCMI+YFYD3E63BFfCFqvuJ/Tbyi6Jyhkb7UZucwW1TMc4SA3tdxQIrnO98rSgGi7K4r2K8wxS6FWZRVlwpjaQkAq1YmjbZOqMu1wLVzLvkU4p5YWzkEEnoHqBbmelrqKJUrj+0HcU3bCRf7iHI57hLY+SpLsoHs8KUk+CiEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652183; c=relaxed/simple;
-	bh=0lvf9ueTV0FuBz/MkpdFxIV9ZRx6wzvM5NwmC3CQh2I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nmq7Ao5sgwn5ifk6nNM9BZiErBww7GMsm2OhgX0w+irKO+DKipDWfAsV41n4S+GnLmpgftJ4mt2IP5Z/TdWb5bFytkNccdteTl17me5hGzBPszgfwps6JE2l+bXmj70kJdE3sDS1EPXzCg3LC7kZKJgQfp4ska7WzPvXIqieImk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7E5751A03B2;
-	Fri,  8 Aug 2025 13:22:53 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0F5371A114B;
-	Fri,  8 Aug 2025 13:22:53 +0200 (CEST)
-Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B73041800085;
-	Fri,  8 Aug 2025 19:22:51 +0800 (+08)
-From: Lakshay Piplani <lakshay.piplani@nxp.com>
-To: alexandre.belloni@bootlin.com,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org
-Cc: vikash.bansal@nxp.com,
-	priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com,
-	Lakshay Piplani <lakshay.piplani@nxp.com>
-Subject: [PATCH 2/2] rtc: pcf85363: add support for additional features
-Date: Fri,  8 Aug 2025 16:52:46 +0530
-Message-Id: <20250808112246.4169280-2-lakshay.piplani@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250808112246.4169280-1-lakshay.piplani@nxp.com>
-References: <20250808112246.4169280-1-lakshay.piplani@nxp.com>
+	s=arc-20240116; t=1754652227; c=relaxed/simple;
+	bh=3Up3kwRIerg9fg4YQW6lOfJHj5P0kMfll1euXunJB6g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=p01kr7++Gcbd7xxaIO+G4eEa3iqHmwxO8ppn/ck9A/lGHWa/0NOO4h1DmFnYx5empGxAfLOhBnCOGR+k6cJ3GFRzXF6ashSeM8daLY5I7X/gD7TwdQSWI6a7Eo4mFXZiNjdI/eT9NKvMyk8bQqQAIWG5a626kSUtN3Z0c3FGj+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ep0V4Rb3; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-459e1338565so18579835e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754652224; x=1755257024; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kRspYZ6QAEJaF7pYavgjx3m5cWsrC6eyWll+Yl4bXuI=;
+        b=ep0V4Rb3UvqR3X9QnvF0AeM/8ahsbgOcC5NDWcGQxehtKtXcAme+O96ZORWIYhTNJP
+         GFjalDaLDkzTRQE66/FL1Q2N+LaT/Y2CJrQXI0OAleD+qHsd8bMXIqeFtCzSJmU8Hx4Z
+         hmIXQM8u5pHYA0agO9Ox8QERdyA/oSCHtAYLSoJ2DZ5pJy1lZ7CGhQ8g9m2D3mxBWc2x
+         MvvH4ORJSxHMAghI7H358os81+Z/XXhlPh9TxU/NCpSzwNTt39x1hqc3zF0TtC5AU0fN
+         eONDLhTI+y4S8X1xQbPS+9oOf1W5ZCNWsO2A16Lbiad5Nmh4a/mKm33rdfMW7ZodCGfM
+         WNyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754652224; x=1755257024;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kRspYZ6QAEJaF7pYavgjx3m5cWsrC6eyWll+Yl4bXuI=;
+        b=R53BkMKXJniBzotrFixVPiKekSEdr6sYBu3gRks3pP7tAdZGzDO8O0BDSjqqK9H4MA
+         OQnHNbNXKR+oVIL8CaRz+ypyL5u92di9UdqhAcdOEvWtCPJftrd0V/qgCm2E4nX1pztX
+         vF7NcTS3EhS9OYKCFuCrnSGmSGpjEf3oAnwbXfZdG1TcAc3tDgYPZylWcaLS6D0zgD7+
+         HOsnd4IjgezxRI43w7aqmXYDT1ug6vx745Jr7Y/z5gxJgD5FFuVrCqvB9EFJwg9YUtNl
+         +9F+vJvbOdjZ5tSzj7JWAyjpCyHd2URzyjhNqDZ9LEnbDVci7M/PTUO+mrLsEdNFprT0
+         1yBA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1fKd3e6nTVKY4I7F3HP/mD+/XCIjtlp1N9yO+EnPe9Ca4RlJcfId/mSmy7lr4PfiSXUYYpxcCLwrbGCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNE2R/AU6K8fxZrBX2LAaDvQ9yrsMO1pzsL8NVGzZoROsTdJSM
+	VD34QIjfeE6/sjaTvmteSp3N3OTEfCNoFyHU/JGgpR4zeTTCh52A4NGAy8FupABtpyA=
+X-Gm-Gg: ASbGncuDaptE4zU36UmAUXFULFAV6vUcZWmls+lEkA8eB3vFoURrsqX9cE+GwgnXiz1
+	3V8xzGOVMqpuLsLb50q7X7LS6EcGt5LJc3CrVRRwVh567NYRPA3nXuOAjUrSBrAwlO2Lxsqot77
+	pN2BUgcd5imONSiYrOjrsWsmqXsqEkJQG2aE9CbKAGDlUe+Uunq4eHIvbYEFZeOdx7gqFsz8GsS
+	mi5aI/k62X0GHg/Gbk3RO8NwWZ+ddGSPurkb/ZF52pIk2YuSeQZU78282lVj9LGGVYaxFA98eEk
+	paZJTQlyTd6qH4gLui47GBBDpFQSZJli9uvEip2+MyExM1kEWacsDnSSHruu9FeeWyJkQkq2dsW
+	5vJrB/lwSrX2U7aOVw6u1zsnONog9f8k=
+X-Google-Smtp-Source: AGHT+IFCMozOTwE+MxJzqrobvwL8Tio0dUjvbjpt5tE0xDuzGkAjBw2SFMGp7HYlkEU8CksYHLPAsw==
+X-Received: by 2002:a05:600c:474a:b0:456:dc0:7d4e with SMTP id 5b1f17b1804b1-459f4f0376fmr25391795e9.18.1754652223952;
+        Fri, 08 Aug 2025 04:23:43 -0700 (PDT)
+Received: from ho-tower-lan.lan ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45923c34af8sm233482635e9.24.2025.08.08.04.23.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 04:23:43 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH v6 00/12] perf: arm_spe: Armv8.8 SPE features
+Date: Fri, 08 Aug 2025 12:22:57 +0100
+Message-Id: <20250808-james-perf-feat_spe_eft-v6-0-6daf498578c8@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABHelWgC/43Q20rEMBAG4FdZcm1kcmzile8hsqTJZDfitiUpR
+ Vn67qYFqVIqXv4D883hTgrmhIU8ne4k45RK6rsa9MOJ+KvrLkhTqJlw4AoE4/TN3bDQAXOkEd1
+ 4LgOeMY5Uax+iDCaitaR2Dxlj+ljll9ear6mMff5cB01sqX6b4tCcGAXKnecQJDTem+f31LncP
+ /b5ssxYAQX6byAEaQANSqPYT2DZauLbJorbY4hXyAFztnUugHY7SGyQBnUMiQo1rAVvozVgxQ6
+ SG9RwdgzJCoFTvJEMoolhB6l/Qmo5rWm9EqK+yP3+0TzPX5Op3I8kAgAA
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>, 
+ Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, 
+ kvmarm@lists.linux.dev, James Clark <james.clark@linaro.org>
+X-Mailer: b4 0.14.0
 
-Add support for additional features to the NXP PCF8263/PCF85363 RTC driver:
-- Alarm2 (minute,hour,weekday)
-- Timestamps recording for TS pin and Battery switch-over events
-- Battery switch over detection
-- Offset calibration
-- Watchdog timer
+Support 3 new SPE features: FEAT_SPEv1p4 filters, FEAT_SPE_EFT extended
+filtering, and SPE_FEAT_FDS data source filtering. The features are
+independent can be applied separately:
 
-Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+  * Prerequisite sysreg changes - patch 1
+  * FEAT_SPEv1p4 - patches 2 - 3
+  * FEAT_SPE_EFT - patch 4
+  * FEAT_SPE_FDS - patches 5 - 9
+  * FEAT_SPE_FDS Perf tool changes - patches 10 - 12
+
+The first two features will work with old Perfs but a Perf change to
+parse the new config4 is required for the last feature.
+
 ---
- drivers/rtc/rtc-pcf85363.c | 557 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 522 insertions(+), 35 deletions(-)
+Changes in v6:
+- Rebase to resolve conflict with BRBE changes in el2_setup.h
+- Link to v5: https://lore.kernel.org/r/20250721-james-perf-feat_spe_eft-v5-0-a7bc533485a1@linaro.org
 
-diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index 540042b9eec8..428af6a91c12 100644
---- a/drivers/rtc/rtc-pcf85363.c
-+++ b/drivers/rtc/rtc-pcf85363.c
-@@ -5,6 +5,10 @@
-  * Driver for NXP PCF85363 real-time clock.
-  *
-  * Copyright (C) 2017 Eric Nelson
-+ *
-+ * Copyright 2025 NXP
-+ * Added support for alarm2, timestamps, battery switch-over,
-+ * watchdog, offset calibration.
-  */
- #include <linux/module.h>
- #include <linux/i2c.h>
-@@ -15,7 +19,11 @@
- #include <linux/errno.h>
- #include <linux/bcd.h>
- #include <linux/of.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_device.h>
- #include <linux/regmap.h>
-+#include <linux/watchdog.h>
-+#include <linux/uaccess.h>
- 
- /*
-  * Date/Time registers
-@@ -100,19 +108,44 @@
- #define PIN_IO_INTA_OUT	2
- #define PIN_IO_INTA_HIZ	3
- 
-+#define PIN_IO_TSPM	GENMASK(3, 2)
-+#define PIN_IO_TSIM	BIT(4)
-+
- #define OSC_CAP_SEL	GENMASK(1, 0)
- #define OSC_CAP_6000	0x01
- #define OSC_CAP_12500	0x02
- 
- #define STOP_EN_STOP	BIT(0)
-+#define RTCM_BIT	BIT(4)
- 
- #define RESET_CPR	0xa4
- 
- #define NVRAM_SIZE	0x40
- 
-+#define TSR1_MASK	0x03
-+#define TSR2_MASK	0x07
-+#define TSR3_MASK	0x03
-+#define TSR1_SHIFT	0
-+#define TSR2_SHIFT	2
-+#define TSR3_SHIFT	6
-+
-+#define WD_MODE_REPEAT	BIT(7)
-+#define WD_TIMEOUT_MASK	GENMASK(6, 2)
-+#define WD_TIMEOUT_SHIFT	2
-+#define WD_CLKSEL_MASK	GENMASK(1, 0)
-+
-+#define WD_TIMEOUT_MIN	1
-+#define WD_TIMEOUT_MAX	0x1F
-+
-+#define OFFSET_SIGN_BIT	7
-+#define OFFSET_MINIMUM	-128
-+#define OFFSET_MAXIMUM	127
-+#define OFFSET_MASK	0xFF
-+
- struct pcf85363 {
- 	struct rtc_device	*rtc;
- 	struct regmap		*regmap;
-+	u8 ts_valid_flags;
- };
- 
- struct pcf85x63_config {
-@@ -120,6 +153,15 @@ struct pcf85x63_config {
- 	unsigned int num_nvram;
- };
- 
-+struct pcf85363_watchdog {
-+	struct watchdog_device wdd;
-+	struct regmap *regmap;
-+	struct device *dev;
-+	u8 timeout_val;
-+	u8 clock_sel;
-+	bool repeat;
-+};
-+
- static int pcf85363_load_capacitance(struct pcf85363 *pcf85363, struct device_node *node)
- {
- 	u32 load = 7000;
-@@ -295,28 +337,147 @@ static int pcf85363_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- static irqreturn_t pcf85363_rtc_handle_irq(int irq, void *dev_id)
- {
- 	struct pcf85363 *pcf85363 = i2c_get_clientdata(dev_id);
-+	bool handled = false;
- 	unsigned int flags;
- 	int err;
- 
- 	err = regmap_read(pcf85363->regmap, CTRL_FLAGS, &flags);
-+
- 	if (err)
- 		return IRQ_NONE;
- 
-+	if (flags) {
-+		dev_info(&pcf85363->rtc->dev, "IRQ flags: 0x%02x%s%s%s%s%s%s%s\n",
-+			 flags, (flags & FLAGS_A1F) ? " [A1F]" : "",
-+			 (flags & FLAGS_A2F) ? " [A2F]" : "",
-+			 (flags & FLAGS_BSF) ? " [BSF]" : "",
-+			 (flags & FLAGS_TSR1F) ? " [TSR1F]" : "",
-+			 (flags & FLAGS_TSR2F) ? " [TSR2F]" : "",
-+			 (flags & FLAGS_TSR3F) ? " [TSR3F]" : "",
-+			 (flags & FLAGS_WDF) ? " [WDF]" : "");
-+	}
-+
- 	if (flags & FLAGS_A1F) {
- 		rtc_update_irq(pcf85363->rtc, 1, RTC_IRQF | RTC_AF);
- 		regmap_update_bits(pcf85363->regmap, CTRL_FLAGS, FLAGS_A1F, 0);
--		return IRQ_HANDLED;
-+		handled = true;
- 	}
- 
--	return IRQ_NONE;
-+	if (flags & FLAGS_A2F) {
-+		rtc_update_irq(pcf85363->rtc, 1, RTC_IRQF | RTC_AF);
-+		regmap_update_bits(pcf85363->regmap, CTRL_FLAGS, FLAGS_A2F, 0);
-+		handled = true;
-+	}
-+
-+	if (flags & FLAGS_BSF) {
-+		regmap_update_bits(pcf85363->regmap, CTRL_FLAGS, FLAGS_BSF, 0);
-+		handled = true;
-+	}
-+
-+	if (flags & FLAGS_TSR1F) {
-+		regmap_update_bits(pcf85363->regmap, CTRL_FLAGS, FLAGS_TSR1F, 0);
-+		pcf85363->ts_valid_flags |= FLAGS_TSR1F;
-+		handled = true;
-+	}
-+
-+	if (flags & FLAGS_TSR2F) {
-+		regmap_update_bits(pcf85363->regmap, CTRL_FLAGS, FLAGS_TSR2F, 0);
-+		pcf85363->ts_valid_flags |= FLAGS_TSR2F;
-+		handled = true;
-+	}
-+
-+	if (flags & FLAGS_TSR3F) {
-+		regmap_update_bits(pcf85363->regmap, CTRL_FLAGS, FLAGS_TSR3F, 0);
-+		pcf85363->ts_valid_flags |= FLAGS_TSR3F;
-+		handled = true;
-+	}
-+
-+	if (flags & FLAGS_WDF) {
-+		regmap_update_bits(pcf85363->regmap, CTRL_FLAGS, FLAGS_WDF, 0);
-+		handled = true;
-+	}
-+
-+	return handled ? IRQ_HANDLED : IRQ_NONE;
-+}
-+
-+/*
-+ * Read the current RTC offset from the CTRL_OFFSET
-+ * register. This value is an 8-bit signed 2's complement
-+ * value that corrects osciallator drift.
-+ */
-+static int pcf85363_read_offset(struct device *dev, long *offset)
-+{
-+	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(pcf85363->regmap, CTRL_OFFSET, &val);
-+
-+	if (ret)
-+		return ret;
-+
-+	*offset = sign_extend32(val & OFFSET_MASK, OFFSET_SIGN_BIT);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Write an oscillator offset correction value to
-+ * the CTRL_OFFSET register. The valid range is
-+ * -128 to 127 (8-bit signed), typically used to fine
-+ * tune accuracy.
-+ */
-+static int pcf85363_set_offset(struct device *dev, long offset)
-+{
-+	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-+
-+	if (offset < OFFSET_MINIMUM || offset > OFFSET_MAXIMUM) {
-+		dev_warn(dev, "Offset out of range: %ld\n", offset);
-+		return -ERANGE;
-+	}
-+
-+	return regmap_write(pcf85363->regmap, CTRL_OFFSET, offset & OFFSET_MASK);
-+}
-+
-+static int pcf85363_rtc_ioctl(struct device *dev,
-+			      unsigned int cmd, unsigned long arg)
-+{
-+	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-+	unsigned int val;
-+	int ret;
-+
-+	switch (cmd) {
-+	case RTC_VL_READ: {
-+		u32 status = 0;
-+
-+		ret = regmap_read(pcf85363->regmap, CTRL_FLAGS, &val);
-+
-+		if (ret)
-+			return ret;
-+
-+		if (val & FLAGS_BSF)
-+			status |= RTC_VL_BACKUP_SWITCH;
-+
-+		return put_user(status, (u32 __user *)arg);
-+	}
-+
-+	case RTC_VL_CLR:
-+		return regmap_update_bits(pcf85363->regmap, CTRL_FLAGS, FLAGS_BSF, 0);
-+
-+	default:
-+		return -ENOIOCTLCMD;
-+	}
- }
- 
- static const struct rtc_class_ops rtc_ops = {
-+	.ioctl	= pcf85363_rtc_ioctl,
- 	.read_time	= pcf85363_rtc_read_time,
- 	.set_time	= pcf85363_rtc_set_time,
- 	.read_alarm	= pcf85363_rtc_read_alarm,
- 	.set_alarm	= pcf85363_rtc_set_alarm,
- 	.alarm_irq_enable = pcf85363_rtc_alarm_irq_enable,
-+	.read_offset = pcf85363_read_offset,
-+	.set_offset = pcf85363_set_offset,
- };
- 
- static int pcf85363_nvram_read(void *priv, unsigned int offset, void *val,
-@@ -379,11 +540,301 @@ static const struct pcf85x63_config pcf_85363_config = {
- 	.num_nvram = 2
- };
- 
-+/*
-+ * This function sets the watchdog control register based on the timeout,
-+ * clock selection and repeat mode settings. It prepares the value to
-+ * write into the watchdog control register (CTRL_WDOG).
-+ */
-+static int pcf85363_wdt_reload(struct pcf85363_watchdog *wd)
-+{
-+	u8 val;
-+
-+	val = (wd->repeat ? WD_MODE_REPEAT : 0) |
-+	       ((wd->timeout_val & WD_TIMEOUT_MAX) << WD_TIMEOUT_SHIFT) |
-+	       (wd->clock_sel & WD_CLKSEL_MASK);
-+
-+	return regmap_write(wd->regmap, CTRL_WDOG, val);
-+}
-+
-+static int pcf85363_wdt_start(struct watchdog_device *wdd)
-+{
-+	struct pcf85363_watchdog *wd = watchdog_get_drvdata(wdd);
-+
-+	return pcf85363_wdt_reload(wd);
-+}
-+
-+static int pcf85363_wdt_stop(struct watchdog_device *wdd)
-+{
-+	struct pcf85363_watchdog *wd = watchdog_get_drvdata(wdd);
-+
-+	return regmap_write(wd->regmap, CTRL_WDOG, 0);
-+}
-+
-+static int pcf85363_wdt_ping(struct watchdog_device *wdd)
-+{
-+	struct pcf85363_watchdog *wd = watchdog_get_drvdata(wdd);
-+
-+	regmap_update_bits(wd->regmap, CTRL_FLAGS, FLAGS_WDF, 0);
-+
-+	return pcf85363_wdt_reload(wd);
-+}
-+
-+static int pcf85363_wdt_set_timeout(struct watchdog_device *wdd,
-+				    unsigned int timeout)
-+{
-+	struct pcf85363_watchdog *wd = watchdog_get_drvdata(wdd);
-+
-+	wd->timeout_val = clamp(timeout, WD_TIMEOUT_MIN, WD_TIMEOUT_MAX);
-+	wdd->timeout = wd->timeout_val;
-+
-+	return pcf85363_wdt_reload(wd);
-+}
-+
-+static const struct watchdog_info pcf85363_wdt_info = {
-+	.identity = "PCF85363 Watchdog",
-+	.options = WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
-+};
-+
-+static const struct watchdog_ops pcf85363_wdt_ops = {
-+	.owner = THIS_MODULE,
-+	.start = pcf85363_wdt_start,
-+	.stop = pcf85363_wdt_stop,
-+	.ping = pcf85363_wdt_ping,
-+	.set_timeout = pcf85363_wdt_set_timeout,
-+};
-+
-+/*
-+ * Parses watchdog configuration from device tree and registers the
-+ * watchdog with the Linux watchdog subsystem.
-+ */
-+static int pcf85363_watchdog_init(struct device *dev, struct regmap *regmap)
-+{
-+	struct pcf85363_watchdog *wd;
-+	u32 timeout = 10, clock = 0;
-+	int ret;
-+
-+	if (!IS_ENABLED(CONFIG_WATCHDOG) || !device_property_read_bool(dev, "nxp,enable-watchdog"))
-+		return 0;
-+
-+	wd = devm_kzalloc(dev, sizeof(*wd), GFP_KERNEL);
-+	if (!wd)
-+		return -ENOMEM;
-+
-+	wd->regmap = regmap;
-+	wd->dev = dev;
-+
-+	device_property_read_u32(dev, "nxp,watchdog-timeout", &timeout);
-+	wd->timeout_val = clamp(timeout, WD_TIMEOUT_MIN, WD_TIMEOUT_MAX);
-+
-+	device_property_read_u32(dev, "nxp,watchdog-stepsize", &clock);
-+	wd->clock_sel = clock & WD_CLKSEL_MASK;
-+
-+	wd->repeat = device_property_read_bool(dev, "nxp,watchdog-repeat");
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Clear any stale WDF flag */
-+	regmap_update_bits(regmap, CTRL_FLAGS, FLAGS_WDF, 0);
-+
-+	/* Register the watchdog device */
-+	wd->wdd.info = &pcf85363_wdt_info;
-+	wd->wdd.ops = &pcf85363_wdt_ops;
-+	wd->wdd.min_timeout = WD_TIMEOUT_MIN;
-+	wd->wdd.max_timeout = WD_TIMEOUT_MAX;
-+	wd->wdd.timeout = wd->timeout_val;
-+	wd->wdd.parent = dev;
-+
-+	/*
-+	 * For testing purposes, it's recommended to enable CONFIG_WATCHDOG_NOWAYOUT
-+	 * in the kernel configuration. If this option is not set, the watchdog may stop
-+	 * immediately after being started, especially if the user-space daemon closes
-+	 * /dev/watchdog without keeping it alive. Enabling NOWAYOUT ensures the watchdog
-+	 * remains active and can properly test system reset behavior.
-+	 */
-+	wd->wdd.status = WATCHDOG_NOWAYOUT_INIT_STATUS;
-+
-+	watchdog_set_drvdata(&wd->wdd, wd);
-+
-+	dev_info(dev, "pcf85363: watchdog initialized successfully\n");
-+
-+	return devm_watchdog_register_device(dev, &wd->wdd);
-+}
-+
-+/*
-+ * Parses a string in the format "min hour weekday", validates the values,
-+ * converts them to BCD, writes them to the Alarm2 registers, and enables
-+ * the Alarm2 time match bits (minute, hour, weekday).
-+ */
-+static ssize_t alarm2_time_store(struct device *dev,
-+				 struct device_attribute *attr,
-+				 const char *buf, size_t count)
-+{
-+	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-+	int min, hour, weekday;
-+	u8 regbuf[3];
-+	int ret;
-+
-+	if (sscanf(buf, "%d %d %d", &min, &hour, &weekday) != 3)
-+		return -EINVAL;
-+
-+	if (min < 0 || min > 59 || hour < 0 || hour > 23 || weekday < 0 || weekday > 6)
-+		return -EINVAL;
-+
-+	regbuf[0] = bin2bcd(min);
-+	regbuf[1] = bin2bcd(hour);
-+	regbuf[2] = weekday & 0x07;
-+
-+	ret = regmap_bulk_write(pcf85363->regmap, DT_MINUTE_ALM2, regbuf, sizeof(regbuf));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(pcf85363->regmap, DT_ALARM_EN,
-+				 ALRM_MIN_A2E | ALRM_HR_A2E | ALRM_DAY_A2E,
-+				 ALRM_MIN_A2E | ALRM_HR_A2E | ALRM_DAY_A2E);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+/*
-+ * Parses a string ("0" or "1") to control Alarm2 interrupt generation.
-+ * Also clears the Alarm2 flag if the alarm is being disabled.
-+ */
-+static ssize_t alarm2_enable_store(struct device *dev,
-+				   struct device_attribute *attr,
-+				   const char *buf, size_t count)
-+{
-+	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-+	unsigned long enable;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 10, &enable);
-+	if (ret)
-+		return ret;
-+
-+	if (enable) {
-+		ret = regmap_update_bits(pcf85363->regmap, CTRL_INTA_EN,
-+					 INT_A2IE, INT_A2IE);
-+	} else {
-+		ret = regmap_update_bits(pcf85363->regmap, CTRL_INTA_EN,
-+					 INT_A2IE, 0);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_update_bits(pcf85363->regmap, CTRL_FLAGS,
-+					 FLAGS_A2F, 0);
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_WO(alarm2_time);
-+static DEVICE_ATTR_WO(alarm2_enable);
-+
-+static struct attribute *alarm2_attrs[] = {
-+	&dev_attr_alarm2_time.attr,
-+	&dev_attr_alarm2_enable.attr,
-+	NULL
-+};
-+
-+static struct attribute_group alarm2_group = {
-+	.name = "alarm2",
-+	.attrs = alarm2_attrs,
-+};
-+
-+/*
-+ * Reads 6 bytes of timestamp data starting at the given base register,
-+ * converts them from BCD to binary, and formats the result into a
-+ * human-readable string in "YYYY-MM-DD HH:MM:SS" format.
-+ */
-+static int pcf85363_read_timestamp(struct pcf85363 *pcf85363, u8 base_reg, char *buf)
-+{
-+	struct rtc_time tm;
-+	u8 regs[6];
-+	int ret;
-+
-+	ret = regmap_bulk_read(pcf85363->regmap, base_reg, regs, sizeof(regs));
-+
-+	if (ret)
-+		return ret;
-+
-+	tm.tm_sec = bcd2bin(regs[0]);
-+	tm.tm_min = bcd2bin(regs[1]);
-+	tm.tm_hour = bcd2bin(regs[2]);
-+	tm.tm_mday = bcd2bin(regs[3]);
-+	tm.tm_mon = bcd2bin(regs[4]) - 1;
-+	tm.tm_year = bcd2bin(regs[5]) + 100;
-+
-+	return sysfs_emit(buf, "%04d-%02d-%02d %02d:%02d:%02d\n",
-+			  tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
-+			  tm.tm_hour, tm.tm_min, tm.tm_sec);
-+}
-+
-+/*
-+ * Checks whether a specific timestamp flag is set. If so, reads and
-+ * returns the formatted timestamp. Otherwise, returns "00-00-00 00:00:00".
-+ */
-+
-+static ssize_t pcf85363_timestamp_show(struct device *dev, char *buf,
-+				       u8 timestamp_flag, u8 base_reg)
-+{
-+	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-+
-+	if (!(pcf85363->ts_valid_flags & timestamp_flag))
-+		return sysfs_emit(buf, "00-00-00 00:00:00\n");
-+
-+	return pcf85363_read_timestamp(pcf85363, base_reg, buf);
-+}
-+
-+static ssize_t timestamp1_show(struct device *dev,
-+			       struct device_attribute *attr, char *buf)
-+{
-+	return pcf85363_timestamp_show(dev, buf, FLAGS_TSR1F, DT_TIMESTAMP1);
-+}
-+static DEVICE_ATTR_RO(timestamp1);
-+
-+static ssize_t timestamp2_show(struct device *dev,
-+			       struct device_attribute *attr, char *buf)
-+{
-+	return pcf85363_timestamp_show(dev, buf, FLAGS_TSR2F, DT_TIMESTAMP2);
-+}
-+static DEVICE_ATTR_RO(timestamp2);
-+
-+static ssize_t timestamp3_show(struct device *dev,
-+			       struct device_attribute *attr, char *buf)
-+{
-+	return pcf85363_timestamp_show(dev, buf, FLAGS_TSR3F, DT_TIMESTAMP3);
-+}
-+static DEVICE_ATTR_RO(timestamp3);
-+
-+static struct attribute *pcf85363_attrs[] = {
-+	&dev_attr_timestamp1.attr,
-+	&dev_attr_timestamp2.attr,
-+	&dev_attr_timestamp3.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group pcf85363_attr_group = {
-+	.attrs = pcf85363_attrs,
-+};
-+
- static int pcf85363_probe(struct i2c_client *client)
- {
--	struct pcf85363 *pcf85363;
- 	const struct pcf85x63_config *config = &pcf_85363_config;
- 	const void *data = of_device_get_match_data(&client->dev);
-+	struct device *dev = &client->dev;
-+	struct pcf85363 *pcf85363;
-+	int irq_a = client->irq;
-+	bool wakeup_source;
-+	int ret, i, err;
-+	u32 tsr_mode[3];
-+	u8 val;
-+
- 	static struct nvmem_config nvmem_cfg[] = {
- 		{
- 			.name = "pcf85x63-",
-@@ -401,25 +852,43 @@ static int pcf85363_probe(struct i2c_client *client)
- 			.reg_write = pcf85363_nvram_write,
- 		},
- 	};
--	int ret, i, err;
--	bool wakeup_source;
- 
- 	if (data)
- 		config = data;
- 
--	pcf85363 = devm_kzalloc(&client->dev, sizeof(struct pcf85363),
--				GFP_KERNEL);
-+	pcf85363 = devm_kzalloc(&client->dev, sizeof(*pcf85363), GFP_KERNEL);
- 	if (!pcf85363)
- 		return -ENOMEM;
- 
-+	pcf85363->ts_valid_flags = 0;
-+
- 	pcf85363->regmap = devm_regmap_init_i2c(client, &config->regmap);
--	if (IS_ERR(pcf85363->regmap)) {
--		dev_err(&client->dev, "regmap allocation failed\n");
--		return PTR_ERR(pcf85363->regmap);
--	}
-+	if (IS_ERR(pcf85363->regmap))
-+		return dev_err_probe(dev, PTR_ERR(pcf85363->regmap), "regmap init failed\n");
- 
- 	i2c_set_clientdata(client, pcf85363);
- 
-+	ret = regmap_update_bits(pcf85363->regmap, CTRL_FUNCTION, RTCM_BIT, 0);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable RTC mode\n");
-+
-+	if (!device_property_read_u32_array(dev, "nxp,timestamp-mode", tsr_mode, 3)) {
-+		tsr_mode[0] &= TSR1_MASK;
-+		tsr_mode[1] &= TSR2_MASK;
-+		tsr_mode[2] &= TSR3_MASK;
-+
-+		val = (tsr_mode[2] << TSR3_SHIFT) |
-+		      (tsr_mode[1] << TSR2_SHIFT) |
-+		      (tsr_mode[0] << TSR1_SHIFT);
-+
-+		ret = regmap_write(pcf85363->regmap, DT_TS_MODE, val);
-+		if (ret)
-+			dev_warn(dev, "Failed to write timestamp mode register\n");
-+
-+		dev_info(dev, "Timestamp mode set: TSR1=0x%x TSR2=0x%x TSR3=0x%x\n",
-+			 tsr_mode[0], tsr_mode[1], tsr_mode[2]);
-+	}
-+
- 	pcf85363->rtc = devm_rtc_allocate_device(&client->dev);
- 	if (IS_ERR(pcf85363->rtc))
- 		return PTR_ERR(pcf85363->rtc);
-@@ -433,39 +902,57 @@ static int pcf85363_probe(struct i2c_client *client)
- 	pcf85363->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
- 	pcf85363->rtc->range_max = RTC_TIMESTAMP_END_2099;
- 
--	wakeup_source = device_property_read_bool(&client->dev,
--						  "wakeup-source");
--	if (client->irq > 0 || wakeup_source) {
--		regmap_write(pcf85363->regmap, CTRL_FLAGS, 0);
--		regmap_update_bits(pcf85363->regmap, CTRL_PIN_IO,
--				   PIN_IO_INTAPM, PIN_IO_INTA_OUT);
--	}
-+	wakeup_source = device_property_read_bool(dev, "wakeup-source");
- 
--	if (client->irq > 0) {
--		unsigned long irqflags = IRQF_TRIGGER_LOW;
-+	ret = regmap_write(pcf85363->regmap, CTRL_FLAGS, 0x00);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to clear CTRL_FLAGS\n");
-+
-+	if (irq_a > 0) {
-+		regmap_update_bits(pcf85363->regmap, CTRL_PIN_IO, PIN_IO_INTAPM, PIN_IO_INTA_OUT);
-+		ret = devm_request_threaded_irq(dev, irq_a, NULL,
-+						pcf85363_rtc_handle_irq,
-+						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+						"pcf85363-inta", client);
- 
--		if (dev_fwnode(&client->dev))
--			irqflags = 0;
--		ret = devm_request_threaded_irq(&client->dev, client->irq,
--						NULL, pcf85363_rtc_handle_irq,
--						irqflags | IRQF_ONESHOT,
--						"pcf85363", client);
- 		if (ret) {
--			dev_warn(&client->dev,
--				 "unable to request IRQ, alarms disabled\n");
--			client->irq = 0;
-+			dev_err_probe(dev, ret, "INTA IRQ request failed\n");
-+			irq_a = 0;
-+		} else {
-+			regmap_write(pcf85363->regmap, CTRL_INTA_EN, INT_BSIE
-+				     | INT_TSRIE | INT_WDIE);
- 		}
- 	}
- 
--	if (client->irq > 0 || wakeup_source) {
--		device_init_wakeup(&client->dev, true);
--		set_bit(RTC_FEATURE_ALARM, pcf85363->rtc->features);
--	} else {
--		clear_bit(RTC_FEATURE_ALARM, pcf85363->rtc->features);
--	}
-+	regmap_update_bits(pcf85363->regmap, CTRL_PIN_IO,
-+			   PIN_IO_TSPM | PIN_IO_TSIM,
-+			   PIN_IO_TSPM | PIN_IO_TSIM);
-+
-+	ret = pcf85363_watchdog_init(dev, pcf85363->regmap);
-+
-+	if (ret)
-+		dev_err_probe(dev, ret, "Watchdog init failed\n");
-+
-+	if (irq_a > 0 || wakeup_source)
-+		device_init_wakeup(dev, true);
-+
-+	dev_set_drvdata(&pcf85363->rtc->dev, pcf85363);
- 
- 	ret = devm_rtc_register_device(pcf85363->rtc);
- 
-+	if (ret)
-+		return dev_err_probe(dev, ret, "RTC registration failed\n");
-+
-+	ret = sysfs_create_group(&pcf85363->rtc->dev.kobj, &alarm2_group);
-+
-+	if (ret)
-+		dev_err_probe(dev, ret, "Alarm2 sysfs creation failed\n");
-+
-+	ret = sysfs_create_group(&pcf85363->rtc->dev.kobj, &pcf85363_attr_group);
-+
-+	if (ret)
-+		dev_err_probe(dev, ret, "Timestamp sysfs creation failed\n");
-+
- 	for (i = 0; i < config->num_nvram; i++) {
- 		nvmem_cfg[i].priv = pcf85363;
- 		devm_rtc_nvmem_register(pcf85363->rtc, &nvmem_cfg[i]);
+Changes in v5:
+- Forgot to pickup tags from v4
+- Forgot to drop test and review tags on v4 patches that were
+  significantly modified
+- Update commit message for data source filtering to mention inversion
+- Link to v4: https://lore.kernel.org/r/20250721-james-perf-feat_spe_eft-v4-0-0a527410f8fd@linaro.org
+
+Changes in v4:
+- Rewrite "const u64 feat_spe_eft_bits" inline
+- Invert data source filter so that it's possible to exclude all data
+  sources without adding an additional 'enable filter' flag
+- Add a macro in el2_setup.h to check for an SPE version
+- Probe valid filter bits instead of hardcoding them
+- Take in Leo's commit to expose the filter bits as it depends on the
+  new filter probing
+- Link to v3: https://lore.kernel.org/r/20250605-james-perf-feat_spe_eft-v3-0-71b0c9f98093@linaro.org
+
+Changes in v3:
+- Use PMSIDR_EL1_FDS instead of 1 << PMSIDR_EL1_FDS_SHIFT
+- Add VNCR offsets
+- Link to v2: https://lore.kernel.org/r/20250529-james-perf-feat_spe_eft-v2-0-a01a9baad06a@linaro.org
+
+Changes in v2:
+- Fix detection of FEAT_SPE_FDS in el2_setup.h
+- Pickup Marc Z's sysreg change instead which matches the json
+- Restructure and expand docs changes
+- Link to v1: https://lore.kernel.org/r/20250506-james-perf-feat_spe_eft-v1-0-dd480e8e4851@linaro.org
+
+---
+James Clark (11):
+      arm64: sysreg: Add new PMSFCR_EL1 fields and PMSDSFR_EL1 register
+      perf: arm_spe: Support FEAT_SPEv1p4 filters
+      perf: arm_spe: Add support for FEAT_SPE_EFT extended filtering
+      arm64/boot: Factor out a macro to check SPE version
+      arm64/boot: Enable EL2 requirements for SPE_FEAT_FDS
+      KVM: arm64: Add trap configs for PMSDSFR_EL1
+      perf: Add perf_event_attr::config4
+      perf: arm_spe: Add support for filtering on data source
+      tools headers UAPI: Sync linux/perf_event.h with the kernel sources
+      perf tools: Add support for perf_event_attr::config4
+      perf docs: arm-spe: Document new SPE filtering features
+
+Leo Yan (1):
+      perf: arm_spe: Expose event filter
+
+ Documentation/arch/arm64/booting.rst      |  11 +++
+ arch/arm64/include/asm/el2_setup.h        |  28 ++++--
+ arch/arm64/include/asm/sysreg.h           |   9 --
+ arch/arm64/include/asm/vncr_mapping.h     |   2 +
+ arch/arm64/kvm/emulate-nested.c           |   1 +
+ arch/arm64/kvm/sys_regs.c                 |   1 +
+ arch/arm64/tools/sysreg                   |  13 ++-
+ drivers/perf/arm_spe_pmu.c                | 148 ++++++++++++++++++++++++++----
+ include/uapi/linux/perf_event.h           |   2 +
+ tools/include/uapi/linux/perf_event.h     |   2 +
+ tools/perf/Documentation/perf-arm-spe.txt | 104 +++++++++++++++++++--
+ tools/perf/tests/parse-events.c           |  14 ++-
+ tools/perf/util/parse-events.c            |  11 +++
+ tools/perf/util/parse-events.h            |   1 +
+ tools/perf/util/parse-events.l            |   1 +
+ tools/perf/util/pmu.c                     |   8 ++
+ tools/perf/util/pmu.h                     |   1 +
+ 17 files changed, 312 insertions(+), 45 deletions(-)
+---
+base-commit: 37816488247ddddbc3de113c78c83572274b1e2e
+change-id: 20250312-james-perf-feat_spe_eft-66cdf4d8fe99
+
+Best regards,
 -- 
-2.25.1
+James Clark <james.clark@linaro.org>
 
 
