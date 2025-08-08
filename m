@@ -1,135 +1,130 @@
-Return-Path: <linux-kernel+bounces-760196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D998B1E7AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:47:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41153B1E7AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CFAA3B9E8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:47:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B79F7B022C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7472750F8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AF7275AE6;
+	Fri,  8 Aug 2025 11:47:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852262750E5;
 	Fri,  8 Aug 2025 11:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQU2DVcy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A30273D9B;
-	Fri,  8 Aug 2025 11:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754653658; cv=none; b=ZWmBR7wFtUKKRma8lF+BsyWK+1REBLuwFrbqrQNYUZD8Y+XpiTFNFbnmWEydZ0ruoV2Qh2OD7uCKKNIZUDE5LGBWz7paFic3WGHg7Rg+FjxVxOzxLKYvwSuQuyV7M4m31yFp9OtdCfGB9Yaxlo5Qs1YBGPUwTbWWYgHRHuLlvtY=
+	t=1754653660; cv=none; b=UeL7F5nAH77wMORWhbkpm2nTUF8bQMdPhm0mLW/tzAEOXwvYCPFwoXccGM9VNYeBlX9e5WurSH4tSzGb3AOhGOgpAxHRmFcIPQ0Iyulr6LT90qU0/xbkDJxj5+3cdC4BVLdoIIOqo7Chmf0ygN9AyXz0cIGbKygtnT4MUgYR86k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754653658; c=relaxed/simple;
-	bh=/MZhv2xyt4AcUDBeXqBeLQjeF82okZjGlosKDRDZRRI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZwvSN+6gYCU9tu6HmDaESqjHkOVnQuEWcYXHzIArgawo+/VA07frm4VqVb0oyVbqqxWrZ2CF8eWKgdphOLS0psZ0LeO2wtdoKBQiNf6PrLtj2z9Fk/yFPya8aYXp7amH6FJqbxI/QNG4U5fwlWiSIvbuixeMS9sPwrvnnrCjpKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQU2DVcy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C61CC4CEED;
-	Fri,  8 Aug 2025 11:47:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754653655;
-	bh=/MZhv2xyt4AcUDBeXqBeLQjeF82okZjGlosKDRDZRRI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=IQU2DVcyJVd5B0+i0u+kVGVGSkAyEJgeoPLt83MBFTeukFmA767VSCfee9jo2kpJu
-	 ewnqYzL6oFuM7V3YAHQKSYCZOsFySGH8wD9cKXnZ0GjvCQG0ofU/o3fp4iR99Vdn4N
-	 6OxePJiGA9xHAIcPvRRE33aHWyPRNjMyeM8mnvmewljS376m/31icfgu4UnvrvGbjj
-	 Bs+qwGRAP/jEDGNUL2NU1f2FiSa6GoHKoZZ+pLsWzn9OAgxbccK0jU1nVw7t+sZLje
-	 K5KflUU+XXYFZxZAybDHl6gqr17n00q7l0EDS4/DJlhSWNViKSvh12nw55GJCFY56f
-	 EOv0YpzVtF53Q==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org,  jasonmiu@google.com,  graf@amazon.com,
-  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
-  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
-  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
-  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
-  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
-  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
-  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
-  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 02/30] kho: mm: Don't allow deferred struct page with
- KHO
-In-Reply-To: <20250807014442.3829950-3-pasha.tatashin@soleen.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-3-pasha.tatashin@soleen.com>
-Date: Fri, 08 Aug 2025 13:47:25 +0200
-Message-ID: <mafs0jz3eavci.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1754653660; c=relaxed/simple;
+	bh=fw0LMFAx6/CelKIeGgsPTOu4keOgrwh72hmn0s1QYnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iAMsMJey+xauUicgPRJndYf+xF6GA2omgsqjK1/H1QXrZDB/0t+auhvXEkY+8WS1kLCh42of82mknYI1hOI+TkUH3okuThBdaguOzQ8FK9ROIBvbaZeS5WN7JGg4P9KcB1u4DCZNd6Vbdcj8FOZUF+M3Q6A2fAOPXVIeRYze1ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72FF016F8;
+	Fri,  8 Aug 2025 04:47:28 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 290483F673;
+	Fri,  8 Aug 2025 04:47:36 -0700 (PDT)
+Date: Fri, 8 Aug 2025 12:47:34 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>, KP Singh <kpsingh@kernel.org>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	James Clark <james.clark@linaro.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] perf auxtrace: Support AUX pause and resume with
+ BPF
+Message-ID: <20250808114734.GB3420125@e132581.arm.com>
+References: <20250725-perf_aux_pause_resume_bpf_rebase-v3-0-9fc84c0f4b3a@arm.com>
+ <fd7c39d2-64b4-480e-8a29-abefcdc7d10a@intel.com>
+ <20250730182623.GE143191@e132581.arm.com>
+ <0a0ed9d4-6511-4f0b-868f-22a3f95697f8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a0ed9d4-6511-4f0b-868f-22a3f95697f8@intel.com>
 
-On Thu, Aug 07 2025, Pasha Tatashin wrote:
+On Tue, Aug 05, 2025 at 10:16:29PM +0300, Adrian Hunter wrote:
+> On 30/07/2025 21:26, Leo Yan wrote:
+> > Hi Adrian,
+> > 
+> > On Mon, Jul 28, 2025 at 08:02:51PM +0300, Adrian Hunter wrote:
+> >> On 25/07/2025 12:59, Leo Yan wrote:
+> >>> This series extends Perf for fine-grained tracing by using BPF program
+> >>> to pause and resume AUX tracing. The BPF program can be attached to
+> >>> tracepoints (including ftrace tracepoints and dynamic tracepoints, like
+> >>> kprobe, kretprobe, uprobe and uretprobe).
+> >>
+> >> Using eBPF to pause/resume AUX tracing seems like a great idea.
+> >>
+> >> AFAICT with this patch set, there is just support for pause/resume
+> >> much like what could be done directly without eBPF, so I wonder if you
+> >> could share a bit more on how you see this evolving, and what your
+> >> future plans are?
+> > 
+> > IIUC, here you mean the tool can use `perf probe` to firstly create
+> > probes, then enable tracepoints as PMU event for AUX pause and resume.
+> 
+> Yes, like:
+> 
+> $ sudo perf probe 'do_sys_openat2 how->flags how->mode'
+> Added new event:
+>   probe:do_sys_openat2 (on do_sys_openat2 with flags=how->flags mode=how->mode)
+> 
+> You can now use it in all perf tools, such as:
+> 
+>         perf record -e probe:do_sys_openat2 -aR sleep 1
+> 
+> $ sudo perf probe do_sys_openat2%return
+> Added new event:
+>   probe:do_sys_openat2__return (on do_sys_openat2%return)
+> 
+> You can now use it in all perf tools, such as:
+> 
+>         perf record -e probe:do_sys_openat2__return -aR sleep 1
+> 
+> $ sudo perf record --kcore -e intel_pt/aux-action=start-paused/k -e probe:do_sys_openat2/aux-action=resume/ --filter='flags==0x98800' -e probe:do_sys_openat2__return/aux-action=pause/ -- ls
 
-> KHO uses struct pages for the preserved memory early in boot, however,
-> with deferred struct page initialization, only a small portion of
-> memory has properly initialized struct pages.
->
-> This problem was detected where vmemmap is poisoned, and illegal flag
-> combinations are detected.
->
-> Don't allow them to be enabled together, and later we will have to
-> teach KHO to work properly with deferred struct page init kernel
-> feature.
->
-> Fixes: 990a950fe8fd ("kexec: add config option for KHO")
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Thanks a lot for sharing the commands. I was able to replicate them
+using CoreSight.
 
-Nit: Drop the blank line before fixes. git interpret-trailers doesn't
-seem to recognize the fixes otherwise, so this may break some tooling.
-Try it yourself:
+Given that we can achieve the same result without using BPF, I am not
+sure how useful this series is. It may give us a base for exploring
+profiling that combines AUX trace and BPF, but I am fine with holding
+on until we have clear requirements for it.
 
-    $ git interpret-trailers --parse commit_message.txt
+I would get suggestion from you and maintainers before proceeding
+further.
 
-Other than this,
-
-Acked-by: Pratyush Yadav <pratyush@kernel.org>
-
-> Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  kernel/Kconfig.kexec | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> index 2ee603a98813..1224dd937df0 100644
-> --- a/kernel/Kconfig.kexec
-> +++ b/kernel/Kconfig.kexec
-> @@ -97,6 +97,7 @@ config KEXEC_JUMP
->  config KEXEC_HANDOVER
->  	bool "kexec handover"
->  	depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FILE
-> +	depends on !DEFERRED_STRUCT_PAGE_INIT
->  	select MEMBLOCK_KHO_SCRATCH
->  	select KEXEC_FILE
->  	select DEBUG_FS
-
--- 
-Regards,
-Pratyush Yadav
+Thanks,
+Leo
 
