@@ -1,166 +1,358 @@
-Return-Path: <linux-kernel+bounces-759853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D15B1E376
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:34:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABB2B1E375
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992EA18A4372
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:33:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5560FA01572
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA7523F412;
-	Fri,  8 Aug 2025 07:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NwRYp6WN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E5D222578;
+	Fri,  8 Aug 2025 07:30:18 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527AF2248A0
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CB822DF9E
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638219; cv=none; b=Im1s5LhHolMSBCEPk7mjvYe51OflQ3YmrjGEjpJB39WV8EZEMKoFf1dC+sVcK3FBoq7984gy4S06CL1U5Nd8bs/ICO7PIgNry2HySfXvTkKc0lDVA/jk9CcMH/8+XTz9csWaKls34rN5f+5Y/3acxdKtDpZsWKx+TiRxQmHOLes=
+	t=1754638217; cv=none; b=isFbbGmeZIwGp0hgYf31LpfX57o2wpGQinrBGrryECvqwIBb6kOhVlnI/gRyIIGN9vdq6i+8QRTjnjxL2b1NEgxkLfP3O2pciRAyj1a6sdFjN68pPnj/y15tVIb81CcVgmj2g8gs3SfL170V4l6MeyjNcvPZHtOlktflKkzSWZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638219; c=relaxed/simple;
-	bh=EHywBHd1OxRIzOjuUYWD29M8banbtxBweMpbfCeimSc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UFlcu68FjDgIqqH9n466sdKj6/LwE9EQMSCr65Q66AyWW5Hkzw4897TxO3dagL/DpCH3nZ8yTc02gD+Buu6ZrxdEtiH34RI8YivSQBvK0WaC9c6SUCSOx7X0jIngxApJLUQt8LcB/62sain3qnfjuVvs21LUkUmDYKGxcMG1S4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NwRYp6WN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754638216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EHywBHd1OxRIzOjuUYWD29M8banbtxBweMpbfCeimSc=;
-	b=NwRYp6WNk8oV8aCe+RFO+bN3GqJr8m4/SxHOqL5fog55nt+F1mBEpMkPyxAJGre3r0ipkQ
-	t1sxNYQoi6kz+EI2QAiK0GI/HfHxvXscnQ3cd849cxMkoJs228Ey7gM625i3iw3eCI5R4A
-	/q3TAzE9OAZJQBUypEipweVp3eR5++M=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-540-Z8yb4B8gMRyo2u6PEMTS3g-1; Fri, 08 Aug 2025 03:30:14 -0400
-X-MC-Unique: Z8yb4B8gMRyo2u6PEMTS3g-1
-X-Mimecast-MFC-AGG-ID: Z8yb4B8gMRyo2u6PEMTS3g_1754638214
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7e69d69691fso197607385a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 00:30:14 -0700 (PDT)
+	s=arc-20240116; t=1754638217; c=relaxed/simple;
+	bh=keg61B/+p9gqufvR1XQ9nMk8GgnCssYJR3R4TSC6mtM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=TzzlD7HkC4jwzImq1DjtHEs0x4k8L2lyJdnuvcp18GHQMB1/CqaWb4+4MrCq+BhrVYazVfyQ7X0X+mPmsCNUqncQa7rV0x1uDLPg+j+FanaER0q9wCrDX1t3Iqt8/+SBeInkpQwqzyQCJ7m83KYFXMe7QuukVfDxIrygMxCBhOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88177d99827so179704039f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 00:30:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1754638214; x=1755243014;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHywBHd1OxRIzOjuUYWD29M8banbtxBweMpbfCeimSc=;
-        b=EDoKC9OVaPfAHF4Odz7TlpvXcDrywhlXrV1WzGzQdyKYJ1IVTJCsnc0onO5FtlieNZ
-         slvEAOWJzDT2c5qqhkAEoDQ2cQtEup9ZZZg4fbDkXQrO+OLgQSmq1s/cgKp80UUO/ucL
-         V9XMK96ppE18HbA6rVI8VY7oBCWA8EFSUUYfxvBy9yNP8olgMo4zYRWWuueebKNBpAtT
-         VAP3Xnuxsh7te9vWFp/OV7XA+RlZD0F74zGxhXIs0JzYAx/HmNni55gwNX44P5flVp/N
-         PqS6NAqnTX8TJTWTgLWmM+0n9bqA6O/dmk8K9EbB2BgBaW9eWLkMZT0fYo4h5K2VK4gk
-         DTzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyrwZ8bYJDdOQ4NdPCtYo6t+SfJAd9bgb6ujm3tu0prm8BycM4ubUK/EoalyJSn8cQfVJ6bRt4NXinOg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySdVlkvUZ3R13GRdwH/DvJ0CELlt55hHscByvvyRyhBeXOeHV5
-	20Db7YgUh0MI2o3v4Y1a4vfkIIwgK5HBLdmFBx6sqfc9SepDZO5sQp5+jFrs/HS3ofh9Av8wIFE
-	+docEDwtxddOiu2UqlA3DBCVt0dhqLGJ96dbl8qJcXi7o9P7YzHX1U3OwBDY2mywp7Q==
-X-Gm-Gg: ASbGncun92NgLZxzifRwMauhfhEp2IbC4X5a0iiNtCIG76GY+BkaLI3B56UKXkOoSXu
-	45ZFqYL4/QStGCmvCBqUaQEzWmW8DgZLu2n4uKszp+7tQkRJGtTbeEsTQfVH/kWMhEStSTZNIQE
-	BKOUPpHLPZKkf7swgxmNZshAFHjwrJe/Th+lTVhBUSmrKHkFgE4vYF4YuVWr9kZarIJZ8KFZaAY
-	ruw7BIcTQFWVZIwu5zfJmbfK7yb+eOLrHgw9DZKQCcPSF+gCDprbVYyMhegdnlUJ5AT7+cQ1yX+
-	+aoTuFwTaCBHFmNIWCsMETwg/gO+Hq80hJhV4QOpZNZZswlL5EhEPeYCWKkELSoVOA==
-X-Received: by 2002:a05:620a:880d:b0:7e6:7083:e2b3 with SMTP id af79cd13be357-7e82c63c8e2mr261238285a.9.1754638213855;
-        Fri, 08 Aug 2025 00:30:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaEv0CLI3Nwa//Oy5W/et3N8C/QGGdQvh8aoP6RMedjZnqPNG2uAHc2P7KdnkPU1kElEOLcA==
-X-Received: by 2002:a05:620a:880d:b0:7e6:7083:e2b3 with SMTP id af79cd13be357-7e82c63c8e2mr261235185a.9.1754638213434;
-        Fri, 08 Aug 2025 00:30:13 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e698de2df7sm823957785a.80.2025.08.08.00.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 00:30:13 -0700 (PDT)
-Message-ID: <c0ae826c9a3d828ac8ab2088495e671cd9384a86.camel@redhat.com>
-Subject: Re: [PATCH v2 5/5] rv: Add rts monitor
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, 	linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
- Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann	 <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman	 <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, K Prateek Nayak	 <kprateek.nayak@amd.com>
-Date: Fri, 08 Aug 2025 09:30:09 +0200
-In-Reply-To: <87ikiypei8.fsf@yellow.woof>
-References: <cover.1754466623.git.namcao@linutronix.de>
-	 <88fdbeb3f2ecf3a6259f3ee8636ae5b21fa6b72d.1754466623.git.namcao@linutronix.de>
-	 <ecd720a0b971658a915473f0f864668cd6e1ef1a.camel@redhat.com>
-	 <87ikiypei8.fsf@yellow.woof>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        bh=8CDXWPKDbSaaWMQnPXOZ1ZyCr/i3dxjvf7dpcEW3T/g=;
+        b=hFVDHS3tc7aW85JRNi2rxzAUV7Y34SzccLZynDE95Xw+qGPl4Hg5KrlEKTSj7ouoFQ
+         AjGtZiaQ5TOgxnQzFfPZiBfACmwMYyXBt+DE2FfoabTW7X8HRXYF6kkj/GHUKVklYuKz
+         7APCDkn4I9HxfSAj3MaANZ663CGm3YqfBKiuf6pOCKZtylTECafLl/pMFFuUBhJjK8oS
+         gjhSnDyf4PWdImjbGaUFwjr2ZpvIND6Jzy1rMJpOSb8sfmGIKOTM26I8sebaNdUNIcUv
+         TdHz0MsTIlV7ybvQ/VmLLVd1cniCnPG8PVbwwt6u11FE3c88rHh6Cf6dD9VpNesYbkCg
+         YPsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoLUEBzEJ4ftp1FMBsyJM/Bh3Ua2g/vVF5hl1UsAtH/cWz82PF7FZ/7P22TdDimiw/fN9L6oorIuu+7TQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrjWhU97KYg3aFABJTznXVKUcIUdiH0b+0+ImMZQS6yQUBl/ei
+	L5vXozXzt1Qc73zVC8tbsJxebwkAD8U4nb4dMey23ivRo9WiYXWNN6JnpOSyl2r9kDVA6DQ+L2m
+	/5De5JYOkyAm50Lw6M2HCYobI/DhWO15n1khS81sPsIijbo6aOc/p5i0WZfs=
+X-Google-Smtp-Source: AGHT+IG1vKLXhxfVsTKCbsHjpwNzYcuITkrI472OzzS/qNWdw3Km4FDuLtfxYLpAdcwY9YkMud0p0U5Y6AQ4T6KIbSgUkU0r3tXw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6602:1648:b0:87c:a4e:fc7d with SMTP id
+ ca18e2360f4ac-883f1279a2amr449278939f.14.1754638214551; Fri, 08 Aug 2025
+ 00:30:14 -0700 (PDT)
+Date: Fri, 08 Aug 2025 00:30:14 -0700
+In-Reply-To: <20250807175032.7381-1-contact@arnaud-lcm.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6895a786.050a0220.7f033.0057.GAE@google.com>
+Subject: [syzbot ci] Re: bpf: refactor max_depth computation in bpf_get_stack()
+From: syzbot ci <syzbot+ci465abfb91e7946e5@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	contact@arnaud-lcm.com, daniel@iogearbox.net, eddyz87@gmail.com, 
+	haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org, 
+	kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
+	sdf@fomichev.me, song@kernel.org, syzbot@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 2025-08-08 at 07:29 +0200, Nam Cao wrote:
-> Gabriele Monaco <gmonaco@redhat.com> writes:
-> > The monitor shows a violation also in case of priority inversion
-> > boosting, e.g.:
-> >=20
-> > =C2=A0stress-ng --prio-inv 2
->=20
-> This looks like something that would trigger the fair deadline server
-> or RT throttling. Can you please try disabling both of them:
->=20
-> =C2=A0=C2=A0=C2=A0 echo 0 | tee /sys/kernel/debug/sched/fair_server/cpu*/=
-runtime
-> =C2=A0=C2=A0=C2=A0 sysctl -w kernel.sched_rt_runtime_us=3D-1
->=20
-> and see if the problem persists?
+syzbot ci has tested the following series
 
-My bad, that was the fair server's doing, ignore what I said.
+[v1] bpf: refactor max_depth computation in bpf_get_stack()
+https://lore.kernel.org/all/20250807175032.7381-1-contact@arnaud-lcm.com
+* [PATCH 1/2] bpf: refactor max_depth computation in bpf_get_stack()
+* [PATCH 2/2] bpf: fix stackmap overflow check in __bpf_get_stackid()
 
->=20
-> > It seems perfectly reasonable from the monitor description but it's
-> > actually a behaviour meant to improve real time response.
-> > Is the user seeing this type of violation supposed to make sure all
-> > locks held by RT tasks are never shared by fair tasks? If that's
-> > the case I'd mention it in the description.
->=20
-> Boosted fair tasks are treated as RT tasks ;)
->=20
-> > Also very rarely I see failures while cleaning up the monitor, not
-> > sure exactly what caused it but I could reproduce it with something
-> > like:
-> >=20
-> > =C2=A0 for i in $(seq 100); do timeout -s INT 2 rv mon rts -r printk;
-> > done
-> >=20
-> > Running the monitor without stopping for the same amount of time
-> > doesn't seem to show violations (until I terminate it).
->=20
-> This one is strange, I cannot reproduce this issue. Did you run only
-> that command, or did you have other things running as well?
->=20
-> And does the problem still appears after disabling the fair deadline
-> server and RT throttling?
+and found the following issues:
+* KASAN: stack-out-of-bounds Write in __bpf_get_stack
+* PANIC: double fault in its_return_thunk
 
-Also here, I don't seem to reproduce it with both disabled..
-Sorry for that, looks good for me then.
+Full report is available here:
+https://ci.syzbot.org/series/2af1b227-99e3-4e64-ac23-827848a4b8a5
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+***
 
-Thanks,
-Gabriele
+KASAN: stack-out-of-bounds Write in __bpf_get_stack
 
+tree:      bpf-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf-next.git
+base:      f3af62b6cee8af9f07012051874af2d2a451f0e5
+arch:      amd64
+compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+config:    https://ci.syzbot.org/builds/5e5c6698-7b84-4bf2-a1ee-1b6223c8d4c3/config
+C repro:   https://ci.syzbot.org/findings/1355d710-d133-43fd-9061-18b2de6844a4/c_repro
+syz repro: https://ci.syzbot.org/findings/1355d710-d133-43fd-9061-18b2de6844a4/syz_repro
+
+netdevsim netdevsim1 netdevsim0: renamed from eth0
+netdevsim netdevsim1 netdevsim1: renamed from eth1
+==================================================================
+BUG: KASAN: stack-out-of-bounds in __bpf_get_stack+0x54a/0xa70 kernel/bpf/stackmap.c:501
+Write of size 208 at addr ffffc90003655ee8 by task syz-executor/5952
+
+CPU: 1 UID: 0 PID: 5952 Comm: syz-executor Not tainted 6.16.0-syzkaller-11113-gf3af62b6cee8-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ check_region_inline mm/kasan/generic.c:-1 [inline]
+ kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:189
+ __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+ __bpf_get_stack+0x54a/0xa70 kernel/bpf/stackmap.c:501
+ ____bpf_get_stack kernel/bpf/stackmap.c:525 [inline]
+ bpf_get_stack+0x33/0x50 kernel/bpf/stackmap.c:522
+ ____bpf_get_stack_raw_tp kernel/trace/bpf_trace.c:1835 [inline]
+ bpf_get_stack_raw_tp+0x1a9/0x220 kernel/trace/bpf_trace.c:1825
+ bpf_prog_4e330ebee64cb698+0x43/0x4b
+ bpf_dispatcher_nop_func include/linux/bpf.h:1332 [inline]
+ __bpf_prog_run include/linux/filter.h:718 [inline]
+ bpf_prog_run include/linux/filter.h:725 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2257 [inline]
+ bpf_trace_run10+0x2e4/0x500 kernel/trace/bpf_trace.c:2306
+ __bpf_trace_percpu_alloc_percpu+0x364/0x400 include/trace/events/percpu.h:11
+ __do_trace_percpu_alloc_percpu include/trace/events/percpu.h:11 [inline]
+ trace_percpu_alloc_percpu include/trace/events/percpu.h:11 [inline]
+ pcpu_alloc_noprof+0x1534/0x16b0 mm/percpu.c:1892
+ fib_nh_common_init+0x9c/0x3b0 net/ipv4/fib_semantics.c:620
+ fib6_nh_init+0x1608/0x1ff0 net/ipv6/route.c:3671
+ ip6_route_info_create_nh+0x16a/0xab0 net/ipv6/route.c:3892
+ ip6_route_add+0x6e/0x1b0 net/ipv6/route.c:3944
+ addrconf_add_mroute net/ipv6/addrconf.c:2552 [inline]
+ addrconf_add_dev+0x24f/0x340 net/ipv6/addrconf.c:2570
+ addrconf_dev_config net/ipv6/addrconf.c:3479 [inline]
+ addrconf_init_auto_addrs+0x57c/0xa30 net/ipv6/addrconf.c:3567
+ addrconf_notify+0xacc/0x1010 net/ipv6/addrconf.c:3740
+ notifier_call_chain+0x1b6/0x3e0 kernel/notifier.c:85
+ call_netdevice_notifiers_extack net/core/dev.c:2267 [inline]
+ call_netdevice_notifiers net/core/dev.c:2281 [inline]
+ __dev_notify_flags+0x18d/0x2e0 net/core/dev.c:-1
+ netif_change_flags+0xe8/0x1a0 net/core/dev.c:9608
+ do_setlink+0xc55/0x41c0 net/core/rtnetlink.c:3143
+ rtnl_changelink net/core/rtnetlink.c:3761 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3920 [inline]
+ rtnl_newlink+0x160b/0x1c70 net/core/rtnetlink.c:4057
+ rtnetlink_rcv_msg+0x7cf/0xb70 net/core/rtnetlink.c:6946
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:729
+ __sys_sendto+0x3bd/0x520 net/socket.c:2228
+ __do_sys_sendto net/socket.c:2235 [inline]
+ __se_sys_sendto net/socket.c:2231 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2231
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fec5c790a7c
+Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
+RSP: 002b:00007fff7b55f7b0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007fec5d4e35c0 RCX: 00007fec5c790a7c
+RDX: 0000000000000030 RSI: 00007fec5d4e3610 RDI: 0000000000000006
+RBP: 0000000000000000 R08: 00007fff7b55f804 R09: 000000000000000c
+R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000006
+R13: 0000000000000000 R14: 00007fec5d4e3610 R15: 0000000000000000
+ </TASK>
+
+The buggy address belongs to stack of task syz-executor/5952
+ and is located at offset 296 in frame:
+ __bpf_get_stack+0x0/0xa70 include/linux/mmap_lock.h:-1
+
+This frame has 1 object:
+ [32, 36) 'rctx.i'
+
+The buggy address belongs to a 8-page vmalloc region starting at 0xffffc90003650000 allocated at copy_process+0x54b/0x3c00 kernel/fork.c:2002
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888024c63200 pfn:0x24c62
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: ffff888024c63200 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_ZERO|__GFP_NOWARN), pid 5845, tgid 5845 (syz-executor), ts 59049058263, free_ts 59031992240
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
+ alloc_pages_noprof+0xa9/0x190 mm/mempolicy.c:2507
+ vm_area_alloc_pages mm/vmalloc.c:3642 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3720 [inline]
+ __vmalloc_node_range_noprof+0x97d/0x12f0 mm/vmalloc.c:3893
+ __vmalloc_node_noprof+0xc2/0x110 mm/vmalloc.c:3956
+ alloc_thread_stack_node kernel/fork.c:318 [inline]
+ dup_task_struct+0x3e7/0x860 kernel/fork.c:879
+ copy_process+0x54b/0x3c00 kernel/fork.c:2002
+ kernel_clone+0x21e/0x840 kernel/fork.c:2603
+ __do_sys_clone3 kernel/fork.c:2907 [inline]
+ __se_sys_clone3+0x256/0x2d0 kernel/fork.c:2886
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 5907 tgid 5907 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+ vfree+0x25a/0x400 mm/vmalloc.c:3434
+ kcov_put kernel/kcov.c:439 [inline]
+ kcov_close+0x28/0x50 kernel/kcov.c:535
+ __fput+0x44c/0xa70 fs/file_table.c:468
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0x6b5/0x2300 kernel/exit.c:966
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
+ get_signal+0x1286/0x1340 kernel/signal.c:3034
+ arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:40
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffffc90003655e00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90003655e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc90003655f00: 00 00 00 00 00 00 00 00 f1 f1 f1 f1 00 00 f2 f2
+                                           ^
+ ffffc90003655f80: 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3 f3 f3
+ ffffc90003656000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+***
+
+PANIC: double fault in its_return_thunk
+
+tree:      bpf-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/bpf/bpf-next.git
+base:      f3af62b6cee8af9f07012051874af2d2a451f0e5
+arch:      amd64
+compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+config:    https://ci.syzbot.org/builds/5e5c6698-7b84-4bf2-a1ee-1b6223c8d4c3/config
+C repro:   https://ci.syzbot.org/findings/1bf5dce6-467f-4bcd-9357-2726101d2ad1/c_repro
+syz repro: https://ci.syzbot.org/findings/1bf5dce6-467f-4bcd-9357-2726101d2ad1/syz_repro
+
+traps: PANIC: double fault, error_code: 0x0
+Oops: double fault: 0000 [#1] SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5789 Comm: syz-executor930 Not tainted 6.16.0-syzkaller-11113-gf3af62b6cee8-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:its_return_thunk+0x0/0x10 arch/x86/lib/retpoline.S:412
+Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <c3> cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 e9 6b 2b b9 f5 cc
+RSP: 0018:ffffffffa0000877 EFLAGS: 00010246
+RAX: 2161df6de464b300 RBX: 4800be48c0315641 RCX: 2161df6de464b300
+RDX: 0000000000000000 RSI: ffffffff8dba01ee RDI: ffff888105cc9cc0
+RBP: eb7a3aa9e9c95e41 R08: ffffffff81000130 R09: ffffffff81000130
+R10: ffffffff81d017ac R11: ffffffff8b7707da R12: 3145ffff888028c3
+R13: ee8948f875894cf6 R14: 000002baf8c68348 R15: e1cb3861e8c93100
+FS:  0000555557cbc380(0000) GS:ffff8880b862a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffa0000868 CR3: 0000000028468000 CR4: 00000000000006f0
+Call Trace:
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:its_return_thunk+0x0/0x10 arch/x86/lib/retpoline.S:412
+Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <c3> cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 e9 6b 2b b9 f5 cc
+RSP: 0018:ffffffffa0000877 EFLAGS: 00010246
+RAX: 2161df6de464b300 RBX: 4800be48c0315641 RCX: 2161df6de464b300
+RDX: 0000000000000000 RSI: ffffffff8dba01ee RDI: ffff888105cc9cc0
+RBP: eb7a3aa9e9c95e41 R08: ffffffff81000130 R09: ffffffff81000130
+R10: ffffffff81d017ac R11: ffffffff8b7707da R12: 3145ffff888028c3
+R13: ee8948f875894cf6 R14: 000002baf8c68348 R15: e1cb3861e8c93100
+FS:  0000555557cbc380(0000) GS:ffff8880b862a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffa0000868 CR3: 0000000028468000 CR4: 00000000000006f0
+----------------
+Code disassembly (best guess):
+   0:	cc                   	int3
+   1:	cc                   	int3
+   2:	cc                   	int3
+   3:	cc                   	int3
+   4:	cc                   	int3
+   5:	cc                   	int3
+   6:	cc                   	int3
+   7:	cc                   	int3
+   8:	cc                   	int3
+   9:	cc                   	int3
+   a:	cc                   	int3
+   b:	cc                   	int3
+   c:	cc                   	int3
+   d:	cc                   	int3
+   e:	cc                   	int3
+   f:	cc                   	int3
+  10:	cc                   	int3
+  11:	cc                   	int3
+  12:	cc                   	int3
+  13:	cc                   	int3
+  14:	cc                   	int3
+  15:	cc                   	int3
+  16:	cc                   	int3
+  17:	cc                   	int3
+  18:	cc                   	int3
+  19:	cc                   	int3
+  1a:	cc                   	int3
+  1b:	cc                   	int3
+  1c:	cc                   	int3
+  1d:	cc                   	int3
+  1e:	cc                   	int3
+  1f:	cc                   	int3
+  20:	cc                   	int3
+  21:	cc                   	int3
+  22:	cc                   	int3
+  23:	cc                   	int3
+  24:	cc                   	int3
+  25:	cc                   	int3
+  26:	cc                   	int3
+  27:	cc                   	int3
+  28:	cc                   	int3
+  29:	cc                   	int3
+* 2a:	c3                   	ret <-- trapping instruction
+  2b:	cc                   	int3
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	90                   	nop
+  31:	90                   	nop
+  32:	90                   	nop
+  33:	90                   	nop
+  34:	90                   	nop
+  35:	90                   	nop
+  36:	90                   	nop
+  37:	90                   	nop
+  38:	90                   	nop
+  39:	90                   	nop
+  3a:	e9 6b 2b b9 f5       	jmp    0xf5b92baa
+  3f:	cc                   	int3
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
