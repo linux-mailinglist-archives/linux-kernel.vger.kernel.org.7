@@ -1,180 +1,263 @@
-Return-Path: <linux-kernel+bounces-759969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2E8B1E513
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:57:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B306B1E519
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3219A00327
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:56:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6861B160947
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB12126B2AC;
-	Fri,  8 Aug 2025 08:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AF326CE2C;
+	Fri,  8 Aug 2025 08:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="APw8oI/9"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012012.outbound.protection.outlook.com [52.101.126.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKJanVI0"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AF226B2AD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754643350; cv=fail; b=Ld32Di2gTrh+bkPmzQCwz9z/3NxqSM0dqpCTlc+NjR74IOyvG8YW+TxUnqxUcZUhRt7YQ/0zQ6ixdY4yKX3Jzi+McyjGVjpBTxkY24Ob7+6ev3JKFTnH3SgwaH5p27r5GYFB8onuZJ720AOLODPyhahVf18OvDda1iZJRshHWzM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754643350; c=relaxed/simple;
-	bh=MgfUrh63wy8gxIGJj3DNbOcvPORgKtXp80zsQtbGRZI=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Xq8W3K8Pa6qB8UjmFmiSXl2XS5WUtsuVXGCUlOxS1q2i6qhnHGz2c9qgJuO0aYGYI4Gs0uqvB+iItRNI4uCbYOgA/yr+sQxirPNJfMJuOhjDfmt3oOLJszlcPpCOatEvbx/PhPMwy+PeXIfvJY8u4xPVZQJstFoIft0bxVgTj+Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=APw8oI/9; arc=fail smtp.client-ip=52.101.126.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gSvFgYP64C0WwLyuh/U1jBBaZhhEnXTB03oeHUH3x6eq/AvO9M1xE53Pl+4f4f0Gjf6lGRKt62zTMUgYXcarRXOtSRqNucSrlfNR3KRt2tbmH2RxPoDv/4lCXfbjImTFnKlgxws4szW+7cyeZzwdIMpDVf0gZyZc24ZFKpumKGqAV//xa8c/TnFl1vc/+ng3G7ABZiMVoJIt2rL5JSD/reg3Of7fboKQ4/HNXSSVBAxxEwOPmVcPS9gWq9W8LuhccO3brS15NYYA4MuwK369UUaRtoqz90qWQ6q4/U6RPm5pKIuUjq+8hZGB5/HAeemdxjazoAp0pxJkzP/PsyO5Pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/olyKIRYpqhIQf2c1ZYza/+yRyfvu4YuTui9YY/r/7o=;
- b=CkYVyJsojlUkWeY9ShP+xOe6OuLONbyAUwT9TulKwV+kV2H6iKtpHBLSt4EH/N9P0pPoFp1XlHB7/QwlLHSURGrpapgu++wULdAshTi5wc+p9RL9Hx3sUMYlzohe0H46S31B0o+3Zab4o3ocB4gOSnRNqvO8ELW7LV9QOUR7/6ZWfItvQEUXDqlreNJQq8gkrz85JuV7ozfM48Y9slwT5APszXUCmHmL8UlwCNPZhnB4xhoIznqqgsHCUXMf5fc6O0MDsrWjkYsfM7NZo10y9kmOZS7Ze//blHCmLDhZpaULgKo6JKrZUasqCzCdapAAIjWwVM8ncXeWpYEBxYIcHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/olyKIRYpqhIQf2c1ZYza/+yRyfvu4YuTui9YY/r/7o=;
- b=APw8oI/9v0PWmBeCuwEj5tUGDTLUpAaraMleg/y2Y2ly9VxQ/YKc8aml39eTrEskUxNuJv4s4pewlA+Q+XRZCz4viXcIvNUzbAyuabcGj/VqzDZt3E8gYJiwrTUeWgqiyvynm8gJy/3F4RZKfwqo8a6QNrOvuxl2aEZN2p9UlRVp8vCgTQ3uOmseU5Dr1FABECiN6ww/D60R1gaOJak9mxdOcDSVN/XCinNb3JoN0Fa9+9uJVMYuNxa7ynGacmroo7rDIBiO0ED/GGF7dqu3mW4V5jD6tUGrn4v8rInaZqSjnnUoe1RQZoE3R5PCnT5kK6zGIlr8n9B+bwEcDAFRKA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- TYZPR06MB6238.apcprd06.prod.outlook.com (2603:1096:400:33f::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.18; Fri, 8 Aug 2025 08:55:40 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
- 08:55:40 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Yaron Avizrat <yaron.avizrat@intel.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Qianfeng Rong <rongqianfeng@vivo.com>,
-	Farah Kassabri <fkassabri@habana.ai>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] accel/habanalabs: fix mismatched alloc/free for kvcalloc()
-Date: Fri,  8 Aug 2025 16:55:27 +0800
-Message-Id: <20250808085530.233737-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0211.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c5::14) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99361267B9B;
+	Fri,  8 Aug 2025 08:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754643358; cv=none; b=FUnwV1+8/Our0HGFvDpGpXqUXBw0ly9+d2Et/Brxvo7h/dNaSMKAUSDOCCvtSli7L5QcscrAGQy7ISuZsoHovhYxXjfBzZietQljcvRsksTIRUW6mUl9QLf7zIAnmOftQObVJDcmTcgShzqHXvHIpRxLfoL34lyqhwtT3gWeF3U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754643358; c=relaxed/simple;
+	bh=OYg8Gx9p6ZS5BYnwQy23wsSJHrlVh0B0YEUdjS+lPRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uM6IWjCJrKMX0qPcWftfvIsXjrnMtUkZ1Xj+GdbXQo0agqYXx1sqMXef0OQeVgmwnKvjhrrOygZD8cBwVLdh81Utvs/DxlnM63P4Yi8PvDGYmgqvcdbKpRhY8aRCAg6AuNMoUYe0MkRbsER0v3CdqaXtAfoZZ7+BvYrrxrC9jB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mKJanVI0; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-333a17be4e0so5179011fa.1;
+        Fri, 08 Aug 2025 01:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754643354; x=1755248154; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PIys3bAAa6pSMxUyZ671w9wq1HjPaUe9JQbuiuBDBrE=;
+        b=mKJanVI0G+Yd8RCbvldY1jLQBWOQbobd3cqFtoSCAt2kpa5yk1WucLJN6iDvW54HKN
+         C8FXZwmfK3WUBjvFYglftHiNW2+0ApYeojClwQMPZ9sg8T3zvLX4xHn9iOI0x3cBfX23
+         xYYM5aorc5JMaA2V51QPVu1Os75SktiKH6fySkHYAI42V8bkX/mQKhXnq5ab2v3wPZih
+         /SiXNVhLUzwYgXwqmHbZEh6i90mUZM9ZJLE2HGVOBOHSgg7+M+HO1OHasiqwVNjzKjGe
+         g0FFtGsl8IHGkahdCCbrze7d5d4Ua2GCrpHX3xFe0idozVVISKdKDvMpFDXWsMOT9V1V
+         nTUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754643354; x=1755248154;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PIys3bAAa6pSMxUyZ671w9wq1HjPaUe9JQbuiuBDBrE=;
+        b=qF7nMuI6W92WUm8fr4y3pgf9YHGkbSg8wP4kvYz61lI4ZDZUut/K+rBuvW22/A7JR+
+         B3A5VJ+2yBhTeimSYIf/Z6STd4DApxVkNlL7UCQy6L1CCjwrF+9yZehDM3vGAbvXr0qZ
+         2IRzpO/o8J5tCvbi4N/ZTPw2SPZFqMFDOuVxHZzyu7RJ0dYrDuAVHSAInkJy4x8apE71
+         Im8V94IuiMgHEP5xM6IoSOPe9sHO7t/72KAxqKw0uMnCfj0QGopW1EHM9HyZ6jEjlk32
+         U1ROxat/Raaiy3HQ6dY35cEfgNsStWebPi8/hcQ+X0vlEKmj1pU+ClvWrSFL5+oZQIo8
+         4VOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMluoyHkyhwhDFzMmhP/4QRPVeZ/CzwXQ9eaZV2lvvBPeM9c9skNt2hVKk5ioLThm8K6IjFY03bepA@vger.kernel.org, AJvYcCVaqf42JSoPSpJtW58nfo6EGZWhVQHD8N9siFqbvdzwcrrJDvFnlEmh6XGTi1Puzabo7XyiJ46Rs1lb@vger.kernel.org, AJvYcCWwNAHgMf0rVIT8T4fGMnyzOhcVjlz0Pib7ta8kMGxvsFUnjT0asLtTbQHIOCe4GUHcoIDOfoST2GyonGDk@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ3SRi9ERWSnhbYnp9QUHm3V9wGCfp858anSIdiptbxOYB8O0F
+	fyzwK9Nes+WFkXgYYaxcPIncrpMLm2rIf3fTJWQpSdHaNPzAiolClg2+
+X-Gm-Gg: ASbGncsHduZQw9DYrPtsoBG2BGtd++3cI6zksTt58Q+5TprIZHC8iYxZpq407L4zzWl
+	RzvTOJv4BiM0Q0+O7xejMVnBzJk+hDxy7OrgrzLKwMwNRrsmbrvh1bvESxPoTF+Kr5E6BDGz9mG
+	UTrjPkO2dH1L5CWCpuruCtirgJGItmRMlKzOEL2/SLADluMcIQKHBKw4127JsLI+Gh48/FBBoDv
+	JW1s8kK/h3hNuUb4BB5pWXjrIOGtqJCuMcNDBJicujg4B13Kw/K6/8Fndqi1kFxirtoeBWWLr2i
+	gyAaXT9poZaeJw3rSa4xk2sN2Db50/zAKCZp+cbAoWU9arMq3mylonBHa69JSNEmyPY/NKwAkoo
+	e+njDWUo3hucXu/oO1/AN3j00EyEx
+X-Google-Smtp-Source: AGHT+IHd03hIZFq+mKRDRpaNgEPl4nto3IHVTcpImtQsHtoKeXN0wVAnhIUbxRIPv2p+abqnhAEVDQ==
+X-Received: by 2002:a05:6512:1597:b0:55a:90b:7a37 with SMTP id 2adb3069b0e04-55cc0157e86mr561404e87.50.1754643353425;
+        Fri, 08 Aug 2025 01:55:53 -0700 (PDT)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c9906dsm2953861e87.83.2025.08.08.01.55.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 01:55:52 -0700 (PDT)
+Date: Fri, 8 Aug 2025 11:55:48 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 09/10] iio: adc: ad7476: Support ROHM BD79105
+Message-ID: <2a8c8107475f2e394c1a0a51c9a9ddc941132b5d.1754641960.git.mazziesaccount@gmail.com>
+References: <cover.1754641960.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYZPR06MB6238:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0a9465a-3693-4259-ba1c-08ddd6595993
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vyyUOqGsigfjm8yAw7BmeDe5wkldippa2rRdq8atW3OLZYBAhRuYgRn4RHmQ?=
- =?us-ascii?Q?T6dzDzPpdexEkBwKgl5/n8Jxvn2rNfvxPMRGWs/2lX0QYgsR9mSgCMbPYQ4h?=
- =?us-ascii?Q?VbsinEmLU1wPYTHI/5s51W8qbNlcehrmmQ8lb6V/FG7qomsQkDZDKLBpYXAG?=
- =?us-ascii?Q?GE/VMxw6tcsorWnV/CoTA0zaqB3OzqwlBKt94L9oPOpmQYrwL4Pqyu/cHrB2?=
- =?us-ascii?Q?lzNoH1i9lMJkbi4H+0FSdrBaYhJxn+0LQJvylm+qRubyUlKlJzc9WGCETo5J?=
- =?us-ascii?Q?A8sh1iitS1o+ESYPChDjz2iRMqyijnR166AZ65s0vs688jiClQq5mjO9NM6z?=
- =?us-ascii?Q?ah+DUCnMcFUNY4rR7F7gLn+3xSgramx2UWJkC4QJ7ASDTmi2W1QFm3Mt+Vtz?=
- =?us-ascii?Q?Epc3G0caa/ijGU8ekrSHvrUDtSE2K1kSfORIUrSSHhoCMiWbKZy/KBC56jCy?=
- =?us-ascii?Q?AI0Pk8fDl8Ieb7S2O4bylA8Q5mc+HssXL6rfSiJJws0237BYC2VXdIlWjvNy?=
- =?us-ascii?Q?Fkb0LVSQ963LDStaKrtOef61ehReTFfxu38dn6D9AC8Do4HYIQiiyEHF6Kot?=
- =?us-ascii?Q?6Agj6lXYjlClu5TnkcG6GE5PQl/5ko0ZMRss+7p5DB+Sv7gjvLQJ/W4rsZ/y?=
- =?us-ascii?Q?A4OdofczIli4ZVVP5is0NgV3H9WEN2VmBmxDNzCqlX6TV5GNOPDQkBoCjXYv?=
- =?us-ascii?Q?V/JOtakvRJ8eRcM0JCWj3i4B4Kx0U5xqITJJmmUbIXo693Fvq+HGG2PhPRRA?=
- =?us-ascii?Q?1/mGQXjbeGtxIePh0xgoMD4Z02kIyrTTQGoCQkwMK9Rgpu19DE7rqubLI304?=
- =?us-ascii?Q?nTbo5HdFD9ewVKlfFDFJLEB9CZeDg4cSKtf4mVZliuqpd2Oanur6+p571zG+?=
- =?us-ascii?Q?uwfccCanycH+ZozV81jSUp6jgYLwrW7M5TPMPVxGLI9Je25qxAdTK7rN9CxJ?=
- =?us-ascii?Q?sRlcYf1awLA0/zPbluh/Rlzgf+W7oy+bSIDky46RV3OnIjY6toUD4cdPQqXQ?=
- =?us-ascii?Q?oKIUCJde046FWpi4xbje6aZA2U1Ci2lciQ1SDlbADt0tep9f/eh7CZx+Egtb?=
- =?us-ascii?Q?dVfkA5i0gfzooL3XVFZeavJHPYbnM4NL3yKK58mjpNXi6mZTA1sGa2dlp8l0?=
- =?us-ascii?Q?lzdlpEglCH6R9xuHkSQ+NWDggdmIZkbaiGxolO/emttVmxh/S0SU7gJNwA2m?=
- =?us-ascii?Q?5nKqmcPZecMsX8IRpKIWoq6wIvJ4hHE9qKqlAwBSRyP3O7kisYyCGpvnsvP1?=
- =?us-ascii?Q?VEdUqUJZUEYVYfBqAtTxto149RikRenp58FxkwsU+/rpRNoXVUVPXWC5PWPo?=
- =?us-ascii?Q?G545w0v4WNq5RaWMtT/RIEu8JlTD9yQ9kuL2TBYVM+VgiBH4R3tg9i3ijYph?=
- =?us-ascii?Q?600cBgCESLldCmvkdvz3rjmt2qu3wMZ7kb8DR9w53gR9GsNEQw59JrmUN9wO?=
- =?us-ascii?Q?YfwnI6UX/iHjPle9NwLY4BPu9i4nINteVqdNvO36r31M9/qmve7PaA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?84EdeMDYdr08kwR7w6KlnZVQRq3dDvYGXUXKfANFpZ/zrPuSDIL9V301EsRM?=
- =?us-ascii?Q?Jsk7lvn3PFl6PqBU982S3QjdTYMLGjTLyRXlgM4RhAtNcUAK3RK6XICWoURX?=
- =?us-ascii?Q?HXa5MIe7YOCv3MKPuxleOpni0Gd8803/bgmYTLDJh5XPBux14yH98D67wUeg?=
- =?us-ascii?Q?raCkwWIaYRKVzyuSYFYrJyqo3thapomdJeNcAwHut85t3i0nIv2A8lNNa9Jy?=
- =?us-ascii?Q?mm8CJGVowJr6aiYkngHB5i8jt5FjPQzIjOf90jAnb0ll7VyQ72Y9HCgNnzV1?=
- =?us-ascii?Q?CuwY171pyorp4Jkzd3OFaPDvjpbEYty4lIO6bAZe/kDiMLxAenqNPoRhDF3B?=
- =?us-ascii?Q?n5dxYKoBVrlc6tJ0iMS0xq+UiYu5DxkCp3uZO0oDozXXvYZBrL4wReYEVrwI?=
- =?us-ascii?Q?r0sdUCJ6MhqqYicS2HS/g1oMnooxF13jo6duOqMnQRqYh2eRhSKVpA51Z+ya?=
- =?us-ascii?Q?zClC2PqWr09BsfN0Ve8X3MlenST8g7RpdceOlhry/LIh+zln6vU7T49ujGQ6?=
- =?us-ascii?Q?yEj0i+jIssYVa5g8Cc7qViVaad3MOsw8GNNcdWNVwg6ulc3vxMWzLcOsKE2R?=
- =?us-ascii?Q?B1N4Vfd/URffXnDDnuk4hvim5rj6VEGrMCoXFALanXI+CBmIxmb83u8GPdz0?=
- =?us-ascii?Q?YXUcjDfRuvZJMiSFRPeozr6TJlrgBiQgutOBEWHBXFWogEH++ZBHC9l7I3Pu?=
- =?us-ascii?Q?IN21MnCrsbI3Owh9c12J4nZEXamJ6FXq18gkhAgEoesBWU0SrLoSEFpgldnC?=
- =?us-ascii?Q?b9xe3GeAawAosdrca/8lt5CqRdwHJ4syswvxexoi2agZKXG0OcqAapRKHJTM?=
- =?us-ascii?Q?g3h6zUaLkmzWPD40CQEdZnevFo1cBU0K+s3RJI1ZeLZppzjLJtsrK7waGY86?=
- =?us-ascii?Q?J618LVYZWmnTJiyTjzouUmlniXI2u1DQoJahGZJKEpEG6qCGqQ4An2yphPRJ?=
- =?us-ascii?Q?91t9jHllhYvsIn0cjZ4dmdyOHjjxNTutjzxpEvLn8uM9RGUGJR+DOj79ez6I?=
- =?us-ascii?Q?c95ddPR48EvrKa+LUO3WmLSH1miqO96WEvJuyfSudpXRPe5jkwsu0iXdpZD3?=
- =?us-ascii?Q?BcltECt97SgucJt1D9ZOLeN74Q4kPWxuXViA6RO6qe12g8kFKh6I5LC5SqUV?=
- =?us-ascii?Q?ccQAIah2cvF5/ABsvJsiO7gbgtGaHG9ImI0a8Bm8yPbJg/vTnx0iThV7Z9wA?=
- =?us-ascii?Q?4QOoO7cim9Gva04jEaWhm1oPrlcNggUq9qZRf2PxYK99I9L81twSEKkOr69Q?=
- =?us-ascii?Q?MgpwKStIbPbAqb3kiLq+xJXb/zM3L1GA7BskU8bq6RkBMHqzDjq7qy30UNn9?=
- =?us-ascii?Q?hTulLpe+JiLUjytra+q9sEh+LlpgDb72wHEpl2PQhas44isOhvkIbwvFrZBR?=
- =?us-ascii?Q?91SxIw4AKzBizSKqPEPzQwCbw95fVn4rC3VX/q5abCUMrceX+plVa/pv1N1e?=
- =?us-ascii?Q?GeTdKD3V1R/CAkxnZnMKNf33d/EMxv/3DQP90cH0y8pgpLB1Nvd/+/S4fuKR?=
- =?us-ascii?Q?32nVtwMK5oDhfbl5fL8MPQ242RnMopxKx0eGZTqthoBKpZIkWrQxznPrbHVV?=
- =?us-ascii?Q?XnU0ZGzX8m7zoCTT1d7rTmFTGEP6SYjP+c/sVTgS?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0a9465a-3693-4259-ba1c-08ddd6595993
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 08:55:40.1760
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XpcZL0qHA8oUSMaxM5TSUpPE+g6f2SOJ8rJqVL5w9oxk7V3/Mt3ifZKbsCGa7pGB1EXl/JGW9EBhfgksKl17qw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6238
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2DFhNzDdPZ0QcWX0"
+Content-Disposition: inline
+In-Reply-To: <cover.1754641960.git.mazziesaccount@gmail.com>
 
-Replace kfree() with kvfree() for memory allocated by kvcalloc().
 
-Compile-tested only.
+--2DFhNzDdPZ0QcWX0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: f728c17fc97a ("accel/habanalabs/gaudi2: move HMMU page tables to device memory")
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+The ROHM BD79105 is a simple 16-bit ADC accessible via SPI*.
+
+The BD79105 has a CONVSTART pin, which must be set high to start the ADC
+conversion. Unlike with the ad7091 and ad7091r which also have a
+CONVSTART pin, the BD79105 requires that the pin must remain high also
+for the duration of the SPI access.
+
+(*) Couple of words about the SPI. The BD79105 has pins named as
+CONVSTART, SCLK, DIN and DOUT. For the curious reader, DIN is not SPI
+MISO.
+
+DIN is a signal which can be used as a chip-select. When DIN is pulled
+low, the ADC will output the completed measurement via DOUT as SCLK is
+clocked. According to the data-sheet, the DIN can also be used for
+daisy-chaining multiple ADCs. Furthermore, DOUT can be used also for a
+'data-ready' -IRQ. These modes aren't supported by this driver.
+
+Support reading ADC scale and data from the BD79105 using SPI, when DIN
+is used as a chip-select.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
- drivers/accel/habanalabs/gaudi2/gaudi2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Revision history:
+ v2 =3D> v3:
+ - Check for missing convstart GPIO at probe.
+ - Use indirect call to convstart (via function pointer) also from the
+   ad7476_scan_direct().
 
-diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-index a38b88baadf2..5722e4128d3c 100644
---- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
-+++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
-@@ -10437,7 +10437,7 @@ static int gaudi2_memset_device_memory(struct hl_device *hdev, u64 addr, u64 siz
- 				(u64 *)(lin_dma_pkts_arr), DEBUGFS_WRITE64);
- 	WREG32(sob_addr, 0);
- 
--	kfree(lin_dma_pkts_arr);
-+	kvfree(lin_dma_pkts_arr);
- 
- 	return rc;
+ v1 =3D> v2:
+ - Fix the conversion delay for the BD79105
+ - Drop unnecessary GPIO check from the convstart disable
+ - Drop unintended whitespace change
+ - Fix spelling
+---
+ drivers/iio/adc/ad7476.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+index 6cb2cbeafbd3..1bec6657394c 100644
+--- a/drivers/iio/adc/ad7476.c
++++ b/drivers/iio/adc/ad7476.c
+@@ -32,8 +32,10 @@ struct ad7476_chip_info {
+ 	struct iio_chan_spec		channel[2];
+ 	void (*reset)(struct ad7476_state *);
+ 	void (*conversion_pre_op)(struct ad7476_state *st);
++	void (*conversion_post_op)(struct ad7476_state *st);
+ 	bool				has_vref;
+ 	bool				has_vdrive;
++	bool				convstart_required;
+ };
+=20
+ struct ad7476_state {
+@@ -64,6 +66,18 @@ static void ad7091_convst(struct ad7476_state *st)
+ 	udelay(1); /* Conversion time: 650 ns max */
  }
--- 
-2.34.1
+=20
++static void bd79105_convst_disable(struct ad7476_state *st)
++{
++	gpiod_set_value_cansleep(st->convst_gpio, 0);
++}
++
++static void bd79105_convst_enable(struct ad7476_state *st)
++{
++	gpiod_set_value_cansleep(st->convst_gpio, 1);
++	/* Worst case, 2790 ns required for conversion */
++	ndelay(2790);
++}
++
+ static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+ {
+ 	struct iio_poll_func *pf =3D p;
+@@ -81,6 +95,8 @@ static irqreturn_t ad7476_trigger_handler(int irq, void  =
+*p)
+ 	iio_push_to_buffers_with_ts(indio_dev, st->data, sizeof(st->data),
+ 				    iio_get_time_ns(indio_dev));
+ done:
++	if (st->chip_info->conversion_post_op)
++		st->chip_info->conversion_post_op(st);
+ 	iio_trigger_notify_done(indio_dev->trig);
+=20
+ 	return IRQ_HANDLED;
+@@ -103,6 +119,9 @@ static int ad7476_scan_direct(struct ad7476_state *st)
+ 	if (ret)
+ 		return ret;
+=20
++	if (st->chip_info->conversion_post_op)
++		st->chip_info->conversion_post_op(st);
++
+ 	return be16_to_cpup((__be16 *)st->data);
+ }
+=20
+@@ -273,6 +292,22 @@ static const struct ad7476_chip_info ltc2314_14_chip_i=
+nfo =3D {
+ 	.has_vref =3D true,
+ };
+=20
++static const struct ad7476_chip_info bd79105_chip_info =3D {
++	.channel[0] =3D AD7091R_CHAN(16),
++	.channel[1] =3D IIO_CHAN_SOFT_TIMESTAMP(1),
++	/*
++	 * The BD79105 starts ADC data conversion when the CONVSTART line is
++	 * set HIGH. The CONVSTART must be kept HIGH until the data has been
++	 * read from the ADC.
++	 */
++	.conversion_pre_op =3D bd79105_convst_enable,
++	.conversion_post_op =3D bd79105_convst_disable,
++	/* BD79105 won't do conversion without convstart */
++	.convstart_required =3D true,
++	.has_vref =3D true,
++	.has_vdrive =3D true,
++};
++
+ static const struct iio_info ad7476_info =3D {
+ 	.read_raw =3D &ad7476_read_raw,
+ };
+@@ -332,6 +367,9 @@ static int ad7476_probe(struct spi_device *spi)
+ 	if (IS_ERR(st->convst_gpio))
+ 		return PTR_ERR(st->convst_gpio);
+=20
++	if (st->chip_info->convstart_required && !st->convst_gpio)
++		return dev_err_probe(&spi->dev, -EINVAL, "No convstart GPIO\n");
++
+ 	/*
+ 	 * This will never happen. Unless someone changes the channel specs
+ 	 * in this driver. And if someone does, without changing the loop
+@@ -401,6 +439,7 @@ static const struct spi_device_id ad7476_id[] =3D {
+ 	{ "ads7866", (kernel_ulong_t)&ads7866_chip_info },
+ 	{ "ads7867", (kernel_ulong_t)&ads7867_chip_info },
+ 	{ "ads7868", (kernel_ulong_t)&ads7868_chip_info },
++	{ "bd79105", (kernel_ulong_t)&bd79105_chip_info },
+ 	/*
+ 	 * The ROHM BU79100G is identical to the TI's ADS7866 from the software
+ 	 * point of view. The binding document mandates the ADS7866 to be
+--=20
+2.50.1
 
+
+--2DFhNzDdPZ0QcWX0
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiVu5QACgkQeFA3/03a
+ocXmzQf/dvwrVkreuDO18fqPSKtlWrr2euJL29mcRd3F6DTN+5pS/SUkBGo9PqCQ
+L/xeGP7CTJZxrdzKWxRaKk+0YwXxc0GejNnmTROngnLN9OSFCP37JUO7Wf5ZI3lR
+jgRSjx36A5sSurQZC7W3SL8hJAt5k/jrrXUJDCQsHEJcA0csLV8QY3MOLHnhBuwZ
+78Knxs/uVUi92zBqLnNU0PicEXscxLduzXvyK4PUkK7iQhOEa9jwrw7xvQfQJeW8
+gAn61NU7vgMSZHZmvdkFGeu16qFZZ6ceMCgB9mIqMBYsso9CFfIFn1qF0ES8j9Gt
+s6lwSSKrVsFibkh+i86Yi9VvC3qseQ==
+=Abxz
+-----END PGP SIGNATURE-----
+
+--2DFhNzDdPZ0QcWX0--
 
