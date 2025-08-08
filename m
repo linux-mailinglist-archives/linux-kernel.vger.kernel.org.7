@@ -1,176 +1,113 @@
-Return-Path: <linux-kernel+bounces-760319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B19FB1E97B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:47:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE46B1E9B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED5314E44E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:47:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A076917630B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD1880C1C;
-	Fri,  8 Aug 2025 13:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C42825C706;
+	Fri,  8 Aug 2025 13:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OB73HsHa"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="PoXuwj3/"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D70825634;
-	Fri,  8 Aug 2025 13:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF3713AD38;
+	Fri,  8 Aug 2025 13:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754660847; cv=none; b=lM0UBBjgduheKgWY5aXEGHwg8ebhxCPzqrIHZqHfs/LA0zelnr1aQvB/VlDst4qelf8p6Q7Fcv4md+roYN9USsWJugU5BqPyb9w1IdDhjQmzSZv+soMBV66YpMYsiWMIc8VJmCqN8O5J20FAhIbwniOClg1a2qvdslYAXhXB8pw=
+	t=1754661449; cv=none; b=IYb6KgZVgAatLKDVQ1XUOQGVhysJtVcTBQGzwvjXpkL1yQRq9XctJofY2Kwt+RlnNvHjbSfj5qAy6VQDW7rXtznuCApLL/BlWuE75P2gA7EO6yts3bO/dlcP37JipQ+m5WYdyAs5inG5yQFzYzdUqJX7n/RF+1Ty+RLk9nMOA0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754660847; c=relaxed/simple;
-	bh=qV78hq9Pk6FzTiJPiSy8qLL8t6D8jRO15HvkwrTr+0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CNlqlOwYbodLmfZ0Sls4Dg0afB2n0puqHPgmyaQ7v0dLx/EGcAMR/3sOuucSGT0JbgfPAurAjiGshlviWuzbt5YYbX/DhK0/NXr9KvhO4UE7yrkiS+lnJGebsGswfTpmy2M58I5iyWf22WR43IcrM5lITclCCroXCYV6uuK9wKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OB73HsHa; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 578DkmqU992990;
-	Fri, 8 Aug 2025 08:46:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754660808;
-	bh=wTg4kG3CjTwaBrWnll3HIQP/TPmGxsMNV/xOfqXmXO4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=OB73HsHaP6lFvlDJMOV878MmQImc69xq7hPwAt38IUYsPc0sY5JAZ2pS7fIOzJli0
-	 68Z9aSSAvpIsxPBswgyVeotyVfr6xAgG2hvSg6HDHjgmyPoqvkGawc1/fkzQI7OLvl
-	 D/JsSjsN2Q+hBN4evRtAB8ofmriX8qTOMcW5tFY8=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 578DklxT1623098
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 8 Aug 2025 08:46:47 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 8
- Aug 2025 08:46:46 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 8 Aug 2025 08:46:46 -0500
-Received: from [10.249.145.16] ([10.249.145.16])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 578DkXb43128040;
-	Fri, 8 Aug 2025 08:46:35 -0500
-Message-ID: <71ef3203-e11d-4244-8d2d-8e47e8ba6140@ti.com>
-Date: Fri, 8 Aug 2025 19:16:31 +0530
+	s=arc-20240116; t=1754661449; c=relaxed/simple;
+	bh=PajUKIG+d1rsxnTFzvD9VhNvGrQHU8UGNQhvUamGvNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i7TeyqaCRGUBCbr225jw3fuCEthsIw3YolOhoe7G3Ofo4pQI8W0tVClW7wC4ANm/sdXomEn72DepU5oHIt6xtoq5M88Bd7wzc5fw9/027EY0i++E8KX6aeQtBkrsYbJ/UHB67vRp5rnNKYpjqTbn8aFO4E2RdOc6doPxYrg8+dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=PoXuwj3/; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 013C03D84C9E;
+	Fri,  8 Aug 2025 09:46:35 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id x_Dcxyc46QcK; Fri,  8 Aug 2025 09:46:34 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 342083D8510F;
+	Fri,  8 Aug 2025 09:46:34 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 342083D8510F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1754660794; bh=SFTtCwYoU+oAHcmhDwphrupUVwagkfJgXHAqpkplwDY=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=PoXuwj3//2SZ7hSSBL9AY2vpf8qXztJke6N9T5Elb+pEK0U/asopRCI7e7bXP1TsF
+	 z00cOQSp+LfZLxvNFjzthSm/O7H8hE01Og1jX8v3mcuwxiBbFxFiobIaXA20Q726iU
+	 /Q9wEbGivRbG6y2Pc2b1kU1EkrTZlvdf6zQaMvvMWs9CjMk2hH/PB8KjE4MA41WiGO
+	 zxrmWaXtCPYYY5TeLTkcoiSJeOcYHuBn4ANdMpD27WUr/iG3i0jn74b+Q8/dROKyCf
+	 9e52zuuz9Yvh0WeqBWKVw6pHCFqKOcdg4POzG/ZG5B95mryPJG48IQqYAJAy4jCSqd
+	 tCeJl6DLm44Bg==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id 5Xvk3l-accg2; Fri,  8 Aug 2025 09:46:34 -0400 (EDT)
+Received: from fedora (unknown [192.168.51.254])
+	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id D2E9A3D84C9E;
+	Fri,  8 Aug 2025 09:46:33 -0400 (EDT)
+Date: Fri, 8 Aug 2025 09:46:32 -0400
+From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
+	Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>,
+	Robin Gong <yibin.gong@nxp.com>,
+	Enric Balletbo i Serra <eballetbo@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 0/6] add support for pf1550 PMIC MFD-based drivers
+Message-ID: <aJX_uOmSODmLfWkZ@fedora>
+References: <20250716-pf1550-v9-0-502a647f04ef@savoirfairelinux.com>
+ <znrv5235mga6ns4oue63o2acwmj5gge4c2mr32m7pui4lkamji@cu7zk4skmqkg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] drm/tidss: Fix sampling edge configuration
-To: Louis Chauvet <louis.chauvet@bootlin.com>, Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, "Sam
- Ravnborg" <sam@ravnborg.org>,
-        Benoit Parrot <bparrot@ti.com>, Lee Jones
-	<lee@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>
-CC: <thomas.petazzoni@bootlin.com>, Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen
-	<tomi.valkeinen@ti.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <stable@vger.kernel.org>, <s-jain1@ti.com>
-References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
- <20250730-fix-edge-handling-v1-4-1bdfb3fe7922@bootlin.com>
-Content-Language: en-US
-From: devarsh <devarsht@ti.com>
-In-Reply-To: <20250730-fix-edge-handling-v1-4-1bdfb3fe7922@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <znrv5235mga6ns4oue63o2acwmj5gge4c2mr32m7pui4lkamji@cu7zk4skmqkg>
 
-Hi Louis,
-
-Thanks for the patch.
-
-On 30/07/25 22:32, Louis Chauvet wrote:
-> As stated in the AM62x Technical Reference Manual (SPRUIV7B), the data
-> sampling edge needs to be configured in two distinct registers: one in the
-> TIDSS IP and another in the memory-mapped control register modules.
-
-I don't think AM62x is thee only one which requires this and on the
-contrary not all SoCs require this extra setting. We had been waiting on
-confirmations from hardware team and very recently they gave a list of
-SoCs which require this, as per that I think we need to limit this to
-AM62x and AM62A per current supported SoCs.
-
-Swamil,
-Please confirm on this and share if any additional details required here.
-
-Regards
-Devarsh
-
- Since
-> the latter is not within the same address range, a phandle to a syscon
-> device is used to access the regmap.
+On Fri, Aug 08, 2025 at 10:12:09AM +0000, Sean Nyekjaer wrote:
+> On Wed, Jul 16, 2025 at 11:11:43AM +0100, Samuel Kayode via B4 Relay wrote:
+> > This series adds support for pf1550 PMIC. It provides the core driver and a
+> > three sub-drivers for the regulator, power supply and input subsystems.
+> > 
+> > Patch 1 adds the DT binding document for the PMIC. Patches 2-5 adds the
+> > pertinent drivers. Last patch adds a MAINTAINERS entry for the drivers.
+> > 
+> > The patches 3-5 depend on the core driver provided in patch 2.
+> > 
 > 
-> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> Please add to the whole series :)
 > 
-> ---
-> 
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index c0277fa36425ee1f966dccecf2b69a2d01794899..65ca7629a2e75437023bf58f8a1bddc24db5e3da 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -498,6 +498,7 @@ struct dispc_device {
->  	const struct dispc_features *feat;
->  
->  	struct clk *fclk;
-> +	struct regmap *clk_ctrl;
->  
->  	bool is_enabled;
->  
-> @@ -1267,6 +1268,11 @@ void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport,
->  		       FLD_VAL(mode->vdisplay - 1, 27, 16));
->  
->  	VP_REG_FLD_MOD(dispc, hw_videoport, DISPC_VP_CONTROL, 1, 0, 0);
-> +
-> +	if (dispc->clk_ctrl) {
-> +		regmap_update_bits(dispc->clk_ctrl, 0, 0x100, ipc ? 0x100 : 0x000);
-> +		regmap_update_bits(dispc->clk_ctrl, 0, 0x200, rf ? 0x200 : 0x000);
-> +	}
->  }
->  
->  void dispc_vp_disable(struct dispc_device *dispc, u32 hw_videoport)
-> @@ -3012,6 +3018,14 @@ int dispc_init(struct tidss_device *tidss)
->  
->  	dispc_init_errata(dispc);
->  
-> +	dispc->clk_ctrl = syscon_regmap_lookup_by_phandle_optional(tidss->dev->of_node,
-> +								   "ti,clk-ctrl");
-> +	if (IS_ERR(dispc->clk_ctrl)) {
-> +		r = dev_err_probe(dispc->dev, PTR_ERR(dispc->clk_ctrl),
-> +				  "DISPC: syscon_regmap_lookup_by_phandle failed.\n");
-> +		return r;
-> +	}
-> +
->  	dispc->fourccs = devm_kcalloc(dev, ARRAY_SIZE(dispc_color_formats),
->  				      sizeof(*dispc->fourccs), GFP_KERNEL);
->  	if (!dispc->fourccs)
-> 
+> Tested-by: Sean Nyekjaer <sean@geanix.com>
+>
+Will do.
 
+Thanks again for testing!
+
+Thanks,
+Sam
 
