@@ -1,239 +1,194 @@
-Return-Path: <linux-kernel+bounces-760374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E5FB1EA54
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:24:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB460B1EA52
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7600C18C7D29
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:24:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D327B4E463E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC5727EFEF;
-	Fri,  8 Aug 2025 14:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C8227F170;
+	Fri,  8 Aug 2025 14:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YkblCeHt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Go5/5BA+"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4807CF4F1
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F28F2750ED;
+	Fri,  8 Aug 2025 14:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754663040; cv=none; b=kRVUgjmY6iXWeW6XytqWjPnAimpfgssLeYSIrk395su49mgWJJ0yQ0bRo4nrcxEaoWPnsLPkODLJN7/TnM9nOd5O9Bvbe/93sOqeRL2mFCOzoHnLJXT1CvfXAleuPx01h0VbdjMxC2hC6Ox9TaZM4FI0zKxmZtNuhuCacyjgQdY=
+	t=1754663024; cv=none; b=I0Zk3XZ2X8TRMi+ul0Cnh2lMkdy0OtLgJ8UOPSCA7RrYkiLqH3vRBIiFAl3RkcuwueuPVro59d3y4YdY+kPuKv6M0Aa+uBuyqCFWO2djzst5KunmC1e+0EV7s4ykvke7B9NZ2ErWCtUnXhswYKDxGZujvs/aqYL8C6b0kk/Llck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754663040; c=relaxed/simple;
-	bh=f//vz9Qs9jg8eWEct2NufONUab9hKpWK5ssFy61Garo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ifW9Vgr3BRrrVJheSzmvhgC7ouZ12ZI2tQK/7RGcDKKKW9CRRfSb3xByqICGIuU0CGO4ANd5gEuw7z7JmFWP5uZIC96X/iRJjFfGQqInSbgpV/oRuTsCcu/o5t8chdYOKK5Nt1I88HwHtp1LickK8NkzWiOXXXsPDyWmdRJRVnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YkblCeHt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754663037;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XoatM0Ku2K5SI5xfNAI9cK1iS0HhuHQQ3g0x13YtE24=;
-	b=YkblCeHtVIhnR14HoJzyzp760gsDQeSp57IWZCGp9qCyA2EI3OXyJYiWIuAV3gLRwYPtnO
-	uwzEtuK4JcDqXNZN9fUUQmqEHkGWMr4fMG2pB1TK0zDHphe3P5L6cRT5NrwLj9o/S1WO56
-	ZlohG1d5U4GPX0jD27w0SeN4t/I+cIM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-48--FnwkJDeOD2Rz68z0qvaRA-1; Fri, 08 Aug 2025 10:23:55 -0400
-X-MC-Unique: -FnwkJDeOD2Rz68z0qvaRA-1
-X-Mimecast-MFC-AGG-ID: -FnwkJDeOD2Rz68z0qvaRA_1754663034
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b7892c42b7so1458335f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 07:23:55 -0700 (PDT)
+	s=arc-20240116; t=1754663024; c=relaxed/simple;
+	bh=DtU9jEY3LwH49Q0ZMHpA8Bnrf5sEH3YFNsLyxNclX9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fRSBXWTtwjQMujoFX1MciebpLlgpYF49aN2luEnXPNeZTfSIEl7hbp9AY6kfU2/hMXR3Qx67x9ZoFID/R9sdDety67uc6jCNKxY83mHBGv8XvERncgRD+p+BfxR9F8FtR9zEHBatx6V7tJAC3+M2TfNT0P1kDKjtrxPpmemVUcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Go5/5BA+; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-70744318bb3so19130746d6.3;
+        Fri, 08 Aug 2025 07:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754663021; x=1755267821; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1zPzUFUv/zyatupFCi5Bzm9po7cPCCGYJYFMabs0Gm4=;
+        b=Go5/5BA+OcT7NQf/cH0vq3WUXoMv8KTUDKWYRED3/1CzZ3ivd6kirNpdbzsBClvGIg
+         1jXUTrbgczFqLebmMA97rsQkkCILMCU3pWrwPhrFNcQE76RBE3EGANUu85iRi+cr/mb4
+         YQmBlIG8YG+pYvNyzig8S87hcCmz+KgceyDG6KFIY7hTRVSKr1gSohH/HQSWpixovuX1
+         skEFfdAFuZ+CH0GYn3ICteTVZJYFE/bFvq42JCh+BV7prkAuRhAKBULkrxIX7jcT+wKB
+         1X/w624W2Inm61tCSRPX0inhAdFp3N7Q/Wm3HeL3VovwzOm+N/tsDnbWhk4E8nDCg2db
+         ypPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754663034; x=1755267834;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XoatM0Ku2K5SI5xfNAI9cK1iS0HhuHQQ3g0x13YtE24=;
-        b=TXizmVSBFHxWuF+abdhIJkaTL3BRXA840Pn/U9pMZynFLFUZBBOFicYp/yxh9A+WhW
-         xlTpToyjZkvaKA5VJ4hoQ/HaaLmQf4eRMW8016DjKPGKIEVqHkxU5tskhwr8O4TqvtAu
-         a+VZefG1tcX/VKUUHq+oiY5YBmz3FH7+ZiZIh5KEu2rDClPX3EDaliDIutoPgOpXA25S
-         rUKPV8YG254uNfxrjwXGm3FT5U6hNOTg7unUM1f1Q79bUvab8jiGLj1s77es6T5MfItK
-         KOgNcSZDKBHqgNGl+km44pdrg2t8RnDeFo4RhlDXdhrEGPpOIdNAo5j7QjAH9OtIHvIY
-         jWNg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3MdXL2q5mBowbbGav7nlJQ1dgyE/B2IxGy0f0UzM0VvVI0E2ZAU/w0wheLKRlq51b4/9g2bbjiwPOI6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDpinWJEdan+sEWrB9XOiUAf5gryRXOVI/iEPT5hEhJewe3ci8
-	VGIk+4ez1yuvvaoaYhqfJxXbq4c/6hTS8sTL7jluUvbcske2ZmBBo+xaYEmkTYVcLwV+6FnQOgs
-	cl6xM9nGje1GGOer6zl4vmYlple6YAgffTZkie/M0SgsxyDaS5o4vQwHlSOP0S2HaTw==
-X-Gm-Gg: ASbGncsbV5i+aS9ehTWk0Xv/svxzQBoE8bwBbu+tOvwiAhIP98HW5KTb5ALvPJZH/c0
-	Ezg8AeiEVh7kl5nFgSwIWBTtOMteiRJPP+lb3YOkVI3BS8RoTbyqCwMd5vFwR3UjtzQhg4bq7hd
-	rUTJ8eD3fWu26Oxtz0QnA7SgUD/kChSXtAsTQVJPbB0iNIDFI51LoxrQjkpjtNoxuADVKofJ6Y7
-	MVRy2kns5R+iwDxAZMH7sssTdVEzeMwSf4c5E5RT2GIABsQuR88EC0tFIWCM2XWSIiLZWSu9e9s
-	cKeCR7QbAnXlR55R5jLOAokQppmgNUj5qdb6MrEE6faXC36IC6vpEvGspuqnqdYBxcyi0HIcqa3
-	qakQu01xqkhMzuPz8Ghn+W/qYE0pTjeLY08Kw2THOJI8skL5NB5KjpD8i8B+5TXXi
-X-Received: by 2002:a05:6000:2f84:b0:3b7:9dc1:74a9 with SMTP id ffacd0b85a97d-3b900b7aea4mr2535167f8f.42.1754663034462;
-        Fri, 08 Aug 2025 07:23:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEePpZjK2UFX8XfHhLL2C/dDb4Nzd1zVHG6VBTgVmPIHVSFXe9BgmOEmO8a7NQY0B0WsA+mWQ==
-X-Received: by 2002:a05:6000:2f84:b0:3b7:9dc1:74a9 with SMTP id ffacd0b85a97d-3b900b7aea4mr2535140f8f.42.1754663033969;
-        Fri, 08 Aug 2025 07:23:53 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f25:900:2e1e:d717:2543:c4d6? (p200300d82f2509002e1ed7172543c4d6.dip0.t-ipconnect.de. [2003:d8:2f25:900:2e1e:d717:2543:c4d6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8fc28a830sm6142600f8f.16.2025.08.08.07.23.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 07:23:53 -0700 (PDT)
-Message-ID: <687b556e-0196-4a38-986a-2e7b0308e03d@redhat.com>
-Date: Fri, 8 Aug 2025 16:23:52 +0200
+        d=1e100.net; s=20230601; t=1754663021; x=1755267821;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1zPzUFUv/zyatupFCi5Bzm9po7cPCCGYJYFMabs0Gm4=;
+        b=h90SOd+3bXpLx6PKqB60QyPvCswdsyCGBZb7BEHPSEa3wsV1502BSTxIelSw8mBCMq
+         fibSv1TJgEfYjVIPCnqyXpxyj/rzzJUssga9OiAlD+A4fNc5+cBL1sWr9yksojDL6kAU
+         oy1nNmM4YVJIOFKAj3kt2kYUoPn3zfLTxd8lYtQ3fyl//tbrKAyiijA5GSrod7USGHPk
+         nzKYzf2BgP/JEMkDJOMdTWExOc6GriwCY55pQBQLCvZRrqZMxKzOXgoSuJ3kuswEK95J
+         h+nqBpdxvDoxiAoDxmPelqxF1vUcbdjgGpowv/BJM0+kqx4b4EiSAf1Jr2pFhOOZOCoe
+         L6YA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ10uRyj+D77LuVRpM6gQ9FcLVuIoe1DT+lOnW6EaAW4tQ5s1HPfvD0h2XcLAKYnlHcty9y2Dfd06q@vger.kernel.org, AJvYcCV/xMMooFPTXtTYOUWiRsAs9OZ/d5+tu+zga+r4otckIORoWCVdH3yiBZ1W1E+RTv9tPs5cJOq08S0Dp3q4@vger.kernel.org, AJvYcCXsyZUPiqNJkaoakKVybIfVcE1MtDVN+jK/udiPKb5s5enFcMnFk+GqjNnJOR2NP0T+g/YgEpU1L6N+@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTSxlDTulcLpV0mBSNE8lDB51KPx5roQ26ZEamtZNEvX7sRsBN
+	ikkGbw3Hj/MK2CP1b3tC6Rwzig4YlSQurUeHrVu1rdrHcNEgtKD/hKYq
+X-Gm-Gg: ASbGncuSFTKSh0q+0PvMo8X2kk0U0al1Fga7RgMKBaDtb/kb+mkBJTHNNpfT1d6GbrD
+	sWZZjt/hpMpKqNy3NmjpFKsFJdPlBV6M8jRuO4P0M6XEfMEF10eZfXCzLps+zeHai2e82/Uw2FM
+	5UU/UT5u/Y3dIRBLMYsrd9bHFaNf06fBekJohx7/DhPXpXMD2F3RcdbePKRshEfu8AWqd1nuJlF
+	uCwi1s2Uc9u8xH9vT1mrKASAtEQbtGZFuP13xPuf/QRUxHqR7kI6W80TqAFNTaDp+MLjJiruj+K
+	Mpfk9RuAubYqF8lTm6BLlbNCEFm1k8iX+pxWOH6PLy3Bg18LsZZL/gn+Y1X1ZSX3TrYaGKtVKA/
+	qN164Q5FHIrJpPozi/hln+Sb4
+X-Google-Smtp-Source: AGHT+IEakrZlxdSDWbU6urrh2LZv71gA0Sm8Hhk5We4J6qo3HG6kj1nQ4DgoO2znlAE6zUkpF8Dc0w==
+X-Received: by 2002:a05:6214:f21:b0:707:63b8:b3f9 with SMTP id 6a1803df08f44-7099a1cf2a6mr47390976d6.3.1754663021167;
+        Fri, 08 Aug 2025 07:23:41 -0700 (PDT)
+Received: from nsa ([87.249.138.211])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ca5897bsm115034186d6.39.2025.08.08.07.23.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 07:23:40 -0700 (PDT)
+Date: Fri, 8 Aug 2025 15:23:55 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/10] iio: adc: ad7476: Conditionally call convstart
+Message-ID: <lnehdamxzehdsos2ksfmbxy4hub7femah77vl3rvh67nhcffy7@ynrqs7j76djj>
+References: <cover.1754641960.git.mazziesaccount@gmail.com>
+ <57284a156afeb1531fae39897eba4e73d90fa5b9.1754641960.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] mm: fix accounting of memmap pages
-To: Sumanth Korikkar <sumanthk@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, richard.weiyang@gmail.com
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- linux-s390 <linux-s390@vger.kernel.org>
-References: <20250807183545.1424509-1-sumanthk@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
- 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
- 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
- OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
- kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
- GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
- s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
- Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
- FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
- OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
- NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
- Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
- 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
- /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
- bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
- RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
- m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
- CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
- vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
- WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250807183545.1424509-1-sumanthk@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <57284a156afeb1531fae39897eba4e73d90fa5b9.1754641960.git.mazziesaccount@gmail.com>
 
-On 07.08.25 20:35, Sumanth Korikkar wrote:
-> For !CONFIG_SPARSEMEM_VMEMMAP, memmap page accounting is currently done
-> upfront in sparse_buffer_init(). However, sparse_buffer_alloc() may
-> return NULL in failure scenario.
+On Fri, Aug 08, 2025 at 11:54:09AM +0300, Matti Vaittinen wrote:
+> The ad7476 supports two IC variants which may have a 'convstart' -GPIO
+> for starting the conversion. Currently the driver calls a function which
+> tries to access the GPIO for all of the IC variants, whether they
+> support 'convstart' or not. This is not an error because this function
+> returns early if GPIO information is not populated.
 > 
-> Also, memmap pages may be allocated either from the memblock allocator
-> during early boot or from the buddy allocator. When removed via
-> arch_remove_memory(), accounting of memmap pages must reflect the
-> original allocation source.
+> We can do a tad better by calling this function only for the ICs which
+> have the 'convstart' by providing a function pointer to the convstart
+> function from the chip_info structure, and calling this function only
+> for the ICs which have the function pointer set.
 > 
-> To ensure correctness:
-> * Account memmap pages after successful allocation in sparse_init_nid()
->    and section_activate().
-> * Account memmap pages in section_deactivate() based on allocation
->    source.
+> This does also allow to support ICs which require different convstart
+> handling than the currently supported ICs.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 15995a352474 ("mm: report per-page metadata information")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+> Call convstart function only on the ICs which can support it and allow
+> IC-specific convstart functions for the ICs which require different
+> handling.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 > ---
-> v4:
-> * Add fixes and suggested-by.
+> Revision history:
+>  v2 => v3:
+>  - Use indirect call to convstart (via function pointer) also from the
+>    ad7476_scan_direct().
+>  - Adapt to the change which returned the chip_info pointer back to the
+>    driver's state structure.
 > 
-> v3:
-> * Account memmap pages for !CONFIG_SPARSEMEM_VMEMMAP and only when memmap
->    allocation succeeds. Thanks Wei Yang.
+>  v1 => v2:
+>  - Adapt to the change which removed the chip_info pointer from the
+>   driver's state structure.
 > 
-> v2:
-> * Account memmap pages for  !CONFIG_SPARSEMEM_VMEMMAP in
->    section_deactivate().  Thanks David.
-> * https://lore.kernel.org/all/20250804151328.2326642-1-sumanthk@linux.ibm.com/
-> 
-> v1:
-> * Account memmap pages for early sections.
-> * https://lore.kernel.org/all/20250804084015.270570-1-sumanthk@linux.ibm.com/
-> 
->   mm/sparse-vmemmap.c |  5 -----
->   mm/sparse.c         | 15 +++++++++------
->   2 files changed, 9 insertions(+), 11 deletions(-)
-> 
-> diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
-> index fd2ab5118e13..41aa0493eb03 100644
-> --- a/mm/sparse-vmemmap.c
-> +++ b/mm/sparse-vmemmap.c
-> @@ -578,11 +578,6 @@ struct page * __meminit __populate_section_memmap(unsigned long pfn,
->   	if (r < 0)
->   		return NULL;
->   
-> -	if (system_state == SYSTEM_BOOTING)
-> -		memmap_boot_pages_add(DIV_ROUND_UP(end - start, PAGE_SIZE));
-> -	else
-> -		memmap_pages_add(DIV_ROUND_UP(end - start, PAGE_SIZE));
-> -
->   	return pfn_to_page(pfn);
->   }
->   
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 066cbf82acb8..24323122f6cb 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -454,9 +454,6 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
->   	 */
->   	sparsemap_buf = memmap_alloc(size, section_map_size(), addr, nid, true);
->   	sparsemap_buf_end = sparsemap_buf + size;
-> -#ifndef CONFIG_SPARSEMEM_VMEMMAP
-> -	memmap_boot_pages_add(DIV_ROUND_UP(size, PAGE_SIZE));
-> -#endif
->   }
->   
->   static void __init sparse_buffer_fini(void)
-> @@ -567,6 +564,8 @@ static void __init sparse_init_nid(int nid, unsigned long pnum_begin,
->   				sparse_buffer_fini();
->   				goto failed;
->   			}
-> +			memmap_boot_pages_add(DIV_ROUND_UP(PAGES_PER_SECTION * sizeof(struct page),
-> +							   PAGE_SIZE));
+> The follow-up patch adding support for the ROHM BD79105 will bring
+> different 'convstart' functions in use. The IC specific pointer will
+> also prepare the way for this.
+> ---
 
-IIRC, we can have partially populated boot sections, where only some 
-subsections actually have a memmap ... so this calculation is possibly 
-wrong in some cases.
+Reviewed-by: Nuno Sá <nuno.sa@analog.com>
 
--- 
-Cheers,
+>  drivers/iio/adc/ad7476.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> index ad9e629f0cbd..6cb2cbeafbd3 100644
+> --- a/drivers/iio/adc/ad7476.c
+> +++ b/drivers/iio/adc/ad7476.c
+> @@ -31,6 +31,7 @@ struct ad7476_chip_info {
+>  	unsigned int			int_vref_mv;
+>  	struct iio_chan_spec		channel[2];
+>  	void (*reset)(struct ad7476_state *);
+> +	void (*conversion_pre_op)(struct ad7476_state *st);
+>  	bool				has_vref;
+>  	bool				has_vdrive;
+>  };
+> @@ -70,7 +71,8 @@ static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+>  	struct ad7476_state *st = iio_priv(indio_dev);
+>  	int b_sent;
+>  
+> -	ad7091_convst(st);
+> +	if (st->chip_info->conversion_pre_op)
+> +		st->chip_info->conversion_pre_op(st);
+>  
+>  	b_sent = spi_sync(st->spi, &st->msg);
+>  	if (b_sent < 0)
+> @@ -94,7 +96,8 @@ static int ad7476_scan_direct(struct ad7476_state *st)
+>  {
+>  	int ret;
+>  
+> -	ad7091_convst(st);
+> +	if (st->chip_info->conversion_pre_op)
+> +		st->chip_info->conversion_pre_op(st);
+>  
+>  	ret = spi_sync(st->spi, &st->msg);
+>  	if (ret)
+> @@ -160,12 +163,14 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+>  static const struct ad7476_chip_info ad7091_chip_info = {
+>  	.channel[0] = AD7091R_CHAN(12),
+>  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +	.conversion_pre_op = ad7091_convst,
+>  	.reset = ad7091_reset,
+>  };
+>  
+>  static const struct ad7476_chip_info ad7091r_chip_info = {
+>  	.channel[0] = AD7091R_CHAN(12),
+>  	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +	.conversion_pre_op = ad7091_convst,
+>  	.int_vref_mv = 2500,
+>  	.has_vref = true,
+>  	.reset = ad7091_reset,
+> -- 
+> 2.50.1
+> 
 
-David / dhildenb
 
 
