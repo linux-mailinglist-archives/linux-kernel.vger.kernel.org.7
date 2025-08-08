@@ -1,195 +1,174 @@
-Return-Path: <linux-kernel+bounces-759670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AEAB1E0E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:22:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DDFB1E0EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD64918A5A74
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CA203B4691
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71B51AA786;
-	Fri,  8 Aug 2025 03:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA571B0413;
+	Fri,  8 Aug 2025 03:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hBeUB1A8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=maxlinear.com header.i=@maxlinear.com header.b="FcDQhuM2"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2041.outbound.protection.outlook.com [40.107.92.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA323FE4
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 03:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754623327; cv=none; b=GZ3vycWBtnVbT9vrLMD6WeQM4narRPMlgk7JuQzbRElCvPgYRTtUqkkGk5BgkFYZI8IXRlcjDjH4ra6VYxxz44+ab5lLAb2yrTIK0As8uYo8LmchjzGqcVbFQZusUeKSLc5m/RsLz21ge4WP9irqN8cLvpxNOzaKVtrtoUdnTiI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754623327; c=relaxed/simple;
-	bh=lfIMMyzeD6noIh0v2rBCHEY2M8+GwSQ8fOZxz2hGF3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFbJOrjR27H93pMRuUqPEoAADuUy7WRzDl1mpHU2GSDgwG7NgETSNRP26UAd8k7p3CnmifZNWytC84BvwixQFA1KIBsGrqsTjCFXn1DP++8IdNhjTP3DavpFJCET/sk1FI8XBz4tE/ZZKTxrLzrccrsz3F8NWIYaH1Th0Xe6LoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hBeUB1A8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754623323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9v/VfxV4WcSv8mLKBf97De83PUNubQY/hyRrkNkUdjA=;
-	b=hBeUB1A8AlxJwmV2IPATyHI+29DfY6PXbvZJsaaeJzbeNC1Sbq66WfL9KZ8St8NBccrDuC
-	8VOc9JZxqenHYFXEPFTfO8/QFetaPF92+pa07t2hbSrhcrVAgYrDnylFe7DYn0vRppmYGP
-	pG9XM+tcIbvWb8yZCsfzyMXJ3p+ubhA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-477-CQ50kHbEPO-N047aktSPjQ-1; Thu,
- 07 Aug 2025 23:22:00 -0400
-X-MC-Unique: CQ50kHbEPO-N047aktSPjQ-1
-X-Mimecast-MFC-AGG-ID: CQ50kHbEPO-N047aktSPjQ_1754623318
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8CBDA18004D4;
-	Fri,  8 Aug 2025 03:21:57 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.126])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 699EB19560AD;
-	Fri,  8 Aug 2025 03:21:55 +0000 (UTC)
-Date: Fri, 8 Aug 2025 11:21:50 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Marco Elver <elver@google.com>
-Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com,
-	andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com,
-	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 0/4] mm/kasan: make kasan=on|off work for all three modes
-Message-ID: <aJVtTjRUXqWePva0@MiWiFi-R3L-srv>
-References: <20250805062333.121553-1-bhe@redhat.com>
- <CANpmjNP-29cuk+MY0w9rvLNizO02yY_ZxP+T0cmCZBi+b5tDTQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C47D3FE4;
+	Fri,  8 Aug 2025 03:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754623390; cv=fail; b=ERshjF1c+ZBzSHuekhIECH0Gp+s+daQdqAiQCL085M4Kcmdfw2X2YnFs4rElHK8LS+5qoEq7xLB5c5E9im2aGGsARYsfUV6HTYY+Z4Mu7l16rt7+5nY0IfyYh3hd2X+uz/uZ09+raJShUGDwn+/1q7C4K+PQ+CKyU0mt1OdZss8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754623390; c=relaxed/simple;
+	bh=8SbZfVjfY4SKY+rUNZ0Vgy3OUGekuW9CLdkB+C7Lbrs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TYU1/1laZozNz4cOwjFK/PlFyarLYmIvqkwukkW5WxahvtjCxo81YIGMM/rVVpxuzMdJOOcXO9bWGlCUFE/Lmgz7lBeQHaboHCNOtpwPQZKxSjiCCbWhXdf/ieuFMqwjuQ9tZpoUlQgxXCXj9OZSmZ2p4COgLHG5sTKLk94f2a0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxlinear.com; spf=pass smtp.mailfrom=maxlinear.com; dkim=pass (2048-bit key) header.d=maxlinear.com header.i=@maxlinear.com header.b=FcDQhuM2; arc=fail smtp.client-ip=40.107.92.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxlinear.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxlinear.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j5uCxHCTkCcTSiQzucgShX4cAXkBiniAhr0pSHdYA3s4CHo38JsjcUs0DvMt6ZKG73wAvBZYfIMlyzD/8M1CgHpr9gu2zh1380AJkCZOm52z3GxTtnXKumfQXWMNswRiIVFAqHu/TcyPUV4bi8DXeO16giewhEAjjnzme7w2NoojoND5B+m9O8POgX4CWj9ZD6V56V3RFWmY/Gcj1eIqG/N8q3owwmktpWTYFYTQ5Pmot7P9OGMPVsZeBgeSaIN0p13noq2uIWcDL68NfBM/6/HsjworZAcMLt1AHZ/fdKjbreJwc8Ne/GxTCNrLGSmCFOUZowAaNUoqIF8TqS6xvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=caww8GwNOd/Mtn8YkpI3ltlzHNbM4KfiVmv25rfqzc0=;
+ b=C8M2A3HrhK6Xz829HMOulVQit2F+VlswjrKT1GLaa4859E2ydYJClvmkAlLi0btGRcu5npC2qanIYA/m/z/5O9IwCmaVfCTnjO3RD78RVD2VCCFX+r6UliI4sFBO99fLqxOJL02DIAEHQUkM/YRrVSWjUtGDnyYg4bQ+nC+0OixiQaIAGmwLIHeGFiB2Yl3GCednkiplc7XU+3ho5z2QPY6RKge82pzCEaHhl0VQtf//ru/4wX6why1z6DddPqdRL52Q0zW41VbXP732hR7V5lzqkq41TJmAYKl3zalUbMMppR83aHhAo93nuMG2bXoc3dRbyxTLbiyWRNt8Iltylg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 174.47.1.84) smtp.rcpttodomain=kernel.org smtp.mailfrom=maxlinear.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=maxlinear.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxlinear.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=caww8GwNOd/Mtn8YkpI3ltlzHNbM4KfiVmv25rfqzc0=;
+ b=FcDQhuM2ouh0Ev8+8E/svrg76zIPIHk9HPqvSa1bthlUuFc7KNPLH1vt1OEDYzDkFgNYg9DEHr+CGgA4ntVRki/a5FvKVL1gha+s08I+CG0ofnTlfw+i8SY2f8THzUe9LzqgHzKD4GbvYEtQcEpW6UIMqjQu7P/6O7UTBloSNCyZUZjuBFFdin30WgZrxcSyv4zs4g1XJpcgYVfSgMpMfDWpBFFoaOiigVCqGXqMPeC+cs02RlOpVG9dz49IBtu+jliWLX2+zbpWtYHIjqQmK7auIngPiXnRaoVF3ac9Jt7emoTR2Lx2fdYVo3CVrhSY94flB/66MxrhIYZEuiuQOg==
+Received: from DM6PR21CA0004.namprd21.prod.outlook.com (2603:10b6:5:174::14)
+ by PH3PPFC1D60318E.namprd19.prod.outlook.com (2603:10b6:518:1::c4b) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Fri, 8 Aug
+ 2025 03:23:00 +0000
+Received: from DS2PEPF00003440.namprd02.prod.outlook.com
+ (2603:10b6:5:174:cafe::c7) by DM6PR21CA0004.outlook.office365.com
+ (2603:10b6:5:174::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.8 via Frontend Transport; Fri, 8
+ Aug 2025 03:23:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 174.47.1.84)
+ smtp.mailfrom=maxlinear.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=maxlinear.com;
+Received-SPF: Pass (protection.outlook.com: domain of maxlinear.com designates
+ 174.47.1.84 as permitted sender) receiver=protection.outlook.com;
+ client-ip=174.47.1.84; helo=usmxlcas.maxlinear.com; pr=C
+Received: from usmxlcas.maxlinear.com (174.47.1.84) by
+ DS2PEPF00003440.mail.protection.outlook.com (10.167.18.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.9009.8 via Frontend Transport; Fri, 8 Aug 2025 03:22:59 +0000
+Received: from sgb015.sgsw.maxlinear.com (10.23.238.15) by mail.maxlinear.com
+ (10.23.38.119) with Microsoft SMTP Server id 15.1.2507.39; Thu, 7 Aug 2025
+ 20:22:55 -0700
+From: Zhu Yixin <yzhu@maxlinear.com>
+To: <vkoul@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <p.zabel@pengutronix.de>, <kees@kernel.org>,
+	<dave.jiang@intel.com>, <av2082000@gmail.com>, <dmaengine@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Zhu Yixin <yzhu@maxlinear.com>
+Subject: [PATCH v2 1/3] dt-bindings: lgm-dma: Added intel,dma-sw-desc property.
+Date: Fri, 8 Aug 2025 11:22:41 +0800
+Message-ID: <20250808032243.3796335-1-yzhu@maxlinear.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNP-29cuk+MY0w9rvLNizO02yY_ZxP+T0cmCZBi+b5tDTQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003440:EE_|PH3PPFC1D60318E:EE_
+X-MS-Office365-Filtering-Correlation-Id: b971c0b4-dbd9-4625-f0b7-08ddd62ae00d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kQsN6VWRurwyd5pml4CIWS2BPatWedN09Pp0/iCGkDn6oY8p2hetq5GPPnsk?=
+ =?us-ascii?Q?OLEtNzyvokhA9Tz38PW1c3g6geF1MURh45kwlJhRNzmE3xI3OPQQeb9Sa82i?=
+ =?us-ascii?Q?OUBl+odxL/Ve98t+x8ERYTzsukUv12BrCRRq3xfCBOchZSj7zM1+e57qnell?=
+ =?us-ascii?Q?A3jb5Q8/0ykwrAc+KlGNbva6gHZp4Mc2aGI54i0G3/q+AqL+2ZGKj+F9bOne?=
+ =?us-ascii?Q?EPQHQ/fx8UBPs7sGKZfmoAqxQSYEj+ustu8yuUoalQLxaJae9gRdVwf3qR5N?=
+ =?us-ascii?Q?z+Y/eqMRJmbrXHiNR+oaO2qwSQ5LjHt2IbdcL8ePhjkHudnS6iduuVLxr65V?=
+ =?us-ascii?Q?Vmdj1kIerPa2DxID4aVQKpkTP9GkkH6e4CC7UWMkW2hdJOT4sU+vQAiloCF3?=
+ =?us-ascii?Q?UsIYSN8vYNloAKZxpg1qRJ8VYzQOQu+F0/YFPSo8JPQ7n3ppUi/fm+fXeG3p?=
+ =?us-ascii?Q?KW6eQwgAMXDwl+cKagsF8aE2+jncSIrcXY+55qc7tspRTTMr+NvQt/aUFe5r?=
+ =?us-ascii?Q?Hdc76fw6HMYgYdrfs+12nH0c5o46RThepPxT7rTuUeps7xO8CWbTKDMEy2zj?=
+ =?us-ascii?Q?6ABYHccOwKBtkFrFid/sE1cwJXCXG3ahlhHo/WN3GLF+HCT4zHtLgiVtZySv?=
+ =?us-ascii?Q?nKwkIetzpytR1FWqXQbhYoGuymI7NRr5XrqMguzqywWbTI7rheZ+nMrAOSH6?=
+ =?us-ascii?Q?e0bdm4/8P5d8+19hEXdzzMWli0GbsFu2z7ZviTIGgYeWmwrhYP4/WtSVJv/a?=
+ =?us-ascii?Q?uGfXpIwprCSNoWVU0+cSC6GqPgBdl9/8LPkIR0+lFPwnHDuap2LV9wKA7ylr?=
+ =?us-ascii?Q?3+wnhuBjJuhHW8iyHkya8qykP0NBysaadfoviXP45YU4iv6AVCm7FQNqTkOi?=
+ =?us-ascii?Q?qF5APWG6ptC8EcWnv9+U3uut66S/GY1VNgzewRiVxqf8FK/pmgZsjNjtD1E+?=
+ =?us-ascii?Q?P9QjYJlOsToro8TPt7MW7EWxep5WEFATENAmRmF7iiWvwJAsTSOUNgDyLWu5?=
+ =?us-ascii?Q?yyfEZZZfsKXIJ7N/FOjt9+nHTYdXohm+Uh4wzCjkE6bxiIxAptSkEiXqbbxn?=
+ =?us-ascii?Q?2fMRUD5WFGNzCsA1O5iyoFXxwJoYD0Yh/aU9+kcTXqL/dJEePhcj141S3Wp3?=
+ =?us-ascii?Q?T12q+NUsDTgjcYRA4MAWpQXtTqW3/q9qHmatR5p9yxd+G0iW80elYFUDWkA5?=
+ =?us-ascii?Q?AFmJJz4DqiWvdn4q4o06xKXbsiT6kOOYjRtttFqqQUJ3JBrektyOPZvVosnD?=
+ =?us-ascii?Q?FXQCvTRbChrr70+jefQpYt2oaEPLVIxcS26yKRt1O0dd5Q/4dyprrtJW3O5I?=
+ =?us-ascii?Q?iuyqm4AamNfiiwDIb09WrPFg9yAuBGEjf4sNoqSXmvEXq4qvy0lYBP6dM005?=
+ =?us-ascii?Q?3dasWsY6e2mzmOsuwh7fvJyZgv/BzMl3YTIliRIbFMzz067fxp/01ZJKNft6?=
+ =?us-ascii?Q?4FLQr/HQVmwbtLVM/Q7jTM2ztSSAOjgo8zE9nWHnTSWmBSjUxspTktSowx3h?=
+ =?us-ascii?Q?a1F5G2cp7YOtQ/aYJQGcj414M2qU4yYuhwYPAKQeZA6g414Js6Wx9dn1dw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:174.47.1.84;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:usmxlcas.maxlinear.com;PTR:174-47-1-84.static.ctl.one;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: maxlinear.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 03:22:59.1222
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b971c0b4-dbd9-4625-f0b7-08ddd62ae00d
+X-MS-Exchange-CrossTenant-Id: dac28005-13e0-41b8-8280-7663835f2b1d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=dac28005-13e0-41b8-8280-7663835f2b1d;Ip=[174.47.1.84];Helo=[usmxlcas.maxlinear.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003440.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPFC1D60318E
 
-On 08/06/25 at 09:16am, Marco Elver wrote:
-> On Tue, 5 Aug 2025 at 08:23, 'Baoquan He' via kasan-dev
-> <kasan-dev@googlegroups.com> wrote:
-> >
-> > Currently only hw_tags mode of kasan can be enabled or disabled with
-> > kernel parameter kasan=on|off for built kernel. For kasan generic and
-> > sw_tags mode, there's no way to disable them once kernel is built.
-> > This is not convenient sometime, e.g in system kdump is configured.
-> > When the 1st kernel has KASAN enabled and crash triggered to switch to
-> > kdump kernel, the generic or sw_tags mode will cost much extra memory
-> > for kasan shadow while in fact it's meaningless to have kasan in kdump
-> > kernel.
-> 
-> Are you using KASAN generic or SW-tags is production?
-> If in a test environment, is the overhead of the kdump kernel really
-> unacceptable?
+If the intel,dma-sw-desc property is present, it indicates that
+the DMA driver is responsible for managing the DMA engine, including
+handing the DMA descriptors.
+If this property is present, the system defaults to a mode where
+another hardware component takes control of the DMA engine.
+In this case, the hardware can generate and manage descriptors
+independently, without driver involvement.
 
-Thanks for checking this.
+This property only takes effect on HDMA(DMAV3x).
 
-I don't use KASAN in production environment. But in Redhat, our CI will
-run test cases on debug kernel with KASAN enabled by default. Then the
-crashkernel setting will be uncertain. E.g usually crashkernel=256M is
-enough for most of system. However, KASAN would make the crashkernel
-reservation need to reach to 768M on one ampere arm64 system. This is
-not the extra 1/8 of system ram as we expected because we have vmalloc
-mapping to create shaddow too. In this case, QE or other kernel
-developer who is not familiar with KASAN may need spend time to dig out
-what's going on here. And they may need adjust crashkernel= value to get
-an appropriate one to make system work. This is not good because we
-don't need KASAN feature in kdump kernel at all while we need tackle the
-unexpected crashkernel= setting.
+Signed-off-by: Zhu Yixin <yzhu@maxlinear.com>
+---
+ Documentation/devicetree/bindings/dma/intel,ldma.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-This can be fixed with a very easy way, a knob to disable kasan in kdump
-kernel can perfectly handle it.
-
-> 
-> > So this patchset moves the kasan=on|off out of hw_tags scope and into
-> > common code to make it visible in generic and sw_tags mode too. Then we
-> > can add kasan=off in kdump kernel to reduce the unneeded meomry cost for
-> > kasan.
-> >
-> > Test:
-> > =====
-> > I only took test on x86_64 for generic mode, and on arm64 for
-> > generic, sw_tags and hw_tags mode. All of them works well.
-> 
-> Does it also work for CONFIG_KASAN_INLINE?
-
-Yes, Andrey said in reply, I did investigation. You can see that
-KASAN_INLINE will bloat vmlinux by ~30M. This is not a big problem of
-kdump kernel.
-
-CONFIG_KASAN_OUTLINE=y
-[root@ampere-mtsnow-altra-08 linux]# ll vmlinux
--rwxr-xr-x. 1 root root 124859016 Aug  6 06:08 vmlinux
-[root@ampere-mtsnow-altra-08 linux]# ll /boot/vmlinuz-*
--rwxr-xr-x. 1 root root 15938048 Aug  3 00:15 /boot/vmlinuz-0-rescue-f81ab6a509e444e3857153cfa3fc6497
--rwxr-xr-x. 1 root root 15938048 Jul 23 20:00 /boot/vmlinuz-6.15.8-200.fc42.aarch64
--rwxr-xr-x. 1 root root 20644352 Aug  6 06:11 /boot/vmlinuz-6.16.0+
-
-CONFIG_KASAN_INLINE=y
-[root@ampere-mtsnow-altra-08 linux]# ll vmlinux
--rwxr-xr-x. 1 root root 150483592 Aug  6 10:53 vmlinux
-[root@ampere-mtsnow-altra-08 linux]# ll /boot/vmlinuz-* 
--rwxr-xr-x. 1 root root  15938048 Aug  3 00:15 /boot/vmlinuz-0-rescue-f81ab6a509e444e3857153cfa3fc6497
--rwxr-xr-x. 1 root root  15938048 Jul 23 20:00 /boot/vmlinuz-6.15.8-200.fc42.aarch64
--rwxr-xr-x. 1 root root  27779584 Aug  6 10:55 /boot/vmlinuz-6.16.0+
-
-> 
-> > However when I tested sw_tags on a HPE apollo arm64 machine, it always
-> > breaks kernel with a KASAN bug. Even w/o this patchset applied, the bug
-> > can always be seen too.
-> >
-> > "BUG: KASAN: invalid-access in pcpu_alloc_noprof+0x42c/0x9a8"
-> >
-> > I haven't got root cause of the bug, will report the bug later in
-> > another thread.
-> > ====
-> >
-> > Baoquan He (4):
-> >   mm/kasan: add conditional checks in functions to return directly if
-> >     kasan is disabled
-> >   mm/kasan: move kasan= code to common place
-> >   mm/kasan: don't initialize kasan if it's disabled
-> >   mm/kasan: make kasan=on|off take effect for all three modes
-> >
-> >  arch/arm/mm/kasan_init.c               |  6 +++++
-> >  arch/arm64/mm/kasan_init.c             |  7 ++++++
-> >  arch/loongarch/mm/kasan_init.c         |  5 ++++
-> >  arch/powerpc/mm/kasan/init_32.c        |  8 +++++-
-> >  arch/powerpc/mm/kasan/init_book3e_64.c |  6 +++++
-> >  arch/powerpc/mm/kasan/init_book3s_64.c |  6 +++++
-> >  arch/riscv/mm/kasan_init.c             |  6 +++++
-> >  arch/um/kernel/mem.c                   |  6 +++++
-> >  arch/x86/mm/kasan_init_64.c            |  6 +++++
-> >  arch/xtensa/mm/kasan_init.c            |  6 +++++
-> >  include/linux/kasan-enabled.h          | 11 ++------
-> >  mm/kasan/common.c                      | 27 ++++++++++++++++++++
-> >  mm/kasan/generic.c                     | 20 +++++++++++++--
-> >  mm/kasan/hw_tags.c                     | 35 ++------------------------
-> >  mm/kasan/init.c                        |  6 +++++
-> >  mm/kasan/quarantine.c                  |  3 +++
-> >  mm/kasan/shadow.c                      | 23 ++++++++++++++++-
-> >  mm/kasan/sw_tags.c                     |  9 +++++++
-> >  18 files changed, 150 insertions(+), 46 deletions(-)
-> >
-> > --
-> > 2.41.0
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> > To view this discussion visit https://groups.google.com/d/msgid/kasan-dev/20250805062333.121553-1-bhe%40redhat.com.
-> 
+diff --git a/Documentation/devicetree/bindings/dma/intel,ldma.yaml b/Documentation/devicetree/bindings/dma/intel,ldma.yaml
+index d6bb553a2c6f..426168b8709e 100644
+--- a/Documentation/devicetree/bindings/dma/intel,ldma.yaml
++++ b/Documentation/devicetree/bindings/dma/intel,ldma.yaml
+@@ -80,6 +80,12 @@ properties:
+       if it is disabled, the DMA RX will still support programmable fixed burst size of 2,4,8,16.
+       It only applies to RX DMA and memcopy DMA.
+ 
++  intel,dma-sw-desc:
++    type: boolean
++    description:
++      Indicates that the DMA driver should operate in software-managed mode.
++      If this property is not present, it implies that DMA descriptors are managed and generated by another hardware component that controls the DMA engine.
++
+ required:
+   - compatible
+   - reg
+-- 
+2.43.5
 
 
