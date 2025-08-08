@@ -1,124 +1,182 @@
-Return-Path: <linux-kernel+bounces-760814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4DBB1F075
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:54:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9333CB1F077
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2FB05A42A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A31475A42DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD29126CE3D;
-	Fri,  8 Aug 2025 21:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53C1289829;
+	Fri,  8 Aug 2025 21:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYbLg4Gi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="RqJ3qpwt"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB0528A714;
-	Fri,  8 Aug 2025 21:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A0C289819
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 21:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754690000; cv=none; b=rEvvXjPuL41rOx2Ry6p/MuS6H+9WPNIuanfS39UWbSE2L5aB7PLNtG3oHyk8QSXo/ScQ1sKy2nYRfvR4tsrnKprTzBRYNDmExZeEb11qt+BqCH0lSEKi5KEghUlNVWa0CEkhwe3dudmDFRKF0MpGNTnSIo9FhIjYHDqaEqJA0i8=
+	t=1754690066; cv=none; b=nSmyJftMrbZxiWyj1QLwDP23Ffa7IGeybajKKPNksr2KnpWJ0daG6DvC48kX1mE+VIcmUks4qGfDtmktJB4tSIrURAAzmIftQsA6uPCXZyK/nnVKRArdxpYkkgME6RO+L7kHpoxpAp4cd8JAikm1iWK6njIfT5pCyIsGc64d3zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754690000; c=relaxed/simple;
-	bh=Zod0TsMHtgwPaKwYE+/U4AqQ+FNkV4HBXTB6f91BvZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCjMVGk+qP3DYCQHuBkJhiYSjDOIxqEhTLmys4l9gdI0FLruNgGRiHcdIY4Q/LYcBM9yRUDWdjFUW1UT4Zdn2O42N1QxuPRZr6Cvjmo6YIL2e8zpFDAbiReNRIAp+QE8rA4NHHz70RkiRjXvIvGkk3Oo1GiNJt0MOLZhS4wc1n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYbLg4Gi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1511FC4CEED;
-	Fri,  8 Aug 2025 21:53:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754689997;
-	bh=Zod0TsMHtgwPaKwYE+/U4AqQ+FNkV4HBXTB6f91BvZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lYbLg4GiGw07oF2xFiGEtFahtPNaTguxQZTnzCPsaP33Ps1Sd5dpiW8Hyd5/tH5fz
-	 mNwQTkVnoHd8KUZjNIK+Yrud4qzng0tU9T6Z2/wF6XCUipfQzAz+oqGlla7oRVuQKu
-	 4DMlU/Mjyav39rR+6LZEtDFHTv8GCIC7FRQ6VPqWN1Y0lk9mV3Uyn4N+758nnMgSQq
-	 TAfj/Ivzh7mUG6hOvUxB117SjPt3roQe5TQM7xa2+gU+P+ltdgxpem4MCU77zInFJB
-	 2lVBwI+71nkOi9dtIpA/QEJjRO6cgrmZsSBJjEKfTzXiSiEzoAH4NgpaVDxE9rMWGf
-	 ctO+yy1/jYC6g==
-Date: Fri, 8 Aug 2025 14:53:12 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: kernel test robot <lkp@intel.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-	linux-riscv@lists.infradead.org, llvm@lists.linux.dev
-Subject: Re: ld.lld: error: Function Import: link error: linking module flags
- 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at
- 1229286), and 'i32 1' from vmlinux.a(vma_exec.o at 1246866)
-Message-ID: <20250808215312.GA3625764@ax162>
-References: <202508082339.sjRnzZrX-lkp@intel.com>
- <j6pxm4n2n3tnan22x73ff3ku6dwr6e65mi4tafjmlyoicbpygi@vbjbioh7p5fx>
+	s=arc-20240116; t=1754690066; c=relaxed/simple;
+	bh=HmRC7lsFYeGZF1wI7voIgyEsHb+t9+/VffmRds6ZKFk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KQopgD7SaM3EY9Cv2uZQfqxjK3NjMwMTwAWh0iBRpfvlZtNLcVqIzjyiR5NCYhoJ6nW4eum5oyUssb1u/yWXKcqqq5O1vT/b3JSOSa68fCgpb9SgMAqGOLk4/1Vl04Ue3qdZaRgqSndMPrzKa68B6jB4GXJwkRd0UHnjNpRPiYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=RqJ3qpwt; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71a3935fa8dso15929667b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 14:54:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1754690063; x=1755294863; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uuJLHWSmv+c0uCdhfds8sX30zDJBMdAP3nmUmnGq3G4=;
+        b=RqJ3qpwtg2Q2OI1zhuM6eUUlsWA2qsR/GBcAPvWcM0HNEA02RiINv+U1BMrzzpgM3g
+         7waZDSL7ygrwiK2D0a2s4M+Im89gsrw42GPqwwaQRuA4wGL19xvA/a8eIccKho/VhCY/
+         BarQ4ec5asQw6Tknop6aDD925ERk2k3urzV7kL6XHg+aAERlTW1u/d42cbnY76aWRIGK
+         fJNbY0BxTNJ3FqORPIhQqbLi/FCZVuDj8kw1nxx+/k4ogugvqvZnkKHOM/nMQFkMPL3C
+         znfMiDeGNcG/j2kfc0vIj5sHgwFNbVU1o7bpnYFpX0Rij4RC5ggpxyiGU8UcicRhFUkr
+         ZIYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754690063; x=1755294863;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uuJLHWSmv+c0uCdhfds8sX30zDJBMdAP3nmUmnGq3G4=;
+        b=n4EkyKXFCH+EbD6+R7yo3aBGtD79osn6kZXAlXghsh7YAz1YI4yV+37PeocoAbnKzf
+         0r+TXLyev+ndXA7NQoKxe+UyQ5vY3KJhx+HyGf+4dQonkCKPVB/EABGEIrA08J+PQc3v
+         8+S5MxUAUeDUEtskA5ugmh7fdFeNc9+m9zEMkgA59JGQCiHitSoviN8cwJr7XC8Y+BRe
+         OCjfH3aQRvLltgALqZK1aNe0MUeGZO0oNaG07rzhQxRTyrJ68uuH74dbrPIcUYUAkDzx
+         5pWn2oQZk0rVVDU1FZCC8zdxPO/p1XrDPCtgbFaSM8M2XQAO45RlHZ+LrOF2rm1gkl4u
+         bkPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG0MCxW7LCEzZHiyuVhfpKJklYJVicHlq5v6XemHSxUv1tyfCNe9AFeiwCdO2gNFsBtoXZ2lFgK57VDv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeSF0vSn6Gr7qCRKF3b/YiHquCNmmJ9XDku2bs9by5HacOGNMk
+	mbInliMJMuqu44Jg7pi22iv1IR/XImrY/CLryYtCW4tzDg9OKLDUUUnS6CSDxQyZAoE=
+X-Gm-Gg: ASbGncs279c8DtTKX3CeNTdTbv0POc33MCYMjg5PgI0rRFdqwVHgOJXEaH42JaEKwcc
+	wydW+ZitjcEO/8w81AxNZHIsW7S3JXbeLY8dcCKlQuKXcTvXnDlFpQJutyXfVk19Al2Rq5dUO+5
+	wcOB2CF6HFxk9HW4Z9o+IJwo7LxnMwtM3CdAT+Odt91+ypyXZOR9U4qBp/lG945agPL24AxORiz
+	Qx86NjFFZhT5H6m+cDoWM2T55N6otajo0YS0LDDYzRGFZpOI+tcSEjTj8Cikr7JltA3JbKEY/uf
+	0ySqcbFhufx5rr/7fLRX/qxaKZer3lqXmUxqeVIeELE3gjaHBevkJsF1Jv9Bkai4USIFEWAlV67
+	FYuu6RR9ybyKHgt2dwJOhzLNsjRk=
+X-Google-Smtp-Source: AGHT+IGFwdcaBJd15gRJijednbAA2gVVZNZGPOhhiA1n8CUs1CpXJktDmFI1FJq1FaRdjPHUgnRAiA==
+X-Received: by 2002:a05:690c:4c12:b0:71a:1513:236 with SMTP id 00721157ae682-71bf0ef41b9mr57586347b3.40.1754690063156;
+        Fri, 08 Aug 2025 14:54:23 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430::3d? ([2600:1700:6476:1430::3d])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a3f5874sm54842917b3.21.2025.08.08.14.54.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 14:54:22 -0700 (PDT)
+Message-ID: <66f5990f04f4b3d1b53164695ca79c706c36325c.camel@dubeyko.com>
+Subject: Re: [PATCH 2/2] hfsplus: abort hfsplus_lookup if name is too long
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 08 Aug 2025 14:54:20 -0700
+In-Reply-To: <20250806171132.3402278-3-frank.li@vivo.com>
+References: <20250806171132.3402278-1-frank.li@vivo.com>
+	 <20250806171132.3402278-3-frank.li@vivo.com>
+Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
+ keydata=mQINBGgaTLYBEADaJc/WqWTeunGetXyyGJ5Za7b23M/ozuDCWCp+yWUa2GqQKH40dxRIR
+ zshgOmAue7t9RQJU9lxZ4ZHWbi1Hzz85+0omefEdAKFmxTO6+CYV0g/sapU0wPJws3sC2Pbda9/eJ
+ ZcvScAX2n/PlhpTnzJKf3JkHh3nM1ACO3jzSe2/muSQJvqMLG2D71ccekr1RyUh8V+OZdrPtfkDam
+ V6GOT6IvyE+d+55fzmo20nJKecvbyvdikWwZvjjCENsG9qOf3TcCJ9DDYwjyYe1To8b+mQM9nHcxp
+ jUsUuH074BhISFwt99/htZdSgp4csiGeXr8f9BEotRB6+kjMBHaiJ6B7BIlDmlffyR4f3oR/5hxgy
+ dvIxMocqyc03xVyM6tA4ZrshKkwDgZIFEKkx37ec22ZJczNwGywKQW2TGXUTZVbdooiG4tXbRBLxe
+ ga/NTZ52ZdEkSxAUGw/l0y0InTtdDIWvfUT+WXtQcEPRBE6HHhoeFehLzWL/o7w5Hog+0hXhNjqte
+ fzKpI2fWmYzoIb6ueNmE/8sP9fWXo6Av9m8B5hRvF/hVWfEysr/2LSqN+xjt9NEbg8WNRMLy/Y0MS
+ p5fgf9pmGF78waFiBvgZIQNuQnHrM+0BmYOhR0JKoHjt7r5wLyNiKFc8b7xXndyCDYfniO3ljbr0j
+ tXWRGxx4to6FwARAQABtCZWaWFjaGVzbGF2IER1YmV5a28gPHNsYXZhQGR1YmV5a28uY29tPokCVw
+ QTAQoAQQIbAQUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBFXDC2tnzsoLQtrbBDlc2cL
+ fhEB1BQJoGl5PAhkBAAoJEDlc2cLfhEB17DsP/jy/Dx19MtxWOniPqpQf2s65enkDZuMIQ94jSg7B
+ F2qTKIbNR9SmsczjyjC+/J7m7WZRmcqnwFYMOyNfh12aF2WhjT7p5xEAbvfGVYwUpUrg/lcacdT0D
+ Yk61GGc5ZB89OAWHLr0FJjI54bd7kn7E/JRQF4dqNsxU8qcPXQ0wLHxTHUPZu/w5Zu/cO+lQ3H0Pj
+ pSEGaTAh+tBYGSvQ4YPYBcV8+qjTxzeNwkw4ARza8EjTwWKP2jWAfA/ay4VobRfqNQ2zLoo84qDtN
+ Uxe0zPE2wobIXELWkbuW/6hoQFPpMlJWz+mbvVms57NAA1HO8F5c1SLFaJ6dN0AQbxrHi45/cQXla
+ 9hSEOJjxcEnJG/ZmcomYHFneM9K1p1K6HcGajiY2BFWkVet9vuHygkLWXVYZ0lr1paLFR52S7T+cf
+ 6dkxOqu1ZiRegvFoyzBUzlLh/elgp3tWUfG2VmJD3lGpB3m5ZhwQ3rFpK8A7cKzgKjwPp61Me0o9z
+ HX53THoG+QG+o0nnIKK7M8+coToTSyznYoq9C3eKeM/J97x9+h9tbizaeUQvWzQOgG8myUJ5u5Dr4
+ 6tv9KXrOJy0iy/dcyreMYV5lwODaFfOeA4Lbnn5vRn9OjuMg1PFhCi3yMI4lA4umXFw0V2/OI5rgW
+ BQELhfvW6mxkihkl6KLZX8m1zcHitCpWaWFjaGVzbGF2IER1YmV5a28gPFNsYXZhLkR1YmV5a29Aa
+ WJtLmNvbT6JAlQEEwEKAD4WIQRVwwtrZ87KC0La2wQ5XNnC34RAdQUCaBpd7AIbAQUJA8JnAAULCQ
+ gHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRA5XNnC34RAdYjFEACiWBEybMt1xjRbEgaZ3UP5i2bSway
+ DwYDvgWW5EbRP7JcqOcZ2vkJwrK3gsqC3FKpjOPh7ecE0I4vrabH1Qobe2N8B2Y396z24mGnkTBbb
+ 16Uz3PC93nFN1BA0wuOjlr1/oOTy5gBY563vybhnXPfSEUcXRd28jI7z8tRyzXh2tL8ZLdv1u4vQ8
+ E0O7lVJ55p9yGxbwgb5vXU4T2irqRKLxRvU80rZIXoEM7zLf5r7RaRxgwjTKdu6rYMUOfoyEQQZTD
+ 4Xg9YE/X8pZzcbYFs4IlscyK6cXU0pjwr2ssjearOLLDJ7ygvfOiOuCZL+6zHRunLwq2JH/RmwuLV
+ mWWSbgosZD6c5+wu6DxV15y7zZaR3NFPOR5ErpCFUorKzBO1nA4dwOAbNym9OGkhRgLAyxwpea0V0
+ ZlStfp0kfVaSZYo7PXd8Bbtyjali0niBjPpEVZdgtVUpBlPr97jBYZ+L5GF3hd6WJFbEYgj+5Af7C
+ UjbX9DHweGQ/tdXWRnJHRzorxzjOS3003ddRnPtQDDN3Z/XzdAZwQAs0RqqXrTeeJrLppFUbAP+HZ
+ TyOLVJcAAlVQROoq8PbM3ZKIaOygjj6Yw0emJi1D9OsN2UKjoe4W185vamFWX4Ba41jmCPrYJWAWH
+ fAMjjkInIPg7RLGs8FiwxfcpkILP0YbVWHiNAabQoVmlhY2hlc2xhdiBEdWJleWtvIDx2ZHViZXlr
+ b0BrZXJuZWwub3JnPokCVAQTAQoAPhYhBFXDC2tnzsoLQtrbBDlc2cLfhEB1BQJoVemuAhsBBQkDw
+ mcABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEDlc2cLfhEB1GRwP/1scX5HO9Sk7dRicLD/fxo
+ ipwEs+UbeA0/TM8OQfdRI4C/tFBYbQCR7lD05dfq8VsYLEyrgeLqP/iRhabLky8LTaEdwoAqPDc/O
+ 9HRffx/faJZqkKc1dZryjqS6b8NExhKOVWmDqN357+Cl/H4hT9wnvjCj1YEqXIxSd/2Pc8+yw/KRC
+ AP7jtRzXHcc/49Lpz/NU5irScusxy2GLKa5o/13jFK3F1fWX1wsOJF8NlTx3rLtBy4GWHITwkBmu8
+ zI4qcJGp7eudI0l4xmIKKQWanEhVdzBm5UnfyLIa7gQ2T48UbxJlWnMhLxMPrxgtC4Kos1G3zovEy
+ Ep+fJN7D1pwN9aR36jVKvRsX7V4leIDWGzCdfw1FGWkMUfrRwgIl6i3wgqcCP6r9YSWVQYXdmwdMu
+ 1RFLC44iF9340S0hw9+30yGP8TWwd1mm8V/+zsdDAFAoAwisi5QLLkQnEsJSgLzJ9daAsE8KjMthv
+ hUWHdpiUSjyCpigT+KPl9YunZhyrC1jZXERCDPCQVYgaPt+Xbhdjcem/ykv8UVIDAGVXjuk4OW8la
+ nf8SP+uxkTTDKcPHOa5rYRaeNj7T/NClRSd4z6aV3F6pKEJnEGvv/DFMXtSHlbylhyiGKN2Amd0b4
+ 9jg+DW85oNN7q2UYzYuPwkHsFFq5iyF1QggiwYYTpoVXsw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <j6pxm4n2n3tnan22x73ff3ku6dwr6e65mi4tafjmlyoicbpygi@vbjbioh7p5fx>
 
-On Fri, Aug 08, 2025 at 10:32:01PM +0100, Pedro Falcato wrote:
-> This doesn't look particularly mm related, CC'd riscv and kernel llvm lists.
+On Wed, 2025-08-06 at 11:11 -0600, Yangtao Li wrote:
+> Long file names for hfs is 255 characters.
 
-Indeed, this should be avoided with [1], I just need someone in the
-RISC-V space to pick it up.
+You already mentioned in another patch that HFS has limitation in 31
+symbols. I think this patch requires more explanation why you've
+selected hfsplus_lookup().
 
-https://lore.kernel.org/20250710-riscv-restrict-lto-to-medany-v1-1-b1dac9871ecf@kernel.org/
+>=20
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+> =C2=A0fs/hfsplus/dir.c | 3 +++
+> =C2=A01 file changed, 3 insertions(+)
+>=20
+> diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+> index 876bbb80fb4d..d8fb401e7fdc 100644
+> --- a/fs/hfsplus/dir.c
+> +++ b/fs/hfsplus/dir.c
+> @@ -38,6 +38,9 @@ static struct dentry *hfsplus_lookup(struct inode
+> *dir, struct dentry *dentry,
+> =C2=A0	u32 cnid, linkid =3D 0;
+> =C2=A0	u16 type;
+> =C2=A0
+> +	if (dentry->d_name.len > HFSPLUS_MAX_STRLEN)
+> +		return ERR_PTR(-ENAMETOOLONG);
+> +
 
-> On Sat, Aug 09, 2025 at 12:09:05AM +0800, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > head:   37816488247ddddbc3de113c78c83572274b1e2e
-> > commit: dd7a6246f4fd6e8a6dcb08f1f51c899f3e0d3b83 mm: abstract initial stack setup to mm subsystem
-> > date:   3 months ago
-> > config: riscv-randconfig-r071-20250729 (https://download.01.org/0day-ci/archive/20250808/202508082339.sjRnzZrX-lkp@intel.com/config)
-> > compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 1b4db78d2eaa070b3f364a2d2b2b826a5439b892)
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250808/202508082339.sjRnzZrX-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202508082339.sjRnzZrX-lkp@intel.com/
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(core.o at 1243626)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(ring_buffer.o at 1239546)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(vmalloc.o at 1246746)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(memory.o at 1246026)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(main.o at 1225686)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(output.o at 1404306)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(mmap.o at 1246206)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(vma.o at 1246806)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(drm_gem.o at 1315866)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(drm_gem_shmem_helper.o at 1317846)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(virtgpu_vram.o at 1327806)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 1' from vmlinux.a(alternative.o at 1226286), and 'i32 3' from vmlinux.a(init.o at 1229286)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(direct-io.o at 1251666)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(debug_vm_pgtable.o at 1247886)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(drm_gem_dma_helper.o at 1317726)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(blk-lib.o at 1282566)
-> > >> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(vma_exec.o at 1246866)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(context.o at 1229706)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(setup.o at 1226826)
-> >    ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 1229286), and 'i32 1' from vmlinux.a(physaddr.o at 1229886)
-> >    ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
-> > 
-> > -- 
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki
-> 
-> -- 
-> Pedro
-> 
+Are you sure that we really need to abort the hfsplus_lookup()? We
+already have the logic that checks the name length. We call
+hfsplus_cat_build_key() [1], then hfsplus_asc2uni() [2]. And
+hfsplus_asc2uni() checks the maximum name length and it returns -
+ENAMETOOLONG [3].
+
+Thanks,
+Slava.
+
+> =C2=A0	sb =3D dir->i_sb;
+> =C2=A0
+> =C2=A0	dentry->d_fsdata =3D NULL;
+
+[1] https://elixir.bootlin.com/linux/v6.16/source/fs/hfsplus/dir.c#L47
+[2]
+https://elixir.bootlin.com/linux/v6.16/source/fs/hfsplus/catalog.c#L49
+[3]
+https://elixir.bootlin.com/linux/v6.16/source/fs/hfsplus/unicode.c#L375
 
