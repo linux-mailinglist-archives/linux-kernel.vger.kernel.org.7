@@ -1,113 +1,183 @@
-Return-Path: <linux-kernel+bounces-760130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E957B1E6E4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:58:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE847B1E6E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051A43BADD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:58:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011BC177606
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8099525B1C7;
-	Fri,  8 Aug 2025 10:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B7B25BEE7;
+	Fri,  8 Aug 2025 10:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGZ+NVPb"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="q4RG3tTS"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A8823535A;
-	Fri,  8 Aug 2025 10:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B57023535A;
+	Fri,  8 Aug 2025 10:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754650713; cv=none; b=YSRFyu8TaDuAY3y4NIPfXLJOlAEUl4BBblHbx48U67SP/wNfRV6J3nPgct55SvN9wvtaC0Zow9OP9ZodPOOBgnjyLr94SxkDznvk6thioorKiAtyKe5nUiwbrcFakVGl8qgEVkizNThHFsAlQmiuwZPg6aNV+Lao8qC/E4Cb96o=
+	t=1754650774; cv=none; b=Igj3kkGyMIhFik/VGLxbCLTigSpNIKxI4g9vLLIh67+HXT1a0EuQoVae01lirkZkompBb5fbGMmk2acGWcihBYJu2GCywPb4YTuJXc+Z+JKg3Ns2ighDTNkbUxgrCWOmh0JMaz+NcIcqJQdLlBT4IrzyYbBUF0nEHms3cLRpAOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754650713; c=relaxed/simple;
-	bh=YopiqIAAA3cabfm3Wt1fjyPny2SukpHchgZ3pD4S/64=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eFZr6KNN5UqFexOj10cB5Ds9YKuz023ed+JVet4vf78CMfGq12ecOWkz2d+vXrXfgjP+4jXB58WiEHBuXrUzWyss2s+kkV3jTLyW813kXNPh//+e59E0oAW7dmTUqjjMmH/51pejsEQAdr2O/070KVx78NbKVFFrqc51ji1eqLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGZ+NVPb; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-459ddf8acf1so17288895e9.0;
-        Fri, 08 Aug 2025 03:58:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754650709; x=1755255509; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+d6t8XzLh8MzpLApjDXA2yMYEP8+HgsLVFO8WJw3LUE=;
-        b=kGZ+NVPbNQf2EJVIoDstF9JERKu0GYi2HxB4f6eTtd79Pf5Nz7Rmmd2Ua2FHhKH+nc
-         5XLcDcwwA/KWW8kPCOYQe/gNeMkqb19r9dkqzBwTxP6F4Fj0L+kCh75cex0tl4lp2A+1
-         /ofBWtT+HZlXAb6mojc4aTrUGmza96S/MLReQ+1EDZ4pXyv0asTVW9uggwUoCIDRcKeq
-         wKGqCHKWUAawuh7mg4v3pRDBNzy5JwWek4dN+nvdoX59JsdroG7hOEN+MT0AwCUDVvDt
-         l/61bK4yt1z9G94pYemMcWP60nmzFjBpBG/wq6gz20pC/Sf7IYV5bjRtTgD2Z0FRpr9s
-         EOCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754650709; x=1755255509;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+d6t8XzLh8MzpLApjDXA2yMYEP8+HgsLVFO8WJw3LUE=;
-        b=nnK5EYnMNq1go20pWQTe2EUvdCgoMe2aew/6RQZHfZCkjdCj3MBvSdR/RXhqtekZHN
-         7O7M7O0EnwVzWwu9aw5Tg+0l2ZpQgM2xCJTqIQYLvIb5Tmkx+zLY0ff1vqQFiqtKxEE0
-         G/y8kjBYO6Vn258aTt4rdR7uzveD4ePwfbbYNV6SyalF88jaXrhK3ym7BeEj4uSULKyU
-         R0UTjNx9cIv1HUozkcsYW95g4WX/yEsFA4yA0+HKIkuaUlRWKpgYihuoQptuv+J0eM66
-         V30Jg/uNhOOMo0vtb8K9hktLiK1xjmyUWswsjOWSsxF1xQ+4MqhjKv7xY/Ngz+L8yDLL
-         QHMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXs3xZFIL2Q3WTgC4O/4uQWshJwrjZAxUQd7u2M7ZDRyJPTfRPQrCWgqYmlMEmcEFgARV793FM9ExqA8Tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpkhtsDCC04pvuMSn1zb2KT2lL0o2kjAX9WAj8z9khqXDhlwsU
-	vI4cuIrSx6/zq0LjsPBkGr58hAwIEc+rRsxusnG67dNEGkVa9GKLnlPK
-X-Gm-Gg: ASbGncvfJefx113qT+Q7mlGrN2J7eAHs2fncDus/a/vR+smXZa0HNps1JGDHWMLs9/e
-	eI9GfxPKVYMcog+uSA3vq3YU9g3Gz9jVbQG9v9iXH8vxey5PyZ9pNlJPQ4yAXhQrnLwePAgX8RD
-	qyB/MugCPX8B/P4fSItDjQv1uuAcM6KIH/MoT0+uMcjk6eXRc7W4YX8dZnFwzSiggH6/AVWcyDK
-	4K2Qc3zKSEqD6F0dHnXyf/2Xysp+P8Bx7wXG/rQ6JzNrtMkWN5lsCw350FNyCE48rzukZ7l0x0r
-	f375c2FOCQsSHn7AZxn/Y3odzJoaIx4SrK6KEmsuMlVW1cagQrktLMBLU9QyybRJhEC46+ZBKPs
-	cbakzdiMTQfK8t18G9TJR
-X-Google-Smtp-Source: AGHT+IEzE4zbs8Y8E+efTkUJpNYIZAwXwchyLjYwCvGqsPN5J20IQiBX+gs9CsAXsQQxjE5abHkVjQ==
-X-Received: by 2002:a05:6000:2c01:b0:3b7:6828:5f71 with SMTP id ffacd0b85a97d-3b900b449dfmr2171522f8f.9.1754650709426;
-        Fri, 08 Aug 2025 03:58:29 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459e5b84674sm141343945e9.30.2025.08.08.03.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 03:58:29 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Huisong Li <lihuisong@huawei.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: hisilicon: kunpeng_hccs: Fix spelling mistake "decrese" -> "decrease"
-Date: Fri,  8 Aug 2025 11:57:51 +0100
-Message-ID: <20250808105751.830113-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754650774; c=relaxed/simple;
+	bh=0Kz37+b2HmhQsaCCr11nF9LPPY0BleYfH+dO9HDEFlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eCmJFD/gBR5OaF8jZlJhjjygT6DDo25zHOec0gobUKyFrgZykBW3ieNaj8Q43ey5hPCiw8HUQ/lQsVTNifw4G8577WVUQm5gxWlLb22kNsb/lylPxYfOZFzHvwiGzwD84MYb7/OmalbWquBM5Q8OSLZmlV/F4upd/g6xx6i3Si4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=q4RG3tTS; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1754650763;
+	bh=0Kz37+b2HmhQsaCCr11nF9LPPY0BleYfH+dO9HDEFlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=q4RG3tTSLaF8x1NxuBYCxz+426cAzi8275UkWCKuyywKptTlX2hj2MfDjJpMfQIJV
+	 pnSaLqt7kLp9aVWgwzCdvRQq/6TnrInuRpCP3I1ewdd6bKf+jjPZ2MnkFOU6Ysue1M
+	 728rXB8iyTTmnO7jnl+zM2rmbU9EwvBCht0qnUZaGylzwr/HcuuML3Z5iH+wABZlLt
+	 E00F2yJKxsdm59nFqteAvbpbXwrGFwQwuPvTo3mi8amRZFs3v2hgbZhoIfKX9lsz4Z
+	 RYNup+F8TkJ5BUHV2aYmD5XtblDg8sVGzxnGjFNiX+Xnb2W3D5yvZSLPj78VTTmAD3
+	 IqJUVAMAaCNnA==
+Received: from linux.gnuweeb.org (unknown [182.253.126.185])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 9D90D3127DA9;
+	Fri,  8 Aug 2025 10:59:20 +0000 (UTC)
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Fri, 8 Aug 2025 17:59:17 +0700
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux PCI Mailing List <linux-pci@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof Wilczynski <kwilczynski@kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>,
+	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	gwml@vger.gnuweeb.org
+Subject: Re: [GIT PULL v2] PCI changes for v6.17
+Message-ID: <aJXYhfc/6DfcqfqF@linux.gnuweeb.org>
+References: <20250801142254.GA3496192@bhelgaas>
+ <175408424863.4088284.13236765550439476565.pr-tracker-bot@kernel.org>
+ <ed53280ed15d1140700b96cca2734bf327ee92539e5eb68e80f5bbbf0f01@linux.gnuweeb.org>
+ <aJQi3RN6WX6ZiQ5i@wunner.de>
+ <aJQxdBxcx6pdz8VO@linux.gnuweeb.org>
+ <20250807050350.FyWHwsig@linutronix.de>
+ <aJQ19UvTviTNbNk4@linux.gnuweeb.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJQ19UvTviTNbNk4@linux.gnuweeb.org>
+X-Machine-Hash: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
 
-There is a spelling mistake in a dev_err message. Fix it.
+On Thu, Aug 07, 2025 at 12:13:37PM +0700, Ammar Faizi wrote:
+> On Thu, Aug 07, 2025 at 07:03:50AM +0200, Nam Cao wrote:
+> > Does the diff below help?
+> 
+> Yes, it works.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/soc/hisilicon/kunpeng_hccs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So today, I synced with Linus' master branch again:
 
-diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
-index 65ff45fdcac7..006fec47ea10 100644
---- a/drivers/soc/hisilicon/kunpeng_hccs.c
-+++ b/drivers/soc/hisilicon/kunpeng_hccs.c
-@@ -1464,7 +1464,7 @@ static ssize_t dec_lane_of_type_store(struct kobject *kobj, struct kobj_attribut
- 		goto out;
- 	if (!all_in_idle) {
- 		ret = -EBUSY;
--		dev_err(hdev->dev, "please don't decrese lanes on high load with %s, ret = %d.\n",
-+		dev_err(hdev->dev, "please don't decrease lanes on high load with %s, ret = %d.\n",
- 			hccs_port_type_to_name(hdev, port_type), ret);
- 		goto out;
- 	}
+  37816488247d ("Merge tag 'net-6.17-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
+
+and applied your fix on top of it.
+
+I can boot, but I get this splat. Looking at the call trace, it seems
+it's still related to pci, but different issue. The call trace is also
+different from the previous one.
+
+Let me know if you have something for me to test.
+
+  [    1.017767] pci 10000:e0:1d.0: bridge window [mem 0x82000000-0x820fffff]: assigned
+  [    1.018519] pci 10000:e0:1d.0: bridge window [io  size 0x1000]: can't assign; no space
+  [    1.019268] pci 10000:e0:1d.0: bridge window [io  size 0x1000]: failed to assign
+  [    1.020026] pci 10000:e0:1d.0: bridge window [io  size 0x1000]: can't assign; no space
+  [    1.020789] pci 10000:e0:1d.0: bridge window [io  size 0x1000]: failed to assign
+  [    1.021539] pci 10000:e1:00.0: BAR 0 [mem 0x82000000-0x82003fff 64bit]: assigned
+  [    1.022317] pci 10000:e0:1d.0: PCI bridge to [bus e1]
+  [    1.023091] pci 10000:e0:1d.0:   bridge window [mem 0x82000000-0x820fffff]
+  [    1.023885] pci 10000:e1:00.0: VMD: Default LTR value set by driver
+  [    1.024654] pci 10000:e1:00.0: can't override BIOS ASPM; OS doesn't have ASPM control
+  [    1.025442] pcieport 10000:e0:1d.0: can't derive routing for PCI INT A
+  [    1.026245] pcieport 10000:e0:1d.0: PCI INT A: no GSI
+  [    1.027058] ------------[ cut here ]------------
+  [    1.027849] WARNING: CPU: 0 PID: 166 at drivers/pci/controller/vmd.c:309 vmd_init_dev_msi_info+0x36/0x40 [vmd]
+  [    1.028649] Modules linked in: hid_generic i2c_hid_acpi i2c_hid drm intel_lpss_pci i2c_i801 i2c_mux intel_lpss idma64 i2c_smbus vmd(+) hid video wmi pinctrl_tigerlake
+  [    1.029467] CPU: 0 UID: 0 PID: 166 Comm: systemd-udevd Not tainted 6.16.0-afh-home-2025-08-08-g6026508bdb9d #10 PREEMPT(full)  fe08b908bb15b9ded6f7769c45f204194ebf7eef
+  [    1.030301] Hardware name: HP HP Laptop 14s-dq2xxx/87FD, BIOS F.21 03/21/2022
+  [    1.031122] RIP: 0010:vmd_init_dev_msi_info+0x36/0x40 [vmd]
+  [    1.031953] Code: 48 89 cb e8 7c 49 4f e1 84 c0 74 1a 48 8b 53 20 48 c7 42 18 70 18 40 a0 48 8b 53 20 48 c7 42 20 e0 17 40 a0 5b c3 31 c0 5b c3 <0f> 0b 31 c0 c3 0f 1f 44 00 00 0f 1f 44 00 00 41 56 41 55 41 54 49
+  [    1.032798] RSP: 0018:ffff888105a47860 EFLAGS: 00010297
+  [    1.033642] RAX: ffff8881014d5d98 RBX: ffff8881014d5c00 RCX: ffff8881014d5d98
+  [    1.034506] RDX: ffff888120a49400 RSI: ffff888120a49400 RDI: ffff88810132b0c8
+  [    1.035359] RBP: 0000000000000001 R08: ffff888100d8de3a R09: 00000000ffffffff
+  [    1.036206] R10: 0000000000000004 R11: 0000000000000005 R12: ffff8881019b7e40
+  [    1.036561] usb 1-2: new full-speed USB device number 3 using xhci_hcd
+  [    1.037058] R13: ffffffffa020c680 R14: ffff88810132b0c8 R15: ffff888120a49400
+  [    1.038724] FS:  00007f25ede3a8c0(0000) GS:ffff8890f1a2d000(0000) knlGS:0000000000000000
+  [    1.039559] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  [    1.040400] CR2: 00007f25ee475ea0 CR3: 000000011dfd1003 CR4: 0000000000770ef0
+  [    1.041265] PKRU: 55555554
+  [    1.042121] Call Trace:
+  [    1.042971]  <TASK>
+  [    1.043803]  msi_create_device_irq_domain+0x1eb/0x290
+  [    1.044645]  __pci_enable_msi_range+0x106/0x300
+  [    1.045488]  pci_alloc_irq_vectors_affinity+0xc5/0x110
+  [    1.046336]  pcie_portdrv_probe+0x24e/0x610
+  [    1.047177]  ? kernfs_activate+0x48/0x60
+  [    1.048015]  local_pci_probe+0x3c/0x80
+  [    1.048854]  pci_device_probe+0xbc/0x1b0
+  [    1.049693]  really_probe+0xcd/0x380
+  [    1.050529]  ? driver_probe_device+0x90/0x90
+  [    1.051353]  __driver_probe_device+0x78/0x150
+  [    1.052182]  driver_probe_device+0x1f/0x90
+  [    1.053000]  __device_attach_driver+0x76/0xf0
+  [    1.053812]  bus_for_each_drv+0x69/0xa0
+  [    1.054633]  __device_attach+0xaa/0x1a0
+  [    1.055448]  pci_bus_add_device+0x4c/0x70
+  [    1.056260]  pci_bus_add_devices+0x2c/0x70
+  [    1.057063]  vmd_probe+0x81e/0xa20 [vmd 65bddf00234a3cddd21388091a077f038c9af2be]
+  [    1.057881]  local_pci_probe+0x3c/0x80
+  [    1.058682]  pci_device_probe+0xbc/0x1b0
+  [    1.059489]  really_probe+0xcd/0x380
+  [    1.060303]  ? __device_attach_driver+0xf0/0xf0
+  [    1.061112]  __driver_probe_device+0x78/0x150
+  [    1.061908]  driver_probe_device+0x1f/0x90
+  [    1.062711]  __driver_attach+0xbf/0x1b0
+  [    1.063500]  bus_for_each_dev+0x64/0xa0
+  [    1.064303]  bus_add_driver+0x10a/0x230
+  [    1.065100]  driver_register+0x55/0xf0
+  [    1.065892]  ? vmd_drv_exit+0x9a0/0x9a0 [vmd 65bddf00234a3cddd21388091a077f038c9af2be]
+  [    1.066673]  do_one_initcall+0x31/0x1e0
+  [    1.067460]  do_init_module+0x60/0x260
+  [    1.068264]  init_module_from_file+0x74/0x90
+  [    1.069068]  idempotent_init_module+0xed/0x2c0
+  [    1.069853]  __x64_sys_finit_module+0x65/0xd0
+  [    1.070630]  do_syscall_64+0x56/0x260
+  [    1.071394]  entry_SYSCALL_64_after_hwframe+0x29/0x31
+  [    1.072152] RIP: 0033:0x7f25ee53288d
+  [    1.072918] Code: 5b 41 5c c3 66 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 73 b5 0f 00 f7 d8 64 89 01 48
+  [    1.073698] RSP: 002b:00007fff09cbd5b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+  [    1.074477] RAX: ffffffffffffffda RBX: 000055d9edf36030 RCX: 00007f25ee53288d
+  [    1.075254] RDX: 0000000000000000 RSI: 00007f25ee6cc441 RDI: 0000000000000005
+  [    1.076042] RBP: 0000000000020000 R08: 0000000000000000 R09: 00007fff09cbd6f0
+  [    1.076827] R10: 0000000000000005 R11: 0000000000000246 R12: 00007f25ee6cc441
+  [    1.077609] R13: 000055d9edf323b0 R14: 000055d9edf36120 R15: 000055d9edf35850
+  [    1.078389]  </TASK>
+  [    1.079166] ---[ end trace 0000000000000000 ]---
+
 -- 
-2.50.1
+Ammar Faizi
 
 
