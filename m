@@ -1,349 +1,137 @@
-Return-Path: <linux-kernel+bounces-759896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD0FB1E425
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:08:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E4CB1E436
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B35724434
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:07:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FFB318A67C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C4525D1E9;
-	Fri,  8 Aug 2025 08:07:33 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A24A2571C2;
+	Fri,  8 Aug 2025 08:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Of8aOPtf"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D37F25A2C3
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B90254845;
+	Fri,  8 Aug 2025 08:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754640452; cv=none; b=uygGCo0rGb7moLulegLZ5oRWtcPntXHhdyIqVtjHdjxA8d+FP6o7mGcCrXSZj/2nbTC08fm5jIHjFnNhDkC75FnNR2JnwlzLS1Cy/ssCzwNyVXcvgLHsSFyz73u1Vc3jRb2ZE+Qn87Y0VViAqePjFVv8GYAl6thGUWJrAM1XwQ4=
+	t=1754640620; cv=none; b=gt5RpWGQwLZhCfnOt+4JVoEVk9hdG7rwfMkhu3Ri50Kd9x+viPA9qs7BQREiRVIBgK0+B+TkwV1/ajTv336yjt9+OLr6ZHgLvYt1bUtFtNoTyUKfw2bPqHHHTMvIUvfKN59hoTMJCJeoMCzoQ1dfnDMlXGIwrT2r1Bd4mrATTDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754640452; c=relaxed/simple;
-	bh=fbhjfatAP3UDLcg89AE5gW6OGazgFABaG9YaWCmdDwI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Bc4oEbptFM+UZbnNp6R/47/UpBxmXbdYakcB4CGPzK7A6hpBwLDn2nfxhsvoAOLO/jp5KDqqAfRqfiiUHbqIaMwmdTfOkIdOrbKtJ64g9G3x8gIRcVfLZnavrgNQ684k15kxO51s0OQBfz3ENwZbBCrFJ9OIhiC1FkV00DjOvU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87b2a58a4c0so222682539f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:07:30 -0700 (PDT)
+	s=arc-20240116; t=1754640620; c=relaxed/simple;
+	bh=k4Jnibd7i7jRx0hnPmHI1NyJepumY63rXsTCMGpzRJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GW49EllF3fPp4VMGZoVGcJ/xR6Br9PNiEHc33SZl5lDYyXoaCGitGvHzJwIXWXuIPsVQgV4QeORI3kw3njrmWde7wu5fuHxyTxh1/WcboqMCzrwEtASRv5y866FYDd7cZlrazAyemFgL0XEXEu9y0/8Q/s4g8uoMQSgiA/Cca+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Of8aOPtf; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76bd041c431so1814251b3a.2;
+        Fri, 08 Aug 2025 01:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754640617; x=1755245417; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+zLal7wiw2OJhWbaAgh4E8K5No6pZGJ87RB4Sd7Jh6w=;
+        b=Of8aOPtfSMC/b4xp2rcm+mM+n/qJJJWidwPzrhEIFDRKSEzX5zKQSUFLljf35M2rTS
+         B6xiGfWzPd2mh743j9LLzAXyPUnhRnrzJnr+0xQX4/mgcHAHWrRdRAGkvsVl17KQ6prK
+         O64TkW/B94PftbOOXNg2HzXcXjbH5usjGo1tKCxl93rFlng7OcC7rkMh2z5GaAYlIQ6T
+         GEji2qnDHxCDa9sPVTNORlphQfY6UoEfzT7JnNCXcGGFBDJZqpwAGYlEw79ksApL6urA
+         ZuGa27jhO8g5ZsMc7PtXAcROZFeKPB8nrDAClnMJXkIm6dhAiD7c+DFR3SpIhWMJ8yMk
+         un2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754640449; x=1755245249;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4o3EjIAGgZerIrIiZtS4b2/wTHTz4tnKJgIo3bTtmqw=;
-        b=C+gLJCcp6KhTw0jtUrRw1yxtl0lFLSn1ZoQjiSnHd75Ijadi/DS1Bj736ZJkQSJI90
-         coJU2TBniq3NNXgC6f58QaprEvBxaLhYBukDoWiWzh6tpnoK90WPPh0Ys7/nN8CP1Zv4
-         C1si0ayOj7qQ40JkjRkZNzM07u8OCaGGYLJLIauXxB4n2dhYkbFGKs89IIOEXFsp3+Ad
-         +OvRY/Fd7PFHsXNFCBzQk180aJtMcfl7eWAfjNtE7/seHFDbjrIJucDVdvEm4lBMO/pO
-         L8mba4B1+r3xibiELodkcvmiNQfu94gpJttNr7zQAMCFgfdkoBzFtiuGTaSFY8m0a22O
-         /GZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYhTchdwF/Iz7RQguovvZHscnUkiEOZjVkKn47C9xtoEVyU5WMQgWSXxfzjjHgeJldK3cgeguMtYIG0qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTP/L086iizryUCHBNqF8MWGyl8lWxSMJ5L2iI7oHR7kwBpVLf
-	H+qCUx5fM3vlWCMQdLGkiQ1mU6RDv0JT6vAg9Fn5cSLXDbf5mQyX4ntqb4WDvrE8zKuDDctCoVj
-	OzvYG/ryC1Q/4urOVKapXmUwUgwf4kISZr3XdSbO9VI3gtXqTba4SXBrEj9g=
-X-Google-Smtp-Source: AGHT+IH0YDeLMTECHnwk9kv4pYhwXKCIGHWgYukumAYPidEEnCYvOLmfKds+k7C3Zma8Gm5sqk627a66+RtBwkkjADSlKIRdR1ou
+        d=1e100.net; s=20230601; t=1754640617; x=1755245417;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+zLal7wiw2OJhWbaAgh4E8K5No6pZGJ87RB4Sd7Jh6w=;
+        b=kTeFInX+JbrlMXUAwyaIijBg/7J8MsHuRD3NIMyPV57sFMyL7iqls179qfaN9A76md
+         j316Tf3HDZTLtgwy6PKryF4B+zmcJnaxtyZzzlqgOYmk0uK2X2EdH22pP49vshP4O9WF
+         igVpmhVC76n1FLEyeScUhRwMLNk2+Axgd1VdNKbd5od/eaLWNUTUxXQAdyveR+TSG7ag
+         u9zZJfPKpIr4hz5+0vaVUTVtU59lSkI/wdYwNlegzrj0ZudX3ez5nYhjjfwy3TbYs7XK
+         YgTF0c4T0knaqv7TJTu+G7PM1q4SVeobmeR6Dyt1f/4bhxbuwpjbbcgGkDiPPDGVVLeG
+         w9Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrXteJvrxUkoM+h9rCwjoURReosJo1V4NVBwmLPTmKFmODIQjcwBICBkBpM2A8U2KpcF11TxTuyNAvQyjcFQlM@vger.kernel.org, AJvYcCXE3X6FSsR52yoRWtezlxe+Hz8j2VnfcXlj6Sy3RDxLWF7P/zB3PdwVDJhsXn28YJL2QzKP66yYF0To2AA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyITZlfvbZ7ffDvdCp3hsGqTthYXXCX3c+Ie4D1+H/HoqQM6XPg
+	x+5Lb93oO6t97gcberRGIBlHYmK/cDp+HjXTAmTMBdFOVzAGxwWabIbC
+X-Gm-Gg: ASbGnctISaWrekOuSKytSYUqr2WYC6A9FYho4nNd/QaCyJk97yeEn/+9BYtQ7qVr+i3
+	O9Bmeqhnsyx/FMw00MbQGJAZHkkiw6KvryNdMSeW4ZqB2uJjvae9XO81h+3abPL8OqB2fPFXbig
+	Av3Nwp0ev8j2t9iQOV7bLrOqqnjZUIYxEExaQ5tZuIgeaprJpRfdzV9JD+UUiYOnYIGVMlZ4cx/
+	m3eoSCX8sjpNEy6sdIQx740d00HSf9xDJvYHCBa/ceyPCjWMrxS2rl6MdYlVPj5ihneBLFrmuEI
+	nw5NBEIawnBtCcLgEdbbBR656kmpjLw/EAR4qIzQmUwaoRNiHjuYicj+jtKTcN8r8y6HF6hS7uV
+	AMpDXJfXcJ/YIN+bauQEVlW/4/fS28pnE
+X-Google-Smtp-Source: AGHT+IEOBRK8OBS17/ZG9lflsFPSXZq5vwtk1VfOQq6lWhyfYgDsLGdHv2GGhogZHbcQ7nTJUkbVhQ==
+X-Received: by 2002:a05:6a20:12c8:b0:23f:f712:411c with SMTP id adf61e73a8af0-240551f864bmr3260992637.36.1754640616761;
+        Fri, 08 Aug 2025 01:10:16 -0700 (PDT)
+Received: from server.. ([103.251.57.134])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bac0b57sm17098358a12.31.2025.08.08.01.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 01:10:15 -0700 (PDT)
+From: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+To: broonie@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	shuah@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
+Subject: [PATCH v2] selftests: arm64: Check fread return value in exec_target
+Date: Fri,  8 Aug 2025 13:38:30 +0530
+Message-ID: <20250808080955.41735-1-reddybalavignesh9979@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <a72e8741-a63a-487e-838e-daeed3458c0f@sirena.org.uk>
+References: <a72e8741-a63a-487e-838e-daeed3458c0f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1584:b0:87c:30c6:a7cf with SMTP id
- ca18e2360f4ac-883f10de3e3mr400689239f.0.1754640449618; Fri, 08 Aug 2025
- 01:07:29 -0700 (PDT)
-Date: Fri, 08 Aug 2025 01:07:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6895b041.050a0220.7f033.0058.GAE@google.com>
-Subject: [syzbot] [crypto?] KMSAN: kernel-infoleak in rng_recvmsg
-From: syzbot <syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Fix -Wunused-result warning generated when compiled with gcc 13.3.0,
+by checking fread's return value and handling errors, preventing
+potential failures when reading from stdin.
 
-syzbot found the following issue on:
+Fixes compiler warning:
+warning: ignoring return value of 'fread' declared with attribute
+'warn_unused_result' [-Wunused-result]
 
-HEAD commit:    6e64f4580381 Merge tag 'input-for-v6.17-rc0' of git://git...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a181a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b6003cf8ecb92ff2
-dashboard link: https://syzkaller.appspot.com/bug?extid=e8bcd7ee3db6cb5cb875
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117fa1a2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105e9058580000
+Fixes: 806a15b2545e ("kselftests/arm64: add PAuth test for whether exec() changes keys")
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3d9a1192a7cc/disk-6e64f458.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8f363fe8f54a/vmlinux-6e64f458.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/10b73833a575/bzImage-6e64f458.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
-BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:30 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter.h:328 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_iter+0xf0e/0x33f0 lib/iov_iter.c:185
- instrument_copy_to_user include/linux/instrumented.h:114 [inline]
- copy_to_user_iter lib/iov_iter.c:24 [inline]
- iterate_ubuf include/linux/iov_iter.h:30 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- _copy_to_iter+0xf0e/0x33f0 lib/iov_iter.c:185
- copy_to_iter include/linux/uio.h:220 [inline]
- memcpy_to_msg include/linux/skbuff.h:4202 [inline]
- _rng_recvmsg crypto/algif_rng.c:101 [inline]
- rng_recvmsg+0x1af/0x2d0 crypto/algif_rng.c:114
- sock_recvmsg_nosec net/socket.c:1065 [inline]
- sock_recvmsg+0x2df/0x390 net/socket.c:1087
- sock_read_iter+0x2c8/0x360 net/socket.c:1157
- new_sync_read fs/read_write.c:491 [inline]
- vfs_read+0x857/0xf00 fs/read_write.c:572
- ksys_read fs/read_write.c:715 [inline]
- __do_sys_read fs/read_write.c:724 [inline]
- __se_sys_read fs/read_write.c:722 [inline]
- __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
- x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-<Zero or more stacks not recorded to save memory>
-
-Uninit was stored to memory at:
- crypto_sha3_finup+0x136/0xe00 crypto/sha3_generic.c:202
- crypto_shash_op_and_zero crypto/shash.c:105 [inline]
- crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
- jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
- jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
- jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
- jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
- jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
- jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
- crypto_rng_generate include/crypto/rng.h:144 [inline]
- _rng_recvmsg crypto/algif_rng.c:97 [inline]
- rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
- sock_recvmsg_nosec net/socket.c:1065 [inline]
- sock_recvmsg+0x2df/0x390 net/socket.c:1087
- sock_read_iter+0x2c8/0x360 net/socket.c:1157
- new_sync_read fs/read_write.c:491 [inline]
- vfs_read+0x857/0xf00 fs/read_write.c:572
- ksys_read fs/read_write.c:715 [inline]
- __do_sys_read fs/read_write.c:724 [inline]
- __se_sys_read fs/read_write.c:722 [inline]
- __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
- x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- crypto_shash_finup+0xc5a/0xe80 crypto/shash.c:162
- crypto_shash_update include/crypto/hash.h:994 [inline]
- jent_hash_time+0x1de/0x590 crypto/jitterentropy-kcapi.c:136
- jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
- jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
- jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
- jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
- jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
- crypto_rng_generate include/crypto/rng.h:144 [inline]
- _rng_recvmsg crypto/algif_rng.c:97 [inline]
- rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
- sock_recvmsg_nosec net/socket.c:1065 [inline]
- sock_recvmsg+0x2df/0x390 net/socket.c:1087
- sock_read_iter+0x2c8/0x360 net/socket.c:1157
- new_sync_read fs/read_write.c:491 [inline]
- vfs_read+0x857/0xf00 fs/read_write.c:572
- ksys_read fs/read_write.c:715 [inline]
- __do_sys_read fs/read_write.c:724 [inline]
- __se_sys_read fs/read_write.c:722 [inline]
- __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
- x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- put_unaligned_le64 include/linux/unaligned.h:43 [inline]
- crypto_sha3_finup+0xc98/0xe00 crypto/sha3_generic.c:213
- crypto_shash_op_and_zero crypto/shash.c:105 [inline]
- crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
- jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
- jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
- jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
- jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
- jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
- jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
- crypto_rng_generate include/crypto/rng.h:144 [inline]
- _rng_recvmsg crypto/algif_rng.c:97 [inline]
- rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
- sock_recvmsg_nosec net/socket.c:1065 [inline]
- sock_recvmsg+0x2df/0x390 net/socket.c:1087
- sock_read_iter+0x2c8/0x360 net/socket.c:1157
- new_sync_read fs/read_write.c:491 [inline]
- vfs_read+0x857/0xf00 fs/read_write.c:572
- ksys_read fs/read_write.c:715 [inline]
- __do_sys_read fs/read_write.c:724 [inline]
- __se_sys_read fs/read_write.c:722 [inline]
- __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
- x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- keccakf_round crypto/sha3_generic.c:-1 [inline]
- keccakf+0x1efb/0x2110 crypto/sha3_generic.c:155
- crypto_sha3_finup+0x772/0xe00 crypto/sha3_generic.c:210
- crypto_shash_op_and_zero crypto/shash.c:105 [inline]
- crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
- jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
- jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
- jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
- jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
- jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
- jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
- crypto_rng_generate include/crypto/rng.h:144 [inline]
- _rng_recvmsg crypto/algif_rng.c:97 [inline]
- rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
- sock_recvmsg_nosec net/socket.c:1065 [inline]
- sock_recvmsg+0x2df/0x390 net/socket.c:1087
- sock_read_iter+0x2c8/0x360 net/socket.c:1157
- new_sync_read fs/read_write.c:491 [inline]
- vfs_read+0x857/0xf00 fs/read_write.c:572
- ksys_read fs/read_write.c:715 [inline]
- __do_sys_read fs/read_write.c:724 [inline]
- __se_sys_read fs/read_write.c:722 [inline]
- __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
- x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- crypto_sha3_finup+0x5be/0xe00 crypto/sha3_generic.c:207
- crypto_shash_op_and_zero crypto/shash.c:105 [inline]
- crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
- jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
- jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
- jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
- jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
- jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
- jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
- crypto_rng_generate include/crypto/rng.h:144 [inline]
- _rng_recvmsg crypto/algif_rng.c:97 [inline]
- rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
- sock_recvmsg_nosec net/socket.c:1065 [inline]
- sock_recvmsg+0x2df/0x390 net/socket.c:1087
- sock_read_iter+0x2c8/0x360 net/socket.c:1157
- new_sync_read fs/read_write.c:491 [inline]
- vfs_read+0x857/0xf00 fs/read_write.c:572
- ksys_read fs/read_write.c:715 [inline]
- __do_sys_read fs/read_write.c:724 [inline]
- __se_sys_read fs/read_write.c:722 [inline]
- __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
- x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- crypto_sha3_finup+0x136/0xe00 crypto/sha3_generic.c:202
- crypto_shash_op_and_zero crypto/shash.c:105 [inline]
- crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
- jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
- jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
- jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
- jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
- jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
- jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
- crypto_rng_generate include/crypto/rng.h:144 [inline]
- _rng_recvmsg crypto/algif_rng.c:97 [inline]
- rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
- sock_recvmsg_nosec net/socket.c:1065 [inline]
- sock_recvmsg+0x2df/0x390 net/socket.c:1087
- sock_read_iter+0x2c8/0x360 net/socket.c:1157
- new_sync_read fs/read_write.c:491 [inline]
- vfs_read+0x857/0xf00 fs/read_write.c:572
- ksys_read fs/read_write.c:715 [inline]
- __do_sys_read fs/read_write.c:724 [inline]
- __se_sys_read fs/read_write.c:722 [inline]
- __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
- x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- crypto_shash_finup+0xc5a/0xe80 crypto/shash.c:162
- crypto_shash_update include/crypto/hash.h:994 [inline]
- jent_hash_time+0x1de/0x590 crypto/jitterentropy-kcapi.c:136
- jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
- jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
- jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
- jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
- jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
- crypto_rng_generate include/crypto/rng.h:144 [inline]
- _rng_recvmsg crypto/algif_rng.c:97 [inline]
- rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
- sock_recvmsg_nosec net/socket.c:1065 [inline]
- sock_recvmsg+0x2df/0x390 net/socket.c:1087
- sock_read_iter+0x2c8/0x360 net/socket.c:1157
- new_sync_read fs/read_write.c:491 [inline]
- vfs_read+0x857/0xf00 fs/read_write.c:572
- ksys_read fs/read_write.c:715 [inline]
- __do_sys_read fs/read_write.c:724 [inline]
- __se_sys_read fs/read_write.c:722 [inline]
- __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
- x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Local variable intermediary created at:
- jent_hash_time+0x9b/0x590 crypto/jitterentropy-kcapi.c:110
- jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
-
-Bytes 0-23 of 24 are uninitialized
-Memory access of size 24 starts at ffff88811855fb70
-Data copied to user address 00002000000001c0
-
-CPU: 1 UID: 0 PID: 5820 Comm: syz-executor170 Not tainted 6.16.0-syzkaller-11952-g6e64f4580381 #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-=====================================================
-
-
+Signed-off-by: Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes in v2:
+	Use EXIT_FAILURE instead of -1.
+---
+ tools/testing/selftests/arm64/pauth/exec_target.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/tools/testing/selftests/arm64/pauth/exec_target.c b/tools/testing/selftests/arm64/pauth/exec_target.c
+index 4435600ca400..e597861b26d6 100644
+--- a/tools/testing/selftests/arm64/pauth/exec_target.c
++++ b/tools/testing/selftests/arm64/pauth/exec_target.c
+@@ -13,7 +13,12 @@ int main(void)
+ 	unsigned long hwcaps;
+ 	size_t val;
+ 
+-	fread(&val, sizeof(size_t), 1, stdin);
++	size_t size = fread(&val, sizeof(size_t), 1, stdin);
++
++	if (size != 1) {
++		fprintf(stderr, "Could not read input from stdin\n");
++		return EXIT_FAILURE;
++	}
+ 
+ 	/* don't try to execute illegal (unimplemented) instructions) caller
+ 	 * should have checked this and keep worker simple
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
