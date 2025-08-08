@@ -1,170 +1,350 @@
-Return-Path: <linux-kernel+bounces-759955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7249B1E4E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C02B1E4E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02918728214
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BD172307D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7089F26C38C;
-	Fri,  8 Aug 2025 08:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3361826738D;
+	Fri,  8 Aug 2025 08:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWWKtVuO"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nAW8xGll"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126B1267B9B;
-	Fri,  8 Aug 2025 08:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3424B1F949
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754643141; cv=none; b=fiDY1FCZznqzh+0Q69VOSd8vwc7IsQQW3YK57XoLomc9/Q50fBw7bC556j8zSOrDH590FgwDeAjos2BzVOtLVG+iwyLJbVdTLAe5wZmy1LYHF1fv8OT73ZEuVSrUTk5PUqh5+rX3Ov0IwoJ5jCRN63C+NFQcRmGTikA043Qq3IY=
+	t=1754643190; cv=none; b=YLJtvkbov1NRE0FKh1UK62kpyoR3AFG3kdvDU5BCesBBWL5QoSRv83S4TmUEpJPiptXMtz3iKZynnz7h4xotnWrKX/fXA4V0yAkKgg5y8F/9TOMWd/VL7q4l3MFT+ZlN+a+R7i5qPwFxZfMqSS8YjuudptYqgSyNPCJwXsgw20E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754643141; c=relaxed/simple;
-	bh=2V7r0S/y7Yn3reyhMQjQ8huU2c0mD0XSjXPz7VuLEVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iJ5/GegNCumHHACpN+9FdCaCnn1kLVB06Y6BUZlfcudQwHz1wLXQdh1twFU0n6r8z6YSjlx/8tlLU0QeUFcpaJQoxPiCO6vowEfXcv0dGkWxd5i4/JijrUAtTws3qt4sWA7yWr8kQlZ6oDuF2ti8M+qIDokvg8iEEPqXviyCQ10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWWKtVuO; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-332426c78a2so14813161fa.2;
-        Fri, 08 Aug 2025 01:52:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754643138; x=1755247938; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SqqybCS+yNNjnY1vade3b4Z5g0zX8h8grApDt19rVXE=;
-        b=KWWKtVuOzfeVhvz52PfxTCyDx3jOH9dFXulIs63kQbdX3/B8zOmDpvVYzpv3SgT3h/
-         GoPMHOiojm7QcRS/PlFRGSo7ukHW0XFqHdzhwx6FI/+PiS1btrPvrEGWbWmSf8p+0zhV
-         96l531Bz8lHxAMifizF31R2WLZ2CfoyiuT/5d35vBXtzw92GdPcTEkrouChHZ1fT6JXw
-         xEYHtRQSA58/vDSYGA1V4GtZPcuoDNw9709WrLIC6HN8+GU1h/xoImnWFfuRsXjqqr8y
-         3cka+7lATtKHJMHzz/bHQg058Hf/l942AImk8z8MP2uhe64cky3R5rZE0ayss7zF2OGq
-         hHeA==
+	s=arc-20240116; t=1754643190; c=relaxed/simple;
+	bh=6O42uKzCpFUcbZlQ1jvgGj5DaA5oBnfRdxf/QpDlDaY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YdoRovcaXKIg+l1nqgWqgezEzB4FyuGYFO4yRxMnkYKsPu2PIuQb1KGnR0+WsEW+NW6drIXlDjc+H1eqgRDeEEePighoBBk3gACeM3WupoZqguzUEBIEzpUWXGSnUgyNLswLI6cT/Z6VJhqpi9uGo0pRuYKHMJF1kHqQYeJt63k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nAW8xGll; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5788I4mk006539
+	for <linux-kernel@vger.kernel.org>; Fri, 8 Aug 2025 08:53:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=3pf9UTCiEkFRvJbDF6ygTn3PiVAo7h2wmqA
+	MX1iZ5fA=; b=nAW8xGllUvRoAmh9qsP7NrYpCZORL/anGBJ7E3IZXWMB/Xuo2Bp
+	y9GcVz1AlHu2JUT8/icvBOzaBKftzMM9QCgfXPdZrfm9QxRh56q4EklYhFK2ZuHP
+	LW/sdLGJtOThA0zbnXsebChtq95GVeCITs3nBargVHdI6MBkpXuLILo8cp6pmuB5
+	wyWQMFjG9qk48K7mVUwGvbcKHRWVAok/zzKD2lOoQcNP6YRbKanknTHzW/jJziU6
+	z9JnK2mJpx3kjgHydLtk4U3YOitlfiH88MrCEjwihs+Ah3xsGlFPqmdKf7qGsRxu
+	SW3jYjsCyRfuHmKOcU8djIUHaxZq6n3kVkw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ddkkr34w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 08:53:05 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4af18aa7af8so48517581cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:53:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754643138; x=1755247938;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SqqybCS+yNNjnY1vade3b4Z5g0zX8h8grApDt19rVXE=;
-        b=i8Z4iGNc71lF4pVbvxSflphBJ2vcGQwz1FfnZD+y6FQFK+uAKhZFDUyyms9aczwi6Z
-         SL524XS1+TmE7dVQyTkA7L8UJa258Q85uSqze9grVGkcdT3ecchJXTAD3BZ/2YwoK0lR
-         cNEe9oTF/X81nWNL6ZpGHpggjm07Tjq+ZaNIBgxyBtamUk3wB2MJWGxORPLm/6FcBjEY
-         XVOgfmta1TEBJ+flq4WCApPqYczEGX8xD7w7tK81w8qEesN/j2IgNblNSOmvY+J2KNLl
-         axrfrfW4Rbur9BmUGZA5R9e41VLK7BOissKgmKHSB2bzXQuafh3CEed+VBRAKZRDSan2
-         PxUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpwidu/yGH9S6Qvqhjo3bwNUCRvY5JB4IT62dZn13PmxrvCBcsudcrcB8x2/9UOJEUbLqbFafzAXWQn8HR@vger.kernel.org, AJvYcCW+QlFSdIpSKLdbyg5n5dB7vcNc7MeEuc/HVIs/ZoYSc+WvAbC0nImVNMYSddFNUTMTOapv84QRLRoE@vger.kernel.org, AJvYcCWM1rmSCjuw04Y2nXqIcpbMZVi+5pY140j/WBcNxiFA3hAlQ+m3+cdZUI8T48owKSvfh4ilV9qXSqnT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlnvd9yyzgjVTts+vS763289s/On686jTFCjzqCQwbHNjsBbyv
-	As022dhjxRJYLfx/0Gn+xnDn2JvNkh7pGSTcBIToHDu0FswdWWjBKhA0
-X-Gm-Gg: ASbGncv0dY9boxA6zuJ9o75k6v1KceVLPTS5Txo50DqqyMQ0A7cSpIDc47pNF5ur4KS
-	Of7yFnCLuAKF4De3yoGygyJlAmwxFoXDI8KURoHX71FbUuKmzmuOKo2mQHMTzrltC+mx9O3RIO/
-	ByoixOhwDBlVUxAHhw02Hfug5V/9TMNLoJ8n+MQ6bOxIqCUUEXmwWLKx5CAn1mm4oJ1ACfcWAP7
-	da3gKEztwyUKVHYZneqVf1u1JfXdovwHXAcdyU+WqOZTO1S+QuKIeNZrNMTcxKr1mJA1d5Z0Wyx
-	eqCEturaG1FX34Rr56Ahydk+Okdx1h6z1TsO66d+MT9mM98ekbnNL06Q5wzrTxYFCf962ngUaDn
-	L27+UGMoO7Jen5Wx29dUyxyP2mBzb
-X-Google-Smtp-Source: AGHT+IG9sOAPfAkQX+6RML35fUUokX08NVm/JmPUhkRV1bRAEf9SgmB/9YYav7nfc9PhlTWM52AtLg==
-X-Received: by 2002:a2e:742:0:b0:32a:77a3:8781 with SMTP id 38308e7fff4ca-333a225f9eamr4822761fa.30.1754643137963;
-        Fri, 08 Aug 2025 01:52:17 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238911615sm28143851fa.72.2025.08.08.01.52.16
+        d=1e100.net; s=20230601; t=1754643184; x=1755247984;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3pf9UTCiEkFRvJbDF6ygTn3PiVAo7h2wmqAMX1iZ5fA=;
+        b=b0iaFldSzwmSJX9cYdqX5HvLYas+mjwloGt6KJUoLQw2y0Y8ODZaJspNJOcBSXLJvb
+         GZ/trhlf7S3G1wtsXp5dLSmIe7v8zhPuW2XpSutOHtO2y4cyZo7DyMRyn2W9lVC33Rw+
+         afvY4sIgG5vGxkBLueXgWdVFSekTtevZgcdMrJ+/6DskjsWAPpBvbcBDt0NUsi2ws64b
+         VuPXD5xEQaSlWja+AP6QbT8m7HU60AoofhxyaVrX5JlTAUVKa82Ajk0D7Hp5nHOVybse
+         itkPUW/FLGX9vT0L544dHixYwnC8GBQlly+pQ2yXiv5jyeMTybHtIIkm1C2XkQV3o6YX
+         Rm/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWu1Iq+oXwZEerWEdLpBXOfXupcpS3iwYkusHRIEm/0RxWXCE3vpxabqLOGf0sFdKRBHzddM3iebdMyU7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8t6klBOBQLBoNOBdE6K2+S3SMZPC7cFDkTtMiIPn/g/A//qdo
+	if6l4vQz9gRvaI03vpWPGAFnC+c3sGmXhMQ/WALQ0uiwY4NQK7sfhjZrdwxjvtQLAGAe2HSOtMU
+	kFJY8K7se7zaRdUo1SX61kjHKK+nQ3c0vTaik5zeoUOGdBI6NCWP18XdlT6SAvg8+48g=
+X-Gm-Gg: ASbGncvTOJJjEuZiYBfveu3C4O5m1gc9PBOgOxkYy+FAnSm8AalneVoy19eN4J+8ZOl
+	UJcl1j145WY6rTCEmOWI0+6yZc4o7/cwdBa85lxMoOfjMwWtVGBmjaYAVWwZmWsGv/IgxhdVGLJ
+	Q2A6BGofBDitA4qOlIEMtETutpSRGUfSJQEeUdd5mY62m8V6t2ByWM519yM55YMEiEinje5iMC6
+	/ark0toRS2T0mjpmcwFbnHy1sAt+JGzGPZFPBe+zlXrhEXicQp41PqVQBjSiimyFWFT8flX3aIH
+	FZ3u0XO2+csAZXRCH5UNZRIfyBIMdFGRkgGDUxRdtRmvsDWvVUR8e+uQDijFR02B8yHqYB/zVYG
+	2U5yAlOmEhlti
+X-Received: by 2002:ac8:5806:0:b0:4af:15e5:e84 with SMTP id d75a77b69052e-4b0aed41c2dmr31803711cf.42.1754643184126;
+        Fri, 08 Aug 2025 01:53:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH+PTxm++FspJgdq3+3QdFR4Axi7fRCR0blBr5ZNTOdlKiAUdQQfDF4pQvcANKnX1qbwikZcQ==
+X-Received: by 2002:ac8:5806:0:b0:4af:15e5:e84 with SMTP id d75a77b69052e-4b0aed41c2dmr31803401cf.42.1754643183595;
+        Fri, 08 Aug 2025 01:53:03 -0700 (PDT)
+Received: from trex.. (205.red-83-60-94.dynamicip.rima-tde.net. [83.60.94.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e5e99e04sm123818745e9.11.2025.08.08.01.53.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 01:52:17 -0700 (PDT)
-Date: Fri, 8 Aug 2025 11:52:13 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 05/10] iio: adc: ad7476: use *_cansleep GPIO APIs
-Message-ID: <d6a8f19e26ffaa97da32317a9601147a11a82622.1754641960.git.mazziesaccount@gmail.com>
-References: <cover.1754641960.git.mazziesaccount@gmail.com>
+        Fri, 08 Aug 2025 01:53:03 -0700 (PDT)
+From: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+To: jorge.ramirez@oss.qualcomm.com, quic_vgarodia@quicinc.com,
+        quic_dikshita@quicinc.com, bryan.odonoghue@linaro.org,
+        krzk+dt@kernel.org, konradybcio@kernel.org,
+        dmitry.baryshkov@oss.qualcomm.com, mchehab@kernel.org, robh@kernel.org,
+        andersson@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/8] media: venus: Add QCM2290 support with AR50_LITE core
+Date: Fri,  8 Aug 2025 10:52:52 +0200
+Message-Id: <20250808085300.1403570-1-jorge.ramirez@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LhvDpW6zAb6SfMi9"
-Content-Disposition: inline
-In-Reply-To: <cover.1754641960.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDA2NiBTYWx0ZWRfX0elvR/ZyLu4c
+ 2LSh/FHy7hxA4Cpxx3ruNJhHHpO8Y7z/kEQWckVGwPeqMuEG66Ob7PA0mR+e1wlDjXwce7rECfd
+ HBHTH+5ZT4aMvWGUe1vv3E5NagQY5vIkoYjryjZSC5QMvVJfuvSQViAVKZ9Q4wBoy3dd/sm0GSA
+ v2cOvMXPaKCRyZjPoW7qqpR6Jhz0RnZhzNSR6ihCLStvqNQlmZoSPPq5V3rAKIh0BJ8sJZ8mmIU
+ JorSLrMw/NYTd1Ij5ydKUJm+6oBt13BoEqLl26lc5w/dTWax/e2MzF+WR9gZXVrWKMt1rgve1kI
+ 0eXgd1FK7AJuc61zJqDPoM/5k0AS0y0x0QxXNv/kBI5n2HRoaMA2hTM3boNRmTTzfiLX1OKTVGZ
+ ptSeBWgp
+X-Proofpoint-GUID: QqUiJFun2OzQ7WqsGQnrUoZ84JzxmtPc
+X-Proofpoint-ORIG-GUID: QqUiJFun2OzQ7WqsGQnrUoZ84JzxmtPc
+X-Authority-Analysis: v=2.4 cv=Xpv6OUF9 c=1 sm=1 tr=0 ts=6895baf1 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=Rr2dNH5/fcnoRoBmcVUeRg==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=vaIsIKZIAAAA:8
+ a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=fiKrxSy_4L_ZQUeM1s4A:9
+ a=a_PwQJl-kcHnX1M80qC6:22 a=rh-XPM1-DYv4t-UOgbwD:22 a=cvBusfyB2V15izCimMoJ:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_02,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 malwarescore=0 adultscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508080066
 
+Changes since v8:
+  v8: https://lore.kernel.org/all/20250805064430.782201-1-jorge.ramirez@oss.qualcomm.com/
+-  patch 1/8: Add qcm2290 dt schema
+  - no change
+- patch 2/8: media: venus: Define minimum valid firmware version
+  - dev_err on failure
+- patch 3/8: Add framework to support for AR50 LITE video core
+  - pass core rather than the lite property to the hfi platform
+  - remove warnings
+- patch 4/8: HFI platform V4 capabilities
+  -no change
+- patch 5/8: Sort dt_match alphabetically
+  - new
+- patch 6/8: Add DT compatible and capabilities
+  - sort dt_match alphabetically
+- patch 7/8: Add Venus video node for 2290
+  - Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+- patch 8/8: Enable Venus on 2210 RB1 board
+  - Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
---LhvDpW6zAb6SfMi9
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes since v7:
+  v7: https://lore.kernel.org/all/20250715204749.2189875-1-jorge.ramirez@oss.qualcomm.com/
+-  patch 1/7: Add qcm2290 dt schema
+  - extend commit message to cover IOMMU order, remove iommus minItems, alphabetic order for includes
+  - added myself as the file maintainer
+-  patch 2/7: media: venus: Define minimum valid firmware version
+  - Replaces previous patch that was able to distinguish encoder vs decoder firmware version support
+  - Now it is an all or nothing implementation (the firmware either support enc and dec or it doesn't)
+- patch 3/7: Add Support for AR50 LITE video core
+  - remove EOS support for older firmwares since we will drop support for fw < 6.0.55
+- patch 4/7: HFI platform V4 capabilities
+  - remove some hardcoded values and some ternary operations
+  - added reviewed by Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+- patch 5/7: Add DT compatible and capabilities
+  - only min_fw now required since we dont support encode/decode indepedently after 2/7
+  - added reviewed by Dikshita Agarwal <quic_dikshita@quicinc.com>
+- patch 6/7: Add Venus video node for 2290
+  - no change
+- patch 7/7: Enable Venus on 2210 RB1 board
+  - fix alphabetical order
 
-The ad7476 driver supports ADCs which require a GPIO pin to be used to
-start conversion. The GPIO line status seems to be always toggled from
-a process context, either from the user-initiated "raw-read conversion",
-or from a threaded IRQ handler. Furthermore, these ICs are connected via
-SPI bus, which is usually implemented in a way that the access to the
-device can sleep. The GPIO here is toggled from the same context which
-is reading the results over SPI.
+Changes since v6:
+  v6: https://lore.kernel.org/all/20250708180530.1384330-1-jorge.ramirez@oss.qualcomm.com/
+- patch 1/7: Add qcm2290 dt schema
+  - no change
+- patch 2/7: Conditionally register video nodes
+  - fixed potential NULL dereference on handling firmware errors when the encoder is not present.
+- patch 3/7: Add Support for AR50 LITE video core
+  - applied Dikshita Agarwal review comments: do not handle no-tz case, fix WD mask
+  - replaced EOS buffers for a work around (firmware should not access the eos buffers)
+     renamed venus_helper_alloc_eos_buf to venus_helper_prepare_eos_data
+- patch 4/7: HFI platform V4 capabilities
+  - removed 10 bit encoder support as per Dikshita Agarwal review
+- patch 5/7: Add DT compatible and capabilities
+  - removed frequency table as per Konrad Dybcio review (driver now uses opp)
+  - fixed bw_tables for the supported loads (remove 10 bit support)
+- patch 6/7: Add Venus video node for 2290
+  - no change
+- patch 7/7: Enable Venus on 2210 RB1 board
+  - no change
 
-Thus it seems very likely these GPIOs are toggled from a context which
-can sleep.
+Changes since v5:
+  Two additional new patches added to the set to support video encoding.
 
-Swap the gpiod_set_value() to gpiod_set_value_cansleep() accordinlgy.
+- patch 1/7: Add qcm2290 dt schema
+  - added reviewed by: Bryan O'Donoghue
+  - added reviewed by: Krzysztof Kozlowski
+- patch 2/7: Conditionally register video nodes
+  - new functionality required to support AR50_LITE
+- patch 3/7: Add Support for AR50 LITE video core
+  - completely rewritten - lite platforms are extensions of previous HFI_XXX
+- patch 4/7: HFI platform V4 capabilities
+  - use HFI 4XX instead of HFI 6XX as per review
+- patch 5/7: Add DT compatible and capabilities
+  - added reviewed by: Bryan O'Donoghue
+  - enabled new option min_fw_version
+- patch 6/7: Add Venus video node for 2290
+  - added reviewed by: Konrad Dybcio
+  - removed status property
+- patch 7/7: Enable Venus on 2210 RB1 board
+  - new
 
-Suggested-by: Nuno S=E1 <noname.nuno@gmail.com>
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Changes since v4:
+- patch 1/5:
+  - added reviewed by: Krzysztof Kozlowski
+  - updated example section
+- patch 2/5:
+  - added reviewed by: Bryan O'Donoghue
+  - Fixed Co-developed-by order
+- patch 3/5:
+- patch 4/5:
+ - removed encode-node (userspace exposure)
+ - fixed Co-developed-by order
+- patch 5/5:
+ - fixed venus register region
+ - power-domain-names: one per line
+ - clock-names: one per line
+ - fixed interconnect tags
+ - empty line before subnode
+ - enable the venus node
+
+Changes since v3:
+- Fixed schema commit subject.
+
+Changes since v2:
+- Removed IS_HFI/IS_VPU macros
+- checkpatch.pl --strict fixes:
+  - convert macro to static inline to avoid argument reuse side effect
+
+Changes since v1:
+- Added IS_HFI macro usage
+- Moved schema patch to top
+- Fixed commit messages
+
+This patch series adds support for the Venus video decoder/encoder block
+present on the Qualcomm QCM2290.
+
+This series functionally depends on the following patch:
+
+  clk: qcom: gcc-qcm2290: Set HW_CTRL_TRIGGER for video GDSC
+  https://lore.kernel.org/all/20250613102245.782511-1-loic.poulain@oss.qualcomm.com/
+
+Please ensure the above patch is applied before this series.
+
+The QCM2290 integrates an AR50_LITE core, a low-power implementation of
+Venus supporting H.264, HEVC (H.265), and VP9 decoding as well as H.264
+and H.265 encoding.
+
+The series includes:
+  - DT binding schema for qcom,qcm2290-venus
+  - SoC integration via qcm2290.dtsi
+  - Resource table definitions and frequency scaling
+  - Platform capability registration for the AR50_LITE core decoding block.
+
+Limitations:
+  - The hardware does not support concurrent operation at FullHD.
+  - Encoding is not supported in firmware version before 6.0.54
+
+Firmware:
+  - This code has been tested with 6.0.52, 6.0.53, 6.0.54-PRERELEASE
+
+Some basic Tests:
+
+Decoding and Encoding were verified on the QCOM RB1 platform using
+GStreamer with V4L2-based decode plugins.
+
+The following pipelines were used for playback 1280x720 and 1920x1080
+H.264, HEVC and VP9 videos from https://www.elecard.com/videos.
+
+Decoding:
+[H.264]
+gst-launch-1.0 filesrc location=videos/xxxxx.mp4 \
+  ! qtdemux name=demux demux.video_0 ! queue ! h264parse ! v4l2h264dec \
+  ! videoconvert ! autovideosink
+
+[H.265]
+gst-launch-1.0 filesrc location=videos/xxxxx.mp4 \
+  ! qtdemux name=demux demux.video_0 ! queue ! h265parse ! v4l2h265dec \
+  ! videoconvert ! autovideosink
+
+[VP9]
+gst-launch-1.0 filesrc location=videos/xxxxx.webm \
+  ! matroskademux ! queue ! v4l2vp9dec \
+  ! videoconvert ! autovideosink
+
+Encoding:
+[H.264]
+gst-launch-1.0 videotestsrc num-buffers=30 \
+  ! video/x-raw,width=1280,height=720,framerate=30/1 \
+  ! v4l2h264enc ! h264parse ! mp4mux ! filesink location=/tmp/output.mp4
+
+[H.265]
+gst-launch-1.0 videotestsrc num-buffers=30 \
+  ! video/x-raw,width=1920,height=1080,framerate=30/1 \
+  ! v4l2h265enc ! h265parse ! mp4mux ! filesink location=/tmp/output.mp4
+
+Concurrency:
+gst-launch-1.0 -v videotestsrc num-buffers=1000 \
+  ! video/x-raw,format=NV12,width=1280,height=720,framerate=30/1 \
+  ! v4l2h264enc capture-io-mode=4 output-io-mode=2 ! h264parse \
+  ! v4l2h264dec capture-io-mode=4 output-io-mode=2 ! videoconvert \
+  ! autovideosink
+
+[Fluster]
+The H.264 decoder was also tested using the Fluster test suite
+(version: v0.4.0-12-g33566abd0964).
+ Target: GStreamer-H.264-V4L2-Gst1.0, Test Suite: JVT-AVC_V1
+ Result: 126/135 tests passed
+ Failures:
+ FM1_BT_B, FM1_FT_E, FM2_SVA_C, BA3_SVA_C, SP1_BT_A,
+ SP2_BT_B, MR6_BT_B, MR7_BT_B, MR8_BT_B
 
 ---
-Revision history:
- v2 =3D> v3:
- - New patch
----
- drivers/iio/adc/ad7476.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
-index fc701267358e..1445f0f599d9 100644
---- a/drivers/iio/adc/ad7476.c
-+++ b/drivers/iio/adc/ad7476.c
-@@ -57,9 +57,9 @@ static void ad7091_convst(struct ad7476_state *st)
- 	if (!st->convst_gpio)
- 		return;
-=20
--	gpiod_set_value(st->convst_gpio, 0);
-+	gpiod_set_value_cansleep(st->convst_gpio, 0);
- 	udelay(1); /* CONVST pulse width: 10 ns min */
--	gpiod_set_value(st->convst_gpio, 1);
-+	gpiod_set_value_cansleep(st->convst_gpio, 1);
- 	udelay(1); /* Conversion time: 650 ns max */
- }
-=20
---=20
-2.50.1
+Jorge Ramirez-Ortiz (8):
+  media: dt-bindings: venus: Add qcm2290 dt schema
+  media: venus: Define minimum valid firmware version
+  media: venus: Add framework support for AR50_LITE video core
+  media: venus: hfi_plat_v4: Add capabilities for the 4XX lite core
+  media: venus: core: Sort dt_match alphabetically.
+  media: venus: core: Add qcm2290 DT compatible and resource data
+  arm64: dts: qcom: qcm2290: Add Venus video node
+  arm64: dts: qcom: qrb2210-rb1: Enable Venus
 
+ .../bindings/media/qcom,qcm2290-venus.yaml    | 130 ++++++++++++
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi         |  55 +++++
+ arch/arm64/boot/dts/qcom/qrb2210-rb1.dts      |   4 +
+ drivers/media/platform/qcom/venus/core.c      | 109 +++++++---
+ drivers/media/platform/qcom/venus/core.h      |  18 +-
+ drivers/media/platform/qcom/venus/firmware.c  |  30 +++
+ drivers/media/platform/qcom/venus/firmware.h  |   2 +
+ drivers/media/platform/qcom/venus/helpers.c   |  12 +-
+ .../media/platform/qcom/venus/hfi_parser.c    |   2 +-
+ .../media/platform/qcom/venus/hfi_platform.c  |  23 ++-
+ .../media/platform/qcom/venus/hfi_platform.h  |  34 ++--
+ .../platform/qcom/venus/hfi_platform_v4.c     | 188 ++++++++++++++++--
+ .../platform/qcom/venus/hfi_platform_v6.c     |  33 ++-
+ drivers/media/platform/qcom/venus/hfi_venus.c |  25 ++-
+ .../media/platform/qcom/venus/hfi_venus_io.h  |   4 +
+ .../media/platform/qcom/venus/pm_helpers.c    |   2 +-
+ 16 files changed, 582 insertions(+), 89 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,qcm2290-venus.yaml
 
---LhvDpW6zAb6SfMi9
-Content-Type: application/pgp-signature; name=signature.asc
+-- 
+2.34.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiVur0ACgkQeFA3/03a
-ocUXfggAzAND4GqFGEp3idk05Gg6jT1aQ35536iPv10DIMSBio3AhNKGA1FYDJVL
-5GIkLbDH2+7Wfb+Xdkb+UaU5pmffqJqmVNGz1PtQOj3o/YZAHXAZdKIKlQ8J8NLL
-jnlTF39J059Q7XZW4ajOM53T3fqdsoF0zrL8FRNpPmcZNp9or5Do5VNyyNDyfAQa
-Z7EqQu6NHI59t01OApXtJRVxSxEs1bt7efLo9D2kl+6fwStJ3n+3KplT3B/QnLlL
-vOaB5J/P1yaE6YXaLS28Jv94ztPv3fB4ZWzLfKGN1uM9azSa85AIQ65EgoZitIOE
-IkX0qSKTeZX7GCbmJUG15If7mTwzUA==
-=uqj9
------END PGP SIGNATURE-----
-
---LhvDpW6zAb6SfMi9--
 
