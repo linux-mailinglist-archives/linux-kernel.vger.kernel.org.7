@@ -1,129 +1,323 @@
-Return-Path: <linux-kernel+bounces-760698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A52B1EF02
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2199B1EF07
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0331C58745B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:51:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34355587EE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75E3265CDD;
-	Fri,  8 Aug 2025 19:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="eCJDu3rB"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E08288521;
+	Fri,  8 Aug 2025 19:51:56 +0000 (UTC)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90B21E7C05
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 19:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A62F27F74C;
+	Fri,  8 Aug 2025 19:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754682702; cv=none; b=BhNs2rtfdRN2Wvgv1Re7zX3zrChS82k9Hv0PIol/SoRG1rGJqE+4FyDdQnaqAK1G9MHVki/bnI62TYBx2px+Be2M2oI9+oiUIvpG/kj4+3UqtKn0DBKdWKzNEF7yPLphrQMTBVpCoPXyKOaAUtSJ1u7TGhwRV3jCBxK3gBaYpUU=
+	t=1754682716; cv=none; b=f3yc2UhbvPltBKgjRgGrwiti5hPO+rBD++5nO7/n3vtloL/c7Iuio742j0xUtlwdvbnvKD7CeV5I1/tWYtQrLyHfkB5B1rij50kJG4nvQ+ElYUBzw8YfPDr3wHp7+rNqBGZW4UogtnYLL1bk5ZqaOveXns0v9YATDKo0b30rx3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754682702; c=relaxed/simple;
-	bh=BHL0fkXpKKjHtLjXIr2YakBJO2tAgTy6UPx3ySoZ6f0=;
+	s=arc-20240116; t=1754682716; c=relaxed/simple;
+	bh=0ob90HkETYRkq7ul01bifcYwg7rjfKChsYDYQSF85ts=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nqbZKXGbI7pdkisPzUsXGMUucIN3anNyUmS++3Q38yWK/AHOG8GrlThKobNXIqwLL8wD/JfZZT5XLhH54tDYN9tad9iudLgFwRDlJgLAf/GjqKUVbbtNuhyY5ssB8k6VwRa7N5CTtYgXdSGodWUGl7+eE7mP6HwoeOAU2QJOFHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=eCJDu3rB; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4af12ba96daso28356421cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 12:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1754682699; x=1755287499; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZI3NF4nmF87wkVHXd95sZzslTewp5Rg+7HCCf5M8kbU=;
-        b=eCJDu3rB9W6i7ZSxgnM3kWTQIfXiFfn5dNp3bdZ1Ws91iRaiO+Gm0BaH2KvTX/vR2n
-         2lDowxIqVHUlKBiCwfboBUHzaWvRZ1yFADbz7hvbASCYag4cvkoX+x6FqvAGratVsRx9
-         YERtobn1eHy3IXvG2xoGNlNllu2GImAu2tqKjU4oIV8AKgIhUamt8x/O0xBi2PjyRCd9
-         iBlZoAdDd3Vl2EWSHjM+u2/WOzm4ZtVIqQQpgn0TRqUBV6wh46pwXyaAd/cJmCIZY1Au
-         9qEL7qQy2l0ROyUer/lJQEEJRC9m3eoY9B/QE0QjtRJFeyW1dB2NMTAHP2kX1OZxnKom
-         xntA==
+	 To:Cc:Content-Type; b=t/iVIVqDZpZDwZO7G5MtXtP+Lh1uuaL1mx7suX5ZO6uFrvpjOCr0WGMy/kWP6hF2fT7UeRd3HNzP1yL1uscP+zJX5Uuypu09ElRrBPLh0x2rj8gSi6bGXniMMADNTguWO3qc5AYCIvMSkJ+MaY44uH09L0q2ONu/lQiBM2lcO4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-53945ba7f2aso1850937e0c.0;
+        Fri, 08 Aug 2025 12:51:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754682699; x=1755287499;
+        d=1e100.net; s=20230601; t=1754682712; x=1755287512;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZI3NF4nmF87wkVHXd95sZzslTewp5Rg+7HCCf5M8kbU=;
-        b=gsbdBKfmauege9pKQedNXWHBPJlIdAiJ08UleIN9YuWKPRkX5dgwhJQ9ThFGAnQuPN
-         Ca3XxDAXPUIgDRuk/HO6Vaf+AfXk7ZzyZSRkeKpt87WHVpUn554wBiVsEgXb0XY6N7Z6
-         T+vhtpxKZRmOUp8rbizX+9wYckzQMwyX9/WS818N8SPr4qjgabyUa7NQFjNwIjbYSLjj
-         klf5/lXsGE3JXgOOYxVG9MF5AvOrZkIVoFLwoOmUQNzwmIRzeP75GUUChCAODFbchfmn
-         Vap8zWUsAeOTv/n5oovF8qrCBz63xWNx2Nb4dwwxm01x7/mndeegfay2g0rIS8kQbz8/
-         Ivew==
-X-Forwarded-Encrypted: i=1; AJvYcCUkd9IJXtTo/Hbmqb2zwXLzfyidqC+ZKTLYjz9ckaY8qTTVWgcG4bWbsxI9ZOb6IdP9shTcMYa4N4rcX+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYgx6UIg8y0WX/XaiNvoXA4VvyA3khZVkvyxr5ECOkJFpMAry8
-	7FQqp83mnBQgu2Q7kcccKtt+ReBLjIy4uXueeTpeC3f0aDulyAKWNJYaKxCN7p+Ng6ZsXD5z4YD
-	qzlUQ2DoxPzlA3XOEmeHVE7K1UtWzopcox/0yNP423A==
-X-Gm-Gg: ASbGncs48S3zKZKkMefIkQbVDTxTMFJn+AcVhYRq5+zsGByOaKEl2zn7zTpWqgiI7AX
-	Q/QJ15fgQyOMDhblj6PrHW1nOor6oGF4rrScQ7lpUvWZylUd7OqhWTLqNGhNdQPrKQqL1XBm8sb
-	989227r+DHwDi8y3Bt3O9RDS33dTnaMnrMxeeFitE2qLb8p+wTfbnbIu7ZN4Hmen5DTr0xmM7Jn
-	pR5
-X-Google-Smtp-Source: AGHT+IHCcrYg7/jG4VG+Cw86KyymKHrjmDEsAzQfWB1gMcCPUUW3z00Eo/TfCPxNGcOawpm+qrN8GOrYgzTiH++NeZ4=
-X-Received: by 2002:ac8:58d1:0:b0:4b0:82ee:f732 with SMTP id
- d75a77b69052e-4b0aee3b087mr66564781cf.53.1754682699519; Fri, 08 Aug 2025
- 12:51:39 -0700 (PDT)
+        bh=DZ+8vy22VRRFcvaUqDwj58cikikxo4XqdD5alIqAgQc=;
+        b=W9ZFCClzNgHXvkd5zSXc+yXcHfK0Zk/aZgNfs5ajJPHINB7VxQCc8k5Ygrh0LFq63D
+         9Ktkjs9lfbfZiu7RqxTJ+Ffy7qmYiElSiiaeccX26nRQ9UGq0oRXrPd4gbNjPdzzdlyq
+         MjqnBPqcuNYnIINP9OsK/1Bgfj0nCxwGTb2m6Nb2kCgKbjZzoyo4N9yaP8EtB+g8r5oL
+         +N/LLCUWi8vOgY0KaPIPzyM/ICJsUApz5PFu6gBp5cJk2t6dDo2Vyc2gYcdWz1XLLG0p
+         zjkdH04zwcnIycFbwPRh5GcQdUDkxXeq11ciSn8Jw+q9LMqMlG2jNiC00IXevFRe+19T
+         5TgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJPAHGMtPM7yKuTQNnK4qZjpyjPI0WsUlqf0GsXFYBGx4Oyziu9vk2J7kunnSgnfMcAL+HvLphKwnVuQOu@vger.kernel.org, AJvYcCVKk/eFN1XCY2arpAMJU3B0RXKkooXkcq8ItyB64fIX8bRF0iegQrwgXdeg3CF5YgY+nK8FkzDqTObW@vger.kernel.org, AJvYcCWE5giOwIGz/rccjd57XZjRwVqgW4we7vzpJEATH04AbhYVtjpfEG87jLnPYKFYdhwrD1KfuHEN5R4GlDS5eCMpVZw=@vger.kernel.org, AJvYcCWSrJK/cSs8WPSpkaWn/qI/+R+l2Jsfiyi36wU4IRuwfHc+Czfh++x1PfKLHvcS3l7XmqYUJ5SjdBhYbA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaUad4hi2EKrDLZ7aLi6IrfEbrGXmHCDmZjV/YfCdOAhXCoAwT
+	MRv8qFHnWUqdaD4S3rCythd8CBHzN9isExb+QE7GEkGN9acN/mx8bMKIkio/fhFg
+X-Gm-Gg: ASbGnctaip0RIVG2GjBBpI3d2x+Fl+lpvPVK1qf4t79Igl/i3MS+7zf8QSmzrJqE1oI
+	LCbJZCZi0xukuW7QUaDjElEqrqQvLe9IxrfG1DCqamKBJ0jAyGItQJalOG31MRRnvALwOEeThWo
+	K9sCNUOlTmKNt8gPj3a4kaj2ZavhdDOLpBHwwpqtsPFzmoAypLzpJnziYASeMM9kL/oMU1BAkpW
+	TrN8ix2yUTDaEipTaYgPrk5q7QDbyEoDQ1AzxjorPbzR64VY1MLPsIP4QgOEMsHXF5kz6gohWzz
+	k+Zj0OpbI5lk2LN6+ySWV0ZKNIcS21DPnniVx/fq9EgsWd52+0VlNIDSPT2jSbnsl1vJ+fC6Irn
+	kzYP6BvBN8L/c0EBCAD6aStiPCgJ5lWzVkBGL+uG2MdH7YrPtKCGHe1c6qSOU
+X-Google-Smtp-Source: AGHT+IHNxrP/kvsT7aQC5lpPW/Du1Jpqg1d/0ZYPwAvf1ucEays3UqfGR72IUlOZqI/Ifcr3wSyHBw==
+X-Received: by 2002:a05:6122:16a9:b0:520:64ea:c479 with SMTP id 71dfb90a1353d-53a52ef25a1mr1869213e0c.10.1754682712088;
+        Fri, 08 Aug 2025 12:51:52 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-539b01b6352sm1267570e0c.14.2025.08.08.12.51.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 12:51:51 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4dfa2aeec86so2471904137.1;
+        Fri, 08 Aug 2025 12:51:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcAbzBAqNVFdsYjJ9exVFdhJxgsAx4mb0FYmUSVRZ/X7LKZxislF7OFCd+YuiTgtP3pvSL7SOdLuIE@vger.kernel.org, AJvYcCUcQ2ubeGe+FyOLrXJ4UIhuisRlZ0HWSJS1wFBQAWGkDjQ6zYdfBcyNcdFKaw8Wl6kdet02BQXf457NdKuf9OqMVqg=@vger.kernel.org, AJvYcCVCOZjg1nOhtVfpc3YXYxE2uTqCcYSOHLDdo1R8JT/NIcu+xkxsuWcM8gBxuiR7897+pQJu3Pg/dtnNHst+@vger.kernel.org, AJvYcCXvOmqJSimS8vPn7resU5/eJvi3HhKnPs94bMSklVmgfAShpHTd6bIMZnprf4ZJsI2gtl3dLbL492zycg==@vger.kernel.org
+X-Received: by 2002:a05:6102:449a:b0:4eb:efc6:740 with SMTP id
+ ada2fe7eead31-5060eae45cemr2009743137.18.1754682711540; Fri, 08 Aug 2025
+ 12:51:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-2-pasha.tatashin@soleen.com> <mafs0o6sqavkx.fsf@kernel.org>
- <mafs0bjoqav4j.fsf@kernel.org> <CA+CK2bBoMNEfyFKgvKR0JvECpZrGKP1mEbC_fo8SqystEBAQUA@mail.gmail.com>
- <20250808120616.40842e9a9fdc056c9eb74123@linux-foundation.org>
-In-Reply-To: <20250808120616.40842e9a9fdc056c9eb74123@linux-foundation.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 8 Aug 2025 19:51:01 +0000
-X-Gm-Features: Ac12FXzwr7BB3_YD7FWm0iRwopXjM6LILZ73ll6nomRu2PpALziQgUA6db3Oe8A
-Message-ID: <CA+CK2bCVziiUZzdGaEabmPSB4Dq41QZe7gVxtgwy4pWmpo=D_w@mail.gmail.com>
-Subject: Re: [PATCH v3 01/30] kho: init new_physxa->phys_bits to fix lockdep
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, tj@kernel.org, 
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
-	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
-	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
-	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com
+References: <20250801154550.3898494-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250801154550.3898494-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250801154550.3898494-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 8 Aug 2025 21:51:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWApWhAzjJ9K9-SFvZYtPArZ9aFQJvMdMyW=ke+1sj5CA@mail.gmail.com>
+X-Gm-Features: Ac12FXxBdYKoBx_i-NuBt6HhynyXU3rROCx603sVBa_T7YqZkl29ac6x4lP9cAU
+Message-ID: <CAMuHMdWApWhAzjJ9K9-SFvZYtPArZ9aFQJvMdMyW=ke+1sj5CA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: renesas: document RZ/T2H and
+ RZ/N2H SoCs
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-> > Thanks Pratyush, I will make this simplification change if Andrew does
-> > not take this patch in before the next revision.
-> >
+Hi Prabhakar,
+
+On Fri, 1 Aug 2025 at 17:46, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Yes please on the simplification - the original has an irritating
-> amount of kinda duplication of things from other places.  Perhaps a bit
-> of a redo of these functions would clean things up.  But later.
+> Document the pin and GPIO controller IP for the Renesas RZ/T2H
+> (R9A09G077) and RZ/N2H (R9A09G087) SoCs, and add the shared DTSI
+> header file used by both the bindings and the driver.
 >
-> Can we please have this as a standalone hotfix patch with a cc:stable?
-> As Pratyush helpfully suggested in
-> https://lkml.kernel.org/r/mafs0sei2aw80.fsf@kernel.org.
+> The RZ/T2H SoC supports 729 pins, while the RZ/N2H supports 576 pins.
+> Both share the same controller architecture; separate compatible
+> strings are added for each SoC to distinguish them.
+>
+> Co-developed-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v3->v4:
+> - Used patternProperties for pin configuration nodes
+> - Expanded example nodes
 
-I think we should take the first three patches as hotfixes.
+Thanks for the update!
 
-Let me send them as a separate series in the next 15 minutes.
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzt2h-pinctrl.yaml
+> @@ -0,0 +1,177 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/renesas,rzt2h-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas RZ/T2H Pin and GPIO controller
+> +
+> +maintainers:
+> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> +
+> +description:
+> +  The Renesas RZ/T2H SoC features a combined Pin and GPIO controller.
+> +  Pin multiplexing and GPIO configuration is performed on a per-pin basis.
+> +  Each port features up to 8 pins, each of them configurable for GPIO function
+> +  (port mode) or in alternate function mode.
+> +  Up to 8 different alternate function modes exist for each single pin.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - renesas,r9a09g077-pinctrl # RZ/T2H
+> +      - renesas,r9a09g087-pinctrl # RZ/N2H
+> +
+> +  reg:
+> +    minItems: 1
+> +    items:
+> +      - description: Non-safety I/O Port base
+> +      - description: Safety I/O Port safety region base
+> +      - description: Safety I/O Port Non-safety region base
+> +
+> +  reg-names:
+> +    minItems: 1
+> +    items:
+> +      - const: nsr
+> +      - const: srs
+> +      - const: srn
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +    description:
+> +      The first cell contains the global GPIO port index, constructed using the
+> +      RZT2H_GPIO() helper macro from <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
+> +      (e.g. "RZT2H_GPIO(3, 0)" for P03_0). The second cell represents the consumer
+> +      flag. Use the macros defined in include/dt-bindings/gpio/gpio.h.
+> +
+> +  gpio-ranges:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +definitions:
+> +  renesas-rzt2h-n2h-pins-node:
+> +    type: object
+> +    allOf:
+> +      - $ref: pincfg-node.yaml#
+> +      - $ref: pinmux-node.yaml#
+> +    properties:
+> +      pinmux:
+> +        description:
+> +          Values are constructed from I/O port number, pin number, and
+> +          alternate function configuration number using the RZT2H_PORT_PINMUX()
+> +          helper macro from <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>.
+> +      pins: true
+> +      phandle: true
+> +      input: true
+> +      input-enable: true
+> +      output-enable: true
+> +    oneOf:
+> +      - required: [pinmux]
+> +      - required: [pins]
+> +    additionalProperties: false
+> +
+> +patternProperties:
+> +  # Grouping nodes: allow multiple "-pins" subnodes within a "-group"
+> +  '.*-group$':
+> +    type: object
+> +    description:
+> +      Pin controller client devices can organize pin configuration entries into
+> +      grouping nodes ending in "-group". These group nodes may contain multiple
+> +      child nodes each ending in "-pins" to configure distinct sets of pins.
+> +    additionalProperties: false
+> +    patternProperties:
+> +      '-pins$':
+> +        $ref: '#/definitions/renesas-rzt2h-n2h-pins-node'
+> +
+> +  # Standalone "-pins" nodes under client devices or groups
+> +  '-pins$':
+> +    $ref: '#/definitions/renesas-rzt2h-n2h-pins-node'
+> +
+> +  '-hog$':
+> +    type: object
+> +    description: GPIO hog node
+> +    properties:
+> +      gpio-hog: true
+> +      gpios: true
+> +      input: true
+> +      output-high: true
+> +      output-low: true
+> +      line-name: true
+> +    required:
+> +      - gpio-hog
+> +      - gpios
+> +    additionalProperties: false
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +  - gpio-ranges
+> +  - clocks
+> +  - power-domains
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h>
+> +    #include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
+> +
+> +    pinctrl@802c0000 {
+> +        compatible = "renesas,r9a09g077-pinctrl";
+> +        reg = <0x802c0000 0x2000>,
+> +              <0x812c0000 0x2000>,
+> +              <0x802b0000 0x2000>;
+> +        reg-names = "nsr", "srs", "srn";
+> +        clocks = <&cpg CPG_CORE R9A09G077_CLK_PCLKM>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio-ranges = <&pinctrl 0 0 288>;
+> +        power-domains = <&cpg>;
+> +
+> +        serial0-pins {
+> +            pinmux = <RZT2H_PORT_PINMUX(38, 0, 1)>, /* Tx */
+> +                     <RZT2H_PORT_PINMUX(38, 1, 1)>; /* Rx */
+> +        };
+> +
+> +        sd1-pwr-en-hog {
+> +            gpio-hog;
+> +            gpios = <RZT2H_GPIO(39, 2) 0>;
+> +            output-high;
+> +            line-name = "sd1_pwr_en";
+> +        };
+> +
+> +        i2c0-pins {
+> +            pins = "RIIC0_SDA", "RIIC0_SCL";
+> +            input-enable;
+> +        };
+> +
+> +        sdhi0_sd_pins: sd0-sd-group {
 
-Pasha
+No need for unused labels in examples.
+
+> +            sd0-sd-ctrl-pins {
+
+Drop the "sd0-sd-" prefix?
+
+> +                pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
+> +                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD */
+> +            };
+> +
+> +            sd0-sd-data-pins {
+
+Likewise.
+
+> +                pinmux = <RZT2H_PORT_PINMUX(12, 0, 0x29)>, /* SD0_CLK */
+> +                         <RZT2H_PORT_PINMUX(12, 1, 0x29)>; /* SD0_CMD */
+> +            };
+> +
+> +            sd0-sd-tmp-pins {
+> +                pins = "RIIC0_SDA", "RIIC0_SCL";
+> +                input-enable;
+> +            };
+
+Please drop this subnode? It totally confuses me ;-)
+
+> +        };
+> +    };
+
+The rest LGTM, so with the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
