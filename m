@@ -1,251 +1,217 @@
-Return-Path: <linux-kernel+bounces-759758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C3EB1E212
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:18:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77060B1E213
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D366218C39B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A83218C375D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BCD21D00D;
-	Fri,  8 Aug 2025 06:17:50 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0D11F4CB5;
+	Fri,  8 Aug 2025 06:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="C/NhZQyu"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013071.outbound.protection.outlook.com [52.101.72.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599FC43146;
-	Fri,  8 Aug 2025 06:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754633869; cv=none; b=s5a/duBrruqam28dc2E8E6Ej6X3j0aH0WcP1KZFYFudMo3NAi2CRqmu4moEPenezmF2QpIwuaLdxh3Ai0tVHe9YOcythoUWrbUIT90+qQiPuCDoRXAgzCtif7S97bqtKpNvcuyvb+gJJhC8eVwK1/IgwqyK3Ehgx/C9ROJLnHpI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754633869; c=relaxed/simple;
-	bh=cmAsMBvdaiFIRBmsQgKW2WADeetWcA/YHbrfYBriZuU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=R9zEchM0YAh3q4ycLmOhALXAp9ZIoCPq0dFGaz5+EpztT4U4mcOuKJvhwkKIslSM+jlhAVwPlBGQ42z1Loi/zXxIEYcybiAWXuIWSpK8lCxTs5Zi12nVNi1Pbn8wr0wpbEP6hkJdoIdWYyGez3+Jr/v2qDzsjs3JJPddE/cPqes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4byv2t0MHhzYQttR;
-	Fri,  8 Aug 2025 14:17:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A90161A07BB;
-	Fri,  8 Aug 2025 14:17:40 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAHzw+ClpVox_zaCw--.65529S3;
-	Fri, 08 Aug 2025 14:17:40 +0800 (CST)
-Subject: Re: [PATCH v5 11/11] md/md-llbitmap: introduce new lockless bitmap
-To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: hch@lst.de, corbet@lwn.net, song@kernel.org, agk@redhat.com,
- snitzer@kernel.org, mpatocka@redhat.com, linan122@huawei.com, hare@suse.de,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250801070346.4127558-1-yukuai1@huaweicloud.com>
- <20250801070346.4127558-12-yukuai1@huaweicloud.com>
- <CALTww2-FTgDn9pD-Gmh8YKT-fU1ykk_QbB9J2KO8xQzrkAa_Bg@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <e7902d0b-713f-f245-733b-33fd23262496@huaweicloud.com>
-Date: Fri, 8 Aug 2025 14:17:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C68B43146;
+	Fri,  8 Aug 2025 06:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754633895; cv=fail; b=A4RRQwzq8n+a/yalMSI0CXala5z77e1tL/pvoTIB4mSYJp71RpdNJ6sabO2vDKCwvSvn9i+r9OYrfMLH/TVbx4M0ylr2o0sdIWokjDYt2VZweIgJqwVQ4DVWXnZbihfcCRCA2Ic05dJsiSowdGEd2788IuvC6xWvFZ5onzhqf2U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754633895; c=relaxed/simple;
+	bh=3BS3Ufgi/jKX+Vp+lOal5SBfmsLp1ZUgbipMFTwc7ro=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=S3cPOzE/kBiEhPRgXOQ3v4VOj2bsaWrao1WD1G2m3YjMVmBB+0H0iuuxJFCk/tYeYfgJ40bcClPZtSh1Rw+Od4PUbdqtekUShyu/t9OfsgD7p/uDMwOh6uS1F0BcXAUVChEOnhFZfH2dxeiGuGL52Jrxa2G6ygu2oVrWVuZe6rA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=C/NhZQyu; arc=fail smtp.client-ip=52.101.72.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HdNsKaIAIHzORHgXq8+aTYx66xkNkjWz6eQsRJ38tlQ9l8Ofdz9XUmazRWAaiFCWZH3b4+g/ETOw0u+X1eX3PELexFwvIp6nfuOMd4F6sD10qkaUh83+JphJB7IvuO/FQAzv+5C10273AbosWSv5yNu3IqEvRoJVUtimCabbRDqk6ssznLFVJOzlWqNEDN6va11jM6pn7U6gLEpM6l8xQWCVnaNincdWJKWQRrEkAGApJ1VvdJmkEtAEMclLwvfbAicg6zdrA1T8jyJa39PInECITsZk2MQIdg3xhyBuOLTvujsxTwJQQFNR1pwAtprD2VmyiaRb6Vwgz79i6dkULQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z/wNvY6WMUno3vwuuFRiw8s2tgzjYWsAYnXDtDI+9pk=;
+ b=ACsl9SYHX/LGf004bL7rk1NHixKvBihzuoLurMrC1wyZhVacP+Jw8sOoSjjW4GOLhT31m9KC2gvAbN8ii+vi3C4jqeQggctX9VO2qhubO4ahZlZU6bs5YQtiRtjH8im1aA0QyWftnV4KNBjmOjJgGcXgeAZGobl2Qms7hAop6SDtqk9ntQA69yK5THdjO6GCbLpyjSVxZWY8hRzCGiHqydSAjWxjn81+iIKOjQZCpqvP2Le6FuhCPtS2d0+5fUIDBxo+UEyooVNmOKT77X+fHxnbR0+SE89me4aPx1my+3ZIHCwDNBNXe1crozfoA7azACEEqtxNB4LVoU7Is5f0wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z/wNvY6WMUno3vwuuFRiw8s2tgzjYWsAYnXDtDI+9pk=;
+ b=C/NhZQyuyKxTCEbj3yqxNWWQv71p+YRUlVrcAVaHL8zoIXIcoUjDi660z7qysVJYuG6WwGEWm/onC9V7wKog/k8onG0PzVdxq+iqFPDML1g07u1qsi6lp6qbno1SLdabJUvyMeSn+hYlurrLtPaiNCnHtrXjPv2VA4ZThMkVzVTSlrVozknn2TU44V8f9tvWRAnFWgT15GQIRIyvbrCTN/Oz9tayuwvfxOeF9hE06RoxmBf55MxkpX36rPD5jOwCgNUmICaISSoIjB7RLzq3BEOWOJQ+t4OGu3PbO8QSH8974kfOvQislf3SYKvE5eg7eMEKO/yvhSWNx7mV1kxHLw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM9PR04MB8353.eurprd04.prod.outlook.com (2603:10a6:20b:3ef::22)
+ by PA4PR04MB9437.eurprd04.prod.outlook.com (2603:10a6:102:2a9::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.17; Fri, 8 Aug
+ 2025 06:18:09 +0000
+Received: from AM9PR04MB8353.eurprd04.prod.outlook.com
+ ([fe80::46ae:f774:f04c:a1bc]) by AM9PR04MB8353.eurprd04.prod.outlook.com
+ ([fe80::46ae:f774:f04c:a1bc%4]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
+ 06:18:09 +0000
+From: Chancel Liu <chancel.liu@nxp.com>
+To: lars@metafoo.de,
+	perex@perex.cz,
+	tiwai@suse.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: dmaengine_pcm: Add port_window_size to DAI dma data struct
+Date: Fri,  8 Aug 2025 15:17:41 +0900
+Message-ID: <20250808061741.187414-1-chancel.liu@nxp.com>
+X-Mailer: git-send-email 2.50.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0033.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::14) To AM9PR04MB8353.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3ef::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CALTww2-FTgDn9pD-Gmh8YKT-fU1ykk_QbB9J2KO8xQzrkAa_Bg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHzw+ClpVox_zaCw--.65529S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3WF1kWFy8Cr43JFWUXryxKrg_yoW7Ary8pF
-	WxW3WUGr45JryrXr1UXr97ZF95trs7JwnFqrZ3Aa4rGr1qyrs3Kry8GFyUC34kur97GF1D
-	Za15Gry3uw4rWrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8353:EE_|PA4PR04MB9437:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61febc00-221a-4ed6-df89-08ddd64358bd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?D6LrnCZEMZF1T6RjlRo4wpmUXICK1tgRNnLftKPZUb6JpvKBYTZ/yiybqXBw?=
+ =?us-ascii?Q?sqiXU+lnx3LvQALOJLrdCi2RgLrGAvCraliG/nYiJ3tasGTuH+M21FRnZjmR?=
+ =?us-ascii?Q?gTAMbPxEzqOLzU7eLH9+1B/27fQ3cu9qbhHVwT0cgify6V2cWVKlTExqH+n2?=
+ =?us-ascii?Q?9e474rPM0dTVv9XmOyB9oYmXwZ0nIB23ATCZZXK6bPSF25XmkS5mivCY5d/u?=
+ =?us-ascii?Q?4iHBeyAZ0+yqHkd+Ic5c9CTZmRu87kXgDF9UWoIuVsYGZVNnbapvsBVEuwa5?=
+ =?us-ascii?Q?kQYQhTjBRKphrLOB3misX1iPr0wt8dQkDsYp6RNT9PSdOJvPMvkZlxyMYMbF?=
+ =?us-ascii?Q?uE8hUcTz28aY8M9oAUXB6lVpFtsIO2VLl7+nO/aOUhGNThCvI8GMVieiSugC?=
+ =?us-ascii?Q?PbyIFMjnocNQfzjmBw+TGh8aDCCZhya2z8PMZGYY6Le1jLznJM7PeyykB4yu?=
+ =?us-ascii?Q?Q8n2Z22jaGJ0HvBhGpsRlbdxwxk5DROlcUiu4xwDZLfUS2RWN986sqBic/1/?=
+ =?us-ascii?Q?KMbJblt9LpzJgDXY6xS+w5IKtDh2RRo3Udw8KtBmh/zYphB0/ZQ2QyhUyw2P?=
+ =?us-ascii?Q?sfXJ9W4ijNoh8oAHLGfNgSukHFtqXH3LdqAgsdQpBX97JW4c36ZKn8uZ5uDU?=
+ =?us-ascii?Q?UBL7SDOpgc0fWZxkD/IaeFgJQL1V8c+BOpyS+U1PD63nsWdIOiw7XRLAhjbS?=
+ =?us-ascii?Q?rlck+vBhupCn2ZvzR1/nuSLmjyadQnNRgX3Y/fkqqj714RDstVyKHsTyPI/x?=
+ =?us-ascii?Q?xU+B8hDv8wasgXrp1UxZIvHFzBzLtxQdWItIjDk0TCBBpjNKKmZ5Cs/vfyDS?=
+ =?us-ascii?Q?PkX6f1a5TBzBOtj+sQcTfSbghVKUNzn/X+wF81L8MfrKIlBpZ09PZ9R9eVbZ?=
+ =?us-ascii?Q?OMv125h2/aoHznL0iBNCGyRap5z3Dq+DuEPQnJhr/j0p39mndABMhEnDp4fv?=
+ =?us-ascii?Q?Yhmd5kVD5f3p3JrAGZM4kUQCEu6k5y7jTJ8JupB/2oEI8C9UgLTZsGlsVHEK?=
+ =?us-ascii?Q?cC980VZNB3DDLa+viJfvP1ma1xb1XNp0rcu5Y0iIjFMbFiikspCdD4/1sawG?=
+ =?us-ascii?Q?XHvOQnPGWRNFf5i5aNId+bMrqjTXcbvL6fgXawWLNPmAmtxdtjcMkedahNPJ?=
+ =?us-ascii?Q?ut5tYPqITk4VJapBeujXX923Ab64Y8mezzNV1TvLZB2BRD0qv3TrB0w/CCvQ?=
+ =?us-ascii?Q?32Qa8LjYCHOr3pM2ZjWD0bzjFoPm6vKN3pUD3/lyAhsvadE4yn40Wdl0cxqb?=
+ =?us-ascii?Q?yAV1gYqjVeeHEpMNSaPYlyMID3m6u36jIiDiZ307+1y+dyZSWTY7FOc+SxRA?=
+ =?us-ascii?Q?M9PVpfcjIxLNXKTfSJbdAYMmfHtulTG/DOm36gaTxYejHibLpgdLKgAqGrYo?=
+ =?us-ascii?Q?k6f7AsenxanbmqjGbcC3h57uQWbAEah23lPf8Dk1mZvAegWxBXa2STKn9au6?=
+ =?us-ascii?Q?mZZPkJ4HWQGbu8z8HA5o+2TAPtQPVzeMxlWQYrv+dE7Nlz+ZN0tThQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8353.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Ddnwsl/ARsG3r0/4xvOV6N/ojvb57D67wXZnGZ/34OiMBrVpH+MI7uDMtVwB?=
+ =?us-ascii?Q?rwGs11kn10BrF7mac3OjEbKLUvtFIaf2xXnwbhu0iPC0oV4IL+polSe5xfAT?=
+ =?us-ascii?Q?j+GyFjRHZHXGkiD5J9UWGbJy7CBGNTgiD9U9UOj/YvbMrAB57yX28Jq8SzV+?=
+ =?us-ascii?Q?jq+Qkx5HLb1u8LJcLDrRl7SdKFpxDkH/4d/dVATedusfqwVBBd/h7n18Mh/z?=
+ =?us-ascii?Q?pEUhI+5Y/j2xgeBd6u6BxoBbG937PeOHHiKV1dvVNhwlzWWn7obbrF5ix0hu?=
+ =?us-ascii?Q?C5ujiNjZfMCSykbkLnz/Mj4KA5mzLAsSd6itmniGWylHeqfaJIicZACq8l6J?=
+ =?us-ascii?Q?qxtjj9OmynShsm/8oInz0Pv166803Kl11Fnp5hNcv5+ybhTFAspZSZCm0bAI?=
+ =?us-ascii?Q?j0249y2vz6AL4DHCItMZHnXvaynuf3L0aInPUl4P3Z8txT0R00ik/aB9mBWX?=
+ =?us-ascii?Q?yk4aCjzDoPeMeDd15lWnayLCbSvHwnoQ0QvSb6y8FUnDdSlzQixmDEYsHy9f?=
+ =?us-ascii?Q?XP/XQaPPTk4+8B5+NKifwbRDN81SulL9xcJ5qeIv4NMpzljSq7YGV3haXPz0?=
+ =?us-ascii?Q?ki3QkQzHIeE1q2dMSNHyNL1Tsdh2MbG9BikjUx/51hzpUVeM8mVSd4+e6vgb?=
+ =?us-ascii?Q?z8quqR7jWYvJ2hGjysMvfPz6jKvt/Sr/bMLMCI44GX/AGkgiuHm7JsI1XPab?=
+ =?us-ascii?Q?BXhI5eV2tO1Rvf+4bCP20+8XsGC3yeSwzERy5x7wRQU/h0h1niMSjUlheRlk?=
+ =?us-ascii?Q?GYMQ1OaHDE56xskhVSOtmD+kF/BtwIeg4ldmysGQ+2NHhrJIh699zT+c/7t9?=
+ =?us-ascii?Q?M8RmgDHUEuqwYhf5mfajZKoCd+Knw/gfiApQ9drYWVfbBM/H7ryZ61Gr0dmS?=
+ =?us-ascii?Q?cMEZmNALUvgvLQkVs+askIv88yaJ8wSy6o5n1B3lkn2LZpsiJ2vL5DSlBZG+?=
+ =?us-ascii?Q?aba5+1YI5Iy/ubJsypl1SfTJQxQ+zf8ZGhacbNTliP7LiGVHCr7vN6GxfDHa?=
+ =?us-ascii?Q?NCWOtLe4yE+tpveoRzbFItrLm0dvCpd0YNfpfuhQM5W/zx0zWHp24XljGjnD?=
+ =?us-ascii?Q?uLHd3tJPhe2oGAjrx2XQORALD+KxpmqWnQmw6bT8WWyDENaAp2I17GmJyPMM?=
+ =?us-ascii?Q?1mMWxr3PRId+fVDC/NoOqrgPd7fnd4NngRLYqs8jfX/cgnko0jZpg90aNhUi?=
+ =?us-ascii?Q?M5jt0ZYMQKH/hGyevKmFqjrlFhltENlpGhTo5aOiIg/HdQ08xUKysy0XMdsS?=
+ =?us-ascii?Q?bgGxFyCh/Uht/MG+2F2LQQ53KX/y/HmOJQcksMdhkuFVW8AuMwtq/4fr6423?=
+ =?us-ascii?Q?QDr6meHHHnxoIbUzQ3cBYla8Iik6FoBlo46YRYNFNHPc61qdVcppMcDYhG+g?=
+ =?us-ascii?Q?/3FzvfSHiMFA+oQpdtU1UzNBKmbPdcI8GP/7cdboO4Duck8s4wA28DQ0uZA8?=
+ =?us-ascii?Q?NuHZ4LChkeJ1Mm2BUAOAaFmEOANi7akM1vlAuRWhMqHb9/XXD9WMtf1bfj63?=
+ =?us-ascii?Q?0BagVHd+nV+qKA+NIefTc2Lshp6klW7Jzh70tvzkidQTddvnelXBf1kQeKoi?=
+ =?us-ascii?Q?DfWSjAdEfi9MOQCUSnSDjT4UITT6dT4jmUiGnXlw?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61febc00-221a-4ed6-df89-08ddd64358bd
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8353.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 06:18:09.8465
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J9EMSUbXBBUCnnVgiq/Y2oD/CKWI831sVz0eVkL407jzsVRWqpVCtkxPWoE6+tU24qr2vc/YrMTKRjvrumUQVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9437
 
-Hi, Xiao
+The port_window_size is a struct member of dma slave channel runtime
+config. It's the length of the register area in words the data need to
+be accessed on the device side. It is only used for devices which is
+using an area instead of a single register to send or receive the data.
+Typically the DMA loops in this area in order to transfer the data.
 
-在 2025/08/07 11:57, Xiao Ni 写道:
->> +/* set all the bits in the subpage as dirty */
->> +static void llbitmap_infect_dirty_bits(struct llbitmap *llbitmap,
->> +                                      struct llbitmap_page_ctl *pctl,
->> +                                      unsigned int block, unsigned int offset)
->> +{
->> +       bool level_456 = raid_is_456(llbitmap->mddev);
->> +       unsigned int io_size = llbitmap->io_size;
->> +       int pos;
->> +
->> +       for (pos = block * io_size; pos < (block + 1) * io_size; pos++) {
->> +               if (pos == offset)
->> +                       continue;
-> It looks like it doesn't need to pass the argument offset to this
-> function. The pctl->state[offset] must be BitDirty or BitNeedSync. So
-> the following switch/case can skip it. So it can save hundreds
-> comparing pos with offset here.
-> 
-Ok.
->> +
->> +               switch (pctl->state[pos]) {
->> +               case BitUnwritten:
->> +                       pctl->state[pos] = level_456 ? BitNeedSync : BitDirty;
->> +                       break;
->> +               case BitClean:
->> +                       pctl->state[pos] = BitDirty;
->> +                       break;
->> +               };
->> +       }
->> +
->> +}
->> +static void llbitmap_write(struct llbitmap *llbitmap, enum llbitmap_state state,
->> +                          loff_t pos)
->> +{
->> +       unsigned int idx;
->> +       unsigned int offset;
-> How about change offset to bit?
+It's useful for cases that reading/writing multiple registers in DMA
+transactions.
 
-Yes, and the follong name about bit.
->> +static void llbitmap_write_page(struct llbitmap *llbitmap, int idx)
->> +{
->> +       struct page *page = llbitmap->pctl[idx]->page;
->> +       struct mddev *mddev = llbitmap->mddev;
->> +       struct md_rdev *rdev;
->> +       int bit;
-> It's better to change name "bit" to "block"
->> +static int llbitmap_init(struct llbitmap *llbitmap)
->> +{
->> +       struct mddev *mddev = llbitmap->mddev;
->> +       sector_t blocks = mddev->resync_max_sectors;
->> +       unsigned long chunksize = MIN_CHUNK_SIZE;
->> +       unsigned long chunks = DIV_ROUND_UP(blocks, chunksize);
->> +       unsigned long space = mddev->bitmap_info.space << SECTOR_SHIFT;
->> +       int ret;
->> +
->> +       while (chunks > space) {
->> +               chunksize = chunksize << 1;
->> +               chunks = DIV_ROUND_UP(blocks, chunksize);
->> +       }
->> +
->> +       llbitmap->barrier_idle = DEFAULT_BARRIER_IDLE;
->> +       llbitmap->chunkshift = ffz(~chunksize);
->> +       llbitmap->chunksize = chunksize;
->> +       llbitmap->chunks = chunks;
->> +       mddev->bitmap_info.daemon_sleep = DEFAULT_DAEMON_SLEEP;
->> +
->> +       ret = llbitmap_cache_pages(llbitmap);
->> +       if (ret)
->> +               return ret;
->> +
->> +       llbitmap_state_machine(llbitmap, 0, llbitmap->chunks - 1, BitmapActionInit);
->> +       return 0;
->> +}
-> There is a problem, if array is created with --assume-clean, it
-> doesn't need to start sync. And it doesn't have the chance to sync
-> llbitmap superblock to member disks. So it can't get the right bitmap
-> superblock information which is calculated here after a power off. It
-> needs to sync the superblock here.
-> 
-Yes, you're right. The mdraid bitmap metadata is written by mdadm,
-dm-raid  bitmap metadata is write in kernel by md_update_sb(), llbitmap
-is missing a call to llbitmap_write_sb() after initializing, if
-md_update_sb() is never triggered, the bitmap metadata will be lost.
+Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
+---
+ include/sound/dmaengine_pcm.h | 5 +++++
+ sound/core/pcm_dmaengine.c    | 2 ++
+ 2 files changed, 7 insertions(+)
 
->> +
->> +static int llbitmap_create(struct mddev *mddev)
->> +{
->> +       struct llbitmap *llbitmap;
->> +       int ret;
->> +
->> +       ret = llbitmap_check_support(mddev);
->> +       if (ret)
->> +               return ret;
->> +
->> +       llbitmap = kzalloc(sizeof(*llbitmap), GFP_KERNEL);
->> +       if (!llbitmap)
->> +               return -ENOMEM;
->> +
->> +       llbitmap->mddev = mddev;
->> +       llbitmap->io_size = bdev_logical_block_size(mddev->gendisk->part0);
->> +       llbitmap->blocks_per_page = PAGE_SIZE / llbitmap->io_size;
->> +
->> +       timer_setup(&llbitmap->pending_timer, llbitmap_pending_timer_fn, 0);
->> +       INIT_WORK(&llbitmap->daemon_work, md_llbitmap_daemon_fn);
->> +       atomic_set(&llbitmap->behind_writes, 0);
->> +       init_waitqueue_head(&llbitmap->behind_wait);
->> +
->> +       mutex_lock(&mddev->bitmap_info.mutex);
->> +       mddev->bitmap = llbitmap;
->> +       ret = llbitmap_read_sb(llbitmap);
->> +       mutex_unlock(&mddev->bitmap_info.mutex);
->> +       if (ret)
->> +               goto err_out;
->> +
->> +       return 0;
->> +
->> +err_out:
->> +       kfree(llbitmap);
-> mddev->bitmap = NULL. If not,
-> md_run->md_bitmap_destroy->llbitmap_destroy will free it again.
-Yes.
-
-> 
->> +static void llbitmap_start_write(struct mddev *mddev, sector_t offset,
->> +                                unsigned long sectors)
->> +{
->> +       struct llbitmap *llbitmap = mddev->bitmap;
->> +       unsigned long start = offset >> llbitmap->chunkshift;
->> +       unsigned long end = (offset + sectors - 1) >> llbitmap->chunkshift;
->> +       int page_start = (start + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +       int page_end = (end + BITMAP_DATA_OFFSET) >> PAGE_SHIFT;
->> +
->> +       llbitmap_state_machine(llbitmap, start, end, BitmapActionStartwrite);
->> +
->> +
-> Two lines here, just need one.
->> +/*
->> + * Force to write all bitmap pages to disk, called when stopping the array, or
->> + * every daemon_sleep seconds when sync_thread is running.
->> + */
->> +static void __llbitmap_flush(struct mddev *mddev)
->> +{
->> +       struct llbitmap *llbitmap = mddev->bitmap;
->> +       struct blk_plug plug;
->> +       int i;
->> +
->> +       blk_start_plug(&plug);
->> +       for (i = 0; i < llbitmap->nr_pages; i++) {
->> +               struct llbitmap_page_ctl *pctl = llbitmap->pctl[i];
->> +
->> +               /* mark all bits as dirty */
-> "mark all blocks as dirty" is better?
-> 
->> +static void llbitmap_write_sb(struct llbitmap *llbitmap)
->> +{
->> +       int nr_bits = DIV_ROUND_UP(BITMAP_DATA_OFFSET, llbitmap->io_size);
-> s/nr_bits/nr_blocks/g
-> 
-> 
-> 
-> 
-
-Thanks again for the review!
-Kuai
+diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
+index 1ef13bcdc43f9..9472f0a966a27 100644
+--- a/include/sound/dmaengine_pcm.h
++++ b/include/sound/dmaengine_pcm.h
+@@ -69,6 +69,10 @@ struct dma_chan *snd_dmaengine_pcm_get_chan(struct snd_pcm_substream *substream)
+  * @peripheral_config: peripheral configuration for programming peripheral
+  * for dmaengine transfer
+  * @peripheral_size: peripheral configuration buffer size
++ * @port_window_size: The length of the register area in words the data need
++ * to be accessed on the device side. It is only used for devices which is using
++ * an area instead of a single register to send/receive the data. Typically the
++ * DMA loops in this area in order to transfer the data.
+  */
+ struct snd_dmaengine_dai_dma_data {
+ 	dma_addr_t addr;
+@@ -80,6 +84,7 @@ struct snd_dmaengine_dai_dma_data {
+ 	unsigned int flags;
+ 	void *peripheral_config;
+ 	size_t peripheral_size;
++	u32 port_window_size;
+ };
+ 
+ void snd_dmaengine_pcm_set_config_from_dai_data(
+diff --git a/sound/core/pcm_dmaengine.c b/sound/core/pcm_dmaengine.c
+index 72040964b6fd6..f0c17503df425 100644
+--- a/sound/core/pcm_dmaengine.c
++++ b/sound/core/pcm_dmaengine.c
+@@ -111,6 +111,7 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 		slave_config->dst_addr = dma_data->addr;
+ 		slave_config->dst_maxburst = dma_data->maxburst;
++		slave_config->dst_port_window_size = dma_data->port_window_size;
+ 		if (dma_data->flags & SND_DMAENGINE_PCM_DAI_FLAG_PACK)
+ 			slave_config->dst_addr_width =
+ 				DMA_SLAVE_BUSWIDTH_UNDEFINED;
+@@ -119,6 +120,7 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
+ 	} else {
+ 		slave_config->src_addr = dma_data->addr;
+ 		slave_config->src_maxburst = dma_data->maxburst;
++		slave_config->src_port_window_size = dma_data->port_window_size;
+ 		if (dma_data->flags & SND_DMAENGINE_PCM_DAI_FLAG_PACK)
+ 			slave_config->src_addr_width =
+ 				DMA_SLAVE_BUSWIDTH_UNDEFINED;
+-- 
+2.50.1
 
 
