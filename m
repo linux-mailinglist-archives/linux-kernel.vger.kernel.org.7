@@ -1,177 +1,236 @@
-Return-Path: <linux-kernel+bounces-760440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4FBB1EB20
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:08:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CDAB1EB24
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B858B188717A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:07:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27357A07BD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EA2280037;
-	Fri,  8 Aug 2025 15:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5799D281341;
+	Fri,  8 Aug 2025 15:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Lc0mbJQN";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="Ptx9D/MD"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YeblZxfC"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E7B78F36
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526CA27F73E
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754665652; cv=none; b=A5fFXP2zJAmySFCdYXgt/P7DFBBdAEtspWScSP3YFpdOKeVT2ADUZsO5tnG7Or81Ku7+mUn2wQQ2I8svtfRMhW27w9kpeVB/SCwvFuLnyIcG1PTMauaWcoicEmQeGshEiZlxypUf8w/7Ze4gv2355gdtx+sVPBf2Xu9KTZf3i2s=
+	t=1754665699; cv=none; b=caEgNexiM8Bd0fZIl6THqLjFyAIQ1EKSVDZH1T9X7nze+TNMB/sGL1xqMXRJ4mtGEe8bWAgaFHpby1EoJLinWoNX1IaenoKlbkqU2o21XOlilXZn/9FtmSdh3m6tSIEuNf6VGQN5ruUlG9vVewIL7IB3nGGpF64+zDHdJBj48Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754665652; c=relaxed/simple;
-	bh=qUmgf6BTlS6Tq4v69ENyws+aLYifYqV93BeLmR/roZ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CKBvfbsB8M79IhdNkGmZocKHNR2YYsPU7uMWPYoPAw1AbZUBFihQtyeu/donlvsx8tUXYxDMYwazcFfEpM+F4RFfEcsJ9ZJbfKNJ1pcd67rE9gX8c+35oxTPTU50OMIObIcxQe/jf3qCAC/+zYnYn3K7msC3Dxt7u7NjJxNLl8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Lc0mbJQN; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=Ptx9D/MD; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1754665640; x=1755270440;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=uiWgxunv6QTnvQv+xN5Ogh6F+viAfMdu93dlj/u2MPI=;
-	b=Lc0mbJQNoHJGieFCGZWvHI+38xxzNzO0raBpgPim4lpzZtA6mOeP07Y/qiLyV79Y0CuFF/PhE4EZF
-	 7puIxpClse3Zl5y1QS3tNupfRBHi2jM1l6ryiWuvUmhguxiPr7bZvXv0ckR5fyUsMexkQvpV87v39n
-	 VRJvX49hfChzedME0GCWbaMgsNSHBCce21mI3fyR8sloM0Y27MKSQRhAOaywAzFF0xaEN99yI9RFZZ
-	 KaxkAubjn5klV+3tsQQXhKls3+j/6K3wNgsJg6djHaf9stvN/0TKfHrY+tDXU+N78Urc8AByDfGohs
-	 OYw6f/si0mtUGXkZbWDQZ8Bz2BPTdXw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1754665640; x=1755270440;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:
-	 from;
-	bh=uiWgxunv6QTnvQv+xN5Ogh6F+viAfMdu93dlj/u2MPI=;
-	b=Ptx9D/MDVsaJXpWBQSzqjU4cxMjsfRNvc64v9H75xqHvCBh/K4MKhihgtfRncL4xsWN82l4G2wqVR
-	 4JY5Kp3Dg==
-X-HalOne-ID: 607fa9b2-7469-11f0-9500-85eb291bc831
-Received: from localhost.localdomain (host-95-203-16-218.mobileonline.telia.com [95.203.16.218])
-	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 607fa9b2-7469-11f0-9500-85eb291bc831;
-	Fri, 08 Aug 2025 15:07:19 +0000 (UTC)
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-To: rust-for-linux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Vitaly Wool <vitaly.wool@konsulko.se>
-Subject: [PATCH] rust: alloc: implement Box::pin_slice()
-Date: Fri,  8 Aug 2025 17:07:16 +0200
-Message-Id: <20250808150716.2479375-1-vitaly.wool@konsulko.se>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1754665699; c=relaxed/simple;
+	bh=KbyBa2RMxGvUa2qTjS8DYpX+dKFyENEXQ3F7PVCsezM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=iYBY0VdxNbImQBsA39zTMLyZGmOqKPrGcr2QkdNhw/m9KBcrUtCexD43QoY8UbYcrvtcWRM3NEdNvHR7U7D4bQGfMHuLZERBjf9xFJ+RZOq4j1PtyTfYsHg1Mc9+z22ryGyWuokUxHDbo7kzXvqDbvg8YocghTXzcUH0QAUzMgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YeblZxfC; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250808150815epoutp044b2e9981a7faded257d3d9cc9d23e5e9~Z0ydIZ8HH3138531385epoutp040
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:08:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250808150815epoutp044b2e9981a7faded257d3d9cc9d23e5e9~Z0ydIZ8HH3138531385epoutp040
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754665695;
+	bh=KbyBa2RMxGvUa2qTjS8DYpX+dKFyENEXQ3F7PVCsezM=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=YeblZxfCRgVAJ8Yhk6OeVGS4jBSJVQgSw4NoEDq8vypGi4G2OIvH2FK8R3EIsbqW0
+	 G0LfWv9ovZUUVCvze7Y/PaFncOSoG0USMMFQ8E4IulrWrPa+MBCmsy7axwL2pW/jBl
+	 FPwN/1wvT/oa73OJ5G5pzr6sEWjKivAIMB+0Xn0w=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250808150814epcas5p1819cab380f954c265dfc00d7557e35e9~Z0ycfsPfM2113721137epcas5p1t;
+	Fri,  8 Aug 2025 15:08:14 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.91]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4bz6q20zKBz3hhT3; Fri,  8 Aug
+	2025 15:08:14 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250808150813epcas5p3eb081f2f6e90a15593e545ced68435f1~Z0ya_Ijdo2389323893epcas5p3J;
+	Fri,  8 Aug 2025 15:08:13 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250808150810epsmtip1f6ba1f6f143b53b5c12bf28410693323~Z0yYxxj3c1978819788epsmtip1Y;
+	Fri,  8 Aug 2025 15:08:10 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Manivannan Sadhasivam'" <mani@kernel.org>
+Cc: "'Konrad Dybcio'" <konrad.dybcio@oss.qualcomm.com>, "'Krzysztof
+ Kozlowski'" <krzk@kernel.org>, "'Ram Kumar Dwivedi'"
+	<quic_rdwivedi@quicinc.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<andersson@kernel.org>, <konradybcio@kernel.org>,
+	<James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+	<agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
+Subject: RE: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+Date: Fri, 8 Aug 2025 20:38:09 +0530
+Message-ID: <0f8c01dc0876$427cf1c0$c776d540$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQEJQrUlLhd2k13YhwqtNcYaDataOQJtFIHyAldjN/MB24cyRgGnpjwRAmX4p5MB936htgLh1QaLARPOx0QCD7g8CwGFQGz5tVzi6iA=
+X-CMS-MailID: 20250808150813epcas5p3eb081f2f6e90a15593e545ced68435f1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60
+References: <061c01dc062f$70ec34b0$52c49e10$@samsung.com>
+	<87c37d65-5ab1-4443-a428-dc3592062cdc@oss.qualcomm.com>
+	<061d01dc0631$c1766c00$44634400$@samsung.com>
+	<3cd33dce-f6b9-4f60-8cb2-a3bf2942a1e5@oss.qualcomm.com>
+	<06d201dc0689$9f438200$ddca8600$@samsung.com>
+	<wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
+	<06f301dc0695$6bf25690$43d703b0$@samsung.com>
+	<CGME20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60@epcas5p1.samsung.com>
+	<nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
+	<0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
+	<fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
 
-From: Alice Ryhl <aliceryhl@google.com>
 
-Add a new constructor to Box to facilitate Box creation from a pinned
-slice of elements. This allows to efficiently allocate memory for e.g.
-slices of structrures containing spinlocks or mutexes. Such slices may
-be used in kmemcache like or zpool API implementations.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.se>
----
-
-This patch supersedes "rust: extend kbox with a new constructor" posted
-a day earlier.
-
- rust/kernel/alloc/kbox.rs | 61 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
-
-diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-index 1fef9beb57c8..f0be307f7242 100644
---- a/rust/kernel/alloc/kbox.rs
-+++ b/rust/kernel/alloc/kbox.rs
-@@ -290,6 +290,67 @@ pub fn pin(x: T, flags: Flags) -> Result<Pin<Box<T, A>>, AllocError>
-         Ok(Self::new(x, flags)?.into())
-     }
- 
-+    /// Construct a pinned slice of elements `Pin<Box<[T], A>>`.
-+    ///
-+    /// This is a convenient means for creation of e.g. slices of structrures containing spinlocks
-+    /// or mutexes.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// #[pin_data]
-+    /// struct Example {
-+    ///     c: u32,
-+    ///     #[pin]
-+    ///     d: SpinLock<Inner>,
-+    /// }
-+    ///
-+    /// impl Example {
-+    ///     fn new() -> impl PinInit<Self> {
-+    ///         pin_init!(Self {
-+    ///             c: 10,
-+    ///             d <- new_spinlock!(Inner { a: 20, b: 30 }),
-+    ///         })
-+    ///     }
-+    /// }
-+    /// // Allocate a boxed slice of 10 `Example`s.
-+    /// let s = KBox::pin_slice(
-+    ///     | _i | Example::new(),
-+    ///     10,
-+    ///     GFP_KERNEL
-+    /// )?;
-+    /// assert_eq!(s[5].c, 10);
-+    /// assert_eq!(s[3].d.lock().a, 20),
-+    /// ```
-+    pub fn pin_slice<Func, Item, E>(
-+        mut init: Func,
-+        len: usize,
-+        flags: Flags,
-+    ) -> Result<Pin<Box<[T], A>>, E>
-+    where
-+        Func: FnMut(usize) -> Item,
-+        Item: PinInit<T, E>,
-+        E: From<AllocError>,
-+    {
-+        let mut buffer = super::Vec::<T, A>::with_capacity(len, flags)?;
-+        for i in 0..len {
-+            let ptr = buffer.spare_capacity_mut().as_mut_ptr().cast();
-+            // SAFETY:
-+            // - `ptr` is a valid pointer to uninitialized memory.
-+            // - `ptr` is not used if an error is returned.
-+            // - `ptr` won't be moved until it is dropped, i.e. it is pinned.
-+            unsafe { init(i).__pinned_init(ptr)? };
-+            // SAFETY:
-+            // - `i + 1 <= len` => we don't exceed the capacity
-+            // - this new value is initialized
-+            unsafe { buffer.inc_len(1) };
-+        }
-+        let (ptr, _, _) = buffer.into_raw_parts();
-+        let slice = core::ptr::slice_from_raw_parts_mut(ptr, len);
-+        // SAFETY: `slice` is not a NULL pointer because it is a valid pointer to [T]
-+        Ok(Pin::from(unsafe { Box::from_raw(slice) }))
-+    }
-+
-     /// Convert a [`Box<T,A>`] to a [`Pin<Box<T,A>>`]. If `T` does not implement
-     /// [`Unpin`], then `x` will be pinned in memory and can't be moved.
-     pub fn into_pin(this: Self) -> Pin<Self> {
--- 
-2.39.2
-
+> -----Original Message-----
+> From: 'Manivannan Sadhasivam' <mani=40kernel.org>
+> Sent: Friday, August 8, 2025 6:14 PM
+> To: Alim Akhtar <alim.akhtar=40samsung.com>
+> Cc: 'Konrad Dybcio' <konrad.dybcio=40oss.qualcomm.com>; 'Krzysztof
+> Kozlowski' <krzk=40kernel.org>; 'Ram Kumar Dwivedi'
+> <quic_rdwivedi=40quicinc.com>; avri.altman=40wdc.com;
+> bvanassche=40acm.org; robh=40kernel.org; krzk+dt=40kernel.org;
+> conor+dt=40kernel.org; andersson=40kernel.org; konradybcio=40kernel.org;
+> James.Bottomley=40hansenpartnership.com; martin.petersen=40oracle.com;
+> agross=40kernel.org; linux-arm-msm=40vger.kernel.org; linux-
+> scsi=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH 2/3=5D arm64: dts: qcom: sa8155: Add gear and rate =
+limit
+> properties to UFS
+>=20
+> On Thu, Aug 07, 2025 at 10:08:32PM GMT, Alim Akhtar wrote:
+> >
+> >
+> > > -----Original Message-----
+> > > From: 'Manivannan Sadhasivam' <mani=40kernel.org>
+> > > Sent: Wednesday, August 6, 2025 4:56 PM
+> > > To: Alim Akhtar <alim.akhtar=40samsung.com>
+> > > Cc: 'Konrad Dybcio' <konrad.dybcio=40oss.qualcomm.com>; 'Krzysztof
+> > =5B...=5D
+> >
+> > > > >
+> > > > > On Wed, Aug 06, 2025 at 09:51:43AM GMT, Alim Akhtar wrote:
+> > > > >
+> > > > > =5B...=5D
+> > > > >
+> > > > > > > >> Introducing generic solutions preemptively for problems
+> > > > > > > >> that are simple in concept and can occur widely is good
+> > > > > > > >> practice (although it's sometimes hard to gauge whether
+> > > > > > > >> this is a one-off), as if the issue spreads a generic
+> > > > > > > >> solution will appear at some point, but we'll have to
+> > > > > > > >> keep supporting the odd ones as well
+> > > > > > > >>
+> > > > > > > > Ok,
+> > > > > > > > I would prefer if we add a property which sounds like
+> > > > > > > > =22poor thermal dissipation=22 or =22routing channel loss=
+=22
+> > > > > > > > rather than adding limiting UFS gear
+> > > > > > > properties.
+> > > > > > > > Poor thermal design or channel losses are generic enough
+> > > > > > > > and can happen
+> > > > > > > on any board.
+> > > > > > >
+> > > > > > > This is exactly what I'm trying to avoid through my
+> > > > > > > suggestion - one board may have poor thermal dissipation,
+> > > > > > > another may have channel losses, yet another one may feature
+> > > > > > > a special batch of UFS chips that will set the world on fire
+> > > > > > > if instructed to attempt link training at gear 7 - they all
+> > > > > > > are causes, as opposed to describing what needs to happen
+> > > > > > > (i.e. what the hardware must be treated as - gear N
+> > > > > > > incapable despite what can be discovered at runtime), with
+> > > > > > > perhaps a comment on the side
+> > > > > > >
+> > > > > > But the solution for all possible board problems can't be by
+> > > > > > limiting Gear
+> > > > > speed.
+> > > > >
+> > > > > Devicetree properties should precisely reflect how they are
+> > > > > relevant to the hardware. 'limiting-gear-speed' is
+> > > > > self-explanatory that the gear speed is getting limited (for a
+> > > > > reason), but the devicetree doesn't need to describe the
+> > > > > *reason* itself.
+> > > > >
+> > > > > > So it should be known why one particular board need to limit th=
+e
+> gear.
+> > > > >
+> > > > > That goes into the description, not in the property name.
+> > > > >
+> > > > > > I understand that this is a static configuration, where it is
+> > > > > > already known
+> > > > > that board is broken for higher Gear.
+> > > > > > Can this be achieved by limiting the clock? If not, can we add
+> > > > > > a board
+> > > > > specific _quirk_ and let the _quirk_ to be enabled from vendor
+> > > > > specific hooks?
+> > > > > >
+> > > > >
+> > > > > How can we limit the clock without limiting the gears? When we
+> > > > > limit the gear/mode, both clock and power are implicitly limited.
+> > > > >
+> > > > Possibly someone need to check with designer of the SoC if that is
+> > > > possible
+> > > or not.
+> > >
+> > > It's not just clock. We need to consider reducing regulator,
+> > > interconnect votes also. But as I said above, limiting the gear/mode
+> > > will take care of all these parameters.
+> > >
+> > > > Did we already tried _quirk_? If not, why not?
+> > > > If the board is so poorly designed and can't take care of the
+> > > > channel loses or heat dissipation etc, Then I assumed the gear
+> > > > negotiation between host and device should fail for the higher
+> > > > gear and driver can have
+> > > a re-try logic to re-init / re-try =22power mode change=22 at the low=
+er
+> > > gear. Is that not possible / feasible?
+> > > >
+> > >
+> > > I don't see why we need to add extra logic in the UFS driver if we
+> > > can extract that information from DT.
+> > >
+> > You didn=E2=80=99t=20answer=20my=20question=20entirely,=20I=20am=20stil=
+l=20not=20able=20to=0D=0A>=20>=20visualised=20how=20come=20Linkup=20is=20ha=
+ppening=20in=20higher=20gear=20and=20then=20Suddenly=0D=0A>=20it=20is=20fai=
+ling=20and=20we=20need=20to=20reduce=20the=20gear=20to=20solve=20that?=0D=
+=0A>=20=0D=0A>=20Oh=20well,=20this=20is=20the=20source=20of=20confusion=20h=
+ere.=20I=20didn't=20(also=20the=20patch)=20claim=0D=0A>=20that=20the=20link=
+=20up=20will=20happen=20with=20higher=20speed.=20It=20will=20most=20likely=
+=20fail=20if=20it=0D=0A>=20couldn't=20operate=20at=20the=20higher=20speed=
+=20and=20that's=20why=20we=20need=20to=20limit=20it=20to=0D=0A>=20lower=20g=
+ear/mode=20*before*=20bringing=20the=20link=20up.=0D=0A>=20=0D=0ARight,=20t=
+hat's=20why=20a=20re-try=20logic=20to=20negotiate=20a=20__working__=20power=
+=20mode=20change=20can=20help,=20instead=20of=20introducing=20new=20binding=
+=20for=20this=20case.=0D=0AAnd=20that=20approach=20can=20be=20useful=20for=
+=20many=20platforms.=0D=0AAnyway=20coming=20back=20with=20the=20same=20poin=
+t=20again=20and=20again=20is=20not=20productive.=0D=0AI=20gave=20my=20opini=
+on=20and=20suggestions.=20Rest=20is=20on=20the=20maintainers.=0D=0A=0D=0A>=
+=20As=20you=20can=20see,=20the=20driver=20patch=20is=20parsing=20the=20limi=
+ts=20in=20its=0D=0A>=20ufs_hba_variant_ops::init()=20callback,=20which=20ge=
+ts=20called=20during=0D=0A>=20ufshcd_hba_init().=0D=0A>=20=0D=0A>=20-=20Man=
+i=0D=0A>=20=0D=0A>=20--=0D=0A>=20=E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=
+=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=E0=AF=8D=20=E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=
+=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=E0=AF=8D=0D=0A=0D=0A
 
