@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-760621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0C9B1EDDD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D9FB1EDE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AE6A175FAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58775A19AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DA91F4289;
-	Fri,  8 Aug 2025 17:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6258A1F2BBB;
+	Fri,  8 Aug 2025 17:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hx5iGzGf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UpQawy1Z"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3DE19D065
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 17:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4581DED42;
+	Fri,  8 Aug 2025 17:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754674563; cv=none; b=WeZBGUQXnuC5NdHC5eOjtUcuJNBqpUq+IP9CEGrB3cDhYJntPML8DnhKdbA5ushuklm+JtodaJ1CGfXatp0QEDXuVeywBRIw8FV+dyTtXSc5lXhr48C30zOgC2haMOtdpvxBXuh2iqUe6hlLHf4/KrUZ3CsKMKKHTe9IxY2ma40=
+	t=1754674893; cv=none; b=TojbIW73C5xm+usUuVQxmiGkJi3lNcrTlMa3RjGmxUMunMyth3d02n4eiezzBIw8z3ArpYicPXnL8jh1oZYTqaPnK7S5ZoahWiinqvbB4AamlZTVj5FBQjxm4UNn6MzFtgcJKYZ9xr88HczoigFeQwEQiQNJCeLDM0G1bV4JQ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754674563; c=relaxed/simple;
-	bh=4gI3Fbat6bYkv9HAnhdKRnfYXNhPJqclodKFlcXoYSE=;
-	h=Subject:To:Cc:From:Date:Message-Id; b=oWfszTnz88lRsrVK+LIb39nQKXLcTyPKRGr7u+Qi+cSNp9nqRnoIsTPJViOsA/Q1L+tYy903V++sTUa+0OhbIEPOEh5CWtTPZJLNQpWLL8K2Z0WGgApAXiFQpJq9KWm/bg35zxlu5xcSbXwx6s4R6A47pEx235hlTBItP551Y1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hx5iGzGf; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754674562; x=1786210562;
-  h=subject:to:cc:from:date:message-id;
-  bh=4gI3Fbat6bYkv9HAnhdKRnfYXNhPJqclodKFlcXoYSE=;
-  b=Hx5iGzGfWwM5yfYQFZMw5HYyN1mBgE8LBbz72pEg9Q3elerZyL0TEtAz
-   L9KFWfaKPaHv9qY/3SWsFxtPo9kxnTjHOFUnSCC0lhKk0sfgLUBKiZ38y
-   Gf+E6y6gSPiNPy+SI6GLGJUQC+rZAJIsPfvIgHp/vBfJsb7gkaytYN9Dj
-   y1ENa0+02Lvt0MR7/vbkekaCMsEwkap1TjVRFPVu9TQLy15f/YXYsnaa5
-   BRwhm5375nyo3gYtH4cTOAJ3OF/Pe8svH/zLeGXI6GlDxIw+YuGhpM7si
-   6+Rh7THRblu39ApTSDeKARFidTFWTMRmZDcz4D6cgjokWnkizqkOd42FP
-   g==;
-X-CSE-ConnectionGUID: ynWHF0lWROeBv3Z7UUxs/Q==
-X-CSE-MsgGUID: Kh/MlCs8SWqZR+utZNe6oQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60874637"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="60874637"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 10:36:01 -0700
-X-CSE-ConnectionGUID: lMvpRwTsTUySnZ2RVLXzRA==
-X-CSE-MsgGUID: 8jD2peHJTg6xUlyhxepU0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="164609636"
-Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by orviesa006.jf.intel.com with ESMTP; 08 Aug 2025 10:36:02 -0700
-Subject: [PATCH] MAINTAINERS: Remove bouncing Keem Bay maintainer
-To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 08 Aug 2025 10:36:01 -0700
-Message-Id: <20250808173601.77F1A90A@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1754674893; c=relaxed/simple;
+	bh=hsINl+4v4aRuuwnMtF7+lm5+v9ngMnqF3tUz2rgqZ9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JhEuzlpU6DPjKhTS3ZNKfT2hunh+ISbl3jVOEszC22qMbzCw0Dr/0Sm2oQqd6sd3q8SgmcPb/k567jih8WgiycPqwijUxQF5E7k0MmKeMHcpolyJIP1MHCVeqF+KuRjwMlrloFXZolyOvoax5JgazR2NaN/9tN84XqExoQeK7LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UpQawy1Z; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76bc68cc9e4so2708296b3a.2;
+        Fri, 08 Aug 2025 10:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754674891; x=1755279691; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9OXvgZ3ldfhwLT3iaAlad+viQpH+0pL7nvqeNZCv/cA=;
+        b=UpQawy1ZQP5evlBY+CdVHiYjgs8lriHsVs+xAXwrIbKM+MQW9Jaqq9fjeacHkR5BfB
+         rV/FilXM85/8fo0cYsMJYONB4PDdDl3RSHU8F6NXwERBmqfoU8B5O8U1V+3CYa397wmX
+         6wKfVFjhdvUfC1uwWa4Dlgzrbr/GoAqTNx2gK8935EGNAmBnr8RIqHPfpKmdJuGYMC9g
+         ZmRUjfdxwM2DfDC9YSm04gUraxMV8CyAooAE9O6e50nkbdEUvnIKpJvFrbmKpWZXk4o+
+         xN2lVBXs+jCo999x53NBAA/fsx3UeKd5icm5jqb3HcajRGcHWUQEjxaHH4crWR19Pgnz
+         8szQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754674891; x=1755279691;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9OXvgZ3ldfhwLT3iaAlad+viQpH+0pL7nvqeNZCv/cA=;
+        b=ApTpDF412pdGumAXbwq6qQnDwnELIEiyQkYEQxcziOPYUkpFja0dC5dacEqAvukpLS
+         uUXDpWbQUuK+wJe8hGGfMRR7sMAk/hvm+9FAO6bH4J1T+8lo758lZ2YrNn0Av43EItLN
+         24slZExSdoZKGm3Gy5plhNyEP3NQDf8rtmTVEnA2uGLuoetwVVx8+QyfKgQG43rBeoMR
+         Hs45VpAULXfS1HzaH8nZL1ap31PT7V8gK33dYiRvoxTmvpwLRkw7yUVuunpSjh4fyhRy
+         Mb1q6zS8Jq5SGdCEIMCIcUPPtIfMTYfnSFJEX839IdlhygUrKUZ1JMWHclLZRfSeg9Gj
+         Hl6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZDGF6rowycbVntEfnkF5ZmotVOvF/0Tdf+sb2TushhPEoBy6QLU+56qId83sOMGsqBHaCzVilrR21fZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZX9yNfspqzEIMDcKVRqgnAqg3EaCdsx7aIq0PhRutgrVVkKGk
+	yF1yGSn0ZjQoVGD5QGl017+y6+fYtU6Kzy+MvMpmEgbARteC5e/baxL5gWE56mKFSNQ=
+X-Gm-Gg: ASbGncucjnaurF7zyKp6Lh0YBmaQIoPCsKVVjBwJwpLnACfxMpuzZ+df0lpKX8LC6OL
+	qrZjkVDZB4LSaELXkvAAOXFbk/pyjZ2ElB3Mj8LD0EdmnTDUx6fjgPFb99wbpvUAI3whC1dpORo
+	e4/IHfFt2nNO8ckDlw2cFYg1Eqx073ngqastTRpzqFw8hWyS9aQCDxQt5WGXy0fx7jl6Oru3WS1
+	OKkPqcUvYKFwltC6pFtd6ZPyfUwERqSKGpODynKNOjgU5IGtY0FS7f9WW3lacRlO3F/r+jtqekN
+	8nGsn4/WbglVU8hgUTFQxMKY9HxYKkBcUvRAG1arhcglw0/3L5cNvny+X2AlDwM+pjL92/rmr6R
+	1SQUF/ugbZozjSs08fkpEhn0ezwrEtA==
+X-Google-Smtp-Source: AGHT+IEQuucx5ig5t7hJMZjSB7Dmsv1FfUr9yevl3VS/T66x+ks6l6dkfNi/rIhfWqbP54gjCwE+wQ==
+X-Received: by 2002:a17:903:2f4b:b0:240:6e54:3cd1 with SMTP id d9443c01a7336-242c1ff42e6mr65276025ad.1.1754674891446;
+        Fri, 08 Aug 2025 10:41:31 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.215.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8975a66sm214174165ad.95.2025.08.08.10.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 10:41:30 -0700 (PDT)
+From: David Yang <mmyangfl@gmail.com>
+To: netdev@vger.kernel.org
+Cc: David Yang <mmyangfl@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] net: dsa: yt921x: Add support for Motorcomm YT921x
+Date: Sat,  9 Aug 2025 01:38:01 +0800
+Message-ID: <20250808173808.273774-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Motorcomm YT921x is a series of ethernet switches developed by Shanghai
+Motorcomm Electronic Technology, including:
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+  - YT9215S / YT9215RB / YT9215SC: 5 GbE phys
+  - YT9213NB / YT9214NB: 2 GbE phys
+  - YT9218N / YT9218MB: 8 GbE phys
 
-This maintainer's email no longer works. Remove it from MAINTAINERS.
+and up to 2 serdes interfaces.
 
-There is still one listed maintainer for the "INTEL KEEM BAY DRM
-DRIVER".
+This patch adds basic support for a working DSA switch, but not
+including any possible offloading capabilities.
 
-Cc: Anitha Chrisanthus <anitha.chrisanthus@intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
----
+David Yang (2):
+  net: dsa: tag_yt921x: add support for Motorcomm YT921x tags
+  net: dsa: yt921x: Add support for Motorcomm YT921x
 
- b/MAINTAINERS |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/dsa/Kconfig  |    7 +
+ drivers/net/dsa/Makefile |    1 +
+ drivers/net/dsa/yt921x.c | 1895 ++++++++++++++++++++++++++++++++++++++
+ include/net/dsa.h        |    2 +
+ net/dsa/Kconfig          |    6 +
+ net/dsa/Makefile         |    1 +
+ net/dsa/tag_yt921x.c     |  116 +++
+ 7 files changed, 2028 insertions(+)
+ create mode 100644 drivers/net/dsa/yt921x.c
+ create mode 100644 net/dsa/tag_yt921x.c
 
-diff -puN MAINTAINERS~MAINTAINERS-20250707-1 MAINTAINERS
---- a/MAINTAINERS~MAINTAINERS-20250707-1	2025-07-07 11:02:07.348257231 -0700
-+++ b/MAINTAINERS	2025-07-07 11:02:07.364258636 -0700
-@@ -12255,7 +12255,6 @@ F:	drivers/crypto/intel/ixp4xx/ixp4xx_cr
- 
- INTEL KEEM BAY DRM DRIVER
- M:	Anitha Chrisanthus <anitha.chrisanthus@intel.com>
--M:	Edmund Dea <edmund.j.dea@intel.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/display/intel,keembay-display.yaml
- F:	drivers/gpu/drm/kmb/
-_
+-- 
+2.47.2
+
 
