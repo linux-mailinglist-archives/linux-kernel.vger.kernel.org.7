@@ -1,175 +1,210 @@
-Return-Path: <linux-kernel+bounces-759739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09658B1E1CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:43:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDB2B1E1D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A5418C38A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:43:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 083FC7A3606
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF8B20AF98;
-	Fri,  8 Aug 2025 05:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EC91C5D57;
+	Fri,  8 Aug 2025 05:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLv+Qqab"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nNi7Oc7p"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EADF1F5834;
-	Fri,  8 Aug 2025 05:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913E3F9D6;
+	Fri,  8 Aug 2025 05:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754631803; cv=none; b=rSXDT9jOTLObl233rE4fqO1vKnPCdq/1oX7LvYkHALNkyGnj4pIrbA6UR7D8AaMgBaJ1IIEHzTRzv8pKE/QEuFQvJDtrKjeok2FzZDkJZs8GaeQHbdfaBY5Fg0l+3QYrJjiNew3KpfLvI0KzOW6qxDbTXlVsXC8hAg6tQy2d9cM=
+	t=1754632006; cv=none; b=q24P8vuKDVLDMfzgLCzxv+qeX1xP+L0sAMKpcRL71iuTzFL0dmDc4dANuvnR4FJNmcwVDJeEuiyztUtN6G8z77+HfbqVQk52RMPI+2B46xtxgRo2ujXrmeSuXppPLDLQpQSYZupbYBJcpSvqdewiglYe8TonKfm2jIOmSo102yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754631803; c=relaxed/simple;
-	bh=bKlVyLKOnTbKeG0Y9zbYXqtuy/zh3R4yDafYGzyHWpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dnAbtGND8TziTBib+e5hBXXU5xG/P88bnWkCzoIB1z5y9inRdE1/U4RdnkGGaAlPZLIb99QHQB8YHl9ULOsTaiB31HZ8Nvk+hRq5X0AzB4e4pouo1WWFiz3/0/h2RoUKJS6r2/uvZhgZeCzuY3ZLxqDlyy6j5QUJauiYSQRNzSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TLv+Qqab; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1754632006; c=relaxed/simple;
+	bh=SaJ+0IPa6kquZ4dEIDNmhajzUcqO5AHFUFvRu0KQ1YE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=tZQhMSNU2q2alD/1k+eGH4ZWtcATtx5xE9zqePNBw/N2D7EVtS+CMN8vxGmJFzVX96hB/5V4MpWwGRw7ByLBKnwfug0A+lRx5X8nmFy56F0Kl9o91Sm4cXyn4NuC4hgvLDs9eLsvTax1K/dfAfnRxxAYj762rXSYPHKbKHZle3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nNi7Oc7p; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55b975b459aso1627675e87.3;
-        Thu, 07 Aug 2025 22:43:21 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76bd6e84eddso2297119b3a.0;
+        Thu, 07 Aug 2025 22:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754631800; x=1755236600; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S5amIdnpZgeDGy492j3d6HXkFwKBswvaK7B5RnSg3Ec=;
-        b=TLv+QqabHQmGAXqe6IQYNiaxK+V/WlqrvhgJBfATOjPa1LPKVlVIYLGznDPqo0lo2d
-         oyV84wRtWdOfwE6vrf8iuURjfTaAruKxYiy/od2H8FgbduUA8/s9pll84vU2ZnldtcNK
-         iWYcl6KlU5msFhwZCJ4J2qPev8nKku830cT04bV/xdTJAF+xmSEaiGUdO/chppxHBQ1D
-         cu57j+hyF7UpufgDUTX12/mhlkr/u/oOyCnunk0WAJyT+CxHIoRGap/EjiAw9pN9WPXL
-         EQtuzuqVLRBKevbatAL04qXuGAX4m+ZmTEXfp1hkSs0Slw26zfqik+d5RzGWcTP2OauA
-         RSOw==
+        d=gmail.com; s=20230601; t=1754632004; x=1755236804; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HzJNeJceayQzxiqleA4V9oOf0cRVS9OsNem3Aj5gx3s=;
+        b=nNi7Oc7p7XKQkCg7GE4cNzgwYfJQkmVGI3S/scOOw8QrkvqukcgKROsmDOO2Et2C+h
+         wjpStzE31D+Y4oMBqRtjEiZ4OKDDHlBvnfKkz41scANhIR2/YYrVLPiNannDCPcVYyL5
+         1dm7/COpYrjegk37JOge7h36YbGT9pT2h5U4bO5mq2nN+v9e7TmqibbcVXqR5Z1d3B5S
+         D4lnH/Kc7LfhWp4MLudCOk8xn2fK9Lm0C+laszzAqol/Rv/gWSSJi6gI+8U6f9yjYE1k
+         V1f6QTA6jvd9kEV3FquHi+1epyPQxYsdzBXhOoSgQ0RXppcT7B2ms/C3tcCzTuCBRW9c
+         3Ykg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754631800; x=1755236600;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S5amIdnpZgeDGy492j3d6HXkFwKBswvaK7B5RnSg3Ec=;
-        b=cE3EGswpbvri6e8/lzk1P0toiiO1oQ/qiAivEYzroF45wMI4db7XpTtVw2dTC4aGQF
-         Wa+F+B0YLvw/dlEcKNHoDs2AtwOdG6OU62igD2B2a0cu9C+S48hy0qG93T5AVbKE1Lw/
-         wT/l43b+NCV8IM2YZsIaNWst4Fn3wiMdsN+zEFxk3SNIVc7WNMW9oOcIGsO6km2HCAWJ
-         VSe0kV8cVe1WtsCN7fhvMwB2Wsmv7gbcPg/t2TQ6jHiTGj4cpcVerTBwplJnQ0qNF/3N
-         7L4PfrO7OzgQJQEfncgALFgOIJRfx25+NA5fXLoiyApFMX2y8pjnx8JWf+A6FUe1Pdly
-         MDug==
-X-Forwarded-Encrypted: i=1; AJvYcCVkGFXlJrTrCM9R+DsEUTJsqRWteg+nFadVz5xulHOBa+VLaNtE6wWxNPysCimr7pfmuAOM7NiEo/eU@vger.kernel.org, AJvYcCWsD14yIEpkUTH+XnhdsL+9zYcKs3WqGaEOSLt3U4dq/J77vJQ6WSd2KIqfk4GNmA95lnKXUkIAG1i+@vger.kernel.org, AJvYcCXmCK+jdgb6DkxHUcOWpSO4VBGStxcg4XRF8gWXdZQFe69mcvLg513kmO9AuA2R+aP7A7ITUUnsZlFghTHr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTaPJlIZk8BejiehS5IdOBXAjWctjQlWKsnP6tT95jJdlT5hAl
-	/j5U8vLhmq+KkuMS6q+zZpGKk+9fGIAlvWytLFBjywbrzbfintEVPBFb
-X-Gm-Gg: ASbGncsG76IS7EcocrEzK+eDmMcWEFXTMbbt+2VM590eIB86BOedhFfSbZWyOIyrz8v
-	eWc6AmnTNwMZbVzz2s04G0gdunSiBpRuMKmjpmdaPsLocgec1kqWWu8DBvspTsiaSd35O7AbH/s
-	Aeby2RWFEq6VmK0Cvs9OeTy0RjU57TIyTrQR0OISVMSaOFHItCUH8MMH7unLvmuuth22DYCuvNR
-	VYoIq9NOZdDPw/hZP48j/lVsrs8H/CcWJ/3B7Bto+QIhCxjDhsMbewqtKp6fsnqSoASYPV+QLdG
-	lurfjTQO/WEzch61sgMzbI0SHxRU+Yw7qse6LH8eHVMLGf0+kG+6cU0tJhcpMT83vA3nYZ52ucj
-	R40BkbW82mtn1NPozR9PY7tMvtajmQadjs04HE1rLLmoEyxV6ZQOyevpbFcB7c8vtaIw/XnijsV
-	5lmoQ=
-X-Google-Smtp-Source: AGHT+IFmKY3MgaZebQSsv5BpJOV0DvBN/geCeEdzOjDX7cyrB/eyb8tR1jdAcN8rPhOmoLccLwBkhw==
-X-Received: by 2002:a05:6512:1195:b0:55b:941d:bde2 with SMTP id 2adb3069b0e04-55cc00aec48mr414061e87.7.1754631800124;
-        Thu, 07 Aug 2025 22:43:20 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88cabb67sm2965906e87.152.2025.08.07.22.43.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Aug 2025 22:43:19 -0700 (PDT)
-Message-ID: <f8c8cbd3-ce40-4b49-b8e4-cbb84e30dfe1@gmail.com>
-Date: Fri, 8 Aug 2025 08:43:18 +0300
+        d=1e100.net; s=20230601; t=1754632004; x=1755236804;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HzJNeJceayQzxiqleA4V9oOf0cRVS9OsNem3Aj5gx3s=;
+        b=TFmBSLCT5xC6WjZjA0ddCGz7Xuc3IoCzSMbVuK//QHE4NQ88aRcQ9UKtYQGw5oL7Dp
+         GfE49lvjqWX/gAg17aAjXBxgJKIpGywrVHvaXPKqBJN1HWl9OgkjKlmTvnP6rg7b1k8h
+         PuObysja/Vg1rrgbUj5NUbGkVmHDmjGeVR3iYzIaUTlRkUBpHgyqJSfThKRsTwLV5tHP
+         4pnhd+fI9SwbpLhnWoMwAYoublrApooxHxkBk/M9UU5r7lyy65ifljzTuLN8ihRMJjzF
+         PFUzBHh6pkvMtUFvBB6pX3LttujU7YzPlwvN77zj6NypcN9RsunXx9XE9bW7vBMaxnRf
+         0mFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU841WWBwWbCTiA1YX05ulRvujpewTjPLeEl2IRKc9sBJz29IwkDTzmqGju/+3d8Q3cquQqi/ZwQLaO+xXwxg==@vger.kernel.org, AJvYcCUycDyysFSsScDWcCivPAn93DlqJRDGUUDRwTZ7hMG1CiD09Kk+QYborQNGVvuYAYqFF5uMC9GwwAe/Nil0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUQ7TMHmK9WfGSUZVKIuWuMSc6b6dWlwtpqWQpFiM6NFb0gcWs
+	boIKUjyattFwB7qmx/+JvvKsSN9A8Z80htz0+TuJ+nTh1n5yXsCiAkjG
+X-Gm-Gg: ASbGnctG/DXlamhGy7/t0+5M+Meuj3K/WFmGLr4LSW1cY5on39cJuHa0Mli7miE3bgf
+	Ceho20iiuOyxwDVOC8um1WQ6x+dZzobO6Cj3MgncVXC8ImsjkW/itHK387jLJztpQkEj2QERe3E
+	tEFnWu0hxFh/YuldTunRC0lvkadFDTHLQsBDWEY8CtIJ950qM4BFXzzqYIPg1uHOlIYW7faBiBI
+	Idgn/ELtqRveNC+Ayw2YZKWQm+rgi+Na7WHHGsbWbZ2vi4LMzvUl9MVm2EOrHu1LgoK5vTjyd/P
+	XKViA85U/JxFvTyeHE75XEHbm+u+IYHRWLcz7qgU6z9WHjkwG2ZyDCm4aN8fPe5Y2wRJHHxuxyt
+	kS5Y9Qw==
+X-Google-Smtp-Source: AGHT+IHOvQUcJMmiCNry3ZIzGU8f4YL8DV+0B3GFNTPuyMA8WvnFMZpTvmgcnDSBg8fezKfzMfRX9w==
+X-Received: by 2002:a05:6a00:4614:b0:76b:dedb:3048 with SMTP id d2e1a72fcca58-76c4617fd1amr2769508b3a.14.1754632003862;
+        Thu, 07 Aug 2025 22:46:43 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd4893sm19402040b3a.107.2025.08.07.22.46.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Aug 2025 22:46:43 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/10] iio: adc: ad7476: Conditionally call convstart
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1754559149.git.mazziesaccount@gmail.com>
- <bb96107301b249d4be912fa4384ed4de7791410b.1754559149.git.mazziesaccount@gmail.com>
- <jqq73v23juc3wj3ykq5df3mevjatnq3zb2aq4w524xnl4xgban@qemnvtvs2twn>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <jqq73v23juc3wj3ykq5df3mevjatnq3zb2aq4w524xnl4xgban@qemnvtvs2twn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
+Subject: Re: [syzbot] [bcachefs?] kernel panic: bcachefs (loop0): panic after
+ error
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <67282553.050a0220.35b515.01aa.GAE@google.com>
+Date: Fri, 8 Aug 2025 13:46:27 +0800
+Cc: kent.overstreet@linux.dev,
+ linux-bcachefs@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8C36685A-875B-48D8-82AE-8A9D30233022@gmail.com>
+References: <67282553.050a0220.35b515.01aa.GAE@google.com>
+To: syzbot <syzbot+4c6e722ab29ba1d06b19@syzkaller.appspotmail.com>
+X-Mailer: Apple Mail (2.3826.500.181.1.5)
 
-On 07/08/2025 15:47, Nuno Sá wrote:
-> On Thu, Aug 07, 2025 at 12:35:03PM +0300, Matti Vaittinen wrote:
->> The ad7476 supports two IC variants which may have a 'convstart' -GPIO
->> for starting the conversion. Currently the driver calls a function which
->> tries to access the GPIO for all of the IC variants, whether they
->> support 'convstart' or not. This is not an error because this function
->> returns early if GPIO information is not populated.
->>
->> We can do a tad better by calling this function only for the ICs which
->> have the 'convstart' by providing a function pointer to the convstart
->> function from the chip_info structure, and calling this function only
->> for the ICs which have the function pointer set.
->>
->> This does also allow to support ICs which require different convstart
->> handling than the currently supported ICs.
->>
->> Call convstart function only on the ICs which can support it and allow
->> IC-specific convstart functions for the ICs which require different
->> handling.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> ---
->> Revision history:
->>   v1 => v2:
->>   - Adapt to the change which removed the chip_info pointer from the
->>    driver's state structure.
->>
->> The follow-up patch adding support for the ROHM BD79105 will bring
->> different 'convstart' functions in use. The IC specific pointer will
->> also prepare the way for this.
->> ---
->>   drivers/iio/adc/ad7476.c | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
->> index a30eb016c11c..8914861802be 100644
->> --- a/drivers/iio/adc/ad7476.c
->> +++ b/drivers/iio/adc/ad7476.c
->> @@ -30,6 +30,7 @@ struct ad7476_chip_info {
->>   	unsigned int			int_vref_mv;
->>   	struct iio_chan_spec		channel[2];
->>   	void (*reset)(struct ad7476_state *);
->> +	void (*conversion_pre_op)(struct ad7476_state *st);
->>   	bool				has_vref;
->>   	bool				has_vdrive;
->>   };
->> @@ -37,6 +38,7 @@ struct ad7476_chip_info {
->>   struct ad7476_state {
->>   	struct spi_device		*spi;
->>   	struct gpio_desc		*convst_gpio;
->> +	void (*conversion_pre_op)(struct ad7476_state *st);
-> 
-> Ok, I was going to reply to patch patch 5 saying I was not sure about
-> the change. And now this makes it clear. My point would be that it's
-> fairly easiy to end up needing chip info after probe. The above function
-> pointer only has to exist because of patch 5. So I would better drop
-> patch 5 and...
+On Nov 4, 2024, at 09:37, syzbot =
+<syzbot+4c6e722ab29ba1d06b19@syzkaller.appspotmail.com> wrote:
+>=20
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    4236f913808c Merge tag 'scsi-fixes' of =
+git://git.kernel.or..
+> git tree:       upstream
+> console output: =
+https://syzkaller.appspot.com/x/log.txt?x=3D116da55f980000
+> kernel config:  =
+https://syzkaller.appspot.com/x/.config?x=3D4aec7739e14231a7
+> dashboard link: =
+https://syzkaller.appspot.com/bug?extid=3D4c6e722ab29ba1d06b19
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
+Debian) 2.40
+> syz repro:      =
+https://syzkaller.appspot.com/x/repro.syz?x=3D1792c630580000
+> C reproducer:   =
+https://syzkaller.appspot.com/x/repro.c?x=3D156da55f980000
+>=20
+> Downloadable assets:
+> disk image (non-bootable): =
+https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_dis=
+k-4236f913.raw.xz
+> vmlinux: =
+https://storage.googleapis.com/syzbot-assets/ca5604c008a4/vmlinux-4236f913=
+.xz
+> kernel image: =
+https://storage.googleapis.com/syzbot-assets/34ea5692a94f/bzImage-4236f913=
+.xz
+> mounted in repro: =
+https://storage.googleapis.com/syzbot-assets/8ac365f356c8/mount_0.gz
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the =
+commit:
+> Reported-by: syzbot+4c6e722ab29ba1d06b19@syzkaller.appspotmail.com
+>=20
+> bcachefs (loop0): starting version 1.7: mi_btree_bitmap =
+opts=3Derrors=3Dpanic,metadata_checksum=3Dcrc64,data_checksum=3Dnone,compr=
+ession=3Dlz4,background_compression=3Dgzip,no_splitbrain_check,nocow
+> superblock marked clean but clean section not present, shutting down
+> Kernel panic - not syncing: bcachefs (loop0): panic after error
+> CPU: 0 UID: 0 PID: 5308 Comm: syz-executor415 Not tainted =
+6.12.0-rc5-syzkaller-00047-g4236f913808c #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS =
+1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+> <TASK>
+> __dump_stack lib/dump_stack.c:94 [inline]
+> dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> panic+0x349/0x880 kernel/panic.c:354
+> bch2_inconsistent_error+0x146/0x150 fs/bcachefs/error.c:26
+> __bch2_fsck_err+0x10ee/0x1570 fs/bcachefs/error.c:425
+> bch2_read_superblock_clean+0x3b4/0x520 fs/bcachefs/sb-clean.c:152
+> bch2_fs_recovery+0x1f4/0x39c0 fs/bcachefs/recovery.c:640
+> bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+> bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2170
+> vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+> do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+> do_mount fs/namespace.c:3847 [inline]
+> __do_sys_mount fs/namespace.c:4057 [inline]
+> __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f7d3c001eba
+> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f =
+1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
+01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fffe9e18a88 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007fffe9e18aa0 RCX: 00007f7d3c001eba
+> RDX: 00000000200058c0 RSI: 0000000020000100 RDI: 00007fffe9e18aa0
+> RBP: 0000000000000004 R08: 00007fffe9e18ae0 R09: 0000000000005951
+> R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+> R13: 00007fffe9e18ae0 R14: 0000000000000003 R15: 0000000001000000
+> </TASK>
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>=20
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>=20
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before =
+testing.
+>=20
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>=20
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>=20
+> If you want to undo deduplication, reply with:
+> #syz undup
+>=20
 
-Andy had the same comment. I personally like to only carry around stuff 
-that is used after probe in the driver's private data. In my eyes it 
-makes things clearer (and cleaner) as you know what is used. But yes, 
-(also) here it leads to some duplication.
+#syz invalid
 
-Well, I'll drop the patch 5.
-
-Thanks!
-
-Yours,
-	-- Matti
 
