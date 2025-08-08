@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-759936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E47B1E4A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:49:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1058CB1E4AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84AF33BDC92
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:49:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBE894E3CBF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C6F266584;
-	Fri,  8 Aug 2025 08:48:57 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8397B266565;
+	Fri,  8 Aug 2025 08:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXqaUEzE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D38264638;
-	Fri,  8 Aug 2025 08:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D0E1BC5C;
+	Fri,  8 Aug 2025 08:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754642936; cv=none; b=aVznl6F/BrfH8d5UDv6RKoXrfKdd3VBkSlA3dfm16bUk513LkUD5hAWdu6BklZtBjkaqRtrmtasGIzRvoqLOjcHpm+t6IcPNCxZGYVhFmx9hp0PRAiO/mKmuBSxUd1nArMMsCMmEGzDjnuT0BCWlIlVnzwBYJ7QRgtAS7T0TmLI=
+	t=1754642957; cv=none; b=LaQiL1+hG/G1go7mAx4CMLBK4LoXNdQufyDizS+akyvOxy99uKBIxtrCeD2fTueYX6E5CtxOHZ3euz6XA+bIrNocRu5HVzK4NXbFHrvJId8UrwCy31he/Eeu5n0WGnZiDFzp7fJOjRB/pdNFH/sBnybwPcv14mC33AMmctgiDtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754642936; c=relaxed/simple;
-	bh=L5PUFgboiQEWI51dOrJeiQBVhnKgWaRlhyd/gfoW3cQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U0ODBqzeFrlZ+OHCHPQkKfoINkuCsuYgUUDCh9LIpO5Yn1Eg/Ll0i39QtW5fRK1E/mI2viYrVCcQ01XANi6PxfO+/6wKYGSGSunp5BoA3C2YNHGYL3BUR2M4/w/WMIEVnWevezreqoIod/imYdNZiVEN68KtMgXHhva/WKQ1Znk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4byyLJ1mdzz2RW6V;
-	Fri,  8 Aug 2025 16:46:16 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id F37151402C6;
-	Fri,  8 Aug 2025 16:48:49 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 8 Aug 2025 16:48:48 +0800
-Message-ID: <3c754d4e-a2d9-4115-c105-2f199f26abc3@huawei.com>
-Date: Fri, 8 Aug 2025 16:48:48 +0800
+	s=arc-20240116; t=1754642957; c=relaxed/simple;
+	bh=eLQfRVKg5seqR9xZt6I+jvxaFNgVZxZH7nAhxSwK5+k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=cqGHJgZGkXl5IwXUlHJZYuRQObzJhHh3niuBG/SwI+b4E8chJdD6k8nbxcyuWYY6Pkk99aM0d/go3iIrNfZj7h0o2dtYTJlL/DfoQz1PDt+sGp5EJX5VWdQAysoZBTabkZz6H7tmU4kA4A6plDRSIpd61dpZ3HZPyUFZFjAoWSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXqaUEzE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800F0C4CEED;
+	Fri,  8 Aug 2025 08:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754642957;
+	bh=eLQfRVKg5seqR9xZt6I+jvxaFNgVZxZH7nAhxSwK5+k=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=tXqaUEzEEoOW33P+l5GqaAIG/jRdBdurHU7hcVueCFOIPOnRZrQjJbmu8oj85R4Ju
+	 0Nsy8mKv2UUMipDbNPfrrQTxL+fGAlXwJyXQYWG1eHIs0nYNZv/1L/OgsnYH/Xq8gX
+	 iVBoWaVZ6NkQqfnDoxVosy3PMKOTRNIIj3yXmDro+O+ViQ8PNfRSRu6s/0qGxCrYKq
+	 ko9J0Fuo7dyPJaM1KG3WZoC+ENljjU90zMPS6o2Aj1BE1Od6Zyer/YgenSFkLowu+h
+	 +sZDx2fZwY2FqkCGqYPrlxu5Hum6lxsE1XqR/Z6ThAnyb0FmLoQk9Ge6EZLfVjrn3z
+	 RWZEgnOJNNFYA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v7 22/31] irqchip/gic-v5: Add GICv5 LPI/IPI support
-Content-Language: en-US
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Bischoff
-	<sascha.bischoff@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Timothy Hayes <timothy.hayes@arm.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Peter Maydell
-	<peter.maydell@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Jiri Slaby
-	<jirislaby@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-References: <20250703-gicv5-host-v7-0-12e71f1b3528@kernel.org>
- <20250703-gicv5-host-v7-22-12e71f1b3528@kernel.org>
- <cc611dda-d1e4-4793-9bb2-0eaa47277584@huawei.com>
- <aJSvUWRqLEiARDIW@lpieralisi>
- <c8e3dc2c-617b-2988-10ff-88082370e787@huawei.com>
- <aJWzKqM9bHuKy+1m@lpieralisi>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <aJWzKqM9bHuKy+1m@lpieralisi>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500011.china.huawei.com (7.185.36.131)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 08 Aug 2025 10:49:14 +0200
+Message-Id: <DBWX0L4LIOF6.1AVJJV0SMDQ3P@kernel.org>
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
+ for io-uring cmd
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Sidong Yang" <sidong.yang@furiosa.ai>
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Caleb Sander Mateos"
+ <csander@purestorage.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, "Jens Axboe" <axboe@kernel.dk>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <io-uring@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
+ <20250727150329.27433-3-sidong.yang@furiosa.ai>
+ <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
+ <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
+ <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
+ <DBVDWWHX8UY7.TG5OHXBZM2OX@kernel.org>
+ <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
+In-Reply-To: <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
 
+On Fri Aug 8, 2025 at 8:56 AM CEST, Sidong Yang wrote:
+> On Wed, Aug 06, 2025 at 03:38:24PM +0200, Benno Lossin wrote:
+>> On Wed Aug 6, 2025 at 2:38 PM CEST, Daniel Almeida wrote:
+>> > Hi Benno,
+>> >
+>> >> On 2 Aug 2025, at 07:52, Benno Lossin <lossin@kernel.org> wrote:
+>> >>=20
+>> >> On Fri Aug 1, 2025 at 3:48 PM CEST, Daniel Almeida wrote:
+>> >>>> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrot=
+e:
+>> >>>> +    #[inline]
+>> >>>> +    pub fn pdu(&mut self) -> &mut MaybeUninit<[u8; 32]> {
+>> >>>=20
+>> >>> Why MaybeUninit? Also, this is a question for others, but I don=C2=
+=B4t think
+>> >>> that `u8`s can ever be uninitialized as all byte values are valid fo=
+r `u8`.
+>> >>=20
+>> >> `u8` can be uninitialized. Uninitialized doesn't just mean "can take =
+any
+>> >> bit pattern", but also "is known to the compiler as being
+>> >> uninitialized". The docs of `MaybeUninit` explain it like this:
+>> >>=20
+>> >>    Moreover, uninitialized memory is special in that it does not have=
+ a
+>> >>    fixed value ("fixed" meaning "it won=C2=B4t change without being w=
+ritten
+>> >>    to"). Reading the same uninitialized byte multiple times can give
+>> >>    different results.
+>> >>=20
+>> >> But the return type probably should be `&mut [MaybeUninit<u8>; 32]`
+>> >> instead.
+>> >
+>> >
+>> > Right, but I guess the question then is why would we ever need to use
+>> > MaybeUninit here anyways.
+>> >
+>> > It's a reference to a C array. Just treat that as initialized.
+>>=20
+>> AFAIK C uninitialized memory also is considered uninitialized in Rust.
+>> So if this array is not properly initialized on the C side, this would
+>> be the correct type. If it is initialized, then just use `&mut [u8; 32]`=
+.
+>
+> pdu field is memory chunk for driver can use it freely. The driver usuall=
+y
+> saves a private data and read or modify it on the other context. using
+> just `&mut [u8;32]` would be simple and easy to use.
 
+Private data is usually handled using `ForeignOwnable` in Rust. What
+kind of data would be stored there? If it's a pointer, then `&mut [u8;
+32]` would not be the correct choice.
 
-On 2025/8/8 16:19, Lorenzo Pieralisi wrote:
-> On Fri, Aug 08, 2025 at 09:20:30AM +0800, Jinjie Ruan wrote:
->>
->>
-
-[...]
-
->>
->> I also did not see any place in the code where these pointers are
->> accessed, nor did I see in section "L2_ISTE, Level 2 interrupt state
->> table entry" that L2_ISTE can be accessed by software. So, are these
->> states of the LPI interrupt maintained by the GIC hardware itself?
-> 
-> The IST table is where interrupt state and configuration is kept -
-> it is managed by GIC IRS HW. SW controls interrupt configuration
-> through GIC instructions.
-> 
-> It is therefore a false positive, I will send the patch below for
-> inclusion.
-
-Thank you for your explanation, I now have a general understanding of
-how IST works.
-
-> 
-> Thanks,
-> Lorenzo
-> 
->>>
->>> -- >8 --
->>> diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
->>> index ad1435a858a4..e8a576f66366 100644
->>> --- a/drivers/irqchip/irq-gic-v5-irs.c
->>> +++ b/drivers/irqchip/irq-gic-v5-irs.c
->>> @@ -5,6 +5,7 @@
->>>  
->>>  #define pr_fmt(fmt)	"GICv5 IRS: " fmt
->>>  
->>> +#include <linux/kmemleak.h>
->>>  #include <linux/log2.h>
->>>  #include <linux/of.h>
->>>  #include <linux/of_address.h>
->>> @@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
->>>  		kfree(ist);
->>>  		return ret;
->>>  	}
->>> +	kmemleak_ignore(ist);
->>>  
->>>  	return 0;
->>>  }
->>> @@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
->>>  		kfree(l2ist);
->>>  		return ret;
->>>  	}
->>> +	kmemleak_ignore(l2ist);
->>>  
->>>  	/*
->>>  	 * Make sure we invalidate the cache line pulled before the IRS
->>>
-> 
+---
+Cheers,
+Benno
 
