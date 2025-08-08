@@ -1,54 +1,91 @@
-Return-Path: <linux-kernel+bounces-760505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E32CB1EC3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FE7B1EC41
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800003B90BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450431893CFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB2A2836B4;
-	Fri,  8 Aug 2025 15:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CC22836B4;
+	Fri,  8 Aug 2025 15:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="UHMYObw0"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="UlDMjU0Y"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F823F417;
-	Fri,  8 Aug 2025 15:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6484280CC9
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754667502; cv=none; b=soWwy0x8dA2MNT+M8sFWdVIh/la5eU/Jd7kWNuXHTnp9XLLG1O6MiEVrlJmJyNe5gssJPEIQzQZWYVAEaRDed+on6wjI6VSf+P3Ced3G5Px5MpfP2vlt8+I29jImZwyFjqK2R974KI861ZN7TTb12PQdDONE/qyDdzibXhD9yyw=
+	t=1754667560; cv=none; b=NvU3kBHWZ4ZT3myezfA65envXsaed2U9QtK6QFyjS2Q9RzRKyx6wg1izwbbyXQ8pxS21fe7vZL55wW6BfHOjOhg/poOF2sdmRaciLAQkIt4KOgxr/O8R1DqMqDbaIxl0yKMKrs3jRjumrAY6/dXd5BdAgK4NxE5g9MLcPgy6PCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754667502; c=relaxed/simple;
-	bh=qsqW+P4dJou89Vrpwc+AH6es5bPP/fSIuyeAzJXBo4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lOCViHR/Ab9k5bCBr0qZwc9ADPik4dsIG34GQWvC8JV2SFfosA1gZ97DGxHpo054suXX50yTEEIA/nL+ExqXCfPG55S+53xeraym+CY42/kQKFIm55tm32VHBa8CtcT/xXkSX6FrPFZUV9IjPYIkLxowdRMHb04FWOHQXhsLa/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=UHMYObw0; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from simon-Latitude-5450.cni.e-technik.tu-dortmund.de ([129.217.186.92])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 578FcEML014116
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 8 Aug 2025 17:38:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1754667494;
-	bh=qsqW+P4dJou89Vrpwc+AH6es5bPP/fSIuyeAzJXBo4c=;
-	h=From:To:Cc:Subject:Date;
-	b=UHMYObw0IqCEt/tUZPw895BC0jQRID6Fv+xXhC9Z+OIT14VomwTC8ez9+gCjuMHMG
-	 XXfOzlN6Git3v6s9VwauW3Xk6iy3CkuqiKJbeqymyjaIOSX8g17kqwaiw9ZaES3rXB
-	 uqCoHdI/7UG+w3Un/fREC2HHStoCwadcHJeuhHMw=
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-To: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Simon Schippers <simon.schippers@tu-dortmund.de>,
-        Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Subject: [PATCH net] TUN/TAP: Improving throughput and latency by avoiding SKB drops
-Date: Fri,  8 Aug 2025 17:37:21 +0200
-Message-ID: <20250808153721.261334-1-simon.schippers@tu-dortmund.de>
+	s=arc-20240116; t=1754667560; c=relaxed/simple;
+	bh=IpcLp/yXYa3RL6eZOaZO8ehWM4HkL1fjlIOlzX8ZBfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G1S8cOMC/VJ46qTO6yB2vcEbsUE5qAdr8TJ0Jb6XcacP0J23ya4UMBII6En864Nm0Fe/LoIUSp9PNtHCNMli1o/qO1r+OeSWC/GqIDnO7VhlPT7gccNB/9MwF7MJJnpSbGSrOaVqod1r5waHYEoN76VLITGuQd/jbr1lBqaE7w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=UlDMjU0Y; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3190fbe8536so2298461a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 08:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1754667557; x=1755272357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ID9eOa0mJbb7Csy70BEFLYaT6HI+I5SdUw7yhJbZeM=;
+        b=UlDMjU0YLFo4RqNMlFmnIDS6qWMXgAt5cIT9JCUn5nGi+8m97dN4a09wqLlZb/M57A
+         w96UVtfyIKw2EZ3F8MhMCf2b3+ZpPMJfhV9J6BQKuf+EULG9sEikM0RA/PRvZvFvTvuT
+         sLnGND8EmDkNvghIAtI0owjPadJ/pnvqpft0hx8lmiAYPgESGtnxD+hiTxpIx0pclnZ1
+         9SCeawi+xHoMZzwrx7696hrfntBydmwfvvtcgH1cOdjmMKiA2j5KOwtrm23eEuS6+NEh
+         CvLvcGliBASeM06c5+yZr+MBDC7PkX/OEY60jP31p5vRZcHdXpaPOI54XvOaB7UGi7Jg
+         PNNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754667557; x=1755272357;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ID9eOa0mJbb7Csy70BEFLYaT6HI+I5SdUw7yhJbZeM=;
+        b=p196ccVUBBVmeEanyVrkvm2rFPrC1wK7xAthaBPGNpPDFHldoXEybPmlNUSabbD2DI
+         /1mym7+eCba6Ws3hel/eUXzyK3WCb/uHxGtjn8rDOUgtFI8Bk9uOom4d1YLwCC/SeTYQ
+         HPRLP1dNoyJthYC6f+SIuYoOnWB13Fv90zvDXW6UHgKBy7rKqzo+sJ1N5vHdLGzRcPsl
+         Cmhapobvs8mn2e7shDHYpL8tqLqh/wTgMTdGnSj01yMYZcvQa5uOylcFX6POK8w5Rb5K
+         BwreKZkFVAL4OQCLBTrfBmfTI85rquN6K1bMy38i2rivnOY2so0YmsPp+TWAH8FNLZVr
+         Ixlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUH1NaB//9QOwRg2AiP2NDQ/qMc4wrgzJPWM8Nvhw21zUPz74JmvmwhNfP9x1chja13R6XACDuKkyC4CbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhmIxKqyrIGy/n3wRUDy/ZJVGRy671LOOpkKBx7IBMiFChFaUd
+	i+A0adgTnl5eOE8SNGD5BtaBikrSNsc3YOywHcFtkCIRF9jm+sZksHg9l4WeVeuwkKc=
+X-Gm-Gg: ASbGnctTssdHMv1nAS6bzY10tf5c3Z1fCU78U6et95rG2NtYwH27rVSeSiujGDSjQ2+
+	upZTbq+SU1JSdmS1hAMNg50RBa05x4sWWubcpkM7RbONDv/zjor67SRPvIz6zhRwYj0saWVELFz
+	9o6tiNLDbOGaxIKIbXxD3qEwpcqUeHGqcnpgJBAq8S4KwHb7l7k2/LTpzquFWPPvryL3d4dCyTg
+	hGepBO8v5223zm3h19ZrRai0O1+AdEbyPh6nv+puedc037ETbv7eQu4ApKZRkUKmY6Hzz+jXJCA
+	JJbhlo4nmoc+AxXWuGs9uKK+K2W2RzUpig1va7J+cBCwLxYihaP4JSQCwejyXXFl+gihEjRm7iX
+	OlH442+b0oy7TTA==
+X-Google-Smtp-Source: AGHT+IGJSBB0kKDSSdvKCfj6Lqz7T7EoQAptAhpCgVH402UyN2lZVLU9xJ7ez/W/aSW1HGcmlgK4ww==
+X-Received: by 2002:a17:90b:2e45:b0:31f:1744:e7fd with SMTP id 98e67ed59e1d1-32183e7ed80mr4807127a91.31.1754667556852;
+        Fri, 08 Aug 2025 08:39:16 -0700 (PDT)
+Received: from cleger.eu.int ([2001:41d0:420:f300::])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3218c3c2d58sm1135971a91.16.2025.08.08.08.39.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 08:39:16 -0700 (PDT)
+From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Himanshu Chauhan <hchauhan@ventanamicro.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Xu Lu <luxu.kernel@bytedance.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: [PATCH v6 0/5] riscv: add support for SBI Supervisor Software Events
+Date: Fri,  8 Aug 2025 15:38:51 +0000
+Message-ID: <20250808153901.2477005-1-cleger@rivosinc.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,191 +93,170 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch is the result of our paper with the title "The NODROP Patch:
-Hardening Secure Networking for Real-time Teleoperation by Preventing
-Packet Drops in the Linux TUN Driver" [1].
-It deals with the tun_net_xmit function which drops SKB's with the reason
-SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
-resulting in reduced TCP performance and packet loss for bursty video
-streams when used over VPN's.
+The SBI Supervisor Software Events (SSE) extensions provides a mechanism
+to inject software events from an SBI implementation to supervisor
+software such that it preempts all other supervisor level traps and
+interrupts. This extension is introduced by the SBI v3.0 specification[1].
 
-The abstract reads as follows:
-"Throughput-critical teleoperation requires robust and low-latency
-communication to ensure safety and performance. Often, these kinds of
-applications are implemented in Linux-based operating systems and transmit
-over virtual private networks, which ensure encryption and ease of use by
-providing a dedicated tunneling interface (TUN) to user space
-applications. In this work, we identified a specific behavior in the Linux
-TUN driver, which results in significant performance degradation due to
-the sender stack silently dropping packets. This design issue drastically
-impacts real-time video streaming, inducing up to 29 % packet loss with
-noticeable video artifacts when the internal queue of the TUN driver is
-reduced to 25 packets to minimize latency. Furthermore, a small queue
-length also drastically reduces the throughput of TCP traffic due to many
-retransmissions. Instead, with our open-source NODROP Patch, we propose
-generating backpressure in case of burst traffic or network congestion.
-The patch effectively addresses the packet-dropping behavior, hardening
-real-time video streaming and improving TCP throughput by 36 % in high
-latency scenarios."
+Various events are defined and can be send asynchronously to supervisor
+software (RAS, PMU, DEBUG, Asynchronous page fault) from SBI as well
+as platform specific events. Events can be either local (per-hart) or
+global. Events can be nested on top of each other based on priority and
+can interrupt the kernel at any time.
 
-In addition to the mentioned performance and latency improvements for VPN
-applications, this patch also allows the proper usage of qdisc's. For
-example a fq_codel can not control the queuing delay when packets are
-already dropped in the TUN driver. This issue is also described in [2].
+First patch adds the SSE definitions. Second one adds support for SSE
+at arch level (entry code and stack allocations) and third one at driver
+level. Finally, the last patch add support for SSE events in the SBI PMU
+driver. Additional testing for that part is highly welcomed since there
+are a lot of possible path that needs to be exercised.
 
-The performance evaluation of the paper (see Fig. 4) showed a 4%
-performance hit for a single queue TUN with the default TUN queue size of
-500 packets. However it is important to notice that with the proposed
-patch no packet drop ever occurred even with a TUN queue size of 1 packet.
-The utilized validation pipeline is available under [3].
+Amongst the specific points that needs to be handle is the interruption
+at any point of the kernel execution and more specifically at the
+beginning of exception handling. Due to the fact that the exception entry
+implementation uses the SCRATCH CSR as both the current task struct and
+as the temporary register to switch the stack and save register, it is
+difficult to reliably get the current task struct if we get interrupted
+at this specific moment (ie, it might contain 0, the task pointer or tp).
+A fixup-like mechanism is not possible due to the nested nature of SSE
+which makes it really hard to obtain the original interruption site. In
+order to retrieve the task in a reliable manner, add an additional
+__sse_entry_task per_cpu array which stores the current task. Ideally,
+we would need to modify the way we retrieve/store the current task in
+exception handling so that it does not depend on the place where it's
+interrupted.
 
-As the reduction of the TUN queue to a size of down to 5 packets showed no
-further performance hit in the paper, a reduction of the default TUN queue
-size might be desirable accompanying this patch. A reduction would
-obviously reduce buffer bloat and memory requirements.
+Contrary to pseudo NMI [2], SSE does not modifies the way interrupts are
+handled and does not adds any overhead to existing code. Moreover, it
+provides "true" NMI-like interrupts which can interrupt the kernel at
+any time (even in exception handling). This is particularly crucial for
+RAS errors which needs to be handled as fast as possible to avoid any
+fault propagation.
 
-Implementation details:
-- The netdev queue start/stop flow control is utilized.
-- Compatible with multi-queue by only stopping/waking the specific
-netdevice subqueue.
-- No additional locking is used.
+A KVM SBI SSE extension implementation is available at [2].
 
-In the tun_net_xmit function:
-- Stopping the subqueue is done when the tx_ring gets full after inserting
-the SKB into the tx_ring.
-- In the unlikely case when the insertion with ptr_ring_produce fails, the
-old dropping behavior is used for this SKB.
-- In the unlikely case when tun_net_xmit is called even though the tx_ring
-is full, the subqueue is stopped once again and NETDEV_TX_BUSY is returned.
+Link: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/v3.0-rc7/riscv-sbi.pdf [1]
+Link: https://github.com/rivosinc/linux/tree/dev/cleger/sse_kvm [2]
 
-In the tun_ring_recv function:
-- Waking the subqueue is done after consuming a SKB from the tx_ring when
-the tx_ring is empty. Waking the subqueue when the tx_ring has any
-available space, so when it is not full, showed crashes in our testing. We
-are open to suggestions.
-- Especially when the tx_ring is configured to be small, queuing might be
-stopped in the tun_net_xmit function while at the same time,
-ptr_ring_consume is not able to grab a packet. This prevents tun_net_xmit
-from being called again and causes tun_ring_recv to wait indefinitely for
-a packet. Therefore, the queue is woken after grabbing a packet if the
-queuing is stopped. The same behavior is applied in the accompanying wait
-queue.
-- Because the tun_struct is required to get the tx_queue into the new txq
-pointer, the tun_struct is passed in tun_do_read aswell. This is likely
-faster then trying to get it via the tun_file tfile because it utilizes a
-rcu lock.
-
-We are open to suggestions regarding the implementation :)
-Thank you for your work!
-
-[1] Link:
-https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publications/2
-025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
-[2] Link:
-https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffective
--on-tun-device
-[3] Link: https://github.com/tudo-cni/nodrop
-
-Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
 ---
- drivers/net/tun.c | 32 ++++++++++++++++++++++++++++----
- 1 file changed, 28 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index cc6c50180663..e88a312d3c72 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1023,6 +1023,13 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
- 
- 	netif_info(tun, tx_queued, tun->dev, "%s %d\n", __func__, skb->len);
- 
-+	if (unlikely(ptr_ring_full(&tfile->tx_ring))) {
-+		queue = netdev_get_tx_queue(dev, txq);
-+		netif_tx_stop_queue(queue);
-+		rcu_read_unlock();
-+		return NETDEV_TX_BUSY;
-+	}
-+
- 	/* Drop if the filter does not like it.
- 	 * This is a noop if the filter is disabled.
- 	 * Filter can be enabled only for the TAP devices. */
-@@ -1060,13 +1067,16 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *skb, struct net_device *dev)
- 
- 	nf_reset_ct(skb);
- 
--	if (ptr_ring_produce(&tfile->tx_ring, skb)) {
-+	queue = netdev_get_tx_queue(dev, txq);
-+	if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
-+		netif_tx_stop_queue(queue);
- 		drop_reason = SKB_DROP_REASON_FULL_RING;
- 		goto drop;
- 	}
-+	if (ptr_ring_full(&tfile->tx_ring))
-+		netif_tx_stop_queue(queue);
- 
- 	/* dev->lltx requires to do our own update of trans_start */
--	queue = netdev_get_tx_queue(dev, txq);
- 	txq_trans_cond_update(queue);
- 
- 	/* Notify and wake up reader process */
-@@ -2110,15 +2120,21 @@ static ssize_t tun_put_user(struct tun_struct *tun,
- 	return total;
- }
- 
--static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
-+static void *tun_ring_recv(struct tun_struct *tun, struct tun_file *tfile, int noblock, int *err)
- {
- 	DECLARE_WAITQUEUE(wait, current);
-+	struct netdev_queue *txq;
- 	void *ptr = NULL;
- 	int error = 0;
- 
- 	ptr = ptr_ring_consume(&tfile->tx_ring);
- 	if (ptr)
- 		goto out;
-+
-+	txq = netdev_get_tx_queue(tun->dev, tfile->queue_index);
-+	if (unlikely(netif_tx_queue_stopped(txq)))
-+		netif_tx_wake_queue(txq);
-+
- 	if (noblock) {
- 		error = -EAGAIN;
- 		goto out;
-@@ -2131,6 +2147,10 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
- 		ptr = ptr_ring_consume(&tfile->tx_ring);
- 		if (ptr)
- 			break;
-+
-+		if (unlikely(netif_tx_queue_stopped(txq)))
-+			netif_tx_wake_queue(txq);
-+
- 		if (signal_pending(current)) {
- 			error = -ERESTARTSYS;
- 			break;
-@@ -2147,6 +2167,10 @@ static void *tun_ring_recv(struct tun_file *tfile, int noblock, int *err)
- 	remove_wait_queue(&tfile->socket.wq.wait, &wait);
- 
- out:
-+	if (ptr_ring_empty(&tfile->tx_ring)) {
-+		txq = netdev_get_tx_queue(tun->dev, tfile->queue_index);
-+		netif_tx_wake_queue(txq);
-+	}
- 	*err = error;
- 	return ptr;
- }
-@@ -2165,7 +2189,7 @@ static ssize_t tun_do_read(struct tun_struct *tun, struct tun_file *tfile,
- 
- 	if (!ptr) {
- 		/* Read frames from ring */
--		ptr = tun_ring_recv(tfile, noblock, &err);
-+		ptr = tun_ring_recv(tun, tfile, noblock, &err);
- 		if (!ptr)
- 			return err;
- 	}
+Changes in v6:
+ - Fix comment in assembly argument
+ - Check hart id to be the expected one in order to skip CPU id
+   matching in sse assembly.
+
+Changes in v5:
+ - Added a SSE test module in kselftests
+ - Removed an unused variable
+ - Applied checkpatch.pl --strict and fix all errors
+ - Use scope_guard(cpus_read_lock) instead of manual cpus_read_lock()
+ - Fix wrong variable returned in sse_get_event
+ - Remove useless init of events list
+ - Remove useless empty for loop on cpus
+ - Set sse_available as  __ro_after_init
+ - Changed a few pr_debug to pr_warn
+ - Fix event enabled stated updated in case of failure
+ - Change no_lock to nolock
+ - Rename attr_buf to attr
+ - renamed sse_get_event_phys() to sse_event_get_attr_phys() and removed
+   the second argument
+ - Simplify return value in sse_event_attr_set_nolock()
+ - Remove while loop(-EINVAL) for event cpu set call
+ - Renamed interrupted_state_phys to interrupted_phys
+ - Use scoped_guards/guard for sse_mutex
+ - Remove useless struct forward declaration in sse.h
+ - Add more explanations as to why we set SIE bit in IP
+ - Unconditionnally set SIE in SIP
+ - Move SSE_STACK_SIZE adjustement in sse_stack_alloc/free()
+ - Replace move instructions with mv
+ - Rename NR_CPUS asm symbol to ASM_NR_CPUS
+ - Restore SSTATUS first in sse_entry return path so that it works for
+   double trap without any modification later.
+ - Implement proper per cpu revert if enable/register fails
+
+Changes in v4:
+ - Fix a bug when using per_cpu ptr for local event (Andrew)
+ - Add sse_event_disable/enable_local()
+ - Add pmu_disable/pmu_enable() to disable/enable SSE event
+ - Update event ID description according to the latest spec
+ - Fix comment about arguments in handle_sse()
+ - Added Himanchu as a SSE reviewer
+ - Used SYM_DATA_*() macros instead of hardcoded labels
+ - Invoke softirqs only if not returning to kernel with irqs disabled
+ - Remove invalid state check for write attribute function.
+ - Remove useless bneq statement in sse_entry.S
+
+Changes in v3:
+ - Split arch/driver support
+ - Fix potential register failure reporting
+ - Set a few pr_err as pr_debug
+ - Allow CONFIG_RISCV_SSE to be disabled
+ - Fix build without CONFIG_RISCV_SSE
+ - Remove fixup-like mechanism and use a per-cpu array
+ - Fixed SSCRATCH being corrupted when interrupting the kernel in early
+   exception path.
+ - Split SSE assembly from entry.S
+ - Add Himanchu SSE mask/unmask and runtime PM support.
+ - Disable user memory access/floating point/vector in SSE handler
+ - Rebased on master
+
+v2: https://lore.kernel.org/linux-riscv/20240112111720.2975069-1-cleger@rivosinc.com/
+
+Changes in v2:
+ - Implemented specification v2
+ - Fix various error handling cases
+ - Added shadow stack support
+
+v1: https://lore.kernel.org/linux-riscv/20231026143122.279437-1-cleger@rivosinc.com/
+
+Clément Léger (5):
+  riscv: add SBI SSE extension definitions
+  riscv: add support for SBI Supervisor Software Events extension
+  drivers: firmware: add riscv SSE support
+  perf: RISC-V: add support for SSE event
+  selftests/riscv: add SSE test module
+
+ MAINTAINERS                                   |  15 +
+ arch/riscv/include/asm/asm.h                  |  14 +-
+ arch/riscv/include/asm/sbi.h                  |  61 ++
+ arch/riscv/include/asm/scs.h                  |   7 +
+ arch/riscv/include/asm/sse.h                  |  47 ++
+ arch/riscv/include/asm/switch_to.h            |  14 +
+ arch/riscv/include/asm/thread_info.h          |   1 +
+ arch/riscv/kernel/Makefile                    |   1 +
+ arch/riscv/kernel/asm-offsets.c               |  14 +
+ arch/riscv/kernel/sse.c                       | 154 ++++
+ arch/riscv/kernel/sse_entry.S                 | 180 +++++
+ drivers/firmware/Kconfig                      |   1 +
+ drivers/firmware/Makefile                     |   1 +
+ drivers/firmware/riscv/Kconfig                |  15 +
+ drivers/firmware/riscv/Makefile               |   3 +
+ drivers/firmware/riscv/riscv_sse.c            | 694 ++++++++++++++++++
+ drivers/perf/Kconfig                          |  10 +
+ drivers/perf/riscv_pmu.c                      |  19 +
+ drivers/perf/riscv_pmu_sbi.c                  |  71 +-
+ include/linux/perf/riscv_pmu.h                |   3 +
+ include/linux/riscv_sse.h                     |  56 ++
+ tools/testing/selftests/riscv/Makefile        |   2 +-
+ tools/testing/selftests/riscv/sse/Makefile    |   5 +
+ .../selftests/riscv/sse/module/Makefile       |  16 +
+ .../riscv/sse/module/riscv_sse_test.c         | 513 +++++++++++++
+ .../selftests/riscv/sse/run_sse_test.sh       |  44 ++
+ 26 files changed, 1947 insertions(+), 14 deletions(-)
+ create mode 100644 arch/riscv/include/asm/sse.h
+ create mode 100644 arch/riscv/kernel/sse.c
+ create mode 100644 arch/riscv/kernel/sse_entry.S
+ create mode 100644 drivers/firmware/riscv/Kconfig
+ create mode 100644 drivers/firmware/riscv/Makefile
+ create mode 100644 drivers/firmware/riscv/riscv_sse.c
+ create mode 100644 include/linux/riscv_sse.h
+ create mode 100644 tools/testing/selftests/riscv/sse/Makefile
+ create mode 100644 tools/testing/selftests/riscv/sse/module/Makefile
+ create mode 100644 tools/testing/selftests/riscv/sse/module/riscv_sse_test.c
+ create mode 100644 tools/testing/selftests/riscv/sse/run_sse_test.sh
+
 -- 
 2.43.0
 
