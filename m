@@ -1,92 +1,171 @@
-Return-Path: <linux-kernel+bounces-760501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A596B1EBFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:30:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF73B1EC30
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE30AA23D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:30:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53DAB1671AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190AA283FF4;
-	Fri,  8 Aug 2025 15:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3F1284693;
+	Fri,  8 Aug 2025 15:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vfYcsUMx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D+UQHaC2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C94//DvB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E870828467B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 15:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F8D1D61BB;
+	Fri,  8 Aug 2025 15:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754667015; cv=none; b=p8Zk4UPT4SkbXN0im0MIpco6BSnG41lccA9LmfgeAZHGVLvZMHUElqmK5yIEvqZ+fkFUyG0/NlFbBpmQrLQ3rncZ4BZlRb7ml9E8z2dMoXhSY2rJVz+yetDFHHVTB6ilCQyQlhR+gobIqY53QoZAfAyFQoFt/iBpFgVS3cis/Fo=
+	t=1754667075; cv=none; b=cXEkbudRQ3IFEHm9cf9qXtBwts2GfptzpqB51Zlk1HrKMFgijMG6QCE7n8ke4xhfSvVkT7GFNSPn6EA1aiCMMF2unPLCE5zfsagPye6+A4rnMnXGZRKwAgjthOwLOh5FFLb6pPJyC5qeatEDduxT8AMY2oU2eOeZasKwRcKnnj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754667015; c=relaxed/simple;
-	bh=gRPaYihZ0/f4wMLIvQdpsT3JMMaFk6hSHvqp1FDlbgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTuWzqrKQwXUVHjbtEXuUyhvFF93xNjfjDu9MOy3i/VaPSUF8zgORF68M6+4jsttO7u69dOwjEn/6YHO8TIxUH3nOEaANdItSzvPs4YMzuxaCvTDjqBgqg6l7bXwF07zSYcsqT51reeMIiC2ssUIirPzj50Xm5CJnSkrsJQWWRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vfYcsUMx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D+UQHaC2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 8 Aug 2025 17:30:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754667011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cMXIxvxE5BQvdmzpDVy/7yXWORR6dKljoelXvDwT6tc=;
-	b=vfYcsUMxmXaZFvOsAIuK13TynKNADLT+k9WS6UFIVj1riI0sxbXwA9UYHAVVkgvL+5ULq9
-	3LBXv6GEsFex+rOpZGzTo5FaJO8Dxfnps8g5cqS9BXbXEL4mhe6AS9YNKNJSHc/1wZ4h/O
-	5yJP271WnHZvH4L8shBYY0F5L/nMxTMW3C6PLLOa4tgKch0ebvZPV5+nnRnNa43KN58zv/
-	VJhjMF+nnhspsmbCWA1njm/fL1vPj+uZHpPTaTAD2AEyKvJaMunrvsfrtEEYo7rtA7bYhq
-	GGYez4gFAzd7cy8JJBxYZwwGWrFlVTFlldS2R0AW8MGKDUgfCwaxFNTjVHygbA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754667011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cMXIxvxE5BQvdmzpDVy/7yXWORR6dKljoelXvDwT6tc=;
-	b=D+UQHaC29ml9YHi2VtO86C2YQKZjsK8ZxHXCq5M+8Y8U3C7IrecN4LE6aRhnaBsKH0ygsM
-	+ciYPPkj2C2U1wCg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: kernel test robot <lkp@intel.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: ld.lld: error: undefined symbol: xt_recseq
-Message-ID: <20250808153010.09myPtN7@linutronix.de>
-References: <202508061149.iM5f5qtm-lkp@intel.com>
+	s=arc-20240116; t=1754667075; c=relaxed/simple;
+	bh=ZZiBwySTiMIPACxPjy9xEobcxAopojqaVmG80aMHTbo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aWaX7YcTEIceMJGfYqjxgkvTDK1gMpl03v9o/njWo9SP2EK2nhBdyDTdwdlk1mUCDIt8pkR+zbQw/D9nAfv+GS/9Rr1W1Sng9Vo5zDrAeUsPnkBCkKbpm5otUqzU298+walmg5rjT8cXhVt9ELvubJRqT2x3hcazDJ6xdoS+020=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C94//DvB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D39A9C4CEED;
+	Fri,  8 Aug 2025 15:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754667074;
+	bh=ZZiBwySTiMIPACxPjy9xEobcxAopojqaVmG80aMHTbo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=C94//DvBqUYgtdqxhdZMDl0IwqgAjCp6z1moZLV3LGzVOfBNF2r0SuglJanDztZmb
+	 HPhoKvpYMatMzhLaL2Ll7YcgWB/owvGlAMxgSicLGK0u2/Tr1jWz4ysdvp0b/GTUcQ
+	 vAXVqkegeldjlaDhkErCIBb6/gKo5JbbuXHvwPHD5Wm2LaHTWwN+eMbgHTAuyw38NY
+	 Q9meBtCC9PLKTjRFFwK+WvZ7E+H5B6MjKmCtZOQWEWkIEzkJcQpABkTXrOu2iWUkEG
+	 bi0njVgROJIVkvGQmjs5pK/RBVUko2dOMRW7o4V79i5ey8BTLmu4bCSPQR1pigcJew
+	 niPobaLrbQfFg==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Sasha Levin <sashal@kernel.org>,
+	mcgrof@kernel.org,
+	da.gomez@kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.16-6.1] module: Prevent silent truncation of module name in delete_module(2)
+Date: Fri,  8 Aug 2025 11:30:49 -0400
+Message-Id: <20250808153054.1250675-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250808153054.1250675-1-sashal@kernel.org>
+References: <20250808153054.1250675-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202508061149.iM5f5qtm-lkp@intel.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.16
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-06 11:09:05 [+0200], kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   479058002c32b77acac43e883b92174e22c4be2d
-> commit: 9fce66583f06c212e95e4b76dd61d8432ffa56b6 netfilter: Exclude LEGACY TABLES on PREEMPT_RT.
-> date:   12 days ago
-> config: i386-buildonly-randconfig-2001-20250806 (https://download.01.org/0day-ci/archive/20250806/202508061149.iM5f5qtm-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250806/202508061149.iM5f5qtm-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202508061149.iM5f5qtm-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
+From: Petr Pavlu <petr.pavlu@suse.com>
 
-As far as I can tell, this is fixed by
-	25a8b88f000c3 ("netfilter: add back NETFILTER_XTABLES dependencies")
-	https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git/commit/?h=for-netdev-nf-25-08-07&id=25a8b88f000c33a1d580c317e93e40b953dc2fa5
+[ Upstream commit a6323bd4e611567913e23df5b58f2d4e4da06789 ]
 
-Sebastian
+Passing a module name longer than MODULE_NAME_LEN to the delete_module
+syscall results in its silent truncation. This really isn't much of
+a problem in practice, but it could theoretically lead to the removal of an
+incorrect module. It is more sensible to return ENAMETOOLONG or ENOENT in
+such a case.
+
+Update the syscall to return ENOENT, as documented in the delete_module(2)
+man page to mean "No module by that name exists." This is appropriate
+because a module with a name longer than MODULE_NAME_LEN cannot be loaded
+in the first place.
+
+Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+Link: https://lore.kernel.org/r/20250630143535.267745-2-petr.pavlu@suse.com
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+LLM Generated explanations, may be completely bogus:
+
+Based on my analysis, here's my assessment:
+
+**Backport Status: YES**
+
+This commit should be backported to stable kernel trees for the
+following reasons:
+
+1. **Security Fix for Silent Truncation**: The commit fixes a security-
+   relevant issue where module names longer than MODULE_NAME_LEN (56
+   bytes on 64-bit systems) are silently truncated in the
+   delete_module() syscall. This could theoretically lead to
+   unintentionally removing the wrong module if two modules share the
+   same truncated prefix.
+
+2. **Minimal and Contained Change**: The fix is very small and localized
+   - it only modifies the delete_module syscall implementation in
+   kernel/module/main.c. The changes are:
+   - Changes from `strncpy_from_user(name, name_user,
+     MODULE_NAME_LEN-1)` to `strncpy_from_user(name, name_user,
+     MODULE_NAME_LEN)`
+   - Adds proper length checking: `if (len == 0 || len ==
+     MODULE_NAME_LEN) return -ENOENT;`
+   - Returns the correct error code (ENOENT) for oversized names
+
+3. **Follows Stable Tree Rules**:
+   - Fixes a bug that could affect users (incorrect module removal)
+   - Very low risk of regression - the change only affects error
+     handling for invalid input
+   - No new features or architectural changes
+   - Improves consistency with documented behavior (delete_module(2) man
+     page)
+
+4. **Prevents Inconsistent Behavior**: The commit message correctly
+   points out that modules with names longer than MODULE_NAME_LEN cannot
+   be loaded in the first place, so returning ENOENT for such names in
+   delete_module makes the behavior consistent across module operations.
+
+5. **Clear Bug Fix**: The old code would accept a 57+ character module
+   name, truncate it to 56 characters, and potentially remove a
+   different module. The new code properly rejects such names with
+   ENOENT, preventing this dangerous silent truncation.
+
+The change is defensive programming that prevents a potential security
+issue without introducing any backward compatibility concerns, making it
+an ideal candidate for stable backporting.
+
+ kernel/module/main.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index c2c08007029d..cbd637627eb4 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -751,14 +751,16 @@ SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
+ 	struct module *mod;
+ 	char name[MODULE_NAME_LEN];
+ 	char buf[MODULE_FLAGS_BUF_SIZE];
+-	int ret, forced = 0;
++	int ret, len, forced = 0;
+ 
+ 	if (!capable(CAP_SYS_MODULE) || modules_disabled)
+ 		return -EPERM;
+ 
+-	if (strncpy_from_user(name, name_user, MODULE_NAME_LEN-1) < 0)
+-		return -EFAULT;
+-	name[MODULE_NAME_LEN-1] = '\0';
++	len = strncpy_from_user(name, name_user, MODULE_NAME_LEN);
++	if (len == 0 || len == MODULE_NAME_LEN)
++		return -ENOENT;
++	if (len < 0)
++		return len;
+ 
+ 	audit_log_kern_module(name);
+ 
+-- 
+2.39.5
+
 
