@@ -1,291 +1,180 @@
-Return-Path: <linux-kernel+bounces-759968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44361B1E510
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:56:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2E8B1E513
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9AE188DC09
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3219A00327
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53912701A3;
-	Fri,  8 Aug 2025 08:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB12126B2AC;
+	Fri,  8 Aug 2025 08:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUg9XPQf"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="APw8oI/9"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012012.outbound.protection.outlook.com [52.101.126.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7865D2690C4;
-	Fri,  8 Aug 2025 08:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754643274; cv=none; b=WIYyaQ5Nk5vB7JgIKmHncsPOrc5VIKf325SYFkDdZgkeoSX5t97MDiXP+xZ8ac4J/+xqguhiwOyYLPjlvAoGz+VY0pdp0Fp2ANUQDhTeDbkwOnTbP5kXQMkE9YopOS/pkc6LCs2bg17rT2Je28QXUCSvQc7tDhOSElYVGqNTMww=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754643274; c=relaxed/simple;
-	bh=OiR/2HnHwk3hu8f6SamcIhgWgOSPUE9a9pwFjFj4Qp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORBSj2HEsGz5HLswgoEAHeJT7eNp/eCVJNo/17Vhu5HwaYruyey2UUDbc+MpoD6AtAOzDFoyXHfJoWEPlvIrA86zGlOsYTlUDlCUs8asGpNp/Hu/aNCuDyQHRhVtTcc4MNq40w0YGe1N0bhAY7xL67ppwgouNSBVQnN/MAhYziU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUg9XPQf; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55b7454c6b0so2032202e87.3;
-        Fri, 08 Aug 2025 01:54:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754643269; x=1755248069; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJXYbABixyTOaHOtiXscD+YAY82rcQaoMNZVj4YOt9Y=;
-        b=EUg9XPQfy1E/s8MiCkGOyS1ZSW78r1xUibPyzdh64T6fSGAvgPszVaTYA+2I3UA46y
-         5nbLCs50oyVGmaIQFG32eGYcx4jIGWaNQ441OhbAGGq2fSul6YS4w+dPY08Ie+XEU8lR
-         lhyaOHQmHSweaZR9dEub8hxzidpWDEybNaM6GN74i6EVpFnRaercNDQNk7mlahfzPPnr
-         vU3fwgOvDv65aJ02ExmOJmLg/W6PpnQAfsOhg/PPCNWbAJ12uxNj+1e1T0YG8fNmsVKL
-         IXzft6++F/TtDE+HiyFBv5UrX0RE02+A1a/Fbe+gpdidLjW558nt35D2ASiZ6ZUxGGBq
-         6law==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754643269; x=1755248069;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GJXYbABixyTOaHOtiXscD+YAY82rcQaoMNZVj4YOt9Y=;
-        b=B4XQsxtdb5PgdqUmB7RNKLt2Wg8zKuOfza3tYu1/lB1EfW9uYnLTJodZNc5G3m3IIg
-         HjIDvnFI9Q2Lx2yS2V1o/M47SrAIiqeJk6ls2N7GrPnB2dCjOhg2Kn46yJFUQuaoafqc
-         86XnkM2N2FgBpfCMv+6/gPu8zlT5IIUeYdxo5gbiomW+QzlbUc5IVduAjOrZ4gnk+9dX
-         aTzcT8+Ik+Groh5wKN5fpKGH/klwc6K344vpenxx2fZwvVq/oRBn9kUj7DD/sYR4AD+1
-         6RK4Yi018icSZNY+XQ0GP7gglviRrwAaK/Gi6KyfIHuNHoddg4LZ/norj6GngbW6xV46
-         XFfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVq2CGOTnIrhFpwmq+9bTTkUbbTSkQ29Nb6AS5glAhoM1iCDnim3aWrvUh2glhqfloTlh6L1vElIjQP@vger.kernel.org, AJvYcCW91gQdXPPUdolAJoyWa1mjXAJC7MJtPAvsqMchogxWn98b5bLR3C1NVIYwPnCQyneJ43oTxTBSJRY7o0qI@vger.kernel.org, AJvYcCXrGzZqqazfKYPn71uwgJYHkcQpilp1lNFybzgoeCKWrL8G6mMMwv7SiRGdI0miciyCQUCz+gT+B0U8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxonl6su3cc8RdVNIGdhphFyveUN7OwoznA7SR+3sUzmaXo9Ilh
-	avSbv5l1jSAzpp4wPziSxPrOINSzX+050v7QSd5LVE439+/b8Q19HySp
-X-Gm-Gg: ASbGncueSCeWY8wm5ksKTaUmgQ+nSwP8//U3ImL7QFrayuYqZNAIgQ3tUq/vCGsEJme
-	YzwDjhXAFBC/jXWlysG9uIEE7SMPYtjWOTj97afV2pcn6m3ZU1qCY8L7V3vo+ZHCJZXZj1bou07
-	ch4m3OPwNbUaEpsmXEGew74QgPm34ptckwsGblBru9eszlqARdr75lNgW1iJFQYt8ZuDonKtd1V
-	wv/ewFflpykhv231G3iQTVyIRkfUXTcxvf76NNHT1xqxDba9qnaaY3K6btpZHHa7xNUAvziwDBi
-	ZIrWe1OdDKPFKm13Vj4YZnQmMVjujMsAtqb1/xJq15sw6M73ZCyS0KFENf/SlJ73JpreNoZ+CF7
-	IFqS8O6htmzDsbth6IQYwF3cKtC4z
-X-Google-Smtp-Source: AGHT+IG6+zQUBeiPdqX1g2jivVW56r5EB4sFlrYO+u0gHY0UIcG4wiioSFcEo94BfT3o6rO+2EB62Q==
-X-Received: by 2002:a05:6512:2211:b0:55a:e1f6:bd98 with SMTP id 2adb3069b0e04-55cc0083b04mr542983e87.6.1754643269329;
-        Fri, 08 Aug 2025 01:54:29 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b887f72f4sm2979768e87.0.2025.08.08.01.54.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 01:54:28 -0700 (PDT)
-Date: Fri, 8 Aug 2025 11:54:25 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 08/10] dt-bindings: iio: adc: ad7476: Add ROHM bd79105
-Message-ID: <cc5cfa7540caae4bcb7448a59602421d54353ecc.1754641960.git.mazziesaccount@gmail.com>
-References: <cover.1754641960.git.mazziesaccount@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AF226B2AD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754643350; cv=fail; b=Ld32Di2gTrh+bkPmzQCwz9z/3NxqSM0dqpCTlc+NjR74IOyvG8YW+TxUnqxUcZUhRt7YQ/0zQ6ixdY4yKX3Jzi+McyjGVjpBTxkY24Ob7+6ev3JKFTnH3SgwaH5p27r5GYFB8onuZJ720AOLODPyhahVf18OvDda1iZJRshHWzM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754643350; c=relaxed/simple;
+	bh=MgfUrh63wy8gxIGJj3DNbOcvPORgKtXp80zsQtbGRZI=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Xq8W3K8Pa6qB8UjmFmiSXl2XS5WUtsuVXGCUlOxS1q2i6qhnHGz2c9qgJuO0aYGYI4Gs0uqvB+iItRNI4uCbYOgA/yr+sQxirPNJfMJuOhjDfmt3oOLJszlcPpCOatEvbx/PhPMwy+PeXIfvJY8u4xPVZQJstFoIft0bxVgTj+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=APw8oI/9; arc=fail smtp.client-ip=52.101.126.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gSvFgYP64C0WwLyuh/U1jBBaZhhEnXTB03oeHUH3x6eq/AvO9M1xE53Pl+4f4f0Gjf6lGRKt62zTMUgYXcarRXOtSRqNucSrlfNR3KRt2tbmH2RxPoDv/4lCXfbjImTFnKlgxws4szW+7cyeZzwdIMpDVf0gZyZc24ZFKpumKGqAV//xa8c/TnFl1vc/+ng3G7ABZiMVoJIt2rL5JSD/reg3Of7fboKQ4/HNXSSVBAxxEwOPmVcPS9gWq9W8LuhccO3brS15NYYA4MuwK369UUaRtoqz90qWQ6q4/U6RPm5pKIuUjq+8hZGB5/HAeemdxjazoAp0pxJkzP/PsyO5Pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/olyKIRYpqhIQf2c1ZYza/+yRyfvu4YuTui9YY/r/7o=;
+ b=CkYVyJsojlUkWeY9ShP+xOe6OuLONbyAUwT9TulKwV+kV2H6iKtpHBLSt4EH/N9P0pPoFp1XlHB7/QwlLHSURGrpapgu++wULdAshTi5wc+p9RL9Hx3sUMYlzohe0H46S31B0o+3Zab4o3ocB4gOSnRNqvO8ELW7LV9QOUR7/6ZWfItvQEUXDqlreNJQq8gkrz85JuV7ozfM48Y9slwT5APszXUCmHmL8UlwCNPZhnB4xhoIznqqgsHCUXMf5fc6O0MDsrWjkYsfM7NZo10y9kmOZS7Ze//blHCmLDhZpaULgKo6JKrZUasqCzCdapAAIjWwVM8ncXeWpYEBxYIcHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/olyKIRYpqhIQf2c1ZYza/+yRyfvu4YuTui9YY/r/7o=;
+ b=APw8oI/9v0PWmBeCuwEj5tUGDTLUpAaraMleg/y2Y2ly9VxQ/YKc8aml39eTrEskUxNuJv4s4pewlA+Q+XRZCz4viXcIvNUzbAyuabcGj/VqzDZt3E8gYJiwrTUeWgqiyvynm8gJy/3F4RZKfwqo8a6QNrOvuxl2aEZN2p9UlRVp8vCgTQ3uOmseU5Dr1FABECiN6ww/D60R1gaOJak9mxdOcDSVN/XCinNb3JoN0Fa9+9uJVMYuNxa7ynGacmroo7rDIBiO0ED/GGF7dqu3mW4V5jD6tUGrn4v8rInaZqSjnnUoe1RQZoE3R5PCnT5kK6zGIlr8n9B+bwEcDAFRKA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ TYZPR06MB6238.apcprd06.prod.outlook.com (2603:1096:400:33f::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.18; Fri, 8 Aug 2025 08:55:40 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
+ 08:55:40 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Yaron Avizrat <yaron.avizrat@intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Qianfeng Rong <rongqianfeng@vivo.com>,
+	Farah Kassabri <fkassabri@habana.ai>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] accel/habanalabs: fix mismatched alloc/free for kvcalloc()
+Date: Fri,  8 Aug 2025 16:55:27 +0800
+Message-Id: <20250808085530.233737-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0211.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c5::14) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f2LLsVrY0GN/V41a"
-Content-Disposition: inline
-In-Reply-To: <cover.1754641960.git.mazziesaccount@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|TYZPR06MB6238:EE_
+X-MS-Office365-Filtering-Correlation-Id: f0a9465a-3693-4259-ba1c-08ddd6595993
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vyyUOqGsigfjm8yAw7BmeDe5wkldippa2rRdq8atW3OLZYBAhRuYgRn4RHmQ?=
+ =?us-ascii?Q?T6dzDzPpdexEkBwKgl5/n8Jxvn2rNfvxPMRGWs/2lX0QYgsR9mSgCMbPYQ4h?=
+ =?us-ascii?Q?VbsinEmLU1wPYTHI/5s51W8qbNlcehrmmQ8lb6V/FG7qomsQkDZDKLBpYXAG?=
+ =?us-ascii?Q?GE/VMxw6tcsorWnV/CoTA0zaqB3OzqwlBKt94L9oPOpmQYrwL4Pqyu/cHrB2?=
+ =?us-ascii?Q?lzNoH1i9lMJkbi4H+0FSdrBaYhJxn+0LQJvylm+qRubyUlKlJzc9WGCETo5J?=
+ =?us-ascii?Q?A8sh1iitS1o+ESYPChDjz2iRMqyijnR166AZ65s0vs688jiClQq5mjO9NM6z?=
+ =?us-ascii?Q?ah+DUCnMcFUNY4rR7F7gLn+3xSgramx2UWJkC4QJ7ASDTmi2W1QFm3Mt+Vtz?=
+ =?us-ascii?Q?Epc3G0caa/ijGU8ekrSHvrUDtSE2K1kSfORIUrSSHhoCMiWbKZy/KBC56jCy?=
+ =?us-ascii?Q?AI0Pk8fDl8Ieb7S2O4bylA8Q5mc+HssXL6rfSiJJws0237BYC2VXdIlWjvNy?=
+ =?us-ascii?Q?Fkb0LVSQ963LDStaKrtOef61ehReTFfxu38dn6D9AC8Do4HYIQiiyEHF6Kot?=
+ =?us-ascii?Q?6Agj6lXYjlClu5TnkcG6GE5PQl/5ko0ZMRss+7p5DB+Sv7gjvLQJ/W4rsZ/y?=
+ =?us-ascii?Q?A4OdofczIli4ZVVP5is0NgV3H9WEN2VmBmxDNzCqlX6TV5GNOPDQkBoCjXYv?=
+ =?us-ascii?Q?V/JOtakvRJ8eRcM0JCWj3i4B4Kx0U5xqITJJmmUbIXo693Fvq+HGG2PhPRRA?=
+ =?us-ascii?Q?1/mGQXjbeGtxIePh0xgoMD4Z02kIyrTTQGoCQkwMK9Rgpu19DE7rqubLI304?=
+ =?us-ascii?Q?nTbo5HdFD9ewVKlfFDFJLEB9CZeDg4cSKtf4mVZliuqpd2Oanur6+p571zG+?=
+ =?us-ascii?Q?uwfccCanycH+ZozV81jSUp6jgYLwrW7M5TPMPVxGLI9Je25qxAdTK7rN9CxJ?=
+ =?us-ascii?Q?sRlcYf1awLA0/zPbluh/Rlzgf+W7oy+bSIDky46RV3OnIjY6toUD4cdPQqXQ?=
+ =?us-ascii?Q?oKIUCJde046FWpi4xbje6aZA2U1Ci2lciQ1SDlbADt0tep9f/eh7CZx+Egtb?=
+ =?us-ascii?Q?dVfkA5i0gfzooL3XVFZeavJHPYbnM4NL3yKK58mjpNXi6mZTA1sGa2dlp8l0?=
+ =?us-ascii?Q?lzdlpEglCH6R9xuHkSQ+NWDggdmIZkbaiGxolO/emttVmxh/S0SU7gJNwA2m?=
+ =?us-ascii?Q?5nKqmcPZecMsX8IRpKIWoq6wIvJ4hHE9qKqlAwBSRyP3O7kisYyCGpvnsvP1?=
+ =?us-ascii?Q?VEdUqUJZUEYVYfBqAtTxto149RikRenp58FxkwsU+/rpRNoXVUVPXWC5PWPo?=
+ =?us-ascii?Q?G545w0v4WNq5RaWMtT/RIEu8JlTD9yQ9kuL2TBYVM+VgiBH4R3tg9i3ijYph?=
+ =?us-ascii?Q?600cBgCESLldCmvkdvz3rjmt2qu3wMZ7kb8DR9w53gR9GsNEQw59JrmUN9wO?=
+ =?us-ascii?Q?YfwnI6UX/iHjPle9NwLY4BPu9i4nINteVqdNvO36r31M9/qmve7PaA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?84EdeMDYdr08kwR7w6KlnZVQRq3dDvYGXUXKfANFpZ/zrPuSDIL9V301EsRM?=
+ =?us-ascii?Q?Jsk7lvn3PFl6PqBU982S3QjdTYMLGjTLyRXlgM4RhAtNcUAK3RK6XICWoURX?=
+ =?us-ascii?Q?HXa5MIe7YOCv3MKPuxleOpni0Gd8803/bgmYTLDJh5XPBux14yH98D67wUeg?=
+ =?us-ascii?Q?raCkwWIaYRKVzyuSYFYrJyqo3thapomdJeNcAwHut85t3i0nIv2A8lNNa9Jy?=
+ =?us-ascii?Q?mm8CJGVowJr6aiYkngHB5i8jt5FjPQzIjOf90jAnb0ll7VyQ72Y9HCgNnzV1?=
+ =?us-ascii?Q?CuwY171pyorp4Jkzd3OFaPDvjpbEYty4lIO6bAZe/kDiMLxAenqNPoRhDF3B?=
+ =?us-ascii?Q?n5dxYKoBVrlc6tJ0iMS0xq+UiYu5DxkCp3uZO0oDozXXvYZBrL4wReYEVrwI?=
+ =?us-ascii?Q?r0sdUCJ6MhqqYicS2HS/g1oMnooxF13jo6duOqMnQRqYh2eRhSKVpA51Z+ya?=
+ =?us-ascii?Q?zClC2PqWr09BsfN0Ve8X3MlenST8g7RpdceOlhry/LIh+zln6vU7T49ujGQ6?=
+ =?us-ascii?Q?yEj0i+jIssYVa5g8Cc7qViVaad3MOsw8GNNcdWNVwg6ulc3vxMWzLcOsKE2R?=
+ =?us-ascii?Q?B1N4Vfd/URffXnDDnuk4hvim5rj6VEGrMCoXFALanXI+CBmIxmb83u8GPdz0?=
+ =?us-ascii?Q?YXUcjDfRuvZJMiSFRPeozr6TJlrgBiQgutOBEWHBXFWogEH++ZBHC9l7I3Pu?=
+ =?us-ascii?Q?IN21MnCrsbI3Owh9c12J4nZEXamJ6FXq18gkhAgEoesBWU0SrLoSEFpgldnC?=
+ =?us-ascii?Q?b9xe3GeAawAosdrca/8lt5CqRdwHJ4syswvxexoi2agZKXG0OcqAapRKHJTM?=
+ =?us-ascii?Q?g3h6zUaLkmzWPD40CQEdZnevFo1cBU0K+s3RJI1ZeLZppzjLJtsrK7waGY86?=
+ =?us-ascii?Q?J618LVYZWmnTJiyTjzouUmlniXI2u1DQoJahGZJKEpEG6qCGqQ4An2yphPRJ?=
+ =?us-ascii?Q?91t9jHllhYvsIn0cjZ4dmdyOHjjxNTutjzxpEvLn8uM9RGUGJR+DOj79ez6I?=
+ =?us-ascii?Q?c95ddPR48EvrKa+LUO3WmLSH1miqO96WEvJuyfSudpXRPe5jkwsu0iXdpZD3?=
+ =?us-ascii?Q?BcltECt97SgucJt1D9ZOLeN74Q4kPWxuXViA6RO6qe12g8kFKh6I5LC5SqUV?=
+ =?us-ascii?Q?ccQAIah2cvF5/ABsvJsiO7gbgtGaHG9ImI0a8Bm8yPbJg/vTnx0iThV7Z9wA?=
+ =?us-ascii?Q?4QOoO7cim9Gva04jEaWhm1oPrlcNggUq9qZRf2PxYK99I9L81twSEKkOr69Q?=
+ =?us-ascii?Q?MgpwKStIbPbAqb3kiLq+xJXb/zM3L1GA7BskU8bq6RkBMHqzDjq7qy30UNn9?=
+ =?us-ascii?Q?hTulLpe+JiLUjytra+q9sEh+LlpgDb72wHEpl2PQhas44isOhvkIbwvFrZBR?=
+ =?us-ascii?Q?91SxIw4AKzBizSKqPEPzQwCbw95fVn4rC3VX/q5abCUMrceX+plVa/pv1N1e?=
+ =?us-ascii?Q?GeTdKD3V1R/CAkxnZnMKNf33d/EMxv/3DQP90cH0y8pgpLB1Nvd/+/S4fuKR?=
+ =?us-ascii?Q?32nVtwMK5oDhfbl5fL8MPQ242RnMopxKx0eGZTqthoBKpZIkWrQxznPrbHVV?=
+ =?us-ascii?Q?XnU0ZGzX8m7zoCTT1d7rTmFTGEP6SYjP+c/sVTgS?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0a9465a-3693-4259-ba1c-08ddd6595993
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 08:55:40.1760
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XpcZL0qHA8oUSMaxM5TSUpPE+g6f2SOJ8rJqVL5w9oxk7V3/Mt3ifZKbsCGa7pGB1EXl/JGW9EBhfgksKl17qw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6238
 
+Replace kfree() with kvfree() for memory allocated by kvcalloc().
 
---f2LLsVrY0GN/V41a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Compile-tested only.
 
-The ROHM BD79105 is a simple, 16-bit, 1-channel ADC with a 'CONVSTART'
-pin used to start the ADC conversion. Other than the 'CONVSTART', there
-are 3 supply pins (one used as a reference), analog inputs, ground and
-communication pins. It's worth noting that the pin somewhat confusingly
-labeled as 'DIN', is a pin which should be used as a chip-select. The IC
-does not have any writable registers.
-
-The device is designed so that the output pin can, in addition to
-outputting the data, be used as a 'data-ready'-IRQ. This, however, would
-require the IRQ to be masked from host side for the duration of the data
-reads - and it wouldn't also work when the SPI is shared. (As access to
-the other SPI devices would cause data line changes to be detected as
-IRQs - and the BD79105 provides no means to detect if it has generated
-an IRQ).
-
-Hence the device-tree does not contain any IRQ properties.
-
-Add a compatible for the bd79105.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
+Fixes: f728c17fc97a ("accel/habanalabs/gaudi2: move HMMU page tables to device memory")
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 ---
-Revision history:
- v2 =3D> :
- - No changes
+ drivers/accel/habanalabs/gaudi2/gaudi2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- v1 =3D> v2:
- - BD79105 can provide data-ready IRQ (or GPIO) via DOUT-pin.
----
- .../bindings/iio/adc/adi,ad7476.yaml          | 54 +++++++++++++++++++
- 1 file changed, 54 insertions(+)
+diff --git a/drivers/accel/habanalabs/gaudi2/gaudi2.c b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+index a38b88baadf2..5722e4128d3c 100644
+--- a/drivers/accel/habanalabs/gaudi2/gaudi2.c
++++ b/drivers/accel/habanalabs/gaudi2/gaudi2.c
+@@ -10437,7 +10437,7 @@ static int gaudi2_memset_device_memory(struct hl_device *hdev, u64 addr, u64 siz
+ 				(u64 *)(lin_dma_pkts_arr), DEBUGFS_WRITE64);
+ 	WREG32(sob_addr, 0);
+ 
+-	kfree(lin_dma_pkts_arr);
++	kvfree(lin_dma_pkts_arr);
+ 
+ 	return rc;
+ }
+-- 
+2.34.1
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7476.yaml b/Do=
-cumentation/devicetree/bindings/iio/adc/adi,ad7476.yaml
-index d0cb32f136e5..c411a7467651 100644
---- a/Documentation/devicetree/bindings/iio/adc/adi,ad7476.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7476.yaml
-@@ -41,6 +41,7 @@ properties:
-               - adi,ad7910
-               - adi,ad7920
-               - adi,ad7940
-+              - rohm,bd79105
-               - ti,adc081s
-               - ti,adc101s
-               - ti,adc121s
-@@ -55,6 +56,11 @@ properties:
-   reg:
-     maxItems: 1
-=20
-+  interrupts:
-+    description:
-+      The data-ready interrupt. Provided via DOUT pin.
-+    maxItems: 1
-+
-   vcc-supply:
-     description:
-       Main powersupply voltage for the chips, sometimes referred to as VDD=
- on
-@@ -75,6 +81,10 @@ properties:
-     description: A GPIO used to trigger the start of a conversion
-     maxItems: 1
-=20
-+  rdy-gpios:
-+    description: A GPIO for detecting the data-ready.
-+    maxItems: 1
-+
- required:
-   - compatible
-   - reg
-@@ -82,6 +92,20 @@ required:
- allOf:
-   - $ref: /schemas/spi/spi-peripheral-props.yaml#
-=20
-+# Devices with an IRQ
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - rohm,bd79105
-+    then:
-+      properties:
-+        interrupts: true
-+    else:
-+      properties:
-+        interrupts: false
-+
-   # Devices where reference is vcc
-   - if:
-       properties:
-@@ -115,6 +139,7 @@ allOf:
-               - adi,ad7274
-               - adi,ad7475
-               - lltc,ltc2314-14
-+              - rohm,bd79105
-     then:
-       properties:
-         vref-supply: true
-@@ -131,6 +156,7 @@ allOf:
-               - adi,ad7274
-               - adi,ad7475
-               - lltc,ltc2314-14
-+              - rohm,bd79105
-     then:
-       required:
-         - vref-supply
-@@ -141,12 +167,28 @@ allOf:
-             enum:
-               - adi,ad7475
-               - adi,ad7495
-+              - rohm,bd79105
-     then:
-       properties:
-         vdrive-supply: true
-     else:
-       properties:
-         vdrive-supply: false
-+
-+  # Devices which support polling the data-ready via GPIO
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - rohm,bd79105
-+    then:
-+      properties:
-+        rdy-gpios: true
-+    else:
-+      properties:
-+        rdy-gpios: false
-+
-   - if:
-       properties:
-         compatible:
-@@ -154,6 +196,7 @@ allOf:
-             enum:
-               - adi,ad7091
-               - adi,ad7091r
-+              - rohm,bd79105
-     then:
-       properties:
-         adi,conversion-start-gpios: true
-@@ -161,6 +204,17 @@ allOf:
-       properties:
-         adi,conversion-start-gpios: false
-=20
-+  # Devices with a convstart GPIO where it is not optional
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - rohm,bd79105
-+    then:
-+      required:
-+        - adi,conversion-start-gpios
-+
- unevaluatedProperties: false
-=20
- examples:
---=20
-2.50.1
-
-
---f2LLsVrY0GN/V41a
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiVu0EACgkQeFA3/03a
-ocW9CAf/UPyXzdt1BynNJE7meCRzAkG9IHNcnMy/peVmH59nu/DDz/OmIONCiY/S
-0xs9+Z62vmiNwMlqE4Sm0BU+s4gbwZBCrZsX7EuB0QNFx5jUIWfSTBBRsJHxhvNL
-B3vrIT8MGxQvplZq/ilo0uzb+HoHw8A7TkSUIRIxDDzqiuwGvZ6jLLYOGe6Stk5u
-V+GDA818TuPepjnSvpvkHQW3aB5d/+dBA9g+ao+wsXeCTYvOAfdWoZ71OVbBQx5J
-Fq2eIZFOhX8LSj9TShZoSu9QY2KdbPnrulfhseibeSzKXmKojArtaSxebpx+7voO
-p227+BnPPOE07QpDUReYge18sXjUyA==
-=phHV
------END PGP SIGNATURE-----
-
---f2LLsVrY0GN/V41a--
 
