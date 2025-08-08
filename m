@@ -1,115 +1,130 @@
-Return-Path: <linux-kernel+bounces-760681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A697B1EEBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:06:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62604B1EEBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8C1AA12C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:06:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E5A1170727
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE922797B1;
-	Fri,  8 Aug 2025 19:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5014C28640C;
+	Fri,  8 Aug 2025 19:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FFPaZ5Kx"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MVbd3V2B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195661F63CD;
-	Fri,  8 Aug 2025 19:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A3E20468E;
+	Fri,  8 Aug 2025 19:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754679993; cv=none; b=HCFaDMLPwD3tDnj2IsH/SrJ5mVSH3DMS56YJs26d4pXiLikEttOVXH6EATholIynpXl+dXn8/xIMcvSumtrstuWCxvXCpjcdUQBoh1H9ANYVggMbkyXPitWjhR9+yXwE7RFiG6IRhpw4Cng/kV2yBoOIth89Krg1pO730g6kAxY=
+	t=1754679979; cv=none; b=VJ8oY7J/j8LJt1W3DXUf8k6axH7PbUbx/mLSYNP4fttHKt+PYvl8rH5UYJ8L/o8tBeoEGg0Sd4UUL6JsUBJhamwgNW9IT6hlgWE+xlrsbIuaSuAnAaqzngmA/+GowqjVPNIaNnlRB4jIF/i/Vt63HCP2WNs5i1zvFXzSEDJ6ZH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754679993; c=relaxed/simple;
-	bh=6zB+09k9q/K+mfdFZsTuCT1DPpHDUFQXyuQKS5lyp2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0F6lMMT37YyJdSgUbh9glxV4TeZeLGAW9rURNZLszz4HESfvkGHjN/jpISpWCURonN9smJ9+/1gy6JhhhamhvJ5JbT1i6LrEOj2aBWNkI4jeU4h3uCX6AMzXlEWEyyvHNkIoCy6ZVcQm4rpYwPxp3zll5Bfg73t9xynIrBW7k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FFPaZ5Kx; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=G4HKiQec4+nudt9w21R7YT69fpU8DGeinsRM/HaGuos=; b=FFPaZ5KxaTZteVr+zqKgY/GVQw
-	mDWvej1OFKwWJ4UZbX4yfXrQzk4yHsL/0O/4t5G3/FWBpZG/wis/DeOWoS93/Qin19oqpqN8alRWU
-	3dDoPPjC9C2yB4YVmlNG7EisZHaL3qj7S842Ay1YjAh3iqyotvXPHHcAtXQafuCOMIGE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ukSPn-0044x1-4D; Fri, 08 Aug 2025 21:06:07 +0200
-Date: Fri, 8 Aug 2025 21:06:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] net: dsa: tag_yt921x: add support for Motorcomm
- YT921x tags
-Message-ID: <1bfb3b4f-eae3-4454-8d61-674bed3a8673@lunn.ch>
-References: <20250808173808.273774-1-mmyangfl@gmail.com>
- <20250808173808.273774-2-mmyangfl@gmail.com>
+	s=arc-20240116; t=1754679979; c=relaxed/simple;
+	bh=ihLtk4YDljPoQsVr1k+Q6KdWqVvNlEugtmCKJzbpreQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=maEzDQRRNUDuveilOLvbYQQLBB2n4mB81RQAxpdGbUc4PE6YqGA5em0gmZmeupjX28tOmkxjKbKWHBrJU9HA1N50Wv+PEGf/qcoWEsetnu5rfAlmxordiBuDxGhRHMrT5XkCkmc4JixiQ43nF8HTmPPY32gehxlo8OS8jzb8Wlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MVbd3V2B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F40C4CEED;
+	Fri,  8 Aug 2025 19:06:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1754679979;
+	bh=ihLtk4YDljPoQsVr1k+Q6KdWqVvNlEugtmCKJzbpreQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MVbd3V2B9PU2DpN4YFj4kXo77JcV02cklLt8Ew+/o0xBULibQLCGSDhPk+5YuQ/mj
+	 6eGZKLNUShdnj3lo4imTZWyM+09/f2GhQBTb6C+0BGVP3d88ljwJ6pK750+ZjcNkFs
+	 J83iYdBJegh8zofo/HjfG0v4JbPN3aOrqef3Y5ik=
+Date: Fri, 8 Aug 2025 12:06:16 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com,
+ graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
+ dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+ rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+ kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+ masahiroy@kernel.org, tj@kernel.org, yoann.congal@smile.fr,
+ mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+ axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+ vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com,
+ david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org,
+ anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+ linux@weissschuh.net, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org,
+ cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+ Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+ aleksander.lobakin@intel.com, ira.weiny@intel.com,
+ andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+ bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+ stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org,
+ linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com,
+ parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v3 01/30] kho: init new_physxa->phys_bits to fix lockdep
+Message-Id: <20250808120616.40842e9a9fdc056c9eb74123@linux-foundation.org>
+In-Reply-To: <CA+CK2bBoMNEfyFKgvKR0JvECpZrGKP1mEbC_fo8SqystEBAQUA@mail.gmail.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-2-pasha.tatashin@soleen.com>
+	<mafs0o6sqavkx.fsf@kernel.org>
+	<mafs0bjoqav4j.fsf@kernel.org>
+	<CA+CK2bBoMNEfyFKgvKR0JvECpZrGKP1mEbC_fo8SqystEBAQUA@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808173808.273774-2-mmyangfl@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 09, 2025 at 01:38:02AM +0800, David Yang wrote:
-> Add support for Motorcomm YT921x tags, which includes a configurable
-> ethertype field (default to 0x9988).
+On Fri, 8 Aug 2025 14:00:08 +0000 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
 
-Hi David
+> > > I suppose this could be simplified a bit to:
+> > >
+> > >       err = xa_err(physxa);
+> > >         if (err || physxa) {
+> > >               xa_destroy(&new_physxa->phys_bits);
+> > >                 kfree(new_physxa);
+> > >
+> > >               if (err)
+> > >                       return err;
+> > >       } else {
+> > >               physxa = new_physxa;
+> > >       }
+> >
+> > My email client completely messed the whitespace up so this is a bit
+> > unreadable. Here is what I meant:
+> >
+> >         err = xa_err(physxa);
+> >         if (err || physxa) {
+> >                 xa_destroy(&new_physxa->phys_bits);
+> >                 kfree(new_physxa);
+> >
+> >                 if (err)
+> >                         return err;
+> >         } else {
+> >                 physxa = new_physxa;
+> >         }
+> >
+> > [...]
+> 
+> Thanks Pratyush, I will make this simplification change if Andrew does
+> not take this patch in before the next revision.
+> 
 
-Please take a read of:
+Yes please on the simplification - the original has an irritating
+amount of kinda duplication of things from other places.  Perhaps a bit
+of a redo of these functions would clean things up.  But later.
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+Can we please have this as a standalone hotfix patch with a cc:stable? 
+As Pratyush helpfully suggested in
+https://lkml.kernel.org/r/mafs0sei2aw80.fsf@kernel.org.
 
-We are in the merge window at the moment, so you need to post patches
-as RFC. And you need to indicate the tree in the Subject: line.
-
-> +#define YT921X_TAG_PORT_ENf	BIT(15)
-> +#define YT921X_TAG_RX_PORTf	GENMASK(14, 11)
-> +#define YT921X_TAG_TX_PORTf	GENMASK(10, 0)
-> +#define  YT921X_TAG_TX_PORTnv(port)	BIT(port)
-
-These lower case letters at the end are unusual. What do they
-represent?
-
-> +static struct sk_buff *
-> +yt921x_tag_xmit(struct sk_buff *skb, struct net_device *netdev)
-> +{
-> +	struct dsa_port *dp = dsa_user_to_port(netdev);
-> +	__be16 *tag;
-> +
-> +	skb_push(skb, YT921X_TAG_LEN);
-> +	dsa_alloc_etype_header(skb, YT921X_TAG_LEN);
-> +
-> +	tag = (__be16 *)(skb->data + 2 * ETH_ALEN);
-
-dsa_etype_header_pos_tx() ?
-
-> +static struct sk_buff *
-> +yt921x_tag_rcv(struct sk_buff *skb, struct net_device *netdev)
-> +{
-> +	__be16 *tag;
-> +	u16 rx;
-> +	int rx_port;
-
-Reverse Christmas tree. Longest to shortest.
-
-    Andrew
-
----
-pw-bot: cr
+Thanks.
 
