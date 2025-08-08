@@ -1,132 +1,324 @@
-Return-Path: <linux-kernel+bounces-760071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2207CB1E623
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:08:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E1FB1E627
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBDD7203F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 226411AA3623
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B112326CE08;
-	Fri,  8 Aug 2025 10:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFFC2701CA;
+	Fri,  8 Aug 2025 10:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgcelrCS"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="UY2cD6QL"
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB74188A0C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D24188A0C;
+	Fri,  8 Aug 2025 10:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754647730; cv=none; b=Q1V42ybiBzKOh4ZZ3pELgBp9i4pJNhNktDG1j+hZhlmEGxC2xfcMH7/YRZwLMMatqwnkUi7c25B2G12zReFmLseNGX932tWDOD/D1I0pTbKeJOzYmiRJ/JnGFAVClybwh0D+k5ZGRmpRlQI8OqrZXLRiwOKrSVVUqhaiwCmUupI=
+	t=1754647858; cv=none; b=kAv/CBRIYHA3H/1ErOdZKw1AI2y4Tq5K3To+iY9s4Q8w6qnoh9SceH7BVo/7YVc1sNMDudLzxQxU1lmmNM0qWisWzJ4LxFBaRbNZqGTzSEF8edCHlH3dbm5Jn85wnsBnt761BbZI61Lef3PSugNwmP/dn3PTdE+ZFrMeQ8KudM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754647730; c=relaxed/simple;
-	bh=g6rZ2YFkfGDuFwp/K6kGjVvQIuwMBg6U4uuF2Ge9e7w=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GuPdS8YCraba8xa2UYRG9fsDzdSjaOHrGziLHaWQPmi5Cmz4DbgfDWrrplxY30mV6M0Sx1wH9X2tosJMBgdhIIu+dIEBwhk/UrhV9jXavcEc4/KR1tas50fe5e9rxfPNMQouI4pmJ0LvTjYkTb3p8IHy2NNj7/tF6YDngRB0nWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgcelrCS; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55b827aba01so1867633e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 03:08:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754647726; x=1755252526; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gbxY0Jg1r6x7C+hh+rgf9m7gK/9hiurboFkbpVtd5c0=;
-        b=dgcelrCSt9iBB1I5TK0Tgr6CRMDQBfZk1uKpVXplxtwqrBV7y/tLtsCUj56sG5jJI4
-         tjw6sELPd9ASKTMmDTfQrKWmoNskGKyNEXPwzgW2Gpnl4dSlXsO4miY7uNMKBog6TFwN
-         LVCE1p5IhSz/R+Ec2fFV3cdSk72Lxrgz/RCn8JwjxWLzwNmHyio0UJ+dqxrzAPhaA63U
-         MNcpxXHBtv3tX0tDs1rveTFt8eZPFNWzCwCJbO757VnXwtSCUxtYc/eo8A7hHnJQOZAF
-         DpRMS4pch2T2yDS+ztbdMDw7HYkr5tz8AAHVFvP+3fZUQbhc9kIY8l1yotMqrFE26crh
-         MD9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754647726; x=1755252526;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gbxY0Jg1r6x7C+hh+rgf9m7gK/9hiurboFkbpVtd5c0=;
-        b=A1RuV8q8Udrwr8Qq1UJC9M/38pXrxa1CCIxsbPmnliUo9ykq/dJ7XOODKe9ogPw6lE
-         lv352YfSRvppHJuIWbzupEqnyBLDBk3liVNgoJG5MRsSfscabhDfCrFn2zA3R0O7qG61
-         ta/MeYk4LQ+nmIPZcP3arfFd5htqSSKz8myL19zbJ1y32RhJZRJpOopA+xlQv2sf1gGf
-         5raq9vfSPPyLhlTpK06xZXMZz5UKHI/jHroEvO8EudYkmRUBNWjwIHNwjae330kMuSTw
-         RP1WO6/n8Za0H57U4AcsReDJZF6IUzHNUrL9Q76tbL3q9xkMobGuJy1FLkecGX2Y0QYo
-         gPew==
-X-Forwarded-Encrypted: i=1; AJvYcCUU4R+HFXEQ214+7YzUKkTgfHMBzoB3bQufpV/NexdPn+xAL62GFPqEZlWwu1XqdOUwJtkm/btY53+oK78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmDpPPQ1N7W1/uv4bw6CXWHCbP8zbtUqv4nveMZxnuOcxUH9nl
-	AI5+NnSkyUyLnqah1qmMf71g26la69sWaJ42+StO0gjhyM/LnlGT5K4t
-X-Gm-Gg: ASbGnct9tUgpcWMQjiwWuZ140URaU8qGNsjOQEMKP8FtMHU11XbNVgTqgvLuaIxpTmE
-	c3vq0OSND2jCk5tPGJkFLvtb+pLaG2Gs0UY1PtbvBJYbbzo+J0tFETESTlBJI5QsLti0GtHSXqy
-	c6x2GBcEFy4w+/CeIS8GuuMwJGkiaUf6R60+oW5sobl7YqEiP7O05ecRNCiZf/XD9CwQYbrp3/N
-	asVXZycPLcx5d/5Iw6+acBwmMKdgiCR7pLKorrYvjYL4U7kBmgIIAUWxwVTb3QEW/FCsNM28y+X
-	+AM2rtgN7HOipyItx57UPftQWf5axwx+XgFcH0rLKDUrNYLNgaRONYiHkbsFNWwgBHA+CiB/KDS
-	rb3bhq4nyKuxKDVvpz4xv4F2IrA8PQbkIdjYmymrBqpG9IYY2ww==
-X-Google-Smtp-Source: AGHT+IER+HryXfx9J3vMYmF3WW1vWe9m9Xz7yhLgRj00Ua6ih0RT29yWBMSZcOV/UCV8juhmCPA/uw==
-X-Received: by 2002:a05:6512:2210:b0:55b:861a:d2cb with SMTP id 2adb3069b0e04-55cc00da448mr500044e87.21.1754647726257;
-        Fri, 08 Aug 2025 03:08:46 -0700 (PDT)
-Received: from pc636 (host-90-233-217-11.mobileonline.telia.com. [90.233.217.11])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c98ab8sm2960265e87.79.2025.08.08.03.08.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 03:08:44 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Fri, 8 Aug 2025 12:08:42 +0200
-To: Michal Hocko <mhocko@suse.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/8] mm/vmalloc: Remove cond_resched() in
- vm_area_alloc_pages()
-Message-ID: <aJXMqrVCcdLBsMGp@pc636>
-References: <20250807075810.358714-1-urezki@gmail.com>
- <20250807075810.358714-5-urezki@gmail.com>
- <aJSMfJhBOltRiSUh@tiehlicka>
+	s=arc-20240116; t=1754647858; c=relaxed/simple;
+	bh=RggGRjMHU2R6gkBzlubXye+UKgPBHxSYw5o58uEuNPE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nTSQXFFOU76hVj7weuZyPPQISzRFqDZy0zSR53ggJ3PA6/s2ZIUN9tuXSKooTK1Bl4KRt6E79nPr8DL0B+0+8wBamoBNcb6cRUQhdEruUphWqFB1VPkWajnF5i/PRKbHAaXdbv/atWxtQQvtcv6E80KsIRg+sdo4m20KSJeScOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=UY2cD6QL; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1754647840; x=1754907040;
+	bh=Yq9VQhZI5mAsxhu/WxdvqFhc+hT1CLK+UVkJM6ho9rw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=UY2cD6QL6Z23vuTH8SwENI1P/vPhlVOC0sEpCxucNH4Fjo70CHZQgdlKNhG+6/yvo
+	 V7Ef8n9eBOhuVxSviIZPpEm8V4Lp0WXUcStRSA+xeGFURo1cgBHsW8r86vaiBeuQ6n
+	 moPZyiqjJcwADczZnZ9BBFqOoM5V3bhZo2w+3n0iQz4Tx6t/sIGyx9FfoZ9GAuzTfz
+	 THoh3WTG/65PJE+v2cEdcfkJASJmTON07MKLQagdl/UQ7+xEWC6DFEk1caJbp48zq1
+	 7S/S2+tGSAm9uEdWLrPeWTGvYBVlTof7qYKFjm/QmPENccZFQGca0bXW4Y878UNaP0
+	 bbyJ3R+6lsSeg==
+Date: Fri, 08 Aug 2025 10:10:35 +0000
+To: samuel.kayode@savoirfairelinux.com
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>, imx@lists.linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, Robin Gong <yibin.gong@nxp.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 1/6] dt-bindings: mfd: add pf1550
+Message-ID: <gj565636v5qgohhf5usklfqydkc6lzifzhrbquoyawbwvhdlma@kajszdivkp2e>
+In-Reply-To: <20250716-pf1550-v9-1-502a647f04ef@savoirfairelinux.com>
+References: <20250716-pf1550-v9-0-502a647f04ef@savoirfairelinux.com> <20250716-pf1550-v9-1-502a647f04ef@savoirfairelinux.com>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: 2267f331269a8e8c5fc399b9463def7d4fed3f7c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJSMfJhBOltRiSUh@tiehlicka>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 07, 2025 at 01:22:36PM +0200, Michal Hocko wrote:
-> On Thu 07-08-25 09:58:06, Uladzislau Rezki wrote:
-> > The vm_area_alloc_pages() function uses cond_resched() to yield the
-> > CPU during potentially long-running loops. However, these loops are
-> > not considered long-running under normal conditions.
-> 
-> To be more precise they can take long if they dive into the page
-> allocator but that already involves cond_rescheds where appropriate so
-> these are not needed in fact.
-> 
-> > In non-blocking
-> > contexts, calling cond_resched() is inappropriate also.
-> > 
-> > Remove these calls to ensure correctness for blocking/non-blocking
-> > contexts. This also simplifies the code path. In fact, a slow path
-> > of page allocator already includes reschedule points to mitigate
-> > latency.
-> > 
-> > This patch was tested for !CONFIG_PREEMPT kernel and with large
-> > allocation chunks(~1GB), without triggering any "BUG: soft lockup"
-> > warnings.
-> > 
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> 
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> Thanks!
->
-Updated the commit message. Right, it can take long time.
+On Wed, Jul 16, 2025 at 11:11:44AM +0100, Samuel Kayode via B4 Relay wrote:
+> From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+>=20
+> Add a DT binding document for pf1550 PMIC. This describes the core mfd
+> device along with its children: regulators, charger and onkey.
+>=20
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> ---
+> v9:
+>  - Add regulator suspend bindings in example
+>  - Add binding for disabling onkey power down
+>  - Fix thermal regulation temperature range
+> v5:
+>  - Address Krzystof's feedback:
+>    - Drop monitored battery ref already included in power supply schema
+>    - Move `additionalProperties` close to `type` for regulator
+>    - Drop unneccessary |
+>    - Change `additionalProperties` to `unevaluatedProperties` for the
+>      PMIC
+> v4:
+>  - Address Krzystof's feedback:
+>    - Filename changed to nxp,pf1550.yaml
+>    - Replace Freescale with NXP
+>    - Define include before battery-cell
+>    - Drop operating-range-celsius in example since
+>      nxp,thermal-regulation-celsisus already exists
+>  - Not sure if there is similar binding to thermal-regulation...
+>    for regulating temperature on thermal-zones? @Sebastian and @Krzysztof
+> v3:
+>  - Address Krzysztof's feedback:
+>    - Fold charger and onkey objects
+>    - Drop compatible for sub-devices: onkey, charger and regulator.
+>    - Drop constant voltage property already included in
+>      monitored-battery
+>    - Fix whitespace warnings
+>    - Fix license
+> v2:
+>  - Add yamls for the PMIC and the sub-devices
+> ---
+>  .../devicetree/bindings/mfd/nxp,pf1550.yaml        | 144 +++++++++++++++=
+++++++
+>  1 file changed, 144 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/nxp,pf1550.yaml b/Docu=
+mentation/devicetree/bindings/mfd/nxp,pf1550.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ede5b6a2106ff60f4b47b3602=
+fea8dd0b62d6fcf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/nxp,pf1550.yaml
+> @@ -0,0 +1,144 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/nxp,pf1550.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP PF1550 Power Management IC
+> +
+> +maintainers:
+> +  - Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> +
+> +description:
+> +  PF1550 PMIC provides battery charging and power supply for low power I=
+oT and
+> +  wearable applications. This device consists of an i2c controlled MFD t=
+hat
+> +  includes regulators, battery charging and an onkey/power button.
+> +
+> +$ref: /schemas/power/supply/power-supply.yaml
+> +
+> +properties:
+> +  compatible:
+> +    const: nxp,pf1550
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  wakeup-source: true
+> +
+> +  regulators:
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    patternProperties:
+> +      "^(ldo[1-3]|sw[1-3]|vrefddr)$":
+> +        type: object
+> +        $ref: /schemas/regulator/regulator.yaml
+> +        description:
+> +          regulator configuration for ldo1-3, buck converters(sw1-3)
+> +          and DDR termination reference voltage (vrefddr)
+> +        unevaluatedProperties: false
+> +
+> +  monitored-battery:
+> +    description: |
+> +      A phandle to a monitored battery node that contains a valid value
+> +      for:
+> +      constant-charge-voltage-max-microvolt.
+> +
+> +  nxp,thermal-regulation-celsius:
+> +    description:
+> +      Temperature threshold for thermal regulation of charger in celsius=
+.
+> +    enum: [ 80, 95, 110, 125 ]
+> +
+> +  nxp,min-system-microvolt:
+> +    description:
+> +      System specific lower limit voltage.
+> +    enum: [ 3500000, 3700000, 4300000 ]
+> +
+> +  nxp,disable-key-power:
+> +    type: boolean
+> +    description:
+> +      Disable power-down using a long key-press. The onkey driver will r=
+emove
+> +      support for the KEY_POWER key press when triggered using a long pr=
+ess of
+> +      the onkey.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/input/linux-event-codes.h>
+> +
+> +    battery: battery-cell {
+> +        compatible =3D "simple-battery";
+> +        constant-charge-voltage-max-microvolt =3D <4400000>;
+> +    };
+> +
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        pmic@8 {
+> +            compatible =3D "nxp,pf1550";
+> +            reg =3D <0x8>;
+> +
+> +            interrupt-parent =3D <&gpio1>;
+> +            interrupts =3D <2 IRQ_TYPE_LEVEL_LOW>;
+> +            wakeup-source;
+> +            monitored-battery =3D <&battery>;
+> +            nxp,min-system-microvolt =3D <4300000>;
+> +            nxp,thermal-regulation-celsius =3D <80>;
+> +
+> +            regulators {
+> +                sw1_reg: sw1 {
+> +                    regulator-name =3D "sw1";
+> +                    regulator-min-microvolt =3D <600000>;
+> +                    regulator-max-microvolt =3D <1387500>;
+> +                    regulator-always-on;
+> +                    regulator-ramp-delay =3D <6250>;
+> +                };
+> +
+> +                sw2_reg: sw2 {
+> +                    regulator-name =3D "sw2";
+> +                    regulator-min-microvolt =3D <600000>;
+> +                    regulator-max-microvolt =3D <1387500>;
+> +                    regulator-always-on;
+> +                };
+> +
+> +                sw3_reg: sw3 {
+> +                    regulator-name =3D "sw3";
+> +                    regulator-min-microvolt =3D <1800000>;
+> +                    regulator-max-microvolt =3D <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +
+> +                vldo1_reg: ldo1 {
+> +                    regulator-name =3D "ldo1";
+> +                    regulator-min-microvolt =3D <750000>;
+> +                    regulator-max-microvolt =3D <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +
+> +                vldo2_reg: ldo2 {
+> +                    regulator-name =3D "ldo2";
+> +                    regulator-min-microvolt =3D <1800000>;
+> +                    regulator-max-microvolt =3D <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +
+> +                vldo3_reg: ldo3 {
+> +                    regulator-name =3D "ldo3";
+> +                    regulator-min-microvolt =3D <750000>;
+> +                    regulator-max-microvolt =3D <3300000>;
+> +                    regulator-always-on;
+> +                };
+> +            };
+> +        };
+> +    };
+>=20
+> --
+> 2.50.1
+>=20
+>=20
 
-Thank you!
+Does it make sense to show that the driver support suspend to mem
+states? Like...
 
---
-Uladzislau Rezki
+
+=09=09=09sw1_reg: sw1 {
+=09=09=09=09regulator-name =3D "sw1";
+=09=09=09=09regulator-min-microvolt =3D <1325000>;
+=09=09=09=09regulator-max-microvolt =3D <1325000>;
+=09=09=09=09regulator-always-on;
+
+=09=09=09=09regulator-state-mem {
+=09=09=09=09=09regulator-on-in-suspend;
+=09=09=09=09=09regulator-suspend-max-microvolt =3D <900000>;
+=09=09=09=09=09regulator-suspend-min-microvolt =3D <900000>;
+=09=09=09=09};
+=09=09=09};
+
+=09=09=09sw2_reg: sw2 {
+=09=09=09=09regulator-name =3D "sw2";
+=09=09=09=09regulator-min-microvolt =3D <1350000>;
+=09=09=09=09regulator-max-microvolt =3D <1350000>;
+=09=09=09=09regulator-always-on;
+
+=09=09=09=09regulator-state-mem {
+=09=09=09=09=09regulator-on-in-suspend;
+=09=09=09=09};
+=09=09=09};
+
+=09=09=09sw3_reg: sw3 {
+=09=09=09=09regulator-name =3D "sw3";
+=09=09=09=09regulator-min-microvolt =3D <3300000>;
+=09=09=09=09regulator-max-microvolt =3D <3300000>;
+=09=09=09=09regulator-always-on;
+
+=09=09=09=09regulator-state-mem {
+=09=09=09=09=09regulator-on-in-suspend;
+=09=09=09=09};
+=09=09=09};
+
+=09=09=09vldo1_reg: ldo1 {
+=09=09=09=09regulator-name =3D "ldo1";
+=09=09=09=09regulator-min-microvolt =3D <2900000>;
+=09=09=09=09regulator-max-microvolt =3D <2900000>;
+=09=09=09=09regulator-always-on;
+
+=09=09=09=09regulator-state-mem {
+=09=09=09=09=09regulator-off-in-suspend;
+=09=09=09=09};
+=09=09=09};
+
+Br,
+Sean
+
 
