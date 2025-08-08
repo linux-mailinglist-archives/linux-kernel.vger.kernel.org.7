@@ -1,206 +1,163 @@
-Return-Path: <linux-kernel+bounces-759647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48D3B1E0A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:46:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0EAB1E0B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D7AC7A9AA8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:45:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FFD55675D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D209A149C4D;
-	Fri,  8 Aug 2025 02:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OyOetvKj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF1A1922C0;
+	Fri,  8 Aug 2025 02:47:51 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695E98F54
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 02:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CB518A93C;
+	Fri,  8 Aug 2025 02:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754621196; cv=none; b=rInBPcxR+D1XtZ4zHo4JzmMqu28X5vTD4WHqR+M3Vz7Lfb9Te1OMMMpqDkpNSgEDiIq0r2rmZm3JoBNsqQ8vVO8WEaYpUtmdwCTn2f4WmBPWdZvglp85Sh7Tog46KDTyI6d+A2r5U4WZ0Vu85NCBefMh0juJhnag54miUkH3Q1s=
+	t=1754621270; cv=none; b=tBsTIsWmajxtlIez3g0UBy7UTovnlvXjiFLFjIaSBgdB1QdrM7vY8+E/AOzr8PFrbNK36pPgZpm1Hcqjh06xTDIUSgJ+KmIoeaMKknQP9PoGiEU9/j3RHD/BrZW7fJ63Go1D6F03vIu9tXvnS0uaK8bd9qRNvNbrubrqTmrQXlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754621196; c=relaxed/simple;
-	bh=g+WBatSN1qROpBOFqso4X6zWtAVxTg2RObQBEohtQnQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uvwk9+4dulyJ4k8zH20mKKVKvx0+u4YoQwQene7gZzgcGG409UonMvtWtQjTl1aJzDHGxXn9aIZkxIQapGAMyZzyNNKgrrrYj83KUhYWbJc2+fonIKRNQbtNINoL383yH+N1ea4RH2p/8rUZ0q/2uwbnij3rMgvEwD/5zXGG2xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OyOetvKj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754621193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jmALfAD79Sc2v/slqMGPnz9hxOoyvuPzjTOCA6rHq8s=;
-	b=OyOetvKjsy/WbfIcRnrxmn4G0D6iTHlDA4CiirdVCQ0/2zHE5MeKErYpCcd2ErLX8j4sEg
-	smEciV72RoHql+k4cxEhgnl5lbXmn3daG4CATh3T0/PN/sUfoqYAnuv/FWZeq3IzO2pvpq
-	uRhla57x3tlE73cz9x5NOVoHzKAYVzs=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-BUVxd9j_PTKuZ3w6ReZdNA-1; Thu, 07 Aug 2025 22:46:31 -0400
-X-MC-Unique: BUVxd9j_PTKuZ3w6ReZdNA-1
-X-Mimecast-MFC-AGG-ID: BUVxd9j_PTKuZ3w6ReZdNA_1754621190
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-3322b98b1a6so8731291fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 19:46:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754621190; x=1755225990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jmALfAD79Sc2v/slqMGPnz9hxOoyvuPzjTOCA6rHq8s=;
-        b=iL42qo9x6wb5ABm741BDdIkPJPfXQyo3JdBk6nEA3cH3ywskOAd4RKv8QQBhWtGxBT
-         6mwI0HeroA48N8GA6oUNOadkWSL5WQcJu2ZXgke6hYzslgEa/AGm0rUkSLA+GihnluHB
-         plbTeo9JaSJmheXg0Wc/qlNT2CbES9m17Co2x+WuTj88zCEKVnpS3UtUhavYFdj343bU
-         m8nCCRrPEm9BzZ5YZkjNSNzG0d8k/BNL5RUloNqcaSOcEMa45W67BTGRoQgSEWMO7TaR
-         BVxFvx1RK3FX/nPdbHmg/QTQtYOVd/TRO6gKwWGIPQULko7Mswvo6SFvg6l7+xdR4UBu
-         7ixA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXcBXG36Qizm1lhag7hJsbwx66obDnnBImlUl50/HfEOoZy5TyDq7T4ZmhvXiYK8vfxx11Zy5EkR4xGoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/vXzUfqEFtxJgXY+5tsGIIYxL6dDTHej2gM3oW+GxA8pYCMGu
-	HjsZtCZrjTi5MRTO/s8EPpyoXxcVJUxoXEryAm10iHCu+vIeDB0N2hdRAifsJxJvxhJGlLWPSO4
-	YUXSlJUUhGQR5YTTf7C6uZdfSVbhKjfFpkfJ74dZpLVY3Fov8so1C4YknZgoNSxpP633IzWpWx3
-	yJKn0lgIBte7po5VH+mBih5OMVd4aj+e19Lf08pZYO
-X-Gm-Gg: ASbGncuEDqin8R/P22bRjqAgJURuykjSAWqB6YDQQkiE+BK1JRnd1O0+2ZVU7oY6P1+
-	IWDiFtIeXpwqsTwZmZjcvxqOxmcnCgPVjlo0NrzjXdmsuCgUo4ZR7Rzgzqwg31F7phNiWxWcUh0
-	13J8PEgIq3P7jPEAKmIn9dnQ==
-X-Received: by 2002:a05:6512:3996:b0:55b:7e31:c13f with SMTP id 2adb3069b0e04-55cc00b7471mr216424e87.19.1754621189641;
-        Thu, 07 Aug 2025 19:46:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFPl9MPWvi4vw2YfJW296tcWJT8TkRErAZcJZQzg9MhhbuF/GdVGhnXuvrRQn6Mbz1APgoTDbYgXvUw4Gf6gGU=
-X-Received: by 2002:a05:6512:3996:b0:55b:7e31:c13f with SMTP id
- 2adb3069b0e04-55cc00b7471mr216410e87.19.1754621189089; Thu, 07 Aug 2025
- 19:46:29 -0700 (PDT)
+	s=arc-20240116; t=1754621270; c=relaxed/simple;
+	bh=gt6kifYbsOMOVRvFZ7+2EDUxcMagZ4qqgqlPSn5/yZM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=fRwAX2b2I/XedVtjTXN2y3Vr7q6T/5niFVHxM+6Sjc/6+0zI8ycOoLaeRoFgKzNyXB/x3wVz1UiBXJLfu2CDXEZNGIjIK0dEtQoYBreIYUmtcY0BS33j8ACSVveq4OUqyGBpy++pthy9Ccg6KRxaypFtyDsxV9QcFDz+XKNhU0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bypNc1qXtzKHMrj;
+	Fri,  8 Aug 2025 10:47:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5D3201A1A98;
+	Fri,  8 Aug 2025 10:47:43 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDnYhNNZZVoX27KCw--.31726S3;
+	Fri, 08 Aug 2025 10:47:43 +0800 (CST)
+Subject: Re: [PATCH 1/1] loop: sync filesystem cache before getting file size
+ in get_size()
+To: Rajeev Mishra <rajeevm@hpe.com>, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250807232522.192898-1-rajeevm@hpe.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <756e15de-dbbc-4438-80c6-454b2fcc44ac@huaweicloud.com>
+Date: Fri, 8 Aug 2025 10:47:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808015134.2875430-2-lichliu@redhat.com> <CALu+AoTGwZqB28Z+sJ4KW7esNHx8=5kJ6nrMpoQ_rogzSDGwxA@mail.gmail.com>
-In-Reply-To: <CALu+AoTGwZqB28Z+sJ4KW7esNHx8=5kJ6nrMpoQ_rogzSDGwxA@mail.gmail.com>
-From: Dave Young <dyoung@redhat.com>
-Date: Fri, 8 Aug 2025 10:47:09 +0800
-X-Gm-Features: Ac12FXwMHdYPLNUSBIVRDOIQo0wLGhwEoVcSzCO_3Te7legG5opEYpuIRQTyYUM
-Message-ID: <CALu+AoTGY0wKubVgR_EF5BZmYvh180fjP1AsLvp8cJ447WFGaA@mail.gmail.com>
-Subject: Re: [PATCH] fs: Add 'rootfsflags' to set rootfs mount options
-To: Lichen Liu <lichliu@redhat.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, rob@landley.net, 
-	kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	weilongchen@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250807232522.192898-1-rajeevm@hpe.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnYhNNZZVoX27KCw--.31726S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCFyktw1DCr4UtFW3Gry3urg_yoW5Xw1UpF
+	WrAFyYyryDGFW7GanxGwsrZ34Fgws7uFyUury7Aa1vvFnxCw1akF93GFyYga1jgr9xA3WY
+	qayDJryj9FyDZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7I
+	JmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, 8 Aug 2025 at 10:30, Dave Young <dyoung@redhat.com> wrote:
->
-> Hi Lichen,
->
-> On Fri, 8 Aug 2025 at 09:55, Lichen Liu <lichliu@redhat.com> wrote:
-> >
-> > When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
-> > By default, a tmpfs mount is limited to using 50% of the available RAM
-> > for its content. This can be problematic in memory-constrained
-> > environments, particularly during a kdump capture.
-> >
-> > In a kdump scenario, the capture kernel boots with a limited amount of
-> > memory specified by the 'crashkernel' parameter. If the initramfs is
-> > large, it may fail to unpack into the tmpfs rootfs due to insufficient
-> > space. This is because to get X MB of usable space in tmpfs, 2*X MB of
-> > memory must be available for the mount. This leads to an OOM failure
-> > during the early boot process, preventing a successful crash dump.
-> >
-> > This patch introduces a new kernel command-line parameter, rootfsflags,
-> > which allows passing specific mount options directly to the rootfs when
-> > it is first mounted. This gives users control over the rootfs behavior.
-> >
-> > For example, a user can now specify rootfsflags=3Dsize=3D75% to allow t=
-he
-> > tmpfs to use up to 75% of the available memory. This can significantly
-> > reduce the memory pressure for kdump.
-> >
-> > Consider a practical example:
-> >
-> > To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
-> > the default 50% limit, this requires a memory pool of 96MB to be
-> > available for the tmpfs mount. The total memory requirement is therefor=
-e
-> > approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacke=
-d
-> > kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) =E2=89=88 220MB.
-> >
-> > By using rootfsflags=3Dsize=3D75%, the memory pool required for the 48M=
-B
-> > tmpfs is reduced to 48MB / 0.75 =3D 64MB. This reduces the total memory
-> > requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
-> > smaller crashkernel size, such as 192MB.
-> >
-> > An alternative approach of reusing the existing rootflags parameter was
-> > considered. However, a new, dedicated rootfsflags parameter was chosen
-> > to avoid altering the current behavior of rootflags (which applies to
-> > the final root filesystem) and to prevent any potential regressions.
-> >
-> > This approach is inspired by prior discussions and patches on the topic=
-.
-> > Ref: https://www.lightofdawn.org/blog/?viewDetailed=3D00128
-> > Ref: https://landley.net/notes-2015.html#01-01-2015
-> > Ref: https://lkml.org/lkml/2021/6/29/783
-> > Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-in=
-itramfs.html#what-is-rootfs
-> >
-> > Signed-off-by: Lichen Liu <lichliu@redhat.com>
-> > ---
-> >  fs/namespace.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index ddfd4457d338..a450db31613e 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
-> >  }
-> >  __setup("mphash_entries=3D", set_mphash_entries);
-> >
-> > +static char * __initdata rootfs_flags;
-> > +static int __init rootfs_flags_setup(char *str)
-> > +{
-> > +       rootfs_flags =3D str;
->
-> I do see there are a few similar usages in init/do_mounts.c, probably
-> it is old stuff and it just works.  But I think making rootfs_flags as
-> an array and copying str into it is the right way.
+Hi,
 
-Another question, may need fs people to clarify.  If the mount is
-tmpfs and it is also rootfs,  could it use 100% of the memory by
-default, and then no need for an extra param?    I feel that there is
-no point to reserve memory if it is a fully memory based file system.
+ÔÚ 2025/08/08 7:25, Rajeev Mishra Ð´µÀ:
+> The get_size() function now uses vfs_getattr_nosec() with AT_STATX_SYNC_AS_STAT
 
->
-> > +       return 1;
-> > +}
-> > +
-> > +__setup("rootfsflags=3D", rootfs_flags_setup);
-> > +
-> >  static u64 event;
-> >  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
-> >  static DEFINE_IDA(mnt_group_ida);
-> > @@ -6086,7 +6095,7 @@ static void __init init_mount_tree(void)
-> >         struct mnt_namespace *ns;
-> >         struct path root;
-> >
-> > -       mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
-> > +       mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_fla=
-gs);
-> >         if (IS_ERR(mnt))
-> >                 panic("Can't create rootfs");
-> >
-> > --
-> > 2.50.1
-> >
-> >
-> Thanks
-> Dave
+With a quick code review, I didn't found how can that flag ensure
+filesystem cache is synchronized, can you explain in detail? Or Do you
+mean getattr for filesystem like fuse to get latest data from server?
+
+> to ensure filesystem cache is synchronized before retrieving file size. This
+> provides more accurate size information, especially when:
+> 
+> - The backing file size has been changed by another process
+> - The file is on a network filesystem (NFS, CIFS, etc.)
+> - The file is being modified concurrently
+
+I don't think this make sense in real world. If a file is already used
+by loop device, then user should avoid modifying this file directly. For
+a file in fuse, I feel it's not good to use it as loop device.
+
+> - The most accurate size is needed for loop device setup
+> > The implementation gracefully falls back to i_size_read() if 
+vfs_getattr_nosec()
+> fails, maintaining backward compatibility.
+> 
+> Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
+> ---
+>   drivers/block/loop.c | 31 +++++++++++++++++++++++++++++--
+>   1 file changed, 29 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 1b6ee91f8eb9..15d5edbc69ce 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -137,12 +137,39 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
+>   static int max_part;
+>   static int part_shift;
+>   
+> +/**
+> + * get_size - calculate the effective size of a loop device
+> + * @offset: offset into the backing file
+> + * @sizelimit: user-specified size limit
+> + * @file: the backing file
+> + *
+> + * Calculate the effective size of the loop device
+> + *
+> + * Returns: size in 512-byte sectors, or 0 if invalid
+> + */
+>   static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+>   {
+> +	struct kstat stat;
+>   	loff_t loopsize;
+> +	int ret;
+> +
+> +	/*
+> +	 * Get file attributes for validation. We use vfs_getattr() to ensure
+> +	 * we have up-to-date file size information.
+> +	 */
+> +	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE,
+> +			        AT_STATX_SYNC_AS_STAT);
+> +	if (ret) {
+> +		/*
+> +		 * If we can't get attributes, fall back to i_size_read()
+> +		 * which should work for most cases.
+> +		 */
+> +		loopsize = i_size_read(file->f_mapping->host);
+> +	} else {
+> +		/* Use the size from getattr for consistency */
+> +		loopsize = stat.size;
+> +	}
+
+I'm ok switch from i_size_read() to getattr, however, the commit message
+is confusing for me :(
+
+Thanks,
+Kuai
+>   
+> -	/* Compute loopsize in bytes */
+> -	loopsize = i_size_read(file->f_mapping->host);
+>   	if (offset > 0)
+>   		loopsize -= offset;
+>   	/* offset is beyond i_size, weird but possible */
+> 
 
 
