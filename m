@@ -1,165 +1,236 @@
-Return-Path: <linux-kernel+bounces-759677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C133B1E104
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:36:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43714B1E105
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9C118C2D9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:36:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C1484E05AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9722119DF9A;
-	Fri,  8 Aug 2025 03:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC57192598;
+	Fri,  8 Aug 2025 03:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OwWRv5DL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SKpLehK1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37772156236
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 03:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F2FDDAD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 03:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754624161; cv=none; b=BB4PC8QmLKGY4vLVlJMLFarODCKd9gI+r8kRF2RNUOe2GaQahyJwgS1NWviA964d4Ny89qF2C0zJznCBYjrguQVawlwHM+y25jXIRK8qhwiIMVI4pOY0LPutI9iixGGX1UmWL1PQlWLOxBoO8ipxEKwQVKMMes6m+NRVLDOscdw=
+	t=1754624219; cv=none; b=nXbUqtsu0WfCgBhmZZHqrleYrajzyXDOgfRU/T2U+haW2PIXtDTLcjshm6bsTd6KfF7odmfuP3BW81CfTbGw+63reVfFT9rEPx3jkCashPIDVaFHWwyw14HckXzSqKlLz3puxO2f7Qdtxtrh0i4Pt7aJ/XBlVDCpjsUPdpVEJiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754624161; c=relaxed/simple;
-	bh=2eeo3AcKELFcwxsQkPJ5smawUztIIXb8mi5xTh6jwFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JL1qN/oYFqTK4CCjvWa1YzH/YF2NYJtYrboEkxhYFByRk29UgpI1xG0oLF6lbw4+fDGvQK7/38O58z6zforsBqhMvXccsYQX7yA65HBQOLJdrWiFuMBHj8oirz7huMys4rnvFNsEsF29pXrgO8ZlEj4BhWZcWytT1aaRgYHxALw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OwWRv5DL; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754624159; x=1786160159;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=2eeo3AcKELFcwxsQkPJ5smawUztIIXb8mi5xTh6jwFg=;
-  b=OwWRv5DLlb/mQ0tanbH1Me9n/L8NzppxDsSdxlan4cjD7NlJASCKT28h
-   pv1hmd3ZUeNta/GLJa074NGaJdSsN5fCzDTF5jKJNFE3mjLEbtkhDamUn
-   9Tts94nWfReGmMQMmEdfiFrkmqTIHQOsxrb1G3fBalY0T76qTch/IVM0Z
-   XFkK71S+wgaL5vDH1U3ZD1saqSHLXbo8a4rehyadVHsle1vpSAW3syqLi
-   +88KvqoL2g4LS9Xl6tu+gWCe1RSaZ4aPy53uJN9UQ4UbZAFz52rgEwFZE
-   eRqRZTzQ5jc4cQF1G8vGtn/QrYm7z5SMQTga0rCIs7MwJSJjs8tCLRC2C
-   Q==;
-X-CSE-ConnectionGUID: 89E98liiTVKKqfw7AdapWw==
-X-CSE-MsgGUID: a3hlFLCpQhy3HPDVcU8z+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="57110836"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="57110836"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 20:35:58 -0700
-X-CSE-ConnectionGUID: +A61NkWHRfqhiLxAV5YA9A==
-X-CSE-MsgGUID: xMzfIYRfTbK8JhnV9B5jGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="164449015"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 07 Aug 2025 20:35:58 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ukDtb-0003W0-0Z;
-	Fri, 08 Aug 2025 03:35:55 +0000
-Date: Fri, 8 Aug 2025 11:34:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: include/linux/build_bug.h:78:41: error: static assertion failed:
- "XFS: sizeof(struct xfs_attr_sf_entry) is wrong, expected 3"
-Message-ID: <202508081101.hx7Fc3HV-lkp@intel.com>
+	s=arc-20240116; t=1754624219; c=relaxed/simple;
+	bh=DdSoLXyFxci8lCj1B8K/vlsIG2J6Emjbk12yvW85aTc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZLADdKj6JrN0+IBVPxpKuDdy89qWH/MIo/RyJ/Tqx/kNyiSd0mm+hwOI1wBZ5qncoVcMOpN5B+NpxaR4XvFbBhR4ahrqiunVQrPZSSVAXhgpcxR/5u4wRkN9X1AnpCtTy9R5TI/EUPh05UzsR3vwhXelhY/qqJ0ELtqTNrY6YLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SKpLehK1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754624216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gsyp6Edg52gGxunzu47oK6lBp56ZTl6cz3Zk/uJfGaM=;
+	b=SKpLehK1rNMz50RC7Bj21vQU1Nud1E5dl9tpWJnVquBXAhd9xI/t7nn/VN95DfYfDDvHpB
+	mVdNQBEsCcy0LEspnfACcrpkmdo2UR0qH2NxTg/ZAdCZpaOIdYfIuI2ymO3TVSOvGhBIcI
+	olu9SejaEsSbvdbtvbW9H90q7Y/GD7g=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-252-7B_jZHa-MWi-j30-tD1tyQ-1; Thu, 07 Aug 2025 23:36:54 -0400
+X-MC-Unique: 7B_jZHa-MWi-j30-tD1tyQ-1
+X-Mimecast-MFC-AGG-ID: 7B_jZHa-MWi-j30-tD1tyQ_1754624214
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4af199d0facso49894311cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 20:36:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754624214; x=1755229014;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gsyp6Edg52gGxunzu47oK6lBp56ZTl6cz3Zk/uJfGaM=;
+        b=KPAmlruZ/MntEEkad4dyvordVKPVQoo17lgzSnryVnIdvtwWjv8ThyjfyC5+tFjAdA
+         0Qhzen8CCpiN8JD/e26Invkua/u8Yj83SGuRHqaaKmOYJ26ssdsxu8yWUNz/ocxxqwId
+         B8mMu3b7NB1+5iFmkxfSvCE3YfXWsGnKu2yp0xoP3vlzmzAV2onxCIO4Cd+aNntPlziV
+         Fxb+gEwutyudnBPWeyQi3Hgy2XyQicPJrb3Jr+jMdEaPJJXsV4xhSbRef4dMef85UbT8
+         Sdc5ZDQolj5o3U6uVaQsCcs0ziz70XqJOERTczh19tzngDBe3OtuCSwlNvpwqp3bBXuk
+         2tAg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1uqA65yjRJD5eOAWyZa7bDDj1VBDY8kw42Inil4QMMZ4ujZOHqq+tzXciUIf0Q9KuBZz/4Kabwb7II+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtyZDLzUlj2y6XAOhFaiVeqR8mVzMnevifN2doesZZQm/xQe+l
+	Kud395uj1iRSrUArugu85cJeVjYhyGagWwYIcOtmxG8fL47rd0dUzubNRNP1sfT+OS52KVd49Ej
+	wnqz2gAWBNaq+jYXXR1zHQP0czt/Puc8STC/j7+QSMMjpcr7oc42rZkjqfape0Upoo7JlmzoWxZ
+	/5pGnO4GOMpGK0t3LSQ03saH+Bi9ydlFyAN0GfW5h1
+X-Gm-Gg: ASbGnctLzChIg3hz/OUWl80uxcOM+ZD1wzzXCUj5N3zHpxATv5CEWE8TpEYMYeuyZed
+	xJeUzrjfOu3IHWdM/dZ43Q+8jHA3Tzyn8BJUa+GYCFQ6ikJM4vgcSRZP7fgsZCM9fAuqyml32yS
+	9+uAnZAYISe/HyDXU+H87uc69vSiy2aKVbmq8v2vOXV7fmVAYAwULK
+X-Received: by 2002:ac8:5d04:0:b0:4b0:6a31:163a with SMTP id d75a77b69052e-4b0afd827f0mr18021901cf.4.1754624214260;
+        Thu, 07 Aug 2025 20:36:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEh1M25upIO8yP24fBcslf6iFMfxnENdkySk6wSIBZZPvvKaFt0DZ6Carbxl/kgYDKYoZ7WIqT4DSAxq/3ahpg=
+X-Received: by 2002:ac8:5d04:0:b0:4b0:6a31:163a with SMTP id
+ d75a77b69052e-4b0afd827f0mr18021761cf.4.1754624213751; Thu, 07 Aug 2025
+ 20:36:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250808015134.2875430-2-lichliu@redhat.com> <CALu+AoTGwZqB28Z+sJ4KW7esNHx8=5kJ6nrMpoQ_rogzSDGwxA@mail.gmail.com>
+ <CALu+AoTGY0wKubVgR_EF5BZmYvh180fjP1AsLvp8cJ447WFGaA@mail.gmail.com>
+In-Reply-To: <CALu+AoTGY0wKubVgR_EF5BZmYvh180fjP1AsLvp8cJ447WFGaA@mail.gmail.com>
+From: Lichen Liu <lichliu@redhat.com>
+Date: Fri, 8 Aug 2025 11:36:42 +0800
+X-Gm-Features: Ac12FXwg4eabeUdRCinwQOjZemEW_hV9jM2hO2Z7nLNQw6zNDks5tnGEToJNyYA
+Message-ID: <CAPmSd0OQfSHBqDSpFLNAddk-f_aDcjzKt_VBzLWjNqvMAXgzkQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: Add 'rootfsflags' to set rootfs mount options
+To: Dave Young <dyoung@redhat.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, rob@landley.net, 
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	weilongchen@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Darrick,
+On Fri, Aug 8, 2025 at 10:46=E2=80=AFAM Dave Young <dyoung@redhat.com> wrot=
+e:
+>
+> On Fri, 8 Aug 2025 at 10:30, Dave Young <dyoung@redhat.com> wrote:
+> >
+> > Hi Lichen,
+> >
+> > On Fri, 8 Aug 2025 at 09:55, Lichen Liu <lichliu@redhat.com> wrote:
+> > >
+> > > When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
+> > > By default, a tmpfs mount is limited to using 50% of the available RA=
+M
+> > > for its content. This can be problematic in memory-constrained
+> > > environments, particularly during a kdump capture.
+> > >
+> > > In a kdump scenario, the capture kernel boots with a limited amount o=
+f
+> > > memory specified by the 'crashkernel' parameter. If the initramfs is
+> > > large, it may fail to unpack into the tmpfs rootfs due to insufficien=
+t
+> > > space. This is because to get X MB of usable space in tmpfs, 2*X MB o=
+f
+> > > memory must be available for the mount. This leads to an OOM failure
+> > > during the early boot process, preventing a successful crash dump.
+> > >
+> > > This patch introduces a new kernel command-line parameter, rootfsflag=
+s,
+> > > which allows passing specific mount options directly to the rootfs wh=
+en
+> > > it is first mounted. This gives users control over the rootfs behavio=
+r.
+> > >
+> > > For example, a user can now specify rootfsflags=3Dsize=3D75% to allow=
+ the
+> > > tmpfs to use up to 75% of the available memory. This can significantl=
+y
+> > > reduce the memory pressure for kdump.
+> > >
+> > > Consider a practical example:
+> > >
+> > > To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. Wit=
+h
+> > > the default 50% limit, this requires a memory pool of 96MB to be
+> > > available for the tmpfs mount. The total memory requirement is theref=
+ore
+> > > approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpac=
+ked
+> > > kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) =E2=89=88 220MB.
+> > >
+> > > By using rootfsflags=3Dsize=3D75%, the memory pool required for the 4=
+8MB
+> > > tmpfs is reduced to 48MB / 0.75 =3D 64MB. This reduces the total memo=
+ry
+> > > requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with=
+ a
+> > > smaller crashkernel size, such as 192MB.
+> > >
+> > > An alternative approach of reusing the existing rootflags parameter w=
+as
+> > > considered. However, a new, dedicated rootfsflags parameter was chose=
+n
+> > > to avoid altering the current behavior of rootflags (which applies to
+> > > the final root filesystem) and to prevent any potential regressions.
+> > >
+> > > This approach is inspired by prior discussions and patches on the top=
+ic.
+> > > Ref: https://www.lightofdawn.org/blog/?viewDetailed=3D00128
+> > > Ref: https://landley.net/notes-2015.html#01-01-2015
+> > > Ref: https://lkml.org/lkml/2021/6/29/783
+> > > Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-=
+initramfs.html#what-is-rootfs
+> > >
+> > > Signed-off-by: Lichen Liu <lichliu@redhat.com>
+> > > ---
+> > >  fs/namespace.c | 11 ++++++++++-
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/namespace.c b/fs/namespace.c
+> > > index ddfd4457d338..a450db31613e 100644
+> > > --- a/fs/namespace.c
+> > > +++ b/fs/namespace.c
+> > > @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
+> > >  }
+> > >  __setup("mphash_entries=3D", set_mphash_entries);
+> > >
+> > > +static char * __initdata rootfs_flags;
+> > > +static int __init rootfs_flags_setup(char *str)
+> > > +{
+> > > +       rootfs_flags =3D str;
+> >
+> > I do see there are a few similar usages in init/do_mounts.c, probably
+> > it is old stuff and it just works.  But I think making rootfs_flags as
+> > an array and copying str into it is the right way.
+Hi Dave, thanks for your comments!
 
-FYI, the error/warning still remains.
+I will check how to make it better.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6e64f4580381e32c06ee146ca807c555b8f73e24
-commit: 13877bc79d81354c53e91f3c86ac0f7bafe3ba7b xfs: port ondisk structure checks from xfs/122 to the kernel
-date:   9 months ago
-config: arm-randconfig-001-20250808 (https://download.01.org/0day-ci/archive/20250808/202508081101.hx7Fc3HV-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250808/202508081101.hx7Fc3HV-lkp@intel.com/reproduce)
+>
+> Another question, may need fs people to clarify.  If the mount is
+> tmpfs and it is also rootfs,  could it use 100% of the memory by
+> default, and then no need for an extra param?    I feel that there is
+> no point to reserve memory if it is a fully memory based file system.
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508081101.hx7Fc3HV-lkp@intel.com/
+I think rootfstype=3Dramfs will use 100% of the memory.
+For kdump only, there might not be much difference between using ramfs
+and tmpfs size=3D100%. But I think it might provide more flexibility
+since rootfstype=3D and rootflags=3D can be used with root=3D.
 
-All errors (new ones prefixed by >>):
+https://www.kernel.org/doc/html/latest/admin-guide/kernel-parameters.html
 
-   In file included from include/linux/container_of.h:5,
-                    from include/linux/list.h:5,
-                    from include/linux/semaphore.h:11,
-                    from fs/xfs/xfs_linux.h:24,
-                    from fs/xfs/xfs.h:26,
-                    from fs/xfs/xfs_super.c:7:
-   fs/xfs/libxfs/xfs_ondisk.h: In function 'xfs_check_ondisk_structs':
->> include/linux/build_bug.h:78:41: error: static assertion failed: "XFS: sizeof(struct xfs_attr_sf_entry) is wrong, expected 3"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   fs/xfs/libxfs/xfs_ondisk.h:10:9: note: in expansion of macro 'static_assert'
-      10 |         static_assert(sizeof(structname) == (size), \
-         |         ^~~~~~~~~~~~~
-   fs/xfs/libxfs/xfs_ondisk.h:133:9: note: in expansion of macro 'XFS_CHECK_STRUCT_SIZE'
-     133 |         XFS_CHECK_STRUCT_SIZE(struct xfs_attr_sf_entry,         3);
-         |         ^~~~~~~~~~~~~~~~~~~~~
->> include/linux/build_bug.h:78:41: error: static assertion failed: "XFS: sizeof(struct xfs_dir2_data_unused) is wrong, expected 6"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   fs/xfs/libxfs/xfs_ondisk.h:10:9: note: in expansion of macro 'static_assert'
-      10 |         static_assert(sizeof(structname) == (size), \
-         |         ^~~~~~~~~~~~~
-   fs/xfs/libxfs/xfs_ondisk.h:136:9: note: in expansion of macro 'XFS_CHECK_STRUCT_SIZE'
-     136 |         XFS_CHECK_STRUCT_SIZE(struct xfs_dir2_data_unused,      6);
-         |         ^~~~~~~~~~~~~~~~~~~~~
+> >
+> > > +       return 1;
+> > > +}
+> > > +
+> > > +__setup("rootfsflags=3D", rootfs_flags_setup);
+> > > +
+> > >  static u64 event;
+> > >  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+> > >  static DEFINE_IDA(mnt_group_ida);
+> > > @@ -6086,7 +6095,7 @@ static void __init init_mount_tree(void)
+> > >         struct mnt_namespace *ns;
+> > >         struct path root;
+> > >
+> > > -       mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
+> > > +       mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_f=
+lags);
+> > >         if (IS_ERR(mnt))
+> > >                 panic("Can't create rootfs");
+> > >
+> > > --
+> > > 2.50.1
+> > >
+> > >
+> > Thanks
+> > Dave
+>
 
-
-vim +78 include/linux/build_bug.h
-
-bc6245e5efd70c Ian Abbott       2017-07-10  60  
-6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
-6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
-6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
-6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
-6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
-6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
-6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
-6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
-6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
-6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
-6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
-6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
-6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
-6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-6bab69c65013be Rasmus Villemoes 2019-03-07  79  
-07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
-
-:::::: The code at line 78 was first introduced by commit
-:::::: 6bab69c65013bed5fce9f101a64a84d0385b3946 build_bug.h: add wrapper for _Static_assert
-
-:::::: TO: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
