@@ -1,406 +1,85 @@
-Return-Path: <linux-kernel+bounces-759774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78DF9B1E252
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:30:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B4BB1E253
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 229D7724B65
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13D3418C7FDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7A8226165;
-	Fri,  8 Aug 2025 06:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5E0224240;
+	Fri,  8 Aug 2025 06:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oumdgnpI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3Ve4do3o";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s03B0/yH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E801F1306;
-	Fri,  8 Aug 2025 06:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C667D21C9FD;
+	Fri,  8 Aug 2025 06:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754634634; cv=none; b=geodAv2WxrTvjSx5F+XDmoTy68puTiqH1EQZGu+XoiliyH8QgAtwSsHo1VCkfFVutyvbVi4QpFyIyZ4mNipJ/a9OT7VzVYzzYd6AVuVZnF7/Z9M/e5jr8j4O3A5gt7ZUYvVBZYZLTxAHp1dyi69/B00My0RJ0IYR1XePs0Dvzf8=
+	t=1754634647; cv=none; b=FkXJQB1WrRcASBEQKBuJFmEOZuE7Ijhx89EeA40m1XBAls82qIUVvU/URJUIhWtpTlNbZg1ZNaTLo5IDzqVW1jTQvpb07MRB3l8XuJrDObJUSjhDN7sGxxbkPWXXZ8x+YsFSZHYlooqoD65DuXtXwGvZVpyyeuqwvB1pxoWqJqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754634634; c=relaxed/simple;
-	bh=2sZclBUIchMgOI2BfV6AOvaczH7sNa7CyFdTx87lVcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJsST49+5uog5kV2/lr94XjSVUpPOiviZ1BtMsrxc9O1FQHuOMbY9YkiqDxgbRyUDi79p6AUiDG/tsnP1EUqXTWNuBYyNzM19FN1bNNM+pOFKaLqdrjGOtEz5Kzbp/uqIsy/rXsiKC/xlWl5DxuhonkOhx8TnSoEuWpdTPKzqoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oumdgnpI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5463C1648;
-	Fri,  8 Aug 2025 08:29:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754634577;
-	bh=2sZclBUIchMgOI2BfV6AOvaczH7sNa7CyFdTx87lVcE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oumdgnpIcDsNg0djHYTq38XzQUF1TkgCzet42UojtjhitVip2QZCrbg2zqqcByvlX
-	 baY/CA6Dhgx81mz9UqbNHHcJrX7kQLHr2Qwr0A9FfGL8DNPlEjbIJ+qzZwZn4Bu7WR
-	 q6Pt/CjukSiWCSaMGBxXRzbtMbKI+d/wrxnUndSo=
-Date: Fri, 8 Aug 2025 09:30:11 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 27/65] media: Reset file->private_data to NULL in
- v4l2_fh_del()
-Message-ID: <20250808063011.GJ11583@pendragon.ideasonboard.com>
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-27-eb140ddd6a9d@ideasonboard.com>
- <e9aaf929-5e0d-4379-996b-a564acd3e331@kernel.org>
- <20250807085003.GE11583@pendragon.ideasonboard.com>
- <20250807170004.GG11583@pendragon.ideasonboard.com>
- <20250807202553.GB28610@pendragon.ideasonboard.com>
- <7605f778-6b20-47e4-bd65-7a0d85fff736@kernel.org>
+	s=arc-20240116; t=1754634647; c=relaxed/simple;
+	bh=jkiWOhEyhzo/YryVRjT+5Kz54ol26kRNo11irK2vctY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z6gQYThrtnXSUSTBLHjKC5r/tkSoomcGS3X9t5htFfoxh5RyHBqANZLGJJy09IzPrfu+dhkW877nm4LTTqvZsA0nnciDxpAjvj7lz7JvNbZfEkJxcl7weKXRKWRsI63Emn2DB37mYktrR2YtXzNm9mOQUQb4tm5DKSEvL0iGVGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3Ve4do3o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s03B0/yH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754634643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jkiWOhEyhzo/YryVRjT+5Kz54ol26kRNo11irK2vctY=;
+	b=3Ve4do3obONhu6h/bjEiv19h4bHIIDa2xU3UqkAGutAlLpNwFwBE85nKgCUDxzUYL8r6ln
+	ioW/mXb++Tjp58tUHasfVa4XRAYYDEFvopB+x7hztmsFKf/0GV2/pQY/kLxRrE593ul1Sc
+	JJnEEGesOPEB0smAzEH6T6FsC0H8G2w998+my9TFlKjlDuLu5D5IAccg1ua1Tj9/3k6WXt
+	1UpKIlsKo2GHoDLZBETtMNAqC8LUWfAo8i1lUBKxSspks9iEaUbWwegCb4ijWqO0kKiMFo
+	40DA0dlAIu/y7bXrUFXziVcSpeBWs9heNWvuPhdEiQD/Otf/1zNfyfjXN/CipA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754634643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jkiWOhEyhzo/YryVRjT+5Kz54ol26kRNo11irK2vctY=;
+	b=s03B0/yHw2l1VJ+AUcjB3yw8i257TCxgx78KhJVpKw/Wf2gEEdgvmbZlADv8sx1dmLaivd
+	CWbQAVbHavRTRaDQ==
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] verification/rvgen/ltl: Support per-cpu monitor
+ generation
+In-Reply-To: <0d29da11a78f8c4b67f3a590bc015ba1ff4bfcf4.camel@redhat.com>
+References: <cover.1754466623.git.namcao@linutronix.de>
+ <ccfa5ee80e6114b046f04dc1bf1de0c4e7a11c09.1754466623.git.namcao@linutronix.de>
+ <6754c61d60fc161963d0625a4b647a241b363fc5.camel@redhat.com>
+ <87o6sqpfbj.fsf@yellow.woof>
+ <0d29da11a78f8c4b67f3a590bc015ba1ff4bfcf4.camel@redhat.com>
+Date: Fri, 08 Aug 2025 08:30:42 +0200
+Message-ID: <87cy96pbot.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7605f778-6b20-47e4-bd65-7a0d85fff736@kernel.org>
+Content-Type: text/plain
 
-On Thu, Aug 07, 2025 at 10:51:27PM +0200, Hans Verkuil wrote:
-> On 07/08/2025 22:25, Laurent Pinchart wrote:
-> > On Thu, Aug 07, 2025 at 08:00:06PM +0300, Laurent Pinchart wrote:
-> >> On Thu, Aug 07, 2025 at 11:50:07AM +0300, Laurent Pinchart wrote:
-> >>> On Wed, Aug 06, 2025 at 02:45:14PM +0200, Hans Verkuil wrote:
-> >>>> On 02/08/2025 11:22, Jacopo Mondi wrote:
-> >>>>> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>>
-> >>>>> Multiple drivers that use v4l2_fh and call v4l2_fh_del() manually reset
-> >>>>> the file->private_data pointer to NULL in their video device .release()
-> >>>>> file operation handler. Move the code to the v4l2_fh_del() function to
-> >>>>> avoid direct access to file->private_data in drivers. This requires
-> >>>>> adding a file pointer argument to the function.
-> >>>>>
-> >>>>> Changes to drivers have been generated with the following coccinelle
-> >>>>> semantic patch:
-> >>>>>
-> >>>>> @@
-> >>>>> expression fh;
-> >>>>> identifier filp;
-> >>>>> identifier release;
-> >>>>> type ret;
-> >>>>> @@
-> >>>>> ret release(..., struct file *filp, ...)
-> >>>>> {
-> >>>>> 	<...
-> >>>>> -	filp->private_data = NULL;
-> >>>>> 	...
-> >>>>> -	v4l2_fh_del(fh);
-> >>>>> +	v4l2_fh_del(fh, filp);
-> >>>>> 	...>
-> >>>>> }
-> >>>>>
-> >>>>> @@
-> >>>>> expression fh;
-> >>>>> identifier filp;
-> >>>>> identifier release;
-> >>>>> type ret;
-> >>>>> @@
-> >>>>> ret release(..., struct file *filp, ...)
-> >>>>> {
-> >>>>> 	<...
-> >>>>> -	v4l2_fh_del(fh);
-> >>>>> +	v4l2_fh_del(fh, filp);
-> >>>>> 	...
-> >>>>> -	filp->private_data = NULL;
-> >>>>> 	...>
-> >>>>> }
-> >>>>>
-> >>>>> @@
-> >>>>> expression fh;
-> >>>>> identifier filp;
-> >>>>> identifier release;
-> >>>>> type ret;
-> >>>>> @@
-> >>>>> ret release(..., struct file *filp, ...)
-> >>>>> {
-> >>>>> 	<...
-> >>>>> -	v4l2_fh_del(fh);
-> >>>>> +	v4l2_fh_del(fh, filp);
-> >>>>> 	...>
-> >>>>> }
-> >>>>>
-> >>>>> Manual changes have been applied to Documentation/ to update the usage
-> >>>>> patterns, to drivers/media/v4l2-core/v4l2-fh.c to update the
-> >>>>> v4l2_fh_del() prototype and reset file->private_data, and to
-> >>>>> include/media/v4l2-fh.h to update the v4l2_fh_del() function prototype
-> >>>>> and its documentation.
-> >>>>>
-> >>>>> Additionally, white space issues have been fixed manually in
-> >>>>> drivers/usb/gadget/function/uvc_v4l2.c
-> >>>>>
-> >>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> >>>>> ---
-> >>>>>  Documentation/driver-api/media/v4l2-fh.rst                         | 4 ++--
-> >>>>>  Documentation/translations/zh_CN/video4linux/v4l2-framework.txt    | 4 ++--
-> >>>>>  drivers/media/pci/cx18/cx18-fileops.c                              | 4 ++--
-> >>>>>  drivers/media/pci/ivtv/ivtv-fileops.c                              | 4 ++--
-> >>>>>  drivers/media/pci/saa7164/saa7164-encoder.c                        | 2 +-
-> >>>>>  drivers/media/pci/saa7164/saa7164-vbi.c                            | 2 +-
-> >>>>>  drivers/media/platform/allegro-dvt/allegro-core.c                  | 2 +-
-> >>>>>  drivers/media/platform/amlogic/meson-ge2d/ge2d.c                   | 2 +-
-> >>>>>  drivers/media/platform/amphion/vpu_v4l2.c                          | 4 ++--
-> >>>>>  drivers/media/platform/chips-media/coda/coda-common.c              | 4 ++--
-> >>>>>  drivers/media/platform/chips-media/wave5/wave5-helper.c            | 2 +-
-> >>>>>  drivers/media/platform/imagination/e5010-jpeg-enc.c                | 4 ++--
-> >>>>>  drivers/media/platform/m2m-deinterlace.c                           | 2 +-
-> >>>>>  drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c               | 4 ++--
-> >>>>>  drivers/media/platform/mediatek/mdp/mtk_mdp_m2m.c                  | 4 ++--
-> >>>>>  drivers/media/platform/mediatek/mdp3/mtk-mdp3-m2m.c                | 4 ++--
-> >>>>>  .../media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c    | 4 ++--
-> >>>>>  .../media/platform/mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c    | 4 ++--
-> >>>>>  drivers/media/platform/nvidia/tegra-vde/v4l2.c                     | 2 +-
-> >>>>>  drivers/media/platform/nxp/dw100/dw100.c                           | 2 +-
-> >>>>>  drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c                     | 4 ++--
-> >>>>>  drivers/media/platform/nxp/imx-pxp.c                               | 2 +-
-> >>>>>  drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c                 | 2 +-
-> >>>>>  drivers/media/platform/nxp/mx2_emmaprp.c                           | 2 +-
-> >>>>>  drivers/media/platform/qcom/iris/iris_vidc.c                       | 3 +--
-> >>>>>  drivers/media/platform/qcom/venus/core.c                           | 2 +-
-> >>>>>  drivers/media/platform/renesas/rcar_fdp1.c                         | 2 +-
-> >>>>>  drivers/media/platform/renesas/rcar_jpu.c                          | 4 ++--
-> >>>>>  drivers/media/platform/renesas/vsp1/vsp1_video.c                   | 2 +-
-> >>>>>  drivers/media/platform/rockchip/rga/rga.c                          | 2 +-
-> >>>>>  drivers/media/platform/rockchip/rkvdec/rkvdec.c                    | 2 +-
-> >>>>>  drivers/media/platform/samsung/exynos-gsc/gsc-m2m.c                | 4 ++--
-> >>>>>  drivers/media/platform/samsung/exynos4-is/fimc-m2m.c               | 4 ++--
-> >>>>>  drivers/media/platform/samsung/s5p-g2d/g2d.c                       | 2 +-
-> >>>>>  drivers/media/platform/samsung/s5p-jpeg/jpeg-core.c                | 4 ++--
-> >>>>>  drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c                   | 4 ++--
-> >>>>>  drivers/media/platform/st/sti/bdisp/bdisp-v4l2.c                   | 4 ++--
-> >>>>>  drivers/media/platform/st/sti/delta/delta-v4l2.c                   | 4 ++--
-> >>>>>  drivers/media/platform/st/sti/hva/hva-v4l2.c                       | 4 ++--
-> >>>>>  drivers/media/platform/st/stm32/dma2d/dma2d.c                      | 2 +-
-> >>>>>  drivers/media/platform/sunxi/sun8i-di/sun8i-di.c                   | 2 +-
-> >>>>>  drivers/media/platform/sunxi/sun8i-rotate/sun8i_rotate.c           | 2 +-
-> >>>>>  drivers/media/platform/ti/omap3isp/ispvideo.c                      | 5 ++---
-> >>>>>  drivers/media/platform/ti/vpe/vpe.c                                | 2 +-
-> >>>>>  drivers/media/platform/verisilicon/hantro_drv.c                    | 4 ++--
-> >>>>>  drivers/media/test-drivers/vicodec/vicodec-core.c                  | 2 +-
-> >>>>>  drivers/media/test-drivers/vim2m.c                                 | 2 +-
-> >>>>>  drivers/media/test-drivers/visl/visl-core.c                        | 2 +-
-> >>>>>  drivers/media/usb/pvrusb2/pvrusb2-v4l2.c                           | 3 +--
-> >>>>>  drivers/media/v4l2-core/v4l2-fh.c                                  | 7 ++++---
-> >>>>>  drivers/media/v4l2-core/v4l2-subdev.c                              | 5 ++---
-> >>>>>  drivers/staging/media/imx/imx-media-csc-scaler.c                   | 4 ++--
-> >>>>>  drivers/staging/media/meson/vdec/vdec.c                            | 2 +-
-> >>>>>  drivers/staging/media/sunxi/cedrus/cedrus.c                        | 2 +-
-> >>>>>  drivers/staging/most/video/video.c                                 | 4 ++--
-> >>>>>  drivers/usb/gadget/function/uvc_v4l2.c                             | 3 +--
-> >>>>>  include/media/v4l2-fh.h                                            | 5 ++++-
-> >>>>>  57 files changed, 89 insertions(+), 90 deletions(-)
-> >>>>>
-> >>>>
-> >>>> <snip>
-> >>>>
-> >>>>> diff --git a/drivers/media/v4l2-core/v4l2-fh.c b/drivers/media/v4l2-core/v4l2-fh.c
-> >>>>> index b59b1084d8cdf1b62da12879e21dbe56c2109648..df3ba9d4674bd25626cfcddc2d0cb28c233e3cc3 100644
-> >>>>> --- a/drivers/media/v4l2-core/v4l2-fh.c
-> >>>>> +++ b/drivers/media/v4l2-core/v4l2-fh.c
-> >>>>> @@ -67,7 +67,7 @@ int v4l2_fh_open(struct file *filp)
-> >>>>>  }
-> >>>>>  EXPORT_SYMBOL_GPL(v4l2_fh_open);
-> >>>>>  
-> >>>>> -void v4l2_fh_del(struct v4l2_fh *fh)
-> >>>>> +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp)
-> >>>>
-> >>>> Instead of adding a second argument, perhaps it is better to
-> >>>> just provide the filp pointer. After all, you can get the v4l2_fh
-> >>>> from filp->private_data.
-> >>>>
-> >>>> It simplifies the code a bit.
-> >>>
-> >>> That's an interesting idea. I'll give it a try.
-> >>
-> >> We end up with code like (e.g. in v4l2_fh_release(), with similar
-> >> constructs in lots of drivers)
-> >>
-> >> 	if (fh) {
-> >> 		v4l2_fh_del(filp);
-> >> 		v4l2_fh_exit(fh);
-> >> 		kfree(fh);
-> >> 	}
-> >>
-> >> compared to
-> >>
-> >> 	if (fh) {
-> >> 		v4l2_fh_del(fh, filp);
-> >> 		v4l2_fh_exit(fh);
-> >> 		kfree(fh);
-> >> 	}
-> >>
-> >> with the existing patch. I find the fact that v4l2_fh_del() takes a
-> >> different pointer than v4l2_fh_exit() a bit disturbing. If you think
-> >> it's better I'll drop the fh argument in v2.
-> > 
-> > I gave it a try, and looking at the function prototype, its
-> > documentation, the imbalance with v4l2_fh_add(), and the code in the
-> > callers, I think keeping both arguments would look cleaner. Please tell
-> > me if you feel strongly about this, I can still submit a patch to drop
-> > the argument. It can very easily be scripted with coccinelle and doesn't
-> > conflict with the rest of the series, so it could also be done later.
-> 
-> Looking at all the drivers that call v4l2_fh_del/exit I always see v4l2_fh_del()
-> directly followed by v4l2_fh_exit(). I think it would make a lot of sense to just
-> combine the two as a single function: v4l2_fh_del_exit(filp).
-> 
-> That simplifies the code and solves the imbalance.
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> Mind I don't say you should change the value passed to ltl_target_init
+> nor change your logic, I only mean /online/ isn't the right word here.
+>
+> Does this make more sense?
 
-I'll try that as a separate patch on top of this one. Keeping the two
-separate will ease review (both patches will be simpler, and will be
-generated by coccinelle), and will also make it easier to drop the
-second patch if we decide it's not the way to go.
+Yes, thanks for the elaboration!
 
-> >>>>>  {
-> >>>>>  	unsigned long flags;
-> >>>>>  
-> >>>>> @@ -75,6 +75,8 @@ void v4l2_fh_del(struct v4l2_fh *fh)
-> >>>>>  	list_del_init(&fh->list);
-> >>>>>  	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
-> >>>>>  	v4l2_prio_close(fh->vdev->prio, fh->prio);
-> >>>>> +
-> >>>>> +	filp->private_data = NULL;
-> >>>>>  }
-> >>>>>  EXPORT_SYMBOL_GPL(v4l2_fh_del);
-> >>>>>  
-> >>>>> @@ -94,10 +96,9 @@ int v4l2_fh_release(struct file *filp)
-> >>>>>  	struct v4l2_fh *fh = file_to_v4l2_fh(filp);
-> >>>>>  
-> >>>>>  	if (fh) {
-> >>>>> -		v4l2_fh_del(fh);
-> >>>>> +		v4l2_fh_del(fh, filp);
-> >>>>>  		v4l2_fh_exit(fh);
-> >>>>>  		kfree(fh);
-> >>>>> -		filp->private_data = NULL;
-> >>>>>  	}
-> >>>>>  	return 0;
-> >>>>>  }
-> >>>>
-> >>>> <snip>
-> >>>>
-> >>>>> diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
-> >>>>> index d8fcf49f10e09452b73499f4a9bd1285bc2835a5..5e4c761635120608e0b588e0b0daf63e69588d38 100644
-> >>>>> --- a/include/media/v4l2-fh.h
-> >>>>> +++ b/include/media/v4l2-fh.h
-> >>>>> @@ -114,12 +114,15 @@ int v4l2_fh_open(struct file *filp);
-> >>>>>   * v4l2_fh_del - Remove file handle from the list of file handles.
-> >>>>>   *
-> >>>>>   * @fh: pointer to &struct v4l2_fh
-> >>>>> + * @filp: pointer to &struct file associated with @fh
-> >>>>> + *
-> >>>>> + * The function resets filp->private_data to NULL.
-> >>>>>   *
-> >>>>>   * .. note::
-> >>>>>   *    Must be called in v4l2_file_operations->release\(\) handler if the driver
-> >>>>>   *    uses &struct v4l2_fh.
-> >>>>>   */
-> >>>>> -void v4l2_fh_del(struct v4l2_fh *fh);
-> >>>>> +void v4l2_fh_del(struct v4l2_fh *fh, struct file *filp);
-> >>>>>  
-> >>>>>  /**
-> >>>>>   * v4l2_fh_exit - Release resources related to a file handle.
-
--- 
-Regards,
-
-Laurent Pinchart
+Nam
 
