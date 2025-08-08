@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-760033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E25EDB1E5CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:44:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5C6B1E59A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1AF51AA59C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:44:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E123BC7B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2521270EA8;
-	Fri,  8 Aug 2025 09:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1588D26E700;
+	Fri,  8 Aug 2025 09:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KVCdxGB5"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A06E26E70E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 09:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIhPQXAh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A252C181;
+	Fri,  8 Aug 2025 09:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754646250; cv=none; b=dc6/EOAbqCSG6oTMzBpH+sYDL359oj0OG6d6/L3FatCW1+/8od9zOkC7lHgE+R2MbtInslXjo4zy8Ex5tLgu4E5I4QWfg9y/sg0FugaJvnWw3eANf5XFzIjf2SW0392EblBNWkl9rIei5DOm7Gzi7EcZqZra0NUx7Flk/aG4gdc=
+	t=1754645263; cv=none; b=eLwmfrRiPBbbUKgbJZxf2MxDzAH1EK2ETan+nYeuPwIJoef9M9O1dPlCJ1+fmGTlghjNi3DxQPp14htEvEyN5GflRU6ypzRKb5jelJurqugAIUCdLxGhnvl0oVh0lD8E4D15UtpmSJGc/WPqdN/YCErfsvc1fFsw+yReRi6qFRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754646250; c=relaxed/simple;
-	bh=nzbLANNmVBAPUonG7Wxn3kVgCvgdQW9TZkNFQ1L/+8k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=p+NlxtT5rk2t69UuaeokZCkrfUcR77J+P/E5mw/2c4zQOjD5pUWfxMhnH/pGlSSIh+oD8PhwJt3a4jFLpC0swYVG4Rd7t7K2TGKsxZnFlR9doVjMJr0HW8MNCxBm6F2Gd2orYDz80t+Km8RDrpWyk/xPw/ypzEvFHh/3oyx9H/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KVCdxGB5; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=hg/dNySbwBik4yOGXZxNDXDhAmqw7dDjJ6pVF0ShhBY=;
-	b=KVCdxGB5VV9GpPQ2Cbv/DJ4IyeE1SYj3iZ8rgB5+GD36WZ2FkHGX+lf+7W/TdR
-	ohrA+WdbQChSHji0f3qWpM0otKZBUu2m/tdk9Dotoh2fjGQCRIdVholK3Vhfts0W
-	fOb+QgSQFaAG5NcZ0UOLQihNnDuVzyY9KHjmXJO2Pgxzo=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDX0473wpVorWBMAA--.9256S2;
-	Fri, 08 Aug 2025 17:27:19 +0800 (CST)
-From: Qingshuang Fu <fffsqian@163.com>
-To: akpm@linux-foundation.org,
-	hannes@cmpxchg.org
-Cc: david@redhat.com,
-	mhocko@kernel.org,
-	zhengqi.arch@bytedance.com,
-	shakeel.butt@linux.dev,
-	lorenzo.stoakes@oracle.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Qingshuang Fu <fuqingshuang@kylinos.cn>
-Subject: [PATCH] Fix the data type inconsistency issue of min (tier, MAX_CR_TIERS-1) in read_ctrl_pos
-Date: Fri,  8 Aug 2025 17:27:17 +0800
-Message-Id: <20250808092717.191444-1-fffsqian@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754645263; c=relaxed/simple;
+	bh=XMAAaKUHKb+89gbJxiJrRs/H0s9nZo36TNrqRNIy1z0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dw2yA9k5HA7Yg8abuN0GFWcccW1LjRkqVaRsF8yVcw3fP8cL6vC4lwFszIni8vGkUeJpEymsCH4qRl5zT/XTBh+/+tOjo31+hq1CBc2HSKYuLPUlwl1tRaYGxE6PiiNROjjCehNg+YfnWuBGuodvNpkh5u4yWUGsRyOcRlR+Eo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIhPQXAh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD557C4CEED;
+	Fri,  8 Aug 2025 09:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754645263;
+	bh=XMAAaKUHKb+89gbJxiJrRs/H0s9nZo36TNrqRNIy1z0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CIhPQXAhwxdTe1R/BiOa44O+SbQWYdwBn+2/N1HHBfhy109QeXfKIunpLCHPWqIFZ
+	 d22PQSn7qWr9wbbQ1+YPQs3Sp0Fg/GQEP+GM1GeLvNnaR0nZjKpNuSBi9YAjqkZPUW
+	 a8mbNtrju92OrFwbERu4JVxQn8duKtvG5vEFBZnFd2KolyuhPRPJHZWJMFasx9tpPn
+	 UMIoVMpW1YI58xeDG0DbdNgDNP/8eSLOqXZtFB2hCL9mWKk0nqI0p1YilmGNiVg272
+	 oLSLKLsn5uqsta3GkG9zJKfxZaM4Bj+1mMkI2jyH71CdQiBve/gMVF/7usjprluVJp
+	 LGj4SVGGS939Q==
+Message-ID: <fb156b5c-c83c-4d33-86bb-f3cc4cf39ada@kernel.org>
+Date: Fri, 8 Aug 2025 10:27:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] OV02C10: image upside down in kernel 6.16
+To: Frederic Stuyk <fstuyk@runbox.com>, hansg@kernel.org
+Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <7d38cf46-670e-462e-b7c2-78f9aaa9eb43@runbox.com>
+ <4d193kdY6jzaUWpsKVleAVgwUkBkmgx2garx3qWBKFjDuJU0LxENQpBpuvRIXGVoTLPiswDorAZVEG2wy-qjRA==@protonmail.internalid>
+ <b6df9ae7-ea9f-4e5a-8065-5b130f534f37@runbox.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <b6df9ae7-ea9f-4e5a-8065-5b130f534f37@runbox.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX0473wpVorWBMAA--.9256S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uw4rtw43KFWfAr43CFW3Jrb_yoW8Gry3pa
-	93G3yqk39xtwn7Gw1qqr4xAw1xWw1vkFW7JrW2qr10ka43GFykta15Krn8t3yjyFWxX3W3
-	Za4IkFW3K3WDAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jU6pPUUUUU=
-X-CM-SenderInfo: 5iii21xldqqiywtou0bp/xtbBDhqjymiVwnUSpgAAsD
 
-From: Qingshuang Fu <fuqingshuang@kylinos.cn>
+On 08/08/2025 10:03, Frederic Stuyk wrote:
+> Querying the sensor orientation metadata shows:
+> 
+>       $ v4l2-ctl -d /dev/v4l-subdev6 -C camera_sensor_rotation
+>       camera_sensor_rotation: 0
+> 
+> This control is read-only and cannot be changed.
 
-Due to the fact that the tier data type in min (tier, MAX_CR_TIERS -1)
-is int,but MAX_CR_TIERS is an unsigned type, directly using
-the min function for comparison will result in an error:
+Register is defined but not used.
 
-from mm/vmscan.c:15:
-mm/vmscan.c: In function ‘read_ctrl_pos’:
-./include/linux/build_bug.h:78:41: error: static assertion failed:
-"min(tier, 4U - 1) signedness error, fix types or
-consider umin() before min_t()"
+deckard$ grep ROT drivers/media/i2c/ov02c10.c
+#define OV02C10_ROTATE_CONTROL		CCI_REG8(0x3820)
+#define OV02C10_CONFIG_ROTATE		0x18
 
-Fixes: 37a260870f2c ("mm/mglru: rework type selection")
-Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
-Suggested-by: David Hildenbrand <david@redhat.com>
+::set_ctrl()
+case V4L2_CID_HFLIP:
+case V4L2_CID_VFLIP:
+cci_write(ov02c10->regmap, OV02C10_ROTATE_CONTROL,
+           ov02c10->hflip->val | ov02c10->vflip->val << 1, &ret);
+
+::init_controls()
+
+ov02c10->hflip = v4l2_ctrl_new_std(ctrl_hdlr, &ov02c10_ctrl_ops,
+                                    V4L2_CID_HFLIP, 0, 1, 1, 0);
+if (ov02e10->hflip)
+         ov02e10->hflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+
+ov02c10->vflip = v4l2_ctrl_new_std(ctrl_hdlr, &ov02c10_ctrl_ops,
+                                    V4L2_CID_VFLIP, 0, 1, 1, 0);
+if (ov02c10->vflip)
+         ov02c10->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+
+Something like that should work.
+
+I think Hans said the ACPI tables provide the orientation for the sensor.
 
 ---
-v1 -> v2:
-Modified patch descriptio
----
- mm/vmscan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 7de11524a936..f991196fd8e5 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3194,7 +3194,7 @@ static void read_ctrl_pos(struct lruvec *lruvec, int type, int tier, int gain,
- 	pos->gain = gain;
- 	pos->refaulted = pos->total = 0;
- 
--	for (i = tier % MAX_NR_TIERS; i <= min(tier, MAX_NR_TIERS - 1); i++) {
-+	for (i = tier % MAX_NR_TIERS; i <= min_t(int, tier, MAX_NR_TIERS - 1); i++) {
- 		pos->refaulted += lrugen->avg_refaulted[type][i] +
- 				  atomic_long_read(&lrugen->refaulted[hist][type][i]);
- 		pos->total += lrugen->avg_total[type][i] +
--- 
-2.25.1
-
+bod
 
