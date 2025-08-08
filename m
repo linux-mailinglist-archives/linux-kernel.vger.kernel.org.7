@@ -1,141 +1,220 @@
-Return-Path: <linux-kernel+bounces-760205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0940B1E7C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE52BB1E7CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1793AC05D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:55:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44AB63BB067
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3024275AED;
-	Fri,  8 Aug 2025 11:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EAA275AE7;
+	Fri,  8 Aug 2025 11:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="egIcImIJ"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0SNR28J"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02112275860;
-	Fri,  8 Aug 2025 11:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC0122258C;
+	Fri,  8 Aug 2025 11:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754654131; cv=none; b=NR12LLfQ7W5mhMkLdC8TWTkkSCzUWISLngaamSiW8EWtMWe92FUzNhGnPv1/QnspPTaYJuqsuwfGbwiBSmUktnoXOkZjnlO57vXxZjpZJsRJqs51jg0zv+TzDjR20LHiF4uXNqJfnuj4Fpy9VOqSiDrjhNLnS7dr+m3q1d/gGlg=
+	t=1754654255; cv=none; b=sCpJI9jwOS35KfSlewNOZ3VVXRIzEqql/m2psmhSHU7V/3S1sOKMSJ+6Gv7gkyamgIBm5+rscH++6xDA9hB/jnkRq+b8zRJhLgMr1ZRNC5sw2rv8U38PafSanjtUIay6SPk2r2ErEZNzJLWattOdJn2CfJD1fXarvLUnII/5+jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754654131; c=relaxed/simple;
-	bh=j1iFPkLEAmTkGhtA+v5oK2zN/6c1oShcayNSSJekln0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlNbkbCD84XxHVsqmB0MQtPgRxPIwkO1qFH0pgakax0ZMUsHIk1+GRFm+Wr77ZO4NrHAINQr+r0QFcll5mOMoVmeoGduepctgUNmc98pEXKQqITZWXiOpaFQZQKr1+mrDraRE3O1j5HfdbNDeMOEllXECZWnksz1ZBa3qSA5Qyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=egIcImIJ; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4bz2XX66QLz9ty9;
-	Fri,  8 Aug 2025 13:55:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754654124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TMaM5szYKN3qFWMkEpTqrXdlKuBnXydRA4YHiDHA/9Q=;
-	b=egIcImIJjKF7/IfjOV0R1Nw4dd7l5dZO1qMvAspQR0V4HF/5Isr61tUJ0yzQQwy8jp0Sem
-	XcLHtaKMhT2hZxQvA3O3OjKmIlZbUKGaV47ZTAX1KtHTdY6ZVwO0a2MV+bZeiGSU1Uo1en
-	FLkB0T02ycjhAoVdf3fqRNaOB+5R9U1/oGeyalxIkoofAMNxpStcQmZkqiLUOkTPtA70n/
-	bCWvD7GLfLrOjrhXofvM5q+IfXDemykIcYiV6Z9bRJ0KrRo/Q/lVju/xwSDAi7syNi1Lpm
-	uWvAjP8/iX9Ze9ewpTYa9thJvNRlXidkOdEjJrqQeoMPzltneFwG/Zy2MmHk0Q==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Fri, 8 Aug 2025 21:55:10 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36 syscall
- wrappers
-Message-ID: <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
- <20250807-new-mount-api-v2-1-558a27b8068c@cyphar.com>
- <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
+	s=arc-20240116; t=1754654255; c=relaxed/simple;
+	bh=exllA3Jx6HUaPakedceH9it4g83BDsncNgPqDd46eb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aQPW2Tu1RDlWLH+VOwuBa3W6OCUfC/1O9ZUOEDjfvGGhRk9pzViMLWd+8/dpiztn+IiD0Qbb6BUSMExj5/4Dg4Q/+Rhe6AqNxdZZZaahBQRcOGgOoTw4MtwZArJBYBrNAyZNVupi1kQNk5uK+/TJYvQWZJNttisD9JlGcCW5Cco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0SNR28J; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-31ec95ad016so1835171a91.3;
+        Fri, 08 Aug 2025 04:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754654253; x=1755259053; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JPmy7TV8Otdi8h7z+/vlIcixcwuDXsOiVWvreOaDeQE=;
+        b=R0SNR28JfKMJ5Rp8lP5HmMTKGt5M4xrZ2h2qBxtQGeqpndZcK/II+FEm0/5JgxVeUV
+         2ISurGJpcHaPiYFwOPl2sWkTpfd0wNP8Xv4uTzFL17GMLNvYMXj4tfNUZrKx0+yinrVG
+         DblcO/Iz58qU8xcmm12h+fYfXi+xdTQT8DJREoAsRIZqaA5xX0exXFRIyVk3e4uv730F
+         a/Hp7TQ7dutrBW9RFUkc8Og2PjwpnYKzw4d/qblsthEO0VE7V2eX8/w0bltqgt4VyFZI
+         btm/+M+HHdX7M8cYQgMfd8Pv/1H7OSls0SAJ/634rhWP+uDstvpXbFPEHU5j0TNNj7sp
+         5Xaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754654253; x=1755259053;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JPmy7TV8Otdi8h7z+/vlIcixcwuDXsOiVWvreOaDeQE=;
+        b=s5z10H/DaSCJYbCLeHtl5cGAm7xVPhQScHpqIwCJ2Ms0bqIj5KMC+UUahux78/4/F7
+         5ZVZYRT1/Ag7P1kvYNjZwEkJpTUsvs41aJ7SBtWqHr68AQ7htAKHZ8j2DcoqiPuX1LyL
+         wuzfeTutlRVCZCuL27ESbOhFwmLRMlX+Kx5DhUmAbvfANzoWfu2jzBAzoILC3Rl/+eWC
+         o1Tb6dzuspXmT5nslaTo0HtxYzSI9Pk74+okfX3DxD3sAvGXOqN1tOBpO3G6gV/f9ei8
+         XYnH63kRMy5uUMksjzOjIrsiOhbKk6xb47r2KqfjeYgjiwWooB8HN9DPMFV5Xo30i+rh
+         dvEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8eaHP5RK7XqatJRVlFCJB+L8S+uLPBX0Jekb2u/+E9nI8cGLt3Hba9RCPF2+KSumBAcqAmXs8puz4672uE+sKR/dUu/Kj@vger.kernel.org, AJvYcCV4E5JTj6/mtlxIOYA0J3X//WZAsghcSbfgsmovPNMWW+p5KgnPmWj345ItEvNYjiLu6KbOObp8ww==@vger.kernel.org, AJvYcCXaBTx6qPT1kVTdPmimgeqfK9KExRwp+ZcT72oLee87ZbeVnRzWql4aSnqgBmhDCGUsji1AqBbm7/zo0U8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYP3QGN71jCvUIo01Nfn9cY+1Hs3YOJ000MXN8+yzb115Tg+HT
+	+eoef5w+iFF332ErWtb9iLjdNauBm/wcTlQa7BzEXMgbOK8W6WVjIMnBr2eYIvSTPcFafbGBJrx
+	l/AbzyQmyUuiFR5qqEnHmX6Ce4mgAMRo=
+X-Gm-Gg: ASbGncuu8AGZJR0jgoOQcQ3cCLC4YUogNMhkNYMw5odPxwpjpMRpYsLH/rTQdmyBStI
+	7DmQ846LZ39V/LpqSbePxvIaBrS5F69/NCjBFGqhACc8K2N7ZxCovaj9XrU/fFDw7Y7k3mCpxlH
+	W1iSdvd4VfBO1ec96xyp/KVKyCQmxYC6qAvT52IcCkhrXQ0p2QSJYi0Ls7SdGWZaKgq5IZdycUD
+	reh4UY=
+X-Google-Smtp-Source: AGHT+IGLy0Plqc8pj0XqKVn/tG+Xg4TWhxNzbjRb+GBKmuIFfOWvybXhxeNO32hP17A6PKMexiQOxvyLz+efX+befPA=
+X-Received: by 2002:a17:90b:5866:b0:312:959:dc4f with SMTP id
+ 98e67ed59e1d1-321839caddemr3562952a91.5.1754654252833; Fri, 08 Aug 2025
+ 04:57:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="chd6azrmxxoywhso"
-Content-Disposition: inline
-In-Reply-To: <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
-X-Rspamd-Queue-Id: 4bz2XX66QLz9ty9
-
-
---chd6azrmxxoywhso
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250807075745.756415-1-tweek@google.com>
+In-Reply-To: <20250807075745.756415-1-tweek@google.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 8 Aug 2025 07:57:21 -0400
+X-Gm-Features: Ac12FXzFkzXFEtiVUAp0b2BNfX-6piwGGTrFd0rcZB7MNDm2DLbb9e2scCpH7zA
+Message-ID: <CAEjxPJ5nC7s=+Os4+9XjkzhGTyaNVrCyJgx+rz5n3baRFWVrzA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] memfd: call security_inode_init_security_anon
+To: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, Nick Kralevich <nnk@google.com>, 
+	Jeff Xu <jeffxu@google.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36 syscall
- wrappers
-MIME-Version: 1.0
 
-On 2025-08-08, Askar Safin <safinaskar@zohomail.com> wrote:
-> When I render "mount_setattr" from this (v2) pathset, I see weird quote m=
-ark. I. e.:
->=20
-> $ MANWIDTH=3D10000 man /path/to/mount_setattr.2
-> ...
-> SYNOPSIS
->        #include <fcntl.h>       /* Definition of AT_* constants */
->        #include <sys/mount.h>
->=20
->        int mount_setattr(int dirfd, const char *path, unsigned int flags,
->                          struct mount_attr *attr, size_t size);"
-> ...
+On Thu, Aug 7, 2025 at 3:57=E2=80=AFAM Thi=C3=A9baud Weksteen <tweek@google=
+.com> wrote:
+>
+> Prior to this change, no security hooks were called at the creation of a
+> memfd file. It means that, for SELinux as an example, it will receive
+> the default type of the filesystem that backs the in-memory inode. In
+> most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
+> be hugetlbfs. Both can be considered implementation details of memfd.
+>
+> It also means that it is not possible to differentiate between a file
+> coming from memfd_create and a file coming from a standard tmpfs mount
+> point.
+>
+> Additionally, no permission is validated at creation, which differs from
+> the similar memfd_secret syscall.
+>
+> Call security_inode_init_security_anon during creation. This ensures
+> that the file is setup similarly to other anonymous inodes. On SELinux,
+> it means that the file will receive the security context of its task.
+>
+> The ability to limit fexecve on memfd has been of interest to avoid
+> potential pitfalls where /proc/self/exe or similar would be executed
+> [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
+> similarly to the file class. These access vectors may not make sense for
+> the existing "anon_inode" class. Therefore, define and assign a new
+> class "memfd_file" to support such access vectors.
 
-Ah, my bad. "make -R lint-man" told me to put end quotes on the synopsis
-lines, but I missed that there was a separate quote missing. This should
-fix it:
+To provide backward compatibility, I would anticipate that you will
+need to define a new SELinux policy capability and make this change
+conditional on it being enabled, see:
+https://github.com/SELinuxProject/selinux-kernel/wiki/Getting-Started#addin=
+g-a-new-selinux-policy-capability
+for instructions and links to examples.
 
-diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-index d44fafc93a20..46fcba927dd8 100644
---- a/man/man2/mount_setattr.2
-+++ b/man/man2/mount_setattr.2
-@@ -14,7 +14,7 @@ .SH SYNOPSIS
- .B #include <sys/mount.h>
- .P
- .BI "int mount_setattr(int " dirfd ", const char *" path ", unsigned int "=
- flags ","
--.BI "                  struct mount_attr *" attr ", size_t " size );"
-+.BI "                  struct mount_attr *" attr ", size_t " size ");"
- .fi
- .SH DESCRIPTION
- The
+Otherwise, see below.
 
+>
+> [1] https://crbug.com/1305267
+> [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.com=
+/
+>
+> Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
+> ---
+>  mm/memfd.c                          | 16 ++++++++++++++--
+>  security/selinux/hooks.c            | 15 +++++++++++----
+>  security/selinux/include/classmap.h |  2 ++
+>  3 files changed, 27 insertions(+), 6 deletions(-)
+>
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index bbe679895ef6..13bff0e91816 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -433,6 +433,9 @@ static struct file *alloc_file(const char *name, unsi=
+gned int flags)
+>  {
+>         unsigned int *file_seals;
+>         struct file *file;
+> +       struct inode *inode;
+> +       int err =3D 0;
+> +       const char *anon_name =3D "[memfd]";
+>
+>         if (flags & MFD_HUGETLB) {
+>                 file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
+> @@ -444,12 +447,21 @@ static struct file *alloc_file(const char *name, un=
+signed int flags)
+>         }
+>         if (IS_ERR(file))
+>                 return file;
+> +
+> +       inode =3D file_inode(file);
+> +       err =3D security_inode_init_security_anon(inode,
+> +                       LSM_ANON_INODE_MEMFD,
+> +                       &QSTR(anon_name), NULL);
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+Since the anon_name already indicates that this is a memfd, so can't
+you already distinguish these via name-based type_transition rules?
+Why do we need the enum argument?
 
---chd6azrmxxoywhso
-Content-Type: application/pgp-signature; name="signature.asc"
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 8d36d5ebb6e5..49742930e706 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2367,8 +2367,8 @@ static int selinux_bprm_creds_for_exec(struct linux=
+_binprm *bprm)
+>         ad.u.file =3D bprm->file;
+>
+>         if (new_tsec->sid =3D=3D old_tsec->sid) {
+> -               rc =3D avc_has_perm(old_tsec->sid, isec->sid,
+> -                                 SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, =
+&ad);
+> +               rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclas=
+s,
+> +                                 FILE__EXECUTE_NO_TRANS, &ad);
 
------BEGIN PGP SIGNATURE-----
+Here and below I am a little concerned that we could end up reaching
+this code on an inode with an isec->sclass that does not define the
+execute_no_trans and entrypoint permissions. We should do something to
+make that never happens, or check for it and always deny in that case.
 
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJXlngAKCRAol/rSt+lE
-by9BAP4yMGtidqOpBrcBgGWWVVVChQPXqEuLZJoUx48cMFfZXAD/dlNXX2+IP0ZE
-+obDnRBcywlV9Y55z6X1Gbrq5Kvm/wE=
-=qGsv
------END PGP SIGNATURE-----
+>                 if (rc)
+>                         return rc;
+>         } else {
+> @@ -2378,8 +2378,8 @@ static int selinux_bprm_creds_for_exec(struct linux=
+_binprm *bprm)
+>                 if (rc)
+>                         return rc;
+>
+> -               rc =3D avc_has_perm(new_tsec->sid, isec->sid,
+> -                                 SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
+> +               rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclas=
+s,
+> +                                 FILE__ENTRYPOINT, &ad);
+>                 if (rc)
+>                         return rc;
+>
+> @@ -2997,6 +2997,13 @@ static int selinux_inode_init_security_anon(struct=
+ inode *inode,
+>
+>                 isec->sclass =3D context_isec->sclass;
+>                 isec->sid =3D context_isec->sid;
+> +       } else if (type =3D=3D LSM_ANON_INODE_MEMFD) {
+> +               isec->sclass =3D SECCLASS_MEMFD_FILE;
+> +               rc =3D security_transition_sid(
+> +                       sid, sid,
+> +                       isec->sclass, name, &isec->sid);
 
---chd6azrmxxoywhso--
+Again, name-based type_transitions ought to be able to distinguish
+memfd based on the name argument IIUC.
 
