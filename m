@@ -1,100 +1,56 @@
-Return-Path: <linux-kernel+bounces-759886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37915B1E3F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96F0B1E3F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9449118887EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8634189C3A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A808E2517AF;
-	Fri,  8 Aug 2025 07:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A63425179A;
+	Fri,  8 Aug 2025 07:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L2XJKYr9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZ2MAqel"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55ED78F39
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B9578F39;
+	Fri,  8 Aug 2025 07:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754639975; cv=none; b=c+rYudp14mDHrUhREp24APbNU8m00l9H32vBDwD2dvmP583u6YZ7iNPKh0Sf6GV4P4LG1yqnqzTPe4r3AQ0hI/OkXWZTsDpnUB3eHEtDIklXV+cG/4IffqqNHJf+mOImOEZZ+6/DA0JBzZ6rIFYiP8EVURYLxTqDd4LATJtMO0c=
+	t=1754639931; cv=none; b=dZOE4xt1/dDRcW3gJjfSbGcwSoDYgPu3GbVSxS+4Ok98W24VTUH7D+Ljq2jto1j0Bsvf2PKglmlvrBCsoEkMuNw36x63hoW6XqcHIpvjA5665jMiqMjupx/Dm+QIOrL5/5JWtnzWiW8xWAraDuypweck4iiLGnRPl2nEYO2bn5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754639975; c=relaxed/simple;
-	bh=aV0E+W7TpF7ScFUrIhlu67F3pDF1bA8Hd4KFXigqUCs=;
+	s=arc-20240116; t=1754639931; c=relaxed/simple;
+	bh=bhYz0q7sZmksGxtqrz5Z9izdRimJdpZwVcCdQnTK6+Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nR+OH0G0/3XfmrwqOM6b+iJaPxy30qWaHI/vfRv9YmBb74er4frR+XaL5C6S0Irar/2mT6HL5Q6qMHYh3rrCaeVOMAOX2dGxP2jP8bGjk2d3mzcEwTkTm3L61qvK8l1tyNaa1j9WAzpvrx7l5t+St2OBhYZyxvwGC9qiuOouXWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L2XJKYr9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754639972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aV0E+W7TpF7ScFUrIhlu67F3pDF1bA8Hd4KFXigqUCs=;
-	b=L2XJKYr9JdWfQZN69A68Tf3d9LOtxv2DaPdBdleAU/WzRXFOiYNa5fzuhLTxNmX8jWwknX
-	9mp5icIT+Sv136lOSLkJz9chYgF6t2akUPDY5E5Cq3QbIoBJaSeHcGjbLzg3kGCHTYY92S
-	tZ+9vubNmF6MaASbfYvvXsRzwd5i9zE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-UNIuuF62OhurBbbx6qeMxQ-1; Fri,
- 08 Aug 2025 03:59:29 -0400
-X-MC-Unique: UNIuuF62OhurBbbx6qeMxQ-1
-X-Mimecast-MFC-AGG-ID: UNIuuF62OhurBbbx6qeMxQ_1754639965
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7991C1800446;
-	Fri,  8 Aug 2025 07:59:23 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 24BB41954185;
-	Fri,  8 Aug 2025 07:59:06 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  8 Aug 2025 09:58:12 +0200 (CEST)
-Date: Fri, 8 Aug 2025 09:57:54 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: Michal Hocko <mhocko@suse.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
-	wangfushuai <wangfushuai@baidu.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
- address process dependency issues
-Message-ID: <20250808075753.GB29612@redhat.com>
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <aJSpTpB9_jijiO6m@tiehlicka>
- <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WzwTF96uu7tC0DOnbyiQKoFGWosLOra7ADzCm6n7Xj84Ng5ZB0KUQI1FnXWoB1+WDTQ4lfhuU43gKlaj64VYhqYEvUrke2mH86jf9blwfGs/65kKt5EWXbgdppiMPfAunjfGuqaDD5+R/LxBQllec3Tr20Mkqs6O9ljJ7yGfsdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZ2MAqel; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF26C4CEED;
+	Fri,  8 Aug 2025 07:58:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754639931;
+	bh=bhYz0q7sZmksGxtqrz5Z9izdRimJdpZwVcCdQnTK6+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pZ2MAqel0O8SuouEJlBD0NRUR0D89he19cH5jWtUYyHwWCg2Yz8DO9SXgjIeDZd+y
+	 08od+i1Nr52Vf8xefFUv6zBJAlslkMjGanYsbRt+klaK5B006boeiCkfNFE+3by4F9
+	 LlSpkU0BXQzItv7AzoPiWYHTZisBzcUvjQv7tq0GztWAVvkSdrAnJvtpxIVJKyl0Et
+	 YZv1PZZl9sJGHuAmb3LispoeizFPKz4tMfziyI7hxPvWHVsrFYMW+Hyqw4YmVUjFRf
+	 XhyRE4MdvGWedowvfZ79iJmjU680KcM2Hs8Y84LpgbL4vs4rw6mfgM5hs+i6hxa0ld
+	 XsBRpCQtcD7rA==
+Date: Fri, 8 Aug 2025 09:58:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: watchdog: Drop duplicate
+ moxa,moxart-watchdog.txt
+Message-ID: <20250808-tidy-ambrosial-okapi-e5249b@kuoka>
+References: <20250807214222.4170236-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,29 +59,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20250807214222.4170236-1-robh@kernel.org>
 
-On 08/08, Zihuan Zhang wrote:
->
-> 在 2025/8/7 21:25, Michal Hocko 写道:
-> >If they are running in the userspace and e.g. sleeping while not
-> >TASK_FREEZABLE then priority simply makes no difference. And if they are
-> >TASK_FREEZABLE then the priority doens't matter either.
-> >
-> >What am I missing?
+On Thu, Aug 07, 2025 at 04:42:21PM -0500, Rob Herring (Arm) wrote:
+> "moxa,moxart-watchdog" is already documented in faraday,ftwdt010.yaml,
+> so drop the old text binding.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-I too do not understand how can this series improve the freezer.
+Fixes: 289660a4af0e ("dt-bindings: watchdog: convert faraday,ftwdt010 to yaml")
 
-> under ideal conditions, if a userspace task is TASK_FREEZABLE, receives the
-> freezing() signal, and enters the refrigerator in a timely manner,
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Note that __freeze_task() won't even send a signal to a sleeping
-TASK_FREEZABLE task, __freeze_task() will just change its state to
-TASK_FROZEN.
-
-Oleg.
+Best regards,
+Krzysztof
 
 
