@@ -1,110 +1,92 @@
-Return-Path: <linux-kernel+bounces-760812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C163FB1F071
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:54:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80157B1F070
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B157A1C27155
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:54:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342E6A031AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A11728A406;
-	Fri,  8 Aug 2025 21:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKeUBHur"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACA2289E26;
+	Fri,  8 Aug 2025 21:53:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C8528A1D3;
-	Fri,  8 Aug 2025 21:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F85246BB6
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 21:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754689988; cv=none; b=SjdwNvVNZCg1/PApRAR+56LCi9iXqcquExSlBj3tZiXXdmb8Vza0cEkL40AZ9e9hzX57zGftczkIenaQoEHTb1FwEPIYTqwrgfZ6WmUGPGbTSQPPeTRLX5qJvemzUwHIicJPhiBKtqUylwMRwVIi6k+f46yy82qzIT9juI0WlR8=
+	t=1754689987; cv=none; b=GDVo8MoghyqHLyow7ZTkxqK/uOMkfTJ6FqfN4GT2tCUmS+lE5Wevce59N9gGXpxW9lQJ4WZfwVOVa1UDoa9uJ2ElCUl8yFeWvQR0bHKVpV2qnAECK9tLd65wyvQEotBaNIkWTjuNIFg7SD93VgO6Zv9MWHri6ljc2jaDNnL8yIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754689988; c=relaxed/simple;
-	bh=ATwyecHxTopAmdm8049OI8LQGrc6qa1zmAS8EZn7Zt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BrOpntumMWguKXg/aGTaj6wybJq93IWrLKYoz2Gnpqhi4V9R7oQtbrshGFqVOxITYQsn2ugPDiGqrQz3BVPEGKlJHqzcnFZ5S4n84EQtI1hP4yzsgCNYGkVqnqd+7Ex0DvT22UmIROHllc5qNxNvdTgZR6nVd4SIm1Y90ChTrBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKeUBHur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BBF9C4CEF7;
-	Fri,  8 Aug 2025 21:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754689988;
-	bh=ATwyecHxTopAmdm8049OI8LQGrc6qa1zmAS8EZn7Zt8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GKeUBHurZI5lwaUwpKrVDYzX+jl120VmMnO8rd1hLSEncWyHHLlvSQUQ0V6RrAGvh
-	 k8PX1UOMHjoewQLicxQpKX0t/aTlT7BsLimcG8SiAsT8mxzmVXhAwmMl2OO3OFXTg7
-	 r5bfqx8yWCP4X7gJPUhnOLaegu0pWWFsNxjyv4Ila6q+KCVAY+hg+7x/fbq7mM9Kqm
-	 Dfif4kc4qvab5OIFditOH5flk6ovpuod7PMkVMGLBfQcmS9EpjNdJ/2NJ9hvZoJfpC
-	 6jwDq7oiF9stAZmPTDQZFX2a5KZPhOFidvwgKfP5JjhcaYJQc5MsobHP8yE6kMQLLP
-	 Fki4vJFUinaEA==
-Date: Fri, 8 Aug 2025 14:53:03 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org,
-	llvm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] riscv: Only allow LTO with CMODEL_MEDANY
-Message-ID: <20250808215303.GA3695089@ax162>
-References: <20250710-riscv-restrict-lto-to-medany-v1-1-b1dac9871ecf@kernel.org>
+	s=arc-20240116; t=1754689987; c=relaxed/simple;
+	bh=ZzjdYrxYEcxo99s9h1GnuOAWn45kMBSUB24pYO67++U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BTkciU5Ztw6NwXMvCj5P+KhqI6Vcur7SIbHvwFiHBzNfWzSDm2Y225BWRe8B5l96511jsOk2McqN8X2VFRXR1hngJKDts84lxmxWwILYWSIL6K+AP7ju2YRYHD2wCkR6VbgAAHE7ZLJkgEv60bluQyWRjH5/5TUVEvH1qOme4EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86a5def8869so719596339f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 14:53:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754689985; x=1755294785;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fBCMcg0k4PNCUZ4EcEMcgDzn+4NHxC7yQYWs8JkG+bc=;
+        b=bYcmDNjLrOw+ZDpGz6T+3xw5Q+FnCBA3LQChhZgW9MgHZ8S4O2kcr29Uk7j4KmdpQ1
+         16xlMwE1krsZ5V3xUjWZ56LkcF4kzjV0CjT4Lv8PXr0EkI/pDA9JpiMEue5UxKuYmOZo
+         LQBM+dtrT4F9sMqoAcp8Sf7j7IoMfGbBfoR2+dLU56dJTYTbgBwrSpJCATfSiyE54sk5
+         2txLyCb/ePBYGI73smT56fssbx/gL0K7IxLLKC+4CgA2MvjS2z+JXFu1lJpB1vy3a/TK
+         mKJkpqeFPg/RXP4NQgEokd69XDqOR+4UtxX6Yyy6qiZwkPnPZMtA2+eP6sBB9NHG8tBu
+         TOuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIoMURXxeTxbqyRceD2YbggEzxdxIqROwOtlZCXK565KeMjxzElPHJEZY8gDdnFqWiMjoCR1F6NinCDmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJpiXpGLFKi3qx/Iv9HQIqgbXO37l+pGYwPnd4Cfi81gA9E0ZE
+	0gtoy0eAB6AKRSq7naLp35ysUxzfS+YXdKUjtwvFCRUKNliJz9RN9mpHjf759gg6zfKlm/xjqb6
+	PMUFg1QUyOb9/IJBBDMjXUwVUJj/ZwdwSr0qnkp29RBKT4wcN0+te4X6pFGw=
+X-Google-Smtp-Source: AGHT+IEF1na4CL596K5tr9vAfldDM2eKsOY8NzKJNyOz392+5p4iZ2zo9TIo+Y+YiykN5IC1WA2v5EXCr9l6aXuaz9h/U5aUXy/9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-riscv-restrict-lto-to-medany-v1-1-b1dac9871ecf@kernel.org>
+X-Received: by 2002:a05:6602:1591:b0:881:8e2c:9995 with SMTP id
+ ca18e2360f4ac-883f12552ccmr907971639f.11.1754689984923; Fri, 08 Aug 2025
+ 14:53:04 -0700 (PDT)
+Date: Fri, 08 Aug 2025 14:53:04 -0700
+In-Reply-To: <6871b125.a00a0220.26a83e.0066.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689671c0.050a0220.7f033.008b.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in rt_set_nexthop
+From: syzbot <syzbot+97bf275720e06ad75f63@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dhowells@redhat.com, dsahern@kernel.org, 
+	edumazet@google.com, hdanton@sina.com, horms@kernel.org, jaltman@auristor.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Ping? This is still getting hit.
+syzbot suspects this issue was fixed by commit:
 
-On Thu, Jul 10, 2025 at 01:25:26PM -0700, Nathan Chancellor wrote:
-> When building with CONFIG_CMODEL_MEDLOW and CONFIG_LTO_CLANG, there is a
-> series of errors due to some files being unconditionally compiled with
-> '-mcmodel=medany', mismatching with the rest of the kernel built with
-> '-mcmodel=medlow':
-> 
->   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values: 'i32 3' from vmlinux.a(init.o at 899908), and 'i32 1' from vmlinux.a(net-traces.o at 1014628)
-> 
-> Only allow LTO to be performed when CONFIG_CMODEL_MEDANY is enabled to
-> ensure there will be no code model mismatch errors. An alternative
-> solution would be disabling LTO for the files with a different code
-> model than the main kernel like some specialized areas of the kernel do
-> but doing that for individual files is not as sustainable than
-> forbidding the combination altogether.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 021d23428bdb ("RISC-V: build: Allow LTO to be selected")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506290255.KBVM83vZ-lkp@intel.com/
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
->  arch/riscv/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 36061f4732b7..4eee737a050f 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -68,7 +68,7 @@ config RISCV
->  	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
->  	select ARCH_SUPPORTS_HUGETLBFS if MMU
->  	# LLD >= 14: https://github.com/llvm/llvm-project/issues/50505
-> -	select ARCH_SUPPORTS_LTO_CLANG if LLD_VERSION >= 140000
-> +	select ARCH_SUPPORTS_LTO_CLANG if LLD_VERSION >= 140000 && CMODEL_MEDANY
->  	select ARCH_SUPPORTS_LTO_CLANG_THIN if LLD_VERSION >= 140000
->  	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS if 64BIT && MMU
->  	select ARCH_SUPPORTS_PAGE_TABLE_CHECK if MMU
-> 
-> ---
-> base-commit: fda589c286040d9ba2d72a0eaf0a13945fc48026
-> change-id: 20250710-riscv-restrict-lto-to-medany-f1b7dd5c9bba
-> 
-> Best regards,
-> --  
-> Nathan Chancellor <nathan@kernel.org>
-> 
+commit e4d2878369d590bf8455e3678a644e503172eafa
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Jul 17 07:43:41 2025 +0000
+
+    rxrpc: Fix irq-disabled in local_bh_enable()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11a4c1a2580000
+start commit:   d7b8f8e20813 Linux 6.16-rc5
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f6cfc97245100778
+dashboard link: https://syzkaller.appspot.com/bug?extid=97bf275720e06ad75f63
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1532c28c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148f9582580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: rxrpc: Fix irq-disabled in local_bh_enable()
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
