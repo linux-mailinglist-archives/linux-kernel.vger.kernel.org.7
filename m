@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-760329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA95B1E99F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B428AB1E9A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB660A06FD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:54:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 327F0AA0868
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3C0148832;
-	Fri,  8 Aug 2025 13:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7F481732;
+	Fri,  8 Aug 2025 13:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="jXaZG3tH"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GcQRiSTS"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45EF12CDA5
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852AB13A3F7
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754661261; cv=none; b=CXN66Hz3QPhvs5oXP0vre3LoJEuMHFbg4I8yZHYxkuFxUiprtLymefqn+D+pjOFf1gDI+LUmDiAHD3gxAB+/cJ8/dMWCkJniN98FaZnIiY2smh00dveViMfI93YrTzaNIwRx8q1pv1sERGYfxjELV9MQHFPyZ56Nbf3oCMLICGY=
+	t=1754661285; cv=none; b=MlF5usz5FUeUb0zAYPZQFlW1nNDG9B/CKZfCC2HvOyvnaPlIbAfRxLZ/cZH0qrxnFxyN6GlJ3KXQ2QjKHM4Gzjua4nD4z8NK4XMWRE4myBQDok8ydKs5xfxVbNJYrf5hWFwMp+TLwyX4UNNfBKQf39mjofPw75jdktqKm84UHzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754661261; c=relaxed/simple;
-	bh=jzUwRFYMwe0kkKb7Wpg8iUyhHURaS0YrhVvgitXw+xk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mn/d0ZVK5+o9ATmaOI49fWhpVjqddeqSxFB9Fsuufl+kCge4SUt53/tzgZcVO+pHuw3RKxkMmCHU6R7CbGSiaCVKThnXYa+bVQV59WrPpHxDV8K4uA1iC6ebaYFSWwnAstnO6s97Ut1tLtEVNXOhizoPF2z2YWfJcygh1ZbvP2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=jXaZG3tH; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b0a13bb0b7so23950971cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 06:54:19 -0700 (PDT)
+	s=arc-20240116; t=1754661285; c=relaxed/simple;
+	bh=o+KLbLYuZJ7+bIILdO9pY6vQHMLbC/SzrM/4WRI7UUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oEEAmspQoSGV0hGRGzEhXqg80RnLFiatJ4hmD0CZtW0PTueML4pGUhboqXjzpEJtzDR4vlx9iI0DaDBtAfv4zJMVMRsfVQfycxRMURe9JoD8Z49C8XtILY836qajOa3ZAhwreKZ4X/9inYO9xmLa9vlL6uPGpFhzq6IrluFWLqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GcQRiSTS; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b78315ff04so1784939f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 06:54:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1754661258; x=1755266058; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jzUwRFYMwe0kkKb7Wpg8iUyhHURaS0YrhVvgitXw+xk=;
-        b=jXaZG3tH1PMRB0OKnWtxvsHd1Rk10dwuOCEgRiZ5YbCBqxQQTw+Jz5KwUYNcNChoWY
-         xf4WD9V/Y23gBJQiJEVrIPi03TQslgT5miGCO0uzvGNjvtW1WMcFKZt2vM+ip1npFZHS
-         /7IqrN1uq38jyr+pHzz6F7KmXrCR7uYxwubanh4J6jGtp8ZBw4vJyUsbiEMcKnqocg4O
-         18KlT40DuLg1Ls3E1ao8KTRLE2eyQAhs2Ug1pzUcsExdnM2/sloRo03ahg2PY6lKrGv1
-         kvN898/zDWHpxKrb1Q4s38J4C2/MMk5prFbc22KsrleozyUhtwxKMRqLQEHRQy/mrOab
-         uzJw==
+        d=linaro.org; s=google; t=1754661281; x=1755266081; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=moUCs0yDM2TAbGC1DYve6KzheacI5lUjhzwM2sT6dYU=;
+        b=GcQRiSTSSUwX9NrIOElnIdAiYUb5WJ/VgSgAgwgr4HnXYqKhsR+s3o3rKeeJ/Y5frd
+         NepFW331OYJGPCf97buQ4I+UZhZxUunLKBxqRBi/5VEFbXuHAhM2fwn7PAooNW9cHju9
+         zBl57mIDspWVKeHZAuOrOf5XIYvGxf+orvb7AkdvRzbjFvDfsqW+swpNqpMfdnoLqd05
+         jz6z761K2U0yH5pS1qX1qC+IDJpUZE5BP/9PcmBCb+KO6hKHfsBJfJ+IGXkZh7rfCdXZ
+         dZtK7XRcNnGY37Wz59l/82CjRinhNBA2eRo9O8KrV9mmDmpK1zBa4xejaA7tYFDhFa4f
+         ENxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754661258; x=1755266058;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jzUwRFYMwe0kkKb7Wpg8iUyhHURaS0YrhVvgitXw+xk=;
-        b=PbPmtWtM+gLNCGxrDDKHtikfbEZFqLw9v3vya4AXLKK+Gz2ot+pPkkSnV0PRcR3ymD
-         w5uwN/LVkaM54cY66WugW0MX+uznFO0mBd11QfoQOiRRgl9TOJEmi4JXe0pgyYvf+BaR
-         2zMbh5TFdzjmRaktd6puZBFzdbJhnEa2l07MFkbs0wPrcfdXkhMcjVmLnCQW+phrp6zR
-         z1QjpoihC7rUCNtLyC78KHNBgf4T7oadNDAvSpCFF5AtpX1gQk3yPv0LdyFVDg9AvmYE
-         sAP0oQten8bb8cy7BHpXdIoheL3gR2JTkc1ULYrsSYnvbW3QGnVs08wjMlYXjPltnlc1
-         xoIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBCZ52y3oWJcX6yee4O5s0HPyrKh+rEFFFhTL4JjZyAtMAUc133wpALTq4oIn7m50RM9vqdcgzXiMeQHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlZ8782LDeDLbZi5kjYXTLM/5MwqGz14xd1MT+EXitQ/GUBeYh
-	MpgDyIHOUsFKdMheh9/7ll4fbP7lbKoyQTYbbPUpoLIeYAJLJyqo1KP0Ek6Boq5RiEH/9tWhaaR
-	5Vx1scq3g/JNUCdv6UxN3ZX6YsVROKAI+heSCmk8PPw==
-X-Gm-Gg: ASbGncu/LALO4UbhQfeVI0ygqakdXXwao5DW6JmSANDpUFk2MfitTfFbYQ+aCKBkDgl
-	wp2t0vKgbMN0iIZfAPvyN5Y/KFWfTkkdp+Udj5dVLvCLcyesi68F3jpgz4m/srvl9IgAgDtPSCN
-	aLHYft1plFRqdXZtV+OSeqNMq7mGlYZtwUbT24k7oo1L51OoaXM3XDf7SakVqaN8AqysSjsIoJ1
-	tGq
-X-Google-Smtp-Source: AGHT+IEJmYietSH5VpR6RMJMP415b7zyz18sRNUfhN29PGY7yEn2BPdHDpMV3lyr863RZFGEM9NfgFIb4ZTkLRTpI/s=
-X-Received: by 2002:a05:622a:1181:b0:4b0:7620:7351 with SMTP id
- d75a77b69052e-4b0aed29dfemr44241331cf.13.1754661258448; Fri, 08 Aug 2025
- 06:54:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754661281; x=1755266081;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=moUCs0yDM2TAbGC1DYve6KzheacI5lUjhzwM2sT6dYU=;
+        b=AbOC8JVPYgp+X9mHpApBosOvupvVEbgfldQtcvz/MKBq7iX+FyMeSBxVLBguLmCirK
+         HuHAK507kbMfU+8Mut6EOhkshEcxkTG9kErM6yulA5wrwCmRT/01ZA4+zDTEO8cD2EgB
+         mNHP2937FMFkbCy6CcoET1ltpueeXhmOSAtqqHI/5P88KuSNzTR8zOoGuol56zJ9tC7B
+         KsmTHS+yUDyqhDvQFLiCnqlOoXQ4qpost9nhLtr+PUZHwulr9OMvKeDU2lMM812CCs0R
+         TfUOYnpn/NiOA6rPAa3twde1c50xS/F3IluoME2fW+NS1Cz1sADaFEZp9I3Kbe+R+edN
+         DMjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOCbXayruy0+Mnb60MVb33l0hockST1CBiQknJfhiSl7EfLasZe4abAqvpsRC/T1LHGD0B8tksunD1aak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxckEipECn6xTksd9jjK90ZkoU5XKMJApviKL1h+tZJVzY/WRd/
+	nHvsapHpWIunEYmEFIITi8wtwSNIx9qNgYgXfRdGOyMgqSZXl+VdyjB8FOMkQBY30C8=
+X-Gm-Gg: ASbGnctNN7Z78wlsPWtP2i5ecgT+aHHrjzSug/YDbC9N8SZj5FV2Di1vx9/P0LSgrD3
+	xgndPBWjhavKZ3/J9TTHo9w/m+7rPs2DU8SAU+CcxdWtBFZyoCZFClzbdvsVLUoEIUF1ceRRIBc
+	NuLMQ98hJuquhz9P4p4S0iCj4yg/fDnkExY0CN8uJ1bx7zeqBq7mYfgblNxpvwSTROhQGtkH60W
+	KkePPZRJA5vjVU8LCvwGXz6sGKk5iwm1pUA/RED9xsjw4WQhazBG+ihNOQL5+Y6r6+wa91QwAdT
+	HlBV7YVJNaic4dfTvE7i9/6yYYxb1rn8XNQ8H6vbP+asFvCC2rgluwgVrEZPBq2Ifs4j0qOqiu0
+	XNwA8uwsGfu6owJ1+0bHFVdVBoj4=
+X-Google-Smtp-Source: AGHT+IHVsSJcpEnemEjHp7IGPVJBlggfM4sjR5uv5Ni77q0DabV1OzZ+8lZwWPntSJgVoUciTeN9AA==
+X-Received: by 2002:a05:6000:1445:b0:3b7:8412:4540 with SMTP id ffacd0b85a97d-3b900b72d33mr2075950f8f.27.1754661280768;
+        Fri, 08 Aug 2025 06:54:40 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b8e0846777sm20539318f8f.48.2025.08.08.06.54.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 06:54:40 -0700 (PDT)
+Date: Fri, 8 Aug 2025 16:54:36 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] media: v4l2-subdev: Fix alloc failure check in
+ v4l2_subdev_call_state_try()
+Message-ID: <aJYBnGXMYOzhgRPh@stanley.mountain>
+References: <20250808-fix-subdev-call-state-try-v1-1-000676e46754@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <b227482a-31ec-4c92-a856-bd19f72217b7@redhat.com> <mafs07bzeatmf.fsf@kernel.org>
-In-Reply-To: <mafs07bzeatmf.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 8 Aug 2025 13:53:41 +0000
-X-Gm-Features: Ac12FXzC2ItcrNrnqIm-RSLWTwNqS2AX71-Cg7eUT1NgfRdHm0ajR1sU163K8_s
-Message-ID: <CA+CK2bCd9x0KA=cO8EauJ=_GJ-GzO+0Z7HXN5=cObxuGzFDzCA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/30] Live Update Orchestrator
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: David Hildenbrand <david@redhat.com>, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, joel.granados@kernel.org, 
-	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
-	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808-fix-subdev-call-state-try-v1-1-000676e46754@ideasonboard.com>
 
->
-> And now that I think about it, I suppose patch 29 should also add
-> memfd_luo.c under the SHMEM MAINTAINERS entry.
+On Fri, Aug 08, 2025 at 11:59:15AM +0300, Tomi Valkeinen wrote:
+> v4l2_subdev_call_state_try() macro allocates a subdev state with
+> __v4l2_subdev_state_alloc(), but does not check the returned value. If
+> __v4l2_subdev_state_alloc fails, it returns an ERR_PTR, and that would
+> cause v4l2_subdev_call_state_try() to crash.
+> 
+> Add proper error handling to v4l2_subdev_call_state_try().
+> 
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Fixes: 982c0487185b ("media: subdev: Add v4l2_subdev_call_state_try() macro")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/aJTNtpDUbTz7eyJc%40stanley.mountain/
+> Cc: stable@vger.kernel.org
 
-Right, let's update this in the next revision.
+Looks good.  Thanks!
 
-Thanks,
-Pasha
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
 
