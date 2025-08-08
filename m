@@ -1,112 +1,209 @@
-Return-Path: <linux-kernel+bounces-760123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F88B1E6CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:50:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E136B1E6D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7F21897C1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090FA1AA6B3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE2D22A4D6;
-	Fri,  8 Aug 2025 10:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="FTuz+NJi"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BFC256C73;
+	Fri,  8 Aug 2025 10:52:02 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED56227E95
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F282A5695;
+	Fri,  8 Aug 2025 10:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754650242; cv=none; b=EHL4EGvHw0M+OUjhUhRW56eTUgwzmHfNG3ICqpXcizpPrI0HP1ELNJauWmsfAJS7PphjU1tqOhWJBiLrSxlvs8BygUHLE7Y7w6tx32IQ1CktoN+mZs9U/dvX8jLpqBSwAwZ6fwdExdy2nzQg2XQeBPioeNZLbLd9Y0K+DCQl+AA=
+	t=1754650322; cv=none; b=KEoUyRLDJ++/+nIl0fR0kAN9Np/i2eGdcqKd0D6vM41dd19NdYUgpFB8b551pmeWWCqMWvA0rf/NB8LHlJsJuv06yWzXlLqzWR6ePE4sHQwhmPkdj5kmYTzCr6LiCUV0+2axdI/RZnCx/kmKRDgMLpwdvuUZjFGY7vluczKlgE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754650242; c=relaxed/simple;
-	bh=YIm88aacknXO7rjNdWah9pe3ap55dGpndwEra1Jh9L8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f0OOxGQqfjhqqXoxRpQlsNKVmsP9q/9pxayoGMdIjqljjtGYhkvD/GWt4Wj6zwbZpxbABH7D/vaPYkw/odnjb17Pd+8HPd+c84ChpEfW4lZPAJf7LGFImWvuTUIQs+ZCEKxsMrn1SLcTJiuVl7tnzhuwYmEoTurzVMLrvwhf3RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=FTuz+NJi; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e7fb58425cso296457385a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 03:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1754650239; x=1755255039; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2t4Nqy8A7Pvum+ZPz/AX/HM66sDG0qhG/ulIAizon6g=;
-        b=FTuz+NJiNuG6LsFMvFakWij9D4j9e84OBUF97BT8Upzna92nnw1QItLpxZAlsBOVDg
-         666dhbO4mVZSklQBzWWlq36VPwof/MGcokZu0hzP+JzzSssBjsQHbiLGKHbaVguFhCm8
-         nIWyy2FXrZboF7hNG7GgSAIi3UAQOqkguQAu8PL8XRfdZgITOlKMaMGHQC7iZciIsVjV
-         2f4SrBFwZxGSAs4nkTaAI7/kFm9AppPa7Ed9u45qfThU/4dpGL2aCnhu6kXvBq0Xa0vD
-         nt1ye2I/MAaBy5ohSIzc25/SwjI6RxKSUnMJNUHHZEDK60VCryiazPTh36fg/ACmXd3I
-         obmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754650239; x=1755255039;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2t4Nqy8A7Pvum+ZPz/AX/HM66sDG0qhG/ulIAizon6g=;
-        b=ohDG9rc/Zonkp+XzAW2oguDtkeRdHjapdUDWww5bkn0lOhF8/wRtK/kHtHH2DLv5q5
-         cPdAS1cTeyeTisoyG+hbARv030rqtzeVrm6a1W0ydcoYs8N2LYuCccRvEvJiG8WQI0/Y
-         m1xvIPwweK4x1kqJI2b9+TLLLrnkQMGU3fgv2qF+b1AVPYThJISKWNiJNJAbXPf+6+Es
-         zvAMmeeICLNuu3pJGWIqCF8IfKaodaak2VZ1nO4tnhKZUjxPUpk2Lpha4+BMjqaZxA9R
-         ZMODWwgqPSxXXRcWdZ6yq4nl1WTmcmfOew2aZNAEGc31yC3pQqtFnZZpFctqzGWp7wNs
-         +Vhg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/i3Dvp3IeFS783y4qYvSW9TP6K6LbRHIjh8qWGnmM9OW8+ZhmKpXVnX0nglJT8VxKic5oBWKz16nQ3Cc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVEWLKymVWv8yoofkld4Qag8ll4Kz7tAOvz/fz0OQfaSEzS3p6
-	8wv+wL5GD2b1sokunTXN5et0cb3WNMSSTXQvx5rWWIgWD3DbxzjdtdP+FoWK06JiyISIfSR4vNj
-	Aq5/bG4E+8pDDD7fGBa9C5u7uTpFp/xpx9OERxngygw==
-X-Gm-Gg: ASbGncvgGm7+DJ8WHeqBvx9vPNCFdTbU5lMyd+8cY33Yd9peTdvpzal3MhlJ/Qsi1s2
-	IThc07D6n2+aTWlERY2RiDZUXLtSLkD9/4EwPIvoTalmGKbsoAyyiDMBqLJKTCZHhXmU5i8HVyG
-	A8ECkg3k8Mgy8dSo00Es14GJb6zbJxeEY5xPP2FC7sr8waMvytkpsGOqAMUta4dyNvQD49CaMFD
-	l+g/Oc=
-X-Google-Smtp-Source: AGHT+IHKj7FBhJn4YvEWoDBBXtBvizyBf1uRp80BqxN8hVamn27Zko572Q6nuzWyGRHZWX8N75KkGWA1ysouHf3eFnM=
-X-Received: by 2002:a05:620a:1587:b0:7e7:fdd2:cc58 with SMTP id
- af79cd13be357-7e82c684a08mr275759485a.15.1754650238850; Fri, 08 Aug 2025
- 03:50:38 -0700 (PDT)
+	s=arc-20240116; t=1754650322; c=relaxed/simple;
+	bh=KesZR+F59DfKiQMTTe/qycskddKZgXqP+OvKbQU0IZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=izK5HpFA/3aEZLWD8OkjUj3/bGayfxlvz9CZmffYxc7GFxT8UqyVcgeBUX1btP94n1LbqvIjZ8QmfVUTqg89/g3RJaBv45YE+q4MkCqg9itE1UNJl3KBLd2M0e8Q/u5LJ9OLZsrb4MwYjOVBrH4W+uPG07qxhdFSoiWbM8GPGN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48690C4CEED;
+	Fri,  8 Aug 2025 10:51:58 +0000 (UTC)
+Date: Fri, 8 Aug 2025 11:51:55 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+	arnd@arndb.de, will@kernel.org, peterz@infradead.org,
+	akpm@linux-foundation.org, mark.rutland@arm.com,
+	harisokn@amazon.com, cl@gentwo.org, ast@kernel.org,
+	memxor@gmail.com, zhenglifeng1@huawei.com,
+	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
+	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH v3 1/5] asm-generic: barrier: Add
+ smp_cond_load_relaxed_timewait()
+Message-ID: <aJXWyxzkA3x61fKA@arm.com>
+References: <20250627044805.945491-1-ankur.a.arora@oracle.com>
+ <20250627044805.945491-2-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807162633.3666310-1-karunika.choo@arm.com> <20250807162633.3666310-7-karunika.choo@arm.com>
-In-Reply-To: <20250807162633.3666310-7-karunika.choo@arm.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Fri, 8 Aug 2025 11:50:27 +0100
-X-Gm-Features: Ac12FXwZubGjX-KjBWAWJ55zqwf6_QveUqVQsmAMnzOas61qm-AzifcTiF3DvrM
-Message-ID: <CAPj87rP9pETnxr_mVJ4OAwj_Vhh2yS75iQ5LDT7ddC5=a-kXkA@mail.gmail.com>
-Subject: Re: [PATCH v9 6/7] drm/panthor: Make MMU cache maintenance use
- FLUSH_CACHES command
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	Chia-I Wu <olvaffe@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250627044805.945491-2-ankur.a.arora@oracle.com>
 
-Hi Karunika,
+On Thu, Jun 26, 2025 at 09:48:01PM -0700, Ankur Arora wrote:
+> diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
+> index d4f581c1e21d..d33c2701c9ee 100644
+> --- a/include/asm-generic/barrier.h
+> +++ b/include/asm-generic/barrier.h
+> @@ -273,6 +273,101 @@ do {									\
+>  })
+>  #endif
+>  
+> +#ifndef SMP_TIMEWAIT_SPIN_BASE
+> +#define SMP_TIMEWAIT_SPIN_BASE		16
+> +#endif
+> +
+> +/*
+> + * Policy handler that adjusts the number of times we spin or
+> + * wait for cacheline to change before evaluating the time-expr.
+> + *
+> + * The generic version only supports spinning.
+> + */
+> +static inline u64 ___smp_cond_spinwait(u64 now, u64 prev, u64 end,
+> +				       u32 *spin, bool *wait, u64 slack)
+> +{
+> +	if (now >= end)
+> +		return 0;
+> +
+> +	*spin = SMP_TIMEWAIT_SPIN_BASE;
+> +	*wait = false;
+> +	return now;
+> +}
+> +
+> +#ifndef __smp_cond_policy
+> +#define __smp_cond_policy ___smp_cond_spinwait
+> +#endif
+> +
+> +/*
+> + * Non-spin primitive that allows waiting for stores to an address,
+> + * with support for a timeout. This works in conjunction with an
+> + * architecturally defined policy.
+> + */
+> +#ifndef __smp_timewait_store
+> +#define __smp_timewait_store(ptr, val)	do { } while (0)
+> +#endif
+> +
+> +#ifndef __smp_cond_load_relaxed_timewait
+> +#define __smp_cond_load_relaxed_timewait(ptr, cond_expr, policy,	\
+> +					 time_expr, time_end,		\
+> +					 slack) ({			\
+> +	typeof(ptr) __PTR = (ptr);					\
+> +	__unqual_scalar_typeof(*ptr) VAL;				\
+> +	u32 __n = 0, __spin = SMP_TIMEWAIT_SPIN_BASE;			\
+> +	u64 __prev = 0, __end = (time_end);				\
+> +	u64 __slack = slack;						\
+> +	bool __wait = false;						\
+> +									\
+> +	for (;;) {							\
+> +		VAL = READ_ONCE(*__PTR);				\
+> +		if (cond_expr)						\
+> +			break;						\
+> +		cpu_relax();						\
+> +		if (++__n < __spin)					\
+> +			continue;					\
+> +		if (!(__prev = policy((time_expr), __prev, __end,	\
+> +					  &__spin, &__wait, __slack)))	\
+> +			break;						\
+> +		if (__wait)						\
+> +			__smp_timewait_store(__PTR, VAL);		\
+> +		__n = 0;						\
+> +	}								\
+> +	(typeof(*ptr))VAL;						\
+> +})
+> +#endif
 
+TBH, this still looks over-engineered to me, especially with the second
+patch trying to reduce the spin loops based on the remaining time. Does
+any of the current users of this interface need it to get more precise?
 
-On Thu, 7 Aug 2025 at 17:27, Karunika Choo <karunika.choo@arm.com> wrote:
-> @@ -585,6 +615,9 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
->         if (op != AS_COMMAND_UNLOCK)
->                 lock_region(ptdev, as_nr, iova, size);
->
-> +       if (op == AS_COMMAND_FLUSH_MEM || op == AS_COMMAND_FLUSH_PT)
-> +               return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
+Also I feel the spinning added to poll_idle() is more of an architecture
+choice as some CPUs could not cope with local_clock() being called too
+frequently. The above generic implementation takes a spin into
+consideration even if an arch implementation doesn't need it (e.g. WFET
+or WFE). Yes, the arch policy could set a spin of 0 but it feels overly
+complicated for the generic implementation.
 
-Given that FLUSH_MEM and FLUSH_PT are the only ops which are ever
-used, the below becomes dead code. Could you please just inline these,
-so it's more clear what's actually going on? The (op !=
-AS_COMMAND_UNLOCK) branch can also become unconditional, perhaps with
-a WARN_ON() around unknown ops.
+Can we instead have the generic implementation without any spinning?
+Just polling a variable with cpu_relax() like
+smp_cond_load_acquire/relaxed() with the additional check for time. We
+redefine it in the arch code.
 
-Cheers,
-Daniel
+> +#define __check_time_types(type, a, b)			\
+> +		(__same_type(typeof(a), type) &&	\
+> +		 __same_type(typeof(b), type))
+> +
+> +/**
+> + * smp_cond_load_relaxed_timewait() - (Spin) wait for cond with no ordering
+> + * guarantees until a timeout expires.
+> + * @ptr: pointer to the variable to wait on
+> + * @cond: boolean expression to wait for
+> + * @time_expr: monotonic expression that evaluates to the current time
+> + * @time_end: end time, compared against time_expr
+> + * @slack: how much timer overshoot can the caller tolerate?
+> + * Useful for when we go into wait states. A value of 0 indicates a high
+> + * tolerance.
+> + *
+> + * Note that all times (time_expr, time_end, and slack) are in microseconds,
+> + * with no mandated precision.
+> + *
+> + * Equivalent to using READ_ONCE() on the condition variable.
+> + */
+> +#define smp_cond_load_relaxed_timewait(ptr, cond_expr, time_expr,	\
+> +				       time_end, slack) ({		\
+> +	__unqual_scalar_typeof(*ptr) _val;				\
+> +	BUILD_BUG_ON_MSG(!__check_time_types(u64, time_expr, time_end),	\
+> +			 "incompatible time units");			\
+> +	_val = __smp_cond_load_relaxed_timewait(ptr, cond_expr,		\
+> +						__smp_cond_policy,	\
+> +						time_expr, time_end,	\
+> +						slack);			\
+> +	(typeof(*ptr))_val;						\
+> +})
+
+Looking at the current user of the acquire variant - rqspinlock, it does
+not even bother with a time_expr but rather added the time condition to
+cond_expr. I don't think it has any "slack" requirements, only that
+there's no deadlock eventually.
+
+About poll_idle(), are there any slack requirement or we get away
+without?
+
+I think we have two ways forward (well, at least):
+
+1. Clearly define what time_end is and we won't need a time_expr at all.
+   This may work for poll_idle(), not sure about rqspinlock. The
+   advantage is that we can drop the 'slack' argument since none of the
+   current users seem to need it. The downside is that we need to know
+   exactly what this time_end is to convert it to timer cycles for a
+   WFET implementation on arm64.
+
+2. Drop time_end and only leave time_expr as a bool (we don't care
+   whether it uses ns, jiffies or whatever underneath, it's just a
+   bool). In this case, we could use a 'slack' argument mostly to make a
+   decision on whether we use WFET, WFE or just polling with
+   cpu_relax(). For WFET, the wait time would be based on the slack
+   value rather than some absolute end time which we won't have.
+
+I'd go with (2), it looks simpler. Maybe even drop the 'slack' argument
+for the time being until we have a clear user. The fallback on arm64
+would be from wfe (if event streaming available), wfet with the same
+period as the event stream (in the absence of a slack argument) or
+cpu_relax().
+
+-- 
+Catalin
 
