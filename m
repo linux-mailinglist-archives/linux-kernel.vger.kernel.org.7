@@ -1,169 +1,349 @@
-Return-Path: <linux-kernel+bounces-759905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D3BB1E45A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD0FB1E425
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55B818C0FC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:27:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B35724434
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C35625CC4D;
-	Fri,  8 Aug 2025 08:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s29IR6Vx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C4525D1E9;
+	Fri,  8 Aug 2025 08:07:33 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626394A11;
-	Fri,  8 Aug 2025 08:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D37F25A2C3
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754641613; cv=none; b=cIP91aP9lLnwThg3MxCAccvnNbJpjE1Ffkq4Ff68XWFpj9pBfqIEp0OIufiRADfivkO8B/rFb18Y2rEnlkk7/Q2E3g8f3oZrTkRblXK+7wMh+Sf5UxC/EGI57x6LWR7oh56vhLXTpgUIeEX3Kko+TD+j7Sz+6abWExTcA5WTaFI=
+	t=1754640452; cv=none; b=uygGCo0rGb7moLulegLZ5oRWtcPntXHhdyIqVtjHdjxA8d+FP6o7mGcCrXSZj/2nbTC08fm5jIHjFnNhDkC75FnNR2JnwlzLS1Cy/ssCzwNyVXcvgLHsSFyz73u1Vc3jRb2ZE+Qn87Y0VViAqePjFVv8GYAl6thGUWJrAM1XwQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754641613; c=relaxed/simple;
-	bh=PIkUBeN5p34CHt8RnUZp/dB6DGJnt0aCMOsTGN4ZLms=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nFhVBZ7yfLkY/lUV9E3cMjYSu+Rn6yNFDGQHTrvS12XukQb3HWzTtY/A/0H3wMO7j2w0gt5GfVUNixOyv7KVvNZodmsQwWCMKRsQdODcdfAmdwM7ExPq4BxuZEmzIUKeSVYfVTuGM1ixGtG3ENY4arV7/iI+NiFe7vXsljgDCSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s29IR6Vx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50E40C4CEED;
-	Fri,  8 Aug 2025 08:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754641612;
-	bh=PIkUBeN5p34CHt8RnUZp/dB6DGJnt0aCMOsTGN4ZLms=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=s29IR6VxkL4tlA+dRVUMeUbATTld2jxxUo7YDY35pOY0iYFCHijHu0LovP5BTviCp
-	 r8LKKMUzx07K+HJ29ERjYhJNGTc0j1NoB8VoTR5vVRflmJVRmbRxi2SoL/mxgDNi7f
-	 Ci2jBonyEhWPsQppFVwob/qw90N84vSoqL/mz7drOAZKL1/wFlXOSpJ4SThCqMEz6L
-	 KJFwD2jV4KMV06vfI8qpMVmoxLH+kH/v92sBFhZYeMMfek+JbwtTJEjtxtmtpd7TDd
-	 Ee+zMkG7u+oA37e9LPatK52YHMHPuQgTpXPOh4sUtVf53Pi2+Tw/tI2GpkZz5esA7A
-	 dnIBKy9pAKs3Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, Thomas
- Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>,
- linux-kernel@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Stephen
- Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6r?=
- =?utf-8?Q?n?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
- <dakr@kernel.org>, Tamir
- Duberstein <tamird@gmail.com>
-Subject: Re: [PATCH v6 4/7] rust: hrtimer: Add HrTimerCallbackContext and
- ::forward()
-In-Reply-To: <20250724185236.556482-5-lyude@redhat.com>
-References: <20250724185236.556482-1-lyude@redhat.com>
- <tArVEF3mt3aJ9Sgu--Ijmmln4kx_TyXOWLVFaPQAL1E3-CbqsZnQguTK9x9b1k1Nx08lbc2naNxGsP7H__I_jw==@protonmail.internalid>
- <20250724185236.556482-5-lyude@redhat.com>
-Date: Fri, 08 Aug 2025 10:07:00 +0200
-Message-ID: <87bjoq6xuj.fsf@kernel.org>
+	s=arc-20240116; t=1754640452; c=relaxed/simple;
+	bh=fbhjfatAP3UDLcg89AE5gW6OGazgFABaG9YaWCmdDwI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Bc4oEbptFM+UZbnNp6R/47/UpBxmXbdYakcB4CGPzK7A6hpBwLDn2nfxhsvoAOLO/jp5KDqqAfRqfiiUHbqIaMwmdTfOkIdOrbKtJ64g9G3x8gIRcVfLZnavrgNQ684k15kxO51s0OQBfz3ENwZbBCrFJ9OIhiC1FkV00DjOvU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87b2a58a4c0so222682539f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:07:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754640449; x=1755245249;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4o3EjIAGgZerIrIiZtS4b2/wTHTz4tnKJgIo3bTtmqw=;
+        b=C+gLJCcp6KhTw0jtUrRw1yxtl0lFLSn1ZoQjiSnHd75Ijadi/DS1Bj736ZJkQSJI90
+         coJU2TBniq3NNXgC6f58QaprEvBxaLhYBukDoWiWzh6tpnoK90WPPh0Ys7/nN8CP1Zv4
+         C1si0ayOj7qQ40JkjRkZNzM07u8OCaGGYLJLIauXxB4n2dhYkbFGKs89IIOEXFsp3+Ad
+         +OvRY/Fd7PFHsXNFCBzQk180aJtMcfl7eWAfjNtE7/seHFDbjrIJucDVdvEm4lBMO/pO
+         L8mba4B1+r3xibiELodkcvmiNQfu94gpJttNr7zQAMCFgfdkoBzFtiuGTaSFY8m0a22O
+         /GZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYhTchdwF/Iz7RQguovvZHscnUkiEOZjVkKn47C9xtoEVyU5WMQgWSXxfzjjHgeJldK3cgeguMtYIG0qE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTP/L086iizryUCHBNqF8MWGyl8lWxSMJ5L2iI7oHR7kwBpVLf
+	H+qCUx5fM3vlWCMQdLGkiQ1mU6RDv0JT6vAg9Fn5cSLXDbf5mQyX4ntqb4WDvrE8zKuDDctCoVj
+	OzvYG/ryC1Q/4urOVKapXmUwUgwf4kISZr3XdSbO9VI3gtXqTba4SXBrEj9g=
+X-Google-Smtp-Source: AGHT+IH0YDeLMTECHnwk9kv4pYhwXKCIGHWgYukumAYPidEEnCYvOLmfKds+k7C3Zma8Gm5sqk627a66+RtBwkkjADSlKIRdR1ou
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6602:1584:b0:87c:30c6:a7cf with SMTP id
+ ca18e2360f4ac-883f10de3e3mr400689239f.0.1754640449618; Fri, 08 Aug 2025
+ 01:07:29 -0700 (PDT)
+Date: Fri, 08 Aug 2025 01:07:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6895b041.050a0220.7f033.0058.GAE@google.com>
+Subject: [syzbot] [crypto?] KMSAN: kernel-infoleak in rng_recvmsg
+From: syzbot <syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-"Lyude Paul" <lyude@redhat.com> writes:
+Hello,
 
-> With Linux's hrtimer API, there's a number of methods that can only be
-> called in two situations:
->
-> * When we have exclusive access to the hrtimer and it is not currently
->   active
-> * When we're within the context of an hrtimer callback context
->
-> This commit handles the second situation and implements hrtimer_forward()
-> support in the context of a timer callback. We do this by introducing a
-> HrTimerCallbackContext type which is provided to users during the
-> RawHrTimerCallback::run() callback, and then add a forward() function to
-> the type.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->
-> ---
-> V2:
-> * Improve SAFETY comments for HrTimerCallbackContext uses (I forgot to
->   mention that we're within RawHrTimerCallback::run()
-> * Split forward into forward() and raw_forward() since we're going to have
->   two contexts that we can call forward() from now.
-> * Clarify contexts in which certain hrtimer methods can be called.
-> * Make sure that we use a mutable reference for forward() here - just in
->   case :).
-> * Rename interval to duration
-> V3:
-> * Rename duration -back- to interval (now that I actually have read
->   hrtimer_forward's source, interval does make more sense than duration
->   considering the fact we return the number of overruns that occurred
->   according to the given interval).
-> * Rewrite documentation a bit (re: Andreas)
-> V6:
-> * Move reference to HrTimerCallbackContext::forward() in HrTimer::forward()
->   comments into this commit so rustdoc doesn't fail.
-> * Deduplicate documentation for HrTimerCallbackContext::forward()
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/time/hrtimer.rs         | 63 +++++++++++++++++++++++++++--
->  rust/kernel/time/hrtimer/arc.rs     |  9 ++++-
->  rust/kernel/time/hrtimer/pin.rs     |  9 ++++-
->  rust/kernel/time/hrtimer/pin_mut.rs | 12 ++++--
->  rust/kernel/time/hrtimer/tbox.rs    |  9 ++++-
->  5 files changed, 93 insertions(+), 9 deletions(-)
->
-> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-> index 5ccdd1b0b8021..a8fb176e599e8 100644
-> --- a/rust/kernel/time/hrtimer.rs
-> +++ b/rust/kernel/time/hrtimer.rs
-> @@ -69,7 +69,7 @@
->
->  use super::{ClockSource, Delta, Instant};
->  use crate::{prelude::*, types::Opaque};
-> -use core::marker::PhantomData;
-> +use core::{marker::PhantomData, ptr::NonNull};
->  use pin_init::PinInit;
->
->  /// A type-alias to refer to the [`Instant<C>`] for a given `T` from [`HrTimer<T>`].
-> @@ -196,6 +196,10 @@ unsafe fn raw_forward(self_ptr: *mut Self, now: HrTimerInstant<T>, interval: Del
->      /// expires after `now` and then returns the number of times the timer was forwarded by
->      /// `interval`.
->      ///
-> +    /// This function is mainly useful for timer types which can provide exclusive access to the
-> +    /// timer when the timer is not running. For forwarding the timer from within the timer callback
-> +    /// context, see [`HrTimerCallbackContext::forward()`].
-> +    ///
->      /// Returns the number of overruns that occurred as a result of the timer expiry change.
->      pub fn forward(self: Pin<&mut Self>, now: HrTimerInstant<T>, interval: Delta) -> u64
->      where
-> @@ -345,9 +349,13 @@ pub trait HrTimerCallback {
->      type Pointer<'a>: RawHrTimerCallback;
->
->      /// Called by the timer logic when the timer fires.
-> -    fn run(this: <Self::Pointer<'_> as RawHrTimerCallback>::CallbackTarget<'_>) -> HrTimerRestart
-> +    fn run(
-> +        this: <Self::Pointer<'_> as RawHrTimerCallback>::CallbackTarget<'_>,
-> +        ctx: HrTimerCallbackContext<'_, Self>,
-> +    ) -> HrTimerRestart
->      where
-> -        Self: Sized;
-> +        Self: Sized,
-> +        Self: HasHrTimer<Self>;
->  }
+syzbot found the following issue on:
 
-You fixed a bug here since v5 (unbounded T). Please remember to put it in the change
-log, it makes review easier.
+HEAD commit:    6e64f4580381 Merge tag 'input-for-v6.17-rc0' of git://git...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a181a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b6003cf8ecb92ff2
+dashboard link: https://syzkaller.appspot.com/bug?extid=e8bcd7ee3db6cb5cb875
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117fa1a2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105e9058580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3d9a1192a7cc/disk-6e64f458.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8f363fe8f54a/vmlinux-6e64f458.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/10b73833a575/bzImage-6e64f458.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:30 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter.h:328 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_iter+0xf0e/0x33f0 lib/iov_iter.c:185
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ copy_to_user_iter lib/iov_iter.c:24 [inline]
+ iterate_ubuf include/linux/iov_iter.h:30 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:300 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0xf0e/0x33f0 lib/iov_iter.c:185
+ copy_to_iter include/linux/uio.h:220 [inline]
+ memcpy_to_msg include/linux/skbuff.h:4202 [inline]
+ _rng_recvmsg crypto/algif_rng.c:101 [inline]
+ rng_recvmsg+0x1af/0x2d0 crypto/algif_rng.c:114
+ sock_recvmsg_nosec net/socket.c:1065 [inline]
+ sock_recvmsg+0x2df/0x390 net/socket.c:1087
+ sock_read_iter+0x2c8/0x360 net/socket.c:1157
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x857/0xf00 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
+ x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+<Zero or more stacks not recorded to save memory>
+
+Uninit was stored to memory at:
+ crypto_sha3_finup+0x136/0xe00 crypto/sha3_generic.c:202
+ crypto_shash_op_and_zero crypto/shash.c:105 [inline]
+ crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
+ jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
+ jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
+ jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
+ jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
+ jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
+ jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
+ crypto_rng_generate include/crypto/rng.h:144 [inline]
+ _rng_recvmsg crypto/algif_rng.c:97 [inline]
+ rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
+ sock_recvmsg_nosec net/socket.c:1065 [inline]
+ sock_recvmsg+0x2df/0x390 net/socket.c:1087
+ sock_read_iter+0x2c8/0x360 net/socket.c:1157
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x857/0xf00 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
+ x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ crypto_shash_finup+0xc5a/0xe80 crypto/shash.c:162
+ crypto_shash_update include/crypto/hash.h:994 [inline]
+ jent_hash_time+0x1de/0x590 crypto/jitterentropy-kcapi.c:136
+ jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
+ jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
+ jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
+ jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
+ jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
+ crypto_rng_generate include/crypto/rng.h:144 [inline]
+ _rng_recvmsg crypto/algif_rng.c:97 [inline]
+ rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
+ sock_recvmsg_nosec net/socket.c:1065 [inline]
+ sock_recvmsg+0x2df/0x390 net/socket.c:1087
+ sock_read_iter+0x2c8/0x360 net/socket.c:1157
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x857/0xf00 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
+ x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ put_unaligned_le64 include/linux/unaligned.h:43 [inline]
+ crypto_sha3_finup+0xc98/0xe00 crypto/sha3_generic.c:213
+ crypto_shash_op_and_zero crypto/shash.c:105 [inline]
+ crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
+ jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
+ jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
+ jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
+ jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
+ jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
+ jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
+ crypto_rng_generate include/crypto/rng.h:144 [inline]
+ _rng_recvmsg crypto/algif_rng.c:97 [inline]
+ rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
+ sock_recvmsg_nosec net/socket.c:1065 [inline]
+ sock_recvmsg+0x2df/0x390 net/socket.c:1087
+ sock_read_iter+0x2c8/0x360 net/socket.c:1157
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x857/0xf00 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
+ x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ keccakf_round crypto/sha3_generic.c:-1 [inline]
+ keccakf+0x1efb/0x2110 crypto/sha3_generic.c:155
+ crypto_sha3_finup+0x772/0xe00 crypto/sha3_generic.c:210
+ crypto_shash_op_and_zero crypto/shash.c:105 [inline]
+ crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
+ jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
+ jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
+ jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
+ jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
+ jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
+ jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
+ crypto_rng_generate include/crypto/rng.h:144 [inline]
+ _rng_recvmsg crypto/algif_rng.c:97 [inline]
+ rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
+ sock_recvmsg_nosec net/socket.c:1065 [inline]
+ sock_recvmsg+0x2df/0x390 net/socket.c:1087
+ sock_read_iter+0x2c8/0x360 net/socket.c:1157
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x857/0xf00 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
+ x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ crypto_sha3_finup+0x5be/0xe00 crypto/sha3_generic.c:207
+ crypto_shash_op_and_zero crypto/shash.c:105 [inline]
+ crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
+ jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
+ jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
+ jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
+ jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
+ jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
+ jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
+ crypto_rng_generate include/crypto/rng.h:144 [inline]
+ _rng_recvmsg crypto/algif_rng.c:97 [inline]
+ rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
+ sock_recvmsg_nosec net/socket.c:1065 [inline]
+ sock_recvmsg+0x2df/0x390 net/socket.c:1087
+ sock_read_iter+0x2c8/0x360 net/socket.c:1157
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x857/0xf00 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
+ x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ crypto_sha3_finup+0x136/0xe00 crypto/sha3_generic.c:202
+ crypto_shash_op_and_zero crypto/shash.c:105 [inline]
+ crypto_shash_finup+0x327/0xe80 crypto/shash.c:171
+ jent_hash_time+0x247/0x590 crypto/jitterentropy-kcapi.c:138
+ jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
+ jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
+ jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
+ jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
+ jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
+ crypto_rng_generate include/crypto/rng.h:144 [inline]
+ _rng_recvmsg crypto/algif_rng.c:97 [inline]
+ rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
+ sock_recvmsg_nosec net/socket.c:1065 [inline]
+ sock_recvmsg+0x2df/0x390 net/socket.c:1087
+ sock_read_iter+0x2c8/0x360 net/socket.c:1157
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x857/0xf00 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
+ x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ crypto_shash_finup+0xc5a/0xe80 crypto/shash.c:162
+ crypto_shash_update include/crypto/hash.h:994 [inline]
+ jent_hash_time+0x1de/0x590 crypto/jitterentropy-kcapi.c:136
+ jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
+ jent_measure_jitter+0x547/0x770 crypto/jitterentropy.c:541
+ jent_gen_entropy+0x209/0x450 crypto/jitterentropy.c:569
+ jent_read_entropy+0x353/0xeb0 crypto/jitterentropy.c:615
+ jent_kcapi_random+0x6c/0x250 crypto/jitterentropy-kcapi.c:284
+ crypto_rng_generate include/crypto/rng.h:144 [inline]
+ _rng_recvmsg crypto/algif_rng.c:97 [inline]
+ rng_recvmsg+0x149/0x2d0 crypto/algif_rng.c:114
+ sock_recvmsg_nosec net/socket.c:1065 [inline]
+ sock_recvmsg+0x2df/0x390 net/socket.c:1087
+ sock_read_iter+0x2c8/0x360 net/socket.c:1157
+ new_sync_read fs/read_write.c:491 [inline]
+ vfs_read+0x857/0xf00 fs/read_write.c:572
+ ksys_read fs/read_write.c:715 [inline]
+ __do_sys_read fs/read_write.c:724 [inline]
+ __se_sys_read fs/read_write.c:722 [inline]
+ __x64_sys_read+0x1fb/0x4d0 fs/read_write.c:722
+ x64_sys_call+0x2f9c/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable intermediary created at:
+ jent_hash_time+0x9b/0x590 crypto/jitterentropy-kcapi.c:110
+ jent_condition_data+0x4f0/0x510 crypto/jitterentropy.c:438
+
+Bytes 0-23 of 24 are uninitialized
+Memory access of size 24 starts at ffff88811855fb70
+Data copied to user address 00002000000001c0
+
+CPU: 1 UID: 0 PID: 5820 Comm: syz-executor170 Not tainted 6.16.0-syzkaller-11952-g6e64f4580381 #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+=====================================================
 
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Best regards,
-Andreas Hindborg
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
