@@ -1,195 +1,111 @@
-Return-Path: <linux-kernel+bounces-760315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26B6B1E95D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:38:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F71B1E95F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2BEA05146
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADC341AA0E61
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3728A27E05F;
-	Fri,  8 Aug 2025 13:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFEC27E066;
+	Fri,  8 Aug 2025 13:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fYfqvPRp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbG6UqZ/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8096D27CB31;
-	Fri,  8 Aug 2025 13:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0951727BF6F;
+	Fri,  8 Aug 2025 13:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754660319; cv=none; b=uLtABjYdX1AII76RPCpqa2KWp6satLmKe+2e98iNxrCX7rTpx/qOBhc+6X8Tbifb86u8L2IdcpmmtSSxSF0/i9mB07Jn+bP2v0g67qjzVoRtE236gPeKacWsyIecqq5XjSQ6QuJ08Q9XikAFsl8wGd0J7XthiAMH/zYECZ9lemI=
+	t=1754660346; cv=none; b=e+tHG63BhTrGrwU9M4KnUf/51Y5yJweySaUgs/ZS6rSYny5VewrymJw3dTbkURJtD4XLxgWzlqU5zi7d+cyK62KIb8kPKF5QGnCeOMK7ZDlDEo61I96jJQLvvXTfi4YzCztKRJMMSxI9bV27q5bFqDOizVpfd+7+mjZlR5Wz0vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754660319; c=relaxed/simple;
-	bh=xNNphpZVuuV6U/Jc9k5AyTfzIpZRp1BJyfmovI8qRz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K6LrWFmsIdCHafkwd6vTE5oHpDJzCs0zYSDMLVNYzlPrImUiofone2F+akr/BtvGn4AAPF25K6MkPY26KeIQT2V/Jbrqbtk647ezrSWrRWOzZINqTk9U36y48EZyQ599i+ogUTd/GGr5fFW0DZbxadP0Lwnin77elR92xQZ28PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fYfqvPRp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 408EEC4CEED;
-	Fri,  8 Aug 2025 13:38:38 +0000 (UTC)
+	s=arc-20240116; t=1754660346; c=relaxed/simple;
+	bh=O8M84x0IipqdrdHYVv72YHHJENEIRaUQIZ2uMc5u99g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHTfEqXocAEbbLq5A4AOMNmb/Xp/Mz2GInEjLwLycSwctv6pOlXDhHWhz/LvR5kUelaMuorCxzFf9F8gAxpvAxgr8QqUl+DZP6up0vcluE6QK5TtCzZKa9Ft24fgd7b+8EDY1Lv/KrvTBNmMm+ChJV3V2ByAdWqojL6EjRoKEvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbG6UqZ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF1FBC4CEED;
+	Fri,  8 Aug 2025 13:39:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754660318;
-	bh=xNNphpZVuuV6U/Jc9k5AyTfzIpZRp1BJyfmovI8qRz0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fYfqvPRpqL9tPn1XlTBGjZCrl23fSZnBBxWkK3d0SLIQYUv1mTmhtGw+SYAOZFsEc
-	 8jGV1OPcY71+2hanQRPlvCztRXRtCZrg+TDzTXOraT0FFPKC9LFc01OerloGi3BDR+
-	 rOsK+gTRzCfS7yG6KxwdXCfEG/57frdX+ARcwKa+ehuqlHoqK5po3JAlHypiLQoM9n
-	 akslpsAr4M7T6RjNxYjsa542e3DHK5aLxAVffmPIxCDb5PEfb/kLjhGgl6latNHpa5
-	 VFLIpcR2UIWUe4vX+MODn1F0r/OAqHW3lJIfHuFC0ESRh3oleZ9Hfg6qj8eA+Int1I
-	 XFgAP/0KswDiw==
-Message-ID: <4786fbb9-5d25-4d86-b902-61cc78a9b138@kernel.org>
-Date: Fri, 8 Aug 2025 22:38:37 +0900
+	s=k20201202; t=1754660345;
+	bh=O8M84x0IipqdrdHYVv72YHHJENEIRaUQIZ2uMc5u99g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JbG6UqZ/S0zddlUUGNsZ1LW2vuFaUZjaj1rL/Y+l6YznEaocmSIc2kJnU2E+c1yva
+	 Lpeh2fn4V45OtjUoq9klWu0btN9KL9+mopyNOJDiFok1Nc/zuJZS9wnJZMC7icpo/e
+	 Hp2B7PvXd3K5GARORPZT6Jq3n8AMGx0ZJVM2d/4cL1LoyR4D3OhsZEkjT4Ec6/233W
+	 NHanv1pISitDUIR/YtwT8pVBlfOCuOmlK7vjamZA5OSlaPkOcxaiJwR/894+2F90CO
+	 MYvlzlx9OAe2/YOKX7O8nDH9p7oYnZOiLnE/EsqkHgqtTuvOr3cCxSXePWqpGgw5fa
+	 LXZjYbg6HJscQ==
+Date: Fri, 8 Aug 2025 14:39:00 +0100
+From: Simon Horman <horms@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jisheng Zhang <jszhang@kernel.org>, nux-riscv@lists.infradead.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] net: stmmac: thead: Enable TX clock before MAC
+ initialization
+Message-ID: <20250808133900.GD1705@horms.kernel.org>
+References: <20250808103447.63146-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: sd: Fix build warning in sd_revalidate_disk()
-To: Abinash Singh <abinashsinghlalotra@gmail.com>
-Cc: James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, martin.petersen@oracle.com
-References: <5cfefec0-b64b-4f96-a943-4de3205d3c50@kernel.org>
- <20250808113019.20177-1-abinashsinghlalotra@gmail.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250808113019.20177-1-abinashsinghlalotra@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808103447.63146-2-ziyao@disroot.org>
 
-On 8/8/25 20:30, Abinash Singh wrote:
-> A build warning was triggered due to excessive stack usage in
-> sd_revalidate_disk():
-> 
-> drivers/scsi/sd.c: In function ‘sd_revalidate_disk.isra’:
-> drivers/scsi/sd.c:3824:1: warning: the frame size of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-> 
-> This is caused by a large local struct queue_limits (~400B) allocated
-> on the stack. Replacing it with a heap allocation using kmalloc()
-> significantly reduces frame usage. Kernel stack is limited (~8 KB),
-> and allocating large structs on the stack is discouraged.
-> As the function already performs heap allocations (e.g. for buffer),
-> this change fits well.
-> 
-> Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
-> ---
-> 
-> Hi,
-> 
-> Thank you very much for your comments.
-> I have addressed all your suggestions from v1.
-> 
-> As you mentioned concerns regarding the readability of
-> the __free(kfree) attribute, I have used the classic
-> approach in v2. Additionally, I will also send v3
-> where the __free() attribute is used instead.
-> 
-> We can proceed with patch version you
-> find more suitable, and do let me know if you have
-> any further feedback.
-> 
-> changelog v1->v2:
-> 	moved declarations together
-> 	avoided "unreadable" cleanup attribute
-> 	splited long line
-> 	changed the log message to diiferentiate with buffer allocation
-> 
-> Thanks,
-> 
-> ---
->  drivers/scsi/sd.c | 49 +++++++++++++++++++++++++++++------------------
->  1 file changed, 30 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index 4a68b2ab2804..f5ab2a422df6 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -3696,7 +3696,7 @@ static int sd_revalidate_disk(struct gendisk *disk)
->  	struct scsi_disk *sdkp = scsi_disk(disk);
->  	struct scsi_device *sdp = sdkp->device;
->  	sector_t old_capacity = sdkp->capacity;
-> -	struct queue_limits lim;
-> +	struct queue_limits *lim;
->  	unsigned char *buffer;
->  	unsigned int dev_max;
->  	int err;
+On Fri, Aug 08, 2025 at 10:34:48AM +0000, Yao Zi wrote:
 
-If you change this to "int err = 0", then...
+...
 
-> @@ -3711,23 +3711,30 @@ static int sd_revalidate_disk(struct gendisk *disk)
->  	if (!scsi_device_online(sdp))
->  		goto out;
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+> index f2946bea0bc2..50c1920bde6a 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+> @@ -152,7 +152,7 @@ static int thead_set_clk_tx_rate(void *bsp_priv, struct clk *clk_tx_i,
+>  static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
+>  {
+>  	struct thead_dwmac *dwmac = plat->bsp_priv;
+> -	u32 reg;
+> +	u32 reg, div;
 >  
-> +	lim = kmalloc(sizeof(*lim), GFP_KERNEL);
-> +	if (!lim) {
-> +		sd_printk(KERN_WARNING, sdkp,
-> +			"sd_revalidate_disk: Disk limit allocation failure.\n");
-> +		goto out;
-> +	}
+>  	switch (plat->mac_interface) {
+>  	case PHY_INTERFACE_MODE_MII:
+> @@ -164,6 +164,13 @@ static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
+>  	case PHY_INTERFACE_MODE_RGMII_RXID:
+>  	case PHY_INTERFACE_MODE_RGMII_TXID:
+>  		/* use pll */
+> +		div = clk_get_rate(plat->stmmac_clk) / rgmii_clock(SPEED_1000);
+> +		reg = FIELD_PREP(GMAC_PLLCLK_DIV_EN, 1) |
+> +		      FIELD_PREP(GMAC_PLLCLK_DIV_NUM, div),
+
+Sorry for not noticing this before sending my previous email.
+
+Although the code above is correct. I think it would be clearer
+to use ';' rather than ',' at the end of the line above. Perhaps ','
+is a typo.(',' is next to ';' on my keyboard at least).
+
+Flagged by Clang 20.1.8 with -Wcomma
+
 > +
->  	buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
->  	if (!buffer) {
->  		sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory "
->  			  "allocation failure.\n");
-> -		goto out;
-> +		goto free_lim;
-
-Yout can do a "goto out" here...
-
->  	}
->  
-
-[...]
-
->  	set_capacity_and_notify(disk, logical_to_sectors(sdp, sdkp->capacity));
-> -	sd_config_write_same(sdkp, &lim);
-> +	sd_config_write_same(sdkp, lim);
->  	kfree(buffer);
-
-Move this line after the "out" label...
-
->  
-> -	err = queue_limits_commit_update_frozen(sdkp->disk->queue, &lim);
-> -	if (err)
-> +	err = queue_limits_commit_update_frozen(sdkp->disk->queue, lim);
-> +	if (err) {
-
-just do a goto out here...
-
-> +		kfree(lim);
->  		return err;
-> +	}
->  
->  	/*
->  	 * Query concurrent positioning ranges after
-> @@ -3819,6 +3828,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
->  	if (sd_zbc_revalidate_zones(sdkp))
->  		set_capacity_and_notify(disk, 0);
->  
-> + free_lim:
-> +	kfree(lim);
->   out:
-
-And this becomes:
-
- out:
-	kfree(lim);
-	kfree(buffer)
-
-	return err;
-
-Much cleaner :)
-
->  	return 0;
->  }
-
+> +		writel(0, dwmac->apb_base + GMAC_PLLCLK_DIV);
+> +		writel(reg, dwmac->apb_base + GMAC_PLLCLK_DIV);
+> +
+>  		writel(GMAC_GTXCLK_SEL_PLL, dwmac->apb_base + GMAC_GTXCLK_SEL);
+>  		reg = GMAC_TX_CLK_EN | GMAC_TX_CLK_N_EN | GMAC_TX_CLK_OUT_EN |
+>  		      GMAC_RX_CLK_EN | GMAC_RX_CLK_N_EN;
 
 -- 
-Damien Le Moal
-Western Digital Research
+pw-bot: changes-requested.
 
