@@ -1,204 +1,215 @@
-Return-Path: <linux-kernel+bounces-759997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB791B1E56D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:13:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E343B1E56F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9523418C7BD4
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEDED720B8E
 	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CDE268C73;
-	Fri,  8 Aug 2025 09:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96AD725A353;
+	Fri,  8 Aug 2025 09:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b1KPXvWK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e8j0u1QF"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04922356C0;
-	Fri,  8 Aug 2025 09:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754644399; cv=none; b=jCWvqMWY6eoGMPY2zYGmS+QPHXPi/OARfSnHmLW8suRArkpzG8n0kLQxqZ3L/BHHw2lthH08tBBmYccKaWBa74zmlwZbD1nitil/aei5IWsdHe8ZRm9ZPBLfBj+HmfjGfLlzKRK4Aj0c11x9LUdqLIxyqiWxr8wO2zusEQ+PlO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754644399; c=relaxed/simple;
-	bh=jak3MZp79DWMyM3LRf+gkKinlpgNgSN9X5uunOJiQc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4qbN4VbBhj0k/dyjyKnOi7MpkOSkZKIz6yssF4RCBcl1PeN4qxf9JY34vQhK98ohMKrZCl+wgUPLeKwUjYnrGvzWRgq5Pmf3SIdfPrCUIFXi3vrOu1pdDqI/RH6pjkoJg8cmXc/Z20gLAe0T9qCBxSJVvAc9LFZG7KPmbs7ib0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b1KPXvWK; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754644398; x=1786180398;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jak3MZp79DWMyM3LRf+gkKinlpgNgSN9X5uunOJiQc8=;
-  b=b1KPXvWKWLHMK4nfZVqbK0HeBXq8D0x2YyW3XvbqmZJLHfZLoPsCk53O
-   TU0l7cIWuiEJTldYZ42T2/EWbACGqbIWSAf2+5F7NT+87PsBbBfyRORCe
-   uMScHgm69o+BqaEYaBI4jClUDKUpCgOC1cpLzBRPGaFIPOliyt20ui3F9
-   IANe7xnSynq3WhpduC2qV/Qfre09fWFxcjNXfmkseppeOLwEGnZEFyoRt
-   IojjF/NgqKiu3hxtY0ruiDHAeJJ0cK6YCpDgpEufhNUTR5ITozulH8K1Y
-   0tWxCeXzrfBA3xv5VEI/g2bBpx6vG/aG2j5Bzn15OnWHrFodaTS32ne1G
-   g==;
-X-CSE-ConnectionGUID: lVZt+DeMSuW8EvjCdNA9EQ==
-X-CSE-MsgGUID: z84Hts8oReGUOzL14CaoKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="74443780"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="74443780"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 02:13:17 -0700
-X-CSE-ConnectionGUID: 0m8LeReFSzieTb2Y6stPaQ==
-X-CSE-MsgGUID: CD1CwIOYQmGVCDGP9ZgWOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="196109753"
-Received: from unknown (HELO black.igk.intel.com) ([10.91.253.5])
-  by fmviesa001.fm.intel.com with ESMTP; 08 Aug 2025 02:13:14 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 5D8C793; Fri, 08 Aug 2025 11:13:13 +0200 (CEST)
-Date: Fri, 8 Aug 2025 11:13:13 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Mario Limonciello <superm1@kernel.org>,
-	"Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andreas.noever@gmail.com, michael.jamet@intel.com,
-	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
-	Sanath.S@amd.com
-Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
- dynamically
-Message-ID: <20250808091313.GN476609@black.igk.intel.com>
-References: <59cd3694-c6e5-42c4-a757-594b11b69525@amd.com>
- <20250806085118.GE476609@black.igk.intel.com>
- <9a757d21-a6e0-4022-b844-57c91323af5e@kernel.org>
- <20250806150024.GF476609@black.igk.intel.com>
- <2025080628-viral-untruth-4811@gregkh>
- <20250807051533.GG476609@black.igk.intel.com>
- <2025080758-supervise-craftily-9b7f@gregkh>
- <17ed42fe-9d8d-46da-8434-f508ec5932fa@kernel.org>
- <20250808044538.GK476609@black.igk.intel.com>
- <2025080822-cardboard-aloha-3c5d@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195F926C38C;
+	Fri,  8 Aug 2025 09:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754644428; cv=fail; b=ILTiXiZ36Fm8z3nfyk5+8dJiQ54ZfICRvYiRaQwojDqmeCh04qPTZJfeMWb9WYKM6uUBQhGkXlPnYWj8PoON5hJzFxCQWdhtjuw7V75i3RALJHQ8NKc5wCM5IDoVOYUZBDJ12Z5nbhS/ncI+3BzcgCz4l0EGgiS1qJIG5hPF7oA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754644428; c=relaxed/simple;
+	bh=7LgWPijuJSAI/NN/2aWzjTyLt/KV5fvRlWhUR3vrYu0=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=cV2iPkb59Ys6Eq124QLE3uyJ20tcjdbUnUQuMvRbdlDleksaRb20nOmM0xEBJrOLvzLJRGc/8sISQ5/CWt1IO6gGdm+Hbc5XZ7t/iUVDe3aE1PGI5ZMoI1QrwpaUaroIldK7SZPmYIu0FCUJgXqSjog9RjvJQkl5G+mdXzkqvgA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e8j0u1QF; arc=fail smtp.client-ip=40.107.94.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y3ao/qd+2QIHT69m5CgYIN0hitareg0hA/nnnO7ORFR7cy5i9oXHi0l3svNnyFvaYDfeaiwJQGWlbh1ckNNgys79xwtCKtBMunwrnMeD71L2VGMigPUnsIYsrRHDV+5EZolwxqJwafCbIM8S8pzb2xiVxNr6vGRC/c1c6Pq1fFRC8WVxaEqdgDTZR8a5xWqzZ+GHSE7sAMNYyZlvFV8KVq7dhbitHnGTMQz8nzO/oMrr3i28kKjN7OOeRP9h2V3QpQ24xCfkTcbaeMxhaWmp3XoxXlPMQGa25d1mRL75nyGjmfqywQe8acTDe9iZ9AR77/um56nBJLwTjANiqm7WZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7LgWPijuJSAI/NN/2aWzjTyLt/KV5fvRlWhUR3vrYu0=;
+ b=iyBjJv4UW8J/8Ovbj1iY2FcfcmRwFrjnRa3naVxx3EzvP8Qph0kJXG8WCI6LVAAJaXztbLvQUa04qwqmeJU1+xertWbNTOghXdS4xYjGtosXjMPRPt9tvZRzVu88nZeX9m1/WWVyN46vw6sLJblALZ/+Aume04pXmUaCvnU3l6cukaNHHC0F4/zZ4EWK/6H1eKD2sSZXQNE72UVRfls3JhlgTih5wauBDKj7+0FRfDz1Fi90I5p7R2gzjGhQ5gOP+xDqBqXGv4g33SYkaJ6pDLuexwNQXnKUAUxg55QNe3qcdBj8mXlJZQu/2tpeqMXbjM6hz0QYqxLgc4ulkaB1cQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7LgWPijuJSAI/NN/2aWzjTyLt/KV5fvRlWhUR3vrYu0=;
+ b=e8j0u1QFW5kQSIObk5A1cijT0sqce4H/ykNl6Dj9/lty4IFnm3Fm9yVlzoLisR/B5Hv8ojaf+HIHJ5VXFbLpOeKjEJVe6b5q1g5cQ0zimjK0IwV0PFswZqErO7Q+caJlivYHCJP2BNP759JaPjHJISFEEgxlJULG5klFJKr2APSmbmJQ9UJUdU/A7uLivmAZcQC4B7YORw/94RS3+4HAwqQ2HUh3NsgPrTh8alBv4JGW7EJotNfToBdB8n3B7WGQq5Gcqt206u6cyHnUzAeVUyatIpDa8L3dqGmOyJQAa/iOPRkmYUPGaT01jj7oJP5lLLw9JzXXybBVR0uFwUtYOw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA1PR12MB8118.namprd12.prod.outlook.com (2603:10b6:806:333::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.17; Fri, 8 Aug
+ 2025 09:13:44 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
+ 09:13:43 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 08 Aug 2025 18:13:39 +0900
+Message-Id: <DBWXJA6XF1VS.3PNHRWH030H0J@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH 0/4] rust: add `TryFrom` and `Into` derive macros
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Jesung Yang" <y.j3ms.n@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <cover.1754228164.git.y.j3ms.n@gmail.com>
+In-Reply-To: <cover.1754228164.git.y.j3ms.n@gmail.com>
+X-ClientProxiedBy: TYWPR01CA0025.jpnprd01.prod.outlook.com
+ (2603:1096:400:aa::12) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2025080822-cardboard-aloha-3c5d@gregkh>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB8118:EE_
+X-MS-Office365-Filtering-Correlation-Id: 880719bc-f88e-40ad-2eb3-08ddd65bdf05
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|10070799003|376014|7416014|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U25sRzNTQUh1cysvZldWUEozYTFqYTd0TXB4R1lZTnB4UlhYTDZLVDdKbG1U?=
+ =?utf-8?B?ZE5lKzVoNHBERzl1MTJRQ0s5ZkZndmEzOTJUaFlKVERkK3dOdVZTQUttVEpu?=
+ =?utf-8?B?QTBMYTU4b2JObVdnT3F3RHhFdVJrbE11OW1xeXFBVVI3dmJDak5Yc091SHgw?=
+ =?utf-8?B?OVpISDJMSTBXRlhFTzRoSU0xWGhnS0FBci9EbUJ6ZUkzQTZIWnFXQnhtb2xn?=
+ =?utf-8?B?c0FYUEJJTnVDbFh0TFBkelNUSlo2dk1uY2R5N0dtMnlXMFhuczRNbVFWQXE5?=
+ =?utf-8?B?ZTZaOXNnZ1UraEN6cUFuOFB1cW5xSWU2WWhBU05QNU1kLytmUGpWNmRPaFBt?=
+ =?utf-8?B?NzdJeldzNmMwSW9PV1RsTEVDWVRlMTNmcWlZVzNMaklDbUZmei80WW8yUjl2?=
+ =?utf-8?B?ZSttZ29BMktLTHRBVzBsaXJrNEVHbDJlQjFkVXZ2SUM1WkVnRXhLZ0JOMXR4?=
+ =?utf-8?B?MWFWeWp4ajdRQlhDa09KM3RIOE9WSm9Sc1RyQjhxNy9oUTdaVzdGaHJDellW?=
+ =?utf-8?B?VHkycEdjY25UMzJsZXhKVDl3NHVNaEFsSFo0ME9jSW1yQXhOYTNXenhvQ3Zx?=
+ =?utf-8?B?dTBSUWgrV0dPczVPZDlySEtYR1B4VDFrNE1wZDY5UERkclpwdnRsZkRnVkJy?=
+ =?utf-8?B?OVVjTG9yeHlXMHhMZVROQittRllzZlhmZS9PK2xJOGd6TzBwYUkzUlc3K3Zj?=
+ =?utf-8?B?L2dHQ0REeTNRbG45M2QxNDZQNEpRdGxrQWt6RjNmWTkyeVd2ZTgyRzNvUm9z?=
+ =?utf-8?B?YTg5Wi9BeThhNERwVWxRUThSQWRmZVNoS20xeFppZVJrdEE2clpUNkJiRnI1?=
+ =?utf-8?B?MDVrRkdieXhMQVJ0MUJMaUc4UFV3WG9ZbkZKVXpGcU10M3dEVldZSTF2NjZV?=
+ =?utf-8?B?aEQ3bDhCYklBUjlUT09NZDZWYS92cHpJaDljMWR0MnZuWFpKZSt5bjlEOTYv?=
+ =?utf-8?B?Z3lzS1R1WlJJRldHVDh0dHNPNHdhUnlmcG5zVldiYmxVVG92dnBwN0ZrN0pC?=
+ =?utf-8?B?eEFJamd6Rm5NeTJ2aEdhMXFValRKV3JDZnNrcEJTdTJnWDh1MmNVVU5TMlpt?=
+ =?utf-8?B?Q1lQN1BwZ1dzM3RHQlowMURHeEh5N210QWs3M0M4dTlhNEo1NU9EbkRzeTVJ?=
+ =?utf-8?B?SUNiazAyYkY1ZzFMdkQyYjJpQ3JKblljSjVoOFpoK1kyYU5YK1FheTFiZnRR?=
+ =?utf-8?B?NmI2bUpvckdBRGRESUF0TklOOTN6eDROa3I1cUJHSnZtVFNoMk4vMjhPaVha?=
+ =?utf-8?B?Y1FZWTVuR0VtMll4YUtGVEREd1RrckpTRStXSGZiNTMwTGVvZGVUcnNuajdn?=
+ =?utf-8?B?UU11OE9QemNJL0dIQ0JIaEVpeVFUang1YmRURGNXditrREFkMklYVlhET1o4?=
+ =?utf-8?B?cUNJK1RJMkFJRHZvVGMxdGdiR0EyNnBEekRBNWxsKzRXZkRaU1dOaXUzRE44?=
+ =?utf-8?B?MnlaM0NpRjJmVmZzZXREa01nNWo1WjUwRWdQZkQxNzR1eG0vYWxGQkloVTBa?=
+ =?utf-8?B?VFdyUjVsQVV2eWNCMkVCbHdSd1RKZzdhTWxueTJTUGo0SnlxbmdSdkZlZ0xW?=
+ =?utf-8?B?dnJVdzluL3J3NGR4RXFhNURQa2VsOFBqdjNXblBJNmZKYnVKWG4yMzF5VHdw?=
+ =?utf-8?B?cituK0wvSEY2MTdtTERBU3BGZG81OEZSaUQzVmxJd0YrMFRXQXNrYTdybTVy?=
+ =?utf-8?B?aHVwYjNWUVNVZ3I5bDVOSnRzRU8zOHV1b0Y2U2hwN0V6YlJEemdVTmFDcXpj?=
+ =?utf-8?B?aUpDajA2Sll5TEhXYmxmN2JDdzlaQk1aaU1FOVRBakkwcEh6UUVxcVdSM2FW?=
+ =?utf-8?B?NjBTVjBXU0NDNkVSd3dqV3VzTG0ybmhEK1QwYUtHcHBjcFU2QTlZamFBWmJh?=
+ =?utf-8?B?VWlBbzJIOVdPTGgvNmhvMGNua1dVUzdTR09DcnNCMTIxaWRnRlg2aU9GMVdm?=
+ =?utf-8?B?NzF5RXNrN1p1RVJTWGZuM0NDd3VnVGorakhKemp3OWpQckJQRU5LSFZkcExD?=
+ =?utf-8?B?UmZSSHRIUFlBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(376014)(7416014)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?U3N4MXRHUjNFR1lyWEJNV3pSMUVxM0I3ZkZwM3h5eGJuSjdhK0ZkR3oyL1Na?=
+ =?utf-8?B?aW9LQVVkakVPdXc4L2dVdHg2Si84NlE1c1pKd09SSzg4L0t6UkFZbmZuWHRM?=
+ =?utf-8?B?QVI1bHFuc3RueFdZNHhnOHFRL25KdDlnR3NMR2thMUl3ek96eUF1eDVZbkVL?=
+ =?utf-8?B?TzBvTlkxbUFwQjZiQzdzRS9nTzZ6REFScjZqZk03MVFKeWJhT2dpTVBtL0pp?=
+ =?utf-8?B?R2ZNVTcwaGxZVzBudXNldzB0cnR6Mk02S0xKTDNXR0M2ZU5ndTltNldlQ2c0?=
+ =?utf-8?B?cEdWWTMyekVRLzVZby9WdExiOWk5dkErN1JmMWxKM1lRd3JBeWpQMXZyZ2Nn?=
+ =?utf-8?B?M2JRUS94QW03N0kyV1NWVktmbVdGSi9OS3hybEkreXFrczdlR1RnZnlFNyt2?=
+ =?utf-8?B?dXEyUnFMU3NTZVdJYnQxRjEzOWREeWtMblo1eVhRbXZMTlRrZWZnRnlTeTZw?=
+ =?utf-8?B?ZUI2NkZ1ZVRHZDd0RkJOYnBTNklXYnNZUTZnTTF5QXdQd1ErV2laa3pJMEhl?=
+ =?utf-8?B?dDZUWWpoNzhSTzN4MTRsUEhWaHMvdnpWTGVFcTBOS3hpM3FtbVJ4NWNLaXhF?=
+ =?utf-8?B?LzFqcnZGV3hySVhNMkg4MzVqNzE2QTBQZHFEYmptOTQrWFBQZFY0MUtaU1pG?=
+ =?utf-8?B?Q0lVUkc0K1dKV0tzTDFQc3Y1UjRjb0Rva0QvYmZubGNTcU5XWGZydFZZR3pR?=
+ =?utf-8?B?Z09MeFRQaGs3NVhVYlpTbDNhQUY3eURzTnQyMEdLMUgveW0zMmtGeG5HT1Jq?=
+ =?utf-8?B?U2J4dmtEUkFzNVNTT1kyT3lMYkVzYVpBNm92V054d3JYV3NKWHhEMzVmM2Y3?=
+ =?utf-8?B?S3kySGhLQ0d2NWxqQVZiWEpObmFRY1lSN0c4UmdReFRFZmtkOGs1Rk5sWEFY?=
+ =?utf-8?B?MURqL3IxRzk1WER2NnYvT3NzQzB3MW5jWEsycis3VVhHV3I4ck1SNGFtVDY5?=
+ =?utf-8?B?bmZXRGRrNU15UDFVYSttTU5jR3J1ZTIzdzMrb1YzeWl5by9YQTczaEp1Z2tw?=
+ =?utf-8?B?Zyt0YjZhMEgybnAvaithT3lUTjhTZnFpQ2VOUkhYU3ZrK2xaWDNNRXRnc1Uw?=
+ =?utf-8?B?Q2dWbzNzM2J0djBBMEh3UU1DR0VqejVNMkVDNk9ranpMTHh6ZVZDUjZ4ZlF6?=
+ =?utf-8?B?Nk13ZVpxd2xnbkcvay91SDMwVEQyTHcyaEthL1h2a0h1Ylp0YWJSbVRPTldl?=
+ =?utf-8?B?b2xRc0syUytMa1pITVFKNzhiNGFKMGtvVXhERnJUVGkrM1NjSXZKZm9mcFFT?=
+ =?utf-8?B?anNWR2ZHeW1KZDVyWVJQT0xVZGtFNHBiZWEyaWdKSlZlOVdPaCtCZmJFUXN4?=
+ =?utf-8?B?cDlvUUtsVlQrdjVuYjJpbGc0bG04RGdoaVZFSjliWXAwM0FGSEU0ZEx0MXFF?=
+ =?utf-8?B?VHlScGhaYmpvL2JvWkdGN0F4cUk5UFVzZ3RxKzQ4Ykd0KzNNTXloZGtZVDgy?=
+ =?utf-8?B?MFhHbVF5YlIrM0RqQ3dHa1lsKytTVFA1RWZCUXlKL2dGOElteG1GWU9zQ2ow?=
+ =?utf-8?B?WUg2VWJwQnQ4SDJnc1lTdDlYMTBadmlqSXA5Rldma2VWelBVU250cUlrdVdC?=
+ =?utf-8?B?dlRYT0RRMWJrRWgyT3ZJTFVGSDJpTVZHUER6cStvSTZTU2lWVmxtWXY5QWRQ?=
+ =?utf-8?B?ZDVuV2dVSktEcUVBZ3k0dTdhNzlTVzVJS3Bsa2NINXA5SU8rd0NPVFQ0Qk5T?=
+ =?utf-8?B?QW5COXU2VlkxS2x0Zm9kZ3RZU3l3bDZQcGdWVkFOTEViM1VSVWRxV3BScUNI?=
+ =?utf-8?B?SVdqd08yaGQvWStPaEczM000Zm5lUFlsU09uWjNiODZVOGZkNUtIYVhVUkw1?=
+ =?utf-8?B?OTZDYkFieUdrMElFK3FlSEcxSHJvZ2UvZGMyeUdFK205S0VSVDdsN0VZMzFX?=
+ =?utf-8?B?cVRYWFAvdFV0MGh5bzBsVmtmTm42WjRSbVo0V25hVFVsaHo2eXRkeHRFRjVC?=
+ =?utf-8?B?anJrUU1QWnB4Sk5tZU1kK2NlaitYZ3BIbGgwMkZ5aUdIQlVzM1lIaXVvemF5?=
+ =?utf-8?B?aDRqSGJlU3FJVlBmTVZTQTBBUjZaYTlrblcxSm1xQyttUlBVTEVnSTNPZGFT?=
+ =?utf-8?B?L3dNTFZqS3N6eGtrb0pzaWVGUFgvcWx5R1ZidFo4TWhFRkFhYWR2SHNoRlAz?=
+ =?utf-8?B?TkZRSG5FVDlSUW9Yc1JiTXZkOElFZVVyUEU5RHpEd0VwTlpEUXhuajAwRWov?=
+ =?utf-8?Q?6T1Yf2xCXKH9NVK1fBh3CiQdQvjERq433B3WgofPRg/3?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 880719bc-f88e-40ad-2eb3-08ddd65bdf05
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 09:13:43.2203
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z75w/1bQUTzjb/iJJ2wFwHfjBujIvyKwI3XPtBMVxRcPYTZBYTGlPUtpY2EH5rYFMM0HN0lFl5ZCc23VzPqnTQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8118
 
-On Fri, Aug 08, 2025 at 10:02:08AM +0100, Greg KH wrote:
-> On Fri, Aug 08, 2025 at 06:45:38AM +0200, Mika Westerberg wrote:
-> > On Thu, Aug 07, 2025 at 11:07:39AM -0500, Mario Limonciello wrote:
-> > > On 8/7/25 11:02 AM, Greg KH wrote:
-> > > > On Thu, Aug 07, 2025 at 07:15:33AM +0200, Mika Westerberg wrote:
-> > > > > On Wed, Aug 06, 2025 at 05:58:26PM +0100, Greg KH wrote:
-> > > > > > On Wed, Aug 06, 2025 at 05:00:24PM +0200, Mika Westerberg wrote:
-> > > > > > > On Wed, Aug 06, 2025 at 09:06:30AM -0500, Mario Limonciello wrote:
-> > > > > > > > On 8/6/2025 3:51 AM, Mika Westerberg wrote:
-> > > > > > > > > On Wed, Aug 06, 2025 at 11:46:04AM +0530, Rangoju, Raju wrote:
-> > > > > > > > > > 
-> > > > > > > > > > 
-> > > > > > > > > > On 7/28/2025 12:17 PM, Mika Westerberg wrote:
-> > > > > > > > > > > Hi,
-> > > > > > > > > > > 
-> > > > > > > > > > > On Tue, Jul 22, 2025 at 11:20:23PM +0530, Raju Rangoju wrote:
-> > > > > > > > > > > > This patch series aims to update vendor properties for XDomain
-> > > > > > > > > > > > dynamically for vendors like AMD, Intel and ASMedia.
-> > > > > > > > > > > 
-> > > > > > > > > > > The XDomain properties pretty much describe "software" not the underlying
-> > > > > > > > > > > hardware so I don't understand why this is needed? We could have some USB
-> > > > > > > > > > > IF registered Linux specific ID there but I don't see why this matters at
-> > > > > > > > > > > all.
-> > > > > > > > > > 
-> > > > > > > > > > Currently, it is showing up as "Intel" on AMD host controllers during
-> > > > > > > > > > inter-domain connection. I suppose an alternative is to just call it "Linux"
-> > > > > > > > > > or "Linux Connection Manager" to ensure we accurately represent the
-> > > > > > > > > > connections across different systems.
-> > > > > > > > > > 
-> > > > > > > > > > I appreciate your guidance on this and suggestions you might have.
-> > > > > > > > > 
-> > > > > > > > > Yeah, something like that (I prefer "Linux"). The "ID" still is 0x8086
-> > > > > > > > > though but I don't think that matters. AFAIK we have other "donated" IDs in
-> > > > > > > > > use in Linux. Let me check on our side if that's okay.
-> > > > > > > > 
-> > > > > > > > Having looked through this discussion I personally like "Linux" for this
-> > > > > > > > string too.
-> > > > > > > > 
-> > > > > > > > As for the vendor ID doesn't the LF have an ID assigned already of 0x1d6b?
-> > > > > > > > Would it make sense to use that?
-> > > > > > > 
-> > > > > > > AFAIK that's PCI ID, right? It should be USB IF assigned ID and LF is not
-> > > > > > > here at least:
-> > > > > > > 
-> > > > > > >    https://www.usb.org/members
-> > > > > > > 
-> > > > > > > If it really matters we can sure register one.
-> > > > > > 
-> > > > > > Linux has an official USB vendor id, we use it for when Linux is used as
-> > > > > > a USB gadget device and in a few other places.  If you want to reserve a
-> > > > > > product id from it, just let me know and I can dole it out (the list is
-> > > > > > around here somewhere...)
-> > > > > 
-> > > > > Yes please :) I think this is the right thing to do.
-> > > > 
-> > > > Great, please let me know why you need it and what it will be for and
-> > > > why.  I totally can not figure that out from this thread...
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > 
-> > > Actually it's a very similar reason for the gadget drivers.  When connected
-> > > to other machines and using the USB4 networking feature (like a host to host
-> > > communication) the Linux kernel will identify itself and the other side will
-> > > show that to a user.
-> > > 
-> > > So right now it's got some hardcoded values.  This thread was prompting to
-> > > change the strings, but it's brought about the realization that we should
-> > > also be using a Linux specific vendor (the one uses in gadget devices) and
-> > > then a Linux specific "device id" which you will allocate.
-> > > 
-> > > Hope that helps!
-> > 
-> > Thanks Mario, yes exactly that :)
-> > 
-> > "Linux USB4 Inter-domain discovery properties" in a nutshell.
-> 
-> Ok, sounds good.  Here's the currently assigned ids that we have so far:
-> 
-> # Linux Foundation USB id list.
-> 1d6b  Linux Foundation
->         0001  1.1 root hub
->         0002  2.0 root hub
->         0003  3.0 root hub
->         0010  USB Debug Target
->         0011  USB GDB Target
->         0100  PTP Gadget
->         0101  Audio Gadget
->         0102  EEM Gadget
->         0103  NCM (Ethernet) Gadget
->         0104  Multifunction Composite Gadget
->         0105  FunctionFS Gadget
->         0106  Composite Gadget: ACM + Mass Storage
->         0107  Embedded Hub Gadgetg
->         0200  Qemu Audio Device
->         0246  BlueZ Host Stack
->         0247  BlueZ for Android
-> 
-> Any specific number feel drawn toward using?  Would 0004 make sense as this is
-> "USB 4" or should we save that if we ever get a USB 4.0 root hub?
+On Sun Aug 3, 2025 at 11:20 PM JST, Jesung Yang wrote:
+> This patch series introduces derive macros for `TryFrom` and `Into`
+> traits.
+>
+> A few enhancements were made to the custom `quote!()` macro to write
+> the derive macro. These include support for additional punctuation
+> tokens and a fix for an unused variable warning when quoting simple
+> forms. Detailed information about these enhancements is provided in the
+> relevant patches.
+>
+> This series builds on the previous work [1], where the `FromPrimitive`
+> trait was considered too heavy for the current use cases. In response
+> to the emerging need for functionality similar to `ToPrimitive`, this
+> series also implements the `Into` derive macro.
+>
+> The original discussion can be found on Zulip [2].
+>
+> [1] https://lore.kernel.org/rust-for-linux/cover.1750689857.git.y.j3ms.n@=
+gmail.com/
+> [2] https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic/x/n=
+ear/524335626
 
-0004 USB4
+I have tried this series on nova-core and it allowed me to remove 150
+lines of boiletplate just like that. As far as nova-core is concerned,
+this is a perfect fit.
 
-sounds good to me. In USB4 there is no "root hub". It's called host router
-(but we do have device routers that are called USB4 hubs for added
-confusion ;-).
+For the larger kernel, where using the right type is essential and where
+we want to avoid error paths whenever possible, I also feel like this is
+a much better fit than the initial `FromPrimitive`. But it would be nice
+to hear other opinions on the matter.
 
-But I'm fine with other numbers too, does not matter if you want to save it
-for some future USB variant.
+I will try to review as much as my proc-macro knowledge allows me to,
+but for now:
+
+Tested-by: Alexandre Courbot <acourbot@nvidia.com>
 
