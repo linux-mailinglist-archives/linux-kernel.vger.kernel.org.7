@@ -1,799 +1,178 @@
-Return-Path: <linux-kernel+bounces-760159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A575B1E737
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:27:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59359B1E738
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B094758730F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:26:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F93E7A1DC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE67273816;
-	Fri,  8 Aug 2025 11:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74A327A139;
+	Fri,  8 Aug 2025 11:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OANtEjdE"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIZcQEQm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902E9274B38
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C794C27A123;
+	Fri,  8 Aug 2025 11:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652270; cv=none; b=ljVLXXGOlIeGJ39xcTcODNttXKDrlBgc/HuEZN6rb1Q+LV4qKsH0WIpbD0QYx1SI7pX5VyOymJQakfg6oMNhs8ZUzss0j2laPY5mvzI81R/NcMo8Stb5uSdO/ZLBT743sBtpTkMC/odGgeadO0kCnuOaYU9XdQqEVBn7MuCuCaE=
+	t=1754652278; cv=none; b=VSHtzwa7FnNyfN5BBOwCl9rqe81Zu1m6XbPefLn9enxAIoKaixv2c+J4459zgIdPsjZz3eWeCWvV0RphV5iRqizm9Ik1wt+oh66KgQg8IhYYrBN32nxaiUqxQ1e61Hi4QmGwlN40z2fKqnXG4paOrAJWDaIUhccdnpLPJUcwQNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652270; c=relaxed/simple;
-	bh=vnReVjyJO9D/GqTCq1unXf8mPy4GF77C18VgZS57b4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EvfFTAYNUA1aKB5854MTnZzGJxoQPQnd53pG0Edxse2CPv/XWr7MLCHkabywdbJGAGrnugBDMsUv0HpK9LfC5yMq/HaG3O/oFF8JthkBK2bv1dGESbKcrr1dkQLvQQS/QxnGHolPFZz3O4HnIYLeFTT0pbQZRnNfLH3V0fryWGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OANtEjdE; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b7848df30cso1624619f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1754652266; x=1755257066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/QerUatP1FwXy5qM8prcSB6YRZFg5hvH6e9jGVmXCTU=;
-        b=OANtEjdE+vbgxODzAmM0o+THPiLOkAUHWtsb8yGjdIQulEhsQsGxzcuYZQ53jW8Dpu
-         jDKWG+FyYJDkAx7GXAWiGR35RJe7q2tRqkiEyq7rsSsp+V9ltNmbN6fAkR2sdbUkBZA+
-         /nMtjvAxG837h1VU4LujQEFbpSXLYEBTqSYlAQUBuspTfkq/ZzD0QCPym8RR080WdAiZ
-         5M6LyMwHHeucQP0eFfocxtOUcXzCl+A5OhDCWSAK1PeIHX92GF9YkN9EWs8Z2lO+0tqY
-         fSeJaZLuz6dxexV9x9PLHGZajrAtN/M9CIgo1AE7j90tARJ8xCBxUVd7iWoc3BOWuexx
-         XwWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754652266; x=1755257066;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/QerUatP1FwXy5qM8prcSB6YRZFg5hvH6e9jGVmXCTU=;
-        b=Qvshs02TS5BB/3IMIEsCEqWZ+amKGpoLMUKYHkFkojL6MMKTJmVFu0/akvH3T2Wg50
-         vFyYNVhPLQKWfkXJcE34F4pnVUvJUFz2TsKQKYbZRvHYnWRgdhi2w6YrnQ4k/TWY7O1j
-         C1E0GPnPd6uuBOr11x42NjrtZOaSHoWxkRpNg8Ua6M/dRvQh+13JczGNHYXwFOEhPw79
-         Qi/pZl5P8nmGNiAdVIyve+w9hhhvbDIB/9evQ3KEaALA0gELmTV15FTN9LGrnlG9asRv
-         dpnbJcJugFfI37X14sjAqN3T7mkncTMNoEGrihlGjU3/HUM2VSwyBkRqnkOITkemvfzd
-         uxAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeYZ2KkEpDmxpYUm4Y2EQErh4Igmtf3DxfmrRVDJweDlMqHMoG7VjTCRZYOX3Bblm1DuksxPwkcgqumzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXpLpo4g99PzbRK4yqtqWv4LEpR1PkDRH+gADFNlYEDQUlQIqZ
-	uZg9yyzYTFm62YcWwjwG2j2bmmectERCapGviQW7MtZHsDNRWZD5ULjVbabLrNEOVWw=
-X-Gm-Gg: ASbGncvBruERGkjeAhBZNgUnNNcI/rtaLtXsexRYbZbajicyxU4xjCh1NyrNo9sBfQC
-	0jPnAL4UfpW+FYryUrS8j91exPakULDCwNvzbuYn4M9fJ8TzPvv7LyaUttE8ZOXEpY1Rivmsf6A
-	6XLd3v0q+8pK27d9PHqLhaaN1l+eMlRMlsMcRuQ60fCk997bxVdg8b9k98Xm6aU0Broq8+7EG40
-	vE8vgheK8raiNBPDL1ld3iIOg1+oYNE3IBoMw1QBfRS33oEKQGdKE5FAeT1Lmvgtrt6Y6Baj8Ex
-	j1JNGiDOgh7gsAyT3C8aDyejEC5a3uiHuBFWwGyLt4prLUFPUmEgd6W2J1eV5Xy2AHFylxOZEfG
-	GAUthVT57i/A4Krhp91oyVEWjxfpFsbc=
-X-Google-Smtp-Source: AGHT+IHcXV1rLgWWMBZQXeDM6S9Vc4tpauCBc93JgLdUvQwTkrp4rucAKzWGxgdL0s3pD83tO3p5vg==
-X-Received: by 2002:a05:6000:4308:b0:3b7:915c:5fa3 with SMTP id ffacd0b85a97d-3b900fe7e69mr2310478f8f.24.1754652265560;
-        Fri, 08 Aug 2025 04:24:25 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.188])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac093sm31580576f8f.9.2025.08.08.04.24.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 04:24:24 -0700 (PDT)
-Message-ID: <eb59607d-6662-4a5a-bf14-77ce53f872b3@tuxon.dev>
-Date: Fri, 8 Aug 2025 14:24:22 +0300
+	s=arc-20240116; t=1754652278; c=relaxed/simple;
+	bh=G8XBDE8Dsdoq13Ly8auEDySbXA8PcvpOjtCB/bcB1Uo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uypwYNa0Nge9Nqv+9D5uY02+XNR1kFaVWulbGrNH4ITo3G3zBNs7hEPc7W1z9yzmFMukm0IPHezOawPR1Y7clis8PgrEeJoYXSuvokJt14KEoSy3JGQfEjOEIPFMVxKR8dQMUQcC411M8oE9xM0rvr1k64sqHjklZAiG/lmF77k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIZcQEQm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB49C4CEED;
+	Fri,  8 Aug 2025 11:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754652276;
+	bh=G8XBDE8Dsdoq13Ly8auEDySbXA8PcvpOjtCB/bcB1Uo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sIZcQEQmb2EsfdnJKyBOEKi4tLdQvrZbohWfRHKkpyfRXc8CwqqzT5fVnB7/GxZiE
+	 NqvDvbO4ZofZBESiChq3+nW4tIus+68ZlNH8bsly4+si/u0YfbqkwIBGq8CFCViQo4
+	 /KhACcUbFOa0OD8+hkffDEz53ZtHcRhP1ZcDz+dp9ex6vdXjgiSYUeg08PwL34nuLk
+	 9tr9mKmtKQv+CSfPjHCUgCdqEMwBiuvRTP/4xDR283aGd0217HwI/mLBUEGy0wfAQF
+	 NRZb9J0t9hYHj+70EY/k0GNkk+nHieD6LzEgUR+J5wAHMKByrjlA4gj6Add953CoDc
+	 E6v1BLX2jkjkA==
+Date: Fri, 8 Aug 2025 12:24:29 +0100
+From: Will Deacon <will@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	linux-mm <linux-mm@kvack.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ben Copeland <benjamin.copeland@linaro.org>
+Subject: Re: next-20250729: PREEMPT_RT: rock Pi 4b Internal error Oops
+ kmem_cache_alloc_bulk_noprof - kernel locking rtmutex.c at
+ __rt_mutex_slowlock_locked
+Message-ID: <aJXebTmgnrWw7Ks4@willie-the-truck>
+References: <CA+G9fYumD2MGjECCv0wx2V_96_FKNtFQpT63qVNrrCmomoPYVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/9] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
- will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Nam Cao <namcao@linutronix.de>
-References: <20250708192458.GA2148570@bhelgaas>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250708192458.GA2148570@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYumD2MGjECCv0wx2V_96_FKNtFQpT63qVNrrCmomoPYVQ@mail.gmail.com>
 
-Hi, Bjorn,
+Hi Naresh,
 
-Apolgies for taking so long to reply to this.
+On Sat, Aug 02, 2025 at 03:45:51PM +0530, Naresh Kamboju wrote:
+> ## Test log
+> [  527.570253] Unable to handle kernel paging request at virtual
+> address 003f0020f94020a1
+> [  527.570274] Mem abort info:
+> [  527.570277]   ESR = 0x0000000096000004
+> [  527.570282]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [  527.570288]   SET = 0, FnV = 0
+> [  527.570292]   EA = 0, S1PTW = 0
+> [  527.570297]   FSC = 0x04: level 0 translation fault
+> [  527.570302] Data abort info:
+> [  527.570305]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> [  527.570310]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [  527.570316]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [  527.570322] [003f0020f94020a1] address between user and kernel address ranges
+> [  527.570330] Internal error: Oops: 0000000096000004 [#1]  SMP
+> [  527.570336] Modules linked in: brcmfmac rockchip_dfi brcmutil
+> cfg80211 snd_soc_hdmi_codec dw_hdmi_i2s_audio dw_hdmi_cec
+> snd_soc_simple_card snd_soc_audio_graph_card hci_uart
+> snd_soc_rockchip_i2s snd_soc_es8316 snd_soc_spdif_tx
+> snd_soc_simple_card_utils btqca rtc_rk808 rockchipdrm btbcm
+> snd_soc_core dw_hdmi_qp bluetooth snd_compress reset_gpio analogix_dp
+> snd_pcm_dmaengine panfrost hantro_vpu dw_mipi_dsi rfkill rockchip_rga
+> drm_shmem_helper drm_dp_aux_bus snd_pcm gpu_sched dw_hdmi pwrseq_core
+> videobuf2_dma_sg v4l2_vp9 snd_timer drm_display_helper v4l2_h264
+> v4l2_jpeg phy_rockchip_pcie snd v4l2_mem2mem cec videobuf2_dma_contig
+> soundcore videobuf2_memops drm_client_lib videobuf2_v4l2
+> drm_dma_helper videobuf2_common rockchip_saradc drm_kms_helper
+> industrialio_triggered_buffer kfifo_buf rockchip_thermal
+> pcie_rockchip_host coresight_cpu_debug fuse drm backlight
+> [  527.570493] CPU: 3 UID: 0 PID: 34254 Comm: mkdir Not tainted
+> 6.16.0-next-20250801 #1 PREEMPT_RT
+> [  527.570502] Hardware name: Radxa ROCK Pi 4B (DT)
+> [  527.570506] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [  527.570512] pc : kmem_cache_alloc_bulk_noprof (mm/slub.c:5343
+> (discriminator 1) mm/slub.c:5403 (discriminator 1))
+> [  527.570527] lr : kmem_cache_alloc_bulk_noprof
+> (include/linux/atomic/atomic-arch-fallback.h:457
+> include/linux/atomic/atomic-instrumented.h:33
+> include/linux/kfence.h:127 mm/slub.c:5307 mm/slub.c:5403)
+> [  527.570533] sp : ffff80008e24b8f0
+> [  527.570536] x29: ffff80008e24b930 x28: 00ff000000584610 x27: ffff800082b30538
+> [  527.570545] x26: ffff8000816b64dc x25: 0000000000000cc0 x24: 0000000000000000
+> [  527.570554] x23: 0000000000000004 x22: ffff0000f7579d20 x21: 0000000000000001
+> [  527.570563] x20: 0000000000000001 x19: ffff000000405b00 x18: ffff80008e24bcd0
+> [  527.570572] x17: 0000000000000000 x16: ffff800081e18420 x15: 0000ffffa2670fff
+> [  527.570582] x14: 0000000000000000 x13: 1fffe000017942e1 x12: 0000ffffa2470fff
+> [  527.570591] x11: ffff00000bca1708 x10: 0000000000000001 x9 : ffff8000816e41a4
+> [  527.570600] x8 : ffff80008e24b850 x7 : fefefefefefefefe x6 : ffff800082b30000
+> [  527.570608] x5 : d63f0020f9402021 x4 : ffff0000f7579d58 x3 : 0000000000000000
+> [  527.570617] x2 : 0000000000000000 x1 : 0000000000000100 x0 : 0000000000000080
+> [  527.570627] Call trace:
+> [  527.570631] kmem_cache_alloc_bulk_noprof (mm/slub.c:5343
+> (discriminator 1) mm/slub.c:5403 (discriminator 1)) (P)
+> [  527.570639] mas_alloc_nodes (lib/maple_tree.c:1278)
+> [  527.570651] mas_node_count_gfp (lib/maple_tree.c:1339)
+> [  527.570661] mas_preallocate (lib/maple_tree.c:5538 (discriminator 1))
+> [  527.570667] __split_vma (mm/vma.c:528 (discriminator 1))
+> [  527.570677] vma_modify (mm/vma.c:1633)
+> [  527.570685] vma_modify_flags (mm/vma.c:1650)
+> [  527.570694] mprotect_fixup (mm/mprotect.c:819)
+> [  527.570704] do_mprotect_pkey (mm/mprotect.c:993)
+> [  527.570713] __arm64_sys_mprotect (mm/mprotect.c:1011)
+> [  527.570722] invoke_syscall (arch/arm64/include/asm/current.h:19
+> arch/arm64/kernel/syscall.c:54)
+> [  527.570731] el0_svc_common.constprop.0
+> (include/linux/thread_info.h:135 (discriminator 2)
+> arch/arm64/kernel/syscall.c:140 (discriminator 2))
+> [  527.570737] do_el0_svc (arch/arm64/kernel/syscall.c:152)
+> [  527.570744] el0_svc (arch/arm64/include/asm/irqflags.h:82
+> (discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
+> 1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
+> arch/arm64/kernel/entry-common.c:169 (discriminator 1)
+> arch/arm64/kernel/entry-common.c:182 (discriminator 1)
+> arch/arm64/kernel/entry-common.c:880 (discriminator 1))
+> [  527.570752] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:899)
+> [  527.570760] el0t_64_sync (arch/arm64/kernel/entry.S:596)
+> [ 527.570772] Code: 1400000c f94002c5 b4000aa5 b9402a60 (f86068a0)
+> All code
+> ========
+>    0: 1400000c b 0x30
+>    4: f94002c5 ldr x5, [x22]
+>    8: b4000aa5 cbz x5, 0x15c
+>    c: b9402a60 ldr w0, [x19, #40]
+>   10:* f86068a0 ldr x0, [x5, x0] <-- trapping instruction
+> 
+> Code starting with the faulting instruction
+> ===========================================
+>    0: f86068a0 ldr x0, [x5, x0]
+> [  527.570778] ---[ end trace 0000000000000000 ]---
+> [  527.570800] ------------[ cut here ]------------
 
-On 08.07.2025 22:24, Bjorn Helgaas wrote:
-> [+cc Nam for MSI parent domain conversions, head of this thread at
-> https://lore.kernel.org/r/20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com]
-> 
-> In subject:
-> 
->   PCI: rzg3s-host: Add Renesas RZ/G3S SoC host driver
-> 
-> so the important stuff is up front instead of being wrapped at the
-> end.
+If you're able to repro this, please could you see if the patch below
+helps at all?
 
-OK
+https://lore.kernel.org/r/20250806145611.3962-1-dev.jain@arm.com
 
-> 
-> On Fri, Jul 04, 2025 at 07:14:05PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
->> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
->> only as a root complex, with a single-lane (x1) configuration. The
->> controller includes Type 1 configuration registers, as well as IP
->> specific registers (called AXI registers) required for various adjustments.
->>
->> Hardware manual can be downloaded from the address in the "Link" section.
->> The following steps should be followed to access the manual:
->> 1/ Click the "User Manual" button
->> 2/ Click "Confirm"; this will start downloading an archive
->> 3/ Open the downloaded archive
->> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
->> 5/ Open the file r01uh1014ej*-rzg3s.pdf
->>
->> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
->> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
->> +static bool rzg3s_pcie_child_issue_request(struct rzg3s_pcie_host *host)
->> +{
->> +	u32 val;
->> +	int ret;
->> +
->> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_REQISS,
->> +			       RZG3S_PCI_REQISS_REQ_ISSUE,
->> +			       RZG3S_PCI_REQISS_REQ_ISSUE);
->> +	ret = readl_poll_timeout_atomic(host->axi + RZG3S_PCI_REQISS, val,
->> +					!(val & RZG3S_PCI_REQISS_REQ_ISSUE),
->> +					5, RZG3S_REQ_ISSUE_TIMEOUT_US);
->> +
->> +	return !!ret || (val & RZG3S_PCI_REQISS_MOR_STATUS);
-> 
-> From the context in the caller, I guess returning "true" means we
-> timed out or RZG3S_PCI_REQISS_MOR_STATUS contained some failure
-> status, and "false" means success.  This is a little bit mind-bending,
-> and it's a pain to have to deduce the bool meaning from the context.
-> 
-> Personally I would return 0 for success or a negative errno, e.g.,
-> 
->   if (val & RZG3S_PCI_REQISS_MOR_STATUS)
->     return -E<something>;
->   return ret;
-> 
+Cheers,
 
-I'll change it in the next version.
-
->> +}
->> +
->> +static int rzg3s_pcie_child_read_conf(struct rzg3s_pcie_host *host,
->> +				      struct pci_bus *bus,
->> +				      unsigned int devfn, int where,
->> +				      u32 *data)
->> +{
->> +	int ret;
->> +
->> +	bus->ops->map_bus(bus, devfn, where);
->> +
->> +	/* Set the type of request */
->> +	writel(RZG3S_PCI_REQISS_TR_TP0_RD, host->axi + RZG3S_PCI_REQISS);
->> +
->> +	/* Issue the request and wait to finish */
->> +	ret = rzg3s_pcie_child_issue_request(host);
->> +	if (ret)
->> +		return PCIBIOS_SET_FAILED;
->> +
->> +	/* Read the data */
->> +	*data = readl(host->axi + RZG3S_PCI_REQRCVDAT);
->> +
->> +	return PCIBIOS_SUCCESSFUL;
->> +}
-> 
->> +static irqreturn_t rzg3s_pcie_msi_irq(int irq, void *data)
->> +{
->> +	u8 regs = RZG3S_PCI_MSI_INT_NR / RZG3S_PCI_MSI_INT_PER_REG;
->> +	DECLARE_BITMAP(bitmap, RZG3S_PCI_MSI_INT_NR);
->> +	struct rzg3s_pcie_host *host = data;
->> +	struct rzg3s_pcie_msi *msi = &host->msi;
->> +	unsigned long bit;
->> +	u32 status;
->> +
->> +	status = readl(host->axi + RZG3S_PCI_PINTRCVIS);
->> +	if (!(status & RZG3S_PCI_PINTRCVIS_MSI))
->> +		return IRQ_NONE;
->> +
->> +	/* Clear the MSI */
->> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_PINTRCVIS,
->> +			       RZG3S_PCI_PINTRCVIS_MSI,
->> +			       RZG3S_PCI_PINTRCVIS_MSI);
->> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_MSGRCVIS,
->> +			       RZG3S_PCI_MSGRCVIS_MRI, RZG3S_PCI_MSGRCVIS_MRI);
->> +
->> +	for (u8 reg_id = 0; reg_id < regs; reg_id++) {
->> +		status = readl(host->axi + RZG3S_PCI_MSIRS(reg_id));
->> +		bitmap_write(bitmap, status, reg_id * RZG3S_PCI_MSI_INT_PER_REG,
->> +			     RZG3S_PCI_MSI_INT_PER_REG);
->> +	}
->> +
->> +	for_each_set_bit(bit, bitmap, RZG3S_PCI_MSI_INT_NR) {
->> +		int ret;
->> +
->> +		ret = generic_handle_domain_irq(msi->domain->parent, bit);
->> +		if (ret) {
->> +			u8 reg_bit = bit % RZG3S_PCI_MSI_INT_PER_REG;
->> +			u8 reg_id = bit / RZG3S_PCI_MSI_INT_PER_REG;
->> +
->> +			/* Unknown MSI, just clear it */
->> +			writel(BIT(reg_bit),
->> +			       host->axi + RZG3S_PCI_MSIRS(reg_id));
->> +		}
->> +	}
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static void rzg3s_pcie_msi_top_irq_ack(struct irq_data *d)
->> +{
->> +	irq_chip_ack_parent(d);
->> +}
->> +
->> +static void rzg3s_pcie_msi_top_irq_mask(struct irq_data *d)
->> +{
->> +	pci_msi_mask_irq(d);
->> +	irq_chip_mask_parent(d);
->> +}
->> +
->> +static void rzg3s_pcie_msi_top_irq_unmask(struct irq_data *d)
->> +{
->> +	pci_msi_unmask_irq(d);
->> +	irq_chip_unmask_parent(d);
->> +}
->> +
->> +static struct irq_chip rzg3s_pcie_msi_top_chip = {
->> +	.name		= "PCIe MSI",
->> +	.irq_ack	= rzg3s_pcie_msi_top_irq_ack,
->> +	.irq_mask	= rzg3s_pcie_msi_top_irq_mask,
->> +	.irq_unmask	= rzg3s_pcie_msi_top_irq_unmask,
->> +};
->> +
->> +static void rzg3s_pcie_msi_irq_ack(struct irq_data *d)
->> +{
->> +	struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(d);
->> +	struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
->> +	u8 reg_bit = d->hwirq % RZG3S_PCI_MSI_INT_PER_REG;
->> +	u8 reg_id = d->hwirq / RZG3S_PCI_MSI_INT_PER_REG;
->> +
->> +	guard(raw_spinlock_irqsave)(&host->hw_lock);
->> +
->> +	writel(BIT(reg_bit), host->axi + RZG3S_PCI_MSIRS(reg_id));
->> +}
->> +
->> +static void rzg3s_pcie_msi_irq_mask(struct irq_data *d)
->> +{
->> +	struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(d);
->> +	struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
->> +	u8 reg_bit = d->hwirq % RZG3S_PCI_MSI_INT_PER_REG;
->> +	u8 reg_id = d->hwirq / RZG3S_PCI_MSI_INT_PER_REG;
->> +
->> +	guard(raw_spinlock_irqsave)(&host->hw_lock);
->> +
->> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_MSIRM(reg_id), BIT(reg_bit),
->> +			       BIT(reg_bit));
->> +}
->> +
->> +static void rzg3s_pcie_msi_irq_unmask(struct irq_data *d)
->> +{
->> +	struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(d);
->> +	struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
->> +	u8 reg_bit = d->hwirq % RZG3S_PCI_MSI_INT_PER_REG;
->> +	u8 reg_id = d->hwirq / RZG3S_PCI_MSI_INT_PER_REG;
->> +
->> +	guard(raw_spinlock_irqsave)(&host->hw_lock);
->> +
->> +	rzg3s_pcie_update_bits(host->axi, RZG3S_PCI_MSIRM(reg_id), BIT(reg_bit),
->> +			       0);
->> +}
->> +
->> +static void rzg3s_pcie_irq_compose_msi_msg(struct irq_data *data,
->> +					   struct msi_msg *msg)
->> +{
->> +	struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(data);
->> +	struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
->> +	u32 drop_mask = RZG3S_PCI_MSIRCVWADRL_ENA |
->> +			RZG3S_PCI_MSIRCVWADRL_MSG_DATA_ENA;
->> +	u32 lo, hi;
->> +
->> +	/*
->> +	 * Enable and msg data enable bits are part of the address lo. Drop
->> +	 * them.
->> +	 */
->> +	lo = readl(host->axi + RZG3S_PCI_MSIRCVWADRL) & ~drop_mask;
->> +	hi = readl(host->axi + RZG3S_PCI_MSIRCVWADRU);
->> +
->> +	msg->address_lo = lo;
->> +	msg->address_hi = hi;
->> +	msg->data = data->hwirq;
->> +}
->> +
->> +static struct irq_chip rzg3s_pcie_msi_bottom_chip = {
->> +	.name			= "rzg3s-pcie-msi",
->> +	.irq_ack		= rzg3s_pcie_msi_irq_ack,
->> +	.irq_mask		= rzg3s_pcie_msi_irq_mask,
->> +	.irq_unmask		= rzg3s_pcie_msi_irq_unmask,
->> +	.irq_compose_msi_msg	= rzg3s_pcie_irq_compose_msi_msg,
->> +};
->> +
->> +static int rzg3s_pcie_msi_domain_alloc(struct irq_domain *domain,
->> +				       unsigned int virq, unsigned int nr_irqs,
->> +				       void *args)
->> +{
->> +	struct rzg3s_pcie_msi *msi = domain->host_data;
->> +	int hwirq;
->> +
->> +	scoped_guard(mutex, &msi->map_lock) {
->> +		hwirq = bitmap_find_free_region(msi->map, RZG3S_PCI_MSI_INT_NR,
->> +						order_base_2(nr_irqs));
->> +	}
->> +
->> +	if (hwirq < 0)
->> +		return -ENOSPC;
->> +
->> +	for (unsigned int i = 0; i < nr_irqs; i++) {
->> +		irq_domain_set_info(domain, virq + i, hwirq + i,
->> +				    &rzg3s_pcie_msi_bottom_chip,
->> +				    domain->host_data, handle_edge_irq, NULL,
->> +				    NULL);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void rzg3s_pcie_msi_domain_free(struct irq_domain *domain,
->> +				       unsigned int virq, unsigned int nr_irqs)
->> +{
->> +	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
->> +	struct rzg3s_pcie_msi *msi = domain->host_data;
->> +
->> +	guard(mutex)(&msi->map_lock);
->> +
->> +	bitmap_release_region(msi->map, d->hwirq, order_base_2(nr_irqs));
->> +}
->> +
->> +static const struct irq_domain_ops rzg3s_pcie_msi_domain_ops = {
->> +	.alloc	= rzg3s_pcie_msi_domain_alloc,
->> +	.free	= rzg3s_pcie_msi_domain_free,
->> +};
->> +
->> +static struct msi_domain_info rzg3s_pcie_msi_info = {
->> +	.flags	= MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
->> +		  MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_NO_AFFINITY,
->> +	.chip	= &rzg3s_pcie_msi_top_chip,
->> +};
->> +
->> +static int rzg3s_pcie_msi_allocate_domains(struct rzg3s_pcie_msi *msi)
->> +{
->> +	struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
->> +	struct device *dev = host->dev;
->> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
->> +	struct irq_domain *parent;
->> +
->> +	parent = irq_domain_create_linear(fwnode, RZG3S_PCI_MSI_INT_NR,
->> +					  &rzg3s_pcie_msi_domain_ops, msi);
->> +	if (!parent)
->> +		return dev_err_probe(dev, -ENOMEM,
->> +				     "failed to create IRQ domain\n");
->> +	irq_domain_update_bus_token(parent, DOMAIN_BUS_NEXUS);
->> +
->> +	msi->domain = pci_msi_create_irq_domain(fwnode, &rzg3s_pcie_msi_info,
->> +						parent);
->> +	if (!msi->domain) {
->> +		irq_domain_remove(parent);
->> +		return dev_err_probe(dev, -ENOMEM,
->> +				     "failed to create MSI domain\n");
->> +	}
-> 
-> Can you please rework this to follow what Nam Cao is doing for
-> existing drivers:
-> https://lore.kernel.org/r/cover.1750858083.git.namcao@linutronix.de
-
-Sure! Thank you for pointing it!
-
-> 
->> +static int rzg3s_pcie_intx_setup(struct rzg3s_pcie_host *host)
->> +{
->> +	struct device *dev = host->dev;
->> +
->> +	for (int i = 0; i < PCI_NUM_INTX; i++) {
->> +		struct platform_device *pdev = to_platform_device(dev);
->> +		char irq_name[5] = {0};
->> +		int irq;
->> +
->> +		scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 97 + i);
-> 
-> Can you use 'a' instead of 97?
-
-Yes!
-
-> 
->> +		irq = platform_get_irq_byname(pdev, irq_name);
->> +		if (irq < 0)
->> +			return dev_err_probe(dev, -EINVAL,
->> +					     "Failed to parse and map INT%c IRQ\n",
->> +					     65 + i);
-> 
-> And 'A' instead of 65?
-
-Yes!
-
-> 
->> +static int rzg3s_pcie_config_init(struct rzg3s_pcie_host *host)
->> +{
->> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(host);
->> +	struct resource_entry *ft;
->> +	struct resource *bus;
->> +	u8 subordinate_bus;
->> +	u8 secondary_bus;
->> +	u8 primary_bus;
->> +
->> +	ft = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
->> +	if (!ft)
->> +		return -ENODEV;
->> +
->> +	bus = ft->res;
->> +	primary_bus = bus->start;
->> +	secondary_bus = bus->start + 1;
->> +	subordinate_bus = bus->end;
->> +
->> +	/* Enable access control to the CFGU */
->> +	writel(RZG3S_PCI_PERM_CFG_HWINIT_EN, host->axi + RZG3S_PCI_PERM);
->> +
->> +	/* Update vendor ID and device ID */
->> +	writew(host->vendor_id, host->pcie + PCI_VENDOR_ID);
->> +	writew(host->device_id, host->pcie + PCI_DEVICE_ID);
->> +
->> +	/* HW manual recommends to write 0xffffffff on initialization */
->> +	writel(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00L);
->> +	writel(0xffffffff, host->pcie + RZG3S_PCI_CFG_BARMSK00U);
->> +
->> +	/* Update bus info. */
-> 
-> Drop period at end to match other one-line single-sentence comments.
-
-Missed it. I'll drop it.
-
-> 
->> +	writeb(primary_bus, host->pcie + PCI_PRIMARY_BUS);
->> +	writeb(secondary_bus, host->pcie + PCI_SECONDARY_BUS);
->> +	writeb(subordinate_bus, host->pcie + PCI_SUBORDINATE_BUS);
->> +
->> +	/* Disable access control to the CFGU */
->> +	writel(0, host->axi + RZG3S_PCI_PERM);
->> +
->> +	return 0;
->> +}
-> 
->> +static int rzg3s_pcie_host_init(struct rzg3s_pcie_host *host, bool probe)
->> +{
->> +	u32 val;
->> +	int ret;
->> +
->> +	/* Initialize the PCIe related registers */
->> +	ret = rzg3s_pcie_config_init(host);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Initialize the interrupts */
->> +	rzg3s_pcie_irq_init(host);
->> +
->> +	ret = reset_control_bulk_deassert(host->data->num_cfg_resets,
->> +					  host->cfg_resets);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Wait for link up */
->> +	ret = readl_poll_timeout(host->axi + RZG3S_PCI_PCSTAT1, val,
->> +				 !(val & RZG3S_PCI_PCSTAT1_DL_DOWN_STS),
->> +				 PCIE_LINK_WAIT_SLEEP_MS,
->> +				 PCIE_LINK_WAIT_SLEEP_MS *
->> +				 PCIE_LINK_WAIT_MAX_RETRIES * MILLI);
->> +	if (ret) {
->> +		reset_control_bulk_assert(host->data->num_cfg_resets,
->> +					  host->cfg_resets);
->> +		return ret;
->> +	}
->> +
->> +	val = readl(host->axi + RZG3S_PCI_PCSTAT2);
->> +	dev_info(host->dev, "PCIe link status [0x%x]\n", val);
->> +
->> +	val = FIELD_GET(RZG3S_PCI_PCSTAT2_STATE_RX_DETECT, val);
->> +	dev_info(host->dev, "PCIe x%d: link up\n", hweight32(val));
-> 
-> Maybe a little verbose for production use?
-
-OK, I'll drop it.
-
-> 
->> +	if (probe) {
->> +		ret = devm_add_action_or_reset(host->dev,
->> +					       rzg3s_pcie_cfg_resets_action,
->> +					       host);
->> +	}
->> +
->> +	return ret;
->> +}
-> 
->> +static int rzg3s_soc_pcie_init_phy(struct rzg3s_pcie_host *host)
->> +{
->> +	static const u32 xcfgd_settings[RZG3S_PCI_PHY_XCFGD_NUM] = {
->> +		[8]  = 0xe0006801, 0x007f7e30, 0x183e0000, 0x978ff500,
->> +		       0xec000000, 0x009f1400, 0x0000d009,
->> +		[17] = 0x78000000,
->> +		[19] = 0x00880000, 0x000005c0, 0x07000000, 0x00780920,
->> +		       0xc9400ce2, 0x90000c0c, 0x000c1414, 0x00005034,
->> +		       0x00006000, 0x00000001,
->> +	};
->> +	static const u32 xcfga_cmn_settings[RZG3S_PCI_PHY_XCFGA_CMN_NUM] = {
->> +		0x00000d10, 0x08310100, 0x00c21404, 0x013c0010, 0x01874440,
->> +		0x1a216082, 0x00103440, 0x00000080, 0x00000010, 0x0c1000c1,
->> +		0x1000c100, 0x0222000c, 0x00640019, 0x00a00028, 0x01d11228,
->> +		0x0201001d,
->> +	};
->> +	static const u32 xcfga_rx_settings[RZG3S_PCI_PHY_XCFGA_RX_NUM] = {
->> +		0x07d55000, 0x030e3f00, 0x00000288, 0x102c5880, 0x0000000b,
->> +		0x04141441, 0x00641641, 0x00d63d63, 0x00641641, 0x01970377,
->> +		0x00190287, 0x00190028, 0x00000028,
->> +	};
->> +
->> +	/*
->> +	 * Enable access permission for physical layer control and status
->> +	 * registers.
->> +	 */
->> +	writel(RZG3S_PCI_PERM_PIPE_PHY_REG_EN, host->axi + RZG3S_PCI_PERM);
->> +
->> +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGD_NUM; i++)
->> +		writel(xcfgd_settings[i], host->axi + RZG3S_PCI_PHY_XCFGD(i));
->> +
->> +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGA_CMN_NUM; i++) {
->> +		writel(xcfga_cmn_settings[i],
->> +		       host->axi + RZG3S_PCI_PHY_XCFGA_CMN(i));
->> +	}
->> +
->> +	for (u8 i = 0; i < RZG3S_PCI_PHY_XCFGA_RX_NUM; i++) {
->> +		writel(xcfga_rx_settings[i],
->> +		       host->axi + RZG3S_PCI_PHY_XCFGA_RX(i));
->> +	}
-> 
-> Why "for (unsigned int i = 0; ...)" above and "u8" here?  Seems like
-> similar situation here and no benefit for using u8 vs unsigned int.
-
-OK, I'll use unsigned int here as well.
-
-> 
->> +	writel(0x107, host->axi + RZG3S_PCI_PHY_XCFGA_TX);
->> +
->> +	/* Select PHY settings values */
->> +	writel(RZG3S_PCI_PHY_XCFG_CTRL_PHYREG_SEL,
->> +	       host->axi + RZG3S_PCI_PHY_XCFG_CTRL);
->> +
->> +	/*
->> +	 * Disable access permission for physical layer control and status
->> +	 * registers.
->> +	 */
->> +	writel(0, host->axi + RZG3S_PCI_PERM);
->> +
->> +	return 0;
->> +}
-> 
->> +static int
->> +rzg3s_pcie_host_setup(struct rzg3s_pcie_host *host,
->> +		      int (*intx_setup)(struct rzg3s_pcie_host *host),
->> +		      int (*msi_setup)(struct rzg3s_pcie_host *host),
->> +		      bool probe)
->> +{
->> +	struct device *dev = host->dev;
->> +	int ret;
->> +
->> +	/* Set inbound windows */
->> +	ret = rzg3s_pcie_parse_map_dma_ranges(host);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +				     "Failed to set inbound windows!\n");
->> +
->> +	/* Set outbound windows */
->> +	ret = rzg3s_pcie_parse_map_ranges(host);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +				     "Failed to set outbound windows!\n");
->> +
->> +	/* Set the PHY, if any */
->> +	if (host->data->init_phy) {
->> +		ret = host->data->init_phy(host);
->> +		if (ret)
->> +			return dev_err_probe(dev, ret,
->> +					     "Failed to set the PHY!\n");
->> +	}
->> +
->> +	if (intx_setup) {
->> +		ret = intx_setup(host);
->> +		if (ret)
->> +			return dev_err_probe(dev, ret,
->> +					     "Failed to setup INTx\n");
->> +	}
->> +
->> +	/* Set the MSIs */
->> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
->> +		ret = msi_setup(host);
->> +		if (ret)
->> +			return dev_err_probe(dev, ret,
->> +					     "Failed to setup MSIs\n");
->> +	}
->> +
->> +	/* Initialize the host */
-> 
-> Superfluous comment since you have a good function name.
-
-Will drop it.
-
-> 
->> +	ret = rzg3s_pcie_host_init(host, probe);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +				     "Failed to initialize the HW!\n");
->> +
->> +	/* Try to set maximum supported link speed */
-> 
-> Ditto.
-
-OK.
-
-> 
->> +	ret = rzg3s_pcie_set_max_link_speed(host);
->> +	if (ret)
->> +		dev_info(dev, "Failed to set max link speed\n");
->> +
->> +	return 0;
->> +}
-> 
->> +static int rzg3s_pcie_probe(struct platform_device *pdev)
->> +{
->> +	struct pci_host_bridge *bridge;
->> +	struct device *dev = &pdev->dev;
->> +	struct device_node *np = dev->of_node;
->> +	struct device_node *sysc_np __free(device_node) =
->> +		of_parse_phandle(np, "renesas,sysc", 0);
->> +	struct rzg3s_pcie_host *host;
->> +	int ret;
->> +
->> +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*host));
->> +	if (!bridge)
->> +		return -ENOMEM;
->> +
->> +	host = pci_host_bridge_priv(bridge);
->> +	host->dev = dev;
->> +	host->data = device_get_match_data(dev);
->> +	platform_set_drvdata(pdev, host);
->> +
->> +	host->axi = devm_platform_ioremap_resource(pdev, 0);
->> +	if (IS_ERR(host->axi))
->> +		return PTR_ERR(host->axi);
->> +	host->pcie = host->axi + RZG3S_PCI_CFG_BASE;
->> +
->> +	ret = of_property_read_u32(np, "vendor-id", &host->vendor_id);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = of_property_read_u32(np, "device-id", &host->device_id);
->> +	if (ret)
->> +		return ret;
->> +
->> +	host->sysc = syscon_node_to_regmap(sysc_np);
->> +	if (IS_ERR(host->sysc))
->> +		return PTR_ERR(host->sysc);
->> +
->> +	ret = regmap_update_bits(host->sysc, RZG3S_SYS_PCIE_RST_RSM_B,
->> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
->> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_sysc_signal_action,
->> +				       host->sysc);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = rzg3s_pcie_resets_prepare(host);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_pm_runtime_enable(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = pm_runtime_resume_and_get(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_add_action_or_reset(dev, rzg3s_pcie_pm_runtime_put, dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	raw_spin_lock_init(&host->hw_lock);
->> +
->> +	ret = rzg3s_pcie_host_setup(host, rzg3s_pcie_intx_setup,
->> +				    rzg3s_pcie_msi_enable, true);
->> +	if (ret)
->> +		return ret;
->> +
->> +	msleep(PCIE_RESET_CONFIG_WAIT_MS);
-> 
-> We also call rzg3s_pcie_host_setup(), where rzg3s_pcie_host_init()
-> deasserts all the resets and waits for the link to come up, from
-> rzg3s_pcie_resume_noirq().
-> 
-> Seems like the rzg3s_pcie_resume_noirq() path needs similar delay?
-> Perhaps the delay should be in rzg3s_pcie_host_init() where the event
-> that defines the beginning of the required delay is?
-
-You're right. I'll add the delay to rzg3s_pcie_host_setup().
-
-> 
->> +	bridge->sysdata = host;
->> +	bridge->ops = &rzg3s_pcie_root_ops;
->> +	bridge->child_ops = &rzg3s_pcie_child_ops;
->> +	ret = pci_host_probe(bridge);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return devm_add_action_or_reset(dev, rzg3s_pcie_host_remove_action,
->> +					host);
->> +}
-> 
->> +static int rzg3s_pcie_resume_noirq(struct device *dev)
->> +{
->> +	struct rzg3s_pcie_host *host = dev_get_drvdata(dev);
->> +	const struct rzg3s_pcie_soc_data *data = host->data;
->> +	struct regmap *sysc = host->sysc;
->> +	int ret;
->> +
->> +	ret = regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
->> +				 RZG3S_SYS_PCIE_RST_RSM_B_MASK,
->> +				 FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 1));
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = rzg3s_pcie_power_resets_deassert(host);
->> +	if (ret)
->> +		goto assert_rst_rsm_b;
->> +
->> +	ret = pm_runtime_resume_and_get(dev);
->> +	if (ret)
->> +		goto assert_power_resets;
->> +
->> +	ret = rzg3s_pcie_host_setup(host, NULL, rzg3s_pcie_msi_hw_setup, false);
->> +	if (ret)
->> +		goto rpm_put;
->> +
->> +	return 0;
->> +
->> +	/*
->> +	 * If any error happens there is no way to recover the IP. Put it in the
->> +	 * lowest possible power state.
->> +	 */
->> +rpm_put:
->> +	pm_runtime_put_sync(dev);
->> +assert_power_resets:
->> +	reset_control_bulk_assert(data->num_power_resets,
->> +				  host->power_resets);
->> +assert_rst_rsm_b:
->> +	regmap_update_bits(sysc, RZG3S_SYS_PCIE_RST_RSM_B,
->> +			   RZG3S_SYS_PCIE_RST_RSM_B_MASK,
->> +			   FIELD_PREP(RZG3S_SYS_PCIE_RST_RSM_B_MASK, 0));
->> +	return ret;
->> +}
-
+Will
 
