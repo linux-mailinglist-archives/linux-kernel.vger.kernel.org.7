@@ -1,113 +1,186 @@
-Return-Path: <linux-kernel+bounces-760252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461DCB1E87F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:38:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D58B1E883
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 198F91C23754
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B5CA02FFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00525279798;
-	Fri,  8 Aug 2025 12:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C6F279DAA;
+	Fri,  8 Aug 2025 12:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AgacXeh2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEEJQq6G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61278278E42
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3D127991E;
+	Fri,  8 Aug 2025 12:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754656713; cv=none; b=hut/YMdiM4gDOmqNb25Pr/yxI0BzxxDKRJzp2C4EBrkiMm8n5I60BZH5Ga9vTqWPucIEBo09ZYI+gFevRhp7aMrFPLDZxKuiHD2s0p/Y+qSJq7DxAtC2GmwXVDxsLPbgGi1jiUpOYsAVoix28smZJuRqrvKg4tZByc7Yt+6QVBE=
+	t=1754656761; cv=none; b=C9jzX1rPx/M/1KeFl/E44ckfA8i0F04H2AkcBpF5YtQsnIbWt7ybE/YW2X1/oFiSA942R1EkpjsM6lHvRK3C6QjN4q0OhkQ0eTi94L2dTaaSjFY6qhaynB8ayjNrC+YWPbJvGPlAreDtrC5XPzDr8mt1TMdtud/Ijcyf4VNulow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754656713; c=relaxed/simple;
-	bh=+z1SARUox8cV+m8+0oqKQI8N2ni6j8C28ZvZfwIMiVw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fRjHq6HGteXGtnslUTSa/aSAqevM0Et3OrWYeQBgxCvVuPDYIp2cGWMZZmLotdyTJz7LzHiCwd8kI6227IV1BLNPG8K6DseM95ilLkuel0TKmE7txrIuR6ZoSwlwxlgkwVMRXS8X2An7MQR3KBI2kdYYMqjlYpCrma82NcCHNS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AgacXeh2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754656710;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2c5qQSEQJ04PpUTVBYvGevi1pSNfV7Q71bDlXVhAWyw=;
-	b=AgacXeh2Bp8yo9/gEJJ+qyJbf3bCh8rS9m0kZ0rE35V37uO1k7wa+4Y2o3sWGFvHBcIxoU
-	lgPSR+oyqGL7RzrsucKkvNKKu43teTa27GFyWtgbTBayJASJUqrOJr4afxxM6OV4u+xGv9
-	DFhxrDE2pKbUhorFGla+ZvTELTLdWcU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-Lvq33mHbNX2NeCDMkBqKYQ-1; Fri,
- 08 Aug 2025 08:38:28 -0400
-X-MC-Unique: Lvq33mHbNX2NeCDMkBqKYQ-1
-X-Mimecast-MFC-AGG-ID: Lvq33mHbNX2NeCDMkBqKYQ_1754656707
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D6AE1800561;
-	Fri,  8 Aug 2025 12:38:27 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.74.8])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7488930002C0;
-	Fri,  8 Aug 2025 12:38:26 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] nfs: more client side tracepoints in write and
- writeback codepaths
-Date: Fri, 08 Aug 2025 08:38:24 -0400
-Message-ID: <620922BE-915F-4987-8AD6-3D62D4749FB6@redhat.com>
-In-Reply-To: <20250808-nfs-tracepoints-v1-0-f8fdebb195c9@kernel.org>
-References: <20250808-nfs-tracepoints-v1-0-f8fdebb195c9@kernel.org>
+	s=arc-20240116; t=1754656761; c=relaxed/simple;
+	bh=fxN/UNwxz65cx0FSNpWc9Z0w/3Jj5dkmHxHveIdtRuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFlaP57uwU3LiWssbuwOdNBRfA4GuFgSLxKgXPswouPaPG6NRA3m66hHQsX2RS1W0hCCNnCGG7+dApX/4JQDzN2VMcnCo4cXAIFYilNEXZ0f+eke/9ccjqn06BaRgcQTePCLhnBLsVI2gh5Q+WANrAsHjGe95ZPh5Gr3OscHQSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEEJQq6G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC1CC4CEED;
+	Fri,  8 Aug 2025 12:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754656760;
+	bh=fxN/UNwxz65cx0FSNpWc9Z0w/3Jj5dkmHxHveIdtRuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NEEJQq6G4RLRPFMxZhYJ6qScAZgCdMlINlBIfl4xVKT1Sxh+xl8i/lw2teUloJRtc
+	 VTqz5L716c46yoBGb6db7b6xavYyp6i3dcGZ5nJc2nGq+x0Y59DJlx5joE7APSYsmE
+	 EFtXUbb2d6IVQPHk9RRJxXhgR9HiZQ6DhHCKaZ2Ff7TIu8fSur2Z/NW8FN3IzAqWVk
+	 NWt+kn8qF2pxp6QmUgiIbDCC6hT6e4DAXoIdXrIfiInKUw4sC0pptcwPFk3JBqddxt
+	 dlIgOTUAvGXEzrWwV/RkSI9/5k62/VNmo5MVCnWApM5a8JiXqWyVXsm7KB84uTbZnD
+	 EbxSMHjMQV8Rw==
+Date: Fri, 8 Aug 2025 13:39:13 +0100
+From: Will Deacon <will@kernel.org>
+To: perlarsen@google.com
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, arve@android.com, ayrton@google.com,
+	qperret@google.com, sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v9 2/6] KVM: arm64: Use SMCCC 1.2 for FF-A initialization
+ and in host handler
+Message-ID: <aJXv8YXSbV1UFanw@willie-the-truck>
+References: <20250730-virtio-msg-ffa-v9-0-7f1b55c8d149@google.com>
+ <20250730-virtio-msg-ffa-v9-2-7f1b55c8d149@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730-virtio-msg-ffa-v9-2-7f1b55c8d149@google.com>
 
-On 8 Aug 2025, at 7:40, Jeff Layton wrote:
-
-> This is a pile of tracepoint additions and cleanups. Most of these I
-> plumbed in while tracking down the recent client-side corruption I've
-> been hunting. Please consider for v6.18.
->
-> Thanks,
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Wed, Jul 30, 2025 at 09:15:05PM +0000, Per Larsen via B4 Relay wrote:
+> From: Per Larsen <perlarsen@google.com>
+> 
+> SMCCC 1.1 and prior allows four registers to be sent back as a result
+> of an FF-A interface. SMCCC 1.2 increases the number of results that can
+> be sent back to 8 and 16 for 32-bit and 64-bit SMC/HVCs respectively.
+> 
+> FF-A 1.0 references SMCCC 1.2 (reference [4] on page xi) and FF-A 1.2
+> explicitly requires SMCCC 1.2 so it should be safe to use this version
+> unconditionally. Moreover, it is simpler to implement FF-A features
+> without having to worry about compatibility with SMCCC 1.1 and older.
+> 
+> Update the FF-A initialization and host handler code to use SMCCC 1.2.
+> 
+> Signed-off-by: Per Larsen <perlarsen@google.com>
 > ---
-> Jeff Layton (5):
->       nfs: remove trailing space from tracepoint
->       nfs: add tracepoints to nfs_file_read() and nfs_file_write()
->       nfs: new tracepoints around write handling
->       nfs: more in-depth tracing of writepage events
->       nfs: add tracepoints to nfs_writepages()
->
->  fs/nfs/file.c     |  20 ++++++--
->  fs/nfs/nfstrace.h | 135 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  fs/nfs/write.c    |  22 +++++++--
->  3 files changed, 168 insertions(+), 9 deletions(-)
-> ---
-> base-commit: 0919a5b3b11c699d23bc528df5709f2e3213f6a9
-> change-id: 20250807-nfs-tracepoints-f1d84186564d
->
-> Best regards,
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+>  arch/arm64/kvm/hyp/nvhe/Makefile |   1 +
+>  arch/arm64/kvm/hyp/nvhe/ffa.c    | 189 +++++++++++++++++++++++++--------------
+>  2 files changed, 121 insertions(+), 69 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
+> index 0b0a68b663d4bd202a7036384bf8a1748cc97ca5..a244ec25f8c5bd0a744f7791102265323ecc681c 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/Makefile
+> +++ b/arch/arm64/kvm/hyp/nvhe/Makefile
+> @@ -27,6 +27,7 @@ hyp-obj-y := timer-sr.o sysreg-sr.o debug-sr.o switch.o tlb.o hyp-init.o host.o
+>  	 cache.o setup.o mm.o mem_protect.o sys_regs.o pkvm.o stacktrace.o ffa.o
+>  hyp-obj-y += ../vgic-v3-sr.o ../aarch32.o ../vgic-v2-cpuif-proxy.o ../entry.o \
+>  	 ../fpsimd.o ../hyp-entry.o ../exception.o ../pgtable.o
+> +hyp-obj-y += ../../../kernel/smccc-call.o
+>  hyp-obj-$(CONFIG_LIST_HARDENED) += list_debug.o
+>  hyp-obj-y += $(lib-objs)
+>  
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 2c199d40811efb5bfae199c4a67d8ae3d9307357..e66149d40c967c14742087d9b45970435d3f2c75 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -71,36 +71,64 @@ static u32 hyp_ffa_version;
+>  static bool has_version_negotiated;
+>  static hyp_spinlock_t version_lock;
+>  
+> -static void ffa_to_smccc_error(struct arm_smccc_res *res, u64 ffa_errno)
+> +static void ffa_to_smccc_error(struct arm_smccc_1_2_regs *res, u64 ffa_errno)
+>  {
+> -	*res = (struct arm_smccc_res) {
+> +	*res = (struct arm_smccc_1_2_regs) {
+>  		.a0	= FFA_ERROR,
+>  		.a2	= ffa_errno,
+>  	};
+>  }
+>  
+> -static void ffa_to_smccc_res_prop(struct arm_smccc_res *res, int ret, u64 prop)
+> +static void ffa_to_smccc_res_prop(struct arm_smccc_1_2_regs *res, int ret, u64 prop)
+>  {
+>  	if (ret == FFA_RET_SUCCESS) {
+> -		*res = (struct arm_smccc_res) { .a0 = FFA_SUCCESS,
+> -						.a2 = prop };
+> +		*res = (struct arm_smccc_1_2_regs) { .a0 = FFA_SUCCESS,
+> +						      .a2 = prop };
+>  	} else {
+>  		ffa_to_smccc_error(res, ret);
+>  	}
+>  }
+>  
+> -static void ffa_to_smccc_res(struct arm_smccc_res *res, int ret)
+> +static void ffa_to_smccc_res(struct arm_smccc_1_2_regs *res, int ret)
+>  {
+>  	ffa_to_smccc_res_prop(res, ret, 0);
+>  }
+>  
+>  static void ffa_set_retval(struct kvm_cpu_context *ctxt,
+> -			   struct arm_smccc_res *res)
+> +			   struct arm_smccc_1_2_regs *res)
+>  {
+> +	DECLARE_REG(u64, func_id, ctxt, 0);
+>  	cpu_reg(ctxt, 0) = res->a0;
+>  	cpu_reg(ctxt, 1) = res->a1;
+>  	cpu_reg(ctxt, 2) = res->a2;
+>  	cpu_reg(ctxt, 3) = res->a3;
+> +	cpu_reg(ctxt, 4) = res->a4;
+> +	cpu_reg(ctxt, 5) = res->a5;
+> +	cpu_reg(ctxt, 6) = res->a6;
+> +	cpu_reg(ctxt, 7) = res->a7;
+> +
+> +	/*
+> +	 * DEN0028C 2.6: SMC32/HVC32 call from aarch64 must preserve x8-x30.
+> +	 *
+> +	 * We rely on the function ID sent by the caller. Note that there
+> +	 * are cases where a 32-bit interface can have a 64-bit response in FF-A
+> +	 * 1.2 (e.g. FFA_MSG_WAIT or FFA_RUN). This will be addressed in a future
+> +	 * version of the FF-A spec. Moreover, these corner cases are not relevant
+> +	 * on this code path (FFA_RUN is passed through [not proxied] by the
+> +	 * hypervisor and FFA_MSG_WAIT calls are made from the secure partition).
+> +	 */
+> +	if (ARM_SMCCC_IS_64(func_id)) {
+> +		cpu_reg(ctxt, 8) = res->a8;
+> +		cpu_reg(ctxt, 9) = res->a9;
+> +		cpu_reg(ctxt, 10) = res->a10;
+> +		cpu_reg(ctxt, 11) = res->a11;
+> +		cpu_reg(ctxt, 12) = res->a12;
+> +		cpu_reg(ctxt, 13) = res->a13;
+> +		cpu_reg(ctxt, 14) = res->a14;
+> +		cpu_reg(ctxt, 15) = res->a15;
+> +		cpu_reg(ctxt, 16) = res->a16;
+> +		cpu_reg(ctxt, 17) = res->a17;
+> +	}
 
+As discussed previously:
 
-These look great.
+https://lore.kernel.org/all/aH-0cx9YhdWRe2nq@willie-the-truck/
 
-Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+I think we should just do this unconditionally. We know that looking at
+the function ID isn't correct and so my vote is for compatability with
+with the SMC proxy code.
 
-Ben
-
+Will
 
