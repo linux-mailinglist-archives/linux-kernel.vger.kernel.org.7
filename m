@@ -1,126 +1,101 @@
-Return-Path: <linux-kernel+bounces-760438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CE5B1EB12
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:04:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A6FB1EAF5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E929A16E8B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:01:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 328144E4878
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9D228153D;
-	Fri,  8 Aug 2025 14:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AEE283FF7;
+	Fri,  8 Aug 2025 14:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WbnCVx14"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qsAM71Av"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DC827E7FD;
-	Fri,  8 Aug 2025 14:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D6928134D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754665154; cv=none; b=oXlhsRdrdOpOvx3EuJoeejIxvh4R+CEZ2dL87OY+utaq9+0zOCGYBmqdsrJPhZmt70GKR2a5JY7ObSpJ8s155ysV5wE6e3kooEwASGBOcN3B36NXRG7bHG5F+qLI4tB2YBnWyCWbNV6iQ7soSKAhTz70ZN1Cs69ScCMtBGltGts=
+	t=1754664984; cv=none; b=RLj0tBuIWuQsgnr6bZpd6XcUzTpebKL437FMiDXUgYOQjpjRTI8LDCFQwvCCxzai46oN2BYmACyY5LnOacVu9JdBDgXo8gLo/f7bS6BYeRzxgEvKEbXM86+509hU2k8/QgHzmnye292ikWfYYuzsbNLTkTJVhX5KyWPiyqjHnNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754665154; c=relaxed/simple;
-	bh=JS5l0JTvxjfWhfOl7mWhGheL2sKK5NX/r1b9XGlPSYQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=S3rkz4XzuXljVCnb00OOF+VBlLuKPg1n7lLPtekzISZefGbDh/2qPnhZQyUwxOTJrwS2FkgRWJQTUDpyUcUwYtMkFaimqxLIA32+ucClQXOpN1DEznPXI1PBxe9h80NZY1HMZCJgj3oaaZYQQv6d9DHMKjq5udBOm+1HGHAQu+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WbnCVx14; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578DVG8N014777;
-	Fri, 8 Aug 2025 16:58:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	NKA5zhqFYGJHApG3LHZ1wsad9XAvKI/FIK3QKmiMCpI=; b=WbnCVx14jjeuJHN6
-	GJIn+Fy7uBInALd0yOmv8xY1N92s1MboPmYDOVGOfKlyJ1dR9TdIdZfZZ4z7u230
-	hOZgX2ZobRFpBIOy2vaW04NBtp7pze1/toMUiVE1RtWulxbwt1s/1hMJbrSvEsKM
-	mv8O0GZCz25MOCQgGka/uT3VEShhKKugQsfHOZnGaYcy6pyoWjDb679PqL8ypGYf
-	RLUCtOMzNsz/XeURNPf+0IqflqC3ZDk4Ifwp9S9Vi0zr9ltkc3dOgbgt3l/YYUuW
-	ArazUWAES+HMyrjVVRVsnQhgUvAFXTm2W7oQM/aPTere3xJqK2sqyKGuQm7MwPo8
-	C4I3tQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48cq00pdk0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Aug 2025 16:58:44 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A8D2340046;
-	Fri,  8 Aug 2025 16:57:20 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D7F79727648;
-	Fri,  8 Aug 2025 16:55:57 +0200 (CEST)
-Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 8 Aug
- 2025 16:55:54 +0200
-Message-ID: <e7cd764d-bc6d-4e39-aa03-0eee8e30d3e5@foss.st.com>
-Date: Fri, 8 Aug 2025 16:55:52 +0200
+	s=arc-20240116; t=1754664984; c=relaxed/simple;
+	bh=egryD4WW3YF0s4Kmr5JVpmF1EeVvDVMQww6rkW/FnLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UhEknkX86wui5ZbKJTYM9m9e84/J6x26Ma5TBs+ozwi+EHZd7e3lusoucbkyAOQrQ8ateehwys00jCnccC5C5O8ayT6IVIcKTvzyKr4PcCrws/GttKNMEHG1lWFDFaIOkfdoop6ZqsmW2XXfkTCn0fAE+0kSwv0aJrjiQu2WW2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qsAM71Av; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC0BC4CEF4;
+	Fri,  8 Aug 2025 14:56:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754664984;
+	bh=egryD4WW3YF0s4Kmr5JVpmF1EeVvDVMQww6rkW/FnLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qsAM71AvcL3/GgGTXXznKonz3ypj2ZlSdmaA7/Bpc0c088tMmaZlEVKdc1Q3OOR1f
+	 xYA66GTz2t+Rq4uQzyEni4KRkJChTxMLpsfA0SdpJwCP8a2EP/t4ZvZEZ7Y63kfv2d
+	 yASHh6ndVKIaV7jeA4yI0GlFnQXbEO+QfMHD5MtOJZ7Lwt3autBZyPY+w94t3e/Aq2
+	 M5c05+jxCuSE4HXGDjFFbK9w+g6/Av7bx4lF7HM61kSkZlzo+FQ9ToqASaomX+m16H
+	 E8F6nMz/1Xv4O1d4V+A4EsRUHVaK9Y6ekBFWG+/EsuiSVM3ZPnvWELgr912RHHuTCI
+	 GSH738OOTeE/g==
+Date: Fri, 8 Aug 2025 16:56:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: =?utf-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Xiang Gao <gxxa03070307@gmail.com>, 
+	"mjguzik@gmail.com" <mjguzik@gmail.com>, "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>, 
+	"joel.granados@kernel.org" <joel.granados@kernel.org>, "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
+Message-ID: <20250808-erleichtern-hinreichend-35335e412d9e@brauner>
+References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
+ <20250802022550.GT222315@ZenIV>
+ <15b18541f37447dd8d5dbd8012662f67@xiaomi.com>
+ <20250802084525.GB31711@redhat.com>
+ <80be47cb31d14ffc9f9a7d8d4408ab0a@xiaomi.com>
+ <20250804114900.GA6656@redhat.com>
+ <20250804-gepfercht-delfin-0172b1ee9556@brauner>
+ <20250804124402.GB6656@redhat.com>
+ <20250805124300.GB27131@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christian Bruel <christian.bruel@foss.st.com>
-Subject: Re: [PATCH v12 2/9] PCI: stm32: Add PCIe host support for STM32MP25
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>
-CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <p.zabel@pengutronix.de>,
-        <johan+linaro@kernel.org>, <cassel@kernel.org>,
-        <shradha.t@samsung.com>, <thippeswamy.havalige@amd.com>,
-        <quic_schintav@quicinc.com>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250807180951.GA56737@bhelgaas>
-Content-Language: en-US
-In-Reply-To: <20250807180951.GA56737@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-08_04,2025-08-06_01,2025-03-28_01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250805124300.GB27131@redhat.com>
 
-
-
-On 8/7/25 20:09, Bjorn Helgaas wrote:
-> [+to Linus for pinctrl usage question below]
+On Tue, Aug 05, 2025 at 02:43:01PM +0200, Oleg Nesterov wrote:
+> On 08/04, Oleg Nesterov wrote:
+> >
+> > But. I need to re-check, but I just realized that pid_alive() can't
+> > really help, tsk->thread_pid is not stable even if tsk == current.
+> >
+> > This means that, say, task_ppid_nr_ns() is buggy.
 > 
-> On Tue, Jun 10, 2025 at 11:07:07AM +0200, Christian Bruel wrote:
->> Add driver for the STM32MP25 SoC PCIe Gen1 2.5 GT/s and Gen2 5GT/s
->> controller based on the DesignWare PCIe core.
->>
-
->> +
->> +	return pinctrl_pm_select_sleep_state(dev);
+> After the quick grep I don't see the problematic users, but if a zombie
+> task T does task_ppid_nr_ns(current, NULL) the kernel can crash:
 > 
-> Isn't there some setup required before we can use
-> pinctrl_select_state(), pinctrl_pm_select_sleep_state(),
-> pinctrl_pm_select_default_state(), etc?
+> 	- pid_alive() succeeds, the task is not reaped yet
+> 	
+> 	- the parent/debugger does wait()->release_task(T), T->thread_pid
+> 	  is NULL now
 > 
-> I expected something like devm_pinctrl_get() in the .probe() path, but
-> I don't see anything.  I don't know how pinctrl works, but I don't see
-> how dev->pins gets set up.
+> 	- T calls task_tgid_nr_ns()-> ... pid_nr_ns(ns => NULL) because
+> 	  task_active_pid_ns(T) returns NULL
+> 
+> Do you think this worth fixing?
 
-Linus knows better, but the dev->pins states are attached to the dev 
-struct before probe by the pinctrl driver
+If it's not too much work and it is an actual real-world concern then I
+think we should fix it. But I trust your judgement here!
 
-/**
-  * pinctrl_bind_pins() - called by the device core before probe
-  * @dev: the device that is just about to probe
-  */
-int pinctrl_bind_pins(struct device *dev)
+> In any case, I think that task_state(), sched_show_task(), bacct_add_tsk()
+> should be changed to use task_ppid_nr_ns(tsk).
 
-Christian
+Sounds good!
+> 
 
