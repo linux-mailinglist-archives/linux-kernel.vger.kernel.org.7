@@ -1,158 +1,95 @@
-Return-Path: <linux-kernel+bounces-760331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE71B1E9A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:55:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC31B1E9AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2DCF5A17EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:55:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D9D87B203E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A62713D53B;
-	Fri,  8 Aug 2025 13:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77977274B5A;
+	Fri,  8 Aug 2025 13:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="K2Mzkubw"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="i8tB3+w2"
+Received: from smtp153-170.sina.com.cn (smtp153-170.sina.com.cn [61.135.153.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE8A84A35
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAAB81732
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754661339; cv=none; b=CmhA9ExWnvjWk8JxeBc8UcbAPQqh93p6eC2sPxLxAuPPBTrqFji5WYZPi7g0ATWgp28uRdGXP3PC/8JoB+eMa6biuSDiZyOT62jtFqCik5SE5bm8W6+jR5b0ZugF4RgDgTagRWmEoj9KNhUMvFKOREvrfFqgTmSYxMXiaumjEP4=
+	t=1754661406; cv=none; b=WkjfEMOUtsLlT6f2b/jys92nSrEjE+dmompIuFqbxYF+dB70FOpkXyy/SVDhCDcU97vl8K/S/bAl+SmN+JX8xghcsOXSvTv4lVRqqUXnijhgcZlbIeKt/L29KeOq8ga6IL/jMqDGkDhkrvA7BM9SF5md4wLYESQLXizh2D9KwT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754661339; c=relaxed/simple;
-	bh=Zquk4fZlqugpMITqeHfl1rKNFO7IlOev+ik/svkOUIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hkodzv0Hv9tUZekq9iQ7aqI4Tsvlp/VA+GA25oveU/gi4dJpgxdNlC9n7dUeGaa6EM1HC7VLJEcWZ0Xwe95MgEBtXogXkK0ZV6Djm5Jn9WhPHuqcw4Y1AzpJ22qswu8ozfGzpRXx/pVz6MNORW9o2S6w9tecUz961NxpIvqnfng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=K2Mzkubw; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b4274585be2so96905a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 06:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1754661335; x=1755266135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kQqhwMu97JOF+Dnp4Yu6k+ZMIJjBNPmuuiSPr14eUoY=;
-        b=K2MzkubwRH2EvE2i8PEaTpBdJwSCEMaG3fpUbCChQxi2Yh0ccANvO5FjQND0N7s+i9
-         j2i3PHRd0Ls9MrDoGGe484n1BYDb31MM0n1kuMAJ5Cz2K4Vnm3MziHN1Vl1ZB5BVFsIP
-         qRQph51Qvi3SBVYtv2WjcA48fw6ztPuy4iiu8Gg7n1skjCv73vxQSsv8KLxfDvxjkmWK
-         HajajFYoA4JPcJXvKfWq07R894HiqXQqkzkJs2V3Rj8RLDFTsqshXxgHND7jqJzPhkqp
-         0ErG5j/Bt3rNlSDO486PT8CjiyEDrDdpucWqxsu6S1LSpoGWI4upqixVE8eOFbZwkSfq
-         3Kxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754661335; x=1755266135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kQqhwMu97JOF+Dnp4Yu6k+ZMIJjBNPmuuiSPr14eUoY=;
-        b=YuGmoylZ5CWh8tGtvTsqa+ljBpkuTo8LVyAbJwLsZmEPx1jSLNcfv/6fX23ZSbdhbU
-         GIVW7JLrFLFuEMmbO2Ioa3atBEX2oGH/mk5P3Sa75xBYpWcxohDKumpgrmqXf2Vij8Fq
-         +C9CGy/WX4PJb9RvOLt0SelmQ+p37G9ZyHXL9IF8WSTlmiyMTFWJ+PogB6H0X3ozjCPp
-         GCvas84/NSvf5xKzi/ySw0Xm43niz6btyKwmeQK9uw2AkZj2tdkCDmAvmxyqiQxu1slE
-         iVIw9bomf/uupUjq8NDrgRd8lP8Wjt1kZNmAhAa4nOg0yq8kOBok4RM4r0J+8nF26jgz
-         SSDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpdK3R8QPehh03uXMtsrT+bWT3kJPabbKRcJJsxqSyuoqTbn7sXhFTdNLv4HGM2VsND6f/qBYQejfBcCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynkeuOcWgJoLC0rkw4ZD6RgQG7V/rmUeBqqE7T8bseP7y4/Fly
-	s9pvH37RwJUin9QPWgd5k6Jq47ZFx5aoc21eTu4+tS1ks+4QI8MT9N3Kmtafs8YmAEHWI91884t
-	zGvPFqNQNeKftztFILbSO63Zt5j8Rqe1QQ4+Q2em9FQ==
-X-Gm-Gg: ASbGnctXrm8Z5m6Ke2DfZVGnmj6w+8GatRHAvcJ/qrvKEYqx9+V73gGIPtwdPWIZmj7
-	HK2X0NBMIEFvidW+I+cgssenAMmIwpjsre5oouDTencVb3BImzL7owM7XVSXFb+1pZMjvOsC60t
-	LnP6+P+GZoIBnRm2BSMR9zQq1aXZ888uqoBYZ+XfJdxGffkBTm9xwseWfslgCCc8vyU9ZYqnzAM
-	/pyZg==
-X-Google-Smtp-Source: AGHT+IEvTRGuSdb6pbkCKd1y4iUXYP9fAjyHlvC+AqT0WWCcjOtTZnbw9hq9BOfJC/3n9bkUYLQYUhb4M8CKh0KADFU=
-X-Received: by 2002:a17:903:8d0:b0:240:764e:afab with SMTP id
- d9443c01a7336-242c22135a5mr22357765ad.6.1754661335094; Fri, 08 Aug 2025
- 06:55:35 -0700 (PDT)
+	s=arc-20240116; t=1754661406; c=relaxed/simple;
+	bh=VGW3iwhs06TlX3mCL5Fz16GN2dRR+QXkmPM+0ULka0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OASOh5kfcqVa/mhB5CRFJ6MT5ip/mzB1cCcYGHcwkuE25Si0/4hW2DzM3vs1fRF7u/8AGdk3p7xILiw4oNqyq8IiEjYo2amOok1NDh1hXm/gxcTMr85hkNE5SdI0nv3MCOqc9buT/4qbqL7/5Ndq/rb0o0oGb1zLH4lhdpYAlyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=i8tB3+w2; arc=none smtp.client-ip=61.135.153.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754661396;
+	bh=7zg0rcr7ymUsDvF/YkFKUV212hpUZmwQfk5lRWpk9lA=;
+	h=From:Subject:Date:Message-ID;
+	b=i8tB3+w2S4ikrxGOXi6yCk23jYRbZNXPibCHl0O4p+xXqw/4mdT8izR7vlwtw1yJV
+	 nueSPvHkzD+paTcaJHalhb7CjscJ9jD6fSoQTf0Ogc9MrupiJqUXyst1bzNXH8Waa+
+	 bLmWt1QPhRbwwdLuuh2S22mrs5TZGGva2+Ws13eQ=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68960207000013ED; Fri, 8 Aug 2025 21:56:25 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6798736291755
+X-SMAIL-UIID: 1BB8CF37F45442A88123F99ED246849F-20250808-215625-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING: ODEBUG bug in __sk_destruct (3)
+Date: Fri,  8 Aug 2025 21:56:11 +0800
+Message-ID: <20250808135614.4022-1-hdanton@sina.com>
+In-Reply-To: <6895de6e.050a0220.7f033.005d.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
- <20250727150329.27433-3-sidong.yang@furiosa.ai> <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
- <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org> <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
- <DBVDWWHX8UY7.TG5OHXBZM2OX@kernel.org> <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
-In-Reply-To: <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 8 Aug 2025 09:55:22 -0400
-X-Gm-Features: Ac12FXxoKSbsPg1hWv0cG4s-zPj6j-EgqHK_XsFPK4Xy1_Cr-9q7QSTYWD8saXY
-Message-ID: <CADUfDZrWMrECM_LSh-nsurRBadskq_Z9wh_7nO1FUUxvOVHmKg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction for
- io-uring cmd
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Benno Lossin <lossin@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 8, 2025 at 2:56=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai>=
- wrote:
->
-> On Wed, Aug 06, 2025 at 03:38:24PM +0200, Benno Lossin wrote:
-> > On Wed Aug 6, 2025 at 2:38 PM CEST, Daniel Almeida wrote:
-> > > Hi Benno,
-> > >
-> > >> On 2 Aug 2025, at 07:52, Benno Lossin <lossin@kernel.org> wrote:
-> > >>
-> > >> On Fri Aug 1, 2025 at 3:48 PM CEST, Daniel Almeida wrote:
-> > >>>> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wro=
-te:
-> > >>>> +    #[inline]
-> > >>>> +    pub fn pdu(&mut self) -> &mut MaybeUninit<[u8; 32]> {
-> > >>>
-> > >>> Why MaybeUninit? Also, this is a question for others, but I don=C2=
-=B4t think
-> > >>> that `u8`s can ever be uninitialized as all byte values are valid f=
-or `u8`.
-> > >>
-> > >> `u8` can be uninitialized. Uninitialized doesn't just mean "can take=
- any
-> > >> bit pattern", but also "is known to the compiler as being
-> > >> uninitialized". The docs of `MaybeUninit` explain it like this:
-> > >>
-> > >>    Moreover, uninitialized memory is special in that it does not hav=
-e a
-> > >>    fixed value ("fixed" meaning "it won=C2=B4t change without being =
-written
-> > >>    to"). Reading the same uninitialized byte multiple times can give
-> > >>    different results.
-> > >>
-> > >> But the return type probably should be `&mut [MaybeUninit<u8>; 32]`
-> > >> instead.
-> > >
-> > >
-> > > Right, but I guess the question then is why would we ever need to use
-> > > MaybeUninit here anyways.
-> > >
-> > > It's a reference to a C array. Just treat that as initialized.
-> >
-> > AFAIK C uninitialized memory also is considered uninitialized in Rust.
-> > So if this array is not properly initialized on the C side, this would
-> > be the correct type. If it is initialized, then just use `&mut [u8; 32]=
-`.
->
-> pdu field is memory chunk for driver can use it freely. The driver usuall=
-y
-> saves a private data and read or modify it on the other context. using
-> just `&mut [u8;32]` would be simple and easy to use.
+> Date: Fri, 08 Aug 2025 04:24:30 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7abc678e3084 Merge tag 'pmdomain-v6.16-rc2' of git://git.k..
+> git tree:       bpf
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11b0a4f0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=12b5044868deb866
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d199b52665b6c3069b94
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a20f22580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12af2f22580000
 
-MaybeUninit is correct. The io_uring/uring_cmd layer doesn't
-initialize the pdu field. struct io_uring_cmd is overlaid with struct
-io_kiocb's cmd field. struct io_kiocb's are allocated using
-kmem_cache_alloc(_bulk)() in __io_alloc_req_refill(). io_preinit_req()
-is called to initialize each struct io_kiocb but doesn't initialize
-the cmd field. As Sidong said, it's uninitialized memory for the
-->uring_cmd() implementation to use however it wants for the duration
-of the command.
+#syz test upstream master
 
-Best,
-Caleb
+--- x/net/kcm/kcmsock.c
++++ y/net/kcm/kcmsock.c
+@@ -1714,7 +1714,7 @@ static int kcm_release(struct socket *so
+ 	/* Cancel work. After this point there should be no outside references
+ 	 * to the kcm socket.
+ 	 */
+-	cancel_work_sync(&kcm->tx_work);
++	flush_work(&kcm->tx_work);
+ 
+ 	lock_sock(sk);
+ 	psock = kcm->tx_psock;
+--
 
