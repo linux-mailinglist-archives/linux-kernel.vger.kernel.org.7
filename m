@@ -1,221 +1,173 @@
-Return-Path: <linux-kernel+bounces-759889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7499BB1E404
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:04:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B3CB1E3FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A10D7A9A68
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:02:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607D13A7F09
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6E6253954;
-	Fri,  8 Aug 2025 08:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020F123F40A;
+	Fri,  8 Aug 2025 08:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqWBCFoL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZx9NoVF"
+Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF374AEE2;
-	Fri,  8 Aug 2025 08:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDA84AEE2
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754640236; cv=none; b=TsiEIsM9HOp7bReQAtRLP+Jz5lJC9mdWn6S1TEGD0BUgPilx+1cSzuidgJFhRlE79zCmXPD9rKyr8TQ7XvUARZPg3gAzBVedguZDe20WRkcSCGNTqUiUhlQRWc4QpCfXXnT+uLkbv+D+m8+hVhZX3J/yrX9xo5rQC/eiLnxK+lM=
+	t=1754640120; cv=none; b=r6kWW2WVylDAtrkq19WbEHLwgvCfcRpcJCA37NQGjVLjufIf1odFRnBYN14ByzpFuW53hKVR+yZZLUZy5UiJP8mE5DoqVacBYUnv0sIzcYTRrWyMYolrknUKxFQynrIygn/eTqxXi1+vtUbkEd0sT6tZpiUxgqRP1XpS6iOVi9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754640236; c=relaxed/simple;
-	bh=upidoVouFlYnnKwWq5YqHJX7odCiw+ilU2lgJvtYf5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TET3mKzAEsSkbnuymTvJW0KUl3sjCRUW6j72BgfbPES28UC+PBHy5cOZPVsPko54kE1DnJov9Hj1Jw0TRQHKtkogFGUb5UYhOctk4MFRFJtWRBKDcLc9AgHsgp7+Pvg2ixf1CGHTskhOzT01jFk5A+3osKOB9TQT2a+8duGi2/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqWBCFoL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85018C4CEED;
-	Fri,  8 Aug 2025 08:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754640236;
-	bh=upidoVouFlYnnKwWq5YqHJX7odCiw+ilU2lgJvtYf5k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iqWBCFoLiQSge0i141OzQRbbujzAu6K7WvzRl9n/gx4mhzRO+NqSFltDoBCfHbGQD
-	 3s344iaBd3XzaQR2MLAsmvv4iZeTDF/TUZzkxm3JmsK6j3SvsvPt3EyEdseF4fMKrI
-	 Nakw6ZfrHj3B4V7jbgAANp5se0dvWLMkcVN1iaSRZRqmRERLfwpyEKOIQnSgMqxngI
-	 q+BCeRaNnLnzZst72rLgwXz+EzBut86c2MfckQ2xebVqxF8qsrEdNMD6g5h6JJAUrw
-	 U8eM1jhhPrH2/txfbuUD6/NSgMcBY1s2Zf8alaoBXnax86HnxYtV3DIKnOXQxztHKl
-	 +gMUmEbQhxjrw==
-Message-ID: <5cfefec0-b64b-4f96-a943-4de3205d3c50@kernel.org>
-Date: Fri, 8 Aug 2025 17:01:17 +0900
+	s=arc-20240116; t=1754640120; c=relaxed/simple;
+	bh=7oyJJ3eAXJRwGcVTY8F95qK1JKOI+/WBg933hpV9mrc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=uoWK2486QBHw7VyFw4XQdSiqC60UOtucZYt27HgA6F7OA3tVB4KUFa/UplSCMcDiSdE42sBiCS+pvWaB1fGsX8qAAq+IaUbLx3ldcaKI2ZDa0m0iL6eW8c2woU7puoD4MjOulP0/uhiEVU9RsPD1/7zDBO9xG+aya/RCxm0x0ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZx9NoVF; arc=none smtp.client-ip=209.85.219.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-e8da1fd7b6bso1675610276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 01:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754640118; x=1755244918; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MWJMHho/a9SJWI4X4vVnP0p90321hImD1R14P1yKy40=;
+        b=WZx9NoVFIX/tYcwPFB5dulWjSxmNYnQu6hfCA3nGwEypltg+s6VVgjNIzZUSTC0p3y
+         o10ohrzosLsJI8JEB+tGS2XrMBTUJqGn30JFXIyg88dVvgeKsqGpKam3Kncibof0tkgj
+         Y0vB0B9gpSOAQsEdDO8H5F822N51zgeiK2twAIEO06rfaxJRPpY/hzdlngzWFxY1+i/K
+         1DBTI5mIZIthKl9myDcQAJ9GAlRmMuEmLtFziGzJacfzy3zJUrbYyVu/kam8KTjK5xod
+         cwuQ+nBJC5vKXj//cSd/WKvZ1i6XVjMsIcv4xv7Dspmp8aZj4ySS6PDVXtza7COVaJj3
+         MBzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754640118; x=1755244918;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MWJMHho/a9SJWI4X4vVnP0p90321hImD1R14P1yKy40=;
+        b=UiTnXvNMYkEbM+QGGgm8djyIGMMQGr4mojsaX2hg5SNWiR6C4g3jDcleesxtHFO96J
+         GhDJBGSsZFNqpb1PCHHPwpl2bYww4tapktjgK4EyOvgXPjnQBxOyydB3W96UX4AQxFt7
+         /acVBv/p7OtEFOXiyI35gaHhLjDAtDpcdZYUm5ChFrndG/JYZZfjNs8lRP7WipuJZehr
+         IH3WH9zBFLZaSVWgUkNA2gpWzfrywz/4Apxsxk7sKOqbDH42yA2WdGIC9wtesCaGUqf8
+         Eq/dVbfaslevycvPus294+cKhpZO0anKwoRZMTt5CyX/44PMdhnpuhLQoItYnumJWcwj
+         lzwg==
+X-Gm-Message-State: AOJu0Yw0PGFQm0lTm651QEucROcjIypSO+rBG4DmLqU2ry1sCF/K9TVO
+	afUQatwQcwJZqmke4r4ZjS1yn4mSFFhDhqzFy4DXDSjFhqa+PvmPD3CFYxSr6VM5dbHvB85ejMG
+	BERfluGzkDiVSEtp/a1BBPZOsIthiIr+2i7uWgC4=
+X-Gm-Gg: ASbGnctaRIORujgFzpdvJkQIo05OC3jbw4a2e11QYKLWWTnPhZkuJDhBUEew7wzJ7Lt
+	+mE8gCDhiV8jsTASvUG09X5v5Yr7p6NAoWz2ZvI620OhSziQgajr+l87u5D/tYj7P8D2Z5WNbNM
+	Gsngj5itI1+ees/POSpMjz8aape1hg4Tx2HZF7zwSBEtK9Q3xOEo28OjdSk2gdtv9Wmtp/DZN5E
+	OnchrvZ2IAUH82lU71W9rIEoZhiwdgiexystkjawDKLwwe4NHs2
+X-Google-Smtp-Source: AGHT+IE73fjllbl+mmjrUZeCbrVPwf0Dz0AIssUI9Fpy4fJnW2YQVOXCqQCYTjzYXk8xyyhfO2RGqjqH1mMYmnuExOs=
+X-Received: by 2002:a05:690c:8685:10b0:71b:f4b7:181b with SMTP id
+ 00721157ae682-71bf4b725dcmr9136197b3.34.1754640117764; Fri, 08 Aug 2025
+ 01:01:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] scsi: sd: Fix build warning in sd_revalidate_disk()
-To: Abinash Singh <abinashsinghlalotra@gmail.com>,
- James.Bottomley@HansenPartnership.com
-Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250807183000.31465-1-abinashsinghlalotra@gmail.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250807183000.31465-1-abinashsinghlalotra@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Amit <amitchoudhary0523@gmail.com>
+Date: Fri, 8 Aug 2025 13:31:46 +0530
+X-Gm-Features: Ac12FXzJL-tOkPc7YE3pa3weAVrS_OLBQw85H7ZXJqrK1n-X19Rfl2jygbcIHwI
+Message-ID: <CAFf+5ziTOmMxKky9T+hb=zjWdD2OfLpS2s7FEn81r4tT-tG2gA@mail.gmail.com>
+Subject: List of string functions that are not present in the standard C library.
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/8/25 3:30 AM, Abinash Singh wrote:
-> A build warning was triggered due to excessive stack usage in
-> sd_revalidate_disk():
-> 
-> drivers/scsi/sd.c: In function ‘sd_revalidate_disk.isra’:
-> drivers/scsi/sd.c:3824:1: warning: the frame size of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-> 
-> This is caused by a large local struct queue_limits (~400B) allocated
-> on the stack. Replacing it with a heap allocation using kmalloc()
-> significantly reduces frame usage. Kernel stack is limited (~8 KB),
-> and allocating large structs on the stack is discouraged.
-> As the function already performs heap allocations (e.g. for buffer),
-> this change fits well.
-> 
-> Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
+------------------------------------------------------------------------
+List of string functions that are not present in the standard C library.
+------------------------------------------------------------------------
 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index 4a68b2ab2804..a03844400e51 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -34,6 +34,7 @@
->   */
->  
->  #include <linux/bio-integrity.h>
-> +#include <linux/cleanup.h>
->  #include <linux/module.h>
->  #include <linux/fs.h>
->  #include <linux/kernel.h>
-> @@ -3696,11 +3696,16 @@ static int sd_revalidate_disk(struct gendisk *disk)
->  	struct scsi_disk *sdkp = scsi_disk(disk);
->  	struct scsi_device *sdp = sdkp->device;
->  	sector_t old_capacity = sdkp->capacity;
-> -	struct queue_limits lim;
->  	unsigned char *buffer;
->  	unsigned int dev_max;
->  	int err;
->  
-> +	struct queue_limits *lim __free(kfree) = kmalloc(sizeof(*lim), GFP_KERNEL);
+** Many of the following functions take an argument (int case_insensitive) for
+   doing either case-sensitive or case-insensitive op.
 
-Please keep the declarations together. Not sure how that will work with that
-unreadable __free(kfree) annotation though (the "unreadable" part of this
-comment is only my opinion... I really dislike stuff that hides code...).
+* get_input_from_stdin_and_discard_extra_characters()
+* discard_all_characters_from_stdin()
 
-> +	if (!lim) {
-> +		sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory allocation failure.\n");
+* is_str_ascii()
+* is_str_spaces_only()
+* is_str_whitespaces_only()
+* is_str_integer()
+* is_str_long()
+* is_str_float()
+* is_str_double()
 
-Long line. Please split after sdkp. Also, the same message is used for the
-buffer allocation. So maybe differentiate with it ? E.g. something like "Disk
-limit allocation failure" ?
+* str_regex_match()
 
-> +		goto out;
-> +	}
-> +
->  	SCSI_LOG_HLQUEUE(3, sd_printk(KERN_INFO, sdkp,
->  				      "sd_revalidate_disk\n"));
->  
-> @@ -3720,14 +3726,14 @@ static int sd_revalidate_disk(struct gendisk *disk)
->  
->  	sd_spinup_disk(sdkp);
->  
-> -	lim = queue_limits_start_update(sdkp->disk->queue);
-> +	*lim = queue_limits_start_update(sdkp->disk->queue);
->  
->  	/*
->  	 * Without media there is no reason to ask; moreover, some devices
->  	 * react badly if we do.
->  	 */
->  	if (sdkp->media_present) {
-> -		sd_read_capacity(sdkp, &lim, buffer);
-> +		sd_read_capacity(sdkp, lim, buffer);
->  		/*
->  		 * Some USB/UAS devices return generic values for mode pages
->  		 * until the media has been accessed. Trigger a READ operation
-> @@ -3741,17 +3747,17 @@ static int sd_revalidate_disk(struct gendisk *disk)
->  		 * cause this to be updated correctly and any device which
->  		 * doesn't support it should be treated as rotational.
->  		 */
-> -		lim.features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
-> +		lim->features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
->  
->  		if (scsi_device_supports_vpd(sdp)) {
->  			sd_read_block_provisioning(sdkp);
-> -			sd_read_block_limits(sdkp, &lim);
-> +			sd_read_block_limits(sdkp, lim);
->  			sd_read_block_limits_ext(sdkp);
-> -			sd_read_block_characteristics(sdkp, &lim);
-> -			sd_zbc_read_zones(sdkp, &lim, buffer);
-> +			sd_read_block_characteristics(sdkp, lim);
-> +			sd_zbc_read_zones(sdkp, lim, buffer);
->  		}
->  
-> -		sd_config_discard(sdkp, &lim, sd_discard_mode(sdkp));
-> +		sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
->  
->  		sd_print_capacity(sdkp, old_capacity);
->  
-> @@ -3761,45 +3767,45 @@ static int sd_revalidate_disk(struct gendisk *disk)
->  		sd_read_app_tag_own(sdkp, buffer);
->  		sd_read_write_same(sdkp, buffer);
->  		sd_read_security(sdkp, buffer);
-> -		sd_config_protection(sdkp, &lim);
-> +		sd_config_protection(sdkp, lim);
->  	}
->  
->  	/*
->  	 * We now have all cache related info, determine how we deal
->  	 * with flush requests.
->  	 */
-> -	sd_set_flush_flag(sdkp, &lim);
-> +	sd_set_flush_flag(sdkp, lim);
->  
->  	/* Initial block count limit based on CDB TRANSFER LENGTH field size. */
->  	dev_max = sdp->use_16_for_rw ? SD_MAX_XFER_BLOCKS : SD_DEF_XFER_BLOCKS;
->  
->  	/* Some devices report a maximum block count for READ/WRITE requests. */
->  	dev_max = min_not_zero(dev_max, sdkp->max_xfer_blocks);
-> -	lim.max_dev_sectors = logical_to_sectors(sdp, dev_max);
-> +	lim->max_dev_sectors = logical_to_sectors(sdp, dev_max);
->  
->  	if (sd_validate_min_xfer_size(sdkp))
-> -		lim.io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
-> +		lim->io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
->  	else
-> -		lim.io_min = 0;
-> +		lim->io_min = 0;
->  
->  	/*
->  	 * Limit default to SCSI host optimal sector limit if set. There may be
->  	 * an impact on performance for when the size of a request exceeds this
->  	 * host limit.
->  	 */
-> -	lim.io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
-> +	lim->io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
->  	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
-> -		lim.io_opt = min_not_zero(lim.io_opt,
-> +		lim->io_opt = min_not_zero(lim->io_opt,
->  				logical_to_bytes(sdp, sdkp->opt_xfer_blocks));
->  	}
->  
->  	sdkp->first_scan = 0;
->  
->  	set_capacity_and_notify(disk, logical_to_sectors(sdp, sdkp->capacity));
-> -	sd_config_write_same(sdkp, &lim);
-> +	sd_config_write_same(sdkp, lim);
->  	kfree(buffer);
->  
-> -	err = queue_limits_commit_update_frozen(sdkp->disk->queue, &lim);
-> +	err = queue_limits_commit_update_frozen(sdkp->disk->queue, lim);
->  	if (err)
->  		return err;
->  
+* str_split()
+* str_split_regex()
+* str_join()
+* substr()
+* substr_regex()
 
+* str_trim_leading_spaces()
+* str_trim_leading_whitespaces()
+* str_trim_trailing_spaces()
+* str_trim_trailing_whitespaces()
+* str_trim_spaces()
+* str_trim_whitespaces()
 
--- 
-Damien Le Moal
-Western Digital Research
+* convert_num_to_usa_format()
+
+* compare_chars_case_insensitive()
+
+* str_starts_with()
+* str_starts_with_regex()
+* str_ends_with()
+* str_ends_with_regex()
+
+* str_replace_char_first_match()
+* str_replace_char_last_match()
+* str_replace_char_all()
+* str_replace_str_first_match()
+* str_replace_str_last_match()
+* str_replace_str_all()
+* str_replace_regex_first_match()
+* str_replace_regex_last_match()
+* str_replace_regex_all()
+
+* str_delete_char_first_match()
+* str_delete_char_last_match()
+* str_delete_char_all()
+* str_delete_str_first_match()
+* str_delete_str_last_match()
+* str_delete_str_all()
+* str_delete_regex_first_match()
+* str_delete_regex_last_match()
+* str_delete_regex_all()
+
+* str_insert_char()
+* str_insert_str()
+
+* str_compare_range()
+* str_replace_range()
+* str_delete_range()
+
+* str_left_pad_char()
+* str_right_pad_char()
+
+* get_random_char()
+* get_random_char_in_range()
+* get_random_str()
+* get_random_str_in_range()
+
+* str_sort_ascending()
+* str_sort_descending()
+
+* convert_str_to_lowercase()
+* convert_str_to_uppercase()
+
+* condense_consecutive_spaces()
+* condense_consecutive_whitespaces()
+* capitalize_first_char()
+
+* str_hash_code()
+
+* strtok_dm() // dm means don't modify string
+
+----
 
