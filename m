@@ -1,113 +1,138 @@
-Return-Path: <linux-kernel+bounces-759830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E34ABB1E37A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:35:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13712B1E37D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25661AA41A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:34:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A8DA0241A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD3A26D4D5;
-	Fri,  8 Aug 2025 07:24:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313142253EB
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F2F27280C;
+	Fri,  8 Aug 2025 07:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jec1pppl"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66982727EC;
+	Fri,  8 Aug 2025 07:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754637842; cv=none; b=TghMrEDbunM0feod4yO+rtDPhQ1Ezoq5t7uoXJ8fYVWtTUX0rqP3/MvTNQ5quAtYOCr/5PqCQd8mNPleHQXlBxbt8ZmzJhlClVaETkLYTL6vrTAQAY0O+kBzgKker3qc76v4NTy6NN6mKPxc0NWNmyWyhUdrMbVoBH7X6vmfeF8=
+	t=1754637961; cv=none; b=cM3iZj18+m/NFWUBmP6TkhQDzpsx4SbqoTsURRpCXLVXpgdoKPzFpuj4jcbpSUsnNyIydDiyNvLUEUxEi/iAr2H5N8HnL48fgHFHcQESLTe/Y/+y55/YfQgXAgf4DRhC9tA1eanGViTyv/nyC5t387u2Tn2gkU9hHAwzyzj1TT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754637842; c=relaxed/simple;
-	bh=JeQT9rbgdoxHCmmrTlM2nMo9QQ4ZV8FDRonTXTosv+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DOUdYInNVkvbu+DZerovr71OBFvpeBZi0q7w8kUj2gviGqvNmZvzYkTOC18lnz5mFhHOIITCiZuMlVFGhZT4ytql0aZqWIROQ7d611TKFX5ifpvolg9vvOvqyLivYRiEZPRnfruSy+oqqU4OkimMBwH4v7RYefGPlomxwvwh8cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A21B22EA;
-	Fri,  8 Aug 2025 00:23:52 -0700 (PDT)
-Received: from [10.57.5.99] (unknown [10.57.5.99])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30E133F673;
-	Fri,  8 Aug 2025 00:23:54 -0700 (PDT)
-Message-ID: <7f2b31e1-34ea-4207-bbdb-e83f7a147107@arm.com>
-Date: Fri, 8 Aug 2025 08:23:51 +0100
+	s=arc-20240116; t=1754637961; c=relaxed/simple;
+	bh=v99kbMIWKT1gSbp4MBDwhcbuLTRICTgVOKhRkrvL90o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G9XVW3IjoibekohhQ/2IW5IAAek+ZEdyIeCxmA0vm5Mahu60tN/We4odrQ3DYkSIkw33Rc+I3o9iBsF19NZ8O+c1fnUZj0+oZm6SaFrfnPL5tqgK/1FUF8C19J5AHhOitAROaOkUsyswDmLZMMBVNlsoJa/GvKFPHOhXo4wpf6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jec1pppl; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2c4331c50eso1363495a12.3;
+        Fri, 08 Aug 2025 00:25:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754637959; x=1755242759; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o+w3axXai/UtW73ThtGKJHbQUS3xBpWeg88zTzqK2pw=;
+        b=jec1ppplVf1ly/IoLgSlcF0y+ktfLxMyx77nAF95yGsmcueoRGK+6c8Q65Xsh03M6O
+         cBeZL5hHrFJL7/1BhoaTgjbIR9kyUYEd9Yo4utY7PIMPiioN0nWikZLkf5ys+4fL3M3a
+         sbJB1qdYaGuPvvsSoa6JXCx6Xq1+IqUrZ7XcTq9cpvrxQxC3ecXcRmiludaYKYr8gyzO
+         uGbEZ2WCl74ZQ9dkY7NNaEhv76mMBOHFlALNcoQed69K+NVivb8VoQ4U64iqOrJ7bQdJ
+         e22dKTHl7xPJOvMYP+d+OFRPgGMzlVdHjxebkdb/HKHCLrWe1QDdvRNiMN489yZemIrC
+         I5tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754637959; x=1755242759;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o+w3axXai/UtW73ThtGKJHbQUS3xBpWeg88zTzqK2pw=;
+        b=k/qDclKR+/wkJSoBSBRfAZIsiwgK21kSCutXSCAL4323spMSHJ0Re7ISXrgOgdmEle
+         1NKcfMPCg3s0gQJuRPT+SOA5drwZB+555j3TEY4XcKDp7BaajsJ/ydLa6C13YPuyvn5W
+         DfwS7NLGT35ToeWf8Jurb43BFX1RHuM3hqnVz3uBJgyJo8D+YR7ZLiLxxVQTj12Do9XM
+         DG0lY1ppx9qeMIkRJlXC/cH44FsWcT2ZsftbBjTcwx2jXXNumJo05lOxZHkvgyKtxn7l
+         vBHe5fJyvwzTPEpW1QcKGEQ6OtNkjzBMJqenPIsEqzCDH0IfXvlcUiFwpKiB0KuhfObs
+         rTaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUE7lOzcj8oOqatTYG/qnC6Cd2B/hAntt4sxHGtc+DMKk5zgNdIEGX6CcQUHYGt8ajO9JM03llIQrunH4=@vger.kernel.org, AJvYcCUg4/cJ5X0eN8vuB2OJHiqugPjbGXhclvzTrQYWCxIE+PRreH85q0NFrna4nSoUhBoOBjO9FABq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwzRDNUagRRDR8+8lQIrY0KwpI4W2dy8aiGpT/auRD/NTpfrNE
+	p5yos0Tg7/gbtCrNNd7GfNMr0ut3WJU0gOdep6+9TR6ILKj5dgmaWaLA
+X-Gm-Gg: ASbGncuXt3RwQym3cDxW/8A1LOxVRjAle4RE15RvwJgcHTRFcn8PeyxtcI2Khdk6L+I
+	MVErAal31W8I6rTApQ/MC13IlWgFFE/uJ6UyNJ6xEbNiNaoGP2PsXYIzksXAfYacikBobBroFRk
+	gXWOu/CriyMSdUkqcIbNkA+RkVg2JoMWUzA0771GGTAlhBxOS4rUmn1XFFZ19aWGvu280YDwqcu
+	xM+7fKS3sJtp5Cx+mqc3hekNn/oo8WBg42xNpp2vRgBjk/hsg2GA+PUVnwnKXRyJpII4GZawdZ3
+	FfMw1AyfT64ktpYyXFM1B17JMeTZEibpIRc51KLAWiCG9pUh540A2SscNnGQdj++rWiomAHbfkk
+	fbS5pKKpYqzmiV1r7KsBh/xHyHg==
+X-Google-Smtp-Source: AGHT+IH+BOHmBGxowe2FnNX3h7QUib3N48XSR4eZZ0MEEWyLgwxzWx6m1pzQKL5wnLBbHG4viJE9Cg==
+X-Received: by 2002:a17:903:40c5:b0:240:49d1:6347 with SMTP id d9443c01a7336-242c221b477mr28279985ad.35.1754637958692;
+        Fri, 08 Aug 2025 00:25:58 -0700 (PDT)
+Received: from fedora ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24218d8413asm186893565ad.63.2025.08.08.00.25.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 00:25:58 -0700 (PDT)
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: chuck.lever@oracle.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	donald.hunter@gmail.com,
+	borisp@nvidia.com,
+	john.fastabend@gmail.com
+Cc: alistair.francis@wdc.com,
+	dlemoal@kernel.org,
+	kernel-tls-handshake@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: [RFC v2 0/1] net/tls: add support for limiting the max record size
+Date: Fri,  8 Aug 2025 17:23:59 +1000
+Message-ID: <20250808072358.254478-3-wilfred.opensource@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/36] arm_mpam: Add basic mpam driver
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Rob Herring <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>,
- Rohit Mathew <rohit.mathew@arm.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Zeng Heng
- <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
- Carl Worth <carl@os.amperecomputing.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>
-References: <20250711183648.30766-1-james.morse@arm.com>
- <20250801170930.000051fe@huawei.com>
-Content-Language: en-US
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <20250801170930.000051fe@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Jonathan,
+From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
 
-On 01/08/2025 17:09, Jonathan Cameron wrote:
-> On Fri, 11 Jul 2025 18:36:12 +0000
-> James Morse <james.morse@arm.com> wrote:
->> This is just enough MPAM driver for the ACPI and DT pre-requisites.
->> It doesn't contain any of the resctrl code, meaning you can't actually drive it
->> from user-space yet.
+During a handshake, an endpoint may specify a maximum record size limit.
+Currently, the kernel defaults to TLS_MAX_PAYLOAD_SIZE (16KB) for the
+maximum record size. Meaning that, outgoing records from the kernel
+can exceed the negotiated size during a handshake. In such a case,
+the TLS endpoint must send a fatal "record_overflow" alert [1], and
+thus the record is discarded.
 
-[..]
+Upcoming Western Digital NVMe-TCP hardware controllers implement TLS
+support. For these devices, supporting TLS record size negotiation is
+necessary because the maximum TLS record size supported by the controller
+is less than the default 16KB currently used by the kernel.
 
-> Whilst I get that this is minimal, I was a bit surprised that it doesn't
-> contain enough to have the driver actually bind to the platform devices
-> I think that needs the CPU hotplug handler to register a requester.
-> So about another 4 arch patches from your tree.  Maybe you can shuffle
-> things around to help with that.
+This patch adds support for retrieving the negotiated record size limit
+during a handshake, and enforcing it at the TLS layer such that outgoing
+records are no larger than the size negotiated. This patch depends on
+the respective userspace support in tlshd [2] and GnuTLS [3]. GnuTLS
+patches have been merged.
 
-Ah, I hadn't spotted that. The register-requestor code should only serve to
-reduce the available PARTID - just in case the CPUs support less than the
-cache hierarchy.
-It's likely its the 'system_supports_mpam()' that prevents the driver being
-registered. I'll move that into the arm64 patches - its needed so any id
-register overrides in the CPU knock out the driver too.
+[1] https://www.rfc-editor.org/rfc/rfc8449
+[2] https://github.com/oracle/ktls-utils/pull/112
+[3] https://gitlab.com/gnutls/gnutls/-/merge_requests/2005
 
+Wilfred Mallawa (1):
+  net/tls: allow limiting maximum record size
 
-> That makes this a pain to test in isolation.
-> 
-> Given desire to poke the corners, I'm rebasing the old QEMU emulation and
-> will poke it some more.  Now we are getting close to upstream kernel support
-> maybe I'll even clean that up for potential upstream QEMU.
-> 
-> For bonus points I 'could' hook it up to the cache simulator and actually
-> generate real 'counts' but that's probably more for fun than because it's
-> useful. Fake numbers are a lot cheaper to get.
+ Documentation/netlink/specs/handshake.yaml |  3 +++
+ include/net/tls.h                          |  2 ++
+ include/uapi/linux/handshake.h             |  1 +
+ net/handshake/genl.c                       |  5 ++--
+ net/handshake/tlshd.c                      | 29 +++++++++++++++++++++-
+ net/tls/tls_sw.c                           |  6 ++++-
+ 6 files changed, 42 insertions(+), 4 deletions(-)
 
-I've not found a good source of fake numbers to use. Ideally it would just
-increment whenever the task was scheduled - but I've found that hard to hack
-that up in linux.
-I fall back to reading the counters instead of the MPAM registers ... but its
-hard to test for overflow or double counting with that.
+-- 
+2.50.1
 
-
-Thanks,
-
-James
 
