@@ -1,157 +1,150 @@
-Return-Path: <linux-kernel+bounces-759748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AF5B1E1E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:01:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 769BEB1E1F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041433A8DCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C09170BD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C0C1C8603;
-	Fri,  8 Aug 2025 06:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B2421D3F2;
+	Fri,  8 Aug 2025 06:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mhvXsAiT"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3EUbFT4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699C81A0703
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 06:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D17367;
+	Fri,  8 Aug 2025 06:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754632904; cv=none; b=ugpR4hANp42UJWwy+l0qfKwWw9GuZLUZQcjDegjahp1W+w+8HLt1q2CocttzgKeEji7H6yVFsCZlVesYwgeuiANey23d6REUQajMmHAqsr4vv58MUp0KBIIq0OV2rqG7vIgsadKYm+UAsUQm9Qu9ZV2wLe+3Jx1tcDlOqZI2vyw=
+	t=1754633383; cv=none; b=pQNtR5dFyxr3bS3Z9tHWtiQJqiEPh5uNGK0/hbaackWyI+4juwjKN3UsBRAqqKD0IMErI44opMTRt8GJyqk3ZLxJv2NS/RB/AEFTUXgI0PqMAZNejKcfoswiC5F1TozQVhnklf51jTMy24sE+JNPuJImNo7yjA9sAyxP7F+lvWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754632904; c=relaxed/simple;
-	bh=wJ2ShD0lLGDBURenwS/7QYIiH7Qe2dT/+RsxUmG5uog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mZvjG3iAKIZzUPfUEhwVD7ok8w2hKSIfklgoBngoY7E/e7MkWk4gKxEz/79L8cv54M38L2/eyfcsVWw0GbI5KGDBrQJMak03+yrxacT4itQlrAZOlar9zJ26HNW8lKqOT/3u/Vp99g9id10nriWfyqtswXH+ev4+oDnjY2UADGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mhvXsAiT; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4aeb5eb611bso17026581cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 23:01:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754632902; x=1755237702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wJ2ShD0lLGDBURenwS/7QYIiH7Qe2dT/+RsxUmG5uog=;
-        b=mhvXsAiTyyCltGekgP5vGsznpH72GLqDpPA2ScFAgVDcdl33KP+mRKP2V99JQkzBWr
-         pDOpZP4dpZlJV2ldfHrAy7LeR5gd+RmuAuaSwJSbzFLVCPBulgPsw3LrcL0lpc2R1H3S
-         fqF0DimLRRY8oGGLf2DrOUoKf6s57qKDZQQcXL66yHnjg+AY/4JDhs0KU5X6uhEjUM0g
-         +B0hA5d8X54pd1D0iYfBeKeiaiUKPVLWSMmHE9UHFCrkJAFpGclGEB6b0+cm+lzrzlPN
-         yPoj13HpUG1afgurzTJfQ/JQqsNgUM/ptrzu/53wJyCOIuLiD5SATikwJJpU2Qinp+VH
-         dO/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754632902; x=1755237702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wJ2ShD0lLGDBURenwS/7QYIiH7Qe2dT/+RsxUmG5uog=;
-        b=QEj7v1b9UrVYQhkcBTT4bZ6QKoaWDf+RiqsnPhSn6nEQCoOV0jawdJKvWWaSkjsfr0
-         Rmz8JASbWHQcLB2pxfA6rATMWKPRE+6vvckSZ2WK0IH310InImkMbn4x6pEckvaJZHGg
-         aIQgYyhyfXu1x2pU1utqc1ocu5Svk17gGCgPg5SyaPpUxK247HNEhRF0EjMYuYxptGfD
-         ZIa/6w34Rja9dPLFYweeCkbbh7goHmX1FX58tLKGoa6kjlVHxo5MuBH7v2tB62J1Avxx
-         Os2R3VDfnBTh21oTzdYdnHWksI21EAalFG36p42cSRTymVVskKRr6MlsS+QefFKxjNbu
-         DaiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzpiSAJn1t/wdkgQ48L54RQZRl5HVwGA7kh727CT2Uzz9rtlipXUODBeK/T6rbySNBiyXTwbMtHu2ts/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRy5ARWIu4R1n+wnDH2CIbp36S2VMXQ8tmHfAHWKnu3v0THLmB
-	jWpm4O0xayeYyAdsaV9eSWT4Uy8czqMuXa3v2cQS17SFjt4b9o7PJovY7vtX2JnhKMN2aKZe1PE
-	Ed3EEquuHvg3eo1nQV+meqBO8EvqkfA8vAoCLlf0k
-X-Gm-Gg: ASbGncu4b1pv9MMBrRbuYpR/gfs+i6rZjYKHB7Fj2GzSU/aqsyGEaB/qPgroSIQuPga
-	OwcbBMCak0a464/HpuX2UkOLNzE+XkWv0dgt5SI/ZajsgS3HupbAJL6gPipPhOAHi9B5pyRnxHy
-	LQTT8IBpWd/nDYrm3T66UXDf6j/Cm3MjN+djUaDsrVVgpAFKRgr/Xa/3CeEHor4gnvfmpkj9L1X
-	Tv37OIP5XRSJK4=
-X-Google-Smtp-Source: AGHT+IEDMiWQQp2ySXxb5hGnl3PYQ6rBZyTUMmWdkPYFxZ7Pz87uL93oO/sOKthE6Pw8L97g+0HrGG9ouzcdFiM1VfY=
-X-Received: by 2002:a05:622a:548:b0:4b0:86b4:2513 with SMTP id
- d75a77b69052e-4b0aec8e37amr25739601cf.26.1754632901644; Thu, 07 Aug 2025
- 23:01:41 -0700 (PDT)
+	s=arc-20240116; t=1754633383; c=relaxed/simple;
+	bh=tdOL6xo3genBuQKLG4SZmC3BiK3r1j+NBmxJ2jcxiZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tBmPC2NMNqZGCYF5Cvg4bTBaLZ1wm/gTsVoKZ2Tcay8ZTsc2xJOB95VPjWueGFqODkwFbULuPFYuBh+eAtFXC+iMWaq5hxzUXM3bCh5I+xsEVlkpEkKvFzz94s56zyKPwoiV9tcYIYU96gcUN/uSTIbT7d6m8Khb8XJ8hYwbmKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3EUbFT4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3177C4CEED;
+	Fri,  8 Aug 2025 06:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754633383;
+	bh=tdOL6xo3genBuQKLG4SZmC3BiK3r1j+NBmxJ2jcxiZI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=L3EUbFT43PjXl+Kx0gh9A9MtbyORjEGdTaCdWCkIZZfSVBk8TEr1xnIbHBWek9zcH
+	 0+JCWyxokaa8HzJI3fObyL0K1m1NXzCL+zs5Bx6pHDUSZGBwxBLXUXBPCT8prf6kdz
+	 9fxEdGeM0Wq/nRCHRlWyy/SX5cSCr0ZDRpmtATnIlGV01Fv7uy8JpryO891DTpzjmK
+	 Eb1OqTO/bIl0iNwRx8Va6k5HfYddv8SqMqJmc3Qwx43xjUzULoYHvqQrOQGoY50P3+
+	 +fYUFn8ljhjBnSrjIMVjgb9W4Yg9TDizgNAl4lIbc7N9vhpzGKxvcaRmS2He6DcvgZ
+	 2PqC+n+xRx+DA==
+Message-ID: <32a2ec88-b9b8-4c4d-9836-838702e4e136@kernel.org>
+Date: Fri, 8 Aug 2025 08:09:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808050643.107481-1-jackzxcui1989@163.com>
-In-Reply-To: <20250808050643.107481-1-jackzxcui1989@163.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 7 Aug 2025 23:01:29 -0700
-X-Gm-Features: Ac12FXzPxlznul3dZErM2k6olLDrdWJ9vANmmhMhx7XFW35iEJNW8Zi8ExY3IM0
-Message-ID: <CANn89iLJHBDqEzumoURtc4ehdZKkchA8hW4ufDZKj=nEzJ=sjg@mail.gmail.com>
-Subject: Re: [PATCH] net: af_packet: add af_packet hrtimer mode
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: willemdebruijn.kernel@gmail.com, ferenc@fejes.dev, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: lgm-dma: Added intel,dma-sw-desc
+ property.
+To: Zhu Yixin <yzhu@maxlinear.com>, vkoul@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+ kees@kernel.org, dave.jiang@intel.com, av2082000@gmail.com,
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250808032243.3796335-1-yzhu@maxlinear.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250808032243.3796335-1-yzhu@maxlinear.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 7, 2025 at 10:07=E2=80=AFPM Xin Zhao <jackzxcui1989@163.com> wr=
-ote:
->
-> On Wed, 2025-08-06 at 16:51 +0800, Ferenc wrote:
->
-> > I doubt we need another CONFIG option ?
-> >
-> > Also this seems to be beneficial for HZ=3D100 or HZ=3D250 configuration=
-,
-> > maybe worth mentioning in the changelog.
-> >
-> > But more importantly, I think you should explain what difference this
-> > really makes,
-> > in which circumstances this timer needs to fire...
-> >
-> > If real-time is a concern, maybe using a timer to perform GC-style oper=
-ation
-> > is a no go anyway...
->
-> Dear Eric,
->
-> I've thought about it, and I really didn't foresee any obvious drawbacks
-> after switching to hrtimer, so in PATCH v1, I removed that config and dir=
-ectly
-> changed it to hrtimer.
-> As you mentioned, this issue is indeed more pronounced on systems with HZ=
-=3D250
-> or HZ=3D100. Our testing environment was also based on a system with HZ=
-=3D250,
-> which is still quite common in embedded systems.
->
-> Regarding the benefits of using hrtimer, I already provided the test data=
- and
-> testing environment in my previous reply to Ferenc, and the improvements =
-are
-> quite significant.
->
-> As for when the retire timer expires, I've reviewed this logic. From my
-> perspective, the existing mechanism in AF_PACKET is complete. In the
-> prb_retire_rx_blk_timer_expired function, there is a check to see if ther=
-e are
-> any packets in the current block. If there are packets, the status will b=
-e
-> reported to user space. By switching to hrtimer, I aimed to ensure that t=
-he
-> timeout handling in the prb_retire_rx_blk_timer_expired function can be
-> executed in a more timely manner.
->
+On 08/08/2025 05:22, Zhu Yixin wrote:
+> If the intel,dma-sw-desc property is present, it indicates that
+> the DMA driver is responsible for managing the DMA engine, including
+> handing the DMA descriptors.
+> If this property is present, the system defaults to a mode where
+> another hardware component takes control of the DMA engine.
+> In this case, the hardware can generate and manage descriptors
+> independently, without driver involvement.
+> 
+> This property only takes effect on HDMA(DMAV3x).
+> 
+> Signed-off-by: Zhu Yixin <yzhu@maxlinear.com>
 
-I have some doubts why AF_PACKET timer would be involved in the performance
-of an application.
+Where is the changelog?
 
-Are you sure about your requirements ?
+> ---
+>  Documentation/devicetree/bindings/dma/intel,ldma.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/intel,ldma.yaml b/Documentation/devicetree/bindings/dma/intel,ldma.yaml
+> index d6bb553a2c6f..426168b8709e 100644
+> --- a/Documentation/devicetree/bindings/dma/intel,ldma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/intel,ldma.yaml
+> @@ -80,6 +80,12 @@ properties:
+>        if it is disabled, the DMA RX will still support programmable fixed burst size of 2,4,8,16.
+>        It only applies to RX DMA and memcopy DMA.
+>  
+> +  intel,dma-sw-desc:
+> +    type: boolean
+> +    description:
+> +      Indicates that the DMA driver should operate in software-managed mode.
+> +      If this property is not present, it implies that DMA descriptors are managed and generated by another hardware component that controls the DMA engine.
 
-I do not know what application you are running, but I wonder if using
-TX timestamps,
-and EDT model to deliver your packets in a more accurate way would be bette=
-r.
+Nothing improved:
+1. Still wrongly wrapped.
+2. Still SW property.
 
-Some qdiscs already use hrtimer and get sub 50 usec latency out of the box,
-or whatever time a cpu sleeping in deep state takes to wake up.
+I don't think you read the feedback. You need to describe hardware, not SW.
 
-
-> Thanks
-> Xin Zhao
->
+Best regards,
+Krzysztof
 
