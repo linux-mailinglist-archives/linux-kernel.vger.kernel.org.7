@@ -1,318 +1,165 @@
-Return-Path: <linux-kernel+bounces-760645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99492B1EE25
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02924B1EE27
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F1161C27A09
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5991C27EA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3517E1FC109;
-	Fri,  8 Aug 2025 18:02:37 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC37201276;
+	Fri,  8 Aug 2025 18:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NA+6lfXh"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A995B566A
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 18:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2721DA3D;
+	Fri,  8 Aug 2025 18:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754676156; cv=none; b=mF4eLkw5CR7GXmcekabcIPqqzHkxqhu14LynsmKGhBCi5gylP6SYyY/YsKmzr8fOPQBQHqOhGxpsqN1SN6DvhiVX04o68CJsU8EPpLYLXk3AC8M5CGNXNapLp98e6lrVEFJlBF268NwVNjBm6f5tKlRQXT4HT9/fZHhZ0iB/41g=
+	t=1754676206; cv=none; b=IGtZx46XZ7MOZPbui4S1RYW8Tn5pNgZba5a79Wrux0uj3HleSF5e8UXPREY6jV0c8tTCWAGSVCx5AO5W+GDwqh95zxaPjFPhz+cPchxF3rCY0mjL6MNEjvGS5CAcPSpOWk1htlQtJqZrSxaOZ9uGT9gLuY/pRTj+XZYL5T26jZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754676156; c=relaxed/simple;
-	bh=gw2jOQCWAcIcU+5gv60t1ajIUnP+RYkcz2dUTqcMhvI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lSadsTNWYBW7Vmm5LJ8iGeXUWmeVbE95gqDnbZwCVwgVh6q+42PjaIwbks8/NNqkMWMBelAtca0UTS6MdogVS8heHCf2DV/wnD9pfKIDhfjSsoLSZ/RxzGEwG+BqsflIlAvN7b5wJllE6FBqPeSmK2fXpwIk2CqADi+xfra06TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e51869b186so25618455ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 11:02:34 -0700 (PDT)
+	s=arc-20240116; t=1754676206; c=relaxed/simple;
+	bh=jquBVnZjCw255TTTcDjpqQS3Zd2zougjDfYAO2Kqa4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LyQfR6A38Lrq78K1KyPlDOFqoOq18w1zhky9ppNBH79tFl6sS2zbrYxHbsDSp6j3GKbKJoQkB2FIFybQFEyByqmJm0JgvHFiIxPNs+UoiVbT2x92vZf0jIBQd1O+OXyf2rn5sDbnB4AGd58hpu750EmInL0EyZdLgD9xELML3+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NA+6lfXh; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76bdc73f363so2410528b3a.3;
+        Fri, 08 Aug 2025 11:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754676205; x=1755281005; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bdpbMeYSMpsMt1914y/TUI6RCSE8LWRE4aRT+cIx/ic=;
+        b=NA+6lfXhps6200YcmpgjXqI32+Oace2R2xUnYSkq9q4VhNhTNWb9PEwAKAnwPa+WGS
+         rZvt0FsIXnnUDzVf2hqsMzbt60bD11EtACRbGrTBp1PohdHhXtTUbvHPQx2st4PM6kV+
+         BKxKXuOuH8YUJuzBVAcxTlo291c34X65r15WBVpnpTJGEfj2fb+mE6ZdRR/ej2XIkbwp
+         G1vPW1joqoeZXHt5gasCxvPhvoBs1+gQIiL/Hh+HlAp9I9h4KfDH7fheobKWZz4dc8r+
+         7hTndt7GJrIJwBci8wMqNS9014W3ZhwXqO8I2Ew/9t58baUsx4Hi9ddMQ4TAcm2biN/r
+         lhuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754676154; x=1755280954;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L/oObUrgrbo0bauhVu60Atre0exUWDb5T7WIQ+bwbfw=;
-        b=oo/73z7XMzmg7ZcVPMlMm/+BRPeafl6WD5HBEdZ67gVeU6hL4wKW/K9EPtwyq2JooE
-         HojuFEKUM0qrxmk+Q+zZs1TR78WWrSyBUSc1ZfehbjkzVt5E93LjpQP4NdwPjQjNP8ls
-         yQyqP1xuZObBVgU6lmaPmEOC+d9BRuFRigdab81NdWH6BxIbQ8kIByS9jAE+9j9vtdKk
-         QSogwvWCHboqrNzh3E9Fg98nI/PmrIAfnxCUQ7vLNmxmZ6APzLR08lVTDTQgZ8azu7We
-         hGWA32cKL0oOUxNbiBwWgYhrJOUAvCk9eAHUnjQBulGFX6cLNOZtcfpj63yIbieUr16j
-         X3gA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8kzCAOcHUUrwtyfYHmHTKc9cd18xzmriPgTzpXXIHyvY1DrYSGYrxnXdZky9qqW5iCBFqZhTjzgGKBuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqdd71pm13UE5kWmrduezWAy2P1Aocz4jM4WxBmKOdjq7RlPc5
-	QyjeKZs/HS8N4/kG7FX+FRkYpN4pFDrt4pjd932aus4S1rx9VUwOxzJFhaSggOuFCXpOLPZBygs
-	ajeqsgHrm7TNEal40emYXSv/kq59kM7kktS/we6tSOV7MUU9Ogzwq+/gi9UM=
-X-Google-Smtp-Source: AGHT+IG3AwqUCDwmN+4NiYzZzZHFL8pzvK9vLtXzO+d/AlXTI2s17/NRIDSn0B6q+nkPxD0rNCpn9o5yXQJ8MjO6jBXthcBiwHDH
+        d=1e100.net; s=20230601; t=1754676205; x=1755281005;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bdpbMeYSMpsMt1914y/TUI6RCSE8LWRE4aRT+cIx/ic=;
+        b=j11tA+pbGC7zmaJ+N/iNbxpf/+u6X9Rr54TDxfsn5vVLLs2l0q2X9anyw6l1pcEemk
+         1m7Yf6K+5p37aNqcC8k2WH0S0I5ZgJdy6F8SXJk7pWxNoeCzw88nr+uhXN38h3nl/qHn
+         t1yZeCF3+OmDz+JrdYK99Hyj0xBsWuYNzTMCeZYx4DuOfMukdxW+XVE3nzsw4FDis4mb
+         nE/Y82V2sglNKM9KpbSLjb8Q9YOwhDF+yZaeltNaOg+lf5G3FJp/UKiw12Hn2h8OkDHp
+         8FqaXYoBHjKfMfypJ7CtMFTjQGHLhFQA39FZ9Odog0NV3nXYqtzIXBswYCMWo6mzP/R/
+         JDlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVwBYygclPXSejW9MgU9RFnp2f6Yf32mLyHgytqYQYcNI3MYvSW4HbO2bHaHfcuozpr33AAOlmCyx4D2Y=@vger.kernel.org, AJvYcCWbUYHX3vWA0VFO3Hoa1AZWhJn+wHqRA86rcnva/qQvgibG19AzHRCb/oQTQgcPfloBAjsHvKGl@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxZrBgZ2/t6mm/qqmD2afRvW3VSfk02l56ijRYMdxIAqXo2+Yp
+	WVm9NKwcP7e/7eW6IUvbzjcVvxXdYCMcASIPIrqLJAU9PSGG0h0ykSU=
+X-Gm-Gg: ASbGncs8ixvCC2WZRGANjPHKhe4710T8QN05GRzJdgbVPgO20TXNYzALJ+8x3qiH9G1
+	Q7S5J8CQViwuPHbZMDlxVti4RqQncRpUdvJtjH3TD1PDx3cFsMc0Gx0+Li7at90Zfd7TDhMlHvk
+	tAiEEhHpnuN2OpAq/8NCfK1KARE6KlXgFKfuVBLcrOW/aP1QxsZuHrXiHA4KPC4fevRLpFT9IWE
+	EFFNdQkrrPSLdXMVmU0SxbidJPFNx6n9M7Ta3HY15HP/QnpctlZ3PRpd7eSX2qDz5nXo71+mQ3y
+	bPYl6NFA9UneBqOD3/jsvWdqm83e/G7zovhCJ/u+ZunQO4n5g21ylK+FlRDCxZJBu/2ho89P/i+
+	rDDAlVjPfN16r0sUUWhAgRlzSUPyChbSErAaHJq1EAB7xMUt2MbgUp5omzzU=
+X-Google-Smtp-Source: AGHT+IHwRCSZIVwRHSDexCtbMuOZq1L8Uj0GNw8FVAMbiq1XD+XdtS2qexDakcJP0OcpbKwfqsrQ5w==
+X-Received: by 2002:a05:6a20:94c7:b0:23d:f987:b033 with SMTP id adf61e73a8af0-24055230871mr6512250637.40.1754676204462;
+        Fri, 08 Aug 2025 11:03:24 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76be2f2a4c2sm17968735b3a.110.2025.08.08.11.03.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 11:03:24 -0700 (PDT)
+Date: Fri, 8 Aug 2025 11:03:23 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Paolo Abeni <pabeni@redhat.com>, andrew+netdev@lunn.ch,
+	horms@kernel.org, davem@davemloft.net, sdf@fomichev.me,
+	almasrymina@google.com, dw@davidwei.uk, michael.chan@broadcom.com,
+	dtatulea@nvidia.com, ap420073@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2 17/24] eth: bnxt: adjust the fill level of agg queues
+ with larger buffers
+Message-ID: <aJY767C6oiezskdM@mini-arch>
+References: <cover.1754657711.git.asml.silence@gmail.com>
+ <0a4a4b58fa469dffea76535411c188429138cc81.1754657711.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3812:b0:3df:3ad6:bfb2 with SMTP id
- e9e14a558f8ab-3e5331ab4cbmr64173505ab.17.1754676153763; Fri, 08 Aug 2025
- 11:02:33 -0700 (PDT)
-Date: Fri, 08 Aug 2025 11:02:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68963bb9.050a0220.7f033.0085.GAE@google.com>
-Subject: [syzbot] [ext4?] possible deadlock in ext4_readpage_inline (2)
-From: syzbot <syzbot+8721ec072bbbb6adcb01@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0a4a4b58fa469dffea76535411c188429138cc81.1754657711.git.asml.silence@gmail.com>
 
-Hello,
+On 08/08, Pavel Begunkov wrote:
+> From: Jakub Kicinski <kuba@kernel.org>
+> 
+> The driver tries to provision more agg buffers than header buffers
+> since multiple agg segments can reuse the same header. The calculation
+> / heuristic tries to provide enough pages for 65k of data for each header
+> (or 4 frags per header if the result is too big). This calculation is
+> currently global to the adapter. If we increase the buffer sizes 8x
+> we don't want 8x the amount of memory sitting on the rings.
+> Luckily we don't have to fill the rings completely, adjust
+> the fill level dynamically in case particular queue has buffers
+> larger than the global size.
+> 
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+> [pavel: rebase on top of agg_size_fac, assert agg_size_fac]
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  drivers/net/ethernet/broadcom/bnxt/bnxt.c | 27 +++++++++++++++++++----
+>  1 file changed, 23 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> index 40cfc48cd439..a00c2a829b6b 100644
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> @@ -3805,16 +3805,33 @@ static void bnxt_free_rx_rings(struct bnxt *bp)
+>  	}
+>  }
+>  
+> +static int bnxt_rx_agg_ring_fill_level(struct bnxt *bp,
+> +				       struct bnxt_rx_ring_info *rxr)
+> +{
+> +	/* User may have chosen larger than default rx_page_size,
+> +	 * we keep the ring sizes uniform and also want uniform amount
+> +	 * of bytes consumed per ring, so cap how much of the rings we fill.
+> +	 */
+> +	int fill_level = bp->rx_agg_ring_size;
+> +
+> +	if (rxr->rx_page_size > bp->rx_page_size)
+> +		fill_level /= rxr->rx_page_size / bp->rx_page_size;
+> +
+> +	return fill_level;
+> +}
+> +
+>  static int bnxt_alloc_rx_page_pool(struct bnxt *bp,
+>  				   struct bnxt_rx_ring_info *rxr,
+>  				   int numa_node)
+>  {
+> -	const unsigned int agg_size_fac = PAGE_SIZE / BNXT_RX_PAGE_SIZE;
+> +	const unsigned int agg_size_fac = rxr->rx_page_size / BNXT_RX_PAGE_SIZE;
+>  	const unsigned int rx_size_fac = PAGE_SIZE / SZ_4K;
+>  	struct page_pool_params pp = { 0 };
+>  	struct page_pool *pool;
+>  
+> -	pp.pool_size = bp->rx_agg_ring_size / agg_size_fac;
 
-syzbot found the following issue on:
+[..]
 
-HEAD commit:    d2eedaa3909b Merge tag 'rtc-6.17' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=112cc042580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=75e522434dc68cb9
-dashboard link: https://syzkaller.appspot.com/bug?extid=8721ec072bbbb6adcb01
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> +	WARN_ON_ONCE(agg_size_fac == 0);
 
-Unfortunately, I don't have any reproducer for this issue yet.
+nit: do we need to make this if (WARN_ON_ONCE(...)) agg_size_fac = 1?
+Otherwise you're gonna divide by zero on the next line. Or properly
+return some EINVAL instead?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3435b26b899d/disk-d2eedaa3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/531223373575/vmlinux-d2eedaa3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e82f9030b8d5/bzImage-d2eedaa3.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8721ec072bbbb6adcb01@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-syzkaller-11489-gd2eedaa3909b #0 Not tainted
-------------------------------------------------------
-syz.9.1907/11934 is trying to acquire lock:
-ffff8880543c80c8 (&ei->xattr_sem){++++}-{4:4}, at: ext4_readpage_inline+0x36/0x6a0 fs/ext4/inline.c:531
-
-but task is already holding lock:
-ffff8880543c8580 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
-ffff8880543c8580 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_create_folio mm/filemap.c:2539 [inline]
-ffff8880543c8580 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_get_pages+0xc29/0x1ea0 mm/filemap.c:2609
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (mapping.invalidate_lock#2){++++}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
-       filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
-       page_cache_ra_unbounded+0x129/0x7b0 mm/readahead.c:228
-       do_async_mmap_readahead mm/filemap.c:3332 [inline]
-       filemap_fault+0x5a0/0x1200 mm/filemap.c:3431
-       __do_fault+0x138/0x390 mm/memory.c:5152
-       do_read_fault mm/memory.c:5573 [inline]
-       do_fault mm/memory.c:5707 [inline]
-       do_pte_missing mm/memory.c:4234 [inline]
-       handle_pte_fault mm/memory.c:6052 [inline]
-       __handle_mm_fault+0x3611/0x5440 mm/memory.c:6195
-       handle_mm_fault+0x40a/0x8e0 mm/memory.c:6364
-       faultin_page mm/gup.c:1144 [inline]
-       __get_user_pages+0x1699/0x2ce0 mm/gup.c:1446
-       __get_user_pages_locked mm/gup.c:1712 [inline]
-       get_dump_page+0x1ac/0x3f0 mm/gup.c:2212
-       dump_user_range+0x1de/0xc90 fs/coredump.c:1364
-       elf_core_dump+0x337b/0x3990 fs/binfmt_elf.c:2085
-       coredump_write+0x1169/0x1900 fs/coredump.c:1049
-       vfs_coredump+0x1a4b/0x2ab0 fs/coredump.c:1168
-       get_signal+0x1109/0x1340 kernel/signal.c:3019
-       arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
-       exit_to_user_mode_loop kernel/entry/common.c:40 [inline]
-       exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
-       irqentry_exit_to_user_mode+0x81/0x120 kernel/entry/common.c:73
-       exc_page_fault+0x9f/0xf0 arch/x86/mm/fault.c:1535
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
--> #3 (&mm->mmap_lock){++++}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __might_fault+0xcc/0x130 mm/memory.c:6958
-       _inline_copy_to_user include/linux/uaccess.h:192 [inline]
-       _copy_to_user+0x2c/0xb0 lib/usercopy.c:26
-       copy_to_user include/linux/uaccess.h:225 [inline]
-       fiemap_fill_next_extent+0x1c0/0x390 fs/ioctl.c:145
-       ocfs2_fiemap+0x888/0xc90 fs/ocfs2/extent_map.c:806
-       ioctl_fiemap fs/ioctl.c:220 [inline]
-       do_vfs_ioctl+0x1173/0x1430 fs/ioctl.c:532
-       __do_sys_ioctl fs/ioctl.c:596 [inline]
-       __se_sys_ioctl+0x82/0x170 fs/ioctl.c:584
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&ocfs2_quota_ip_alloc_sem_key){++++}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
-       ocfs2_create_local_dquot+0x19d/0x1a40 fs/ocfs2/quota_local.c:1227
-       ocfs2_acquire_dquot+0x80f/0xb30 fs/ocfs2/quota_global.c:883
-       dqget+0x7b1/0xf10 fs/quota/dquot.c:977
-       ocfs2_setattr+0xd72/0x1b40 fs/ocfs2/file.c:1233
-       notify_change+0xb36/0xe40 fs/attr.c:552
-       chown_common+0x40c/0x5c0 fs/open.c:791
-       vfs_fchown fs/open.c:859 [inline]
-       ksys_fchown+0xea/0x160 fs/open.c:871
-       __do_sys_fchown fs/open.c:876 [inline]
-       __se_sys_fchown fs/open.c:874 [inline]
-       __x64_sys_fchown+0x7a/0x90 fs/open.c:874
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&dquot->dq_lock){+.+.}-{4:4}:
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
-       __mutex_lock+0x187/0x1360 kernel/locking/mutex.c:760
-       wait_on_dquot fs/quota/dquot.c:354 [inline]
-       dqget+0x72a/0xf10 fs/quota/dquot.c:972
-       dquot_transfer+0x4b8/0x6d0 fs/quota/dquot.c:2154
-       ext4_setattr+0x865/0x1bc0 fs/ext4/inode.c:5902
-       notify_change+0xb36/0xe40 fs/attr.c:552
-       ovl_do_notify_change fs/overlayfs/overlayfs.h:203 [inline]
-       ovl_setattr+0x3a3/0x550 fs/overlayfs/inode.c:82
-       notify_change+0xb36/0xe40 fs/attr.c:552
-       chown_common+0x40c/0x5c0 fs/open.c:791
-       do_fchownat+0x161/0x270 fs/open.c:822
-       __do_sys_chown fs/open.c:842 [inline]
-       __se_sys_chown fs/open.c:840 [inline]
-       __x64_sys_chown+0x82/0xa0 fs/open.c:840
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ei->xattr_sem){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3165 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
-       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
-       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
-       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
-       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
-       ext4_readpage_inline+0x36/0x6a0 fs/ext4/inline.c:531
-       ext4_read_folio+0x16c/0x320 fs/ext4/inode.c:3390
-       filemap_read_folio+0x117/0x380 mm/filemap.c:2413
-       filemap_create_folio mm/filemap.c:2548 [inline]
-       filemap_get_pages+0xd4e/0x1ea0 mm/filemap.c:2609
-       filemap_read+0x3f6/0x11a0 mm/filemap.c:2712
-       __kernel_read+0x46c/0x8c0 fs/read_write.c:530
-       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
-       ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-       ima_calc_file_hash+0x85e/0x16f0 security/integrity/ima/ima_crypto.c:568
-       ima_collect_measurement+0x428/0x8e0 security/integrity/ima/ima_api.c:293
-       process_measurement+0x1121/0x1a40 security/integrity/ima/ima_main.c:405
-       ima_file_check+0xd7/0x120 security/integrity/ima/ima_main.c:633
-       security_file_post_open+0xbb/0x290 security/security.c:3160
-       do_open fs/namei.c:3889 [inline]
-       path_openat+0x2f26/0x3830 fs/namei.c:4046
-       do_filp_open+0x1fa/0x410 fs/namei.c:4073
-       do_sys_openat2+0x121/0x1c0 fs/open.c:1435
-       do_sys_open fs/open.c:1450 [inline]
-       __do_sys_openat fs/open.c:1466 [inline]
-       __se_sys_openat fs/open.c:1461 [inline]
-       __x64_sys_openat+0x138/0x170 fs/open.c:1461
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ei->xattr_sem --> &mm->mmap_lock --> mapping.invalidate_lock#2
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(mapping.invalidate_lock#2);
-                               lock(&mm->mmap_lock);
-                               lock(mapping.invalidate_lock#2);
-  rlock(&ei->xattr_sem);
-
- *** DEADLOCK ***
-
-3 locks held by syz.9.1907/11934:
- #0: ffff88805ebb2428 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:557
- #1: ffff88804df9d398 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x74b/0x1a40 security/integrity/ima/ima_main.c:299
- #2: ffff8880543c8580 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:934 [inline]
- #2: ffff8880543c8580 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_create_folio mm/filemap.c:2539 [inline]
- #2: ffff8880543c8580 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_get_pages+0xc29/0x1ea0 mm/filemap.c:2609
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 11934 Comm: syz.9.1907 Not tainted 6.16.0-syzkaller-11489-gd2eedaa3909b #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
- check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3165 [inline]
- check_prevs_add kernel/locking/lockdep.c:3284 [inline]
- validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
- __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
- ext4_readpage_inline+0x36/0x6a0 fs/ext4/inline.c:531
- ext4_read_folio+0x16c/0x320 fs/ext4/inode.c:3390
- filemap_read_folio+0x117/0x380 mm/filemap.c:2413
- filemap_create_folio mm/filemap.c:2548 [inline]
- filemap_get_pages+0xd4e/0x1ea0 mm/filemap.c:2609
- filemap_read+0x3f6/0x11a0 mm/filemap.c:2712
- __kernel_read+0x46c/0x8c0 fs/read_write.c:530
- integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
- ima_calc_file_hash+0x85e/0x16f0 security/integrity/ima/ima_crypto.c:568
- ima_collect_measurement+0x428/0x8e0 security/integrity/ima/ima_api.c:293
- process_measurement+0x1121/0x1a40 security/integrity/ima/ima_main.c:405
- ima_file_check+0xd7/0x120 security/integrity/ima/ima_main.c:633
- security_file_post_open+0xbb/0x290 security/security.c:3160
- do_open fs/namei.c:3889 [inline]
- path_openat+0x2f26/0x3830 fs/namei.c:4046
- do_filp_open+0x1fa/0x410 fs/namei.c:4073
- do_sys_openat2+0x121/0x1c0 fs/open.c:1435
- do_sys_open fs/open.c:1450 [inline]
- __do_sys_openat fs/open.c:1466 [inline]
- __se_sys_openat fs/open.c:1461 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1461
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb8d038eb69
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb8ce1f6038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fb8d05b6160 RCX: 00007fb8d038eb69
-RDX: 0000000000000242 RSI: 0000200000000040 RDI: ffffffffffffff9c
-RBP: 00007fb8d0411df1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007fb8d05b6160 R15: 00007ffd6d60aa88
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> +
+> +	pp.pool_size = bnxt_rx_agg_ring_fill_level(bp, rxr) / agg_size_fac;
 
