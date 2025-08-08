@@ -1,436 +1,206 @@
-Return-Path: <linux-kernel+bounces-759651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1279BB1E0B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:47:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48D3B1E0A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44F854E24E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:47:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D7AC7A9AA8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFB718A6AB;
-	Fri,  8 Aug 2025 02:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D209A149C4D;
+	Fri,  8 Aug 2025 02:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XZii05qX"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2063.outbound.protection.outlook.com [40.107.244.63])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OyOetvKj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D681AF0A4;
-	Fri,  8 Aug 2025 02:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754621217; cv=fail; b=mvpMJuNeoGW9NRtsD7sNnajyJKD//8iYZuYvXZtKxi54yEFEO8ZFh2IuHLTeWTgGKy6DmJSepGiROSCBuxy+57ZaW8wObMQy86oAkHh07+FUNFsZWQsek4AywsZso2iX9pWpdnWoPVgX4fiKU5TbywgiP2cIXHAZbDLj6+YbjaU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754621217; c=relaxed/simple;
-	bh=c8egsNOp92VRwZkllTww2hjSKCb0nsf42J3n3bKx6mg=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=ZTNdxBQpMCszHvMt49Re27vwRCyASkmYCJs0fr6kc+TeVSahCvliCzVwUpfTOee8DDkTMjoIDt2J6jPk4VJwv+6CYLwQkdVuYIboMeKE05WrBVzBmzqF44xX+3MbYd4dVPBGZiuFHb/wcF+NBnbOHtLD0QAi4fTVnCGeZ3rIWIo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XZii05qX; arc=fail smtp.client-ip=40.107.244.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oOirhuGHbIgp/5rYl/koq/D7oJzHj4mTBAh93Rt0h7tjKyJYPn46gmJF0MrczeFmKPhUvr4wtv8HnTczRJyehALDKBBuD6RmridcIo2bj3D+ODZ/wLTktFrkHPcO4nKea2weBdwcXxigWA6hepIDYCWISIcdBLLTLH1uoPS3bF0qMzM5D4bnFMyG+auEyNehYqIAdSJ/QF2xwew4lqACGWJCKTJa2l+MPeEJIkM5U+usnNNEKa1F+T9UOgi20P5POa5nj0WPOyGxktJW97n61pneUi2VWc6606XgubL306nnFhzrD/W/OVTVVn830vlTVMCUwhGMRUzVy2iqew+auA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Dj9rGXrYsT/rhDHdlYytaqCUg63c2o3MxqzD/x+yIUY=;
- b=Ag9DRVOWL1O4t6EDWO+zEcQgOHDIsfedBbp6ZXn5lLB2nSVl0ybqL4Sa3j7Q2otUPGlmg1TxX4DCVF90Nf5rTKYEkQGWmctuxPKt54UoSAMhqndN60lXWEjDVXkZyYgJlqjfDozch1I70Z7U7c0KP9+RJn8yqcFoV2KKdv/vBwqNv2zSGIMGjcxyuzfmfhp0WPAflgQ/T0vM5x+u55XcEoFJI+R5N/W2W8lEz4t7DjURu6tavoLHYu14j9ng6XlwEClRrz08Ya5FVpzonh1ofNgd1lstF3IsFpSHqVvnmyotbLmdWrVk4EZefcq6aOiKhKCBbqw5NfGl+sTUPsE46A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Dj9rGXrYsT/rhDHdlYytaqCUg63c2o3MxqzD/x+yIUY=;
- b=XZii05qXOCSDWpJS+LcquER9TATK5iT/5lM60RhoYoAPMMvWv1AKfvHEo83jBGxIDm5xQhB3yOYI9SwtSeUEKSYphkx89kCj4LyTFOOhjJJSpZiKyMtN5HcT0i8pFrwzQgQ6X5D7kMfAg1wfu0fR1yzwx5ZgnwKYCmQoMjdDbON1Cl0389OX726p7GVN4HyRTVE9CWsX3qvNtDNnZsp2pJq/jPkbWS8Vl3E15xsLyGI1DHvSaAlvIHBu3OYoUDsj44e1WDRsYIjUYDwpzQgE94iyRfjm31yx1WVGyUqgVSZNyJFAZYq3OaGUuqqu/bnZWoTRapt0t0BDtUqzy3v/xg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by MW5PR12MB5600.namprd12.prod.outlook.com (2603:10b6:303:195::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Fri, 8 Aug
- 2025 02:46:53 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
- 02:46:52 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Fri, 08 Aug 2025 11:46:42 +0900
-Subject: [PATCH 2/2] gpu: nova-core: vbios: store reference to Device where
- relevant
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-vbios_device-v1-2-834bbbab6471@nvidia.com>
-References: <20250808-vbios_device-v1-0-834bbbab6471@nvidia.com>
-In-Reply-To: <20250808-vbios_device-v1-0-834bbbab6471@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Joel Fernandes <joelagnelf@nvidia.com>
-Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: TYCP286CA0310.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:38b::7) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695E98F54
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 02:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754621196; cv=none; b=rInBPcxR+D1XtZ4zHo4JzmMqu28X5vTD4WHqR+M3Vz7Lfb9Te1OMMMpqDkpNSgEDiIq0r2rmZm3JoBNsqQ8vVO8WEaYpUtmdwCTn2f4WmBPWdZvglp85Sh7Tog46KDTyI6d+A2r5U4WZ0Vu85NCBefMh0juJhnag54miUkH3Q1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754621196; c=relaxed/simple;
+	bh=g+WBatSN1qROpBOFqso4X6zWtAVxTg2RObQBEohtQnQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uvwk9+4dulyJ4k8zH20mKKVKvx0+u4YoQwQene7gZzgcGG409UonMvtWtQjTl1aJzDHGxXn9aIZkxIQapGAMyZzyNNKgrrrYj83KUhYWbJc2+fonIKRNQbtNINoL383yH+N1ea4RH2p/8rUZ0q/2uwbnij3rMgvEwD/5zXGG2xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OyOetvKj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754621193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jmALfAD79Sc2v/slqMGPnz9hxOoyvuPzjTOCA6rHq8s=;
+	b=OyOetvKjsy/WbfIcRnrxmn4G0D6iTHlDA4CiirdVCQ0/2zHE5MeKErYpCcd2ErLX8j4sEg
+	smEciV72RoHql+k4cxEhgnl5lbXmn3daG4CATh3T0/PN/sUfoqYAnuv/FWZeq3IzO2pvpq
+	uRhla57x3tlE73cz9x5NOVoHzKAYVzs=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-BUVxd9j_PTKuZ3w6ReZdNA-1; Thu, 07 Aug 2025 22:46:31 -0400
+X-MC-Unique: BUVxd9j_PTKuZ3w6ReZdNA-1
+X-Mimecast-MFC-AGG-ID: BUVxd9j_PTKuZ3w6ReZdNA_1754621190
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-3322b98b1a6so8731291fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 19:46:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754621190; x=1755225990;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jmALfAD79Sc2v/slqMGPnz9hxOoyvuPzjTOCA6rHq8s=;
+        b=iL42qo9x6wb5ABm741BDdIkPJPfXQyo3JdBk6nEA3cH3ywskOAd4RKv8QQBhWtGxBT
+         6mwI0HeroA48N8GA6oUNOadkWSL5WQcJu2ZXgke6hYzslgEa/AGm0rUkSLA+GihnluHB
+         plbTeo9JaSJmheXg0Wc/qlNT2CbES9m17Co2x+WuTj88zCEKVnpS3UtUhavYFdj343bU
+         m8nCCRrPEm9BzZ5YZkjNSNzG0d8k/BNL5RUloNqcaSOcEMa45W67BTGRoQgSEWMO7TaR
+         BVxFvx1RK3FX/nPdbHmg/QTQtYOVd/TRO6gKwWGIPQULko7Mswvo6SFvg6l7+xdR4UBu
+         7ixA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXcBXG36Qizm1lhag7hJsbwx66obDnnBImlUl50/HfEOoZy5TyDq7T4ZmhvXiYK8vfxx11Zy5EkR4xGoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/vXzUfqEFtxJgXY+5tsGIIYxL6dDTHej2gM3oW+GxA8pYCMGu
+	HjsZtCZrjTi5MRTO/s8EPpyoXxcVJUxoXEryAm10iHCu+vIeDB0N2hdRAifsJxJvxhJGlLWPSO4
+	YUXSlJUUhGQR5YTTf7C6uZdfSVbhKjfFpkfJ74dZpLVY3Fov8so1C4YknZgoNSxpP633IzWpWx3
+	yJKn0lgIBte7po5VH+mBih5OMVd4aj+e19Lf08pZYO
+X-Gm-Gg: ASbGncuEDqin8R/P22bRjqAgJURuykjSAWqB6YDQQkiE+BK1JRnd1O0+2ZVU7oY6P1+
+	IWDiFtIeXpwqsTwZmZjcvxqOxmcnCgPVjlo0NrzjXdmsuCgUo4ZR7Rzgzqwg31F7phNiWxWcUh0
+	13J8PEgIq3P7jPEAKmIn9dnQ==
+X-Received: by 2002:a05:6512:3996:b0:55b:7e31:c13f with SMTP id 2adb3069b0e04-55cc00b7471mr216424e87.19.1754621189641;
+        Thu, 07 Aug 2025 19:46:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPl9MPWvi4vw2YfJW296tcWJT8TkRErAZcJZQzg9MhhbuF/GdVGhnXuvrRQn6Mbz1APgoTDbYgXvUw4Gf6gGU=
+X-Received: by 2002:a05:6512:3996:b0:55b:7e31:c13f with SMTP id
+ 2adb3069b0e04-55cc00b7471mr216410e87.19.1754621189089; Thu, 07 Aug 2025
+ 19:46:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MW5PR12MB5600:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0716f3a9-b8ff-4be1-4649-08ddd625d4a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RGtqUldMa2xxaWZUem85SDJsTnJRU1F4RXJPYi9seEtpTjVza2VxbkRRZDU0?=
- =?utf-8?B?NUpENVROQ1JMVjllQTZWMTd6RkU1UGtuY0R4N04rMDMzTFY5M2ZpRXcrbWo2?=
- =?utf-8?B?QlFRMnBqZFFvWUJzYUNlRFF6d0pUckRwd0FMelQwSWEvQnVYcVJIdE5XRTRt?=
- =?utf-8?B?OWRSdXhRMHBMd2VjM095cHp2c0VtamxsdXd2b2taWDc2SThZOENpRFA0NTJ0?=
- =?utf-8?B?K2pnSjNkQTVRbTkydW9ESThkd2t5NTJMUlMxdVcxQnNJSjAvREw2eXRZT3ht?=
- =?utf-8?B?eW9QbHJTV3JVUGlLRzBuRHpHRmdaWkpBbkNCYy9uL2ZpQzhEeER4cGswQmdG?=
- =?utf-8?B?bm93bDEvTkExd3VqUVNzUUMyUENXV0loRGplRlBjTjQ2TTVVNmtFa3pmSE9j?=
- =?utf-8?B?NzgzYXZldEZjakFuQlZ3b3B5eU0zRzZvMHp3RDd6aDRvZU1rYTNHNkVaZmMz?=
- =?utf-8?B?Zzhjc3p5Q01jUTltL2d5ZDU5bEZaZmNZYzgyZUdRR1FSUUxzamNJeTdxT0lL?=
- =?utf-8?B?eTM2eVZCTEtva3ZnVHMycWw1dERlL0J1L3RnN08zMjZkVlRqa0VYM25BVmFJ?=
- =?utf-8?B?NHdLUm1zUTNNQk9hVisyMFUrTmE5aW5CVnVRN0J6dW9yeWJtL0lRSFJJVzhk?=
- =?utf-8?B?MjFST0IzUlVxQmRhVk5zZzNwWnRST0p3MnNsc2h4QUhETktXZFp5VHZJdXNW?=
- =?utf-8?B?alU1N1lTb1lFT3RLdWN2U3JOdXBVWDBpTEpSUVNScnRLTG5oblBRQzl4QnFL?=
- =?utf-8?B?bDRRODBWVkdpRmVWQ0ZCNUoxa0dqYURuOVVlWlozZnYzMldiSTFtam1hZEky?=
- =?utf-8?B?eVlPS3l3SGlSd29Dcm1qWWYwVlovTU0wSUZRbWFiTzludFhIUnpuWnh3Tml5?=
- =?utf-8?B?eHNOZ0xzSXIxTXdDM2I4UkY2bWkvOVdlSWx3dU1lVU5aTlJUaGk4VVBheXhp?=
- =?utf-8?B?Nis3WkJpNCsvWXlYbzZBL1R3ZUVsb0l3V2luQytDTTJkckY3bXRtNkc0cHQ3?=
- =?utf-8?B?Z2JKdjJMWFFLcU1GVzZ5eVFlaUoxdTZtM0h3dytXcWJwV28zVWpVdlFaRTdl?=
- =?utf-8?B?Z3BhdGN0emZqRDkwRmkwY1hrN0RLNnRMdDg1M1FRM1B2aHByK3RXVVpWTisw?=
- =?utf-8?B?TmphMjlIUzIxOVN0Y3dPZWpZRXJQeEFWOWJlWitGclJtN2RqcWQ3Z000UzE1?=
- =?utf-8?B?dGYxV0lTNTJ4Y0FmWUJzMlBZOWJGWERqN0FyU1ErNy81WUl2SVVzUExqVS9V?=
- =?utf-8?B?bWdzdFJjK2JNN2ozNkFYSVlHbDFKaTFReExubmtESWNwR0h0MnhTS25wc1M0?=
- =?utf-8?B?QjUzQWxMVEdVMWxwdGJRRGJTVFVnaWtObkNRZXpORTFjc0o3L0xOeHhPbElX?=
- =?utf-8?B?VE02Y2tIaE9GV0VuZnM3VDEyZ1lDMmRZNXdZSExTUUV1SFRPY2hDaDUzcTBw?=
- =?utf-8?B?d1VvTWVQdEtweDVwZ0xENURWN3k0SlAza0o2YnZGRXZpRWczaTZ4eDV1RWNl?=
- =?utf-8?B?Z041WW80S20yVnpsQ2dBSmR5RS8yc1h4aHVrVTUreGUyN0tNQjBxQW9pMGJo?=
- =?utf-8?B?MEF2K2JGakMvSG1wK2RGd3NINXBGeU5HSU1mU0lPWjh1UmpvTjc0WnFtT2JD?=
- =?utf-8?B?dWZuaGZlMWNmQ25wSVNqbFNpeTVHL3BNcWJHS2xBdzJVTnZLQ3NQL0w1a2Jz?=
- =?utf-8?B?bmJvUzlRV1RtbFptZHp6SHM1dlBVclBEMkxqcmxLcWgvc0R1NGp0WlNyRnJu?=
- =?utf-8?B?T3didkxZb3FTWlNLOEd4MU5NRU1zcC9hdERNUGFGOGFkZDhNTmtGVkdCL0sv?=
- =?utf-8?B?dEkvQ3Z1M25ERzVaNDJ5LzBzbGVUYlZhbExqS3JOanlPdHdiUUtDZDEwMHBj?=
- =?utf-8?B?a0JBTDV0TWo3NTV6V3pKVTI2SGNRcUQxQnBVbTZFd1RpQ1BoV282eXF4Qkkr?=
- =?utf-8?Q?Zq4AeM9uupw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VnoycFFGVUJxbHk0eDFkVkNrVmVCdmFwVnhWM0JiL2tRQ2VzRXFjbG56RlhZ?=
- =?utf-8?B?Wm1pU3NIYjFrNW9FMmU5THJGcVl4dDdIZTJ3TXRrMngvQ0ZQSm5XdG41cEJq?=
- =?utf-8?B?Z01hdUlRdnBTRmVBb2NsNVJ3czJCY2VNNWZLSXdnMjZ6RDU0T2Q2K3Y0OXBB?=
- =?utf-8?B?eE5tbjRJYU1La2k1d0JQRjZXU3ZraVc5RFMvZWxGVWMrdmVqYUZoa1VMZ0FD?=
- =?utf-8?B?dW1waURhNW1lTzFwZi9LSWpvWmpZUWRjVzdXSm81c2g1R3JUVjBnTDEwbzN4?=
- =?utf-8?B?UnUvdTg2dnRWL3ZQMDg5bDJZRWJjUU54NTJ1WUZsUDhueFg5WXVidDhPcGt4?=
- =?utf-8?B?MC80a203c1FTNUh5aFFLZTV5cE53amlOcFVTR0dVcU9WM2ZOV3JUTGNXYTdE?=
- =?utf-8?B?YlpLR1lGcGlnU21Va08yK2JYWWNQMDltRm8ySG4wdVlBWGtlazdjK1R0d0xx?=
- =?utf-8?B?cG1GaTZiZlNROER1dXlIaGFwaERCSk42bktvNllNTjhQd0xMR0tGM1EzY2xF?=
- =?utf-8?B?SCtnMnh4WVFoSWhEUVRGTXhhTDNhTkVjbmVpa3dNVkZIZG8vK1dxNzBwTWlU?=
- =?utf-8?B?dzZiNDlqNk9MUmJCMVB1bFdiWkRyQ0pTS2hkbWNHQ2FVb2k5QllVdTlSRFFN?=
- =?utf-8?B?WXRYU1RMK1dDNTBsM1lLc1Y2aDZOUFlZaitPL3Z2L2dqbnNCV1BGS2dmelNU?=
- =?utf-8?B?ZVRSM2VpY0M3VmpqTG41YWhKaWo3Ky9tT2Z0SGNINXFkUzdLdWh6Ym1rdHVF?=
- =?utf-8?B?M3hFUUt5UjhOYXBtd0FnSmxJSURJNUdqK2VuNFg0V2xxOTFrYS9tT0x3dVBW?=
- =?utf-8?B?ZXd5K2pWTS9FNzdLQytvOEc5d3BFeHhjQ3ZHQnFyc0kreTdaWEd0VXM4ZzFL?=
- =?utf-8?B?a0NONk4yQis5T3ZqTXRZdWk4dWFQQ0lUMzhFVlA5UXcvYlRtUkNUNGs4SEdm?=
- =?utf-8?B?Kys1b0o0SW5JMkhFVUhiaEJ0cVZxOTR2a3hVNjIwLzcrSXUvTXNQaGN4emNn?=
- =?utf-8?B?T1A3Qys0WlA1NDZsU0FncmlUN0p2Z09QL0F1MHZ5d2w0eG4rNW90SUdYRHYz?=
- =?utf-8?B?RWRsSHMzaUU4cXdickRtakVqWjFDcm96V3VsMTFpOVB1TkFoK2hySGY3bEFw?=
- =?utf-8?B?dUpPR1FGN3pFNXRkcmRaajhIY0Y0QitGRWpIL1BsdjNSbjNhU0xkY3g0aTdL?=
- =?utf-8?B?cEx5a01uN09RZGo2ZkxJTitMMEp6KzRqZVhnVHpsRnhTNWFRTFZoQTBscHNh?=
- =?utf-8?B?VjZsbWVTVG1TR1JpbUpjWklqaW54VTJ2Sm1IaDFGOURNMlVoS2ZNZWZFTlJ6?=
- =?utf-8?B?QzZpcmxTc0o3cHQzYjJsRFExZGtUUTYyem9TRS9xMFVFVlJqOXI5VllXUUVU?=
- =?utf-8?B?NVFIbHhJRDBOSi8xaWNqNDJ4eWljcHVFNXQzOEV4QlllUTVHNVZVTzRnZUUw?=
- =?utf-8?B?N2VhWVhQYjNDeVJ1N3hvbk5vTkIrZ3BoSGpjTEhyWnluUTVpQ1NiSGZNSFBy?=
- =?utf-8?B?MzgzVk1xTUJtaGRDbXhkTXBLT2t4aHoydVJtV3k2QXp6T2g4bnNYWXIxTFRu?=
- =?utf-8?B?ZWwrNzRTdTdhSGRNUHg0d05kT3cvRmowMEZZbW9TVStHdVRjUFc1b2c2RDZn?=
- =?utf-8?B?MDBVdHhER2FpM2Z2Mm9DYnlJcmhXY0p5RFVZa0hEOTVoYVFTbUtrdmJTN0Zq?=
- =?utf-8?B?R2FtZmg0aWhCd3AvdmZuSW5EalV1dVkrTjQya094L2tQb0pmUzBqZmpyQTNQ?=
- =?utf-8?B?SlltRGk5djNWckdRcWxsdDY4czZnZmpGQlpvR01vb0g3ZVBZRWc2dWU1VGRo?=
- =?utf-8?B?VTdyZmYwcEhGay9xUUlFTy9xTkdQYTVydWcxWW9ZS2FtNFYzTXZVUkd0aGNk?=
- =?utf-8?B?Vkg1dTIvTC9RSjJxaEpzcWNTOG5sOUtOamZBT3RBY2xJU01MTnpadW1QdE5V?=
- =?utf-8?B?QzdxOXBnTkFELzFpazRPZHh3eEdNMWdJaUVKbmdwSzNEUFpQLzZpK3BDb2ti?=
- =?utf-8?B?akxOSnBNOWJ3UDh3YUF0TGZiVHFrTVJUVHFxcmcySnJ4aWhVVnVLVU9GcnNF?=
- =?utf-8?B?cXlhMWdYWkNHRGFmMnBrTnlRc3dEdThyOTV6eEttQTZxOXJkSDhPdU1CL2hC?=
- =?utf-8?B?ZXhJSmJiMklBU2RjTE9XNFVYNFA1TlBMMk5vWmtMSmplY0p1VDhEdG5xN1Fx?=
- =?utf-8?Q?xsTLcIWP+OKB0deRdoeCMWkSUrVEvOHEnbd/hK2qPGGr?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0716f3a9-b8ff-4be1-4649-08ddd625d4a8
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 02:46:52.9003
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t0I8QA9rnhbWGjVrwHkdER4bRsy0BxJD4BAJs/VQRWqiUm/WRKxO9BN/uxUkm2g1AiCPFIxwn4hQtIkvdAcFCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5600
+References: <20250808015134.2875430-2-lichliu@redhat.com> <CALu+AoTGwZqB28Z+sJ4KW7esNHx8=5kJ6nrMpoQ_rogzSDGwxA@mail.gmail.com>
+In-Reply-To: <CALu+AoTGwZqB28Z+sJ4KW7esNHx8=5kJ6nrMpoQ_rogzSDGwxA@mail.gmail.com>
+From: Dave Young <dyoung@redhat.com>
+Date: Fri, 8 Aug 2025 10:47:09 +0800
+X-Gm-Features: Ac12FXwMHdYPLNUSBIVRDOIQo0wLGhwEoVcSzCO_3Te7legG5opEYpuIRQTyYUM
+Message-ID: <CALu+AoTGY0wKubVgR_EF5BZmYvh180fjP1AsLvp8cJ447WFGaA@mail.gmail.com>
+Subject: Re: [PATCH] fs: Add 'rootfsflags' to set rootfs mount options
+To: Lichen Liu <lichliu@redhat.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, rob@landley.net, 
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	weilongchen@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that the vbios code uses a non-bound `Device` instance, store an
-`ARef` to it at construction time so we can use it for logging without
-having to carry an extra argument on every method for that sole purpose.
+On Fri, 8 Aug 2025 at 10:30, Dave Young <dyoung@redhat.com> wrote:
+>
+> Hi Lichen,
+>
+> On Fri, 8 Aug 2025 at 09:55, Lichen Liu <lichliu@redhat.com> wrote:
+> >
+> > When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
+> > By default, a tmpfs mount is limited to using 50% of the available RAM
+> > for its content. This can be problematic in memory-constrained
+> > environments, particularly during a kdump capture.
+> >
+> > In a kdump scenario, the capture kernel boots with a limited amount of
+> > memory specified by the 'crashkernel' parameter. If the initramfs is
+> > large, it may fail to unpack into the tmpfs rootfs due to insufficient
+> > space. This is because to get X MB of usable space in tmpfs, 2*X MB of
+> > memory must be available for the mount. This leads to an OOM failure
+> > during the early boot process, preventing a successful crash dump.
+> >
+> > This patch introduces a new kernel command-line parameter, rootfsflags,
+> > which allows passing specific mount options directly to the rootfs when
+> > it is first mounted. This gives users control over the rootfs behavior.
+> >
+> > For example, a user can now specify rootfsflags=3Dsize=3D75% to allow t=
+he
+> > tmpfs to use up to 75% of the available memory. This can significantly
+> > reduce the memory pressure for kdump.
+> >
+> > Consider a practical example:
+> >
+> > To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
+> > the default 50% limit, this requires a memory pool of 96MB to be
+> > available for the tmpfs mount. The total memory requirement is therefor=
+e
+> > approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacke=
+d
+> > kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) =E2=89=88 220MB.
+> >
+> > By using rootfsflags=3Dsize=3D75%, the memory pool required for the 48M=
+B
+> > tmpfs is reduced to 48MB / 0.75 =3D 64MB. This reduces the total memory
+> > requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
+> > smaller crashkernel size, such as 192MB.
+> >
+> > An alternative approach of reusing the existing rootflags parameter was
+> > considered. However, a new, dedicated rootfsflags parameter was chosen
+> > to avoid altering the current behavior of rootflags (which applies to
+> > the final root filesystem) and to prevent any potential regressions.
+> >
+> > This approach is inspired by prior discussions and patches on the topic=
+.
+> > Ref: https://www.lightofdawn.org/blog/?viewDetailed=3D00128
+> > Ref: https://landley.net/notes-2015.html#01-01-2015
+> > Ref: https://lkml.org/lkml/2021/6/29/783
+> > Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-in=
+itramfs.html#what-is-rootfs
+> >
+> > Signed-off-by: Lichen Liu <lichliu@redhat.com>
+> > ---
+> >  fs/namespace.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index ddfd4457d338..a450db31613e 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
+> >  }
+> >  __setup("mphash_entries=3D", set_mphash_entries);
+> >
+> > +static char * __initdata rootfs_flags;
+> > +static int __init rootfs_flags_setup(char *str)
+> > +{
+> > +       rootfs_flags =3D str;
+>
+> I do see there are a few similar usages in init/do_mounts.c, probably
+> it is old stuff and it just works.  But I think making rootfs_flags as
+> an array and copying str into it is the right way.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpu/nova-core/firmware/fwsec.rs |  8 ++--
- drivers/gpu/nova-core/vbios.rs          | 69 ++++++++++++++++++++-------------
- 2 files changed, 46 insertions(+), 31 deletions(-)
+Another question, may need fs people to clarify.  If the mount is
+tmpfs and it is also rootfs,  could it use 100% of the memory by
+default, and then no need for an extra param?    I feel that there is
+no point to reserve memory if it is a fully memory based file system.
 
-diff --git a/drivers/gpu/nova-core/firmware/fwsec.rs b/drivers/gpu/nova-core/firmware/fwsec.rs
-index 0dff3cfa90afee0cd4c3348023c8bfd7edccdb29..d9b9d1f92880cbcd36dac84b9e86a84e6465cf5d 100644
---- a/drivers/gpu/nova-core/firmware/fwsec.rs
-+++ b/drivers/gpu/nova-core/firmware/fwsec.rs
-@@ -253,8 +253,8 @@ impl FalconFirmware for FwsecFirmware {
- 
- impl FirmwareDmaObject<FwsecFirmware, Unsigned> {
-     fn new_fwsec(dev: &Device<device::Bound>, bios: &Vbios, cmd: FwsecCommand) -> Result<Self> {
--        let desc = bios.fwsec_image().header(dev)?;
--        let ucode = bios.fwsec_image().ucode(dev, desc)?;
-+        let desc = bios.fwsec_image().header()?;
-+        let ucode = bios.fwsec_image().ucode(desc)?;
-         let mut dma_object = DmaObject::from_data(dev, ucode)?;
- 
-         let hdr_offset = (desc.imem_load_size + desc.interface_offset) as usize;
-@@ -343,7 +343,7 @@ pub(crate) fn new(
-         let ucode_dma = FirmwareDmaObject::<Self, _>::new_fwsec(dev, bios, cmd)?;
- 
-         // Patch signature if needed.
--        let desc = bios.fwsec_image().header(dev)?;
-+        let desc = bios.fwsec_image().header()?;
-         let ucode_signed = if desc.signature_count != 0 {
-             let sig_base_img = (desc.imem_load_size + desc.pkc_data_offset) as usize;
-             let desc_sig_versions = u32::from(desc.signature_versions);
-@@ -382,7 +382,7 @@ pub(crate) fn new(
-             dev_dbg!(dev, "patching signature with index {}\n", signature_idx);
-             let signature = bios
-                 .fwsec_image()
--                .sigs(dev, desc)
-+                .sigs(desc)
-                 .and_then(|sigs| sigs.get(signature_idx).ok_or(EINVAL))?;
- 
-             ucode_dma.patch_signature(signature, sig_base_img)?
-diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
-index b5564b4d3e4758e77178aa403635e4780f0378cc..6fc06b1b83655a7dec00308880dbdfc32d7105ce 100644
---- a/drivers/gpu/nova-core/vbios.rs
-+++ b/drivers/gpu/nova-core/vbios.rs
-@@ -9,6 +9,7 @@
- use kernel::device;
- use kernel::error::Result;
- use kernel::prelude::*;
-+use kernel::types::ARef;
- 
- /// The offset of the VBIOS ROM in the BAR0 space.
- const ROM_OFFSET: usize = 0x300000;
-@@ -230,10 +231,10 @@ pub(crate) fn new(dev: &device::Device, bar0: &Bar0) -> Result<Vbios> {
-             (second_fwsec_image, first_fwsec_image, pci_at_image)
-         {
-             second
--                .setup_falcon_data(dev, &pci_at, &first)
-+                .setup_falcon_data(&pci_at, &first)
-                 .inspect_err(|e| dev_err!(dev, "Falcon data setup failed: {:?}\n", e))?;
-             Ok(Vbios {
--                fwsec_image: second.build(dev)?,
-+                fwsec_image: second.build()?,
-             })
-         } else {
-             dev_err!(
-@@ -742,9 +743,10 @@ fn try_from(base: BiosImageBase) -> Result<Self> {
- ///
- /// Each BiosImage type has a BiosImageBase type along with other image-specific fields. Note that
- /// Rust favors composition of types over inheritance.
--#[derive(Debug)]
- #[expect(dead_code)]
- struct BiosImageBase {
-+    /// Used for logging.
-+    dev: ARef<device::Device>,
-     /// PCI ROM Expansion Header
-     rom_header: PciRomHeader,
-     /// PCI Data Structure
-@@ -801,6 +803,7 @@ fn new(dev: &device::Device, data: &[u8]) -> Result<Self> {
-         data_copy.extend_from_slice(data, GFP_KERNEL)?;
- 
-         Ok(BiosImageBase {
-+            dev: dev.into(),
-             rom_header,
-             pcir,
-             npde,
-@@ -836,7 +839,7 @@ fn get_bit_token(&self, token_id: u8) -> Result<BitToken> {
-     ///
-     /// This is just a 4 byte structure that contains a pointer to the Falcon data in the FWSEC
-     /// image.
--    fn falcon_data_ptr(&self, dev: &device::Device) -> Result<u32> {
-+    fn falcon_data_ptr(&self) -> Result<u32> {
-         let token = self.get_bit_token(BIT_TOKEN_ID_FALCON_DATA)?;
- 
-         // Make sure we don't go out of bounds
-@@ -847,14 +850,14 @@ fn falcon_data_ptr(&self, dev: &device::Device) -> Result<u32> {
-         // read the 4 bytes at the offset specified in the token
-         let offset = token.data_offset as usize;
-         let bytes: [u8; 4] = self.base.data[offset..offset + 4].try_into().map_err(|_| {
--            dev_err!(dev, "Failed to convert data slice to array");
-+            dev_err!(self.base.dev, "Failed to convert data slice to array");
-             EINVAL
-         })?;
- 
-         let data_ptr = u32::from_le_bytes(bytes);
- 
-         if (data_ptr as usize) < self.base.data.len() {
--            dev_err!(dev, "Falcon data pointer out of bounds\n");
-+            dev_err!(self.base.dev, "Falcon data pointer out of bounds\n");
-             return Err(EINVAL);
-         }
- 
-@@ -978,11 +981,10 @@ fn find_entry_by_type(&self, entry_type: u8) -> Result<PmuLookupTableEntry> {
- impl FwSecBiosBuilder {
-     fn setup_falcon_data(
-         &mut self,
--        dev: &device::Device,
-         pci_at_image: &PciAtBiosImage,
-         first_fwsec: &FwSecBiosBuilder,
-     ) -> Result {
--        let mut offset = pci_at_image.falcon_data_ptr(dev)? as usize;
-+        let mut offset = pci_at_image.falcon_data_ptr()? as usize;
-         let mut pmu_in_first_fwsec = false;
- 
-         // The falcon data pointer assumes that the PciAt and FWSEC images
-@@ -1005,10 +1007,15 @@ fn setup_falcon_data(
-         self.falcon_data_offset = Some(offset);
- 
-         if pmu_in_first_fwsec {
--            self.pmu_lookup_table =
--                Some(PmuLookupTable::new(dev, &first_fwsec.base.data[offset..])?);
-+            self.pmu_lookup_table = Some(PmuLookupTable::new(
-+                &self.base.dev,
-+                &first_fwsec.base.data[offset..],
-+            )?);
-         } else {
--            self.pmu_lookup_table = Some(PmuLookupTable::new(dev, &self.base.data[offset..])?);
-+            self.pmu_lookup_table = Some(PmuLookupTable::new(
-+                &self.base.dev,
-+                &self.base.data[offset..],
-+            )?);
-         }
- 
-         match self
-@@ -1021,14 +1028,18 @@ fn setup_falcon_data(
-                 let mut ucode_offset = entry.data as usize;
-                 ucode_offset -= pci_at_image.base.data.len();
-                 if ucode_offset < first_fwsec.base.data.len() {
--                    dev_err!(dev, "Falcon Ucode offset not in second Fwsec.\n");
-+                    dev_err!(self.base.dev, "Falcon Ucode offset not in second Fwsec.\n");
-                     return Err(EINVAL);
-                 }
-                 ucode_offset -= first_fwsec.base.data.len();
-                 self.falcon_ucode_offset = Some(ucode_offset);
-             }
-             Err(e) => {
--                dev_err!(dev, "PmuLookupTableEntry not found, error: {:?}\n", e);
-+                dev_err!(
-+                    self.base.dev,
-+                    "PmuLookupTableEntry not found, error: {:?}\n",
-+                    e
-+                );
-                 return Err(EINVAL);
-             }
-         }
-@@ -1036,7 +1047,7 @@ fn setup_falcon_data(
-     }
- 
-     /// Build the final FwSecBiosImage from this builder
--    fn build(self, dev: &device::Device) -> Result<FwSecBiosImage> {
-+    fn build(self) -> Result<FwSecBiosImage> {
-         let ret = FwSecBiosImage {
-             base: self.base,
-             falcon_ucode_offset: self.falcon_ucode_offset.ok_or(EINVAL)?,
-@@ -1044,8 +1055,8 @@ fn build(self, dev: &device::Device) -> Result<FwSecBiosImage> {
- 
-         if cfg!(debug_assertions) {
-             // Print the desc header for debugging
--            let desc = ret.header(dev)?;
--            dev_dbg!(dev, "PmuLookupTableEntry desc: {:#?}\n", desc);
-+            let desc = ret.header()?;
-+            dev_dbg!(ret.base.dev, "PmuLookupTableEntry desc: {:#?}\n", desc);
-         }
- 
-         Ok(ret)
-@@ -1054,13 +1065,16 @@ fn build(self, dev: &device::Device) -> Result<FwSecBiosImage> {
- 
- impl FwSecBiosImage {
-     /// Get the FwSec header ([`FalconUCodeDescV3`]).
--    pub(crate) fn header(&self, dev: &device::Device) -> Result<&FalconUCodeDescV3> {
-+    pub(crate) fn header(&self) -> Result<&FalconUCodeDescV3> {
-         // Get the falcon ucode offset that was found in setup_falcon_data.
-         let falcon_ucode_offset = self.falcon_ucode_offset;
- 
-         // Make sure the offset is within the data bounds.
-         if falcon_ucode_offset + core::mem::size_of::<FalconUCodeDescV3>() > self.base.data.len() {
--            dev_err!(dev, "fwsec-frts header not contained within BIOS bounds\n");
-+            dev_err!(
-+                self.base.dev,
-+                "fwsec-frts header not contained within BIOS bounds\n"
-+            );
-             return Err(ERANGE);
-         }
- 
-@@ -1072,7 +1086,7 @@ pub(crate) fn header(&self, dev: &device::Device) -> Result<&FalconUCodeDescV3>
-         let ver = (hdr & 0xff00) >> 8;
- 
-         if ver != 3 {
--            dev_err!(dev, "invalid fwsec firmware version: {:?}\n", ver);
-+            dev_err!(self.base.dev, "invalid fwsec firmware version: {:?}\n", ver);
-             return Err(EINVAL);
-         }
- 
-@@ -1092,7 +1106,7 @@ pub(crate) fn header(&self, dev: &device::Device) -> Result<&FalconUCodeDescV3>
-     }
- 
-     /// Get the ucode data as a byte slice
--    pub(crate) fn ucode(&self, dev: &device::Device, desc: &FalconUCodeDescV3) -> Result<&[u8]> {
-+    pub(crate) fn ucode(&self, desc: &FalconUCodeDescV3) -> Result<&[u8]> {
-         let falcon_ucode_offset = self.falcon_ucode_offset;
- 
-         // The ucode data follows the descriptor.
-@@ -1104,15 +1118,16 @@ pub(crate) fn ucode(&self, dev: &device::Device, desc: &FalconUCodeDescV3) -> Re
-             .data
-             .get(ucode_data_offset..ucode_data_offset + size)
-             .ok_or(ERANGE)
--            .inspect_err(|_| dev_err!(dev, "fwsec ucode data not contained within BIOS bounds\n"))
-+            .inspect_err(|_| {
-+                dev_err!(
-+                    self.base.dev,
-+                    "fwsec ucode data not contained within BIOS bounds\n"
-+                )
-+            })
-     }
- 
-     /// Get the signatures as a byte slice
--    pub(crate) fn sigs(
--        &self,
--        dev: &device::Device,
--        desc: &FalconUCodeDescV3,
--    ) -> Result<&[Bcrt30Rsa3kSignature]> {
-+    pub(crate) fn sigs(&self, desc: &FalconUCodeDescV3) -> Result<&[Bcrt30Rsa3kSignature]> {
-         // The signatures data follows the descriptor.
-         let sigs_data_offset = self.falcon_ucode_offset + core::mem::size_of::<FalconUCodeDescV3>();
-         let sigs_size =
-@@ -1121,7 +1136,7 @@ pub(crate) fn sigs(
-         // Make sure the data is within bounds.
-         if sigs_data_offset + sigs_size > self.base.data.len() {
-             dev_err!(
--                dev,
-+                self.base.dev,
-                 "fwsec signatures data not contained within BIOS bounds\n"
-             );
-             return Err(ERANGE);
-
--- 
-2.50.1
+>
+> > +       return 1;
+> > +}
+> > +
+> > +__setup("rootfsflags=3D", rootfs_flags_setup);
+> > +
+> >  static u64 event;
+> >  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+> >  static DEFINE_IDA(mnt_group_ida);
+> > @@ -6086,7 +6095,7 @@ static void __init init_mount_tree(void)
+> >         struct mnt_namespace *ns;
+> >         struct path root;
+> >
+> > -       mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
+> > +       mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_fla=
+gs);
+> >         if (IS_ERR(mnt))
+> >                 panic("Can't create rootfs");
+> >
+> > --
+> > 2.50.1
+> >
+> >
+> Thanks
+> Dave
 
 
