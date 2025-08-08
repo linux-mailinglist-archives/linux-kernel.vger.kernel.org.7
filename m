@@ -1,120 +1,200 @@
-Return-Path: <linux-kernel+bounces-760634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017CAB1EE03
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16E8B1EE05
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 19:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287D7170ECC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9321C27FDC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33051E9B2D;
-	Fri,  8 Aug 2025 17:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4281EBA1E;
+	Fri,  8 Aug 2025 17:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="P2izBx7a"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hnTsNRSV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QisqGGgW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hnTsNRSV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QisqGGgW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D541110F1;
-	Fri,  8 Aug 2025 17:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316BF10F1
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 17:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754675156; cv=none; b=f7yld/fwcc+UhoT5BbLAhGy6ufeHhc73UN6DADhbmSfKcfzp0YwerLVlA2uAUo5CR0JcCIAAqlYetVfy7cmmPF8mzcYPbROYLcYY3bkQyxdI/O7xnOWqcMEm6z7FFBF4FyQifstmM8H2HbNaYid454Bk5fT/DWc6aHvlSzNuYdo=
+	t=1754675168; cv=none; b=cWQcmW6rXrukLlNlxU96ntir2qekst9/3L9WUk78ktb1TbXBW7ivm7Bx9XHbrRfZHxFuES9qjn/PFHZ0LvNg2SUz7mfxkgZ5TUnd/ZTYd31zNyr6TMUIjFjjJp9YStDhD2PVd6d/aYp+OMFFDM95F11ba560FVvm3WiVZxqWAUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754675156; c=relaxed/simple;
-	bh=cMPX83TXW5WS1B/djWZ1BWLuRX2sVxKhO971mWW3Bbc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QSTbH4ykN7Bj0Ik0PHNwqbXQc6Q+/T+ygc6PSsr3f/dQXqWr5xSUo3WKKDMxtK3TYDk3O5uxV0Ty0YBgUIc7V8yMlKJJIRW6xigFdpMrJ6LLwC7+wzTK69f+QDQ28aE92yTpRfrADOWhSSlYfAnl42GyuA5CMxneq+ieNN0Ulr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=P2izBx7a; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1754675145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fpm+EefCxsK9ltMIu4skM6GdnS0CE2R/LNLTBMAwR+8=;
-	b=P2izBx7a6ckvP7R/lUPQJzhhq9+t2zVzBAI6BrFG/Ysh4FecA58vIyvKAYaWw9b4GEwyMd
-	2nLUt2kwdNAOntXzq6LCjDeZVPBQv5UYiIPxFfU3gIymSLy7iIc3FItFhiwHsDNFizGpZL
-	2nA9I426y1rtUbKmifX/URbO3d/2YvU=
-From: Sven Eckelmann <sven@narfation.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: chris.packham@alliedtelesis.co.nz, Alex Guo <alexguo1023@gmail.com>,
- andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] i2c: rtl9300: Fix out-of-bounds bug in rtl9300_i2c_smbus_xfer
-Date: Fri, 08 Aug 2025 19:45:39 +0200
-Message-ID: <10749199.nUPlyArG6x@sven-desktop>
-In-Reply-To: <aJB6u1WoNjiE-tZz@shikoro>
-References:
- <20250615235248.529019-1-alexguo1023@gmail.com> <4670491.LvFx2qVVIh@ripper>
- <aJB6u1WoNjiE-tZz@shikoro>
+	s=arc-20240116; t=1754675168; c=relaxed/simple;
+	bh=iGutLKLgFUfnDYSezu1T9enbcXs8bRsISAfNtknSfw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i5DdbvrCNNWLcdCMwRkoJLAwqQYWIK4FXvPChQcZ8QUss7rU/Hz5ZnMAKJYf8tLOE83QF9aZPqG/RGYM4bPB1N2a8aCZOGSmJ2WpL4iAJpMeYSOQKcgqczT42rlabNc8bfGOnb1xIRzVFQnWxjaj0b3OYY41ql0Fd8pyysukTII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hnTsNRSV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QisqGGgW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hnTsNRSV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QisqGGgW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3427433E3F;
+	Fri,  8 Aug 2025 17:46:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754675163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OgUmwY6RCC9p9/dfYsN5D7uMh1db1LsUhnXQ6lTp2CU=;
+	b=hnTsNRSVcXZvncuMw3nnw3vQDVI1iiWEAHLrfxWgbwFzht9b+UyUTUYYy/aNFqBcXY4CUT
+	nbIZqT+2hRwWPzxv67SfrKgnuvM6erLL7LbqDtgg4hXLicK3kl/GuKMW6FZaqCmX6an7mc
+	UsSjNdn48T5GOfWzuuoH75CNj62gJHU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754675163;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OgUmwY6RCC9p9/dfYsN5D7uMh1db1LsUhnXQ6lTp2CU=;
+	b=QisqGGgWGb0XheLsmWyq31VQkNt7/VLiJP9Kc/6q7GiK1lg5QFvTGDBPmuzglkgYPiHmnV
+	n37q4/fG28qVkmBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754675163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OgUmwY6RCC9p9/dfYsN5D7uMh1db1LsUhnXQ6lTp2CU=;
+	b=hnTsNRSVcXZvncuMw3nnw3vQDVI1iiWEAHLrfxWgbwFzht9b+UyUTUYYy/aNFqBcXY4CUT
+	nbIZqT+2hRwWPzxv67SfrKgnuvM6erLL7LbqDtgg4hXLicK3kl/GuKMW6FZaqCmX6an7mc
+	UsSjNdn48T5GOfWzuuoH75CNj62gJHU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754675163;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=OgUmwY6RCC9p9/dfYsN5D7uMh1db1LsUhnXQ6lTp2CU=;
+	b=QisqGGgWGb0XheLsmWyq31VQkNt7/VLiJP9Kc/6q7GiK1lg5QFvTGDBPmuzglkgYPiHmnV
+	n37q4/fG28qVkmBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF51F1392A;
+	Fri,  8 Aug 2025 17:46:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6GkKOto3lmjUaAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 08 Aug 2025 17:46:02 +0000
+Message-ID: <2a53f01c-db74-4298-bb9e-36b770e4fcd0@suse.cz>
+Date: Fri, 8 Aug 2025 19:46:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2364835.iZASKD2KPV";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl
+ under per-vma locks
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
+ peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org,
+ paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com,
+ brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com,
+ linux@weissschuh.net, willy@infradead.org, osalvador@suse.de,
+ andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
+ tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ SeongJae Park <sj@kernel.org>
+References: <20250808152850.2580887-1-surenb@google.com>
+ <20250808152850.2580887-4-surenb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250808152850.2580887-4-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[29];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[oracle.com,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid];
+	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
---nextPart2364835.iZASKD2KPV
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Sven Eckelmann <sven@narfation.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Fri, 08 Aug 2025 19:45:39 +0200
-Message-ID: <10749199.nUPlyArG6x@sven-desktop>
-In-Reply-To: <aJB6u1WoNjiE-tZz@shikoro>
-MIME-Version: 1.0
+On 8/8/25 17:28, Suren Baghdasaryan wrote:
+> Utilize per-vma locks to stabilize vma after lookup without taking
+> mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
+> contended, we fall back to mmap_lock but take it only momentarily
+> to lock the vma and release the mmap_lock. In a very unlikely case
+> of vm_refcnt overflow, this fall back path will fail and ioctl is
+> done under mmap_lock protection.
+> 
+> This change is designed to reduce mmap_lock contention and prevent
+> PROCMAP_QUERY ioctl calls from blocking address space updates.
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Acked-by: SeongJae Park <sj@kernel.org>
 
-On Monday, 4 August 2025 11:17:47 CEST Wolfram Sang wrote:
-> Yes, we can do that. In general, it doesn't make sense to add this check
-> when the ultimate goal is to support SMBus v3 which doesn't need the
-> check anymore. But if it is blocking further development, we can apply
-> this. The check will be removed when SMBus v3 support comes in.
-
-Yes, when I2C_SMBUS_BLOCK_MAX becomes >= 255 bytes, such a check would not 
-be necessary. But this driver is already in Linux 6.13 - and in this version, 
-I2C_SMBUS_BLOCK_MAX is just 32 bytes. So, just from the code perspective, it 
-would be interesting for Linux stable to get this fixed in longterm kernel 
-6.15 (and also the most recent Linux 6.16.y).
-
-If you want to have an argument against this patch then it would be the the 
-hardware limitation of this i2c host controller. It only allows to transfer up 
-to 16 bytes. But then you could also argue that there might be variants which 
-will not have this limitation anymore. And Jonas is already trying to make the 
-driver more flexible [1] - the future will only show whether this will ever be 
-a relevant check (before I2C_SMBUS_BLOCK_MAX is large enough to make this 
-check obsolete).
-
-Btw. I've already picked it up in my patchset [2] to avoid conflicts with this 
-patch. And since they (2-4) fix broken functionality in Linux 6.13, this patch 
-becomes a requirement for backporting those fixes to the stable kernels.
-
-Kind regards,
-	Sven
-
-[1] https://lore.kernel.org/r/20250729075145.2972-1-jelonek.jonas@gmail.com
-[2] https://lore.kernel.org/r/20250804-i2c-rtl9300-multi-byte-v3-0-e20607e1b28c@narfation.org
---nextPart2364835.iZASKD2KPV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaJY3wwAKCRBND3cr0xT1
-y93kAPwNyB6o77zkG3AMKPTc4CK5HZntt58sAq5BoD7c205gSAEAxbybkLWRb6n9
-29KQvlkpHYwO0+DMtzCL8HSeI5g7qg4=
-=XPxz
------END PGP SIGNATURE-----
-
---nextPart2364835.iZASKD2KPV--
-
-
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 
