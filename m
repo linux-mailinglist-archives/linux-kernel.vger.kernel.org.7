@@ -1,99 +1,119 @@
-Return-Path: <linux-kernel+bounces-760114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635A9B1E6A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:44:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D54B1E6BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598681893701
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:44:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B8216AA98
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763632749D2;
-	Fri,  8 Aug 2025 10:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED9023AB81;
+	Fri,  8 Aug 2025 10:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B0EjYcKg"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qsb+8VRk"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DABC1F1538;
-	Fri,  8 Aug 2025 10:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B016D5695;
+	Fri,  8 Aug 2025 10:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754649844; cv=none; b=QwXS1nIwFZznkAOuCVZ/UO+CgjdCHlzTqTysjxx5Ypl+pODQ7xzOx6mOtvP9CEHGJ0tAmx0RgoyU9eXnfLGhXDZjNIEY/IWA1fH+fdDZQdj/bx65VZfhl4z4XTa3zq3OeXxuXTih2/EUMIjv2Y1jDkSRFji/k+8R/lGACgQtEDk=
+	t=1754650023; cv=none; b=e/Idt7Zsjt7l04F8EJbwF0Vwein81EXjOeDiAMAY95ddJCbg1NjBqTA20yLsyiOaColNIYeNMCQeI0OiPaE+APdIy8kTKD8OaxjXCY77+jXYbasFbgzsuXWe/1qrJNt8kbCXPTvBGjCSM5iCwNVpoJVSIK1/wXIjhn4D8YoD6zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754649844; c=relaxed/simple;
-	bh=yD0mi7Uyn2c5rvpZYEE9/kGZcsO9rhPRIIJK6YIVS7Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iMN7dbqAC0vvsSUUdfYRroI5r9JvcGkZLM5fQ8OVdTYqCnGN6+dsiK6+za2xMFQ4ueD9ACFgysL+SG1Mdf0tPhBMVFNj3M8RB2TPErcibu4h//YhUEE8gBjSXJrlRrSdN+g7jC6qbJ1/DcUDXWkmc7zYJhvDYMMjMzdn4G5yyXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B0EjYcKg; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 17DEA41C7B;
-	Fri,  8 Aug 2025 10:43:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754649840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yD0mi7Uyn2c5rvpZYEE9/kGZcsO9rhPRIIJK6YIVS7Y=;
-	b=B0EjYcKgJzqeCgKhFUYQDiDJroLjBvTKhCAST0DimHX7D8YJG7g97F9rquUineE9/2Hzkd
-	jg5p+1VqCnIjbRLs2ksamT/MXzQWK0n8gkUUTHMS1wYcSzGUfFiqY1EvmZu7evuoCpSbn2
-	XLi919S9apR9YYzYDPEvckA2tpC8tFqYZTV3q4dfTKKbi3N/BCbfcriafbj7qwP/+nIs7m
-	mG9F9lMzUSls4OV4U3ZwpUq0nLuV42726Pv2bDs8MGzrJyg4h3qvy5bizSmWbhDkhuGkuj
-	KWNTpB5tgeeoH0KVgQDhNVZme0bU6iHmDSWPsiUTST1ldDk09M8Z2VVUSZaRNg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>,  Kishon Vijay Abraham I
- <kishon@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  linux-phy@lists.infradead.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: phy: marvell,comphy-cp110: Fix clock and
- child node constraints
-In-Reply-To: <20250806200138.1366189-1-robh@kernel.org> (Rob Herring's message
-	of "Wed, 6 Aug 2025 15:01:37 -0500")
-References: <20250806200138.1366189-1-robh@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Fri, 08 Aug 2025 12:43:59 +0200
-Message-ID: <87qzxm9jps.fsf@bootlin.com>
+	s=arc-20240116; t=1754650023; c=relaxed/simple;
+	bh=3ibipzUySSqHmtKXTWb4ha0TMTGI734ck1ABPHtXVpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jo1b8+wE/djh13uav5wv4flcS+DoHJpiAmJsHgOADmplfmNxxp3zQHfbGPNvsu38G2uVBbAwfbp3r0pPNa0jMFjWtKfTO7Od0/rbcrTKvZyOwyaf9BiG6/BFleia3dSL4hlVerUTAbah57Q27RsTA2CJ5+Or5b06gAwp5CSwacI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qsb+8VRk; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b8de6f7556so1052541f8f.1;
+        Fri, 08 Aug 2025 03:47:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754650020; x=1755254820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9FTG6NMUrOc/WW0podSvrB6jKWxep/Y5whSGifB9nMY=;
+        b=Qsb+8VRkpCNf9AtoVkKdy1FK/V7E3opyx45Cdjbn/heWk+gPU4Hq+6qstNVrmKZFTu
+         cpOAzd+8nPK2Xb2+ek8cAA1u65KcwI2qotpwTlr8uuFy8ztVRdbCGUKbFS6rUg/rKNO7
+         CmBmhJWxLbafy0uBuXvC8QlfbzJmtO1jlDiLyi+B97d46R9OS7C5vtFyd9g9KsqYG3mL
+         rW8PRGR706Hxh+EjDhiXsytrQSUScNkTth3zheXKhJOhXSahxHnLxJm5lJ36oC0+2zYW
+         8hW7Fchxp/2qOdujjBINHbkMzgeZYgZviuUDCG3CJbqrDK2RMDzzLyBu7BR71HBzhBFr
+         cYIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754650020; x=1755254820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9FTG6NMUrOc/WW0podSvrB6jKWxep/Y5whSGifB9nMY=;
+        b=uYxw4QfigttdQ5YZuwYtl1l8d9LFQjL6P3YNN7qJXoQdvEIMsF8x7DI/63Jm+ZSmrZ
+         XT1Sei4lQAR2Ia7IgBbvIo3jALW4UwzEvKADyNVEHw2q5HbigpYDOt8XrcvQxUTvDYpm
+         YU2yntoLk8ZvKoUi4XJD4ABs07xAYQtSgy3biXwO8JF7f9YBoaoaE+OywUoUapfdR4aV
+         g+8lHkO1aFGlZWLa1OYwGIp/QrKkKkjdgFbrasEpkKEMfEClyFISTR0rTe1ISTqRxOEd
+         2f+WbAac+vZ8SEkffhLit3FrmOU/HDpLBq8dkpjaGtJ48HSH2cZ9wTzwyzCG44FzMORZ
+         6Ecg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtnFWxFWnH93LyKUBrVA9snMLf7kpRmC5O1ZcDYI9Y1luGhyPYDvjfP7JvJvMDZRdBmQHInQ3Eu/ZU2Xw=@vger.kernel.org, AJvYcCWWjtlos3j1O0vRR8F4VAy5zX7Gmnv4M0sirp55NUzzcQ4KyipbnKNDnLWCZ2RuR4GiHaIb8gVmBlNIucM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwgqDAgHgE4TVYWNRScroSXdl1Hfkv1IF/a8hZOwDgE3kSc2qC
+	L2e1w4U8nATc8zKaecDg3SDOqKifOb422KSlb2c6NfNZ7OeJk0XXGKjmYzCK5m0wcDXWmw==
+X-Gm-Gg: ASbGncsrVZgcTb6HYQoSqTLAwGyGLY74EuL+MfN3XqbWaZBkvgDtOeXYqBcpALuJLrD
+	0am3sY5AunRLCTPls6aEe6qm+brz8V7RYAzlx2rSYwqDQ5WZHx2rVOObWLyoOboeNae/GdZQ0Wp
+	Pk87ZCzmK8Wc574O00FuahsULMgURaeJHdJxx+PfMHCMY7XujTTOTFMNMQmlto7ZsFpFw3UAdeb
+	MEOQIFAJeZ6m2pNeQE6NPtI963Nrzxu4sJA5z8x+QyeXIH21nHKPPQWjvyTT3ogE/Y9hQ83sV7U
+	t6YDtCENAwjZDhqJbSpjw/6DcWNB/lJmz/wn4hlPraoa4R2aNPMCMbZb0cwlxjdCKuGP5lQCGcT
+	LOHbaYaI7nBl4VX8I5ssT
+X-Google-Smtp-Source: AGHT+IEYUwqFOg/SdjZy3Bry6MSmnKWOEJY2K+fn9aIueqnuNBAKZ+hlmkh9LLEtXckFUPI6/qyInA==
+X-Received: by 2002:a05:6000:290a:b0:3b8:fa8c:f1b3 with SMTP id ffacd0b85a97d-3b900b55f36mr2067409f8f.53.1754650019887;
+        Fri, 08 Aug 2025 03:46:59 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c489e81sm30290727f8f.68.2025.08.08.03.46.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 03:46:59 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ALSA: hda: Fix spelling mistake "dismatch" -> "mismatch"
+Date: Fri,  8 Aug 2025 11:46:21 +0100
+Message-ID: <20250808104621.829448-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdefiedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledvrddukeegrddutdekrdeiheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddtkedrieehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvkhhouhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkihhshhhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhphhihsehlihhsthhsrdhin
- hhfrhgruggvrggurdhorhhgpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 06/08/2025 at 15:01:37 -05, "Rob Herring (Arm)" <robh@kernel.org> wrote:
+There is a spelling mistake (or neologism of dis and match) in a
+dev_err message. Fix it.
 
-> In converting marvell,comphy-cp110 to schema, the constraints for clocks =
-on
-> marvell,comphy-a3700 are wrong, the maximum number of child nodes are wro=
-ng,
-> and the phy nodes may have a 'connector' child node:
->
-> phy@18300 (marvell,comphy-a3700): clock-names: False schema does not allo=
-w ['xtal']
-> phy@120000 (marvell,comphy-cp110): 'phy@3', 'phy@4', 'phy@5' do not match=
- any of the regexes: '^phy@[0-2]$', '^pinctrl-[0-9]+$'
-> phy@120000 (marvell,comphy-cp110): phy@2: 'connector' does not match any =
-of the regexes: '^pinctrl-[0-9]+$'
->
-> Fixes: 50355ac70d4f ("dt-bindings: phy: Convert marvell,comphy-cp110 to D=
-T schema")
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+index 45ac5e41bd4f..e1d60da50897 100644
+--- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
++++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+@@ -356,7 +356,7 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
+ 	}
+ 
+ 	if (cd->total_sz != offset) {
+-		dev_err(p->dev, "%s: tot_size(%lu) and offset(%u) dismatch\n",
++		dev_err(p->dev, "%s: tot_size(%lu) and offset(%u) mismatch\n",
+ 			__func__, cd->total_sz, offset);
+ 		return -EINVAL;
+ 	}
+-- 
+2.50.1
 
-Thanks,
-Miqu=C3=A8l
 
