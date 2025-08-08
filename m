@@ -1,203 +1,104 @@
-Return-Path: <linux-kernel+bounces-760047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F01EB1E5F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:53:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6930B1E603
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 313E24E3ED4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC87F583717
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4125B2737E4;
-	Fri,  8 Aug 2025 09:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 315AB270ED4;
+	Fri,  8 Aug 2025 09:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CW9e9eGi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="S0htzyiU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CW9e9eGi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="S0htzyiU"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC34A271461
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 09:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ASCMsHJm"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA6325DB07
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 09:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754646791; cv=none; b=SFU4ztt+xeNdY5nyOcxgQvz0iqnYNBXYZsqoTylt4rPyb5iJ9k484nPN3AND2YnNtO90oaoXA9LFu7gZONniKehQ6qXw6dhKsF8MZfkXlXHQ6B6n7JyOEKEOmelYhAOHE+9j2THsbE3bRDyWlCl9ks/mCe2GOnp+qoD6gmMIZZ8=
+	t=1754646945; cv=none; b=PgyPH+y0O9gFOqgP/8R+WUY6bO6qtSouJI5GDDurjMvAPywi3jendvx5jp7B2qkcxQQv6mL1o1kR5nxEDpx11tgxl88qpfVSI29Dp4gFzNYn9YzoERyJzm0Ad6Pp62Ilynk3PTVwCn0dg9Q6vcDXHXcyTTB16D+AOPohIkSFojI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754646791; c=relaxed/simple;
-	bh=mRBQhyAKgwd0SyR78LSg9dYwtNTpOoLNvJ2ECVnsbWM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rJdGKM6+RvLHS3DT8vZbaU9EYktEyMXkLd99dwc17PG56s5KvaXRN0lMEaFUs9xtpnKo2l0bTVR8OdXzcWlqPSl2rYirwFscKSRYfggXcqDUEh/jq8HyDEThYtJJ1PKMiqflNCVYOPVXg9w+foOEP5w55kkKtNCyBhG3yiaMLMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CW9e9eGi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=S0htzyiU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CW9e9eGi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=S0htzyiU; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 20E5522D9B;
-	Fri,  8 Aug 2025 09:53:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754646788; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwaaYyMDev0NGtjYWn+qdV4V8O7PjKtAlVYBTh0QrVA=;
-	b=CW9e9eGirwcjKQklfiuFpy7jH9yFxRbEO9vlkslResmt1JhU4TWswAavFwQgRnsLjw5VOA
-	EEdh4QA9VVJ/DYN8I/YDAhWFLS/fowekLKQUCyOHSxXVJRs/vjDE3iUlNknnmJkncSq+NF
-	CPYy4vZCpm4u2qKgJaAQobPQyE0pjaA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754646788;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwaaYyMDev0NGtjYWn+qdV4V8O7PjKtAlVYBTh0QrVA=;
-	b=S0htzyiUNuFbtBJazZ0ljT0E1uPoeEy/zE0cBGBTMevpYD6C+s9bCpEjLl9mhUcxyoWDLI
-	e76gr9d6p7rwY9AQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=CW9e9eGi;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=S0htzyiU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754646788; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwaaYyMDev0NGtjYWn+qdV4V8O7PjKtAlVYBTh0QrVA=;
-	b=CW9e9eGirwcjKQklfiuFpy7jH9yFxRbEO9vlkslResmt1JhU4TWswAavFwQgRnsLjw5VOA
-	EEdh4QA9VVJ/DYN8I/YDAhWFLS/fowekLKQUCyOHSxXVJRs/vjDE3iUlNknnmJkncSq+NF
-	CPYy4vZCpm4u2qKgJaAQobPQyE0pjaA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754646788;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwaaYyMDev0NGtjYWn+qdV4V8O7PjKtAlVYBTh0QrVA=;
-	b=S0htzyiUNuFbtBJazZ0ljT0E1uPoeEy/zE0cBGBTMevpYD6C+s9bCpEjLl9mhUcxyoWDLI
-	e76gr9d6p7rwY9AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE4411392A;
-	Fri,  8 Aug 2025 09:53:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ddn+MAPJlWhnXAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 08 Aug 2025 09:53:07 +0000
-Date: Fri, 08 Aug 2025 11:53:07 +0200
-Message-ID: <87jz3eywak.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
-Cc: linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1754646945; c=relaxed/simple;
+	bh=GvvkJ2v8pRO8+u/GJb91DZY1Bziuc5B1n2Kl8sTuSD0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RlfpdDitGj2P/YV9QfHDZ3JPzIENke6WG54Fq9CRmkQ8N4r/5TJ2DksI4e68BlYXdbMvQMoEQvYSmC1jnH1itZIJIE4LQJe3lUpkmZmWWnqcdZhNYUshzvoHnHBHyTrWW+Lxws223amcThA7vYl7AxG9xjv/wltFagFMQ8rzUzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ASCMsHJm; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=fgEIQccnW8nT0HbsPC5z944AQr0c2fBSMFL9YRUiOcs=;
+	b=ASCMsHJmopXVtSvZ2tFEgta7XFidR2shjoHZAPJMZOcrneXecKGH3PCjXj2/Wi
+	DXywyhE6I2luQA1qdzSPuYl4nLc9Cas9mVO51D0o1uTKf0404fsD5td2HpbMqyPM
+	IUXgUQNZO1Jq458BpgYcfL571Gfuc2bBdqSQczqED3bRE=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgDHD5FKyZVoRUzkBw--.6054S2;
+	Fri, 08 Aug 2025 17:54:18 +0800 (CST)
+From: Qingshuang Fu <fffsqian@163.com>
+To: akpm@linux-foundation.org,
+	hannes@cmpxchg.org
+Cc: david@redhat.com,
+	mhocko@kernel.org,
+	zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev,
+	lorenzo.stoakes@oracle.com,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Wesley Cheng <quic_wcheng@quicinc.com>
-Subject: Re: [RFC PATCH v3] ALSA: usb-audio: Add support for TASCAM US-144MKII
-In-Reply-To: <20250803203409.17005-1-ramiserifpersia@gmail.com>
-References: <20250803203409.17005-1-ramiserifpersia@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	Qingshuang Fu <fuqingshuang@kylinos.cn>
+Subject: [PATCH v2] Fix the data type inconsistency issue of min (tier, MAX_CR_TIERS-1) in read_ctrl_pos
+Date: Fri,  8 Aug 2025 17:54:16 +0800
+Message-Id: <20250808095416.208289-1-fffsqian@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 20E5522D9B
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+X-CM-TRANSID:PCgvCgDHD5FKyZVoRUzkBw--.6054S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uw4rtw43KFWfAr43CFW3Jrb_yoW8Jw4rpa
+	93G3yqk39xtwn7Kr1qqr4fAw1xWw1vkFWxJrW7tr10kasxGFyktF45Kwn8t3y2yayxX3W3
+	Z34IkFW3K3WDAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jUnYwUUUUU=
+X-CM-SenderInfo: 5iii21xldqqiywtou0bp/xtbBDg+jymiVwnVE-wACsb
 
-On Sun, 03 Aug 2025 22:34:09 +0200,
-�erif Rami wrote:
-> 
-> Hi,
-> 
-> Apologies for the invalid patches and the noise from my earlier attempts.
-> I have corrected my workflow and am now submitting this properly.
-> 
-> This patch introduces a new, dedicated driver for the TASCAM US-144MKII.
-> It replaces the partial support that previously existed
-> in the `us122l` driver, which now no longer targets this device.
-> The new driver implements ALSA compatible duplex and RawMIDI implementation of proprietary MIDI protocol.
-> 
-> This v3 patch has been tested as follows:
-> The code has been checked against the kernel's coding style guidelines.
-> It compiles cleanly without any warnings or errors.
-> I have performed a full kernel build against the latest master branch, installed it, and successfully verified that the module loads and functions correctly with the hardware.
-> 
-> Any feedback is greatly appreciated.
+From: Qingshuang Fu <fuqingshuang@kylinos.cn>
 
-Thanks for the patch.  The code looks almost good and you can submit
-as a proper patch at the next submission.
-A few points from my side:
+Due to the fact that the tier data type in min (tier, MAX_CR_TIERS -1)
+is int,but MAX_CR_TIERS is an unsigned type, directly using
+the min function for comparison will result in an error:
 
-- The sysfs file should be dropped as Greg suggested
+from mm/vmscan.c:15:
+mm/vmscan.c: In function ‘read_ctrl_pos’:
+./include/linux/build_bug.h:78:41: error: static assertion failed:
+"min(tier, 4U - 1) signedness error, fix types or
+consider umin() before min_t()"
 
-- Try to use guard() for spinlocks.  (I know other USB audio drivers
-  don't do that yet, but I already have a bit patch set to convert
-  those.)
+Fixes: 37a260870f2c ("mm/mglru: rework type selection")
+Suggested-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Qingshuang Fu <fuqingshuang@kylinos.cn>
+---
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Of course, there are cases where guard() and scoped_guard() don't
-  fit well (e.g. the loop with temporary unlock/re-locking), but in
-  most cases, you can use it well.  If it doesn't fit, it's a good
-  chance to take a look at your code again and reconsider whether the
-  code flow can be changed better.
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 7de11524a936..f991196fd8e5 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3194,7 +3194,7 @@ static void read_ctrl_pos(struct lruvec *lruvec, int type, int tier, int gain,
+ 	pos->gain = gain;
+ 	pos->refaulted = pos->total = 0;
+ 
+-	for (i = tier % MAX_NR_TIERS; i <= min(tier, MAX_NR_TIERS - 1); i++) {
++	for (i = tier % MAX_NR_TIERS; i <= min_t(int, tier, MAX_NR_TIERS - 1); i++) {
+ 		pos->refaulted += lrugen->avg_refaulted[type][i] +
+ 				  atomic_long_read(&lrugen->refaulted[hist][type][i]);
+ 		pos->total += lrugen->avg_total[type][i] +
+-- 
+2.25.1
 
-- Similarly, try to use __free(kfree) for temporary buffers.
-
-- snd_pcm_lib_preallocate_*() can be replaced with
-  snd_pcm_set_managed_buffer().  Then you can drop
-  snd_pcm_lib_malloc_pages() and snd_pcm_lib_free_pages() calls from
-  hw_params and hw_free callbacks, too.
-
-- Most of enum info callbacks can be simplified with
-  snd_ctl_enum_info() helper function.
-
-- It's a bit big code and it'd be great if you can split the patches
-  in a logical manner.  But it'd be OK-ish to have a single patch if
-  it's not easy, too.
-
-
-thanks,
-
-Takashi
 
