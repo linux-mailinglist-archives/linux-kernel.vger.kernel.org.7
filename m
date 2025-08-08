@@ -1,97 +1,92 @@
-Return-Path: <linux-kernel+bounces-760766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B32B1EFE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:50:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E60CB1EFEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881023BB5A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:50:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E32A1C22D94
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181C5253F07;
-	Fri,  8 Aug 2025 20:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD12B23D2B2;
+	Fri,  8 Aug 2025 20:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkpOygPB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRe/8c4U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1AF24DCF7;
-	Fri,  8 Aug 2025 20:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F13220687;
+	Fri,  8 Aug 2025 20:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754686198; cv=none; b=iL/c584p/AXyHdyUt1+x1Bo5CzXBiCsyOZD+L0tT7AhsXXXD3eYnTcTFxwfU9GmEyvzLNGvHV6PzDpszGE4VBzYJHsY2wDNEviJyiuVLB1i10XLdkXZaD8gSRlZ5c/Frco/Brij51z5OAdop1vQY9loPK6iXl2SuJbVxLgiSY9Q=
+	t=1754686276; cv=none; b=U9YIYDsqcPHDpiqUL70bXAXKUOCLGb9HPEljno2zNKxMiWA1KJLwLiyru2wMENIKFL8tZgWgzh+RpKOg/pGJkdOU+YHs4smi7uzdUba4qOTChOZ5LFMZPCggSLFr2GUut2UXLXsDz1kYpzqjW3gJ/+GL3c8HaAIhTQGVTZzUu7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754686198; c=relaxed/simple;
-	bh=vbPO1Z2O5/XQmrbQpNnJxGj4ucnLwhHQhFQ9Eq3o/ww=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rLsJ+z+E83FG5PAXEXukg7Uspn7VxEW/NvuzukfpAeY8GLTncRKvx3y3PsK3vVIt6k+k5U6Ie9NlwPgerginXLAC3Ox4SgudhLjtfx7Ub+6Wt6tuvhv80U+1BQm1LT+fHPFwMZ8TaY63TFiIu5DOku1sOidmsbognyBKu35ndio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkpOygPB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1630C4CEED;
-	Fri,  8 Aug 2025 20:49:57 +0000 (UTC)
+	s=arc-20240116; t=1754686276; c=relaxed/simple;
+	bh=31Ona4YptkLnY7hwH+W90Nq1bn4ZaSRBUysNTltRM2A=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=g71ZviTefZwXLCL31K8EqbVMIt567YD0swMY2rOM6TUWXkjSZtVTF86tOP+wo771euGKpXp6aKZ38dTW7bsJ56/uJThB8FMXD1F515xwftAGCWJlcT+82eJxL85qcV6QvhL397M09QhonuAi07u6vbK+fa83bJoo/eVuKihCR8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRe/8c4U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE49C4CEED;
+	Fri,  8 Aug 2025 20:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754686198;
-	bh=vbPO1Z2O5/XQmrbQpNnJxGj4ucnLwhHQhFQ9Eq3o/ww=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jkpOygPBC6uVqxsjIISAmmQTQgtCPwPZrrB7ssczBMtMfKgUruj9UXTZ5mvthYfbk
-	 yG48m2hSvLhaxVrRArMUg6qLSSMulgEeZ6rNMUmBj+ZZMNHgbHIULgmz8fWV9Wcm5H
-	 BSaFISENaUHNIQvJAqUhlBJpiE0cimgRQQoXoH/j08/3euVgGjFhOYdUfuVy5U9v/h
-	 vVa27oQYj2+8p0PIFIHm4oESVd/Hl6NgTzrU4KPLfUUnxosVOAvBx0fkkFBHmTbulb
-	 +O2tziYvKT7thTvxpRG1ElM/crabUxAV+gDcsahmzeBoJmq6u5/EAxtvLoawFQKiGl
-	 ko7Z3Q7zJIAeQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B78383BF5A;
-	Fri,  8 Aug 2025 20:50:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1754686275;
+	bh=31Ona4YptkLnY7hwH+W90Nq1bn4ZaSRBUysNTltRM2A=;
+	h=Subject:From:To:Date:From;
+	b=jRe/8c4Uwk0FZoAjNCZhF0pgp23xPZP6MGovwClV0Y8cWyurw3EhBhNw9hPk4v/3v
+	 UecrfdftDlh2gOR4n3UgQT5NvEGgpddDHPlq/eyx6LgdxtICKpUaFJZ08qY6/I/Zwj
+	 RoK63Ph1DW4kTnmz5b9wJFxoAsRYdPQ6MB5zeo/+5KDWk47tCkcgV2M2MlaNbKj40w
+	 aPw9UPcE1mkRe89Qjr10FRLiYW5VFWhFt+usM1N6yD2LNoVPh/o4dFV8K/1w9t/deI
+	 gtBGOiXRj2wKEfpSqASLXavC0TSJJLfu8AZHMHI8ihWRpo7M5TIAdpzDubQnLEcgsG
+	 qNWI3VeRlAfJg==
+Message-ID: <4a0198d9416721bb02c027d7b273e5ca6bc41c3f.camel@kernel.org>
+Subject: [ANNOUNCE] 5.4.296-rt100
+From: Tom Zanussi <zanussi@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-rt-users
+ <linux-rt-users@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>, John
+ Kacur <jkacur@redhat.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Daniel Wagner <wagi@monom.org>, Clark Williams
+ <williams@redhat.com>,  "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+ Joseph Salisbury <joseph.salisbury@oracle.com>, Tom Zanussi
+ <zanussi@kernel.org>
+Date: Fri, 08 Aug 2025 15:51:13 -0500
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net,v2] hv_netvsc: Fix panic during namespace deletion
- with VF
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175468621124.263488.11010327015683191308.git-patchwork-notify@kernel.org>
-Date: Fri, 08 Aug 2025 20:50:11 +0000
-References: <1754511711-11188-1-git-send-email-haiyangz@linux.microsoft.com>
-In-Reply-To: <1754511711-11188-1-git-send-email-haiyangz@linux.microsoft.com>
-To: Haiyang Zhang <haiyangz@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- haiyangz@microsoft.com, kys@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, andrew+netdev@lunn.ch, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, davem@davemloft.net,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-Hello:
+Hello RT Folks!
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+I'm pleased to announce the 5.4.296-rt100 stable release.
 
-On Wed,  6 Aug 2025 13:21:51 -0700 you wrote:
-> From: Haiyang Zhang <haiyangz@microsoft.com>
-> 
-> The existing code move the VF NIC to new namespace when NETDEV_REGISTER is
-> received on netvsc NIC. During deletion of the namespace,
-> default_device_exit_batch() >> default_device_exit_net() is called. When
-> netvsc NIC is moved back and registered to the default namespace, it
-> automatically brings VF NIC back to the default namespace. This will cause
-> the default_device_exit_net() >> for_each_netdev_safe loop unable to detect
-> the list end, and hit NULL ptr:
-> 
-> [...]
+This release is just an update to the new stable 5.4.296
+version and no RT specific changes have been made.
 
-Here is the summary with links:
-  - [net,v2] hv_netvsc: Fix panic during namespace deletion with VF
-    https://git.kernel.org/netdev/net/c/33caa208dba6
+You can get this release via the git tree at:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
+  branch: v5.4-rt
+  Head SHA1: 39b17f7d3bb71d69a4ad560f8b80dd922961a5ae
+
+Or to build 5.4.296-rt100 directly, the following patches should be applied=
+:
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.4.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.4.296.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.4/patch-5.4.296-rt1=
+00.patch.xz
+
+Enjoy!
+
+   Tom
 
 
