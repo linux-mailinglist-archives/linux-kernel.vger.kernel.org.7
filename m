@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-760125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA441B1E6D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D20B1E6D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C95B3BE989
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:52:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047311AA6AF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735582586FE;
-	Fri,  8 Aug 2025 10:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A635259CB1;
+	Fri,  8 Aug 2025 10:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k9JNZ+U7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dlIXmByd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipXnzS27"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593C222A4D6;
-	Fri,  8 Aug 2025 10:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDC0227E95;
+	Fri,  8 Aug 2025 10:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754650343; cv=none; b=sOwnzdf3R8xKg4ah6YM3KfYDDEQWtmJ+noxTnJ1ohmC3GzfjEM3TMzAnIaIP4Z8P63wBDLP73kuSUbxnAYzfeX+iomUTf38R2OGNbrRjRCpMwB9TXTSSRsMu7yUCs+z86ot6hAZ++hkE/vOklQXP+r5s4eKybw06gzLNgvshDlE=
+	t=1754650445; cv=none; b=jwtmtRPt/Ixj8evyJUvJ9pt7UYojXOptqv9qPXkv8tlWjfCNAQ4ZWQJZu14rNX5npfa9AJaYk5s/Yto4QOj7e08fV1MCF1IfPi5+S4xFMtTE+9yzkNaXPtlwIPvKHp7nOGQASsGEr46ccPskX4O7h2nzvDU2/j9uzi1fk3Tth3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754650343; c=relaxed/simple;
-	bh=4n05sXx4K1OdWyUMcQfUZ9L1Yws0sYnpm310JJ/TY2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8NOfn3SsBvg61cdeZ+Hlct0uadg8DZN6vapcIgIitxTIE6IWd99M0B07Ng9ynQ9huH8T6ZWv3rP8yCHQYB1i7U76vuVcRrXx31EkzvonWlIltMCo7o/EvgDqqYk5T0GOZM16zCKAjztahlijGaBzrFukvcoAqRscOZ3SoAXmQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k9JNZ+U7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dlIXmByd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 8 Aug 2025 12:52:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754650340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=COfbD9hYHRNc1ZECAMNz5MgkoyPH6n5P0rlnn/iyVhs=;
-	b=k9JNZ+U7Wnkn3KKZSdlbetyX2PXBGc3C/lWIDIWzrk+gzWj+Y74VqLCoTB8WPgb6F5QZYG
-	73k33bnEgUsPw+aJ3Dy8xA5FnFNb46KLluiVLpeGIgv6Vc7Jl5F+bm+HVIPhkvZEq9VGwz
-	RAywIjPCVmapo4SbTw/i5PQKlc66PzXAAkQt0z4cuorKs6bui/96LjkBSEK+FXYprjpHdn
-	GH1ez3KjPiYmu/Wnpw0iQrdUCvl/T4AuOrVNPm/bIo4lHYxtwoiWSyanDaOZDU4fPLSBd0
-	S483RtBn7GcBLv25hiEQ7n/Y42dNajx/x7nwuYwloNw7Lc3wCdfBmjynrcwPpg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754650340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=COfbD9hYHRNc1ZECAMNz5MgkoyPH6n5P0rlnn/iyVhs=;
-	b=dlIXmBydf59eqNlHAe6nIS78Arg8QSNSAruYAMXkIg+JOm22qif4Ahjb/rwB3jH8Tf4jwz
-	KZbJkVQnQZPDtRAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
-	m.grzeschik@pengutronix.de, balbi@ti.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, akash.m5@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com,
-	shijie.cai@samsung.com, alim.akhtar@samsung.com,
-	muhammed.ali@samsung.com, thiagu.r@samsung.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] usb: dwc3: Remove WARN_ON for device endpoint command
- timeouts
-Message-ID: <20250808105218.WmVk--eM@linutronix.de>
-References: <CGME20250807014905epcas5p13f7d4ae515619e1e4d7a998ab2096c32@epcas5p1.samsung.com>
- <20250807014639.1596-1-selvarasu.g@samsung.com>
- <20250808090104.RL_xTSvh@linutronix.de>
- <20c46529-b531-494a-9746-2084a968639e@samsung.com>
+	s=arc-20240116; t=1754650445; c=relaxed/simple;
+	bh=lnVlmRUuumBXjFDMqsZCaql8rzu778J/CcpHymusD+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gHFOLsGDFzwKKRjFQK1qYQmQEoNVYnN89O6DuMHV4+qRaX+ImBaAtACW6fj/xEtLPd1v9rkNKo215EB93VJdSQN7auj48VWvdJn/3JJNraUqzCFvf3Z7BsYj4tEKXYd+tSJ+TjSNZWmavZjbfaPQYqADagIXHuvHlQ8z1hm3D74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipXnzS27; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b7920354f9so1618615f8f.2;
+        Fri, 08 Aug 2025 03:54:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754650442; x=1755255242; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qMqIIfGgn6miB0zobtsFUkQvM4z3NfFxewv7fUWGHOg=;
+        b=ipXnzS27bQE5AQPa4Ac+bR+eyKxCqVCQ+iJfgR/fM1tvNiKsSHBUblvMBKOTxGeAL3
+         6WWEag7mcR/84Sf5ZW2QLjlCjlrI510Wt2UIOjw7z14BiXsAX8yzmoRDEjnrpsvDLMYp
+         E1uzLrZSF+/N7WUuebbelL7ns+O2polfAnkMQoZCoxW3V8vQjP3A/wXoX9iLKHQkznoA
+         p3y5vO/9uMUghc0zb7bAw3Kce8N75xBMBEtlx6szE+raPRnggZDbhh8h7GKQJXQh/7Y7
+         dV7TpAc9SDsMTbWmg9b6/irY1tn/jjKvYFXsoXLufvmnhAQwhe1cxVbO2sZ0PFkMbQ78
+         pm4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754650442; x=1755255242;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qMqIIfGgn6miB0zobtsFUkQvM4z3NfFxewv7fUWGHOg=;
+        b=aVf1bodYbdrjqVaqCoZqGXnjsy3YeYHJ51EuLv197QplLGEPDHKc016YrtpquL3uTP
+         W5lWjTupJ3RCrNWpWs7xr0vsHqiNm4LKJU3aIQj575kw9Gz+GGr6FdE2csaxuU7xVvVa
+         K+Duu1NsHrsAN+rVpX+0qwsu7Vd8iLlca3BotGIBNMB5PP1c00jRrjQD5WPZJ727OZ7d
+         w7cRkZtPwuJet00f/bN+up0mak+L/Mmq+axCygvShURtIJpoAuzhQrBwHAjDeARS3HGi
+         RfPBxIJhKi1WIqakmB0ijSB0e803sJqoLpRMmawcK+QRz5hjma0MmycqQ+OdGKG395ND
+         TvVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQhfPhbG9GdbeeD7bZN6+wHPVFL/eJCeGZ9jUzVMdxv4XQs8+VC+s0hnDHrV4D9O9xgyw12/xuhoY9rFE=@vger.kernel.org, AJvYcCUk60ZaY9iwSfpyOsxl2Sc43wjj2StTUKhkL6qAdTn97UseJSmteXtWnMuRZ/bcsepPV0V5+NoRuoM1mTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi5zLEwnK3QbGpZA0JIbosrWdlXorzZzukd08m8F88kzJoTtLW
+	g9pajpG7jOD5TTFm1QNgZIOIe6M6NsboXZdNg6TBltK43Sv6MkavOiRTSPuWdIIvKKD+Gw==
+X-Gm-Gg: ASbGncs6tusJtgEvIRu5ZQpzmswqCTXXHMi++GqvJL28r8flMMhzsp93ypbJs45jjI2
+	7FS+XBSle0KVrj8myn6SCAL8605Ffs8x1WoxAGzDrvwTxWtTjxpbzomgghOBPk1fbYFDlv2WdT1
+	1j5qU0eZQpCBgNMmoaDTnwso3RLD4dCsBSh2OwJAGQUv4bpvz6/l/fuo/UZvRY77+KYyAw8CJjj
+	V4zp/cxgfhVNKmVv80duSHVd1VPAkUAaVfU4lvgoLUx1xuDquKtmsCA56f5bepy392aMKWsb9Cf
+	pUPmF+7vAWAvBdbqcblBScbc8bOypplWsyLQDjH93i9h2z1th/9dWJwcJ10M89jAz02b4KXrJqo
+	pte3Obypnj2ol6A6dyvHQ
+X-Google-Smtp-Source: AGHT+IG2qUBo7DwH1oxPokpOfFJVSUkPFi0bV2hgL3Hre/p0CbUqcKb4SWB8ggHg1jAKJzCAcNy5YA==
+X-Received: by 2002:a05:6000:1785:b0:3b8:d16a:a4a5 with SMTP id ffacd0b85a97d-3b900905a8amr2477013f8f.0.1754650442478;
+        Fri, 08 Aug 2025 03:54:02 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3b95f4sm29760042f8f.23.2025.08.08.03.54.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 03:54:02 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Kiseok Jo <kiseok.jo@irondevice.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: codec: sma1307: replace spelling mistake with new error message
+Date: Fri,  8 Aug 2025 11:53:24 +0100
+Message-ID: <20250808105324.829883-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20c46529-b531-494a-9746-2084a968639e@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2025-08-08 16:07:25 [+0530], Selvarasu Ganesan wrote:
-> Thank you for pointing out the discrepancy. We will ensure that the 
-> patch submission accurately reflects the authorship.
-> 
-> Since I, "Selvarasu Ganesan" am the author, I will reorder the sign-offs 
-> to reflect the correct authorship.
-> 
-> Here is the corrected patch submission:
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
-> Signed-off-by: Akash M <akash.m5@samsung.com>
-> 
-> Regarding the next steps, I will post a new patchset with the reordered 
-> sign-offs.
+There is a spelling mistake in a failure message, replace the
+message with something a little more meaningful.
 
-Your sign-off (as the poster) should come last.
-What is Akash' role in this?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/sma1307.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Thanks,
-> Selva
+diff --git a/sound/soc/codecs/sma1307.c b/sound/soc/codecs/sma1307.c
+index b3d401ada176..6a601e7134ea 100644
+--- a/sound/soc/codecs/sma1307.c
++++ b/sound/soc/codecs/sma1307.c
+@@ -1749,7 +1749,7 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
+ 	       sma1307->set.header_size * sizeof(int));
+ 
+ 	if ((sma1307->set.checksum >> 8) != SMA1307_SETTING_CHECKSUM) {
+-		dev_err(sma1307->dev, "%s: failed by dismatch \"%s\"\n",
++		dev_err(sma1307->dev, "%s: checksum failed \"%s\"\n",
+ 			__func__, setting_file);
+ 		sma1307->set.status = false;
+ 		return;
+-- 
+2.50.1
 
-Sebastian
 
