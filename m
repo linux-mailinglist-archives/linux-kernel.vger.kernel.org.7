@@ -1,87 +1,219 @@
-Return-Path: <linux-kernel+bounces-760283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD37B1E8F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:11:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73ABDB1E8F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0167C16C8FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:11:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC34A00E56
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA6A27603F;
-	Fri,  8 Aug 2025 13:11:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359F627BF93;
+	Fri,  8 Aug 2025 13:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UB8LkggD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DA5260592
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754658665; cv=none; b=K7NMCgDqiZoaz0lukPOWJOrzHcBvW81J1Rn0qhzJXzPceJLpq9S+ijHzGFAHqV5wngPKQy0yZPCNSCEWzNWj77sP+LYGCpFvI3xN87mBs3yXO1mawdpHylkpd5E9RyQoofR4/yALEwKi2tpOpZxVZNfeHulPvinLJpTQ4cM91/4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754658665; c=relaxed/simple;
-	bh=ZE0SEK60mtbsliMPxlAG8SnYeqvfSaBX40GSK/AanqU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cCs+oSmfcPDFLjU4Sr6co7raoVy4XnC8PBIXSWT8z1PMUnB/Pil2zUA41dsaISPXhu5NfpDTog7pxg25uOi6INvUev91dIAj7nE9raS9KmGiprUZ/eMyvCPxZ5Yr0TUfvfrp3bB5/mzVxtkNKHUMoBhR3iI4Zpz1hkFxdR1m2Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-869e9667f58so506335439f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 06:11:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754658663; x=1755263463;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AhZx7zENkxQe5AbQJ77xeuD0BdDOYHSOItjPHuT1JPU=;
-        b=mLNuqiiLtHuwzCNlL9CRGylCVLGWD0J8vWN91yjVYY4Aj2uO6+wX6rzH9LMz4EEQwe
-         kskEqsQ1cUwuiNSO9T2BjpXEgjBwiQ1zSvtG/Gc/1eque2gOTjHQ807Oj/bh9n1sJJVQ
-         RY3oeEWJNzw6gmNLBfW4G6Pyvbk/nlpJA25lGbRECpt7uwEadjPZwCCuLqi2nJ+kVRjL
-         Rxg2qZ5rv7q0/7N+BEFlqqRiTAbH1/8JLDAInpfwyFKStWd588M+Yra+nEO8S2MBDClo
-         5Gg9Bas09QPv51s7gTIdUk2GTtfH6YiprZv/8xL+UVNWD+A7ZUs6qn5M/4cHJZpD0BmP
-         E1QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZBrGEjib5YG2OvpAOPiaHIyiZq8C4HpSqj+svdERjzQe8EkFZ0f3iYumcS9EHfWan234lLsWwiheA28s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFezHhMkzeJBMnuugFYzwsdXnQrvjE6UPpRg/Ax1ZpiQi/M/e2
-	dc7n7VAT3N4Rcj4SfMSjKlsJatVWsrHknnX1ktsJurmiUUa3JM5nX0jQTYdpkZ2HEwSmGPcpD9e
-	8nGjWlTuLS0JNKlU0g4sS7qXlCi4WfgQK8EYiQU6WypsF4WOUR31gqVrO64M=
-X-Google-Smtp-Source: AGHT+IFR/kg22snptckHcHi3WJ8VCMVs1g8tIWPbiYjf3ET+JTUIO003DYxMDbgSxq247KZH0Wmwh+F3efDO6l8FzFletuhXu46W
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C1D27BF80
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754658694; cv=fail; b=p0mY7DwqV7mNOo5wzRHmzOcoM19nHR92VCPC6ul/LrmtCobKOhgAJcSlc1tN8CjF311KP/93wQyEtiTR29If836MvjBnLbloaISOiyL2tY8IuzT6V/gZJwvjkA9Wwy5SpRIOsnlRbt7ts/Z6MWwdnLfdtbWUVnWRo/EDGS+P2iU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754658694; c=relaxed/simple;
+	bh=kCrJchKg3yMlE9qRdLmDczVM/S81dXeduPSQ/mf+unI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KS+hYTSw3j2hcy8xZS7YV0EZ/W7zJ7PyEWc5njN3n48eoI4qb+UU7WrQZvvEFJPhczbMH8JopHzYEvzI3VeEDHzZlcNlhmrcA/zsQdjR/h5Tf5aIDOtN8XQY+ZVQSdcpXX5I+o4Xq4Z8egv6upSZxZ33+nFzVKHtZiG9aLyesnw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UB8LkggD; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754658693; x=1786194693;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=kCrJchKg3yMlE9qRdLmDczVM/S81dXeduPSQ/mf+unI=;
+  b=UB8LkggDKnQJTqhxYXUJjUC73PgubQtd2rp5iXyTaPmbaVbItoWHEvqG
+   vZJyr4QCVKTErd27DVoejhlmHb9vmgxafssyhMxkFuiX9bebq03ICoJXB
+   xkE3vvrdpeMB0olSCrr/V0gNdwMw4z4qXIIbLQy+CQ8VTz0jhYE1sm9XO
+   0Th6XnqQ+8+UREyiVezYqzvROrOB4IH4egNhSilJYSi5/8fPy6mKJtLqD
+   Fw1foGfVpxDbK78DhDM2z8BG13SFc7G0/kJTV7R/YoNGx+mMGpE2p2gNp
+   wvKyOupwb/Fq3Jhgc8o7IyLnwugmkeKWFFducmkivXOUo3kTDzkSz0RfT
+   A==;
+X-CSE-ConnectionGUID: RD/ReQawST+DoSodC5DFQg==
+X-CSE-MsgGUID: 6/6cVgC2ReqVbpE8TX5zIg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="59619876"
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="59619876"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 06:11:32 -0700
+X-CSE-ConnectionGUID: EbeRu0PvS06bBniLPXOx7w==
+X-CSE-MsgGUID: +g/UoytjRsKDghoRLB44aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="164544872"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 06:11:30 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 8 Aug 2025 06:11:29 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Fri, 8 Aug 2025 06:11:29 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.79) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 8 Aug 2025 06:11:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JRqtZRMEzG1kIpMRlm20CUKMKyAul8VdKBN1cYmChvGomVITQ3DFTYpH7g6lETDwWg2U5sROhC434SqrPYaxS+J0yYl90BQAqAULIjPx1hW7tV+yb/72+XJrOgF2DpVwSCdInwhWIF8PJ/yOTOsPgwntgftYy9z+XciZ2ucUzWWaCKQIJTSo/NgjH7/kt7gvTR0jCYmdTSIrj7YXIyzLVH1hE4uB3+VPYKob7eWHcLTkBdY4Mr74I6Xz/Da+xbA741WMfbYF1xXNHxj/1XvG6+yaWe8Ki6otzw+r8IrckHi827dX0vMV0ZPzOWFCgLx2iuz3qoUKpgOkvvLSvIKJzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VlFm9kLNOmiw9SBL85XinMUnEHp00Sgq6aym1kmsVio=;
+ b=mtJZ+tEqJsZoACPPvOMAFqmlSzQVgRN1bobfg9ADZ2Q7f0z+HAT9fUN5yN7Wt51cLnJ3QXnwL06KglGAAIQFw7TKrbzuPYSCyX4XV5Be2l83+k/SUEwLHIS9W/rcInLuZOREqPrCOf0APzv4pXvutazH9N0UdeO28xMPEulN4uRpefetr/oS9JtKRyTOnrpbi8jQNJdNlrLvF1/5GhIDRyjSQVs4V29k6RP+3TkxnipB/LSsruJbSX2INbLLUS+Vipw6WtVS46lBaZSzEvBr2Wf89u8Tr8vCrIb2uE/fCtVyLeHWN/2+w5YZ2vxYmCIdELwaRCyk228rxFycZJT44w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by IA0PR11MB7379.namprd11.prod.outlook.com (2603:10b6:208:431::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
+ 2025 13:11:27 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
+ 13:11:27 +0000
+Date: Fri, 8 Aug 2025 10:11:18 -0300
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+CC: Juston Li <justonli@chromium.org>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] gpu/trace: TRACE_GPU_MEM should depend on DRM
+Message-ID: <szqogm2xmsmruu36ttl3rewrlaraku7n2xnff3gjkznxq3hdgb@xh75zonga2w6>
+References: <43ea77e79722abf6c16c3c7b59b25453cc88a4c6.1753948197.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Disposition: inline
+In-Reply-To: <43ea77e79722abf6c16c3c7b59b25453cc88a4c6.1753948197.git.geert+renesas@glider.be>
+X-ClientProxiedBy: BYAPR07CA0019.namprd07.prod.outlook.com
+ (2603:10b6:a02:bc::32) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:60c6:b0:879:c9db:cbf0 with SMTP id
- ca18e2360f4ac-883f11b474dmr526446839f.2.1754658662655; Fri, 08 Aug 2025
- 06:11:02 -0700 (PDT)
-Date: Fri, 08 Aug 2025 06:11:02 -0700
-In-Reply-To: <05795247-a9c4-40ba-b213-c2b4370f86a7@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6895f766.050a0220.7f033.0064.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] WARNING in __vmap_pages_range_noflush
-From: syzbot <syzbot+23727438116feb13df15@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|IA0PR11MB7379:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9618f0af-4c53-4cd6-3372-08ddd67d1527
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mHleQE1zUeUiZw0Re3aYPRxGyEFo9enNP+UbR+O+ARMBt1aCDo3CZgpld6J0?=
+ =?us-ascii?Q?hiUT1dymL4zLOwWL/Z4D+giIxLQdLgIHv2v2FT4Q7Kwsw21fO6r3hd8VWvMU?=
+ =?us-ascii?Q?neydH77ko1WtjLgvmBtmXYLKBDNHlGj4PkwXLJL2iVcNUWCOiztEmOr7HLmo?=
+ =?us-ascii?Q?n4KssLDN/Ra6HbjHbcdmqnJ0bUSIKIZaiZSl+LC5ssQ6CuaHqwN9SzxZ6Se6?=
+ =?us-ascii?Q?/WEUOsGljF++iuja6FC+S4LJAepp08JhW/RMQInW8jMqDny1TwiFom3yoHo6?=
+ =?us-ascii?Q?jGf5uKY0cioI/WrUIvCSdelvTKIHeSQkYphIlhzRmfuj47xQMdZGl3m2yuRF?=
+ =?us-ascii?Q?0IeSUpoVZxvPBA4BSMt8asSu/sLVxUIW9H0Okx8TvVOQpooEfcJQD21avp9R?=
+ =?us-ascii?Q?3GO8xPQErbtdjtPNfwFYsTVDxbaVR9YkQWrS08gEhDHhvOGNawvFZjwjJcZs?=
+ =?us-ascii?Q?2SyeMziOYwfNJf5ILqLKGU82ngFSMJItvpBSYpIgNADNjYuxe93zzXS/w/WZ?=
+ =?us-ascii?Q?SV8XSZUQGDp1D8SzVywZNGWDbmUbqXUcueSn5hW+Uyq3I+ioCKHwrZ2PG7sW?=
+ =?us-ascii?Q?rhBXBtqqpshTBhx1g0gA5ORy6HcpITTTrb+F/ILdXlVbzol+Tlts/9ElvJiC?=
+ =?us-ascii?Q?W7TBHcqP6DJPt1fq9Yv2W1xsaQcdppWBV9B3iR2jZfxBzD2zp2W5qjIlKBtT?=
+ =?us-ascii?Q?btxOjvD9zAn2IrOsRyM2tkLGqyFxweidq9Z7p7OL8q4sie1cMHfr1MV/nuLc?=
+ =?us-ascii?Q?n8MiD3rkK6IQhEVWKJ5F3s123sjLCI3ZOIrftLWFTcUY/BwTvztpqL4WPSNk?=
+ =?us-ascii?Q?mYnQpt9XvGJST0foXWXl1gQECFIg8dkXKGfrOs2FZAdIEq++rF+PPvgoSpFo?=
+ =?us-ascii?Q?r+bG5HkY7NI7BavJhMPQS40pXhFNttkfmay4VXos4WTJkgebglpd2gzPfBiC?=
+ =?us-ascii?Q?jyg4DfitIvn66RXlupwTTlI4PYNAe24MsKJ0ShAA8vbCNb7mSMOTb+fhiRMt?=
+ =?us-ascii?Q?GO/ixUZRserquOHZU59aB5ejV6D93ZqF8wosBEV/T05896TdwhSezTXMHPQo?=
+ =?us-ascii?Q?VzP/NU4LexITB72fvV0FGXc1JobBVob9NMKMFGz3S8Bww3CKwSpKRcJGIjMJ?=
+ =?us-ascii?Q?9tT+jOsaTgT+TiiPSj0yuKkGjxzYfuN8/JejUyo8ZDHbOtOIh9nRD9H2NVhO?=
+ =?us-ascii?Q?kfAWoqgAaB+v7cv6epIZ0ya3XlBhjM4r/qEIj2mRMzpFAfM/GSTv8tnVl1DS?=
+ =?us-ascii?Q?S5Aaf4NCEWfwmwT2soWmeCjRAh+cjT6xRz7oR6/uAVD7pF/toibaDIM+KBZi?=
+ =?us-ascii?Q?lGSjogbw1UzNT+bz69qjaRsNHfUOGZwBlOMl4tkl6MO/py1qvyij03QEaJSZ?=
+ =?us-ascii?Q?85IvZ+IUFylO8+pLE3mUOeb7/br4wy9GchRGvsd0vqOGyRuK4w=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bw921AfpD8bnZvBEs968gIjerjhIidhJc80NGcS59PtMi9Ayy+jqQ4euRzDE?=
+ =?us-ascii?Q?C4EN3twJjKRTzPMyc58aPhf9IkeoETw5lg/Kk/jGbY/EqR5uSp7VWNqGuHf5?=
+ =?us-ascii?Q?ATalAKiB6OahsXl78Vuju8yklZiZcemsr+jGSQDAoX6PuK7Cj5ImhRrxcqFC?=
+ =?us-ascii?Q?46bumocmQ/wG9iAh29t4FVplxmoaTPCHS6ClhcPUK9sz2v5Cj7a0Nx7G1wY/?=
+ =?us-ascii?Q?AwIsJCf9gQjVslBnYx/wcbQLo7obd51MSiudBiVat2fW0WouMmtB9OaflHbV?=
+ =?us-ascii?Q?ewYxFwN37qiGXqEiP17+0j4zaZZbLQ8iQ9mXYGp/zegMfuW3brAAfRkhnwo5?=
+ =?us-ascii?Q?FXJmqx3Sy6tcwPZlMKM6PbY5uSbKbnIEFfWmDxGPHzgT1UztD/ofrS19OpBp?=
+ =?us-ascii?Q?RccWv1sbCzE+L7hDZ5qPAg9lrImlejQIRHtwuSNX+tiAqw4cz9j6cqiTkhBz?=
+ =?us-ascii?Q?7bhTmkN+wdaHbIWVafeUSTZM6RmDQp2vs0j8hvkcnPEvZoN+4OQGVtidsgI4?=
+ =?us-ascii?Q?7IqerWj7MzSGaekksiIQhGZVmhGxXB0i4MP4wrHQ2F7MtV6/Gyv0rZQDMQtQ?=
+ =?us-ascii?Q?61hk+1gp0OUPCR0auCTSiJZahmPw/Sr5WdF6TBxBSPPoW7WhM6FZK6YRHMHd?=
+ =?us-ascii?Q?yDdgeYep0nHah4dwy+z+mmsX10S+yS/fYs2cIEUzz/SCIIVOxvyFPnG714w5?=
+ =?us-ascii?Q?VkogqwraotpqbbvP25II8oEE//D76SGNmQcwJMgsoByf6ty6K6GNK6KYKbVT?=
+ =?us-ascii?Q?A0RgzxKaxUbrffGDBnF6SrVm/R7nWEwDeTT88ttEIFFxVEpJW2n3OA3pm6hn?=
+ =?us-ascii?Q?CPixCbiNKHkYjK8ZTk2udN4nqQZzH8XZvQXtYuB+zOogz664tjQyOHTfAOhB?=
+ =?us-ascii?Q?j0RYCW/aUKmFJC5ohrDjWidjBomJjwJidBC1PAphsW/2sA8uK/TMf7Jv/CGI?=
+ =?us-ascii?Q?IVfpy71huhsQx/7uI5MVNh7AGUYgVWap7bmpWY8rDDTo0ho5iKT3IywMpW3r?=
+ =?us-ascii?Q?KlmC9+u4XshDketl2K6OpCKQxH+l00AEvU/juZAOXNCblofoZly3A8b3/sfj?=
+ =?us-ascii?Q?GSVspvYelDQ8VFSx8g866C14oyI1I+QtAZ3p6JRcBiBedUz1dhqNlpSDXmVb?=
+ =?us-ascii?Q?Nu6n4vB6Tl6wLJM3KwkBo+BKQlhsiMIey5R1werwwYZFMPhoo8ptRHTHep+3?=
+ =?us-ascii?Q?uaiz17BmCPQ39ADbHoyxHWOkeIBI09Cx54/nVVfeGvPicf8Mj3Tcyy3UxOoc?=
+ =?us-ascii?Q?UnKotfGYlnMFJwDs5WSs6/GcV90/efW/HaOVMf7g17LMIoIPJ+4Mr2F8P1vg?=
+ =?us-ascii?Q?wTru1AZnFU8AHDs3djDPgdy+5u0VIrxo+KZe6kug99Yx7Z3d4o+F5IXDdw+r?=
+ =?us-ascii?Q?1ASu5JBUInEUbtg8OZMlqZ13bYJQZ9fJlZE/Vx0GCgoQFpLt+Px1Lzr0nQGe?=
+ =?us-ascii?Q?kQEaboqh66nFWKWFFo/DBM8qptl3fPbT9Q0VX7cabD5wtm0Q0KsKaNGR0iB1?=
+ =?us-ascii?Q?Vta3k+ka53ooVemVTrDCgUWP0d+tbqwpq3U87nEYgZHJ2JHVZplg60X2r9pr?=
+ =?us-ascii?Q?m/R/42yDHPCA86nPhJ+eb37whKEJB4DgYQv51uOZWIJ0JNdoU3ka3OIU3FTI?=
+ =?us-ascii?Q?Pg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9618f0af-4c53-4cd6-3372-08ddd67d1527
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 13:11:27.4923
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ahz5OKXx9ScY7HhE4ebq5MtJaeq3dMoT0dQ+ME+BDb77okKJUjahnkYbJpur1pzgq60iHpkqdZiFZHI/B73rAYx3HxWWzrhpu7nVNe9AM7U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7379
+X-OriginatorOrg: intel.com
 
-Hello,
+On Thu, Jul 31, 2025 at 09:51:13AM +0200, Geert Uytterhoeven wrote:
+>GPU memory usage tracepoints are only used by DRM GPU drivers.
+>Hence add a dependency on DRM, to prevent asking the user about this
+>functionality when configuring a kernel without DRM GPU support.
+>
+>Fixes: 5d95cbf21a4a550f ("gpu/trace: make TRACE_GPU_MEM configurable")
+>Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Currently there are 2 drivers using it: drm/xe and drm/msm, but there's
+no real dependency and in future more drivers may add these tracepoints.
+Juston, do you have any other drivers planned?
 
-Reported-by: syzbot+23727438116feb13df15@syzkaller.appspotmail.com
-Tested-by: syzbot+23727438116feb13df15@syzkaller.appspotmail.com
+Lucas De Marchi
 
-Tested on:
-
-commit:         37816488 Merge tag 'net-6.17-rc1' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ca61a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=251464a47fe663c3
-dashboard link: https://syzkaller.appspot.com/bug?extid=23727438116feb13df15
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16e13ea2580000
-
-Note: testing is done by a robot and is best-effort only.
+>---
+> drivers/gpu/trace/Kconfig | 1 +
+> 1 file changed, 1 insertion(+)
+>
+>diff --git a/drivers/gpu/trace/Kconfig b/drivers/gpu/trace/Kconfig
+>index cd3d19c4a201c9c6..7f405ce7df5a0a42 100644
+>--- a/drivers/gpu/trace/Kconfig
+>+++ b/drivers/gpu/trace/Kconfig
+>@@ -2,6 +2,7 @@
+>
+> config TRACE_GPU_MEM
+> 	bool "Enable GPU memory usage tracepoints"
+>+	depends on DRM || COMPILE_TEST
+> 	default n
+> 	help
+> 	  Choose this option to enable tracepoints for tracking
+>-- 
+>2.43.0
+>
 
