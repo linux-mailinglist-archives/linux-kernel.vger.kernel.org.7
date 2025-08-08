@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-760398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C95EB1EAAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:50:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C3CB1EAAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3995869E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:50:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32705586CE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1BC2836A3;
-	Fri,  8 Aug 2025 14:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257BD2820B2;
+	Fri,  8 Aug 2025 14:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XRpNEbZe"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SZD+ynxn"
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D022820B2
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0147F283C89
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754664585; cv=none; b=hKOYmEMWv2rW/JvARPp7jOq69moo+l3tuXZ7AH4HlCtLj4nvLqWf/ymG8PzgzEev9SZtGKxSFTVXFSPcda9iBl1UR3kiv7GioL7b1X3qa7TFFvedz5kNsmhFv0zbYq8mqOatRoX/D4u7yuf9qnk+OvIt61AoXGs61dow2IdnKbA=
+	t=1754664587; cv=none; b=sOXwlxlLnOxm05RpmpM7/v/nxJ7KD0c6pmXQotHk9gaq4sVty2tMal3136mpAU1nLyC6nUKDgdA1leaYttqtnLT2elzVn+kqF70Q6esKwxkit6FVhLqLkXqXcZH8tiE4MR4COt5/dtb8z1aKyiWJeserHJOXHw3xKSSl9zsk938=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754664585; c=relaxed/simple;
-	bh=H5Xb1Om8mdF5RIZgOAHxxetoF+yntH0NeJzyLF1TBI0=;
+	s=arc-20240116; t=1754664587; c=relaxed/simple;
+	bh=osA/Tpi12kQ5CER3paP/Bp7QeYpQh8yJ9Fzu2SQ6Mqc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KLHT8Y70FXj6vjw5j+QEWNcMMVaiT8BDj/4oj8/nXmtureuOOqv+V9swtEh3mmmeq6lgGfocdMXvn0nBrHN7xtTV6VDbgS1FkMk/UKC/b/F+YP0ProWdjpYIaPI0HcUZYD6HIqvEOzU1fwv5+6HhFLcz9e2rxj0Nf3vZv0q/X9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XRpNEbZe; arc=none smtp.client-ip=217.70.183.200
+	 In-Reply-To:To:Cc; b=motXf+wB4pKlovQPgH2ERzQF8MEGuFDSfCwnl/BWf5eAEkLOOyqv35b4tbKYVIzfKlczNAphiFjh6EsIwcI7LUloxBZSH6nsVPLTg+eYiVYrYERf5rZ3RQNsQ0yiLTCs/wAkJT0Z8Bpif4PIWBeyQrJlbMHTsm3PPeXAvJbMWqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SZD+ynxn; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A19454398A;
-	Fri,  8 Aug 2025 14:49:39 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 15B7A43986;
+	Fri,  8 Aug 2025 14:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754664581;
+	t=1754664584;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x5FboEgCdGJLmxZMiB0i2htDNO12smggut39uay0DPM=;
-	b=XRpNEbZeUx1iZaVTHx5I6X072fTr2282hm75h3TH0KH/sCa4iyc3hZ4RjB6ZEdmNIGgY1w
-	wNMzTHumwjPDDV5B5fxBTAg6plO3A5Y8DmERubd44e32eGxz5st0WmXoUFlK7N8r0bhy7b
-	wmuUBXSag2sGh0gswudnvb+bp4Kko0UcuXLQ3a9Ps0MtERGFGTkrs7qR9bpu744z2sI3Au
-	e38LGKXZE28NpWEwADmF7dmU2Su5duxb+ddtOyTAzcehijOosKOC1kjWw+egxuPcHJM9bJ
-	epxmiEETLt/v6KFJE+dxuglHEL506ZXwPvGOoHI5GUM9+RgknB+QUbj24cDwfA==
+	bh=PGUyvHe9BuPd0T5rhlt1+H6vTEPvRtliykdDnPP91xg=;
+	b=SZD+ynxnh44uTk7maCvSbO/ThN25G58Ul1kZ5W/pgAU9taYbLT48RQ3XUKvTNGObHwSuJm
+	gcDkyvLb9kwxwqonxfRtese5JwCCSmazujcXiJ0xFxpiorkczTF8ea0Cg6mJt53aqKBgAR
+	+/EL3V3ZhOZcWIPNmG6lW+9DttXEJ8wzvhLp+PO3Ls1GfaqtcXT1NYVB9esgu1kTmEfKtI
+	fP/gno4VfJlmEEBB+Hnr2UObFlVsNiRzNVsOqssHcUz+MF6zOLO1bmFNdwVbwekGE7SJOK
+	M3t+sPTSV/fNEkrhrrMzljQz4fjzJTzpK5eAtvyeH0Vxsalesyzm2LvKF8ftRQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 08 Aug 2025 16:49:12 +0200
-Subject: [PATCH v2 5/9] drm/atomic: use
+Date: Fri, 08 Aug 2025 16:49:13 +0200
+Subject: [PATCH v2 6/9] drm/bridge: use
  drm_for_each_bridge_in_chain_scoped()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-5-edb6ee81edf1@bootlin.com>
+Message-Id: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-6-edb6ee81edf1@bootlin.com>
 References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
 In-Reply-To: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -88,30 +88,25 @@ refcounted.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/drm_atomic.c | 3 +--
+ drivers/gpu/drm/drm_bridge.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index cd15cf52f0c9144711da5879da57884674aea9e4..ed5359a71f7e2cd8fa52b993e62ee65f8fed4537 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -1308,7 +1308,6 @@ drm_atomic_add_encoder_bridges(struct drm_atomic_state *state,
- 			       struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index c3bfcd735a3c426a147bf0a7427b3d2cd0df3524..c91a99b7eb1b9b1525e2d95888952f733ca6b9e0 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -1476,10 +1476,9 @@ static int encoder_bridges_show(struct seq_file *m, void *data)
  {
- 	struct drm_bridge_state *bridge_state;
+ 	struct drm_encoder *encoder = m->private;
+ 	struct drm_printer p = drm_seq_file_printer(m);
 -	struct drm_bridge *bridge;
+ 	unsigned int idx = 0;
  
- 	if (!encoder)
- 		return 0;
-@@ -1317,7 +1316,7 @@ drm_atomic_add_encoder_bridges(struct drm_atomic_state *state,
- 		       "Adding all bridges for [encoder:%d:%s] to %p\n",
- 		       encoder->base.id, encoder->name, state);
+-	drm_for_each_bridge_in_chain(encoder, bridge)
++	drm_for_each_bridge_in_chain_scoped(encoder, bridge)
+ 		drm_bridge_debugfs_show_bridge(&p, bridge, idx++);
  
--	drm_for_each_bridge_in_chain(encoder, bridge) {
-+	drm_for_each_bridge_in_chain_scoped(encoder, bridge) {
- 		/* Skip bridges that don't implement the atomic state hooks. */
- 		if (!bridge->funcs->atomic_duplicate_state)
- 			continue;
+ 	return 0;
 
 -- 
 2.50.1
