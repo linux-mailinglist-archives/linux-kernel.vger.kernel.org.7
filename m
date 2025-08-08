@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-760073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6ACB1E62A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75EEB1E62E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 871683A8176
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE6272023B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2319E26FDB7;
-	Fri,  8 Aug 2025 10:12:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC3C272E7F;
+	Fri,  8 Aug 2025 10:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="froTg+2G"
+Received: from mail-24420.protonmail.ch (mail-24420.protonmail.ch [109.224.244.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B0244697
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB0726B75D;
+	Fri,  8 Aug 2025 10:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754647925; cv=none; b=p0KC4J8Cx1aj4tgXX3MwzAyu+QZsTAIdrFvb1UhZPCt7Z4prylfh5ka89dICBvB66o/ZR4ILRjyV3pR2tdYRhCdUd8vybkdo9mGq/vLDsYkEPDTdRMOzsYW7MNzuFsrMxoevhXFvklk7WadlIizaTwPCwE3N3r4biY5qyuINlkQ=
+	t=1754647945; cv=none; b=LY8e3u2uKE9JSEMepo8F2MtXAaA3m6mTOlu02qCQXCbyWsVIZzguNtourE9IsynJ/UMFKxFGW9nDLWga8QG+6TxHndg86CnzquUNHSxVwt3GUYIemU0hyGBPZGIN4FTl+eu3WXotOttGDtlLmZt3F8D40g7uJBp2upl2UFzXZNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754647925; c=relaxed/simple;
-	bh=ofqEPgYz84eCMqoq5/ykQp79iei1YL/zHuokFvUXxNs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TwBpv/WtT5huFJMg9cpA1pGrV3EDB+NM4bbXOK2WEIBEcUqqMkU+/H41fWkOkYYcEJ8Tq0NwiPzoyhDYrtrBGnW9jx7JEssb1IecvWzUSq4IssRV+6BTWkcAZ6yjMEY7Qvt9mNUfRVq/nU9+h2mS9Kh3wbFhvSTcsgnCOjg6Ee4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86463467dddso207158839f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 03:12:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754647923; x=1755252723;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=twWFXuhRQyVstCOvDFpwC1CYSoFxAVC5SXmWu7KDflk=;
-        b=AUSxjk4ra+wFDuXva8IBeaLNC3Q4gKDOooljHynvvZtipUjNEGDAVRkfOznUG96NUt
-         0bCx9c16m4dVHx0yWW7FrJyKn7nEz2TwsuDHNRRqgSu/EhOzOqHrdBKtWOF4itfvh+J/
-         oZKilf682A5TFLgE9rIu9iDJ6WEmllWj3Nsr6j5COQdSs6/Mssa8e3XDMPuZqgU47Vod
-         sQIrIWM6h7zgQxRoSzpWKIGx4fMdgTICkw4cv70jA7HatltSaDTDE8D0V6DgKZW9cdZV
-         TtnBUmtKuRm7z8Cv8EWFeKY8QVm8EI+CNRXnpZ5x1gZW43C8td1+Ay9/Vcvld/GSiWXf
-         Ga2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWH4HxMs9BM0cGXk10pOB7RkAtBIHSFTtiAzxZWqSgg1soY6F6f00/8Jxcx/R6AH2YWRHUT24D3YhraKV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx216ARukUzjkGkB9MN0dLLsOdl/0aGjbRLvZI9lIs2yogXIsTG
-	UwIvVE4WrhOxhOaVyKbkA3uEyh1RWqFH/FBWnrH2gNW++OXf0IIIBiVW9uwo9KI0kaa8/V5NT6y
-	54wv/qLC1lY+mabIzewoiyvlxD4Jkck/pscxnoVmXI6NRYRMsfZorkI3mzSA=
-X-Google-Smtp-Source: AGHT+IE8vc2ddi2YStgugfLCw1l5QWN4IahGwFSDWmZAbINPHjIjK7E/N0DRuQVZDGTcoGGjmQy9wj0quraAI+UBaPjMPPeJoikR
+	s=arc-20240116; t=1754647945; c=relaxed/simple;
+	bh=h0zIQbSvyxqDSyFVDGoSNiPPz+mQYBdiYh2opvFecX0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ta/MsBS1iLdAvMRza/JEvpfFmUdAdQV3eOBu0yyaEmFlgKL9+Ft+PxcHV0FntTnixOkFLy/CDYkXwtvv5KNVfboun7uLXC51NWKgPYibt9QMvRgevCbVfjkvycgFA2Nb1WOgawl4LRaXg2yuDJpTWBD90TtsGc/lihLHxCCvRlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=froTg+2G; arc=none smtp.client-ip=109.224.244.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail; t=1754647933; x=1754907133;
+	bh=h0zIQbSvyxqDSyFVDGoSNiPPz+mQYBdiYh2opvFecX0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=froTg+2GHOGPNLELm2mc2cAxgrgZ9C1WYyIMFQjOhJIMCARoRFdN4cs8PqPzNWmxp
+	 5LFBHXCDa5Jn0sq+VA3VrY87ydwT7f6Xj/4m6mKbI0dAiNsglCcHWb170/PAn4Bncq
+	 AexVS+psvWoi/msrr1iY+BvDFWDefAwt5ERJX8j1wYLPybumZ4JG5L1zb0wWT7Q3AI
+	 5N9lWjxQ0hHqfro8HSzkk6cBLl9bHZXu1kzp4UV44sQZ08uqB9fw515Mui0R3+tv3E
+	 2zc5W4C1KzzmlSQhx6Z3kp5x56gSFAzl2+DVA7irhuYmAWlXzaqEQPI1hqQOXUF5jr
+	 8MRZ4LJlU95aw==
+Date: Fri, 08 Aug 2025 10:12:09 +0000
+To: samuel.kayode@savoirfairelinux.com
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>, imx@lists.linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, Robin Gong <yibin.gong@nxp.com>, Enric Balletbo i Serra <eballetbo@gmail.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v9 0/6] add support for pf1550 PMIC MFD-based drivers
+Message-ID: <znrv5235mga6ns4oue63o2acwmj5gge4c2mr32m7pui4lkamji@cu7zk4skmqkg>
+In-Reply-To: <20250716-pf1550-v9-0-502a647f04ef@savoirfairelinux.com>
+References: <20250716-pf1550-v9-0-502a647f04ef@savoirfairelinux.com>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: 0efdb6af94b748956b6be047e167a11300340c63
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1546:b0:881:8979:93f4 with SMTP id
- ca18e2360f4ac-883f127fca5mr453469339f.14.1754647923690; Fri, 08 Aug 2025
- 03:12:03 -0700 (PDT)
-Date: Fri, 08 Aug 2025 03:12:03 -0700
-In-Reply-To: <EC82157D-32AE-4456-9134-51B6AAFBED19@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6895cd73.050a0220.7f033.005c.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in invalidate_inode_pages2_range
- (3)
-From: syzbot <syzbot+de1434c5355cc909b734@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mmpgouride@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Jul 16, 2025 at 11:11:43AM +0100, Samuel Kayode via B4 Relay wrote:
+> This series adds support for pf1550 PMIC. It provides the core driver and=
+ a
+> three sub-drivers for the regulator, power supply and input subsystems.
+>=20
+> Patch 1 adds the DT binding document for the PMIC. Patches 2-5 adds the
+> pertinent drivers. Last patch adds a MAINTAINERS entry for the drivers.
+>=20
+> The patches 3-5 depend on the core driver provided in patch 2.
+>=20
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Please add to the whole series :)
 
-fs/bcachefs/fs-io-buffered.c:283:2: error: no member named 'dep_map' in 'two_state_lock_t'
+Tested-by: Sean Nyekjaer <sean@geanix.com>
 
-
-Tested on:
-
-commit:         9191195d bcachefs: Don't lock ei_pagecache_lock in bch..
-git tree:       https://github.com/alanskind/bcachefs
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6a237c32900fc479
-dashboard link: https://syzkaller.appspot.com/bug?extid=de1434c5355cc909b734
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-
-Note: no patches were applied.
 
