@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-760010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53D7B1E595
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:24:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D22B1E5B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25F327A539B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:22:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0FDD188DA36
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA3226F454;
-	Fri,  8 Aug 2025 09:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="XZQx7x//"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE26626FA6C;
+	Fri,  8 Aug 2025 09:39:45 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4899A25A353;
-	Fri,  8 Aug 2025 09:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754645034; cv=pass; b=IhQJ1FaB3CGB+52qlcxVFxdpiDsNfCEE7OmIUw1Jrb8kZgGyb6x60MBpq314vYS3Ry0fdopA7WoFItiIWtroxRfoxzHYw/9hrBmAogF5dgX6TxSDY/UQEkh7Wi/WDeulETHYJzLzIsd6dOTRVgDvmtM8FfeaI3E0OqoECG71ZVQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754645034; c=relaxed/simple;
-	bh=SO2SWS87wrmr90aXp8MV7nXkIBbDNlFBsr2YdgnkMVA=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=igrhD6wVdUZ4Wljkznp6hW78eJhh7NIyNsTNkW7xn4a//0e3QhliD+aHjc13sXBtNe3Tkc0aDOJVOSNvMyyIvxzQpMr1FTCPZQ50xUO/7Xbt6TgqLjytLTRT9dV+kdW98BPPJTmM4QC00OmgIRGIIFiOxQ6OrNpa9B0t5ok6wuk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=XZQx7x//; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754645009; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=FYyq1fZz1IS22/RUCDhON+v9w6YMPgNkHfv610WORwmWPcasx3s99gRxbTOgWLftv8uwd+Kc2cVK/xJEfwYJ3RbBGlak+HoSz/K9rQ/LsVZ24XRUAry5TrLtFP9SyFgGiWplWRrcS/MG6K/DDUaM3P09zMdmApI2nR1sK/xlQk0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754645009; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=hLRD0ttrjJcn9aSzGG4A6G4GZMfaAZS1OWrgULlUiZk=; 
-	b=mMQ0ljG0MVocbthBsArMfm+35uhG1a2FJNKJeAUMkp5HhYvagCxy9GhkniAs4P1UzU1riVcxe9iI3b9Hk8BcOgSapBMfxk/74pMks9LavQj8/6J6hSib6CHhfdY28+Ns9AR2hPw0C0TFRU/k6yTAjwn6Qa102HOsP8Rm+J23dNo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754645009;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=hLRD0ttrjJcn9aSzGG4A6G4GZMfaAZS1OWrgULlUiZk=;
-	b=XZQx7x//DmJwAXklbU3MaAI9HSAfsD0EL54z1Nc6L1TFNZ2HjXaa5pNudDyWTm0o
-	c1sWvIO/k75aI+m5tJIYoUGvuGk30U5F2D/yY3tLs+QUSwDMwEQcdz889WX76zJKLYb
-	/3Jdm4/kQsXlsDGLMaUByUm1K152Ipi22ryCJqdQ=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1754645008500552.794219999255; Fri, 8 Aug 2025 02:23:28 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Fri, 8 Aug 2025 02:23:28 -0700 (PDT)
-Date: Fri, 08 Aug 2025 13:23:28 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
-In-Reply-To: <20250807-new-mount-api-v2-1-558a27b8068c@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com> <20250807-new-mount-api-v2-1-558a27b8068c@cyphar.com>
-Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36
- syscall wrappers
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A29526AAB2;
+	Fri,  8 Aug 2025 09:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754645985; cv=none; b=BCjWxgbPCivXL4j9Xjj+0M+6WG6LSqZgozhmcdE2b5UAc02OH+3Gfjn4NwgYVlVzh3xe4sg0l7WxhsaH4VgZeJWqmx3TWodTjaVpOJhcctjBvIhL2ilt3DnHEYya9ozCtqaABtd05RAglkd38RxxudUNcywasCJYwDnNO/80Wjc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754645985; c=relaxed/simple;
+	bh=5CfI4XvynZwvr40M7GsPB0Pq2bvqxRwdnQ6OwP/wkBs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rSzliXZavZsQUrT6seFwsDKj1ByYlmjv+hOhQcrexlGPBbg4j4AIDTrA45gW5cXUo7+EFmFHLf8sDriGwNTXPXv4yv3a39CC1qj8olsPCnMIQqnScOF/20M3Fn+lhBPzTh5C+UZxkn6aZ0G67gomZRfd7DndKDA7ye/0zSxrkoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4byzWx5rJVzKHMsF;
+	Fri,  8 Aug 2025 17:39:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id E50531A0359;
+	Fri,  8 Aug 2025 17:39:40 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP2 (Coremail) with SMTP id Syh0CgCXo7XPxZVooOS_Cw--.51716S2;
+	Fri, 08 Aug 2025 17:39:40 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	longman@redhat.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: [PATCH -next 0/4] some optimization for cpuset
+Date: Fri,  8 Aug 2025 09:25:11 +0000
+Message-Id: <20250808092515.764820-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr0801122775f2f5b5d0340d94914587a70000844159bbf145211ba84f98e1226d87d858c029117558446855:zu08011227a1f057b002366232480c184100006cd47b3729268c142f6942b709ac7ce2d1f28b58774225b1bc:rf0801122bfa074accb980a2a2bb8578f500007a33d37bd93e79db2d35754a4271d7b933c92a7bd5492a2070e26039a3:ZohoMail
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgCXo7XPxZVooOS_Cw--.51716S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtFW7uw4Dtryktw43ury7Awb_yoWfGFc_Aa
+	y8ZFyDtry7JFWSqa4Utrs0yFWDKr4UCr18A3WktrWayFnrA3ZxXw4ay3yjqrnFvFs7Ar1U
+	JasrKrs5Xw1DJjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUxo7KDUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-When I render "mount_setattr" from this (v2) pathset, I see weird quote mark. I. e.:
+From: Chen Ridong <chenridong@huawei.com>
 
-$ MANWIDTH=10000 man /path/to/mount_setattr.2
-...
-SYNOPSIS
-       #include <fcntl.h>       /* Definition of AT_* constants */
-       #include <sys/mount.h>
+This patch series includes the following improvements:
 
-       int mount_setattr(int dirfd, const char *path, unsigned int flags,
-                         struct mount_attr *attr, size_t size);"
-...
+1. Removes the redundant CS_ONLINE flag.
+2. Introduces new helper functions guard_cpuset() and
+   guard_cpus_read_and_cpuset().
+3. Replaces manual locking patterns with the new guard helpers.
 
---
-Askar Safin
-https://types.pl/@safinaskar
+Chen Ridong (4):
+  cpuset: remove redundant CS_ONLINE flag
+  cpuset: add helpers for cpuset related locks
+  cpuset: use guard_cpus_read_and_cpuset to make code concise
+  cpuset: replace cpuset_lock() with guard_cpuset()
+
+ include/linux/cgroup.h          |  5 ++++
+ include/linux/cpuset.h          |  3 +-
+ kernel/cgroup/cpuset-internal.h |  5 ++--
+ kernel/cgroup/cpuset-v1.c       | 22 +++++---------
+ kernel/cgroup/cpuset.c          | 52 ++++++++++-----------------------
+ kernel/sched/syscalls.c         | 15 ++++------
+ 6 files changed, 37 insertions(+), 65 deletions(-)
+
+-- 
+2.34.1
 
 
