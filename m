@@ -1,149 +1,210 @@
-Return-Path: <linux-kernel+bounces-760193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95745B1E7A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:45:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C4CB1E79C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E62A21AA7021
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:46:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A1F67A61B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FD1274B31;
-	Fri,  8 Aug 2025 11:45:26 +0000 (UTC)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5422750E5;
+	Fri,  8 Aug 2025 11:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="StestG5H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDE2273D9B;
-	Fri,  8 Aug 2025 11:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAC02749F1
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754653525; cv=none; b=nwPGnyTUpl3j5Ry1b1VvGGGER1JwZ9WzCjVcZ6fHSCF7bhrSbBYtW/xrVr7F5NUshZdZp/0MkuuQAa54+LP+lzGHjD2vb8gsaVOVtWXwH+R59mAUOebxq9eOyHEDxPeQpB2Wu6XCdKe92l+X1fAMVUoMKUHNFUGrGyjYPdKXxkY=
+	t=1754653520; cv=none; b=RlKEZFAyVODnl0MJ0UjDfIbKFhVEi8Nb8D5tbWhbt9BNQymQMg1o41rTqVMvhgQSIJmOdR0vmjkYTM6iHH1jAa44koVK6DRjGLzFV0zqwdnihsojt27VXraEmFzcS0ilZbnL65pEBaiPQIaXCU2wqfFMm0WosdwaQtHJQbIeEBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754653525; c=relaxed/simple;
-	bh=WBYg6Ly46TKn9kNUQszvbhlGgnkk5kuSW6Ll2fRZeXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AprMYmWtQvrPEWel5o8IJzTDyc1ZaoQKTEmEpDTX+BTHPE/6HgtagT9LcTnkKRYqn8IKyzkP6p1ahuSGexyU+VnoFBJIj2Phd9Kc9biUsOm/8tQ0yeut+HGtMv1jrpVLMGXmmHNmJvhiUSAYd+Eu6HTtrJjRkfqqF6pR3MiAbTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-53944f65481so658467e0c.2;
-        Fri, 08 Aug 2025 04:45:23 -0700 (PDT)
+	s=arc-20240116; t=1754653520; c=relaxed/simple;
+	bh=7M0JrCgx5eU5w98j2LZMhjmsn+OCjUdu/yqPopMhdQ8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=g/DuHs+54c3bv2/gKXtNP4UV+S3jl1YW+5o1onLO1qN1B7cIYPXxrIGPp7hvHzCnEL0a4rmlOmVuwYzPNmPOR9AhBCBiz/m/LtNzEH90AEVLrvcmtU2sdgQdIiZxlCDa6QxJHvgfzJEcFN82zJb72dZo7HZHWaICSOlFFn8sFeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=StestG5H; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754653517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YkZCdLb6WZU2/frpn0NwOv9SmThv3TPw8wVjf2uMHJ0=;
+	b=StestG5HL7SmvCiUiEGbi/ZXIzV4leABU0yXd9wqnxFYdMwxXUUDYv2cAYk9zvQXPXaoa5
+	VzZcmRU+rPMwvufqvcS3XGcSyxY59exrFxtb9XF7/oaAtIbwe8ztJ7yvY0VCrpg1zf1k1w
+	9KtMOw0yoluZY/wTML7PZ1/O8z79Cjk=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-73-Ce9EjMqfOJ6i4PRJOTiQog-1; Fri, 08 Aug 2025 07:45:16 -0400
+X-MC-Unique: Ce9EjMqfOJ6i4PRJOTiQog-1
+X-Mimecast-MFC-AGG-ID: Ce9EjMqfOJ6i4PRJOTiQog_1754653515
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b8d8935418so1305845f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:45:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754653523; x=1755258323;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VxO/wb5SjqYKhirNQ57pk715Lm2Z0cnx8YRmXgpwJPM=;
-        b=Ci7XEkuDP9MarVNZuGjXPQj9c0b5SjZPUu0GoJXfzoOWDvKu357jOFCgy4c7TGT4jD
-         XVsj39/qUsuAIWzJnlofoNEc+EYkzMPHMkVqkPmOgoUmMgYvm1Prmgd5TkSR9ueMX2MT
-         2jNEvhzD+HHjfKcAS0FLiffhMjm82RrzKMrMT3ZqqKhJY8vdV9sTkvNUsrV57gWuINEg
-         9IPZfFf7PTI6ddpM6EwDgOX2K9h2DerEIMQgD+jvzIq1UFJwJAPh3iKWq7ywQd4w3gvp
-         LByJKTrkRA03urGj5IP3FGA82AIj9QutlmGDzYdkCOp5BJCRqjFjP+U+JTN7l7bU6ys4
-         iq4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVRJEIJfwpklynRxSTxOaLUatumKFRoQPQBHOQqWFkjlSRQ2VDQcPLw9MBT/Y0ZtOBuluwRD/oKnqgA3qV5@vger.kernel.org, AJvYcCVcBczF0vys6zeULq0p+qnRzNFFOjV86INX+RAGe3OOxbJIbPWEFDSGPMP+EC81CGMk7YExqOxHWe15yJEiZTBINAo=@vger.kernel.org, AJvYcCViDx5AQxtKwz+n6urLffiKsawGQfVG+d+v/KsSrZEOIrENBFiOdjyV/vi3n0LNgfhuGCDeFLiPfJYK@vger.kernel.org, AJvYcCWwbZ52ZO77bT7RQ2hiFLrEM0NpgYR48q3Ew0oUzbkMg0pNqzmpbpmbOAxQvlMTpApzYF0NWosj/ZwU@vger.kernel.org, AJvYcCXGmFyREXJVBhJT/cwqmuuGzmJ9Dmg1SRReOp6j9F3rg28/ekB9aMqnmoQKHI3Qv/a9ocsDF36OsTS+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW850hnkVGJGGprP56MRNAAFw6SRNiQ1Wb73480xOGMKOmrk3j
-	82D9gO4QzAb7gWupJFzuhEYlzoaM5EBxs+p4LdBtwAXf2K5rolGvxoNSevnjE3ae
-X-Gm-Gg: ASbGncvvlTGNsZwA298jAK6fJcRvgmvMlgBc8oG4X893HNjyE+goKKn+eOWoTjMeNjY
-	/nbbgJkcq14pqVo2X/cYFdgrCAmrPPlkjLrr6sFWnkRE8zlf0kaW2Jpl6w0tY8x8zgjK702GjQM
-	yrg2FYys8jNoedQKwKnWBBxnxUDOamGQWZGfj/3PsQVT4b1ABEh3aiv+FkFNJEdFlDgch5cyJrd
-	IdpiFZq3EI/fkSip3MssI6uOodc6gtCgNf1PXcY+KkQYU4q0aOMK1GC3qnadYNZlKQzeiPaW1LA
-	TEnLU7Gss7B1kjRRLH9+cMpGTARqBVhtPI3jYquswK+GE3/x8kYDgGY0u9C3uWym/240fo1T+8+
-	NP4S/euYxTswAgs+DNude74LgFaFzPDo/3/k/2UbqOUQ11HUJYn91zDNh0MgE
-X-Google-Smtp-Source: AGHT+IHBm8/EhEZtraF6A4Q/6qmzcdQI2gDgwOqaPrnwSVO+QmnX5oleXYC68/yzuyfi8/OyE85M5w==
-X-Received: by 2002:a05:6122:1acb:b0:530:5996:63a2 with SMTP id 71dfb90a1353d-53a52eb02d9mr820826e0c.7.1754653522656;
-        Fri, 08 Aug 2025 04:45:22 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-539b018968asm1032185e0c.3.2025.08.08.04.45.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 04:45:22 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-504dd871d70so647452137.0;
-        Fri, 08 Aug 2025 04:45:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgs8NBwzJpVWKDN1AkBLX6PNxnpd0F/dSRk7fh0N0GtWlTx27zglnyf+jAQomk/z19vTyTBqvwQskbk0mO4d2SA0A=@vger.kernel.org, AJvYcCVqJ8s7JBgmVIs0XTIK3KgSc7LG2v+5Bf5TpPRyMX0qzml4AugmwSZfJeF5Oxzco+VYrNnMgiVWj8LVBl2R@vger.kernel.org, AJvYcCW5/siLmiC0TFpwsPufqpH1Es6c3MexWx8N5YoKL2fhqt2bJnwGy6B68lKZPZcOvcROMcfeDwrZ8toJ@vger.kernel.org, AJvYcCXSHciOpWspGB38ii7336FVI6PoUUT7D7HSvHEesWsc6wOncI+O9G27VHBfY9Odb3YD+AnRH0DDFl0A@vger.kernel.org, AJvYcCXXkJ3ob2750dHd1Fazyeia+Q9a2/Zehl8A2qiaYS1SLsMvok4h6TKBZ3S4YsiDWw52w2vaq2FvGXd4@vger.kernel.org
-X-Received: by 2002:a05:6102:5ccc:b0:4cb:5d6c:9946 with SMTP id
- ada2fe7eead31-5060d2a74damr861831137.10.1754653521602; Fri, 08 Aug 2025
- 04:45:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754653515; x=1755258315;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YkZCdLb6WZU2/frpn0NwOv9SmThv3TPw8wVjf2uMHJ0=;
+        b=BJ0oYOgyXudrWaiSfjFLXHM7UDK47EJd1mY+TsXkznM5VJnaKG+jkibysaPgg9LuSN
+         rh69jEq8v/+3foC7mTWhDbL6B123un6BynwXVGGk1vNIPTH+Ox1Fj8kzNgiBvx9Zv87i
+         teKyG+PvCUSD4AUveY4zn41XFgPhacGsdHfOemeisd/1jlRXt8tmYgd8maL++Fmf+XlT
+         gnZkQOcnzbj/OeyYjzCoNYW/amfHDD4jDJEdXtNTrTsdmff/NhnKGeCEJ2ofIeP+jvvm
+         tE7Zjj7/SYQlKwciIwyOolGpwo53GQBRJARdIIuOw4o4ujXuwmaVdlwlfDQVB6F/R+op
+         rFvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEW6vAlgmJ8jk13w7Jugy67dF73ukffKdyVT8d7PrJH7FxkKsY9cjbdu4tAs2ortL7Sl6VeUCs0jJSAvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw38swqm9vwduDP+EN59R8G3BNNNh7wX8a0L0dQlF+s2vInDeY3
+	mgRkm1oTA8xrvzE2wkMOkvHYvtsMa87WrguVdjfaBhEuYshQFvZhCsFO4gBjS8cqFEQwwzWJi28
+	hIiydNtMQFE4XemEHh+oPmzvc2HVCR4blNGO2Wa5UQL0yaTX+S4pFKmU+TH0irzh4ig==
+X-Gm-Gg: ASbGncuOZDIgEnZD14Ndr8lQqQHB5wPNbhGfvVURox+aayixhdrpdgphNP8JIZFRi4M
+	o3H98Y/HhBrnxmUT9zUg2U3oPLu1BNPwfYge506KMLIeFZpg8lkdU9qOnxSHUVnTBF8jmxpsH8V
+	xOKdblaS/7iad6TKmwg9cHewKBLRM2nUsAINpkFDwG2mGd+ibyomWARGj57zpKYVY/jo0gHza/C
+	TCuyIXAHyeLUJtyb0gbVJn9wbZfLQOKE7U7vPU1N47pVD1quHX1teEill7h816lkkCAbBbC90ew
+	1KeLY/IDhxf6h+ugkXqdNHdDPfX16yF5J9Xc2hdleh90EzBS6+C9YcnKlZWlvYhIlTlq5HI7tNb
+	HDQ==
+X-Received: by 2002:a05:6000:250a:b0:3a5:243c:6042 with SMTP id ffacd0b85a97d-3b900b4bca8mr2407523f8f.2.1754653515457;
+        Fri, 08 Aug 2025 04:45:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZZTsr8LljTVMXUVmF2Zx0tLBx9Kd0/V8sNlHZ2iorN2eL2lkbGw2YXs0akABivYUbZzhBFw==
+X-Received: by 2002:a05:6000:250a:b0:3a5:243c:6042 with SMTP id ffacd0b85a97d-3b900b4bca8mr2407483f8f.2.1754653514913;
+        Fri, 08 Aug 2025 04:45:14 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb ([2a04:cec0:107e:d29c:76ef:3842:1ccc:76b2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459eec47306sm71622085e9.28.2025.08.08.04.45.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 04:45:13 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Aaron Lu <ziqianlu@bytedance.com>
+Cc: Ben Segall <bsegall@google.com>, K Prateek Nayak
+ <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, Chengming
+ Zhou <chengming.zhou@linux.dev>, Josh Don <joshdon@google.com>, Ingo
+ Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org, Juri Lelli
+ <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chuyi
+ Zhou <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>,
+ Florian Bezdeka <florian.bezdeka@siemens.com>, Songtang Liu
+ <liusongtang@bytedance.com>
+Subject: Re: [PATCH v3 3/5] sched/fair: Switch to task based throttle model
+In-Reply-To: <20250808101330.GA75@bytedance>
+References: <20250715071658.267-1-ziqianlu@bytedance.com>
+ <20250715071658.267-4-ziqianlu@bytedance.com>
+ <xhsmhv7myp46n.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <20250808101330.GA75@bytedance>
+Date: Fri, 08 Aug 2025 13:45:11 +0200
+Message-ID: <xhsmhsei2ox4o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-8-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113464920ECAC2C3CB89DE2D5864FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <7c8c7a25-c373-452a-9fe8-8b2d92ddd885@tuxon.dev> <TY3PR01MB113467C09DF7D3D0D7833A6598649A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB113467C09DF7D3D0D7833A6598649A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 Aug 2025 13:45:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXmOaMo-2JfMmi7fOJxpVhL86U4PsWewrjk1z6hX6agaw@mail.gmail.com>
-X-Gm-Features: Ac12FXz7HpF5HU5dBXnxnL240s782w9rEqQwz4F0XZ8wdldivob67uVHXOAVnQM
-Message-ID: <CAMuHMdXmOaMo-2JfMmi7fOJxpVhL86U4PsWewrjk1z6hX6agaw@mail.gmail.com>
-Subject: Re: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
- dma-ranges for PCIe
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>, "bhelgaas@google.com" <bhelgaas@google.com>, 
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>, 
-	"mani@kernel.org" <mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"geert+renesas@glider.be" <geert+renesas@glider.be>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, 
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "lizhi.hou@amd.com" <lizhi.hou@amd.com>, 
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-On Wed, 9 Jul 2025 at 07:05, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> > On 07.07.2025 11:18, Biju Das wrote:
-> > >> From: Claudiu <claudiu.beznea@tuxon.dev>
-> > >> Sent: 04 July 2025 17:14
-> > >> Subject: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
-> > >> dma-ranges for PCIe
-> > >>
-> > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >>
-> > >> The first 128MB of memory is reserved on this board for secure area.
-> > >> Update the PCIe dma-ranges property to reflect this.
-> > >
-> > > I see R-Car PCIe dma-ranges[1] and [2] maps all possible DDR area supported by the SoC?
-> > > Do we need to make board specific as well there?
-> >
-> > I'm not familiar with R-Car, but if there are ranges reserved for other purposes, I think we should
-> > reflect it in board specific device trees.
+On 08/08/25 18:13, Aaron Lu wrote:
+> On Fri, Aug 08, 2025 at 11:12:48AM +0200, Valentin Schneider wrote:
+>> On 15/07/25 15:16, Aaron Lu wrote:
+>> > From: Valentin Schneider <vschneid@redhat.com>
+>> >
+>> > In current throttle model, when a cfs_rq is throttled, its entity will
+>> > be dequeued from cpu's rq, making tasks attached to it not able to run,
+>> > thus achiveing the throttle target.
+>> >
+>> > This has a drawback though: assume a task is a reader of percpu_rwsem
+>> > and is waiting. When it gets woken, it can not run till its task group's
+>> > next period comes, which can be a relatively long time. Waiting writer
+>> > will have to wait longer due to this and it also makes further reader
+>> > build up and eventually trigger task hung.
+>> >
+>> > To improve this situation, change the throttle model to task based, i.e.
+>> > when a cfs_rq is throttled, record its throttled status but do not remove
+>> > it from cpu's rq. Instead, for tasks that belong to this cfs_rq, when
+>> > they get picked, add a task work to them so that when they return
+>> > to user, they can be dequeued there. In this way, tasks throttled will
+>> > not hold any kernel resources. And on unthrottle, enqueue back those
+>> > tasks so they can continue to run.
+>> >
+>> 
+>> Moving the actual throttle work to pick time is clever. In my previous
+>> versions I tried really hard to stay out of the enqueue/dequeue/pick paths,
+>> but this makes the code a lot more palatable. I'd like to see how this
+>> impacts performance though.
+>> 
 >
-> Already Linux has this DDR info[1]. Linux provides DMA memory only from this region.
+> Let me run some scheduler benchmark to see how it impacts performance.
 >
-> In your testing, have you faced any issue like system allocated DMA region other than [1]
-> and you don't want to use it, then the changes are ok??
+> I'm thinking maybe running something like hackbench on server platforms,
+> first with quota not set and see if performance changes; then also test
+> with quota set and see how performance changes.
+>
+> Does this sound good to you? Or do you have any specific benchmark and
+> test methodology in mind?
+>
 
-Exactly.  PCI memory must be located in the intersection of
-dma-ranges in r9a08g045s33.dtsi and the various memory nodes in
-rzg3s-smarc-som.dtsi.  The latter already excludes the secure area.
+Yeah hackbench is pretty good for stressing the EQ/DQ paths.
 
-> Not sure, PCIe can work on internal memory such as SRAM?
+>> > +	if (throttled_hierarchy(cfs_rq) &&
+>> > +	    !task_current_donor(rq_of(cfs_rq), p)) {
+>> > +		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+>> > +		return true;
+>> > +	}
+>> > +
+>> > +	/* we can't take the fast path, do an actual enqueue*/
+>> > +	p->throttled = false;
+>> 
+>> So we clear p->throttled but not p->throttle_node? Won't that cause issues
+>> when @p's previous cfs_rq gets unthrottled?
+>> 
+>
+> p->throttle_node is already removed from its previous cfs_rq at dequeue
+> time in dequeue_throttled_task().
+>
+> This is done so because in enqueue time, we may not hold its previous
+> rq's lock so can't touch its previous cfs_rq's limbo list, like when
+> dealing with affinity changes.
+>
 
-If that is the case, it should be reflected in r9a08g045s33.dtsi.
+Ah right, the DQ/EQ_throttled_task() functions are when DQ/EQ is applied to an
+already-throttled task and it does the right thing.
 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi?h=next-20250708#n31
+Does this mean we want this as enqueue_throttled_task()'s prologue?
 
-Gr{oetje,eeting}s,
+  /* @p should have gone through dequeue_throttled_task() first */
+  WARN_ON_ONCE(!list_empty(&p->throttle_node));
 
-                        Geert
+>> > @@ -7145,6 +7142,11 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+>> >   */
+>> >  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>> >  {
+>> > +	if (unlikely(task_is_throttled(p))) {
+>> > +		dequeue_throttled_task(p, flags);
+>> > +		return true;
+>> > +	}
+>> > +
+>> 
+>> Handling a throttled task's move pattern at dequeue does simplify things,
+>> however that's quite a hot path. I think this wants at the very least a
+>> 
+>>   if (cfs_bandwidth_used())
+>> 
+>> since that has a static key underneath. Some heavy EQ/DQ benchmark wouldn't
+>> hurt, but we can probably find some people who really care about that to
+>> run it for us ;)
+>> 
+>
+> No problem.
+>
+> I'm thinking maybe I can add this cfs_bandwidth_used() in
+> task_is_throttled()? So that other callsites of task_is_throttled() can
+> also get the benefit of paying less cost when cfs bandwidth is not
+> enabled.
+>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Sounds good to me; just drop the unlikely and let the static key do its
+thing :)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
