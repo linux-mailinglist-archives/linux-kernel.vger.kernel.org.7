@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-760120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4ABB1E6C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:50:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F88B1E6CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06CE7563E2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:50:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7F21897C1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B83F2550CD;
-	Fri,  8 Aug 2025 10:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE2D22A4D6;
+	Fri,  8 Aug 2025 10:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vb1cfBF/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zWhwFypf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="FTuz+NJi"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFD52248BA;
-	Fri,  8 Aug 2025 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED56227E95
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754650205; cv=none; b=VkZZZQMFscLfuHZkmzqhGsrTzuzPGYSEnr6TYox+Emx/niTBzfQzmPeSMMKI8Yf0Bp1ivVa/UmgxvE1rO3+PNOZcGQ1+ULAFJ/LKpocTzSSFWJxYDUoXvMCF2rqwo4elbVNkQ8Y+TzU+3ZDHNal/YKRkzyuRfZyJT8bD/RZu2ms=
+	t=1754650242; cv=none; b=EHL4EGvHw0M+OUjhUhRW56eTUgwzmHfNG3ICqpXcizpPrI0HP1ELNJauWmsfAJS7PphjU1tqOhWJBiLrSxlvs8BygUHLE7Y7w6tx32IQ1CktoN+mZs9U/dvX8jLpqBSwAwZ6fwdExdy2nzQg2XQeBPioeNZLbLd9Y0K+DCQl+AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754650205; c=relaxed/simple;
-	bh=7ovIFhWjXZuDLJZR4cDBmjSpBjw0GzEJjCyqgUwvTE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DAlto70YDOMd7GRvOZUZMWGOAkk6VZRj4oR0ZfDyg6WrCnH6QbXcWIahbR7/42Xm0rbaIN5k/fFo5sIZZRQC38qP+uScT0AHFxD+4aqWEZf6+iV7wLxNa87j53MK1ahmDRtB3iKrnMo5JT4S3qMo5uW3TVkNKlfI2PcEK7DKfj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vb1cfBF/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zWhwFypf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 8 Aug 2025 12:50:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754650202;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ovIFhWjXZuDLJZR4cDBmjSpBjw0GzEJjCyqgUwvTE8=;
-	b=vb1cfBF/7YK6hJyG15Ng7vqjhAkhPrbdIxz6thQRmzP0FY1QBq10oGYFTy5vNAMIkOF/Er
-	3iQgKB1rC8lZW5fDe3Qa/WN2skT13W5dkveRH3nI+HYxbopV8DDi7rFO6cc+AZ6joH2Bbr
-	HEwQv4vneewlJA+Iqvay0ZqPvBkM/pjpYBxVZZ0dtJynRV8+V/6yFP/TiurLSYMEjnFvH0
-	+C/BnUlOFxoiZuz1R3s6L3ZuTR4E/ndvg60LCsMMADC+Er66ekEIYKnc4IwtIzxXlDdCI+
-	V6eYVFhCSJxMCYTprygpDsUC2h4MxFE0z/kk1ihi8SOjsZBnjdlpsDjRyESkMw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754650202;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ovIFhWjXZuDLJZR4cDBmjSpBjw0GzEJjCyqgUwvTE8=;
-	b=zWhwFypfYEil3TXTW4XJRR1LLvHkMukwxXK0TXus3PnXdZkKU15He4ft3uenbQeY3iceOb
-	rFpu98P1TY7Z4UAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: Bert Karwatzki <spasswolf@web.de>, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	linux-pm@vger.kernel.org, Huang Rui <ray.huang@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: loading amd-pstate-ut kernel module crashes with PREEMPT_RT
-Message-ID: <20250808105001.N6t7p2-N@linutronix.de>
-References: <20250731092316.3191-1-spasswolf@web.de>
- <aJI9xbIllYV7ON8S@BLRRASHENOY1.amd.com>
- <d501ba67cbae1113c50fccf97155c1fa67a533ae.camel@web.de>
- <aJRN2wMLAnhDFykv@BLRRASHENOY1.amd.com>
+	s=arc-20240116; t=1754650242; c=relaxed/simple;
+	bh=YIm88aacknXO7rjNdWah9pe3ap55dGpndwEra1Jh9L8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f0OOxGQqfjhqqXoxRpQlsNKVmsP9q/9pxayoGMdIjqljjtGYhkvD/GWt4Wj6zwbZpxbABH7D/vaPYkw/odnjb17Pd+8HPd+c84ChpEfW4lZPAJf7LGFImWvuTUIQs+ZCEKxsMrn1SLcTJiuVl7tnzhuwYmEoTurzVMLrvwhf3RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=FTuz+NJi; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7e7fb58425cso296457385a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 03:50:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar.org; s=google; t=1754650239; x=1755255039; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2t4Nqy8A7Pvum+ZPz/AX/HM66sDG0qhG/ulIAizon6g=;
+        b=FTuz+NJiNuG6LsFMvFakWij9D4j9e84OBUF97BT8Upzna92nnw1QItLpxZAlsBOVDg
+         666dhbO4mVZSklQBzWWlq36VPwof/MGcokZu0hzP+JzzSssBjsQHbiLGKHbaVguFhCm8
+         nIWyy2FXrZboF7hNG7GgSAIi3UAQOqkguQAu8PL8XRfdZgITOlKMaMGHQC7iZciIsVjV
+         2f4SrBFwZxGSAs4nkTaAI7/kFm9AppPa7Ed9u45qfThU/4dpGL2aCnhu6kXvBq0Xa0vD
+         nt1ye2I/MAaBy5ohSIzc25/SwjI6RxKSUnMJNUHHZEDK60VCryiazPTh36fg/ACmXd3I
+         obmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754650239; x=1755255039;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2t4Nqy8A7Pvum+ZPz/AX/HM66sDG0qhG/ulIAizon6g=;
+        b=ohDG9rc/Zonkp+XzAW2oguDtkeRdHjapdUDWww5bkn0lOhF8/wRtK/kHtHH2DLv5q5
+         cPdAS1cTeyeTisoyG+hbARv030rqtzeVrm6a1W0ydcoYs8N2LYuCccRvEvJiG8WQI0/Y
+         m1xvIPwweK4x1kqJI2b9+TLLLrnkQMGU3fgv2qF+b1AVPYThJISKWNiJNJAbXPf+6+Es
+         zvAMmeeICLNuu3pJGWIqCF8IfKaodaak2VZ1nO4tnhKZUjxPUpk2Lpha4+BMjqaZxA9R
+         ZMODWwgqPSxXXRcWdZ6yq4nl1WTmcmfOew2aZNAEGc31yC3pQqtFnZZpFctqzGWp7wNs
+         +Vhg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/i3Dvp3IeFS783y4qYvSW9TP6K6LbRHIjh8qWGnmM9OW8+ZhmKpXVnX0nglJT8VxKic5oBWKz16nQ3Cc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVEWLKymVWv8yoofkld4Qag8ll4Kz7tAOvz/fz0OQfaSEzS3p6
+	8wv+wL5GD2b1sokunTXN5et0cb3WNMSSTXQvx5rWWIgWD3DbxzjdtdP+FoWK06JiyISIfSR4vNj
+	Aq5/bG4E+8pDDD7fGBa9C5u7uTpFp/xpx9OERxngygw==
+X-Gm-Gg: ASbGncvgGm7+DJ8WHeqBvx9vPNCFdTbU5lMyd+8cY33Yd9peTdvpzal3MhlJ/Qsi1s2
+	IThc07D6n2+aTWlERY2RiDZUXLtSLkD9/4EwPIvoTalmGKbsoAyyiDMBqLJKTCZHhXmU5i8HVyG
+	A8ECkg3k8Mgy8dSo00Es14GJb6zbJxeEY5xPP2FC7sr8waMvytkpsGOqAMUta4dyNvQD49CaMFD
+	l+g/Oc=
+X-Google-Smtp-Source: AGHT+IHKj7FBhJn4YvEWoDBBXtBvizyBf1uRp80BqxN8hVamn27Zko572Q6nuzWyGRHZWX8N75KkGWA1ysouHf3eFnM=
+X-Received: by 2002:a05:620a:1587:b0:7e7:fdd2:cc58 with SMTP id
+ af79cd13be357-7e82c684a08mr275759485a.15.1754650238850; Fri, 08 Aug 2025
+ 03:50:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aJRN2wMLAnhDFykv@BLRRASHENOY1.amd.com>
+References: <20250807162633.3666310-1-karunika.choo@arm.com> <20250807162633.3666310-7-karunika.choo@arm.com>
+In-Reply-To: <20250807162633.3666310-7-karunika.choo@arm.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 8 Aug 2025 11:50:27 +0100
+X-Gm-Features: Ac12FXwZubGjX-KjBWAWJ55zqwf6_QveUqVQsmAMnzOas61qm-AzifcTiF3DvrM
+Message-ID: <CAPj87rP9pETnxr_mVJ4OAwj_Vhh2yS75iQ5LDT7ddC5=a-kXkA@mail.gmail.com>
+Subject: Re: [PATCH v9 6/7] drm/panthor: Make MMU cache maintenance use
+ FLUSH_CACHES command
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	Chia-I Wu <olvaffe@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-08-07 12:25:23 [+0530], Gautham R. Shenoy wrote:
-> Hello Bert,
-Hi Gautham,
+Hi Karunika,
 
-> Thank you for confirming this. Let me see if we can delink the
-> cpufreq_driver_lock can be delinked w.r.t access and freeing of the
-> cpufreq policy object.
 
-You identified all the spots. Please keep me in loop.
+On Thu, 7 Aug 2025 at 17:27, Karunika Choo <karunika.choo@arm.com> wrote:
+> @@ -585,6 +615,9 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+>         if (op != AS_COMMAND_UNLOCK)
+>                 lock_region(ptdev, as_nr, iova, size);
+>
+> +       if (op == AS_COMMAND_FLUSH_MEM || op == AS_COMMAND_FLUSH_PT)
+> +               return mmu_hw_do_flush_on_gpu_ctrl(ptdev, as_nr, op);
 
-> Thanks and Regards
-> gautham.
+Given that FLUSH_MEM and FLUSH_PT are the only ops which are ever
+used, the below becomes dead code. Could you please just inline these,
+so it's more clear what's actually going on? The (op !=
+AS_COMMAND_UNLOCK) branch can also become unconditional, perhaps with
+a WARN_ON() around unknown ops.
 
-Sebastian
+Cheers,
+Daniel
 
