@@ -1,73 +1,158 @@
-Return-Path: <linux-kernel+bounces-759646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C5AB1E0A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:43:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A3BB1E0AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2140618A09F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2B556580F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922F786352;
-	Fri,  8 Aug 2025 02:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26EE1990C7;
+	Fri,  8 Aug 2025 02:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b="fghKz6D5"
-Received: from va-1-20.ptr.blmpb.com (va-1-20.ptr.blmpb.com [209.127.230.20])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSP0r76W"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCFE367
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 02:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.230.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5D28F54;
+	Fri,  8 Aug 2025 02:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754621006; cv=none; b=NuxdE1n3cpfXWtH0sRzqtmwiQ1fxjeZxZjvS6Umlv1UEaTSiII052sIRXSpnlxQF+s2vOZ4XXDxJ12HPlzOK2cbW/YyI5akSxI8LBwVpJIQsF8FouqCjDSu5OUXX25jSJ4dSQ2/ph7VPdc86DCsSFCn9oErWYS7sas+qPlcRxaI=
+	t=1754621212; cv=none; b=QpBRYBLB4z61nSuYKe4E/gooVvLaNczw56LJSkFfSrchDSSg0ZGnbSSUqsiUMgozjiVjk8wQvYV7v9Ofw9p5tNssKAtrU/HTYmZxelp7hzivbnjzgq8aC+7Z54OamfcNCA2aVHcusXGJKZswqN4qa6pmXgdLE3YT0fXGGh9tJwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754621006; c=relaxed/simple;
-	bh=07ONC8WlXPk8jptQtuzE5Qmo9lm76KsnOsxW1x29sbg=;
-	h=To:Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:
-	 References:In-Reply-To:From; b=f23W5UI0u1rsyoxC1Fg9OYtUZtgkaiv1O2XXcuuJVZPAuic3NKwRLtdLudqza0+u7BoOEN8ia5VpfAuBJiDB2DOJP5Tv8d66ribAYQ8ezJsPvtDXtNBCGmWN9CKeKjSEQuuQoBMz+WN24jthltYMpQAMCac0gRPjfQt/ncFmbXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com; spf=pass smtp.mailfrom=lanxincomputing.com; dkim=pass (2048-bit key) header.d=lanxincomputing-com.20200927.dkim.feishu.cn header.i=@lanxincomputing-com.20200927.dkim.feishu.cn header.b=fghKz6D5; arc=none smtp.client-ip=209.127.230.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lanxincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lanxincomputing.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=lanxincomputing-com.20200927.dkim.feishu.cn; t=1754620938;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=07ONC8WlXPk8jptQtuzE5Qmo9lm76KsnOsxW1x29sbg=;
- b=fghKz6D5f8uxOEZnZUWsXleorTqETF/thXjUiMvIqIpLC3l9kB64+slU7AWGMFx8iHOTn0
- zJ2nZC9oj6hpujGu3NRulUJhUclyHy3BD4DvdpiGPPKAkyck67vA4+34AXZECVzhTDOXi9
- mBsoxoiOycQdGeYFObju+bq8FuC8XE6Oje99k+3yeTNsojrGK4K6LwxKC4yGZfN9ETMnZB
- ySuZbtIdHjXJYi27nhe3Xi+Kx+OInPTkitBDFQEiG1iSMR+K2TTInpJnHy4r8MQxnMiCx4
- XVWw6hIIGCuxvFISJd6dFFxKpf9zkomizt5rjqbk7xQHplMonMpIUPWlNuAuAA==
-To: <markus.elfring@web.de>
+	s=arc-20240116; t=1754621212; c=relaxed/simple;
+	bh=6eSIumEnVqBAHxkcRySbKyk8WK2BmCyzcvRVh0iuIX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BNhaJkxrYxKyyW+K03eJ0rsU+j1ylmXDdcdBnLqhiX3NZMdNsvkMx5QwutXE4amsLP9kzarmunPpR9VJgFEACgzPl7G8c03pdcpLk0dxcrB/syZsZXMnehu9WWtB0zpubUVZzidutYwQrIO7qiTLyHrbMK1SQs15M659Nl2hLMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fSP0r76W; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30babf43ddaso590614fac.3;
+        Thu, 07 Aug 2025 19:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754621210; x=1755226010; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MUTlcJcSAf0RqZ1mjBBPM2/hxVYL9IMk97YOwGgUXR4=;
+        b=fSP0r76WT3n0DW0pt4GXsuuOsplBj/q54H++1Wc4+28BJ9sNmto42x1lgEQcL+XCIE
+         5Ep+W2mspZBt6urk1WH2Zq4fZI4xTTf4UsF9wjN1mx3Cs4/H7QGyX6SNPC9Y7qH3DZd4
+         w0PskYsKh/AqK4iRqoVNq5WIJZ4WgQWFuGAZxhAspf5TzKI6Yu5pXkt1FTADeAEMPhPx
+         6sYq4gaVgfT91C2beXP5zAMAoI7JZ0x+LMYsprbESl7Qm8UURIqwe1H7WWGw1QR5XVwm
+         wotolPcXKHWZR1i5J5wK8J3Z3jcee/d6eTy1A3JtlD95GRjYZycPS0r9twL2VlafKFqb
+         G97Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754621210; x=1755226010;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MUTlcJcSAf0RqZ1mjBBPM2/hxVYL9IMk97YOwGgUXR4=;
+        b=TaHWdVGuKSEnnX18xZ9SlWh3bP+h6IPw5bGbdemxZfsuGTU0NW0FG7ln7uExSzAc4W
+         xZxrPfQkAMycmTP/FXNLTWYPjqVFGCiNyLoCs0CrMPP+fCQCYDu/Nk2oFcts2nyuvnXV
+         8cICIuKMRZhQEyHBVSsh3aB6c+zVxPMSgs7H3C+mmwOY+N1TkIruGb5a+YBuFHNJKziF
+         2iNDCiCrmhO3scT3+IP8r8N1VyYV5H3jBYMbFi/tNRd00ss1fdqcqOFJbcmZRHSklfBC
+         MN52boO/AvXrm+/enukn6DCCBVEVFkPp/ngDCJA72IoSyDzVDMzMMic1mAKUTulJGRqL
+         COGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUl810TfzGjK1SiLkBdOlNcCaMQm/xDs+uH9UZ8zKRxAqC1R+bO1DQqd9vPFk1rqpPdUBS+VRtJJJ25CNks@vger.kernel.org, AJvYcCVT8ZFG0lNW2WQIIIEHdF2w+HhvJLizbd4KH+n7FjNsj0Ij6beA1u89CAQoK0Rdp2KOQAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5IN8k+4DN8YCzcXitrmJW3XqOdbvYEvk7oP/dC3lN2LexZJIE
+	C5+RkP7BPCW5Aw5xbGpdo2zhuZWOcILhdyYNCO61NI59V99SWubx3zksaiU9jY5dhAxNVCI7UXX
+	Nn/e2GJT2yCxTiba7jaqwzD2g7sKE0DM=
+X-Gm-Gg: ASbGncs4G3cgAkcMVxx3EPVAoCrSmXzfUnYO3nq8QTUzNGgUB2DAJW4MHhhwt4iC9pB
+	ZqLCZ5+gYZ0ZaQy8I/iot4nd4WlfEpgCF0iuR3+Y69luk8njqLFKarYMx6CXfh1upKQzQfcNY3d
+	57M7hEqBCGYA1GKtvFT9QB0jYzEZ27jJfVyhi0k4HEXTPyVfyTsOASNSKlreGGsG8KqlV/jjSIt
+	XtDQ70=
+X-Google-Smtp-Source: AGHT+IHwEfdTGFfLBzTAAdGW8Mg/b51BAGAxnhdAPxMyWF/3/GJIWPrt6OV+0ucQFa1FYFvEYF2z7EM0XXmqFqP3X5c=
+X-Received: by 2002:a05:6870:a910:b0:30b:aeb8:fa62 with SMTP id
+ 586e51a60fabf-30c20f50a06mr990473fac.16.1754621209668; Thu, 07 Aug 2025
+ 19:46:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Original-From: XianLiang Huang <huangxianliang@lanxincomputing.com>
-X-Lms-Return-Path: <lba+268956408+07bb2c+vger.kernel.org+huangxianliang@lanxincomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Date: Fri,  8 Aug 2025 10:42:03 +0800
-Message-Id: <20250808024203.16672-1-huangxianliang@lanxincomputing.com>
-Content-Transfer-Encoding: 7bit
-Cc: <alex@ghiti.fr>, <aou@eecs.berkeley.edu>, 
-	<huangxianliang@lanxincomputing.com>, <iommu@lists.linux.dev>, 
-	<joro@8bytes.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-riscv@lists.infradead.org>, <palmer@dabbelt.com>, 
-	<paul.walmsley@sifive.com>, <robin.murphy@arm.com>, 
-	<tjeznach@rivosinc.com>, <will@kernel.org>
-Subject: Re: Re: [PATCH v?] iommu/riscv: check pte null pointer before use
-References: <effb29be-6d14-47e5-ab71-454119467750@web.de>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <effb29be-6d14-47e5-ab71-454119467750@web.de>
-Received: from LeonHXL.localdomain ([116.237.111.137]) by smtp.feishu.cn with ESMTPS; Fri, 08 Aug 2025 10:42:15 +0800
-From: "XianLiang Huang" <huangxianliang@lanxincomputing.com>
+MIME-Version: 1.0
+References: <20250806081051.3533470-1-hugoolli@tencent.com>
+ <aJOc8vIkds_t3e8C@google.com> <CAAdeq_+Ppuj8PxABvCT54phuXY021HxdayYyb68G3JjkQE0WQg@mail.gmail.com>
+ <aJTytueCqmZXtbUk@google.com>
+In-Reply-To: <aJTytueCqmZXtbUk@google.com>
+From: hugo lee <cs.hugolee@gmail.com>
+Date: Fri, 8 Aug 2025 10:46:37 +0800
+X-Gm-Features: Ac12FXwrw46uHl0Gmh5Te-yT6pNi6Eq_nyRwXIAuZbf3W_z-lWvESf1ROWiZJMg
+Message-ID: <CAAdeq_+wLaze3TVY5To8_DhE_S9jocKn4+M9KvHp0Jg8pT99KQ@mail.gmail.com>
+Subject: Re: [PATCH] KVM: x86: Synchronize APIC State with QEMU when irqchip=split
+To: Sean Christopherson <seanjc@google.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, x86@kernel.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yuguo Li <hugoolli@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Sure, 'prevent' is much appropriate than 'check' here...
+On Fri, Aug 8, 2025, Sean Christopherson <seanjc@google.com> wrote:
+>
+> On Thu, Aug 07, 2025, hugo lee wrote:
+> > On Thu, Aug 7, 2025 Sean Christopherson wrote:
+> > >
+> > > On Wed, Aug 06, 2025, Yuguo Li wrote:
+> > > > When using split irqchip mode, IOAPIC is handled by QEMU while the LAPIC is
+> > > > emulated by KVM.  When guest disables LINT0, KVM doesn't exit to QEMU for
+> > > > synchronization, leaving IOAPIC unaware of this change.  This may cause vCPU
+> > > > to be kicked when external devices(e.g. PIT)keep sending interrupts.
+> > >
+> > > I don't entirely follow what the problem is.  Is the issue that QEMU injects an
+> > > IRQ that should have been blocked?  Or is QEMU forcing the vCPU to exit unnecessarily?
+> > >
+> >
+> > This issue is about QEMU keeps injecting should-be-blocked
+> > (blocked by guest and qemu just doesn't know that) IRQs.
+> > As a result, QEMU forces vCPU to exit unnecessarily.
+>
+> Is the problem that the guest receives spurious IRQs, or that QEMU is forcing
+> unnecesary exits, i.e hurting performance?
+>
 
-Prevent null pointer dereference in riscv_iommu_iova_to_phys(). Now, when
-it's called with an unmapped iova, the kernel will not crash here.
+It is QEMU is forcing unnecessary exits which will hurt performance by
+trying to require the Big QEMU Lock in qemu_wait_io_event.
+
+> > > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > > > index 8172c2042dd6..65ffa89bf8a6 100644
+> > > > --- a/arch/x86/kvm/lapic.c
+> > > > +++ b/arch/x86/kvm/lapic.c
+> > > > @@ -2329,6 +2329,10 @@ static int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
+> > > >                       val |= APIC_LVT_MASKED;
+> > > >               val &= apic_lvt_mask[index];
+> > > >               kvm_lapic_set_reg(apic, reg, val);
+> > > > +             if (irqchip_split(apic->vcpu->kvm) && (val & APIC_LVT_MASKED)) {
+> > >
+> > > This applies to much more than just LINT0, and for at least LVTPC and LVTCMCI,
+> > > KVM definitely doesn't want to exit on every change.
+> >
+> > Actually every masking on LAPIC should be synchronized with IOAPIC.
+>
+> No, because not all LVT entries can be wired up to the I/O APIC.
+>
+> > Because any desynchronization may cause unnecessary kicks
+> > which rarely happens due to the well-behaving guests.
+> > Exits here won't harm, but maybe only exit when LINT0 is being masked?
+>
+> Exits here absolutely will harm the VM by generating spurious slow path exits.
+>
+> > Since others unlikely cause exits.
+>
+> On Intel, LVTPC is masked on every PMI.
+>
+
+So I will make it only exit when LINT0/1 is being masked.
+
+> > > Even for LINT0, it's not obvious that "pushing" from KVM is a better option than
+> > > having QEMU "pull" as needed.
+> > >
+> >
+> > QEMU has no idea when LINT0 is masked by the guest. Then the problem becomes
+> > when it is needed to "pull". The guess on this could lead to extra costs.
+>
+> So this patch is motivated by performance?
+
+Yes.
 
