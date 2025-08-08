@@ -1,296 +1,334 @@
-Return-Path: <linux-kernel+bounces-760087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9CBB1E64D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:16:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A66B1E649
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC68A00C60
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:15:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D565C18996DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D10275AE7;
-	Fri,  8 Aug 2025 10:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492042749C0;
+	Fri,  8 Aug 2025 10:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UXDUKa3s"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PizlP/8d"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F382749D6;
-	Fri,  8 Aug 2025 10:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3260E27466D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754648046; cv=none; b=kCmVK3RO1vM/4Za+ZyQc2+VSpMzzHIPsOqw5oybHoDU9ndytzWSj7aVh5jgAe+F/kAQckxPN4GgMt+O9fwINswbyIuUSyo32/8tCnxYkntCxdBVaOmWp2wOiPQi1qA5/3Ac1HZqj34/hsB/esccKxmoTwzCC/L7Y+UAp9ZwQg44=
+	t=1754648038; cv=none; b=Jx/1EG2Ke4rcSkvpaTaQe5YrU8B8ScZ10E6yUoVhO2OguXkGl4B1Mld67/FsxI5SEaG1Wyneko8XIklr4ULaeSfkH32e3c6Xm7Fe0M7v2MINRvmDc/3H+0WaGkKPk9X01I3KIUIrEQfhkt5dh/mMvsigpQyQx1xnVT8XxKtx4Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754648046; c=relaxed/simple;
-	bh=8K/gkZXRg9vjrF2Hl8hRr7Ej6gPCU43tnZWXOw2zpMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JmbDcNs2VoiBzIh3xm1/XlXgGoDungncuGvriP9LDOl8eKH3dlsvzcFE+YI91grYtDJsu4ZJuFCQPnx/PIm9sVF8XtjCNmWlny07l7i8lzbwEsQn2Ue9EIt5YiXMVMjdlMYiIQkx9TfeaG3MaVyU+0iu2IZ3LJq6TEhavEP+JZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UXDUKa3s; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5789fd1g030191;
-	Fri, 8 Aug 2025 10:14:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MDlfp9Cm3Gh1iAl0MDPh+jXgJSTiUnK8VXqjC8KJpzE=; b=UXDUKa3s5osH+e7N
-	C2t5PG3rWvLcgEsE8knMB6UWAiLdEb0g7Wvd0kz0l9Zs6+Y+du6Z3x9edBjLYcfk
-	ilRaR81L5JhVsq899o23LKdrtoZum4ry+8F+emKhN246Wtusyz13OfKqzDR7L0T2
-	IbNhofXi/nKW4Yd9l80RqIGsfXo8FwaXGI7tdH7X2etifYop3i1guEuY5UGyp3aR
-	mqvWrRQ2mo7W8tadaaG5FjuUSSCt8rwJyZ0O2PoP/kVbThYZgbNtUOcgmdoKdOc0
-	AYs1ESj43oKvAdWgbSuFjCf43C4nCj0Z/25CwFAPcu0DKIH4beDEaF/lDJqB8Cvt
-	r8IiMg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw01vmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Aug 2025 10:14:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 578ADxhP009721
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 8 Aug 2025 10:13:59 GMT
-Received: from [10.50.49.153] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 8 Aug
- 2025 03:13:55 -0700
-Message-ID: <2b4a9952-001a-2401-fe14-354b24c07656@quicinc.com>
-Date: Fri, 8 Aug 2025 15:43:22 +0530
+	s=arc-20240116; t=1754648038; c=relaxed/simple;
+	bh=CT5uKBplR8Fx97PYW0K6EMnv04+79EodmPFrpoehyPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkUJ55U7Ss98ozhiXTPkjASXWS4ys+weIZOQPWgcqBYcZcACqARYxTcNyqZ7BK/NPBXGZJPXJSez71bLp0lllcyDcqvAWOWL8IUdL2qRJzQYw4936D6zY3zgdcFGqYD469q4deBzPdpORshOcXZXnvIW/eFmBOT+qkUIcLf45Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PizlP/8d; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b423b13e2c3so1485090a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 03:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1754648035; x=1755252835; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H6w7Q+X7KMIFjgnGmMmusOPLy4cippV/zV2BqSjFLeY=;
+        b=PizlP/8doJwrF9sUyKGo6U6nKFmw+DXsCLTziWwJbFRXPJ+0AdCR+VDqzOhs90FCQO
+         YtBXhKbtlz8jeBsNxeOWO9eqFiBfQyzixBNki1xHFAPrRyyUQ3Rm57mkhiWf5T4cqpm8
+         HLBqbLWe2wz+SNfB8JFvfvoE6hV4nAdKHSJqRBiJtcQKJIbffxhY82+GWEzSkBRwXfEL
+         /NkZpI2MdLKAuUTGCtmIjxhbT+nXF2Esg4vYHiHSy6bPX3IBG6Q4yLk1flPuZ5IHKd8s
+         iGrzUPz4/U3StTqttDfng9guLaReQsVZNG2AyFJqK2kGceMr2DgJdrMP3OqGQhK9xj+n
+         7GXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754648035; x=1755252835;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H6w7Q+X7KMIFjgnGmMmusOPLy4cippV/zV2BqSjFLeY=;
+        b=pIMhg44U7JfKYkm2EUYPoet46qaA+RA9SWClX/8SKEg6yKwbxyPbaf8QPR+/TIqzfh
+         lSIlLBYIq+mOaYGLSQZ0vEUxwr3Qh8zEcaY98gpHAeEOIE47t88wlj35PVb/GyHWI55d
+         p0t+0B7yRVfqxCxLcKeK7HyudD8eM/r4pEk8rPljoiio7Ow9/sOimCGv35IS6BWV/oyd
+         akT8za7DLzpHfTtOr2RmCLWsDCyTdC0w0LuSC5Tl4qMNFZbO1YTyXWy6Hien3XCDkowW
+         kA5KZYHVu+4ao8j0+P28J2OBVKftRiy/zcl9GwFAbUwgMlc4zxT0hUlqgt+8Q6zSdlNU
+         XjjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHfzT6o++vclfeczTDv8s0biwCFDlhN7dPdtevyvZAV0iKyhN/lYueiTB3EeIWNDRxO/ugwtCVuxrDjYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOmPxEFryVM6Vk11JK4XvP70Wv4uB3cZJhgLbLqqy3cha/KNxq
+	VqwLJF0gwfP8V9nIoCGU/JppQ7E0m5w9LTyEmdTwavk89B87l75yTKJwlYYSs93QLg==
+X-Gm-Gg: ASbGnctaJ+PHTs9ZIVNbyJ/CNm0ZVdqfFuJ0qil0PCJFaOpuCX+JrnMqmMs1b5ra5Vg
+	d60bt6DVVEtnvQOjKc1o7e1dTHmlMRwwRSSCHXRAuX/rdb16XK4xG3sj5LorqsC+uSbkn5PmfBo
+	abt/3+hvTLBBRS72SkgP0F6s/wyMcADzN3nlQsvL4jO94GywiXTGMMbwGeG94e2GR6sERnPPB5x
+	Qj+ow4KAvCZGKockfcJW1CJfcFldNMwWxPLCSA5xqDzXLKinT2aHbEsylPlerOYJwgXlUi7mw75
+	MRwoP80XO8EKoEB6u72TVeVbupdzjgRyysMPh9nl3O5zBjxh+xOWLd+pu3sK1bELtU6nIETfaTx
+	OM5z7a7B7KosiH98T73gboat3/OK55A5gbS194LL5TZk=
+X-Google-Smtp-Source: AGHT+IFFgAJQvR5CsIxZq+2mS9NxGTCjlxDbPkVk6NrHqfc3VKotYsB4QNLDmIv76aaCdHIOG4KDHg==
+X-Received: by 2002:a17:902:e74e:b0:240:8369:9b9d with SMTP id d9443c01a7336-242c1fdc961mr36999635ad.9.1754648035183;
+        Fri, 08 Aug 2025 03:13:55 -0700 (PDT)
+Received: from bytedance ([61.213.176.56])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bae2fe7sm17731021a12.44.2025.08.08.03.13.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 03:13:54 -0700 (PDT)
+Date: Fri, 8 Aug 2025 18:13:30 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>
+Subject: Re: [PATCH v3 3/5] sched/fair: Switch to task based throttle model
+Message-ID: <20250808101330.GA75@bytedance>
+References: <20250715071658.267-1-ziqianlu@bytedance.com>
+ <20250715071658.267-4-ziqianlu@bytedance.com>
+ <xhsmhv7myp46n.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v9 2/8] media: venus: Define minimum valid firmware
- version
-Content-Language: en-US
-To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
-        <quic_vgarodia@quicinc.com>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>, <konradybcio@kernel.org>,
-        <dmitry.baryshkov@oss.qualcomm.com>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250808085300.1403570-1-jorge.ramirez@oss.qualcomm.com>
- <20250808085300.1403570-3-jorge.ramirez@oss.qualcomm.com>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20250808085300.1403570-3-jorge.ramirez@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OCk37eQ8RVwPZI8R6pbmba7fcTrJv2EN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX9Uuw2qVzdy7p
- fhMBEks7WkHJIxEj4y78Qc94d2Ij3bH6hJsIazNVv1RIf1ns3gdXnP39y0sVs1PzXvZjxLNStkh
- p3NRHIQCqzsgl3iSjysLnPaOZn2St5e5QAmEeTabY6D9nbgWCDchLSHOicOOTTH+bfVOlBsY6Ii
- DcaQTygb/gYWOCPZd68D/Ivobfajpsw8fXKtnieLG84onvgde1QRPGoLcMKmKWgSmOkxdi8u6J3
- frorzfxxf6bSHl9nEeYbUZqzLjy0JupAi8MesAN+oatOwu7Kcm32nrk9liK8lLTUhLRmFqthuHE
- 9Q6hMj4IuwTM+slwxkjnKMd/mZ0rB4HscAPLBBXx2CHZ/jWrh2NkU+p2u9H0xhSRGjAapR3QWlj
- ZsNjLicC
-X-Proofpoint-ORIG-GUID: OCk37eQ8RVwPZI8R6pbmba7fcTrJv2EN
-X-Authority-Analysis: v=2.4 cv=NsLRc9dJ c=1 sm=1 tr=0 ts=6895cde8 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=WlVmAdqaFFRlyjDRuvgA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-08_03,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0
- adultscore=0 malwarescore=0 spamscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmhv7myp46n.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
+On Fri, Aug 08, 2025 at 11:12:48AM +0200, Valentin Schneider wrote:
+> On 15/07/25 15:16, Aaron Lu wrote:
+> > From: Valentin Schneider <vschneid@redhat.com>
+> >
+> > In current throttle model, when a cfs_rq is throttled, its entity will
+> > be dequeued from cpu's rq, making tasks attached to it not able to run,
+> > thus achiveing the throttle target.
+> >
+> > This has a drawback though: assume a task is a reader of percpu_rwsem
+> > and is waiting. When it gets woken, it can not run till its task group's
+> > next period comes, which can be a relatively long time. Waiting writer
+> > will have to wait longer due to this and it also makes further reader
+> > build up and eventually trigger task hung.
+> >
+> > To improve this situation, change the throttle model to task based, i.e.
+> > when a cfs_rq is throttled, record its throttled status but do not remove
+> > it from cpu's rq. Instead, for tasks that belong to this cfs_rq, when
+> > they get picked, add a task work to them so that when they return
+> > to user, they can be dequeued there. In this way, tasks throttled will
+> > not hold any kernel resources. And on unthrottle, enqueue back those
+> > tasks so they can continue to run.
+> >
+> 
+> Moving the actual throttle work to pick time is clever. In my previous
+> versions I tried really hard to stay out of the enqueue/dequeue/pick paths,
+> but this makes the code a lot more palatable. I'd like to see how this
+> impacts performance though.
+> 
 
+Let me run some scheduler benchmark to see how it impacts performance.
 
-On 8/8/2025 2:22 PM, Jorge Ramirez-Ortiz wrote:
-> Add support for specifying the minimum firmware version required for
-> correct operation.
-> 
-> When set, the driver compares this value against the version reported by
-> the firmware: if the firmware is older than required, driver
-> initialization will fail.
-> 
-> The version check is performed before creating dynamic device tree
-> nodes, to avoid the need for reverting nodes on failure.
-> 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> ---
->  drivers/media/platform/qcom/venus/core.c     | 40 +++++++++++---------
->  drivers/media/platform/qcom/venus/core.h     | 13 ++++---
->  drivers/media/platform/qcom/venus/firmware.c | 20 ++++++++++
->  drivers/media/platform/qcom/venus/firmware.h |  1 +
->  4 files changed, 51 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index 4c049c694d9c..f45715c9b222 100644
-> --- a/drivers/media/platform/qcom/venus/core.c
-> +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -448,19 +448,9 @@ static int venus_probe(struct platform_device *pdev)
->  	if (ret < 0)
->  		goto err_runtime_disable;
->  
-> -	if (core->res->dec_nodename || core->res->enc_nodename) {
-> -		ret = venus_add_dynamic_nodes(core);
-> -		if (ret)
-> -			goto err_runtime_disable;
-> -	}
-> -
-> -	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-> -	if (ret)
-> -		goto err_remove_dynamic_nodes;
-> -
->  	ret = venus_firmware_init(core);
->  	if (ret)
-> -		goto err_of_depopulate;
-> +		goto err_runtime_disable;
->  
->  	ret = venus_boot(core);
->  	if (ret)
-> @@ -474,34 +464,48 @@ static int venus_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_venus_shutdown;
->  
-> -	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_DEC);
-> +	ret = venus_firmware_check(core);
->  	if (ret)
->  		goto err_core_deinit;
->  
-> +	if (core->res->dec_nodename || core->res->enc_nodename) {
-> +		ret = venus_add_dynamic_nodes(core);
-> +		if (ret)
-> +			goto err_core_deinit;
-> +	}
-> +
-> +	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-> +	if (ret)
-> +		goto err_remove_dynamic_nodes;
-> +
-> +	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_DEC);
-> +	if (ret)
-> +		goto err_of_depopulate;
-> +
->  	ret = venus_enumerate_codecs(core, VIDC_SESSION_TYPE_ENC);
->  	if (ret)
-> -		goto err_core_deinit;
-> +		goto err_of_depopulate;
->  
->  	ret = pm_runtime_put_sync(dev);
->  	if (ret) {
->  		pm_runtime_get_noresume(dev);
-> -		goto err_core_deinit;
-> +		goto err_of_depopulate;
->  	}
->  
->  	venus_dbgfs_init(core);
->  
->  	return 0;
->  
-> +err_of_depopulate:
-> +	of_platform_depopulate(dev);
-> +err_remove_dynamic_nodes:
-> +	venus_remove_dynamic_nodes(core);
->  err_core_deinit:
->  	hfi_core_deinit(core, false);
->  err_venus_shutdown:
->  	venus_shutdown(core);
->  err_firmware_deinit:
->  	venus_firmware_deinit(core);
-> -err_of_depopulate:
-> -	of_platform_depopulate(dev);
-> -err_remove_dynamic_nodes:
-> -	venus_remove_dynamic_nodes(core);
->  err_runtime_disable:
->  	pm_runtime_put_noidle(dev);
->  	pm_runtime_disable(dev);
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index 5b1ba1c69adb..d1f0e9979ba4 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -58,6 +58,12 @@ enum vpu_version {
->  	VPU_VERSION_IRIS2_1,
->  };
->  
-> +struct firmware_version {
-> +	u32 major;
-> +	u32 minor;
-> +	u32 rev;
-> +};
-> +
->  struct venus_resources {
->  	u64 dma_mask;
->  	const struct freq_tbl *freq_tbl;
-> @@ -94,6 +100,7 @@ struct venus_resources {
->  	const char *fwname;
->  	const char *enc_nodename;
->  	const char *dec_nodename;
-> +	const struct firmware_version *min_fw;
->  };
->  
->  enum venus_fmt {
-> @@ -231,11 +238,7 @@ struct venus_core {
->  	unsigned int core0_usage_count;
->  	unsigned int core1_usage_count;
->  	struct dentry *root;
-> -	struct venus_img_version {
-> -		u32 major;
-> -		u32 minor;
-> -		u32 rev;
-> -	} venus_ver;
-> +	struct firmware_version venus_ver;
->  	unsigned long dump_core;
->  	struct of_changeset *ocs;
->  	bool hwmode_dev;
-> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> index 66a18830e66d..3666675ae298 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.c
-> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -280,6 +280,26 @@ int venus_shutdown(struct venus_core *core)
->  	return ret;
->  }
->  
-> +int venus_firmware_check(struct venus_core *core)
-> +{
-> +	const struct firmware_version *req = core->res->min_fw;
-> +	const struct firmware_version *run = &core->venus_ver;
-> +
-> +	if (!req)
-> +		return 0;
-> +
-> +	if (!is_fw_rev_or_newer(core, req->major, req->minor, req->rev))
-> +		goto error;
-> +
-> +	return 0;
-> +error:
-> +	dev_err(core->dev, "Firmware v%d.%d.%d < v%d.%d.%d\n",
-> +		run->major, run->minor, run->rev,
-> +		req->major, req->minor, req->rev);
-> +
-> +	return -EINVAL;
-> +}
-> +
->  int venus_firmware_init(struct venus_core *core)
->  {
->  	struct platform_device_info info;
-> diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
-> index aaccd847fa30..ead39e3797f0 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.h
-> +++ b/drivers/media/platform/qcom/venus/firmware.h
-> @@ -9,6 +9,7 @@ struct device;
->  
->  int venus_firmware_init(struct venus_core *core);
->  void venus_firmware_deinit(struct venus_core *core);
-> +int venus_firmware_check(struct venus_core *core);
->  int venus_boot(struct venus_core *core);
->  int venus_shutdown(struct venus_core *core);
->  int venus_set_hw_state(struct venus_core *core, bool suspend);
+I'm thinking maybe running something like hackbench on server platforms,
+first with quota not set and see if performance changes; then also test
+with quota set and see how performance changes.
 
-Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Does this sound good to you? Or do you have any specific benchmark and
+test methodology in mind?
+
+> > Throttled cfs_rq's PELT clock is handled differently now: previously the
+> > cfs_rq's PELT clock is stopped once it entered throttled state but since
+> > now tasks(in kernel mode) can continue to run, change the behaviour to
+> > stop PELT clock only when the throttled cfs_rq has no tasks left.
+> >
+> 
+> I haven't spent much time looking at the PELT stuff yet; I'll do that next
+> week. Thanks for all the work you've been putting into this, and sorry it
+> got me this long to get a proper look at it!
+> 
+
+Never mind and thanks for taking a look now :)
+
+> > Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> > Suggested-by: Chengming Zhou <chengming.zhou@linux.dev> # tag on pick
+> > Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> > Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+> 
+> > +static bool enqueue_throttled_task(struct task_struct *p)
+> > +{
+> > +	struct cfs_rq *cfs_rq = cfs_rq_of(&p->se);
+> > +
+> > +	/*
+> > +	 * If the throttled task is enqueued to a throttled cfs_rq,
+> > +	 * take the fast path by directly put the task on target
+> > +	 * cfs_rq's limbo list, except when p is current because
+> > +	 * the following race can cause p's group_node left in rq's
+> > +	 * cfs_tasks list when it's throttled:
+> > +	 *
+> > +	 *        cpuX                       cpuY
+> > +	 *   taskA ret2user
+> > +	 *  throttle_cfs_rq_work()    sched_move_task(taskA)
+> > +	 *  task_rq_lock acquired
+> > +	 *  dequeue_task_fair(taskA)
+> > +	 *  task_rq_lock released
+> > +	 *                            task_rq_lock acquired
+> > +	 *                            task_current_donor(taskA) == true
+> > +	 *                            task_on_rq_queued(taskA) == true
+> > +	 *                            dequeue_task(taskA)
+> > +	 *                            put_prev_task(taskA)
+> > +	 *                            sched_change_group()
+> > +	 *                            enqueue_task(taskA) -> taskA's new cfs_rq
+> > +	 *                                                   is throttled, go
+> > +	 *                                                   fast path and skip
+> > +	 *                                                   actual enqueue
+> > +	 *                            set_next_task(taskA)
+> > +	 *                          __set_next_task_fair(taskA)
+> > +	 *                    list_move(&se->group_node, &rq->cfs_tasks); // bug
+> > +	 *  schedule()
+> > +	 *
+> > +	 * And in the above race case, the task's current cfs_rq is in the same
+> > +	 * rq as its previous cfs_rq because sched_move_task() doesn't migrate
+> > +	 * task so we can use its current cfs_rq to derive rq and test if the
+> > +	 * task is current.
+> > +	 */
+> 
+> OK I think I got this; I slightly rephrased things to match similar
+> comments in the sched code:
+> 
+> --->8---
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 3a7c86c5b8a2b..8566ee0399527 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5827,37 +5827,38 @@ static bool enqueue_throttled_task(struct task_struct *p)
+>  	struct cfs_rq *cfs_rq = cfs_rq_of(&p->se);
+>  
+>  	/*
+> -	 * If the throttled task is enqueued to a throttled cfs_rq,
+> -	 * take the fast path by directly put the task on target
+> -	 * cfs_rq's limbo list, except when p is current because
+> -	 * the following race can cause p's group_node left in rq's
+> -	 * cfs_tasks list when it's throttled:
+> +	 * If the throttled task @p is enqueued to a throttled cfs_rq,
+> +	 * take the fast path by directly putting the task on the
+> +	 * target cfs_rq's limbo list.
+> +
+> +	 * Do not do that when @p is current because the following race can
+> +	 * cause @p's group_node to be incorectly re-insterted in its in rq's
+> +	 * cfs_tasks list, despite being throttled:
+>  	 *
+>  	 *        cpuX                       cpuY
+> -	 *   taskA ret2user
+> -	 *  throttle_cfs_rq_work()    sched_move_task(taskA)
+> -	 *  task_rq_lock acquired
+> -	 *  dequeue_task_fair(taskA)
+> -	 *  task_rq_lock released
+> -	 *                            task_rq_lock acquired
+> -	 *                            task_current_donor(taskA) == true
+> -	 *                            task_on_rq_queued(taskA) == true
+> -	 *                            dequeue_task(taskA)
+> -	 *                            put_prev_task(taskA)
+> -	 *                            sched_change_group()
+> -	 *                            enqueue_task(taskA) -> taskA's new cfs_rq
+> -	 *                                                   is throttled, go
+> -	 *                                                   fast path and skip
+> -	 *                                                   actual enqueue
+> -	 *                            set_next_task(taskA)
+> -	 *                          __set_next_task_fair(taskA)
+> -	 *                    list_move(&se->group_node, &rq->cfs_tasks); // bug
+> +	 *  p ret2user
+> +	 *    throttle_cfs_rq_work()  sched_move_task(p)
+> +	 *    LOCK task_rq_lock
+> +	 *    dequeue_task_fair(p)
+> +	 *    UNLOCK task_rq_lock
+> +	 *                              LOCK task_rq_lock
+> +	 *                              task_current_donor(p) == true
+> +	 *                              task_on_rq_queued(p) == true
+> +	 *                              dequeue_task(p)
+> +	 *                              put_prev_task(p)
+> +	 *                              sched_change_group()
+> +	 *                              enqueue_task(p) -> p's new cfs_rq
+> +	 *                                                 is throttled, go
+> +	 *                                                 fast path and skip
+> +	 *                                                 actual enqueue
+> +	 *                              set_next_task(p)
+> +	 *                                list_move(&se->group_node, &rq->cfs_tasks); // bug
+>  	 *  schedule()
+>  	 *
+> -	 * And in the above race case, the task's current cfs_rq is in the same
+> -	 * rq as its previous cfs_rq because sched_move_task() doesn't migrate
+> -	 * task so we can use its current cfs_rq to derive rq and test if the
+> -	 * task is current.
+> +	 * In the above race case, @p current cfs_rq is in the same
+> +	 * rq as its previous cfs_rq because sched_move_task() only moves a task
+> +	 * to a different group from the same rq, so we can use its current
+> +	 * cfs_rq to derive rq and test if the * task is current.
+>  	 */
+>  	if (throttled_hierarchy(cfs_rq) &&
+>  	    !task_current_donor(rq_of(cfs_rq), p)) {
+> ---8<---
+>
+
+Will follow your suggestion in next version.
+
+> > +	if (throttled_hierarchy(cfs_rq) &&
+> > +	    !task_current_donor(rq_of(cfs_rq), p)) {
+> > +		list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+> > +		return true;
+> > +	}
+> > +
+> > +	/* we can't take the fast path, do an actual enqueue*/
+> > +	p->throttled = false;
+> 
+> So we clear p->throttled but not p->throttle_node? Won't that cause issues
+> when @p's previous cfs_rq gets unthrottled?
+> 
+
+p->throttle_node is already removed from its previous cfs_rq at dequeue
+time in dequeue_throttled_task().
+
+This is done so because in enqueue time, we may not hold its previous
+rq's lock so can't touch its previous cfs_rq's limbo list, like when
+dealing with affinity changes.
+
+> > +	return false;
+> > +}
+> > +
+> 
+> > @@ -7145,6 +7142,11 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+> >   */
+> >  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> >  {
+> > +	if (unlikely(task_is_throttled(p))) {
+> > +		dequeue_throttled_task(p, flags);
+> > +		return true;
+> > +	}
+> > +
+> 
+> Handling a throttled task's move pattern at dequeue does simplify things,
+> however that's quite a hot path. I think this wants at the very least a
+> 
+>   if (cfs_bandwidth_used())
+> 
+> since that has a static key underneath. Some heavy EQ/DQ benchmark wouldn't
+> hurt, but we can probably find some people who really care about that to
+> run it for us ;)
+> 
+
+No problem.
+
+I'm thinking maybe I can add this cfs_bandwidth_used() in
+task_is_throttled()? So that other callsites of task_is_throttled() can
+also get the benefit of paying less cost when cfs bandwidth is not
+enabled.
+
+> >  	if (!p->se.sched_delayed)
+> >  		util_est_dequeue(&rq->cfs, p);
+> >  
+> 
 
