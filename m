@@ -1,172 +1,142 @@
-Return-Path: <linux-kernel+bounces-760340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813C2B1E9CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:02:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7017FB1E9DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906FA1755E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:02:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7791C25256
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF1527E05F;
-	Fri,  8 Aug 2025 14:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B051624C5;
+	Fri,  8 Aug 2025 14:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="YSHo12rd"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DKviQFxg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637BB20322
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CECA38DEC
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754661712; cv=none; b=Y0YzqUDBhwU4pt2DHmJwNldzKg3TPBoht08LVafkYsE5v8mxrN40GTay/5uo/V0/GgocXWQ4h1nVI/HtUpjh9qdTwm4TwOafrFSir4pz0biLvMY4zTmJUikqkCDoWzmDI5j6ef+9G0PkimDa/XYc7kE9f9eTS4QZdxPVR3IJj9g=
+	t=1754661834; cv=none; b=REBEFnUst93Pc2hQBRjUo0LdcCdgkSiM7/BbD/ojdKEMLki9pyGcRHBUOlJMAhXZUPLC0cO0pXKrOZsG/jQn1ncaWeeoVatiE3BldL90XyosQ/BnlSZo5IpWlRnESi70ngFGRpi18Mah7tuKBdKWfqcmqcbpFfzknWbr+dLCP0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754661712; c=relaxed/simple;
-	bh=XudJJd4XOmhk26ypsQpMMb/lzwssZiORriOrX5Ocrbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iSiaoAEDmB70BPvxW8++RGziYUILRzPDEy5i4s0FIi/PGWUEyHQp/ve3SH3ua6emuSKbUyZnbbiGvLDiywAIyip8aDlfKr5UYac6dTZba+B63zMcpFZAt8tcQBPyMFPyDaBLWLffEcCelvdGGaJD528T4ymwaAp3lDVdTDi7rkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=YSHo12rd; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4b08a0b63c6so24871181cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 07:01:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1754661710; x=1755266510; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cgf3Gf6pf2QyMmdIpvCgXWMeWxUvQmvcME2UoQnjQWw=;
-        b=YSHo12rd43CZjqW43H4h42hhoZE0Xud+09tw6SvsSBoRb7hB8kynw5XuZmZEujxnso
-         4dp4ibV/DHw38LS1oiLTtZR1H1mXcFQeUXB3STrQ9ls6TgB2p1kUPDsp2gVAjBcVo6MC
-         ZY87Of0lUkgGaPCrGJRGNoDYDOvI8HJFkxolFIFdLpa0xqRXE31w2Rmmhj4heEjKwW24
-         HGqi4f5bZXfFRGI/zJDr9kfPj86cZjfwHeXIEGou1GlTH15pBV/gMKkkAeeW2c11Sd8t
-         Mck0ThFgWNTGZARQ3hlnbclT4AWvBW4nOJmnj5U+BAJEqOU9BRQ6pG4xnbHmdpHfTTpi
-         mXnA==
+	s=arc-20240116; t=1754661834; c=relaxed/simple;
+	bh=KNSFSQ6elscxyJktPMiz3bx6RWsh26XGE1bHk9J/sMk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=BxpIWgMcomk1Qfgv+dgzFDywC/QI+V9JAf4pSpHn9YVMkY/uAinA8UyaY/3RNPt90ffrJdYZkbkN3S0Z5C93y0X3lPSd3KqE4UEOW/8zPlRgYqVTcP4+W5iVfcZY4cEqzjMkjVJ6N8elzktEkveD0X9Xz1zZaVBccWSRdpid0iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DKviQFxg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5786lMs2007839
+	for <linux-kernel@vger.kernel.org>; Fri, 8 Aug 2025 14:03:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=DYlHBOVdDgh8
+	f6X0diGns/kpdvEmUjNJzPbxdtZIxq8=; b=DKviQFxgcNbCFRu7UrIYxRN6rqLv
+	xxwgRnJ8I9LDf13Igcj6+VdmT+8/lKTNIQlVhfWSMawT2ypn8UGhCaHKy8emHAXF
+	raleNzgVAZ3GhwucBTNmC2l00pmtWIrhDafhdAbRHX+aJiY2QTfANWQDLSzwHcmv
+	osW+7toivqOUvuJFMIcIjnU9RtYzpqEPX4eR3EDCmlZUXbPnF8eglulnQvQiVqSs
+	3FP3kvHbDpB/LZ4QhbUpAPmVHCXxhHJOpn3Z2b//SUvQf6aXMI1yZy/842f6PJXz
+	ekRBLC/y2EOj9q3EUdz+nsPCha5ANKekfzcZI+DlYPpQZ2YxwZJkwv+mWA==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpy727dj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 14:03:51 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76bc511e226so2385433b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 07:03:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754661710; x=1755266510;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1754661830; x=1755266630;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Cgf3Gf6pf2QyMmdIpvCgXWMeWxUvQmvcME2UoQnjQWw=;
-        b=kQ3yjASz19EFAHX5zAF8FDQujg9C7519eo/vHsxiNWFy9Bzjl1zyNWXCeWZcK4esuM
-         icDIWzVtTJqIWwCD1BNk0j2+Vx4eV1rI5Y9NsRKlb7quZbH+yKmIlJolhKF6s3YGl7Ja
-         Qfuc62/JD7dtchQNSs8tcnIN04BkHmRtHVfyrXU42Vdpod9dk2GzX0hZJBGmjs75wBN8
-         4Y0P5kuKVYwbXTAiZwnrEN2dnFOu0AlGCSeX44V7WcAnG0dG9ubdp5z/ewMwOarz+tIC
-         ta86wFVabnmqqve9ooZd0CiiOJNT/1uDpuyWmpDBTPGFunvdfA0TcvgUdqT5+aOvy/yB
-         NXQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMXkkMUuFxwwIdY++sn4NcHX/MEty6vWRjwyPBoFWe4AbLJVkAg+idN6fifJhqfBmXchYTH+b3devDatk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhiivltxzhYIXmsEl0w+YJCbJ/LgxY3M3CoQg7lbgW6kjKLGlJ
-	3KujKUL+fOVriCKYbhUtP6n/8kR1RX//bK/Efk4mMlkN+B635DvJD6d/e+LjyicJE2Zs3mGwD1l
-	nopEZ6vyxwBPDftaHn7IS0stYXQKJt9WCMJ7q8ACsVw==
-X-Gm-Gg: ASbGncsrH+g2/asL2nz1iy5godFGZ1WbwZaFxMPAbJEmT0K+J8vI2dsxH+++9lxM0mq
-	dAezBOdpR9kSid19nIQWvx7DXseyxf011nHv6zwyT7fmhIk+awyTwBmnlCasHmB5E1FNWv1dkVo
-	q8peSz6yq+jufay8iWncqOVFboD0zTbl5sL25kzbBWnd9tmth7AUq2pdYkPezBKEwCMKlU77Jxd
-	laE
-X-Google-Smtp-Source: AGHT+IEH1BqMSX1yIRX4eK9XjBPS6pkTO1kxH3JapIOH8TKb2ESrqoA/iZRqQ2exr79E4dgeMXF8CiLL82TWwqJhOYQ=
-X-Received: by 2002:a05:622a:258e:b0:4ae:cc75:4703 with SMTP id
- d75a77b69052e-4b0aee5afb9mr42782921cf.58.1754661709835; Fri, 08 Aug 2025
- 07:01:49 -0700 (PDT)
+        bh=DYlHBOVdDgh8f6X0diGns/kpdvEmUjNJzPbxdtZIxq8=;
+        b=Wy4nP+qQeQpkimGbTgGbNA7VEzh71pRMKWMBKvvvFW8kq3O2kO9sJ4dxFOApaBCOs3
+         24O/OTLyKlZKOdYU0Bj5BR7BPQ4N5Lj/hSKkD8MuQRBH+3x6eetaaGeulPw/MkGGq8Gm
+         Go3dXTNnGTSGAoPomfHQ/zQ6KzHjHBA7EVewxBGxJts2JE5bF/qCz2hmzthNtIu8kURF
+         8KnSxvrMReBPB3Af5o/8sj9L0gjgs9mGphMB6FXOim1VGObZYFiDPWP7iUGu/8OTLYZk
+         8Nkxbb/LaLWzcspCY9bHGqQLn3oyzCkM5dgkimNWQKCnEu6UOrfRJJpUZM69JzT2UXaz
+         94iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjxEDzgQ8O7kJEb05looIM7RWLzkLmUP2LmVKYeXVQDBQ4zoYcnwdvozUgS0c8jGLRLIo/bpFDB92mgwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQd47+1GkwurFTnixXn/fnRhGHwfpE0Hw2vXjhGgQdEVQpl1zV
+	Q3Bj8C27Y6xhsfscmp2Oku/yk5WIojhnvAE6lKx4BDwsNTk9EiLCZG0FkiwnivGt9OV3KcBl67Q
+	t30ljcBUWPZOmWxuXdfFZSdfKx5SzSPQ4n51QfAKJkXekNGITgsmswOr6vv3aSMZAE78=
+X-Gm-Gg: ASbGncsuoI8xE7ZGUPl1ngMxUzPdsDYptoVVroJ/lmNUdDKSlUVqVnli+o+IC6bt35Z
+	lPVjb7RgU84Qg4/Kr12tWYxliwewOHOY3zkGpW3MQVUPal6W1ca0pQ8PL5HseUismU2hc6mshz5
+	4Kj/eE7qREGTFTeE1bHjv3T6f+KgssONfvMM2bOB9BdMSkI12t4aX5blVyf0u/MmDgOJAChgkRA
+	KniJaQIWTSJHmAmlHSff2zEL4HwzH+tEdb48HEcDkCdsY+kPiAoC8XhPl54l+3his8ue4dFki99
+	VoFf0P6i+Sf/FWkONty6PgKDE1WgyRwhxwLhnhKOcf3VIT4s6JGpWWoiH7CCX4rD6u/YX4IgHg=
+	=
+X-Received: by 2002:a05:6a00:14c8:b0:76b:ed75:81a with SMTP id d2e1a72fcca58-76c460db4a0mr4025986b3a.5.1754661829747;
+        Fri, 08 Aug 2025 07:03:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhEiM/0PtRwCDBt4ZjihWPSb0Kaib7rt7yZ/T3fusuqcHUJsYFV6dtXZ0fUfu8FH+LqK+L1Q==
+X-Received: by 2002:a05:6a00:14c8:b0:76b:ed75:81a with SMTP id d2e1a72fcca58-76c460db4a0mr4025894b3a.5.1754661829052;
+        Fri, 08 Aug 2025 07:03:49 -0700 (PDT)
+Received: from hu-okukatla-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c2078afd8sm8595621b3a.117.2025.08.08.07.03.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 07:03:48 -0700 (PDT)
+From: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+        Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Tipton <mike.tipton@oss.qualcomm.com>
+Subject: [PATCH 0/3] Enable QoS configuration on SA8775P
+Date: Fri,  8 Aug 2025 19:32:57 +0530
+Message-Id: <20250808140300.14784-1-odelu.kukatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.17.1
+X-Proofpoint-ORIG-GUID: zslNVJWQlZiNbJtxvQrN9O8Gg0bM1TXG
+X-Proofpoint-GUID: zslNVJWQlZiNbJtxvQrN9O8Gg0bM1TXG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfXwtrH8bj0Yd2y
+ FczgUmYVfvDca7FJwEmz1oZXJYf62iqDGmF37vo6CWLPnUSI2ypPtpApv1XMJF3HE+KgheyF6v7
+ QBMBv5NQykDwPEvu7DxuOGWZL5jRTayQPHgsSGXPFvUGx59GxIQ1v95FXcLFfCX7x6NIk4IdySv
+ Co6jlNa2clZbo9rGZH/2QllAFaMtqfsng/MekCcbMkCg32QpxU4SxhuLE/MEgdFEPQ73VBPauGX
+ b34anTyEWj54+3TSU7yIr8iPOFf8dGNSvC8CfTlCDD3gRf7pGdtK1lbtGJQi3kFHdGcLEhfwEFd
+ swh3/mO34X0S9eXh9399uOs8XIO7N610vL2scrpY3d/LdCojtjIOIxRl8fh0eekhoByuG+HJVpM
+ DG5D0btY
+X-Authority-Analysis: v=2.4 cv=LNVmQIW9 c=1 sm=1 tr=0 ts=689603c7 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=2OwXVqhp2XgA:10 a=pgtP2bmdoZ-auWmCWbcA:9 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_04,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 clxscore=1011 malwarescore=0 adultscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060009
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-3-pasha.tatashin@soleen.com> <mafs0jz3eavci.fsf@kernel.org>
-In-Reply-To: <mafs0jz3eavci.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 8 Aug 2025 14:01:13 +0000
-X-Gm-Features: Ac12FXzfZzUeYL8qqgO-oYE8dxdNMTs6gp9itdpmGem1pHDL8sFl_NAXG2JwrAk
-Message-ID: <CA+CK2bCqos=z0q+YsmFK_kFQ8PLyLQw32TkJB5SK2y4Y1kVErg@mail.gmail.com>
-Subject: Re: [PATCH v3 02/30] kho: mm: Don't allow deferred struct page with KHO
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
-	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 8, 2025 at 11:47=E2=80=AFAM Pratyush Yadav <pratyush@kernel.org=
-> wrote:
->
-> On Thu, Aug 07 2025, Pasha Tatashin wrote:
->
-> > KHO uses struct pages for the preserved memory early in boot, however,
-> > with deferred struct page initialization, only a small portion of
-> > memory has properly initialized struct pages.
-> >
-> > This problem was detected where vmemmap is poisoned, and illegal flag
-> > combinations are detected.
-> >
-> > Don't allow them to be enabled together, and later we will have to
-> > teach KHO to work properly with deferred struct page init kernel
-> > feature.
-> >
-> > Fixes: 990a950fe8fd ("kexec: add config option for KHO")
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->
-> Nit: Drop the blank line before fixes. git interpret-trailers doesn't
+This series enables QoS configuration for QNOC type device which
+can be found on SA8775P platform. It enables QoS configuration
+for master ports with predefined priority and urgency forwarding.
+This helps in prioritizing the traffic originating from different
+interconnect masters at NOC (Network On Chip).
 
-Makes sense.
+Odelu Kukatla (3):
+  dt-bindings: interconnect: add clocks property to enable QoS on
+    sa8775p
+  interconnect: qcom: sa8775p: enable QoS configuration
+  arm64: dts: qcom: sa8775p: Add clocks for QoS configuration
 
-> seem to recognize the fixes otherwise, so this may break some tooling.
-> Try it yourself:
->
->     $ git interpret-trailers --parse commit_message.txt
->
-> Other than this,
->
-> Acked-by: Pratyush Yadav <pratyush@kernel.org>
+ .../interconnect/qcom,sa8775p-rpmh.yaml       |  78 +++-
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 163 ++++---
+ drivers/interconnect/qcom/sa8775p.c           | 439 ++++++++++++++++++
+ 3 files changed, 607 insertions(+), 73 deletions(-)
 
-Thank you for the review.
+-- 
+2.17.1
 
-Pasha
-
->
-> > Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > ---
-> >  kernel/Kconfig.kexec | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> > index 2ee603a98813..1224dd937df0 100644
-> > --- a/kernel/Kconfig.kexec
-> > +++ b/kernel/Kconfig.kexec
-> > @@ -97,6 +97,7 @@ config KEXEC_JUMP
-> >  config KEXEC_HANDOVER
-> >       bool "kexec handover"
-> >       depends on ARCH_SUPPORTS_KEXEC_HANDOVER && ARCH_SUPPORTS_KEXEC_FI=
-LE
-> > +     depends on !DEFERRED_STRUCT_PAGE_INIT
-> >       select MEMBLOCK_KHO_SCRATCH
-> >       select KEXEC_FILE
-> >       select DEBUG_FS
->
-> --
-> Regards,
-> Pratyush Yadav
 
