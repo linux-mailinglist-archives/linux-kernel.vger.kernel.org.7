@@ -1,219 +1,175 @@
-Return-Path: <linux-kernel+bounces-760272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D6DB1E8C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:57:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25573B1E8B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A87A51C22307
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:58:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C59558458D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E961B27BF6F;
-	Fri,  8 Aug 2025 12:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C2C27AC21;
+	Fri,  8 Aug 2025 12:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WDDv0CS8"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZIcQ8Xjl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BCA27A935;
-	Fri,  8 Aug 2025 12:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3FC27A12C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754657848; cv=none; b=VXVzz6YWDWXJK0c450aXdbtWzQ8LX/zWwBBN0x1zpFK4AjSfCeP0AShAoxHpaDDaGwZkydgD8pB/2nBYJprcjwb8o6y6KzsjFKDao6aq0twL/+ck1GIhau+pGpLFXjKQxXwdgynJGkPteDLBTOalG5N3+vaL1fjuC2bgMdfc68k=
+	t=1754657710; cv=none; b=UcryfY2xFTG32ruC3gEo4MajH/H0lzZ3OvqDlM4aSPEfNqfsTGLHpNgAIpNULAQvHB23hFgUEd6rVZpNs9bJmNFAoWpKjmMlG8t9ixgKfil1n9sYOEAoS3s31HeC6J7LuwBoaHquDKQFJMgT1JZOErEvRuOQauVtR2MjvSB3Bew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754657848; c=relaxed/simple;
-	bh=OiFjKQm4yuSmHnGdvmcdt687Ak3ltatBg8OdatrGnO4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PWUknm1lVy4D2S+wLl8Fo5iDhnlJDnlijfTrqxl4CowpIKtozlGYL2YSxfGv2hxp0xr//+cPgpUYAViQJyZEq296Be39YVo6bOVxRshK/OXvcCa+kcmLW3jjsxnrdMgEia/YGcqsdRMCWe9pLWuRV5v+wNlW+X0sPhQHrkZhdvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=WDDv0CS8; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 37320d80745711f0b33aeb1e7f16c2b6-20250808
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=F7/5iPlMS2Eikv0pSJnmqFU+Hn3Pmxuqd3z8Jpy57g0=;
-	b=WDDv0CS8dx/LXnWRh3lSzkR3sK7Jex9b9biqzx7cBDVmtJHnaa+2X4ZxGQAGbJ4oQZB5eKm5xua+ueEquLINf/8Cm9H8jT6xLFyEH+u/iCU/SpUl6H03lF2GiwqZeQLAyLu0yS+xUb2ZNAMC8h736JMaXGLVTrEUCbjOLy06GT8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:2aa67724-7a77-4554-bb78-17b3f65fd855,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:acb1be9d-7ad4-4169-ab95-78e9164f00fe,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 37320d80745711f0b33aeb1e7f16c2b6-20250808
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
-	(envelope-from <jay.liu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1419771957; Fri, 08 Aug 2025 20:57:18 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 8 Aug 2025 20:57:15 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 8 Aug 2025 20:57:14 +0800
-From: Jay Liu <jay.liu@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Jay Liu <jay.liu@mediatek.com>, CK Hu
-	<ck.hu@mediatek.com>
-Subject: [PATCH v3 6/6] drm/mediatek: Add TDSHP component support for MT8196
-Date: Fri, 8 Aug 2025 20:54:01 +0800
-Message-ID: <20250808125512.9788-7-jay.liu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250808125512.9788-1-jay.liu@mediatek.com>
-References: <20250808125512.9788-1-jay.liu@mediatek.com>
+	s=arc-20240116; t=1754657710; c=relaxed/simple;
+	bh=ACUK4qgqm3ftNNEGB9p2GKz/5T/Q8TaeMNYmr6hRbJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFmBDgPftx6awS2D3XYrkBsrLWqeAZpoktxEZGsAQQvLXM5oBNjCZ3mhJ/4v7DbZLCe9EaLlJwVufe5829y1nBXHLft6l4PC2SqP82YXIkWHLB6Ja2z0iWOa+3zbUivt45Dr7eFc4pR3x7DoxAooO/lHEq25C1fs+/wFWmvGY0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZIcQ8Xjl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754657707;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=735MKqTpVsLiwF08r9eYm/WhPdFnfobFmT9GhcsZRXQ=;
+	b=ZIcQ8XjlH+lc9gWTtRvhOXZ34xKfmRzE9NFRXErYoP7hifsqi+D5/SDRmTrnce17Xtmp+f
+	u+Ls84ZB0wLX5Mb1htEAAzQ1fHnaEFzIWntxhXR6L83ScTOJyzLDD19sfPkHxrv11U52GV
+	fJSIKW/+xDNbG8lTrS0cpE0AWBexLuo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-JSQNINiVOQuzqBr7vxM5Mg-1; Fri,
+ 08 Aug 2025 08:55:02 -0400
+X-MC-Unique: JSQNINiVOQuzqBr7vxM5Mg-1
+X-Mimecast-MFC-AGG-ID: JSQNINiVOQuzqBr7vxM5Mg_1754657700
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5804B180036E;
+	Fri,  8 Aug 2025 12:55:00 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.126])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3F3B180047F;
+	Fri,  8 Aug 2025 12:54:57 +0000 (UTC)
+Date: Fri, 8 Aug 2025 20:54:53 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: linux-mm@kvack.org, glider@google.com, andreyknvl@gmail.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 0/4] mm/kasan: make kasan=on|off work for all three modes
+Message-ID: <aJXznYlO7dpY+p7D@MiWiFi-R3L-srv>
+References: <20250805062333.121553-1-bhe@redhat.com>
+ <69b4f07d-b83d-4ead-b3f1-1e42b2dca9c2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <69b4f07d-b83d-4ead-b3f1-1e42b2dca9c2@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Add TDSHP component support for MT8196.
-TDSHP is a hardware module designed to enhance the sharpness and
-clarity of displayed images by analyzing and improving edges and
-fine details in frames.
+On 08/07/25 at 06:34pm, Andrey Ryabinin wrote:
+> 
+> 
+> On 8/5/25 8:23 AM, Baoquan He wrote:
+> > Currently only hw_tags mode of kasan can be enabled or disabled with
+> > kernel parameter kasan=on|off for built kernel. For kasan generic and
+> > sw_tags mode, there's no way to disable them once kernel is built. 
+> > This is not convenient sometime, e.g in system kdump is configured.
+> > When the 1st kernel has KASAN enabled and crash triggered to switch to
+> > kdump kernel, the generic or sw_tags mode will cost much extra memory
+> > for kasan shadow while in fact it's meaningless to have kasan in kdump
+> > kernel.
+> > 
+> 
+> Ideally this problem should be solved by having kdump kernel with different
+> config. Because if we want only reliably collect crash dumps, than we probably
+> don't want other debug features, e.g. like VM_BUG_ON() crashing our kdump kernel.
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Jay Liu <jay.liu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_ddp_comp.c | 49 +++++++++++++++++++++++++
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h |  1 +
- drivers/gpu/drm/mediatek/mtk_drm_drv.c  |  2 +
- 3 files changed, 52 insertions(+)
+Yeah, we have done that in Redhat's internal CI testing. While we still
+want to switch back to let kdump take the same kernel as the 1st kernel.
+Like this, we have chance to test debug kernel for vmcore dumping. In
+this case, KASAN is the main barrier. For other debug features,
+VM_BUG_ON() should be captured in 1st kernel's running, we won't wait to
+run kdump kernel to catch it. I am planning to check and adding feature
+switch for kdump to disable if it's not needed in kdump kernel. E.g I
+have done in ima=on|off, and the existing 'kfence.sample_interval=0' for
+kfence.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-index 850e3b18da61..c63a12c41215 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-@@ -57,6 +57,14 @@
- #define POSTMASK_RELAY_MODE				BIT(0)
- #define DISP_REG_POSTMASK_SIZE			0x0030
- 
-+#define DISP_REG_TDSHP_CTRL			0x0100
-+#define DISP_TDSHP_CTRL_EN			BIT(0)
-+#define DISP_REG_TDSHP_CFG			0x0110
-+#define DISP_TDSHP_RELAY_MODE			BIT(0)
-+#define DISP_REG_TDSHP_INPUT_SIZE		0x0120
-+#define DISP_REG_TDSHP_OUTPUT_OFFSET		0x0124
-+#define DISP_REG_TDSHP_OUTPUT_SIZE		0x0128
-+
- #define DISP_REG_UFO_START			0x0000
- #define UFO_BYPASS				BIT(2)
- 
-@@ -261,6 +269,37 @@ static void mtk_postmask_stop(struct device *dev)
- 	writel_relaxed(0x0, priv->regs + DISP_REG_POSTMASK_EN);
- }
- 
-+static void mtk_disp_tdshp_config(struct device *dev, unsigned int w,
-+				  unsigned int h, unsigned int vrefresh,
-+				  unsigned int bpc, struct cmdq_pkt *cmdq_pkt)
-+{
-+	struct mtk_ddp_comp_dev *priv = dev_get_drvdata(dev);
-+
-+	mtk_ddp_write(cmdq_pkt, w << 16 | h, &priv->cmdq_reg, priv->regs,
-+		      DISP_REG_TDSHP_INPUT_SIZE);
-+	mtk_ddp_write(cmdq_pkt, w << 16 | h, &priv->cmdq_reg, priv->regs,
-+		      DISP_REG_TDSHP_OUTPUT_SIZE);
-+	mtk_ddp_write(cmdq_pkt, 0x0, &priv->cmdq_reg, priv->regs,
-+		      DISP_REG_TDSHP_OUTPUT_OFFSET);
-+
-+	mtk_ddp_write(cmdq_pkt, DISP_TDSHP_RELAY_MODE, &priv->cmdq_reg,
-+		      priv->regs, DISP_REG_TDSHP_CFG);
-+}
-+
-+static void mtk_disp_tdshp_start(struct device *dev)
-+{
-+	struct mtk_ddp_comp_dev *priv = dev_get_drvdata(dev);
-+
-+	writel(DISP_TDSHP_CTRL_EN, priv->regs + DISP_REG_TDSHP_CTRL);
-+}
-+
-+static void mtk_disp_tdshp_stop(struct device *dev)
-+{
-+	struct mtk_ddp_comp_dev *priv = dev_get_drvdata(dev);
-+
-+	writel(0, priv->regs + DISP_REG_TDSHP_CTRL);
-+}
-+
- static void mtk_ufoe_start(struct device *dev)
- {
- 	struct mtk_ddp_comp_dev *priv = dev_get_drvdata(dev);
-@@ -268,6 +307,14 @@ static void mtk_ufoe_start(struct device *dev)
- 	writel(UFO_BYPASS, priv->regs + DISP_REG_UFO_START);
- }
- 
-+static const struct mtk_ddp_comp_funcs ddp_tdshp = {
-+	.clk_enable = mtk_ddp_clk_enable,
-+	.clk_disable = mtk_ddp_clk_disable,
-+	.config = mtk_disp_tdshp_config,
-+	.start = mtk_disp_tdshp_start,
-+	.stop = mtk_disp_tdshp_stop,
-+};
-+
- static const struct mtk_ddp_comp_funcs ddp_aal = {
- 	.clk_enable = mtk_aal_clk_enable,
- 	.clk_disable = mtk_aal_clk_disable,
-@@ -441,6 +488,7 @@ static const char * const mtk_ddp_comp_stem[MTK_DDP_COMP_TYPE_MAX] = {
- 	[MTK_DISP_POSTMASK] = "postmask",
- 	[MTK_DISP_PWM] = "pwm",
- 	[MTK_DISP_RDMA] = "rdma",
-+	[MTK_DISP_TDSHP] = "tdshp",
- 	[MTK_DISP_UFOE] = "ufoe",
- 	[MTK_DISP_WDMA] = "wdma",
- 	[MTK_DP_INTF] = "dp-intf",
-@@ -496,6 +544,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_DRM_ID_MAX]
- 	[DDP_COMPONENT_RDMA1]		= { MTK_DISP_RDMA,		1, &ddp_rdma },
- 	[DDP_COMPONENT_RDMA2]		= { MTK_DISP_RDMA,		2, &ddp_rdma },
- 	[DDP_COMPONENT_RDMA4]		= { MTK_DISP_RDMA,		4, &ddp_rdma },
-+	[DDP_COMPONENT_TDSHP0]		= { MTK_DISP_TDSHP,		0, &ddp_tdshp },
- 	[DDP_COMPONENT_UFOE]		= { MTK_DISP_UFOE,		0, &ddp_ufoe },
- 	[DDP_COMPONENT_WDMA0]		= { MTK_DISP_WDMA,		0, NULL },
- 	[DDP_COMPONENT_WDMA1]		= { MTK_DISP_WDMA,		1, NULL },
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-index 98a701ac4cde..a03fa3385d2f 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-@@ -38,6 +38,7 @@ enum mtk_ddp_comp_type {
- 	MTK_DISP_POSTMASK,
- 	MTK_DISP_PWM,
- 	MTK_DISP_RDMA,
-+	MTK_DISP_TDSHP,
- 	MTK_DISP_UFOE,
- 	MTK_DISP_WDMA,
- 	MTK_DPI,
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index d5e6bab36414..042cf03c7a54 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -812,6 +812,8 @@ static const struct of_device_id mtk_ddp_comp_dt_ids[] = {
- 	  .data = (void *)MTK_DISP_RDMA },
- 	{ .compatible = "mediatek,mt8195-disp-rdma",
- 	  .data = (void *)MTK_DISP_RDMA },
-+	{ .compatible = "mediatek,mt8196-disp-tdshp",
-+	  .data = (void *)MTK_DISP_TDSHP },
- 	{ .compatible = "mediatek,mt8173-disp-ufoe",
- 	  .data = (void *)MTK_DISP_UFOE },
- 	{ .compatible = "mediatek,mt8173-disp-wdma",
--- 
-2.46.0
+And the public kasan=on|off kernel parameter can make kasan feature more
+flexible. It can be used in production environment with kasan=off, and
+can switch to the same kernel to catch issues easily by stripping the
+cmdline setting. As adding a cmdline is much easier than setting kernel
+config and rebuild kernel.
+
+Besides, based on this patchset, we can easily remove
+kasan_arch_is_ready() by detecting the arch's support and disable
+kasan_flag_enabled. And when I testing generic/sw_tags/hw_tags on arm64,
+I feel if adding a kernel parameter for choosing different KASAN mode is
+much more convenient than changing kernel config and rebuild. If we
+choose to KASAN_OUTLINE, this even doesn't impact much in production
+environment. I would like to hear your suggestion.
+
+Thanks
+Baoquan
+> 
+> 
+> > So this patchset moves the kasan=on|off out of hw_tags scope and into
+> > common code to make it visible in generic and sw_tags mode too. Then we
+> > can add kasan=off in kdump kernel to reduce the unneeded meomry cost for
+> > kasan.
+> > 
+> > Test:
+> > =====
+> > I only took test on x86_64 for generic mode, and on arm64 for
+> > generic, sw_tags and hw_tags mode. All of them works well.
+> > 
+> > However when I tested sw_tags on a HPE apollo arm64 machine, it always
+> > breaks kernel with a KASAN bug. Even w/o this patchset applied, the bug 
+> > can always be seen too.
+> > 
+> > "BUG: KASAN: invalid-access in pcpu_alloc_noprof+0x42c/0x9a8"
+> > 
+> > I haven't got root cause of the bug, will report the bug later in
+> > another thread.
+> > ====
+> > 
+> > Baoquan He (4):
+> >   mm/kasan: add conditional checks in functions to return directly if
+> >     kasan is disabled
+> >   mm/kasan: move kasan= code to common place
+> >   mm/kasan: don't initialize kasan if it's disabled
+> >   mm/kasan: make kasan=on|off take effect for all three modes
+> > 
+> >  arch/arm/mm/kasan_init.c               |  6 +++++
+> >  arch/arm64/mm/kasan_init.c             |  7 ++++++
+> >  arch/loongarch/mm/kasan_init.c         |  5 ++++
+> >  arch/powerpc/mm/kasan/init_32.c        |  8 +++++-
+> >  arch/powerpc/mm/kasan/init_book3e_64.c |  6 +++++
+> >  arch/powerpc/mm/kasan/init_book3s_64.c |  6 +++++
+> >  arch/riscv/mm/kasan_init.c             |  6 +++++
+> >  arch/um/kernel/mem.c                   |  6 +++++
+> >  arch/x86/mm/kasan_init_64.c            |  6 +++++
+> >  arch/xtensa/mm/kasan_init.c            |  6 +++++
+> >  include/linux/kasan-enabled.h          | 11 ++------
+> >  mm/kasan/common.c                      | 27 ++++++++++++++++++++
+> >  mm/kasan/generic.c                     | 20 +++++++++++++--
+> >  mm/kasan/hw_tags.c                     | 35 ++------------------------
+> >  mm/kasan/init.c                        |  6 +++++
+> >  mm/kasan/quarantine.c                  |  3 +++
+> >  mm/kasan/shadow.c                      | 23 ++++++++++++++++-
+> >  mm/kasan/sw_tags.c                     |  9 +++++++
+> >  18 files changed, 150 insertions(+), 46 deletions(-)
+> > 
+> 
 
 
