@@ -1,209 +1,127 @@
-Return-Path: <linux-kernel+bounces-760536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5BDB1EC8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:56:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E556CB1EC93
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255233BCB8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:56:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0A2B1894DDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A87173;
-	Fri,  8 Aug 2025 15:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83F228689B;
+	Fri,  8 Aug 2025 15:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bIBm+3A0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Efg3ZFSc"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2E1285CB5;
-	Fri,  8 Aug 2025 15:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFFE285CB5;
+	Fri,  8 Aug 2025 15:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754668552; cv=none; b=YbDyikT5vDfyKz0cQ8UevMivZCj7FaOIFJ6wdxoB7JfOBi9T7dNWm3AvckkQpPk2nMRtH+xyzcrPqHILaH14bg2KqkW430B0fo3rbzeBoxchBy2L6IpEh2sDMM8HFwPxV0qXg5F4kOhr7I2jfWSn5vxYgFqffyItY6710yRjTc8=
+	t=1754668570; cv=none; b=LxlgpAqC2Ki1+2os3aCwBRalwRz/jwpvbqjE/yTOJzFOoT/HYUj8MuHUKEj/Jd84OgBY2DNXZqXxeJnOfmZcU4I2cKMz5tZ3W8jB9GNC4tnD1bfYQcj/KhvdjqEcbkvy4ZaLhyESJyO3X1z7A44agyvxkZ1IzW2jW/4kGEULE2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754668552; c=relaxed/simple;
-	bh=OcaDToPvu/EEOBIvyPIc8Gm5Mu+wySbfvpWzqrlXL+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LAccqLk2xr++gT+OrXWv5S9Gflr7kKIu7KkxF7EZTCKTyGAVgunju+pB2QNr77lq786zE0Yl3yOgsOAE0g5YxF/gpyOPuDfZvw2K6Se0sXqkSExhiqXgbxXr8HZPceyGq90Lk67gje8RCBpiufjZGxfqpmjO/4D9ly1u1dftlaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bIBm+3A0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28054C4CEED;
-	Fri,  8 Aug 2025 15:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754668551;
-	bh=OcaDToPvu/EEOBIvyPIc8Gm5Mu+wySbfvpWzqrlXL+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bIBm+3A0Klj5Sv82WBkHb1TqKpq3M+wIq+lrWhvnofEF4mnMJQK9E1iVE3clQxS0P
-	 9vmPwj+SQV7+4YUTsz3LJam4wh9+Vr9X0onjpO5PLxD04uTwL96IfcnRMFD//eYmhO
-	 ULtzLOlIDMgFQ0r3M42O8QMHmo4Ed9gZrbIUrqRmhnhafepNQ8IiiQNOb7UunVsTMy
-	 fuMi0LAVkhA7/K3iYRtCcdUU4ksvSKq0g0OyoGaqBqgGrEkxR1nD2Mz5l806nENWSp
-	 n4Dk98zSKYakyYQsXgclRWUOaznM7r49o6rP32FS04CnknpBSlEZCrV4ez9rX1qjSg
-	 TfNj9ppmTL5GQ==
-Date: Fri, 8 Aug 2025 11:55:49 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, peterx@redhat.com,
-	aarcange@redhat.com, surenb@google.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
- entries
-Message-ID: <aJYeBbkHsDECexWN@lappy>
-References: <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com>
- <aG06QBVeBJgluSqP@lappy>
- <a8f863b1-ea06-4396-b4da-4dca41e3d9a5@redhat.com>
- <aItjffoR7molh3QF@lappy>
- <214e78a0-7774-4b1e-8d85-9a66d2384744@redhat.com>
- <aIzAj9xUOPCsmZEG@lappy>
- <593b222e-1a62-475c-9502-76e128d3625d@redhat.com>
- <aIzPPWTaf_88i8-a@lappy>
- <aJUDqqjCycGDn1Wg@lappy>
- <5b9c775c-35a1-4cd6-8387-00198e768b9a@redhat.com>
+	s=arc-20240116; t=1754668570; c=relaxed/simple;
+	bh=qfpzjLlQsWd/dz73rtB8Y4qWAxAkLUPES9eWN9vE8hY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=evqWmG1BQ8p4jV2757jr6bwHOjqFQDki4d/B1/GuEdJwv8oODTsyFTnE/+42RnQRu6/0+9r3EXbAbVB007s95bLYImKFHNkiArhWL9JAlRQbmqRfWaq6FJznAakJO+2bDrG4e6T3gPcsdpKOhbvEBXpEq1iylR+2b1d3TOrnylk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Efg3ZFSc; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 578Ftx23582641;
+	Fri, 8 Aug 2025 10:55:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754668559;
+	bh=D1eanfAkB5EEMvMI6mKH8d/IGekndB5PumogQ8P7NTY=;
+	h=From:To:CC:Subject:Date;
+	b=Efg3ZFSc0zmeTNG06/HXUNXRtG4hqEOUXzRiZ+EzshJoTBVHIqTrgan0OE7RdpcxG
+	 h5FbVAiyT25eu2ohF9zKSqcXByZPlEebgy9pDrGMku7rzjsr+SYfDc6j2py53um8nZ
+	 jtlDIp+JQJc2c4vq32oiBlLkeLI3FaxFp5T8bL4Q=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 578Ftxim1028687
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 8 Aug 2025 10:55:59 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 8
+ Aug 2025 10:55:58 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Fri, 8 Aug 2025 10:55:58 -0500
+Received: from udba0500997.dhcp.ti.com (udba0500997.dhcp.ti.com [128.247.81.190])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 578Ftw3I2977000;
+	Fri, 8 Aug 2025 10:55:58 -0500
+From: Brandon Brnich <b-brnich@ti.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        Devarsh
+ Thakkar <devarsht@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Darren Etheridge
+	<detheridge@ti.com>,
+        Brandon Brnich <b-brnich@ti.com>
+Subject: [PATCH v3] arm64: dts: ti: k3-j722s-main: Add E5010 JPEG Encoder
+Date: Fri, 8 Aug 2025 10:55:55 -0500
+Message-ID: <20250808155555.2632451-1-b-brnich@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <5b9c775c-35a1-4cd6-8387-00198e768b9a@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Aug 08, 2025 at 10:02:08AM +0200, David Hildenbrand wrote:
->On 07.08.25 21:51, Sasha Levin wrote:
->>On Fri, Aug 01, 2025 at 10:29:17AM -0400, Sasha Levin wrote:
->>>On Fri, Aug 01, 2025 at 04:06:14PM +0200, David Hildenbrand wrote:
->>>>Sure, if it's prechecked by you no problem.
->>>
->>>Yup. Though I definitely learned a thing or two about Coccinelle patches
->>>during this experiment.
->>
->>Appologies if it isn't the case, but the two patches were attached to
->>the previous mail and I suspect they might have been missed :)
->
->Whoop's not used to reviewing attachments. I'll focus on the loongarch patch.
+This adds node for E5010 JPEG Encoder which is a stateful JPEG Encoder
+present in J722s SoC, supporting baseline encoding of semiplanar based
+YUV420 and YUV422 raw video formats to JPEG encoding, with resolutions
+supported from 64x64 to 8kx8k.
 
-Thank you for the review!
+Signed-off-by: Brandon Brnich <b-brnich@ti.com>
+---
 
->From a547687db03ecfe13ddc74e452357df78f880255 Mon Sep 17 00:00:00 2001
->From: Sasha Levin <sashal@kernel.org>
->Date: Fri, 1 Aug 2025 09:17:04 -0400
->Subject: [PATCH 2/2] LoongArch: fix kmap_local_page() LIFO ordering in
-> copy_user_highpage()
->
->The current implementation violates kmap_local_page()'s LIFO ordering
->requirement by unmapping the pages in the same order they were mapped.
->
->This was introduced by commit 477a0ebec101 ("LoongArch: Replace
->kmap_atomic() with kmap_local_page() in copy_user_highpage()") when
->converting from kmap_atomic() to kmap_local_page(). The original code
->correctly unmapped in reverse order, but the conversion swapped the
->mapping order while keeping the unmapping order unchanged, resulting
->in a LIFO violation.
->
->kmap_local_page() requires unmapping to be done in reverse order
->(Last-In-First-Out). Currently we map vfrom and then vto, but unmap
->vfrom and then vto, which is incorrect. This patch corrects it to
->unmap vto first, then vfrom.
->
->This issue was detected by the kmap_local_lifo.cocci semantic patch.
->
->Fixes: 477a0ebec101 ("LoongArch: Replace kmap_atomic() with kmap_local_page() in copy_user_highpage()")
->Co-developed-by: Claude claude-opus-4-20250514
->Signed-off-by: Sasha Levin <sashal@kernel.org>
->---
-> arch/loongarch/mm/init.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
->index c3e4586a7975..01c43f455486 100644
->--- a/arch/loongarch/mm/init.c
->+++ b/arch/loongarch/mm/init.c
->@@ -47,8 +47,8 @@ void copy_user_highpage(struct page *to, struct page *from,
-> 	vfrom = kmap_local_page(from);
-> 	vto = kmap_local_page(to);
-> 	copy_page(vto, vfrom);
->-	kunmap_local(vfrom);
-> 	kunmap_local(vto);
->+	kunmap_local(vfrom);
-> 	/* Make sure this page is cleared on other CPU's too before using it */
-> 	smp_wmb();
-> }
->-- 
->2.39.5
->
->
->So, loongarch neither supports
->
->a) Highmem
->
->nor
->
->b) ARCH_SUPPORTS_KMAP_LOCAL_FORCE_MAP, disabling DEBUG_KMAP_LOCAL_FORCE_MAP
->
->Consequently __kmap_local_page_prot() will not do anything:
->
->	if (!IS_ENABLED(CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP) && !PageHighMem(page))
->		return page_address(page);
->
->
->So there isn't anything to fix here and the whole patch subject+description should be
->rewritten to focus on this being purely a cleanup -- unless I am missing
->something important.
->
->Also, please reduce the description to the absolute minimum, nobody wants to read the
->same thing 4 times using slightly different words.
->
->"LIFO ordering", "LIFO ordering", "unmapped in reverse order ... LIFO violation" ...
->"reverse order (Last-In-First-Out)"
+Changes in v3:
+  - Add TI compatible
+  - Make node name more generic
 
-How about something like:
+Changes in v2:
+  - remove invalid clock-names attribute
 
-     LoongArch: cleanup kmap_local_page() usage in copy_user_highpage()
-     
-     Unmap kmap_local_page() mappings in reverse order to follow the
-     function's LIFO specification. While LoongArch doesn't support
-     highmem and these operations are no-ops, code should still adhere
-     to the API requirements.
-     
-     Detected by kmap_local_lifo.cocci.
-     
-     Fixes: 477a0ebec101 ("LoongArch: Replace kmap_atomic() with kmap_local_page() in copy_user_highpage()")
-     Signed-off-by: Sasha Levin <sashal@kernel.org>
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
->More importantly: is the LIFO semantics clearly documented somewhere? I read
->Documentation/mm/highmem.rst
->
->  Nesting kmap_local_page() and kmap_atomic() mappings is allowed to a certain
->  extent (up to KMAP_TYPE_NR) but their invocations have to be strictly ordered
->  because the map implementation is stack based. See kmap_local_page() kdocs
->  (included in the "Functions" section) for details on how to manage nested
->  mappings.
->
->and that kind-of spells that out (strictly order -> stack based). I think one could
->have clarified that a bit further.
->
->Also, I would expect this to be mentioned in the docs of the relevant kmap functions,
->and the pte map / unmap functions.
->
->Did I miss that part or could we extend the function docs to spell that out?
-
-The docs for kmap_local_page() seem to cover it better, and give the
-concrete example we're trying to fix here:
-
-  * Requires careful handling when nesting multiple mappings because the map
-  * management is stack based. The unmap has to be in the reverse order of
-  * the map operation:
-  *
-  * addr1 = kmap_local_page(page1);
-  * addr2 = kmap_local_page(page2);
-  * ...
-  * kunmap_local(addr2);
-  * kunmap_local(addr1);
-  *
-  * Unmapping addr1 before addr2 is invalid and causes malfunction.
-
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+index 5cfa7bf36641..c0a104bc87ad 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+@@ -385,6 +385,16 @@ c7x_1: dsp@7e200000 {
+ 		ti,sci-proc-ids = <0x31 0xff>;
+ 		status = "disabled";
+ 	};
++
++	e5010: jpeg-encoder@fd20000 {
++		compatible = "ti,am62a-jpeg-enc", "img,e5010-jpeg-enc";
++		reg = <0x00 0xfd20000 0x00 0x100>,
++		      <0x00 0xfd20200 0x00 0x200>;
++		reg-names = "core","mmu";
++		clocks = <&k3_clks 201 0>;
++		power-domains = <&k3_pds 201 TI_SCI_PD_EXCLUSIVE>;
++		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++	};
+ };
+ 
+ &main_bcdma_csi {
 -- 
-Thanks,
-Sasha
+2.34.1
+
 
