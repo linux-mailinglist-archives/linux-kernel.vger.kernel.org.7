@@ -1,163 +1,100 @@
-Return-Path: <linux-kernel+bounces-760103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913AFB1E679
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:31:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37213B1E663
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6911AA6362
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:32:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BC4916C24B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A216327511F;
-	Fri,  8 Aug 2025 10:31:01 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689532737E4;
+	Fri,  8 Aug 2025 10:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="de0HcDcg"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A931127510F;
-	Fri,  8 Aug 2025 10:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA0320E6F3
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 10:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754649061; cv=none; b=fpUTOURVjNElL3j7TIhZrtnoHcIfGqf0NG3FCP0NhMekJLcG+sDqhfxpSi8dCLQvp1lRugPptCp7XfjTtHLKgP6hiNSpB2dSxh8qTiLRkIjtM7TRHC9qf9Q545jlUOzn1UiaRBmLKJ1yqxPHoP0UIDgn0q55OqqZxgk+QE4K2Qs=
+	t=1754648371; cv=none; b=XzqCJr4hXAumc7HpGWj4YIX/qwMexYdnzJ6QkVsZC+Jga1FbtprgkEmVNVH08lVMi+1DoAlBaCh03FaHxqFlcaumCUge7fSWLORkiUnUb1ZPmAQ/IdjkqBIajlreJLNqH9Ll/Yk5vwE3bN+f2lyGERVx2rOS+lg7aUDxNxV6haM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754649061; c=relaxed/simple;
-	bh=sA5KnYbtFQz/Tq+1yur0DYDuYig5lZVDnnbq9TiJjbk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tK0zQMj/BTwPs2KOveay4Ik0TnWXO+SDGcV7tNqBaEye3yj1lOSQ47JGHuIpwM6HILBv+JAo+tuSXhYd8N+bltJEcozxenPxJb0iq+f/Vn2LFDtczZZ+RazARiZP8hEzyYun+XosLVglcSZxtCJs8tCOBOlvp3EyG7S7dpqC1cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from zq-Legion-Y7000.. (unknown [121.237.92.164])
-	by APP-03 (Coremail) with SMTP id rQCowADHH4HY0ZVo5CNQCg--.60359S2;
-	Fri, 08 Aug 2025 18:30:48 +0800 (CST)
-From: zhouquan@iscas.ac.cn
-To: anup@brainfault.org,
-	ajones@ventanamicro.com,
-	atishp@atishpatra.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	Quan Zhou <zhouquan@iscas.ac.cn>
-Subject: [PATCH v2 6/6] KVM: riscv: selftests: Add bfloat16 extension to get-reg-list test
-Date: Fri,  8 Aug 2025 18:19:18 +0800
-Message-Id: <40e52ff7053401a2fcb206e75f45ebc8557fc28b.1754646071.git.zhouquan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1754646071.git.zhouquan@iscas.ac.cn>
-References: <cover.1754646071.git.zhouquan@iscas.ac.cn>
+	s=arc-20240116; t=1754648371; c=relaxed/simple;
+	bh=ASv3hStQq7O6sTyM/Di8lawrZZXPfUnBQcVoF3yT3fU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H/nHFSpxSfX19i2TLj9LaYC895njJ2KU2i3pGRRb+2zZRJnEwgo922PoDUn4X1IMlYRp716OE7cifruGSz9McDXC2Gaan3hQCOhZ24shKKdDNm8XSRoKCJc67PgVGAheTJxFG2Vd07Xnupg5sHYYCOiZpMq/+df/1Air9V5G19k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=de0HcDcg; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B4A984320D;
+	Fri,  8 Aug 2025 10:19:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754648367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GfxpN6ZiqcVyW4i6uW3ZKSO2WB/dwXVU69neRz5alTU=;
+	b=de0HcDcgkFyNffryiXNWtj9t9e6pkWr4eO+Ju24QUompQtVAHzWdirHO5b3WoIrsoFdMM/
+	xMgS9HjJk3e4qsvLaXstVbszXWHSekkXHjX8frJOjK+sHgFPNmjyDVpd2ZeFz84eCUifXU
+	V50emlFWTl0JDzRZ8vomXmgBRRx+DXBiosIJ826gNeXX3ZDqaNoH8ZKqWd8xc1T7Xp62XE
+	i65Kl5n/ORw2ShJMKvvCS9NE7y/OAL6BUPIv3dQJHN3zA6ZU88/e7OeymDnWRFeHy4wgwS
+	E4u8DIaZF6T1VRZXGy0bBnqtzDJ6ZCQvN+zYFIBFjZsMrefmmbkkIvz0ibkg1w==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Cheng Ming Lin <linchengming884@gmail.com>
+Cc: vigneshr@ti.com,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  richard@nod.at,  alvinzhou@mxic.com.tw,
+  leoyu@mxic.com.tw,  Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: Re: [PATCH 2/2] mtd: spi-nand: macronix: Add randomizer support
+In-Reply-To: <20250808095503.906244-3-linchengming884@gmail.com> (Cheng Ming
+	Lin's message of "Fri, 8 Aug 2025 17:55:03 +0800")
+References: <20250808095503.906244-1-linchengming884@gmail.com>
+	<20250808095503.906244-3-linchengming884@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Fri, 08 Aug 2025 12:19:24 +0200
+Message-ID: <87zfca9kur.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADHH4HY0ZVo5CNQCg--.60359S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw48KryxGF1rZFWUur45Wrg_yoWrXw1Dpr
-	10ya9xGr48J3s3Zws2yF98Gw48Xws8Jw4kCw47ur1fJFyjyryxJF1qy3W3Jw1qya4Fqr1S
-	vFyfXr4Iyw40yrUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8tw
-	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
-	6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64
-	vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42
-	IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeXo2DUUUU
-X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiDAUIBmiVo6aROgAAsU
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdefheeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledvrddukeegrddutdekrdeiheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddtkedrieehpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtoheplhhinhgthhgvnhhgmhhinhhgkeekgeesghhmrghilhdrtghomhdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrt
+ hdprhgtphhtthhopegrlhhvihhniihhohhusehmgihitgdrtghomhdrthifpdhrtghpthhtoheplhgvohihuhesmhigihgtrdgtohhmrdhtfidprhgtphhtthhopegthhgvnhhgmhhinhhglhhinhesmhigihgtrdgtohhmrdhtfi
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-From: Quan Zhou <zhouquan@iscas.ac.cn>
+On 08/08/2025 at 17:55:03 +08, Cheng Ming Lin <linchengming884@gmail.com> w=
+rote:
 
-The KVM RISC-V allows Zfbfmin/Zvfbfmin/Zvfbfwma extensions for Guest/VM
-so add them to get-reg-list test.
+> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+>
+> Enable randomizer function by specific flowchart to set the default value
+> of RANDEN to 1.
+>
+> Randomizer introduces two new DT properties for child nodes to configure
+> the randomizer functionality and coverage options.
+>  - mxic,enable-randomizer-otp: Specify whether to activate the randomizer
+>                                feature.
+>  - mxic,randopt: Define the randomizer area per page.
 
-Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
----
- tools/testing/selftests/kvm/riscv/get-reg-list.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Can we create a global NAND DT property for that? Enabling a randomizer
+is quite a generic step.
 
-diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-index e60e1975095b..5e461c83a4aa 100644
---- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-@@ -80,6 +80,7 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCF:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZCMOP:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFA:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFBFMIN:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFH:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZFHMIN:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICBOM:
-@@ -104,6 +105,8 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZTSO:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVBB:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVBC:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVFBFMIN:
-+	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVFBFWMA:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVFH:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVFHMIN:
- 	case KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZVKB:
-@@ -535,6 +538,7 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
- 		KVM_ISA_EXT_ARR(ZCF),
- 		KVM_ISA_EXT_ARR(ZCMOP),
- 		KVM_ISA_EXT_ARR(ZFA),
-+		KVM_ISA_EXT_ARR(ZFBFMIN),
- 		KVM_ISA_EXT_ARR(ZFH),
- 		KVM_ISA_EXT_ARR(ZFHMIN),
- 		KVM_ISA_EXT_ARR(ZICBOM),
-@@ -559,6 +563,8 @@ static const char *isa_ext_single_id_to_str(__u64 reg_off)
- 		KVM_ISA_EXT_ARR(ZTSO),
- 		KVM_ISA_EXT_ARR(ZVBB),
- 		KVM_ISA_EXT_ARR(ZVBC),
-+		KVM_ISA_EXT_ARR(ZVFBFMIN),
-+		KVM_ISA_EXT_ARR(ZVFBFWMA),
- 		KVM_ISA_EXT_ARR(ZVFH),
- 		KVM_ISA_EXT_ARR(ZVFHMIN),
- 		KVM_ISA_EXT_ARR(ZVKB),
-@@ -1138,6 +1144,7 @@ KVM_ISA_EXT_SIMPLE_CONFIG(zcd, ZCD);
- KVM_ISA_EXT_SIMPLE_CONFIG(zcf, ZCF);
- KVM_ISA_EXT_SIMPLE_CONFIG(zcmop, ZCMOP);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfa, ZFA);
-+KVM_ISA_EXT_SIMPLE_CONFIG(zfbfmin, ZFBFMIN);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfh, ZFH);
- KVM_ISA_EXT_SIMPLE_CONFIG(zfhmin, ZFHMIN);
- KVM_ISA_EXT_SUBLIST_CONFIG(zicbom, ZICBOM);
-@@ -1162,6 +1169,8 @@ KVM_ISA_EXT_SIMPLE_CONFIG(zkt, ZKT);
- KVM_ISA_EXT_SIMPLE_CONFIG(ztso, ZTSO);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvbb, ZVBB);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvbc, ZVBC);
-+KVM_ISA_EXT_SIMPLE_CONFIG(zvfbfmin, ZVFBFMIN);
-+KVM_ISA_EXT_SIMPLE_CONFIG(zvfbfwma, ZVFBFWMA);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvfh, ZVFH);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvfhmin, ZVFHMIN);
- KVM_ISA_EXT_SIMPLE_CONFIG(zvkb, ZVKB);
-@@ -1213,6 +1222,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_zcf,
- 	&config_zcmop,
- 	&config_zfa,
-+	&config_zfbfmin,
- 	&config_zfh,
- 	&config_zfhmin,
- 	&config_zicbom,
-@@ -1237,6 +1247,8 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_ztso,
- 	&config_zvbb,
- 	&config_zvbc,
-+	&config_zvfbfmin,
-+	&config_zvfbfwma,
- 	&config_zvfh,
- 	&config_zvfhmin,
- 	&config_zvkb,
--- 
-2.34.1
+> The penalty of randomizer are subpage accesses prohibited and more time
+> period is needed in program operation and entering deep power-down mode.
+> i.e., tPROG 320us to 360us (randomizer enabled).
 
+Do you want to share what is the added value in terms of lifetime to
+enable the randomizer, given the drawbacks which are significant?
+
+Thanks,
+Miqu=C3=A8l
 
