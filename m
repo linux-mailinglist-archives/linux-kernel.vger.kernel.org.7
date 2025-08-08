@@ -1,389 +1,294 @@
-Return-Path: <linux-kernel+bounces-760827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC732B1F0B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 00:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF70B1F0B9
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 00:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B64FC1C805AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:37:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C785A213C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05ED28A73B;
-	Fri,  8 Aug 2025 22:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC34B28B41A;
+	Fri,  8 Aug 2025 22:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="mkjdQ0A/"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="c9LyAkYv"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013027.outbound.protection.outlook.com [52.101.83.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936E628B41E;
-	Fri,  8 Aug 2025 22:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754692643; cv=none; b=KpZqffM5V3M6tU5x1d5SGmW69VIb518CqjrN+fLS4NjkYhH7gwAz+//f13dF7W7MwY8WDJuLuHVYmmEdnvn8EfPL9Xjv2pEuu/9kuQWqKXhocgCHLy66QsBQ2gXDB3r0zvg5D8043Y9tRgsA36lHbybbfZdcJtAb//077C6F6O4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754692643; c=relaxed/simple;
-	bh=JHVmu2n/nTTH6LX4nabX1OA53QT7DxKgSG23yl+OzXY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=II5rlI3pZZl8Iw1VIFIzDcfV6sTNa4IK56DRDeenRSqGqR4d4JI0Un1wHylIyDwEMlkITLgX7KvLFRI5QU69R6HEjvOheTeSFpa+AIozNZ+cb7FMfRisfs0Booac1cNz4rB37EORfDsJNW8CPGJrKFL/hFfFVvCsSL4AWNNH6Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=mkjdQ0A/; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=lusU9fDt0+doSISdjWA/f49G8mbzLTv949xNyjBeF9A=; t=1754692640;
-	x=1755297440; b=mkjdQ0A/00dhYMnzcrOQZ/ZouwaVyNfZ3PWFtwtxaxdlhB/tpMNh23jkgxlX3
-	V1J6QlQ9Scmn3tGBVi5RhzKG1kPUSjjS5NrmLa6iunwC3SjuID6zZMqLnaZD+eKZLOgBl8yitMbpQ
-	CaIiAA885p1xS7N2jMUytJAz6yIeAOuTT0O2sx0VwNrtt1DWX/LGAiz+CUcJSJ03LNgY11pUqKvNN
-	5knkgV0PcWpjfQn4g8jZSiq81iYlVbhTAabnIa7RN2CVwiKfV2JskKn2f0UvSZWv7XzUq1w/mj35b
-	BR2UVsk2YQ5SLFgR9bOGk9QTo0UR+h96BKMQz9dZ1VTxd1qkog==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1ukVi7-00000003f3G-2ulW; Sat, 09 Aug 2025 00:37:15 +0200
-Received: from dynamic-002-242-002-090.2.242.pool.telefonica.de ([2.242.2.90] helo=[192.168.178.50])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1ukVi7-00000001Le7-1qeS; Sat, 09 Aug 2025 00:37:15 +0200
-Message-ID: <38f4469f48e6d36fa92b445c8ecef7a440be43e6.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH] sparc64: fix hugetlb for sun4u
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Anthony Yznaga <anthony.yznaga@oracle.com>, sparclinux@vger.kernel.org, 
-	davem@davemloft.net, andreas@gaisler.com
-Cc: linux-kernel@vger.kernel.org, agordeev@linux.ibm.com, will@kernel.org, 
-	ryan.roberts@arm.com, david@redhat.com, osalvador@suse.de
-Date: Sat, 09 Aug 2025 00:37:14 +0200
-In-Reply-To: <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
-References: <20250716012446.10357-1-anthony.yznaga@oracle.com>
-	 <35f5ec4eda8a7dbeeb7df9ec0be5c0b062c509f7.camel@physik.fu-berlin.de>
-	 <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F62328A73B;
+	Fri,  8 Aug 2025 22:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754692806; cv=fail; b=jPxM121/zHiMkxYD8Lgs2tBlR0vDwgxU7GmUY0JE71bfjcajZkSMRL66Nkvm7cQIsrnT/ypT2U+yD+stXXQoKMaUENBxSeLPbs4ShEglen4eoHAuJtQK9cldG3nlZfy9lqXvwTmv731JZSoiGjwn1DTuaPutlDSK8+4fepGtkuM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754692806; c=relaxed/simple;
+	bh=QCFfRh2TuVE6D2GZcOWQb9Z99Q24DQoTUpFcwuYayvI=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=Cb2DtAU+MslMkRbicgp5oBxmtdo/zlijsBSU7oNe7+hmm8rmH1eYGHCFSBmVQBk2zaNbtvIHVT5vg3pTjr5j7l78OdK2gGZZ+Zdj8nei0qm0ph1N49wnK9TA4u9Lg3D0C3msCSKDGPOZ7ival5PKGgCvgNiYf3kXg93NzVlVNHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=c9LyAkYv; arc=fail smtp.client-ip=52.101.83.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mkCxsshZGRhM5xeDItSMMqU8vvN81/38/Rb+kgs39uuDUBld2cU9XYkO2Ks4EUC0xAChSpn5cwAvpwXKNPiLeQs4gWukjAkput3dfTIBG/DJFljqmHLFI0BsiJevaGJ5h1YpJlO0S3TN8XP56ISd/tCwdSbPsr6/pELkGeYixrA3yNBp6lLZPPAdfVB61L+mLVnWsalAwDboZCb/92detKeKxvRw7LcENEGFDDvf+yqFABllYRJBMbGmECjAlBQLlgGlmCjJLCXCDbngBWl09LbnC8+5rLYIlCj9n4Qr5qCz6NLE+RMmwEagyZOWKulzp6Ls5rkWRzfjNRS/X6QA8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ze8SLnbKV0VX5oprvp+8qsrPWEfxssuhVYrPqjycQIA=;
+ b=dOtPNn2zCfDcCwBDVEmh2lEQDJK9gjwXBe6WYeZDupwfRCtgpgjuUmTb1nABj5S28QaX23DcYhiGWfpC42+2OMlPeaHcDs988MLsfrSGgAEZtWL8vm60kDGFA9YUzAtDGVhy6n6S3sUcfy2mNJzU8SwM0qD0Ph7VVAb/NDl/fIH/rR9mR8JqIRsXp9sU+K4d9323UpP8MEFYCl73Z890pj+lwVWvi0dq4reSSpuXtOAtarJDyCfudxeWKsBYYbUfvw9NmJ1qyUOoUFkf9uYBSF5vglQbEpcDjpqGmDsAx8/CW+O/qgXYrhNLdzl/gA4lZBwWFGEEerJaQk6c+QaePQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ze8SLnbKV0VX5oprvp+8qsrPWEfxssuhVYrPqjycQIA=;
+ b=c9LyAkYvtXI8v3PIpTj6KnMDI8y8RDI7RXC4sJMgTAgnDgdxF/hBHYh7wwMMsiMJlIva3K8D/deoy1W/Lc6jPIRdhFDCTQMUsYJ6moLWvbu8q9DUYu5dNn8E2hJ3w0GT/I6ifMEjBeQ/awgDQSG0SYVVtXZoqh1u8EfDvud2HnsTCygjp9G8rsVJ4teoN7ydYztWpJ/1DeHmlEc8R62GjuZOy7a/regrSTDoeDCmuA2hPraSGw/2IXBecAp2IRy/4d6+OZOvAVWeKuWT2afL0hALbVTehKUKFqGVVoGHeJNl1EVx1dG9OkQ0QJxTJIWK/iSlCIpwTRYzp7baFn0V1g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA1PR04MB10528.eurprd04.prod.outlook.com (2603:10a6:102:445::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
+ 2025 22:39:58 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.9031.008; Fri, 8 Aug 2025
+ 22:39:58 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v2 00/32] media: add imx93 mipi/controller csi support
+Date: Fri, 08 Aug 2025 18:39:03 -0400
+Message-Id: <20250808-95_cam-v2-0-4b29fa6919a7@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIh8lmgC/zXMQQ6DIBCF4auYWZdmoCLVVe/RmAYQ6ywEA42xM
+ dy91KbL/+Xl2yG5SC5BV+0Q3UqJgi8hThXYSfunYzSUBoFCYoMNa+XD6pkZVVtsaz3w0UA5L9G
+ NtB3QvS89UXqF+D7clX/XH6GQ/4mVM2RWciWMNperMje/LWcbZuhzzh9H70EimgAAAA==
+X-Change-ID: 20250606-95_cam-b74c094ad1fb
+To: Rui Miguel Silva <rmfrfs@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
+ Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Steve Longerbeam <slongerbeam@gmail.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
+ linux-staging@lists.linux.dev, Frank Li <Frank.Li@nxp.com>, 
+ Luis Oliveira <lolivei@synopsys.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754692792; l=5030;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=QCFfRh2TuVE6D2GZcOWQb9Z99Q24DQoTUpFcwuYayvI=;
+ b=yUj0KPA5iX99n7NQ+R0ueIqRNd24SRX8CJZqbwEcLPzNfzMILbV/9c2HiT9eCvfztNHKIm1QS
+ yWgXyGhpcY1CZGrtMRvHlWUwZ/Kl87ijxy36RrggnahAzC9HXDGCAZp
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: PH7PR03CA0024.namprd03.prod.outlook.com
+ (2603:10b6:510:339::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA1PR04MB10528:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56fc3299-001f-47b0-15f9-08ddd6cc80e1
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|52116014|376014|7416014|19092799006|1800799024|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?VURxQ3IyVTdIRnF5TzY3bTlOYm91RktWK2dGVExRYU9PU2lOTGZsdlNsVnZq?=
+ =?utf-8?B?cWpTRzFraVRsOVYwSXpoOHgweGswQ3ZwdnJ6UnlVWHd4aXZLLzhRV0FWUmh3?=
+ =?utf-8?B?enZRTkZXL0JhRmxlYXNHaWpuQUg2eVl0L2JQRzQyZi8zd1lneVA4a3hJV2FJ?=
+ =?utf-8?B?YWlobS9DNzk1MlNKeGFwS2xFa3gxNEhOdGM0VjJhckRrdTFJSU5ndmtQaldr?=
+ =?utf-8?B?MU91Sk1rblhERi9LZ09sK2xoNVZ3Wm9tQklQVDIzYWF5ZFZOdkNYc085WXZm?=
+ =?utf-8?B?dlVJbmFydEFYdmk5Q0RmVlNhOEZPY2RMUEZqK1JuaXhBcHQzcGF6WERoOXl5?=
+ =?utf-8?B?THl6NWtWdDIreHdWaFFFV1VqdmZpLzlVa1VRVWpYN1pYVS93RTZGczJWbkZp?=
+ =?utf-8?B?NEtZcXRrZDNYRzVuOUx5d0dnTVF0TVh4d3ZQZWFqSzN1OGRmbWVxK3hxdVVZ?=
+ =?utf-8?B?d1hxZFd6SXEwdnRxb0tJQlFkMzJ0THRSMVVicTVaaWRrSjlXRTR4T1cwSHVi?=
+ =?utf-8?B?WnoyNWFSbGZOMWk0cDRNSUZuSEJod21BWEh0NDg4U3BsRldDaUhKRFhBUVhG?=
+ =?utf-8?B?V01sMWJjbEp4eGRVV1Z5cnBJbkdkSVh2ZFdnRjRON0NWZ29PZDRYVXJCdWJl?=
+ =?utf-8?B?ZklITTAzQTV1ZDBjRW9mRTFVdlF2cGNpWVRvbU41WnUvREQvZXRXTEV3MEt1?=
+ =?utf-8?B?WGRRU00xSUZ3MlB0L1dTYmVjWG5xMEdhVlJhekhhUmljOXcvU2NYa01WVkNh?=
+ =?utf-8?B?OUlLeU4xVGRESU5kZWxZczJ0U1ZrY3hPSUN2SEFETzJjNFFhVkZGZW9TSEhT?=
+ =?utf-8?B?dkZUSTVndW1XbGNOZFNRSWVsa0RhMlFxaDJtaUxoRVdXTHNVSlh2QndmM05H?=
+ =?utf-8?B?M2htRXcyck1USFJ5V1Nac0drcERPbU9QQVJCcmRtTWlQY3gxdytlTnFjQXND?=
+ =?utf-8?B?K2U0S2VvbDgyUlRVMExvaTJlbTF4UVJxVVdVSnVEdFNyYjNwSkZsVEZNNk4r?=
+ =?utf-8?B?NUpFUHpZTnphakkwSC9oSkVvY29VNUwxYzNKV3loL2VNeHg0dXU4T2wxcW1x?=
+ =?utf-8?B?VC85cjBUb3BhRFhXcVNPVU5LZFZlR2Nqcmlia0xQaXYzTVdITzhKL1BpejJ1?=
+ =?utf-8?B?R2VGcllBYzBzaGw5VzM1NnRZQ3pVYXlnZGJjWVgzbU1mQm4zZGl1MHFwRERG?=
+ =?utf-8?B?UzBiaGJYTEd3dlQ1ME10bE1xZmZnYzBiQ2VBRmMweVduS2J5U3NRd0E4dnJh?=
+ =?utf-8?B?eFhEZFMrRFJ0dFh2UDRDNWJBVHY4cURIL2tLQ2pteG1GWVRMc3psUlpNcDJa?=
+ =?utf-8?B?aCtwcEIvcVNEQXZTMzRwVjFTeTgwdFhuR3ZSNlUvR2NXZWJBbkl3NjVQU2ZV?=
+ =?utf-8?B?QmF0anFEQzIzTTJRRndVd0hueStjc1BTYUx2Y2xuZkZsTWhoblV4SEpNSTE4?=
+ =?utf-8?B?d2pTVTVkSndKUGkxeUhBSnFXMmpaaTk3eXZMSWJEQTJ0WGlkNjNEZURLMkgv?=
+ =?utf-8?B?WkhoYnhPU2VoRmZpU2tNSmt3a3pubVZINk5TMkU0dW52bTFtakp4RzdaT3dX?=
+ =?utf-8?B?M0FmKy9WcHMzNjZSL1VhZTNyUUp6QUwrWmhud3prZFoyLyt6ZzJIRUVlMlpM?=
+ =?utf-8?B?WWN1aDZ2V2lxdENvUzhNMFZwbkp1em04RkRGV0lSOXducHpKdzBmSjNEdVJl?=
+ =?utf-8?B?VHpsR3dGVlZvMEZydW4vWnkyaDNPY0RvbTRJbEFVSGs1cHhtTFltOTc3SzRO?=
+ =?utf-8?B?R2l1aE5XNnptK2pOWVNadTJUcEFML1g5R2R5K3NvTkl4V2p1NzJzS0hjc3pz?=
+ =?utf-8?B?TFo4emF4UnA4SUtFS2NUSHlYR0FPVjFnbSt6NEFLYlgva2gwSlJISmt3ZDZO?=
+ =?utf-8?B?eEdmQTlvZW1pQTFYei9HQkJYd2wwN1puTCtFK0RjejlLVlhhMHNMTkh6bnRS?=
+ =?utf-8?B?U1VnaDJ0TEx1V0pnRFVLbGZlU2tvUkxSVWZhMnh0cEQyV1JTWEkxT0hDU1hY?=
+ =?utf-8?B?cHhVeHh2bytoOTJsbEt5bHVQQ01KdnpsSlVaZHIwWjA2Ykp0QWRSWkF6Wkk0?=
+ =?utf-8?Q?hB8860?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(19092799006)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?TFBpNHQxUmtNdndmUiszUlU1VUVlc3JrRTFtaW5nWEQrUnJkdWg5cVRyTlEy?=
+ =?utf-8?B?Wmd1c3lsbjBQanRCK1I1UG90RVFBVHhOZmtNYTgyNkZEb1JuaFMxYi9xTW4v?=
+ =?utf-8?B?NWUzMFJRRkdybUoycEJ5bzdZYS9xeS9sc2l6YWVPakFYVTZ4cTAwdlVGU2dH?=
+ =?utf-8?B?eHVpUDhNbWhWdEFqZ0RwK0tnUS9obFJtWmxMSnVFQWtmSWZJR0ZwVkltUUdD?=
+ =?utf-8?B?bTdRTEpWNjFaZEdDL3ZMdVVKaHMvYUt6NTRKV2krS0gvTnZhTmF0TTlkSkF4?=
+ =?utf-8?B?aExnNDJ2ZE9ybkNiM0VRdnZLeVBvY2FHVW4yV0huMVU2dnRvUXU1cU92d2RV?=
+ =?utf-8?B?aTcwYXlXQ1B1OUhBTUtFeXE0dXFQN2N1QmZuYUN3b2htTzVuTzNYSWZWZHlO?=
+ =?utf-8?B?UnRwWmdSZDBpL2NiODA3bUR3NmtFUVMzWExkcnBoaHByeVcrY0RyT0kxWWFh?=
+ =?utf-8?B?QVJ2MjJPYUJxZWZCUjA0SkhjSC9IUW5kVnAxTnRRZFpDdGZyQ3hhVDlCUU9C?=
+ =?utf-8?B?d09xVGZuN0FYVzlHOUdVbStQbUNQcXJOQ1RoeWZyVmkzaWVIUGMwc2ZuRUdS?=
+ =?utf-8?B?emxsRlkvZnI2TDdUYzgrMzlmMFg3Nm1yWXJWY2w2STR0NllaMTdMQnlERnQ1?=
+ =?utf-8?B?aHRjOGFhQjBYcVpvcy82WTNKcXdoQnIwYjNBbTZ4aFdLZ1BPbnA4RzBpMzRr?=
+ =?utf-8?B?Vk8wcTZHYTJRd1A0bGZZc2lBQ0V6ZlpaTEMwQ2NFeFZIVnIzazEwc1RDVjVM?=
+ =?utf-8?B?NGtjNmUzbThCU0tVdmJXK0dPV1Q1VGJzZEFCT3pYK1pycW5hMWdoVUtkaGl1?=
+ =?utf-8?B?SWpWRFdxeHY5UFd0VjcvUGxIQ0pVbFkvY3RkejQzdXdRMFEwT3F6Unp6ZGlZ?=
+ =?utf-8?B?MTcxRXlCZCtoc0xXVStoaDBlRXFPbno5aEp0OTQ4NTZEU3NRYjFmbFVqUSta?=
+ =?utf-8?B?bWl5YmdhQWxUcUFaRWNRekZhWVF6Yk12NDRSUTFYSWt0TmNING9PSFF5Q2ll?=
+ =?utf-8?B?VVd5MXpmaVM1a3Q1ZGtsR0NjY3VQUGQzVEJzRFNYMVhNVDhsVGZ1dUNmcXBX?=
+ =?utf-8?B?MXJiNnd6U2F3dmVRMzdrOVJ2d3gyUWRTZXdvRHZmdzVaQ2xHZThhOWFRRS9F?=
+ =?utf-8?B?TzAwdEZzUk9sQ2hPQ01JVlNSRlJWZ2JOc1A2OXkzVGdPY2tpODlzTFFRd3pn?=
+ =?utf-8?B?andXWnF0QWtGTFNKY2hZd2NtZFBmcTNCYXdIaDBXQUplZnZvSWhRZlJnZnZw?=
+ =?utf-8?B?TklZWlZ1b3VhOGlqVTRqVmhIT2krd0tYOUh2bk9CSE12bzY5SEE3TkIrenVp?=
+ =?utf-8?B?MVFVdDNNNTVFY1VXV0NMamdBaHdqWGdFc2ZqVFEybkM2UjZsUVBoUS9DUVlH?=
+ =?utf-8?B?M3hJOWlFbHZvbm1FWE9oaCttQ3ZWN1B4bDhhOUhNZTNycmpUUFliYkRBMHN4?=
+ =?utf-8?B?SEwydjJTdFFHM25JL2ZPTzRKZTdiaG91WTJVb05Jdlh0T2hFOUZubitIdVZI?=
+ =?utf-8?B?NWJUdlNzL2lzallwTDd6SlJWQzUvcURtUGs1RUczMXRNaEwwUDVCSXpIY1lW?=
+ =?utf-8?B?SnB0bzFiTFZVUU56MWkrNDFhVjdESFg5cmxxZGJUSFBycFRCdWpFK0VpVU1O?=
+ =?utf-8?B?WU5tQi9VaHBiaVBDbmdWUGZtK1Z3TkhuTmVTOTlNUW5BelZQVHQvUllVUVlN?=
+ =?utf-8?B?YVdUZEx5UU5UOTFHSm45a3FZay91RnIwZGFaSUp3WkorZy9SRUw1ZkNaemRM?=
+ =?utf-8?B?bURMTW9MNWxFdU9FWXZBRWpOL0VtdlpzQ1NVMDh2bDE4azdTMU1PcjBzYlY5?=
+ =?utf-8?B?TE9qQUJRTVhtRzRqczZsU3diV1E2dEF6NkRaVVZVZTZIYm5xd29RMHBVVzNR?=
+ =?utf-8?B?bGZzbXZjOE56QmZNYkd3K1NGcks0eXdTc1B6UkNpSWh1VmVnd0dxUHJMSEs5?=
+ =?utf-8?B?am5KM2NVd3Ywb1plQmxxQWhtb0RiTjF2ZnZSdTdNMGI0djBrbG8vanJ2VEFQ?=
+ =?utf-8?B?RkIwUzRKZTd4UjJiZkF1UGlmNnZjMUJTT0VKWTI2d2VYcDhiVDd1WVhvalhv?=
+ =?utf-8?B?RHRqcnhDK2FJcFdzbW94QlQ5OEpjalJCekdEREdsTXVRdDVwOFBsUW9qM3BO?=
+ =?utf-8?Q?BznsTl4kMN25IyEcTkAuVw0PU?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56fc3299-001f-47b0-15f9-08ddd6cc80e1
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 22:39:58.3610
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0Tc5wBIfQWMy86lny38me45fPQKyrtrm94LkYbqe07TLvXvqc7wQ9SbefeP5ux3AW7nCiDa+W5P5ia/ROkOrLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10528
 
-Hi Anthony,
+Totally rewrite CSI part driver compared to V1.
 
-On Fri, 2025-08-08 at 15:15 -0700, Anthony Yznaga wrote:
-> > So, I have to admit that I'm not an expert on Linux kernel memory manag=
-ement and
-> > don't exactly know what the difference between HugeTLB and Transparent =
-Huge Pages
-> > is. Could someone enlighten me?
->=20
-> They both use use huge pages to reduce the number of TLB misses. HugeTLB=
-=20
-> has to be configured and requires changes to an application to=20
-> explicitly use it. THP works in a more automated fashion where the=20
-> kernel manages when and where to use huge pages without requiring=20
-> changes to the application.
+This only includes CSI related patches.
 
-Thanks for the explanation! I had actually researched the difference in the=
- mean time
-because I was curious about it ;-).
+DTS part: see https://lore.kernel.org/imx/20250701-95_cam-v1-6-c5172bab387b@nxp.com/
+PHY part: see https://lore.kernel.org/imx/20250701-95_cam-v1-4-c5172bab387b@nxp.com/
+AP1302 part: see https://lore.kernel.org/imx/20250701-95_cam-v1-7-c5172bab387b@nxp.com/
+	upstream: https://lore.kernel.org/imx/20250623-ap1302-v3-0-c9ca5b791494@nxp.com/
 
-> >=20
-> > The reason I am asking is because while this patch seems to fix HugeTLB=
- support,
-> > we're still seeing TLB-related crashes on sun4u which are triggered whe=
-n both
-> > CONFIG_TRANSPARENT_HUGEPAGE and CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS are =
-set.
-> >=20
-> > I previously thought that HugeTLB and THP are the same, but it seems li=
-ke that's
-> > not the case.
->=20
-> Yes, my patch fixes HugeTLB only, and has no bearing on THP.
->=20
-> >=20
-> > Enabling both these options leads to the following backtrace during boo=
-t:
-> >=20
-> > [   29.858572] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
-> > [   29.858580] rcu:     (detected by 0, t=3D2109 jiffies, g=3D-1155, q=
-=3D3 ncpus=3D1)
-> > [   29.858586] rcu: All QSes seen, last rcu_sched kthread activity 2109=
- (4294939474-4294937365), jiffies_till_next_fqs=3D1, root ->qsmask 0x0
-> > [   29.858595] rcu: rcu_sched kthread starved for 2109 jiffies! g-1155 =
-f0x2 RCU_GP_WAIT_FQS(5) ->state=3D0x0 ->cpu=3D0
-> > [   29.858603] rcu:     Unless rcu_sched kthread gets sufficient CPU ti=
-me, OOM is now expected behavior.
-> > [   29.858606] rcu: RCU grace-period kthread stack dump:
-> > [   29.858609] task:rcu_sched       state:R  running task     stack:0  =
-   pid:15    tgid:15    ppid:2      task_flags:0x208040 flags:0x07000000
-> > [   29.858626] Call Trace:
-> > [   29.858629] [<0000000000c0a234>] schedule+0x14/0x160
-> > [   29.858646] [<0000000000c11194>] schedule_timeout+0x54/0xe0
-> > [   29.858657] [<00000000004fbd40>] rcu_gp_fqs_loop+0x140/0x6c0
-> > [   29.858669] [<000000000050003c>] rcu_gp_kthread+0x23c/0x2a0
-> > [   29.858678] [<000000000049b788>] kthread+0xe8/0x120
-> > [   29.858688] [<00000000004060c8>] ret_from_fork+0x1c/0x2c
-> > [   29.858700] [<0000000000000000>] 0x0
-> > [   29.858705] rcu: Stack dump where RCU GP kthread last ran:
-> > [   29.858710] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.0+=
- #32 VOLUNTARY
-> > [   29.858719] TSTATE: 0000004411001603 TPC: 00000000004db400 TNPC: 000=
-00000004db404 Y: 0000137d    Not tainted
-> > [   29.858725] TPC: <console_flush_all+0x360/0x4c0>
-> > [   29.858738] g0: 00000000004db400 g1: 0000000000000000 g2: 0000000000=
-000000 g3: 00000000017fd000
-> > [   29.858743] g4: fff0000000180000 g5: fff000023d194000 g6: fff0000000=
-158000 g7: 000000000000000e
-> > [   29.858748] o0: 00000000017fd1e0 o1: 0000000000000000 o2: 0000000000=
-000000 o3: 00000000017fc5d0
-> > [   29.858752] o4: 0000000000000000 o5: 000000000185d7e8 sp: fff0000000=
-15a901 ret_pc: 00000000004db3f0
-> > [   29.858757] RPC: <console_flush_all+0x350/0x4c0>
-> > [   29.858764] l0: 00000000017fc5d0 l1: 0000000000000000 l2: 0000000000=
-000000 l3: 000000000143b538
-> > [   29.858769] l4: 0000000000000000 l5: 0000000000000001 l6: 0000000001=
-5c20b0 l7: 0000000001536308
-> > [   29.858773] i0: 0000000000000000 i1: fff000000015b2b8 i2: fff0000000=
-15b2b3 i3: 0000000000000000
-> > [   29.858778] i4: 00000000017fd1e0 i5: 0000000000000001 i6: fff0000000=
-15aa01 i7: 00000000004db5e8
-> > [   29.858782] I7: <console_unlock+0x88/0x120>
-> > [   29.858790] Call Trace:
-> > [   29.858793] [<00000000004db5e8>] console_unlock+0x88/0x120
-> > [   29.858801] [<00000000004dc128>] vprintk_emit+0x1e8/0x280
-> > [   29.858809] [<000000000042a34c>] _printk+0x20/0x30
-> > [   29.858819] [<00000000004dc66c>] register_console+0x34c/0x580
-> > [   29.858828] [<0000000000920358>] serial_core_register_port+0x898/0x8=
-c0
-> > [   29.858835] [<000000000092555c>] su_probe+0x15c/0x3e0
-> > [   29.858844] [<0000000000936d88>] platform_probe+0x28/0x80
-> > [   29.858851] [<0000000000934338>] really_probe+0xb8/0x340
-> > [   29.858863] [<0000000000934764>] driver_probe_device+0x24/0x120
-> > [   29.858872] [<0000000000934a0c>] __driver_attach+0x8c/0x1a0
-> > [   29.858879] [<000000000093232c>] bus_for_each_dev+0x4c/0xa0
-> > [   29.858887] [<0000000000933668>] bus_add_driver+0x148/0x220
-> > [   29.858894] [<0000000000935634>] driver_register+0x74/0x120
-> > [   29.858903] [<0000000001635e3c>] sunsu_init+0x180/0x1dc
-> > [   29.858915] [<00000000004347b0>] do_one_initcall+0x30/0x240
-> > [   29.858924] [<000000000160d014>] kernel_init_freeable+0x244/0x2b8
-> >=20
-> > Running the apt package manager results in a minute-long hang and this =
-backtrace:
-> >=20
-> > [  112.800879] systemd-journald[154]: Time jumped backwards, rotating.
-> > [  123.148552] kernel BUG at fs/ext4/inode.c:1174!
-> > [  123.208162]               \|/ ____ \|/
-> > [  123.208162]               "@'/ .. \`@"
-> > [  123.208162]               /_| \__/ |_\
-> > [  123.208162]                  \__U_/
-> > [  123.401513] apt(881): Kernel bad sw trap 5 [#1]
-> > [  123.461051] CPU: 0 UID: 0 PID: 881 Comm: apt Not tainted 6.16.0+ #32=
- VOLUNTARY
-> > [  123.557129] TSTATE: 0000004411001603 TPC: 000000000075eda8 TNPC: 000=
-000000075edac Y: 00000000    Not tainted
-> > [  123.686379] TPC: <ext4_block_write_begin+0x408/0x480>
-> > [  123.752813] g0: 0000000000000000 g1: 0000000000000001 g2: 0000000000=
-000000 g3: 0000000000000000
-> > [  123.867186] g4: fff0000007eb8140 g5: fff000023d194000 g6: fff000000a=
-130000 g7: 0000000000000001
-> > [  123.981565] o0: 0000000000000023 o1: 0000000000d74b28 o2: 0000000000=
-000496 o3: 0000000000101cca
-> > [  124.095948] o4: 0000000001568800 o5: 0000000000000000 sp: fff000000a=
-133161 ret_pc: 000000000075eda0
-> > [  124.214890] RPC: <ext4_block_write_begin+0x400/0x480>
-> > [  124.281219] l0: fff00000029ce828 l1: 0000000000113cca l2: fff0000002=
-9ce6c0 l3: 0000000000001000
-> > [  124.395608] l4: 0000000000000002 l5: 0000000000080000 l6: 0000000000=
-012000 l7: 0000000000000001
-> > [  124.509978] i0: 0000000000000000 i1: 000c0000003bfa00 i2: 0000000000=
-001fc0 i3: 0000000000680000
-> > [  124.624351] i4: 0000000000000000 i5: 0000000000000000 i6: fff000000a=
-133251 i7: 0000000000762518
-> > [  124.738729] I7: <ext4_da_write_begin+0x158/0x300>
-> > [  124.800487] Call Trace:
-> > [  124.832506] [<0000000000762518>] ext4_da_write_begin+0x158/0x300
-> > [  124.911429] [<00000000005b84ac>] generic_perform_write+0x8c/0x240
-> > [  124.991491] [<000000000074ae30>] ext4_buffered_write_iter+0x50/0x120
-> > [  125.074997] [<0000000000695420>] vfs_write+0x2a0/0x400
-> > [  125.142468] [<00000000006956c4>] ksys_write+0x44/0xe0
-> > [  125.208805] [<0000000000406274>] linux_sparc_syscall+0x34/0x44
-> > [  125.285437] Disabling lock debugging due to kernel taint
-> > [  125.355205] Caller[0000000000762518]: ext4_da_write_begin+0x158/0x30=
-0
-> > [  125.439843] Caller[00000000005b84ac]: generic_perform_write+0x8c/0x2=
-40
-> > [  125.525624] Caller[000000000074ae30]: ext4_buffered_write_iter+0x50/=
-0x120
-> > [  125.614836] Caller[0000000000695420]: vfs_write+0x2a0/0x400
-> > [  125.688035] Caller[00000000006956c4]: ksys_write+0x44/0xe0
-> > [  125.760093] Caller[0000000000406274]: linux_sparc_syscall+0x34/0x44
-> > [  125.842442] Caller[0000000000000000]: 0x0
-> > [  125.895052] Instruction DUMP:
-> > [  125.895055]  110035d2
-> > [  125.933938]  7ff35910
-> > [  125.964823]  90122328
-> > [  125.995700] <91d02005>
-> > [  126.026582]  80a06000
-> > [  126.057466]  02480010
-> > [  126.088347]  d45fa7cf
-> > [  126.119224]  d85fa7cf
-> > [  126.150125]  9736a000
-> > [  126.181088]
-> >=20
-> > After applying this patch to fix HugeTLB support on sun4u, the backtrac=
-e during boot changes to:
-> >=20
-> > [   29.860234] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
-> > [   29.860241] rcu:     (detected by 0, t=3D2109 jiffies, g=3D-1151, q=
-=3D3 ncpus=3D1)
-> > [   29.860247] rcu: All QSes seen, last rcu_sched kthread activity 2109=
- (4294939474-4294937365), jiffies_till_next_fqs=3D1, root ->qsmask 0x0
-> > [   29.860256] rcu: rcu_sched kthread starved for 2109 jiffies! g-1151 =
-f0x2 RCU_GP_WAIT_FQS(5) ->state=3D0x0 ->cpu=3D0
-> > [   29.860263] rcu:     Unless rcu_sched kthread gets sufficient CPU ti=
-me, OOM is now expected behavior.
-> > [   29.860266] rcu: RCU grace-period kthread stack dump:
-> > [   29.860269] task:rcu_sched       state:R  running task     stack:0  =
-   pid:15    tgid:15    ppid:2      task_flags:0x208040 flags:0x07000000
-> > [   29.860285] Call Trace:
-> > [   29.860288] [<0000000000c0a2f4>] schedule+0x14/0x160
-> > [   29.860305] [<0000000000c11254>] schedule_timeout+0x54/0xe0
-> > [   29.860317] [<00000000004fbe00>] rcu_gp_fqs_loop+0x140/0x6c0
-> > [   29.860329] [<00000000005000fc>] rcu_gp_kthread+0x23c/0x2a0
-> > [   29.860338] [<000000000049b848>] kthread+0xe8/0x120
-> > [   29.860347] [<00000000004060c8>] ret_from_fork+0x1c/0x2c
-> > [   29.860359] [<0000000000000000>] 0x0
-> > [   29.860364] rcu: Stack dump where RCU GP kthread last ran:
-> > [   29.860368] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.16.0+=
- #33 VOLUNTARY
-> > [   29.860378] TSTATE: 0000004411001603 TPC: 00000000004db4c0 TNPC: 000=
-00000004db4c4 Y: 00001390    Not tainted
-> > [   29.860383] TPC: <console_flush_all+0x360/0x4c0>
-> > [   29.860397] g0: 00000000004db4c0 g1: 0000000000000000 g2: 0000000000=
-000000 g3: 00000000017fd000
-> > [   29.860401] g4: fff0000000180000 g5: fff000023d194000 g6: fff0000000=
-158000 g7: 000000000000000e
-> > [   29.860406] o0: 00000000017fd1e0 o1: 0000000000000000 o2: 0000000000=
-000000 o3: 00000000017fc5d0
-> > [   29.860411] o4: 0000000000000000 o5: 000000000185d7e8 sp: fff0000000=
-15a901 ret_pc: 00000000004db4b0
-> > [   29.860415] RPC: <console_flush_all+0x350/0x4c0>
-> > [   29.860423] l0: 00000000017fc5d0 l1: 0000000000000000 l2: 0000000000=
-000000 l3: 000000000143b538
-> > [   29.860427] l4: 0000000000000000 l5: 0000000000000001 l6: 0000000001=
-5c20b0 l7: 0000000001536308
-> > [   29.860432] i0: 0000000000000000 i1: fff000000015b2b8 i2: fff0000000=
-15b2b3 i3: 0000000000000000
-> > [   29.860436] i4: 00000000017fd1e0 i5: 0000000000000001 i6: fff0000000=
-15aa01 i7: 00000000004db6a8
-> > [   29.860441] I7: <console_unlock+0x88/0x120>
-> > [   29.860449] Call Trace:
-> > [   29.860451] [<00000000004db6a8>] console_unlock+0x88/0x120
-> > [   29.860459] [<00000000004dc1e8>] vprintk_emit+0x1e8/0x280
-> > [   29.860467] [<000000000042a34c>] _printk+0x20/0x30
-> > [   29.860477] [<00000000004dc72c>] register_console+0x34c/0x580
-> > [   29.860485] [<0000000000920418>] serial_core_register_port+0x898/0x8=
-c0
-> > [   29.860493] [<000000000092561c>] su_probe+0x15c/0x3e0
-> > [   29.860502] [<0000000000936e48>] platform_probe+0x28/0x80
-> > [   29.860509] [<00000000009343f8>] really_probe+0xb8/0x340
-> > [   29.860521] [<0000000000934824>] driver_probe_device+0x24/0x120
-> > [   29.860529] [<0000000000934acc>] __driver_attach+0x8c/0x1a0
-> > [   29.860537] [<00000000009323ec>] bus_for_each_dev+0x4c/0xa0
-> > [   29.860544] [<0000000000933728>] bus_add_driver+0x148/0x220
-> > [   29.860552] [<00000000009356f4>] driver_register+0x74/0x120
-> > [   29.860560] [<0000000001635e3c>] sunsu_init+0x180/0x1dc
-> > [   29.860572] [<00000000004347b0>] do_one_initcall+0x30/0x240
-> > [   29.860581] [<000000000160d014>] kernel_init_freeable+0x244/0x2b
-> >=20
-> > while the backtrace produced when apt hangs is:
-> >      =20
-> > [  337.599490] ------------[ cut here ]------------
-> > [  337.660412] WARNING: CPU: 0 PID: 895 at fs/ext4/extents_status.c:298=
- __es_find_extent_range+0x128/0x140
-> > [  337.784523] Modules linked in: sg sr_mod cdrom sym53c8xx tg3 libphy =
-mdio_bus
-> > [  337.877302] CPU: 0 UID: 0 PID: 895 Comm: apt Not tainted 6.16.0+ #33=
- VOLUNTARY
-> > [  337.877314] Call Trace:
-> > [  337.877316] [<000000000047286c>] __warn+0x10c/0x120
-> > [  337.877326] [<0000000000472910>] warn_slowpath_fmt+0x90/0x120
-> > [  337.877332] [<0000000000748988>] __es_find_extent_range+0x128/0x140
-> > [  337.877341] [<00000000007490f0>] ext4_es_find_extent_range+0x50/0x10=
-0
-> > [  337.877348] [<0000000000742a1c>] ext4_ext_map_blocks+0x7fc/0x22a0
-> > [  337.877355] [<00000000007578d0>] ext4_map_query_blocks+0x30/0x2a0
-> > [  337.877366] [<00000000007596a0>] ext4_da_get_block_prep+0x380/0x640
-> > [  337.877375] [<000000000075ecf4>] ext4_block_write_begin+0x294/0x480
-> > [  337.877382] [<00000000007625d8>] ext4_da_write_begin+0x158/0x300
-> > [  337.877389] [<00000000005b856c>] generic_perform_write+0x8c/0x240
-> > [  337.877399] [<000000000074aef0>] ext4_buffered_write_iter+0x50/0x120
-> > [  337.877406] [<00000000006954e0>] vfs_write+0x2a0/0x400
-> > [  337.877415] [<0000000000695784>] ksys_write+0x44/0xe0
-> > [  337.877421] [<0000000000406274>] linux_sparc_syscall+0x34/0x44
-> > [  337.877433] ---[ end trace 0000000000000000 ]---
-> > [  339.153555] ------------[ cut here ]------------
-> > [  339.214459] WARNING: CPU: 0 PID: 895 at fs/ext4/extents_status.c:298=
- __es_find_extent_range+0x128/0x140
-> > [  339.338108] Modules linked in: sg sr_mod cdrom sym53c8xx tg3 libphy =
-mdio_bus
-> > [  339.430869] CPU: 0 UID: 0 PID: 895 Comm: apt Tainted: G        W    =
-       6.16.0+ #33 VOLUNTARY
-> > [  339.430880] Tainted: [W]=3DWARN
-> > [  339.430883] Call Trace:
-> > [  339.430886] [<000000000047286c>] __warn+0x10c/0x120
-> > [  339.430894] [<0000000000472910>] warn_slowpath_fmt+0x90/0x120
-> > [  339.430900] [<0000000000748988>] __es_find_extent_range+0x128/0x140
-> > [  339.430907] [<00000000007490f0>] ext4_es_find_extent_range+0x50/0x10=
-0
-> > [  339.430915] [<0000000000742a1c>] ext4_ext_map_blocks+0x7fc/0x22a0
-> > [  339.430921] [<00000000007578d0>] ext4_map_query_blocks+0x30/0x2a0
-> > [  339.430931] [<00000000007597d4>] ext4_da_get_block_prep+0x4b4/0x640
-> > [  339.430940] [<000000000075ecf4>] ext4_block_write_begin+0x294/0x480
-> > [  339.430948] [<00000000007625d8>] ext4_da_write_begin+0x158/0x300
-> > [  339.430954] [<00000000005b856c>] generic_perform_write+0x8c/0x240
-> > [  339.430964] [<000000000074aef0>] ext4_buffered_write_iter+0x50/0x120
-> > [  339.430971] [<00000000006954e0>] vfs_write+0x2a0/0x400
-> > [  339.430979] [<0000000000695784>] ksys_write+0x44/0xe0
-> > [  339.430985] [<0000000000406274>] linux_sparc_syscall+0x34/0x44
-> > [  339.430996] ---[ end trace 0000000000000000 ]---
-> >=20
-> > So, I guess while your patch may fix HugeTLB support, there is still a =
-bug on sun4u with THP
-> > which needs to be addressed.
->=20
-> Maybe try enabling CONFIG_DEBUG_VM_IRQSOFF, CONFIG_DEBUG_VM, and perhaps=
-=20
-> CONFIG_DEBUG_VM_PGFLAGS. That might help detect a problem closer to the=
-=20
-> source. You can also try adding transparent_hugepage=3Dnever to the kerne=
-l=20
-> boot line to see if compiling in THP support but not using it is okay.
+First 3 patches add some common helper function to simple code and remove
+duplicated code in difference CSI2 drivers.
 
-OK, I will try that. But not today anymore. It's half past midnight now her=
-e in Germany
-and I was debugging this issue almost all day long. I'm glad to have finall=
-y been able
-to track this down to THP support being enabled.
+Clean up stage imx6 old version csi2 driver, and prepare create common
+dw csi2 library for difference IP version.
 
-Maybe you can try whether you can reproduce this in QEMU as well.
+Move stage driver under driver/media/synosis.
 
-Adrian
+Create simple platform driver for common dw csi2 use case.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+TODO:
+	1. create bus, to probe phy driver under "test_if" interface for
+specific phys under CSI2.
+	2. support to combine phy, (which connect to both dw CSI and DSI's
+test_if). Need use DSI's test_if to config combo phy to switch to RX mode.
+and also need config RX part's phy register by use CSI's testif.
+	3. move other vendor's csi driver to use this common DWC CSI
+library.
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Changes in v2:
+- totally rewrite, see above section
+- Link to v1: https://lore.kernel.org/r/20250701-95_cam-v1-0-c5172bab387b@nxp.com
+
+---
+Eugen Hristev (1):
+      dt-bindings: media: add DW MIPI CSI-2 Host support
+
+Frank Li (31):
+      media: v4l2-common: Add helper function v4l_get_required_align_by_bpp()
+      media: v4l2-common: Add helper function media_bus_fmt_to_csi2_bpp()
+      media: v4l2-common: Add helper function media_bus_fmt_to_csi2_dt()
+      media: staging: media: imx6-mipi-csi2: replace space with tab for alignment
+      media: staging: media: imx6-mipi-csi2: use devm_add_action_or_reset() to simplify code
+      media: staging: media: imx6-mipi-csi2: use devm_clk_bulk_get_all() to fetch clocks
+      media: staging: media: imx6-mipi-csi2: use devm_mutex_init() to simplify code
+      media: staging: media: imx6-mipi-csi2: use guard() to simplify code
+      media: staging: media: imx6-mipi-csi2: use register structure to match hardware
+      media: staging: media: imx6-mipi-csi2: use devm_platform_ioremap_resource() simplify code
+      media: staging: media: imx6-mipi-csi2: move probe part to imx6-csi2.c
+      media: staging: media: imx6-mipi-csi2: move sd imx6's specific initialization into imx6-sci2.c
+      media: staging: media: imx6-mipi-csi2: move csi2ipu_gasket_init() to imx6-csi2.c
+      media: staging: media: imx6-mipi-csi2: move number pad macro define into imx6-csi2.c
+      media: staging: media: imx6-mipi-csi2: move dphy init part to imx6-csi2.c
+      media: staging: media: imx6-mipi-csi2: use runtime_pm frame to control clks
+      media: synopsys: move imx6-mipi-csi2.c to synopsys/mipi-csi2.c
+      media: synopsys: csi2: Remove deprecated s_stream and use v4l2_subdev_pad_ops
+      media: synopsys: csi2: Add phy interface support
+      media: synopsys: csi2: Add basic v150* version register
+      media: synopsys: csi2: Add irq support to record error count
+      media: synopsys: csi2: Handle alignment requirement for width
+      media: synopsys: csi2: Add register prefix to register field definitions
+      media: synopsys: csi2: Add need_dphy_reset in config
+      media: synopsys: csi2: Add default simple dw_csi2_subdev_init_state
+      media: synopsys: csi2: Add v150 lane stop state register bit define
+      media: synopsys: csi2: use standard v4l2_subdev_get_fmt() function
+      media: synopsys: csi2: Add customize get_frame_desc() callback
+      media: synopsys: csi2: Add Image Pixel Interface (IPI) support for v150
+      media: synopsys: csi2: Remove source pad connected check at dw_csi2_enable_streams()
+      media: synopsys: csi2: Add simple synopsys platform driver
+
+ .../bindings/media/snps,dw-mipi-csi2-v150.yaml     |  158 +++
+ MAINTAINERS                                        |    1 +
+ drivers/media/platform/synopsys/Kconfig            |   20 +
+ drivers/media/platform/synopsys/Makefile           |    3 +
+ drivers/media/platform/synopsys/mipi-csi2-simple.c |   75 ++
+ drivers/media/platform/synopsys/mipi-csi2.c        | 1258 ++++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-common.c              |  220 ++++
+ drivers/staging/media/imx/Kconfig                  |    1 +
+ drivers/staging/media/imx/Makefile                 |    2 +-
+ drivers/staging/media/imx/imx6-csi2.c              |  181 +++
+ drivers/staging/media/imx/imx6-mipi-csi2.c         |  846 -------------
+ include/media/dw-mipi-csi2.h                       |  120 ++
+ include/media/mipi-csi2.h                          |    5 +
+ include/media/v4l2-common.h                        |   30 +
+ 14 files changed, 2073 insertions(+), 847 deletions(-)
+---
+base-commit: 33652d58b64e92d2598205fd992989bd93cd61f4
+change-id: 20250606-95_cam-b74c094ad1fb
+
+Best regards,
+--
+Frank Li <Frank.Li@nxp.com>
+
 
