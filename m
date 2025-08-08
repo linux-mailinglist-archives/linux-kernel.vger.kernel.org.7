@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-760393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2503DB1EAA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:49:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A5BB1EAA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 982BF188EFE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39E6A081E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2780E280CE0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC653281366;
 	Fri,  8 Aug 2025 14:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="e07+lHfe"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pMmZ+n6q"
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16A74A32
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E34280033
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754664580; cv=none; b=qoTxwMEawxhkQd7uhO3Zf0wA47cC4TrPgfVY/TeeVjgjdjf0NETA4Tg0WBXLi78OA4K+z09BQ2L9RoQFKxiWVYqgna7OYuO4wLXxOjHdcSMcptfsDzKH/tChxFcygLZZokqUtmp3VozrCCznh2uRTV2TpTCBOoIRSuScLT7vrkI=
+	t=1754664581; cv=none; b=c3fMJb2vAYl4eTJFijZpn3WkZjKPDQ/pl6nVkwM3F9Py6fASD3xvkHqOm5u+1vfm6tlspcgJkqwanQZucdEqcV75TMrsmIdfe4whUwvzindWv72HmhfxCS3C6fotd3rtagPg9hYaQvuvv+Yi2NwHoFAxoXll5GXxYkUB9HmKVRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754664580; c=relaxed/simple;
-	bh=fQrkvta09sPrtjxxDO32mEFlkrQnedz1eUHNNkgQqBk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mmfHMDP3TyK9szxe8ZycMQnqRQxrBJSiVm8LpUwclOr4azcfetN+6lZ7JgBxp3mQUqDMX6cCZmi6hhnaQNLZPM4Yjcd2R7Y/yGOWwCgrBg9QTxSDdsDauuZOlPzM+AjrxuVMDjofgb/8X16WrwD08IAXoqg3FaHvjNjYEXH7rOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=e07+lHfe; arc=none smtp.client-ip=217.70.183.200
+	s=arc-20240116; t=1754664581; c=relaxed/simple;
+	bh=TR6H9vhB/qFJMc8S7OFtQFjgbVhU9R6LQz2RKnpHAa4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=nMUEhzDVYf+b/O4yGLIdqgq33+//hUOYQ4AfihT7G+/BUdY0UW85wEFwOhsvEleEb/PuZX6NhiliIFbsusb3icpscV6sR+6MxB4Ttan5L/biamWSJJyCg3fLsO3Ebzgx61o2dPMV3C26z2meYVowsVrfiGiX7c0WDNS/mRZ58y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pMmZ+n6q; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2E8AE4397C;
-	Fri,  8 Aug 2025 14:49:25 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AFEBE43986;
+	Fri,  8 Aug 2025 14:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754664569;
+	t=1754664572;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YuF4nnvi3fV43zgWxp+tW6JoStyuwuQCwhjAMoEMygw=;
-	b=e07+lHfe25z6EU4RbT2WyUVdiZane0nD01Q4wJLAx9JlqBRpSAKJEW2itqfpya2L9bRCts
-	hhhzK8bjqR/KHEkPfw2zaJz074hSaWMdP6A4xzg+4MjQfL4jAh9pZl7HUQ0iHLg2wc6OVm
-	mDSmY45HdYThz8gIs0SV4M/bkRgKWPOwZRdgTuqw9IMFiqp/Ow5dsUou147Us6vtUdIL4G
-	dQ2UtLveUwKvUgJ9GQdj4ap3rY4ql0boysIbh9zUVlSnjfhADJ1OCJWpuiT0WhocONNs60
-	0Dk0mr4HFHzEH5rdrk1ZmudGfUlqfr6slyMcIBeiac4EigxFUIgHsPQ9ORYHcQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+FAywltmFU9dB2pOTz2lEsEdD9YeBwzzMU9uV0qEppY=;
+	b=pMmZ+n6qrqq69hp5yRJXDH+CVOgRvWIw17uBsEXmoDpEf8jMdJgL0dB+/OTEo6k6Dpgv0s
+	DaQjRDkIQZItS5H7znZi5NwYSreXE8+vJ6b7xYOdhzfVUbN8kNP5zJAJzBpwMjE7LfcASf
+	kFKYEPan+0hX+GO2z8wglYYCNCZ5qIj7NOjpvXLLl36MIoMi1Xv+G28bVExyf3DMOOFf7h
+	ETGA0ckfGCiw3c/3X1pK7071UK4/1MHl636UzkmGyKmajqASo4AEYkrcxrHMlV2DfgAua1
+	akrCyTe98b+RyHoRq1jeEMdhZE94De8HbyWypxzQa/2cihLQBAjmgLHJAH0eOQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: [PATCH v2 0/9] drm/bridge: get/put the bridge when looping over
- the encoder chain
-Date: Fri, 08 Aug 2025 16:49:07 +0200
-Message-Id: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
+Date: Fri, 08 Aug 2025 16:49:08 +0200
+Subject: [PATCH v2 1/9] drm/display: bridge-connector: use scope-specific
+ variable for the bridge pointer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,13 +55,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAGMOlmgC/42P7Y6DIBBFX8Xwe2kAFT/SbPoeTdMMOFRSlS5Q0
- 6bx3Rd1H2B/3pnknnM/JKC3GEibfYjH2QbrphTEV0Z0D9MNqe1SJoKJklW8pp0fqfK2Sx8YBqf
- pDePjGalx/oqg++vf0/CCA/JKyRJIant4NPa1kc6XPXv8eSZg3I9EQUCq3Tja2GadUEVthMqZE
- WXTVLCWQcc0GtCy1qI0tc5ztlaPGAJspm123ESlYIxzyeWBJ2VO7+gnHE5g/f1tD4nxTVaH3ob
- o/HsbP/NNYt8p8n/vnDllVGFtCkDGJDYn5Vwc7LRiyGVZll80rISvZAEAAA==
-X-Change-ID: 20250718-drm-bridge-alloc-getput-for_each_bridge-f141ae17b65a
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-1-edb6ee81edf1@bootlin.com>
+References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
+In-Reply-To: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
  Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
  Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
@@ -80,101 +78,55 @@ Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdegtdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejjefhgfffleevhefhfeduhedtfedttedtkefgkeeuieehtdeifeduveejffevgeenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrghdpkhgvrhhnvghlrdhorhhgnecukfhppeejkedrvdduvddrvdejrdduudehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeekrddvuddvrddvjedrudduhedphhgvlhhopegludejvddrudeirddtrddungdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehnihgtkhdruggvshgruhhlnhhivghrshdolhhkmhhlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguv
- ggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepthhomhhirdhvrghlkhgvihhnvghnsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdegtdelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepjeekrddvuddvrddvjedrudduheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeejkedrvdduvddrvdejrdduudehpdhhvghloheplgdujedvrdduiedrtddrudgnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdehpdhrtghpthhtohepnhhitghkrdguvghsrghulhhnihgvrhhsodhlkhhmlhesghhmrghilhdrtghomhdprhgtphhtthhopehmohhrsghosehgohhoghhlvgdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehtohhmihdrvhgrlhhkvghin
+ hgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-This series adds drm_bridge_get/put() calls for DRM bridges used when
-looping over bridges in an encoder chain.
+Currently drm_bridge_connector_init() reuses the 'bridge' variable, first
+as a loop variable in the long drm_for_each_bridge_in_chain() and then in
+the HDMI-specific code as a shortcut to bridge_connector->bridge_cec.
 
-This is part of the work towards removal of bridges from a still existing
-DRM pipeline without use-after-free. The grand plan was discussed in [1].
-Here's the work breakdown (➜ marks the current series):
+We are about to remove the 'bridge' loop variable for
+drm_for_each_bridge_in_chain() by moving to a scoped version of the same
+macro, which implies removing the 'bridge' variable from the main function
+scope. Additionally reusing the variable can make such long function less
+readable.
 
- 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
-    (based on devm_drm_bridge_alloc() [0])
-    A. ✔ add new alloc API and refcounting (in v6.16-rc1)
-    B. ✔ convert all bridge drivers to new API (now in drm-misc-next)
-    C. ✔ kunit tests (now in drm-misc-next)
-    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
-         and warn on old allocation pattern (now in drm-misc-next)
-    E. ➜ add get/put on drm_bridge accessors
-       1. ✔ drm_bridge_chain_get_first_bridge() + add a cleanup action
-       2. … drm_bridge_get_prev_bridge()
-       3. … drm_bridge_get_next_bridge()
-       4. ➜ drm_for_each_bridge_in_chain()
-       5. drm_bridge_connector_init
-       6. of_drm_find_bridge
-       7. drm_of_find_panel_or_bridge, *_of_get_bridge
-    F. debugfs improvements
- 2. handle gracefully atomic updates during bridge removal
- 3. … avoid DSI host drivers to have dangling pointers to DSI devices
- 4. finish the hotplug bridge work, removing the "always-disconnected"
-    connector, moving code to the core and potentially removing the
-    hotplug-bridge itself (this needs to be clarified as points 1-3 are
-    developed)
-
-Most loops on the encoder bridge chain are based on
-drm_for_each_bridge_in_chain(), which does not get/put the bridge pointed
-to by the loop iterator.
-
-Add a scoped variant that ensures ta reference to the bridge pointed to by
-the iterator is taken/released before/after every iteration (and when
-breaking out of the loop). Using the scoped version, the bridge being
-iterated on will always have a reference taken during the shole
-iteration. This is similar to what for_each_child_of_node() and similar
-for_each_* macros do.
-
-All conversions are trivial except for drm_bridge_connector_init() which
-needs some preliminary cleanups (patches 1-2).
-
-omapdrm/omap_encoder.c is the only driver iterating over the encoder bridge
-chain starting from a specific bridge, instead of iterating over the whole
-list. For this use case, add a drm_for_each_bridge_in_chain_from() variant.
-
-This series depends on:
-
- * commit 103578241512 ("drm/bridge-connector: Fix bridge in
-   drm_connector_hdmi_audio_init()"), currently in drm-misc-fixes, not yet
-   on drm-misc-next
-
-[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b715ea3d1ba537ef2da95eec
-[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/t/#u
+Similarly to what commit 6f727c838ea8 ("drm/bridge-connector: Fix bridge in
+drm_connector_hdmi_audio_init()") already did for the audio HDMI bridge,
+use n local variable inside the scopes where it is needed as a
+bridge_connector->bridge_hdmi_cec shortcut to make its scope clearer as
+well as to allow removing the 'bridge' variable in an upcoming commit.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
-Changes in v2:
-- Prune series dependency list
-- Clarify wording in cover letter and patch 3
-- Link to v1: https://lore.kernel.org/r/20250723-drm-bridge-alloc-getput-for_each_bridge-v1-0-be8f4ae006e9@bootlin.com
+ drivers/gpu/drm/display/drm_bridge_connector.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
----
-Luca Ceresoli (9):
-      drm/display: bridge-connector: use scope-specific variable for the bridge pointer
-      drm/display: bridge-connector: remove unused variable assignment
-      drm/bridge: add drm_for_each_bridge_in_chain_scoped()
-      drm/display: bridge-connector: use drm_for_each_bridge_in_chain_scoped()
-      drm/atomic: use drm_for_each_bridge_in_chain_scoped()
-      drm/bridge: use drm_for_each_bridge_in_chain_scoped()
-      drm/bridge: remove drm_for_each_bridge_in_chain()
-      drm/bridge: add drm_for_each_bridge_in_chain_from()
-      drm/omap: use drm_for_each_bridge_in_chain_from()
+diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
+index 8c915427d0538435661d771940efe38b462027a1..3ddde53b28131c3ce026413eb5518e9c8ed08b4d 100644
+--- a/drivers/gpu/drm/display/drm_bridge_connector.c
++++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+@@ -816,7 +816,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 
+ 	if (bridge_connector->bridge_hdmi_cec &&
+ 	    bridge_connector->bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_NOTIFIER) {
+-		bridge = bridge_connector->bridge_hdmi_cec;
++		struct drm_bridge *bridge = bridge_connector->bridge_hdmi_cec;
+ 
+ 		ret = drmm_connector_hdmi_cec_notifier_register(connector,
+ 								NULL,
+@@ -827,7 +827,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+ 
+ 	if (bridge_connector->bridge_hdmi_cec &&
+ 	    bridge_connector->bridge_hdmi_cec->ops & DRM_BRIDGE_OP_HDMI_CEC_ADAPTER) {
+-		bridge = bridge_connector->bridge_hdmi_cec;
++		struct drm_bridge *bridge = bridge_connector->bridge_hdmi_cec;
+ 
+ 		ret = drmm_connector_hdmi_cec_register(connector,
+ 						       &drm_bridge_connector_hdmi_cec_funcs,
 
- .clang-format                                  |  2 +-
- drivers/gpu/drm/display/drm_bridge_connector.c | 13 +++----
- drivers/gpu/drm/drm_atomic.c                   |  3 +-
- drivers/gpu/drm/drm_bridge.c                   |  3 +-
- drivers/gpu/drm/omapdrm/omap_encoder.c         |  4 +-
- include/drm/drm_bridge.h                       | 52 ++++++++++++++++++++++++--
- 6 files changed, 58 insertions(+), 19 deletions(-)
----
-base-commit: d2b48f2b30f25997a1ae1ad0cefac68c25f8c330
-change-id: 20250718-drm-bridge-alloc-getput-for_each_bridge-f141ae17b65a
-prerequisite-message-id: <20250620011616.118-1-kernel@airkyi.com>
-prerequisite-patch-id: ba5a6a15ea02bcee387db0e92ffb4cd0e1fbf816
-
-Best regards,
 -- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+2.50.1
 
 
