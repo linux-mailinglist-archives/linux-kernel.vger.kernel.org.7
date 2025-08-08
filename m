@@ -1,134 +1,255 @@
-Return-Path: <linux-kernel+bounces-759700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55973B1E157
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:59:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB97B1E190
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74E105669EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 04:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8DA23A8CA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CA21DED52;
-	Fri,  8 Aug 2025 04:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D7D1DED42;
+	Fri,  8 Aug 2025 05:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbN0x6Cw"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKZgA/z6"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432B11C5D57;
-	Fri,  8 Aug 2025 04:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5DF2E36E2;
+	Fri,  8 Aug 2025 05:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754629152; cv=none; b=B7cEEIvXAplXUwjAEbIZQaIdjlbHkR1LcI7ZFwWnpPcuqT7y6KDuCYmMbzA6domjxYRH0NJsU2GiWAviuSHTo/QXYRhz+lTyRkmB9QO7pL2zJKoFv14wIRT77aK24ofGcuJw2V4/brM+N8KXTsD3wcf+T+YOVjERGU57z0prv4o=
+	t=1754629782; cv=none; b=kJja4kzoiwWe8Sl2CCkguuHUxA7fHOi7XMrL4V+GImRUh+ZEl6VfA19z39qJYPcBpvMYZBzlrNr0WH0yN/DGfCztN1PITo4hG6duwPRMLoU7O6fOmlC8kIgYC1USQ3xP2/sgFTy655c6Aw58PNYvZBWCihutL6C7brung8aCJWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754629152; c=relaxed/simple;
-	bh=/VoKBIRGiniKsG1TFIp8MwJEZI2BoAtxiN0PrthFJkM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Z+u2oCoNK0eFBPwkWLgTvYGOMiG0zWu1MFNfHwhQNkq8aoye6qDCJ1g8F3IwzrHikvBLPmWtM6Iu14Wwtd/4rwO1qpIOsIkzVzQoKoXazPRdfJkGePOsxlEQD8/xWg8VF3j8UfdfD4W8AV1cRd5n5b08Oq9TmkRyYsOyaOdAJiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbN0x6Cw; arc=none smtp.client-ip=209.85.219.42
+	s=arc-20240116; t=1754629782; c=relaxed/simple;
+	bh=a2y6oq32RCdK2rJQj7kda/c55NYWJH3sUNJiUAyzCXA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ehNAF/h2gOiILDw8IhZP5v75Z+eKlc737qSbzCXnwdlRSXZZl0E9uGEgk0HNCoONXPw9RFFkx0MwNPt+aWiAZPaqDeS8XlVYKgjJ0e+s9fz1d34xATTPV9d5xdajpL5ysfUy1AD0km877OOoZxWmrJT7n8Oi7Hez2b4y97mkP6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XKZgA/z6; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-70767eef931so21871586d6.3;
-        Thu, 07 Aug 2025 21:59:10 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b7910123a0so1490058f8f.1;
+        Thu, 07 Aug 2025 22:09:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754629150; x=1755233950; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3NMZPTEUmLg12mM+VUodjDSUgZfHpg3c9/sNqjgze9A=;
-        b=mbN0x6Cws9Y7oaN5dmZoW5cwtnUEl97LnLTwkG9ERAE8f2B9iDss/nWKlSWn8xaHUw
-         TdDaOg4bfuSUeLD7m9a3pla8ITxcqvE+dqB6u7JR6RwqHNKGtBsLwcJRL8VljCD1KWpP
-         fz6dEcPVqebeCg40hCJsvj7ROz5yHqlkw2t8MiWmpapnxZvTCq0/fn/dQrKEmkI9Bb8G
-         iCKb+Pz/raN9oXP8Ir91XSz+pB6SVPqYVshsGH3gFGtgjJNthkCx6sikMTgQUPh6ybVT
-         R5x0C+7JYJa1jFF4fHZCvSsoOGktgQ0HJa24e5hB3SIZZCe+NSXeQcdlVypW+l5gT0Ki
-         RcHw==
+        d=gmail.com; s=20230601; t=1754629779; x=1755234579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vJeRKC2Sbj8HVwSNuMEkUt6TOmddOusn/wpP7GmPtQg=;
+        b=XKZgA/z65vZIMyUV0qrjN7ZtWIsYAVCDbVKiUeyG5nA+Vv01ob3K3FY6BzlT1QXErN
+         NCIrnchtleBNZhzoQ/Cj6RgA2dMr4sHGDDycMbovgiR9fV+wNYbujllkKjE0JMzFweiI
+         4s7PHZrUJ13QjYjNuuxLepxYyY2hDGxh829VnHZdJ7y5qkpitLrNApZHtQUG0p91bW5R
+         mIsc7u6C0fnjfLzAkZva2tV4IQ+oZNXhrSkERjwrwMpT+BN/eLdK9yU13Nt2vR+ge/gX
+         aXfKVH7NnAb0KbBSgukBX74KbOUmjyUk/FU66nhgDO2e5eyP8ABVKXpm6AFd88h+grV/
+         5lpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754629150; x=1755233950;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3NMZPTEUmLg12mM+VUodjDSUgZfHpg3c9/sNqjgze9A=;
-        b=AJcHVfg86wqfBLQvyaPC/DvmR2Aymq84WumDhyXF6cW/nTuVJXBCtpzfPJalX2/WAa
-         y8/LcjVxtficNdSkeb2EFT0ED4xRDy9MXglDf1FYgLI9xcB0euQ/f5PQPxCiQSkLwjUp
-         O1bXWgVwk8STa0/ihfX5EFW9szB+gyLozEW3ozk45M2QhoCw7DWI78ZxUFcUdhxdepF3
-         55uDEtxsg/hY5OHGdDt4WMlciSehaom7Uc3rMEWuk9137kZFBEtinxfpLyh8fb1Tu2C0
-         FBqKAH/zJSp3S0wPPmt0xXUhj1wJ7bn9tX5sQdxCp2bdlJgyG6dBa4x8gQ103eeB/POu
-         3Gdw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8m9WJ+km0cnB/MUMWXncemv/LuKmE5DZdcDPaTmRDsUYNXR/blFO005KZFo5DleZrWgB/KA10xhTSIpkY@vger.kernel.org, AJvYcCWOUcxF25ql8bdeTr8FBf25tGIee98tG9mCHUuHf5GVHqqXCxBg8+D7ziFYE9hUO36Bs+WQ3C/qubGN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo16lSBsJ+2oTy/ctrkEU5fgW+FRChWMIslh/oXVO0Q4mXZqll
-	9Z0TqysNVqEuQz5btzpajeofOexCKWZemIgC43VmMCIBOO+yRLu3CAaLEcc4x9NTc7RGLy2uKKB
-	yYfdoEaaUVInrY3KuzMy14JPUP4fozfAREF4c
-X-Gm-Gg: ASbGncuiYSvU1S3ee2KwQfrjbZIf7AUJsJqBeDuR1rUzv//85kxiX7KDX88idTqZVpD
-	+ZjsDaht60XFOqWMOme3Wp6OwhHhnPnQPayObhdrw/cMrUc2/uwyYKn4zLbbHLPWNeHyDY78h1b
-	/lkrF5eITrIwlJFEp5X9JRqcOoafLMX55GJd26ZjumstrPRp+DF00lNx/mCUVWQYFUONA3NCSm0
-	V0hVe+GQt0Zbw7hynBGMF6KOiypT9diaWAbk9cQ
-X-Google-Smtp-Source: AGHT+IFQVW1TjkW/29AJ4QjojZr1+QwZQV1LqXCN7XtQ/37rwybEDxlOnn6cAfsZ4KcH0fkOgfLkYp9aMoFkFomCBKU=
-X-Received: by 2002:a05:6214:2aa1:b0:707:69ad:d84a with SMTP id
- 6a1803df08f44-7099a4ba55emr24323766d6.42.1754629149962; Thu, 07 Aug 2025
- 21:59:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754629779; x=1755234579;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vJeRKC2Sbj8HVwSNuMEkUt6TOmddOusn/wpP7GmPtQg=;
+        b=jJmwbj5XtwLogV1GEHlZcatH6fpGxz3aIdabYsxWvMpemE5ey/CvouFkaWVR76ls2n
+         ucWFB/omVifW+5V3xiFPbXVgr1evSDHvyjBwvpcBcBIj+adPYeWsPpbOx9KEodXPb9BH
+         qsGMogFIiNyLlfSo13lnaaUBZkqaagFCOAbJGFitMimqSsUe2dTk37z7lNtW7qjmqAP8
+         0LpilPrgRY3o97dMWUtmllbk7pagdGzqJwoSSuRElISVMQmHa7DS0YcN5E6DU/t7bidm
+         OyZ7y+/PftgjOfgARUgZxeK9f11j6NdImB/RpX/CbUixKy9YmKuv996ML26WZ8tIgidH
+         OX+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUGDhZrwH/KuZkDidQNUte/5NR5GGQz5t++U9x5rAoJlwU3keSkLf68kQqiXniXer/KLuQnHh8aM8mN@vger.kernel.org, AJvYcCX8qGWgMKxw8Cw1RbuiilCHyCMLTB1wTARct0yGWbcmLRkMSyxAxgaqNV6Wiw5LPOISaIm9gEvWkgrTrpJ+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDrxia6ll3EMg7tkBgVpRcnOKjV4y8fszKaYaikiNGhkrer1ue
+	Rgx+ora+d93BQDBCkUE+9nLN5mpP3bYP4DNLlIKfeZLPKGCi08kkHjFq
+X-Gm-Gg: ASbGncueP/MRe8Ys1fK7R1xExD8b99XywY36rrheK1xm7MCgbm1SFiR8xDPsKShLy7M
+	dDm+ySrAm4pM2i4yYDjpEvw1h9lqhSn4IXXbxLDqRgDSyLu/Wi8EwlOH4VAxnd9z00Q3ijb5Pf1
+	H8jJTn6FTpMM91Q/prNeXZ1xqz2iesOMw+Wgt93g7xGfj6JxCY2t1jq9GP1z3xDlSgNIsTLytc8
+	5MIBwswlTjzDt+leluU/yD5YW31KvWBfxdEx/NOChPk8bovEJ3XvM22SFgeCx5T0DTtIMhCqLVg
+	bygTlOEKTTPlFaZANG2g/nsxw4b6hM/9m5yMyK3SBlUDik+LtQNzgp+H0/z/pugRvqGKkh2R0F7
+	CulOFCFt/uwIUrE2Bii9AzQ==
+X-Google-Smtp-Source: AGHT+IGwelafdCRl6SiKeVuK/HuvzHQhpk9K8nX49sic8+ZNkOUUXoXMzaot61MhFyk5x8qVia2ILg==
+X-Received: by 2002:a05:6000:4029:b0:3b7:7d96:e24a with SMTP id ffacd0b85a97d-3b900b7b057mr1168474f8f.35.1754629778868;
+        Thu, 07 Aug 2025 22:09:38 -0700 (PDT)
+Received: from masalkhi.. ([61.8.128.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e0683045sm19686172f8f.41.2025.08.07.22.09.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Aug 2025 22:09:38 -0700 (PDT)
+From: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To: abd.masalkhi@gmail.com
+Cc: arnd@arndb.de,
+	christophe.jaillet@wanadoo.fr,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	luoyifan@cmss.chinamobile.com,
+	robh@kernel.org
+Subject: Re: [PATCH v7 3/3] ABI: sysfs: add documentation for ST M24LR EEPROM and control interface
+Date: Fri,  8 Aug 2025 05:01:59 +0000
+Message-ID: <20250808050159.36405-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250717063934.5083-4-abd.masalkhi@gmail.com>
+References: <20250717063934.5083-4-abd.masalkhi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 7 Aug 2025 23:58:57 -0500
-X-Gm-Features: Ac12FXwUgvDHdw_yjgYnic27b8AfFeABMaXlal7e0NuwgxTuJcpp0DdXf-BKnwI
-Message-ID: <CAH2r5mtS_MJcNe9iXHv2VpC+dtf3G_9nqOqwosH5F2N60idrBg@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Please pull the following changes since commit
-e5cf61fa6e2fb9ae6339eaa892612488c966baaf:
+Hi all,
 
-  Merge tag 'v6.17-rc-smb3-server-fixes' of git://git.samba.org/ksmbd
-(2025-07-28 16:25:24 -0700)
+Gentle ping.
 
-are available in the Git repository at:
-
-  git://git.samba.org/ksmbd.git tags/v6.17rc-part2-ksmbd-server-fixes
-
-for you to fetch changes up to 8e7d178d06e8937454b6d2f2811fa6a15656a214:
-
-  smb: server: Fix extension string in ksmbd_extract_shortname()
-(2025-08-07 18:23:12 -0500)
-
-----------------------------------------------------------------
-Six ksmbd server fixes:
-- Fix limiting repeated connections from same IP
-- Fix for extracting shortname when name begins with .
-- Four smbdirect fixes:
-     - three fixes to the receive path: potential unmap bug, potential
-       resource leaks and stale connections, and also potential use
-       after free race
-    - cleanup to remove unneeded queue
-----------------------------------------------------------------
-Namjae Jeon (1):
-      ksmbd: limit repeated connections from clients with the same IP
-
-Stefan Metzmacher (4):
-      smb: server: remove separate empty_recvmsg_queue
-      smb: server: make sure we call ib_dma_unmap_single() only if we
-called ib_dma_map_single already
-      smb: server: let recv_done() consistently call
-put_recvmsg/smb_direct_disconnect_rdma_connection
-      smb: server: let recv_done() avoid touching data_transfer after
-cleanup/move
-
-Thorsten Blum (1):
-      smb: server: Fix extension string in ksmbd_extract_shortname()
-
- fs/smb/server/connection.h     |  1 +
- fs/smb/server/smb_common.c     |  2 +-
- fs/smb/server/transport_rdma.c | 97 +++++++++++++++---------------------------
- fs/smb/server/transport_tcp.c  | 17 ++++++++
- 4 files changed, 54 insertions(+), 63 deletions(-)
+On Thu, Jul 17, 2025 at 06:39 +0000, Abd-Alrhman Masalkhi wrote:
+> Add sysfs ABI documentation for the STMicroelectronics M24LR device,
+> covering both the control interface (e.g., unlock, password update, UID,
+> total sectors, and SSS entries) and EEPROM access via the nvmem subsystem.
+>
+> Signed-off-by: Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> ---
+> Changes in v7:
+>  - No changes
+>  - Link to v6: https://lore.kernel.org/all/20250706105311.395162-4-abd.masalkhi@gmail.com/
+>
+> Changes in v6:
+>  - No changes
+>  - Link to v5: https://lore.kernel.org/all/20250704123914.11216-4-abd.masalkhi@gmail.com/
+>
+> Changes in v5:
+>  - Fix dates and update targeted kernel version.
+>  - Link to v4: https://lore.kernel.org/lkml/20250608182714.3359441-4-abd.masalkhi@gmail.com/
+>
+> Changes in v4:
+>  - Replaced 'sss<N>' entries with a single binary 'sss' attribute
+>  - Added 'total_sectors' attribute to report the number of valid SSS bytes
+>  - removed 'mem_size' attribute
+>  - Fix dates and update targeted kernel version.
+>  - Link to v3: https://lore.kernel.org/lkml/20250606120631.3140054-4-abd.masalkhi@gmail.com/
+>
+> Changes in v3:
+>  - Updated sysfs entry paths to use <busnum>-<primary-addr> to reflect the
+>    control address.
+>  - Link to v2: https://lore.kernel.org/lkml/20250601153022.2027919-4-abd.masalkhi@gmail.com/
+>
+> Changes in v2:
+>  - Added initial sysfs ABI documentation.
+> ---
+>  .../ABI/testing/sysfs-bus-i2c-devices-m24lr   | 100 ++++++++++++++++++
+>  1 file changed, 100 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
+>
+> diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr b/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
+> new file mode 100644
+> index 000000000000..7c51ce8d38ba
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-i2c-devices-m24lr
+> @@ -0,0 +1,100 @@
+> +What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/unlock
+> +Date:           2025-07-04
+> +KernelVersion:  6.17
+> +Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> +Description:
+> +                Write-only attribute used to present a password and unlock
+> +                access to protected areas of the M24LR chip, including
+> +                configuration registers such as the Sector Security Status
+> +                (SSS) bytes. A valid password must be written to enable write
+> +                access to these regions via the I2C interface.
+> +
+> +                Format:
+> +                  - Hexadecimal string representing a 32-bit (4-byte) password
+> +                  - Accepts 1 to 8 hex digits (e.g., "c", "1F", "a1b2c3d4")
+> +                  - No "0x" prefix, whitespace, or trailing newline
+> +                  - Case-insensitive
+> +
+> +                Behavior:
+> +                  - If the password matches the internal stored value,
+> +                    access to protected memory/configuration is granted
+> +                  - If the password does not match the internally stored value,
+> +                    it will fail silently
+> +
+> +What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/new_pass
+> +Date:           2025-07-04
+> +KernelVersion:  6.17
+> +Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> +Description:
+> +                Write-only attribute used to update the password required to
+> +                unlock the M24LR chip.
+> +
+> +                Format:
+> +                  - Hexadecimal string representing a new 32-bit password
+> +                  - Accepts 1 to 8 hex digits (e.g., "1A", "ffff", "c0ffee00")
+> +                  - No "0x" prefix, whitespace, or trailing newline
+> +                  - Case-insensitive
+> +
+> +                Behavior:
+> +                  - Overwrites the current password stored in the I2C password
+> +                    register
+> +                  - Requires the device to be unlocked before changing the
+> +                    password
+> +                  - If the device is locked, the write silently fails
+> +
+> +What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/uid
+> +Date:           2025-07-04
+> +KernelVersion:  6.17
+> +Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> +Description:
+> +                Read-only attribute that exposes the 8-byte unique identifier
+> +                programmed into the M24LR chip at the factory.
+> +
+> +                Format:
+> +                  - Lowercase hexadecimal string representing a 64-bit value
+> +                  - 1 to 16 hex digits (e.g., "e00204f12345678")
+> +                  - No "0x" prefix
+> +                  - Includes a trailing newline
+> +
+> +What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/total_sectors
+> +Date:           2025-07-04
+> +KernelVersion:  6.17
+> +Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> +Description:
+> +                Read-only attribute that exposes the total number of EEPROM
+> +                sectors available in the M24LR chip.
+> +
+> +                Format:
+> +                  - 1 to 2 hex digits (e.g. "F")
+> +                  - No "0x" prefix
+> +                  - Includes a trailing newline
+> +
+> +                Notes:
+> +                  - Value is encoded by the chip and corresponds to the EEPROM
+> +                    size (e.g., 3 = 4 kbit for M24LR04E-R)
+> +
+> +What:           /sys/bus/i2c/devices/<busnum>-<primary-addr>/sss
+> +Date:           2025-07-04
+> +KernelVersion:  6.17
+> +Contact:        Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+> +Description:
+> +                Read/write binary attribute representing the Sector Security
+> +                Status (SSS) bytes for all EEPROM sectors in STMicroelectronics
+> +                M24LR chips.
+> +
+> +                Each EEPROM sector has one SSS byte, which controls I2C and
+> +                RF access through protection bits and optional password
+> +                authentication.
+> +
+> +                Format:
+> +                  - The file contains one byte per EEPROM sector
+> +                  - Byte at offset N corresponds to sector N
+> +                  - Binary access only; use tools like dd, Python, or C that
+> +                    support byte-level I/O and offset control.
+> +
+> +                Notes:
+> +                  - The number of valid bytes in this file is equal to the
+> +                    value exposed by 'total_sectors' file
+> +                  - Write access requires prior password authentication in
+> +                    I2C mode
+> +                  - Refer to the M24LR datasheet for full SSS bit layout
+> -- 
+> 2.43.0
+>
 
 -- 
-Thanks,
-
-Steve
+Best Regards,
+Abd-Alrhman
 
