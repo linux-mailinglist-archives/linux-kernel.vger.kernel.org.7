@@ -1,182 +1,146 @@
-Return-Path: <linux-kernel+bounces-760575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644F3B1ED27
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF79B1ED2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 18:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 548AA7B0983
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:42:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6062A7B1524
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CBD2877C1;
-	Fri,  8 Aug 2025 16:44:13 +0000 (UTC)
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCEB2877C2;
+	Fri,  8 Aug 2025 16:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QbecY7Go"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C7327FB07;
-	Fri,  8 Aug 2025 16:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F94A287254
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 16:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754671452; cv=none; b=ZBh3o1G6v7KBElU+nFd00o12JDPcqah4i36lS4xiRbPbCkMww6aqnMRZMzoWJlTQCfFjnqK0ZpbPgX25Nsh5pGcUEytT3qnt/m7FNbRV4HjaMkONby1n2MmgfmbHNaBuYCj0jbt/DNbDWhvldVxs0iWuZe4wlLxQ01ho9nspm8k=
+	t=1754671480; cv=none; b=TzVHWf5lymiUq1EvrFd15HfCwxA3iypYwCcny5dTSBDv8opiQPrnqlyjTCrJONw8pt6YpMfHhXPtDG0JUbtFlN29zuokJXjrCa+bd8oDRWB/MtfPi4IJMLRa1MRzuhhjgFKw1lywPyP2DjXK/9SUWOmi3/VQduiG3ahgu92aNCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754671452; c=relaxed/simple;
-	bh=PXre777B2idTmV51mUoS99uMhDePtl9t6H3/4Aoie/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AwVj6AUWXYvk4ahtmWT2zFk0xecOWNUa0u8kqxjXU9X1KSBp034ztbArc18VvMjDVwLaGT93DtgNxXXU9L1Pa4AySHVAyxfGg+U7Cd6t5fnywFBvLswQExkS56N9dvEKPFMqqYE2VcPpoiGC+5XkrPlm6qsLpVt2XWiOJ16K4O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org; spf=pass smtp.mailfrom=ozlabs.org; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ozlabs.org
-Received: from mail.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-	by gandalf.ozlabs.org (Postfix) with ESMTP id 4bz8xh05gdz4xdF;
-	Sat,  9 Aug 2025 02:44:08 +1000 (AEST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bz8xc2nlQz4xcb;
-	Sat,  9 Aug 2025 02:44:03 +1000 (AEST)
-Message-ID: <bc7e754f-f414-4c43-8f25-03314b894b34@kaod.org>
-Date: Fri, 8 Aug 2025 18:44:00 +0200
+	s=arc-20240116; t=1754671480; c=relaxed/simple;
+	bh=EqzL6rRNfDoERryCSv/CIEvhiAVHF+Sgc/VdogwlX2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rii+5Ho3337n9qYSyR653ELiPVBrpRH7OddirYKlleWKBPJBCCnUuXwrgbHTESfBZ+C1Z7hJ9Np9UVbOHHhc8QZt7mvgjVjppkbSQvnaFVfr/unJWm/atcc7ChP9JgT6uZPwLNz7EwMlFgEPjke8uU3CZPbcAJqChpGh+Oc/48M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QbecY7Go; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578FZAep008408
+	for <linux-kernel@vger.kernel.org>; Fri, 8 Aug 2025 16:44:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=huQmaFeVLUaz6BrvOTgjq7zFoIFLwTBr1MX
+	tCtGIIfA=; b=QbecY7GocBo81F2WWovpuEGiFoR3MJTiATy3z4eN7gM0iq92c2t
+	8hm5m4TBvHIH/DRuvSh7R2lIsG3BGx6RkE2xqbb+GflXOmEaGlnM7OIB0tz6Y4rY
+	1wwlyFdUaDgU4NwIIgDh5b/N6rMJoqV3vVX/XpkSSF+PsiBq0bOkbOwlGUMAF70k
+	004xSI3QGOLF4/u0nnwwX4+eiqdvSRLZM/1VLUVMZPw7P/DCa9RulJrxYjXGhuu0
+	tdD5Vs2G8rLopoxZbYa38BBbewMpfxXu/V52EKXNANcDnsXDXLnSpmZB86quwVZJ
+	uBruZwBikLFDgclQUetSznREQFtj13jyHwg==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c8u27q98-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 16:44:36 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76bcf2cac36so2494844b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 09:44:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754671476; x=1755276276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=huQmaFeVLUaz6BrvOTgjq7zFoIFLwTBr1MXtCtGIIfA=;
+        b=kHn2Y8CrG90F75x8frRLNDe1jXKiCaMFbTwEd/hZ3Excs2O6rugghXLfUQXFpC+8Ni
+         StX0Rhq+o1/899zBejZw7zPxzISMGzT43OmXMnohFpL/Rf9A9Pa5FX3cJB5ryiTOyVC8
+         AubDq5e4zuj+/hPKgg14jN3wAKHLvmsMxaajURrTrhpg8K2Di233aGZmmtkZf2PqFwSb
+         guksf3jzYqNh8+xOFU9xupBJ5ArzDeuYNI2JIaocQGSYSZvi2gpzU6hJ+2XytqJNdjOy
+         fK4uhFq79XMQfSWocUfuc5mvbTYRCX/fJZeY67YCdWBC1AZfPIhDusd87h2gXARJHIkv
+         VrXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjsmsrSVtmtRMo+InexnL89oASPr4jlR7ZhcZ+zb80/b7q+sf9pmAvhIJKYZJpp8P8WchvnWtVlWcqOZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2mJzvlbGcOxDM/ZA8IN4JATgiV1/AuggiMKIg5zoGHDM3xELb
+	XwVKaMxZBFELobhOWx+sVv7FM0nQvJtMY311/iCkisf/rxqG6RbOJvM/gxRTCn5wDFbLzw5cOl8
+	eavDZv7LnXPypGkRATtyM0luZCz49iIw0QTLVQMLjSlqJLbcXic5utpq3obAQLTxuM4Y=
+X-Gm-Gg: ASbGncvGpg/s6FVpp37zj7D1IjVKxXgigHKu1DNdrIjb5g1PmU2AyUrZDyQ/4r5f4oT
+	69U9kjArJlubAaVxe5ZGzSV8v8MW2cg/4fq+ixSNM32Tm4F+4IphVgaJkzMZfVwBaO1z5reDdx/
+	cg+SelhIXkCGIq7J0jXlUDhsszdzhtB5+VbMLv9a8DQHjGppe+deWb6YTJ4Bzo6H5vv1Zu+Pwl6
+	xd5R4F2u/gZ7I54Sywjkj6LVU9THr6E6irNmHCqCUyTbUuyiDPUfFCpyV13JfhjtGlJmqlYWTm4
+	nT3ttln9syhryw3+gZDpcOJXzekWP9dciJRnC9Sz0JwddmFBJ83QgxHJFEbO94THy7U=
+X-Received: by 2002:a05:6a00:92a3:b0:76b:d93a:6a02 with SMTP id d2e1a72fcca58-76c45f67a5dmr5010281b3a.0.1754671475950;
+        Fri, 08 Aug 2025 09:44:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRN9mDpNEYryQ+Th1q0Yl+AOPWnFZ0wbyScqj1Kwa64LHrFPfZCQPxWBECZkWS/S3tA3rHhw==
+X-Received: by 2002:a05:6a00:92a3:b0:76b:d93a:6a02 with SMTP id d2e1a72fcca58-76c45f67a5dmr5010254b3a.0.1754671475508;
+        Fri, 08 Aug 2025 09:44:35 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd0e78sm20690165b3a.99.2025.08.08.09.44.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 09:44:35 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH] remoteproc: qcom: Update MAX_NUM_OF_SS to 30
+Date: Fri,  8 Aug 2025 22:14:17 +0530
+Message-ID: <20250808164417.4105659-1-mukesh.ojha@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
-To: Alex Mastro <amastro@fb.com>, Alex Williamson
- <alex.williamson@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org
-References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
- <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
- <dd0b8e6f-1673-49c3-8018-974d1e7f1a54@kaod.org>
- <20250808205338.dc652e3e-61-amachhiw@linux.ibm.com>
-From: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
-Content-Language: en-US, fr
-Autocrypt: addr=clg@kaod.org; keydata=
- xsFNBFu8o3UBEADP+oJVJaWm5vzZa/iLgpBAuzxSmNYhURZH+guITvSySk30YWfLYGBWQgeo
- 8NzNXBY3cH7JX3/a0jzmhDc0U61qFxVgrPqs1PQOjp7yRSFuDAnjtRqNvWkvlnRWLFq4+U5t
- yzYe4SFMjFb6Oc0xkQmaK2flmiJNnnxPttYwKBPd98WfXMmjwAv7QfwW+OL3VlTPADgzkcqj
- 53bfZ4VblAQrq6Ctbtu7JuUGAxSIL3XqeQlAwwLTfFGrmpY7MroE7n9Rl+hy/kuIrb/TO8n0
- ZxYXvvhT7OmRKvbYuc5Jze6o7op/bJHlufY+AquYQ4dPxjPPVUT/DLiUYJ3oVBWFYNbzfOrV
- RxEwNuRbycttMiZWxgflsQoHF06q/2l4ttS3zsV4TDZudMq0TbCH/uJFPFsbHUN91qwwaN/+
- gy1j7o6aWMz+Ib3O9dK2M/j/O/Ube95mdCqN4N/uSnDlca3YDEWrV9jO1mUS/ndOkjxa34ia
- 70FjwiSQAsyIwqbRO3CGmiOJqDa9qNvd2TJgAaS2WCw/TlBALjVQ7AyoPEoBPj31K74Wc4GS
- Rm+FSch32ei61yFu6ACdZ12i5Edt+To+hkElzjt6db/UgRUeKfzlMB7PodK7o8NBD8outJGS
- tsL2GRX24QvvBuusJdMiLGpNz3uqyqwzC5w0Fd34E6G94806fwARAQABzSBDw6lkcmljIExl
- IEdvYXRlciA8Y2xnQGthb2Qub3JnPsLBeAQTAQIAIgUCW7yjdQIbAwYLCQgHAwIGFQgCCQoL
- BBYCAwECHgECF4AACgkQUaNDx8/77KGRSxAAuMJJMhJdj7acTcFtwof7CDSfoVX0owE2FJdd
- M43hNeTwPWlV5oLCj1BOQo0MVilIpSd9Qu5wqRD8KnN2Bv/rllKPqK2+i8CXymi9hsuzF56m
- 76wiPwbsX54jhv/VYY9Al7NBknh6iLYJiC/pgacRCHtSj/wofemSCM48s61s1OleSPSSvJE/
- jYRa0jMXP98N5IEn8rEbkPua/yrm9ynHqi4dKEBCq/F7WDQ+FfUaFQb4ey47A/aSHstzpgsl
- TSDTJDD+Ms8y9x2X5EPKXnI3GRLaCKXVNNtrvbUd9LsKymK3WSbADaX7i0gvMFq7j51P/8yj
- neaUSKSkktHauJAtBNXHMghWm/xJXIVAW8xX5aEiSK7DNp5AM478rDXn9NZFUdLTAScVf7LZ
- VzMFKR0jAVG786b/O5vbxklsww+YXJGvCUvHuysEsz5EEzThTJ6AC5JM2iBn9/63PKiS3ptJ
- QAqzasT6KkZ9fKLdK3qtc6yPaSm22C5ROM3GS+yLy6iWBkJ/nEYh/L/du+TLw7YNbKejBr/J
- ml+V3qZLfuhDjW0GbeJVPzsENuxiNiBbyzlSnAvKlzda/sBDvxmvWhC+nMRQCf47mFr8Xx3w
- WtDSQavnz3zTa0XuEucpwfBuVdk4RlPzNPri6p2KTBhPEvRBdC9wNOdRBtsP9rAPjd52d73O
- wU0EW7yjdQEQALyDNNMw/08/fsyWEWjfqVhWpOOrX2h+z4q0lOHkjxi/FRIRLfXeZjFfNQNL
- SoL8j1y2rQOs1j1g+NV3K5hrZYYcMs0xhmrZKXAHjjDx7FW3sG3jcGjFW5Xk4olTrZwFsZVU
- cP8XZlArLmkAX3UyrrXEWPSBJCXxDIW1hzwpbV/nVbo/K9XBptT/wPd+RPiOTIIRptjypGY+
- S23HYBDND3mtfTz/uY0Jytaio9GETj+fFis6TxFjjbZNUxKpwftu/4RimZ7qL+uM1rG1lLWc
- 9SPtFxRQ8uLvLOUFB1AqHixBcx7LIXSKZEFUCSLB2AE4wXQkJbApye48qnZ09zc929df5gU6
- hjgqV9Gk1rIfHxvTsYltA1jWalySEScmr0iSYBZjw8Nbd7SxeomAxzBv2l1Fk8fPzR7M616d
- tb3Z3HLjyvwAwxtfGD7VnvINPbzyibbe9c6gLxYCr23c2Ry0UfFXh6UKD83d5ybqnXrEJ5n/
- t1+TLGCYGzF2erVYGkQrReJe8Mld3iGVldB7JhuAU1+d88NS3aBpNF6TbGXqlXGF6Yua6n1c
- OY2Yb4lO/mDKgjXd3aviqlwVlodC8AwI0SdujWryzL5/AGEU2sIDQCHuv1QgzmKwhE58d475
- KdVX/3Vt5I9kTXpvEpfW18TjlFkdHGESM/JxIqVsqvhAJkalABEBAAHCwV8EGAECAAkFAlu8
- o3UCGwwACgkQUaNDx8/77KEhwg//WqVopd5k8hQb9VVdk6RQOCTfo6wHhEqgjbXQGlaxKHoX
- ywEQBi8eULbeMQf5l4+tHJWBxswQ93IHBQjKyKyNr4FXseUI5O20XVNYDJZUrhA4yn0e/Af0
- IX25d94HXQ5sMTWr1qlSK6Zu79lbH3R57w9jhQm9emQEp785ui3A5U2Lqp6nWYWXz0eUZ0Ta
- d2zC71Gg9VazU9MXyWn749s0nXbVLcLS0yops302Gf3ZmtgfXTX/W+M25hiVRRKCH88yr6it
- +OMJBUndQVAA/fE9hYom6t/zqA248j0QAV/pLHH3hSirE1mv+7jpQnhMvatrwUpeXrOiEw1n
- HzWCqOJUZ4SY+HmGFW0YirWV2mYKoaGO2YBUwYF7O9TI3GEEgRMBIRT98fHa0NPwtlTktVIS
- l73LpgVscdW8yg9Gc82oe8FzU1uHjU8b10lUXOMHpqDDEV9//r4ZhkKZ9C4O+YZcTFu+mvAY
- 3GlqivBNkmYsHYSlFsbxc37E1HpTEaSWsGfAHQoPn9qrDJgsgcbBVc1gkUT6hnxShKPp4Pls
- ZVMNjvPAnr5TEBgHkk54HQRhhwcYv1T2QumQizDiU6iOrUzBThaMhZO3i927SG2DwWDVzZlt
- KrCMD1aMPvb3NU8FOYRhNmIFR3fcalYr+9gDuVKe8BVz4atMOoktmt0GWTOC8P4=
-In-Reply-To: <20250808205338.dc652e3e-61-amachhiw@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: NFGmtO_xy31IcRZaUpUbctX3p9jxWPx8
+X-Authority-Analysis: v=2.4 cv=Q/TS452a c=1 sm=1 tr=0 ts=68962974 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=evFLFRRwLpfRx6s5WfcA:9
+ a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-ORIG-GUID: NFGmtO_xy31IcRZaUpUbctX3p9jxWPx8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA5MCBTYWx0ZWRfXw3nsRKRMo+ZP
+ ZE3ZSbAN/L2L/SdKTqkgDiqfHZmbe6WfRhy8nJ7os/ZIi4KpXQdxeJei37j0tFA5h3E2TaO8mly
+ wyNcm0q0g9d8WbPq00887c5S0zd4Umw2YzRx1AiyQH84xSEjSal6lCnwoypdCbqcZX+BqIA6Pdr
+ VYzdudt9+BnETMnd6JJqsVKvRPwueocf4rg/Cqr2nTm2N2Fv6h5pJQnbHMHoSvLJFHJ+zc6YYsp
+ jFlwSd9S/TtdT/dFNEmaEvmmB3p51sxpPyhVBUyrgndo9UKw0zwr1iCElevutWEyDmzhHkHepnc
+ XMFbdWnK9439Ouwp2Lz8yFwE+hOBzAKF7T8cVETjqIMwWnqvBkyJxbwxOW/YPOIh/PubKkpeVM7
+ U8IsvLUy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060090
 
-On 8/8/25 17:45, Amit Machhiwal wrote:
-> Hi Cédric,
-> 
-> Please find my comments inline:
-> 
-> On 2025/08/08 03:49 PM, Cédric Le Goater wrote:
->> Hello Amit,
->>
->> On 8/7/25 11:34, Amit Machhiwal wrote:
->>> Hello,
->>>
->>> On 2025/08/04 12:44 PM, Alex Mastro wrote:
->>>> Print the PCI device syspath to a vfio device's fdinfo. This enables tools
->>>> to query which device is associated with a given vfio device fd.
->>>>
->>>> This results in output like below:
->>>>
->>>> $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
->>>> vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
->>>>
->>>> Signed-off-by: Alex Mastro <amastro@fb.com>
->>>
->>> I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
->>> could see the VFIO device syspath in fdinfo.
->>
->> POWER9 running on OPAL FW : I am curious about the software stack.
->>
->> I suppose this is the latest upstream kernel ?
-> 
-> Yes, I used the latest upstream kernel and applied this patch on top of commit
-> cca7a0aae895.
-> 
->> Are you using an upstream QEMU to test too ?
-> 
-> No, I had used the Fedora 42 distro qemu. The version details are as below:
-> 
->    [root@localhost ~]# qemu-system-ppc64 --version
->    QEMU emulator version 9.2.4 (qemu-9.2.4-1.fc42)
->    Copyright (c) 2003-2024 Fabrice Bellard and the QEMU Project developers
-> 
-> I gave the upstream qemu (HEAD pointing to cd21ee5b27) a try and I see the same
-> behavior with that too.
-> 
->    [root@localhost ~]# ./qemu-system-ppc64 --version
->    QEMU emulator version 10.0.92 (v10.1.0-rc2-4-gcd21ee5b27-dirty)
->    Copyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers
-> 
->    [root@localhost ~]# cat /proc/52807/fdinfo/191
->    pos:    0
->    flags:  02000002
->    mnt_id: 17
->    ino:    1125
->    vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
-> 
->>
->> and which device ?
-> 
-> I'm using a Broadcom NetXtreme network card (4-port) and passing through its
-> fn0.
-> 
->    [root@guest ~]# lspci
->    [...]
->    0001:00:01.0 Ethernet controller: Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe (rev 01)
-> 
-> Please let me know if I may help you with any additional information.
+In the latest firmware for Qualcomm SoCs, the value of MAX_NUM_OF_SS has
+been increased to 30 to accumulate more subsystems.
 
-It is good to know that device pass-through still works with upstream on
-OpenPower servers.
+Let's update so that we should not get array out of bound error when we
+test minidump on these SoCs.
 
-Have you tried VFs ?
+Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+---
+ drivers/remoteproc/qcom_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks Amit,
-
-C.
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 8c8688f99f0a..dbe3bf852585 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -28,7 +28,7 @@
+ #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
+ #define to_pdm_subdev(d) container_of(d, struct qcom_rproc_pdm, subdev)
+ 
+-#define MAX_NUM_OF_SS           10
++#define MAX_NUM_OF_SS           30
+ #define MAX_REGION_NAME_LENGTH  16
+ #define SBL_MINIDUMP_SMEM_ID	602
+ #define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
+-- 
+2.50.1
 
 
