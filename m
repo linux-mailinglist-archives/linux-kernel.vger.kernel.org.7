@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-759855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A27CB1E379
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:35:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EE6B1E3D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEF1585DA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6A4C3A76E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476A625CC42;
-	Fri,  8 Aug 2025 07:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QCzzD3i1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0108B22A1D5;
-	Fri,  8 Aug 2025 07:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A6F22FF39;
+	Fri,  8 Aug 2025 07:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618AC8F6E;
+	Fri,  8 Aug 2025 07:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638251; cv=none; b=XwO1jHQMAPmzk7T8Ft4iQtznGFk4L7BUh3fZGGJ+CASnGhwkMmYG3M5Jy8G5NnNCm29XizmwsEB4+6iLwY87ZEg/+0DkZpvMRG5HJ1xGh1oEf9JxvD53OT+Vg7W+1akcsBmwHk6H9bsEqXSdQLcHsf/pH06lMg3k1QO+RWX5z64=
+	t=1754639437; cv=none; b=KYjsqVeLMS6jm181j8hrnEOg5sSysx0K5o5T+d5X33IEl7C+VEL3bV6FN3qaoH02M/on+APG+5e9lUbl33LYw0Ye8TxxTjhgJqhEgdvBEeYku4ORNGzoFqPCjxqXVHPFtZwJu6QEhQSX/EZjsnMsuOMpbx7p3LjyDBIs6rdCFBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638251; c=relaxed/simple;
-	bh=N93jbXCfcX8tT1d6Si749lOVTvmyst9EjSTFBREX9yk=;
+	s=arc-20240116; t=1754639437; c=relaxed/simple;
+	bh=PTBUnvgYofk3T2KvTUzNAupS8RDnaET+hh5Nt05Oem0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nruZ3qvapTGs62IZhreh8gMrvQGZErsFNmDD0BMVgUDTPnyc48WRSF4zKLz6ToSLnvijNNXzpo8yd2L53YX5q1IcMK7TIrdgMagoQgFHdeAKWxBZaLt8jDwAFL9INhr+B9NAAXBQOk5WRHP+ej0yvY9UyGkHIM7joKHXMq5jBVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QCzzD3i1; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754638250; x=1786174250;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=N93jbXCfcX8tT1d6Si749lOVTvmyst9EjSTFBREX9yk=;
-  b=QCzzD3i1ZbnrUsaoWeChKbnC1N8x9UaGsrMi70uG1KNUlfB1lk3cxNuS
-   whO1L3uNXl5+RGB1Y7v6FMmYJRN+T82P5XvdT5XHcetVgRyLsuqQxVBnK
-   kiddcc0bzrOtY2oOp/MgLTljAL20f+LLMsKM9f3gyfb5aQASmGFJ2D4Mg
-   Oz3VN6rvs2BhUuHbcMNF0Oljy/N6UmKZGozlCenQgIY04M+Kwg2zC3dvn
-   3ywXd3gIjQe7jnYCFua+3wXRiedRLtBELpnF6dHzzngpPmjVdb3Z/r4Qj
-   3mXRUjDAj9WgTQvUaJxXIo8LkbRIHPWwIZpzTYtMRcdRJtm8Kevhh+xV6
-   g==;
-X-CSE-ConnectionGUID: jCqLyoTHR0eEEdyMNCz5Ig==
-X-CSE-MsgGUID: RwgnHLbQTwiXDxCzctC8nQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="56860991"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="56860991"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 00:30:50 -0700
-X-CSE-ConnectionGUID: nPT+neYWR5ic6FwTvd4gdw==
-X-CSE-MsgGUID: 3HIOr3NzSxqUGeU1ve8zNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="165677254"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 00:30:43 -0700
-Message-ID: <f3e09bef-8bc9-48ac-983e-7a18c2ff4ad2@linux.intel.com>
-Date: Fri, 8 Aug 2025 15:30:40 +0800
+	 In-Reply-To:Content-Type; b=MDKsxkWUL4R27MktGSGAS0HxZwTjaKvcfwBPd/BKFHBAkw7i36Mb5a15Fch2Gg8XjTRubD1ybfOkqYYKWMBe6skHZRlCoF+6akZg4JUG549+b7flwpz0nTEbntYkmQV/aQC+rWYULMVFsciqWDdy2wqZ5MpIiYvUfOaS6b0yzcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4bywkg3Mhqz9sS7;
+	Fri,  8 Aug 2025 09:33:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 6-UTSoBBRo41; Fri,  8 Aug 2025 09:33:47 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4bywkg2Vk1z9sRy;
+	Fri,  8 Aug 2025 09:33:47 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3F40D8B770;
+	Fri,  8 Aug 2025 09:33:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id UAt1KEdP_5VW; Fri,  8 Aug 2025 09:33:47 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1F8218B763;
+	Fri,  8 Aug 2025 09:33:46 +0200 (CEST)
+Message-ID: <59ce87be-0a0a-4f6b-b439-bc7a4a037fc2@csgroup.eu>
+Date: Fri, 8 Aug 2025 09:33:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,158 +55,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 07/44] perf: Add APIs to load/put guest mediated PMU
- context
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, loongarch@lists.linux.dev,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Kan Liang <kan.liang@linux.intel.com>, Yongwei Ma <yongwei.ma@intel.com>,
- Mingwei Zhang <mizhang@google.com>,
- Xiong Zhang <xiong.y.zhang@linux.intel.com>,
- Sandipan Das <sandipan.das@amd.com>
-References: <20250806195706.1650976-1-seanjc@google.com>
- <20250806195706.1650976-8-seanjc@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250806195706.1650976-8-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v5 1/2] kasan: introduce ARCH_DEFER_KASAN and unify static
+ key across modes
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, ryabinin.a.a@gmail.com
+Cc: bhe@redhat.com, hca@linux.ibm.com, andreyknvl@gmail.com,
+ akpm@linux-foundation.org, zhangqing@loongson.cn, chenhuacai@loongson.cn,
+ davidgow@google.co, glider@google.com, dvyukov@google.com, alex@ghiti.fr,
+ agordeev@linux.ibm.com, vincenzo.frascino@arm.com, elver@google.com,
+ kasan-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-um@lists.infradead.org, linux-mm@kvack.org
+References: <20250807194012.631367-1-snovitoll@gmail.com>
+ <20250807194012.631367-2-snovitoll@gmail.com>
+ <22872a3f-85dc-4740-b605-ba80b5a3b1bc@csgroup.eu>
+ <CACzwLxiVURgamkv2ws5sK9BQVMz7VPSWGy_aQb+MT8jtv03d3Q@mail.gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <CACzwLxiVURgamkv2ws5sK9BQVMz7VPSWGy_aQb+MT8jtv03d3Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On 8/7/2025 3:56 AM, Sean Christopherson wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
->
-> Add exported APIs to load/put a guest mediated PMU context.  KVM will
-> load the guest PMU shortly before VM-Enter, and put the guest PMU shortly
-> after VM-Exit.
->
-> On the perf side of things, schedule out all exclude_guest events when the
-> guest context is loaded, and schedule them back in when the guest context
-> is put.  I.e. yield the hardware PMU resources to the guest, by way of KVM.
->
-> Note, perf is only responsible for managing host context.  KVM is
-> responsible for loading/storing guest state to/from hardware.
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> Signed-off-by: Mingwei Zhang <mizhang@google.com>
-> [sean: shuffle patches around, write changelog]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  include/linux/perf_event.h |  2 ++
->  kernel/events/core.c       | 61 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 63 insertions(+)
->
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 0958b6d0a61c..42d019d70b42 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -1925,6 +1925,8 @@ extern u64 perf_event_pause(struct perf_event *event, bool reset);
->  #ifdef CONFIG_PERF_GUEST_MEDIATED_PMU
->  int perf_create_mediated_pmu(void);
->  void perf_release_mediated_pmu(void);
-> +void perf_load_guest_context(unsigned long data);
-> +void perf_put_guest_context(void);
->  #endif
->  
->  #else /* !CONFIG_PERF_EVENTS: */
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 6875b56ddd6b..77398b1ad4c5 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -469,10 +469,19 @@ static cpumask_var_t perf_online_pkg_mask;
->  static cpumask_var_t perf_online_sys_mask;
->  static struct kmem_cache *perf_event_cache;
->  
-> +#ifdef CONFIG_PERF_GUEST_MEDIATED_PMU
-> +static DEFINE_PER_CPU(bool, guest_ctx_loaded);
-> +
-> +static __always_inline bool is_guest_mediated_pmu_loaded(void)
-> +{
-> +	return __this_cpu_read(guest_ctx_loaded);
-> +}
-> +#else
->  static __always_inline bool is_guest_mediated_pmu_loaded(void)
->  {
->  	return false;
->  }
-> +#endif
->  
->  /*
->   * perf event paranoia level:
-> @@ -6379,6 +6388,58 @@ void perf_release_mediated_pmu(void)
->  	atomic_dec(&nr_mediated_pmu_vms);
->  }
->  EXPORT_SYMBOL_GPL(perf_release_mediated_pmu);
-> +
-> +/* When loading a guest's mediated PMU, schedule out all exclude_guest events. */
-> +void perf_load_guest_context(unsigned long data)
 
-nit: the "data" argument is not used in this patch, we may defer to
-introduce it in patch 09/44.
+Le 08/08/2025 à 09:26, Sabyrzhan Tasbolatov a écrit :
+> On Fri, Aug 8, 2025 at 10:03 AM Christophe Leroy
+> <christophe.leroy@csgroup.eu> wrote:
+>>> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+>>> index 9083bfdb773..a12cc072ab1 100644
+>>> --- a/arch/um/Kconfig
+>>> +++ b/arch/um/Kconfig
+>>> @@ -5,6 +5,7 @@ menu "UML-specific options"
+>>>    config UML
+>>>        bool
+>>>        default y
+>>> +     select ARCH_DEFER_KASAN if STATIC_LINK
+>>
+>> No need to also verify KASAN here like powerpc and loongarch ?
+> 
+> Sorry, I didn't quite understand the question.
+> I've verified powerpc with KASAN enabled which selects KASAN_OUTLINE,
+> as far as I remember, and GENERIC mode.
+
+The question is whether:
+
+	select ARCH_DEFER_KASAN if STATIC_LINK
+
+is enough ? Shouldn't it be:
+
+	select ARCH_DEFER_KASAN if KASAN && STATIC_LINK
+
+Like for powerpc and loongarch ?
 
 
-> +{
-> +	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
-> +
-> +	lockdep_assert_irqs_disabled();
-> +
-> +	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
-> +
-> +	if (WARN_ON_ONCE(__this_cpu_read(guest_ctx_loaded)))
-> +		return;
-> +
-> +	perf_ctx_disable(&cpuctx->ctx, EVENT_GUEST);
-> +	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_GUEST);
-> +	if (cpuctx->task_ctx) {
-> +		perf_ctx_disable(cpuctx->task_ctx, EVENT_GUEST);
-> +		task_ctx_sched_out(cpuctx->task_ctx, NULL, EVENT_GUEST);
-> +	}
-> +
-> +	perf_ctx_enable(&cpuctx->ctx, EVENT_GUEST);
-> +	if (cpuctx->task_ctx)
-> +		perf_ctx_enable(cpuctx->task_ctx, EVENT_GUEST);
-> +
-> +	__this_cpu_write(guest_ctx_loaded, true);
-> +}
-> +EXPORT_SYMBOL_GPL(perf_load_guest_context);
-> +
-> +void perf_put_guest_context(void)
-> +{
-> +	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
-> +
-> +	lockdep_assert_irqs_disabled();
-> +
-> +	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
-> +
-> +	if (WARN_ON_ONCE(!__this_cpu_read(guest_ctx_loaded)))
-> +		return;
-> +
-> +	perf_ctx_disable(&cpuctx->ctx, EVENT_GUEST);
-> +	if (cpuctx->task_ctx)
-> +		perf_ctx_disable(cpuctx->task_ctx, EVENT_GUEST);
-> +
-> +	perf_event_sched_in(cpuctx, cpuctx->task_ctx, NULL, EVENT_GUEST);
-> +
-> +	if (cpuctx->task_ctx)
-> +		perf_ctx_enable(cpuctx->task_ctx, EVENT_GUEST);
-> +	perf_ctx_enable(&cpuctx->ctx, EVENT_GUEST);
-> +
-> +	__this_cpu_write(guest_ctx_loaded, false);
-> +}
-> +EXPORT_SYMBOL_GPL(perf_put_guest_context);
->  #else
->  static int mediated_pmu_account_event(struct perf_event *event) { return 0; }
->  static void mediated_pmu_unaccount_event(struct perf_event *event) {}
+> 
+> I haven't tested LoongArch booting via QEMU, only tested compilation.
+> I guess, I need to test the boot, will try to learn how to do it for
+> qemu-system-loongarch64. Would be helpful LoongArch devs in CC can
+> assist as well.
+> 
+> STATIC_LINK is defined for UML only.
+> 
 
