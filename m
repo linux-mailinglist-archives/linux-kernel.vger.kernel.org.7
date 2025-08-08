@@ -1,108 +1,207 @@
-Return-Path: <linux-kernel+bounces-760494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D3FB1EBD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:28:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02944B1EB87
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2577A3B4B55
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A53C55A0206
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28821285CA7;
-	Fri,  8 Aug 2025 15:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291A3283C82;
+	Fri,  8 Aug 2025 15:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORwDYNVG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d5pTy9tC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75598284B33;
-	Fri,  8 Aug 2025 15:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3E4283C87;
+	Fri,  8 Aug 2025 15:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754666746; cv=none; b=s//zVN3vvLlInJGH4lkcaiph3hHQ0xesF9fnimDAmF19G5srvlW8zrFwbhfw1pp3eBeqst/m+p6L/pVVzglF3vmYvLXDeVL3mcJw3m3GKJltEmaeeVxl4mtN1pjtCl9kRkQBKb0wVJOqEPNX8PG21mGCIziVWdedsmilwgC612Y=
+	t=1754666417; cv=none; b=AK+hTAER3s5hyUqBgqnr/+8k7kem5QvS8FgG7KMizEdDoCw3c8VHQugWGPGPwoQE5oWXy0BMWRzQ4Tg6FV6yRkU9mQ7btSg1Au2zVQwXUVfRYdbwH8VMzjsTI7t54xxcHMxXwhVGV8vZWhXDLjWkJb+/gbfKmGXPtUTlB6U8boY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754666746; c=relaxed/simple;
-	bh=Q7LJqYntC3C0kPPrvn7+7VaNuFpGlm/sR/DRdUSA6H0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JVGnJVtDi+nB7FERHd0ZzXOIpFwqB1fhylC8E+3o7+Ecba7XYdvvHo7x7TaEhE3EauKqJTzqGMHkv3bW0xOvmknfZlUxAlxmUS0CuPIlDCm6vUr15XSRtmCM/+1vrrRNi4kfe1+dmbVQG3EdlmQkCj3UQbzkyHuL3UX4V0KUR/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORwDYNVG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55BE3C4CEED;
-	Fri,  8 Aug 2025 15:25:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754666746;
-	bh=Q7LJqYntC3C0kPPrvn7+7VaNuFpGlm/sR/DRdUSA6H0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ORwDYNVGaH/T0ODn+KGGXIMdkJ0mdcA6ZaPRahTP4I1kcEGH+cJ+g0hybo4niIij5
-	 oHAp2+IyZt9aMHwB11WQ+m57WDqT0qZbL+szNmKt2K7cGIrTpB/TMFeOLLBFk+7DUi
-	 5EfrZzEYORNmIx7+ZX4Jt/6mWSiw17I2/a8rVWdmboaZMuJTU6TOnTAhu7viNLmxBk
-	 fbyIrjY8haWR9vvU9qMZQU76GGp6rwxPwQ7urtTciHLcHieqym9DQlsegTh+WONr99
-	 AN4YOVZ8zd9u+wths+Ad8GEsMOpEW9ac1r/8qIbD4lXYMzX16cHw/mmEZL63Ip096H
-	 ahnaJWnqipT3Q==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Peng Fan <peng.fan@nxp.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Koichiro Den <koichiro.den@canonical.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 21/21] gpiolib: turn off legacy interface by default
-Date: Fri,  8 Aug 2025 17:18:06 +0200
-Message-Id: <20250808151822.536879-22-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250808151822.536879-1-arnd@kernel.org>
-References: <20250808151822.536879-1-arnd@kernel.org>
+	s=arc-20240116; t=1754666417; c=relaxed/simple;
+	bh=bz4INqk5MS19bwx/1q9o5BeO8oO9JV4/LsKmtt5ip24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nP+guWDSM5yTHauBweKog++ArK5E7YXH1Bs2CztfllHns4UIxnUwqNchSkZXKFOYReD1wCM/omWeQR69Khgf5XvaSa9CdG3UhCgsF9ubd4rM65I9ENYPB6EC1S26vOALk7pETpudO7HeFopjfIkYeWT257n9wis52k2kr1vBktk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d5pTy9tC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578F5NKf000995;
+	Fri, 8 Aug 2025 15:20:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	H+21hjpa8XJ6XRd6SoHfWWI7noNUkNVcdDwUeOUPVmo=; b=d5pTy9tCVXZOwHWY
+	SJwANfzhsGw3MowAgZIpVLwGfGVWlNLP1Mf2BrpcFVNZQGBn+y9o+Wz2ZcqWzLDB
+	7weNpMZac7PgFYuheU9WfbDW0uDzfZAbCrfxRDalgGlD53x2uxV8wbyXkG0c2Kjo
+	bAZjkS+lfFm690bRJsV4RwLE/5l2910tA0DBo/VC4yp0pEkhRLe/kuwQkiJ/wHDJ
+	H/8OePvTA6bjYrB049yozUYZiloFhzFTygqAQh+9KVx4dpk/Chd4XagE9hpwuHjK
+	0QallPYYw/iesthsjjTXqkE6DWflT+knGtHO2cVz3VnFoJBAWhtAGgv2A2EUlu4i
+	DAYljw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpw3ac7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 15:20:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 578FK2Sx026396
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 8 Aug 2025 15:20:02 GMT
+Received: from [10.216.30.51] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 8 Aug
+ 2025 08:19:55 -0700
+Message-ID: <5e32be05-0dbd-4d6f-879d-8ce97fb430ba@quicinc.com>
+Date: Fri, 8 Aug 2025 20:49:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 2/4] arm64: dts: qcom: sm8750: add max-microamp for UFS
+ PHY and PLL supplies
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <mani@kernel.org>,
+        <conor+dt@kernel.org>, <bvanassche@acm.org>, <andersson@kernel.org>,
+        <neil.armstrong@linaro.org>, <dmitry.baryshkov@oss.qualcomm.com>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-3-quic_nitirawa@quicinc.com>
+ <20250808-calm-boa-of-swiftness-a4a7ce@kuoka>
+ <9af71063-0629-4ccc-bc76-3fb588677bf4@oss.qualcomm.com>
+ <292907f3-25d6-40d9-be6e-b6b83e646d73@kernel.org>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <292907f3-25d6-40d9-be6e-b6b83e646d73@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOCBTYWx0ZWRfX78XoknspEosh
+ 3OXl0pK59Pa75jpfRdrwTq7trc7HCBDexXL4ZIsyp1LdiYmJbw4jKndVDQJz7SpZ5gLsjoeBUFM
+ Hi6pkPDFQYy7JueFxwvOOoi/BJKVHmbA/qct4sytFFInvj5w3cJceCV+k0IPVqknyRLaKJIVDfQ
+ 6XsJEuE4kxfb8hD07+KyJvll6lNtro1lnNo+bRuwnKArUe63j6mh9s+xjenbutWnbEB7fU0RZWn
+ xR39RmRE6dhtzHCwjq1d9ibh3MeRR1mYJ/fqGuFG4/BV4kmnsN1YxUuLqPgTdlg3blLnPomMVA9
+ 5tCQWFaC4AQDe8u7sB6dINeXq9t35d/S/vLRZF1WwEEabxDKhHSrCP/R84MY13cuprq8inB+gwZ
+ eXUeCHX0
+X-Authority-Analysis: v=2.4 cv=J8Cq7BnS c=1 sm=1 tr=0 ts=689615a4 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=x0E13wpUDKbC8JPA_PIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: ByLAag_KUVeJdsX6CF77K1wWPjNQXd1S
+X-Proofpoint-ORIG-GUID: ByLAag_KUVeJdsX6CF77K1wWPjNQXd1S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_04,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060008
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-All users of the legacy interface now select CONFIG_GPIOLIB_LEGACY,
-so it can be turned off by default.
 
-Allow turning it on manually for compile testing, in order to keep
-the build coverage of the legacy drivers.
+On 8/8/2025 3:09 PM, Krzysztof Kozlowski wrote:
+> On 08/08/2025 10:58, Konrad Dybcio wrote:
+>> On 8/8/25 9:29 AM, Krzysztof Kozlowski wrote:
+>>> On Wed, Aug 06, 2025 at 09:13:38PM +0530, Nitin Rawat wrote:
+>>>> Add `vdda-phy-max-microamp` and `vdda-pll-max-microamp` properties to
+>>>> the UFS PHY node in the device tree.
+>>>>
+>>>> These properties define the maximum current (in microamps) expected
+>>>> from the PHY and PLL regulators. This allows the PHY driver to
+>>>> configure regulator load accurately and ensure proper regulator
+>>>> mode based on load requirements.
+>>>
+>>> That's not the property of phy, but regulator.
+>>>
+>>> Also reasoning is here incomplete - you just post downstream code. :/
+>>
+>> The reason for this change is good, but perhaps not explained clearly
+>>
+>> All of these values refer to the maximum current draw that needs to be
+>> allocated on a shared voltage supply for this peripheral (because the
+> 
+> 
+> It sounds very different than how much it can be drawn. How much can be
+> drawn is the property of the regulator. The regulator knows how much
+> current it can support.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpio/Kconfig | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Consumers are aware of their dynamic load requirements, which can vary 
+at runtime—this awareness is not reciprocal. The power grid is designed 
+based on the collective load requirements of all clients sharing the 
+same power rail.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index e43abb322fa6..2b57ba776c13 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -12,10 +12,17 @@ menuconfig GPIOLIB
- 
- 	  If unsure, say N.
- 
-+if GPIOLIB
-+
- config GPIOLIB_LEGACY
--	def_bool y
-+	bool "Legacy GPIO interfaces" if COMPILE_TEST
-+	help
-+	  There are a few legacy platforms that use the traditional GPIO
-+	  number based interfaces instead of GPIO descriptors.
-+	  Say Y here to enable build testing drivers that are specific
-+	  to those platforms.
- 
--if GPIOLIB
-+	  If unsure, say N.
- 
- config GPIOLIB_FASTPATH_LIMIT
- 	int "Maximum number of GPIOs for fast path"
--- 
-2.39.5
+Since regulators can operate in multiple modes for power optimization, 
+each consumer is expected to vote for its runtime power needs. These 
+votes help the regulator framework maintain the regulator in the 
+appropriate mode, ensuring stable and efficient operation across all 
+clients.
+
+
+Stability issues can arise if each consumer does not vote for its own 
+load requirement.
+For example, consider a scenario where a single regulator is shared by 
+two consumers.
+
+If the first client requests low-power mode by voting for zero or a 
+minimal load to regulator framework during its driver's LPM sequence, 
+and the second client (e.g., UFS PHY) has not voted for its own load 
+requirement through the regulator framework, the regulator may 
+transition to low-power mode. This can lead to issues for the second 
+client, which expects a higher power state to operate correctly.
+
+
+> 
+> 
+>> supply's capabilities change depending on the maximum potential load
+>> at any given time, which the regulator driver must be aware of)
+>>
+>> This is a property of a regulator *consumer*, i.e. if we had a chain
+>> of LEDs hanging off of this supply, we'd need to specify NUM_LEDS *
+>> MAX_CURR under the "led chain" device, to make sure that if the
+>> aggregated current requirements go over a certain threshold (which is
+>> unknown to Linux and hidden in RPMh fw), the regulator can be
+>> reconfigured to allow for a higher current draw (likely at some
+>> downgrade to efficiency)
+> 
+> 
+> The problem is that rationale is downstream. Instead I want to see some
+> reason: e.g. datasheets, spec, type of UFS device (that was the argument
+> in the driver patch discussion).
+
+
+The PHY load requirements for consumers such as UFS, USB, PCIe are 
+defined by Qualcomm’s PHY IP and are well-documented in Qualcomm’s 
+datasheets and power grid documentation. These values can depending on 
+the process or technology node, board design, and even the chip foundry 
+used.
+
+As a result, the load values can differ across SoCs or may be even 
+board(unlikely though) due to variations in any of these parameters.
+
+
+Regards,
+Nitin
+
+
+
+> 
+> The only argument here for given value is: downstream has it.
+> 
+> Best regards,
+> Krzysztof
 
 
