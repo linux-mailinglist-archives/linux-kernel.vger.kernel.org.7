@@ -1,189 +1,131 @@
-Return-Path: <linux-kernel+bounces-760168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652C5B1E750
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:29:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670B9B1E757
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345751C2147E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:29:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615D6587BC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157D42741D1;
-	Fri,  8 Aug 2025 11:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5596F2749E8;
+	Fri,  8 Aug 2025 11:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VbmPTxgG"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EM9N/akd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641612737F9
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A7F27467A;
+	Fri,  8 Aug 2025 11:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652499; cv=none; b=LcXp4N8CFE5aFpkAYysGaOwxHV2wlhsCGybDUZluTiGbBRhXGUtr/kdVY1Yst5CCT8qXjKW5QHkBViMkjWN7mNpvlQuXvNzpSO9BgcbygM0Mx/UszCzAv/xXMVJRd/j7JhmqozDHW9cVC4qqhxwnbiBhkFy4vau7ESkYTHqQiE8=
+	t=1754652514; cv=none; b=utlfOKeP08TWyoJXnOdMJK2vOuppbsYd6ka/AmRDJVf0Lu/WxsWyM/6LwfDtLec0Df3Pa+KDMY1tFoj166q+rIAj6Edo3PU1lKhk3bl6ylDcI4fXTSu6pk6yQEm6flXB1TBrkiQiZw8fLNkzf9w7f1s0G33D4vGChhiD9WEhFIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652499; c=relaxed/simple;
-	bh=z5ZUekvUvpNnLWumH7i0r1l/KVlw1EnwwX2WWJ5MDqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K4+Kvc8W3/+VQ3aYF70g425vAzIaLvjTXXKMqbirPzYQEmBU4KIubYXQnPkQOm8e52nKjmM2L6OoTMO2WBX1nUMkrUuab8JewSU0aFQ6/sQeS59I545HqpzCv0M0tlUY2Bp3t7yacFEeMgfbSvCwuLNUy0wAOT9Vwvei4BrVIG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VbmPTxgG; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-459ddb41539so7181455e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1754652496; x=1755257296; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wuJVZzZIQCTzLTzieTR01L1RJwkvyO7UMJraS2W9Ndo=;
-        b=VbmPTxgG4Y61wXHUE1kifFFnwgMm0Mb7eYZrrlaWde/WnCbl2/XYjJj6+Lp7B+w0LL
-         SvUsT8pWRZUzM+r2JIIVBQUXmOWBhytN05zObJhNHfcSAo6qXRynvpB45PNbQlim0WaV
-         4LD9zyOWSl5fsj9t7s7FSEYmMryIuCvwYWhavvzUcJaRQx6J3Qeyj8k8TmULyJnvxiLV
-         smOM9IJE/t/0i5X/NAZkENweSSpX/y9O8sxwYeVtttRjL6Qkwun8GuN1zyqzxW9bvZjD
-         79t2XHBg4mpqOOzmzxeDozahqOlwqXNA3SFgx8ZMNrdBWyNbPmFLlbzjUxSaW6gWUv9q
-         +lBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754652496; x=1755257296;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wuJVZzZIQCTzLTzieTR01L1RJwkvyO7UMJraS2W9Ndo=;
-        b=B7J1cs8z8GU4EKSwIU7tiDT+XxLEsrluncrYLiC909G6yyia9HICjZTN9B/SiD162h
-         yb6btDM6lPnRdWFOj+AZDRgveYGBeKreswdbARHAdyMvZe5NciCQ9Tmvty4OFsS4llj1
-         cqbK3Wm67/G3U7R5BjYr1Gfbh1ZmVFQgGwwm4sttUh2vNFPVFvXlAJ/x+HVE723ImvPW
-         FJXmcAwAU+li+eMMQDFnNqvAZTVBtBTq81pwV+ibpENcQ8uOGS90I9oJOEtJdLAdEZ3d
-         NRI6M4waCeMdC/DFW7TUWDvxUF3W+xu/ZPZNKRWCCL/AymeN8AQ6D770hMMHZPj49Mib
-         DceQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXp5ETdOa7Qv0eckWl1j8BjjTHL2VzdC0VlTDmLjVWIsPSCyYi0QnQgPbdPozexZVphyERR4oooZ1JJ/m4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/TQfy4EGqPPvWe+xzrbZ9HHzLBwuoOlJlbrWHQhT62kugBsc9
-	/CndGZQsAbbsRFo4vWjFRdCll7PZDI/SwfsvNEbOJkPJKp5RGjf3Q2TCBpsuTrgWpWc=
-X-Gm-Gg: ASbGnctCiI/8y/LqucdLBDcNoWCN5D/LOBKMmiwn0ZxbSTdWplosNI2JZGv+x10vT9j
-	uNoVCYnOi1adUxIFrNg0ad7Jq/culUqS+JhxKmt/Y6vRyRTCqZBpoexGGzi3tAoP1gWd80gmhDV
-	wow+9Dnu8FthajgYL/uG02mZBqcRlE0Us4FO3BWslIJQ4E/A5t4F6v4jJH2RJwhc2UhwsQF7Wc2
-	ki4vPdejmwyjHpB65xkUqOV4OOsi4Z5WoMT2GKCICA1nAyiM/nDC7t95W3WC3QXzxfpL7c85ms/
-	gzqciDEH/V0yXJxggs+OR2DkU7VNyiHENf6KdCg6moc0bbYaM5QqTAQiK27UWnUwN0dFWOT6G2a
-	aJXwt3wn5eaKnnttpHMjWJ045e1TqJ10=
-X-Google-Smtp-Source: AGHT+IEaRRICyrF0MfupXKJ2sBoN8+NsjzhBxiQBkAqrwCfw85T5RHBvLEqeXF14peiWqYwm1M7yag==
-X-Received: by 2002:a05:600c:3b1f:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-459f4f3e226mr21968055e9.33.1754652495747;
-        Fri, 08 Aug 2025 04:28:15 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458f713eb44sm249864835e9.14.2025.08.08.04.28.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 04:28:15 -0700 (PDT)
-Message-ID: <fa0da331-273a-414b-b0d8-229c6772692d@tuxon.dev>
-Date: Fri, 8 Aug 2025 14:28:13 +0300
+	s=arc-20240116; t=1754652514; c=relaxed/simple;
+	bh=7bjZzLfO9fl1ghbHcTqWmndQHxP4RCvD8GzQZJjMcHE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Uqev8xKZCWQLjq3kRfd/Gm0pAWrPRQAGrljY0j5JYKoDXc/4UqMxvdENFHz8cFO7VlS8JoDsGngLRQZo/p1R2zs/yLGp5r2DfT6l1EuiznQvR4MHPuZZPlT3aczZePN3I2t/VfdTpyXKJ4dLeYMkS3uWAv8DiGtFwr5ErYZ83Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EM9N/akd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D52C4CEED;
+	Fri,  8 Aug 2025 11:28:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754652514;
+	bh=7bjZzLfO9fl1ghbHcTqWmndQHxP4RCvD8GzQZJjMcHE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=EM9N/akdd5EknCUIRfNSycnmf+GuuLwx9r1iowOgI1VM/jPQJJWuTe2M0lx0BCn62
+	 7ZJZSQ8QPw4PqxA3E7U0+yIrHQZQeATd5AYlunMxnVVvZWTDPCfTicAT0WobVXjfdP
+	 qAaqRL8W/f20T5FDrzmj4TI/NVMtel/Vur+PgekEOSgDoqkTqBWpz3mfJiTtWKT3kK
+	 pRUnPPM6tBDkZBCEfnDCMrAeK5NqhPOWuxZQ+FkxBCvlkPB5K7ZFj5NdL//rfUHp3r
+	 JQSeLsGt2mezuOoIzXIH5b/tSYvkvtRRvvukOVKBp96rhpHiU+4ZKlUa79r0A3m4lW
+	 p+zYV/qcchcFQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Mike Rapoport <rppt@kernel.org>,  <oe-lkp@lists.linux.dev>,
+  <lkp@intel.com>,  <linux-kernel@vger.kernel.org>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Alexander Graf <graf@amazon.com>,  Changyuan
+ Lyu <changyuanl@google.com>,  Pasha Tatashin <pasha.tatashin@soleen.com>,
+  Pratyush Yadav <pratyush@kernel.org>,  Shuah Khan <shuah@kernel.org>,
+  <kexec@lists.infradead.org>,  <linux-mm@kvack.org>
+Subject: Re: [linus:master] [kho]  b753522bed:
+ INFO:trying_to_register_non-static_key
+In-Reply-To: <202508081032.1450e413-lkp@intel.com>
+References: <202508081032.1450e413-lkp@intel.com>
+Date: Fri, 08 Aug 2025 13:28:31 +0200
+Message-ID: <mafs0sei2aw80.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
- dma-ranges for PCIe
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "kwilczynski@kernel.org" <kwilczynski@kernel.org>,
- "mani@kernel.org" <mani@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "lizhi.hou@amd.com" <lizhi.hou@amd.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250704161410.3931884-1-claudiu.beznea.uj@bp.renesas.com>
- <20250704161410.3931884-8-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113464920ECAC2C3CB89DE2D5864FA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <7c8c7a25-c373-452a-9fe8-8b2d92ddd885@tuxon.dev>
- <TY3PR01MB113467C09DF7D3D0D7833A6598649A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <TY3PR01MB113467C09DF7D3D0D7833A6598649A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi, Biju,
+On Fri, Aug 08 2025, kernel test robot wrote:
 
-On 09.07.2025 08:05, Biju Das wrote:
-> Hi Claudiu Beznea,
-> 
->> -----Original Message-----
->> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
->> Sent: 08 July 2025 11:10
->> Subject: Re: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update dma-ranges for PCIe
->>
->> Hi, Biju,
->>
->> On 07.07.2025 11:18, Biju Das wrote:
->>> Hi Claudiu,
->>>
->>>> -----Original Message-----
->>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>> Sent: 04 July 2025 17:14
->>>> Subject: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
->>>> dma-ranges for PCIe
->>>>
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> The first 128MB of memory is reserved on this board for secure area.
->>>> Update the PCIe dma-ranges property to reflect this.
->>>
->>> I see R-Car PCIe dma-ranges[1] and [2] maps all possible DDR area supported by the SoC?
->>> Do we need to make board specific as well there?
->>
->> I'm not familiar with R-Car, but if there are ranges reserved for other purposes, I think we should
->> reflect it in board specific device trees.
-> 
-> 
-> Already Linux has this DDR info[1]. Linux provides DMA memory only from this region.
+> Hello,
+>
+[...]
+>
+>
+> [   59.011407][    T1] INFO: trying to register non-static key.
+> [   59.011783][    T1] The code is fine but needs lockdep annotation, or maybe
+> [   59.011783][    T1] you didn't initialize this object before use?
+> [   59.011783][    T1] turning off the locking correctness validator.
+> [   59.011783][    T1] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G                T   6.16.0-rc5-00079-gb753522bed0b #1 PREEMPT(voluntary)
+> [   59.011783][    T1] Tainted: [T]=RANDSTRUCT
+> [   59.011783][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [   59.011783][    T1] Call Trace:
 
-What we provide though dma-ranges DT property is setup in the PCI
-controller register corresponding to the AXI windows. It is the same in
-case of R-Car (as of my investigation on driver).
+Pasha, I think your patch [0] fixes this. Perhaps it is a good idea for
+it to land independent of the LUO patches, since those are likely to
+take some more time?
 
-> 
-> In your testing, have you faced any issue like system allocated DMA region other than [1]
-> and you don't want to use it, then the changes are ok??
+[0] https://lore.kernel.org/lkml/20250807014442.3829950-2-pasha.tatashin@soleen.com/
 
-I haven't currently encounter any issues.
+> [   59.011783][    T1]  <TASK>
+> [ 59.011783][ T1] dump_stack_lvl (lib/dump_stack.c:123) 
+> [ 59.011783][ T1] assign_lock_key (kernel/locking/lockdep.c:988) 
+> [ 59.011783][ T1] register_lock_class (kernel/locking/lockdep.c:?) 
+> [ 59.011783][ T1] __lock_acquire (kernel/locking/lockdep.c:?) 
+> [ 59.011783][ T1] lock_acquire (kernel/locking/lockdep.c:5871) 
+> [ 59.011783][ T1] ? xa_load_or_alloc (include/linux/xarray.h:699 kernel/kexec_handover.c:106) 
+> [ 59.011783][ T1] ? tracer_preempt_off (kernel/trace/trace_irqsoff.c:412) 
+> [ 59.011783][ T1] _raw_spin_lock (include/linux/spinlock_api_smp.h:133 kernel/locking/spinlock.c:154) 
+> [ 59.011783][ T1] ? xa_load_or_alloc (include/linux/xarray.h:699 kernel/kexec_handover.c:106) 
+> [ 59.011783][ T1] xa_load_or_alloc (include/linux/xarray.h:699 kernel/kexec_handover.c:106) 
+> [ 59.011783][ T1] __kho_preserve_order (kernel/kexec_handover.c:156) 
+> [ 59.011783][ T1] kho_test_init (lib/test_kho.c:84) 
+> [ 59.011783][ T1] ? __cfi_kho_test_init (lib/test_kho.c:271) 
+> [ 59.011783][ T1] do_one_initcall (init/main.c:1274) 
+> [ 59.011783][ T1] ? __cfi_kho_test_init (lib/test_kho.c:271) 
+> [ 59.011783][ T1] ? kasan_save_track (arch/x86/include/asm/current.h:25 mm/kasan/common.c:60 mm/kasan/common.c:69) 
+> [ 59.011783][ T1] ? kasan_save_track (mm/kasan/common.c:48 mm/kasan/common.c:68) 
+> [ 59.011783][ T1] ? __kasan_kmalloc (mm/kasan/common.c:398) 
+> [ 59.011783][ T1] ? tracer_hardirqs_off (kernel/trace/trace_irqsoff.c:412) 
+> [ 59.011783][ T1] ? do_initcalls (include/linux/slab.h:909 include/linux/slab.h:1039 init/main.c:1345) 
+> [ 59.011783][ T1] ? kernel_init_freeable (init/main.c:1588) 
+> [ 59.011783][ T1] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:452) 
+> [ 59.011783][ T1] ? tracer_hardirqs_off (kernel/trace/trace_irqsoff.c:412) 
+> [ 59.011783][ T1] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:452) 
+> [ 59.011783][ T1] ? irqentry_exit (kernel/entry/common.c:311) 
+> [ 59.011783][ T1] ? next_arg (lib/cmdline.c:273) 
+> [ 59.011783][ T1] ? parameq (kernel/params.c:91) 
+> [ 59.011783][ T1] ? parse_args (kernel/params.c:?) 
+> [ 59.011783][ T1] do_initcall_level (init/main.c:1335) 
+> [ 59.011783][ T1] do_initcalls (init/main.c:1349) 
+> [ 59.011783][ T1] kernel_init_freeable (init/main.c:1588) 
+> [ 59.011783][ T1] ? __cfi_kernel_init (init/main.c:1466) 
+> [ 59.011783][ T1] kernel_init (init/main.c:1476) 
+> [ 59.011783][ T1] ? __cfi_kernel_init (init/main.c:1466) 
+> [ 59.011783][ T1] ret_from_fork (arch/x86/kernel/process.c:154) 
+> [ 59.011783][ T1] ? __cfi_kernel_init (init/main.c:1466) 
+> [ 59.011783][ T1] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
+> [   59.011783][    T1]  </TASK>
 
-As the values passed though the dma-ranges DT property are setup in the
-controller register for AXI windows, and the DMA endpoints can act as bus
-masters, to avoid any issue where the DMA endpoints may corrupt memory
-specific to the secure area, I chose to update the "dma-ranges" though
-board specific bindings (to reflect the presence of the secure area and
-tell the PCIe controller to not use it).
-
-> 
-> Not sure, PCIe can work on internal memory such as SRAM?
-
-Inbound window is RAM, outbound window is a PCIe specific memory described
-though "ranges" DT property.
-
-Thank you for your review,
-Claudiu
-
-> 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi?h=next-20250708#n31
-> 
-> Cheers,
-> Biju
-
+-- 
+Regards,
+Pratyush Yadav
 
