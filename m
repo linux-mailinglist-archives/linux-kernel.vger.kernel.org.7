@@ -1,140 +1,93 @@
-Return-Path: <linux-kernel+bounces-759882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03430B1E3E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:53:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCFAB1E3EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E99B34E3640
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:53:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EDB1189C14A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0777253B40;
-	Fri,  8 Aug 2025 07:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FD8245010;
+	Fri,  8 Aug 2025 07:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pA07gkxg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VhlU5wGj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Jw5Q+zej"
+Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B032165E2;
-	Fri,  8 Aug 2025 07:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485F878F39
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754639589; cv=none; b=feRrpc90X1so6reWKeAi1DAczIYtIvA1AFJED4G5RoGLZxCXFAKkT5w8BEec7nEECiN9f2VJmT06hY+9OUaULzpZw7miL0ar0ZhHN7SUal3x3JFusqqFMX5g6U0kz8mbVtLTSxIsn8+RzDS3ajMXfjzHWPcve1+yJf38215KmJw=
+	t=1754639719; cv=none; b=JvMgZ5E9kb9sLb8BoISJrFC8cgaPwLkjjNhsQrwseQSjgMSr9MQbZADc/ZVV2CLoJXK83MnwWKlPLIRNg7//IGJ5ppuPojwiqB3+agxxs7jWZwEsORSbs8B/u33/PqxL0n/lpRileG1Bj2GkLym6qJ0Ne+LVHaeIbBWAYJfCYJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754639589; c=relaxed/simple;
-	bh=/7ClYfMiSxAa1wTucVb/CJkSZIYnrq/mU6F7bRSsfVg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SMiq0F/y71lGT7K35PsSxXV031x5LtVOSbcm1qx/3XZQLPXV4XAgkwWE4ygXJN5m6nBjCMUs+F5Rp1Yat/NTQkeZNFaopFP0EouX3C14AOS/ziVQDlU2uyG6MLU4n4j2T0HkEWzDCAnGtQgkoP2b77AWIDESaXI5tojHIigkhy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pA07gkxg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VhlU5wGj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754639585;
+	s=arc-20240116; t=1754639719; c=relaxed/simple;
+	bh=pVxFHL9HzSCSx8QhDhlyAkNUlcRpniIjlScG/IP3+4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mMEnfNr8VTNDtFmXwca+iaM2p5sQsSQ0vLWRvz+MVpKzx073kq9rqc2Q2llybjeo7XWMQzO9wvxIrQOfbKBtTVsBzZErFkd+cPmcbqCQoCTuRaAk+K4W3nf8/TeT9akFkd2BBB4j2tOlYw2ZV9AiJMYLg3b7kaLKS/b2whBxikE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Jw5Q+zej; arc=none smtp.client-ip=217.70.178.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C6584422E;
+	Fri,  8 Aug 2025 07:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754639714;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tgvQLFtkKGmmjE3l2Crv/yMEwEOMbKI3kuWlY+rtSxg=;
-	b=pA07gkxguS3KtmYy7DLtM3wOXtdxVrciLNp/FtkZahkbj6Kf7LF2NUuVKjMnnI+hqxPs7e
-	LewPqsAecVNYzcK3HOixoJVeBSWrhwMA6GrAkyYOs+9XI6QwpNHGFehO/ZAVteWr3IsRBt
-	zlfySEeLabBq8kgLjnRvwOKldUsyHI3lWAy+jaoadoYMXQJ4rYCyPFaKwBBdintNF8qMoG
-	SDhZ1MygrIkyTk8UG7FOFVzsKWHOxTAHwjF7PJSTQRbpbF9GuXyRob1Y76tNy88yojNa2h
-	8YmU4MH4jCJlQG8jUn5ZY7a8cmqCZhiaH+thf9ZRHHSeWBuXg+XUKxgSXTdsBA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754639585;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tgvQLFtkKGmmjE3l2Crv/yMEwEOMbKI3kuWlY+rtSxg=;
-	b=VhlU5wGjtK/wzDzetlc9swBMxQ6cBYQO3ymCTc+Zh76HQkZDdEyYZS43X9ClrJyprKJicG
-	E6TwEJT4BCySPVDg==
-To: kernel test robot <oliver.sang@intel.com>, Gabriele Monaco
- <gmonaco@redhat.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
- Peter
- Zijlstra <peterz@infradead.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Tomas Glozar <tglozar@redhat.com>, Juri
- Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John Kacur
- <jkacur@redhat.com>, linux-trace-kernel@vger.kernel.org,
- aubrey.li@linux.intel.com, yu.c.chen@intel.com, oliver.sang@intel.com,
- Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Andrew Lunn
- <andrew+netdev@lunn.ch>, David S. Miller <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [linus:master] [sched]  adcc3bfa88:
- kunit.VCAP_API_DebugFS_Testsuite.vcap_api_show_admin_raw_test.fail
-In-Reply-To: <202508070739.4c6e0633-lkp@intel.com>
-References: <202508070739.4c6e0633-lkp@intel.com>
-Date: Fri, 08 Aug 2025 09:52:53 +0200
-Message-ID: <87a54ap7vu.fsf@yellow.woof>
+	bh=S8PKXqTNQ/3w7esuxvUmGUr1FNJgEX8ancYJBx/8lUU=;
+	b=Jw5Q+zejgVSOJLIWzjuV1peIgXNXkkWjcs7DfVxeX/TAjpG38xMw+88vR33+6kR5NZQKdX
+	Nh0d4mUPXBxKv1qB2EtiEuc2+JNZMcRsZ7VNCk6rhYJ6j6i696oJZCel3qxnSCgJ67uNnr
+	Wq4RJ5kvhB8QhOzAQTn9wAeTan9HA20GbZP+fdDzu4zQDsYf9sXvJAEdKqe4EOe5rhtL/C
+	YFWMs4o7r68wr/Mt2eZqUGrrBQBY3qo12OtZYxww32XXdDdF32WaopNFC9qtdZEV53Oj7a
+	WLu0NFyffwSTgykhGVLi4LONvI4C95mcdNkMt4mBLUno/lL8IKd/UsIgS8eJ1w==
+Date: Fri, 8 Aug 2025 09:55:07 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Liao Yuanhong <liaoyuanhong@vivo.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Aradhya Bhatia
+ <a-bhatia1@ti.com>, Dmitry Baryshkov <lumag@kernel.org>, Tomi Valkeinen
+ <tomi.valkeinen@ideasonboard.com>, dri-devel@lists.freedesktop.org (open
+ list:DRM DRIVERS), linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v2] drm/bridge: cdns-dsi: Remove unnecessary memset
+Message-ID: <20250808095507.3675071a@booty>
+In-Reply-To: <20250808035939.134861-1-liaoyuanhong@vivo.com>
+References: <20250808035939.134861-1-liaoyuanhong@vivo.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdefvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeejkedrvdduvddrvdejrdduudehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepjeekrddvuddvrddvjedrudduhedphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheplhhirghohihurghnhhhonhhgsehvihhvohdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtr
+ dhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
 
+On Fri,  8 Aug 2025 11:59:37 +0800
+Liao Yuanhong <liaoyuanhong@vivo.com> wrote:
 
-Cc: netdev folks
+> kzalloc() has already been initialized to full 0 space, there is no need to
+> use memset() to initialize again.
+> 
+> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 
-I don't see any connection between the reported commit and the
-problem. This looks like the driver's problem.
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-kernel test robot <oliver.sang@intel.com> writes:
-
-> Hello,
->
-> kernel test robot noticed "kunit.VCAP_API_DebugFS_Testsuite.vcap_api_show_admin_raw_test.fail" on:
->
-> commit: adcc3bfa8806761ac21aa271f78454113ec6936e ("sched: Adapt sched tracepoints for RV task model")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
-> [test failed on linus/master      6a68cec16b647791d448102376a7eec2820e874f]
-> [test failed on linux-next/master 84b92a499e7eca54ba1df6f6c6e01766025943f1]
->
-> in testcase: kunit
-> version: 
-> with following parameters:
->
-> 	group: group-03
->
->
->
-> config: x86_64-rhel-9.4-kunit
-> compiler: gcc-12
-> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-3770K CPU @ 3.50GHz (Ivy Bridge) with 16G memory
->
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
->
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202508070739.4c6e0633-lkp@intel.com
->
->
-> [   80.925851]     # vcap_api_show_admin_raw_test: EXPECTATION FAILED at drivers/net/ethernet/microchip/vcap/vcap_api_debugfs_kunit.c:377
->                    Expected test_expected == test_pr_buffer[0], but
->                        test_expected == "  addr: 786, X6 rule, keysets: VCAP_KFS_MAC_ETYPE
->                "
->                        test_pr_buffer[0] == ""
-> [   80.926182]     not ok 2 vcap_api_show_admin_raw_test
->
->
->
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20250807/202508070739.4c6e0633-lkp@intel.com
->
->
->
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
