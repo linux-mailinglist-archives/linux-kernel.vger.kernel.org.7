@@ -1,179 +1,184 @@
-Return-Path: <linux-kernel+bounces-760217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE63B1E806
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:11:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA7BB1E80B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF81E18C820E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:11:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54226567C6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48F4276026;
-	Fri,  8 Aug 2025 12:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F1E276054;
+	Fri,  8 Aug 2025 12:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="aW9VOXyk"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="agCmlyBq"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8113B275B16
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 12:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB5E26658F;
+	Fri,  8 Aug 2025 12:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754655067; cv=none; b=fyBvb+7eJdRoSaRM817cLpfNSUoCCrAe56/4/QYqqAYdcUfs+yrSTxH9VBVKhEzFAoHR6kn17O72R4fCVhF+/PvSd+5MBCizvyY9pkd1EvCBXXpM50lvmw5kbNWGDFAqFDlYAMKlSdCykZX/3Coapp8xr97Qs3qM2GUBFPlTx/M=
+	t=1754655125; cv=none; b=l8OQkuoCveTACjCpKE+gbpIhBApW3aqStu2PIwiNilKOYdKbWicm3LD9O/zHOc4czIJfmHD8az2Iy2BgIibZJrrWCizn2Nr1WOQlWX4s0YmvYWOQ1dr7C8AU2epaBa3RZSo85/OMuNfqHiuoOAASrpy+VoWrZmRc/I8nvRSxKog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754655067; c=relaxed/simple;
-	bh=jrIEWBRIyno6UVI34k6pRfIfKxlL/J2GMbRuz4wtFbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Na+QyUw6nKjwUURt26jIiy45WCz8cH7ZCnXsJz+ixLPR/Xidf2oxOWJpnQJpig6gXjQWJWHlsbC3lX76PACrx96mI28FY5YCuL9HzyDfN8ipBjOuMDDdlAgK+MSNjTmp+WGPD9UZeDiJgZloe6qpBlyIPcXbPMHgj/pa65nHAnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=aW9VOXyk; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-af66d49daffso361172366b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 05:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1754655064; x=1755259864; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7H80wazDhrSZXsCUSdHhSJpvhnQo21M43h8Ky6/QQsc=;
-        b=aW9VOXykFy9EaBOjw1ysCPG1AnI8CFQy/n356NjYz32dkx1PLLCAk2gApqd7i72Pg9
-         VIsJzv28lD/BbBgPN7xDEKu97+Y5PfQ5FcW8KoUqn/3akJRGQe/+yFytMjm4XPQH8R2p
-         TPdg8WPTLDkfCLpjg6w9860Au8oQvWtZikzTFvXQvMOMnqgMMg5TLcfOmwVHXDxPe0sL
-         JKttD5Ooy4/O7oZiHiRmn7+jq5Kpp99i59tjfrYpOEZPXbaif9sXNpxSgtwqflifxqy3
-         9bgeCh/dYImGSAy6sPjIFy6w86r0nWOBfigRKkRZrqT4ObZZdnqSpibsys+MMcr8jJCj
-         A4VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754655064; x=1755259864;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7H80wazDhrSZXsCUSdHhSJpvhnQo21M43h8Ky6/QQsc=;
-        b=cKO1L2VO4Ox+7WBZ+iwv9OMUQqsdBsVery5DKXvjPE5Qfn8Cz2yTxZE144zEgVliMS
-         +eH1szkGWjuS/WRTjfnILVo2OX2kCRZ1liTokizQQ/b7qsKfP/fJRUCCzXykg5QJQUMb
-         cHsVXkFewq1lmFP8JUfCSZhgZq6ZDqlZ6sLY4QwhAFdbEfV2vr6GEGPScFETbE/M9bkZ
-         xY/1F6N5NvLKUhHjpDTl6/dOclrplLVN8BA/516FDm96EPEZUgWgXP7HCgfHM9GalFKR
-         vaeIl4WLkdx2kYLtxwZfNl+4yMQoWlM8TSe7auMSmlUCjQt//6WW4ZWl6KIB2Uughhso
-         +x3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXk6/DsDi6ngAGOjOhaytcNavChlZZLNe8iSF+EAhok1P7g0rne36C40fgs+y6zYOaH2ZXC9gM1xqJAMCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf1wx9P/8XzzjKMXpoV/Uy92HYyGqVMLK75PFNXyRYZBqDMexT
-	SdngA2afSrMVyXtrrZLMFn4XkScFMpPGPpj9U9YymPhuO6JSMGjI+wT1hibgOyTl2tM=
-X-Gm-Gg: ASbGncspndDA+/z06/zIKequ1zj3yR+d7oBBttBBaQETumNpej1xxmNJuC3GU2RTF7Q
-	yLjku+1Q5tmWK2S46Y65qJnLOSIQXETO/3NK0UirB53S4YPkNiZH9L67GerfhkembYpd5lfNvWt
-	P3gjAfOhEzN2V4RknLKCzwaX7PTKVRYDh6LAWP8Tk+WY56ReIoUMBAxlZKtbs6rjQ5cfi0osyPC
-	+BNPXg0jBx5oZ7xAYY+kc+KPnT1Axv4fyapU2XheTtxPTMN9/vMXnozpu4ZMV79+vO+n3Z8Mxgx
-	efuNAlh1YiVA9WH+y+0zu6UVHjjUbQbEKjZNOj8FFGP9ZfY/5iPaaK+Hl2o3fRTidbRYeqXa10/
-	wPZW8gj/Vl/GiVew2Wi6sNY74TyfCF5M=
-X-Google-Smtp-Source: AGHT+IEP1hKdTSLFyfN0oVcI9oj4h90fVgoQ1FAVba1VNEavj2ZZMm/pymmutdkY8hgx8gRVclajEQ==
-X-Received: by 2002:a17:907:7fab:b0:ad8:a935:b908 with SMTP id a640c23a62f3a-af9c64fba5amr264177766b.30.1754655063505;
-        Fri, 08 Aug 2025 05:11:03 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.188])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3375sm1485634566b.41.2025.08.08.05.11.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Aug 2025 05:11:03 -0700 (PDT)
-Message-ID: <277ca37d-e304-4d78-bfd9-b1fa222fd0f3@tuxon.dev>
-Date: Fri, 8 Aug 2025 15:11:01 +0300
+	s=arc-20240116; t=1754655125; c=relaxed/simple;
+	bh=Yi2zqVvIw6FwfgHjkwX+5bUhhssLCf7mv9Hxv2uccb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=H3UomtLA8AblaXnSBcEJ/wF8eLQOVaXNw85Oy5BbnQ2Mj29cDpOJE84VCf0xAhSStlXpXqYBS8mk4piNPTI/lCgePnWgPN6hy9iHfEdApzi1dmTQKvXr7ZjnGFvuElaO8GbPkS3UuDFnByL9EWvjLMZWTh1NWSShNfYZwyFVCv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=agCmlyBq; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bz2vg0pGGz9t1l;
+	Fri,  8 Aug 2025 14:11:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1754655119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Gq0OeZwDaL5z5Xu6wgwBz9txTnznNgka8W43C8hPZ/U=;
+	b=agCmlyBqWDI8uXws05wegBw8VNYZvzogW5ivaAEBs3xIwAlLVJ6L/os842wAkcEWfawc9N
+	2pnXTagI7x0qBMbN2Ah3ELpQXd/gukSnRNzFJTAYT83in01gDtHxJhq0HUrL58I4fU6JIn
+	YzMBuS7ykB/sEQo4GbjN6h+fausqFyd/yBCWUnhRqCLtde14cWFBBaN4O/W11fqmFqBHs5
+	jrxJk7bM7ljUqjmib/b4ddOG8/exmYXkUaIf3jcAW8AMBUKkx1fkz9dZpW7Wd7KNjOB2IM
+	EuNTFPA3vV0TGX90DW4wDGkT+ioP8wwn0HwgHaX1VPQn22HzG//DLnKet/IkTw==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Suren Baghdasaryan <surenb@google.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Zi Yan <ziy@nvidia.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Michal Hocko <mhocko@suse.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Nico Pache <npache@redhat.com>,
+	Dev Jain <dev.jain@arm.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org,
+	willy@infradead.org,
+	linux-mm@kvack.org,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	kernel@pankajraghav.com,
+	hch@lst.de,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH v2 0/5] add persistent huge zero folio support
+Date: Fri,  8 Aug 2025 14:11:36 +0200
+Message-ID: <20250808121141.624469-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/8] soc: renesas: rz-sysc: Add syscon/regmap support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
- yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- John Madieu <john.madieu.xa@bp.renesas.com>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250808061806.2729274-1-claudiu.beznea.uj@bp.renesas.com>
- <20250808061806.2729274-2-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUsFFd+orb17oQqoEidzYWMRjPoqMyzpgrdnicc=MRSYQ@mail.gmail.com>
- <cbdfa6fd-e65b-45d7-a21f-3bfdd46af332@tuxon.dev>
- <CAMuHMdXM=Mu+vJ6n3spj7Dd+8boLXEpcSn0M1KB8OwPijqq4aw@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdXM=Mu+vJ6n3spj7Dd+8boLXEpcSn0M1KB8OwPijqq4aw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Geert,
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-On 08.08.2025 14:36, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, 8 Aug 2025 at 12:32, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->> On 08.08.2025 12:29, Geert Uytterhoeven wrote:
->>> On Fri, 8 Aug 2025 at 08:18, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>> From: John Madieu <john.madieu.xa@bp.renesas.com>
->>>>
->>>> The RZ/G3E system controller has various registers that control or report
->>>> some properties specific to individual IPs. The regmap is registered as a
->>>> syscon device to allow these IP drivers to access the registers through the
->>>> regmap API.
->>>>
->>>> As other RZ SoCs might have custom read/write callbacks or max-offsets,
->>>> register a custom regmap configuration.
->>>>
->>>> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
->>>> [claudiu.beznea:
->>>>  - do not check the match->data validity in rz_sysc_probe() as it is
->>>>    always valid
->>>>  - dinamically allocate regmap_cfg]
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> ---
->>>>
->>>> Changes in v4:
->>>> - adjusted the patch description by dropping "add" from
->>>>   "add register a custom regmap configuration"
->>>> - updated the list of changes from Claudiu Beznea
->>>> - dynamically allocate the regmap_config as proposed at [2]
->>>> - this patch is needed for proper function of USB (as proposed in this
->>>>   series) that being the reason it is introduced here, as well
->>>>
->>>> [2] https://lore.kernel.org/all/CAMuHMdVyf3Xtpw=LWHrnD2CVQX4xYm=FBHvY_dx9OesHDz5zNg@mail.gmail.com/
->>>
->>>> --- a/drivers/soc/renesas/rz-sysc.c
->>>> +++ b/drivers/soc/renesas/rz-sysc.c
->>> =
->>>> @@ -117,7 +125,26 @@ static int rz_sysc_probe(struct platform_device *pdev)
->>>>                 return PTR_ERR(sysc->base);
->>>>
->>>>         sysc->dev = dev;
->>>> -       return rz_sysc_soc_init(sysc, match);
->>>> +       ret = rz_sysc_soc_init(sysc, match);
->>>> +       if (ret)
->>>> +               return ret;
->>>> +
->>>> +       regmap_cfg = devm_kzalloc(dev, sizeof(*regmap_cfg), GFP_KERNEL);
->>>> +       if (!regmap_cfg)
->>>> +               return -ENOMEM;
->>>
->>> Is there any specific reason you decided to allocate regmap_cfg
->>> separately, instead of embedding it into struct rz_sysc?
->>
->> Sorry, I missed to mention.
->>
->> I chose to have it like this as the regmap_cfg is not used anywhere else
->> (through rz_sysc) except in probe.
-> 
-> OK.  Upon closer look, devm_regmap_init_mmio() does not save the
-> regmap_cfg pointer for later use, so it can be allocated using kzalloc()
-> instead, and freed immediately after calling devm_regmap_init_mmio().
+Many places in the kernel need to zero out larger chunks, but the
+maximum segment we can zero out at a time by ZERO_PAGE is limited by
+PAGE_SIZE.
 
-You're right, I forgot this. I'll update it this way.
+This concern was raised during the review of adding Large Block Size support
+to XFS[2][3].
 
-Thank you,
-Claudiu
+This is especially annoying in block devices and filesystems where
+multiple ZERO_PAGEs are attached to the bio in different bvecs. With multipage
+bvec support in block layer, it is much more efficient to send out
+larger zero pages as a part of single bvec.
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Some examples of places in the kernel where this could be useful:
+- blkdev_issue_zero_pages()
+- iomap_dio_zero()
+- vmalloc.c:zero_iter()
+- rxperf_process_call()
+- fscrypt_zeroout_range_inline_crypt()
+- bch2_checksum_update()
+...
+
+Usually huge_zero_folio is allocated on demand, and it will be
+deallocated by the shrinker if there are no users of it left. At the moment,
+huge_zero_folio infrastructure refcount is tied to the process lifetime
+that created it. This might not work for bio layer as the completions
+can be async and the process that created the huge_zero_folio might no
+longer be alive. And, one of the main point that came during discussion
+is to have something bigger than zero page as a drop-in replacement.
+
+Add a config option PERSISTENT_HUGE_ZERO_FOLIO that will always allocate
+the huge_zero_folio, and disable the shrinker so that huge_zero_folio is
+never freed.
+This makes using the huge_zero_folio without having to pass any mm struct and does
+not tie the lifetime of the zero folio to anything, making it a drop-in
+replacement for ZERO_PAGE.
+
+I have converted blkdev_issue_zero_pages() as an example as a part of
+this series. I also noticed close to 4% performance improvement just by
+replacing ZERO_PAGE with persistent huge_zero_folio.
+
+I will send patches to individual subsystems using the huge_zero_folio
+once this gets upstreamed.
+
+Looking forward to some feedback.
+
+[1] https://lore.kernel.org/linux-mm/20250707142319.319642-1-kernel@pankajraghav.com/
+[2] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
+[3] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
+
+Changes since v1:
+- Simplified the code by allocating in thp_shinrker_init() and disable
+  the shrinker when this PERSISTENT_HUGE_ZERO_FOLIO config is enabled.
+- Reworked commit messages and config messages based on Dave's feedback
+- Added RVB and Acked-by tags.
+
+Changes since RFC v2:
+- Convert get_huge_zero_page and put_huge_zero_page to *_folio.
+- Convert MMF_HUGE_ZERO_PAGE to MMF_HUGE_ZERO_FOLIO.
+- Make the retry for huge_zero_folio from 2 to 1.
+- Add an extra sanity check in shrinker scan for static huge_zero_folio
+  case.
+
+Changes since v1:
+- Fixed all warnings.
+- Added a retry feature after a particular time.
+- Added Acked-by and Signed-off-by from David.
+
+Changes since last series[1]:
+- Instead of allocating a new page through memblock, use the same
+  infrastructure as huge_zero_folio but raise the reference and never
+  drop it. (David)
+- And some minor cleanups based on Lorenzo's feedback.
+
+Pankaj Raghav (5):
+  mm: rename huge_zero_page to huge_zero_folio
+  mm: rename MMF_HUGE_ZERO_PAGE to MMF_HUGE_ZERO_FOLIO
+  mm: add persistent huge zero folio
+  mm: add largest_zero_folio() routine
+  block: use largest_zero_folio in __blkdev_issue_zero_pages()
+
+ block/blk-lib.c          | 15 +++++----
+ include/linux/huge_mm.h  | 38 ++++++++++++++++++++++
+ include/linux/mm_types.h |  2 +-
+ mm/Kconfig               | 16 +++++++++
+ mm/huge_memory.c         | 70 ++++++++++++++++++++++++++--------------
+ 5 files changed, 108 insertions(+), 33 deletions(-)
+
+
+base-commit: 53c448023185717d0ed56b5546dc2be405da92ff
+-- 
+2.49.0
 
 
