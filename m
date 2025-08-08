@@ -1,223 +1,322 @@
-Return-Path: <linux-kernel+bounces-760514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C207B1EC4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:44:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB110B1EC5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451BB62673E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 618813AF293
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48E928312B;
-	Fri,  8 Aug 2025 15:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AEE285CAB;
+	Fri,  8 Aug 2025 15:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="A+/WM6CB"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2060.outbound.protection.outlook.com [40.107.243.60])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PkitBGE5"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764BF23F417;
-	Fri,  8 Aug 2025 15:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754667847; cv=fail; b=uuxMHYk6ysRyHrL+lm385BmdjsYe7zJt15VP9tjdTHEVN4BnzgCDkzgkeIcQu5COANGKJy2sM1i5JzuWHdIunt73RJoRD6eYZPWd7OaUbQK/jW8PCU2cdn0Jt0IG9cNtjwCUU+IFb8zHcjGqqSI/FpytOO2geYGIxelPDC3aDwQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754667847; c=relaxed/simple;
-	bh=3OhM4EwhjwLh1f4DzsNLa+8IUYRoY/JWjG6NmWBZVik=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jycwo1BpNv9xgqD9tJTdrDJp0knLkB4ll65HAXdhAGYAl+xktPm5QGEhuOuVoGfHIPHRGB1EBk5Yeo6HVVzVZkeERKn9fwEEQKX8xRVv8xQSOaODlmdYmkF2IZVEcCpojaDcnBqoLoF8BLydLdR0gM9PehyuMkFRv0ZvLRi6W/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=A+/WM6CB; arc=fail smtp.client-ip=40.107.243.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aB/jq0XaKTC1IgDoX2LFQxSBpU4DeLQPyYYRzYnci+D66CGVQDw08Pxf7pgjjxM9eTEaoNHHMICW0sBrYeYT/nMxA5T2dYkVm5/Sh7NFYn5JNH2SE2FTEcLv7l2s4g+CLO7MoTfT75qJiO8OGl2zW07gAKN/VpfI3ZIVPalNST9C0f5c3M1ha6B8qvUkmk9ntQfbH74mxLvZmJJH9Agc6UhNMQ9AZsOzZuN0abGdo59Z0UzMcN0iFuGboz/idceUKFtpfxQTHuqGmxTjRLCYivHSQ6t+VidzlmVThQKJE7Uukp3BZQ2u8gVx4IOR9aoDmNPkkOFnpf3alzuSs834ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JM7tj28809Sl/XCQp+qz354CEABsnGf6IKQ8LZeL4r4=;
- b=sV1dvuhCRQmTbL/1pajRj+EDIL6YWcY80HyXaowGXsDIZ9b7QC3M8M8yKh2FYPYD8/njliceTXjEcPr/xOCsQHeZ7qDW7qYwFAn8ZkZsqkrsVVworY15vV9ncE7Ipllk5sW6Tkxw3YG5g6g1/YlxR3pDd8BiT9lvlEwNmJ/7ZkfQtB612wzJEppew0E2daOq5FiSGjN6B42+sw3+pLIqm7yZtTc6VlU555t2CA7HXTDMYFur9v/0Wl7uUbiz8KQQA8kcKpV5n67DDaCkpUukCvnyLqhDEBDE6TriCrXjTRp11jHXUxRyUigtSu+FwXglQIKE2M2T6c/fY8cqaGCTyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JM7tj28809Sl/XCQp+qz354CEABsnGf6IKQ8LZeL4r4=;
- b=A+/WM6CBs97TwN2bu1ApgK3LBy+vRRsF4VspTzbM5SM6IQrods5nVLLHmwFwP4t5S36v2b4lP5hradJS7qq4ZMFKF5Gim7RIt8M/zYW11aVdu6j0gQnw4qfrHt6n6nRow2epLNnv5RTBbdOOCe0U6rxidslpXbFWpk7LzO4WxdH2r6LCVtabFg1CF3r2shAuI7O0CeiuUnGlvesYXubba62vyE3rYLlidrYAzNUXqF6Fth4ju+GSZOexqa2CyvELUfSkETO5tBLA3FIfbn0ABOTc+M68HWZgco1P30YYaZPBxQVokTc/zD/GtVuYr//haIuZIJ2UQADkN4F+N2hELw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- IA0PR12MB8088.namprd12.prod.outlook.com (2603:10b6:208:409::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.18; Fri, 8 Aug 2025 15:44:03 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
- 15:44:03 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>, <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH 2/4] mm/huge_memory: move to next folio after
- folio_split() succeeds.
-Date: Fri, 08 Aug 2025 11:44:01 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <B178AB0E-07C8-4777-B15E-8A378E3AE69F@nvidia.com>
-In-Reply-To: <CD2ECB34-11E2-41F5-B220-860FD2C60821@nvidia.com>
-References: <20250806022045.342824-1-ziy@nvidia.com>
- <20250806022045.342824-3-ziy@nvidia.com>
- <20250807085521.bhs2o6wk6pe7xf5x@master>
- <30CEAF42-ABC1-4174-8D78-C92B8C8AEB37@nvidia.com>
- <20250808031523.g76tmlghuaorjaoq@master>
- <CD2ECB34-11E2-41F5-B220-860FD2C60821@nvidia.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MN0P220CA0023.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:52e::27) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED0D51022;
+	Fri,  8 Aug 2025 15:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754668181; cv=none; b=G80Eaheggf4qf+Qry2thLKx7oQyGWvCmFDI3A7XlhJSkNgxxk8bYN3BJXQElcEDCsFLA+C3uIT8sywLdajR7fqkK1OPnjV+l0QKpKGTOe0wSDgDrjcQRvlb7YrQB5ogxX2Ra1j4ksMIEwDVHMAkC735iEPDxbnYTvUEBTI+Ax28=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754668181; c=relaxed/simple;
+	bh=FKgDRBwvHKW+NItJ/C/tdcMYpqeLoJp+ybnYisRSw+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kAFaaPvFOccYyTVhhv3hu9BbgmGvhfg3oii+oUfL8Y2ilYs8Jh0pJgqloSqIrrOoF9PbM7Q4tveIcXrALFI/R1ghdOK4iYRwJgsXUA47l4mG3M7Xj1JrcGVGq8qq7ESGjlYc0d/0eMLz1vkgMJeb65pXqxSmrS3Kb3jTkYEn+Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PkitBGE5; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578CaBd6019724;
+	Fri, 8 Aug 2025 15:46:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=hVVTbx
+	IG4t9rFlI1TQKC+Hxj/Mh9EeK0KpEbo6pNZKE=; b=PkitBGE5UXNDnmL0QwcOYI
+	l7pq6FFVIwEjOrGiUDDH8bwROvbS26QXYuKWHhb/tZL+mmi3Xl+Ik/uvlBaVQp7k
+	q//FpQH7qMHutGOFraeOVrkGAES92zaciN7zNiXepoCRqFhrhGklVzRBs8Zb63gm
+	QRL3NCGQM2+8lzjS6Kjtzm4LQHErARlaz/+kk5MvZ48rxDRzZ1y6D2MEVbU24l+O
+	u4NUTqgw8hMD99+ODFXM9mYvFbeNgarmZmWd9SfUJTRyHob/c65+xhhuxzCepTWa
+	OcV1+CGqCOiyMumbnbL9wjccNo7jtEvq/zk0+X6oR8ltQTYo8y9g76SXBVjK6fAA
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48c26u6mjn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 15:46:04 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 578Eiqlk001500;
+	Fri, 8 Aug 2025 15:46:03 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwr682e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Aug 2025 15:46:03 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 578Fk2F852167082
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Aug 2025 15:46:02 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E3BBA20043;
+	Fri,  8 Aug 2025 15:46:01 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C169920040;
+	Fri,  8 Aug 2025 15:45:59 +0000 (GMT)
+Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.39.29.218])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  8 Aug 2025 15:45:59 +0000 (GMT)
+Date: Fri, 8 Aug 2025 21:15:57 +0530
+From: Amit Machhiwal <amachhiw@linux.ibm.com>
+To: =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>
+Cc: Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
+Message-ID: <20250808205338.dc652e3e-61-amachhiw@linux.ibm.com>
+Mail-Followup-To: =?utf-8?Q?C=C3=A9dric?= Le Goater <clg@kaod.org>, 
+	Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvm@vger.kernel.org
+References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
+ <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
+ <dd0b8e6f-1673-49c3-8018-974d1e7f1a54@kaod.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA0PR12MB8088:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5f1a17d-e187-4ea3-a55e-08ddd69266e3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TecI/0X7Mo+xX5pORsUQVyUGM7BWybUxWjJtK9xj9M7IWpsfss6T85s8es1u?=
- =?us-ascii?Q?/x2YLcVx8g/lFuwzP1y8RZx/8NzAIfE+oE9g0Y9VifKJgNEud0OcgdIneyH3?=
- =?us-ascii?Q?rXKTebMMc84c/129N511muEBvU++j834NOLQbV7UzANk4WLC22FAjYtaAY1r?=
- =?us-ascii?Q?lzhyfg3Z40GanlXgbEOnWmq7hVZJZyfB0csbHQwRY+sZ7CgHeXkybzlrwk24?=
- =?us-ascii?Q?rBJXlUajaoUPbOp5PBvIoAlJg10JpiXoospcteCXqZpcAATkQXUn2qgE81wl?=
- =?us-ascii?Q?8bvszzupnJ3ic6HVC4gVierpxdTdDmDmfqJPZ9v3mLdxxyw0LrNL5r9KpUs9?=
- =?us-ascii?Q?YaiJrvG44ML7yGK6Q2gKHff5HpHY5BH7tSwnSEBn457/9ISa1QEx2NHFSygK?=
- =?us-ascii?Q?qtcUOSBAywpyPdR1ObSWW5GXZU0yS3yMcLODBWJSm5EraErSyAK5GMEUZrh1?=
- =?us-ascii?Q?ww1KnsYTxK+hhfn34+cQx8rHdkSNVmaKn7M+FOO8mDnAU0+ppGDDrg+fJjXv?=
- =?us-ascii?Q?XkN9eCJFz391OWrzk59UKKMIc2TCyzQO0J1mc9vpwsQRevz+3MaSGLixvyi3?=
- =?us-ascii?Q?ba4CTczDyus01XuHJ608c60T4iSwHBpN3O24yD44+nKALd+odaVXUS6cykNg?=
- =?us-ascii?Q?O83BdbP6r97HgPbRci3j1Mt6FMoViEuei8zpYZ8PVz+dhRi4Rnxn80nFqMXv?=
- =?us-ascii?Q?3Fwm1MeWKPQTXPgsqBKFrNoCmJwkapWhC9k06XpyD6DJYKMaUAp/M0MN6Xz4?=
- =?us-ascii?Q?lGZ2hLBDyVjvGn7JZfYlQDfVtF1a3BGrK4RukMXO3UMq5FcAyVNIsw1mO57s?=
- =?us-ascii?Q?hOvOzsYy4zNgYVZsanWLNxuHagfh0FO8Wdwr/iPh2J8ytSI6ToLhSYufFllG?=
- =?us-ascii?Q?uQQ0oVP2LYILbLxDhvGFxNHvVYdWZpNFOusIJwy1x2wkSdQdrhuLOX0jeJum?=
- =?us-ascii?Q?G0LdU8rE5KWo0Inb/PYGuT3SnAnh1AbjSJQRr4E7rTi6pOs/agjzC/ytQp0a?=
- =?us-ascii?Q?dfw1NYT1o5IDxTajJhDzzN2HxpqUkgyQ10y6uRFH5xuoHoxwP4LD8E5x3HOr?=
- =?us-ascii?Q?/7bOWY4adqVm+udWkTGEFqK0vpex+91JaDQDIxZc6gvp4ZpoUYJg3C00kowo?=
- =?us-ascii?Q?8DraJxs63L4u5/3/i1+OUHlMcse56FaIIP0nVIWjAYylGjNDonFfOBLLsnjV?=
- =?us-ascii?Q?jIghoRPyJgPuim1EPpAI8Z5qLtIvX5zRYGdrZxL6F6Lg66FMsPlYF4GGUalO?=
- =?us-ascii?Q?eLQSH3WStH/zOqvr+D8Bt1NtGPyX2ziJ0bSbR3rzb7xbGYVzxo2GGHOxNRHc?=
- =?us-ascii?Q?fCOeHig2gpPHvYyNN1p2IEs8UQjLHVp5LvcClK/9dyBDKzjTbnzH8rUN6uKM?=
- =?us-ascii?Q?tMeRX+/Eqcz3tlrcwYR5XgnPMYMuSWVfY7Oj47B0kTr+PBvgFfuSfZHuDi+P?=
- =?us-ascii?Q?7y1WRho5NEo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ek9lagwdS8kmbvtkbo+jJvdU8a82+4wSQCGhignsJiyi4QIbSvou1ikPOCbJ?=
- =?us-ascii?Q?jEgssU3FLhMn8SymU2KGH9UHhh98suAgTd/vTtJteSd+XAi6N0S+y6b2wxwD?=
- =?us-ascii?Q?jeEtfJ6py80Ql1i7nU5ng23y4BiHa6S3Hs6wzak588yo0n+fMa7EdShjGRkU?=
- =?us-ascii?Q?Gc28kXWtStZbSmjTuhQYoLjJtCO11mc1/ZgzS8K7KO6pcKB1PIWCqLqCqdCN?=
- =?us-ascii?Q?LnnezBxvVe9tRZodxn0UH0A4a6YXgadZUoYxy1a2G5YQpyNA8Z9B6XMGxKVJ?=
- =?us-ascii?Q?Gt7EYQrqUNrthQMOn3mjz4Ko8sdVRTVdAMu+/2THkcxugvmettAz396zPBc1?=
- =?us-ascii?Q?eJ26RMhSMLnkmr6XVBqXVtIk3+6QbYwEJBvoiRX5DndnBDLpPRfrZxfDrVoK?=
- =?us-ascii?Q?52f+sfcfSG1/mP6KUKg3BQwWNbr1lOS4yn0wnSJQOhJpzcOV5KcDq5/t6ys0?=
- =?us-ascii?Q?tLe4DdZC3WaDZV4cvuqZmtrGoKnlL5Craqqz+i6xM/dfbhOdP5yF8gJcX/5w?=
- =?us-ascii?Q?y7V7k7F3NevtHnQfOWInK0gNtLivDngjXGR9CxczSK74Jt1nh47UrhqyAecT?=
- =?us-ascii?Q?Ge6q1JJTAOd2Tm6u+YpYFVenlFtYRAUnoyAp5R7sT7Z8NGWEn/XOQgCko5P1?=
- =?us-ascii?Q?0PsubcNup8UIsR5Qmy7MV0Kl6RbTsacWi2jnjMlf5cM+fEOnH6IWUPuj4CUU?=
- =?us-ascii?Q?1LTMgR4FcOTwaM1V7lDN7PiUG8YIsxxkJ/7f6wHftmxeOAhsXOE51kmCXMCC?=
- =?us-ascii?Q?iMtGOtyUZm9iN9TkVbx3mhSV5Ucoe7t0/QUIDbbPEweg3mdxxPCuVTntR1e3?=
- =?us-ascii?Q?H6gRtcTFjhgWYdZeh54MIXmc1K+WRr6laikzOo8G17fB3sDEPXAHBzgaPcdV?=
- =?us-ascii?Q?flkX6xToeLMXYayBxBpW4sLkyQgsPwBMJry8a92CJ524Hgiw03nsgakoxMk5?=
- =?us-ascii?Q?hTci6X7oabs9Ulx3siT3vcc6bGThrxgWnx9orGXCSw89d2FpN0B1hieq9nj6?=
- =?us-ascii?Q?IQVu/WbzdXMDC6IiS+W1kKzrxjiuJqOVs01yGz8/mnYn4gIAq6VVdQVwzR+4?=
- =?us-ascii?Q?1fKamH+glkB+sxLChwFeHOOAP5cTxUkYfxeL3YJklqp2ghoksbXYksonqw0a?=
- =?us-ascii?Q?5b6xacdvLpHFIBV/VnCDrsoEK96BWaNwJ4Z1qBaXjbH1+T5GTKUAQZW6fZVs?=
- =?us-ascii?Q?BRs8Z44P8OEvwcuezXQR4s1maOsfM3urM6CnEOgyA+4V83jE7XlOEvp5547x?=
- =?us-ascii?Q?eJD/i+dWxcHgp09XYHY9QqQtlhF2Y02iL8rwCM+WYPa0jsXSYjZqHG++lL62?=
- =?us-ascii?Q?DBS5GzAS7ulRMNlDU5gSN5VseIIrBKhLPdKuHZ9US6Op5s5jxuIxuTfApCdj?=
- =?us-ascii?Q?Er4gOW6XmRwCMXWA4hfFHsa8kpFlSMi3/4KDiDtdwJMV3LgagqxtRuBLfEMz?=
- =?us-ascii?Q?JD+Gk11+jWMT7dpH+m49LSrbaAqhvrL5xO1M4HoWH2L81vk7HW9ITX2LZW0W?=
- =?us-ascii?Q?rj3/pxc90t0L5MG4r8ED7TKK95rKGNnWYtHY7Go7W0EW1l7sn+2wNdIddlYe?=
- =?us-ascii?Q?EduJP4tjH/PsO/eoR9wfN+tpL0xjMFseb98s5O4V?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5f1a17d-e187-4ea3-a55e-08ddd69266e3
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 15:44:03.7519
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pk5CKqok4iY4XfFOc9ZuFumyb+2Acyh7WtwjYwZC72gYlL824i/5elgWI23q8lXY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8088
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dd0b8e6f-1673-49c3-8018-974d1e7f1a54@kaod.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: NYBsndrIoJCnnEC55H9YQzVdDfMBbWza
+X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=68961bbc cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=8nJEP1OIZ-IA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=FOH2dFAWAAAA:8
+ a=VnNF1IyMAAAA:8 a=mChgkEYXGDxemXdaQwAA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-GUID: NYBsndrIoJCnnEC55H9YQzVdDfMBbWza
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDEyNSBTYWx0ZWRfX6YR5mM/2BZHW
+ xa5GBzRRmaz/1XwO+tCFYA8iEOpwsrnCzPfGo+BBQVTxvr7Ui9aHUKEMk7WNu+gia3cGXDhi7kb
+ QFx78WefC6e7rkHVQNqpyt8xbEDFy06exMaOeGdMzXaZwC+GAKfHATL+hK5iuJ3PRIwD213L9nG
+ ekSBmbrui87dGzoU2NzNHb/nyZ3PsIH27y1abcBMiIfZv1NK7qSjLWY6YL1gr9OcfdY8wRscyyW
+ ziToxgGUBMEhDdO6aLVgzIrQQ1r0l6TkwDHuG5rDtvWQWs64RJakKfUk9sMw7Pt2/SirIqXeVnV
+ TeF982BvdBVsuFNgs3CF6mxYJy1pur1umDf1vpoBkfU+2B/y74OFITQw6y2UW4TwShayEYdMxPF
+ Y1VXf6WJPx6Cb+1LAITPNwqA7wAcT4BoFHJmIvDC4ZO0M81OvE8igPtFW/DjOvUK6KXV7fUb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-08_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_spam_definite policy=outbound
+ score=100 mlxscore=100 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ clxscore=1011 spamscore=100 bulkscore=0 adultscore=0 mlxlogscore=-999
+ malwarescore=0 phishscore=0 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508080125
 
-On 8 Aug 2025, at 11:24, Zi Yan wrote:
+Hi Cédric,
 
-> On 7 Aug 2025, at 23:15, Wei Yang wrote:
->
->> On Thu, Aug 07, 2025 at 01:05:09PM -0400, Zi Yan wrote:
->>> On 7 Aug 2025, at 4:55, Wei Yang wrote:
->>>
->>>> On Tue, Aug 05, 2025 at 10:20:43PM -0400, Zi Yan wrote:
->>>> [...]
->>>>>
->>>>> -		if (in_folio_offset < 0 ||
->>>>> -		    in_folio_offset >= folio_nr_pages(folio)) {
->>>>> +		if (in_folio_offset < 0 || in_folio_offset >= nr_pages) {
->>>>> 			if (!split_folio_to_order(folio, target_order))
->>>>> 				split++;
->>>>> 		} else {
->>>>> -			struct page *split_at = folio_page(folio,
->>>>> -							   in_folio_offset);
->>>>> -			if (!folio_split(folio, target_order, split_at, NULL))
->>>>> +			struct page *split_at =
->>>>> +				folio_page(folio, in_folio_offset);
->>>>> +			if (!folio_split(folio, target_order, split_at, NULL)) {
->>>>> 				split++;
->>>>> +				addr += PAGE_SIZE * nr_pages;
->>>>> +			}
->>>>
->>>> Are we sure addr points to the folio start?
->>>
->>> David pointed it out. Will use addr += PAGE_SIZE * (nr_pages - 1).
->>>
->>
->> No, let me be more clear. I am talking about the addr in next iteration. I am
->> talking about the addr in this round.
->>
->> For an addr in the middle of 2M, we still could get the large folio if my
->> understanding is correct.  Then (addr + whole folio size) seems wrong.
->>
->>              addr
->> 	     |
->> 	     v
->>       +-------------------+
->>       |                   |
->>       +-------------------+
->>
->> Not sure this would be the case.
->
-> Got it. addr should be aligned up to PAGE_SIZE * nr_pages to get to the next
-> folio. Thanks.
+Please find my comments inline:
 
-On a second thought, this new stepping would mess up with PTE-mapped folio split.
-I will drop this patch (pr_debug part will be moved to Patch 1) and change
-split_huge_page_test.c instead.
+On 2025/08/08 03:49 PM, Cédric Le Goater wrote:
+> Hello Amit,
+> 
+> On 8/7/25 11:34, Amit Machhiwal wrote:
+> > Hello,
+> > 
+> > On 2025/08/04 12:44 PM, Alex Mastro wrote:
+> > > Print the PCI device syspath to a vfio device's fdinfo. This enables tools
+> > > to query which device is associated with a given vfio device fd.
+> > > 
+> > > This results in output like below:
+> > > 
+> > > $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
+> > > vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+> > > 
+> > > Signed-off-by: Alex Mastro <amastro@fb.com>
+> > 
+> > I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
+> > could see the VFIO device syspath in fdinfo.
+> 
+> POWER9 running on OPAL FW : I am curious about the software stack.
+> 
+> I suppose this is the latest upstream kernel ?
 
---
-Best Regards,
-Yan, Zi
+Yes, I used the latest upstream kernel and applied this patch on top of commit
+cca7a0aae895.
+
+> Are you using an upstream QEMU to test too ?
+
+No, I had used the Fedora 42 distro qemu. The version details are as below:
+
+  [root@localhost ~]# qemu-system-ppc64 --version
+  QEMU emulator version 9.2.4 (qemu-9.2.4-1.fc42)
+  Copyright (c) 2003-2024 Fabrice Bellard and the QEMU Project developers
+
+I gave the upstream qemu (HEAD pointing to cd21ee5b27) a try and I see the same
+behavior with that too.
+
+  [root@localhost ~]# ./qemu-system-ppc64 --version
+  QEMU emulator version 10.0.92 (v10.1.0-rc2-4-gcd21ee5b27-dirty)
+  Copyright (c) 2003-2025 Fabrice Bellard and the QEMU Project developers
+
+  [root@localhost ~]# cat /proc/52807/fdinfo/191
+  pos:    0
+  flags:  02000002
+  mnt_id: 17
+  ino:    1125
+  vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
+
+> 
+> and which device ?
+
+I'm using a Broadcom NetXtreme network card (4-port) and passing through its
+fn0.
+
+  [root@guest ~]# lspci
+  [...]
+  0001:00:01.0 Ethernet controller: Broadcom Inc. and subsidiaries NetXtreme BCM5719 Gigabit Ethernet PCIe (rev 01)
+
+Please let me know if I may help you with any additional information.
+
+Thanks,
+Amit
+
+> 
+> Thanks,
+> 
+> C.
+> 
+> 
+> 
+> 
+> > 
+> >   Without this patch:
+> >   -------------------
+> > 
+> >      [root@localhost ~]# cat /proc/7059/fdinfo/188
+> >      pos:    0
+> >      flags:  02000002
+> >      mnt_id: 17
+> >      ino:    1113
+> > 
+> >   With this patch:
+> >   ----------------
+> >      [root@localhost ~]# cat /proc/7722/fdinfo/188
+> >      pos:    0
+> >      flags:  02000002
+> >      mnt_id: 17
+> >      ino:    2145
+> >      vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
+> > 
+> > ..., and the code changes LGTM. Hence,
+> > 
+> > Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+> > Tested-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+> > 
+> > Thanks,
+> > Amit
+> > 
+> > > ---
+> > > Changes in v4:
+> > > - Remove changes to vfio.h
+> > > - Link to v3: https://lore.kernel.org/r/20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com
+> > > Changes in v3:
+> > > - Remove changes to vfio_pci.c
+> > > - Add section to Documentation/filesystems/proc.rst
+> > > - Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
+> > > Changes in v2:
+> > > - Instead of PCI bdf, print the fully-qualified syspath (prefixed by
+> > >    /sys) to fdinfo.
+> > > - Rename the field to "vfio-device-syspath". The term "syspath" was
+> > >    chosen for consistency e.g. libudev's usage of the term.
+> > > - Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
+> > > ---
+> > >   Documentation/filesystems/proc.rst | 14 ++++++++++++++
+> > >   drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
+> > >   2 files changed, 34 insertions(+)
+> > > 
+> > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> > > index 2a17865dfe39..fc5ed3117834 100644
+> > > --- a/Documentation/filesystems/proc.rst
+> > > +++ b/Documentation/filesystems/proc.rst
+> > > @@ -2162,6 +2162,20 @@ DMA Buffer files
+> > >   where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
+> > >   the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
+> > > +VFIO Device files
+> > > +~~~~~~~~~~~~~~~~
+> > > +
+> > > +::
+> > > +
+> > > +	pos:    0
+> > > +	flags:  02000002
+> > > +	mnt_id: 17
+> > > +	ino:    5122
+> > > +	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+> > > +
+> > > +where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
+> > > +file.
+> > > +
+> > >   3.9	/proc/<pid>/map_files - Information about memory mapped files
+> > >   ---------------------------------------------------------------------
+> > >   This directory contains symbolic links which represent memory mapped files
+> > > diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+> > > index 1fd261efc582..37a39cee10ed 100644
+> > > --- a/drivers/vfio/vfio_main.c
+> > > +++ b/drivers/vfio/vfio_main.c
+> > > @@ -28,6 +28,7 @@
+> > >   #include <linux/pseudo_fs.h>
+> > >   #include <linux/rwsem.h>
+> > >   #include <linux/sched.h>
+> > > +#include <linux/seq_file.h>
+> > >   #include <linux/slab.h>
+> > >   #include <linux/stat.h>
+> > >   #include <linux/string.h>
+> > > @@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
+> > >   	return device->ops->mmap(device, vma);
+> > >   }
+> > > +#ifdef CONFIG_PROC_FS
+> > > +static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
+> > > +{
+> > > +	char *path;
+> > > +	struct vfio_device_file *df = filep->private_data;
+> > > +	struct vfio_device *device = df->device;
+> > > +
+> > > +	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
+> > > +	if (!path)
+> > > +		return;
+> > > +
+> > > +	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
+> > > +	kfree(path);
+> > > +}
+> > > +#endif
+> > > +
+> > >   const struct file_operations vfio_device_fops = {
+> > >   	.owner		= THIS_MODULE,
+> > >   	.open		= vfio_device_fops_cdev_open,
+> > > @@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
+> > >   	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
+> > >   	.compat_ioctl	= compat_ptr_ioctl,
+> > >   	.mmap		= vfio_device_fops_mmap,
+> > > +#ifdef CONFIG_PROC_FS
+> > > +	.show_fdinfo	= vfio_device_show_fdinfo,
+> > > +#endif
+> > >   };
+> > >   static struct vfio_device *vfio_device_from_file(struct file *file)
+> > > 
+> > > ---
+> > > base-commit: 4518e5a60c7fbf0cdff393c2681db39d77b4f87e
+> > > change-id: 20250801-show-fdinfo-ef109ca738cf
+> > > 
+> > > Best regards,
+> > > -- 
+> > > Alex Mastro <amastro@fb.com>
+> > > 
+> > 
+> 
 
