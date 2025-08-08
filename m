@@ -1,73 +1,56 @@
-Return-Path: <linux-kernel+bounces-760322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F5BB1E985
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:50:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62730B1E986
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E8AA06C69
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:50:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD2A3BDEEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E923714F125;
-	Fri,  8 Aug 2025 13:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A673126C03;
+	Fri,  8 Aug 2025 13:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DcwFJFQg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AHJyut+X"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CvVs8Zf1"
+Received: from mail-06.mail-europe.com (mail-06.mail-europe.com [85.9.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E182E62C;
-	Fri,  8 Aug 2025 13:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C4235961
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 13:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754661022; cv=none; b=jNvDPJ/RRHzvEoYvNZInZW77PzFpoUjAdrimN0eRGzCy6bSM6fAauZiDKskNgR6+6cVnY8xjSwJjtMuI0E94qqpW6H35rh1ASl32l068OJwVZMgD+DzWgmQE+OilB0sU32jmVix484rx3lATJTwHoeSwwXa/62uxdr+vZGYdlHQ=
+	t=1754661059; cv=none; b=RJnUCLvydnLV2WA3qnUcjLbE5B5+Y/uvoOeaR4JlE0Fv0ZOoVYJnpJzd+JB6BwaHUuRPqpD7b86wZb2R9aN0YzFHyI/yce7dfBF+MQ+MA5wUsPr+SD34zyJPpwqgySE6U/jV5H5B1GswAv/lPmWWNHtcs5zanNLYpZSqL9fnIRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754661022; c=relaxed/simple;
-	bh=gfk1YcUJLZRk1tM/elLznY8hRMaF9ZOT/cGJ68rVJ+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e1ExMRwjX95/ageA+ahUrwBSPDHZtRDHarJB3ehRHZc78QrMXEZ7djPpVGBX8pp1B/T00WW/I75kEKknjMbySxIIq1CvLN+oPCZZNBZVMSGg3Iy4Bt1RJiPU7tvKcQENcN0q79ORHVm3K00IOxWqqpC7FkeEmjhgNKHCOqMmPuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DcwFJFQg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AHJyut+X; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 8 Aug 2025 15:50:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754661015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gfk1YcUJLZRk1tM/elLznY8hRMaF9ZOT/cGJ68rVJ+8=;
-	b=DcwFJFQgJF/DZyg3N82IkHk0LxFYBHub4MpmyawL2xxF3nSwHxcYjKZ4ZXQl4XSb2mYtHc
-	VyRyJEovkisBBneQjznjlMImd4ugYBNkmUWNyYA+XHFIk1C/ofb/ephQWwZY3zedrCrINd
-	+A2KBoHt/Vri2kEEuqnc0PkQgZmasaCbjHQot8E7/DSXeJxsj7RQADSXt1rG/6Xg/Cv7kD
-	Ql/MLnNn1/qT/OVnYaOgTyi588HoufrCn2MCPSG9vl5qZ0pvFsuPRmV3nvP01m6hS/LHIy
-	1nvAZD81C0yFE5k+9gHLv6wZ7uTB8WqVAF98L5XFtv9RvHR8DETKH1JLTZYNqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754661015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gfk1YcUJLZRk1tM/elLznY8hRMaF9ZOT/cGJ68rVJ+8=;
-	b=AHJyut+XFzRFI5KROG1DW/xcKt6rFzTonQEj9v0csfL619G9r2SrBxMU29WIFFTi2Dnman
-	6bri30KQpRFJefDg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
-	m.grzeschik@pengutronix.de, balbi@ti.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, akash.m5@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com,
-	shijie.cai@samsung.com, alim.akhtar@samsung.com,
-	muhammed.ali@samsung.com, thiagu.r@samsung.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] usb: dwc3: Remove WARN_ON for device endpoint command
- timeouts
-Message-ID: <20250808135013.UMcO2oA1@linutronix.de>
-References: <CGME20250808125457epcas5p111426353bf9a15dacfa217a9abff6374@epcas5p1.samsung.com>
- <20250808125315.1607-1-selvarasu.g@samsung.com>
+	s=arc-20240116; t=1754661059; c=relaxed/simple;
+	bh=eBlzYYEDKZ/bzHpdPUPduwb/0YYIgOgqFczneNMpEPg=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kmEj9RJdJLudRYJNuIT3z/mlmN8IXR4OXu+tIUdEmaZuQqSUdfFj1tszglkxg6nqDwWJcJ/U3dAmhX/EKLr2Nu7GVdRJpCXhRvz8upOF/+bAVGDRnyoMI7c0GLseJmMOhydLAVCg8jSJfYcCW7ET8IrO/vgp0ztHyLQcjhOmXWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CvVs8Zf1; arc=none smtp.client-ip=85.9.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1754661047; x=1754920247;
+	bh=eBlzYYEDKZ/bzHpdPUPduwb/0YYIgOgqFczneNMpEPg=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=CvVs8Zf1mJoqPSuny+QGAGtESMBnGlP9C+jSMxMI45aVpHwKaG+uxdO/3+MHodj0N
+	 uBQ2iz0d3IlTJAuYkxr1oTlmgGJNvgsrijwuQBwBHUXoBIYHY3s+NzCyora5xmOtoS
+	 Y/XniAYd3Siz/OwmJxXkGGzx/MNl5HGn5pQXzMA/Z2KE5aorOE1/zKRd5/Tf7YPVue
+	 KUuwwYFhsJebQvAAS/kz44SLzQC8M6do3UcUV2MU2PJXUsh6uSf8wkZ/sGr0ID8/Pz
+	 xsj01LcWY17gOAayODe7aoU4jHRYzLiFl2aFgHVopXIQlgKcnNHJ4wAvq1jV35q6zs
+	 3YLOeVmzIMk+A==
+Date: Fri, 08 Aug 2025 13:50:44 +0000
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux1394-devel@lists.sourceforge.net" <linux1394-devel@lists.sourceforge.net>
+From: "edmund.raile" <edmund.raile@proton.me>
+Subject: Re: [GIT PULL] firewire updates for v6.17 kernel
+Message-ID: <pTURxXSK4yF5-FlMBbpWLMW5JUC2s1BvSYdYGKBAgEOpI9z4RhnQsLrrRj7E2Iu02sOznG5ysKRVpXR4ZWFp-CSeSebIP1YGQl7gbFLGeEo=@proton.me>
+In-Reply-To: <20250802054917.GA127374@workstation.local>
+References: <20250802054917.GA127374@workstation.local>
+Feedback-ID: 45198251:user:proton
+X-Pm-Message-ID: 32ba37d8ef6a000a2834e8cb5f0b03366b7e1299
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,20 +58,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250808125315.1607-1-selvarasu.g@samsung.com>
 
-On 2025-08-08 18:23:05 [+0530], Selvarasu Ganesan wrote:
-> This commit addresses a rarely observed endpoint command timeout
-=E2=80=A6
-> Cc: stable@vger.kernel.org
-> Co-developed-by: Akash M <akash.m5@samsung.com>
-> Signed-off-by: Akash M <akash.m5@samsung.com>
-> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Dear Mr. Sakamoto,
+thank you for including me in the pull request, I am honored!
 
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+I tested the combination of this pull request and your fix patches [1]
+on arch 6.16.0-1-mainline (based on "Linux 6.16" 038d61fd6422)
+with TI XIO2213B and RME FireFace 800.
 
-Sebastian
+[1] https://lore.kernel.org/lkml/20250728015125.17825-1-o-takashi@sakamocch=
+i.jp/
+
+So far audio playback seems perfectly stable:
+days with varying CPU load, compiles, even mprime.
+Suspend also seems fine, even without first powering down / disconnecting
+the FireFace.
+Direct ALSA streaming or pipewire, no issues so far.
+
+Tested-by: Edmund Raile (edmund.raile@proton.me)
+
+Thank you for keeping FireWire alive and even developing it!
+
+Kind regards,
+Edmund Raile
 
