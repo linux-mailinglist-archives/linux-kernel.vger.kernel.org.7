@@ -1,254 +1,148 @@
-Return-Path: <linux-kernel+bounces-760774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB45B1EFFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:58:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3BDB1F001
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6611F17985E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:58:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 502D97A6D74
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9373B242D89;
-	Fri,  8 Aug 2025 20:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8798C242D78;
+	Fri,  8 Aug 2025 20:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yul6fmaD"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Z4a7Skhb"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9282253FE;
-	Fri,  8 Aug 2025 20:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E15121CFFD;
+	Fri,  8 Aug 2025 20:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754686691; cv=none; b=efV68lXgl7oK3VXNHegBXE5+ZOPfX1KDcjBq5ES7fa15iM0+AxklqbesDHaOd4zg3WDtSiW/erhr5kdeF3gLN2pNkEcFHFuDfLKlVmIM91bAvN0eAA+034sWeo1sJ4xZbxM8q4j31ovSt7lF2ZrYEXO5iS9SK6+VHoOaS2FomVs=
+	t=1754686762; cv=none; b=Lhy6UnK/tgp+mnXqVrQMUQn690ZLbC0TlzmmeNFyB0iROxh/ONETU2KEGtVCpm5HAGZIAKw4Hi51Mff3hS1Djl6NjNOzECiuE3MhVbGL46/Z5Wk0uWKFcc06OXI9j1CAt+yTjC+2M+/o//o0kVjxYlNjaoRfwQzN6Ar+cIEdT/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754686691; c=relaxed/simple;
-	bh=TyJQUH8dHZ46FhzJ+l2L31lXtQBdoSRQf/tGmeQC7CY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KD9f68L5b2EAQ9u8ziJplfCP51o7d7BVhLjHMQCkr0LCeAwS+84h4klBMuHdWokiqjD3+1h3wq8pW272IwOkhfpD6AIo67LOLltIpysVpWBZOl3ZUeqSiUk4tt0iRVC4xsgfvXgZwU//qThqETnb5UZNr3Up95YN1TmH3gLXMY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yul6fmaD; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24049d16515so22127665ad.1;
-        Fri, 08 Aug 2025 13:58:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754686689; x=1755291489; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rnHfT5Qo8qf2TJOAloAsKSB5a9DbpjCeLYVaNSXEctw=;
-        b=Yul6fmaD36a/Fo4cgjk7JIV8AKmMfTv/BCN500dEsHfiCrs0x3t9mP1Nc6epeFlbwt
-         T9t56ViIyT09/4UE+6/HDo7LOr7hEQQQYXaGW3N0QmqL2g4SDJDCsIRISQui0x41EAG4
-         XXrtddElKAEI/1IQeO5rLTWmjA5I3Ci3N4Nr0ZDl1UcDjHMelT2iOhUJdWiXh5/uArx5
-         NCRYxf37jG2+qUhzj2bjZds6ofy0mM1rhsOzuNz3Azqbhe46UG+ShoQrqVfS6Ic8DVjQ
-         Fl9OfsOHryluL3E90FklZTEHtZQupfxWzHNQbEIJn36UrrepbE6X9+Ai5F45LHrLMerD
-         lLLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754686689; x=1755291489;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rnHfT5Qo8qf2TJOAloAsKSB5a9DbpjCeLYVaNSXEctw=;
-        b=AK7CCWm+PfwKFosF5/URVIEMd3NvTWBPfYOrWT2ZDjVMOob0DRsNIQAL3/ufVOogpb
-         SeO1+V7qokzKaHHUS8Kn1gb0kkf7exYymWU1TIYj27/YSIiBB7dxAl9LtLmfp+e74zKC
-         yMv5X7dM8VuHJDo2dNVNtbU5lixx4M2mI1MYfpUG3V5hEEA9A4s7iK2mHT5CFhHw74E2
-         gDVMGFop3BlaOlVHNphcRJp+jDDLwYCR3j8OnqwFJkU2qQcG1cdwkzxmwO2yb6RnqerU
-         sQMfxmRT6anC0U62MR24jjhXeh0LjxptS2uY89smgc8sfObDiABLkmSnXXRiMEWg8M7m
-         SQiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSwitgryu3upbW9HbfAu0Eq1pUcs9hS9Y3ETJuPwYF5JPsEIDoQV0dk7nu/dEzPAnb6TxhoLSOpoSEJA==@vger.kernel.org, AJvYcCWtKzzeHCLYTay4VxTsD1IIlvg2W37ELd4O2oKcFw6poRS0qilwVY5OUDnYLiS0xaCRn8t6OtVNHmPyIHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRSuEwEDdAj2I7iIok9eshHOkO3wyWsLci97ahUMCwbDqZdhWg
-	/Ebp4QAuyEvIRKXcSWahGulAEvEYT13lBgTrDA+cvAzqL9ryZHHAUXrm
-X-Gm-Gg: ASbGnctJ3fv++n2/hM+RZFhi/2bMASX2UZrmfUuxdDPwh0PPGiosqf6HUzb+HNLaOj3
-	SyaM9q5d5lpMV/EYqe1pn897iS/gpc29hYcSXqm2EOpUInmkdvBbgbvLAJ9nQUX5RiymAMb4uhM
-	tEOxt37OXriXI019jLpOE4QMYqxP6Trg6Q/QjgZaavNFlxAuZ+8xQdBXJ8mgLmTe4RTeaj0GAde
-	NPKQIZd73yh4gQnRj9UjELGBO40nXj+9tWmV2NJ6hyYGuUKcFRkffEB/1TSkdfE9aFcUf71T22D
-	lzwruuQferZDy9MRF+EYr/G8/E9NXr1OzCN4YaygQUsG68efqPTqr6U/obbC1hUqHjYoy3p3q4/
-	UCcDVYbYUxTGBxPVYROJWKw/QRbJCPYpv
-X-Google-Smtp-Source: AGHT+IFZbUctANYJ/CeWiY6FK0Ci9xEWrnhxRKGWGdndMkE6kbcoC1j4wEfK2UbCtcoDhNUSK88miA==
-X-Received: by 2002:a17:902:c94a:b0:240:3913:7c84 with SMTP id d9443c01a7336-242c1ecc793mr60770215ad.4.1754686689380;
-        Fri, 08 Aug 2025 13:58:09 -0700 (PDT)
-Received: from avinash ([2406:8800:9014:d938:f647:9d6a:9509:bc41])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e89768a7sm216840965ad.83.2025.08.08.13.58.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 13:58:09 -0700 (PDT)
-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-To: bvanassche@acm.org
-Cc: James.Bottomley@HansenPartnership.com,
-	abinashsinghlalotra@gmail.com,
-	dlemoal@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	martin.petersen@oracle.com
-Subject: [PATCH v5 2/2] scsi: sd: Fix build warning in sd_revalidate_disk()
-Date: Sat,  9 Aug 2025 02:28:19 +0530
-Message-ID: <20250808205819.29517-3-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250808205819.29517-1-abinashsinghlalotra@gmail.com>
-References: <20250808205819.29517-1-abinashsinghlalotra@gmail.com>
+	s=arc-20240116; t=1754686762; c=relaxed/simple;
+	bh=Y1akW/tUO8/eLc3WG3wFlUv009EciIOQQNjsOPYu7hE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J4nQ2PSeNEjPBiBq1440gI8y/lfbHo7TEaTroSb1fq6OikFk3v//PvOnZo+qxq4ZppmeJRM0RexVbF6LaJ2JVepv2pUgkU8/7kz91J++gYOygYoLjHvM2wr6kbYx4iZDE+23r2OP+mn6ws80roCsd1FEsW2cOoiCJtJdpNgKoGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Z4a7Skhb; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=n1D/LrSY803XlLsMoG+Du6YGArf9vgrOCY1imzFNMh8=; b=Z4a7Skhbl8V+UHlHFJR8iRC52Y
+	27HdoiG4eTDk2jZfWEBotuMrHJ4BSxMQMaAkWdtU/ZyHeRosClI5dcjoBLs2fPJCGeAgxbjy0zwmd
+	thHnjEnjcW/5T0/lj6yWKDo1zC3RstTrtB+R2L5nvuQWD5jjTfVAueU/bGh7JVeyldwGaxa//NVZ0
+	Wxi6pHuP7JlCGQdUz8Vludq8nJDYTZ7r3u2fDtNg7shvJWvLOiA7Ys9Ce0g7N7XzxNCO1M8fxBGRk
+	DtCWzAz88BXYS2C9Z8bhvgwHTynKsmIfHtnMkkSfs9+vQkE9Q7TNU/WhD4uBZ0oo7X+tIT34gMrkK
+	s4czI3lg==;
+Received: from [152.250.7.37] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1ukUBD-00BiQh-Se; Fri, 08 Aug 2025 22:59:12 +0200
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH RFC v3 0/7] ovl: Enable support for casefold filesystems
+Date: Fri, 08 Aug 2025 17:58:42 -0300
+Message-Id: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAJllmgC/3XNTQrCMBAF4KvIrI3ktzauBMEDuBUXoZ20wdpIU
+ oKl9O6GbETE5ZvHfG+BiMFhhMNmgYDJRefHHMR2A01vxg6Ja3MGTrmikmoy+XG+E58wDGa2kSj
+ NrELZSro3kL+eAa17FfEKl/MJbvnYuzj5MJeVxEr1F0yMUCK0ZhWrLGojjq4zgzO7xj8KlvgHq
+ Kn6BXgGKCrJa9YaweovYF3XNz/Annn1AAAA
+X-Change-ID: 20250409-tonyk-overlayfs-591f5e4d407a
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+ Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
+Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ kernel-dev@igalia.com, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+X-Mailer: b4 0.14.2
 
-A build warning was triggered due to excessive stack usage in
-sd_revalidate_disk():
+Hi all,
 
-drivers/scsi/sd.c: In function ‘sd_revalidate_disk.isra’:
-drivers/scsi/sd.c:3824:1: warning: the frame size of 1160 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+We would like to support the usage of casefold filesystems with
+overlayfs to be used with container tools. This use case requires a
+simple setup, where every layer will have the same encoding setting
+(i.e. Unicode version and flags), using one upper and one lower layer.
 
-This is caused by a large local struct queue_limits (~400B) allocated
-on the stack. Replacing it with a heap allocation using kmalloc()
-significantly reduces frame usage. Kernel stack is limited (~8 KB),
-and allocating large structs on the stack is discouraged.
-As the function already performs heap allocations (e.g. for buffer),
-this change fits well.
+* Implementation
 
-Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
+When merge layers, ovl uses a red-black tree to check if a given dentry
+name from a lower layers already exists in the upper layer. For merging
+case-insensitive names, we need to store then in tree casefolded.
+However, when displaying to the user the dentry name, we need to respect
+the name chosen when the file was created (e.g. Picture.PNG, instead of
+picture.png). To achieve this, I create a new field for cache entries
+that stores the casefolded names and a function ovl_strcmp() that uses
+this name for searching the rb_tree. For composing the layer, ovl uses
+the original name, keeping it consistency with whatever name the user
+created.
+
+The rest of the patches are mostly for checking if casefold is being
+consistently used across the layers and dropping the mount restrictions
+that prevented case-insensitive filesystems to be mounted.
+
+Thanks for the feedback!
+
 ---
- drivers/scsi/sd.c | 48 +++++++++++++++++++++++++++--------------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+Changes in v3:
+- Rebased on top of vfs-6.18.misc branch
+- Added more guards for casefolding things inside of IS_ENABLED(UNICODE)
+- Refactor the strncmp() patch to do a single kmalloc() per rb_tree operation
+- Instead of casefolding the cache entry name everytime per strncmp(),
+  casefold it once and reuse it for every strncmp().
+- Created ovl_dentry_ci_operations to not override dentry ops set by
+  ovl_dentry_operations
+- Instead of setting encoding just when there's a upper layer, set it
+  for any first layer (ofs->fs[0].sb), regardless of it being upper or
+  not.
+- Rewrote the patch that set inode flags
+- Check if every dentry is consistent with the root dentry regarding
+  casefold
+v2: https://lore.kernel.org/r/20250805-tonyk-overlayfs-v2-0-0e54281da318@igalia.com
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 2f9381dcbcce..7e9c8d08120a 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3696,8 +3696,8 @@ static void sd_revalidate_disk(struct gendisk *disk)
- 	struct scsi_disk *sdkp = scsi_disk(disk);
- 	struct scsi_device *sdp = sdkp->device;
- 	sector_t old_capacity = sdkp->capacity;
--	struct queue_limits lim;
--	unsigned char *buffer;
-+	struct queue_limits *lim = NULL;
-+	unsigned char *buffer = NULL;
- 	unsigned int dev_max;
- 	int err;
- 
-@@ -3711,6 +3711,13 @@ static void sd_revalidate_disk(struct gendisk *disk)
- 	if (!scsi_device_online(sdp))
- 		goto out;
- 
-+	lim = kmalloc(size(*lim), GFP_KERNEL);
-+	if (!lim) {
-+		sd_printk(KERN_WARNING, sdkp,
-+			"sd_revalidate_disk: Disk limit allocation failure.\n");
-+		goto out;
-+	}
-+
- 	buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
- 	if (!buffer) {
- 		sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory "
-@@ -3720,14 +3727,14 @@ static void sd_revalidate_disk(struct gendisk *disk)
- 
- 	sd_spinup_disk(sdkp);
- 
--	lim = queue_limits_start_update(sdkp->disk->queue);
-+	*lim = queue_limits_start_update(sdkp->disk->queue);
- 
- 	/*
- 	 * Without media there is no reason to ask; moreover, some devices
- 	 * react badly if we do.
- 	 */
- 	if (sdkp->media_present) {
--		sd_read_capacity(sdkp, &lim, buffer);
-+		sd_read_capacity(sdkp, lim, buffer);
- 		/*
- 		 * Some USB/UAS devices return generic values for mode pages
- 		 * until the media has been accessed. Trigger a READ operation
-@@ -3741,17 +3748,17 @@ static void sd_revalidate_disk(struct gendisk *disk)
- 		 * cause this to be updated correctly and any device which
- 		 * doesn't support it should be treated as rotational.
- 		 */
--		lim.features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
-+		lim->features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
- 
- 		if (scsi_device_supports_vpd(sdp)) {
- 			sd_read_block_provisioning(sdkp);
--			sd_read_block_limits(sdkp, &lim);
-+			sd_read_block_limits(sdkp, lim);
- 			sd_read_block_limits_ext(sdkp);
--			sd_read_block_characteristics(sdkp, &lim);
--			sd_zbc_read_zones(sdkp, &lim, buffer);
-+			sd_read_block_characteristics(sdkp, lim);
-+			sd_zbc_read_zones(sdkp, lim, buffer);
- 		}
- 
--		sd_config_discard(sdkp, &lim, sd_discard_mode(sdkp));
-+		sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
- 
- 		sd_print_capacity(sdkp, old_capacity);
- 
-@@ -3761,45 +3768,44 @@ static void sd_revalidate_disk(struct gendisk *disk)
- 		sd_read_app_tag_own(sdkp, buffer);
- 		sd_read_write_same(sdkp, buffer);
- 		sd_read_security(sdkp, buffer);
--		sd_config_protection(sdkp, &lim);
-+		sd_config_protection(sdkp, lim);
- 	}
- 
- 	/*
- 	 * We now have all cache related info, determine how we deal
- 	 * with flush requests.
- 	 */
--	sd_set_flush_flag(sdkp, &lim);
-+	sd_set_flush_flag(sdkp, lim);
- 
- 	/* Initial block count limit based on CDB TRANSFER LENGTH field size. */
- 	dev_max = sdp->use_16_for_rw ? SD_MAX_XFER_BLOCKS : SD_DEF_XFER_BLOCKS;
- 
- 	/* Some devices report a maximum block count for READ/WRITE requests. */
- 	dev_max = min_not_zero(dev_max, sdkp->max_xfer_blocks);
--	lim.max_dev_sectors = logical_to_sectors(sdp, dev_max);
-+	lim->max_dev_sectors = logical_to_sectors(sdp, dev_max);
- 
- 	if (sd_validate_min_xfer_size(sdkp))
--		lim.io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
-+		lim->io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
- 	else
--		lim.io_min = 0;
-+		lim->io_min = 0;
- 
- 	/*
- 	 * Limit default to SCSI host optimal sector limit if set. There may be
- 	 * an impact on performance for when the size of a request exceeds this
- 	 * host limit.
- 	 */
--	lim.io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
-+	lim->io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
- 	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
--		lim.io_opt = min_not_zero(lim.io_opt,
-+		lim->io_opt = min_not_zero(lim->io_opt,
- 				logical_to_bytes(sdp, sdkp->opt_xfer_blocks));
- 	}
- 
- 	sdkp->first_scan = 0;
- 
- 	set_capacity_and_notify(disk, logical_to_sectors(sdp, sdkp->capacity));
--	sd_config_write_same(sdkp, &lim);
--	kfree(buffer);
-+	sd_config_write_same(sdkp, lim);
- 
--	err = queue_limits_commit_update_frozen(sdkp->disk->queue, &lim);
-+	err = queue_limits_commit_update_frozen(sdkp->disk->queue, lim);
- 	if (err)
- 		goto out;
- 
-@@ -3820,7 +3826,9 @@ static void sd_revalidate_disk(struct gendisk *disk)
- 		set_capacity_and_notify(disk, 0);
- 
-  out:
--	/* Placeholder for future cleanup */
-+	kfree(lim);
-+	kfree(buffer);
-+
- }
- 
- /**
+Changes in v2:
+- Almost a full rewritten from the v1.
+v1: https://lore.kernel.org/lkml/20250409-tonyk-overlayfs-v1-0-3991616fe9a3@igalia.com/
+
+---
+André Almeida (7):
+      ovl: Store casefold name for case-insentive dentries
+      ovl: Create ovl_casefold() to support casefolded strncmp()
+      fs: Create sb_same_encoding() helper
+      ovl: Ensure that all mount points have the same encoding
+      ovl: Set case-insensitive dentry operations for ovl sb
+      ovl: Add S_CASEFOLD as part of the inode flag to be copied
+      ovl: Support case-insensitive lookup
+
+ fs/overlayfs/namei.c     |  17 +++---
+ fs/overlayfs/overlayfs.h |   2 +-
+ fs/overlayfs/ovl_entry.h |   1 +
+ fs/overlayfs/params.c    |   7 +--
+ fs/overlayfs/readdir.c   | 133 ++++++++++++++++++++++++++++++++++++++++++-----
+ fs/overlayfs/super.c     |  39 ++++++++++++++
+ fs/overlayfs/util.c      |   8 +--
+ include/linux/fs.h       |  19 +++++++
+ 8 files changed, 195 insertions(+), 31 deletions(-)
+---
+base-commit: 0fdf709a849f773c9b23b0d9fff2a25de056ddd5
+change-id: 20250409-tonyk-overlayfs-591f5e4d407a
+
+Best regards,
 -- 
-2.50.1
+André Almeida <andrealmeid@igalia.com>
 
 
