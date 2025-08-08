@@ -1,166 +1,157 @@
-Return-Path: <linux-kernel+bounces-759747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87A4AB1E1E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:01:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AF5B1E1E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C1CE7AF1D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041433A8DCF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C00E22156D;
-	Fri,  8 Aug 2025 06:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C0C1C8603;
+	Fri,  8 Aug 2025 06:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sBu3xAsZ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mhvXsAiT"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B9021FF39;
-	Fri,  8 Aug 2025 06:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699C81A0703
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 06:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754632865; cv=none; b=Gq06FGn6jkYyXwof89OzQ2puIq2JwjlFbacT97iHoVk5NpELpyEtGNpG6HCX5i+LFQR+X7yBISKMsvm6aHLIuDPov4y5U4LUqExvmScbU0KlK4LUuLjSGCLU0sJwJXqNussYUIoiuzH5ZX/R36vL557czRbIBQZieqUqjVZRRHI=
+	t=1754632904; cv=none; b=ugpR4hANp42UJWwy+l0qfKwWw9GuZLUZQcjDegjahp1W+w+8HLt1q2CocttzgKeEji7H6yVFsCZlVesYwgeuiANey23d6REUQajMmHAqsr4vv58MUp0KBIIq0OV2rqG7vIgsadKYm+UAsUQm9Qu9ZV2wLe+3Jx1tcDlOqZI2vyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754632865; c=relaxed/simple;
-	bh=MjI/zU8qCooN8dLbMdIOUGEjfZaj8l6X7GnTu/rSb7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ywz/GORT7VZ6lsHfqqmjGweLcx76mtBXAGocYEJqEiySxWzPhCe7GlXZkBQJ9OXORi7DuSqoDIFSA7AroZ10tlii962Z26JmtS6KXzb0bT4bssYIA1ss+cVsd55ON4wgPqdHKf+b6gQwmmjvOBG0Oll/bPBg+DwsrZGlnSIdLwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sBu3xAsZ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57812HTf021221;
-	Fri, 8 Aug 2025 06:00:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=TqVIlPEXdBGYYQWx6dmdE3sRD5TRo5
-	cHpU0SRXejBZA=; b=sBu3xAsZI374rXJLKfb4vbLkuNRecfU4GcKiDV8QoWBel8
-	ydy0hzp4qfd2rDnfmfYjggaqBjIM62KK5EyX+j5UalE2CkDnkb1d3uiDWBAvuXs3
-	ZRtZT5FduQ7zjr1uGPcg9N+seBKed7ZwA/5Eyj/WbslQJGgLTmE/pYPGhnuHyy55
-	WMtN4yuVvNBnCUEPsqomX6vqID/LEuDrinTsgeMGa7GAogM9VZhpWea1WTbQtqqP
-	YbJKVXDfIxEsdDO9NYnOBTLp67Gzojwm8by2Ud1YItqJb+nvymB4Lh/1Uh3fg6aw
-	z3Su7r1hyb+k1FhUpfZ2DaBnGHA7E7srvaQhnE2g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63eavw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Aug 2025 06:00:34 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5785wsTU005698;
-	Fri, 8 Aug 2025 06:00:34 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48bq63eavr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Aug 2025 06:00:34 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5781LJnl001586;
-	Fri, 8 Aug 2025 06:00:33 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48bpwr4agf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Aug 2025 06:00:33 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57860Vfc45548022
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 8 Aug 2025 06:00:31 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6BA4D20043;
-	Fri,  8 Aug 2025 06:00:31 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A68EA2004F;
-	Fri,  8 Aug 2025 06:00:29 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.29.239])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  8 Aug 2025 06:00:29 +0000 (GMT)
-Date: Fri, 8 Aug 2025 11:30:27 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Zorro Lang <zlang@redhat.com>,
-        fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
- crc check verifier
-Message-ID: <aJWRoCMhKj91T1z8@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <aId8oZGXSg5DW48X@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <3a4854ac-75ad-4783-acbd-048fe7c7fdb0@oracle.com>
- <aIhmG-l4nWOAzz2I@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20250729144526.GB2672049@frogsfrogsfrogs>
- <aIrun9794W0eZA8d@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <22ccfefc-1be8-4942-ac27-c01706ef843e@oracle.com>
- <aIxhsV8heTrSH537@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <76974111-88f6-4de8-96bc-9806c6317d19@oracle.com>
- <aI205U8Afi7tALyr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <83e05a05-e517-4d41-96ff-da4d49482471@oracle.com>
+	s=arc-20240116; t=1754632904; c=relaxed/simple;
+	bh=wJ2ShD0lLGDBURenwS/7QYIiH7Qe2dT/+RsxUmG5uog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mZvjG3iAKIZzUPfUEhwVD7ok8w2hKSIfklgoBngoY7E/e7MkWk4gKxEz/79L8cv54M38L2/eyfcsVWw0GbI5KGDBrQJMak03+yrxacT4itQlrAZOlar9zJ26HNW8lKqOT/3u/Vp99g9id10nriWfyqtswXH+ev4+oDnjY2UADGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mhvXsAiT; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4aeb5eb611bso17026581cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 23:01:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754632902; x=1755237702; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wJ2ShD0lLGDBURenwS/7QYIiH7Qe2dT/+RsxUmG5uog=;
+        b=mhvXsAiTyyCltGekgP5vGsznpH72GLqDpPA2ScFAgVDcdl33KP+mRKP2V99JQkzBWr
+         pDOpZP4dpZlJV2ldfHrAy7LeR5gd+RmuAuaSwJSbzFLVCPBulgPsw3LrcL0lpc2R1H3S
+         fqF0DimLRRY8oGGLf2DrOUoKf6s57qKDZQQcXL66yHnjg+AY/4JDhs0KU5X6uhEjUM0g
+         +B0hA5d8X54pd1D0iYfBeKeiaiUKPVLWSMmHE9UHFCrkJAFpGclGEB6b0+cm+lzrzlPN
+         yPoj13HpUG1afgurzTJfQ/JQqsNgUM/ptrzu/53wJyCOIuLiD5SATikwJJpU2Qinp+VH
+         dO/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754632902; x=1755237702;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wJ2ShD0lLGDBURenwS/7QYIiH7Qe2dT/+RsxUmG5uog=;
+        b=QEj7v1b9UrVYQhkcBTT4bZ6QKoaWDf+RiqsnPhSn6nEQCoOV0jawdJKvWWaSkjsfr0
+         Rmz8JASbWHQcLB2pxfA6rATMWKPRE+6vvckSZ2WK0IH310InImkMbn4x6pEckvaJZHGg
+         aIQgYyhyfXu1x2pU1utqc1ocu5Svk17gGCgPg5SyaPpUxK247HNEhRF0EjMYuYxptGfD
+         ZIa/6w34Rja9dPLFYweeCkbbh7goHmX1FX58tLKGoa6kjlVHxo5MuBH7v2tB62J1Avxx
+         Os2R3VDfnBTh21oTzdYdnHWksI21EAalFG36p42cSRTymVVskKRr6MlsS+QefFKxjNbu
+         DaiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzpiSAJn1t/wdkgQ48L54RQZRl5HVwGA7kh727CT2Uzz9rtlipXUODBeK/T6rbySNBiyXTwbMtHu2ts/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRy5ARWIu4R1n+wnDH2CIbp36S2VMXQ8tmHfAHWKnu3v0THLmB
+	jWpm4O0xayeYyAdsaV9eSWT4Uy8czqMuXa3v2cQS17SFjt4b9o7PJovY7vtX2JnhKMN2aKZe1PE
+	Ed3EEquuHvg3eo1nQV+meqBO8EvqkfA8vAoCLlf0k
+X-Gm-Gg: ASbGncu4b1pv9MMBrRbuYpR/gfs+i6rZjYKHB7Fj2GzSU/aqsyGEaB/qPgroSIQuPga
+	OwcbBMCak0a464/HpuX2UkOLNzE+XkWv0dgt5SI/ZajsgS3HupbAJL6gPipPhOAHi9B5pyRnxHy
+	LQTT8IBpWd/nDYrm3T66UXDf6j/Cm3MjN+djUaDsrVVgpAFKRgr/Xa/3CeEHor4gnvfmpkj9L1X
+	Tv37OIP5XRSJK4=
+X-Google-Smtp-Source: AGHT+IEDMiWQQp2ySXxb5hGnl3PYQ6rBZyTUMmWdkPYFxZ7Pz87uL93oO/sOKthE6Pw8L97g+0HrGG9ouzcdFiM1VfY=
+X-Received: by 2002:a05:622a:548:b0:4b0:86b4:2513 with SMTP id
+ d75a77b69052e-4b0aec8e37amr25739601cf.26.1754632901644; Thu, 07 Aug 2025
+ 23:01:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <83e05a05-e517-4d41-96ff-da4d49482471@oracle.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=NInV+16g c=1 sm=1 tr=0 ts=68959282 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=6yZzKTUn8j-8rjHs7NAA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: foxn4ZVbnOOoYxzRqC7YB18yaBdp0tDq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA4MDA0NyBTYWx0ZWRfX9j8mCvcfTgLh
- 4R3reE0El8Kl+pm+mN1datibZYmgg/CQVkC+bi9yi3HgnMK7TsXlJwC0gvv1peuaCI4nSUCS4yJ
- t6zUCqNmion/7XfZ9fc+Rf8M8u6WuP/MsY4E/td4rUmM2LfsqLDHky9uox5Rpm41Kdc6GTosS7q
- 4qjqukTzRSN0RtX/AViPXmDsGBxhGsXd+2ufqkRyWWRaoCmKuey94k9LuRmg2VAch4fTvzohRMi
- wUNkzJ5VV6hIwvBVIHri+2S1cIgbMtR51NU67xVh3cE6FAc7eSpYJv1Kq8rX37LBar5JN65RdtI
- ExM0znN7qC0xkxZ5aYaqUuDoMAE2J9fjH+qWAYG2OpzLWJo8XxsNbrPQAkTfgIFkf0pNrUUZo3A
- JJXp/qDXdJoYhkRKG829Kivmd7mdSZ71JTf+t+YcfnqV+N7QIub3j76zqjKcGs9cEIWFBGto
-X-Proofpoint-ORIG-GUID: jTyKt8jTh_GQvseQDQMGqDEJC0yPUJtQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-08_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 clxscore=1015 adultscore=0 mlxscore=0
- bulkscore=0 priorityscore=1501 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508080047
+References: <20250808050643.107481-1-jackzxcui1989@163.com>
+In-Reply-To: <20250808050643.107481-1-jackzxcui1989@163.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 7 Aug 2025 23:01:29 -0700
+X-Gm-Features: Ac12FXzPxlznul3dZErM2k6olLDrdWJ9vANmmhMhx7XFW35iEJNW8Zi8ExY3IM0
+Message-ID: <CANn89iLJHBDqEzumoURtc4ehdZKkchA8hW4ufDZKj=nEzJ=sjg@mail.gmail.com>
+Subject: Re: [PATCH] net: af_packet: add af_packet hrtimer mode
+To: Xin Zhao <jackzxcui1989@163.com>
+Cc: willemdebruijn.kernel@gmail.com, ferenc@fejes.dev, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 04, 2025 at 08:12:00AM +0100, John Garry wrote:
-> On 02/08/2025 07:49, Ojaswin Mujoo wrote:
-> > On Fri, Aug 01, 2025 at 09:23:46AM +0100, John Garry wrote:
-> > > On 01/08/2025 07:41, Ojaswin Mujoo wrote:
-> > > > Got it, I think I can make this test work for ext4 only but then it might
-> > > > be more appropriate to run the fio tests directly on atomic blkdev and
-> > > > skip the FS, since we anyways want to focus on the storage stack.
-> > > > 
-> > > testing on ext4 will prove also that the FS and iomap behave correctly in
-> > > that they generate a single bio per atomic write (as well as testing the
-> > > block stack and below).
-> > Okay, I think we are already testing those in the ext4/061 ext4/062
-> > tests of this patchset. Just thought blkdev test might be useful to keep
-> > in generic. Do you see a value in that or shall I just drop the generic
-> > overlapping write tests?
-> 
-> If you want to just test fio on the blkdev, then I think that is fine.
-> Indeed, maybe such tests are useful in blktests also.
+On Thu, Aug 7, 2025 at 10:07=E2=80=AFPM Xin Zhao <jackzxcui1989@163.com> wr=
+ote:
+>
+> On Wed, 2025-08-06 at 16:51 +0800, Ferenc wrote:
+>
+> > I doubt we need another CONFIG option ?
+> >
+> > Also this seems to be beneficial for HZ=3D100 or HZ=3D250 configuration=
+,
+> > maybe worth mentioning in the changelog.
+> >
+> > But more importantly, I think you should explain what difference this
+> > really makes,
+> > in which circumstances this timer needs to fire...
+> >
+> > If real-time is a concern, maybe using a timer to perform GC-style oper=
+ation
+> > is a no go anyway...
+>
+> Dear Eric,
+>
+> I've thought about it, and I really didn't foresee any obvious drawbacks
+> after switching to hrtimer, so in PATCH v1, I removed that config and dir=
+ectly
+> changed it to hrtimer.
+> As you mentioned, this issue is indeed more pronounced on systems with HZ=
+=3D250
+> or HZ=3D100. Our testing environment was also based on a system with HZ=
+=3D250,
+> which is still quite common in embedded systems.
+>
+> Regarding the benefits of using hrtimer, I already provided the test data=
+ and
+> testing environment in my previous reply to Ferenc, and the improvements =
+are
+> quite significant.
+>
+> As for when the retire timer expires, I've reviewed this logic. From my
+> perspective, the existing mechanism in AF_PACKET is complete. In the
+> prb_retire_rx_blk_timer_expired function, there is a check to see if ther=
+e are
+> any packets in the current block. If there are packets, the status will b=
+e
+> reported to user space. By switching to hrtimer, I aimed to ensure that t=
+he
+> timeout handling in the prb_retire_rx_blk_timer_expired function can be
+> executed in a more timely manner.
+>
 
-Okay, I think it is better suited for blktests, so I'll add it there.
+I have some doubts why AF_PACKET timer would be involved in the performance
+of an application.
 
-> 
-> > 
-> > Also, just for the records, ext4 passes the fio tests ONLY because we use
-> > the same io size for all threads. If we happen to start overlapping
-> > RWF_ATOMIC writes with different sizes that can get torn due to racing
-> > unwritten conversion.
-> 
-> I'd keep the same io size for all threads in the tests.
+Are you sure about your requirements ?
 
-Yep
+I do not know what application you are running, but I wonder if using
+TX timestamps,
+and EDT model to deliver your packets in a more accurate way would be bette=
+r.
 
-Thanks,
-Ojaswin
-> 
-> Thanks,
-> John
+Some qdiscs already use hrtimer and get sub 50 usec latency out of the box,
+or whatever time a cpu sleeping in deep state takes to wake up.
+
+
+> Thanks
+> Xin Zhao
+>
 
