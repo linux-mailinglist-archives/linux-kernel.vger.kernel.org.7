@@ -1,136 +1,186 @@
-Return-Path: <linux-kernel+bounces-760357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5791B1EA18
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:14:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1D4B1EA21
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952473A6630
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:14:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E93E17302D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AECB27E07E;
-	Fri,  8 Aug 2025 14:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FFF27E049;
+	Fri,  8 Aug 2025 14:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjK/+29s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qavj5MhT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vcMJx+ql";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qavj5MhT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vcMJx+ql"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892D726AC3;
-	Fri,  8 Aug 2025 14:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8906D13C8EA
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754662436; cv=none; b=IosKWHUYvHhridt/t+snl42ae11/XoYNDHCZbZNvvquJIfCF0ctldIeZXDsMvy+iW/ya5eeRosuzb7vME3yAbmy1KCh5/GNCNCIDzub+cB0QYCX85L+NPhou29UlPTdHnPUOINhFCv8T/faYMnGo64GhsDTNZKdTkh3glt8A8jc=
+	t=1754662528; cv=none; b=Kui4rUBeYDREbb3k0krjavpS9yul8Yn3pqcRmHueuQIzx02P7ZjqSQ/mVONGwJ165pcKXaHv72EvCipmjNR85XWJzd9fc/kMohTxwQg88sa1f1o8csPQPXa4Zu/RxFGZ0qfmPoiHQ014k8Dw8WEg0HFE0+Swy/akScRNJy3osgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754662436; c=relaxed/simple;
-	bh=9yk04mc+0Ylbce9BjbokKz+Cr6x4aNkv2rGq0+e+Jt0=;
+	s=arc-20240116; t=1754662528; c=relaxed/simple;
+	bh=0EnkHEGJ73QH04wvhXkCK8nf+om469IjyS/Wkl6uPyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6IjhEysR9MP9seAwF3kAxCYPmdMKh3Korus97PiKg/eTZ6221ET3hsnPHxiVvZheHVKyH0vRMAzSSsqhNWkigrvPR9n0wcLzP1nwfOsvFIgeMtOE2ebSMsdd6pska6Wh19jvAmjVYyIxH0G5pC3+hJh+yMAhFfNKNy1Ro/m5nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NjK/+29s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C91C4CEF4;
-	Fri,  8 Aug 2025 14:13:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754662436;
-	bh=9yk04mc+0Ylbce9BjbokKz+Cr6x4aNkv2rGq0+e+Jt0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NjK/+29sJp+Jh7+L6gRyHXbecq2hI4C0ZzApO6eHPTdMfdxDFR5/cMbwf7g8s/gY4
-	 j81ZKJbzsDCzow9mwZNzxBEnLaLUuQofa5/DcgyRWV0vhXBkW/fmgyGtO/Kd8p5rRU
-	 z79SkO9wx1cpODEWIkQnDiK7T0aS0ThcmTAu0Fd3hvNsbqkoE8hjBsnJa0fYkhH2ou
-	 PP9jbG7Fnrd35u1NQQCY4qylVConsnrnTIVPLdxyoBW5JIDxEIUIQq8H3OS6n5H6U6
-	 P6iHBZHwQeP28VGjfvZPd5vznlZE4xPadp534409BKAPtJCatI+1ML3LC5Mgb5ktDd
-	 Q3VCfNHzSMBQg==
-Date: Fri, 8 Aug 2025 16:13:51 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Charalampos Mitrodimas <charmitro@posteo.net>, 
-	Eric Sandeen <sandeen@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
-	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] debugfs: fix mount options not being applied
-Message-ID: <20250808-aufrechnung-geizig-a99993c8e8f4@brauner>
-References: <20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net>
- <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
- <d6588ae2-0fdb-480d-8448-9c993fdc2563@redhat.com>
- <8734a53cpx.fsf@posteo.net>
- <cf97c467-6391-44df-8ce3-570f533623b8@sandeen.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fDLiHgsd8dt5b8f5p8vme8lAAHH2MoctpP+KS71Hk14sMWz9EMYRruuXNXq6wHrW1d3dJGK74Yc91bLIRtgO5Ek8KdBbWTkhKPwLk3SknymfBgPyZXYkDW5/kQ2WZt13EsDiwtAu71ODLaeAM56iCPf8cAsxOuySYnsEDkIAnHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qavj5MhT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vcMJx+ql; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qavj5MhT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vcMJx+ql; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AA61C5BDEE;
+	Fri,  8 Aug 2025 14:15:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754662524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+nCJX2YVHRzsi+NQ8DFEFBBW8/NL0NIQfBKtZHerXTs=;
+	b=qavj5MhTSvJRCF9J0MiircfSlkIm8v927uxY/RydR3WgRSDsurECXTraE3n364Dh4s8dm7
+	wrOvZf+zUBiEMB9KaVdHYcPHMx0v+xxUOfOS5dPP1Zj8VHikmzXn58rih3CTaPwsgEdTyK
+	IQjQUJSoeTnHekNCFOTQ7mALfwNr97M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754662524;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+nCJX2YVHRzsi+NQ8DFEFBBW8/NL0NIQfBKtZHerXTs=;
+	b=vcMJx+qllMS5++GYAm0RxaJ5042O3IDvPfV7XxysuUg8yP2EqWluevmzshjG9V+8/1uP6l
+	o6BCxligy4dTNuCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qavj5MhT;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vcMJx+ql
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754662524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+nCJX2YVHRzsi+NQ8DFEFBBW8/NL0NIQfBKtZHerXTs=;
+	b=qavj5MhTSvJRCF9J0MiircfSlkIm8v927uxY/RydR3WgRSDsurECXTraE3n364Dh4s8dm7
+	wrOvZf+zUBiEMB9KaVdHYcPHMx0v+xxUOfOS5dPP1Zj8VHikmzXn58rih3CTaPwsgEdTyK
+	IQjQUJSoeTnHekNCFOTQ7mALfwNr97M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754662524;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+nCJX2YVHRzsi+NQ8DFEFBBW8/NL0NIQfBKtZHerXTs=;
+	b=vcMJx+qllMS5++GYAm0RxaJ5042O3IDvPfV7XxysuUg8yP2EqWluevmzshjG9V+8/1uP6l
+	o6BCxligy4dTNuCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 356C51392A;
+	Fri,  8 Aug 2025 14:15:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Dp1xOnsGlmg7MQAAD6G6ig
+	(envelope-from <ematsumiya@suse.de>); Fri, 08 Aug 2025 14:15:23 +0000
+Date: Fri, 8 Aug 2025 11:15:13 -0300
+From: Enzo Matsumiya <ematsumiya@suse.de>
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Wang Zhaolong <wangzhaolong@huaweicloud.com>, Stefan Metzmacher <metze@samba.org>, 
+	Mina Almasry <almasrymina@google.com>, linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/31] netfs: [WIP] Allow the use of MSG_SPLICE_PAGES
+ and use netmem allocator
+Message-ID: <nok4rlj33npje4jwyo3cytuqapcffa4jzomibiyspxcrbc6qg6@77axvtbjzbfm>
+References: <20250806203705.2560493-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <cf97c467-6391-44df-8ce3-570f533623b8@sandeen.net>
+In-Reply-To: <20250806203705.2560493-1-dhowells@redhat.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: AA61C5BDEE
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-On Wed, Aug 06, 2025 at 11:33:11AM -0500, Eric Sandeen wrote:
-> On 8/5/25 12:22 PM, Charalampos Mitrodimas wrote:
-> > Eric Sandeen <sandeen@redhat.com> writes:
-> > 
-> >> On 8/4/25 12:22 PM, Eric Sandeen wrote:
-> >>> On 8/4/25 9:30 AM, Charalampos Mitrodimas wrote:
-> >>>> Mount options (uid, gid, mode) are silently ignored when debugfs is
-> >>>> mounted. This is a regression introduced during the conversion to the
-> >>>> new mount API.
-> >>>>
-> >>>> When the mount API conversion was done, the line that sets
-> >>>> sb->s_fs_info to the parsed options was removed. This causes
-> >>>> debugfs_apply_options() to operate on a NULL pointer.
-> >>>>
-> >>>> As an example, with the bug the "mode" mount option is ignored:
-> >>>>
-> >>>>   $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
-> >>>>   $ mount | grep debugfs_test
-> >>>>   debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
-> >>>>   $ ls -ld /tmp/debugfs_test
-> >>>>   drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
-> >>>
-> >>> Argh. So, this looks a lot like the issue that got fixed for tracefs in:
-> >>>
-> >>> e4d32142d1de tracing: Fix tracefs mount options
-> >>>
-> >>> Let me look at this; tracefs & debugfs are quite similar, so perhaps
-> >>> keeping the fix consistent would make sense as well but I'll dig
-> >>> into it a bit more.
-> >>
-> >> So, yes - a fix following the pattern of e4d32142d1de does seem to resolve
-> >> this issue.
-> >>
-> >> However, I think we might be playing whack-a-mole here (fixing one fs at a time,
-> >> when the problem is systemic) among filesystems that use get_tree_single()
-> >> and have configurable options. For example, pstore:
-> >>
-> >> # umount /sys/fs/pstore 
-> >>
-> >> # mount -t pstore -o kmsg_bytes=65536 none /sys/fs/pstore
-> >> # mount | grep pstore
-> >> none on /sys/fs/pstore type pstore (rw,relatime,seclabel)
-> >>
-> >> # mount -o remount,kmsg_bytes=65536 /sys/fs/pstore
-> >> # mount | grep pstore
-> >> none on /sys/fs/pstore type pstore (rw,relatime,seclabel,kmsg_bytes=65536)
-> >> #
-> >>
-> >> I think gadgetfs most likely has the same problem but I'm not yet sure
-> >> how to test that.
-> >>
-> >> I have no real objection to merging your patch, though I like the
-> >> consistency of following e4d32142d1de a bit more. But I think we should
-> >> find a graceful solution so that any filesystem using get_tree_single
-> >> can avoid this pitfall, if possible.
-> > 
-> > Hi, thanks for the review, and yes you're right.
-> > 
-> > Maybe a potential systemic fix would be to make get_tree_single() always
-> > call fc->ops->reconfigure() after vfs_get_super() when reusing an
-> > existing superblock, fixing all affected filesystems at once.
-> 
-> Yep, I'm looking into that. mount_single used to do this, and IIRC we discussed
-> it before but for some reason opted not to. It seems a bit trickier than I first
-> expected, but I might just be dense. ;)
+Hi David,
 
-If we can make it work generically, we should. I too don't remember what
-the reasons were for not doing it that way.
+On 08/06, David Howells wrote:
+> (3) Rewrite the base TCP transmission to be able to use MSG_SPLICE_PAGES.
+>
+>     (a) Copy all the data involved in a message into a big buffer formed
+>     	 of a sequence of pages attached to a bvecq.
+
+Nice!
+
+>     (b) If encrypting the message just encrypt this buffer.  Converting
+>     	 this to a scatterlist is much simpler (and uses less memory) than
+>     	 encrypting from the protocol elements.
+
+This could've been done a long ago, but since you're on it... crypto API
+supports in-place ops (src == dst), so you can save yet another allocation
+here.
+
+This is also possible from SMB2 side because the spec says if encryption
+fails, the request should be failed as a whole.
+
+>     (d) Compression should be a matter of vmap()'ing these pages to form
+>     	 the source buffer, allocating a second buffer of pages to form a
+>     	 dest buffer, also in a bvecq, vmapping that and then doing the
+>     	 compression.  The first buffer can then just be replaced by the
+>     	 second.
+
+OTOH, compression can't be in-place because SMB2 says that if
+compression fails, the original uncompressed request must be sent (i.e.
+src must be left untouched until smb_compress() finishes).
+
+I don't know how relevant these comments are for you and your patches,
+but HTH.
+
+Directly related to the patches: it would be great if you could handle
+commented out code, either by completely removing them, or by providing
+some in-code fallback mechanism (I'll reply to the patches).
+
+Other than that, +1 for the cleanup/refactoring; I really like the new
+smb_message/transport infrastructure!
+
+
+Cheers,
+
+Enzo
 
