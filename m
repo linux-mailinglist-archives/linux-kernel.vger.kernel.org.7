@@ -1,248 +1,189 @@
-Return-Path: <linux-kernel+bounces-759612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99277B1E01C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:14:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5ACB1E021
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69F6B7B1CF2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA49724132
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7773D35958;
-	Fri,  8 Aug 2025 01:13:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D1E2A1CA;
+	Fri,  8 Aug 2025 01:20:44 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903472E36E0;
-	Fri,  8 Aug 2025 01:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2650AEAF9;
+	Fri,  8 Aug 2025 01:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754615632; cv=none; b=cOQTovKpxlyNx1vSH3NvqaPgK6MqMMVsM5548QkdjQgdNG2Fle92fsixPGl1ybYwQP6/qMlOEwSslr3i55cS4S8P25wwWYm/gvYLaNnuOQt4l0eMvdMkBaoXdN76cBsxRrddOGEYyCRp4bkCspdeWSAEENCAkagqVHbOq9+bYmo=
+	t=1754616043; cv=none; b=CTStsafdz8O5oMRhzE3IF63ZMcl+P3Ks/MahAl6NQyZg25BKQcaADa8e5TCJpY6hm1w/ACyFpXyihHmdvxwei3zPbyU3VSxvwrZVaYmtqfx2vuMrtLZPkC7PxhZ4eDUjURblfhU4qhxZbkd+rEDgW70Rkhnv5yrQKUV21Exa0OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754615632; c=relaxed/simple;
-	bh=R1Jwc6a/WrKjV5zidgzTjP1eu9KZ8+1q30QH43FEGis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XifQ8vV20d/C5vzq/MpSrX8FHyVFkQHl/RugxBGWa6htE894znb1NbgPg00QK1iQW1oaeW4QFaSVDzUMdVnrEiWWoBTPA6/fg4fV0PT2Mrp+RKao8uxPi6RPhe6FGIZKjDja7g83oWiAPfpbH1rYcAx3WpRLQCs+WFgymK6JaEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: eb81b21273f411f0b29709d653e92f7d-20250808
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:776e54fd-e886-4705-8814-2912ed7b1ed4,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:b62a745bded9568a354f757b5e9c74bc,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
-	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: eb81b21273f411f0b29709d653e92f7d-20250808
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1518627884; Fri, 08 Aug 2025 09:13:40 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 7C2CBE0000B0;
-	Fri,  8 Aug 2025 09:13:40 +0800 (CST)
-X-ns-mid: postfix-68954F44-36935566
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id E603EE0000B0;
-	Fri,  8 Aug 2025 09:13:30 +0800 (CST)
-Message-ID: <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
-Date: Fri, 8 Aug 2025 09:13:30 +0800
+	s=arc-20240116; t=1754616043; c=relaxed/simple;
+	bh=Gg09YzVfrrD0Ahyvrgz1u9XSWw51btwBjpVpV1tFyX0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Go7FYP8bs8Ke6y3sAe/mm5WiN+AWQSq8VJMDBkBQvbQuASJXi0V+2DTDCVJ/OZLIr+/2VGUnkct2AfOvgHcTwi0Of/WqycnxTBrjuXXtwm1N3CAEOEIP5QzTCPFWg5HKtgQ/tYJceDRYMfQ710uSqHRnI+BxM3HxAeWVvg+r1mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bymLM5xB7z14MC1;
+	Fri,  8 Aug 2025 09:15:39 +0800 (CST)
+Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id CC83F180080;
+	Fri,  8 Aug 2025 09:20:36 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 8 Aug 2025 09:20:30 +0800
+Message-ID: <c8e3dc2c-617b-2988-10ff-88082370e787@huawei.com>
+Date: Fri, 8 Aug 2025 09:20:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
- address process dependency issues
-To: Michal Hocko <mhocko@suse.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
- David Hildenbrand <david@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
- Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
- xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
- Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
- <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
- <aJSpTpB9_jijiO6m@tiehlicka>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <aJSpTpB9_jijiO6m@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-=E5=9C=A8 2025/8/7 21:25, Michal Hocko =E5=86=99=E9=81=93:
-> On Thu 07-08-25 20:14:09, Zihuan Zhang wrote:
->> The Linux task freezer was designed in a much earlier era, when usersp=
-ace was relatively simple and flat.
->> Over the years, as modern desktop and mobile systems have become incre=
-asingly complex=E2=80=94with intricate IPC,
->> asynchronous I/O, and deep event loops=E2=80=94the original freezer mo=
-del has shown its age.
-> A modern userspace might be more complex or convoluted but I do not
-> think the above statement is accurate or even correct.
-You=E2=80=99re right =E2=80=94 that statement may not be accurate. I=E2=80=
-=99ll be more careful=20
-with the wording.
->> ## Background
->>
->> Currently, the freezer traverses the task list linearly and attempts t=
-o freeze all tasks equally.
->> It sends a signal and waits for `freezing()` to become true. While thi=
-s model works well in many cases, it has several inherent limitations:
->>
->> - Signal-based logic cannot freeze uninterruptible (D-state) tasks
->> - Dependencies between processes can cause freeze retries
->> - Retry-based recovery introduces unpredictable suspend latency
->>
->> ## Real-world problem illustration
->>
->> Consider the following scenario during suspend:
->>
->> Freeze Window Begins
->>
->>      [process A] - epoll_wait()
->>          =E2=94=82
->>          =E2=96=BC
->>      [process B] - event source (already frozen)
->>
->> =E2=86=92 A enters D-state because of waiting for B
-> I thought opoll_wait was waiting in interruptible sleep.
-
-Apologies =E2=80=94 my description may not be entirely accurate.
-
-But there are some dmesg logs:
-
-[   62.880497] PM: suspend entry (deep)
-[   63.130639] Filesystems sync: 0.249 seconds
-[   63.130643] PM: Preparing system for sleep (deep)
-[   63.226398] Freezing user space processes
-[   63.227193] freeze round: 0, task to freeze: 681
-[   63.228110] freeze round: 1, task to freeze: 1
-[   63.230064] task:Xorg            state:D stack:0     pid:1404  tgid:14=
-04  ppid:1348   task_flags:0x400100 flags:0x00004004
-[   63.230068] Call Trace:
-[   63.230069]  <TASK>
-[   63.230071]  __schedule+0x52e/0xea0
-[   63.230077]  schedule+0x27/0x80
-[   63.230079]  schedule_timeout+0xf2/0x100
-[   63.230082]  wait_for_completion+0x85/0x130
-[   63.230085]  __flush_work+0x21f/0x310
-[   63.230087]  ? __pfx_wq_barrier_func+0x10/0x10
-[   63.230091]  drm_mode_rmfb+0x138/0x1b0
-[   63.230093]  ? __pfx_drm_mode_rmfb_work_fn+0x10/0x10
-[   63.230095]  ? __pfx_drm_mode_rmfb_ioctl+0x10/0x10
-[   63.230097]  drm_ioctl_kernel+0xa5/0x100
-[   63.230099]  drm_ioctl+0x270/0x4b0
-[   63.230101]  ? __pfx_drm_mode_rmfb_ioctl+0x10/0x10
-[   63.230104]  ? syscall_exit_work+0x108/0x140
-[   63.230107]  radeon_drm_ioctl+0x4a/0x80 [radeon]
-[   63.230141]  __x64_sys_ioctl+0x93/0xe0
-[   63.230144]  ? syscall_trace_enter+0xfa/0x1c0
-[   63.230146]  do_syscall_64+0x7d/0x2c0
-[   63.230148]  ? do_syscall_64+0x1f3/0x2c0
-[   63.230150]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   63.230153] RIP: 0033:0x7f1aa132550b
-[   63.230154] RSP: 002b:00007ffebab69678 EFLAGS: 00000246 ORIG_RAX: 0000=
-000000000010
-[   63.230156] RAX: ffffffffffffffda RBX: 00007ffebab696bc RCX: 00007f1aa=
-132550b
-[   63.230158] RDX: 00007ffebab696bc RSI: 00000000c00464af RDI: 000000000=
-000000e
-[   63.230159] RBP: 00000000c00464af R08: 00007f1aa0c41220 R09: 000055a71=
-ce32310
-[   63.230160] R10: 0000000000000087 R11: 0000000000000246 R12: 000055a71=
-b813660
-[   63.230161] R13: 000000000000000e R14: 0000000003a8f5cd R15: 000055a71=
-b6bbfb0
-[   63.230164]  </TASK>
-[   63.230248] freeze round: 2, task to freeze: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v7 22/31] irqchip/gic-v5: Add GICv5 LPI/IPI support
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+CC: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Bischoff
+	<sascha.bischoff@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Timothy Hayes <timothy.hayes@arm.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Peter Maydell
+	<peter.maydell@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Jiri Slaby
+	<jirislaby@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>
+References: <20250703-gicv5-host-v7-0-12e71f1b3528@kernel.org>
+ <20250703-gicv5-host-v7-22-12e71f1b3528@kernel.org>
+ <cc611dda-d1e4-4793-9bb2-0eaa47277584@huawei.com>
+ <aJSvUWRqLEiARDIW@lpieralisi>
+Content-Language: en-US
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <aJSvUWRqLEiARDIW@lpieralisi>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500011.china.huawei.com (7.185.36.131)
 
 
-You can find it in this patch
 
-link:=20
-https://lore.kernel.org/all/20250619035355.33402-1-zhangzihuan@kylinos.cn=
-/
+On 2025/8/7 21:51, Lorenzo Pieralisi wrote:
+> On Thu, Aug 07, 2025 at 07:52:58PM +0800, Jinjie Ruan wrote:
+>>
+>>
+>> On 2025/7/3 18:25, Lorenzo Pieralisi wrote:
+>>> An IRS supports Logical Peripheral Interrupts (LPIs) and implement
+>>> Linux IPIs on top of it.
+>>>
 
->> =E2=86=92 Cannot respond to freezing signal
->> =E2=86=92 Freezer retries in a loop
->> =E2=86=92 Suspend latency spikes
->>
->> In such cases, we observed that a normal 1=E2=80=932ms freezer cycle c=
-ould balloon to **tens of milliseconds**.
->> Worse, the kernel has no insight into the root cause and simply retrie=
-s blindly.
->>
->> ## Proposed solution: Freeze priority model
->>
->> To address this, we propose a **layered freeze model** based on per-ta=
-sk freeze priorities.
->>
->> ### Design
->>
->> We introduce 4 levels of freeze priority:
->>
->>
->> | Priority | Level             | Description                       |
->> |----------|-------------------|-----------------------------------|
->> | 0        | HIGH              | D-state TASKs                     |
->> | 1        | NORMAL            | regular  use space TASKS          |
->> | 2        | LOW               | not yet used                      |
->> | 4        | NEVER_FREEZE      | zombie TASKs , PF_SUSPNED_TASK    |
->>
->>
->> The kernel will freeze processes **in priority order**, ensuring that =
-higher-priority tasks are frozen first.
->> This avoids dependency inversion scenarios and provides a deterministi=
-c path forward for tricky cases.
->> By freezing control or event-source threads first, we prevent dependen=
-t tasks from entering D-state prematurely =E2=80=94 effectively avoiding =
-dependency inversion.
-> I really fail to see how that is supposed to work to be honest. If a
-> process is running in the userspace then the priority shouldn't really
-> matter much. Tasks will get a signal, freeze themselves and you are
-> done. If they are running in the userspace and e.g. sleeping while not
-> TASK_FREEZABLE then priority simply makes no difference. And if they ar=
-e
-> TASK_FREEZABLE then the priority doens't matter either.
->
-> What am I missing?
-under ideal conditions, if a userspace task is TASK_FREEZABLE, receives=20
-the freezing() signal, and enters the refrigerator in a timely manner,=20
-then freeze priority wouldn=E2=80=99t make a difference.
+[...]
 
-However, in practice, we=E2=80=99ve observed cases where tasks appear stu=
-ck in=20
-uninterruptible sleep (D state) during the freeze phase=C2=A0 =E2=80=94 a=
-nd thus=20
-cannot respond to signals or enter the refrigerator. These tasks are=20
-technically TASK_FREEZABLE, but due to the nature of their sleep state,=20
-they don=E2=80=99t freeze promptly, and may require multiple retry rounds=
-, or=20
-cause the entire suspend to fail.
+>>> +static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data,
+>>> +					    unsigned int lpi_id_bits,
+>>> +					    unsigned int istsz)
+>>> +{
+>>> +	size_t l2istsz;
+>>> +	u32 n, cfgr;
+>>> +	void *ist;
+>>> +	u64 baser;
+>>> +	int ret;
+>>> +
+>>> +	/* Taken from GICv5 specifications 10.2.1.13 IRS_IST_BASER */
+>>> +	n = max(5, lpi_id_bits + 1 + istsz);
+>>> +
+>>> +	l2istsz = BIT(n + 1);
+>>> +	/*
+>>> +	 * Check memory requirements. For a linear IST we cap the
+>>> +	 * number of ID bits to a value that should never exceed
+>>> +	 * kmalloc interface memory allocation limits, so this
+>>> +	 * check is really belt and braces.
+>>> +	 */
+>>> +	if (l2istsz > KMALLOC_MAX_SIZE) {
+>>> +		u8 lpi_id_cap = ilog2(KMALLOC_MAX_SIZE) - 2 + istsz;
+>>> +
+>>> +		pr_warn("Limiting LPI ID bits from %u to %u\n",
+>>> +			lpi_id_bits, lpi_id_cap);
+>>> +		lpi_id_bits = lpi_id_cap;
+>>> +		l2istsz = KMALLOC_MAX_SIZE;
+>>> +	}
+>>> +
+>>> +	ist = kzalloc(l2istsz, GFP_KERNEL);
+>>
+>>
+>> When kmemleak is on, There is a memory leak occurring as below:
+>>
+>>
+>> unreferenced object 0xffff00080039a000 (size 4096):
+>>   comm "swapper/0", pid 0, jiffies 4294892296
+>>   hex dump (first 32 bytes):
+>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>   backtrace (crc 0):
+>>     kmemleak_alloc+0x34/0x40
+>>     __kmalloc_noprof+0x320/0x464
+>>     gicv5_irs_iste_alloc+0x1a4/0x484
+>>     gicv5_irq_lpi_domain_alloc+0xe4/0x194
+>>     irq_domain_alloc_irqs_parent+0x78/0xd8
+>>     gicv5_irq_ipi_domain_alloc+0x180/0x238
+>>     irq_domain_alloc_irqs_locked+0x238/0x7d4
+>>     __irq_domain_alloc_irqs+0x88/0x114
+>>     gicv5_of_init+0x284/0x37c
+>>     of_irq_init+0x3b8/0xb18
+>>     irqchip_init+0x18/0x40
+>>     init_IRQ+0x104/0x164
+>>     start_kernel+0x1a4/0x3d4
+>>     __primary_switched+0x8c/0x94
+> 
+> Thank you for reporting it.
+> 
+> It should be a false positive, we hand over the memory to the GIC but
+> never store the pointer anywhere (only its PA).
+> 
+> Patch below should "fix" it - well, it is obvious, we are telling
+> kmemleak to ignore the pointer value:
+
+I also did not see any place in the code where these pointers are
+accessed, nor did I see in section "L2_ISTE, Level 2 interrupt state
+table entry" that L2_ISTE can be accessed by software. So, are these
+states of the LPI interrupt maintained by the GIC hardware itself?
+
+> 
+> -- >8 --
+> diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
+> index ad1435a858a4..e8a576f66366 100644
+> --- a/drivers/irqchip/irq-gic-v5-irs.c
+> +++ b/drivers/irqchip/irq-gic-v5-irs.c
+> @@ -5,6 +5,7 @@
+>  
+>  #define pr_fmt(fmt)	"GICv5 IRS: " fmt
+>  
+> +#include <linux/kmemleak.h>
+>  #include <linux/log2.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> @@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
+>  		kfree(ist);
+>  		return ret;
+>  	}
+> +	kmemleak_ignore(ist);
+>  
+>  	return 0;
+>  }
+> @@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
+>  		kfree(l2ist);
+>  		return ret;
+>  	}
+> +	kmemleak_ignore(l2ist);
+>  
+>  	/*
+>  	 * Make sure we invalidate the cache line pulled before the IRS
+> 
 
