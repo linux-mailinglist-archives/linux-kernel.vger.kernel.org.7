@@ -1,464 +1,433 @@
-Return-Path: <linux-kernel+bounces-759615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDADBB1E028
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:23:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80563B1E02E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6211AA0D71
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D28C58237A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1907082D;
-	Fri,  8 Aug 2025 01:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EB278F36;
+	Fri,  8 Aug 2025 01:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2stP4a0M"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MoBzVzvq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6DC39FCE
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 01:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754616187; cv=none; b=lrePX2Uuota+5/XwK1TaUcLYYgQdhzsyakaSQATden7s/dll0zqsJi4WPbfmMJYVWlSZFDoHtM/hV/xxOTktKi9DZA7SllmWArMG6z9VaGB/y9uPntX1OJJojCFGNuZXQQePPqPQRT4bPKOJfnLL6n2LzDOm2aNbACUNDSDjSnU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754616187; c=relaxed/simple;
-	bh=Uryd1J4b5v1UKVVA0DJq1CimX1JjdKWcP8BUkEbztV4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MrqTpPrRP7zU0tnP4q4fAN7cTPRTlutR9Ap44ZrqsxNFt6hwkUBuQ154XEs00PsBTZz/eFUcjVQ2zMJQ6WhGAtTEtsBZTRKqBdfCb8pqWKBGGcxtd6MOzml89BwJ9EkgVHN8CYTvSZlYkxf+5nwFHTLWfoAwVHUzan3jqNxUHDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2stP4a0M; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso3214a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 18:23:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754616183; x=1755220983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2D00aj35qn0lgLEWR00CYBcQuTXDPk0GIrAj2AelFpM=;
-        b=2stP4a0M6S2bcwx9x6kNdp5X4Z5XSlZb4qy3V7uIMxfAnps9MfRfa5SwnuSUdHT5JK
-         KX062+W0H0kO7Vz+Ox4Y63q3pnXRrs0qm43vd5IWyL9v4y2Opr1U6dXRbTJ87Q4fTSbp
-         3V6hqZWsURODwZrF/ZiK7/OxW2OmfoGpNyRu4Jye0KUmPO18qRHIgSM3BT9JvGcMxg7Y
-         bUa5CCxJY36i/0071NHMwEHVzsjumWthj+vQ3ZX8qO3Bu/sr1qGZ/gXrp2mfIPwh8Eu2
-         d0p4qeim85SZpkTTOJaaPbgkKVlNH/gzBWGuy57PgEcBu5H/na6vreM2tbnT1uq5ntuc
-         S4Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754616183; x=1755220983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2D00aj35qn0lgLEWR00CYBcQuTXDPk0GIrAj2AelFpM=;
-        b=fccUezNljh8mpfPgUWjTNDrw5cYQKZXR2qJTXvFLF5GUnVOPknFVyBkp2WWG7B1yNG
-         4yNPR7Lqs4IukQ4Hvkzh02FQrPTJOvlcIv3Zw0QhyhRIc5Yqx5ruMg+udae+AaWcUyGN
-         X+KNBxbdF1rDN8IEGqY7JhrvO/t7S40qYNR0iUQDPR7WgDliz6xRDLSv9sXOWbP8528y
-         dAV7PEMYNGcFtvlCTkYse+ZmEXrSTuBbG4bdzYyKrtWuaU2Y5GwohSfaLoJECDwWe9Yb
-         JGxj0ggSTkiDdeApDRbEQMV2T8cbVQgH56nqLzSd0R2Q10i+2odhuNiowFTGW5Up9X9I
-         c2mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpeexeSukOVBVJaW2efi+uEKU1aUtBVNoCB1/X2+VQtw0TyAXlDI2hvvUT6HAl2cdA0IqwOf81gpoXbgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUG7pUMeaG8VlDXBfDYrcqCaMDOG2FuB2W5HFm1k49MU1Nt0kt
-	laNUIQZ0E0pwnuvkYcKDA+TPRObxlOk0CBoZGBsZyea7aRfLPaAfmWH2IagWBuj2qnfLrz6wN3c
-	X8XBvJZ1Jp/U6HXx4vpLfIN1/kFmD0MrAC975OcVQ
-X-Gm-Gg: ASbGncsx3dmCWkh9DLKgV6G6JTQVRBj4RfvutmQJAFd1P6QPvaBmiJpFf4HO9xVCI5l
-	0hoxrEq6EjGTSygKaJix0wr80y31167XI5JNlOHDOhcTAlEem+tYR0BmnD0zrDg1H+n7r8ZflfT
-	PhVDO5tXq2lsV+a9pji6K8ZTjGvBLTma7qp+FGdu0JMUmHsTMOEhyZXwdmjiZPpxu6t78NpUFTu
-	1eMy4U+
-X-Google-Smtp-Source: AGHT+IGaR/h/J9/1J1DqeC39jxSWn0nyV0BCQ8iE+VjGFJZUiVPSq0jiBZsdGYmezeXImgpn13C2HiTTQedvJM4YdKE=
-X-Received: by 2002:a50:8ac9:0:b0:615:6167:4835 with SMTP id
- 4fb4d7f45d1cf-617e4938cc5mr22550a12.7.1754616182348; Thu, 07 Aug 2025
- 18:23:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990666F06A;
+	Fri,  8 Aug 2025 01:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754616554; cv=fail; b=FpYkN7Ih4KFEOteLqL6UhmHUdv7LUrXVkIndYkjGO6i3AVbGnnM1j27PVw+NEL7PnTjqbK1fWV70xuJw6mmGq2HhUDf9HEzeyil9DZgqVfioEXHYhEgicZZ1CSe2cNudCgBJz8o+gI+VsEwRPizmkjN10mz+AheBwahS/YpG39U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754616554; c=relaxed/simple;
+	bh=JpOiukpxJF8kVjavgsFMVGULXN4vsgacktb5DV3WgUc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dmsDVNnYPK6bSX/mUu37v9DZqCUNlL7rZl8yIf6UZzypWjFsnWwBWKZXUF2DnCmbyioQPhrtEYZCzKF57vkQsNOBypcIUMiRafMBaNR5EaUK+aB3KnauiKb+urEZ3jYTLDgWO4IkEJd73ZzJv3rnfeRmiWWkW7Lhz2wJyU/uvdk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MoBzVzvq; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754616553; x=1786152553;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=JpOiukpxJF8kVjavgsFMVGULXN4vsgacktb5DV3WgUc=;
+  b=MoBzVzvqR7SA2XjdFlQPWoc7vfM/ondDx7sUaP5pRhjmh4B/QY0e+poh
+   Pmpry43FztImZE1O8390AFHDekbc9AmfP/Pmqmq1zEV65MN7nNsgxqMpE
+   CGLb5wj5+8kejeSbBAjdQ4/Nnk73xNqVbdQxxi1RMfqjjy61eXeQ1H3qa
+   Ofn9cUzbOVQA0PqF+sloB3fPbCK/vSAhmSBJ2N6ZW2cA5nfvvI6spc0u6
+   /6oIE6cCvl01VU+aYVzkn5qxWAbmPMfkMHEiz+cAuWvoJ8AmNBOm0LPL0
+   SgaTaf61Z/28kW8+EyS+86GH+Lw9NecFVnWyg2k7l2j1g0IMiJtwED/s2
+   A==;
+X-CSE-ConnectionGUID: kgHm8TVsRVGqC7/ygKvLiA==
+X-CSE-MsgGUID: +ntLLfZZTm+O3kw3ZA6zpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="82409100"
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="82409100"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 18:25:28 -0700
+X-CSE-ConnectionGUID: +HVld4HKQmKDglKgQZuWfw==
+X-CSE-MsgGUID: rwjVu45XRMqxeO+vlB+lDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
+   d="scan'208";a="164430856"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 18:25:28 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 7 Aug 2025 18:25:27 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 7 Aug 2025 18:25:27 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.56)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 7 Aug 2025 18:25:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kz0EaKPSg2E96FLaGBPwbecPObEZkOCS1TM543nufC77LX4584HJcps01UJUKucKKTOfGpHZ7EQmCfH6+LbSVp9P1z58L9ZJfx8vwF8Q6NHFGjSZwA+t/x5HZmCHX07YTboDX+tT0kc7GRWcs6Flb4nq2JOoSbkE1SbU6NbAETEjkqV8QKdxNkZo/djht05p8ykb3ccCK8oNMFlErb57sIjRb0RGFM2B04KRe//Ks/B1alIUzk5z57MZup20vYvrXbU+Ylf4L/3UZp6iuRLzZ6HyEGHQswrrz4mvq6meUvp4MtKMTuW1c2jcScd8xmwLD+TTnn+l9h/upKLYcmRUmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CnvtK+DS73spMVs+SfZF3uAfgJLzjlrnzAh7H2Z6XVY=;
+ b=pnLjC10bEuL1ITyoi8B+s9xBuIlmkYozsoJcj9dazgP2XLYxB+8XVvWzstmgZeSHKHgpBhDEEbXTH7ERCi8KeQo7ZctvGzZ2ng47uP5clb1dsOlq1Ct57BNdRb45waiMm1PA9rynQjzI3nkWRm4HE/wXsySOtLnWPGrCQajM7PB1Hf9hgL5crSkPVLaW7q0ZiTifm/r+2l+1dWL+/EbZv0TayJYShVhvCdsGPyEzQUGCuS9+8DIsX9tTVSuCQb22PRcs//P0okwS0Hl0+JLw88xOQw3zJE0tJG2QXUnXzhW0o4hw1MW+SWvCu/YiTUwlf5V88mGsu3r7Aq+xfXBgLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB5674.namprd11.prod.outlook.com (2603:10b6:510:ec::10)
+ by PH7PR11MB5818.namprd11.prod.outlook.com (2603:10b6:510:132::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Fri, 8 Aug
+ 2025 01:25:24 +0000
+Received: from PH0PR11MB5674.namprd11.prod.outlook.com
+ ([fe80::77d3:dfb2:3bd:e02a]) by PH0PR11MB5674.namprd11.prod.outlook.com
+ ([fe80::77d3:dfb2:3bd:e02a%3]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
+ 01:25:24 +0000
+Date: Fri, 8 Aug 2025 09:25:14 +0800
+From: Philip Li <philip.li@intel.com>
+To: Aleksa Sarai <cyphar@cyphar.com>
+CC: kernel test robot <lkp@intel.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, <oe-kbuild-all@lists.linux.dev>, David Howells
+	<dhowells@redhat.com>, <linux-api@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] vfs: output mount_too_revealing() errors to
+ fscontext
+Message-ID: <aJVR+vUzxCiqzpNW@rli9-mobl>
+References: <20250806-errorfc-mount-too-revealing-v2-2-534b9b4d45bb@cyphar.com>
+ <202508071236.2BTGpdZx-lkp@intel.com>
+ <2025-08-07.1754589415-related-cynic-passive-zombies-cute-jaybird-n5AIYt@cyphar.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2025-08-07.1754589415-related-cynic-passive-zombies-cute-jaybird-n5AIYt@cyphar.com>
+X-ClientProxiedBy: SG2PR04CA0171.apcprd04.prod.outlook.com (2603:1096:4::33)
+ To PH0PR11MB5674.namprd11.prod.outlook.com (2603:10b6:510:ec::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729193647.3410634-1-marievic@google.com> <20250729193647.3410634-7-marievic@google.com>
- <CA+GJov7AH5Qyiaua7LKZjVNRoUd==DiSXvd1UP7TcSzvn5JZtQ@mail.gmail.com>
-In-Reply-To: <CA+GJov7AH5Qyiaua7LKZjVNRoUd==DiSXvd1UP7TcSzvn5JZtQ@mail.gmail.com>
-From: Marie Zhussupova <marievic@google.com>
-Date: Thu, 7 Aug 2025 21:22:50 -0400
-X-Gm-Features: Ac12FXy83TfjpYK_0eq_uQ1ZcPI2DWSWUtOe3NX9vC6swmGOuFsU9to_-ct3_vs
-Message-ID: <CAAkQn5LUA-gRj9nypcf0jE+gjRwN2axkJ4KO14Aj8AB3dhZHsw@mail.gmail.com>
-Subject: Re: [PATCH 6/9] kunit: Enable direct registration of parameter arrays
- to a KUnit test
-To: Rae Moar <rmoar@google.com>
-Cc: davidgow@google.com, shuah@kernel.org, brendan.higgins@linux.dev, 
-	elver@google.com, dvyukov@google.com, lucas.demarchi@intel.com, 
-	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB5674:EE_|PH7PR11MB5818:EE_
+X-MS-Office365-Filtering-Correlation-Id: b09d55e4-8691-4148-dd85-08ddd61a72d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?K1LZ7BnyVgXNy1VOqfhlnFvadPi+RuQMLGgvL2ufzfZjIb3R+hQqDwKyxBMj?=
+ =?us-ascii?Q?ClHd9OnQ+tGCjNVtIY0D7NKZhwXAPxpd6LSfSLWCZSXdRlme2OWvogBf6OF9?=
+ =?us-ascii?Q?Wr3UrnWhKnBLiRqxNbfSQzVcBpiFlkJhoJDYRHFRSolnVinOvz8KZudpcW0F?=
+ =?us-ascii?Q?GsGc4xY9WBZOH+1qy/5oFLvM9lg76bMgip3Q1sO9lyoVFtlr+dixCsnCwyfF?=
+ =?us-ascii?Q?BtXSnqpz8kZWu0q31QXFVhc2nW+Fg1BFNQu3Q3qik3S30Ac+h4tX3MBuukjN?=
+ =?us-ascii?Q?le4Znu1fgL92oem8LVZetkncR6pgUlNQ2eWxEvreVLmsMIvVRnvig1d7CPwQ?=
+ =?us-ascii?Q?E4TxcpbVM/KRvPLsdIKObjcMlTk1IntxMoL7gqI548YO8PDl7eUbFDcpGj7j?=
+ =?us-ascii?Q?Jo8qylLH2T06bLdaKxgmcjbZWTY4Tm7M0Dpup7+merN7dwqVg3z0Obbe5XVE?=
+ =?us-ascii?Q?6aGbeq5nFe89yrEV/JeqmCw8n/25rejZWBBUtwa/KHCLPs59ABmsROktvg1x?=
+ =?us-ascii?Q?dvYqMYg6zyWnn/EyBj1ZRHBZ2qvRQ+pDp/f30CO4LelP89Ajpg8PqtfpUjKZ?=
+ =?us-ascii?Q?KcAmAn8ofqJY7T79RUD26eEMlaQdjjrqPtnemCTc9Y97XFKKrCNxRowvfjqX?=
+ =?us-ascii?Q?tgQAou0WpWMByeuq5Nst16wJKD/Bh06rdmScvWZLcvOC3JGkTwfFq/V1Bw+Z?=
+ =?us-ascii?Q?/VPlxi1A9qHB6RjAGGETpLN1x2OKfKetOOrV052Oa8WePuXmCucdmoofYSSM?=
+ =?us-ascii?Q?KZkGwnSkQZ1UajgLw0hj3mSQhIBFbvMh7lR6OU0OX2diji2QHw9luf2JrW5/?=
+ =?us-ascii?Q?Y1wume1CvEur1Kg1ICE7yEgXnHbLnaNIwuL83Uu4OJkynpI0ucu3dlexSGEt?=
+ =?us-ascii?Q?Xafpme1SkiC5/Tpus2p4lJ/ywrOksWxVEz3T+oDp12ZHqsQ4w5embViTZPmx?=
+ =?us-ascii?Q?NK7pqhDOBteR1ew/tThiJ+gd0viValiNB4iiRcvPVTcf8RpVN7nl6mz4eFgf?=
+ =?us-ascii?Q?o5/R2fyfdAI+nvTVB402C4e+f6xbt80JbKNn79ekHQPL4EkIzkf0gKyrIb61?=
+ =?us-ascii?Q?K5EosFF1DvoAeNUu7ZNjOHkRp7rG1BraLN+25sIw3B82jMbB5TEpTH6rmRFC?=
+ =?us-ascii?Q?OzEXCsHCXFGZi0xeRAx5TXqbD9VEYEy8wsKxPyqmD7UdXGaAEY0PiNvCDwcN?=
+ =?us-ascii?Q?F77U296Loq5bf1OycvJ9r2vu+XWFl+z5BiqD9qDjbZA5JSLe0BV64zpHJFBO?=
+ =?us-ascii?Q?mknLPZiQcUL6SNUafK3pLcA1EN/icuWY/T1SYRdt5iZmKxLaJsLiOPcZKwox?=
+ =?us-ascii?Q?LswIc4jSfv+LZMyT31mVGPL4u40O5hC/6M8Qieac/DaMz11c7ifj0bu8ivut?=
+ =?us-ascii?Q?RckJfEYbtMTDEK9z8WDkaqLrNSMz?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB5674.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5YrPr+wrDzgpKOJlrJgKm7KATbMwLD61GonCzGe0MhFJhFOk2VxqCmuAi34Z?=
+ =?us-ascii?Q?k75w4YejjcGSooXS96HSMDjxOCChvIPPTjlrOhLKh+Fm5T/lobHwqr+BM16i?=
+ =?us-ascii?Q?y+4Q1084kmvMbAVyC8Z6Z7KZGnjDIOUNSwKt7Fj8e+V5JtBHWdH0QCjtUmgd?=
+ =?us-ascii?Q?hXxIgXP+3sb6m/8xSgIhhaFnu46SVJCdyiw7pYsb/d5rsVU7vSZ5Lmem90lQ?=
+ =?us-ascii?Q?jGDnRosx61Tcoq3iAWu+IOdliVYBz0YZRnRpnW2Thok9pfHi2QsEYhPgIY6E?=
+ =?us-ascii?Q?XIBHWOpgLqTLTv6SWr6aovbDl9j2uMDCMvzaL1bCqwhxnsxDL67pu56vLtNQ?=
+ =?us-ascii?Q?DDUovBGNk0U598rQuafVxDHQpSP2yWvAJ6IOYaXNApU2ore+XlswH9otu1GF?=
+ =?us-ascii?Q?SP2TXb9REDthJYKH0COhONSaR/KgiezcX3x8b6kUOwTE/mLS1ua++NuWLN/E?=
+ =?us-ascii?Q?Qlwjqr7PftBPcyevNsXadguJPyRt7eDXCu8qmT17UYZn5cmz0e3PIIsfZ4HT?=
+ =?us-ascii?Q?kIWhvsd4ZkcL8IzT6/ajVQvswFMv/TnPZw4UBaB5AfjPzvOAVxN/PXjlFNcw?=
+ =?us-ascii?Q?ZhZ9sFYdwJ4rgBiNRrRxLIOJPLFKOdqhMdMg1yH+TPwXD6nK5DiY+293S6p0?=
+ =?us-ascii?Q?MHeBszGLdqdDV+nns1ADlJYS6kBsdWyTJ4S6oBawrB0vGUUw2zC0QXRhTVs+?=
+ =?us-ascii?Q?dU6b3rS60h5c/zASONGWNxwsMfYIS8GbkonyhV8u9QVT8hgKw3A1pk9hCvXL?=
+ =?us-ascii?Q?yzalNzVAG8drh4lYn8brqJ4XO0bXSk3jNzx9DiMhNODgl2sPXWKG9beDomAo?=
+ =?us-ascii?Q?GYzXuN62oOj/9rYHmOjEina5YVVRYap3plXAhEvWRzJlSLkleXDGLHGD2trx?=
+ =?us-ascii?Q?If/bXkf5noGgdUvC0Jy22oWfwSVQAs+/I8C2bTcQK8Qx7iMhCN5n6yLLJui1?=
+ =?us-ascii?Q?r9WKSEABED/MnV4tyaNLGEgR3yTsBXq89hzRO7Iu1VTGQwcISAles32X3cx1?=
+ =?us-ascii?Q?UGeBNj4L9agoV+DKhCTVpOM3OvSiP8N2gHCSVxLAOaMXbZfg2CCmKY50fm7W?=
+ =?us-ascii?Q?fKfiCDU1/FAS8u7lK/+T/uJER3a9SBCcQ3jCJNdoxM1gt0/2dXYHjZeyVoiX?=
+ =?us-ascii?Q?u9GbppTkNVJVm91qFB9FADMhbDG9Ie+HHQuPSgiU0BWN4mTC/ZpBUXhhW3jK?=
+ =?us-ascii?Q?KEMvmkdOUFBYnJ/yD70Hg/ggxXhDMOqiePvUnpBl7Umiya/7/IXMVwQ85R8b?=
+ =?us-ascii?Q?YBr8dUdibB7DRo2uU00xHokyK5mA+VMbnSbH0WfmCtqk9YyV96BtliIA37er?=
+ =?us-ascii?Q?jJsNDLsqJrQVCIUR4cyBQFsl7m/C0CvplYvYr1ZwmZHHQHZn/3z88mlLv4BT?=
+ =?us-ascii?Q?i2gBKwqj4MtCIZUY51Y8bV8C7FpdEUAUM4l5qcl+dGtSHW4Lk3wIflpn5Zzk?=
+ =?us-ascii?Q?5F3IjM8GOEKIqpwYcsJr+k8gwaK5v1Rzzl/Q0JRnEqUIl4gxpVn4mYdedXND?=
+ =?us-ascii?Q?vdPGQGmLBbqgm+2U0e7TsBJJtqhmPb954cr7jjq1KhPPmp2moIkWC8w4Cah0?=
+ =?us-ascii?Q?vXEYPfLLY0yG666yfVGtAG7wJCb4NRdFHY+X7HBV?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b09d55e4-8691-4148-dd85-08ddd61a72d6
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB5674.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 01:25:24.5212
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IBmmw1JCkSsVKrQuygg6qFXLak1wPdLTMefwKOJtjeEoSQ3kxxAXPb+qrMhE8X5X93lzP/tS81wk6QFdQeuzOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5818
+X-OriginatorOrg: intel.com
 
-On Tue, Aug 5, 2025 at 11:18=E2=80=AFAM Rae Moar <rmoar@google.com> wrote:
->
-> On Tue, Jul 29, 2025 at 3:37=E2=80=AFPM Marie Zhussupova <marievic@google=
-.com> wrote:
-> >
-> > KUnit parameterized tests currently support two
-> > primary methods for getting parameters:
-> > 1.  Defining custom logic within a `generate_params`
-> >     function.
-> > 2.  Using the KUNIT_ARRAY_PARAM and KUNIT_ARRAY_PARAM_DESC
-> >     macros with pre-defined static arrays.
-> >
-> > These methods present limitations when dealing with
-> > dynamically generated parameter arrays, or in scenarios
-> > where populating parameters sequentially via
-> > `generate_params` is inefficient or overly complex.
-> >
-> > This patch addresses these limitations by adding a new
-> > `params_data` field to `struct kunit`, of the type
-> > `kunit_params`. The struct `kunit_params` is designed to
-> > store the parameter array itself, along with essential metadata
-> > including the parameter count, parameter size, and a
-> > `get_description` function for providing custom descriptions
-> > for individual parameters.
-> >
-> > The `params_data` field can be populated by calling the new
-> > `kunit_register_params_array` macro from within a
-> > `param_init` function. By attaching the parameter array
-> > directly to the parent kunit test instance, these parameters
-> > can be iterated over in kunit_run_tests() behind the scenes.
-> >
-> > This modification provides greater flexibility to the
-> > KUnit framework, allowing testers to easily register and
-> > utilize both dynamic and static parameter arrays.
-> >
-> > Signed-off-by: Marie Zhussupova <marievic@google.com>
->
-> Hello!
->
-> Very excited by the prospect of setting up an array dynamically
-> instead of statically for parameterized tests. In general, I am happy
-> to see this framework is becoming more flexible and therefore more
-> tailored to our test author's needs.
->
-> I already commented on the modpost error but I have a few more
-> comments and ideas below. Let me know what you think.
->
-> Thanks!
-> -Rae
->
+On Fri, Aug 08, 2025 at 03:57:09AM +1000, Aleksa Sarai wrote:
+> On 2025-08-07, kernel test robot <lkp@intel.com> wrote:
+> > Hi Aleksa,
+> > 
+> > kernel test robot noticed the following build errors:
+> > 
+> > [auto build test ERROR on 66639db858112bf6b0f76677f7517643d586e575]
+> 
+> This really doesn't seem like a bug in my patch...
 
-Hello Rae,
+Sorry for the false report, this is related to [1]. I will disable the further
+report of this issue to avoid meaningless report.
 
-I have added replies to your comments below.
+[1] https://lore.kernel.org/linux-riscv/d5e49344-e0c2-4095-bd1f-d2d23a8e6534@ghiti.fr/
 
-Thank you,
--Marie
+> 
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Aleksa-Sarai/fscontext-add-custom-prefix-log-helpers/20250806-141024
+> > base:   66639db858112bf6b0f76677f7517643d586e575
+> > patch link:    https://lore.kernel.org/r/20250806-errorfc-mount-too-revealing-v2-2-534b9b4d45bb%40cyphar.com
+> > patch subject: [PATCH v2 2/2] vfs: output mount_too_revealing() errors to fscontext
+> > config: riscv-randconfig-002-20250807 (https://download.01.org/0day-ci/archive/20250807/202508071236.2BTGpdZx-lkp@intel.com/config)
+> > compiler: riscv32-linux-gcc (GCC) 8.5.0
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250807/202508071236.2BTGpdZx-lkp@intel.com/reproduce)
+> > 
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202508071236.2BTGpdZx-lkp@intel.com/
+> > 
+> > All errors (new ones prefixed by >>, old ones prefixed by <<):
+> > 
+> > WARNING: modpost: vmlinux: section mismatch in reference: prp_dup_discard_out_of_sequence+0x266 (section: .text.prp_dup_discard_out_of_sequence) -> ili9486_spi_driver_exit (section: .exit.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: prp_dup_discard_out_of_sequence+0x2ae (section: .text.prp_dup_discard_out_of_sequence) -> ili9486_spi_driver_exit (section: .exit.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: prp_dup_discard_out_of_sequence+0x2f2 (section: .text.prp_dup_discard_out_of_sequence) -> mi0283qt_spi_driver_exit (section: .exit.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: prp_dup_discard_out_of_sequence+0x33e (section: .text.prp_dup_discard_out_of_sequence) -> mi0283qt_spi_driver_exit (section: .exit.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: ida_free+0xa0 (section: .text.ida_free) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: ida_free+0xba (section: .text.ida_free) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: ida_free+0xdc (section: .text.ida_free) -> devices_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: ida_alloc_range+0x4c (section: .text.ida_alloc_range) -> devices_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: ida_alloc_range+0x9c (section: .text.ida_alloc_range) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: ida_alloc_range+0x31a (section: .text.ida_alloc_range) -> devices_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: kobj_kset_leave+0x2 (section: .text.kobj_kset_leave) -> save_async_options (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __kobject_del+0x18 (section: .text.__kobject_del) -> .LVL39 (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x2aa (section: .text.mas_empty_area_rev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x2ba (section: .text.mas_empty_area_rev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x2c0 (section: .text.mas_empty_area_rev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x2d0 (section: .text.mas_empty_area_rev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x2da (section: .text.mas_empty_area_rev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x2ec (section: .text.mas_empty_area_rev) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x2fe (section: .text.mas_empty_area_rev) -> __platform_driver_probe (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x314 (section: .text.mas_empty_area_rev) -> __platform_driver_probe (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x328 (section: .text.mas_empty_area_rev) -> __platform_driver_probe (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x34c (section: .text.mas_empty_area_rev) -> __platform_driver_probe (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x398 (section: .text.mas_empty_area_rev) -> __platform_driver_probe (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x39e (section: .text.mas_empty_area_rev) -> __platform_driver_probe (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x3d4 (section: .text.mas_empty_area_rev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x400 (section: .text.mas_empty_area_rev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area_rev+0x42a (section: .text.mas_empty_area_rev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump_node+0x230 (section: .text.mt_dump_node) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump_node+0x24a (section: .text.mt_dump_node) -> __platform_driver_probe (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump+0x20 (section: .text.mt_dump) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump+0x32 (section: .text.mt_dump) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump+0x42 (section: .text.mt_dump) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump+0x4c (section: .text.mt_dump) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump+0x56 (section: .text.mt_dump) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump+0x7c (section: .text.mt_dump) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mt_dump+0xd4 (section: .text.mt_dump) -> __platform_driver_probe (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x43e (section: .text.mas_empty_area) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x454 (section: .text.mas_empty_area) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x466 (section: .text.mas_empty_area) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x4b2 (section: .text.mas_empty_area) -> platform_bus_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x4ba (section: .text.mas_empty_area) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x4d2 (section: .text.mas_empty_area) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x532 (section: .text.mas_empty_area) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x548 (section: .text.mas_empty_area) -> __platform_create_bundle (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x572 (section: .text.mas_empty_area) -> .L461 (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x574 (section: .text.mas_empty_area) -> __platform_create_bundle (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x57a (section: .text.mas_empty_area) -> __platform_create_bundle (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x592 (section: .text.mas_empty_area) -> .L459 (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x5de (section: .text.mas_empty_area) -> .L457 (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x5e4 (section: .text.mas_empty_area) -> .L458 (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_empty_area+0x5f0 (section: .text.mas_empty_area) -> .L0  (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_root_expand+0x84 (section: .text.mas_root_expand) -> .L495 (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_root_expand+0x98 (section: .text.mas_root_expand) -> cpu_dev_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_prev_range+0x18 (section: .text.mas_prev_range) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: mas_prev+0x18 (section: .text.mas_prev) -> classes_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __rb_insert_augmented+0xc8 (section: .text.__rb_insert_augmented) -> auxiliary_bus_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __rb_insert_augmented+0xe8 (section: .text.__rb_insert_augmented) -> auxiliary_bus_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __rb_insert_augmented+0xf8 (section: .text.__rb_insert_augmented) -> auxiliary_bus_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __rb_insert_augmented+0x102 (section: .text.__rb_insert_augmented) -> auxiliary_bus_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __rb_insert_augmented+0x114 (section: .text.__rb_insert_augmented) -> mount_param (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: rb_first+0x8 (section: .text.rb_first) -> mount_param (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: rb_first+0xa (section: .text.rb_first) -> mount_param (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: rb_first+0x10 (section: .text.rb_first) -> mount_param (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: rb_last+0x8 (section: .text.rb_last) -> mount_param (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: rb_last+0xa (section: .text.rb_last) -> mount_param (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: rb_last+0x10 (section: .text.rb_last) -> mount_param (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __rb_erase_color+0xda (section: .text.__rb_erase_color) -> auxiliary_bus_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __rb_erase_color+0xf8 (section: .text.__rb_erase_color) -> mount_param (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: __rb_erase_color+0x188 (section: .text.__rb_erase_color) -> auxiliary_bus_init (section: .init.text)
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15a8 (section: __ex_table) -> .LASF2568 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15a8 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15ac (section: __ex_table) -> .LASF2570 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15ac references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15b4 (section: __ex_table) -> .LASF2572 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15b4 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15b8 (section: __ex_table) -> .LASF2574 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15b8 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15c0 (section: __ex_table) -> .LASF2576 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15c0 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15c4 (section: __ex_table) -> .LASF2578 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15c4 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15cc (section: __ex_table) -> .LASF2580 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15cc references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15d0 (section: __ex_table) -> .LASF2574 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15d0 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15d8 (section: __ex_table) -> .LASF2583 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15d8 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15dc (section: __ex_table) -> .LASF2574 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15dc references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15e4 (section: __ex_table) -> .LASF2586 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15e4 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15e8 (section: __ex_table) -> .LASF2588 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x15e8 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15f0 (section: __ex_table) -> .L0  (section: __ex_table)
+> > ERROR: modpost: __ex_table+0x15f0 references non-executable section '__ex_table'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15f4 (section: __ex_table) -> .L0  (section: __ex_table)
+> > ERROR: modpost: __ex_table+0x15f4 references non-executable section '__ex_table'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x15fc (section: __ex_table) -> .L0  (section: __ex_table)
+> > ERROR: modpost: __ex_table+0x15fc references non-executable section '__ex_table'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1600 (section: __ex_table) -> firsttime (section: .data.firsttime.60983)
+> > >> ERROR: modpost: __ex_table+0x1600 references non-executable section '.data.firsttime.60983'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1614 (section: __ex_table) -> .LASF230 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1614 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1618 (section: __ex_table) -> .LASF232 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1618 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1620 (section: __ex_table) -> .LASF234 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1620 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1624 (section: __ex_table) -> .LASF232 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1624 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x162c (section: __ex_table) -> .LASF237 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x162c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1630 (section: __ex_table) -> .LASF232 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1630 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1638 (section: __ex_table) -> .LASF240 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1638 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x163c (section: __ex_table) -> .LASF232 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x163c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1644 (section: __ex_table) -> .LASF243 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1644 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1648 (section: __ex_table) -> .LASF232 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1648 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1650 (section: __ex_table) -> .LASF246 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1650 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1654 (section: __ex_table) -> .LASF232 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1654 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x165c (section: __ex_table) -> .LASF249 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x165c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1660 (section: __ex_table) -> .LASF251 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1660 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1668 (section: __ex_table) -> .LASF253 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1668 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x166c (section: __ex_table) -> .LASF255 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x166c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1674 (section: __ex_table) -> .LASF257 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1674 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1678 (section: __ex_table) -> .LASF259 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1678 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1680 (section: __ex_table) -> .LASF261 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1680 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1684 (section: __ex_table) -> .LASF263 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1684 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x168c (section: __ex_table) -> .LASF265 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x168c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1690 (section: __ex_table) -> .LASF267 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1690 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1698 (section: __ex_table) -> .LASF269 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1698 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x169c (section: __ex_table) -> .LASF271 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x169c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16a4 (section: __ex_table) -> .LASF273 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16a4 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16a8 (section: __ex_table) -> .LASF275 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16a8 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16b0 (section: __ex_table) -> .LASF277 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16b0 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16b4 (section: __ex_table) -> .LASF279 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16b4 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16bc (section: __ex_table) -> .LASF281 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16bc references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16c0 (section: __ex_table) -> .LASF283 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16c0 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16c8 (section: __ex_table) -> .LASF285 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16c8 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16cc (section: __ex_table) -> .LASF287 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16cc references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16d4 (section: __ex_table) -> .LASF289 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16d4 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16d8 (section: __ex_table) -> .LASF291 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16d8 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16e4 (section: __ex_table) -> .LASF4984 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16e4 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16ec (section: __ex_table) -> .LASF4986 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16ec references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16f0 (section: __ex_table) -> .LASF4984 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16f0 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x16fc (section: __ex_table) -> .LASF4984 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x16fc references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1704 (section: __ex_table) -> .LLST20 (section: .debug_loc)
+> > ERROR: modpost: __ex_table+0x1704 references non-executable section '.debug_loc'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1708 (section: __ex_table) -> .LLST22 (section: .debug_loc)
+> > ERROR: modpost: __ex_table+0x1708 references non-executable section '.debug_loc'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1710 (section: __ex_table) -> .LLST23 (section: .debug_loc)
+> > ERROR: modpost: __ex_table+0x1710 references non-executable section '.debug_loc'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1714 (section: __ex_table) -> .LASF4984 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1714 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x171c (section: __ex_table) -> .LASF270 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x171c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1720 (section: __ex_table) -> .LASF272 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1720 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x174c (section: __ex_table) -> .LASF1801 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x174c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1750 (section: __ex_table) -> .LASF1803 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1750 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1758 (section: __ex_table) -> .LASF1805 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1758 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x175c (section: __ex_table) -> .LASF1807 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x175c references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1764 (section: __ex_table) -> .LASF1809 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1764 references non-executable section '.debug_str'
+> > WARNING: modpost: vmlinux: section mismatch in reference: 0x1768 (section: __ex_table) -> .LASF1807 (section: .debug_str)
+> > ERROR: modpost: __ex_table+0x1768 references non-executable section '.debug_str'
+> > 
+> > -- 
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> https://www.cyphar.com/
 
-> > ---
-> >  include/kunit/test.h | 54 ++++++++++++++++++++++++++++++++++++++++----
-> >  lib/kunit/test.c     | 26 ++++++++++++++++++++-
-> >  2 files changed, 75 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/include/kunit/test.h b/include/kunit/test.h
-> > index 4ba65dc35710..9143f0e22323 100644
-> > --- a/include/kunit/test.h
-> > +++ b/include/kunit/test.h
-> > @@ -245,7 +245,8 @@ static inline char *kunit_status_to_ok_not_ok(enum =
-kunit_status status)
-> >   */
-> >  #define KUNIT_CASE_PARAM_WITH_INIT(test_name, gen_params, init, exit) =
-         \
-> >                 { .run_case =3D test_name, .name =3D #test_name,       =
-             \
-> > -                 .generate_params =3D gen_params,                     =
-           \
-> > +                 .generate_params =3D (gen_params)                    =
-           \
-> > +                  ?: kunit_get_next_param_and_desc,                   =
-         \
-> >                   .param_init =3D init, .param_exit =3D exit,          =
-             \
-> >                   .module_name =3D KBUILD_MODNAME}
-> >
-> > @@ -294,6 +295,21 @@ struct kunit_suite_set {
-> >         struct kunit_suite * const *end;
-> >  };
-> >
-> > +/* Stores the pointer to the parameter array and its metadata. */
-> > +struct kunit_params {
-> > +       /*
-> > +        * Reference to the parameter array for the parameterized tests=
-. This
-> > +        * is NULL if a parameter array wasn't directly passed to the
-> > +        * parent kunit struct via the kunit_register_params_array macr=
-o.
-> > +        */
-> > +       const void *params;
-> > +       /* Reference to a function that gets the description of a param=
-eter. */
-> > +       void (*get_description)(const void *param, char *desc);
-> > +
-> > +       int num_params;
->
-> Since in some cases we know the number of params within a series/suite
-> of the parameterized tests, is it possible for us to print a test plan
-> line in KTAP when this number is known? This would be helpful for
-> reading test results but also the parser could verify the number of
-> subtests is the number expected.
 
-This sounds like a great idea. My initial worry was that the availability
-of the test plan would be inconsistent since there would be no parameter
-count information when the parameters are generated using a custom
-generate_params function unless a test user provides them.
-However, it is good to provide any information that we have.
-
->
-> > +       size_t elem_size;
-> > +};
-> > +
-> >  /**
-> >   * struct kunit - represents a running instance of a test.
-> >   *
-> > @@ -302,12 +318,14 @@ struct kunit_suite_set {
-> >   * @parent: for user to store data that they want to shared across
-> >   *         parameterized tests. Typically, the data is provided in
-> >   *         the param_init function (see &struct kunit_case).
-> > + * @params_data: for users to directly store the parameter array.
-> >   *
-> >   * Used to store information about the current context under which the=
- test
-> >   * is running. Most of this data is private and should only be accesse=
-d
-> > - * indirectly via public functions; the two exceptions are @priv and @=
-parent
-> > - * which can be used by the test writer to store arbitrary data or dat=
-a that is
-> > - * available to all parameter test executions, respectively.
-> > + * indirectly via public functions. There are three exceptions to this=
-: @priv,
-> > + * @parent, and @params_data. These members can be used by the test wr=
-iter to
-> > + * store arbitrary data, data available to all parameter test executio=
-ns, and
-> > + * the parameter array, respectively.
-> >   */
-> >  struct kunit {
-> >         void *priv;
-> > @@ -316,6 +334,8 @@ struct kunit {
-> >          * during parameterized testing.
-> >          */
-> >         struct kunit *parent;
-> > +       /* Stores the params array and all data related to it. */
-> > +       struct kunit_params params_data;
->
-> I might slightly prefer the term params_array rather than params_data.
-> Up to what you prefer.
-
-I like params_array because it's a naming convention similar
-to what object-oriented programming (OOP) languages like
-Java use. For instance, an ArrayList object encapsulates
-both an array and its size. I will make this change in v2.
-
->
-> >
-> >         /* private: internal use only. */
-> >         const char *name; /* Read only after initialization! */
-> > @@ -386,6 +406,8 @@ void kunit_exec_list_tests(struct kunit_suite_set *=
-suite_set, bool include_attr)
-> >  struct kunit_suite_set kunit_merge_suite_sets(struct kunit_suite_set i=
-nit_suite_set,
-> >                 struct kunit_suite_set suite_set);
-> >
-> > +const void *kunit_get_next_param_and_desc(struct kunit *test, const vo=
-id *prev, char *desc);
-> > +
-> >  #if IS_BUILTIN(CONFIG_KUNIT)
-> >  int kunit_run_all_tests(void);
-> >  #else
-> > @@ -1735,6 +1757,30 @@ do {                                            =
-                                \
-> >                 return NULL;                                           =
-                         \
-> >         }
-> >
-> > +/**
-> > + * kunit_register_params_array() - Register parameters for a KUnit tes=
-t.
-> > + * @test: The KUnit test structure to which parameters will be added.
-> > + * @params_arr: An array of test parameters.
-> > + * @param_cnt: Number of parameters.
-> > + * @get_desc: A pointer to a function that generates a string descript=
-ion for
-> > + * a given parameter element.
-> > + *
-> > + * This macro initializes the @test's parameter array data, storing in=
-formation
-> > + * including the parameter array, its count, the element size, and the=
- parameter
-> > + * description function within `test->params_data`. KUnit's built-in
-> > + * `kunit_get_next_param_and_desc` function will automatically read th=
-is
-> > + * data when a custom `generate_params` function isn't provided.
-> > + */
-> > +#define kunit_register_params_array(test, params_arr, param_cnt, get_d=
-esc)                     \
->
-> I also might slightly prefer params_array and param_count here instead
-> of params_arr and param_cnt. Again this is definitely a nitpick so up
-> to you.
-
-I will do params_arr and param_cnt in v2, it definitely looks better.
-
->
-> > +       do {                                                           =
-                         \
-> > +               struct kunit *_test =3D (test);                        =
-                   \
-> > +               const typeof((params_arr)[0]) * _params_ptr =3D &(param=
-s_arr)[0];                 \
-> > +               _test->params_data.params =3D _params_ptr;             =
-                           \
-> > +               _test->params_data.num_params =3D (param_cnt);         =
-                           \
-> > +               _test->params_data.elem_size =3D sizeof(*_params_ptr); =
-                           \
-> > +               _test->params_data.get_description =3D (get_desc);     =
-                           \
-> > +       } while (0)
-> > +
-> >  // TODO(dlatypov@google.com): consider eventually migrating users to e=
-xplicitly
-> >  // include resource.h themselves if they need it.
-> >  #include <kunit/resource.h>
-> > diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-> > index f50ef82179c4..2f4b7087db3f 100644
-> > --- a/lib/kunit/test.c
-> > +++ b/lib/kunit/test.c
-> > @@ -337,6 +337,13 @@ void __kunit_do_failed_assertion(struct kunit *tes=
-t,
-> >  }
-> >  EXPORT_SYMBOL_GPL(__kunit_do_failed_assertion);
-> >
-> > +static void __kunit_init_params(struct kunit *test)
-> > +{
-> > +       test->params_data.params =3D NULL;
-> > +       test->params_data.num_params =3D 0;
-> > +       test->params_data.elem_size =3D 0;
-> > +}
-> > +
-> >  void kunit_init_test(struct kunit *test, const char *name, struct stri=
-ng_stream *log)
-> >  {
-> >         spin_lock_init(&test->lock);
-> > @@ -347,6 +354,7 @@ void kunit_init_test(struct kunit *test, const char=
- *name, struct string_stream
-> >                 string_stream_clear(log);
-> >         test->status =3D KUNIT_SUCCESS;
-> >         test->status_comment[0] =3D '\0';
-> > +       __kunit_init_params(test);
-> >  }
-> >  EXPORT_SYMBOL_GPL(kunit_init_test);
-> >
-> > @@ -641,6 +649,22 @@ static void kunit_accumulate_stats(struct kunit_re=
-sult_stats *total,
-> >         total->total +=3D add.total;
-> >  }
-> >
-> > +const void *kunit_get_next_param_and_desc(struct kunit *test, const vo=
-id *prev, char *desc)
-> > +{
-> > +       struct kunit_params *params_arr =3D &test->params_data;
-> > +       const void *param;
-> > +
-> > +       if (test->param_index < params_arr->num_params) {
-> > +               param =3D (char *)params_arr->params
-> > +                       + test->param_index * params_arr->elem_size;
-> > +
-> > +               if (params_arr->get_description)
-> > +                       params_arr->get_description(param, desc);
-> > +               return param;
-> > +       }
-> > +       return NULL;
-> > +}
->
-> I also agree with David that it should definitely be considered: 1 -
-> whether to utilize struct kunit_params for the case of using
-> KUNIT_ARRAY_PARAM and 2 - whether the user should actively input this
-> function instead of setting generate_params to NULL.
->
-> Another idea that just popped into my head is if we have access to
-> struct kunit* test now in all of the generate_params functions,
-> instead of setting a "desc" could we just set the test->name field?
->
-
-Utilizing struct kunit_params in KUNIT_ARRAY_PARAM is a great idea
-as that would mean greater test plan availability as well as the consistenc=
-y
-of storing parameter array information in struct kunit_params.
-
-To the second point, I think the user being asked to explicitly input
-kunit_get_next_param_and_desc if they are registering a parameter
-array in param_init is a good solution. It would make the code easier
-as there would be no extra logic happening behind the scenes.
-Moreover, we would always know that if it's a parameterized
-test then the generate_params function is not NULL. The only thing
-is that we would have to document it really well.
-
-Another potential solution could be to assign the
-kunit_get_next_param_and_desc function to generate_params
-in the  __kunit_init_parent_test function that runs param_init, if we
-keep its run before we determine that a test
-is parameterized (I know you commented on this here:
-https://lore.kernel.org/all/CA+GJov5R2GnBfxXR=3D28vS3F4b1E-=3DWLDXpgdJo0SpK=
-AXb1dpsw@mail.gmail.com/).
-
-__kunit_init_parent_test could set generate_params to
-kunit_get_next_param_and_desc if generate_params is NULL
-and kunit_params is non NULL, after the param_init call.
-What are your thoughts?
-
-Finally, utilizing test->name could be something to do in a future patch.
-First, we wouldn't need to pass char *desc as an argument to
-generate_params and second, the variable naming would be better
-as we are using the test name for KTAP output for regular tests.
-The downside would be having to change existing implementations
-that use char *desc and to explicitly specify to use test->name to users.
-
-> > +
-> >  static void __kunit_init_parent_test(struct kunit_case *test_case, str=
-uct kunit *test)
-> >  {
-> >         if (test_case->param_init) {
-> > @@ -687,7 +711,7 @@ int kunit_run_tests(struct kunit_suite *suite)
-> >                         /* Test marked as skip */
-> >                         test.status =3D KUNIT_SKIPPED;
-> >                         kunit_update_stats(&param_stats, test.status);
-> > -               } else if (!test_case->generate_params) {
-> > +               } else if (!test_case->generate_params && !test.params_=
-data.params) {
->
-> I agree with David that it is helpful to have one check for whether a
-> test is a parameterized test rather than two. My instinct is that if
-> test_case->generate_params is NULL it should be safe to assume the
-> test isn't a parameterized test.
-
-Agreed.
-
->
-> However, as an alternative or even as a helpful addition, I like the
-> idea of a simple kunit_test_is_param function that can pass in the
-> test and it will return a bool whether the test is parameterized or
-> not.
->
-That could be a good idea. At the same time, if it remains true
-that generate_params being NULL implies that it's not a
-parameterized test, I think a simple check would be enough.
-
->
->
->
-> >                         /* Non-parameterised test. */
-> >                         test_case->status =3D KUNIT_SKIPPED;
-> >                         kunit_run_case_catch_errors(suite, test_case, &=
-test);
-> > --
-> > 2.50.1.552.g942d659e1b-goog
-> >
 
