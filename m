@@ -1,174 +1,131 @@
-Return-Path: <linux-kernel+bounces-760731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9A8B1EF58
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:19:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90259B1EF5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4E27222E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40181C27A61
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E0C222568;
-	Fri,  8 Aug 2025 20:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E522343C7;
+	Fri,  8 Aug 2025 20:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izoAwczS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ftvagsDA"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7411F2BBB;
-	Fri,  8 Aug 2025 20:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977B621CC58
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 20:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754684366; cv=none; b=P5qOPbuBymuBc3C6LfL7LbT9nVuDS3k52xZ3Mxst/9k8jESLjbFYFOy1/83mS2Rti0ZGblFlBaef2B+fU4PwRD/4894yZw1/grecemVxi+smb1fe8ZdaOYzmY9TonDv5pK8SsLCbtGtoPN2jv36wvJF3cXyhRH7Xkbe3zJJv0WI=
+	t=1754684438; cv=none; b=goO04NQ5B3/72DnewC95FVPE/uFUC2avFZz4cfnXIzw2anpk1582ERR4H1AolfmC/GNmIIbiCqQMkqq5jyNXwzLBltcXOYvWHFCa1VTVCU1MXHEO/h8f9ZyomOLq++flhu8XlFsf7DMuXPpJ1H6+Gfcy9uVAab5DgfTbHSpQ6WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754684366; c=relaxed/simple;
-	bh=pWKT3K+8gMimKus0ATVq4Jop8KpQJ6hmcDT9wrHbZ8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FigjjdjaY4h/6ZDZNVIuGuzR8U+itkWdmKMyAMqx5rZXT27XziOG17wjRiV3Y/EjnjzmzZg5f4ep/H4LCQVGPTVWfxaomtmaGlGERAU3yCzgWWiVZL5tGaWA2G5HbjvkNXzffKpz93b8pTw68XSkXODYmSw60YYp2+WY8k1klA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izoAwczS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96C08C4CEED;
-	Fri,  8 Aug 2025 20:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754684365;
-	bh=pWKT3K+8gMimKus0ATVq4Jop8KpQJ6hmcDT9wrHbZ8g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=izoAwczSMZFX47afiSPZBAQxHlyNlYQuLrRqGMa5uI7r+s7zciC2B9OWQs8sK3J4G
-	 RRWqehMm+S+T+E84v3v5JMtOw3+An+yJWb+FKUmHmFBJe26Nevdp2ubTNCiJa478IO
-	 EL8sX7iT2fguwMrYq+oe8Pauxc7lHWPHMsZlfcq+9VeukQIu8gJiDJBzyokzLOTNw9
-	 MDEq3Gw4Yc47P7aw/BBCWXnbrciJ8AWKfCn10QVuVUMTITuQgS856tgp1glII6k0dS
-	 XV0/LlXf0k4aYDWz6n66r3rf6yrS/NQjdSjN+3ah3V0pTrKvKmCzekEYDwnuMR8ZbS
-	 pSemDHlh0UiJA==
-Date: Fri, 8 Aug 2025 20:19:24 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clocksource: hyper-v: Prefer architecture counter when
- running as root partition
-Message-ID: <aJZbzDgIHR7_dowJ@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-References: <20250807165846.1804541-1-wei.liu@kernel.org>
- <SN6PR02MB41578685EF8F664D77DF2156D42CA@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1754684438; c=relaxed/simple;
+	bh=xCzcDEPseUj6dwEakDSVeahmG75Mdil8GGbmQtbGq1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QMpFgU2D61y4C5lim4WQxkLeEf3e7fji9XwLkBbB8jfa+rcp+clLS34ooVXShUFFmV6eUoAWEp17H5sKS048/CIPMJWmHjKFPyrGwP/y6IEhq4l58EdkFlm+Mx+fkRF0RtmsOI/CeVUHo0279w/8wehaOEMho4Tb95w9B4G2Fvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=ftvagsDA; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4b06d6cb45fso31336301cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 13:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1754684435; x=1755289235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pQYa91kkeSfQG6Jm1FdT+mkrUk8mk+nsXZw2Gvf2uBM=;
+        b=ftvagsDAfbPb8S4pSEKEvhXWuW0NCQzJne+7o3Np+qkVGAM4u5YEUlabGgmTKSgXzM
+         NjG8uJYs4fgWiWJZQiil0in/jrqe1dvQdgati1dJClHgDTpvvq7Gn3AWj13VqXxpiary
+         DlILjO4h5Rj85t7wiL0h5FR75Bgq/+oHKDqqXXdIMLIazCZkGkhoC1mfFZs3hgSjtitL
+         vVDZz26fcXwRyxHCluLIte/0z1yKizDQld3ORVyn0iaEEPQdNDw4UKgk86MI77YlpvOR
+         KN9W23+bj/CLEKwsqf8pNOMKsUc0O2rmpWv17bfmsrFSGmhpSITmC/DV2FBAelRYzQcg
+         ELhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754684435; x=1755289235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pQYa91kkeSfQG6Jm1FdT+mkrUk8mk+nsXZw2Gvf2uBM=;
+        b=xS5zVOeRqde+4XMxRCFQPH5ehb2J6IYQf535IqcbabL6V27yfYOim5Ndt4Dya6uxYK
+         O4p2Fp+AKkGJcsroDMCfdxbqQU7GVp0cSEzcu/T88QBXBj+xZg7qQ2Ra67b2dKoazM6y
+         yvpkRYm0RdPCPIig1hxoBX3V+DhxOH6MvxXp4fKtoHh1tdUtEcQnbUX9pPXQ41BrATkv
+         3WIKfPgUjAh7OwQro5hbcghg9ASRRwLKGwqEM4sHx2/0CqNY0Yq7BSpqiKSFrjtVIpWr
+         czniRcxTXRYMFat7k5YNI6BpKjj6Z3J6rYpik6VZUGDAhce3OjVe4xYfBWBIYHawntH4
+         59GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCPAHlrubU19I86ux4KSo1CiKjdsimaEvuuzdZJUVOz/a6h92BVnXzlvAq1c6BTHT30iOSceUOtZNxntA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwNaa12KDhU7yTF4VsX1z/oKeZgQaZ9EaED6OBmHO57pRFIeAN
+	WaqX9H14UCFqcw5IXdMiw6uBuuliwWEYXC9PdlSg6wjzFk7FZHYM3EoTaXKGEF3t24x89T2NMlh
+	+GyUx6ZUqWI4eGOZULuiP0RdkKXbMXtQcm/rama1IzQ==
+X-Gm-Gg: ASbGncvqZOZWxlL9bg0s2Tq8y1LHFXyH9S/pglLZ7hBQ6cQVgEqd4bPwp0tciEs/1SH
+	vjcB708WqGn190qOdQwlCZgGuUNqg7V8/NC7Aikr0tyaKCNwu4JAjgXjlXN2yvX/Xv1KdDqXw0h
+	Wg9n/WpiVo7vav5qECOKt6H6Xld4IRlNvcET/IJqKfnfEThiRYnnRklSBMDjbkAtvp2RPgQNHsf
+	uOX
+X-Google-Smtp-Source: AGHT+IEo3U6rdysgoF2C0xCMhrgpG0Agqof6n2ba9uwRUTWht+9WRzi5tte7RjhfTHV9iSsZvxQedOnK/ZZyoy8est4=
+X-Received: by 2002:a05:622a:1a0a:b0:4b0:6cef:19d2 with SMTP id
+ d75a77b69052e-4b0aed031fcmr51001501cf.8.1754684435323; Fri, 08 Aug 2025
+ 13:20:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB41578685EF8F664D77DF2156D42CA@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-2-pasha.tatashin@soleen.com> <mafs0o6sqavkx.fsf@kernel.org>
+ <mafs0bjoqav4j.fsf@kernel.org> <CA+CK2bBoMNEfyFKgvKR0JvECpZrGKP1mEbC_fo8SqystEBAQUA@mail.gmail.com>
+ <20250808120616.40842e9a9fdc056c9eb74123@linux-foundation.org> <CA+CK2bCVziiUZzdGaEabmPSB4Dq41QZe7gVxtgwy4pWmpo=D_w@mail.gmail.com>
+In-Reply-To: <CA+CK2bCVziiUZzdGaEabmPSB4Dq41QZe7gVxtgwy4pWmpo=D_w@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 8 Aug 2025 20:19:58 +0000
+X-Gm-Features: Ac12FXymO_RsH5GAn7D-2QfHaIXjJtVjSwQOC9gpco0na8ETzrHiY720l5D8Qt8
+Message-ID: <CA+CK2bBjpZLiqK_63L-o+vxotz5fTUMpO4NgUaJ=sEV72qGyqg@mail.gmail.com>
+Subject: Re: [PATCH v3 01/30] kho: init new_physxa->phys_bits to fix lockdep
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, tj@kernel.org, 
+	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev, 
+	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com, 
+	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org, 
+	dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org, 
+	rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org, 
+	zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
+	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
+	witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 07, 2025 at 08:27:32PM +0000, Michael Kelley wrote:
-> From: wei.liu@kernel.org <wei.liu@kernel.org> Sent: Thursday, August 7, 2025 9:59 AM
-> > 
-> > There is no HV_ACCESS_TSC_INVARIANT bit when Linux runs as the root
-> > partition. 
-> 
-> Some clarifying questions here: When you say "there is no
-> HV_ACCESS_TSC_INVARIANT bit", does that mean that bit 15 of the
-> HV_PARTITION_PRIVILEGE_MASK is just unused and undefined?
+On Fri, Aug 8, 2025 at 7:51=E2=80=AFPM Pasha Tatashin <pasha.tatashin@solee=
+n.com> wrote:
+>
+> > > Thanks Pratyush, I will make this simplification change if Andrew doe=
+s
+> > > not take this patch in before the next revision.
+> > >
+> >
+> > Yes please on the simplification - the original has an irritating
+> > amount of kinda duplication of things from other places.  Perhaps a bit
+> > of a redo of these functions would clean things up.  But later.
+> >
+> > Can we please have this as a standalone hotfix patch with a cc:stable?
 
-The HV_ACCESS_TSC_INVARIANT bit is still defined, but it is always zero
-for the root partition. I can modify the commit message and code comment
-to clarify that.
-
-> 
-> And what is the behavior if the root partition writes to
-> HV_X64_MSR_TSC_INVARIANT_CONTROL? In a normal x86 guest,
-> HV_X64_MSR_TSC_INVARIANT_CONTROL determines whether
-> CPUID 0x80000007/EDX bit 8 is set. What will the root partition see
-> for CPUID 0x80000007/EDX bit 8? Whatever the underlying hardware
-> provides? See also the comment in ms_hyperv_init_platform().
-> 
-
-The root partition sees whatever the underlying hardware provides. It
-doesn't need to write write to that MSR.
-
-I think it should be fine to skip the code in ms_hyperv_init_platform().
-
-Thanks,
-Wei
-
-> Michael
-> 
-> > The old logic caused the native TSC clock source to be
-> > incorrectly marked as unstable on x86.
-> > 
-> > The clock source driver runs on both x86 and ARM64. Change it to prefer
-> > architectural counter when it runs on Linux root.
-> > 
-> > Signed-off-by: Wei Liu <wei.liu@kernel.org>
-> > ---
-> > Cc: Michael Kelley <mhklinux@outlook.com>
-> > 
-> > Pending further testing.
-> > 
-> > The preference of architectural counter over Hyper-V Reference TSC for
-> > Linux root is confirmed by the hypervisor team.
-> > ---
-> >  arch/x86/kernel/cpu/mshyperv.c     |  6 +++++-
-> >  drivers/clocksource/hyperv_timer.c | 10 +++++++++-
-> >  2 files changed, 14 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-> > index fd708180d2d9..1713545dcf4a 100644
-> > --- a/arch/x86/kernel/cpu/mshyperv.c
-> > +++ b/arch/x86/kernel/cpu/mshyperv.c
-> > @@ -966,8 +966,12 @@ static void __init ms_hyperv_init_platform(void)
-> >  	 * TSC should be marked as unstable only after Hyper-V
-> >  	 * clocksource has been initialized. This ensures that the
-> >  	 * stability of the sched_clock is not altered.
-> > +	 *
-> > +	 * The root partition doesn't see HV_ACCESS_TSC_INVARIANT.
-> > +	 * No need to check for it.
-> >  	 */
-> > -	if (!(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
-> > +	if (!hv_root_partition() &&
-> > +	    !(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
-> >  		mark_tsc_unstable("running on Hyper-V");
-> > 
-> >  	hardlockup_detector_disable();
-> > diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
-> > index f6415e726e96..59c3e09f1961 100644
-> > --- a/drivers/clocksource/hyperv_timer.c
-> > +++ b/drivers/clocksource/hyperv_timer.c
-> > @@ -534,14 +534,22 @@ static void __init hv_init_tsc_clocksource(void)
-> >  	union hv_reference_tsc_msr tsc_msr;
-> > 
-> >  	/*
-> > +	 * When running as a guest partition:
-> > +	 *
-> >  	 * If Hyper-V offers TSC_INVARIANT, then the virtualized TSC correctly
-> >  	 * handles frequency and offset changes due to live migration,
-> >  	 * pause/resume, and other VM management operations.  So lower the
-> >  	 * Hyper-V Reference TSC rating, causing the generic TSC to be used.
-> >  	 * TSC_INVARIANT is not offered on ARM64, so the Hyper-V Reference
-> >  	 * TSC will be preferred over the virtualized ARM64 arch counter.
-> > +	 *
-> > +	 * When running as the root partition:
-> > +	 *
-> > +	 * There is no HV_ACCESS_TSC_INVARIANT feature. Always prefer the
-> > +	 * architectural defined counter over the Hyper-V Reference TSC.
-> >  	 */
-> > -	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
-> > +	if ((ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) ||
-> > +	    hv_root_partition()) {
-> >  		hyperv_cs_tsc.rating = 250;
-> >  		hyperv_cs_msr.rating = 245;
-> >  	}
-> > --
-> > 2.43.0
-> 
+Done:
+https://lore.kernel.org/all/20250808201804.772010-1-pasha.tatashin@soleen.c=
+om
 
