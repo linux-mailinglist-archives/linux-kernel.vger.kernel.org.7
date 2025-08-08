@@ -1,161 +1,157 @@
-Return-Path: <linux-kernel+bounces-760160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460D3B1E734
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:27:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980FEB1E73D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150BB1C20AFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51DBE17E9B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6152B274FD0;
-	Fri,  8 Aug 2025 11:24:34 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB75D27585D;
+	Fri,  8 Aug 2025 11:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fN9GHOOf"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EE2274B56
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6983F275851
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754652273; cv=none; b=f/Vo1T7zjql9viWHVoUdVnLvMQHbtxQ/p+3eo9PUIwNaAU8e8LJ8h6eEoae0wgOOwUgtQWukpIupsRTTGeOajM+JgasZWb5gmDSqSQfGtukdEL82I6eSOr+4U7BP4C0UEINmCB/RAsbTrzuGWlytCqMtezFiEZk6mw+Z4ScfXgM=
+	t=1754652288; cv=none; b=TCgXOeaTPj8zRDijm+2XorcB99Z193hxXA/W/1/6jleD3pXIQNUibN+oN0QrTtawMihM4vwEogU2MmoIPDo1vDyKeQnNK1NITH5uOGAWSR7Tcc0OSk9Q0z8Dw5mYhgw6rkaIRiW85fWI4K0wJSFZGdVnkcRLB04q1ncDcRCRbBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754652273; c=relaxed/simple;
-	bh=zmdaemnzI6Dweo/PE+lpJKXaYs9qBfUp7ZJH2qFe46o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LKJHFniqHlAX+cF7CTghFbBHY0gdexuNIFMkPjDlf3HGN/TdYVlJsbx9Y6dosyP4DO0ONuS3ehcNAR041SmL0bA9UUm10ot62hJagvDudJ0ZmQEaPCUtz1A5ASYoacmqaJBsAUAX34ZUkwLOs/GBljVo48zxmllV8FaMoh/FBJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e3f0a3f62aso47002025ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:24:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754652271; x=1755257071;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1754652288; c=relaxed/simple;
+	bh=tdqmTZskz+yQCU0OtNWJ7hb3SLauZy7LX8Gd3jyLS4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VEx1IL87a6r5AjmCrOPhXuO1tsC3LKjVF94NmlAQsg48/8YTUpf/eHwgSxmFKA1dMcIDRE+sOKeFWc2s9qMRlf5nKL6Z3p7Tum97eeHnRuACeBjMEHXx0h1HrvV9tgNywhsIB0WNcVqqEi+ZuIGFAvpQ5Rvqj99l/Id/70UIjrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fN9GHOOf; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-459e1338565so18589085e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 04:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1754652285; x=1755257085; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2uIUGDiVBEDnqS5buaD8/8+TR/c5UVNJJj0BUK+zU5c=;
-        b=KTenDKYdWr1fovzaal2FOzLwMf49gMUrbJxIfCXyBg29PaEks8ObQ9ag0oLQcjfbcG
-         3Z7g/SeZ5fyF7y3RuAS9HwErxuhHIzvrLu+0r42459uA8ebkFgabvsDaoea15W5qkDYN
-         l0RCIBcDqVA5qz+HUBeWEm53fAHFnwCqxZ2znfCQYZoGJhkh6BCsFYbwTtQl7nZO+und
-         7bzQtErGBDxHDjPyKMPbEj3C5pYpOsWJAt6ColMNbyNQMkeYxXveRXnWtTlwQuEdhkle
-         Olqt+/uVv+uxD1OOnYgBNYxNKnBKVf3D05DMReN07Klhe1q8SXD7JW0374z53t9pFJD9
-         eAow==
-X-Forwarded-Encrypted: i=1; AJvYcCW0GvEyFh9vD1xBinVfE7114mTHUXgT3lPohX0tRe25/aBXSN40oV7AwCiP7CQ3QCtlj6WcH8S4ot5ROgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkbKPB1n2B1xnNHpYWTd2vmQfHPImHPvoOAkuVf2bKmTKbY3jj
-	D8XrvT6KXZMbTHdWjxig2AtB9wA8PNBiHKMC5qYqIDhG//FiDL5eEYiyymXo2+CqoyOGQG/Y0i9
-	nd+6R2HpcmemB9eD1C+dT59pZ4Pgvcqy04qR5NNvFfzyI3qxHT1brpMmfvr0=
-X-Google-Smtp-Source: AGHT+IH6IsH6YZeuvtQQE7tRPQJFSp+r4/taKPwvfvWUv2+BNPSKtSSP2mG/JBrssv/9onz01Az0+fpaid1bcPRnSDzs+hdsXdiv
+        bh=WDaDKFrE9tePMwqIpXfK3gAKisGxx+wlPAiFTrZ+JsA=;
+        b=fN9GHOOff3ZEYCkEguHUtX8uGA0gAEZF67S3H+eextsE/KrKMpS1HFfVm/Q/Hf8dSd
+         EaIz3Bxxa6hXvRNGpAjtqCgcNmT1nIwRJcZcI+Zhy0iO+tJ4HqxL7zo6W2PBxzGANZkv
+         NSk6tPHvj1kBAfo5igO9cOejjMtv9LsyVBMMMdeJw5Efe1gCCdNhhBLaDBUYcyZJYmWr
+         aIx7qnHovjrVuEm/BbShu2n9m5m2/y6zZdo0diZL3qyym22CfSBQHA77RpswFKDrqpF8
+         xxBwLfAm47whs8aXsUmU+mhcPHTlPIieoPS/VmvVQgQy8rYAJxDupii152uNWYHfVTj6
+         jKFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754652285; x=1755257085;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WDaDKFrE9tePMwqIpXfK3gAKisGxx+wlPAiFTrZ+JsA=;
+        b=H8+F+cxYGwtU7PRdSi5O0natJO+6f2HH/XoUxo7lP20usMWbPbmf1m9nPpsaJKaGoN
+         W2XK3hUwLI9FlbOMwsBHMJCWjjdzrseAXU4fd79tdC7HCVZFEKWQ07L+lzVGHRik8DGy
+         bQyzWv3iBD97EkrkLaQ1cVFqRqubUDlrbh5ky7nQi+A6Nfv+i9HVwMHtOmCw/QTyma7I
+         s3EsYiIa4NCprNIwjLlX5sVT5kdkZPSNuUr9+0g5y3v+G00H67Bk7UCSos8keMWPGxof
+         ShFZ9Ir9k+Pl6R1+iMBZs4OuqNEQNbAZgcq5rAaasO08mwtmMQIQDE1m6qeCiZhPvYzU
+         q2qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVt99nxTmZoqojVT5Xszyw6qSKig8OjdMTflPnkMMISKrf+SWOMfGgmXUmM6S3RksTzp/UHDYnSp4IK9WQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzobMdfwrbdH0ERnRiRtyiVrcCcr6vnrH3zOWgeJgQQ46f77qS6
+	EbI/5mdjn8AYs33bfFgFF5Qxj8FWNVWjdGckMs3Jazv55d0XYWZaiUVMF/8LMbRB6qE=
+X-Gm-Gg: ASbGncvYUM5POWMwG/2eSct992mlzAh4PrPz32i9Vt+f97HjPeIlLQac0P1xbDFE5fE
+	kWspSQH80IQmjWRcx6ua0ZJ1BfFMMogYDsomcWsKHW0U4n3a/K2SdNyTtWS0TNyWy/oSA7MHMgP
+	BuGSaH2K9r7T2eYHCPGUKBQ7fKVokOJy+VI9liRf7hNUqebF+xO8Mt/K9ez6MWyPaY5WpUJjtxv
+	3ilEEBPiPM2n7cjNN1BrVCrrBzuniM0+cygCzhMx+INIHa8ivMZILsHOSQUNN9wcljHo/qIhhky
+	Q7/6kRlaBXwGCH6Vctb50+xzusdpzNIFNJ6FZE76Y8GKG/1GenHy2huU8Kg2cW/FXk7C+WuuITr
+	MDQzCKhHYoiVcsYcMOFoEQsVuWcO5RGo=
+X-Google-Smtp-Source: AGHT+IGFc+AaIxGFA2SLKc1CBodgdE5FKKCWRuNF/M1Z18xEptVX+bZf7YDkhLJM8Nb3ewYalAQT8w==
+X-Received: by 2002:a05:600c:4f4b:b0:456:f1e:205c with SMTP id 5b1f17b1804b1-459f4e9df86mr24463835e9.4.1754652284753;
+        Fri, 08 Aug 2025 04:24:44 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.188])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e6867193sm128153435e9.6.2025.08.08.04.24.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Aug 2025 04:24:44 -0700 (PDT)
+Message-ID: <efdf5d48-c105-4e1b-8dbe-14706302aa2d@tuxon.dev>
+Date: Fri, 8 Aug 2025 14:24:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180a:b0:3e3:d1ef:83f9 with SMTP id
- e9e14a558f8ab-3e5330abcc0mr42119435ab.6.1754652270983; Fri, 08 Aug 2025
- 04:24:30 -0700 (PDT)
-Date: Fri, 08 Aug 2025 04:24:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6895de6e.050a0220.7f033.005d.GAE@google.com>
-Subject: [syzbot] [net?] WARNING: ODEBUG bug in __sk_destruct (3)
-From: syzbot <syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/9] arm64: dts: renesas: rzg3s-smarc-som: Update
+ dma-ranges for PCIe
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, catalin.marinas@arm.com,
+ will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, lizhi.hou@amd.com, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250708165540.GA2148533@bhelgaas>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250708165540.GA2148533@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi, Bjorn,
 
-syzbot found the following issue on:
+On 08.07.2025 19:55, Bjorn Helgaas wrote:
+> On Fri, Jul 04, 2025 at 07:14:07PM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The first 128MB of memory is reserved on this board for secure area.
+>> Update the PCIe dma-ranges property to reflect this.
+> 
+> Can we include a sentence or two about what the "secure area" means?
 
-HEAD commit:    7abc678e3084 Merge tag 'pmdomain-v6.16-rc2' of git://git.k..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b0a4f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12b5044868deb866
-dashboard link: https://syzkaller.appspot.com/bug?extid=d199b52665b6c3069b94
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a20f22580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12af2f22580000
+I'll update it.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8a9fc2a6bfdf/disk-7abc678e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/29375cef95f6/vmlinux-7abc678e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8148ffc5b47b/bzImage-7abc678e.xz
+Basically, it is a RAM region that is used by firmware.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com
+Thank you for your review,
+Claudiu
 
-------------[ cut here ]------------
-ODEBUG: free active (active state 0) object: ffff88807dcf7668 object type: work_struct hint: kcm_tx_work+0x0/0x180 net/kcm/kcmsock.c:-1
-WARNING: CPU: 0 PID: 6293 at lib/debugobjects.c:615 debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
-Modules linked in:
-CPU: 0 UID: 0 PID: 6293 Comm: syz.0.87 Not tainted 6.16.0-rc6-syzkaller-g7abc678e3084 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:debug_print_object+0x16b/0x1e0 lib/debugobjects.c:612
-Code: 4c 89 ff e8 e7 b7 5b fd 4d 8b 0f 48 c7 c7 a0 95 e2 8b 48 8b 34 24 4c 89 ea 89 e9 4d 89 f0 41 54 e8 da 93 bd fc 48 83 c4 08 90 <0f> 0b 90 90 ff 05 c7 85 db 0a 48 83 c4 08 5b 41 5c 41 5d 41 5e 41
-RSP: 0018:ffffc900021efb30 EFLAGS: 00010296
-RAX: f0e2d1323eb60c00 RBX: dffffc0000000000 RCX: ffff88802699da00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: 0000000000000000 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bfaa6c R12: ffffffff8a9e4d50
-R13: ffffffff8be29720 R14: ffff88807dcf7668 R15: ffffffff8b89dd60
-FS:  00007f6914e486c0(0000) GS:ffff888125c23000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6914e47f98 CR3: 00000000288b8000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __debug_check_no_obj_freed lib/debugobjects.c:1099 [inline]
- debug_check_no_obj_freed+0x3a2/0x470 lib/debugobjects.c:1129
- slab_free_hook mm/slub.c:2312 [inline]
- slab_free mm/slub.c:4643 [inline]
- kmem_cache_free+0x113/0x400 mm/slub.c:4745
- sk_prot_free net/core/sock.c:2284 [inline]
- __sk_destruct+0x4d2/0x660 net/core/sock.c:2381
- kcm_release+0x528/0x5c0 net/kcm/kcmsock.c:1731
- __sock_release net/socket.c:647 [inline]
- sock_close+0xc0/0x240 net/socket.c:1391
- __fput+0x44c/0xa70 fs/file_table.c:465
- fput_close_sync+0x119/0x200 fs/file_table.c:570
- __do_sys_close fs/open.c:1589 [inline]
- __se_sys_close fs/open.c:1574 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1574
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6913f8e9a9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6914e48038 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 00007f69141b6160 RCX: 00007f6913f8e9a9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
-RBP: 00007f6914010d69 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f69141b6160 R15: 00007ffe8d790a18
- </TASK>
+> I don't know how to connect this with anything in the driver.
+> 
+>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v3:
+>> - collected tags
+>>
+>> Changes in v2:
+>> - none, this patch is new
+>>
+>>  arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> index 39845faec894..1b03820a6f02 100644
+>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> @@ -214,6 +214,11 @@ &sdhi2 {
+>>  };
+>>  #endif
+>>  
+>> +&pcie {
+>> +	/* First 128MB is reserved for secure area. */
+>> +	dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>;
+>> +};
+>> +
+>>  &pinctrl {
+>>  #if SW_CONFIG3 == SW_ON
+>>  	eth0-phy-irq-hog {
+>> -- 
+>> 2.43.0
+>>
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
