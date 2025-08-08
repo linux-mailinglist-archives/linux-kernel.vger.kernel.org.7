@@ -1,372 +1,282 @@
-Return-Path: <linux-kernel+bounces-759975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F541B1E524
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 10:59:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE1EB1E52C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481A41892EDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A66E3BBE37
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3788A266EFC;
-	Fri,  8 Aug 2025 08:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107A826B76A;
+	Fri,  8 Aug 2025 09:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="CDs8LWOb"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012064.outbound.protection.outlook.com [52.101.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0kkV5N7"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296FE25484D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 08:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754643583; cv=fail; b=CBamsbi0Pg3QyEtNuvMLOrMUpMTsQBLPcxeWtPzN1GeDUP0qs84x/WOzsYE3u7TGNL+ZKzbmRf++cKu3/krD/+CobuTvOg558IabLkj+uhjzmFZxBM6P1PKTghKKKG1fkouv3ZKhc+NhDOTA2T1lrzMmkrYkToMKqdp770NxRQc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754643583; c=relaxed/simple;
-	bh=Ffd/s9jD2Vkj1E4TAt+1cJa3pJpz+kG3PllAvYull/c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xp+QlkSQxji/Wq/ybQcL1NaxH93JTB9FYIysDTh3I8526DkFGSIEhzu6wIhVtukS3WXDF/fuSt9zgBRE2qAnVF9BrwQikNZ5/kRrjy/o/H6J1TpuUyOUc5fKRUt/wBon4KyhVsnLkVzxodg31Jd5DCXBXvw9py0SBF5y1rffmXE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=CDs8LWOb; arc=fail smtp.client-ip=52.101.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e8kQ55ZWsYMvVwOMewiq3cPkLJPRFHWYM+fQrra0mU6sQ+Loo7y7DiHLagoSyGVCs8mon0xoe/h+sWNOd7zU/n3lS4VaeC4StWG6vQC5eWKSPiSlQNLF4zhMZJB/cKoTu/tU1iKOxriAGhC+7xlr0DNM8mm0OuKjqr/C4z/VbHT5H3myAwjZvx5Jv/MLD5/3aMLnuLG8XKVSPtLpvT5dIOOhlBdkSHwdIuh6hpogQ4g6w64l7cwsFljsBuLaSHktyyfW/3p/vuEQQWAowVWZInSJElJceqksU3lxefdAUfNUO1NfAbgsK5eAtMWzl0IhpnqZ/io03KERI2ZbQwCYsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=35vnqT0Pwb7/ULCRChoERa/pUTomL/D4RodpISeDTdg=;
- b=daS8BgO7qz2xkUi+mLwdYE4O4EbSd7hrUBKrRCXNJYsIIBpZ+PgUgqW35G0OCPDo/I9eWlDEdMVeS+BXEhzy5C5o5mIyCCDKwK0AwYXDmHmlvKPdmsX5R2dyAEg2AnGb4pxognLYNk/ndSEldJOMbYuZCkHFEulIzuIuydk5/PS4UxhCDdciH3ODYm/X55PYxeVTU6txHeJf5kF4xa6p7E37awAIfOzUIVRjmPxXuO4gWzy+z/Y7BU2RQznBIv3xrOqbRZgeyVEbg0iPXOA84xavyPk0KXqGgTRmq25i/Ma2E0zUBQWMq8HoqOKWOumMk2byO8W9Fv1yoG3nwFZpYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=35vnqT0Pwb7/ULCRChoERa/pUTomL/D4RodpISeDTdg=;
- b=CDs8LWObWKvyd5HtASoley4oj27xL8mrRc92PN/VF3dPuvuWwhqm9PVeRPXHwr5EVilU/FiyGv4FK5nyKNrsX7NXjxDV6h4NIEqQ/RNuntV0b94g5uswtSBlzkGlUXmwzeZ7EEZCHFIILmizJss2Yi1dFm8QteGxKB+sxI/KmWwknAHZv3iEK06dk0Rq6Ru4ZE3n3gr/Sz7pAjetgb5AKNSJJhsaK6gKySWx9IWpS0jUtakdLcUWZ5INnJBWmAodfbELUeY5xh+UlqOCLcoazygJchSBcphTs+B5J5WSsQNat/hRXPwMeaYynZsdlVOGEDSAXZoYkypfh+9B+nIf6g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TY0PR06MB5579.apcprd06.prod.outlook.com (2603:1096:400:32f::14)
- by KL1PR06MB6041.apcprd06.prod.outlook.com (2603:1096:820:cb::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Fri, 8 Aug
- 2025 08:59:38 +0000
-Received: from TY0PR06MB5579.apcprd06.prod.outlook.com
- ([fe80::4f2:e048:7c93:f263]) by TY0PR06MB5579.apcprd06.prod.outlook.com
- ([fe80::4f2:e048:7c93:f263%5]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
- 08:59:37 +0000
-Message-ID: <ef339cbb-5179-4c4d-9315-d331e3a8f31d@vivo.com>
-Date: Fri, 8 Aug 2025 16:59:35 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] f2fs: Add bggc_block_io to adjust the priority of
- BG_GC when issuing IO
-To: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20250808072939.202357-1-liaoyuanhong@vivo.com>
- <459de7d9-970a-4921-b16d-d8ee658f86a8@kernel.org>
-Content-Language: en-US
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-In-Reply-To: <459de7d9-970a-4921-b16d-d8ee658f86a8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCPR01CA0032.jpnprd01.prod.outlook.com
- (2603:1096:405:1::20) To TY0PR06MB5579.apcprd06.prod.outlook.com
- (2603:1096:400:32f::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6818825EF90;
+	Fri,  8 Aug 2025 09:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754643627; cv=none; b=Dj+3jW72mOEnpEbaMIW3NFeLINOnJK9Kptz9DFkF1+x4+zPTgk167KzGz01ademJVp83Kynw2NeMRmHL0XmG2tWudVSH6/G5VQyPPfKbPwb0kdHs4cpoSh+SLAgkTQYWuMaosq40HH3AJhiX22S0BJmAXmZhOzacCnXJEcyUA3k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754643627; c=relaxed/simple;
+	bh=GL2ZrboJ9iHfDfAE0NcP4l10BIigsRXNQYX1hN5Y720=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8WKMlfbRgTRLVF2NDsPN4SNK/XgHkNG1comVMdbZm/xVcLRBus5DnWK/KdQ6hy3YZDfuo52pAWn9L3IUYnWkr7RZPtRk+NO9m88NR3Z1q736EAwkkeYNKn7F1KOMPgjTTYSA9UFXOsdYAOgZXkHMvA9A+Sfm334Nnov9+GqJgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0kkV5N7; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af937728c3eso492434566b.0;
+        Fri, 08 Aug 2025 02:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754643623; x=1755248423; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=k8rdjH+Db+Fz5b710nahZQZSQrrrT57SDbAIyGOmM94=;
+        b=d0kkV5N7S9ndL7IgUoL68X1EW4S7leq0xKbH2PVLwJnHowHiV7YMR6+V/zNRaTqg4t
+         5p1N9qCnLqcI3gsJdn2ysZGunOQcquDANRTE+yisPHu2xG4KdvHZrS0kF7vqyeNyYPb1
+         qa2zrIjgli1SK5QpVZK3f0uOyj50QF2wwYnWexrdqs5Wcjt5RIS5Mho2YPkJJvXCbTju
+         WDB5ix3pVGvElkBrf4bh4+1GjqwPUrCcNyTe39GIdUCnA6uXxRtZ1ojJn3l9BHnZlzjP
+         lHuEJSHW0Bu/5NF+2UNEyMQcWsjZQWz+nJHsJzwQrvsf55JzDkZRF9GbSf0pjzyDTvLg
+         R6Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754643623; x=1755248423;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k8rdjH+Db+Fz5b710nahZQZSQrrrT57SDbAIyGOmM94=;
+        b=HvIP1QBe7FGmbuaA0t9+g8OUZP4M6AvUTNF4ms2IBPVZkPHWZCKjinnoaRm6u5xkkH
+         glyoGg2xHPxD8wgZqpiRRniQav5TlGJIzTlxbPTBQm/oN9wX7ZMA3ilouhOlCdMXZbb/
+         BTpzcG4ole6nMyy5ZCr/u4InuCjZwaQ1Kqc4m0yX1vBfBBOMudx8Nj3xeCJpdUetGRtO
+         DqccDGut8Z/UixsnW1T2a0A43QQyk3QH77qowrGQbUraNthprHnTD/Lx9NzyJNiHCL+r
+         PqDXByT8EvuEzPPUh+ey/tN7xUIJcBQ/xzVqZH7JYN5qCygDePHl3+8E9TupX9iuhA6F
+         C69w==
+X-Forwarded-Encrypted: i=1; AJvYcCUE56uR80nvxXxigsCDhS6tZC5ZjRoSaLbzGhs73Nj6/lrjdKikG+iYVLjC589iZE+UG46Q3Mns9xeK@vger.kernel.org, AJvYcCVjHHW2xmeSbz/0Ca4npDuCq4OBgDwh2JMUm9/6oPrZqi78rcLuMsebMJcM7xspTxxavt1dZXh9zRio@vger.kernel.org, AJvYcCW5IHx+M6+qv8AgJ84Y/+kZ5hRWGOJzKVqO7Vx1qwI8K1J0XpKD01Xkbv7jbwlldDJfnN3SVuHL1hl0wrrQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywp3QfWhaUUE5sIdZcIsbQOgFJkRlWIdzSOenA/cxKqQ5X5PBAW
+	/7ugeUFgwxKYctsMSCFXiXJiB8EAazdKxZWPCqnbiJhOuAj0PUMepJlD
+X-Gm-Gg: ASbGnctWF/iMpGIOeGbvsecVtTQHU9cA5o/UbAVuctIxQqlf3ASEtl9wqIewxsUYI7L
+	aWqb9j4J0IWczK+aBjsu9h7eKjNEA5FgOVIOlVdrRP/aRJPQ/FBSc2XOWwGSqvKUS6irI2+xeqF
+	jwAsrfPN7uNTuZVBTY2x/dIXGahZIqnzKwM2vBRSVUYKWB1G8StxKz6JKZE129hTkQVsOSla5Td
+	BlvK8Rl4ocM/U9hn4QbYRFxFA+Zd4FjkOCAVUojAAE4vqjykcanNWRV1t0ZGRIDHcu4BlrzDzzO
+	6gu/aPpkoElbe0N4r2Jqfw6H3CbtBqbcVJJ4VoFrmwPLNx5bIbdkRrWfPXgTGO6EthoU58RCSg5
+	hBaM6360+iHUMq7k3C1Js
+X-Google-Smtp-Source: AGHT+IHecywVS5Ip+72T+mjbLiYvwjd3kAV0wAjDP6j9FnxibAvP4+TjMFuGgQyhV1yEeCxPZmNa9w==
+X-Received: by 2002:a17:907:948d:b0:af9:21ed:6ebe with SMTP id a640c23a62f3a-af9c700b437mr176174566b.21.1754643623233;
+        Fri, 08 Aug 2025 02:00:23 -0700 (PDT)
+Received: from nsa ([185.128.9.3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a078afbsm1455962766b.4.2025.08.08.02.00.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 02:00:22 -0700 (PDT)
+Date: Fri, 8 Aug 2025 10:00:39 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] iio: adc: ad7476: Drop convstart chan_spec
+Message-ID: <t54tty4xbcsozeouoqmytdw6saedgoxbemnr2azbiv2f4h2wta@rf4fnooawrgs>
+References: <cover.1754559149.git.mazziesaccount@gmail.com>
+ <09bf5e7973c37413ada950741e6e09c375e37c57.1754559149.git.mazziesaccount@gmail.com>
+ <tc4od3jtqnj743naxefx5lxkha46wohuuvw46mik6nullvsqbe@knj4t23eaodw>
+ <ngcbj6p7vfakah5fqsxqjlmrcycpg5rxfrbh4s34fll2kb3zq2@eyesluawn5w2>
+ <076b7f07-e755-4fe7-84b1-f3f495978008@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY0PR06MB5579:EE_|KL1PR06MB6041:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5361a983-6ef3-4847-da10-08ddd659e6ed
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eFpZMnhBd2lxbFJ0WXdFNVlKc3MzNmVheGNpWHNON21abzV6T0FJaTNxd25N?=
- =?utf-8?B?OHZwYjd6RXczK2NpZ24zWnJoRGJEWDFZbFVjUTQ5dXFQSzRLMVRLKzdHN0FM?=
- =?utf-8?B?Z1Rkb0Fia0FRbEVaVlU2cWJMd205ek9YU0RBODV4VW1OdDM3WDhPczZWTnMw?=
- =?utf-8?B?MlJrVFBJRUIweFlSY2xoTUIzNFpzbDZtVTBtd2lyLzhPeXVvdDJ6ZmlrRTI1?=
- =?utf-8?B?cTlmcngrVlY1WUF0dFphNVZQa3RrcXM0dWtlTjZ6cnFWRXhvcXQ4emlrKzNa?=
- =?utf-8?B?bEppLzBrSzdyUlNSMW5tZnYwUHR3NkR2S1YxQ1BENXNtMVc0dEpUaVBOMDBs?=
- =?utf-8?B?ZVBIZFZGZkExbGU0MzJzZG5uZUYzQVl2cmVZNWJpMFc3dTZXL1Vya242eDhm?=
- =?utf-8?B?aWN6S0VmUU9va0FQZVBrWVJ5Q2syMW9pRkN4cVoyUzB1Zkw4ZE5nSzZxanQ3?=
- =?utf-8?B?Z3cxQmxzTGhvQ3VRS0sxQisyNkFIYWZaVER5RmxNSkNTei93c2p1T3N5Ly9P?=
- =?utf-8?B?dXlrd2xHN3BYM1JPOFliTlI2YlQxTkJSSmlVUFdEVlhRSmZtcTJSY2hmVFY1?=
- =?utf-8?B?VU80cFJxNFYyN05nZmNLR3Y5NHZxMlVLR1k3TkNrZlRiNkxvQmlZc2kzUDFE?=
- =?utf-8?B?UXRsU1dVWWVrQUVsaUZTNU9MbjhJMUJSejlvS2ppYTdnZDl1UG5NSjV3VEVz?=
- =?utf-8?B?N3BDV1I2andkekZ1Vy9SRG4vZmxXRDl0ODZmRVVBQnkyQVVHRHMrc0hucGNK?=
- =?utf-8?B?MG4yTS8wcDUxVUltV2JRZFdFS1YrblV6VWk3NE14ZE9tanF4ejdGWGNIMHhD?=
- =?utf-8?B?MFNJb1FJaHlhbnpjcXlmaS91TUpVYXdXUE4yMHVldmNQNzNaSzJRUGQ5cFZy?=
- =?utf-8?B?d3J1MC9Kc25NaitFTElpTitjOUx5Z3pnRmcwdUtZWXlLS3BRaWpyMjRPUjVY?=
- =?utf-8?B?OG85d0JEM3hFWGxMSlhEdXc4NW5TVExVM3p1aWxDUkY0NHArajE0UURyZE9F?=
- =?utf-8?B?dHBnU1VGdEtPVnYxVmFwTXhGeWRWTkVoS0srOVltKzkvZkpaZ2lCUklSWEtN?=
- =?utf-8?B?SlE2QlVXVjBwUmVpQUM5aW5JVmVYTGpORXFCMGp1MStHVnJQbklaYzQ5TnBT?=
- =?utf-8?B?eTVaTGlySVB4bTNsZnAxL21rVGg2M21TRE9MSDc2U3JpSTlkNVJ1bnUrOVhl?=
- =?utf-8?B?RmVDQ3VGRVB6dndhR1FnRlh0UkhibGRFSzVYZHpYUUdYaGVPaEZrS2w2Q3VQ?=
- =?utf-8?B?eXU2MUZ3SmlGYlVuM29zQk9Melk5dkhZalJ1RTBtNTBrUDh5N2ZwTXZsR1M4?=
- =?utf-8?B?ZDRjelVma2FmY2Q0MHg3SnUyVkkwUk44eGFkNVl1M0N4dGFtVEk2cWdKaC9Z?=
- =?utf-8?B?N000KzI3ZmlMSjJvNzg0dHA2UHNFTHNoUGlZQU50RlBaeXFsZmtlb3d1VlYy?=
- =?utf-8?B?U0tvc2l1NkI5U0pZYjhqNlVlS0F0VkNCWjZTV2gyUmMvL05QNDFZc1RaMXRl?=
- =?utf-8?B?UXNYVkZFeDhFTUQzVnIyRTlzem9hOFVPdnF5T01wMWRQYk9qNDhhaHh1UGFz?=
- =?utf-8?B?OVhVK2kzOHJUdnM0RklUWkNqWVJWRFdJRWtvaDNWWXZJTHJuWXFGc2FTY0NR?=
- =?utf-8?B?RUhpUm9wWHhjb1pvWW9vSVVEYlhDeTFoZ09Ra2lIUnlhZmM3bjE0N0RHTDRq?=
- =?utf-8?B?WkcvVmNpejJKSW52T2ZuRXNkQ2o3RC90S3dqLy93VjNpdVRxRHhvZkFLc0lE?=
- =?utf-8?B?SDU4UXRQd3hmS0RZRVRCRUJTUmF5cThxNGJuY0J1TWFBSlJuc05GSUtUWElx?=
- =?utf-8?B?WllGZWFVZjNhMFNvVm92M0VLTjRZeUQvVTd1Qm5DUFZKQWY4S0RydnR4MFJy?=
- =?utf-8?B?SXlqY0hiRm56WTVubWZhbkVhMkpuTEhiVGRtN2hsOTQrenc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR06MB5579.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c2h0UWJqVGxPR0lxY2RFK3RLZGpVc1E0Z1lzK2pRSGZ4bXBDVmpEMGNiUmN4?=
- =?utf-8?B?WU5LSVhwdC9EM3F6S1J3SGI0V3UyQ2NxR3JCUHR1TmduWVFmYitGRnhqSmpR?=
- =?utf-8?B?dUhoTXdBc2hhNWJSdWZTbzhtL0pzaDQxdS9iTTJZQXpGS0w3akt1WmhuTFlo?=
- =?utf-8?B?YzhDdm5pdkNSZ2IwZ25jcGZ0UFlEYjJuYkpVK2MybnZlU2dKdUpVdHU1Z0po?=
- =?utf-8?B?MCtleklBNWZEdUd2KzhJS1E5VHZFZ0hnRTRYRHduRnR5SlRqbHlORWU5TGY1?=
- =?utf-8?B?ODBrTVhZTVFyTlZvSGN1UFM3NUdJOFErZmM0VGRmUzlKNUpVOVlTU2NPMnlW?=
- =?utf-8?B?eHo2YjNjZlZIOUdtUSs2WEZRVzhBaTc4MDZrSUtyR04xVzlqV2ZuaWRqRWpK?=
- =?utf-8?B?dDNFMHNQTWpNQ0ZxUWhDU01iTW5kREh1WUZMSTVtNXVoUnBtU1h5ZUtlZzNa?=
- =?utf-8?B?eTkrWmxBazMwOElEMVBCNDJWMlZtSFlvdjRmNkxmMDRDV0VTMmhHUXdTa01h?=
- =?utf-8?B?U25Ibk4rNnAwWG5UMUhNaGRnSVZIdzFCSzJibk14aTBOWGdGT1VYbFFXdmMw?=
- =?utf-8?B?SjlVb1ltY0NHVGxPSWkyREYrZzZ5d3ZqeUFoTEMySGRZQWhhUXdvNUp5NzBh?=
- =?utf-8?B?aFV1alZuVDlTVEVoeU9TYjh5YzMwc3lJakJjZ2d0Y0lXR1NUeERXbStwNHJs?=
- =?utf-8?B?VHBseGRnTWJoM2VOcDhQRExSSkdFNlpjL0VYK0YrNTAyeWtLcDlodGlna0tj?=
- =?utf-8?B?NUJOQk5KdHRqTVR5alJGOUp2eG1OL2hCbTZIYXpOdEhpcmUzZWFPTjVOZHFN?=
- =?utf-8?B?ekxOZmFiSjNBYzM4ME9hNkw2UWNwNXBMZVNyclZaMkRRUEYzTmNJMFAweC91?=
- =?utf-8?B?L3lHR0liWFpnUXI2R1ZZTzJtU3VoUXdJMHFaTDNINTZTR0pNc2xoSzczclg5?=
- =?utf-8?B?Y0pKa0tXZEdEaGxhRTBlVDBQczZGMWo3ZjlteW85eSt0bkZZOUxvZUZNM1hR?=
- =?utf-8?B?TjVMVUZuT2ZFem0xWnlRRFh5cVRaNkNFN0NLeUI4OVRCNjNpRDZrNHNaZTE3?=
- =?utf-8?B?YkpsY01RQ29PMGJ5RWltL0F6bkhyVngyTHhRaDVyYUJoOW5RYzQ4L2Z1ZVZj?=
- =?utf-8?B?aFBoYVpSWXJ5cTZXcHBudWEwNHc1K2I3MmVqS0h6VThJVzV3VnJzNWR1Y3FT?=
- =?utf-8?B?Yk1GTEZQdC8rZzN0cjdxZHZQM3g5eDYza01TVkhINWFqMXFsY00yZGZPQzg0?=
- =?utf-8?B?Q2JoWklFSS9TWEc4UnlKVkJEbEJKRzhLTEtmY2ViRTFSSExtZTV3cHU5WXhC?=
- =?utf-8?B?MTRCMjk1NHhpQnNReDljbUMrYmloQlpmOW1NU1ZVV0hOVGdoR1o4QTl6Wnpn?=
- =?utf-8?B?ME1MUG9XMTRiNW5SelF1RFlJTmlsZzVLYndCb2czd3ZsVStLUklhbW5BK0I5?=
- =?utf-8?B?cXNTeG5DQU90SzEvL1hrNWM4QmIweStxQ0lXNldOdE1tem80Rk9MRnYyVXJN?=
- =?utf-8?B?ZFVObjRZV1RrbktSMWR2RWIrTTk3am1kd2o3Zm1NSi9pa2NFeW11U0h4TG5Q?=
- =?utf-8?B?U0t6aU9DcXQ5U0FyaWE1WWZsRVFkZ3NTRHJDRlhCV1lsN1BrMk1KeTlaSElN?=
- =?utf-8?B?QStnaFVyY2lIYlYwcTRvMFoxV3BPZ0NnOHN1MFJRdzArTkNUYkVUN2lhOVlp?=
- =?utf-8?B?T0hOWU5QRzRETUZEZmZpR0F1OXkvTDZVUXBqUzdyaHhiOHRkSUd5RTJhYzI2?=
- =?utf-8?B?TXJycHpocjE4WUl0NmtVaEZHYkxjQ1F4M0ZlUTZZTzBpblRlV1hiNHI3YmZE?=
- =?utf-8?B?Tzk4bFQ4bkd4cnBpb2kzRTl3a2I5VG9kOFZjTUEyTzkyb3gyQ1dpTHRmTWhT?=
- =?utf-8?B?N1RwVkw2dUdpa2lWaUhiTitKSUVtZEt5N25ndzZ6Vk9NOXJnaUk3WjhkSHVh?=
- =?utf-8?B?SkxwNHRsVE5nWk9xQm42dHJYemlsR2YxR1NjeXphYUViWHRGZjViMDU0cWJ1?=
- =?utf-8?B?aFJpMXJYWTNvU2JwME03Z0pHOVc4YlpwMmtZdzBPQmVSSksrbUhObTRoc0xu?=
- =?utf-8?B?N2pFd0dla3RVK1NxdEdkM2MwWjhOS3planVoT2YvZ2ExVjNyQzNMT1dEbWs3?=
- =?utf-8?Q?/nxMXUBBLGqBK51m0L8rrgObd?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5361a983-6ef3-4847-da10-08ddd659e6ed
-X-MS-Exchange-CrossTenant-AuthSource: TY0PR06MB5579.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 08:59:37.2196
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OIHyNraBPxV9+rDxXKhm5lUM76jRoQnomHD10VS5FjmbmSoLBV+3Sai3tzUuFI0dV6ZlDOai38ro2Ivmr62MEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6041
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <076b7f07-e755-4fe7-84b1-f3f495978008@gmail.com>
 
+On Fri, Aug 08, 2025 at 08:37:07AM +0300, Matti Vaittinen wrote:
+> On 07/08/2025 16:10, Nuno Sá wrote:
+> > On Thu, Aug 07, 2025 at 01:41:31PM +0100, Nuno Sá wrote:
+> > > On Thu, Aug 07, 2025 at 12:34:52PM +0300, Matti Vaittinen wrote:
+> > > > The ad7476 driver defines separate chan_spec structures for operation
+> > > > with and without convstart GPIO. At quick glance this may seem as if the
+> > > > driver did provide more than 1 data-channel to users - one for the
+> > > > regular data, other for the data obtained with the convstart GPIO.
+> > > > 
+> > > > The only difference between the 'convstart' and 'non convstart'
+> > > > -channels is presence / absence of the BIT(IIO_CHAN_INFO_RAW) in
+> > > > channel's flags.
+> > > > 
+> > > > We can drop the convstart channel spec, and related convstart macro, by
+> > > > allocating a mutable per driver instance channel spec an adding the flag
+> > > > in probe if needed. This will simplify the driver with the cost of added
+> > > > memory consumption.
+> > > > 
+> > > > Assuming there aren't systems with very many ADCs and very few
+> > > > resources, this tradeoff seems worth making.
+> > > > 
+> > > > Simplify the driver by dropping the 'convstart' channel spec and
+> > > > allocating the chan spec for each driver instance.
+> > > 
+> > > I do not agree with this one. Looking at the diff, code does not look
+> > > simpler to me...
+> > 
+> > Ok, on a second thought I'm ok with this. It makes adding devices easier
+> > and (IIUC) for the one you're adding later we only have "convst_channel"
+> > channels.
+> 
+> Yes, that's right. The BD79105 requires the convstart.
+> 
+> > On comment though...
+> > 
+> > > 
+> > > - Nuno Sá
+> > > 
+> > > > 
+> > > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> > > > 
+> > > > ---
+> > > > Revision history:
+> > > >   v1 => v2:
+> > > >   - New patch
+> > > > 
+> > > > I considered squashing this change with the one limiting the chip_info
+> > > > scope. Having this as a separate change should help reverting if someone
+> > > > complains about the increased memory consumption though.
+> > > > ---
+> > > >   drivers/iio/adc/ad7476.c | 31 ++++++++++++++++++-------------
+> > > >   1 file changed, 18 insertions(+), 13 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> > > > index e97742912b8e..a30eb016c11c 100644
+> > > > --- a/drivers/iio/adc/ad7476.c
+> > > > +++ b/drivers/iio/adc/ad7476.c
+> > > > @@ -29,8 +29,6 @@ struct ad7476_state;
+> > > >   struct ad7476_chip_info {
+> > > >   	unsigned int			int_vref_mv;
+> > > >   	struct iio_chan_spec		channel[2];
+> > > > -	/* channels used when convst gpio is defined */
+> > > > -	struct iio_chan_spec		convst_channel[2];
+> > > >   	void (*reset)(struct ad7476_state *);
+> > > >   	bool				has_vref;
+> > > >   	bool				has_vdrive;
+> > > > @@ -41,6 +39,7 @@ struct ad7476_state {
+> > > >   	struct gpio_desc		*convst_gpio;
+> > > >   	struct spi_transfer		xfer;
+> > > >   	struct spi_message		msg;
+> > > > +	struct iio_chan_spec		channel[2];
+> > > >   	int				scale_mv;
+> > > >   	/*
+> > > >   	 * DMA (thus cache coherency maintenance) may require the
+> > > > @@ -153,24 +152,18 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+> > > >   #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+> > > >   		BIT(IIO_CHAN_INFO_RAW))
+> > > >   #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
+> > > > -#define AD7091R_CONVST_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), \
+> > > > -		BIT(IIO_CHAN_INFO_RAW))
+> > > >   #define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
+> > > >   		BIT(IIO_CHAN_INFO_RAW))
+> > > >   static const struct ad7476_chip_info ad7091_chip_info = {
+> > > >   	.channel[0] = AD7091R_CHAN(12),
+> > > >   	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > > -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
+> > > > -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > >   	.reset = ad7091_reset,
+> > > >   };
+> > > >   static const struct ad7476_chip_info ad7091r_chip_info = {
+> > > >   	.channel[0] = AD7091R_CHAN(12),
+> > > >   	.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > > -	.convst_channel[0] = AD7091R_CONVST_CHAN(12),
+> > > > -	.convst_channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > >   	.int_vref_mv = 2500,
+> > > >   	.has_vref = true,
+> > > >   	.reset = ad7091_reset,
+> > > > @@ -282,7 +275,7 @@ static int ad7476_probe(struct spi_device *spi)
+> > > >   	const struct ad7476_chip_info *chip_info;
+> > > >   	struct ad7476_state *st;
+> > > >   	struct iio_dev *indio_dev;
+> > > > -	int ret;
+> > > > +	int ret, i;
+> > > >   	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> > > >   	if (!indio_dev)
+> > > > @@ -332,16 +325,28 @@ static int ad7476_probe(struct spi_device *spi)
+> > > >   	if (IS_ERR(st->convst_gpio))
+> > > >   		return PTR_ERR(st->convst_gpio);
+> > > > +	/*
+> > > > +	 * This will never realize. Unless someone changes the channel specs
+> > > > +	 * in this driver. And if someone does, without changing the loop
+> > > > +	 * below, then we'd better immediately produce a big fat error, before
+> > > > +	 * the change proceeds from that developer's table.
+> > > > +	 */
+> > > > +	BUILD_BUG_ON(ARRAY_SIZE(st->channel) != ARRAY_SIZE(chip_info->channel));
+> > 
+> > I guess it make sense but still looks too fancy for this :)
+> 
+> Nothing else but a developer's carefulness keeps the number of channels "in
+> sync" for these two structs. I was originally doing WARN_ON() - but then I
+> thought that it's be even better to catch this at build time. Then I found
+> the BUILD_BUG_ON(). I see Andy suggested static_assert() instead - I've no
+> idea why one is preferred over other though. Let's see if I get educated by
+> Andy :)
+> 
+> > 
+> > > > +	for (i = 0; i < ARRAY_SIZE(st->channel); i++) {
+> > > > +		st->channel[i] = chip_info->channel[i];
+> > > > +		if (st->convst_gpio)
+> > 
+> > I would flip this an do:
+> > 	if (!st->convst_gpio)
+> > 		break;
+> 
+> To me this would just add an extra line of code, and more complex flow. I
+> would definitely agree if there were more operations to be done for the
+> 'convstart channels' - but since this is really just "if it's convstart,
+> then set a bit" - the
+> 
+> if (foo)
+> 	bar;
+> 
+> seems simpler than
+> 
+> if (!foo)
+> 	break;
+> bar;
 
-On 8/8/2025 4:51 PM, Chao Yu wrote:
-> On 8/8/2025 3:29 PM, Liao Yuanhong wrote:
->> Currently, we have encountered some issues while testing ZUFS. In
->> situations near the storage limit (e.g., 50GB remaining), and after
->> simulating fragmentation by repeatedly writing and deleting data, we 
->> found
->> that application installation and startup tests conducted after 
->> idling for
->> a few minutes take significantly longer several times that of 
->> traditional
->> UFS. Tracing the operations revealed that the majority of I/Os were 
->> issued
->> by background GC, which blocks normal I/O operations.
->>
->> Under normal circumstances, ZUFS indeed requires more background GC and
->> employs a more aggressive GC strategy. However, I aim to find a way to
->> minimize the impact on regular I/O operations under these near-limit
->> conditions. To address this, I have introduced a bggc_block_io feature,
->> which controls the prioritization of background GC in the presence of 
->> I/Os.
->> This switch can be adjusted at the framework level to implement 
->> different
->> strategies. If set to ALL_IO_PRIOR, all background GC operations will be
->> skipped during active I/O issuance. The default option remains 
->> consistent
->> with the current strategy, ensuring no change in behavior.
->>
->> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
->> ---
->> Changes in v4:
->>     Adjust the default policy ALL_IO_PRIOR to 0 and modify the 
->> description to
->>     match this change
->>
->> Changes in v3:
->>     Modified the issue where it does not work after closing
->>     CONFIG_BLK_DEV_ZONED.
->>
->> Changes in v2:
->>     Non ZUFS can also be adjusted through this option.
->> ---
->>   Documentation/ABI/testing/sysfs-fs-f2fs | 13 +++++++++++++
->>   fs/f2fs/f2fs.h                          | 18 +++++++++++-------
->>   fs/f2fs/super.c                         |  2 ++
->>   fs/f2fs/sysfs.c                         |  9 +++++++++
->>   4 files changed, 35 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs 
->> b/Documentation/ABI/testing/sysfs-fs-f2fs
->> index bc0e7fefc39d..21e6951919de 100644
->> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
->> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
->> @@ -883,3 +883,16 @@ Date:        June 2025
->>   Contact:    "Daeho Jeong" <daehojeong@google.com>
->>   Description:    Control GC algorithm for boost GC. 0: cost benefit, 
->> 1: greedy
->>           Default: 1
->> +
->> +What:        /sys/fs/f2fs/<disk>/bggc_block_io
->> +Date:        August 2025
->> +Contact:    "Liao Yuanhong" <liaoyuanhong@vivo.com>
->> +Description:    Used to adjust the BG_GC priority when issuing IO, 
->> with a default value
->> +        of 0. Specifically, for ZUFS, the default value is 1.
->> +
->> +        ================== 
->> =============================================
->> +        value                description
->> +        bggc_block_io = 0   Stop background GC when issuing I/O
->> +        bggc_block_io = 1   Stop background GC only when issuing 
->> read I/O
->> +        bggc_block_io = 2   Prioritize background GC
->> +        ================== 
->> =============================================
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 46be7560548c..440542ea0646 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -155,6 +155,12 @@ enum blkzone_allocation_policy {
->>       BLKZONE_ALLOC_PRIOR_CONV,    /* Prioritize writing to 
->> conventional zones */
->>   };
->>   +enum bggc_block_io_policy {
->> +    ALL_IO_PRIOR,
->> +    READ_IO_PRIOR,
->> +    BGGC_PRIOR,
->
-> Hi Yuanhong,
->
-> Just nitpick, :)
->
-> A little bit confuse for BGGC_PRIOR naming, since it won't submit
-> bggc IO in prior to other IO, just not be aware other IOs.
->
-> So, what do you think of renaming as below? Keeping align w/ naming
-> of discard_policy.io_aware.
->
-> /sys/fs/f2fs/<dev>/bggc_io_aware
->
-> enum bggc_io_aware_policy {
->     AWARE_ALL_IO,        /* skip background GC if there is any kind of 
-> pending IO */
->     AWARE_READ_IO,        /* skip background GC if there is pending 
-> read IO */
->     AWARE_NONE,        /* don't aware IO for background GC */
-> };
->
-> Thanks,
->
-Thank you for your suggestion. I will submit a revised new version.
+Yes but in this particular case, you likely would not need to do any
+line break afterward because of indentation. Logically it also makes
+sense because st->convst_gpio is a device property (not a channel one).
+So it makes no sense to check it for all channels (I know we only have two
+channels). So if you prefer, you could even do:
 
+if (st->convst_gpio) {
+	for (...)
+		__set_bit(...);
+}
 
-Thanks,
+which also would make more sense to me.
 
-Liao
+Up to you now :)
 
->> +};
->> +
->>   /*
->>    * An implementation of an rwsem that is explicitly unfair to 
->> readers. This
->>    * prevents priority inversion when a low-priority reader acquires 
->> the read lock
->> @@ -1804,6 +1810,7 @@ struct f2fs_sb_info {
->>       spinlock_t dev_lock;            /* protect dirty_device */
->>       bool aligned_blksize;            /* all devices has the same 
->> logical blksize */
->>       unsigned int first_seq_zone_segno;    /* first segno in 
->> sequential zone */
->> +    unsigned int bggc_block_io;        /* For adjust the BG_GC 
->> priority when issuing IO */
->>         /* For write statistics */
->>       u64 sectors_written_start;
->> @@ -2998,13 +3005,10 @@ static inline bool is_idle(struct 
->> f2fs_sb_info *sbi, int type)
->>       if (sbi->gc_mode == GC_URGENT_HIGH)
->>           return true;
->>   -    if (zoned_gc) {
->> -        if (is_inflight_read_io(sbi))
->> -            return false;
->> -    } else {
->> -        if (is_inflight_io(sbi, type))
->> -            return false;
->> -    }
->> +    if (sbi->bggc_block_io == READ_IO_PRIOR && 
->> is_inflight_read_io(sbi))
->> +        return false;
->> +    if (sbi->bggc_block_io == ALL_IO_PRIOR && is_inflight_io(sbi, 
->> type))
->> +        return false;
->>         if (sbi->gc_mode == GC_URGENT_MID)
->>           return true;
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index e16c4e2830c2..a21cecc5424e 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -4629,9 +4629,11 @@ static int f2fs_scan_devices(struct 
->> f2fs_sb_info *sbi)
->>         logical_blksize = bdev_logical_block_size(sbi->sb->s_bdev);
->>       sbi->aligned_blksize = true;
->> +    sbi->bggc_block_io = ALL_IO_PRIOR;
->>   #ifdef CONFIG_BLK_DEV_ZONED
->>       sbi->max_open_zones = UINT_MAX;
->>       sbi->blkzone_alloc_policy = BLKZONE_ALLOC_PRIOR_SEQ;
->> +    sbi->bggc_block_io = READ_IO_PRIOR;
->>   #endif
->>         for (i = 0; i < max_devices; i++) {
->> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->> index f736052dea50..1b587908f049 100644
->> --- a/fs/f2fs/sysfs.c
->> +++ b/fs/f2fs/sysfs.c
->> @@ -866,6 +866,13 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
->>           return count;
->>       }
->>   +    if (!strcmp(a->attr.name, "bggc_block_io")) {
->> +        if (t < ALL_IO_PRIOR || t > BGGC_PRIOR)
->> +            return -EINVAL;
->> +        sbi->bggc_block_io = t;
->> +        return count;
->> +    }
->> +
->>       *ui = (unsigned int)t;
->>         return count;
->> @@ -1175,6 +1182,7 @@ F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
->>   #endif
->>   F2FS_SBI_GENERAL_RW_ATTR(carve_out);
->>   F2FS_SBI_GENERAL_RW_ATTR(reserved_pin_section);
->> +F2FS_SBI_GENERAL_RW_ATTR(bggc_block_io);
->>     /* STAT_INFO ATTR */
->>   #ifdef CONFIG_F2FS_STAT_FS
->> @@ -1303,6 +1311,7 @@ static struct attribute *f2fs_attrs[] = {
->>       ATTR_LIST(discard_idle_interval),
->>       ATTR_LIST(gc_idle_interval),
->>       ATTR_LIST(umount_discard_timeout),
->> +    ATTR_LIST(bggc_block_io),
->>   #ifdef CONFIG_F2FS_IOSTAT
->>       ATTR_LIST(iostat_enable),
->>       ATTR_LIST(iostat_period_ms),
->
+- Nuno Sá
+
+> 
+> > 		
+> > > > +			st->channel[i].info_mask_separate |=
+> > > > +				BIT(IIO_CHAN_INFO_RAW);
+> > 		
+> > 		__set_bit()...
+> 
+> Ok. Thanks.
+> 
+> 
+> Thanks for the review(s) Nuno!
+> 
+> Yours,
+> 	-- Matti
 
