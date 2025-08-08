@@ -1,221 +1,153 @@
-Return-Path: <linux-kernel+bounces-760711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BF3B1EF24
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:04:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAEA6B1EF2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 22:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 021207A69C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:02:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D78C6568414
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 20:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2011A23BCED;
-	Fri,  8 Aug 2025 20:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D8622D7A7;
+	Fri,  8 Aug 2025 20:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vqYX0x1a"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="g9wsNghN"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B64222068F
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 20:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC43225A5B;
+	Fri,  8 Aug 2025 20:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754683413; cv=none; b=SqY1910pgAU3tR28diuyk1Ni2I85LRonAglv9/3kAinx0bk2OhIOURCT/kzR50PqxrN1Ifp9kwNT8Ub8UtlKhGD8OgSI81770cuvMEcLkiBernOdwhgmtSRyFtEfGrJo34jpSwbwDsuSaJ9AgiymQouYoj40cWAI1CI2Stj5sCQ=
+	t=1754683437; cv=none; b=XExE3970/Ayi1K9Ldbt+jUR541reCsEEuYY7AL2+WVx3p4YBeQpWBmbyMn9GAg+jx5wW6BLQ79uBoihDVUtkx/DquyBgCBjryius9BzF/DPUkSl3Q11raVEgxsoh5IovsTeWhg3tBVP7AzUGejLhDm5oigy+4O3n3C3dLDZHHU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754683413; c=relaxed/simple;
-	bh=NsA/CAR+RtyCAfhqNwO/OEoxhBdFN+ZLJMUpUfq+R8M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YtHcwZLZkepzexfEhu4RDqZkQQHq64H6RKuyVhmdDFJRisZfs/JDaV0GbULcb4DH+tqfWycyXfzgvCn0wcOb50OUTC7tky3yrO2BWxs+PtDV4Dh25jYP/vSYtQNBNcLun4yqEGuRspNOb5ClBzsx0PnUh6pc8RlbfFlalNxbnLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jpiecuch.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vqYX0x1a; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jpiecuch.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-458c0c8d169so12706705e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 13:03:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754683410; x=1755288210; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5OtIhhKwZ5LIpMwZNc9pJdMveQzWwOLEkahic0/q3KU=;
-        b=vqYX0x1aW7cdz3UZEIM3LQ0Qb8/8eHRmZeZZC5P26mWPRFQSV5syBEa6cC1IMItLjN
-         i/pP8INzxj3u4+r6fgIzrdIVLTtpV/8ryzqBE2GDfWudvFosx21daoA6VzGqVBmOFNLq
-         sLnfOeCJYLGLNixN3K5aM8ICOln6ZuV/onUnxsaHTUDUl2JN+7TZuBO5ED1HX26eZZ1h
-         XZv0zB3P3WXcxO4kKquz24SnXYo7IXfhSjJYJLBryRtf1Is/o0M/+iAHOUUtKhKytTxk
-         xX3DaFxTqdtQkcgXgMNli2g548ryuSZOJOTcESyQKu2g8KbG6bTOCQP3Wtp793YPfqNS
-         UVmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754683410; x=1755288210;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5OtIhhKwZ5LIpMwZNc9pJdMveQzWwOLEkahic0/q3KU=;
-        b=ONJXqOWZU/V49UGy+juuvf3VWEatLLn6HPS9h/VE0lunfPM2GeXYKUEe/npWgEFUtu
-         dxyic+Jtg/GRHKudHWKeMVHabomA7ZvrRYyFRvtOynUkhtGypNq4k9gBkuHBItQEXcUP
-         zkw7VHyiej0zSdstRiC6wBJ/2pyvsMn7JL/KA6c/uQDMPGYglesC2X98kmjZWb0SvCUs
-         kkD3NV2Ad20QBa3KK27/zn+h3Y3lpc+75nf4K9dRzsvIY36+vgqOy0zK+6T9BhTJTjmX
-         XhKt0oiLdsVh1OkOGne49Xq/2GJM71Zp7QZXmgNQKJPtrYVv8AT6DtdA3/DqHS40OndR
-         4BLQ==
-X-Gm-Message-State: AOJu0Ywa1bg4/HSjgSr1rB/lFZnfBHIniT9I6CfR/akB5OXaLMlKSbft
-	4PoSZroLQUNc7EnfTQ9VjPduOzwbPrGtkZ8XQ6pNC1630H76Ao0tzDSP/x5OWsg5iRTJYCq/Wbo
-	mwvMNDzGBq0iWRQ==
-X-Google-Smtp-Source: AGHT+IFhEHRHvFN07ovdSLruJEqx2ftiwQyIcjpEWdBXuq9L2w9g3BjJDajHTGgVHcgWzbhDZDXtlsQ4ywyR2g==
-X-Received: from wmsr8.prod.google.com ([2002:a05:600c:8b08:b0:459:ddf8:fed5])
- (user=jpiecuch job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:840f:b0:456:19eb:2e09 with SMTP id 5b1f17b1804b1-459f4eba76amr37936965e9.8.1754683409865;
- Fri, 08 Aug 2025 13:03:29 -0700 (PDT)
-Date: Fri,  8 Aug 2025 20:02:50 +0000
-In-Reply-To: <20250808200250.2016584-1-jpiecuch@google.com>
+	s=arc-20240116; t=1754683437; c=relaxed/simple;
+	bh=8Hxw2IStYv/MEOzfgY792r3eSVsz/GkseQLYrGILriA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ujyvwpUM6Wftx6AX99yNC2qtRV2Oh4XkMHuWu07ffEhJwqYxtDmATVhcTgbVAKIYJ+N3rIIGgq6DLQcCIJ3cFQ1D1OyzmnEZZJ9pAgiLriHDp+Gkp2XiiiTLZ4ZnbGH3uRxhS+CD5ZYAojo5cLHNtmCh96uChBPOBFm1QqxrX9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=g9wsNghN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754683428;
+	bh=8Hxw2IStYv/MEOzfgY792r3eSVsz/GkseQLYrGILriA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=g9wsNghNoNuXbDOEp8M9JNUVlKfFqjuTkQJjuEHpDN0mO+rvxmzTOsecohCmz1Y1/
+	 g+mut7bQ7EwopiVbRJsBHDaUavF4q+/8ZOpL2p9oSffw5V+gGaPgu8IwX8Ja37eMHg
+	 HfU4FtDwmuC016BL2S31GfapVAtKi0g/wJbVVMGTulWfs7jMtmAAwce3zsYPCgUbJn
+	 Ibq4ssDQahNwxVJzd0so3xVx8ppCJAgcoaiv/sjvLsfpOpSrPMMI4Ug08VXt1vgYtV
+	 Efd0x+Ba1soExskMGJ2ySDmyTYNyNDhKG1/uktzxAGCeTpcjghD+q0JtpE+736UqHi
+	 AYPL8eVO+q7Sw==
+Received: from earth.mtl.collabora.ca (mtl.collabora.ca [66.171.169.34])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3320B17E0C8C;
+	Fri,  8 Aug 2025 22:03:47 +0200 (CEST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Detlev Casanova <detlev.casanova@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH v2 00/12] media: rkvdec: Add support for VDPU381 and VDPU383
+Date: Fri,  8 Aug 2025 16:03:22 -0400
+Message-ID: <20250808200340.156393-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250808200250.2016584-1-jpiecuch@google.com>
-X-Mailer: git-send-email 2.51.0.rc0.155.g4a0f42376b-goog
-Message-ID: <20250808200250.2016584-4-jpiecuch@google.com>
-Subject: [RFC PATCH 3/3] sched/fair: add debugfs knob for yield throttling
-From: Kuba Piecuch <jpiecuch@google.com>
-To: peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, joshdon@google.com
-Cc: linux-kernel@vger.kernel.org, Kuba Piecuch <jpiecuch@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-yield_interval_ns specifies the interval within which any given thread
-is allowed to yield at most once. Subsequent calls to sched_yield()
-within the interval simply return without calling schedule().
+These variants are found respectively in the RK3588 and RK3576 SoCs.
+This patch only adds support for H264 and H265 in both variants.
 
-Allowing unlimited calls to sched_yield() allows for DoS-like behavior
-because threads can continually call into schedule() which results in
-various types of contention.
+As there is a considerable part of the code that can be shared with the
+already supported rkvdec decoder driver, the support for these variants
+is added here rather than writing a new driver.
 
-For example, if a process has a profiling timer enabled, every call to
-update_curr() results in an atomic add to a shared process-wide variable
-p->signal->cputimer->cputime_atomic.sum_exec_runtime, performed in
-account_group_exec_runtime().
+This patch set uses the newly introduced hevc_ext_sps_[ls]t_rps v4l2
+controls for HEVC [1].
+Therefore, a patched version of userpace tools is needed for HEVC
+support (added for GStreamer[2] and in an early stage for FFmpeg[3]).
 
-In a synthetic benchmark consisting of 80 threads (2 per core) calling
-sched_yield() in a busy loop with a profiling timer enabled, we have
-observed that ~80% of CPU time is spent in the single atomic add
-instruction. Setting yield_interval_ns to 10000 lowers that percentage
-to 1-2%, at the cost of decreasing the total number yields that end up
-calling schedule() by ~60%. The benchmark was run on an Intel Emerald
-Rapids CPU with 60 physical cores.
+This patch set also depends on the preparation patch set sent earlier [4]
+as well as the iommu restore fix [5] (already merged in linux-media) and
+Nicolas Frattaroli's bitmap patch [6] to support setting registers that
+uses upper 16 bits as masks.
 
-Signed-off-by: Kuba Piecuch <jpiecuch@google.com>
----
- include/linux/sched.h |  2 ++
- kernel/sched/core.c   |  1 +
- kernel/sched/debug.c  |  2 ++
- kernel/sched/fair.c   | 29 +++++++++++++++++++++++++++++
- kernel/sched/sched.h  |  2 ++
- 5 files changed, 36 insertions(+)
+[1]: https://lore.kernel.org/all/20250807194327.69900-1-detlev.casanova@collabora.com/
+[2]: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/9355
+[3]: https://gitlab.collabora.com/detlev/ffmpeg
+[4]: https://lore.kernel.org/all/20250623160722.55938-1-detlev.casanova@collabora.com/
+[5]: https://lore.kernel.org/all/20250508-rkvdec-iommu-reset-v1-1-c46b6efa6e9b@collabora.com/
+[6]: https://lore.kernel.org/all/20250623-byeword-update-v2-1-cf1fc08a2e1f@collabora.com/
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index aa9c5be7a6325..c637025792fc6 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -946,6 +946,8 @@ struct task_struct {
- 
- 	struct sched_info		sched_info;
- 
-+	ktime_t last_yield;
-+
- 	struct list_head		tasks;
- #ifdef CONFIG_SMP
- 	struct plist_node		pushable_tasks;
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 81c6df746df17..acc87c9ff5681 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4493,6 +4493,7 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
- {
- 	p->on_rq			= 0;
- 
-+	p->last_yield			= ktime_set(0, 0);
- 	p->se.on_rq			= 0;
- 	p->se.exec_start		= 0;
- 	p->se.sum_exec_runtime		= 0;
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 557246880a7e0..93d2c988d491d 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -512,6 +512,8 @@ static __init int sched_init_debug(void)
- 	debugfs_create_u32("latency_warn_ms", 0644, debugfs_sched, &sysctl_resched_latency_warn_ms);
- 	debugfs_create_u32("latency_warn_once", 0644, debugfs_sched, &sysctl_resched_latency_warn_once);
- 
-+	debugfs_create_u32("yield_interval_ns", 0644, debugfs_sched, &sysctl_sched_yield_interval);
-+
- #ifdef CONFIG_SMP
- 	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, NULL, &sched_scaling_fops);
- 	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3f9bfc64e0bc5..39ca52128f502 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -81,6 +81,18 @@ static unsigned int normalized_sysctl_sched_base_slice	= 700000ULL;
- 
- __read_mostly unsigned int sysctl_sched_migration_cost	= 500000UL;
- 
-+/*
-+ * This interval controls how often a given CFS thread can yield.
-+ * A given thread can only yield once within this interval.
-+ * The throttling is accomplished by making calls to sched_yield() return
-+ * without actually calling schedule().
-+ * A value of 0 means yields are not throttled.
-+ *
-+ * (default: 0, units: nanoseconds)
-+ */
-+__read_mostly unsigned int sysctl_sched_yield_interval;
-+
-+
- static int __init setup_sched_thermal_decay_shift(char *str)
- {
- 	pr_warn("Ignoring the deprecated sched_thermal_decay_shift= option\n");
-@@ -9015,6 +9027,7 @@ static bool yield_task_fair(struct rq *rq)
- 	struct task_struct *curr = rq->curr;
- 	struct cfs_rq *cfs_rq = task_cfs_rq(curr);
- 	struct sched_entity *se = &curr->se;
-+	ktime_t now, throttle_end_time;
- 
- 	/*
- 	 * Are we the only task in the tree?
-@@ -9024,6 +9037,22 @@ static bool yield_task_fair(struct rq *rq)
- 
- 	clear_buddies(cfs_rq, se);
- 
-+	if (unlikely(sysctl_sched_yield_interval)) {
-+		/*
-+		 * Limit how often a given thread can call schedule() via
-+		 * sched_yield() to once every sysctl_sched_yield_interval
-+		 * nanoseconds.
-+		 */
-+		now = ktime_get();
-+		throttle_end_time = ktime_add_ns(curr->last_yield,
-+						 sysctl_sched_yield_interval);
-+
-+		if (unlikely(ktime_before(now, throttle_end_time)))
-+			return false;
-+
-+		curr->last_yield = now;
-+	}
-+
- 	update_rq_clock(rq);
- 	/*
- 	 * Update run-time statistics of the 'current'.
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 8b2cd54a09942..14e3d90b0df0e 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2827,6 +2827,8 @@ extern __read_mostly unsigned int sysctl_sched_migration_cost;
- 
- extern unsigned int sysctl_sched_base_slice;
- 
-+extern __read_mostly unsigned int sysctl_sched_yield_interval;
-+
- extern int sysctl_resched_latency_warn_ms;
- extern int sysctl_resched_latency_warn_once;
- 
+Changes since v1:
+ - Add parsing of the short and long term ref frame sets from the new v4l2
+   controls
+ - Add RPS cache to avoid parsing the same data again
+ - Fix HEVC pixel formats selection
+ - Fix multiple indentation errors
+
+Detlev Casanova (12):
+  media: rkvdec: Switch to using structs instead of writel
+  media: rkvdec: Move cabac table to its own source file
+  media: rkvdec: Use structs to represent the HW RPS
+  media: rkvdec: Move h264 functions to common file
+  media: rkvdec: Add per variant configuration
+  media: rkvdec: Add RCB and SRAM support
+  media: rkvdec: Support per-variant interrupt handler
+  media: rkvdec: Enable all clocks without naming them
+  media: rkvdec: Add H264 support for the VDPU381 variant
+  media: rkvdec: Add H264 support for the VDPU383 variant
+  media: rkvdec: Add HEVC support for the VDPU381 variant
+  media: rkvdec: Add HEVC support for the VDPU383 variant
+
+ .../media/platform/rockchip/rkvdec/Kconfig    |    1 +
+ .../media/platform/rockchip/rkvdec/Makefile   |   13 +-
+ .../platform/rockchip/rkvdec/rkvdec-cabac.c   | 3944 +++++++++++++++++
+ .../rockchip/rkvdec/rkvdec-h264-common.c      |  253 ++
+ .../rockchip/rkvdec/rkvdec-h264-common.h      |   81 +
+ .../platform/rockchip/rkvdec/rkvdec-h264.c    |  891 +---
+ .../rockchip/rkvdec/rkvdec-hevc-common.c      |  511 +++
+ .../rockchip/rkvdec/rkvdec-hevc-common.h      |  101 +
+ .../platform/rockchip/rkvdec/rkvdec-rcb.c     |  174 +
+ .../platform/rockchip/rkvdec/rkvdec-rcb.h     |   29 +
+ .../platform/rockchip/rkvdec/rkvdec-regs.h    |  567 ++-
+ .../rockchip/rkvdec/rkvdec-vdpu381-h264.c     |  469 ++
+ .../rockchip/rkvdec/rkvdec-vdpu381-hevc.c     |  596 +++
+ .../rockchip/rkvdec/rkvdec-vdpu381-regs.h     |  427 ++
+ .../rockchip/rkvdec/rkvdec-vdpu383-h264.c     |  582 +++
+ .../rockchip/rkvdec/rkvdec-vdpu383-hevc.c     |  688 +++
+ .../rockchip/rkvdec/rkvdec-vdpu383-regs.h     |  284 ++
+ .../platform/rockchip/rkvdec/rkvdec-vp9.c     |  230 +-
+ .../media/platform/rockchip/rkvdec/rkvdec.c   |  569 ++-
+ .../media/platform/rockchip/rkvdec/rkvdec.h   |   39 +
+ 20 files changed, 9260 insertions(+), 1189 deletions(-)
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-cabac.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-h264-common.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-h264-common.h
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.h
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-h264.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-hevc.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu383-h264.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu383-hevc.c
+ create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu383-regs.h
+
 -- 
-2.51.0.rc0.155.g4a0f42376b-goog
+2.50.1
 
 
