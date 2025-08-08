@@ -1,189 +1,143 @@
-Return-Path: <linux-kernel+bounces-759613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5ACB1E021
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601D9B1E024
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA49724132
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:20:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76F7C561FF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D1E2A1CA;
-	Fri,  8 Aug 2025 01:20:44 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AC372604;
+	Fri,  8 Aug 2025 01:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="xUo8yl40"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2650AEAF9;
-	Fri,  8 Aug 2025 01:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C071939FCE;
+	Fri,  8 Aug 2025 01:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754616043; cv=none; b=CTStsafdz8O5oMRhzE3IF63ZMcl+P3Ks/MahAl6NQyZg25BKQcaADa8e5TCJpY6hm1w/ACyFpXyihHmdvxwei3zPbyU3VSxvwrZVaYmtqfx2vuMrtLZPkC7PxhZ4eDUjURblfhU4qhxZbkd+rEDgW70Rkhnv5yrQKUV21Exa0OY=
+	t=1754616091; cv=none; b=lU6tcZMVkQuaXEt1eUbrjGSI/+nEk1FlyY4DSd2ApWa0i/F/m4ZgefS380iMjNdn6mg3MjcZmZWzGQfFzymOTwEC37cIfPkbgcTtOsTyPI2++zFr2srnVPVE55VLgiZylcFeOkRYWOxYkv8mYd8hlQGg8crh9Dga7VnOwkuO6rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754616043; c=relaxed/simple;
-	bh=Gg09YzVfrrD0Ahyvrgz1u9XSWw51btwBjpVpV1tFyX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Go7FYP8bs8Ke6y3sAe/mm5WiN+AWQSq8VJMDBkBQvbQuASJXi0V+2DTDCVJ/OZLIr+/2VGUnkct2AfOvgHcTwi0Of/WqycnxTBrjuXXtwm1N3CAEOEIP5QzTCPFWg5HKtgQ/tYJceDRYMfQ710uSqHRnI+BxM3HxAeWVvg+r1mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4bymLM5xB7z14MC1;
-	Fri,  8 Aug 2025 09:15:39 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id CC83F180080;
-	Fri,  8 Aug 2025 09:20:36 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 8 Aug 2025 09:20:30 +0800
-Message-ID: <c8e3dc2c-617b-2988-10ff-88082370e787@huawei.com>
-Date: Fri, 8 Aug 2025 09:20:30 +0800
+	s=arc-20240116; t=1754616091; c=relaxed/simple;
+	bh=+DX8W+FwNNw/MDG6n2LqOQwHvg6cOglOY7bkGn1f49I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNn9SUx2J1LwZuYcC8TXsQ3Jexo8t2vxtmpvrt+7Ovju6MO0nQpNgJ8Sa7Vqs1DJ64QsNgTLLe8kmJHZ+aeJFXxvfBVwzHWkhkJja8qR/p6pH+QRyOWDjC08j8pMdtd7vBIgWtFLjo0DjsqZJ+2aYZswv1qk2Hwx0E5GIFJ+DV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=xUo8yl40; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1754616067;
+	bh=YONhLCtVxAOKYtMTLs/xNzYwEhqj7k/VVs38rD2tJdw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=xUo8yl40om/6vyjsJ/vdKWhKnFTTL68dj7Oazlh8QICVZD1NOzFifQ6iTFuWNy8nb
+	 E117VGekHAigoQJRaT1dOkEljJBJ/lVoEMxBbhDuchHBOEC8kQx6G0ZAoDnghzcBa/
+	 FGfegd+0k50JIxaRzAtn2JmuXkUgqJrWAXjGwffM=
+X-QQ-mid: zesmtpsz6t1754616061tbef0d426
+X-QQ-Originating-IP: zQHRZWbedkVaYFV1bT3lY2wArHNnLUL6AKgzsJCZB+0=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 08 Aug 2025 09:20:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11874263861845849413
+EX-QQ-RecipientCnt: 17
+Date: Fri, 8 Aug 2025 09:20:59 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Alex Elder <elder@riscstar.com>, Haylen Chu <heylenay@4d2.org>,
+	Inochi Amaoto <inochiama@outlook.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jinmei Wei <weijinmei@linux.spacemit.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: spacemit: introduce i2s pre-clock
+Message-ID: <D09A72E63AAF75B3+aJVQ-75A7NL4CJtb@LT-Guozexi>
+References: <20250807-k1-clk-i2s-generation-v1-0-7dc25eb4e4d3@linux.spacemit.com>
+ <20250807-k1-clk-i2s-generation-v1-1-7dc25eb4e4d3@linux.spacemit.com>
+ <20250807-untrained-anthology-bcf760fe73cb@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v7 22/31] irqchip/gic-v5: Add GICv5 LPI/IPI support
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Sascha Bischoff
-	<sascha.bischoff@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Timothy Hayes <timothy.hayes@arm.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Peter Maydell
-	<peter.maydell@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Jiri Slaby
-	<jirislaby@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-References: <20250703-gicv5-host-v7-0-12e71f1b3528@kernel.org>
- <20250703-gicv5-host-v7-22-12e71f1b3528@kernel.org>
- <cc611dda-d1e4-4793-9bb2-0eaa47277584@huawei.com>
- <aJSvUWRqLEiARDIW@lpieralisi>
-Content-Language: en-US
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <aJSvUWRqLEiARDIW@lpieralisi>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500011.china.huawei.com (7.185.36.131)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807-untrained-anthology-bcf760fe73cb@spud>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NhdiEwnVOUqExbdtneD2Nu7R21a/RIjfbpDCHKhuWw+YFgDMDdesIbFO
+	FYhNDcg+NENbRxTOrEdxgHHbIloslw7CpMBVbMhB2nwu4/albAHvopLankj7E/SKTL2KR8Y
+	7vWpf4b5klEq+2qBGF0dbZcwatcwru1XQ2GGOxUxNqGhC+S5wvfQd8yFK6vj+X8fy6sgeEB
+	p8DNMB0YM+12s9cBHANgFTvIefFSO+3UGDK4wsqAo+jYRYmzByy2SPeRTK+d0sj28bNEYk6
+	V8JRB3HZr13+hKYzy9K18aTYEPagOW4tY+rT5F45wAyaVe36T9kzIwPpHEMfKyfgVZRK6Pb
+	uA6ZFzjiIWhdCNJyNeJ8vUrPRQbfjY56Sug8CDfv0BYgmI1d1vKQL2EwDAPYdsefFB2jC/a
+	tmEy22MEEkh+dXNL9aA1G8f+icwe2LbkxJKikzQnDwJyY6iBf/Ansr2gSxJWVgMXY3f4reQ
+	3l7XwQEo0AHpSjpm+pZszBltS9Eqip8qIRKfEnCKW6WoR5MGTEunhf3wlWqJtGepV7LTZMd
+	oZRXwxjrQDrkH87JxR5edVr2iokLfxAh4fFcn3OrxZ8Qj/aIMdJdUFEhWTP3QAs/oGWHVHM
+	USdHbL2NsDtVPkdbK/u4RNRmwuDwG4frdQ/r58KSPQr9ETbqUPvcf1Oule65O7Hvx+de2ED
+	xcPIxQY+JcemPcF9l7W7VLB+XAoxzEx469nXjRBtoCKa8+KnZN60VwsVGdabxI1Otwiw9T8
+	zX0zdkGP+Z7YXnC/USdz6KnObRg/fZqA7xaYwkNCKXEjO8d+beF+I/A480du1B3V2r09MYK
+	fermrziemzJfHLXt0m4g6+sN3yhEy7qUoD/HcZ/iW0UCIc4XACU5MK14TIKjs/e5z0WwN+s
+	lVxOPxyNDQn7s3d5gB0PRo76r+0cOsRqyVVrS7jwHPUf6mq2rEYBdAu9T9zqoVRRKfVICQS
+	HAtm/4mJ0KPns9MutoA++ZUQcuBCLmQP1RzMfBYi8VwGCHizSg0c+qrF8NHJ7lIb0/E9yh1
+	bL6Z1YU1+qndZwBe4epRnBKmkdin4=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-
-
-On 2025/8/7 21:51, Lorenzo Pieralisi wrote:
-> On Thu, Aug 07, 2025 at 07:52:58PM +0800, Jinjie Ruan wrote:
->>
->>
->> On 2025/7/3 18:25, Lorenzo Pieralisi wrote:
->>> An IRS supports Logical Peripheral Interrupts (LPIs) and implement
->>> Linux IPIs on top of it.
->>>
-
-[...]
-
->>> +static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data,
->>> +					    unsigned int lpi_id_bits,
->>> +					    unsigned int istsz)
->>> +{
->>> +	size_t l2istsz;
->>> +	u32 n, cfgr;
->>> +	void *ist;
->>> +	u64 baser;
->>> +	int ret;
->>> +
->>> +	/* Taken from GICv5 specifications 10.2.1.13 IRS_IST_BASER */
->>> +	n = max(5, lpi_id_bits + 1 + istsz);
->>> +
->>> +	l2istsz = BIT(n + 1);
->>> +	/*
->>> +	 * Check memory requirements. For a linear IST we cap the
->>> +	 * number of ID bits to a value that should never exceed
->>> +	 * kmalloc interface memory allocation limits, so this
->>> +	 * check is really belt and braces.
->>> +	 */
->>> +	if (l2istsz > KMALLOC_MAX_SIZE) {
->>> +		u8 lpi_id_cap = ilog2(KMALLOC_MAX_SIZE) - 2 + istsz;
->>> +
->>> +		pr_warn("Limiting LPI ID bits from %u to %u\n",
->>> +			lpi_id_bits, lpi_id_cap);
->>> +		lpi_id_bits = lpi_id_cap;
->>> +		l2istsz = KMALLOC_MAX_SIZE;
->>> +	}
->>> +
->>> +	ist = kzalloc(l2istsz, GFP_KERNEL);
->>
->>
->> When kmemleak is on, There is a memory leak occurring as below:
->>
->>
->> unreferenced object 0xffff00080039a000 (size 4096):
->>   comm "swapper/0", pid 0, jiffies 4294892296
->>   hex dump (first 32 bytes):
->>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>   backtrace (crc 0):
->>     kmemleak_alloc+0x34/0x40
->>     __kmalloc_noprof+0x320/0x464
->>     gicv5_irs_iste_alloc+0x1a4/0x484
->>     gicv5_irq_lpi_domain_alloc+0xe4/0x194
->>     irq_domain_alloc_irqs_parent+0x78/0xd8
->>     gicv5_irq_ipi_domain_alloc+0x180/0x238
->>     irq_domain_alloc_irqs_locked+0x238/0x7d4
->>     __irq_domain_alloc_irqs+0x88/0x114
->>     gicv5_of_init+0x284/0x37c
->>     of_irq_init+0x3b8/0xb18
->>     irqchip_init+0x18/0x40
->>     init_IRQ+0x104/0x164
->>     start_kernel+0x1a4/0x3d4
->>     __primary_switched+0x8c/0x94
+On Thu, Aug 07, 2025 at 05:19:51PM +0100, Conor Dooley wrote:
+> On Thu, Aug 07, 2025 at 09:30:10AM +0800, Troy Mitchell wrote:
+> > Previously, the K1 clock driver did not include the parent clocks of
+> > the I2S sysclk.
+> > 
+> > This patch adds their definitions to allow proper registration
+> > in the driver and usage in the device tree.
+> > 
+> > Fixes: 1b72c59db0add ("clk: spacemit: Add clock support for SpacemiT K1 SoC")
 > 
-> Thank you for reporting it.
-> 
-> It should be a false positive, we hand over the memory to the GIC but
-> never store the pointer anywhere (only its PA).
-> 
-> Patch below should "fix" it - well, it is obvious, we are telling
-> kmemleak to ignore the pointer value:
+> I'm not sure that a fixes tag is suitable here, seems to be some new
+> feature/development. The driver change seems to talk about how modelling
+> as a fixed-clock is incorrect, but this change mentions none of that.
+> Without whatever context that provides, it's hard to see how this can be
+> justified as a fix rather than a new feature being added.
 
-I also did not see any place in the code where these pointers are
-accessed, nor did I see in section "L2_ISTE, Level 2 interrupt state
-table entry" that L2_ISTE can be accessed by software. So, are these
-states of the LPI interrupt maintained by the GIC hardware itself?
+Introduce pre-clock to fix I2S clock; otherwise, the I2S clock may not work as expected.
 
+I'll explain it in next version.
 > 
-> -- >8 --
-> diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
-> index ad1435a858a4..e8a576f66366 100644
-> --- a/drivers/irqchip/irq-gic-v5-irs.c
-> +++ b/drivers/irqchip/irq-gic-v5-irs.c
-> @@ -5,6 +5,7 @@
->  
->  #define pr_fmt(fmt)	"GICv5 IRS: " fmt
->  
-> +#include <linux/kmemleak.h>
->  #include <linux/log2.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> @@ -117,6 +118,7 @@ static int __init gicv5_irs_init_ist_linear(struct gicv5_irs_chip_data *irs_data
->  		kfree(ist);
->  		return ret;
->  	}
-> +	kmemleak_ignore(ist);
->  
->  	return 0;
->  }
-> @@ -232,6 +234,7 @@ int gicv5_irs_iste_alloc(const u32 lpi)
->  		kfree(l2ist);
->  		return ret;
->  	}
-> +	kmemleak_ignore(l2ist);
->  
->  	/*
->  	 * Make sure we invalidate the cache line pulled before the IRS
-> 
+> > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > ---
+> >  include/dt-bindings/clock/spacemit,k1-syscon.h | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
+> > index 2714c3fe66cd5b49e12c8b20689f5b01da36b774..524268246fedd3f1238320f35244baf32354fbd2 100644
+> > --- a/include/dt-bindings/clock/spacemit,k1-syscon.h
+> > +++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
+> > @@ -77,6 +77,9 @@
+> >  #define CLK_I2S_BCLK		30
+> >  #define CLK_APB			31
+> >  #define CLK_WDT_BUS		32
+> > +#define CLK_I2S_153P6		33
+> > +#define CLK_I2S_153P6_BASE	34
+> > +#define CLK_I2S_SYSCLK_SRC	35
+> >  
+> >  /* MPMU resets */
+> >  #define RESET_WDT		0
+> > 
+> > -- 
+> > 2.50.1
+> > 
+> > 
+
+
 
