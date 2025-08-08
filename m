@@ -1,130 +1,187 @@
-Return-Path: <linux-kernel+bounces-760197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41153B1E7AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:48:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30AE9B1E7AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 13:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B79F7B022C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:46:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08BEB189311C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 11:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AF7275AE6;
-	Fri,  8 Aug 2025 11:47:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852262750E5;
-	Fri,  8 Aug 2025 11:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77FE275B18;
+	Fri,  8 Aug 2025 11:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bfWL5h0R";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DxCG3OlU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bfWL5h0R";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DxCG3OlU"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBD827585F
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 11:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754653660; cv=none; b=UeL7F5nAH77wMORWhbkpm2nTUF8bQMdPhm0mLW/tzAEOXwvYCPFwoXccGM9VNYeBlX9e5WurSH4tSzGb3AOhGOgpAxHRmFcIPQ0Iyulr6LT90qU0/xbkDJxj5+3cdC4BVLdoIIOqo7Chmf0ygN9AyXz0cIGbKygtnT4MUgYR86k=
+	t=1754653662; cv=none; b=K2IqIknxWrM7vpY8ywdsjTxrI44xbfz4cIqCbyeHmMHOARZQ4rB6TLwzos6cKXuU93lClivB4prg6Pd1C7/NtVFmb/CujOdX2tBC3j/3NcappUpVLa0Hblz2lg69t49gJ/EyXo78CwQwiufFmV6WpV/G2ShC6K5BDc8FQXqW05c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754653660; c=relaxed/simple;
-	bh=fw0LMFAx6/CelKIeGgsPTOu4keOgrwh72hmn0s1QYnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iAMsMJey+xauUicgPRJndYf+xF6GA2omgsqjK1/H1QXrZDB/0t+auhvXEkY+8WS1kLCh42of82mknYI1hOI+TkUH3okuThBdaguOzQ8FK9ROIBvbaZeS5WN7JGg4P9KcB1u4DCZNd6Vbdcj8FOZUF+M3Q6A2fAOPXVIeRYze1ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72FF016F8;
-	Fri,  8 Aug 2025 04:47:28 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 290483F673;
-	Fri,  8 Aug 2025 04:47:36 -0700 (PDT)
-Date: Fri, 8 Aug 2025 12:47:34 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	James Clark <james.clark@linaro.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] perf auxtrace: Support AUX pause and resume with
- BPF
-Message-ID: <20250808114734.GB3420125@e132581.arm.com>
-References: <20250725-perf_aux_pause_resume_bpf_rebase-v3-0-9fc84c0f4b3a@arm.com>
- <fd7c39d2-64b4-480e-8a29-abefcdc7d10a@intel.com>
- <20250730182623.GE143191@e132581.arm.com>
- <0a0ed9d4-6511-4f0b-868f-22a3f95697f8@intel.com>
+	s=arc-20240116; t=1754653662; c=relaxed/simple;
+	bh=OMs39cPXH3EsbEjYCGDQeZSreiy7G8uM9/UhBT/4ekY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BXoROzySywg0qsZ6xD9R8V9Q/QQTyqOXpDxD7IoB0TcDlkd+xk13wzNku4hvFZmAoUwpjH+DqclLBcDwOy3r9+zwRcMxz+0kOaVcmAeWovzuZ37LdUUYtEBL6MNjRZ8wTHKyhB75Cn3isFL9Vh2JgHPxXMgZYn668jGdM8IqyLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bfWL5h0R; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DxCG3OlU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bfWL5h0R; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DxCG3OlU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 585D75BDDF;
+	Fri,  8 Aug 2025 11:47:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754653658; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=joXkF6ZQTX4Bw9+xPY1uO4UwL5P2K6IIXB7mOXl7enM=;
+	b=bfWL5h0ReRJM3Os+zAYR2NNgdMd3W+9CXVPe6zu2bEP8uK0v3TADyizhW9Nicxoc8GU3Bo
+	MAQXLVHFMBkyEg8QYZ8kxlah7XUeuB2W3xHfjruTQCqoqGHkOPFIT6G77gTwudpTEIQdhT
+	huq4uZaS8lkEmdUfzQa69ahGSKUoH3o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754653658;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=joXkF6ZQTX4Bw9+xPY1uO4UwL5P2K6IIXB7mOXl7enM=;
+	b=DxCG3OlUYKjeIisqyfObPZD1Ker3MHHl+gZ/XtDioYo2d4lc+8Pmj/ubsNL/iH6LtvLs5n
+	DSEKj6c6p2iCoiAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754653658; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=joXkF6ZQTX4Bw9+xPY1uO4UwL5P2K6IIXB7mOXl7enM=;
+	b=bfWL5h0ReRJM3Os+zAYR2NNgdMd3W+9CXVPe6zu2bEP8uK0v3TADyizhW9Nicxoc8GU3Bo
+	MAQXLVHFMBkyEg8QYZ8kxlah7XUeuB2W3xHfjruTQCqoqGHkOPFIT6G77gTwudpTEIQdhT
+	huq4uZaS8lkEmdUfzQa69ahGSKUoH3o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754653658;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=joXkF6ZQTX4Bw9+xPY1uO4UwL5P2K6IIXB7mOXl7enM=;
+	b=DxCG3OlUYKjeIisqyfObPZD1Ker3MHHl+gZ/XtDioYo2d4lc+8Pmj/ubsNL/iH6LtvLs5n
+	DSEKj6c6p2iCoiAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E5C311392A;
+	Fri,  8 Aug 2025 11:47:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id S7DdNtnjlWjVAwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 08 Aug 2025 11:47:37 +0000
+Date: Fri, 08 Aug 2025 13:47:37 +0200
+Message-ID: <878qjuyqzq.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
+Cc: tiwai@suse.de,
+	arnd@arndb.de,
+	broonie@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	quic_wcheng@quicinc.com,
+	tiwai@suse.com
+Subject: Re: [PATCH v3] ALSA: usb-audio: Add support for TASCAM US-144MKII
+In-Reply-To: <20250808111406.4074-1-ramiserifpersia@gmail.com>
+References: <87jz3eywak.wl-tiwai@suse.de>
+	<20250808111406.4074-1-ramiserifpersia@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a0ed9d4-6511-4f0b-868f-22a3f95697f8@intel.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-On Tue, Aug 05, 2025 at 10:16:29PM +0300, Adrian Hunter wrote:
-> On 30/07/2025 21:26, Leo Yan wrote:
-> > Hi Adrian,
-> > 
-> > On Mon, Jul 28, 2025 at 08:02:51PM +0300, Adrian Hunter wrote:
-> >> On 25/07/2025 12:59, Leo Yan wrote:
-> >>> This series extends Perf for fine-grained tracing by using BPF program
-> >>> to pause and resume AUX tracing. The BPF program can be attached to
-> >>> tracepoints (including ftrace tracepoints and dynamic tracepoints, like
-> >>> kprobe, kretprobe, uprobe and uretprobe).
-> >>
-> >> Using eBPF to pause/resume AUX tracing seems like a great idea.
-> >>
-> >> AFAICT with this patch set, there is just support for pause/resume
-> >> much like what could be done directly without eBPF, so I wonder if you
-> >> could share a bit more on how you see this evolving, and what your
-> >> future plans are?
-> > 
-> > IIUC, here you mean the tool can use `perf probe` to firstly create
-> > probes, then enable tracepoints as PMU event for AUX pause and resume.
+On Fri, 08 Aug 2025 13:14:06 +0200,
+Šerif Rami wrote:
 > 
-> Yes, like:
+> Hi Takashi,
 > 
-> $ sudo perf probe 'do_sys_openat2 how->flags how->mode'
-> Added new event:
->   probe:do_sys_openat2 (on do_sys_openat2 with flags=how->flags mode=how->mode)
+> Thank you for your reply and for taking the time to review my patch.
 > 
-> You can now use it in all perf tools, such as:
+> > - The sysfs file should be dropped as Greg suggested
+> >
+> > - Try to use guard() for spinlocks.  (I know other USB audio drivers
+> >   don't do that yet, but I already have a bit patch set to convert
+> >   those.)
+> >
+> >   Of course, there are cases where guard() and scoped_guard() don't
+> >   fit well (e.g. the loop with temporary unlock/re-locking), but in
+> >   most cases, you can use it well.  If it doesn't fit, it's a good
+> >   chance to take a look at your code again and reconsider whether the
+> >   code flow can be changed better.
+> >
+> > - Similarly, try to use __free(kfree) for temporary buffers.
+> >
+> > - snd_pcm_lib_preallocate_*() can be replaced with
+> >   snd_pcm_set_managed_buffer().  Then you can drop
+> >   snd_pcm_lib_malloc_pages() and snd_pcm_lib_free_pages() calls from
+> >   hw_params and hw_free callbacks, too.
+> >
+> > - Most of enum info callbacks can be simplified with
+> >   snd_ctl_enum_info() helper function.
+> >
+> > - It's a bit big code and it'd be great if you can split the patches
+> >   in a logical manner.  But it'd be OK-ish to have a single patch if
+> >   it's not easy, too.
 > 
->         perf record -e probe:do_sys_openat2 -aR sleep 1
+> I will implement the suggested changes.
 > 
-> $ sudo perf probe do_sys_openat2%return
-> Added new event:
->   probe:do_sys_openat2__return (on do_sys_openat2%return)
-> 
-> You can now use it in all perf tools, such as:
-> 
->         perf record -e probe:do_sys_openat2__return -aR sleep 1
-> 
-> $ sudo perf record --kcore -e intel_pt/aux-action=start-paused/k -e probe:do_sys_openat2/aux-action=resume/ --filter='flags==0x98800' -e probe:do_sys_openat2__return/aux-action=pause/ -- ls
+> Regarding patch splitting, since most of the driver code is new, the plan is to create two patches: one that removes the US-144MKII device binding from the existing `us122l` driver, and a second that adds the new driver files under `sound/usb/usx2y`. Please let me know if this sounds good or if you’d prefer a different approach.
 
-Thanks a lot for sharing the commands. I was able to replicate them
-using CoreSight.
+I don't think this would bring so much -- the drop of the old driver
+binding is just a few line of entry point, after all.
+Rather splitting the new driver code in a few logical pieces might
+help for reviewing.
 
-Given that we can achieve the same result without using BPF, I am not
-sure how useful this series is. It may give us a base for exploring
-profiling that combines AUX trace and BPF, but I am fine with holding
-on until we have clear requirements for it.
 
-I would get suggestion from you and maintainers before proceeding
-further.
+thanks,
 
-Thanks,
-Leo
+Takashi
 
