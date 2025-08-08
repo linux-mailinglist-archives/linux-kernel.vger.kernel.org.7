@@ -1,478 +1,133 @@
-Return-Path: <linux-kernel+bounces-759752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C448B1E1FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:11:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2772EB1E1FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 08:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4BCE7AC63B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:10:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17444172C39
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 06:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB4B22157E;
-	Fri,  8 Aug 2025 06:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E35722172C;
+	Fri,  8 Aug 2025 06:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hu6h+Ix9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrMxAviO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBED22126D;
-	Fri,  8 Aug 2025 06:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754633497; cv=fail; b=robCHA06oLEkwXVAip42aN8NCdLPVFOKmX0oEOzSzaPrF3/a9S2J2/m8mQYDwCqX52rOo4T/+KLwpd4YWdFLt2ObVbLhvOngT1awOLhax8enWAZYnsjYOUK7cFY7IGqHiF6LkSkK5Dm0bsrPXUEPIC1jm5s/Ksgy+5oN0rnVLHw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754633497; c=relaxed/simple;
-	bh=B+rqFpe77O7Z7B2Cy/1UMbzFvlJx4zgRSRqQMFCufk4=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=l8EL1E5bt/9zBxYnX3omB/3u/YnOMfJpD0YmXPaOBBgN8TNo559EhBIim/zuBE+bJDMCvZ6xKvPpjgE8EKEQyWpvIABAywX9OS+KnsKRi33rmMUgSnUOBW/r20duZHKkCp/ErX8LY8/LUHL4bnWMiYirOYIs4f+f6Ve6mLF3xjk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hu6h+Ix9; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754633495; x=1786169495;
-  h=date:from:to:cc:subject:message-id:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=B+rqFpe77O7Z7B2Cy/1UMbzFvlJx4zgRSRqQMFCufk4=;
-  b=Hu6h+Ix9lFjrVEVjYpVja8BOqBXWu1o/DyS4Uy20cwJeMN2PzBfcEI1i
-   bhRbUcPGl3YTqtoGxpiWF67tgYRJBL6qHx+uUf5DpCOBj9hGTZ1BaML/F
-   rzqudcpUMj2xfnQu/8MV1D87WAfPc4WYzvg5kwcXNM2mv1VeYS4jnI/ua
-   sHemMLaahFtulCXuPcwKvLxfNRtlWBdNvCl92jVJ2enuh1T5Mdjjpemid
-   LbnX4ah9t4C+4Rhs8OS3j+naJt4PhmqrDDItdbpO/1Js0ubhM46vVIlqS
-   n7WRIEWo3mv7tYzpGhHWkoP6NJJ/xgL0u8pOGFTov0t6s30DKX57rBweP
-   A==;
-X-CSE-ConnectionGUID: 1n2Y0QMvS/6utcqFV00M0A==
-X-CSE-MsgGUID: WY+mFjosREatzzD3QfqU2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="57118444"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="57118444"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 23:11:35 -0700
-X-CSE-ConnectionGUID: hIVq6rMVR+aoPNWJnOY8+A==
-X-CSE-MsgGUID: vOxyOhAvSmmar5fd13w1Qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="202420724"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 23:11:34 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 7 Aug 2025 23:11:33 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Thu, 7 Aug 2025 23:11:33 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.58)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 7 Aug 2025 23:11:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yG3RIrlJp+hgvmMgclbehZhzMtfMZsGQXF8I0yA+jhhlQ7ziPccaWWpYPB07HhtXoQPCiMAhfmkl63n0f18bTuL9YAaMyNVARZ75ix9XnEC+hlI0zFyeKdwAZ/YcL4k8+xkVHU0VoRzp/KGYqC3mMX5fNc/QNZnGF5gynXNX9d8JQRCjc7Vq4YeU1iUKmTrRCri1CcDcM7JfQ3l2btFpo8FfLrPKOm2H/yf7dpIZJpDIuVgq5J0EfHuzoH7LQdiQ4VwpaGPpVBKLPclQuLC+VHRGQVx4riQgKvIOPH4T5dmEs9yS7A4tjtt/NtsDiDx85IlVLzLvLJ7i3+Cfwo16zg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D01V9RilzvSmB7lexaPB/p3swRGKQ845bmt6/QL0hlo=;
- b=vpdaQxC/8GzeFoyHywrLmhxerB5PeZc9NrRT8YhQZtzfU87Z797LLMpqWYzp8BRQ2VT/AutQK1e74/6f0Cf3spD82l8/ZN6fnpZCLwxF9gO7BuVGcBDlnCQYKyCbzlob6ZySh6NUg4P3QbZ2A6WSDA5i5sQEiCsN41XWyF0pDVIVuCKTIypn8NL+mVQjXZRp/UVlaMjdtFrTS6QdzAbM2evAWSpAmSYJ2RMtilEhDmuDDZfd1hvYuW7rByYbrMmuEvQKl3zr32nXC/ZZ/PGLxKipMTQkbS7+2h8C+AVocaj66T35fkL2YgduoiuFoROInyoO76/ChqpSRi45PmRitw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by SA0PR11MB7158.namprd11.prod.outlook.com (2603:10b6:806:24b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
- 2025 06:11:31 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9009.013; Fri, 8 Aug 2025
- 06:11:31 +0000
-Date: Fri, 8 Aug 2025 14:11:16 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Yuzhuo Jing <yuzhuo@google.com>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
-	<xudong.hao@intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
-	<mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
-	<namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>, Yuzhuo Jing <yzj@umich.edu>, "Yuzhuo
- Jing" <yuzhuo@google.com>, Andrea Parri <parri.andrea@gmail.com>, "Palmer
- Dabbelt" <palmer@rivosinc.com>, Charlie Jenkins <charlie@rivosinc.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Kumar Kartikeya Dwivedi
-	<memxor@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Barret Rhoden
-	<brho@google.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Guo Ren
-	<guoren@kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<oliver.sang@intel.com>
-Subject: Re: [PATCH v1 1/7] tools: Import cmpxchg and xchg functions
-Message-ID: <202508080716.5744484-lkp@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250729022640.3134066-2-yuzhuo@google.com>
-X-ClientProxiedBy: SI2P153CA0015.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::21) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869AF22126D;
+	Fri,  8 Aug 2025 06:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754633491; cv=none; b=imzTuQamhA+mZvZtY8mE1JRCVzIYN/xXX+iOqCh+p0a/1+rpX8Uz7alx9C1UQhbRV+LxR55bAQemVjnjjO08hsKPKvFs0QL8Sq7ubZfijQ0QDsSIJJWTPWBNy96zX3TQpQqBshlCcviFNMa/+c0CxH9mrNXFALk+SrOGd6MOLHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754633491; c=relaxed/simple;
+	bh=aqYxcnkh6l/YJOT84xB0o7oh1kG3jXmJGIEjT8yJZWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=n6ZXKx+1BRcORvyo+Xg1agHyMrH4GwzVGKnW3XPxzNezgOn/BFLB16vfVwNZmOTFuXKHus7i2kTNN7MEQUn47nyv3QdP+q4eveMQPv6/Q3m0BUhp/km/707lZ5GAfcrP21DgRKlm4Ns3aWqG2FQY5p7NyqEff5VXmBOvEJnNuCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrMxAviO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D194AC4CEED;
+	Fri,  8 Aug 2025 06:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754633490;
+	bh=aqYxcnkh6l/YJOT84xB0o7oh1kG3jXmJGIEjT8yJZWQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=WrMxAviO7CBA37FJ78govV/ktWC9kB3sJ5oAxKxX4FX/mQ5gbvucGP6/lEW3EjBE5
+	 3bRX0QUv4YNUBGKEEBl1jbRrmjKnARlGPFAlI4azv4JDiRR8xsV991VtjTRZ+6Ks5B
+	 BeGoLwQ9RUdaUGqPbCufqNjLy+NGvkV0tpYxfXB4iCqgDXYd56GDI1uYZ+YWeqBfYs
+	 PLbIygbxDdgxf97cfDyBSh7zVJTA4jxFram/HrnaIynkoziwuk7XjmTgQFwJ7P5mIg
+	 HVkDYSc9l04fOw5GfREEE0hsgLk1TlrACb4ZH3lBk+54lysxJM7vzSSI/xJzbqhc3d
+	 rf3y2DkGhwB0Q==
+Message-ID: <3f1a35fc-7fda-4179-948e-1a2acafd0f8a@kernel.org>
+Date: Fri, 8 Aug 2025 08:11:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SA0PR11MB7158:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3cfa7f09-fd2b-4237-629b-08ddd6426b4b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZFp1Vjd5S2t3NnZLTW9VM0lKRHJOb0V4SEZLeWVEajlhS1o2dXhjSEtYZjFD?=
- =?utf-8?B?a0NMQ01CZ3g5aWRNbkJXR1hRbExpZWx5MHRXK2c4UytwQVY1VzFrOVc3bVEy?=
- =?utf-8?B?N0Z4MmZiYVNhNnZUNFRheHlDelRXRmZPOVltbEZXVS9HWVR1MkE4SGJUVlBs?=
- =?utf-8?B?bytDQjM4WGZEWFRJZFJRcjV5d0hmWTRYU2lEOHV6NWM5T2Exd1lRdVpNa01m?=
- =?utf-8?B?MmxBaEp2SGVyR3FDOWp1czI3TEo1SmlmbE1KdEFuWTMrNVd0eFZGcCtuWTJM?=
- =?utf-8?B?RFRNeHdHRnpzZnVPZXo3bmZsVXVSV1RJeit2M1BuajI0Unc5d3FrdmhYbVEv?=
- =?utf-8?B?Mk9icHRHMjg4dlFYaVJvUzhlZUhncWZzU29leXZ1UEhkMjdEMmdDZEVob0F6?=
- =?utf-8?B?SFJOTXh4TjFOVWtUd01jWkYzV0FYRlI1UlRTb0wwbnZVRVJqQlAzaitzRDYy?=
- =?utf-8?B?VDFLSXduTUZFN3laSE85Uk9PVVA0WG9HRVFybGhzWWRDVEhtK1lqS2IvYWF5?=
- =?utf-8?B?T2xScjBIa0RIMzZuNElyNllwcGNuYm5QNGZsdUNIRGRkcGFLcHluZjBqRTMy?=
- =?utf-8?B?SmYvQjdXZHRyOUJlZTY4TDd0bFNhd1lOSnZrcGZZZXhmQ0R4aC9HMWhjY2J0?=
- =?utf-8?B?ak9WczQveFYvR0V2aVROdlhzVFM3VmxuazU0L2xJcWU4NTJUbUljWC8yVzls?=
- =?utf-8?B?VWRoMHNOazFYdTdwNFR3dlBBSGdrVUNKZXFpTC82R3NxTXovaDU2Qzk4T0Fl?=
- =?utf-8?B?MjZJQUQwdU1lanBtamU3SzRpc1lKbWlGZTNyWHFUMGJ4SnBMZWlvVEJYNkhk?=
- =?utf-8?B?WUdDeWUvRFBWNFRvdXV2dHREVUVIN21sNGNBbE55aXZzdWtDLzVDOXdXV1gr?=
- =?utf-8?B?c3ZaeEQ1NVo3b0xMTERCQytSanJaVjVzZWsvZnhUZ25NRjh1WDdrbFF5emE5?=
- =?utf-8?B?bmZjWUtqbm45K01XejEvSVkveUlGSDJZQlYzNFBPTzMwb0hSUW5DSjk0aytU?=
- =?utf-8?B?cjNLRVc5dWkrblhsMzBPMUpMSHlwR1VzTldXdnFiMkRrT1RjbjUxN1lCWG9i?=
- =?utf-8?B?MnJLTWdzRUZjQytJenAzZ0oxNWdDVUErM2xVeFRZaUJmVU1RNVpMelpoOTlR?=
- =?utf-8?B?VXZjcjllMnVGanlPb1cyOG1rZER0MUVrYjQ1ekNRVFdzeUdXT3pWRHN3QTg2?=
- =?utf-8?B?bjJIc25zWjhFNXJjeHhmYVdHanVQajhnU204Q1cyNXNWRVA3SVJFTWlYZjJs?=
- =?utf-8?B?eWxLanVDRk52OGJYSlZUYms4VnFVZVpDOUtMb09jaUlrWi9MalBza0ZHVGI2?=
- =?utf-8?B?QVJBT0NxMU94MWhSNFpCMU9KeFBlQWlkMWRJQUVxUTkvdlpDQWpqOW1ObFRt?=
- =?utf-8?B?UHE0QWwySlZVMVVmK2Nxa0RhaHBrMnRITG52VnJOODRvOU8waVlpOVpIUmlr?=
- =?utf-8?B?c1Z6clU5endaQWlsVXVKN0dXSVFOcVYybFF2bHhGUFBIMk4yYm1kZFo5UjhD?=
- =?utf-8?B?QmF6SURQRVJHSjFDQ2cyRXJ0a0dVSHNxQnVCLzJpMENZQmluWkpTaXFIcm9W?=
- =?utf-8?B?S1h3Y1M3Nkp0SzdhcDV1RkFvMFM3cU1pZkRiekRxRmI2dkQwSHo3b2lsZmkr?=
- =?utf-8?B?dTlJWk9DS3dSOTE5cnBzTGxuNXlJVWNQZHBSUDBJTkliVTBPNkRpc0ZmWWZM?=
- =?utf-8?B?cE5tWHAxemdtWURlUmtoblErcElBb3NtbVFISVZBQVZ4a05wMXVncExlb1Fo?=
- =?utf-8?B?VGVmMzR0Z3A2OThTZjZZUFFKc2pKK0ZTKzduY21XSXdYTDNCM0ZlMnBvMzJR?=
- =?utf-8?B?ei94cTNsbzl6OEp3VnZmR0lHYkZmMng5OFl4QkV5bEQwRGYzcElSZTN5czZU?=
- =?utf-8?Q?SltVgd/AITVEn?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bFh0RGlGYXM3WkI5S29rMzBVOWp3SDVyVHluRnVrc3lJcjc3SW1lRTJrZmhq?=
- =?utf-8?B?cC9Ha2JCNTlkQVJtYS8xMENrY21pSTVyZDgrVVF3OHBhVEdDZlRRdVRFMHNX?=
- =?utf-8?B?TTBBUnFTbWVRWTRFN2NQVzVFdkE3RmM1Z05LYVhQM2JQY0hRL2NOVVFXK1FJ?=
- =?utf-8?B?b3lrV1Q3elBPY0pMbFdPb3VYdmZocGM1NFJJNzhseityV0JUaTBndDRWdlNl?=
- =?utf-8?B?eWJTTHVqUmdGbUprVDRrVkE2ckhyZ1dVd1plNnU4NGdhK0lNdmhBc1N1YVgr?=
- =?utf-8?B?MS9uU2E3MW8vZUh1dzJKUmRkcEVHQWtCRmVONktMV3YwejJFSG9ZbkNFcUhu?=
- =?utf-8?B?eXQvRFMwWVI3eWxseHl1Z0g1cWd4bmdGRkUwRGpDVjl2SktQWkFhcWVsbitK?=
- =?utf-8?B?R2xacWIrbWJweUR3Zk1zcWpTMjhMWFBxRjJXc2FYOEJ2eEdja3N1cWZCY0o5?=
- =?utf-8?B?TUhZV1pqN2t0eENvWC9TL2hDb2tLdUxOV2QzUG5kb2s3ZUJTUGJsK0hoRWhp?=
- =?utf-8?B?Y3RJZVBFaWZ5cldiQVZ6eEUyTit1SmVabXZ3YkhiVTlPMEErMHZEeUZVekF0?=
- =?utf-8?B?NlZWNFZqSE1zWVNZMGVHc3NSM05ST0NYK0d5OGh2U0dWbmtOSEw4Z3o2VTdm?=
- =?utf-8?B?YXlGSTRJa01EWXBFMjRJUHN6cHh4K2dZZ1kxdDZsTHZOV2t6OTF0TFJCVHo1?=
- =?utf-8?B?cUVlWWt5YzN1SFV4TFlCWWV3OTN3TEZUOXI5NlFEcVlVMDF5OWNpQ1BNMHJ1?=
- =?utf-8?B?RW5pSXRhRmd6aWg2SDh0Zmh5enBNaXdtL3dCbGdXMXFHWlpBdnhLZjQ0MVVR?=
- =?utf-8?B?K0RSMjhTNzY3WkNvWXBhbTJ4c2QrdTJ6VnhTMGNEdnpSN2xoL2g4K3JDaXE2?=
- =?utf-8?B?M1RaeERqSXNWNitkeTU0b2MzR2M2MUZERGtWVkU2ZTRUQkdLWnc5Y0s5TzJ2?=
- =?utf-8?B?NUlsZVIrTVFjV1dVUElKcDg4eWswcDMyampwN0lhTk9Vd2tqTHBZWks3ZU5L?=
- =?utf-8?B?WTMxb3N4Q2VFcld3SEJkSFd4RVkrVEdsbU9BbWVlRFgvY2JwRU9GZzBTdnh3?=
- =?utf-8?B?TVU0UTRpTTVYVFE5K01IUkZkR1ZlN1ZTZ1E0ZUF3TUhOaWk5ZWpUaVR4V3l3?=
- =?utf-8?B?eFh3RzVyY1h6SloweEh0dVQ5UG1kUWc2ZVBESmxORUxhc3F4cnB3SDh4Z0VV?=
- =?utf-8?B?WFdSWUV1QlpDSEtseFhDSmFnMnEvRGtVeVZVamxFMmUzcklISUloTmZFYTV6?=
- =?utf-8?B?VUhhKy95ZlU4OVhtK09YRTEwbjNndHdnZVV3NWdyQTRFSmlmM3FKbDJhejNX?=
- =?utf-8?B?T0RvTFkyMU9sQXowZ1NkQm85ZmgyY0VrYTZKZHRXSTZONDl4dHl4eHJ6RlB4?=
- =?utf-8?B?eE5EWnFiTWg1WFk1SjFDem9oaTN6cWJhYm5DbElpMXUrbGtVbjV4cm9pdUl1?=
- =?utf-8?B?eDZtYXJxd0FuWlh0alljdDM1TGd5NVpVdis4UE44ZmsvSk9aV1RRbjZoakxz?=
- =?utf-8?B?MWdrS1hqeTdEUFRJK2lwYkdtTXBlNnBvZThmRHJ0RWd2L3lFRDlVWDkwbFpa?=
- =?utf-8?B?RWl6WDNTSTVlNy9HMEhCdXJ0azZWSE8zRVp0QktBTjZHR1JLaGdjVWROVUpY?=
- =?utf-8?B?Y0ZORzBybDVUdjM4RVVYa3F4d29xSlgzT3lGUm9XVFBQTXdKVmxCVWFVVS9w?=
- =?utf-8?B?KzVUT09TWHdzVlNWTElVbDlQeU1kalRKQTJMRVo4T2Urb0YrbVNwbzRLKzFV?=
- =?utf-8?B?VkpKWjk4dm8vb3JGekZOd0hnc2tHSUJFY21mRmszWFlIR1FjRFZtbURqbkZh?=
- =?utf-8?B?TXd3MGFZdTNmOVNYUk5OWElxTnVGNlRzOHRpdGMxVzFlV1dNd3FnWEgxS1Aw?=
- =?utf-8?B?NDNsUVU1RzQ2d3NaMmVONmorN0NLMjgvU0hsalZ1Ry82ZmhrN0h6ZGpzRmI2?=
- =?utf-8?B?M3VYRmcrVUZLRkU0S0E1YW9VRXVhNHRMcFJnZTkrKzhtTU1RUWg4LzFtUUZj?=
- =?utf-8?B?WWZ1OXJDRG0zaWxaS01qYkdZVzJsdnVkWjh1eXM5a05NYVhZUnJnMjFpd3BR?=
- =?utf-8?B?UFdlcUhFV0JFRXBrVEw2VDVZNUU1QzdvekZyTnQzc0RZRzM3NThJWnRMQTMx?=
- =?utf-8?B?S2xhU2xSd3BCNWJ6TldwUDNIV1ZZMzZXdWFtaXBNU3R3ajI1MVJNM0xGMnFJ?=
- =?utf-8?B?QWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cfa7f09-fd2b-4237-629b-08ddd6426b4b
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 06:11:31.4518
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p51rJIlE3137GkWqG8y+xz4aXjF3ZuGlaypwnCv/Q6p+veP7eX3l9Iph05u/z1xAJOV8o8HTSrYIiVLa/sDCXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB7158
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] dmaengine: lgm-dma: Added Software management
+ functions on HDMA.
+To: Zhu Yixin <yzhu@maxlinear.com>, vkoul@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+ kees@kernel.org, dave.jiang@intel.com, av2082000@gmail.com,
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250808032243.3796335-1-yzhu@maxlinear.com>
+ <20250808032243.3796335-3-yzhu@maxlinear.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250808032243.3796335-3-yzhu@maxlinear.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 08/08/2025 05:22, Zhu Yixin wrote:
+> +
+> +struct dw4_desc_sw {
+> +	struct virt_dma_desc	vd;
+> +	struct ldma_chan	*chan;
+> +	struct dw4_desc_hw	*desc_hw;
+> +};
+> +
+> +/**
+> + * hdma TX need some sideband info to switch in dw0 and dw1
+
+That's not a kerneldoc.
+
+Please run standard kernel tools for static analysis, like coccinelle,
+smatch and sparse, and fix reported warnings. Also please check for
+warnings when building with W=1. Most of these commands (checks or W=1
+build) can build specific targets, like some directory, to narrow the
+scope to only your code. The code here looks like it needs a fix. Feel
+free to get in touch if the warning is not clear.
 
 
-
-Hello,
-
-kernel test robot noticed "kernel-selftests.kvm.make.fail" on:
-
-commit: 108c296547f3e749d89c270aa6319894f014f01c ("[PATCH v1 1/7] tools: Im=
-port cmpxchg and xchg functions")
-url: https://github.com/intel-lab-lkp/linux/commits/Yuzhuo-Jing/tools-Impor=
-t-cmpxchg-and-xchg-functions/20250729-102940
-base: https://git.kernel.org/cgit/linux/kernel/git/perf/perf-tools-next.git=
- perf-tools-next
-patch link: https://lore.kernel.org/all/20250729022640.3134066-2-yuzhuo@goo=
-gle.com/
-patch subject: [PATCH v1 1/7] tools: Import cmpxchg and xchg functions
-
-in testcase: kernel-selftests
-version: kernel-selftests-x86_64-186f3edfdd41-1_20250803
-with following parameters:
-
-	group: kvm
-
-
-
-config: x86_64-rhel-9.4-kselftests
-compiler: gcc-12
-test machine: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480+ (Sapphi=
-re Rapids) with 256G memory
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new versio=
-n of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202508080716.5744484-lkp@intel.com
-
-KERNEL SELFTESTS: linux_headers_dir is /usr/src/linux-headers-x86_64-rhel-9=
-.4-kselftests-108c296547f3e749d89c270aa6319894f014f01c
-2025-08-05 10:05:53 sed -i s/default_timeout=3D45/default_timeout=3D300/ ks=
-elftest/runner.sh
-2025-08-05 10:05:53 make -j224 TARGETS=3Dkvm
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-9.4-kselft=
-ests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/kvm'
-gcc -D_GNU_SOURCE=3D  -I/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-=
-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/cgroup/lib=
-/include -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=3Dgnu99 -Wno=
--gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT -fno-builtin-mem=
-cmp -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-strnlen -fno-stack=
--protector -fno-PIE -fno-strict-aliasing -I/usr/src/perf_selftests-x86_64-r=
-hel-9.4-kselftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/s=
-elftests/../../../tools/include -I/usr/src/perf_selftests-x86_64-rhel-9.4-k=
-selftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/=
-../../../tools/arch/x86/include -I/usr/src/perf_selftests-x86_64-rhel-9.4-k=
-selftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/=
-../../../usr/include/ -Iinclude -I. -Iinclude/x86 -I ../rseq -I..  -isystem=
- /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270=
-aa6319894f014f01c/usr/include -march=3Dx86-64-v2   -c demand_paging_test.c =
--o /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c2=
-70aa6319894f014f01c/tools/testing/selftests/kvm/demand_paging_test.o
-
-...
-
-gcc -D_GNU_SOURCE=3D  -I/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-=
-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/cgroup/lib=
-/include -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=3Dgnu99 -Wno=
--gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT -fno-builtin-mem=
-cmp -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-strnlen -fno-stack=
--protector -fno-PIE -fno-strict-aliasing -I/usr/src/perf_selftests-x86_64-r=
-hel-9.4-kselftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/s=
-elftests/../../../tools/include -I/usr/src/perf_selftests-x86_64-rhel-9.4-k=
-selftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/=
-../../../tools/arch/x86/include -I/usr/src/perf_selftests-x86_64-rhel-9.4-k=
-selftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/=
-../../../usr/include/ -Iinclude -I. -Iinclude/x86 -I ../rseq -I..  -isystem=
- /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270=
-aa6319894f014f01c/usr/include -march=3Dx86-64-v2   -c pre_fault_memory_test=
-.c -o /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d8=
-9c270aa6319894f014f01c/tools/testing/selftests/kvm/pre_fault_memory_test.o
-gcc -D_GNU_SOURCE=3D  -I/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-=
-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/cgroup/lib=
-/include -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=3Dgnu99 -Wno=
--gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT -fno-builtin-mem=
-cmp -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-strnlen -fno-stack=
--protector -fno-PIE -fno-strict-aliasing -I/usr/src/perf_selftests-x86_64-r=
-hel-9.4-kselftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/s=
-elftests/../../../tools/include -I/usr/src/perf_selftests-x86_64-rhel-9.4-k=
-selftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/=
-../../../tools/arch/x86/include -I/usr/src/perf_selftests-x86_64-rhel-9.4-k=
-selftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/=
-../../../usr/include/ -Iinclude -Ix86 -Iinclude/x86 -I ../rseq -I..  -isyst=
-em /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c2=
-70aa6319894f014f01c/usr/include -march=3Dx86-64-v2   -c x86/nx_huge_pages_t=
-est.c -o /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e74=
-9d89c270aa6319894f014f01c/tools/testing/selftests/kvm/x86/nx_huge_pages_tes=
-t.o
-In file included from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/bits.h:34,
-                 from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/arch/x86/include/asm/msr-index.h:5,
-                 from include/x86/processor.h:13,
-                 from include/x86/apic.h:11,
-                 from x86/fix_hypercall_test.c:13:
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/linux/overf=
-low.h:31: warning: "is_signed_type" redefined
-   31 | #define is_signed_type(type)       (((type)(-1)) < (type)1)
-      |=20
-In file included from include/kvm_test_harness.h:11,
-                 from x86/fix_hypercall_test.c:12:
-../kselftest_harness.h:754: note: this is the location of the previous defi=
-nition
-  754 | #define is_signed_type(var)       (!!(((__typeof__(var))(-1)) < (__=
-typeof__(var))1))
-      |=20
-In file included from x86/svm_nested_soft_inject_test.c:11:
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/asm/../../a=
-rch/x86/include/asm/atomic.h:79:28: error: expected declaration specifiers =
-or =E2=80=98...=E2=80=99 before =E2=80=98(=E2=80=99 token
-   79 | static __always_inline int atomic_fetch_or(int i, atomic_t *v)
-      |                            ^~~~~~~~~~~~~~~
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/asm/../../a=
-rch/x86/include/asm/atomic.h:79:28: error: expected declaration specifiers =
-or =E2=80=98...=E2=80=99 before =E2=80=98(=E2=80=99 token
-   79 | static __always_inline int atomic_fetch_or(int i, atomic_t *v)
-      |                            ^~~~~~~~~~~~~~~
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/asm/../../a=
-rch/x86/include/asm/atomic.h:79:28: error: expected declaration specifiers =
-or =E2=80=98...=E2=80=99 before numeric constant
-   79 | static __always_inline int atomic_fetch_or(int i, atomic_t *v)
-      |                            ^~~~~~~~~~~~~~~
-In file included from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/bits.h:34,
-                 from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/bitops.h:14,
-                 from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/hashtable.h:13,
-                 from include/kvm_util.h:11,
-                 from x86/userspace_msr_exit_test.c:11:
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/linux/overf=
-low.h:31: warning: "is_signed_type" redefined
-   31 | #define is_signed_type(type)       (((type)(-1)) < (type)1)
-      |=20
-In file included from include/kvm_test_harness.h:11,
-                 from x86/userspace_msr_exit_test.c:9:
-../kselftest_harness.h:754: note: this is the location of the previous defi=
-nition
-  754 | #define is_signed_type(var)       (!!(((__typeof__(var))(-1)) < (__=
-typeof__(var))1))
-      |=20
-cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-size=
-d-type-not-at-end=E2=80=99 may have been intended to silence earlier diagno=
-stics
-make[1]: *** [Makefile.kvm:299: /usr/src/perf_selftests-x86_64-rhel-9.4-kse=
-lftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/kv=
-m/x86/svm_nested_soft_inject_test.o] Error 1
-make[1]: *** Waiting for unfinished jobs....
-In file included from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/bits.h:34,
-                 from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/bitops.h:14,
-                 from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/hashtable.h:13,
-                 from include/kvm_util.h:11,
-                 from x86/sync_regs_test.c:20:
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/linux/overf=
-low.h:31: warning: "is_signed_type" redefined
-   31 | #define is_signed_type(type)       (((type)(-1)) < (type)1)
-      |=20
-In file included from include/kvm_test_harness.h:11,
-                 from x86/sync_regs_test.c:18:
-../kselftest_harness.h:754: note: this is the location of the previous defi=
-nition
-  754 | #define is_signed_type(var)       (!!(((__typeof__(var))(-1)) < (__=
-typeof__(var))1))
-      |=20
-In file included from include/kvm_test_harness.h:11,
-                 from x86/vmx_pmu_caps_test.c:17:
-../kselftest_harness.h:754: warning: "is_signed_type" redefined
-  754 | #define is_signed_type(var)       (!!(((__typeof__(var))(-1)) < (__=
-typeof__(var))1))
-      |=20
-In file included from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/bits.h:34,
-                 from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/bitops.h:14,
-                 from /usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-10=
-8c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/../../../too=
-ls/include/linux/bitmap.h:7,
-                 from x86/vmx_pmu_caps_test.c:15:
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/linux/overf=
-low.h:31: note: this is the location of the previous definition
-   31 | #define is_signed_type(type)       (((type)(-1)) < (type)1)
-      |=20
-In file included from memslot_perf_test.c:12:
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/asm/../../a=
-rch/x86/include/asm/atomic.h:79:28: error: expected declaration specifiers =
-or =E2=80=98...=E2=80=99 before =E2=80=98(=E2=80=99 token
-   79 | static __always_inline int atomic_fetch_or(int i, atomic_t *v)
-      |                            ^~~~~~~~~~~~~~~
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/asm/../../a=
-rch/x86/include/asm/atomic.h:79:28: error: expected declaration specifiers =
-or =E2=80=98...=E2=80=99 before =E2=80=98(=E2=80=99 token
-   79 | static __always_inline int atomic_fetch_or(int i, atomic_t *v)
-      |                            ^~~~~~~~~~~~~~~
-/usr/src/perf_selftests-x86_64-rhel-9.4-kselftests-108c296547f3e749d89c270a=
-a6319894f014f01c/tools/testing/selftests/../../../tools/include/asm/../../a=
-rch/x86/include/asm/atomic.h:79:28: error: expected declaration specifiers =
-or =E2=80=98...=E2=80=99 before numeric constant
-   79 | static __always_inline int atomic_fetch_or(int i, atomic_t *v)
-      |                            ^~~~~~~~~~~~~~~
-cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-size=
-d-type-not-at-end=E2=80=99 may have been intended to silence earlier diagno=
-stics
-make[1]: *** [Makefile.kvm:299: /usr/src/perf_selftests-x86_64-rhel-9.4-kse=
-lftests-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/kv=
-m/memslot_perf_test.o] Error 1
-cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-size=
-d-type-not-at-end=E2=80=99 may have been intended to silence earlier diagno=
-stics
-cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-size=
-d-type-not-at-end=E2=80=99 may have been intended to silence earlier diagno=
-stics
-cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-size=
-d-type-not-at-end=E2=80=99 may have been intended to silence earlier diagno=
-stics
-cc1: note: unrecognized command-line option =E2=80=98-Wno-gnu-variable-size=
-d-type-not-at-end=E2=80=99 may have been intended to silence earlier diagno=
-stics
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-9.4-kselfte=
-sts-108c296547f3e749d89c270aa6319894f014f01c/tools/testing/selftests/kvm'
-make: *** [Makefile:207: all] Error 2
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20250808/202508080716.5744484-lkp@i=
-ntel.com
-
-
-
---=20
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Best regards,
+Krzysztof
 
