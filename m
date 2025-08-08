@@ -1,168 +1,101 @@
-Return-Path: <linux-kernel+bounces-760240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1ACB1E861
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:31:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D07B1E865
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73B9C7A349D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:30:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99A8D3BEF7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B99D2609D6;
-	Fri,  8 Aug 2025 12:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF9727814C;
+	Fri,  8 Aug 2025 12:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEWH6viJ"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="XFYuNxhQ"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF81CA4E;
-	Fri,  8 Aug 2025 12:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754656293; cv=none; b=HuPm87YJv0bwhr917qLM817tWlYesJvzRp9pS8Orr2r60S6opLCE6GUkade+34Wy1A1SY1J4oxvP2Tv4x2VRZBgMP9Ejq0vzNPCP8SUVPTVu3cttEGXbHpHpWLiExha+0FEp3hqMvqQajoL8TcxZ8FY278HLde3ul4bOfr1DuLk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754656293; c=relaxed/simple;
-	bh=AE+OUZpHkq97f9U9eh3DCeegcbjETDZEqQEqimmtRhU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MsikrMnXrnA6yEimRL3sIlOxpSDTsUsBk2GhzazkH34jjJ+jmMhhw5qBgymyOKmlrPHJuReTO3aTPeuOsmWa1B1qvq5dn45rgVNi0Spqbyi3gKxrB8/B7qMt5lfDsNFHn+73e3PA/eJeDNWRx+q7I3cWpW47XCa/mVapsh0DlnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEWH6viJ; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af96fba3b37so382584066b.3;
-        Fri, 08 Aug 2025 05:31:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754656290; x=1755261090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kQ2ky9tHZPhS0rovmNk56b1YbseXuuUIMllhwDB0Xeg=;
-        b=MEWH6viJ7rojYWEhykE1ENRApQ1ennsMSdVduPZ030kMwWTPlYBlkWxWRRVonNZNAN
-         AHsBhy4Scct5M4DcvsnNsDiiJv9i/zPQsDHhmMmIkiHItqg0vfSob4vKI9ge3KZd1Ek1
-         XvF1jB6JOS0EkdGUMOtHicv6OoT6ZsmZGfvUnRD2bvbBrzzubA7S8AcwOF4jNOp8g8eF
-         dH9dh+0lHhdj91JodlgYU+8yUWpy3dP67HeKQSx2t9Uni5Jk3T20pffFMjUBExAXYnwn
-         LTXqWuRP+GRL2lFuSdhd7kcAqy3JMM078K3flIwWjsIF6dMv/3qwIh+OhGnC0nCgL86B
-         wzWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754656290; x=1755261090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kQ2ky9tHZPhS0rovmNk56b1YbseXuuUIMllhwDB0Xeg=;
-        b=VJDMwqVweAJGQqkh62ZIzxgUi1LuNh/nVQFjuN/fCRJW5PA8z5vMCtnQSLj8QkeOev
-         UBHj7L/0yt7COe0Wo9HM6ZzdynjkJXJU++bT19E3cKxt+R7S6FDobNpDgoqpKbpprkvt
-         XpmKRoIJWtVZtprvA42J+SzUqyuHAaf/6NUttpXb8hAHykmTymbu6dMwmThSHiLdYtCu
-         k71Mbz0xF3GfKN0pBLuTfLv1NBOszglT/EMk67v3cAcvwqMD+ul8e/Rm/Ls8P0ZTF8Ik
-         3dIZwDUsl+AVZa8TsqvB/+hFzkVdVpsESr3gWfZSY4DxTn1ZW69+vmvIsVzdyuaBOyaM
-         PNjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyVeaZ55+NQbRzccsC7k/zccmhApkdsMgjxyx9nM0qSeMNO6gAtF+xGEWWysXmEsk1RNHlVqJUTls=@vger.kernel.org, AJvYcCXWlcyy9DJptDuVclHZtufmGogk+NEypTN4DUMXlNR12CLieGyHhnN38tZgICIO/cGWKbDG3nslsgcpXleY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwspaeWJDgXL4VL19PG09bpUWxq+IVzvnWL8y/j/8kFQU++N0qH
-	XwRKx54CQ5IytRbGvRcmJbqAmK7k4d7z50N3IF3Tfk/Isy7QzEcKA+6MQ5CFpnOrz6efe8g/Msl
-	PNtQxVzVk/NWosB6A9wEry5WVj1ga6No=
-X-Gm-Gg: ASbGncsaQE1cqRAZePUB9DyIcZCTmHxOVXC5yCe0FS53rU0Z0A7iPQKa48+XYpwtVfL
-	mAnW5d+s6iRa7Zw8Y16+rLBH8OPOazF9GnTkf5z8Jfg2o7h0DLdXuSdIX1DKuDw956GN3UEwY1O
-	9wOVGa3dGwFMNoAqie4ICs6HFKxvQo679d+l37SCLWGkcYbyLKeKkf93vz0vzM0AifUrw0u3Apd
-	H9qApH+4Q==
-X-Google-Smtp-Source: AGHT+IFnJfak8sxqVoSo5+esC18P6F++h/8FSN6A559e4RirFQKqkKy9SJoUHWT6H/G4ZIXVU0htdui/Eqf9Nh0dP9k=
-X-Received: by 2002:a17:907:6d22:b0:ad8:9257:573a with SMTP id
- a640c23a62f3a-af9c62fb725mr258113566b.5.1754656289949; Fri, 08 Aug 2025
- 05:31:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319E01EA6F;
+	Fri,  8 Aug 2025 12:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754656372; cv=pass; b=ph/XuEIo0z+R+Yf0GpOd92J+Nhc9EQbzsH/LnRntPPJNqoBKXVrCxlaHKVeHhALyLUBCpAkZbpbWyoMvRgcXVb+g6IaHv0sn1LQJ/jXPrUYZfX1eFWdkvgS+M5YnfO92Iwmkj2P6TJLDckBCnuQlV0hQE14UjZBfAMhxsfPWyus=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754656372; c=relaxed/simple;
+	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=MvtjYd96ZNENAJdXasb5WMu9wMCalWqEUjSYejotez1u0I1JmLL7R7IduYk9DKzOr6n3KhkKEKA/oirU214NoYgXsiYaFcyT0mrpkp6LRP56qX2h+L/neWq4i8dSbyGkDMPTHcHsULjpjIuecWqi7o6aaf1LhGPZFBW5v2NYGzw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=XFYuNxhQ; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754656345; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UrDX7IR2VxvXfwtejFwdGZfS2v1hw8nj+cg5B2l3pDrVo5MTqw/+JmND8V0FIMfCM9CBXcimP1Gc08fXy4yU0o+DVA5un3rMf30OQ43NZztswVW8TJKAxSmuueOzao+Zi/tG3hxHF/vAbmz7ClLWFgKg5rKi/A7JvofgIoTKBnQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754656345; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=; 
+	b=Ye8gHmpoQgBExPR2Nr1sLutPFa7IFeImcLnKkO22YTlQtmvNXupQ+U339MGphPdq4E4t1wc/06uTFopgtnnT6hcNAporfmqx02xwz7gZCZFVqR6rzYdfMz/OoAgir3snTaLKd01bMKodI0g1iFRouI6tiH9ou8LfkNYz/iunJSY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754656345;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=;
+	b=XFYuNxhQ4V3dMbkA5Uv23BNwH7JMq9UrwR9O4Ex78upsvUoVeGi0fYp82IB3lz33
+	AP0AaXP1Fk/JV+Z+3IptAHnKBYd02K95LVqXFAvmueqUyqqGNgtlndfUnXfwaGWOvng
+	DmJMwIdr+sMcEroCQiPAvlrDZPL/QGzK8EBPc8/g=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1754656343428651.8436591123038; Fri, 8 Aug 2025 05:32:23 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Fri, 8 Aug 2025 05:32:23 -0700 (PDT)
+Date: Fri, 08 Aug 2025 16:32:23 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: "Alejandro Colomar" <alx@kernel.org>,
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
+	"Alexander Viro" <viro@zeniv.linux.org.uk>,
+	"Jan Kara" <jack@suse.cz>,
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
+	"linux-man" <linux-man@vger.kernel.org>,
+	"linux-api" <linux-api@vger.kernel.org>,
+	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"David Howells" <dhowells@redhat.com>,
+	"Christian Brauner" <brauner@kernel.org>
+Message-ID: <19889ab0576.e4d2f37341528.6111844101094013469@zohomail.com>
+In-Reply-To: <20250807-new-mount-api-v2-8-558a27b8068c@cyphar.com>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com> <20250807-new-mount-api-v2-8-558a27b8068c@cyphar.com>
+Subject: Re: [PATCH v2 08/11] open_tree.2: document 'new' mount api
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aJReTh-t5D45aZNV@pc> <fe98c2a2-ec8d-4352-a9fb-6f0e798f7268@baylibre.com>
- <CAHp75VfH6xuiPNZA_eGmFgMGxdGTf-y6o+SEKeCbG=wsUOJYfg@mail.gmail.com>
- <CAHp75VfEC3qUurUO4LKA1d6_Ot15AHY2zG9tk3wWrtYAgHrHgQ@mail.gmail.com>
- <c8189da5-f660-4500-b3b3-246913453ad5@baylibre.com> <aJXonEh2W8NNDMZU@debian-BULLSEYE-live-builder-AMD64>
-In-Reply-To: <aJXonEh2W8NNDMZU@debian-BULLSEYE-live-builder-AMD64>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 8 Aug 2025 14:30:53 +0200
-X-Gm-Features: Ac12FXxEia05zpl6f8XsVYrdTWTD2A6EW8qU38pHWlli9W4LuXU_nmHnSR3fkU8
-Message-ID: <CAHp75VfWsyj6q1dYK2dL7Mp3W=98SMGJT=ner3k6ty_NFVYM+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: adc: ad4170-4: Use ERR_PTR() with %pe to improve
- error logging
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Salah Triki <salah.triki@gmail.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr08011227ec3fb710edb18d71033cf66a0000f0b18623aa033c3fd537ebecad1b88db1fc808a4879d0a0e93:zu0801122783754bada4211323d45ed4b50000f21b461a6265b1713ea60e9de137aa5cde7232862d10e0b658:rf0801122b4eb2dc596efb65b1382cdee1000011cd5c6982eaed6fdedff49ce50371052af85a2b0623aad07268b14c1e:ZohoMail
 
-On Fri, Aug 8, 2025 at 2:07=E2=80=AFPM Marcelo Schmitt
-<marcelo.schmitt1@gmail.com> wrote:
-> On 08/07, David Lechner wrote:
-> > On 8/7/25 4:02 PM, Andy Shevchenko wrote:
-> > > On Thu, Aug 7, 2025 at 11:01=E2=80=AFPM Andy Shevchenko
-> > > <andy.shevchenko@gmail.com> wrote:
-> > >> On Thu, Aug 7, 2025 at 6:03=E2=80=AFPM David Lechner <dlechner@bayli=
-bre.com> wrote:
-> > >>> On 8/7/25 3:05 AM, Salah Triki wrote:
+In "man open_tree":
 
-...
+> As with "*at()" system calls, fspick() uses the dirfd argument in conjunction
 
-> > >>>>       ret =3D __ad4170_read_sample(indio_dev, chan, val);
-> > >>>>       if (ret) {
-> > >>>> -             dev_err(dev, "failed to read sample: %d\n", ret);
-> > >>>> +             dev_err(dev, "failed to read sample: %pe\n", ERR_PTR=
-(ret));
-> > >>>>
-> > >>>>               ret2 =3D ad4170_set_channel_enable(st, chan->address=
-, false);
-> > >>>>               if (ret2)
-> > >>>> -                     dev_err(dev, "failed to disable channel: %d\=
-n", ret2);
-> > >>>> +                     dev_err(dev, "failed to disable channel: %pe=
-\n", ERR_PTR(ret2));
-> > >>>>
-> > >>>>               return ret;
-> > >>>>       }
-> > >>>
-> > >>> Interesting, I didn't know we had this format specifier. But I thin=
-k
-> > >>> this is something we would want to do kernel-wide or not at all to =
-stay
-> > >>> consistent.
-> > >>
-> > >> I'm sorry but I didn't follow. This is a kernel-wide format specifie=
-r.
-> >
-> > I meant that it would be strange to make this change just in one
-> > driver and not do the same everywhere else.
->
-> Casting error values to pointers is already being done by many IIO driver=
-s
-> if we consider the use of dev_err_probe().
-> __dev_probe_failed() does the casting from within dev_err_probe()
-> https://elixir.bootlin.com/linux/v6.15.9/source/drivers/base/core.c#L5026
+You meant "open_tree"
 
-This is a manipulation. The dev_err_probe() and __dev_probe_failed()
-are parts of the core where we specifically bend the rules for all in
-one place just for a reason to avoid this spreading (and avoid
-creating specific APIs).
+> If flags does not contain OPEN_TREE_CLONE, open_tree() returns
+> a file descriptor that is exactly equivalent to one produced by open(2).
 
-> Thus, I think this patch makes the error messaging from ad4170
-> more consistent and, because of that, I also see this as a good change.
->
-> Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Please, change "by open(2)" to "by openat(2) with O_PATH" (and other similar places).
 
-Thanks for the review...
+--
+Askar Safin
+https://types.pl/@safinaskar
 
-> Though, I'm also totally fine if maintainers prefer not to take this chan=
-ge for
-> whatever reason.
-
-...but the below still stays...
-
-> > > And to be clear: I am not in favour of this change exactly due to a
-> > > bit weird (for the reader) castings just for the sake of use of %pe.
-
---=20
-With Best Regards,
-Andy Shevchenko
 
