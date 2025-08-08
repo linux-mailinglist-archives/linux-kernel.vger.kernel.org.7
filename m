@@ -1,52 +1,97 @@
-Return-Path: <linux-kernel+bounces-760406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CFFB1EAB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 16:52:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F695B1EAFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4304AA1160
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4B2E5A3637
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E88E28033C;
-	Fri,  8 Aug 2025 14:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F748280335;
+	Fri,  8 Aug 2025 14:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlqKf/YK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TVB/mdjx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F0D27FB10;
-	Fri,  8 Aug 2025 14:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C235827E7FD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 14:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754664769; cv=none; b=p4WoeUVcRDHesbSxZBCSo68DdwoZSFaBF5ge3RZP+j0sAUp4iR65BjS02qJHpZLBEAhVlyhxkvSAFWvg4JKaEwcYZ1UHOYVgMoskfTdRfFW3PMBU59lN0XUdp7MUmSZ5Y5fovRiO5imvaWKzx+IvYGvrzAk48iJ60B5ePgUt5qU=
+	t=1754664927; cv=none; b=SaUXsWmM2gWmwQ+y6RNa0PSNOTy2gBRY8lwWeUnRQegPOyQL1SD2Sfh3mPP0SzwLefkPpPPSyuG7WwX2195z3clEwZkF4ueLzBj7FYOrXeJ8QNnaOWEhZJkxwrnfL7gGGyp8X+eVNT4mpTu34cKIEdoAW8p3NqBXASf9tHDgUjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754664769; c=relaxed/simple;
-	bh=+8R8f5ossUYjzlupzncXya+tDUku1t2Hr80KJqFPnP4=;
+	s=arc-20240116; t=1754664927; c=relaxed/simple;
+	bh=Tj7T2vafcrPanx5uGIfgumtfb4o9PLTGmL4k/Y3xDwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksTGiljs5Xqjj69wzWwOSAmnRUeJwc8CzDoQJSHpAFKas3HaL5L3ewJ5wB4tlOK1N7aTv5Eba1M48oE07AU9te1TN2M8w+MGjwz2yfLm6sWDyBSg6GB1yc7ti2yoORtfwQHHhtpuz1P+aBunwCHyMJR3hY+VVaW7t2MAB4eEVzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlqKf/YK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E908BC4CEED;
-	Fri,  8 Aug 2025 14:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754664769;
-	bh=+8R8f5ossUYjzlupzncXya+tDUku1t2Hr80KJqFPnP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rlqKf/YK0MP9ngePxLgR40gcu3sEQ78YYwXfKEwe54/obnlJicnDQM6WgTTEHAuo+
-	 OPoUI374V8iQvNV6/mXJR6VxtYjPXeftM+DT6ci1NfLtAWhVtm2RcDXA6zgbyyiTRs
-	 Tnnx/zWSx1cVndd2vYlhrnhGx7m+Aj/l5Doaq+tLC0tqWdDLPCODpRszueUyjnPVcz
-	 zI3px2PRNrR4waZq/VeqSIAXLBW6k7cYVSR0YH4Q1v6EzBnyEiqrqN6+sCpuvyqbn7
-	 nI6066knBgaNHe0TwbJUoyNvVmxVNonx+o3WLftq5+7NEeduBZw3TYs9weGDRP5z8I
-	 09EIiu6rzDJyA==
-Date: Fri, 8 Aug 2025 07:52:48 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: cem@kernel.org, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] xfs: fix "acheive"->"achieve"
-Message-ID: <20250808145248.GU2672049@frogsfrogsfrogs>
-References: <20250808084321.230969-1-zhao.xichao@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYbvBKsAHMFvVyu/akW362UrtZ79Jxo6/CIfUszoltmGpNfeGq7xLdJ8UkFZF2D2eqslfu9KB8Qwb0HzqhzWTwMjAN5sndoMCgMr5k/4ZEgMurUq8KZ/eVZI+9fe10eQ4hmn4cl06S2C2hZ+/G70DKu5lsJ4eblwbc8cbNz4POo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TVB/mdjx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754664924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gkM3QF49wtdLwhGqe2QpWy/vLyG4tuPu0m+0oSeMzXc=;
+	b=TVB/mdjxjI5m8lgcjRADOi1k8Ieke72n7waMH7BOCLK5/2dcH44uHXF8lWtJjGNi4X9YE8
+	ykhVwQs5gfjHm7iwG/JAVzn0jUaFrqnJvuhPYftPXtVZYL+WdVeDBTY4Gs3cHDUZvZQ3az
+	2mGZs++FK2JX9PV1+ESYuUEI27CdQNs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-131-M8qeCOvAPA6mb-zvy_eSGw-1; Fri,
+ 08 Aug 2025 10:55:23 -0400
+X-MC-Unique: M8qeCOvAPA6mb-zvy_eSGw-1
+X-Mimecast-MFC-AGG-ID: M8qeCOvAPA6mb-zvy_eSGw_1754664919
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2EE8D1800280;
+	Fri,  8 Aug 2025 14:55:17 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 36BCD180047F;
+	Fri,  8 Aug 2025 14:55:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  8 Aug 2025 16:54:05 +0200 (CEST)
+Date: Fri, 8 Aug 2025 16:53:50 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
+	wangfushuai <wangfushuai@baidu.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 7/9] freezer: raise freeze priority of tasks
+ failed to freeze last time
+Message-ID: <20250808145349.GC21685@redhat.com>
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <20250807121418.139765-8-zhangzihuan@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,39 +100,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250808084321.230969-1-zhao.xichao@vivo.com>
+In-Reply-To: <20250807121418.139765-8-zhangzihuan@kylinos.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, Aug 08, 2025 at 04:43:21PM +0800, Xichao Zhao wrote:
-> Trivial fix to spelling mistake in comment text.
+On 08/07, Zihuan Zhang wrote:
+>
+> --- a/kernel/power/process.c
+> +++ b/kernel/power/process.c
+> @@ -111,8 +111,10 @@ static int try_to_freeze_tasks(bool user_only)
+>  		if (!wakeup || pm_debug_messages_on) {
+>  			read_lock(&tasklist_lock);
+>  			for_each_process_thread(g, p) {
+> -				if (p != current && freezing(p) && !frozen(p))
+> +				if (p != current && freezing(p) && !frozen(p)) {
+> +					freeze_set_default_priority(p, FREEZE_PRIORITY_HIGH);
+>  					sched_show_task(p);
+> +				}
 
-Already submitted to the list[1], please read the archives before you
-hit send.
+IMO, this change should go into 3/9 to make the intent more clear.
 
-[1] https://lore.kernel.org/linux-xfs/jjpiu6ot5kndjcggvoochddt7qq6vxmijdlog2vcp7y6pldhy3@wmbpth6y5af4/T/#u
+Other than that, I leave this series to maintainers and other reviewers.
+Personally, I am skeptical.
 
---D
+Oleg.
 
-> 
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->  fs/xfs/xfs_inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 9c39251961a3..4c66bbe23001 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -1745,7 +1745,7 @@ xfs_ifree_cluster(
->  		 * IO and it won't be unlocked until the cluster freeing has
->  		 * been committed to the journal and the buffer unpinned. If it
->  		 * is written, we want to know about it, and we want it to
-> -		 * fail. We can acheive this by adding a write verifier to the
-> +		 * fail. We can achieve this by adding a write verifier to the
->  		 * buffer.
->  		 */
->  		bp->b_flags |= XBF_DONE;
-> -- 
-> 2.34.1
-> 
-> 
 
