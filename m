@@ -1,291 +1,128 @@
-Return-Path: <linux-kernel+bounces-759864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3B8B1E3B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:42:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AE3B1E3B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0195A051E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFC6BA02391
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2621D54C2;
-	Fri,  8 Aug 2025 07:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FDF4227B8C;
+	Fri,  8 Aug 2025 07:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="nA+S0+y1"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUp5q7py"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96312264A7
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35601EE019;
+	Fri,  8 Aug 2025 07:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638793; cv=none; b=jV5N3cesHyidna3SERUOQCWFX2NiXUaeqx/UF4vM0sig1xXR0uS18o8dmshydYxHqeJ03lS44/Q2XTE33Fums/Nnhed7q4z7QiRDAlD2LyPHstb3dMXlSG5cWBplsGflQacO0t9yCR/DLFsPvsfDXKyzhZzSDyReq/9wiS9m41U=
+	t=1754638812; cv=none; b=ULSoGDDEVzFe1E437P1IxigdXqHL/TGZToE56I/nA3uL/f+b+C/BsThjwjqHPwvYrKxcXD5h+ndT/tRXFXAXtpScVHsen/1X8LWfHevoJ7bIgjvtLOTA3I3Eo7znK3++9ZovK9/lAaqTizRRnS0sUvrpRZBHhSGRGAKnHC47TkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638793; c=relaxed/simple;
-	bh=1ByddKXfYzb2Biu/UoJUKo5zD1MP4q8sPZxMFZ142oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ib2VN+0QvMqDV0BuTpYseOu71W4KTxcyvlCjBQg1F1Nfaf9F6wxW/q5Krh/30xuQmgCqymEPdb+jfp3HgGODTENLVo+KaOgPvieAq1YGXsIyZQ0bw7+94ANGVr3vJqQtXaP9Rt76HLsKC05CrxoGK7bm6a7XTgzUTAouY/8+EfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=nA+S0+y1; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
-Date: Fri, 8 Aug 2025 09:39:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1754638786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0PgcJqY7piVMe4TqAZpbZAh/XwpMd15g8rkb2eWQ+P0=;
-	b=nA+S0+y1ZwxrRdleSyjhsoPj011FiJ27Kyq/aNLv3Y9bteLeu5MAhVAUNc+5ApSON9ch2w
-	qW4M3kf+Nx73kPxeKZRQcEMAo316jMFtQ7xEnz8KmTXwDa2UvQ8iRGE2YwRLz3JAqghmJ1
-	pqWAcgxOsT5W+bJ7RmSD25h+D42IbRc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-Message-ID: <20250808073413.GA19227@grimfrac.localdomain>
-References: <20250721-exynos4-sii9234-driver-v1-0-2e47ed02f677@grimler.se>
- <CGME20250721094425eucas1p2a427e209cd0f1933118b2046c01e1c3f@eucas1p2.samsung.com>
- <20250721-exynos4-sii9234-driver-v1-3-2e47ed02f677@grimler.se>
- <ef676bc4-a4e8-45d8-9db7-5f9843241d0c@samsung.com>
+	s=arc-20240116; t=1754638812; c=relaxed/simple;
+	bh=VmEZ34d/BfDqCjXVktgRfwADPDnoWkyW/gk7BmB/x1Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZVn5mcMTqBFX1JYbiPE+DbrxOIdQnJiC+aRbszEfhK/a96GKTs0woSBchQSMOsOdh+Mt20qykMr4Q5bF06AKsUWuWjKo1i0CNq5Y0NcEHoU22R9UybhkjKCe7+weC4iOU9XhzQPIFFJeTO37veQBdjqfsYGQz/EwlZZHiMD/bq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUp5q7py; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 826D2C4CEED;
+	Fri,  8 Aug 2025 07:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754638811;
+	bh=VmEZ34d/BfDqCjXVktgRfwADPDnoWkyW/gk7BmB/x1Q=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=AUp5q7pyx4AIAF0bU9xw33qIiIyBXHwnIwWWqSK3s45ov3ocuVjXtRn4hNcndLdCc
+	 dKloqpHmHosGnYJlxxmVurdEb/9wpxvVOfuzxYuc/vb3nzv5TfSO4UY5IbjwPZeUzg
+	 ozAKqudPtXMOKa4eQubk+b7FicDw/8f8W1p2rLawjkNHZ86kD24umsJ4oSg/qs+mtQ
+	 OTUa15y/FOxttaJGHIxYMr3wR3j5cx8zuqkmbFKDA3ddhxUUBlcwoWuphHDk0impX/
+	 Z7s/Jno02zTLZKe/KbV8zcZbPwMJHNcO6w4x3piMTIyPr7v+NdRzSjGw+NtrpTd3hM
+	 Jy2DFNbsLBBog==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7850BC87FD2;
+	Fri,  8 Aug 2025 07:40:11 +0000 (UTC)
+From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
+Date: Fri, 08 Aug 2025 09:40:10 +0200
+Subject: [PATCH] iio: imu: inv_icm42600: change invalid data error to EBUSY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef676bc4-a4e8-45d8-9db7-5f9843241d0c@samsung.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250808-inv-icm42600-change-temperature-error-code-v1-1-986fbf63b77d@tdk.com>
+X-B4-Tracking: v=1; b=H4sIANmplWgC/y2NwQqDMBAFf0X23IUkaGr7K6WHkLy2ezCRjUpB/
+ HdD6XFgmNmpQgWV7t1Oik2qlNzAXjqKn5DfYEmNyRk3mNFcWfLGEqfeeWP4ryyYZmhYVgVDtSj
+ HksB+SNaH2xg9LLXgrHjJ9zd7PI/jBD+8oqZ8AAAA
+X-Change-ID: 20250807-inv-icm42600-change-temperature-error-code-65d16a98c6e1
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754638810; l=1568;
+ i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
+ bh=NpeRL441DPZ1rC1rEkgDPmcWmaZUMbzkqnfYNLrMji8=;
+ b=EPMyM5pzy8BkOiqIAuGm4MBI6sE8S7x+CcXBqShuVr25CsSsqrrzPnoiR5Nq0tEH5xd4Ivn8B
+ M1Bjef2/BL/C2SkgfYqYreeV0aECEBlblVdSc4X409EmjW8Sx3FSa/g
+X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
+ pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
+X-Endpoint-Received: by B4 Relay for
+ jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
+X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Reply-To: jean-baptiste.maneyrol@tdk.com
 
-Hi Marek,
+From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
 
-On Fri, Aug 01, 2025 at 10:09:08AM +0200, Marek Szyprowski wrote:
-> On 21.07.2025 11:43, Henrik Grimler wrote:
-> > To use MHL we currently need the MHL chip to be permanently on, which
-> > consumes unnecessary power. Let's use extcon attached to MUIC to enable
-> > the MHL chip only if it detects an MHL cable.
-> >
-> > Signed-off-by: Henrik Grimler <henrik@grimler.se>
-> > ---
-> 
-> Thanks!
-> 
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Temperature sensor returns the temperature of the mechanical parts
+of the chip. If both accel and gyro are off, temperature sensor is
+also automatically turned off and return invalid data.
 
-Thanks for testing! On trats2 I assume? After some more testing I
-noticed that mhl hotplugging only works reliably if device screen is
-on when cable is plugged in, otherwise I get errors like:
+In this case, returning EBUSY error code is better then EINVAL and
+indicates userspace that it needs to retry reading temperature in
+another context.
 
-[  281.203520] exynos-hdmi 12d00000.hdmi: [drm:hdmiphy_enable.part.0] *ERROR* PLL could not reach steady state
-[  281.313816] exynos-mixer 12c10000.mixer: timeout waiting for VSYNC
-[  281.420637] ------------[ cut here ]------------
-[  281.423861] WARNING: CPU: 3 PID: 1189 at drivers/gpu/drm/drm_atomic_helper.c:1720 drm_atomic_helper_wait_for_vblanks.part.0+0x264/0x26c
-[  281.436172] [CRTC:71:crtc-1] vblank wait timed out
-[  281.440870] Modules linked in: cpufreq_conservative rfcomm aes_arm aes_generic nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 cmac nft_reject algif_hash algif_skcipher nft_ct nf_conntrack af_alg nf_defrag_ipv6 nf_defrag_ipv4 bnep nf_tables ntc_thermistor hwmon brcmfmac_wcc s5k6a3 st_accel_spi spi_s3c64xx st_gyro_spi hci_uart st_sensors_spi btbcm btintel pwm_samsung bluetooth st_gyro_i2c st_accel_i2c st_gyro st_sensors_i2c st_accel st_sensors brcmfmac ecdh_generic ecc s5c73m3 libaes lima cfg80211 drm_shmem_helper gpu_sched exynos_adc brcmutil rfkill panel_samsung_s6e8aa0 s5p_sss exynos_rng s5p_g2d tm2_touchkey leds_an30259a cm36651 leds_aat1290 led_class_flash led_class ak8975 industrialio_triggered_buffer kfifo_buf gpio_keys uhid hid uinput ledtrig_pattern zram zsmalloc fuse loop nfnetlink ipv6 evdev [last unloaded: cpufreq_conservative]
-[  281.514974] CPU: 3 UID: 10000 PID: 1189 Comm: phoc Tainted: G        W           6.16.0-postmarketos-exynos4 #38 PREEMPT 
-[  281.515007] Tainted: [W]=WARN
-[  281.515013] Hardware name: Samsung Exynos (Flattened Device Tree)
-[  281.515027] Call trace: 
-[  281.515062]  unwind_backtrace from show_stack+0x18/0x1c
-[  281.515155]  show_stack from dump_stack_lvl+0x50/0x64
-[  281.515219]  dump_stack_lvl from __warn+0x88/0x15c
-[  281.515271]  __warn from warn_slowpath_fmt+0x118/0x1ac
-[  281.515285]  warn_slowpath_fmt from drm_atomic_helper_wait_for_vblanks.part.0+0x264/0x26c
-[  281.515340]  drm_atomic_helper_wait_for_vblanks.part.0 from drm_atomic_helper_commit_tail_rpm+0x84/0x94
-[  281.515363]  drm_atomic_helper_commit_tail_rpm from commit_tail+0xa8/0x1a0
-[  281.515385]  commit_tail from drm_atomic_helper_commit+0x164/0x19c
-[  281.515402]  drm_atomic_helper_commit from drm_atomic_commit+0xd0/0x104
-[  281.515489]  drm_atomic_commit from drm_mode_atomic_ioctl+0x9f8/0xd14
-[  281.515512]  drm_mode_atomic_ioctl from drm_ioctl+0x20c/0x4cc
-[  281.515562]  drm_ioctl from sys_ioctl+0x5a8/0xc10
-[  281.515634]  sys_ioctl from ret_fast_syscall+0x0/0x54
-[  281.515651] Exception stack(0xc5d05fa8 to 0xc5d05ff0)
-[  281.515665] 5fa0:                   beb4be88 beb4be88 0000000d c03864bc beb4be88 0000000d
-[  281.515675] 5fc0: beb4be88 beb4be88 c03864bc 00000036 acbe4450 ad8edc70 acbe4490 acd46cf0
-[  281.515682] 5fe0: beb4be58 beb4bd38 b6e5651f b6ebb040
-[  281.515693] ---[ end trace 0000000000000000 ]---
+Fixes: bc3eb0207fb5 ("iio: imu: inv_icm42600: add temperature sensor support")
+Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/iio/imu/inv_icm42600/inv_icm42600_temp.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-or device just hangs. I suppose this might not be an issue in the
-sii9234 driver though, so will collect your tags (unless I do further
-changes)!
+diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_temp.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_temp.c
+index 8b15afca498cb5dfa7e056a60d3c78e419f11b29..1756f3d07049a26038776a35d9242f3dd1320354 100644
+--- a/drivers/iio/imu/inv_icm42600/inv_icm42600_temp.c
++++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_temp.c
+@@ -32,8 +32,12 @@ static int inv_icm42600_temp_read(struct inv_icm42600_state *st, s16 *temp)
+ 		goto exit;
+ 
+ 	*temp = (s16)be16_to_cpup(raw);
++	/*
++	 * Temperature data is invalid if both accel and gyro are off.
++	 * Return EBUSY in this case.
++	 */
+ 	if (*temp == INV_ICM42600_DATA_INVALID)
+-		ret = -EINVAL;
++		ret = -EBUSY;
+ 
+ exit:
+ 	mutex_unlock(&st->lock);
 
-> You should also add "select EXTCON" (like in case of Sii8620) to Kconfig 
-> to avoid potential build break if extcon support is built as a module.
-
-Kernel robot also reported this issue, so I have added the select in
-v2:
-https://lore.kernel.org/linux-samsung-soc/20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se/
+---
+base-commit: 6408dba154079656d069a6a25fb3a8954959474c
+change-id: 20250807-inv-icm42600-change-temperature-error-code-65d16a98c6e1
 
 Best regards,
-Henrik Grimler
+-- 
+Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
 
-> 
-> >   drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
-> >   1 file changed, 86 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-> > index 0e0bb1bf71fdcef788715cfd6fa158a6992def33..4d84ba01ea76816bebdbc29d48a041c9c6cd508e 100644
-> > --- a/drivers/gpu/drm/bridge/sii9234.c
-> > +++ b/drivers/gpu/drm/bridge/sii9234.c
-> > @@ -19,6 +19,7 @@
-> >   
-> >   #include <linux/delay.h>
-> >   #include <linux/err.h>
-> > +#include <linux/extcon.h>
-> >   #include <linux/gpio/consumer.h>
-> >   #include <linux/i2c.h>
-> >   #include <linux/interrupt.h>
-> > @@ -26,6 +27,7 @@
-> >   #include <linux/kernel.h>
-> >   #include <linux/module.h>
-> >   #include <linux/mutex.h>
-> > +#include <linux/of_graph.h>
-> >   #include <linux/regulator/consumer.h>
-> >   #include <linux/slab.h>
-> >   
-> > @@ -170,8 +172,12 @@ struct sii9234 {
-> >   	struct drm_bridge bridge;
-> >   	struct device *dev;
-> >   	struct gpio_desc *gpio_reset;
-> > -	int i2c_error;
-> >   	struct regulator_bulk_data supplies[4];
-> > +	struct extcon_dev *extcon;
-> > +	struct notifier_block extcon_nb;
-> > +	struct work_struct extcon_wq;
-> > +	int cable_state;
-> > +	int i2c_error;
-> >   
-> >   	struct mutex lock; /* Protects fields below and device registers */
-> >   	enum sii9234_state state;
-> > @@ -864,6 +870,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
-> >   	return 0;
-> >   }
-> >   
-> > +static void sii9234_extcon_work(struct work_struct *work)
-> > +{
-> > +	struct sii9234 *ctx =
-> > +		container_of(work, struct sii9234, extcon_wq);
-> > +	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-> > +
-> > +	if (state == ctx->cable_state)
-> > +		return;
-> > +
-> > +	ctx->cable_state = state;
-> > +
-> > +	if (state > 0)
-> > +		sii9234_cable_in(ctx);
-> > +	else
-> > +		sii9234_cable_out(ctx);
-> > +}
-> > +
-> > +static int sii9234_extcon_notifier(struct notifier_block *self,
-> > +			unsigned long event, void *ptr)
-> > +{
-> > +	struct sii9234 *ctx =
-> > +		container_of(self, struct sii9234, extcon_nb);
-> > +
-> > +	schedule_work(&ctx->extcon_wq);
-> > +
-> > +	return NOTIFY_DONE;
-> > +}
-> > +
-> > +static int sii9234_extcon_init(struct sii9234 *ctx)
-> > +{
-> > +	struct extcon_dev *edev;
-> > +	struct device_node *musb, *muic;
-> > +	int ret;
-> > +
-> > +	/* Get micro-USB connector node */
-> > +	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-> > +	/* Then get micro-USB Interface Controller node */
-> > +	muic = of_get_next_parent(musb);
-> > +
-> > +	if (!muic) {
-> > +		dev_info(ctx->dev,
-> > +			 "no extcon found, switching to 'always on' mode\n");
-> > +		return 0;
-> > +	}
-> > +
-> > +	edev = extcon_find_edev_by_node(muic);
-> > +	of_node_put(muic);
-> > +	if (IS_ERR(edev)) {
-> > +		dev_err_probe(ctx->dev, PTR_ERR(edev),
-> > +			      "invalid or missing extcon\n");
-> > +	}
-> > +
-> > +	ctx->extcon = edev;
-> > +	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-> > +	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-> > +	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-> > +	if (ret) {
-> > +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
-> >   					 const struct drm_display_info *info,
-> >   					 const struct drm_display_mode *mode)
-> > @@ -916,12 +986,17 @@ static int sii9234_probe(struct i2c_client *client)
-> >   	if (ret < 0)
-> >   		return ret;
-> >   
-> > +	ret = sii9234_extcon_init(ctx);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> >   	i2c_set_clientdata(client, ctx);
-> >   
-> >   	ctx->bridge.of_node = dev->of_node;
-> >   	drm_bridge_add(&ctx->bridge);
-> >   
-> > -	sii9234_cable_in(ctx);
-> > +	if (!ctx->extcon)
-> > +		sii9234_cable_in(ctx);
-> >   
-> >   	return 0;
-> >   }
-> > @@ -930,7 +1005,15 @@ static void sii9234_remove(struct i2c_client *client)
-> >   {
-> >   	struct sii9234 *ctx = i2c_get_clientdata(client);
-> >   
-> > -	sii9234_cable_out(ctx);
-> > +	if (ctx->extcon) {
-> > +		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-> > +					   &ctx->extcon_nb);
-> > +		flush_work(&ctx->extcon_wq);
-> > +		if (ctx->cable_state > 0)
-> > +			sii9234_cable_out(ctx);
-> > +	} else {
-> > +		sii9234_cable_out(ctx);
-> > +	}
-> >   	drm_bridge_remove(&ctx->bridge);
-> >   }
-> >   
-> >
-> Best regards
-> -- 
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
-> 
+
 
