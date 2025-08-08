@@ -1,246 +1,220 @@
-Return-Path: <linux-kernel+bounces-759604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537FBB1E000
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:48:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B496B1E003
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 02:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E02E725FAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3496B1AA201E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 00:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD581BDCF;
-	Fri,  8 Aug 2025 00:48:31 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF263594F;
+	Fri,  8 Aug 2025 00:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UoTQXNWQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB0D8C0B;
-	Fri,  8 Aug 2025 00:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F75323741
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 00:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754614110; cv=none; b=KiEGVPej1GZNYsIKFEJRuCzPG9TkaAYV94PV3GzHNV864olOQ6Qh+gQ6H15+lUNBKYgYJnH6dOHDsfK6OnXrhmUaLxstf/g0tLnjr3KiEML5jyQaGlkQXpVW+g7gEJj8HwahGWmIan2zR41RmgXVVD0Qw+ds3IIDcyiBjIa5E7k=
+	t=1754614252; cv=none; b=ritwYR0LCQQdwlRQX6KoiKqBXY6rrqhPpAeLrFP7LtGlvXx0DndanSqLe7h1DMFUGSFbVZDjmE0vfasXKTDf0zzVC+397nm7adPs1pMzwqJVOkhqyzdsqcDmhfmzp9UczcUGJ++NmGzPk+lH5tOplXurOrRRqzMqN+js3BGwxS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754614110; c=relaxed/simple;
-	bh=/lLAZ7Ixy4zZJuQDswxQaxxBVdmb5/bI4Q4aVxdTGuQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=LuZY7O7Kau/8TVbjQUlKW3PH/zPl7F6j4Q5fPvi2eQXaShutGghEdo+5xqBf73vB9IHZnHcGXkBCZF8bHO476sG8q/FFX+JOzcFJDuvOivSXk42atTTWxb9AzWVKJjfDkLLYvkLaB7DE4U26yV2om9KkkFnmS/9mNLdfi2v/WHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bylky1Kn5zYQv9B;
-	Fri,  8 Aug 2025 08:48:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CE6211A01A3;
-	Fri,  8 Aug 2025 08:48:24 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDXUxRVSZVo4QLBCw--.31837S3;
-	Fri, 08 Aug 2025 08:48:22 +0800 (CST)
-Subject: Re: [PATCH] block: fix kobject double initialization in add_disk
-To: Zheng Qixing <zhengqixing@huaweicloud.com>,
- Nilay Shroff <nilay@linux.ibm.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, houtao1@huawei.com,
- zhengqixing@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250807072056.2627592-1-zhengqixing@huaweicloud.com>
- <470ab442-e5eb-4fa8-bde7-d6d2d1115a5a@linux.ibm.com>
- <1aa629f8-88d3-4e1b-9e96-003959809fa1@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c5036a51-ffd5-4eab-f1a5-369adff3a291@huaweicloud.com>
-Date: Fri, 8 Aug 2025 08:48:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754614252; c=relaxed/simple;
+	bh=k85IiXCWAS/CvmseNXmQBHOZ+NfmWA4sVVk9GIrPsTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aKvEVZipvdn8jrorPqr5JlxDy94ADEaKvJnpg5385Bh87GezixnSOGdEFcDWh9sU1ueJgP/d5q+mICHd2iu2JB92YJYIiWpmCutyrBDv6jeITHVwgEXJBBvhK5EIg4Om+zddCj5nyBS6O38zP7B58nn96ZhRUGTSk+RmdjO+KLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UoTQXNWQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754614249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k85IiXCWAS/CvmseNXmQBHOZ+NfmWA4sVVk9GIrPsTY=;
+	b=UoTQXNWQ2a5spOlJ18SWl4727w8eKvFJ1TxeULqBfqNqpUcL3GMBUOadc5y+D56qrd7daa
+	eo19JBb8BTOuM+XseprdZ3eGzVrGjfuPqj8boW1WJAX20K9oZJP5uBrkXbJnvuu6OSebkx
+	eRz6cOlEli9avXP6simiOk/CBd8frcY=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-505-Fi1B9EKvOwm8BO6Y_9JMCQ-1; Thu, 07 Aug 2025 20:50:46 -0400
+X-MC-Unique: Fi1B9EKvOwm8BO6Y_9JMCQ-1
+X-Mimecast-MFC-AGG-ID: Fi1B9EKvOwm8BO6Y_9JMCQ_1754614246
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-31ebadfb7f2so1554114a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 17:50:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754614246; x=1755219046;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k85IiXCWAS/CvmseNXmQBHOZ+NfmWA4sVVk9GIrPsTY=;
+        b=sUnHC2dL3IEvdZhiKPFS72V2HG8jT9x9o+dXGOxkWUIWKnD6mhJCH+BIdh0i9p9coe
+         9nWW8/0bQhe2t+Ony99D0dkX2jhNUTxw1Jw5IT7OIKp1r3cYitN67zFiPJT5cv7YiXPB
+         0PBQveiB3XdHuk9fRMYAotDDn7iOk3prpEfpH90yVBmwgMBu7B17qTJMszCfzc1cSr51
+         E10ol3fqqwN50COABBWI3rvTaRzqHrd2godGIeAY6pVEQxyZULcY3cUC4qoxI1WNDoI8
+         Rad4T++Bc6jBy1BIrMRZ+Hn+bil5NGhdD3DYluy2IDYEGZiXz3+YGLrcYTdoFMC0PL1q
+         XSbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoyGL2j0q9vLTa36ooMKHVF5J9rl3pKoQBvBuLWVk9Q7pDQepBullWGmuog7LG39e2LlJL7YuoWmPFB7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ+t/nNXdU0tft2D4dGSFsEKfsvP7Z5awhxQo4rerMQkcH6nKF
+	PgRxyhQXpik+gItj6lPq0jRjNDs//HO6v4gKA3aAR9pIFv0zz2XtEuGlUbTeIg+1nDxP1dU+vLd
+	BOOHU2NkGaXKsy1CgXPriD5Q/lLtEfl/4ynvGhbHSubcN+F8cA+h7odmQ0lBicfPvNpVQTZgzJg
+	RlgbbXlwc9FebpaBGRa5u2p7Ci9nhPaeTFa/Lto0h8
+X-Gm-Gg: ASbGncsg1+Fqg4KLdJAIl6N7BBsK86+ZfCcEY0OHcemXglNAI7vHAMdSflxmYT41vqI
+	b8GJ3Nv/x7cNU7CRHSqEpSa6lnrAQzEpPzDpWfzVt47GIueFKwOZxuaSCX6NSy1rZCii150aTpv
+	nYsGsVHgcEU4UL/CJN4NXPeQ==
+X-Received: by 2002:a17:90a:e70e:b0:2fe:85f0:e115 with SMTP id 98e67ed59e1d1-32183c47c5dmr1335419a91.26.1754614245623;
+        Thu, 07 Aug 2025 17:50:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSQMIMaGld2j9Lm2m2M4p9H0kvKzugos7AveU9jYYJBzyjMA9OcQ8bD8bCIEmakTVtC2XZbkaXX/iXo3IbBcU=
+X-Received: by 2002:a17:90a:e70e:b0:2fe:85f0:e115 with SMTP id
+ 98e67ed59e1d1-32183c47c5dmr1335391a91.26.1754614245220; Thu, 07 Aug 2025
+ 17:50:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1aa629f8-88d3-4e1b-9e96-003959809fa1@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXUxRVSZVo4QLBCw--.31837S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtrWUWw1DCr45JrWrGw15urg_yoW7ZrW8pr
-	Zaqa17t3ykKr4xXw4DJ3WDJFyxKrs5XrnrArs3tFySvrZFyrnFgF4UXFyq9F48Jrs7CF4j
-	qF4UK39I9r1DAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20250606115012.1331551-1-eperezma@redhat.com> <20250606115012.1331551-2-eperezma@redhat.com>
+ <CACGkMEsw2taXgW11na2CFK6W03c=x=wMn3iwNZPypgPkeSU06Q@mail.gmail.com>
+ <CACGkMEvinV7Zd+xddnxcerFbw_c+RZypkeD5HaN8=g6+peZvMQ@mail.gmail.com>
+ <CAJaqyWeetDsdoDzVrN-n0+jr97MBPeHdTxeM3ttmNUeLK702VA@mail.gmail.com>
+ <CACGkMEvbxZsmPPHgfst89FCbZamBPLt8V=K-eepa4s3muFuM4A@mail.gmail.com> <CAJaqyWerLAL44w-mnwaohZh+duzHqPS3BO-sJDoEHZDN5RLY1g@mail.gmail.com>
+In-Reply-To: <CAJaqyWerLAL44w-mnwaohZh+duzHqPS3BO-sJDoEHZDN5RLY1g@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 8 Aug 2025 08:50:34 +0800
+X-Gm-Features: Ac12FXy8zkKGbNYGGTDXgnr8OHp0_OsYxaYJ2CwxU2LIzJaj3-nvqhMQWLeE0l0
+Message-ID: <CACGkMEvsvFzKUF6w0T4juUFcDbm67YoFFwNDw82K6kogB-1yRA@mail.gmail.com>
+Subject: Re: [RFC 1/6] vduse: add v1 API definition
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
+	linux-kernel@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Aug 7, 2025 at 6:56=E2=80=AFPM Eugenio Perez Martin <eperezma@redha=
+t.com> wrote:
+>
+> On Tue, Jun 10, 2025 at 10:36=E2=80=AFAM Jason Wang <jasowang@redhat.com>=
+ wrote:
+> >
+> > On Mon, Jun 9, 2025 at 2:11=E2=80=AFPM Eugenio Perez Martin <eperezma@r=
+edhat.com> wrote:
+> > >
+> > > On Mon, Jun 9, 2025 at 3:50=E2=80=AFAM Jason Wang <jasowang@redhat.co=
+m> wrote:
+> > > >
+> > > > On Mon, Jun 9, 2025 at 9:41=E2=80=AFAM Jason Wang <jasowang@redhat.=
+com> wrote:
+> > > > >
+> > > > > On Fri, Jun 6, 2025 at 7:50=E2=80=AFPM Eugenio P=C3=A9rez <eperez=
+ma@redhat.com> wrote:
+> > > > > >
+> > > > > > This allows to define all functions checking the API version se=
+t by the
+> > > > > > userland device.
+> > > > > >
+> > > > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > > > >
+> > > > > It might be worth clarifying how it works.
+> > > > >
+> > > > > For example,
+> > > > >
+> > > > > 1) would VDUSE behave differently or if it's just some new ioctls
+> > >
+> > > I'd like to test more in-depth, but a device can just bump the versio=
+n
+> > > ID and then implement the replies to the vduse messages. No need to
+> > > implement new ioctls. If the VDUSE device sets 0 in either number of
+> > > ASID or vq groups, the kernel assumes 1.
+> >
+> > Right, this is the way we use now and I think maybe we can document
+> > this somewhere.
+> >
+> > >
+> > > But you have a very good point here, I think it is wise to evaluate
+> > > the shortcut of these messages in the VDUSE kernel module. If a VDUSE
+> > > device only has one vq group and one ASID, it can always return group
+> > > 0 and asid 0 for everything, and fail every try to ser asid !=3D 0.
+> >
+> > Yes, and vhost-vDPA needs to guard against the misconfiguration.
+> >
+> > > This
+> > > way, the update is transparent for the VDUSE device, and future
+> > > devices do not need to implement the reply of these. What do you
+> > > think?
+> >
+> > This should work.
+> >
+> > >
+> > > > > 2) If VDUSE behave differently, do we need a ioctl to set the API
+> > > > > version for backward compatibility?
+> > > >
+> > > > Speak too fast, there's a VDUSE_SET_API_VERSION actually.
+> > > >
+> > > > I think we need to think if it complicates the migration compatibil=
+ity or not.
+> > > >
+> > >
+> > > Do you mean migration as "increase the VDUSE version number", not "VM
+> > > live migration from vduse version 0 to vduse version 1", isn't it? Th=
+e
+> > > second should not have any problem but I haven't tested it.
+> >
+> > I mean if we bump the version, we can't migrate from version 1 to
+> > version 0. Or we can offload this to the management (do we need to
+> > extend the vdpa tool for this)?
+> >
+>
+> I just noticed I left this unreplied. But I still do not get what
+> migrate means here :).
+>
+> If migrate means to run current VDUSE devices on kernel with this
+> series applied these devices don't set V1 API so they have one vq
+> group, and one asid. I'm actually testing this with my libfuse+VDUSE
+> modifications that don't use V1 at all. Adding this explanation to the
+> patch as it is a very good point indeed.
 
-在 2025/08/07 21:44, Zheng Qixing 写道:
-> Hi,
-> 
-> 
-> 在 2025/8/7 19:47, Nilay Shroff 写道:
->>
->> On 8/7/25 12:50 PM, Zheng Qixing wrote:
->>> From: Zheng Qixing <zhengqixing@huawei.com>
->>>
->>> Device-mapper can call add_disk() multiple times for the same gendisk
->>> due to its two-phase creation process (dm create + dm load). This leads
->>> to kobject double initialization errors when the underlying iSCSI 
->>> devices
->>> become temporarily unavailable and then reappear.
->>>
->>> However, if the first add_disk() call fails and is retried, the 
->>> queue_kobj
->>> gets initialized twice, causing:
->>>
->>> kobject: kobject (ffff88810c27bb90): tried to init an initialized 
->>> object,
->>> something is seriously wrong.
->>>   Call Trace:
->>>    <TASK>
->>>    dump_stack_lvl+0x5b/0x80
->>>    kobject_init.cold+0x43/0x51
->>>    blk_register_queue+0x46/0x280
->>>    add_disk_fwnode+0xb5/0x280
->>>    dm_setup_md_queue+0x194/0x1c0
->>>    table_load+0x297/0x2d0
->>>    ctl_ioctl+0x2a2/0x480
->>>    dm_ctl_ioctl+0xe/0x20
->>>    __x64_sys_ioctl+0xc7/0x110
->>>    do_syscall_64+0x72/0x390
->>>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>
->>> Fix this by separating kobject initialization from sysfs registration:
->>>   - Initialize queue_kobj early during gendisk allocation
->>>   - add_disk() only adds the already-initialized kobject to sysfs
->>>   - del_gendisk() removes from sysfs but doesn't destroy the kobject
->>>   - Final cleanup happens when the disk is released
->>>
->>> Fixes: 2bd85221a625 ("block: untangle request_queue refcounting from 
->>> sysfs")
->>> Reported-by: Li Lingfeng <lilingfeng3@huawei.com>
->>> Closes: 
->>> https://lore.kernel.org/all/83591d0b-2467-433c-bce0-5581298eb161@huawei.com/ 
->>>
->>> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
->>> ---
->>>   block/blk-sysfs.c | 4 +---
->>>   block/blk.h       | 1 +
->>>   block/genhd.c     | 2 ++
->>>   3 files changed, 4 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
->>> index 396cded255ea..37d8654faff9 100644
->>> --- a/block/blk-sysfs.c
->>> +++ b/block/blk-sysfs.c
->>> @@ -847,7 +847,7 @@ static void blk_queue_release(struct kobject *kobj)
->>>       /* nothing to do here, all data is associated with the parent 
->>> gendisk */
->>>   }
->>> -static const struct kobj_type blk_queue_ktype = {
->>> +const struct kobj_type blk_queue_ktype = {
->>>       .default_groups = blk_queue_attr_groups,
->>>       .sysfs_ops    = &queue_sysfs_ops,
->>>       .release    = blk_queue_release,
->>> @@ -875,7 +875,6 @@ int blk_register_queue(struct gendisk *disk)
->>>       struct request_queue *q = disk->queue;
->>>       int ret;
->>> -    kobject_init(&disk->queue_kobj, &blk_queue_ktype);
->>>       ret = kobject_add(&disk->queue_kobj, &disk_to_dev(disk)->kobj, 
->>> "queue");
->>>       if (ret < 0)
->>>           goto out_put_queue_kobj;
->> If the kobject_add() fails here, then we jump to the label 
->> out_put_queue_kobj,
->> where we release/put disk->queue_kobj. That would decrement the kref of
->> disk->queue_kobj and possibly bring it to zero.
-> 
-> 
-> Since we remove the kobject_init() into alloc disk, when the 
-> kobject_add() fails here,
-> 
-> it should return without kobject_del/put().
+Right.
 
-Yes, sorry I didn't noticed.
-> 
-> 
-> If kobject_add() succeeds but later steps fail, we should call 
-> kobject_del() to rollback.
-> 
-> 
-> The current error handling with kobject_put() in blk_register_queue() is 
-> indeed problematic.
-> 
-> 
->> Next time, when we call add_disk() again without invoking kobject_init()
->> (because the initialization is now moved outside add_disk()), the 
->> refcount
->> of disk->queue_kobj — which was previously released — would now go for a
->> toss. Wouldn't that lead to use-after-free or inconsistent state?
->>
->>> @@ -986,5 +985,4 @@ void blk_unregister_queue(struct gendisk *disk)
->>>           elevator_set_none(q);
->>>       blk_debugfs_remove(disk);
->>> -    kobject_put(&disk->queue_kobj);
->>>   }
->> I'm thinking a case where add_disk() fails after the queue is registered.
->> In that case, we call blk_unregister_queue() — which would ideally put()
->> the disk->queue_kobj.
->> But if we skip that put() in blk_unregister_queue() (and that's what 
->> we do
->> above), and then later retry add_disk(), wouldn’t kobject_add() from
->> blk_register_queue() complain loudly — since we’re trying to add a 
->> kobject
->> that was already added previously?
+>
+> If it means to migrate a guest from using a V1 VDUSE device to a V0
+> device "it should work", as it is just a backend implementation
+> detail.
 
-This is exactly the problem reported orginally, now is the same
-procedures before 2bd85221a625:
+For example src is the VDUSE with multiqueue support (v1) but dest
+doesn't have this support (v0). I think the qemu should fail to launch
+in dest.
 
-1) allocate memory: kobject_init
-2) register queue: kobject_add
-3) unregister queue: kobject_del
-4) free memory: kobject_put
+> If we migrate from or to a vdpa device backed by hardware, for
+> example, one of the devices does not even have the concept of VDUSE
+> API version.
+>
+> In the case of net, it does not work at the moment because the only
+> way to set features like mq are through the shadow CVQ.
 
-Noted that kobject_add is corresponding to kobject_del, and they don't
-grab/release kobject reference. 2) and 3) can be executed multiple
-times, the only thing that I noticed is the following uevent:
+I think you mean qemu should fail, I'm not sure this is friendly to libvirt=
+.
 
-kobject_uevent(&disk->queue_kobj, KOBJ_ADD);
+> If a VDUSE net
+> device implements, let's say, admin vq, something similar to PF and
+> VF, and dirty bitmap, I guess it should be possible. Maybe it is
+> easier to play with this wuth block devices.
+>
 
-Looks like the uevent is only valid for the first one, if first add_disk
-failed and then queue is registered again, there won't be uevent again,
-see state_add_uevent_sent.
+It looks like another topics:
 
-However, this is probably fine.
-> 
-> 
-> blk_unregister_queue() calls kobject_del(), then the sysfs state is 
-> properly cleaned up
-> 
-> and retry should work fine.
+1) harden CVQ for VDUSE
+2) support hardware dirty page tracking
 
-Thanks,
-Kuai
-
-> 
-> 
->>
->> Thanks,
->> --Nilay
-> 
-> 
-> Thanks,
-> 
-> Qixing
-> 
-> .
-> 
+Thanks
 
 
