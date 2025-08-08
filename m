@@ -1,101 +1,139 @@
-Return-Path: <linux-kernel+bounces-760241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D07B1E865
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:33:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB61B1E86D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 14:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99A8D3BEF7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:33:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673BD3BE243
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 12:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF9727814C;
-	Fri,  8 Aug 2025 12:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA342609D6;
+	Fri,  8 Aug 2025 12:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="XFYuNxhQ"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5Ejamfu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319E01EA6F;
-	Fri,  8 Aug 2025 12:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754656372; cv=pass; b=ph/XuEIo0z+R+Yf0GpOd92J+Nhc9EQbzsH/LnRntPPJNqoBKXVrCxlaHKVeHhALyLUBCpAkZbpbWyoMvRgcXVb+g6IaHv0sn1LQJ/jXPrUYZfX1eFWdkvgS+M5YnfO92Iwmkj2P6TJLDckBCnuQlV0hQE14UjZBfAMhxsfPWyus=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754656372; c=relaxed/simple;
-	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=MvtjYd96ZNENAJdXasb5WMu9wMCalWqEUjSYejotez1u0I1JmLL7R7IduYk9DKzOr6n3KhkKEKA/oirU214NoYgXsiYaFcyT0mrpkp6LRP56qX2h+L/neWq4i8dSbyGkDMPTHcHsULjpjIuecWqi7o6aaf1LhGPZFBW5v2NYGzw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=XFYuNxhQ; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754656345; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UrDX7IR2VxvXfwtejFwdGZfS2v1hw8nj+cg5B2l3pDrVo5MTqw/+JmND8V0FIMfCM9CBXcimP1Gc08fXy4yU0o+DVA5un3rMf30OQ43NZztswVW8TJKAxSmuueOzao+Zi/tG3hxHF/vAbmz7ClLWFgKg5rKi/A7JvofgIoTKBnQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754656345; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=; 
-	b=Ye8gHmpoQgBExPR2Nr1sLutPFa7IFeImcLnKkO22YTlQtmvNXupQ+U339MGphPdq4E4t1wc/06uTFopgtnnT6hcNAporfmqx02xwz7gZCZFVqR6rzYdfMz/OoAgir3snTaLKd01bMKodI0g1iFRouI6tiH9ou8LfkNYz/iunJSY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754656345;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=5RQ0+KlgYtKgJpnVIo+1qCVbmoXGajzKhpxHfMEn0WY=;
-	b=XFYuNxhQ4V3dMbkA5Uv23BNwH7JMq9UrwR9O4Ex78upsvUoVeGi0fYp82IB3lz33
-	AP0AaXP1Fk/JV+Z+3IptAHnKBYd02K95LVqXFAvmueqUyqqGNgtlndfUnXfwaGWOvng
-	DmJMwIdr+sMcEroCQiPAvlrDZPL/QGzK8EBPc8/g=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1754656343428651.8436591123038; Fri, 8 Aug 2025 05:32:23 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Fri, 8 Aug 2025 05:32:23 -0700 (PDT)
-Date: Fri, 08 Aug 2025 16:32:23 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>
-Cc: "Alejandro Colomar" <alx@kernel.org>,
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <19889ab0576.e4d2f37341528.6111844101094013469@zohomail.com>
-In-Reply-To: <20250807-new-mount-api-v2-8-558a27b8068c@cyphar.com>
-References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com> <20250807-new-mount-api-v2-8-558a27b8068c@cyphar.com>
-Subject: Re: [PATCH v2 08/11] open_tree.2: document 'new' mount api
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4761EA84;
+	Fri,  8 Aug 2025 12:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754656452; cv=none; b=Oo4fIIealtTF7k3928OGEBJllSyUISwGugRb/mwR+v/YRUCUctBnBSCib2f7/RRoDUbzoEOoIMxN579QXjFJGX7vRk03AqAdkYIfrnX7iYKHGGrMzCJCvSRbr0Gr39CruJBUw3Ne4huHp4BsEO2zYj/qm0cUf0sglrCHj9SIAIk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754656452; c=relaxed/simple;
+	bh=bsBWuWydjwV6gpToYD0UMemkzbOVgo4dHyaxM95+a24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hvvyjXcQluZVQLiSbGSs26OF+Cvl5Otbk6Ceug2XIKmPxBBEIXJZroboLxt5hC1qbndhO8wcQLXxQBKhK7MqOD9tWAGEm8RYUqNUZzBcQJcTRJc7FrAvnam5m4Dp1i+A0SWbmSkIN9sMXELDV/syM9p/+uAElD61sv8oTKLAENA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5Ejamfu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7FEDC4CEF4;
+	Fri,  8 Aug 2025 12:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754656452;
+	bh=bsBWuWydjwV6gpToYD0UMemkzbOVgo4dHyaxM95+a24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S5Ejamfu2Gi5t0Qk9/oMf87Ab0zV+Wo05mqeUuf+8751FQtXtm4epsLg+1kVLl3vm
+	 GN4phyce5gkDEAN1oD/0D1fI+foS4v6nGQsfljlh/WS3Tu1l2mcfIVWYhCIWXAqCd8
+	 Yix5rmgPEG21gSUhwpr8P0xIjvE7YlQI9uKDuCfxGqjG8Sa+bPywAlv+P9nDBNZz30
+	 xHnlxTv/cFvwlZnyZd5b9dmd4R3V3WPkTZUdKfCNuO5FJha+j1uBM45ztyjrW2yCMl
+	 rFZEbTaNR2GIqwNXkBBUPr/6f8r9owNnS2Ukk6briqUjKixqWmvqmbux2GZTvFgcu1
+	 LxeLeuV9JrThQ==
+Date: Fri, 8 Aug 2025 18:03:46 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, conor+dt@kernel.org, 
+	bvanassche@acm.org, andersson@kernel.org, neil.armstrong@linaro.org, 
+	dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org, krzk+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+Message-ID: <xrarnbg2qmhuivqgl7vzhmvfi6sc4zp6wa6zvpv4r4nufllc3p@u4wed2orm2cq>
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-5-quic_nitirawa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr08011227ec3fb710edb18d71033cf66a0000f0b18623aa033c3fd537ebecad1b88db1fc808a4879d0a0e93:zu0801122783754bada4211323d45ed4b50000f21b461a6265b1713ea60e9de137aa5cde7232862d10e0b658:rf0801122b4eb2dc596efb65b1382cdee1000011cd5c6982eaed6fdedff49ce50371052af85a2b0623aad07268b14c1e:ZohoMail
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250806154340.20122-5-quic_nitirawa@quicinc.com>
 
-In "man open_tree":
+On Wed, Aug 06, 2025 at 09:13:40PM GMT, Nitin Rawat wrote:
+> Add support in QMP PHY driver to read optional vdda-phy-max-microamp
+> and vdda-pll-max-microamp properties from the device tree.
+> 
+> These properties define the expected maximum current (in microamps) for
+> each supply. The driver uses this information to configure regulators
+> more accurately and ensure they operate in the correct mode based on
+> client load requirements.
+> 
+> If the property is not present, the driver defaults load to
+> `QMP_VREG_UNUSED`.
+> 
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 22 +++++++++++++++++++---
+>  1 file changed, 19 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> index 9c69c77d10c8..6e116f7370c3 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> @@ -39,6 +39,8 @@
+>  #define PHY_INIT_COMPLETE_TIMEOUT		10000
+>  
+>  #define NUM_OVERLAY				2
+> +#define QMP_VREG_UNUSED				-1
+> +#define MAX_PROP_NAME				32
+>  
+>  /* set of registers with offsets different per-PHY */
+>  enum qphy_reg_layout {
+> @@ -1894,15 +1896,29 @@ static int qmp_ufs_vreg_init(struct qmp_ufs *qmp)
+>  {
+>  	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>  	struct device *dev = qmp->dev;
+> +	struct device_node *np = dev->of_node;
+> +	char prop_name[MAX_PROP_NAME];
+>  	int num = cfg->num_vregs;
+> -	int i;
+> +	const char *supply;
+> +	int i, ret;
+>  
+>  	qmp->vregs = devm_kcalloc(dev, num, sizeof(*qmp->vregs), GFP_KERNEL);
+>  	if (!qmp->vregs)
+>  		return -ENOMEM;
+>  
+> -	for (i = 0; i < num; i++)
+> -		qmp->vregs[i].supply = cfg->vreg_list[i];
+> +	for (i = 0; i < num; i++) {
+> +		supply = cfg->vreg_list[i];
+> +		qmp->vregs[i].supply = supply;
+> +
+> +		/* Defaults to unused */
+> +		qmp->vregs[i].init_load_uA = QMP_VREG_UNUSED;
 
-> As with "*at()" system calls, fspick() uses the dirfd argument in conjunction
+You don't need to initialize the load. It will be zero initialized at this point
+and if the property parsing fails below, it's value still be zero. And the
+regulator core will apply the load only if it is > 0.
 
-You meant "open_tree"
+> +
+> +		snprintf(prop_name, sizeof(prop_name), "%s-max-microamp", supply);
+> +		ret = of_property_read_u32(np, prop_name, &qmp->vregs[i].init_load_uA);
+> +		if (ret)
+> +			dev_dbg(qmp->dev, "No max microamp for %s, using default %d\n",
+> +				supply, QMP_VREG_UNUSED);
 
-> If flags does not contain OPEN_TREE_CLONE, open_tree() returns
-> a file descriptor that is exactly equivalent to one produced by open(2).
+This print doesn't make sense as it will print the default value of -1. Please
+drop it.
 
-Please, change "by open(2)" to "by openat(2) with O_PATH" (and other similar places).
+- Mani
 
---
-Askar Safin
-https://types.pl/@safinaskar
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
