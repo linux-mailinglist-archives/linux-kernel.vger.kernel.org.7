@@ -1,139 +1,135 @@
-Return-Path: <linux-kernel+bounces-760521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC331B1EC60
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:50:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E6BB1EC64
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FC9F189DC6B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:50:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D3DC566062
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B04551022;
-	Fri,  8 Aug 2025 15:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACD228640B;
+	Fri,  8 Aug 2025 15:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="L+EsLG9Q"
-Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3N08WGA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB1B280004;
-	Fri,  8 Aug 2025 15:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644CA277016;
+	Fri,  8 Aug 2025 15:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754668197; cv=none; b=mNqZIyUS/kPMA3Bdd7v3002LR/Z53po6IEoZJ6/7O57VE0o+daSXa2MZRqKBfzrNmmsbSgB4JVprLcsRwUHYq7O5C/A9fSUp3nQQqBpmCOwJ2iZ6BpptHNFSQSKacoSULS2XXvT2L/O2GuY4IUClANOjfMGqwZuTPZTsJzSuTrA=
+	t=1754668212; cv=none; b=CHsG/ayag951KpNL96tWepuQY3/xZrH21vR4jBBzJumj1bhENTv1PaRy/lVX36FRcDeKDjad9iimAecQOfBiNvZ5lSyz/qZabAq8bSXlUj319oX72LB2we/spIg3iRLCjgq5yUrJ5/il9RYIxpVdwHbI8Y9ewPNcUxoja/x4D4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754668197; c=relaxed/simple;
-	bh=Rq0M4qn2Kke/HeuAK6ANde7q4jKlLT1dbCu7lGeVEd0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dMqafcjqlu/SY4mS5SuxO+5LPS1JjpZeo5X48hmp01uPTA3qNcr6XXNgiKdakdent/jlETYayKXvqxL+eRosbRoVBOec80HTyHM7JCCSRNpHkKN1k824cv1G19tSnf5j+iNF6BNqREeCa1A5yOCzRWJxX2xeUyd/r6HWp1srQ0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=L+EsLG9Q; arc=none smtp.client-ip=37.27.248.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay10 (localhost.localdomain [127.0.0.1])
-	by relay10.grserver.gr (Proxmox) with ESMTP id E0E9B485AD;
-	Fri,  8 Aug 2025 18:49:53 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay10.grserver.gr (Proxmox) with ESMTPS id 63773485EF;
-	Fri,  8 Aug 2025 18:49:53 +0300 (EEST)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id C524E1FF6C2;
-	Fri,  8 Aug 2025 18:49:52 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1754668193;
-	bh=1TpnNQLScJc2Itv09Mw/jSyfwY6OaBIbVEpAdmP8cxU=;
-	h=Received:From:Subject:To;
-	b=L+EsLG9Q2S4fwuVevN6/eAlBxDMpR5RsmxW5Z5Ob2fdbMV9gMwQsJ3lAwb2aQqSKs
-	 8Y+4iizNjL+XSBQIqR4pA4m/YubwS8ndmk+9SXc5iz8h+/gDDJS5B3UOpBNADj8opI
-	 zs+yA6QDM5S/hHqU0cmel95XzA7ojmZ862ErvWtFJPwaQSEWR0KmBP9KHnu6PAXUQy
-	 NYG0B99tBk1PJrd/DHIHxR0SDW3TGbN2zPm6d0wMLhBNyPrj73pggKq9efuBKVlQRF
-	 ZICV7LUQzC0Cb8nq08X8mxGCeTLRvvIDu0DmPZYxyE1dTfZTCild3IIesdfVT+Rb8a
-	 q4z9Zhv4ovxiw==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.172) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f172.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f172.google.com with SMTP id
- 38308e7fff4ca-3324e2e6f54so30730951fa.1;
-        Fri, 08 Aug 2025 08:49:52 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yzlf/cdi0tEvcWfhrOrbLjI0NASeAV/g+s1NHwS9HDFH2Zu7l0p
-	zzU9gzFe8HyHE8DbOoBiXzJN28ehpPY3N1rh+z4bZqevkiF88FzVOWaDZm2rCJay11QX0QDnIoP
-	2iQhw07SgzrdO4Q3v9hsS0qwxrPLv4i0=
-X-Google-Smtp-Source: 
- AGHT+IE+/V9yuzFsLUKHmcIJSWERnL8+YY+VtehALmxazqBBqQ41AUVlv5ItuFMl4n3Viu2w3jq/L4XJd10EjM+98IE=
-X-Received: by 2002:a05:651c:1a0a:b0:32b:4932:d5ad with SMTP id
- 38308e7fff4ca-333a263c9aemr10295201fa.10.1754668192302; Fri, 08 Aug 2025
- 08:49:52 -0700 (PDT)
+	s=arc-20240116; t=1754668212; c=relaxed/simple;
+	bh=Fn13LnOkMLX97otRtesVk7OTraqlk5v2xVlghm+sXjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+mZDKYEATchViSfLZhg5hClJxv2FrOhMKVD1LUwkVR1IWtrul7SbMA5H+mOsj+8j4i+qIFuQ3sxzrBP1zmzWbmt8wZDfWStC44cvrjxeY3j4A73wCtjUW2YE8hjLSAHZogp6lnaTunjh7hC2zRTv7KeCJZJ+IOP3SUvVEHCH4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3N08WGA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F73EC4CEED;
+	Fri,  8 Aug 2025 15:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754668211;
+	bh=Fn13LnOkMLX97otRtesVk7OTraqlk5v2xVlghm+sXjQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G3N08WGAjIBlgU8eYjkiXU4FoSp9IQUU06tvK1XaWuYpVwRsqsttAs+659bFTPuXS
+	 +auLx87cNatKO5EzQ0I9q5/k1ih0wlMU3MwUYYP3uf1+SJ0XeYnfT2k8Sa/FpZhdDU
+	 z+9Yp47zXwejNZm+gIwsLY0ReTmY8eRwC3FdkHXXMvUQNg3o9cEtQqEkYwamwTwE96
+	 GED6qrhP4zbsQeXOf/kf/CiUraKjA3WghO80D2v7GEbTa7WoPlQ1Y4jH1LUUClaNK4
+	 Jg0Rzff93HXLu3AWlyJRY8Ph6O/RmMgpcSJbIEYZk2jNSDZ0Trq0FBGxTSqgVkjuq9
+	 UHUWIgdWk08mA==
+Date: Fri, 8 Aug 2025 17:50:09 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Phil Auld <pauld@redhat.com>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Cestmir Kalina <ckalina@redhat.com>
+Subject: Re: [RFC PATCH 00/18] cgroup/cpuset: Enable runtime modification of
+Message-ID: <aJYcsXEiFmCmDAjz@localhost.localdomain>
+References: <20250808151053.19777-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808154710.8981-1-lkml@antheas.dev>
-In-Reply-To: <20250808154710.8981-1-lkml@antheas.dev>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Fri, 8 Aug 2025 17:49:41 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwE-Bw2zN5G24ArW9dJ1d=Q5_NLYWWCBmQRfu1zqUN8Qpg@mail.gmail.com>
-X-Gm-Features: Ac12FXwFwrWcZzUqTbvaI0hHBN_tIA4j0Vh9Vf39brvFTjVZeu_eiywX-T6U3W8
-Message-ID: 
- <CAGwozwE-Bw2zN5G24ArW9dJ1d=Q5_NLYWWCBmQRfu1zqUN8Qpg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] platform/x86: asus-wmi: Remove extra keys from
- ignore_key_wlan quirk
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Mathieu Fenniak <mathieu@fenniak.net>,
- Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <175466819297.1699872.2965947503286872788@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.0.9 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250808151053.19777-1-longman@redhat.com>
 
-Also cc'd Mathieu on this one. Would be good to verify my assessment
-is correct. I asked two other Duo users while making the patch.
+Le Fri, Aug 08, 2025 at 11:10:44AM -0400, Waiman Long a écrit :
+> The "nohz_full" and "rcu_nocbs" boot command parameters can be used to
+> remove a lot of kernel overhead on a specific set of isolated CPUs which
+> can be used to run some latency/bandwidth sensitive workloads with as
+> little kernel disturbance/noise as possible. The problem with this mode
+> of operation is the fact that it is a static configuration which cannot
+> be changed after boot to adjust for changes in application loading.
+> 
+> There is always a desire to enable runtime modification of the number
+> of isolated CPUs that can be dedicated to this type of demanding
+> workloads. This patchset is an attempt to do just that with an amount of
+> CPU isolation close to what can be done with the nohz_full and rcu_nocbs
+> boot kernel parameters.
+> 
+> This patch series provides the ability to change the set of housekeeping
+> CPUs at run time via the cpuset isolated partition functionality.
+> Currently, the cpuset isolated partition is able to disable scheduler
+> load balancing and the CPU affinity of the unbound workqueue to avoid the
+> isolated CPUs. This patch series will extend that with other kernel noises
+> associated with the nohz_full boot command line parameter which has the
+> following sub-categories:
+>   - tick
+>   - timer
+>   - RCU
+>   - MISC
+>   - WQ
+>   - kthread
 
-Antheas
+Thanks for working on that, I'm about to leave for 2 weeks vacation so I
+won't have the time to check this until I'm back.
 
-On Fri, 8 Aug 2025 at 17:48, Antheas Kapenekakis <lkml@antheas.dev> wrote:
->
-> Currently, the ignore_key_wlan quirk applies to keycodes 0x5D, 0x5E, and
-> 0x5F. However, the relevant code for the Asus Zenbook Duo is only 0x5F.
-> Since this code is emitted by other Asus devices, such as from the Z13
-> for its ROG button, remove the extra codes before expanding the quirk.
->
-> For the Duo devices, which are the only ones that use this quirk, there
-> should be no effect.
->
-> Fixes: 9286dfd5735b ("platform/x86: asus-wmi: Fix spurious rfkill on UX8406MA")
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/platform/x86/asus-nb-wmi.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-> index f84c3d03c1de..e6726be5890e 100644
-> --- a/drivers/platform/x86/asus-nb-wmi.c
-> +++ b/drivers/platform/x86/asus-nb-wmi.c
-> @@ -655,8 +655,6 @@ static void asus_nb_wmi_key_filter(struct asus_wmi_driver *asus_wmi, int *code,
->                 if (atkbd_reports_vol_keys)
->                         *code = ASUS_WMI_KEY_IGNORE;
->                 break;
-> -       case 0x5D: /* Wireless console Toggle */
-> -       case 0x5E: /* Wireless console Enable */
->         case 0x5F: /* Wireless console Disable */
->                 if (quirks->ignore_key_wlan)
->                         *code = ASUS_WMI_KEY_IGNORE;
->
-> base-commit: 186f3edfdd41f2ae87fc40a9ccba52a3bf930994
-> --
-> 2.50.1
->
->
+However this series is highly conflicting with mine (cpuset/isolation: Honour
+kthreads preferred affinity). Your patchset even redoes things I'm doing
+(housekeeping cpumask update, RCU synchronization, HK_TYPE_DOMAIN to include
+cpusets, etc...)
 
+I have a v2 that is almost ready to post.
+
+Wouldn't it be better to wait for it and its infrastructure changes before
+proceeding with nohz_full?
+
+Thanks.
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
