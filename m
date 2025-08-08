@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-759858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DD7B1E3AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:41:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA558B1E3B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76424188BAD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A1C4176963
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D83222585;
-	Fri,  8 Aug 2025 07:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6921725393C;
+	Fri,  8 Aug 2025 07:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZy8Mme7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IETId7a+"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4DD1D54C2;
-	Fri,  8 Aug 2025 07:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6971F23ABB3
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 07:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754638547; cv=none; b=NUmtGmRGE1mP6ltM/6Wg4Ng8FjB9ws0cZdq6Wjh7yvUaGNxx6A/hYlWNi2If01hKfc9RZmK/fbVjHamKJsrKoT24g0CqyNQJIovXmDhYC1VptxdUCHdZ6F8CgXCHeI9ngWE5689fDci0+sX+jalEFQBi51aRdmUF1c94v3Z9Vys=
+	t=1754638680; cv=none; b=GAQOTOKauhbfqJpJRF1bAZO9rF+CarFI21eW35kOjxKF546zbw1tkeaGxpAL186StTi2xsZHczmbnwcvDGLw02yrL08NXy7giJPPu9I+LMoys1QvgsF5BYMjEk/6B77S8gwic+iWQn/HZ9PpavgqhWG4Bhi11RFLfacfGEnC70E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754638547; c=relaxed/simple;
-	bh=fSFQ4BFpgAzz0JTLtrpfPT919diDmGwK+Dw9OkWmuBw=;
+	s=arc-20240116; t=1754638680; c=relaxed/simple;
+	bh=5CiDG1Hntthp/y9bIpJbpiVwCvhXd81s9iufeJe+x3g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gb6joYMHuEw3olicibi3l5pzwT0bbmTFalmi8NJ6XUe1AHJrr2zgv30v7IVIvI2a+6aboMcT3Mm7kBzBZuZxVCDvgoBmI8MFFbNn1zFXuqr5f9icvvIUiKxBhqIhWRvxSGTUEyEpXpIhO7WHGLHq3BppUUOwL5983UxmWHB6vrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZy8Mme7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C1E7C4CEED;
-	Fri,  8 Aug 2025 07:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754638546;
-	bh=fSFQ4BFpgAzz0JTLtrpfPT919diDmGwK+Dw9OkWmuBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OZy8Mme7TpW+NGxATpczCzeRM6bqUT5ztLWouhxQrAQQ29h9gpy4Efhg9SvkfZ86Y
-	 Jk/Y60NKWGoRpxKrKAn/gYvH9JDy+jqeUQdckwhWK/+NoJVphBCR+FxAqCCfUoyj6i
-	 meBtj4HyISCka6PY43NN1jLZiqLazDBiihwTP8gZRWFA3Sc5oqVHnFp1DMpYUNXOBc
-	 hsKvtpVvdhFG++wPnQ5GLIjl5oeZHn36yw8Gq/+ehwBCsL3zxXW6W3CaUpOQNag2Kg
-	 BCzpIBrdztWJbwAVvFRVxun9GjgHOg/+bCVwefGxcZ/L67C0yT9A2gweRTeiC9lAm8
-	 P22Evj6X/7TPQ==
-Date: Fri, 8 Aug 2025 09:35:44 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, David Wronek <david@mainlining.org>, 
-	Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH RFC 1/5] dt-bindings: clock: marvell,pxa1908: Add
- simple-mfd, syscon compatible to apmu
-Message-ID: <20250808-amusing-ladybug-of-joviality-3fb371@kuoka>
-References: <20250806-pxa1908-genpd-v1-0-16409309fc72@dujemihanovic.xyz>
- <20250806-pxa1908-genpd-v1-1-16409309fc72@dujemihanovic.xyz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gt12q5QUU6rBJYOBPIQXLw5jKLqGendZCHrlZ1CpPc80DSj0KMQ3fqD8yPvyrmcqr9DtyLsgTV0qCNvCEwT1/G0+RlEnC357qeJGmoj9yAwGMSYODpBUZI6GiUTlaI9xHk3nJYK0a5GibpHpwGsGHvrpCoQbzHdYGj+FjKYySP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IETId7a+; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 8 Aug 2025 03:37:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754638675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K6WN31UG96otIJ2fJHDsBlOFAssMef/NT0GXXSKI6p0=;
+	b=IETId7a+OrE2YzUQ5d84Y+xNTjcCco4JvOxGt5d16HDaYYdT22kKD9c3re0nlqiFHl2hOP
+	sawdE4a1TkL3XNtXzlOrPVKEaUpnS6yuh0oCW04a41Yby5eo9PxtN7L4fGUWT3Au+445Yh
+	BXGw3+EvzqfhnCNtFbxeOQa9ra2cuO4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Alex Galvin <alex.v.galvin@gmail.com>
+Cc: torvalds@linux-foundation.org, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: Bcachefs plans for the future
+Message-ID: <gn7qnk6oop3xakhpoauktsizxn6wiirh57jz324wvlnyvdl3yj@yyyzvz7xa4sj>
+References: <CAOaPw=i_4s_OPuSqZiKqWNXq19H3K6U24o9fn_m71CT+a35DOQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250806-pxa1908-genpd-v1-1-16409309fc72@dujemihanovic.xyz>
+In-Reply-To: <CAOaPw=i_4s_OPuSqZiKqWNXq19H3K6U24o9fn_m71CT+a35DOQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 06, 2025 at 07:33:20PM +0200, Duje Mihanovi=C4=87 wrote:
-> Add required syscon and simple-mfd compatibles to the APMU controller.
-> This is required for the SoC's power domain controller as the registers
-> are shared. The simple-mfd compatible allows devices whose registers are
-> completely contained in the APMU range (such as the power domain
-> controller and potentially more) to be children of the clock controller
-> node.
->=20
-> Also add an optional power-controller child node to the APMU controller
-> to accommodate the new power domain driver.
->=20
-> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
-> ---
->  .../devicetree/bindings/clock/marvell,pxa1908.yaml | 36 ++++++++++++++++=
-++----
->  1 file changed, 30 insertions(+), 6 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml=
- b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-> index 4e78933232b6b925811425f853bedf6e9f01a27d..5e924ebd97e6457191ac021ad=
-dafd22caba48964 100644
-> --- a/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-> +++ b/Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-> @@ -19,11 +19,15 @@ description: |
-> =20
->  properties:
->    compatible:
-> -    enum:
-> -      - marvell,pxa1908-apbc
-> -      - marvell,pxa1908-apbcp
-> -      - marvell,pxa1908-mpmu
-> -      - marvell,pxa1908-apmu
-> +    oneOf:
-> +      - enum:
-> +          - marvell,pxa1908-apbc
-> +          - marvell,pxa1908-apbcp
-> +          - marvell,pxa1908-mpmu
-> +      - items:
-> +          - const: marvell,pxa1908-apmu
-> +          - const: simple-mfd
-> +          - const: syscon
-> =20
->    reg:
->      maxItems: 1
-> @@ -31,18 +35,38 @@ properties:
->    '#clock-cells':
->      const: 1
-> =20
-> +  power-controller:
-> +    description: |
-> +      Optional power domain controller node.
-> +    type: object
-> +    additionalProperties: true
-> +    properties:
-> +      compatible:
-> +        const: marvell,pxa1908-power-controller
+On Fri, Aug 08, 2025 at 01:06:32AM -0400, Alex Galvin wrote:
+> Hi Linus,
+> 
+> You've stated that you and Kent Overstreet will "be parting ways" in
+> this kernel release. I understand your words to mean that you will not
+> be accepting PRs from him starting in this release cycle, with the ban
+> continuing indefinitely into the future. Please correct me if I am
+> wrong.
+> 
+> Could you clarify what you will be doing with the code that is
+> currently in mainline? If it is not removed, would you still merge
+> bcachefs code that was sent to the mailing list by someone else? Would
+> you accept that code even if it was written by Kent, so long as
+> someone else made the pull request?
 
-I commented on next patch, so oly to re-iterate here: no, don't create
-nodes just to instantiate drivers. You do not have any resources here.
+Well, Linus has been talking about removing bcachefs from the kernel for
+a long time, he's made it quite clear that's what he wants to do.
 
-Best regards,
-Krzysztof
+In the past the reasons were more that it was "experimental garbage". I
+would hope the user reports have finally silenced that for good; it has
+stabilized incredibly quickly for a modern filesystem. (We're now down
+to fewer open syzbot bugs than either ext4 or btrfs and the main bug
+tracker is nearly emptied out; we're well on track for a very solid
+release and the experimental label off in 6.18).
 
+Now, all the assertions are about how I don't work with other
+maintainers and there's a lot of other maintainers who want bcachefs
+deleted (along with talk about the need for public apologies, therapy,
+things of that nature); this on top of a page and a half rant about how
+Linus doesn't trust my judgement within fs/bcachefs during the recent
+private maintainer thread).
+
+But the assertions about all the other people I've been pissed off have
+been very light on details and don't seem to mesh very well; they seem
+like more an attempt to keep long dead disputes alive than anything
+else.
+
+Well, it's still his kernel, if he wants to remove it that's his
+choice...
 
