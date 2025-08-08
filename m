@@ -1,107 +1,145 @@
-Return-Path: <linux-kernel+bounces-759610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEAF4B1E014
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:03:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 448ECB1E015
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 03:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7732018C1AD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291FA18C424B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 01:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C947199BC;
-	Fri,  8 Aug 2025 01:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A72199BC;
+	Fri,  8 Aug 2025 01:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="dLPO0rnL"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gnl57YMr"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B76AD51
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 01:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754614992; cv=pass; b=ML+49WTCl/WX6mjLGkffsvPPNHbf314kIMFnUPKr7djCKiJpQpI1lHimyaWMw73/bHMk0zjdUTwzBelxm0iq94HN7f/tuBkvZrC1nCh42VVXzH68iU5ozxEmkbvKj7BF2r0lprzd2DxbWIfKPLWr0SIRMY7v1uufvZ1uuEJeS+s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754614992; c=relaxed/simple;
-	bh=Pc7ROBykw7Ijxm/k1AVDblmfp1+IROxA1QV7aw4Z8q8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nsXaQbSHe7SQK7VnfUy8NAcaElTSjFRYHUfu7dNqm7VM4fseSAeh4oohOSKYCYM47NEaISP5SrnvRyYGmkvgyGQNyQT+jgPacMY2qgk/zpc62HnX+oJ/HYo4b4iVQ4vfEKwhvZ9r0hxe02ZNAARlMG6Z+P9ux6P3ccxDqMMc5v8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=dLPO0rnL; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754614970; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=l5A2KRmE8hy+m5DCBSIwK3wVu+4fHGAUirxtmwmLjzwWVLPSV2GWsa5mQKNVGUPJSu8i+sOQ7u8JqdtUYqB5lhq0xwtSB7V0yWgFb9pwL3dMr4DymMhaQZ5iOvql/RPOY5qtx2veagfdcul2OH8JhpNLGCfHNXSzUiKJ+6dPd6g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754614970; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=CqlsM5eFyojY0kwTT9YlTdqpSfGKGhBS1ZnJ4HyXBXo=; 
-	b=OPiH6JQvHticzgSMH+lK+UOgqU5zGewPKufZScmFU43Pd75wFF+KGOG9cdhr/6Z+3fADT5HDab3oGF92afxmFwIQG0QIzg7UMOMRN5I4qy6nPjJ6N27r2IAgdZvTJCgdrb6QyCQs92i4CjEYz0+Ip8bPgBLn/ZpmoSSTGhXK1PU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754614970;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=CqlsM5eFyojY0kwTT9YlTdqpSfGKGhBS1ZnJ4HyXBXo=;
-	b=dLPO0rnLkYCyeaZS148W+n2BtYKLN6o5jF5kwGdR5cwQIs5Fhz6kXTnKMt7ae1jj
-	7Z7JO9hdXOEo4mEtg50fe8/0ZXa2W2oIK0Vk7apWWntaePdWlpUQ6shwZ5A6IwNjMqo
-	1NR59AoStv0PE1cYtZYrmAgYFqSulIFx+r7Q/Zbw=
-Received: by mx.zohomail.com with SMTPS id 1754614968543351.6309078864217;
-	Thu, 7 Aug 2025 18:02:48 -0700 (PDT)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	kernel@collabora.com,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Christopher Healy <healych@amazon.com>,
-	Daniel Stone <daniels@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH v2] drm/panfrost: Print RSS for tiler heap BO's in debugfs GEMS file
-Date: Fri,  8 Aug 2025 02:02:34 +0100
-Message-ID: <20250808010235.2831853-1-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66C72E36E0
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 01:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754615280; cv=none; b=EdTd+EOyHxvCmh4ptcEKCxEc9cgP/2D5a6/TNi9sOMHpsy6FVG8EbhZwL5ux8Gu56wROf0u+05czwyvZYWUB0opoxGYsZMYDQLVwyY1erC7ubDq11mnZ4yKYb20jJQRx1gaqwkSvwGXin7RyqP9LEFTGJF3km2HHsLIXoH1aO3Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754615280; c=relaxed/simple;
+	bh=2aVBDYbfIZLYlSENnlX5p/F6TejocqQIUWwQpE0tFUE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uEpUpKS50BzfW+iQtLRYvL5zuf5pgfrULzzDdwqzaEVpIK49mCej/UdyJBMfGxTs6jFYQBfHIIAQzw9IcM9Q4HGEvPVcw+2yEgCYETwHBp/oXRspK1uDMB0SW3Jy7RSqiwX40+jR3ROinYalPVhAZtgLeevmzEUhmnseS0VpdWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gnl57YMr; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459ea4f40afso3035645e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Aug 2025 18:07:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754615277; x=1755220077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r3eQ7rVkDjHljPJGyTGwqVmjvof0apAgtM+Mb2oIdIs=;
+        b=gnl57YMr2fTdU1QrDNxBdAKgZ5ridFG/GS3TKGdS4mUfbUxiSS8ZXHYO6O3k01/rtl
+         +DW9S3qyykkn0ck/Tg5LmQzi6P53CKIMd/wT+yM+h7Wsu8P42afOxffrBRqaeEDL+ZUH
+         PwydDVryRJrnXJIYvx/vB4MUtPviMCxQ+1KOEbn2CC6uW2YiJ722YhMmXa36FEqYoBlV
+         RoG+0EjUrT4gbEyFAaUbzJBVlrZ53UdLKPf0ucAkp8fyMrv4CljEw3vIZBYHBcvdFPgl
+         E8U4xtY9wznRM3yDcDThdYTfCnW7TcqM8uITWecOF460/v4YCs3yyCNYTwXm54bfAKpt
+         WsYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754615277; x=1755220077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r3eQ7rVkDjHljPJGyTGwqVmjvof0apAgtM+Mb2oIdIs=;
+        b=S63CnhlAqZVOCBjuO3u7YYKAHg+s9ItX2Nqks8LJRLfFP5PiB0wOPzu9eCervQ/4qI
+         qnjp2utfJcAbk0TdPB6lTSI4K9VGXZMCtyjfPe+G4PFkDl+fVM1DjsHf9Am6tLAZZaAe
+         75VyaaELu1kX/e/1EUtrg6vz+JbxeVSYt/rSpJk+VL0PpMkiN7yxBW38ZiYZ6nh9A14s
+         /Rfa9NnweAX6K8ChShrSZBTy3iNorqije7yKMef25L/oSrpBtPCP62UlXByFrqSyQd9q
+         KKK9FjmIFGObhIhRz2Uh0ASRG1TS2WMfEkrMhLswJi/2LvmUIMEVBR6RBvUxl0vAiHbb
+         ZOAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQXO5xrnGmG7GbtsKBj7UslJw+lW8u81Qnky1YgfbLyc2AbP3RfXnIO4oNOWVAbioxN9d79BfX8FPgbfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKSYqMxd0QPFAAyb3p0lKj+iWlC3wagw8Y4XEXR/MjXkeHsqXE
+	o05fTepITXMdQw2heM90xs5lIYCcuMOrVKzc5YU/Msbk+afw1RbdeUu+dfVQs3ABqJAqZ6G8C6z
+	im+3thwSMKQBIe1zg4IeQu/i93++Dy5c=
+X-Gm-Gg: ASbGncukIAKm9Nte/4VDgGLXUUEv28CtZ8bmJ+GLK1QPjm3YKvlyyIpTkLM+m7Z8prR
+	p6PmAn0X5BeyVy/i3MeLiXKaUBlPFbdk8GRhL7/AQJ8I/6V7XQ8W5nOtKvrGr6acW9tEmvDl8mq
+	MCNtZCXFwPc80EsEYD48fvlVesThcBdJUAjpnzTRhrj85SC/cumoron1ddkjydkRaGQ5nVg6oYk
+	aEqALBf
+X-Google-Smtp-Source: AGHT+IEZocG28lsVdx4WmXyb8tMnkkxxVJIR13Bp4wAasTNkMfgb79wuAfbCl8kCP05s9O0uN7IxhvfR8GcWLKSyR0I=
+X-Received: by 2002:a05:600c:358a:b0:459:d7c4:9e28 with SMTP id
+ 5b1f17b1804b1-459f4c50c3amr2943505e9.0.1754615276953; Thu, 07 Aug 2025
+ 18:07:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250807014836.3780988-1-chao@kernel.org>
+In-Reply-To: <20250807014836.3780988-1-chao@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Fri, 8 Aug 2025 09:07:44 +0800
+X-Gm-Features: Ac12FXwzxFsdSooevGSbA__Aw8caF8T_m6NgFpnzo_IiqTmxx2FEXioaWPMDkfA
+Message-ID: <CAHJ8P3Krr4pCdOmnSJ6mp5bfGLLH4TJqd0FC7Qiw2V3iEL5VEw@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to clear unusable_cap for checkpoint=enable
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Otherwise it would display the virtual allocation size, which is often
-much bigger than the RSS.
-
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-Fixes: e48ade5e23ba ("drm/panfrost: show device-wide list of DRM GEM objects over DebugFS")
-Tested-by: Christopher Healy <healych@amazon.com>
-Reviewed-by: Daniel Stone <daniels@collabora.com>
----
- drivers/gpu/drm/panfrost/panfrost_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
-index bb73f2a68a12..85d6289a6eda 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gem.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
-@@ -432,7 +432,7 @@ static void panfrost_gem_debugfs_bo_print(struct panfrost_gem_object *bo,
- 	if (!refcount)
- 		return;
- 
--	resident_size = bo->base.pages ? bo->base.base.size : 0;
-+	resident_size = panfrost_gem_rss(&bo->base.base);
- 
- 	snprintf(creator_info, sizeof(creator_info),
- 		 "%s/%d", bo->debugfs.creator.process_name, bo->debugfs.creator.tgid);
--- 
-2.50.0
-
+Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+=E4=BA=8E2025=E5=B9=B48=E6=9C=887=E6=97=A5=E5=91=A8=E5=9B=9B 09:52=E5=86=99=
+=E9=81=93=EF=BC=9A
+>
+> mount -t f2fs -o checkpoint=3Ddisable:10% /dev/vdb /mnt/f2fs/
+> mount -t f2fs -o remount,checkpoint=3Denable /dev/vdb /mnt/f2fs/
+>
+> kernel log:
+> F2FS-fs (vdb): Adjust unusable cap for checkpoint=3Ddisable =3D 204440 / =
+10%
+>
+> If we has assigned checkpoint=3Denable mount option, unusable_cap{,_perc}
+> parameters of checkpoint=3Ddisable should be reset, then calculation and
+> log print could be avoid in adjust_unusable_cap_perc().
+>
+> Fixes: 1ae18f71cb52 ("f2fs: fix checkpoint=3Ddisable:%u%%")
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/super.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index f37004780ce0..c1f45df9efec 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1014,6 +1014,10 @@ static int f2fs_parse_param(struct fs_context *fc,=
+ struct fs_parameter *param)
+>                         ctx_set_opt(ctx, F2FS_MOUNT_DISABLE_CHECKPOINT);
+>                         break;
+>                 case Opt_checkpoint_enable:
+> +                       F2FS_CTX_INFO(ctx).unusable_cap_perc =3D 0;
+> +                       ctx->spec_mask |=3D F2FS_SPEC_checkpoint_disable_=
+cap_perc;
+> +                       F2FS_CTX_INFO(ctx).unusable_cap =3D 0;
+> +                       ctx->spec_mask |=3D F2FS_SPEC_checkpoint_disable_=
+cap;
+Hi Chao,
+when enable checkpoint, shoud it be:
+ctx->spec_mask &=3D ~F2FS_SPEC_checkpoint_disable_cap_perc;
+ctx->spec_mask &=3D ~F2FS_SPEC_checkpoint_disable_cap;
+please correct me if I misunderstanding.
+thanks!
+>                         ctx_clear_opt(ctx, F2FS_MOUNT_DISABLE_CHECKPOINT)=
+;
+>                         break;
+>                 default:
+> --
+> 2.49.0
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
