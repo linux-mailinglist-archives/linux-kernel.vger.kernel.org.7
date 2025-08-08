@@ -1,289 +1,129 @@
-Return-Path: <linux-kernel+bounces-759831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99142B1E37C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:36:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A97B1E35C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 09:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60CDF5850FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:34:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03A567B1626
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C4126E17D;
-	Fri,  8 Aug 2025 07:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836BC270ED5;
+	Fri,  8 Aug 2025 07:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VvtFYjcH"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXTtI64z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B76C2253EB;
-	Fri,  8 Aug 2025 07:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA85F2264D9;
+	Fri,  8 Aug 2025 07:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754637872; cv=none; b=pxfCcBPMikAKRYXeXAFHsdfuR3dIqxRQIWt1KQvni4WxSVAxP0cvDInYolIzJWu7VptexoinGLXaZeZpUkGXv3TqZWvVLM8rsHw8dAINEL/OvwxP4NiZBTLO8va6Hyl/fCHqVWuLjQ3iBZhA/NYEQNCnfXOylcfBAgWKO6WOX2o=
+	t=1754637953; cv=none; b=dZ3lmC3jTAJeWX8+c1WKxlNt42W3CbxTGsg0NHS17lySAFqf9jUxRtBGcr+HO6pn49IrYyJlf+w60ONYQm5ioZ+/SeagjDcu9CkMArDiBjhV//aOsVYqT/cG69XbW+NmEutdikGR5abtmFdzudgPMSPqx1+MQ1QUVHaue5dduyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754637872; c=relaxed/simple;
-	bh=CoyAj5ykzX0RsUkQzxfR9fWF0JGaTLnIfiCV/+2rXAI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ODhJeTlfsLzOvmMeskS6wBCgSdosjY4l+Svdvzz2WNsgqUNW6VCixbQM9cLiPcEye/wJ00+kMl/7Q/OQTmThUZcNFJXTJo3XpUG5xtsSqRySgCJ6dGfqEfC4l582tl+r6C/djCFLC/+abHlVXcVZX+Fm0sZ+vXDSLT0cZj3uFN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VvtFYjcH; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-31ece02ad92so1524447a91.2;
-        Fri, 08 Aug 2025 00:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754637870; x=1755242670; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kq6jfnH6Ny9gPRgiG3cjYrW5tpA/eQz2qFEMu+Bkk8=;
-        b=VvtFYjcH7q5tky4rWqWBmWe0RmTACIuSC7e1+wWJOiz5agrdK/d7SuBofpeEfzsQy7
-         xmUY+RTPUKBlFtMybjDlNc49rkR8sfPVW3ds59gsNNbw4syYrVMiw1dy4IhUwKhlNEOn
-         sylGfMrrOJGMpqkcbcQxBz55qibnqS11s/zaFHmtuaKY2FayVvLGET6lCxGHiXo457Z3
-         EimbotL3tInC7ZhmkkG0X+PlFYzgrqArFgE3o5SL5+FJv7MVNgF+u9IFMdKd/xO38KE8
-         QPEishWGCORMvsntMt3F5BvcxeF6ZWvpU7+YBREXFKXeUMG8ZGPPYVmh8ygSpXdOOQYh
-         vUQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754637870; x=1755242670;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kq6jfnH6Ny9gPRgiG3cjYrW5tpA/eQz2qFEMu+Bkk8=;
-        b=GvPKOtWmuBU+17NyDuXEtVNTCGVIoQ2Iagq0rLH5sKItGKbqpbeBz5uBDNYAXyHqW9
-         aVfRIh0BJOBU0/9Od4/VrYGydofj92+Ea2Oi71sT/wbLtmv/gxC5MaK15eKUEsstSlD3
-         QoBhoj9zdhHxyas7RW/zcBjK551WMBmIvxhM6QgmsMqWoUwflnu0w+4lrH+M94R56F/9
-         AJ2URoCVTuX4xVT//ScieCGI3GcdSmHvPVG7l0WdBwKEDQaf92qfxvIX2M5MU4bUokRL
-         5TaXx56B40y9NgcJNJgaCPGkMfeClBEEQdCMXHhhQMRogh5AZxRTCLkUl42lBX04nhMi
-         uTOw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4yjJE65ba0mKO/PuiUzV/iRnkvu17G+MNcZ/e95A4+CNYkqnm1zrAMnjbWvWpaClXCZgzuJBmp022U0a5@vger.kernel.org, AJvYcCX3vGlDTzHTCruhp5q3nDQe62Xbzei+wdkx8+yLpTXN8QqwaTYuh0IDKsC4Q41gXi87XuqGt5cVvuyETuJmrA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVZtNjOwXxcEwI4dwvWizIKRLjjnioYE4LH2uY8Qq2v7lsa9we
-	kYUpiPwnSoU5DXihvw6xg/2wqLhVQR/8uzJdVF9NEJjVGrvvsrkVhgwM
-X-Gm-Gg: ASbGncuyBOq4JSFiD5WWGYc9xlWnarLX+EKSzZymAqMEf43/HHhaGQpLjNEs2uUdned
-	V+e6cfH6H493qgiQY3cFfTj741dhWevwl1g5SIP8WYsZyrTBKylTUuN+K6PzmdIeWADYZOlcGu0
-	8utWuo3mVFT2AxR433nYmBSFPNIzO8vPsJR4lD7jRyN0OhOx8fIVKRL/5bbF031FkXW/Ji/JUZc
-	l326GBqkAlN74o/VT5ys5gWtxeAf/XUch8yvwwNw6fC1rFymSpUATLRwJdmb2RSsWbvOPE1a+7y
-	CT4mRW+pWtJ8h+7UTQ/1EuJa0E30K+OBV6G0+6fcs9qyKVG13hzv0ga1YPPeIdppddiMHWnQutU
-	ySMIHZnTdPW4jz9eT
-X-Google-Smtp-Source: AGHT+IGJsxvBasl+HRN4thk+yxnR9s6JRomaZlNIoO0K+w92vAXmpA79Cm8QdXqYOdzpt7F6+Lv8sw==
-X-Received: by 2002:a17:90b:2685:b0:2fa:157e:c790 with SMTP id 98e67ed59e1d1-321839d6666mr3234299a91.5.1754637869597;
-        Fri, 08 Aug 2025 00:24:29 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63dc4ef0sm24164488a91.14.2025.08.08.00.24.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Aug 2025 00:24:29 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1754637953; c=relaxed/simple;
+	bh=4dII2zr2lKG9KmcQeK6dVUXaq5kcE5zY11ZU5f2bPgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Us9bN5lJqPn/7X7Lfv3vLzc/M9yvPFTBNv+AKL7dvaojjfwMwdEmf5rpLw0Q86sOhgjXWnqIEOWIYsggzQQ3m+wxuQLVfPh8e6LS04Wjc+vK0b5bR/wYttFnqqpw3insNGTGqaOE32EbXkLESkbFu0JyrtGDbvtvbPVKhyDZiAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXTtI64z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B65B5C4CEF0;
+	Fri,  8 Aug 2025 07:25:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754637952;
+	bh=4dII2zr2lKG9KmcQeK6dVUXaq5kcE5zY11ZU5f2bPgo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fXTtI64z0GrM2KCRlY7jZll6v0CI43RH8gvE1J0dHa1btco7q0ce7u9SfUvBjhEkR
+	 l8Hpqw60ozUF8506LpOZQ7vAykFNVg7gO6NdgQ5SPjVBnrAN2YJ/B71Y8hDeZFoqU7
+	 ASCL5CkasD59/6lhGl/fpisNjKmBe4qyJbXSuznk1s200imVGOAaWU/K7N19hJC17w
+	 SgcUopvrdnVYYytb+cqEp1kJ7qXiLzJb1wDDfcCQy2aDgYGBIR4mpKYL8botCUgz/9
+	 aVweM7F5c41FPLpQ2taYyAx4OeXec3zGY1RRazGi+6SJSMMz4wf9h6TPkFHE0EzQwS
+	 xdVd6sIa4X+vg==
+Date: Fri, 8 Aug 2025 09:25:49 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nitin Rawat <quic_nitirawa@quicinc.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, vkoul@kernel.org, kishon@kernel.org, mani@kernel.org, 
+	conor+dt@kernel.org, bvanassche@acm.org, andersson@kernel.org, 
+	neil.armstrong@linaro.org, dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org, 
+	krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+Message-ID: <20250808-unbiased-classy-heron-cd7f3f@kuoka>
+References: <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+ <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
+ <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
+ <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
+ <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+ <685e3d36-c0e3-4faa-b817-aecc15976a25@quicinc.com>
+ <c1435858-6288-4525-8c92-e27ed86cb55e@sirena.org.uk>
+ <31461227-3f3a-4316-9c8a-c851209d0278@quicinc.com>
+ <4efc8a3a-ceb6-40dc-b877-328b86348e0b@sirena.org.uk>
+ <52625e59-c7d0-45d1-8af3-d9958c5ef01a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.500.181.1.5\))
-Subject: Re: [syzbot] [bcachefs?] possible deadlock in trans_set_locked
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <6749f54c.050a0220.253251.00bc.GAE@google.com>
-Date: Fri, 8 Aug 2025 15:24:13 +0800
-Cc: kent.overstreet@linux.dev,
- linux-bcachefs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <80513B36-FAE6-4CB6-855B-029E2CAE235B@gmail.com>
-References: <6749f54c.050a0220.253251.00bc.GAE@google.com>
-To: syzbot <syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com>
-X-Mailer: Apple Mail (2.3826.500.181.1.5)
+In-Reply-To: <52625e59-c7d0-45d1-8af3-d9958c5ef01a@quicinc.com>
 
-On Nov 30, 2024, at 01:09, syzbot =
-<syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com> wrote:
->=20
-> Hello,
->=20
-> syzbot found the following issue on:
->=20
-> HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch =
-'iommu/arm/smmu'..
-> git tree:       =
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git =
-for-kernelci
-> console output: =
-https://syzkaller.appspot.com/x/log.txt?x=3D17d6af78580000
-> kernel config:  =
-https://syzkaller.appspot.com/x/.config?x=3D9bc44a6de1ceb5d6
-> dashboard link: =
-https://syzkaller.appspot.com/bug?extid=3D78f4eb354f5ca6c1e6eb
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
-Debian) 2.40
-> userspace arch: arm64
-> syz repro:      =
-https://syzkaller.appspot.com/x/repro.syz?x=3D107bdf5f980000
-> C reproducer:   =
-https://syzkaller.appspot.com/x/repro.c?x=3D13ae49e8580000
->=20
-> Downloadable assets:
-> disk image: =
-https://storage.googleapis.com/syzbot-assets/4d4a0162c7c3/disk-7b1d1d4c.ra=
-w.xz
-> vmlinux: =
-https://storage.googleapis.com/syzbot-assets/a8c47a4be472/vmlinux-7b1d1d4c=
-.xz
-> kernel image: =
-https://storage.googleapis.com/syzbot-assets/0e173b91f83e/Image-7b1d1d4c.g=
-z.xz
-> mounted in repro #1: =
-https://storage.googleapis.com/syzbot-assets/5ab7b24d2900/mount_0.gz
-> mounted in repro #2: =
-https://storage.googleapis.com/syzbot-assets/fbfbb60588c1/mount_2.gz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> Reported-by: syzbot+78f4eb354f5ca6c1e6eb@syzkaller.appspotmail.com
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> WARNING: possible circular locking dependency detected
-> 6.12.0-syzkaller-g7b1d1d4cfac0 #0 Not tainted
-> ------------------------------------------------------
-> syz-executor203/6432 is trying to acquire lock:
-> ffff0000da100128 (bcachefs_btree){+.+.}-{0:0}, at: =
-trans_set_locked+0x5c/0x21c fs/bcachefs/btree_locking.h:193
->=20
-> but task is already holding lock:
-> ffff0000dc661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: =
-__bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
->=20
-> which lock already depends on the new lock.
+On Fri, Aug 08, 2025 at 02:15:31AM +0530, Nitin Rawat wrote:
 >=20
 >=20
-> the existing dependency chain (in reverse order) is:
+> On 8/8/2025 12:15 AM, Mark Brown wrote:
+> > On Thu, Aug 07, 2025 at 11:26:17PM +0530, Nitin Rawat wrote:
+> >=20
+> > > 1. Regulator and PMIC configurations are board-specific, meaning they=
+ can
+> > > vary significantly across different platforms. For example, some boar=
+ds may
+> > > use different generations of UFS devices =E2=80=94 such as UFS 2.x =
+=E2=80=94 which come with
+> > > distinct power and load requirements and some with UFS3.x which has i=
+t own
+> > > power/load requirement.
+> >=20
+> > Requirements from generations of UFS devices presumably come from the
+> > UFS spec and should just be known though?
+> >=20
+> > > 2. UFS PHY load and PMIC requirements also varies across targets, dep=
+ending
+> > > on the underlying technology node and the specific PHY capabilities. =
+These
+> > > differences can be influenced by the MIPI version or other implementa=
+tion
+> > > details.
+> >=20
+> > If you've got non-enumerable PHYs that have a big impact that's a much
+> > clearer use case for putting things in DT.
 >=20
-> -> #1 (&c->fsck_error_msgs_lock){+.+.}-{3:3}:
->       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
->       __mutex_lock kernel/locking/mutex.c:752 [inline]
->       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
->       __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
->       bch2_check_alloc_hole_freespace+0x5fc/0xd74 =
-fs/bcachefs/alloc_background.c:1278
->       bch2_check_alloc_info+0x1174/0x26f8 =
-fs/bcachefs/alloc_background.c:1547
->       bch2_run_recovery_pass+0xe4/0x1d4 =
-fs/bcachefs/recovery_passes.c:191
->       bch2_run_online_recovery_passes+0xa4/0x174 =
-fs/bcachefs/recovery_passes.c:212
->       bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
->       thread_with_stdio_fn+0x64/0x134 =
-fs/bcachefs/thread_with_file.c:298
->       kthread+0x288/0x310 kernel/kthread.c:389
->       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
->=20
-> -> #0 (bcachefs_btree){+.+.}-{0:0}:
->       check_prev_add kernel/locking/lockdep.c:3161 [inline]
->       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
->       validate_chain kernel/locking/lockdep.c:3904 [inline]
->       __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
->       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
->       trans_set_locked+0x88/0x21c fs/bcachefs/btree_locking.h:194
->       __bch2_trans_relock+0x2a0/0x394 fs/bcachefs/btree_locking.c:785
->       bch2_trans_relock+0x24/0x34 fs/bcachefs/btree_locking.c:793
->       __bch2_fsck_err+0x1664/0x2544 fs/bcachefs/error.c:363
->       bch2_check_alloc_hole_freespace+0x5fc/0xd74 =
-fs/bcachefs/alloc_background.c:1278
->       bch2_check_alloc_info+0x1174/0x26f8 =
-fs/bcachefs/alloc_background.c:1547
->       bch2_run_recovery_pass+0xe4/0x1d4 =
-fs/bcachefs/recovery_passes.c:191
->       bch2_run_online_recovery_passes+0xa4/0x174 =
-fs/bcachefs/recovery_passes.c:212
->       bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
->       thread_with_stdio_fn+0x64/0x134 =
-fs/bcachefs/thread_with_file.c:298
->       kthread+0x288/0x310 kernel/kthread.c:389
->       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
->=20
-> other info that might help us debug this:
->=20
-> Possible unsafe locking scenario:
->=20
->       CPU0                    CPU1
->       ----                    ----
->  lock(&c->fsck_error_msgs_lock);
->                               lock(bcachefs_btree);
->                               lock(&c->fsck_error_msgs_lock);
->  lock(bcachefs_btree);
->=20
-> *** DEADLOCK ***
->=20
-> 3 locks held by syz-executor203/6432:
-> #0: ffff0000dc600278 (&c->state_lock){++++}-{3:3}, at: =
-bch2_run_online_recovery_passes+0x3c/0x174 =
-fs/bcachefs/recovery_passes.c:204
-> #1: ffff0000dc604398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: =
-srcu_lock_acquire+0x18/0x54 include/linux/srcu.h:150
-> #2: ffff0000dc661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: =
-__bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
->=20
-> stack backtrace:
-> CPU: 1 UID: 0 PID: 6432 Comm: syz-executor203 Not tainted =
-6.12.0-syzkaller-g7b1d1d4cfac0 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, =
-BIOS Google 09/13/2024
-> Call trace:
-> show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:484 (C)
-> __dump_stack lib/dump_stack.c:94 [inline]
-> dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
-> dump_stack+0x1c/0x28 lib/dump_stack.c:129
-> print_circular_bug+0x154/0x1c0 kernel/locking/lockdep.c:2074
-> check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2206
-> check_prev_add kernel/locking/lockdep.c:3161 [inline]
-> check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-> validate_chain kernel/locking/lockdep.c:3904 [inline]
-> __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
-> lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
-> trans_set_locked+0x88/0x21c fs/bcachefs/btree_locking.h:194
-> __bch2_trans_relock+0x2a0/0x394 fs/bcachefs/btree_locking.c:785
-> bch2_trans_relock+0x24/0x34 fs/bcachefs/btree_locking.c:793
-> __bch2_fsck_err+0x1664/0x2544 fs/bcachefs/error.c:363
-> bch2_check_alloc_hole_freespace+0x5fc/0xd74 =
-fs/bcachefs/alloc_background.c:1278
-> bch2_check_alloc_info+0x1174/0x26f8 =
-fs/bcachefs/alloc_background.c:1547
-> bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:191
-> bch2_run_online_recovery_passes+0xa4/0x174 =
-fs/bcachefs/recovery_passes.c:212
-> bch2_fsck_online_thread_fn+0x150/0x3e8 fs/bcachefs/chardev.c:799
-> thread_with_stdio_fn+0x64/0x134 fs/bcachefs/thread_with_file.c:298
-> kthread+0x288/0x310 kernel/kthread.c:389
-> ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
->=20
->=20
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->=20
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->=20
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->=20
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before =
-testing.
->=20
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->=20
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->=20
-> If you want to undo deduplication, reply with:
-> #syz undup
->=20
+> What I meant is that different boards may use different UFS parts, and the
+> associated PHY load requirements are not governed by the UFS specification
+> itself. Instead, these requirements depend on our specific PHY design and
+> MIPI, which can vary across platforms.
 
-#syz fix: bcachefs: bch2_trans_relock() is trylock for lockdep
+The UFS controller knows which device it has attached - 2.x or 3.x - so
+power considerations are known to the driver.
+
+>=20
+> Because these characteristics =E2=80=94 such as load requirements =E2=80=
+=94 are not
+> enumerable or automatically detectable, it makes sense to describe them
+> explicitly in the device tree. This approach ensures that board-specific
+> variations are accurately captured without hardcoding them into the drive=
+r.
+
+But you never came with rationale why given board has that value.
+
+All this is done ONLY because downstream has it.
+
+Best regards,
+Krzysztof
 
 
