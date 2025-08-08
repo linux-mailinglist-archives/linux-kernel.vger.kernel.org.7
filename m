@@ -1,129 +1,96 @@
-Return-Path: <linux-kernel+bounces-759711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71DBB1E18D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:09:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3871CB1E193
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D70E3A8C9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:09:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 252AF7B1C81
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869F41DF75A;
-	Fri,  8 Aug 2025 05:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A241E25F9;
+	Fri,  8 Aug 2025 05:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dDwFfJdz"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jVagqRyo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uNipW5YA"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11B719D09C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 05:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C181C5F2C;
+	Fri,  8 Aug 2025 05:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754629745; cv=none; b=eGSJ2KzENmv53rKKv167FJmYOhkct81b2Khct1fc+Qyp66MXNUmEnhsozttsCyeedRm60XsVsjfr/KeYQW4DIqqeGlF66I+0ySE6pbRIkFCW7JPBwwcDcW/TdXaBYps3NwnopTOMXtqtYALLh0yPSA1rX8UsCcYa4uFmUiMT9x4=
+	t=1754629940; cv=none; b=GzFvrpWplK0CCUhuZJhlrwieexmzrHm+AkiEAWH9/GKwR76sCbRbM8rehU9b1o9PG3kqz6pIPBB60UC7NLuMPKsfYlBukCXafh1PmU5qqCMxR4uiAFYdGTXHuOCNkfh/bRmOTFoz/Zqy1dhXBPhEftqXMaozL7ezBBVABh9rQcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754629745; c=relaxed/simple;
-	bh=YsLMrkf+1ivzC8WoJA/+R7/IB2icXE+D3ZYrrS1/KPI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=VLkdNSAkphCDR8TGd94sIsV/jXHY9Wo3M4rR5QzyURxDJAykbln7/s4XnAVKhNqEOeTMSVSd6QLNTy18K+I9Upe8WGC9Ku+cVURzGXAT6HQZdhLr4QLmJ6V5N/xKAQAlTFTsjjS10rRhV16+Y0Dpkb/vvofEKVLXf1XK5/HDiQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dDwFfJdz; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250808050854epoutp034cb748db63862a1db2df77cbb09b069c~ZsnJ4NaUb1718517185epoutp03D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 05:08:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250808050854epoutp034cb748db63862a1db2df77cbb09b069c~ZsnJ4NaUb1718517185epoutp03D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754629734;
-	bh=u3huiNdu0rRAya2M/kre/HuzuylCu0m0RuGmkyeYlU4=;
-	h=From:To:Subject:Date:References:From;
-	b=dDwFfJdznR7YeHoHrN0tY0n4xOehu7TNaS/C1Krg+K/mam2WC2hxeImS6gc5wxpih
-	 mzW522mqaPZANzADwhgE5rXQjouEQMIzu2Br1fXwng6mHB8fXmWs+nyfQWEU1mKU5y
-	 k04L8FnZUu5dMdiAHKoJXbJJwPTz/V7jnkz/1eCw=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250808050854epcas2p2df1b856b6a98c0feaced3206054adf63~ZsnJXsUMd3201832018epcas2p2W;
-	Fri,  8 Aug 2025 05:08:54 +0000 (GMT)
-Received: from epcas2p1.samsung.com (unknown [182.195.36.89]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4bysWT2W8fz2SSKY; Fri,  8 Aug
-	2025 05:08:53 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250808050852epcas2p41faca5b3fd8a7bc18cc173ce44650bff~ZsnIKI84i0265402654epcas2p4F;
-	Fri,  8 Aug 2025 05:08:52 +0000 (GMT)
-Received: from KORCO118546 (unknown [12.36.150.57]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250808050852epsmtip12823c61b1c9681d1f46a0d01cd41bd14~ZsnIFlj6d1991519915epsmtip1D;
-	Fri,  8 Aug 2025 05:08:52 +0000 (GMT)
-From: "hoyoung seo" <hy50.seo@samsung.com>
-To: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <jejb@linux.ibm.com>,
-	<martin.petersen@oracle.com>, <beanhuo@micron.com>, <bvanassche@acm.org>,
-	<kwangwon.min@samsung.com>, <kwmad.kim@samsung.com>, <cpgs@samsung.com>,
-	<h10.kim@samsung.com>, <linux-fsdevel@vger.kernel.org>, <hch@infradead.org>
-Subject: Questions about dquota write by writeback in the context of storage
- shortage
-Date: Fri, 8 Aug 2025 14:08:52 +0900
-Message-ID: <000001dc0822$886fc990$994f5cb0$@samsung.com>
+	s=arc-20240116; t=1754629940; c=relaxed/simple;
+	bh=JePby3LynBt2EamhXGDR2pCcDuW93SWFbdrkEr7YO5I=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Aw6JNMKlwkKjMEUNyO70pD5Q4aHJskhgi2qvhV5z2KiDhk7zfon9CxW1j9DpeS5Gc713jcmIU3ZLqRm+PpR74TSf9Y0YV7MFsRgypdaeO5X33bauXx0fYY1CcvtD1iEe+4m/199DlCYLZpmpWmqdceYiGInS63wKoXFCR3oLDQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jVagqRyo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uNipW5YA; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754629937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JePby3LynBt2EamhXGDR2pCcDuW93SWFbdrkEr7YO5I=;
+	b=jVagqRyonN+sfCNgL1NnggHAv3Q7adSqt91y8FAmjy7J59PZ/07tDw+vd/D5gll9JzWEXo
+	ue8Yo6Am81rCZv7v/MCljfVyHnlvjXv2qC6YbNFTBxrX2AMJcLuqhp8zJhMmacnhgVwdA3
+	1nq8Y8v4O/SkzP9wgzlMTZNn310iWMSDtmdymgYv1Bbe4RYjGo5HLvRe+jVNTcMQJOMrQB
+	0I4FUtG+tP9pWEKHvj1UJ3FODlNYNo5tnMNV6dZr+HDVM6XJ4ByHBHzVUaFY5jcny87JRU
+	KPWEJWouIdRW1zEVUGIIbQsVWrBOgxCRj3ADs0r+GCGfgxw8ELuB2HjBVojzXg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754629937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JePby3LynBt2EamhXGDR2pCcDuW93SWFbdrkEr7YO5I=;
+	b=uNipW5YAEaX5LMMslbLVwnvODloV2Ij+y7MIX01+/H4U8B7cdMZ5JeRkJH+ABkeZsqhL9d
+	1t0CyEOLqsFlLYCA==
+To: Gabriele Monaco <gmonaco@redhat.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] verification/rvgen/ltl: Support per-cpu monitor
+ generation
+In-Reply-To: <6754c61d60fc161963d0625a4b647a241b363fc5.camel@redhat.com>
+References: <cover.1754466623.git.namcao@linutronix.de>
+ <ccfa5ee80e6114b046f04dc1bf1de0c4e7a11c09.1754466623.git.namcao@linutronix.de>
+ <6754c61d60fc161963d0625a4b647a241b363fc5.camel@redhat.com>
+Date: Fri, 08 Aug 2025 07:12:16 +0200
+Message-ID: <87o6sqpfbj.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AdwIIoPDH3+1YAVzRxe4KvlMHLhSQA==
-Content-Language: ko
-X-CMS-MailID: 20250808050852epcas2p41faca5b3fd8a7bc18cc173ce44650bff
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250808050852epcas2p41faca5b3fd8a7bc18cc173ce44650bff
-References: <CGME20250808050852epcas2p41faca5b3fd8a7bc18cc173ce44650bff@epcas2p4.samsung.com>
+Content-Type: text/plain
 
-Hi,
+Gabriele Monaco <gmonaco@redhat.com> writes:
+> I get you're trying to be more type-agnostic, but I believe this
+> /online/ is a bit imprecise, unless you register a hotplug handler and
+> just initialise the online CPUs (much of an overkill I'd say).
+> What about something like "this is false if the monitor exists already
+> before the monitor is enabled"
 
-When the storage usage was full(99%), the following panic_on_warm occurred.
+Sorry, after re-reading this one day later, I am still not sure why you
+says "online" is imprecise. Due to hotplug, CPUs can become online and
+offline.
 
-In this case, wb_writeback function used writeback workqeue included WQ_MEM=
-_RECLAIM flag.
-And wb_writeback function called f2fs_write_single_data_page for updating d=
-quot(Write checkpoint to reclaim prefree segments)
-In this case, dquot_writback_dquots function use events_unbound workqueue.
-It is not include WQ_MEM_RECLAIM flag.
-So occurred this problem.
-First of all, I don't think this situation should be created, but I don't k=
-now why it's like this
-So I guess quota_release_workfn function should use workqueue with WQ_MEM_R=
-ECLAIM flag, but is this the right solution?
+The current implementation ignore hotplug and initialize all possible
+CPUs as if they are all oneline. But if hotplug becomes important in the
+future, I may add a CPU hotplug handler.
 
+> Other than that it looks good to me.
+>
+> Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 
-workqueue: WQ_MEM_RECLAIM writeback:wb_workfn is flushing =21WQ_MEM_RECLAIM=
- events_unbound:quota_release_workfn
-Call trace:
-  check_flush_dependency+0x160/0x16c
-  __flush_work+0x168/0x738
-  flush_delayed_work+0x58/0x70
-  dquot_writeback_dquots+0x90/0x4bc
-  f2fs_do_quota_sync+0x120/0x284
-  f2fs_write_checkpoint+0x58c/0xe18
-  f2fs_gc+0x3e8/0xd78
-  f2fs_balance_fs+0x204/0x284
-  f2fs_write_single_data_page+0x700/0xaf0
-  f2fs_write_data_pages+0xe94/0x15bc
-  do_writepages+0x170/0x3f8
-  __writeback_single_inode+0xa0/0x8c4
-  writeback_sb_inodes+0x2ac/0x708
-  __writeback_inodes_wb+0xc0/0x118
-  wb_writeback+0x1f4/0x664
-  wb_workfn+0x62c/0x900
+Thanks!
 
-Thanks.
-
+Nam
 
