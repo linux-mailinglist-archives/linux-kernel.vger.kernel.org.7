@@ -1,143 +1,97 @@
-Return-Path: <linux-kernel+bounces-760523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EE2B1EC67
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:51:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34681B1EC69
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 17:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123ACA0577F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26853566B03
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 15:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB23285CAF;
-	Fri,  8 Aug 2025 15:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F26285CAE;
+	Fri,  8 Aug 2025 15:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIYeKXV4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H3u2AbBA"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBCF225A29;
-	Fri,  8 Aug 2025 15:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BC123ABB3;
+	Fri,  8 Aug 2025 15:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754668291; cv=none; b=INb3n4leueQ5L7CTdkwRYsc1qyA7cTnOw65KhiYzZFNtizAyA1zOM/ep/6DaquMlvbJHqwYYiz8n52uT8zhAXMB4O+YeoyxRJ1WV7NCOWJrGbkXWp/DSMawVuf3y12yXTuXhkqHlVxWqGiQbrXtCCBoTqnepZj9gQMNujbCKNHQ=
+	t=1754668313; cv=none; b=TahQr5Rvrhp67kpNRzqsyN+fEmpzK7WmTPhPj/F9VoNSRWKmKXdCPfRMWptnSjvXVIj79j2S5sCIIWzoQpQWYgaY8bGn+k+9CoC34ybVURWc6dVj2VQTCSAENTxHZJ0SPGb4CHM0CdsiOvcJvEZWuZ9deGVnFVUGJ8ZCjc6IaXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754668291; c=relaxed/simple;
-	bh=9M9vj6O/7T0eVWhnTNWZUnrhO3VOhOj0y1nq7m5+/KE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mtw26uGjRKLMSh79p+/Dbv8ZGssce/JkNUo3CaJtVv73ntfbIBiLWdUWEPepW1I6ug5JeL2KmaNPkylJRmFClklHk5Qg9Wnx7Iu8Xglwfh8JtIoC5fVHvhxCgFB+HjtMO96k6/UufHjjKl0kE9dHjaUosSpCvCmuW2/625JYf5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIYeKXV4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B2BCC4CEED;
-	Fri,  8 Aug 2025 15:51:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754668290;
-	bh=9M9vj6O/7T0eVWhnTNWZUnrhO3VOhOj0y1nq7m5+/KE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RIYeKXV4q5z6kKHjTlMG66L4ft6xNwRXRWfVR048a8Np9uvX7sWmdyRaDON/yfP/m
-	 g0YV6UoqFXXYmCbmEwDzuAbrXJXPZmpYuAT27k0f/gBIokFEtVOMAfFXnxn8K7wCiZ
-	 58M+8+qi56hsrVR5Nd4QfXhVoHWdDiojV4KV0ebpRH/m6uBWZiuBtHR4jSm75ADUwv
-	 Oau/agS+PvoN62brSbn3k7ONiFAzFZ5Ek+B2hb+9QJEOV1SE5gINQnXLtD8GVVoo0J
-	 3boyH2aZpnco9cbOim8xX1c6NzgGQB2rkHI2j7dPqoVy/Nf30OjCw2sMdYXh6v5T5D
-	 Ee02sCv1R0rXQ==
-Message-ID: <94048354-2385-4f65-9c36-64424985613c@kernel.org>
-Date: Fri, 8 Aug 2025 17:51:25 +0200
+	s=arc-20240116; t=1754668313; c=relaxed/simple;
+	bh=O60+CfQRqxsPkK5orfussWxIUT5ae8zTCtYvV75yCVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TAypm+z0U3yR5KVxlCgfod1dnGZdr4Hvbf2dfN+Ox5a8tK/LqiTC8pewp2AklnQ+qUkZJWFQL70xB0glGnXwVapH/Kwyq0pcviV7oB8oynYETqRo9BL+HM/+DNFz8+BHz5BkEblTxzoweUBdxNKalu0BU9CuP6t+X5O5C+KQ2KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=H3u2AbBA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 4A5BA1920;
+	Fri,  8 Aug 2025 17:50:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754668259;
+	bh=O60+CfQRqxsPkK5orfussWxIUT5ae8zTCtYvV75yCVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H3u2AbBATMXYoDUmdaZwhAluBeolSpisTYeWlq7jOyRGqLPowhIx5qDH0wijbbjdI
+	 PbCM+7+rWgjf5YEJJDZX6nRdg1qPEAPGTIq6ulv5SYoeWZ6/S5fTdHJbHL/KmhyB2V
+	 8IJOTTys3ZsHnJyBdXO4Qx7Z+RLyKz5UkgC5dT+w=
+Date: Fri, 8 Aug 2025 18:51:33 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Lee Jones <lee@kernel.org>
+Cc: arnd@arndb.de, mchehab@kernel.org, lgirdwood@gmail.com,
+	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+	linux@treblig.org, linux-media@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/4] Remove the wl1273 FM Radio
+Message-ID: <20250808155133.GC23187@pendragon.ideasonboard.com>
+References: <20250625133258.78133-1-linux@treblig.org>
+ <175137646300.2319882.12045106011003909576.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3] selftests/bpf: Add LPM trie microbenchmarks
-To: Matt Fleming <matt@readmodwrite.com>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, kernel-team@cloudflare.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Martin KaFai Lau <martin.lau@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, netdev@vger.kernel.org,
- Matt Fleming <mfleming@cloudflare.com>
-References: <20250722150152.1158205-1-matt@readmodwrite.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20250722150152.1158205-1-matt@readmodwrite.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <175137646300.2319882.12045106011003909576.b4-ty@kernel.org>
 
+Hi Lee,
 
-
-On 22/07/2025 17.01, Matt Fleming wrote:
-> From: Matt Fleming<mfleming@cloudflare.com>
+On Tue, Jul 01, 2025 at 02:27:43PM +0100, Lee Jones wrote:
+> On Wed, 25 Jun 2025 14:32:54 +0100, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > I noticed that the wl1273 radio had an unused symbol, but then noticed
+> > it is on Arnd's unused driver list:
+> >   https://lore.kernel.org/lkml/a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com/
+> > 
+> > So, delete it.
+> > The components seem pretty separable, except for Kconfig dependencies.
+> > 
+> > [...]
 > 
-> Add benchmarks for the standard set of operations: lookup, update,
-> delete. Also, include a benchmark for trie_free() which is known to have
-> terrible performance for maps with many entries.
+> Applied, thanks!
 > 
-> Benchmarks operate on tries without gaps in the key range, i.e. each
-> test begins with a trie with valid keys in the range [0, nr_entries).
-> This is intended to cause maximum branching when traversing the trie.
-> 
-> All measurements are recorded inside the kernel to remove syscall
-> overhead.
-> 
-> Most benchmarks run an XDP program to generate stats but free needs to
-> collect latencies using fentry/fexit on map_free_deferred() because it's
-> not possible to use fentry directly on lpm_trie.c since commit
-> c83508da5620 ("bpf: Avoid deadlock caused by nested kprobe and fentry
-> bpf programs") and there's no way to create/destroy a map from within an
-> XDP program.
-> 
-> Here is example output from an AMD EPYC 9684X 96-Core machine for each
-> of the benchmarks using a trie with 10K entries and a 32-bit prefix
-> length, e.g.
-> 
->    $ ./bench lpm-trie-$op \
->    	--prefix_len=32  \
-> 	--producers=1     \
-> 	--nr_entries=10000
-> 
->    lookup: throughput    7.423 ± 0.023 M ops/s (  7.423M ops/prod), latency  134.710 ns/op
->    update: throughput    2.643 ± 0.015 M ops/s (  2.643M ops/prod), latency  378.310 ns/op
->    delete: throughput    0.712 ± 0.008 M ops/s (  0.712M ops/prod), latency 1405.152 ns/op
->      free: throughput    0.574 ± 0.003 K ops/s (  0.574K ops/prod), latency    1.743 ms/op
-> 
-> Tested-by: Jesper Dangaard Brouer<hawk@kernel.org>
+> [3/4] mfd: wl1273-core: Remove
+>       commit: efddd98938400a570bde5bc69b5ecc7e76cacbe1
+> [4/4] mfd: wl1273-core: Remove the header
+>       commit: d356033e7b1e94e0187bb0651f4a066a4646fbb9
 
-I've run a lot more benchmarks.
+Ah, that may answer the question I just posted in another reply to the
+cover letter.
 
-I've used a slightly updated version[1] written by Matt, that improve
-the "delete" operation accounting that Alexei complain about, but I
-guess Matt isn't 100% happy with his approach (as I don't see a V4).
-The below "delete" numbers have improved compared to above.
+I think patch 4/4 will break build in -next until patches 1/4 and 2/4
+get merged too. Should we get 1/4 and 2/4 merged in the media and sound
+trees ASAP, or would you prefer a different option ?
 
-Results from[2] with default 10,000 entries:
-  lookup	7.598 ± 0.004 M ops/s	131.608 ns/op
-  update	3.247 ± 0.029 M ops/s	308.008 ns/op
-  delete	1.747 ± 0.053 M ops/s	572.519 ns/op
-  free	0.294 ± 0.055 K ops/s	3.521 ms/op
+-- 
+Regards,
 
-  [1] 
-https://github.com/xdp-project/xdp-project/blob/main/areas/bench/patches/bench-lpm-trie-V3-adjusted.patch
-  [2] 
-https://github.com/xdp-project/xdp-project/blob/main/areas/bench/bench01_lpm-trie.org
-
-I'm mostly interested in the fast-path lookup performance. Documented
-here [3] and links to plots[4]. People seeing these per operations
-costs, remember that this includes the get random number cost. That said
-is very clear from my data, that LPM trie have problems with cache-line
-trashing as number of entries increase.
-
-  [3] 
-https://github.com/xdp-project/xdp-project/blob/main/areas/bench/bench02_lpm-trie-lookup.org
-  [4] 
-https://github.com/xdp-project/xdp-project/blob/main/areas/bench/bench02_lpm-trie-lookup.org#plotting-results
-
-I've also documented the "bench" harness a little[5].
-
-  [5] 
-https://github.com/xdp-project/xdp-project/blob/main/areas/bench/README.org
-
---Jesper
-
+Laurent Pinchart
 
