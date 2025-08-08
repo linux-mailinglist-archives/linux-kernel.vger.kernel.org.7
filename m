@@ -1,285 +1,363 @@
-Return-Path: <linux-kernel+bounces-759716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-759717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A61B1E197
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2DEB1E198
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 07:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BCD018C2E2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E0C627278
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 05:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D751DED5B;
-	Fri,  8 Aug 2025 05:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD051E570D;
+	Fri,  8 Aug 2025 05:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgZ/bwSu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="L0yafbGo";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="L0yafbGo"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013040.outbound.protection.outlook.com [40.107.162.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C77F3C17;
-	Fri,  8 Aug 2025 05:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754630233; cv=none; b=p/4wfH3osNOFORzvk+p/WY3HTidedb8rt9loQq4cU7xOLEtmhOjzhpDsjx7tcCZNjDgZacKEOkcOXp+kzhbX6acIsA9jPQfrY9wtcf1OwpX0a4E85LFJywsJuQXZNmj8l0NCPulvRQLtbkbHrzRaZIzK5hdg9GtlXqrTzsc70z4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754630233; c=relaxed/simple;
-	bh=OV45XsrkcfFJCl91T0aANLhMqM1x4PJEUmvBK6Hky+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NZsNRdLCcHkW4UMiRGpLZzMrIPEp09Ow7BcuWcQhaiEQs45GnU+bUqDG6bvVAl3QfgTsVZM/vy/WREYoHxI+WWHCG8kaJ7aXUVDTj31wOnNlpPOI5pbE0jwWHD5dev2q8ZcYe64D7YzhDqgL1X4pNFACZ/0siHl7mba5GOKm4+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgZ/bwSu; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754630231; x=1786166231;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OV45XsrkcfFJCl91T0aANLhMqM1x4PJEUmvBK6Hky+0=;
-  b=QgZ/bwSubo82epPYrC570t350Va8ZQwY84wabI1XFOeVwYwPWQin8DCg
-   vISa4zajuE6aau28copRimzmaW6QZkf1tTPYYDFBbIGCJSwl2kRZqQqQY
-   g3K2jYuCTD0yYYOeIeSooAVjp20FRFFTQ5wE7xHb5e0iHJsj3XVXaqwES
-   reyKWvdz3ZIhPwuAPKWQKjifSp3Bu9v5M8iiV+N1LFVac1rf3G45dcfq+
-   Xlqj5BuAqKtuyCVHMVQqN1dRbUvxE2KmetWlIvDLEjjL0s7VGhl+yZNmK
-   OJqz1DwgmB93ZXhOUkPBbhA3CLdnk6sYXRT1AGxvxqK+hGheN3MrDI8jE
-   A==;
-X-CSE-ConnectionGUID: ZEPfypKwSjK2jwGNPRFxNg==
-X-CSE-MsgGUID: mvcWL1iXSoirikU9f59BJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11514"; a="57054750"
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="57054750"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 22:17:11 -0700
-X-CSE-ConnectionGUID: m9u5htjUSgamqgHN3ylsbg==
-X-CSE-MsgGUID: 84kYWOcgQYSPTUbd0j0Cig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,274,1747724400"; 
-   d="scan'208";a="169453259"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2025 22:17:06 -0700
-Message-ID: <b6defa2a-164e-4c2f-ac55-fef5b4a9ba0f@linux.intel.com>
-Date: Fri, 8 Aug 2025 13:15:12 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696EE3C17
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Aug 2025 05:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.40
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754630360; cv=fail; b=lAycDDoePARH4sNDqeSGPZMbE3iYff+XuV7ClUGYz6bRcsHr8VkulBtkKEZfX0Ljb3uv8LMOLshmjaqXFa6eUk59mxC5rPUMWwCZBQQquIdSq1c2xV5BYrVwT7HnCoYiPDZgEeoBtwGdiENLhU4I3w5/Hz9M7S1sS/QTokSmpck=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754630360; c=relaxed/simple;
+	bh=b+tDBdf/Woln9HnQN12pQNqVNv9WMY1XIWtcIE+rVgw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H9P71KjoP9g7ns7mAgXUnm+VSr/x3inlBvoDFgPGDRCZqya8IqyHN27gW2UMl/89//Jju8Z4ZWHdR4MB4e5rgtiMO/yIvNHQmleZ1iGOgy+Ypbo3RsSliY5CmmwLBaxlboEfth+XRuJQSf0GBovECusR37hj0j51NY3u4KUCmjA=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=L0yafbGo; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=L0yafbGo; arc=fail smtp.client-ip=40.107.162.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=a3pUwySHpoZHmP7IBrmiOCQzAFJf09Cyv1o+DNKB5nsEOKnqGoSwO5inDWX8B2DvbXzfiXPOT8YX/+UeY/wvImE8HB12eAv9Cpjc2wUuN3mVHHqvAXBw3N6A8MVHdjWoFfmnPIlx6S0bT52VRkrf2BWiWORpIHWkLFSm9l06lFUZBoymSgW5tlf/sP9xMKhk5HB3HVf3bj0rQHGiiRAqM4tmc4T88Op3rGZspd/RVvBFdSRWdWVGe6dOVEuemx5eFjKkYTAOxJ2D6/Drp4hgDm5oJ9zWltYzq/zEa87D0Up++mxpYC9s9zV8E2GAsfMbO27ab2ie6Bv3tIKduauUYQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vtX70LdeOCMMwJCDV7ic9bKOL6hK0tvpbaMRIzgfpKo=;
+ b=hL8cUz/Y90BgMKt62OmelEojmXFtUq1LR/AFl3zqWoHB/UFM2x8BqfcTZyydELxW9DIoziBJkvoj3MvHILsZEMXPm995C8npE0u7h5+koUCYApXOwPhA05oXL/5BIKV5IOmJ9WOUUkMww7g3BDNOfZJ4uN5SIHKz/JLaCH1jU+SjzzyFNDcEYK3745gp0PM7Tb7HAqh4bHnTbj6msJKLcRw+6wkqKV2X6YmMPXNAJPOEKvS+DDCs0kKEftLU1UXGKRW/feUoMrxjUXWnKjnU/+ULN609L7amg2XwfjZJAkqGMti1js09/cwHZ4nMXOrUHzI5hDlHRmnhsKuLlylJDA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=oracle.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vtX70LdeOCMMwJCDV7ic9bKOL6hK0tvpbaMRIzgfpKo=;
+ b=L0yafbGo0bHvaD8f0rCOG/KQesgDpVu4HL6KJkFh7CT3xbEVkuMDpr10AW4kOE1cDfhNMxcI69smIXPOcCAVuVfx7c95IAj7A0aOAA3UvQsxyczPo8niXdIS0K+sCNIzWoI2KDmx26nSWzkyfi7XCU6/d4SYnSNEBmQQP60yVEs=
+Received: from AS4P190CA0030.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:5d0::20)
+ by AS8PR08MB6277.eurprd08.prod.outlook.com (2603:10a6:20b:23d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Fri, 8 Aug
+ 2025 05:19:05 +0000
+Received: from AMS0EPF00000194.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5d0:cafe::e9) by AS4P190CA0030.outlook.office365.com
+ (2603:10a6:20b:5d0::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.18 via Frontend Transport; Fri,
+ 8 Aug 2025 05:19:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AMS0EPF00000194.mail.protection.outlook.com (10.167.16.214) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
+ via Frontend Transport; Fri, 8 Aug 2025 05:19:03 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Xrf7vXV35js0rXEenwV6Zz8V/ad7fHZH3Mxy1I2DbSm9b+YshWsW6BsOb8C3ABF6u1MFZVLcDTjSYi7ug2tk9rDAFixJLTxHHb+VbkrJET76hAzwSPA2eiCN/X5l5Ve24qz+O4LB2uFdSi7LyJ2youkqY0Uqp5lCGQURc7S0QPfM7xwWS4L4ruaKVFuYxqP3S0YsqJwaIKB9/TGdDOVjCRlTptIox+vQO+68ZRgfa7DdPJbhifyzjFadC0cH6/Z/XTqBnErZacVdnLZpFjiES/cVLxHhghAL8wuWucNqr+M5CmQ50L+VynuAAE60aUnBCtQ4VJix1PdwnSu+dxOa1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vtX70LdeOCMMwJCDV7ic9bKOL6hK0tvpbaMRIzgfpKo=;
+ b=liUXK+ZJdFASK1JSU+TCoXa55W/5DpT7B0UE59l8ch4fQff68lHz3sIKBaXUvTcAEAMPQuD/Eq/hsRys+xWU3OVxDlq63dYVaau8MFeGzAVBOOi4ZJFjsO+x7ixiEmU7WA1tLB0jKbhdE21IvZUe2pX4Hv7wasK1zUM89odwFXijqtsdjg2OqOTzWokc8bqZ+tGmm/ji3ehw2LCAXVMLXhphEYAgkTtnSb/kPWbQnySkLe8/ctrZV1I8piFOmj1ZylmU+pA4+2YWG95hur0J5rDIKIIJVSgkAwY1sLRjsHQPxsRWbYrCjBvm1Hqu6jd5DalHx5Rb75rCcmokj1vKpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vtX70LdeOCMMwJCDV7ic9bKOL6hK0tvpbaMRIzgfpKo=;
+ b=L0yafbGo0bHvaD8f0rCOG/KQesgDpVu4HL6KJkFh7CT3xbEVkuMDpr10AW4kOE1cDfhNMxcI69smIXPOcCAVuVfx7c95IAj7A0aOAA3UvQsxyczPo8niXdIS0K+sCNIzWoI2KDmx26nSWzkyfi7XCU6/d4SYnSNEBmQQP60yVEs=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
+ by AS8PR08MB6582.eurprd08.prod.outlook.com (2603:10a6:20b:339::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Fri, 8 Aug
+ 2025 05:18:31 +0000
+Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
+ ([fe80::2933:29aa:2693:d12e%5]) with mapi id 15.20.9009.017; Fri, 8 Aug 2025
+ 05:18:30 +0000
+Message-ID: <9db37970-abfa-49ab-bab6-081d26e587ee@arm.com>
+Date: Fri, 8 Aug 2025 10:48:25 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH HOTFIX 6.17] mm/mremap: avoid expensive folio lookup on
+ mremap folio pte batch
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Ryan Roberts <ryan.roberts@arm.com>
+Cc: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Barry Song <baohua@kernel.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250807185819.199865-1-lorenzo.stoakes@oracle.com>
+ <158e6422-fc82-4d6c-a442-2ebe956a66da@redhat.com>
+ <3fc75720-8da7-4f6c-bdce-1e1280b8e28f@lucifer.local>
+ <6870e24f-dda6-421c-8df8-58294927b62d@arm.com>
+ <ae01c6bc-019a-4263-8083-8ab073e72729@lucifer.local>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <ae01c6bc-019a-4263-8083-8ab073e72729@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MAXP287CA0023.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a00:49::31) To AM9PR08MB7120.eurprd08.prod.outlook.com
+ (2603:10a6:20b:3dc::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Dave Hansen <dave.hansen@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <4ce79c80-1fc8-4684-920a-c8d82c4c3dc8@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <4ce79c80-1fc8-4684-920a-c8d82c4c3dc8@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-TrafficTypeDiagnostic:
+	AM9PR08MB7120:EE_|AS8PR08MB6582:EE_|AMS0EPF00000194:EE_|AS8PR08MB6277:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09640803-26e8-4076-6f78-08ddd63b1760
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?SlNGazdrVzJHcEx3bHh4dk8rcFI1WmtGK05hSUNaVjNKK2lTL1dXV2I5T09r?=
+ =?utf-8?B?Nm1jRFFVT1JhMnplZlJDbGhoZWcvYk5GNXhCMVdlU3BVZld6TTBHc2xremg5?=
+ =?utf-8?B?VFVIaHV0V01ya1NDTmlaMWhkcG1jT0RaeUx4bmVGMFdyODhpL0Zta1AwalhG?=
+ =?utf-8?B?WTBSeW1FUTRScU0rVnhNa1pheURFbjhVTDBlTXZNZitxUVJQZkxyU0RILzhH?=
+ =?utf-8?B?bmgxVEN6Q0k0NGJUaHhoRlNuOS9qVVJPWEZZcUJWVHBKbUpoOTF3SXc5MEJG?=
+ =?utf-8?B?TmpQaE9LbTJ0WmMyMVU1V0xkUjgzVHdXUWg5ZWxIQ09aUExJM0cwWDR4SkNT?=
+ =?utf-8?B?YmZ3cXgxMFdMWVZBSzVDRzdZU01wVUVQemNpcEZSbEtsQlNvMU5USUsyandE?=
+ =?utf-8?B?Z1ErTm5zc0ZYU1MwYjluOEx1clllQUVyRVl2dmZOVDMrUTdpMUl2V2syRWIw?=
+ =?utf-8?B?MG1nbG5rVi83NnplVWNuVi9OZzY0dUVCaThMYkpxcG50bVVZS045cGZVdlN1?=
+ =?utf-8?B?Z0swS2xNWWw4Q2pOaG1EMStQRXluUFE3VUNodkNSYWppTGVPV1RvRlFNSTBP?=
+ =?utf-8?B?NFBjRk96UW5NZklWa0ZlOFllY0k5NlhLdjB2a0NGekRFZUlIR0l0L3BxNkwz?=
+ =?utf-8?B?TnUyQm5yTjRKT1ZUOVdLU1R6Yy9NcjRoUkFJaElUSEpmTXlJKzUweE5oTUZI?=
+ =?utf-8?B?MDhwbDdDc2wzWStpaXZ0T2hqNlZmdlZuNDE2aHNtVVkwMUo0eUx3REYxa2VB?=
+ =?utf-8?B?V0doTVI3UTZqaThLWFFrdHNSNkZNYjMwaml3Znhtc1N5TFBDZlluUXQ2Rnkx?=
+ =?utf-8?B?Z25LbkQwYWhROGt6ZE1tclN0dmtnSFRiM2w1QVVuWjRPV3F0cFVXVUxVRGl0?=
+ =?utf-8?B?YVJNUEV3a1MyOVlqL1p2ZVFqcjdRcXlIbDV6N3lYVVdYWkNkeGxGUndOenBI?=
+ =?utf-8?B?UVZHQnl1bUMvZWxuK3g0M1NZdHpJMk1ZOUI0eE1vK0lvQ2MxbGU1dnJtSGl2?=
+ =?utf-8?B?QXVWSDdheXpvWE9WdlVFd3ZiR2U3RHpSeS9CNUVjaVZyWm9CRG42NGNQSlFK?=
+ =?utf-8?B?THU2WDYrRkdzQmo0ZnhrUzRtTkFhaUpMQVF6MWpVOHNXZzJmQmdTV2RhNTF3?=
+ =?utf-8?B?NEhxVG1JTEZQQTNORkhldU4xU0hIakZjbEc1M1VZS0NQNTB1OEp0aTFsVHlj?=
+ =?utf-8?B?SHRLU29jWFo0LzVqOUxNa2FrN1NEaGR3OGpCZ1BsYjZsQ200SnpkcC9FZ2Fw?=
+ =?utf-8?B?amhRWmlYRWhIQkxobjNpemkyMDZIZTlRT3p2Q3NvLzg0M29vME1oNDhGN0tq?=
+ =?utf-8?B?TzF5QjRLTWdkbXlkNC95dnFyTlhsemxWTGV6S2dYUTA1Y2NWS0NGcmhmUzNP?=
+ =?utf-8?B?ZVhDU0tPdnRhV3psc2dBQzRyN0g4TE1yNTZLVUI1clU0RnpqNFpRZ1AxVTQ2?=
+ =?utf-8?B?RkpCTVVYQmRuQnVZbFFjU3Z3TENlaURqdHJhV2Q5dWlSckFHbnN5cjkxWnUw?=
+ =?utf-8?B?S2ljUWh5TFRzdEVwdFZzUlNiWWFVK0U1SGFpcVcvWVNybk1NMjM1S0VNR2xs?=
+ =?utf-8?B?YTFBV2VLQVFVbk94VjFQT2laODRSNjRqZXlJUU52d1RPQkYwdHV4RElGN3dw?=
+ =?utf-8?B?ZmkrU0YybFBrNWJycXYrT2RiWDEyOWhLTWJLc2FFYndDQjRjNnlLdUtydWhm?=
+ =?utf-8?B?UmNBMDArcUYxaURCVXMzZnIydk05WVpPYWtEMFR4RVU2cGREVkc0V3d3VmpI?=
+ =?utf-8?B?RE5LLzJRbjNJU05ERmdJK09aSDRHd0R6Y1VMbldxeStrNjhIOXBGODdraW9o?=
+ =?utf-8?B?QWMrdkt3ZGxVYWhzbkVVR2N4Smo1UWQ4NWtQZUMxUE1SL1BmT2JjbGh2czlm?=
+ =?utf-8?B?R0N0S1kzdHlDVFFmUUJSb2VTczg2cC8rV2orbHc2RzNSeVM0OEFnTkZNcS9W?=
+ =?utf-8?Q?WNp7DcdOPTc=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6582
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF00000194.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	3891b00c-8864-4064-f564-08ddd63b035f
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|35042699022|14060799003|1800799024|36860700013|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R1dxeDRKV0NqVHZEblA2VDBHQlN5ZHk1U2FtL0hyOVJhREsvQTRxVnlaQzRK?=
+ =?utf-8?B?OFlBb3J5dW95UldwMTBFWm12L1J0a2NIQjQ1bHV2S1cxU1JaaEk3Mm5TRVBM?=
+ =?utf-8?B?OTFpUEJSb25RdjROL0NyQTZIL3E3TTVMTU9TcFNmWmcweXdWMTV4ZUsrQ2lS?=
+ =?utf-8?B?YWFaUlRHMHNyUmZRS0VIbnA2OWExeS82eExjL0dCYVdkWmRBWmhYV3NXQ3Jn?=
+ =?utf-8?B?US9NTDRTU1JXc1J0M3dFajhkR3FVdU81aFIzb2hPdTdOdDhid3NPazFYRTJk?=
+ =?utf-8?B?b1Z5bVlyOVBiMCswWnBaaDNVNWpJVHVVUnM3Ny90SnJYNzJLUjloTDUwUHR5?=
+ =?utf-8?B?b1FIRWJUVWdPNUNPQnU0MnhINlB5cUtnc21QZzNpTTJ5eXFlTHkrQ2l3b0pz?=
+ =?utf-8?B?Q1lZTUE4cnV1cWFNRmtFVGdCVVYwa3p0T0Y4QW1PY01OS2tvWXFyWjJVcFlq?=
+ =?utf-8?B?SGNETm1xQzdabFFTYVlnakhEa0RHSjJBSU1RRndFU2FXeEhKZ2JiY1VrdUNC?=
+ =?utf-8?B?Um4vb1ZkdmF5eGNEdDlTUWdGbTMwNTM1VXY1Q2pEZDRPelZ6blRYM0ErRFJ3?=
+ =?utf-8?B?UjAzS2x2MlptS1JGYzQ0RFdQVnFWQ01RaytCdjZUTk9mZ2M3S3lzZHMraTIr?=
+ =?utf-8?B?UThiUTYwOFFmN2JIaUFkZzY5clpLd2ZuQWlrTUhSU29hK0NWajZlMEk5Zm1N?=
+ =?utf-8?B?eXBoRkVTNFdJZ1lBVHFnUytoOFBTRG52dCtWZ1dGUXFOcFc2Sk4vcEsydGNY?=
+ =?utf-8?B?UU1INUh6RWxzSmhHWXNLQmJvMnBnUmp4R2Rld2thU0grOUk0UVUwVnk3M3Ni?=
+ =?utf-8?B?eFgybG45K0wxMmsvUG53cThkOFN6U2x0V1pMa1pzZm1QbW12QS8rNG1MMk9Q?=
+ =?utf-8?B?YXNtRDk0ZFFRQnVWVnNMWWMvT0lBYWxhcUovSEdlMFBCSEhaWS80TGY0SEw0?=
+ =?utf-8?B?WXhqZEcwYUY0VGU2a2d5K3ZDb2tLNzlQWnBZNVRDWWZhK0RwZDExYmc3RHlT?=
+ =?utf-8?B?U21YYWNtK29XR1BqT3hUOHVVZ2hhWVc1U0xOR0tlNlA1TG9VdjBzcmhUYmNr?=
+ =?utf-8?B?dGpZdU54Um1ERVh3VG5OUFlSN2Z0VzlHbGlIL0hKeEFibGNXaDhVblEyME54?=
+ =?utf-8?B?dWt2MnZ3dlY2WmErYUVWbVRFejZ2VzJMTkROekJvYlEyWEhuV2tRT0hmQlFV?=
+ =?utf-8?B?T0pxNlFjakcweUR1OFRzajJOYzIrVmNLRUdSSXZzUlM0MFh1dmZ6bW9acy9w?=
+ =?utf-8?B?Q044Z1ZsZ0QvdFNqS09SSnRjaWFaZ0tORWtNaDJObGVxa2RmTWpmT0xlZWhK?=
+ =?utf-8?B?N3pFS3p2UzNJNHJhSWNFY1V2d2NzckNGbHd1TmRRNVJscGhaK0E2U01mUWRM?=
+ =?utf-8?B?Z0Y3SmRHbVRpQ1JkdFY5N1oyNWkyQ3pqbEpTQjNNM1dRZHdlMGJDTGtwK0xY?=
+ =?utf-8?B?enUxU2hVT2p5V3ZSam9NY2c4NyszbWdPVVowciszbnZFMFFRS2IzcHcyKytN?=
+ =?utf-8?B?K3dCTUREUVBVL1V5Qmg0V01vODhEZDVoUDloUElpWFY1bEJqNHJkYzk5bVVT?=
+ =?utf-8?B?LzdYVTZnQWFJQUJrL2s0OTJMTUZmWlVRWW5xM3poYktvUm40ZHplaEwweTRj?=
+ =?utf-8?B?Q2h6dDJhTUhMRWZtUUhGc3ovYXU1ZVBvMzFyakI4Zmh2MktSTlgzNklIM2xp?=
+ =?utf-8?B?ZGhZa0JHUEw2SGtyZWxSQ3pYcTBzd2ZpRVRaMmZuZHR2dGJYbUNmNzZrenFZ?=
+ =?utf-8?B?KzBrdVNoYm5FZlRkZWdaNzFQUXYyMXVVVFE2R1hnYVNLb0xQRHgybmw4QkRU?=
+ =?utf-8?B?ejFUN0VEeU94NGlHYTJPakkwUkVoVjlOeFdoTHZPQ2pSeTdLd2RGSkpEMVRB?=
+ =?utf-8?B?UUxzL1J0U3VUUVM0WmpxQUhQRXVFc1JuWVlSS25TTC9JMXVaR0t1Y3dqWU9s?=
+ =?utf-8?B?R2MvMzgyOFBwMjNzM0Q2L3kwMEtLblVGVHRSdWNzbEFWejRBaWtQUHFTTVlR?=
+ =?utf-8?B?ZXRPRGxTcDVaY0xMY0NURFhFeDhSMUFqOWo5NmZCRUJ4eGRmUWtPRUI0cloy?=
+ =?utf-8?B?V0JjUCtZZmNsQmZlRGU2U0pvL0RCWVhybm9YZz09?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(35042699022)(14060799003)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Aug 2025 05:19:03.8970
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09640803-26e8-4076-6f78-08ddd63b1760
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF00000194.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6277
 
-On 8/7/25 23:31, Dave Hansen wrote:
->> +void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
->> +{
->> +    struct page *page = virt_to_page(pte);
->> +
->> +    guard(spinlock)(&kernel_pte_work.lock);
->> +    list_add(&page->lru, &kernel_pte_work.list);
->> +    schedule_work(&kernel_pte_work.work);
->> +}
->> diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
->> index 3c8ec3bfea44..716ebab67636 100644
->> --- a/include/asm-generic/pgalloc.h
->> +++ b/include/asm-generic/pgalloc.h
->> @@ -46,6 +46,7 @@ static inline pte_t
->> *pte_alloc_one_kernel_noprof(struct mm_struct *mm)
->>   #define pte_alloc_one_kernel(...)
->> alloc_hooks(pte_alloc_one_kernel_noprof(__VA_ARGS__))
->>   #endif
+
+On 08/08/25 2:28 am, Lorenzo Stoakes wrote:
+> On Thu, Aug 07, 2025 at 08:56:44PM +0100, Ryan Roberts wrote:
+>> On 07/08/2025 20:20, Lorenzo Stoakes wrote:
+>>> +cc Ryan for ContPTE stuff.
+>> Appologies, I was aware of the other thread and on-going issues but haven't had
+>> the bandwidth to follow too closely.
 >>
->> +#ifndef __HAVE_ARCH_PTE_FREE_KERNEL
->>   /**
->>    * pte_free_kernel - free PTE-level kernel page table memory
->>    * @mm: the mm_struct of the current context
->> @@ -55,6 +56,7 @@ static inline void pte_free_kernel(struct mm_struct
->> *mm, pte_t *pte)
->>   {
->>       pagetable_dtor_free(virt_to_ptdesc(pte));
->>   }
->> +#endif
+>>> On Thu, Aug 07, 2025 at 09:10:52PM +0200, David Hildenbrand wrote:
+>>>> Acked-by: David Hildenbrand <david@redhat.com>
+>>> Thanks!
+>>>
+>>>> Wondering whether we could then just use the patch hint instead of going via
+>>>> the folio.
+>>>>
+>>>> IOW,
+>>>>
+>>>> return pte_batch_hint(ptep, pte);
+>>> Wouldn't that break the A/D stuff? Also this doesn't mean that the PTE won't
+>>> have some conflicting flags potentially. The check is empirical:
+>>>
+>>> static inline unsigned int pte_batch_hint(pte_t *ptep, pte_t pte)
+>>> {
+>>> 	if (!pte_valid_cont(pte))
+>>> 		return 1;
+>>>
+>>> 	return CONT_PTES - (((unsigned long)ptep >> 3) & (CONT_PTES - 1));
+>>> }
+>>>
+>>> So it's 'the most number of PTEs that _might_ coalesce'.
+>> No that's not correct; It's "at least this number of ptes _do_ coalesce".
+>> folio_pte_batch() may end up returning a larger batch, but never smaller.
+> Yup David explained.
+>
+> I suggest you rename this from 'hint', because that's not what hint means
+> :) unless I'm really misunderstanding what this word means (it's 10pm and I
+> started work at 6am so it's currently rather possible).
+>
+> I understand the con PTE bit is a 'hint' but as I recall you saying at
+> LSF/MM 'modern CPUs take the hint'. Which presumably is where this comes
+> from, but that's kinda deceptive.
+>
+> Anyway the reason I was emphatic here is on the basis that I believe I had
+> this explained to met his way, which obviously I or whoever it was (don't
+> recall) must have misunderstood. Or perhaps I hallucinated it... :)
+>
+> I see that folio_pte_batch() can get _more_, is this on the basis of there
+> being adjacent, physically contiguous contPTE entries that can also be
+> batched up?
+>
+>> This function is looking to see if ptep is inside a conpte mapping, and if it
+>> is, it's returning the number of ptes to the end of the contpte mapping (which
+>> is of 64K size and alignment on 4K kernels). A contpte mapping will only exist
+>> if the physical memory is appropriately aligned/sized and all belongs to a
+>> single folio.
 >>
->>   /**
->>    * __pte_alloc_one - allocate memory for a PTE-level user page table
-> I'd much rather the arch-generic code looked like this:
-> 
-> #ifdef CONFIG_ASYNC_PGTABLE_FREE
-> // code and struct here, or dump them over in some
-> // other file and do this in a header
-> #else
-> static void pte_free_kernel_async(struct page *page) {}
-> #endif
-> 
-> void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
-> {
->      struct page *page = virt_to_page(pte);
-> 
->      if (IS_DEFINED(CONFIG_ASYNC_PGTABLE_FREE)) {
-> 	pte_free_kernel_async(page);
->      else
-> 	pagetable_dtor_free(page_ptdesc(page));
-> }
-> 
-> Then in Kconfig, you end up with something like:
-> 
-> config ASYNC_PGTABLE_FREE
-> 	def_bool y
-> 	depends on INTEL_IOMMU_WHATEVER
-> 
-> That very much tells much more of the whole story in code. It also gives
-> the x86 folks that compile out the IOMMU the exact same code as the
-> arch-generic folks. It_also_ makes it dirt simple and obvious for the
-> x86 folks to optimize out the async behavior if they don't like it in
-> the future by replacing the compile-time IOMMU check with a runtime one.
-> 
-> Also, if another crazy IOMMU implementation comes along that happens to
-> do what the x86 IOMMUs do, then they have a single Kconfig switch to
-> flip. If they follow what this patch tries to do, they'll start by
-> copying and pasting the x86 implementation.
+>>> (note that a bit grossly we'll call it _again_ in folio_pte_batch_flags()).
+>>>
+>>> I suppose we could not even bother with checking if same folio and _just_ check
+>>> if PTEs have consecutive PFNs, which is not very likely if different folio
+>>> but... could that break something?
+>> Yes something could break; the batch must *all* belong to the same folio.
+>> Functions like set_ptes() require that in their documentation, and arm64 depends
+>> upon it in order not to screw up the access/dirty bits.
+> Turning this around - is a cont pte range guaranteed to belong to only one
+> folio?
+>
+> If so then we can just limit the range to one batched block for the sake of
+> mremap that perhaps doesn't necessarily hugely benefit from further
+> batching anyway?
+>
+> Let's take the time to check performance on arm64 hardware.
+>
+> Are we able to check to see how things behave if we have small folios only
+> in the tested range on arm64
+>
+>>> It seems the 'magic' is in set_ptes() on arm64 where it'll know to do the 'right
+>>> thing' for a contPTE batch (I may be missing something - please correct me if so
+>>> Dev/Ryan).
+>> It will all do the right thing functionally no matter how you call it. But if
+>> you can set_ptes() (and friends) on full contpte mappings, things are more
+>> efficient.
+> Yup this is what I was... hinting at ;)
+>
+>>> So actually do we even really care that much about folio?
+>>  From arm64's perspective, we're happy enough with batches the size of
+>> pte_batch_hint(). folio_pte_batch() is a bonus, but certainly not a deal-breaker
+>> for this location.
+> OK, so I think we should definitely refactor this.
+>
+> David pointed out off-list we are duplicating the a/d handing _anyway_ in
+> get_and_clear_ptes(). So that bit is just wasted effort, so there's really
+> no need to do much that.
+>
+>> For the record, I'm pretty sure I was the person pushing for protecting
+>> vm_normal_folio() with pte_batch_hint() right at the start of this process :)
+> I think you didn't give your hint clearly enough ;)
+>
+>> Thanks,
+>> Ryan
+>>
+>>>>
+>>>> Not sure if that was discussed at some point before we went into the
+>>>> direction of using folios. But there really doesn't seem to be anything
+>>>> gained for other architectures here (as raised by Jann).
+>>> Yup... I wonder about the other instances of this... ruh roh.
+>> IIRC prior to Dev's mprotect and mremap optimizations, I believe all sites
+>> already needed the folio. I haven't actually looked at how mprotect ended up,
+>> but maybe worth checking to see if it should protect with pte_batch_hint() too.
+> mprotect didn't? I mean let's check.
 
-I'll do it like this.  Does that look good to you?
+Yeah it didn't, it took the folio only for prot_numa case. For that reason I had first come up
+with that maybe_contiguous_pte_pfns() [1] thingy for mremap, not sure how useful that is - It will
+increase ptep_get() calls potentially and also won't work for large folios split into small
+folios, since they will have contiguous pfns but not useful for batching.
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index 70d29b14d851..6f1113e024fa 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -160,6 +160,7 @@ config IOMMU_DMA
-  # Shared Virtual Addressing
-  config IOMMU_SVA
-  	select IOMMU_MM_DATA
-+	select ASYNC_PGTABLE_FREE if X86
-  	bool
+But, I think even that won't work - I think the regression we see here is because batching
+isn't actually saving anything here as Jann mentions, so maybe_contiguous_pte_pfns will
+still regress for large folios due to retrieving the folio.
 
-  config IOMMU_IOPF
-diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
-index 3c8ec3bfea44..dbddacdca2ce 100644
---- a/include/asm-generic/pgalloc.h
-+++ b/include/asm-generic/pgalloc.h
-@@ -46,6 +46,19 @@ static inline pte_t 
-*pte_alloc_one_kernel_noprof(struct mm_struct *mm)
-  #define pte_alloc_one_kernel(...) 
-alloc_hooks(pte_alloc_one_kernel_noprof(__VA_ARGS__))
-  #endif
+So fundamentally the optimization to be made in this specific case is only for arm64 - save
+on ptep_get calls and TLB flushes.
 
-+#ifdef CONFIG_ASYNC_PGTABLE_FREE
-+struct pgtable_free_work {
-+	struct list_head list;
-+	spinlock_t lock;
-+	struct work_struct work;
-+};
-+extern struct pgtable_free_work kernel_pte_work;
-+
-+void pte_free_kernel_async(struct ptdesc *ptdesc);
-+#else
-+static inline void pte_free_kernel_async(struct ptdesc *ptdesc) {}
-+#endif
-+
-  /**
-   * pte_free_kernel - free PTE-level kernel page table memory
-   * @mm: the mm_struct of the current context
-@@ -53,7 +66,12 @@ static inline pte_t 
-*pte_alloc_one_kernel_noprof(struct mm_struct *mm)
-   */
-  static inline void pte_free_kernel(struct mm_struct *mm, pte_t *pte)
-  {
--	pagetable_dtor_free(virt_to_ptdesc(pte));
-+	struct ptdesc *ptdesc = virt_to_ptdesc(pte);
-+
-+	if (IS_ENABLED(CONFIG_ASYNC_PGTABLE_FREE))
-+		pte_free_kernel_async(ptdesc);
-+	else
-+		pagetable_dtor_free(ptdesc);
-  }
+[1] https://lore.kernel.org/all/20250507060256.78278-3-dev.jain@arm.com/
 
-  /**
-diff --git a/mm/Kconfig b/mm/Kconfig
-index e443fe8cd6cf..528550cfa7fe 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1346,6 +1346,13 @@ config LOCK_MM_AND_FIND_VMA
-  config IOMMU_MM_DATA
-  	bool
-
-+config ASYNC_PGTABLE_FREE
-+	bool "Asynchronous kernel page table freeing"
-+	help
-+	  Perform kernel page table freeing asynchronously. This is required
-+	  for systems with IOMMU Shared Virtual Address (SVA) to flush IOTLB
-+	  paging structure caches.
-+
-  config EXECMEM
-  	bool
-
-diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index 567e2d084071..6639ee6641d4 100644
---- a/mm/pgtable-generic.c
-+++ b/mm/pgtable-generic.c
-@@ -13,6 +13,7 @@
-  #include <linux/swap.h>
-  #include <linux/swapops.h>
-  #include <linux/mm_inline.h>
-+#include <linux/iommu.h>
-  #include <asm/pgalloc.h>
-  #include <asm/tlb.h>
-
-@@ -406,3 +407,32 @@ pte_t *__pte_offset_map_lock(struct mm_struct *mm, 
-pmd_t *pmd,
-  	pte_unmap_unlock(pte, ptl);
-  	goto again;
-  }
-+
-+#ifdef CONFIG_ASYNC_PGTABLE_FREE
-+static void kernel_pte_work_func(struct work_struct *work);
-+struct pgtable_free_work kernel_pte_work = {
-+	.list = LIST_HEAD_INIT(kernel_pte_work.list),
-+	.lock = __SPIN_LOCK_UNLOCKED(kernel_pte_work.lock),
-+	.work = __WORK_INITIALIZER(kernel_pte_work.work, kernel_pte_work_func),
-+};
-+
-+static void kernel_pte_work_func(struct work_struct *work)
-+{
-+	struct ptdesc *ptdesc, *next;
-+
-+	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
-+
-+	guard(spinlock)(&kernel_pte_work.lock);
-+	list_for_each_entry_safe(ptdesc, next, &kernel_pte_work.list, pt_list) {
-+		list_del_init(&ptdesc->pt_list);
-+		pagetable_dtor_free(ptdesc);
-+	}
-+}
-+
-+void pte_free_kernel_async(struct ptdesc *ptdesc)
-+{
-+	guard(spinlock)(&kernel_pte_work.lock);
-+	list_add(&ptdesc->pt_list, &kernel_pte_work.list);
-+	schedule_work(&kernel_pte_work.work);
-+}
-+#endif
--- 
-2.43.0
-
+>
+> We definitely need to be careful about other arches.
+>
+>> Thanks,
+>> Ryan
+> Cheers, Lorenzo
 
