@@ -1,148 +1,294 @@
-Return-Path: <linux-kernel+bounces-760809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4865B1F06D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:53:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7C3B1F074
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 23:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3BF45A4207
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E181C27156
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Aug 2025 21:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CBD28A73B;
-	Fri,  8 Aug 2025 21:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB9E28A73E;
+	Fri,  8 Aug 2025 21:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gmL/NxpR"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2nTL4j8"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB954289E39;
-	Fri,  8 Aug 2025 21:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC9A28A714;
+	Fri,  8 Aug 2025 21:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754689944; cv=none; b=uC8VZUBrwyvkoGwWPQ3XjdTEI/87i0DetIFZqKLjgUjVTM4o0BZ7reRgJ5UCC0aK3BY6KErRzPN4ZuFcGMyU6ChGdaIA7HGsy6ZlfaxNeS0Gn/xag/G5ExZPEh5ZrlqKO85Pf3x0LFETMjDe2mJ78+Y32OxPnWXET3pyMDzGh2o=
+	t=1754689996; cv=none; b=j5TZrIsVKpxiMQjDz/IUhwCkdG83OZ5ynuGfHrcwJvpEhYiBwUjUCq57B13AvnFuZA4ikiIHEPcJ/dxasxCTKszaD37Y1Il1g52fnDPHbX8xw6USVXh8VZ0/bMnFycfHMAiai6+dR/uq1vhvmbfgc/QyqN2mi6cqiDkBMzZ/4VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754689944; c=relaxed/simple;
-	bh=MgRQW6IwPCnaCl/We4GjzTXHJKwd4rAbiwcpcw8mUjo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z1f+ssYhMcFJV6GNPR6X7udJJAkG51qRaIrbY6F3KIdKKwBmnmWhya90VtvRZyPtyGnli5GPCwez1nIIvtWdytBJnrSWw3M4Hd1XbkelaKZ8sP5RAOJ1s50dBM9hXLwF5nMtFB62mVGZDl3Gg7pNFQSAn5m4xiBxQRbOR2YoeNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gmL/NxpR; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1754689996; c=relaxed/simple;
+	bh=FHdoU4mNeEPmLoDZXwy3/cdEdLB/1Dkosg+2BYHMKn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=seVb48lRS2x4M4OKR0s+/8/ANnYjjm7A2+PoC15F0PeGGCkxogvSJFynjjEhZjX3EbqK3BCpt7zMkvWK/TW18SrccVdCQouIufKPjNGQehyFaTFD0kpe+4ThRUwwa+/xR7RjfQladSWsX1hW/Hc1M6aOVdWpAlukCya//afCMck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2nTL4j8; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b78d13bf10so2591938f8f.1;
-        Fri, 08 Aug 2025 14:52:22 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af93150f7c2so399375066b.3;
+        Fri, 08 Aug 2025 14:53:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754689941; x=1755294741; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754689992; x=1755294792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cmSdf/9CQUvl70IdXMlZn/po6qGixtnt6qlryVPh128=;
-        b=gmL/NxpRX3hP3eUbZ/BF7bAjzKFMvBWLLrZq48q/G5UbEw+p61znkD4CR3XR/stsK8
-         c56soMm/MOqkSeYe2lLd2+sTAJPt1Y/OKKU7q4Y2JCibdPwty1LctDs6zFXwrZ+mHBPh
-         +c0+z+y+yGyxMFp68WRaGFlWaaCubtZvne/8/Gg89EWmLIRu490VGLLOEe+o2DZSsC41
-         e2Sj6Xt71jgXOu3aEuVwdQ1OMmCUwKqW8NjEBIIrZckFccVqtmwAagDtsXefSmZxUiI/
-         qKq83YnHNbb1lkEM1dMJPbuk2NQBERAM2aEJTws2anW4CNDmIq93fEHxjo5H+Rc/k1BJ
-         D99w==
+        bh=E2GN7W7Sz7gEboNuVXd3lEPoXXlYWcnFTU1ztKD3RZk=;
+        b=I2nTL4j8gCdVzWvR4DVkRUR2we563kAUu/EvIk5z+dvPtOPcoz1N4ORgpHjWCuBvWS
+         k6cZyCBHBonZKqVTPDsQCT00P+pRKaUJgQis/0C2mnFnlxVWjuWCjrpjJBpKsx8urj2X
+         BIilYc0fs/1w/bHHi0zeh1+jBiRMV3loTkAQrGGiiXg33Pd78A8zaqgorA4FT3nQOaa1
+         cL/5pKVhlQLQ71Y/dcBOFKWQXKeDwhnQPcGd8J1FE8aeCCyiBEGeE2T84xctaaY4IL4K
+         OVzEAxX+5OgJGtvGAPszE+IDVdPHABVHvTyw5MksqhdjdvSY5HkICsAGuuEMudqvh3Am
+         hISw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754689941; x=1755294741;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1754689992; x=1755294792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cmSdf/9CQUvl70IdXMlZn/po6qGixtnt6qlryVPh128=;
-        b=JfoQNJ603wQ53xa42LscOwhECUo51wmNcnfVUAJGOdJ8r75+lvJyodavOk1jXG56Yl
-         h0KYCLr+bYN8LELa/yWAgz52Npaly1wI3hSboWH7rySFIte/jV/na0dD+WXLHYgKnhlh
-         DmkpV5qc0ucb8Bns/5yU963Ayi/CLKnqKv+mj4RMFYu1sB3e7KKB/mJn0Ji7mlq/Yre0
-         lBuyCdS5zpDQg4nLO+Jlgx/S2sE7mo0dAkqKeuC00rYvYBNK4R/MrbZsSpXDONDFwq4B
-         SoPGLob6kplrIEImv7NnoUwGVHx1Rm8jISGYbHQ3F1TmtVo7uboU+qqcitxcRpgdHskR
-         YeJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKEg2XYFr/UunQm7rrvncOKMiNJqYBVT0HTsPDXZJPuKmbeCkL6BU1LfKx9QeqVVKA/RTMQBK3x18x89Knc0B0lqs=@vger.kernel.org, AJvYcCVz/iKWCzZy8/gl8G05XhlRgpnrqtPy0uZ1VTh3WzP4w5cFk7DbTV+6AZArH9DC/pj0rWXS0l97vpGdZ3ce@vger.kernel.org, AJvYcCW+yTTn/aum/C+7q/SjQyCEtEFwaqkozkPt8HgxUNAOxKWe35xQbSnzICHIJ+Lyqe36IRvzovmnHSiO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybp61dgY/5vmsg7yZu1ZozU7vLWH6gXxH+qul1zIkagBjheEu7
-	OU2FkatoigAYeGUqgGJuDWEXGGweCFePDKFQ9aTvqSIXBcMzsQQsuAWP
-X-Gm-Gg: ASbGncuHU/2oK87Qqpq0yIiYdJL6qYibCHleaRXsHpTnqWVuPS9vlPm2EBlfk0FtmNh
-	sU0vGpsRmjJXjizV8w+KUlTJv6vuwzj0V7RMuSkR6h3dEWRHv+9rDCHlFCkgGdXrKpD2m3puOxI
-	iMGdsEOxxxPA0azUPGoE1R7lpeX96n4YtZWyc/UOaXmL4hpl9/veTAnwKPSMmdSy1OezYA9szwj
-	tYWC3cvnwpSJqdhVicRGamhKN9qCgwMW5r8f16OGGP/jed8TwJtEshlmYffeL6WPF6jWmTAcQBK
-	8ID94HX0eqxStLz8mDhVypKG88gNPBSrEDc8lSKLgjDL6vJdp4TWHlsy5TW2hfDvBKQV7Kmfnle
-	eGHmzIkFvfqFaX2QX1TuiC+nSYnbOFzxLJQ1E7lFQRNqCIkMQHZlXWlhB2xemcG8h9lqHg2/jM0
-	jOBI/jkOc=
-X-Google-Smtp-Source: AGHT+IF/05lCcQEipOrmBWnaTpk2Y7mleC1kcTd4heh6tjbXJbUyTuT7e3mrMhTJPNdy+G7l0l5YmQ==
-X-Received: by 2002:a05:6000:4283:b0:3b7:8af8:b91d with SMTP id ffacd0b85a97d-3b900b72e05mr4400030f8f.35.1754689940999;
-        Fri, 08 Aug 2025 14:52:20 -0700 (PDT)
-Received: from iku.example.org (97e54365.skybroadband.com. [151.229.67.101])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8ff860acbsm5326759f8f.51.2025.08.08.14.52.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 14:52:20 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 5/5] phy: renesas: rcar-gen3-usb2: Move debug print after register value is updated
-Date: Fri,  8 Aug 2025 22:52:09 +0100
-Message-ID: <20250808215209.3692744-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250808215209.3692744-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250808215209.3692744-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        bh=E2GN7W7Sz7gEboNuVXd3lEPoXXlYWcnFTU1ztKD3RZk=;
+        b=F7ruHVmU7SrmLhS1aD151D6DVq7w9Zhq3yXF5Bhb0F58yOshCKNcliDP8KH/gbyk0j
+         vCgY/z4DJscdZSRBa54x+9m+gRCpbSL6ftQFUY2UPEQBLMim0tbxQxdcilIIXQjVd96G
+         fvEW7Ub2g8BE9pkY5/6okXaNAZ5s97JYyjUNWYNktSMEmOvxx7vUjNKcaLjc9wapVZBh
+         n2WG1K25WvqOeYkiW6Ew5rZ2dLWjG5jnisJAad47ldc3iyi7930rS9xM5RSZtESDbV+Z
+         NVePMgWdYPNxmcRjy34KUSKDslfX3B+kNwlPfH9rd7oxx5Q86kw8o5rdZG94wtUhiu6P
+         ugjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNoB6z+MMX1rAKNnvLT0eBNsRfZpiiWElzlsR2yj7jicR2JdqrDyBTbaDlckt6aOfqGUZZGrONA+e6mkv5@vger.kernel.org, AJvYcCWztz3tZzVpalwCtaE0y6Is5oz0G/m1EtetTrHGoqi6mxwxgS0NqPkhZLMG4AK/KNlu5DkhrSWGleQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9t8APNqtBjGOz+ea6CTwVGt+iSQl6tF50rbTx1hQGPIRFvKwH
+	3Cqu1XjAAsgmbQzf6ekq4tt6jG3liwMUACGP8HO6hcXwzknYXct1mRGM0VK6/rNSTlAkzkspVB2
+	d4S74keF1BYne1W0SuanmWVo23Fl/n4k=
+X-Gm-Gg: ASbGncusybtge4jn10SQ2xIgBOaw/QXt30oENSXtK7NvAcRDSF7BHq7DzKbIYdyS8F2
+	7Vbm8jR2jEpY1ovVyyPlcZtTHHoGbYwvQxkKIYw1dgOzrlBJ7Ojt+xqpJTuX+QJ43rA4QAiaNeM
+	8GX7qxL8Whq+ok3ZjfvpD3R6Shx5sB4AF8VOfm/frXR9KplmFxeT0Rjk6nbSMf7mi0dKoSGN9mr
+	yDI0Cb8yA==
+X-Google-Smtp-Source: AGHT+IEX9iv8bZjifqSIW6eXeKVomU13zNO5NsGsWmF335itG5QWaqkagb+K3LBMo9DYi9YczpXRUgw7iHwyOT80QcY=
+X-Received: by 2002:a17:907:3f94:b0:af9:29c1:1103 with SMTP id
+ a640c23a62f3a-af9c6591347mr419188566b.55.1754689992421; Fri, 08 Aug 2025
+ 14:53:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250808-icm42pmreg-v2-0-a480279e7721@geanix.com> <20250808-icm42pmreg-v2-5-a480279e7721@geanix.com>
+In-Reply-To: <20250808-icm42pmreg-v2-5-a480279e7721@geanix.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 8 Aug 2025 23:52:35 +0200
+X-Gm-Features: Ac12FXxKpxuO8YMoYbsgDqhalk0UzbXLJ0r5sG70xlV3YnQfZtwgOelFnshdeEI
+Message-ID: <CAHp75VeA36CHbvmhHVesw3itRW0aGURTqCJPAtw_P=q12F_0Yw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] iio: imu: inv_icm42600: use guard() to release mutexes
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, Aug 8, 2025 at 5:58=E2=80=AFPM Sean Nyekjaer <sean@geanix.com> wrot=
+e:
+>
+> Replace explicit mutex_lock() and mutex_unlock() with the guard() macro
+> for cleaner and safer mutex handling.
 
-Relocate the debug print in rcar_gen3_enable_vbus_ctrl() to appear after
-the `val` variable is assigned and updated based on the VBUS state. This
-ensures that the debug log reflects the actual register value being
-written, improving debugging accuracy.
+...
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
----
-v1->v2:
-- Added Reviewed-by from Neil.
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>         pm_runtime_get_sync(dev);
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+>         ret =3D inv_icm42600_set_accel_conf(st, &conf, NULL);
+>
+> -       mutex_unlock(&st->lock);
+>         pm_runtime_mark_last_busy(dev);
+>         pm_runtime_put_autosuspend(dev);
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 8caef9cb228c..7b4a6e8b7508 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -211,7 +211,6 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
- 	u32 vbus_ctrl_val = USB2_ADPCTRL_DRVVBUS;
- 	u32 val;
- 
--	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, vbus);
- 	if (ch->phy_data->no_adp_ctrl || ch->phy_data->vblvl_ctrl) {
- 		if (ch->vbus)
- 			regulator_hardware_enable(ch->vbus, vbus);
-@@ -225,6 +224,7 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
- 		val |= vbus_ctrl_val;
- 	else
- 		val &= ~vbus_ctrl_val;
-+	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, vbus);
- 	writel(val, usb2_base + vbus_ctrl_reg);
- }
- 
--- 
-2.50.1
+This makes PM calls under the mutex. In some cases it may lead to deadlocks=
+.
+I think you wanted to use scoped_guard() here and in similar cases.
 
+...
+
+>         struct inv_icm42600_state *st =3D iio_device_get_drvdata(indio_de=
+v);
+>         int ret;
+>
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+>         st->fifo.watermark.accel =3D val;
+>         ret =3D inv_icm42600_buffer_update_watermark(st);
+>
+> -       mutex_unlock(&st->lock);
+> -
+>         return ret;
+
+Now remove ret and use return directly.
+
+>  }
+
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+>         ret =3D inv_icm42600_buffer_hwfifo_flush(st, count);
+>         if (!ret)
+>                 ret =3D st->fifo.nb.accel;
+>
+> -       mutex_unlock(&st->lock);
+> -
+>         return ret;
+
+In the similar way as above.
+
+ret =3D _flush();
+if (ret)
+  return ret;
+
+return ...nb.accel;
+
+...
+
+>         struct inv_icm42600_state *st =3D iio_device_get_drvdata(indio_de=
+v);
+
+>         int ret;
+
+Now unneeded, just return directly.
+
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+>         if (readval)
+>                 ret =3D regmap_read(st->map, reg, readval);
+>         else
+>                 ret =3D regmap_write(st->map, reg, writeval);
+>
+> -       mutex_unlock(&st->lock);
+> -
+>         return ret;
+
+...
+
+>         int ret =3D 0;
+
+Now unneeded assignment.
+
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+>         st->suspended.gyro =3D st->conf.gyro.mode;
+>         st->suspended.accel =3D st->conf.accel.mode;
+>         st->suspended.temp =3D st->conf.temp_en;
+> -       if (pm_runtime_suspended(dev))
+> -               goto out_unlock;
+> +       ret =3D pm_runtime_suspended(dev);
+> +       if (ret)
+> +               return ret;
+
+...
+
+>         /* disable vddio regulator if chip is sleeping */
+>         if (!wakeup)
+>                 regulator_disable(st->vddio_supply);
+>
+> -out_unlock:
+> -       mutex_unlock(&st->lock);
+>         return ret;
+
+Now return 0 to make it clear that this is a success.
+
+...
+
+> @@ -881,10 +878,11 @@ static int inv_icm42600_resume(struct device *dev)
+>         bool wakeup;
+>         int ret =3D 0;
+
+Assignment is useless now.
+
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+> -       if (pm_runtime_suspended(dev))
+> -               goto out_unlock;
+> +       ret =3D pm_runtime_suspended(dev);
+> +       if (ret)
+> +               return ret;
+
+...
+
+> -out_unlock:
+> -       mutex_unlock(&st->lock);
+>         return ret;
+
+  return 0;
+
+?
+
+...
+
+>         regulator_disable(st->vddio_supply);
+>
+> -error_unlock:
+> -       mutex_unlock(&st->lock);
+>         return ret;
+
+Ditto.
+
+>  }
+
+...
+
+>         int ret;
+
+Now useless variable.
+
+>
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+>         ret =3D inv_icm42600_enable_regulator_vddio(st);
+>
+> -       mutex_unlock(&st->lock);
+>         return ret;
+>  }
+
+...
+
+>         int ret;
+
+Ditto.
+
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+>         st->fifo.watermark.gyro =3D val;
+>         ret =3D inv_icm42600_buffer_update_watermark(st);
+>
+> -       mutex_unlock(&st->lock);
+> -
+>         return ret;
+>  }
+
+...
+
+> -       mutex_lock(&st->lock);
+> +       guard(mutex)(&st->lock);
+>
+>         ret =3D inv_icm42600_buffer_hwfifo_flush(st, count);
+>         if (!ret)
+>                 ret =3D st->fifo.nb.gyro;
+
+Invert conditional and return ret directly.
+
+> -       mutex_unlock(&st->lock);
+> -
+>         return ret;
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
