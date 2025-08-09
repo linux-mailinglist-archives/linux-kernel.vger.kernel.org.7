@@ -1,150 +1,96 @@
-Return-Path: <linux-kernel+bounces-761151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F17AB1F4FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45681B1F50B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 202D2720292
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 14:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0652A3A533E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C502BE04A;
-	Sat,  9 Aug 2025 14:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978362BE644;
+	Sat,  9 Aug 2025 15:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xl0e39jD"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD67429E10D;
-	Sat,  9 Aug 2025 14:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hhAy01ws"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FCA190692;
+	Sat,  9 Aug 2025 15:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754750046; cv=none; b=uQrIXG9ir0jpJbve51qNdzDMJQn9SNTyU8pmQqrj659lJyxZMO8ywmrayUD6YrzxwI4ru4V8pI2DsyioDC1JEEzvuf2DHqRMDu6Q8miRgs8R+1h6/EDO2GVUpAaNndmxORwL5n36S4uA9ysfZhDP2oCvRRAi8A5x87V6Sw/7MKU=
+	t=1754751648; cv=none; b=rQ4/ZhIhwe+1b3woL/3wqrWgGQJBjAsVGJaC+AC11z2qh5RuoW3mtwcHqPq1vpwjIStYURC0/RwXTabJs9YrP6nIhLc/s1aZqsQqExUsl+qUkBoZXXw4X2t+y45CbfB/+VYJISuxzUtLzoV2FiYFlT6lI5RUN/tD910AlaSnd/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754750046; c=relaxed/simple;
-	bh=1VmpB5Ibj4Yszy6afKomstQ8c+4Jfgpb5dWPq5qaHsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXJTzMwQu8TKJh+D1M80WHamfScUncOWvUSUr/iuW9wtrbzZX+0W3qgm0RouYX7UWIJgOnWXU/yu027WlWsngtKgQApNZpUkX6Joofk6hhUVyCpTENf8q3pQOUZImy0K0UMTQPWaLrztLHJL6eWZVVS/7ze19xah1KSHzHwMiMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xl0e39jD; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b2c4331c50eso2222850a12.3;
-        Sat, 09 Aug 2025 07:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754750044; x=1755354844; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6qWFAQa6ghWNAVFp90dmhpeqTC8dkDj2Z0djww0iqfM=;
-        b=Xl0e39jDp2ysUGJxRoMx0c+yrLc2KmBoSltcb1OYB25kq5PzpAFliwxbBSHgdJhkty
-         hMiyGXsBv6t2k66U94PzPRXDN3jxWkNR4hl01qwLEZrsixI0MTc7L9NZgqSKUPM2OoSU
-         DiBCdj0765tVkRusdkH/YRgkaunKSH+AeWWPAkZ32Ehx/jW8nzv2aPzG/0BrbvHy9xAP
-         nNPeXf+retq4liLGsZC1gndztatb4S55rF4DCtluJcUawp3MJjThLJvLXUJDK+adCwRq
-         8kmQmq3D/e0PRV+7GQtSkEcOeTWYbchKtXD7suTW+p97gS0zlhQGeCggOGn2D7bigSwz
-         1yog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754750044; x=1755354844;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6qWFAQa6ghWNAVFp90dmhpeqTC8dkDj2Z0djww0iqfM=;
-        b=mL8c03FOgH7D7rX7KcNPULK+3N+PUGQaBCr+nGLKVW/pXuAQ5qMNRIgMRzWjLJOx+/
-         afsFvLzSY1B/oEX+e7CDJ+hYkAxrzq9uPOzQZSrLjvwHORC2N4kwF+0QZeFxyzELSamy
-         2edipNpwxzBfk2Lcj/WWXErry/64y8ydQszrpAwmDqla/2o/kTT8HPb7ZSVxlP1xt6Rn
-         nxYSVrU94wZz8roo+naWiSMezp30X9S/3nXXkHG65QRsPS8sbIywAZ3iE+L3nWTjI0M2
-         +rh6DrsWP6XK0B9ue0QTVvqKto6wKjyThp3A3dN/yVhs1Tw8tiM9/zcrX57J3ipRMQKq
-         XIpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVA55PI7UjtKhGkDhTLz7AHrPAUZKIi/4jCmoPV3QHqSa1eyHjopBmEu0VS2tgCcgESFdKpGL3QahqPy5eo@vger.kernel.org, AJvYcCWk/WV6KjBCpMgFjDR9xKlFoVCMfPt2nP7vliXzDXPi+MvwXifwBNaErQRe4T/AccmQED5D5D7qDwMK@vger.kernel.org, AJvYcCXNIqNCMrzedgvLkMzS/5QQY0ZtjtSZmG8jc+PWEUBEaN+YtRSuQRgUMMZWGp7NmdwT4G52RBy3X9jQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWzJdLehAbbVv0fmCrGVfSj85dmjQhxkpm6AmQ80m+yzhQpU1/
-	e9jgUbfLbSd9tQ9CAJUJWxEaHZizOzFvk7zM8Y19yHIf3LKj2gPr1mga
-X-Gm-Gg: ASbGncuGKI90Oas0PDRCqudrIvfLUqWWi9amyg9CbXErp7K3agsOMkwC/6DuKupijgt
-	EorQ120+2zWO5PIHKYM4op7zMB+xdmkK6bYAfWYEgFuz0rZ5uKR3hCaYG4FO0cixrIaVbuqzIvE
-	bqN6zQxsX6FWSo/maCFCtrSPxRvB9HCRsHowl3fq34WY0OVQMLDe+usFuIW7BNPs6r6GJznrQuH
-	bcsIhCkTK5RDFG70eqZswIs+oWVLZ4IF+7hYP1FX6c1kWw69+lMKhteZNxJI9oBAi45Oow1zuG1
-	qtLqvQwuWMdTxaNHSeVaqpCOy9tLurmjIOGMbGKTKfD4FusUc7mvenRfKeRgcenYvxRz3Akx3yk
-	ErP/dLGYWchfBHuobtg6PSg==
-X-Google-Smtp-Source: AGHT+IFLW6w5oB6ZXbuB7TpKPWatpCUluGeUA5lja2xOuxx1eqqEzTSB1q3l1GYm+kirkb7tz809Lg==
-X-Received: by 2002:a17:903:3b8c:b0:234:986c:66bf with SMTP id d9443c01a7336-242c20037f0mr87772355ad.11.1754750043928;
-        Sat, 09 Aug 2025 07:34:03 -0700 (PDT)
-Received: from dixit ([2401:4900:1c45:5acf:2843:11a:c808:689a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e897ef30sm230625275ad.106.2025.08.09.07.33.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 07:34:03 -0700 (PDT)
-Date: Sat, 9 Aug 2025 20:03:54 +0530
-From: Dixit Parmar <dixitparmar19@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-Message-ID: <aJdcUhz-vqnx8DwA@dixit>
-References: <20250807-tlv493d-sensor-v6_16-rc5-v3-0-b80d2cb41232@gmail.com>
- <20250807-tlv493d-sensor-v6_16-rc5-v3-1-b80d2cb41232@gmail.com>
- <CAHp75VeKPr=3H_wOvcesqj4OsrqN7zwRFFk3ys3O012JpQtxrQ@mail.gmail.com>
- <aJcw8icGvsDzFGpJ@dixit>
- <CAHp75Vc7Jftvmgb0EgnYmiKtT2TTYb2uQGNgaqm7hvkFWpJ9cg@mail.gmail.com>
+	s=arc-20240116; t=1754751648; c=relaxed/simple;
+	bh=Dz2PkMibCWtk3xZiunjGwlziFF5FYxDuqokFTdbnGVo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Z5AiVgE5vptlZ6C1cgEYu4SUauJ+6TxRlhrAmbimIG4mUUfCuNNkvUFvUPbeZsMrLicCtpn3oqXqrmNcWngSq6gK4ViKLOkMMNZ1iRLBO6lEhlp8pHzx7PbWg8zTTBNjgd6/BoKkQKglCEMnWOjGJzSf6GGYwQbLZorISUWVCDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hhAy01ws; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=Dz2PkMibCWtk3xZiunjGwlziFF5FYxDuqokFTdbnGVo=;
+	b=hhAy01wsq1KQYASxxPofg3wExsK/ho+NbCLry9ILB6CJxRbpyIb0MWkU9eq3Eu
+	yZ1t+gyqwynFJmrp1DXR/ENUKP3FXA96JGqUKD1Qz3T2WX4Vp6QnnWRu6tUUy3Lf
+	Ywu85AGHKAv0VDFGPnZ40qGJaj+ujUdVd++vnCha0/zgQ=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wAHyIbPXpdoGuRVAQ--.42733S2;
+	Sat, 09 Aug 2025 22:44:31 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: willemdebruijn.kernel@gmail.com,
+	edumazet@google.com,
+	ferenc@fejes.dev
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: af_packet: Use hrtimer to do the retire operation
+Date: Sat,  9 Aug 2025 22:44:31 +0800
+Message-Id: <20250809144431.1784097-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vc7Jftvmgb0EgnYmiKtT2TTYb2uQGNgaqm7hvkFWpJ9cg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAHyIbPXpdoGuRVAQ--.42733S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruFW8AF1fKF1xAw17Xry7Jrb_yoWfCwcEkr
+	4j9FykA3yxZFyqka18Kr47JFy7CrWjk3W5CFWkXF9xX34xXrnxuF9Ygry7Z3WfGayS9Fy5
+	CFs0q3sxG3W29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbyEEUUUUUU==
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRwqkCmiXWhlEMwAAso
 
-On Sat, Aug 09, 2025 at 02:44:00PM +0200, Andy Shevchenko wrote:
-> > > > +       data->wr_regs[TLV493D_WR_REG_MODE1] |= mode1_cfg;
-> > > > +       data->wr_regs[TLV493D_WR_REG_MODE2] |= mode2_cfg;
-> > >
-> > > No mask for the existing values in the respective wr_regs? Wouldn't
-> > > you need to use FIELD_MODIFY() instead?
-> > >
-> > I believe, we are doing OR op with the value created using FIELD_PREP,
-> > so it should not interefere with the existing non-masked values.
-> 
-> I am talking about existing values in the array.
->
-Right. So in that I think it will make more sense to directly use
-FIELD_MODIFY instead of using FIELD_PREP first and then doing this OR
-op. Right?
-> > However, as FIELD_MODIFY is there, I should utilize it.
-> 
-> > > > +       u16 val = 0;
-> > >
-> > > I would move the default assignment to the 'default' case. This makes
-> > > the intention clearer.
-> > >
-> > As per the suggestion on privious version of the patch, we are having
-> > ch datatype as enum and as suggested, with enum as swicth-case, it
-> > should not have default case. so I think this initialisation to 0 at the
-> > beginning should be fine.
-> 
-> It will make no sense. Please, remove it. and perhaps the compiler
-> won't warn, otherwise the default case will be needed.
->
-Understood. Will keep it uninitialized.
+On Sat, 2025-08-09 at 21:45 +0800, Willem wrote:
 
-> > > Missing include for this macro I believe.
-> > >
-> > No I guess. DEFINE_RUNTIME_DEV_PM_OPS is part of pm_runtime.h and its
-> > already included.
-> 
-> And how is it related to my comment _here_ in the code?
-Pardon my misunderstanding. Please ignore.
+> This is a resubmit of the patch you yesterday [1]? While the
+> discussion on the original patch was ongoing too.
 
-> > > > +       },
-> > > > +       .probe = tlv493d_probe,
-> > > > +       .id_table = tlv493d_id,
-> > > > +};
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+> Net-next is also closed. See also see also
+> Documentation/process/maintainer-netdev.rst for the process.
+
+> I'll take a closer look later. Agreed in principle that it's
+> preferable to replace timer with hrtimer than to add a CONFIG to
+> select between them.
+
+> [1] https://lore.kernel.org/netdev/20250808032623.11485-1-jackzxcui1989@163.com/
+
+
+Dear Willem，
+
+Yes, you're right. I noticed that the title of the patch I submitted yesterday was
+incorrect; it should be "use" instead of "user." Additionally, the title was a bit
+too long, so I resubmitted it.
+As you mentioned, I took Eric's advice and removed the new config, directly
+modifying the code instead. Since the title has changed, I didn't use the "PATCH v1"
+format.
+
+
+Thanks
+Xin Zhao
+
 
