@@ -1,204 +1,350 @@
-Return-Path: <linux-kernel+bounces-761252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAAAB1F620
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:04:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AFBB1F626
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404E0189C4E8
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB01E621A21
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1027D27814C;
-	Sat,  9 Aug 2025 20:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6262275AE6;
+	Sat,  9 Aug 2025 20:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNHOnjGS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXdM+P7C"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF66201276;
-	Sat,  9 Aug 2025 20:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D6F1C3C11;
+	Sat,  9 Aug 2025 20:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754769889; cv=none; b=DckQ3zIT6etbGCzVszbpYSBnEf3LiOeN4m3ZolAFYj9RRO5bRbJlxebQvmdlMvWtU1Ify3yvMT1ZbsH70lbIJn968a/NotR7+9SVTSVhQMwcMNRwcGrikogPHVtg+jxueVoiQ1Nu2R4c3YW4Oy4/VUKIrE4vtLRVZf89GXSLLd8=
+	t=1754770720; cv=none; b=Y5dLB5uzRjy0NagDl4aj22fxBDDG9Rr1fvEXFlHNLevrv00RURAHkwuTR/5yh/I81tVtK3ZihINVA1nla7PbFdw7/4pBTREN2vgjlPDZ5LYH+IJmogQ+buwneyQQ9Ytfe7+hTocc0fdERpkgaspri2VHxFOs32tB4D6lBWa52M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754769889; c=relaxed/simple;
-	bh=q/5GUlOQTr3fIoGisjpYnV9hJAJvnNOPyRfBFJT/tI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UbzmsbvdGWoI2DBt17Bjp3KAiw20gyKeCnHQjE8n0WRNYpAinI9iNzbyj5xAPsWaX2hcvOw27ji6K7nyvDWIJMwCRs/SiRdejFit1isMMYTj+KwecBuhBkrCG9LFb+2lLV+3kYadzOJNeevrqPP8U5n7iJbiuxuNPu2M9zVgSyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNHOnjGS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3567C4CEE7;
-	Sat,  9 Aug 2025 20:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754769888;
-	bh=q/5GUlOQTr3fIoGisjpYnV9hJAJvnNOPyRfBFJT/tI4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LNHOnjGSYFKTneIKoyjKE6Foh0RdoJKu7teJX+7SSrPMmTYlP0samtCL/dbRg4jda
-	 ddktL6CQbZkcEDUDuSizAEYcWl6XQ8wNHBN0fXkb3thhC+hK3dffaDN1AXIWycS1nN
-	 8SDTMtUSqW/uUveqzT+Gd7o3ucQGdGXUf0qk7PAVSoPPCHXhhRmvfPdHgBKSCNqe/e
-	 gpL8h8OM6KFuVWNjtX9hIFjn1ZzX0FtfyAU56SfvNB9ke0E2PCnW1qfR4oGFEsbHrX
-	 r0xhWWsjezGtLn/+mdu5c0yTDo8xt9bsdSkFxSak9ytDpTdgfswuxZ8N7Fhj2hdFe+
-	 cCuPbyoMkhC6w==
-Date: Sat, 9 Aug 2025 21:04:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: Replace bouncing Analog emails
-Message-ID: <20250809210438.23fb5fd0@jic23-huawei>
-In-Reply-To: <20250728144901.3f646a4c@jic23-huawei>
-References: <20250724113826.61998-2-krzysztof.kozlowski@linaro.org>
-	<20250728144901.3f646a4c@jic23-huawei>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754770720; c=relaxed/simple;
+	bh=9RNEt9rEC1Pwi7k0QJhwDHHiYN3BBKMi5yhVWOt8Hrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ie8iphohvBp4W6yiYSYDM0i77Bh+bnV9XNMz+fHIj6+MQ9eteTAKH46xWddsYtlFl37dQXvem+CNyVDqxPbfXc+eh7zagKvp2BThuwM8fKx5ycYR05KZasNJ3NX0LBf7YZV/LbhVSS5ZpTV2/fsNo97uPBVQiq39tw1yQFku4PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXdM+P7C; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6157c81ff9eso4915545a12.3;
+        Sat, 09 Aug 2025 13:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754770717; x=1755375517; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fpOW6oYqvSq8dY4Sy6tlydo2R85SL2NbZNGCMBO2JGo=;
+        b=RXdM+P7CV+1ZnW75CjoWtTJx3RnnifFjLxY1eAsaCvKT8ju/jW5QNciuWDZ+8/ZqbG
+         sfVVxGRMLGVURgY0R9LEezGLOPWlmN15BRqHjMiJreyjTd7p15po+ah8lliKPhmBS0Po
+         Wf2hdxN5Y3bTA79CmZ9pj0XYux2qcfY+4A51y1H3Z/Kx/uFyrtjNxqaaBI26B6WsdRuk
+         BSf019wc1ztzld2aBAEqJNuqGcX1kcFaDO4eAqhPX1GWnFVXxrdd6BQ1JpIGfhLJaKsR
+         mUeZ7WvHSqLWGF3lVfR7G4YGe86CphW8p46ByRnpq8iT2+EVwS3csIa0/58NhpA81CpK
+         vg1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754770717; x=1755375517;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fpOW6oYqvSq8dY4Sy6tlydo2R85SL2NbZNGCMBO2JGo=;
+        b=Xp6w0fI9tYGFPZnJElto6xRTC7VBN8UaIUMIRV9/OtFpduUben20pACame0BREGWZH
+         kggtXDRIApMvTdO1zf0E6HkixPE4TSaZPVu+malb3nLfpCfMpUErCYmgVOcTY+lms7oA
+         zngic+5VvAwlAc5A9FglFQRTt+XS2oi2ObL+FK249Id6fmN8kbs8sjzLLcEZb5geHcgp
+         Gt+gXnMpbk43O/VYEwV8WKKrrA+reYQEnW2QzXois8ZbljdkAgt38BW0Vi8ANOw0+nbz
+         /KRwtJaaG7O0PZ85QTD3RYQ1+eyfRi+weVJkf3MplOvWSVrC2YFsIzrB4QLok/LdmSj+
+         yOhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCNbDKITs+Y++5+fcF3PWPdxbH9RztvQIzS66tFrtrRpcqKzx00JqoR1EOFu64WMj207G6ZkzAt1+XWvU=@vger.kernel.org, AJvYcCXnNFZ8EsDeaTsE6sBSxjWczZlhPh5yBhI7pDSCqofEbgztKypYn5d2h5ZpGcDHj7AHjrQDifb9O9+gxnGK5/QZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNmWoJZfAcWlkwvhAbOW3ySmtlUPDKyHLRX1mKNEfR2FeHq8pa
+	a6fvczm8/xUO/6JkH1cYu6WoqZsNNyeMKAbi8/Enfm8yXcs0s+ReAoER
+X-Gm-Gg: ASbGncs7ku5+80/LTby3egFc9qtwURHvDLT4dl41UwpRLuhX2jdfFF5sKqQAmBWTHFE
+	6hucbJbe1HIouFbzihzu7rJOda3qIPHWQrkLrRdWLCPEp1YgNyVSIZpIVRBi4tzkvSUtDOCkoV4
+	lSQmzjH/smvNWztfm0on6WJXkpl0KDuAytRohJJ05Jt67AvAYxbGkJJMpNNKrqNX8CcxnRUNNlL
+	I4gm9nfAwxZiX5VDvG58Pd7amB4s7+ypX7dEScyNo4BAUei57Aj6k1xAg2/J3yxOa8JEvABqHrC
+	HNm/ZVmdOaCfM/C0Z+bxGiususffs5Ia0eiYyMhog4Ry6a0EcahjVZ/3Y8QSGl8VqTlGcy7K9RY
+	OhrzL/uaWKrL+UhcGMud28g==
+X-Google-Smtp-Source: AGHT+IGoIF4TzpsGbw98vDMoE6TA6To8S/rOi5El7EFY9c81/pe07BFvjZIzYcHEsO4A8H/7IkNSjw==
+X-Received: by 2002:a50:c310:0:b0:615:c5a9:4cab with SMTP id 4fb4d7f45d1cf-617e2bc49a1mr4617374a12.13.1754770717056;
+        Sat, 09 Aug 2025 13:18:37 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6180ce5b9e3sm1250045a12.9.2025.08.09.13.18.36
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Aug 2025 13:18:36 -0700 (PDT)
+Date: Sat, 9 Aug 2025 20:18:36 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] selftests/mm: add check_folio_orders() helper.
+Message-ID: <20250809201836.jegaanplfcjak44f@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250808190144.797076-1-ziy@nvidia.com>
+ <20250808190144.797076-3-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808190144.797076-3-ziy@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Mon, 28 Jul 2025 14:49:01 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
-
-> On Thu, 24 Jul 2025 13:38:27 +0200
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+On Fri, Aug 08, 2025 at 03:01:43PM -0400, Zi Yan wrote:
+>The helper gathers an folio order statistics of folios within a virtual
+>address range and checks it against a given order list. It aims to provide
+>a more precise folio order check instead of just checking the existence of
+>PMD folios.
+>
+>Signed-off-by: Zi Yan <ziy@nvidia.com>
+>---
+> .../selftests/mm/split_huge_page_test.c       |   4 +-
+> tools/testing/selftests/mm/vm_util.c          | 133 ++++++++++++++++++
+> tools/testing/selftests/mm/vm_util.h          |   7 +
+> 3 files changed, 141 insertions(+), 3 deletions(-)
+>
+>diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+>index cb364c5670c6..5ab488fab1cd 100644
+>--- a/tools/testing/selftests/mm/split_huge_page_test.c
+>+++ b/tools/testing/selftests/mm/split_huge_page_test.c
+>@@ -34,8 +34,6 @@ uint64_t pmd_pagesize;
+> #define PID_FMT_OFFSET "%d,0x%lx,0x%lx,%d,%d"
+> #define PATH_FMT "%s,0x%lx,0x%lx,%d"
 > 
-> > Emails to stefan.popa@analog.com and alexandru.tachici@analog.com bounce
-> > permanently:
-> > 
-> >   Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not found by SMTP address lookup'
-> > 
-> > so replace them with Marcelo Schmitt from Analog where appropriate.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > 
-> > ---
-> > 
-> > I don't know who from Analog should maintain these devices, so I chosen
-> > author from Analog of one of last commits.
-> > 
-> > Marcelo Schmitt, could you confirm that you are okay (or not) with this?  
+>-#define PFN_MASK     ((1UL<<55)-1)
+>-#define KPF_THP      (1UL<<22)
+> #define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
 > 
-> Nuno, Michael, other ADI folk.  Can someone confirm if we are making these Marcelo's
-> problem?
+> int is_backed_by_thp(char *vaddr, int pagemap_file, int kpageflags_file)
+>@@ -49,7 +47,7 @@ int is_backed_by_thp(char *vaddr, int pagemap_file, int kpageflags_file)
 > 
-
-As amusing as it would be for me, I definitely can't pick this up without
-some tags from ADI folk and Marcelo in particular!!
-
-Jonathan
-
-> Jonathan
-> 
-> > ---
-> >  Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml | 2 +-
-> >  Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml   | 2 +-
-> >  Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml      | 2 +-
-> >  Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml    | 1 -
-> >  Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml     | 2 +-
-> >  Documentation/devicetree/bindings/iio/frequency/adf4371.yaml   | 2 +-
-> >  Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml   | 2 +-
-> >  7 files changed, 6 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-> > index 3dc973b98f81..40e9a40a7a60 100644
-> > --- a/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16240.yaml
-> > @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  title: ADIS16240 Programmable Impact Sensor and Recorder driver
-> >  
-> >  maintainers:
-> > -  - Alexandru Tachici <alexandru.tachici@analog.com>
-> > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> >  
-> >  description: |
-> >    ADIS16240 Programmable Impact Sensor and Recorder driver that supports
-> > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-> > index 88aa67bf2280..55e44c9292cf 100644
-> > --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl372.yaml
-> > @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  title: Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer
-> >  
-> >  maintainers:
-> > -  - Stefan Popa <stefan.popa@analog.com>
-> > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> >  
-> >  description: |
-> >    Analog Devices ADXL372 3-Axis, +/-(200g) Digital Accelerometer that supports
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> > index 7146a654ae38..958a37def56c 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> > @@ -8,7 +8,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  title: Analog Devices AD7124 ADC device driver
-> >  
-> >  maintainers:
-> > -  - Stefan Popa <stefan.popa@analog.com>
-> > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> >  
-> >  description: |
-> >    Bindings for the Analog Devices AD7124 ADC device. Datasheet can be
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> > index 5207c919abe0..eac48166fe72 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> > @@ -9,7 +9,6 @@ title: Linear Technology / Analog Devices LTC2496 ADC
-> >  maintainers:
-> >    - Lars-Peter Clausen <lars@metafoo.de>
-> >    - Michael Hennerich <Michael.Hennerich@analog.com>
-> > -  - Stefan Popa <stefan.popa@analog.com>
-> >  
-> >  properties:
-> >    compatible:
-> > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-> > index 82b0eed6a7b7..058df4c8ddf8 100644
-> > --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.yaml
-> > @@ -8,7 +8,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  title: Analog Devices AD5770R DAC device driver
-> >  
-> >  maintainers:
-> > -  - Alexandru Tachici <alexandru.tachici@analog.com>
-> > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> >  
-> >  description: |
-> >    Bindings for the Analog Devices AD5770R current DAC device. Datasheet can be
-> > diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> > index 53d607441612..031b1657cde1 100644
-> > --- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> > @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  title: Analog Devices ADF4371/ADF4372 Wideband Synthesizers
-> >  
-> >  maintainers:
-> > -  - Popa Stefan <stefan.popa@analog.com>
-> > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> >  
-> >  description: |
-> >    Analog Devices ADF4371/ADF4372 SPI Wideband Synthesizers
-> > diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> > index 7a1a74fec281..e49d5e6fab61 100644
-> > --- a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-> > @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  title: Analog Devices ADIS16480 and similar IMUs
-> >  
-> >  maintainers:
-> > -  - Alexandru Tachici <alexandru.tachici@analog.com>
-> > +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
-> >  
-> >  properties:
-> >    compatible:  
-> 
+> 		if (kpageflags_file) {
+> 			pread(kpageflags_file, &page_flags, sizeof(page_flags),
+>-				(paddr & PFN_MASK) * sizeof(page_flags));
+>+				PAGEMAP_PFN(paddr) * sizeof(page_flags));
 > 
 
+is_backed_by_thp() shares similar logic as get_page_flags(), I am thinking we can
+leverage get_page_flags() here.
+
+> 			return !!(page_flags & KPF_THP);
+> 		}
+>diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
+>index 6a239aa413e2..41d50b74b2f6 100644
+>--- a/tools/testing/selftests/mm/vm_util.c
+>+++ b/tools/testing/selftests/mm/vm_util.c
+>@@ -338,6 +338,139 @@ int detect_hugetlb_page_sizes(size_t sizes[], int max)
+> 	return count;
+> }
+> 
+>+static int get_page_flags(char *vaddr, int pagemap_file, int kpageflags_file,
+>+			  uint64_t *flags)
+>+{
+
+Nit.
+
+In vm_util.c, we usually name the file descriptor as xxx_fd.
+
+>+	unsigned long pfn;
+>+	size_t count;
+>+
+>+	pfn = pagemap_get_pfn(pagemap_file, vaddr);
+>+	/*
+>+	 * Treat non-present page as a page without any flag, so that
+>+	 * gather_folio_orders() just record the current folio order.
+>+	 */
+>+	if (pfn == -1UL) {
+>+		*flags = 0;
+>+		return 0;
+>+	}
+>+
+>+	count = pread(kpageflags_file, flags, sizeof(*flags),
+>+		      pfn * sizeof(*flags));
+>+
+>+	if (count != sizeof(*flags))
+>+		return -1;
+>+
+>+	return 0;
+>+}
+>+
+
+Maybe a simple document here would be helpful.
+
+>+static int gather_folio_orders(char *vaddr_start, size_t len,
+>+			       int pagemap_file, int kpageflags_file,
+>+			       int orders[], int nr_orders)
+>+{
+>+	uint64_t page_flags = 0;
+>+	int cur_order = -1;
+>+	char *vaddr;
+>+
+>+	if (!pagemap_file || !kpageflags_file)
+>+		return -1;
+>+	if (nr_orders <= 0)
+>+		return -1;
+>+
+>+	for (vaddr = vaddr_start; vaddr < vaddr_start + len; ) {
+>+		char *next_folio_vaddr;
+>+		int status;
+>+
+>+		if (get_page_flags(vaddr, pagemap_file, kpageflags_file, &page_flags))
+>+			return -1;
+>+
+>+		/* all order-0 pages with possible false postive (non folio) */
+>+		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
+>+			orders[0]++;
+>+			vaddr += psize();
+>+			continue;
+>+		}
+>+
+>+		/* skip non thp compound pages */
+>+		if (!(page_flags & KPF_THP)) {
+>+			vaddr += psize();
+>+			continue;
+>+		}
+>+
+>+		/* vpn points to part of a THP at this point */
+>+		if (page_flags & KPF_COMPOUND_HEAD)
+>+			cur_order = 1;
+>+		else {
+>+			/* not a head nor a tail in a THP? */
+>+			if (!(page_flags & KPF_COMPOUND_TAIL))
+>+				return -1;
+>+			continue;
+>+		}
+>+
+>+		next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
+>+
+>+		if (next_folio_vaddr >= vaddr_start + len)
+>+			break;
+
+Would we skip order 1 folio at the last position?
+
+For example, vaddr_start is 0x2000, len is 0x2000 and the folio at vaddr_start
+is an order 1 folio, whose size is exactly 0x2000.
+
+Then we will get next_folio_vaddr == vaddr_start + len.
+
+Could that happen?
+
+>+
+>+		while (!(status = get_page_flags(next_folio_vaddr, pagemap_file,
+>+						 kpageflags_file,
+>+						 &page_flags))) {
+>+			/* next compound head page or order-0 page */
+>+			if ((page_flags & KPF_COMPOUND_HEAD) ||
+>+			    !(page_flags & (KPF_COMPOUND_HEAD |
+>+			      KPF_COMPOUND_TAIL))) {
+
+Maybe we can put them into one line.
+
+>+				if (cur_order < nr_orders) {
+>+					orders[cur_order]++;
+>+					cur_order = -1;
+>+					vaddr = next_folio_vaddr;
+>+				}
+>+				break;
+>+			}
+>+
+>+			/* not a head nor a tail in a THP? */
+>+			if (!(page_flags & KPF_COMPOUND_TAIL))
+>+				return -1;
+>+
+>+			cur_order++;
+>+			next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
+>+		}
+
+The while loop share similar logic as the outer for loop. Is it possible
+reduce some duplication?
+
+>+
+>+		if (status)
+>+			return status;
+>+	}
+>+	if (cur_order > 0 && cur_order < nr_orders)
+>+		orders[cur_order]++;
+>+	return 0;
+>+}
+>+
+>+int check_folio_orders(char *vaddr_start, size_t len, int pagemap_file,
+>+			int kpageflags_file, int orders[], int nr_orders)
+>+{
+>+	int *vaddr_orders;
+>+	int status;
+>+	int i;
+>+
+>+	vaddr_orders = (int *)malloc(sizeof(int) * nr_orders);
+>+
+
+I took a look into thp_setting.h, where defines an array with NR_ORDERS
+element which is 20. Maybe we can leverage it here, since we don't expect the
+order to be larger.
+
+>+	if (!vaddr_orders)
+>+		ksft_exit_fail_msg("Cannot allocate memory for vaddr_orders");
+>+
+>+	memset(vaddr_orders, 0, sizeof(int) * nr_orders);
+>+	status = gather_folio_orders(vaddr_start, len, pagemap_file,
+>+				     kpageflags_file, vaddr_orders, nr_orders);
+>+	if (status)
+>+		return status;
+>+
+>+	status = 0;
+>+	for (i = 0; i < nr_orders; i++)
+>+		if (vaddr_orders[i] != orders[i]) {
+>+			ksft_print_msg("order %d: expected: %d got %d\n", i,
+>+				       orders[i], vaddr_orders[i]);
+>+			status = -1;
+>+		}
+>+
+>+	return status;
+>+}
+>+
+> /* If `ioctls' non-NULL, the allowed ioctls will be returned into the var */
+> int uffd_register_with_ioctls(int uffd, void *addr, uint64_t len,
+> 			      bool miss, bool wp, bool minor, uint64_t *ioctls)
+>diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+>index 1843ad48d32b..02e3f1e7065b 100644
+>--- a/tools/testing/selftests/mm/vm_util.h
+>+++ b/tools/testing/selftests/mm/vm_util.h
+>@@ -18,6 +18,11 @@
+> #define PM_SWAP                       BIT_ULL(62)
+> #define PM_PRESENT                    BIT_ULL(63)
+> 
+>+#define KPF_COMPOUND_HEAD             BIT_ULL(15)
+>+#define KPF_COMPOUND_TAIL             BIT_ULL(16)
+>+#define KPF_THP                       BIT_ULL(22)
+>+
+>+
+> /*
+>  * Ignore the checkpatch warning, we must read from x but don't want to do
+>  * anything with it in order to trigger a read page fault. We therefore must use
+>@@ -85,6 +90,8 @@ bool check_huge_shmem(void *addr, int nr_hpages, uint64_t hpage_size);
+> int64_t allocate_transhuge(void *ptr, int pagemap_fd);
+> unsigned long default_huge_page_size(void);
+> int detect_hugetlb_page_sizes(size_t sizes[], int max);
+>+int check_folio_orders(char *vaddr_start, size_t len, int pagemap_file,
+>+			int kpageflags_file, int orders[], int nr_orders);
+> 
+> int uffd_register(int uffd, void *addr, uint64_t len,
+> 		  bool miss, bool wp, bool minor);
+>-- 
+>2.47.2
+
+-- 
+Wei Yang
+Help you, Help me
 
