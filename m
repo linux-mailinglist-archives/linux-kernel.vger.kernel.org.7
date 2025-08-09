@@ -1,90 +1,188 @@
-Return-Path: <linux-kernel+bounces-761268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A35B1F6CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:35:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBE1B1F6F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 00:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E53A6212F9
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 21:35:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C369A3B453D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0C5277813;
-	Sat,  9 Aug 2025 21:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823DB27BF95;
+	Sat,  9 Aug 2025 22:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s1xPi0PY"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEVKh0bW"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C80E2356C7
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 21:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114B2239E80;
+	Sat,  9 Aug 2025 22:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754775307; cv=none; b=umFVboxT78qIBKt/qlBIVZgSrWA1OxxYx9NeHl4sKsY9RkBx7ICObtF48RH0mmJKTgCt6u/u/+z6W0XNm+ogy+6yCv98/J133F2no2jsft9UZQri9qyZM232Fx+s77pERBUeXTkrcOInPc14xUriSA5mYcUBTvn0+UuX3vxhWdQ=
+	t=1754777245; cv=none; b=ZXuL/WDannGkJJokDiQFnwaseegW3SDgXgIWAto3kvin9MUoGhSzknIYvhadz/usxaRQaJ51isJOLy/lyx27mQAFCHgZp1dXj2OTe9pqSLQ0e5ZLICk8Sqxgg6dFlqroxASdgIgeurCpb6mHKj8hv2TNM+ni3xWYEiRaGR+WdH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754775307; c=relaxed/simple;
-	bh=0U+2bvwtG3+Ixdx6wgI6eMv1jak/Ko5vKr/jWtgVvMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nlHSmCfVoB5tZ7ACVXcB5IqwpLUyu8W/5t2a0Yp5IR5Q4DtL5HABD9bkZBgogrTDez9Nvf8VgsFB8KSB4WpqTY3rjYt+1HThPDefQoc34Ah30UMhonjcKjMRiOl2ae4Lnq/r9iLf5XyKTu6qtM+1dCXGzU+rRQUM/+m15OriK4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s1xPi0PY; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 9 Aug 2025 17:34:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754775292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0U+2bvwtG3+Ixdx6wgI6eMv1jak/Ko5vKr/jWtgVvMI=;
-	b=s1xPi0PYLSX/IuFioAucP59tJfJUn7c5MOdXTkVAgB4VxMI3c8B89R+UuAwcd0DNtfSSlm
-	cOIip6cudiOQ0I0g7llrp9EDhTYzTlk/a9Hwttx9ThQ9DKARBf5rSJju/BRJz+Y4vTDmF0
-	Vl7pvGCdK6qw6vZEXOqQkTUcbVXXg80=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Aquinas Admin <admin@aquinas.su>, 
-	Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	"Carl E. Thompson" <list-bcachefs@carlthompson.net>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <qivictc5jxyx62mqz6rlg6cix3tzaahqxbgk2ig3cq5d6esqyy@xydebz6gakxq>
-References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
- <1869778184.298.1754433695609@mail.carlthompson.net>
- <5909824.DvuYhMxLoT@woolf>
- <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <20250809192156.GA1411279@fedora>
- <2z3wpodivsysxhxmkk452pa4zrwxsu5jk64iqazwdzkh3rmg5y@xxtklrrebip2>
+	s=arc-20240116; t=1754777245; c=relaxed/simple;
+	bh=4EzJwQuBIFM4raNBxPJN0k1uknAHAN8Ud0aTfpRATdM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D1GasHSfSRuZfucIKYmoWxwKt+xswzDa6ehJLYRLkggfIj3IenFSVGzP47Z08g0a3bcaIu2vvoaoHPhdUeGkeH8nUUEPRpOgQNXN0kHf0RZ7qpUOwcrYsuDxv50JtqUsvW366TlImtBWEq4NKHDmoi53p0klCjsHcj1l1MAxBdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iEVKh0bW; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b786421e36so1705338f8f.3;
+        Sat, 09 Aug 2025 15:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754777242; x=1755382042; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ON51mp/PIZKw7yNbH39krxKEwgXvkrApaUAVnb4qDrs=;
+        b=iEVKh0bWkPtct/rXPF09vw2CH7aSy6B6sc+E0HM23S2n9jNEbm+f34Tf65W0r6F9c1
+         8/FCMeFGulMzsX/1IJ6ps3OFZrvjOyRIdkId8I9f21rJNtPVbFAGjQrh7ze6Oul7WGiv
+         hmyYvvWNqRVPaadvg3/cxbLoVPYbSfdTeflQz7N0qo10GJrSIpTfZyL2gEHVrRsD6sZw
+         cFuEyMQlwsRrvxsyzlJC+lhB9jruw+Lrks126e7k1xlJmfh0RBIOGgA4mGcWFSLd/jD8
+         B3dOWEX1lEe/cXz7KIzAdOWk+s4++1H2bYz4+dsBfebDkW+ppwjzjKt24FflJYzpcGy8
+         ICog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754777242; x=1755382042;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ON51mp/PIZKw7yNbH39krxKEwgXvkrApaUAVnb4qDrs=;
+        b=SQjOpD0geGbxue2+GAMxSqV1ERwzmsziOopkzhcqhA7N/lul305BU/EiK2lfmo0JNN
+         UzaxN0MU07CCLmZEEzeR3F/S3ziCXjkUFQ948Rjnv14gpLvBpY2tGwVNmvCEDIzjrOCC
+         AQCgfRoSdy5rPm9rr6Qj72562OttSllOFKpErphIyptpefqWtBQDBBZmB6mwDlZvqjIo
+         2ZvNhzsWuyzdRPCooLaxLc2EH6MiCeJXdLdUJL+L7aAywejoReIFAh4lpsmSs199Z3Sa
+         MybMT85emMdW+Fq2qz7cRE6rb6ZVhPwUKoK7C+i0BAYZDKG+CY2wFPybP7bI9eAMrn5o
+         qlBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiZkCwz/26q/1hDGYFsU2/s1hGsRm2bCvMRvnVF7AZ9dD9UhKIjyaR43+xzU2T6VqIrx2RejL4f40S@vger.kernel.org, AJvYcCVp6ClNXBcbHbjeTlJbpFoCkxrPH+QGXYHyXp8Npifn3WF/5bAwO8Y1NyzayRYmJJVD1JqJo90bPTzsJ012@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjNyuQQFWWzx6iehOoxC+nsNd2S5e6B+gRyLZq6KXwbLCTJVEr
+	37mQfsd7aGB7WyCxel7pEzo7YK0qIZHCuu2QPrG3xhsf3L7nZW6MghtUbvFffg==
+X-Gm-Gg: ASbGnctapZhvrHRSdJUZFsRnGjlpge7r7g6Hlq1653oOowd542QrqHOUH6mlbZeg0Th
+	3JBvLYqnc9mgvJ9hFR4gP6kkszMww9geE016WFP73boq/Worpv6LWNPOFAWYqFmndX4Q5qtdfp6
+	JLjpXgivLcUqtOiqYm2ZC6zyF4gP7V771ICFJlYTBYWrO+fxn3b/wEcTveL9svD4txwpuzkxTyO
+	jqaK8rNUM1PdOyHnOXi2IlgrlmM3jDFRpsL4TVuXo4Dl/l6k4WJsukGX0pIe+giu9Niqk51Q/fh
+	F7wlVCspuOvff7f0WubIqAuwr0bnDKJw4laJgyPXF5y3t3VfBnBqYV/4l0uZjJkBmIp2E5BJSpJ
+	zaBJWBbpwxmWWCA++RtPpUWyArHi9J2d5WhAB2N5ZYovadTrH8x6z
+X-Google-Smtp-Source: AGHT+IHpixIBUdkRkSToWyKVB/tbX1BCbXUF6/OprNCLLAnNCeqB+CaznTHWMurcVG7SR9P/g3Xruw==
+X-Received: by 2002:a05:6000:178d:b0:3b7:931d:379a with SMTP id ffacd0b85a97d-3b900b576b0mr5156985f8f.58.1754777242110;
+        Sat, 09 Aug 2025 15:07:22 -0700 (PDT)
+Received: from builder.. (188-9-142-46.pool.kielnet.net. [46.142.9.188])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ed0ecsm145592185e9.4.2025.08.09.15.07.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 15:07:21 -0700 (PDT)
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-i2c@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Markus Stockhausen <markus.stockhausen@gmx.de>,
+	Sven Eckelmann <sven@narfation.org>,
+	Harshal Gohel <hg@simonwunderlich.de>,
+	Jonas Jelonek <jelonek.jonas@gmail.com>
+Subject: [PATCH v5 00/11] i2c: rework and extend RTL9300 I2C driver
+Date: Sat,  9 Aug 2025 22:07:01 +0000
+Message-ID: <20250809220713.1038947-1-jelonek.jonas@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2z3wpodivsysxhxmkk452pa4zrwxsu5jk64iqazwdzkh3rmg5y@xxtklrrebip2>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 09, 2025 at 04:37:56PM -0400, Kent Overstreet wrote:
-> At this point in the development and deployment in bcachefs I can say,
-> with confidence, that bcachefs is changing that, and that in time we
-> will deliver _better_ reliability than ext4/xfs.
+This patch series reworks the current implementation of the driver for
+I2C controller integrated into RTL9300 SoCs to have better overall code
+simplify support extension, and adds support for the RTL9310 series.
+Goal of this is to have RTL9310 support upstream in a proper
+implementation to be able to drop downstream versions of this driver.
 
-I should add, based on the data I'm seeing - this isn't far off, but due
-to the sheer amount of deployment and usage ext4/xfs have had it'll be
-awhile (perhaps a year) before we have the data to make hard claims.
+The first patch changes the driver to use more of the regmap API.
+Instead of using macros, all registers are defined as reg_field and
+operations on these registers are performed using regmap_field and the
+corresponding API. This simplifies adding support for further chip
+families and avoids potential redundant code by just providing
+chip-specific functions for every chip family.
 
-The data from users versus btrfs is much clearer, we're already
-delivering much better reliability in terms of "will my data be safe" -
-there are numerous failure modes that simply don't exist in bcachefs.
-And where we've had significant bugs (I count ~2 that have made it all
-the way to a mainline .0 release), good debugging tools and a clean
-design have meant that we've been able to resolve them by about the
-third report, and in every case with significant hardening done after
-the fact and real support for affected users.
+Further patches add some checks to fix issues based on incorrect passed
+values, remove SMBus Quick support (not actually supported by hardware)
+and reorder some operations to be at a proper location.
 
-IOW: your data is safe on bcachefs, and that's priority #1 for a
-filesystem.
+The last patch and penultimate patch add support for RTL9310 series to
+the driver and adjust the dt-bindings accordingly.
+
+Simple operations have been tested successfully on RTL9302B-based Zyxel
+XGS1210-12 and RTL9313-based Netgear MS510TXM, with simple SFP EEPROM
+read. Other operations need testing from people with devices available.
+
+Compile-tested with Linux, run-tested as backport in OpenWrt on the
+aforementioned devices.
+
+I splitted the changes to my best knowledge, to simplify review. If
+suggested, I might combine some of them for final merge.
+
+--
+Changelog
+
+v5: - added more patches to fix further issues/do further cleanup
+        - remove SMBus Quick support (not supported by hardware)
+        - move setting SCL frequency to config_io
+        - only set read message format (RD_MODE) once on probing
+        - add check to avoid len = 0 being allowed as length
+    - adjusted cover letter
+
+v4: - fixed an incorrect check for number of channels which was already
+      present in original code
+
+v3: - narrowed vendor property per variant to be required only
+      for RTL9310
+    - narrowed usable child-node i2c addresses per variant
+    - no changes to driver patches
+
+v2: - Patch 1:
+        - adjusted commit message
+        - retained Tested-By and Reviewed-By from Chris Packham
+    - Patch 2:
+        - simplified check as suggested by Markus Stockhausen
+        - fixed commit message
+    - Patch 3 (all requested by Krzysztof):
+        - use vendor property instead of generic
+        - add front compatibles to make binding complete
+        - fix commit message
+    - reordered patches, dt-bindings patch now comes before its 'user'
+    - properly add device-tree list and relevant maintainers to To/Cc
+
+--
+
+Jonas Jelonek (11):
+  i2c: rtl9300: use regmap fields and API for registers
+  i2c: rtl9300: fix channel number bound check
+  dt-bindings: i2c: realtek,rtl9301-i2c: fix wording and typos
+  i2c: rtl9300: rename internal sda_pin to sda_num
+  i2c: rtl9300: check if xfer length is valid
+  i2c: rtl9300: remove SMBus Quick operation support
+  i2c: rtl9300: move setting SCL frequency to config_io
+  i2c: rtl9300: do not set read mode on every transfer
+  i2c: rtl9300: separate xfer configuration and execution
+  dt-bindings: i2c: realtek,rtl9301-i2c: extend for RTL9310 support
+  i2c: rtl9300: add support for RTL9310 I2C controller
+
+ .../bindings/i2c/realtek,rtl9301-i2c.yaml     |  45 +-
+ drivers/i2c/busses/i2c-rtl9300.c              | 477 +++++++++++-------
+ 2 files changed, 321 insertions(+), 201 deletions(-)
+
+
+base-commit: 7e161a991ea71e6ec526abc8f40c6852ebe3d946
+prerequisite-patch-id: 603f6da5f9ccbf40aa1e8247144e2413f676ef24
+prerequisite-patch-id: 4328bb2802794cbd46f4952a22cbc73e022d0c12
+prerequisite-patch-id: 90d8673eb6c9444937ea335ae8a934414e0a9ecd
+prerequisite-patch-id: de876ceafb623d95a41af42b3e3dae7538023e33
+prerequisite-patch-id: ecc2a415352d9ed09975b06b97b750b5182f4147
+-- 
+2.48.1
+
 
