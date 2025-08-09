@@ -1,110 +1,134 @@
-Return-Path: <linux-kernel+bounces-761254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21764B1F62A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:22:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE15DB1F62E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E78C17D2FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0BBA189D04D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B2F279DA9;
-	Sat,  9 Aug 2025 20:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D85E2798EB;
+	Sat,  9 Aug 2025 20:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/1LjE54"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iV2bczuU"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4312E36F1;
-	Sat,  9 Aug 2025 20:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AC42E36F1;
+	Sat,  9 Aug 2025 20:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754770930; cv=none; b=VjLlsNwqwGaz09CX7iz+4PWMLcIsJkW8ruAShjliHll+/JDito/G26tF5VVPmlos96jV/jW+E4gNnzCNUzh/itFK/ZuzvGxz+jTuLpBpnbA1rIX7TH4MX/P91ndARiTuwfqqaSHi2YvEnXV8EjpJVrPE0GVLQAmBP+uSLyOyp2E=
+	t=1754771313; cv=none; b=PnquUgR94F5N+8+bVZIetwNDi6pWMJbTvnWIi/YGyRzUjDNI2mM0LFKlsI7rjeZoo8DN0329Z+IabSr6/ZQsoJNzV8byH25NL+VVKWqWCB2CXffoc+7bs9UAFfs1/wFzKlA4adGkSw/n0SyBIKwOLeQ1jVQAllDgBZvctuva+5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754770930; c=relaxed/simple;
-	bh=BjLJCqEd7VeVy0KqVbhTunrlhwq6ZptffnF9gyr2yPk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=oa0RU/WKRX8fqD5Shk662DkQEnR7NEnAe1mhUYJh0PaK5Nv4Nqb22fpL2YL76ceT4n3IQ31EGvufrLtOyJIuSO/hIucHLF+UXgrSQ9drqltaTc3R2pjjOfkgeqTRj8JL89JOUyGAxBGlCZuC0XQ3rzdDMZ4xnK6igt0DYlLB7Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/1LjE54; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03F5CC4CEE7;
-	Sat,  9 Aug 2025 20:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754770929;
-	bh=BjLJCqEd7VeVy0KqVbhTunrlhwq6ZptffnF9gyr2yPk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=D/1LjE54khs3k1dxPdkfwM+QSFd8Utx13CvoVehajnhjigIRpypfuSPvANeZY/3+S
-	 L3tGPbz3mq0l8hnYKFBfFFsh3qb37sqgNivvpNR/by/Swc6pl5I5bcadT1NPhcimb3
-	 kS1E7ue7LLwyQI9pdDWvumVddJhIm5SIhUFD0rKkoPbibtbqrpsL3nwlSX4IgQntRs
-	 yeI+Zc9jIgIV9A179t2hdTl9UMXOJ97EA/3kPeRTIfTX/hD5/6zIk9+oHAKoCUqfWa
-	 YIywFvPa3IRbYbfDVORNCoaBpFxJBWhmNhsLxy24wYeDBCpOH3XLQCAX3kAmya3Yos
-	 fE9+bXvTMK8OA==
+	s=arc-20240116; t=1754771313; c=relaxed/simple;
+	bh=37hFr4JQ5cAUiFBjprBnJALMGkmbzYbC5hvMuHDdEeg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f9laC04hjV21XTGoebqUxRv/CUX3C+kSqpFS93Bl1i92E3EFGjFJ8+AETccL762iIT8CEisaybS+tdTAdzFptEK4ehKU3ibN1UjU+1od7CUdx+Y2mEuxWovdmejmasXvpYrEfUX44gYaYKFGzWuIqFEeR22tbSONk3Guq1UD0rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iV2bczuU; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af9618282a5so631799066b.2;
+        Sat, 09 Aug 2025 13:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754771310; x=1755376110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EvCp3OvNUB4OhNHYWKMJm9g+RtzmygR3Z13148Yf9dI=;
+        b=iV2bczuUFFEqo7x3naXLETf4tnfSGgANKzYH0nClX7TFXHWAiw1Kgi60tPBXSfNAoX
+         xvj4Ewc/8Zbs9fw/hOUJ2wdcwuQCYe/X5Of27gybAi+HkmpiPoSJe8JedIziGJVJjLC1
+         PxiQi869Sj+QeV19f9SM+H1IpLbg3E0JwhgnMpD8EgUlbjjPQ3N46dUDm0frgqrIv75F
+         5nXsA85KzANNSz1Io4t5xgXpTH8XXMUpqla1blh6B/b7fzP83uG1dH/BKYcdam4WXEox
+         jF7e9Ot7M9/LDBWQVeL/SluwMc4umGQPpYpgsSKMCTHI3uiMrnCwZFdFZwHlJmVyvOGW
+         OUeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754771310; x=1755376110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EvCp3OvNUB4OhNHYWKMJm9g+RtzmygR3Z13148Yf9dI=;
+        b=o1If/tpc2pbo/N4iRANiOKlLiESHeGYFIiwIBIE6mxFQJsl197jLVQP3KB8GIZ6EHn
+         8znM0rAmi7ZKiWFQOtzuW7JTTfT0oxV9hHTz/PFz2pQVI87urz8VBIRLRZhW4aq0jJjB
+         XGw48t4YA7lba0YBOGESNuppiq7DOVP/AaUVVLF77kOd1NvIHGJZLHw5dmgWImGv3YWi
+         +2at1X1gdNwxGXFcsr/RScs+IQP8YhRtuuMWWjZ5rca9DtNoqrVkQHRyVv6YyeZSl7nv
+         T6Hk5b0AN7z/IOksANSPiFD1lPp94kyclAFwhZT/GdtL9ERb23HD1rVUGdhETNluGOV/
+         TdRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+/1mlrAkWgKIgihKkRAGvLgqMjmm6gxgmFr4OUxHdP9vKV7rdMi0E85uk7J5gVw12xBAPVRc8ay4=@vger.kernel.org, AJvYcCXCcK0AR6ON1IatHp7UITABeFD0mBT6mWU7vs9/uIwmrh0hqard6ip7uTHJ7Gnm/itqC3e9hMV5sqCnm15P@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqr8DXXNMtHwhyCNhqP/HlMImwblDB88Q0IUNPk5bDVQ4aenri
+	3THfzt6TEDS8aoOoABF+uPIRpsrc0xBsDF8oBLw9pFvhIJKZkdPZC1UFU7+o5hL6li6ymB83VC8
+	lbxDlaH1PwB664V2xMnO5gUYgy0owWPA=
+X-Gm-Gg: ASbGncue8se5DbVaOfp99Nj46/PukyZqYeVdhrQPcr4BuIXXvk70mZm07bDdN5/tfjw
+	Ngi12K1yI9+cq5tY9Y5HVndhJeG590p7hS1HCQ/AC+rOWyEIVKs1/Hh4/9PjScbyTzsWLY/itpv
+	Cqz1JBH3uW1fttagbM9hPpaOUUEcDuljgP6MJDMkLcy4audsdx/rk87RR7Wksi6GGGwPASPQSe0
+	TuyBNjXqQ==
+X-Google-Smtp-Source: AGHT+IGcC8v+IXhY2ttWzIwIXrVDJZJwHOrz5ae0rZ55TlsOES7mAXPKPdPq5D0f+gfh8MsYX6xE8mXSdXxSj5318co=
+X-Received: by 2002:a17:907:948a:b0:af9:69d1:9c6d with SMTP id
+ a640c23a62f3a-af9c65b02d8mr723466366b.40.1754771309447; Sat, 09 Aug 2025
+ 13:28:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250808-icm42pmreg-v2-0-a480279e7721@geanix.com>
+ <20250808-icm42pmreg-v2-1-a480279e7721@geanix.com> <CAHp75VdKNE0xD8xbJQ2RSCA=_MB9DMZtXRTCNkpdKdv8vW-Q-w@mail.gmail.com>
+ <20250809190609.4fef9df7@jic23-huawei>
+In-Reply-To: <20250809190609.4fef9df7@jic23-huawei>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 9 Aug 2025 22:27:52 +0200
+X-Gm-Features: Ac12FXz9Qx9vHpjcHamJejeb1GK9RQZkty2IQjqDet9B67oLvWEl908F5wrZO8w
+Message-ID: <CAHp75Vc5CxOj77cw85hmioFTG6YJCe3ZJWwJsJW+QL79K8GpWw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] iio: imu: inv_icm42600: Simplify pm_runtime setup
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Sean Nyekjaer <sean@geanix.com>, 
+	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 09 Aug 2025 22:22:06 +0200
-Message-Id: <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
-Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>, "Jens Axboe"
- <axboe@kernel.dk>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <io-uring@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
- for io-uring cmd
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Sidong Yang" <sidong.yang@furiosa.ai>, "Caleb Sander Mateos"
- <csander@purestorage.com>
-X-Mailer: aerc 0.20.1
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
- <20250727150329.27433-3-sidong.yang@furiosa.ai>
- <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
- <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
- <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
- <DBVDWWHX8UY7.TG5OHXBZM2OX@kernel.org>
- <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
- <DBWX0L4LIOF6.1AVJJV0SMDQ3P@kernel.org>
- <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
- <DBXTJQ27RY6K.1R6KUNEXF008N@kernel.org>
- <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
-In-Reply-To: <aJdEbFI2FqSCBt9L@sidongui-MacBookPro.local>
 
-On Sat Aug 9, 2025 at 2:51 PM CEST, Sidong Yang wrote:
-> On Sat, Aug 09, 2025 at 12:18:49PM +0200, Benno Lossin wrote:
->> We'd need to ensure that `borrow_pdu` can only be called if `store_pdu`
->> has been called before. Is there any way we can just ensure that pdu is
->> always initialized? Like a callback that's called once, before the value
->> is used at all?
+On Sat, Aug 9, 2025 at 8:06=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+> On Fri, 8 Aug 2025 23:37:51 +0200
+> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > On Fri, Aug 8, 2025 at 5:58=E2=80=AFPM Sean Nyekjaer <sean@geanix.com> =
+wrote:
+
+...
+
+> > > +       struct device *dev =3D regmap_get_device(st->map);
+> > >
+> > > +       if (!pm_runtime_status_suspended(dev))
+> > > +               regulator_disable(st->vddio_supply);
+> >
+> > I would rather use positive conditional as it seems to me more scalable
 >
-> I've thought about this. As Celab said, returning `&mut MaybeUninit<[u8;3=
-2]> is
-> simple and best. Only driver knows it's initialized. There is no way to
-> check whether it's initialized with reading the pdu. The best way is to r=
-eturn
-> `&mut MaybeUninit<[u8;32]>` and driver initializes it in first time. Afte=
-r=20
-> init, driver knows it's guranteed that it's initialized so it could call=
-=20
-> `assume_init_mut()`. And casting to other struct is another problem. The =
-driver
-> is responsible for determining how to interpret the PDU, whether by using=
- it
-> directly as a byte array or by performing an unsafe cast to another struc=
-t.
+> To potentially save time when Sean looks at this.  I don't follow. Do you=
+ mean
+> something like
+>         if (pm_runtime_status_suspended(dev))
+>                 return;
+>
+>         regulator_disable(st->vddio_supply);
+>
+> ?
 
-But then drivers will have to use `unsafe` & possibly cast the slice to
-a struct? I think that's bad design since we try to avoid unsafe code in
-drivers as much as possible. Couldn't we try to ensure from the
-abstraction side that any time you create such an object, the driver
-needs to provide the pdu data? Or we could make it implement `Default`
-and then set it to that before handing it to the driver.
+Yes.
 
----
-Cheers,
-Benno
+> If so I'm not seeing why we'd want this to scale as it's a single use
+> devm_set_action_or_reset() callback doing just one thing.
+
+While I agree in _this_ case, in general the check and return
+immediately is more scalable for reading purposes, e.g., indentation
+will be one level less. Also it won't require additional churn in
+adding {, i.e. changing conditional line just for that.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
