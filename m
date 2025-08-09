@@ -1,329 +1,179 @@
-Return-Path: <linux-kernel+bounces-761023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC902B1F343
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:25:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A1FB1F345
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 394987A9540
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357A15637B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9344227E07F;
-	Sat,  9 Aug 2025 08:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0075227563;
+	Sat,  9 Aug 2025 08:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIowxpi6"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I8McxVus"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C502206A6;
-	Sat,  9 Aug 2025 08:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70C8AD5A
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 08:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754727927; cv=none; b=cIT1WnRDccaJ2UGhd9oJBq3X7YbwgV4qkZDsNExoOeZurS60OyNl3DgMR17X9Bvn/JZLrPZJEoy8398Vp0acPfcZpxCRtTE0K2X5zdaPfklTQ/7ppYE8KPGr/t6Jfv0nncsW5i70BZbSmOi9orkEUStnf0SaWHwmIv7YPa1av4g=
+	t=1754728357; cv=none; b=Av5hFnOv0e9oFgkkHn1Vwi4sQ8S4jtMwzGIzRUOtI+MZxg79i29p4mDLvgvNzus2cG7yEEFl2U+nRmRAYUNJJzxo915nGeWbTCuMXVy93Z0L1JEyiC5wTD50eDVV1SGfddPGUqIJlFWtFbNBTbYIIdamxN/SPX9MNsovg+iZkCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754727927; c=relaxed/simple;
-	bh=6hZUX5BzXJxl+le6JejaaAQ5vkqA5NpiAPa/FpDs7EE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KftFMoMSmQPvwLl3XynQc60NssoAvhiy1TFFELUTnGM1/kaHkzysJvDQAlqD+lmXB17EVYcwaTmcy3b6X/c926O8KR0o4SKhsCL7xCMzdL93lz0Mvo0M3S8WuaoOqgDhuOOHWRfMZ8uacvUtJOSO5kmhgEEQjpSScj9NYXilci4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIowxpi6; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-451d3f72391so22767865e9.3;
-        Sat, 09 Aug 2025 01:25:25 -0700 (PDT)
+	s=arc-20240116; t=1754728357; c=relaxed/simple;
+	bh=k1DVeL1f1UhLNfkqO5ZKFormbjFilw7LsKOmGZEgmlI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=K90iwbboObdD+VsMKagVhkksg659qKDDZYcpB9//qX7h1Dz3/5SEfKb7fvDCyuQ0CGQ2xWgcExrbDfRhpXju+4pGhuE99y3b6KhyCEwGCPUFReRwYpyAzFXUY+D1AWF62dUZuSK+s4PuYnwpWIFW2AFB95O4/UEPXgU+bOB06z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I8McxVus; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76c67258a9dso343805b3a.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 01:32:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754727924; x=1755332724; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PkGRBgYyAuoN42OXjEbj1I1gqGxF3tvkJgNCQHwK9uM=;
-        b=YIowxpi6sBQd3GXdRB41gfa7JxeZ+CTfVN8nqo/a7FGSTbDjDqZ7vIUPcp6oF7rNhP
-         Wbtd505E02iwwoNy77a9y8i0QS/VKd/UzuFewg69HVoXW9Q9t1VUaoWC/IG32L1wifyW
-         zcFty5DNPkrFy9D4cvl9LLtkbmFzvFfPG6+BhdoqHKotmjVRlIK+hxKTkOTfAp4Gevtr
-         dB3NxCWBDX+yVHeiM+ghVjaU9VSol9w9nlvhmnXX9YBr2LAtScmygG1+qK661+jPnjlh
-         I3KfKncaf/lDekqpwx1A7V5LtkPW2KYOSzRxjRTz2Z48gqmsR//BaUKKeJ9ZTySMW4AI
-         AsFg==
+        d=google.com; s=20230601; t=1754728355; x=1755333155; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bwjbob3BQMKF4UEPhqbfbZc9QrWDX+0Z77IxKZ5IcFY=;
+        b=I8McxVusaHIVVksqQ02uA8HY3Od2oSUA//OY1RKHcRekiQchxARBxRC+cjmWaHEGmj
+         yJM/zn0O82nZJppMABhlFgFkBIiPdyQYUo8IoPclCRBQPYRurW+cMaODO9wvyASJDyQi
+         6R7tsbC7nv0c6eGGBWvhMYxu63WItIJk8PIYPaIGSnkhAgxwtQDQNxBt4h51NH+BX2iN
+         YtQ1uSDjfMj74sh86umM6yoHXPZSEDDTF0optCwizLOEXCy0n0avu7m8tjQv82V00mmj
+         0NIHNT1CUQ8iBRuuuGcFQgPtFu+QcdkRTpPJSH2iTvcMWrgmQwIwyG+YP85rFfVjKcxM
+         4xgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754727924; x=1755332724;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PkGRBgYyAuoN42OXjEbj1I1gqGxF3tvkJgNCQHwK9uM=;
-        b=L0geCIS/984DypQxhscr77jaq07BGY8IWBKBFwKluhD2F9E6e2kqSl3QXTghYPlEYz
-         M8tMoybpNcsIBWNgdAfi2O9iOSb3+BJf/sMwBbcI+IZ85KIyCxpfQ6CdRJaRkvGg8fdm
-         fwiFRIwhFXg//9Mw6XlBQEmInzxn0nFmVzaw7/3HtbG2pZ9Vq+dQLa+1l8gF1YJcYg5S
-         gytFKfJazr60WRiCyWVmz4sGG8DeCZCR9ZW/oTMtG6pnDQ/uhKyOZt1MutVGFBB1cUdD
-         vyFY0uFg9YKFAwBJC++TnEQKfeaWbcdZSDA78HptIaKMWVbA6AND5hM0LHf4v/QpmkMK
-         mCSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBqAiVNJolVwK9V92ltvX8NtnKkTYMfEu78KPvYXfpvcoBrDN1F8F+1X5xmfRKABae/OhB1jcl+7tj3KYl+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxkas1PDwKMvupfxjL9gXPDqBI4HyotmIgMExqtWwhnQTV1ZrBC
-	7EIAv3JUZyN4JX45ByWquXrWHRa7W3XMmFeXzgqptun4fFDG95WRbYTF
-X-Gm-Gg: ASbGncsyjstCR6MTgUp+OJad7L855L+TfPeO4/hQscrilw/HDFcqXzSONrGiSZ61uPJ
-	zm/l5VJVe6Qn3xRyvXt3CUAaAjRostpPk7eergNDME8pVx4sVROgvbtgcTzVodx6W8Y7Gu5cLjY
-	IXgN2jEpVj5O5YWVs3OsEg26Mo/ZYCmECAITGJ5o3pt8E56a3y1pLTgG7uBuFA7mNDXSNyeroAR
-	eyGo/+qfSGqn/L6tNv/Fg+sKma+2ZTVLVO5vWzNR0ESI67w0LY3QCmVTPy8wF4xxZEgHIfot/Be
-	xiMPBSJ4LtDWrbJNUycvgCfmrUWigmGbo3YRvKpdgjVjed0Sw2S9SJe7SNLdf9Cb4ZDASD01A7w
-	nwwcUqOpSjZ9OOwaGU7tyebu4008y2jthOxVzDntWM9YINRuhUTGfLPLuux5aDw==
-X-Google-Smtp-Source: AGHT+IF/AjD/uSKMHY+9I7X9FWDKbt9gCniZj27bIHBhWy2Exb0IZvR9U87sHXds88zqGJNJL10CSQ==
-X-Received: by 2002:a05:600c:458b:b0:459:dd34:52fb with SMTP id 5b1f17b1804b1-459f4eb411bmr53201545e9.12.1754727923848;
-        Sat, 09 Aug 2025 01:25:23 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a2848sm32599079f8f.71.2025.08.09.01.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 01:25:22 -0700 (PDT)
-Date: Sat, 9 Aug 2025 09:25:21 +0100
-From: Stafford Horne <shorne@gmail.com>
-To: ChenMiao <chenmiao.ku@gmail.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-	Linux OpenRISC <linux-openrisc@vger.kernel.org>,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
-	Sahil Siddiq <sahilcdq0@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2 1/2] openrisc: Add text patching API support
-Message-ID: <aJcF8RnqYVNEMlp8@antec>
-References: <20250806020520.570988-1-chenmiao.ku@gmail.com>
- <20250806020520.570988-2-chenmiao.ku@gmail.com>
+        d=1e100.net; s=20230601; t=1754728355; x=1755333155;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Bwjbob3BQMKF4UEPhqbfbZc9QrWDX+0Z77IxKZ5IcFY=;
+        b=WnGkC8Gqf1wNofds4IYZZHhXRl9nLwIo0B3tu9rvQAaLLu7jlGjvazvOKOfFWVfksu
+         7KLpKxSncgWOU99FM6afZPxCBnQV7CbESS9n0nXmdyXNTMxM8kAHQ1F4UMawnZ3dAQw7
+         OKYYXi5ZFbibgOoRkTxxyCeWcJgfoZQgPDZQk2rug23CPgahF/9T9xV+C6U+jv59gbox
+         BT7C+We8BvK3t/jKiRBG8dyNzmNJOL4cEwNtOOj7egk0quS+nl7F82zBvgR0fX/P6JU2
+         1SnSeUvzjJ4Vew9ixkDEy5GgsDJjhyly5kdiHChtSquRVoC9AWsIyK8XvzNgXizPhPkd
+         IJtA==
+X-Gm-Message-State: AOJu0YxuuqBSeEnms86wf2QmALXK+vqUfG0qON+LIdRFenYqyTHRjWcQ
+	usWfs+4nOZel3cRZKqVnEdfQA3IjQy+bl9n/ZggmknxO4i9ViB1HXQVvB3QV/Hhu6FYiXp5KsrQ
+	yZg==
+X-Google-Smtp-Source: AGHT+IFHwJeuLroag34qeDXclC4fMzhy/RI0hddE38yCwL8myoAMsSukXfOcUVvtuHRq1vdM4L0yBnYYiQ==
+X-Received: from pfhx41.prod.google.com ([2002:a05:6a00:18a9:b0:748:f4a1:ae2e])
+ (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:cd2:b0:76b:d791:42e5
+ with SMTP id d2e1a72fcca58-76c46184b5amr8068166b3a.17.1754728354998; Sat, 09
+ Aug 2025 01:32:34 -0700 (PDT)
+Date: Sat,  9 Aug 2025 16:32:29 +0800
+In-Reply-To: <11620764-a95a-40dc-97be-ba6a9a39e71c@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806020520.570988-2-chenmiao.ku@gmail.com>
+Mime-Version: 1.0
+References: <11620764-a95a-40dc-97be-ba6a9a39e71c@igalia.com>
+X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
+Message-ID: <20250809083229.2444507-1-wakel@google.com>
+Subject: [PATCH v2] selftests/futex: Skip futex_waitv tests if ENOSYS
+From: Wake Liu <wakel@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, 
+	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Shuah Khan <shuah@kernel.org>, Wake Liu <wakel@google.com>, 
+	Edward Liaw <edliaw@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 06, 2025 at 02:05:03AM +0000, ChenMiao wrote:
-> From: chenmiao <chenmiao.ku@gmail.com>
-> 
-> We need a text patching mechanism to ensure that in the subsequent
-> implementation of jump_label, the code can be modified to the correct
-> location. Therefore, FIX_TEXT_POKE0 has been added as a mapping area.
-> 
-> And, I create a new file named insn-def.h to define the or1k insn macro
-> size and more define in the future.
-> 
-> Among these changes, we implement patch_map and support the
-> patch_insn_write API for single instruction writing.
-> 
-> - V2: We modify the patch_insn_write(void *addr, const void *insn) API to
-> patch_insn_write(void *addr, u32 insn), derectly support a single u32
-> instruction write to map memory.
-> 
-> Link: https://lore.kernel.org/openrisc/aJIC8o1WmVHol9RY@antec/T/#t
-> 
-> Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
-> ---
+The futex_waitv() syscall was introduced in Linux 5.16. The existing
+test in futex_wait_timeout.c will fail on kernels older than 5.16
+due to the syscall not being implemented.
 
-The v2, notes should go in this part of the patch (after ---), this way
-it does not show up when I queue the patches.
+Modify the test_timeout() function to check if the error returned
+is ENOSYS. If it is, skip the test and report it as such, rather than
+failing. This ensures the selftests can be run on a wider range of
+kernel versions without false negatives.
 
->  arch/openrisc/include/asm/Kbuild          |  1 -
->  arch/openrisc/include/asm/fixmap.h        |  1 +
->  arch/openrisc/include/asm/insn-def.h      | 12 ++++
->  arch/openrisc/include/asm/text-patching.h | 13 ++++
->  arch/openrisc/kernel/Makefile             |  1 +
->  arch/openrisc/kernel/patching.c           | 79 +++++++++++++++++++++++
->  arch/openrisc/mm/init.c                   |  2 +-
->  7 files changed, 107 insertions(+), 2 deletions(-)
->  create mode 100644 arch/openrisc/include/asm/insn-def.h
->  create mode 100644 arch/openrisc/include/asm/text-patching.h
->  create mode 100644 arch/openrisc/kernel/patching.c
-> 
-> diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
-> index 2b1a6b00cdac..cef49d60d74c 100644
-> --- a/arch/openrisc/include/asm/Kbuild
-> +++ b/arch/openrisc/include/asm/Kbuild
-> @@ -9,4 +9,3 @@ generic-y += spinlock.h
->  generic-y += qrwlock_types.h
->  generic-y += qrwlock.h
->  generic-y += user.h
-> -generic-y += text-patching.h
-> diff --git a/arch/openrisc/include/asm/fixmap.h b/arch/openrisc/include/asm/fixmap.h
-> index aaa6a26a3e92..74000215064d 100644
-> --- a/arch/openrisc/include/asm/fixmap.h
-> +++ b/arch/openrisc/include/asm/fixmap.h
-> @@ -28,6 +28,7 @@
->  
->  enum fixed_addresses {
->  	FIX_EARLYCON_MEM_BASE,
-> +	FIX_TEXT_POKE0,
->  	__end_of_fixed_addresses
->  };
->  
-> diff --git a/arch/openrisc/include/asm/insn-def.h b/arch/openrisc/include/asm/insn-def.h
-> new file mode 100644
-> index 000000000000..dc8d16db1579
-> --- /dev/null
-> +++ b/arch/openrisc/include/asm/insn-def.h
-> @@ -0,0 +1,12 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2025 Chen Miao
-> + */
-> +
-> +#ifndef __ASM_INSN_DEF_H
-> +#define __ASM_INSN_DEF_H
-> +
-> +/* or1k instructions are always 32 bits. */
-> +#define	OPENRISC_INSN_SIZE		4
+Signed-off-by: Wake Liu <wakel@google.com>
+---
++V1 -> V2:
++- Addressed review comments from Andr=C3=A9 Almeida.
++- Applied ENOSYS check to futex_wait_wouldblock.c as well.
+---
+ .../selftests/futex/functional/futex_wait_timeout.c  | 10 +++++++---
+ .../futex/functional/futex_wait_wouldblock.c         | 12 ++++++++----
+ .../testing/selftests/futex/functional/futex_waitv.c |  8 ++++++++
+ 3 files changed, 23 insertions(+), 7 deletions(-)
 
-Is this used outside of the usage below?  Why do we need a header for it?
-
-> +#endif /* __ASM_INSN_DEF_H */
-> diff --git a/arch/openrisc/include/asm/text-patching.h b/arch/openrisc/include/asm/text-patching.h
-> new file mode 100644
-> index 000000000000..bffe828288c3
-> --- /dev/null
-> +++ b/arch/openrisc/include/asm/text-patching.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2025 Chen Miao
-> + */
-> +
-> +#ifndef _ASM_PATCHING_H_
-> +#define _ASM_PATCHING_H_
-> +
-> +#include <linux/types.h>
-> +
-> +int patch_insn_write(void *addr, u32 insn);
-> +
-> +#endif /* _ASM_PATCHING_H_ */
-> diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
-> index 58e6a1b525b7..f0957ce16d6b 100644
-> --- a/arch/openrisc/kernel/Makefile
-> +++ b/arch/openrisc/kernel/Makefile
-> @@ -13,5 +13,6 @@ obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
->  obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
->  obj-$(CONFIG_MODULES)		+= module.o
->  obj-$(CONFIG_OF)		+= prom.o
-> +obj-y	+= patching.o
->  
->  clean:
-> diff --git a/arch/openrisc/kernel/patching.c b/arch/openrisc/kernel/patching.c
-> new file mode 100644
-> index 000000000000..c9a30f0d1193
-> --- /dev/null
-> +++ b/arch/openrisc/kernel/patching.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (C) 2020 SiFive
-> + * Copyright (C) 2025 Chen Miao
-> + */
-> +
-> +#include <linux/mm.h>
-> +#include <linux/kernel.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/uaccess.h>
-> +
-> +#include <asm/insn-def.h>
-> +#include <asm/cacheflush.h>
-> +#include <asm/page.h>
-> +#include <asm/fixmap.h>
-> +#include <asm/text-patching.h>
-> +#include <asm/sections.h>
-> +
-> +static DEFINE_RAW_SPINLOCK(patch_lock);
-> +
-> +static inline bool is_exit_text(uintptr_t addr)
-> +{
-> +	/* Now Have NO Mechanism to do */
-> +	return true;
-> +}
-
-Is this needed?  OpenRISC doesn't seem to have any sections to support __exit
-annotated cleanup functions.
-
-  Ref: https://kernelnewbies.org/FAQ/InitExitMacros
-
-Returning true here means that all of the patch_map calls will be treated as
-kernel pages below though, which is wrong, please remove this.
-
-> +
-> +static __always_inline void *patch_map(void *addr, int fixmap)
-> +{
-> +	uintptr_t uaddr = (uintptr_t) addr;
-> +	phys_addr_t phys;
-> +
-> +	if (core_kernel_text(uaddr) || is_exit_text(uaddr)) {
-> +		phys = __pa_symbol(addr);
-> +	} else {
-> +		struct page *page = vmalloc_to_page(addr);
-> +		BUG_ON(!page);
-> +		phys = page_to_phys(page) + offset_in_page(addr);
-> +	}
-> +
-> +	return (void *)set_fixmap_offset(fixmap, phys);
-> +}
-> +
-> +static void patch_unmap(int fixmap)
-> +{
-> +	clear_fixmap(fixmap);
-> +}
-> +
-> +static int __patch_insn_write(void *addr, u32 insn)
-> +{
-> +	void *waddr = addr;
-> +	unsigned long flags = 0;
-> +	int ret;
-> +
-> +	raw_spin_lock_irqsave(&patch_lock, flags);
-> +
-> +	waddr = patch_map(addr, FIX_TEXT_POKE0);
-> +
-> +	ret = copy_to_kernel_nofault(waddr, &insn, OPENRISC_INSN_SIZE);
-> +	local_icache_range_inv((unsigned long)waddr,
-> +			       (unsigned long)waddr + OPENRISC_INSN_SIZE);
-
-Instead of OPENRISC_INSN_SIZE, can you use sizeof(insn)?
-
-> +	patch_unmap(FIX_TEXT_POKE0);
-> +
-> +	raw_spin_unlock_irqrestore(&patch_lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +int patch_insn_write(void *addr, u32 insn)
-> +{
-> +	u32 *tp = addr;
-> +	int ret;
-> +
-> +	if ((uintptr_t) tp & 0x3)
-> +		return -EINVAL;
-> +
-> +	ret = __patch_insn_write(tp, insn);
-> +
-> +	return ret;
-> +}
-> diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
-> index e4904ca6f0a0..b5925710f954 100644
-> --- a/arch/openrisc/mm/init.c
-> +++ b/arch/openrisc/mm/init.c
-> @@ -226,7 +226,7 @@ static int __init map_page(unsigned long va, phys_addr_t pa, pgprot_t prot)
->  	return 0;
->  }
->  
-> -void __init __set_fixmap(enum fixed_addresses idx,
-> +void __set_fixmap(enum fixed_addresses idx,
-
-Can you put a comment about this bit in the commit description?
-
->  			 phys_addr_t phys, pgprot_t prot)
->  {
->  	unsigned long address = __fix_to_virt(idx);
-> -- 
-> 2.45.2
-
--Stafford
+diff --git a/tools/testing/selftests/futex/functional/futex_wait_timeout.c =
+b/tools/testing/selftests/futex/functional/futex_wait_timeout.c
+index d183f878360b..8a48cf5d235f 100644
+--- a/tools/testing/selftests/futex/functional/futex_wait_timeout.c
++++ b/tools/testing/selftests/futex/functional/futex_wait_timeout.c
+@@ -64,9 +64,13 @@ void *get_pi_lock(void *arg)
+ static void test_timeout(int res, int *ret, char *test_name, int err)
+ {
+ 	if (!res || errno !=3D err) {
+-		ksft_test_result_fail("%s returned %d\n", test_name,
+-				      res < 0 ? errno : res);
+-		*ret =3D RET_FAIL;
++		if (errno =3D=3D ENOSYS) {
++			ksft_test_result_skip("%s: %m\n", test_name);
++		} else {
++			ksft_test_result_fail("%s returned %d\n", test_name,
++					      res < 0 ? errno : res);
++			*ret =3D RET_FAIL;
++		}
+ 	} else {
+ 		ksft_test_result_pass("%s succeeds\n", test_name);
+ 	}
+diff --git a/tools/testing/selftests/futex/functional/futex_wait_wouldblock=
+.c b/tools/testing/selftests/futex/functional/futex_wait_wouldblock.c
+index 2d8230da9064..5e85ebb33e62 100644
+--- a/tools/testing/selftests/futex/functional/futex_wait_wouldblock.c
++++ b/tools/testing/selftests/futex/functional/futex_wait_wouldblock.c
+@@ -98,10 +98,14 @@ int main(int argc, char *argv[])
+ 	info("Calling futex_waitv on f1: %u @ %p with val=3D%u\n", f1, &f1, f1+1)=
+;
+ 	res =3D futex_waitv(&waitv, 1, 0, &to, CLOCK_MONOTONIC);
+ 	if (!res || errno !=3D EWOULDBLOCK) {
+-		ksft_test_result_fail("futex_waitv returned: %d %s\n",
+-				      res ? errno : res,
+-				      res ? strerror(errno) : "");
+-		ret =3D RET_FAIL;
++		if (errno =3D=3D ENOSYS) {
++			ksft_test_result_skip("futex_waitv: %m\n");
++		} else {
++			ksft_test_result_fail("futex_waitv returned: %d %s\n",
++					      res ? errno : res,
++					      res ? strerror(errno) : "");
++			ret =3D RET_FAIL;
++		}
+ 	} else {
+ 		ksft_test_result_pass("futex_waitv\n");
+ 	}
+diff --git a/tools/testing/selftests/futex/functional/futex_waitv.c b/tools=
+/testing/selftests/futex/functional/futex_waitv.c
+index a94337f677e1..84eec26910bb 100644
+--- a/tools/testing/selftests/futex/functional/futex_waitv.c
++++ b/tools/testing/selftests/futex/functional/futex_waitv.c
+@@ -59,6 +59,14 @@ void *waiterfn(void *arg)
+=20
+ int main(int argc, char *argv[])
+ {
++	if (!ksft_min_kernel_version(5, 16)) {
++		ksft_print_header();
++		ksft_set_plan(0);
++		ksft_print_msg("%s: FUTEX_WAITV not implemented until 5.16\n",
++			       basename(argv[0]));
++		ksft_print_cnts();
++		return KSFT_SKIP;
++	}
+ 	pthread_t waiter;
+ 	int res, ret =3D RET_PASS;
+ 	struct timespec to;
+--=20
+2.50.1.703.g449372360f-goog
 
 
