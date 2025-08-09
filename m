@@ -1,95 +1,75 @@
-Return-Path: <linux-kernel+bounces-761158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E016B1F513
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:04:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0F6B1F51B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF4837AB294
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:03:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15B3F188F3CC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6889F2BE63B;
-	Sat,  9 Aug 2025 15:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF41729E0E6;
+	Sat,  9 Aug 2025 15:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="REifcxqn"
-Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QIG3Erz2"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4703B2868A1;
-	Sat,  9 Aug 2025 15:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754751877; cv=pass; b=sR+QlTK+fweDwQul8CBNllu0av/iQ2oKIHC6ZvCpLIoXwgoxFCb//zp+dRaq+PUhyubo49TxROH88l2d5Q27XJlX6ViXInX7wUzArpq5MJCCa2K25VMWjw39hYNIJyRwVGNpKPbowEmtipVQYKhkihWQd8yFSa0ekuD0CWdotJU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754751877; c=relaxed/simple;
-	bh=9SInk7XBl0PU26m9kuyot0Wcgz/WCj8xKaCGWJ3wrDI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=qrsrL9NJRKfx3aamDJappMzLnX/WUWynfNc1rwbQGt+43YtlLDiDmV7L1oQmmWsw2+qTNrxVTckXou0Uu9nPWseThBZy5AcUmmZC8ie8uAhzWVQN30xzeVvSF932Eyd5uIS54abR3erW0QxeL2DDVS3T73FE4cXEkJQhcJILSg4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=REifcxqn; arc=pass smtp.client-ip=136.143.188.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754751847; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=chTIJMNPVGOw+HKN7JHbsOZC8lRWRBvyD2kxDyziIEolwgakSVtLFYLpCITO542IjUpoD9g1kfCh7qhebcv0BLas/5otcruOL8lCs0NLaanZYPveaFxmSzOfX0vyd+uVH4wW69M4BMkHe4L7ZF8rvbU9d18/JD4UycGQUAGHS3A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754751847; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9SInk7XBl0PU26m9kuyot0Wcgz/WCj8xKaCGWJ3wrDI=; 
-	b=VxBMjlMSu2chidgHLMyXPcCdrbKMC32F5JJhqdUoqPIUHEtl17O9PJWci45IqY8MDeJPPHN7f+TeZxK/Qd+zAt2I4kON2vb4DKab4CXC8XpGF6YPDmAzUJNAJH+/4k7TnbTAghtXPB+O+JlaHgxwbwLW5GLqq+I+TX1Jk68D1TI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
-	dmarc=pass header.from=<safinaskar@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754751847;
-	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=9SInk7XBl0PU26m9kuyot0Wcgz/WCj8xKaCGWJ3wrDI=;
-	b=REifcxqnmtYNpz0wF4GubBC8nS5/0CPimGdly+ddpXZXA9EQaRNvUyLEpCsXQve6
-	VDypYt/W6jt5n8Q2YrSgvtdEGCX3NVO79jTJEH8pWcu9w1gsuNxZpzEgflujgTg9wIr
-	WlYRNMPbrvyZBsfhYbjOfQsYOqlFsbkeiIZsYg1Q=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1754751846652344.24688580782697; Sat, 9 Aug 2025 08:04:06 -0700 (PDT)
-Received: from  [212.73.77.104] by mail.zoho.com
-	with HTTP;Sat, 9 Aug 2025 08:04:06 -0700 (PDT)
-Date: Sat, 09 Aug 2025 19:04:06 +0400
-From: Askar Safin <safinaskar@zohomail.com>
-To: "Aleksa Sarai" <cyphar@cyphar.com>, "Alejandro Colomar" <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>,
-	"Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Jan Kara" <jack@suse.cz>,
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>,
-	"linux-man" <linux-man@vger.kernel.org>,
-	"linux-api" <linux-api@vger.kernel.org>,
-	"linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"David Howells" <dhowells@redhat.com>,
-	"Christian Brauner" <brauner@kernel.org>
-Message-ID: <1988f5c48ef.e4a6fe4950444.5375980219736330538@zohomail.com>
-In-Reply-To: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECEB1B424D
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 15:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754752158; cv=none; b=PjXNBWf+hurP7b/zMWYCFxLDJrlhBH3kOZTre6T5PszzBqHoxJNsO62l7OKo194zFy8N0Y5eTEVuMGkswpQFdGqG1hrQ5OCJyDLnYj9G6XdN70agKSRbpaFABRFzi5FfrlTZ6PYo0lNbeij1yuqF5UKZwAkAkipr56GCzOKNwRI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754752158; c=relaxed/simple;
+	bh=UwKqpRKDDxRgP7s4GO+5N2tPP63JCco5WMTY2dPUmJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsNk94dGH3aTDCfdkFZQC+3KMheQSKZM8ZFJZiOJObV7CmAIcjM2oYjzqce0+28k0KM3qnLLPrY9fCyf8tj8P9d5A1f98/7IZt1/NpQmAzE4poyHxvu70zGu1K0frUQke945FKNQ2N9l1SnrTVHIa45OK8VlCg1ykvK6oSEhAA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QIG3Erz2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Kh5JpPd0ptOiYUOZ9ynxu8RlzVLFZCHO4x+p/YYs66Q=; b=QIG3Erz2tmy2zkOldagaHY1R0w
+	YN3ASOLfG+/kOlfs8CwfLaBNXKI+S9An1kE9HNPvrkFgC8flBgVUIrmRk5sD+/1ngGFWjRQBibuKy
+	qBOD//Xx7wz5QhjQowZy8eAciZjahDXdgAixcqZTD5KSSXppGf/V1fBi3/2vdfTy/vvVFVfqmOt+c
+	A9ANy/l6JSDNpMKdBZzu4BwO0odN60SZiQFcxzug9YbJtRuu4GjAu4VozAZ6Xt3tyBMpSEBDXbziz
+	kpdITreN5uz7ZOLCfhTeDz39FBOHu8+y8nwby7inbGhMsCVq5tI0lM25yUIlkjwD+UJVohtowjQEy
+	PQmQ/OKQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uklC4-0000000GrcX-0zn3;
+	Sat, 09 Aug 2025 15:09:12 +0000
+Date: Sat, 9 Aug 2025 16:09:12 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: "Subrata Nath (Nokia)" <subrata.nath@nokia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: prevent RCU stalls in kswapd by adding cond_resched()
+Message-ID: <aJdkmCP41RhNC9FH@casper.infradead.org>
+References: <AM9PR07MB78119166E41E86BE5E7DDCC0882EA@AM9PR07MB7811.eurprd07.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-Feedback-ID: rr0801122767838548632ee7156d99845d0000f2981edb0e0187e4a4b2b81610de22d3cbf787a147ddc02bc1:zu0801122777075560cf48c082acbf16d200009c4d429677047108011ff5ac1348024664759804a63ad210ea:rf0801122b163779dcc3392054649eaff80000a3d5ddcb7f3241b52139eb169685ed62b3ad79c11a70921a4d8f513d87:ZohoMail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM9PR07MB78119166E41E86BE5E7DDCC0882EA@AM9PR07MB7811.eurprd07.prod.outlook.com>
 
-I plan to do a lot of testing of "new" mount API on my computer.
-It is quiet possible that I will find some bugs in these manpages during testing.
-(I already found some, but I'm not sure.)
-I think this will take 3-7 days.
-So, Alejandro Colomar, please, don't merge this patchset until then.
+On Sat, Aug 09, 2025 at 11:59:16AM +0000, Subrata Nath (Nokia) wrote:
+> Fix this by adding cond_resched() after all spinlock release points
+> in page_vma_mapped_walk() and in the main loop of shrink_zones().
+> These calls, placed outside spinlock-held sections, allow voluntary
+> scheduling and ensure timely quiescent state reporting, avoiding
+> prolonged RCU stalls.
 
---
-Askar Safin
-https://types.pl/@safinaskar
-
+No.  We're removing cond_resched().  See
+https://lore.kernel.org/linux-mm/87cyyfxd4k.ffs@tglx/
+and many many other emails over the past few years.
 
