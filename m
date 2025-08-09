@@ -1,174 +1,151 @@
-Return-Path: <linux-kernel+bounces-761076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C36DB1F409
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:08:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67046B1F40C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 417D27A03C4
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:06:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5827268C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBA224DD13;
-	Sat,  9 Aug 2025 10:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqYZd+gC"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B10254AE7;
+	Sat,  9 Aug 2025 10:09:29 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3BA146A72;
-	Sat,  9 Aug 2025 10:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715701E8326
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 10:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754734090; cv=none; b=jZqFcQCAvFMEtXFEmkxWmGLAxxCIYuUeQlZXlm4YEwyBgUga9Jva3qAQ6K/94MXwk3L4zLdqwLqStR5dHHwP8bpTsS5gO/1HBe3brpjvq6k5SgiK7WQCPh6tBJ123wauIIL279ve8enBli1RKX7oW609HplG2MtCzugHnhk2vpA=
+	t=1754734169; cv=none; b=f7FbbYcEu7HmojRT4p1ARQ5ue26/Nirw2Td0NFNfRNVF7ZOJm28mRFuj6nCGAxPP5IjLPm04Oz6qY8TVnhIC/SOepns9pMrEkwbDdIwQl/RE/M35xg/b9cu7ODfmfe9JKAa/10thbdoQdD/GcfM78m+TIa4ZhQ1wJOx7LqmLsgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754734090; c=relaxed/simple;
-	bh=lga9pgiwZZMzTGRuWaRxqaiQtbSWaBM34r1Z641KLKo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lF6sopBawH7UgmsG8KEdBVfFlGC6l8unOZC09vjAv9J2ePQB/iWQfwgApNNbCvqFDecWGlCOydnYUnGpGnwJeuO4BPCMyPg8Njzxs+1jkvavCnkZk5Y55NoDgNbAlRkYwPanExdvAbdbBZkl/vUIXEOYJGGR1uO9VegMyHrQG/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EqYZd+gC; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af949bdf36cso494175466b.0;
-        Sat, 09 Aug 2025 03:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754734087; x=1755338887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sIQXQZQu1+6vEGMEjeH1puu0gWgZwO1IcUkPlVIjGL4=;
-        b=EqYZd+gCDMDa0WnMSgzQbSFfxiokx8IzdozVxXcNXEVE7Ge19OdnY0UAwHDwPr2AXU
-         tGM+JYofiusb9x/6DfA5AD072twGYbzRkHCp4//JmfYkRKq8p+u9Fmylk6EJyfPI6Ns4
-         WIcNQQz/d7PmxJ67kGBiTQmscntybiq5nei+/510NYJDW1yBLGvSmjjxSkzrSTSzvLup
-         Fs+dD3y8eHu3Vyj2dPyDZE3seU6kf3HAi+q+xmGW6paXBZCHZTHXpk37JPblXw79zo5G
-         6sGmcrh9PAITShfG+9qSJErkZlpfWGlI1FaOL7UKgOB413lcbQUOEe/wck5/k5pbP9qR
-         9VaA==
+	s=arc-20240116; t=1754734169; c=relaxed/simple;
+	bh=UfVDSP4tIy+sLTTalushrExNwVMUpip9xKfPEYvuhfo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RbAWk8XT3XexsLcXoQTX8vM5wSOTXWdoEmhpzkf1soJRb6f86FJwr5il0gsHGW+IkVTDqlOAfJ3KPl2yJ3HmG0NaLjuqsTUkMd2D4UBrzhnOvyqO7H90N0NdNIbIZa4ZHLGg5TJwjy0BtxlzwNjZ83ypyD6ng/8dpcVGZrfkbLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3e51869b186so30281405ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 03:09:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754734087; x=1755338887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sIQXQZQu1+6vEGMEjeH1puu0gWgZwO1IcUkPlVIjGL4=;
-        b=FNbvWwlwRg1HFiouMpXoWvJ8B77r29q6vioVq3Lt309LBr2G5zjXiQBrRnvlNQ7Wrx
-         JvAu7ZOC5CHQJy5wr8cmFpQwxajTL0vlz5ehbL7LWlbAKvZExLLZraCievsyakgpd9gb
-         3NF0TvAdTmEpydFJdTen8P0bpgHpbeFutHP1FTgGkGRLnceNH+Wzoga+VRwUXiqYlskU
-         DD2jqYAEbiu+bvDmvD/ZVqZZfzECTOR6rYi8a2FbNtbZuB7sVh50j0Astn5BWDpUUig/
-         atdssIg8pueIVZmfCZxFWJkS8fAdISieYj96x5HZMVV1fCYdcOMkEmgj2IoNapHInrbs
-         XNwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcUWNN664zyixNxZnl0khx/fNCv1FTy2kpY7ZFIuls2+gTziB7QRTSQFcDWF0aaz5FRMPwBnGF4Ie0hSEJzA==@vger.kernel.org, AJvYcCWJpB6wdLBAh1eV3WXyvWhnifv5wzP/eYUfWnlMqXpWTV3g0Ef41zuXm/P9QEYzfHqkKv+hBeSPqdcbur1d@vger.kernel.org, AJvYcCWxZoZvrSoISPV09IvoQvUFS92eB6+9ou4dLTCILTdwlO7ZRVKgOclnkIRLnIvile8WAPTQM5jwJIClEptf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCuzViyazsLpsofK/beB/pLb0zGLuAEAVjNSd6LHmmVKah95iN
-	MD2MCrgSSRKOIUo+TAt8h6ITVRJEb1i3Vqfk/0Vn3c6WspYUCTTrfiO7pt7ZSoUiRTbQ+u4qRdJ
-	Ewth4xRCWgpmU2vpD4LqWkLh2S8OjCuw=
-X-Gm-Gg: ASbGncsKTUWEbrjYmQ4qBsmS+5MMbZQ+mvDGwydr4xqH0sQghG5bobBvoXhpzPiIsbo
-	Hk0+DRIs9N88sOsHhpoaJEfgL7K0/5b2htd1wsTOYKw6sAtC+mRr11CGq+MSoEkKuPXyare8Wjx
-	d46izk0O3NrcwUATb4PHvYhkjJMq4EPADsnnsxcuGjgyxDeB2+PjjKe6yOwYzNFGDOhJXc40EeD
-	noSZG8=
-X-Google-Smtp-Source: AGHT+IE6dxz8o3+PYhHrDBBahI7Jkews09Ev+dhaBseaNyuXcllm2iXZNfZ4IF8glX36sCDnlH79ucNlTx1kUQ2lMKA=
-X-Received: by 2002:a17:907:3d02:b0:ade:3ce3:15d1 with SMTP id
- a640c23a62f3a-af9c645329dmr566121066b.27.1754734087310; Sat, 09 Aug 2025
- 03:08:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754734166; x=1755338966;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t51EWKdiMX8nQRomsdgyFHzvsopLtn3pV7NsndEVukY=;
+        b=G59o0LA4FHCS4HREy+pGP0eZYhX+b5oZdNU/NbTCt6gWElc8z/julyJJM/Cf7rv9kj
+         r70jgnWjFUiykAeMsiB8r1c2Nzen5isDyVFbikfNFkZG9W8aazHB+B6K/X/VxAHEmAnq
+         3NteL2Hp5BEoBsWrwQ7Q9j89IsX2iZd7HbregCloyb7jOyETJpS6+ccy9Qsyr3ABv5dn
+         5xYMkdm/wABwlFOi2PD1u9MO5Nv8KmxSg+uX5OeuPASoMz9Pk4CgF3kUGVMq6pCLTsEw
+         nEIJ1NKfu8SisEKkMWYbicsWFn/ZgXHua5THBa9gp9flnIg4MYKT/nrJs9PmK7D5Adp+
+         I6hA==
+X-Forwarded-Encrypted: i=1; AJvYcCXC8pmLiA8StcdgAxNFj+ShwPQHa8PeTHidd3u5c4xREd/1fnMm3xraaK2yCiosHPwhSo+G39SUvmyehgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlIKeeTV6vBbD17Jb2f6Kl7ZAsg7Sewb1Qtvtzwh/3l9F06ndG
+	fpROlarW5aBCOGZFYXmgjVNqGaoT0BxdKHAT4Q9RsfJtdbpxmpwp7pg1gnM9xDacB5PEzDqMMVj
+	EfdPXuczp4oE0M5d4BI/jNQ34bE5VP1Zp8aU1cShpgIeDMx9H1P85GYK02L0=
+X-Google-Smtp-Source: AGHT+IGjJNcZOEDHQQseb3CPm4CzDqqSikXlC+huCp9wdB3KnMfVdDqcLNqnUzd1KP0JNZFs++TQ2wlXBLHuOr+oV/byGlYd5fmJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <20250808-tonyk-overlayfs-v3-4-30f9be426ba8@igalia.com>
-In-Reply-To: <20250808-tonyk-overlayfs-v3-4-30f9be426ba8@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 9 Aug 2025 12:07:56 +0200
-X-Gm-Features: Ac12FXySHqBT78bwGzLSstGk7mKLDJaNroBOdAsooH4Xa7ziEHPu7nezIHdrW7c
-Message-ID: <CAOQ4uxikEukw8o_=SrH6w01bnjD0ZBmMrf3kzLuR1U++B2x4dQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 4/7] ovl: Ensure that all mount points have the
- same encoding
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
-	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
+X-Received: by 2002:a05:6e02:1789:b0:3e3:d7e9:f305 with SMTP id
+ e9e14a558f8ab-3e5331e7a5amr123556025ab.21.1754734166615; Sat, 09 Aug 2025
+ 03:09:26 -0700 (PDT)
+Date: Sat, 09 Aug 2025 03:09:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68971e56.a70a0220.7865.0031.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in ieee80211_free_keys (2)
+From: syzbot <syzbot+de3ee5362db09487ea37@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
-> When mounting different mount points with casefold support, they should
+Hello,
 
-Different mount points in incorrect terminology, please use:
-When merging layers from different filesystems with casefold enabled,
-all layers should...
+syzbot found the following issue on:
+
+HEAD commit:    d2eedaa3909b Merge tag 'rtc-6.17' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=178886a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=75e522434dc68cb9
+dashboard link: https://syzkaller.appspot.com/bug?extid=de3ee5362db09487ea37
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/73ccac85e612/disk-d2eedaa3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/33b13def715b/vmlinux-d2eedaa3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/930b192c99ba/bzImage-d2eedaa3.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+de3ee5362db09487ea37@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 12058 at net/mac80211/key.c:1163 ieee80211_free_keys+0x536/0x650 net/mac80211/key.c:1162
+Modules linked in:
+CPU: 0 UID: 0 PID: 12058 Comm: kworker/u8:17 Not tainted 6.16.0-syzkaller-11489-gd2eedaa3909b #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: netns cleanup_net
+RIP: 0010:ieee80211_free_keys+0x536/0x650 net/mac80211/key.c:1162
+Code: 00 00 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc e8 f9 3c c7 f6 90 0f 0b 90 e9 46 fc ff ff e8 eb 3c c7 f6 90 <0f> 0b 90 4c 8b 24 24 e9 7c fe ff ff e8 d9 3c c7 f6 e9 2f fe ff ff
+RSP: 0000:ffffc90004aff040 EFLAGS: 00010293
+RAX: ffffffff8af86d55 RBX: dffffc0000000000 RCX: ffff88802bd2da00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: ffffc90004aff0f0 R08: ffffc90004afede7 R09: 1ffff9200095fdbc
+R10: dffffc0000000000 R11: fffff5200095fdbd R12: 0000000000000002
+R13: ffff8880534569d0 R14: 1ffff1100a68ad3a R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff888125c28000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcb75946040 CR3: 000000007e27c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ieee80211_do_stop+0xf47/0x1fb0 net/mac80211/iface.c:584
+ ieee80211_stop+0x1b1/0x240 net/mac80211/iface.c:814
+ __dev_close_many+0x361/0x6f0 net/core/dev.c:1755
+ netif_close_many+0x225/0x410 net/core/dev.c:1780
+ netif_close+0x158/0x210 net/core/dev.c:1797
+ dev_close+0x10a/0x220 net/core/dev_api.c:220
+ cfg80211_shutdown_all_interfaces+0xd4/0x220 net/wireless/core.c:277
+ ieee80211_remove_interfaces+0x109/0x6e0 net/mac80211/iface.c:2364
+ ieee80211_unregister_hw+0x5d/0x2c0 net/mac80211/main.c:1664
+ mac80211_hwsim_del_radio+0x275/0x460 drivers/net/wireless/virtual/mac80211_hwsim.c:5674
+ hwsim_exit_net+0x584/0x640 drivers/net/wireless/virtual/mac80211_hwsim.c:6554
+ ops_exit_list net/core/net_namespace.c:198 [inline]
+ ops_undo_list+0x497/0x990 net/core/net_namespace.c:251
+ cleanup_net+0x4c5/0x800 net/core/net_namespace.c:682
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
-> use the same encoding version and have the same flags to avoid any kind
-> of incompatibility issues.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
->  fs/overlayfs/super.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index df85a76597e910d00323018f1d2cd720c5db921d..bcb7f5dbf9a32e4aa09bc4159=
-6be443851e21200 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -998,6 +998,7 @@ static int ovl_get_layers(struct super_block *sb, str=
-uct ovl_fs *ofs,
->         int err;
->         unsigned int i;
->         size_t nr_merged_lower;
-> +       struct super_block *sb1 =3D NULL;
->
->         ofs->fs =3D kcalloc(ctx->nr + 2, sizeof(struct ovl_sb), GFP_KERNE=
-L);
->         if (ofs->fs =3D=3D NULL)
-> @@ -1024,6 +1025,8 @@ static int ovl_get_layers(struct super_block *sb, s=
-truct ovl_fs *ofs,
->         if (ovl_upper_mnt(ofs)) {
->                 ofs->fs[0].sb =3D ovl_upper_mnt(ofs)->mnt_sb;
->                 ofs->fs[0].is_lower =3D false;
-> +
-> +               sb1 =3D ofs->fs[0].sb;
->         }
->
->         nr_merged_lower =3D ctx->nr - ctx->nr_data;
-> @@ -1067,6 +1070,9 @@ static int ovl_get_layers(struct super_block *sb, s=
-truct ovl_fs *ofs,
->                         return err;
->                 }
->
-> +               if (!sb1)
-> +                       sb1 =3D mnt->mnt_sb;
-> +
->                 /*
->                  * Make lower layers R/O.  That way fchmod/fchown on lowe=
-r file
->                  * will fail instead of modifying lower fs.
-> @@ -1083,6 +1089,11 @@ static int ovl_get_layers(struct super_block *sb, =
-struct ovl_fs *ofs,
->                 l->name =3D NULL;
->                 ofs->numlayer++;
->                 ofs->fs[fsid].is_lower =3D true;
-> +
-> +               if (!sb_same_encoding(sb1, mnt->mnt_sb)) {
-> +                       pr_err("all layers must have the same encoding\n"=
-);
-> +                       return -EINVAL;
-> +               }
->         }
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-This condition is too strict IMO.
-It is only needed if ofs->casefold is enabled.
-When casefolding is not enabled for the ovl mount,
-we need not care about the layers encoding.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-This is related to another comment I have on path 7 -
-ofs->casefold config should be introduced much earlier in the
-series, so that it could be used in conditions like this one and
-in the S_CASEFOLD assertions after copying inode flags.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Thanks,
-Amir.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
