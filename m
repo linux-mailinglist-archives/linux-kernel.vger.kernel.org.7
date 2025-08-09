@@ -1,163 +1,108 @@
-Return-Path: <linux-kernel+bounces-761122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3647B1F4AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 14:53:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F46B1F4AF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D1918C086E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE2F62329A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7150329B8E2;
-	Sat,  9 Aug 2025 12:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="fZsbyABi"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5E427CCE0
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 12:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0790227FD52;
+	Sat,  9 Aug 2025 13:04:56 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88B3275B0A
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 13:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754744021; cv=none; b=VeTe7wv3t1yzXpg+1DGff7MIPwaAgLaCR5ArXYx89VlLfaZ46eGea86O3WNFp6KToWjCnp9AF63qFIKWZy/6XUpEchpSOuKH5O8GlKnaajSJ8MsNTKpAUZMCGRzMfyY3JnZbRm0ojeRSBn5pgeHhEpS9sgw84C1PXfZTu/5XQmc=
+	t=1754744695; cv=none; b=lQcAsNF2Gn5lkhXR5GaNiVbREK5GjCcs79abqTTA/ssQDndeTFR+1v6XMOTi/R/lwmkGTv0E3OHFJrlHgl9jqa6BTELMK9ol4HUTgAqauqFoBJ+OTXA6AXS4lzw/MoHVkK43HAwELzNw56s1Yg/hD4G+ns15PnQjff2ns8kgEj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754744021; c=relaxed/simple;
-	bh=fx1Rl2XN14tk+BtEc41p90+jXDudqi7LnVoEeN8UTn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EYK9X0PiRB3NefNm3XVj+ZdA1IJ4vjtv7V4gU6fde6CufcgkCDYFbtpWXukogYyO/SQ5jErzMSfY0d2QADGp1OhYn6lGbAjT1c+9ze669iytavn06YGXOMtzzuxvdL3mlDUw6t26Ob/CuR4CDB3Ryn9g53aKXa/TZq+2s8gk9+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=fZsbyABi; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31f325c1bc1so2723127a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 05:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1754744020; x=1755348820; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=l6ld1uqa+Y0Ptl6MvYRH/7bNpbs5gzVTJqHHdh4KG+0=;
-        b=fZsbyABiD2Vl1ej9G+3ddCDD8ZE1kpI8dtpAlGfM0wr+bXwNcHvbMkgwSitds+Jzy8
-         p4VoRogEBvnvd0iNuYJ2WphvrvMmF5l0OkRPB9FSnhV39LsdUpmqs1G55mPhWwbnpsjz
-         v6gTKmY+VRgYbkgegD+CtXabuhrp7v2ygbWks=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754744020; x=1755348820;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l6ld1uqa+Y0Ptl6MvYRH/7bNpbs5gzVTJqHHdh4KG+0=;
-        b=V+D7aZwCcPdP97ntrZqONd6af86jx99mT1jdU3ACQxzYcyj72XG99UZS3zR1tQ7WP+
-         4dVuJn8HpnY7ZlND0fNMN1wJl4S1uJArelYZYgJ/kW/bLfeImax0s8AbbjrdPece/cTV
-         xQXsDKZVmW9gdMn5QFQrSwSbdnrKgWmSktXCrI9dGR+MK4pQthY1sUgGwOD6OI97D72m
-         LMVU9hhLPptksNw45qJ/5MJJ27J4JU7B1HCNQcHRf+sIkPbHK/Vl9Cw3zf4OpDEZbCn5
-         Q5nNwI4X5iZVUuzJo7/YUzUuI6JymWDitx8SRUxXEq0d+xQfM/ydV7DlBn2ItCajEL2w
-         yxog==
-X-Forwarded-Encrypted: i=1; AJvYcCW17gLjsoGt4yfkX9omBRSlApcTTnautXtlHnkthXUrp6D0sq1asF4Tanu7wEFH8KmpsjC+ah+k+j+pewE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/EKdFemDXHIeGYTEZiTh4BkzdF3q0SRPbqH8PFCVMf35Hkvfi
-	UreBr1UYS3May7h+Yd+7TUZUj/oX4AJd2XJiJ1Oz/f33TSIwoGUfRWgp4r9ni9ubSHE=
-X-Gm-Gg: ASbGncu3dYnjXsjMYuWIWc5J42mx3v30O90lecn1Vfrcm+oJPIaR24VArlu1c1wff0J
-	9Plrs9do1JCVg5VnclJkwbE68hg9owIa/RXN91IV6wYZLp0PKn5kcZOh/prL52Sw75KhtFhTU2+
-	jyX1wx+zlZeQzgR/wG2nfwmfcqX05v2bgBS6sYLi2Yi7SL5JNJs3SAifWxblAL2f/ktPe9miqiV
-	9dlApqQUpTfc6aytfrFVwTe6qo9VZSDn0eTilp37nGSP9Aeas4PdT+bmUj25KdTSLpHniiHeN9U
-	ZDbk+QTde4cK4i0bEaOQoPxwiybPEPJtW0aPa24VKoxK5w8npZ9P70+94n6DoKdu1EW6DyHgjdV
-	GefxY44WjAgvVOHdP5kiF1gYjHhw0eFmmeRcgXnl921zEzkJbylrjPbrlli3Yfw==
-X-Google-Smtp-Source: AGHT+IGh8dSlzi3tIj0AQRFc46haMuqZOjOj19eAYcc5a4BffBcr0JUb8WW+MLPjBW9qywnxDaMQvA==
-X-Received: by 2002:a17:90b:17d0:b0:311:ef19:824d with SMTP id 98e67ed59e1d1-321839d39b2mr9575683a91.2.1754744019796;
-        Sat, 09 Aug 2025 05:53:39 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([175.195.128.78])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32161294ee4sm10490104a91.32.2025.08.09.05.53.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 05:53:39 -0700 (PDT)
-Date: Sat, 9 Aug 2025 21:53:34 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Benno Lossin <lossin@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
- for io-uring cmd
-Message-ID: <aJdEzqbSxv0NhuDM@sidongui-MacBookPro.local>
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
- <20250727150329.27433-3-sidong.yang@furiosa.ai>
- <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
- <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
- <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
- <DBVDWWHX8UY7.TG5OHXBZM2OX@kernel.org>
- <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
- <CADUfDZrWMrECM_LSh-nsurRBadskq_Z9wh_7nO1FUUxvOVHmKg@mail.gmail.com>
+	s=arc-20240116; t=1754744695; c=relaxed/simple;
+	bh=tGpi0w11HTJSv8+vaMNftX3CbkyNObcOdG9bdmdrEVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RElA9xpjo0lDS+I5Tm/KNyl6sTqpYSJH3xC4p5jd1/wnCdNllmrzWhNWBGG6+8YHX3xdyq6dT4N0mb+w+Z+STgBUsEETtVuxKYpL+oY/JcvHlSq1kCSnL8PyURgC9U+JW9PS3xoehuuLyquyalbY3S7Po6fLS8tRalxPbuus+9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.69.45])
+	by gateway (Coremail) with SMTP id _____8BxrnJoR5do_zM9AQ--.52258S3;
+	Sat, 09 Aug 2025 21:04:40 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.69.45])
+	by front1 (Coremail) with SMTP id qMiowJAxleRfR5doOXY+AA--.38152S2;
+	Sat, 09 Aug 2025 21:04:38 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH] sched/deadline: Fix dl_server_stopped()
+Date: Sat,  9 Aug 2025 21:04:19 +0800
+Message-ID: <20250809130419.1980742-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZrWMrECM_LSh-nsurRBadskq_Z9wh_7nO1FUUxvOVHmKg@mail.gmail.com>
+X-CM-TRANSID:qMiowJAxleRfR5doOXY+AA--.38152S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw17Cw15uF13Aw47XF1fAFc_yoWkZFX_G3
+	4rZr1xGr10qrs8uwsrZ3y8ZrySqayjq3Z8J3WkWayFka4xJ3s8A34jgF1fX345GryfAF9x
+	JwnIgan3Zr12kosvyTuYvTs0mTUanT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbfkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
+	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AK
+	xVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
 
-On Fri, Aug 08, 2025 at 09:55:22AM -0400, Caleb Sander Mateos wrote:
-> On Fri, Aug 8, 2025 at 2:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > On Wed, Aug 06, 2025 at 03:38:24PM +0200, Benno Lossin wrote:
-> > > On Wed Aug 6, 2025 at 2:38 PM CEST, Daniel Almeida wrote:
-> > > > Hi Benno,
-> > > >
-> > > >> On 2 Aug 2025, at 07:52, Benno Lossin <lossin@kernel.org> wrote:
-> > > >>
-> > > >> On Fri Aug 1, 2025 at 3:48 PM CEST, Daniel Almeida wrote:
-> > > >>>> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> > > >>>> +    #[inline]
-> > > >>>> +    pub fn pdu(&mut self) -> &mut MaybeUninit<[u8; 32]> {
-> > > >>>
-> > > >>> Why MaybeUninit? Also, this is a question for others, but I don´t think
-> > > >>> that `u8`s can ever be uninitialized as all byte values are valid for `u8`.
-> > > >>
-> > > >> `u8` can be uninitialized. Uninitialized doesn't just mean "can take any
-> > > >> bit pattern", but also "is known to the compiler as being
-> > > >> uninitialized". The docs of `MaybeUninit` explain it like this:
-> > > >>
-> > > >>    Moreover, uninitialized memory is special in that it does not have a
-> > > >>    fixed value ("fixed" meaning "it won´t change without being written
-> > > >>    to"). Reading the same uninitialized byte multiple times can give
-> > > >>    different results.
-> > > >>
-> > > >> But the return type probably should be `&mut [MaybeUninit<u8>; 32]`
-> > > >> instead.
-> > > >
-> > > >
-> > > > Right, but I guess the question then is why would we ever need to use
-> > > > MaybeUninit here anyways.
-> > > >
-> > > > It's a reference to a C array. Just treat that as initialized.
-> > >
-> > > AFAIK C uninitialized memory also is considered uninitialized in Rust.
-> > > So if this array is not properly initialized on the C side, this would
-> > > be the correct type. If it is initialized, then just use `&mut [u8; 32]`.
-> >
-> > pdu field is memory chunk for driver can use it freely. The driver usually
-> > saves a private data and read or modify it on the other context. using
-> > just `&mut [u8;32]` would be simple and easy to use.
-> 
-> MaybeUninit is correct. The io_uring/uring_cmd layer doesn't
-> initialize the pdu field. struct io_uring_cmd is overlaid with struct
-> io_kiocb's cmd field. struct io_kiocb's are allocated using
-> kmem_cache_alloc(_bulk)() in __io_alloc_req_refill(). io_preinit_req()
-> is called to initialize each struct io_kiocb but doesn't initialize
-> the cmd field. As Sidong said, it's uninitialized memory for the
-> ->uring_cmd() implementation to use however it wants for the duration
-> of the command.
+Commit cccb45d7c429 ("sched/deadline: Less agressive dl_server handling")
+introduces dl_server_stopped(). But it is obvious that dl_server_stopped()
+should return true if dl_se->dl_server_active is 0.
 
-Agreed. Thanks.
+Fixes: cccb45d7c429 ("sched/deadline: Less agressive dl_server handling")
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+I found that after commit cccb45d7c429 ("sched/deadline: Less agressive
+dl_server handling") there is always a message "sched: DL replenish lagged
+too much" after boot. Then I found this bug, but unfortunately this patch
+cannot wipe the message.
+---
+ kernel/sched/deadline.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Sidong
-> 
-> Best,
-> Caleb
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index e2d51f4306b3..bb813afe5b08 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1611,7 +1611,7 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
+ static bool dl_server_stopped(struct sched_dl_entity *dl_se)
+ {
+ 	if (!dl_se->dl_server_active)
+-		return false;
++		return true;
+ 
+ 	if (dl_se->dl_server_idle) {
+ 		dl_server_stop(dl_se);
+-- 
+2.47.3
+
 
