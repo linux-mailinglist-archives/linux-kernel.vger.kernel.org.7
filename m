@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-761130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FB1B1F4C6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098FDB1F4CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B7A2723BA0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27115175281
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB8729B208;
-	Sat,  9 Aug 2025 13:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0B526529A;
+	Sat,  9 Aug 2025 13:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lC1t++yc"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKabPf3S"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762D42609D4;
-	Sat,  9 Aug 2025 13:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A39D1D61BC;
+	Sat,  9 Aug 2025 13:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754747120; cv=none; b=LwKZPdQqVRbz5WYei5Ct8+Kypk3zsMaVUai/H/5ZWb2dcjMbtW8rraX8AjfvsAtnzC925Xk5isTf5xkzrmzBWmFDKMtj2n4jKDOsiEa6duIdpst4h8k2N3wKu3uyuvJiksatJuKn1VF571TwSH1dY6lj2Vx9mwoCdUkJ/A29Q/4=
+	t=1754747478; cv=none; b=hXF9VLPbIMEz3hveV1Joy6+EkYTG6nF1wpGpN/0hQdAeAr1I260Wx7lPgiH7hlrps8uARECTKC2DBGxpsQIj+ktwfGwU/+K69LyRc4qtrHBSu+cETZg56laZZuVxPmIq3oI6jakrLR8OyMBMvYjk1x1KCkVR6dY6BIpW8HEz/kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754747120; c=relaxed/simple;
-	bh=OUb89YNcB+O1QqowKQck97SXaBpSIoevZfkXAChOW2s=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=lsaVujez/kB8YawF1wNCbNP8MDQgdAazzuA2Xmwuu0Tp7h0CC6qOQbhf81JUC3KeobXYicJKb+XadMJ78T+TMxvC4ZPgmUSb27ogrJEbCOsAhTIntZjQGx6qvp4KQANpXhhxK/WpiKe5jxtdr/ei9ZWz30OL1AJWbBu4ey+KpNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lC1t++yc; arc=none smtp.client-ip=209.85.219.43
+	s=arc-20240116; t=1754747478; c=relaxed/simple;
+	bh=1CkWIYU9TiZBzPgfU8euPX2L38utanqE8VHj514fMNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3F7MqehGGLcJS91ttKHLfk/d7rSvUNUeziDnSbBTaSLw8B9oTY+011YoyCW12WTALgjo/9rm4UrQTFEF7HNnR7MYIURm/20MxJIh7Iii0dQ5rve7PRaHQQACj7DL6kFki0Am035erK7qQyPUr5UTnSOgProKcmJs4e57aneD/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKabPf3S; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fa980d05a8so30838286d6.2;
-        Sat, 09 Aug 2025 06:45:19 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76bc55f6612so2899534b3a.0;
+        Sat, 09 Aug 2025 06:51:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754747118; x=1755351918; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z6tarr7SGERQGP4F8QUjzkuALlpG89WF5FI3+w2kYgg=;
-        b=lC1t++yclb2lcu/22TEdlySgL7WhfA1H2ORbAtuDfJbvu+Ez7RacqTfTo/5VVZLAS0
-         kC8geTsMnDfxQjYGl474t00RQGTIIdKkZGWhhGbW/47nlMXY5ScnSH+118xRfwlTxhF+
-         H5lk5GqiY1/0idESX2CORNkOObjGWxE68GXoAnDByBfTyXrt2chG4bQpUkh69CrpN/7i
-         IWPb+Sa+O942rcf4E3LKoOXCe7Q0HXa4pn7uATTn+YlBrzKhh8ApRJJWnWDVYOFMkwfe
-         XHZOQtX9MG9TfwmSbBkL/qJaxurMNrNRvLcRjA9QysOH60XhAlZvyCmuXx9wnMxFhnYd
-         GSig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754747118; x=1755351918;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+        d=gmail.com; s=20230601; t=1754747477; x=1755352277; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=Z6tarr7SGERQGP4F8QUjzkuALlpG89WF5FI3+w2kYgg=;
-        b=ocwAVklu5EtI1vP49qV2rv1dTJlZ18B3QLrDU8TdTavnjHEwiSEkpOxIO/p9DNjfMH
-         jGtLkJ33DwvBnWmTcYbNGubTVx9bEo4WAxs4kBNbgcPSeWYSVFT/BlUehmGtWoejYV81
-         32JM99h1+KYuT8u6usw3ke8TYeppXBeeNUGqeBcSDLaM+n6OSFb3Z1KMLGYvQcj6mLBS
-         bIyGrdtJUdUOLa8HLz0WXbV2FF1obIE1DjWBfQvBv9oEdMRHQ6zm5zEDkD2fWq2wDY3x
-         M3Ba0L2z1hVy94IItCertceUKUkxHOSsW1G+Ivn93lL9kqnu7MDxzeyPI4rwxUgeU6bA
-         /HzA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8BkZhqThOQ6gO/aXgGl80BF2ZbENe8FJMTfDWM2jLAzQJY1d+nk8WyyS7sJgbkRko+DnAt53o5gyqmhE=@vger.kernel.org, AJvYcCWswpdXXbi3L/nI0C8wONdoy+LJNENz0JG6i24IlxofguTH/vnx3zTKCauheWzJTQKA3gEOhgYc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8LLmJc6b3GxA+bFiyjPnTM5A2CYazp4GKlfJ9cRwa5+/I66RL
-	MCKJRQyliuExfiSzqQk7FwFiNrZ8yGob+AJxIk+9NSQC0t590PH4KlyH
-X-Gm-Gg: ASbGncstMvGHP+7hNbfolqVur+ZZeb6JMiO5NwSA4iV5cnXlFJrExGYhxsiem+aPV6A
-	ONxo1Sxav/YxTczrkI1Z9tnCEg+cC3RB3x4wSIUzl4mT9pGo30UPkHkljjPfG9Q339Ie/PchXrS
-	R24XBMeLC/+2lHHeZYKvoLsD+u7oKY/V1GNwKBiAa3ELvNRSqC2VHhFrKf1G0rLhcB2hP+Bp2HY
-	3qHqHBhAYZaoEyx9uj8jUh6Zaj2VC2o9TWWckMWkYzqraX76Fp64wZ7IPF4ZAkYi9DNuLsc9uFb
-	DVFH+S7j+b8eXm/aewGdfMXgbjLYuD3QXAvibL/HFwjY84Cztv9RvDtvuazBD1raQJ2bMx2SPMc
-	6eZ1PMcTbWcgVr0ftLmsipBwoX+5ghNsHrSSHy3Svh0m/MY7FsFZHaKokhya84q9DUZLLoA==
-X-Google-Smtp-Source: AGHT+IG/n7ywdlro1lwrlyMwE93AsDo9/VNyCkACNxcREpkxAWB8Gg5krVfaA79gvryYNnCsHWOVLg==
-X-Received: by 2002:ad4:4ee7:0:b0:707:4668:3314 with SMTP id 6a1803df08f44-7099a28496emr96806106d6.1.1754747117960;
-        Sat, 09 Aug 2025 06:45:17 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70937821c2esm102984576d6.68.2025.08.09.06.45.16
+        bh=PHGHdetss61Sc0mfujVjdXkttn0zgYYmgZcXGuGxpUg=;
+        b=ZKabPf3S4p1OaYeMn9a19xG1vnT8OQU46TEsMKlzNTvebeY4h+byQWWUHPMH7CZUFD
+         /m1798jjhWhmsqxqzHaNhTWmoFOkDkNNYcJiQ27+mZf4LfccB3q4JCoL8oWqvfBJEqH4
+         F9omC5tSJ5RegUNxsBYDoaa8nYaDQz3Iu/qnEQ7m6/+/qpQPBkWa3CPi/9Ft9F7YtFoF
+         J90cF4HKBB8TAyRW1OMA1ts+1p3ivKqBmtT4ttJz4DUrZwZe07Nz4fVo59Goo+htYxwb
+         FgNzAJNEsOx0Y4FAMT/gXng04Ozhv5hWB4nCBBaZOBAjQXZWfub8kH9SAuyTzyjaY3Jz
+         n9cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754747477; x=1755352277;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PHGHdetss61Sc0mfujVjdXkttn0zgYYmgZcXGuGxpUg=;
+        b=DNq4skin3kVsTlMZLjcmbSh2Blvk0rh9rWMSZtTDaHvA5e7BEG1T1T7XjEoomDSZxO
+         UIlA+YaYMs6lLVEPlFyM6HbdEIxf3ldFZnVwsIEe0PnTldQpgjrmujuXdl/P2Crk9sas
+         kFP1byPI4XxlWdhdhEgWQ5vOwbyrJHhXAdy0CtzjRsjW6cpIPPkKHJTYA0W6KXR8TiU1
+         4ha71nnXtsjF7RZbJWeqsjZU90yaDf1JjReL2XJIrN7I++5R6NeNw6+FARtT1Huuki6X
+         7iQLr8rOCTdBgcVqyLzayNL+33pVofH+FFTeuyfnq8eG2V/+ke4Qir8apxuTVrsmns4d
+         yjQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEOMtL/PcxDO0Ub+P9x85YY4Bc+EnPwKbJykNmcrIXKA33rKux+eaM6A7HwCGEzxQgrlGpVjPOj0JutbH7@vger.kernel.org, AJvYcCXMYxTgRBK9ohe7SD+uum8STedL0bRN66AJWv3er1Yq9syKm7zUmAj00vk5P7TBJOdelRrr/5QDxeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs71jt0fUfEHcuSgQymPw0r6sRp/IwdYvOTr72r0xeGYX/cZYR
+	Zo435fIA6czMVnfjDf0DsA884zYYSVYqZMH4Bmhg1JEz/7Tj70E5ZnjS
+X-Gm-Gg: ASbGnctxouqqnpnQUaOI1/dUQo2D1siXATlWZZh/gLkz2p3O1rlK1qhSl3qdGeo/Y6T
+	tlfbnuWrcyb1VcxY+9itChzuHGXgUqlxb7H981cmZlhQD8HIdyap2kdk6gRopm9NR85wig2wfMs
+	LF3srZaXvbwiJqs0WnLa6RG81+LByOop1Drlz6LuLSjcoOBRgCmwA8sTV44590+ZQWKxI/pF5cI
+	eLJrI9ZjrwWLwnq2KYou4F5elgY3hIY21Pp4AiPAzUItbb69KAYw6tRjno6hAn5nhEekAR+jEBZ
+	R3DXvK29vKWFlHtP7byXLaznnM54sH1Yo/RMJSmrIJ0RNcGWe4dzUeLPpq5QimeMCpHFBL9iIwT
+	xrucwMEPmezcVvsORPc5/ZH2orgF4XIIaoYVGYm/JNA==
+X-Google-Smtp-Source: AGHT+IFhwSyIVLsc0VjIyhOgFApol7RJrQu8U52Gnc3jHjzczZ/isefoEOSJP86rPX6uNN1evgBA7Q==
+X-Received: by 2002:a05:6a20:2444:b0:240:1dca:d144 with SMTP id adf61e73a8af0-24055558e7bmr10966679637.8.1754747476695;
+        Sat, 09 Aug 2025 06:51:16 -0700 (PDT)
+Received: from localhost ([2804:30c:1f50:da00:c6fb:5400:5af6:282f])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-76bcce8a838sm22718366b3a.32.2025.08.09.06.51.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 06:45:17 -0700 (PDT)
-Date: Sat, 09 Aug 2025 09:45:16 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Xin Zhao <jackzxcui1989@163.com>, 
- willemdebruijn.kernel@gmail.com, 
- edumazet@google.com, 
- ferenc@fejes.dev
-Cc: davem@davemloft.net, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- horms@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Xin Zhao <jackzxcui1989@163.com>
-Message-ID: <689750ec91ef7_2ad372294d8@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20250809124313.1677945-1-jackzxcui1989@163.com>
-References: <20250809124313.1677945-1-jackzxcui1989@163.com>
-Subject: Re: [PATCH] net: af_packet: Use hrtimer to do the retire operation
+        Sat, 09 Aug 2025 06:51:15 -0700 (PDT)
+Date: Sat, 9 Aug 2025 10:51:28 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+	andy@kernel.org, dlechner@baylibre.com, jic23@kernel.org,
+	nuno.sa@analog.com
+Subject: Re: [PATCH] MAINTAINERS: Update max30208 maintainership
+Message-ID: <aJdSYIv8_QX0WwdI@debian-BULLSEYE-live-builder-AMD64>
+References: <20250808190203.7493-1-marcelo.schmitt@analog.com>
+ <CAHp75Vc1KgiDUUEjeEKdrSfom6NThPG-383O=sezydnrZLoGqg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75Vc1KgiDUUEjeEKdrSfom6NThPG-383O=sezydnrZLoGqg@mail.gmail.com>
 
-Xin Zhao wrote:
-> In a system with high real-time requirements, the timeout mechanism of
-> ordinary timers with jiffies granularity is insufficient to meet the
-> demands for real-time performance. Meanwhile, the optimization of CPU
-> usage with af_packet is quite significant. Use hrtimer instead of timer
-> to help compensate for the shortcomings in real-time performance.
-> In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-> enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-> This is unacceptable in some high real-time systems that require timely
-> processing of network packets. By replacing it with hrtimer, if a timeout
-> of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-> 3 ms.
+On 08/08, Andy Shevchenko wrote:
+> On Fri, Aug 8, 2025 at 9:02 PM Marcelo Schmitt
+> <marcelo.schmitt@analog.com> wrote:
+> >
+> > Update MAX30208 temperature sensor driver maintainer.
+> > The previous maintainer's email bounces and no longer works.
+> > Also mark the driver as supported.
 > 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+> Reported-by:
+> Closes:
+> 
+> ?
+Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+Closes: https://lore.kernel.org/linux-iio/20250808174901.4556B33A@davehans-spike.ostc.intel.com/
+> 
+> Otherwise LGTM,
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> 
+> ...
+> 
+> > -S:     Maintained
+> > +S:     Supported
+> 
+> Just curious, are you really having this as a day job task?
 
-This is a resubmit of the patch you yesterday [1]? While the
-discussion on the original patch was ongoing too.
+There is a request for MAX30210 support and so this driver may get extended to
+also support that part. Though, even if we end up with a separate driver for
+MAX30210, it feel unlikely to me that people lost interest in MAX30208 
+as that's still in production according to MAX30208's page [1].
 
-Net-next is also closed. See also see also
-Documentation/process/maintainer-netdev.rst for the process.
+[1]: https://www.analog.com/en/products/MAX30208.html
 
-I'll take a closer look later. Agreed in principle that it's
-preferable to replace timer with hrtimer than to add a CONFIG to
-select between them.
-
-[1] https://lore.kernel.org/netdev/20250808032623.11485-1-jackzxcui1989@163.com/
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 
