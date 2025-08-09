@@ -1,102 +1,78 @@
-Return-Path: <linux-kernel+bounces-761018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DF6B1F30E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:13:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F699B1F335
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA327265C3
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:13:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE9777B13D8
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0D927E06D;
-	Sat,  9 Aug 2025 08:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AB7239E65;
+	Sat,  9 Aug 2025 08:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QnmxysSA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ievb2aAE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878E127CCE0
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 08:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DAD219E8;
+	Sat,  9 Aug 2025 08:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754727200; cv=none; b=Yll9VwROQPLQmWcpH4X3K9OybWtnF+89w+FcCYBmHvLNoYOYCohF4j5/VMPIRULLSFgQ0kHAldBTdiO2sVDOb7VXteqcHNKXtDJzT6e6W1d9/ZpHC/ZBZV4cFHUqgGRDKG90LjzpDtnG39zt9xIlwu+uVcpEUTgalkBR54UiMFc=
+	t=1754727441; cv=none; b=VgDeREJb58+KLmg+v++ZSNg9xyPabXLRFKkWllJ0oH5fDzQ3zyWnhK5R9TI2bouIAL9FLVww+pHwhvHRVpRgZWxzeMNvgAPsIFRC2oS2E1FxLoak3YdaitrbkvHYUO22j72Wt79+xQmtgsxIL7WcCpultGJp3roNsb1wmKyJ+lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754727200; c=relaxed/simple;
-	bh=Zo8mlEHVKK7r3dcAcUMCIDPk9nysi03jQvXkxi4PMQA=;
+	s=arc-20240116; t=1754727441; c=relaxed/simple;
+	bh=2YSZy7Wa2RklNltVg30MuT+diQJQvzunPDVhj+9/SR0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kSCYrrjWFUVjPcW6rB6qUyfe5cbdD2E/Wzlw+iWiHK/eI1lDqZtvO2MXbMr1iBAyZ7FFN1LpSpw3jJMhm/eJJKbHWFmUZk7K/HqkzHRfXXyLykBRUFLZprRkKNAjOaAARltxjOooPmkpVvudrpQY9dJINeX8InixmXTjlcQE6ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QnmxysSA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5794e2l7010478
-	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 08:13:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=O2W0/Uola8XxJxiRMnFlST/E
-	5qvZKRamukaTM8REaeY=; b=QnmxysSAIisuS80ghUv9HK8lNGCT2nUbWyl8EGdo
-	4HKaFSgJ2PFxvBX/dxZ3ySjEZD+CtXFCRTKbpfqdS7QN7fMf4D4J0bpvIMwV0dC+
-	7y2BLgWFuRicSPYqtZ05z/I0UH89CmegqfEwF0rJtwSI0VkOHVNX0LpOGvIacdYx
-	W96E1m0sCbSsG+cgOgRl8j7YdH6ZJQsafLBPSv0IDgsF0ZWQG4Sr2QnxEFqyq7V4
-	pZi3inLWRgdmEJBqXXKeXW3UUikzp1hyh4nEWw5OTKcVogtGgC3+AQhbv8Zm/RsY
-	WPVfunSG/ESBGC/C8ovd8Nd7tnvkh4Q6L7wlEdDMhZF9dA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dygm8824-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 08:13:18 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b06228c36aso38476911cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 01:13:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754727197; x=1755331997;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O2W0/Uola8XxJxiRMnFlST/E5qvZKRamukaTM8REaeY=;
-        b=cigakHawuuUnv2ywV7+QbSQGTJkfs1NPbLhB0Ep1PyzzGxK47HSDsP+3x9Kw8YyYNN
-         VZsiUboMkdlkKoxFRqt1OlrcopJN+pBxurGr/3N4Win0RClKqxQrOS/obLib9raEhdLy
-         lcyVfdTqByACk6OaQVY0NyhQmwPCY5ftp9a1noxKkwfCJn7qAQ/JSYjeooJXkEuvwgN8
-         gYEYU/WRSJrAtenjXvSVIz6KiIAKRlfj8/WIJA79rGl0S7GCn91xhHCu9E7SgIMMa9JR
-         JEfIyffUS/TDS2Bi/vPjWlLXqjo551ddR3rCpbM/wZBVNN0hcIEgltpqxnM1iOXpyfOf
-         FDQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUJmiu11dGvSj5Rx7wKXS0/FzQM7ufdYVlkEbUbefoEuvCLdRvJQYgt8wH1Zy1lqE7V1As0FopFnFOwpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJdNo62ANNVuRkdBmzt0b3DY07VDSO0L9eccJuM3oYJ+O8eQyL
-	oiXMH4XA0yv4POsf6W2uwavst70hDR48tTrnPNoDhSIUCZyh8t1qw4i14aBYN5VGNgz21sXqHKN
-	5BvKMf0HAaGKkCyB8wgndK8bBQ8LMj5kI+fkH7mhWVH62s7yLRbt7ZjqUDyidIHejh8A=
-X-Gm-Gg: ASbGncujLbZQan8h8z/MzE4D+AKCsE117CS8UHg5denvsQFUtJ70mx0jHp+lHzV+e61
-	zk0FfTWFGeVKvcwIQF/7k+a7HU6BBGun4NvqAr9QLs2LxOX6ay6TdBhdUASNlupV182UgyrqrWl
-	vG3C6WeYeP82RM35HM2sHftQCfYaxXudgJfONXONT8AiWCK+yxs4zTEyi8sPrwlZBvuiC/PfL++
-	YsGtFxN/1IC7b+oBd8v8zSSQsLimKiJaXwWlp14UEwb9Tm13fb10N/23K5urVEbAUodyjbp5wfN
-	uHUhImVi4NURrBwt/y3qyeIhngQ8bpBTakOim0gFPcnA+6fwAYzdpYYiRq3QaTUGuE59YPIIgLS
-	KcrVlyCVBExPCv68L9L8qHevGDsOLhk4DvOeJvy4q9BQlqX5PIH5y
-X-Received: by 2002:a05:622a:514b:b0:4b0:761a:6c2a with SMTP id d75a77b69052e-4b0aed0bfe6mr93340721cf.11.1754727196942;
-        Sat, 09 Aug 2025 01:13:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGWYFgm3/KyGXb3VuNmzRZloNCLps1V2yzQNaYINb8ch8ribH0OaG2k0Toez8ZWQTKm+Sc4Q==
-X-Received: by 2002:a05:622a:514b:b0:4b0:761a:6c2a with SMTP id d75a77b69052e-4b0aed0bfe6mr93340531cf.11.1754727196459;
-        Sat, 09 Aug 2025 01:13:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cc8592678sm169601e87.31.2025.08.09.01.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 01:13:15 -0700 (PDT)
-Date: Sat, 9 Aug 2025 11:13:13 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 5/6] phy: qcom: qmp-combo: register a typec mux to
- change the QMPPHY_MODE
-Message-ID: <ibrupwvn5frzb4vo3eukb7p7pzonaxwhygshz743wmyrbprkcq@xcpt4ryzvwqr>
-References: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
- <20250807-topic-4ln_dp_respin-v4-5-43272d6eca92@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qckTwOibGnEWcLSi7Ppn6uSGiBxuSCal7NIc5xynOSnFTW1Verze25SoHOJEOSr3mVibHR0a0y7UTjp6DF3DvEqPkbeIfQaaLpZNkvxr+ijG+orENYDMJvgzh/jmD3CMXuc/AQhMf+3Vvg6bUmWSi22fpvGz/sVs3pJlm3QBZDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ievb2aAE; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754727439; x=1786263439;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2YSZy7Wa2RklNltVg30MuT+diQJQvzunPDVhj+9/SR0=;
+  b=ievb2aAEsLJVJ3AaOpwTeddO4F/Eh3HqZiId5BGuuRBGhzMWiydFWR61
+   2euJGDZXlrZoQeFqUPWKYExn+xWGW7IblYns94Bcm5sE07Tz7urDzoz7a
+   50gXj66qnMjeEVmWOBllIqVgh2LBAddsFredGulM7EDuOEnS3t4FUZEjM
+   Kz//Hds28/Puj99ESXUaTaW/NdZh++l3BTxnHvYQWO8ZjehBfioSCoERN
+   pP+KcL9LqU8tFQZwjWVpuSI8/cM5V6PgZ3Wmae7plGnp/8vkBy8mLNR85
+   NCicxJnhGHA9itm85FVmz8lGvNUicDodIWv0XoT9+IbODp7ENEZo7hB/J
+   Q==;
+X-CSE-ConnectionGUID: /4x983GkRLmWcHL3yuzlAQ==
+X-CSE-MsgGUID: /hO5qcNOTq+qHSzqVsHPDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60864068"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="60864068"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 01:17:18 -0700
+X-CSE-ConnectionGUID: LZnx3N6iS1u8B8S2+Ekigw==
+X-CSE-MsgGUID: H05uyA1fQV6ht5YdS4wrqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165816372"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 09 Aug 2025 01:17:16 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ukelN-0004gc-1G;
+	Sat, 09 Aug 2025 08:17:13 +0000
+Date: Sat, 9 Aug 2025 16:17:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Abinash Singh <abinashsinghlalotra@gmail.com>, bvanassche@acm.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	James.Bottomley@hansenpartnership.com,
+	abinashsinghlalotra@gmail.com, dlemoal@kernel.org,
+	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v5 2/2] scsi: sd: Fix build warning in
+ sd_revalidate_disk()
+Message-ID: <202508091640.gvFPjI6O-lkp@intel.com>
+References: <20250808205819.29517-3-abinashsinghlalotra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,63 +81,191 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250807-topic-4ln_dp_respin-v4-5-43272d6eca92@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzNSBTYWx0ZWRfX/KtFrCyfObwk
- omCJI7vcMKd3kIKQJCKjq9A+QTbU2jAK7k7/YMokEpMw4a05sdjB/vhU1+eAmJCpQyK259njfC4
- hQ3reh+P3eCscH9FRATciukVsmEzlNhuu6/xQULYgIBDVzpLfy+2huxEgXcYyR0bD6RNUMcNZYJ
- PBo+xbnC7AaB8bevt7vhnJkKrNDOurMYSW8CU3z9UbHLAV2zOEiqApky0zi/IhD7P2v+rMqJeYs
- UQYak9tj4ZAbPDIXiomc+IWegUfizDRM+WxmxQhtVTCIX6XBmJWUTOIpn8k7fQZLpcjtgm5/MvJ
- nAM1NJ6jXWN+3YmTin+h+fKegkiSsNcsl8f5N227XneZim5/4p4+hhVqsT32T5aevJ38lhIRBse
- PHuQLERR
-X-Authority-Analysis: v=2.4 cv=FvMF/3rq c=1 sm=1 tr=0 ts=6897031e cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=k9OlTz8o9ZlVdqEcvcAA:9
- a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: 0MRsvUO6Vc46J8D-cXQuOTnmLGz-WeaZ
-X-Proofpoint-ORIG-GUID: 0MRsvUO6Vc46J8D-cXQuOTnmLGz-WeaZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-09_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
- clxscore=1015 impostorscore=0 spamscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090035
+In-Reply-To: <20250808205819.29517-3-abinashsinghlalotra@gmail.com>
 
-On Thu, Aug 07, 2025 at 06:33:23PM +0200, Konrad Dybcio wrote:
-> From: Neil Armstrong <neil.armstrong@linaro.org>
-> 
-> Register a typec mux in order to change the PHY mode on the Type-C
-> mux events depending on the mode and the svid when in Altmode setup.
-> 
-> The DisplayPort phy should be left enabled if is still powered on
-> by the DRM DisplayPort controller, so bail out until the DisplayPort
-> PHY is not powered off.
-> 
-> The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
-> will be set in between of USB-Only, Combo and DisplayPort Only so
-> this will leave enough time to the DRM DisplayPort controller to
-> turn of the DisplayPort PHY.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> [konrad: renaming, rewording, bug fixes]
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 118 ++++++++++++++++++++++++++++--
->  1 file changed, 113 insertions(+), 5 deletions(-)
-> 
-> +
-> +	if (qmp->qmpphy_mode != QMPPHY_MODE_USB3_ONLY && qmp->dp_powered_on) {
-> +		dev_dbg(qmp->dev, "typec_mux_set: DP PHY is still in use, delaying switch\n");
-> +		return 0;
-> +	}
+Hi Abinash,
 
-I can't say that I'm fully happy about it, nevertheless:
+kernel test robot noticed the following build errors:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+[auto build test ERROR on jejb-scsi/for-next]
+[also build test ERROR on mkp-scsi/for-next linus/master v6.16 next-20250808]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Abinash-Singh/scsi-sd-make-sd_revalidate_disk-return-void/20250809-045941
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20250808205819.29517-3-abinashsinghlalotra%40gmail.com
+patch subject: [PATCH v5 2/2] scsi: sd: Fix build warning in sd_revalidate_disk()
+config: x86_64-buildonly-randconfig-002-20250809 (https://download.01.org/0day-ci/archive/20250809/202508091640.gvFPjI6O-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250809/202508091640.gvFPjI6O-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508091640.gvFPjI6O-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/scsi/sd.c:3709:16: error: call to undeclared function 'size'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    3709 |         lim = kmalloc(size(*lim), GFP_KERNEL);
+         |                       ^
+   drivers/scsi/sd.c:3709:16: note: did you mean 'ksize'?
+   include/linux/slab.h:491:8: note: 'ksize' declared here
+     491 | size_t ksize(const void *objp);
+         |        ^
+   1 error generated.
+
+
+vim +/size +3709 drivers/scsi/sd.c
+
+  3683	
+  3684	/**
+  3685	 *	sd_revalidate_disk - called the first time a new disk is seen,
+  3686	 *	performs disk spin up, read_capacity, etc.
+  3687	 *	@disk: struct gendisk we care about
+  3688	 **/
+  3689	static void sd_revalidate_disk(struct gendisk *disk)
+  3690	{
+  3691		struct scsi_disk *sdkp = scsi_disk(disk);
+  3692		struct scsi_device *sdp = sdkp->device;
+  3693		sector_t old_capacity = sdkp->capacity;
+  3694		struct queue_limits *lim = NULL;
+  3695		unsigned char *buffer = NULL;
+  3696		unsigned int dev_max;
+  3697		int err;
+  3698	
+  3699		SCSI_LOG_HLQUEUE(3, sd_printk(KERN_INFO, sdkp,
+  3700					      "sd_revalidate_disk\n"));
+  3701	
+  3702		/*
+  3703		 * If the device is offline, don't try and read capacity or any
+  3704		 * of the other niceties.
+  3705		 */
+  3706		if (!scsi_device_online(sdp))
+  3707			goto out;
+  3708	
+> 3709		lim = kmalloc(size(*lim), GFP_KERNEL);
+  3710		if (!lim) {
+  3711			sd_printk(KERN_WARNING, sdkp,
+  3712				"sd_revalidate_disk: Disk limit allocation failure.\n");
+  3713			goto out;
+  3714		}
+  3715	
+  3716		buffer = kmalloc(SD_BUF_SIZE, GFP_KERNEL);
+  3717		if (!buffer) {
+  3718			sd_printk(KERN_WARNING, sdkp, "sd_revalidate_disk: Memory "
+  3719				  "allocation failure.\n");
+  3720			goto out;
+  3721		}
+  3722	
+  3723		sd_spinup_disk(sdkp);
+  3724	
+  3725		*lim = queue_limits_start_update(sdkp->disk->queue);
+  3726	
+  3727		/*
+  3728		 * Without media there is no reason to ask; moreover, some devices
+  3729		 * react badly if we do.
+  3730		 */
+  3731		if (sdkp->media_present) {
+  3732			sd_read_capacity(sdkp, lim, buffer);
+  3733			/*
+  3734			 * Some USB/UAS devices return generic values for mode pages
+  3735			 * until the media has been accessed. Trigger a READ operation
+  3736			 * to force the device to populate mode pages.
+  3737			 */
+  3738			if (sdp->read_before_ms)
+  3739				sd_read_block_zero(sdkp);
+  3740			/*
+  3741			 * set the default to rotational.  All non-rotational devices
+  3742			 * support the block characteristics VPD page, which will
+  3743			 * cause this to be updated correctly and any device which
+  3744			 * doesn't support it should be treated as rotational.
+  3745			 */
+  3746			lim->features |= (BLK_FEAT_ROTATIONAL | BLK_FEAT_ADD_RANDOM);
+  3747	
+  3748			if (scsi_device_supports_vpd(sdp)) {
+  3749				sd_read_block_provisioning(sdkp);
+  3750				sd_read_block_limits(sdkp, lim);
+  3751				sd_read_block_limits_ext(sdkp);
+  3752				sd_read_block_characteristics(sdkp, lim);
+  3753				sd_zbc_read_zones(sdkp, lim, buffer);
+  3754			}
+  3755	
+  3756			sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
+  3757	
+  3758			sd_print_capacity(sdkp, old_capacity);
+  3759	
+  3760			sd_read_write_protect_flag(sdkp, buffer);
+  3761			sd_read_cache_type(sdkp, buffer);
+  3762			sd_read_io_hints(sdkp, buffer);
+  3763			sd_read_app_tag_own(sdkp, buffer);
+  3764			sd_read_write_same(sdkp, buffer);
+  3765			sd_read_security(sdkp, buffer);
+  3766			sd_config_protection(sdkp, lim);
+  3767		}
+  3768	
+  3769		/*
+  3770		 * We now have all cache related info, determine how we deal
+  3771		 * with flush requests.
+  3772		 */
+  3773		sd_set_flush_flag(sdkp, lim);
+  3774	
+  3775		/* Initial block count limit based on CDB TRANSFER LENGTH field size. */
+  3776		dev_max = sdp->use_16_for_rw ? SD_MAX_XFER_BLOCKS : SD_DEF_XFER_BLOCKS;
+  3777	
+  3778		/* Some devices report a maximum block count for READ/WRITE requests. */
+  3779		dev_max = min_not_zero(dev_max, sdkp->max_xfer_blocks);
+  3780		lim->max_dev_sectors = logical_to_sectors(sdp, dev_max);
+  3781	
+  3782		if (sd_validate_min_xfer_size(sdkp))
+  3783			lim->io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
+  3784		else
+  3785			lim->io_min = 0;
+  3786	
+  3787		/*
+  3788		 * Limit default to SCSI host optimal sector limit if set. There may be
+  3789		 * an impact on performance for when the size of a request exceeds this
+  3790		 * host limit.
+  3791		 */
+  3792		lim->io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
+  3793		if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
+  3794			lim->io_opt = min_not_zero(lim->io_opt,
+  3795					logical_to_bytes(sdp, sdkp->opt_xfer_blocks));
+  3796		}
+  3797	
+  3798		sdkp->first_scan = 0;
+  3799	
+  3800		set_capacity_and_notify(disk, logical_to_sectors(sdp, sdkp->capacity));
+  3801		sd_config_write_same(sdkp, lim);
+  3802	
+  3803		err = queue_limits_commit_update_frozen(sdkp->disk->queue, lim);
+  3804		if (err)
+  3805			goto out;
+  3806	
+  3807		/*
+  3808		 * Query concurrent positioning ranges after
+  3809		 * queue_limits_commit_update() unlocked q->limits_lock to avoid
+  3810		 * deadlock with q->sysfs_dir_lock and q->sysfs_lock.
+  3811		 */
+  3812		if (sdkp->media_present && scsi_device_supports_vpd(sdp))
+  3813			sd_read_cpr(sdkp);
+  3814	
+  3815		/*
+  3816		 * For a zoned drive, revalidating the zones can be done only once
+  3817		 * the gendisk capacity is set. So if this fails, set back the gendisk
+  3818		 * capacity to 0.
+  3819		 */
+  3820		if (sd_zbc_revalidate_zones(sdkp))
+  3821			set_capacity_and_notify(disk, 0);
+  3822	
+  3823	 out:
+  3824		kfree(lim);
+  3825		kfree(buffer);
+  3826	
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
