@@ -1,148 +1,282 @@
-Return-Path: <linux-kernel+bounces-761103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B77B1F46D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:48:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA652B1F46F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D014624E6C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:48:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74CAA4E0EEF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CF3274B34;
-	Sat,  9 Aug 2025 11:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDA427F011;
+	Sat,  9 Aug 2025 11:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QgsZwyc1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmqUxmud"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3071C8612
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 11:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE3E1C8612;
+	Sat,  9 Aug 2025 11:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754740117; cv=none; b=ftk/f/lvVxiPYkHLK3HKL52eAnHvVKYgUv6XUmJyLZz9lvSrur2dpao1PZzgJ9MRyK6pZs1RQDypD/IoSGjti5Pbgxa0ryskXfNh16pIWqyxL8iI97GCShX8ugnCELkZsnLMxbTmnjvpfLLN13fGqitXqYSo1bsD7RP5m50CmwU=
+	t=1754740265; cv=none; b=mdDXGhJsX2hhCXvIXSi5xzu+44sFlKbIiWABN/Zts8pD3spOeLmSZ25cegkeSg835JmHzfVYWhaeHQpnnYIm9GsxkoXzjpnGnXfnYqGdr3mshkt9PzfiLwmtKlOg2QaGusir/ikWbTVNhuSE1kQ4FqCoxr7W3fudpZCQQP5m4Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754740117; c=relaxed/simple;
-	bh=PX9MZaAM0+QR0JVll5Mbb3uPaWv1GoJ4uUmIN6eLKo4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V03EM/bKuya/NjpLkFPbG0yvqR3kMAk91+c6SOj8jdkBvYzBhi48+MKoRCprtCWzZ+ZTDo6Fj+kyGfwKLa71zt3KJz/whUClial1E3cYCumcngCv9iF6yCv6IBj2nREbtyYYj7dQeiNAMd7nb5DPdMErLXA3fMv8MdlQmQrMruI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QgsZwyc1; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754740114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8EDDZnuKj0755GogAhCpvIsf+rm8EiRfLgn4JfYrMsU=;
-	b=QgsZwyc1x7RjR1kDIQbGh0yKPNp7cjZpzW1Is3DN2T1Lh16qG2/dpbqdrTheFd719Lj6B0
-	Lwnwlvgko9cqBqf+JaVQj6/T70Z2nqnCSruBlDx0HM9w9MTNuq/o2hYghK21vH6fwXwjxx
-	TtcvfG9ZDB20XGI9UlMlmlfsxMilo1w=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-639-Zi6aipnNP0Cq5ZAGRWQv2A-1; Sat, 09 Aug 2025 07:48:33 -0400
-X-MC-Unique: Zi6aipnNP0Cq5ZAGRWQv2A-1
-X-Mimecast-MFC-AGG-ID: Zi6aipnNP0Cq5ZAGRWQv2A_1754740112
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-af911fc1751so189780866b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 04:48:33 -0700 (PDT)
+	s=arc-20240116; t=1754740265; c=relaxed/simple;
+	bh=umgl5S5iD3CkVkoXfrjuAMTV5SQMCel30y8lHMmkFIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GH9VpHKXHUW+69e0SCCyUfA2DbLzJFSCFm/sdNrMQ1JcMQ/oFWJW0SRltL3ZBG2gZMFIX7VDIwehjnNiqiCkWRe53ZxWv5KNnWNv0qpjSA5pfSiSuHWLdb3nxjItU5PEPGxjZpcWAms8Tnx5AZQZwLfVDiHYvkQ+uaau9eGgZgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmqUxmud; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-615398dc162so4732798a12.3;
+        Sat, 09 Aug 2025 04:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754740262; x=1755345062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5akKwpC8IMkTFFts2eo/e1Duj9P6C50jyTgZzoqxgpQ=;
+        b=CmqUxmudzzhshFvaSY6IOwUulVduCqnxoMBFTGqBIlUPS5jXpdfPaGGcsdqD2/hmLX
+         QnrGfc/6hV/0/wmFLWvf74FxRk1Hqi2jM05j38+TiLNuPw3ZQWuUzmlhmuEOtvILI4jm
+         ltuDZXcVTgFBunuPvRwCcllPguIhf7pp3qCe0nVTHoaSM1qT9gtfdchSLPW5f2Rne7xG
+         i6Fyq9Oemo0Q+UfZAfbMGJDTQvP4VIRor0BHvYcCoiDyTPetpYoIiTexigO0ho7rfeW8
+         k0EuSQ2/EvOH3EqmwixNf3JAOnxdc3BzR44MqpSUk94JQcjJ2QTIgY3WhR4kqEHU63nm
+         EvhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754740112; x=1755344912;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8EDDZnuKj0755GogAhCpvIsf+rm8EiRfLgn4JfYrMsU=;
-        b=AWbBR/0yD1BhOzzksaPvPTbBPH/7/PR7PYwPYjG2/zK/aKobAR/YjrCLelIIQUho5Z
-         5Zqk9I8mfUxkLGuXtRndXfEYmSwt7lkbbgp8RfmUaghx3jFI+5+/Hkg5UvkxRVps1UZV
-         80OWXmbcQmqE2CP6df9HfEsOwE7vfCpSlZt11idKkNkpf5O8++e1zU1CPpIVbIep/N8I
-         nVC5CMVT4PJLEJUUHt3qcr3yK98wjs4q9V2Kc/arpVlLlksVkosXwt+GO5pbNfOnlfZD
-         CeCQjt176sr1UeygXvTMS59GEyUIBOdCSzhaXNJ0AEW6xKWGGlG5WSx6WxWVjUaxm0SH
-         3DfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLq16yr5ixjUcu93v62xx3Lj1s+natH++jzytu/w6dyBcoDxvpsF1senLHM1LK3Ti19kVgO7xkhlx/EPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwT0aaE0kVwX20X5VpZBWOwksGiJckHnJK3ESJ+YlKp2Ca2dnk
-	zx5fEXyKDRBNHUpgo1bTiuH2ikgmbdt8Igd7WqZOb5jZypJq2ttBFfdh8ZkCJld07QvnhAX19T3
-	ciQ/mvwQv0v47rq24vGNdFpP3cBn4iom24G0oC2N7uTV9/VxcYjqruL+9OPVMDbzeLg==
-X-Gm-Gg: ASbGncuIAUSyYgIF9rmiBGAOATbtkjjEZ6ZgeV/1gGmgqvfuIHQyxe4WYmC7uBgdtC7
-	vbO61XGEwaee2aEvHH6ecC/yM/y4k1AvCKkGS0fiblBG20rQbWiOop4Oh6l1Wh4bwPojIE0rMlO
-	ZhW2ZGU6M2NMhRv+dKSLwNnR5oo92t+r4lkw5gOy/VWD/GMQf2DLHnRBIv4wX8Pd7wO+lt9Ydbt
-	UmIKljGWigHk4W8R+lKsUsprPp/mB8zPoxA6eCtWVYJVKF1ek5bvNgbegPyBJ5aeE1Y25AbKcPg
-	1/2wvjQ6/5pSdevKkxkL4MRW1gFynYmeM8inwW0YWZnIB3udT54qn6TdFPHBfYzBN+NCB1OeeGf
-	pxci1ULkKO/OQUsWkOjShoJIvBi4iZV08fOtZSDbVCdF/52mrdYNd1FJsHa9OPXaXmR/Xukt3Fn
-	RIJ7OBnSuPvgXH1oc=
-X-Received: by 2002:a17:907:6d26:b0:ae3:60fb:1b3b with SMTP id a640c23a62f3a-af9c654451dmr618309566b.58.1754740111843;
-        Sat, 09 Aug 2025 04:48:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcHoDyu59LmIlTnUYKnF1WKU80auy3Frrs4e9ro0Ni0EFHEbUF/59qTRw5C4WvAJV2ELm1aw==
-X-Received: by 2002:a17:907:6d26:b0:ae3:60fb:1b3b with SMTP id a640c23a62f3a-af9c654451dmr618308666b.58.1754740111408;
-        Sat, 09 Aug 2025 04:48:31 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a219ecfsm1646962966b.94.2025.08.09.04.48.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Aug 2025 04:48:30 -0700 (PDT)
-Message-ID: <8da2d4b5-4e53-4c0c-84e2-16b5aee6d757@redhat.com>
-Date: Sat, 9 Aug 2025 13:48:30 +0200
+        d=1e100.net; s=20230601; t=1754740262; x=1755345062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5akKwpC8IMkTFFts2eo/e1Duj9P6C50jyTgZzoqxgpQ=;
+        b=QQA4nTKwRLwR3knqWQ3FoRcZbSUtfj4fqFb8cagAcdcicIVC17WayY4JDFF4AZHXNT
+         BW3iUcLthMGtjgFDb40NenzMFW07XKFBnlNmGE8c1NkiGTbzinTMq8Pek0RwsJNeANcB
+         F2N98FrLV/uTkXfiEWkw5aZzwcmALMl9r+VOldP1pZEDBstBuCG01kn4UOyaAEuXzbWE
+         cwIuDZRXlMAnaNkQ6AbQ2I7jkl2UPEJnVz57P7uQiWTpGxHd81qxQUsGlDV+tRKD9/ji
+         ycvMOGpTrXBrs+7scwpfMKc8SeBYRcMbN0qSBf0zSAx4Bbq7WXxKm2soqsJQlZ3RnSSP
+         lXtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMDFQuMruZ09Tm8x3FRB8psSVkHrRbsbgQoCVM6cERiXFWm/icGtFMcbxoTOMNI28P3Fm/TP2E54jmkVYI@vger.kernel.org, AJvYcCXFqmR3DqcjsvtmAxVGFuZYse7ieqFC9h+iKMG3vnPXnk7F6aLg97VqYgOHl7jggZjABqiq67YZDnIGVerWNg==@vger.kernel.org, AJvYcCXnc+xk5cI1sO45X5hASLr++2CMCsbuxeyUyKnsPvsSoH6Yr8vvrk3i7ZHKByvUuqzfLPP2vmAUa5S/2xde@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1pJ1Pad+OZM1K4LkS/DwmHqYlT01zBHghoz7bWAfmn0Ab+X7U
+	VooyE6qyq8M0GnlOhPYtOEz2NSvV+z9eW51ZmFQQR5M2ehpasjDFBKY1hIAUW7QqUJSPbia4mbR
+	PDKldkCbij1dEZoSitFfhK1oVqmsz/Eg=
+X-Gm-Gg: ASbGncs8Fuo8JlD6zpX8PHZwZzDKYQp6Dy8YbYRSg89OffaGWzo8eminEovIrGZ6Zk8
+	LeQfWxDcNKqdTRNVSKiI8GN8OqaDjzf255CZfgeF81W4YipGHEEadQPeSUOvIzTdrFyqiUA8/GD
+	f+zndGwVQgOd2OhWWaicLJU/9WGeuQxTeRTWcGH+/5azzj0Yor2FQjRdcY/npHYOvYEmd3mYOPJ
+	tF4piY=
+X-Google-Smtp-Source: AGHT+IHd+FBbW2YkPH15kNn5/vNwhRP3OgDWgNA2KUkXuXEBG1T+ThwFKa4VJOrTkPcVpl3JliNZ0rryShESGcvsHvs=
+X-Received: by 2002:a17:907:3da2:b0:af9:5260:9ed3 with SMTP id
+ a640c23a62f3a-af9c642fdddmr576516866b.14.1754740261464; Sat, 09 Aug 2025
+ 04:51:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm: panel-orientation-quirks: Add Chuwi MiniBook X
- quirk
-To: Ibrahim Burak Yorulmaz <iburaky.dev@gmail.com>,
- maarten.lankhorst@linux.intel.com
-Cc: mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250809111200.10086-1-iburaky.dev@gmail.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250809111200.10086-1-iburaky.dev@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <20250808-tonyk-overlayfs-v3-5-30f9be426ba8@igalia.com>
+In-Reply-To: <20250808-tonyk-overlayfs-v3-5-30f9be426ba8@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 9 Aug 2025 13:50:50 +0200
+X-Gm-Features: Ac12FXymfynjWT6oaNDg2pY7A5wkIJ6yOhqyJGu9_Eu5mvdmvf9djMKbJn-W9EE
+Message-ID: <CAOQ4uxj+42O07HxnKrp5A2A-Gk0Z_WLDk=62Y9WZ7RRypdju2w@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 5/7] ovl: Set case-insensitive dentry operations
+ for ovl sb
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ibrahim,
-
-On 9-Aug-25 1:12 PM, Ibrahim Burak Yorulmaz wrote:
-> v2:
-> - Changed subject prefix to drm: panel-orientation-quirks
-> 
-> The Chuwi MiniBook X (CWI558) uses a tablet screen which is oriented
-> incorrectly by default. This adds a DMI quirk to rotate the panel into
-> the correct orientation.
-> 
-> Signed-off-by: Ibrahim Burak Yorulmaz <iburaky.dev@gmail.com>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hansg@kernel.org>
-
-Regards,
-
-Hans
-
-
+On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> For filesystems with encoding (i.e. with case-insensitive support), set
+> the dentry operations for the super block as ovl_dentry_ci_operations.
+> Also, use the first layer encoding as the ovl super block encoding.
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 > ---
->  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> index c554ad8f246b..c85f63c42bbe 100644
-> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> @@ -282,6 +282,12 @@ static const struct dmi_system_id orientation_data[] = {
->  		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Hi10 pro tablet"),
->  		},
->  		.driver_data = (void *)&lcd1200x1920_rightside_up,
-> +	}, {	/* Chuwi MiniBook X (CWI558) */
-> +		.matches = {
-> +		  DMI_MATCH(DMI_SYS_VENDOR, "CHUWI"),
-> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "MiniBook X"),
-> +		},
-> +		.driver_data = (void *)&lcd1200x1920_rightside_up,
->  	}, {	/* Dynabook K50 */
->  		.matches = {
->  		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Dynabook Inc."),
+> Changes from v2:
+> - Create ovl_dentry_ci_operations to not override dentry ops set by
+>   ovl_dentry_operations
+> - Create a new function for this
+> - Instead of setting encoding just when there's a upper layer, set it
+>   for any first layer (ofs->fs[0].sb), regardless of it being upper or
+>   not.
+> ---
+>  fs/overlayfs/super.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index bcb7f5dbf9a32e4aa09bc41596be443851e21200..68091bf8368a880d62d942555=
+2613497d6e90b6b 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -161,6 +161,16 @@ static const struct dentry_operations ovl_dentry_ope=
+rations =3D {
+>         .d_weak_revalidate =3D ovl_dentry_weak_revalidate,
+>  };
+>
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +static const struct dentry_operations ovl_dentry_ci_operations =3D {
+> +       .d_real =3D ovl_d_real,
+> +       .d_revalidate =3D ovl_dentry_revalidate,
+> +       .d_weak_revalidate =3D ovl_dentry_weak_revalidate,
+> +       .d_hash =3D generic_ci_d_hash,
+> +       .d_compare =3D generic_ci_d_compare,
+> +};
+> +#endif
+> +
+>  static struct kmem_cache *ovl_inode_cachep;
+>
+>  static struct inode *ovl_alloc_inode(struct super_block *sb)
+> @@ -1318,6 +1328,21 @@ static struct dentry *ovl_get_root(struct super_bl=
+ock *sb,
+>         return root;
+>  }
+>
+> +/*
+> + * Set the ovl sb encoding as the same one used by the first layer
+> + */
+> +static void ovl_set_sb_ci_ops(struct super_block *ovl_sb, struct super_b=
+lock *fs_sb)
+> +{
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +       if (sb_has_encoding(fs_sb)) {
+> +               ovl_sb->s_encoding =3D fs_sb->s_encoding;
+> +               ovl_sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
+> +       }
+> +
+> +       set_default_d_op(ovl_sb, &ovl_dentry_ci_operations);
 
+I don't like it that set_default_d_op() is called twice and if anything thi=
+s
+helper should have been called only for the ofs->casefold enabled case.
+
+what I suggest it to split to two helpers, first set dentry_ops based on
+ofs->casefold determined before ovl_fill_super() is called:
+
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index df85a76597e9..00647440a566 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1307,6 +1307,19 @@ static struct dentry *ovl_get_root(struct
+super_block *sb,
+        return root;
+ }
+
++static void ovl_set_d_op(struct super_block *sb)
++{
++       struct ovl_fs *ofs =3D sb->s_fs_info;
++
++#if IS_ENABLED(CONFIG_UNICODE)
++       if (ofs->casefold) {
++               set_default_d_op(ovl_sb, &ovl_dentry_ci_operations);
++               return;
++       }
++#endif
++       set_default_d_op(sb, &ovl_dentry_operations);
++}
++
+ int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+        struct ovl_fs *ofs =3D sb->s_fs_info;
+@@ -1322,7 +1335,7 @@ int ovl_fill_super(struct super_block *sb,
+struct fs_context *fc)
+        if (WARN_ON(fc->user_ns !=3D current_user_ns()))
+                goto out_err;
+
+-       set_default_d_op(sb, &ovl_dentry_operations);
++       ovl_set_d_op(sb);
+
+
+> +#endif
+> +}
+> +
+>  int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>         struct ovl_fs *ofs =3D sb->s_fs_info;
+> @@ -1423,12 +1448,15 @@ int ovl_fill_super(struct super_block *sb, struct=
+ fs_context *fc)
+>
+>                 sb->s_stack_depth =3D upper_sb->s_stack_depth;
+>                 sb->s_time_gran =3D upper_sb->s_time_gran;
+> +
+
+stray new line.
+
+>         }
+>         oe =3D ovl_get_lowerstack(sb, ctx, ofs, layers);
+>         err =3D PTR_ERR(oe);
+>         if (IS_ERR(oe))
+>                 goto out_err;
+>
+> +       ovl_set_sb_ci_ops(sb, ofs->fs[0].sb);
+> +
+
+This is wrong because ofs->fs[0].sb is NULL on overlay without an upper dir=
+.
+
+Please consider doing this as part of patch 4 instead of using the
+local sb1 var:
+
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -991,6 +991,19 @@ static int ovl_get_data_fsid(struct ovl_fs *ofs)
+ }
+
++/*
++ * Set the ovl sb encoding as the same one used by the first layer
++ */
++static void ovl_set_encoding(struct super_block *sb, struct super_block *f=
+s_sb)
++{
++#if IS_ENABLED(CONFIG_UNICODE)
++      if (sb_has_encoding(fs_sb)) {
++              sb->s_encoding =3D fs_sb->s_encoding;
++              sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
++      }
++#endif
++}
++
+ static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
+                          struct ovl_fs_context *ctx, struct ovl_layer *lay=
+ers)
+ {
+@@ -1024,6 +1036,8 @@ static int ovl_get_layers(struct super_block
+*sb, struct ovl_fs *ofs,
+        if (ovl_upper_mnt(ofs)) {
+                ofs->fs[0].sb =3D ovl_upper_mnt(ofs)->mnt_sb;
+                ofs->fs[0].is_lower =3D false;
++               if (ofs->casefold)
++                       ovl_set_encoding(sb, ofs->fs[0].sb);
+        }
+
+        nr_merged_lower =3D ctx->nr - ctx->nr_data;
+@@ -1083,6 +1097,17 @@ static int ovl_get_layers(struct super_block
+*sb, struct ovl_fs *ofs,
+                l->name =3D NULL;
+                ofs->numlayer++;
+                ofs->fs[fsid].is_lower =3D true;
++
++               if (ofs->casefold) {
++                       if (!ovl_upper_mnt(ofs) && !sb_has_encoding(sb))
++                               ovl_set_encoding(sb, ofs->fs[fsid].sb);
++
++                       if (!sb_has_encoding(sb) ||
++                           !sb_same_encoding(sb, mnt->mnt_sb)) {
++                               pr_err("all layers must have the same
+encoding\n");
++                               return -EINVAL;
++                       }
++               }
+        }
+
+
+Thanks,
+Amir.
 
