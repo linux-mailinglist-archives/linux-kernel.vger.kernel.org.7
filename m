@@ -1,719 +1,202 @@
-Return-Path: <linux-kernel+bounces-760904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E92B1F1DB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 03:28:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE94B1F1D8
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 03:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D940F1AA839A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 01:29:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DCA3585763
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 01:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934B62777F1;
-	Sat,  9 Aug 2025 01:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD9F276050;
+	Sat,  9 Aug 2025 01:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e4Q7dj4e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VBvb7fTH"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2041.outbound.protection.outlook.com [40.107.95.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB14274FD0
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 01:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754702921; cv=none; b=EhT7eIkpXdxV1m57TM4Fl3Z5LoGBq3UoZRwyVVCjTYwZv9GQOzD0l6IkRkrHdZuAXtN9do4CkHHti7G465tG9CftxrrkIoL58z0JDqyuhlG+tXcmItlxqWMchpw7cyQj9RBUZzwFxhjJcEoqIQbuOV3ojZa+hJOK7Uwt+s8VXJo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754702921; c=relaxed/simple;
-	bh=nxkSUDR9or4CDNo4EGFcsMcw82X0+O9CzhntZAPlces=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IwV2Rc37Q5CCDY5G73GfygY9RqhT0FSnc2qPNM0JZoGwBbwlwJKGIqZs3GSbxsRq3d1M5aDw+DC/riKAqYwQVM8akx3sQlJO1t8sHHj6AG1Htmx3JzvwvWYaOqOcYQpRkGcnn6OqARY7mjjcXuBfAsOfpSNG4uK0jFiQCCNnUac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e4Q7dj4e; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754702917; x=1786238917;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=nxkSUDR9or4CDNo4EGFcsMcw82X0+O9CzhntZAPlces=;
-  b=e4Q7dj4ehcy5uQb1rAnoEqvPRymsRfrE1v+BRYAHXki0gs1w4hQY1m6w
-   uBk9EuG1tjCWaGWQJ/wfXyQplasg0t/YMzCOqIEDPRgRY7ORrEMQLFtzh
-   1OP2aC+C4PwDWw54SANc04L/DP7Ef6W2vSjsrd4Eqjwiul3FMczGNPPq0
-   /lugDschL7fHm7Y/LmNhDcJZ6YzkqzNlO4qlS5jkC82PAWHQ4dUmbvEhA
-   9vXRdPS3aM69Tsn2mq2D0bPBYormERqNcJgYJcrulpjRUHvdv867vMT9b
-   7cGlYqTVtpZEhqJ9IiuQq75cHbBgXi6Wb5UCXIOOoXQTI8nKbCQMQ7nA7
-   A==;
-X-CSE-ConnectionGUID: mizbzaxtSLSVTBza9zvMag==
-X-CSE-MsgGUID: cWBZ0iU5TQ6B6VGuTRy4jw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="67643847"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="67643847"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 18:28:36 -0700
-X-CSE-ConnectionGUID: othbSNp3SXqNAGwWb2CdpA==
-X-CSE-MsgGUID: MbZC5irxSTeeZdIoWPEVgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="166250518"
-Received: from unknown (HELO b3b7d4258b7c) ([10.91.175.65])
-  by fmviesa010.fm.intel.com with ESMTP; 08 Aug 2025 18:28:34 -0700
-Received: from kbuild by b3b7d4258b7c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ukYNr-0002i9-3D;
-	Sat, 09 Aug 2025 01:28:32 +0000
-Date: Sat, 9 Aug 2025 03:27:37 +0200
-From: kernel test robot <lkp@intel.com>
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, "Rob Herring (Arm)" <robh@kernel.org>
-Subject: arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: pmic@2d
- (ti,tps65911): 'wakeup-source' does not match any of the regexes:
- '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-Message-ID: <202508090302.gVlOiKrE-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12210264A60;
+	Sat,  9 Aug 2025 01:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754702889; cv=fail; b=ZDJslTWJJ/x4BU76cQ2hIJZ7tZQkg/4UiBVC4z6ixb4N1jsVFQcdMgLhJlf+UR+xCfupAQ96xU8p5Ncy7Pn0jK5rRINDch7KnIiRQrzL1ExqRI//TDTT2+MKFP2wfDAeVAfRn6LfW8UyPZDfFFOcFW/NVnkjWBedhZF/DgiDinQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754702889; c=relaxed/simple;
+	bh=SoGa28xF9OXb1NRt704qFwZ9FnAOsh7Z5jgcoZ/xCZE=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=V3bv9bRZ0ezcogygkH7ARXgeURmfIKxGUlBMwCh0orA04JemjRY5DOOaqzxHESrnfmdHRtleEmrFdthpROSIgssdqa5/3TaMVSxMMqM4eP73IjtHseiA3tqmPYokOrVV08B0FC21kXK8gq8p+RhIMgByEbaxfBBSyZaLEL46ljI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VBvb7fTH; arc=fail smtp.client-ip=40.107.95.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sGYIIhrnHSkTboEoMwwRN+dVR2s4yQS6DliwCY+h+oEd19dU63WM7+AjZ1RlOMnmP0g1ZdcAto4jZFL3aeJd6O8eMI/Vr5oAYhBzLaZTolyo/UbTFMzQ4vtTG0XisOiUoT5DyBqJFA4wGUwwNQEEC87IhjV2vR+kpfFMHJrbBARQO8akvdoenBmBkKlnjpqBVfImp8zBUUlXFiXYWlnS3wEbWPEW8Vz6QSpjChwTjUvNDU7I7GSpIMwRHxdXp3q8AX4gKZd67AHD+hxnrJPQFtiaNW9XxZM8Ys8F+Y3+KImu/3mWcZ3QeozspE2Rt4puW3Yh8vbrjSbgcyUk4jJnWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ofyyo0K8CI35rv3mJSb9ueOgBsEcfgHWgbJqnUjjlaM=;
+ b=MAnvHzvFvxpIQYBWYJhnh5Zb+IylUgQ58gopCoKNxFVrLSmdFx3vsUXuYG7w+dinC9uqC8SgtQixkmZ7bIRN37xAD8gkhqpG7o3CRyuy5Gc+73OrUoA2kl5sEoPsw5PtgnJ6Rs9PIvhRffY7JujuYNRjfUvE4/kl1hn9qhzrRTCz3sNizwAnICwuZ5UGFGbQ5fPAz6nM/KeXg+7Jo1pP5F8I8FHlqpMRMDGqYf2qHlkDbiQToSxkPfm4q0H3b4sbArPr07tLoi505SQKVt7uBCIPTdAxS32OYUkNPR38uwpBNWcKgdwYkZeijDxb0qfETmJhc4utDubpwN85JFO94A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ofyyo0K8CI35rv3mJSb9ueOgBsEcfgHWgbJqnUjjlaM=;
+ b=VBvb7fTHfh0pHXmCcwek8Ggl27vcUF9mgk5jviSI0OzijfRjSLoN3JDKQMX39Am5eg1osFKKAOTvijFRxQ0l3uUqgOCp8S7qZo2BHWi7sEfE2jIvxlBJ7/tFj90HxGMIN77z1xlShqBSXq/8nV7lMdOF15ufad37G+xGWRZNVcdTdnXaMEY0OJbopxa21uUkMuIdBY6dZdlrhbWt3dWdOewO2nRgS0fFMpImXqL0jtkWBYlQO8Yp6avFxrR3DCMfu3uDEKkoWqpqiInONNWW0a/lfLWTHD42BiJ79so7IS58JOwk0X7LnvfRZp4b51AQCGosvdERFd9CeVWjkfl33A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA1PR12MB8143.namprd12.prod.outlook.com (2603:10b6:806:333::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Sat, 9 Aug
+ 2025 01:28:02 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9009.013; Sat, 9 Aug 2025
+ 01:28:01 +0000
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 09 Aug 2025 10:27:51 +0900
+Message-Id: <DBXI970JGY3S.35LGOC2FO3EOE@nvidia.com>
+Cc: <rust-for-linux@vger.kernel.org>, "Fiona Behrens" <me@kloenk.dev>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 1/5] rust: implement `kernel::sync::Refcount`
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Gary Guo" <gary@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Tamir Duberstein"
+ <tamird@gmail.com>, "Ingo Molnar" <mingo@kernel.org>, "Mitchell Levy"
+ <levymitchell0@gmail.com>, "Lyude Paul" <lyude@redhat.com>, "Wedson Almeida
+ Filho" <wedsonaf@gmail.com>, "Viresh Kumar" <viresh.kumar@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250723233312.3304339-1-gary@kernel.org>
+ <20250723233312.3304339-2-gary@kernel.org>
+In-Reply-To: <20250723233312.3304339-2-gary@kernel.org>
+X-ClientProxiedBy: TYAPR03CA0008.apcprd03.prod.outlook.com
+ (2603:1096:404:14::20) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB8143:EE_
+X-MS-Office365-Filtering-Correlation-Id: 83eceee3-c1b2-4479-2bb3-08ddd6e3fab4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|10070799003|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MnJGaG52QWc5OW9Cd2tVNFhzamNTdTQ5VllxNlkydFl6YmY3dE5EcUNjZlho?=
+ =?utf-8?B?RUo0Z3NNbjhpV2h6cHpLRWJBK0ZXM3N3VFJRNW9Nalp0MGYxQkRmbU5xcFM4?=
+ =?utf-8?B?UkNzYW9MN3QyTXhoYVZLamI1QkROeWdKc1hwaHlXUjVVeG5DVE5UOXhMZU1i?=
+ =?utf-8?B?NDJwVU5OSXhXVVZPYUo5bHo0aGxGYnFXL2NPalZsQVNXMEwwdUExUnNHelNI?=
+ =?utf-8?B?K3JWajlYMjBnczBqU0hoek05WWRRVG5xUGFyQ0c5VDNLUkVlTUhLd00wS0ZW?=
+ =?utf-8?B?eUFaMmxiMGMzbG5NWU0rOW9PVCt6RDVuTWc5MEgvUnp1alBHTkoza2t2eXdk?=
+ =?utf-8?B?d2FOcFJHMmpiVU4vdU1NQ2tEVWxBb1ZUMkVhaHpGVGhNQUI3ME92MEQ0d3NZ?=
+ =?utf-8?B?RXN5REhQSWdGVmxmdmIxdHFzNUJ1SGxIUEtBbnA1ckM4NUhydDdLTXJwbVhh?=
+ =?utf-8?B?aTlTMS9PenhydkNQbE9RUzZwOUVIU0NwMlhsV2V4bXJzSUVOUzFqNkpqa0k5?=
+ =?utf-8?B?S0FYKzRVN2tJZktLZk9FUE5wWU03K0lSRmI4RWJ3M01qNkR0dFF3UDRKWjV6?=
+ =?utf-8?B?YUpxYjRQNTljMnRlRVdWVC9jWXN5UlFMalhPMFk1RnZtUHFoQXVKbE4vSlc5?=
+ =?utf-8?B?UXJSRVlrUnp3MWVNUGdneFNaTkZjWGZubFlNbjZ1bzZ2ZTVUNEp5MFh6TWZW?=
+ =?utf-8?B?eWFOTzNEajRlcFRqdXVVYnkvOHE5ZC9UYnVTOWNYaUhoc0lic1BxaDZTMmsw?=
+ =?utf-8?B?WjdlR2hPeXRBU1JXdC81U2huMGRvUjYrVHhNR2x3QnRkZFNXa2htYzBGRkV1?=
+ =?utf-8?B?c2wyY3JKYnhiZGl3dHNjRmhtNGRBTEZ1TC9zZ0RCWTlIcHBoS1h3dWVkMFRK?=
+ =?utf-8?B?NWt4aEIyeTQwNVUyNzdKUGdmK25JNWxXbmRqRUpWN3FYRXYwTlpURS9iSThv?=
+ =?utf-8?B?MncyOGZkSnJ1Q0EyeitIVTJZRHB3QkJHQmgzbnBDTXhQOEVBbUcvaVlBcjlt?=
+ =?utf-8?B?ZEV2UVBDRDdhR0tnUEN5NWNVYkRZRWNYYlRhZ1A0Tng0MXc4ZWxabXFyNTVY?=
+ =?utf-8?B?TG80M25MbVVobEIvQkpMc2FDTXRFc2RQL2ZTaDh1Y2tBVE81VndSc2kxN25R?=
+ =?utf-8?B?cmVCeHZONFJURE0rU2NZR09wcWNoOWQwelVZc2FMNHNYT1VudFZYUjY1K1Vn?=
+ =?utf-8?B?RHlad00vcmJHU0dta01iQWU0cUxZd21rUG9zUjRRdVljM1ZqczA3WVVnNVhr?=
+ =?utf-8?B?ODlYS01GTlpHdm9HS1l3TjNSalpTaVorUTlKSmVBV2NQRzZOcmpYdmNuZFYx?=
+ =?utf-8?B?eWJtZ2RwNk4rbldMUEo2MkVIOGRrUGZ1RFkwMVNxOUd0L1lpaHFjMlNzWktB?=
+ =?utf-8?B?WjlnYjN2TmpHOFhIOFk3ZVA0cnhJVU41U1FmMFVuWTMwd3Q2UGhpWnovYVYz?=
+ =?utf-8?B?c2hPRXhhbWg4cFNncFNEblZGWnRGbnVaZFcrOXE0Yjc0Z2NoRSswT3cxZGVI?=
+ =?utf-8?B?MThuNDlERmE1c3ArZStCSGh5MnR3L3BRaitNYjVTNUxVcGtxVFY3ejRqci9O?=
+ =?utf-8?B?bUdwRWF5bHo1bFdFWVdqeDVETjNxTEpEMFVleHdlSCtWSk9iTm1OUXpHRXAz?=
+ =?utf-8?B?UzRSODRpcGFyN20rS1Q3UFM3OGxLa2UyZzI4dFcwMURQYk1uaW9MYThxSmhB?=
+ =?utf-8?B?azRiRW1BVHBuM1NtdG9MVU1WOU45K0FhZkVUT1F0Q1FXVjJmTXk5cEF5OGxi?=
+ =?utf-8?B?M0F5WlJyMWwvUjJJQUxMa1l5MUJGSzdEbUJUejNmL3czMXlmQm5kY2ZUSFRY?=
+ =?utf-8?B?c01mTzlBekpBUnB0a3JPMW8zRWlCYWJkd3ZmaFlUUEkwNWNlSmh0T1c0Zk12?=
+ =?utf-8?B?UjNiV3E5Ni9DbzVRYituQ0J3dFpjRkxMLzZxcnVac2JBekMvYXRzQmd4cGNs?=
+ =?utf-8?B?Y1ZqUDhWYWRZSTZGejBEY2JLK3ROTnVsNFY0NTd1Z0ZtOHlGSlRwWGE0VTQv?=
+ =?utf-8?B?VytJanVYOHpnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(10070799003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VHJHYzJQaC9IMVZsT2ZrWGFxY1dwdFRVamdYczVtblpPZEoyUXhoOXc0cE1Q?=
+ =?utf-8?B?a1F6VjJKZElMZ3pUbVNlbm16YVRoaGFjTklkcWxBS2dxZnJjUWljN0hmUE52?=
+ =?utf-8?B?djhIQnMvVC9EU0NGcTlBUi9uM2dlS2lEL1hYMzVRYnhXWFZnZ2hSMTM0VURr?=
+ =?utf-8?B?VWJuS0M1bHExc2tOVjFHMVBHNVRsWGxMdFNDMWVBTnFNWTRQRHdpd3ZBcFRL?=
+ =?utf-8?B?YXVvV1llVThYSmt4YzZnekhENHRwOEFDbWVtTHhrUTdrTlgvQUs0dGdSWGZJ?=
+ =?utf-8?B?TGVRRGg3Y3hmMFprRFd3WjRxaFlHalA5dzkxa3NzOVh2cDRHWkJpVVEwTTZF?=
+ =?utf-8?B?djFsVlRtZ29VWGxnd1ZqUXRqUG9KcVZxaUJYR0VzK0JyYVlKZ041WUIyNEJk?=
+ =?utf-8?B?Qmc1YXN0MXducERTSHRPYWZJUG0zNUo3S0k5QnJ4bDhEWDNIQTZpc3FabzlG?=
+ =?utf-8?B?aW1PVWlJUUJPeFROZTkyWWduUUw2U2wyTU9HWWlEYjBVaktESFBiZm9FZWdU?=
+ =?utf-8?B?d3dvWXFXc29ueUtsaCtSN1JxUnk2aW5xTUF2MGhQMlB1Z0tkR3Y1aE5BU1Vp?=
+ =?utf-8?B?M0lYU2V0L2haMTRnRG93a2x4a0puV3ZFbTlQUjdOZHh1Q3JDMVMxeWlSS2dm?=
+ =?utf-8?B?RC9qQlBCcERha3U4eE1qaXRIWHVHRS9oNmljY1p5MFM4LzMyaTdQREFMRWJB?=
+ =?utf-8?B?dUNnUjIxYlVFZ1lNYm9BRjZBUnh4STkrdk8zbDRKd1NlUmNqR1RqQmVPRCto?=
+ =?utf-8?B?Y2xJUUwyR21VeXR3aDkzOG1KT2pVek42NDh2NGYyWFd5THR1aTVFQXdTT2p3?=
+ =?utf-8?B?cTB4RXhjd2lUejcwWHRlUW9QaS81SlFraW12Tlg1MnU2ZFkzQW00MHRYVDVJ?=
+ =?utf-8?B?TGtKLy9BR1ZrS0w5SzhuMGdrTlAzNmo1ZU9XdTFTemt2WTllQlBvdm9aZklJ?=
+ =?utf-8?B?L3lwazNQT01ENGUwSFBNNTRTYlZPUzhERVEwbUlWRXRkbXRpbVF0VEpLZDZU?=
+ =?utf-8?B?ZzdNVlk1RlRoT3RHWERScmQ2cHY0bTRyZmNoVUVhZGFGRGhJUWFzSnl3SXRx?=
+ =?utf-8?B?eVdTeWtRRiswM056QktXWDgvVHlkZzBVQklOa1I4bzJ6RndVVVBVNGRIMWs4?=
+ =?utf-8?B?cGNhQncvRjJURXlqbWhhcGo0Q0FDOE0xM3kvcmx6VmJZcUhZY3N3Z05hUnoy?=
+ =?utf-8?B?Qld5ZTIyRFJ1NFMrVkJ3R1ZFSjdpaUlDZ1F6OWxvQnhwVHd4ZVU0MTI1M0hF?=
+ =?utf-8?B?NGl6UmZQZXZVWEZMZFJGVjdHa2tiWTdWNEdrSE4yMkgweEo5U0VJWS82RmJu?=
+ =?utf-8?B?d2ZBSHN6WGVWWnBZUGkyNU5NWjVZdlJFUEE4S0FPa2VFWHY1UUpodm9uNFNq?=
+ =?utf-8?B?djlxUWprMGNPTzhGRk9CRk1GdDk4VjdkSnNBNDRoR0FPdUNnNkRxZFFwdjBJ?=
+ =?utf-8?B?WDRWdTFXUDJhRWIwY3oxcEU0TDZ5Y3p0OHhOQm1aektzOEZ6MmlMaTR1d2cy?=
+ =?utf-8?B?eUwyMGRnUU9tVloxR2kvTVJwRlFWZDdoMUlBOGdtVkx2bHBWZkExL2YyZGwx?=
+ =?utf-8?B?aGoxSTVZY1FyVEtFaVFqMHJBYjVZL1RCZDJkTzdtQStvTWhLRHFYZEt0Y1g2?=
+ =?utf-8?B?bFZwaXJBcVlhWmRjUDI0Nk9jNlVqVkRUb2hLa2hjR2MrbE1NM3Y5TkYxYjBs?=
+ =?utf-8?B?Z3g3amhMT3BMc2pCdXYvMThVSC9VclFGWWVLOGNCaGNXT1JkM2phMVdmdjFu?=
+ =?utf-8?B?K1cvNE1vclQxNUZEcGZRS3hNWS9LVGw4NFU1RFdlR3RMaGJZV0VLT1gvMEFl?=
+ =?utf-8?B?MnA4SmFMbTFRSUI1bXpSRDcrcEtxZGxRajQwQUMwWm5ubHRPS016ZlNlR1Nv?=
+ =?utf-8?B?OStSNUNtdDdWcmk0QmMyd2FsUElVMldDSk1lcUoza3BCSmgzajl0cXNIY1B1?=
+ =?utf-8?B?M3BtMVdXU3JicjBFT3I4NWE5N1ppSlBqWG45dGNkTXJHK3htK292OEdxYmtD?=
+ =?utf-8?B?Rzhrb25VV0U3Z0JmZmJIVVJPOU1ta1k0ai9CWkNqQzVmdVltb2lTamlKRGFQ?=
+ =?utf-8?B?cVArU0x0S2Rmd2hHZ2YzL2FmcTZkVlcxcmdWZG9FQU9QNjh6TG5EZzZvTjVL?=
+ =?utf-8?B?QzNSNXJBcWgralJDNTdDbGF6WmJDSldFL3haUng1Y2dGbmJ5TUpqYVlCWmhE?=
+ =?utf-8?Q?cMpYjJ+aJht+Svm4ZJ+B4PxzyvyaO5l9aADtlyg5Q5nB?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83eceee3-c1b2-4479-2bb3-08ddd6e3fab4
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2025 01:28:01.1038
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: io0LvX8LIU+KFrJVZCznTStLc8UEk7dHDInEiBqT+yNrDkl+kJP4WG0VMq07jWQ2WNbNn/Ia/2jBumthkwf2hw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8143
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   821c9e515db512904250e1d460109a1dc4c7ef6b
-commit: 006aa8f57f55dd5bf68c4ada1e0d3f4e59027d71 mfd: dt-bindings: Convert TPS65910 to DT schema
-date:   10 days ago
-config: arm-randconfig-2052-20250731 (https://download.01.org/0day-ci/archive/20250809/202508090302.gVlOiKrE-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-dtschema version: 2025.6.2.dev4+g8f79ddd
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250809/202508090302.gVlOiKrE-lkp@intel.com/reproduce)
+Hi Gary,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508090302.gVlOiKrE-lkp@intel.com/
+On Thu Jul 24, 2025 at 8:32 AM JST, Gary Guo wrote:
+<snip>
+> +pub struct Refcount(Opaque<bindings::refcount_t>);
+> +
+> +impl Refcount {
+> +    /// Construct a new [`Refcount`] from an initial value.
+> +    ///
+> +    /// The initial value should be non-saturated.
+> +    #[inline]
+> +    pub fn new(value: i32) -> Self {
+> +        build_assert!(value >=3D 0, "initial value saturated");
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1154.15-1166.4: Warning (unique_unit_address_if_enabled): /usb@7d004000: duplicate unit-address (also used in node /usb-phy@7d004000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: pmic@2d (ti,tps65911): 'wakeup-source' does not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: touchscreen@41 (st,stmpe811): 'blocks', 'id', 'irq-gpio', 'irq-trigger', 'stmpe_adc', 'stmpe_touchscreen' do not match any of the regexes: '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/st,stmpe.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: touchscreen@41 (st,stmpe811): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/st,stmpe.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: /i2c@7000d000/temp-sensor@4c: failed to match any schema with compatible: ['national,lm95245']
-   arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-apalis-eval.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
---
-   arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-common.dtsi:49.22-55.5: Warning (unit_address_vs_reg): /reserved-memory/linux,cma@80000000: node has a unit name, but no reg or ranges property
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
->> arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: pmic@2d (ti,tps65911): 'wakeup-source' does not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: audio-codec@1c (realtek,rt5640): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5640.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: audio-codec@1c (realtek,rt5640): Unevaluated properties are not allowed ('clock-names', 'clocks' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5640.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-nexus7-grouper-PM269.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
---
-   arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi:53.22-59.5: Warning (unit_address_vs_reg): /reserved-memory/linux,cma@80000000: node has a unit name, but no reg or ranges property
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf201.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf201.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf201.dtb: pmic@2d (ti,tps65911): 'pmic-sleep-hog', 'wakeup-source' do not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf201.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf201.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf201.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf201.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf201.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi:53.22-59.5: Warning (unit_address_vs_reg): /reserved-memory/linux,cma@80000000: node has a unit name, but no reg or ranges property
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300t.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300t.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf300t.dtb: pmic@2d (ti,tps65911): 'pmic-sleep-hog', 'wakeup-source' do not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf300t.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300t.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300t.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300t.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300t.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi:53.22-59.5: Warning (unit_address_vs_reg): /reserved-memory/linux,cma@80000000: node has a unit name, but no reg or ranges property
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tg.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tg.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf300tg.dtb: pmic@2d (ti,tps65911): 'pmic-sleep-hog', 'wakeup-source' do not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf300tg.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tg.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tg.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tg.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tg.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi:53.22-59.5: Warning (unit_address_vs_reg): /reserved-memory/linux,cma@80000000: node has a unit name, but no reg or ranges property
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: pmic@2d (ti,tps65911): 'pmic-sleep-hog', 'wakeup-source' do not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30-asus-transformer-common.dtsi:53.22-59.5: Warning (unit_address_vs_reg): /reserved-memory/linux,cma@80000000: node has a unit name, but no reg or ranges property
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf700t.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf700t.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf700t.dtb: pmic@2d (ti,tps65911): 'pmic-sleep-hog', 'wakeup-source' do not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-asus-tf700t.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf700t.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf700t.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf700t.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-asus-tf700t.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1154.15-1166.4: Warning (unique_unit_address_if_enabled): /usb@7d004000: duplicate unit-address (also used in node /usb-phy@7d004000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
-   arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: rt5640@1c (realtek,rt5640): Unevaluated properties are not allowed ('realtek,ldo1-en-gpios' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/sound/realtek,rt5640.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: tps65911@2d (ti,tps65911): 'wakeup-source' does not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: tps65911@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: tps62361@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-beaver.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a02.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a02.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-cardhu-a02.dtb: tps65911@2d (ti,tps65911): 'wakeup-source' does not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-cardhu-a02.dtb: tps65911@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a02.dtb: tps62361@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a02.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a02.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a02.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a04.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a04.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-cardhu-a04.dtb: tps65911@2d (ti,tps65911): 'wakeup-source' does not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-cardhu-a04.dtb: tps65911@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a04.dtb: tps62361@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a04.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a04.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-cardhu-a04.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1154.15-1166.4: Warning (unique_unit_address_if_enabled): /usb@7d004000: duplicate unit-address (also used in node /usb-phy@7d004000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-colibri-eval-v3.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-colibri-eval-v3.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-colibri-eval-v3.dtb: pmic@2d (ti,tps65911): 'wakeup-source' does not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-colibri-eval-v3.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-colibri-eval-v3.dtb: touchscreen@41 (st,stmpe811): 'blocks', 'id', 'irq-gpio', 'irq-trigger', 'stmpe_adc', 'stmpe_touchscreen' do not match any of the regexes: '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/st,stmpe.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-colibri-eval-v3.dtb: touchscreen@41 (st,stmpe811): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/st,stmpe.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-colibri-eval-v3.dtb: /i2c@7000d000/temp-sensor@4c: failed to match any schema with compatible: ['national,lm95245']
-   arch/arm/boot/dts/nvidia/tegra30-colibri-eval-v3.dtb: regulator@60 (ti,tps62362): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
---
-   arch/arm/boot/dts/nvidia/tegra30-ouya.dts:46.22-52.5: Warning (unit_address_vs_reg): /reserved-memory/linux,cma@80000000: node has a unit name, but no reg or ranges property
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1154.15-1166.4: Warning (unique_unit_address_if_enabled): /usb@7d004000: duplicate unit-address (also used in node /usb-phy@7d004000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-ouya.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-ouya.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-ouya.dtb: pmic@2d (ti,tps65911): 'wakeup-source' does not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-ouya.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-ouya.dtb: tps62361@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-ouya.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-ouya.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-ouya.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dts:57.22-63.5: Warning (unit_address_vs_reg): /reserved-memory/linux,cma@80000000: node has a unit name, but no reg or ranges property
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1110.15-1123.4: Warning (unique_unit_address_if_enabled): /usb@7d000000: duplicate unit-address (also used in node /usb-phy@7d000000)
-   arch/arm/boot/dts/nvidia/tegra30.dtsi:1196.15-1208.4: Warning (unique_unit_address_if_enabled): /usb@7d008000: duplicate unit-address (also used in node /usb-phy@7d008000)
-   arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-   arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
->> arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: pmic@2d (ti,tps65911): 'pmic-sleep-hog', 'wakeup-source' do not match any of the regexes: '^(vcc(io|[1-7])-supply)$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: pmic@2d (ti,tps65911): regulators:vddctrl: Unevaluated properties are not allowed ('nvidia,tegra-cpu-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: core-regulator@60 (ti,tps62361): Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-   arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-   arch/arm/boot/dts/nvidia/tegra30-pegatron-chagall.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
---
-   arch/arm/boot/dts/rockchip/rk3066a.dtsi:100.18-108.5: Warning (graph_child_address): /vop@1010c000/port: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
-   arch/arm/boot/dts/rockchip/rk3066a.dtsi:126.18-134.5: Warning (graph_child_address): /vop@1010e000/port: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
->> arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-bqcurie2.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
---
-   arch/arm/boot/dts/rockchip/rk3066a.dtsi:100.18-108.5: Warning (graph_child_address): /vop@1010c000/port: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
-   arch/arm/boot/dts/rockchip/rk3066a.dtsi:126.18-134.5: Warning (graph_child_address): /vop@1010e000/port: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
->> arch/arm/boot/dts/rockchip/rk3066a-marsboard.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-marsboard.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-marsboard.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-marsboard.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-marsboard.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
---
-   arch/arm/boot/dts/rockchip/rk3066a.dtsi:100.18-108.5: Warning (graph_child_address): /vop@1010c000/port: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
-   arch/arm/boot/dts/rockchip/rk3066a.dtsi:126.18-134.5: Warning (graph_child_address): /vop@1010e000/port: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
->> arch/arm/boot/dts/rockchip/rk3066a-rayeager.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-rayeager.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-rayeager.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-rayeager.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/rockchip/rk3066a-rayeager.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
---
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/cm@48004000/clockdomains/dpll5_clkdm: failed to match any schema with compatible: ['ti,clockdomain']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/cm@48004000/clockdomains/sgx_clkdm: failed to match any schema with compatible: ['ti,clockdomain']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/cm@48004000/clockdomains/usbhost_clkdm: failed to match any schema with compatible: ['ti,clockdomain']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/target-module@48320000/counter@0: failed to match any schema with compatible: ['ti,omap-counter32k']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/target-module@48056000/dma-controller@0: failed to match any schema with compatible: ['ti,omap3630-sdma', 'ti,omap-sdma']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/target-module@48056000/dma-controller@0: failed to match any schema with compatible: ['ti,omap3630-sdma', 'ti,omap-sdma']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/omap3-echo.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/1w@480b2000: failed to match any schema with compatible: ['ti,omap3-1w']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/mmc@4809c000: failed to match any schema with compatible: ['ti,omap3-hsmmc']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/mmc@480b4000: failed to match any schema with compatible: ['ti,omap3-hsmmc']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/mmc@480ad000: failed to match any schema with compatible: ['ti,omap3-hsmmc']
-   arch/arm/boot/dts/ti/omap/omap3-echo.dtb: /ocp@68000000/mmc@480ad000/atheros@0: failed to match any schema with compatible: ['atheros,ath6kl']
---
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: serial@0 (ti,am3352-uart): compatible: 'oneOf' conditional failed, one must be fixed:
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: tps@2d (ti,tps65910): ti,en-ck32k-xtal: 1 is not of type 'boolean'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: /ocp/interconnect@48000000/segment@0/target-module@60000/mmc@0: failed to match any schema with compatible: ['ti,am335-sdhci']
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: segment@100000 (simple-pm-bus): 'anyOf' conditional failed, one must be fixed:
-   	'clocks' is a required property
-   	'power-domains' is a required property
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir2110.dtb: segment@100000 (simple-pm-bus): $nodename:0: 'segment@100000' does not match '^bus(@[0-9a-f]+)?$'
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
---
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: tps@2d (ti,tps65910): ti,en-ck32k-xtal: 1 is not of type 'boolean'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: /ocp/interconnect@48000000/segment@0/target-module@60000/mmc@0: failed to match any schema with compatible: ['ti,am335-sdhci']
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: segment@100000 (simple-pm-bus): 'anyOf' conditional failed, one must be fixed:
-   	'clocks' is a required property
-   	'power-domains' is a required property
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: segment@100000 (simple-pm-bus): $nodename:0: 'segment@100000' does not match '^bus(@[0-9a-f]+)?$'
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir3220.dtb: serial@0 (ti,am3352-uart): compatible: 'oneOf' conditional failed, one must be fixed:
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
---
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir5221.dtb: serial@0 (ti,am3352-uart): compatible: 'oneOf' conditional failed, one must be fixed:
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir5221.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-baltos-ir5221.dtb: tps@2d (ti,tps65910): ti,en-ck32k-xtal: 1 is not of type 'boolean'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir5221.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir5221.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir5221.dtb: /ocp/interconnect@48000000/segment@0/target-module@60000/mmc@0: failed to match any schema with compatible: ['ti,am335-sdhci']
-   arch/arm/boot/dts/ti/omap/am335x-baltos-ir5221.dtb: segment@100000 (simple-pm-bus): 'anyOf' conditional failed, one must be fixed:
-   	'clocks' is a required property
-   	'power-domains' is a required property
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
---
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: tps@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: scm@0 (ti,am3-scm): clockdomains: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: scm@0 (ti,am3-scm): $nodename:0: 'scm@0' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-base0033.dtb: /ocp/interconnect@44c00000/segment@200000/target-module@10000/scm@0: failed to match any schema with compatible: ['ti,am3-scm', 'simple-bus']
---
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evm.dtb: tps@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evm.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evm.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-evm.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evm.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evm.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evm.dtb: scm@0 (ti,am3-scm): clockdomains: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evm.dtb: scm@0 (ti,am3-scm): $nodename:0: 'scm@0' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evm.dtb: /ocp/interconnect@44c00000/segment@200000/target-module@10000/scm@0: failed to match any schema with compatible: ['ti,am3-scm', 'simple-bus']
---
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: tps@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: lis331dlh@18 (st,lis331dlh): 'Vdd-supply', 'Vdd_IO-supply', 'st,click-single-x', 'st,click-single-y', 'st,click-single-z', 'st,click-thresh-x', 'st,click-thresh-y', 'st,click-thresh-z', 'st,irq1-click', 'st,irq2-click', 'st,max-limit-x', 'st,max-limit-y', 'st,max-limit-z', 'st,min-limit-x', 'st,min-limit-y', 'st,min-limit-z', 'st,wakeup-x-hi', 'st,wakeup-x-lo', 'st,wakeup-y-hi', 'st,wakeup-y-lo', 'st,wakeup-z-hi', 'st,wakeup-z-lo' do not match any of the regexes: '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/iio/st,st-sensors.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-evmsk.dtb: lis331dlh@18 (st,lis331dlh): compatible: 'oneOf' conditional failed, one must be fixed:
-   	['st,lis331dlh', 'st,lis3lv02d'] is too long
-   	'st,lis331dlh' is not one of ['st,h3lis331dl-accel', 'st,lis2de12', 'st,lis2dw12', 'st,lis2hh12', 'st,lis2dh12-accel', 'st,lis2ds12', 'st,lis302dl', 'st,lis331dl-accel', 'st,lis331dlh-accel', 'st,lis3de', 'st,lis3dh-accel', 'st,lis3dhh', 'st,lis3l02dq', 'st,lis3lv02dl-accel', 'st,lng2dm-accel', 'st,lsm303agr-accel', 'st,lsm303c-accel', 'st,lsm303dl-accel', 'st,lsm303dlh-accel', 'st,lsm303dlhc-accel', 'st,lsm303dlm-accel', 'st,lsm330-accel', 'st,lsm330d-accel', 'st,lsm330dl-accel', 'st,lsm330dlc-accel']
---
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: power-controller@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: power-controller@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: power-controller@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: power-controller@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: power-controller@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: power-controller@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: power-controller@2d (ti,tps65910): '#power-domain-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/power/power-domain.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-icev2.dtb: tsc (ti,am3359-tsc): 'ti,wires' is a required property
---
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: tps@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: scm@0 (ti,am3-scm): clockdomains: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: scm@0 (ti,am3-scm): $nodename:0: 'scm@0' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: /ocp/interconnect@44c00000/segment@200000/target-module@10000/scm@0: failed to match any schema with compatible: ['ti,am3-scm', 'simple-bus']
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: scm_conf@0 (syscon): phy-gmii-sel: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-lxm.dtb: scm_conf@0 (syscon): clocks: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
---
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: tps@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: regulator@12 (regulator-fixed): Unevaluated properties are not allowed ('reg', 'regulator-compatible' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/regulator/fixed-regulator.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-moxa-uc-8100-me-t.dtb: rtc_wdt@68 (dallas,ds1374): $nodename:0: 'rtc_wdt@68' does not match '^rtc(@.*|-([0-9]|[1-9][0-9]+))?$'
---
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: serial@0 (ti,am3352-uart): compatible: 'oneOf' conditional failed, one must be fixed:
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: tps@2d (ti,tps65910): ti,en-ck32k-xtal: 1 is not of type 'boolean'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: /ocp/interconnect@48000000/segment@0/target-module@60000/mmc@0: failed to match any schema with compatible: ['ti,am335-sdhci']
-   arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: segment@100000 (simple-pm-bus): 'anyOf' conditional failed, one must be fixed:
-   	'clocks' is a required property
-   	'power-domains' is a required property
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dtb: segment@100000 (simple-pm-bus): $nodename:0: 'segment@100000' does not match '^bus(@[0-9a-f]+)?$'
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
---
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-2xx.dtb: serial@0 (ti,am3352-uart): compatible: 'oneOf' conditional failed, one must be fixed:
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-2xx.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-netcom-plus-2xx.dtb: tps@2d (ti,tps65910): ti,en-ck32k-xtal: 1 is not of type 'boolean'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-2xx.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-2xx.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-2xx.dtb: /ocp/interconnect@48000000/segment@0/target-module@60000/mmc@0: failed to match any schema with compatible: ['ti,am335-sdhci']
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-2xx.dtb: segment@100000 (simple-pm-bus): 'anyOf' conditional failed, one must be fixed:
-   	'clocks' is a required property
-   	'power-domains' is a required property
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
---
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: serial@0 (ti,am3352-uart): compatible: 'oneOf' conditional failed, one must be fixed:
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: tps@2d (ti,tps65910): ti,en-ck32k-xtal: 1 is not of type 'boolean'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: /ocp/interconnect@48000000/segment@0/target-module@60000/mmc@0: failed to match any schema with compatible: ['ti,am335-sdhci']
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: segment@100000 (simple-pm-bus): 'anyOf' conditional failed, one must be fixed:
-   	'clocks' is a required property
-   	'power-domains' is a required property
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-netcom-plus-8xx.dtb: segment@100000 (simple-pm-bus): $nodename:0: 'segment@100000' does not match '^bus(@[0-9a-f]+)?$'
-   	from schema $id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
---
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: serial@0 (ti,am3352-uart): Unevaluated properties are not allowed ('rts-gpio' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: tps@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: tps@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: tps@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: tps@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: tps@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: tps@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: scm@0 (ti,am3-scm): clockdomains: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-pdu001.dtb: scm@0 (ti,am3-scm): $nodename:0: 'scm@0' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
---
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: pmic@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: pmic@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: pmic@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: pmic@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: pmic@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: pmic@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: scm@0 (ti,am3-scm): clockdomains: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: scm@0 (ti,am3-scm): $nodename:0: 'scm@0' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-phycore-rdk.dtb: /ocp/interconnect@44c00000/segment@200000/target-module@10000/scm@0: failed to match any schema with compatible: ['ti,am3-scm', 'simple-bus']
---
-   	['ti,am3352-uart', 'ti,omap3-uart'] is too long
-   	'ti,am3352-uart' is not one of ['ti,am64-uart', 'ti,j721e-uart']
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: pmic@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: pmic@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: pmic@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: pmic@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: pmic@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: pmic@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: scm@0 (ti,am3-scm): clockdomains: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-regor-rdk.dtb: scm@0 (ti,am3-scm): $nodename:0: 'scm@0' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
---
-   	'ti,am654-uart' was expected
-   	from schema $id: http://devicetree.org/schemas/serial/8250_omap.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: pmic@2d (ti,tps65910): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: pmic@2d (ti,tps65910): regulators: '#address-cells', '#size-cells', 'regulator@0', 'regulator@1', 'regulator@10', 'regulator@11', 'regulator@12', 'regulator@13', 'regulator@2', 'regulator@3', 'regulator@4', 'regulator@5', 'regulator@6', 'regulator@7', 'regulator@8', 'regulator@9' do not match any of the regexes: '^(vdd[1-3]|vaux([1-2]|33)|vdig[1-2])$', '^(vrtc|vio|vpll|vdac|vmmc|vbb|vddctrl)$', '^ldo[1-8]$', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: pmic@2d (ti,tps65910): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
->> arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: pmic@2d (ti,tps65910): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: pmic@2d (ti,tps65910): 'gpio-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: pmic@2d (ti,tps65910): '#gpio-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/mfd/ti,tps65910.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: scm@0 (ti,am3-scm): clockdomains: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: scm@0 (ti,am3-scm): $nodename:0: 'scm@0' does not match '^([a-z][a-z0-9\\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-   arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dtb: /ocp/interconnect@44c00000/segment@200000/target-module@10000/scm@0: failed to match any schema with compatible: ['ti,am3-scm', 'simple-bus']
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Given that `inc` will WARN if the refcount is `0`, do we want to accept
+`0` here?
 
