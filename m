@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-760936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6EEB1F22F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:08:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D84B1F230
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612D01AA27FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:08:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269E5625E86
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF5C274B39;
-	Sat,  9 Aug 2025 05:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58A4226CFC;
+	Sat,  9 Aug 2025 05:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c7C5KF6q"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KCQ9b2gg"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE9D226CFC
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029841DC994
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754716079; cv=none; b=mzMpUPIBhCIfqgfGYLirSyVew1DiGNGy8kHH9pByDFwjQLg/R08SklG4sqt+h9F0MjNW8uROdXW9EhU0eQGBZx9K4bKZLpb32NTZ568kuQTL5xijzNnbyKAfpI4nekWx9gHcKn2NZrcT76Sz4xJ2qgXu5qqYX/ksmmq4ZH9u+uk=
+	t=1754716096; cv=none; b=WeFRqzbJuIG6rs2oBAOGSTvUwR0GN2LxtVKltBBp1IAWJ1/M5927lhVOryPqkDV68MiNoDiPeaUuIGeJXy1yxTNPU+76g8h8o2kq0++bTNlmXdtCkgRKkjAyvo6JUXPfk9qDPu5fNyxlfwrmUYWgRrIiKd3DbVL5bDFDsKlvmIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754716079; c=relaxed/simple;
-	bh=57gcT4d4kI048m64jkmqBDrfcowgupEqZQwQ5AEee0w=;
+	s=arc-20240116; t=1754716096; c=relaxed/simple;
+	bh=3Uph+Pq82/wD/SKt6Wb33FmEmMZN7GyPmlnOYYynb0Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f3RQRxzvnj66spzaJhbe9MgqAYCa98AUSZuwljPsRXInxq/Oxk06wgAT2vRlhS0ehsQOQHM82nnzblQnvrJvdVfOkRoSiG94h3cOAWLd5yBkPjkPpHdCL+rW9rkGbaTLW4RhQdXSHhYol4ZYkaUUjpFkZLW21Gb6+B8vqJUbOW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c7C5KF6q; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=o3E1Bq0Hs0dTChFZYVm4GVOaPeXcpLPhZZEQJ43VOlsuNVair0TGmjdyd1fLlVjeODS5guLeDmjO76w+loIt+jPuKVqUMOnTWw1sIHx/QjCLlCjeJzEknh9dFn7KMZ1m1CPRGI1DknlEPNf/b1KDvycj+UhJPpZyr/+EIpZ7wE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KCQ9b2gg; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754716078; x=1786252078;
+  t=1754716095; x=1786252095;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=57gcT4d4kI048m64jkmqBDrfcowgupEqZQwQ5AEee0w=;
-  b=c7C5KF6q/sRDGDVG+lM2wu4H0TzbLyHIoFXYrwK1PhMTWehBhmUrl96S
-   T3NkwyIpBdauVKsc3hrNWBirHezNT+Ts0OE7838wAraS+qmqOaNyn/zFO
-   uMSRssAaGwLukBsRJhTXc1N5I0Xy/egiTw1fhkKvS4U8SfrTfRWrmwRa3
-   RPU4tMB524z4Z6MxtH6azdWGiN57MoFd2/dFpTSaE7cXAWavDizO4/WkF
-   yI3XD8KwS9r/rQo9E5DRI45b4Vgd1JhUvkVPHt9fZqza6Nai4EKnx1UNE
-   0Vq3A218YIyzDKDxbIwkrtpMqkq0EWb+pBp1au3p6UMfK3D2O6VNQOM+h
+  bh=3Uph+Pq82/wD/SKt6Wb33FmEmMZN7GyPmlnOYYynb0Q=;
+  b=KCQ9b2ggnvTfhFeV/E50fpZUEEpmBsHHnpwH10t35fPh5GZQ4EVxbF9O
+   iwfbtGzsyddng/NZIteqbsCZ21Nl1B6x7QxI9972j42g46j13xjdwRoZ3
+   8A5ColX2OkCXP0fikLLx5ox8/8xMCGNiAOuHNT4EVTgK2VkSLTjB4x6k2
+   OuuokNSBejb3QbstBidVgae5eMr6rPiKsjUpKeIv2M/QgpCk+dAN8C98Z
+   9hQOg7BYjmAjMdUmUQXdfIf7u4hNaX6qUCPOtPPWVhaIxMAKXUR8DS4hA
+   yBD3fm5G5+abwatbqRE6FgrAva6LfJ6mMuAuKCPYQ9SPgzZrUlqukRs7B
    A==;
-X-CSE-ConnectionGUID: Fqgj+0eySbSqlUZZn4AFOw==
-X-CSE-MsgGUID: Y/ZbdGdBSSKyPLJRd4lBYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60682928"
+X-CSE-ConnectionGUID: 2W0v7dR/SgiRTYDXa05aZw==
+X-CSE-MsgGUID: hTr8aLcoRrKUtcFs+hv2jQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60682947"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="60682928"
+   d="scan'208";a="60682947"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:07:58 -0700
-X-CSE-ConnectionGUID: vDQ06Yc6TseUjHJDDorjIA==
-X-CSE-MsgGUID: sVVKpPMjSQmXlszsGV2bRg==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:08:15 -0700
+X-CSE-ConnectionGUID: /DUYqfzETGitdTxBYN+2cg==
+X-CSE-MsgGUID: /4qu8b2ATfih1n9Fc4FHNQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="170841605"
+   d="scan'208";a="170841644"
 Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by orviesa005.jf.intel.com with ESMTP; 08 Aug 2025 22:07:52 -0700
+  by orviesa005.jf.intel.com with ESMTP; 08 Aug 2025 22:08:09 -0700
 From: Chen Yu <yu.c.chen@intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -84,9 +84,9 @@ Cc: Vincent Guittot <vincent.guittot@linaro.org>,
 	Chen Yu <yu.chen.surf@gmail.com>,
 	Chen Yu <yu.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 03/28] sched: Avoid task migration within its preferred LLC
-Date: Sat,  9 Aug 2025 13:01:41 +0800
-Message-Id: <37376d2072f6175d2fb909a29b66a3da0bcfcce3.1754712565.git.tim.c.chen@linux.intel.com>
+Subject: [RFC PATCH v4 04/28] sched: Avoid calculating the cpumask if the system is overloaded
+Date: Sat,  9 Aug 2025 13:02:04 +0800
+Message-Id: <88d1c3bc1e817cc72346f566153a4618604b9ecd.1754712565.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1754712565.git.tim.c.chen@linux.intel.com>
 References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
@@ -98,32 +98,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It was found that when running schbench, there is a
-significant amount of in-LLC task migrations, even if
-the wakee is woken up on its preferred LLC. This
-leads to core-to-core latency and impairs performance.
+From: K Prateek Nayak <kprateek.nayak@amd.com>
 
-Inhibit task migration if the wakee is already in its
-preferred LLC.
+If SIS_UTIL terminates the search for idle CPUs, the result of
+cpumask_and() becomes irrelevant. Given that select_idle_cpu()
+may now be invoked twice per wake-up within select_idle_sibling()
+due to cache-aware wake-ups, this overhead can be observed in
+benchmarks such as hackbench.
 
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+To conserve additional cycles-particularly in scenarios where
+the LLC is frequently targeted and the search aborts because
+the LLC is busy - calculate the cpumask only when the system is
+not overloaded.
+
+Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 ---
- kernel/sched/fair.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/sched/fair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e97ab46509e3..00bd0d25bc91 100644
+index 00bd0d25bc91..a7be5c5ecba3 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8835,6 +8835,8 @@ static int select_cache_cpu(struct task_struct *p, int prev_cpu)
- 	if (cpu < 0)
- 		return prev_cpu;
+@@ -7940,8 +7940,6 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
+ 	int i, cpu, idle_cpu = -1, nr = INT_MAX;
+ 	struct sched_domain_shared *sd_share;
  
-+	if (cpus_share_cache(cpu, prev_cpu))
-+		return prev_cpu;
+-	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
+-
+ 	if (sched_feat(SIS_UTIL)) {
+ 		sd_share = rcu_dereference(per_cpu(sd_llc_shared, target));
+ 		if (sd_share) {
+@@ -7953,6 +7951,8 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
+ 		}
+ 	}
  
- 	if (static_branch_likely(&sched_numa_balancing) &&
- 	    __migrate_degrades_locality(p, prev_cpu, cpu, false) > 0) {
++	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
++
+ 	if (static_branch_unlikely(&sched_cluster_active)) {
+ 		struct sched_group *sg = sd->groups;
+ 
 -- 
 2.25.1
 
