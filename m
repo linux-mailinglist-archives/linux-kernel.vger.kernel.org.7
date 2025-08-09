@@ -1,258 +1,329 @@
-Return-Path: <linux-kernel+bounces-761022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B71B1F340
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:22:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC902B1F343
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E918F56286D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:22:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 394987A9540
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2D727EFEF;
-	Sat,  9 Aug 2025 08:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9344227E07F;
+	Sat,  9 Aug 2025 08:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AwaQaQ3d"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2051.outbound.protection.outlook.com [40.107.223.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIowxpi6"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A5C1F8747;
-	Sat,  9 Aug 2025 08:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754727719; cv=fail; b=AKNMQdUMQhcXRA/1ELKqjYstw4qR5TcFv092v7HPJMSvevltpRmqQU4zcjzXwdYiq++wg/cmPAXiY6bb2sCV9dhZSnLKJN6C3xw1JdUnnqfuRIRgH/rlAoYBkmllZpBRY+fMcUYg0i0yb/F5uI1z1+2Aj5lyhByodrWI3ZKbY34=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754727719; c=relaxed/simple;
-	bh=VY3yooPhUIM7nGgYMnFvfKWaUvcQLKqP+5h0j+YKvko=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=Jn4FZvOw8nWvRPHoPNCSmGoPNuhUDUB+W40zr5AP2p2KN3FmRucOeHOcpadmvYuWUtPlyHw+8PLf7wWn3VwriiPzkN/134JOMeIXddv+9HMYPdih+G8yYO30J+u26OjyL8KlDs6ot48uJzhSJYIQY11/F8CkKqfuCuIVD5IMemg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AwaQaQ3d; arc=fail smtp.client-ip=40.107.223.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GNzqBxksdTqno6gdqy/tiLwt7BbBosIxI/NvXWEVYs30uD99ZnLollsLEbJBASTE7uwE+QZo7tPtdsUoSFoR2dMJzsKhRXmRgcMM2hpKAt3wbQtWys8UQUVk3HOV8fb2/rUHTv9SN0C5XBcnimRqOxlvd7+ZS9knczjqNrAk5FYc3xFuVdvNVeTRtxrbxXjqXsXFrLEWMYVOyYsnbQHwb1uwSHOR2SeJg5BGwn3KlHnh/KJlySx6RQzjMxH/8vJLC8p8lI1qZgOn9tAkNsXXla6SF8fXbUtXK3itQxmfKGovbYEDs2LeKW6RSangTgeyxd0emcgdrlThwQufOTXVKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ixIWluUuxNZt8DE635iJy5N0AmzdBDbmFGqEpKnBrWw=;
- b=iP1jetr/9zO8IFOCLM0jBtCO+Z0PgzAjUAHk/8pIeHclptNBz3CGGcr5UD7XShFF8H+puIxLoWU7pvE6UssXOqnNEdWgHPPktuuat47RF9T1MtHnhF1+yptNtSKAIpsytAoLCBgjINFNKsOqRiMtHFAKSjef6dfWQMeLMHszIZDPJD5fVzG7d/omIhrIp6dvAFaFOGPHwhe0O7yMbK4nQORpR5LwBGo9rbmcVaewUrVWOx9ciYg8NnOwVWsn2nLRbViswlMzN8bOE41qQPv6ldt+QyZfYITlA4oDVAZjpP+9XK7gGT/n0r8ZwguZmEkRS3w4w19icm1fwojmtwWTbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ixIWluUuxNZt8DE635iJy5N0AmzdBDbmFGqEpKnBrWw=;
- b=AwaQaQ3d5/rD/YwRmWEgMqZzTw/kBQnNXzWtaaPQOzrOCbyoXIr4NZK/XixQ9BFFkmNRnduGMbGQbGjYoPrKXQBN7x6tf9rbZhHTv0F/OW7lQZkizjsiI6/87CB3EkBCwV2FcaO+ZunftbFWwTh2baNpkBIXxbfdWQD+N4y5fVzPYB1w6fzrfOR2wVCPxcWuQyGiU1lAezl7Y0j4EsEE6xa8LTCAJmMXBlR7xp3GIbF1oXchrsfHpQnArafKqjo7pT9RkJoyjaykI8jQLDnx6feh86dOHNSnyIhhxbfLeCYLDrWI8Tsxk4VxkASn2Myw5r3UrUOaeIjDxSlO1pbL0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by MN2PR12MB4175.namprd12.prod.outlook.com (2603:10b6:208:1d3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Sat, 9 Aug
- 2025 08:21:54 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.9009.013; Sat, 9 Aug 2025
- 08:21:54 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 09 Aug 2025 17:21:49 +0900
-Message-Id: <DBXR255ZMW6F.2AF1IOPN7IPI7@nvidia.com>
-Cc: <rust-for-linux@vger.kernel.org>, "David Gow" <davidgow@google.com>,
- <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 4/5] rust: block: convert `block::mq` to use
- `Refcount`
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Gary Guo" <gary@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
- Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
- Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "Mark Rutland" <mark.rutland@arm.com>, "Tamir Duberstein"
- <tamird@gmail.com>, "Francesco Zardi" <frazar00@gmail.com>, "Antonio
- Hickey" <contact@antoniohickey.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250723233312.3304339-1-gary@kernel.org>
- <20250723233312.3304339-5-gary@kernel.org>
-In-Reply-To: <20250723233312.3304339-5-gary@kernel.org>
-X-ClientProxiedBy: TYCPR01CA0172.jpnprd01.prod.outlook.com
- (2603:1096:400:2b2::9) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C502206A6;
+	Sat,  9 Aug 2025 08:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754727927; cv=none; b=cIT1WnRDccaJ2UGhd9oJBq3X7YbwgV4qkZDsNExoOeZurS60OyNl3DgMR17X9Bvn/JZLrPZJEoy8398Vp0acPfcZpxCRtTE0K2X5zdaPfklTQ/7ppYE8KPGr/t6Jfv0nncsW5i70BZbSmOi9orkEUStnf0SaWHwmIv7YPa1av4g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754727927; c=relaxed/simple;
+	bh=6hZUX5BzXJxl+le6JejaaAQ5vkqA5NpiAPa/FpDs7EE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KftFMoMSmQPvwLl3XynQc60NssoAvhiy1TFFELUTnGM1/kaHkzysJvDQAlqD+lmXB17EVYcwaTmcy3b6X/c926O8KR0o4SKhsCL7xCMzdL93lz0Mvo0M3S8WuaoOqgDhuOOHWRfMZ8uacvUtJOSO5kmhgEEQjpSScj9NYXilci4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIowxpi6; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-451d3f72391so22767865e9.3;
+        Sat, 09 Aug 2025 01:25:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754727924; x=1755332724; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PkGRBgYyAuoN42OXjEbj1I1gqGxF3tvkJgNCQHwK9uM=;
+        b=YIowxpi6sBQd3GXdRB41gfa7JxeZ+CTfVN8nqo/a7FGSTbDjDqZ7vIUPcp6oF7rNhP
+         Wbtd505E02iwwoNy77a9y8i0QS/VKd/UzuFewg69HVoXW9Q9t1VUaoWC/IG32L1wifyW
+         zcFty5DNPkrFy9D4cvl9LLtkbmFzvFfPG6+BhdoqHKotmjVRlIK+hxKTkOTfAp4Gevtr
+         dB3NxCWBDX+yVHeiM+ghVjaU9VSol9w9nlvhmnXX9YBr2LAtScmygG1+qK661+jPnjlh
+         I3KfKncaf/lDekqpwx1A7V5LtkPW2KYOSzRxjRTz2Z48gqmsR//BaUKKeJ9ZTySMW4AI
+         AsFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754727924; x=1755332724;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PkGRBgYyAuoN42OXjEbj1I1gqGxF3tvkJgNCQHwK9uM=;
+        b=L0geCIS/984DypQxhscr77jaq07BGY8IWBKBFwKluhD2F9E6e2kqSl3QXTghYPlEYz
+         M8tMoybpNcsIBWNgdAfi2O9iOSb3+BJf/sMwBbcI+IZ85KIyCxpfQ6CdRJaRkvGg8fdm
+         fwiFRIwhFXg//9Mw6XlBQEmInzxn0nFmVzaw7/3HtbG2pZ9Vq+dQLa+1l8gF1YJcYg5S
+         gytFKfJazr60WRiCyWVmz4sGG8DeCZCR9ZW/oTMtG6pnDQ/uhKyOZt1MutVGFBB1cUdD
+         vyFY0uFg9YKFAwBJC++TnEQKfeaWbcdZSDA78HptIaKMWVbA6AND5hM0LHf4v/QpmkMK
+         mCSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBqAiVNJolVwK9V92ltvX8NtnKkTYMfEu78KPvYXfpvcoBrDN1F8F+1X5xmfRKABae/OhB1jcl+7tj3KYl+A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkas1PDwKMvupfxjL9gXPDqBI4HyotmIgMExqtWwhnQTV1ZrBC
+	7EIAv3JUZyN4JX45ByWquXrWHRa7W3XMmFeXzgqptun4fFDG95WRbYTF
+X-Gm-Gg: ASbGncsyjstCR6MTgUp+OJad7L855L+TfPeO4/hQscrilw/HDFcqXzSONrGiSZ61uPJ
+	zm/l5VJVe6Qn3xRyvXt3CUAaAjRostpPk7eergNDME8pVx4sVROgvbtgcTzVodx6W8Y7Gu5cLjY
+	IXgN2jEpVj5O5YWVs3OsEg26Mo/ZYCmECAITGJ5o3pt8E56a3y1pLTgG7uBuFA7mNDXSNyeroAR
+	eyGo/+qfSGqn/L6tNv/Fg+sKma+2ZTVLVO5vWzNR0ESI67w0LY3QCmVTPy8wF4xxZEgHIfot/Be
+	xiMPBSJ4LtDWrbJNUycvgCfmrUWigmGbo3YRvKpdgjVjed0Sw2S9SJe7SNLdf9Cb4ZDASD01A7w
+	nwwcUqOpSjZ9OOwaGU7tyebu4008y2jthOxVzDntWM9YINRuhUTGfLPLuux5aDw==
+X-Google-Smtp-Source: AGHT+IF/AjD/uSKMHY+9I7X9FWDKbt9gCniZj27bIHBhWy2Exb0IZvR9U87sHXds88zqGJNJL10CSQ==
+X-Received: by 2002:a05:600c:458b:b0:459:dd34:52fb with SMTP id 5b1f17b1804b1-459f4eb411bmr53201545e9.12.1754727923848;
+        Sat, 09 Aug 2025 01:25:23 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a2848sm32599079f8f.71.2025.08.09.01.25.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 01:25:22 -0700 (PDT)
+Date: Sat, 9 Aug 2025 09:25:21 +0100
+From: Stafford Horne <shorne@gmail.com>
+To: ChenMiao <chenmiao.ku@gmail.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+	Linux OpenRISC <linux-openrisc@vger.kernel.org>,
+	Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Sahil Siddiq <sahilcdq0@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 1/2] openrisc: Add text patching API support
+Message-ID: <aJcF8RnqYVNEMlp8@antec>
+References: <20250806020520.570988-1-chenmiao.ku@gmail.com>
+ <20250806020520.570988-2-chenmiao.ku@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MN2PR12MB4175:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad542807-123e-4608-9b2e-08ddd71dcc3b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|1800799024|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VVc0UHJJMnpvY0EvOU5RWXNMbWVDMWZ0MXFuUlUweWorZVZqTU9tUEI3enJ0?=
- =?utf-8?B?OFhDR2xDK3RmTW1NalQvTmVIYzZ0Y08rZ2dHWVlxeHVWTmN0TGNWN3czQ1Fo?=
- =?utf-8?B?ZXFmL08xcG9HWE9wN0MwSFJ1TnRocmNkZk1xRnl0ODk5TWlQWFhRL0JoQ2hv?=
- =?utf-8?B?L0VkT0dib0R3eU4rRTFBZDZhTTJkbWRHZk9oK0poL3ZkNVRyRjJHZFVqelFM?=
- =?utf-8?B?N3VsWDBhUmJ0b3lmRkJKcGhwekdBVDE3bHkrOGdlMEt3eUgwSUR6WXYyNnZa?=
- =?utf-8?B?UUR0QllIR1JCV3pPdC9BSWtCN0NGaXVUWWJUU0g4TzNtNjJpdi9JS0s5R1Uv?=
- =?utf-8?B?dGVRYjFTck5lVXlmWjVoRFJZQnFmZ1ovcEg4N2FTbkwxWURLZDFNSTFhSm5I?=
- =?utf-8?B?NWFTNHRvZkFvWUt1cWdheFhvSlM4SmsxRzFWd2QyTi94RkhGcllwZ0ZId2I3?=
- =?utf-8?B?czBLY1RSSzZjWHlPZDNhdHBXWHk5aVB6cFdsbzJJeGFZTkYvUGVUY25ib1lj?=
- =?utf-8?B?RDd6cjE2M0xYNUFwbzFFS3dSWUxsYjRDTGZoeUx4SFNndFlnZnBTMmtqa2VS?=
- =?utf-8?B?VWpjMjVLOTJzRlJWZi9HSkFKTkZLVWNOSThqZmZraUR2ZVVjWWgzWlhRdUo5?=
- =?utf-8?B?OE1YR280ckZmeGphUmZmcHZQVWVGT29yTEJDUjh0UDlXVTRZVkRVd1JRMTlz?=
- =?utf-8?B?UTkzRGxYZFdESHlHc3kvRmRyeW1Ub3hOSHZjaFI2c0RCZU5rK0MzVlRtRzUr?=
- =?utf-8?B?am90MTJHSXhxZjJwQkpmeUNaSk1SYlNtWk82cTRIaDZqVHI0VE40a01Hb3BS?=
- =?utf-8?B?akQ1MFBOQklyaDBkV0x4bytDN1piNHlPMHlCa2pFVDlOaDdMR3JOR3Z3Ulkw?=
- =?utf-8?B?WGQzTUNZbXdxRE16UVU4QWhGYm9IZE16MnRtYTFQR3dKNFhBcGcwMVoxS2hj?=
- =?utf-8?B?TkVsM2hqaDdpRDV2dmZPeWR5ay84b1o0bUNzdzBhdGRsbEc3UTZ6SFlkNDZC?=
- =?utf-8?B?NHhGeDV5aCs5YTJOSXlLRnl2NjdWWnBRdEZjSzQ2aGVSSlR0aG9aU2pzV3pm?=
- =?utf-8?B?VVBWYS91dWxISWlNSXZhejV5YjdsSVRMUjJrbWswSmFDTURmT2wxOWZRaGVs?=
- =?utf-8?B?SGlueElUNnNaaUwvRVVoWEE5NUh5ZGp5R09GZmxBckdlVDJMclU3K2RUK2NB?=
- =?utf-8?B?cFNWWkVveW5JVGM5OUhVN1R3MWo3LzhZWHlmMnlVT3c0R1BIUlJ4d0kySC9O?=
- =?utf-8?B?YWJVd1BRMWs3N2swVHhXUzNjd2xiSVZQMmllYzFFdXg3UVJ1eWpFcmdvN0Vw?=
- =?utf-8?B?dzRrZWZyS1d3eEtJdDJzMzd5Y1lwOEllb2d2UWI0YnJrM0FQdUJ0Zkg0TE5n?=
- =?utf-8?B?SXVvVXYycm1QeWhBU2dSUFJucnZvTFJJaENTaEtnWnROVUFyMjdZVThwQndZ?=
- =?utf-8?B?M09OamVhbVgvVFJkbDIxK0d5QjNIZHRvaVY5ZW5pV0piZE9zYVZxVU9NdkJu?=
- =?utf-8?B?TDhqdm9IR05DK1R4OTVFQXh3OFpGcDlwMDlpNXp3cEIxT0MzTFM2YnNtckZn?=
- =?utf-8?B?Q3V2RjhtVUl1bkt2OEFMSzJ4WW9ZZndpa1FmWDhKOHdrU3ZaZmFnY1k5OXNY?=
- =?utf-8?B?SE9FbHlOWDNjUnBPRUNDOUhmMEVDd3pKU1VUMUlMU1c5aC9Tdy85N1R5TkF5?=
- =?utf-8?B?NkI5NHI0SkxXL2JUOEhqUlFIQzlqQktFRXlvSHA0a0gxRnd0aWxkcFFSZjNp?=
- =?utf-8?B?Qm5McXNXT0daNUhzd2RVaVRRYlI1cXI0c3EwQXpKZmwvN2pjVnNBMk5FUVlY?=
- =?utf-8?B?YlNMaC8rUjQ2eGhidmx2K3FseGNtSFVQSDUzeHVVM0tvL3VSYm1HWTRveno5?=
- =?utf-8?B?RFJvQ1R5L1ZtdzlnYS9WT0JqRGZHRVF2cjVKcWtCOUJ1VTdJVHRPQzY3Rjkw?=
- =?utf-8?B?VU9BMlA5azJHVnhrcjJoZk9YSHBseTU5K3gyYTZReVNLdTBES09uYWJIUSsw?=
- =?utf-8?B?VzV3cXEzTFV3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?LzczVG9WTC9yUGZ3M0RuVWdzTUpKVER0MS9xVUhDNGhOMFB3b1MybjNVWVpw?=
- =?utf-8?B?NVRGTlN5Tis2WU1hcFErUndyTnRSODZzZGY2YloxZkJvRUtIYVhRRHpuT3hP?=
- =?utf-8?B?NUxoU3VyTWV4M3gvS0RHMHFaME5XM3c1UEdWc1d2WFVSWWMweEhabGdPSi8w?=
- =?utf-8?B?OVY2cWhkb2NDcC81cTd5L0VNWUplV1NTaUFvSXRQa0hJYmEwZVNEU1VwUWJj?=
- =?utf-8?B?ZjJyYUF3N3U1QzYvQjhGVXFjMEd3UzQvVGFqamVuOVhjN3dNOUdCdGZTWTRH?=
- =?utf-8?B?Wmp2WnRkcGNtNW1nelN4eDU5VW0ydEhub3M1RVJEbmhPdlFLdHdMMS9xVnlp?=
- =?utf-8?B?NTFGQno3aDdMRlhPYWVSRi9XYzhUK3g5WFZYTHQ0aUo4ZWlWUnFoVEpkeWJ4?=
- =?utf-8?B?b3QvZDZqMndXcHVqY1dqTittL1Y1bkhHbFNZME9kUzM2VkpoWDZGMS9VdThH?=
- =?utf-8?B?dXdrVFc3Skx2bDhyWHBISDczUkMvK1RPUHJ2dlk0L2J2N3VocXZYSU8wVUFB?=
- =?utf-8?B?NUEvWUJrZlltQVcxUnJDZlhUSlN3aWN1V0NGdXFoMnRKYWJzdU1hS1V6V045?=
- =?utf-8?B?MFZ5Z3RPeFpCOEtRMmhubmJrUWdrNUxrNHM0SGIvREtKajlLVHRESjRJWTFk?=
- =?utf-8?B?UEJGSVpMem1XbkJEQmdoMCszLzc5NUt2QmJyWmVEZVl4emF2elRpLzdWaWo0?=
- =?utf-8?B?VGhqNlpZb1VrUGJBUXdzNXF2a0R5dXczSjR6ekhHTEVtSjgxS05hWlJXSWxU?=
- =?utf-8?B?YUV5K3dvdkhUSVpBNUMvWVRWNFlLYWw3N2lDaVMvbjUvZi93d0NmK0pybUhT?=
- =?utf-8?B?ZkZydjVXTTV2aXR4RmZBSGVXb1J4bmdadVZnNEF0ZXk3R2dBenVEVFVBRzd2?=
- =?utf-8?B?N0lZRWN5c0RXZXRsZVo0bEZWQWFPYkt1czRCbXArZkh0RW9DZ0c0NnpwMlIr?=
- =?utf-8?B?ckdNNE9vN1JxRXB5R05Xbkc2MytON1pTMXVZM08vRkc4UDZXdWFDa0lZdndE?=
- =?utf-8?B?UENDUDkvYUNxQTQ1K1FyS1hKanVNbGFLK1phYWFET2ZEK1d4dFM2MG5zaFMy?=
- =?utf-8?B?REhVZnNZK1c3c0V6RVRPOS8wcHljVkJNZmtTR2pXTGNpSzBPR0RSWnpmQ214?=
- =?utf-8?B?R1hNVGZpczI5ZXNSa1BKckkzVHVYWWhEd3FMOFBqT1pvN0RvelFWamxGVG93?=
- =?utf-8?B?VUZnVXVBRTQ1ZFFGdS9QeS9oWFNxSzg1TTFzR1hEejJJeUFuRi9PTWRYTDBr?=
- =?utf-8?B?Rm9LWG5iVndUOHlWQ3U4T2MvZlppOVZIczFReHF5NTc1VGE4b3l2VjNHT3Yw?=
- =?utf-8?B?K3NGMEhuNGt2QlNXcGhrd2VkSG5CS1RUTTZCTllzc2w4WDFqWnJqMW9ha0NX?=
- =?utf-8?B?UTdON0k5U0prWmN5bFA1N2c5MnNySDZPbG1UR1NYb1hkNnlra2xXUDM3N2tM?=
- =?utf-8?B?dmV1NW5ibGgwTHhoWjhVaGhjN29weXdENmZ2ZCs0RFZadlRrbzRLazl0cHdo?=
- =?utf-8?B?dGVHamVaaXhxT1VKK2V5VnBDeFI3U05zSkM4Rlk1a0tyZmxjcDFiSjZoRjha?=
- =?utf-8?B?bzlxSUw3RWNDSEtWYURuR2ljOWpoQjF6T2IwV3Y5bkpOdE41dkRDM3FUZXRp?=
- =?utf-8?B?U3ZkNVBoVkhsR3g0TURPU0JLRHVvS2ZRVktBc0duY1k1MWNicWhXdzU2KzFS?=
- =?utf-8?B?dytyRXY4blNXeC9uU0UvK0ZicU5GT3FxT1lTWGFyVWRsWkZCZGptZ0tBUzJX?=
- =?utf-8?B?bHJ3Wm5WNzRvMzI2Ky9oZUNJRDl3OGhUNkVpSjgwd3YzMEJJOHpvR1Y2c1A5?=
- =?utf-8?B?M3RHSkI5N0ZhejR5NW8zYTNMaUhyYlVac21WZXhMOFRDenJyeHVzK0xmSVRJ?=
- =?utf-8?B?ZVU0U3M1ZzBRUUFMZGx3TEV1bXNlMkpNRDJEV0EwNEJFdWpDdmtXWlRHajF3?=
- =?utf-8?B?SlBwZUdPbWpmMlhFcW02T2xwY2tBZUVUL1RmWmE3NjlzREw2VUpleXBJT1M2?=
- =?utf-8?B?MDBiN0VtUzV1YjVwZGd1eHNqMGYyWVdHTGw2NjA5Vm9pRnVKcy85R0RzcWpJ?=
- =?utf-8?B?ZXEzL2JJR2pFVFhTVTRaNW01TUV0SmJGMHRnZTlWcVpWUGd2K1VibGNqM3RG?=
- =?utf-8?B?ek5QcS9HNFVNbVFvZS9xYisxeXRtSjJMMDFEaTE4WlFzTWl4cHZDdFVaM1pK?=
- =?utf-8?Q?SOUPLCeuWY8boVpdvvxj74Y4Sxn4X3O4sJ4FOHFGW6lI?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad542807-123e-4608-9b2e-08ddd71dcc3b
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2025 08:21:54.1549
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BvSpPEMhdlqwhdKMHlrAYk/NMG7dAFLx3gzJtLuEtGDlgDgsg5Q3tzpdbsyjb59Jra9cvfIquaFUPzWO7KWplw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4175
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806020520.570988-2-chenmiao.ku@gmail.com>
 
-On Thu Jul 24, 2025 at 8:32 AM JST, Gary Guo wrote:
-> From: Gary Guo <gary@garyguo.net>
->
-> Currently there's a custom reference counting in `block::mq`, which uses
-> `AtomicU64` Rust atomics, and this type doesn't exist on some 32-bit
-> architectures. We cannot just change it to use 32-bit atomics, because
-> doing so will make it vulnerable to refcount overflow. So switch it to
-> use the kernel refcount `kernel::sync::Refcount` instead.
->
-> There is an operation needed by `block::mq`, atomically decreasing
-> refcount from 2 to 0, which is not available through refcount.h, so
-> I exposed `Refcount::as_atomic` which allows accessing the refcount
-> directly.
->
-> Tested-by: David Gow <davidgow@google.com>
-> Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: Gary Guo <gary@garyguo.net>
+On Wed, Aug 06, 2025 at 02:05:03AM +0000, ChenMiao wrote:
+> From: chenmiao <chenmiao.ku@gmail.com>
+> 
+> We need a text patching mechanism to ensure that in the subsequent
+> implementation of jump_label, the code can be modified to the correct
+> location. Therefore, FIX_TEXT_POKE0 has been added as a mapping area.
+> 
+> And, I create a new file named insn-def.h to define the or1k insn macro
+> size and more define in the future.
+> 
+> Among these changes, we implement patch_map and support the
+> patch_insn_write API for single instruction writing.
+> 
+> - V2: We modify the patch_insn_write(void *addr, const void *insn) API to
+> patch_insn_write(void *addr, u32 insn), derectly support a single u32
+> instruction write to map memory.
+> 
+> Link: https://lore.kernel.org/openrisc/aJIC8o1WmVHol9RY@antec/T/#t
+> 
+> Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
 > ---
->  rust/kernel/block/mq/operations.rs |  7 ++--
->  rust/kernel/block/mq/request.rs    | 63 ++++++++----------------------
->  rust/kernel/sync/refcount.rs       | 14 +++++++
->  3 files changed, 34 insertions(+), 50 deletions(-)
->
-> diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/op=
-erations.rs
-> index c2b98f507bcbd..c0f95a9419c4e 100644
-> --- a/rust/kernel/block/mq/operations.rs
-> +++ b/rust/kernel/block/mq/operations.rs
-> @@ -10,9 +10,10 @@
->      block::mq::Request,
->      error::{from_result, Result},
->      prelude::*,
-> +    sync::Refcount,
->      types::ARef,
+
+The v2, notes should go in this part of the patch (after ---), this way
+it does not show up when I queue the patches.
+
+>  arch/openrisc/include/asm/Kbuild          |  1 -
+>  arch/openrisc/include/asm/fixmap.h        |  1 +
+>  arch/openrisc/include/asm/insn-def.h      | 12 ++++
+>  arch/openrisc/include/asm/text-patching.h | 13 ++++
+>  arch/openrisc/kernel/Makefile             |  1 +
+>  arch/openrisc/kernel/patching.c           | 79 +++++++++++++++++++++++
+>  arch/openrisc/mm/init.c                   |  2 +-
+>  7 files changed, 107 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/openrisc/include/asm/insn-def.h
+>  create mode 100644 arch/openrisc/include/asm/text-patching.h
+>  create mode 100644 arch/openrisc/kernel/patching.c
+> 
+> diff --git a/arch/openrisc/include/asm/Kbuild b/arch/openrisc/include/asm/Kbuild
+> index 2b1a6b00cdac..cef49d60d74c 100644
+> --- a/arch/openrisc/include/asm/Kbuild
+> +++ b/arch/openrisc/include/asm/Kbuild
+> @@ -9,4 +9,3 @@ generic-y += spinlock.h
+>  generic-y += qrwlock_types.h
+>  generic-y += qrwlock.h
+>  generic-y += user.h
+> -generic-y += text-patching.h
+> diff --git a/arch/openrisc/include/asm/fixmap.h b/arch/openrisc/include/asm/fixmap.h
+> index aaa6a26a3e92..74000215064d 100644
+> --- a/arch/openrisc/include/asm/fixmap.h
+> +++ b/arch/openrisc/include/asm/fixmap.h
+> @@ -28,6 +28,7 @@
+>  
+>  enum fixed_addresses {
+>  	FIX_EARLYCON_MEM_BASE,
+> +	FIX_TEXT_POKE0,
+>  	__end_of_fixed_addresses
 >  };
-> -use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::atomic::O=
-rdering};
-> +use core::marker::PhantomData;
-> =20
->  /// Implement this trait to interface blk-mq as block devices.
->  ///
-> @@ -78,7 +79,7 @@ impl<T: Operations> OperationsVTable<T> {
->          let request =3D unsafe { &*(*bd).rq.cast::<Request<T>>() };
-> =20
->          // One refcount for the ARef, one for being in flight
-> -        request.wrapper_ref().refcount().store(2, Ordering::Relaxed);
-> +        request.wrapper_ref().refcount().set(2);
-> =20
->          // SAFETY:
->          //  - We own a refcount that we took above. We pass that to `ARe=
-f`.
-> @@ -187,7 +188,7 @@ impl<T: Operations> OperationsVTable<T> {
-> =20
->              // SAFETY: The refcount field is allocated but not initializ=
-ed, so
->              // it is valid for writes.
-> -            unsafe { RequestDataWrapper::refcount_ptr(pdu.as_ptr()).writ=
-e(AtomicU64::new(0)) };
-> +            unsafe { RequestDataWrapper::refcount_ptr(pdu.as_ptr()).writ=
-e(Refcount::new(0)) };
+>  
+> diff --git a/arch/openrisc/include/asm/insn-def.h b/arch/openrisc/include/asm/insn-def.h
+> new file mode 100644
+> index 000000000000..dc8d16db1579
+> --- /dev/null
+> +++ b/arch/openrisc/include/asm/insn-def.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Chen Miao
+> + */
+> +
+> +#ifndef __ASM_INSN_DEF_H
+> +#define __ASM_INSN_DEF_H
+> +
+> +/* or1k instructions are always 32 bits. */
+> +#define	OPENRISC_INSN_SIZE		4
 
-Ah, so that's why `0` is allowed as a valid value for `Refcount::new`.
-Seeing the use that is made of atomics here, I wonder if `Refcount` is a
-good choice, or if we could adapt the code to use them as expected. I am
-not familiar enough with this part of the code to give informed advice
-unfortunately.
+Is this used outside of the usage below?  Why do we need a header for it?
 
-But at the very least, I think the constructor should not be made unsafe
-due to account for one particular user. How about doing a
-`Refcount::new(1)` immediately followed by a `set(0)` so other users are
-not tricked into creating an invalid Refcount?
+> +#endif /* __ASM_INSN_DEF_H */
+> diff --git a/arch/openrisc/include/asm/text-patching.h b/arch/openrisc/include/asm/text-patching.h
+> new file mode 100644
+> index 000000000000..bffe828288c3
+> --- /dev/null
+> +++ b/arch/openrisc/include/asm/text-patching.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Chen Miao
+> + */
+> +
+> +#ifndef _ASM_PATCHING_H_
+> +#define _ASM_PATCHING_H_
+> +
+> +#include <linux/types.h>
+> +
+> +int patch_insn_write(void *addr, u32 insn);
+> +
+> +#endif /* _ASM_PATCHING_H_ */
+> diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
+> index 58e6a1b525b7..f0957ce16d6b 100644
+> --- a/arch/openrisc/kernel/Makefile
+> +++ b/arch/openrisc/kernel/Makefile
+> @@ -13,5 +13,6 @@ obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
+>  obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
+>  obj-$(CONFIG_MODULES)		+= module.o
+>  obj-$(CONFIG_OF)		+= prom.o
+> +obj-y	+= patching.o
+>  
+>  clean:
+> diff --git a/arch/openrisc/kernel/patching.c b/arch/openrisc/kernel/patching.c
+> new file mode 100644
+> index 000000000000..c9a30f0d1193
+> --- /dev/null
+> +++ b/arch/openrisc/kernel/patching.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (C) 2020 SiFive
+> + * Copyright (C) 2025 Chen Miao
+> + */
+> +
+> +#include <linux/mm.h>
+> +#include <linux/kernel.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/uaccess.h>
+> +
+> +#include <asm/insn-def.h>
+> +#include <asm/cacheflush.h>
+> +#include <asm/page.h>
+> +#include <asm/fixmap.h>
+> +#include <asm/text-patching.h>
+> +#include <asm/sections.h>
+> +
+> +static DEFINE_RAW_SPINLOCK(patch_lock);
+> +
+> +static inline bool is_exit_text(uintptr_t addr)
+> +{
+> +	/* Now Have NO Mechanism to do */
+> +	return true;
+> +}
+
+Is this needed?  OpenRISC doesn't seem to have any sections to support __exit
+annotated cleanup functions.
+
+  Ref: https://kernelnewbies.org/FAQ/InitExitMacros
+
+Returning true here means that all of the patch_map calls will be treated as
+kernel pages below though, which is wrong, please remove this.
+
+> +
+> +static __always_inline void *patch_map(void *addr, int fixmap)
+> +{
+> +	uintptr_t uaddr = (uintptr_t) addr;
+> +	phys_addr_t phys;
+> +
+> +	if (core_kernel_text(uaddr) || is_exit_text(uaddr)) {
+> +		phys = __pa_symbol(addr);
+> +	} else {
+> +		struct page *page = vmalloc_to_page(addr);
+> +		BUG_ON(!page);
+> +		phys = page_to_phys(page) + offset_in_page(addr);
+> +	}
+> +
+> +	return (void *)set_fixmap_offset(fixmap, phys);
+> +}
+> +
+> +static void patch_unmap(int fixmap)
+> +{
+> +	clear_fixmap(fixmap);
+> +}
+> +
+> +static int __patch_insn_write(void *addr, u32 insn)
+> +{
+> +	void *waddr = addr;
+> +	unsigned long flags = 0;
+> +	int ret;
+> +
+> +	raw_spin_lock_irqsave(&patch_lock, flags);
+> +
+> +	waddr = patch_map(addr, FIX_TEXT_POKE0);
+> +
+> +	ret = copy_to_kernel_nofault(waddr, &insn, OPENRISC_INSN_SIZE);
+> +	local_icache_range_inv((unsigned long)waddr,
+> +			       (unsigned long)waddr + OPENRISC_INSN_SIZE);
+
+Instead of OPENRISC_INSN_SIZE, can you use sizeof(insn)?
+
+> +	patch_unmap(FIX_TEXT_POKE0);
+> +
+> +	raw_spin_unlock_irqrestore(&patch_lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +int patch_insn_write(void *addr, u32 insn)
+> +{
+> +	u32 *tp = addr;
+> +	int ret;
+> +
+> +	if ((uintptr_t) tp & 0x3)
+> +		return -EINVAL;
+> +
+> +	ret = __patch_insn_write(tp, insn);
+> +
+> +	return ret;
+> +}
+> diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
+> index e4904ca6f0a0..b5925710f954 100644
+> --- a/arch/openrisc/mm/init.c
+> +++ b/arch/openrisc/mm/init.c
+> @@ -226,7 +226,7 @@ static int __init map_page(unsigned long va, phys_addr_t pa, pgprot_t prot)
+>  	return 0;
+>  }
+>  
+> -void __init __set_fixmap(enum fixed_addresses idx,
+> +void __set_fixmap(enum fixed_addresses idx,
+
+Can you put a comment about this bit in the commit description?
+
+>  			 phys_addr_t phys, pgprot_t prot)
+>  {
+>  	unsigned long address = __fix_to_virt(idx);
+> -- 
+> 2.45.2
+
+-Stafford
 
 
