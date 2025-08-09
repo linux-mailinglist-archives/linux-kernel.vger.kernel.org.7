@@ -1,84 +1,165 @@
-Return-Path: <linux-kernel+bounces-761198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5478DB1F5B0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 19:39:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52726B1F5B4
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 19:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1410D6256CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B8D17CC85
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086162BF3D7;
-	Sat,  9 Aug 2025 17:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C14D29B8E8;
+	Sat,  9 Aug 2025 17:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="v71QqACL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C29929CB39
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 17:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="n26hh+VH"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C07242D89
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 17:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754761126; cv=none; b=ECxgnioqaAzoiv8N1ob2LJLEuXDSDd28phwVI+UUH3cZb1pgxoxJsNXl9zzWdhVqgSca/uWkUTrFLwyCcUosb081Gl1WdLfRENU3tAQPrM3sWSbKNjM6jOa9M8bqZqVSam3vSU9FW2yuUUy7axBPnCNoKyqIabAsrjeF+ildM9Q=
+	t=1754761285; cv=none; b=J5IBivoD4BS24gqNa7hYx40/NeDAxA0VDAH6sO+AD7AclytQRdzCRnbq4SBbKQ5ByJOoni5z0t22gDGA+10BOWnI4AY0dwN6Awq9qf7dH06YPgkRdw4i0AevPlsnLJKoBXXiV+G8e/lxTCWRRKtTnel21b0Z1BZoI72og4QPEZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754761126; c=relaxed/simple;
-	bh=Wot/69dsHs/GESb54RZeUFnXDmcOEqiL63MrJD9t7XU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SICWMjxuTF4SKyBPhnmYmVJ8Y2EddqrN/8pUS+/OhUI4B/AJJ6HQExMywHZn0uSkjUuVSCZHBVw2sn6UzdgOaKo8ZhFKMksqW82S+IPxq+LPt8C0EI7Ezym0hhh3wknZbJ3J1bDUddaGa3LoEFdtUSGAdV/akf90ydkrqoilpxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=v71QqACL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6B8EC4CEE7;
-	Sat,  9 Aug 2025 17:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1754761125;
-	bh=Wot/69dsHs/GESb54RZeUFnXDmcOEqiL63MrJD9t7XU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=v71QqACLAlEXZHsJC8YNMN9x1cZKNM313wf7JjuOJkxWPIINOxUYRf1+qfmLGBBws
-	 dtp/D9xGTnOqAUzIqeAjnr0aSpvDo7W3WqVEEuztO/9dZCASuFpXPUTKxCGDHqI7V9
-	 a+9ZDQnabITo35u/Q5NJ2P97bECh29wOOR8T8eXI=
-Date: Sat, 9 Aug 2025 10:38:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Subrata Nath (Nokia)" <subrata.nath@nokia.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: prevent RCU stalls in kswapd by adding
- cond_resched()
-Message-Id: <20250809103845.21ca58f0a97c0c1f61c0879c@linux-foundation.org>
-In-Reply-To: <aJdkmCP41RhNC9FH@casper.infradead.org>
-References: <AM9PR07MB78119166E41E86BE5E7DDCC0882EA@AM9PR07MB7811.eurprd07.prod.outlook.com>
-	<aJdkmCP41RhNC9FH@casper.infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754761285; c=relaxed/simple;
+	bh=yEgpWM9alLUuN7wZwmttedF5P1rg710YOjB98POZGbM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AJ20EGzoyq0dm9COkLOv43L/tkmHb14PLMYgtJKVHxZaWlm8qb2Nn8PDGQk6YyJTOJlCtMy9X9EEObGZ/hvtziaQ451nsOF/cZ/DFxQ+/84WDyvj5v2bjWIo6h9MD9kcfDJ/G5hXrD29An1go2McYSfoqtaj8uNyG+k/FAbNJk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=n26hh+VH; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=yX
+	y9iTU1zIv1DoZeuTR4acBDv8VeQCTLTXLCgjA+LG8=; b=n26hh+VHKM+NUMhTn0
+	g1JSthHFf5P1DIKjgq2HcCdBIzmrTVMVsFEf3FZiYyqOyI04OZTqdM9Prg7tu6tb
+	5aOkv0+Si2gBPNj5aCpVAdvC8Sc7DJzVxcJ+wsNvIKdB1yWuE64z1cx8Mf9v62H1
+	gMqyuK0G/yMkTA/TmzEq/Za54=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wA3kqf1h5dorc5FAw--.44224S2;
+	Sun, 10 Aug 2025 01:40:06 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Xin Zhao <jackzxcui1989@163.com>
+Subject: [PATCH] sched/fair: Make the BW replenish timer expire in hardirq context for PREEMPT_RT
+Date: Sun, 10 Aug 2025 01:39:45 +0800
+Message-Id: <20250809173945.1953141-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wA3kqf1h5dorc5FAw--.44224S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZrWkWw45ArW5uF1kGF1xZrb_yoWrury8pF
+	Wjkry5tr1UJr10q3WkCwn7WFyru397Jr47A3Z7G3ySyw13Cry8tF1Sgr1YgFZ0krZa9r1S
+	vF1Fvry3Zr90yaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zioGQ3UUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRwqkCmiXWhlEMwABsp
 
-On Sat, 9 Aug 2025 16:09:12 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+Valentin Schneider has made changes in 2023 to move the callback logic of
+the BW replenish timer into the hardirq context in the PREEMPT_RT system.
+Given that the PREEMPT_RT code has already been merged into the mainline
+and considering the serious impact of this issue, I believe it is
+essential to incorporate this change into the mainline to prevent others
+using the PREEMPT_RT system from encountering this frustrating problem.
+Our project has also encountered the same issue on the Linux 6.1.134
+RT-Linux kernel, and I have written a reproducible program that almost
+100% triggers the panic caused by this problem on our system.
+The reproducible program is inspired by previous discussions related to
+the cgroup issue, which contained the following description:
+    Consider the following scenario under PREEMPT_RT:
+    o A CFS task p0 gets throttled while holding read_lock(&lock)
+    o A task p1 blocks on write_lock(&lock), making further readers enter the
+      slowpath
+    o A ktimers or ksoftirqd task blocks on read_lock(&lock)
+    If the cfs_bandwidth.period_timer to replenish p0's runtime is enqueued on
+    the same CPU as one where ktimers/ksoftirqd is blocked on read_lock(&lock),
+    this creates a circular dependency.
+My reproducible program also follows the logic described above. The detailed
+implementation of the 100% reproducible program runs on a Linux 6.1.134
+RT-Linux system with only six CPUs.
+I wrote a kernel module named testcgroupbug.ko, which creates a proc node that
+responds to an ioctl command. Depending on the mode parameter passed, it
+performs different operations. There are two modes: read mode and write mode.
+In read mode, it executes read_lock and then enters a loop, waiting for a
+write-mode task to exist before executing a dead loop that lasts for 0.25
+seconds, registering a pinned hrtimer in HRTIMER_MODE_ABS_PINNED mode,
+and finally executing read_unlock once the specified timeout expires.
+In write mode, it executes write_lock and waits for the specified timeout to
+expire before executing write_unlock.
+The script that runs the program is structured as follows (the main idea is
+to keep all CPUs busy except CPU 1, inducing the system to choose CPU 1 for
+executing the related cgroup period timer operations. Thus, when the
+read-mode task enters the kernel via ioctl, the creation of the soft-mode
+pinned hrtimer also occurs on CPU 1, thereby forming the aforementioned
+circular dependency):
+taskset -c 0 ./deadloop &
+taskset -c 2 ./deadloop &
+taskset -c 3 ./deadloop &
+taskset -c 4 ./deadloop &
+taskset -c 5 ./deadloop &
+sleep 3
+mkdir /sys/fs/cgroup/test
+echo "500000 1000000" > /sys/fs/cgroup/test/cpu.max
+sleep 1
+taskset -c 1 ./rwlock_read 5 &
+pid=$!
+echo $pid > /sys/fs/cgroup/test/cgroup.procs
+chrt -f 60 ./rwlock_write 3 &
+In the script above, rwlock_read is the read-mode function executed in the
+kernel module, where 5 indicates the timeout period of 5 seconds. The
+rwlock_write function represents the write-mode function executed in the
+kernel module, where 3 indicates the timeout period of 3 seconds.
 
-> On Sat, Aug 09, 2025 at 11:59:16AM +0000, Subrata Nath (Nokia) wrote:
-> > Fix this by adding cond_resched() after all spinlock release points
-> > in page_vma_mapped_walk() and in the main loop of shrink_zones().
-> > These calls, placed outside spinlock-held sections, allow voluntary
-> > scheduling and ensure timely quiescent state reporting, avoiding
-> > prolonged RCU stalls.
-> 
-> No.  We're removing cond_resched().  See
-> https://lore.kernel.org/linux-mm/87cyyfxd4k.ffs@tglx/
-> and many many other emails over the past few years.
+Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
+---
+ kernel/sched/fair.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-tglx's email was sent two years ago.
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b173a0593..54c998661 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6456,8 +6456,13 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *paren
+ 	cfs_b->hierarchical_quota = parent ? parent->hierarchical_quota : RUNTIME_INF;
+ 
+ 	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
++#ifdef CONFIG_PREEMPT_RT
++	hrtimer_setup(&cfs_b->period_timer, sched_cfs_period_timer, CLOCK_MONOTONIC,
++		      HRTIMER_MODE_ABS_PINNED_HARD);
++#else
+ 	hrtimer_setup(&cfs_b->period_timer, sched_cfs_period_timer, CLOCK_MONOTONIC,
+ 		      HRTIMER_MODE_ABS_PINNED);
++#endif
+ 
+ 	/* Add a random offset so that timers interleave */
+ 	hrtimer_set_expires(&cfs_b->period_timer,
+@@ -6483,7 +6488,11 @@ void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+ 
+ 	cfs_b->period_active = 1;
+ 	hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
++#ifdef CONFIG_PREEMPT_RT
++	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED_HARD);
++#else
+ 	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
++#endif
+ }
+ 
+ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+-- 
+2.34.1
 
-Meanwhile we have shipped kernels which are emitting nasty warning
-splats (which are indications of possible other misbehavior).  So I
-think we should proceed with Subrata's change and give it a cc:stable
-also.
-
-We already have 285 cond_resched()s in mm/.  If Thomas's idea ever gets
-implemented then six more won't kill us.
 
