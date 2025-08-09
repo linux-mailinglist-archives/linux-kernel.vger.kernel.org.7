@@ -1,214 +1,156 @@
-Return-Path: <linux-kernel+bounces-761017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2A5B1F30B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:09:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1268B1F308
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24AC172558A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFAA55841BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D5A22156D;
-	Sat,  9 Aug 2025 08:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lttuJLFW"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FD227C178;
+	Sat,  9 Aug 2025 08:08:33 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BD1225A32;
-	Sat,  9 Aug 2025 08:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2587022156D
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 08:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754726914; cv=none; b=lmMUoGakbuKrkHjmb+w2kVfw44yVEPDomiG5Gm8ZO/sDekRUkbc9GPS5Bib0cBK3BWfEIgqOS+O2LRvDFbIR4xEJONkTLcueCylYmP9lDrKz/qBw4dnC58uyZjWKw9ckjfygD+R/qahd0wl1hUsTojqQ7TUnPSeUSffLpp9cVMQ=
+	t=1754726912; cv=none; b=bKNJczKGYcysuYqcXm7GOkvdM9cepaT7tqrfmKVbxKBo4bfYyL3Uo5Rf0cQHTxHW+4nx0EC6v5vbP6PadzZq+93Mij096NmvdK+5mVQc7WiVVlQZezHEuteR1oyfotE3ur120TOcVnBCTM4NqSv9muY6ipTUqmU7tbIXaro5ZCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754726914; c=relaxed/simple;
-	bh=zxqVNvlmFBueyIpfaw0chLiheUGrJ1bn4hX2Kep9wY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T/gFaFFGN0VO9aLN/ygp1W8v6TQcpsbc+UssHw49fPhHN7mQlkog0kOBx3pCBsrZ8rvFfLlBVJYSRSiextE8oVmd6TZ+t8nJqYTmDrNzwYXf8FOqboOENzqx5dL3GSwM7u/+rCTY7c/OaBdfOQQbqzYFbkhg7DpOUkcwm/1qjOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lttuJLFW; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b8de193b60so1673242f8f.0;
-        Sat, 09 Aug 2025 01:08:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754726910; x=1755331710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bO63kbpz8+8BzniFjwRj6G4Qq7weRB5CNspOoOAO+Xo=;
-        b=lttuJLFWutHCpTmF9EYsLu0zcE3II9PhnC9GWb+kIQA7Xwq6CQ7Hv0oyyb0d5ZRKtT
-         nRmbXMRYiXwnnDfbcWb0CKtGBqgRnJHi5QNWOu1LDSbRk1iRj9JWH6FYHNYL27twszxZ
-         MyJ7du/f/+hjocHJdFm2vcogy65/I1jdoss+CCfPA+V7Ihh36cFLwxfJYC2uinqtrtcI
-         yPwTkDR45k9ZbkanieZIbkD5zJYq10FImYAipLClyXcWzaBkbBglg/VOzEGjUoswIO+D
-         CpECHmF4aKrY6Kyd6y5o/9X7GsbacR33r0P3qsA7vTsV+bbamVL3s3rRhJZuXPGLNRF7
-         MvnQ==
+	s=arc-20240116; t=1754726912; c=relaxed/simple;
+	bh=gxhJv3M6LTgsTm9Y7kg+WT4sO+pHU5IOfXqCVEzQPeI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ndr3kfLCJZ8Z2ia3IzAdCoaC00t1mcqnen8quGYe5fWr7qiLczA9u5r5Bhc3BbLyGkQG3LnCpIiwQNvgiIdyD0eF31rZxT1JKS9c+ltnZEpvoO1cycCLvqvlQnKcNwHp/C4QVXFOAZNHRQfWNujy8cCMKDto3vxzcvMNRTKgMrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3e51497bdbeso21333135ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 01:08:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1754726910; x=1755331710;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bO63kbpz8+8BzniFjwRj6G4Qq7weRB5CNspOoOAO+Xo=;
-        b=Co0O+GT6WMgqpApCwH1QMu6SA6p2KiCAw1jVcbTkfO9jBtJiLz5/ZSnyyGPTBM14zN
-         RJ+PT1nOJk50rQp4IYdZo+fWTmqkTi6ADGqeAJIP3XVoB6gCD30ALSfhKzrGihvIsiRG
-         ClQa18hm61Uh3VJGST8W19360Febc7brAuFUDwBt8ODvGComxHmHQitOKuvjKZF1go1z
-         uIX/r1jZ21NrOB71yBMxXHl+tzFYMq817IQkvmZ6p05pSF1qcCVbzqwb4e1FHIyz+5o+
-         Uo15P/5f5VwIyt/oS2Y0Qr/BUB3Gje421UFBS7Nvs3JXv80zqEHU4vmCMao3oklGFC5c
-         TpZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSHFY4wb4wyw0FMG1Be224j1ldH/z9tVuRF2baNUnOP/uxLZXvpcx7RRfNw751M2FvZQYzfu7sK9tmtRQ=@vger.kernel.org, AJvYcCXfwuK6D2IRbrHns3ifkoM4oYZYA2i1MhlJwDuJXDAx1x7lZETGpO/hov3LHU9ZrlctPoKmNWfzG+HZNFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4rdjpCRTzbdJeSzIzbT5v+wC1CwqOax6jCCE9mQ66xSSalIRL
-	La3OwlFjvKvtV+iiLhr1utklEz+wCPRqTfhANoqNvHvOn3IB5vfMdkV0KuW7pecV3V2h2Q==
-X-Gm-Gg: ASbGncuSfeEyVYUakm4PqFNZORQq+LYgL3wVpDmmGcdiUuI4kS4COVpj/tuEn+h9wTs
-	NWjCdFdIpi94nNmUQRcwUjFiYG5RLFO1FU62shZDazalIPtKdog7rukMZAPU4LtdXfeTC/2oTFu
-	XMo1ZpB03qzzDsbN9rxVKBYqRST1fNQgnMMAST0Ffc0oPsYNcBuj2vJdT3UzZ5qH6Bgy89gm0eR
-	XKKfoLOwVyhCQIOtcGuyJjKHSXsDOqjbLhm01seKXb/xincSNfxkuTU/FjppCvhgzv3qgfdQl6Q
-	WXbcJC1s26F9HSgrqLiG15CfcZHstDytowx0NvH0LC3GDWmIqoN5vGjHb56/eCqbAym9PqSHI15
-	y/BQVCNMzm7MnxgA=
-X-Google-Smtp-Source: AGHT+IHDWCw/q0WaB4EMZMox+xYQMzAajDWTVvScx+MoxUHFCsr91rFaz5iWccvYQPwh/Fr4EUAwyg==
-X-Received: by 2002:a05:6000:18a6:b0:3b5:dafc:1525 with SMTP id ffacd0b85a97d-3b900b4b727mr4817748f8f.33.1754726910280;
-        Sat, 09 Aug 2025 01:08:30 -0700 (PDT)
-Received: from mmk-tp ([2a00:1d36:1034:ab00:136:d194:45b4:3fb9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459fb43b491sm31291005e9.3.2025.08.09.01.08.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 01:08:29 -0700 (PDT)
-From: Mahdi Khosravi <mmk1776@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mahdi Khosravi <mmk1776@gmail.com>
-Subject: [PATCH v4] ASoC: dt-bindings: realtek,alc5623: convert to DT schema
-Date: Sat,  9 Aug 2025 11:08:24 +0300
-Message-ID: <20250809080824.68845-1-mmk1776@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bb9JiR6xp3nJjHaWZta3Yh54N0h9tCnSUrjA3nNswFg=;
+        b=RxUbw73TKO3PqQjnm5y7N/HJhw/3JBFc9DaJ3rt0/96sW8/WAHdCd5gtXddW74BF48
+         buU3ddZs1GqYotyz9Lo8dHP//9PVWH1z1PwyRtz8l6aNvr6auXILE81oOErMJGbcFeMb
+         jTFZK67zFYJh8JFlhZID/onHcYM3daZsuptl927v/2Spy7Unmts7Dd4KQv/KH2oBMn1z
+         hXFNrUJ/7qi+Vlvc8pcu2pxprUbnCom+fWHQcmT3Se97gNvoAiV+FdJN9TLWto/8CM1r
+         tPodwek3zwDIpC3ZF/nb1Yptm4F1XDmgEloRcF89aZJKC6po6lczF0xqGL+4MY+Qbh4i
+         LoDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTF/m7VaIE494t/MEjwnT+JOTyDJEyNB8pJyAOHxMW98zOgvWKI/NIsflIl96EyWdWhYKz8Gk/6Vj0Ck4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw37bhTuaULoo3/B1ONPXnYWfOttu99j1toFpDSEkwWKHQXDQvT
+	setTMVLeuTyWSaXP9Al1eIe7vPfCe1BxQYptAXiXbHwJNcd4PAhZXavQnXqIDLf0zqGt3ahdMwZ
+	10WTtMckziMkMz5NTNKVUpf3GY6QVwtGmgKK4hburHWner3p0wEWLzYEGAgE=
+X-Google-Smtp-Source: AGHT+IFRJ0gQJJTCyilBOiHjVnsBnC4TBMAhvaWvlqiSt+fL7dpw6KWbz+K2NDmVSPmUAlTnH9dcggAsMRc4PAKPZYEKmeMH1/wD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1546:b0:3e3:cc1b:2b5e with SMTP id
+ e9e14a558f8ab-3e533159919mr101574425ab.15.1754726910075; Sat, 09 Aug 2025
+ 01:08:30 -0700 (PDT)
+Date: Sat, 09 Aug 2025 01:08:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689701fe.a70a0220.7865.0030.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in ieee80211_link_info_change_notify (3)
+From: syzbot <syzbot+4b9a40c62f9a80195a4f@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Convert alc5623 audio codec binding to DT schema.
+Hello,
 
-Signed-off-by: Mahdi Khosravi <mmk1776@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    7e161a991ea7 Merge tag 'i2c-for-6.17-rc1-part2' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f07aa2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1bb6a60e53533c7
+dashboard link: https://syzkaller.appspot.com/bug?extid=4b9a40c62f9a80195a4f
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c830eae67136/disk-7e161a99.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cbc8fc9ead36/vmlinux-7e161a99.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/db1e8c2fe140/bzImage-7e161a99.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4b9a40c62f9a80195a4f@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+wlan1: Failed check-sdata-in-driver check, flags: 0x0
+WARNING: CPU: 0 PID: 14825 at net/mac80211/main.c:425 ieee80211_link_info_change_notify+0x349/0x3f0 net/mac80211/main.c:425
+Modules linked in:
+CPU: 0 UID: 0 PID: 14825 Comm: syz.4.1907 Not tainted 6.16.0-syzkaller-11699-g7e161a991ea7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:ieee80211_link_info_change_notify+0x349/0x3f0 net/mac80211/main.c:425
+Code: 74 24 08 48 81 c6 20 01 00 00 48 89 74 24 08 e8 fd f8 bc f6 8b 54 24 04 48 8b 74 24 08 48 c7 c7 c0 42 08 8d e8 48 97 7b f6 90 <0f> 0b 90 90 e9 0b fe ff ff e8 d9 f8 bc f6 90 0f 0b 90 e9 21 fd ff
+RSP: 0018:ffffc90003c6fb30 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff88805ab04d80 RCX: ffffc9000e0ef000
+RDX: 0000000000080000 RSI: ffffffff817a3315 RDI: 0000000000000001
+RBP: 0000000000040000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: ffff88805ab05728
+R13: ffff88805ab06500 R14: 0000000000000000 R15: ffff88805abe8e40
+FS:  00007fb6b366a6c0(0000) GS:ffff8881246c6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdb6ffb5f40 CR3: 000000005f61b000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ieee80211_recalc_txpower+0xe4/0x110 net/mac80211/iface.c:81
+ ieee80211_set_tx_power+0x2b8/0x10d0 net/mac80211/cfg.c:3263
+ rdev_set_tx_power net/wireless/rdev-ops.h:600 [inline]
+ cfg80211_wext_siwtxpower+0x30e/0x680 net/wireless/wext-compat.c:893
+ ioctl_standard_call+0xb5/0x1d0 net/wireless/wext-core.c:1043
+ wireless_process_ioctl.constprop.0+0x291/0x3d0 net/wireless/wext-core.c:981
+ wext_ioctl_dispatch net/wireless/wext-core.c:1014 [inline]
+ wext_ioctl_dispatch net/wireless/wext-core.c:1002 [inline]
+ wext_handle_ioctl+0x226/0x2a0 net/wireless/wext-core.c:1075
+ sock_ioctl+0x3a1/0x6b0 net/socket.c:1291
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl fs/ioctl.c:584 [inline]
+ __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb6b278eb69
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb6b366a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fb6b29b6080 RCX: 00007fb6b278eb69
+RDX: 0000200000000040 RSI: 0000000000008b26 RDI: 0000000000000006
+RBP: 00007fb6b2811df1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fb6b29b6080 R15: 00007fffe088baf8
+ </TASK>
+
+
 ---
-Changes in v4:
-- Add "realtek,alc5621" and "realtek,alc5622" to compatible list
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changes in v3:
-- Drop allOf, just use $ref for uint32
-- Remove stray '>' in descriptions
-- Fix subject to "to DT schema"
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Changes in v2:
-- Add dai-common ref
-- Switch add-ctrl/jack-det-ctrl to allOf uint32
-- Use unevaluatedProperties
-- Fix example compatible
----
- .../devicetree/bindings/sound/alc5623.txt     | 25 ---------
- .../bindings/sound/realtek,alc5623.yaml       | 55 +++++++++++++++++++
- 2 files changed, 55 insertions(+), 25 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/alc5623.txt
- create mode 100644 Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-diff --git a/Documentation/devicetree/bindings/sound/alc5623.txt b/Documentation/devicetree/bindings/sound/alc5623.txt
-deleted file mode 100644
-index 26c86c98d671..000000000000
---- a/Documentation/devicetree/bindings/sound/alc5623.txt
-+++ /dev/null
-@@ -1,25 +0,0 @@
--ALC5621/ALC5622/ALC5623 audio Codec
--
--Required properties:
--
-- - compatible:	"realtek,alc5623"
-- - reg:		the I2C address of the device.
--
--Optional properties:
--
-- - add-ctrl:	  Default register value for Reg-40h, Additional Control
--		  Register. If absent or has the value of 0, the
--		  register is untouched.
--
-- - jack-det-ctrl: Default register value for Reg-5Ah, Jack Detect
--		  Control Register. If absent or has value 0, the
--		  register is untouched.
--
--Example:
--
--	alc5621: alc5621@1a {
--		compatible = "alc5621";
--		reg = <0x1a>;
--		add-ctrl = <0x3700>;
--		jack-det-ctrl = <0x4810>;
--	};
-diff --git a/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-new file mode 100644
-index 000000000000..f9c9518cd084
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/realtek,alc5623.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ALC5621/ALC5622/ALC5623 Audio Codec
-+
-+maintainers:
-+  - Mahdi Khosravi <mmk1776@gmail.com>
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,alc5621
-+      - realtek,alc5622
-+      - realtek,alc5623
-+
-+  reg:
-+    maxItems: 1
-+
-+  add-ctrl:
-+    description:
-+      Default register value for Reg-40h, Additional Control Register.
-+      If absent or zero, the register is left untouched.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  jack-det-ctrl:
-+    description:
-+      Default register value for Reg-5Ah, Jack Detect Control Register.
-+      If absent or zero, the register is left untouched.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        codec@1a {
-+            compatible = "realtek,alc5623";
-+            reg = <0x1a>;
-+            add-ctrl = <0x3700>;
-+            jack-det-ctrl = <0x4810>;
-+        };
-+    };
--- 
-2.50.1
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
