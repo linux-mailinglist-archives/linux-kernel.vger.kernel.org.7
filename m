@@ -1,234 +1,121 @@
-Return-Path: <linux-kernel+bounces-761140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBA2B1F4DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:53:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C877B1F4DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F2A0723BEA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:53:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 456237A6429
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CAB2BD58C;
-	Sat,  9 Aug 2025 13:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E33829DB77;
+	Sat,  9 Aug 2025 13:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUfugQiQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTElCiPe"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5602D2BD037
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 13:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F4818C322;
+	Sat,  9 Aug 2025 13:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754747547; cv=none; b=uUx/dKE8f2aT1kEEEgcGcX7tiiGa5TlyltpSGaQJYgyBRYYcZnFiN5lexLTfuvVXoOmUNQR5CJCqPDuQLLRSWzcFApbAbnelI3CWROURY2ITmlAmZawbkkwm4WcqKAc/nS4PIhfsjTMEVzEGvCUpnKE9omdw+sS8qgEJ/wleEZU=
+	t=1754747663; cv=none; b=ZpXV5qYPUkFSLfu+Atk3FHElpVdgoxRojpTYE3IV7ys72oMtmkxc6c8B+YduhCtOZze263wiUv1EGCbUMNsqEYPmiQSbHwdhPfDp5g5fKH4OL5rl0EqD/iEZRtyQFk1UH90y3bHC2utwdNB5kzvtE7LHcYXYGzAT3Yi+Ua0YFe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754747547; c=relaxed/simple;
-	bh=eVwlttIO5cPoFbzrqx0Zh2eNe66yN5Gkt7LN4QnB250=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n4so4CqV8GtpoYEaYj9m5ArBw8Y2C/LZloZb6cZRdwDqt+M8S8LeHZ6zPgTg9rLy+uUYWyLLmaOyi/iCo38ocsYIuIZJ9Wi2UxKCZ4XU4HvFtYPK9emhh0abbPfEWDtwEkszgx0eaAZx+Ni2XduE5OYfztVGXjQpPbZqudU3qhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUfugQiQ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754747546; x=1786283546;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=eVwlttIO5cPoFbzrqx0Zh2eNe66yN5Gkt7LN4QnB250=;
-  b=WUfugQiQZEq5MG97m8M4HprNo5316mcdIjF7oZS+EpdpK/zTMFtrAVuT
-   Xi2D5s71oo127b+EsGlW1urSWstyDyIs9fUycKYdZWpkQRZNU5xSD3f1c
-   Sb2PUGit/jyl3K4bqYjU9Xb/kC3/ShFsshg+nW6CGwJfOsFMa9MjE4WVR
-   ZLI1czzt5sAOZA6A4DolDx1owLhg7uyGpm1KHU6QmC7FqfAjgSe98yjwM
-   rsgvara3Ct2bIXFV2T9nIyWiKWDQrRbpvpQ1RIbr/jbV3vzjHJo78oBfv
-   FcC0kuBK2HThEy59UrgGXbhEhfiKLG2wicWqILy4Zl2+7CVAYA4tm8KhR
-   A==;
-X-CSE-ConnectionGUID: Cj4DhNNfToGikl5mcVbbwA==
-X-CSE-MsgGUID: DCkEvYEvQwOCh6aEHdqkWg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="68153594"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="68153594"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 06:52:26 -0700
-X-CSE-ConnectionGUID: R3aCHRgpQ4+mVFpxSPBY2Q==
-X-CSE-MsgGUID: zuNnvxMYTpSWm7CSeb31rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165903777"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO fedora) ([10.245.244.28])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 06:52:24 -0700
-From: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
-To: intel-xe@lists.freedesktop.org
-Cc: Matthew Brost <matthew.brost@intel.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dave Airlie <airlied@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 6/6] drm/xe: Implement two pass MMU notifiers for SVM
-Date: Sat,  9 Aug 2025 15:51:37 +0200
-Message-ID: <20250809135137.259427-7-thomas.hellstrom@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250809135137.259427-1-thomas.hellstrom@linux.intel.com>
-References: <20250809135137.259427-1-thomas.hellstrom@linux.intel.com>
+	s=arc-20240116; t=1754747663; c=relaxed/simple;
+	bh=7Xp+H3/Fm8Q2xD0Zm9yjoa74Ff3Js1v2RozQaurWIKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eHcLISIDTzRdL14lTQjeeb77fRirCJHS+RymZM53yPISrV9hEnxtSInNzz/isjiA7VaO1mAUTH705LeZNs/Vw3VB5zv/UOe8/jdQ3psaoqQBJfWiaQpGq+ulKvrJJoCLFHQMV9WeOGWLMjeFBg3GoZVGmAmDEckgxHI87MNRcEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTElCiPe; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6f6so3616966a12.2;
+        Sat, 09 Aug 2025 06:54:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754747660; x=1755352460; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WKbJICwI7R9TEKBrctvbj5erT6wdzmAXj7iW9KBeWVs=;
+        b=HTElCiPeRQbkPmk3QtuSX4qdDgWBq2oCn99UmPe9D6Xm+KXY2D9E0B/gJLG1J/pJuQ
+         D9ww5bI1dcq8kQ3MNqugXmOr2RlXjs74LFHVcrWY8ScvxaHLZnjXNhZvCF7aBohkKInZ
+         U0cFG6LGWYhLdBZWTTEAjmzjktoknrONPkumKqeuHvyc33Le06lwI4QSGQ6VySzw9X1E
+         yZt45zV2LhnzIdDbyogXPSjClnFbbeEuKBn0RMxNN/+fJ2N3UIlrVTTlpr/fH6oisU8Z
+         NeK/lsl/t2OxmvrK69sRjIJyGoB9eifAVurn02pjfBgSWvqNb9cnSgdZ32vj+ihn3j/2
+         0SeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754747660; x=1755352460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WKbJICwI7R9TEKBrctvbj5erT6wdzmAXj7iW9KBeWVs=;
+        b=uGQ6+Bml0w0myL0FH8hu9Pv8AYaWoQ2+kfsOc4bTXBHtkhPoiaJs76MIWyQtfrBW6s
+         Ozt1ux5MUy3buFEcFIvXb4+59HYAPT4GDH+DFJvQVaeK5x9eKIaOZk0zyZ/f8EfxR3u+
+         LmEULZrRBE7a+wkQtOVi9Jeh8X6rolYzkQ81NiLYTAH6BE52eye3qwWvJk/OEA0YCBIA
+         uBwe3EADz/ATvO/7HB6oaxTdv9L6SY8aPRsHFTEq193E4RgSZUi/BjTyNBDBE7JEcqt9
+         UomfaEXzUiFbM8WSXszi5qGiPRiVkFgXV8lGnvv3vQVU/Q546+2A3x2yEuOWzRXrH/Cq
+         iSIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1sJVETeK9HeQeEoWFAgdBz4reV4Igbu4zaPipPaInpafodR5wuo/HqQ+WMd/JgiGfhPgVUip53B8u0Nrw@vger.kernel.org, AJvYcCUwCS1K/XV2MQ905XigPAbFP4SmSyHHSdVv+NRCwBRb4Wogxb7adOKhQB6tXYR3U1pjP5xZl2LMdYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxekGWpPZ4uLjHtuKTWFoQhISnCl4q3Yq+g+c3PrBMB4g/QxhBd
+	4/R7R0Pst7mKyIdDQbcOS92Yh1gI6r2i3bDaFhe3+gZTIaImF3srDNr5YlhWEkyi0HtKRihrmuA
+	/faJXeH+N6zRJ/rwGaBRSi+uOMOd6nwo=
+X-Gm-Gg: ASbGncuC7dNAYs7S7StHIk3903cGffPqX38KurP4QvbwCk6RhdeFVJbmA/+AL6ZDw6M
+	knnmF3hH1bj+4hB6jN5SbAxeiCVASspt/sGGzJUpEBhYW6LiZfE7joa9RUBk+n0xhM/JrLM2Nlp
+	GJUMIrHE3P9v6s1XXiz66PGsUGMWAfnMOUG2/nEdUn4rolRdeKcjUskSCzzK9ijAjFDhFafDJ5P
+	+mUfXBrQQ==
+X-Google-Smtp-Source: AGHT+IGFKn7yA9e2N9IurEtBV7XxrZhhF9iFQPjWWNgCk2ICO4tBbIc2md2clhXR7CaxLDLs5nDGWg7lakOdE+eW3dU=
+X-Received: by 2002:a17:906:9f85:b0:ade:43e8:8fa4 with SMTP id
+ a640c23a62f3a-af9c6373614mr675128166b.18.1754747660120; Sat, 09 Aug 2025
+ 06:54:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250808190203.7493-1-marcelo.schmitt@analog.com>
+ <CAHp75Vc1KgiDUUEjeEKdrSfom6NThPG-383O=sezydnrZLoGqg@mail.gmail.com> <aJdSYIv8_QX0WwdI@debian-BULLSEYE-live-builder-AMD64>
+In-Reply-To: <aJdSYIv8_QX0WwdI@debian-BULLSEYE-live-builder-AMD64>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 9 Aug 2025 15:53:42 +0200
+X-Gm-Features: Ac12FXxIrAjtdDv5Q0kGFop7xcEZ9v_yGMoa6DhqTYIs_wezLkDMJmGOVN_uv0U
+Message-ID: <CAHp75Vdgafv9hqtZYiouC_RgY+0m2a3TfOOsk12LUMDEmY+4AQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Update max30208 maintainership
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, andy@kernel.org, 
+	dlechner@baylibre.com, jic23@kernel.org, nuno.sa@analog.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Matthew Brost <matthew.brost@intel.com>
+On Sat, Aug 9, 2025 at 3:51=E2=80=AFPM Marcelo Schmitt
+<marcelo.schmitt1@gmail.com> wrote:
+> On 08/08, Andy Shevchenko wrote:
+> > On Fri, Aug 8, 2025 at 9:02=E2=80=AFPM Marcelo Schmitt
+> > <marcelo.schmitt@analog.com> wrote:
 
-Implement two-pass MMU notifiers for SVM, enabling multiple VMs or
-devices with GPU mappings to pipeline costly TLB invalidations by
-issuing them in the first pass and waiting for completion in the second.
+...
 
-Signed-off-by: Matthew Brost <matthew.brost@intel.com>
----
- drivers/gpu/drm/drm_gpusvm.c |  2 +-
- drivers/gpu/drm/xe/xe_svm.c  | 74 ++++++++++++++++++++++++++++++------
- 2 files changed, 63 insertions(+), 13 deletions(-)
+> > > -S:     Maintained
+> > > +S:     Supported
+> >
+> > Just curious, are you really having this as a day job task?
+>
+> There is a request for MAX30210 support and so this driver may get extend=
+ed to
+> also support that part. Though, even if we end up with a separate driver =
+for
+> MAX30210, it feel unlikely to me that people lost interest in MAX30208
+> as that's still in production according to MAX30208's page [1].
 
-diff --git a/drivers/gpu/drm/drm_gpusvm.c b/drivers/gpu/drm/drm_gpusvm.c
-index 92dc7d2bd6cf..f153df1bc862 100644
---- a/drivers/gpu/drm/drm_gpusvm.c
-+++ b/drivers/gpu/drm/drm_gpusvm.c
-@@ -413,7 +413,7 @@ drm_gpusvm_notifier_invalidate_twopass(struct mmu_interval_notifier *mni,
-  * drm_gpusvm_notifier_ops - MMU interval notifier operations for GPU SVM
-  */
- static const struct mmu_interval_notifier_ops drm_gpusvm_notifier_ops = {
--	.invalidate_twopass = drm_gpusvm_notifier_invalidate_twopass,
-+	.invalidate_multipass = drm_gpusvm_notifier_invalidate_twopass,
- };
- 
- /**
-diff --git a/drivers/gpu/drm/xe/xe_svm.c b/drivers/gpu/drm/xe/xe_svm.c
-index 82a598c8d56e..5728394806ca 100644
---- a/drivers/gpu/drm/xe/xe_svm.c
-+++ b/drivers/gpu/drm/xe/xe_svm.c
-@@ -144,15 +144,8 @@ xe_svm_range_notifier_event_begin(struct xe_vm *vm, struct drm_gpusvm_range *r,
- 	 * invalidations spanning multiple ranges.
- 	 */
- 	for_each_tile(tile, xe, id)
--		if (xe_pt_zap_ptes_range(tile, vm, range)) {
-+		if (xe_pt_zap_ptes_range(tile, vm, range))
- 			tile_mask |= BIT(id);
--			/*
--			 * WRITE_ONCE pairs with READ_ONCE in
--			 * xe_vm_has_valid_gpu_mapping()
--			 */
--			WRITE_ONCE(range->tile_invalidated,
--				   range->tile_invalidated | BIT(id));
--		}
- 
- 	return tile_mask;
- }
-@@ -161,16 +154,60 @@ static void
- xe_svm_range_notifier_event_end(struct xe_vm *vm, struct drm_gpusvm_range *r,
- 				const struct mmu_notifier_range *mmu_range)
- {
-+	struct xe_svm_range *range = to_xe_range(r);
- 	struct drm_gpusvm_ctx ctx = { .in_notifier = true, };
- 
- 	xe_svm_assert_in_notifier(vm);
- 
-+	/*
-+	 * WRITE_ONCE pairs with READ_ONCE in xe_vm_has_valid_gpu_mapping()
-+	 */
-+	WRITE_ONCE(range->tile_invalidated, range->tile_present);
-+
- 	drm_gpusvm_range_unmap_pages(&vm->svm.gpusvm, r, &ctx);
- 	if (!xe_vm_is_closed(vm) && mmu_range->event == MMU_NOTIFY_UNMAP)
- 		xe_svm_garbage_collector_add_range(vm, to_xe_range(r),
- 						   mmu_range);
- }
- 
-+struct xe_svm_invalidate_pass {
-+	struct drm_gpusvm *gpusvm;
-+	struct drm_gpusvm_notifier *notifier;
-+#define XE_SVM_INVALIDATE_FENCE_COUNT	\
-+	(XE_MAX_TILES_PER_DEVICE * XE_MAX_GT_PER_TILE)
-+	struct xe_gt_tlb_invalidation_fence fences[XE_SVM_INVALIDATE_FENCE_COUNT];
-+	struct mmu_interval_notifier_pass p;
-+};
-+
-+static struct mmu_interval_notifier_pass *
-+xe_svm_invalidate_second(struct mmu_interval_notifier_pass *p,
-+			 const struct mmu_notifier_range *mmu_range,
-+			 unsigned long cur_seq)
-+{
-+	struct xe_svm_invalidate_pass *pass = container_of(p, typeof(*pass), p);
-+	struct drm_gpusvm *gpusvm = pass->gpusvm;
-+	struct drm_gpusvm_notifier *notifier = pass->notifier;
-+	struct drm_gpusvm_range *r = NULL;
-+	struct xe_vm *vm = gpusvm_to_vm(gpusvm);
-+	u64 adj_start = mmu_range->start, adj_end = mmu_range->end;
-+	int id;
-+
-+	/* Adjust invalidation to notifier boundaries */
-+	adj_start = max(drm_gpusvm_notifier_start(notifier), adj_start);
-+	adj_end = min(drm_gpusvm_notifier_end(notifier), adj_end);
-+
-+	for (id = 0; id < XE_SVM_INVALIDATE_FENCE_COUNT; ++id)
-+		xe_gt_tlb_invalidation_fence_wait(&pass->fences[id]);
-+
-+	drm_gpusvm_in_notifier_lock(gpusvm);
-+	drm_gpusvm_for_each_range(r, notifier, adj_start, adj_end)
-+		xe_svm_range_notifier_event_end(vm, r, mmu_range);
-+	drm_gpusvm_in_notifier_unlock(gpusvm);
-+
-+	kfree(pass);
-+	return NULL;
-+}
-+
- static void xe_svm_invalidate_twopass(struct drm_gpusvm *gpusvm,
- 				      struct drm_gpusvm_notifier *notifier,
- 				      const struct mmu_notifier_range *mmu_range,
-@@ -179,6 +216,8 @@ static void xe_svm_invalidate_twopass(struct drm_gpusvm *gpusvm,
- 	struct xe_vm *vm = gpusvm_to_vm(gpusvm);
- 	struct xe_device *xe = vm->xe;
- 	struct drm_gpusvm_range *r, *first;
-+	struct xe_svm_invalidate_pass *pass = NULL;
-+	struct xe_gt_tlb_invalidation_fence *fences = NULL;
- 	u64 adj_start = mmu_range->start, adj_end = mmu_range->end;
- 	u8 tile_mask = 0;
- 	long err;
-@@ -226,14 +265,25 @@ static void xe_svm_invalidate_twopass(struct drm_gpusvm *gpusvm,
- 
- 	xe_device_wmb(xe);
- 
--	err = xe_vm_range_tilemask_tlb_invalidation(vm, NULL, adj_start,
-+	pass = kzalloc(sizeof(*pass), GFP_NOWAIT);
-+	if (pass) {
-+		pass->gpusvm = gpusvm;
-+		pass->notifier = notifier;
-+		pass->p.pass = xe_svm_invalidate_second;
-+		fences = pass->fences;
-+		*p = &pass->p;
-+	}
-+
-+	err = xe_vm_range_tilemask_tlb_invalidation(vm, fences, adj_start,
- 						    adj_end, tile_mask);
- 	WARN_ON_ONCE(err);
- 
- range_notifier_event_end:
--	r = first;
--	drm_gpusvm_for_each_range(r, notifier, adj_start, adj_end)
--		xe_svm_range_notifier_event_end(vm, r, mmu_range);
-+	if (!pass) {
-+		r = first;
-+		drm_gpusvm_for_each_range(r, notifier, adj_start, adj_end)
-+			xe_svm_range_notifier_event_end(vm, r, mmu_range);
-+	}
- }
- 
- static int __xe_svm_garbage_collector(struct xe_vm *vm,
--- 
-2.50.1
+Ah, cool, thanks for taking care of this!
 
+> [1]: https://www.analog.com/en/products/MAX30208.html
+
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
