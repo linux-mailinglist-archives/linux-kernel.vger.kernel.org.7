@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-761105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BD8B1F475
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:54:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D471B1F477
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D507A353A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2AD3A633F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988A327FB1E;
-	Sat,  9 Aug 2025 11:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UQKBrBuU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B94F27FB27;
+	Sat,  9 Aug 2025 11:56:56 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E77A18FC92;
-	Sat,  9 Aug 2025 11:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2A418FC92;
+	Sat,  9 Aug 2025 11:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754740449; cv=none; b=cswidOkO735nDiD/3bUDxlzQKDEMTgyMczQq9nCe01Dfy0OnWiBRu6FNQUs7T399nl7KjcS4AEWf+NqlKq/c5ldgFgMhiySD22tsTzXe1m2xin1mzJUfAYku/bhhDix3J8q43fFYhBg6Rcg/rMcLYiioYLASWrwg5D2tBRFz1/8=
+	t=1754740615; cv=none; b=HUPB0P4reD2pAeXwGzHr3wdyQVHbf7JLdfwiYQ/MpKCENGgP0QXU3a6YtwO8X+ECWdgrhq2uCJ0SL97KP7TPmG8a6LafVdcGIpgSaBuF2OZhpmcAjlhunH8zUkBdfw80T24mKBOcOtEbmEwr2DLARx1sSFrKuBH8VBM8hZTTzik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754740449; c=relaxed/simple;
-	bh=mnV+jg9VSYFDZGvhdpkSY2iW8ke8agEGlUQFaLp0wdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcaBhtNAajpvXfHoi4/GmngXJjCqkw1wmt3wZM6SCs2ZxtCQPrjYWF/4N8b2oa8XfxqnV0d8G2bFvuYEG5tfe4SnIqe1CZgkobD33JeMftr/Fz8XOSYapTAl7i9Zim62UCND/L2JSiYf3zzjfGOzF+BUEZSivt3q+gtNx2AYWhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UQKBrBuU; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754740447; x=1786276447;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mnV+jg9VSYFDZGvhdpkSY2iW8ke8agEGlUQFaLp0wdY=;
-  b=UQKBrBuUhSUkheJjlr+WOMyeY926+hY/9ACw7YQ28QtUrDSvIUzaeMsh
-   7V02QqCFw5jZibS9trG3pEniFXtpCsGSTUy/U0k+8gpUt4hQLRbwHKB/O
-   HPDyDxVvdAjun22gbj0IjFQ15Kh49uWW0wmjM293V3oVUUPEyhQ7NXIvB
-   zcKO+J82mI9naPmhoi5epyy9zcF0ZybkH482sRRAF5srhGb91S+c2VGKH
-   I5j85J8Bp+43vhj7MR/J+QSgq+yp7oU2uZ2BhJs66PtaQTA47AjYbdQsH
-   P/N2HY8j4MffzFGx+Nmjk0IMr7+JWT9K9HxnWCHGqiR5WkbyTq9lp2Xfd
-   Q==;
-X-CSE-ConnectionGUID: 23Bv7p+ARGKgQt2T6N8d4w==
-X-CSE-MsgGUID: oYiChTHtRcWMfdLYVn3ZyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60868941"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="60868941"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 04:54:07 -0700
-X-CSE-ConnectionGUID: f2pAyptXQOu+WoNR8wp0bQ==
-X-CSE-MsgGUID: 6WPcD7jSQQ67d4c9XhBHRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="164753875"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 09 Aug 2025 04:54:05 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uki9B-0004m8-2g;
-	Sat, 09 Aug 2025 11:54:01 +0000
-Date: Sat, 9 Aug 2025 19:53:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v2 10/12] media: rkvdec: Add H264 support for the VDPU383
- variant
-Message-ID: <202508091909.RNcoZmVb-lkp@intel.com>
-References: <20250808200340.156393-11-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1754740615; c=relaxed/simple;
+	bh=4rAT3KfGVqPHQTA7SxZPwEn/jA7WeiYvZlLVWr4aAGU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kZMNudaHlIdq+2MmPl4igL96egmqx719JsAOVMTUSkHExoOHUZ6oZwy+qrMlS/4W7GtjKMTmKpwUu1vtMMxPbpwIQ2/XENpkcTN6y4PahpyOA2uJlkenpsnPKVhJwJW7/e8jU/fxbH7gXdTBmW9SD30/ZPb5dLE9EaV5opyl3qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:f24d:f84c:98a:7e26])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 1494141835;
+	Sat,  9 Aug 2025 11:56:44 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:f24d:f84c:98a:7e26) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: yonghong.song@linux.dev
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	contact@arnaud-lcm.com,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH v2 1/2] bpf: refactor max_depth computation in bpf_get_stack()
+Date: Sat,  9 Aug 2025 12:56:36 +0100
+Message-ID: <20250809115636.86856-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <1797f2fd-2b34-4c6b-bc61-043e01fde417@linux.dev>
+References: <1797f2fd-2b34-4c6b-bc61-043e01fde417@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808200340.156393-11-detlev.casanova@collabora.com>
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175474060494.29492.1981260016976444026@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Hi Detlev,
+A new helper function stack_map_calculate_max_depth() that
+computes the max depth for a stackmap.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+---
+ kernel/bpf/stackmap.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
-[auto build test ERROR on linuxtv-media-pending/master]
-[also build test ERROR on linus/master next-20250808]
-[cannot apply to rockchip/for-next sailus-media-tree/master sailus-media-tree/streams v6.16]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Detlev-Casanova/media-rkvdec-Switch-to-using-structs-instead-of-writel/20250809-041049
-base:   https://git.linuxtv.org/media-ci/media-pending.git master
-patch link:    https://lore.kernel.org/r/20250808200340.156393-11-detlev.casanova%40collabora.com
-patch subject: [PATCH v2 10/12] media: rkvdec: Add H264 support for the VDPU383 variant
-config: i386-buildonly-randconfig-005-20250809 (https://download.01.org/0day-ci/archive/20250809/202508091909.RNcoZmVb-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250809/202508091909.RNcoZmVb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508091909.RNcoZmVb-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/media/platform/rockchip/rkvdec/rkvdec.c:12:10: fatal error: 'linux/hw_bitfield.h' file not found
-      12 | #include <linux/hw_bitfield.h>
-         |          ^~~~~~~~~~~~~~~~~~~~~
-   1 error generated.
-
-
-vim +12 drivers/media/platform/rockchip/rkvdec/rkvdec.c
-
-  > 12	#include <linux/hw_bitfield.h>
-    13	#include <linux/clk.h>
-    14	#include <linux/genalloc.h>
-    15	#include <linux/interrupt.h>
-    16	#include <linux/iommu.h>
-    17	#include <linux/module.h>
-    18	#include <linux/of.h>
-    19	#include <linux/platform_device.h>
-    20	#include <linux/pm.h>
-    21	#include <linux/pm_runtime.h>
-    22	#include <linux/slab.h>
-    23	#include <linux/videodev2.h>
-    24	#include <linux/workqueue.h>
-    25	#include <media/v4l2-event.h>
-    26	#include <media/v4l2-mem2mem.h>
-    27	#include <media/videobuf2-core.h>
-    28	#include <media/videobuf2-vmalloc.h>
-    29	
-
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 3615c06b7dfa..532447606532 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -42,6 +42,27 @@ static inline int stack_map_data_size(struct bpf_map *map)
+ 		sizeof(struct bpf_stack_build_id) : sizeof(u64);
+ }
+ 
++/**
++ * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
++ * @map_size:        Size of the buffer/map value in bytes
++ * @elem_size:       Size of each stack trace element
++ * @flags:       BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
++ *
++ * Return: Maximum number of stack trace entries that can be safely stored
++ */
++static u32 stack_map_calculate_max_depth(u32 map_size, u32 elem_size, u64 flags)
++{
++	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 max_depth;
++
++	max_depth = map_size / elem_size;
++	max_depth += skip;
++	if (max_depth > sysctl_perf_event_max_stack)
++		return sysctl_perf_event_max_stack;
++
++	return max_depth;
++}
++
+ static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
+ {
+ 	u64 elem_size = sizeof(struct stack_map_bucket) +
+@@ -406,7 +427,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 			    struct perf_callchain_entry *trace_in,
+ 			    void *buf, u32 size, u64 flags, bool may_fault)
+ {
+-	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
++	u32 trace_nr, copy_len, elem_size, max_depth;
+ 	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
+ 	bool crosstask = task && task != current;
+ 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+@@ -438,10 +459,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 		goto clear;
+ 	}
+ 
+-	num_elem = size / elem_size;
+-	max_depth = num_elem + skip;
+-	if (sysctl_perf_event_max_stack < max_depth)
+-		max_depth = sysctl_perf_event_max_stack;
++	max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
+ 
+ 	if (may_fault)
+ 		rcu_read_lock(); /* need RCU for perf's callchain below */
+@@ -461,7 +479,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+ 	}
+ 
+ 	trace_nr = trace->nr - skip;
+-	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
++	trace_nr = min(trace_nr, max_depth - skip);
+ 	copy_len = trace_nr * elem_size;
+ 
+ 	ips = trace->ip + skip;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
