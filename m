@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-760909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED288B1F1E3
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 03:56:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6724FB1F1E7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 04:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 939A67AD2DB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 01:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26D91A06074
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D9E277030;
-	Sat,  9 Aug 2025 01:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F48A277CB8;
+	Sat,  9 Aug 2025 02:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="NcABfOKo"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KzZqsIUa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E582221540
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 01:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BD81401B;
+	Sat,  9 Aug 2025 02:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754704570; cv=none; b=cqMKL95NkGslSqxUo2LPlWAzWr64LOfkdmHv51BZKHhFOdozQYjL4KVuhJ8GmmTQPoC7T3Hu7RlWfc+ltKtmgH3qWlDVNIDR09369wJQXYTPr1BsMiG2TBSZs+XQmtRxtrWoyWPloYbN8GIu6olIwjGo62zsU353q2cNgH4E8dI=
+	t=1754704850; cv=none; b=ctvxCTIKoCm6bp2Kh9u4SE393FERIgG0gRbR5RfUC/jpIgs0FpQFWGegbvihhlDN53NmkYuB0+OihJKbIY7UglUyRBDWMwTX4M5i6/BL7d5Ui5GlDjQzQJC6KPYPEgVDxkL0S42KUu78JSV0quMIgYZfPI86MUQ9ArXA+XyMPrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754704570; c=relaxed/simple;
-	bh=MYKaqM8CAHkyIRmw3YojkfdyJu+8WrIZ/Vqc5NhiXkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GZgp3I/XD/bw4X/l1XznbLcrVc1pjBx+Bsb6zVGJXtwQOJWp336ipcYKj9K7EbGPLRcqUjQ2+V0MH6qnbESZOtiBLV7UFPfn3t23gJVdqtAaBx5hz74Ef3XuhEPhWaB9Rm61By80RMDmZwgdTK7BEW1a0FdprHkSs/xYZMkKpSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=NcABfOKo; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b271f3ae786so2271880a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 18:56:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google; t=1754704566; x=1755309366; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T0gEu9M1jWiqQ/ChUNqQXxDev3uWQxp3w+IDbpV+h3k=;
-        b=NcABfOKosfvTWZ6zrHfyp0u0iXkhQ393pcCM506MM+ZtF0s32A6RVj3JYTYRKb5Te0
-         7JxvBkNKx0fCjnqDdeEmtRzu77+79USCB7v5NaFeK5qMXBckZDdFSRuWoZThye4//fzs
-         t5RPJvjn8+xx6H0S8J8YnBy72xHQkfC1yXr0A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754704566; x=1755309366;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T0gEu9M1jWiqQ/ChUNqQXxDev3uWQxp3w+IDbpV+h3k=;
-        b=ndpnMAZQWx3yGK6nFcf1VbfNKhvR/0vpG6JNgFeayZHIGDIldRZNL0GbwcXKqIumde
-         qf53ZRUQ8RNomW483lR5ClsnTdR+zbklED7PwFV6+Dm9EkU7DzfPl8E614MClMUsVNuz
-         CzvjUQ9upEpsWv/rRAmTuI4sfco+UmNX/7ghcncCZ2Np0j99W0eVKFKcyY2yoeTFbp0c
-         iPSW/3pWEMLPLQ8DR69KxdutwPeDAYkITxE6DEIRK5WgwMExHxwlF5zOZ1711pKeME3U
-         NAmRzgCwWGywiUiVsrJbcJLrPPOpUTIgHTtCjktXqGj1MTfQ2K8hco0byTGOvzCobc5T
-         4BoQ==
-X-Gm-Message-State: AOJu0YwCHORkPOtsaP6rCfrHjNAZWtWcrE9fSYCfHOjavWxsPAmMD25o
-	266OD6h+OufyYpVGmmCuf+tK67G5rD3pHCWt5IQq9XwceekX2cUweCLfxYeHVVGO9al4YY7wZOb
-	WgFEZGw8=
-X-Gm-Gg: ASbGncul48r2Z4igxPvFIoub+LdoYFDa6iJxdubmaEDNNb53Kp2WRXq20Gb39LatkeH
-	DzKQ34dgRMkAbqEp9Dq/bCkaGqyiwLoLMv9WO8bkh3XxxXdlhLfD2n5O3bpfKmY7P7PZuS/lams
-	3SMm5VTM+rg8tkHXIeQW+xR+XssNAz+ui6RI1EQBm+ZqMRslJVw6AYZvXVLrroe+JDlnXgqb3eF
-	EmoIH4JR3ssLXEemrluyJKk6QO/S3MVyOhHElfpqMdM8IRE60VKhBh6oNbN71MvyWTw8Hm3YYY0
-	58k0ONEex3joGxlyIJidiHVe8ioC457pnYgHzpNwA+ZgEN0UcKhgWnIOB5408wITXwDHcm1Vjr4
-	BJ1Ibvjq4LDdIVHw2B12AayqRmQIHOh+p/cBxMSdGbl/Qs04Hw9k94E/tpGc0yTPgWu14gFvx9Q
-	==
-X-Google-Smtp-Source: AGHT+IERjA7mv9VWNW+RynYLJcRsU6bRSQXETe7C9BCz+ad/Id+lhGtD2CjniX3rZywKY+yyxNgFow==
-X-Received: by 2002:a17:903:4b43:b0:242:9bc6:6bc0 with SMTP id d9443c01a7336-242c2266792mr66416245ad.55.1754704565794;
-        Fri, 08 Aug 2025 18:56:05 -0700 (PDT)
-Received: from shiro (p1561006-ipxg00c01sizuokaden.shizuoka.ocn.ne.jp. [153.226.109.6])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-241e89771e2sm220358985ad.88.2025.08.08.18.56.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 18:56:05 -0700 (PDT)
-From: Daniel Palmer <daniel@0x0f.com>
-To: geert@linux-m68k.org,
-	linux-m68k@lists.linux-m68k.org
-Cc: linux-kernel@vger.kernel.org,
-	Daniel Palmer <daniel@0x0f.com>
-Subject: [PATCH] m68k: Add target for lz4 compressed vmlinux
-Date: Sat,  9 Aug 2025 10:55:29 +0900
-Message-ID: <20250809015529.373693-1-daniel@0x0f.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1754704850; c=relaxed/simple;
+	bh=U7N8SvBKFsep1X+GGgH7xn+OmcWtHlCezIcmne4AlDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUFzWQ7knlS+3Wi2zq1j9XFZUz7qW0sS/NWOav1TfEkQxRs5asQeejdfUcu5w9SHNNbXTOuAU+E8hllZ25AcGWPSUerg5rWcSc4Uh4C6tb2ETGSFvJIXRRbmzglY5ihOvA/Koi0OyfElcJW2XARG0G9kYjnBoGqa4F/GQPPiTVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KzZqsIUa; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754704849; x=1786240849;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U7N8SvBKFsep1X+GGgH7xn+OmcWtHlCezIcmne4AlDY=;
+  b=KzZqsIUaV2sPL61yrzbSkkOhWeuxLhNFBEra4tjbNtuOwvLHpWbhG4co
+   TZKPCsg/ntvxBsnG0kYd3Wgi3pUzWOHp+eOA2AoEYJPueu74uHK+cDZbw
+   uwZdxHj3GzplZljpMH2slULnPb/PFYDrSTBX/OCz3jZekuArawArIx36T
+   KkzCDMiN+RM+LgH6yf21kR8SRfTFoiltBBdgS+YJ9OheOqch7OD++kXjQ
+   b0gZv6XRH5bCMCtXhU6HoN7d3uemuWVq++3tX6Ap2xbwphM92Cj5pMVw3
+   BmhEkFgDcG+nAerFHmF4pBK9+1uS9PX207KUXAM0sDsir7i970cSFAZxF
+   A==;
+X-CSE-ConnectionGUID: gAuxruRuRhWr4WxTgLD1GA==
+X-CSE-MsgGUID: m1ebJ5knScSlIcOCBgZPKg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="68509855"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="68509855"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 19:00:49 -0700
+X-CSE-ConnectionGUID: pzn0sm/NQ5WOOoTuOGgzTg==
+X-CSE-MsgGUID: CPv93rPoS4uSrRdjp2LTOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="170822641"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 08 Aug 2025 19:00:45 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ukYt0-0004S6-06;
+	Sat, 09 Aug 2025 02:00:42 +0000
+Date: Sat, 9 Aug 2025 09:59:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: hans.zhang@cixtech.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, mani@kernel.org, robh@kernel.org,
+	kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mpillai@cadence.com,
+	fugang.duan@cixtech.com, guoyin.chen@cixtech.com,
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hans Zhang <hans.zhang@cixtech.com>
+Subject: Re: [PATCH v6 06/12] PCI: cadence: Add support for High Performance
+ Arch(HPA) controller
+Message-ID: <202508090915.VpyifVYr-lkp@intel.com>
+References: <20250808072929.4090694-7-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808072929.4090694-7-hans.zhang@cixtech.com>
 
-Traditionally gzip (/bzip?) has been the compressed image format
-but its a pain to decompress because its very hard to load and
-decompress it in chunks which you need to do if you don't
-have enough memory to load the whole kernel image and decompress
-it somewhere else.
+Hi,
 
-With lz4 you can set a block size, read it from the header,
-and then you only need memory for a single block and the
-decompressed kernel.
+kernel test robot noticed the following build errors:
 
-I use lz4 compressed images on 68000 with 8MB of ram
-and MVME147 with 16MB. I want to use lz4 in my fork of EMILE
-to boot m68k macs because streaming decompress of gzip is painful.
+[auto build test ERROR on 37816488247ddddbc3de113c78c83572274b1e2e]
 
-Signed-off-by: Daniel Palmer <daniel@0x0f.com>
----
- arch/m68k/Makefile | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+url:    https://github.com/intel-lab-lkp/linux/commits/hans-zhang-cixtech-com/PCI-cadence-Split-PCIe-controller-header-file/20250808-154018
+base:   37816488247ddddbc3de113c78c83572274b1e2e
+patch link:    https://lore.kernel.org/r/20250808072929.4090694-7-hans.zhang%40cixtech.com
+patch subject: [PATCH v6 06/12] PCI: cadence: Add support for High Performance Arch(HPA) controller
+config: sparc-randconfig-001-20250809 (https://download.01.org/0day-ci/archive/20250809/202508090915.VpyifVYr-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250809/202508090915.VpyifVYr-lkp@intel.com/reproduce)
 
-diff --git a/arch/m68k/Makefile b/arch/m68k/Makefile
-index 0abcf994ce55..a56e853037c0 100644
---- a/arch/m68k/Makefile
-+++ b/arch/m68k/Makefile
-@@ -124,6 +124,17 @@ else
- 	$(KBZIP2) -1c vmlinux >vmlinux.bz2
- endif
- 
-+vmlinux.lz4: vmlinux
-+
-+ifndef CONFIG_KGDB
-+	cp vmlinux vmlinux.tmp
-+	$(STRIP) vmlinux.tmp
-+	$(LZ4) -z9f vmlinux.tmp vmlinux.lz4
-+	rm vmlinux.tmp
-+else
-+	$(LZ4) -z9f vmlinux vmlinux.lz4
-+endif
-+
- CLEAN_FILES += vmlinux.gz vmlinux.bz2
- 
- archheaders:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508090915.VpyifVYr-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+ERROR: modpost: missing MODULE_LICENSE() in drivers/pci/controller/cadence/pcie-cadence-host-hpa.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/cadence/pcie-cadence-host-hpa.o
+ERROR: modpost: "cdns_pcie_host_start_link" [drivers/pci/controller/cadence/pcie-cadence-host.ko] undefined!
+ERROR: modpost: "cdns_pcie_host_dma_ranges_cmp" [drivers/pci/controller/cadence/pcie-cadence-host.ko] undefined!
+ERROR: modpost: "bar_max_size" [drivers/pci/controller/cadence/pcie-cadence-host.ko] undefined!
+ERROR: modpost: "cdns_pcie_host_find_min_bar" [drivers/pci/controller/cadence/pcie-cadence-host.ko] undefined!
+ERROR: modpost: "cdns_pcie_host_find_max_bar" [drivers/pci/controller/cadence/pcie-cadence-host.ko] undefined!
+>> ERROR: modpost: "cdns_pcie_host_wait_for_link" [drivers/pci/controller/cadence/pcie-cadence-host-hpa.ko] undefined!
+>> ERROR: modpost: "cdns_pcie_retrain" [drivers/pci/controller/cadence/pcie-cadence-host-hpa.ko] undefined!
+>> ERROR: modpost: "cdns_pcie_hpa_set_outbound_region_for_normal_msg" [drivers/pci/controller/cadence/pcie-cadence-host-hpa.ko] undefined!
+>> ERROR: modpost: "cdns_pcie_hpa_set_outbound_region" [drivers/pci/controller/cadence/pcie-cadence-host-hpa.ko] undefined!
+>> ERROR: modpost: "cdns_pcie_host_dma_ranges_cmp" [drivers/pci/controller/cadence/pcie-cadence-host-hpa.ko] undefined!
+WARNING: modpost: suppressed 5 unresolved symbol warnings because there were too many)
+
 -- 
-2.50.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
