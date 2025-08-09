@@ -1,140 +1,231 @@
-Return-Path: <linux-kernel+bounces-761170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFA8B1F53A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:32:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07504B1F53C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35BF18C0C17
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FFB46254AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183AF2BE039;
-	Sat,  9 Aug 2025 15:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5575D2BE653;
+	Sat,  9 Aug 2025 15:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t5tx4/DC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yHa0EYuk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtD+6zK8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C00D176ADB;
-	Sat,  9 Aug 2025 15:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99030274B5A;
+	Sat,  9 Aug 2025 15:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754753540; cv=none; b=rBm0bUW4tfQC69gnB1W7bao3BptfpmsGABcdhFCFJmXpZXpgZL/RS6wnDiIEtxD6Zgqj0p6f8Vn7IjIZze/mJ79GtbbzAgyj3MzUPTNQOc0BjqcNifnKjwM6+X7NZ7e5hVbL0rkt64+8wI3dwTPZyn3gO7KZHD72ZazfIwf3vx8=
+	t=1754754285; cv=none; b=THBaDXGAL+3+S4yfbPnmo2bZUbE8kKfg5dXG3uS8h+yzNQ45JA5TwBxybPU3jy/CGxGF9KbPCB/VQPSh6yzw21uvRXuflPkTfFKAmohlc6JM9TUhPfdC4fMnUjuCV8I3o1M18ZA9S90GllpelnMxanSueNM+IdKJEiAivekHVzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754753540; c=relaxed/simple;
-	bh=wsbKp4Rul3bBUSC3LqRvUkLGDNGpyyc3CDONbZFn5hM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iswFz/ficz9+XclPbr3H6tHoE9fYPj+uuP9xyzskDdoj55yGxpG9mck8nkfj+3B56rG/eHR1AKR0CDok6eSNxZA+EYERKZJ4RSVwWUm4ZOxi215V/QXnnGKb/WMJ4GXjKhkPXkz1Z7nU7cjHwIE2WxRHBkYVYXnV5T8PoQ/ax/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t5tx4/DC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yHa0EYuk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754753537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BZbRABX71KNiM1YZsVSV5L7I+pnm05kQRVz0yjcb9Jc=;
-	b=t5tx4/DCOsGMhdOC+GYxsOc8pGy6NjeC2wnDn/BjYlLNYJevf7hwH90b8GvHvDvxjPxXwz
-	XA3Z7OfwDWFGqCyhHckVT+n4Y3NC4Zdg4xmfdgJ+LkCmOQFYzSb+Z9dAHrq48wiaoLbLyZ
-	UFFrKog4Q/lP8ubEjAdqWD35OfBfixgDIekWy2EzyN5Z67Vb6LCIzvyIBTLxTfub7bCFi2
-	DhbDlvIBVxN88ozGe0iYXOQ9ot0JvxUSl0FfYlumHTGV2TmfuANGcqQeXmBXEIMXvw+5Qz
-	IMYeCE1iiXnFFVIi++/ts/EZDgIoPaPHbfKRK4YEFnKet7f53dHBe5ofdNFXrQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754753537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BZbRABX71KNiM1YZsVSV5L7I+pnm05kQRVz0yjcb9Jc=;
-	b=yHa0EYukbFVUAlOsG4vONfTw5FGbtm4aPI4DvjK9nOeHCG5IDBGQ5Nzvf9ZLLp/TQ9zr1g
-	p4gZpfNcZ7HutKCg==
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lukas Wunner <lukas@wunner.de>,
- Bjorn Helgaas <helgaas@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, Linux PCI Mailing List
- <linux-pci@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Lorenzo
- Pieralisi <lorenzo.pieralisi@arm.com>, Manivannan Sadhasivam
- <mani@kernel.org>, Krzysztof Wilczynski <kwilczynski@kernel.org>, Armando
- Budianto <sprite@gnuweeb.org>, Alviro Iskandar Setiawan
- <alviro.iskandar@gnuweeb.org>, gwml@vger.gnuweeb.org, namcaov@gmail.com
-Subject: Re: [GIT PULL v2] PCI changes for v6.17
-In-Reply-To: <aJdmGwFU6b9zh1BO@linux.gnuweeb.org>
-References: <aJQxdBxcx6pdz8VO@linux.gnuweeb.org>
- <20250807050350.FyWHwsig@linutronix.de>
- <aJQ19UvTviTNbNk4@linux.gnuweeb.org> <aJXYhfc/6DfcqfqF@linux.gnuweeb.org>
- <aJXdMPW4uQm6Tmyx@linux.gnuweeb.org> <87ectlr8l4.fsf@yellow.woof>
- <aJZ/rum9bZqZInr+@biznet-home.integral.gnuweeb.org>
- <20250809043409.wLu40x1p@linutronix.de>
- <aJdNB8zITrkZ3n6r@linux.gnuweeb.org>
- <20250809144927.eUbR3MXg@linutronix.de>
- <aJdmGwFU6b9zh1BO@linux.gnuweeb.org>
-Date: Sat, 09 Aug 2025 17:32:16 +0200
-Message-ID: <87wm7ch5of.fsf@yellow.woof>
+	s=arc-20240116; t=1754754285; c=relaxed/simple;
+	bh=k3EHWo7z0Fgl/ecQ3m03h2zQ8gHkwpN9dUUclhzRHh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gRQol15xA4bGftjK9Vhy4D3csyu9Jx7Ymi7w/7RUH8biVNz4tXcA5W/slTX2/8/RgbUpBhhd3KLfLQdXFN7ATBY5ydEWOP1+AI2oVCm58r0dWHRPL6rSZtzmNpoyEfLKbQ+Qpqnq+pIYQGmffh+Lp6NgH1m80s7o8SAx7JQVspQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtD+6zK8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 185F9C4CEE7;
+	Sat,  9 Aug 2025 15:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754754285;
+	bh=k3EHWo7z0Fgl/ecQ3m03h2zQ8gHkwpN9dUUclhzRHh8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JtD+6zK8UccuOL/d7BzEdMEOprAEBhBtaxnNEioaBbJeB3yqWGkmtzXO1BGMeBZfo
+	 DWsI8e+FHIaLGinQEe+A2H6P7fVmxon0RJLsNrAGcE6rniCjCoWfYRSbfnkegS2s5b
+	 jtwpb9dJb+XWoWAfyxFx7RDf962kMzot2N28cHG4EeqBNRTdxeJ8i2d79tYOlyNi6C
+	 Ku3uHG9Ew5p9nLquTFprXiTctnL8f2eCJcvNrNotnArTOdPvWP2Th42rzesWL/wwQq
+	 2YH989iijNa6NIgxukuCaW3n9Sp/LeyUByRXsB5grO4JEixVwneOZWjFDBKth5zfH6
+	 76aPp/AO2Dfdg==
+Date: Sat, 9 Aug 2025 17:44:41 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH v2 10/12] docs: kdoc: further rewrite_struct_members()
+ cleanup
+Message-ID: <20250809174441.6b0baa06@foz.lan>
+In-Reply-To: <20250807211639.47286-11-corbet@lwn.net>
+References: <20250807211639.47286-1-corbet@lwn.net>
+	<20250807211639.47286-11-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Ammar Faizi <ammarfaizi2@gnuweeb.org> writes:
-> Here's the result after reverting those two commits and applied the diff.
->
->   https://gist.github.com/ammarfaizi2/03c7a9c0fec2a11f206931f1b7790709#file-dmesg_pci_debug_002-txt
->
-> Let's see if this one is enough for you to diagnose the problem.
+Em Thu,  7 Aug 2025 15:16:37 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Thanks, I think the problem is clear now. 
+> Get rid of some redundant checks, and generally tighten up the code; no
+> logical change.
 
-The diff I sent you has a mistake, it should be
-    if (pci_msix_vec_count(pci_dev) < 0)
-not
-    if (!pci_msix_vec_count(pci_dev))
+LGTM, but see below:
 
-So the log is wrong, it printed "MSI-X, looking good...". It should have
-printed the other one.
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 86 ++++++++++++++++-----------------
+>  1 file changed, 41 insertions(+), 45 deletions(-)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index e3d0270b1a19..b3f937901037 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -673,73 +673,69 @@ class KernelDoc:
+>          while tuples:
+>              for t in tuples:
+>                  newmember = ""
+> -                maintype = t[0]
+> -                s_ids = t[5]
+> -                content = t[3]
+> -
+> -                oldmember = "".join(t)
+> -
+> -                for s_id in s_ids.split(','):
+> +                oldmember = "".join(t) # Reconstruct the original formatting
+> +                dtype, name, lbr, content, rbr, rest, semi = t
 
-But no need to re-run it, the backtrace is enough.
+Here, I would either use non-group matches or use "_" for the vars
+we're just ignoring.
 
-    MSI-X, looking good... <-------- wrong log
-    CPU: 3 UID: 0 PID: 183 Comm: systemd-udevd Not tainted 6.16.0-afh2-dbg-2025-08-09-gb622ab28bcac #13 PREEMPT(full)  28137b57996795286f6544f071ec852674a057d4
-    Hardware name: HP HP Laptop 14s-dq2xxx/87FD, BIOS F.21 03/21/2022
-    Call Trace:
-     <TASK>
-    dump_stack_lvl
-    vmd_msi_init
-    msi_domain_alloc
-    irq_domain_alloc_irqs_locked
-    __irq_domain_alloc_irqs
-    __msi_domain_alloc_irqs
-    msi_domain_alloc_irqs_all_locked
-    __msi_capability_init
-    __pci_enable_msi_range
-    pci_alloc_irq_vectors_affinity
-    pcie_portdrv_probe
+IMO, the cleanest approach without using finditer would be:
 
-So unlike what VMD doc says, it actually can have non-MSI-X children devices!
 
-Please discard the reverts and the diff I sent you, and try the diff
-below. I believe your machine will work now.
+	struct_members = KernRe("("			# 0: the entire pattern
+				r'(struct|union)' 	# 1: declaration type
+				r'([^\{\};]+)'
+				r'(?:\{)'
+				r'(?:[^\{\}]*)'		# 2: Contents of declaration
+				r'(?:\})'
+				r'([^\{\};]*)(;)')	# 3: Remaining stuff after declaration
+				")")
 
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index b679c7f28f51..1bd5bf4a6097 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -306,9 +306,6 @@ static bool vmd_init_dev_msi_info(struct device *dev, struct irq_domain *domain,
- 				  struct irq_domain *real_parent,
- 				  struct msi_domain_info *info)
- {
--	if (WARN_ON_ONCE(info->bus_token != DOMAIN_BUS_PCI_DEVICE_MSIX))
--		return false;
--
- 	if (!msi_lib_init_dev_msi_info(dev, domain, real_parent, info))
- 		return false;
- 
+	tuples = struct_members.findall(members)
+	while tuples:
+            for t in tuples:
+		oldmember, maintype, content, s_ids = match.groups()
+
+I wonder if using finditer would avoid the first while - I guess not
+as the logic here picks multi-level members - but if it matches, then
+It would be a nice improvement to use it.
+
+Anyway, such cleanup can be done later. So:
+
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+> +                #
+> +                # Pass through each field name, normalizing the form and formatting.
+> +                #
+> +                for s_id in rest.split(','):
+>                      s_id = s_id.strip()
+> -
+> -                    newmember += f"{maintype} {s_id}; "
+> +                    newmember += f"{dtype} {s_id}; "
+> +                    #
+> +                    # Remove bitfield/array/pointer info, getting the bare name.
+> +                    #
+>                      s_id = KernRe(r'[:\[].*').sub('', s_id)
+>                      s_id = KernRe(r'^\s*\**(\S+)\s*').sub(r'\1', s_id)
+> -
+> +                    #
+> +                    # Pass through the members of this inner structure/union.
+> +                    #
+>                      for arg in content.split(';'):
+>                          arg = arg.strip()
+> -
+> -                        if not arg:
+> -                            continue
+> -
+> +                        #
+> +                        # Look for (type)(*name)(args) - pointer to function
+> +                        #
+>                          r = KernRe(r'^([^\(]+\(\*?\s*)([\w.]*)(\s*\).*)')
+>                          if r.match(arg):
+> +                            dtype, name, extra = r.group(1), r.group(2), r.group(3)
+>                              # Pointer-to-function
+> -                            dtype = r.group(1)
+> -                            name = r.group(2)
+> -                            extra = r.group(3)
+> -
+> -                            if not name:
+> -                                continue
+> -
+>                              if not s_id:
+>                                  # Anonymous struct/union
+>                                  newmember += f"{dtype}{name}{extra}; "
+>                              else:
+>                                  newmember += f"{dtype}{s_id}.{name}{extra}; "
+> -
+> +                        #
+> +                        # Otherwise a non-function member.
+> +                        #
+>                          else:
+> -                            # Handle bitmaps
+> +                            #
+> +                            # Remove bitmap and array portions and spaces around commas
+> +                            #
+>                              arg = KernRe(r':\s*\d+\s*').sub('', arg)
+> -
+> -                            # Handle arrays
+>                              arg = KernRe(r'\[.*\]').sub('', arg)
+> -
+> -                            # Handle multiple IDs
+>                              arg = KernRe(r'\s*,\s*').sub(',', arg)
+> -
+> +                            #
+> +                            # Look for a normal decl - "type name[,name...]"
+> +                            #
+>                              r = KernRe(r'(.*)\s+([\S+,]+)')
+> -
+>                              if r.search(arg):
+> -                                dtype = r.group(1)
+> -                                names = r.group(2)
+> +                                for name in r.group(2).split(','):
+> +                                    name = KernRe(r'^\s*\**(\S+)\s*').sub(r'\1', name)
+> +                                    if not s_id:
+> +                                        # Anonymous struct/union
+> +                                        newmember += f"{r.group(1)} {name}; "
+> +                                    else:
+> +                                        newmember += f"{r.group(1)} {s_id}.{name}; "
+>                              else:
+>                                  newmember += f"{arg}; "
+> -                                continue
+> -
+> -                            for name in names.split(','):
+> -                                name = KernRe(r'^\s*\**(\S+)\s*').sub(r'\1', name).strip()
+> -
+> -                                if not name:
+> -                                    continue
+> -
+> -                                if not s_id:
+> -                                    # Anonymous struct/union
+> -                                    newmember += f"{dtype} {name}; "
+> -                                else:
+> -                                    newmember += f"{dtype} {s_id}.{name}; "
+> -
+> +                #
+> +                # At the end of the s_id loop, replace the original declaration with
+> +                # the munged version.
+> +                #
+>                  members = members.replace(oldmember, newmember)
+> +            #
+> +            # End of the tuple loop - search again and see if there are outer members
+> +            # that now turn up.
+> +            #
+>              tuples = struct_members.findall(members)
+>          return members
+>  
+
+
+
+Thanks,
+Mauro
 
