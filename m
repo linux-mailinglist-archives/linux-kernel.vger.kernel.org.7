@@ -1,126 +1,171 @@
-Return-Path: <linux-kernel+bounces-761096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D916AB1F453
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:12:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C23A6B1F458
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6013A951B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791783B4CE8
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED42272E7F;
-	Sat,  9 Aug 2025 11:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA70427CCE0;
+	Sat,  9 Aug 2025 11:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4bLd7Yg"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4EeApLm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E98E1F3FED
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 11:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B18213D539;
+	Sat,  9 Aug 2025 11:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754737941; cv=none; b=PG+ACMVvmrxo3H6uTFE7wGaP+aVAIxcu1/O7pQR8pxKErFc4AStouO+5+lhKtEqsUZWYjFdL+C+sNJYA7vfvhFaq08D/tn2+ShV1wT/L2TRKw85kkzDRv8GUiwQGEczsiVlPtD2mYYjLACBR09KnbI/r5gOgSOx639Z6nUOujms=
+	t=1754738025; cv=none; b=iF0JUgWIojfw7JggJP18ZlJEljFzDWuQumuMJB6Owo8v+El0fZZkAJZeXOdm7rr5ou8xFV/vrfSb1aLYht9HEMrFiXAJgsguHP2mX8XJaxxU+nx73FMt7TMw3xajWA9nG+PvUmoUqqy3VWAsVmp9vHT9J7xrVjR5akvo9peUCy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754737941; c=relaxed/simple;
-	bh=gN1MIuTnzSQMDEWF2dpOhcvXN5nDzF24d+3PpF3VceM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sDXAIscmJsTo/aCoLkP2BlcoqyNPQqqWdgSjpUGrnr4MycocT/kK1CCAU11r0y5PoBxSQquuNAPYGVOwmPGq0GHAGCiQLawCF5IPvAMpstng0BOSv/K5sodgdcp2Ww/CdwVkYW0YM3jGVj9lywevZnBMGw+af6TVlT1BVAUzrYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4bLd7Yg; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-458b49c98a7so18362675e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 04:12:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754737938; x=1755342738; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BNqr2noYtj5/iKHD8yrAFo9MADN3PbbGdwwaImthjec=;
-        b=W4bLd7YgXv70c8AV5LkGDe+DIhKcE6tSJsV3CGO5BzMyykt2xmT8qounciAKc62nIi
-         napWneiW4qSncKJVBdeGxLPBx1eXFxCtyUyW55fCfpNO46gMkD8pvjwIw1nCxz93L31U
-         nSPxfQpO5sb7qNxpPIk4ih4nQM+ubgNpC85O5PBWHH7lpxqGTJ/HVlijFvn82uprFUy7
-         16SuslesJogdbPB+N7WH+Huy3nY0X/6N42Go4HxRdr0o6Jva+Un6I/LQTYPEihQVD9FJ
-         2gT4hmh1tZPgCTGtQdjHG6RLocf9G0o5XqkAftnS5RL5gt9ycPGKjFNWog5iYZeCKoX0
-         ci1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754737938; x=1755342738;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BNqr2noYtj5/iKHD8yrAFo9MADN3PbbGdwwaImthjec=;
-        b=vxOJ/19fE17MlNSDB/4EPGb4FTNr9T3NrGfFaK72Yt0byVVpYTwagECqCzA+mmzPbT
-         X2URy9vvduz0nb/+xH1m3O0h3BzKCallO3fYZU4nX3KeUQJ9nxLnUqc5300ZSyqH0ZoD
-         Bt5kay2IAJqVrfi6PJAAC68NR97coBmieuleaQgb9D+90QLtaNIpcoN8ZyO50WaIXlKX
-         j/7M282mYv9DEbixXG5jCcBjcTii7AVamSS72bnGMrLivxN7FDYtKyrxnXiGiyt0ZV6+
-         tW5YO4L7qNrM15kS5p/4YXqGTkvi6fzOy/ehFcyyxM1Ogr+MZ4hWk7SmYGWWoR7s/wKQ
-         590g==
-X-Forwarded-Encrypted: i=1; AJvYcCWs+nY8ieBWdHD76a1pM/l63AWPXRaRsRJPdKFds23xeSYg5XUsJUE0h7i6nThqJ/XnoBBa0bauEEp9UDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC6BK7diH90OqWFcJFJDO+SCy2IGwn2vDtnDL/h2qQ0/BT3Km9
-	tASQXZ1loV5Je5E6spZ4oCCkeCypa/mpmqwS7frUIefj3sx3gAIXVs7b
-X-Gm-Gg: ASbGncu36kKTq8apR0SRc/+NdLJoP7hL8+Dp7q76sbB2e6IzIUyt5MbYV6INwf+8uRM
-	tEZCxGEOKecitMTHFo4VZpyKDiahmQ0TEIsik/SOCxa07fN17J98UOdTgl7qeldHMDyLBoAhnai
-	5BOal53cHu72Cos7lYfjRyPaEPBWvmbLlG0L1r5u+y14z37xNcMnzNHi73amIFFNwRroR0ypc8V
-	wFW7UaypxifeL6EUKNG5EklSrkUpbUNqAYp4PUnA4WUKuTC2/UIwHIPAA3FPhQDHE3hvX9tzV4K
-	vURrS54ByhS5c/lbXFvbkx5Omo/Wx4gFI7FbUqTAnLg6zmBPCfK1L3/cxhzUFxnUEDGQBk+e98w
-	2gbrwKQC/nvfpb8gkWHYnlRhYfuCEM391UpKB8wc=
-X-Google-Smtp-Source: AGHT+IGmd1/DibPEbs3Ynld1GabCFw3/aExk+KV6VBw1GEk4585Fs9anirjuYo29usAS7EZvYyVlOw==
-X-Received: by 2002:a05:600c:45cc:b0:43c:ea1a:720a with SMTP id 5b1f17b1804b1-459f4f2e6d7mr49925915e9.1.1754737937597;
-        Sat, 09 Aug 2025 04:12:17 -0700 (PDT)
-Received: from burak-MiniBook-X.. ([2a00:8a60:e00e:10f7:a1c7:d533:5228:9a11])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459dc2647f6sm122340435e9.2.2025.08.09.04.12.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 04:12:17 -0700 (PDT)
-From: Ibrahim Burak Yorulmaz <iburaky.dev@gmail.com>
-To: maarten.lankhorst@linux.intel.com
-Cc: mripard@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	hdegoede@redhat.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ibrahim Burak Yorulmaz <iburaky.dev@gmail.com>
-Subject: [PATCH v2] drm: panel-orientation-quirks: Add Chuwi MiniBook X quirk
-Date: Sat,  9 Aug 2025 13:12:00 +0200
-Message-ID: <20250809111200.10086-1-iburaky.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754738025; c=relaxed/simple;
+	bh=mwTGoJ1vJekZDumrlzePyF4v7ik+2mC6/XKusF2wlkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CS2HKIEFeTZFSWjYZSmxFkTsF7gvfSLGnRZNsimQ+cAbZYiesPEJJeHbZE44mp6kDCGHyvJEVhZFDRB4mMgukxqjaAbcCdwATEZlb77hcQnxzE6qXFDqmlXigS71qRNQRQQ2kztY52dHFVq1h8K80gOEyXrffyOkfFUqKmYwH9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4EeApLm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A04EC4CEE7;
+	Sat,  9 Aug 2025 11:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754738024;
+	bh=mwTGoJ1vJekZDumrlzePyF4v7ik+2mC6/XKusF2wlkM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i4EeApLm9HV60hGRx8yNmXdQOcs5p382vugfMwd6b2ZU6+xsLGEbyx5Kc15wmYbDB
+	 RtIytPwLJP8l9xJVe1ezILZ92YOnx7haquRmPFlQJxjlNbz9pKulfLjqJLbejF7YXE
+	 ifIM5iCqZmQx8fV0AsF1TRje4XcmHTkHEMBHDVcygxHW8ee/S3l/gc21JjFfJZxa79
+	 Y+VihLkJIHb4MAt+CRTeJC304AWoio8ZDQVqIPl3BrlBEGBEhAuQJhTqgTMCD7lUmy
+	 m15DrniUUrzi7u/mLuTzYrpwJZaXfkN54r2MunZAHCsnW7LLkUjPxuLH28vgU1sYBV
+	 Rz24cYj2bqa6A==
+Date: Sat, 9 Aug 2025 16:43:35 +0530
+From: 'Manivannan Sadhasivam' <mani@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>, 
+	'Krzysztof Kozlowski' <krzk@kernel.org>, 'Ram Kumar Dwivedi' <quic_rdwivedi@quicinc.com>, 
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, agross@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+Message-ID: <o2lnzaxurshoyyxtdcyiyphprumisggd6m2qvcoeptvnkvh4ap@dm2nc4krinja>
+References: <06d201dc0689$9f438200$ddca8600$@samsung.com>
+ <wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
+ <06f301dc0695$6bf25690$43d703b0$@samsung.com>
+ <CGME20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60@epcas5p1.samsung.com>
+ <nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
+ <0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
+ <fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
+ <0f8c01dc0876$427cf1c0$c776d540$@samsung.com>
+ <xqynlabahvaw4cznbofkkqjr4oh7tf6crlnxoivhpadlymxg5v@a4b5fgf55nqw>
+ <10ae01dc08c9$022d8aa0$06889fe0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <10ae01dc08c9$022d8aa0$06889fe0$@samsung.com>
 
-v2:
-- Changed subject prefix to drm: panel-orientation-quirks
+On Sat, Aug 09, 2025 at 06:30:29AM GMT, Alim Akhtar wrote:
 
-The Chuwi MiniBook X (CWI558) uses a tablet screen which is oriented
-incorrectly by default. This adds a DMI quirk to rotate the panel into
-the correct orientation.
+[...]
 
-Signed-off-by: Ibrahim Burak Yorulmaz <iburaky.dev@gmail.com>
----
- drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> > > > > > > > > I understand that this is a static configuration, where it
+> > > > > > > > > is already known
+> > > > > > > > that board is broken for higher Gear.
+> > > > > > > > > Can this be achieved by limiting the clock? If not, can we
+> > > > > > > > > add a board
+> > > > > > > > specific _quirk_ and let the _quirk_ to be enabled from
+> > > > > > > > vendor specific hooks?
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > How can we limit the clock without limiting the gears? When
+> > > > > > > > we limit the gear/mode, both clock and power are implicitly
+> > limited.
+> > > > > > > >
+> > > > > > > Possibly someone need to check with designer of the SoC if
+> > > > > > > that is possible
+> > > > > > or not.
+> > > > > >
+> > > > > > It's not just clock. We need to consider reducing regulator,
+> > > > > > interconnect votes also. But as I said above, limiting the
+> > > > > > gear/mode will take care of all these parameters.
+> > > > > >
+> > > > > > > Did we already tried _quirk_? If not, why not?
+> > > > > > > If the board is so poorly designed and can't take care of the
+> > > > > > > channel loses or heat dissipation etc, Then I assumed the gear
+> > > > > > > negotiation between host and device should fail for the higher
+> > > > > > > gear and driver can have
+> > > > > > a re-try logic to re-init / re-try "power mode change" at the
+> > > > > > lower gear. Is that not possible / feasible?
+> > > > > > >
+> > > > > >
+> > > > > > I don't see why we need to add extra logic in the UFS driver if
+> > > > > > we can extract that information from DT.
+> > > > > >
+> > > > > You didn’t answer my question entirely, I am still not able to
+> > > > > visualised how come Linkup is happening in higher gear and then
+> > > > > Suddenly
+> > > > it is failing and we need to reduce the gear to solve that?
+> > > >
+> > > > Oh well, this is the source of confusion here. I didn't (also the
+> > > > patch) claim that the link up will happen with higher speed. It will
+> > > > most likely fail if it couldn't operate at the higher speed and
+> > > > that's why we need to limit it to lower gear/mode *before* bringing the
+> > link up.
+> > > >
+> > > Right, that's why a re-try logic to negotiate a __working__ power mode
+> > change can help, instead of introducing new binding for this case.
+> > 
+> > Retry logic is already in place in the ufshcd core, but with this kind of signal
+> > integrity issue, we cannot guarantee that it will gracefully fail and then we
+> > could retry. The link up *may* succeed, then it could blow up later also
+> > (when doing heavy I/O operations etc...). So with this non-deterministic
+> > behavior, we cannot rely on this logic.
+> > 
+> I would image in that case , PHY tuning / programming is not proper.
 
-diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-index c554ad8f246b..c85f63c42bbe 100644
---- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-@@ -282,6 +282,12 @@ static const struct dmi_system_id orientation_data[] = {
- 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Hi10 pro tablet"),
- 		},
- 		.driver_data = (void *)&lcd1200x1920_rightside_up,
-+	}, {	/* Chuwi MiniBook X (CWI558) */
-+		.matches = {
-+		  DMI_MATCH(DMI_SYS_VENDOR, "CHUWI"),
-+		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "MiniBook X"),
-+		},
-+		.driver_data = (void *)&lcd1200x1920_rightside_up,
- 	}, {	/* Dynabook K50 */
- 		.matches = {
- 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Dynabook Inc."),
+I don't have the insight into the PHY tuning to avoid this issue. Maybe Nitin or
+Ram can comment here. But PHY tuning is mostly SoC specific in the PHY driver.
+We don't have board level tuning sequence AFIAK.
+
+> 
+> > > And that approach can be useful for many platforms.
+> > 
+> > Other platforms could also reuse the same DT properties to workaround
+> > similar issues.
+> > 
+> > > Anyway coming back with the same point again and again is not productive.
+> > > I gave my opinion and suggestions. Rest is on the maintainers.
+> > 
+> > Suggestions are always welcomed. It is important to have comments to try
+> > out different things instead of sticking to the proposed solution. But in my
+> > opinion, the retry logic is not reliable in this case. Moreover, we do have
+> > similar properties for other peripherals like PCIe, MMC, where the vendors
+> > would use DT properties to limit the speed to workaround the board issues.
+> > So we are not doing anything insane here.
+> > 
+> > If there are better solutions than what is proposed here, we would indeed
+> > like to hear.
+> > 
+> For that, more _technical_ things need to be discussed (e.g. Is it the PHY which has problem, or problem is happening at unipro level or somewhere else), 
+> I didn't saw any technical backing from the patch Author/Submitter
+> (I assume Author should be knowing a bit more in-depth then what we are assuming and discussing here). 
+> 
+
+Nitin/Ram, please share more details on what level the customer is facing the
+issue.
+
+- Mani
+
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
