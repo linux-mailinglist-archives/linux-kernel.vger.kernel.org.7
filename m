@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-761285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F318B1F72D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 01:14:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6208B1F73B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 01:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E93621F12
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0421E189B793
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75C825C706;
-	Sat,  9 Aug 2025 23:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F4D26AAAA;
+	Sat,  9 Aug 2025 23:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Eah1Oj+y"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmp9+4xE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67811DE3DF
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 23:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAAE1F3FC8;
+	Sat,  9 Aug 2025 23:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754781254; cv=none; b=uLVz9Ml+ARCoAyvEUd1S2fEdCFwq17FRzfBpdDnWbESKC9VIlQf2iMIRg242pPLBd/az83DVYkv37QEwcaTsxgm3qYamiWhz7B3fQuf5Csjg4uDBKbrbfRrgmLN89tPti/SuDR84CR0CBU4JbFXQlaPZ5IWbnQHneuhVXKKQPU0=
+	t=1754782822; cv=none; b=piiurP6fXIhdCH2emHFQRc7KgbMI/xLHD9tubB8I1cUEjQubiFOAcm7MkPaCO58MFFXvx2uK0u7sWPM4KELUDzQqWLambj6PoaD/OlDDwbfrHrLyYmo+mqAA4dO7Yf/EYK0Q9+eGowOq/dCt5YtmjqQWV92+cPH+4MP3O1lIp0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754781254; c=relaxed/simple;
-	bh=fmVPHBigGFAaqyMpsLUQ5LM4gMqJVzKCjUYlxvsHllU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UdAYm8DBvUdmhO9f6niofbtb4R9ABRbpeO1P7yhBqTK7w1w+abuwVjSeMyn8s5kG4Vj1SGdV3nN/PAeQM4SK2IdKRLVdoZENyjBOglF+M17hlAwHw18VIxMVwXocb8frmlefIrdey+s/DHCs1rYsXZg5NMfT9cGgibDzWXrBeFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Eah1Oj+y; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 9 Aug 2025 19:13:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754781239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iem01Egtfw6SUgLx/wWkmfSpdCk4uMYAUeBV3sOHgNw=;
-	b=Eah1Oj+yMrE6PVZeSbwwQqP2AXAVWv0j6qzfWw+zW1unr68t7tS8ixjv+thEUOJZu7ZaY3
-	PAT1KUhHkHjxEGW0MzsSXDD4jN48qslluIu/rI3AZeIGmyZqD4UjfBSNMQ89oKLy+6s9nF
-	Wm5Wqw3c9nrlIwtNeSHC5i7V6PTO31w=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Aquinas Admin <admin@aquinas.su>, 
-	Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	"Carl E. Thompson" <list-bcachefs@carlthompson.net>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <5ip2wzfo32zs7uznaunpqj2bjmz3log4yrrdezo5audputkbq5@uoqutt37wmvp>
-References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
- <1869778184.298.1754433695609@mail.carlthompson.net>
- <5909824.DvuYhMxLoT@woolf>
- <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <aJfTPliez_WkwOF3@casper.infradead.org>
+	s=arc-20240116; t=1754782822; c=relaxed/simple;
+	bh=0krP812oyw02W1PFcWpcjqMHYTl6SRO9CmN1xtE8Rk8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uogk4YmJuJUgkGUeGqObbWT+hUMT3UTjPnLsvFEWXEZt+T176oL6xDH8ROMzSFMHV1MFP1Qu8zThzlKVFw24mj+bRhvTgjy4EcwfwNYNuhFpPZP1feZMxAGph1yicIZsvPHE3/xNP0RkyEtvHjixk0URgeJzeUvI9WsPgcLdlAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmp9+4xE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF65DC4CEE7;
+	Sat,  9 Aug 2025 23:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754782820;
+	bh=0krP812oyw02W1PFcWpcjqMHYTl6SRO9CmN1xtE8Rk8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bmp9+4xEr2qiiE1XjuY/l91izABP77eVMTv5AQFNVnfKO08VTb4d1EJhhtDCQT4My
+	 AksM/RLDoWr16TsS+oBsjZNQEOtaccekFIWenBCZtXFKwRQrReWsevuz3s79Amr7kL
+	 CmmzcloRyApHM0HBNwwDjZhJONrJTgjEUJA6n57VR+gGs4wmERCv/Ven4SUxRkrOzs
+	 KAyy70L8vg63DnU2RZDu00yT//4zFZXpnP1ijQunsDOOpHPmwvVKfenoMAxFUtRQqb
+	 j0D22uYdd0IAZ9GtCSH8x5TjSrej5uKBfUVS0F0s/WKQQh7Ob5QHWaLxEtAjJ4eEj9
+	 EZ9Em8u/tsIGA==
+From: Sasha Levin <sashal@kernel.org>
+To: sashal@kernel.org
+Cc: corbet@lwn.net,
+	josh@joshtriplett.org,
+	kees@kernel.org,
+	konstantin@linuxfoundation.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org,
+	workflows@vger.kernel.org
+Subject: [PATCH v2 0/2] Add unified configuration for coding agents
+Date: Sat,  9 Aug 2025 19:40:06 -0400
+Message-Id: <20250809234008.1540324-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJfTPliez_WkwOF3@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 10, 2025 at 12:01:18AM +0100, Matthew Wilcox wrote:
-> On Sat, Aug 09, 2025 at 01:36:39PM -0400, Kent Overstreet wrote:
-> > Yes, this is accurate. I've been getting entirely too many emails from
-> > Linus about how pissed off everyone is, completely absent of details -
-> > or anything engineering related, for that matter. Lots of "you need to
-> > work with us better" - i.e. bend to demands - without being willing to
-> > put forth an argument that stands to scrutiny.
-> 
-> Kent, if you genuinely don't understand by now what it is that you do
-> that pisses people off, find someone you trust and get them to explain it
-> to you.  I've tried.  Other people have tried.  You react by dismissing
-> and insulting us, then pretending months later that you've done nothing
-> wrong.  Now you've pissed off Linus and he has ultimate power to decide to
-> accept your pull requests or not ... and he's decided not to.  You had
-> a lot of chances to fix your behaviour before it got to this point.
-> It's sad that you chose not to take any of them.
-> 
-> Can you really not see the difference between, eg Palmer's response here:
-> https://lore.kernel.org/lkml/mhng-655602B8-F102-4B0F-AF4A-4AB94A9F231F@Palmers-Mini.rwc.dabbelt.com/
-> 
-> and your response whenever Linus dares to critique even the smallest
-> parts of your pull requests?
-> 
-> [pointless attempt to divert the conversation to engineering snipped]
+This patch series adds unified configuration and documentation for coding
+agents working with the Linux kernel codebase. As coding agents become
+increasingly common in software development, it's important to establish
+clear guidelines for their use in kernel development.
 
-There's been pull requests where I've quietly dropped patches and
-respun. I've never argued with Linus when it comes to other subsystems,
-and there are things I've absolutely changed and addressed about the
-bcachefs pull requests (e.g. switching to sending them on Thursdays;
-which, unfortunately, took a three day shouting match before it came out
-that that was the issue).
+The series consists of two patches:
 
-But when it comes to getting bugfixes out that users are waiting on; too
-many of the pull requests have come over that, and "feedback" on those
-has never come in the form of "do we need this? Can we dial things
-back?" - too often it's been "oh hell no!"; and when I've got users I'm
-supporting that's just not going to go well. Nor is it how things
-generally work for other subsystems; Linus at one point gave me examples
-of his other pull request feedback, while saying "this is totally
-normal" - and my immediate response was, if I'd been getting that kind
-of calm reasonable feedback, we'd have been in a very different place.
+1. README: restructure with role-based documentation and guidelines
+   - Reorganizes README to provide targeted documentation paths for
+     different user roles (developers, researchers, security experts,
+     maintainers, and AI coding assistants)
+   - Adds quick start section and essential documentation links
+   - Establishes proper attribution requirements for AI-assisted
+     contributions using Assisted-by tags with agent details
 
-And you recently took to outright swearing at me on IRC, while I've been
-staring at mm bugs and going "ok, the CONFIG_VM_DEBUG approach isn't
-working".
+2. agents: add unified agent coding assistant configuration
+   - Creates configuration files for major coding agents (Claude,
+     GitHub Copilot, Cursor, Codeium, Continue, Windsurf, and Gemini)
+   - Uses @README references to point all agents to the central
+     documentation, ensuring consistency across tools
 
-And now, I just got an email from Linus saying "we're now talking about
-git rm -rf in 6.18", after previously saying we just needed a
-go-between.
+The agent configuration files now use @README references instead of
+symlinks.
 
-So if that's the plan, I need to be arguing forcefully here, because a
-lot is on the line for a lot of people.
+Example agent attribution in commits:
 
-I've heard from so many people saying things along the lines of "when
-will it be ready, I _need_ something more reliable because I've been bit
-too many times", and up until a month ago I've been telling people
-"check back, we're nearly there, but check back soon".
+    Assisted-by: Claude-claude-3-opus-20240229 checkpatch
 
-Now, I finally clear out the bug tracker, and the bug reports and
-feedback start pointing to "yes, we're pretty much there", and I have
-this to face.
+This ensures full transparency about agent involvement in code development
+while maintaining proper attribution standards.
 
-Oi vey.
+Sasha Levin (2):
+  README: restructure with role-based documentation and guidelines
+  agents: add unified agent coding assistant configuration
+
+ .codeium/instructions.md        |   1 +
+ .continue/context.md            |   1 +
+ .cursorrules                    |   1 +
+ .github/copilot-instructions.md |   1 +
+ .gitignore                      |  10 ++
+ .windsurfrules                  |   1 +
+ CLAUDE.md                       |   1 +
+ GEMINI.md                       |   1 +
+ README                          | 184 ++++++++++++++++++++++++++++++--
+ 9 files changed, 190 insertions(+), 11 deletions(-)
+ create mode 100644 .codeium/instructions.md
+ create mode 100644 .continue/context.md
+ create mode 100644 .cursorrules
+ create mode 100644 .github/copilot-instructions.md
+ create mode 100644 .windsurfrules
+ create mode 100644 CLAUDE.md
+ create mode 100644 GEMINI.md
+
+-- 
+2.39.5
+
 
