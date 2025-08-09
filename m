@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-760892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D96AB1F1AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:38:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE48B1F1AB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37924624A2F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 00:38:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FEFA174DF6
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 00:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2600A26560C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F67A266560;
 	Sat,  9 Aug 2025 00:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GARjsjIx"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J71t2Ve+"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE98F239E7A
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 00:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A05258CC9
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 00:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754699754; cv=none; b=l+65m8rkWO/IAyS5UuMG55lau3IpjvSmMCrc3+chOMubAWFSw/bpBCtIlWpNToPrkBFZyoCLssX/ZytOis55ZUtBOJA3RBtwPSzgRIxL4pBzvjqulChYpu3gEw3e0UMjydaJm37ZKebcXWBVcaE8rC9NxLEcME2xD5qT5HFpWJk=
+	t=1754699755; cv=none; b=e8MqXrW30uiULl9FQV2TGaR0fMbO6e3gADVa8wHvGn4T0QTnDQnB4Sg84RDlbyk2cZJmhWyQHPxPbb7EERMGlGBwgRjeaLAf6/0VkUV1GKeFbGArqLnP62QDnBRWg5WD0Rp1trQTCecdjFEosXU3bi86TP5S3Ner0JPIF/isJ3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754699754; c=relaxed/simple;
-	bh=w6BSJBqJqbIRJ05+nno85RYDhBvoyNtIQfjze0MwCY4=;
+	s=arc-20240116; t=1754699755; c=relaxed/simple;
+	bh=JQn53FWdqnsenAxhsXtXftYUURqXJ8dtPT1Q4jRdnDU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F05MqD3zt3M2vzXa1xzN07So+gmDyXHwxVD0ps5pMO/ZAuP1psFp687elHYTZZ9y2pVF+UbKqokysEnaLx1gQuzzBeFNQ5cX4novjNq/QgVnHFTzmeIBR//r0dA9sSdQZbqnIaNdgk2rkcx/yTIyJseAFFU5fApcXgzjDJYRIuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GARjsjIx; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=EzHXx/bCkBSmoJhK26Muk4PZEBI5Qqui6duJqnjPj5vu1t+Ddd0LGaWbo7WnY4JJIA8+a29gt8tncZbuRJZhVeBb1Zc0Aj0GxwIW1319XX8v7K8czd51Hc5s72WE1qmlP7r/+x0Zs94dHwqWL10k5BOGmu53RSwbes9KME/HpuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J71t2Ve+; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578Ftxx5003585
-	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 00:35:52 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578DhDaT022425
+	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 00:35:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hc2PomjCEUqKfvXR+bI4mzShsBkkrWDeiNQWOs+oPq4=; b=GARjsjIxBjPqaEs+
-	dRrhK3m/x63COM+8JPBDXUZwuIpO43+hrbxxKGKURxs0zEVf8PoWQHyYC1Csr+U2
-	DUFhNE1gbWLvar9Lbws6KTtA7KMMsbLFWnEo+Ax27lyzpD9dPVmoB01SrWgGP/S2
-	q6qEk0ESqPVWhe/YpZDGKnpZ67Deu6GNANKam2EWkPdy2DGIBeyeJawcmQi6usSw
-	I6RDzd6jh7IV7POxRqLqJdtRwmJXQmcHTk/izilHm6u63EnBZoFOyakgvV+L2Gio
-	jIvEN9QBUAVK0SI0KaNPSm3ihPPEhsGOERvT1Llnk5Vdih0uBI/owJiOO4/LAZun
-	MnArbA==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48bpyakhw9-1
+	lygnt7Zi/DkDBsXWW/2tMmsIMiJD5/QBa7Q1HdwAysI=; b=J71t2Ve+xg0D+Yw9
+	+Bs7s5zBjwvaNfF4eswxmyQNq3gopOMpfOaSBAuX18u+UZWwuOjMDeA8NdXkuT3U
+	pL0GlnI3zDkMj5Ed29gs8AVaZmkWi+U4xRlkqQ9tCLg7Hycp35tK4YoUy2r/jD6V
+	58BUZg+J1kDC0phV6l0tc2sjmlbiTBoW+U8eYgGlhzMlBXhFOJReMaNVhrH7lBgB
+	vH3duJW74/OYT9x9KpUIrWsjfApUBuBx3YLaHJHOTbrQL0dd3J3f1ynLJG5wyqTP
+	1piGel42/S7+ka33rRiD3jyVCLICRqCx+6JAFsYbZ6hSdltQx8FX+Xzld5+LxfLp
+	Vy5/YA==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48cs5ndtwt-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 00:35:51 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b2fcbd76b61so4176293a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 17:35:51 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 00:35:52 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b2fa1a84566so2335051a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 17:35:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754699751; x=1755304551;
+        d=1e100.net; s=20230601; t=1754699752; x=1755304552;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hc2PomjCEUqKfvXR+bI4mzShsBkkrWDeiNQWOs+oPq4=;
-        b=USYEPjPPIwu9deS+aDbIT9sb14NQplr189DLMnhFfKpCFcsq44y2V7WhF8Me1LkEqQ
-         yGaQb0iMJcR2anefmOHTd+mjHA7BXVI6M78Lry0rsUVBFMVrHZV9smqxTyyHBny3Ii6G
-         BroBXfFbvxiafKa6rJngEQTkkjRlhF7Kc/kV/ajhMh9ejlR8O0ZXhFeQXmIzRQ9xAqwJ
-         Lcc5J9fdv6JZCEonWJCMcRvxuG5Yhukj6qZ8MlqG5Nvm4FXKT6jeuQKSBuWsOHbQJA+c
-         KJ/k/jSSu0XPQo3kOAU7AjqpEx3s7EKpQ0348cjrNwaAtd0r8o+mjtmGDhiXUJt38Gko
-         nTWA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6JbAg1FgEVJzo2b78OyclUyjYI+PD760GYmskjgYVaEeiA+ZkdHPb3NRd7RozGB0bHojtbiacIhu4gLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXL/DfzaoV64JenWxJ92aYVJhpYwu5akEOF9fo4tWSPoY1gzP+
-	L2rsWVuLEaIKoaV9zZDblPxL5IXWuLLurW0muXhWDM59YMxPqzXyfu0Ipd6n0XcwuiwJBkpvDnR
-	LB5sjCSoq5UoGS+Cx7+rc00DUTmTMGmexS9ri+ePGiJCOfILFGSEQ/ZU05GZsB9UnIsg=
-X-Gm-Gg: ASbGncutE2M4ZlF2f+VzSdswYdwIv/PQIRvQ9SZMgxwPpYTVubAagg64fHfW+eurTRz
-	BCgixmt3WCwKX4l8WoLwFWpDr6ZVZpu87TXU+domUraCyb9fNFYKWttI5w3MpDgfRsFs9URlz5q
-	AQLZKiFS6guNgxftwKQuxfWxcW9mr68FXFa+XvCu/d98o2wC7ekQ2x2DxPI3gVJrpHsDTmklHU1
-	3Syi4mcnfXpEp1Bf8FXgfjNraEOi3B/D5CLxrTk+GXGuAyqnIqhfg6lDzE1pSedmflp4ZpxTvwZ
-	rc/OwQfITzasDa2daB/Jr+yKWovIPn5z1rTTlDUTwc4jxZs0Wa8vkk9uLg5S7kj+E6FcdepjUof
-	/LwR5AVFkFLUQ/c+nuxfDBdlh
-X-Received: by 2002:a17:903:2ace:b0:234:b123:b4ff with SMTP id d9443c01a7336-242c2011167mr76235195ad.21.1754699750674;
-        Fri, 08 Aug 2025 17:35:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEVZKvg/CHR+DlFz8GZZA1oxge4Mj/q2fUpvjTmYPJPdIKAl3vEyocljUvcweSNDD/Po99vQ==
-X-Received: by 2002:a17:903:2ace:b0:234:b123:b4ff with SMTP id d9443c01a7336-242c2011167mr76234835ad.21.1754699750208;
-        Fri, 08 Aug 2025 17:35:50 -0700 (PDT)
+        bh=lygnt7Zi/DkDBsXWW/2tMmsIMiJD5/QBa7Q1HdwAysI=;
+        b=TOAeM+F7AmDu2KGqcO3XAWAvir5BApbOifou75cIuac4lYD38/voV3JyQ59AMdlOGy
+         4f4OZoQnl8i++N3JO3G2rGgCrt3BccnBxRUme561rkmztQUHSsv/OiVolCiD5E/9zaJM
+         0tppN/KxrCcoyAwMHxhIjHLkdPPCM6TMpT5j5ytY5JzwJ1LDy3bdOrJaXFzkHqto5STL
+         cjFYV/M69y9ZzlewzioEf+dMjUrET/lUzKQa6VWCrVTtTHStFCfSHtbrmkmnfIRQzpRT
+         39pFMrG8tWRsiVuDExeBm0M64kg7wq0JkhIhp06dg+8L29dDH9Vc7idwtDwn8Z8v8J7r
+         Risw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNulGY9TEpM/D+u77+z6c/Yak6gz84q9esk+czbGFMR6w1sPvAriWoVCEjEfYyfiYQL4u6F9KRe1rqgGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ItspqpN+I9QavFFBDiG1+8ZEitEbyn0mpPchF05lb6XosP72
+	7mp7ZniWXLIjxY95hOKnS+9UKnPiJ6J3wavegpij5qUpuLOosZKqS3t+Hy/n6xwf/GG+ams5hfU
+	HZnmahHRyK7Jrl4APpPurp7lvXnMabapJJkCbU8kCRbHh3E2E57sJ5BcMTS1HkEDJ7o8=
+X-Gm-Gg: ASbGncsG/cOvq266VK3H+AspLUbumi445K3ARqf5Cf2Kewgr/n11TxkByoMP3WZqn+e
+	J2XJ+0SpYd8y5xt5eFLtrql+AJs7frwz+t6n3bmBzQGMQxCuf/hiMXeRmXaYMLqSi8Mx3tMwcYl
+	9v5tTJmHBqcXWAwzRVofnFqbtakmuooxZ3pxNVR58hlISk1ajD1I74IfR4vG5lnV9oEV7S/6FqL
+	SWRPB0UbF6POEczXZIlzPaxpz8t8Y1t0r41JkMl0YhWETgFNHd+qw79XouZw3TcVwH44MGmaBOd
+	4zjX8bGHLXKHMgvJUFf+VVJcXcQvUT4glCAU7OhboZVDRhjaiEvr5wL0RGRWv+as4aoc/pU1T4X
+	nEe6SRt+cBE9/dCBK9EoNFwrE
+X-Received: by 2002:a17:902:e550:b0:240:bf61:fee3 with SMTP id d9443c01a7336-242c225701dmr76135355ad.44.1754699752005;
+        Fri, 08 Aug 2025 17:35:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE33DCMAedQDUiF2/I3ZWb+fz5inLjDwdHMAuwQmrl6+a26bmnVEJtkyEOMMqC99p7LJwIB1g==
+X-Received: by 2002:a17:902:e550:b0:240:bf61:fee3 with SMTP id d9443c01a7336-242c225701dmr76135015ad.44.1754699751568;
+        Fri, 08 Aug 2025 17:35:51 -0700 (PDT)
 Received: from jesszhan-linux.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef678dsm219865355ad.39.2025.08.08.17.35.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef678dsm219865355ad.39.2025.08.08.17.35.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 17:35:49 -0700 (PDT)
+        Fri, 08 Aug 2025 17:35:51 -0700 (PDT)
 From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Date: Fri, 08 Aug 2025 17:35:23 -0700
-Subject: [PATCH v2 11/12] drm/msm/dp: drop the entire HPD state machine
+Date: Fri, 08 Aug 2025 17:35:24 -0700
+Subject: [PATCH v2 12/12] drm/msm/dp: Add sink_count and link_ready to
+ debug logs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,7 +92,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-hpd-refactor-v2-11-7f4e1e741aa3@oss.qualcomm.com>
+Message-Id: <20250808-hpd-refactor-v2-12-7f4e1e741aa3@oss.qualcomm.com>
 References: <20250808-hpd-refactor-v2-0-7f4e1e741aa3@oss.qualcomm.com>
 In-Reply-To: <20250808-hpd-refactor-v2-0-7f4e1e741aa3@oss.qualcomm.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>,
@@ -105,394 +106,130 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Yongxing Mou <quic_yongmou@quicinc.com>
 X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754699734; l=12541;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754699734; l=3874;
  i=jessica.zhang@oss.qualcomm.com; s=20230329; h=from:subject:message-id;
- bh=w6BSJBqJqbIRJ05+nno85RYDhBvoyNtIQfjze0MwCY4=;
- b=ue+ZOIXB8H7Ln9T8HYJ680b1Q6pLSgOQ13/vHpi2GRDQuKoxwiT/FHvI25mesYj/sAf4FAAS6
- jGpB6F9C4XWCIdY9mstgxG0hrmbyYDm/+4qjnt0/JDkphkp389mItmV
+ bh=JQn53FWdqnsenAxhsXtXftYUURqXJ8dtPT1Q4jRdnDU=;
+ b=UfAJZEmii2W1xg/n7I3OixqLYvkqxFi5dqufHjpIdry9W5CQqZsyJUliQA/+ckK85WtgecgCZ
+ CVY9K6KZqniDV8ngdPtL9w803gnE4hUnfeNcWL8TSsh2p37Dk/WXnlm
 X-Developer-Key: i=jessica.zhang@oss.qualcomm.com; a=ed25519;
  pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-Proofpoint-ORIG-GUID: tfTz88xGCt9cqeemin_SIiSiB9x248I0
-X-Authority-Analysis: v=2.4 cv=MrlS63ae c=1 sm=1 tr=0 ts=689697e7 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=T1xWuFrC4okc8hw_pIcA:9
- a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDAwOSBTYWx0ZWRfX6QLrDxqOHqV3
- rGsZO2az6EgaZ6VXeHES7neXWgrFCMarmsmswfiGhryJlJIJ7ZID365EQL3d1ERqI0lFG8bvWzg
- KqBLksko6x4rpyv0oabSs0C2NEBYk7QuNLq/BZNKooBNNmbYH3+2VniTyaHjmHh2KK0lVXS/1SH
- Jw39EJP6kXTGy7eCvEI74hUNUtYYuOVSuOVv+gBOJk5a7d9TMDlV4e6uku1Si1N6lvyJMCgOnzN
- sDtRDGhbJAJGs0nGGiVu0oIJ6qf7CvZA5DAteu+UNw3mJHDCevAEOqQOL9MtriqZU57mIP+N/xl
- UvaU+amjaPnaY5DbjvX4YlkrcGx0DzIBByPtA9K5a7FWz8bx0L3GPd+EUOsQF/QDjhSOlHQSY36
- vTGsIdkM
-X-Proofpoint-GUID: tfTz88xGCt9cqeemin_SIiSiB9x248I0
+X-Authority-Analysis: v=2.4 cv=Q+XS452a c=1 sm=1 tr=0 ts=689697e9 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=nsv5_4zRg9i3qj8PKKQA:9
+ a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-GUID: X8G3rWTDVQWbxcIKqhvJX4QGzVUTPJDE
+X-Proofpoint-ORIG-GUID: X8G3rWTDVQWbxcIKqhvJX4QGzVUTPJDE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA2OSBTYWx0ZWRfX33bBFsqK4+f5
+ R+MNeqxYHv7JJ6SMseFuWFU1NLW0Ip31IRcDUkv3Lrb72rwV0T4yDUp+mr4JAHXDdyQ/orlKU4N
+ D+49k/Vn7kH7c1Woo2HOqg1qDiS2feHh+NbiZNkNNBnhJ0CWo/hcY7RMFLYGKpymYkjK8luibtI
+ teH0wvvO4bj6D2+cNd9bGNeJl3YinMl8WlRaZ7wIQtf37Fju0KyQVEGE1WK+zDsBKcHZKqeMemN
+ D0Xgra0p8Shblh0itLaVolNbY7gqUYJDtr0pR1Zc88qH0PM+QrJc8QkIYsXyMPyXpcXi30y2KQr
+ KV5qQC7iBVUth2PNrPzk0kiup5jEInhRx6CGylVpxaHB63wADF1UHpLtCcO5Pe+aQtOTSvynLnu
+ z8bTcwpn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-08_08,2025-08-06_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 adultscore=0 priorityscore=1501 phishscore=0
- spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508060009
+ clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508070069
 
-Since internal HPD IRQ event handling has been moved to being handled by
-the DRM framework detect() and hpd_notify() callbacks, there is no need
-for the MSM driver to track the HPD state separately.
-
-Drop all references to the HPD state machine and replace existing checks
-with checks for link_ready or sink_count.
+Add sink count and link_ready to the debug logs for [un]plug and HPD IRQ
+handling.
 
 Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
 ---
- drivers/gpu/drm/msm/dp/dp_ctrl.c    |  22 ------
- drivers/gpu/drm/msm/dp/dp_ctrl.h    |   1 -
- drivers/gpu/drm/msm/dp/dp_display.c | 148 +++++++++---------------------------
- 3 files changed, 34 insertions(+), 137 deletions(-)
+ drivers/gpu/drm/msm/dp/dp_display.c | 38 ++++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-index c42fd2c17a32..4cf269b98029 100644
---- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
-+++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-@@ -2567,28 +2567,6 @@ void msm_dp_ctrl_off_link_stream(struct msm_dp_ctrl *msm_dp_ctrl)
- 			phy, phy->init_count, phy->power_count);
- }
- 
--void msm_dp_ctrl_off_link(struct msm_dp_ctrl *msm_dp_ctrl)
--{
--	struct msm_dp_ctrl_private *ctrl;
--	struct phy *phy;
--
--	ctrl = container_of(msm_dp_ctrl, struct msm_dp_ctrl_private, msm_dp_ctrl);
--	phy = ctrl->phy;
--
--	msm_dp_ctrl_mainlink_disable(ctrl);
--
--	dev_pm_opp_set_rate(ctrl->dev, 0);
--	msm_dp_ctrl_link_clk_disable(&ctrl->msm_dp_ctrl);
--
--	DRM_DEBUG_DP("Before, phy=%p init_count=%d power_on=%d\n",
--		phy, phy->init_count, phy->power_count);
--
--	phy_power_off(phy);
--
--	DRM_DEBUG_DP("After, phy=%p init_count=%d power_on=%d\n",
--		phy, phy->init_count, phy->power_count);
--}
--
- void msm_dp_ctrl_off(struct msm_dp_ctrl *msm_dp_ctrl)
- {
- 	struct msm_dp_ctrl_private *ctrl;
-diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.h b/drivers/gpu/drm/msm/dp/dp_ctrl.h
-index 124b9b21bb7f..f68bee62713f 100644
---- a/drivers/gpu/drm/msm/dp/dp_ctrl.h
-+++ b/drivers/gpu/drm/msm/dp/dp_ctrl.h
-@@ -19,7 +19,6 @@ struct phy;
- int msm_dp_ctrl_on_link(struct msm_dp_ctrl *msm_dp_ctrl);
- int msm_dp_ctrl_on_stream(struct msm_dp_ctrl *msm_dp_ctrl, bool force_link_train);
- void msm_dp_ctrl_off_link_stream(struct msm_dp_ctrl *msm_dp_ctrl);
--void msm_dp_ctrl_off_link(struct msm_dp_ctrl *msm_dp_ctrl);
- void msm_dp_ctrl_off(struct msm_dp_ctrl *msm_dp_ctrl);
- void msm_dp_ctrl_push_idle(struct msm_dp_ctrl *msm_dp_ctrl);
- irqreturn_t msm_dp_ctrl_isr(struct msm_dp_ctrl *msm_dp_ctrl);
 diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index 82f0b6bdbf39..dd529942f7db 100644
+index dd529942f7db..93ea623473f4 100644
 --- a/drivers/gpu/drm/msm/dp/dp_display.c
 +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -43,15 +43,6 @@ enum {
- 	ISR_HPD_REPLUG_COUNT,
- };
- 
--/* event thread connection state */
--enum {
--	ST_DISCONNECTED,
--	ST_MAINLINK_READY,
--	ST_CONNECTED,
--	ST_DISCONNECT_PENDING,
--	ST_DISPLAY_OFF,
--};
--
- struct msm_dp_display_private {
- 	int irq;
- 
-@@ -79,7 +70,6 @@ struct msm_dp_display_private {
- 	spinlock_t irq_thread_lock;
- 	u32 hpd_isr_status;
- 
--	u32 hpd_state;
- 	bool wide_bus_supported;
- 
- 	struct msm_dp_audio *audio;
-@@ -392,24 +382,6 @@ static int msm_dp_display_usbpd_configure_cb(struct device *dev)
- 	return msm_dp_display_process_hpd_high(dp);
- }
- 
--static int msm_dp_display_notify_disconnect(struct device *dev)
--{
--	struct msm_dp_display_private *dp = dev_get_dp_display_private(dev);
--
--	if (!dp->msm_dp_display.is_edp)
--		drm_dp_set_subconnector_property(dp->msm_dp_display.connector,
--						 connector_status_disconnected,
--						 dp->panel->dpcd,
--						 dp->panel->downstream_ports);
--
--	dp->msm_dp_display.link_ready = false;
--
--	if (!dp->msm_dp_display.internal_hpd)
--		msm_dp_display_send_hpd_notification(dp, false);
--
--	return 0;
--}
--
- static void msm_dp_display_handle_video_request(struct msm_dp_display_private *dp)
- {
- 	if (dp->link->sink_request & DP_TEST_LINK_VIDEO_PATTERN) {
-@@ -424,17 +396,11 @@ static int msm_dp_display_handle_port_status_changed(struct msm_dp_display_priva
- 
- 	if (drm_dp_is_branch(dp->panel->dpcd) && dp->link->sink_count == 0) {
- 		drm_dbg_dp(dp->drm_dev, "sink count is zero, nothing to do\n");
--		if (dp->hpd_state != ST_DISCONNECTED) {
--			dp->hpd_state = ST_DISCONNECT_PENDING;
-+		if (dp->msm_dp_display.link_ready)
- 			msm_dp_display_send_hpd_notification(dp, false);
--		}
- 	} else {
--		if (dp->hpd_state == ST_DISCONNECTED) {
--			dp->hpd_state = ST_MAINLINK_READY;
-+		if (!dp->msm_dp_display.link_ready)
- 			rc = msm_dp_display_process_hpd_high(dp);
--			if (rc)
--				dp->hpd_state = ST_DISCONNECTED;
--		}
- 	}
- 
- 	return rc;
-@@ -445,7 +411,7 @@ static int msm_dp_display_handle_irq_hpd(struct msm_dp_display_private *dp)
- 	u32 sink_request = dp->link->sink_request;
- 
- 	drm_dbg_dp(dp->drm_dev, "%d\n", sink_request);
--	if (dp->hpd_state == ST_DISCONNECTED) {
-+	if (!dp->msm_dp_display.link_ready) {
- 		if (sink_request & DP_LINK_STATUS_UPDATED) {
- 			drm_dbg_dp(dp->drm_dev, "Disconnected sink_request: %d\n",
- 							sink_request);
-@@ -472,8 +438,7 @@ static int msm_dp_display_usbpd_attention_cb(struct device *dev)
- 	rc = msm_dp_link_process_request(dp->link);
- 	if (!rc) {
- 		sink_request = dp->link->sink_request;
--		drm_dbg_dp(dp->drm_dev, "hpd_state=%d sink_request=%d\n",
--					dp->hpd_state, sink_request);
-+		drm_dbg_dp(dp->drm_dev, "sink_request=%d\n", sink_request);
- 		if (sink_request & DS_PORT_STATUS_CHANGED)
- 			rc = msm_dp_display_handle_port_status_changed(dp);
- 		else
-@@ -485,20 +450,15 @@ static int msm_dp_display_usbpd_attention_cb(struct device *dev)
- 
- static int msm_dp_hpd_plug_handle(struct msm_dp_display_private *dp, u32 data)
- {
--	u32 state;
- 	int ret;
- 	struct platform_device *pdev = dp->msm_dp_display.pdev;
+@@ -455,8 +455,10 @@ static int msm_dp_hpd_plug_handle(struct msm_dp_display_private *dp, u32 data)
  
  	msm_dp_aux_enable_xfers(dp->aux, true);
  
--	state =  dp->hpd_state;
--	drm_dbg_dp(dp->drm_dev, "Before, type=%d hpd_state=%d\n",
--			dp->msm_dp_display.connector_type, state);
--
--	if (state == ST_MAINLINK_READY || state == ST_CONNECTED)
--		return 0;
-+	drm_dbg_dp(dp->drm_dev, "Before, type=%d\n",
-+			dp->msm_dp_display.connector_type);
+-	drm_dbg_dp(dp->drm_dev, "Before, type=%d\n",
+-			dp->msm_dp_display.connector_type);
++	drm_dbg_dp(dp->drm_dev, "Before, type=%d sink_count=%d, link_ready=%d\n",
++			dp->msm_dp_display.connector_type,
++			dp->link->sink_count,
++			dp->msm_dp_display.link_ready);
  
--	if (state == ST_DISCONNECT_PENDING)
-+	if (dp->msm_dp_display.link_ready)
+ 	if (dp->msm_dp_display.link_ready)
  		return 0;
- 
- 	ret = pm_runtime_resume_and_get(&pdev->dev);
-@@ -509,14 +469,12 @@ static int msm_dp_hpd_plug_handle(struct msm_dp_display_private *dp, u32 data)
- 
- 	ret = msm_dp_display_usbpd_configure_cb(&pdev->dev);
- 	if (ret) {	/* link train failed */
--		dp->hpd_state = ST_DISCONNECTED;
-+		dp->msm_dp_display.link_ready = false;
+@@ -473,8 +475,10 @@ static int msm_dp_hpd_plug_handle(struct msm_dp_display_private *dp, u32 data)
  		pm_runtime_put_sync(&pdev->dev);
--	} else {
--		dp->hpd_state = ST_MAINLINK_READY;
  	}
  
--	drm_dbg_dp(dp->drm_dev, "After, type=%d hpd_state=%d\n",
--			dp->msm_dp_display.connector_type, state);
-+	drm_dbg_dp(dp->drm_dev, "After, type=%d\n",
-+			dp->msm_dp_display.connector_type);
+-	drm_dbg_dp(dp->drm_dev, "After, type=%d\n",
+-			dp->msm_dp_display.connector_type);
++	drm_dbg_dp(dp->drm_dev, "After, type=%d sink_count=%d, link_ready=%d\n",
++			dp->msm_dp_display.connector_type,
++			dp->link->sink_count,
++			dp->msm_dp_display.link_ready);
  
  	/* uevent will complete connection part */
  	return 0;
-@@ -538,51 +496,40 @@ static void msm_dp_display_handle_plugged_change(struct msm_dp *msm_dp_display,
- 
- static int msm_dp_hpd_unplug_handle(struct msm_dp_display_private *dp, u32 data)
- {
--	u32 state;
- 	struct platform_device *pdev = dp->msm_dp_display.pdev;
+@@ -500,8 +504,10 @@ static int msm_dp_hpd_unplug_handle(struct msm_dp_display_private *dp, u32 data)
  
  	msm_dp_aux_enable_xfers(dp->aux, false);
  
--	state = dp->hpd_state;
--
--	drm_dbg_dp(dp->drm_dev, "Before, type=%d hpd_state=%d\n",
--			dp->msm_dp_display.connector_type, state);
-+	drm_dbg_dp(dp->drm_dev, "Before, type=%d\n",
-+			dp->msm_dp_display.connector_type);
+-	drm_dbg_dp(dp->drm_dev, "Before, type=%d\n",
+-			dp->msm_dp_display.connector_type);
++	drm_dbg_dp(dp->drm_dev, "Before, type=%d sink_count=%d, link_ready=%d\n",
++			dp->msm_dp_display.connector_type,
++			dp->link->sink_count,
++			dp->msm_dp_display.link_ready);
  
--	if (state == ST_DISCONNECTED) {
--		/* triggered by irq_hdp with sink_count = 0 */
--		if (dp->link->sink_count == 0) {
--			msm_dp_display_host_phy_exit(dp);
--		}
--		msm_dp_display_notify_disconnect(&dp->msm_dp_display.pdev->dev);
-+	if (!dp->msm_dp_display.link_ready)
+ 	if (!dp->msm_dp_display.link_ready)
  		return 0;
--	} else if (state == ST_DISCONNECT_PENDING) {
--		return 0;
--	} else if (state == ST_MAINLINK_READY) {
--		msm_dp_ctrl_off_link(dp->ctrl);
-+
-+	/* triggered by irq_hdp with sink_count = 0 */
-+	if (dp->link->sink_count == 0)
- 		msm_dp_display_host_phy_exit(dp);
--		dp->hpd_state = ST_DISCONNECTED;
--		msm_dp_display_notify_disconnect(&dp->msm_dp_display.pdev->dev);
--		pm_runtime_put_sync(&pdev->dev);
--		return 0;
--	}
- 
- 	/*
- 	 * We don't need separate work for disconnect as
- 	 * connect/attention interrupts are disabled
- 	 */
--	msm_dp_display_notify_disconnect(&dp->msm_dp_display.pdev->dev);
-+	if (!dp->msm_dp_display.is_edp)
-+		drm_dp_set_subconnector_property(dp->msm_dp_display.connector,
-+						 connector_status_disconnected,
-+						 dp->panel->dpcd,
-+						 dp->panel->downstream_ports);
- 
--	if (state == ST_DISPLAY_OFF) {
--		dp->hpd_state = ST_DISCONNECTED;
--	} else {
--		dp->hpd_state = ST_DISCONNECT_PENDING;
--	}
-+	dp->msm_dp_display.link_ready = false;
-+
-+	if (!dp->msm_dp_display.internal_hpd)
-+		msm_dp_display_send_hpd_notification(dp, false);
- 
+@@ -528,8 +534,10 @@ static int msm_dp_hpd_unplug_handle(struct msm_dp_display_private *dp, u32 data)
  	/* signal the disconnect event early to ensure proper teardown */
  	msm_dp_display_handle_plugged_change(&dp->msm_dp_display, false);
  
--	drm_dbg_dp(dp->drm_dev, "After, type=%d hpd_state=%d\n",
--			dp->msm_dp_display.connector_type, state);
-+	drm_dbg_dp(dp->drm_dev, "After, type=%d\n",
-+			dp->msm_dp_display.connector_type);
+-	drm_dbg_dp(dp->drm_dev, "After, type=%d\n",
+-			dp->msm_dp_display.connector_type);
++	drm_dbg_dp(dp->drm_dev, "After, type=%d, sink_count=%d, link_ready=%d\n",
++			dp->msm_dp_display.connector_type,
++			dp->link->sink_count,
++			dp->msm_dp_display.link_ready);
  
  	/* uevent will complete disconnection part */
  	pm_runtime_put_sync(&pdev->dev);
-@@ -591,23 +538,14 @@ static int msm_dp_hpd_unplug_handle(struct msm_dp_display_private *dp, u32 data)
- 
+@@ -539,13 +547,17 @@ static int msm_dp_hpd_unplug_handle(struct msm_dp_display_private *dp, u32 data)
  static int msm_dp_irq_hpd_handle(struct msm_dp_display_private *dp, u32 data)
  {
--	u32 state;
--
  	/* irq_hpd can happen at either connected or disconnected state */
--	state =  dp->hpd_state;
--	drm_dbg_dp(dp->drm_dev, "Before, type=%d hpd_state=%d\n",
--			dp->msm_dp_display.connector_type, state);
--
--	if (state == ST_DISPLAY_OFF)
--		return 0;
--
--	if (state == ST_MAINLINK_READY || state == ST_DISCONNECT_PENDING)
--		return 0;
-+	drm_dbg_dp(dp->drm_dev, "Before, type=%d\n",
-+			dp->msm_dp_display.connector_type);
+-	drm_dbg_dp(dp->drm_dev, "Before, type=%d\n",
+-			dp->msm_dp_display.connector_type);
++	drm_dbg_dp(dp->drm_dev, "Before, type=%d, sink_count=%d, link_ready=%d\n",
++			dp->msm_dp_display.connector_type,
++			dp->link->sink_count,
++			dp->msm_dp_display.link_ready);
  
  	msm_dp_display_usbpd_attention_cb(&dp->msm_dp_display.pdev->dev);
  
--	drm_dbg_dp(dp->drm_dev, "After, type=%d hpd_state=%d\n",
--			dp->msm_dp_display.connector_type, state);
-+	drm_dbg_dp(dp->drm_dev, "After, type=%d\n",
-+			dp->msm_dp_display.connector_type);
+-	drm_dbg_dp(dp->drm_dev, "After, type=%d\n",
+-			dp->msm_dp_display.connector_type);
++	drm_dbg_dp(dp->drm_dev, "After, type=%d, sink_count=%d, link_ready=%d\n",
++			dp->msm_dp_display.connector_type,
++			dp->link->sink_count,
++			dp->msm_dp_display.link_ready);
  
  	return 0;
  }
-@@ -1426,7 +1364,6 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
- 	struct msm_dp *dp = msm_dp_bridge->msm_dp_display;
- 	int rc = 0;
- 	struct msm_dp_display_private *msm_dp_display;
--	u32 hpd_state;
- 	bool force_link_train = false;
- 
- 	msm_dp_display = container_of(dp, struct msm_dp_display_private, msm_dp_display);
-@@ -1443,7 +1380,6 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
- 		return;
+@@ -1540,7 +1552,7 @@ void msm_dp_bridge_hpd_notify(struct drm_bridge *bridge,
+ 		hpd_link_status = msm_dp_aux_is_link_connected(dp->aux);
  	}
  
--	hpd_state = msm_dp_display->hpd_state;
- 	if (msm_dp_display->link->sink_count == 0)
- 		return;
+-	drm_dbg_dp(dp->drm_dev, "type=%d link connected=0x%x, link_ready=%d, status=%d\n",
++	drm_dbg_dp(dp->drm_dev, "type=%d link hpd_link_status=0x%x, link_ready=%d, status=%d\n",
+ 		   msm_dp_display->connector_type, hpd_link_status,
+ 		   msm_dp_display->link_ready, status);
  
-@@ -1453,9 +1389,7 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
- 		return;
- 	}
- 
--	hpd_state =  msm_dp_display->hpd_state;
--
--	if (hpd_state == ST_DISPLAY_OFF) {
-+	if (dp->link_ready && !dp->power_on) {
- 		msm_dp_display_host_phy_init(msm_dp_display);
- 		force_link_train = true;
- 	}
-@@ -1474,9 +1408,6 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
- 		msm_dp_display_disable(msm_dp_display);
- 	}
- 
--	/* completed connection */
--	msm_dp_display->hpd_state = ST_CONNECTED;
--
- 	drm_dbg_dp(dp->drm_dev, "type=%d Done\n", dp->connector_type);
- }
- 
-@@ -1497,7 +1428,6 @@ void msm_dp_bridge_atomic_post_disable(struct drm_bridge *drm_bridge,
- {
- 	struct msm_dp_bridge *msm_dp_bridge = to_dp_bridge(drm_bridge);
- 	struct msm_dp *dp = msm_dp_bridge->msm_dp_display;
--	u32 hpd_state;
- 	struct msm_dp_display_private *msm_dp_display;
- 
- 	msm_dp_display = container_of(dp, struct msm_dp_display_private, msm_dp_display);
-@@ -1505,21 +1435,11 @@ void msm_dp_bridge_atomic_post_disable(struct drm_bridge *drm_bridge,
- 	if (dp->is_edp)
- 		msm_dp_hpd_unplug_handle(msm_dp_display, 0);
- 
--	hpd_state = msm_dp_display->hpd_state;
--	if (hpd_state != ST_DISCONNECT_PENDING && hpd_state != ST_CONNECTED)
--		drm_dbg_dp(dp->drm_dev, "type=%d wrong hpd_state=%d\n",
--			   dp->connector_type, hpd_state);
-+	if (!dp->link_ready)
-+		drm_dbg_dp(dp->drm_dev, "type=%d is disconnected\n", dp->connector_type);
- 
- 	msm_dp_display_disable(msm_dp_display);
- 
--	hpd_state =  msm_dp_display->hpd_state;
--	if (hpd_state == ST_DISCONNECT_PENDING) {
--		/* completed disconnection */
--		msm_dp_display->hpd_state = ST_DISCONNECTED;
--	} else {
--		msm_dp_display->hpd_state = ST_DISPLAY_OFF;
--	}
--
- 	drm_dbg_dp(dp->drm_dev, "type=%d Done\n", dp->connector_type);
- 
- 	pm_runtime_put_sync(&dp->pdev->dev);
 
 -- 
 2.50.1
