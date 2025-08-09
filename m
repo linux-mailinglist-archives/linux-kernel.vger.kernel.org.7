@@ -1,107 +1,230 @@
-Return-Path: <linux-kernel+bounces-761059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C27B1F3D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:47:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5381B1F3D8
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A1F3BA4D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:47:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E6924E05D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F0223C4FC;
-	Sat,  9 Aug 2025 09:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E902724167B;
+	Sat,  9 Aug 2025 09:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HP0Tzhzz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gA9QfvrU"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3215A1D5ABA;
-	Sat,  9 Aug 2025 09:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0281F1311
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 09:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754732856; cv=none; b=AD/eLjcFJykji/tBL2hB6eijaSZUx47LkQKypPWg8rqkjhYjtO0I9onbCDdiqchtwMClXeJj1n9qTZqFcujCe9+weSGXS8+ObRd31AUQe2Q/FNcJWweItNtVER0IY6M8+iF4T575tW22IBJDtL5j3kJtOVpjXp2hUAaGHv6RTEM=
+	t=1754733013; cv=none; b=OQ+hYTx835rHr6gI4ls0Z3pd7QaUnmWdK5AAwxQ3Mte0JNSVHPrlvqfM8fUFT7lSwRJpOcQUtaI+kfghDTH1eFHtjJ/Y1d/QE7Fyqeb50JIfYoiJ8ooL9MwSJRusVxKqRe8yj1Hy4Lgl7fnU13BHu6g6DjsOiFHEJCQcx//zVwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754732856; c=relaxed/simple;
-	bh=JINXn9Zyw+aEkTOgsmUWAuNYs0DmFS5fyd6z0+L/6+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FMF3FD2JDBYgdp1/jEbkadOHWxOy4Rh9Utgt6tuCRfDzPJQVUkuEoCSex3JH+WKpf6vor3VtNsiiJQXyPOG4fZ1kmKkPS214/Mx6SNJ3DQ6o2l2ppnL9IkxVpGsZydc/pLd+k/M2IQFY25a5VsIZN+QfcKlqawiWUPeFTIc53EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HP0Tzhzz; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754732855; x=1786268855;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=JINXn9Zyw+aEkTOgsmUWAuNYs0DmFS5fyd6z0+L/6+E=;
-  b=HP0TzhzzWmln7wxLl5g131EaKGEXx5YSjcKbRAwlZDfy/lbXp4lHGPZj
-   2d7uEgCtNUpnvsODQ4gRDRRQ4+1v84AjUALi85tpZhBJEd63iQGr4dYBX
-   vmxdbVm0inOyc4X2TWj4thf1WBTxpI9vmB5S1umn7zFqq0XGmH6WVAF9N
-   4pUjhOIONzuUuymc8bVX4KvG9SggHxVYK31AxTQun2XFdTQdaK9ZU9N2+
-   4IR5MAF8/JJZgQkp3l4zLUqTWWJgiACgMEE4k4YE+HHm2LXsxrjK5jDcV
-   qbVAkqhWwZmpiSLPChO/fpwpOvj9PJzSDPQLq9Lo4/ySgu5OMJeb39rqZ
-   Q==;
-X-CSE-ConnectionGUID: /LW/pJEETCOvmfPVJg0sZg==
-X-CSE-MsgGUID: xoaNa6OnTjqIrHCrnRBmCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="68433297"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="68433297"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 02:47:35 -0700
-X-CSE-ConnectionGUID: Mb1Ht4xzTp2hIg69i/K4Gg==
-X-CSE-MsgGUID: RPZLRIZARkOlewicNsoGQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165880184"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 02:47:32 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ukgAj-00000004cW8-2uf7;
-	Sat, 09 Aug 2025 12:47:29 +0300
-Date: Sat, 9 Aug 2025 12:47:29 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Abinash Singh <abinashsinghlalotra@gmail.com>
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	sunilvl@ventanamicro.com, u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH v3 0/2] serial: 8250_platform: Reduce stack usage in
- probe functions
-Message-ID: <aJcZMel1baOP-xHF@smile.fi.intel.com>
-References: <aJO9fnbydWqu1RpJ@smile.fi.intel.com>
- <20250806215134.4921-1-abinashsinghlalotra@gmail.com>
+	s=arc-20240116; t=1754733013; c=relaxed/simple;
+	bh=ZYbf8EsIYZFO81yTHUMtKbiC2T75uk75+9T+AJpt1Lc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yb6BI5eOY6IkwdYz0JmGjyHAhP0wDCK4lmlBLNpwUXg9TIG2KS2arDH7cwi6418/7vJs9i2jVQgcOsoxj9mZfliH0r+u7/nqsRN4h+zjvRvBA6kx99NNDqLm9jDLTEADmAFO34iJgyWS65fuy4U8K+9u/mqvEKxmua2qZEZJqmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gA9QfvrU; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-31ee880f7d2so3421729a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 02:50:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754733011; x=1755337811; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mApNl9OyMaD4VGZ6r0mx3memK22VlVhEsGoa9kJ9Y84=;
+        b=gA9QfvrUKe0rW26w3NGkg/B3G1ekTuIkXkGSxlS8mW/7KyUvuBbi5u9FuOzgmgMJpj
+         MHCJh5uu3cVL9MMnSDAMhamdQWlI8H4dGps5BG0HBsWidVUob9+vm92avGoLa4CfaEEh
+         4blIFkDzxkSL1+E4k1xZLLS4KzbjZgzqBy8BQBWfqMmJVXcaXkq1zLY+lWzcZemmdbpm
+         qxpMNpo5LOh5UuaCz7gIBlj0eoxROgjKczY3UhJ+QbvcRSC6o5cpG/F7ip6RP8yZa9kF
+         uoWoTLWeVsDydF4z8W7GMzDL5XlNrbRBpHM1s2X+6FBaYfWJZI3ivdnMQm8ocLODQBjA
+         goSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754733011; x=1755337811;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mApNl9OyMaD4VGZ6r0mx3memK22VlVhEsGoa9kJ9Y84=;
+        b=K/YuKs+1EKaP9fLFPO4bOJPvNGRJnPnjFlCr95Bp+Pe0T3Wng666ckKDoFpPdrFaED
+         4fhPRQmO8eNnvGe7KtvonyVqvQ35oNO5sgAcXQSXqzRJyhjxO9RqDcWmv0QjS7khYw3+
+         XQHPsQOwSW8MVGkbKRhPmwGC+GQznOGfD/aS98iwNNrN7n30W2jhzoTkDipcjzxCcpVZ
+         euIKQM3B/lcMcsN79TVgqavf7/vn3UYOOKp9OKZ+54GDTNBj9P3a/Uaty0x+6BfkKzck
+         1WuFNpIFUpH2K4R3SwD5elqHI+yRrtLxSTTr9OREBgRSE4A8ZaIjGbbIumx+ZLo3+mar
+         Cm1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXfkwPVw014Pu9OB/8OVSZ4Ziln2IVY4kYIXNu3+W66BwF0rOweLswE34CdSM2nadMlQYZf/9XedwJylQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6mRvC0R5C99BUCifcgAkuHwMgmiOJYPLS+fHEnRcTJtU3RdLg
+	D4ZirYNI/aKpHpbGbEzQBhEASRreDG1N7AaKjrWHBJt4FhN0727dvLRac4Yg6cKkJszwhOr5UI9
+	SoOjQby9Pa5EpSb/ZGrPpN6rYjxnbJyYq6k1WLXd/
+X-Gm-Gg: ASbGncvJG4JFWkcxy13z25WAsyZRFO3SwJUbOGoxlb1aZxKS8uq88tsP9RMew92P4Bd
+	HYgEBhIWLXtW4A1UbPJaBSiepKn6+2TiBb5BWDMadybjn8gLLwI5E7AmGPgGCko8m6F6Ho06bNw
+	08XxOreNnMYKbjr4zhIGA0kgGIk8TZnVo7FoH3RAN3cKJGn9pKk5kpNTCXD2b9Mw3jonICtRCd3
+	CBO7nizFyPM504QP3KsKYACch8RHoRMgXI=
+X-Google-Smtp-Source: AGHT+IESzd9zfaC2deh5/pTXOEXeXfK/44plwlVMAXnQlm2v63zn18NvHxQVXO92KZ4+0x7GC3psv5PGn+zts+fYpgo=
+X-Received: by 2002:a17:90b:544c:b0:31e:c630:ec93 with SMTP id
+ 98e67ed59e1d1-32183b45722mr9956895a91.16.1754733010777; Sat, 09 Aug 2025
+ 02:50:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250806215134.4921-1-abinashsinghlalotra@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250805162153.952693-1-wakel@google.com> <87ikj0esnv.ffs@tglx>
+In-Reply-To: <87ikj0esnv.ffs@tglx>
+From: Wake Liu <wakel@google.com>
+Date: Sat, 9 Aug 2025 17:49:32 +0800
+X-Gm-Features: Ac12FXwAyr8kLaNxcUw79dYiwgd27yldMNM5geindbHi_tJ59IaBKROkiaTcO-k
+Message-ID: <CAOcRiAFzN61FE=By1ANB3aK4PKVTBQAzrCcfoHfHwMX7Qn8wYA@mail.gmail.com>
+Subject: Re: [PATCH] vdso: Define NSEC_PER_SEC as 64-bit to prevent overflow
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 07, 2025 at 03:21:32AM +0530, Abinash Singh wrote:
-> On Wed, 6 Aug 2025 23:39 Andy Shevchenko wrote:
-> > Have you had a chance to see Arnd's comments?
-> >
-> Yeah ,I have made comments on that.
-> Please check that and provide feedback.
-> 
-> Hi,
-> Apologies for not reviewing the patch carefully before submitting it.
-> It's 3 A.M. here, and I’m still up, so I missed it
+Hi Thomas,
 
-If others are okay with this intermediate step,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Here's the command I used in android.
 
--- 
-With Best Regards,
-Andy Shevchenko
+```
+/data/nativetest/vts_linux_kselftest_arm_32/set-timer-lat
+```
+And the strace message.
+```
+Setting timers for every 1 seconds
+CLOCK_REALTIME         ABSTIME PERIODIC timer fired early:       1 : [FAILE=
+D]
+CLOCK_REALTIME         ABSTIME PERIODIC max latency:     747886 ns : [OK]
+CLOCK_REALTIME         RELTIME PERIODIC timer fired early:       0 : [OK]
+CLOCK_REALTIME         RELTIME PERIODIC max latency: 4296109428 ns : [FAILE=
+D]
+CLOCK_REALTIME         ABSTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_REALTIME         ABSTIME ONE-SHOT max latency:     715292 ns : [OK]
+CLOCK_REALTIME         ABSTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_REALTIME         RELTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_REALTIME         RELTIME ONE-SHOT max latency:     628703 ns : [OK]
+CLOCK_REALTIME         RELTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_MONOTONIC        ABSTIME PERIODIC timer fired early:       1 : [FAILE=
+D]
+CLOCK_MONOTONIC        ABSTIME PERIODIC max latency:     738160 ns : [OK]
+CLOCK_MONOTONIC        RELTIME PERIODIC timer fired early:       1 : [FAILE=
+D]
+CLOCK_MONOTONIC        RELTIME PERIODIC max latency:     708172 ns : [OK]
+CLOCK_MONOTONIC        ABSTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_MONOTONIC        ABSTIME ONE-SHOT max latency:     586385 ns : [OK]
+CLOCK_MONOTONIC        ABSTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_MONOTONIC        RELTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_MONOTONIC        RELTIME ONE-SHOT max latency:     818237 ns : [OK]
+CLOCK_MONOTONIC        RELTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_BOOTTIME         ABSTIME PERIODIC timer fired early:       1 : [FAILE=
+D]
+CLOCK_BOOTTIME         ABSTIME PERIODIC max latency:     795249 ns : [OK]
+CLOCK_BOOTTIME         RELTIME PERIODIC timer fired early:       0 : [OK]
+CLOCK_BOOTTIME         RELTIME PERIODIC max latency: 4295613660 ns : [FAILE=
+D]
+CLOCK_BOOTTIME         ABSTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_BOOTTIME         ABSTIME ONE-SHOT max latency:     978516 ns : [OK]
+CLOCK_BOOTTIME         ABSTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_BOOTTIME         RELTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_BOOTTIME         RELTIME ONE-SHOT max latency:     628948 ns : [OK]
+CLOCK_BOOTTIME         RELTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_REALTIME_ALARM   ABSTIME PERIODIC timer fired early:       1 : [FAILE=
+D]
+CLOCK_REALTIME_ALARM   ABSTIME PERIODIC max latency:    1511436 ns : [OK]
+CLOCK_REALTIME_ALARM   RELTIME PERIODIC timer fired early:       1 : [FAILE=
+D]
+CLOCK_REALTIME_ALARM   RELTIME PERIODIC max latency:     758913 ns : [OK]
+CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT max latency:     610881 ns : [OK]
+CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT max latency:     633708 ns : [OK]
+CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_BOOTTIME_ALARM   ABSTIME PERIODIC timer fired early:       0 : [OK]
+CLOCK_BOOTTIME_ALARM   ABSTIME PERIODIC max latency: 4295683321 ns : [FAILE=
+D]
+CLOCK_BOOTTIME_ALARM   RELTIME PERIODIC timer fired early:       0 : [OK]
+CLOCK_BOOTTIME_ALARM   RELTIME PERIODIC max latency:     839520 ns : [OK]
+CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT max latency:     601401 ns : [OK]
+CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT max latency:     628175 ns : [OK]
+CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_TAI              ABSTIME PERIODIC timer fired early:       0 : [OK]
+CLOCK_TAI              ABSTIME PERIODIC max latency: 4295577120 ns : [FAILE=
+D]
+CLOCK_TAI              RELTIME PERIODIC timer fired early:       0 : [OK]
+CLOCK_TAI              RELTIME PERIODIC max latency:     921184 ns : [OK]
+CLOCK_TAI              ABSTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_TAI              ABSTIME ONE-SHOT max latency:     590048 ns : [OK]
+CLOCK_TAI              ABSTIME ONE-SHOT count:                   1 : [OK]
+CLOCK_TAI              RELTIME ONE-SHOT timer fired early:       0 : [OK]
+CLOCK_TAI              RELTIME ONE-SHOT max latency:    1007202 ns : [OK]
+CLOCK_TAI              RELTIME ONE-SHOT count:                   1 : [OK]
+# Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
+```
+
+So there is some odd stuff going on in how the time comparisons are
+done of 32 bit builds.
+
+Looks like there is some integer overflow on 32 bit builds in the
+timespec_sub function:
+
+long long timespec_sub(struct timespec a, struct timespec b)
+{
+long long ret =3D NSEC_PER_SEC * b.tv_sec + b.tv_nsec;
+
+ret -=3D NSEC_PER_SEC * a.tv_sec + a.tv_nsec;
+return ret;
+}
+
+on 32 bit builds NSEC_PER_SEC and b.tv_sec are only 32 bit values
+which I'm guessing is causing the overflow.
+
+NSEC_PER_SEC is defined as 1000000000L but if we change this to
+1000000000LL then the test starts passing.
 
 
+
+Thomas Gleixner <tglx@linutronix.de> =E6=96=BC 2025=E5=B9=B48=E6=9C=886=E6=
+=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=884:55=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Wed, Aug 06 2025 at 00:21, Wake Liu wrote:
+> > The constant NSEC_PER_SEC (1,000,000,000) is defined as a long literal.
+> > On 32-bit systems like arm32, where long is 32 bits, this value can
+> > overflow when used in 64-bit calculations.
+>
+> How so? Where is the overflow exactly?
+>
+> The only usage of NSEC_PER_SEC in the VDSO is:
+>
+> # git grep NSEC_PER_SEC lib/vdso/
+> lib/vdso/gettimeofday.c:        ts->tv_sec =3D sec + __iter_div_u64_rem(n=
+s, NSEC_PER_SEC, &ns);
+>
+> and __iter_div_u64_rem() is an inline:
+>
+> static __always_inline u32
+> __iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
+>
+> So how exactly is this causing an overflow?
+>
+> Also by your description this would be a problem throughout the kernel.
+>
+> Thanks,
+>
+>         tglx
+>
+>
+
+
+--=20
+Best Regards,
+Wake Liu
 
