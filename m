@@ -1,114 +1,148 @@
-Return-Path: <linux-kernel+bounces-761081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2458DB1F416
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:21:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B857FB1F412
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D5B71C218CD
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64BEA6225D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC70A260590;
-	Sat,  9 Aug 2025 10:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2969725BF1B;
+	Sat,  9 Aug 2025 10:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UF6jJx0e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxYjeXqP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCFC25F994;
-	Sat,  9 Aug 2025 10:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E8723B62C;
+	Sat,  9 Aug 2025 10:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754734862; cv=none; b=Gakb8BomUm3o92HIrTnMr83QVHTgmUT2G2kHbYFUEftEYPu6rezLtYj/C4qRGmHrs0IT5mh09BfQvH/TD2ChklvsZB9N9givwv5DegighepR+RjYxnghCfIAZIP/DcS56f6QPk4N6cQBaP+u5gWdWXpmtMT6A/Rekcx+qTJ0A1Y=
+	t=1754734733; cv=none; b=fFW5XFCOSjm08wsoJmHXynVop0XTrWXv4HJKtr6UeJMURkGtD7OQqbD7liJGaJsk4j04LQS9uDaBpIPLo1h7dTAAaYYIB5W+saAadvjSAcI9niGgC2XnVAnB88Q7x+Db0+7NHEPyjEbWhsXwEPPguXwkYzLYnAFWhUT1mlY+TjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754734862; c=relaxed/simple;
-	bh=xkhoRCRwaoDqayR583mMtqSwtvLH7lvE+LIjFMy9+EI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwFzZSkfLSiVwf9x5yh0R4VedbiLr0/dmZ1A/SP46fCAmbeOF8zptJupa/s+sHYYpAcaPbM7KUdhOi35JOv1CRbvsUqJ9cW2niO8gawSsKe1SyxyjbAV2NbQBY3v/QshPq8MScTFK7Er/1d8GPfFZRPqjYvURKUNbrEhejBa+JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UF6jJx0e; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754734860; x=1786270860;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xkhoRCRwaoDqayR583mMtqSwtvLH7lvE+LIjFMy9+EI=;
-  b=UF6jJx0e5n6rL9MSXsG3pEID6NrNuhWyGq76R6VloR2XvdbklTDZxGUJ
-   tuInbstWB+N1UJqoVdMHJDtsUsNFu5oUxFs6Rer05/2DJtLkRKYr2Ka5w
-   4M2tV3Hf42zYwIkRsstgmm0t3zn7cUri1paE4YYP0EC6V5KEu312o99Uj
-   xq+KGtEVQDerszb7zXR50gf0qepL7Xb5FpFcPXi0qpacw/Eqbj+dDTO5K
-   0yNdh66d12OMCp5G1IBmnHGMWFCnw1O1QJ8Nlep3HX7iR+JpUsFusDz3x
-   H1jKys8TVQDMIB4WpvSUDB+PRZIyhhgpkS592VEv9owDmkGOTJocB1H12
-   Q==;
-X-CSE-ConnectionGUID: SKl6TWGVTfKKGc4/IINV5Q==
-X-CSE-MsgGUID: Q44EEy22Tj6UMrygsorFpA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="56271853"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="56271853"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 03:18:18 -0700
-X-CSE-ConnectionGUID: zR0577vPSaCvZHC4n2jlNw==
-X-CSE-MsgGUID: WbWozsYRQ/Kqh82BKHVD0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="166311440"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 03:18:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ukgeT-00000004col-136C;
-	Sat, 09 Aug 2025 13:18:13 +0300
-Date: Sat, 9 Aug 2025 13:18:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Peng Fan <peng.fan@nxp.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Koichiro Den <koichiro.den@canonical.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 21/21] gpiolib: turn off legacy interface by default
-Message-ID: <aJcgZLWgMy01re08@smile.fi.intel.com>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-22-arnd@kernel.org>
+	s=arc-20240116; t=1754734733; c=relaxed/simple;
+	bh=3kTYfvX/cig3L/pY8sJWJIZAQ0MeL7eM9NiGFkbQpNA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=AjxE2Fd6JBsF6qaOCsQQg0lA2OR+4JD9Y/oQ5u8sp+4BdfG4ZImbQx7CTRGHJT29fMVZuYBeZHS5DNv7CjHFnWdD5HJegeeF/Vsbq9+1gWd14fAJvBnJDG7Pv55wFI09T9w0FkzyUodaEMWTXvFFZxZzxzvh6fARwT/2t2rXPR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxYjeXqP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04663C4CEE7;
+	Sat,  9 Aug 2025 10:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754734732;
+	bh=3kTYfvX/cig3L/pY8sJWJIZAQ0MeL7eM9NiGFkbQpNA=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=IxYjeXqPHlUJa37Wqz4UdSMV/G8qNNw/rwrlElk1s6w9Rt2eB+ZUV+Vwav6ZbKYja
+	 WDSz6yWM5D+5WIpRRYNXtHLuR+xXu8YTIchJ118qn/PLNwYw1VFzNtGwz2roFmJKj2
+	 Nefdjgo0cOBB+7uQq/LKuLb7r7TlCfOBDthWlXgUuVo9nWI2jeJ9NGgW4ZAu+dekbc
+	 kNIVfM9SEGKSP9Ez9iSlXIph/9TuySRahsnFRl63qxPmXW3UxtrNpnxlucXirF40uL
+	 vbsvep2Fe8dRvfJFaRo1crge5nM62Q4VFHxMMXX0JOJIqOQnnCtdtl7iX7dKZt6DsL
+	 YzSu+7NnhXhsg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808151822.536879-22-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 09 Aug 2025 12:18:49 +0200
+Message-Id: <DBXTJQ27RY6K.1R6KUNEXF008N@kernel.org>
+To: "Sidong Yang" <sidong.yang@furiosa.ai>
+Cc: "Daniel Almeida" <daniel.almeida@collabora.com>, "Caleb Sander Mateos"
+ <csander@purestorage.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, "Jens Axboe" <axboe@kernel.dk>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <io-uring@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
+ for io-uring cmd
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
+ <20250727150329.27433-3-sidong.yang@furiosa.ai>
+ <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
+ <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
+ <949A27C5-1535-48D1-BE7E-F7E366A49A52@collabora.com>
+ <DBVDWWHX8UY7.TG5OHXBZM2OX@kernel.org>
+ <aJWfl87T3wehIviV@sidongui-MacBookPro.local>
+ <DBWX0L4LIOF6.1AVJJV0SMDQ3P@kernel.org>
+ <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
+In-Reply-To: <aJXG3wPf9W3usEj2@sidongui-MacBookPro.local>
 
-On Fri, Aug 08, 2025 at 05:18:06PM +0200, Arnd Bergmann wrote:
+On Fri Aug 8, 2025 at 11:43 AM CEST, Sidong Yang wrote:
+> On Fri, Aug 08, 2025 at 10:49:14AM +0200, Benno Lossin wrote:
+>> On Fri Aug 8, 2025 at 8:56 AM CEST, Sidong Yang wrote:
+>> > On Wed, Aug 06, 2025 at 03:38:24PM +0200, Benno Lossin wrote:
+>> >> On Wed Aug 6, 2025 at 2:38 PM CEST, Daniel Almeida wrote:
+>> >> > Hi Benno,
+>> >> >
+>> >> >> On 2 Aug 2025, at 07:52, Benno Lossin <lossin@kernel.org> wrote:
+>> >> >>=20
+>> >> >> On Fri Aug 1, 2025 at 3:48 PM CEST, Daniel Almeida wrote:
+>> >> >>>> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> w=
+rote:
+>> >> >>>> +    #[inline]
+>> >> >>>> +    pub fn pdu(&mut self) -> &mut MaybeUninit<[u8; 32]> {
+>> >> >>>=20
+>> >> >>> Why MaybeUninit? Also, this is a question for others, but I don=
+=C2=B4t think
+>> >> >>> that `u8`s can ever be uninitialized as all byte values are valid=
+ for `u8`.
+>> >> >>=20
+>> >> >> `u8` can be uninitialized. Uninitialized doesn't just mean "can ta=
+ke any
+>> >> >> bit pattern", but also "is known to the compiler as being
+>> >> >> uninitialized". The docs of `MaybeUninit` explain it like this:
+>> >> >>=20
+>> >> >>    Moreover, uninitialized memory is special in that it does not h=
+ave a
+>> >> >>    fixed value ("fixed" meaning "it won=C2=B4t change without bein=
+g written
+>> >> >>    to"). Reading the same uninitialized byte multiple times can gi=
+ve
+>> >> >>    different results.
+>> >> >>=20
+>> >> >> But the return type probably should be `&mut [MaybeUninit<u8>; 32]=
+`
+>> >> >> instead.
+>> >> >
+>> >> >
+>> >> > Right, but I guess the question then is why would we ever need to u=
+se
+>> >> > MaybeUninit here anyways.
+>> >> >
+>> >> > It's a reference to a C array. Just treat that as initialized.
+>> >>=20
+>> >> AFAIK C uninitialized memory also is considered uninitialized in Rust=
+.
+>> >> So if this array is not properly initialized on the C side, this woul=
+d
+>> >> be the correct type. If it is initialized, then just use `&mut [u8; 3=
+2]`.
+>> >
+>> > pdu field is memory chunk for driver can use it freely. The driver usu=
+ally
+>> > saves a private data and read or modify it on the other context. using
+>> > just `&mut [u8;32]` would be simple and easy to use.
+>>=20
+>> Private data is usually handled using `ForeignOwnable` in Rust. What
+>> kind of data would be stored there? If it's a pointer, then `&mut [u8;
+>> 32]` would not be the correct choice.
+>
+> Most driver uses `io_uring_cmd_to_pdu` macro that casts address of pdu to
+> private data type. It seems that all driver use this macro has it's own
+> struct type. How about make 2 function for pdu? like store_pdu(), borrow_=
+pdu().
 
-> All users of the legacy interface now select CONFIG_GPIOLIB_LEGACY,
-> so it can be turned off by default.
-> 
-> Allow turning it on manually for compile testing, in order to keep
-> the build coverage of the legacy drivers.
+We'd need to ensure that `borrow_pdu` can only be called if `store_pdu`
+has been called before. Is there any way we can just ensure that pdu is
+always initialized? Like a callback that's called once, before the value
+is used at all?
 
-...
-
->  config GPIOLIB_LEGACY
-> -	def_bool y
-> +	bool "Legacy GPIO interfaces" if COMPILE_TEST
-
-Maybe I'm missing something, but how does it supposed to be compiled for old
-platforms? (No, COMPILE_TEST is not a correct option for that)
-Perhaps you meant EXPERT ?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+---
+Cheers,
+Benno
 
