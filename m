@@ -1,116 +1,117 @@
-Return-Path: <linux-kernel+bounces-761214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611E2B1F5D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:45:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E1FB1F5D9
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215ED3BE1B9
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0218D3BE413
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2072BEC53;
-	Sat,  9 Aug 2025 18:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6142BF010;
+	Sat,  9 Aug 2025 18:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TeTDeRCV"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8930E146A72
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 18:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fRgOKmOF"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A051F1301;
+	Sat,  9 Aug 2025 18:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754765104; cv=none; b=mLL75uy/doEBffdUXzLupN6DqjlAsu8/iGU8bic43XOZtgCDrX37Dg77dh8FkWYY+fN37A/bIUXvvWqLdmh4zPnWDcwtwaDCd9Sllib0ZuN1YH0d61FpU0s1/5jSQe7Oj5A19exaRZAA6utHZnRRG7ZZoq4GJkYgs8i+47baiBc=
+	t=1754765119; cv=none; b=PEbs/hCfNxS5rkiaPpW0C7c80qiv9zRCpLfvX3rD/8x3g6r9YJ6fCPqovU4tlpCiR+d7t8hsfI+J5dyjK1vsB7VnN176/ssualhKYVmljyYzGiObJO9GgExbh+QZbpROfl9C8v1TC+MI4+DLCkLoxZxA20oaMVcwkt5PCTsSCVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754765104; c=relaxed/simple;
-	bh=xlYPx3rUiRif1vt0rmZ01ozsf1aifnE8niKIXf+1624=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EgJAive5QDWPonPQcwpd9D9b7bPaRfopmunFqaEeDraYm6sEvdkUDuYNNlKUUbFOt2rO2WOYZT9od+ojHOH/0ICFv4I7MY52gnTUgPY9pO1Sgq3f5KllSUGcX8QeDguQFb0TVPpnix3WZI6QRObV0s4ejhR5cm4XeWnBFOpL3YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TeTDeRCV; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=qp
-	8SVa1IxFlmm0KJl6asj4gWs4d8qTmrc7gFSCo0b/Y=; b=TeTDeRCVDlyeEnv6/C
-	hYM/Z3a7q6JHUghPqhebM4pgEgGkqXtOTvgIDzv1dXWAl2jsJ57jA3L0l5NMO/sl
-	uRujxUZhvZECR/MpvtSDt2FA146Omraeht9TH5dwR2Q+ouqaVHh3WHJhCraAlS+v
-	UxDLg691rL7Wy7GJa4TT61wfI=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDn48YDl5doaAV+AQ--.44420S2;
-	Sun, 10 Aug 2025 02:44:20 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH] sched/rt: Use prev_sum_exec_runtime to record the timeslice start time
-Date: Sun, 10 Aug 2025 02:44:18 +0800
-Message-Id: <20250809184418.2012584-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754765119; c=relaxed/simple;
+	bh=ZNd/uryG0IlirF9BmUwsd7PQAKgrbbcYk4SiTLxWx7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ibPccG9jcC64Uc0M/poImR+eXoSjTJaDNa+zVEP6PnBd5j8i+Y5dV5TS2Y168MyDik9jUb0z9rlVcWpFDBcBKILZDN2qxgf9lT8QTHQxxBjFdQ0dlwUze+qsez5Eg3ddy0pD8OAcIvyOmSrAIcWleagqu2ZtZs4SZSAy46XyvkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fRgOKmOF; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-615622ed70fso5107904a12.3;
+        Sat, 09 Aug 2025 11:45:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754765116; x=1755369916; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eR8zOZ3z2WcWE6RFK1IoXRDArEFQfISp1rsngDDWJHA=;
+        b=fRgOKmOFXtbANoPqtk5wB4I/Z5pxwSzrPtEkdShsKGWKDqxvtI6dgSduimFQhMe5jD
+         yaM2b3AgbzJVjWIaZVj2DfasXovABnj8XGLIB4aPDo0DRK761CKxnsr1F9WL5HVLv5jv
+         odt5Mo7fQwMxIzfMgYCZWHf2bKGm/LgdbKgnhRs9gSM6fMTb5bh8fxkQyo7b8A+XecD0
+         3gDJJ8LYQWqNJW2v+teWendQIMt5d72OtmA/QcxvHQfvCKy6OtbgN7uLZFgOxrxmjMVW
+         vh2e1fQnWrPFQgDiU9TdgwGBUWqlrRBSVS3r5kRfIkJtqEZHdfL/XWaUD9oZbGKIIw7A
+         9E/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754765116; x=1755369916;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=eR8zOZ3z2WcWE6RFK1IoXRDArEFQfISp1rsngDDWJHA=;
+        b=PXYjJCFKf0v95bPD46lRFMuXN8kTOJKt/iB9lnmKeNU7LjuYGgYjAYADCpqxL9XZrY
+         JK5LU7wNyJhpUoo30NrKW0CFiUW+PKxYFKOH5ukip5BxHfadRtgu848FBHNJaso3eb3K
+         C/4XLOUD9NzXs6iEm9hR1qsgOrpuZQEHR40Wmv5QXoM9CKu1GIOaRVP74FDVjlJwS4Gs
+         jqnqkVdhdsdMYl4gtSaqi34/Z9LrIovVuzaVdfhOMYU7AyF2/W4ch3LKhU+evj5maBt0
+         2g9Mht2kVGya3EN15lsV1LB5HG9xtYo8L0rlhtXLDYVyr5uW3yFPYjHTYm6Cf2DqrKy/
+         kkJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzSUNri4X0kw8KadK+6AeD5nUoXa/gdLDGWagEE+O/hHGgfoNMw6rUF4n7bjMeM3hfAP4PmbhulGRpLhYoyqG/@vger.kernel.org, AJvYcCWgiEuw7QZJtaZfBThlgyrG6hSM5Xy/1VFriQYFFfHUHWbvc6fq0DMwRpyUGBCMKkhhHFweZE80huSxrII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV2e/F8jhZ2EoOGkxIxa2zhyOPi4CRRuPaaD41TvzVM8t6M2mM
+	TSMEXRkqdPa+wWdIBv7k2XHWect/E2P5mzDwhVxgnlKs9Mg6LyU//bot
+X-Gm-Gg: ASbGncsbosn0wGLKwpLK120v4soie1GQDfYrnQOHIlPAaEhKPaEUnJmoLPc6+mNFHgq
+	W7rpmuvmvA8aRjnWNhISW6mbfsRCpL51FElM1r3cEfyz45JWMh7SDKqS/CA2wd7avZhkl7PSXRZ
+	FiAnWpFFaXzSGALigyXy9N/hE1Idt5D1UYoIK+AiEjLe3s0TF+Ltu4cth5aySmB9JxjMBu0VleI
+	9RLl4g1NS10lHWNcmpby9fyStHlE5MkM26Vc0jExClCj4E5x7e1NdPg1bTD/MVMTZyP+Jmwu4RN
+	+/4ZcVlp0YBnjZBf/Ztrs+0p/0orKznmGbwVceNRjQWMTXh7HOIeXzyVoeuBLjnqw/VDIgf1yCo
+	M/LQ+RoZslYU4wZLTYgdCPQ==
+X-Google-Smtp-Source: AGHT+IGSLKkdoXK2TOxZXhsboglDsLFIiyNrDvo4bkRRZ/lXamgG7y7rXWOoHMoxfnH/vEriZPA3Jw==
+X-Received: by 2002:a17:907:3c84:b0:ae3:bf5f:ca20 with SMTP id a640c23a62f3a-af9c640ed5amr594511466b.8.1754765115775;
+        Sat, 09 Aug 2025 11:45:15 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c076sm1676437966b.102.2025.08.09.11.45.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Aug 2025 11:45:15 -0700 (PDT)
+Date: Sat, 9 Aug 2025 18:45:15 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] mm/huge_memory: add new_order and offset to
+ split_huge_pages*() pr_debug.
+Message-ID: <20250809184515.sd2qrwrae4a5bv4r@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250808190144.797076-1-ziy@nvidia.com>
+ <20250808190144.797076-2-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn48YDl5doaAV+AQ--.44420S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tw17ZryfWrWrJr18ArWDurg_yoW5Jry7pF
-	WDW347tw4DJ3WrtrW7Zws3uryYg393Kw17KFn0yw1UAr15G3W8KrsIgr42qF4j9rnYkF12
-	vF40qwsru3WqvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRxWrJUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbioxekCmiXk2c7zwAAsl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808190144.797076-2-ziy@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-For tasks in the fair scheduling class, we can register a sched_stat_runtime
-tracepoint. When a periodic tick interrupt occurs, we can calculate the
-difference between prev_sum_exec_runtime and sum_exec_runtime to determine
-how long the current time slice has been running. However, for RT scheduling
-class tasks, this is not possible because the value of prev_sum_exec_runtime
-is not set when scheduling RT tasks, making it impossible to perform such a
-difference calculation.
-This detection is very meaningful because if a real-time task runs for too
-long in a single time slice, it can significantly impact the overall system
-state. For instance, it may prevent the rcu's gp_seq from updating in a
-timely manner, and it may cause kworker and other system-level tasks to be
-unable to get scheduled on time, which can further affect the entire system's
-operation. Early identification of this issue can help the system make
-functional safety decisions sooner, especially in the context of automotive
-intelligent driving systems.
-This change can be combined with tracepoints to extend the sensitive
-detection of long-running time slices from fair scheduling class tasks to
-RT tasks using the existing tick mechanism of the system. Without this
-modification, we would only be able to check at a relatively later time,
-such as during sched_switch, and RT tasks can sometimes run for a long time
-when issues arise. Discovering system problems only during task switching is
-not always a wise choice. Of course, we could use other means, such as adding
-a high-resolution timer in a hard interrupt context to perform this detection,
-but high-frequency hrtimers can impose a certain burden on the system. If we
-can leverage the existing tick mechanism for such checks, it would be a
-better approach.
+On Fri, Aug 08, 2025 at 03:01:42PM -0400, Zi Yan wrote:
+>They are useful information for debugging split huge page tests.
+>
+>Signed-off-by: Zi Yan <ziy@nvidia.com>
 
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
- kernel/sched/rt.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 7936d4333..8e4093a17 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1641,6 +1641,7 @@ static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, bool f
- 	struct sched_rt_entity *rt_se = &p->rt;
- 	struct rt_rq *rt_rq = &rq->rt;
- 
-+	p->se.prev_sum_exec_runtime = p->se.sum_exec_runtime;
- 	p->se.exec_start = rq_clock_task(rq);
- 	if (on_rt_rq(&p->rt))
- 		update_stats_wait_end_rt(rt_rq, rt_se);
 -- 
-2.34.1
-
+Wei Yang
+Help you, Help me
 
