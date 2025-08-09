@@ -1,144 +1,452 @@
-Return-Path: <linux-kernel+bounces-761056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FD7B1F3CF
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:43:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F50FB1F3D0
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B52037B3657
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F00E5632EA
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9779225F780;
-	Sat,  9 Aug 2025 09:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB5323D287;
+	Sat,  9 Aug 2025 09:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ocsQvtQy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZhklySx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71B322A7E9
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 09:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC96241114;
+	Sat,  9 Aug 2025 09:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754732544; cv=none; b=kyfcyZdGoTRTyeUWg+EYZWh3zpB+iluSjl6fpWo35NgDZJ76FPKJayQVjirKbGPSN/fUeN62S8EEWOWg/92szIAmZvN87D20HwbQk7VPljGvaXKqtcDCegyGP/TVaYUpLSWgdmRZ8uc1Ktd4KtDmZEdd2FKHaeFsz8mEdrNxWOk=
+	t=1754732576; cv=none; b=UmDv5c26rWoqrBd+yupvqKdqtXgiF2t5JgxX5e43lbpk2cQZ/sF49djYZdH1Dv0B9gG39rhTh/hcq4Kw4fGLtTyuaqbzxa8jUWqqtA41kf1NtYReqMc8/ZUfFz46aPW4+47R1uf9ZCJKUP2cknjiT9CJN48pY1LLaXHEKhDe2yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754732544; c=relaxed/simple;
-	bh=ifWR+5YTYXsRgjzxK77i+K01IrQXJ9sN/mQ5f08sldc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjuPttJ2PYIgXlif6EOBmbJTMmizg8GgjdfsH3PS5QSWosiaXkPSnu1GbeHK5+eCjrDIt1zt0cDK1Ae9zZk2Pih+n5nh4JrrySaJhMMfIMmywgsVqu3stru5/yrbKJ30zjaDDZ8QLPMu95mniWLlgiZcM1+CY69BsGfKsrOIv6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ocsQvtQy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5794BqDh029745
-	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 09:42:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=0372A92yO+6UzrCsBHxULUhC
-	eOFsZLUB9BV4b4k/xxs=; b=ocsQvtQyl+rIznivUSMnxJKWoVXw8tKVWP6aYCXo
-	NoHoZ0Jw7brxIgxyFnV3yYdTcCN6r/UlIC/aMOEbRvK/8UerXk6qmA12Ct1TlBOv
-	o8DCZL6Crc5ta5YkxutyQi73btgUpCaN6DjoONU69PTVTT+on3F2UQ3LC81fAbi+
-	F/07w6P0a4NmCPipL2pp0TgOXi1wW5NbMLxINvBS0OFrhd+j5CWMee8VkZuWIWWb
-	de+pYI4cAFy000ra0b0tHARUtRxrTEAVhlXPGaTzRiGSTIhgXzQDdBCJHyvHJZas
-	HO/EU9BDjWja1gqrdSMkpIIoU97qVHocFssoAoSTHsCoRQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3g0c8c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 09:42:21 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b0680f6270so73239941cf.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 02:42:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754732540; x=1755337340;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0372A92yO+6UzrCsBHxULUhCeOFsZLUB9BV4b4k/xxs=;
-        b=W87BQ5wYs6i+zh4KzL3Cq2h7EDHBGo6gD9h5GVS7CUX7QCpF0KXxNRf/la3kbM7LRA
-         DlDp3VYVl4430DwC+zUHG/Mla1luFK8A41PnEc+/9JDtCeBgwtclwQEx249BIkO+BmW4
-         cSE6yuktGHdieUzLWejWU6eiiFdm7Y96Bd3dWH0E2yYuHzQzmVCcfP6IHQeJ9yocRqru
-         laDerkmQBBDjx9IwsDc+NeipK7/ZJRtoOF93cKz5E5uQfuBhAXhLU+Si4eAZHVjz4OmQ
-         CIRHLnnEUwcyboo+qWD6AgZo/gezmTguHnUsOJ58VSyXQMBbY5U/ucZpHfY+POCjr43U
-         lE3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+irLv3xC5UJ2BZOiz9PZzznVEs9TW61JtfJ7sjJV4p5Kd+EUwYngEw59jThpRBtTZuIXvr7pNAzslFgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx397ObBLvrJ7RY9rvoDYQ8K5wHRQJZg93hm8vb+19kFR8fiKWy
-	cGJxy8X48JKxT+da3qgtanLjf/tejEtq8/ummR4+Ue45PeTIgDFia549gPELN911Yh+Ya6q/f8v
-	JgMJdQNzIlyP/G5lMgj6IXHHZpMIVX5wKT9ehvMxsCFl09wLgkHs7w8/TCvhllJeZv6q2gi0ypd
-	s=
-X-Gm-Gg: ASbGnctp+enhz2w3xZp77jPgH3YT18L6VnC6BiLinvNgSMY27d5vbHYqZTbB0chNfTm
-	+PyGEdDr5IDu6cqdUFZFfIOfSvrQ20JWpRKEteIrrvRinBHqnfV72KKAd2sPxb3z1cYRQY7cXxa
-	09v/acg6zNB4RoNkV9GXMwEcPXz+Ni0R7M6HZlzUlU6s2z79Rv8C+NVmnAywADN1+UqDtpAxvS8
-	sHF5G80JiXop42zGfJ9GN4mDMxPRu4hmEkYKTtV5yO+FcvnTN7AlkF+MGz9/BhT9KqMu2EkAWnI
-	x/qgshBsiklO9zh5/ERof4z0uvqqTy3YYqqcMz47RSaPi+FIIHka23zI+oZBl1H8LIFXwBVUH6d
-	q1+CX85OH0Csqb4IOvxQtTGVHFu7RfCaH/ysrxarsvqUChXCYAkna
-X-Received: by 2002:a05:622a:5294:b0:4b0:b39c:af01 with SMTP id d75a77b69052e-4b0b39cb116mr61368451cf.4.1754732540291;
-        Sat, 09 Aug 2025 02:42:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IESERnHKkIRpuJX4iR1miZrmVl0om2FZb47EtMDQ9dwoDLbFFiSfbashWKXj5hwmlVMBtCJHg==
-X-Received: by 2002:a05:622a:5294:b0:4b0:b39c:af01 with SMTP id d75a77b69052e-4b0b39cb116mr61368281cf.4.1754732539900;
-        Sat, 09 Aug 2025 02:42:19 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cc8c2e556sm164796e87.105.2025.08.09.02.42.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 02:42:19 -0700 (PDT)
-Date: Sat, 9 Aug 2025 12:42:16 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH DO NOT MERGE RFC v2 2/3] arm64: dts: qcom: sm8750-mtp:
- Enable Iris codec
-Message-ID: <pb3yyyjpffjb5u4oorv2rfo634h6v52gytmevn36k5xeqxhjwn@xj7x3dmaxwv3>
-References: <20250806-b4-sm8750-iris-dts-v2-0-2ce197525eed@linaro.org>
- <20250806-b4-sm8750-iris-dts-v2-2-2ce197525eed@linaro.org>
+	s=arc-20240116; t=1754732576; c=relaxed/simple;
+	bh=3VHE2B0l2Q90/ed5gALWvq6pSkiRJCQYOUx232VRNPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YGAUecnnTyXRDIs4mTXZw44maaluv44XZYWGgLIPypy+7No+Yqj9rdwupw97O+zQXe34v9BvanqdMPezs+o42o97ZJf5Q3F6G/Uxx2ccAEdqmZ0YjQGtVQBLIpDTgotCr+lEhCfAi+Dy/3qNkOxH7CMQFOmB7RwQFEO3LFl8ga4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZhklySx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D17C9C4CEE7;
+	Sat,  9 Aug 2025 09:42:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754732575;
+	bh=3VHE2B0l2Q90/ed5gALWvq6pSkiRJCQYOUx232VRNPs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lZhklySxjgEYlC0qHipBextwx/4FwvYnf2XeDrbjLmoJBKJcmuWyA000lTE3YEuYQ
+	 ONkcPM8uKZVG6LD9YoXJK39NGBQHqafTT+irDiJ8+5UVJActMTRpj1LNQJCvFVYpKB
+	 sTU3g0YpiUPLIvK89Serw2M9GxjWyFMLwnJBHY+Oh+yw5yXwv9AFbNSByq7b5kO6WD
+	 k2Y6gUZjGnrI1VOvLV1aoE+zlOG2Q9L5baU6o0vkYG3MalLVAYtlYE9sz+FKkj9Sl/
+	 aQxWKlbSCvdeCc6goz7T+XSKPe27Ld5PCakFoBgvS0Lr2r2mf0gTQSccpiFdNUIA/d
+	 5ObM0d2x7UvLA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Phil Auld <pauld@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Waiman Long <longman@redhat.com>,
+	linux-doc@vger.kernel.org
+Subject: [PATCH] doc: Add CPU Isolation documentation
+Date: Sat,  9 Aug 2025 11:42:47 +0200
+Message-ID: <20250809094247.8384-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250806-b4-sm8750-iris-dts-v2-2-2ce197525eed@linaro.org>
-X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689717fe cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=CFmXjhnyot7mmrd5IyEA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfXz5rN7sAv5Mt0
- 6LyR3kgMTNxVO+IjoYU2BdkLKWeUvxxCEnmDwo7/Aw6BbRKrV8F9v02newza3MLAq2FTM0ODaJG
- 1EzsZ5UtGFwj3YPDjzXBY53XlrSxALDRrQqgxKM/Kq6fp0vSx740Zeu6WEzp6v2bkQLErG8jpuF
- u6xhwmTFLD3dyLuYc+mbCaTef5QqFcJiH77LOvAT4wt4qqaePViOT6BvyjF35bCEp6B3SCY3iTI
- Bw3DXtmHsX6WGRB0wH+839hsbxolpS9VnmHl/JfOhsYJuDYG7mZrddNdNlH0YIqXlNtOTroKNEn
- L0XnvvIn27314ovZdQ8Vk/sUAZbZzyrPHq6DYlG/F9FMAJz8A1hHsY0TdyecAxWFslSQf/gL0V/
- 9oxtB0KN
-X-Proofpoint-GUID: que2pc0hAA03ClMVr5GSrV915DSRAgc5
-X-Proofpoint-ORIG-GUID: que2pc0hAA03ClMVr5GSrV915DSRAgc5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-09_03,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
- spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090031
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 06, 2025 at 02:38:31PM +0200, Krzysztof Kozlowski wrote:
-> Enable on SM8750 MTP the Iris video codec for accelerated video
-> encoding/decoding.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Do not merge because firmware (hard-coded in the driver) is not released.
+nohz_full was introduced in v3.10 in 2013, which means this
+documentation is overdue for 12 years.
 
-I don't think we have been delaying enablement of the hardware for these
-reasons. The user might have other ways to get the firmware (or to
-disable the device) in DT.
+The shoemaker's children always go barefoot. And working on timers
+hasn't made me arriving on time either.
 
+Fortunately Paul wrote a part of the needed documentation a while ago,
+especially concerning nohz_full in Documentation/timers/no_hz.rst and
+also about per-CPU kthreads in
+Documentation/admin-guide/kernel-per-CPU-kthreads.rst
+
+Introduce a new page that gives an overview of CPU isolation in general.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ Documentation/admin-guide/cpu-isolation.rst | 338 ++++++++++++++++++++
+ Documentation/admin-guide/index.rst         |   1 +
+ 2 files changed, 339 insertions(+)
+ create mode 100644 Documentation/admin-guide/cpu-isolation.rst
+
+diff --git a/Documentation/admin-guide/cpu-isolation.rst b/Documentation/admin-guide/cpu-isolation.rst
+new file mode 100644
+index 000000000000..250027acf7b2
+--- /dev/null
++++ b/Documentation/admin-guide/cpu-isolation.rst
+@@ -0,0 +1,338 @@
++=============
++CPU Isolation
++=============
++
++Introduction
++============
++
++"CPU Isolation" means leaving a CPU exclusive to a given userspace
++workload without any undesired code interference from the kernel.
++
++Those interferences, commonly pointed out as "noise", can be triggered
++by asynchronous events (interrupts, timers, scheduler preemption by
++workqueues and kthreads, ...) or synchronous events (syscalls and page
++faults).
++
++Such noise usually goes unnoticed. After all synchronous events are a
++component of the requested kernel service. And asynchronous events are
++either sufficiently well distributed by the scheduler when executed
++as tasks or reasonably fast when executed as interrupt. The timer
++interrupt can even execute 1024 times per seconds without
++significantly measurable impact most of the time.
++
++However some rare and extreme workloads can be quite sensitive to
++those kinds of noise. This is the case, for example, with high
++bandwidth network processing that can't afford losing a single packet
++or very low latency network processing. Typically those usecases
++involve DPDK, bypassing the kernel networking stack and performing
++direct access to the networking device from userscace.
++
++In order to run a CPU without or with limited kernel noise, the
++related housekeeping work needs to be either shutdown, migrated or
++offloaded.
++
++Housekeeping
++============
++
++In the CPU isolation terminology, housekeeping is the work, often
++asynchronous, that the kernel needs to process in order to maintain
++all its services. It matches the noises and disturbances enumerated
++above except when at least one CPU is isolated. Then housekeeping may
++make use of further coping mechanisms if CPU-tied work must be
++offloaded.
++
++Housekeeping CPUs are the non-isolated CPUs where the kernel noise
++is moved away from isolated CPUs.
++
++The isolation can be implemented in several ways depending on the
++nature of the noise:
++
++- Unbound work, where "unbound" means not tied to any CPU, can be
++  simply migrated away from isolated CPUs to housekeeping CPUs.
++  This is the case of unbound workqueues, kthreads and timers.
++
++- Bound work, where "bound" means tied to a specific CPU, usually
++  can't be moved away as-is by nature. Either:
++
++	- The work must switch to a locked implementation. Eg: This is
++	  the case of RCU with CONFIG_RCU_NOCB_CPU.
++
++	- The related feature must be shutdown and considered
++	  incompatible with isolated CPUs. Eg: Lockup watchdog,
++	  unreliable clocksources, etc...
++
++	- An elaborated and heavyweight coping mechanism stands as a
++	  replacement. Eg: the timer tick is shutdown on nohz_full but
++	  with the constraint of running a single task on the CPU. A
++	  significant cost penalty is added on kernel entry/exit and
++	  a residual 1Hz scheduler tick is offloaded to housekeeping
++	  CPUs.
++
++In any case, housekeeping work has to be handled, which is why there
++must be at least one housekeeping CPU in the system, preferrably more
++if the machine runs a lot of CPUs. For example one per node on NUMA
++systems.
++
++Also CPU isolation often means a tradeoff between noise-free isolated
++CPUs and added overhead on housekeeping CPUs, sometimes even on
++isolated CPUs entering the kernel.
++
++Isolation features
++==================
++
++Different levels of isolation can be configured in the kernel, each of
++which having their own drawbacks and tradeoffs.
++
++Scheduler domain isolation
++--------------------------
++
++This feature isolates a CPU from the scheduler topology. As a result,
++the target isn't part of the load balancing. Tasks won't migrate
++neither from nor to it unless affine explicitly.
++
++As a side effect the CPU is also isolated from unbound workqueues and
++unbound kthreads.
++
++Requirements
++~~~~~~~~~~~~
++
++- CONFIG_CPUSETS=y for the cpusets based interface
++
++Tradeoffs
++~~~~~~~~~
++
++By nature, the system load is overall less distributed since some CPUs
++are extracted from the global load balancing.
++
++Interface
++~~~~~~~~~
++
++- :ref:`Documentation/admin-guide/cgroup-v2.rst <Cpuset v2 "isolated"
++  partitions>`
++  are recommended because they are tunable at runtime.
++
++- The 'isolcpus=' kernel boot parameter with the 'domain' flag is a
++  less flexible alternative that doesn't allow for runtime
++  reconfiguration.
++
++IRQs isolation
++--------------
++
++Isolate the IRQs whenever possible, so that they don't fire on the
++target CPUs.
++
++Interface
++~~~~~~~~~
++
++- /proc/irq/*/smp_affinity as explained :ref:`Documentation/core-api/irq/irq-affinity.rst <here>` in detail.
++
++- The "irqaffinity=" kernel boot parameter for a default setting.
++
++- The "managed_irq" flag in the "isolcpus=" kernel boot parameter
++  tries a best effort affinity override for managed IRQs.
++
++Full Dynticks (aka nohz_full)
++-----------------------------
++
++Full dynticks extends the dynticks idle mode, which stop the tick when
++the CPU is idle, to CPUs running a single task in userspace. That is,
++the timer tick is stopped if the environment allows it.
++
++Global timer callbacks are also isolated from the nohz_full CPUs.
++
++Requirements
++~~~~~~~~~~~~
++
++- CONFIG_NO_HZ_FULL=y
++
++Constraints
++~~~~~~~~~~~
++
++- The isolated CPUs must run a single task only. Multitask requires
++  the tick to maintain preemption. This is usually fine since the
++  workload usually can't stand the latency of random context switches.
++
++- No call to the kernel from isolated CPUs, at the risk of triggering
++  random noise.
++
++- No use of posix CPU timers on isolated CPUs.
++
++- Architecture must have a stable and reliable clocksource (no
++  unreliable TSC that requires the watchdog).
++
++
++Tradeoffs
++~~~~~~~~~
++
++In terms of cost, this is the most invasive isolation feature. It is
++assumed to be used when the workload spends most of its time in
++userspace and doesn't rely on the kernel except for preparatory
++work because:
++
++- RCU is slower due to the locked, offloaded and threaded callbacks
++  processing (the same that would be obtained with "rcu_nocb=" boot
++  parameter).
++
++- Kernel entry/exit through syscalls, exceptions and IRQs are more
++  costly due to fully ordered RmW operations that maintain userspace
++  as RCU extended quiescent state. Also the CPU time is accounted on
++  kernel boundaries instead of periodically from the tick.
++
++- Housekeeping CPUs must run a 1Hz residual remote scheduler tick
++  on behalf of the isolated CPUs.
++
++Checklist
++=========
++
++You have set up each of the above isolation features but you still
++observe jitters that trash your workload? Make sure to check a few
++elements before proceeding.
++
++Some of these checklist items are similar to those of real time
++workloads:
++
++- Use mlock() to prevent your pages from being swapped away. Page
++  faults are usually not compatible with jitter sensitive workloads.
++
++- Avoid SMT to prevent your hardware thread from being "preempted"
++  by another one.
++
++- CPU frequency changes may induce subtle sorts of jitter in a
++  workload. Cpufreq should be used and tuned with caution.
++
++- Deep C-states may result in latency issues upon wake-up. If this
++  happens to be a problem, C-states can be limited via kernel boot
++  parameters such as processor.max_cstate or intel_idle.max_cstate.
++
++
++Full isolation example
++======================
++
++In this example, the system has 8 CPUs and the 8th is to be fully
++isolated. Since CPUs start from 0, the 8th CPU is CPU 7.
++
++Kernel parameters
++-----------------
++
++Set the following kernel boot parameters to disable SMT and setup tick
++and IRQ isolation:
++
++- Full dynticks: nohz_full=7
++
++- IRQs isolation: irqaffinity=0-6
++
++- Managed IRQs isolation: isolcpus=managed_irq,7
++
++- Prevent from SMT: nosmt
++
++The full command line is then:
++
++  nohz_full=7 irqaffinity=0-6 isolcpus=managed_irq,7 nosmt
++
++CPUSET configuration (cgroup v2)
++--------------------------------
++
++Assuming cgroup v2 is mounted to /sys/fs/cgroup, the following script
++isolates CPU 7 from scheduler domains.
++
++  cd /sys/fs/cgroup
++  # Activate the cpuset subsystem
++  echo +cpuset > cgroup.subtree_control
++  # Create partition to be isolated
++  mkdir test
++  cd test
++  echo +cpuset > cgroup.subtree_control
++  # Isolate CPU 7
++  echo 7 > cpuset.cpus
++  echo "isolated" > cpuset.cpus.partition
++
++The userspace workload
++----------------------
++
++Fake a pure userspace workload, the below program runs a dummy
++userspace loop on the isolated CPU 7.
++
++  #include <stdio.h>
++  #include <fcntl.h>
++  #include <unistd.h>
++  #include <errno.h>
++  int main(void)
++  {
++  	// Move the current task to the isolated cpuset (bind to CPU 7)
++  	int fd = open("/sys/fs/cgroup/test/cgroup.procs", O_WRONLY);
++  	if (fd < 0) {
++  		perror("Can't open cpuset file...\n");
++  		return 0;
++  	}
++
++  	write(fd, "0\n", 2);
++  	close(fd);
++
++  	// Run an endless dummy loop until the launcher kills us
++  	while (1)
++  	;
++
++  	return 0;
++  }
++
++Build it and save for later step:
++
++  # gcc user_loop.c -o user_loop
++
++The launcher
++------------
++
++The below launcher runs the above program for 10 seconds and traces
++the noise resulting from preempting tasks and IRQs.
++
++  TRACING=/sys/kernel/tracing/
++  # Make sure tracing is off for now
++  echo 0 > $TRACING/tracing_on
++  # Flush previous traces
++  echo > $TRACING/trace
++  # Record disturbance from other tasks
++  echo 1 > $TRACING/events/sched/sched_switch/enable
++  # Record disturbance from interrupts
++  echo 1 > $TRACING/events/irq_vectors/enable
++  # Now we can start tracing
++  echo 1 > $TRACING/tracing_on
++  # Run the dummy user_loop for 10 seconds on CPU 7
++  ./user_loop &
++  USER_LOOP_PID=$!
++  sleep 10
++  kill $USER_LOOP_PID
++  # Disable tracing and save traces from CPU 7 in a file
++  echo 0 > $TRACING/tracing_on
++  cat $TRACING/per_cpu/cpu7/trace > trace.7
++
++If no specific problem arose, the output of trace.7 should look like
++the following:
++
++  <idle>-0 [007] d..2. 1980.976624: sched_switch: prev_comm=swapper/7 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=user_loop next_pid=1553 next_prio=120
++  user_loop-1553 [007] d.h.. 1990.946593: reschedule_entry: vector=253
++  user_loop-1553 [007] d.h.. 1990.946593: reschedule_exit: vector=253
++
++That is, no specific noise triggered between the first trace and the
++second during 10 seconds when user_loop was running.
++
++Debugging
++=========
++
++Of course things are never so easy, especially on this matter.
++Chances are that actual noise will be observed in the aforementioned
++trace.7 file.
++
++The best way to investigate further is to enable finer grained
++tracepoints such as those of subsystems producing asynchronous
++events: workqueue, timer, irq_vector, etc... It also can be
++interesting to enable the tick_stop event to diagnose why the tick is
++retained when that happens.
++
++Some tools may also be useful for higher level analysis:
++
++- :ref:`Documentation/tools/rtla/rtla-osnoise.rst <rtla-osnoise>` runs a kernel
++  tracer that analyzes and output a
++  summary of the noises.
++
++- dynticks-testing does something similar but in userspace. It is available
++  at git://git.kernel.org/pub/scm/linux/kernel/git/frederic/dynticks-testing.git
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 259d79fbeb94..b5f1fc7d5290 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -94,6 +94,7 @@ likely to be of interest on almost any system.
+ 
+    cgroup-v2
+    cgroup-v1/index
++   cpu-isolation
+    cpu-load
+    mm/index
+    module-signing
 -- 
-With best wishes
-Dmitry
+2.50.1
+
 
