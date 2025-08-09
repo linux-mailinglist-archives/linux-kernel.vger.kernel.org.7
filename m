@@ -1,307 +1,140 @@
-Return-Path: <linux-kernel+bounces-761248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB67B1F614
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 21:48:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36725B1F615
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 21:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39EAA18C08EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 19:48:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37DEC17AA59
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 19:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839BB27A11A;
-	Sat,  9 Aug 2025 19:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38385279DC5;
+	Sat,  9 Aug 2025 19:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GW3Ki4is"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pdJGtnoK"
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9ABB12E1CD;
-	Sat,  9 Aug 2025 19:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A002741C0
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 19:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754768910; cv=none; b=XOIaRN82hVbSbLB1ZDkvtfOEcanljNBF7mgy1nxYPJNUQbNeeDLqciTJ7Ij++cTQAQlYceU/Ahmxw+QnZBTvuc9w2rRdpPFNYcb2ZtniwmN0ncv529IQoBW5ke9R6UbVir/J20MYVs0lR98aEMiRTfVhMjODeh9yuOUoAGcP87s=
+	t=1754769290; cv=none; b=CQIYcYI51dti6R5PMm5kDcIVnILn2AKxPLZyBD2t1GNm4j5OF6akEPsaGoGP0cjcz9DfqVH25nGbPqMejeVJKEHaDN0GP0Peg3ZPpSEYX3aqbgDD+Fjh9c03Zw3FRbVuVQTOtU1NjH2Utvk9MQF0qPvFq2eciZS+v7eQqjnM6JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754768910; c=relaxed/simple;
-	bh=kZKOnWSmfiYKAbhxP9TeIj78E+X0219vt+YwRgx5caA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oE5c3s9sTxtbAT3E0lmxrNd2ek0fyTgYHjFHPbIHKTT75LMC6oLQqcYm+Yith1bQvK0gFNRGJfeL3EbdkknTh69i/CLzN9+GiD/dtsMCFBiYUXguG+AG4RXVQsbb3iDaNS1Com+g6SXxO4zcJGZ3kJbwzlBskAPN5w0sxp1poVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GW3Ki4is; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6F0C4CEE7;
-	Sat,  9 Aug 2025 19:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754768910;
-	bh=kZKOnWSmfiYKAbhxP9TeIj78E+X0219vt+YwRgx5caA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GW3Ki4iswX83edgSTiywebaP2Tkoq9Z/2Z2cBdYlFoSW+sYXn4P4Cw7L3Laar0hCM
-	 DYcge4uPqn4WvBxIqLMNo70w6vHYnY0wT3dWcrS9c5lr1XnTXNE7OqH7+2GeNurYA6
-	 eUV2duYEEcyZ6u73hkDCEK2yvOHHOwgpJxE4P8R+16zfXo2j8rw/p63i4Ycr6gG4aG
-	 fPDC6SRbXu1zZvOBaWskAwuNuluH5Bu5dyKSCnZneaiZaVu0jpRonJWdX3SVuNA4E0
-	 lbG22aHZe5ke/I5xzQF5RlxfuSOW3lVnxG58G3Y/3TQ712FLJWKPU76y4Ma+1H8sbc
-	 gsrXDlGLlcZiA==
-Date: Sat, 9 Aug 2025 20:48:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ioana Risteiu <Ioana.Risteiu@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, "David Lechner" <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ramona Nechita
- <ramona.nechita@analog.com>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] iio: adc: update ad7779 to use IIO backend
-Message-ID: <20250809204820.3e0893fc@jic23-huawei>
-In-Reply-To: <20250806192502.10120-4-Ioana.Risteiu@analog.com>
-References: <20250806192502.10120-1-Ioana.Risteiu@analog.com>
-	<20250806192502.10120-4-Ioana.Risteiu@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754769290; c=relaxed/simple;
+	bh=Qple7dVHu51m/us1/VFXteTGBstgEBpuTHVxpQBcCd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XuXWXy169K+aYuiO9DgQclXnP9Sq3ByUM0vbUb/NX2QFtw6A/PCbP3g43RD+I5s2udPaIgApRm3UcbC5pKMILdTJEaPHFn/2uK/7jTJfqSy9rCP0eNfQBTfvFMGxvvynrw2a3nyxraBWrwN8l9Y4wTfor2rIqPfDRU7TaC2lM5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pdJGtnoK; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id kpeKuejjbRhnRkpeOufcbp; Sat, 09 Aug 2025 21:54:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1754769284;
+	bh=bK21wD7nl97qcLMn06fqRw81oy02Las0yDlYoImnWWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=pdJGtnoKjn6ZExkcIGvsuFX/v+vAQj3U8rqppt9pcNnhEa/TYH4T+npTWIfaBRkTU
+	 sv/xalT4h1eAhoB37KT3zpLLFj+YBW+PoUvLZkM6EXv1IAGj1TOEX7qReaO1iRptRP
+	 ihCy91exWe2NFFWvjf7sGsjttYYKXtlYKQ0J99yWZkDoFd3i94fhpYe8CiwlQL+OuJ
+	 /Sua09mZuEUdXFsBjrdtd8OT1FN45ERIJtDwxwkwNIvCmJkRmCQPCxCBDfg7E9HG+j
+	 1OnKUY/ArgfwQOEGzXwUe+T89syTiO1KPQmW7L5pscqNF3wLVeULUgc7iNRs0z6ApA
+	 cSMDc3c8P/9sQ==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 09 Aug 2025 21:54:44 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <5811d6f7-7305-4611-a06f-793343b0412e@wanadoo.fr>
+Date: Sat, 9 Aug 2025 21:54:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] misc: ds1682: fix out-of-bounds access in EEPROM
+ functions
+To: wajahat iqbal <wajahatiqbal22@gmail.com>, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org
+References: <CA+LcPJ3nAdBmuSBQ0mgzFmUL=ZE5RKkfp_4dQf-ycTiHxH=PXA@mail.gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <CA+LcPJ3nAdBmuSBQ0mgzFmUL=ZE5RKkfp_4dQf-ycTiHxH=PXA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 6 Aug 2025 22:25:00 +0300
-Ioana Risteiu <Ioana.Risteiu@analog.com> wrote:
-
-> Add a new functionality to ad7779 driver that streams data through data
-> output interface using IIO backend interface.
+Le 09/08/2025 à 17:54, wajahat iqbal a écrit :
+> Found a couple of issues in the ds1682 driver while reviewing the code:
 > 
-> Signed-off-by: Ioana Risteiu <Ioana.Risteiu@analog.com>
-Hi Ionna,
+> The EEPROM read/write functions don't check if offset and count exceed
+> the 10-byte EEPROM size, which could lead to out-of-bounds I2C access.
+> 
+> Also replaced sprintf with scnprintf in the sysfs show function for
+> better safety.
+> 
+> For reads beyond EEPROM size, return 0. For writes, return -EINVAL if
+> starting beyond bounds, otherwise truncate to fit within the EEPROM.
+> 
+> Signed-off-by: Wajahat Iqbal <wajahatiqbal22@gmail.com>
+> ---
+>   drivers/misc/ds1682.c | 12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/misc/ds1682.c b/drivers/misc/ds1682.c
+> index cb09e056531a..4cf4b43e5355 100644
+> --- a/drivers/misc/ds1682.c
+> +++ b/drivers/misc/ds1682.c
+> @@ -92,7 +92,7 @@ static ssize_t ds1682_show(struct device *dev,
+> struct device_attribute *attr,
+>    * Special case: the 32 bit regs are time values with 1/4s
+>    * resolution, scale them up to milliseconds
+>    */
+> - return sprintf(buf, "%llu\n", (sattr->nr == 4) ? (val * 250) : val);
+> + return scnprintf(buf, PAGE_SIZE, "%llu\n", (sattr->nr == 4) ? (val *
+> 250) : val);
+>   }
+> 
+>   static ssize_t ds1682_store(struct device *dev, struct device_attribute *attr,
+> @@ -163,6 +163,11 @@ static ssize_t ds1682_eeprom_read(struct file
+> *filp, struct kobject *kobj,
+>    dev_dbg(&client->dev, "ds1682_eeprom_read(p=%p, off=%lli, c=%zi)\n",
+>    buf, off, count);
+> 
+> + if (off >= DS1682_EEPROM_SIZE)
+> + return 0;
+> + if (off + count > DS1682_EEPROM_SIZE)
+> + count = DS1682_EEPROM_SIZE - off;
+> +
+>    rc = i2c_smbus_read_i2c_block_data(client, DS1682_REG_EEPROM + off,
+>       count, buf);
+>    if (rc < 0)
+> @@ -180,6 +185,11 @@ static ssize_t ds1682_eeprom_write(struct file
+> *filp, struct kobject *kobj,
+>    dev_dbg(&client->dev, "ds1682_eeprom_write(p=%p, off=%lli, c=%zi)\n",
+>    buf, off, count);
+> 
+> + if (off >= DS1682_EEPROM_SIZE)
+> + return -EINVAL;
+> + if (off + count > DS1682_EEPROM_SIZE)
+> + count = DS1682_EEPROM_SIZE - off;
+> +
+>    /* Write out to the device */
+>    if (i2c_smbus_write_i2c_block_data(client, DS1682_REG_EEPROM + off,
+>       count, buf) < 0)
 
->  
-> +static int ad7779_set_data_lines(struct iio_dev *indio_dev,
-> +				 unsigned int num_lanes)
-> +{
-> +	struct ad7779_state *st = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = ad7779_set_sampling_frequency(st, num_lanes * AD7779_DEFAULT_SAMPLING_1LINE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = iio_backend_num_lanes_set(st->back, num_lanes);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
-> +				    AD7779_DOUT_FORMAT_MSK,
-> +				    FIELD_PREP(AD7779_DOUT_FORMAT_MSK, 2 - ilog2(num_lanes)));
-> +}
-> +
-> +static int ad7779_conf_channels(struct iio_dev *indio_dev, const struct ad7779_state *st)
+Are these new tests really needed?
 
-As per other branch of thread.  This needs a name that makes it more
-obvious it's a probe time setup rather that anything to do with configuring
-channels at runtime.
+Isn't it already done the same way by the core, because of the ".size = 
+DS1682_EEPROM_SIZE" in ds1682_eeprom_attr?
 
-> +{
-> +	struct iio_chan_spec *channels;
-> +	struct device *dev = &st->spi->dev;
-> +	int num_channels = ARRAY_SIZE(ad7779_channels);
-> +
-> +	channels = devm_kcalloc(dev, num_channels, sizeof(*channels), GFP_KERNEL);
-devm_kmemdup_array()?
+I'm' not really familiar with this code, but my understanding is that it 
+goes thru sysfs_kf_bin_write() and sysfs_kf_bin_read().
 
-> +	if (!channels)
-> +		return -ENOMEM;
-> +
-> +	memcpy(channels, st->chip_info->channels, num_channels * sizeof(struct iio_chan_spec));
-> +
-> +	for (int i = 0; i < 8; i++)
-
-Andy got this, but make sure to get that 8 from somewhere. It's num_channels I think. 
-Though given most of this code collapses into a single call to devm_kmemdup_array()
-I think that local variable may not make much sense. ARRAY_SIZE may be clearer.
-
-> +		channels[i].scan_type.endianness = IIO_CPU;
-> +
-> +	indio_dev->channels = channels;
-> +
-> +	return 0;
-> +}
-> +
-> +static int setup_irq(struct ad7779_state *st, struct iio_dev *indio_dev)
-
-As below. Do this in a precursor patch and give it a better name!
-Pretty much everything in IIO driver gets namespaced with a driver
-specific prefix. Makes future problems with new generic functions
-much less likely and makes it clear what is local to the driver.
-
-> +{
-> +	int ret;
-> +	struct device *dev = &st->spi->dev;
-> +
-> +	indio_dev->info = &ad7779_info;
-> +	indio_dev->channels = st->chip_info->channels;
-> +
-> +	st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d", indio_dev->name,
-> +					  iio_device_id(indio_dev));
-> +	if (!st->trig)
-> +		return -ENOMEM;
-> +
-> +	st->trig->ops = &ad7779_trigger_ops;
-> +
-> +	iio_trigger_set_drvdata(st->trig, st);
-> +
-> +	ret = devm_request_irq(dev, st->spi->irq, iio_trigger_generic_data_rdy_poll,
-> +			       IRQF_ONESHOT | IRQF_NO_AUTOEN, indio_dev->name,
-> +			       st->trig);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "request IRQ %d failed\n",
-> +					st->spi->irq);
-> +
-> +	ret = devm_iio_trigger_register(dev, st->trig);
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->trig = iio_trigger_get(st->trig);
-> +
-> +	init_completion(&st->completion);
-> +
-> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-> +					      &iio_pollfunc_store_time,
-> +					      &ad7779_trigger_handler,
-> +					      &ad7779_buffer_setup_ops);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
-> +				    AD7779_DCLK_CLK_DIV_MSK,
-> +				    FIELD_PREP(AD7779_DCLK_CLK_DIV_MSK, 7));
-
-return ad7779_spi_write_mask...
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int setup_back(struct ad7779_state *st, struct iio_dev *indio_dev)
-> +{
-> +	struct device *dev = &st->spi->dev;
-> +	int ret = -EINVAL;
-> +	int num_lanes;
-> +
-> +	indio_dev->info = &ad7779_info_data;
-> +
-> +	ret = ad7779_conf_channels(indio_dev, st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->back = devm_iio_backend_get(dev, NULL);
-> +	if (IS_ERR(st->back)) {
-> +		dev_err_probe(dev, ret, "failed to get iio backend");
-ret == 0 which isn't what you want.
-> +		return PTR_ERR(st->back);
-
-I think Andy pointed this out as well.  I'm not being too careful to not
-duplicate unless I happen to remember he covered something in the earlier
-review.
-
-> +	}
-> +
-> +	ret = devm_iio_backend_request_buffer(dev, st->back, indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_iio_backend_enable(dev, st->back);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = device_property_read_u32(dev, "adi,num-lanes", &num_lanes);
-> +	if (ret < 0)
-
-Whilst it's a bit fiddly as this is an array read underneath, the fact
-num_lanes is not null is enough to ensure if (ret) is fine here.
-
-> +		return ad7779_set_data_lines(indio_dev, 4);
-> +
-> +	return ad7779_set_data_lines(indio_dev, num_lanes);
-> +}
-> +
->  static int ad7779_probe(struct spi_device *spi)
->  {
->  	struct iio_dev *indio_dev;
-> @@ -760,9 +917,6 @@ static int ad7779_probe(struct spi_device *spi)
->  	struct device *dev = &spi->dev;
->  	int ret = -EINVAL;
->  
-> -	if (!spi->irq)
-> -		return dev_err_probe(dev, ret, "DRDY irq not present\n");
-> -
->  	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
->  	if (!indio_dev)
->  		return -ENOMEM;
-> @@ -804,45 +958,14 @@ static int ad7779_probe(struct spi_device *spi)
->  		return ret;
->  
->  	indio_dev->name = st->chip_info->name;
-> -	indio_dev->info = &ad7779_info;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
-> -	indio_dev->channels = st->chip_info->channels;
->  	indio_dev->num_channels = ARRAY_SIZE(ad7779_channels);
->  
-> -	st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d", indio_dev->name,
-> -					  iio_device_id(indio_dev));
-> -	if (!st->trig)
-> -		return -ENOMEM;
-> -
-> -	st->trig->ops = &ad7779_trigger_ops;
-> -
-> -	iio_trigger_set_drvdata(st->trig, st);
-> -
-> -	ret = devm_request_irq(dev, spi->irq, iio_trigger_generic_data_rdy_poll,
-> -			       IRQF_ONESHOT | IRQF_NO_AUTOEN, indio_dev->name,
-> -			       st->trig);
-> -	if (ret)
-> -		return dev_err_probe(dev, ret, "request IRQ %d failed\n",
-> -				     st->spi->irq);
-> -
-> -	ret = devm_iio_trigger_register(dev, st->trig);
-> -	if (ret)
-> -		return ret;
-> -
-> -	indio_dev->trig = iio_trigger_get(st->trig);
-> -
-> -	init_completion(&st->completion);
-> -
-> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-> -					      &iio_pollfunc_store_time,
-> -					      &ad7779_trigger_handler,
-> -					      &ad7779_buffer_setup_ops);
-> -	if (ret)
-> -		return ret;
-> +	if (device_property_present(dev, "io-backends"))
-> +		ret = setup_back(st, indio_dev);
-> +	else
-> +		ret = setup_irq(st, indio_dev);
-
-Do the factoring out of the setup_irq stuff in a precursor patch.
-Then this one will just make it conditional as part of adding the new backend stuff.
-
-setup_irq isn't a good name. It does a bunch of things that aren't
-directly related to the irq.  Prefix the function as well
-ad7779_setup_without_backend() maybe?
-
-
->  
-> -	ret = ad7779_spi_write_mask(st, AD7779_REG_DOUT_FORMAT,
-> -				    AD7779_DCLK_CLK_DIV_MSK,
-> -				    FIELD_PREP(AD7779_DCLK_CLK_DIV_MSK, 7));
->  	if (ret)
->  		return ret;
->  
-> @@ -936,3 +1059,4 @@ module_spi_driver(ad7779_driver);
->  MODULE_AUTHOR("Ramona Alexandra Nechita <ramona.nechita@analog.com>");
->  MODULE_DESCRIPTION("Analog Devices AD7779 ADC");
->  MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("IIO_BACKEND");
+CJ
 
 
