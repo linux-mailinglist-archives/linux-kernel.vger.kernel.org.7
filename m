@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-761205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19793B1F5C3
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:06:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A2FB1F5C4
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFEAF7AF8FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8945218C13F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69EE2BEC27;
-	Sat,  9 Aug 2025 18:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF6F2BE7B3;
+	Sat,  9 Aug 2025 18:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqNbQEqJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="epBJJYlc"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C917276058;
-	Sat,  9 Aug 2025 18:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC3B2BD587
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 18:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754762775; cv=none; b=EpHefuEXGZSOEEuNKE2A9tBUlDqF8j1o4EQH/yv2detYC7N9EbhXGYDEzx8yVZdluUiLqx0Gc6r4oqyeBUnawgOUK/ozMgDlO+/DIJIQnvz6N7HhEHv+et19oEMH4u1V8LZxFIdgOzbsTADeh9qxYt/NPpf3vAZcuouxjEVicwk=
+	t=1754763122; cv=none; b=LnBGFWpFeN+1FlvL+AhQ2ExrQNhnrGp83leAd+9XQkdR0ed0tymAtP4ef30nYXVFTAbPqtfdvji1g6yOJkzkluRN27eSp9lyP/n33CVQUD5GtHZg7/UKurhbDmdogFPcerzQfAhaPcfsUu0kcyak8RDLV4fWbOnOdp0WJSW6TOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754762775; c=relaxed/simple;
-	bh=OWQOb5Wv6YQJrRHXG8/0NDloufLu93A2qR9hQYvfMjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TxGrZyS0dCNCTlnctHzrXUyRbJOkf02y6wM6pAOEFvGwp+UX4ztsySvCBT92nvM2ymdgO8Q6PQUasuIT4WF2SXu13ueXTW2dc3y0ag8Wa2xgkabgra8bdEnXu4YGGGvB5jphNtTvRuSrDTbI8Pgqvp7gnmokFZtRoVJuwZL3LlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqNbQEqJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B2F2C4CEE7;
-	Sat,  9 Aug 2025 18:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754762774;
-	bh=OWQOb5Wv6YQJrRHXG8/0NDloufLu93A2qR9hQYvfMjY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XqNbQEqJqxkipxn8r7otRCRmHoApwspj80PhUKkhiaXnK59vdMDWW6VYGCpP3Db2L
-	 bJbJqORv300DBZNpiTmdKAgA+t1QCWXbkxEv3CzxS27+dyDb4btyJkHlrHzf3ZUEhf
-	 oXcHX9BdqakSJSJefZ0kEp3234T50P+QNQmg/JyErzJBwAwJ0U31R2Q3DM4CRB8jwr
-	 cBMej77vbvfs6Rg11HLCNB9zQMWhfB4ozwAldHdHjRTxxUh0zH39Blyg5alXgdD1I6
-	 chm91J13W4mAEsmzRJEoyoRamDVv8F30iFFAsZPriO2HK3Uh4eY+rCBPB0G78OThMI
-	 lP+IVt/pnFvJA==
-Date: Sat, 9 Aug 2025 19:06:09 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Sean Nyekjaer <sean@geanix.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 1/5] iio: imu: inv_icm42600: Simplify pm_runtime
- setup
-Message-ID: <20250809190609.4fef9df7@jic23-huawei>
-In-Reply-To: <CAHp75VdKNE0xD8xbJQ2RSCA=_MB9DMZtXRTCNkpdKdv8vW-Q-w@mail.gmail.com>
-References: <20250808-icm42pmreg-v2-0-a480279e7721@geanix.com>
-	<20250808-icm42pmreg-v2-1-a480279e7721@geanix.com>
-	<CAHp75VdKNE0xD8xbJQ2RSCA=_MB9DMZtXRTCNkpdKdv8vW-Q-w@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754763122; c=relaxed/simple;
+	bh=fEeFwC+/L6QrhxcJ8HZszMYzB2e64gb9ymZP9Mtxo0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bs1HrTlh5d2LYq1NhtkjOS9eLwQHXT+oC77GcGL7wvy0GdGRkPmN8qNw6mq29RblPIYbgbe79yIUtPAO3ajRC+es2UzsSLI0BSa1Bu86tPvCuA1NX2x/kpAyYtYmUQs4csfWO7TPyBaPQo+UdwKSwAiuNoJziSlzXCF+HJsTw3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=epBJJYlc; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EE11D40E01FD;
+	Sat,  9 Aug 2025 18:11:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1_-T55u3TL3a; Sat,  9 Aug 2025 18:11:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1754763113; bh=ufHTacxAQRsC7C4xJRXkBE6O2TywptRtk2q6pWPAR50=;
+	h=Date:From:To:Cc:Subject:From;
+	b=epBJJYlcKe8IIfuzhTTvaSVrqHf3A9ob6aYTKtYMlzK3d05jbxdtFesphjenlzDSG
+	 ZAD5yR+nmj2pALCHC/rFmhsAVoML/vE/U1MM65BoouhHX5WsB2JwGWKsMgJxDf5Opu
+	 ryKzniU5GM0isxAHbwNQjUT1rwedo2P7Ghcm7Yuz96+XbnJ8nVGUWrIJumnqYEVu5g
+	 +sOuAn67GjG6iusfbfA2UYrwqxbCk7tl/3sxy/7MqJtOFQo96zgvcLc0IWT16zbEvU
+	 BqX1wSj+0KOcWs4MwS+TERLlV4nfdC50XViqrRtMAsnLGmbpyE230gpGb57E9rOKTV
+	 1Qx8RJfTOEGCHJlHXPdiOoKnxpaTdVb7Y5FGC9AVx3360vgG0tPF/OwQypBjVrvXnS
+	 XKF4KZRhuL59IaF0w0gFbBW38KotDdpHV5iRKJfFTMCKOMU4am3OW7ceRePMni7efC
+	 f6Nub0Ar9fJGl+/+1RVmr43JRET5yGpsGH5a9YIPn3LzkRu5F4f7hnNQm9mSBXVGNA
+	 BZzaw3wE3ZjvIm03aRd3FQDjSlSnsFsxReqxgKhBdjmqhvNT1po886rZB816MIZIYU
+	 fvxR/T75uOWVTcH0W894yOTOMxW8jm9RyoUYcz5EcoyQkupIz5QsIDlpoCs1iGlVQ1
+	 xULvmRRMHWV+/+456DwT0O/4=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 06D9240E0176;
+	Sat,  9 Aug 2025 18:11:49 +0000 (UTC)
+Date: Sat, 9 Aug 2025 20:11:49 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/urgent for v6.17-rc1
+Message-ID: <20250809181149.GAaJePZT3hBq-Vk-hm@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Fri, 8 Aug 2025 23:37:51 +0200
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+Hi Linus,
 
-> On Fri, Aug 8, 2025 at 5:58=E2=80=AFPM Sean Nyekjaer <sean@geanix.com> wr=
-ote:
-> >
-> > Rework the power management in inv_icm42600_core_probe() to use
-> > devm_pm_runtime_set_active_enabled(), which simplifies the runtime PM
-> > setup by handling activation and enabling in one step.
-> > Remove the separate inv_icm42600_disable_pm callback, as it's no longer
-> > needed with the devm-managed approach.
-> > Using devm_pm_runtime_enable() also fixes the missing disable of
-> > autosuspend.
-> > Update inv_icm42600_disable_vddio_reg() to only disable the regulator if
-> > the device is not suspended i.e. powered-down, preventing unbalanced
-> > disables.
-> > Also remove redundant error msg on regulator_disable(), the regulator
-> > framework already emits an error message when regulator_disable() fails.
-> >
-> > This simplifies the PM setup and avoids manipulating the usage counter
-> > unnecessarily. =20
->=20
-> ...
->=20
-> > +       struct device *dev =3D regmap_get_device(st->map);
-> >
-> > +       if (!pm_runtime_status_suspended(dev))
-> > +               regulator_disable(st->vddio_supply); =20
->=20
-> I would rather use positive conditional as it seems to me more scalable
-Hi Andy,
->=20
+please pull the x86/urgent lineup for v6.17-rc1.
 
-To potentially save time when Sean looks at this.  I don't follow. Do you m=
-ean
-something like
-	if (pm_runtime_status_suspended(dev))
-		return;
+Thx.
 
-	regulator_disable(st->vddio_supply);
+---
 
-?
+The following changes since commit 98e8f2c0e0930feee6a2538450c74d9d7de0a9cc:
 
-If so I'm not seeing why we'd want this to scale as it's a single use
-devm_set_action_or_reset() callback doing just one thing.
+  Merge tag 'x86-platform-2025-07-29' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip (2025-07-29 20:05:06 -0700)
 
-Jonathan
+are available in the Git repository at:
 
-> >  } =20
->=20
->=20
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.17_rc1
 
+for you to fetch changes up to ce0b5eedcb753697d43f61dd2e27d68eb5d3150f:
+
+  x86/irq: Plug vector setup race (2025-08-04 23:34:03 +0200)
+
+----------------------------------------------------------------
+- Fix an interrupt vector setup race which leads to a non-functioning device
+
+- Add new Intel CPU models *and* a family: 0x12. Finally. Yippie! :-)
+
+----------------------------------------------------------------
+Thomas Gleixner (1):
+      x86/irq: Plug vector setup race
+
+Tony Luck (1):
+      x86/cpu: Add new Intel CPU model numbers for Wildcatlake and Novalake
+
+ arch/x86/include/asm/hw_irq.h       | 12 ++++---
+ arch/x86/include/asm/intel-family.h |  5 +++
+ arch/x86/kernel/irq.c               | 63 ++++++++++++++++++++++++++++---------
+ 3 files changed, 60 insertions(+), 20 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
