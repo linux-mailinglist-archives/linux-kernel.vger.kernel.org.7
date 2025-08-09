@@ -1,121 +1,171 @@
-Return-Path: <linux-kernel+bounces-761141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C877B1F4DC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:54:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85892B1F4CC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 456237A6429
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:53:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63960189ED73
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E33829DB77;
-	Sat,  9 Aug 2025 13:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799F5277031;
+	Sat,  9 Aug 2025 13:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTElCiPe"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="EvpGBCHd"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F4818C322;
-	Sat,  9 Aug 2025 13:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A4024166E
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 13:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754747663; cv=none; b=ZpXV5qYPUkFSLfu+Atk3FHElpVdgoxRojpTYE3IV7ys72oMtmkxc6c8B+YduhCtOZze263wiUv1EGCbUMNsqEYPmiQSbHwdhPfDp5g5fKH4OL5rl0EqD/iEZRtyQFk1UH90y3bHC2utwdNB5kzvtE7LHcYXYGzAT3Yi+Ua0YFe8=
+	t=1754747520; cv=none; b=cpAiVM7OJvEBXntTq9lLy8u/HmBdP/1gSGwuAhBtOG/HVi8rgZnrSgR3XGgqUhs3TM2sVHT29fr8fvIOvEC8V0oqhkojdq23X9luXmMaTiuS4EBjhy7X/9rCAWWx2HkQKOkFXbUcZnFfibLiNpFFtv+KKkMa6kYTwyxZBCe/3MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754747663; c=relaxed/simple;
-	bh=7Xp+H3/Fm8Q2xD0Zm9yjoa74Ff3Js1v2RozQaurWIKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eHcLISIDTzRdL14lTQjeeb77fRirCJHS+RymZM53yPISrV9hEnxtSInNzz/isjiA7VaO1mAUTH705LeZNs/Vw3VB5zv/UOe8/jdQ3psaoqQBJfWiaQpGq+ulKvrJJoCLFHQMV9WeOGWLMjeFBg3GoZVGmAmDEckgxHI87MNRcEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTElCiPe; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6f6so3616966a12.2;
-        Sat, 09 Aug 2025 06:54:21 -0700 (PDT)
+	s=arc-20240116; t=1754747520; c=relaxed/simple;
+	bh=tjyqMDsgDi7/+p9JXVyraldUe4Vb3gfBUInuu8Tjjwg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q1mDUm16oNehxkvaSft+tuzdoSpzgcdlVYVhY0VD23M/IdqhMz1b9z6uOlafw618nY9xk/vBlYLdaQ3PJtXcnL9hd32EJnsRUv0BAjvUfBoqjBFMzONA/cBpvWSxazLdXgkomEO9mwDuf1b0WUK1PLQfPvj8CS2NcGXNh0JlIUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=EvpGBCHd; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76bd6e84eddso3963523b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 06:51:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754747660; x=1755352460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WKbJICwI7R9TEKBrctvbj5erT6wdzmAXj7iW9KBeWVs=;
-        b=HTElCiPeRQbkPmk3QtuSX4qdDgWBq2oCn99UmPe9D6Xm+KXY2D9E0B/gJLG1J/pJuQ
-         D9ww5bI1dcq8kQ3MNqugXmOr2RlXjs74LFHVcrWY8ScvxaHLZnjXNhZvCF7aBohkKInZ
-         U0cFG6LGWYhLdBZWTTEAjmzjktoknrONPkumKqeuHvyc33Le06lwI4QSGQ6VySzw9X1E
-         yZt45zV2LhnzIdDbyogXPSjClnFbbeEuKBn0RMxNN/+fJ2N3UIlrVTTlpr/fH6oisU8Z
-         NeK/lsl/t2OxmvrK69sRjIJyGoB9eifAVurn02pjfBgSWvqNb9cnSgdZ32vj+ihn3j/2
-         0SeA==
+        d=csie.ntu.edu.tw; s=google; t=1754747517; x=1755352317; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jFMFOpY04n7pfsjOLDYFeb6qmDpqp5aExAGmAsyPClc=;
+        b=EvpGBCHdr6Tyr0yM8WuDiz3JwGPpXKdNFm8+sm5Wky+G0Mir0O/LTLFEm1PpF0oHtu
+         91ikmHaZi0XHHd0c3r3oIxw0jMT3PyqBkGpoWdcENfHaNWThyGEp/WVkBl6KtZzqJiYx
+         +II73la7CVtc/2b6NWngG2EpUG10ICurKN+XIc0HvVJLtfvhJJuXkqY5OgfrV9Uk/Knh
+         jdrMkPVoLfMBOtrTSz3nnH5h4ZYvrW6GO2BopDvP55RBdSQvdElxAOYRkfpzTHHqQcuf
+         SJ41oqp10DT2dJ6aYlzdXoU8wpRvqWVdvkQ+I7qFBdM45TcdRw4VHd+zmRWMWSvqzzpQ
+         vc0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754747660; x=1755352460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WKbJICwI7R9TEKBrctvbj5erT6wdzmAXj7iW9KBeWVs=;
-        b=uGQ6+Bml0w0myL0FH8hu9Pv8AYaWoQ2+kfsOc4bTXBHtkhPoiaJs76MIWyQtfrBW6s
-         Ozt1ux5MUy3buFEcFIvXb4+59HYAPT4GDH+DFJvQVaeK5x9eKIaOZk0zyZ/f8EfxR3u+
-         LmEULZrRBE7a+wkQtOVi9Jeh8X6rolYzkQ81NiLYTAH6BE52eye3qwWvJk/OEA0YCBIA
-         uBwe3EADz/ATvO/7HB6oaxTdv9L6SY8aPRsHFTEq193E4RgSZUi/BjTyNBDBE7JEcqt9
-         UomfaEXzUiFbM8WSXszi5qGiPRiVkFgXV8lGnvv3vQVU/Q546+2A3x2yEuOWzRXrH/Cq
-         iSIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1sJVETeK9HeQeEoWFAgdBz4reV4Igbu4zaPipPaInpafodR5wuo/HqQ+WMd/JgiGfhPgVUip53B8u0Nrw@vger.kernel.org, AJvYcCUwCS1K/XV2MQ905XigPAbFP4SmSyHHSdVv+NRCwBRb4Wogxb7adOKhQB6tXYR3U1pjP5xZl2LMdYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxekGWpPZ4uLjHtuKTWFoQhISnCl4q3Yq+g+c3PrBMB4g/QxhBd
-	4/R7R0Pst7mKyIdDQbcOS92Yh1gI6r2i3bDaFhe3+gZTIaImF3srDNr5YlhWEkyi0HtKRihrmuA
-	/faJXeH+N6zRJ/rwGaBRSi+uOMOd6nwo=
-X-Gm-Gg: ASbGncuC7dNAYs7S7StHIk3903cGffPqX38KurP4QvbwCk6RhdeFVJbmA/+AL6ZDw6M
-	knnmF3hH1bj+4hB6jN5SbAxeiCVASspt/sGGzJUpEBhYW6LiZfE7joa9RUBk+n0xhM/JrLM2Nlp
-	GJUMIrHE3P9v6s1XXiz66PGsUGMWAfnMOUG2/nEdUn4rolRdeKcjUskSCzzK9ijAjFDhFafDJ5P
-	+mUfXBrQQ==
-X-Google-Smtp-Source: AGHT+IGFKn7yA9e2N9IurEtBV7XxrZhhF9iFQPjWWNgCk2ICO4tBbIc2md2clhXR7CaxLDLs5nDGWg7lakOdE+eW3dU=
-X-Received: by 2002:a17:906:9f85:b0:ade:43e8:8fa4 with SMTP id
- a640c23a62f3a-af9c6373614mr675128166b.18.1754747660120; Sat, 09 Aug 2025
- 06:54:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754747517; x=1755352317;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jFMFOpY04n7pfsjOLDYFeb6qmDpqp5aExAGmAsyPClc=;
+        b=Op9asXMV296cMTTgh9zKm0Mo1RDVvtOGb1IoYlYjWIgZsc/NvIRWA6ldHUVLWrR/4I
+         CkH9lv7BM4fFvYi5BfJG8eLSlMFq/oCRrMJePsSRWNsxHrUuS8rQXGcPhQhw0v5wR6wo
+         CSo5DxzN60Uzxp01AH9eHL+hrFVqvHvF8YcCKw+uFveHHc0Wg7+POO8ouRPbDxzn8gVo
+         45SdsWEXD4L+HtpTw16jp/8FdH5b4miDwSD2o+71UncyKmbciU441sJTafNDEsrIX7nO
+         nTChZOXBhHzV5Ucl6zP4R0+O/ptxy+Ixh0D11JSU9kjFm83XygBBwbHx1j+yMKlGNH4J
+         AOqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNsV/4S5/MKFPYI6F0usWpCFjvqVwTCIbsJlPKAX8pkPH1hINRd7p5JJ0dV37HNujzXmtHDSuulGVYgnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlFfPV9zkTd5qxyQJgwv5EML8d8cqBvf7IswQDXFYkf6V0Jaqb
+	8ilJ/YTEB1/6iphvp1yZubPxShyJUX/cRmh9jwxUu4JFxcNCCYxRguGOJqZsJXBTqqWoMMambnM
+	+3nrDS1hIEM5GpMPn11OCp/txmEN01Cd+YoLz13/iS0iyhKzYoIcrmxSK1r0=
+X-Gm-Gg: ASbGnctURMWxgqXM/iq0a4IM/TVuh8e0tRGn60rFRQUPE8R9CEfz/FyeB3mDKZBtfHd
+	uEqDS8VqenFLjvg2DYg4el/dVJWmMNketrQag0ZrY/Lyyb53yrScdHezs1+aS0c337kZ2PDbj/v
+	IDJRRb9JSfai9YdRRdidj791F8fkJy7Y1wKXxhIjm5zpLYVwjtPGcoBZ4W+xHOjOWOvmVGv3HrE
+	xH1HmshM4zStC9f4kCajYGOQpeCLOEa7h046sM5yWdClmOsj7SJJ+2Rxq4k2Gfj0K/htLmv+gml
+	MLlnLXwco+Fn9ho4+gYemmXBNsTB0e6eILlK4OdP+dZx+nDKqDRs+hzm3Y0B6ShwGHQwL3t0cvD
+	4Aewltjwjqu9/A4NB0QmGYnk2NWbKyu/hBXh9l9ohYXzzpL3zlq5yIikHGfKFdptZkg==
+X-Google-Smtp-Source: AGHT+IEeNgCRS6Ls8b+R2Cf86RDBC5tmWlbLAIMn2W5koGX7pj8yLDZ046+xiBALeYUwG2HzAegNfg==
+X-Received: by 2002:a05:6a21:6d94:b0:240:1bdb:bed2 with SMTP id adf61e73a8af0-240551be2a1mr10707896637.32.1754747516856;
+        Sat, 09 Aug 2025 06:51:56 -0700 (PDT)
+Received: from zenbook (1-162-100-9.dynamic-ip.hinet.net. [1.162.100.9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8fa10sm22538342b3a.52.2025.08.09.06.51.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 06:51:56 -0700 (PDT)
+From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+To: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>,
+	Will Deacon <will@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2] KVM: arm64: ptdump: Don't test PTE_VALID alongside other attributes
+Date: Sat,  9 Aug 2025 21:53:56 +0800
+Message-ID: <20250809135356.1003520-1-r09922117@csie.ntu.edu.tw>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808190203.7493-1-marcelo.schmitt@analog.com>
- <CAHp75Vc1KgiDUUEjeEKdrSfom6NThPG-383O=sezydnrZLoGqg@mail.gmail.com> <aJdSYIv8_QX0WwdI@debian-BULLSEYE-live-builder-AMD64>
-In-Reply-To: <aJdSYIv8_QX0WwdI@debian-BULLSEYE-live-builder-AMD64>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 9 Aug 2025 15:53:42 +0200
-X-Gm-Features: Ac12FXxIrAjtdDv5Q0kGFop7xcEZ9v_yGMoa6DhqTYIs_wezLkDMJmGOVN_uv0U
-Message-ID: <CAHp75Vdgafv9hqtZYiouC_RgY+0m2a3TfOOsk12LUMDEmY+4AQ@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update max30208 maintainership
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, andy@kernel.org, 
-	dlechner@baylibre.com, jic23@kernel.org, nuno.sa@analog.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 
-On Sat, Aug 9, 2025 at 3:51=E2=80=AFPM Marcelo Schmitt
-<marcelo.schmitt1@gmail.com> wrote:
-> On 08/08, Andy Shevchenko wrote:
-> > On Fri, Aug 8, 2025 at 9:02=E2=80=AFPM Marcelo Schmitt
-> > <marcelo.schmitt@analog.com> wrote:
+The attribute masks and test values in the ptdump code are meant for
+individual attributes, however for stage-2 ptdump we included PTE_VALID
+while testing for R, W, X, and AF. This led to some confusion and the
+flipped output for the executable attribute.
 
-...
+Remove PTE_VALID from all attribute masks and values so that each test
+matches only the relevant bits.
 
-> > > -S:     Maintained
-> > > +S:     Supported
-> >
-> > Just curious, are you really having this as a day job task?
->
-> There is a request for MAX30210 support and so this driver may get extend=
-ed to
-> also support that part. Though, even if we end up with a separate driver =
-for
-> MAX30210, it feel unlikely to me that people lost interest in MAX30208
-> as that's still in production according to MAX30208's page [1].
+Additionally, the executable attribute printing is updated to align with
+stage-1 ptdump, printing "NX" for non-executable regions and "x " for
+executable ones.
 
-Ah, cool, thanks for taking care of this!
+Suggested-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
+Suggested-by: Sebastian Ene <sebastianene@google.com>
+Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+---
+Tested on QEMU.
 
-> [1]: https://www.analog.com/en/products/MAX30208.html
+Changes in v2, thanks to those listed in the Suggested-by tags:
+  - remove PTE_VALID from .mask and .val
+  - make executable attribute output format identical to stage-1 ptdump
+  - Link to v1: https://lore.kernel.org/kvmarm/20250802104021.3076621-1-r09922117@csie.ntu.edu.tw/
+---
+ arch/arm64/kvm/ptdump.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
+diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+index 098416d7e5c25..dc5acfb00af91 100644
+--- a/arch/arm64/kvm/ptdump.c
++++ b/arch/arm64/kvm/ptdump.c
+@@ -32,23 +32,23 @@ static const struct ptdump_prot_bits stage2_pte_bits[] = {
+ 		.set	= " ",
+ 		.clear	= "F",
+ 	}, {
+-		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+-		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
++		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R,
++		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R,
+ 		.set	= "R",
+ 		.clear	= " ",
+ 	}, {
+-		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
+-		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
++		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W,
++		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W,
+ 		.set	= "W",
+ 		.clear	= " ",
+ 	}, {
+-		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+-		.val	= PTE_VALID,
+-		.set	= " ",
+-		.clear	= "X",
++		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN,
++		.val	= KVM_PTE_LEAF_ATTR_HI_S2_XN,
++		.set	= "NX",
++		.clear	= "x ",
+ 	}, {
+-		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+-		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
++		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF,
++		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF,
+ 		.set	= "AF",
+ 		.clear	= "  ",
+ 	}, {
+-- 
+2.50.1
 
-
---=20
-With Best Regards,
-Andy Shevchenko
 
