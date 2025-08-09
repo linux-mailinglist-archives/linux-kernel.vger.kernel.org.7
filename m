@@ -1,112 +1,108 @@
-Return-Path: <linux-kernel+bounces-761265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAFCB1F6C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:23:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75DBB1F6CA
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40BBD7A12EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 21:22:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E830916727A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 21:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625EC27BF95;
-	Sat,  9 Aug 2025 21:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8686927BF95;
+	Sat,  9 Aug 2025 21:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKELzsPL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dvrbQ7jS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE341F8725
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 21:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BD11F8725
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 21:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754774631; cv=none; b=t5QXw5rt9L80rFbJkdWbgNbh91zCNHEX1wr+bg/G2KpKPY2JJIMJ/n0X2A2yFh68lglRwXetbSMGZOruVpAomZ1fWq6fHr9XkG7uuFDvsVrx5uS3EbS5/hcGXInsPS+n0j5sk0kB35/eLU0s2YNm8FMB0op0hHfHqH0iCM3rOkM=
+	t=1754774709; cv=none; b=ajqo0T9jlSSRLPnjCw8Bhm2wp4//2893PBHuRYQR+InagmnX7umx0EMyvbDO4hh7N5IriE9hsgi5fPWNsZ3yVPtPcyiACeBXr80gnbjjQ/7RylhWwOBEKbs2KjPpmJizsoUwInuAlrDnkfKfjvgwPboUSXGiPBVqoXJTpQ4Lsk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754774631; c=relaxed/simple;
-	bh=tEOcjJ/fH84hDn8E2XVzszjzCXCoN+CRVRYBfzYq+c4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgMowOZ4PC2O1GyW1CuFyL04KuEdSFo96Llu66d0BtTAKa+FgcM3JhFkMEH/dx8z1upIBCsOUZQUAdu1hS2UgfpICrP1ToRVwCUoYu8plvhGjsmIVVUrpYQHDtIGLDWKNquWEGWYTtv9NwLd8E80p+jRz/D5mMpcmslbaTdLu9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKELzsPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F353C4CEE7;
-	Sat,  9 Aug 2025 21:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754774631;
-	bh=tEOcjJ/fH84hDn8E2XVzszjzCXCoN+CRVRYBfzYq+c4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iKELzsPLgidJNvgkVjFRsid0NOn08Y7c3T6DfPB+VV99iGz+UZqOdDK2wU7oOuNgp
-	 pUBYeUJMgK1hjSTgPH4JHmNg8zWPoe+o5S1BUzezuatSQ7hI0fiO+8PlKj+kse75vG
-	 sbW1WJHb9+is5PdVu/8W+t+WQexONnTka5YVz9gRA3njBDnYJfInyx1wyaG9ClAilF
-	 D4EH1X3kStninZOY9CVpjuJO7bPZFe2kGyadNBTJt6Ua+S8OQZzkJA7xVLUYLDDo7o
-	 xhs6M+fPTMX8DHCBW7L8S/0gEKt5TpBUHH2S+Shv1hQgePYJ606qt834IB5mQ7tntk
-	 x9A75XIn5XWFA==
-Date: Sat, 9 Aug 2025 14:23:49 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Drew Fustini <dfustini@tenstorrent.com>
-Subject: Re: [PATCH v2] riscv: Add sysctl to control discard of vstate during
- syscall
-Message-ID: <aJe8ZW5LEtBK7Jmj@x1>
-References: <20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org>
- <lhuo6so7ur5.fsf@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1754774709; c=relaxed/simple;
+	bh=cu43oJZJDSYTPewA1ytVKt7gwF23fVix0wRgHoCaITU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r7wqQPW7Be/FSf4N5xn/hicklqr+jmBWw1rNUcWzJg4zm3PLxI/mQcv0T8KOUapAka1rZY6/DFqO0pPdpJUeOA/QS1hHiOQbZF2WvgKVpLX/GtGLt1sJuRhPWIig5SnMDfA/+1EjAskrGw6rujfaRRxN0/QWnMiULxzRHFXGbNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dvrbQ7jS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754774706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LDoKRMJSPm4TxBi0UG7O3F8vhPw8DnuxBqFoCagKhtg=;
+	b=dvrbQ7jSlmAq39VBbdJpo4lwyGjmCb7jMd1i+Mg6djEJV5uiUVfPFIjPjOENUEK23SkUGE
+	wMJRq5AssCqtZPD/8Ib/kwx34KTNT6VHL7y4b1WpKv/oXCYdub3sVjKDDEqe/mLJcILKc1
+	Pv+VzXkIDn06nnZfpb0NgKMuW0rN+wE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-26-JDeaz4bNNmyjE8rlcJhsrg-1; Sat,
+ 09 Aug 2025 17:25:00 -0400
+X-MC-Unique: JDeaz4bNNmyjE8rlcJhsrg-1
+X-Mimecast-MFC-AGG-ID: JDeaz4bNNmyjE8rlcJhsrg_1754774699
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D394A1956088;
+	Sat,  9 Aug 2025 21:24:58 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.64.79])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 921D11800446;
+	Sat,  9 Aug 2025 21:24:56 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] futex: Use user_write_access_begin() in futex_put_value()
+Date: Sat,  9 Aug 2025 17:24:42 -0400
+Message-ID: <20250809212442.240540-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lhuo6so7ur5.fsf@oldenburg.str.redhat.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Sat, Aug 09, 2025 at 10:40:46AM +0200, Florian Weimer wrote:
-> * Drew Fustini:
-> 
-> > From: Drew Fustini <dfustini@tenstorrent.com>
-> >
-> > Clobbering the vector registers can significantly increase system call
-> > latency for some implementations. To mitigate this performance impact, a
-> > sysctl knob is provided that controls whether the vector state is
-> > discarded in the syscall path:
-> >
-> > /proc/sys/abi/riscv_v_vstate_discard
-> >
-> > Valid values are:
-> >
-> > 0: Vector state is not always clobbered in all syscalls
-> > 1: Mandatory clobbering of vector state in all syscalls
-> >
-> > The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
-> 
-> Can this be put into the system call number instead, or make it specific
-> to some system calls in other ways?
+Commit cec199c5e39b ("futex: Implement FUTEX2_NUMA") introduces a new
+futex_put_value() helper function to write a value to the given user
+address. However, it uses user_read_access_begin() before the write.
+For arches that differentiate between read and write accesses, like
+powerpc, futex_put_value() fails with a -EFAULT return value.  Fix that
+by using user_write_access_begin().
 
-Do you mean the control the initial state of the sysctl, or not having a
-sysctl for discard behavior at all?
+Fixes: cec199c5e39b ("futex: Implement FUTEX2_NUMA")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/futex/futex.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I think C libraries can use this optimization for their system calls
-> (after adjusting the assembler clobbers) because the vector state is
-> caller-saved in the standard calling convention.  But there is backwards
-> compatibility impact for turning this on for the entire process.
+diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
+index c74eac572acd..2b6ae6a2b2a2 100644
+--- a/kernel/futex/futex.h
++++ b/kernel/futex/futex.h
+@@ -319,7 +319,7 @@ static __always_inline int futex_put_value(u32 val, u32 __user *to)
+ {
+ 	if (can_do_masked_user_access())
+ 		to = masked_user_access_begin(to);
+-	else if (!user_read_access_begin(to, sizeof(*to)))
++	else if (!user_write_access_begin(to, sizeof(*to)))
+ 		return -EFAULT;
+ 	unsafe_put_user(val, to, Efault);
+ 	user_read_access_end();
+-- 
+2.50.1
 
-The focus I have right now is allowing users to avoid the delay in
-syscall entry on implementations where clobbering is slow. Palmer had
-mentioned in my v1 [1] that he has 'a patch out for GCC that enables a
-system-wide vector ABI, but I don't have time to test/benchmark it so 
-it's kind of hard to justify'. It seems like creating a new ABI where
-the vector registers are preserved across syscalls could be useful, but
-I think it would be best to handle that possiblity later on.
-
-Thanks,
-Drew
-
-[1] https://lore.kernel.org/linux-riscv/mhng-E49DDC7D-A330-4626-A122-4146AADDBB33@Palmers-Mini.rwc.dabbelt.com/
 
