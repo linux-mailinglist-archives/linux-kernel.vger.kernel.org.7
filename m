@@ -1,151 +1,113 @@
-Return-Path: <linux-kernel+bounces-761178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913E9B1F559
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:06:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A0AB1F556
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D92918C4319
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:06:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 926FC7A26EE
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4582BE65B;
-	Sat,  9 Aug 2025 16:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A7F2BE634;
+	Sat,  9 Aug 2025 16:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fouR70ma"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="h+V6mZ+S"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD3E190692;
-	Sat,  9 Aug 2025 16:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0994F84A35;
+	Sat,  9 Aug 2025 16:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754755573; cv=none; b=q+rrGbu4/vsT2Vv4ZamMU3CcqeiNKkwa+YII9kYJf+7r0llCyxuOg6PS3JqW36FepDsMzGGFpRjvmsEvd4UkAd7H6SR64rkSi1mWawRdB9AMG1ygNGTbp3jtm7UQ2w5X0AcrKnlekozKlTVqULzL3+YklJGRyWJ+w0FSuGQ8+8w=
+	t=1754755425; cv=none; b=l6cdrbKpMgn+8giEdwi/Bxf5QSLxrLko8N8wyO4S34+y50p86M68Vvti/UlBekQe9F4oYsQEt+Nk7B+leWqr6tnBxCA2iIJazPSdt5gjUNxsnxECn+p9ULQorN/SxdLS818eIEElDyrs+k00fQoeDsmSidJrRhVhpgBalWKQOQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754755573; c=relaxed/simple;
-	bh=HAk69Pc5A1YrLY9i1RUYP3nywrOxPYN1GCMeY35TGyU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g1X1YK0JnLksD4LfSv7jWBNKsJIg16WXPXptN6+FK9kK+8A2hxTzIzozAjy1XDdDdtZcORMbeVti6XcYOeep4NZm3JYt1VvUHdKIPfVKah1aPokGZQ2+Rs6+AY8VRqUfWfMkCz1Tu9cHagVJtVu96M7SnTy+oYMifxqBWHNlFkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fouR70ma; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id klw9uY1qF0fq3klwAueszH; Sat, 09 Aug 2025 17:57:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1754755020;
-	bh=BiEn152QsMiVFPSw+oP65Hk1xCKOktxxpDWtbkBNJYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=fouR70maiFpPNUbTdYT+PBrW8VWShFOn3ifEPCIwLGJUEiir+pDcDJP0s/DTLLzmu
-	 IPQHY2m6D3OhjTbYCNAMET1tORvsH0d0tslJrosrQ9MCvbtoya3ebtjR2uK/e/KjFY
-	 H+l1mTHLs6jzsJpmJmKd50WaNGxAEJ/LwjhSGkcvt+J245SwQAKY8MHIQ6wvh58C72
-	 52vCb9VScqzdVWl8qVkhXlC00gHhJSs4g3vXQehM2MG5grWTF/WJy1JmaFsQzsZWiX
-	 R8f7Uq/aH3Q1J5PFLF+cScSBQ6oPSepL8GatOIYmOmRBIROcH75qizqwevF+ydyAs/
-	 mekdWCuiloPEg==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 09 Aug 2025 17:57:00 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <30dd9cb7-8471-400e-b293-a1a52921a5f3@wanadoo.fr>
-Date: Sat, 9 Aug 2025 17:56:49 +0200
+	s=arc-20240116; t=1754755425; c=relaxed/simple;
+	bh=EypI9G8Vr/nQW0k5/vP9i30wLp/EuxAkr8epbMXEq+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CxofH9g4hCOrtk+j+FIBjVnYYkhmo7cUCtsdvuPpc6AOCNIoLcfXd//2qVF/CnGBqzQNCByTO/pkEylK+Xa1W5rzwmDthGHBrr9ShyXgONWcC1rNFJT7canAqy6dhH7WjnL2Y8f+fYdXIo8Y0aca70T7EZaHXkjhMX9Ayp3Mr7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=h+V6mZ+S; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1754755422;
+	bh=EypI9G8Vr/nQW0k5/vP9i30wLp/EuxAkr8epbMXEq+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=h+V6mZ+SgWAby2j9+p+g30xLkGtTcRMllYCkbr9s7YwmujbweFCOznJxvtij8NUrb
+	 1+8cpsF+rMvuZEWDRHrKG1ufVKLgKCkIqFOICDZhc07OFrFecwvhUK3DDh4US7u0FO
+	 hvh7PlGtAEH8XM7bgzP8T/D8k0NuI98wyc2QBE4QEdvMjhQa1IHwXbWoleomnkRJu2
+	 oSmmOuqxf3pa32No444zkW3Nmz2lfasTrrNS0VhcKV1YkOyNdjSPNF9/V5y4lftc8C
+	 1JEBRUwTxEEy2aOfTTWvUtGe55Ys1xUjhXFWoOLJu4xHXr8aXTCzBnAty7Dc4jVdh7
+	 OE1zQ+E+vB2VQ==
+Received: from linux.gnuweeb.org (unknown [182.253.126.185])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id B4D083127D72;
+	Sat,  9 Aug 2025 16:03:38 +0000 (UTC)
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Sat, 9 Aug 2025 23:03:35 +0700
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lukas Wunner <lukas@wunner.de>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux PCI Mailing List <linux-pci@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof Wilczynski <kwilczynski@kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>,
+	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	gwml@vger.gnuweeb.org, namcaov@gmail.com
+Subject: Re: [GIT PULL v2] PCI changes for v6.17
+Message-ID: <aJdxVy1i3wGTvU3b@linux.gnuweeb.org>
+References: <aJQ19UvTviTNbNk4@linux.gnuweeb.org>
+ <aJXYhfc/6DfcqfqF@linux.gnuweeb.org>
+ <aJXdMPW4uQm6Tmyx@linux.gnuweeb.org>
+ <87ectlr8l4.fsf@yellow.woof>
+ <aJZ/rum9bZqZInr+@biznet-home.integral.gnuweeb.org>
+ <20250809043409.wLu40x1p@linutronix.de>
+ <aJdNB8zITrkZ3n6r@linux.gnuweeb.org>
+ <20250809144927.eUbR3MXg@linutronix.de>
+ <aJdmGwFU6b9zh1BO@linux.gnuweeb.org>
+ <87wm7ch5of.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 2/4] cpuset: add helpers for cpuset related locks
-To: chenridong@huaweicloud.com
-Cc: bsegall@google.com, cgroups@vger.kernel.org, chenridong@huawei.com,
- dietmar.eggemann@arm.com, hannes@cmpxchg.org, juri.lelli@redhat.com,
- linux-kernel@vger.kernel.org, longman@redhat.com, lujialin4@huawei.com,
- mgorman@suse.de, mingo@redhat.com, mkoutny@suse.com, peterz@infradead.org,
- rostedt@goodmis.org, tj@kernel.org, vincent.guittot@linaro.org,
- vschneid@redhat.com
-References: <20250808092515.764820-1-chenridong@huaweicloud.com>
- <20250808092515.764820-3-chenridong@huaweicloud.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <20250808092515.764820-3-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wm7ch5of.fsf@yellow.woof>
+X-Gw-Outgoing-Server-Hash: 01afd303c8b96d0c1d5e80aa96a4ee40ec69888f786fa24107c0862c0644af79
 
-Le 08/08/2025 à 11:25, Chen Ridong a écrit :
-> From: Chen Ridong <chenridong-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-> 
-> Add guard_cpus_read_and_cpuset and guard_cpuset helpers for cpuset, which
-> will be user for subsequent patched to make code concise;
-> 
-> Signed-off-by: Chen Ridong <chenridong-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-> ---
->   include/linux/cpuset.h          |  1 +
->   kernel/cgroup/cpuset-internal.h |  2 ++
->   kernel/cgroup/cpuset.c          | 11 +++++++++++
->   3 files changed, 14 insertions(+)
-> 
-> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> index 2ddb256187b5..6153de28acf0 100644
-> --- a/include/linux/cpuset.h
-> +++ b/include/linux/cpuset.h
-> @@ -74,6 +74,7 @@ extern void inc_dl_tasks_cs(struct task_struct *task);
->   extern void dec_dl_tasks_cs(struct task_struct *task);
->   extern void cpuset_lock(void);
->   extern void cpuset_unlock(void);
-> +extern void guard_cpuset(void);
->   extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
->   extern bool cpuset_cpus_allowed_fallback(struct task_struct *p);
->   extern bool cpuset_cpu_is_isolated(int cpu);
-> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
-> index 75b3aef39231..084e19fe33d5 100644
-> --- a/kernel/cgroup/cpuset-internal.h
-> +++ b/kernel/cgroup/cpuset-internal.h
-> @@ -277,6 +277,8 @@ ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
->   				    char *buf, size_t nbytes, loff_t off);
->   int cpuset_common_seq_show(struct seq_file *sf, void *v);
->   
-> +void guard_cpus_read_and_cpuset(void);
-> +
->   /*
->    * cpuset-v1.c
->    */
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index cf7cd2255265..f6cdb5cdffe8 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -260,6 +260,17 @@ void cpuset_unlock(void)
->   	mutex_unlock(&cpuset_mutex);
->   }
->   
-> +void guard_cpuset(void)
-> +{
-> +	guard(mutex)(&cpuset_mutex);
-> +}
-> +
-> +void guard_cpus_read_and_cpuset(void)
-> +{
-> +	guard(cpus_read_lock)();
-> +	guard(mutex)(&cpuset_mutex);
-> +}
-> +
+On Sat, Aug 09, 2025 at 05:32:16PM +0200, Nam Cao wrote:
+> So unlike what VMD doc says, it actually can have non-MSI-X children devices!
 
-Not sure that it works like that.
+If that's the conclusion, then Intel VMD doc also needs fixing :/
 
-I think that these 2 functions are just no-op because whatever is 
-"garded", it will be release when the function exits.
+> Please discard the reverts and the diff I sent you, and try the diff
+> below. I believe your machine will work now.
 
-So, if correct, all this serie does is removing some existing 
-synchronisation mechanism.
+Yes, I can confirm it's now clean. Just to verify both sides, here is
+the last result:
 
-Do I miss something obvious?
+  https://gist.github.com/ammarfaizi2/72578d2b4cc385fbdb5faee69013d530
 
-CJ
+If that one fix is final, then:
 
+Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
 
->   static DEFINE_SPINLOCK(callback_lock);
->   
->   void cpuset_callback_lock_irq(void)
+Thanks for the debugging work.
+
+It's probably too late to get the fix in mainline before rc1. But if it
+can go upstream sooner, that would be great.
+
+-- 
+Ammar Faizi
 
 
