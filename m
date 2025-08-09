@@ -1,251 +1,304 @@
-Return-Path: <linux-kernel+bounces-761257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC082B1F630
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:31:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676CAB1F632
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F39620620
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A93017D338
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FC4239E80;
-	Sat,  9 Aug 2025 20:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E39225415;
+	Sat,  9 Aug 2025 20:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tt39Wdxg"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2072.outbound.protection.outlook.com [40.107.100.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVWVm3Gq"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7915635959;
-	Sat,  9 Aug 2025 20:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754771506; cv=fail; b=MZvcXVw7qcrK7iU9giA/Vb1HegPOZfLRyfqS0OWXPKOXWYu3beJPKtP9xGCjFnVD7Dg2NbfKKgrKcPtpa1bZtPBiWU8m5YhRGQ5q6n45hCKZkxc7roz8TAk1wmYVPft1hYh547lwV/ZNqfTUicZrotuo0PDDyouE1KlpfU4ZIeQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754771506; c=relaxed/simple;
-	bh=C3f+MmCOgssSNh6iXfkM5Jjd2AL2ou1cv9452z5DvuY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JnM0APSeyGsT3EJAKjh61vtlbPI7Psx1PQ/wJaLLD5+EN911hsGR8IIvrS6qPZY30yrxRXdIh0JeX6JcLl5kdYXMfrLOhNPiraP9Yx87o7r76f89RF2RvpLPpgqqOba3MduODdjHRNSEN/jTNfSETJk0TQLn63Z/OvHTlMIaXMs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tt39Wdxg; arc=fail smtp.client-ip=40.107.100.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZuEvBVZDsJNSI9GvklbhiEoI4z/CBuBq3ogoI1tLdrfxMxCK+ET3y7SIqLYjMemROyo50fzcz2DXrO/N5mzJx2DWBbKwu3OEJB9+I8dfieutIvvcXB4qnuacxcHU4BiZhIrpuBh153Sbd/i2AwKCkDmncAJvs2Qfgt9kv2BfeCE5ZR5IhWYK9nvra18Cb4kcL/OUNQHSAWhZ6QjreaUMds2EY7xH/yODZmZhhajgellyl91siJccThLeHg1KfFWKA+obBU0IYRBwJvjnBzyxTfDMqOPgPuFnfc63rAIbFDxzkLvKrlGOVGEq+83GOUap13r447A9ze/b1DrKiqN++w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vIxfEgOXjek6ZvwjX3ZZAEORqOIBFXx7q7IgDCTg3G0=;
- b=pfJ6Gp32zm+3Vj5ndigrBNLlK23Emw+wN5/yu+nnMDzAFyERZeFF/EgaUGPGbd/3aVzKCBxwGrAYhQqOFJS35MkrAUY3PEnepeb/sLk0pZyim8sOUkVLi5yUs0zXli9a4AYeKzXPw5m9G188HolVs1cZag875SOZn1hLGVypGlW8EN3qAKaVO0u7GQD1tYW5cT00w2sw8yjgJIbwn7YMw+zMrCcMn1EmdXA7pwb6fyxFN7fwvok907SN36d/2apWCJper7ci2fgxwzPLQvqQSOTPTspjZYC9uvJU0QrbcNTBok/Lj7AJDvx4gGwIVo5wYw9zPqBAk5cHK5wcO4rn6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vIxfEgOXjek6ZvwjX3ZZAEORqOIBFXx7q7IgDCTg3G0=;
- b=tt39WdxgoiZgmsqrVB9v/jXtkpldg4Q0rxwA2TRYKWvpw7ENvAwsn5ThSG0OMzXrPtmW3Y1HkO2e1KAbGMZKblUUP2FFhoM05mrhhDTl32CwVgJB+btXsEWw4oJzGSrvkkjNiMdlBr5m7QHpbpw6BSc5NYHViDtasxaWbeeumyk=
-Received: from BL3PR12MB6571.namprd12.prod.outlook.com (2603:10b6:208:38e::18)
- by BY5PR12MB4321.namprd12.prod.outlook.com (2603:10b6:a03:204::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.13; Sat, 9 Aug
- 2025 20:31:40 +0000
-Received: from BL3PR12MB6571.namprd12.prod.outlook.com
- ([fe80::4cf2:5ba9:4228:82a6]) by BL3PR12MB6571.namprd12.prod.outlook.com
- ([fe80::4cf2:5ba9:4228:82a6%5]) with mapi id 15.20.9009.013; Sat, 9 Aug 2025
- 20:31:40 +0000
-From: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "Simek, Michal"
-	<michal.simek@amd.com>, "sean.anderson@linux.dev" <sean.anderson@linux.dev>,
-	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, "horms@kernel.org"
-	<horms@kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Katakam, Harini" <harini.katakam@amd.com>
-Subject: RE: [PATCH net] net: xilinx: axienet: Increment Rx skb ring head
- pointer after BD is successfully allocated in dmaengine flow
-Thread-Topic: [PATCH net] net: xilinx: axienet: Increment Rx skb ring head
- pointer after BD is successfully allocated in dmaengine flow
-Thread-Index: AQHcBj3ufqq2Yvzk4kWpSUUhUrH6hbRZIlkAgAGeWkA=
-Date: Sat, 9 Aug 2025 20:31:40 +0000
-Message-ID:
- <BL3PR12MB65712291B55DD8D535BAE667C92EA@BL3PR12MB6571.namprd12.prod.outlook.com>
-References: <20250805191958.412220-1-suraj.gupta2@amd.com>
- <20250808120534.0414ffd0@kernel.org>
-In-Reply-To: <20250808120534.0414ffd0@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-08-09T19:48:46.0000000Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
- Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL3PR12MB6571:EE_|BY5PR12MB4321:EE_
-x-ms-office365-filtering-correlation-id: 984c8f8b-c96b-41a5-130c-08ddd783befb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?romOseIgHpOfGCwDFbx7SOdI/ncyRfM8uHbQapp0Ex40nqJuHPhD+W+GlgAZ?=
- =?us-ascii?Q?sU7OgWf4AcecPShWvINQtkPGy+7O2vhoL3e1xA8hYZCOHXOqQ8vkdITHJDoq?=
- =?us-ascii?Q?GUnLerbpqEfHXOfoFrV/7kDuPHU6gz3HrRqkV7g10ZeflOu5ylkXx0Bl5dLx?=
- =?us-ascii?Q?VbQCk4FBw8CfKybmZ286TzLn+t9M+8d1YyYTakOrsHJX2HRZiI3V9CqPowa0?=
- =?us-ascii?Q?swEdB+WieMma7scX2r8umpC/Xh5OwhXbhxDL2KtvEo8GSsLnm/lGrGNXVund?=
- =?us-ascii?Q?5qOyiIq5H+RRs86eRqmB6hDSn+BalJdEkH3BtVnkELxXAlyrO5EU451k97dZ?=
- =?us-ascii?Q?t1e/+RuJI66wMpecQk1FuN7G7PdsBihXZGxrAy1P7Wqprxn362anls7eyY/+?=
- =?us-ascii?Q?JGleEnEe84XzdabV35El4Rx8rImLQVr57cOdLzRJiq1JBSjMMUih9hI7GBuq?=
- =?us-ascii?Q?MJIaNnRB2QLUlGcg8szlYqMlY3n34OkBSKzcTHud/nzLYzTA9of7mIs6zoYF?=
- =?us-ascii?Q?N9qnsg8QKvpCyd8XO/E19x/fNEstQ61QxZYtbS925e7zZCNR2tJVY75deb9W?=
- =?us-ascii?Q?lUYJ65nB2IMV9zIr5KOYZ6OEi/L3bTlBKQV9SwyxPqFyee5UFoCXeeJv149T?=
- =?us-ascii?Q?XkLodk6VvbSOnbJ3xeOinfuakbyubmbOdWsCrdLNGd585q8nGi6nFY4724mX?=
- =?us-ascii?Q?WhF/lX0C8z0vP/UiddlcB77rN+9jSEO0oqRH16NDCA/9lS2cmLk7uVTz052V?=
- =?us-ascii?Q?0YQ9MGGkT0Hp2cR+LUKfqVEcX6reN90wCA2iBQQ3vilSmKBKzV6IxYpYBmmk?=
- =?us-ascii?Q?Yji0QiyeZqd7skZbV6rJo4IQc6E6RNaa3ZEBBJ0fwnkSyYijSj/ejHlE0j1v?=
- =?us-ascii?Q?nTILiMka3k0+v8XHAhK2qa7ZwdO1xJyRDLWRTUTjSSjTQ2eOH7ndu88esKnU?=
- =?us-ascii?Q?sJx1OBsuCvnRxVo0RvsgaU3lfK19fmiQ7qfpGZg1ocC4yiV3ePcgQjN0/zhM?=
- =?us-ascii?Q?1do9cUas8RfF5hz+g+4vz8vGK6muyuIWwBR3/O4xdGXKT5i9wcuWWsCGtdMK?=
- =?us-ascii?Q?nIDpzCSTIYDKoxQxVIOpIjwzegt2nsCLZgnKxJN9ECvoGRLBolb/w/EPkTS7?=
- =?us-ascii?Q?b1o1WCdwhUJw1Llj/KVc+5OZdX/5dGT30W/V54V7sr27poFgqrrxpyS+GGoZ?=
- =?us-ascii?Q?w9IAJXupUoVe07vxX8q7LdxCMpI1MUzjpmjo8zaOJ+1BFY9T1rQlctKEgnd+?=
- =?us-ascii?Q?OiGXL349QJ0Amfzflr03wBMmt5v6BwI/+mVY5rY3RtvOXFvjbxzAIqhe4f4f?=
- =?us-ascii?Q?NnWCmDQ/KiIOoQh1TR0+8nJX/fnMiLXtLfEd0zRzfAOYaEbKwJt7vQyMeP4U?=
- =?us-ascii?Q?K0s2oBxayLRNIzet5KC4t+TQ9QFY+6rRdb7XwRbH2AKKMUIWDSjf1d43sQjG?=
- =?us-ascii?Q?VV/uE2gmLqZYaltOAWC4foRInal5TsFWw2V5XU7wFcHAHlpRjjmt2Gz8+Wy5?=
- =?us-ascii?Q?hlJOOjJ/VyYsBnk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6571.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Z7PW3OogLw+W54iw3k1USFZDBeBZq+KjLuxeBjm+3N9G88un3Y+4NrCXrYM4?=
- =?us-ascii?Q?TE8w2GIIaSLxf7vlyx3LkJRTHb2+lsgHH5trD+7NiQUG8yG/yaXAvPZlEbfV?=
- =?us-ascii?Q?EI/21xTqmEpOgGkKpcpgbDgJC2s8wsQZJOcNUHWI4SkciHLHiliqt9CyBokA?=
- =?us-ascii?Q?yBMXg0m7wVNNI2q6chX4iQi1CVi+/A3I1P5kW4uRecxy8CvBWCsICs23cJOO?=
- =?us-ascii?Q?k/LUq9r1NDxNmB4pnTCahrnGnZK/sWB7+l1W8AKEh7j1vY2FvF+1pc74QTL9?=
- =?us-ascii?Q?+HJOs2z6pyzW+zOrGQ07S11MZA2HCshkahVSpUiidgfG5+5aP06ozdXBaOux?=
- =?us-ascii?Q?L0Vb7srxvT0xfEvqizGTmD7qSPZ82oSQ4SeN9b6BDbu5P/4rWGldo5Ih0o/l?=
- =?us-ascii?Q?lj0UNMVA6TmiN4NZ1Gmqyli7MfoFo+Jgbn60RWNxZ3wL24FShNwPAM3Bx9cP?=
- =?us-ascii?Q?kUyOVjJ/lgIJpywtjtsm2CmR138PSMKNqFAX37GKovUCsoEVDZtZFh4oOvV0?=
- =?us-ascii?Q?1+oal8tErW4r2b+HHNKzlIgI4j3/oe0V3gyXB9BlITFqw8axKxfGVtVh0dAo?=
- =?us-ascii?Q?k/l+RXqgE6a6ALYKT2nGwmsoln40IAKRvoZnylSMJfdeCjmqTAHdnFZ5Xdh8?=
- =?us-ascii?Q?J+M4OxEiTf7tEQv/ZsBui8IdYycsRhu6ENAo8EwjLXjxL9xLYUAFj3i/D5XS?=
- =?us-ascii?Q?JqJMzSIOWhKpRP8bnpCLzksMlTQwkijeLYaPnEvvltgUgU9HhMs6m4tQ8L3x?=
- =?us-ascii?Q?GRq13xOTWdpkGq6bGuDtDsN0rwm5Aj85vO3+afrA1vbgeJXe+pdxiimV0guB?=
- =?us-ascii?Q?4RiSSVvtgJfvs7n7vetzYA60flXTleuBukyFkiYppe49OPYYw2GcULaQ32BF?=
- =?us-ascii?Q?R9qSMchSEGWtUicW+Dpt7NiK01zkWY9q9G3dgOBGN+RQOmMSOzaYUqyf9MS/?=
- =?us-ascii?Q?zcoS6HMk9pCvrAhmWfRGzQ5r6Xq/pzdJ4oxWds5cr5UvFrvIGHV5lhX/F/FS?=
- =?us-ascii?Q?aoiCZIKs5FjllAqbeFVAptQ1/ZMKD6F4yeOyWX7YKaDxMujUJoLxlJ7iVlKq?=
- =?us-ascii?Q?0mUnfwrTwxHVfl3PZJaPVLUsuZwsc7fZEFJQ2wydp1VuigLYf30ueI8XmJg2?=
- =?us-ascii?Q?TpivXOeRHL5eHfxYBVmSFnYBXdXrnv2VQ74ETfa+42v0tiAXJTSPaH1aJYm+?=
- =?us-ascii?Q?afgNKEQ5wGIIrcHJ1m3bLsFSnwqBVk4IkBqsv7nD08CRqx0bFUH13ftGI2ZJ?=
- =?us-ascii?Q?x4y4uOBhtFslmgK8BzR6PqZx6rM+eh9Mee7xIGNx1OsGSvuXFHPQkzmPlG61?=
- =?us-ascii?Q?mR8ZLnJCHmkkIe/F+GBQIxNHZqmKZ8E/hOf5Sy3IyMOxCY3cvdzyrx21sIia?=
- =?us-ascii?Q?QaZUZ6vBgEqm6lnCxe/KpezKU1sJiSJjaGDwIf3bWANA8pQsNz6ADicixSd9?=
- =?us-ascii?Q?01dA4wikKPmxNY7F2fvLN9KLhPV292bB5gdPyPAx47KZ0pbe7uMuXYCyhEga?=
- =?us-ascii?Q?KYCEfcBJLOSiliz8J4DdI5A0jAiiNdCNgnIHMft+sTWppLkGYT5wBqC1QDFX?=
- =?us-ascii?Q?UOxPg6o1Kzs6CW79+CQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3621D2E36F1;
+	Sat,  9 Aug 2025 20:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754771698; cv=none; b=qytjbOwbTjFlOgsSFqO8fmETHUowHwclBukMLipr+7Tza4niaUFbtw82NtZZtHQgUGXxfM0wkm3uwNKfkUcI5n6hTioPlSpwGkx8O9u+RZUVDVx2yH1KrGgRr7IrXxUl4NuAgIJmWQGQbxby1qnUF5MvYK/sqVSJPJ9JQ9b3IdM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754771698; c=relaxed/simple;
+	bh=wqOLG9i9RjrWpwScItaVm5i8hEzKty+ljNIAUBVKf7c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BvxMwHOlqEiTbUKwiUrxXHOoWIXiFthcVQAAZex+ZuqtpLbSILgBin6y35eTTAy0k0pcn947Gi7P6N8u5dZ+Adlw6gZ50TiX+RzowYcIqrSTaAkuH299WrD5KUXUXmqkiG++a1la4TgGzeB1MwiiNu26IvvPOhVxh2lIw7TR0rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kVWVm3Gq; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-af95b919093so479965666b.2;
+        Sat, 09 Aug 2025 13:34:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754771694; x=1755376494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kZmH6zEe19LahdSi523CClX4+3HiP+RimCUczdeWDI=;
+        b=kVWVm3GqZq1whn6zUYE75gxKTSPs0y1jswUNSsTaQNr3TfgsbKpeCPwjeiuUPL77gc
+         FgTUyxLuCEHNThH+w/RGAWqdi3URlBSx4gg5eA8hRRKth2a7Ra1eWExqBmz/lVfE3opQ
+         qZBPN/8vh3452ADXCG0YNc7vn/W9FjvU0Q7e8X3f2kG2TdLM05dopG4pTBGMEP20HrHf
+         wG3HtdtL+ekSV/2JEA4atHcH7HjJ47ZdqqRWwbLKZ7aaTq1u2DyusLsU6thQ6wDo1rg8
+         hjhhg3udDVRMmtccv5ousQ/lehLl35ZHyJmPjwSN2sBAvEuraFCZr74F5dtjURO1db9Y
+         3vug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754771694; x=1755376494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8kZmH6zEe19LahdSi523CClX4+3HiP+RimCUczdeWDI=;
+        b=iK2ZGeTbSJ1CF3VQFA6eLmR6aGVW76ROGe6nSUf6HtbwIg8uvlmm8PwBjQWtNwlmq+
+         s+86fk1fFJjNMBeO2wj/RSiLKpcYs1aCHvvOfcy2Zga4KVb11DfkJMkLmVo7B/jnJ71R
+         Z4BgKtijLpP9iIQuaV3NPPHLqkJJBpS0iaRkou2nEZ1R6K92uIEcGKSVtYrkoslzVeQN
+         FY0OfEouXouazNzzHHjxlfWpysqQEAxb2JC00RgUiv9BBwtXJf6hTc2ig0rf4mr4f5Xe
+         FgLqaF/5/Qa7qavEyv/6nrRsAVyzPZNIYVs9/C23GFTNlyulvz7OfSUHFd+NVu9InyNo
+         gcpw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/7BlazN8oMLEVFBZlruTuK+xBuiPeig3zudzoXcVAUqBMBHiprKPWbbs1NRqkU7WiL3WQU4TqwgA=@vger.kernel.org, AJvYcCWe+kToo8BXd/7P6Bxi/yBYmMQ5zkwY/Qy5OYu4DvXhujYzYLaeb7dqbHRAdnDEItbNZqjzM04+Mhy61qKi@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyUFQtGvbCEIjeEIs1XUsefktStOfe8wKIYU+XMrstc8/MB5i5
+	Yb/xm88+kAI9Oy3rzvktLL78p1Drm+CGNwU0FA+HNR77dU8zwg+WgZ93aTB2YO1PyL/jD171cZf
+	iqdds9jpto1325zb88Flk5xysg4rqFSg=
+X-Gm-Gg: ASbGncsSayVPKVjXv/gDlJUyOvjObi9UJkbft5UsvrPhVReZFH4VesVxgMBvtlW/vDt
+	XuALc424XJyzZU3nVzUStEfdiuiUuxQhJ+K4/eyFwSmM9k6yZWWAGRKcIXUcDrr9n3YNXHg8L+U
+	TT4ETNl5NIdRBPhSoA3TEWc1DPeLtCzUJzA9z9eyS2r0mAftix9wJXy9OxQLGvgiEwPYS3poLcN
+	G2/gCHp9g==
+X-Google-Smtp-Source: AGHT+IEuz9sJpUKzmwW3Jy6jfLTjTrqYaKrZq54NviwCHzcqk8k4YCyVolw98oKgO5Jhk8p64YtViQ7X1Zdwx6hB5BE=
+X-Received: by 2002:a17:907:3d4c:b0:adb:229f:6b71 with SMTP id
+ a640c23a62f3a-af9c640e627mr806927466b.5.1754771694444; Sat, 09 Aug 2025
+ 13:34:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6571.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 984c8f8b-c96b-41a5-130c-08ddd783befb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Aug 2025 20:31:40.1213
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wevRx6tLE2GqO7LFyk8uNdJjU7TTpkuTleBgRUedYx8euqxeU89qsYLSVyLN5HeqS6GUVSQCvs6ad39SNELeHw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4321
+References: <20250804192513.62799-1-akshayaj.lkd@gmail.com>
+ <CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com>
+ <CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
+ <CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
+ <20250806161801.000061c0@huawei.com> <aJO05BNi2TsYtdwe@smile.fi.intel.com>
+ <20250807140401.00006c85@huawei.com> <aJcapPt8f5YMUBH3@smile.fi.intel.com> <20250809205736.34b75763@jic23-huawei>
+In-Reply-To: <20250809205736.34b75763@jic23-huawei>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 9 Aug 2025 22:34:18 +0200
+X-Gm-Features: Ac12FXxOtcAJgzshVTz7po25h_GlHwg-lGid0lpBnMSErpDEP1DTXUeEYdmxHMY
+Message-ID: <CAHp75VffV4Xomb-1zp6_xB=r+PJzsDnj_gjwyWas8cX7dhuhng@mail.gmail.com>
+Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
+ support in device registration
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Akshay Jindal <akshayaj.lkd@gmail.com>, 
+	anshulusr@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[Public]
+On Sat, Aug 9, 2025 at 9:57=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+> On Sat, 9 Aug 2025 12:53:40 +0300
+> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > On Thu, Aug 07, 2025 at 02:04:01PM +0100, Jonathan Cameron wrote:
+> > > On Wed, 6 Aug 2025 23:02:44 +0300
+> > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > > > On Wed, Aug 06, 2025 at 04:18:01PM +0100, Jonathan Cameron wrote:
+> > > > > On Tue, 5 Aug 2025 14:47:32 +0200
+> > > > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > > > > > On Tue, Aug 5, 2025 at 6:05=E2=80=AFAM Akshay Jindal <akshayaj.=
+lkd@gmail.com> wrote:
+> > > > > > > On Tue, Aug 5, 2025 at 2:36=E2=80=AFAM Andy Shevchenko
+> > > > > > > <andy.shevchenko@gmail.com> wrote:
 
-Hi Jakub,
-> -----Original Message-----
-> From: Jakub Kicinski <kuba@kernel.org>
-> Sent: Saturday, August 9, 2025 12:36 AM
-> To: Gupta, Suraj <Suraj.Gupta2@amd.com>
-> Cc: andrew+netdev@lunn.ch; davem@davemloft.net;
-> edumazet@google.com; pabeni@redhat.com; Simek, Michal
-> <michal.simek@amd.com>; sean.anderson@linux.dev; Pandey, Radhey
-> Shyam <radhey.shyam.pandey@amd.com>; horms@kernel.org;
-> netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; Katakam, Harini <harini.katakam@amd.com>
-> Subject: Re: [PATCH net] net: xilinx: axienet: Increment Rx skb ring head
-> pointer after BD is successfully allocated in dmaengine flow
->
-> Caution: This message originated from an External Source. Use proper
-> caution when opening attachments, clicking links, or responding.
->
->
-> On Wed, 6 Aug 2025 00:49:58 +0530 Suraj Gupta wrote:
-> > In DMAengine flow, AXI DMA driver invokes callback before freeing BD
-> > in irq handling path.
-> > In Rx callback (axienet_dma_rx_cb()), axienet driver tries to allocate
-> > new BD after processing skb.
-> > This will be problematic if both AXI-DMA and AXI ethernet have same BD
-> > count as all Rx BDs will be allocated initially and it won't be able
-> > to allocate new one after Rx irq. Incrementing head pointer w/o
-> > checking for BD allocation will result in garbage values in skb BD and
-> > cause the below kernel crash:
+...
+
+> > > > > > > > Doesn't sound right to me. HAve you investigated PM runtime=
+ paths?
+> > > > > > > Yes I did investigate and found that PM runtime->suspend() ca=
+llback
+> > > > > > > co-exists with remove callback.
+> > > > > > >
+> > > > > > > > Looking at what the code you added there it sounds to me li=
+ke a part
+> > > > > > > > of PM runtime ->suspend() callback.
+> > > > > > > Yes, part of functionality will always be common, because bot=
+h the
+> > > > > > > callback implementations put
+> > > > > > > the device into powered down or low power state which is what=
+ has been done here
+> > > > > > > Both _suspend() and remove are called at different times in t=
+he lifecycle of the
+> > > > > > > driver, but with respect to register setting, they put the de=
+vice into
+> > > > > > > power down state.
+> > > > > >
+> > > > > > Are you sure about the remove stage and how it interacts with r=
+untime
+> > > > > > PM? Please, check how the device driver core manages PM on the =
+remove
+> > > > > > stage.
+> > > > > >
+> > > > > > > Additionally .remove() can have code for:
+> > > > > > > 1. disable runtime power management (if enabled while device =
+registration).
+> > > > > >
+> > > > > > If the device core enables it for you, it will disable it
+> > > > > > symmetrically. I don't see the issue here, it should be done
+> > > > > > automatically. If you do that explicitly, use the respective
+> > > > > > devm_pm_runtime_*() call.
+> > > > > >
+> > > > > > > 2. device cleanup (disabling interrupt and cleaning up other =
+configs done).
+> > > > > >
+> > > > > > Wrap them into devm if required.
+> > > > > >
+> > > > > > > 2. unregister the device.
+> > > > > >
+> > > > > > Already done in the original code which your patch reverts, why=
+?
+> > > > > >
+> > > > > > > For eg: another light sensor bh1750
+> > > > > > > static void bh1750_remove(struct i2c_client *client)
+> > > > > > > {
+> > > > > > >     iio_device_unregister(indio_dev);
+> > > > > > >     mutex_lock(&data->lock);
+> > > > > > >     i2c_smbus_write_byte(client, BH1750_POWER_DOWN);
+> > > > > > >     mutex_unlock(&data->lock);
+> > > > > > > }
+> > > > > > >
+> > > > > > > static int bh1750_suspend(struct device *dev)
+> > > > > > > {
+> > > > > > >     mutex_lock(&data->lock);
+> > > > > > >     ret =3D i2c_smbus_write_byte(data->client, BH1750_POWER_D=
+OWN);
+> > > > > > >     mutex_unlock(&data->lock);
+> > > > > > >     return ret;
+> > > > > > > }
+> > > > > >
+> > > > > > Correct and where do you see the problem here? Perhaps the prob=
+lem is
+> > > > > > in the cleanup aordering and some other bugs vs. devm calls?
+> > > > > >
+> > > > > > > In drivers/iio/light, you can find similar examples in pa1220=
+3001,
+> > > > > > > rpr0521, apds9960,
+> > > > > > > vcnl4000, isl29028, vcnl4035. You can find many more examples=
+ in
+> > > > > > > sensors other than light sensors.
+> > > > > >
+> > > > > > Good, should all they need to be fixed?
+> > > > >
+> > > > > The complex corners that occur with devm + runtime pm are around
+> > > > > things that we must not run if we are already in runtime suspend.
+> > > > > Typically disabling power supplies (as we can underflow counters
+> > > > > and getting warning prints).  Seeing as this driver is not
+> > > > > doing that it should be simple to use a devm_add_action_or_reset(=
+)
+> > > > >
+> > > > > Key thing to consider is that runtime pm may not be built.
+> > > >
+> > > > This will mean that user does not want to handle PM at all at runti=
+me, so why
+> > > > should it be our problem? If device is off, it's not the problem of=
+ the driver
+> > > > to do the power cycle at run time (yes, this might not apply to the=
+ system
+> > > > suspend and resume cases, which has to be implemented as well).
+> > > >
+> > > > > So the flow should work with those calls doing nothing.  That mea=
+ns that
+> > > > > if you turn the device on in probe we should make sure to explici=
+tly turn
+> > > > > it off in the remove flow. That's where devm_add_action_or_reset(=
+)
+> > > > > comes in handy.
+> > > >
+> > > > I don't think we should do that explicitly in remove. As I pointed =
+out above,
+> > > > this the case that driver should not override.  Otherwise there is =
+no point in
+> > > > having the common runtime PM. User deliberately makes it not compil=
+ed, so they
+> > > > should prepare to leave with it.
+> > >
+> > > Hmm. I don't agree. We turned it on so on error or remove I think we
+> > > should turn it off again.  We do that in many drivers that never made=
+ use of
+> > > any of the standard PM stuff because they only touch enable and disab=
+le in
+> > > probe and remove.  If nothing else I don't like the lack of balance b=
+etween
+> > > probe and remove if we don't do it.
 > >
-> > Unable to handle kernel paging request at virtual address
-> > fffffffffffffffa <snip> Internal error: Oops: 0000000096000006 [#1]
-> > SMP pc : axienet_dma_rx_cb+0x78/0x150 lr :
-> > axienet_dma_rx_cb+0x78/0x150  Call trace:
-> >   axienet_dma_rx_cb+0x78/0x150 (P)
-> >   xilinx_dma_do_tasklet+0xdc/0x290
-> >   tasklet_action_common+0x12c/0x178
-> >   tasklet_action+0x30/0x3c
-> >   handle_softirqs+0xf8/0x230
-> > <snip>
->
-> Do you mean that we're incrementing lp->rx_ring_head before we know that
-> the submission will succeed? Potentially leaving an uninitialized entry (=
-say at
-> index n), next attempt will try to use the next entry (n + 1) but the com=
-pletion
-> will not know about the skip so it will try to complete entry n ?
->
-> This is really not coming thru in your explanation.
->
-You're right, I only explained the issue I faced while running perf test wi=
-th same BD count in axienet and AXI DMA. Above is more generic explanation =
-of the situation here. I'll modify the description.
+> > We can do it, but this sounds to me like a step back. Implementing prop=
+er PM
+> > runtime callbacks is a step forward.
+> I entirely agree that runtime PM is good to have and it does a lot more
+> than just turning the power on and off once per probe / remove cycle.
 
-> The fix itself seems incomplete. Even if we correctly skip the increment =
-we
-> will never try to catch up with the allocations, the ring will have fewer
-> outstanding Rx skbs until reset, right? Worst case we drop all the skbs a=
-nd the
-> ring will be empty, no Rx will happen until reset.
-> The shutdown path seems to be checking for skb =3D NULL so I guess it's c=
-orrect
-> but good to double check..
-> --
-> pw-bot: cr
+> But runtime_pm is currently optional (system wide) and that's not somethi=
+ng
+> I think we are in a position to change.
 
-I agree that Rx ring will have fewer outstanding skbs. But I think that dif=
-ference won't exceed one anytime as descriptors submission will fail only o=
-nce due to insufficient space in AXIDMA BD ring. Rest of the time we alread=
-y will have an extra entry in AXIDMA BD ring. Also, invoking callback (wher=
-e Rx skb ring hp is filled in axienet)and freeing AXIDMA BD are part of sam=
-e tasklet in AXIDMA driver so next callback will only be called after freei=
-ng a BD.
-I tested running stress tests (Both UPD and TCP netperf).
-Please let me know your thoughts if I'm missing something.
+True.
 
-Thanks,
-Suraj
+>  We should support runtime pm in
+> as many drivers as possible but not rely on it for 'correct functionality=
+'.
+
+Why not? If the driver doesn't care about the PM, then why bother at
+all. The PM runtime is for that.
+
+> To me turning a device off at remove that
+
+> we turned
+
+Key words! And that can be done in different ways. One of which is the
+PM runtime. The custom on and off is basically an open coded part or
+the runtime PM functionality.
+
+> on at probe is something
+> we should do.
+
+Yes, of course. I do not object to this flow.
+
+> Now if it's already off, then sure don't turn it off again if
+> it has side effects to do so (which is the heart of the underflow warning=
+ issue
+> with regulators)
+
+Sure.
+
+> > Doing the former in the existing drivers is not an argument to me becau=
+se all
+> > of them avoiding use of the PM APIs. Note, with PM APIs it may also inv=
+olve
+> > devlink and other benefits that device driver core gives us.
+>
+> We have lots of drivers that do both minimal management at probe and remo=
+ve
+> as necessary to function, and if it is enabled, full runtime pm.
+>
+> Though recently it has shown up that there are some underflow issues if w=
+e
+> aren't careful wrt to regulators being handled by devm.
+>
+> > > > > ret =3D regmap_set_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_SE=
+NSOR_ENABLE);
+> > > > > Is the paired operation with the second disable you add in remove=
+.
+> > > > > Wrap that in a devm callback.
+> > > > >
+> > > > > More complex is the interrupt enable as that doesn't pair with
+> > > > > anything in particular in probe. I'm curious though, do we need
+> > > > > to disable it given the next operation turns off the sensor and o=
+n
+> > > > > probe we reset the sensor.
+> > > > >
+> > > > > Is just clearing the enable bit enough?
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
