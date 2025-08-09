@@ -1,282 +1,144 @@
-Return-Path: <linux-kernel+bounces-761104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA652B1F46F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:51:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BD8B1F475
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74CAA4E0EEF
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D507A353A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDA427F011;
-	Sat,  9 Aug 2025 11:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988A327FB1E;
+	Sat,  9 Aug 2025 11:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmqUxmud"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UQKBrBuU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE3E1C8612;
-	Sat,  9 Aug 2025 11:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E77A18FC92;
+	Sat,  9 Aug 2025 11:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754740265; cv=none; b=mdDXGhJsX2hhCXvIXSi5xzu+44sFlKbIiWABN/Zts8pD3spOeLmSZ25cegkeSg835JmHzfVYWhaeHQpnnYIm9GsxkoXzjpnGnXfnYqGdr3mshkt9PzfiLwmtKlOg2QaGusir/ikWbTVNhuSE1kQ4FqCoxr7W3fudpZCQQP5m4Go=
+	t=1754740449; cv=none; b=cswidOkO735nDiD/3bUDxlzQKDEMTgyMczQq9nCe01Dfy0OnWiBRu6FNQUs7T399nl7KjcS4AEWf+NqlKq/c5ldgFgMhiySD22tsTzXe1m2xin1mzJUfAYku/bhhDix3J8q43fFYhBg6Rcg/rMcLYiioYLASWrwg5D2tBRFz1/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754740265; c=relaxed/simple;
-	bh=umgl5S5iD3CkVkoXfrjuAMTV5SQMCel30y8lHMmkFIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GH9VpHKXHUW+69e0SCCyUfA2DbLzJFSCFm/sdNrMQ1JcMQ/oFWJW0SRltL3ZBG2gZMFIX7VDIwehjnNiqiCkWRe53ZxWv5KNnWNv0qpjSA5pfSiSuHWLdb3nxjItU5PEPGxjZpcWAms8Tnx5AZQZwLfVDiHYvkQ+uaau9eGgZgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmqUxmud; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-615398dc162so4732798a12.3;
-        Sat, 09 Aug 2025 04:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754740262; x=1755345062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5akKwpC8IMkTFFts2eo/e1Duj9P6C50jyTgZzoqxgpQ=;
-        b=CmqUxmudzzhshFvaSY6IOwUulVduCqnxoMBFTGqBIlUPS5jXpdfPaGGcsdqD2/hmLX
-         QnrGfc/6hV/0/wmFLWvf74FxRk1Hqi2jM05j38+TiLNuPw3ZQWuUzmlhmuEOtvILI4jm
-         ltuDZXcVTgFBunuPvRwCcllPguIhf7pp3qCe0nVTHoaSM1qT9gtfdchSLPW5f2Rne7xG
-         i6Fyq9Oemo0Q+UfZAfbMGJDTQvP4VIRor0BHvYcCoiDyTPetpYoIiTexigO0ho7rfeW8
-         k0EuSQ2/EvOH3EqmwixNf3JAOnxdc3BzR44MqpSUk94JQcjJ2QTIgY3WhR4kqEHU63nm
-         EvhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754740262; x=1755345062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5akKwpC8IMkTFFts2eo/e1Duj9P6C50jyTgZzoqxgpQ=;
-        b=QQA4nTKwRLwR3knqWQ3FoRcZbSUtfj4fqFb8cagAcdcicIVC17WayY4JDFF4AZHXNT
-         BW3iUcLthMGtjgFDb40NenzMFW07XKFBnlNmGE8c1NkiGTbzinTMq8Pek0RwsJNeANcB
-         F2N98FrLV/uTkXfiEWkw5aZzwcmALMl9r+VOldP1pZEDBstBuCG01kn4UOyaAEuXzbWE
-         cwIuDZRXlMAnaNkQ6AbQ2I7jkl2UPEJnVz57P7uQiWTpGxHd81qxQUsGlDV+tRKD9/ji
-         ycvMOGpTrXBrs+7scwpfMKc8SeBYRcMbN0qSBf0zSAx4Bbq7WXxKm2soqsJQlZ3RnSSP
-         lXtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMDFQuMruZ09Tm8x3FRB8psSVkHrRbsbgQoCVM6cERiXFWm/icGtFMcbxoTOMNI28P3Fm/TP2E54jmkVYI@vger.kernel.org, AJvYcCXFqmR3DqcjsvtmAxVGFuZYse7ieqFC9h+iKMG3vnPXnk7F6aLg97VqYgOHl7jggZjABqiq67YZDnIGVerWNg==@vger.kernel.org, AJvYcCXnc+xk5cI1sO45X5hASLr++2CMCsbuxeyUyKnsPvsSoH6Yr8vvrk3i7ZHKByvUuqzfLPP2vmAUa5S/2xde@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1pJ1Pad+OZM1K4LkS/DwmHqYlT01zBHghoz7bWAfmn0Ab+X7U
-	VooyE6qyq8M0GnlOhPYtOEz2NSvV+z9eW51ZmFQQR5M2ehpasjDFBKY1hIAUW7QqUJSPbia4mbR
-	PDKldkCbij1dEZoSitFfhK1oVqmsz/Eg=
-X-Gm-Gg: ASbGncs8Fuo8JlD6zpX8PHZwZzDKYQp6Dy8YbYRSg89OffaGWzo8eminEovIrGZ6Zk8
-	LeQfWxDcNKqdTRNVSKiI8GN8OqaDjzf255CZfgeF81W4YipGHEEadQPeSUOvIzTdrFyqiUA8/GD
-	f+zndGwVQgOd2OhWWaicLJU/9WGeuQxTeRTWcGH+/5azzj0Yor2FQjRdcY/npHYOvYEmd3mYOPJ
-	tF4piY=
-X-Google-Smtp-Source: AGHT+IHd+FBbW2YkPH15kNn5/vNwhRP3OgDWgNA2KUkXuXEBG1T+ThwFKa4VJOrTkPcVpl3JliNZ0rryShESGcvsHvs=
-X-Received: by 2002:a17:907:3da2:b0:af9:5260:9ed3 with SMTP id
- a640c23a62f3a-af9c642fdddmr576516866b.14.1754740261464; Sat, 09 Aug 2025
- 04:51:01 -0700 (PDT)
+	s=arc-20240116; t=1754740449; c=relaxed/simple;
+	bh=mnV+jg9VSYFDZGvhdpkSY2iW8ke8agEGlUQFaLp0wdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UcaBhtNAajpvXfHoi4/GmngXJjCqkw1wmt3wZM6SCs2ZxtCQPrjYWF/4N8b2oa8XfxqnV0d8G2bFvuYEG5tfe4SnIqe1CZgkobD33JeMftr/Fz8XOSYapTAl7i9Zim62UCND/L2JSiYf3zzjfGOzF+BUEZSivt3q+gtNx2AYWhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UQKBrBuU; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754740447; x=1786276447;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mnV+jg9VSYFDZGvhdpkSY2iW8ke8agEGlUQFaLp0wdY=;
+  b=UQKBrBuUhSUkheJjlr+WOMyeY926+hY/9ACw7YQ28QtUrDSvIUzaeMsh
+   7V02QqCFw5jZibS9trG3pEniFXtpCsGSTUy/U0k+8gpUt4hQLRbwHKB/O
+   HPDyDxVvdAjun22gbj0IjFQ15Kh49uWW0wmjM293V3oVUUPEyhQ7NXIvB
+   zcKO+J82mI9naPmhoi5epyy9zcF0ZybkH482sRRAF5srhGb91S+c2VGKH
+   I5j85J8Bp+43vhj7MR/J+QSgq+yp7oU2uZ2BhJs66PtaQTA47AjYbdQsH
+   P/N2HY8j4MffzFGx+Nmjk0IMr7+JWT9K9HxnWCHGqiR5WkbyTq9lp2Xfd
+   Q==;
+X-CSE-ConnectionGUID: 23Bv7p+ARGKgQt2T6N8d4w==
+X-CSE-MsgGUID: oYiChTHtRcWMfdLYVn3ZyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60868941"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="60868941"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 04:54:07 -0700
+X-CSE-ConnectionGUID: f2pAyptXQOu+WoNR8wp0bQ==
+X-CSE-MsgGUID: 6WPcD7jSQQ67d4c9XhBHRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="164753875"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 09 Aug 2025 04:54:05 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uki9B-0004m8-2g;
+	Sat, 09 Aug 2025 11:54:01 +0000
+Date: Sat, 9 Aug 2025 19:53:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2 10/12] media: rkvdec: Add H264 support for the VDPU383
+ variant
+Message-ID: <202508091909.RNcoZmVb-lkp@intel.com>
+References: <20250808200340.156393-11-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <20250808-tonyk-overlayfs-v3-5-30f9be426ba8@igalia.com>
-In-Reply-To: <20250808-tonyk-overlayfs-v3-5-30f9be426ba8@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 9 Aug 2025 13:50:50 +0200
-X-Gm-Features: Ac12FXymfynjWT6oaNDg2pY7A5wkIJ6yOhqyJGu9_Eu5mvdmvf9djMKbJn-W9EE
-Message-ID: <CAOQ4uxj+42O07HxnKrp5A2A-Gk0Z_WLDk=62Y9WZ7RRypdju2w@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 5/7] ovl: Set case-insensitive dentry operations
- for ovl sb
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
-	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808200340.156393-11-detlev.casanova@collabora.com>
 
-On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
-lia.com> wrote:
->
-> For filesystems with encoding (i.e. with case-insensitive support), set
-> the dentry operations for the super block as ovl_dentry_ci_operations.
-> Also, use the first layer encoding as the ovl super block encoding.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
-> Changes from v2:
-> - Create ovl_dentry_ci_operations to not override dentry ops set by
->   ovl_dentry_operations
-> - Create a new function for this
-> - Instead of setting encoding just when there's a upper layer, set it
->   for any first layer (ofs->fs[0].sb), regardless of it being upper or
->   not.
-> ---
->  fs/overlayfs/super.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index bcb7f5dbf9a32e4aa09bc41596be443851e21200..68091bf8368a880d62d942555=
-2613497d6e90b6b 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -161,6 +161,16 @@ static const struct dentry_operations ovl_dentry_ope=
-rations =3D {
->         .d_weak_revalidate =3D ovl_dentry_weak_revalidate,
->  };
->
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +static const struct dentry_operations ovl_dentry_ci_operations =3D {
-> +       .d_real =3D ovl_d_real,
-> +       .d_revalidate =3D ovl_dentry_revalidate,
-> +       .d_weak_revalidate =3D ovl_dentry_weak_revalidate,
-> +       .d_hash =3D generic_ci_d_hash,
-> +       .d_compare =3D generic_ci_d_compare,
-> +};
-> +#endif
-> +
->  static struct kmem_cache *ovl_inode_cachep;
->
->  static struct inode *ovl_alloc_inode(struct super_block *sb)
-> @@ -1318,6 +1328,21 @@ static struct dentry *ovl_get_root(struct super_bl=
-ock *sb,
->         return root;
->  }
->
-> +/*
-> + * Set the ovl sb encoding as the same one used by the first layer
-> + */
-> +static void ovl_set_sb_ci_ops(struct super_block *ovl_sb, struct super_b=
-lock *fs_sb)
-> +{
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +       if (sb_has_encoding(fs_sb)) {
-> +               ovl_sb->s_encoding =3D fs_sb->s_encoding;
-> +               ovl_sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
-> +       }
-> +
-> +       set_default_d_op(ovl_sb, &ovl_dentry_ci_operations);
+Hi Detlev,
 
-I don't like it that set_default_d_op() is called twice and if anything thi=
-s
-helper should have been called only for the ofs->casefold enabled case.
+kernel test robot noticed the following build errors:
 
-what I suggest it to split to two helpers, first set dentry_ops based on
-ofs->casefold determined before ovl_fill_super() is called:
+[auto build test ERROR on linuxtv-media-pending/master]
+[also build test ERROR on linus/master next-20250808]
+[cannot apply to rockchip/for-next sailus-media-tree/master sailus-media-tree/streams v6.16]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index df85a76597e9..00647440a566 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -1307,6 +1307,19 @@ static struct dentry *ovl_get_root(struct
-super_block *sb,
-        return root;
- }
+url:    https://github.com/intel-lab-lkp/linux/commits/Detlev-Casanova/media-rkvdec-Switch-to-using-structs-instead-of-writel/20250809-041049
+base:   https://git.linuxtv.org/media-ci/media-pending.git master
+patch link:    https://lore.kernel.org/r/20250808200340.156393-11-detlev.casanova%40collabora.com
+patch subject: [PATCH v2 10/12] media: rkvdec: Add H264 support for the VDPU383 variant
+config: i386-buildonly-randconfig-005-20250809 (https://download.01.org/0day-ci/archive/20250809/202508091909.RNcoZmVb-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250809/202508091909.RNcoZmVb-lkp@intel.com/reproduce)
 
-+static void ovl_set_d_op(struct super_block *sb)
-+{
-+       struct ovl_fs *ofs =3D sb->s_fs_info;
-+
-+#if IS_ENABLED(CONFIG_UNICODE)
-+       if (ofs->casefold) {
-+               set_default_d_op(ovl_sb, &ovl_dentry_ci_operations);
-+               return;
-+       }
-+#endif
-+       set_default_d_op(sb, &ovl_dentry_operations);
-+}
-+
- int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
- {
-        struct ovl_fs *ofs =3D sb->s_fs_info;
-@@ -1322,7 +1335,7 @@ int ovl_fill_super(struct super_block *sb,
-struct fs_context *fc)
-        if (WARN_ON(fc->user_ns !=3D current_user_ns()))
-                goto out_err;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508091909.RNcoZmVb-lkp@intel.com/
 
--       set_default_d_op(sb, &ovl_dentry_operations);
-+       ovl_set_d_op(sb);
+All errors (new ones prefixed by >>):
+
+>> drivers/media/platform/rockchip/rkvdec/rkvdec.c:12:10: fatal error: 'linux/hw_bitfield.h' file not found
+      12 | #include <linux/hw_bitfield.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
 
 
-> +#endif
-> +}
-> +
->  int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
->  {
->         struct ovl_fs *ofs =3D sb->s_fs_info;
-> @@ -1423,12 +1448,15 @@ int ovl_fill_super(struct super_block *sb, struct=
- fs_context *fc)
->
->                 sb->s_stack_depth =3D upper_sb->s_stack_depth;
->                 sb->s_time_gran =3D upper_sb->s_time_gran;
-> +
+vim +12 drivers/media/platform/rockchip/rkvdec/rkvdec.c
 
-stray new line.
+  > 12	#include <linux/hw_bitfield.h>
+    13	#include <linux/clk.h>
+    14	#include <linux/genalloc.h>
+    15	#include <linux/interrupt.h>
+    16	#include <linux/iommu.h>
+    17	#include <linux/module.h>
+    18	#include <linux/of.h>
+    19	#include <linux/platform_device.h>
+    20	#include <linux/pm.h>
+    21	#include <linux/pm_runtime.h>
+    22	#include <linux/slab.h>
+    23	#include <linux/videodev2.h>
+    24	#include <linux/workqueue.h>
+    25	#include <media/v4l2-event.h>
+    26	#include <media/v4l2-mem2mem.h>
+    27	#include <media/videobuf2-core.h>
+    28	#include <media/videobuf2-vmalloc.h>
+    29	
 
->         }
->         oe =3D ovl_get_lowerstack(sb, ctx, ofs, layers);
->         err =3D PTR_ERR(oe);
->         if (IS_ERR(oe))
->                 goto out_err;
->
-> +       ovl_set_sb_ci_ops(sb, ofs->fs[0].sb);
-> +
-
-This is wrong because ofs->fs[0].sb is NULL on overlay without an upper dir=
-.
-
-Please consider doing this as part of patch 4 instead of using the
-local sb1 var:
-
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -991,6 +991,19 @@ static int ovl_get_data_fsid(struct ovl_fs *ofs)
- }
-
-+/*
-+ * Set the ovl sb encoding as the same one used by the first layer
-+ */
-+static void ovl_set_encoding(struct super_block *sb, struct super_block *f=
-s_sb)
-+{
-+#if IS_ENABLED(CONFIG_UNICODE)
-+      if (sb_has_encoding(fs_sb)) {
-+              sb->s_encoding =3D fs_sb->s_encoding;
-+              sb->s_encoding_flags =3D fs_sb->s_encoding_flags;
-+      }
-+#endif
-+}
-+
- static int ovl_get_layers(struct super_block *sb, struct ovl_fs *ofs,
-                          struct ovl_fs_context *ctx, struct ovl_layer *lay=
-ers)
- {
-@@ -1024,6 +1036,8 @@ static int ovl_get_layers(struct super_block
-*sb, struct ovl_fs *ofs,
-        if (ovl_upper_mnt(ofs)) {
-                ofs->fs[0].sb =3D ovl_upper_mnt(ofs)->mnt_sb;
-                ofs->fs[0].is_lower =3D false;
-+               if (ofs->casefold)
-+                       ovl_set_encoding(sb, ofs->fs[0].sb);
-        }
-
-        nr_merged_lower =3D ctx->nr - ctx->nr_data;
-@@ -1083,6 +1097,17 @@ static int ovl_get_layers(struct super_block
-*sb, struct ovl_fs *ofs,
-                l->name =3D NULL;
-                ofs->numlayer++;
-                ofs->fs[fsid].is_lower =3D true;
-+
-+               if (ofs->casefold) {
-+                       if (!ovl_upper_mnt(ofs) && !sb_has_encoding(sb))
-+                               ovl_set_encoding(sb, ofs->fs[fsid].sb);
-+
-+                       if (!sb_has_encoding(sb) ||
-+                           !sb_same_encoding(sb, mnt->mnt_sb)) {
-+                               pr_err("all layers must have the same
-encoding\n");
-+                               return -EINVAL;
-+                       }
-+               }
-        }
-
-
-Thanks,
-Amir.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
