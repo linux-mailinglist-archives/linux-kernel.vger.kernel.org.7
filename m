@@ -1,182 +1,317 @@
-Return-Path: <linux-kernel+bounces-761147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D635B1F4EB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECFEB1F4EE
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90F267AFE4E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 14:21:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF0BE560238
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 14:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1920329DB96;
-	Sat,  9 Aug 2025 14:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87332BD03F;
+	Sat,  9 Aug 2025 14:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Fxwr5X2E"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013036.outbound.protection.outlook.com [40.107.44.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhPiH1Jl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1DD194C86;
-	Sat,  9 Aug 2025 14:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754749377; cv=fail; b=hsPhFlFMtPegossNKIUY8+DeNZ9GezyZZeUVk7fx2rdiWKpMp/Xpp9oD9ZlS03yYBjn7OMMcskjAsRsrIzaCOIcJCgPQLQt8+vkKxuRhS0HzBBE1O9Rv8YTh9KebeTK3Jb+XM5sEsdgZoc/kMK59hyYJgubzRzsiRV0JrlhD6Dg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754749377; c=relaxed/simple;
-	bh=4oj/evASI34nr/GLYEs/AtMghZGBz2J7PN+TVm1Ul4E=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=NKycKl0V4MnfWmGL+3ri4LEpmKAd582d56FAF0zsUIRkRDKi+HR+jsJFogGjKbCxbsCQHchv5Bk3Ca+x/waI/XDnHe6HK9HTXuVXMwOmUvT9M41IVU/4AAD5LBj5ACRSG//tX6VJ7FMEGafnHrluYWFZtasSE+ztw4rAjmklH0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Fxwr5X2E; arc=fail smtp.client-ip=40.107.44.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bD/kgR85WR4Ll2Zx5SBbdXTUF6h82fRk2edy2agDeQLkGMbbmZb8MY08Nv50d1qa3jfuRQrS+VhjDDn07FAFGHz3lGkSLv5qXL9B90WUbOz5vNRwy9D1O5WKxG+vOHqQkHN0jSnof5x8rluhxgIYomLVEwmFw30uqw2jV6F2c3p3LfS8u5WIdO9JLt5BPv22XXRZFCSU2gt7BoCoQgckjNXGZRedwQNgO+XvyesXowHXggQN6ZDjn+PBUrw/spkuGTq8wgR26v9+yEyTnR5X8uDjJKcGVlIKAuPlLctqfm1KyslRapfngJhWjvlW3H4f/egaHyRmjesUZspI0pfkrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ClZxdjqa+4e6p2VRYe4+k53OWOS35M7TZUPFw1P45GM=;
- b=MiDsVgDEtWicKveQWqQsUTJKEMaHs8IArIAYVIutbPrw6wrrqx0EWZB5FlCMOMjuZxfkSmj/L2+GKflluR5JDQEghVNaXuOYU72gXT8fttiKQ+oxSLVlv0nRvaQUe6TP9cs1WmLDpdlfCeMl7OPBl9U5D/HwMlNYR1j+XzbcwZT+LhFTMNdM79AmPu7wb3JuhE1vMPzOxr184q3q45wQbZVNl08uBHin+y55h6ax37U+BfD5PZKCshPoxKl6+S0M4Kwz19XNLDUjk2x5nDi8g0QawaYaqeRxt2eEwLOWKr8RHLOuOdy1b01JlAAewo/RLlfvvCX8z/J+11ITujQ89A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ClZxdjqa+4e6p2VRYe4+k53OWOS35M7TZUPFw1P45GM=;
- b=Fxwr5X2EJ6pmw6hQ58DJtcXTi4dvGdMc9aMK18cMtPa8Lhx/PjVFputKuHUXfzZmBnc5H0n6JC3sovyiELCh2lJCDfRh78ZZiRN8sFGtYt274fQ3tstQ3V1Sg8zAvCST/slJ+HWWQziwoTl4qadMNYgTUKm7Isay8wxhhao7kod/3i+/JLgiAE7++fn88EZeiaHF12Qw22qHv3U561f5+kVAsjio73Ekm5uXUoTKwwnYekjoVtCEMKpCWPSBLrV1YMbuWwka5uqz/WXVmYddpvZxxdd+vWIJbndZzFSDgdqSZXxWOL6mbG4F7mye1EDvKgPBEt4rpaeh8fK8fYsxHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- KL1PR06MB7329.apcprd06.prod.outlook.com (2603:1096:820:144::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Sat, 9 Aug
- 2025 14:22:52 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.017; Sat, 9 Aug 2025
- 14:22:52 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Yu Kuai <yukuai3@huawei.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] block, bfq: remove redundant __GFP_NOWARN
-Date: Sat,  9 Aug 2025 22:22:39 +0800
-Message-Id: <20250809142240.174197-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0345.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:38e::6) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBAA12C499;
+	Sat,  9 Aug 2025 14:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754749528; cv=none; b=GRg0wqb5esr0Ty9nJ3zcoMO3lLr4WAFBNGhWWFBX2z90kkvyQHL+1PME86SARdAjNTQCtsVT/0ZbPCvpxVBsaWn1glbnCJWkp6AjJ1SWEE3wT8TUJMANgN0mlkSlS+jgTuPIpK2RhPsKnDlixh8ZS2OLuACyWvhVmsY0UCab9x8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754749528; c=relaxed/simple;
+	bh=oITAnnL4pXbTCRefVuC52zFet+7k9cZryAFVCd68ykQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHhUPpYg/+TKW/E0hnOdbBk5DfKB5jJqQ2thTsrENF5N68T7FSecTKUWlKwTKwn/b4FbOtYtug3oU/lwn/ern8ginMnB2HCIOY6Qdmkwgc3uYyYpc5z+R/yfNDgeRytD5YCTXPIeieaVRnLZCPOA04Gp834RntnaMeDX3eKhTo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhPiH1Jl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D81FCC4CEE7;
+	Sat,  9 Aug 2025 14:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754749527;
+	bh=oITAnnL4pXbTCRefVuC52zFet+7k9cZryAFVCd68ykQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lhPiH1JlOayaV8jMajfbPXRp+PJT0K/tDMTHVy9FlsjaNitJUKSthITV+aMSgYQ7Y
+	 Cm4vBNyRSPvvlbsEnkFIT0XabcKcbSexsKdVA8fXH0Q3pmHeiS+xWHV/tVPtC1wDzq
+	 b4FAHduYiEb083Q8qAIKcLacAdSmSpMUQH4njEd3m9wArAA9tngZcQbmj74hwKYiau
+	 U9caVv1ZEwjE5U2CWoMJ9pWiqzN6AcQXgFfynGOmOIrnXjxyZslWo9Tm56nsBV2kyX
+	 XaHV10+Q8M7jQt2LfxnHEjw31K//sCZzjfDL5DFMQHdPy1eSYe19MN29u5l4nyLoEN
+	 CQth0XyUDiU1A==
+Date: Sat, 9 Aug 2025 16:25:18 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] man/man2/mremap.2: describe multiple mapping move
+Message-ID: <ekjakm6zburrawhk34smm3fd43zufzguisfean4hmv7vyjp7fq@uvy6n47qbydl>
+References: <cover.1754414738.git.lorenzo.stoakes@oracle.com>
+ <53e4284ffe80a63260c957369ccacea8f5c16adc.1754414738.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|KL1PR06MB7329:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54b4f522-e671-4810-1376-08ddd750396d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ecj6uShnkVayepkAWn3Msc/lQ/6UNLXe/oI4LZnRqH1pMvNaBeS52CFzYz/T?=
- =?us-ascii?Q?8inAgyebSrSq3wPgaH0gz2flSJ5Fj4jJVH+BAO0wdy8Zks+VRelWlTzx+Cy3?=
- =?us-ascii?Q?JsS1X5j5LXCEwwp4rsFhG9M2dMtYZ1bpLrsCmtU628L8qUfi8j4Ng9QO4EKw?=
- =?us-ascii?Q?33aRrkGfi6EnjonShNZj7pkDQOteWyjbMsRYWJO9SmMkMfR2w0S1DR64y5qq?=
- =?us-ascii?Q?hVc6323ISKqhL4nj+6WnpMSlje3PUk3Ky94bKXpQpechBD4TziQYhkAyh7+d?=
- =?us-ascii?Q?BcLM+6N/E1v/BeUward0zju3J0bwecPpx/HoEK9pe6hv+5I4TKsjXxcyWTG0?=
- =?us-ascii?Q?jdboaxccL4B1YkRoyluz4T/gRAeLZUU9+21mGk4NOjlaRfhZh6m3Nc1Q0/rA?=
- =?us-ascii?Q?dI22vs7re6gcUrpaE+zVKyIxowJPUrqQMUFJlSbMDrZcxqFtp8PWt5WCGjTb?=
- =?us-ascii?Q?3Q3tGfEu3nMq5Qgheuu6IujEGZ+Yo5ibXb05KTLjvqDuUMP/9fP4k1bQ1rX5?=
- =?us-ascii?Q?8USNod+sTYsifHZ3kHqv1effsq3U45FiNZ2bIrMpulAla4IaE5OJiQzOV/8n?=
- =?us-ascii?Q?QPi1JHzf7GtN9d5qGdaQlpSkZSYNZoLk4+qxkAAqp1/JjScJWf9MJghLNhJG?=
- =?us-ascii?Q?2kVrFGZJaNvPDJvY3WPIMlCxoQfCPbJ/7BTtxxsWlhhsigyevZwbQ/XobBoU?=
- =?us-ascii?Q?fsc62UJzaddMoLm/4QfzEoypwxDF2Q8v7dpwvzWD+uRTYGhneGyYCghrGJCM?=
- =?us-ascii?Q?kjxL5kmVy1dIcvHKIhczJNWTqoU82gBw3ogyJyn25URw1DhXSjBy1eG7a2E/?=
- =?us-ascii?Q?45MkRifCaeT+3R8O67mIRtXNL/lYZeCiirgJzuXkAJhqzZ1IomRRXWMx9+DE?=
- =?us-ascii?Q?AL/Lg6tzcUCfwk2du4pwpnMPTPepcwLYvIFygX/6d/cWhuUlO/x/+TqeLIkY?=
- =?us-ascii?Q?n5wouQwQYBK4xoNIQ17dvW1Vk3NcxzjUW/1ABDY2kVuACGdb6r4JX6h33ZgY?=
- =?us-ascii?Q?ZcixlZWqHRTMdQGz8j5HFxwtYMVyRUXoBZL2VaeKMHvBeLd6tlCu9SJ4zUGc?=
- =?us-ascii?Q?ViCW45LXx9UyBWb9FUrP+AqYYhzmJ/N5Y48VVtTStt39PmOTY2cmq+9OUBv4?=
- =?us-ascii?Q?XPu9jKbD38xtQ1WALPJ6z/VkF3QCTQglNXopChE+gdR15LIizw10m3gTNUxf?=
- =?us-ascii?Q?AxzMCHERTLW1q5RN2DwfwbCPe05JCI4/eRpbypgPdWtVnzqyw0jN3NzP0D//?=
- =?us-ascii?Q?o1f2Xyq2e2HnoAzgvyQq9STqzjWLioM0ayr8mHh4o+sf2SIK6fkL8BFkjW9+?=
- =?us-ascii?Q?v4spRlK2olsrtRO0RaMD96FIRaRkQ3rZMTNNDo2r4cNxXECY0PBbevUuCUIp?=
- =?us-ascii?Q?xTKw4ux+/llsrL3ggAI/rMr5TaA+Mw12/tYOnyCfb9Mc/xJjytYXYuelInaR?=
- =?us-ascii?Q?1C54T8sEZ6vqv3MQhzmhB8O5fk5SDK4C2llpO2tpukf+ARfbsYawhg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Kd02B9qBmDg71VPF9kfJCn8rzP9IEd2QWw/IJPG5eB7Dklfi3Wt+icBBWKgZ?=
- =?us-ascii?Q?Fi63yk00FJWZGAiqmajphrkzq78pMXK1PP8yp/guctYIbM3nJWrdNWpjBlWn?=
- =?us-ascii?Q?zHL8JHDTYFx9+ha/qKEZkgDuYSQnorXBrdpJC6/Lw4BtBlz5Pj44efdvrDkE?=
- =?us-ascii?Q?FX2mZiUhwHkUfSBP/iOcbx4m0I8WUkTQq2X/KgGHoP6aIKSi7BrcmNkM66Hg?=
- =?us-ascii?Q?4wmGVmH8//FAKSE4+LlyePeJMtQh1ZvUwX2616mA6jTnYfCWX9g6w0VsJaa5?=
- =?us-ascii?Q?N6PWlQWrUkH1zvCNKqmeHN83llh++vYgNAIcMnOif4gg145iUJgP27ozdWzP?=
- =?us-ascii?Q?HiP73XZ7MTrBgw96DqMH2XEk11qelgAHgmfHEdBfXCqNykW0zhtE8JV51FGY?=
- =?us-ascii?Q?dsJTLwi5+OMBtwIZNRGCIJiCDYEpitRX189vQM/tsIoKv9y7hv0RcLox/YZl?=
- =?us-ascii?Q?5jhgNmoeroOouNGmGGtsVYI/QF7Txowm4wNQNDiF05lDTL21RaYhHg0ddcUG?=
- =?us-ascii?Q?p9olBn14KDKNtkq4mXXGL+Wqp1cJ4svwECojrJAeo7lx/L8e8QLx7X0p28LO?=
- =?us-ascii?Q?iOLC3vppBxep+HtOCncRkuW8qeEBEf5kC23N7QHQfPsxNNhfIQV7VzGunsnS?=
- =?us-ascii?Q?cJVASL6buNkE6J7hpH/ASEKs+5vhp5fpeo03/91HpELYinDgUajyo4p6ctNP?=
- =?us-ascii?Q?U9NTBNazJevxCVIFIRiya3bPa6b/wII5/iGMsT4SRz9SPt2schEwUBNNpjLB?=
- =?us-ascii?Q?++dwxtc7G008y9C5pQyJ9wHfOctcF0GkQpW1kHcpoYPIZaIzyVI2AFBI4HK5?=
- =?us-ascii?Q?pP44dTwsdeddUsWoyHVBT4HVkTg9TZnArg8AZslwEG9QGc2TeInbGkZcp+wz?=
- =?us-ascii?Q?2icJOrTFi28iyvJkErkh8kOcM9P5DIfmaCXd+VPwEqG3ivmjssYTxKA0ggbA?=
- =?us-ascii?Q?ZVqAuJFjjlNN9HftJfGC966fpv1VdWlu1cwaNo68CrJtZeh2y1cXWkJ7ymf1?=
- =?us-ascii?Q?PQgwBwnNWnbcSqb42qvQbRXem3xUhytrShvbH5G7/UGzupctucithhHo7MU3?=
- =?us-ascii?Q?zPAKspTAzuuOaSeruX8Ls+REhhoGZLPIWr+RsWlV3AO1gnfqRqDrgfwGpaVt?=
- =?us-ascii?Q?nKkXnbnzIiIK6wm+Hs2EtT4dusz7yA9KFAmTq0lDo309Ppt3/9a9nJgKH7vA?=
- =?us-ascii?Q?5zhqCoQM4BgSZJFcNiF9U2m5tooJ0u2adYDw4DtFSNGIi+lAxeu0tqFDXjjW?=
- =?us-ascii?Q?8iFH3Qxy4feEamJIl7uFKd3KSBRRjJc9Df1tNiYRQbYzcICga+ufI155yeh/?=
- =?us-ascii?Q?G3mPZbdI0hFLBdIKJcdHEY0POKzBEdxwWXrhcnzA35wV9JEQVAEm1sBEuOGQ?=
- =?us-ascii?Q?PWhtrjrOUA94+Trq+GYb1f/g43afYuyM9qmwGPvkiIgqYirrR81HjKo3otty?=
- =?us-ascii?Q?Qfeh+Km1AFa73nKGYwvAlJdwv8EMuiKMCREjt1uWGzZWRxNqVQoOkwKa0Ylf?=
- =?us-ascii?Q?Z4TbfJGjLEpoVtyKgXFJIjFKzQo7+Gk5HMME8FyRn+Q/Ajf5NEO+tGyDs2pE?=
- =?us-ascii?Q?FcdneLPXwu+cvfA6f35IY9SaMe9a4s3f6Pa87m4d?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54b4f522-e671-4810-1376-08ddd750396d
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2025 14:22:51.9440
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T87R05jp9jx3FLy2dQd9nGZYhZS5f/UXWVYuKYf9fmRX3BvQp9rHsR3H+lyXhMzOMgoftBIYjiMWk1AdMXimNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB7329
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5xmbayfvgezef2h2"
+Content-Disposition: inline
+In-Reply-To: <53e4284ffe80a63260c957369ccacea8f5c16adc.1754414738.git.lorenzo.stoakes@oracle.com>
 
-Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT") made
-GFP_NOWAIT implicitly include __GFP_NOWARN.
 
-Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT (e.g.,
-`GFP_NOWAIT | __GFP_NOWARN`) is now redundant.  Let's clean up these
-redundant flags across subsystems.
+--5xmbayfvgezef2h2
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] man/man2/mremap.2: describe multiple mapping move
+References: <cover.1754414738.git.lorenzo.stoakes@oracle.com>
+ <53e4284ffe80a63260c957369ccacea8f5c16adc.1754414738.git.lorenzo.stoakes@oracle.com>
+MIME-Version: 1.0
+In-Reply-To: <53e4284ffe80a63260c957369ccacea8f5c16adc.1754414738.git.lorenzo.stoakes@oracle.com>
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
----
- block/bfq-iosched.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Lorenzo,
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 3bf76902f07f..db0ae65186ec 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -5848,7 +5848,7 @@ static struct bfq_queue *bfq_get_queue(struct bfq_data *bfqd,
- 	}
- 
- 	bfqq = kmem_cache_alloc_node(bfq_pool,
--				     GFP_NOWAIT | __GFP_ZERO | __GFP_NOWARN,
-+				     GFP_NOWAIT | __GFP_ZERO,
- 				     bfqd->queue->node);
- 
- 	if (bfqq) {
--- 
-2.34.1
+On Tue, Aug 05, 2025 at 06:31:55PM +0100, Lorenzo Stoakes wrote:
+> Document the new behaviour introduced in Linux 6.17 whereby it is now
+> possible to move multiple mappings in a single operation, as long as the
+> operation is purely a move, that is old_size is equal to new_size and
+> MREMAP_FIXED is specified.
+>=20
+> To make things clearer, also describe this 'pure move' operation, before
+> expanding upon it to describe the newly introduced behaviour.
 
+Can we split this further into two commits?
+
+>=20
+> This change also explains the limitations of of this method and the
+> possibility of partial failure.
+>=20
+> Finally, we pluralise language where it makes sense to so the documentati=
+on
+> does not contradict either this new capability nor the pre-existing edge
+> case.
+>=20
+> Example code is enclosed below demonstrating the behaviour which is now
+> possible:
+>=20
+> int main(void)
+> {
+> 	unsigned long page_size =3D sysconf(_SC_PAGESIZE);
+> 	void *ptr =3D mmap(NULL, 10 * page_size, PROT_READ | PROT_WRITE,
+> 			 MAP_ANON | MAP_PRIVATE, -1, 0);
+> 	void *tgt_ptr =3D mmap(NULL, 10 * page_size, PROT_NONE,
+> 			     MAP_ANON | MAP_PRIVATE, -1, 0);
+> 	int i;
+>=20
+> 	if (ptr =3D=3D MAP_FAILED || tgt_ptr =3D=3D MAP_FAILED) {
+> 		perror("mmap");
+> 		return EXIT_FAILURE;
+> 	}
+>=20
+> 	/* Unmap every other page. */
+> 	for (i =3D 1; i < 10; i +=3D 2)
+> 		munmap(ptr + i * page_size, page_size);
+>=20
+> 	/* Now move all 5 distinct mappings to tgt_ptr. */
+> 	ptr =3D mremap(ptr, 10 * page_size, 10 * page_size,
+> 		     MREMAP_MAYMOVE | MREMAP_FIXED, tgt_ptr);
+> 	if (ptr =3D=3D MAP_FAILED) {
+> 		perror("mremap");
+> 		return EXIT_FAILURE;
+> 	}
+>=20
+> 	return EXIT_SUCCESS;
+> }
+>=20
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  man/man2/mremap.2 | 84 ++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 73 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/man/man2/mremap.2 b/man/man2/mremap.2
+> index 2168ca728..6ba51310c 100644
+> --- a/man/man2/mremap.2
+> +++ b/man/man2/mremap.2
+> @@ -25,18 +25,47 @@ moving it at the same time (controlled by the
+>  argument and
+>  the available virtual address space).
+>  .P
+> +Mappings can also simply be moved
+> +(without any resizing)
+> +by specifying equal
+> +.I old_size
+> +and
+> +.I new_size
+> +and using the
+> +.B MREMAP_FIXED
+> +flag
+> +(see below).
+> +Since Linux 6.17,
+> +while
+> +.I old_address
+> +must reside within a mapping,
+
+I don't understand this.  What does it mean that old_address must reside
+within a mapping?  It's a point, not a size, so I'm not sure I
+understand it.
+
+> +.I old_size
+> +may span multiple mappings
+> +which do not have to be
+> +adjacent to one another when
+> +performing a move like this.
+> +The
+> +.B MREMAP_DONTUNMAP
+> +flag may be specified.
+> +.P
+> +If the operation is not
+> +simply moving mappings,
+> +then
+> +.I old_size
+> +must span only a single mapping.
+> +.P
+>  .I old_address
+> -is the old address of the virtual memory block that you
+> -want to expand (or shrink).
+> +is the old address of the first virtual memory block that you
+> +want to expand, shrink, and/or move.
+>  Note that
+>  .I old_address
+>  has to be page aligned.
+>  .I old_size
+> -is the old size of the
+> -virtual memory block.
+> +is the size of the range containing
+> +virtual memory blocks to be manipulated.
+>  .I new_size
+>  is the requested size of the
+> -virtual memory block after the resize.
+> +virtual memory blocks after the resize.
+>  An optional fifth argument,
+>  .IR new_address ,
+>  may be provided; see the description of
+> @@ -105,13 +134,43 @@ If
+>  is specified, then
+>  .B MREMAP_MAYMOVE
+>  must also be specified.
+> +.IP
+> +Since Linux 6.17,
+> +if
+> +.I old_size
+> +is equal to
+> +.I new_size
+> +and
+> +.B MREMAP_FIXED
+> +is specified, then
+> +.I old_size
+> +may span beyond the mapping in which
+> +.I old_address
+> +resides.
+> +In this case,
+> +gaps between mappings in the original range
+> +are maintained in the new range.
+> +The whole operation is performed atomically
+> +unless an error arises,
+> +in which case the operation may be partially
+> +completed,
+> +that is,
+> +some mappings may be moved and others not.
+> +.IP
+> +
+
+Why this blank?
+
+
+Cheers,
+Alex
+
+> +Moving multiple mappings is not permitted if
+> +any of those mappings have either
+> +been registered with
+> +.BR userfaultfd (2) ,
+> +or map drivers that
+> +specify their own custom address mapping logic.
+>  .TP
+>  .BR MREMAP_DONTUNMAP " (since Linux 5.7)"
+>  .\" commit e346b3813067d4b17383f975f197a9aa28a3b077
+>  This flag, which must be used in conjunction with
+>  .BR MREMAP_MAYMOVE ,
+> -remaps a mapping to a new address but does not unmap the mapping at
+> -.IR old_address .
+> +remaps mappings to a new address but does not unmap them
+> +from their original address.
+>  .IP
+>  The
+>  .B MREMAP_DONTUNMAP
+> @@ -149,13 +208,13 @@ mapped.
+>  See NOTES for some possible applications of
+>  .BR MREMAP_DONTUNMAP .
+>  .P
+> -If the memory segment specified by
+> +If the memory segments specified by
+>  .I old_address
+>  and
+>  .I old_size
+> -is locked (using
+> +are locked (using
+>  .BR mlock (2)
+> -or similar), then this lock is maintained when the segment is
+> +or similar), then this lock is maintained when the segments are
+>  resized and/or relocated.
+>  As a consequence, the amount of memory locked by the process may change.
+>  .SH RETURN VALUE
+> @@ -188,7 +247,10 @@ virtual memory address for this process.
+>  You can also get
+>  .B EFAULT
+>  even if there exist mappings that cover the
+> -whole address space requested, but those mappings are of different types.
+> +whole address space requested, but those mappings are of different types,
+> +and the
+> +.BR mremap ()
+> +operation being performed does not support this.
+>  .TP
+>  .B EINVAL
+>  An invalid argument was given.
+> --=20
+> 2.50.1
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--5xmbayfvgezef2h2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiXWjcACgkQ64mZXMKQ
+wqklGg//SF0JLJ2EiiXam+d6ODgH9lopFyhItyfqL3G5G4HQc19RtfHsy4v2T2MD
+ewK8cwOkg2e/u/ejOUi2L+/AGO8hc4ykHSxM74eivyf4O8AJs9mSB1ywZ4CJ18S1
+GU/ZApYIFSExfIgY6PAywvn/Dv3PQdPfO8gG2tK9FflCfsmbSJbpN7ADVfCrA9pW
+ZfeqA949CLLAiGoDTMx3K309dJeT7qTr7IQqlSJQzvrVCnukaqmoUowCvlwJdr/0
+ffjCt7aTU/JCoafEg5gJOrPvunUKwd6mRbj6+wCdfe215Lw/s1MWtGURJp1qGl1T
+XoNkSBO0z2+noPkEoD9N1mU7tlZRf7QLRSf3nZX8fXiIrPBk2lhhfhwoEKXGDI2F
+PkFIas97LQ3XXauEmM85GGGl420Jl62VnS0lRiVHNp2c6Y71ADGi5QhbhlWIl78x
+eQPmjkJJxCgCi+OeSCyUFgvrvA7VFOIaS/U2aC95yu00V+B1i3X+61z6I3snAkTI
+JLV7pTNtrrY92U1f4LRHcO7d8xF1F6vL4nuH+mb97bLyWzuLIEbC1sBhtJiDNxbT
+n7XMQA1v4g68Dcc0IQEgx9YlbewR14KZSm6p43kILDjM5z3CtvoORAi3wgYs+dw6
++UEfBqtc989H3Vg6QrYhdNslpgv7HIZGEEItTWHs1JGW+PEBEHQ=
+=oKUk
+-----END PGP SIGNATURE-----
+
+--5xmbayfvgezef2h2--
 
