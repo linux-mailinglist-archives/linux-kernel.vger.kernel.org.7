@@ -1,118 +1,200 @@
-Return-Path: <linux-kernel+bounces-761281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE51CB1F71A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 00:11:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 989FCB1F726
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 01:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB81B17829B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:11:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6A4F7AE6BD
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE39D27C145;
-	Sat,  9 Aug 2025 22:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbP5LOr6"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767732566F5;
+	Sat,  9 Aug 2025 23:01:46 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D274A2AE84;
-	Sat,  9 Aug 2025 22:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9EE186294;
+	Sat,  9 Aug 2025 23:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754777484; cv=none; b=fTTV7GM6MOU7L6UcQQhpO93XdXihJ+KlYQ0D4lw/VMjGx1bxcs7T7SY55OwQN+tq74NQwmBjRwrZTSXinawp+rCcfFgsc8uSAo3PF6HvYNd8OTO+WVgMya5oLN5YcwV13aFBZA3Ay48FO+PlICmc3Pbn3RSwaG3IJ734lzzrBro=
+	t=1754780506; cv=none; b=Ah44hAwUPZVydf9fOdUrw6U2dSqX3gDYOcCZacLoEOlsC9C/in23oFXruSpZ0qG6tTMD17ZWtrN9XjKfL4RvP7txcMoTKteZ+PpTFCvS2QAsIMGvU1EK4Ct7ciG5q5aXlz/GVqjWAtgPxZtUgOny+LLRR+7GAdjvci2L7nuzWH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754777484; c=relaxed/simple;
-	bh=CyKdCLPGTToqh2o1gFAActl2h/O8Zjet60prjlxM7C8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FO3PzmCnMw9agXWuqdqprKFRuOZ/MI/Fy+Ip6MLgvkQ6dY0GL7KkhWjVbsLG3CuZBkN4uzRJMyHwnQkluDtS3knfnfNVoB5d/8RlXYSxcNalQ9FF1XUYlc6cxft30nvnyoJQD2qHpJqOna1uGtD22RhsvpLVBdMGmNJ0ExqcyBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbP5LOr6; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45994a72356so25091495e9.0;
-        Sat, 09 Aug 2025 15:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754777481; x=1755382281; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kWyuqnnM831kHmXUyyqa9K5BLHE5Wnfr+uFjW9Eqgrk=;
-        b=LbP5LOr6ld1cvnip+L+WI2HWGYFG1njV/AKLZWqVITAuof/un2k0KnBAXERl+tkS12
-         1pyY5m1zMjFnLEZ35coO1LsCkP4cRB0jb9weP6rxn1+VnVmT0DgNVQljMe+Xli86nsXm
-         NDkuobUlzZQCTrxhSY9IpKifHo7AVe58f9YPzejNj+0M1RVV4+rMjqsok7A/jtf+Vo1z
-         xsvfAOwPXLJHItbiaONpM6cXDkHSG1v8bu+c3MZq+ZIr2dPlO0ltaM5KEE2Vcf5iUPA2
-         xk11BnJSDikHggCxdYcCfVn1N6J5okSFV8dZJkQ2+PKYPdTOlD2n8s7t66KN2QImEHRJ
-         PMfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754777481; x=1755382281;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kWyuqnnM831kHmXUyyqa9K5BLHE5Wnfr+uFjW9Eqgrk=;
-        b=oOK9O2PwKBP3MCKzKOfK7QmOlrk/WRa1nuAeS63KHmrzcdw3ft1doEFDB6QU2vdbgQ
-         Nbi+Rou+kKbumsznT2ehbdTa3fBXuCLaKdANv8oUBzgbZfVY6PSjKQ0G3qm4tnYwalzY
-         v25FHtKevdkFUJ8EEM+9GqosGs2Vcyu0qv10QfbHU0lEdViBP8dUHSNukzgoJkenNqX9
-         SAc+5lHSeAk5Qixmalg/ESZ+qbAQCp8SFAlZT/rrxlpa3bQtjhNzBJPzdsiK12oD8Jet
-         6aOQPCgl7jRL7h1FwKRTNY544NDGFGNEgQpLubpipJAQUD7YdsxzTtoEnq4naNTYGzxI
-         cwQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUh9HQ7OiD4uyowrnNMOqvUed3mf8G64x+GLCDQHTHRHQQ0afL2i3R3JvYFPvmIjrObLCkjAibRHDvu0CM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjV+gvw/l8OU/MqdsHoo3eeCc+B4g9tkYOPossAVqgfYxO+M23
-	uC4O0z2RlgOXfe5h+T6zdg9513buR+Wpr2IabAOZOrn9crbaNDmy5+o9
-X-Gm-Gg: ASbGncvFbHs2JaDJ4cRghQ//owgHGEjG12ZiSR5uaFbPUKOXeKwnT8dEZZorcm4fuA5
-	JZEwcGwtgvH4ZpygCjb7CPjeJl/f38DLLvi3yXrff0BO8XW+Rr74OgeEi2pcETWcGwdTuz9tCe1
-	A0VI3BNHvldazie/jJOeFyssqiSBaz8tJeQ+5nkYQ8oijEFcDzbbTye5jQiTX/1boaaIMkCRl+r
-	9j/JyYskyI+1OHVmaqbctD5l3Zn0BcelWyqxVDPwF4Y1OUOHBk3Z1fhjhtc0Jh2I9RBzZQ1pCrX
-	TPvM8lnkAokCEBBsmQI+IkiPUw6fE0AWOAobWrIdFdFTE5QabwMMGgLV9VoKZrYMaESoqhU7M8B
-	82Ds+9TIGgyU2rJhZRXRjh2d1KBU7RW0a/w2JTOmKvUrpFIv4ClvCdhZyTVOkIMitZTtErjGFPc
-	ZwwSv7hc7uwm3PwA/fEDAV2w==
-X-Google-Smtp-Source: AGHT+IFYf6olDIH9fyHWCMbqbkxZHbQ1BIDwefn9eFC8Zz0ceeVxyDgzJx3yIdA1+DdqYOeoC3CfNw==
-X-Received: by 2002:a05:600c:3b1b:b0:459:e39e:e5a5 with SMTP id 5b1f17b1804b1-459f51a7fbamr67662745e9.5.1754777480967;
-        Sat, 09 Aug 2025 15:11:20 -0700 (PDT)
-Received: from ?IPV6:2001:9e8:f126:ce32:5d9b:45f7:a91d:3c6b? ([2001:9e8:f126:ce32:5d9b:45f7:a91d:3c6b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ececdsm166418865e9.1.2025.08.09.15.11.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Aug 2025 15:11:20 -0700 (PDT)
-Message-ID: <4e192acc-3364-4318-b31b-120a37af6a2f@gmail.com>
-Date: Sun, 10 Aug 2025 00:11:20 +0200
+	s=arc-20240116; t=1754780506; c=relaxed/simple;
+	bh=CjJsvcst6MRZmo+FQY5M+ytxwUkRquRR0/OqVbCuUKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=R/Y/CTUWILbQ1lVZqHAdVzHgbaaXHWau1jkd6oxgWUrem3q1TFeT68I7CtkRp9dPnc8IHQeIQunVApOxJp8HOsU5M7hWwZPb4KYYUVgDE2CIZ2g3nu2g5i1IdWE3lmJe/2cJbUbX1X3VMC7YrJypavjOhPTrPQDdqWWJasfNXd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uksAA-000000002Cb-2BOp;
+	Sat, 09 Aug 2025 22:35:42 +0000
+Date: Sat, 9 Aug 2025 23:35:28 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Arkadi Sharshevsky <arkadis@mellanox.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH/RFC net] net: dsa: lantiq_gswip: honor dsa_db passed to
+ port_fdb_{add,del}
+Message-ID: <aJfNMLNoi1VOsPrN@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH i2c-host v4 5/5] i2c: rtl9300: Implement I2C block read
- and write
-Content-Language: en-GB
-To: Sven Eckelmann <sven@narfation.org>,
- Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- Harshal Gohel <hg@simonwunderlich.de>,
- Simon Wunderlich <sw@simonwunderlich.de>
-References: <20250809-i2c-rtl9300-multi-byte-v4-0-d71dd5eb6121@narfation.org>
- <20250809-i2c-rtl9300-multi-byte-v4-5-d71dd5eb6121@narfation.org>
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-In-Reply-To: <20250809-i2c-rtl9300-multi-byte-v4-5-d71dd5eb6121@narfation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Sven,
+Commit c9eb3e0f8701 ("net: dsa: Add support for learning FDB through
+notification") added a dev_close() call "to indicate inconsistent
+situation" when we could not delete an FDB entry from the port. In case
+of the lantiq_gswip driver this is problematic on standalone ports for
+which all calls to either .port_fdb_add() or .port_fdb_del() would just
+always return -EINVAL as adding or removing FDB entries is currently
+only supported for ports which are a member of a bridge.
 
-On 09.08.2025 08:40, Sven Eckelmann wrote:
-> @@ -314,6 +343,7 @@ static u32 rtl9300_i2c_func(struct i2c_adapter *a)
->  {
->  	return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
->  	       I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
-> +	       I2C_FUNC_SMBUS_READ_I2C_BLOCK | I2C_FUNC_SMBUS_WRITE_I2C_BLOCK |
->  	       I2C_FUNC_SMBUS_BLOCK_DATA;
->  }
->  
+As since commit c26933639b54 ("net: dsa: request drivers to perform FDB
+isolation") the dsa_db is passed to the .port_fdb_add() or
+.port_fdb_del() calls we can use that to set the FID accordingly,
+similar to how it was for bridge ports, and to FID 0 for standalone
+ports. In order for FID 0 to work at all we also need to set bit 1 in
+val[1], so always set it.
 
-Is there a specific reason you explicitly use I2C_FUNC_SMBUS_READ_I2C_BLOCK and
-*_WRITE_* instead of I2C_FUNC_SMBUS_I2C_BLOCK ?
+This solution was found in a downstream driver provided by MaxLinear
+(which is the current owner of the former Lantiq switch IP) under
+GPL-2.0. Import the implementation and the copyright headers from that
+driver.
 
-Best regards,
-Jonas Jelonek
+Fixes: c9eb3e0f8701 ("net: dsa: Add support for learning FDB through notification")
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/net/dsa/lantiq_gswip.c | 55 ++++++++++++++++++++--------------
+ 1 file changed, 33 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
+index 6eb3140d4044..fed86b2d78fc 100644
+--- a/drivers/net/dsa/lantiq_gswip.c
++++ b/drivers/net/dsa/lantiq_gswip.c
+@@ -2,9 +2,11 @@
+ /*
+  * Lantiq / Intel GSWIP switch driver for VRX200, xRX300 and xRX330 SoCs
+  *
+- * Copyright (C) 2010 Lantiq Deutschland
+- * Copyright (C) 2012 John Crispin <john@phrozen.org>
++ * Copyright (C) 2023 - 2024 MaxLinear Inc.
++ * Copyright (C) 2022 Snap One, LLC.  All rights reserved.
+  * Copyright (C) 2017 - 2019 Hauke Mehrtens <hauke@hauke-m.de>
++ * Copyright (C) 2012 John Crispin <john@phrozen.org>
++ * Copyright (C) 2010 Lantiq Deutschland
+  *
+  * The VLAN and bridge model the GSWIP hardware uses does not directly
+  * matches the model DSA uses.
+@@ -239,6 +241,7 @@
+ #define  GSWIP_TABLE_MAC_BRIDGE_KEY3_FID	GENMASK(5, 0)	/* Filtering identifier */
+ #define  GSWIP_TABLE_MAC_BRIDGE_VAL0_PORT	GENMASK(7, 4)	/* Port on learned entries */
+ #define  GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC	BIT(0)		/* Static, non-aging entry */
++#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID	BIT(1)		/* Valid bit */
+ 
+ #define XRX200_GPHY_FW_ALIGN	(16 * 1024)
+ 
+@@ -1349,30 +1352,37 @@ static void gswip_port_stp_state_set(struct dsa_switch *ds, int port, u8 state)
+ }
+ 
+ static int gswip_port_fdb(struct dsa_switch *ds, int port,
+-			  const unsigned char *addr, u16 vid, bool add)
++			  const unsigned char *addr, u16 vid, struct dsa_db db,
++			  bool add)
+ {
+-	struct net_device *bridge = dsa_port_bridge_dev_get(dsa_to_port(ds, port));
+ 	struct gswip_priv *priv = ds->priv;
+ 	struct gswip_pce_table_entry mac_bridge = {0,};
+-	unsigned int max_ports = priv->hw_info->max_ports;
+ 	int fid = -1;
+-	int i;
+ 	int err;
++	int i;
+ 
+-	if (!bridge)
+-		return -EINVAL;
+-
+-	for (i = max_ports; i < ARRAY_SIZE(priv->vlans); i++) {
+-		if (priv->vlans[i].bridge == bridge) {
+-			fid = priv->vlans[i].fid;
+-			break;
++	switch (db.type) {
++	case DSA_DB_BRIDGE:
++		for (i = 0; i < ARRAY_SIZE(priv->vlans); i++) {
++			if (priv->vlans[i].bridge == db.bridge.dev) {
++				fid = priv->vlans[i].fid;
++				break;
++			}
+ 		}
+-	}
+-
+-	if (fid == -1) {
+-		dev_err(priv->dev, "no FID found for bridge %s\n",
+-			bridge->name);
+-		return -EINVAL;
++		if (fid == -1) {
++			dev_err(priv->dev, "Port %d not part of a bridge\n", port);
++			return -EINVAL;
++		}
++		break;
++	case DSA_DB_PORT:
++		if (dsa_is_cpu_port(ds, port) &&
++			dsa_fdb_present_in_other_db(ds, port, addr, vid, db))
++			return 0;
++		/* FID of a standalone / single port bridge */
++		fid = 0;
++		break;
++	default:
++		return -EOPNOTSUPP;
+ 	}
+ 
+ 	mac_bridge.table = GSWIP_TABLE_MAC_BRIDGE;
+@@ -1382,7 +1392,8 @@ static int gswip_port_fdb(struct dsa_switch *ds, int port,
+ 	mac_bridge.key[2] = addr[1] | (addr[0] << 8);
+ 	mac_bridge.key[3] = FIELD_PREP(GSWIP_TABLE_MAC_BRIDGE_KEY3_FID, fid);
+ 	mac_bridge.val[0] = add ? BIT(port) : 0; /* port map */
+-	mac_bridge.val[1] = GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC;
++	mac_bridge.val[1] = add ? (GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC |
++				   GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID) : 0;
+ 	mac_bridge.valid = add;
+ 
+ 	err = gswip_pce_table_entry_write(priv, &mac_bridge);
+@@ -1396,14 +1407,14 @@ static int gswip_port_fdb_add(struct dsa_switch *ds, int port,
+ 			      const unsigned char *addr, u16 vid,
+ 			      struct dsa_db db)
+ {
+-	return gswip_port_fdb(ds, port, addr, vid, true);
++	return gswip_port_fdb(ds, port, addr, vid, db, true);
+ }
+ 
+ static int gswip_port_fdb_del(struct dsa_switch *ds, int port,
+ 			      const unsigned char *addr, u16 vid,
+ 			      struct dsa_db db)
+ {
+-	return gswip_port_fdb(ds, port, addr, vid, false);
++	return gswip_port_fdb(ds, port, addr, vid, db, false);
+ }
+ 
+ static int gswip_port_fdb_dump(struct dsa_switch *ds, int port,
+-- 
+2.50.1
+
 
