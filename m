@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-760939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E84B1F232
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:09:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E63B1F233
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A83566E9D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31CE46220C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F210274B39;
-	Sat,  9 Aug 2025 05:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3503A274B43;
+	Sat,  9 Aug 2025 05:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XB8zwFIH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cZoFv+co"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24CE21D3E1
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A097E125D6
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754716147; cv=none; b=LI4h+6OJWZaBS0TR7Q3NBzoXkmy9JmDvvsP0v6h3Wr+GpKZR5W1whx1t+MpULY/tpCopCTQwtk+d4eHYbBbXGG8tw911CUm66GpfCtas8ctsmrrtOtpyFMSEQ1wSEmj4dWMkrZhPa8ugb3u+CyP9djkHSe8sZ2gx2yAfRIPx9CU=
+	t=1754716161; cv=none; b=Rm7TcpHSNUIIoFYEPwrZQSk2+mFBFaIi8Biv/YBu8NhjoOpqLYiSDc8n/N7a+PcWKj1D5lN8yxsfXFZpqwNZo9V27otdxT/bMNi/j+pCcQsy85gMx6mqoYUfLUdWB0a4zERaoznppBe6okhDs8L/kX4GGnSX8g32CRW4pXc/jS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754716147; c=relaxed/simple;
-	bh=euRWyMdufoCin//rgMJ4T3fWMZpHw1jQB7L14khTmb4=;
+	s=arc-20240116; t=1754716161; c=relaxed/simple;
+	bh=V4wQFWsJMut3Mv4WM/pNBpXZswfWqWCXgqNTuOQgQwc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FhwU+egXgnivL5wAIp8WWClNxp4yT7p2+qq0OVtPsZHuRHUqSefqGa8Mw69mD2l/SvPpXJI146UF1gIL0OohXuZVBnBx9uuzjtJB0fwJPdjrZGa51C5jL55hj27fGIPyUJpmNwnKZK7cVsQFji5MJ9gcLGaigOLthcWnAQfM4Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XB8zwFIH; arc=none smtp.client-ip=198.175.65.18
+	 MIME-Version; b=tR/Eg9pwE3kfKHQ1XrSvfns7tRo1/54dBTa3Mcw/Vf9PUP5J9yjcpYZjzIWQ96CkLtFqrg19Zl0Cj25CGXm9QEsmQiICsQrbY8sep3kg5LmP1PeugdTFvBMNkphNKcutc0NLmiPwdKekqx5gwUaOM5x4KAy1UaLJ56yS2wqthlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cZoFv+co; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754716146; x=1786252146;
+  t=1754716160; x=1786252160;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=euRWyMdufoCin//rgMJ4T3fWMZpHw1jQB7L14khTmb4=;
-  b=XB8zwFIHW5tROwSjY+TkhHve8zxklhKn+ovNLIF8SV5U0iIW3uisGZ+h
-   hY/ESXsB+pgUaisyny/yy5pPLNKo8MGtQy5YXsFvNJCRR/qBzsPTciwpd
-   DWKZJ1KhyMu77ycu6eYUAzqZuN/gRnxFRxIu0gB+CDzvdaP0yW6Alm3q2
-   6uSDm53TwoaOggR9d3iPh9Z+dpDEn90e2yYpi8OZHptMKcxOxMQuhOE8g
-   XyVt9GJRY6uXVn+Xhk0ObrEJv4d8fU3+v015Xl9/d69ko5uk8uOcrTvoC
-   5KhPHr2patZHHRizOM78ma1nH5m9MLqfkUzr1tVCq2xOpXisttW9XZBQc
-   Q==;
-X-CSE-ConnectionGUID: fZf0KiitSgGguAZwYKknTQ==
-X-CSE-MsgGUID: qtUqGlf/QgGtoI55sDwkdQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="57137770"
+  bh=V4wQFWsJMut3Mv4WM/pNBpXZswfWqWCXgqNTuOQgQwc=;
+  b=cZoFv+cooYycPX6fhTDFz3M70RpTXLjWW54A4RKCHWeGADL7LpNgffxW
+   gBfRlECeZkPmt7ZbNEgFqOrc7h37RbVfI0hpXkfJXAbSVhFqX1dyT3XdI
+   KBuYaf5c3EOsWZOREhMvQUtHsoLmWta+xL56O2v1gsR3leEwTYp2Wagee
+   zuCK7oxtqjbXilAu6g6eLj5fAL1la9xryvQW3Hx9lwncNu2ChThNoNOIL
+   8rqMMvopoFaWOd9vVKtpzIX0eyrh2S0jAjm/gycY3Z9ipQFIzNCz17K0J
+   RJ7dwofq53rsYOMlEnDTxOs2VjSm+OkCdnAYfR59wl5PkmnVd8HuSY4K7
+   g==;
+X-CSE-ConnectionGUID: U6TaVEBsQ1urnPH9VT6FpQ==
+X-CSE-MsgGUID: xLUFPU/zRaayB1BNHTCWGw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="57137798"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57137770"
+   d="scan'208";a="57137798"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:09:05 -0700
-X-CSE-ConnectionGUID: 7a50TPFuTq2l0110KDRwEA==
-X-CSE-MsgGUID: IsqZoesVQLiHgA5hLOCuhg==
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:09:19 -0700
+X-CSE-ConnectionGUID: MAk8xVHNTeiRA2GQcBH6/g==
+X-CSE-MsgGUID: rE8RpT+sQLqRJLnxvLOvng==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165374544"
+   d="scan'208";a="165374559"
 Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by fmviesa006.fm.intel.com with ESMTP; 08 Aug 2025 22:09:00 -0700
+  by fmviesa006.fm.intel.com with ESMTP; 08 Aug 2025 22:09:13 -0700
 From: Chen Yu <yu.c.chen@intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -84,9 +84,9 @@ Cc: Vincent Guittot <vincent.guittot@linaro.org>,
 	Chen Yu <yu.chen.surf@gmail.com>,
 	Chen Yu <yu.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 06/28] sched: Save the per LLC utilization for better cache aware scheduling
-Date: Sat,  9 Aug 2025 13:02:54 +0800
-Message-Id: <d77d4db175adc09cd01fdee097c16bc3e52c8be2.1754712565.git.tim.c.chen@linux.intel.com>
+Subject: [RFC PATCH v4 07/28] sched: Add helper function to decide whether to allow cache aware scheduling
+Date: Sat,  9 Aug 2025 13:03:10 +0800
+Message-Id: <701c7be7f0e69582d9ad0c25025ec2e133e73fbb.1754712565.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1754712565.git.tim.c.chen@linux.intel.com>
 References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
@@ -98,115 +98,208 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When a system gets busy and a process's preferred LLC
-is saturated by too many threads within this process, there are significant
-in-LLC task migrations within its preferred LLC. This leads to migration
-latency and degrades performance. Ideally, task aggregation should be
-inhibited if the task's preferred LLC is overloaded. This implies that a
-metric is needed to indicate whether the LLC is busy.
+From: Tim Chen <tim.c.chen@linux.intel.com>
 
-Store the per-LLC utilization calculated via periodic load
-balancing. These statistics will be used in subsequent patches to
-determine whether tasks should be aggregated to their preferred LLC.
+Cache-aware scheduling is designed to aggregate threads into their
+preferred LLC, either via the task wake up path or the load balancing
+path. One side effect is that when the preferred LLC is saturated,
+more threads will continue to be stacked on it, degrading the workload's
+latency. A strategy is needed to prevent this aggregation from going too
+far such that the preferred LLC is too overloaded.
 
+Introduce helper function _get_migrate_hint() to implement the
+LLC migration policy:
+
+1) A task is aggregated to its preferred LLC if both source/dest LLC
+   are not too busy (<50% utilization, tunable), or the preferred
+   LLC will not be too out of balanced from the non preferred LLC
+   (>20% utilization, tunable, close to imbalance_pct of the LLC
+   domain).
+2) Allow a task to be moved from the preferred LLC to the
+   non-preferred one if the non-preferred LLC will not be too out
+   of balanced from the preferred prompting an aggregation task
+   migration later.  We are still experimenting with the aggregation
+   and migration policy. Some other possibilities are policy based
+   on LLC's load or average number of tasks running.  Those could
+   be tried out by tweaking _get_migrate_hint().
+
+The function _get_migrate_hint() returns migration suggestions for
+the upper-level functions.
+
+Aggregation will tend to make utilization on the preferred LLC to
+be more than the non-preferred one. Parameter "sysctl_llc_aggr_imb"
+is the imbalance allowed. If it is set to 0, as long as the preferred
+LLC is not utilized more than the source LLC, we could still aggregate
+towards the preferred LLC and a preference could still be there.
+
+Co-developed-by: Chen Yu <yu.c.chen@intel.com>
 Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- include/linux/sched/topology.h |  3 ++
- kernel/sched/fair.c            | 53 ++++++++++++++++++++++++++++++++++
- 2 files changed, 56 insertions(+)
+ kernel/sched/debug.c |   4 ++
+ kernel/sched/fair.c  | 110 ++++++++++++++++++++++++++++++++++++++++++-
+ kernel/sched/sched.h |   5 ++
+ 3 files changed, 118 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 198bb5cc1774..692f8a703b93 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -78,6 +78,9 @@ struct sched_domain_shared {
- 	atomic_t	nr_busy_cpus;
- 	int		has_idle_cores;
- 	int		nr_idle_scan;
-+#ifdef CONFIG_SCHED_CACHE
-+	unsigned long	util_avg;
-+#endif
- };
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 557246880a7e..682fd91a42a0 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -532,6 +532,10 @@ static __init int sched_init_debug(void)
+ 	debugfs_create_u32("hot_threshold_ms", 0644, numa, &sysctl_numa_balancing_hot_threshold);
+ #endif
  
- struct sched_domain {
++#ifdef CONFIG_SCHED_CACHE
++	debugfs_create_u32("llc_aggr_cap", 0644, debugfs_sched, &sysctl_llc_aggr_cap);
++	debugfs_create_u32("llc_aggr_imb", 0644, debugfs_sched, &sysctl_llc_aggr_imb);
++#endif
+ 	debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
+ 
+ 	debugfs_fair_server_init();
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9e3c6f0eb934..4f79b7652642 100644
+index 4f79b7652642..3128dbcf0a36 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8828,6 +8828,22 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
- #ifdef CONFIG_SCHED_CACHE
- static long __migrate_degrades_locality(struct task_struct *p, int src_cpu, int dst_cpu, bool idle);
+@@ -8826,7 +8826,39 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ }
  
-+/* expected to be protected by rcu_read_lock() */
-+static bool get_llc_stats(int cpu, unsigned long *util,
-+			  unsigned long *cap)
+ #ifdef CONFIG_SCHED_CACHE
+-static long __migrate_degrades_locality(struct task_struct *p, int src_cpu, int dst_cpu, bool idle);
++static long __migrate_degrades_locality(struct task_struct *p,
++					int src_cpu, int dst_cpu,
++					bool idle);
++__read_mostly unsigned int sysctl_llc_aggr_cap       = 50;
++__read_mostly unsigned int sysctl_llc_aggr_imb       = 20;
++
++/*
++ * The margin used when comparing LLC utilization with CPU capacity.
++ * Parameter sysctl_llc_aggr_cap determines the LLC load level where
++ * active LLC aggregation is done.
++ * Derived from fits_capacity().
++ *
++ * (default: ~50%)
++ */
++#define fits_llc_capacity(util, max)	\
++	((util) * 100 < (max) * sysctl_llc_aggr_cap)
++
++/*
++ * The margin used when comparing utilization.
++ * is 'util1' noticeably greater than 'util2'
++ * Derived from capacity_greater().
++ * Bias is in perentage.
++ */
++/* Allows dst util to be bigger than src util by up to bias percent */
++#define util_greater(util1, util2) \
++	((util1) * 100 > (util2) * (100 + sysctl_llc_aggr_imb))
++
++enum llc_mig_hint {
++	mig_allow = 0,
++	mig_ignore,
++	mig_forbid
++};
++
+ 
+ /* expected to be protected by rcu_read_lock() */
+ static bool get_llc_stats(int cpu, unsigned long *util,
+@@ -8844,6 +8876,82 @@ static bool get_llc_stats(int cpu, unsigned long *util,
+ 	return true;
+ }
+ 
++static enum llc_mig_hint _get_migrate_hint(int src_cpu, int dst_cpu,
++					   unsigned long tsk_util,
++					   bool to_pref)
 +{
-+	struct sched_domain_shared *sd_share;
++	unsigned long src_util, dst_util, src_cap, dst_cap;
 +
-+	sd_share = rcu_dereference(per_cpu(sd_llc_shared, cpu));
-+	if (!sd_share)
-+		return false;
++	if (cpus_share_cache(src_cpu, dst_cpu))
++		return mig_allow;
 +
-+	*util = READ_ONCE(sd_share->util_avg);
-+	*cap = per_cpu(sd_llc_size, cpu) * SCHED_CAPACITY_SCALE;
++	if (!get_llc_stats(src_cpu, &src_util, &src_cap) ||
++	    !get_llc_stats(dst_cpu, &dst_util, &dst_cap))
++		return mig_ignore;
 +
-+	return true;
++	if (!fits_llc_capacity(dst_util, dst_cap) &&
++	    !fits_llc_capacity(src_util, src_cap))
++		return mig_ignore;
++
++	src_util = src_util < tsk_util ? 0 : src_util - tsk_util;
++	dst_util = dst_util + tsk_util;
++	if (to_pref) {
++		/*
++		 * sysctl_llc_aggr_imb is the imbalance allowed between
++		 * preferred LLC and non-preferred LLC.
++		 * Don't migrate if we will get preferred LLC too
++		 * heavily loaded and if the dest is much busier
++		 * than the src, in which case migration will
++		 * increase the imbalance too much.
++		 */
++		if (!fits_llc_capacity(dst_util, dst_cap) &&
++		    util_greater(dst_util, src_util))
++			return mig_forbid;
++	} else {
++		/*
++		 * Don't migrate if we will leave preferred LLC
++		 * too idle, or if this migration leads to the
++		 * non-preferred LLC falls within sysctl_aggr_imb percent
++		 * of preferred LLC, leading to migration again
++		 * back to preferred LLC.
++		 */
++		if (fits_llc_capacity(src_util, src_cap) ||
++		    !util_greater(src_util, dst_util))
++			return mig_forbid;
++	}
++	return mig_allow;
++}
++
++/*
++ * Give suggestion when task p is migrated from src_cpu to dst_cpu.
++ */
++static __maybe_unused enum llc_mig_hint get_migrate_hint(int src_cpu, int dst_cpu,
++							 struct task_struct *p)
++{
++	struct mm_struct *mm;
++	int cpu;
++
++	if (cpus_share_cache(src_cpu, dst_cpu))
++		return mig_allow;
++
++	mm = p->mm;
++	if (!mm)
++		return mig_allow;
++
++	cpu = mm->mm_sched_cpu;
++	if (cpu < 0)
++		return mig_allow;
++
++	if (cpus_share_cache(dst_cpu, cpu))
++		return _get_migrate_hint(src_cpu, dst_cpu,
++					 task_util(p), true);
++	else if (cpus_share_cache(src_cpu, cpu))
++		return _get_migrate_hint(src_cpu, dst_cpu,
++					 task_util(p), false);
++	else
++		return mig_allow;
 +}
 +
  static int select_cache_cpu(struct task_struct *p, int prev_cpu)
  {
  	struct mm_struct *mm = p->mm;
-@@ -10670,6 +10686,42 @@ sched_reduced_capacity(struct rq *rq, struct sched_domain *sd)
- 	return check_cpu_capacity(rq, sd);
- }
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index f4ab45ecca86..83552aab74fb 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2844,6 +2844,11 @@ extern unsigned int sysctl_numa_balancing_scan_period_max;
+ extern unsigned int sysctl_numa_balancing_scan_size;
+ extern unsigned int sysctl_numa_balancing_hot_threshold;
  
 +#ifdef CONFIG_SCHED_CACHE
-+/*
-+ * Save this sched group's statistic for later use:
-+ * The task wakeup and load balance can make better
-+ * decision based on these statistics.
-+ */
-+static void update_sg_if_llc(struct lb_env *env, struct sg_lb_stats *sgs,
-+			     struct sched_group *group)
-+{
-+	/* Find the sched domain that spans this group. */
-+	struct sched_domain *sd = env->sd->child;
-+	struct sched_domain_shared *sd_share;
-+
-+	if (!sched_feat(SCHED_CACHE) || env->idle == CPU_NEWLY_IDLE)
-+		return;
-+
-+	/* only care the sched domain that spans 1 LLC */
-+	if (!sd || !(sd->flags & SD_SHARE_LLC) ||
-+	    !sd->parent || (sd->parent->flags & SD_SHARE_LLC))
-+		return;
-+
-+	sd_share = rcu_dereference(per_cpu(sd_llc_shared,
-+				  cpumask_first(sched_group_span(group))));
-+	if (!sd_share)
-+		return;
-+
-+	if (likely(READ_ONCE(sd_share->util_avg) != sgs->group_util))
-+		WRITE_ONCE(sd_share->util_avg, sgs->group_util);
-+}
-+#else
-+static inline void update_sg_if_llc(struct lb_env *env, struct sg_lb_stats *sgs,
-+				    struct sched_group *group)
-+{
-+}
++extern unsigned int sysctl_llc_aggr_cap;
++extern unsigned int sysctl_llc_aggr_imb;
 +#endif
 +
- /**
-  * update_sg_lb_stats - Update sched_group's statistics for load balancing.
-  * @env: The load balancing environment.
-@@ -10759,6 +10811,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ #ifdef CONFIG_SCHED_HRTICK
  
- 	sgs->group_type = group_classify(env->sd->imbalance_pct, group, sgs);
- 
-+	update_sg_if_llc(env, sgs, group);
- 	/* Computing avg_load makes sense only when group is overloaded */
- 	if (sgs->group_type == group_overloaded)
- 		sgs->avg_load = (sgs->group_load * SCHED_CAPACITY_SCALE) /
+ /*
 -- 
 2.25.1
 
