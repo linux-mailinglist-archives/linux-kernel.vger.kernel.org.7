@@ -1,124 +1,275 @@
-Return-Path: <linux-kernel+bounces-761115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DC9B1F490
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 14:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B422BB1F495
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 14:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556871C201CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:29:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C435A18C0D6F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182C9298CDA;
-	Sat,  9 Aug 2025 12:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AA2299927;
+	Sat,  9 Aug 2025 12:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="MK7xTAnU"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIRbyPzI"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B718298CC4
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 12:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80245244677;
+	Sat,  9 Aug 2025 12:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754742553; cv=none; b=ERzreHKzUgp2EEKWXSJv0c61xb9hT2VckgKcOG0mD0Hgo4K9k5o6ENwJF347oVe/LM8guAYQn77YyA0kvUuVnqnnw5gSd/jkMiIUovonjICUJdRHizkdRxNQCVaRenINzd4j77LqUBN+dVy6ASQJVKJvedLDRjYg/7mrFRJ3V4Y=
+	t=1754742990; cv=none; b=FUtFQAYVpzeWvYz8yMsEy5E0SfOf7aJ9rOhiNw5OMQ+2+AweOt8HOSjdF2Jd1yoLm6io0Q4lKzZGqZEA91xgpK/nPJm6/l+Gkmyer3yQ8cl4xbhWOuCqsD+XINy6vAeYmnWSyiXJXxd0XgrWEH8Vu3qA6IVo8d16CNevQQ76Z3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754742553; c=relaxed/simple;
-	bh=RRwvM09qeDecLH+dYSOmlHPhvo17VziRN9IUQ98/X90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDnG5+PaKZxwZSfl0X/9PIxOc0h0qaSgwvEEucTRYhQTMHe27r40CLRYIGMXY52aEnNlX7kNTuwKhy79dMN+8Uz9phei3/TJmxI1JJe5z0P78o/DyQchOdB9HOZzOzeA9bdchjskZ2eH44x3R23gdNgC/3vW0oQKIfhiIpdBqTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=MK7xTAnU; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1754742550;
-	bh=RRwvM09qeDecLH+dYSOmlHPhvo17VziRN9IUQ98/X90=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MK7xTAnU4w+gj8jq57ptOwo3ln+cQLxC12vhch3Drqjs0iHWaLbXo6jpgbw/fEDiN
-	 ThRNqm+Pjp6rs8sAZLHb9ZWgvDIc7AyHh8QaV5+OoNvM8AjPVfzLpHuFuXOvZGE2nC
-	 wwfOA4OFkTxbJs5/4Y3M/EyQdlcnPb0iO9cGLOSQ=
-Date: Sat, 9 Aug 2025 14:29:09 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Daniel Palmer <daniel@0x0f.com>
-Cc: geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] m68k: Add target for lz4 compressed vmlinux
-Message-ID: <d7974cbe-41b3-4994-8982-30c8f660e65f@t-8ch.de>
-References: <20250809015529.373693-1-daniel@0x0f.com>
- <5dd0a031-dd7b-4078-b1a8-6b760248390b@t-8ch.de>
- <CAFr9PXmF-AOL8yj9FntHw+b1A8HWKNeAHU=rx7Dk7pfi1N_4fA@mail.gmail.com>
+	s=arc-20240116; t=1754742990; c=relaxed/simple;
+	bh=oLw6t04dtk91WBMbXe/9DtsTKh22NqMz2zSS/v0RE2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TgVhYlQQg1TKXkgO2UWQ3YQqHZ+QIfT9lEvgHRYiHCdSK4QXxJECgzeYyow4sw/cin5BpUvXJcyfR2fEEF2f4wtPd+CLvSyCPc/HQr0UGUmPks6tNh2SkaBP/mhp6qMmTJrhxELg1EMYwhKUmSWCW16tt+Ap4B90UTJOr97wQpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIRbyPzI; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so567662366b.3;
+        Sat, 09 Aug 2025 05:36:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754742987; x=1755347787; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eRoaKzlW07zs3NpzL/zUAlPACOOfMwP8ZC5PGuZsgDY=;
+        b=kIRbyPzISLbsCwDOnceLl3sIPK+ygSS1ne6l02ltigzKH7JkmNiLtEwZrQnfQeo5dy
+         CUkPibMIKRh3KI/NuVU680eVelyg2oMyHW+ssE20g0B+2MIKpHtreY/YpqNmAXSzEgoY
+         7V0GTqyYhwrE2TMvv0x719TAmf1hhuDjEcELtoHiYGxHtrvcP65zxUn6bBMgFQZu5yhl
+         VK3fupyBt8hVUYltMD1yHsaI33m1V+7pd2jS50RtOTbhI/R5i5G8Csf2PutX3A69TI/F
+         EVr/7edCHiiOSutlSCPcw9bh/Hu8qAbIlLQTBMjgvg25cbI7SVinZQN6ftn8TcbVHBlX
+         6T5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754742987; x=1755347787;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eRoaKzlW07zs3NpzL/zUAlPACOOfMwP8ZC5PGuZsgDY=;
+        b=Vjf61cOuQqXB5pitGSyy2xoKJhf1DMJ9DcOCFvpkaDzarbvSNAXj5TMC4Gp+FJkb9o
+         UEUSl8i4BQ1R08oWEkt4fH6Jufm0OqqjmXJI2Bicr5byats97rzGUneuTNfVY9kMoo3m
+         AfheEdaGkEbCDBq4lCBep+6oVlfQEAR6XGjDnZCTe5CE9NBjzuZnZMGj/DFIupXaaBFZ
+         HksFUPaipn7cbtuiMCenifjSjXsSBTqyCXw7/a3H6q0+VKv863yeTmN25qYoO70yxSJR
+         xw8LC6A1TruBd098xfoAGbBh1WmCaG8QbkqOy5s32KymC4k5v7WizhjrAWhk6YgeWb5C
+         VXDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWY7r9FBSQBSffIkFUEo8XSHGfxXRDRUbfoTRhwQE0/vu6dWlL6z1+PAxGR6hNFUzbYFAd8eBXP6lJ38ZBs@vger.kernel.org, AJvYcCXjC7Z4cnn0s8Bjvs/Rx5fNu5v4eXBhRo+2Zydy0FDePuC7mAij0X3zA0nmO0/IMX2QdKNWeAWu84tp5MLT@vger.kernel.org, AJvYcCXwZhjRYyDg8HejDHxoxBIoSX6v4Diog927gdu5znUkO3DeKKgUtRR2HeMKr0ca1Jk8NtqoPtVHNIQes8hDcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF0PTLGnJtcOLiPpoes0te4B00kcjxvPVdhhbouJSjOrcVFlyr
+	zVFdAK/ploedhNjaPaSayTDsoJlyC4pXvUHDmXNpMyUii62ldkH7A2yXcs7ogOOkpL3xgXjCyRN
+	yFsXAoPB2BhIJTzeozWO3pjYVBkAtkws=
+X-Gm-Gg: ASbGncuxzN9hVd1m2NjV0DJh71KOLHBU8yaw9j56uhRUPAPvgx7gt82qeyGHZwVDsr+
+	VS20wpjxqlxjjMUY/ApDKxw2H/sOC9cwkn5LRC8OY+kEAA51Jnpsrgw2OpEdJb3kDwVwuWsZajo
+	035xEJwMtuLYJtbrzYMBDwcbZXX1PYwvafbF6JjIp/bbmZ6Jf2MnKDVbDIH7uXNYxt5l2j3Oplg
+	nro5yQ=
+X-Google-Smtp-Source: AGHT+IHSWwS/buNPqITaxdKDVY1uKDuwtYzSBRHCgvPL1Qh5tWVb7vQRRJijmb9wUBHlSO9IFpRGutJr3eGhVz8eCNM=
+X-Received: by 2002:a17:907:7e89:b0:ae0:35fb:5c83 with SMTP id
+ a640c23a62f3a-af9c64bf042mr527260266b.28.1754742986514; Sat, 09 Aug 2025
+ 05:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFr9PXmF-AOL8yj9FntHw+b1A8HWKNeAHU=rx7Dk7pfi1N_4fA@mail.gmail.com>
+References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <20250808-tonyk-overlayfs-v3-1-30f9be426ba8@igalia.com>
+In-Reply-To: <20250808-tonyk-overlayfs-v3-1-30f9be426ba8@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 9 Aug 2025 14:36:14 +0200
+X-Gm-Features: Ac12FXxP3f5A8LTv5kEEgxosIWCJPDd5y2WC3kiD6sjtLvEpJKNRVeLowoYhTvs
+Message-ID: <CAOQ4uxjdE4A14cwkhm+QjZS-5ANhc1568nbNU=KtF-oh_fE3VQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 1/7] ovl: Store casefold name for case-insentive dentries
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Daniel,
+On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> In order to make case-insentive mounting points work, overlayfs needs
 
-On 2025-08-09 20:35:39+0900, Daniel Palmer wrote:
-> On Sat, 9 Aug 2025 at 16:50, Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > Splitting the vmlinux.tmp creation into a dedicated target would make
-> > all the compressor targets simpler. It will need a bit more disk space,
-> > but there are a bunch of vmlinux copies already in any case.
-> >
-> 
-> That's true. I think a target for vmlinux.stripped and then use that
-> in the compressed image targets.
-> 
-> How about this?:
-> 
-> vmlinux.stripped: vmlinux
->        cp $< $@
->        $(STRIP) $@
-> 
-> vmlinux.gz: vmlinux.stripped
-> 
-> ifndef CONFIG_KGDB
->        $(KGZIP) -9c vmlinux.stripped >vmlinux.gz
-> else
->        $(KGZIP) -9c vmlinux >vmlinux.gz
-> endif
-> 
-> <snip>
+Terminology:
+not case-insensitive mounting points
+case-insensitive layers.
 
-I would continue with vmlinux.tmp. It might not actually be stripped.
+> the casefolded version of its dentries so the search and insertion in
 
-quiet_cmd_precompress = PRECOMPRESS $@
-ifndef CONFIG_KGDB
-      cmd_precompress = cp $< $@
-else
-      cmd_precompress = $(STRIP) $< -o $@
-endif
+Terminology:
+overlayfs needs the casefolded names
+the objects in the rb tree correspond to dirent readdir results not to dent=
+ries
+which are dcache objects.
 
-vmlinux.tmp: vmlinux FORCE
-	$(call if_changed,precompress)
+> the struct ovl_readdir_data's red-black compares the dentry names in a
+> case-insentive fashion.
+>
+> If a dentry is casefolded, compute and store it's casefolded name and
 
-targets += vmlinux.tmp
+We are not doing per-dir casefolding so should say:
+"If overlay mount is casefolded, compute and store the casefolded name..."
 
-This will also correctly handle CONFIG_KGDB changing.
+> it's Unicode map. If utf8_casefold() fails, set it's name pointer as
+> NULL so it can be ignored and fallback to the original name.
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+> Changes from v3:
+>  - Guard all the casefolding inside of IS_ENABLED(UNICODE)
+> ---
+>  fs/overlayfs/readdir.c | 41 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 40 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index b65cdfce31ce27172d28d879559f1008b9c87320..2f42fec97f76c2000f76e15c6=
+0975db567b2c6d6 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -16,6 +16,8 @@
+>  #include <linux/overflow.h>
+>  #include "overlayfs.h"
+>
+> +#define OVL_NAME_LEN 255
+> +
 
-(Maybe the naming can be improved)
+This is very arbitrary.
+Either use the existing constant NAME_MAX or
+use the max of all layers ofs->namelen.
+I think ofs->namelen will always be <=3D NAME_MAX,
+so it's fine to use NAME_MAX if we never expose
+the cf_name to userspace.
 
+>  struct ovl_cache_entry {
+>         unsigned int len;
+>         unsigned int type;
+> @@ -27,6 +29,8 @@ struct ovl_cache_entry {
+>         bool is_upper;
+>         bool is_whiteout;
+>         bool check_xwhiteout;
+> +       char *cf_name;
+> +       int cf_len;
+>         char name[];
+>  };
+>
+> @@ -45,6 +49,7 @@ struct ovl_readdir_data {
+>         struct list_head *list;
+>         struct list_head middle;
+>         struct ovl_cache_entry *first_maybe_whiteout;
+> +       struct unicode_map *map;
+>         int count;
+>         int err;
+>         bool is_upper;
+> @@ -166,6 +171,31 @@ static struct ovl_cache_entry *ovl_cache_entry_new(s=
+truct ovl_readdir_data *rdd,
+>         p->is_whiteout =3D false;
+>         /* Defer check for overlay.whiteout to ovl_iterate() */
+>         p->check_xwhiteout =3D rdd->in_xwhiteouts_dir && d_type =3D=3D DT=
+_REG;
+> +       p->cf_name =3D NULL;
+> +       p->cf_len =3D 0;
+> +
+> +#if IS_ENABLED(CONFIG_UNICODE)
 
-And for the compressor invocations we already have predefined commands:
+Whenever possible in C code you should use:
 
-vmlinux.gz: vmlinux.tmp FORCE
-	$(call if_changed,gzip)
+if (IS_ENABLED(CONFIG_UNICODE) && rdd->map && ...
 
-targets += vmlinux.gz
+> +       if (rdd->map && !is_dot_dotdot(name, len)) {
+> +               const struct qstr str =3D { .name =3D name, .len =3D len =
+};
+> +               int ret;
+> +
+> +               p->cf_name =3D kmalloc(OVL_NAME_LEN, GFP_KERNEL);
+> +
+> +               if (!p->cf_name) {
+> +                       kfree(p);
+> +                       return NULL;
+> +               }
+> +
+> +               ret =3D utf8_casefold(rdd->map, &str, p->cf_name, OVL_NAM=
+E_LEN);
+> +
+> +               if (ret < 0) {
+> +                       kfree(p->cf_name);
+> +                       p->cf_name =3D NULL;
+> +               } else {
+> +                       p->cf_len =3D ret;
+> +               }
+> +       }
+> +#endif
+>
+>         if (d_type =3D=3D DT_CHR) {
+>                 p->next_maybe_whiteout =3D rdd->first_maybe_whiteout;
+> @@ -223,8 +253,10 @@ void ovl_cache_free(struct list_head *list)
+>         struct ovl_cache_entry *p;
+>         struct ovl_cache_entry *n;
+>
+> -       list_for_each_entry_safe(p, n, list, l_node)
+> +       list_for_each_entry_safe(p, n, list, l_node) {
+> +               kfree(p->cf_name);
+>                 kfree(p);
+> +       }
+>
+>         INIT_LIST_HEAD(list);
+>  }
+> @@ -357,12 +389,19 @@ static int ovl_dir_read_merged(struct dentry *dentr=
+y, struct list_head *list,
+>                 .list =3D list,
+>                 .root =3D root,
+>                 .is_lowest =3D false,
+> +               .map =3D NULL,
+>         };
+>         int idx, next;
+>         const struct ovl_layer *layer;
+>
+>         for (idx =3D 0; idx !=3D -1; idx =3D next) {
+>                 next =3D ovl_path_next(idx, dentry, &realpath, &layer);
+> +
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +               if (ovl_dentry_casefolded(realpath.dentry))
+> +                       rdd.map =3D realpath.dentry->d_sb->s_encoding;
+> +#endif
+> +
 
-> > > +
-> > >  CLEAN_FILES += vmlinux.gz vmlinux.bz2
-> >
-> > CLEAN_FILES also needs to be updated.
-> 
-> Noted. Will fix for v2.
+We are not doing per-dir casefolding, so this should be
+if (ofs->casefold)
 
-If you use $(call if_changed) as explained above, the "targets += ..."
-will make the CLEAN_FILES unnecessary.
+and I'd rather avoid this ifdef, so how about another vfs helper:
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 2ec4807d4ea8..3f4c89367908 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3738,15 +3738,20 @@ static inline bool
+generic_ci_validate_strict_name(struct inode *dir, struct qst
+ }
+ #endif
+
+-static inline bool sb_has_encoding(const struct super_block *sb)
++static inline struct unicode_map *sb_encoding(const struct super_block *sb=
+)
+ {
+ #if IS_ENABLED(CONFIG_UNICODE)
+-       return !!sb->s_encoding;
++       return sb->s_encoding;
+ #else
+-       return false;
++       return NULL;
+ #endif
+ }
+
++static inline bool sb_has_encoding(const struct super_block *sb)
++{
++       return !!sb_encoding(sb);
++}
++
+
+Thanks,
+Amir.
 
