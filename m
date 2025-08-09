@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-761075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1092B1F406
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A85B1F3FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EFA93ACC98
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC383726453
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E215C248F75;
-	Sat,  9 Aug 2025 10:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2922343C7;
+	Sat,  9 Aug 2025 10:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="SSE1jwF8"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GbfEm9Dz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0EC146A72;
-	Sat,  9 Aug 2025 10:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D36F256C9F;
+	Sat,  9 Aug 2025 10:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754733910; cv=none; b=HTYpn0UHEdReDJ9wjvug4m4i6ao9/o80QyOwImI/7y9HJm9LuRRnvQpoEdDLGIZZONX3Q3c0V/rtGh8DEe2s38eS1PjEi+pJbPO6Q4TNXfhTCjgtgb7V+WMjZhmy6nER5lNb23Jpr20Zk99CMbu8BI4chTjN0rwBxRaDDOpb4JA=
+	t=1754733655; cv=none; b=GF+iMuyc8yubWY1Kj5QSLtn7XO9KCEnp7O+N2XV957jRR+rfW4KmU0TyhRXRahLIxugpxvh6KyMPPC4qr+G+HeF+HhIQ0h0XvlnC+iO/9JdVl3Rd9qWE9YLZpVVXUK+Pb4E+T43wLj0BUA/I8sQf/9nwsa0/zq50Y4VVFUnlMgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754733910; c=relaxed/simple;
-	bh=lVNZ6Vs+ZMKKXx3J6Dt8FT9hY4HAY8MLWksoD2tTOyc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=XR1PrbYmQrfzyO859uFcd3dIpOy9flVvTJnyfgr853Y/f4YL06mebhu3WTkSUF3nfPC6lUfQ2ly+GXin5GhwZlYefaZfLIU1816NY7daKWOZCo7AUSIrel6Nn0iPcQ/E9ZkK4Im0xE2DnodJiIiSv80Iq5p6CjGwEJdmRGcqx6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=SSE1jwF8; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1754733592; bh=DKmkljtQB7ro0+vyMCwEguJAv66dTk4iG4899l3s0Hk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=SSE1jwF8KMOM2lDmI1YxfLGGaZz0loe6UXyS5+LmKFo9/Ojzs0KkCdXlR3271eIGN
-	 LtIhnVsaT8QaWBBsrDGVGrFnl5mLPdJdhr/Q2ygtCvlrdXO7Bvv4VTeaCP5AizeW+l
-	 ZYVB4RfSu99orLrKp/ZZbaJFMsnjlluzKTfmA13M=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.231.14])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id EF2BB6B8; Sat, 09 Aug 2025 17:59:50 +0800
-X-QQ-mid: xmsmtpt1754733590tuxu8ia6i
-Message-ID: <tencent_B406618996EEF22ED6CC8EA7DF46FD92D206@qq.com>
-X-QQ-XMAILINFO: Nq1uWKlIb9DMQ2GdnJ6K2hM4AFeSO37h50FFuFrT75jNbtFnBYc6FpF0W1e1vg
-	 PrCTGKPDOx3GqJ/cVM8LtZK1AsEEhbTs5UCXF0l1OBQUPKHr2jo7CHG2NQlntLcjzeAes93MJ78u
-	 kqmKFSD8SfVrRFaz0EwQwlBPcBJXZFh22LRhJ67ZUiLS0gtk8rlY95qjeHiMeheDr8jOGnv+knVW
-	 L9ZPfB0c2WWvlHL5/VYAmxJ4CgQ51jnL5sIRmgbzQ6jBU7+r8S3PhqB9nDtwvMmNcPfkeIiwuRDn
-	 9VK4Pp6W/qbdw6VyGQoH4XlfGBQWGWOUntpnZrJ3514ILthisC0vhZX6axH4VaHRPvOs0FtExgZ1
-	 J9dke9Sl5WPdYbPP/e8wLNvWCDIAXruhDlCVLlv2IE75F7oIFdPCGKLNIekOfOFjZ9bZnrMGW7La
-	 +WrU9OAbQdFrKaVyLHwu7nQUd6xlNoX/Tces3gCQGhGnVHiofQ8Vc+UlzVTpKfSHoYiWCgm25wTA
-	 IcbTG9q/P+s7N+S9F9wrUS6wsLmMs47TcK/mW00BBfIHoe85NpJVxrJ1dQ9VwslLAp+ahyUvbTt8
-	 qxn/zKa1HOyeYTCbjdex9MiBJeol3IyC8hsFnC2wisW1LY45ul7+JC7uZx5nDWpkbJ7+9iIFcRj1
-	 GPo74O1ixPkLCFDU79UJKU2xKbYdT5xNoyG4fkR+ijBojdsgNvn/a3kJjHxFi9pWQhNyQ2kVzKIC
-	 6ss5PL/GZR1qeYS7kIFICoiAq+MRbZcLE/JNnCDJCRCJvQ4RHXnWyD6Ci/aV50L9WofNRDwLJXRA
-	 Bpn2I059PgpBNlNdnV7y/6Wn+nbArATixGUE+yz4crleJ4QotStesgoQMYauOwhIabFuhcqdhUKK
-	 CIRAQNts1ZaDEj3jafTWXnPUREk6t4hcTa2HwKZXDv/PzUAWJYUA7ORve8KPsANY7QZpe7Ph9niA
-	 Xw+ZmpLGRSA0ry7tEOZ63FM3SNp7Mg
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-Cc: davem@davemloft.net,
-	herbert@gondor.apana.org.au,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] crypto: Prevent kernel-infoleak in rng_recvmsg
-Date: Sat,  9 Aug 2025 17:59:43 +0800
-X-OQ-MSGID: <20250809095942.310397-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <6895b041.050a0220.7f033.0058.GAE@google.com>
-References: <6895b041.050a0220.7f033.0058.GAE@google.com>
+	s=arc-20240116; t=1754733655; c=relaxed/simple;
+	bh=O9yzI25O8NSIWGcrb+Gut9g134POOu2r1v8V94cBxGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAwUIXAZMCSF2fl420FbHzRVSyj40MsHsMrHadniy2+aGgcIv/WsWu0cJLXVYzEdjIb9QBKKEtwksXM7epfIvAD4WbR53cvhIaa55nyqvDmTLGSCMWg5725OgN90EtlJFbdITTXElczb66PHAhmyaeBvQNjt075l5yMOif4f/1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GbfEm9Dz; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754733654; x=1786269654;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O9yzI25O8NSIWGcrb+Gut9g134POOu2r1v8V94cBxGk=;
+  b=GbfEm9Dzu88K2Ka3TTrhEpLJW31po4hQkabNldYUiM/Ug8UJFgi62qWk
+   qnHSPeJxoEcJ2a8zjBjeeOdf0ZxCMIYyMYvZIETT9oVHodEEcWb4/AxIi
+   +zQKx1b0kLQc97Qro0lHE5iFw17vwGQKrsrzKBPTXWU+8SJrDqcI6SBj6
+   cI3GA3icGdaL/LRFeyrskPM/OIxPFfLPJ5U57DFDmvBhfnW+C89BimMx9
+   26FfQ8lB/GFBfK+lNXxOsXd2qAaE+VXC2iR5WdnMWAZcPMTilI8gn8sbY
+   fPNAlGxaD0Jd7N6ina5lTVY7lPjfYMrI8Hkgqo7L6OchdKp0F5Q2Az/75
+   w==;
+X-CSE-ConnectionGUID: y5lpSWtaRw+i1GKANAA3IQ==
+X-CSE-MsgGUID: FLlUuRhYQDKfljicRkusTw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="68146232"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="68146232"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 03:00:52 -0700
+X-CSE-ConnectionGUID: TVQAju9BSDGGPQ+TQB4hCA==
+X-CSE-MsgGUID: Oyn9zOaxTLaSo+3gI7Hl/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165166672"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 03:00:48 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ukgNY-00000004ce5-0zPC;
+	Sat, 09 Aug 2025 13:00:44 +0300
+Date: Sat, 9 Aug 2025 13:00:43 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
+	Dzmitry Sankouski <dsankouski@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 05/21] x86/platform: select legacy gpiolib interfaces
+ where used
+Message-ID: <aJccS7fdcx0INYTA@smile.fi.intel.com>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-6-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808151822.536879-6-arnd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Initialize the intermediary array member to 0 to prevent the kernel from
-leaking uninitialized data to user space.
+On Fri, Aug 08, 2025 at 05:17:49PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> A few old machines have not been converted away from the old-style
+> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
+> symbol so the code still works where it is needed but can be left
+> out otherwise.
 
-Reported-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=e8bcd7ee3db6cb5cb875
-Tested-by: syzbot+e8bcd7ee3db6cb5cb875@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- crypto/jitterentropy-kcapi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+...
 
-diff --git a/crypto/jitterentropy-kcapi.c b/crypto/jitterentropy-kcapi.c
-index c24d4ff2b4a8..9e9e069f55af 100644
---- a/crypto/jitterentropy-kcapi.c
-+++ b/crypto/jitterentropy-kcapi.c
-@@ -107,7 +107,7 @@ int jent_hash_time(void *hash_state, __u64 time, u8 *addtl,
- {
- 	struct shash_desc *hash_state_desc = (struct shash_desc *)hash_state;
- 	SHASH_DESC_ON_STACK(desc, hash_state_desc->tfm);
--	u8 intermediary[SHA3_256_DIGEST_SIZE];
-+	u8 intermediary[SHA3_256_DIGEST_SIZE] = { 0 };
- 	__u64 j = 0;
- 	int ret;
- 
+> --- a/drivers/platform/x86/x86-android-tablets/Kconfig
+> +++ b/drivers/platform/x86/x86-android-tablets/Kconfig
+> @@ -8,6 +8,7 @@ config X86_ANDROID_TABLETS
+>  	depends on I2C && SPI && SERIAL_DEV_BUS
+>  	depends on GPIOLIB && PMIC_OPREGION
+>  	depends on ACPI && EFI && PCI
+> +	select GPIOLIB_LEGACY
+>  	select NEW_LEDS
+>  	select LEDS_CLASS
+>  	select POWER_SUPPLY
+
+Hmm... This is a surprising change. But I leave it to Hans.
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
