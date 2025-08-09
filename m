@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-760956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1818FB1F245
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:14:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D891B1F246
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B10123B9A69
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:14:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D278189CC08
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1C7274B43;
-	Sat,  9 Aug 2025 05:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4812777E1;
+	Sat,  9 Aug 2025 05:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GZsq9eJL"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nkaLairD"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A7D2749D5
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FEB275872
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754716450; cv=none; b=IeQpUvuEInOqzZCCDB3S2FFJC3zSp4/XkEtNAu2D98UQxwsXgo2BbwLtaxH6iJwbi4gN7aV60Aez3K8ydwiJFAzlJgHRf/3+aORKqKYd4JzlvthQfT5xmROL82OUpU66n+lqag40QZb3zB8TfPDePjvzD5oeSB7VRw6J3Cixx+g=
+	t=1754716461; cv=none; b=IojQ3o0319gniGMl43HTVAIglRucNSyn6f7mIZ2sA6nGcNZlUGEZWY6057tDsNZ4vk1O+nB32WSiImkG1cA4P3bSQwXMpAQf17p3nQR/jrpVdHP7V0+mJDJgG2Sf7l8Ti7krqUFqfX2pqdYZqFCdot+k/yWtmOk0EJDIuVmMV9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754716450; c=relaxed/simple;
-	bh=aXXr09emE5m1BA8+F+9P+Qieum2q8rFMJHj2OrnZISQ=;
+	s=arc-20240116; t=1754716461; c=relaxed/simple;
+	bh=vn8SQoDAOd07cpCKj326vCb8D/qCqZCs9BwVgi4KoVg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S5MR0P7NeiK39j0s1bhGmWRhNoCo1BGGAp0DbGAVUu/cKCksVWgSVTBQqiegxZ+gsioGdqPIL8dWWDic13tfdX1SnoZ6qXprsQhZj7vCqF2cTb/xO8jcfhLxZaWGG0ZCiaJ0gxuXgS+7OA9TZAf4d9OKuUhX4CnNCW42X+VS4FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GZsq9eJL; arc=none smtp.client-ip=192.198.163.12
+	 MIME-Version; b=PMXTmQv0twXoDtxt8UL0eicbBf9o7Tfv//e1wCHtE99sZhtB/nIU8wVaymmbbfxF6XMzVWor4WdG/qxhSD/wWJ4vwz9cuiTjtjsAycEcLvPhT9aUF3kUVc4kwE6SAX+4OTFtFFHuRXxnq1R/3zLjD9SIRWfAHwReiV3b07cgCmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nkaLairD; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754716449; x=1786252449;
+  t=1754716461; x=1786252461;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=aXXr09emE5m1BA8+F+9P+Qieum2q8rFMJHj2OrnZISQ=;
-  b=GZsq9eJL5DGjYunKJTsof+Ln2cKfOk2BGwjzrC+sKFMATJMkyxO99PMo
-   2Oyl5uVHYhRF8Tm0YmjjPIUI3d++yQ67YwJyf8GQHF8cYeMonziUJgHhH
-   kWHsp/STcLEVX42oVsCvQJlHA6eoqh5JKSyBBe3w1N12e5vNle7MdQRuI
-   9sPdUfMBH0dbovuNFtw5OfBzc2eoiu4kiBY1XCFzj5eShFF03nf9Tv2B/
-   ClF5YQoCu+HTwDDVvM9QKGz82gKXl8kYElV4byqv5tvHmI7Psovf6yI1d
-   zi0XGuLMMAQ/QyWVmk7U53AdlwCTHAyvtt6E7DmP/8gc3IF+ydRquzbUa
+  bh=vn8SQoDAOd07cpCKj326vCb8D/qCqZCs9BwVgi4KoVg=;
+  b=nkaLairDDjkysNs4UHTZ5xKHewoxOhkUNj9VyNX4tbdn4A+qnsAVwMle
+   R5heWKuCY8Flip8hzeFiNi/CFABQw9zu7obpiMTotWoXuYrKrGBh3HoZh
+   lmLG5GkRobIJvrI3ad/N+LP8GAWOX5LCCD9ciXh9NpYENpuy7gVq79Rno
+   lOPq4XCXPVEuiMBh+0Se3GxDjUG9K2DZWlyzewIOPzwn2XZvGRXdUZ3Ot
+   w3MIJHSIsVA80TETVQPqTJE71E/W3dHyU/Fc9CdibOzm0oeRAQl7UFWIV
+   RWX9ArTsi+Tp+Wc1c8CtMey1/OwsGiNy5hIgFduA1bpZq8LLDwe4VQMBf
    g==;
-X-CSE-ConnectionGUID: Q9jwphPASBiXZUHMOabB2g==
-X-CSE-MsgGUID: 2ZVJmYQUSISFufuXvDLTyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60860025"
+X-CSE-ConnectionGUID: Uof0EABPSOGTbrf//bNl/A==
+X-CSE-MsgGUID: G6Abi0pKRMKI/T1SAuVRiQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60860044"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="60860025"
+   d="scan'208";a="60860044"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:14:08 -0700
-X-CSE-ConnectionGUID: ilrvcjmWQsiRa7CRb1DYVw==
-X-CSE-MsgGUID: Uh2zL5Q0RAa3BSoaBdHAzw==
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:14:20 -0700
+X-CSE-ConnectionGUID: Y7bYuOZeSdOfQBAqGM3CtQ==
+X-CSE-MsgGUID: edOp5vWRTYOveGm/1PiD4g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="169693092"
+   d="scan'208";a="169693142"
 Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by orviesa003.jf.intel.com with ESMTP; 08 Aug 2025 22:14:02 -0700
+  by orviesa003.jf.intel.com with ESMTP; 08 Aug 2025 22:14:14 -0700
 From: Chen Yu <yu.c.chen@intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -84,9 +84,9 @@ Cc: Vincent Guittot <vincent.guittot@linaro.org>,
 	Chen Yu <yu.chen.surf@gmail.com>,
 	Chen Yu <yu.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 22/28] sched: Turn EPOCH_PERIOD and EPOCH_OLD into tunnable debugfs
-Date: Sat,  9 Aug 2025 13:07:59 +0800
-Message-Id: <79c8fdcf7e875617935cfaba2ea1f2c2ae5ce62c.1754712565.git.tim.c.chen@linux.intel.com>
+Subject: [RFC PATCH v4 23/28] sched: Scan a task's preferred node for preferred LLC
+Date: Sat,  9 Aug 2025 13:08:11 +0800
+Message-Id: <178bf43d7cbc9b2c9aea408dd56b87391067df37.1754712565.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1754712565.git.tim.c.chen@linux.intel.com>
 References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
@@ -98,79 +98,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert EPOCH_PERIOD and EPOCH_OLD into tunable debugfs
-entries. Users can adjust the decay rate as needed.
-By default, occupancy decays by half every 10 ms.
+When sched_cache is enabled, fully scanning all online
+CPUs to find the hottest one is very costly. As a first
+step, limit the scan to only the CPUs within the task's
+preferred node. If the node containing the task's preferred
+LLC is not in the CPU scan mask, add it. Additionally, if
+the node where the current task is running is not in the
+scan mask, add it too.
 
+Suggested-by: Jianyong Wu <jianyong.wu@outlook.com>
 Suggested-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+Co-developed-by: Tim Chen <tim.c.chen@linux.intel.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- kernel/sched/debug.c | 2 ++
- kernel/sched/fair.c  | 9 ++++++---
- kernel/sched/sched.h | 2 ++
- 3 files changed, 10 insertions(+), 3 deletions(-)
+ kernel/sched/fair.c | 36 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 33 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 682fd91a42a0..7a9ec03704b9 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -535,6 +535,8 @@ static __init int sched_init_debug(void)
- #ifdef CONFIG_SCHED_CACHE
- 	debugfs_create_u32("llc_aggr_cap", 0644, debugfs_sched, &sysctl_llc_aggr_cap);
- 	debugfs_create_u32("llc_aggr_imb", 0644, debugfs_sched, &sysctl_llc_aggr_imb);
-+	debugfs_create_u32("llc_period", 0644, debugfs_sched, &sysctl_llc_period);
-+	debugfs_create_u32("llc_old", 0644, debugfs_sched, &sysctl_llc_old);
- #endif
- 	debugfs_create_file("debug", 0444, debugfs_sched, NULL, &sched_debug_fops);
- 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 194ec594561b..64f757ad39fc 100644
+index 64f757ad39fc..420d3a080990 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1175,6 +1175,9 @@ static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
- #define EPOCH_PERIOD	(HZ/100)	/* 10 ms */
- #define EPOCH_OLD	5		/* 50 ms */
- 
-+__read_mostly unsigned int sysctl_llc_period    = EPOCH_PERIOD;
-+__read_mostly unsigned int sysctl_llc_old       = EPOCH_OLD;
-+
- DEFINE_STATIC_KEY_FALSE(sched_cache_present);
- 
- static int llc_id(int cpu)
-@@ -1283,9 +1286,9 @@ static inline void __update_mm_sched(struct rq *rq, struct mm_sched *pcpu_sched)
- 	long delta = now - rq->cpu_epoch_next;
- 
- 	if (delta > 0) {
--		n = (delta + EPOCH_PERIOD - 1) / EPOCH_PERIOD;
-+		n = (delta + sysctl_llc_period - 1) / sysctl_llc_period;
- 		rq->cpu_epoch += n;
--		rq->cpu_epoch_next += n * EPOCH_PERIOD;
-+		rq->cpu_epoch_next += n * sysctl_llc_period;
- 		__shr_u64(&rq->cpu_runtime, n);
+@@ -1390,13 +1390,36 @@ static void task_tick_cache(struct rq *rq, struct task_struct *p)
  	}
+ }
  
-@@ -1346,7 +1349,7 @@ void account_mm_sched(struct rq *rq, struct task_struct *p, s64 delta_exec)
- 	 * has only 1 thread, invalidate
- 	 * it's preferred state.
- 	 */
--	if (epoch - READ_ONCE(mm->mm_sched_epoch) > EPOCH_OLD ||
-+	if (epoch - READ_ONCE(mm->mm_sched_epoch) > sysctl_llc_old ||
- 	    get_nr_threads(p) <= 1) {
- 		mm->mm_sched_cpu = -1;
- 		pcpu_sched->occ = 0;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 3e60618a88e9..d752d64d4acd 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2858,6 +2858,8 @@ extern unsigned int sysctl_numa_balancing_hot_threshold;
- extern unsigned int sysctl_llc_aggr_cap;
- extern unsigned int sysctl_llc_aggr_imb;
- extern struct static_key_false sched_cache_present;
-+extern unsigned int sysctl_llc_period;
-+extern unsigned int sysctl_llc_old;
- #endif
++static void get_scan_cpumasks(cpumask_var_t cpus, int cache_cpu,
++			      int pref_nid, int curr_cpu)
++{
++#ifdef CONFIG_NUMA_BALANCING
++	/* first honor the task's preferred node */
++	if (pref_nid != NUMA_NO_NODE)
++		cpumask_or(cpus, cpus, cpumask_of_node(pref_nid));
++#endif
++
++	/* secondly honor the task's cache CPU if it is not included */
++	if (cache_cpu != -1 && !cpumask_test_cpu(cache_cpu, cpus))
++		cpumask_or(cpus, cpus,
++			   cpumask_of_node(cpu_to_node(cache_cpu)));
++
++	/*
++	 * Thirdly honor the task's current running node
++	 * as the last resort.
++	 */
++	if (!cpumask_test_cpu(curr_cpu, cpus))
++		cpumask_or(cpus, cpus, cpumask_of_node(cpu_to_node(curr_cpu)));
++}
++
+ static void __no_profile task_cache_work(struct callback_head *work)
+ {
+ 	struct task_struct *p = current;
+ 	struct mm_struct *mm = p->mm;
+ 	unsigned long m_a_occ = 0;
+ 	unsigned long last_m_a_occ = 0;
+-	int cpu, m_a_cpu = -1;
++	int cpu, m_a_cpu = -1, cache_cpu,
++	    pref_nid = NUMA_NO_NODE, curr_cpu = smp_processor_id();
+ 	cpumask_var_t cpus;
  
- #ifdef CONFIG_SCHED_HRTICK
+ 	WARN_ON_ONCE(work != &p->cache_work);
+@@ -1406,11 +1429,18 @@ static void __no_profile task_cache_work(struct callback_head *work)
+ 	if (p->flags & PF_EXITING)
+ 		return;
+ 
+-	if (!alloc_cpumask_var(&cpus, GFP_KERNEL))
++	if (!zalloc_cpumask_var(&cpus, GFP_KERNEL))
+ 		return;
+ 
++	cache_cpu = mm->mm_sched_cpu;
++#ifdef CONFIG_NUMA_BALANCING
++	if (static_branch_likely(&sched_numa_balancing))
++		pref_nid = p->numa_preferred_nid;
++#endif
++
+ 	scoped_guard (cpus_read_lock) {
+-		cpumask_copy(cpus, cpu_online_mask);
++		get_scan_cpumasks(cpus, cache_cpu,
++				  pref_nid, curr_cpu);
+ 
+ 		for_each_cpu(cpu, cpus) {
+ 			/* XXX sched_cluster_active */
 -- 
 2.25.1
 
