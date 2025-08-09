@@ -1,68 +1,63 @@
-Return-Path: <linux-kernel+bounces-761194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DCDB1F5A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 19:32:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6284CB1F5A9
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 19:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8405C560425
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:32:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FAC9560748
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512542BEFFD;
-	Sat,  9 Aug 2025 17:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DA22BE7BA;
+	Sat,  9 Aug 2025 17:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="VX6Bma1I"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UpdC7Emb"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E712D24728C;
-	Sat,  9 Aug 2025 17:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6F8276050
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 17:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754760765; cv=none; b=o7pF20sN+uvTx5Nx+rDS4FXFZARC0DkZkFUox6bhfTQm097A/s7Xbp2Mzb0GiqygQZVwsYhPprojz9a/aE40F2Jw6L5n/OcaDPUuqD/nAF86uj12GYNQk/OtSkpfvV+8b2XDKi9YLiiRI3dbPseID3ZrkkDHGczYiU274NhNBuQ=
+	t=1754760904; cv=none; b=Vwwa/KzcYpCaW1wrscgtIfQxrLnAis/rtS6yatEFxg9EpXx61/AM5t7SQKxapNaR3+dMw0AhbQ32qJHQgLdeEY/2SBdkIR0m4MFmUVcnPqIpN/G4MnXY3aJUOG6e3OZBT6mdZ8n08FjdnrRnYROUNep+xlzAsvi19DFizjbpiXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754760765; c=relaxed/simple;
-	bh=kP/J6dc5UQ2tJiEMSuWAfFTCklbsx5KCW70FjT+a/u0=;
+	s=arc-20240116; t=1754760904; c=relaxed/simple;
+	bh=GaiXKFj06EKzWM3cwTRt4zPflhb4z5ZAlRARKzBicFA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DbkF84SwRuUseV6AYpCJ3ybr0rS+55UIc+npJ4QjzLLzDrF0kmGm/qKWUc8Kjh3x1NS9FU9R0tA4aeQmCdl531LDA6uJWQxMnynxwHzg6pVU3f9mRje5tdB6PqWB8oAbY75kriPWMjvBQdPcpUhyi5s7I07U04RMzC1HjOuudZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=VX6Bma1I; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bznzC6qwKz9stg;
-	Sat,  9 Aug 2025 19:32:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1754760760;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kP/J6dc5UQ2tJiEMSuWAfFTCklbsx5KCW70FjT+a/u0=;
-	b=VX6Bma1IBx4ug8hkRPZe7cdvcW0YEaqMVkpKQBKZAEb/KUsLkkIKZNyKtTh1QUooYlJn1s
-	pi+zrBBghzqMJntFkZy5uFSm/WinP/UCAFob4iuGXYsvGYkRa5PVOZRY7cgkA4/uRcAeHO
-	C6RNVcvlMTew/zao5AMa+kCpdN3k/tWcp366DHgWNjF1DBqqSybGxA91GtUqW2mAl6ID22
-	01LnVflUsrojkd7PdXlFM+WIRE/renLynwjNRA/o7SzpcoHwMfR2UHO6rBsZ+CMFU+cCrH
-	Rl6I4mB0UM/zTLSoPjx7/P6RsF3su419KQryyxaXlfEreKRQOdCL40mE5ulBmg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Sun, 10 Aug 2025 03:32:25 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
-	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-Message-ID: <2025-08-09.1754760145-silky-magic-obituary-sting-3OnpC7@cyphar.com>
-References: <20250809-new-mount-api-v3-0-f61405c80f34@cyphar.com>
- <1988f5c48ef.e4a6fe4950444.5375980219736330538@zohomail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k32wUNZEGDs6Tosl5Ip67Xsk25oBSk/TTk5CpJuSc5X+Mdawg4+JvCkhrIJeZcSxAK3GISCsHaHsEZkQXffi6uo2iL5fSgU2wmZFxBWal6ZmJhvRp+ndDUxsZkaCZg6BYTPrsZA1MDfkTsI8GrARxRvXYKOZsLBsA+wMrS2jr9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UpdC7Emb; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Jy4R
+	CQzC4CWh7/PrWweAqu8kFz7W0uIQuS9di8xCb2c=; b=UpdC7Embea6HoDCi1ZBL
+	XjXLFw5WqgPgwVRhN2T2nNUj6GO1vfeSruEAJOH2C3gGhDrka/4Swsf8G0J5KP6u
+	5Xt3wuWcDwZXvJVfaJpm5p7VN+Zrtmym2EcW+0WSfzow+6lY3EWdhmPGHwIMnu+b
+	ODqI1Fv7GxBccakzlQ2H0S9tUA5S52paifgH+ZJ3Ljwn8UdQIS96R/n3zwEcGfQZ
+	vv7Z//X3eL6OX5CEdp5Rz2fZPmds/uJrFenYQd9BH38eSu98BHANdUAAQGl89hbr
+	rQg69JG796EHDEqwy7fWIHeTwxOY1XfgiaGGLBaPjQ/WwlzxrWvH1ywSwZtqIRaX
+	TQ==
+Received: (qmail 2148172 invoked from network); 9 Aug 2025 19:34:56 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Aug 2025 19:34:56 +0200
+X-UD-Smtp-Session: l3s3148p1@GcHUG/I7iONtKDNQ
+Date: Sat, 9 Aug 2025 19:34:54 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Sven Eckelmann <sven@narfation.org>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonas Jelonek <jelonek.jonas@gmail.com>,
+	Harshal Gohel <hg@simonwunderlich.de>,
+	Simon Wunderlich <sw@simonwunderlich.de>,
+	Alex Guo <alexguo1023@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH i2c-host-fixes v4 1/5] i2c: rtl9300: Fix out-of-bounds
+ bug in rtl9300_i2c_smbus_xfer
+Message-ID: <aJeGvoSYS5Raqxyk@shikoro>
+References: <20250809-i2c-rtl9300-multi-byte-v4-0-d71dd5eb6121@narfation.org>
+ <20250809-i2c-rtl9300-multi-byte-v4-1-d71dd5eb6121@narfation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,60 +65,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yfw6iade575frhla"
+	protocol="application/pgp-signature"; boundary="LLfJenckN6oSwQa8"
 Content-Disposition: inline
-In-Reply-To: <1988f5c48ef.e4a6fe4950444.5375980219736330538@zohomail.com>
-X-Rspamd-Queue-Id: 4bznzC6qwKz9stg
+In-Reply-To: <20250809-i2c-rtl9300-multi-byte-v4-1-d71dd5eb6121@narfation.org>
 
 
---yfw6iade575frhla
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--LLfJenckN6oSwQa8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 00/12] man2: document "new" mount API
-MIME-Version: 1.0
 
-On 2025-08-09, Askar Safin <safinaskar@zohomail.com> wrote:
-> I plan to do a lot of testing of "new" mount API on my computer.
-> It is quiet possible that I will find some bugs in these manpages during =
-testing.
-> (I already found some, but I'm not sure.)
-> I think this will take 3-7 days.
-> So, Alejandro Colomar, please, don't merge this patchset until then.
+On Sat, Aug 09, 2025 at 08:40:54AM +0200, Sven Eckelmann wrote:
+> From: Alex Guo <alexguo1023@gmail.com>
+>=20
+> The data->block[0] variable comes from user. Without proper check,
+> the variable may be very large to cause an out-of-bounds bug.
+>=20
+> Fix this bug by checking the value of data->block[0] first.
+>=20
+> 1. commit 39244cc75482 ("i2c: ismt: Fix an out-of-bounds bug in
+>    ismt_access()")
+> 2. commit 92fbb6d1296f ("i2c: xgene-slimpro: Fix out-of-bounds bug in
+>    xgene_slimpro_i2c_xfer()")
+>=20
+> Cc: <stable@vger.kernel.org>
+> Fixes: c366be720235 ("i2c: Add driver for the RTL9300 I2C controller")
+> Signed-off-by: Alex Guo <alexguo1023@gmail.com>
+> Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Signed-off-by: Sven Eckelmann <sven@narfation.org>
 
-I don't plan to work on this again for the next week at least (I've
-already spent over a week on these docs -- writing, rewriting, and then
-rewriting once more for good measure; I've started seeing groff in my
-nightmares...), so I will go through review comments after you're done.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-There are some rough edges on these APIs I found while writing these
-docs, so I plan to fix those this cycle if possible (hopefully those
-aren't the bugs you said you found in the docs). Two of the fixes have
-already been merged in the vfs tree for 6.18 (the -ENODATA handling bug,
-as well as a bug in open_tree_attr() that would've let userspace trigger
-UAFs). (Once 6.18 is out, I will send a follow-up patchset to document
-the fixes.)
 
-FYI, I've already fixed the few ".BR \% FOO" typos. (My terminal font
-doesn't have a bold typeface, so when reviewing the rendered man-pages,
-mistakes involving .B are hard to spot.)
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---yfw6iade575frhla
+--LLfJenckN6oSwQa8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJeGKQAKCRAol/rSt+lE
-b+/XAQCK8HwtD6JpUiaORCrGprHu9pstb/CQ7XKzFG4j2laqbQD+OYm2okSCqq/+
-MB9+U84vJuUdkAreA+36Wsn3t6aBhwU=
-=5iQM
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiXhrsACgkQFA3kzBSg
+KbYsxg//c6JAqXX7UQ3nihMt2s+4Z5AfdahtyhF0v3L4ccT+YtXGxFP3JNftpeec
+HBT9s3t+0V6Y4kI8sVOZ49xw4D4UxAJqDijOSn927S/j4geEBd8DOV+hwnn8cSzs
+JiclnehZ5Uhu7WcsTYWx49QmrpFbWCr5X5OaGH7PR2ObAfDfSly1GEIdrPNFASig
+gIViZmSvLmcttuq4cDwX32KU0xbFwq3y8pJ7szSv/TbCTyAh0tHAanuVoLBHSkVt
+sUhMoAGh2JPXKloC4tdvpzS4xedw90nz8d5W2kG71NusCsmEpQMWmk5A622GH1GR
+fTS7Tr+j9++i4xxVFl5ybf3k5F120mWqCPlZJdRd5aF5/2aFL1Aks+KzwlPVRuB0
+2I8bsppQ6CVwYz9WqiYuFMvlR/cCmBnTgANSrfXIIOf1UKYiUSdkbYYR/RxBwrRa
+AjlxyxT0FpBSXFtnG0vd01iQxOhWCx6WmLAkGanCVPT9Mw/R5b3XbFk4OnCV2c7U
+R8JFC7bP/2j+TIK+az6rUZ5+P+uPGQH/hwIpHHdTkzKz/kWe1wyJEM3jDnF7ot9h
+xWnxSh25bkV3X2XuclD/OszsVQiIeKK6THDcaNMH5QOonE/Zq581nmkxAN0T5rNK
+HdMcUfw7LNDCxLauP7Y2cW6a/I7dAHe/bjgaBQYpds+li6+GMdU=
+=19xn
 -----END PGP SIGNATURE-----
 
---yfw6iade575frhla--
+--LLfJenckN6oSwQa8--
 
