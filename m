@@ -1,287 +1,129 @@
-Return-Path: <linux-kernel+bounces-761048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A47B1F3BD
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 625B8B1F3BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ADAD18C334F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69BA3189D15D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A4027FB15;
-	Sat,  9 Aug 2025 09:29:05 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B5A2248A0;
+	Sat,  9 Aug 2025 09:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Udwbhb08"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181691C2324
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 09:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F72954279;
+	Sat,  9 Aug 2025 09:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754731744; cv=none; b=DyvwlrdiUnhgyivw5/UNlk8vud/Z+Vc7uVqMuAqJf2SaDga3DIVRDxbIwPge7eR5F8GsfGe8hnwp7eulRaqgF8jg7RiEZmZfZX3gzoWZo+yZqQ/WYS/W5xQNsIfYph5cMXgZ2ZmGHpKB8UZKZ0h1BMb+h2fJN7gYdAH7T3CpjlE=
+	t=1754732066; cv=none; b=TZUfb5wLJysWLbpsSMGF5V5XihYcz+Hffh5w1vh11nS5zDe8WxQPGi5v0kXMwMderJy6FEHFKS3uf2YDKSJ/6mpbtuUUraM/d4WF1aNks0OQRhI7iuLG8gyfQO6m6eyu8K8H9VHNOZ5wBYqsZWc8mHW7EhHtACfFBe90/TM7pMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754731744; c=relaxed/simple;
-	bh=mtKp7k78At0Nke+v7N6Xy/XEEeiX3STC+r/o0e/YvHE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YjLwdl29Oi0JuVa3uOOOHKolt4y+Y384N/BD+aQt1i9St0RfHCM6YF6ATrmuafwObdW8bUC0aW+uLpKb8PtX1QflB/1t4AvIksp5mG3zgfBXOH3LYEFeMLc/qtvw/+GiIP2bI8FaNF4EOs7K8rvO0+677FemYwDC7xBHo4zb4lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bzbCq1y0rztT4X;
-	Sat,  9 Aug 2025 17:27:51 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 30098180B64;
-	Sat,  9 Aug 2025 17:28:52 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by dggpemf500011.china.huawei.com
- (7.185.36.131) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 9 Aug
- 2025 17:28:51 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <maz@kernel.org>, <lpieralisi@kernel.org>, <tglx@linutronix.de>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [RFC PATCH -next] irqchip/gic-v5: Improve the SPI alloc efficiency
-Date: Sat, 9 Aug 2025 17:29:20 +0800
-Message-ID: <20250809092920.3765609-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754732066; c=relaxed/simple;
+	bh=9kFH3IbpdDiWi0KcPfRY/uynAW9w4+nIJYuXmNn5C6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p1DG6LO65EMTW4RdXNMFJ0rY8of1zTfe6vlBvRceA1bjFDMLCMn6Q4FV0PXEFo8MpSYrugnjqJWczZbUjTLl2yDSTogxhqauPt03+75lVy62cACG5lhdoq+Z5DvcYVxiZbZNvuiM/I0bCExgXrV7/3IsCj41dbncR3QTjpiVkWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Udwbhb08; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-76c18568e5eso3189459b3a.1;
+        Sat, 09 Aug 2025 02:34:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754732065; x=1755336865; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=h30n2QnGq+LUcM2n+2uQ8ZZxtd7mZCxFXJa+M3jXHx0=;
+        b=Udwbhb08gwLnEFc90RE9gx8U9966lzzuPqxbITM2xPCXbNc9r/QB4HBvfso2sxiHO0
+         3sp4+6ll+MMBG9rltbSBl3BCfA40AKzTV0GxBaeppiTZSCrT7R5Xpg1E1zwLkp6EjKcY
+         72yvHWlzfYVOvjAYeCoEfHCoRm7I6fp4ViGjaD7CJmt7kafGv77/5Rsa50l19tS70zub
+         GwJrJ80+PH/A4Ul0FAPrh+6t/Q1L2drYnIsx8ujFlasDMjPCe7euDVNl0RU047puh/3Y
+         mcAbg0YTEzvcxFqJ+NqELyqttfAJ5nWQK75bIfwj5enK/dgXde1ir3MqNxUAvs48P4Ia
+         3RsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754732065; x=1755336865;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h30n2QnGq+LUcM2n+2uQ8ZZxtd7mZCxFXJa+M3jXHx0=;
+        b=PDtjPRYKQrhHN55ZyBTfQjH60/6PXzZ+pyA9HqT+Xx3FMVWm/pJHkCIjyATm1a8wwL
+         1FHR30luSVy0EPD+BfxnJlfZYx0IrbYms6PGHN1nvHgrEOTyix9e2E4wWTkaabldMe7Y
+         kVGt7p2xaox3+ScEN8fDeWDr4oq4EzK9LDFnm/ko4y9unm2OPkhz5oFvGQdWrnk2nHfF
+         +P18/2IdrF5jWbSpolH49iIpDSvxz3vN22mpqkLpyiblBFZ+aAFGPvojXxZKyhY7eGJp
+         rF4ZwwWCF/7TWmbl7JhrHMNuDdtv8CkEAPbccF5StQUGVpciuISdFnKq3rKq6HhYExul
+         1r5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWuH2xnYD4W92/blYD/F8Ky3jNo6uo1UDKPqrIpLMZ9iOtL3HA3vR0ZCm33T9ek+UkTj4/cYltkhaTHgXQ=@vger.kernel.org, AJvYcCXMiOZ16MuZsnDLXW9mQiNORC3K0UCEnemQ4Jn6HX/c8d53FZ81MHp/lW3gna8LCWILy5ttuPo+ahZe+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJN23qLXOD2X9uZKfdYBFi/jR+MKK3D6ri4jO5KC+/KcnIY6eN
+	CZnrTfy5L5TAycFn0ZJCGMLkb1bOafPApecJL3fDtSUpZt6KGiCCgwWu
+X-Gm-Gg: ASbGncsWOl7dClFJyIe8l6vd17qqiietaEaplTsViVe982fcy/UZki/3CnEPWZnrpxT
+	S1cogg7JlPgcUUtiXGfGqtdE57uerXFpxPWCb3j45hDouGYPybvpTCUdCcIAen1tvBozpG0Jx22
+	/cdYiS4YdpI+AlWnwEjup5FEuUMmqyjNXRUGG5GwiuaGBdgyzXukdGsyMVfdkHKLUxdngwNNpr+
+	ds3EhULyXUElbA8b4uiR5VVg5OHTQYcNtAQdawnmvVtzoWELy7utza5v+DbCmaS36KKhN/L2uWR
+	z3PuJz/Dvr+nSQK4YDNK9zYwxWeu+LgRUpevZm9SjTrY2ML38oG/C4AoCqQFOhxfUaJ2g5rfYgQ
+	scuKPwPfwRiU3jTICfNwb96HctP9Aw6on
+X-Google-Smtp-Source: AGHT+IFOj/dihK1qyItgxwSupNeccLmvTHv1JmJ0R2zZLZTK3Iu9p4jtKGnCeYYEEkwuLJ7AfPLlSQ==
+X-Received: by 2002:a05:6a20:9146:b0:240:413:bda6 with SMTP id adf61e73a8af0-24054ffc1ebmr9749292637.9.1754732064575;
+        Sat, 09 Aug 2025 02:34:24 -0700 (PDT)
+Received: from avinash ([2406:8800:9014:d938:f647:9d6a:9509:bc41])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32161259329sm9823438a91.17.2025.08.09.02.34.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 02:34:24 -0700 (PDT)
+From: Abinash Singh <abinashsinghlalotra@gmail.com>
+To: abinashsinghlalotra@gmail.com
+Cc: James.Bottomley@HansenPartnership.com,
+	bvanassche@acm.org,
+	dlemoal@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	martin.petersen@oracle.com,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v6 0/2] scsi: sd: Fix build warning in sd_revalidate_disk()
+Date: Sat,  9 Aug 2025 15:05:05 +0530
+Message-ID: <20250809093507.372430-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500011.china.huawei.com (7.185.36.131)
 
-If the GICv5 system has a large number of PEs and IRS components,
-traversing the linked list to find the irs_data corresponding
-to a specific SPI interrupt will be very slow.
+This v6 series follows up on v5 of the "scsi: sd: Fix build warning in
+sd_revalidate_disk()" patches.
+In v5, the change was split into two
+patches: the first patch refactors sd_revalidate_disk() to return void,
+and the second patch addresses excessive stack usage by allocating
+certain structures dynamically.
 
-Since the maximum number of IRS nodes, the minimum and maximum SPI
-interrupt numbers for each IRS is known during the initialization
-of the IRS nodes, sort the IRS nodes by interrupt number at
-the initial stage. This way, when allocating SPI interrupts, we can
-directly perform a binary search on the irs_data
-using the SPI interrupt number with O(log N) complexity.
+Apologies for the oversight in v5 — although I built and tested the
+kernel locally with the correct changes, I mistakenly sent an older
+version of patch 2/2 that still had `size(*lim)` instead of
+`sizeof(*lim)`. This caused a build error reported by the kernel test
+robot when building with clang.
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/irqchip/irq-gic-v5-irs.c   | 83 +++++++++++++++++++++---------
- include/linux/irqchip/arm-gic-v5.h |  2 +
- 2 files changed, 61 insertions(+), 24 deletions(-)
+Changes in v6:
+ - Replace `size(*lim)` with `sizeof(*lim)` in patch 2/2
 
-diff --git a/drivers/irqchip/irq-gic-v5-irs.c b/drivers/irqchip/irq-gic-v5-irs.c
-index f845415f9143..41ddfd3c85de 100644
---- a/drivers/irqchip/irq-gic-v5-irs.c
-+++ b/drivers/irqchip/irq-gic-v5-irs.c
-@@ -8,6 +8,7 @@
- #include <linux/log2.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/sort.h>
- 
- #include <linux/irqchip.h>
- #include <linux/irqchip/arm-gic-v5.h>
-@@ -22,7 +23,7 @@
- #define IRS_FLAGS_NON_COHERENT		BIT(0)
- 
- static DEFINE_PER_CPU_READ_MOSTLY(struct gicv5_irs_chip_data *, per_cpu_irs_data);
--static LIST_HEAD(irs_nodes);
-+static struct gicv5_irs_chip_data **irs_nodes;
- 
- static u32 irs_readl_relaxed(struct gicv5_irs_chip_data *irs_data,
- 			     const u32 reg_offset)
-@@ -382,17 +383,18 @@ int gicv5_irs_cpu_to_iaffid(int cpuid, u16 *iaffid)
- 
- struct gicv5_irs_chip_data *gicv5_irs_lookup_by_spi_id(u32 spi_id)
- {
--	struct gicv5_irs_chip_data *irs_data;
--	u32 min, max;
-+	int l = 0, r = gicv5_global_data.irs_count - 1;
- 
--	list_for_each_entry(irs_data, &irs_nodes, entry) {
--		if (!irs_data->spi_range)
--			continue;
-+	while (l <= r) {
-+		int m = (l + r) >> 1;
- 
--		min = irs_data->spi_min;
--		max = irs_data->spi_min + irs_data->spi_range - 1;
--		if (spi_id >= min && spi_id <= max)
--			return irs_data;
-+		if (irs_nodes[m]->spi_min <= spi_id &&
-+		    spi_id <= irs_nodes[m]->spi_max)
-+			return irs_nodes[m];
-+		else if (spi_id < irs_nodes[m]->spi_min)
-+			r = m - 1;
-+		else
-+			l = m + 1;
- 	}
- 
- 	return NULL;
-@@ -489,7 +491,7 @@ void gicv5_irs_syncr(void)
- 	struct gicv5_irs_chip_data *irs_data;
- 	u32 syncr;
- 
--	irs_data = list_first_entry_or_null(&irs_nodes, struct gicv5_irs_chip_data, entry);
-+	irs_data = irs_nodes[0];
- 	if (WARN_ON_ONCE(!irs_data))
- 		return;
- 
-@@ -673,7 +675,7 @@ static void irs_setup_pri_bits(u32 idr1)
- 	}
- }
- 
--static int __init gicv5_irs_init(struct device_node *node)
-+static int __init gicv5_irs_init(struct device_node *node, unsigned int *num)
- {
- 	struct gicv5_irs_chip_data *irs_data;
- 	void __iomem *irs_base;
-@@ -725,11 +727,11 @@ static int __init gicv5_irs_init(struct device_node *node)
- 	irs_data->spi_range = FIELD_GET(GICV5_IRS_IDR6_SPI_IRS_RANGE, idr);
- 
- 	if (irs_data->spi_range) {
-+		irs_data->spi_max = irs_data->spi_min + irs_data->spi_range - 1;
- 		pr_info("%s detected SPI range [%u-%u]\n",
- 						of_node_full_name(node),
- 						irs_data->spi_min,
--						irs_data->spi_min +
--						irs_data->spi_range - 1);
-+						irs_data->spi_max);
- 	}
- 
- 	/*
-@@ -737,8 +739,7 @@ static int __init gicv5_irs_init(struct device_node *node)
- 	 * Global properties (iaffid_bits, global spi count) are guaranteed to
- 	 * be consistent across IRSes by the architecture.
- 	 */
--	if (list_empty(&irs_nodes)) {
--
-+	if (*num == 0) {
- 		idr = irs_readl_relaxed(irs_data, GICV5_IRS_IDR1);
- 		irs_setup_pri_bits(idr);
- 
-@@ -752,7 +753,7 @@ static int __init gicv5_irs_init(struct device_node *node)
- 		pr_debug("Detected %u SPIs globally\n", spi_count);
- 	}
- 
--	list_add_tail(&irs_data->entry, &irs_nodes);
-+	irs_nodes[(*num)++] = irs_data;
- 
- 	return 0;
- 
-@@ -765,12 +766,14 @@ static int __init gicv5_irs_init(struct device_node *node)
- 
- void __init gicv5_irs_remove(void)
- {
--	struct gicv5_irs_chip_data *irs_data, *tmp_data;
-+	struct gicv5_irs_chip_data *irs_data;
-+	int i;
- 
- 	gicv5_free_lpi_domain();
- 	gicv5_deinit_lpis();
- 
--	list_for_each_entry_safe(irs_data, tmp_data, &irs_nodes, entry) {
-+	for (i = 0; i < gicv5_global_data.irs_count; i++) {
-+		irs_data = irs_nodes[i];
- 		iounmap(irs_data->irs_base);
- 		list_del(&irs_data->entry);
- 		kfree(irs_data);
-@@ -782,8 +785,7 @@ int __init gicv5_irs_enable(void)
- 	struct gicv5_irs_chip_data *irs_data;
- 	int ret;
- 
--	irs_data = list_first_entry_or_null(&irs_nodes,
--					    struct gicv5_irs_chip_data, entry);
-+	irs_data = irs_nodes[0];
- 	if (!irs_data)
- 		return -ENODEV;
- 
-@@ -799,24 +801,57 @@ int __init gicv5_irs_enable(void)
- void __init gicv5_irs_its_probe(void)
- {
- 	struct gicv5_irs_chip_data *irs_data;
-+	int i;
- 
--	list_for_each_entry(irs_data, &irs_nodes, entry)
-+	for (i = 0; i < gicv5_global_data.irs_count; i++) {
-+		irs_data = irs_nodes[i];
- 		gicv5_its_of_probe(to_of_node(irs_data->fwnode));
-+	}
-+}
-+
-+static int spi_min_cmp(const void *a, const void *b)
-+{
-+	const struct gicv5_irs_chip_data *irs_data1 = a;
-+	const struct gicv5_irs_chip_data *irs_data2 = b;
-+
-+	return irs_data1->spi_min - irs_data2->spi_min;
- }
- 
- int __init gicv5_irs_of_probe(struct device_node *parent)
- {
-+	unsigned int irs_count = 0, num = 0;
- 	struct device_node *np;
- 	int ret;
- 
-+	for_each_available_child_of_node(parent, np) {
-+		if (of_device_is_compatible(np, "arm,gic-v5-irs"))
-+			irs_count++;
-+	}
-+
-+	if (irs_count == 0)
-+		return -ENODEV;
-+
-+	irs_nodes = kcalloc(irs_count, sizeof(struct gicv5_irs_chip_data *),
-+			    __GFP_ZERO);
-+	if (!irs_nodes)
-+		return -ENOMEM;
-+
- 	for_each_available_child_of_node(parent, np) {
- 		if (!of_device_is_compatible(np, "arm,gic-v5-irs"))
- 			continue;
- 
--		ret = gicv5_irs_init(np);
-+		ret = gicv5_irs_init(np, &num);
- 		if (ret)
- 			pr_err("Failed to init IRS %s\n", np->full_name);
- 	}
- 
--	return list_empty(&irs_nodes) ? -ENODEV : 0;
-+	if (num == 0) {
-+		kfree(irs_nodes);
-+		return -ENODEV;
-+	}
-+
-+	sort(irs_nodes, num, sizeof(struct gicv5_irs_chip_data *), spi_min_cmp, NULL);
-+	gicv5_global_data.irs_count = num;
-+
-+	return 0;
- }
-diff --git a/include/linux/irqchip/arm-gic-v5.h b/include/linux/irqchip/arm-gic-v5.h
-index 68ddcdb1cec5..6661b583b8d8 100644
---- a/include/linux/irqchip/arm-gic-v5.h
-+++ b/include/linux/irqchip/arm-gic-v5.h
-@@ -278,6 +278,7 @@ struct gicv5_chip_data {
- 	u8			cpuif_pri_bits;
- 	u8			cpuif_id_bits;
- 	u8			irs_pri_bits;
-+	unsigned int		irs_count;
- 	struct {
- 		__le64 *l1ist_addr;
- 		u32 l2_size;
-@@ -294,6 +295,7 @@ struct gicv5_irs_chip_data {
- 	void __iomem		*irs_base;
- 	u32			flags;
- 	u32			spi_min;
-+	u32			spi_max;
- 	u32			spi_range;
- 	raw_spinlock_t		spi_config_lock;
- };
+
+Now there are no build errors.
+I am very sorry for that .
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202508091640.gvFPjI6O-lkp@intel.com/
+
+
+Abinash Singh (2):
+  scsi: sd: make sd_revalidate_disk() return void
+  scsi: sd: Fix build warning in sd_revalidate_disk()
+
+ drivers/scsi/sd.c | 54 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 31 insertions(+), 23 deletions(-)
+
 -- 
-2.34.1
+2.50.1
 
 
