@@ -1,122 +1,103 @@
-Return-Path: <linux-kernel+bounces-761058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB3BB1F3D5
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:46:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C27B1F3D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DDD1172920
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A1F3BA4D3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451F5235046;
-	Sat,  9 Aug 2025 09:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F0223C4FC;
+	Sat,  9 Aug 2025 09:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RVqhjG3f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HP0Tzhzz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358E519DF9A;
-	Sat,  9 Aug 2025 09:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3215A1D5ABA;
+	Sat,  9 Aug 2025 09:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754732804; cv=none; b=KJHHlocTCA1oEL6Htw0nSnUeSKJ+nUtF+HzNQhbKdHNFEuLXI3tqzIqelo0JDbfn+auFDcwUlc1GvzC7BSeFPJmwhR0jQBSW6LNqZWNUxekOc3rHn9o3/AMHfw8X2vj0bLIfUrMaT54NZHtFFoq0xNwfninumzzIlt1GPdaQqhE=
+	t=1754732856; cv=none; b=AD/eLjcFJykji/tBL2hB6eijaSZUx47LkQKypPWg8rqkjhYjtO0I9onbCDdiqchtwMClXeJj1n9qTZqFcujCe9+weSGXS8+ObRd31AUQe2Q/FNcJWweItNtVER0IY6M8+iF4T575tW22IBJDtL5j3kJtOVpjXp2hUAaGHv6RTEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754732804; c=relaxed/simple;
-	bh=wdy+l8t7qIA++5RlDvu5ZdGGsffFZW4ATZxlimIuYLg=;
+	s=arc-20240116; t=1754732856; c=relaxed/simple;
+	bh=JINXn9Zyw+aEkTOgsmUWAuNYs0DmFS5fyd6z0+L/6+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjCdslP41xWy0eV8NsYOboFu0+dKYyheeSIfuCQuh32BJ1j1uGIrgEhmGPnEBSYIibZpkzdjbFcOcbPneguBV2eTvSr3knVgS367tgBLlLB5JMIaxYU5UzYN/ovb1br3kSuYlnJqyYAYZitWLOnvyXpHD6ugLAiFm7UAYKeLcF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RVqhjG3f; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=FMF3FD2JDBYgdp1/jEbkadOHWxOy4Rh9Utgt6tuCRfDzPJQVUkuEoCSex3JH+WKpf6vor3VtNsiiJQXyPOG4fZ1kmKkPS214/Mx6SNJ3DQ6o2l2ppnL9IkxVpGsZydc/pLd+k/M2IQFY25a5VsIZN+QfcKlqawiWUPeFTIc53EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HP0Tzhzz; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754732804; x=1786268804;
+  t=1754732855; x=1786268855;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wdy+l8t7qIA++5RlDvu5ZdGGsffFZW4ATZxlimIuYLg=;
-  b=RVqhjG3fGGQw2hv3KlbFZ9trIMouY/2EJFTi+veNBl3y+Um7tfaCLGKs
-   4rJY5fe8SS98yu8eSy+dl76LK6xVSGg35ZVkFjA+HEiTqeMlDt5I/P7MG
-   3U7pqsiK8gYDA4F+WxFTpCBXx1CB5k3U0jlcoLoOqx/Ax0yBBqELplm8O
-   QtNcLK6FX0DR7+Mvo9nYF5hqhSem+WPrtQywdnjvgOXvl4VW55hd6uAdH
-   Q9EFWcHg+BlRtNPU+PB6CghNnr0cbf0evhmrWwUOGv9Q/D0sq2hEmRf4x
-   yyudAkTNjS2LKeLKQA9dtHY6iSxEPTZiGJWMHujkUA78Xm/y7gJkn+/WV
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JINXn9Zyw+aEkTOgsmUWAuNYs0DmFS5fyd6z0+L/6+E=;
+  b=HP0TzhzzWmln7wxLl5g131EaKGEXx5YSjcKbRAwlZDfy/lbXp4lHGPZj
+   2d7uEgCtNUpnvsODQ4gRDRRQ4+1v84AjUALi85tpZhBJEd63iQGr4dYBX
+   vmxdbVm0inOyc4X2TWj4thf1WBTxpI9vmB5S1umn7zFqq0XGmH6WVAF9N
+   4pUjhOIONzuUuymc8bVX4KvG9SggHxVYK31AxTQun2XFdTQdaK9ZU9N2+
+   4IR5MAF8/JJZgQkp3l4zLUqTWWJgiACgMEE4k4YE+HHm2LXsxrjK5jDcV
+   qbVAkqhWwZmpiSLPChO/fpwpOvj9PJzSDPQLq9Lo4/ySgu5OMJeb39rqZ
    Q==;
-X-CSE-ConnectionGUID: tXnG3J9VTFeAWSfxD7F26Q==
-X-CSE-MsgGUID: vao8Mn6kRnehpbfP5AoA5w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="56965705"
+X-CSE-ConnectionGUID: /LW/pJEETCOvmfPVJg0sZg==
+X-CSE-MsgGUID: xoaNa6OnTjqIrHCrnRBmCg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="68433297"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="56965705"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 02:46:43 -0700
-X-CSE-ConnectionGUID: TKcsy3kwQTqHq84z+ykv4A==
-X-CSE-MsgGUID: RAzjC8bcS92sZNIqBA4Xdg==
+   d="scan'208";a="68433297"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 02:47:35 -0700
+X-CSE-ConnectionGUID: Mb1Ht4xzTp2hIg69i/K4Gg==
+X-CSE-MsgGUID: RPZLRIZARkOlewicNsoGQw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="202693344"
+   d="scan'208";a="165880184"
 Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 02:46:40 -0700
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 02:47:32 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ukg9t-00000004cVB-0h0M;
-	Sat, 09 Aug 2025 12:46:37 +0300
-Date: Sat, 9 Aug 2025 12:46:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: dave.jiang@intel.com, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject: Re: [PATCH] cleanup: Fix unused guard error function with
- DEFINE_CLASS_IS_COND_GUARD
-Message-ID: <aJcY_IVHj_0xaM3_@smile.fi.intel.com>
-References: <20250804220955.1453135-1-dan.j.williams@intel.com>
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ukgAj-00000004cW8-2uf7;
+	Sat, 09 Aug 2025 12:47:29 +0300
+Date: Sat, 9 Aug 2025 12:47:29 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Abinash Singh <abinashsinghlalotra@gmail.com>
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	sunilvl@ventanamicro.com, u.kleine-koenig@baylibre.com
+Subject: Re: [PATCH v3 0/2] serial: 8250_platform: Reduce stack usage in
+ probe functions
+Message-ID: <aJcZMel1baOP-xHF@smile.fi.intel.com>
+References: <aJO9fnbydWqu1RpJ@smile.fi.intel.com>
+ <20250806215134.4921-1-abinashsinghlalotra@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250804220955.1453135-1-dan.j.williams@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250806215134.4921-1-abinashsinghlalotra@gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Aug 04, 2025 at 03:09:54PM -0700, Dan Williams wrote:
-> Andy reports that the "lock_timer" scheme in kernel/time/posix-timers.c,
-> with its custom usage of DEFINE_CLASS_IS_COND_GUARD(), results in:
+On Thu, Aug 07, 2025 at 03:21:32AM +0530, Abinash Singh wrote:
+> On Wed, 6 Aug 2025 23:39 Andy Shevchenko wrote:
+> > Have you had a chance to see Arnd's comments?
+> >
+> Yeah ,I have made comments on that.
+> Please check that and provide feedback.
 > 
-> kernel/time/posix-timers.c:89:1: error: unused function 'class_lock_timer_lock_err' [-Werror,-Wunused-function]
->    89 | DEFINE_CLASS_IS_COND_GUARD(lock_timer);
-> 
-> ...with a clang W=1 build. Per Nathan, clang catches unused "static inline"
-> functions in C files since commit 6863f5643dd7 ("kbuild: allow Clang to
-> find unused static inline functions for W=1 build").
-> 
-> There are 2 ways to solve this, either mark the class_##_lock_err()
-> function as __maybe_unused, or make sure class_##_lock_err() *is* used /
-> gets called to disposition the lock status.
-> 
-> At present __lock_timer() only indicates failure with a NULL __guard_ptr().
-> However, one could imagine that __lock_timer(), or some other custom
-> conditional locking primitive, wants to pass an ERR_PTR() to indicate the
-> reason for the lock acquisition failure.
-> 
-> Update __scoped_cond_guard() to check for ERR_PTR() in addition to NULL
-> @scope values. This allows __lock_timer(), or another open coded
-> DEFINE_CLASS_IS_COND_GUARD() user, to switch to passing an ERR_PTR() in the
-> future. In the meantime, this just silences the warning.
+> Hi,
+> Apologies for not reviewing the patch carefully before submitting it.
+> It's 3 A.M. here, and I’m still up, so I missed it
 
-FWIW,
-
-Tested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-
-but as I mentioned in previous mail, it doesn't fix all issues I have, and
-maybe more.
+If others are okay with this intermediate step,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 -- 
 With Best Regards,
