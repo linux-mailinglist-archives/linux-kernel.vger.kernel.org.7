@@ -1,148 +1,147 @@
-Return-Path: <linux-kernel+bounces-761179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A48B1F55C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:08:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B777CB1F55D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF80916BA38
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752503B8E85
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979BB2BE7C2;
-	Sat,  9 Aug 2025 16:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9546D2BDC2F;
+	Sat,  9 Aug 2025 16:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx73WWHc"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="jgLesPPp"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE3E190692;
-	Sat,  9 Aug 2025 16:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBBB1BC5C
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 16:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754755700; cv=none; b=OXOGui/dLBd+tqWHvxiwHLjZabG1g+s2NA+ujrk9/V+jmii7x/TxA+5JxsqnWlX04Igosjoe+fNR9EDYYebMoUfM9SnDs6VNI05RrXZs8pDeR8VMMNRRobL9nfggTJNZZd42zokIaNCZWwTFZlXvljcTm5btGipGTb/VFDx8EW4=
+	t=1754755805; cv=none; b=mh3S5QFYNzLLabbasnnLkithkjisEgbJjrrYNP9P/dd8kew52nWeJ8YVV2xsum3+XPlncXSuOVj/u9INvTLsAd3qcEpjE6qQaqcqD0BEIj2c8J0xlePzlXiTJEy1KuDfppHnzgN3DxQ0g5GLXzyA/FDO+mV6NrgcUkul5zXZIpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754755700; c=relaxed/simple;
-	bh=Ufaxx+IfF2XAwJC0bJUHBGNG54r+MorybcTOPrfdJaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c4RtoUhN7mAq8qr0/qQhpcS3DFaJ5ThMtANB/Nj4wPjml3wJTnQzNpwCF4N1txiy1cRZRspnU3BOXTY9uYp3mJj7pZ/QNEZ4NFppUD2LVg5tExyJ5phldiUGkpFHkJoGh/ZyvYhiyDFqqVKctB8JkIzVHDAwEeiHIVdKxzl/eo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx73WWHc; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af922ab4849so463281066b.3;
-        Sat, 09 Aug 2025 09:08:15 -0700 (PDT)
+	s=arc-20240116; t=1754755805; c=relaxed/simple;
+	bh=EU3uiBgYcc4HLECZb4pgs+ZSeBNWlX64SnD/K4xqSIo=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=PvBm6lRG7Tgor9MW4VlTxsDolFB2dwBcwx+I3hcv/DjmaJ5kCN5vgrgbSg89Js2qQz5z59xQM7RAc6Clv2JlOMTR81W+++Ey2WdUb83JbtZt7nxegICed4BHCTO/r9Mk8Je7PKk8Kbgyb+hoEFxAqlcDFkyW+mn4jW2/RKEWqLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=jgLesPPp; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76b6422756fso4509067b3a.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 09:10:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754755694; x=1755360494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ufaxx+IfF2XAwJC0bJUHBGNG54r+MorybcTOPrfdJaA=;
-        b=Tx73WWHcNZxOoVC6Tl8ZICfvnLBOWG8As34DjDnVjML2701Pajwj2xNAZQidS7T+lY
-         FT33xwdieUPfu3dx+AjuVWQ4BJ4ZIkivR8is8y7MWO2VJ5Wodo9dBkEMlEId5wUXFoJe
-         e4Z/M46MJSNdfQZp1Rbf2E1MJFeaek2dYab2sP6lO+38hrS8iOr+p7H4bdsrzwTPL9Du
-         AoFim+Ys4FeUhufP3pNzMBZcs7j9Yk293MLgI7sDvnBfpi76cdZregS1QBHC2+rl06HA
-         4hnqjxLg9h2sOawnzGnk2YSZDqL85hKYuU9ivR5p3Vj26UtnZx3Q209Ue8aSvlgPbnfB
-         Tcrw==
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1754755803; x=1755360603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vm111q7HEdqrlcr65H+xqM79ZO22buScjk8C2vfUtAU=;
+        b=jgLesPPpJBHLimsHjWlccdY4S9rNhvT8JH2VTODuJ8gihLdAVxIdqdY9Z7WL0VKUfe
+         4UEcfBI7oDUJU449z0MhsDbQnFh+HmfYDu9fq5Nx02j40ZXPujpLxWEw7WIMGuNmiu1y
+         YGJFnaHTVwtxc6Cjdg+g0U4T16zkbe27EbdgTu7dT3gnc37UfeHWK68+p/yjAub9LQlQ
+         2MZQUfdulCQ4oOmgJvQhWwq53oi3nVZrYOmOYCEDPyr7xsM0clSfTIsyhOX6mSq4XQOq
+         IyhO0N8C7p2qnyfZI/taHRHOZfDMH5l5ptXqY99GbpYckvIttE8+f2Mu8rt+iDozxvDV
+         lXfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754755694; x=1755360494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ufaxx+IfF2XAwJC0bJUHBGNG54r+MorybcTOPrfdJaA=;
-        b=ZuTDHTYDRakMUMTOPJKAOEaJIO6zODd1vsbmnThhX+i/rqlP16aogll0IsxCb+NaP6
-         QMN3ciwys23vCRuiUWGBZM1H7lSDZ4n0TcCdeBRu7cqGQzDjz0USTqFL9otLLHCze8nV
-         gfouXDWOkVUEXflbmJd//sdaasyPdSbvf13/RybOPDpGZC6RNDod4aUEbcrBposgZ43k
-         ifAlQqi8y7soK6hUJz8TVRLiuX9LL7fCt4vJ3jzhVyY+3F+GDHJ9/vd4cc4mVufuM5Ef
-         eaABzZFYJCE3ZGTMJcY4klrj3o43YFo/R+8ILsUadBYJGOl8n7q2gf7XbooRhU9B+VFL
-         VUgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUf9LO0ChTOLT3fNPxbXsBW8c2v7Ib2t44pu9R+/BJ9zO62mwC9/7fGjvjnrMcZx2la0O3kBjvgHbGftqr9bQ==@vger.kernel.org, AJvYcCVgWeBtpWyGiNPXW+iLJv/Egp0kZ1Zaao6AWkqVs7zDCrbD1B9VJSamFmXeBa+gTPHSsYkN6tw8G3MrowQn@vger.kernel.org, AJvYcCXXdOIaf/uImgJMhYaE5gnH0T71rOwbMeG3DDs5chFc1krH3NIau/49bB2I60nkI9AIbJfZPKF3bT6rOTVL@vger.kernel.org
-X-Gm-Message-State: AOJu0YybTdHIHweDTRA392MKXNA67yOH0wutQi0XuIZe2zYxgmOBElQZ
-	tLNGOJTRZYxlHRIIsKWCPa+ek+xmZi6Q4H1P9rZGGB11W9mXTqNbp/wNIlGWyQzzBkWyqbhKWDr
-	9VHOsp4B0CGe5vMTQS94+/CqsXuIhxG0=
-X-Gm-Gg: ASbGnctU83VgdHM7ofbggxOIve44Vw0cqJphGLJBpjKinm7Mk0rPPV2T7IayNJYk80W
-	hDJDktGTG9VMPqeIDcs1YIuEaSa0X/kLYhy0fRDGYkida2G9eXgWeM4Fkws9pxeD6q1Hr1O0AvF
-	D/IWhXDP4ireFkDxPq7VKyfqhmf/lJkl5OrvMnW90+1PJDqRq3G7W/FfS2GJSiOTA44Y7iHlqo0
-	tbD/C0=
-X-Google-Smtp-Source: AGHT+IF2wokC1FoGnEmT8nxhTkWU0r3sYovpSj4TMBjhgpqFblGVc6zJxH12qFYUNW6qhfkU9b5EX09xCEQsNhxAq0E=
-X-Received: by 2002:a17:907:7e9c:b0:af9:bdfd:c60c with SMTP id
- a640c23a62f3a-af9c65b5604mr600478666b.47.1754755694159; Sat, 09 Aug 2025
- 09:08:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754755803; x=1755360603;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vm111q7HEdqrlcr65H+xqM79ZO22buScjk8C2vfUtAU=;
+        b=rhGefxgcQ8p4qM+yws6SucqeTNY3y5ilfRMn10DMFkUHUOvplF2Ez/LN3JRbE078nZ
+         ALT1YsBZ2ojVl6P6hAn4ujYnKTHVyeQ2lyD/MOFvvXSrnKiAVNR9MPdBa3xClGTn5hKE
+         mmNmByg3sunNoIM84uN1N6UWNf/CULen5p97AzeAnH1cfuv5uQ4/JSPlStjcVTG88OiK
+         VZuunwbjBOrA7wbx+hO03a+Sm/csh7zZUQEZaK6sHdO5OgX5jFQZIt20iAl5dKiDZqID
+         k9mb2jxn+m8MrmVv4HBcqBtE3UGGlLeCrnt53E1wv+jTRmFxAbdqvGanSVgTap7JBK36
+         gKTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqTLTuBwgny7QDi+rdtexVdvEc/Pasi3F1V5PZPHYl+wtBgL4YySXQ5U91vGHC+SDCXEkjXXu03AhyT4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydOdet5aAQE8yjb/rb0eWF1Jw1R1oYAU/3gJcA2dAfDxEGpYNO
+	d2dPgLc/nQ8sdDbR/fJfRYiM7ol5GHr1ZyHxgZ3S+e/+YjHBFrCLUPxQIsjauWr85j4buh+1uZ7
+	2cNlPGAg=
+X-Gm-Gg: ASbGncs1nBTt2H2pjAhny99iEWW/N0PfzKWYCVoRCn9Z//ZBBXYuEyfUvLdRA68OAAm
+	lKzcgqMBQWzCRLDMFZpOXfZJiCntkPt/WBlqYWLga1DTwuXGG+5fAWEyKGLjJBJgezr9Dj7271/
+	tmN8NYuxmKNBFxDv+p6PVXW2Azo3J9QbfhtlZep7v9TRSQr4hXliiNEl5glaYWKaODpCcRbi40v
+	vHsJxMH39R0x1YxSV7ba/r/1mzBZ+UaJ/lFtOeeaIdOAcr8ZjJT73eXe4H4h6T5m62B8uXBgQp+
+	40tJOp0TXdMpDvNe11I8DN1Cp517IASGL6s1reaX3DHllAe9x6n5Lc++XSkd3R7edtwzW8v+luJ
+	a1ARX56Iv79OPOYj4axbz2ksdYZ47Zw3RQnQ=
+X-Google-Smtp-Source: AGHT+IHIz6p0J1AiyXsleLuls77tX/jAJ92HSf9ZGsUP8iZXambPb+8il8tsfWkoH0Y+WW/deM2Rhw==
+X-Received: by 2002:a05:6a21:329f:b0:224:c067:66f8 with SMTP id adf61e73a8af0-240551d6a9cmr10697755637.37.1754755803063;
+        Sat, 09 Aug 2025 09:10:03 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-31f63da6249sm27246362a91.3.2025.08.09.09.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 09:10:02 -0700 (PDT)
+Date: Sat, 09 Aug 2025 09:10:02 -0700 (PDT)
+X-Google-Original-Date: Sat, 09 Aug 2025 09:09:59 PDT (-0700)
+Subject:     Re: [GIT PULL] RISC-V Patches for the 6.17 Merge Window, Part 1
+In-Reply-To: <CAHk-=wjLCqUUWd8DzG+xsOn-yVL0Q=O35U9D6j6=2DUWX52ghQ@mail.gmail.com>
+CC: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-655602B8-F102-4B0F-AF4A-4AB94A9F231F@Palmers-Mini.rwc.dabbelt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <CAOQ4uxgPiANxXsfnga-oa1ccx3KKc1qeVWLkyv=PPczY-m9zhg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgPiANxXsfnga-oa1ccx3KKc1qeVWLkyv=PPczY-m9zhg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 9 Aug 2025 18:08:02 +0200
-X-Gm-Features: Ac12FXwRowk5MZdjdmJvl1wX56Mra6b_t3cSUtI9Q_rWJBumfeUkBqo2hWtl_qE
-Message-ID: <CAOQ4uxj13iGDE-tz91BLpjOcJror77-pG4CkxQB18YDXX0kUkg@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 0/7] ovl: Enable support for casefold filesystems
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
-	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 9, 2025 at 11:17=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
- wrote:
+On Fri, 08 Aug 2025 21:58:32 PDT (-0700), Linus Torvalds wrote:
+> On Fri, 8 Aug 2025 at 21:19, Palmer Dabbelt <palmer@dabbelt.com> wrote:
+>>
+>> RISC-V Patches for the 6.17 Merge Window, Part 1
 >
-> On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@i=
-galia.com> wrote:
-> >
-> > Hi all,
-> >
-> > We would like to support the usage of casefold filesystems with
-> > overlayfs to be used with container tools. This use case requires a
-> > simple setup, where every layer will have the same encoding setting
-> > (i.e. Unicode version and flags), using one upper and one lower layer.
-> >
-> > * Implementation
-> >
-> > When merge layers, ovl uses a red-black tree to check if a given dentry
-> > name from a lower layers already exists in the upper layer. For merging
-> > case-insensitive names, we need to store then in tree casefolded.
-> > However, when displaying to the user the dentry name, we need to respec=
-t
-> > the name chosen when the file was created (e.g. Picture.PNG, instead of
-> > picture.png). To achieve this, I create a new field for cache entries
-> > that stores the casefolded names and a function ovl_strcmp() that uses
-> > this name for searching the rb_tree. For composing the layer, ovl uses
-> > the original name, keeping it consistency with whatever name the user
-> > created.
-> >
-> > The rest of the patches are mostly for checking if casefold is being
-> > consistently used across the layers and dropping the mount restrictions
-> > that prevented case-insensitive filesystems to be mounted.
-> >
-> > Thanks for the feedback!
+> No. This is garbage and it came in too late. I asked for early pull
+> requests because I'm traveling, and if you can't follow that rule, at
+> least make the pull requests *good*.
 >
-> Hi Andre,
+> This adds various garbage that isn't RISC-V specific to generic header files.
 >
-> This v3 is getting close.
-> Still some small details to fix.
-> With v4, please include a link to fstest so I can test your work.
-> I already had a draft for the casefold capable and disabled layers
-> in 6.17 but I did not post it yet.
-> Decide it would be better to test the final result after your work.
-> I'd started to adapt the test to the expected behavior for 6.18,
-> but it's just an untested draft for you to extend:
-> https://github.com/amir73il/xfstests/commits/ovl-casefold/
+> And by "garbage" I really mean it. This is stuff that nobody should
+> ever send me, never mind late in a merge window.
 >
-> Please make sure that you run at least check -overlay -g overlay/quick
-> sanity check for v4 and that you run check -g casefold,
-> which should run the new generic test.
+> Like this crazy and pointless make_u32_from_two_u16() "helper".
 >
+> That thing makes the world actively a worse place to live. It's
+> useless garbage that makes any user incomprehensible, and actively
+> *WORSE* than not using that stupid "helper".
+>
+> If you write the code out as "(a << 16) + b", you know what it does
+> and which is the high word. Maybe you need to add a cast to make sure
+> that 'b' doesn't have high bits that pollutes the end result, so maybe
+> it's not going to be exactly _pretty_, but it's not going to be wrong
+> and incomprehensible either.
+>
+> In contrast, if you write make_u32_from_two_u16(a,b) you have not a
+> f%^5ing clue what the word order is. IOW, you just made things
+> *WORSE*, and you added that "helper" to a generic non-RISC-V file
+> where people are apparently supposed to use it to make *other* code
+> worse too.
+>
+> So no. Things like this need to get bent. It does not go into generic
+> header files, and it damn well does not happen late in the merge
+> window.
+>
+> You're on notice: no more late pull requests, and no more garbage
+> outside the RISC-V tree.
+>
+> Now, I would *hope* there's no garbage inside the RISC-V parts, but
+> that's your choice. But things in generic headers do not get polluted
+> by crazy stuff. And sending a big pull request the day before the
+> merge window closes in the hope that I'm too busy to care is not a
+> winning strategy.
+>
+> So you get to try again in 6.18. EARLY in the that merge window. And
+> without the garbage.
 
-Also, please remove the RFC label for v4.
-We are pass the point of RFC.
+OK, sorry.  I've been dropping the ball lately and it kind of piled up 
+as taking a bunch of stuff late, but that just leads to me making 
+mistakes.  So I'll stop being late, and hopefully that helps with the 
+quality issues.
 
-Thanks,
-Amir.
+>                 Linus
 
