@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-760949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65607B1F23E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10556B1F23F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B79188FE72
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:13:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E24071896E1A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734CE275872;
-	Sat,  9 Aug 2025 05:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE56F262FE7;
+	Sat,  9 Aug 2025 05:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TEnIOB1/"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DO7eB20K"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC501DE3BE
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82CABA36
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754716359; cv=none; b=QbiGTyG3g2KE4hVHW5ANIWTpqVt3p0S/zxdB0gitjC7ulgs6vf7jEjdLirjHI7kaK+ztqqN/rCqTa/6hfausklfNc4rz8dYqp0CG6Y6YgxkKUwvBQIrp/KqxhxJRz+O3v6tp0XTYU16LxAdHr+C5BFN93tNkPr76wtjETRyaMaw=
+	t=1754716375; cv=none; b=aS7CLs0yVWKaF6OGVkXK8ZAgy8yUgUakdznwWDtZD4N9gQ9eA7tWRxrHj1IeAjaqTL8M+VmHHPvI8FEcOuDBcfH3oVpULXvb4/xFnoBCpg/mVg6MCRCvDJrLWdumxn7wi15V2NyagC2GII5gOWOj3odj3IWvyB3Ywa1aJoBDB/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754716359; c=relaxed/simple;
-	bh=yGnpZ6FlvoEQkStNXEnYs/+BqL2dRHGniBRSc7+bEyI=;
+	s=arc-20240116; t=1754716375; c=relaxed/simple;
+	bh=fRnw1t3Rh9UYvT00ArjMcNIiB37mwFZbA2eVDMCUX9M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m1yPm73VBI2YcbcZuIT/BdavdjC/l3BdlBwnghR8mggxNfB23vX6iBYsgIl3jTAM5i/J7m6oqk0xrxs69iqlLFQ90jQ8hbG1d9nYsXQ1qBKpwmo+MO9karhCFAgqXxtek2+Fw6jBNSgn4f3uTQlC2jV9TQHxB0EG1HVMEE5ZgXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TEnIOB1/; arc=none smtp.client-ip=198.175.65.19
+	 MIME-Version; b=RJUo8ambmNBfq+wvLRlOCmiE/W7wpbkuJF7yL9JEQZ65V62F8oCjVmz3qVgLvkV3PLO6TzjT6umm4UV9UMY1fHNephBb+kWs8mVMmZ6rPjQkthPxxV8sRM5GBZAKF/4w8+2Bp7vO3sUeIwn+6xlZ35XOq6ECCeBWwM5GJsRHcEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DO7eB20K; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754716358; x=1786252358;
+  t=1754716374; x=1786252374;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=yGnpZ6FlvoEQkStNXEnYs/+BqL2dRHGniBRSc7+bEyI=;
-  b=TEnIOB1/ILlwqYFTI6kKipRVVwx6DRo7Bg6DA7Rv5STVaUTCs0KWpJvq
-   Z6xP+XRjxHgLpyN1tALXTPQatPAmzpP8yoIO81oaWxQRxnjTqFILCkrJF
-   kCtJQ/VZjCEhVc7wgV23PMjUStSCtMH0P9OW3KNu8Za5Pnw7tMZySzv3t
-   NECmaJZ84sMsSF0CtDUsuTqG088mMNcuu4rS+3dzRuIJxgZ7St1Ds47Z9
-   1QQxPYZElaPgiDkZBfePvDHM5kCX7XSWYlmCxqKtAeHU7eYkQHevmw80h
-   wEnmX47OYGWTIQssLuDSa8NOAiVjB27DwhzduhCcmV9MOJn0mr3hsf+ZP
-   A==;
-X-CSE-ConnectionGUID: lvcsmsR8QjyFBqcujWQmiQ==
-X-CSE-MsgGUID: bzzKp3XeT8WmtT0FxfRmoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="56932532"
+  bh=fRnw1t3Rh9UYvT00ArjMcNIiB37mwFZbA2eVDMCUX9M=;
+  b=DO7eB20K/f/MVe9m5JNfhy4n46O8ccIoioHjrTsbuwZlLpqzzksjVlAv
+   FSWzb4JVfyBHYiQaKCDVfK0CkNncYJ22CpRHB1RwD3zGRfwsq6x9aCRQH
+   TKpWNRyQsj3e8nZiDG6U1hLeWNbIKj/X6uKv56QKiYVXkZeKHyR4Zqnxi
+   U5rknviHlsICE9lsjONRBpod6oRa32YfBF17V6dJ4X6Vo8cglEVlG/FKh
+   aqYrgjA98DE4rWoYD97vabGK2LMtYuZO47cKW4wuRsI+yu4gtqm55Wgcy
+   1wWRnlj7aVuWb9SYbQgGx83xtwUCYP9X9i36gO7Eb2NFdoWyrm8YyDqHa
+   g==;
+X-CSE-ConnectionGUID: 0oJuosNIQM23ggPBmbF4UQ==
+X-CSE-MsgGUID: LCnyHPYNSYquGLfPEsgHmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="56932555"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="56932532"
+   d="scan'208";a="56932555"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:12:37 -0700
-X-CSE-ConnectionGUID: cebyh5CzSdq9bdRIx+9UHw==
-X-CSE-MsgGUID: 291hr3FsSYCIyZnbCahMKA==
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:12:53 -0700
+X-CSE-ConnectionGUID: 0pVJsl26T9OrBTO7kMP8BQ==
+X-CSE-MsgGUID: o19YVeMBQCulANK7Q6DXLA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="164703738"
+   d="scan'208";a="164703753"
 Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by orviesa006.jf.intel.com with ESMTP; 08 Aug 2025 22:12:31 -0700
+  by orviesa006.jf.intel.com with ESMTP; 08 Aug 2025 22:12:47 -0700
 From: Chen Yu <yu.c.chen@intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -84,9 +84,9 @@ Cc: Vincent Guittot <vincent.guittot@linaro.org>,
 	Chen Yu <yu.chen.surf@gmail.com>,
 	Chen Yu <yu.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 15/28] sched: Introduce a new migration_type to track the preferred LLC load balance
-Date: Sat,  9 Aug 2025 13:06:27 +0800
-Message-Id: <b2ac5df723e9995d5b336282c639cc484ac1b884.1754712565.git.tim.c.chen@linux.intel.com>
+Subject: [RFC PATCH v4 16/28] sched: Consider LLC locality for active balance
+Date: Sat,  9 Aug 2025 13:06:42 +0800
+Message-Id: <38d036cf946223b46a20ad60ccf13f9dcb316240.1754712565.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1754712565.git.tim.c.chen@linux.intel.com>
 References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
@@ -100,104 +100,103 @@ Content-Transfer-Encoding: 8bit
 
 From: Tim Chen <tim.c.chen@linux.intel.com>
 
-Introduce a new migration type named migrate_llc_task to facilitate
-cache-aware load balancing.
+If busiest run queue has only one task, active balance is enlisted
+to actually move the task.  However, before moving the task,
+we should consider whether we are moving the task from its preferred
+LLC.
 
-After the busiest sched_group is identified as the one that needs
-migration due to having most tasks preferring destination LLC, tag the
-migration type as the newly introduced migrate_llc_task. During load
-balancing, each runqueue within the busiest preferred-LLC sched_group
-is checked, and the runqueue with the highest number of tasks preferring
-to run on the destination CPU is chosen as the busiest runqueue.
+Don't move the single running task in a run queue to another LLC, if
+we are moving it from its desired LLC, or moving it will cause too much
+imbalance between the LLCs.
 
+Co-developed-by: Chen Yu <yu.c.chen@intel.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- kernel/sched/fair.c | 37 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+ kernel/sched/fair.c | 51 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b8cc85291351..a301b56dd2b4 100644
+index a301b56dd2b4..592a4034e760 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -9746,7 +9746,8 @@ enum migration_type {
- 	migrate_load = 0,
- 	migrate_util,
- 	migrate_task,
--	migrate_misfit
-+	migrate_misfit,
-+	migrate_llc_task
- };
- 
- #define LBF_ALL_PINNED	0x01
-@@ -10180,6 +10181,15 @@ static int detach_tasks(struct lb_env *env)
- 			env->imbalance -= util;
- 			break;
- 
-+		case migrate_llc_task:
-+			/*
-+			 * Since can_migrate_task() succeed, when we reach here, it means that p
-+			 * can be migrated even if dst_cpu is not p's preferred_llc, because there
-+			 * are no idle cores for p to do in-llc load balance.
-+			 */
-+			env->imbalance--;
-+			break;
-+
- 		case migrate_task:
- 			env->imbalance--;
- 			break;
-@@ -11817,6 +11827,15 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 		return;
- 	}
- 
-+#ifdef CONFIG_SCHED_CACHE
-+	if (busiest->group_llc_balance) {
-+		/* Move a task that prefer local LLC */
-+		env->migration_type = migrate_llc_task;
-+		env->imbalance = 1;
-+		return;
-+	}
-+#endif
-+
- 	if (busiest->group_type == group_imbalanced) {
- 		/*
- 		 * In the group_imb case we cannot rely on group-wide averages
-@@ -12125,6 +12144,10 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
- 	struct rq *busiest = NULL, *rq;
- 	unsigned long busiest_util = 0, busiest_load = 0, busiest_capacity = 1;
- 	unsigned int busiest_nr = 0;
-+#ifdef CONFIG_SCHED_CACHE
-+	unsigned int busiest_pref_llc = 0;
-+	int dst_llc;
-+#endif
- 	int i;
- 
- 	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
-@@ -12233,6 +12256,16 @@ static struct rq *sched_balance_find_src_rq(struct lb_env *env,
- 			}
- 			break;
- 
-+		case migrate_llc_task:
-+#ifdef CONFIG_SCHED_CACHE
-+			dst_llc = llc_idx(env->dst_cpu);
-+			if (!cpus_share_cache(env->dst_cpu, rq->cpu) &&
-+			    busiest_pref_llc < rq->nr_pref_llc[dst_llc]) {
-+				busiest_pref_llc = rq->nr_pref_llc[dst_llc];
-+				busiest = rq;
-+			}
-+#endif
-+			break;
- 		case migrate_task:
- 			if (busiest_nr < nr_running) {
- 				busiest_nr = nr_running;
-@@ -12415,6 +12448,8 @@ static void update_lb_imbalance_stat(struct lb_env *env, struct sched_domain *sd
- 	case migrate_misfit:
- 		__schedstat_add(sd->lb_imbalance_misfit[idle], env->imbalance);
- 		break;
-+	case migrate_llc_task:
-+		break;
- 	}
+@@ -12332,10 +12332,43 @@ imbalanced_active_balance(struct lb_env *env)
+ 	return 0;
  }
  
++#ifdef CONFIG_SCHED_CACHE
++static inline bool
++break_llc_locality(struct lb_env *env)
++{
++	if (!sched_feat(SCHED_CACHE))
++		return 0;
++
++	if (cpus_share_cache(env->src_cpu, env->dst_cpu))
++		return 0;
++	/*
++	 * All tasks want to stay put. Move only if LLC is
++	 * heavily loaded or don't pull a task from its
++	 * preferred CPU if it is the only one running.
++	 */
++	if (env->src_rq->nr_pref_llc_running == env->src_rq->cfs.h_nr_runnable &&
++	    (env->src_rq->nr_running <= 1 ||
++	    _get_migrate_hint(env->src_cpu, env->dst_cpu,
++			      0, false) == mig_forbid))
++		return 1;
++
++	return 0;
++}
++#else
++static inline bool
++break_llc_locality(struct lb_env *env)
++{
++	return 0;
++}
++#endif
++
+ static int need_active_balance(struct lb_env *env)
+ {
+ 	struct sched_domain *sd = env->sd;
+ 
++	if (break_llc_locality(env))
++		return 0;
++
+ 	if (asym_active_balance(env))
+ 		return 1;
+ 
+@@ -12355,7 +12388,8 @@ static int need_active_balance(struct lb_env *env)
+ 			return 1;
+ 	}
+ 
+-	if (env->migration_type == migrate_misfit)
++	if (env->migration_type == migrate_misfit ||
++	    env->migration_type == migrate_llc_task)
+ 		return 1;
+ 
+ 	return 0;
+@@ -12800,9 +12834,20 @@ static int active_load_balance_cpu_stop(void *data)
+ 		goto out_unlock;
+ 
+ 	/* Is there any task to move? */
+-	if (busiest_rq->nr_running <= 1)
+-		goto out_unlock;
++	if (busiest_rq->nr_running <= 1) {
++#ifdef CONFIG_SCHED_CACHE
++		int llc = llc_idx(target_cpu);
+ 
++		if (!sched_feat(SCHED_CACHE))
++			goto out_unlock;
++
++		if (llc < 0)
++			goto out_unlock;
++		/* don't migrate if task does not prefer target */
++		if (busiest_rq->nr_pref_llc[llc] < 1)
++#endif
++			goto out_unlock;
++	}
+ 	/*
+ 	 * This condition is "impossible", if it occurs
+ 	 * we need to fix it. Originally reported by
 -- 
 2.25.1
 
