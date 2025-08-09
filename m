@@ -1,129 +1,95 @@
-Return-Path: <linux-kernel+bounces-760919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D677CB1F1F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 04:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC3BB1F1FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 04:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1FB95652D1
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F69958234D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825CA27BF95;
-	Sat,  9 Aug 2025 02:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEBE223710;
+	Sat,  9 Aug 2025 02:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brrwSjZY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Z/VuOy91"
+Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485CF2777F2;
-	Sat,  9 Aug 2025 02:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803FE126BFA
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 02:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754706813; cv=none; b=N31vViVUpSXrnnL6tWpD0eGf6Cueyq+zZDpRfi+bCvUtgWBvPtPUKbY0X71slWcQT2ntWTAKF6+A+E/MLH421bD07hIwux+3+bDyxf89x5Oo7cM++EQV3uQpneqKfU821adLb880eZt3mALVIYUf5w4kMB67wVWg5yhgNTdIWGE=
+	t=1754708024; cv=none; b=OOTFV9WhLH3ubTj7yrhsLhCVn80/uEGPrsJNEcMNg5/SjhbiEtbDX5hbvgbrl2HiZFoz465nJs6wU2mVey1Rhr8eOTxheIDuYPa/8p7B2PsRjHNLll5vUs9ZOPtLBRGBbGKBpbzfJ1aQIwSjaksKHFnD4GBzNZIdszYLq8BKk4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754706813; c=relaxed/simple;
-	bh=bL8yAbxiuQ22bQVHGv33iwssGxRBYo5+qxn51pPBsUs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aBdjM6zyIw6frc+Pchh3PS0gIe1rqvtl4Gdv5WALJUOOi8gtkbsSqLRIRfIfN+nEX2JijSb2maQzXyM5iXLsE4t3NI0sWjOWvblQaYvz9/PRlf9M0exteBwFkJ17Yg8X6ufN2KfwDSRS9C2yf/9+OQXBL9UztxDPEHfJpJhFp6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brrwSjZY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E66E5C113CF;
-	Sat,  9 Aug 2025 02:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754706812;
-	bh=bL8yAbxiuQ22bQVHGv33iwssGxRBYo5+qxn51pPBsUs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=brrwSjZYVe6DJOgiMa6/vKnk+IWLapUTy2j8iVVYIjvQszwrnZO+8g7oZ6Hfwt85s
-	 Gj/NPyZVvS4nrwsjqsJSMbYBYsamssQTQIn7Shn8D7uYbaIruRSoL5LfypHn8LbPLH
-	 RWRCJxg03fn+DzfdecEOAsda+prs+r3vnLsALZ9yk9hf/wREohDbL8TRw0DSGFKW9i
-	 J4nwT6mjbGT8FYwtHa8bMMe1vVK0hS1dxlD/SF9x69HFP/piienf5Ce9g2tbNTk/Co
-	 YrE5YzE4B4sl/Vky++cfxSRwgvlQlGUQI2GeIxxpmLz4Gu1sbFrX8x4p1mZtvo/aPb
-	 /WiVDlGpoc86Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC441C87FCB;
-	Sat,  9 Aug 2025 02:33:32 +0000 (UTC)
-From: Per Larsen via B4 Relay <devnull+perlarsen.google.com@kernel.org>
-Date: Sat, 09 Aug 2025 02:33:24 +0000
-Subject: [PATCH v10 6/6] KVM: arm64: Bump the supported version of FF-A to
- 1.2
+	s=arc-20240116; t=1754708024; c=relaxed/simple;
+	bh=rshu1EznhtWCQ3f262wqHAvjArFZVH/xgOZiidDze+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JCgJ6yw+X9bSTZ7Y1VmKr5a0A/6V00R+UcX5fJNoVWirzGDRSPUYigyXskjVGQRgC18I0W6E90f6Cg0soP9WDgbuhHCNxbTcm/Ted3m2/vDrfaNO3kUoDLpqnpheWmJR5QC/ers4/edl7Bgt4/PghoLJQQ0pkj92pVgWqBlgLQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Z/VuOy91; arc=none smtp.client-ip=202.108.3.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754708019;
+	bh=rvsKC8gpfHRa9+JDANyj7H168oO0fQoMpmQCu1RBaf0=;
+	h=From:Subject:Date:Message-ID;
+	b=Z/VuOy91H/cIEzGmw4qxfG1Fo66lccN3Sodn/mfWgBefk1PFG4NRGPnP6cfZktdIr
+	 5zSOYNhJx5wEuh4VVEk5z000+5TT/e1KHv/HehALjNYjeXaffoIEECYtEUhg+qWriG
+	 syexnsdvGSKfUl6oZUwwwHg9xtFSWgNihRp+uYQk=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 6896B82600007516; Sat, 9 Aug 2025 10:53:28 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6750976291944
+X-SMAIL-UIID: 78276F9A5FD548E2B94EDE40A56E4657-20250809-105328-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING: ODEBUG bug in __sk_destruct (3)
+Date: Sat,  9 Aug 2025 10:53:15 +0800
+Message-ID: <20250809025317.4045-1-hdanton@sina.com>
+In-Reply-To: <6895de6e.050a0220.7f033.005d.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250809-virtio-msg-ffa-v10-6-189eeecf8ae8@google.com>
-References: <20250809-virtio-msg-ffa-v10-0-189eeecf8ae8@google.com>
-In-Reply-To: <20250809-virtio-msg-ffa-v10-0-189eeecf8ae8@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- linux-kernel@vger.kernel.org, ahomescu@google.com, armellel@google.com, 
- arve@android.com, ayrton@google.com, qperret@google.com, 
- sebastianene@google.com, qwandor@google.com, 
- Per Larsen <perlarsen@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754706812; l=1485;
- i=perlarsen@google.com; s=20250508; h=from:subject:message-id;
- bh=rli6Os3TRNMcjM1Tg+jZU9NsfEjaWrpVPYJg1zkUw64=;
- b=X2RNV1idUQq0rqDRDkahKbNK+IHDHq4CSzOIfKKcWhLavNLE8079ljldJGBNHc3FIXCzoL/GL
- o5K9qPjfyGDBUCjeyRuVyG229qoxNXUOr2IMAErkgcjZoUi9xepxer5
-X-Developer-Key: i=perlarsen@google.com; a=ed25519;
- pk=jjc/Ta4VmrLRmMoahP6d1mBcKzvWU+nsmdtYe2oS2kQ=
-X-Endpoint-Received: by B4 Relay for perlarsen@google.com/20250508 with
- auth_id=402
-X-Original-From: Per Larsen <perlarsen@google.com>
-Reply-To: perlarsen@google.com
+Content-Transfer-Encoding: 8bit
 
-From: Per Larsen <perlarsen@google.com>
+> Date: Fri, 08 Aug 2025 04:24:30 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7abc678e3084 Merge tag 'pmdomain-v6.16-rc2' of git://git.k..
+> git tree:       bpf
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11b0a4f0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=12b5044868deb866
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d199b52665b6c3069b94
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a20f22580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12af2f22580000
 
-FF-A version 1.2 introduces the DIRECT_REQ2 ABI. Bump the FF-A version
-preferred by the hypervisor to enable implementation of the 1.2-only
-FFA_MSG_SEND_DIRECT_REQ2 and FFA_MSG_SEND_RESP2 messaging interfaces.
+#syz test upstream master
 
-Co-developed-by: Ayrton Munoz <ayrton@google.com>
-Signed-off-by: Ayrton Munoz <ayrton@google.com>
-Acked-by: Will Deacon <will@kernel.org>
-Signed-off-by: Per Larsen <perlarsen@google.com>
----
- arch/arm64/kvm/hyp/nvhe/ffa.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-index 22a369f8d1d8edcde45d77377e29dc08256c0bcc..68a7798857dfea9c93dd66069b0f99fb0a030c15 100644
---- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-+++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-@@ -931,7 +931,7 @@ int hyp_ffa_init(void *pages)
+--- x/net/kcm/kcmsock.c
++++ y/net/kcm/kcmsock.c
+@@ -717,6 +717,8 @@ static void kcm_tx_work(struct work_stru
  
- 	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs) {
- 		.a0 = FFA_VERSION,
--		.a1 = FFA_VERSION_1_1,
-+		.a1 = FFA_VERSION_1_2,
- 	}, &res);
- 	if (res.a0 == FFA_RET_NOT_SUPPORTED)
- 		return 0;
-@@ -952,10 +952,10 @@ int hyp_ffa_init(void *pages)
- 	if (FFA_MAJOR_VERSION(res.a0) != 1)
- 		return -EOPNOTSUPP;
+ 	lock_sock(sk);
  
--	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_1))
-+	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_2))
- 		hyp_ffa_version = res.a0;
- 	else
--		hyp_ffa_version = FFA_VERSION_1_1;
-+		hyp_ffa_version = FFA_VERSION_1_2;
- 
- 	tx = pages;
- 	pages += KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE;
-
--- 
-2.51.0.rc0.155.g4a0f42376b-goog
-
-
++	if (kcm->tx_stopped)
++		goto out;
+ 	/* Primarily for SOCK_DGRAM sockets, also handle asynchronous tx
+ 	 * aborts
+ 	 */
+--
 
