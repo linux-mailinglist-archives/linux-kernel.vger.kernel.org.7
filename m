@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-760937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D84B1F230
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:08:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6729B1F231
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269E5625E86
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:08:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A7317A4A6E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58A4226CFC;
-	Sat,  9 Aug 2025 05:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62DA274B43;
+	Sat,  9 Aug 2025 05:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KCQ9b2gg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yz3P0As2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029841DC994
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3651DE3BE
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 05:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754716096; cv=none; b=WeFRqzbJuIG6rs2oBAOGSTvUwR0GN2LxtVKltBBp1IAWJ1/M5927lhVOryPqkDV68MiNoDiPeaUuIGeJXy1yxTNPU+76g8h8o2kq0++bTNlmXdtCkgRKkjAyvo6JUXPfk9qDPu5fNyxlfwrmUYWgRrIiKd3DbVL5bDFDsKlvmIg=
+	t=1754716112; cv=none; b=PThukVAMb7sFuKxVcgD3wTM4phVJ8rI9r7+ebpAt9DmMUXFw/IDfhBgJzVDETnMraJUzTpjxdg0CH+MqsJFdZpG0+0YGabzIwZ03oS5dGUCpiuwcqMBi79EXkvVi691ZUTMUjUdIFwJpzWnQscUTpYi1EC8GJgP4BnZ2xG+wmR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754716096; c=relaxed/simple;
-	bh=3Uph+Pq82/wD/SKt6Wb33FmEmMZN7GyPmlnOYYynb0Q=;
+	s=arc-20240116; t=1754716112; c=relaxed/simple;
+	bh=LDYuA5WJyjvULccdhS0DHdWu2p7tGoJ/eeAWhiaAlrg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o3E1Bq0Hs0dTChFZYVm4GVOaPeXcpLPhZZEQJ43VOlsuNVair0TGmjdyd1fLlVjeODS5guLeDmjO76w+loIt+jPuKVqUMOnTWw1sIHx/QjCLlCjeJzEknh9dFn7KMZ1m1CPRGI1DknlEPNf/b1KDvycj+UhJPpZyr/+EIpZ7wE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KCQ9b2gg; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=bj8SEXlQMrLRUboVVGnQOu9JBe5g36Sf1XMNZ4Fxig9ZZalYOFEmmdY0+oe5Ky5U018MFmBrwaWfJieFQcobideyIOiTbWBmhitES6gj23mv2S9buVmE5umygmQde5ClZGVf904vuEv77RefIPDld9g1BbkRQFkgRCwN1dgJYBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yz3P0As2; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754716095; x=1786252095;
+  t=1754716109; x=1786252109;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=3Uph+Pq82/wD/SKt6Wb33FmEmMZN7GyPmlnOYYynb0Q=;
-  b=KCQ9b2ggnvTfhFeV/E50fpZUEEpmBsHHnpwH10t35fPh5GZQ4EVxbF9O
-   iwfbtGzsyddng/NZIteqbsCZ21Nl1B6x7QxI9972j42g46j13xjdwRoZ3
-   8A5ColX2OkCXP0fikLLx5ox8/8xMCGNiAOuHNT4EVTgK2VkSLTjB4x6k2
-   OuuokNSBejb3QbstBidVgae5eMr6rPiKsjUpKeIv2M/QgpCk+dAN8C98Z
-   9hQOg7BYjmAjMdUmUQXdfIf7u4hNaX6qUCPOtPPWVhaIxMAKXUR8DS4hA
-   yBD3fm5G5+abwatbqRE6FgrAva6LfJ6mMuAuKCPYQ9SPgzZrUlqukRs7B
-   A==;
-X-CSE-ConnectionGUID: 2W0v7dR/SgiRTYDXa05aZw==
-X-CSE-MsgGUID: hTr8aLcoRrKUtcFs+hv2jQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="60682947"
+  bh=LDYuA5WJyjvULccdhS0DHdWu2p7tGoJ/eeAWhiaAlrg=;
+  b=Yz3P0As2P7sAAeLgT7nQe+nKKbEUL/+9rKdSGXrRCerJoyPyZVJiAIca
+   rTCc2mIWo0r7xKXHBwJCzl+lhPLNxfq7ThXFDqw/086ptM6gsSmcdBYFy
+   0XG6Bpx4G8F6WIlomNDg2uKFh3+Gf6iv4ohkTrkI1AR9d2HRIWlbSXqPg
+   gjIc3qKxMHdoEmw84F/oRaqsVQVLHKyRLGcXSUZ869pJdp3tCl5EFYIHx
+   RipzC73I4/a7J8WSfr1XW9s1QojcqMVZE0c1LndRlkFmT99Paa711cvo0
+   L3/AK8mOeiqf6B9FcyzKS+XWq8jtfhVABayP9NRmDhXta4Wem5Y5cg2O/
+   Q==;
+X-CSE-ConnectionGUID: 1ql6YZT/RpyNFYw0G8nvRg==
+X-CSE-MsgGUID: Py+W8Q8/QNGIYDmbtHMFoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="57019866"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="60682947"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:08:15 -0700
-X-CSE-ConnectionGUID: /DUYqfzETGitdTxBYN+2cg==
-X-CSE-MsgGUID: /4qu8b2ATfih1n9Fc4FHNQ==
+   d="scan'208";a="57019866"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2025 22:08:29 -0700
+X-CSE-ConnectionGUID: IcQ9RT+CQgWiji82ikx4LA==
+X-CSE-MsgGUID: ojuGhmoFTkKNKnNcd1Z5hA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="170841644"
+   d="scan'208";a="169704810"
 Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
-  by orviesa005.jf.intel.com with ESMTP; 08 Aug 2025 22:08:09 -0700
+  by fmviesa005.fm.intel.com with ESMTP; 08 Aug 2025 22:08:23 -0700
 From: Chen Yu <yu.c.chen@intel.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -84,9 +84,9 @@ Cc: Vincent Guittot <vincent.guittot@linaro.org>,
 	Chen Yu <yu.chen.surf@gmail.com>,
 	Chen Yu <yu.c.chen@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 04/28] sched: Avoid calculating the cpumask if the system is overloaded
-Date: Sat,  9 Aug 2025 13:02:04 +0800
-Message-Id: <88d1c3bc1e817cc72346f566153a4618604b9ecd.1754712565.git.tim.c.chen@linux.intel.com>
+Subject: [RFC PATCH v4 05/28] sched: Add hysteresis to switch a task's preferred LLC
+Date: Sat,  9 Aug 2025 13:02:18 +0800
+Message-Id: <e51f8a6e172606d520c91c94c0c14b045639217e.1754712565.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1754712565.git.tim.c.chen@linux.intel.com>
 References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
@@ -98,46 +98,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: K Prateek Nayak <kprateek.nayak@amd.com>
+From: Tim Chen <tim.c.chen@linux.intel.com>
 
-If SIS_UTIL terminates the search for idle CPUs, the result of
-cpumask_and() becomes irrelevant. Given that select_idle_cpu()
-may now be invoked twice per wake-up within select_idle_sibling()
-due to cache-aware wake-ups, this overhead can be observed in
-benchmarks such as hackbench.
+Switching a process's preferred LLC generates lots of task
+migrations across LLCs. To avoid frequent switches
+of home LLC, implement the following policy:
 
-To conserve additional cycles-particularly in scenarios where
-the LLC is frequently targeted and the search aborts because
-the LLC is busy - calculate the cpumask only when the system is
-not overloaded.
+1. Require a 2x occ change threshold to switch preferred LLC
+2. Don't discard preferred LLC for a task
 
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- kernel/sched/fair.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 00bd0d25bc91..a7be5c5ecba3 100644
+index a7be5c5ecba3..9e3c6f0eb934 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7940,8 +7940,6 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
- 	int i, cpu, idle_cpu = -1, nr = INT_MAX;
- 	struct sched_domain_shared *sd_share;
+@@ -1175,6 +1175,14 @@ static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
+ #define EPOCH_PERIOD	(HZ/100)	/* 10 ms */
+ #define EPOCH_OLD	5		/* 50 ms */
  
--	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
--
- 	if (sched_feat(SIS_UTIL)) {
- 		sd_share = rcu_dereference(per_cpu(sd_llc_shared, target));
- 		if (sd_share) {
-@@ -7953,6 +7951,8 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
++static int llc_id(int cpu)
++{
++	if (cpu < 0)
++		return -1;
++
++	return per_cpu(sd_llc_id, cpu);
++}
++
+ void mm_init_sched(struct mm_struct *mm, struct mm_sched __percpu *_pcpu_sched)
+ {
+ 	unsigned long epoch;
+@@ -1307,6 +1315,7 @@ static void __no_profile task_cache_work(struct callback_head *work)
+ 	struct task_struct *p = current;
+ 	struct mm_struct *mm = p->mm;
+ 	unsigned long m_a_occ = 0;
++	unsigned long last_m_a_occ = 0;
+ 	int cpu, m_a_cpu = -1;
+ 	cpumask_var_t cpus;
+ 
+@@ -1345,11 +1354,13 @@ static void __no_profile task_cache_work(struct callback_head *work)
+ 					     per_cpu(sd_llc_id, i), occ, m_occ, m_cpu, nr);
+ 			}
+ 
+-			a_occ /= nr;
++			// a_occ /= nr;
+ 			if (a_occ > m_a_occ) {
+ 				m_a_occ = a_occ;
+ 				m_a_cpu = m_cpu;
+ 			}
++			if (llc_id(cpu) == llc_id(mm->mm_sched_cpu))
++				last_m_a_occ = a_occ;
+ 
+ 			trace_printk("(%d) a_occ: %ld m_a_occ: %ld\n",
+ 				     per_cpu(sd_llc_id, cpu), a_occ, m_a_occ);
+@@ -1363,13 +1374,10 @@ static void __no_profile task_cache_work(struct callback_head *work)
  		}
  	}
  
-+	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
-+
- 	if (static_branch_unlikely(&sched_cluster_active)) {
- 		struct sched_group *sg = sd->groups;
+-	/*
+-	 * If the max average cache occupancy is 'small' we don't care.
+-	 */
+-	if (m_a_occ < (NICE_0_LOAD >> EPOCH_OLD))
+-		m_a_cpu = -1;
+-
+-	mm->mm_sched_cpu = m_a_cpu;
++	if (m_a_occ > (2 * last_m_a_occ)) {
++		/* avoid the bouncing of mm_sched_cpu */
++		mm->mm_sched_cpu = m_a_cpu;
++	}
  
+ 	free_cpumask_var(cpus);
+ }
 -- 
 2.25.1
 
