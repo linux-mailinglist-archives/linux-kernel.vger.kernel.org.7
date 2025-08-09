@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-761180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B777CB1F55D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:10:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5674FB1F563
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752503B8E85
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:10:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF45062613F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9546D2BDC2F;
-	Sat,  9 Aug 2025 16:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB39D2BEC52;
+	Sat,  9 Aug 2025 16:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="jgLesPPp"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxmhfCJA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBBB1BC5C
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 16:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBA4AD51;
+	Sat,  9 Aug 2025 16:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754755805; cv=none; b=mh3S5QFYNzLLabbasnnLkithkjisEgbJjrrYNP9P/dd8kew52nWeJ8YVV2xsum3+XPlncXSuOVj/u9INvTLsAd3qcEpjE6qQaqcqD0BEIj2c8J0xlePzlXiTJEy1KuDfppHnzgN3DxQ0g5GLXzyA/FDO+mV6NrgcUkul5zXZIpA=
+	t=1754756305; cv=none; b=WviPob4mCMsC/wMZN8ZR+AaMO7sYLHIxOVaoLf8T7E0AxnFgke8CJ30r82yRzc9uZEGB9QqTGm+hm89nZkomeh76WDK7ldHyiAnAqJqgdmH15NvvcIIWYBluklxUPJJRH68uWT2Lqtq4QSGs4+1DMIf8HGHGHh2e/jdzsSWSOhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754755805; c=relaxed/simple;
-	bh=EU3uiBgYcc4HLECZb4pgs+ZSeBNWlX64SnD/K4xqSIo=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=PvBm6lRG7Tgor9MW4VlTxsDolFB2dwBcwx+I3hcv/DjmaJ5kCN5vgrgbSg89Js2qQz5z59xQM7RAc6Clv2JlOMTR81W+++Ey2WdUb83JbtZt7nxegICed4BHCTO/r9Mk8Je7PKk8Kbgyb+hoEFxAqlcDFkyW+mn4jW2/RKEWqLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=jgLesPPp; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76b6422756fso4509067b3a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 09:10:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1754755803; x=1755360603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vm111q7HEdqrlcr65H+xqM79ZO22buScjk8C2vfUtAU=;
-        b=jgLesPPpJBHLimsHjWlccdY4S9rNhvT8JH2VTODuJ8gihLdAVxIdqdY9Z7WL0VKUfe
-         4UEcfBI7oDUJU449z0MhsDbQnFh+HmfYDu9fq5Nx02j40ZXPujpLxWEw7WIMGuNmiu1y
-         YGJFnaHTVwtxc6Cjdg+g0U4T16zkbe27EbdgTu7dT3gnc37UfeHWK68+p/yjAub9LQlQ
-         2MZQUfdulCQ4oOmgJvQhWwq53oi3nVZrYOmOYCEDPyr7xsM0clSfTIsyhOX6mSq4XQOq
-         IyhO0N8C7p2qnyfZI/taHRHOZfDMH5l5ptXqY99GbpYckvIttE8+f2Mu8rt+iDozxvDV
-         lXfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754755803; x=1755360603;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vm111q7HEdqrlcr65H+xqM79ZO22buScjk8C2vfUtAU=;
-        b=rhGefxgcQ8p4qM+yws6SucqeTNY3y5ilfRMn10DMFkUHUOvplF2Ez/LN3JRbE078nZ
-         ALT1YsBZ2ojVl6P6hAn4ujYnKTHVyeQ2lyD/MOFvvXSrnKiAVNR9MPdBa3xClGTn5hKE
-         mmNmByg3sunNoIM84uN1N6UWNf/CULen5p97AzeAnH1cfuv5uQ4/JSPlStjcVTG88OiK
-         VZuunwbjBOrA7wbx+hO03a+Sm/csh7zZUQEZaK6sHdO5OgX5jFQZIt20iAl5dKiDZqID
-         k9mb2jxn+m8MrmVv4HBcqBtE3UGGlLeCrnt53E1wv+jTRmFxAbdqvGanSVgTap7JBK36
-         gKTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqTLTuBwgny7QDi+rdtexVdvEc/Pasi3F1V5PZPHYl+wtBgL4YySXQ5U91vGHC+SDCXEkjXXu03AhyT4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydOdet5aAQE8yjb/rb0eWF1Jw1R1oYAU/3gJcA2dAfDxEGpYNO
-	d2dPgLc/nQ8sdDbR/fJfRYiM7ol5GHr1ZyHxgZ3S+e/+YjHBFrCLUPxQIsjauWr85j4buh+1uZ7
-	2cNlPGAg=
-X-Gm-Gg: ASbGncs1nBTt2H2pjAhny99iEWW/N0PfzKWYCVoRCn9Z//ZBBXYuEyfUvLdRA68OAAm
-	lKzcgqMBQWzCRLDMFZpOXfZJiCntkPt/WBlqYWLga1DTwuXGG+5fAWEyKGLjJBJgezr9Dj7271/
-	tmN8NYuxmKNBFxDv+p6PVXW2Azo3J9QbfhtlZep7v9TRSQr4hXliiNEl5glaYWKaODpCcRbi40v
-	vHsJxMH39R0x1YxSV7ba/r/1mzBZ+UaJ/lFtOeeaIdOAcr8ZjJT73eXe4H4h6T5m62B8uXBgQp+
-	40tJOp0TXdMpDvNe11I8DN1Cp517IASGL6s1reaX3DHllAe9x6n5Lc++XSkd3R7edtwzW8v+luJ
-	a1ARX56Iv79OPOYj4axbz2ksdYZ47Zw3RQnQ=
-X-Google-Smtp-Source: AGHT+IHIz6p0J1AiyXsleLuls77tX/jAJ92HSf9ZGsUP8iZXambPb+8il8tsfWkoH0Y+WW/deM2Rhw==
-X-Received: by 2002:a05:6a21:329f:b0:224:c067:66f8 with SMTP id adf61e73a8af0-240551d6a9cmr10697755637.37.1754755803063;
-        Sat, 09 Aug 2025 09:10:03 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-31f63da6249sm27246362a91.3.2025.08.09.09.10.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 09:10:02 -0700 (PDT)
-Date: Sat, 09 Aug 2025 09:10:02 -0700 (PDT)
-X-Google-Original-Date: Sat, 09 Aug 2025 09:09:59 PDT (-0700)
-Subject:     Re: [GIT PULL] RISC-V Patches for the 6.17 Merge Window, Part 1
-In-Reply-To: <CAHk-=wjLCqUUWd8DzG+xsOn-yVL0Q=O35U9D6j6=2DUWX52ghQ@mail.gmail.com>
-CC: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-655602B8-F102-4B0F-AF4A-4AB94A9F231F@Palmers-Mini.rwc.dabbelt.com>
+	s=arc-20240116; t=1754756305; c=relaxed/simple;
+	bh=Bwb6t2YuRUfjH9rtbL/iknXzFlmnm4YAv6kHXJJPfCc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q5dfpD5qBBm5Y8/l49bs4mREy+hIWEVLUlB47DR+sqbSi75GAaFkKPOswCDbFNDE8qkZ+2ZcljCBcFfWMXXc3K1mjx2iE7/5QbLmyvDMLEtVv4kofIJHsm6fTbyShWh9TmFNRDx3FJxXNc0hj4B9H6d+KtMPdKhiyoNPvxOoIKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxmhfCJA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 94A83C4CEE7;
+	Sat,  9 Aug 2025 16:18:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754756304;
+	bh=Bwb6t2YuRUfjH9rtbL/iknXzFlmnm4YAv6kHXJJPfCc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=WxmhfCJANyNDVkwjSJprunldKaEGS8PyJKlbE+ylFclnnxnKfQD/pPhr3rmyYryDW
+	 KcvFI5BjMbU9D/xwFGwFIUUjMzhtlqoJXvmWJaQ2jyBwct9C4zLo6nPEASitzbaelv
+	 mLNE1UMe+QHlDtTkoidxwNAZvZGUJBXbzM/KZL2jmwW6jMoefOizgph2qE9g1EPk41
+	 4n5Sxxb0EB6t/0b4IlIQ8L3Wg6jD1RYzauDnIOakSk0f5/jabeu/FR2snbnyIT3Ogq
+	 wzCCkj84Abu47SW8fkVXxBUVLxNVr3ut4fRvdkEpMzqX4yzpyrzW9hsSknqh9AyF2h
+	 iBiDL3o2muC8w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF1AC87FD2;
+	Sat,  9 Aug 2025 16:18:24 +0000 (UTC)
+From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
+Subject: [PATCH v2 0/3] Audio and other peripherals on Orange Pi Zero
+Date: Sat, 09 Aug 2025 18:18:05 +0200
+Message-Id: <20250809-opz-audio-v2-0-f4fd15552a82@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAL10l2gC/03MQQ7CIBCF4as0sxYDSC3tynuYLgod7WyAQCVqw
+ 93FJiYu/5eXb4OEkTDB0GwQMVMi72rIQwN2mdwdGc21QXLZciU65sObTY+ZPNM916q32hiJUP8
+ h4o2eu3Uday+UVh9fO53Fd/0p+k/JggmmUJ+NaY3tTuoSfFrRHx2uMJZSPpkBRDSjAAAA
+X-Change-ID: 20250417-opz-audio-890849c8bb2e
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754756302; l=1005;
+ i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
+ bh=Bwb6t2YuRUfjH9rtbL/iknXzFlmnm4YAv6kHXJJPfCc=;
+ b=M7EvQXq4AITTYxKXjvWKmbdYsFY8YmBweMFkH+7/uCjZJtk5oXQhfg7cjblavaI1YXjCEMJfv
+ 7Qn+cYdiikoA1sq1BfTl9mPzw6SGataXmHp07VPaQvx189eg50rM062
+X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
+ pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
+X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
+ auth_id=156
+X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+Reply-To: j.ne@posteo.net
 
-On Fri, 08 Aug 2025 21:58:32 PDT (-0700), Linus Torvalds wrote:
-> On Fri, 8 Aug 2025 at 21:19, Palmer Dabbelt <palmer@dabbelt.com> wrote:
->>
->> RISC-V Patches for the 6.17 Merge Window, Part 1
->
-> No. This is garbage and it came in too late. I asked for early pull
-> requests because I'm traveling, and if you can't follow that rule, at
-> least make the pull requests *good*.
->
-> This adds various garbage that isn't RISC-V specific to generic header files.
->
-> And by "garbage" I really mean it. This is stuff that nobody should
-> ever send me, never mind late in a merge window.
->
-> Like this crazy and pointless make_u32_from_two_u16() "helper".
->
-> That thing makes the world actively a worse place to live. It's
-> useless garbage that makes any user incomprehensible, and actively
-> *WORSE* than not using that stupid "helper".
->
-> If you write the code out as "(a << 16) + b", you know what it does
-> and which is the high word. Maybe you need to add a cast to make sure
-> that 'b' doesn't have high bits that pollutes the end result, so maybe
-> it's not going to be exactly _pretty_, but it's not going to be wrong
-> and incomprehensible either.
->
-> In contrast, if you write make_u32_from_two_u16(a,b) you have not a
-> f%^5ing clue what the word order is. IOW, you just made things
-> *WORSE*, and you added that "helper" to a generic non-RISC-V file
-> where people are apparently supposed to use it to make *other* code
-> worse too.
->
-> So no. Things like this need to get bent. It does not go into generic
-> header files, and it damn well does not happen late in the merge
-> window.
->
-> You're on notice: no more late pull requests, and no more garbage
-> outside the RISC-V tree.
->
-> Now, I would *hope* there's no garbage inside the RISC-V parts, but
-> that's your choice. But things in generic headers do not get polluted
-> by crazy stuff. And sending a big pull request the day before the
-> merge window closes in the hope that I'm too busy to care is not a
-> winning strategy.
->
-> So you get to try again in 6.18. EARLY in the that merge window. And
-> without the garbage.
+Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+---
+Changes in v2:
+- Rebase on (almost) 6.17-rc1
+- Disable audio pins by default
+- Provide separate DT overlay for the Orange Pi Zero Interface Board
+- Link to v1: https://lore.kernel.org/r/20250418-opz-audio-v1-1-4e86bb5bc734@posteo.net
 
-OK, sorry.  I've been dropping the ball lately and it kind of piled up 
-as taking a bunch of stuff late, but that just leads to me making 
-mistakes.  So I'll stop being late, and hopefully that helps with the 
-quality issues.
+---
+J. Neuschäfer (3):
+      ARM: dts: allwinner: orangepi-zero: Add default audio routing
+      ARM: dts: allwinner: orangepi-zero2: Add default audio routing
+      ARM: dts: allwinner: Add Orange Pi Zero Interface Board overlay
 
->                 Linus
+ arch/arm/boot/dts/allwinner/Makefile               |  7 ++++
+ .../dts/allwinner/sun8i-h2-plus-orangepi-zero.dts  | 14 +++++++
+ .../dts/allwinner/sun8i-h3-orangepi-zero-plus2.dts | 14 +++++++
+ .../sun8i-orangepi-zero-interface-board.dtso       | 46 ++++++++++++++++++++++
+ 4 files changed, 81 insertions(+)
+---
+base-commit: 36c31984cca32c5d9720c8c1eb5bd17fa915419f
+change-id: 20250417-opz-audio-890849c8bb2e
+
+Best regards,
+-- 
+J. Neuschäfer <j.ne@posteo.net>
+
+
 
