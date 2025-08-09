@@ -1,113 +1,125 @@
-Return-Path: <linux-kernel+bounces-761176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A0AB1F556
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:03:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC75B1F557
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 926FC7A26EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C063189E8AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A7F2BE634;
-	Sat,  9 Aug 2025 16:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43B32BE64C;
+	Sat,  9 Aug 2025 16:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="h+V6mZ+S"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P4biu8Mu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0994F84A35;
-	Sat,  9 Aug 2025 16:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9FC190692
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 16:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754755425; cv=none; b=l6cdrbKpMgn+8giEdwi/Bxf5QSLxrLko8N8wyO4S34+y50p86M68Vvti/UlBekQe9F4oYsQEt+Nk7B+leWqr6tnBxCA2iIJazPSdt5gjUNxsnxECn+p9ULQorN/SxdLS818eIEElDyrs+k00fQoeDsmSidJrRhVhpgBalWKQOQ8=
+	t=1754755502; cv=none; b=GCe1s6ZFpZd/YtPimEZgkAMusUBI+9E0B4D3SOfdSVsRLJtQXdFgaVNJhnDJETP1QrdDiBxjPKaumI7LWR2MXJpKb9S67wHMf3ECaURU+iirIyl7gfSmNyRyq5yJ7gj3MnqeyeHI+hLD1ObBzps0jFaaNycChZuRH6blGmueFlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754755425; c=relaxed/simple;
-	bh=EypI9G8Vr/nQW0k5/vP9i30wLp/EuxAkr8epbMXEq+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxofH9g4hCOrtk+j+FIBjVnYYkhmo7cUCtsdvuPpc6AOCNIoLcfXd//2qVF/CnGBqzQNCByTO/pkEylK+Xa1W5rzwmDthGHBrr9ShyXgONWcC1rNFJT7canAqy6dhH7WjnL2Y8f+fYdXIo8Y0aca70T7EZaHXkjhMX9Ayp3Mr7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=h+V6mZ+S; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1754755422;
-	bh=EypI9G8Vr/nQW0k5/vP9i30wLp/EuxAkr8epbMXEq+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
-	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
-	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
-	b=h+V6mZ+SgWAby2j9+p+g30xLkGtTcRMllYCkbr9s7YwmujbweFCOznJxvtij8NUrb
-	 1+8cpsF+rMvuZEWDRHrKG1ufVKLgKCkIqFOICDZhc07OFrFecwvhUK3DDh4US7u0FO
-	 hvh7PlGtAEH8XM7bgzP8T/D8k0NuI98wyc2QBE4QEdvMjhQa1IHwXbWoleomnkRJu2
-	 oSmmOuqxf3pa32No444zkW3Nmz2lfasTrrNS0VhcKV1YkOyNdjSPNF9/V5y4lftc8C
-	 1JEBRUwTxEEy2aOfTTWvUtGe55Ys1xUjhXFWoOLJu4xHXr8aXTCzBnAty7Dc4jVdh7
-	 OE1zQ+E+vB2VQ==
-Received: from linux.gnuweeb.org (unknown [182.253.126.185])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id B4D083127D72;
-	Sat,  9 Aug 2025 16:03:38 +0000 (UTC)
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Sat, 9 Aug 2025 23:03:35 +0700
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Lukas Wunner <lukas@wunner.de>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux PCI Mailing List <linux-pci@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof Wilczynski <kwilczynski@kernel.org>,
-	Armando Budianto <sprite@gnuweeb.org>,
-	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
-	gwml@vger.gnuweeb.org, namcaov@gmail.com
-Subject: Re: [GIT PULL v2] PCI changes for v6.17
-Message-ID: <aJdxVy1i3wGTvU3b@linux.gnuweeb.org>
-References: <aJQ19UvTviTNbNk4@linux.gnuweeb.org>
- <aJXYhfc/6DfcqfqF@linux.gnuweeb.org>
- <aJXdMPW4uQm6Tmyx@linux.gnuweeb.org>
- <87ectlr8l4.fsf@yellow.woof>
- <aJZ/rum9bZqZInr+@biznet-home.integral.gnuweeb.org>
- <20250809043409.wLu40x1p@linutronix.de>
- <aJdNB8zITrkZ3n6r@linux.gnuweeb.org>
- <20250809144927.eUbR3MXg@linutronix.de>
- <aJdmGwFU6b9zh1BO@linux.gnuweeb.org>
- <87wm7ch5of.fsf@yellow.woof>
+	s=arc-20240116; t=1754755502; c=relaxed/simple;
+	bh=hhKEkRqaprHI0rrxGfYnmGdOsHQcafkZ2chs4N9ElJc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=C051QDYAYDJH7lkqLciTPOd971qUx/XvfYJoayMh6W/VwBBrejQUM5kkMPS7GvMbSG6nW38Lw4cE5FRhNQYAQP46/d4YlRbGSOHpNjo+7buOPID+5mEeEqBRHa46+H68ws3X69xHRf1w6wGtrz+MDZ3rSC/yzKdAjdOcfwMWE88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P4biu8Mu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754755499;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sxzZXZ9khqyL8fNdwVgMsrfFG2YXiwPF3nzkdXzjMeA=;
+	b=P4biu8MukGfFoZSZgstxESw7y4GObMn2UyVAG/AtcNsH7Q7VSNCsiCyQba4a3xUmmw8cUa
+	mVfKIUX+QM7fqZs26UmDtqTjGPkzb+X5IkQ4Pv9wE0ayBE+iH0s1rYvlIwdiwNIEG+bZs5
+	79VoahUD20ZDmD5TK8v5R3iAZPiP130=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-280-r5sfhV_oOkaQbFtmHfxCUw-1; Sat,
+ 09 Aug 2025 12:04:54 -0400
+X-MC-Unique: r5sfhV_oOkaQbFtmHfxCUw-1
+X-Mimecast-MFC-AGG-ID: r5sfhV_oOkaQbFtmHfxCUw_1754755491
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C11ED1800451;
+	Sat,  9 Aug 2025 16:04:50 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.45])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62BC53001455;
+	Sat,  9 Aug 2025 16:04:43 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,  Andy Lutomirski
+ <luto@kernel.org>,  Peter Zijlstra <peterz@infradead.org>,
+  x86@kernel.org,  Kostya Serebryany <kcc@google.com>,  Andrey Ryabinin
+ <ryabinin.a.a@gmail.com>,  Andrey Konovalov <andreyknvl@gmail.com>,
+  Alexander Potapenko <glider@google.com>,  Taras Madan
+ <tarasmadan@google.com>,  Dmitry Vyukov <dvyukov@google.com>,  "H . J .
+ Lu" <hjl.tools@gmail.com>,  Andi Kleen <ak@linux.intel.com>,  Rick
+ Edgecombe <rick.p.edgecombe@intel.com>,  Bharata B Rao <bharata@amd.com>,
+  Jacob Pan <jacob.jun.pan@linux.intel.com>,  Ashok Raj
+ <ashok.raj@intel.com>,  Linus Torvalds <torvalds@linux-foundation.org>,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  Weihong Zhang
+ <weihong.zhang@intel.com>
+Subject: Re: [PATCHv16 13/17] selftests/x86/lam: Add mmap and SYSCALL test
+ cases for linear-address masking
+In-Reply-To: <20230312112612.31869-14-kirill.shutemov@linux.intel.com> (Kirill
+	A. Shutemov's message of "Sun, 12 Mar 2023 14:26:08 +0300")
+References: <20230312112612.31869-1-kirill.shutemov@linux.intel.com>
+	<20230312112612.31869-14-kirill.shutemov@linux.intel.com>
+Date: Sat, 09 Aug 2025 18:04:58 +0200
+Message-ID: <lhupld4zdjp.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wm7ch5of.fsf@yellow.woof>
-X-Gw-Outgoing-Server-Hash: 01afd303c8b96d0c1d5e80aa96a4ee40ec69888f786fa24107c0862c0644af79
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sat, Aug 09, 2025 at 05:32:16PM +0200, Nam Cao wrote:
-> So unlike what VMD doc says, it actually can have non-MSI-X children devices!
+* Kirill A. Shutemov:
 
-If that's the conclusion, then Intel VMD doc also needs fixing :/
+> From: Weihong Zhang <weihong.zhang@intel.com>
+>
+> Add mmap and SYSCALL test cases.
+>
+> SYSCALL test cases:
+>
+>  - LAM supports set metadata in high bits 62:57 (LAM_U57) of a user
+>    pointer, pass the pointer to SYSCALL, SYSCALL can dereference the
+>    pointer and return correct result.
 
-> Please discard the reverts and the diff I sent you, and try the diff
-> below. I believe your machine will work now.
+Is this test expected to pass?
 
-Yes, I can confirm it's now clean. Just to verify both sides, here is
-the last result:
+I've tried to compile the Fedora kernel (6.15.9-201.fc42) with address
+masking and LAM enabled, and while basic LAM support is there (the CPU
+ignores the metadata bits after the arch_prctl system call), it's not
+valid to use addresses with metadata in system calls:
 
-  https://gist.github.com/ammarfaizi2/72578d2b4cc385fbdb5faee69013d530
+$ ./lam_64 -t 8
+not ok 1 SYSCALL: LAM_U57. syscall with metadata
+ok 2 SYSCALL:[Negative] Disable LAM. Dereferencing pointer with metadata.
+not ok 3 GET_USER: get_user() and pass a properly tagged user pointer.
+ok 4 GET_USER:[Negative] get_user() with a kernel pointer and the top bit cleared.
+ok 5 GET_USER:[Negative] get_user() with a kernel pointer and the bottom sign-extension bit cleared.
+ok 6 GET_USER:[Negative] get_user() and pass a kernel pointer.
+1..6
+# Totals: pass:4 fail:2 xfail:0 xpass:0 skip:0 error:0
 
-If that one fix is final, then:
+This also happens outside the test, where write (for example) returns
+EFAULT if passed an address with metadata.
 
-Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-
-Thanks for the debugging work.
-
-It's probably too late to get the fix in mainline before rc1. But if it
-can go upstream sooner, that would be great.
-
--- 
-Ammar Faizi
+Thanks,
+Florian
 
 
