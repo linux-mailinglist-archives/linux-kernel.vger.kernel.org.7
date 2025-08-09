@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-760966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75884B1F253
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:19:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCAD3B1F254
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 07:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13695A0473D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E198586FC1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 05:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C49279323;
-	Sat,  9 Aug 2025 05:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A0B279DAE;
+	Sat,  9 Aug 2025 05:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcBQoWzx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQv03v33"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43B41BD035;
-	Sat,  9 Aug 2025 05:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46A32798F3;
+	Sat,  9 Aug 2025 05:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754716782; cv=none; b=p5JIl8S2S9c9H+PKCw9u1qQeU4OtL83FhiDizNh1ZvDqA91JxYF2p7ydelyTY8nJk55zrlFP1M+8FluX7Da5XzDLxXbzvIKJMIOlbf147XE5Xdu9HbiSYyw9JyIldUTXJgHQ6OchDm0dKGKc0UQoCOB+0O8378boAsVbTwB5yyo=
+	t=1754716784; cv=none; b=dNhA6SZamysr/GmrPDVP4SRIp22EYNKaTLg2Zthx5wCkqik/n6mWSEOfIxiWbacc0K1bUPAAWpo98/ELMuTUL6tZYpQp4/qXt8dBkrPvH/oOWtmlJUEESYgl4CeW9D7g7YR1DqckbdYAMUWyScT7qEv1Z5UefTd7HiwK62vyd3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754716782; c=relaxed/simple;
-	bh=o/Q6oXK95eojTB5aBs10Ti5Dfs4qZbnilecSrMHqIp4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=VeM4VxxK5jLWTic8lNrfmFEc/EhXlZElrpZ1WW3O2ly3jJoMUdO01vJo1X11x2S56SAEV6L9gALlLXRRhyOxbFuQJ/1CTXQ8SyjWDBPtA9LIzcetXtaXtiJDSqz3acKfuJNOokDSxl6dxsoJGJ1ytSP4efm0J6QnZ+3ESzSzOTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcBQoWzx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95EBDC4CEF1;
-	Sat,  9 Aug 2025 05:19:42 +0000 (UTC)
+	s=arc-20240116; t=1754716784; c=relaxed/simple;
+	bh=VzBAsWRSTwzfFy/+Yxei2w8AhNorArP7LLskldpKag4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ruchP+wWRczlERRuagqm6CBJrKyJS7tVsfCH55pEjdkfBgz6/X94J6+BS2DOetG89qrKkbaF1N/28gi60pFAYFsR7SwOc70u2Zw6Wrzq3+wqr2HYUQYDGx2llvNYbfj/oHbLAb2sE/Fkfa1gN646mnU5PA6yEnA+yJTWHqfYvzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQv03v33; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9076BC4CEE7;
+	Sat,  9 Aug 2025 05:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754716782;
-	bh=o/Q6oXK95eojTB5aBs10Ti5Dfs4qZbnilecSrMHqIp4=;
+	s=k20201202; t=1754716784;
+	bh=VzBAsWRSTwzfFy/+Yxei2w8AhNorArP7LLskldpKag4=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=qcBQoWzxO463OUOFf4JyOkfzmo2ILvcHIcMMWedMPirZU71B3SkrlO68/yqV/mgAP
-	 PO8aYhyU+C9wQaD4ER8JNHHfedoFjfMxTZUb1JA3avbZ9su+2oXFLs5/S+Um9/5gn+
-	 uYjwjsdxuY+vBX1gXf8OIy6ocbpqCE2s2sf0cBSFVj4kFlYvRNgtEdeaHO6C5F46m6
-	 9oTWsd9izy3UqZnx0pYghRUxTF0iLfbwqweLbjcd0loT4BNYPV2xA9+rasRUkVeJKp
-	 i6OQZ2pTtx5nDjzCsLBqWba1Zz1PoZM6y38aNDNUaFiRDRcRmFUY0OTGtcCdbwxdbk
-	 Sqtn9ZGp+TMtQ==
+	b=EQv03v33auK3vNP7LDYN5Wf5x5jSa/iC1gEcKYg2gfgP8BR0dHVioKaojOmP3TJMO
+	 PHou7xuMBb7aDSBuAuN2oJ020jYaJmGwhotLm5L6TfjLf7CUcMCdO2xdTTbxFeyGwt
+	 rPv/48wLd67DyNoq+WbH4h6mykNqZ1PJoeTcJLlu74nOCLDty9usRJuArW0d9mIO/0
+	 LvkR+fhy56JZUu4gnVkYCmyntXXwK+ZEA2805EQm9pY06v5UY/APUYcAttCjiciD8K
+	 9I5Y4JupEV/LuwmkaFVi7FETKcztFCMW0tvFX0Yxy9jayDZIS5XBvDC4ALdAMvA4Ph
+	 i6Ynwv8CbLi7w==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF96383BF5A;
-	Sat,  9 Aug 2025 05:19:56 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Fixes for 6.17
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EACE8383BF5A;
+	Sat,  9 Aug 2025 05:19:58 +0000 (UTC)
+Subject: Re: [GIT PULL] sound fixes for 6.17-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <aJWOH9GgXhoJsHp6@gondor.apana.org.au>
-References: <aJWOH9GgXhoJsHp6@gondor.apana.org.au>
+In-Reply-To: <87cy96yu42.wl-tiwai@suse.de>
+References: <87cy96yu42.wl-tiwai@suse.de>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aJWOH9GgXhoJsHp6@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.17-p2
-X-PR-Tracked-Commit-Id: 9d9b193ed73a65ec47cf1fd39925b09da8216461
+X-PR-Tracked-Message-Id: <87cy96yu42.wl-tiwai@suse.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-6.17-rc1
+X-PR-Tracked-Commit-Id: e8e4f3c242cc26de9d69bd8b3a678d1e50980abe
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 01b6ba6b097a0ceeef1975ae37c1660fed1b560c
-Message-Id: <175471679557.380510.9903755724887042086.pr-tracker-bot@kernel.org>
-Date: Sat, 09 Aug 2025 05:19:55 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+X-PR-Merge-Commit-Id: c93913c70809898aa5e450e4aad0b99750d9f082
+Message-Id: <175471679757.380510.7603276198610793432.pr-tracker-bot@kernel.org>
+Date: Sat, 09 Aug 2025 05:19:57 +0000
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 8 Aug 2025 13:41:51 +0800:
+The pull request you sent on Fri, 08 Aug 2025 12:40:13 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.17-p2
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-6.17-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/01b6ba6b097a0ceeef1975ae37c1660fed1b560c
+https://git.kernel.org/torvalds/c/c93913c70809898aa5e450e4aad0b99750d9f082
 
 Thank you!
 
