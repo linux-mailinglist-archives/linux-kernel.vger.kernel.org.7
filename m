@@ -1,102 +1,56 @@
-Return-Path: <linux-kernel+bounces-761211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EF6B1F5CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41220B1F5D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E6156110A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:32:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F44917E55A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5B929B8E2;
-	Sat,  9 Aug 2025 18:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE632BEFEB;
+	Sat,  9 Aug 2025 18:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SAt5XAKj"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpo9QR5z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3D2288CC;
-	Sat,  9 Aug 2025 18:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACF82E36F1;
+	Sat,  9 Aug 2025 18:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754764331; cv=none; b=fNLeFNcHZnMkxwfgP6Gs+S1QX9hrbEvfCZA4TkYDDZXyxt3u9luZGIngR06iylndI5fu5gnpsUk0jZ7kPBYm96/LDAC9Vf2eb4WCd4+TzIvuKfytLrBYOyzoXSdoS7eTIwlJ0Jr5eXAF80/Q92OSXIBZWz7NXcrIro82Une9Tz0=
+	t=1754765042; cv=none; b=IYvb3lhURXtvti8Zty6NSlYpUkzKTwjrKmNeXD8wfwu83x71HGJrE20XjJzV/xiqUMcnc9tLqH6K6fKKrSwzj/cryJ8hsI8fmhX6hReHyNKBrT26KQv24V1iZuK8UeppjfO0dFN9k7z+5rHV7CKT4KunKtOjRVrLnRW9E9YzWf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754764331; c=relaxed/simple;
-	bh=skl41PDPVmrAXNWrGw4QZDlPxbtwj6rcz6iytdfNCm8=;
+	s=arc-20240116; t=1754765042; c=relaxed/simple;
+	bh=aa8IQJFKCDIitHyQPjymTeuf9Brbrmd71giZYI4ySvk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OVr2YT50qlPU6oyVUDNqAY1Dk0mrFT7qXUM3FMiAcgtHrOPbArlRfCzph/Pg3iIOGIFmpHIs3QpYI3zRjtV4IPhoxNCl31aaWjrpTRHEh2ZDGQTG2DaAK0AR/2E6cImRfpqV1zGoAKKyPSCY6BJmKd0UzwhJeKOILDkz0VrPoiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SAt5XAKj; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af9180a11bcso647161266b.0;
-        Sat, 09 Aug 2025 11:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754764328; x=1755369128; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9s/fBeEFb/0n5Z77cYt+rcfLlCaa7g5SQq4WcqQ9I+g=;
-        b=SAt5XAKjOQ/55r9JM1UOD/kR5yy0UBXksArkFESCcnQ/ehoPIlPBRgc0cIg8jPk18j
-         pNOCatMxlDMay1riYegunBPND/G//nD9tl0yt3VeCxFCybibgMCBX2+iX3YDTer5yDja
-         uYjD5r7tAlzAYmFalqJtYYacQqzARl/6HVDvUG86HWuuZ/Fy2Ywa9MqZLr2W/1nF/8ot
-         w0sqLb+WTOSl1ydFms0EZtRSYF4FZu1D8DCdmKVmtK54cUaT33AFvCOotPddq7bB3Km6
-         aGYdNfCOLD3f/Z8fvLy/YkFHxZW7a7sVbiAZIf/ZfPWf/HsjNpMLFo0vikpkADpWqLDZ
-         Hglg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754764328; x=1755369128;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=9s/fBeEFb/0n5Z77cYt+rcfLlCaa7g5SQq4WcqQ9I+g=;
-        b=kJYfaeqEbGuk+qtSYvyLW4ojNjk4kvyFef0TtXsgnXqcoJEKUo7IVV3P66IGt+ZA91
-         HKpiSQuYpa9aYDo/HADFcIIhQ2QpA/RGsNsvFTx3aKTXg2K4bTPLxyYKMxXpOi6GGzOW
-         45hXWJxJCwzUAoyvZPiJbZLvyndkRwcdUCaM5vJQeAUofiBvVUjxnQVhjuXp4aUz/HoO
-         yCDR7D/TscpbqGcBg3/TF0pipE32It86NYdPmpL514CpjZcuXU67tYsblYvjTjB/gkFy
-         pGIKeoAo7v5H99A6CL4CfzNPVi4nYGQRNNxG1NxqD/l68CWQ4maYx4EYPXVgYxelh10B
-         wrxw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Kf1Gjjzm8nH0APziH38TQ2dCnZb1iwfTrHpUNMWAatAY4pzWg6FIgUszK/41C3b/TsQZkxjZOSSks4fVO66/@vger.kernel.org, AJvYcCXzk1fRD4K8JJxf6Cr/iqxJthfqvBLYmScUUocczWxBIsUYPxMr0PtH3oASllE+OzXmxBSunFJiGr5XzRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsB/iRQSCiV9VnkSh1gu4v0Kn3MWBC+YeQXxmeNLHgXPSxyckZ
-	tmH7cUIWmYLgZzKa1lu/WehQAGhkjXn9AhohLJpheopQHiVo25/P9EcQ
-X-Gm-Gg: ASbGncuVvnSF19mdOzWw/B3fjZCKyVz5crv3Qt1xnQQjC2ElBKGA+7la51CB5u3OT8b
-	QbIONdyiiBjKjT+f2vUTgYCYDxv71PMxWQ04Madjqs06z4YU5pCWY+dInl9MQKXIhkRCzLIscUd
-	m57zzMV/pTCGMvL43b2/DRLYFMQNGh8Y35yOx9UWEyMxPyNLn28z6Nc22EJBenzuhLY9UW9S1e4
-	C2M9TXBwcfA3cAVTScY8qV3L4YMJv9dSV+bA/yIPSg21EO1WXdoqt0i3CDxDhrbscdX2kVi7y/L
-	iCWM5ZbQzsenuRNZi8IOQ1D20aR/EUm4RpCiBRaMBEM90WPA6sgrmHpJuohhs1UGNMt8XSS5gZr
-	8VyAplLxvqxetEA/BAkMoOw==
-X-Google-Smtp-Source: AGHT+IHbu6+/jA8LdZVqHL1WWQcHp/s9Y+pab9NC8J94dNGk70WHYDDncBcYtCWmCpOWWCCNlU7Qbg==
-X-Received: by 2002:a17:907:7213:b0:af9:9e50:470 with SMTP id a640c23a62f3a-af9c705a837mr672476866b.28.1754764328248;
-        Sat, 09 Aug 2025 11:32:08 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af99148eab9sm752111466b.77.2025.08.09.11.32.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Aug 2025 11:32:07 -0700 (PDT)
-Date: Sat, 9 Aug 2025 18:32:07 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>,
-	Aboorva Devarajan <aboorvad@linux.ibm.com>,
-	akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-	baohua@kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v3 3/7] selftest/mm: Fix ksm_funtional_test failures
-Message-ID: <20250809183207.yx3eetkmr7bd3356@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
- <20250729053403.1071807-4-aboorvad@linux.ibm.com>
- <20250804091141.ifwryfmgjepwrog4@master>
- <20fb853c-7d79-4d26-9c8a-f6ce9367d424@linux.ibm.com>
- <20250805170353.6vlbyg6qn5hv4yzz@master>
- <e9079694-1e30-46b6-97e7-b79be01c65a6@linux.ibm.com>
- <20250806145432.nygrslkiyvzulujn@master>
- <111d2351-3fb7-4011-af07-78b40874d956@linux.ibm.com>
- <20250808025804.b7cv47gcq2yscka7@master>
- <c237c703-3ed6-4d7d-aaff-bd6291f9220f@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/dQ+oP9S/iRtyBhOX//xb9k2r/1TQUXfSCI+TOIKAGhZg7ChSqUMEjNGbtRYTFmkqfqcLvbFyG3DCc6Uum6gdqasn4b2NU3VMf4LaohK0rdGcizaSz8rtTRj8pJIHgsX55SYAiJyt7C1ORMzwYjZAOrdti8RNwohJ8bXT+lO9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpo9QR5z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06D0C4CEE7;
+	Sat,  9 Aug 2025 18:44:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754765041;
+	bh=aa8IQJFKCDIitHyQPjymTeuf9Brbrmd71giZYI4ySvk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cpo9QR5zU48PvAAnMdDxQ7voZJK8GoqLzvrBUY1IeRgkt//WL3fRwGtdhFnCmQBtW
+	 UDXwf3xONEM4QagTrHbSxScfiLXP/VGD6RMzA3Sek9HyHegMR1QYRRlgVphTILaYox
+	 FHdlQgeRJ9yVcuZI8SDC8U0tpYidA0lqWvEQ0srlQKUKcufAHilIwmy6DA5ZONMPeJ
+	 OItN6Vxl1mQ/pnk66B7Tfjrcu29d+ZrbvVTIGRT8RrLdGATex/y4zp53n8jOsY1tBO
+	 LXnqQE60vOSu9vSjMl23A/Em2VHctnMszPvTHMyXwgGJp07TH8XR9m+p6IU26mqpxe
+	 zRsfUQ1pDGTdQ==
+Date: Sat, 9 Aug 2025 08:44:00 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: Re: [PATCH 0/3] cgroup/cpuset: Miscellaneous fixes and cleanup
+Message-ID: <aJeW8JeDVuR_-NX8@slm.duckdns.org>
+References: <20250806172430.1155133-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,35 +59,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c237c703-3ed6-4d7d-aaff-bd6291f9220f@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20250806172430.1155133-1-longman@redhat.com>
 
-On Fri, Aug 08, 2025 at 07:55:37PM +0530, Donet Tom wrote:
-[...]
->> Thanks for the detailed analysis.
->> 
->> So the key is child has no ksm_rmap_item which will not clear ksm_merging_page
->> on ksm_unmerge().
->> 
->> > So, only processes that performed KSM merging will have their counters
->> > updated during ksm_unmerge(). The child process, having not initiated any
->> > merging, retains the inherited counter value without any update.
->> > 
->> > So from a testing point of view, I think it is better to reset the
->> > counters as part of the cleanup code to ensure that the next tests do
->> > not get incorrect values.
->> > 
->> Hmm... I agree from the test point of view based on current situation.
->> 
->> While maybe this is also a check point for later version.
->
->Are you okay to proceed with the current patch in this series?
->
+On Wed, Aug 06, 2025 at 01:24:27PM -0400, Waiman Long wrote:
+> This patch series includes 2 bug fixes patches and 1 cleanup patch. 
+> 
+> Waiman Long (3):
+>   cgroup/cpuset: Use static_branch_enable_cpuslocked() on
+>     cpusets_insane_config_key
+>   cgroup/cpuset.c: Fix a partition error with CPU hotplug
+>   cgroup/cpuset: Remove the unnecessary css_get/put() in
+>     cpuset_partition_write()
 
-Sure.
+Applied 1-3 to cgroup/for-6.17-fixes.
 
+Thanks.
 
 -- 
-Wei Yang
-Help you, Help me
+tejun
 
