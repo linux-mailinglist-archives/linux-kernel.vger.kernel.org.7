@@ -1,125 +1,158 @@
-Return-Path: <linux-kernel+bounces-761072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A85B1F3FC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F6BB1F400
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC383726453
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:01:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB53E566ACE
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2922343C7;
-	Sat,  9 Aug 2025 10:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5989253939;
+	Sat,  9 Aug 2025 10:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GbfEm9Dz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQ+lPAPj"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D36F256C9F;
-	Sat,  9 Aug 2025 10:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B652F252292;
+	Sat,  9 Aug 2025 10:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754733655; cv=none; b=GF+iMuyc8yubWY1Kj5QSLtn7XO9KCEnp7O+N2XV957jRR+rfW4KmU0TyhRXRahLIxugpxvh6KyMPPC4qr+G+HeF+HhIQ0h0XvlnC+iO/9JdVl3Rd9qWE9YLZpVVXUK+Pb4E+T43wLj0BUA/I8sQf/9nwsa0/zq50Y4VVFUnlMgU=
+	t=1754733701; cv=none; b=MSjv84sSbgzC5LYJIzNFj4NZO0qcLgBBhOyjTMjxL+pCYKcgTZ52VhMZ7MXSwez7J78/qEnpBRWQjMJWLHAmFczne0H8ZasClJa7BD+boWlx3gPz3iu20PkuZsP8TRu2EEdJDPc0feK7aEpKIyzvu5ZUsbmgptMH4mgfksRNjA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754733655; c=relaxed/simple;
-	bh=O9yzI25O8NSIWGcrb+Gut9g134POOu2r1v8V94cBxGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eAwUIXAZMCSF2fl420FbHzRVSyj40MsHsMrHadniy2+aGgcIv/WsWu0cJLXVYzEdjIb9QBKKEtwksXM7epfIvAD4WbR53cvhIaa55nyqvDmTLGSCMWg5725OgN90EtlJFbdITTXElczb66PHAhmyaeBvQNjt075l5yMOif4f/1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GbfEm9Dz; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754733654; x=1786269654;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O9yzI25O8NSIWGcrb+Gut9g134POOu2r1v8V94cBxGk=;
-  b=GbfEm9Dzu88K2Ka3TTrhEpLJW31po4hQkabNldYUiM/Ug8UJFgi62qWk
-   qnHSPeJxoEcJ2a8zjBjeeOdf0ZxCMIYyMYvZIETT9oVHodEEcWb4/AxIi
-   +zQKx1b0kLQc97Qro0lHE5iFw17vwGQKrsrzKBPTXWU+8SJrDqcI6SBj6
-   cI3GA3icGdaL/LRFeyrskPM/OIxPFfLPJ5U57DFDmvBhfnW+C89BimMx9
-   26FfQ8lB/GFBfK+lNXxOsXd2qAaE+VXC2iR5WdnMWAZcPMTilI8gn8sbY
-   fPNAlGxaD0Jd7N6ina5lTVY7lPjfYMrI8Hkgqo7L6OchdKp0F5Q2Az/75
-   w==;
-X-CSE-ConnectionGUID: y5lpSWtaRw+i1GKANAA3IQ==
-X-CSE-MsgGUID: FLlUuRhYQDKfljicRkusTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="68146232"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="68146232"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 03:00:52 -0700
-X-CSE-ConnectionGUID: TVQAju9BSDGGPQ+TQB4hCA==
-X-CSE-MsgGUID: Oyn9zOaxTLaSo+3gI7Hl/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165166672"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 03:00:48 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ukgNY-00000004ce5-0zPC;
-	Sat, 09 Aug 2025 13:00:44 +0300
-Date: Sat, 9 Aug 2025 13:00:43 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
-	Dzmitry Sankouski <dsankouski@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 05/21] x86/platform: select legacy gpiolib interfaces
- where used
-Message-ID: <aJccS7fdcx0INYTA@smile.fi.intel.com>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-6-arnd@kernel.org>
+	s=arc-20240116; t=1754733701; c=relaxed/simple;
+	bh=az885+90iLBhcRYBBw/buQhmprKt9Gsei0KvAVcbtQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aEfjpJn2kcMVVuTpl4ilwijVh/mktbB4Up/ymmCOaokez6VhNJYqY2pBaJIgQJS0DigPJ8EhJM80/UlRJ2k4dtSGID5MqVoh4oDKY9i4+bdgdYoYcJH+vkwXx1DU0TOA5D2lXm0NnyGSNHkPbplh7lzr9w9qkif2iv2revQO7Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQ+lPAPj; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-617d24e7246so4383326a12.2;
+        Sat, 09 Aug 2025 03:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754733696; x=1755338496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R8mMRa/M3Y0T73jOiSL73hGVow9fICclLp12FGiAzKc=;
+        b=CQ+lPAPj5k7tuflBHhcWBErE73ZG8WjlqeYnyObMsN1nW3fFtAbBXLJTi8L54Z5UWq
+         fvCewcsZ3kioMZPtq34fLi2lQ/3YgDaFxNvJ3bQsvePEL6IBm0k/bPNvSIdsmppr6uxh
+         +Q/a6DCH2mSgTR4zuUZaW0WEnijUIGDLPymbOXn3o+VAF7EatzVSxSUaf0Ark2WVcX0R
+         AjS5crj9fHoe6oBwcKplPJUddw2ChGRi4V1oZqeivdz3kHLcTaXaOhPE7I/DUz+O5KDu
+         hhn4bkHvSxbfWeaiUzcE6kPY7IEchlmQGH7e3OQR4WfrJ373ggmdSszXxdNZifgGWTXc
+         bxcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754733696; x=1755338496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R8mMRa/M3Y0T73jOiSL73hGVow9fICclLp12FGiAzKc=;
+        b=QiewEqrnw2TNd83VIz0rgYJCDk16+0DOdX6wIFfsMqMTC+8craZRfS73F8Rp/1Smfk
+         UVUnHudbmGicmr1q4G3Xgg+JmB/+OZXAcI2Og3ymkVqX6P7Na3sDdGhZMBRFN5lxU+2X
+         2cT1pN5KLwKshMhcYqXHX1fFYK6dUWSHmP0FD+Ur9KYf1l1QF7dC1N2rgjJ3HsRsP2n5
+         hxqKgimMuGqT6HvW7dIRh6y9xSQNV+dgjuo8wM0lZnovDzXw0L978gLucdth1hkVPJdu
+         MWyPdBoRECpPyDpmdrzwBgG0drup/K6Ftsl6pGCNgv+eQQPk/+Rz9LlXhWh0TUmeueRY
+         AAlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUs7h5Y7hQXCR82YXD7nZpMp5r3xRyhCq8oSYvImDORpL2bhCiG1KgWoxGPl6SmffqStCYLpx2ulQvmjKhx2w==@vger.kernel.org, AJvYcCUxRpdJ0aHzrlSTsWdfktHX3pKFcLRldpMsOFDajEeSclbnQ5IKP8wd2mw7qFpMeH0TnEKv18tBfeAPxWod@vger.kernel.org, AJvYcCVIHy1syOMP0L5Aryumoy/q1ptd8zFGWNRwAP95U7U+J8lbKnde99gxsZypVvD0LrexZhX6c4BLXkYI/9PY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzexEZYATztcOkJqLCCf3tIjDqTCAC1HlDK2RCFXgX7oMZFsfuz
+	nM+0H1wSubp4wvZ9g8TnGknYoF0gneJ5z3H7x8Y0EqwWzv1ZqiAFj3AyXAWkPTVHLIvFJ99NBl7
+	Ec1BWVC2R60qqgNz18Yddsg6AJsS//bg=
+X-Gm-Gg: ASbGncsUEuPXXGBea3BbMUdJXs5EL8ZehKrmhWXuW4z+3dzhVGtssgjtccFCewUvpSa
+	XQlaZbrYyKr8wEwO45eqr/fCZDadfNhfBTgeJhVX3qCocoRkEkPqAabOWFho4Bg0+CSNHKhRFI/
+	PzQVzgJ3LYQ8qA2ohAkhT/Mp/FzG574C+aNrhNizUy9228KkfyjMobLmbAAzGmgpStBQYN9yvAd
+	U0qyrE=
+X-Google-Smtp-Source: AGHT+IFD9nf2IbRwxa01dS7TJ7qpk6yA7P1KMZFU3dhM1iF7Xslmx+mig/rAcU8xsKlgbrhW0Akte21RGjtoY5YSYMo=
+X-Received: by 2002:a17:907:971c:b0:ae0:bd4d:4d66 with SMTP id
+ a640c23a62f3a-af9c638542cmr571245566b.27.1754733695776; Sat, 09 Aug 2025
+ 03:01:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808151822.536879-6-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <20250808-tonyk-overlayfs-v3-3-30f9be426ba8@igalia.com>
+In-Reply-To: <20250808-tonyk-overlayfs-v3-3-30f9be426ba8@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 9 Aug 2025 12:01:24 +0200
+X-Gm-Features: Ac12FXwf1uKpzGeKHFlErlj6DDCkfrtWh-IWgN_pK10SWVEAb0YoJSWU4j_aJpo
+Message-ID: <CAOQ4uxg3d4CoJd49gNFnqfjeOS1AC5nGXLuVsoWppaNcWvVx9g@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 3/7] fs: Create sb_same_encoding() helper
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 08, 2025 at 05:17:49PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> A few old machines have not been converted away from the old-style
-> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
-> symbol so the code still works where it is needed but can be left
-> out otherwise.
+On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
+>
+> For cases where a file lookup can go to different mount points (like in
 
-...
+s/can go to different mount points/can look in different filesystems/
 
-> --- a/drivers/platform/x86/x86-android-tablets/Kconfig
-> +++ b/drivers/platform/x86/x86-android-tablets/Kconfig
-> @@ -8,6 +8,7 @@ config X86_ANDROID_TABLETS
->  	depends on I2C && SPI && SERIAL_DEV_BUS
->  	depends on GPIOLIB && PMIC_OPREGION
->  	depends on ACPI && EFI && PCI
-> +	select GPIOLIB_LEGACY
->  	select NEW_LEDS
->  	select LEDS_CLASS
->  	select POWER_SUPPLY
+> overlayfs), both super blocks must have the same encoding and the same
+> flags. To help with that, create a sb_same_encoding() function.
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 
-Hmm... This is a surprising change. But I leave it to Hans.
+With wording fixed feel free to add:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
+Thanks,
+Amir.
 
+> ---
+> Changes from v2:
+> - Simplify the code. Instead of `if (cond) return true`, just do `return
+>   cond`;
+> ---
+>  include/linux/fs.h | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index db49a17376d124785b87dd7f35672fc6e5434f47..d1fe69f233c046a960a60072d=
+5ac3f6286d32c17 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3746,6 +3746,25 @@ static inline bool sb_has_encoding(const struct su=
+per_block *sb)
+>  #endif
+>  }
+>
+> +/*
+> + * Compare if two super blocks have the same encoding and flags
+> + */
+> +static inline bool sb_same_encoding(const struct super_block *sb1,
+> +                                   const struct super_block *sb2)
+> +{
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +       if (sb1->s_encoding =3D=3D sb2->s_encoding)
+> +               return true;
+> +
+> +       return (sb1->s_encoding && sb2->s_encoding &&
+> +              (sb1->s_encoding->version =3D=3D sb2->s_encoding->version)=
+ &&
+> +              (sb1->s_encoding_flags =3D=3D sb2->s_encoding_flags));
+> +#else
+> +       return true;
+> +#endif
+> +}
+> +
+> +
+>  int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
+>                 unsigned int ia_valid);
+>  int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *)=
+;
+>
+> --
+> 2.50.1
+>
 
