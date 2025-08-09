@@ -1,164 +1,102 @@
-Return-Path: <linux-kernel+bounces-761262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0CEB1F640
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:59:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37651B1F6CC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3616B7AB70B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 564EA189E79D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 21:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3656D27A11A;
-	Sat,  9 Aug 2025 20:59:36 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2004027CB35;
+	Sat,  9 Aug 2025 21:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F8R0mMZZ"
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231A526563F
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 20:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62A11F8725;
+	Sat,  9 Aug 2025 21:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754773175; cv=none; b=jTu5if6fsORb4MyTNrt5tTTRz/og7a5SC6ro4v17axHBFBnQEnkepLh4rEBykc683DZNPYQ51YbB0pHqIes4D5o1Mli5nt9t1R9p2p7bQqUhfsKbIl9n9qBNMGxT4+Ynde/5bp4Oaszh+wAhvvkH8F507t4wqok+X/M6bTN0pVU=
+	t=1754774793; cv=none; b=QtxzaKMaLercUvTTi4JOkBNPFsDvuTKi6DcXly8ryU+gisQEtaG8Oy9KwYu3+vIQQafxVEoLH2W2+sPQ/XrjAef8Jsc2cJLMCbUk3ofUPszOYpl9mXY85pFms2eRChBX0RF5Ei5Rba0jr69K7oZGffRQ2Hr09t3RnUWeZgYw/YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754773175; c=relaxed/simple;
-	bh=TUs0WbiDAT8s32fIHJeyRuj25pNzSZ1BvSQFOYaxYXk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AKqC5aZVUagSD7BG5ynNMdbDW3L+opTUdIONMsLH10TgGqKkhQCgwow+nGY1tMMyx7isxQ8sOXgH5Kyfptyf6BzFvvGwcdgIA2ShSd1e9ydnRt/PVnUJJP0WyNIGP129YS+jW+i/4jn+NrIjrY58qKpaUOOJzTWCHHckWCTlV30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-8817d15cad2so315234439f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 13:59:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754773173; x=1755377973;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CJvc1sJnjzoRqNwvFQXAxTnYsZfyWTXvD3W28YsGcvs=;
-        b=cT3E2u78gfO5WvBo48otduEEecZfQGqLHym4b82QDmPcj2Qu0jy/T0q0blMpWzK464
-         NlMdg5Tp85I7CQbIiGT4DAsNdQsFjt1mayyg0kfP+voYvMH5aKMCk7Z8x/EXFa6VrxuD
-         993E9ZpL/QnpHEapxD2yUJZw96lypCvlkEcNfm7oSY2J7+t7MetuBFLBoVXoCgiNqRaA
-         Mm/1vzGTQXp2D5SS6/+V4Vu1A5s+/iB2/BbxNRZofdkxv5wbJXjavZxYHSxEUunzc3HQ
-         XbW0C2o8Hk2fwj22uLJA2QFKB/feVxJs76Dl61nvrDln6N/+84PcKAdiQ/kdMsB5eaUS
-         +I3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXF6XvStA/5m/V7LoYlQYLJ9D+/M1ZQgK5mRsKCApwmqsK0Br51euahr0s+iA7Hy7q6yqXLzcbtci6A4qY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuhORYCpVbgtv/MsML5EABCiBkmX7yrtEzuH3puMa7Lh6JlTBg
-	14meXL7uTiUJNjdnHDP4gW4AEKg1MtyfxNnvup9r2zIhz7TFHYEDM/rW41AxFyZO4/buaVmEJ61
-	UTco6eaf2A+Oj6/IJeL/wwGlQ/XH3wjEx5f4JKBzsszT17zk+rUyvW/sCf5U=
-X-Google-Smtp-Source: AGHT+IH5AUOBIRicWFY3OJQXulqmwZrhBc7pjjojqRKG4JjxHiaAIxKGvmE/eFdqH4NJocnm8nIFXb6x1R+p7pndjIkvyOlFuaV6
+	s=arc-20240116; t=1754774793; c=relaxed/simple;
+	bh=hnfjCHnQaU33x2fRHAj1738Ecz7tv9QWfCs2jXcb5j4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YPifiQRuvnX+eMhsg05HoPnDQ5/RyTZhgYGzi7gVGcuewAow5n6beylqn1nmzKhuvshob2Ot6DXTJ2baNlRG8GT+Nj78h4sRdZN36cEo5+eJFZUrlAZHiHm7LA+xz3xmVYnFJysGXkJrgtx/kvczCCgmt/jTZp25tnMwgmDvhjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F8R0mMZZ; arc=none smtp.client-ip=80.12.242.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id kqvxuMZTICThEkqvxuji24; Sat, 09 Aug 2025 23:16:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1754774219;
+	bh=gRjOuSVm0vyW/KeKNVV0XzdhAD9WM43tL7z8dD//4s4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=F8R0mMZZGRWpLzWwCxgv62qxAjuqJWsym4+TnvQVLvmtATFUS34JS2O2ip+29jtNN
+	 yO9lzwk8sEJTlyXHRag0oxxNTzbJd+Jpou2QSVFWCEgD/MH2Ke2TBFkTSchWtJNraH
+	 1q4+bTik6NmpOnNnm+WDmmOhmXUlzveAVl//CHFnwVNLNzTOTanzMaqiHAfBVOPv0m
+	 EKcrvmONPj1KZMQ9BKt+fsMknHX+KZxdsK5xz1JX6S/iO1cp97Fsu8kX3x2UvqSIcx
+	 uguG+QTySiKVvEAe3dmafLaiTFx6yoAXj72FvTqUPueqhaC41y8zkkF6zNpMAUkpqW
+	 cREoK2XtF6Pmw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 09 Aug 2025 23:16:59 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Russell King <linux@armlinux.org.uk>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Clark <robin.clark@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Russell King <rmk+kernel@arm.linux.org.uk>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/armada: Use the correct prototype for a struct file_operations .write function
+Date: Sat,  9 Aug 2025 23:16:52 +0200
+Message-ID: <8085f9c18ab06158b9adbbdadb8554c85972d390.1754774176.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:cf12:0:b0:882:c736:3995 with SMTP id
- ca18e2360f4ac-883f1267881mr976009439f.10.1754773173412; Sat, 09 Aug 2025
- 13:59:33 -0700 (PDT)
-Date: Sat, 09 Aug 2025 13:59:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6897b6b5.050a0220.7f033.00b2.GAE@google.com>
-Subject: [syzbot] [pvrusb2?] WARNING in pvr2_send_request/usb_submit_urb
-From: syzbot <syzbot+1237a720b657b1d06a22@syzkaller.appspotmail.com>
-To: isely@pobox.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mchehab@kernel.org, pvrusb2@isely.net, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+.write functions from struct file_operations return a ssize_t not an int.
 
-syzbot found the following issue on:
+This is maybe not an issue for architectures that use this driver, but it
+is nicer to explicitly use the correct return type.
 
-HEAD commit:    d632ab86aff2 Merge tag 'for-6.17/dm-changes' of git://git...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=137422f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6f764ce607e41bad
-dashboard link: https://syzkaller.appspot.com/bug?extid=1237a720b657b1d06a22
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f6912b7acf0b/disk-d632ab86.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ddc035c67711/vmlinux-d632ab86.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a995ca981cbf/bzImage-d632ab86.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1237a720b657b1d06a22@syzkaller.appspotmail.com
-
-WARNING: CPU: 0 PID: 1309 at drivers/usb/core/urb.c:379 usb_submit_urb+0x1519/0x1770 drivers/usb/core/urb.c:379
-Modules linked in:
-CPU: 0 UID: 0 PID: 1309 Comm: pvrusb2-context Not tainted 6.16.0-syzkaller-11568-gd632ab86aff2 #0 PREEMPT(voluntary) 
-RIP: 0010:usb_submit_urb+0x1519/0x1770 drivers/usb/core/urb.c:379
-Code: fd eb cb bb fe ff ff ff e9 96 f3 ff ff e8 5f 38 da fc c6 05 ac 36 cb 05 01 90 48 c7 c7 80 71 c5 87 48 89 de e8 b8 f2 9c fc 90 <0f> 0b 90 90 e9 ac fe ff ff bb f8 ff ff ff e9 66 f3 ff ff 48 89 ef
-RSP: 0018:ffffc90001cbeda8 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff88810cf23300 RCX: ffffffff8140b968
-RDX: ffff88811193ba00 RSI: ffffffff8140b975 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000000
-R13: 00000000c000a800 R14: ffff888137f6e000 R15: ffff888136599610
-FS:  0000000000000000(0000) GS:ffff88826911d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007faf709fae9c CR3: 0000000123a8c000 CR4: 00000000003506f0
-Call Trace:
- <TASK>
- pvr2_send_request+0x3a/0x50 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:3819
- pvr2_i2c_read+0x203/0x6d0 drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c:130
- pvr2_i2c_basic_op+0xcf/0xf0 drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c:172
- pvr2_i2c_xfer+0x37d/0xfd0 drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c:445
- __i2c_transfer+0x6b3/0x2190 drivers/i2c/i2c-core-base.c:2264
- i2c_smbus_xfer_emulated+0x230/0x11f0 drivers/i2c/i2c-core-smbus.c:470
- __i2c_smbus_xfer drivers/i2c/i2c-core-smbus.c:608 [inline]
- __i2c_smbus_xfer+0x836/0x1020 drivers/i2c/i2c-core-smbus.c:554
- i2c_smbus_xfer drivers/i2c/i2c-core-smbus.c:546 [inline]
- i2c_smbus_xfer+0x200/0x3c0 drivers/i2c/i2c-core-smbus.c:536
- i2c_smbus_read_byte_data+0x135/0x1e0 drivers/i2c/i2c-core-smbus.c:143
- saa711x_detect_chip drivers/media/i2c/saa7115.c:1710 [inline]
- saa711x_probe+0x234/0x20b0 drivers/media/i2c/saa7115.c:1816
- i2c_device_probe+0x65d/0xd40 drivers/i2c/i2c-core-base.c:591
- call_driver_probe drivers/base/dd.c:581 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:659
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:801
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:831
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:959
- bus_for_each_drv+0x156/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e4/0x4b0 drivers/base/dd.c:1031
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x1148/0x1aa0 drivers/base/core.c:3689
- i2c_new_client_device+0x660/0xeb0 drivers/i2c/i2c-core-base.c:1022
- v4l2_i2c_new_subdev_board+0xb6/0x300 drivers/media/v4l2-core/v4l2-i2c.c:81
- v4l2_i2c_new_subdev+0x14f/0x1c0 drivers/media/v4l2-core/v4l2-i2c.c:136
- pvr2_hdw_load_subdev drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2022 [inline]
- pvr2_hdw_load_modules drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2074 [inline]
- pvr2_hdw_setup_low drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2155 [inline]
- pvr2_hdw_setup drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2261 [inline]
- pvr2_hdw_initialize+0x28d0/0x4510 drivers/media/usb/pvrusb2/pvrusb2-hdw.c:2338
- pvr2_context_check drivers/media/usb/pvrusb2/pvrusb2-context.c:111 [inline]
- pvr2_context_thread_func+0x253/0x9b0 drivers/media/usb/pvrusb2/pvrusb2-context.c:158
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x5b6/0x6c0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
+Fixes: 96f60e37dc66 ("DRM: Armada: Add Armada DRM driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Spotted while looking at something else and trying to compile the file on a
+x86_64 using:
+  make -j8 drivers/gpu/drm/armada/armada_debugfs.o
+---
+ drivers/gpu/drm/armada/armada_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/gpu/drm/armada/armada_debugfs.c b/drivers/gpu/drm/armada/armada_debugfs.c
+index a763349dd89f..96aebd56272f 100644
+--- a/drivers/gpu/drm/armada/armada_debugfs.c
++++ b/drivers/gpu/drm/armada/armada_debugfs.c
+@@ -49,7 +49,7 @@ static int armada_debugfs_crtc_reg_open(struct inode *inode, struct file *file)
+ 			   inode->i_private);
+ }
+ 
+-static int armada_debugfs_crtc_reg_write(struct file *file,
++static ssize_t armada_debugfs_crtc_reg_write(struct file *file,
+ 	const char __user *ptr, size_t len, loff_t *off)
+ {
+ 	struct armada_crtc *dcrtc;
+-- 
+2.50.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
