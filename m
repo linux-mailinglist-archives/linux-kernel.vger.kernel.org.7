@@ -1,199 +1,117 @@
-Return-Path: <linux-kernel+bounces-761183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8F7B1F566
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:18:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469D5B1F56D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B318A6261E7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:18:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69657561FB0
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB1B2BEC5E;
-	Sat,  9 Aug 2025 16:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0872BEC21;
+	Sat,  9 Aug 2025 16:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rrfxhvNY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="gHQ3E/56"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D71274B3D;
-	Sat,  9 Aug 2025 16:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C9F2BE637
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 16:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754756305; cv=none; b=rhZvsB44xdMn/hgdsizZr/Lka/mHx2vK8campQqS0FusR11RDq4HqhzB3sswuGZJyvxAf5HLFaQ+a36IP4BSGI1l0QRPQXc+r/0P/AXNaXUaMHDFXFQlbdlkRA/flWqU2O93uL/uUtvign7zcvHVCv5kVoCJVh2kqLKaIktILeg=
+	t=1754756731; cv=none; b=PgeOje5I0YwVmB+AV7YbOoLxnUJwCiqAcA11tz1JxGnT8uzCgnQhK96vfD0Le2LJxD/lCf6nQxmzLp16wa66cWtoTnD4xHueaV47yAw/Vj3wPxj06SMH6+Br9qL1z6+iGXK6FQeBgXhi/EDGHKAwQPfquTidzHdf2DfNNpopI+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754756305; c=relaxed/simple;
-	bh=nR2X7s3XzAMg7Jh5xr8ezkiYQpIyMXAwdpWu2LY5er8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c9SFWeJlur4/wu4WJ+iog12bg+E56ttoEXRZ8wbGSCwrA6+oMx8LxUSbLDMRvX3ojlW8VEKXGqnfC2qn34y1sJh8t/zQjqD1jZoZfjjKWsvVgfDoWMV5ELQTmCff/aggUuxyGjcqiQPnc70/hXuU+iWJKdNyYyt/YABFe7BvdLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rrfxhvNY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC68CC4AF0B;
-	Sat,  9 Aug 2025 16:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754756304;
-	bh=nR2X7s3XzAMg7Jh5xr8ezkiYQpIyMXAwdpWu2LY5er8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=rrfxhvNY1Xma1bH/fKBsf09iN7y+fl8DiKnaeS+BlTh4cizsaQGF0wTAIVurPrwB/
-	 Bdkv+a0wPPlCagIZcZTjF3NfqtaXp8R6KXA6zoJG7zbC0j/r8bLQsKcftFV6d49/ct
-	 rpWwb5frvKo8qjdfVMoZbVZDeuYfY6LZd1NW2TJqe2twT+EIwZE9eE475/ibYRMTom
-	 rE7xjPlrtSOiyQoY+hSrHXKH6Ilwo+iyQDHmVGSxRvFfb5ZeKONmQENRSx5fdT+H/t
-	 nTNVsozhDG6viVrjAicRUS5azQYQzloLS/pgOA3Eu/XGrNxjqq5soDFsTNP5ibTdDF
-	 m4NA7TsKBpLLA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA566C87FCF;
-	Sat,  9 Aug 2025 16:18:24 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Sat, 09 Aug 2025 18:18:08 +0200
-Subject: [PATCH v2 3/3] ARM: dts: allwinner: Add Orange Pi Zero Interface
- Board overlay
+	s=arc-20240116; t=1754756731; c=relaxed/simple;
+	bh=1Hv8o9hqPxrhOTCbjdh5yB02ZbNjr2Ou0CSmQ1AIVJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HnlLVSOWy8GtBXBJ+wYbuzLv+RvdOfH/Xrk/8VFmGZ8bEAk/mKQ/Y/NFX0+9oEVKWDBsKy1WqXRoqTXwI45P7mLM+6Nwl1xhQ78RC7Q7o5hJryYrgLL0H8ODlICxwWzmLeh9aRU+I4RsqiIOgR3tRvWIX+Ruv4x3Y6390V54ihw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=gHQ3E/56; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id F231A104D0DD
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 21:55:20 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in F231A104D0DD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1754756720; bh=1Hv8o9hqPxrhOTCbjdh5yB02ZbNjr2Ou0CSmQ1AIVJE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gHQ3E/564mRmdf7TVnjWW/4kJh2nw8D8556JXjz9EjNdSnUGUaWIdwJ5WpMJrut/x
+	 kzyYJLpMaZsy0clRE7JYKEKwS6GnnAcREd9xqH1zvsC1OliKSZxeoRjHiWLi11NXWm
+	 fNg3/yNHBv6FhcadSen2by+4nNkZyI/oPiYSGsMg=
+Received: (qmail 24743 invoked by uid 510); 9 Aug 2025 21:55:20 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.467976 secs; 09 Aug 2025 21:55:20 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 9 Aug 2025 21:55:16 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id F2A5A341558;
+	Sat,  9 Aug 2025 21:55:15 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id D1A641E8130A;
+	Sat,  9 Aug 2025 21:55:15 +0530 (IST)
+Date: Sat, 9 Aug 2025 21:55:10 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: linus.walleij@linaro.org, brgl@bgdev.pl, dianders@chromium.org
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
+Subject: [PATCH] gpio: virtuser: remove debugfs_create_dir() error checks
+Message-ID: <aJd2Zho5QRUTAEzm@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250809-opz-audio-v2-3-f4fd15552a82@posteo.net>
-References: <20250809-opz-audio-v2-0-f4fd15552a82@posteo.net>
-In-Reply-To: <20250809-opz-audio-v2-0-f4fd15552a82@posteo.net>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754756302; l=3705;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=rwwErTSLr++MWzr7FBwd2E7U9pR2ndpNt4EaJnJ0gxI=;
- b=UNB0zJG+JHbx/WEK9byBYkwHKR96kwXklUN3q3nyKKIbldkKzClVLmTI1r5YqJlV0SG59huMg
- oaeZ8XxD19UAbQAumRnof7/2vAsqpFTvu8yb1oijYquR5OP9ludnPBz
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+Remove return value checks for debugfs_create_dir() wherever
+appropriate. Follow guidelines mentioned in [1] that callers
+should ignore errors returned as other debugfs functions handle them
+appropriately.
+Refer commit 8bcbde2bb1374 ("debugfs: Document that debugfs_create
+functions need not be error checked") to clean up unnecessary error checks
+without impacting the functionality.
 
-The Orange Pi Zero interface board is a (mostly) passive adapter from the
-13-pin header of the Orange Pi Zero and Orange Pi Zero Plus2 to standard
-connectors (2x USB A, 1x Audio/Video output, 1x built-in microphone, 1x
-infrared input). Headphones, microphone, infrared (CIR) input, and USB
-have been tested with the Orange Pi Zero.
-
-CVBS output is currently not supported.
-
-  https://orangepi.com/index.php?route=product/product&product_id=871
-
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+Fixes: 91581c4b3f29e ("gpio: virtuser: new virtual testing driver for the GPIO API")
+Link: https://lore.kernel.org/all/20220222154555.1.I26d364db7a007f8995e8f0dac978673bc8e9f5e2@changeid/ [1]
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
 ---
+ drivers/gpio/gpio-virtuser.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-v2:
-- new patch
----
- arch/arm/boot/dts/allwinner/Makefile               |  7 ++++
- .../sun8i-orangepi-zero-interface-board.dtso       | 46 ++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
-
-diff --git a/arch/arm/boot/dts/allwinner/Makefile b/arch/arm/boot/dts/allwinner/Makefile
-index d799ad153b37b917d1e1c091fb051140398a574b..97d0a205493f40ba5969b5c8f4708a817ae725c5 100644
---- a/arch/arm/boot/dts/allwinner/Makefile
-+++ b/arch/arm/boot/dts/allwinner/Makefile
-@@ -182,6 +182,7 @@ dtb-$(CONFIG_MACH_SUN7I) += \
- 	sun7i-a20-wits-pro-a20-dkt.dtb
+diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
+index a10eab7d2617..295b8718f39d 100644
+--- a/drivers/gpio/gpio-virtuser.c
++++ b/drivers/gpio/gpio-virtuser.c
+@@ -788,8 +788,6 @@ static int gpio_virtuser_dbgfs_init_line_array_attrs(struct device *dev,
+ 		return -ENOMEM;
  
- # Enables support for device-tree overlays for all pis
-+DTC_FLAGS_sun8i-h2-plus-orangepi-zero := -@
- DTC_FLAGS_sun8i-h3-orangepi-lite := -@
- DTC_FLAGS_sun8i-h3-bananapi-m2-plus := -@
- DTC_FLAGS_sun8i-h3-nanopi-m1-plus := -@
-@@ -225,6 +226,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-h2-plus-libretech-all-h3-cc.dtb \
- 	sun8i-h2-plus-orangepi-r1.dtb \
- 	sun8i-h2-plus-orangepi-zero.dtb \
-+	sun8i-h2-plus-orangepi-zero-interface-board.dtb \
- 	sun8i-h3-bananapi-m2-plus.dtb \
- 	sun8i-h3-bananapi-m2-plus-v1.2.dtb \
- 	sun8i-h3-beelink-x2.dtb \
-@@ -244,6 +246,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-h3-orangepi-plus.dtb \
- 	sun8i-h3-orangepi-plus2e.dtb \
- 	sun8i-h3-orangepi-zero-plus2.dtb \
-+	sun8i-h3-orangepi-zero-plus2-interface-board.dtb \
- 	sun8i-h3-rervision-dvk.dtb \
- 	sun8i-h3-zeropi.dtb \
- 	sun8i-h3-emlid-neutis-n5h3-devboard.dtb \
-@@ -264,6 +267,10 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-v3s-licheepi-zero-dock.dtb \
- 	sun8i-v3s-netcube-kumquat.dtb \
- 	sun8i-v40-bananapi-m2-berry.dtb
-+sun8i-h2-plus-orangepi-zero-interface-board-dtbs += \
-+	sun8i-h2-plus-orangepi-zero.dtb sun8i-orangepi-zero-interface-board.dtbo
-+sun8i-h3-orangepi-zero-plus2-interface-board-dtbs += \
-+	sun8i-h3-orangepi-zero-plus2.dtb sun8i-orangepi-zero-interface-board.dtbo
- dtb-$(CONFIG_MACH_SUN9I) += \
- 	sun9i-a80-optimus.dtb \
- 	sun9i-a80-cubieboard4.dtb
-diff --git a/arch/arm/boot/dts/allwinner/sun8i-orangepi-zero-interface-board.dtso b/arch/arm/boot/dts/allwinner/sun8i-orangepi-zero-interface-board.dtso
-new file mode 100644
-index 0000000000000000000000000000000000000000..e137eefee34163752372d442c22179b1fa41615a
---- /dev/null
-+++ b/arch/arm/boot/dts/allwinner/sun8i-orangepi-zero-interface-board.dtso
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR X11)
-+/*
-+ * Copyright (C) 2025 J. Neuschäfer <j.ne@posteo.net>
-+ *
-+ * Devicetree overlay for the Orange Pi Zero Interface board (OP0014).
-+ *
-+ *   https://orangepi.com/index.php?route=product/product&product_id=871
-+ *
-+ * This overlay applies to the following base files:
-+ *
-+ * - arch/arm/boot/dts/allwinner/sun8i-h2-plus-orangepi-zero.dts
-+ * - arch/arm/boot/dts/allwinner/sun8i-h3-orangepi-zero-plus2.dts
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&codec {
-+	status = "okay";
-+};
-+
-+&de {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&ehci3 {
-+	status = "okay";
-+};
-+
-+&ir {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&r_ir_rx_pin>;
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&ohci3 {
-+	status = "okay";
-+};
-
+ 	data->ad.dbgfs_dir = debugfs_create_dir(name, dbgfs_entry);
+-	if (IS_ERR(data->ad.dbgfs_dir))
+-		return PTR_ERR(data->ad.dbgfs_dir);
+ 
+ 	return gpio_virtuser_create_debugfs_attrs(
+ 			gpio_virtuser_line_array_dbgfs_attrs,
+@@ -825,8 +823,6 @@ static int gpio_virtuser_dbgfs_init_line_attrs(struct device *dev,
+ 		return ret;
+ 
+ 	data->ad.dbgfs_dir = debugfs_create_dir(name, dbgfs_entry);
+-	if (IS_ERR(data->ad.dbgfs_dir))
+-		return PTR_ERR(data->ad.dbgfs_dir);
+ 
+ 	return gpio_virtuser_create_debugfs_attrs(
+ 				gpio_virtuser_line_dbgfs_attrs,
 -- 
-2.48.0.rc1.219.gb6b6757d772
-
+2.34.1
 
 
