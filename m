@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-761177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC75B1F557
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:05:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A48B1F55C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C063189E8AD
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:05:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF80916BA38
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43B32BE64C;
-	Sat,  9 Aug 2025 16:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979BB2BE7C2;
+	Sat,  9 Aug 2025 16:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P4biu8Mu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx73WWHc"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9FC190692
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 16:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE3E190692;
+	Sat,  9 Aug 2025 16:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754755502; cv=none; b=GCe1s6ZFpZd/YtPimEZgkAMusUBI+9E0B4D3SOfdSVsRLJtQXdFgaVNJhnDJETP1QrdDiBxjPKaumI7LWR2MXJpKb9S67wHMf3ECaURU+iirIyl7gfSmNyRyq5yJ7gj3MnqeyeHI+hLD1ObBzps0jFaaNycChZuRH6blGmueFlA=
+	t=1754755700; cv=none; b=OXOGui/dLBd+tqWHvxiwHLjZabG1g+s2NA+ujrk9/V+jmii7x/TxA+5JxsqnWlX04Igosjoe+fNR9EDYYebMoUfM9SnDs6VNI05RrXZs8pDeR8VMMNRRobL9nfggTJNZZd42zokIaNCZWwTFZlXvljcTm5btGipGTb/VFDx8EW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754755502; c=relaxed/simple;
-	bh=hhKEkRqaprHI0rrxGfYnmGdOsHQcafkZ2chs4N9ElJc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C051QDYAYDJH7lkqLciTPOd971qUx/XvfYJoayMh6W/VwBBrejQUM5kkMPS7GvMbSG6nW38Lw4cE5FRhNQYAQP46/d4YlRbGSOHpNjo+7buOPID+5mEeEqBRHa46+H68ws3X69xHRf1w6wGtrz+MDZ3rSC/yzKdAjdOcfwMWE88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P4biu8Mu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754755499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sxzZXZ9khqyL8fNdwVgMsrfFG2YXiwPF3nzkdXzjMeA=;
-	b=P4biu8MukGfFoZSZgstxESw7y4GObMn2UyVAG/AtcNsH7Q7VSNCsiCyQba4a3xUmmw8cUa
-	mVfKIUX+QM7fqZs26UmDtqTjGPkzb+X5IkQ4Pv9wE0ayBE+iH0s1rYvlIwdiwNIEG+bZs5
-	79VoahUD20ZDmD5TK8v5R3iAZPiP130=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-280-r5sfhV_oOkaQbFtmHfxCUw-1; Sat,
- 09 Aug 2025 12:04:54 -0400
-X-MC-Unique: r5sfhV_oOkaQbFtmHfxCUw-1
-X-Mimecast-MFC-AGG-ID: r5sfhV_oOkaQbFtmHfxCUw_1754755491
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C11ED1800451;
-	Sat,  9 Aug 2025 16:04:50 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.45])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62BC53001455;
-	Sat,  9 Aug 2025 16:04:43 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,  Andy Lutomirski
- <luto@kernel.org>,  Peter Zijlstra <peterz@infradead.org>,
-  x86@kernel.org,  Kostya Serebryany <kcc@google.com>,  Andrey Ryabinin
- <ryabinin.a.a@gmail.com>,  Andrey Konovalov <andreyknvl@gmail.com>,
-  Alexander Potapenko <glider@google.com>,  Taras Madan
- <tarasmadan@google.com>,  Dmitry Vyukov <dvyukov@google.com>,  "H . J .
- Lu" <hjl.tools@gmail.com>,  Andi Kleen <ak@linux.intel.com>,  Rick
- Edgecombe <rick.p.edgecombe@intel.com>,  Bharata B Rao <bharata@amd.com>,
-  Jacob Pan <jacob.jun.pan@linux.intel.com>,  Ashok Raj
- <ashok.raj@intel.com>,  Linus Torvalds <torvalds@linux-foundation.org>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  Weihong Zhang
- <weihong.zhang@intel.com>
-Subject: Re: [PATCHv16 13/17] selftests/x86/lam: Add mmap and SYSCALL test
- cases for linear-address masking
-In-Reply-To: <20230312112612.31869-14-kirill.shutemov@linux.intel.com> (Kirill
-	A. Shutemov's message of "Sun, 12 Mar 2023 14:26:08 +0300")
-References: <20230312112612.31869-1-kirill.shutemov@linux.intel.com>
-	<20230312112612.31869-14-kirill.shutemov@linux.intel.com>
-Date: Sat, 09 Aug 2025 18:04:58 +0200
-Message-ID: <lhupld4zdjp.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1754755700; c=relaxed/simple;
+	bh=Ufaxx+IfF2XAwJC0bJUHBGNG54r+MorybcTOPrfdJaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c4RtoUhN7mAq8qr0/qQhpcS3DFaJ5ThMtANB/Nj4wPjml3wJTnQzNpwCF4N1txiy1cRZRspnU3BOXTY9uYp3mJj7pZ/QNEZ4NFppUD2LVg5tExyJ5phldiUGkpFHkJoGh/ZyvYhiyDFqqVKctB8JkIzVHDAwEeiHIVdKxzl/eo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx73WWHc; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af922ab4849so463281066b.3;
+        Sat, 09 Aug 2025 09:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754755694; x=1755360494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ufaxx+IfF2XAwJC0bJUHBGNG54r+MorybcTOPrfdJaA=;
+        b=Tx73WWHcNZxOoVC6Tl8ZICfvnLBOWG8As34DjDnVjML2701Pajwj2xNAZQidS7T+lY
+         FT33xwdieUPfu3dx+AjuVWQ4BJ4ZIkivR8is8y7MWO2VJ5Wodo9dBkEMlEId5wUXFoJe
+         e4Z/M46MJSNdfQZp1Rbf2E1MJFeaek2dYab2sP6lO+38hrS8iOr+p7H4bdsrzwTPL9Du
+         AoFim+Ys4FeUhufP3pNzMBZcs7j9Yk293MLgI7sDvnBfpi76cdZregS1QBHC2+rl06HA
+         4hnqjxLg9h2sOawnzGnk2YSZDqL85hKYuU9ivR5p3Vj26UtnZx3Q209Ue8aSvlgPbnfB
+         Tcrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754755694; x=1755360494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ufaxx+IfF2XAwJC0bJUHBGNG54r+MorybcTOPrfdJaA=;
+        b=ZuTDHTYDRakMUMTOPJKAOEaJIO6zODd1vsbmnThhX+i/rqlP16aogll0IsxCb+NaP6
+         QMN3ciwys23vCRuiUWGBZM1H7lSDZ4n0TcCdeBRu7cqGQzDjz0USTqFL9otLLHCze8nV
+         gfouXDWOkVUEXflbmJd//sdaasyPdSbvf13/RybOPDpGZC6RNDod4aUEbcrBposgZ43k
+         ifAlQqi8y7soK6hUJz8TVRLiuX9LL7fCt4vJ3jzhVyY+3F+GDHJ9/vd4cc4mVufuM5Ef
+         eaABzZFYJCE3ZGTMJcY4klrj3o43YFo/R+8ILsUadBYJGOl8n7q2gf7XbooRhU9B+VFL
+         VUgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUf9LO0ChTOLT3fNPxbXsBW8c2v7Ib2t44pu9R+/BJ9zO62mwC9/7fGjvjnrMcZx2la0O3kBjvgHbGftqr9bQ==@vger.kernel.org, AJvYcCVgWeBtpWyGiNPXW+iLJv/Egp0kZ1Zaao6AWkqVs7zDCrbD1B9VJSamFmXeBa+gTPHSsYkN6tw8G3MrowQn@vger.kernel.org, AJvYcCXXdOIaf/uImgJMhYaE5gnH0T71rOwbMeG3DDs5chFc1krH3NIau/49bB2I60nkI9AIbJfZPKF3bT6rOTVL@vger.kernel.org
+X-Gm-Message-State: AOJu0YybTdHIHweDTRA392MKXNA67yOH0wutQi0XuIZe2zYxgmOBElQZ
+	tLNGOJTRZYxlHRIIsKWCPa+ek+xmZi6Q4H1P9rZGGB11W9mXTqNbp/wNIlGWyQzzBkWyqbhKWDr
+	9VHOsp4B0CGe5vMTQS94+/CqsXuIhxG0=
+X-Gm-Gg: ASbGnctU83VgdHM7ofbggxOIve44Vw0cqJphGLJBpjKinm7Mk0rPPV2T7IayNJYk80W
+	hDJDktGTG9VMPqeIDcs1YIuEaSa0X/kLYhy0fRDGYkida2G9eXgWeM4Fkws9pxeD6q1Hr1O0AvF
+	D/IWhXDP4ireFkDxPq7VKyfqhmf/lJkl5OrvMnW90+1PJDqRq3G7W/FfS2GJSiOTA44Y7iHlqo0
+	tbD/C0=
+X-Google-Smtp-Source: AGHT+IF2wokC1FoGnEmT8nxhTkWU0r3sYovpSj4TMBjhgpqFblGVc6zJxH12qFYUNW6qhfkU9b5EX09xCEQsNhxAq0E=
+X-Received: by 2002:a17:907:7e9c:b0:af9:bdfd:c60c with SMTP id
+ a640c23a62f3a-af9c65b5604mr600478666b.47.1754755694159; Sat, 09 Aug 2025
+ 09:08:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com> <CAOQ4uxgPiANxXsfnga-oa1ccx3KKc1qeVWLkyv=PPczY-m9zhg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgPiANxXsfnga-oa1ccx3KKc1qeVWLkyv=PPczY-m9zhg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sat, 9 Aug 2025 18:08:02 +0200
+X-Gm-Features: Ac12FXwRowk5MZdjdmJvl1wX56Mra6b_t3cSUtI9Q_rWJBumfeUkBqo2hWtl_qE
+Message-ID: <CAOQ4uxj13iGDE-tz91BLpjOcJror77-pG4CkxQB18YDXX0kUkg@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 0/7] ovl: Enable support for casefold filesystems
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Kirill A. Shutemov:
-
-> From: Weihong Zhang <weihong.zhang@intel.com>
+On Sat, Aug 9, 2025 at 11:17=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> Add mmap and SYSCALL test cases.
+> On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@i=
+galia.com> wrote:
+> >
+> > Hi all,
+> >
+> > We would like to support the usage of casefold filesystems with
+> > overlayfs to be used with container tools. This use case requires a
+> > simple setup, where every layer will have the same encoding setting
+> > (i.e. Unicode version and flags), using one upper and one lower layer.
+> >
+> > * Implementation
+> >
+> > When merge layers, ovl uses a red-black tree to check if a given dentry
+> > name from a lower layers already exists in the upper layer. For merging
+> > case-insensitive names, we need to store then in tree casefolded.
+> > However, when displaying to the user the dentry name, we need to respec=
+t
+> > the name chosen when the file was created (e.g. Picture.PNG, instead of
+> > picture.png). To achieve this, I create a new field for cache entries
+> > that stores the casefolded names and a function ovl_strcmp() that uses
+> > this name for searching the rb_tree. For composing the layer, ovl uses
+> > the original name, keeping it consistency with whatever name the user
+> > created.
+> >
+> > The rest of the patches are mostly for checking if casefold is being
+> > consistently used across the layers and dropping the mount restrictions
+> > that prevented case-insensitive filesystems to be mounted.
+> >
+> > Thanks for the feedback!
 >
-> SYSCALL test cases:
+> Hi Andre,
 >
->  - LAM supports set metadata in high bits 62:57 (LAM_U57) of a user
->    pointer, pass the pointer to SYSCALL, SYSCALL can dereference the
->    pointer and return correct result.
+> This v3 is getting close.
+> Still some small details to fix.
+> With v4, please include a link to fstest so I can test your work.
+> I already had a draft for the casefold capable and disabled layers
+> in 6.17 but I did not post it yet.
+> Decide it would be better to test the final result after your work.
+> I'd started to adapt the test to the expected behavior for 6.18,
+> but it's just an untested draft for you to extend:
+> https://github.com/amir73il/xfstests/commits/ovl-casefold/
+>
+> Please make sure that you run at least check -overlay -g overlay/quick
+> sanity check for v4 and that you run check -g casefold,
+> which should run the new generic test.
+>
 
-Is this test expected to pass?
-
-I've tried to compile the Fedora kernel (6.15.9-201.fc42) with address
-masking and LAM enabled, and while basic LAM support is there (the CPU
-ignores the metadata bits after the arch_prctl system call), it's not
-valid to use addresses with metadata in system calls:
-
-$ ./lam_64 -t 8
-not ok 1 SYSCALL: LAM_U57. syscall with metadata
-ok 2 SYSCALL:[Negative] Disable LAM. Dereferencing pointer with metadata.
-not ok 3 GET_USER: get_user() and pass a properly tagged user pointer.
-ok 4 GET_USER:[Negative] get_user() with a kernel pointer and the top bit cleared.
-ok 5 GET_USER:[Negative] get_user() with a kernel pointer and the bottom sign-extension bit cleared.
-ok 6 GET_USER:[Negative] get_user() and pass a kernel pointer.
-1..6
-# Totals: pass:4 fail:2 xfail:0 xpass:0 skip:0 error:0
-
-This also happens outside the test, where write (for example) returns
-EFAULT if passed an address with metadata.
+Also, please remove the RFC label for v4.
+We are pass the point of RFC.
 
 Thanks,
-Florian
-
+Amir.
 
