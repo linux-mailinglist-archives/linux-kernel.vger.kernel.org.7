@@ -1,224 +1,255 @@
-Return-Path: <linux-kernel+bounces-760912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2915EB1F1F0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 04:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D83CB1F1F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 04:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23892561AB6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:24:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD23564163
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D089F275B1F;
-	Sat,  9 Aug 2025 02:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6xWengS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEE4276046;
+	Sat,  9 Aug 2025 02:28:55 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BA3C2FB;
-	Sat,  9 Aug 2025 02:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34602197A8E;
+	Sat,  9 Aug 2025 02:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754706248; cv=none; b=q23kk4nsOivSt7R1B4wP/72GWcEbsYuEhXlKp2vR4xg8BrPey19VRWDWB8GzXCElNOIkjG3sfAZmb29FMvNj7oITxMX45LjddwnA+JYsnnsziA5tMYcH08mD53D/5Y50lzPES2qg/IwpB+zqm0+ElxrCf1wxk/OLsYg5tLr/aqs=
+	t=1754706535; cv=none; b=bjTYeeGvYc2q6Talvj+LG7lTtVMFXKTm/PxU0Z9tDi6Y7H2mH0J3OxBM3ca4WNqE+9UFnPCSQO3pqN2gPsrrL4h2VHmXGnx0vGVlmvHuoMT/L7Klnweud6AtTTteRDPMpSshBfPreWFQo+Ws2gnw/rndm+2a8TOY+zPkExVVPbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754706248; c=relaxed/simple;
-	bh=oG/gs0IIq/R05gYX+mXbeKSOc+H5ut11vppSDkHojUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQewh029EUE9J2a/9+n917Q3/KtEyGUvsfepy9S7Raf7YfV2S2c5QRWIXxwUGWVHWWhKtbLELIWtvhxWbNel7QRYLX0Q3w2VMqUq/M+u+oTr9olXybc+RGwSFDddr6chmxFpIvy0aT3Ta6r76iCltHPSY8CiDENWa8vFuVYra1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6xWengS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A696C4CEED;
-	Sat,  9 Aug 2025 02:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754706247;
-	bh=oG/gs0IIq/R05gYX+mXbeKSOc+H5ut11vppSDkHojUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X6xWengSOLiD7r74p7CJMMKTHCqElz6amQ5SN59+PDUpxHAMC3CJINWjDQZHmiIfL
-	 QOY/81Yy5eA2e1LBhSC+Ks9bb8678Ce0ZuvvB+gPAFRjJ17Hm1T9uR4zfarThtAbPz
-	 MCttIFUaIJcciUAD4dpNjnZBRzGhcM4qdCBtfTP8Di1hTnlkZJmiIXs3200sOOYbam
-	 Dqu5KsZZkAAnN+PSzBLIyG247b2AYFExjwJ4NAnw10EVRVrlarhI1GPDpsquGRbHUa
-	 DXloZuLk/i52Aj9sibc+M03+pSTSdrt2WS/gTIzY7w0v4ve2OeJUj37znpPxkb7wtN
-	 ReN1aFMpys5hg==
-Date: Fri, 8 Aug 2025 22:24:05 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-	Donglin Peng <dolinux.peng@gmail.com>,
-	Zheng Yejian <zhengyejian@huaweicloud.com>
-Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
- graph tracer
-Message-ID: <aJaxRVKverIjF4a6@lappy>
-References: <20250227185804.639525399@goodmis.org>
- <20250227185822.810321199@goodmis.org>
+	s=arc-20240116; t=1754706535; c=relaxed/simple;
+	bh=gWg6Q9GS2s508llCjhcIyMi4CF9o463J0gly9Pfm8uA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=RVl0JSSCCfPdaMvrUdkhAJdhUBw6RoHJzN798IZxQpnKoZdYGt9PK4iC7sVF8+Y1w9ZUq1J/Eyrs2zKYQUY4DXVOqjsYXp3C0XXbB4f6droEHceLh9NKJnYN5PQpV0GZaBLf7tozCHF6TB/faJi1r/flE+W+yh8nlhnky8hzFx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bzPwG6PCMzKHMbj;
+	Sat,  9 Aug 2025 10:28:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 0D6A21A18C7;
+	Sat,  9 Aug 2025 10:28:46 +0800 (CST)
+Received: from [10.174.177.163] (unknown [10.174.177.163])
+	by APP1 (Coremail) with SMTP id cCh0CgCXU69XspZocRQADA--.4939S2;
+	Sat, 09 Aug 2025 10:28:43 +0800 (CST)
+Subject: Re: [PATCH v2] brd: use page reference to protect page lifetime
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250729090616.1008288-1-yukuai1@huaweicloud.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <00473627-a594-dd5c-2100-eaf2df84ff7d@huaweicloud.com>
+Date: Sat, 9 Aug 2025 10:28:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250227185822.810321199@goodmis.org>
+In-Reply-To: <20250729090616.1008288-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID:cCh0CgCXU69XspZocRQADA--.4939S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr4fur43Jw45XF4rXr45GFg_yoWrKF45pF
+	WUJFyxA3y5Jry3tw17X3Z8uFyF934IgayfK343G3ySkr1fGr9Iya4UKry0qw45CrWUCrWU
+	AFsxtw4DCrZ0q3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hi folks,
 
-I've been trying to track down an issue that started appearing a while
-back:
 
-[   73.078526] ------------[ cut here ]------------
-[   73.083194] WARNING: CPU: 2 PID: 4002 at kernel/trace/trace_functions_graph.c:991 print_graph_entry+0x579/0x590
-[   73.093544] Modules linked in: x86_pkg_temp_thermal fuse
-[   73.098939] CPU: 2 UID: 0 PID: 4002 Comm: cat Tainted: G S                  6.16.0 #1 PREEMPT(voluntary)
-[   73.108587] Tainted: [S]=CPU_OUT_OF_SPEC
-[   73.112664] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS 2.7 12/07/2021
-[   73.120126] RIP: 0010:print_graph_entry+0x579/0x590
-[   73.125198] Code: 49 89 40 20 49 8b 46 08 49 89 40 28 49 8b 46 10 49 89 40 30 49 8b 46 18 49 89 40 38 49 8b 46 20 49 89 40 40 e9 27 fe ff ff 90 <0f> 0b 90 e9 e2 fe ff ff 90 0f 0b 90 e9 8e fc ff ff e8 91 d8 10 01
-[   73.144001] RSP: 0018:ffffa6af02d37c58 EFLAGS: 00010282
-[   73.149369] RAX: ffffc6aeffd986f0 RBX: ffff9d70c83b0000 RCX: 00000000fefefefe
-[   73.156621] RDX: ffffffffbb374080 RSI: 0000000000000001 RDI: ffffffffbaf773ea
-[   73.163839] RBP: ffffa6af02d37cf0 R08: ffff9d70c1790cc0 R09: 0000000000000020
-[   73.171023] R10: 0000000000000000 R11: 0000000000000004 R12: ffff9d70c83b2090
-[   73.178216] R13: 0000000000000003 R14: ffff9d70c83b0000 R15: ffff9d70c1790cc0
-[   73.185412] FS:  00007fd8c6872740(0000) GS:ffff9d72741a9000(0000) knlGS:0000000000000000
-[   73.193584] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   73.199391] CR2: 00007ffedaf50fbc CR3: 00000001049f4006 CR4: 00000000003726f0
-[   73.206570] Call Trace:
-[   73.209086]  <TASK>
-[   73.211313]  ? trace_event_raw_event_preemptirq_template+0x66/0xc0
-[   73.217573]  ? __pfx_put_cpu_partial+0x10/0x10
-[   73.222093]  ? __pfx_put_cpu_partial+0x10/0x10
-[   73.226635]  print_graph_function_flags+0x27c/0x530
-[   73.231607]  ? peek_next_entry+0x9d/0xb0
-[   73.235618]  print_graph_function+0x13/0x20
-[   73.239895]  print_trace_line+0xbb/0x530
-[   73.243909]  tracing_read_pipe+0x1d6/0x380
-[   73.248121]  vfs_read+0xbb/0x380
-[   73.251495]  ? vfs_read+0x9/0x380
-[   73.254929]  ksys_read+0x7b/0xf0
-[   73.258258]  __x64_sys_read+0x1d/0x30
-[   73.261995]  x64_sys_call+0x1ada/0x20d0
-[   73.265936]  do_syscall_64+0xb2/0x2b0
-[   73.269694]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   73.274818] RIP: 0033:0x7fd8c6904687
-[   73.278491] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
-[   73.297320] RSP: 002b:00007ffe8bb08e60 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
-[   73.304974] RAX: ffffffffffffffda RBX: 00007fd8c6872740 RCX: 00007fd8c6904687
-[   73.312185] RDX: 0000000000040000 RSI: 00007fd8c6831000 RDI: 0000000000000003
-[   73.319369] RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
-[   73.326588] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fd8c6831000
-[   73.333801] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000040000
-[   73.341050]  </TASK>
-[   73.343324] ---[ end trace 0000000000000000 ]---
-[   73.804718] ------------[ cut here ]------------
-[   73.809372] WARNING: CPU: 1 PID: 4002 at kernel/trace/trace_functions_graph.c:933 print_graph_entry+0x582/0x590
-[   73.819492] Modules linked in: x86_pkg_temp_thermal fuse
-[   73.824888] CPU: 1 UID: 0 PID: 4002 Comm: cat Tainted: G S      W           6.16.0 #1 PREEMPT(voluntary)
-[   73.834477] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
-[   73.839314] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS 2.7 12/07/2021
-[   73.846739] RIP: 0010:print_graph_entry+0x582/0x590
-[   73.851662] Code: 89 40 28 49 8b 46 10 49 89 40 30 49 8b 46 18 49 89 40 38 49 8b 46 20 49 89 40 40 e9 27 fe ff ff 90 0f 0b 90 e9 e2 fe ff ff 90 <0f> 0b 90 e9 8e fc ff ff e8 91 d8 10 01 90 90 90 90 90 90 90 90 90
-[   73.870458] RSP: 0018:ffffa6af02d37c58 EFLAGS: 00010282
-[   73.875733] RAX: ffffc6aeffd186f0 RBX: ffff9d70c83b0000 RCX: 00000011792c5f40
-[   73.882906] RDX: ffffffffbb374080 RSI: 00000000fefefefd RDI: 00000011792c5ff6
-[   73.890079] RBP: ffffa6af02d37cf0 R08: ffff9d70c1790cc0 R09: 0000000000000020
-[   73.897249] R10: 00000000fefefefe R11: 0000000000000004 R12: ffff9d70c83b2090
-[   73.904424] R13: 0000000000000001 R14: ffff9d70c1790ce0 R15: ffff9d70c1790cc0
-[   73.911609] FS:  00007fd8c6872740(0000) GS:ffff9d7274129000(0000) knlGS:0000000000000000
-[   73.919740] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   73.925528] CR2: 0000559a316ca3c0 CR3: 00000001049f4003 CR4: 00000000003726f0
-[   73.932705] Call Trace:
-[   73.935200]  <TASK>
-[   73.937350]  ? __legitimize_mnt+0x4/0xb0
-[   73.941342]  print_graph_function_flags+0x27c/0x530
-[   73.946269]  ? trace_hardirqs_on+0x2f/0x90
-[   73.950401]  ? ring_buffer_empty_cpu+0x86/0xd0
-[   73.954912]  print_graph_function+0x13/0x20
-[   73.959149]  print_trace_line+0xbb/0x530
-[   73.963135]  tracing_read_pipe+0x1d6/0x380
-[   73.967291]  vfs_read+0xbb/0x380
-[   73.970580]  ? vfs_read+0x9/0x380
-[   73.973954]  ksys_read+0x7b/0xf0
-[   73.977244]  __x64_sys_read+0x1d/0x30
-[   73.980952]  x64_sys_call+0x1ada/0x20d0
-[   73.984839]  do_syscall_64+0xb2/0x2b0
-[   73.988558]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   73.993657] RIP: 0033:0x7fd8c6904687
-[   73.997278] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
-[   74.016084] RSP: 002b:00007ffe8bb08e60 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
-[   74.023743] RAX: ffffffffffffffda RBX: 00007fd8c6872740 RCX: 00007fd8c6904687
-[   74.030920] RDX: 0000000000040000 RSI: 00007fd8c6831000 RDI: 0000000000000003
-[   74.038101] RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
-[   74.045277] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fd8c6831000
-[   74.052484] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000040000
-[   74.059724]  </TASK>
-[   74.061974] ---[ end trace 0000000000000000 ]---
-
-This patch was within the window where the issue started happening, and
-on inspection I found something suspicious (but couldn't verify since
-I'm traveling).
-
-On Thu, Feb 27, 2025 at 01:58:06PM -0500, Steven Rostedt wrote:
->diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
->index fbfb396905a6..77a8ba3bc1e3 100644
->--- a/kernel/trace/trace_entries.h
->+++ b/kernel/trace/trace_entries.h
->@@ -72,17 +72,18 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
-> );
+On 7/29/2025 5:06 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 >
-> /* Function call entry */
->-FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
->+FTRACE_ENTRY(funcgraph_entry, ftrace_graph_ent_entry,
+> As discussed [1], hold rcu for copying data from/to page is too heavy.
+> it's better to protect page with rcu around for page lookup and then
+> grab a reference to prevent page to be freed by discard.
 >
-> 	TRACE_GRAPH_ENT,
+> [1] https://lore.kernel.org/all/eb41cab3-5946-4fe3-a1be-843dd6fca159@kernel.dk/
 >
-> 	F_STRUCT(
-> 		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
-> 		__field_packed(	unsigned long,	graph_ent,	func		)
->-		__field_packed(	int,		graph_ent,	depth		)
->+		__field_packed(	unsigned long,	graph_ent,	depth		)
->+		__dynamic_array(unsigned long,	args				)
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+> Changes from v1:
+>  - refer to filemap_get_entry(), use xas_load + xas_reload to fix
+>  concurrent problems.
+>
+>  drivers/block/brd.c | 73 ++++++++++++++++++++++++++++-----------------
+>  1 file changed, 46 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+> index 0c2eabe14af3..b7a0448ca928 100644
+> --- a/drivers/block/brd.c
+> +++ b/drivers/block/brd.c
+> @@ -44,45 +44,72 @@ struct brd_device {
+>  };
+>  
+>  /*
+> - * Look up and return a brd's page for a given sector.
+> + * Look up and return a brd's page with reference grabbed for a given sector.
+>   */
+>  static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
+>  {
+> -	return xa_load(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
+> +	struct page *page;
+> +	XA_STATE(xas, &brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
+> +
+> +	rcu_read_lock();
+> +repeat:
+> +	xas_reset(&xas);
 
-So we've added a dynamically sized array to the end of
-ftrace_graph_ent_entry, but in struct fgraph_data, the saved entry is
-defined as:
+Is it better to move xas_reset() to the failing branches instead of
+adding an extra xas_reset() for the success branch ?
+> +	page = xas_load(&xas);
+> +	if (xas_retry(&xas, page))
+> +		goto repeat;
+> +
+> +	if (!page || xa_is_value(page)) {
+> +		page = NULL;
+> +		goto out;
+> +	}
 
-   struct fgraph_data {
-       ...
-       union {
-           struct ftrace_graph_ent_entry ent;
-           struct fgraph_retaddr_ent_entry rent;
-       } ent;
-       ...
-   }
+brd will not store special value in the xarray, so xa_is_value() is
+unnecessary.
+> +
+> +	if (!get_page_unless_zero(page))
+> +		goto repeat;
+> +
+> +	if (unlikely(page != xas_reload(&xas))) {
+> +		put_page(page);
+> +		goto repeat;
+> +	}
+> +out:
+> +	rcu_read_unlock();
+> +
+> +	return page;
+>  }
+>  
+>  /*
+>   * Insert a new page for a given sector, if one does not already exist.
+> + * The returned page will grab reference.
+>   */
+>  static struct page *brd_insert_page(struct brd_device *brd, sector_t sector,
+>  		blk_opf_t opf)
+> -	__releases(rcu)
+> -	__acquires(rcu)
+>  {
+>  	gfp_t gfp = (opf & REQ_NOWAIT) ? GFP_NOWAIT : GFP_NOIO;
+>  	struct page *page, *ret;
+>  
+> -	rcu_read_unlock();
+>  	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
+> -	if (!page) {
+> -		rcu_read_lock();
+> +	if (!page)
+>  		return ERR_PTR(-ENOMEM);
+> -	}
+>  
+>  	xa_lock(&brd->brd_pages);
+>  	ret = __xa_cmpxchg(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT, NULL,
+>  			page, gfp);
+> -	rcu_read_lock();
+> -	if (ret) {
+> +	if (!ret) {
+> +		brd->brd_nr_pages++;
+> +		get_page(page);
+>  		xa_unlock(&brd->brd_pages);
+> -		__free_page(page);
+> -		if (xa_is_err(ret))
+> -			return ERR_PTR(xa_err(ret));
+> +		return page;
+> +	}
+> +
+> +	if (!xa_is_err(ret)) {
+> +		get_page(ret);
+> +		xa_unlock(&brd->brd_pages);
+> +		put_page(page);
+>  		return ret;
+>  	}
+> -	brd->brd_nr_pages++;
+> +
+>  	xa_unlock(&brd->brd_pages);
+> -	return page;
+> +	put_page(page);
+> +	return ERR_PTR(xa_err(ret));
+>  }
+>  
+>  /*
+> @@ -95,7 +122,7 @@ static void brd_free_pages(struct brd_device *brd)
+>  	pgoff_t idx;
+>  
+>  	xa_for_each(&brd->brd_pages, idx, page) {
+> -		__free_page(page);
+> +		put_page(page);
+>  		cond_resched();
+>  	}
+>  
+> @@ -117,7 +144,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
+>  
+>  	bv.bv_len = min_t(u32, bv.bv_len, PAGE_SIZE - offset);
+>  
+> -	rcu_read_lock();
+>  	page = brd_lookup_page(brd, sector);
+>  	if (!page && op_is_write(opf)) {
+>  		page = brd_insert_page(brd, sector, opf);
+> @@ -135,13 +161,13 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
+>  			memset(kaddr, 0, bv.bv_len);
+>  	}
+>  	kunmap_local(kaddr);
+> -	rcu_read_unlock();
+>  
+>  	bio_advance_iter_single(bio, &bio->bi_iter, bv.bv_len);
+> +	if (page)
+> +		put_page(page);
+>  	return true;
+>  
+>  out_error:
+> -	rcu_read_unlock();
+>  	if (PTR_ERR(page) == -ENOMEM && (opf & REQ_NOWAIT))
+>  		bio_wouldblock_error(bio);
+>  	else
+> @@ -149,13 +175,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
+>  	return false;
+>  }
+>  
+> -static void brd_free_one_page(struct rcu_head *head)
+> -{
+> -	struct page *page = container_of(head, struct page, rcu_head);
+> -
+> -	__free_page(page);
+> -}
+> -
+>  static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
+>  {
+>  	sector_t aligned_sector = round_up(sector, PAGE_SECTORS);
+> @@ -170,7 +189,7 @@ static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
+>  	while (aligned_sector < aligned_end && aligned_sector < rd_size * 2) {
+>  		page = __xa_erase(&brd->brd_pages, aligned_sector >> PAGE_SECTORS_SHIFT);
+>  		if (page) {
+> -			call_rcu(&page->rcu_head, brd_free_one_page);
+> +			put_page(page);
+>  			brd->brd_nr_pages--;
+>  		}
+>  		aligned_sector += PAGE_SECTORS;
 
-Which doesn't seem to have room for args?
-
-The code in get_return_for_leaf() does:
-
-   data->ent.ent = *curr;
-
-This copies the struct, but curr points to a larger entry with args
-data. The copy operation only copies sizeof(struct
-ftrace_graph_ent_entry) bytes, which doesn't include the dynamic args
-array.
-
-And then later functions (like print_graph_entry()) would go ahead and
-assume that iter->ent_size is sane and make a mess out of everything.
-
-I can't test right now whether this actually fixes the issues or not,
-but I wanted to bring this up as this looks somewhat odd and I'm not too
-familiar with this code.
-
--- 
-Thanks,
-Sasha
 
