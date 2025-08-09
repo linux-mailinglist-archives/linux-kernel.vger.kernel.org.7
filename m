@@ -1,295 +1,292 @@
-Return-Path: <linux-kernel+bounces-761082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A7BB1F427
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AB3B1F428
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2B6A581FE1
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4381582089
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7624F262FE6;
-	Sat,  9 Aug 2025 10:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B434262FE6;
+	Sat,  9 Aug 2025 10:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E3nW+YOk"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8JOM4dk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407E925392D
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 10:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87FC25392D;
+	Sat,  9 Aug 2025 10:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754735300; cv=none; b=IxlxvjiAWk65C0M29EDxS9jvD526ieKeN/Ss+AWjDhYzUsQFEcOsJrQE3ZIgO3HA7yA6GwCh2igNQRThzNoDxwmfpu98va4V9W1NDEtVdWaI0L+TTJ4FCVGe2S0FRisWPsrjO3XFABsvIHfsWPK2nZNC1EOwdH5w9ZlzkO3ipoY=
+	t=1754735349; cv=none; b=CGh2r1LSwLqVP+iVoV52564K0qTCdwtqLJmdKssmsG72BKjRA57XSHZUa3HhXzs9zCVovko2t6ovn+30au+kJKYENZx+GFRAO2OCRnD2No1AnzwW6VQ+/URHeDAK2PUrLfEy7ODqShhI8toDyUo9lrM65WS0AJM8qbnCrrcVJd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754735300; c=relaxed/simple;
-	bh=m6nTgomGxXImj/StHZ03gz/I8UjVJR5n3oWFcAjYE/w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XNUNZJLn0e4N/QwNRTvj0zzhB/Tlqp/T2cPH5lEXraXIb9hF6mDrtB94I39ocbOH+Aa5fZcrI3flz2W+0ZiSZvUP9uc1tuBY7SSMSRdj3Z3UwW+gRMwoQN0pPrQe0GtGX47GbB7I7y/4JGTpA8QER8b1sczCqze/4/Sw2KC/5b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E3nW+YOk; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76be0be9ee1so3110486b3a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 03:28:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754735298; x=1755340098; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9mWScs8BUkt3rAk7MTYnao70mSIUIP2Js8CYQGZzX/I=;
-        b=E3nW+YOkJtHucJjY64Vppk+o+kjf79+JZsXuKEcMLgafeaIIw/ujENCgWR2NZf/u4s
-         klJtRu0mhL1xvwN/TlLcixT+ahQoh/a+mA9Osl9QJzopHnUW+wcQaETCqEyC46rP91WE
-         hqaDJlvcR0EopRgarTBFtliaiFDACooXER6dcj8iG5qf9t4YoYGYNmFg3wsrJsfhfPrb
-         bI3G8ebm5VeI6URJBa633B/tfFz35tsRcsR4M3eDC+npc4m3uiZjrP6DuL/m9gZdhuyo
-         1AJQPN6veqRthk3ydd2niHoe5gv8Q12/W3UEjk5ZccfaIO6ecff2MJZUwGOTvrP7F9KT
-         YglA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754735298; x=1755340098;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9mWScs8BUkt3rAk7MTYnao70mSIUIP2Js8CYQGZzX/I=;
-        b=w0R1y2kuRH8qHlTYaotda2OxLtut2UDVSw9gX184HiL2p1/srXZKj/3pzLMLdtee3b
-         1+uynaIZ1b+nrzfV9gBLhuXmkjq4oVTPhnH4Stzq362RKnZtZ1x99/qxv5UgFmhSWPvG
-         mQ0Q/7pz3YsfSTwoC1k3Uviz7eHISEPKEVrP5VB4NakD62mEJ8DAxh+DYkaTORMdXGta
-         Tp/QgWzBoKor1pbOH+6LO1/Jgz5JibrC3UkvBF6YPQxswNwdHMjimmVOepp1f8dtUnBV
-         B7/ycRbUc+a48B+eaGJeJct0RilTl56FUPd4DXyJ98hr0kSzPZbb5kxUgyp7C+OESQZg
-         Q6Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCVGH5GtVQ++OmDKf8m9mq1BVRuInuZiJW/ouMyn6S6JZE4oCpd9BPhpqNdJ3cL5llRkuWuT7naIL4Z61yI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziYnfoPA/4KX6Z4VS7iL1Bs38sFyQV4zc80GOTjcG1IFpiTgdF
-	7xSngKO0mgkc5u89B3UhpmE/KmhOdckCsDfbwMsv7PsbYK99o+jgWCmLgI6bB5n/fjTcKNu9qym
-	qqw==
-X-Google-Smtp-Source: AGHT+IF3NNTcr+DurXnMcnqThubf8NPrNqtglb3gdC6Me0IRYuZp3yVfxre8HaWWeyI3PwnHbJtCyDagtw==
-X-Received: from pgja18.prod.google.com ([2002:a63:cd52:0:b0:b42:27a9:f7e4])
- (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2449:b0:240:167:9c3f
- with SMTP id adf61e73a8af0-24055036e07mr10850632637.14.1754735298422; Sat, 09
- Aug 2025 03:28:18 -0700 (PDT)
-Date: Sat,  9 Aug 2025 18:28:12 +0800
-In-Reply-To: <20250807140508-d3df8cab-249a-47ed-b92a-d33e43de0aee@linutronix.de>
+	s=arc-20240116; t=1754735349; c=relaxed/simple;
+	bh=ay55KwcH9stnDws+b6Vbr3kYE7hZUQ1Z+DxrqR1R+q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Myd7dyhvw0Fm8wBBnMF+kGJRFhsckMIdisetXkahR9WUlth6/f9G2z1cwt9FRdWfANGCF3RX8/YJKAKumdLrBu0xnlaoVG42g76rEbYPSRK3/C0N56U6/oRbySfvtvki97jrETy1giN8xYAz1Y74foB7q9MderII0NGtWnG6980=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8JOM4dk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECE09C4CEE7;
+	Sat,  9 Aug 2025 10:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754735349;
+	bh=ay55KwcH9stnDws+b6Vbr3kYE7hZUQ1Z+DxrqR1R+q8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y8JOM4dkr+BQ0S8cRfJDMrLrfnBCKwiotuvISvhDBUP3y+XQGhsuD5ClnwVAoLoRS
+	 rLvGIe98fJHEB90dH7r21BsTA7kwG6PoWC4jVog571Od28wzMPv10GkdTSADDgFpmT
+	 3Kfyb5YoQgmaXidEmxrTgJodAdo7ImR2qlblcl50i/7s1oOBamtVW7L/k1REt+guhY
+	 OD9lYLExDDOiHqnrnbdN+yAGfuhIEriUCVgYEldaqSoijQVZS7QsBfDX3zeY4ZUX5H
+	 YLn9Ls744hiMmYhuJyo4SkYzGx7KZAur9XRsPcQqbNgZ8pEasUfR7lk8ZAacnzDUUd
+	 2YXtcQnMg7meA==
+Date: Sat, 9 Aug 2025 13:29:05 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Elena Reshetova <elena.reshetova@intel.com>
+Cc: dave.hansen@intel.com, seanjc@google.com, kai.huang@intel.com,
+	mingo@kernel.org, linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
+	chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
+	bondarn@google.com, scott.raynor@intel.com
+Subject: Re: [PATCH v11 0/5] Enable automatic SVN updates for SGX enclaves
+Message-ID: <aJci8Zt9iSb3LurZ@kernel.org>
+References: <20250806081344.404004-1-elena.reshetova@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250807140508-d3df8cab-249a-47ed-b92a-d33e43de0aee@linutronix.de>
-X-Mailer: git-send-email 2.50.1.703.g449372360f-goog
-Message-ID: <20250809102812.2472581-1-wakel@google.com>
-Subject: [PATCH v4] selftests/futex: Check for shmget support at runtime
-From: Wake Liu <wakel@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, 
-	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>, Wake Liu <wakel@google.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806081344.404004-1-elena.reshetova@intel.com>
 
-The futex tests `futex_wait.c` and `futex_waitv.c` rely on the `shmget()`
-syscall, which may not be available if the kernel is built without
-System V IPC support (CONFIG_SYSVIPC=n). This can lead to test
-failures on such systems.
+On Wed, Aug 06, 2025 at 11:11:51AM +0300, Elena Reshetova wrote:
+> Changes since v10 following reviews by Dave:
+> 
+>  - merge patch 1 and 2
+>  - patch 1: clarify the comment about the function prototype
+>  - patch 3: clarify the description of SGX_NO_UPDATE
+>   error code, move the definition of EUPDATESVN enum leaf
+>   to patch 4
+>  - patch 4: clarify commit, adjust sgx_update_svn() function
+>   according to feedback
+> 
+> Changes since v9 following reviews by Kai:
+> 
+>  - postpone the definition of sgx_inc_usage_count
+>    until patch 6
+>  - clarify the commit message in patch 6
+>  - minor fixes
+> 
+> Note: I didn't merge patch 1 and 2 since it goes against
+> previous suggestion made by Jarkko.
+> 
+> Changes since v8 following reviews by Dave and Jarkko:
+> 
+>  - fix the sgx_inc/dec_usage_count() to not do any
+>  actual counting until the later patch when adequate
+>  mutex is introduced as suggested by Dave
+>  - add an additional patch (patch 1) to redefine
+>  existing sgx_(vepc_)open into wrappers to allow
+>  the follow up patch to introduce the sgx_inc/dec_usage_count()
+>  functions into sgx_(vepc_)open cleanly as suggested
+>  by Jarkko. 
+> 
+> Changes since v7 following reviews by Dave:
+> 
+>  - change sgx_usage_count to be a normal int type
+>  and greatly simplify the sgx_inc_usage_count func.
+>  This results in requiring a mutex for each sgx_(vepc_)open
+>  but given that the mutex is held a short amount of
+>  time it should be ok perf-wise.
+> 
+> Changes since v6 following reviews by Kai,Jarkko
+> and Dave:
+> 
+>  - fix sgx_update_svn function description
+>  - add maybe_unused for sgx_update_svn in patch 4
+>  to silence the warning, remove it in patch 5
+>  - add note to patch 1 explaining why the prototype
+>  sgx_inc_usage_count returns int and not void
+>  - fix the order of return code checks in 
+>  sgx_update_svn
+>  - cosmetic fixes
+>  
+> Note: I didn't change the sgx_inc/dec_usage_count
+> to statics because they are called from a number of
+> different code locations and also rely on a static
+> sgx_usage_count, which lives naturally in main.c.  
+>  
+> Changes since v5 following reviews by Ingo, Kai,
+> Jarkko and Dave:
+> 
+>  - rebase on x86 tip
+>  - patch 1 is fixed to do correct unwinding in
+>  case of errors
+>  - patch 2: add feature flag to cpuid-deps.c
+>  - patch 3: remove unused SGX_EPC_NOT_READY error code
+>  - patch 4: fix x86 feature check, return -EAGAIN
+>  on SGX_INSUFFICIENT_ENTROPY and -EIO on other non-
+>  expected errors. Comments/style are also fixed.
+>  - patch 5: rewrite commit message, add comments inline
+> 
+> Changes since v4 following reviews by Dave and Jarkko:
+> 
+>  - breakdown the single patch into 4 patches as
+>  suggested by Dave
+>  - fix error unwinding in sgx_(vepc_)open as 
+>  suggested by Jarkko
+>  - numerous code improvements suggested by Dave
+>  - numerous additional code comments and commit
+>  message improvements as suggested by Dave
+>  - switch to usage of atomic64_t for sgx_usage_count
+>  to ensure overflows cannot happen as suggested by Dave
+>  - do not return a error case when failing with
+>  SGX_INSUFFICIENT_ENTROPY, fail silently as suggested
+>  by Dave
+> 
+> Changes since v3 following reviews by Kai and Sean:
+> 
+>  - Change the overall approach to the one suggested
+>   by Sean and do the EUPDATESVN execution during
+>   sgx_open() and sgx_vepc_open().
+>   Note, I do not try to do EUPDATESVN during the release()
+>   flows since it doesnt save any noticable amount
+>   of time during next open flow per underlying EUPDATESVN
+>   microcode logic.
+>  - In sgx_update_svn() remove the check that we are
+>   running under VMM and expect the VMM to instead
+>   expose correct CPUID
+>  - Move the actual CPUID leaf check out of
+>   sgx_update_svn() into sgx_init()
+>  - Use existing RDRAND_RETRY_LOOPS define instead of 10
+>  - Change the sgx_update_svn() to return 0 only in
+>  success cases (or if unsupported)
+>  - Various smaller cosmetic fixes
+> 
+> The still to be discussed question is what sgx_update_svn()
+> should return in case of various failures. The current version
+> follows suggestion by Kai and would return an error (and block
+> sgx_(vepc_)open() in all cases, including running out of entropy.
+> I think this might be the correct approach for SGX_INSUFFICIENT_ENTROPY
+> since in such cases userspace can retry the open() and also
+> will get an info about what is actually blocking the EUPDATEVSN
+> (and can act on this). However, this is a change in existing API
+> and therefore debatable and I would like to hear people's feedback.
+> 
+> Changes since v2 following review by Jarkko:
+> 
+>  - formatting of comments is fixed
+>  - change from pr_error to ENCLS_WARN to communicate errors from
+>  EUPDATESVN
+>  - In case an unknown error is detected (must not happen per spec),
+>  make page allocation from EPC fail in order to prevent EPC usage
+> 
+> Changes since v1 following review by Jarkko:
+> 
+>  - first and second patch are squashed together and a better
+>    explanation of the change is added into the commit message
+>  - third and fourth patch are also combined for better understanding
+>    of error code purposes used in 4th patch
+>  - implementation of sgx_updatesvn adjusted following Jarkko's 
+>    suggestions
+>  - minor fixes in both commit messages and code from the review
+>  - dropping co-developed-by tag since the code now differs enough
+>    from the original submission. However, the reference where the
+>    original code came from and credits to original author is kept
+> 
+> Background
+> ----------
+> 
+> In case an SGX vulnerability is discovered and TCB recovery
+> for SGX is triggered, Intel specifies a process that must be
+> followed for a given vulnerability. Steps to mitigate can vary
+> based on vulnerability type, affected components, etc.
+> In some cases, a vulnerability can be mitigated via a runtime
+> recovery flow by shutting down all running SGX enclaves,
+> clearing enclave page cache (EPC), applying a microcode patch
+> that does not require a reboot (via late microcode loading) and
+> restarting all SGX enclaves.
+> 
+> 
+> Problem statement
+> -------------------------
+> Even when the above-described runtime recovery flow to mitigate the
+> SGX vulnerability is followed, the SGX attestation evidence will
+> still reflect the security SVN version being equal to the previous
+> state of security SVN (containing vulnerability) that created
+> and managed the enclave until the runtime recovery event. This
+> limitation currently can be only overcome via a platform reboot,
+> which negates all the benefits from the rebootless late microcode
+> loading and not required in this case for functional or security
+> purposes.
+> 
+> 
+> Proposed solution
+> -----------------
+> 
+> SGX architecture introduced  a new instruction called EUPDATESVN [1]
+> to Ice Lake. It allows updating security SVN version, given that EPC
+> is completely empty. The latter is required for security reasons
+> in order to reason that enclave security posture is as secure as the
+> security SVN version of the TCB that created it.
+> 
+> This series enables opportunistic execution of EUPDATESVN upon first
+> EPC page allocation for a first enclave to be run on the platform.
+> 
+> This series is partly based on the previous work done by Cathy Zhang
+> [2], which attempted to enable forceful destruction of all SGX
+> enclaves and execution of EUPDATESVN upon successful application of
+> any microcode patch. This approach is determined as being too
+> intrusive for the running SGX enclaves, especially taking into account
+> that it would be performed upon *every* microcode patch application
+> regardless if it changes the security SVN version or not (change to the
+> security SVN version is a rare event).
+> 
+> Testing
+> -------
+> 
+> Tested on EMR machine using kernel-6.16.0_rc7 & sgx selftests.
+> Also tested on a Kaby Lake machine without EUPDATESVN support.
+> If Google folks in CC can test on their side, it would be greatly appreciated.
+> 
+> 
+> References
+> ----------
+> 
+> [1] https://cdrdv2.intel.com/v1/dl/getContent/648682?explicitVersion=true
+> [2] https://lore.kernel.org/all/20220520103904.1216-1-cathy.zhang@intel.com/
+> 
+> Elena Reshetova (5):
+>   x86/sgx: Introduce functions to count the sgx_(vepc_)open()
+>   x86/cpufeatures: Add X86_FEATURE_SGX_EUPDATESVN feature flag
+>   x86/sgx: Define error codes for use by ENCLS[EUPDATESVN]
+>   x86/sgx: Implement ENCLS[EUPDATESVN]
+>   x86/sgx: Enable automatic SVN updates for SGX enclaves
+> 
+>  arch/x86/include/asm/cpufeatures.h       |  1 +
+>  arch/x86/include/asm/sgx.h               | 37 ++++++----
+>  arch/x86/kernel/cpu/cpuid-deps.c         |  1 +
+>  arch/x86/kernel/cpu/scattered.c          |  1 +
+>  arch/x86/kernel/cpu/sgx/driver.c         | 19 ++++-
+>  arch/x86/kernel/cpu/sgx/encl.c           |  1 +
+>  arch/x86/kernel/cpu/sgx/encls.h          |  5 ++
+>  arch/x86/kernel/cpu/sgx/main.c           | 91 ++++++++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/sgx.h            |  3 +
+>  arch/x86/kernel/cpu/sgx/virt.c           | 20 +++++-
+>  tools/arch/x86/include/asm/cpufeatures.h |  1 +
+>  11 files changed, 163 insertions(+), 17 deletions(-)
+> 
+> -- 
+> 2.45.2
+> 
+> 
 
-This patch modifies the tests to check for `shmget()` support at
-runtime by calling it and checking for an `ENOSYS` error. If `shmget()`
-is not supported, the tests are skipped with a clear message,
-improving the user experience and preventing false negatives.
+LGTM
 
-This approach is more robust than relying on compile-time checks and
-ensures that the tests run only when the required kernel features are
-present.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
----
-+V3 -> V4:
-- Use ksft_finished() to simplify test exit.
-- Replace perror()/exit() with ksft_exit_fail_perror().
-
-Signed-off-by: Wake Liu <wakel@google.com>
----
- .../selftests/futex/functional/futex_wait.c   | 51 +++++++------
- .../selftests/futex/functional/futex_waitv.c  | 74 +++++++++++--------
- 2 files changed, 72 insertions(+), 53 deletions(-)
-
-diff --git a/tools/testing/selftests/futex/functional/futex_wait.c b/tools/testing/selftests/futex/functional/futex_wait.c
-index 685140d9b93d..ffe9a94c1267 100644
---- a/tools/testing/selftests/futex/functional/futex_wait.c
-+++ b/tools/testing/selftests/futex/functional/futex_wait.c
-@@ -48,7 +48,7 @@ static void *waiterfn(void *arg)
- int main(int argc, char *argv[])
- {
- 	int res, ret = RET_PASS, fd, c, shm_id;
--	u_int32_t f_private = 0, *shared_data;
-+	u_int32_t f_private = 0, *shared_data = NULL;
- 	unsigned int flags = FUTEX_PRIVATE_FLAG;
- 	pthread_t waiter;
- 	void *shm;
-@@ -96,32 +96,34 @@ int main(int argc, char *argv[])
- 	/* Testing an anon page shared memory */
- 	shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
- 	if (shm_id < 0) {
--		perror("shmget");
--		exit(1);
--	}
-+		if (errno == ENOSYS) {
-+			ksft_test_result_skip("Kernel does not support System V shared memory\n");
-+		} else {
-+            ksft_test_result_fail("shmget() failed with error: %s\n", strerror(errno));
-+        }
-+	} else {
-+		shared_data = shmat(shm_id, NULL, 0);
- 
--	shared_data = shmat(shm_id, NULL, 0);
-+		*shared_data = 0;
-+		futex = shared_data;
- 
--	*shared_data = 0;
--	futex = shared_data;
-+		info("Calling shared (page anon) futex_wait on futex: %p\n", futex);
-+		if (pthread_create(&waiter, NULL, waiterfn, NULL))
-+			error("pthread_create failed\n", errno);
- 
--	info("Calling shared (page anon) futex_wait on futex: %p\n", futex);
--	if (pthread_create(&waiter, NULL, waiterfn, NULL))
--		error("pthread_create failed\n", errno);
--
--	usleep(WAKE_WAIT_US);
-+		usleep(WAKE_WAIT_US);
- 
--	info("Calling shared (page anon) futex_wake on futex: %p\n", futex);
--	res = futex_wake(futex, 1, 0);
--	if (res != 1) {
--		ksft_test_result_fail("futex_wake shared (page anon) returned: %d %s\n",
--				      errno, strerror(errno));
--		ret = RET_FAIL;
--	} else {
--		ksft_test_result_pass("futex_wake shared (page anon) succeeds\n");
-+		info("Calling shared (page anon) futex_wake on futex: %p\n", futex);
-+		res = futex_wake(futex, 1, 0);
-+		if (res != 1) {
-+			ksft_test_result_fail("futex_wake shared (page anon) returned: %d %s\n",
-+					      errno, strerror(errno));
-+			ret = RET_FAIL;
-+		} else {
-+			ksft_test_result_pass("futex_wake shared (page anon) succeeds\n");
-+		}
- 	}
- 
--
- 	/* Testing a file backed shared memory */
- 	fd = open(SHM_PATH, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
- 	if (fd < 0) {
-@@ -161,11 +163,12 @@ int main(int argc, char *argv[])
- 	}
- 
- 	/* Freeing resources */
--	shmdt(shared_data);
-+	if (shared_data)
-+		shmdt(shared_data);
- 	munmap(shm, sizeof(f_private));
- 	remove(SHM_PATH);
- 	close(fd);
- 
--	ksft_print_cnts();
--	return ret;
-+	ksft_finished();
- }
-+
-diff --git a/tools/testing/selftests/futex/functional/futex_waitv.c b/tools/testing/selftests/futex/functional/futex_waitv.c
-index a94337f677e1..681d78ee869f 100644
---- a/tools/testing/selftests/futex/functional/futex_waitv.c
-+++ b/tools/testing/selftests/futex/functional/futex_waitv.c
-@@ -110,40 +110,56 @@ int main(int argc, char *argv[])
- 	}
- 
- 	/* Shared waitv */
--	for (i = 0; i < NR_FUTEXES; i++) {
--		int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
-+	bool shm_supported = true;
-+	int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
-+
-+	if (shm_id < 0) {
-+		if (errno == ENOSYS) {
-+			shm_supported = false;
-+			ksft_test_result_skip("Kernel does not support System V shared memory\n");
-+		} else {
-+            ksft_test_result_fail("shmget() failed with error: %s\n", strerror(errno));
-+            shm_supported = false;
-+        }
-+	} else {
-+		shmctl(shm_id, IPC_RMID, NULL);
-+	}
- 
--		if (shm_id < 0) {
--			perror("shmget");
--			exit(1);
--		}
-+	if (shm_supported) {
-+		for (i = 0; i < NR_FUTEXES; i++) {
-+			int shm_id = shmget(IPC_PRIVATE, 4096, IPC_CREAT | 0666);
- 
--		unsigned int *shared_data = shmat(shm_id, NULL, 0);
-+			if (shm_id < 0) {
-+				ksft_exit_fail_perror("shmget");
-+			}
- 
--		*shared_data = 0;
--		waitv[i].uaddr = (uintptr_t)shared_data;
--		waitv[i].flags = FUTEX_32;
--		waitv[i].val = 0;
--		waitv[i].__reserved = 0;
--	}
-+			unsigned int *shared_data = shmat(shm_id, NULL, 0);
- 
--	if (pthread_create(&waiter, NULL, waiterfn, NULL))
--		error("pthread_create failed\n", errno);
-+			*shared_data = 0;
-+			waitv[i].uaddr = (uintptr_t)shared_data;
-+			waitv[i].flags = FUTEX_32;
-+			waitv[i].val = 0;
-+			waitv[i].__reserved = 0;
-+		}
- 
--	usleep(WAKE_WAIT_US);
-+		if (pthread_create(&waiter, NULL, waiterfn, NULL))
-+			error("pthread_create failed\n", errno);
- 
--	res = futex_wake(u64_to_ptr(waitv[NR_FUTEXES - 1].uaddr), 1, 0);
--	if (res != 1) {
--		ksft_test_result_fail("futex_wake shared returned: %d %s\n",
--				      res ? errno : res,
--				      res ? strerror(errno) : "");
--		ret = RET_FAIL;
--	} else {
--		ksft_test_result_pass("futex_waitv shared\n");
--	}
-+		usleep(WAKE_WAIT_US);
- 
--	for (i = 0; i < NR_FUTEXES; i++)
--		shmdt(u64_to_ptr(waitv[i].uaddr));
-+		res = futex_wake(u64_to_ptr(waitv[NR_FUTEXES - 1].uaddr), 1, 0);
-+        if (res != 1) {
-+            ksft_test_result_fail("futex_wake shared returned: %d %s\n",
-+                                  res ? errno : res,
-+                                  res ? strerror(errno) : "");
-+            ret = RET_FAIL;
-+        } else {
-+			ksft_test_result_pass("futex_waitv shared\n");
-+		}
-+
-+		for (i = 0; i < NR_FUTEXES; i++)
-+			shmdt(u64_to_ptr(waitv[i].uaddr));
-+	}
- 
- 	/* Testing a waiter without FUTEX_32 flag */
- 	waitv[0].flags = FUTEX_PRIVATE_FLAG;
-@@ -232,6 +248,6 @@ int main(int argc, char *argv[])
- 		ksft_test_result_pass("futex_waitv invalid clockid\n");
- 	}
- 
--	ksft_print_cnts();
--	return ret;
-+	ksft_finished();
- }
-+
--- 
-2.50.1.703.g449372360f-goog
-
+BR, Jarkko
 
