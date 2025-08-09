@@ -1,171 +1,86 @@
-Return-Path: <linux-kernel+bounces-761133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85892B1F4CC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:52:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA9CB1F4DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63960189ED73
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:52:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E71C17EB3B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 14:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799F5277031;
-	Sat,  9 Aug 2025 13:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b="EvpGBCHd"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E7E2BD58A;
+	Sat,  9 Aug 2025 14:12:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A4024166E
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 13:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E448D263C8E
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 14:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754747520; cv=none; b=cpAiVM7OJvEBXntTq9lLy8u/HmBdP/1gSGwuAhBtOG/HVi8rgZnrSgR3XGgqUhs3TM2sVHT29fr8fvIOvEC8V0oqhkojdq23X9luXmMaTiuS4EBjhy7X/9rCAWWx2HkQKOkFXbUcZnFfibLiNpFFtv+KKkMa6kYTwyxZBCe/3MU=
+	t=1754748726; cv=none; b=bsgM6vm6Ujj5ztDS1+RSxYTBdNgtJBuPJ4q47fN5Qj+65veVXJ7IHJzKWLnzoIcMpCNfJCcCRgN2Nx6LxZBjBx0mPYz4lvpVhwj4KJ9stE0nvYKQQtX/Nz7eMqjzi5feKjtUIzzk6dIXbO334G3fVE+LV2pKiw6gZSDdZySJazU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754747520; c=relaxed/simple;
-	bh=tjyqMDsgDi7/+p9JXVyraldUe4Vb3gfBUInuu8Tjjwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q1mDUm16oNehxkvaSft+tuzdoSpzgcdlVYVhY0VD23M/IdqhMz1b9z6uOlafw618nY9xk/vBlYLdaQ3PJtXcnL9hd32EJnsRUv0BAjvUfBoqjBFMzONA/cBpvWSxazLdXgkomEO9mwDuf1b0WUK1PLQfPvj8CS2NcGXNh0JlIUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw; spf=pass smtp.mailfrom=csie.ntu.edu.tw; dkim=pass (2048-bit key) header.d=csie.ntu.edu.tw header.i=@csie.ntu.edu.tw header.b=EvpGBCHd; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.ntu.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csie.ntu.edu.tw
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76bd6e84eddso3963523b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 06:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=csie.ntu.edu.tw; s=google; t=1754747517; x=1755352317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jFMFOpY04n7pfsjOLDYFeb6qmDpqp5aExAGmAsyPClc=;
-        b=EvpGBCHdr6Tyr0yM8WuDiz3JwGPpXKdNFm8+sm5Wky+G0Mir0O/LTLFEm1PpF0oHtu
-         91ikmHaZi0XHHd0c3r3oIxw0jMT3PyqBkGpoWdcENfHaNWThyGEp/WVkBl6KtZzqJiYx
-         +II73la7CVtc/2b6NWngG2EpUG10ICurKN+XIc0HvVJLtfvhJJuXkqY5OgfrV9Uk/Knh
-         jdrMkPVoLfMBOtrTSz3nnH5h4ZYvrW6GO2BopDvP55RBdSQvdElxAOYRkfpzTHHqQcuf
-         SJ41oqp10DT2dJ6aYlzdXoU8wpRvqWVdvkQ+I7qFBdM45TcdRw4VHd+zmRWMWSvqzzpQ
-         vc0Q==
+	s=arc-20240116; t=1754748726; c=relaxed/simple;
+	bh=5XTl3hfM+i6PN4ZwADVuAT0eW5YL7EYH2VQC6mJoZis=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RmVqJFAdSQG++Zm1CtJ/kBbxt/WUEwIYsMojq+ysU3c6ordNaaUzY6K/i8H3qL6snVzE6QQr1uZplXuu1E55j2WefNt5gWscnqLVoDAQxMVlvYTsOkl5Q3Dbf0IFtGcEKTJbydROH6uN/7Oq8lYheOuQkTNVf10UWl7zyZ1wWFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e538a3fecbso10419585ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 07:12:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754747517; x=1755352317;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jFMFOpY04n7pfsjOLDYFeb6qmDpqp5aExAGmAsyPClc=;
-        b=Op9asXMV296cMTTgh9zKm0Mo1RDVvtOGb1IoYlYjWIgZsc/NvIRWA6ldHUVLWrR/4I
-         CkH9lv7BM4fFvYi5BfJG8eLSlMFq/oCRrMJePsSRWNsxHrUuS8rQXGcPhQhw0v5wR6wo
-         CSo5DxzN60Uzxp01AH9eHL+hrFVqvHvF8YcCKw+uFveHHc0Wg7+POO8ouRPbDxzn8gVo
-         45SdsWEXD4L+HtpTw16jp/8FdH5b4miDwSD2o+71UncyKmbciU441sJTafNDEsrIX7nO
-         nTChZOXBhHzV5Ucl6zP4R0+O/ptxy+Ixh0D11JSU9kjFm83XygBBwbHx1j+yMKlGNH4J
-         AOqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNsV/4S5/MKFPYI6F0usWpCFjvqVwTCIbsJlPKAX8pkPH1hINRd7p5JJ0dV37HNujzXmtHDSuulGVYgnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlFfPV9zkTd5qxyQJgwv5EML8d8cqBvf7IswQDXFYkf6V0Jaqb
-	8ilJ/YTEB1/6iphvp1yZubPxShyJUX/cRmh9jwxUu4JFxcNCCYxRguGOJqZsJXBTqqWoMMambnM
-	+3nrDS1hIEM5GpMPn11OCp/txmEN01Cd+YoLz13/iS0iyhKzYoIcrmxSK1r0=
-X-Gm-Gg: ASbGnctURMWxgqXM/iq0a4IM/TVuh8e0tRGn60rFRQUPE8R9CEfz/FyeB3mDKZBtfHd
-	uEqDS8VqenFLjvg2DYg4el/dVJWmMNketrQag0ZrY/Lyyb53yrScdHezs1+aS0c337kZ2PDbj/v
-	IDJRRb9JSfai9YdRRdidj791F8fkJy7Y1wKXxhIjm5zpLYVwjtPGcoBZ4W+xHOjOWOvmVGv3HrE
-	xH1HmshM4zStC9f4kCajYGOQpeCLOEa7h046sM5yWdClmOsj7SJJ+2Rxq4k2Gfj0K/htLmv+gml
-	MLlnLXwco+Fn9ho4+gYemmXBNsTB0e6eILlK4OdP+dZx+nDKqDRs+hzm3Y0B6ShwGHQwL3t0cvD
-	4Aewltjwjqu9/A4NB0QmGYnk2NWbKyu/hBXh9l9ohYXzzpL3zlq5yIikHGfKFdptZkg==
-X-Google-Smtp-Source: AGHT+IEeNgCRS6Ls8b+R2Cf86RDBC5tmWlbLAIMn2W5koGX7pj8yLDZ046+xiBALeYUwG2HzAegNfg==
-X-Received: by 2002:a05:6a21:6d94:b0:240:1bdb:bed2 with SMTP id adf61e73a8af0-240551be2a1mr10707896637.32.1754747516856;
-        Sat, 09 Aug 2025 06:51:56 -0700 (PDT)
-Received: from zenbook (1-162-100-9.dynamic-ip.hinet.net. [1.162.100.9])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8fa10sm22538342b3a.52.2025.08.09.06.51.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 06:51:56 -0700 (PDT)
-From: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
-To: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Sebastian Ene <sebastianene@google.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>,
-	Will Deacon <will@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2] KVM: arm64: ptdump: Don't test PTE_VALID alongside other attributes
-Date: Sat,  9 Aug 2025 21:53:56 +0800
-Message-ID: <20250809135356.1003520-1-r09922117@csie.ntu.edu.tw>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1754748724; x=1755353524;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d46NLEbGCYNLGtaOAWCwaD/PrTEZTMI64r4n4YxYATs=;
+        b=ToIevGBulisPhD+c2jhc7wcZJh2WR+fNOcIq73JM7AxIyYGD/OvJ93Z/ZnBfRdqpE9
+         O7+rmCbk50uKsa/LT/dSJGfxEvJFsQNHUduqQnNY/dhdFjOiPTNeo/bv2NWxxcTowQ50
+         iNryCw6MI/Mdhfe3cozUrNaC8Sk5YUvDj1ZXNG6cJ3hXbdure6DAJWjIUwLQRMNpYtjX
+         hhQjpwsde7lG6Y/yoEA29tIJaPfksrbKjgNV/TJicd79VxnZJtA3zbgBEAanGv5daG2S
+         STPssqbrEBJSbJlPyL3YzbnLSZabQ/jrPXYEQP8QpdP2YfMPGljUUWWTN9RKXNIPjzu1
+         2Yww==
+X-Gm-Message-State: AOJu0YzH/XEZ8Ag/YwxzTqQpiZcnL7Do35vNe0GkLGNStzjN8HpTJuGD
+	WMqtNd+ftRPadggi8d/S2mX74M2ySby8+25n5ZjBGesx+BSEkDI33xNjuKhE1/0h4+t9nmBeSb2
+	CtD+XY7BWxmch+BQoShjWU5MN483wfc0VMmRk/bJQ926JFjhYWOAMrdBj5ho=
+X-Google-Smtp-Source: AGHT+IFhr5rWJpZrv2FA37kUzChbKB9UDwP4rrYi6P4b5BFiIw7puFs8Pd3dgqz+UiQKtCAuklKNXx/nyghnU/ok9Dl9HlyGPOIY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+X-Received: by 2002:a05:6e02:1a8b:b0:3e2:9ab4:3ebf with SMTP id
+ e9e14a558f8ab-3e5331ca273mr136804555ab.19.1754748724083; Sat, 09 Aug 2025
+ 07:12:04 -0700 (PDT)
+Date: Sat, 09 Aug 2025 07:12:04 -0700
+In-Reply-To: <64b5284b-73e7-4ac1-acab-a1eb092e8b16@I-love.SAKURA.ne.jp>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68975734.050a0220.51d73.007d.GAE@google.com>
+Subject: Re: [syzbot] [fuse?] WARNING: refcount bug in process_one_work
+From: syzbot <syzbot+a638ae70fa7b6a1353b4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The attribute masks and test values in the ptdump code are meant for
-individual attributes, however for stage-2 ptdump we included PTE_VALID
-while testing for R, W, X, and AF. This led to some confusion and the
-flipped output for the executable attribute.
+Hello,
 
-Remove PTE_VALID from all attribute masks and values so that each test
-matches only the relevant bits.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Additionally, the executable attribute printing is updated to align with
-stage-1 ptdump, printing "NX" for non-executable regions and "x " for
-executable ones.
+Reported-by: syzbot+a638ae70fa7b6a1353b4@syzkaller.appspotmail.com
+Tested-by: syzbot+a638ae70fa7b6a1353b4@syzkaller.appspotmail.com
 
-Suggested-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Suggested-by: Sebastian Ene <sebastianene@google.com>
-Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
----
-Tested on QEMU.
+Tested on:
 
-Changes in v2, thanks to those listed in the Suggested-by tags:
-  - remove PTE_VALID from .mask and .val
-  - make executable attribute output format identical to stage-1 ptdump
-  - Link to v1: https://lore.kernel.org/kvmarm/20250802104021.3076621-1-r09922117@csie.ntu.edu.tw/
----
- arch/arm64/kvm/ptdump.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+commit:         c30a1353 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11aef1a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e163e02b14cf5481
+dashboard link: https://syzkaller.appspot.com/bug?extid=a638ae70fa7b6a1353b4
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14075434580000
 
-diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
-index 098416d7e5c25..dc5acfb00af91 100644
---- a/arch/arm64/kvm/ptdump.c
-+++ b/arch/arm64/kvm/ptdump.c
-@@ -32,23 +32,23 @@ static const struct ptdump_prot_bits stage2_pte_bits[] = {
- 		.set	= " ",
- 		.clear	= "F",
- 	}, {
--		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
--		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
-+		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R,
-+		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R,
- 		.set	= "R",
- 		.clear	= " ",
- 	}, {
--		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
--		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
-+		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W,
-+		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W,
- 		.set	= "W",
- 		.clear	= " ",
- 	}, {
--		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
--		.val	= PTE_VALID,
--		.set	= " ",
--		.clear	= "X",
-+		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN,
-+		.val	= KVM_PTE_LEAF_ATTR_HI_S2_XN,
-+		.set	= "NX",
-+		.clear	= "x ",
- 	}, {
--		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
--		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
-+		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF,
-+		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF,
- 		.set	= "AF",
- 		.clear	= "  ",
- 	}, {
--- 
-2.50.1
-
+Note: testing is done by a robot and is best-effort only.
 
