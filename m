@@ -1,108 +1,251 @@
-Return-Path: <linux-kernel+bounces-761123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F46B1F4AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40C2B1F4B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE2F62329A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:04:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE43562AA0
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0790227FD52;
-	Sat,  9 Aug 2025 13:04:56 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88B3275B0A
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 13:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3803327FB37;
+	Sat,  9 Aug 2025 13:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IQwg1Ese"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364451DE8AE;
+	Sat,  9 Aug 2025 13:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754744695; cv=none; b=lQcAsNF2Gn5lkhXR5GaNiVbREK5GjCcs79abqTTA/ssQDndeTFR+1v6XMOTi/R/lwmkGTv0E3OHFJrlHgl9jqa6BTELMK9ol4HUTgAqauqFoBJ+OTXA6AXS4lzw/MoHVkK43HAwELzNw56s1Yg/hD4G+ns15PnQjff2ns8kgEj0=
+	t=1754745467; cv=none; b=A6rekSDL+Izvgt7Y5DmQfJyP8v6Qx/Vo8qer0lfUj0O7E5n8WW/bInbB1V2a3P6+OPZcS8OYuyCQKo3b029lcHM/DD77uulSCtM94NAr5nMGAzvggKJTRZAUO4VPjXoIm/dXzZdVlOahEsy5e0aejDz9LvHKd3SAV1z19q7JeEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754744695; c=relaxed/simple;
-	bh=tGpi0w11HTJSv8+vaMNftX3CbkyNObcOdG9bdmdrEVg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RElA9xpjo0lDS+I5Tm/KNyl6sTqpYSJH3xC4p5jd1/wnCdNllmrzWhNWBGG6+8YHX3xdyq6dT4N0mb+w+Z+STgBUsEETtVuxKYpL+oY/JcvHlSq1kCSnL8PyURgC9U+JW9PS3xoehuuLyquyalbY3S7Po6fLS8tRalxPbuus+9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.69.45])
-	by gateway (Coremail) with SMTP id _____8BxrnJoR5do_zM9AQ--.52258S3;
-	Sat, 09 Aug 2025 21:04:40 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.69.45])
-	by front1 (Coremail) with SMTP id qMiowJAxleRfR5doOXY+AA--.38152S2;
-	Sat, 09 Aug 2025 21:04:38 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] sched/deadline: Fix dl_server_stopped()
-Date: Sat,  9 Aug 2025 21:04:19 +0800
-Message-ID: <20250809130419.1980742-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1754745467; c=relaxed/simple;
+	bh=RbSGZsdpzlkDff1hVs81RD6N3zPNN/x5VL/ZTxrfsUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VegPU3XsUhbCZj2K/m2tWlI3/kcQ14XszBBoiwKEGlwqFx5FxTr+y1P8C+/cuZMYgMDEOlIRqyl3NmAexE+FHPXZiRZ6zX4GExZL85lZoob9EL/Sp4L8RanPh3HDLd8h0eVDS8zLbiF9Q9SQ6MocU9rbvF6RMBRWGZiaHOx2vdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IQwg1Ese; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754745466; x=1786281466;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RbSGZsdpzlkDff1hVs81RD6N3zPNN/x5VL/ZTxrfsUM=;
+  b=IQwg1EseZ1nlLx8XDpGgrs/9GAGXNGlg477NQfpkFmlO2c+wF5vtDrZn
+   jlsUGW5iiTqlygooGi1jyauHeljlW1J0Qx27LROs9pYkHExN4xneoz50r
+   e4of//wXyFVrn0HyRkCAJuvprALJy+WtP5sMa2ssRlfZIJtQWkODZhQY0
+   oMpfKXGx6ufS96W78458olnt8A1fFYV3K8buSUT0BNytTJn5nwgOgufbB
+   0cyCYQXN50dQ3bNBfTT7BDHMnN7EDzzffcerFIW0ngO0rivfkJpQMGGpB
+   TI9g2UVtqV7mA7aMX1l7zFD/5jY+BZxzP9j2IL8EBoWHOAaobTlp0O5gO
+   Q==;
+X-CSE-ConnectionGUID: tIIXKegfSRuYQolX6z9UTw==
+X-CSE-MsgGUID: qbJ9+qRiQ32LAljDSl46ew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11515"; a="67338566"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="67338566"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 06:17:45 -0700
+X-CSE-ConnectionGUID: kuu25EDyQBWNUhQnZy+QVw==
+X-CSE-MsgGUID: N+S8Ygg5TUKLxpj6LWRDqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="169746865"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 09 Aug 2025 06:17:42 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ukjS7-0004o0-2h;
+	Sat, 09 Aug 2025 13:17:39 +0000
+Date: Sat, 9 Aug 2025 21:17:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2 11/12] media: rkvdec: Add HEVC support for the VDPU381
+ variant
+Message-ID: <202508092052.AFrUDe6V-lkp@intel.com>
+References: <20250808200340.156393-12-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxleRfR5doOXY+AA--.38152S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw17Cw15uF13Aw47XF1fAFc_yoWkZFX_G3
-	4rZr1xGr10qrs8uwsrZ3y8ZrySqayjq3Z8J3WkWayFka4xJ3s8A34jgF1fX345GryfAF9x
-	JwnIgan3Zr12kosvyTuYvTs0mTUanT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbfkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Cr1j6rxdM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
-	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AK
-	xVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808200340.156393-12-detlev.casanova@collabora.com>
 
-Commit cccb45d7c429 ("sched/deadline: Less agressive dl_server handling")
-introduces dl_server_stopped(). But it is obvious that dl_server_stopped()
-should return true if dl_se->dl_server_active is 0.
+Hi Detlev,
 
-Fixes: cccb45d7c429 ("sched/deadline: Less agressive dl_server handling")
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
-I found that after commit cccb45d7c429 ("sched/deadline: Less agressive
-dl_server handling") there is always a message "sched: DL replenish lagged
-too much" after boot. Then I found this bug, but unfortunately this patch
-cannot wipe the message.
----
- kernel/sched/deadline.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index e2d51f4306b3..bb813afe5b08 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1611,7 +1611,7 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
- static bool dl_server_stopped(struct sched_dl_entity *dl_se)
- {
- 	if (!dl_se->dl_server_active)
--		return false;
-+		return true;
- 
- 	if (dl_se->dl_server_idle) {
- 		dl_server_stop(dl_se);
+[auto build test ERROR on linuxtv-media-pending/master]
+[also build test ERROR on linus/master next-20250808]
+[cannot apply to rockchip/for-next sailus-media-tree/master sailus-media-tree/streams v6.16]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Detlev-Casanova/media-rkvdec-Switch-to-using-structs-instead-of-writel/20250809-041049
+base:   https://git.linuxtv.org/media-ci/media-pending.git master
+patch link:    https://lore.kernel.org/r/20250808200340.156393-12-detlev.casanova%40collabora.com
+patch subject: [PATCH v2 11/12] media: rkvdec: Add HEVC support for the VDPU381 variant
+config: i386-buildonly-randconfig-005-20250809 (https://download.01.org/0day-ci/archive/20250809/202508092052.AFrUDe6V-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250809/202508092052.AFrUDe6V-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508092052.AFrUDe6V-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-hevc.c:119:39: error: field has incomplete type 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     119 |         struct v4l2_ctrl_hevc_ext_sps_st_rps    st_cache;
+         |                                                 ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   1 error generated.
+--
+>> drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:261:23: error: subscript of pointer to incomplete type 'const struct v4l2_ctrl_hevc_ext_sps_lt_rps'
+     261 |                         run->ext_sps_lt_rps[i].lt_ref_pic_poc_lsb_sps;
+         |                         ~~~~~~~~~~~~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:69:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_lt_rps'
+      69 |         const struct v4l2_ctrl_hevc_ext_sps_lt_rps      *ext_sps_lt_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:263:26: error: subscript of pointer to incomplete type 'const struct v4l2_ctrl_hevc_ext_sps_lt_rps'
+     263 |                         !!(run->ext_sps_lt_rps[i].flags & V4L2_HEVC_EXT_SPS_LT_RPS_FLAG_USED_LT);
+         |                            ~~~~~~~~~~~~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:69:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_lt_rps'
+      69 |         const struct v4l2_ctrl_hevc_ext_sps_lt_rps      *ext_sps_lt_rps;
+         |                      ^
+>> drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:263:38: error: use of undeclared identifier 'V4L2_HEVC_EXT_SPS_LT_RPS_FLAG_USED_LT'
+     263 |                         !!(run->ext_sps_lt_rps[i].flags & V4L2_HEVC_EXT_SPS_LT_RPS_FLAG_USED_LT);
+         |                                                           ^
+>> drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:299:77: error: subscript of pointer to incomplete type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     299 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps *rps_data = &run->ext_sps_st_rps[idx];
+         |                                                                 ~~~~~~~~~~~~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+>> drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:310:38: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     310 |         ref_rps_idx = st_rps_idx - (rps_data->delta_idx_minus1 + 1); /* 7-59 */
+         |                                     ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:311:31: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     311 |         delta_rps = (1 - 2 * rps_data->delta_rps_sign) *
+         |                              ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:312:15: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     312 |                    (rps_data->abs_delta_rps_minus1 + 1); /* 7-60 */
+         |                     ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:317:41: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     317 |                 used_by_curr_pic_flag[j] = !!(rps_data->used_by_curr_pic & (1 << j));
+         |                                               ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:318:34: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     318 |                 use_delta_flag[j] = !!(rps_data->use_delta_flag & (1 << j));
+         |                                        ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:376:77: error: subscript of pointer to incomplete type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     376 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps *rps_data = &run->ext_sps_st_rps[idx];
+         |                                                                 ~~~~~~~~~~~~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:381:38: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     381 |         st_rps->num_negative_pics = rps_data->num_negative_pics;
+         |                                     ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:383:38: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     383 |         st_rps->num_positive_pics = rps_data->num_positive_pics;
+         |                                     ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:387:47: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     387 |                 st_rps->used_by_curr_pic_s0[i] = !!(rps_data->used_by_curr_pic & (1 << i));
+         |                                                     ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:391:40: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     391 |                         st_rps->delta_poc_s0[i] = -(rps_data->delta_poc_s0_minus1[i] + 1);
+         |                                                     ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:396:14: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     396 |                                 (rps_data->delta_poc_s0_minus1[i] + 1);
+         |                                  ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:402:47: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     402 |                 st_rps->used_by_curr_pic_s1[j] = !!(rps_data->used_by_curr_pic & (1 << (i + j)));
+         |                                                     ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:406:38: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     406 |                         st_rps->delta_poc_s1[j] = rps_data->delta_poc_s1_minus1[j] + 1;
+         |                                                   ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:411:14: error: incomplete definition of type 'const struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     411 |                                 (rps_data->delta_poc_s1_minus1[j] + 1);
+         |                                  ~~~~~~~~^
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+>> drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.c:427:42: error: invalid application of 'sizeof' to an incomplete type 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+     427 |         if (!memcmp(cache, run->ext_sps_st_rps, sizeof(struct v4l2_ctrl_hevc_ext_sps_st_rps)))
+         |                                                 ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-common.h:68:15: note: forward declaration of 'struct v4l2_ctrl_hevc_ext_sps_st_rps'
+      68 |         const struct v4l2_ctrl_hevc_ext_sps_st_rps      *ext_sps_st_rps;
+         |                      ^
+   fatal error: too many errors emitted, stopping now [-ferror-limit=]
+   20 errors generated.
+
+
+vim +119 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-hevc.c
+
+   115	
+   116	struct rkvdec_hevc_ctx {
+   117		struct rkvdec_aux_buf			priv_tbl;
+   118		struct v4l2_ctrl_hevc_scaling_matrix	scaling_matrix_cache;
+ > 119		struct v4l2_ctrl_hevc_ext_sps_st_rps	st_cache;
+   120		struct rkvdec_vdpu381_regs_hevc		regs;
+   121	};
+   122	
+
 -- 
-2.47.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
