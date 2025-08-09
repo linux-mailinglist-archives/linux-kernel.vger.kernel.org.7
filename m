@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-761283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989FCB1F726
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 01:01:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64002B1F724
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 01:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6A4F7AE6BD
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:00:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282D8189F24C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767732566F5;
-	Sat,  9 Aug 2025 23:01:46 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9645F2522A7;
+	Sat,  9 Aug 2025 23:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T7m+UkYw"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9EE186294;
-	Sat,  9 Aug 2025 23:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971871C2324;
+	Sat,  9 Aug 2025 23:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754780506; cv=none; b=Ah44hAwUPZVydf9fOdUrw6U2dSqX3gDYOcCZacLoEOlsC9C/in23oFXruSpZ0qG6tTMD17ZWtrN9XjKfL4RvP7txcMoTKteZ+PpTFCvS2QAsIMGvU1EK4Ct7ciG5q5aXlz/GVqjWAtgPxZtUgOny+LLRR+7GAdjvci2L7nuzWH8=
+	t=1754780491; cv=none; b=hef4NVK4k5nUreT2y6GsPysDb3xLfhj+sKUwLUx+x/GyHW41NdAu2IvD0mT7wSc5Vtpp8x+UU5n2sGE1/kUIdr/WVrK0SzrYId4L2GL12goITkUjZL3mgter53b5YayeSzFZ6J/FWJvRDFYZeYP/wvJLEqfX1d5KO2gGtoWJ8J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754780506; c=relaxed/simple;
-	bh=CjJsvcst6MRZmo+FQY5M+ytxwUkRquRR0/OqVbCuUKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=R/Y/CTUWILbQ1lVZqHAdVzHgbaaXHWau1jkd6oxgWUrem3q1TFeT68I7CtkRp9dPnc8IHQeIQunVApOxJp8HOsU5M7hWwZPb4KYYUVgDE2CIZ2g3nu2g5i1IdWE3lmJe/2cJbUbX1X3VMC7YrJypavjOhPTrPQDdqWWJasfNXd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1uksAA-000000002Cb-2BOp;
-	Sat, 09 Aug 2025 22:35:42 +0000
-Date: Sat, 9 Aug 2025 23:35:28 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Arkadi Sharshevsky <arkadis@mellanox.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	s=arc-20240116; t=1754780491; c=relaxed/simple;
+	bh=If17jhKfTfvnCrbpdWWKlNj01AnvZXZylbmRi/I12RU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNnJ/3J1/uOJ0PaBasY1N+ioXGfC7mCDdc15A/LzkzNid8ZtF0rk0GDMGA9LjT3tUwuWpH4XDaR7IT7fMwbaBWYUL/aBP31zLvU2akridkYUaljI51vUEtKrvY8n3qEKSIyVyh3k2F9jCcPjyJNIFUWuzKyiqCBLcE/f6/NJvWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T7m+UkYw; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+GHbL+2thnDTAchEhJDBnLOieaRoTv86wX69IAATfFE=; b=T7m+UkYwdpn1IGrDs8M6co92C0
+	TmJrfLYHXV8vKDyuQMkNXNOanLqnUcpHmVK7nUMPM2MqxYNtX56R2DpLiebN5H3NfyMdMX+lCnpCL
+	amcOLur3bN3YWHgZTO0nnTb5mK02hfVggHRztHSbj0Yfnm67qvKUd3w1neFGX8q8txgOeGBhZFLtS
+	dfOtbC8mgpfiX7FB60Q6jgYpQrhV8FRcQiySKh3eXVBKZLkzkJUi8XsO92NPq4IcWDU4E/sSaqbkB
+	M5K2DzAq90J4J+YWdib7tdPhlRKtZQrzR+thrd3Y200W1TgbDh/3ae5Pt5+aZQZ2eEiMXXYodXNx7
+	vBZ6vKHQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uksYw-00000009owE-3Qhe;
+	Sat, 09 Aug 2025 23:01:18 +0000
+Date: Sun, 10 Aug 2025 00:01:18 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Aquinas Admin <admin@aquinas.su>,
+	Malte =?iso-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Carl E. Thompson" <list-bcachefs@carlthompson.net>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Andreas Schirm <andreas.schirm@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	John Crispin <john@phrozen.org>
-Subject: [PATCH/RFC net] net: dsa: lantiq_gswip: honor dsa_db passed to
- port_fdb_{add,del}
-Message-ID: <aJfNMLNoi1VOsPrN@pidgin.makrotopia.org>
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Message-ID: <aJfTPliez_WkwOF3@casper.infradead.org>
+References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
+ <1869778184.298.1754433695609@mail.carlthompson.net>
+ <5909824.DvuYhMxLoT@woolf>
+ <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,142 +67,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
 
-Commit c9eb3e0f8701 ("net: dsa: Add support for learning FDB through
-notification") added a dev_close() call "to indicate inconsistent
-situation" when we could not delete an FDB entry from the port. In case
-of the lantiq_gswip driver this is problematic on standalone ports for
-which all calls to either .port_fdb_add() or .port_fdb_del() would just
-always return -EINVAL as adding or removing FDB entries is currently
-only supported for ports which are a member of a bridge.
+On Sat, Aug 09, 2025 at 01:36:39PM -0400, Kent Overstreet wrote:
+> Yes, this is accurate. I've been getting entirely too many emails from
+> Linus about how pissed off everyone is, completely absent of details -
+> or anything engineering related, for that matter. Lots of "you need to
+> work with us better" - i.e. bend to demands - without being willing to
+> put forth an argument that stands to scrutiny.
 
-As since commit c26933639b54 ("net: dsa: request drivers to perform FDB
-isolation") the dsa_db is passed to the .port_fdb_add() or
-.port_fdb_del() calls we can use that to set the FID accordingly,
-similar to how it was for bridge ports, and to FID 0 for standalone
-ports. In order for FID 0 to work at all we also need to set bit 1 in
-val[1], so always set it.
+Kent, if you genuinely don't understand by now what it is that you do
+that pisses people off, find someone you trust and get them to explain it
+to you.  I've tried.  Other people have tried.  You react by dismissing
+and insulting us, then pretending months later that you've done nothing
+wrong.  Now you've pissed off Linus and he has ultimate power to decide to
+accept your pull requests or not ... and he's decided not to.  You had
+a lot of chances to fix your behaviour before it got to this point.
+It's sad that you chose not to take any of them.
 
-This solution was found in a downstream driver provided by MaxLinear
-(which is the current owner of the former Lantiq switch IP) under
-GPL-2.0. Import the implementation and the copyright headers from that
-driver.
+Can you really not see the difference between, eg Palmer's response here:
+https://lore.kernel.org/lkml/mhng-655602B8-F102-4B0F-AF4A-4AB94A9F231F@Palmers-Mini.rwc.dabbelt.com/
 
-Fixes: c9eb3e0f8701 ("net: dsa: Add support for learning FDB through notification")
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- drivers/net/dsa/lantiq_gswip.c | 55 ++++++++++++++++++++--------------
- 1 file changed, 33 insertions(+), 22 deletions(-)
+and your response whenever Linus dares to critique even the smallest
+parts of your pull requests?
 
-diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
-index 6eb3140d4044..fed86b2d78fc 100644
---- a/drivers/net/dsa/lantiq_gswip.c
-+++ b/drivers/net/dsa/lantiq_gswip.c
-@@ -2,9 +2,11 @@
- /*
-  * Lantiq / Intel GSWIP switch driver for VRX200, xRX300 and xRX330 SoCs
-  *
-- * Copyright (C) 2010 Lantiq Deutschland
-- * Copyright (C) 2012 John Crispin <john@phrozen.org>
-+ * Copyright (C) 2023 - 2024 MaxLinear Inc.
-+ * Copyright (C) 2022 Snap One, LLC.  All rights reserved.
-  * Copyright (C) 2017 - 2019 Hauke Mehrtens <hauke@hauke-m.de>
-+ * Copyright (C) 2012 John Crispin <john@phrozen.org>
-+ * Copyright (C) 2010 Lantiq Deutschland
-  *
-  * The VLAN and bridge model the GSWIP hardware uses does not directly
-  * matches the model DSA uses.
-@@ -239,6 +241,7 @@
- #define  GSWIP_TABLE_MAC_BRIDGE_KEY3_FID	GENMASK(5, 0)	/* Filtering identifier */
- #define  GSWIP_TABLE_MAC_BRIDGE_VAL0_PORT	GENMASK(7, 4)	/* Port on learned entries */
- #define  GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC	BIT(0)		/* Static, non-aging entry */
-+#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID	BIT(1)		/* Valid bit */
- 
- #define XRX200_GPHY_FW_ALIGN	(16 * 1024)
- 
-@@ -1349,30 +1352,37 @@ static void gswip_port_stp_state_set(struct dsa_switch *ds, int port, u8 state)
- }
- 
- static int gswip_port_fdb(struct dsa_switch *ds, int port,
--			  const unsigned char *addr, u16 vid, bool add)
-+			  const unsigned char *addr, u16 vid, struct dsa_db db,
-+			  bool add)
- {
--	struct net_device *bridge = dsa_port_bridge_dev_get(dsa_to_port(ds, port));
- 	struct gswip_priv *priv = ds->priv;
- 	struct gswip_pce_table_entry mac_bridge = {0,};
--	unsigned int max_ports = priv->hw_info->max_ports;
- 	int fid = -1;
--	int i;
- 	int err;
-+	int i;
- 
--	if (!bridge)
--		return -EINVAL;
--
--	for (i = max_ports; i < ARRAY_SIZE(priv->vlans); i++) {
--		if (priv->vlans[i].bridge == bridge) {
--			fid = priv->vlans[i].fid;
--			break;
-+	switch (db.type) {
-+	case DSA_DB_BRIDGE:
-+		for (i = 0; i < ARRAY_SIZE(priv->vlans); i++) {
-+			if (priv->vlans[i].bridge == db.bridge.dev) {
-+				fid = priv->vlans[i].fid;
-+				break;
-+			}
- 		}
--	}
--
--	if (fid == -1) {
--		dev_err(priv->dev, "no FID found for bridge %s\n",
--			bridge->name);
--		return -EINVAL;
-+		if (fid == -1) {
-+			dev_err(priv->dev, "Port %d not part of a bridge\n", port);
-+			return -EINVAL;
-+		}
-+		break;
-+	case DSA_DB_PORT:
-+		if (dsa_is_cpu_port(ds, port) &&
-+			dsa_fdb_present_in_other_db(ds, port, addr, vid, db))
-+			return 0;
-+		/* FID of a standalone / single port bridge */
-+		fid = 0;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
- 	}
- 
- 	mac_bridge.table = GSWIP_TABLE_MAC_BRIDGE;
-@@ -1382,7 +1392,8 @@ static int gswip_port_fdb(struct dsa_switch *ds, int port,
- 	mac_bridge.key[2] = addr[1] | (addr[0] << 8);
- 	mac_bridge.key[3] = FIELD_PREP(GSWIP_TABLE_MAC_BRIDGE_KEY3_FID, fid);
- 	mac_bridge.val[0] = add ? BIT(port) : 0; /* port map */
--	mac_bridge.val[1] = GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC;
-+	mac_bridge.val[1] = add ? (GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC |
-+				   GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID) : 0;
- 	mac_bridge.valid = add;
- 
- 	err = gswip_pce_table_entry_write(priv, &mac_bridge);
-@@ -1396,14 +1407,14 @@ static int gswip_port_fdb_add(struct dsa_switch *ds, int port,
- 			      const unsigned char *addr, u16 vid,
- 			      struct dsa_db db)
- {
--	return gswip_port_fdb(ds, port, addr, vid, true);
-+	return gswip_port_fdb(ds, port, addr, vid, db, true);
- }
- 
- static int gswip_port_fdb_del(struct dsa_switch *ds, int port,
- 			      const unsigned char *addr, u16 vid,
- 			      struct dsa_db db)
- {
--	return gswip_port_fdb(ds, port, addr, vid, false);
-+	return gswip_port_fdb(ds, port, addr, vid, db, false);
- }
- 
- static int gswip_port_fdb_dump(struct dsa_switch *ds, int port,
--- 
-2.50.1
-
+[pointless attempt to divert the conversation to engineering snipped]
 
