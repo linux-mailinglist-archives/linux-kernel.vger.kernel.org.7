@@ -1,88 +1,79 @@
-Return-Path: <linux-kernel+bounces-761126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D74B1F4BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:24:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A4AB1F4BC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1FD720F7C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7C762712D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C2C29B208;
-	Sat,  9 Aug 2025 13:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB4629B764;
+	Sat,  9 Aug 2025 13:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1NpFZ9L"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="AHXQNRTc"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE016157A5A;
-	Sat,  9 Aug 2025 13:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B6623C4FA;
+	Sat,  9 Aug 2025 13:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754745856; cv=none; b=IVwrmgl73BC2Rei+SOjT+PhhkSs89Ti/AQcLtteaNt7pAvlHNHbkl3Bu1i4XbXYf9WqbsddEMqVGjJPFtyaFMw89EnZJr7CQxICfkZuIdZbZaXVnZlB0qWh+wPXHkFN0jlEggZFEEIBIh9I60fo1ThgfW53y5g/nyFUuWXRuw68=
+	t=1754746135; cv=none; b=GzH4NFvOi5qQUEvGIqw2OKbjuFE5TVCOQZgMrXaINnuULtrYIHmphGspJKzs0yOLd/WTBRkf1seYn6Uc2wHHhbOV8sqEHRYLdMiVrimDFEI6p4buTXlLA/ZmEfVFSRlpwQHtQztz5SZLD7e/i2v3pW+coI4xINl4/1LoNj7Vvx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754745856; c=relaxed/simple;
-	bh=i/aXl3FafuonDW2uRsPEFO2nW4UOl5q69OmnYgerOAg=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awdJp0GrCzDb+JhhW2gTc3jgI7ohQmfS5rCBKSkQWjLC0M1SqoHfrkrAJ+h3iSTUozdsLsMHmsQ2WLMaAidS61hEP6Iqy7ktzy84FOmoI+Z1jyIwuUzwIk8Brza1AhHZZn5v+JzJrEtHhsq8Hp7Uegdr5Mn1kGcp9eNpZfSK0/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H1NpFZ9L; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-31f1da6d294so2766264a91.2;
-        Sat, 09 Aug 2025 06:24:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754745854; x=1755350654; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gg5qA8e+0UYHLSOIBa7q2BXIt9K71iMCY0q3plis3nE=;
-        b=H1NpFZ9LFpgupZKYuO4NiQMnq0xGp37VUWAsup1vMXJDdAis2NKgvEFxbJbGcwNS3C
-         EU36DYeR6QJJV/ZA3rmjsaR8P+3Iz+AU64R0fJHxUKEfGHHDBzOSqPVtNrYDWLgYIg6r
-         1/dTN3uq7AjMSXoGWuLwmTJcnO4958XZrAG4fvG9bHQVWBgFtJVNIJ7nTdrLgrMBGhuP
-         N1/sI9HH2Op/+/F2LS7ufK/LG8gmL0QzgRMUApA274padEPf6TSuOltkNCDorBr2QCO+
-         N1jZJMJorgzoSOncgnSxZ15lwrjRJwQg+7vV3tf/nH1c2ExCgwEQwkh46r3rvFN/XiMh
-         QIRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754745854; x=1755350654;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gg5qA8e+0UYHLSOIBa7q2BXIt9K71iMCY0q3plis3nE=;
-        b=CB4IVd8a9Lo8xQAwX1N3RC7JWbZxyecDNDqe5zMDwRVJVZSq9TG0IswHXkm4I/Woqb
-         vuY7obgMP72IRMcnj+fSmfpiisaNZMkXlBAgMXrrqksCqKMTjt9vUVMYIs/z4U6NfQTF
-         3qi4H1XMluZCMgR59q2r8aCvkASm0uD2l+HHkq2N/9g3/APa3olBj2unr5r0EOqjEGpU
-         jqQ6rKWbFkw1Nnir9QHwUVf5i3ogco0KehTz26zfe+uexIQ2ISnr4+DQy/Vbyag+1O1D
-         Dah4dMYkGcmvJIi25dKM37miSRi46I8UQVpusqGOUZ4JbBv3ReNzq5Xg2Zf6O0FU9SgI
-         sw/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUAZY91GiyLUK4IJm810nmnf26SjP6SJ9JEyMV8JIeoli5kqfAhADJBDgp/lIdHaBRBKCp22paS/fn8MKU=@vger.kernel.org, AJvYcCXpv4F32kkoGhHbMu9x4G8rPHh+xIu5WOXorL/guJgs3ByzeHHKYHMS6hcmkFAYBqQzEyxf2xxI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGRP+6xYNTY1RJDaYUZjrwgmIcOM8asbhcEoNnXp2eHpFQ92af
-	Wj6Yf2D6OBplfApefaDLoOo/yVTm0S3Ft+P4/jp7HDDYPLWRkgV6bzcZ
-X-Gm-Gg: ASbGncvgyjgWOevP+plt5ydxtNoYpdx7wIjEU2RAIzxH6gyX0Nol0kmeO71S7Q7kJS2
-	1sieXLbSCsadayVNoZ2vMa1V6AkfBLj+Pujzk0/m1E9ID3UTpoVooXXvY1zjYY0Xv8G2A12fK8u
-	kdjlVTQN8OpmVUkOPhnV26PIsSGFUfnoRB4QOOedK0C7fTdYn7J3vckwgCWL2f7z+LB8EMKPt+q
-	Ujlrwxt7qIGbf12BN+ZszEXsD7GpWK+xDKzrO5jEa3AWgCeUmIct7FDtX4q0R8Dj2uR3TBQ+gRt
-	OwLjCg27eViWugqS6alKpbN3tLPl0yuRXniRIxLf4Xm2s4P47XCIKU9z+XyMOAW2krRB4FRJ89+
-	qw0msit4Ss35731mY1k8LwQ==
-X-Google-Smtp-Source: AGHT+IG6XUjvU1ujGKElusFwiJuytuORtuq2Rt2NrzrdYHFF84WEYLfReDSdYsL1FrWIQ0Z4Hb3WYw==
-X-Received: by 2002:a17:90b:2ecc:b0:321:87fa:e1e8 with SMTP id 98e67ed59e1d1-32187fae3a9mr7874585a91.2.1754745854056;
-        Sat, 09 Aug 2025 06:24:14 -0700 (PDT)
-Received: from localhost ([216.228.127.129])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3218c3c2d58sm3034935a91.16.2025.08.09.06.24.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 06:24:13 -0700 (PDT)
-Date: Sat, 9 Aug 2025 09:24:11 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, wireguard@lists.zx2c4.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] rework wg_cpumask_next_online()
-Message-ID: <aJdL-5t9va5Ln0xv@yury>
-References: <20250719224444.411074-1-yury.norov@gmail.com>
+	s=arc-20240116; t=1754746135; c=relaxed/simple;
+	bh=TRSaDjzbvtdu1i28FtkDB5I4os3zzzmPa28t2zf3BKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6GiklgVe8Dk1dFr+i7QlTFezyqbT3NORQgU4dKSjOkVDmkeLxwISD4JAT05LXY8YZQwikFjIIhyrVYajhnYGYMYKhMUuhq4xRfQiuYpBv+KVivn2l/7WYwk9IjjiKhF0FcZWCGCQwtSzRp+tNqvbmLKA/fZIQ1KRTmntjrJJOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=AHXQNRTc; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1754746125;
+	bh=TRSaDjzbvtdu1i28FtkDB5I4os3zzzmPa28t2zf3BKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=AHXQNRTc9vIj2nij1HLyG1mCZACXTF7AyoUYN8GmMp6bx/i3nFYMZl1R9rTHimUlm
+	 bgnUcQGFQxwmcTKsN0g6rvMMl5aqByM+94pRy54hxIOjfZb4iJLpcEPsTZ9XsR8B7R
+	 2i3VDzAvXgA8Le0kNdaMgbANaeF3DOf+ni6Pp7MbqsGK0V/HR6tR1LPCLUWP2cZuXs
+	 TaRyLo0RVtIKNYTcC/2qYm2LWkhl2aYMlA6gvI/T14KWgytwbkSu1/Xm+CZVgLFloS
+	 hJVRNPNXdqBe2RD/k8MC54zqGhTyLz9OMSX37geI+wfb6VYMiGdTp6eHo8JbIbJQ1+
+	 sBCqtDRek/gDg==
+Received: from linux.gnuweeb.org (unknown [182.253.126.185])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 7E12F3127CAF;
+	Sat,  9 Aug 2025 13:28:42 +0000 (UTC)
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Sat, 9 Aug 2025 20:28:39 +0700
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lukas Wunner <lukas@wunner.de>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux PCI Mailing List <linux-pci@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof Wilczynski <kwilczynski@kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>,
+	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>,
+	gwml@vger.gnuweeb.org, namcaov@gmail.com
+Subject: Re: [GIT PULL v2] PCI changes for v6.17
+Message-ID: <aJdNB8zITrkZ3n6r@linux.gnuweeb.org>
+References: <ed53280ed15d1140700b96cca2734bf327ee92539e5eb68e80f5bbbf0f01@linux.gnuweeb.org>
+ <aJQi3RN6WX6ZiQ5i@wunner.de>
+ <aJQxdBxcx6pdz8VO@linux.gnuweeb.org>
+ <20250807050350.FyWHwsig@linutronix.de>
+ <aJQ19UvTviTNbNk4@linux.gnuweeb.org>
+ <aJXYhfc/6DfcqfqF@linux.gnuweeb.org>
+ <aJXdMPW4uQm6Tmyx@linux.gnuweeb.org>
+ <87ectlr8l4.fsf@yellow.woof>
+ <aJZ/rum9bZqZInr+@biznet-home.integral.gnuweeb.org>
+ <20250809043409.wLu40x1p@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,25 +82,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250719224444.411074-1-yury.norov@gmail.com>
+In-Reply-To: <20250809043409.wLu40x1p@linutronix.de>
+X-Gw-Outgoing-Server-Hash: 01afd303c8b96d0c1d5e80aa96a4ee40ec69888f786fa24107c0862c0644af79
 
-Ping?
+On Sat, Aug 09, 2025 at 06:34:29AM +0200, Nam Cao wrote:
+> On Sat, Aug 09, 2025 at 07:52:30AM +0900, Ammar Faizi wrote:
+> > I can do that. Send me a git diff. I'll test it and back with the dmesg
+> > output.
+> 
+> That would be very helpful, thanks!
+> 
+> Please bear with me, this may take a few iterations.
+> 
+> Let's first try the below.
 
-On Sat, Jul 19, 2025 at 06:44:41PM -0400, Yury Norov wrote:
-> From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> 
-> Simplify the function and fix possible out-of-boundary condition.
-> 
-> v2:
->  - fix possible >= nr_cpu_ids return (Jason).
-> 
-> Yury Norov (NVIDIA) (2):
->   wireguard: queueing: simplify wg_cpumask_next_online()
->   wireguard: queueing: always return valid online CPU in wg_cpumask_choose_online()
-> 
->  drivers/net/wireguard/queueing.h | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> -- 
-> 2.43.0
+I just got home from a family outing. A bit slow response.
+
+Here's the result:
+
+  https://gist.github.com/ammarfaizi2/ef5f98123ed3868f8d64ed41662edd63#file-dmesg_pci_debug_001-txt-L853
+
+-- 
+Ammar Faizi
+
 
