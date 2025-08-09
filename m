@@ -1,171 +1,129 @@
-Return-Path: <linux-kernel+bounces-761097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C23A6B1F458
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:13:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08CAB1F45F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791783B4CE8
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:13:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71DB567965
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA70427CCE0;
-	Sat,  9 Aug 2025 11:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7150727D780;
+	Sat,  9 Aug 2025 11:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4EeApLm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNkVchFu"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B18213D539;
-	Sat,  9 Aug 2025 11:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCCC246779;
+	Sat,  9 Aug 2025 11:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754738025; cv=none; b=iF0JUgWIojfw7JggJP18ZlJEljFzDWuQumuMJB6Owo8v+El0fZZkAJZeXOdm7rr5ou8xFV/vrfSb1aLYht9HEMrFiXAJgsguHP2mX8XJaxxU+nx73FMt7TMw3xajWA9nG+PvUmoUqqy3VWAsVmp9vHT9J7xrVjR5akvo9peUCy4=
+	t=1754738926; cv=none; b=OEWUNavuBIAKhtRQ6cclmG0CX5nEwBxJfoNNR/fCuZ5Mi6KvXK7qMTmX2W8V0qzMHKVlbN8TBgwXlUF0PMSbK/APyV0I/P4buZ3Cl5uoC4CbeT0diGNM2JvkKEaiXi0/ePwqJqYKnYnLnm+VyZW4/GdYZPZxAMWc0DJ3Aa0BVg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754738025; c=relaxed/simple;
-	bh=mwTGoJ1vJekZDumrlzePyF4v7ik+2mC6/XKusF2wlkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CS2HKIEFeTZFSWjYZSmxFkTsF7gvfSLGnRZNsimQ+cAbZYiesPEJJeHbZE44mp6kDCGHyvJEVhZFDRB4mMgukxqjaAbcCdwATEZlb77hcQnxzE6qXFDqmlXigS71qRNQRQQ2kztY52dHFVq1h8K80gOEyXrffyOkfFUqKmYwH9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4EeApLm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A04EC4CEE7;
-	Sat,  9 Aug 2025 11:13:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754738024;
-	bh=mwTGoJ1vJekZDumrlzePyF4v7ik+2mC6/XKusF2wlkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i4EeApLm9HV60hGRx8yNmXdQOcs5p382vugfMwd6b2ZU6+xsLGEbyx5Kc15wmYbDB
-	 RtIytPwLJP8l9xJVe1ezILZ92YOnx7haquRmPFlQJxjlNbz9pKulfLjqJLbejF7YXE
-	 ifIM5iCqZmQx8fV0AsF1TRje4XcmHTkHEMBHDVcygxHW8ee/S3l/gc21JjFfJZxa79
-	 Y+VihLkJIHb4MAt+CRTeJC304AWoio8ZDQVqIPl3BrlBEGBEhAuQJhTqgTMCD7lUmy
-	 m15DrniUUrzi7u/mLuTzYrpwJZaXfkN54r2MunZAHCsnW7LLkUjPxuLH28vgU1sYBV
-	 Rz24cYj2bqa6A==
-Date: Sat, 9 Aug 2025 16:43:35 +0530
-From: 'Manivannan Sadhasivam' <mani@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: 'Konrad Dybcio' <konrad.dybcio@oss.qualcomm.com>, 
-	'Krzysztof Kozlowski' <krzk@kernel.org>, 'Ram Kumar Dwivedi' <quic_rdwivedi@quicinc.com>, 
-	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, agross@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
+	s=arc-20240116; t=1754738926; c=relaxed/simple;
+	bh=YAcz0GI6lmhmLOzPOdOzpzMapTDL/z/W8wLkh75SQL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r7FVCokpH1EFtRCYplsoOLxX3e+VVIXVzNFviob1hw+UO7k7R2m0UxjJrsKrRfsNTm0651VIUnukxqk4ZEWFIN2yYK6uSF2DiuyNdmd2FVtxJ1Kj2/V38oCd1LlPC/xwFmRxUMAF8g8deAmU/8Z9bjnov8zQwCzSVn5BQhuXSRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YNkVchFu; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459ddb41539so10101725e9.2;
+        Sat, 09 Aug 2025 04:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754738923; x=1755343723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6jUBDNtcZUdQBqv/XouqcNisEUoX1i6dcMgd7LXXpWM=;
+        b=YNkVchFubTECVJH1SPEIiYX017yGCpF5xXj1zfAlju1E3//dFpDwSRl6zCgn2xyuQy
+         UKrvIPYHV7v4tnT++2Po1kbTP4FENDf5jQPUBkfARpNc5gPYF76jQVnGHUyE9WJY3bZk
+         MtGeos3ecyNf4NWc+iQH9/bz/OLnX76gOxFOb/tDdRnRC0QsPs8PDIxk4GPfhtpxS80Y
+         hRPbdDX/ugHU4rSkMZeLFya9CHMGkWgUBCCrbDr5pJ+aF/Ev3zcj+1D438yzg5OzHQGx
+         F6oqGlv9tKGgF2nuDTaQvjG+HaVB+NiJK3PQM2raza/0TZIVet34fr4BxETi0SIk9u+e
+         DM0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754738923; x=1755343723;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6jUBDNtcZUdQBqv/XouqcNisEUoX1i6dcMgd7LXXpWM=;
+        b=TmXYjHJmKY8+N4T93zYkPpEKdW2dsdGvtB94HtOwoWpmmEks0itgb2FUG3vKYHifhl
+         Ym4KjGJWg3EAE/p3jFMsYYmWiVNQYB2sYN5WCgMREEHYWpGu61iUfF6uRVDlhv1pjeJ9
+         xlxQecpqZDaLtNJU/+onxrT0cMzdbdQAG2E86I9+nMagBJA/A2mV9gxQ4bQzQNG1QiW/
+         A9JJZIx44Lj1Ux1zcT27keV+6qntKeJq4NcpdjOlWbEUKZAxtLojqteHTM8gLQO89lFx
+         7FGHcuBlA8WYB9NgLeC4aFUAQfttfTpQfqRFnBk8EYSWwDSUbdFlYSzsHBhx+V+nopZq
+         MnXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUG712c6yQcP2eqQc1OFZd3ENHtP/CqWrpu3/SACr4ymEiOjx+eM1YulYV5RzTDQT+KCzvNOlJgdI=@vger.kernel.org, AJvYcCVod+KVv6VDhoHjIfJ1FNp/nzvvoPyd0xwNiw3tfEIRKexLNvsx8M3Pbwbe2l7BxdjMqzkKsi36M50T8iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoyV+VygECWo866BdjWReXiNZkJBqS1FJD6/BkKhL47nLnxhgC
+	zubWHDX0imSyeHc6YhjX8JgdbBeVGLTeCaWf+WAWpoQOoIieGMD32fbh
+X-Gm-Gg: ASbGncui3HdG7b5w1UYy70tg7nfRronblNfnvccge/Jxnlp9uRqHhsnrVOq3BO5Gc+A
+	xBseB8NnXzCrCfmqPDKXNNWCsE1X0V8IJH6IN5c+y/hOCJBXrSTTD1g+TviDr4qGOfnLV2v2YS6
+	VQObJZR1DvYyyYIFr5AYUzhHmQ+JtC3wI8ATxhwlGHWiy0kzU4wM2lEMF3SLT+ZnhTAMZ7rzydH
+	MbBvopQFj/SsGFdJg0i+W2ximy/ZwpuO0Yv5Q/sE+DPjbN9E84qJwC8DF+ZOHfpwiFoWufi3HoR
+	3x04GNS7rUwy3if8VoV7WfZOplvOkah4tl014sjQ4Javeh3I2KxhQ0I/UPvCKkOd57O4lrBSS75
+	szjh8DypmayfUR9M7Yvd96nC4/c4rjl0nkN/oFYJyz2dJG3EjWkh7OjztBaEc+lHlvwxjmWE9eT
+	tPDg==
+X-Google-Smtp-Source: AGHT+IHGpAZN88lSkNQFhW8Q7CX8cvPXLBRCvqb9iAebcw24MmuPgU9OMUjXhEiZ9pvM9mcp8UqlhQ==
+X-Received: by 2002:a05:600c:6286:b0:439:86fb:7340 with SMTP id 5b1f17b1804b1-459f5687c58mr62609365e9.30.1754738923262;
+        Sat, 09 Aug 2025 04:28:43 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-80-181-255-224.pool80181.interbusiness.it. [80.181.255.224])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-458f713eb44sm293650725e9.14.2025.08.09.04.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 04:28:42 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-Message-ID: <o2lnzaxurshoyyxtdcyiyphprumisggd6m2qvcoeptvnkvh4ap@dm2nc4krinja>
-References: <06d201dc0689$9f438200$ddca8600$@samsung.com>
- <wpfchmssbrfhcxnoe37agonyc5s7e2onark77dxrlt5jrxxzo2@g57mdqrgj7uk>
- <06f301dc0695$6bf25690$43d703b0$@samsung.com>
- <CGME20250806112542epcas5p15f2fdea9b635a43c54885dbdffa03b60@epcas5p1.samsung.com>
- <nkefidnifmbnhvamjjyl7sq7hspdkhyoc3we7cvjby3qd7sgho@ddmuyngsomzu>
- <0d6801dc07b9$b869adf0$293d09d0$@samsung.com>
- <fh7y7stt5jm65zlpyhssc7dfmmejh3jzmt75smkz5uirbv6ktf@zyd2qmm2spjs>
- <0f8c01dc0876$427cf1c0$c776d540$@samsung.com>
- <xqynlabahvaw4cznbofkkqjr4oh7tf6crlnxoivhpadlymxg5v@a4b5fgf55nqw>
- <10ae01dc08c9$022d8aa0$06889fe0$@samsung.com>
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH] cpufreq: airoha: Add support for AN7583 SoC
+Date: Sat,  9 Aug 2025 13:28:30 +0200
+Message-ID: <20250809112832.15830-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <10ae01dc08c9$022d8aa0$06889fe0$@samsung.com>
 
-On Sat, Aug 09, 2025 at 06:30:29AM GMT, Alim Akhtar wrote:
+New Airoha AN7583 SoC use the same exact logic to control the CPU
+frequency. Add the Device compatible to the block list for
+cpufreq-dt-plat and to the Airoha CPUFreq driver compatible list.
 
-[...]
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/cpufreq/airoha-cpufreq.c     | 1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-> > > > > > > > > I understand that this is a static configuration, where it
-> > > > > > > > > is already known
-> > > > > > > > that board is broken for higher Gear.
-> > > > > > > > > Can this be achieved by limiting the clock? If not, can we
-> > > > > > > > > add a board
-> > > > > > > > specific _quirk_ and let the _quirk_ to be enabled from
-> > > > > > > > vendor specific hooks?
-> > > > > > > > >
-> > > > > > > >
-> > > > > > > > How can we limit the clock without limiting the gears? When
-> > > > > > > > we limit the gear/mode, both clock and power are implicitly
-> > limited.
-> > > > > > > >
-> > > > > > > Possibly someone need to check with designer of the SoC if
-> > > > > > > that is possible
-> > > > > > or not.
-> > > > > >
-> > > > > > It's not just clock. We need to consider reducing regulator,
-> > > > > > interconnect votes also. But as I said above, limiting the
-> > > > > > gear/mode will take care of all these parameters.
-> > > > > >
-> > > > > > > Did we already tried _quirk_? If not, why not?
-> > > > > > > If the board is so poorly designed and can't take care of the
-> > > > > > > channel loses or heat dissipation etc, Then I assumed the gear
-> > > > > > > negotiation between host and device should fail for the higher
-> > > > > > > gear and driver can have
-> > > > > > a re-try logic to re-init / re-try "power mode change" at the
-> > > > > > lower gear. Is that not possible / feasible?
-> > > > > > >
-> > > > > >
-> > > > > > I don't see why we need to add extra logic in the UFS driver if
-> > > > > > we can extract that information from DT.
-> > > > > >
-> > > > > You didn’t answer my question entirely, I am still not able to
-> > > > > visualised how come Linkup is happening in higher gear and then
-> > > > > Suddenly
-> > > > it is failing and we need to reduce the gear to solve that?
-> > > >
-> > > > Oh well, this is the source of confusion here. I didn't (also the
-> > > > patch) claim that the link up will happen with higher speed. It will
-> > > > most likely fail if it couldn't operate at the higher speed and
-> > > > that's why we need to limit it to lower gear/mode *before* bringing the
-> > link up.
-> > > >
-> > > Right, that's why a re-try logic to negotiate a __working__ power mode
-> > change can help, instead of introducing new binding for this case.
-> > 
-> > Retry logic is already in place in the ufshcd core, but with this kind of signal
-> > integrity issue, we cannot guarantee that it will gracefully fail and then we
-> > could retry. The link up *may* succeed, then it could blow up later also
-> > (when doing heavy I/O operations etc...). So with this non-deterministic
-> > behavior, we cannot rely on this logic.
-> > 
-> I would image in that case , PHY tuning / programming is not proper.
-
-I don't have the insight into the PHY tuning to avoid this issue. Maybe Nitin or
-Ram can comment here. But PHY tuning is mostly SoC specific in the PHY driver.
-We don't have board level tuning sequence AFIAK.
-
-> 
-> > > And that approach can be useful for many platforms.
-> > 
-> > Other platforms could also reuse the same DT properties to workaround
-> > similar issues.
-> > 
-> > > Anyway coming back with the same point again and again is not productive.
-> > > I gave my opinion and suggestions. Rest is on the maintainers.
-> > 
-> > Suggestions are always welcomed. It is important to have comments to try
-> > out different things instead of sticking to the proposed solution. But in my
-> > opinion, the retry logic is not reliable in this case. Moreover, we do have
-> > similar properties for other peripherals like PCIe, MMC, where the vendors
-> > would use DT properties to limit the speed to workaround the board issues.
-> > So we are not doing anything insane here.
-> > 
-> > If there are better solutions than what is proposed here, we would indeed
-> > like to hear.
-> > 
-> For that, more _technical_ things need to be discussed (e.g. Is it the PHY which has problem, or problem is happening at unipro level or somewhere else), 
-> I didn't saw any technical backing from the patch Author/Submitter
-> (I assume Author should be knowing a bit more in-depth then what we are assuming and discussing here). 
-> 
-
-Nitin/Ram, please share more details on what level the customer is facing the
-issue.
-
-- Mani
-
+diff --git a/drivers/cpufreq/airoha-cpufreq.c b/drivers/cpufreq/airoha-cpufreq.c
+index 4fe39eadd163..b6b1cdc4d11d 100644
+--- a/drivers/cpufreq/airoha-cpufreq.c
++++ b/drivers/cpufreq/airoha-cpufreq.c
+@@ -107,6 +107,7 @@ static struct platform_driver airoha_cpufreq_driver = {
+ };
+ 
+ static const struct of_device_id airoha_cpufreq_match_list[] __initconst = {
++	{ .compatible = "airoha,an7583" },
+ 	{ .compatible = "airoha,en7581" },
+ 	{},
+ };
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index a010da0f6337..7a01c0ae904a 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -103,6 +103,7 @@ static const struct of_device_id allowlist[] __initconst = {
+  * platforms using "operating-points-v2" property.
+  */
+ static const struct of_device_id blocklist[] __initconst = {
++	{ .compatible = "airoha,an7583", },
+ 	{ .compatible = "airoha,en7581", },
+ 
+ 	{ .compatible = "allwinner,sun50i-a100" },
 -- 
-மணிவண்ணன் சதாசிவம்
+2.50.0
+
 
