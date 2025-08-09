@@ -1,144 +1,138 @@
-Return-Path: <linux-kernel+bounces-761263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96E8B1F647
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 23:14:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62341B1F63D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 22:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBD4A4E0543
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 21:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005D1189D9EC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 20:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F01A27875C;
-	Sat,  9 Aug 2025 21:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B32C2798EB;
+	Sat,  9 Aug 2025 20:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EBFrWwR3"
-Received: from sonic305-21.consmr.mail.sg3.yahoo.com (sonic305-21.consmr.mail.sg3.yahoo.com [106.10.241.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jg9iK4zs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ntVW/R5D"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F556238176
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 21:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318E9282FA;
+	Sat,  9 Aug 2025 20:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754774090; cv=none; b=IWgo84w7ShYH43oDJuzTIGX/3QkW23C6B+pk4u2tV+GMTTRDvws7LDexs8cYSmyCjwd7mDNn+tzANIA86lguu+w0JVQSiFY+cVnqDnibQnz5biSkRXX+Th0wZFwqm3+TW8DWP4GpagFUyO2ps1gT99wd2mx1I0soJOTdc+P2New=
+	t=1754772951; cv=none; b=HKULOEg+lzRUtcuSrgMgX/+Q33R7Q2JTTnKJGTsopJD0pDb6WiyiOZPqoSw7oHjcSpYmYPOXEYbJhUbRxFKMrXOzFLQQ/0alBbY67PD6hJc7JJQi8NcgC/VN4PUwweHkfAryos/Q//LNyElaIHrvxotr9Tuio3xEIaJTol8Kc18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754774090; c=relaxed/simple;
-	bh=d0Yjtt3IzlqKcHROs78kHofsMlGTuJ7ll+LtvZtLsjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ua5REx6obSSXpsnV1p+H+D7x7k8CdJZJO54U+0fc+WVD0JTVqMPTKCIjXxfcHwzkl6mwTuCT9te12AGnRHtgQFnMuWV9F1VSJfiZTdOHSjFhcBGULwgfyV573+0iSAqg8vr93+/BTQY+k6atUuD09rE8R4Q5Cor5iAP6BvZEueY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=EBFrWwR3; arc=none smtp.client-ip=106.10.241.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754774085; bh=+ykyPREPuo21LV5KP7vBGJIecoZNQK65w4laRFBAxUo=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=EBFrWwR3eFJKcCMVuxYic1P7jbOpSiIdNOK5+KdLyAN7U64Qj6n/MadFYNrDA1DxLsm43xxaOt8GMi0tCpIsMBReCg18WPN+fGWz9ibJyBGBzIBOX59H55a7U2EoYC3Yg6xvGL5iuO83gV5QnZeZfoRIjc7XnAUEOFN+kCmB9OahBffuxvGCnLhkxqashm9bygnC+KXuvRCw0TU6+XdTN1fVYueAvYgO2ku/0ykDBDICcjGjcCtF6NoghgkKstXwmlcmWL/402DZwQysc11Hu9zapS1ywf5iw8ZgAidLXjW2h+UIVitATztCo38ZUKLKqDaztiUBuMzdaTmGPPBZxQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754774085; bh=6HJmNh6wBUfV8aag4HV7mlJlp3RyfJwoGNSEks5mmOH=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=jXdWOktteTXsSe6dZFJdB/aADnC0XGO8eAkSLskD42oZ5XBjTTE3xKxECcZLzDoVv+8B2iN7RnylVDd+4/XNv1r9IDtW4f2nNZD086LlxdEG9AvWHGLCH1VHgbez1CBwdxoS6ToRhyf0TSgDWD4Z7gIK4Z8hf1f2jKzWHm0nAHYVBl0U3RF4wrgEOA8shFqmfCCW9MSO/BCBz4g30pwpMcqhCN+EveB23SkXmfg3G4gnvDVvyA9w84k21JtXPvWQC13YABm9uzjx5IPCyK9hdIWERQiNdmVwk5z7KwtblmhkEvbg78r8oa8T+RW1/F1odSPz69rYeeQzMT/kQmAXnA==
-X-YMail-OSG: .zwCfjgVM1mDn5NwRxL.9Geo041SjG.__aX.GjsF37GhlpoTanX6ltexlztkJtq
- XBYNvaqTp31Xqo4PqIoU9N0GLhr87k1qDOKlP94ULYs322_7N4CFcMYMPllbP1M3TjkHtg9piuFP
- v1LaqzexHlhHnngUmRDTy8X8SQEm_VRpEgIchawlevlyhmVeg5i0GGTWuV3eG7KrVEFEOsV8mTuy
- FwdRV1U7D.jHeWIXmJjzAxPkwEnOHUUM0zKrP8.MhXkwJBZRDcgC5mPHgHHbRci1sTcvLklW7neE
- gcsKhmujIE1z0KEt.oAseFux6xceP3gQH9aGQDgceJBCZ0m0r4q9u_n9cLgZAJhh6uQyzwrpEftf
- Edwu47ikKAGeW1uVIvi1JIwT4syjvG3YRBmMuO59n2OvOJSZq9aNBnVrCIRq2LY9pxI9aYB0B.n7
- Jh9doPGkmaN5n31rZNMtQ8GivPCFT2I1zOUgVAgVozRr0A205RKGKdw3tS3ReZF3rfM6TAuULTyj
- R5OvuwS7KBAxMscKF72qhF3LCbTDsa4nhMZZKS9rOxSIlcqAIpH0yls_FjW_kghsa.VB6aomtKtS
- chxgKlYlDxnZ4.bmRupiovD6SRruOod6PIQdBEuW47vlA3l6HgieXjKpCLAdpbSa0x1XcvbXKrkp
- vrNm1AF3IluKSppDKZ9SIi0ukMExD.6ybyvSR6dKrxEwEwrb7Uy3lqZ7NUM2h1u3VPz8H4aPmMsY
- 2jDGuUvEXTRyMQSq2I125MgUFGDWGujiLrbunkSo72sXXvFx8uaG9W53N_DFO50WVxeqKZ4q9NZV
- z3cWzggSyAs2K8MOfaxyz2srarqsa0ijW7ViytBJa.gjRtVQD3kNytxJy7IRwBg1jkizPaO9Ir_F
- Gi3bqvoUrwpOEaj27_dC.uxt24lTB_RWtWTzYWwnxHbCZwo2d7O3PaSpdRT24ugFTwX6wbQWKgZ0
- n85d8X2Jq5KIs13J0J1DUuYueiXPBxwNwbgd_TvZinUY1GRtRTciDovqzirbADUt5QQyNDn5Bu8l
- _awokpjRaBSTxnxpzOCO0ApAw4XoLBHH24nfsvaKQ7lH5i_I.Zcz6fI3ry7R94EgBcIfnd10Um08
- vtj6h1eK7M8h4XpqdpdGQqiQyGsX7whxqWWv4dHWa2jeq0SZEThyb5oe_6n2pp.75Pdb4hMLJq97
- Gq5_E6qhk1jhxHoFGR4DJN9o28CTMHfV4aepUk8cpaz_jGg5sC4a9rsbNctKEImk.sgR8q5WWHZq
- 848GOjpcd0FXEuxEzRIwB70KH83rYepJueW_4K32hkaCceh9Dsi5_X5DSE_59QmLbOT2y_EPOx.E
- Jw36O9cMd8a594DSxUQv8ONKzkuLVxxpM.rgEZz4ArKLE2U5L3t4jT8i8m6WYhF5Z359bR9SLlFP
- 7u_K5WEzpkyZtUgp.CsZPTE7Gsmv59LL.e2oMO9aCNwPXLbnzp0gY3JGFAMAXgEtjJcSBnx2sChu
- L3pIHjRgHXi1ZtALZSH5VqlsoOOShGGL8c3rc4P22SSWMmpOuL7wikrsu5jlYOfOv_x93qfH5zQH
- pGKVvkmIVFvF4nw9dvXHi3n0gtqcFGU4OH0RQrGp.ru1v1WSVIbSZtK2a7b6F45jKv2irNI.9Hzy
- 7ncJuvC_zCTvaxBLXDABOu0zKJJE2kenMVDZutPP3r2OarD795WSIquLYXAf2dQGjb7a7u1YXJ8H
- L08T2CBogJCY.1HJYAv4lxDscxYwb7Q0UYJiMTPkl5LB9WaTWDiU2hQU47uRNovkJiaRoKsWe7FK
- Hx8DVKBrngQ29_E63bwjpnVZyt41e_RWCW.NNl2IeNqISsxo2MhdlEOCUaZYv5kRO0mRp0DzQh8h
- 04diF_T1adXMJtxzhM9x_CgsO1oIZCwzNc9VVBjbw1d2tjCumIkCBfIC2nIUGMPrdDzRKnNvzaAq
- UMqJmRYJfGBMGKSeGQUsn4_61dtq4Hl_FfKxPS3o6mM9h4EsSCT1veB9iL27ugMuZjWGPo1svtjA
- RHQgdMwSzwO1xOt28bv4.ZmJvsfbvusbzglAeesgWAKyUNaHu2a1sjnGmjmlixaWMHfJGGW6Y9WJ
- lMK668PiYVGaoxtE.gIzTmMcnv4s8ubop959ureaqFnTI53nSLmFpS80rPA9E10uPbz2Jiy1eseE
- aALM1Xwq93uIeq3DIuDQ7PsupFBcAirwMtYP4CXRRqMnI_B2AaY1PuZDhFBotvRznx7c0PNGO3UN
- OvTdV6lMucAKkCalUnYiKsZ8eJV10SUYurxtkL_wBvhsMigST0_jMocFU3ozU6taVV4h4Lqo6fgL
- bBrAjSsQL1h9pM_risZoSynbOWK8JRxAP_k1Tlw--
-X-Sonic-MF: <sumanth.gavini@yahoo.com>
-X-Sonic-ID: a3d1a8a2-68b3-4579-8586-96106a1df016
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.sg3.yahoo.com with HTTP; Sat, 9 Aug 2025 21:14:45 +0000
-Received: by hermes--production-ne1-9495dc4d7-psbrp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ad8551e2f6b02f307823b0a83dc795a2;
-          Sat, 09 Aug 2025 20:54:25 +0000 (UTC)
-From: Sumanth Gavini <sumanth.gavini@yahoo.com>
-To: axboe@kernel.dk,
-	asml.silence@gmail.com,
-	lkp@intel.com
-Cc: Sumanth Gavini <sumanth.gavini@yahoo.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	oe-kbuild-all@lists.linux.dev,
-	John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v2 6.6] io_uring/rw: ensure reissue path is correctly handled for IOPOLL
-Date: Sat,  9 Aug 2025 15:54:18 -0500
-Message-ID: <20250809205420.214099-1-sumanth.gavini@yahoo.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aJeVj4yXt4F01nPb@f5c43a121a53>
-References: <aJeVj4yXt4F01nPb@f5c43a121a53>
+	s=arc-20240116; t=1754772951; c=relaxed/simple;
+	bh=XsAY+I0V7t/bRiWxTGrMkkPV2nHwxaPbF8aYmtcLFvk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lKduQFtfALkZQGl5LG30heQN9vQi+QSSzBzripOiPw0aojfgabq0IEMw6dpBHMEAdvPxNzfeOdn9cJImUrEY4IcONHzZb4d44bouDFrdidziB9BCRbEYm/kVw+tGxQmz4ul6qeg3KfZx82o4B5cIwmDOPennUjWX2U+plXODm2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jg9iK4zs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ntVW/R5D; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 23975EC1B60;
+	Sat,  9 Aug 2025 16:55:48 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Sat, 09 Aug 2025 16:55:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754772948;
+	 x=1754859348; bh=00YVrUoOFUKa6IxONMxJUOwOGEtIYHYtjitPZW1x3IE=; b=
+	Jg9iK4zsVrcSNzL7z+rrq84jWqLk1zRD1iqIsk+Mu9dCH9RTmeB1aQKDQr1o8uTF
+	y/23h/KPABlNR4yM/1pxj081Jdxr+vxVe806APntun8g5l/dwW6aESTn6kghyyjl
+	cdciLqQzn2OCbH4PJENs1D9+mfSeS6gKgvEtpQ7loNtxd+zMdlsrv9vjU8KRmk0h
+	KLj+I0ROjcT5Y1oeh8mtDVPKc5gqm9RyYOJh80Q44UQD+ph0k4yiRAb/I1zoH26a
+	jf4kOQVrSfS+dBTsVlCDL1K+KVq2mxVkGV3G8y+53/MvineuC/eoAtWZvgCdxZfb
+	kz4xAPxMmPUaDxD53rzxhQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754772948; x=
+	1754859348; bh=00YVrUoOFUKa6IxONMxJUOwOGEtIYHYtjitPZW1x3IE=; b=n
+	tVW/R5DgLVbkRloe9XDClBFnyi4JDvhoBL20PPTR9S1Hj21jpDl1k0GrDz49tugI
+	O7xaWP6ZoCMin5uXJcmgtfsxOIRPoNkBVTQzP50Ya9IcD07Hw2Inaw8uSxWaVnwy
+	RsweeH/DJje84I5FlAZim04Vo427aUdcmzYSw5LggV79rQG6Tw1c+78Z1XnQB1PO
+	M7xCqGfyXXbHwGk4XlwPGfetDaz73s8jGCeGo+Z0bFM4kfH/3yEMvtTFBxdLiLlw
+	lYkMdDe8YCXqVDsvnGadkoh/3X64ULktwWaxJDqcHOSpntLJyHNn9dXIq74cZB+5
+	N+Mk2WyKckEzK3XREk3/A==
+X-ME-Sender: <xms:07WXaHgYftGCsEsXKay4RpEZnBmoFOYUoD3AhSOOXeJ2pYBfNI2Bqw>
+    <xme:07WXaEBXQmNuveUsEAH3XJS8yslcvkNxyERzgsoOgqmCDRXjzjhqsImc3ChtMmDID
+    CrClTIqgHhrIxQEL-k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdejjeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukh
+    dprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepfhhlohhrihgr
+    nhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopegurghvvg
+    hmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepjhhonhgrshdrghhorhhskhhi
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhihlhgvhhgvnhgurhihuggvvhesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehnohhlthgrrhhisehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepohhlthgvrghnvhesghhmrghilhdrtghomhdprhgtphhtthhopegvughumhgrii
+    gvthesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:07WXaL1-ogyBNb0r8R7_iZpGWcknUJAj5KtzXICrWGLyDeWOQiaIcQ>
+    <xmx:07WXaEyd7z1-FDOlp4f73uKovhiLJ6fQIxVU-_dA5vebEo5lTNfAXw>
+    <xmx:07WXaCj0J53nf21ROP5Ne1zI1JoTUrXKGGbEfJ9r8A1jHZdmEpsf3A>
+    <xmx:07WXaLyAZzGALNGV7e71uIfNxQERLUOMvBuBHo9cxoB5UtpHMXFsBw>
+    <xmx:1LWXaKUe3IoRcX5CNiy-Nrf3lbh75lvGrvd8afyoO2aEdDjxH9kkL2_s>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 22BAD700068; Sat,  9 Aug 2025 16:55:47 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: Tfbba8c937fccaf1f
+Date: Sat, 09 Aug 2025 22:55:26 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jonas Gorski" <jonas.gorski@gmail.com>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, "Vladimir Oltean" <olteanv@gmail.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>,
+ =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
+ "Kyle Hendry" <kylehendrydev@gmail.com>,
+ "Russell King" <rmk+kernel@armlinux.org.uk>, Netdev <netdev@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <ba75ec03-f790-41e9-916d-a14eb52aadd2@app.fastmail.com>
+In-Reply-To: 
+ <CAOiHx=mW8B2vQ7UhauPJpJ9KmtxTZ2-1MC3Vf2uNF9RaJ4WQ5A@mail.gmail.com>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-16-arnd@kernel.org>
+ <CAOiHx=mW8B2vQ7UhauPJpJ9KmtxTZ2-1MC3Vf2uNF9RaJ4WQ5A@mail.gmail.com>
+Subject: Re: [PATCH 15/21] dsa: b53: hide legacy gpiolib usage on non-mips
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-commit bcb0fda3c2da9fe4721d3e73d80e778c038e7d27 upstream.
+On Sat, Aug 9, 2025, at 12:01, Jonas Gorski wrote:
+> On Fri, Aug 8, 2025 at 5:23=E2=80=AFPM Arnd Bergmann <arnd@kernel.org>=
+ wrote:
+>
+> Can't really test this (no matching hardware), but with the code issue=
+s fixed
+>
+> Reviewed-by: Jonas Gorski <jonas.gorski@gmail.com>
 
-The IOPOLL path posts CQEs when the io_kiocb is marked as completed,
-so it cannot rely on the usual retry that non-IOPOLL requests do for
-read/write requests.
+Thanks! I've added the fixes you suggested and made sure it
+actually builds on mips. I had done lots of randconfig tested
+on arm and x86, but since that code block is only built on
+mips, I missed my mistakes.
 
-If -EAGAIN is received and the request should be retried, go through
-the normal completion path and let the normal flush logic catch it and
-reissue it, like what is done for !IOPOLL reads or writes.
-
-Fixes: d803d123948f ("io_uring/rw: handle -EAGAIN retry at IO completion time")
-Reported-by: John Garry <john.g.garry@oracle.com>
-Link: https://lore.kernel.org/io-uring/2b43ccfa-644d-4a09-8f8f-39ad71810f41@oracle.com/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sumanth Gavini <sumanth.gavini@yahoo.com>
----
-Changes in v2:
-- Removed the extra space before commit-id in message, No codes changes
-- Link to v1:https://lore.kernel.org/all/20250809182636.209767-1-sumanth.gavini@yahoo.com/
-
----
- io_uring/rw.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 4ff3442ac2ee..6a84c4a39ce9 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -326,11 +326,10 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
- 	if (kiocb->ki_flags & IOCB_WRITE)
- 		io_req_end_write(req);
- 	if (unlikely(res != req->cqe.res)) {
--		if (res == -EAGAIN && io_rw_should_reissue(req)) {
-+		if (res == -EAGAIN && io_rw_should_reissue(req))
- 			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
--			return;
--		}
--		req->cqe.res = res;
-+		else
-+			req->cqe.res = res;
- 	}
- 
- 	/* order with io_iopoll_complete() checking ->iopoll_completed */
--- 
-2.43.0
-
+     Arnd
 
