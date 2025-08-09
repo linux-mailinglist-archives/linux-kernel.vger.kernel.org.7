@@ -1,180 +1,413 @@
-Return-Path: <linux-kernel+bounces-761032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7F6B1F36E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:37:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDEDEB1F372
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD9E1884412
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:37:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5971163D0A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DFC227563;
-	Sat,  9 Aug 2025 08:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6BE277813;
+	Sat,  9 Aug 2025 08:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aK8mAb7w"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qi2NT1Mh"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C5C22172D
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 08:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCC1227563;
+	Sat,  9 Aug 2025 08:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754728619; cv=none; b=msUD8+mEBmeBGQWAN+jA2070MtpQwe/wmVq+FKKjv4Hyo1+g14H++wBGbXi6O90iCaHZEH/snPDqDlFaSidahdL8aoQMmVGEzsHizSi5mZrmosyynZbMaWiz1ymbvfHffU4VWE+xnIw+okiscy71IbvkCVVU682ofFBc52a5BAY=
+	t=1754728668; cv=none; b=ux9IMoclvDzAJ0YaU26KMGg4zg/2Dlwu0JtIVshSlSZz2Gsu1qn0GehFltacO7m4azuFS4VsP9vV29XhxYd7Dd4DDpo8XCAEZfpoTOYLLQlPj/3CH2uBNzoj8EuXunzL5RG6Ap81i32wnIlHGrM+VE88yyOOLoDk/s3ICSNS6KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754728619; c=relaxed/simple;
-	bh=KmUlDlykqRmfS/c3OkAxh7AJ+0CRPOU7eFP0ludcvrM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=E+kOkhwM0jx+6wCMd50N3rEGdzb6xNT2BsfZm76Gk36sMz6nWjpbbPznv3a3T2HgV6KnlypTftVQ/18zN3Gi5RYDUjefTGDU0bteMPdLeB6DrUQ78F9EAXonwvnjSswz4cDTl9t9fJrMLQ2ykDfAoRFz5P6UH/PkkOv+rCDCBjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aK8mAb7w; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5796U5uO010000
-	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 08:36:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Vbhk6QCT3EVReeZaEWJCjX
-	Dtjty/QxM/QqF3JsKZ/bQ=; b=aK8mAb7wHR5CDudbNk+2qoh4ORGcuSpp7chNfB
-	6++T8nTbtFwp61xD+vH4dam9eveMkdL/wdrfiu4W5YiQHRFYEpKGs4UoM+yLMSvL
-	EC+Hpbiz43YJ+AqR4FJPLA5uRTECXQZsAjwPJbF0SikwJ3jXa31WqoOsZ5UztfeM
-	T70FEGLOcgEOgWfh7eRTDHv/tuyq2NHiKScvNzd85nOGWNIi47eFHzUORm3qtysE
-	JFyEgxqX+wXktzaKCD10gWUrzhu3CdS5MldCCYNjdak24e4JzU3/V+m/7g9vUx01
-	l07HrL5srnGtmENYNAPKTJD1Vc5QHcPcboGk8jKHA17Od8qA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxq6raxw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 08:36:57 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b06228c36aso38590561cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 01:36:57 -0700 (PDT)
+	s=arc-20240116; t=1754728668; c=relaxed/simple;
+	bh=OXIu3ZwosSTqSvLAOP5vlqWAG1tlDw0cMqTHNjaIquc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWYMVFphre0VHm2o3MVmxhLyTeTqWyL7/S9WJlby/0zP2nyJlSyE53BefSSMhTsA7wTFzlIHG9C3iwASh4R7qj1dluLgr6dZITobM5QHFAyyeczSoqsVODlEI1d2W6klpcekUrxQfEECbaHlRFym5TauPC4e9L1pu3IoCj9pO+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qi2NT1Mh; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-459ddf8acf1so24378085e9.0;
+        Sat, 09 Aug 2025 01:37:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754728665; x=1755333465; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QTOXYj3i7STcpYp00YB8eHyH1DFpV7xQaYk6AtLc3CY=;
+        b=Qi2NT1Mh1QeZy7FgIG9gOg7rpsBedFcXDooTVahdHau/43RY1aSjYi0CqJFHKkAEMQ
+         0oSmph2CvC2evqW/JUSzD/prprnH7yOnPbXS6Z0K7Z/x2IU1BxNiMSch5HDPZzhp2v4u
+         sjnS1Eg1wfFKiUbNPJGy1Yls02IguMQocKCaQiteUg4CuYeFyMC94L7/DeT6BZ3XmQAt
+         Qv3o+1Ln1RyYdFSDA+dx1uNHfSowbmaGkokI822NJ5n/qIEvsfiBm9jaMCh6zL5wPzn1
+         Eca52FS5iuTdX+BwwrkIb/pqzqxdrPJPMxKE0Qx6g3uU5GiJJp10aocu1cgz9Kh919et
+         8E+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754728617; x=1755333417;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vbhk6QCT3EVReeZaEWJCjXDtjty/QxM/QqF3JsKZ/bQ=;
-        b=oRH/5PXsA04d/6AzM9HYlAiniuor8pbb/YybtkJlAod9zU9f5+Z3tPEB/m/Ea/QnhC
-         uyy/is4Tmk6LpMqfuug/+oK8xYxC3lIubJ/0kHPUcMf3ABxk8DobEj5IMEkqU7KsauDh
-         Cwxe5ow29V23/En/S6pHO83zK7N+jrk3NCnBptmDY452VbbQN0v7M69MqlFBzkFTmdKE
-         a7F3P8y4iI7oPfsnTXFMQpPwUmxCWnE3P8OUkKf3et17H20RKOnYVm40EcOp8Qtp0MxI
-         FWpGwfflFOiazygK5UtwKbBPKX8fSw3Ux1cNCnX/JxiaPrz4F+kyGEkuO6ecajKV6lTg
-         66PA==
-X-Forwarded-Encrypted: i=1; AJvYcCWP/uHpZ3rI80R8z5aZOpQ4fp4vM8Z2ex6NnbouipHwwQfjvcAQdpNLs3Okm/wb860loB/Ro5167nrmOFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn1b3gV8Wg/PAMXJ0yz1d5CN28DGOP/WZiW64P3wasJv/t2bca
-	cJJkPxEoCYVgj83JVpB1xSXmLKmAVskkYJeGRRRaLhZAhsEIWl/G89znF/YIgTDuA+EquHiEmvO
-	Txh+Wg3D6sXGB0mZI6y/vsn2rpQ11mBEXhi82wYwOMBLoZxl98SLDetc0xdXgse0sUtU=
-X-Gm-Gg: ASbGncvbuX3B8P1TCVouOOOSEjQAV1zkVojWC+OaUI6QJgptg4dWbQRdaiY9zAEPJEB
-	4BMzVkTbLsF00S0uuvTuiyrSpTGzL7Ty3UYciwE7Fqc2c7yFJoudCR/JUiqYMRSjQkEKELnJmb3
-	+8iTEml39g+t+sURXMrxn6InBcfkMJgtwBEP6PUfcXZ801QY6lsZVOEz2UiCFEDFkd838+zDlzD
-	WY+8PN2Vw4yl+44Qfm3DV51n6bfdrhnlbJlwsIFlNtE/NpmkuZN6SK1y1dg1t57iwGK9fccXuDD
-	o8vGHv3xkzYuMT8IQFcx7Vu06HHNxZdEp8T1MDbExE1KZSspeaOY2oQw0d0dPQqanXIgUxf2Ewo
-	pb7zTjUEQ3rNCqDYjRA06TQYCTxXSN7pd7EptDirdQ4EzPIr4sOMT
-X-Received: by 2002:a05:622a:2446:b0:4b0:7ecf:beda with SMTP id d75a77b69052e-4b0aed0bff1mr90397821cf.9.1754728616703;
-        Sat, 09 Aug 2025 01:36:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH37kRnw8/1Yvy8Ct0TseBki1Zc9SOjiU5tdXrLe87OhkeI9dMLexzVEv+ZZeRaP96/LWT6Gw==
-X-Received: by 2002:a05:622a:2446:b0:4b0:7ecf:beda with SMTP id d75a77b69052e-4b0aed0bff1mr90397511cf.9.1754728616224;
-        Sat, 09 Aug 2025 01:36:56 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88db2214sm3239974e87.177.2025.08.09.01.36.55
+        d=1e100.net; s=20230601; t=1754728665; x=1755333465;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QTOXYj3i7STcpYp00YB8eHyH1DFpV7xQaYk6AtLc3CY=;
+        b=CPwZPQtJge4Nvci+HFQNe+K6lLnydaizkWLd0OeEafl+Dj/fCkDdjOfMTK6imibAG8
+         aT1npZMvppd/t7D8nwBXBT9lh0CbRtGBH2sGwaoD1ZBQPXPM05XWkPvqEbhZpB/ij4Bz
+         qVjr9ar4bc4mnZ+RYAVWiaztkB14dsyA80CafZLKOXHocOhIWWlZzgscZWd7YiNuMgRn
+         tkehkNsTywSiZ/c4iJx0Ie6XEGnOvuom8DQy2H6pkr/ERgMTAvaygwSVss/yafOSdz0Q
+         fBG23TY9IiKh4UoOJLW6THjU2YHU/RNoWODxoRxG9QiNwFITXN574KsJdmoB3RT3MD3m
+         32Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5CAH/wS1Bsytqorke1UbpqkTOey1VkXP3Q+fucT7aVQtrfTkuxXIFaXBLaH/4zWuffKuJem6NUVI=@vger.kernel.org, AJvYcCVFhf13T4LQB+eqFvDwIRciQkPZ/opXzJ8CRsIOG5I07FLVFVbNYKOH9zpUQjE9gCv7E43HzcE5khMaZDmp94E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZIF86M9BhsM2rbedFbmLLeUWcN3e7zYmF8B3hfnszrpro3dPV
+	YgECX/iLOOyTeAs9VtFOzmgoKnXooydKCJ4tWwjPrdEnRCoaWancjDbOLnWEYugf
+X-Gm-Gg: ASbGncslDkyCWRnyx40ur0Cjls7+L54sTAwTq8XhU7lSb4e9urAPFCaHi07HXD3BztC
+	ajZ0zIk0nd9oU+JpEuqwLDEDZcx1+a5XXy5oSW25QoirT1diCJA5IWDpjLViRwW9z9oVwP0NljG
+	fal9VCq66tHnJPOQ1zEKWC8454EyUWuk7i99RWTs9O30LU0bo7Vjq0+BodUHw19w5yXjiIG6erY
+	jsI9WCakzVn5mKiBpNI3fn8fadaNwLjiR/1YxIR8QS8V9ag10jylDK4/Op5dPwr54V/0nVuUkPp
+	eDx65+ARzk3+vX86lRaefttaM0+tbKcGXreMqdxQ3CeMcF4TivRkujlEclqkuGFUNOHO6HHUYzN
+	UELcaHPhMaP7dzIIa+9+uhxOV78nASAV5p+GfAUQd758kU786TOQGscMNhkP1pQ==
+X-Google-Smtp-Source: AGHT+IHRfffAqTyGU55GjuAMX7DVuMqjQINkCU0qbnRn8lMroi61+z8ToMKLzzZY9NYbQvCRtc1Q7Q==
+X-Received: by 2002:a05:600c:37cf:b0:459:db80:c2ce with SMTP id 5b1f17b1804b1-459f5a9863amr48573915e9.7.1754728664347;
+        Sat, 09 Aug 2025 01:37:44 -0700 (PDT)
+Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e58553f8sm179973925e9.14.2025.08.09.01.37.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 01:36:55 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Sat, 09 Aug 2025 11:36:54 +0300
-Subject: [PATCH] dt-bindings: display/msm: qcom,mdp5: drop lut clock
+        Sat, 09 Aug 2025 01:37:43 -0700 (PDT)
+Date: Sat, 9 Aug 2025 09:37:42 +0100
+From: Stafford Horne <shorne@gmail.com>
+To: ChenMiao <chenmiao.ku@gmail.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+	Linux OpenRISC <linux-openrisc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Jonas Bonn <jonas@southpole.se>,
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Sahil Siddiq <sahilcdq0@gmail.com>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] openrisc: Add jump label support
+Message-ID: <aJcI1pr9RMTvfcTj@antec>
+References: <20250806020520.570988-1-chenmiao.ku@gmail.com>
+ <20250806020520.570988-3-chenmiao.ku@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250809-msm8976-no-lut-v1-1-f5479d110297@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAKUIl2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCwNL3dziXAtLczPdvHzdnNISXZMkU0MDg6TktCRjUyWgpoKi1LTMCrC
- B0bG1tQBoHPxKYAAAAA==
-X-Change-ID: 20250809-msm8976-no-lut-4b5100bcfb35
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1257;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=KmUlDlykqRmfS/c3OkAxh7AJ+0CRPOU7eFP0ludcvrM=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ8Z0jmVKKiy51Y/+3+p5PqP0fs3XmjAmj0vMF8rL7+qbz
- 9pwz+dNJ6MxCwMjF4OsmCKLT0HL1JhNyWEfdkythxnEygQyhYGLUwAmwt7I/lc0OcDbbM3ekOis
- iwVbqiwWv17z0pxlS2uU0aXM3CsaynEnRPmeb52nF5CvlMBhGOc+92HM1YO1LOrxojddP8zyZRP
- 5zHk2sFz3352j1zasC+o/syEq5We3aOYH9cKSCU+5LnV0ae26m/r1Gp/4Djul+zKnijef6Xt56U
- BCzOwJJuueexW0nir2Csl1MQuQFDc93Nt8nmch890Sh4OmlWwWQi1Mu9cw/jBfKjb7y7H57yfPU
- sqwC7/WWmZYwnjp8IHpC+c92KXH2Tox8bggZ5zCYpZnis0HXAqSLhYf+8J2KyHWfnnvXYu/b1s6
- ZO/0Gr+xMvVSfXdl4dTAhx+mz1JO/wa0sWVamsGVsr2yAA==
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyOCBTYWx0ZWRfX3ZHyNmnnI3gi
- gxnGlZ24WAGmj1176nTYtYHOIjiqT5zXEAxuyyQV7uMwQVjzOyT5vA0gpCHfyfmIIiY6mPrLOaE
- ty4964gThOt8VkMn1BBlKKTgvJXvUfhfKy/40Pmdcehs0hA8B/LCpC3G1tiG+HfzxodzO23Jb4k
- 8XqBcRz4IbV7C3yHrdR5CSQjSxKWy2ou3Y9IqkCn65U04IO+o5yIZlzSSYOS4DE2+pCOWizsr9y
- L9+1X2/N/zoRj/tKsLB1qGJxqk2P8u8I+5AVxgDnmOzooL+0MkCcfZXAMFLayVEFmSm6xM5Jlo5
- TMvGbGtHSlOXXXwizg4sJ4nftNtId3KikOyNdxkzex2v9xxHTCL9RIoz4+k+5mUHKa2geXAi4Sa
- v5+95Hnt
-X-Authority-Analysis: v=2.4 cv=QYhmvtbv c=1 sm=1 tr=0 ts=689708a9 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=-Y5st2MN6ViVPFRs--AA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: va8aHksLNfwlymNjvt4teJk57azPhTjl
-X-Proofpoint-ORIG-GUID: va8aHksLNfwlymNjvt4teJk57azPhTjl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-09_02,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 spamscore=0 phishscore=0 bulkscore=0
- malwarescore=0 impostorscore=0 suspectscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508090028
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250806020520.570988-3-chenmiao.ku@gmail.com>
 
-None of MDP5 platforms have a LUT clock on the display-controller, it
-was added by the mistake. Drop it, fixing DT warnings on MSM8976 /
-MSM8956 platforms. Technically it's an ABI break, but no other platforms
-are affected.
+On Wed, Aug 06, 2025 at 02:05:04AM +0000, ChenMiao wrote:
+> From: chenmiao <chenmiao.ku@gmail.com>
+> 
+> Implemented the full functionality of jump_label, of course,
+> with text patching supported by just one API.
+> 
+> By the way, add new macro OPENRISC_INSN_NOP in insn-def.h to use.
+> 
+> - V2: using the patch_insn_write(void *addr, u32 insn) not the
+> const void *insn.
+> 
+> Link: https://lore.kernel.org/openrisc/aJIC8o1WmVHol9RY@antec/T/#t
+> 
+> Signed-off-by: chenmiao <chenmiao.ku@gmail.com>
+> ---
+>  .../core/jump-labels/arch-support.txt         |  2 +-
+>  arch/openrisc/Kconfig                         |  2 +
+>  arch/openrisc/configs/or1ksim_defconfig       | 19 ++----
+>  arch/openrisc/configs/virt_defconfig          |  1 +
+>  arch/openrisc/include/asm/insn-def.h          |  3 +
+>  arch/openrisc/include/asm/jump_label.h        | 68 +++++++++++++++++++
+>  arch/openrisc/kernel/Makefile                 |  1 +
+>  arch/openrisc/kernel/jump_label.c             | 53 +++++++++++++++
+>  arch/openrisc/kernel/setup.c                  |  2 +
+>  9 files changed, 138 insertions(+), 13 deletions(-)
+>  create mode 100644 arch/openrisc/include/asm/jump_label.h
+>  create mode 100644 arch/openrisc/kernel/jump_label.c
+> 
+> diff --git a/Documentation/features/core/jump-labels/arch-support.txt b/Documentation/features/core/jump-labels/arch-support.txt
+> index ccada815569f..683de7c15058 100644
+> --- a/Documentation/features/core/jump-labels/arch-support.txt
+> +++ b/Documentation/features/core/jump-labels/arch-support.txt
+> @@ -17,7 +17,7 @@
+>      |  microblaze: | TODO |
+>      |        mips: |  ok  |
+>      |       nios2: | TODO |
+> -    |    openrisc: | TODO |
+> +    |    openrisc: |  ok  |
+>      |      parisc: |  ok  |
+>      |     powerpc: |  ok  |
+>      |       riscv: |  ok  |
+> diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
+> index b38fee299bc4..9156635dd264 100644
+> --- a/arch/openrisc/Kconfig
+> +++ b/arch/openrisc/Kconfig
+> @@ -24,6 +24,8 @@ config OPENRISC
+>  	select GENERIC_PCI_IOMAP
+>  	select GENERIC_IOREMAP
+>  	select GENERIC_CPU_DEVICES
+> +	select HAVE_ARCH_JUMP_LABEL
+> +	select HAVE_ARCH_JUMP_LABEL_RELATIVE
+>  	select HAVE_PCI
+>  	select HAVE_UID16
+>  	select HAVE_PAGE_SIZE_8KB
+> diff --git a/arch/openrisc/configs/or1ksim_defconfig b/arch/openrisc/configs/or1ksim_defconfig
+> index 59fe33cefba2..769705ac24d5 100644
+> --- a/arch/openrisc/configs/or1ksim_defconfig
+> +++ b/arch/openrisc/configs/or1ksim_defconfig
+> @@ -3,26 +3,23 @@ CONFIG_LOG_BUF_SHIFT=14
+>  CONFIG_BLK_DEV_INITRD=y
+>  # CONFIG_RD_GZIP is not set
+>  CONFIG_EXPERT=y
+> -# CONFIG_KALLSYMS is not set
+>  # CONFIG_EPOLL is not set
+>  # CONFIG_TIMERFD is not set
+>  # CONFIG_EVENTFD is not set
+>  # CONFIG_AIO is not set
+> -# CONFIG_VM_EVENT_COUNTERS is not set
+> -# CONFIG_COMPAT_BRK is not set
+> -CONFIG_SLUB=y
+> -CONFIG_SLUB_TINY=y
+> -CONFIG_MODULES=y
+> -# CONFIG_BLOCK is not set
+> +# CONFIG_KALLSYMS is not set
+>  CONFIG_BUILTIN_DTB_NAME="or1ksim"
+>  CONFIG_HZ_100=y
+> +CONFIG_JUMP_LABEL=y
+> +CONFIG_MODULES=y
+> +# CONFIG_BLOCK is not set
+> +CONFIG_SLUB_TINY=y
+> +# CONFIG_COMPAT_BRK is not set
+> +# CONFIG_VM_EVENT_COUNTERS is not set
+>  CONFIG_NET=y
+>  CONFIG_PACKET=y
+>  CONFIG_UNIX=y
+>  CONFIG_INET=y
+> -# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
+> -# CONFIG_INET_XFRM_MODE_TUNNEL is not set
+> -# CONFIG_INET_XFRM_MODE_BEET is not set
+>  # CONFIG_INET_DIAG is not set
+>  CONFIG_TCP_CONG_ADVANCED=y
+>  # CONFIG_TCP_CONG_BIC is not set
+> @@ -35,7 +32,6 @@ CONFIG_DEVTMPFS=y
+>  CONFIG_DEVTMPFS_MOUNT=y
+>  # CONFIG_PREVENT_FIRMWARE_BUILD is not set
+>  # CONFIG_FW_LOADER is not set
+> -CONFIG_PROC_DEVICETREE=y
+>  CONFIG_NETDEVICES=y
+>  CONFIG_ETHOC=y
+>  CONFIG_MICREL_PHY=y
+> @@ -53,4 +49,3 @@ CONFIG_SERIAL_OF_PLATFORM=y
+>  # CONFIG_DNOTIFY is not set
+>  CONFIG_TMPFS=y
+>  CONFIG_NFS_FS=y
+> -# CONFIG_ENABLE_MUST_CHECK is not set
+> diff --git a/arch/openrisc/configs/virt_defconfig b/arch/openrisc/configs/virt_defconfig
+> index c1b69166c500..4a80c5794877 100644
+> --- a/arch/openrisc/configs/virt_defconfig
+> +++ b/arch/openrisc/configs/virt_defconfig
+> @@ -12,6 +12,7 @@ CONFIG_NR_CPUS=8
+>  CONFIG_SMP=y
+>  CONFIG_HZ_100=y
+>  # CONFIG_OPENRISC_NO_SPR_SR_DSX is not set
+> +CONFIG_JUMP_LABEL=y
+>  # CONFIG_COMPAT_BRK is not set
+>  CONFIG_NET=y
+>  CONFIG_PACKET=y
 
-Fixes: 385c8ac763b3 ("dt-bindings: display/msm: convert MDP5 schema to YAML format")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml | 1 -
- 1 file changed, 1 deletion(-)
+The defconfig updates look quite different.  Did you use savedefconfig for both
+of them?
 
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml b/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-index e153f8d26e7aaec64656570bbec700794651c10f..2735c78b0b67af8c004350f40ca9700c563b75f8 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,mdp5.yaml
-@@ -60,7 +60,6 @@ properties:
-           - const: bus
-           - const: core
-           - const: vsync
--          - const: lut
-           - const: tbu
-           - const: tbu_rt
-         # MSM8996 has additional iommu clock
+> diff --git a/arch/openrisc/include/asm/insn-def.h b/arch/openrisc/include/asm/insn-def.h
+> index dc8d16db1579..2ccdbb37c27c 100644
+> --- a/arch/openrisc/include/asm/insn-def.h
+> +++ b/arch/openrisc/include/asm/insn-def.h
+> @@ -9,4 +9,7 @@
+>  /* or1k instructions are always 32 bits. */
+>  #define	OPENRISC_INSN_SIZE		4
+>  
+> +/* or1k nop instruction code */
+> +#define OPENRISC_INSN_NOP     0x15000000U
 
----
-base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
-change-id: 20250809-msm8976-no-lut-4b5100bcfb35
+I see you use this header again here, note that in
+arch/openrisc/kernel/signal.c.  We write instructions to memory too for the
+sigreturn trampoline.
 
-Best regards,
--- 
-With best wishes
-Dmitry
+Also, you use OPENRISC_INSN_SIZE below.  Could you move this header to this
+patch completely?  I don't think its needed in the patching patch.
 
+>  #endif /* __ASM_INSN_DEF_H */
+> diff --git a/arch/openrisc/include/asm/jump_label.h b/arch/openrisc/include/asm/jump_label.h
+> new file mode 100644
+> index 000000000000..03afca9c3a1f
+> --- /dev/null
+> +++ b/arch/openrisc/include/asm/jump_label.h
+> @@ -0,0 +1,68 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2025 Chen Miao
+> + *
+> + * Based on arch/arm/include/asm/jump_label.h
+> + */
+> +#ifndef __ASM_JUMP_LABEL_H
+> +#define __ASM_JUMP_LABEL_H
+
+Can this be __ASM_OPENRISC_JUMP_LABEL_H?
+
+> +#ifndef __ASSEMBLY__
+
+Note upstream this is now __ASSEMBLER__.
+
+> +#include <linux/types.h>
+> +#include <asm/insn-def.h>
+> +
+> +#define HAVE_JUMP_LABEL_BATCH
+> +
+> +#define JUMP_LABEL_NOP_SIZE OPENRISC_INSN_SIZE
+> +
+> +/*
+> + * should aligned 4
+> + * for jump_label relative
+> + * entry.code   = nop.addr - . -> return false
+> + * entry.target = l_yes - .    -> return true
+> + * entry.key	= key - .
+> + */
+> +#define JUMP_TABLE_ENTRY(key, label)			\
+> +	".pushsection	__jump_table, \"aw\"	\n\t"	\
+> +	".align 	4 			\n\t"	\
+> +	".long 		1b - ., " label " - .	\n\t"	\
+> +	".long 		" key " - . 		\n\t"	\
+> +	".popsection				\n\t"
+> +
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	".align		4			\n\t"	\
+> +	"1: l.nop				\n\t"	\
+> +	"    l.nop				\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+> +static __always_inline bool arch_static_branch(struct static_key *const key,
+> +					       const bool branch)
+> +{
+> +	asm goto (ARCH_STATIC_BRANCH_ASM("%0", "%l[l_yes]")
+> +		  ::"i"(&((char *)key)[branch])::l_yes);
+> +
+> +	return false;
+> +l_yes:
+> +	return true;
+> +}
+> +
+> +#define ARCH_STATIC_BRANCH_JUMP_ASM(key, label)		\
+> +	".align		4			\n\t"	\
+> +	"1: l.j	" label "			\n\t"	\
+> +	"    l.nop				\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+> +static __always_inline bool
+> +arch_static_branch_jump(struct static_key *const key, const bool branch)
+> +{
+> +	asm goto (ARCH_STATIC_BRANCH_JUMP_ASM("%0", "%l[l_yes]")
+> +		  ::"i"(&((char *)key)[branch])::l_yes);
+> +
+> +	return false;
+> +l_yes:
+> +	return true;
+> +}
+> +
+> +#endif /* __ASSEMBLY__ */
+> +#endif /* __ASM_JUMP_LABEL_H */
+> diff --git a/arch/openrisc/kernel/Makefile b/arch/openrisc/kernel/Makefile
+> index f0957ce16d6b..19e0eb94f2eb 100644
+> --- a/arch/openrisc/kernel/Makefile
+> +++ b/arch/openrisc/kernel/Makefile
+> @@ -9,6 +9,7 @@ obj-y	:= head.o setup.o or32_ksyms.o process.o dma.o \
+>  	   traps.o time.o irq.o entry.o ptrace.o signal.o \
+>  	   sys_call_table.o unwinder.o cacheinfo.o
+>  
+> +obj-$(CONFIG_JUMP_LABEL)	+= jump_label.o
+>  obj-$(CONFIG_SMP)		+= smp.o sync-timer.o
+>  obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
+>  obj-$(CONFIG_MODULES)		+= module.o
+> diff --git a/arch/openrisc/kernel/jump_label.c b/arch/openrisc/kernel/jump_label.c
+> new file mode 100644
+> index 000000000000..ce259ba30258
+> --- /dev/null
+> +++ b/arch/openrisc/kernel/jump_label.c
+> @@ -0,0 +1,53 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025 Chen Miao
+> + *
+> + * Based on arch/arm/kernel/jump_label.c
+> + */
+> +#include <linux/jump_label.h>
+> +#include <linux/kernel.h>
+> +#include <linux/memory.h>
+> +#include <asm/bug.h>
+> +#include <asm/cacheflush.h>
+> +#include <asm/text-patching.h>
+> +
+> +bool arch_jump_label_transform_queue(struct jump_entry *entry,
+> +				     enum jump_label_type type)
+> +{
+> +	void *addr = (void *)jump_entry_code(entry);
+> +	u32 insn;
+> +
+> +	if (type == JUMP_LABEL_JMP) {
+> +		long offset;
+> +
+> +		offset = jump_entry_target(entry) - jump_entry_code(entry);
+> +		/*
+> +		 * The actual maximum range of the l.j instruction's offset is -134,217,728
+> +		 * ~ 134,217,724 (sign 26-bit imm).
+> +		 * For the original jump range, we need to right-shift N by 2 to obtain the
+> +		 * instruction's offset.
+> +		 */
+> +		if (unlikely(offset < -134217728 || offset > 134217724)) {
+> +			WARN_ON_ONCE(true);
+> +		}
+> +		/* 26bit imm mask */
+> +		offset = (offset >> 2) & 0x03ffffff;
+> +
+> +		insn = offset;
+> +	} else {
+> +		insn = OPENRISC_INSN_NOP;
+> +	}
+> +
+> +	if (early_boot_irqs_disabled) {
+> +		copy_to_kernel_nofault(addr, &insn, sizeof(insn));
+> +	} else {
+> +		patch_insn_write(addr, insn);
+> +	}
+> +	return true;
+> +}
+> +
+> +void arch_jump_label_transform_apply(void)
+> +{
+> +	// flush
+
+Could you use the /* */ comment style?  Is this really flushing?
+
+> +	kick_all_cpus_sync();
+> +}
+> diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
+> index a9fb9cc6779e..000a9cc10e6f 100644
+> --- a/arch/openrisc/kernel/setup.c
+> +++ b/arch/openrisc/kernel/setup.c
+> @@ -249,6 +249,8 @@ void __init setup_arch(char **cmdline_p)
+>  		initrd_below_start_ok = 1;
+>  	}
+>  #endif
+> +	/* perform jump_table sorting before paging_init locks down read only memory */
+> +	jump_label_init();
+>  
+>  	/* paging_init() sets up the MMU and marks all pages as reserved */
+>  	paging_init();
+> -- 
+> 2.45.2
+> 
 
