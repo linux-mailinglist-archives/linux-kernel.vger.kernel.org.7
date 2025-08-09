@@ -1,597 +1,197 @@
-Return-Path: <linux-kernel+bounces-761036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98C4B1F383
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:13:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8612B1F37D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 11:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EBE318C3738
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0679C16C21B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 09:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F1D27FB15;
-	Sat,  9 Aug 2025 09:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC91E27FB07;
+	Sat,  9 Aug 2025 09:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VCCEzvVv"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3FE19ABDE;
-	Sat,  9 Aug 2025 09:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PkK+dHIe"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B2A2236FC
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 09:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754730810; cv=none; b=tkmrLhsydmmh5dFTPyOZVc32aEsEvkUd0s6oZSrOiHhCvv7cFmKpbKSkxPUJlZpLaYyFt8GvqeBibrJkVsynEp/ukCbt5c9EhPi2aSFaJrqwF/PutZLX5JOwDNT3JwHHPszNoTCTovVChD1lRMTdKpgPo+lCu4fdUuZbpryOZ40=
+	t=1754730571; cv=none; b=CR7gXBK+9blpgAMzyNTFoIOotVI6jsngxB/UlqNqx/duQEk6EPq0VR1YkjKus8ht4u8IbQEqoZ5lxvp8Ga4vwOoVVzjcevzPhBmsAnmKRw6T+WJcCqUl4NGY9Q6ZLhPZo3pD7xahLA2sr9AYaDJ6h5arqUv+/4Sb7fH98rTqME8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754730810; c=relaxed/simple;
-	bh=sLFmTatwFr7l5cPHDnYWTzrehQZQLPBOcZpGKNc97us=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qMiRYxjZp52+vcOpnCueGqlRdOZILXg1HnXfoFTq2wqNAm374nZ7g8wKmKtMcQVYwGrFPU1IZSdrTqn4d/WbBrHuexW+ru3tnB59Xq7Txs4hTrjDLWtUtQep44vNLFPst7cZL5JlBJkAstXIBJapZzYSWhJnnTfl70q4awbl3LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VCCEzvVv; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=rR
-	lAbYCKdyKBPyABH9sthDYvZeVuJdVFuC6WIkvivI0=; b=VCCEzvVv9WYftXAX6N
-	vb/QEKUuZEZWU+UvWvh4MAVEPZFuyzNJN4p6dOy7lAhMsWkMWNIHvoDWbuHHv43+
-	s1VDgropsVU28yZxAAY/TrxT/ihdc58gEG3J3KwX4Dyi16Fau1MHRPsrPHolpdy8
-	nnDDN98yD7S1NUs1w8yNZxnfA=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDHq_x2DZdoreX8Ag--.34476S2;
-	Sat, 09 Aug 2025 16:57:27 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	ferenc@fejes.dev
-Cc: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: af_packet: add af_packet hrtimer mode
-Date: Sat,  9 Aug 2025 16:57:26 +0800
-Message-Id: <20250809085726.1482059-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754730571; c=relaxed/simple;
+	bh=gj5WdryTYu7PT4dTZngjyxnWpSzUxEs+xqEH1hXzTQc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSWSc6soxtnqYRDSKYxusa2i+As2brEdpt/EVAmhd2/gfee0YeNz1G958pa9JWPdsq8Q7TVxDP4gSOVzEtGDND9Gzrhs4gN/AsNUg+oA6A7uIYWB7nhQa1p6W+ST9gLepMDjzLEaJupHjI40/9khCInfqqnO6LkHmvbUt2ovTKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PkK+dHIe; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5798Wvro001587
+	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 09:09:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	i1p4sIou1OtXlVv6o2JJTzg44/zZ5upOzf0/7xYa3us=; b=PkK+dHIeYigCel8M
+	i/26lYcOcLcNcmR7YKbLytinfo1eiki44XBl57oQIYOCcN665fhtPBfXhXqW5GaI
+	KyeHFUXCp+/c7EmIEd3vx8i5oNVk13qroSB4tT1OulGxe2MHTTpLwS48RTmptrsB
+	oj/pm6wn2oh88s3ej7kvbh0X3bM/tBFMJ5LVdsKYI4ikY/EudQqAjXh3h1ZEmpNj
+	JiKMbzz2Bo9v7Nq/SJxPyQraRuZdeQTxXO7bIIoVKBAv9YOOrzmdzB+YGLNihZNh
+	6yrcK9XQIXJdqgLFgLDuryEBwWF71gdZQ9t+dcGxVvo4vTe60O8CnnKXREEPZ6Zc
+	T1JJHw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dygm8a8j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 09:09:28 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4aedcff08fdso53595311cf.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 02:09:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754730567; x=1755335367;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i1p4sIou1OtXlVv6o2JJTzg44/zZ5upOzf0/7xYa3us=;
+        b=bcsv5c3rOOlawjy+GIGUoLc6sZCnC04EZsEQR4y9G6ISFSe9xeYTkBVSis5oWYVwP/
+         WCT95k6GWlEU87eT246ya7DJt8Mx2gtx4L9Z6pkVl5HA3klt9iYiCUOU2AGdpX6qinVy
+         A76cy2/40j99Ers89YJ8h6XvVfQPtxeA/2fxDhSRAqjriFzXlTMSVukHoY7W1vSM8zbq
+         y4LdmfsN3f3bwvoQlM7oUKtU72FcqRt0Qor8gWAUkUG1YCeQ8BftFuqf0cJcOSd+yywm
+         EPyBsFB26aN77V8iqgSSeHqpNgpFpOBntEK/PBVDeMeyIHY5Qe5e6lY+wsVkMjM6GgJm
+         Ys8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVITdsHrjf5KWPD4bbaXcFEEXXwni4Pte4wcdkLvfiLIMGmmahu/36GkPI5tMJlQPkQR+R6Wfos4ohxlXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpO0/PpLqCghDivqUutG42iNwBdHq2oK0STmwH+UFMxpl5phyZ
+	aPoueUpsMlezIH9IxKCj4RQwV+d3jHmxows5j6WLwd1XQMcPP8au4yYCqK//x/EyLhdiWdqgnu5
+	8nsox6oGWGBJJevcXlw6Wi6xkp5s9DN577AZoiVFvqK/46Uc2vhRwJaCJ4zokb46+zn/xWqAOYV
+	ICIA==
+X-Gm-Gg: ASbGncveA7FOWX1tJiMWJkHTo4hkmKP/3m1LLsW9+D14cdWM8a7irJy6tEW6Af2ZARi
+	dWqW+0qjr4XiQXsnRCP1h8BH1Ke+b4H2OQTl4O+YgnGGHW2KaB4mB5BxRnWhMz/Fg7jE/ywlMwX
+	GZsIXkZIh8X9wGI8nJ89f24syHBDhW9fh/6Kd5p7z/TN3vFBNVfdMYmn2njnH6lPiYwMEHsQouC
+	fkYk43gtsPn9c3DyOMcQaMFiTINzCqKt8kOWb1Bytdo3ebGly/OM7u4wOHHX6N2EhROrSY+ZXLg
+	O2wk/bQejMOKHsVm93vC5leS5fwnjiV8AjVHiuhYDiyaMOVb3jdsIMefj7u+aAzzWk9KAA==
+X-Received: by 2002:ac8:59cc:0:b0:4ab:65c3:37d0 with SMTP id d75a77b69052e-4b0aedd7d06mr83220641cf.31.1754730567403;
+        Sat, 09 Aug 2025 02:09:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtfrK4MBV+QXIawmd4r+w5lF0c2fMvBfjSp7sAbrpzm1gjiPZN0ejajPq8vKUzIPcSwLTQWQ==
+X-Received: by 2002:ac8:59cc:0:b0:4ab:65c3:37d0 with SMTP id d75a77b69052e-4b0aedd7d06mr83220271cf.31.1754730566864;
+        Sat, 09 Aug 2025 02:09:26 -0700 (PDT)
+Received: from trex (205.red-83-60-94.dynamicip.rima-tde.net. [83.60.94.205])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9386sm33241324f8f.18.2025.08.09.02.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Aug 2025 02:09:26 -0700 (PDT)
+From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
+Date: Sat, 9 Aug 2025 11:09:24 +0200
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        bryan.odonoghue@linaro.org, quic_dikshita@quicinc.com,
+        konradybcio@kernel.org, krzk+dt@kernel.org, mchehab@kernel.org,
+        conor+dt@kernel.org, andersson@kernel.org, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 5/7] media: venus: core: Add qcm2290 DT compatible and
+ resource data
+Message-ID: <aJcQRLDplbNetNKN@trex>
+References: <aJHgh8mon9auOHzi@trex>
+ <aJHqpiqvulGY2BYH@trex>
+ <to2hrxml3um6iep4fcxhkq7pbibuimfnv4kfwqzlwdkh4osk5f@orjzbuawwgko>
+ <aJMMhIqNupwPjCN+@trex>
+ <0248afed-b82d-4555-8277-e84aacf153fd@oss.qualcomm.com>
+ <aJNTigOMy1JFOxot@trex>
+ <fcdd9534-d494-3fdb-dfa7-1d15da6f697a@quicinc.com>
+ <aJSvjqfQw3kNrVVH@trex>
+ <447caa6d-13d2-2e75-5f33-6df9b2fd6d69@quicinc.com>
+ <2yj3er5j72yoa2ltboopx5gvquur7jl3viqnq5qsci2fxjf4ix@7t63vgizfknb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHq_x2DZdoreX8Ag--.34476S2
-X-Coremail-Antispam: 1Uf129KBjvAXoW3uFy3GF1fGF4fZw4kJF1rtFb_yoW8Ww18Xo
-	Z3XFs8Ga1rKFnrJrW0krs2yF4Uuw1vy3W7Jrs8JrnrW3WSk3y8W3yIkw45Ja13WrWFkF98
-	Xa97Gw1avwn8tFZ5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUbzuAUUUUU
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbibgqjCmiV2OK4lQABsm
+In-Reply-To: <2yj3er5j72yoa2ltboopx5gvquur7jl3viqnq5qsci2fxjf4ix@7t63vgizfknb>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzNSBTYWx0ZWRfX0mZwQSGEHiDy
+ vG/SJnuBdx2O5dgR+uBZ25X763QLJW5EcERqJnbSu+FPfAXI4rHsZEyKiqf0Naczb1UPXYGKISd
+ 3hpm/DiT+ML89dYi5PPAIOUC/i5vBoEZzmLs4qUL/Uj8Aq3iVHkEaSXvEnXtHfUMgAMqmbaZMsl
+ HowhGE7dB/HO8RIwj3IHwHm1PuMRnFrzTsWhorTmPziy8M6OfmlmMeX0t+M45AA1XkktobPTd0S
+ 2gYewK8Yd2ACbK6odDd/GRsV5jOUVjN2A+rojHBfGMhDnzbrlKpjwDL2qMq+XYfpbhjT3y7Tf1Z
+ wN1ew1Vea7D6Fn8Cjw5V14QdA1Ok/RMjeVdq3I1HBQ3fZ2a0uTsV0jutrP4U7Bgj1QQvK4Cpcy5
+ nx9eC8RU
+X-Authority-Analysis: v=2.4 cv=FvMF/3rq c=1 sm=1 tr=0 ts=68971048 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=Rr2dNH5/fcnoRoBmcVUeRg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=24S9wm6B5SMZhME8xikA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: EpJgsC34lsdR1YV9anhs8c4cObQN7sBV
+X-Proofpoint-ORIG-GUID: EpJgsC34lsdR1YV9anhs8c4cObQN7sBV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-09_03,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
+ clxscore=1015 impostorscore=0 spamscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090035
 
-On Fri, 2025-08-08 at 19:39 +0800, Ferenc wrote:
-
-> Thanks for the additional details. Out of curiosity, how do your setup looks
-> like? The packet received from the LIDAR device are
-> A) processed on the system
-> B) processed on the system and transmitted elsewhere
-> C) only transmitted elsewhere
+On 09/08/25 11:18:21, Dmitry Baryshkov wrote:
+> On Thu, Aug 07, 2025 at 10:05:10PM +0530, Vikash Garodia wrote:
+> > 
+> > 
+> > On 8/7/2025 7:22 PM, Jorge Ramirez wrote:
+> > > On 07/08/25 16:36:41, Vikash Garodia wrote:
+> > >>
+> > >>> It was agreed that this complexity was not necessary and that we should
+> > >>> just drop <6.0.55 firmware support (which would in any case only include
+> > >>> video decode).
+> > >>>
+> > >>> And so on v8, I removed the above.
+> > >>>
+> > >>> Now I have v9 ready to post it, but Dmitry is asking why cant we have
+> > >>> the v7 functionality so I am waiting for direction.
+> > >>
+> > >> the issue is in firmware for both encoder and decoder. Didn't like the idea of
+> > >> driver carrying the hack for a firmware issue. Just because, for encoder, we are
+> > >> unable to hack it in driver, we are ok to have it enabled in a newer version of
+> > >> the firmware, we can follow the same for decoders as well.
+> > > 
+> > > if that is the only reason please do explain what do you mean by hack.
+> > 
+> > I meant that the EOS handling was not needed in driver after fixing it in
+> > firmware, isn't it ? Was trying to avoid carrying this in driver.
+> > 
+> > I tend to agree with the comment made by Dmitry in another thread to have decode
+> > enabled with existing firmware, no option but to support the *already* published
+> > bins.
+> > 
+> > Having said that, these limitation of having a separate EOS dummy buffer is well
+> > sorted out in gen2 HFI which have an explicit DRAIN cmd for it. Hope this
+> > motivates you to migrate to iris soon for AR50LITE variants :)
 > 
-> From the details provided so far I'm unable to understand the setup you have.
-> Both 2ms and 8ms looks pretty high for me. For example on a loaded system, I
-> have seen ~200-300us latencies with AF_PACKET software switch P95 with soma rare
-> outliers over 1ms. But that system might be faster than a embedded device you
-> have.
+> Migrating to Iris won't bring gen2 HFI. Think about users which have
+> OEM-fused hardware. For them it's not possible to switch firmware from
+> gen1 to gen2. Thus, if the SoC has been released using gen1 HFI, we
+> should think twice before upgrading it to gen2.
+>
 
-Dear Ferenc,
+As I understand it now after the thread, any driver developer working on
+new features should not be constrained by users with OEM-fused hardware.
 
-The packet received from the LIDAR device are only processed on the system.
-The sample code:
+Since only the OEM can provide signed firmware updates, it is their
+responsibility—not ours—to figure out how to deliver those updates if
+they want their users to benefit from new features (or new fixes).
 
-#include <arpa/inet.h>
-#include <assert.h>
-#include <inttypes.h>
-#include <linux/filter.h>
-#include <linux/if_ether.h>
-#include <linux/if_packet.h>
-#include <linux/ip.h>
-#include <net/if.h>
-#include <netdb.h>
-#include <netinet/udp.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <sstream>
-#include <string>
-#include <vector>
+The EU Cyber Resilience Act supports this view by placing the update
+obligation on manufacturers (at least that is what I understand it, let
+me know if you understand it differently)
 
-static const uint16_t kAtxBlockPerPacket = 2U;
-static const uint16_t kAtxScanPerBlock = 100;
-static const uint16_t kAtxScanPerBlockPed = 36;
-static const uint32_t kAtxMaxPointPerScan = 160000U;
-static const uint16_t kAtxWheelAngle = 180U;
-static const uint16_t kAtxHighAngleUint = 256U;
-static const uint16_t kAtxWheelNum = 3U;
-static const uint32_t kAtxMaxPkgPerScan = 1800U;
-static const float kAtxDistanceMaxMeter = 200.0f;
-static const float kAtxDistanceMinMeter = 0.3f;
+Breaking backward compatibility is something we must avoid of
+course. However, guaranteeing compatibility between old firmwares
+(whether signed or not) and _new_ features is a separate matter...
 
-#pragma pack(push, 1)
-struct AtxTail {
-  uint8_t status_data[3];
-  uint8_t reserved1[7];
-  uint8_t parity_flag;  // same as frame_id
-  uint8_t reserved2[7];
-  int16_t motor_speed;
-  uint32_t ts_us;        // ts us parrt
-  uint8_t return_mode;   // 0x37  strongest, 0x38 last
-  uint8_t factory_info;  // 0x42
-  union {
-    struct {
-      uint8_t reserved4[2];
-      uint32_t ts_sec;  // ts sec parrt
-    };
-    uint8_t ts_utc[6];  // ? virtual time ,not supported currently
-  };
-  uint32_t udp_seq;
-};
 
-struct AtxNetSafty {
-  uint8_t signature[32];
-};
-
-struct AtxChannel {
-  uint16_t distance;
-  uint8_t intensity;
-  uint8_t confidence;
-};
-
-struct AtxBlock {
-  // the real azimuth = azimuth / 512
-  // low resolution part
-  uint16_t azimuth;
-  // high resolution part
-  uint8_t reserved;
-  // AtxChannel channel[kAtxScanPerBlock + kAtxScanPerBlockPed];
-  AtxChannel channel[kAtxScanPerBlock];
-};
-
-struct AtxDataHeader {
-  uint8_t laser_num;
-  uint8_t block_num;
-  uint8_t first_block_return;
-  uint8_t dis_unit;
-  uint8_t return_num;
-  uint8_t content_flag;
-};
-
-struct AtxPkgHeader {
-  uint16_t start_flag;
-  uint8_t protocol_ver_major;
-  uint8_t protocol_ver_minor;
-  uint8_t reserved[2];
-};
-
-struct AtxDataPkt {
-  AtxPkgHeader pkg_header;
-  AtxDataHeader data_header;
-  AtxBlock blocks[kAtxBlockPerPacket];
-  uint32_t crc;
-  AtxTail tail;
-  char reserved[12];
-  AtxNetSafty funcs;
-};
-
-// ATX angle correction data
-struct PandarATXCorrectionsHeader {
-  uint8_t delimiter[2];
-  uint8_t version[2];
-  uint8_t reserved[2];
-  uint8_t channel_quantity;
-  uint16_t angle_inv_factor;
-};
-
-struct PandarATXCorrections {
-  PandarATXCorrectionsHeader header;
-  int16_t azimuth_offset[kAtxScanPerBlock];
-  int16_t azimuth_offset_odd[kAtxScanPerBlock];
-  int16_t elevation[kAtxScanPerBlock];
-  uint8_t S56[32];
-};
-#pragma pack(pop)
-
-
-struct block_desc {
-  uint32_t version;
-  uint32_t offset_to_priv;
-  struct tpacket_hdr_v1 h1;
-};
-
-struct ring {
-  struct iovec* rd;
-  uint8_t* map;
-  struct tpacket_req3 req;
-};
-
-static unsigned long packets_total = 0, bytes_total = 0;
-
-std::string GenSockFilterCmd() {
-  std::string tcpdump_cmd = "tcpdump -i eth0  host 192.168.1.204 and 'port 10000' -dd";
-  return tcpdump_cmd;
-}
-
-int32_t GenSockFilterRegisterValue(std::vector<struct sock_filter>& filter_contents) {
-  std::string tcpdump_cmd = GenSockFilterCmd();
-  std::string result_str(4096u, 0u);
-  FILE* fp = popen(tcpdump_cmd.c_str(), "r");
-  if (fp == nullptr) {
-    printf("exec tcpdump cmd %s fail.", tcpdump_cmd);
-    return -1;
-  }
-  auto read_len = fread((void*)result_str.c_str(), 1u, result_str.size(), fp);
-  if (read_len <= 0u || read_len >= result_str.size()) {
-    printf("exec tcpdump cmd:%s fail, tcpdump result:%s is invalid.", tcpdump_cmd, read_len);
-    pclose(fp);
-    return -1;
-  }
-  pclose(fp);
-  std::size_t parsed_index = 0u;
-  printf("result_str:%s\n", result_str.c_str());
-  while (parsed_index < read_len) {
-    std::size_t start_idx = result_str.find('{', parsed_index);
-    start_idx += 1u;
-    std::size_t end_idx = static_cast<std::size_t>(result_str.find('}', parsed_index));
-    if (start_idx == std::string::npos || end_idx == std::string::npos) {
-      break;
-    }
-
-    auto len = end_idx - start_idx;
-    std::istringstream result_is(std::string(result_str.substr(start_idx, len)));
-
-    std::string code, jt, jf, k;
-    result_is >> code >> jt >> jf >> k;
-    code.erase(code.size() - 1u);
-    jt.erase(jt.size() - 1u);
-    jf.erase(jf.size() - 1u);
-    struct sock_filter filter_content;
-    filter_content.code = static_cast<uint16_t>(std::stoi(code, nullptr, 16));
-    filter_content.jt = static_cast<uint8_t>(std::stoi(jt));
-    filter_content.jf = static_cast<uint8_t>(std::stoi(jf));
-    filter_content.k = static_cast<std::size_t>(std::stol(k, nullptr, 16));
-    printf("code:%d, jt:%d, jf:%d, k:%lu\n", filter_content.code, filter_content.jt, filter_content.jf, filter_content.k);
-    filter_contents.push_back(filter_content);
-    parsed_index = end_idx + 1U;
-  }
-  return 0;
-}
-
-static int setup_socket(struct ring* ring, char* netdev) {
-  int err, i, fd, v = TPACKET_V3;
-  struct sockaddr_ll ll;
-  unsigned int blocknum = 64;
-
-  fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-  if (fd < 0) {
-    perror("socket");
-    exit(1);
-  }
-
-  err = setsockopt(fd, SOL_PACKET, PACKET_VERSION, &v, sizeof(v));
-  if (err < 0) {
-    perror("----setsockopt1");
-    exit(1);
-  }
-
-  memset(&ring->req, 0, sizeof(ring->req));
-  ring->req.tp_block_size = static_cast<uint32_t>(getpagesize());
-  ring->req.tp_frame_size = static_cast<uint32_t>(getpagesize());
-  ring->req.tp_block_nr = blocknum;
-  ring->req.tp_frame_nr = blocknum;
-  ring->req.tp_retire_blk_tov = 2;
-  ring->req.tp_feature_req_word = TP_FT_REQ_FILL_RXHASH;
-  printf("--------pagesize:%d\n", ring->req.tp_block_size);
-  err = setsockopt(fd, SOL_PACKET, PACKET_RX_RING, &ring->req, sizeof(ring->req));
-  if (err < 0) {
-    perror("-----setsockopt2");
-    exit(1);
-  }
-
-#if 0
-  std::vector<struct sock_filter> filter_contents;
-  if ((0 == GenSockFilterRegisterValue(filter_contents)) && !filter_contents.empty()) {
-    struct sock_fprog bpf_filter;
-    bpf_filter.len = static_cast<uint16_t>(filter_contents.size());
-    bpf_filter.filter = filter_contents.data();
-    if (setsockopt(fd, SOL_SOCKET, SO_ATTACH_FILTER, &bpf_filter, sizeof(bpf_filter)) >= 0) {
-    } else {
-      printf("attach kernel filter fail and packet filter by user.");
-    }
-  }
-#else
-  struct sock_filter code[25] = {
-      {0x28, 0, 0, 0x0000000c},  {0x15, 0, 22, 0x00000800}, {0x20, 0, 0, 0x0000001a}, {0x15, 0, 20, 0xc0a801cc},
-      {0x30, 0, 0, 0x00000017},  {0x15, 2, 0, 0x00000084},  {0x15, 1, 0, 0x00000006}, {0x15, 0, 16, 0x00000011},
-      {0x28, 0, 0, 0x00000014},  {0x45, 14, 0, 0x00001fff}, {0xb1, 0, 0, 0x0000000e}, {0x48, 0, 0, 0x0000000e},
-      {0x15, 0, 11, 0x00002710}, {0x20, 0, 0, 0x0000001e},  {0x15, 0, 9, 0xc0a8010a}, {0x30, 0, 0, 0x00000017},
-      {0x15, 7, 0, 0x00000084},  {0x15, 6, 0, 0x00000006},  {0x15, 0, 5, 0x00000011}, {0x28, 0, 0, 0x00000014},
-      {0x45, 3, 0, 0x00001fff},  {0x48, 0, 0, 0x00000010},  {0x15, 0, 1, 0x000028a2}, {0x6, 0, 0, 0x00040000},
-      {0x6, 0, 0, 0x00000000}
-  };
-  struct sock_fprog bpf_filter;
-  bpf_filter.len = static_cast<uint16_t>(25);
-  bpf_filter.filter = code;
-  setsockopt(fd, SOL_SOCKET, SO_ATTACH_FILTER, &bpf_filter, sizeof(bpf_filter));
-#endif
-
-  memset(&ll, 0, sizeof(ll));
-  ll.sll_family = PF_PACKET;
-  ll.sll_protocol = htons(ETH_P_ALL);
-  ll.sll_ifindex = if_nametoindex(netdev);
-  ll.sll_hatype = 0;
-  ll.sll_pkttype = 0;
-  ll.sll_halen = 0;
-
-  err = bind(fd, (struct sockaddr*)&ll, sizeof(ll));
-  if (err < 0) {
-    perror("bind");
-    exit(1);
-  }
-
-  ring->map = reinterpret_cast<uint8_t*>(mmap(
-      NULL, ring->req.tp_block_size * ring->req.tp_block_nr, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_LOCKED, fd, 0));
-  if (ring->map == MAP_FAILED) {
-    perror("mmap");
-    exit(1);
-  }
-
-  ring->rd = reinterpret_cast<iovec*>(malloc(ring->req.tp_block_nr * sizeof(*ring->rd)));
-  assert(ring->rd);
-  for (i = 0; i < ring->req.tp_block_nr; ++i) {
-    ring->rd[i].iov_base = ring->map + (i * ring->req.tp_block_size);
-    ring->rd[i].iov_len = ring->req.tp_block_size;
-  }
-
-  return fd;
-}
-
-bool CheckBlockPacketVaild(struct tpacket3_hdr *packet_hdr_ptr) {
-  if (packet_hdr_ptr == nullptr) {
-    printf("packet_hdr_ptr is nullptr");
-    return false;
-  }
-  {
-    struct ethhdr *ethhdr_ptr = (struct ethhdr *)((uint8_t *)packet_hdr_ptr +
-                                packet_hdr_ptr->tp_mac);
-    if (ethhdr_ptr->h_proto == htons(ETH_P_IP)) {
-      struct iphdr *iphdr_ptr = (struct iphdr *)((uint8_t *)ethhdr_ptr +
-                                ETH_HLEN);
-      char cli_ip[NI_MAXHOST] = {0};
-      struct sockaddr_in sockaddr_source;
-      memset(&sockaddr_source, 0, sizeof(sockaddr_source));
-      sockaddr_source.sin_family = PF_INET;
-      sockaddr_source.sin_addr.s_addr = iphdr_ptr->saddr;
-
-      getnameinfo((struct sockaddr *) &sockaddr_source,
-                  sizeof(sockaddr_source),
-                  cli_ip, sizeof(cli_ip), NULL, 0u, NI_NUMERICHOST);
-      if (iphdr_ptr->protocol == IPPROTO_UDP) {
-        struct udphdr *udphdr_ptr = (struct udphdr *)((uint8_t *)iphdr_ptr +
-                                    sizeof(struct iphdr));
-        // printf("port dest:%d, src:%d\n", ntohs(udphdr_ptr->dest), ntohs(udphdr_ptr->source));
-        if (ntohs(udphdr_ptr->dest) == 10402 && ntohs(udphdr_ptr->source) == 10000) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  return true;
-}
-
-union LidarPkgTs {
-  uint8_t data[8];
-  uint64_t ts{0UL};
-};
-
-int64_t GetSensorTimeStamp(const AtxDataPkt &raw_pkg) {
-  LidarPkgTs pkg_ts;
-  constexpr uint32_t kTimeToUsec = 1000000U;
-  if (0 == raw_pkg.tail.ts_utc[0]) {
-    pkg_ts.data[7] = 0U;
-    pkg_ts.data[6] = 0U;
-    pkg_ts.data[5] = 0U;
-    pkg_ts.data[4] = 0U;
-    pkg_ts.data[3] = raw_pkg.tail.ts_utc[2];
-    pkg_ts.data[2] = raw_pkg.tail.ts_utc[3];
-    pkg_ts.data[1] = raw_pkg.tail.ts_utc[4];
-    pkg_ts.data[0] = raw_pkg.tail.ts_utc[5];
-    return static_cast<int64_t>(pkg_ts.ts * kTimeToUsec + raw_pkg.tail.ts_us);
-  } else {
-    // current using this block
-    struct tm point_utctime;
-    memset(&point_utctime, 0x00, sizeof(point_utctime));
-    point_utctime.tm_year = raw_pkg.tail.ts_utc[0];
-    point_utctime.tm_mon = raw_pkg.tail.ts_utc[1] - 1;
-    point_utctime.tm_mday = raw_pkg.tail.ts_utc[2];
-    point_utctime.tm_hour = raw_pkg.tail.ts_utc[3];
-    point_utctime.tm_min = raw_pkg.tail.ts_utc[4];
-    point_utctime.tm_sec = raw_pkg.tail.ts_utc[5];
-#ifdef WIN
-    int64_t utc_ts = _mkgmtime(&point_utctime);
-#else
-    int64_t utc_ts = timegm(&point_utctime);
-#endif
-    return (utc_ts * kTimeToUsec + raw_pkg.tail.ts_us);
-  }
-}
-
-#include <time.h>
-#include <stdio.h>
-
-long long get_current_time_us() {
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    return (long long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
-}
-
-inline void display(struct tpacket3_hdr* ppd) {
-  struct ethhdr* eth = (struct ethhdr*)((uint8_t*)ppd + ppd->tp_mac);
-  struct iphdr* ip = (struct iphdr*)((uint8_t*)eth + ETH_HLEN);
-  uint32_t header_len = ETH_HLEN + sizeof(iphdr) + sizeof(udphdr);
-  static uint32_t g_last_udp_seq{0};
-  if (CheckBlockPacketVaild(ppd)) 
-  {
-    struct sockaddr_in ss, sd;
-    char sbuff[NI_MAXHOST], dbuff[NI_MAXHOST];
-
-    memset(&ss, 0, sizeof(ss));
-    ss.sin_family = PF_INET;
-    ss.sin_addr.s_addr = ip->saddr;
-    getnameinfo((struct sockaddr*)&ss, sizeof(ss), sbuff, sizeof(sbuff), NULL, 0, NI_NUMERICHOST);
-
-    memset(&sd, 0, sizeof(sd));
-    sd.sin_family = PF_INET;
-    sd.sin_addr.s_addr = ip->daddr;
-    getnameinfo((struct sockaddr*)&sd, sizeof(sd), dbuff, sizeof(dbuff), NULL, 0, NI_NUMERICHOST);
-    uint8_t * tmp_pack_ptr_ = reinterpret_cast<uint8_t *>(ppd) + ppd->tp_mac + header_len;
-    AtxDataPkt* tmp_atx_ptr = reinterpret_cast<AtxDataPkt *>(tmp_pack_ptr_);
-    size_t pack_size_ = static_cast<size_t>(ppd->tp_snaplen - header_len);
-    int64_t tmp_pkt_us = GetSensorTimeStamp(*tmp_atx_ptr);
-    //struct timespec ___ts;
-    //clock_gettime(CLOCK_REALTIME, &___ts);
-    printf(
-        "pack_size_:%lu, atx_udp_seq:%u, cur_ts_us:[%llu], cur_pkg_ts_us:[%lu], "
-        "delay:%llu\n",
-        pack_size_,
-        tmp_atx_ptr->tail.udp_seq,
-        get_current_time_us(),
-        tmp_pkt_us, get_current_time_us() - tmp_pkt_us);
-    // printf("%s -> %s, size:%d, udp_seq:%d \n", sbuff, dbuff, pack_size_, tmp_atx_ptr->tail.udp_seq);
-    if (0 != g_last_udp_seq && tmp_atx_ptr->tail.udp_seq != g_last_udp_seq + 1) {
-      printf("seq loss, last_seq:%u, cur_seq:%u", g_last_udp_seq, tmp_atx_ptr->tail.udp_seq);
-    }
-    g_last_udp_seq = tmp_atx_ptr->tail.udp_seq;
-  }
-
-  // printf("rxhash: 0x%x\n", ppd->hv1.tp_rxhash);
-}
-
-inline void walk_block(struct block_desc* pbd, const int block_num) {
-  int num_pkts = pbd->h1.num_pkts, i;
-  // unsigned long bytes = 0;
-  struct tpacket3_hdr* ppd;
-
-  ppd = (struct tpacket3_hdr*)((uint8_t*)pbd + pbd->h1.offset_to_first_pkt);
-  printf("--------num_pkts:%d--------\n", num_pkts);
-  for (i = 0; i < num_pkts; ++i) {
-    // bytes += ppd->tp_snaplen;
-    display(ppd);
-
-    ppd = (struct tpacket3_hdr*)((uint8_t*)ppd + ppd->tp_next_offset);
-  }
-
-  // packets_total += num_pkts;
-  // bytes_total += bytes;
-}
-
-static void flush_block(struct block_desc* pbd) {
-  pbd->h1.block_status = TP_STATUS_KERNEL;
-}
-
-static void teardown_socket(struct ring* ring, int fd) {
-  munmap(ring->map, ring->req.tp_block_size * ring->req.tp_block_nr);
-  free(ring->rd);
-  close(fd);
-}
-
-int main(int argc, char** argp) {
-  int fd, err;
-  socklen_t len;
-  struct ring ring;
-  struct pollfd pfd;
-  unsigned int block_num = 0, blocks = 64;
-  struct block_desc* pbd;
-  struct tpacket_stats_v3 stats;
-
-  if (argc != 2) {
-    fprintf(stderr, "Usage: %s INTERFACE\n", argp[0]);
-    return EXIT_FAILURE;
-  }
-
-  memset(&ring, 0, sizeof(ring));
-  fd = setup_socket(&ring, argp[argc - 1]);
-  assert(fd > 0);
-
-  memset(&pfd, 0, sizeof(pfd));
-  pfd.fd = fd;
-  pfd.events = POLLIN | POLLERR;
-  pfd.revents = 0;
-
-  while (1) {
-    pbd = (struct block_desc*)ring.rd[block_num].iov_base;
-
-    if ((pbd->h1.block_status & TP_STATUS_USER) == 0) {
-      poll(&pfd, 1, -1);
-      continue;
-    }
-
-    walk_block(pbd, block_num);
-    flush_block(pbd);
-    block_num = (block_num + 1) % blocks;
-  }
-
-  len = sizeof(stats);
-  err = getsockopt(fd, SOL_PACKET, PACKET_STATISTICS, &stats, &len);
-  if (err < 0) {
-    perror("getsockopt");
-    exit(1);
-  }
-
-  fflush(stdout);
-  printf("\nReceived %u packets, %lu bytes, %u dropped, freeze_q_cnt: %u\n",
-         stats.tp_packets,
-         bytes_total,
-         stats.tp_drops,
-         stats.tp_freeze_q_cnt);
-
-  teardown_socket(&ring, fd);
-  return 0;
-}
-
-
-> From the details provided so far I'm unable to understand the setup you have.
-> Both 2ms and 8ms looks pretty high for me. For example on a loaded system, I
-> have seen ~200-300us latencies with AF_PACKET software switch P95 with soma rare
-> outliers over 1ms. But that system might be faster than a embedded device you
-> have.
-
-From my perspective on the implementation of af_packet code, the faster the packets
-arrive, the more timely user space can process them, as the block quickly fills up.
-However, if the retire timer is still based on jiffies, it remains a significant
-issue in systems with CONFIG_HZ_250 or lower. Once packets arrive less frequently
-at a certain moment, the existing content in the blk cannot be quickly perceived
-and processed by user space. This situation worsens especially in systems configured
-with 64k as a page size. We have indeed measured this in our system using sample
-program mentioned above.
-
-
-> These timestamps calculated like this for example?:
-> 
-> sk = socket(AF_PACKET, ...)
-> cur_ts_us = now();
-> send(pkt, sk)
-> cur_pkg_ts_us = now()
-
-The embedded system we are using has a time synchronization design. The cur_pkg_ts_us
-time in the sample, as written in the code above, is the timestamp parsed from the
-packet, which is filled in by the LIDAR device when it is sent. The cur_ts_us time
-in the sample is the system time obtained from the system. Due to time synchronization,
-there will not be a significant discrepancy between the LIDAR time and the system time.
-
-
-
-Thanks
-Xin Zhao
 
 
