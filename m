@@ -1,302 +1,220 @@
-Return-Path: <linux-kernel+bounces-761129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2422B1F4C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:35:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBA4B1F4C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5908718C66EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:35:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1432A565083
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E3923E354;
-	Sat,  9 Aug 2025 13:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF04A29CB52;
+	Sat,  9 Aug 2025 13:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ixJwxTcm"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2071.outbound.protection.outlook.com [40.107.243.71])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mp8fVqDL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F17125A320;
-	Sat,  9 Aug 2025 13:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754746502; cv=fail; b=CRmHsMO2BT2TEQRlP8a5tgzfi/01Yj0lLIPhiyHMh+E/qQ2DfJL62iEr/waAaksAy62RPLAaP4yr2ETTunuzOJ6RBK6eZ5xgDlQ2kpB10y0ZZiuqDUHuljOayRCmVSa/rjS43lXdURU3fM3SriiM00A4+1QwjMgURZWZA3zX76M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754746502; c=relaxed/simple;
-	bh=FNcKeZ6pgs/gVRx5hz7TzVrO8SwwpdRtL5XxZPOF8gI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hhu7gS0cBixYTEETdzlnGT9/Em5izAMbUxYejDGF0ic3aqyq+X7DHlHxYgArwa/bu1HszZPgsAJUvNejbXG0UzvEkgzQ8A5jaEzxAs5FotE8U6VFvcEDXeqkYGjQpiV3WL3AiW5iY/66cFfjuMsMdTx8M/S31dapCA5SJiPfjjE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ixJwxTcm; arc=fail smtp.client-ip=40.107.243.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LVWxGMpQHc+QFX0/tTrsQ+8oHoHhaaBptiFL16N9lUZjafg2Vwxo83jWrmIx0ys15EM9iLwa74lxSiyNk5ftshFT+e1Eta7JIqCOTCrW5byLiQBsfKVaCVBBzPup2XaTOnikWBB7vgKTU+z4zXiTNeng/jCqYBe2h2PYH2fwzQ3PKP8NSselMu8jizZmYlls+PHYCRS2pHfeAG3XPYxZzpJWN8N4qmR31PJItd4uPx4olthfFjDZ02xGEMNGj13mDybVgBPs2TerV0xYuzIS54FH+0SOXfMTRaQBcIHb+RSZ1q23RYtpQ+AgpWmPR1O+sGDFqziTlb5ldPoq5gKYOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5hQwFjXQOmqNPj4Z17V9pB+cg3fmuvcbi4cPAiVbgUQ=;
- b=S0eeE5f0L2EE2VBH3feGr3RpQeI9Jf7XwUukXfSWpH0rHI4Cbbq4k8XxHRnzfC3h7A9scNhTRHpB7NPASDxxAvsF2uVw8haHpy80o4tFiNNNIUw1ZrWJjHDZ1HkWrvT4659y433RL1/B32AmUWgHSAbFI2tU2kxcPmRuXX7k97ZcM1BUQ4rRwzn/DGDFShh03rW4LPHeitwa11rKRDFgk34lLSqUk2yOrJhN0A6/HuISK79BDAUQ9Ggyj1furszHvdXn3ecKKQh2Rkhx62Vk0/hAZ8KMsrpAQdp6sLgJo3ysePjx/XPBGuO1iqY+XpwavZOZCbPSJLUiTUCrjYqJXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5hQwFjXQOmqNPj4Z17V9pB+cg3fmuvcbi4cPAiVbgUQ=;
- b=ixJwxTcm+kMKNa9ZTfkl9q/o6ev8PVNhKEbMjdsrg+H/yTiFRoJ2euaU869KCzSfeGn9H/vLmpUZdjSjHFlDHqNaHmllIc10ECQatkdpiuleb+Knbk+tFIZHhwR9iL8nXEM3zYbe8Rg5DOC1evdVGNJ8ruG6NcLB7HnZdrXeAR4XOFAgsC+8tfOHdlu/c0aPJThwgtyh1JkHkPwiPWAq8ktbbdSmztha/wBga5v5PHzke09E7ei/dXf22IvZmYzqagBxnWwCGKeDxF7oRfVM7V0XK2E8HQnukn5ZWhXcY194nEA/ikp9XYSVRduQqYyaKi2HMxM0JFDOmNJjQjrESQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by CH2PR12MB4120.namprd12.prod.outlook.com (2603:10b6:610:7b::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Sat, 9 Aug
- 2025 13:34:56 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9009.018; Sat, 9 Aug 2025
- 13:34:56 +0000
-Date: Sat, 9 Aug 2025 10:34:54 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v1 00/16] dma-mapping: migrate to physical address-based
- API
-Message-ID: <20250809133454.GP184255@nvidia.com>
-References: <cover.1754292567.git.leon@kernel.org>
- <CGME20250807141938eucas1p2319a0526b25db120b3c9aeb49f69cce1@eucas1p2.samsung.com>
- <20250807141929.GN184255@nvidia.com>
- <a154e058-c0e6-4208-9f52-57cec22eaf7d@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a154e058-c0e6-4208-9f52-57cec22eaf7d@samsung.com>
-X-ClientProxiedBy: YT1PR01CA0136.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2f::15) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1693719049B;
+	Sat,  9 Aug 2025 13:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754747131; cv=none; b=Swds9sdzGkD3USV7cDlViyAoUEvoqOqKfJVWUcCFs/1X/CWIehCD026xYAwnIyC82JxSrawIg5VOvHl2+nR451LA3hM/fRqy0mJcoQrnYLTVH8UhfuNUksVniVtyE+Le+1ANIJfiYC1OAE+kd1J92KVYYQY7d70vNkfZ6WUhL9M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754747131; c=relaxed/simple;
+	bh=ydFHCGuoBScykYKE90uFJyDswDmXxIBtqGIzFZRDmE0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oCiysh2lD438dORGr7x9SYsYfN4bijeJNj7W4hxIY8XeU8HCJbYFw02VTglIWmUOLZ9PBjk+V/wIGkCzq61waQKyKcR4C+jamerdqDOM/QkxpamFx8TyWUkFFN9yc7vNO/Dpc+KVEXiX6GMZlOzmuTvfiOXEwQiP+oHPLDbyDyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mp8fVqDL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 579DA4UA004805;
+	Sat, 9 Aug 2025 13:44:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=OG3d0lDrcuXWFch/2X4e2K4a3EtHmuRoI+T
+	86cCg/bQ=; b=Mp8fVqDL4RHrC9ownhrxU8Wkj//AVqYe8TN7QpDq/YKxIl/EfnV
+	3Q+n/fVVtOeAAwxqTcAM7rUKr+YZk4PTdMPzGxeDsAQ7tdtVo6nY5d4GD6rD/LE4
+	v0IpEW+3JO3M2dfn+PotWaJyiXYl1bDmQgDytuEfeGzN8DXOtUgWc6l30XMWN9mz
+	pWZTjXZfyGJweXw8vAKMwQByudPvlSQL09/HBPayGod1KRywcEowHOVP+TocuR/O
+	IUT80IepWJkRdprPNS0VjOzSPHeM8Hfjiq3+WBNlPcYhBdRdcQ5EZkR4ZKZzqfOJ
+	0NuHa415Il9CgjBbLv3Ck7kH7Vneb5yjE0Q==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dygm8k2n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 09 Aug 2025 13:44:52 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 579DimsD019700;
+	Sat, 9 Aug 2025 13:44:48 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 48dydktb6c-1;
+	Sat, 09 Aug 2025 13:44:48 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 579Dim0B019694;
+	Sat, 9 Aug 2025 13:44:48 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 579Dilik019693;
+	Sat, 09 Aug 2025 13:44:48 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
+	id 22AE15729CC; Sat,  9 Aug 2025 19:14:47 +0530 (+0530)
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+To: mani@kernel.org, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, bvanassche@acm.org,
+        neil.armstrong@linaro.org, konrad.dybcio@oss.qualcomm.com,
+        tglx@linutronix.de
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>
+Subject: [PATCH V1] ufs: ufs-qcom: Fix ESI null pointer dereference
+Date: Sat,  9 Aug 2025 19:14:45 +0530
+Message-ID: <20250809134445.19050-1-quic_nitirawa@quicinc.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CH2PR12MB4120:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea51f777-dd35-4f45-4aa8-08ddd7498728
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U3E5Z09lcGdXblFaVVFad0VLYzdKWGJzZTU5V0ZwN1c2SEJ2cVpwV1YxZm1q?=
- =?utf-8?B?Y0hBSTNKb3ViWGVZL1lyNmRaVUFOelhBelJEdnQvbDQvTWpXTHhURENMOEZj?=
- =?utf-8?B?R1grOXQ0ZG5Ma3hGU2NwZ0xJamIyaVhwRjcwSXJoa1ZuaDhqRXRPMGs5dE1v?=
- =?utf-8?B?T2wzK0huNCtXUnNlME81dW1pak5ySno4TTZyYzJaNFBVbHF0RWhmZ0ttZnRM?=
- =?utf-8?B?RnBpQWozaWRMak9BZjBaRlRGdW1rd3JtTDVIVFFhUHBETEZ5R3UvTjkzdFRl?=
- =?utf-8?B?d1FYYkZ2aUJxU3BpWVNZUVlSdW9yYU1GbTBHVFp5MXVoSXZIbFE3WE1yUW1G?=
- =?utf-8?B?N0YwaU9OTEVnaXZKeklrYk1OTVFJclVVZ25xRTk4VE9HMkJQR0tRZjBMblRO?=
- =?utf-8?B?YW41b3pnd2wyNDY0U05hQVMvY1N0SVVQT3JUMmFZcXVLbmxDdkhsZ0NKK0Fw?=
- =?utf-8?B?bTBlUVMxRlpoWWRDYUJIOU5vZzlSTDVvZTk5Y2E1eVZaZFdrUC9rN0F0L0Vk?=
- =?utf-8?B?WVdEOThFelpDdzJXeVlFcWVCZjMwMHpXQVB6YTlKSFdsMlBWRndwV29JaGpJ?=
- =?utf-8?B?b2ErNVRtY3VjTUIyMDZtc1d3THJxKzBYNlg3eFBxSmFwbzlJOW04Ni9GeFk3?=
- =?utf-8?B?eVlaVW1iakpKN2ZMQ3dDTTBJelFINVF0Z3djWndaK0U4MjdYaXR6eCtaZVJq?=
- =?utf-8?B?N3h6VndrZnhFYVBrQ2I3OC93eVVXRzVWUFlXbk4rU2RyQ2ZnU0JPU09nUXEz?=
- =?utf-8?B?MUNvNjIyeWZqWDZhdDFSK0M3NHYxTkRNRkovZzl2cTd3RGhBZThpSkFWK09J?=
- =?utf-8?B?UVkrMkhTWkgvanpUcTcwMFRieVB6NGk1VTU3NjFxTVZlbXVqMWkzYVhxb3Ji?=
- =?utf-8?B?YlFxcFRHUUZBNTdPc3FxVlJkVkhMbTlKZ2ZRUDNVOHZsMzFrS094TStiRUNu?=
- =?utf-8?B?Snk2S3ZZRThpdXFOQXZRb25jQ2orZHdtNllFY0xSUnM2LzdyYm5FYXdWT0tO?=
- =?utf-8?B?NUptdVFQU25WKzNBQ0Ezc3pqd0VSMzlIejNJSVJDY1VHTE5IUzhGamRBTExt?=
- =?utf-8?B?NFIwMnh5bkxBb1BoeDUxdWtlUnhKZTBKS2NwT2MweDI0eklrSDl1WUo1TG9P?=
- =?utf-8?B?bFpROTRGcU9MK2dabXpiUThLZ0NHc0tScUgrK2hSUFFJaDVRV01hN2xMZVBI?=
- =?utf-8?B?SWZQSUE2cnFmTC9aMHJzREE3YjhLNG5IcW9XZzc5K0RiRTh4Wmk0bENHbUtp?=
- =?utf-8?B?NVRZRElsZjhLOFZJbkJ2OWQzeUVIOVU5SUZLMWlSaUtFTG1HZWF3RVVJQ09u?=
- =?utf-8?B?N1c4SkxOV0N1SDIzcWQvdmNzSGtqbGtMOTdRWVB1NGp3S294enNqY1Njai8v?=
- =?utf-8?B?RTNod2U2N3F4QzZDVitscFN1K3h2VjNIcHFKNDY5WXJmQTd5eUI3aWRZaEFE?=
- =?utf-8?B?RHRuY3lLcXZKa3pkMEhkQXk2OEFicE1EdisyMEt1ZXJxTElVNXNYZWRseGV6?=
- =?utf-8?B?WC9IRHV2MlVLZ3YrZk5EdmdPTDNSNkRPeVpKMi9xdW15RGsvYzNadlV0eUor?=
- =?utf-8?B?UjBMdmNxMC9yNkp1MDNGc2RSODU3NzVTTytySmNkcXJ4TmJCSWNHdDdLRmpy?=
- =?utf-8?B?WGpHVEFkL1FvdzlNRkk4bjlXMCtCbDR2UWw3NmpUMnl3QzUydFJTOGVxd2w0?=
- =?utf-8?B?UktRRUN5M1NoMjlEWThpQVpuTURCM2Jvaml6Q2pmbkZzUkF1MnlaUlRNNHFK?=
- =?utf-8?B?aURCd1lxT09UNU83bC9yaGlNNDRnTDZZUVhrVktweEJxcXdLSUc5MTM0TDFn?=
- =?utf-8?B?Ym9kU0VLLzc4UnI4YVFEUUU0QUVIemVnSzA4ZkNPdWFMME11YUpjOGtsbndE?=
- =?utf-8?B?MGkrN1ZHNFRaZDhoS21ER1U1U0RTNnhWNVBzVUdkOUljOWk3ZnJBSWFNRjFq?=
- =?utf-8?Q?clzIDg9uv2o=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cUlPQ3Q2bW1obUhaZnE4MTdVVlpBcVlKSkc3OWdGMHE2N2prNk1JQjRwTVMy?=
- =?utf-8?B?M0RZd1VqN1RIK1VLMVN2emZaRzNkSk9iSjZ0bUZYcU8wczFkRGtKeTRqNmJ4?=
- =?utf-8?B?Sjg5OUZVanMzM0o1U1RkVysvcWFVSTRwV2d3UDUwVUhGaGhoYmNjT1BwWThm?=
- =?utf-8?B?VXlsMGlidi8wZmc4MDQ1T21FYWwxa2dpbHlESEM1SGhIM1JFeDNFQ1NZL2JC?=
- =?utf-8?B?cGhFekdyTnlZdlpCVUhwOTdhYVI5WHJKVm9SaURENHlWNUVxSzlRL1V0Y2tr?=
- =?utf-8?B?cHhsY2lHSFN2WFgzSjlUVXo3T1g1cWlocEFZMG9maDBSS1ZuckVrVXVySDJn?=
- =?utf-8?B?NFpnZnZycnY5dU1ra3RNd0g0Q0JKY2hNVWRrRTFaMDh2b29zdGlneE9DOTdi?=
- =?utf-8?B?WlNjK1pHbFppekFqSWR4M3p1dGxwbGwvalU4aS81Sm1VdkVwSmR3RlVOcjFF?=
- =?utf-8?B?RUhjYm1WNVlxaCs0dThjOVRnZk9mOXdxWWk1S3M5eTVVcWphQ294VnFaNDF1?=
- =?utf-8?B?T01OYktuQzR3QWlnQlFoRG90dkJpbFB4K05jZnBDUnVBRHMwdURWVi9VRjhZ?=
- =?utf-8?B?OTduOG5Ra3JLeHI0aWMrNExRaWhWK0kxM0pQZDUxam1PMFhSTG9DanFiMTZO?=
- =?utf-8?B?YzhTb3B3d1FQVEd3MzdzUUh3RXFNS2dnMkdrdUUyc3laWjhaQkVDWUFxTUt4?=
- =?utf-8?B?WVIxUkdoUW80NVUwZldDZVIzZXB4TXZ0Q3pjQjhNOHNOK3hBYndrNkZQelNr?=
- =?utf-8?B?NTdkdGpYSzhjMDJMZEw4TjREeFg5cFlsV3pmUTlieU1oYW5ZSzF5MDJGTzlp?=
- =?utf-8?B?SC8vTTBuRTlHTytOQTdvWmNjaHdvYnNsYzN5aGI2Wk9ld3NjN1NGemxjRysx?=
- =?utf-8?B?bEl2NERCQndsTUF0emNaYXVKUHU5TFR3dzAwOXFCczVxYnNxeEVHK2F2Njkr?=
- =?utf-8?B?MlFxSU1FdzB6K3FCeE9Wb3RiZkVUMXhCMHVKMDRIMVZ5ZWhqelZZbWhsY0Nq?=
- =?utf-8?B?TDF4bmV6ckVCSWc2aVZicGZna0ptTFpmVGZ4WWVheGhuZjhxQVFZNnBqdkc3?=
- =?utf-8?B?ci8yWE1RRjhWR1MyMEpHWC84eFZWZmJJa0ZhM0RzR0ZnWVM5SnE4UERZTnRH?=
- =?utf-8?B?WEdDalhKd0JoVW9iU0RqNXRLNlFDZ2NiVTdhcW5PV3VaL2JFNkVCT1pLWlFR?=
- =?utf-8?B?eUxzSW1kcG9CblNOQVRMZWcwdk5jMURrZk51MTFFWXg1ZlBFc0Y3U3MydGo5?=
- =?utf-8?B?b1B6ODJkaDVCVVV0VUgwNlFvbU5WUEQ1b2FvK0F6Y1NweUhnblErWkpmbXcv?=
- =?utf-8?B?UDZYUUVCSzk2RHVzSWx0V3gyZ3RGTDU3cTBIblhEbWJtVVFsRGxCVk0yZEZk?=
- =?utf-8?B?RTFzQjJ2MTNKa3drczcvZGNtNUE0b0lPMmVON0pPL2pIaG14OTdLZExtQzk2?=
- =?utf-8?B?eXFCbWkrNlVIdDM5eEJLWmNtUithY1pqVFVZWGRVeExXMldhNjlVTXBNSzAr?=
- =?utf-8?B?aUVHZDZsaDJSdXo4dzJ4Yk9KOHRyaEJHS0luL01uNG82bllEaWhETmhRNjhQ?=
- =?utf-8?B?OCs2U2dlUWhyeFZGbVd3TElrWnNaR1RLTkRQVEhBb0xvT05IZjJQVWhZSVBx?=
- =?utf-8?B?eU5RNkZFanYvODZEaWNEK1VBdlRRcmRwcitHNGJxbU9UdUo1eHlTempVaVZU?=
- =?utf-8?B?cDFsbnY0QXE2TCtFMlorSVJSWWZaVEl4OEZZUzFnWGV2ZjlQZkxTZy9Nd1R3?=
- =?utf-8?B?cFBHWmRnb2FHZmZZejNKZHlobFhaNTJsV2Jyb2lkK0Rxdzk4SFFabFJjSjFt?=
- =?utf-8?B?MC9OZ2d3dmdrUVBJK1hkZHIwODFPdThwei8rUXJ6NlJCOW9UY1VMOWhjZjN4?=
- =?utf-8?B?QWRZMFJOVkN3YlFPN004U2I2aWI3OWhpUU1CaFUvSmVnOUdEK3Q2cGVRQmh2?=
- =?utf-8?B?djI4Mk5vZDBxbElxMVowc1hXTys0cWgzbjRQK0dEc1duMmhxc3FjM3dXZTlr?=
- =?utf-8?B?WEt2SmQ0Z3prcEdtRjJ2TldKMEowYUN6ZkRNVnZ6azkwdm40U29selB1ZzdX?=
- =?utf-8?B?bGM4MHJUbzdsdW5Kamc0VkJHaDh3d3plRVVOdVFYMmcyMVBpVkZtaXdodnho?=
- =?utf-8?Q?MjQ4=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea51f777-dd35-4f45-4aa8-08ddd7498728
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Aug 2025 13:34:55.9153
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6Ly2R1iyYEFH7E0g275dSDdE+KiUwr3rSanp+t+S8WiLKTigRjsg+luIZBAobiS3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4120
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzNSBTYWx0ZWRfX+VgGfB/IWru1
+ s4/3Hw7ZfGiH6/5RwRMzu/U4ybsIdk1Ar2wzzRen38f5m1LLt+Mc8ECQ46sOLZ5NWiVT7Wx4j6S
+ 4sw86j6b4vHiDPXab3hUjB16f0QX9IMiY5SJjSgnfkQFvtzvQ6YX+IF3Somq2AF4B4jo1wbvwt/
+ zFH6JOiiLYGDd4seYCj4JYgtUca32MxoX5rBps1VZ2rUCTq2HO9/Am0+uaq1PFv4XNPk7tddujz
+ eDLJQVJccQeY6NrSolUeWL79SB3C6J0KldwUY/j7lQiB8SEC0EpOx7r9glbazsXlTtiOWfMoltH
+ QEQYu1OhjcM3KUhDByRkp5t4x2mmZTKTSYqQk9qae/IbzwABdauiMJL38rdI4nC5TBq8uG4e0HO
+ 62xGoYRe
+X-Authority-Analysis: v=2.4 cv=FvMF/3rq c=1 sm=1 tr=0 ts=689750d5 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=xPyU-xE4Y_ssW17iAtgA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: YLgI4I5zzs0HyKADvIiaEr9n-nIJ_ByT
+X-Proofpoint-ORIG-GUID: YLgI4I5zzs0HyKADvIiaEr9n-nIJ_ByT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-09_04,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
+ clxscore=1011 impostorscore=0 spamscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090035
 
-On Fri, Aug 08, 2025 at 08:51:08PM +0200, Marek Szyprowski wrote:
-> First - basing the API on the phys_addr_t.
-> 
-> Page based API had the advantage that it was really hard to abuse it and 
-> call for something that is not 'a normal RAM'. 
+ESI/MSI is a performance optimization feature that provides dedicated
+interrupts per MCQ hardware queue . This is optional feature and
+UFS MCQ should work with and without ESI feature.
 
-This is not true anymore. Today we have ZONE_DEVICE as a struct page
-type with a whole bunch of non-dram sub-types:
+Commit fc87dd58d8f9("scsi: ufs: qcom: Remove the MSI descriptor abuse")
+brings a regression in ESI (Enhanced System Interrupt) configuration
+that causes a null pointer dereference when Platform MSI allocation
+fails.
 
-enum memory_type {
-	/* 0 is reserved to catch uninitialized type fields */
-	MEMORY_DEVICE_PRIVATE = 1,
-	MEMORY_DEVICE_COHERENT,
-	MEMORY_DEVICE_FS_DAX,
-	MEMORY_DEVICE_GENERIC,
-	MEMORY_DEVICE_PCI_P2PDMA,
-};
+The issue occurs in when platform_device_msi_init_and_alloc_irqs()
+in ufs_qcom_config_esi() fails (returns -EINVAL) but the current
+code uses __free() macro for automatic cleanup free MSI resources
+that were never successfully allocated.
 
-Few of which are kmappable/page_to_virtable() in a way that is useful
-for the DMA API.
+Unable to handle kernel NULL pointer dereference at virtual
+address 0000000000000008
 
-DMA API sort of ignores all of this and relies on the caller to not
-pass in an incorrect struct page. eg we rely on things like the block
-stack to do the right stuff when a MEMORY_DEVICE_PCI_P2PDMA is present
-in a bio_vec.
+  Call trace:
+  mutex_lock+0xc/0x54 (P)
+  platform_device_msi_free_irqs_all+0x1c/0x40
+  ufs_qcom_config_esi+0x1d0/0x220 [ufs_qcom]
+  ufshcd_config_mcq+0x28/0x104
+  ufshcd_init+0xa3c/0xf40
+  ufshcd_pltfrm_init+0x504/0x7d4
+  ufs_qcom_probe+0x20/0x58 [ufs_qcom]
 
-Which is not really fundamentally different from just using
-phys_addr_t in the first place.
+Fix by restructuring the ESI configuration to try MSI allocation
+first, before any other resource allocation and instead use
+explicit cleanup instead of __free() macro to avoid cleanup
+of unallocated resources.
 
-Sure, this was a stronger argument when this stuff was originally
-written, before ZONE_DEVICE was invented.
+Tested on SM8750 platform with MCQ enabled, both with and without
+Platform ESI support.
 
-> I initially though that phys_addr_t based API will somehow simplify
-> arch specific implementation, as some of them indeed rely on
-> phys_addr_t internally, but I missed other things pointed by
-> Robin. Do we have here any alternative?
+Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+---
+ drivers/ufs/host/ufs-qcom.c | 39 ++++++++++++++-----------------------
+ 1 file changed, 15 insertions(+), 24 deletions(-)
 
-I think it is less of a code simplification, more as a reduction in
-conceptual load. When we can say directly there is no struct page type
-anyhwere in the DMA API layers then we only have to reason about
-kmap/phys_to_virt compatibly.
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index 4bbe4de1679b..bef8dc12de20 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -2078,17 +2078,6 @@ static irqreturn_t ufs_qcom_mcq_esi_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
 
-This is also a weaker overall requirement than needing an actual
-struct page which allows optimizing other parts of the kernel. Like we
-aren't forced to create MEMORY_DEVICE_PCI_P2PDMA stuct pages just to
-use the dma api.
+-static void ufs_qcom_irq_free(struct ufs_qcom_irq *uqi)
+-{
+-	for (struct ufs_qcom_irq *q = uqi; q->irq; q++)
+-		devm_free_irq(q->hba->dev, q->irq, q->hba);
+-
+-	platform_device_msi_free_irqs_all(uqi->hba->dev);
+-	devm_kfree(uqi->hba->dev, uqi);
+-}
+-
+-DEFINE_FREE(ufs_qcom_irq, struct ufs_qcom_irq *, if (_T) ufs_qcom_irq_free(_T))
+-
+ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ {
+ 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+@@ -2103,18 +2092,18 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ 	 */
+ 	nr_irqs = hba->nr_hw_queues - hba->nr_queues[HCTX_TYPE_POLL];
 
-Again, any place in the kernel we can get rid of struct page the
-smoother the road will be for the MM side struct page restructuring.
+-	struct ufs_qcom_irq *qi __free(ufs_qcom_irq) =
+-		devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
+-	if (!qi)
+-		return -ENOMEM;
+-	/* Preset so __free() has a pointer to hba in all error paths */
+-	qi[0].hba = hba;
+-
+ 	ret = platform_device_msi_init_and_alloc_irqs(hba->dev, nr_irqs,
+ 						      ufs_qcom_write_msi_msg);
+ 	if (ret) {
+-		dev_err(hba->dev, "Failed to request Platform MSI %d\n", ret);
+-		return ret;
++		dev_warn(hba->dev, "Platform MSI not supported or failed, continuing without ESI\n");
++		return ret; /* Continue without ESI */
++	}
++
++	struct ufs_qcom_irq *qi = devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
++
++	if (!qi) {
++		platform_device_msi_free_irqs_all(hba->dev);
++		return -ENOMEM;
+ 	}
 
-For example one of the bigger eventual goes here is to make a bio_vec
-store phys_addr_t, not struct page pointers.
+ 	for (int idx = 0; idx < nr_irqs; idx++) {
+@@ -2125,15 +2114,17 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ 		ret = devm_request_irq(hba->dev, qi[idx].irq, ufs_qcom_mcq_esi_handler,
+ 				       IRQF_SHARED, "qcom-mcq-esi", qi + idx);
+ 		if (ret) {
+-			dev_err(hba->dev, "%s: Fail to request IRQ for %d, err = %d\n",
++			dev_err(hba->dev, "%s: Failed to request IRQ for %d, err = %d\n",
+ 				__func__, qi[idx].irq, ret);
+-			qi[idx].irq = 0;
++			/* Free previously allocated IRQs */
++			for (int j = 0; j < idx; j++)
++				devm_free_irq(hba->dev, qi[j].irq, qi + j);
++			platform_device_msi_free_irqs_all(hba->dev);
++			devm_kfree(hba->dev, qi);
+ 			return ret;
+ 		}
+ 	}
 
-DMA API is not alone here, we have been de-struct-paging the kernel
-for a long time now:
+-	retain_and_null_ptr(qi);
+-
+ 	if (host->hw_ver.major >= 6) {
+ 		ufshcd_rmwl(hba, ESI_VEC_MASK, FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC - 1),
+ 			    REG_UFS_CFG3);
+--
+2.48.1
 
-netdev: https://lore.kernel.org/linux-mm/20250609043225.77229-1-byungchul@sk.com/
-slab: https://lore.kernel.org/linux-mm/20211201181510.18784-1-vbabka@suse.cz/
-iommmu: https://lore.kernel.org/all/0-v4-c8663abbb606+3f7-iommu_pages_jgg@nvidia.com/
-page tables: https://lore.kernel.org/linux-mm/20230731170332.69404-1-vishal.moola@gmail.com/
-zswap: https://lore.kernel.org/all/20241216150450.1228021-1-42.hyeyoo@gmail.com/
-
-With a long term goal that struct page only exists for legacy code,
-and is maybe entirely compiled out of modern server kernels.
-
-> Second - making dma_map_phys() a single API to handle all cases.
-> 
-> Do we really need such single function to handle all cases? 
-
-If we accept the direction to remove struct page then it makes little
-sense to have a dma_map_ram(phys_addr) and dma_map_resource(phys_addr)
-and force key callers (like block) to have more ifs - especially if
-the conditional could become "free" inside the dma API (see below).
-
-Plus if we keep the callchain split then adding a
-"dma_link_resource"/etc are now needed as well.
-
-> DMA_ATTR_MMIO for every typical DMA user? I know that branching is 
-> cheap, but this will probably increase code size for most of the typical 
-> users for no reason.
-
-Well, having two call chains will increase the code size much more,
-and 'resource' can't be compiled out. Arguably this unification should
-reduce the .text size since many of the resource only functions go
-away.
-
-There are some branches, and I think the push toward re-using
-DMA_ATTR_SKIP_CPU_SYNC was directly to try to reduce that branch
-cost.
-
-However, I think we should be looking for a design here that is "free"
-on the fast no-swiotlb and non-cache-flush path. I think this can be
-achieved by checking ATTR_MMIO only after seeing swiotlb is needed
-(like today's is p2p check). And we can probably freely fold it into
-the existing sync check:
-
-	if ((attrs & (DMA_ATTR_SKIP_CPU_SYNC | DMA_ATTR_MMIO)) == 0)
-
-I saw Leon hasn't done these micro optimizations, but it seems like it
-could work out.
-
-Regards,
-Jason
 
