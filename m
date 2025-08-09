@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-761185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469D5B1F56D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:25:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633F0B1F570
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 18:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69657561FB0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8603D17D6CC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 16:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0872BEC21;
-	Sat,  9 Aug 2025 16:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A878C2BEC2D;
+	Sat,  9 Aug 2025 16:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="gHQ3E/56"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MJ8yVLVn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nNgYSaqF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C9F2BE637
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 16:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C3D2E36EE;
+	Sat,  9 Aug 2025 16:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754756731; cv=none; b=PgeOje5I0YwVmB+AV7YbOoLxnUJwCiqAcA11tz1JxGnT8uzCgnQhK96vfD0Le2LJxD/lCf6nQxmzLp16wa66cWtoTnD4xHueaV47yAw/Vj3wPxj06SMH6+Br9qL1z6+iGXK6FQeBgXhi/EDGHKAwQPfquTidzHdf2DfNNpopI+c=
+	t=1754756892; cv=none; b=pQXJq3SMGc4RonXT4dnVJkKdsweLtA5yS+WK+VmC9ikrhXJSmQX9l+3Y9AknyRSY3vsvcGzjjCPytk3PdMxx4HLqxWBrB/HjdZssQOAHr4kDmKQnl93VrxAtEE/YDT9rcPGHPhOU52oL5rIRo7JjA+nCtnVMgsw7B6qKsJdXZ4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754756731; c=relaxed/simple;
-	bh=1Hv8o9hqPxrhOTCbjdh5yB02ZbNjr2Ou0CSmQ1AIVJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HnlLVSOWy8GtBXBJ+wYbuzLv+RvdOfH/Xrk/8VFmGZ8bEAk/mKQ/Y/NFX0+9oEVKWDBsKy1WqXRoqTXwI45P7mLM+6Nwl1xhQ78RC7Q7o5hJryYrgLL0H8ODlICxwWzmLeh9aRU+I4RsqiIOgR3tRvWIX+Ruv4x3Y6390V54ihw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=gHQ3E/56; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id F231A104D0DD
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 21:55:20 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in F231A104D0DD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1754756720; bh=1Hv8o9hqPxrhOTCbjdh5yB02ZbNjr2Ou0CSmQ1AIVJE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=gHQ3E/564mRmdf7TVnjWW/4kJh2nw8D8556JXjz9EjNdSnUGUaWIdwJ5WpMJrut/x
-	 kzyYJLpMaZsy0clRE7JYKEKwS6GnnAcREd9xqH1zvsC1OliKSZxeoRjHiWLi11NXWm
-	 fNg3/yNHBv6FhcadSen2by+4nNkZyI/oPiYSGsMg=
-Received: (qmail 24743 invoked by uid 510); 9 Aug 2025 21:55:20 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.467976 secs; 09 Aug 2025 21:55:20 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 9 Aug 2025 21:55:16 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id F2A5A341558;
-	Sat,  9 Aug 2025 21:55:15 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id D1A641E8130A;
-	Sat,  9 Aug 2025 21:55:15 +0530 (IST)
-Date: Sat, 9 Aug 2025 21:55:10 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: linus.walleij@linaro.org, brgl@bgdev.pl, dianders@chromium.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Subject: [PATCH] gpio: virtuser: remove debugfs_create_dir() error checks
-Message-ID: <aJd2Zho5QRUTAEzm@bhairav-test.ee.iitb.ac.in>
+	s=arc-20240116; t=1754756892; c=relaxed/simple;
+	bh=aPLm6QL6vU52pLZ7PYQvh4xZM/UHPGJFDYeKhJ/u40Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FTvf9QTTqt3xvS4WWWlF/nqjliDCforSz+NyJ0Pe8jaylyY1A3TZdTeWKHHopOkWEXGlQAJDx80pZsXA9qOBnmhyRtR4eLgivEe/hCY9qlyTmN27LOoWQRRL9DLsbIZe1mF0ThW55HcvsXhpQN3CcmzUL4GW9/2hxqheUskPJXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MJ8yVLVn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nNgYSaqF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754756888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PS8l+qmFFn8A9kMqskYImlOYBznIbxngq+KJri3fzOU=;
+	b=MJ8yVLVnY1FgjOe1jbGV1gmPUtThCHydpX7PK97BsLQcsbexU791MYy7JjPqx1kRj0q0Ku
+	9NyjDG/tXBD0qnVD622xTlC6GOf37zVugcSgTEGM/3jDkvNiTeC7Goz7O4XhwkRqhfJbqa
+	48li9fFDMPc4EatsdvpkGAVazzKI/sKcVSeS3HS/3CEDisy5cwXp6As24EK2crsPsxvcO1
+	Jgt2kH7bssTGC14taPJcpsdmE1RUAcjlwisGJGAmep/GKO3ZTbpNarvtYXowIyHbE73jp7
+	SfMTS0jqT3IB6fsC0eGITYo9+S99mf1vF4EBycc5FhMZCMAr6AFma1IpARqeBQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754756888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PS8l+qmFFn8A9kMqskYImlOYBznIbxngq+KJri3fzOU=;
+	b=nNgYSaqFQ4yFdo8FEYAO9wlgpDnYAfEa1LYrNMB6MiFS1ikPFkTLqg9ytDoNk+4GFlnslc
+	r0Kcbm6rNyBrStBg==
+To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lukas Wunner <lukas@wunner.de>,
+ Bjorn Helgaas <helgaas@kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Linux PCI Mailing List
+ <linux-pci@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Lorenzo
+ Pieralisi <lorenzo.pieralisi@arm.com>, Manivannan Sadhasivam
+ <mani@kernel.org>, Krzysztof Wilczynski <kwilczynski@kernel.org>, Armando
+ Budianto <sprite@gnuweeb.org>, Alviro Iskandar Setiawan
+ <alviro.iskandar@gnuweeb.org>, gwml@vger.gnuweeb.org, namcaov@gmail.com
+Subject: Re: [GIT PULL v2] PCI changes for v6.17
+In-Reply-To: <aJdxVy1i3wGTvU3b@linux.gnuweeb.org>
+References: <aJQ19UvTviTNbNk4@linux.gnuweeb.org>
+ <aJXYhfc/6DfcqfqF@linux.gnuweeb.org> <aJXdMPW4uQm6Tmyx@linux.gnuweeb.org>
+ <87ectlr8l4.fsf@yellow.woof>
+ <aJZ/rum9bZqZInr+@biznet-home.integral.gnuweeb.org>
+ <20250809043409.wLu40x1p@linutronix.de>
+ <aJdNB8zITrkZ3n6r@linux.gnuweeb.org>
+ <20250809144927.eUbR3MXg@linutronix.de>
+ <aJdmGwFU6b9zh1BO@linux.gnuweeb.org> <87wm7ch5of.fsf@yellow.woof>
+ <aJdxVy1i3wGTvU3b@linux.gnuweeb.org>
+Date: Sat, 09 Aug 2025 18:28:07 +0200
+Message-ID: <87tt2gh33c.fsf@yellow.woof>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
 
-Remove return value checks for debugfs_create_dir() wherever
-appropriate. Follow guidelines mentioned in [1] that callers
-should ignore errors returned as other debugfs functions handle them
-appropriately.
-Refer commit 8bcbde2bb1374 ("debugfs: Document that debugfs_create
-functions need not be error checked") to clean up unnecessary error checks
-without impacting the functionality.
+Ammar Faizi <ammarfaizi2@gnuweeb.org> writes:
 
-Fixes: 91581c4b3f29e ("gpio: virtuser: new virtual testing driver for the GPIO API")
-Link: https://lore.kernel.org/all/20220222154555.1.I26d364db7a007f8995e8f0dac978673bc8e9f5e2@changeid/ [1]
-Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
----
- drivers/gpio/gpio-virtuser.c | 4 ----
- 1 file changed, 4 deletions(-)
+> On Sat, Aug 09, 2025 at 05:32:16PM +0200, Nam Cao wrote:
+>> So unlike what VMD doc says, it actually can have non-MSI-X children devices!
+>
+> If that's the conclusion, then Intel VMD doc also needs fixing :/
 
-diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
-index a10eab7d2617..295b8718f39d 100644
---- a/drivers/gpio/gpio-virtuser.c
-+++ b/drivers/gpio/gpio-virtuser.c
-@@ -788,8 +788,6 @@ static int gpio_virtuser_dbgfs_init_line_array_attrs(struct device *dev,
- 		return -ENOMEM;
- 
- 	data->ad.dbgfs_dir = debugfs_create_dir(name, dbgfs_entry);
--	if (IS_ERR(data->ad.dbgfs_dir))
--		return PTR_ERR(data->ad.dbgfs_dir);
- 
- 	return gpio_virtuser_create_debugfs_attrs(
- 			gpio_virtuser_line_array_dbgfs_attrs,
-@@ -825,8 +823,6 @@ static int gpio_virtuser_dbgfs_init_line_attrs(struct device *dev,
- 		return ret;
- 
- 	data->ad.dbgfs_dir = debugfs_create_dir(name, dbgfs_entry);
--	if (IS_ERR(data->ad.dbgfs_dir))
--		return PTR_ERR(data->ad.dbgfs_dir);
- 
- 	return gpio_virtuser_create_debugfs_attrs(
- 				gpio_virtuser_line_dbgfs_attrs,
--- 
-2.34.1
+Other possibilities are problem with your BIOS (likely), or problem with
+Linux's PCI enumeration (unlikely).
 
+But without hardware, I cannot investigate this further. Now that we
+know my commit didn't make the driver any worse, I am done here.
+
+>> Please discard the reverts and the diff I sent you, and try the diff
+>> below. I believe your machine will work now.
+>
+> Yes, I can confirm it's now clean. Just to verify both sides, here is
+> the last result:
+>
+>   https://gist.github.com/ammarfaizi2/72578d2b4cc385fbdb5faee69013d530
+>
+> If that one fix is final, then:
+>
+> Tested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+>
+> Thanks for the debugging work.
+
+Thanks for running tests, it would be impossible to figure out otherwise.
+
+> It's probably too late to get the fix in mainline before rc1. But if it
+> can go upstream sooner, that would be great.
+
+I don't think PCI maintainers are available at the moment, so I will
+send the patch next Monday. Time to enjoy my weekends..
+
+Nam
 
