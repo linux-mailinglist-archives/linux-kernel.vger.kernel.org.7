@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-760889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79D8B1F1A4
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:37:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9863EB1F1A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D38F1AA7B16
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 00:37:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CE3A7B7868
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 00:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B31624729A;
-	Sat,  9 Aug 2025 00:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF3F2586EC;
+	Sat,  9 Aug 2025 00:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="npBGLZGl"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LV0hx5sa"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50FA246BAA
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 00:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442C124DCF8
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 00:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754699751; cv=none; b=Vvo/aO4ZZdtWV0RTdAG2f4P+dh5FLSjIGx6dzeK1ruvxtKVhu1i4DmH+FlErCqNXAXu29buDOp1tG+kvBMrjGP9WDve7eYIBltI9KPE1d/SgerlLIE6b4+h6bGUwwWD5QDZwfsOUpsRMJeZeBR1I0aBAq/wwVlcqPdSo5AQqbzI=
+	t=1754699752; cv=none; b=a/Sxjbm+E9WY/8gIrBljhjZZhRJ6CzXKZC4MNObmr7SK8x4+nIJP/smyiWWlRahA29PF7EOtdxJC/HRRl5itOXnKAzHfntfpxtK5AtNb37GzXC1OdbgMzgSQOLT9O1g82zqcH19w6PT2yleCjcVpm5UGs90LtgWcXQjPqUopLrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754699751; c=relaxed/simple;
-	bh=ggjVjCaXkx6Mamyc1EgH8Z1xDLiJkr291pJTB5zorsY=;
+	s=arc-20240116; t=1754699752; c=relaxed/simple;
+	bh=4NtupbLbHXZJKW3LGWuziF6T3O+S2Clq0/ZFSk/f48A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NIhXgfv88qPeyqK2eWVBGUGlBoxaJjKGz7WUuJwWxg7fdOUECfBXBY2xRLiaLoVqSRNF55/BY54zoQQHT10kcuy8YMmW6byjDv0PKjRhUeT4B3Bm//tEjKNODA+e7R67o4MIH/Orukmv0un6aeRj/jlzPj1q6VKjH5WEykaF+ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=npBGLZGl; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=Hmj8fC8jmD643MBd4G2NEirjTnNvvFhwhIcdRX5p7evNm4V2lc+4gJ/MDxbLBsn2dudRAK7DNBV6GQB+Wr2RoKfcn/on6vqFIZLtvWCDODE/WSDbvEDlNhNfggBOMK7s+EJrJe6GqhhCLsNYT3ueMY9zIujF5jw+mky/yucCfjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LV0hx5sa; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578Ewkh9011668
-	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 00:35:49 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578FuskG022433
+	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 00:35:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3eZyTM1lKAlxwHu0KgfbpHrzCleYc0+uy6KH19detY8=; b=npBGLZGlyc08LaU9
-	kco4hlyvKU2rGweNbK6e3aJwO4lcjBj+EJeHiLv+73LNdhlCU6JX/eG4np2vuZGv
-	+N1c2UGqOJFE8HnKbNzQ65/jM11QgmHEmx3zaH41+Y1Mq3F6so2XKaW2HQ/QeEfX
-	ZHJ5R9GDF3elvWzYIU5eBP56zcnqXdUtpjYEjjJ+QI8uTqrZes3Wp8/uefdFgNJr
-	+1YL567h9yr+WnujIu9aaX+kJ3VQQvAFyql3HzgJ5/qd8EL7/VYfA9uVx9WfyC3o
-	kXSS0c6L2Fe516WBdcJwDLkZm8zFBF00MwHWFkPWHKiC7ykul2CFwJFHMgdqpUol
-	qkUX4A==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48cpvy69dn-1
+	PiZ22avjMQ6yPSDZ6+PmnqKblqG/QInLtG55ppMw6bc=; b=LV0hx5sa7UOFHmvt
+	K4N5be3m9douJyU9YeYoEbgSBnU50CLRN5ntDb/xiGsPfn8yJUGFBGERALz3hXDu
+	IGN2WkM5Xum8J11P/Nrs/3PSjpOjNA2BSBi3RXmYsVqeM9p/CWd4gcoOGLAjTrF2
+	2gFoRFtMx3nq1w+dzF7KRKwjhnzcwnViqADzwglvcdViQTZrko6SZvCcMIJVoIfU
+	6FS/hbVwxSKUWuQlmlmbl79+IrcDP0vHoEpzVtr4hN3uvtFB5uE7XJ5mH6KwOoyY
+	xw79v6+7V9wPXwP98nkt4cGc2e+lPJmhTNMJaEgJ4y/qTme13nhG8rkcznFptBGI
+	ObMVHg==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48cs5ndtwh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 00:35:48 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-23fd8c99dbfso22177945ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 17:35:48 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 00:35:50 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3214765a5b9so5148463a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 17:35:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754699748; x=1755304548;
+        d=1e100.net; s=20230601; t=1754699749; x=1755304549;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3eZyTM1lKAlxwHu0KgfbpHrzCleYc0+uy6KH19detY8=;
-        b=emK63tDsKoLm8nJenvPHgabsEPkENXsC3RxCvNg+PXwatenPI/3I+G38jqujwWbWeH
-         Tb8fh7zgiLY3Zd34xOYzCeOcVKw+Hsj5sA7p+YqtQxziaZkh6CN/PlQ9X/UAYR36iLV1
-         k5QZF13nWN7ICy8+AsfnQT8xMAFvEsMxPx0sdY4S5eXoe2EpQOs4GsaDXAVKwFxFmlEO
-         Yfgk6iTKB5Nfha16fNsAJIgg5vDonesjaslTaNUFJo7UT/dg+4Q9c4reNibbt7w/Nsqy
-         tZzzSEE4c/wB2Okp3odCcy/f5rQhfWO9N4nUuvuFZXcjpdaheI7/PE3EuXNJ0dfLgg0W
-         N7lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8g2+djT/mNrm14jD4IlH+zf/jjDE/IElhIjsI7PEYfKshdyogjrH89vP+sMOOY5wQg3KN+Ar2umFOltw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPNAeCHR/vtjC5wlYzePLH3ogGZv/36Kg+eiwnCWOpkJ9gTIeG
-	TYPy3Q/PnF5F/qx7Q4cCsZ8Us+3I1S/GCbLrYvT+io3mztguMmkJG5r5S5aOPuSlZLWDWcfH9oX
-	sNXeyIm90nWvUQF+Iug/s/GfqFbbL7ySgizYLUCLFf6dvVkRl6Ajw0NPMtZKKnsLKXMo=
-X-Gm-Gg: ASbGncu0cFUYRCmaUtbupEmUuM5QYQDR1x3rdr3T9sDXvwZjVPJ256OjjOZhblUO2Ku
-	SDDnbqj2VFQLHSo549xPsgyyEvRklLxOgZDRcJ+/wuMHx535sHGzoptBaZIql2UFGWjEvRIirsL
-	EsfWPM90PSx/o8C94s2Iu5gnw7hM/oxCMBFSrx64Ssdbt5Gg4XUwichoTRnN0QuMB7471Y97eOJ
-	C5R1m/8WkgLiJg+93I0HHiZZFjr/DWIengA8tvPfMSjGOhIBDwGarNOjuwpnxTsppiFo8eu+d1/
-	K1uD6OaUAYpuSmwQbjV2/YmhtILNaFsVZZZVV49fEDDRnwT0Wn7hLExyVFIFWOh/UkOcI3ecCEl
-	AG9seLTsQQTffps/pS+K/8Y32
-X-Received: by 2002:a17:902:e786:b0:23f:f96d:7581 with SMTP id d9443c01a7336-242c2039e50mr64543035ad.20.1754699748047;
+        bh=PiZ22avjMQ6yPSDZ6+PmnqKblqG/QInLtG55ppMw6bc=;
+        b=hqwaFUdfY9COw91jztoxDDPdPTaFyDW3gyK4ccMR3ScSs3ZH5znxRXggqcUKTybCqJ
+         105WmlDKVz7SD6GgaVin6icusmJv8DN0XBqgXJ9HUbJDjqqtWNVMaERZH9C8RQ2KakCe
+         hZRM6IIEcM5+LtK7pggUkW0945+bl6pkrIDEPI2W/KBFsdJF4BR3bdUJ5NgBMvIkI0Nn
+         TVkllBweoXtY6UqRiyuyc3ReobqPJyDW1UQ+iV/xCNyibsM1JSA2JQq3MUK2Fd3HckKA
+         /T0c7i4Q4dIDAzXgJpCr8TqJncVjqB9KyuVEIo8mFnJvmma13hhtgvAB0vF4c+maYI/B
+         h11w==
+X-Forwarded-Encrypted: i=1; AJvYcCUD3bhxBDyaXGBSlnMoq+HoC3yW6Tkz+BvZOYjRtoDyfPZo/5Cdq+ZK4/gNq56tSki3ECuZ4rtahlOm1oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ejKksr3niCMy0PHgYxD9IVvagPZ5d9pbRCyuh5DipsG1dZqA
+	ByHXoExGuG6J1j9l7nr7l9QkJalCZj6FfPtaj+8TMDxNFir5nNOvolJK8f+rsl216u/PdW463PG
+	ZwYvy7q7iRX7k3IZuPfCvSapAiCYOuDDFtFooMzn7qqnFwU4vwLqkeyFLCrR4WI76felZ4uid1B
+	U=
+X-Gm-Gg: ASbGnctqj490vE5/Uvr2DM7KPnqz6CIvWIgPop6Bx1hV+1pnzw7neBaJzaQLhI5mH5I
+	OU+yFl/7FAYY0vez2r9Np9UXAoaQYKzlPe7HF4uGw9HwqLLUULk1SHsCa17xctf5KCi0Ldrw8mO
+	eHhwVgREvfANWt1v75FUUmFXb3ukJyS9hxpuxryUhlVrfPndqnX08jX4VxUUFi4jMTlpOJnKci1
+	p4mM4Bll7J7fUqMOvP2B1kXWqtfzw8bijmDv9wkw5FyfbD00EDOerV08bqii0CAPBWouijrzL8P
+	XdgFqoKpQvOs65u7wRBSJ9MQNQWeVXXhviC4hDIWSgp0oj7+nrStUJAwELw4YEoikxLskVStt9T
+	J0T0hcjJeyScM9arJ2I6M5RB3
+X-Received: by 2002:a17:902:cec8:b0:242:9bbc:6018 with SMTP id d9443c01a7336-242c2277f70mr67504835ad.56.1754699749331;
+        Fri, 08 Aug 2025 17:35:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRcmkdoPKn0Y/gtVgwKawEtn3XJx+wDXdjs6KbTeVW7Zyo7yLwrrGGpLbIydsVcXp/EeUE5w==
+X-Received: by 2002:a17:902:cec8:b0:242:9bbc:6018 with SMTP id d9443c01a7336-242c2277f70mr67504525ad.56.1754699748876;
         Fri, 08 Aug 2025 17:35:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFcMrJNf4hYbUM6Mca4QfD0ZQhsL/38byXKglBB4WfSR1lbVjH3mDxc+Vqs9SUlmhl07AwLRQ==
-X-Received: by 2002:a17:902:e786:b0:23f:f96d:7581 with SMTP id d9443c01a7336-242c2039e50mr64542765ad.20.1754699747607;
-        Fri, 08 Aug 2025 17:35:47 -0700 (PDT)
 Received: from jesszhan-linux.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef678dsm219865355ad.39.2025.08.08.17.35.46
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef678dsm219865355ad.39.2025.08.08.17.35.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 17:35:47 -0700 (PDT)
+        Fri, 08 Aug 2025 17:35:48 -0700 (PDT)
 From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Date: Fri, 08 Aug 2025 17:35:21 -0700
-Subject: [PATCH v2 09/12] drm/msm/dp: remove redundant checks related to
- ST_DISPLAY_OFF in plug handler
+Date: Fri, 08 Aug 2025 17:35:22 -0700
+Subject: [PATCH v2 10/12] drm/msm/dp: Return early from atomic_enable() if
+ cable is not connected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +93,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250808-hpd-refactor-v2-9-7f4e1e741aa3@oss.qualcomm.com>
+Message-Id: <20250808-hpd-refactor-v2-10-7f4e1e741aa3@oss.qualcomm.com>
 References: <20250808-hpd-refactor-v2-0-7f4e1e741aa3@oss.qualcomm.com>
 In-Reply-To: <20250808-hpd-refactor-v2-0-7f4e1e741aa3@oss.qualcomm.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>,
@@ -104,80 +105,66 @@ To: Rob Clark <robin.clark@oss.qualcomm.com>,
         Kuogee Hsieh <quic_khsieh@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Yongxing Mou <quic_yongmou@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>
+        Yongxing Mou <quic_yongmou@quicinc.com>
 X-Mailer: b4 0.15-dev-a9b2a
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754699734; l=1745;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754699734; l=1258;
  i=jessica.zhang@oss.qualcomm.com; s=20230329; h=from:subject:message-id;
- bh=L/K5K5k1xBQ/wx+huy+cI13UFEAuqZN8YUVxLinE3Yk=;
- b=bDAongJDXX6a6O+352pvsIP13wU3uFnz7DQHr8iAWYbGG6fO0Ff2FBG7AzARKFuAkqFwsvxpz
- WAmus7KaTCSAThVoDDaKKbokeJY6sI8CUyT3NiIbYW7Lmqljm/T3ElI
+ bh=4NtupbLbHXZJKW3LGWuziF6T3O+S2Clq0/ZFSk/f48A=;
+ b=pzZTjzYITZ80tgTHFP+3PXCECEW+ccVzZNuZooIm+CrqIvDUL9LgrFJnwSPGcSTtpuU2/mngE
+ 3yJTVSVx8BHCAAqhjaPQm2i2nj4ByCXG0skte9RwSkKuNRukmpO0gIp
 X-Developer-Key: i=jessica.zhang@oss.qualcomm.com; a=ed25519;
  pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-Authority-Analysis: v=2.4 cv=TJpFS0la c=1 sm=1 tr=0 ts=689697e4 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=e5mUnYsNAAAA:8 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=3iXaqZgdguojTDSw8eMA:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22 a=Vxmtnl_E_bksehYqCbjh:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 5IBZJnDFw_WaD6iEP9vByfkpFKcAGyyg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA0NiBTYWx0ZWRfXyrkl1XkoH3t8
- 29FfWVXdpuSbIS880yW3FQtblESLCj8MOIzg5cmMeJwKxV9sq0/Js+Nufn56YUYUa/FR9N6mg09
- 6/G1/lP4sj05qBlESrNOVyVK/c88BWMpPl0NxoMXl+t7k00SX+6oTCzOeN/qqmHKAq02pLwndxp
- 0YMG51gJ6IqRsrvyBFngasFLRU7oceKdywkDXnq3z0CryqnVi+t+/FruvgYAPAjgHzDMXaSRQ39
- OL1KduvVjK17zV30LffMz076pGwlpTCIEUdmYJA4Ke4qUkxSkokXBY/9wfWs4/mHWVQkfs5+tlp
- /2Dq6XkrpLx9csqrONUZkeyJrUEn/mhqPXSUsL9fXYEzUwlE9Q9MXerXx/LgLNdcCdQ5wLcMLhG
- /rna1ASp
-X-Proofpoint-ORIG-GUID: 5IBZJnDFw_WaD6iEP9vByfkpFKcAGyyg
+X-Authority-Analysis: v=2.4 cv=Q+XS452a c=1 sm=1 tr=0 ts=689697e6 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=C9iwNz8zScVtocZF6eoA:9
+ a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-GUID: Eo-MfRPbIsfQIrx2zfHjjypQv04mbTJX
+X-Proofpoint-ORIG-GUID: Eo-MfRPbIsfQIrx2zfHjjypQv04mbTJX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA3MDA2OSBTYWx0ZWRfX+4NVnGHa6q0q
+ /Qibaje78pV55rYScH7I4en7grkhXVRjKXJu2pBN/0b2GNqVwnJeNkciPrKWklnjSSIQFU7z/Tb
+ hvf869ta//myG+2FX7smA2B0/7Ls1jLPRlZ4KZdYCFjJwU1trFEDDo7j7hSZY7cewNg6vPmpE7F
+ xnissj0Z/3IuNk6Z+qZWSAbsdYB7J9OKInaW8LEfYgPQXnQb0K4yl/yESmDUCJSnRefY8zTD8EG
+ FvlVMWV5qrcMi8G+3gJ/iOI3n7y5ICAu5R+C6Vssd8T39ArURcLAuoUKXqYk6gm884n1Z0sobIj
+ KCI835PCXjjtiO/xNkLUEaeEpRlA+VmdnLAJo4JujMSJqmgPiETATwgg/P55wVb1IOKReRKngBb
+ 8ne3N7zn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-08_08,2025-08-06_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- adultscore=0 spamscore=0 malwarescore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508070046
+ clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508070069
 
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Replace the ST_MAINLINK_READY check here with a check for sink count.
 
-In commit 8ede2ecc3e5ee ("drm/msm/dp: Add DP compliance tests on Snapdragon
-Chipsets"), checks were introduced to avoid handling any plug event in
-ST_DISPLAY_OFF state.
+Since atomic_check() fails if the link isn't ready, we technically don't
+need a check against ST_MAINLINK_READY. The hpd_state should also never
+really hit ST_DISPLAY_OFF since atomic_enable() shouldn't be called
+twice in a row without an atomic_disable() in between.
 
-Even if we do get hpd events, after the bridge was disabled,
-it should get handled. Moreover, its unclear under what circumstances
-these events will fire because ST_DISPLAY_OFF means that the link was
-still connected but only the bridge was disabled. If the link was
-untouched, then interrupts shouldn't fire.
+That being said, it is possible for the cable to be disconnected after
+atomic_check() but before atomic_enable(). So let's change this check to
+guard against sink_count instead.
 
-Even in the case of the DP compliance equipment, it should be raising these
-interrupts during the start of the test which is usually accompanied with
-either a HPD pulse or a IRQ HPD but after the bridge is disabled it should
-be fine to handle these anyway. In the absence of a better reason to keep
-these checks, drop these and if any other issues do arise, it should be
-handled in a different way.
-
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
 ---
-Note: Taken from https://patchwork.freedesktop.org/series/142010/
----
- drivers/gpu/drm/msm/dp/dp_display.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/gpu/drm/msm/dp/dp_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index eabd6e6981fb..dd3fdeaacc91 100644
+index dd3fdeaacc91..82f0b6bdbf39 100644
 --- a/drivers/gpu/drm/msm/dp/dp_display.c
 +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -495,9 +495,6 @@ static int msm_dp_hpd_plug_handle(struct msm_dp_display_private *dp, u32 data)
- 	drm_dbg_dp(dp->drm_dev, "Before, type=%d hpd_state=%d\n",
- 			dp->msm_dp_display.connector_type, state);
+@@ -1444,7 +1444,7 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
+ 	}
  
--	if (state == ST_DISPLAY_OFF)
--		return 0;
--
- 	if (state == ST_MAINLINK_READY || state == ST_CONNECTED)
- 		return 0;
+ 	hpd_state = msm_dp_display->hpd_state;
+-	if (hpd_state != ST_DISPLAY_OFF && hpd_state != ST_MAINLINK_READY)
++	if (msm_dp_display->link->sink_count == 0)
+ 		return;
  
+ 	rc = msm_dp_display_set_mode(dp, &msm_dp_display->msm_dp_mode);
 
 -- 
 2.50.1
