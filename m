@@ -1,377 +1,165 @@
-Return-Path: <linux-kernel+bounces-761086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D91B1F435
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:38:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB13B1F439
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 12:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E2018C2AB7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:39:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE97556052D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 10:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DCD262FCD;
-	Sat,  9 Aug 2025 10:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E7126B2AD;
+	Sat,  9 Aug 2025 10:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bk/j+vL1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDqKTywn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244491F2BBB;
-	Sat,  9 Aug 2025 10:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EC41D5ACE;
+	Sat,  9 Aug 2025 10:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754735915; cv=none; b=oLHc6ZP5zxhi9iJPwWfLBSnw7/DFjV97aWgb05+azjE5kdmO3ooq0hy/GgM6NAuISCBeqVW5+KBbbj87HfDvHVSPTVOntwmQibM+HtmpziypyqSb8r0CH795gmvq5ZneZ2/JIgDERrq72lkfzwVvG5AyJuOG57MrOxip+kEtskI=
+	t=1754736178; cv=none; b=PEeV4fHjIDwDzoDxt03vmFj7s0Eee/kRWC0jzfKDv8mzoz5lxPxpvmgmjLTt8ESx2VVRWz6ocQK4zW/ml+7PhdcFe0Qp/Wrk/o/HBpk1Pb+bEiR/xlay4NcAi9/UG9AiWH8aIYVfCEIPaibM7yKvQtHnkCPMhwZOhNJG8vlLMbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754735915; c=relaxed/simple;
-	bh=hT1hS+2HvJNm9Gj2U39uAT2b5VPOI8pW2heMf/kWoYs=;
+	s=arc-20240116; t=1754736178; c=relaxed/simple;
+	bh=a8+UN8/ZSBO/sg2c/xViTOsohY3HngjC+LoJbCHsVEM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p1XPcTY4L7VTGSJcNCoHhD9KAyFD3+hLuBlxR2DuIOpjja6VLzjRKPGGgKvO+dEqb1qnBlJFBoTFMZCOP+W9eFcOS+qkkNpVUvrfyRDUdqjFV4cKyrtQr0ZSyOCLGZyxFXnAYCbJmaaC/Ln9nr94yR/vXF4VHgIiBgc466y3AhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bk/j+vL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BB61C4CEE7;
-	Sat,  9 Aug 2025 10:38:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfNd/JCBQ6PzTSuYILtEmkJPYgJvgMHvMu/LEOFQMUZ3K6Cbk+uQvm1ADTzJfBTNL/H8huenSm2xAU7XGs5nJTA40tIHcg2HT/DU/3TOg1yo0Ko23Psmwi1J/3qxcCwRvs7YFgO3rahYkzKkmh9TjhywzaQ8EDnyeW/VR4XD6xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDqKTywn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F15C4CEE7;
+	Sat,  9 Aug 2025 10:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754735913;
-	bh=hT1hS+2HvJNm9Gj2U39uAT2b5VPOI8pW2heMf/kWoYs=;
+	s=k20201202; t=1754736178;
+	bh=a8+UN8/ZSBO/sg2c/xViTOsohY3HngjC+LoJbCHsVEM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bk/j+vL1yDBnvqAW7FIVXavMv9+ZS9+K9ITwI/jNZRmtI8GKobVL3Do+jDL4woxeA
-	 mHly4ZQrDv7sv8oP0zXBsRhdpZK0F3n7ec/CsU69ms/VVGWlHUDy8nPBsyZghTY2/T
-	 pnkTyYhfhC3Qr8lPPVGVOlGiByNJh9KlCMfIadoHfr7SuH6vSwy/rlpiVYOQ6uOHWu
-	 q6znxVOB3hsvgXuPmoAAjo9/yMeFpIAIO1+7wPNk1f1S/0utIccFGeB5bGFm3TEWZZ
-	 +UCdgoRgoHxyFpXLPjc2ZrhJgfaQ6v6t57O5wMSeL0QRsZuh8mhDpvJDzBmfsBZZR8
-	 ugKpVU2lJz9kw==
-Date: Sat, 9 Aug 2025 13:38:29 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-	David Howells <dhowells@redhat.com>,
-	linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] KEYS: trusted_tpm1: Move private functionality out
- of public header
-Message-ID: <aJclJaSDuF8aIdrx@kernel.org>
-References: <20250731212354.105044-1-ebiggers@kernel.org>
- <20250731212354.105044-4-ebiggers@kernel.org>
- <aJILqzhBKLMYF0P4@kernel.org>
- <20250805173347.GE1286@sol>
+	b=YDqKTywnRc8WgKFRX1w9DZ3/NL4s3ZkX6W5/rlg/5WFN87tXrkrpeIVLb+hfnoGeC
+	 7B4znkqz0L4jJkvotDRFDR8Roi+O9GruyarmlJRoadFPSzcBKpR+J22EJA0127pcVC
+	 mchr+wxMc4WgE+32mw1HTdV3G1eVrWq0r4isB81lIDonS3lxt6ipVG9mrt1PlYm4Ji
+	 R9MTZ3HwBWHSrGy5Gvp3noLR5btNMKi1BLVtu2K87kLmtVjybFAz+pYCL1Kftg72Nm
+	 96NhX8jTpot1/TkbKYoEP1HzmhJ47NDk+elNKPWbaUWDzi8IpoYmH/95YpDERMqtz2
+	 ttnAiY2zK2SjQ==
+Date: Sat, 9 Aug 2025 12:42:47 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Askar Safin <safinaskar@zohomail.com>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36 syscall
+ wrappers
+Message-ID: <j57inuu7wzzh2tm7sxfnhdogg4u7f4gf3vktmla4qlafuknh3p@ypu3peu3g5k6>
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-1-558a27b8068c@cyphar.com>
+ <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
+ <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ad66n3krjtkx2hx6"
 Content-Disposition: inline
-In-Reply-To: <20250805173347.GE1286@sol>
+In-Reply-To: <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
 
-On Tue, Aug 05, 2025 at 10:33:47AM -0700, Eric Biggers wrote:
-> On Tue, Aug 05, 2025 at 04:48:27PM +0300, Jarkko Sakkinen wrote:
-> > On Thu, Jul 31, 2025 at 02:23:54PM -0700, Eric Biggers wrote:
-> > > Move functionality used only by trusted_tpm1.c out of the public header
-> > > <keys/trusted_tpm.h>.  Specifically, change the exported functions into
-> > > static functions, since they are not used outside trusted_tpm1.c, and
-> > > move various other definitions and inline functions to trusted_tpm1.c.
-> > > 
-> > > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> > > ---
-> > >  include/keys/trusted_tpm.h                | 79 ----------------------
-> > >  security/keys/trusted-keys/trusted_tpm1.c | 80 ++++++++++++++++++++---
-> > >  2 files changed, 72 insertions(+), 87 deletions(-)
-> > > 
-> > > diff --git a/include/keys/trusted_tpm.h b/include/keys/trusted_tpm.h
-> > > index a088b33fd0e3b..0fadc6a4f1663 100644
-> > > --- a/include/keys/trusted_tpm.h
-> > > +++ b/include/keys/trusted_tpm.h
-> > > @@ -3,94 +3,15 @@
-> > >  #define __TRUSTED_TPM_H
-> > >  
-> > >  #include <keys/trusted-type.h>
-> > >  #include <linux/tpm_command.h>
-> > >  
-> > > -/* implementation specific TPM constants */
-> > > -#define TPM_SIZE_OFFSET			2
-> > > -#define TPM_RETURN_OFFSET		6
-> > > -#define TPM_DATA_OFFSET			10
-> > > -
-> > > -#define LOAD32(buffer, offset)	(ntohl(*(uint32_t *)&buffer[offset]))
-> > > -#define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
-> > > -#define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
-> > > -
-> > >  extern struct trusted_key_ops trusted_key_tpm_ops;
-> > >  
-> > > -struct osapsess {
-> > > -	uint32_t handle;
-> > > -	unsigned char secret[SHA1_DIGEST_SIZE];
-> > > -	unsigned char enonce[TPM_NONCE_SIZE];
-> > > -};
-> > > -
-> > > -/* discrete values, but have to store in uint16_t for TPM use */
-> > > -enum {
-> > > -	SEAL_keytype = 1,
-> > > -	SRK_keytype = 4
-> > > -};
-> > > -
-> > > -int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-> > > -			unsigned int keylen, unsigned char *h1,
-> > > -			unsigned char *h2, unsigned int h3, ...);
-> > > -int TSS_checkhmac1(unsigned char *buffer,
-> > > -			  const uint32_t command,
-> > > -			  const unsigned char *ononce,
-> > > -			  const unsigned char *key,
-> > > -			  unsigned int keylen, ...);
-> > > -
-> > > -int trusted_tpm_send(unsigned char *cmd, size_t buflen);
-> > > -int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce);
-> > > -
-> > >  int tpm2_seal_trusted(struct tpm_chip *chip,
-> > >  		      struct trusted_key_payload *payload,
-> > >  		      struct trusted_key_options *options);
-> > >  int tpm2_unseal_trusted(struct tpm_chip *chip,
-> > >  			struct trusted_key_payload *payload,
-> > >  			struct trusted_key_options *options);
-> > >  
-> > > -#define TPM_DEBUG 0
-> > > -
-> > > -#if TPM_DEBUG
-> > > -static inline void dump_options(struct trusted_key_options *o)
-> > > -{
-> > > -	pr_info("sealing key type %d\n", o->keytype);
-> > > -	pr_info("sealing key handle %0X\n", o->keyhandle);
-> > > -	pr_info("pcrlock %d\n", o->pcrlock);
-> > > -	pr_info("pcrinfo %d\n", o->pcrinfo_len);
-> > > -	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
-> > > -		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-> > > -}
-> > > -
-> > > -static inline void dump_sess(struct osapsess *s)
-> > > -{
-> > > -	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
-> > > -		       16, 1, &s->handle, 4, 0);
-> > > -	pr_info("secret:\n");
-> > > -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> > > -		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-> > > -	pr_info("trusted-key: enonce:\n");
-> > > -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> > > -		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
-> > > -}
-> > > -
-> > > -static inline void dump_tpm_buf(unsigned char *buf)
-> > > -{
-> > > -	int len;
-> > > -
-> > > -	pr_info("\ntpm buffer\n");
-> > > -	len = LOAD32(buf, TPM_SIZE_OFFSET);
-> > > -	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
-> > > -}
-> > > -#else
-> > > -static inline void dump_options(struct trusted_key_options *o)
-> > > -{
-> > > -}
-> > > -
-> > > -static inline void dump_sess(struct osapsess *s)
-> > > -{
-> > > -}
-> > > -
-> > > -static inline void dump_tpm_buf(unsigned char *buf)
-> > > -{
-> > > -}
-> > > -#endif
-> > >  #endif
-> > > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> > > index 126437459a74d..636acb66a4f69 100644
-> > > --- a/security/keys/trusted-keys/trusted_tpm1.c
-> > > +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> > > @@ -22,10 +22,78 @@
-> > >  #include <keys/trusted_tpm.h>
-> > >  
-> > >  static struct tpm_chip *chip;
-> > >  static struct tpm_digest *digests;
-> > >  
-> > > +/* implementation specific TPM constants */
-> > > +#define TPM_SIZE_OFFSET			2
-> > > +#define TPM_RETURN_OFFSET		6
-> > > +#define TPM_DATA_OFFSET			10
-> > > +
-> > > +#define LOAD32(buffer, offset)	(ntohl(*(uint32_t *)&buffer[offset]))
-> > > +#define LOAD32N(buffer, offset)	(*(uint32_t *)&buffer[offset])
-> > > +#define LOAD16(buffer, offset)	(ntohs(*(uint16_t *)&buffer[offset]))
-> > > +
-> > > +struct osapsess {
-> > > +	uint32_t handle;
-> > > +	unsigned char secret[SHA1_DIGEST_SIZE];
-> > > +	unsigned char enonce[TPM_NONCE_SIZE];
-> > > +};
-> > > +
-> > > +/* discrete values, but have to store in uint16_t for TPM use */
-> > > +enum {
-> > > +	SEAL_keytype = 1,
-> > > +	SRK_keytype = 4
-> > > +};
-> > > +
-> > > +#define TPM_DEBUG 0
-> > > +
-> > > +#if TPM_DEBUG
-> > > +static inline void dump_options(struct trusted_key_options *o)
-> > > +{
-> > > +	pr_info("sealing key type %d\n", o->keytype);
-> > > +	pr_info("sealing key handle %0X\n", o->keyhandle);
-> > > +	pr_info("pcrlock %d\n", o->pcrlock);
-> > > +	pr_info("pcrinfo %d\n", o->pcrinfo_len);
-> > > +	print_hex_dump(KERN_INFO, "pcrinfo ", DUMP_PREFIX_NONE,
-> > > +		       16, 1, o->pcrinfo, o->pcrinfo_len, 0);
-> > > +}
-> > > +
-> > > +static inline void dump_sess(struct osapsess *s)
-> > > +{
-> > > +	print_hex_dump(KERN_INFO, "trusted-key: handle ", DUMP_PREFIX_NONE,
-> > > +		       16, 1, &s->handle, 4, 0);
-> > > +	pr_info("secret:\n");
-> > > +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> > > +		       16, 1, &s->secret, SHA1_DIGEST_SIZE, 0);
-> > > +	pr_info("trusted-key: enonce:\n");
-> > > +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE,
-> > > +		       16, 1, &s->enonce, SHA1_DIGEST_SIZE, 0);
-> > > +}
-> > > +
-> > > +static inline void dump_tpm_buf(unsigned char *buf)
-> > > +{
-> > > +	int len;
-> > > +
-> > > +	pr_info("\ntpm buffer\n");
-> > > +	len = LOAD32(buf, TPM_SIZE_OFFSET);
-> > > +	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, buf, len, 0);
-> > > +}
-> > > +#else
-> > > +static inline void dump_options(struct trusted_key_options *o)
-> > > +{
-> > > +}
-> > > +
-> > > +static inline void dump_sess(struct osapsess *s)
-> > > +{
-> > > +}
-> > > +
-> > > +static inline void dump_tpm_buf(unsigned char *buf)
-> > > +{
-> > > +}
-> > > +#endif
-> > > +
-> > >  static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
-> > >  		       unsigned int keylen, ...)
-> > >  {
-> > >  	struct hmac_sha1_ctx hmac_ctx;
-> > >  	va_list argp;
-> > > @@ -54,11 +122,11 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
-> > >  }
-> > >  
-> > >  /*
-> > >   * calculate authorization info fields to send to TPM
-> > >   */
-> > > -int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-> > > +static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-> > >  			unsigned int keylen, unsigned char *h1,
-> > >  			unsigned char *h2, unsigned int h3, ...)
-> > >  {
-> > >  	unsigned char paramdigest[SHA1_DIGEST_SIZE];
-> > >  	struct sha1_ctx sha_ctx;
-> > > @@ -92,16 +160,15 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
-> > >  		ret = TSS_rawhmac(digest, key, keylen, SHA1_DIGEST_SIZE,
-> > >  				  paramdigest, TPM_NONCE_SIZE, h1,
-> > >  				  TPM_NONCE_SIZE, h2, 1, &c, 0, 0);
-> > >  	return ret;
-> > >  }
-> > > -EXPORT_SYMBOL_GPL(TSS_authhmac);
-> > >  
-> > >  /*
-> > >   * verify the AUTH1_COMMAND (Seal) result from TPM
-> > >   */
-> > > -int TSS_checkhmac1(unsigned char *buffer,
-> > > +static int TSS_checkhmac1(unsigned char *buffer,
-> > >  			  const uint32_t command,
-> > >  			  const unsigned char *ononce,
-> > >  			  const unsigned char *key,
-> > >  			  unsigned int keylen, ...)
-> > >  {
-> > > @@ -157,11 +224,10 @@ int TSS_checkhmac1(unsigned char *buffer,
-> > >  
-> > >  	if (crypto_memneq(testhmac, authdata, SHA1_DIGEST_SIZE))
-> > >  		return -EINVAL;
-> > >  	return 0;
-> > >  }
-> > > -EXPORT_SYMBOL_GPL(TSS_checkhmac1);
-> > >  
-> > >  /*
-> > >   * verify the AUTH2_COMMAND (unseal) result from TPM
-> > >   */
-> > >  static int TSS_checkhmac2(unsigned char *buffer,
-> > > @@ -242,11 +308,11 @@ static int TSS_checkhmac2(unsigned char *buffer,
-> > >  
-> > >  /*
-> > >   * For key specific tpm requests, we will generate and send our
-> > >   * own TPM command packets using the drivers send function.
-> > >   */
-> > > -int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> > > +static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> > >  {
-> > >  	struct tpm_buf buf;
-> > >  	int rc;
-> > >  
-> > >  	if (!chip)
-> > > @@ -268,11 +334,10 @@ int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> > >  		rc = -EPERM;
-> > >  
-> > >  	tpm_put_ops(chip);
-> > >  	return rc;
-> > >  }
-> > > -EXPORT_SYMBOL_GPL(trusted_tpm_send);
-> > >  
-> > >  /*
-> > >   * Lock a trusted key, by extending a selected PCR.
-> > >   *
-> > >   * Prevents a trusted key that is sealed to PCRs from being accessed.
-> > > @@ -322,11 +387,11 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
-> > >  }
-> > >  
-> > >  /*
-> > >   * Create an object independent authorisation protocol (oiap) session
-> > >   */
-> > > -int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
-> > > +static int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
-> > >  {
-> > >  	int ret;
-> > >  
-> > >  	if (!chip)
-> > >  		return -ENODEV;
-> > > @@ -339,11 +404,10 @@ int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
-> > >  	*handle = LOAD32(tb->data, TPM_DATA_OFFSET);
-> > >  	memcpy(nonce, &tb->data[TPM_DATA_OFFSET + sizeof(uint32_t)],
-> > >  	       TPM_NONCE_SIZE);
-> > >  	return 0;
-> > >  }
-> > > -EXPORT_SYMBOL_GPL(oiap);
-> > >  
-> > >  struct tpm_digests {
-> > >  	unsigned char encauth[SHA1_DIGEST_SIZE];
-> > >  	unsigned char pubauth[SHA1_DIGEST_SIZE];
-> > >  	unsigned char xorwork[SHA1_DIGEST_SIZE * 2];
-> > > -- 
-> > > 2.50.1
-> > > 
-> > 
-> > IMHO, this could followed (as next logical steps):
-> > 
-> > 1. Get rid of LOAD*() (tpm_buf_read*)
-> > 2. I think we should delete dump_* given modern times and countless ways
-> >    to acquire that data (e.g., with eBPF).
-> > 
-> 
-> Sure, would you be interested in sending a follow-up patch?  I don't
-> have much interest in this driver myself.
 
-OK fine I'll work on that later!
+--ad66n3krjtkx2hx6
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Askar Safin <safinaskar@zohomail.com>, 
+	"Michael T. Kerrisk" <mtk.manpages@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
+	linux-man <linux-man@vger.kernel.org>, linux-api <linux-api@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 01/11] mount_setattr.2: document glibc >= 2.36 syscall
+ wrappers
+References: <20250807-new-mount-api-v2-0-558a27b8068c@cyphar.com>
+ <20250807-new-mount-api-v2-1-558a27b8068c@cyphar.com>
+ <19888fe1066.fcb132d640137.7051727418921685299@zohomail.com>
+ <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <2025-08-08.1754653930-iffy-pickled-agencies-mother-K0e7Hn@cyphar.com>
 
-> 
-> - Eric
+Hi Aleksa, Askar,
 
-BR, Jarkko
+On Fri, Aug 08, 2025 at 09:55:10PM +1000, Aleksa Sarai wrote:
+> On 2025-08-08, Askar Safin <safinaskar@zohomail.com> wrote:
+> > When I render "mount_setattr" from this (v2) pathset, I see weird quote=
+ mark. I. e.:
+> >=20
+> > $ MANWIDTH=3D10000 man /path/to/mount_setattr.2
+> > ...
+> > SYNOPSIS
+> >        #include <fcntl.h>       /* Definition of AT_* constants */
+> >        #include <sys/mount.h>
+> >=20
+> >        int mount_setattr(int dirfd, const char *path, unsigned int flag=
+s,
+> >                          struct mount_attr *attr, size_t size);"
+> > ...
+>=20
+> Ah, my bad. "make -R lint-man" told me to put end quotes on the synopsis
+> lines, but I missed that there was a separate quote missing. This should
+> fix it:
+>=20
+> diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
+> index d44fafc93a20..46fcba927dd8 100644
+> --- a/man/man2/mount_setattr.2
+> +++ b/man/man2/mount_setattr.2
+> @@ -14,7 +14,7 @@ .SH SYNOPSIS
+>  .B #include <sys/mount.h>
+>  .P
+>  .BI "int mount_setattr(int " dirfd ", const char *" path ", unsigned int=
+ " flags ","
+> -.BI "                  struct mount_attr *" attr ", size_t " size );"
+> +.BI "                  struct mount_attr *" attr ", size_t " size ");"
+
+Actually, I'd use
+
+=2EBI "                  struct mount_attr *" attr ", size_t " size );
+
+>  .fi
+>  .SH DESCRIPTION
+>  The
+
+Hmmm, thanks for the catch!  My CI server is down until I come back home
+and have a chance to fix it.
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--ad66n3krjtkx2hx6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmiXJicACgkQ64mZXMKQ
+wqnnbw//WMHggmA4jUE/nRABMPtJLZDCGULhgMy1N4WDcF/+TKjDOt0ExRzUDVru
+ItgtH8RM8Pp3sDxwaq3BonhA6gzg/JHKIJ8jxVJy5jpEOD+ovNOpCYbD7n1KCnAy
+efvU3E27J4t4liHsA05PPqugb0Ndu20snWa7eaVPKnBWVTAEzTYl6NNgjvE5K7i1
+noOwofQZt8wzNtAZzQyOfTh3RnamwJ0G/f9r15KiFOZ7Sq+ZVJJkhY18QS6lQVOO
+VjNft+KwyOXGF+vHnFVkDBUr8sRe2UiFbQkS+jB12Rp0YGGjk+eirsLMRSqTxlLo
+MBEq16FTOD8HPEgTn9Unvuml09SSluevUQlMOa8Hbnu62148zqL9ApGa0JS8ButU
+JRXrJCZOwqRtOgNlusc4e5Xhej7Gpvw5tbl+2AJpxRrnZGOxTXkRZFv4pRp6mOcz
+8kgMMZuZwuYyHYn5W3R5MXLHs/mkCLkcJXQXU0PwHiDDH/6RIwChUTJ2qha61Fqa
+Wkfln9v94TDWVVGCBKNy7A9TPS8+mAK8cVfYn/iqdWm5NpL18223l32qjw5rQt3Y
+0R+WgxjLdpjRRjcV4b1wGN5raLE7/yKUB0y3MR71q+oS7s8hj7t21LgZaxE4TiI3
+iN15mSC7sAns/N56Ig3367Hm9b8xr4/eZWfN0zVCWqzYg2Z4Cdk=
+=TkZt
+-----END PGP SIGNATURE-----
+
+--ad66n3krjtkx2hx6--
 
