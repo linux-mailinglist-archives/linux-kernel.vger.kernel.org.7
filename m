@@ -1,104 +1,143 @@
-Return-Path: <linux-kernel+bounces-760981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8568B1F293
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:36:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A7DB1F29B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 08:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12E958148F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 06:36:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34D83B9905
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 06:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5408C1FC109;
-	Sat,  9 Aug 2025 06:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57E427815F;
+	Sat,  9 Aug 2025 06:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="qU8NdC0O"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=stegemann.de header.i=@stegemann.de header.b="UTROeoPN"
+Received: from dd41718.kasserver.com (dd41718.kasserver.com [85.13.145.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6871C4A13
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 06:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5D21D432D;
+	Sat,  9 Aug 2025 06:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.13.145.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754721402; cv=none; b=aysEVgY2Jg9jao4bHZWER56gKb+Tj2MSAoHrutM58k8gR3rmtDPCj7S0Hd8C1wKCgpvE5dgvuwzX9jg0S3FYsKf2ICcB694cqUeA5fPpl0X8L/2rfMIVpMZ/ujGYzL7DsjVqEaStOzVzT+rsP+XaPaQN83B1lpCYPsSJkkqdI5Y=
+	t=1754721928; cv=none; b=M5gcRoXxd6W5D2f4P//zYko9ZbhDTSS7GDWjo8envemWgNHYAI7tUgCojO2On0WxQjT9yYFz3A/DOZRvOwLfDN/dduFiUTxgHY3GOow0SrMSXilbtM1s3V10QqyXKq2LfWeb0p8mmPhP+lWVxhacFNWJ/qALmqHrhrnbNal5rs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754721402; c=relaxed/simple;
-	bh=Ho91ac16/KHECqo1eDShFW3v/Gslza3laABM8iHK2Po=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IHfOEn1Ph4NDj78bLhLqMMzMBwgEJp+WEODqfig4nAr6APOFw1CL1jr80KjnH1tSbN5fXcNMjOUnXUZDDTr3vaQeFkRcmwVJrGD7UOX3k568PywbyLCqZ8Fjah58nECVND276LC9OG0oUXMHDJVfO54ViODuxLPEok20xftkWaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=qU8NdC0O; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 26ED2104CBC3
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 12:06:29 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 26ED2104CBC3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1754721389; bh=Ho91ac16/KHECqo1eDShFW3v/Gslza3laABM8iHK2Po=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qU8NdC0OI9MrhiDLmeH41uW2hPx+Yq7tx9R9RnoctTbmdtuUaWnggCzGIhzkqoKYv
-	 PBR+g38/67WXGY8I1zEsSdZkZs0dqSsBc4NLSR3sh5YLP6U9Ajh+FLQjVEQVK7tseH
-	 +lFWL0A55T5U59WL/dmmYKywRLEQ8WTyN+er2FGM=
-Received: (qmail 9486 invoked by uid 510); 9 Aug 2025 12:06:29 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.44074 secs; 09 Aug 2025 12:06:29 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 9 Aug 2025 12:06:24 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id 32EC6341555;
-	Sat,  9 Aug 2025 12:06:24 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 00C0D1E813ED;
-	Sat,  9 Aug 2025 12:06:23 +0530 (IST)
-Date: Sat, 9 Aug 2025 12:06:18 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: rostedt@goodmis.org, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, gmonaco@redhat.com
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Subject: [PATCH] include/linux/rv.h: remove redundant include file
-Message-ID: <aJbsYkON4V4iFPFG@bhairav-test.ee.iitb.ac.in>
+	s=arc-20240116; t=1754721928; c=relaxed/simple;
+	bh=zvx995jZvhgpw8Zwg3xEmNPHpXPuVOefVTjpESQ6GRw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r7ST82aRzX4eL3P65HOfvbz1uOo8RU7fjqyIqfIy58DNiqxn1OOPwhLvkm1GEu0UFp6cBl6vWDEBSmyNRMzWc0zIQXLiGLotCZ9IW3+jiGO/3/JhZpJQwqBGlMWqZiy/j16RRRqKfcbvxdRtneXz16L8LvHfsxK7Wvbt+v9yYjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=stegemann.de; spf=pass smtp.mailfrom=stegemann.de; dkim=pass (2048-bit key) header.d=stegemann.de header.i=@stegemann.de header.b=UTROeoPN; arc=none smtp.client-ip=85.13.145.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=stegemann.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stegemann.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stegemann.de;
+	s=kas202307141421; t=1754721419;
+	bh=Bir3wHohf1pjvDnOTZ+u3N0JcfX4O2/ic9Nnk3OTI5E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UTROeoPNRVJO237G02ghc80x1KYzBs/kuZO4reW9Z3OpcLBIzOenG9tNY4ajg0R6d
+	 /nvAUmStAGN6n1bdzrkWQkWM/82JxKBPmquxBn5hzPqw+aW5WihecdjSWQbnR9vlEx
+	 0lijWxzOge5kYziJKM5u29/Vu3Z13yIzGjnpuIoJAQDaVkuRZ7mNFUeEtXrg2dl7/M
+	 sZbA/PVZH9t/5P6VeOSiVw9mM95KDMl32Hun5NDdfvaVxCkVw+partGmFvlkzqrNQN
+	 9vE+lBHOqC/W5HHrKaNMIDYi3BpN1oWdwkeN1mB0FXhXShVn1UW9nfPEm0021aQOZ2
+	 dE+pYLJcbsVAA==
+Received: from DESKTOP-I55TJV0.localdomain (p5b2eae0a.dip0.t-ipconnect.de [91.46.174.10])
+	by dd41718.kasserver.com (Postfix) with ESMTPSA id 5DD6055E0014;
+	Sat,  9 Aug 2025 08:36:59 +0200 (CEST)
+From: Sven Stegemann <sven@stegemann.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sven Stegemann <sven@stegemann.de>,
+	syzbot+e62c9db591c30e174662@syzkaller.appspotmail.com,
+	syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com
+Subject: [PATCH net-next] net: kcm: Fix race condition in kcm_unattach()
+Date: Sat,  9 Aug 2025 08:36:19 +0200
+Message-ID: <20250809063622.117420-1-sven@stegemann.de>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: +++++
+X-Spam: Yes
 
-Remove redundant include <linux/types.h> to clean up the code.
-Fix this redundancy introduced by commit [1].
+syzbot found a race condition when kcm_unattach(psock)
+and kcm_release(kcm) are executed at the same time.
 
-Fixes: 24cbfe18d55a ("rv: Merge struct rv_monitor_def into struct rv_monitor") [1]
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202507312017.oyD08TL5-lkp@intel.com/
-Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+kcm_unattach is missing a check of the flag
+kcm->tx_stopped before calling queue_work().
+
+If the kcm has a reserved psock, kcm_unattach() might get executed
+between cancel_work_sync() and unreserve_psock() in kcm_release(),
+requeuing kcm->tx_work right before kcm gets freed in kcm_done().
+
+Remove kcm->tx_stopped and replace it by the less
+error-prone disable_work().
+
+Fixes: ab7ac4eb9832 ("kcm: Kernel Connection Multiplexor module")
+Reported-by: syzbot+e62c9db591c30e174662@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e62c9db591c30e174662
+Reported-by: syzbot+d199b52665b6c3069b94@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d199b52665b6c3069b94
+Signed-off-by: Sven Stegemann <sven@stegemann.de>
 ---
- include/linux/rv.h | 1 -
- 1 file changed, 1 deletion(-)
+ include/net/kcm.h | 1 -
+ net/kcm/kcmsock.c | 9 ++-------
+ 2 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 14410a42faef..8b968b8ed77b 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -15,7 +15,6 @@
+diff --git a/include/net/kcm.h b/include/net/kcm.h
+index 441e993be634..d9c35e71ecea 100644
+--- a/include/net/kcm.h
++++ b/include/net/kcm.h
+@@ -71,7 +71,6 @@ struct kcm_sock {
+ 	struct list_head wait_psock_list;
+ 	struct sk_buff *seq_skb;
+ 	struct mutex tx_mutex;
+-	u32 tx_stopped : 1;
  
- #ifdef CONFIG_RV
- #include <linux/bitops.h>
--#include <linux/types.h>
- #include <linux/array_size.h>
+ 	/* Don't use bit fields here, these are set under different locks */
+ 	bool tx_wait;
+diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
+index a4971e6fa943..2f66b5279f2a 100644
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -430,7 +430,7 @@ static void psock_write_space(struct sock *sk)
  
- /*
+ 	/* Check if the socket is reserved so someone is waiting for sending. */
+ 	kcm = psock->tx_kcm;
+-	if (kcm && !unlikely(kcm->tx_stopped))
++	if (kcm)
+ 		queue_work(kcm_wq, &kcm->tx_work);
+ 
+ 	spin_unlock_bh(&mux->lock);
+@@ -1693,12 +1693,6 @@ static int kcm_release(struct socket *sock)
+ 	 */
+ 	__skb_queue_purge(&sk->sk_write_queue);
+ 
+-	/* Set tx_stopped. This is checked when psock is bound to a kcm and we
+-	 * get a writespace callback. This prevents further work being queued
+-	 * from the callback (unbinding the psock occurs after canceling work.
+-	 */
+-	kcm->tx_stopped = 1;
+-
+ 	release_sock(sk);
+ 
+ 	spin_lock_bh(&mux->lock);
+@@ -1714,6 +1708,7 @@ static int kcm_release(struct socket *sock)
+ 	/* Cancel work. After this point there should be no outside references
+ 	 * to the kcm socket.
+ 	 */
++	disable_work(&kcm->tx_work);
+ 	cancel_work_sync(&kcm->tx_work);
+ 
+ 	lock_sock(sk);
 -- 
-2.34.1
+2.50.1
 
 
