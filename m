@@ -1,54 +1,63 @@
-Return-Path: <linux-kernel+bounces-761172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42271B1F53E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:47:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CE3B1F54B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 17:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 028603B23CB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D756189FD88
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEC4274B5A;
-	Sat,  9 Aug 2025 15:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099BC2BE7A0;
+	Sat,  9 Aug 2025 15:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkn8DZbP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeYIrzw6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313B235898;
-	Sat,  9 Aug 2025 15:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA1812E5B;
+	Sat,  9 Aug 2025 15:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754754442; cv=none; b=cyRY8yxlX/PKq00acyo8RlMTYrU0kzHMvb/+iYEyUg68ni4w2ZKYXYmjE+srOPiBqfg+e9Zx2Il7TdWM3pBGvvULopO9kXCJiK2dugg9cDZosWgwmzCDzICjzfm9hKxdzYDEG69NLjskLhOGJ5aJNwz/LZ/KknqyF1QAkCdQUD4=
+	t=1754754555; cv=none; b=Q85ULHhqWz6axg/pxnC/FAw/0ptUaoWgqTJZNSevxZKfYoeIgKdd+1BNRUJMWEsKXsJADJFjWphf08qXkH3I2MLW7GGgx/lDcndF6IIes5YCo5zeCPS8y8I5rt6jooqXhIDNVk4i4ohFRajO0GCYYj3LDjkGnLkvxkgHQ0NmGPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754754442; c=relaxed/simple;
-	bh=YHBM3Kt/CXqGsQnTOsqsjFAcAg3r2WP0nFyyLxHyjB0=;
+	s=arc-20240116; t=1754754555; c=relaxed/simple;
+	bh=7vhXrSuioZ/SBtRU3dtiWP/UxtiLm+RnSM/SUhZhUWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DSZKVq7kUvqKVTAdCY2M76QOxQ2XEaHzpjtKJYV5D6AguiZAaDS6s2TE9r9jhUtuVYv+p41dx2JxYfO3KwViSLro4z25belrVY2xP0Gu1Cm+e/aZA/c0RcfIP9f3cPp4/cmgDcXIWtY1lc8tlEEqFp5oQdbnqajORDyeL6vJQPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkn8DZbP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0F73C4CEE7;
-	Sat,  9 Aug 2025 15:47:20 +0000 (UTC)
+	 MIME-Version:Content-Type; b=KU1VMu81My+mQperQqulzARGYtNEl7TWr9GsjF6d8qrYVJDOLtQY0wU125DbS4X4Zj18SM9Yd5FOX8f8EMHmv2By5kGUlrp1WCAs5nVujoCBhFIgAae0i8yhWB+OjgQzmKvBZ+h6uokeAkKu6+FPgFMOdheK11PkOBAe3UcZtKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeYIrzw6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72998C4CEE7;
+	Sat,  9 Aug 2025 15:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754754441;
-	bh=YHBM3Kt/CXqGsQnTOsqsjFAcAg3r2WP0nFyyLxHyjB0=;
+	s=k20201202; t=1754754553;
+	bh=7vhXrSuioZ/SBtRU3dtiWP/UxtiLm+RnSM/SUhZhUWo=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tkn8DZbPayb++ejni54yisZM/o353tkciON6zDB2YD4L3ipnXMrxusoTZbRiKJYiS
-	 3+und1P0FSDSGIuwnUW0nrx8hhgIcYzRXkmtnQjRY59CHK+Kq1bqg+/JzUyTs54nh+
-	 J9yN9jOBPgQnzMSouvj8uEQfntMtU0RicTYz2zG0ot/g1dqutwQ3a2uYOe/3W927Vs
-	 yKJIZfW5MDYwR45nN+J60m5uZX86SSi7XhwCEYHlfc4DSJE8lnW6AvHSGKpL0wS1j3
-	 VmEEpHsTUdcs9wbD/f2bdU/+QJcGQgiMsWKEnwwzVhTtDv2OAR+L8G3QA12FEdjaYq
-	 Y2P621aj2cuRQ==
-Date: Sat, 9 Aug 2025 17:47:17 +0200
+	b=AeYIrzw6PnujYHIivdpprLbCVBJJQp2fdEyQ/xsD8jKikwQylgzqARsMFhU4EykU0
+	 W5jg9ied0X6sycGDiIx01KFxiMu7ItlFTXRp0deBctpVieEd32qgOTqHrE7Y4f7Okr
+	 GcD2ys0L+RAPxYbTqF/6VIDO1Cy8UOhossFxGz4xtzAmQoBo4ORBEJGCUsko7ZPqGj
+	 pc1iLL3cHLrnZaQtW94TafVbpN2K3cK/32KxpNnKWPzU62xKZTRoDnKGPPtVKj8anp
+	 lFD9tsYVUBxhfcBIToO7SlzgUGhhvQ8W3ThB6yqPf5NS7ATMeS5hoPLEdJqQROTaU5
+	 +ANpyaud/Ckiw==
+Date: Sat, 9 Aug 2025 17:49:07 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH v2 00/12] docs: kdoc: thrash up dump_struct()
-Message-ID: <20250809174717.45e26abf@foz.lan>
-In-Reply-To: <20250807211639.47286-1-corbet@lwn.net>
-References: <20250807211639.47286-1-corbet@lwn.net>
+To: Daniel Ferguson <danielf@os.amperecomputing.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ard Biesheuvel
+ <ardb@kernel.org>, Jonathan Corbet <corbet@lwn.net>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Len Brown <lenb@kernel.org>, James Morse
+ <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, Borislav Petkov
+ <bp@alien8.de>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-edac@vger.kernel.org, Jason Tian <jason@os.amperecomputing.com>,
+ Shengwei Luo <luoshengwei@huawei.com>, Shiju Jose <shiju.jose@huawei.com>
+Subject: Re: [PATCH v4 0/5] Fix issues with ARM Processor CPER records
+Message-ID: <20250809174907.35ac47c5@foz.lan>
+In-Reply-To: <4499042f-e1e0-4fe6-8670-4556a3f4a88a@os.amperecomputing.com>
+References: <20250805-mauro_v3-v6-16-rev2-v4-0-ea538759841c@os.amperecomputing.com>
+	<385eca9a-0366-4f3a-95cf-6f19101957ea@os.amperecomputing.com>
+	<20250808160121.000038bd@huawei.com>
+	<4499042f-e1e0-4fe6-8670-4556a3f4a88a@os.amperecomputing.com>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,39 +68,46 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Thu,  7 Aug 2025 15:16:27 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+Em Fri, 8 Aug 2025 12:03:06 -0700
+Daniel Ferguson <danielf@os.amperecomputing.com> escreveu:
 
-> In my ongoing effort to truly understand our new kernel-doc, I continue to
-> make changes to improve the code, and to try to make the understanding task
-> easier for the next person.  These patches focus on dump_struct() in
-> particular, which starts out at nearly 300 lines long - to much to fit into
-> my little brain anyway.  Hopefully the result is easier to manage.
+> On 8/8/2025 8:01 AM, Jonathan Cameron wrote:
+> > On Tue, 5 Aug 2025 11:39:38 -0700
+> > Daniel Ferguson <danielf@os.amperecomputing.com> wrote:
+> >   
+> >> On 8/5/2025 11:35 AM, Daniel Ferguson wrote:  
+> >>> [NO NEED FOR INTERNAL REVIEW, THIS IS JUST A TEST]    
+> >>
+> >> Yes, PLEASE REVIEW...
+> >> I accidentally left that message in...
+> >>
+> >> ~Daniel  
+> > 
+> > Hi Daniel,
+> > 
+> > No problem with you picking this up to take forwards as I gather you asked
+> > Mauro first, but good to mention that change and that it's with agreement
+> > (or not if it's abandoned code which I don't think this was.) 
+> > 
+> > Thanks,
+> > 
+> > Jonathan  
 > 
-> There are no changes in the rendered docs.
+> Hi Jonathan,
 > 
-> Changes in v2:
+> I didn't ask Mauro directly, but I did ask this list if my intervention would be
+> useful. I was given feedback that it would be.
 > 
->  - Reduce the regex backslash removal to keep them in place for
->    {}()[] even when not required.
-> 
->  - Restore some of the single-use variables set from regex matches
-> 
-> Mauro, I have applied your Reviewed-by to everything except patch 10,
-> hopefully it is more to your liking now.
+> When I resubmit this patch, to take into account your feedback, I'll be sure to
+> also explain in the cover letter the change of hands.
 
-All looks good to me now. Thanks!
+I saw your past e-mail. I'm fine if you can resubmit this.
 
-I sent a suggestion for a further improvement on patch 10/12 together
-with my R-B.
-
-> [Helpful hint for the future: if you are going to make a bunch of
-> subtle changes to regexes used throughout a patch series, do it at
-> the end...you'll go through far less rebasing pain that way when you
-> have to change them... :) ]
-
-Sorry for that! Yet, IMO, the code looks a lot nicer with the regex
-changes you did over the past version.
+> 
+> Hopefully I didn't step on any toes, that wasn't my intention.
+> 
+> FWIW, here is a link to the brief conversation that led to the hand-off:
+> https://lore.kernel.org/linux-acpi/CAMj1kXGSNT08QrCp1jazmi9ANpZ7RCuS4kHo9x6hwxtp6z0Nhg@mail.gmail.com/
 
 Regards,
 Mauro
