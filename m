@@ -1,207 +1,115 @@
-Return-Path: <linux-kernel+bounces-761125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6D0B1F4B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:23:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D74B1F4BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 15:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AE825607E4
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1FD720F7C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 13:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A457C298CBE;
-	Sat,  9 Aug 2025 13:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C2C29B208;
+	Sat,  9 Aug 2025 13:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bluespec-com.20230601.gappssmtp.com header.i=@bluespec-com.20230601.gappssmtp.com header.b="fNcsrYI2"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1NpFZ9L"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A06A157A5A
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 13:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE016157A5A;
+	Sat,  9 Aug 2025 13:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754745785; cv=none; b=hY8gVOe/UXE1OEow1Oa06ojGlQgcoHXVzpvtiXmcDU6Qs0OJMB75KxzHwbQt54mmk6UBOtmQv6tFWNruUM3yjR6qkMNZkSUuoDb+9QbrJW+9odLnF9oaVZZ1ajy7iEZS8O17IWOMznbwSNGzWv4561V1VqGyl6fbWbr+np+3Eaw=
+	t=1754745856; cv=none; b=IVwrmgl73BC2Rei+SOjT+PhhkSs89Ti/AQcLtteaNt7pAvlHNHbkl3Bu1i4XbXYf9WqbsddEMqVGjJPFtyaFMw89EnZJr7CQxICfkZuIdZbZaXVnZlB0qWh+wPXHkFN0jlEggZFEEIBIh9I60fo1ThgfW53y5g/nyFUuWXRuw68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754745785; c=relaxed/simple;
-	bh=+KyfCEflr+zZidAMqnUZw06lZ660anfekMb+MV59imQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0enl2Yas6LaiEzTyHdyo1qkVclExoN/1aHziTYje+5boM4anYcNLtV7RnKTgaUG46vEnFMM4/MFYmhc4hlwWXs6ck0H+VPWB/v+LFEZ7MJZa6rFfDSysgbILiqfcg3vAA8RMMoCW9eIukE/z6MA8ILWDc43k3mbfzk6+63gzC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bluespec.com; spf=fail smtp.mailfrom=bluespec.com; dkim=pass (2048-bit key) header.d=bluespec-com.20230601.gappssmtp.com header.i=@bluespec-com.20230601.gappssmtp.com header.b=fNcsrYI2; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bluespec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=bluespec.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso30108236d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 06:23:03 -0700 (PDT)
+	s=arc-20240116; t=1754745856; c=relaxed/simple;
+	bh=i/aXl3FafuonDW2uRsPEFO2nW4UOl5q69OmnYgerOAg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awdJp0GrCzDb+JhhW2gTc3jgI7ohQmfS5rCBKSkQWjLC0M1SqoHfrkrAJ+h3iSTUozdsLsMHmsQ2WLMaAidS61hEP6Iqy7ktzy84FOmoI+Z1jyIwuUzwIk8Brza1AhHZZn5v+JzJrEtHhsq8Hp7Uegdr5Mn1kGcp9eNpZfSK0/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H1NpFZ9L; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-31f1da6d294so2766264a91.2;
+        Sat, 09 Aug 2025 06:24:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bluespec-com.20230601.gappssmtp.com; s=20230601; t=1754745783; x=1755350583; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m1HWAIl/l6Jo/icoJcFI/eQvHLHYv3eOCzqgLsh2+qQ=;
-        b=fNcsrYI2fV0prO4ma3apgK0/xIcci1TXq59c61CmS6v6GEDlSxSE+7Qd1DZL+KORHx
-         /TC5AkUUSFxISI1OA4dHP7u/Rkr2NoYXhGg0tzS5nFSvG0db0UdTYHZZTSc1/DQN2666
-         vZPlQvfGpgQTxJ1KWO3tzsHuBTy78Lspd4fExzyClEWXXl3U9q65UU501eb8uZoEjSOm
-         ekJRvZJEA2AeGOlW13q5pJmUJ6rd7cO/yof/UoaG4/b8ZBa6L42SG0AiR/RvTgOY1a8k
-         5CmYJ2J7qSNsT9Qer2N8mlT0ullxM25hfL7oI817IEZOQ3g+0F7LIR5Z4Y5GljGU4wiz
-         pwCQ==
+        d=gmail.com; s=20230601; t=1754745854; x=1755350654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gg5qA8e+0UYHLSOIBa7q2BXIt9K71iMCY0q3plis3nE=;
+        b=H1NpFZ9LFpgupZKYuO4NiQMnq0xGp37VUWAsup1vMXJDdAis2NKgvEFxbJbGcwNS3C
+         EU36DYeR6QJJV/ZA3rmjsaR8P+3Iz+AU64R0fJHxUKEfGHHDBzOSqPVtNrYDWLgYIg6r
+         1/dTN3uq7AjMSXoGWuLwmTJcnO4958XZrAG4fvG9bHQVWBgFtJVNIJ7nTdrLgrMBGhuP
+         N1/sI9HH2Op/+/F2LS7ufK/LG8gmL0QzgRMUApA274padEPf6TSuOltkNCDorBr2QCO+
+         N1jZJMJorgzoSOncgnSxZ15lwrjRJwQg+7vV3tf/nH1c2ExCgwEQwkh46r3rvFN/XiMh
+         QIRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754745783; x=1755350583;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m1HWAIl/l6Jo/icoJcFI/eQvHLHYv3eOCzqgLsh2+qQ=;
-        b=btvug0fPn4WElXbHV1zL71nKVXiO9/aVtYUAF1y0zmlsyttGxC6N9dWJRiEMwuc3Lr
-         HMDKFt0IU1UuESjjsJlkbJvs1vPti1HrrM0+7uq+vXUg3IpFUASXRT1PBygjg5gkInMI
-         Fq7Y50P4RZ7M7uBvdzPr5IADUJtl2QUjtnsJ1EEs/87bMF3o9CU89Hcu9Jj5o3hJSeC1
-         PQgz+FNh4GZUPQ2FixFPOZdkQ27QVBVhA/jOHBnXtX2hMMEFOLR//T7ymMyVWVNX/JCX
-         X37xKolxeylMSwED829G9vHhC4nVnvUbflQ5UFaqzSOYQeITl7E2YLFOIwRuud8C81uk
-         Xi9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUl4Ruoa19RWoE4aruyb6ktz4mzv70w6N+OutOFr6SXOTXrlpLO/ILA+0xA3GlPJP8ZuXSn49shotay4PQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ9+616f3BJ+A4UuYq8OxyPS0kreWnCuAiFU/vKnYr5dzn9/8V
-	qESBNGwWWli1XKX9dkbJjrohYCh76/9BkL9CtiIoQEPbT/bkfJjQ3gMLGIdufnUe
-X-Gm-Gg: ASbGncsEoAHKZ9H+PeFMvGt4NHNQ6BXQ6ZxkxhussyF/vWV4iu6vHVA1n9VSnOlXrbw
-	SP0F/aHpCkirPwhVxiA+22XsOM5APnwvF001qdMX5vP/c6+JI7cZf2fr3IqrKYGcLneNwT7pGOd
-	rM1ZvJP0IT2Lo6GV04mzFOqEjeAiXjS+l5o9s5mwab/2YWKVyoDAjpUq9fPwaIbjlurjQ7q1Vn2
-	wifEiCneVA5LVvEsfy8tgjQ4m791NLUFUwlvoK+BJf1WzXUtuKp2yYj9WesKNrTYTpD1s/mZKWd
-	XSCawMtXMSiTzCXcYNMWQJWb+0fwhss4Sc+RC23ftxHRIGVzog4LW0oeW1+o5DqDQH6tgzZ0cYk
-	TQStTIylh1mYK6Uv7yyPlFrVcZP2fZf8=
-X-Google-Smtp-Source: AGHT+IHnkjLCl6BuRx0vZJ+XlCeUb46kGhdYSIkBrOOBdb1kcWB7KRzOq298Msvi9tw1zh6I7RJfNw==
-X-Received: by 2002:a05:6214:1d0a:b0:701:77a:88b with SMTP id 6a1803df08f44-7099a30586fmr77763936d6.21.1754745782762;
-        Sat, 09 Aug 2025 06:23:02 -0700 (PDT)
-Received: from localhost.localdomain ([37.19.220.12])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7094e245309sm88739056d6.1.2025.08.09.06.23.01
+        d=1e100.net; s=20230601; t=1754745854; x=1755350654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gg5qA8e+0UYHLSOIBa7q2BXIt9K71iMCY0q3plis3nE=;
+        b=CB4IVd8a9Lo8xQAwX1N3RC7JWbZxyecDNDqe5zMDwRVJVZSq9TG0IswHXkm4I/Woqb
+         vuY7obgMP72IRMcnj+fSmfpiisaNZMkXlBAgMXrrqksCqKMTjt9vUVMYIs/z4U6NfQTF
+         3qi4H1XMluZCMgR59q2r8aCvkASm0uD2l+HHkq2N/9g3/APa3olBj2unr5r0EOqjEGpU
+         jqQ6rKWbFkw1Nnir9QHwUVf5i3ogco0KehTz26zfe+uexIQ2ISnr4+DQy/Vbyag+1O1D
+         Dah4dMYkGcmvJIi25dKM37miSRi46I8UQVpusqGOUZ4JbBv3ReNzq5Xg2Zf6O0FU9SgI
+         sw/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUAZY91GiyLUK4IJm810nmnf26SjP6SJ9JEyMV8JIeoli5kqfAhADJBDgp/lIdHaBRBKCp22paS/fn8MKU=@vger.kernel.org, AJvYcCXpv4F32kkoGhHbMu9x4G8rPHh+xIu5WOXorL/guJgs3ByzeHHKYHMS6hcmkFAYBqQzEyxf2xxI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGRP+6xYNTY1RJDaYUZjrwgmIcOM8asbhcEoNnXp2eHpFQ92af
+	Wj6Yf2D6OBplfApefaDLoOo/yVTm0S3Ft+P4/jp7HDDYPLWRkgV6bzcZ
+X-Gm-Gg: ASbGncvgyjgWOevP+plt5ydxtNoYpdx7wIjEU2RAIzxH6gyX0Nol0kmeO71S7Q7kJS2
+	1sieXLbSCsadayVNoZ2vMa1V6AkfBLj+Pujzk0/m1E9ID3UTpoVooXXvY1zjYY0Xv8G2A12fK8u
+	kdjlVTQN8OpmVUkOPhnV26PIsSGFUfnoRB4QOOedK0C7fTdYn7J3vckwgCWL2f7z+LB8EMKPt+q
+	Ujlrwxt7qIGbf12BN+ZszEXsD7GpWK+xDKzrO5jEa3AWgCeUmIct7FDtX4q0R8Dj2uR3TBQ+gRt
+	OwLjCg27eViWugqS6alKpbN3tLPl0yuRXniRIxLf4Xm2s4P47XCIKU9z+XyMOAW2krRB4FRJ89+
+	qw0msit4Ss35731mY1k8LwQ==
+X-Google-Smtp-Source: AGHT+IG6XUjvU1ujGKElusFwiJuytuORtuq2Rt2NrzrdYHFF84WEYLfReDSdYsL1FrWIQ0Z4Hb3WYw==
+X-Received: by 2002:a17:90b:2ecc:b0:321:87fa:e1e8 with SMTP id 98e67ed59e1d1-32187fae3a9mr7874585a91.2.1754745854056;
+        Sat, 09 Aug 2025 06:24:14 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3218c3c2d58sm3034935a91.16.2025.08.09.06.24.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 06:23:02 -0700 (PDT)
-Date: Sat, 9 Aug 2025 09:23:00 -0400
-From: Darius Rad <darius@bluespec.com>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: Drew Fustini <fustini@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Drew Fustini <dfustini@tenstorrent.com>
-Subject: Re: [PATCH v2] riscv: Add sysctl to control discard of vstate during
- syscall
-Message-ID: <aJdLtG8jcAxT8idC@localhost.localdomain>
-Mail-Followup-To: Vivian Wang <wangruikang@iscas.ac.cn>,
-	Drew Fustini <fustini@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Drew Fustini <dfustini@tenstorrent.com>
-References: <20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org>
- <aJXvWuPKIc2lCSX3@localhost.localdomain>
- <e4d21516-23b5-404b-a7da-cf6ebfd02dbc@iscas.ac.cn>
+        Sat, 09 Aug 2025 06:24:13 -0700 (PDT)
+Date: Sat, 9 Aug 2025 09:24:11 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, wireguard@lists.zx2c4.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] rework wg_cpumask_next_online()
+Message-ID: <aJdL-5t9va5Ln0xv@yury>
+References: <20250719224444.411074-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e4d21516-23b5-404b-a7da-cf6ebfd02dbc@iscas.ac.cn>
+In-Reply-To: <20250719224444.411074-1-yury.norov@gmail.com>
 
-On Sat, Aug 09, 2025 at 11:58:24AM +0800, Vivian Wang wrote:
-> My previous comment on v1 on prefering clobbering with VS = Initial
-> handling aside...
-> 
-> On 8/8/25 20:36, Darius Rad wrote:
-> > On Wed, Aug 06, 2025 at 07:03:28AM -0700, Drew Fustini wrote:
-> > [...]
-> >> diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
-> >> index 3987f5f76a9deb0824e53a72df4c3bf90ac2bee1..b702c00351617165a4d8897c7df68eadcd2d562e 100644
-> >> --- a/Documentation/arch/riscv/vector.rst
-> >> +++ b/Documentation/arch/riscv/vector.rst
-> >> @@ -134,7 +134,25 @@ processes in form of sysctl knob:
-> >>  3.  Vector Register State Across System Calls
-> >>  ---------------------------------------------
-> >>  
-> >> -As indicated by version 1.0 of the V extension [1], vector registers are
-> >> -clobbered by system calls.
-> >> +Linux adopts the syscall ABI proposed by version 1.0 of the V extension [1],
-> >> +where vector registers are clobbered by system calls. Specifically:
-> >> +
-> >> +    Executing a system call causes all caller-saved vector registers
-> >> +    (v0-v31, vl, vtype) and vstart to become unspecied.
-> >> +
-> > Perhaps:
-> >
-> > Clobbering the vector registers may prevent leaking information to user
-> 
-> No... Not clobbering does not "leak" anything. If you find that it leaks
-> information, please report - that's a bug.
-> 
+Ping?
 
-That's why I wrote "may".  If such a bug existed, either now or in the
-future, clobbering here would limit the scope of it.  But this may not be
-important enough to mention.
-
-> > space and aid in debugging, but can significantly increase system call
-> > latency for some implementations.  [...]
-> >
-> >> +However, clobbering the vector registers can significantly increase system call
-> >> +latency for some implementations. To mitigate this performance impact, a sysctl
-> >> +knob is provided that controls whether vector state is always discarded in the
-> >> +syscall path:
-> >> +
-> >> +* /proc/sys/abi/riscv_v_vstate_discard
-> >> +
-> >> +    Valid values are:
-> >> +
-> >> +    * 0: Vector state is not always clobbered in all syscalls
-> >> +    * 1: Mandatory clobbering of vector state in all syscalls
-> >> +
-> >> +    Reading this file returns the current discard behavior. The initial state is
-> >> +    controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
-> >>  
-> >>  1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
-> >> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> >> index 36061f4732b7496a9c68a9a10f9959849dc2a95c..7bb8a8513135cbc105bd94d273012486a886f724 100644
-> >> --- a/arch/riscv/Kconfig
-> >> +++ b/arch/riscv/Kconfig
-> >> @@ -656,6 +656,16 @@ config RISCV_ISA_V_DEFAULT_ENABLE
-> >>  
-> >>  	  If you don't know what to do here, say Y.
-> >>  
-> >> +config RISCV_ISA_V_VSTATE_DISCARD
-> >> +	bool "Enable Vector state discard by default"
-> >> +	depends on RISCV_ISA_V
-> >> +	default n
-> >> +	help
-> > Perhaps add the following paragraph:
-> >
-> > Discarding vector state is more robust, but has negative performance
-> > implications in certain implementations.
+On Sat, Jul 19, 2025 at 06:44:41PM -0400, Yury Norov wrote:
+> From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 > 
-> "Robust" is too vague... I don't think this word is helpful for anyone
-> trying to understand what this does.
+> Simplify the function and fix possible out-of-boundary condition.
 > 
-> Vivian "dramforever" Wang
+> v2:
+>  - fix possible >= nr_cpu_ids return (Jason).
 > 
-> >
-> >> +	  Say Y here if you want to always discard vector state in syscalls.
-> >> +	  Otherwise, userspace has to enable it via the sysctl interface.
-> >> +
-> >> +	  If you don't know what to do here, say N.
-> >> +
-> >>  config RISCV_ISA_V_UCOPY_THRESHOLD
-> >>  	int "Threshold size for vectorized user copies"
-> >>  	depends on RISCV_ISA_V
+> Yury Norov (NVIDIA) (2):
+>   wireguard: queueing: simplify wg_cpumask_next_online()
+>   wireguard: queueing: always return valid online CPU in wg_cpumask_choose_online()
 > 
+>  drivers/net/wireguard/queueing.h | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
 > 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> -- 
+> 2.43.0
 
