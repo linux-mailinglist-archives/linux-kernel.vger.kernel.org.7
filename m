@@ -1,150 +1,224 @@
-Return-Path: <linux-kernel+bounces-760911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-760912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42374B1F1EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 04:15:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2915EB1F1F0
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 04:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0375644F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23892561AB6
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Aug 2025 02:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC80274B4D;
-	Sat,  9 Aug 2025 02:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D089F275B1F;
+	Sat,  9 Aug 2025 02:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IQtr0TCA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6xWengS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2A3197A8E
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Aug 2025 02:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BA3C2FB;
+	Sat,  9 Aug 2025 02:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754705698; cv=none; b=ih9TxFDBsx8iioCL4E39n8e2KdW8JYnTgdUb+4u25NtWMxnKY+1KmpYNOqgo1zgmIn1//7D9WomJ3f537EXNcqd2hnJccl/PiOHsLk3OEuwYSskvxxRZ/lIuBYdG2PjV3QH8jc8czkww/iSD2J8hvoVr7KaigET+GndtE3X5kBo=
+	t=1754706248; cv=none; b=q23kk4nsOivSt7R1B4wP/72GWcEbsYuEhXlKp2vR4xg8BrPey19VRWDWB8GzXCElNOIkjG3sfAZmb29FMvNj7oITxMX45LjddwnA+JYsnnsziA5tMYcH08mD53D/5Y50lzPES2qg/IwpB+zqm0+ElxrCf1wxk/OLsYg5tLr/aqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754705698; c=relaxed/simple;
-	bh=XEHcXFeB1JLeJqc5dVktvb+4u89AId7IC1+S2hcUAzA=;
+	s=arc-20240116; t=1754706248; c=relaxed/simple;
+	bh=oG/gs0IIq/R05gYX+mXbeKSOc+H5ut11vppSDkHojUc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNfsFwM8oAlsiU6FcGGGDIKYrnnEa6tCoWLN8sw4IOJLpdhNUcgz62BZChZMGur2T+7UWDAgBArkPDtDVWpwfH7PM9RdjrqRAOyLRl+u040Afsu4k/FiYhkrpBnlzvY9EzvuBnJzyRgCAEzDrGPhxhFhqPRY96BXUHgZrfVRVKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IQtr0TCA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 578EjP59007642
-	for <linux-kernel@vger.kernel.org>; Sat, 9 Aug 2025 02:14:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=d8V82vBwUz1mJ+IWuJuo2vsL
-	/UFk1BqGFbx/Lzd+kf8=; b=IQtr0TCA51V0mY2vJcxwuMa31dpLyn09YQndPGAQ
-	A3OZw2KyvMcC3QdCOOdDXibEQxO/wXrJJj8VRgTI5TWUWVdYXemWlaTHCzX2mKg6
-	/ZjWguNe9BwlAE1Px+zzEFmMqGkR1XNgIW21jEzqW9djN8Ql3kSYOcwutgptrdj7
-	H70st6UGLQtW6HLcv/59csvO5g6Oc04FoSNDjT8QYi9JCqerP7a6Mf8h29z3CyLD
-	VxR0BihDXoNfq97n6fbtlupB6eiqIXajqC9wctCo7rjXN9v5k5B75Avnb9/NMAlT
-	g09B6ofPria46uQ0aR+OScIKET3vdp2HhF1NRy3Qg8OXQg==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48c8u28q3q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 02:14:56 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4aedd0b5af9so55554001cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Aug 2025 19:14:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754705695; x=1755310495;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d8V82vBwUz1mJ+IWuJuo2vsL/UFk1BqGFbx/Lzd+kf8=;
-        b=RY2AXueMiaaZk6+G6CbqSbn6+gMifCyR2YhnzXrHSGmioB6g5gDVZ/Qe8Yal5uS69d
-         ADoSYHoE+MuESAQKBpaHJFHAdRFVLjj2j/7KFU3FQdkgN93X5dtJFaS4NIpMEd16HI0G
-         bp3ZApoAq17faoOykEPgCIMYAoh2eOy906/iyeLQpeKeFn8+NkcNtMSTU8Z5fI+EnV1u
-         Mq04DFXbSRGIn3CCWRCndj0+p/4G81cVIiKW+ZvuG8g1o7j3OopCdhMj8iYY2ZPEyHTE
-         pYYrmS2A0skjeN6CQj0xjBlfiifx0t2c+yB6wIl+BWdYkzDmiFywHTA66oaSvmX77aXc
-         +upg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkJRHfMTXnxxHQINAhZqtMPoLYdQulcULBz02Nk7z8d6p9ETBOJA49FpRu8xiXglLphkzKCxxxoSfl0YY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJTO85+T+x6cnW8l4IlFtJFkgGBGTP+rpA0AcxdnSMmPH29BF1
-	p6PWYPx+pav0wbx1zPcOePw+F3/GZhdqZy7qzmntdIrs5HBsIglQ/ax3FCwoDumZJdYUlasWUdL
-	stCV5xw85lcGmQPzWmKZAh3V7ITqixm11jpwFhQRAL5L2IuoGVBR6N9F2/Hy2Q6CJZVI=
-X-Gm-Gg: ASbGncvXPdW8M9PVrPMBn24s9PEiES2tgbZhbx9qO7PfhDG9T9otVDeNJSN5GrsZmPv
-	SNIwXaVCHK5MgT5tnHFPLE/V7xmMwQXeWDsXXUosWoTw/JkcZJk2AblTwxd/36xm5UtzP06iw4w
-	n9DGoYGiY1Lyq+qJwK+5znILfCVGf7c9ZGqq9V0ypAV9HxKTp19OTrHn+dBRWG1LpIGY8RMSY/S
-	7pPIOX9SCOL8gxJfIE1SZm9UvVJgAOjQiOhIcunwx5IKn4M70sht8lpMmNIZE5ApVOtYaOPy4+F
-	5V6gh+UcTrdZnN2RFyumTyiay+cF47IM3jfHsHvC+m+v3Isq/rmCgsbpRIrJbjQUFobYE04xcN9
-	7Z8Urw8/lmSe/M5ws7819AhSjRzKFUMTYCufoHzrcONww/uplK9VU
-X-Received: by 2002:ac8:5749:0:b0:4af:1f61:7d39 with SMTP id d75a77b69052e-4b0aed21313mr106146031cf.29.1754705694675;
-        Fri, 08 Aug 2025 19:14:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG5aRbQ/NlwN7L7iMrcnkgPVM/w6fIHpvroCwE+0c/uE92MdaewoP1y/ibErVYY6x3kEp26cA==
-X-Received: by 2002:ac8:5749:0:b0:4af:1f61:7d39 with SMTP id d75a77b69052e-4b0aed21313mr106145681cf.29.1754705694224;
-        Fri, 08 Aug 2025 19:14:54 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8899f897sm3194466e87.49.2025.08.08.19.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 19:14:52 -0700 (PDT)
-Date: Sat, 9 Aug 2025 05:14:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Yongxing Mou <quic_yongmou@quicinc.com>
-Subject: Re: [PATCH v2 05/12] drm/msm/dp: Drop EV_USER_NOTIFICATION
-Message-ID: <ykbudesvb2ya2gbtgbyrcn5niesul2bnpfsrl2hourpw56zwdn@y7kmcd2ejwxz>
-References: <20250808-hpd-refactor-v2-0-7f4e1e741aa3@oss.qualcomm.com>
- <20250808-hpd-refactor-v2-5-7f4e1e741aa3@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQewh029EUE9J2a/9+n917Q3/KtEyGUvsfepy9S7Raf7YfV2S2c5QRWIXxwUGWVHWWhKtbLELIWtvhxWbNel7QRYLX0Q3w2VMqUq/M+u+oTr9olXybc+RGwSFDddr6chmxFpIvy0aT3Ta6r76iCltHPSY8CiDENWa8vFuVYra1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6xWengS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A696C4CEED;
+	Sat,  9 Aug 2025 02:24:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754706247;
+	bh=oG/gs0IIq/R05gYX+mXbeKSOc+H5ut11vppSDkHojUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X6xWengSOLiD7r74p7CJMMKTHCqElz6amQ5SN59+PDUpxHAMC3CJINWjDQZHmiIfL
+	 QOY/81Yy5eA2e1LBhSC+Ks9bb8678Ce0ZuvvB+gPAFRjJ17Hm1T9uR4zfarThtAbPz
+	 MCttIFUaIJcciUAD4dpNjnZBRzGhcM4qdCBtfTP8Di1hTnlkZJmiIXs3200sOOYbam
+	 Dqu5KsZZkAAnN+PSzBLIyG247b2AYFExjwJ4NAnw10EVRVrlarhI1GPDpsquGRbHUa
+	 DXloZuLk/i52Aj9sibc+M03+pSTSdrt2WS/gTIzY7w0v4ve2OeJUj37znpPxkb7wtN
+	 ReN1aFMpys5hg==
+Date: Fri, 8 Aug 2025 22:24:05 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Donglin Peng <dolinux.peng@gmail.com>,
+	Zheng Yejian <zhengyejian@huaweicloud.com>
+Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
+ graph tracer
+Message-ID: <aJaxRVKverIjF4a6@lappy>
+References: <20250227185804.639525399@goodmis.org>
+ <20250227185822.810321199@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250808-hpd-refactor-v2-5-7f4e1e741aa3@oss.qualcomm.com>
-X-Proofpoint-GUID: Nd-c7j9Td9soU2tqeeB75mL-xVpB3rp4
-X-Authority-Analysis: v=2.4 cv=Q/TS452a c=1 sm=1 tr=0 ts=6896af20 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=93MD9rSA5G_0oRVq-qYA:9 a=CjuIK1q_8ugA:10
- a=zZCYzV9kfG8A:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: Nd-c7j9Td9soU2tqeeB75mL-xVpB3rp4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA2MDA5MCBTYWx0ZWRfXxNx/04li5n9J
- RbRR0+rOERP0jqig77HugSqxalZPtsEtAyaDxs3iBs0NHBDW1IiYDPPLqh/GxwNAfCXNePMBRlc
- ihQdgxQGcyFNLN+SXGRuNOpPNrIJw+9kljBnHpK7pt3o2ToFkvQu/JOPVqAN+DQZydT+u+f4kxV
- ZxlifYlO/OkpmTYVPQo0fqWJsR75/J85q/XE90Bys1eoWG3WtPbsVlFhuygwGfVM4D6evrdNdIN
- c/I3JAv65wuJe5LN8qW+WC6w6fbdaOBDK4yURsL07BP9mAjg31hZrdzHVsYb8eqFCGESR9iKz8Z
- ergs+eF3119mCoPlepao4Uj4cfymNypXHi4VoYyu+QGhzJMcy+Kh33dkIZV9wwkz5pz9qiEKto8
- gIMVUojQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-09_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- priorityscore=1501 impostorscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508060090
+In-Reply-To: <20250227185822.810321199@goodmis.org>
 
-On Fri, Aug 08, 2025 at 05:35:17PM -0700, Jessica Zhang wrote:
-> Currently, we queue an event for signalling HPD connect/disconnect. This
-> can mean a delay in plug/unplug handling and notifying DRM core when a
-> hotplug happens.
-> 
-> Drop EV_USER_NOTIFICATION and signal the IRQ event as part of hotplug
-> handling.
-> 
-> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/dp/dp_display.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
+Hi folks,
 
-This removes serialisation around
-msm_dp_display_send_hpd_notification(). This means that it can be called
-this function can be called in parallel, so we need to add locking
-around .link_ready access.
+I've been trying to track down an issue that started appearing a while
+back:
+
+[   73.078526] ------------[ cut here ]------------
+[   73.083194] WARNING: CPU: 2 PID: 4002 at kernel/trace/trace_functions_graph.c:991 print_graph_entry+0x579/0x590
+[   73.093544] Modules linked in: x86_pkg_temp_thermal fuse
+[   73.098939] CPU: 2 UID: 0 PID: 4002 Comm: cat Tainted: G S                  6.16.0 #1 PREEMPT(voluntary)
+[   73.108587] Tainted: [S]=CPU_OUT_OF_SPEC
+[   73.112664] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS 2.7 12/07/2021
+[   73.120126] RIP: 0010:print_graph_entry+0x579/0x590
+[   73.125198] Code: 49 89 40 20 49 8b 46 08 49 89 40 28 49 8b 46 10 49 89 40 30 49 8b 46 18 49 89 40 38 49 8b 46 20 49 89 40 40 e9 27 fe ff ff 90 <0f> 0b 90 e9 e2 fe ff ff 90 0f 0b 90 e9 8e fc ff ff e8 91 d8 10 01
+[   73.144001] RSP: 0018:ffffa6af02d37c58 EFLAGS: 00010282
+[   73.149369] RAX: ffffc6aeffd986f0 RBX: ffff9d70c83b0000 RCX: 00000000fefefefe
+[   73.156621] RDX: ffffffffbb374080 RSI: 0000000000000001 RDI: ffffffffbaf773ea
+[   73.163839] RBP: ffffa6af02d37cf0 R08: ffff9d70c1790cc0 R09: 0000000000000020
+[   73.171023] R10: 0000000000000000 R11: 0000000000000004 R12: ffff9d70c83b2090
+[   73.178216] R13: 0000000000000003 R14: ffff9d70c83b0000 R15: ffff9d70c1790cc0
+[   73.185412] FS:  00007fd8c6872740(0000) GS:ffff9d72741a9000(0000) knlGS:0000000000000000
+[   73.193584] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   73.199391] CR2: 00007ffedaf50fbc CR3: 00000001049f4006 CR4: 00000000003726f0
+[   73.206570] Call Trace:
+[   73.209086]  <TASK>
+[   73.211313]  ? trace_event_raw_event_preemptirq_template+0x66/0xc0
+[   73.217573]  ? __pfx_put_cpu_partial+0x10/0x10
+[   73.222093]  ? __pfx_put_cpu_partial+0x10/0x10
+[   73.226635]  print_graph_function_flags+0x27c/0x530
+[   73.231607]  ? peek_next_entry+0x9d/0xb0
+[   73.235618]  print_graph_function+0x13/0x20
+[   73.239895]  print_trace_line+0xbb/0x530
+[   73.243909]  tracing_read_pipe+0x1d6/0x380
+[   73.248121]  vfs_read+0xbb/0x380
+[   73.251495]  ? vfs_read+0x9/0x380
+[   73.254929]  ksys_read+0x7b/0xf0
+[   73.258258]  __x64_sys_read+0x1d/0x30
+[   73.261995]  x64_sys_call+0x1ada/0x20d0
+[   73.265936]  do_syscall_64+0xb2/0x2b0
+[   73.269694]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   73.274818] RIP: 0033:0x7fd8c6904687
+[   73.278491] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[   73.297320] RSP: 002b:00007ffe8bb08e60 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
+[   73.304974] RAX: ffffffffffffffda RBX: 00007fd8c6872740 RCX: 00007fd8c6904687
+[   73.312185] RDX: 0000000000040000 RSI: 00007fd8c6831000 RDI: 0000000000000003
+[   73.319369] RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+[   73.326588] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fd8c6831000
+[   73.333801] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000040000
+[   73.341050]  </TASK>
+[   73.343324] ---[ end trace 0000000000000000 ]---
+[   73.804718] ------------[ cut here ]------------
+[   73.809372] WARNING: CPU: 1 PID: 4002 at kernel/trace/trace_functions_graph.c:933 print_graph_entry+0x582/0x590
+[   73.819492] Modules linked in: x86_pkg_temp_thermal fuse
+[   73.824888] CPU: 1 UID: 0 PID: 4002 Comm: cat Tainted: G S      W           6.16.0 #1 PREEMPT(voluntary)
+[   73.834477] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN
+[   73.839314] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS 2.7 12/07/2021
+[   73.846739] RIP: 0010:print_graph_entry+0x582/0x590
+[   73.851662] Code: 89 40 28 49 8b 46 10 49 89 40 30 49 8b 46 18 49 89 40 38 49 8b 46 20 49 89 40 40 e9 27 fe ff ff 90 0f 0b 90 e9 e2 fe ff ff 90 <0f> 0b 90 e9 8e fc ff ff e8 91 d8 10 01 90 90 90 90 90 90 90 90 90
+[   73.870458] RSP: 0018:ffffa6af02d37c58 EFLAGS: 00010282
+[   73.875733] RAX: ffffc6aeffd186f0 RBX: ffff9d70c83b0000 RCX: 00000011792c5f40
+[   73.882906] RDX: ffffffffbb374080 RSI: 00000000fefefefd RDI: 00000011792c5ff6
+[   73.890079] RBP: ffffa6af02d37cf0 R08: ffff9d70c1790cc0 R09: 0000000000000020
+[   73.897249] R10: 00000000fefefefe R11: 0000000000000004 R12: ffff9d70c83b2090
+[   73.904424] R13: 0000000000000001 R14: ffff9d70c1790ce0 R15: ffff9d70c1790cc0
+[   73.911609] FS:  00007fd8c6872740(0000) GS:ffff9d7274129000(0000) knlGS:0000000000000000
+[   73.919740] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   73.925528] CR2: 0000559a316ca3c0 CR3: 00000001049f4003 CR4: 00000000003726f0
+[   73.932705] Call Trace:
+[   73.935200]  <TASK>
+[   73.937350]  ? __legitimize_mnt+0x4/0xb0
+[   73.941342]  print_graph_function_flags+0x27c/0x530
+[   73.946269]  ? trace_hardirqs_on+0x2f/0x90
+[   73.950401]  ? ring_buffer_empty_cpu+0x86/0xd0
+[   73.954912]  print_graph_function+0x13/0x20
+[   73.959149]  print_trace_line+0xbb/0x530
+[   73.963135]  tracing_read_pipe+0x1d6/0x380
+[   73.967291]  vfs_read+0xbb/0x380
+[   73.970580]  ? vfs_read+0x9/0x380
+[   73.973954]  ksys_read+0x7b/0xf0
+[   73.977244]  __x64_sys_read+0x1d/0x30
+[   73.980952]  x64_sys_call+0x1ada/0x20d0
+[   73.984839]  do_syscall_64+0xb2/0x2b0
+[   73.988558]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   73.993657] RIP: 0033:0x7fd8c6904687
+[   73.997278] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[   74.016084] RSP: 002b:00007ffe8bb08e60 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
+[   74.023743] RAX: ffffffffffffffda RBX: 00007fd8c6872740 RCX: 00007fd8c6904687
+[   74.030920] RDX: 0000000000040000 RSI: 00007fd8c6831000 RDI: 0000000000000003
+[   74.038101] RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
+[   74.045277] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fd8c6831000
+[   74.052484] R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000040000
+[   74.059724]  </TASK>
+[   74.061974] ---[ end trace 0000000000000000 ]---
+
+This patch was within the window where the issue started happening, and
+on inspection I found something suspicious (but couldn't verify since
+I'm traveling).
+
+On Thu, Feb 27, 2025 at 01:58:06PM -0500, Steven Rostedt wrote:
+>diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+>index fbfb396905a6..77a8ba3bc1e3 100644
+>--- a/kernel/trace/trace_entries.h
+>+++ b/kernel/trace/trace_entries.h
+>@@ -72,17 +72,18 @@ FTRACE_ENTRY_REG(function, ftrace_entry,
+> );
+>
+> /* Function call entry */
+>-FTRACE_ENTRY_PACKED(funcgraph_entry, ftrace_graph_ent_entry,
+>+FTRACE_ENTRY(funcgraph_entry, ftrace_graph_ent_entry,
+>
+> 	TRACE_GRAPH_ENT,
+>
+> 	F_STRUCT(
+> 		__field_struct(	struct ftrace_graph_ent,	graph_ent	)
+> 		__field_packed(	unsigned long,	graph_ent,	func		)
+>-		__field_packed(	int,		graph_ent,	depth		)
+>+		__field_packed(	unsigned long,	graph_ent,	depth		)
+>+		__dynamic_array(unsigned long,	args				)
+
+So we've added a dynamically sized array to the end of
+ftrace_graph_ent_entry, but in struct fgraph_data, the saved entry is
+defined as:
+
+   struct fgraph_data {
+       ...
+       union {
+           struct ftrace_graph_ent_entry ent;
+           struct fgraph_retaddr_ent_entry rent;
+       } ent;
+       ...
+   }
+
+Which doesn't seem to have room for args?
+
+The code in get_return_for_leaf() does:
+
+   data->ent.ent = *curr;
+
+This copies the struct, but curr points to a larger entry with args
+data. The copy operation only copies sizeof(struct
+ftrace_graph_ent_entry) bytes, which doesn't include the dynamic args
+array.
+
+And then later functions (like print_graph_entry()) would go ahead and
+assume that iter->ent_size is sane and make a mess out of everything.
+
+I can't test right now whether this actually fixes the issues or not,
+but I wanted to bring this up as this looks somewhat odd and I'm not too
+familiar with this code.
 
 -- 
-With best wishes
-Dmitry
+Thanks,
+Sasha
 
