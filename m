@@ -1,122 +1,79 @@
-Return-Path: <linux-kernel+bounces-761341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC32B1F891
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 08:06:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78248B1F892
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 08:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120153BB254
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 06:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A5C6171557
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 06:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DBB1C861D;
-	Sun, 10 Aug 2025 06:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="SujXDIlU"
-Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D1D1F3BAC;
+	Sun, 10 Aug 2025 06:06:10 +0000 (UTC)
+Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2263018FC92
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 06:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADD51E520B;
+	Sun, 10 Aug 2025 06:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754805967; cv=none; b=HHJErs8CitZ/cEnpuAF7qPIDtyO23kWuhIRkrH21T9uhzZlVXblGVsmgH8JsTmu7LMWaR8LWyr57bMF0PYdntDBdLhLAj9IJD8iGN5KeKBs0J3REDAPSN1sI3tvRREXnzZN8+jHHDcV+3zYZ0tCVwSlVPi4mHZGE6RohcqAcxUs=
+	t=1754805970; cv=none; b=BwexFPKAMQ3pmSfU1XbgqTLE8vvlvEVCHGtoHdQcIE4IqttaKtHP83B5kOtjAZmrK9AU64dBNdCkix0t6NxGAXt2NuWrj3XN3RGN07pmi85CK90/QzX101MAojPnQIc2b3bfBiKRaNfXa4sDhVZxdyAngxOYwUzDeK9+hq54k7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754805967; c=relaxed/simple;
-	bh=4XHmcM7fML6dqcwyzuILOOxazeY1/gJDKj81dKMfDgU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JTqP8dRUVgYUmiQfj91XPbVH0SqXDoyJCXfFQe+gcusQyOdINu3oBaJhA9h6OiBtQPsX1eBAY7IVa3nJKmtm7IXcryHdWriNmOOBj3OC3B4dJoA0ITDN4TOg8ieKA8tiS+M6m8Yd1vqzIxaI6+LB6uo0p7PYbl2lwd4JVPm8I4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=SujXDIlU; arc=none smtp.client-ip=202.108.3.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754805961;
-	bh=ZewGuYVPNLZbb9yG6TY0OO7gkHqJyc63CzEmP0Q4+eI=;
-	h=From:Subject:Date:Message-ID;
-	b=SujXDIlU3mnWfslZummv9sZRzGJ3L7iJU+5Ynzqrlo7k4hJ7tMQZcR8o4CdvtMcmM
-	 mQo8aE5Wen8ASNCuPz2aaNfilIMXdFDvvgnNsr+EZP8ZQiSlgRF1EEyH9tllN5STxj
-	 IB1C4qnS73GsDPt0AdabNDNq+Ia4DeeGIGYFZSkc=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 689836C3000024A8; Sun, 10 Aug 2025 14:05:56 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8166556292133
-X-SMAIL-UIID: 0A77EEC8A2414FDBBF001D4467F170D2-20250810-140556-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+63859a31071a369082b1@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] WARNING in try_to_migrate_one (3)
-Date: Sun, 10 Aug 2025 14:04:43 +0800
-Message-ID: <20250810060545.4177-1-hdanton@sina.com>
-In-Reply-To: <6897b156.050a0220.51d73.0082.GAE@google.com>
-References: 
+	s=arc-20240116; t=1754805970; c=relaxed/simple;
+	bh=a+BZgYmi7k3vnE2eh4pZZC/qkKUR0kd5fvjKOuGsfYc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=HrWXVhRd/vMQBpfZAXkKqL1DxyzhWz6sFi4xMt7RThpOgJMiorqbbhdrO63w1FUbdNVf2WBDc7QTzPmuZTjFaimBaz9pViTASv8iUmdoq7G8C6Qd/qM7CeZxFkjKTmsLxzFsnBIw2KrBBYwoi7MVzpclcNuFw5JIOckg+bXd3lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
+Received: from mail.carlthompson.net (mail.home [10.35.20.252])
+	(Authenticated sender: cet@carlthompson.net)
+	by smtp.carlthompson.net (Postfix) with ESMTPSA id 5162A1E3AE570;
+	Sat,  9 Aug 2025 23:05:58 -0700 (PDT)
+Date: Sat, 9 Aug 2025 23:05:58 -0700 (PDT)
+From: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Josef Bacik <josef@toxicpanda.com>, Aquinas Admin <admin@aquinas.su>,
+	=?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Message-ID: <745617536.363.1754805958174@mail.carlthompson.net>
+In-Reply-To: <20250810022436.GA966107@mit.edu>
+References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
+ <1869778184.298.1754433695609@mail.carlthompson.net>
+ <5909824.DvuYhMxLoT@woolf>
+ <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <20250809192156.GA1411279@fedora>
+ <2z3wpodivsysxhxmkk452pa4zrwxsu5jk64iqazwdzkh3rmg5y@xxtklrrebip2>
+ <20250810022436.GA966107@mit.edu>
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev73
+X-Originating-Client: open-xchange-appsuite
 
-> Date: Sat, 09 Aug 2025 13:36:38 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    0227b49b5027 Merge tag 'gpio-updates-for-v6.17-rc1-part2' ..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1422d434580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=2ae1da3a7f4a6ba4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=63859a31071a369082b1
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117c72f0580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ab7ea2580000
 
-#syz test
+> On 2025-08-09 7:24 PM PDT Theodore Ts'o <tytso@mit.edu> wrote:
 
---- x/mm/rmap.c
-+++ y/mm/rmap.c
-@@ -2283,6 +2283,7 @@ static bool try_to_migrate_one(struct fo
- 	struct mm_struct *mm = vma->vm_mm;
- 	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
- 	bool anon_exclusive, writable, ret = true;
-+	int check_excl = 1;
- 	pte_t pteval;
- 	struct page *subpage;
- 	struct mmu_notifier_range range;
-@@ -2422,6 +2423,7 @@ static bool try_to_migrate_one(struct fo
- 			if (pte_dirty(pteval))
- 				folio_mark_dirty(folio);
- 			writable = pte_write(pteval);
-+			check_excl = 0;
- 		} else if (likely(pte_present(pteval))) {
- 			flush_cache_page(vma, address, pfn);
- 			/* Nuke the page table entry. */
-@@ -2446,10 +2448,17 @@ static bool try_to_migrate_one(struct fo
- 		} else {
- 			pte_clear(mm, address, pvmw.pte);
- 			writable = is_writable_device_private_entry(pte_to_swp_entry(pteval));
-+			check_excl = 0;
- 		}
- 
--		VM_WARN_ON_FOLIO(writable && folio_test_anon(folio) &&
--				!anon_exclusive, folio);
-+		if (check_excl) {
-+			pfn = pte_pfn(pteval);
-+			subpage = folio_page(folio, pfn - folio_pfn(folio));
-+			anon_exclusive = folio_test_anon(folio) &&
-+					PageAnonExclusive(subpage);
-+			VM_WARN_ON_FOLIO(writable && folio_test_anon(folio) &&
-+					!anon_exclusive, folio);
-+		}
- 
- 		/* Update high watermark before we lower rss */
- 		update_hiwater_rss(mm);
---
+> ... unless you can find someone willing to be your intermediary, and
+> hopefully your coach in how to better work with other people ...
+
+Going that route would just prolong Kent's attack on all of you (and the kernel) and make the damage worse. It's not a matter of getting him to understand; He's *always* understood what is needed from him but he does not believe in it and will not do it. Even though he is now (once again) promising to behave he won't. You all know that. Giving him yet another chance right now won't undo the damage that's already been done to Linux and will only allow him to inflict more.
+
+Kent has already said many times, including in this thread, that he can and will continue to work on bcachefs even if it's removed from the kernel. Let him.
+
+This is not the time to try to fix him. This is the time to protect the thing you've spent so much of your collective lives building.
 
