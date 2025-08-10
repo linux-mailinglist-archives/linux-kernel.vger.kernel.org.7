@@ -1,136 +1,122 @@
-Return-Path: <linux-kernel+bounces-761340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B511B1F890
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 08:00:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC32B1F891
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 08:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692E517B767
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 06:00:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120153BB254
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 06:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738881F1311;
-	Sun, 10 Aug 2025 06:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DBB1C861D;
+	Sun, 10 Aug 2025 06:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="CiD4o/GZ"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="SujXDIlU"
+Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468AD1EB5C2
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 06:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2263018FC92
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 06:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754805651; cv=none; b=bLQSGwLQrwSgjOBv6cOnZiKTRnZx7mSl9Tl979ipcILJY9nLT9LB2LgHVnZ3hDdFfDqu4LIDUfGSZWKH0jEVqN+lBbjBSTG29ijVP0h2ACQZnKffo65i/4awlXtWzA34UQb8wmkZrCYXgHdOB3B2M+/+W+UPHoH5xeM5T6+lXHA=
+	t=1754805967; cv=none; b=HHJErs8CitZ/cEnpuAF7qPIDtyO23kWuhIRkrH21T9uhzZlVXblGVsmgH8JsTmu7LMWaR8LWyr57bMF0PYdntDBdLhLAj9IJD8iGN5KeKBs0J3REDAPSN1sI3tvRREXnzZN8+jHHDcV+3zYZ0tCVwSlVPi4mHZGE6RohcqAcxUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754805651; c=relaxed/simple;
-	bh=X1/ooEFvmO4P/PkGomwnODSES9eAvH0BCLvNX5aVK1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3yT/TRBMET+xivEdg7jgWRNMFnsWnZpGUJ8/yyucPfG+EGBkdQZyZmXlHtBSXdZI78P8HM/T+Etzgn+pPNuLVzV7gZuqXIkjnVbbtDqDnC44GtZpBJ7BkKW7dGxu32otCpc60oPLngG2Rpm9I4Qo87ZK9fZFCbdFphdYqM1e8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=CiD4o/GZ; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-102-110.bstnma.fios.verizon.net [173.48.102.110])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 57A5xtH5010531
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Aug 2025 01:59:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1754805598; bh=uUHLexSEobUC4W0Zie10Dls/rbOBf/7+GetsPvrexGc=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=CiD4o/GZzQp+LaV/G7HQH2FbGlTTsDLmMnySWyoCf0BN0KPhZsRixTH2FF9CG+64Z
-	 W/aBBHE5F4Kx2DLaYuKNQKWBB7wixCzYnBCl3knIN7ABXFRg+vtcJWxO4OFTrsHClr
-	 7vTPZ0xV2kwtXFvDLYXUG+tk1Oar1+B8B1sJnT7z6FWqXJ9DORgwJQnaMCGZ7hjM9G
-	 ZQ3oMq+gWWb5m2JySjCQ9u4TaMuY1NYPwAIH94FkXybXxfZlXTbUVbGk2vQxQbl+8I
-	 xagBxkGLmwzfAOKcLbm8muT/V+FO4nk1W+cTJXvm1UPnvjsSGKzuuFOy9muFKDCEgQ
-	 N/QmZtXAm+HOQ==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 8D97B2E00D6; Sun, 10 Aug 2025 01:59:55 -0400 (EDT)
-Date: Sun, 10 Aug 2025 01:59:55 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: "Gerald B. Cox" <gbcox@bzb.us>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-        Sasha Levin <sashal@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        Aquinas Admin <admin@aquinas.su>,
-        Malte =?iso-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <20250810055955.GA984814@mit.edu>
-References: <1869778184.298.1754433695609@mail.carlthompson.net>
- <5909824.DvuYhMxLoT@woolf>
- <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <20250809192156.GA1411279@fedora>
- <2z3wpodivsysxhxmkk452pa4zrwxsu5jk64iqazwdzkh3rmg5y@xxtklrrebip2>
- <20250810022436.GA966107@mit.edu>
- <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
- <aJgaiFS3aAEEd78W@lappy>
- <2e47wkookxa2w6l2hv4qt2776jrjw5lyukul27nqhyqp5fsyq2@5mvbmay7qn2g>
- <CACLvpcxmnXFmgfwGCyUJe1chz5vLkxbg3=NzayYOKWi4efHrqQ@mail.gmail.com>
+	s=arc-20240116; t=1754805967; c=relaxed/simple;
+	bh=4XHmcM7fML6dqcwyzuILOOxazeY1/gJDKj81dKMfDgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JTqP8dRUVgYUmiQfj91XPbVH0SqXDoyJCXfFQe+gcusQyOdINu3oBaJhA9h6OiBtQPsX1eBAY7IVa3nJKmtm7IXcryHdWriNmOOBj3OC3B4dJoA0ITDN4TOg8ieKA8tiS+M6m8Yd1vqzIxaI6+LB6uo0p7PYbl2lwd4JVPm8I4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=SujXDIlU; arc=none smtp.client-ip=202.108.3.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754805961;
+	bh=ZewGuYVPNLZbb9yG6TY0OO7gkHqJyc63CzEmP0Q4+eI=;
+	h=From:Subject:Date:Message-ID;
+	b=SujXDIlU3mnWfslZummv9sZRzGJ3L7iJU+5Ynzqrlo7k4hJ7tMQZcR8o4CdvtMcmM
+	 mQo8aE5Wen8ASNCuPz2aaNfilIMXdFDvvgnNsr+EZP8ZQiSlgRF1EEyH9tllN5STxj
+	 IB1C4qnS73GsDPt0AdabNDNq+Ia4DeeGIGYFZSkc=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 689836C3000024A8; Sun, 10 Aug 2025 14:05:56 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8166556292133
+X-SMAIL-UIID: 0A77EEC8A2414FDBBF001D4467F170D2-20250810-140556-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+63859a31071a369082b1@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] WARNING in try_to_migrate_one (3)
+Date: Sun, 10 Aug 2025 14:04:43 +0800
+Message-ID: <20250810060545.4177-1-hdanton@sina.com>
+In-Reply-To: <6897b156.050a0220.51d73.0082.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACLvpcxmnXFmgfwGCyUJe1chz5vLkxbg3=NzayYOKWi4efHrqQ@mail.gmail.com>
 
-On Sat, Aug 09, 2025 at 09:26:16PM -0700, Gerald B. Cox wrote:
-> And really, this whole thread feels beneath what the kernel community
-> should be. If there’s a serious question about bcachefs’s future, it
-> ought to be a quiet, direct conversation between Kent and Linus—not a
-> public spectacle.
+> Date: Sat, 09 Aug 2025 13:36:38 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    0227b49b5027 Merge tag 'gpio-updates-for-v6.17-rc1-part2' ..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1422d434580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2ae1da3a7f4a6ba4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=63859a31071a369082b1
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117c72f0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ab7ea2580000
 
-There has been private conversations with Kent.  I will note that it
-was *Kent* who started this most recent round of e-mails[1].  In his
-e-mail, He slammed the Linux Kernel's "engineering standards", and
-btrfs in particular.  I won't quote any of it here, because it really
-is quite toxic, but please note that it was Kent who started the
-discussion about btrfs.  This kind of attack is Just Not Helpful, and
-this kind of behavior is, unfortunately, quite common coming from
-Kent.
+#syz test
 
-[1] https://lore.kernel.org/all/3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa/
-
-And no, I don't agree that Kent's behavior is due to him being
-"piled-on".  His behaviour has been going on for months, if not a year
-or more.  Some of us have tried pointing this out to Kent before,
-privately, but about a month ago, I gave up out of frustration.
-Getting him to understand is clearly beyond my abilities.
-
-If Kent hadn't spoken up, I would have remained quiet and waited for
-Linus to do what he was going to do --- but no, he decided to take
-this public, and started slamming Linux's engineering standards.  I
-will point out that a good engineer has to have good people skills[2].
-In fact, there are many who have claimed that engineers' soft skills
-are just as important, if not more important than their technical
-abilities.
-
-[2] https://www.ijee.ie/articles/Vol13-5/ijee996.pdf
-
-Kent has been claiming the role of victim, but [1] is a really good
-example of how this is not the case.  Similar e-mails over the past
-year questioning other developers' professionalism, engineering
-competence, etc. is why there hasn't been any Linux developers
-speaking up trying to defend Kent on various private e-mail threads in
-the past month.
-
-Kent, it's not about promising to not criticize btrfs.  It's
-about assuming good faith, and other maintainers' technical
-competence, and listening to their concerns, and genunely believing
-that perhaps their concerns are as important as yours.  If you really
-believe that we are all clowns, and that Linux's engineering standards
-are cr*p, I cordially invite you to create your own OS which upholds
-your high technical standards.  Maybe you will be happier, and maybe
-you *will* create something which is better for all of your users.
-
-Cheers,
-
-					- Ted
+--- x/mm/rmap.c
++++ y/mm/rmap.c
+@@ -2283,6 +2283,7 @@ static bool try_to_migrate_one(struct fo
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
+ 	bool anon_exclusive, writable, ret = true;
++	int check_excl = 1;
+ 	pte_t pteval;
+ 	struct page *subpage;
+ 	struct mmu_notifier_range range;
+@@ -2422,6 +2423,7 @@ static bool try_to_migrate_one(struct fo
+ 			if (pte_dirty(pteval))
+ 				folio_mark_dirty(folio);
+ 			writable = pte_write(pteval);
++			check_excl = 0;
+ 		} else if (likely(pte_present(pteval))) {
+ 			flush_cache_page(vma, address, pfn);
+ 			/* Nuke the page table entry. */
+@@ -2446,10 +2448,17 @@ static bool try_to_migrate_one(struct fo
+ 		} else {
+ 			pte_clear(mm, address, pvmw.pte);
+ 			writable = is_writable_device_private_entry(pte_to_swp_entry(pteval));
++			check_excl = 0;
+ 		}
+ 
+-		VM_WARN_ON_FOLIO(writable && folio_test_anon(folio) &&
+-				!anon_exclusive, folio);
++		if (check_excl) {
++			pfn = pte_pfn(pteval);
++			subpage = folio_page(folio, pfn - folio_pfn(folio));
++			anon_exclusive = folio_test_anon(folio) &&
++					PageAnonExclusive(subpage);
++			VM_WARN_ON_FOLIO(writable && folio_test_anon(folio) &&
++					!anon_exclusive, folio);
++		}
+ 
+ 		/* Update high watermark before we lower rss */
+ 		update_hiwater_rss(mm);
+--
 
