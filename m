@@ -1,196 +1,139 @@
-Return-Path: <linux-kernel+bounces-761470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C4FB1FA7E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:39:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8CEB1FA80
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E724179289
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 14:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A183ABBED
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 14:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E98F26E6ED;
-	Sun, 10 Aug 2025 14:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64209185E4A;
+	Sun, 10 Aug 2025 14:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ik6Q0UUQ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s/xnyZpz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF0A267B02;
-	Sun, 10 Aug 2025 14:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEDE27462;
+	Sun, 10 Aug 2025 14:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754836761; cv=none; b=dhn22PB1IHO7rhXMXoOa6UmHETHDIOztyJVI07g831ngh4KhBSjxxoF0klb3m4y/aFQV3mo9976zZnwWfBMCFPr5I3QPl/wHFUhBbDjGPi9uGlIKAMeZcmZCrBB2GS6pFvy2eqo7BZ5utNPqreUKpnyr2Y/hdd7RQxtMjEKycBY=
+	t=1754836920; cv=none; b=Tu0XSs24281xWSrJDs0b594Y13yNHdTbT+iQaWPkwQLV4HNzwywowLbSwJxKBTCcK5SgS4SLjkdcLRyi1n3tVNPNezgmDyD8Yi3ogmoYrZ8MtRgUT8Fc4OjOZ2aw5YomgQkApH2IsY9jGC9jHtBMiB/t+RLCtwzs70Leubglpjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754836761; c=relaxed/simple;
-	bh=sd116yBRfTrFTiTq7X2NwY8LjAgyVCQApOiIDIKWWPA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Sin1zLJn2Dc7NvB7ZkFSoTNAxrsa0LOCJwfCxHbc7NGp1SG+IjLCfMop1NgBOh/ElnEEmSRv8rn1dEta44vTOzTMVswTOcrYArUSRKRwKwMAatX47Sk57vateB6aordq+OKl2dKo2LEOcROu4PvpnsAUBuLpCjckrjfeiSYw34o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ik6Q0UUQ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459ebb6bbdfso22547705e9.0;
-        Sun, 10 Aug 2025 07:39:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754836758; x=1755441558; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DcmxIpPYdCpfPFBt8uKF7gd7DS2ROw7aJi4hs4RfP1Y=;
-        b=ik6Q0UUQFPhsE06SUKW4Sxvw2Iwy3ASeil3LxwBAvB9gF6Ou7VLs3lSEcvKoX3KRtI
-         lkeHQO59Ei78+N3h6smXVCl2jL5bH5es61qTdH4yrFwAexq5HLUQ22LfhWY3jQbxKo+0
-         dXIsgpXOs9whBMdTM40bNHiDU5e1htVg7etvK//sOVlaHdwpRcLy2AnhTfDKBWWCM41n
-         +ll/za3RXcncNerT6WlTnwftSD03ZgtQKn9myJB/QgsfNjCDE7SC+szKOTs0REHVNaSq
-         PoKZ5veOiDSZGI7iKmFEFRL6TejB9jXE8Aur6IfnAawat4gfSI/cu+LVldYJOX2R311F
-         sWoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754836758; x=1755441558;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DcmxIpPYdCpfPFBt8uKF7gd7DS2ROw7aJi4hs4RfP1Y=;
-        b=dHQKfDvyqyF1+FUfN/4ndTCMtfh+USDnBJGUhpDryfKgd/Ea0pYI4PPLY9f0ZQRD3l
-         vqgcRA/70EAJT4cUNV9ndlVk5WFn5U1CieiR1d6hd/NFrru2i7VvhiaFlvT4JEmIdkS3
-         bBPyTYWg5vIE7inwhcOXtWxLjDH0Bu2HBpy9BJA9ExAHGOzy/zU00Iwv2ScR5zrxsJWF
-         Xsuf+SG3VuDpFc0EZ/mQ+9+kpgWjnTu11zE2K93oWRYFyRgY8qv2WHiP8pPdY7WehdrT
-         /EFH+q4Ijhugdb30j/N/Htz2yl7KhgGByWUUpZTygEzf0oU17dei9Full9+gP99eRSJf
-         AAwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpb6eylQNB9jooY3YQlMUBrfAVO7bsw0Ct7RYs3ZLT8y+OC3HRyPrU3qxTeTaWu3g7k7wPxkbT1dPcmVI5@vger.kernel.org, AJvYcCVgpdXylYKhDBZGS7tPBjU7Ly10h8z1HuCtMuIKl1qHoHsD0DHFk8nxbf/aZjcYhtPQGuE6KD7jrv7ZDeuS@vger.kernel.org, AJvYcCXFUMVvLPloiuWS6e7iSTIGrj1MgYMMM0AECbbCUmjFJVSbaJkMAauUZKWPbGExFb23OVgCoAsulF64@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW5ejhmLJcFvwWKGfz5lUn5KacgEdEioIwFYINqXCs4UUKM12E
-	p3u1575PtRXgsLTfWTA95ITpQ9UJYhHIxs3aP4xVrsN81vZcXnc/AHISx5Q/Sw==
-X-Gm-Gg: ASbGncvKMbNfUMUh0tX7z5P+nENyqceE/M7bYNoemGF2Oqy7rqQvKgv2wUB0aOKE9lD
-	I2urGKUJCOj8trmo7xBVvysGpptRNqe2hawDo11L44yOHoB9jP72ZduCNwqnP5URI1esjlTTLXm
-	kfvB+ocgYqjj7nFORxm/jreYptgidJYQRhzUbLS3Rwjo8o7kx/oJt+ovPfYlkVmzYuDMPcl7wWc
-	6HLnclROXUCCVxjISDI+l2ZTSGp/CWE+4vi8omdQ49Sv17T3rsHYwCciIzv2kRQ7YgzQxpw69Ox
-	JwpSJn20vPs8WxftkMcYYd23z5/l/QOJu2ML6LtyGakCwMt8NuOb9F09lzvl3ucjvOW/vcuzsT6
-	QgaasRGSCdbOo5xZFNx093HfT6IFp6YLepQ2e2uuGL1nXTvFUrJg=
-X-Google-Smtp-Source: AGHT+IGnnqxXALeugOVFPoFTxC2pIiR+d5jk8lpEovJ2tb6XVsxkdrVtmSfFxdJSHhTjsHQA9RZzsQ==
-X-Received: by 2002:a05:600c:3b87:b0:459:db80:c2d0 with SMTP id 5b1f17b1804b1-45a0a90d9cbmr42735e9.7.1754836758214;
-        Sun, 10 Aug 2025 07:39:18 -0700 (PDT)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-459dbba5210sm287721715e9.2.2025.08.10.07.39.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 07:39:17 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Sun, 10 Aug 2025 16:38:51 +0200
-Subject: [PATCH 2/2] spi: spi-qpic-snand: remove 'clr*status' members of
- struct 'qpic_ecc'
+	s=arc-20240116; t=1754836920; c=relaxed/simple;
+	bh=HvT9pror921pOe5uMwS3gIoavtbqAOFDqoQIPnEJHPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/yvIqOWhvmUAMr5Y4tkYKLY9jjjZB75MbkDFpI0xct9KNDLOlyOyg6feZFVGnnJt+ykwPQo6ZnHHcc9IlDl5UrvG7udupqnBW+8zQ0xuAhZtK0ZYAWL9ZkEJVBty9Duj5XsaD4jj4TUXiAXDvMFXRRw0pt+F8wMB7GkGnVGkGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s/xnyZpz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE255C4CEEB;
+	Sun, 10 Aug 2025 14:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754836920;
+	bh=HvT9pror921pOe5uMwS3gIoavtbqAOFDqoQIPnEJHPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s/xnyZpz28bXCvkvD17Uid9feY/x5ZhfeAAchkwqvnyBJuR3ufsjjBzOFiK1nx/jX
+	 xrvY4Q6Btg2rJRUvamHVEKQzya0BePGHc9guqHd22BRh9/GJDgvh2s97YT2frVZUo3
+	 d7fAFbDBFRfN+3+NSbpp8Mm1BcIdqjOe2SmXEbds=
+Date: Sun, 10 Aug 2025 16:41:57 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH 2/2] staging: axis-fifo: use unique identifiers in device
+ names
+Message-ID: <2025081035-encourage-lend-0a15@gregkh>
+References: <20250808204831.2618122-1-ovidiu.panait.oss@gmail.com>
+ <20250808204831.2618122-2-ovidiu.panait.oss@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250810-qpic-snand-qpic_ecc-cleanup-v1-2-33a6b2bcbc67@gmail.com>
-References: <20250810-qpic-snand-qpic_ecc-cleanup-v1-0-33a6b2bcbc67@gmail.com>
-In-Reply-To: <20250810-qpic-snand-qpic_ecc-cleanup-v1-0-33a6b2bcbc67@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Md Sadre Alam <quic_mdalam@quicinc.com>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808204831.2618122-2-ovidiu.panait.oss@gmail.com>
 
-In the qcom_spi_ecc_init_ctx_pipelined() function, the 'clrflashstatus'
-and the 'clrreadstatus' members of the ECC context gets initialized with
-constant values. Then these values are used by several functions to set
-the corresponding members in the register cache.
+On Fri, Aug 08, 2025 at 11:48:31PM +0300, Ovidiu Panait wrote:
+> Axis-fifo devices use physical addresses in their name, for example
+> 'axis_fifo_0x43c00000'. This is generally frowned upon and it does not
+> follow the usual naming scheme that uses unique identifiers.
+> 
+> Therefore, use ida_alloc()/ida_free() to implement unique identifiers
+> for axis-fifo device names (i.e. axis-fifo0, axis-fifo1, etc.).
+> 
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+> ---
+>  drivers/staging/axis-fifo/axis-fifo.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
+> index 06f7cfab4c6a..27e12af25bc7 100644
+> --- a/drivers/staging/axis-fifo/axis-fifo.c
+> +++ b/drivers/staging/axis-fifo/axis-fifo.c
+> @@ -107,6 +107,8 @@
+>  static long read_timeout = 1000; /* ms to wait before read() times out */
+>  static long write_timeout = 1000; /* ms to wait before write() times out */
+>  
+> +static DEFINE_IDA(axis_fifo_ida);
+> +
+>  /* ----------------------------
+>   * module command-line arguments
+>   * ----------------------------
+> @@ -123,6 +125,7 @@ MODULE_PARM_DESC(write_timeout, "ms to wait before blocking write() timing out;
+>   */
+>  
+>  struct axis_fifo {
+> +	int id;
+>  	int irq; /* interrupt */
+>  	void __iomem *base_addr; /* kernel space memory */
+>  
+> @@ -698,10 +701,6 @@ static int axis_fifo_probe(struct platform_device *pdev)
+>  
+>  	dev_dbg(fifo->dt_device, "remapped memory to 0x%p\n", fifo->base_addr);
+>  
+> -	/* create unique device name */
+> -	snprintf(device_name, 32, "%s_%pa", DRIVER_NAME, &r_mem->start);
+> -	dev_dbg(fifo->dt_device, "device name [%s]\n", device_name);
+> -
+>  	/* ----------------------------
+>  	 *          init IP
+>  	 * ----------------------------
+> @@ -737,6 +736,11 @@ static int axis_fifo_probe(struct platform_device *pdev)
+>  	 *      init char device
+>  	 * ----------------------------
+>  	 */
+> +	fifo->id = ida_alloc(&axis_fifo_ida, GFP_KERNEL);
+> +	if (fifo->id < 0)
+> +		return fifo->id;
+> +
+> +	snprintf(device_name, 32, "%s%d", DRIVER_NAME, fifo->id);
+>  
+>  	/* create character device */
+>  	fifo->miscdev.fops = &fops;
+> @@ -744,8 +748,10 @@ static int axis_fifo_probe(struct platform_device *pdev)
+>  	fifo->miscdev.name = device_name;
+>  	fifo->miscdev.parent = dev;
+>  	rc = misc_register(&fifo->miscdev);
+> -	if (rc < 0)
+> +	if (rc < 0) {
+> +		ida_free(&axis_fifo_ida, fifo->id);
+>  		return rc;
+> +	}
+>  
+>  	axis_fifo_debugfs_init(fifo);
+>  
+> @@ -759,6 +765,7 @@ static void axis_fifo_remove(struct platform_device *pdev)
+>  
+>  	debugfs_remove(fifo->debugfs_dir);
+>  	misc_deregister(&fifo->miscdev);
+> +	ida_free(&axis_fifo_ida, fifo->id);
 
-Because the values are never modified, change the code to set the those
-directly in the register cache by the qcom_spi_ecc_init_ctx_pipelined()
-function, and remove the repetitive code from the other functions to
-reduce code duplication.
+Did you forget to call ida_destroy() when the module is unloaded?
 
-Also, remove the respective members from the 'qpic_ecc' structure as
-those became unused due to the change.
+thanks,
 
-No functional changes intended.
-
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
- drivers/spi/spi-qpic-snand.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
-index bc2158e560be3b0ab1b26882e4de524ecf662d14..01f16f49d4cafa608373a176cd1bd88bd00d2a99 100644
---- a/drivers/spi/spi-qpic-snand.c
-+++ b/drivers/spi/spi-qpic-snand.c
-@@ -94,8 +94,6 @@ struct qpic_ecc {
- 	u32 cfg1_raw;
- 	u32 ecc_buf_cfg;
- 	u32 ecc_bch_cfg;
--	u32 clrflashstatus;
--	u32 clrreadstatus;
- 	bool bch_enabled;
- };
- 
-@@ -381,12 +379,12 @@ static int qcom_spi_ecc_init_ctx_pipelined(struct nand_device *nand)
- 			       FIELD_PREP(ECC_PARITY_SIZE_BYTES_BCH_MASK, ecc_cfg->ecc_bytes_hw);
- 
- 	ecc_cfg->ecc_buf_cfg = FIELD_PREP(NUM_STEPS_MASK, 0x203);
--	ecc_cfg->clrflashstatus = FS_READY_BSY_N;
--	ecc_cfg->clrreadstatus = 0xc0;
- 
- 	conf->step_size = ecc_cfg->step_size;
- 	conf->strength = ecc_cfg->strength;
- 
-+	snandc->regs->clrflashstatus = cpu_to_le32(FS_READY_BSY_N);
-+	snandc->regs->clrreadstatus = cpu_to_le32(0xc0);
- 	snandc->regs->erased_cw_detect_cfg_clr = cpu_to_le32(CLR_ERASED_PAGE_DET);
- 	snandc->regs->erased_cw_detect_cfg_set = cpu_to_le32(SET_ERASED_PAGE_DET);
- 
-@@ -598,8 +596,6 @@ static int qcom_spi_read_last_cw(struct qcom_nand_controller *snandc,
- 	snandc->regs->cfg0 = cpu_to_le32(cfg0);
- 	snandc->regs->cfg1 = cpu_to_le32(cfg1);
- 	snandc->regs->ecc_bch_cfg = cpu_to_le32(ecc_bch_cfg);
--	snandc->regs->clrflashstatus = cpu_to_le32(ecc_cfg->clrflashstatus);
--	snandc->regs->clrreadstatus = cpu_to_le32(ecc_cfg->clrreadstatus);
- 	snandc->regs->exec = cpu_to_le32(1);
- 
- 	qcom_spi_set_read_loc(snandc, num_cw - 1, 0, 0, ecc_cfg->cw_size, 1);
-@@ -733,8 +729,6 @@ static int qcom_spi_read_cw_raw(struct qcom_nand_controller *snandc, u8 *data_bu
- 	snandc->regs->cfg0 = cpu_to_le32(cfg0);
- 	snandc->regs->cfg1 = cpu_to_le32(cfg1);
- 	snandc->regs->ecc_bch_cfg = cpu_to_le32(ecc_bch_cfg);
--	snandc->regs->clrflashstatus = cpu_to_le32(ecc_cfg->clrflashstatus);
--	snandc->regs->clrreadstatus = cpu_to_le32(ecc_cfg->clrreadstatus);
- 	snandc->regs->exec = cpu_to_le32(1);
- 
- 	qcom_spi_set_read_loc(snandc, raw_cw, 0, 0, ecc_cfg->cw_size, 1);
-@@ -849,8 +843,6 @@ static int qcom_spi_read_page_ecc(struct qcom_nand_controller *snandc,
- 	snandc->regs->cfg0 = cpu_to_le32(cfg0);
- 	snandc->regs->cfg1 = cpu_to_le32(cfg1);
- 	snandc->regs->ecc_bch_cfg = cpu_to_le32(ecc_bch_cfg);
--	snandc->regs->clrflashstatus = cpu_to_le32(ecc_cfg->clrflashstatus);
--	snandc->regs->clrreadstatus = cpu_to_le32(ecc_cfg->clrreadstatus);
- 	snandc->regs->exec = cpu_to_le32(1);
- 
- 	qcom_spi_set_read_loc(snandc, 0, 0, 0, ecc_cfg->cw_data, 1);
-@@ -942,8 +934,6 @@ static int qcom_spi_read_page_oob(struct qcom_nand_controller *snandc,
- 	snandc->regs->cfg0 = cpu_to_le32(cfg0);
- 	snandc->regs->cfg1 = cpu_to_le32(cfg1);
- 	snandc->regs->ecc_bch_cfg = cpu_to_le32(ecc_bch_cfg);
--	snandc->regs->clrflashstatus = cpu_to_le32(ecc_cfg->clrflashstatus);
--	snandc->regs->clrreadstatus = cpu_to_le32(ecc_cfg->clrreadstatus);
- 	snandc->regs->exec = cpu_to_le32(1);
- 
- 	qcom_spi_set_read_loc(snandc, 0, 0, 0, ecc_cfg->cw_data, 1);
-@@ -1063,8 +1053,6 @@ static int qcom_spi_program_raw(struct qcom_nand_controller *snandc,
- 	snandc->regs->cfg0 = cpu_to_le32(cfg0);
- 	snandc->regs->cfg1 = cpu_to_le32(cfg1);
- 	snandc->regs->ecc_bch_cfg = cpu_to_le32(ecc_bch_cfg);
--	snandc->regs->clrflashstatus = cpu_to_le32(ecc_cfg->clrflashstatus);
--	snandc->regs->clrreadstatus = cpu_to_le32(ecc_cfg->clrreadstatus);
- 	snandc->regs->exec = cpu_to_le32(1);
- 
- 	qcom_spi_config_page_write(snandc);
-
--- 
-2.50.1
-
+greg k-h
 
