@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-761584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EC2B1FC31
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:13:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36612B1FC36
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C6CF189783A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:13:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AA7E1897E2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E786220685;
-	Sun, 10 Aug 2025 21:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35872220F24;
+	Sun, 10 Aug 2025 21:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivL7QVkh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Osf4jbmh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05D8238D49;
-	Sun, 10 Aug 2025 21:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4C7253B42;
+	Sun, 10 Aug 2025 21:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754860332; cv=none; b=nn9SGRfFrp+AS6HsbsEFyvh+5E0/TulqJRrYRL9nvhWFyrDOMrsBzy8iOIRLhbRKBBFpTf8YZL9L7+NQmf/olUWH8Gp3e8ASfZ/fZ01MxEJFFOan9BZUWuUmWcPCUrA8ggBGekReZJnUQr1xGwct716ngEs+DGZs0x2doSyxePw=
+	t=1754860335; cv=none; b=sMuNurCZomjKdZo1t427T0v447vluYZdCivwEfLftJ39QhSc00tay5QR0qH9ZVZCb8oR27mItyoB0btLgu7H8gfaGWX+NSggBXKQEknj/Htvt2jKbR8zYpcUT//kasijhnNYnynX5Lf/hxYRZbi6+Cwt76hyX4EalYd4Mk/2QcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754860332; c=relaxed/simple;
-	bh=Nk+nlMj8RvGrT4DnRJpYaYLBYV46+pgSfSCrnwqmvis=;
+	s=arc-20240116; t=1754860335; c=relaxed/simple;
+	bh=6qZtmYPtQt6UwAsXJ30diF7OIT7IeXGDZboQy/POMhY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KH1hUKbDZX9Ve+0xJ1PIblcCdF4wMXCeDLwBXlRVHJhKr9+HKfNawvuIFhQgGM1B6opW/4xi/WUTXRD9xu5k+3azFRwSK46MPR7oZci43ag/QTEuWwQa4WdbE4qbG+a4CuGIC+1LD67nqaQragdchM1mxGWHyqXLvguUKCyhnr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivL7QVkh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DDC6C4CEEB;
-	Sun, 10 Aug 2025 21:12:12 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=FoqfiyPJCjHqjbN7WKY+UXfkGt35bgtl1PXPMHsTeYa6uy4vmcMtOlKc4bzSQg4ScN/ou7aR1Xg+izox8mPzh2mmZF9f0IMt58wGBco9pfZNIWV2f1KaN9juUifd7Zas3fXylucK/mo2jJDl7rNf2jCtxrhQe6RG2ZFWrT7Kg7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Osf4jbmh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61AB4C4CEF8;
+	Sun, 10 Aug 2025 21:12:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754860332;
-	bh=Nk+nlMj8RvGrT4DnRJpYaYLBYV46+pgSfSCrnwqmvis=;
+	s=k20201202; t=1754860335;
+	bh=6qZtmYPtQt6UwAsXJ30diF7OIT7IeXGDZboQy/POMhY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ivL7QVkhykah8Omp/xFVgPDQSPoT8cIdd4Im4ynihPf2YbWyPmaNvPTw0HMhYUz/a
-	 pbal64NXxrXhpFBa03AfI5GX9PNQZZ5idrrx+g3S9/abi0O35bASo20zdfJOSEz/7j
-	 3TfcwH7JtDCjBLWvI8/J20EHVLISYGk425x8i6JKPo/4Y9mE/nNbM4k6np6jNUm1tA
-	 cIr3bixLpGp6psNrTIIqq/DJAd3euWqY0AAOCYGfTeZwMGpEbdkAdH5DV4DGN4Wv89
-	 dNWT3b5gLlN/kP/B5Dc7Uijo4Yw7caeoFU8JThW+R05PMi5Vde3d1h/ni+jDxcT5ya
-	 U2QfoCm9jPNwQ==
+	b=Osf4jbmhAA6UtiHphDxnXbpyWNtr3NtPHo5Orbi0VcusCvyEN9ju4ZjusP9njFz0y
+	 BEkKw4L9d2HggMgUg7UxPMaJCZcFjxD/l1aEeiE88jk/Z9s6h8G7jsyj0R6w8PRtOW
+	 Q45wlJ8ga//bPDscDGu5K/FJj0cygWL75l6w91Y7G71cWNVO7AzOk1LkNr6grMkJUq
+	 mFQc3Fl9RDiCcv0j+VvneBDn7JCeUX1nDthOy733XoPFAo2bOeHoYi0oadwLSTC+KY
+	 DiOT9Kp/cteJ2xGwnIAzNOpXuBDjuXNkLxi9V4Wvv2cvfoJOgqwCUBnCGnyEyRb3GR
+	 jDjiXPYViAJDQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D2039D0C2B;
-	Sun, 10 Aug 2025 21:12:26 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D4339D0C2B;
+	Sun, 10 Aug 2025 21:12:29 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,48 +51,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/6] docs: Remove false positives from check-sysctl-docs
+Subject: Re: [PATCH v2 08/21] cpuidle: riscv-sbi: Opt-out from genpd's common
+ ->sync_state() support
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175486034524.1221929.1694480113579330478.git-patchwork-notify@kernel.org>
-Date: Sun, 10 Aug 2025 21:12:25 +0000
-References: <20250701-jag-sysctldoc-v1-0-936912553f58@kernel.org>
-In-Reply-To: <20250701-jag-sysctldoc-v1-0-936912553f58@kernel.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: linux-riscv@lists.infradead.org, kees@kernel.org, corbet@lwn.net,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org
+ <175486034774.1221929.3623715142191297628.git-patchwork-notify@kernel.org>
+Date: Sun, 10 Aug 2025 21:12:27 +0000
+References: <20250523134025.75130-9-ulf.hansson@linaro.org>
+In-Reply-To: <20250523134025.75130-9-ulf.hansson@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-riscv@lists.infradead.org, saravanak@google.com, sboyd@kernel.org,
+ linux-pm@vger.kernel.org, rafael@kernel.org, gregkh@linuxfoundation.org,
+ m.grzeschik@pengutronix.de, andersson@kernel.org, abel.vesa@linaro.org,
+ peng.fan@oss.nxp.com, tomi.valkeinen@ideasonboard.com, johan@kernel.org,
+ maulik.shah@oss.qualcomm.com, michal.simek@amd.com, konradybcio@kernel.org,
+ thierry.reding@gmail.com, jonathanh@nvidia.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ anup@brainfault.org
 
 Hello:
 
 This series was applied to riscv/linux.git (fixes)
-by Joel Granados <joel.granados@kernel.org>:
+by Ulf Hansson <ulf.hansson@linaro.org>:
 
-On Tue, 01 Jul 2025 10:56:41 +0200 you wrote:
-> Removed false positives from check-sysctl-docs where there where
-> ctl_tables that were implemented and had documentation but were being
-> marked as undocumented or unimplemented.
+On Fri, 23 May 2025 15:40:05 +0200 you wrote:
+> The riscv-sbi-domain implements its own specific ->sync_state() callback.
+> Let's set the GENPD_FLAG_NO_SYNC_STATE to inform genpd about it.
 > 
-> Besides adjusting the patterns in the check-sysctl-docs script, I also
-> corrected formatting in the kernel.rst and vm.rst doc files (no wording
-> changes!)
+> Moreover, let's call of_genpd_sync_state() to make sure genpd tries to
+> power off unused PM domains.
+> 
+> Cc: Anup Patel <anup@brainfault.org>
+> Cc: linux-riscv@lists.infradead.org
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [1/6] docs: nixify check-sysctl-docs
-    https://git.kernel.org/riscv/c/89b491bcf2d1
-  - [2/6] docs: Use skiplist when checking sysctl admin-guide
-    https://git.kernel.org/riscv/c/be0aef10dca8
-  - [3/6] docs: Add awk section for ucount sysctl entries
-    https://git.kernel.org/riscv/c/e97a96baa527
-  - [4/6] docs: Remove colon from ctltable title in vm.rst
-    https://git.kernel.org/riscv/c/30ec9fde45b5
-  - [5/6] docs: Replace spaces with tabs in check-sysctl-docs
-    https://git.kernel.org/riscv/c/999aab7f5645
-  - [6/6] docs: Downgrade arm64 & riscv from titles to comment
-    https://git.kernel.org/riscv/c/ffc137c5c195
+  - [v2,08/21] cpuidle: riscv-sbi: Opt-out from genpd's common ->sync_state() support
+    https://git.kernel.org/riscv/c/ee766b017586
+  - [v2,21/21] cpuidle: riscv-sbi: Drop redundant sync_state support
+    https://git.kernel.org/riscv/c/eb34a0b5fee7
 
 You are awesome, thank you!
 -- 
