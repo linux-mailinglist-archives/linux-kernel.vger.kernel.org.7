@@ -1,113 +1,257 @@
-Return-Path: <linux-kernel+bounces-761527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB390B1FB69
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65689B1FB78
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F277178DD4
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616BB179002
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E4D26FDB3;
-	Sun, 10 Aug 2025 17:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780762777F1;
+	Sun, 10 Aug 2025 17:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QSHq8/FO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAtvL9bt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73645246BD7
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 17:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F6C26E6F7;
+	Sun, 10 Aug 2025 17:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754847465; cv=none; b=BCLLzD2QMRfVocBC6vE6jqYda9o/9hbQeYEJbN22M3WaXo0KWakzpMrmCFIdlTHBGHCi0bgUKkbLPHH+S4l7UWO/GdsYpwwhwWwIjtQOmNZxq0Cvzegom937psEP/+bXxKqU6XjOp8htte0gOk3/xsDuje5+vPsImpMVN82uS0s=
+	t=1754847492; cv=none; b=V3vHmedqqrYLmgwevLVxlwIsCOOTEBpWEJURdewFDCy79k9WMLJWr8rsZbAHwmE4piza15qaFrEBG/hBrAkzuelBFFzv16w6NPlyikxg6ghwDf+Rcsw8NdahErockGXtVDFrqLXo19vBPcNs2aLDBJCeQ9FnQD41PFWA9Jzkhl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754847465; c=relaxed/simple;
-	bh=IQANVj1qjIqP2py4nDdelIPoqtOaywRC0fCXaOHYbPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=VkZcvSwbF+p6GXxyAOLggfRIe1BCnr8p7zMaEGuZVwJmOzBWpfWc4yfPKoWuxYbYVo+s2xim5WVXPH3VhXJ21AmckLiJLEktCAoDhonnz5PnGikwuZdEDvXrEcnP4v2yO+3zQTQUhhKPXqSpmfkLMiYRS5T43xKJgatyXFu6X+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QSHq8/FO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754847462;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=CqeifxCXqtUPoufTGd78LwzLTftk3/MuUkvijeAKGhI=;
-	b=QSHq8/FOfZASGHk/LOgac1w/RXLg6h2SPvDyDjVPM6GtwzCSVv4i4DJiOwPwD/lJ0E75NJ
-	OhEI+Pv2lJ0lvLMNwHWzCDmqoZV2p3oWdzq4MW0TXtopYK+gJd97GM1jyOa921Dvdmc/DY
-	EYBl6aqNPfYPc0/eMW2DrpIrpWuzpaw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-624-hgilzUi2NYmeKv9NyKT1xw-1; Sun,
- 10 Aug 2025 13:37:36 -0400
-X-MC-Unique: hgilzUi2NYmeKv9NyKT1xw-1
-X-Mimecast-MFC-AGG-ID: hgilzUi2NYmeKv9NyKT1xw_1754847455
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 774B618003FD;
-	Sun, 10 Aug 2025 17:37:35 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A9D6C1800280;
-	Sun, 10 Aug 2025 17:37:32 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 10 Aug 2025 19:36:24 +0200 (CEST)
-Date: Sun, 10 Aug 2025 19:36:20 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	=?utf-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>,
-	Xiang Gao <gxxa03070307@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] pid: change task_state() to use task_ppid_nr_ns()
-Message-ID: <20250810173620.GA20007@redhat.com>
+	s=arc-20240116; t=1754847492; c=relaxed/simple;
+	bh=UtC1eyVbnD6Dxf1r+UMQ1SfmdtF+J5BaFqbq83twDHw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GUfvf4F5/KAkbku0XmfvrbfBQ4cZgDHCj+OdP/rkBP2o/ctE4cVKE/jQwly0x0L5UR76RZ7lr/95F+tD8faNeKeV00zohAISlfP9C3O1Jsy8qNOL4obhoBJ/C1YRwwpeN9Km8g+N22D+49s/4UD9LxiIiHmeEJPgQw1hoBahnj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAtvL9bt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 84386C4CEEB;
+	Sun, 10 Aug 2025 17:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754847491;
+	bh=UtC1eyVbnD6Dxf1r+UMQ1SfmdtF+J5BaFqbq83twDHw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=NAtvL9btH9oVoaN50OYd3P87puKOjMvJlRWAv525oWNgpm7Z5aUWqnlqWe2MBlOyc
+	 QrjQEwhFyUiDNQD/21jxFtXshEdC9a0FaLMtSUolC+6OLf46NnzPq1MU21azOkgpSp
+	 KUvGnfcD6miX3kXwI9onXBNuE074MLR3s1q/ghXUXwsva1be/L+CvPnUTMv49BklDf
+	 KJU6LcJAVmxMBe8wJk08pMO0h8+35J85uBLDETDioCqTYH+dVroDVCtANIFlZQXErY
+	 PtNzYqVq1porljJ6Hmj5kJaTx4zvD2RYzvXuBUNiRAZRqpnfF7ZtTDnLQXfHhtrz4o
+	 qUOnT6yyIuWSw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C56C87FDA;
+	Sun, 10 Aug 2025 17:38:11 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v10 0/3] arm64: dts: qcom: Add Lenovo ThinkBook 16 device
+ tree
+Date: Sun, 10 Aug 2025 19:37:41 +0200
+Message-Id: <20250810-tb16-dt-v10-0-0bfed6d75c69@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250802022123.3536934-1-gxxa03070307@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOnYmGgC/33T227cIBAG4FexfF1WDMPRiqq8R5QLDOMsqg9b4
+ 1hpo7x72V2l9s36EoQ+YOafzzrTnCjXTfVZz7SmnKaxLID/qOpw9uMbsRTLRi24UFwBsKUFzeL
+ CyMogEaM1LdTl9GWmLn3cqJfXsj6nvEzzn5u8wnX321D/jRUYZzEoK7UXKkj7PPUxh/M09Xnq3
+ 5fymHxq09/6Cq5ij+gNEQUxQTqno7IU9SGCO0TIDcGCgCGho0NFBg8R+QCRBREBSHOwETt+iKg
+ N0dxsiCqIJ+kQteyUUIeIfoDogmjwCA4kkRGHiNkhwm2IKQgqYTRKQLTdIWJ3CPINsQUJnRQen
+ S51Pe6O2xDDt6yt7tri6EhYbtG0j2vydU/iTL/fS5aXexzrgXL2tyg31dO3Dha1UCdw2gqpGTD
+ f08dpTaOf86+Un98Gn/pTmIaf9X4YmuoOlL4P00qM4oXRGC9TGpfMOh8pRO9j9NCst8FofSZWm
+ CEtTdWCkk5dL7chOGq9QRGEanmZpM54hSGEUu2u/OTrH+AzbQadAwAA
+X-Change-ID: 20250511-tb16-dt-e84c433d87b1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Matthias Kaehlcke <mka@chromium.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754847490; l=7261;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=UtC1eyVbnD6Dxf1r+UMQ1SfmdtF+J5BaFqbq83twDHw=;
+ b=p3gGT4/Iz3PEqemGCe2QuEG3o7eVN2i9DFdi7MQBZCBFpWGxyXD7+nqBnD+RIKhAi9778OBDa
+ GktWoMTHlbHDyt4xGhNKT5ak6wBZkgJuIY0VF5TtcbRqqQfqbp2j9Hc
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-to simplify the code.
+Device tree for the Lenovo Thinkbook 16 G7 QOY
 
-Note that only tpid and max_fds really need rcu_read_lock(), we could move
-task_ppid_nr_ns/task_tgid_nr_ns/task_numa_group_id/get_task_cred outside of
-rcu read section.
+The Laptop is a Snapdragon X1 / X1 Plus (Purwa) based device [1].
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Supported features:
+
+- USB type-c and type-a ports
+- Keyboard
+- Touchpad (all that are described in the dsdt)
+- Touchscreen (described in the dsdt, no known SKUss)
+- Display including PWM backlight control
+- PCIe devices
+- nvme
+- SDHC card reader
+- ath12k WCN7850 Wifi and Bluetooth
+- ADSP and CDSP
+- GPIO keys (Lid switch)
+- Sound via internal speakers / DMIC / USB / headphone jack
+- DP Altmode with 2 lanes (as all of these still do)
+- Integrated fingerprint reader (FPC)
+- Integrated UVC camera
+- X1-45 GPU
+
+Not supported yet:
+
+- HDMI port.
+- EC and some fn hotkeys.
+
+Limited support yet:
+
+- SDHC card reader is based on the on-chip sdhc_2 controller, but the driver from
+the Snapdragon Dev Kit is only a partial match. It can do normal slow sd cards,
+but not UHS-I (SD104) and UHS-II.
+
+Notes:
+
+- Putting the camera behind usb_2_dwc3 results in the camera switched off after 30
+seconds. With the stand-alone node as previously defined it stays usable and
+suspends, as intended. Since the sole reason for the USB camera to be in the
+devicetree is the required extra supply (which is guessed, as mentioned), and
+its handling by power management, I would propose to keep it this way.
+
+- The gpi_dma nodes appear to be implicitly enabled when a serial device is used.
+I added them, no change in behaviour, though. Since this would be the only X1
+device adding them afaik, I left them out.
+
+- The cma-memory is removed, it is not on all x1 devices as I assumed.
+Haven't found a case where it is required.
+
+- i2c2 defines the keyboard and 4 different touchpad interfaces. With the bundling
+of the pinctrl it seems to work better. I've had issues with only clock and touchpad
+pinctrl on the i2c2 node, and not keyboard.
+
+This work was done without any schematics or non-public knowledge of the device.
+So, it is based on the existing x1 device trees, dsdt analysis, using HWInfo
+ARM64, and pure guesswork. It has been confirmed, however, that the device really
+has 4 NXP PTN3222 eUSB2 repeaters, one of which doesn't have a reset GPIO (eusb5
+@43).
+
+I have brought up the Thinkbook over the last 5 months since the x1p42100-crd
+patches were available. The laptop is very usable now, and quite solid as a dev/
+test platform.
+
+Big thanks to Aleksandrs Vinarskis for helping (and sort of persisting) on the
+fingerprint, camera and HDMI issues.
+
+[1]: https://psref.lenovo.com/syspool/Sys/PDF/ThinkBook/ThinkBook_16_G7_QOY/ThinkBook_16_G7_QOY_Spec.pdf
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
 ---
- fs/proc/array.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Changes in v10:
+- rebased as recommended onto 20250701183625.1968246-1-alex.vinarskis@gmail.com and
+  20250724-move-edp-endpoints-v1-3-6ca569812838@oss.qualcomm.com (whole series)
+- rebased onto next-20250808
+- amended node order
+- checked occurrence of touchpad variants: current users have eiher @2c (like mine) or @38
+- removed 4 lanes definition from mdss_dp0_out and mdss_dp_1_out. The required patches for
+  it are not yet upstream, as it seems.
+- removed UFS reset from reserved ranges
+- removed commented-out lines 
+- Link to v9: https://lore.kernel.org/r/20250701-tb16-dt-v9-0-7d9e280837b5@oldschoolsolutions.biz
 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index d6a0369caa93..69269745d73b 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -157,13 +157,11 @@ static inline void task_state(struct seq_file *m, struct pid_namespace *ns,
- 	unsigned int max_fds = 0;
- 
- 	rcu_read_lock();
--	ppid = pid_alive(p) ?
--		task_tgid_nr_ns(rcu_dereference(p->real_parent), ns) : 0;
--
- 	tracer = ptrace_parent(p);
- 	if (tracer)
- 		tpid = task_pid_nr_ns(tracer, ns);
- 
-+	ppid = task_ppid_nr_ns(p, ns);
- 	tgid = task_tgid_nr_ns(p, ns);
- 	ngid = task_numa_group_id(p);
- 	cred = get_task_cred(p);
+Changes in v9:
+- rebase to next-20250701
+- fix errors listed from Rob Herrings dts check script - one typo, one missing 
+  pmic-glink compatible string
+- Link to v8: https://lore.kernel.org/r/20250630-tb16-dt-v8-0-cf42a396e736@oldschoolsolutions.biz
+
+Changes in v8:
+- rebase to next-20250630
+- fix bleed-over of edp0_hpd_active - not in linux-next yet
+- fix bleed-over of hdmi definition 
+- Link to v7: https://lore.kernel.org/r/20250629-tb16-dt-v7-0-35276341338f@oldschoolsolutions.biz
+
+Changes in v7:
+- amended pinctrl order and indents where needed
+- interchanged enable-gpios and select-gpios for usb-sbu-mux as they are
+  defined in the dsdt - dp altmode function confirmed in both orientations
+- picked up reviewed-by and acked-by from Dmitry Baryshkob and Rob Herring
+- Link to v6: https://lore.kernel.org/r/20250607-tb16-dt-v6-0-61a31914ee72@oldschoolsolutions.biz
+
+Changes in v6:
+- removed compatible for qcom,sm8550-pmic-glink" in pmic-glink
+- fixed malformed gpu node
+- Link to v5: https://lore.kernel.org/r/20250607-tb16-dt-v5-0-ae493364f525@oldschoolsolutions.biz
+
+Changes in v5:
+- removed patch for the CMN N160JCE-ELL panel, got reviewed
+- re-ordered code in onboard_usb_dev as requested by Dmitry Baryshkov
+- amended device tree with review notes from Dmitry Baryshkov where possible
+  and resuting in a working laptop - added notes section
+- Link to v4: https://lore.kernel.org/r/20250524-tb16-dt-v4-0-2c1e6018d3f0@oldschoolsolutions.biz
+
+Changes in v4:
+- squashed Makefile and dts commits to one
+- picked up r-b from Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+- Link to v3: https://lore.kernel.org/r/20250524-tb16-dt-v3-0-17e26d935e73@oldschoolsolutions.biz
+
+Changes in v3:
+- removed changes in x1e80100.dtsi and x1p42100.dtsi - resolved with [2]
+- fixed schema errors with correct compatible string for the model
+- added power management for the camera via onboard_usb_dev.c
+- amended node ordering
+- changed the panel driver used to edp-panel, added panel in the driver
+- amended x1e80100.dtsi for exposing PM8010: This one is not present in the design,
+  added /delete-node/ for it.
+- removed commented-out lines for sdhc, specified which don't work.
+- corrected ZAP shader firmware name
+- Link to v2: https://lore.kernel.org/r/20250516-tb16-dt-v2-0-7c4996d58ed6@oldschoolsolutions.biz
+
+Changes in v2:
+- removed nodes that gave DTC compile errors (pm8010_thermal, edp0_hpd_active)
+- amended qcom.yaml
+- shortened the commit titles to fit 75 chars
+- Link to v1: https://lore.kernel.org/r/20250515-tb16-dt-v1-0-dc5846a25c48@oldschoolsolutions.biz
+
+[2]: 20250520-topic-x1p4_tsens-v2-1-9687b789a4fb@oss.qualcomm.com
+
+---
+Jens Glathe (3):
+      dt-bindings: arm: qcom: Add Lenovo TB16 support
+      firmware: qcom: scm: Allow QSEECOM on Lenovo Thinkbook 16
+      arm64: dts: qcom: Add Lenovo ThinkBook 16 G7 QOY device tree
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ .../boot/dts/qcom/x1p42100-lenovo-thinkbook-16.dts | 1629 ++++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c                   |    1 +
+ 4 files changed, 1633 insertions(+)
+---
+base-commit: b1549501188cc9eba732c25b033df7a53ccc341f
+change-id: 20250511-tb16-dt-e84c433d87b1
+prerequisite-message-id: <20250701183625.1968246-1-alex.vinarskis@gmail.com>
+prerequisite-patch-id: b35889814152fca77b3822bce5418358924fe9f7
+prerequisite-change-id: 20250724-move-edp-endpoints-fadecdaadda1:v1
+prerequisite-patch-id: c536bf9ec7fd22af9b05b695272997615dfd675f
+prerequisite-patch-id: d513e5a08d3be585b9b6a737ef3a1ad275d7caad
+prerequisite-patch-id: 605ef6f89dd84f810df11be9d11ee6803a6bf289
+prerequisite-patch-id: 2ab2430624acbdd9011f6c0c2a77469fd19fc75a
+prerequisite-patch-id: bfbb562513763ce75f2bb5da7f12e7b54ff3919d
+
+Best regards,
 -- 
-2.25.1.362.g51ebf55
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
 
 
