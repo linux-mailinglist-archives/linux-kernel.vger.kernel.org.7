@@ -1,135 +1,137 @@
-Return-Path: <linux-kernel+bounces-761384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9620B1F972
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB0CB1F975
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C241899488
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D812189729A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA63D1EE7DD;
-	Sun, 10 Aug 2025 09:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B609F23E23C;
+	Sun, 10 Aug 2025 09:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="B2mm2CTL"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0uftgnK"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8D778F29
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 09:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DA01CBA18;
+	Sun, 10 Aug 2025 09:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754816910; cv=none; b=A0Ifq9NTiBK5bGj+P8hwQF7TXpiY0T1iM3afPSsk1YH1o9lTtXMeygW110wuYvHtKZD5YAR3aIJxXlrIJ8wzYdh1xXlSBVdKktLeG1VoN+233TbH55yrImz3hE2UIzDfXSipDR3MTLeU996WRjHDYIN0m80gDOOLOwRDejHV3vY=
+	t=1754817022; cv=none; b=Q3ZbWYjWu2axlKkxO03WslVEO7Oo01al1uXfe0HjtGiCYwWTVe7Mch2Jq5I5VKu0Rx7Pavw1dECgZw619j5MkDnAYRU/u9/7alvaFmlOf47P+7jxFFEOIaMDGaOflZJgSsxcLETM03S20kY6uJPH3/pE3LpPMBpdADUhEyJ95Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754816910; c=relaxed/simple;
-	bh=NqrJcDK9Q9Pbwnv9mkT1gvpoDiy/onKZKuiEiMl6Esw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RpiXSs4rNEmwGIkP5uhY7KbrU02VfTWUr62jPXF/uUGR/WmqOwGQVSPwzO6fm5Yac71SNYxDJdK6xD8FCVjg9syj+R3Nz0w3KZ3PGcXQYSFbRWfSJnf/UfckPzRoccjKqR4PepK65k3ludcMp4LdaOrAznd/MTs88uUsHrj2JjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=B2mm2CTL; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b46d905cb67so133573a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 02:08:26 -0700 (PDT)
+	s=arc-20240116; t=1754817022; c=relaxed/simple;
+	bh=AarUpmoqBH0VjpicWfUBDo75sYZonSW04kSonv2nz38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CAMbJ9LPDbMGS49289qaNdzXB+YGX43+DwXXy6jHGpof+Eny0QAklQOe00i1KExEtXGGA0YMkCkVnzqiU1FB9RGkS6vS7JfFhybvRQGovmAv9g7tMt3cPNJrhhZwpfLeVCqHE4sGR1y/y4j4nDO5VMKllnS+tbGwHr5EnzDavAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U0uftgnK; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso22267815e9.2;
+        Sun, 10 Aug 2025 02:10:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google; t=1754816906; x=1755421706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XefKmLNL7nnqmo+5yH2hBjHjtzORSbfHYnDOv5fvrSs=;
-        b=B2mm2CTL2ihy+Ec0lj4cIlqD8W1I9JAXNg5OeBbR1lh4it5aM6bQMk7MQtGhK7U85O
-         kVDDQcoqx3PXdlBORGfna9HQRT/VFjXpmW74MEgKoYhthT3tmh2ees9z4SkSW5+kvWrA
-         +hwtDSXOk+sgZrv5fBRtxC5eTUl+jvUhDdqjE=
+        d=gmail.com; s=20230601; t=1754817017; x=1755421817; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WvZTBUTJuWW1WaJXGc+vnqzxzvAXh3a0z05/pfxtXiA=;
+        b=U0uftgnKdwJ1CgvW+YM/vtcHynV/6pd3BkHiqYclvPFsz+o21y77CqHaeApAc5QYQV
+         NBpucHWDMqzTIrPD7MWsoDLyGHgdEu+elJCgLcfBZYFYl2zPzX+WIV5/+vcfmi4xjkp5
+         Kt7MiiDSwaOm3seV/kFJssO5bjuopDJPXhQanwznLUQFI9P3QDSoTbAt2akaYvfqzFJ8
+         nIatqt6F19nkfh+7KHYM1dXDX1RyYOmCWmar7H7CWIcOkotAJdILWcKimrsGdYcp5jUk
+         CDfhCdEK3ej03sbibTZ4Cas6LcLOhcjg53uh9qZo4/z4IQPYqBUPurRQZf0p4F6YiLhE
+         gl/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754816906; x=1755421706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XefKmLNL7nnqmo+5yH2hBjHjtzORSbfHYnDOv5fvrSs=;
-        b=uaAqYpxu1cmor2jE3h+83YU3GQjejWX8ePbj9IFHa4ROFtSHyznXVGfHwV3OOxHA9D
-         YTqrypLBvPUaMl+6wz9Rb3qm4L3m1qh3ZMcG7ynYkYo7k0v+Rv4EDPMYE91uJIaLpceV
-         08+8j3WqMCPTVSxbSzin5hagNehJo+II07wlQNPLw1PCgxlGQN+FwQLays2fhP2A/xdp
-         AHapnMUlLQ5djaSJ/GDUP1i/t5t/ySp+1Sh3ZOVbr2wm8R+oeL5i/gtY+SqTUuYOv25X
-         jMj+RULgwf+S8988tEORm0ZE4uD/Re1Rml3MOF3ip534Yg8nMEhFD5CL65YFtGCcDLR+
-         f0QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVC21UfgMLjGVHbppwP0ep3n1PpUaiMQhp4pmV81lX9E6CdcgHf3gFVtxf9XtN2hDTCRHk3eV6KpPYTPdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/2bxto3lMF4XkBjdnO/qo4FGKOzMzcrNN2MTrGKHqt4sdLNWi
-	D/QtFWdvHUNtrygHXL8U11zcgBDOp1q7n7rs0qEx0zy+3eB/NHz59ywpr8i0EtsiNfyNRZTIoRg
-	RbjcrUkoxqO7WhqeWHFhSbi+hTVN3Fn/6QIYrQuJXTQ==
-X-Gm-Gg: ASbGncvJ+im3g8u/M6UWZg+TknVkFRwpAuj6tkyUC8rr3xFPZSXDVa+9U4dDphoq8Vw
-	mqhv9BtKgVB1Jy1L0eAc6dP1O4p+H/V7ibA97R6FAngZF7G27ck2Vu+XkhnMW1Ary2Ayi8ZwHKr
-	GxNAglQS6DodsnSO0fd6kdxKHsGrF4eNoDvQZ1jKLLSuE6udrmbLkUMatFXCJKqseAGVu78dr4j
-	m8VuzI=
-X-Google-Smtp-Source: AGHT+IGgxGY8TIGss+p+m+rvdoCroOkrH0WSwlEH1yu+EbvcphNklaPzY6Wumaxx6GRiOOtAmCnqSI1I1Q1UxJRHVLE=
-X-Received: by 2002:a17:90a:ec8e:b0:321:9462:49b7 with SMTP id
- 98e67ed59e1d1-32194624af4mr7997024a91.12.1754816906402; Sun, 10 Aug 2025
- 02:08:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754817017; x=1755421817;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WvZTBUTJuWW1WaJXGc+vnqzxzvAXh3a0z05/pfxtXiA=;
+        b=siIkatgnEHdLhyJM9upni66ASzHbzKi9HVGuJZU0HwzHHAxaf4xOVFlHSEzdHAfi+o
+         HZrX/FVGr1sQfbpKpmTI9UnN18ZxEmhOfW/iRxX5pZmjIGqMWUGMOXc2Erc1WJHrKd6U
+         SguQBRCP3YsGxICR6buyh29TKJsq9RlgcVfaaBXIDLL2CRk8UngDUAY8a6oowv72W5VV
+         JHkPFBxcn/MqcaFXFutWvmR/vveMFCFNYGzdErejasLphZrEbchYmg7dhFTSBnh+fSGx
+         j9Pi7XJZUghIl9Hqtn6wDvtEMGAXRFSuBTDHFmuTmT0AXm0008FPttk750JuLBjVXq+y
+         g4LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUjaP6vimoDTTO4YYLpJaIQRjmvqnAWIVCDmoLBFx7L15TrFwoVXycmOr6beOkKEY3YVi+fgOlW3KP@vger.kernel.org, AJvYcCXmdWkJyzzxrNMsZJ3LJrmF92UEiaoJrWQ6QrhKnV68nsQcEJ0CbsDGFVwZ1bRTybKXeQghrjnz6paJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoFSak81AFSb7Y9L48TARGY8dwmhwxZdkeVm+2n/WF0WzIGq/S
+	JRDpTBirZWheHZDtEHkF3B5PheKShDzHfxkBd8Y5FI8kpxZAVr7wI4JSDOz4Jw==
+X-Gm-Gg: ASbGncsdNlyIj2StrSHeFZ9pQqutcee6BXJ/Q7Q7jF1SsslkibL8JrATpSFb2yReO8K
+	KLNWO3L3O3ioLZJZDezFe6EkKU1NSHfZpIiTlm4n/I1ez6bUYEOjtJqjrIJfbOBDAboF3IgBQ1r
+	6ld2fgCZd2Z9aPKeWZsoQv7dktBeWml5mMuG8rRIK9RXCKR20JR6w8GuAhazp1P/rSQFMXgsvpD
+	ynlJ7B1PeDrn8wATPYNJVVnrkDVKxSbVLfSKB0Yd6L3ioug/lfmvR1vDRc+3lvXBf2K/fsqeXbS
+	cyyVGVhhFahETziky3kqOcbfXiq3543gbvutom0kTb0t+cDdS/wZmqD6SjG2KaJxrh0uZtaxaTz
+	QTEZIf+GTWmYq8g/olpFPp/cgER0/vbr3anXxHkEhqMOkfceUNp7+JqOjI/ElvQRz2kwdtX8Y0F
+	Es9RD4vGUsJo+h3DfXn6NZsmA9C89ioAkH
+X-Google-Smtp-Source: AGHT+IEI39Qe0sPacI0gnFG0jDx8f2VGWrXmRDWrdvWPyCAqwFKtJHGu0UEBwNgIX4mRIqCYJQCItQ==
+X-Received: by 2002:a05:600c:c0d2:10b0:459:ea5d:418b with SMTP id 5b1f17b1804b1-459f4eb3fcemr48468855e9.9.1754817016582;
+        Sun, 10 Aug 2025 02:10:16 -0700 (PDT)
+Received: from ?IPV6:2001:9e8:f12c:bb32:3d75:9109:b5a7:a261? ([2001:9e8:f12c:bb32:3d75:9109:b5a7:a261])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8ff860acbsm10209684f8f.51.2025.08.10.02.10.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Aug 2025 02:10:16 -0700 (PDT)
+Message-ID: <97ff6fe9-0dfc-4116-99a0-7efcdd16f8dc@gmail.com>
+Date: Sun, 10 Aug 2025 11:10:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250809015529.373693-1-daniel@0x0f.com> <5dd0a031-dd7b-4078-b1a8-6b760248390b@t-8ch.de>
- <CAFr9PXmF-AOL8yj9FntHw+b1A8HWKNeAHU=rx7Dk7pfi1N_4fA@mail.gmail.com> <d7974cbe-41b3-4994-8982-30c8f660e65f@t-8ch.de>
-In-Reply-To: <d7974cbe-41b3-4994-8982-30c8f660e65f@t-8ch.de>
-From: Daniel Palmer <daniel@0x0f.com>
-Date: Sun, 10 Aug 2025 18:08:15 +0900
-X-Gm-Features: Ac12FXzKlx-ot3OecZiA6JO8-sqa2rTE3ab_yidKsy8cX4VcNGeRieYae9c2z9w
-Message-ID: <CAFr9PXkJCPm9UwV8-FeZxhB+ODxGgtbKdD3n90UjqyPGF8tMSw@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Add target for lz4 compressed vmlinux
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 07/11] i2c: rtl9300: move setting SCL frequency to
+ config_io
+Content-Language: en-GB
+To: Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>,
+ Chris Packham <chris.packham@alliedtelesis.co.nz>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Harshal Gohel <hg@simonwunderlich.de>,
+ Markus Stockhausen <markus.stockhausen@gmx.de>,
+ Sven Eckelmann <sven@narfation.org>
+References: <20250809220713.1038947-8-jelonek.jonas@gmail.com>
+ <9a1616dc-34b2-42fd-8f64-9d46fa3bb92f@web.de>
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+In-Reply-To: <9a1616dc-34b2-42fd-8f64-9d46fa3bb92f@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Thomas,
 
-On Sat, 9 Aug 2025 at 21:29, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> w=
-rote:
+On 10.08.2025 10:49, Markus Elfring wrote:
+> …
+>> +++ b/drivers/i2c/busses/i2c-rtl9300.c
+> …
+>> +static int mshv_vtl_sint_ioctl_set_eventfd(struct mshv_vtl_set_eventfd __user *arg)
+>> +{
+> …
+>> @@ -244,7 +245,7 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
+>>  
+>>  	mutex_lock(&i2c->lock);
+>>  	if (chan->sda_num != i2c->sda_num) {
+>> -		ret = rtl9300_i2c_config_io(i2c, chan->sda_pin);
+>> +		ret = rtl9300_i2c_config_io(i2c, chan);
+>>  		if (ret)
+>>  			goto out_unlock;
+> …
 >
-> Hi Daniel,
->
-> On 2025-08-09 20:35:39+0900, Daniel Palmer wrote:
-> > On Sat, 9 Aug 2025 at 16:50, Thomas Wei=C3=9Fschuh <linux@weissschuh.ne=
-t> wrote:
-> I would continue with vmlinux.tmp. It might not actually be stripped.
->
-> quiet_cmd_precompress =3D PRECOMPRESS $@
-> ifndef CONFIG_KGDB
->       cmd_precompress =3D cp $< $@
-> else
->       cmd_precompress =3D $(STRIP) $< -o $@
-> endif
->
-> vmlinux.tmp: vmlinux FORCE
->         $(call if_changed,precompress)
->
-> targets +=3D vmlinux.tmp
->
-> This will also correctly handle CONFIG_KGDB changing.
->
-> (Maybe the naming can be improved)
+> Under which circumstances would you become interested to apply a statement
+> like “guard(mutex)(&i2c->lock);”?
+> https://elixir.bootlin.com/linux/v6.16/source/include/linux/mutex.h#L225
 
-Nice, that's a lot better and I've reworked my patch to do that.
+Didn't know about that before but no objections against it. Can integrate that
+in the next version.
 
-> And for the compressor invocations we already have predefined commands:
->
-> vmlinux.gz: vmlinux.tmp FORCE
->         $(call if_changed,gzip)
+The link Sven posted was quite helpful on that, thanks! This looks quite similar
+to how it is in Rust, that you just lock/guard it and it is dropped at the end of
+the current scope. I like that :)
 
-I also did this for all of the targets and $(call if_changed,lz4)
-results in an lz4 file with the old header format[0] and 8MB block
-size which is not what I need.
-So v2 will have a patch to add a helper to generate that style of lz4
-in scripts/Makefile.lib
+> Regards,
+> Markus
 
-Thanks!,
-
-Daniel
-
-0 - https://github.com/lz4/lz4/blob/dev/doc/lz4_Frame_format.md#legacy-fram=
-e
+Best regards,
+Jonas
 
