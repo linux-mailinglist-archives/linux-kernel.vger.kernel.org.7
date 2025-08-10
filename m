@@ -1,170 +1,140 @@
-Return-Path: <linux-kernel+bounces-761300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAD2B1F82F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 04:25:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 520CBB1F831
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 04:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B95723BC3C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 02:25:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 649F81896941
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 02:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD8E194A59;
-	Sun, 10 Aug 2025 02:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="a3qzAjph"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3E7191493;
+	Sun, 10 Aug 2025 02:56:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C6114AD2D
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 02:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD113790B
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 02:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754792726; cv=none; b=J8iXI71+UIzVCFyVljuJBghFkRbRFjo71PWpD5SC8Q5xfe3sEqi24IB8+dNUfcAZ+oCZw+5CGEqUe9yeisfbeM4HP8mhRxaQIAV6SNixrHzsdsrMY1NrwcQHICWZp8naZQ5lxXsrsi50THeVMB1zuk50u3ne9sQwR20k0eVWZqs=
+	t=1754794565; cv=none; b=Z40QIkwgknFI7YPJSWQ1lVM/q3dk+z8DQzj6wBVnsJWdo2RBje3BNs0ErSCSNQ7Vo/PLKo7OIZuAecrpXf/5J0ZVXdmEhp1WaTb+qt1acGJqDZKyr7Sm9rsa7pKG5aXoyS2QacHgymQuUajUv7ZbK7JOR/wM3dQRfFWoWQNwVI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754792726; c=relaxed/simple;
-	bh=lcDmeBzy9nP5wZihJdA9h09fgJ8nlD7B/NawEffdeeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cswDiXRNKJDLov+bDDCkMfxTEo22pC0YozNnM/oNQG5lylVmPbjYVHJ9TvRgswMwDD6aBXR6vJ99ZfUa59ytC+rvzGPSiIEHKGnjy3VQ5JrlTsu+K/uendmDa8xflhLdSxPvmugsEEE8vlT8QwmT4A76d3gCOhqi0WfQPdIdw4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=a3qzAjph; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-102-110.bstnma.fios.verizon.net [173.48.102.110])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 57A2Oack003150
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 9 Aug 2025 22:24:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1754792683; bh=EuCczcoy6lfa/ts/992fZBYJ3SCYziTSz4v3L/UPbP8=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=a3qzAjph2f+l3VpYNFfKLdhCSmponX2JHJadWcHW7XhglBlx4Zx/9x7csdveo6/hn
-	 +aNJ8IoXCGgE3QW5vw911maFuf2doQSsRopMEdNKTLLwRGRL3fVB4RFosfp0sAOw8Q
-	 QnX7h7eQxfbyn8jrUPHcma8oxLAm16Nk1VB5zKSpJroXbMJMyh4BP1K07R5shSmZbU
-	 On8QJbJYu4uTqHbBOXDzZuDE9wBRueYdPpsRJgTYbZRm9WIwrBDQbltOv1+ByG8Vjh
-	 BxFrn96wq0G9ufJt8nDRpi3+rkqYr8zM8Sh2+OssPmW+k/qkZlhLrmWL4Lxa/O9ipO
-	 fTdoTqtHIBnag==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 51E1C2E00D6; Sat, 09 Aug 2025 22:24:36 -0400 (EDT)
-Date: Sat, 9 Aug 2025 22:24:36 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Josef Bacik <josef@toxicpanda.com>, Aquinas Admin <admin@aquinas.su>,
-        Malte =?iso-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Message-ID: <20250810022436.GA966107@mit.edu>
-References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
- <1869778184.298.1754433695609@mail.carlthompson.net>
- <5909824.DvuYhMxLoT@woolf>
- <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <20250809192156.GA1411279@fedora>
- <2z3wpodivsysxhxmkk452pa4zrwxsu5jk64iqazwdzkh3rmg5y@xxtklrrebip2>
+	s=arc-20240116; t=1754794565; c=relaxed/simple;
+	bh=GDK4rR9kipkAUgSxuFb0bTCk0jyjy9Y5iilq9iup3GE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CkV8gJtlLwqrYMGneMIY6SYJiFAlob21KIQ00CDHoQOibltWCNtYgIw6dnU7eBE6LOnkShehH/ayH+Tn/WrJxRioyzN3+gI4rAErhb4nlLHCQPNr7rmZn4IzzLJnPzPdjo+R2jOBwq1qmqb2915+sW2YhnsxM68JHYP4lN5jc3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8818b1512c2so313178739f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 19:56:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754794563; x=1755399363;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vCE12Imvi84JX5F1OBqoUKUrxAuzFmBcO5au4Z5/j6s=;
+        b=hRc24itoSZEG8On7o3owQ90RhsXd/KNP3ObGLTH/hwqQ/4pvjbu3M2TUvUnevQMp5Z
+         1LhOsLokSHfW9IikyROML+apW1C+q5GnLqrPWfOH5cHQtgQ1nAi1ta5MBYqQbYjRCitd
+         +RSRHWvaYxDAx0e++4Gno4Hv9IKipjLn1Md9aaWHJ3rJ01VhXnSpOXzTNq6gXBYPve2w
+         DAXdsjiHY+oYDZYKe3Uq/ZyI6nR1yKp+FbJ2qwCdGILCXINgUli+wH1HWYbLNypB6L69
+         8RAO0bhWBdsjE5ZOEl6ahnn6tCvMwk7uvBwhi0LVYfNYWgp4yD8NqRlTR3AJoJ7FovDS
+         t+dA==
+X-Forwarded-Encrypted: i=1; AJvYcCVN4s9V8mwEN8ePP81oNEfCpfjpnPcH1VIYTm1trE6EcsZxzehasWTY419m9M3HrAxgSCpjULqkEwkprHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxahYUfKReQnrelNgslq4AqtLVQCw118GThOpwc7cn7VXudwqkj
+	rSsLiUVn8Y/bT/pSNwxSccne/deByWBAZXWpjgFVVCRMCA/s4SjOvrWe5CCNbXQxj5/jzCJB8H8
+	pouFCkX3O/nOcrYOvLf19ICprpeEpjowA3WPD6SzPYAqAEHtQieOofhF8lqM=
+X-Google-Smtp-Source: AGHT+IEPB0P7VUg+AXZKhTmpLtTLNykT1PDPHzcXJiMvR6c3994UgNE9G0Mr31F3k6fAhC86S/DPT1pZR3Rtq9nKlUduKo5GBPoH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2z3wpodivsysxhxmkk452pa4zrwxsu5jk64iqazwdzkh3rmg5y@xxtklrrebip2>
+X-Received: by 2002:a05:6602:f:b0:881:87ac:24a with SMTP id
+ ca18e2360f4ac-883f12042acmr1068712439f.7.1754794563469; Sat, 09 Aug 2025
+ 19:56:03 -0700 (PDT)
+Date: Sat, 09 Aug 2025 19:56:03 -0700
+In-Reply-To: <20250810020217.4151-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68980a43.050a0220.7f033.00b6.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in try_to_migrate_one (3)
+From: syzbot <syzbot+63859a31071a369082b1@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Aug 09, 2025 at 04:37:51PM -0400, Kent Overstreet wrote:
-> showed that it was possible, but the common consensus in the user
-> community, among people with the data (i.e. quite a few of the distros)
-> is that btrfs dropped the ball, and regressed on reliability from
-> ext4/xfs.
+Hello,
 
-Kent, you eeem to have ignored the primary point of Josef's message,
-and instead, prceeded to prove *exactly* what he was pointing out.
-Let me quote the most relevant parts of his e-mail, in case you missed
-it:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in try_to_migrate_one
 
-> Btrfs doesn't need me or anybody else wandering around screaming
-> about how everybody else sucks to gain users. The proof is in the
-> pudding. If you read anything that I've wrote in my commentary about
-> other file systems you will find nothing but praise and respect,
-> because this is hard and we all make our tradeoffs.
->
-> That courtesy has been extended to you in the past, and still
-> extends to your file system. Because I don't need to tear you down
-> or your work down to make myself feel good. And because I truly
-> beleive you've done some great things with bcachefs, things I wish
-> we had had the foresight to do with btrfs.
->
-> I'm yet again having to respond to this silly childishness because
-> people on the outside do not have the context or historical
-> knowledge to understand that they should ignore every word that
-> comes out of your mouth. If there are articles written about these
-> claims I want to make sure that they are not unchallenged and thus
-> viewed as if they are true or valid.
-> 
-> ...
-> Emails like this are why nobody wants to work with you. Emails like
-> this are why I've been on literally dozens of email threads, side
-> conversations, chat threads, and in person discussions about what to
-> do when we have exceedingly toxic developers in our community.
-> 
-> Emails like this are why a majority of the community filters your emails to
-> /dev/null.
-> 
-> You alone with your toxic behavior have wasted a fair amount of mine
-> and other peoples time trying to figure out how do we exist in our
-> place of work with somebody who is bent on tearing down the
-> community and the people who work in it.
+ folios_put include/linux/mm.h:1419 [inline]
+ folio_batch_move_lru+0x319/0x3a0 mm/swap.c:175
+ __folio_batch_add_and_move+0x5ad/0xd20 mm/swap.c:196
+ map_anon_folio_pmd+0x1c9/0x5a0 mm/huge_memory.c:1208
+ __do_huge_pmd_anonymous_page mm/huge_memory.c:1253 [inline]
+ do_huge_pmd_anonymous_page+0x518/0xb60 mm/huge_memory.c:1371
+ create_huge_pmd mm/memory.c:5917 [inline]
+ __handle_mm_fault+0x1139/0x5440 mm/memory.c:6166
+ handle_mm_fault+0x40a/0x8e0 mm/memory.c:6364
+ do_user_addr_fault+0xa81/0x1390 arch/x86/mm/fault.c:1336
+ handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+ exc_page_fault+0x76/0xf0 arch/x86/mm/fault.c:1532
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6632 at mm/rmap.c:2453 try_to_migrate_one+0xf99/0x3540 mm/rmap.c:2452
+Modules linked in:
+CPU: 0 UID: 0 PID: 6632 Comm: syz.0.17 Not tainted 6.16.0-syzkaller-12256-g561c80369df0-dirty #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:try_to_migrate_one+0xf99/0x3540 mm/rmap.c:2452
+Code: 00 e8 cb 3f ae ff 49 be 00 00 00 00 00 fc ff df e9 f2 f7 ff ff e8 b7 3f ae ff 4c 89 ff 48 c7 c6 00 79 96 8b e8 08 90 16 ff 90 <0f> 0b 90 e9 52 ff ff ff e8 9a 3f ae ff 49 ff cf e9 bb f8 ff ff e8
+RSP: 0018:ffffc900034f7360 EFLAGS: 00010246
+RAX: ac960e1a3b7e2b00 RBX: 0400000000000000 RCX: ac960e1a3b7e2b00
+RDX: 0000000000000003 RSI: ffffffff8dba5fb3 RDI: ffff888029dd9e00
+RBP: ffffc900034f75b0 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa1ec R12: ffffea0001c1c198
+R13: 0000000070706867 R14: dffffc0000000000 R15: ffffea0001c1c180
+FS:  00007fbdca6816c0(0000) GS:ffff888125c1c000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00002000000012c0 CR3: 000000002d9e6000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ rmap_walk_anon+0x550/0x730 mm/rmap.c:2843
+ rmap_walk mm/rmap.c:2948 [inline]
+ try_to_migrate+0x3bc/0x670 mm/rmap.c:2622
+ migrate_folio_unmap mm/migrate.c:1302 [inline]
+ migrate_pages_batch+0x116f/0x3620 mm/migrate.c:1851
+ migrate_pages_sync mm/migrate.c:1974 [inline]
+ migrate_pages+0x1bcc/0x2930 mm/migrate.c:2083
+ do_mbind mm/mempolicy.c:1539 [inline]
+ kernel_mbind mm/mempolicy.c:1682 [inline]
+ __do_sys_mbind mm/mempolicy.c:1756 [inline]
+ __se_sys_mbind+0xa3e/0xc30 mm/mempolicy.c:1752
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbdc978ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbdca681038 EFLAGS: 00000246 ORIG_RAX: 00000000000000ed
+RAX: ffffffffffffffda RBX: 00007fbdc99b5fa0 RCX: 00007fbdc978ebe9
+RDX: 0000000000000001 RSI: 0000000000600000 RDI: 0000200000000000
+RBP: 00007fbdc9811e19 R08: 0000000000000000 R09: 0000000000000002
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fbdc99b6038 R14: 00007fbdc99b5fa0 R15: 00007ffd9d17a4b8
+ </TASK>
 
-And how did you respond?  By criticizing another file system, and
-talking about how wonderful you believe bcachefs to be, all of which
-is beside the point.  In fact, you once again demonstrated exactly why
-a very large number of kernel deevlopers have decided you are
-extremely toxic, and have been clamoring that your code be ejected
-from the kernel.  Not because of the code, but because your behavior.
 
-In general, file system developers have been the ones that have been
-arguing that you should be shone more grace, because we respect the
-work that you have done.  However, don't mistake respect for your code
-with respect for your behavior.  There are *many* developers in
-adjcaent subsystems (for example, block and mm) who have lost all
-patience with you.  This is not just one or two people; so please
-don't blame this on the people who have been trying to reach out and
-help you see what you have been doing.  Quite frankly, it is
-astonishing to me how *many* people who have been arguing for "git rm
--r fs/bcachefs" as soon as the merge window opened and effectively
-asking why Linus has been extending as much grace as he has up until
-now.
+Tested on:
 
-Programming is a team sport, and you have pissed off a very large
-number of people on the team.  It doesn't matter how talented a
-particular indiviual might be; if they can't work with the other
-people on the team; if they are toxic to the community, it doesn't
-matter whether or not they might be technically correct on a
-particular point or not.
+commit:         561c8036 Merge tag 'tty-6.16-rc1-2' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1109fea2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2ae1da3a7f4a6ba4
+dashboard link: https://syzkaller.appspot.com/bug?extid=63859a31071a369082b1
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15403434580000
 
-Many decades ago, when I was working group chair for ipsec, there was
-a particular individual who was super-smart; and who was often
-technically on point..  Unfortunately, he had the habit of appending
-phrases such as, "as any idiot could see" at to the end of what might
-otherwise be a very insightful comment.  It didn't matter that the
-point that he raised was one that was (a) correct, and (b) missed by
-other people in the working group.  The way that he phrased it meant
-that no one wanted to listen to what he had to say.  Because I wanted
-the ipsec standardization to succeed, I acted as that person's
-intermediary, rephrasing his arguments and technical points in a way
-that was easier to understand, and more importantly, stripping out all
-of the adhominem asides.  It took a huge amount of work, and psychic
-toil, and it isn't something I would ask someone else to do.
-
-All of this being said, unless you can find someone willing to be your
-intermediary, and hopefully your coach in how to better work with
-other people, I fear that the only thing we can do is to find the most
-graceful way for you to leave the community.  And fortunately, I'm
-very glad that at the end of the day, it's not up to me.
-
-						- Ted
 
