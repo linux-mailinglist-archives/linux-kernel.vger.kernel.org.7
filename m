@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-761596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD110B1FC4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A45B1FC4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 777F41630B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B84921898349
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CF327E05E;
-	Sun, 10 Aug 2025 21:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6902264D3;
+	Sun, 10 Aug 2025 21:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRWX9qby"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fhbLTKp0"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3ED827BF7E;
-	Sun, 10 Aug 2025 21:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082861C07C3;
+	Sun, 10 Aug 2025 21:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754860351; cv=none; b=aYhCmA1wcMmdwi4LMrSPG+ppKTdybylLhkYs4Jb7QOLy8yD5XWGE62tfWDuN4YZ6SGUk11tr8esAdxNyKMxPW6A2cmfqD0s3rScas9vvbBpAxJXSk9D/IiMyp8zBnHrNveWJBznjFcxs4bGf3DaDtABWeLU4uPIFmMAdUIukylU=
+	t=1754860389; cv=none; b=ic7/eJNSLgpRzcdya1LeJcUR5HuXCQECW4S2/XyO03LHGG55XoV8LwRnea8gu7C5lkzpnco9YvHJ/kA23o7RfKYiThWhDwqSsAII3ZrZV/47kPfJKDYKt5fNtFnVAytbXe2xuxnTz+6hTCi4enbutko5BplM+sCwOaXb5DnUb4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754860351; c=relaxed/simple;
-	bh=+EPDIqigYF0dLwDVKm4n7P07Soa8UCdwgsSbIhQglhg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oyUgp3qRB2j4IMdggGxG2kfr9C3Dp9FbXnN2SAJV4dQgskndKgIrP57GITai/O90fWuVpif9A9ruVSCtGy7JSHrqy4KYKpSVlfz1Naco4FfKvprxsZz4qCP/YZ/fCzlEvmBjjzjAC6lyNFc1oJ437rv4W/K3oZIPDFW8mzvZuUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRWX9qby; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2A6C4CEF1;
-	Sun, 10 Aug 2025 21:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754860351;
-	bh=+EPDIqigYF0dLwDVKm4n7P07Soa8UCdwgsSbIhQglhg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=PRWX9qbyv9u6FbnKrFjePyfsaZ737MOhr4mO7TsZ7R+GzU8zlYvZAYf8JD/OXtEUT
-	 hA9ZGe4MgMB70B1Zw0njMIw4A2/fhOmu8/xlsiHxmIUZJvNyZW6a8uiunB9JTjc62k
-	 WQvCcnsGvL3edUrU5mU3msfwtOhFXOborJRekZFipn3fdTQKLp1K+FdaZrtWvHMoCG
-	 BjGMfqHcgkkIzLtrpEo6cyj4t26pG93hr2845rzETZe270MpglUmq+wxcG1OLi+DB/
-	 81Kg/BR1SiRTfzYt5r1OrTvGUw8lrqFdyiU9Eqy8LtRG2Wu0knKnUQq5VbApAR7XFV
-	 wpBAVMLGZQIKw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BB739D0C2B;
-	Sun, 10 Aug 2025 21:12:45 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1754860389; c=relaxed/simple;
+	bh=MCn7L2oMDXqpaBL68ifUAKfNI6ZgEO9AvUjGAwdqGzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHHwm0DHZfGyKSLrxYTczDbWJMB/8dkjgS5fjNlN6H7I13rLlaZ3716wIf7G2cQp4Y/f7UZf7FFoe9fsBWmSyVC9kkR8e1VTbkpQxW4Di8YjVWg+6FbksW/FpNekQTREI5gACmPl76KWVtmw6HY7PcrebPOn6y2FFRwDJPq/KSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fhbLTKp0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=a08pxIKssvva7WGMOpdQs7q50iSGhijNpUjVdmBVafU=; b=fhbLTKp0cHKqEl0SQ3eao1jBUI
+	U3VY98wdyOIDCYXjKKGLsw8r3dtC6OyQZ19VzOA4mJutCclYgT5mTevdbGCfVT5XFOElCLc+z4aBW
+	liI0zxI5TPxQi9ChdMOb/RWDOXdeVQirMml2aP0ydzD89E3tKJ2L9G4JjGfzJo3gGa5+S1LQ6XJdc
+	wCHfIGYv/GZsKMHuqGNuSiRTJ1YgaBzO/S2PM4wb+9vg5IJdXoICZxCGOIYy3rK96NzD/1TjgkGl9
+	jjAk0rmXZSr499Fs074dnjGssHkUZJWAIUTUNSlc1F5u2AeoF8TYNKeHPCl7kT4QUNWviG9JC54fS
+	qV7QEa0g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulDLi-0000000AWXo-29XN;
+	Sun, 10 Aug 2025 21:13:02 +0000
+Date: Sun, 10 Aug 2025 22:13:02 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Ujwal Kundur <ujwal.kundur@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, allison.henderson@oracle.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rds: Fix endian annotations across various
+ assignments
+Message-ID: <20250810211302.GQ222315@ZenIV>
+References: <20250810171155.3263-1-ujwal.kundur@gmail.com>
+ <20250810174705.GK222315@ZenIV>
+ <20250810182506.GL222315@ZenIV>
+ <398e53d8-906d-43c9-9395-f6115dcb945b@lunn.ch>
+ <CALkFLLJkGqA7T5JhRQOs4spa+ihr-6RXA9xWwQRbRp6upLXBaw@mail.gmail.com>
+ <20250810210058.GP222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 00/23] binfmt_elf,arch/*: Use elf.h for coredump note
- names
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <175486036374.1221929.319441619761028585.git-patchwork-notify@kernel.org>
-Date: Sun, 10 Aug 2025 21:12:43 +0000
-References: <20250701135616.29630-1-Dave.Martin@arm.com>
-In-Reply-To: <20250701135616.29630-1-Dave.Martin@arm.com>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- davem@davemloft.net, hpa@zytor.com, James.Bottomley@HansenPartnership.com,
- akihiko.odaki@daynix.com, aou@eecs.berkeley.edu, agordeev@linux.ibm.com,
- alex@ghiti.fr, andreas@gaisler.com, anton.ivanov@cambridgegreys.com,
- bp@alien8.de, bcain@kernel.org, catalin.marinas@arm.com, chris@zankel.net,
- borntraeger@linux.ibm.com, christophe.leroy@csgroup.eu,
- dave.hansen@linux.intel.com, dinguyen@kernel.org, geert@linux-m68k.org,
- guoren@kernel.org, hca@linux.ibm.com, deller@gmx.de, chenhuacai@kernel.org,
- mingo@redhat.com, johannes@sipsolutions.net, glaubitz@physik.fu-berlin.de,
- jonas@southpole.se, kees@kernel.org, maddy@linux.ibm.com, jcmvbkbc@gmail.com,
- mpe@ellerman.id.au, npiggin@gmail.com, oleg@redhat.com, palmer@dabbelt.com,
- paul.walmsley@sifive.com, dalias@libc.org, richard@nod.at,
- linux@armlinux.org.uk, shorne@gmail.com, stefan.kristiansson@saunalahti.fi,
- svens@linux.ibm.com, tsbogend@alpha.franken.de, tglx@linutronix.de,
- gor@linux.ibm.com, vgupta@kernel.org, kernel@xen0n.name, will@kernel.org,
- ysato@users.sourceforge.jp, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-um@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250810210058.GP222315@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello:
-
-This patch was applied to riscv/linux.git (fixes)
-by Kees Cook <kees@kernel.org>:
-
-On Tue,  1 Jul 2025 14:55:53 +0100 you wrote:
-> This series aims to clean up an aspect of coredump generation:
+On Sun, Aug 10, 2025 at 10:00:58PM +0100, Al Viro wrote:
+> On Mon, Aug 11, 2025 at 01:01:01AM +0530, Ujwal Kundur wrote:
 > 
-> ELF coredumps contain a set of notes describing the state of machine
-> registers and other information about the dumped process.
+> > > It took me about 60 seconds to prove the POLLERR change was wrong, and
+> > > i know nothing about this code base. So it is in fact not a lot of
+> > > effort.
+> > I looked up the definition of POLLERR on Elixir [1] and it seemed like
+> > a valid Sparse report to me. I wasn't aware of EPOLLERR, and now
+> > realize all the other operations are prefixed with EPOLL* in af_rds.c.
+> > I look forward to reviews/critiques to learn from them but being
+> > accused of using LLMs is kinda disheartening.
 > 
-> Notes are identified by a numeric identifier n_type and a "name"
-> string, although this terminology is somewhat misleading.  Officially,
-> the "name" of a note is really an "originator" or namespace identifier
-> that indicates how to interpret n_type [1], although in practice it is
-> often used more loosely.
-> 
-> [...]
+> As for the POLLERR part of that, the thing about POLL* constants is that
+> beyond the first 6 (IN/PRI/OUT/ERR/HUP/NVAL) they are arch-dependent,
+> and not just in a sense of bit assignments.
 
-Here is the summary with links:
-  - [16/23] riscv: ptrace: Use USER_REGSET_NOTE_TYPE() to specify regset note names
-    https://git.kernel.org/riscv/c/c9502cc7bef5
+> generic:
+> IN  PRI  OUT  ERR  HUP  NVAL  RDNORM  RDBAND WRNORM  WRBAND  MSG  REMOVE  RDHUP
+> 0   1    2    3    4    5     6       7      8       9       10   11      12
+> sparc:
+> 0   1    2    3    4    5     6       7      =OUT    8       9    10      11
+> mips,m68k:
+> 0   1    2    3    4    5     6       7      =OUT    8       10   11      13
+> xtensa:
+> 0   1    2    3    4    5     6       7      =OUT    8       10   11      12
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Ugh...
 
+My apologies - messed table above in the last two columns.
 
+REMOVE is 10 for sparc, 11 for xtensa and 12 for everybody else.
+RDHUP is 11 for sparc and 13 for everybody else.
+
+generic:
+IN  PRI  OUT  ERR  HUP  NVAL  RDNORM  RDBAND WRNORM  WRBAND  MSG  REMOVE  RDHUP
+0   1    2    3    4    5     6       7      8       9       10   12      13
+sparc:
+0   1    2    3    4    5     6       7      =OUT    8       9    10      11
+mips,m68k:
+0   1    2    3    4    5     6       7      =OUT    8       10   12      13
+xtensa:
+0   1    2    3    4    5     6       7      =OUT    8       10   11      13
 
