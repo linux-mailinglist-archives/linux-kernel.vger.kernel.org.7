@@ -1,169 +1,138 @@
-Return-Path: <linux-kernel+bounces-761373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2ADEB1F8F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:42:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DF5B1F8F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBE56178179
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C2C33BE454
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612B922D9F1;
-	Sun, 10 Aug 2025 07:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B992144B4;
+	Sun, 10 Aug 2025 07:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FykBMwph"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VnifWRqF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47981E7C19;
-	Sun, 10 Aug 2025 07:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1914D5B21A
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 07:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754811718; cv=none; b=iBm0qEkn4r30UmPCquJtfUDt8nmMA/VtnMi9kSmcdDggnMbTYM9Y3V7+biDa169VFU+RkPuj8PMaPpZqp2edse0XEu5UX5f9CjHP4GW1NqNT4Geq04Tveys6hmnGr38lJDOPctfwjV5UOnXKAKUs3oNbovI2cssKSBNLYjExXT8=
+	t=1754811948; cv=none; b=ubOqy0u3OsHz7D998jX6qkEMb+RX2dj3DHdK1ek4ZrsYYTdTMexXq0q418MluV/WAH105nOwsv/JVkEgbRsyohFtxd6fw4FiB60XotX1xe+4tcaqrbAbEYGKVE/r4soDX2BlgwadwNxh/6IQBpQpCERTFZDE7be82bYdjCn4oyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754811718; c=relaxed/simple;
-	bh=LHgDFxP3XNY/BaNZDOHVAHZ0/bMk5RECcQRqMjPp2kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tyi5gextIN9mPdyV1hfPfhTJuTPoP5Tl0jGF+/JO1ndHi+fBzGgPBwLI/CeWfxzL9j3/lTM0X2j8Sjcu1CRkaZcTaeuTxxBfgzd0W7hgt1U1YeN9Be8oSJ6TTlGs5MkSqdLO31VaDWIljAV9fM8SdwQs4Y6csqY+YVxT1mSLWEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FykBMwph; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 532E21D00027;
-	Sun, 10 Aug 2025 03:41:55 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Sun, 10 Aug 2025 03:41:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1754811715; x=1754898115; bh=ZBpDMWwG52ZlaidcpEch1+eTaLrx9B9nAIB
-	cLcWcipQ=; b=FykBMwphm94LCK9WWheVlz2z/mmSjeophpu8qZSqSQPaA+Zjhwy
-	MdhD+bk/WEKBDjfWQNpiSk8ShcTXacERf6ZiSWwv5hteB6zhMQ8MqhD6FZhAc91d
-	oHww/m79p9DyrxHcSIE14DE+pc5XawSv/rpmemr7gbgLPu8o2sCp5eC8wl8HShT+
-	WlpCB2utNFCp7tadhiya4P4lssEtTk9SQLRPGxaXpIOmXtBAX4wCftxX/+70lKxz
-	l1qfIba3QFTZfJuDt1yscWPlbWIHnAlc49ZUenv1E+e5fnmQKqY0h6xaD4ZPM4kE
-	2XWK9xq5TjteoNYLDDojA1SPeWHcyrLPXpQ==
-X-ME-Sender: <xms:QU2YaAxDmBrN_Gdo59KNbwK8oSA925CfNUc0lpcIB6tBthT-YX7uKQ>
-    <xme:QU2YaCzci3WgluqKFvPRQ-ptDLSEkKFpN7N_jHf0_nXwkAgd7ClnFsy4DDLUTuV7-
-    JLU2_scfh5aUZo>
-X-ME-Received: <xmr:QU2YaN2FCnP6cEDo5l6Kmgakp5zJqw0rJkBwY1ezHu6BSwYhuN0Z4W3ymhSw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdeltddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
-    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepvddufeevkeehueegfedtvdevfefgudeifeduieefgfelkeehgeelgeejjeeggefh
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepihguoh
-    hstghhsehiughoshgthhdrohhrghdpnhgspghrtghpthhtohepudegpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehmvghnghhlohhnghekrdguohhnghesghhmrghilhdrtg
-    homhdprhgtphhtthhopegushgrhhgvrhhnsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmh
-    esuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhg
-    lhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepshgufhesfhhomhhitghhvghvrdhmvg
-X-ME-Proxy: <xmx:QU2YaIog91-BIcvRmTWF3_hMp8s0wmdDdffT4VB2LH_X6GPm998mVw>
-    <xmx:QU2YaLBWjc_8J9vgx0iF2tw-9NFDIkmyg5GCV-Up9X2vxFfD12KKcg>
-    <xmx:QU2YaBqaCyiAlhv1_6jseAnjUMkHT-F1gbmMCtC_ySUOqQMnnxL6qw>
-    <xmx:QU2YaOANkZyBf0O2BVa0EaQy33d1usHbXvY8AtvS4HJThfRKg1383A>
-    <xmx:Q02YaEgm8MnVzXVJVdBy5_QPGIo7mWPiiZ8Uad5OU71HtI-TumyJ_ATK>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 10 Aug 2025 03:41:53 -0400 (EDT)
-Date: Sun, 10 Aug 2025 10:41:51 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: dsahern@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, sdf@fomichev.me, kuniyu@google.com,
-	ahmed.zaki@intel.com, aleksander.lobakin@intel.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: vrf: don't down the interface when add
- slave
-Message-ID: <aJhNP_xQyENLSF6d@shredder>
-References: <20250807055634.113753-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1754811948; c=relaxed/simple;
+	bh=koNTC0O56I+1mmS8V1RrSLAsQcHOPE+c4Prmjz5N4xA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cjzqtBQdjPzt/3EB5GiCRKwOufJEXN/CC7U8lIP0grJK/qZnE1VwxUPqldbJFWJjFFcEVhNJvhSEAHFWf8AcxCI28usT5uI+J4WrUZITcGNsLIu8sN1xRRxYEsXCv4v3MEkC6yxAIdjkdHEQOck5buhcfDkcxw9vB0ttPUPemTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VnifWRqF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754811945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DVt0giKq01c+tkApRK/bOHrB953kwHQUrVwjxBxJkWY=;
+	b=VnifWRqFivpwRrw+MrHsVHXYotK42py8wv7+KXDshpHpQGWfDO2x1osp7HfEEPgxeIdhEm
+	ED3prd7zgHt9Ic32e6KB5Gyz16RivaRB2qpPiYKaXM7WM12rkM07Dd9j9rAdtsJipJB5Y4
+	hGBG4AJZ2hfqC/72HhOhYRmkTAEFrBc=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-135-uDWUvcvAO1ychBbt31xByw-1; Sun,
+ 10 Aug 2025 03:45:36 -0400
+X-MC-Unique: uDWUvcvAO1ychBbt31xByw-1
+X-Mimecast-MFC-AGG-ID: uDWUvcvAO1ychBbt31xByw_1754811934
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 509571956087;
+	Sun, 10 Aug 2025 07:45:34 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.37])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E6AF01800280;
+	Sun, 10 Aug 2025 07:45:29 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt
+ <palmer@dabbelt.com>,  Alexandre Ghiti <alex@ghiti.fr>,  Samuel Holland
+ <samuel.holland@sifive.com>,  =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>,  Andy Chiu
+ <andybnac@gmail.com>,  Conor Dooley <conor.dooley@microchip.com>,
+  linux-riscv@lists.infradead.org,  linux-kernel@vger.kernel.org,  Drew
+ Fustini <dfustini@tenstorrent.com>
+Subject: Re: [PATCH v2] riscv: Add sysctl to control discard of vstate
+ during syscall
+In-Reply-To: <aJe8ZW5LEtBK7Jmj@x1> (Drew Fustini's message of "Sat, 9 Aug 2025
+	14:23:49 -0700")
+References: <20250806-riscv_v_vstate_discard-v2-1-6bfd61b2c23b@kernel.org>
+	<lhuo6so7ur5.fsf@oldenburg.str.redhat.com> <aJe8ZW5LEtBK7Jmj@x1>
+Date: Sun, 10 Aug 2025 09:45:45 +0200
+Message-ID: <lhuqzxjy5zq.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807055634.113753-1-dongml2@chinatelecom.cn>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Aug 07, 2025 at 01:56:34PM +0800, Menglong Dong wrote:
-> For now, cycle_netdev() will be called to flush the neighbor cache when
-> add slave by downing and upping the slave netdev. When the slave has
-> vlan devices, the data transmission can interrupted.
+* Drew Fustini:
 
-OK, but can you provide more details on the production use case for
-enslaving the real device to a VRF during runtime? Usually this kind of
-configuration is performed before data transmission begins. I suspect
-this is why nobody complained about this behavior despite being present
-in the VRF driver since its initial submission almost a decade ago.
+> On Sat, Aug 09, 2025 at 10:40:46AM +0200, Florian Weimer wrote:
+>> * Drew Fustini:
+>> 
+>> > From: Drew Fustini <dfustini@tenstorrent.com>
+>> >
+>> > Clobbering the vector registers can significantly increase system call
+>> > latency for some implementations. To mitigate this performance impact, a
+>> > sysctl knob is provided that controls whether the vector state is
+>> > discarded in the syscall path:
+>> >
+>> > /proc/sys/abi/riscv_v_vstate_discard
+>> >
+>> > Valid values are:
+>> >
+>> > 0: Vector state is not always clobbered in all syscalls
+>> > 1: Mandatory clobbering of vector state in all syscalls
+>> >
+>> > The initial state is controlled by CONFIG_RISCV_ISA_V_VSTATE_DISCARD.
+>> 
+>> Can this be put into the system call number instead, or make it specific
+>> to some system calls in other ways?
+>
+> Do you mean the control the initial state of the sysctl, or not having a
+> sysctl for discard behavior at all?
 
-I'm asking because the potential for regressions from this patch seems
-quite high to me. For example, before this patch nexthop objects using
-the enslaved device would get flushed, but now they persist. This can
-impact offload of nexthop objects and it's possible I'm missing more
-potential regressions.
+It's seems rather strange to have a sysctl for such an ABI change
+because it really has to be a per-process property.
 
-Before:
+>> I think C libraries can use this optimization for their system calls
+>> (after adjusting the assembler clobbers) because the vector state is
+>> caller-saved in the standard calling convention.  But there is backwards
+>> compatibility impact for turning this on for the entire process.
+>
+> The focus I have right now is allowing users to avoid the delay in
+> syscall entry on implementations where clobbering is slow. Palmer had
+> mentioned in my v1 [1] that he has 'a patch out for GCC that enables a
+> system-wide vector ABI, but I don't have time to test/benchmark it so 
+> it's kind of hard to justify'. It seems like creating a new ABI where
+> the vector registers are preserved across syscalls could be useful, but
+> I think it would be best to handle that possiblity later on.
 
-# ip link add name dummy1 up type dummy
-# ip link add name vrf1 up type vrf table 100
-# ip address add 192.0.2.1/24 dev dummy1
-# ip nexthop add id 1 via 192.0.2.2 dev dummy1
-# ip nexthop
-id 1 via 192.0.2.2 dev dummy1 scope link
-# ip link set dev dummy1 master vrf1
-# ip nexthop
-# echo $?
-0
+I'm confused.  Current glibc assumes that vector registers are preserved
+across system calls because the assembler clobbers do not mention them.
+Similar inline assembly probably has ended up in other projects, too.
+It works by accident if glibc is compiled for a non-vector target, or if
+it so happens that GCC never keeps vector registers alive across system
+calls.
 
-After:
+Thanks,
+Florian
 
-# ip link add name dummy1 up type dummy
-# ip link add name vrf1 up type vrf table 100
-# ip address add 192.0.2.1/24 dev dummy1
-# ip nexthop add id 1 via 192.0.2.2 dev dummy1
-# ip nexthop
-id 1 via 192.0.2.2 dev dummy1 scope link 
-# ip link set dev dummy1 master vrf1
-# ip nexthop
-id 1 via 192.0.2.2 dev dummy1 scope link 
-
-> 
-> Optimize it by introducing the NETDEV_VRF_MASTER event. When a net device
-> is added to the slave of the vrf, the NETDEV_VRF_MASTER event will be
-> triggered, and the neighbor cache will be flushed, and the routes will be
-> moved to the corresponding table.
-> 
-> The moving of the routes across tables is tested with following command:
-> 
->   $ ip link add name dummy1 up type dummy
->   $ sysctl -wq net.ipv6.conf.dummy1.keep_addr_on_down=1
->   $ ip address add 192.0.2.1/24 dev dummy1
->   $ ip address add 2001:db8:1::1/64 dev dummy1
->   $ ip link add name vrf1 up type vrf table 100
->   $ ip link set dev dummy1 master vrf1
-> 
->   $ ip -6 r show table 100
->   local 2001:db8:1::1 dev dummy1 proto kernel metric 0 pref medium
->   2001:db8:1::/64 dev dummy1 proto kernel metric 256 pref medium
->   local fe80::cc26:8ff:fe02:ae95 dev dummy1 proto kernel metric 0 pref medium
->   fe80::/64 dev dummy1 proto kernel metric 256 pref medium
->   multicast ff00::/8 dev dummy1 proto kernel metric 256 pref medium
-> 
->   $ ip -4 r show table 100
->   192.0.2.0/24 dev dummy1 proto kernel scope link src 192.0.2.1
->   local 192.0.2.1 dev dummy1 proto kernel scope host src 192.0.2.1
->   broadcast 192.0.2.255 dev dummy1 proto kernel scope link src 192.0.2.1
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
