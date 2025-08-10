@@ -1,165 +1,239 @@
-Return-Path: <linux-kernel+bounces-761400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284D2B1F99D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 12:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5967B1F99F
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 12:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0F3B7AB00C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 10:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D681D1645EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 10:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698EA25C706;
-	Sun, 10 Aug 2025 10:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D5624466F;
+	Sun, 10 Aug 2025 10:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFbw6hvG"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aoFh88eB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6581223FC42;
-	Sun, 10 Aug 2025 10:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286951DB122
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 10:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754820968; cv=none; b=OA0MIuIQD6QBaxcl3RvlCnvQCMRZtka9AxN0AEqBYuRLEr6uL9p1KADcs300r0XF6CQJ6I1oHVQpqVXe2ykAaX0E4jM8D+8JXEhcgD46rlVDCsVZmdxYLVBQtZF06R0gQcGonDPhEk4K6slX2Mrfy0iqZvoa16GrgvhRYrc6HwI=
+	t=1754821133; cv=none; b=ocpp8tS7ORz1hIdOmF9kTF84onJG91b82i360ZvDm9d+9N8yc2bJxygPIcFdhik9BqJIVU4RwFdL+WlBOwTLKnlLDpzbtTlmies/HIkOMfm4FyCrPCbdakDj828nMsxNYNDlv58HYS3K5OcPVGQXdFnJu8X2PE6NlP9cHlUsOJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754820968; c=relaxed/simple;
-	bh=rDQIx1s6A6hGmi9HbZcEjXtoTdyxpU+DpS5cyiDpCqs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DDe/fbt9pB5rHEhzhk5lpxR/RHoj/jqZNP0DwqDCCgQZvhGwTaI3r8AAUbqOvegCEJJLSEVzujjKNUuRCKvhOd3UfkygbxC+YVGXeTebvJAcTnDkDSW9fII1o6PfiLz9M6jb2YPkvb7wmG8kv9sXkrQwDWGv34hIzRKfpLHHQxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mFbw6hvG; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b34a8f69862so2490250a12.2;
-        Sun, 10 Aug 2025 03:16:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754820967; x=1755425767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y2OT5F7bZ/arjZTso2AUwwEE0thLjDqJvHVad93pKuM=;
-        b=mFbw6hvGLvoMahE0p51EHAvIUB3WPzywNgIvWj8QsbqTaq+/pMM9y8Gdi/hXytJqep
-         1pru4AksJ9UddzlisCFr0aEjZTR2Bbja7tJb3ws38trz54NCBZu/MA9G9Wt2meCKQlfv
-         +zxDKifr9/SWtJ+QaP9T48drAZ9WzG4+gBAVDPxqVPH7F5ql4NGSC8iVMleBBnwGlBC3
-         iTraatSIQ4b3Htuuu3G32Zw6APLScJo8S4aa/YByMn4f4SDJo99XIayvPQ4yYuKJYdKQ
-         uwQ38oB3WSh2boQolLrmicWKr2Kmo9nCPMAP7B8BohAYJD3Lrr1FyQ5ydv9kk4OGleiv
-         IiMg==
+	s=arc-20240116; t=1754821133; c=relaxed/simple;
+	bh=kPiyXZ2e4XXm2+ZgHWDD9letI2XCK7Rr9ZtefVy2dzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dmdwiypx0K6PbwIOFyKRkoCjqZtjcDQZiCvdTqVA4VT1dWnjKqEfTJix7enK9+QsE+7yBvysytldpXhnFGpTeUuaTfQV6lxMjpEA8OslHXoWwrvdG1edjo7H2spOI7xDQZQBPVBoeqlYL2z6OhIZF5L7FxOP8cZT5TUcS3G0OAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aoFh88eB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754821130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kPiyXZ2e4XXm2+ZgHWDD9letI2XCK7Rr9ZtefVy2dzg=;
+	b=aoFh88eB+Q89+Y0bvn99j2ykoOrdGPt7tWsGram6ZOGuS5J/Jt0dhyARLPgd+yziEZ00eo
+	mYKNLECI1yonkg3lx17qacAspDtosNdKG5N4YSjkTENGQ97DFobOxg0o2c23z6Drtd5tU5
+	Bz5MzmAHxWOR3cgTO1w2q/QRHNR0/1k=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668--qK2yhy-OWOsifJ7hidndQ-1; Sun, 10 Aug 2025 06:18:48 -0400
+X-MC-Unique: -qK2yhy-OWOsifJ7hidndQ-1
+X-Mimecast-MFC-AGG-ID: -qK2yhy-OWOsifJ7hidndQ_1754821127
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-31f729bf733so6480184a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 03:18:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754820967; x=1755425767;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1754821127; x=1755425927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y2OT5F7bZ/arjZTso2AUwwEE0thLjDqJvHVad93pKuM=;
-        b=w3LLOQxDrJY2Mfeba7CitJANmCaTVDu159IEHed6qDcwISS+9lgMjyklrCILjbaPtV
-         mFiEAXFwRBZ/UQeTVj5env44XC3JPm8D1COFJM6lLDVDfLlAJLXvwNwnJTBOAvZDkvrV
-         9qLzejUgmJXc1QEfjET3IVg/gWoXON/4mpuCVpl+Sr3zN+UpAXektU3vyh0E38cmSMMa
-         TVxebOgXNy3JQnXgD3/9Cinn2KvBJpcfmIiHpUw8e3Tckr87AdVBKVrZYTgNz6O6pTJ/
-         pyiPALipThCH3B1pMvDoHOvsx9eYjzSUGuZjUJVQI0X/3Q8vsP7NJUbxyZZyfxCCZFJ2
-         iFoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJy+L+DYt1sFEwR/9e/dTbvpf3plkZFncRHHv7bAOn8juyDkGaVvMBfKBN0Hsdx6YPm2M4Jz54kd7pcDID@vger.kernel.org, AJvYcCXQM74ixIaCknYoLjRkw3XFdGoMPRXsHU2gqxdxAg21uRKScB1uI/tnp4aQcswg1ZHNV38EfQVvUxF4sV5Y@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp1euaY+W1QPX3wfLxb/4zDEIT4vzOWx+r0NnWG5oBwZq23PRg
-	+zaUs2IG1SMZa/FA9YLHJNDE0YYRrs+3mvbEr6mZ/HNLeHpH+KwceQjM
-X-Gm-Gg: ASbGncsLcPywx2W386SnOAGEkJokk8IfLnqGV91jTk1iRw+i1UUeLqPoEny5BxvXxc6
-	j4tA3CK3fvIxB9qgcuzjWBTNJK3nOPnt7CfDz4dp3f9CwAtGFWnBB/b49mQRtxG+XFinh5mQAx/
-	eW4JzM046p3/EuUpN1xnlBfmHOHQaHkRiKmpnt4rBfWa5LzmyLtZs/89tWzrCG6RmmkUXCpL+ft
-	oVAjIIFoaxU49SVUyoMkUd2YxQdUHbSvsqRzV1ipv7fU4zOaUwNIc/nH0jxsXp1OfeZdM9K4xal
-	HtT4gqmZWIfmmnG5JKMr8AhBEJ5YFhu1JTtqN5blqHo7dZlLBCHCrOyePwotCavI+he+vDF1vVB
-	YY1Fij/aTBCNzoyW4g8N/D8qU2Py8pJPapjXwBmNIO4Rfcg==
-X-Google-Smtp-Source: AGHT+IEfzIB/bMwT0gz0dl/X1susnwXrNxFT85X7Tg/EAtUZIdu1PG7GaBu71SPqPgTGFInFXAWt6A==
-X-Received: by 2002:a17:90b:48c4:b0:31e:fe18:c6df with SMTP id 98e67ed59e1d1-32183e32f54mr15165340a91.16.1754820966597;
-        Sun, 10 Aug 2025 03:16:06 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32161259329sm11923432a91.17.2025.08.10.03.16.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 03:16:06 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: brauner@kernel.org,
-	djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v2 4/4] iomap: don't abandon the whole thing with iomap_folio_state
-Date: Sun, 10 Aug 2025 18:15:54 +0800
-Message-ID: <20250810101554.257060-5-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250810101554.257060-1-alexjlzheng@tencent.com>
-References: <20250810101554.257060-1-alexjlzheng@tencent.com>
+        bh=kPiyXZ2e4XXm2+ZgHWDD9letI2XCK7Rr9ZtefVy2dzg=;
+        b=w+9NQp7AtbdAkOpwv9QhuqI8U5ZFj2TVV/dyJ0OYxumgxjs9O+wAHR4TtSUVWv72KY
+         NDBXyPi2FOrfCvDTjTKjrhFscpFe2jGn87QpE003U2sXz51TNde1OlHOMI26UHFEUEzY
+         dvnL8A3kkIOYnorrNw1WIAUGRqMPYSVejGJtv1A1PZF7Hi+osMdoEecEaIQwVd63Hl9J
+         kC0+PCitlSc4W46hPN9CUecolWyffFLG+pmbbgPWrjLpnoSgc5Iv4iPaZO6Wr0Z6kRnx
+         loWPXRMuHvYJqosJKST+SXVWaT0DkUIKpEBW+2mS9MgrTklxmyws89k5ay4N53iCwVJ7
+         2LsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVT9VPaKpF/wMRSjbm4Lgu5nTvroUpV/wwkAXruzeBdb3bfW2ckJPSdpWmUp1qQJMgJv1jsD2Mjh5Lvi5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydQvFLcegBe40kOz7Q7mGICqkf5k7e2ANKOJQ8cjWPjyYfwXR4
+	nzWjvbgtYwYaFM7pj/xtDuPQRZ3P94S8QNF0UJOdLJrbfRmippZ2Ewq5BJKRp42ybEf6NRbEa6L
+	Q/mytVfeZTacyqNY1F6xt7flAJYHZWsGILKuf1duY94ScdGfO9x433NAbdnPkxXdkYLIVzjAuYn
+	Mzj6AtZLMawUKyqlK1MmGvHl/T/0c4RmjfoXbFwBvS
+X-Gm-Gg: ASbGncuJaw28A0FEv00Z0HlRvc1gARzki2rBENYixMmAkMUWyxwJC5vpyl8qB2Xa9C2
+	HzR2VFzeuScXRT7zgGJ2lsOA6eagWv6PynRduuhT/9a+WpDtCOlvZeEOZQgzPAMZBf601/+zrvB
+	88r5Rm1lPVnqE34CJEDPon
+X-Received: by 2002:a17:90b:3912:b0:31e:f3b7:49d2 with SMTP id 98e67ed59e1d1-32183899525mr14684495a91.0.1754821127276;
+        Sun, 10 Aug 2025 03:18:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0fVBMxJ59N53Gaxmyy37OKmMJbvC5IFc3fBjBnBSbQn/4zi2E8Jo3gZ7goVYswjuyRbT7vtLFfz8g3PBTRCE=
+X-Received: by 2002:a17:90b:3912:b0:31e:f3b7:49d2 with SMTP id
+ 98e67ed59e1d1-32183899525mr14684467a91.0.1754821126855; Sun, 10 Aug 2025
+ 03:18:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250606115012.1331551-1-eperezma@redhat.com> <20250606115012.1331551-2-eperezma@redhat.com>
+ <CACGkMEsw2taXgW11na2CFK6W03c=x=wMn3iwNZPypgPkeSU06Q@mail.gmail.com>
+ <CACGkMEvinV7Zd+xddnxcerFbw_c+RZypkeD5HaN8=g6+peZvMQ@mail.gmail.com>
+ <CAJaqyWeetDsdoDzVrN-n0+jr97MBPeHdTxeM3ttmNUeLK702VA@mail.gmail.com>
+ <CACGkMEvbxZsmPPHgfst89FCbZamBPLt8V=K-eepa4s3muFuM4A@mail.gmail.com>
+ <CAJaqyWerLAL44w-mnwaohZh+duzHqPS3BO-sJDoEHZDN5RLY1g@mail.gmail.com> <CACGkMEvsvFzKUF6w0T4juUFcDbm67YoFFwNDw82K6kogB-1yRA@mail.gmail.com>
+In-Reply-To: <CACGkMEvsvFzKUF6w0T4juUFcDbm67YoFFwNDw82K6kogB-1yRA@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Sun, 10 Aug 2025 12:18:10 +0200
+X-Gm-Features: Ac12FXwtjED04DT8sjJMyWyO9bALrxlsb89TiDaofyKYFnnAHJ0EUE-cORz85uM
+Message-ID: <CAJaqyWeteUcvzTbcf2ShatX8QLCVCEgs-dgy19ir=W3LJE3y1A@mail.gmail.com>
+Subject: Re: [RFC 1/6] vduse: add v1 API definition
+To: Jason Wang <jasowang@redhat.com>
+Cc: Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
+	linux-kernel@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+On Fri, Aug 8, 2025 at 2:50=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
+te:
+>
+> On Thu, Aug 7, 2025 at 6:56=E2=80=AFPM Eugenio Perez Martin <eperezma@red=
+hat.com> wrote:
+> >
+> > On Tue, Jun 10, 2025 at 10:36=E2=80=AFAM Jason Wang <jasowang@redhat.co=
+m> wrote:
+> > >
+> > > On Mon, Jun 9, 2025 at 2:11=E2=80=AFPM Eugenio Perez Martin <eperezma=
+@redhat.com> wrote:
+> > > >
+> > > > On Mon, Jun 9, 2025 at 3:50=E2=80=AFAM Jason Wang <jasowang@redhat.=
+com> wrote:
+> > > > >
+> > > > > On Mon, Jun 9, 2025 at 9:41=E2=80=AFAM Jason Wang <jasowang@redha=
+t.com> wrote:
+> > > > > >
+> > > > > > On Fri, Jun 6, 2025 at 7:50=E2=80=AFPM Eugenio P=C3=A9rez <eper=
+ezma@redhat.com> wrote:
+> > > > > > >
+> > > > > > > This allows to define all functions checking the API version =
+set by the
+> > > > > > > userland device.
+> > > > > > >
+> > > > > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > > > > >
+> > > > > > It might be worth clarifying how it works.
+> > > > > >
+> > > > > > For example,
+> > > > > >
+> > > > > > 1) would VDUSE behave differently or if it's just some new ioct=
+ls
+> > > >
+> > > > I'd like to test more in-depth, but a device can just bump the vers=
+ion
+> > > > ID and then implement the replies to the vduse messages. No need to
+> > > > implement new ioctls. If the VDUSE device sets 0 in either number o=
+f
+> > > > ASID or vq groups, the kernel assumes 1.
+> > >
+> > > Right, this is the way we use now and I think maybe we can document
+> > > this somewhere.
+> > >
+> > > >
+> > > > But you have a very good point here, I think it is wise to evaluate
+> > > > the shortcut of these messages in the VDUSE kernel module. If a VDU=
+SE
+> > > > device only has one vq group and one ASID, it can always return gro=
+up
+> > > > 0 and asid 0 for everything, and fail every try to ser asid !=3D 0.
+> > >
+> > > Yes, and vhost-vDPA needs to guard against the misconfiguration.
+> > >
+> > > > This
+> > > > way, the update is transparent for the VDUSE device, and future
+> > > > devices do not need to implement the reply of these. What do you
+> > > > think?
+> > >
+> > > This should work.
+> > >
+> > > >
+> > > > > > 2) If VDUSE behave differently, do we need a ioctl to set the A=
+PI
+> > > > > > version for backward compatibility?
+> > > > >
+> > > > > Speak too fast, there's a VDUSE_SET_API_VERSION actually.
+> > > > >
+> > > > > I think we need to think if it complicates the migration compatib=
+ility or not.
+> > > > >
+> > > >
+> > > > Do you mean migration as "increase the VDUSE version number", not "=
+VM
+> > > > live migration from vduse version 0 to vduse version 1", isn't it? =
+The
+> > > > second should not have any problem but I haven't tested it.
+> > >
+> > > I mean if we bump the version, we can't migrate from version 1 to
+> > > version 0. Or we can offload this to the management (do we need to
+> > > extend the vdpa tool for this)?
+> > >
+> >
+> > I just noticed I left this unreplied. But I still do not get what
+> > migrate means here :).
+> >
+> > If migrate means to run current VDUSE devices on kernel with this
+> > series applied these devices don't set V1 API so they have one vq
+> > group, and one asid. I'm actually testing this with my libfuse+VDUSE
+> > modifications that don't use V1 at all. Adding this explanation to the
+> > patch as it is a very good point indeed.
+>
+> Right.
+>
+> >
+> > If it means to migrate a guest from using a V1 VDUSE device to a V0
+> > device "it should work", as it is just a backend implementation
+> > detail.
+>
+> For example src is the VDUSE with multiqueue support (v1) but dest
+> doesn't have this support (v0). I think the qemu should fail to launch
+> in dest.
+>
+> > If we migrate from or to a vdpa device backed by hardware, for
+> > example, one of the devices does not even have the concept of VDUSE
+> > API version.
+> >
+> > In the case of net, it does not work at the moment because the only
+> > way to set features like mq are through the shadow CVQ.
+>
+> I think you mean qemu should fail, I'm not sure this is friendly to libvi=
+rt.
+>
 
-With iomap_folio_state, we can identify uptodate states at the block
-level, and a read_folio reading can correctly handle partially
-uptodate folios.
+No, I think QEMU should not transmit vdpa backend properties not
+visible to the guest, so we don't get an explosion of properties that
+are hard to get. Expanding on this, QEMU is not even able to know if
+it is talking with VDUSE, vdpa_sim, or a vdpa device backed by
+hardware. And I think we don't want QEMU to have this information. So
+sending the VDUSE version implies removing a lot of useful
+abstractions.
 
-Therefore, when a partial write occurs, accept the block-aligned
-partial write instead of rejecting the entire write.
+In the case of net, the destination QEMU should fail if it is not able
+to restore the device state. At this moment this implies to have at
+least two ASID if the net device has CVQ, and that CVQ is in its own
+ASID, but that may not be true in the future.
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/iomap/buffered-io.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+But QEMU does not check if that is the case migrating between two
+vdpa_net_sim if one supports ASID but the other doesn't. And this is
+only a requirement for net, not for other vdpa devices.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index f80386a57d37..19bf879f3333 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -873,6 +873,25 @@ static int iomap_write_begin(struct iomap_iter *iter,
- 	return status;
- }
- 
-+static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
-+		size_t copied, struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+	unsigned block_size, last_blk, last_blk_bytes;
-+
-+	if (!ifs || !copied)
-+		return 0;
-+
-+	block_size = 1 << inode->i_blkbits;
-+	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
-+	last_blk_bytes = (pos + copied) & (block_size - 1);
-+
-+	if (!ifs_block_is_uptodate(ifs, last_blk))
-+		copied -= min(copied, last_blk_bytes);
-+
-+	return copied;
-+}
-+
- static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
- {
-@@ -886,12 +905,15 @@ static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	 * read_folio might come in and destroy our partial write.
- 	 *
- 	 * Do the simplest thing and just treat any short write to a
--	 * non-uptodate page as a zero-length write, and force the caller to
--	 * redo the whole thing.
-+	 * non-uptodate block as a zero-length write, and force the caller to
-+	 * redo the things begin from the block.
- 	 */
--	if (unlikely(copied < len && !folio_test_uptodate(folio)))
--		return 0;
--	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
-+	if (unlikely(copied < len && !folio_test_uptodate(folio))) {
-+		copied = iomap_trim_tail_partial(inode, pos, copied, folio);
-+		if (!copied)
-+			return 0;
-+	}
-+	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), copied);
- 	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
- 	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
--- 
-2.49.0
+So if we want to develop it, I think it is independent of this series.
+
+[...]
 
 
