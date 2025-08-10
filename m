@@ -1,135 +1,144 @@
-Return-Path: <linux-kernel+bounces-761318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FC1B1F869
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 06:53:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FCFB1F86B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1250D4E1565
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 04:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B58F3BDD0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 05:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14591D61B7;
-	Sun, 10 Aug 2025 04:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F1F1E32C6;
+	Sun, 10 Aug 2025 05:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DxJbrZCJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b="RiOCAotp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d+AGpCL3"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B61ACA4E;
-	Sun, 10 Aug 2025 04:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739A01DED4C;
+	Sun, 10 Aug 2025 05:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754801624; cv=none; b=VtYnAxzjLcZkpoy4B3Pez/9pk+kWy+vMxz851ohSSBcFR8Hg68L8rs9+qfcodOji/FlkyHG8Oka0z994fd0ByGffRjqXCbrAvQR3Lu91F1SMf84UDSOJG4uZ+8DqNiTdsIRH6IrWzR2uuKcra1Mo6z+7ziLXmRDy0BkH/5xefrU=
+	t=1754802617; cv=none; b=qQlndiAmz+vRHZnOpEFFriV77I++O6ZJI/1Kbu/PqLTLavC4cY9i7MxHtfJ//uBkGeGfVJrWu4N1/Vq04VlUvTP8E3A3ypTvXEQvM193RoPrLqsM7snk7yj6u4EwbeEbEh0IKdhLd0W1ZZZ5S041POMDaxxVFCBHKbxiDVTor5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754801624; c=relaxed/simple;
-	bh=3lGbStlu8yMmhRhoMabgr57jQSN1KJvUT8IV+PChT00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qiYkyUHjWAn5cBkTvYlXbxRH2ExPQS4r4ax2GBhwpGXa4grXG0qxYG8HS1G4h52IwuJkd3kmjmsZizeNIuVORfovuq8zbZwCdplVlV7wmVf7ySHoPAA3Evt/9GqM3voCEYJblCMfWjLggrmDcjbm4mqb4cv/Qpg4FrNYytEkans=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DxJbrZCJ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754801623; x=1786337623;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3lGbStlu8yMmhRhoMabgr57jQSN1KJvUT8IV+PChT00=;
-  b=DxJbrZCJNoIha3IyR0U8bOA2cMgQi5/o+suVNqj7bihpsE1KunKv3NjS
-   qU8aOlA07+iVQ3bZ/DEUzpVREd8IpWmheyhwE5R/H0buzOSUu4YOX4wf6
-   g/O+zqu4nTYPN1yJ6F3kHciCnwIOu7NeCFYYx9Up6M5wm/eOOLBXT1e8w
-   dBBizs9qKWvNLWzG+igrgEIW2dy7Ok8BtHVWfuZESD4GFKjH5zg+B9DSP
-   ehL+1XwGtEyBe4cxJxkZQNqYsxB8HjevE94jzGOn/drdOYjTSUXEELIIp
-   yRdYOpyvb/2GfVvqavyN8dn+FJScXgmhhgtLwJtT1kxjh1BqYFb4zbyVo
-   Q==;
-X-CSE-ConnectionGUID: fEZUPJmBQp6q8VV9WY7XgA==
-X-CSE-MsgGUID: xywdxMidS2a94nq+K0FSVw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11516"; a="60937692"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="60937692"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2025 21:53:42 -0700
-X-CSE-ConnectionGUID: x47SEqisQNKcU/UXGw+X3w==
-X-CSE-MsgGUID: vN/EfR04RhGvXrtVCgkhUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="169862035"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Aug 2025 21:53:36 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uky3p-0005AC-2A;
-	Sun, 10 Aug 2025 04:53:33 +0000
-Date: Sun, 10 Aug 2025 12:52:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Menglong Dong <menglong8.dong@gmail.com>, alexei.starovoitov@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net,
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-	jolsa@kernel.org, jani.nikula@intel.com, simona.vetter@ffwll.ch,
-	tzimmermann@suse.de, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH tip 2/3] sched: make migrate_enable/migrate_disable inline
-Message-ID: <202508101230.2KBZa0Ql-lkp@intel.com>
-References: <20250810030442.246974-3-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1754802617; c=relaxed/simple;
+	bh=DWTCq8bkMNor4m4ua6gwcJThhUe0WQPRO1M8FnsLT8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ocKDdVKeeLXE/NKYJ+o1EHipm46x3xj2KUbhu0Z7t7NhWjdq/rhoy+qu4mqKHZcG2cV7gj9NrBtkqnFcvPcncDVhlIsdqZKYO2grfLPL09fsSiW7I5DKmnChA9x9N8xTKDEs9TZOkhfuzT0zcfCCvi+X2hJWS7fi0eCN+3yddAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net; spf=pass smtp.mailfrom=bzzt.net; dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b=RiOCAotp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d+AGpCL3; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bzzt.net
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 99C27140007D;
+	Sun, 10 Aug 2025 01:10:14 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Sun, 10 Aug 2025 01:10:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bzzt.net; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1754802614; x=
+	1754889014; bh=OlCCal+fNGZcQ6+kJvw1v/1zAyc6Fk0jLbxn8+A2XYk=; b=R
+	iOCAotp9kSEKPu99rcZfPqHMVaES+gpiF1ucYAfVLEBKwWo5Zeu+NkFbveerZleL
+	FTyZLKGLeaY8KI7atqandh4n35/pIIu42ylV4lS69iP/oycoq9KFScxxeFjbnfKa
+	wCOC+FuDQp+Vqci2L7/hSZkvEEkfql0Vy6HHB+RiMZF/Eu53oKq+umgXYN9+ZqRD
+	jkFhmCPWqHDzLmURIwByrBddtturlWhonlITdSrDDZ+I6/2mNCBVqyciaIjxkxLd
+	ROuUG2Dc4tN5XwQl8NmxjugXiY63XUxXBoAlDVJrwD/zcaE1RVq+q6CIfmaLRGPm
+	PS0NZ83io74Xd2CW00h7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1754802614; x=1754889014; bh=O
+	lCCal+fNGZcQ6+kJvw1v/1zAyc6Fk0jLbxn8+A2XYk=; b=d+AGpCL3jwTFkV0b7
+	hWX9nqmy9gXKP2qWrxdma5tfcHV4H1xC/T11t4SvvBph1abTW6H9nJ+u7923XwQm
+	CI0G6C5o4kz7BTG4kmfH3fno0/n5xw93li7H+BGp6N3Z+TM+ca6V9nt0uaCFg5TE
+	P/uYvWGHmLcmYKOobh4AyepqsIY+nUQVmkwao52ksd4gYxRmhdJRWUe7KR2gWp0b
+	F4nyESqYWVsc0adubawIyItwbmRFCnGTT6gvpecjxMDvFd+NbgXYoycmztNbFYTa
+	zmWLAhJqKshOZvVfryYBr0yfYcBYqlMM7tVph5n/qUMKJ1J+DcPUj5RyaCPxj73F
+	haiLA==
+X-ME-Sender: <xms:tSmYaM9dSkm7nxwzKCtigVyf7EHt4wR7jW1Iaxat3u-XFxzNUGHBzA>
+    <xme:tSmYaLc7iYQmzkt2IjN7CuyZQWlEukeF3tYxMzjyWkEbgPbiN0_ymn3r00TAZ_2eP
+    rMj-C4HiA1yyR8csRo>
+X-ME-Received: <xmr:tSmYaDy3fKuB53mbg4XUFm17Kk7DzOu3-ts2uOShBTBv85Gp77Jvqg3eCtOkuTq0VarMiU3npS39>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduvdekjedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
+    ertddtnecuhfhrohhmpeetrhhnohhuthcugfhnghgvlhgvnhcuoegrrhhnohhuthessgii
+    iihtrdhnvghtqeenucggtffrrghtthgvrhhnpefgiedutdehffehfeevieelhfefueejgf
+    ehveeljeettddugeehvdekjeetveehgeenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpegrrhhnohhuthessgiiiihtrdhnvghtpdhnsggprhgtph
+    htthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguhhhofigvlhhlshes
+    rhgvughhrghtrdgtohhmpdhrtghpthhtoheprghnthhonhihsehphhgvnhhomhgvrdhorh
+    hgpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehmrgigihhmihhlihgrnhesmhgsohhstghhrdhmvgdprhgtphhtthhopehrvghgrh
+    gvshhsihhonhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepshgvuggr
+    thdrughilhgvkhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:tSmYaILBJ4t7M7GCTW-NbnpsFDd8W-VM558U06fvAI-y3F0g6IyttA>
+    <xmx:tSmYaNHlLCWS4IXys-Rw5VXpLLr_BN6QolGnm6CXkZRn9ECVe7HkiQ>
+    <xmx:tSmYaM_Pw8bxkZ3hdEnE67Vfo9F6iWGyQx1EQyMlOy0yYCKNZ-Hhtg>
+    <xmx:tSmYaFIribQT5hDrm91cGdt56OVBkF6Sf_v-Y5UEIaQWaaDoFMFN5A>
+    <xmx:timYaKkT_tM1vC6Lge2HUUoCbzj3FpffXG1rSNCdMsTDs9bVEKFtp38x>
+Feedback-ID: i8a1146c4:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 10 Aug 2025 01:10:12 -0400 (EDT)
+From: Arnout Engelen <arnout@bzzt.net>
+To: dhowells@redhat.com
+Cc: antony@phenome.org,
+	brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	maximilian@mbosch.me,
+	regressions@lists.linux.dev,
+	sedat.dilek@gmail.com
+Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
+Date: Sun, 10 Aug 2025 07:10:11 +0200
+Message-ID: <20250810051011.1387079-1-arnout@bzzt.net>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <2171405.1729521950@warthog.procyon.org.uk>
+References: <2171405.1729521950@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250810030442.246974-3-dongml2@chinatelecom.cn>
+Content-Transfer-Encoding: 8bit
 
-Hi Menglong,
+> Can you tell me what parameters you're mounting 9p with?  Looking at the
+> backtrace:
+> 
+> [   32.390878]  bad_page+0x70/0x110
+> [   32.391056]  free_unref_page+0x363/0x4f0
+> [   32.391257]  p9_release_pages+0x41/0x90 [9pnet]
+> [   32.391627]  p9_virtio_zc_request+0x3d4/0x720 [9pnet_virtio]
+> [   32.391896]  ? p9pdu_finalize+0x32/0xa0 [9pnet]
+> [   32.392153]  p9_client_zc_rpc.constprop.0+0x102/0x310 [9pnet]
+> [   32.392447]  ? kmem_cache_free+0x36/0x370
+> [   32.392703]  p9_client_read_once+0x1a6/0x310 [9pnet]
+> [   32.392992]  p9_client_read+0x56/0x80 [9pnet]
+> [   32.393238]  v9fs_issue_read+0x50/0xd0 [9p]
+> [   32.393467]  netfs_read_to_pagecache+0x20c/0x480 [netfs]
+> [   32.393832]  netfs_readahead+0x225/0x330 [netfs]
+> [   32.394154]  read_pages+0x6a/0x250
+> 
+> it's using buffered I/O, but when I try and use 9p from qemu, it wants to use
+> unbuffered/direct I/O.
 
-kernel test robot noticed the following build warnings:
+The NixOS integration tests mount 9p with 'cache=loose' which triggers the
+buffered I/O.
 
-[auto build test WARNING on tip/master]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/arch-add-the-macro-COMPILE_OFFSETS-to-all-the-asm-offsets-c/20250810-110846
-base:   tip/master
-patch link:    https://lore.kernel.org/r/20250810030442.246974-3-dongml2%40chinatelecom.cn
-patch subject: [PATCH tip 2/3] sched: make migrate_enable/migrate_disable inline
-config: arc-randconfig-001-20250810 (https://download.01.org/0day-ci/archive/20250810/202508101230.2KBZa0Ql-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250810/202508101230.2KBZa0Ql-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508101230.2KBZa0Ql-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> kernel/sched/core.c:2385:6: warning: no previous prototype for '__migrate_enable' [-Wmissing-prototypes]
-    void __migrate_enable(void)
-         ^~~~~~~~~~~~~~~~
+(I'm still seeing an issue in this area on 6.16-rc6, which remains also with
+'only' 'cache=lookahead' - I'll do some more analysis before sharing more
+about that, though)
 
 
-vim +/__migrate_enable +2385 kernel/sched/core.c
+Kind regards,
 
-  2384	
-> 2385	void __migrate_enable(void)
-  2386	{
-  2387		struct task_struct *p = current;
-  2388		struct affinity_context ac = {
-  2389			.new_mask  = &p->cpus_mask,
-  2390			.flags     = SCA_MIGRATE_ENABLE,
-  2391		};
-  2392	
-  2393		__set_cpus_allowed_ptr(p, &ac);
-  2394	}
-  2395	EXPORT_SYMBOL_GPL(__migrate_enable);
-  2396	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Arnout
 
