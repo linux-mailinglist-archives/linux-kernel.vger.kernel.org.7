@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-761444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC97B1FA24
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:39:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B95CB1FA27
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B71C1895BE7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 13:39:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C2DD17746A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 13:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D5C258CDA;
-	Sun, 10 Aug 2025 13:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A123125D546;
+	Sun, 10 Aug 2025 13:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcE1+2nv"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="prrCeoFw"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4205680
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 13:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C53335C7;
+	Sun, 10 Aug 2025 13:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754833148; cv=none; b=nYejcaso34nBTuJbBK1AGcdx09sZ3/i0a+ZVZ1+NphqlTve1iRrTDvXURcqFX6+44cWnldjxs0XYMR/kuRnvOLBeEt942F61hV7vJIB4rKx1+s+z0UQkiFWX+xdtQOyYdvTkAE3OXB8uLSGIlb+mXEqb62AXm8HX9cIYzSbalAY=
+	t=1754833339; cv=none; b=KTzVg14ZHJtoCMPpvWjWMWi7RGzkjFWu6CxPOULr2tJHAvg39svQDzgUNcDYOxv8m+LsytgGiDrP9orX6zdhPVrvO3/DzunIv/RkRiNO4K8jOk4EH9uyONYhl8T4SsFf5xdLAiJcSyccrAI8J2Z7/uAWJa6z30/Ah77aCEGshDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754833148; c=relaxed/simple;
-	bh=6/Zd5tNyUFBPJBdLEdpaqv9X25GxYiZLX6mT0Kah7G4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UzwVgs8/1HjVn6y2LosZX9ioW4zcYYVfoWqKO4Qiq5+TXys/n1EhqncL7sZrMmLqe0wUw8I1mRl9+4gISIMHC5pgVW5TQrB2hnS1iqhbhS7wDU9o0ltQfXQrUyDz3QDj8NZFaYL3iZxPrEtG9eIuRUW+f/mWtQQ27npV9FK3WPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcE1+2nv; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4233978326so1945750a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 06:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754833145; x=1755437945; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yoshnGQPZvUUhsSurL6kAbf6xWu8EGMASlS/IDx1kw0=;
-        b=XcE1+2nv8VFZKC8zkNaZw9pUXxrOruIWieO9mrp7ihx9rVqAMU97TRe9yq4x06Y0NR
-         A4Vr8FhRPepnfSCb4I+UNUTh6sqDD/QrPoUMBAwj5N5AGVRkTo1+044Qu3Ql0wPeRW5r
-         tAQDZby/H4FCxtf17i8qd4zY+pf7caANhDLOPjpv04Mlda5WasoGG5+1Nk0eUdTwf1xe
-         ZYebIOk45soe/VC+woUQ9+DP2EG0eIZqkCsdIvBKSQmdDLEEq4bs5PyMb8lsOZKGX+c6
-         nqA/g1MniMwZTaw6q6PdMDwFUTcfrAajA/iFPgizWprxQHskyjdOtwIZQfVbwvciwKxl
-         d+2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754833145; x=1755437945;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yoshnGQPZvUUhsSurL6kAbf6xWu8EGMASlS/IDx1kw0=;
-        b=aZ3DdFDdBYOOvNkw9wHTWbgsNuXs6L/ivCt/ZBOJE5jHNGeJUXwDcC2797JiKeCfNi
-         ZDGhLlMsEyeBtZMTkq2h1jcH+RNQZr4r7sHw3XHGA4RERn7g0UJ9xd8V7BNXjZaV5VUx
-         CNbs25P1KmXB5958G5v4fY3tsgESP1/qtTpQX3Ud0/JjJegjulwvUSWpq9NgeTd0gbsm
-         yLWCqesww1GHzoQKQuI6EfaXmz8DeOUq5rv+ngVicQ6MNDhN4BMgTbeS3tJmesWDHt6N
-         R+tnmb/CQa8sNALO78xky1o2X93xvFfMj4x0assU9yjLIJCP6iOQN4h6Ux+hFRj4IZMm
-         Y9DA==
-X-Gm-Message-State: AOJu0YzAIKZxXpXHgGOwfPnf4FAtSqRSYcgw0204gwABBJs8pVx8Brh1
-	Ev0JqUo/5OmYxKmjN7M9c7hi+r491WdAXEW+OX3pd27N9NiTZViTLQtl
-X-Gm-Gg: ASbGncsxUFAduVx34jVEJR2p43UOTU+LBQD80UusfNffqcuGghxbvzTKNgdKwqSDswy
-	Y/aYLp7jTOMYNBIkBoHeLGq83agJEq5FhZeuC58fI9vrKvt8UHqfiaOIE+qPBGglTjqZnqNrXKi
-	LwmHZBokIO6mu6UAfJoiOQB7rH6mEk+dbapRW2gAqFHrPSDc1TdslOtsFhA0L4jHiASDD/IgbRD
-	ggTylAyuv7V77bQu/fr5fTqRzGNz0/vM/TpzbxIeWq55oxO7Mbt+oR7BEgNvwYXK39GBGoQFj4j
-	uc1gyGmIYMHO0QXAHZ8D6P8omxUfAiGQTOXWSFAD9lkiF1yxxkG6Yuzk3h5sKySQ9wKTYe8mV96
-	5X0Q9C/F8/on9ExvAQNUHwzfobw==
-X-Google-Smtp-Source: AGHT+IEJiOcqd3f+iw2pD2y2xG4uE9Z7LUa7e0HgFMcWgFkFuTJ5hxWFqi58BPIb9xglcRf2wEO9uA==
-X-Received: by 2002:a17:903:3b87:b0:235:c9a7:d5f5 with SMTP id d9443c01a7336-242c2039f7fmr113424935ad.13.1754833144742;
-        Sun, 10 Aug 2025 06:39:04 -0700 (PDT)
-Received: from CNSZTL-DEB.lan ([2408:8262:245d:40cb:bc4b:53ff:fead:2725])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a48esm252223925ad.114.2025.08.10.06.38.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 06:39:04 -0700 (PDT)
-From: Tianling Shen <cnsztl@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Tianling Shen <cnsztl@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: [PATCH] mtd: spinand: add support for FudanMicro FM25S01A
-Date: Sun, 10 Aug 2025 21:38:52 +0800
-Message-ID: <20250810133852.52389-1-cnsztl@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754833339; c=relaxed/simple;
+	bh=eBSdJbmxbZYL0Ditld2pAWjUEPM/2am4aaqO2klRFr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DdwtA0YPGNoMARBrVIYB3wXmqjs9ops2HhZhMwHeXSYqGZt+74MX70UTYfv164PHamyXl1t1Xs8TjYH9JDORuw1RLIGhyoFXEKb4MmrcvWYhRQTuAw0N4KJuKV6M2t/BurrRFyf4jpbraJ+TwgvZW2DSVaFrxwEbbERbw/JfE1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=prrCeoFw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57A8kmtZ013794;
+	Sun, 10 Aug 2025 13:42:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=9MaeqQRmqCIb07g4pLtMVewudppB2WtsXzdJPTqQ4
+	Ks=; b=prrCeoFw2bCaPbkzk+O+1Y06P1XlgRE1J5JWj8vzYFOZOdtKVIgDdhhq4
+	Oqgm4ecQ9AOO06uc0oy/jBtv3WyelFMUjb3OAIzItbbUeN/6ttl5AeHdNF8SJtjB
+	rc4+d5SHKBPa0ItL2Ww3450zJiBDEgvwnsvRQKdtbxS1LyT9c06s2sY0gZat4Eb5
+	1By7AWmI2Qg0JY2wINn7bkvrcGWdNWaKF9vUHtCEBu+7+0gWQN1xBx3dxMHJKNQi
+	LZ0WpRNkQFbmAwJSD55nFxo43kc7fGB2GcT22/etYpsx00ivcjoi7m9o+UDVJ5il
+	JjO1tB3pcLJ2xVa4Q3cbYmQcmcA5w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48durtwjak-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Aug 2025 13:42:09 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57ADg8d6006698;
+	Sun, 10 Aug 2025 13:42:08 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48durtwjag-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Aug 2025 13:42:08 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57ABqr6a010646;
+	Sun, 10 Aug 2025 13:42:07 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48egnua5yk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Aug 2025 13:42:07 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57ADg66529098592
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 10 Aug 2025 13:42:06 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 28C2C20043;
+	Sun, 10 Aug 2025 13:42:06 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DEDD220040;
+	Sun, 10 Aug 2025 13:42:03 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.216.43])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 10 Aug 2025 13:42:03 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        john.g.garry@oracle.com, tytso@mit.edu, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: [PATCH v4 00/11] Add more tests for multi fs block atomic writes
+Date: Sun, 10 Aug 2025 19:11:51 +0530
+Message-ID: <cover.1754833177.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,135 +88,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: QGujCYFCGKlwnUPWOj_iIG2jLeitjQnY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA5NyBTYWx0ZWRfX+4kTR010G2j3
+ Q5RiFtBmYlEp/cvM7Nv38pd8Pmy61JsNbailFcLcPEoDsFrZamJH7euISJwqPA6DD9HU+z1u1YP
+ EX1rYUeMv/f2nLgf2XqZ+iIINxb0bFy5Gp+STDFuDhKZFdfHW6Xd+6FpHMvQ11zrn4TYzCE+iLT
+ HoBf1B9FoGSvUAt9g4e4Mn2ss8BD4tbfguHexCmcI85GXRd+oNz34UflaTdgb+ji57j0gTp+EGq
+ qn5gGhnjUTdTsBm/lhAZbyYHrxEkpUhCHNFGVyfeZ7iB7zqAPinrUSqhzlARqdQ5gWh+TP/gPPP
+ jty1B5Azxi80uv1EYgPE2Qn0RCconB/6BtEROYAjPb5QNxzILoWj1Vlx1HLkmYJdytlQtiVAOZf
+ Duuacq+S7mELkKvQUpuyKqfkeKP+O/BqYO2AjB7vTXAckt6iIOYZwt7/OSDLuCaSYhqGF6fV
+X-Authority-Analysis: v=2.4 cv=QtNe3Uyd c=1 sm=1 tr=0 ts=6898a1b1 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=VnNF1IyMAAAA:8
+ a=jc9Yl3RBPp2OVu_FEiAA:9
+X-Proofpoint-ORIG-GUID: 8vnx56vtEP_BQxVBtUwdmpvQiVLhhLrX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-10_04,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ mlxlogscore=999 impostorscore=0 suspectscore=0 bulkscore=0 mlxscore=0
+ phishscore=0 malwarescore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508100097
 
-Add support for FudanMicro FM25S01A SPI NAND.
-Datasheet: http://eng.fmsh.com/nvm/FM25S01A_ds_eng.pdf
+Changes in v4: (Thanks to Darrick, John and Zorro for the reviews)
 
-Signed-off-by: Tianling Shen <cnsztl@gmail.com>
----
- drivers/mtd/nand/spi/Makefile |  2 +-
- drivers/mtd/nand/spi/core.c   |  1 +
- drivers/mtd/nand/spi/fmsh.c   | 74 +++++++++++++++++++++++++++++++++++
- include/linux/mtd/spinand.h   |  1 +
- 4 files changed, 77 insertions(+), 1 deletion(-)
- create mode 100644 drivers/mtd/nand/spi/fmsh.c
+- g/1226,1227: Modify fio threads to not issue overlapping atomic writes
+- g/1228: Use xfs_io -c "shutdown" instead of _scratch_shutdown to avoid
+          bash overhead
+- g/1229: Remove FSX_AVOID handling for bigalloc from common/rc. It is
+          part of the specific test now
+- ext4/063: add more clearer extent diagram
+- ext4/064: Drop the test for now as im taking sometime to understand
+            the behavior better.
+- Removed test numbers from commit message
+- For tests with significant changes I've removed the RVBs
 
-diff --git a/drivers/mtd/nand/spi/Makefile b/drivers/mtd/nand/spi/Makefile
-index 258da42451a4..e288742ea8f0 100644
---- a/drivers/mtd/nand/spi/Makefile
-+++ b/drivers/mtd/nand/spi/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--spinand-objs := core.o otp.o
-+spinand-objs := core.o fmsh.o otp.o
- spinand-objs += alliancememory.o ato.o esmt.o foresee.o gigadevice.o macronix.o
- spinand-objs += micron.o paragon.o skyhigh.o toshiba.o winbond.o xtx.o
- obj-$(CONFIG_MTD_SPI_NAND) += spinand.o
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index b0898990b2a5..ea47028d021a 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -1184,6 +1184,7 @@ static const struct spinand_manufacturer *spinand_manufacturers[] = {
- 	&alliancememory_spinand_manufacturer,
- 	&ato_spinand_manufacturer,
- 	&esmt_c8_spinand_manufacturer,
-+	&fmsh_spinand_manufacturer,
- 	&foresee_spinand_manufacturer,
- 	&gigadevice_spinand_manufacturer,
- 	&macronix_spinand_manufacturer,
-diff --git a/drivers/mtd/nand/spi/fmsh.c b/drivers/mtd/nand/spi/fmsh.c
-new file mode 100644
-index 000000000000..8b2097bfc771
---- /dev/null
-+++ b/drivers/mtd/nand/spi/fmsh.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2020-2021 Rockchip Electronics Co., Ltd.
-+ *
-+ * Author: Dingqiang Lin <jon.lin@rock-chips.com>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/mtd/spinand.h>
-+
-+#define SPINAND_MFR_FMSH		0xA1
-+
-+static SPINAND_OP_VARIANTS(read_cache_variants,
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 2, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_FAST_1S_1S_1S_OP(0, 1, NULL, 0, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0, 0));
-+
-+static SPINAND_OP_VARIANTS(write_cache_variants,
-+		SPINAND_PROG_LOAD_1S_1S_4S_OP(true, 0, NULL, 0),
-+		SPINAND_PROG_LOAD_1S_1S_1S_OP(true, 0, NULL, 0));
-+
-+static SPINAND_OP_VARIANTS(update_cache_variants,
-+		SPINAND_PROG_LOAD_1S_1S_4S_OP(false, 0, NULL, 0),
-+		SPINAND_PROG_LOAD_1S_1S_1S_OP(false, 0, NULL, 0));
-+
-+static int fm25s01a_ooblayout_ecc(struct mtd_info *mtd, int section,
-+				  struct mtd_oob_region *region)
-+{
-+	return -ERANGE;
-+}
-+
-+static int fm25s01a_ooblayout_free(struct mtd_info *mtd, int section,
-+				   struct mtd_oob_region *region)
-+{
-+	if (section)
-+		return -ERANGE;
-+
-+	region->offset = 2;
-+	region->length = 62;
-+
-+	return 0;
-+}
-+
-+static const struct mtd_ooblayout_ops fm25s01a_ooblayout = {
-+	.ecc = fm25s01a_ooblayout_ecc,
-+	.free = fm25s01a_ooblayout_free,
-+};
-+
-+static const struct spinand_info fmsh_spinand_table[] = {
-+	SPINAND_INFO("FM25S01A",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xE4),
-+		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(1, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&fm25s01a_ooblayout, NULL)),
-+};
-+
-+static const struct spinand_manufacturer_ops fmsh_spinand_manuf_ops = {
-+};
-+
-+const struct spinand_manufacturer fmsh_spinand_manufacturer = {
-+	.id = SPINAND_MFR_FMSH,
-+	.name = "Fudan Micro",
-+	.chips = fmsh_spinand_table,
-+	.nchips = ARRAY_SIZE(fmsh_spinand_table),
-+	.ops = &fmsh_spinand_manuf_ops,
-+};
-diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-index 27a45bdab7ec..927c10d78769 100644
---- a/include/linux/mtd/spinand.h
-+++ b/include/linux/mtd/spinand.h
-@@ -355,6 +355,7 @@ struct spinand_manufacturer {
- extern const struct spinand_manufacturer alliancememory_spinand_manufacturer;
- extern const struct spinand_manufacturer ato_spinand_manufacturer;
- extern const struct spinand_manufacturer esmt_c8_spinand_manufacturer;
-+extern const struct spinand_manufacturer fmsh_spinand_manufacturer;
- extern const struct spinand_manufacturer foresee_spinand_manufacturer;
- extern const struct spinand_manufacturer gigadevice_spinand_manufacturer;
- extern const struct spinand_manufacturer macronix_spinand_manufacturer;
+Changes in v3 [3]:
+
+- (2/13) use dumpe2fs to figure out if FS is bigalloc
+- (9/13) generic/1230: Detect device speeds for more accurate testing. ALso
+  speeds up the test
+- fio tests - switch to write followed by verify approach to avoid false
+  failures due to fio verify reads splitting and racing with atomic
+  writes. Discussion thread:
+
+  https://lore.kernel.org/fstests/0430bd73-e6c2-4ce9-af24-67b1e1fa9b5b@oracle.com/
+
+  [3] https://lore.kernel.org/fstests/cover.1752329098.git.ojaswin@linux.ibm.com/
+
+Changes in v2 [1]:
+
+- (1/13) new patch with _min and _max helpers
+- (2/13) remove setup_fs_options and add fsx specifc helper
+- (4/13) skip atomic write instead of falling back to normal write (fsx)
+- (4/13) make atomic write default on instead of default off (fsx)
+- (5,6/13) refactor and cleanup fio tests
+- (7/13) refactored common code
+- (8/13) dont ignore mmap writes for fsx with atomic writes
+- (9/13) use od instead of xxd. handle cleanup of bg threads in _cleanup()
+- (10-13/13) minor refactors
+- change all tests use _fail for better consistency
+- use higher tests numbers for easier merging
+
+ [1] https://lore.kernel.org/fstests/cover.1750924903.git.ojaswin@linux.ibm.com/
+
+* Original cover [2] *
+
+These are the tests we were using to verify that filesystems are not
+tearing multi fs block atomic writes. Infact some of the tests like
+generic/772 (now: g/1230) actually helped us catch and fix issues in
+ext4's early implementations of multi fs block atomic writes and hence
+we feel these tests are useful to have in xfstests.
+
+We have tested these with scsi debug as well as a real nvme device
+supporting multi fs block atomic writes.
+
+Thoughts and suggestions are welcome!
+
+[2] rfc: https://lore.kernel.org/fstests/cover.1749629233.git.ojaswin@linux.ibm.com/
+
+Ojaswin Mujoo (9):
+  common/rc: Add _min() and _max() helpers
+  common/rc: Add a helper to run fsx on a given file
+  ltp/fsx.c: Add atomic writes support to fsx
+  generic: Add atomic write test using fio crc check verifier
+  generic: Add atomic write test using fio verify on file mixed mappings
+  generic: Add atomic write multi-fsblock O_[D]SYNC tests
+  generic: Stress fsx with atomic writes enabled
+  generic: Add sudden shutdown tests for multi block atomic writes
+  ext4: Atomic write test for extent split across leaf nodes
+
+Ritesh Harjani (IBM) (2):
+  ext4: Atomic writes stress test for bigalloc using fio crc verifier
+  ext4: Atomic writes test for bigalloc using fio crc verifier on
+    multiple files
+
+ common/rc              |  45 ++++-
+ ltp/fsx.c              | 109 ++++++++++-
+ tests/ext4/061         | 130 ++++++++++++++
+ tests/ext4/061.out     |   2 +
+ tests/ext4/062         | 176 ++++++++++++++++++
+ tests/ext4/062.out     |   2 +
+ tests/ext4/063         | 129 +++++++++++++
+ tests/ext4/063.out     |   2 +
+ tests/generic/1226     | 107 +++++++++++
+ tests/generic/1226.out |   2 +
+ tests/generic/1227     | 131 ++++++++++++++
+ tests/generic/1227.out |   2 +
+ tests/generic/1228     | 137 ++++++++++++++
+ tests/generic/1228.out |   2 +
+ tests/generic/1229     |  68 +++++++
+ tests/generic/1229.out |   2 +
+ tests/generic/1230     | 397 +++++++++++++++++++++++++++++++++++++++++
+ tests/generic/1230.out |   2 +
+ 18 files changed, 1437 insertions(+), 8 deletions(-)
+ create mode 100755 tests/ext4/061
+ create mode 100644 tests/ext4/061.out
+ create mode 100755 tests/ext4/062
+ create mode 100644 tests/ext4/062.out
+ create mode 100755 tests/ext4/063
+ create mode 100644 tests/ext4/063.out
+ create mode 100755 tests/generic/1226
+ create mode 100644 tests/generic/1226.out
+ create mode 100755 tests/generic/1227
+ create mode 100644 tests/generic/1227.out
+ create mode 100755 tests/generic/1228
+ create mode 100644 tests/generic/1228.out
+ create mode 100755 tests/generic/1229
+ create mode 100644 tests/generic/1229.out
+ create mode 100755 tests/generic/1230
+ create mode 100644 tests/generic/1230.out
+
 -- 
-2.50.1
+2.49.0
 
 
