@@ -1,90 +1,129 @@
-Return-Path: <linux-kernel+bounces-761552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5FEB1FBB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B81B1FBB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528A5162501
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:28:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34CBB3BBB47
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B436274FF1;
-	Sun, 10 Aug 2025 18:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185911E7C12;
+	Sun, 10 Aug 2025 18:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VxZFI/yz"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="odJG6gJh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAC918C933;
-	Sun, 10 Aug 2025 18:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F2518C02E;
+	Sun, 10 Aug 2025 18:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754850477; cv=none; b=o6n1zElH1dKSIvNnwPttV8oBMzRiEqPE1Uh7gK7uuj+1bAmEttmnv9hbtq+eKerrT84UVTMTXEqHxqyBcGOtei1qzRr/qVrDIqE9hJzO4HohtGgD9KwGvbBi/9jFW99zckU7wp5qNeDEiiaXcS3UR66xO21c7ChGNbpJO0LK7lU=
+	t=1754850629; cv=none; b=bvySZP8s2+gpMx2EkLimpXdU64VsOplrB9XwvUtEH1clO+756r06Wx5HHmJG1anMT2JOi622VCJKqARGdVyeA3lU7Rgl4TKkwQRtG+4pdabLcMr1WjRiDXvbl9w03fQhiUTpyvbt2QgHQX1f6fWld76blBFeJ7SmLzy8eFBaP5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754850477; c=relaxed/simple;
-	bh=Chf5vZfJTlSUeF7Zp09INTZxoB9ozgmqN97YzZnCAgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGz2kieQqYtCbBrKqm5wQwmbv/MI2FwlOLIOsGTMBtkg8CMhKvKnEH06ETLjhnwYciPuStnjNf/x+M7mkLz+7Ovpd2IdAYLB5AwixvdEA6J32tEHVS+D7tz17mpmR6bF5wSakEoJz80Pcl5OTXT9JrNKh+hd2FUGFHIHnWDlDBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VxZFI/yz; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZuOcuE0qvw2SZroUFnKL6SVWavIZnk5WBLZ9gVUuY7E=; b=VxZFI/yz8oEOwAB6G6JMXGlK05
-	zNBucBAUpdK49s1/fbMGwBiYWVkNCA1J4rsyakKluxfKI2jmsXLKZvlYinAMIsDmzDNUfY6MoguuF
-	acR+1fLAUBOqRVa3DmvzQPo6Zy3vHQzoafrKmt+CRMdOP8eEQ1fh/s3db1ipkKmciyrZCeA9prsxj
-	OqB4ZGZBoTlXxKmhh75CnwfQkTdL///SWVSRflp9vpLkLgf47SQ18TBil+RWmw3uw6YrCYe5qxmxm
-	ltXWfo43KN+HSVT4WjjcTFTBifNJ2jI1En4D/chXz9RGt5ofzIkKMuWT2hMBMOy+/rB1IjMjP5qm2
-	7gfhqEQw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulAls-00000009MDE-0eE6;
-	Sun, 10 Aug 2025 18:27:52 +0000
-Date: Sun, 10 Aug 2025 19:27:52 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ujwal Kundur <ujwal.kundur@gmail.com>, g@zeniv.linux.org.uk
-Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] rds: Fix endian annotations across various
- assignments
-Message-ID: <20250810182752.GM222315@ZenIV>
-References: <20250810171155.3263-1-ujwal.kundur@gmail.com>
- <20250810174705.GK222315@ZenIV>
- <20250810182506.GL222315@ZenIV>
+	s=arc-20240116; t=1754850629; c=relaxed/simple;
+	bh=BDEwxdP6aRMHliLQFbvtUXExAgSE5ZNqRkzrfSLCK18=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=td4ECuwJ+KXvDVb7XINbSleFl7HA+emUe7Ai5knruCHcRxw3SXKeE/e6EaJ6ov5DAzahrCVfAwUelhXFjNc+ugwnfCHPJCDd0w/JsTtA9KSf9dACXrCYiADDoMu78xfRSQ1I4hvyMPIDFAliOP9qUTVl9NkUj6lkVtfdxDA05S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=odJG6gJh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7628C4CEEB;
+	Sun, 10 Aug 2025 18:30:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754850629;
+	bh=BDEwxdP6aRMHliLQFbvtUXExAgSE5ZNqRkzrfSLCK18=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=odJG6gJhbVnnwy/20Dbnp2QMhB/bcLH31yZ2VSB++KMff3smByWkNKLVtzHw2yjkE
+	 NOdVpCWFw7Ki36+/xEOiLAOSZHR3smSzdXtJiBxUEKEnoUd2BBCFG2UxBpcyZejZ5t
+	 VwoLYSfsTlqqSeWZeodAZsvjSuG0sLzNfXRD5s0zB0ukw6ZsBpXK8cey9XVaCeSwvW
+	 Z93bEEem+BR+i99vDjvbWM8Jz24AXOVJVZ206cfzF0Vyk4bztr/vcSoWMArocJIWr4
+	 BFS7gjNzhRIujPptMbpU2W73Gr+V3oLcEMrWOUMYwvIh7h4AC61nKhKbdpUpql/fp6
+	 IEcDA4PiEATiw==
+Date: Sun, 10 Aug 2025 19:30:17 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andreas Klinger <ak@it-klinger.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lars@metafoo.de, javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
+ andriy.shevchenko@linux.intel.com, arthur.becker@sentec.com,
+ perdaniel.olsson@axis.com, mgonellabolduc@dimonoff.com,
+ muditsharma.info@gmail.com, clamor95@gmail.com, emil.gedenryd@axis.com,
+ devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/3] iio:light: add driver for veml6046x00 RGBIR
+ color sensor
+Message-ID: <20250810193017.571cdf40@jic23-huawei>
+In-Reply-To: <20250728075447.338725-1-ak@it-klinger.de>
+References: <20250728075447.338725-1-ak@it-klinger.de>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250810182506.GL222315@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Aug 10, 2025 at 07:25:06PM +0100, Al Viro wrote:
-> On Sun, Aug 10, 2025 at 06:47:05PM +0100, Al Viro wrote:
-> 
-> > >  		switch (type) {
-> > >  		case RDS_EXTHDR_NPATHS:
-> > >  			conn->c_npaths = min_t(int, RDS_MPATH_WORKERS,
-> > > -					       be16_to_cpu(buffer.rds_npaths));
-> > > +					      (__force __u16)buffer.rds_npaths);
-> > 
-> > No.  It will break on little-endian.  That's over-the-wire data you are
-> > dealing with; it's *NOT* going to be host-endian.  Fix the buggered
-> > annotations instead.
-> 
-> PS: be16_to_cpu() is not the same thing as a cast.  On a big-endian box,
-> a 16bit number 1000 (0x3e8) is stored as {3, 0xe8}; on a little-endian it's
-> {3, 0xe8} instead; {0xe8, 3} means 59395 there (0xe8 * 256 + 3).
-  ^^^^^^^^           ^^^^^^^^^
-  {0xe8, 3}          {3, 0xe8}
+On Mon, 28 Jul 2025 09:54:43 +0200
+Andreas Klinger <ak@it-klinger.de> wrote:
 
-Sorry, buggered editing.
+> This patchset adds an IIO driver for Vishay veml6046x00 RGBIR color sensor.
+Tweaks as per comments on patch 2 and applied to the testing branch of iio.git.
+
+I'll rebase on rc1 in the next few days and then push this out as a tree linux-next
+picks up.
+
+Thanks,
+
+Jonathan
+
+> 
+> Changes in v7:
+> - Thanks to the reviews of Jonathan and Andy improvements in the PM could be
+>   implemented like removal of pm_runtime_mark_last_busy() and consistency in PM
+>   handling in some functions.
+> 
+> Changes in v6:
+> - Thanks to the in-depth review of Andy many datatype improvements were
+>   realized.
+> - According to Jonathans review change the channel types from IIO_LIGHT to
+>   IIO_INTENSITY.
+> 
+> Changes in v5:
+> - Thanks to the feedback of Andy and further explanations of Jonathan many
+>   improvements could be implemented.
+> - add documentation in kernel-doc format
+> - iio_push_to_buffers_with_ts() is not used as also testing against
+>   linux-stable where it is not available so far.
+> 
+> Changes in v4:
+> - implement feedback from Andy and Jonathan
+> - implement feedback from vendor (reading interrupt register as bulk read)
+> 
+> Changes in v3:
+> - implement a lot of feedback from Jonathan
+> - change scale value to real factor of lux per raw count instead of hardware
+>   gain  
+> - optimize code by using more lookup tables
+> - remove unimplemented threshold functionality
+> 
+> Changes in v2:
+> - fix missing include for example in vishay,veml6046x00.yaml
+> 
+> Andreas Klinger (3):
+>   dt-bindings: iio: light: veml6046x00: add color sensor
+>   iio: light: add support for veml6046x00 RGBIR color sensor
+>   MAINTAINER: add maintainer for veml6046x00
+> 
+>  .../iio/light/vishay,veml6046x00.yaml         |   51 +
+>  MAINTAINERS                                   |    6 +
+>  drivers/iio/light/Kconfig                     |   13 +
+>  drivers/iio/light/Makefile                    |    1 +
+>  drivers/iio/light/veml6046x00.c               | 1031 +++++++++++++++++
+>  5 files changed, 1102 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
+>  create mode 100644 drivers/iio/light/veml6046x00.c
+> 
+
 
