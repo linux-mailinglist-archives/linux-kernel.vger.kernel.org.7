@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-761375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9372B1F950
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 10:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A3CB1F945
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 10:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8CD53BFC14
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 08:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFDFC18979D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 08:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3FF2367C9;
-	Sun, 10 Aug 2025 08:03:04 +0000 (UTC)
-Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A2422A4E5;
+	Sun, 10 Aug 2025 08:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X//UV3gC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F9eDelKj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DAF6DCE1;
-	Sun, 10 Aug 2025 08:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B652421C19D
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 08:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754812983; cv=none; b=mFo00cOkfCFLN0z7VjfoInbiixGq7YsKIQ3PK8yN65v103skkSbk+aPTlzH9G84BKg6MaaeQqQvpqttFRJtdKjy0VtHdikuF88toeb3AlqE9ur3CBapyPQHxbcVjC4wBNIT+SfeVY+4jc/FKBoAbZtQeOvsxOh5/D8wBtn/3FvI=
+	t=1754813005; cv=none; b=M+JlcbN/PldAbJWx92bD5OYziLfLN5V2Vdo0Ges49lu6NdBjd02glo6qkk/+wm4iZo9n33VrefeNFTUszf9+v6x3a5HkVWb2qN7fHTOcunMPCxjjz6BWJ1vizxtRflxdUMUNKFGASnNpVFlLc/uoD4oxniKn+Hcu6aMsKri8MZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754812983; c=relaxed/simple;
-	bh=ADRozaRnU5m4kHiz5jjiFKrDWtNl3Wz0lFtyPVMGAZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WqT0Z4MNCB4RVLU0IF9+NK0qacMA+WrRmsmLkYd4LRGGg92zO6YMMbYYcGKrKHRnFbiJ14PIIQNFYY86Pd8C5+pEOVb4gNZkZQiOCwRkiRMJgd+RcDsg3jCeEA5MejtquR9lXRw/2H6G04WBXNVzqhDZ/bh54ZkHWCi5m8T3EKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id 9612312DFD1;
-	Sun, 10 Aug 2025 08:02:48 +0000 (UTC)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Theodore Ts'o <tytso@mit.edu>, Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Josef Bacik <josef@toxicpanda.com>, Aquinas Admin <admin@aquinas.su>,
- Malte =?UTF-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Date: Sun, 10 Aug 2025 10:02:46 +0200
-Message-ID: <1935642.tdWV9SEqCh@lichtvoll.de>
-In-Reply-To: <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
-References:
- <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <20250810022436.GA966107@mit.edu>
- <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
+	s=arc-20240116; t=1754813005; c=relaxed/simple;
+	bh=nXK2mSgGPp6/C5xxgucCzCbZ02BX7q/V84JRyhwTOew=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kkg2Kbvo7uRQKNklCxMhIHQZaUrZOxBfWoSOaJFhedxODsNhnsG6KyFOU3dG0rrhHiFMHBiQuN/4YtllnD0D9BjHm4jecklv3D1LUJspavu+OgR6CvW+bArnxtLmM+QG4qYvkrx394Xjnb0fL8lyYBymneB+5Y5mpA4wiEooYDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X//UV3gC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F9eDelKj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754813001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KupjT+G+qGfBWouHMcG68F1zSg7ZodVvjKNcni2DPuQ=;
+	b=X//UV3gCeoascmIhxWzxTL4gp4on0EOZk426avxUZNZ8FZ55Tf31Sh06eHW+b55i0Wqs3D
+	H5Od4H0ZRPIl/JwjYduF9Y4KGUL923UDFxDho9LcNtM1UW1d8P5LREDBf0wzv1WkRY3eo2
+	YIF4K4oalau+JtXwNP4j5rWu2SSUXRqaT1THf2PQ//rFNRxOqmJDhRnhgmE8/M3jI0lYDO
+	jt+RRnpQt51scQQwBr5nYyabnV7IgAdjEHHs43OaH/lpE9/kZMYBRNhNT0FwfRjpAfFUiI
+	Fm0oAgkqakyEMcScxHt9Wb7UxytQnpdt36+pBp+kBXH+TJYicuGJq+TYZK0blg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754813001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KupjT+G+qGfBWouHMcG68F1zSg7ZodVvjKNcni2DPuQ=;
+	b=F9eDelKj8+RGvzE+BgIpJEsQoIeFhXUSi9KCqtTKuAtyW310RO/VnHbRzyZMBvxn1KWD+0
+	4CIrFTEcplPjs3Bw==
+To: Wake Liu <wakel@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino
+ <vincenzo.frascino@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vdso: Define NSEC_PER_SEC as 64-bit to prevent overflow
+In-Reply-To: <CAOcRiAFzN61FE=By1ANB3aK4PKVTBQAzrCcfoHfHwMX7Qn8wYA@mail.gmail.com>
+References: <20250805162153.952693-1-wakel@google.com> <87ikj0esnv.ffs@tglx>
+ <CAOcRiAFzN61FE=By1ANB3aK4PKVTBQAzrCcfoHfHwMX7Qn8wYA@mail.gmail.com>
+Date: Sun, 10 Aug 2025 10:03:19 +0200
+Message-ID: <87wm7bbo3c.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 
-Hi Kent, hi,
+On Sat, Aug 09 2025 at 17:49, Wake Liu wrote:
 
-Kent Overstreet - 10.08.25, 05:17:44 CEST:
-> I think you guys have been taking this a bit too far.
+Please do not top post and trim your replies.
 
-I am not sure who is right here. Or right to what extend.
+> CLOCK_REALTIME         ABSTIME PERIODIC timer fired early:       1 : [FAILED]
+> Looks like there is some integer overflow on 32 bit builds in the
+> timespec_sub function:
+>
+> long long timespec_sub(struct timespec a, struct timespec b)
 
-And maybe that is not even the question.
+That's in selftests and not in the kernel VDSO code.
 
-But Kent, if your priority is the users of BCacheFS, look at the result:
+Can you please be precise with your subject and changelog? You claimed:
 
-The current result is a disservice to users.
+ "This can lead to incorrect time calculations within the VDSO"
 
-Maybe even a huge one.
+No, it can't not because the VDSO does not use it that way.
 
-And likely a disservice to developers as well.
+> {
+> long long ret = NSEC_PER_SEC * b.tv_sec + b.tv_nsec;
+>
+> ret -= NSEC_PER_SEC * a.tv_sec + a.tv_nsec;
+> return ret;
+> }
+>
+> on 32 bit builds NSEC_PER_SEC and b.tv_sec are only 32 bit values
+> which I'm guessing is causing the overflow.
 
-Is this result really what you like to achieve?
+Guessing is not a valid technical problem solving approach.
 
-Cause if not, I can assure you that by doing the same thing over and over=20
-and over again you will yield exactly the same result over and over and=20
-over again. Just look at the past: This has been going in *predictable*=20
-cycles.
+> NSEC_PER_SEC is defined as 1000000000L but if we change this to
+> 1000000000LL then the test starts passing.
 
-If you go on to do the same thing over and over again that drives off=20
-people, then that is exactly the result you will be receiving.
+Yes, that function bogus on 32bit.
 
-So if you do not adapt your behavior and do something *different* next=20
-time=E2=80=A6 *whether you like it or not* (!) you need to wait until someo=
-ne else=20
-does. And that "until" may never happen. You can only influence what you=20
-do. So do you like to continue to give the power to change something in=20
-here to someone else by blaming everyone but you? That would be a lot of=20
-wasted energy.
+There are at least ten different ways to implement this function 32-bit
+safe, but you picked the worst option of all, which breaks the kernel
+build as you got told by 0-day.
 
-You are not going to change the dynamics of power within the kernel=20
-development community by what you have been doing all the time.
+I'm sure you can figure out how to ensure that the multiplication is
+actually expanding to 64-bit or use some other approach to calculate
+that delta.
 
-Of course this goes the other way around as well: As long as people try to=
-=20
-change each other in here, this is not going anywhere. The only change you=
-=20
-can affect is a change within yourself.
+And please make that an inline function and put it into a header file in
+the timer selftest directory, and replace _all_ copies of it in the
+various timer tests.
 
-So maybe take a while off mail, breathe deeply and meditate or do whatever=
-=20
-helps you to see what within you contributes to the result we see here. I=20
-will do the same.
+Thanks,
 
-All in all again I point out: This cannot by solved by writing mails. You=20
-need to *speak* to each other.
-
-Enough already.
-
-Best,
-=2D-=20
-Martin
-
-
+        tglx
 
