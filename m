@@ -1,103 +1,90 @@
-Return-Path: <linux-kernel+bounces-761551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CE7B1FBB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:26:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5FEB1FBB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33193BA6F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528A5162501
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31EC274FE8;
-	Sun, 10 Aug 2025 18:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B436274FF1;
+	Sun, 10 Aug 2025 18:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlWFNxs6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VxZFI/yz"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F51F18C933;
-	Sun, 10 Aug 2025 18:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAC918C933;
+	Sun, 10 Aug 2025 18:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754850372; cv=none; b=c4fiWFwV1ugf143Jml1jPQmMGHMD40xfooM9gcNH3ktMBlYs78W+WbrlIbdyCOWfPy0fdCQDocwOadRYDl3qDPneWHf7RkLr1S4BBJER4FUUBuxoY0extIWGY/A+B4fx7NNMumF637e6hQdynW0J7db5kBe4Znk1kGoO7L6PHJ8=
+	t=1754850477; cv=none; b=o6n1zElH1dKSIvNnwPttV8oBMzRiEqPE1Uh7gK7uuj+1bAmEttmnv9hbtq+eKerrT84UVTMTXEqHxqyBcGOtei1qzRr/qVrDIqE9hJzO4HohtGgD9KwGvbBi/9jFW99zckU7wp5qNeDEiiaXcS3UR66xO21c7ChGNbpJO0LK7lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754850372; c=relaxed/simple;
-	bh=2zwGXhwxWi13w4nSYysw2oa5FejZxpDZAD0f4uYQPXw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mmlO7PNTpDrEcEVYbbmMoePm3MVV7Apz5KTit3ZeYzTKDSIiaB16cbnk5tKi3sEZ4/hjCnvQuoCMFfinwhqrrBNYXkL/z0nZeQv4wdXCXjBialTgVTvCgdLGfQE5SlKivUXH9MgeHqtMp/qOu1TSrNNOpyF2fnHO2g3rpTxL0kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GlWFNxs6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC488C4CEEB;
-	Sun, 10 Aug 2025 18:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754850372;
-	bh=2zwGXhwxWi13w4nSYysw2oa5FejZxpDZAD0f4uYQPXw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GlWFNxs6lw9T8Gm49EYpEh52ouUPv13/JA/4lmKZ0BB3cac3L15n1SHc4SwYbHI0r
-	 dHxxLcPZfYjeymneVBx2ztn6zZazuFq3i+oo/KhOQGBnvAp9V+4UlpP0uvwRsVNhxW
-	 iIT0K6hkQ/NI+xjGhXTHrZYUIDrh7g8I2Xv4aTPu7gyifTMHiqfgVBg3ekE3H4Z13b
-	 Qxbj3eSZkw2hEK6JeAvUaRUpVUB56JhZ6Aqnm1MJ23OKSPDNehs58amTM4uxlilEUz
-	 f5tpirlHuI8KQqxSlXnd9RssLF/yW6IqVsGTqKCC1zUuyJ3Lalk+cOtj8QPIL9Bcpu
-	 pAp9RUuBCAnjA==
-From: Sven Peter <sven@kernel.org>
-To: Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nick Chan <towinchenmi@gmail.com>
-Cc: Sven Peter <sven@kernel.org>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/9] I2C dt nodes and bindings for Apple A7-A11 SoCs
-Date: Sun, 10 Aug 2025 20:26:01 +0200
-Message-Id: <175485029275.49938.2043201584717247270.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250610-i2c-no-t2-v2-0-a5a71080fba9@gmail.com>
-References: <20250610-i2c-no-t2-v2-0-a5a71080fba9@gmail.com>
+	s=arc-20240116; t=1754850477; c=relaxed/simple;
+	bh=Chf5vZfJTlSUeF7Zp09INTZxoB9ozgmqN97YzZnCAgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eGz2kieQqYtCbBrKqm5wQwmbv/MI2FwlOLIOsGTMBtkg8CMhKvKnEH06ETLjhnwYciPuStnjNf/x+M7mkLz+7Ovpd2IdAYLB5AwixvdEA6J32tEHVS+D7tz17mpmR6bF5wSakEoJz80Pcl5OTXT9JrNKh+hd2FUGFHIHnWDlDBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VxZFI/yz; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZuOcuE0qvw2SZroUFnKL6SVWavIZnk5WBLZ9gVUuY7E=; b=VxZFI/yz8oEOwAB6G6JMXGlK05
+	zNBucBAUpdK49s1/fbMGwBiYWVkNCA1J4rsyakKluxfKI2jmsXLKZvlYinAMIsDmzDNUfY6MoguuF
+	acR+1fLAUBOqRVa3DmvzQPo6Zy3vHQzoafrKmt+CRMdOP8eEQ1fh/s3db1ipkKmciyrZCeA9prsxj
+	OqB4ZGZBoTlXxKmhh75CnwfQkTdL///SWVSRflp9vpLkLgf47SQ18TBil+RWmw3uw6YrCYe5qxmxm
+	ltXWfo43KN+HSVT4WjjcTFTBifNJ2jI1En4D/chXz9RGt5ofzIkKMuWT2hMBMOy+/rB1IjMjP5qm2
+	7gfhqEQw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulAls-00000009MDE-0eE6;
+	Sun, 10 Aug 2025 18:27:52 +0000
+Date: Sun, 10 Aug 2025 19:27:52 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Ujwal Kundur <ujwal.kundur@gmail.com>, g@zeniv.linux.org.uk
+Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rds: Fix endian annotations across various
+ assignments
+Message-ID: <20250810182752.GM222315@ZenIV>
+References: <20250810171155.3263-1-ujwal.kundur@gmail.com>
+ <20250810174705.GK222315@ZenIV>
+ <20250810182506.GL222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250810182506.GL222315@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, 10 Jun 2025 21:45:19 +0800, Nick Chan wrote:
-> This series adds the device tree nodes and bindings for I2C on Apple A7-A11
-> SoCs, since the existing driver appears to be compatible. The drivers for the
-> attached Dialog DA2xxx PMIC will be in a future patch series.
+On Sun, Aug 10, 2025 at 07:25:06PM +0100, Al Viro wrote:
+> On Sun, Aug 10, 2025 at 06:47:05PM +0100, Al Viro wrote:
 > 
+> > >  		switch (type) {
+> > >  		case RDS_EXTHDR_NPATHS:
+> > >  			conn->c_npaths = min_t(int, RDS_MPATH_WORKERS,
+> > > -					       be16_to_cpu(buffer.rds_npaths));
+> > > +					      (__force __u16)buffer.rds_npaths);
+> > 
+> > No.  It will break on little-endian.  That's over-the-wire data you are
+> > dealing with; it's *NOT* going to be host-endian.  Fix the buggered
+> > annotations instead.
 > 
+> PS: be16_to_cpu() is not the same thing as a cast.  On a big-endian box,
+> a 16bit number 1000 (0x3e8) is stored as {3, 0xe8}; on a little-endian it's
+> {3, 0xe8} instead; {0xe8, 3} means 59395 there (0xe8 * 256 + 3).
+  ^^^^^^^^           ^^^^^^^^^
+  {0xe8, 3}          {3, 0xe8}
 
-Applied to local tree (apple-soc/dt-6.18), thanks!
-
-[2/9] arm64: dts: apple: s5l8960x: Add I2C nodes
-      https://github.com/AsahiLinux/linux/commit/68e01988b208
-[3/9] arm64: dts: apple: t7000: Add I2C nodes
-      https://github.com/AsahiLinux/linux/commit/5b1ab37ccc60
-[4/9] arm64: dts: apple: t7001: Add I2C nodes
-      https://github.com/AsahiLinux/linux/commit/a56771d333ed
-[5/9] arm64: dts: apple: s800-0-3: Add I2C nodes
-      https://github.com/AsahiLinux/linux/commit/5bee6cb9d9df
-[6/9] arm64: dts: apple: s8001: Add I2C nodes
-      https://github.com/AsahiLinux/linux/commit/baf703b08374
-[7/9] arm64: dts: apple: t8010: Add I2C nodes
-      https://github.com/AsahiLinux/linux/commit/9f286293541e
-[8/9] arm64: dts: apple: t8011: Add I2C nodes
-      https://github.com/AsahiLinux/linux/commit/1d16ae50cb1b
-[9/9] arm64: dts: apple: t8015: Add I2C nodes
-      https://github.com/AsahiLinux/linux/commit/e1313c2185d2
-
-Best regards,
--- 
-Sven Peter <sven@kernel.org>
-
+Sorry, buggered editing.
 
