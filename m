@@ -1,108 +1,104 @@
-Return-Path: <linux-kernel+bounces-761550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45047B1FBAE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:26:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4259B1FBAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D73B176FFA
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:26:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FDA1899D7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87452275B0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F02275AF9;
 	Sun, 10 Aug 2025 18:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYe7rWM5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cw6kDkH2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BF926C39B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26272475C3;
 	Sun, 10 Aug 2025 18:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754850349; cv=none; b=YJiFknJFnhdHL+bvzNwHLfyYdGCOzf3i4kry2+Wrb4tuI+MT9TTFVqe0iTAWzvsHg2IMDRC9PjD/T4VH7yXS5fDdkyhCXQpk/MMSKNHfrKZ4+fyCSIMS1v7FJFWOrLkunhb7u91/mHUScrmfkcOBVJHBbxoxWiYsXufzKwwZNXc=
+	t=1754850348; cv=none; b=XK49OERZWJWJpZ90Dd8XFF8ikHC1P665lcvL8jLBJQl/7dcv5O+MbTDHgE031yZInv1Ai80Jzh1DCltwL8mEgUz+SpLerQp1fXHaR91i8oJCGB4eS5IlktzfsjARvujuXEChMbg5cWSKvunJkNcH3tf9ZyLL6vSrYgA5UgezavY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754850349; c=relaxed/simple;
-	bh=mZCkM6wGTji0mWS1T8Wao5Nwc6iHBzOB8nBF6FjiL+0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JYCQd870NlKgYnKfudTxMi80MXMX1yK0Pgv1cHlQQHQxbFN0kVD6jrYH7mTzyqBJn5HlUdrvXf6wwZHG6YIek5MYtkvKIZyByp8UqQSaE+hMpaJZ2KQrF0nLb2zd+Pd3PD4Q2dmMNOoNJFL/Qr54s+6i818md3ogBM4E3+bJRtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYe7rWM5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDF8DC4CEEB;
-	Sun, 10 Aug 2025 18:25:43 +0000 (UTC)
+	s=arc-20240116; t=1754850348; c=relaxed/simple;
+	bh=cHUvKE0uzLE5GpEm+b1ft6VrM0liU5poatPyQlzQxHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iYIxlN8aK6AyT1mTnvhzwRBTL6mOhBbBgj0yEdvvJ0EoUOQZXRyMW/wuY0/FKio2HgdhY2i5ubdCPn+lvzviC+T3hjCpqr499TShEIvOS+OeBh6/mn6Ev8UQEJDycuKqXT+dNu4LUic6jzPhVfm6ZBJA5Ei6cY7jZd1SJsFg6Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cw6kDkH2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3637DC4CEF1;
+	Sun, 10 Aug 2025 18:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1754850348;
-	bh=mZCkM6wGTji0mWS1T8Wao5Nwc6iHBzOB8nBF6FjiL+0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QYe7rWM5WTvPFgmLR7TLjrutsMkJklAM/UhllHcSQAfItQYp0TIM5qKhyNbmwqd9p
-	 HZnUw7fWKocJce1pJiPspNZGQZH+Vm46cN7KOL9PZ4eh0w2SCOQKvmn1daATRrV9Cv
-	 4cdQxC1mAC5SLLCrc9dk587FcaSETEVNuPQjkKwe4pFCCgoht6KoOnQpmJstZ4LwhK
-	 mU+QkVG1GAVBX32aiGpRWx+VUTOzOhMWP8cbN7RtcdzXpodPlWtbwmfwo68Jz84cp0
-	 iVRfDjK90q+dXl0TmkkgfAGAicf3uU1xgqaNv6tz949zkpXivG+bL2WJz3LruH+wWv
-	 f0AqtP3qtqlPQ==
-From: Sven Peter <sven@kernel.org>
-To: Janne Grunau <j@jannau.net>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>,
-	Hector Martin <marcan@marcan.st>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: (subset) [PATCH v7 00/10] Apple Mac System Management Controller
-Date: Sun, 10 Aug 2025 20:25:34 +0200
-Message-Id: <175485029271.49938.2893773472462799086.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
-References: <20250610-smc-6-15-v7-0-556cafd771d3@kernel.org>
+	bh=cHUvKE0uzLE5GpEm+b1ft6VrM0liU5poatPyQlzQxHc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cw6kDkH2/KD0DYq15pzE8EGOWPy9fKAZ5O6yi+T6p6SnFQl0AhoxVEo3xc+ZRJOvW
+	 qY9Nlmdi1qjwHLJCa7UlE1O/pN54rpqbywBqbI1v3Bny20UukQiun9ZbYb7A0uyGtJ
+	 ak8R61rJNy0COLr8blPYxwArd9yPfoKIodHPwpt0gjxc8ubUQ+4t0+DvEZDKgzMFpe
+	 z7qGVxYcc/NX2PXeQOnkVb3h4mwz27rZsI/2wpA78OvarWy7P9M8fZKFWyD5LNYkXz
+	 9pmSKQ5ITydkWHtFz7wbIkym2XIzHfGZlJ9CavUjfhNKxEXM0QC5gMyewrnVVX/ERC
+	 Qu8h/xZXrzfyg==
+Date: Sun, 10 Aug 2025 19:25:42 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Alex Lanzano
+ <lanzano.alex@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lothar Rubusch
+ <l.rubusch@gmail.com>
+Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
+Message-ID: <20250810192542.1443ecb5@jic23-huawei>
+In-Reply-To: <raapwni4cn2lmazn7n2yvmjocmgntwram4wj2guvo5vwslhjbl@ni3elcf4ptn7>
+References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
+	<20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
+	<aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
+	<aHYIBReTFqJMtiXW@smile.fi.intel.com>
+	<vlpqd3jeszhgpcob7qyzp5vljdowwu26my7xuwuvfftf54zg35@czxhsjejgdkm>
+	<aHd2s987EMCdgdrJ@smile.fi.intel.com>
+	<20250724162227.065d20a0@jic23-huawei>
+	<aIKlC-HlP3nX-ERA@smile.fi.intel.com>
+	<20250727164909.1833c4bc@jic23-huawei>
+	<20250802125821.2ae1b17b@jic23-huawei>
+	<raapwni4cn2lmazn7n2yvmjocmgntwram4wj2guvo5vwslhjbl@ni3elcf4ptn7>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 10 Jun 2025 15:29:41 +0000, Sven Peter wrote:
-> This series adds support for the System Management Controller found in
-> Apple Silicon devices which we model as a mfd. It also includes support
-> for the GPIO block and the power/reset block as sub-devices.
-> 
-> Changes between v6 and v7:
->   - Rebased on 6.16-rc1
->   - Dropped mfd- prefix from the macsmc driver name
->   - Removed the check if the MBSE key exists in the reboot driver since
->     we can rely on the device tree now
->   - Changed my mail address to kernel.org
-> 
-> [...]
+On Mon, 4 Aug 2025 19:26:03 -0300
+Gustavo Silva <gustavograzs@gmail.com> wrote:
 
-Applied to local tree (apple-soc/dt-6.18), thanks!
+> On Sat, Aug 02, 2025 at 12:58:21PM +0100, Jonathan Cameron wrote:
+> > >  =20
+> > I got lost in this thread, so perhaps am assuming there is a v5 to come.
+> >=20
+> > Maybe just send one anyway even if no changes as it'll jump up my list =
+to look at.
+> >=20
+> > Jonathan
+> >  =20
+>=20
+> Hi Jonathan,
+>=20
+> Yes, I=E2=80=99ve yet to send v5. Just a quick reminder: patches 1 and 2 =
+from
+> this series were already accepted as of v3.
+>=20
+> Regarding v5, would it make sense to split it into two separate patches:
+> one for the motion events and another for the ABI documentation?
 
-[08/10] arm64: dts: apple: t8103: Add SMC node
-        https://github.com/AsahiLinux/linux/commit/6101fe95b1ee
-[09/10] arm64: dts: apple: t8112: Add SMC node
-        https://github.com/AsahiLinux/linux/commit/49765a617a54
-[10/10] arm64: dts: apple: t600x: Add SMC node
-        https://github.com/AsahiLinux/linux/commit/4379305ffbc2
+I'm a bit lost (and short on time, after a garage door crisis - always
+have spare cables and helpful friends - both of which I did :)
 
-Best regards,
--- 
-Sven Peter <sven@kernel.org>
+Anyhow, if ABI is custom in same patch as the code that implements it.
+If documenting new or existing (docs missing) then separate patch.
 
+Jonathan
 
