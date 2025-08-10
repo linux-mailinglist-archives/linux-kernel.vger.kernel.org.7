@@ -1,177 +1,100 @@
-Return-Path: <linux-kernel+bounces-761535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2C0B1FB81
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:57:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A46CAB1FB83
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1F0176876
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2B7A177C33
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140472741D1;
-	Sun, 10 Aug 2025 17:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD88F271A7B;
+	Sun, 10 Aug 2025 17:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b="Qka6HBPB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ibFpBTjG"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ryc/S090"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6DC1EA7E1;
-	Sun, 10 Aug 2025 17:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6484CAD51;
+	Sun, 10 Aug 2025 17:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754848642; cv=none; b=PhHQoowWHmSfSeFtsFrl1lgQf5kLbk+mLJSoRrLctfRqvexmCxJ1bVOcExzUI1JVCkJYo+lPWWEp01e87jq9sXMfescsQSNvUgBh8HpIRoeh2YEl4Y/kSS86ZDjlZS31Kvlgosl9djdGKz27HcXEvb11qsalH2ZUE4YTVDLmH2k=
+	t=1754848722; cv=none; b=C994TQOAoNiBdsjAgX0gDBZBiuioXeaSgsXPrIi0NCwoshuMKi2YRzmCrYU51Uec9ChaMFMrscDI+zSYyQewIkQ74htawoIbJsHn5OMA88Q7L9up7BdY79kScUWATf2ZBTwNHui9HkyjBeoYwYZcX3uQozD1JBNhq/ZujiekO3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754848642; c=relaxed/simple;
-	bh=fSO2pKtQJLGHg+uw3sLgbIV1Rv915LeTxSDp+iPlEGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FG+LW5KlgqGnh6qQ2jBXmJW7l+7LoueFrIQzkD+5nY2Zr4UxP/eYMI0vQwsClrFo+a53sb2uJUNQuJfvDqlY+j4gKKTCfJ6Cy1WdGlxgJwaSUGWxsPDOsvVfR8HYA7dKr578IHwguCQ7bpk4nLfFAR1oUj6we3cbA7j1G2BYMHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net; spf=pass smtp.mailfrom=bzzt.net; dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b=Qka6HBPB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ibFpBTjG; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bzzt.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id EC79F7A005D;
-	Sun, 10 Aug 2025 13:57:18 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Sun, 10 Aug 2025 13:57:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bzzt.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1754848638;
-	 x=1754935038; bh=CKJHwhQNQy+ROAE4lhfUgG6FBAvwCYWmzuMLynqXNDE=; b=
-	Qka6HBPBqe5fFkfsB1QsgZOj02B+CQ+76ZlodrPFL+Ch8r3VIJk5Snqf0cKnkhA1
-	IZ3dLri3iITKx1o65wRVm6bwyEv1gnfpvsizzGHfJQrSNDTtgJxk8tmLcbajYzBA
-	OJA1ASn2woSDuMTnZr4Ip/0AwaHMRNa98/nC6iWh1B5iENqmoouEGNm5WcpZQtAi
-	3eluXgNwlrPBwTw9kDqn0ksDwa2GPbUxCZO+gWzQ886tKa+gz9FXgWJBSmW+dDEB
-	wxY8aO4Pz2r3IrvHVOHlEK44BOh2Jp0DHEK/s82OTf3/++9Qa7jBG9mLDr3NYnoY
-	7V5Jv8FAirX6vjKFezargA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754848638; x=
-	1754935038; bh=CKJHwhQNQy+ROAE4lhfUgG6FBAvwCYWmzuMLynqXNDE=; b=i
-	bFpBTjGb9fCWYdq3sYwnc0SHSZGr0WTjAbLnYO7IqS1tpAd7njgM7Xu0qFrtpP3m
-	gFdnLnit6gx9yjF8AkfMVilRyZ1VEeSQEaVcTMol2DHkYYs6M4myxRUvV0l0UUE4
-	0Yd46zL8595Ndxs7cyMZEsrAPz75trPsXwlTkt8C+1UyeOlpLnMmUUylTDh9ZCg3
-	IDuKdeRW4lihW8dScWLFA+LVWbakEISc7Y/7z+0dhDL6lPF4ybEluUcOv1fo1Xr/
-	pqrbaQaDx8aTZnBXTqKbWFMHmmflnsoFrHpLvg4uPqQ2suyvsYTyk4qAXVeMn2w3
-	m5njHCjRRezeCmXN3lVhA==
-X-ME-Sender: <xms:fd2YaGODLmsaYYqHgAYhzfD8D87YLk_dlT3sie7l16O5O1btDznLhA>
-    <xme:fd2YaAIhHDYjSjkzmFk6sVZ7Vk20nHv22OSrP0A-ZI4a6rgL_TS84h99OUilz2wmY
-    pFC546vITfipt39nL8>
-X-ME-Received: <xmr:fd2YaBFYsrXgcgPT6m4SvNx4z8pIzvPRMxWG3mU1b_S4PmJD2dQi87L16oZ9gYjtET2T2uHTdnhE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedtvdefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfgggtgfesthekre
-    dtredtjeenucfhrhhomheptehrnhhouhhtucfgnhhgvghlvghnuceorghrnhhouhhtsegs
-    iiiithdrnhgvtheqnecuggftrfgrthhtvghrnheptefhueeugeduueffudfgveeuveetje
-    ehgeetvdevjefghfeltdethfeugeegvedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhr
-    ghdptghouggvsggvrhhgrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhhouhhtsegsiiiithdrnhgvthdpnhgspghrtghpthht
-    ohepudeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrhigrnheslhgrhhhfrg
-    drgiihiidprhgtphhtthhopegrnhhtohhnhidrrghnthhonhihsehsvggtuhhnvghtrdgt
-    ohhmpdhrtghpthhtoheprghnthhonhihsehphhgvnhhomhgvrdhorhhgpdhrtghpthhtoh
-    eprghsmhgruggvuhhssegtohguvgifrhgvtghkrdhorhhgpdhrtghpthhtohepsghrrghu
-    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughhohifvghllhhssehrvgguhh
-    grthdrtghomhdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:fd2YaBDLZ2R5Ln6k6Z1XOkXZIwdLI8Dme8LY1SElmURnfN5lISEafQ>
-    <xmx:fd2YaL2f48BRL_vkrRKQx4L17yDv_SdYFwZYMSr7yM46T9u56chk6w>
-    <xmx:fd2YaONzoIRKTHhOqJEQbN7sZHuf_qqizhRCoUY8kQIr2KL5U5Jd7A>
-    <xmx:fd2YaI4I-JiomzH8_jKrJt8RHA-cepX4Twx3FtxE2KZwlgxVVC2aRQ>
-    <xmx:ft2YaFb6tPdtSsGjfunltI3H_MMOjEBfiMTpr3yLLBS_syheoxzx2VRh>
-Feedback-ID: i8a1146c4:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 10 Aug 2025 13:57:13 -0400 (EDT)
-From: Arnout Engelen <arnout@bzzt.net>
-To: ryan@lahfa.xyz
-Cc: antony.antony@secunet.com,
-	antony@phenome.org,
-	asmadeus@codewreck.org,
-	brauner@kernel.org,
-	dhowells@redhat.com,
-	ericvh@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux_oss@crudebyte.com,
-	lucho@ionkov.net,
-	maximilian@mbosch.me,
-	netfs@lists.linux.dev,
-	regressions@lists.linux.dev,
-	sedat.dilek@gmail.com,
-	v9fs@lists.linux.dev
-Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
-Date: Sun, 10 Aug 2025 19:57:11 +0200
-Message-ID: <20250810175712.3588005-1-arnout@bzzt.net>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
-References: <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
+	s=arc-20240116; t=1754848722; c=relaxed/simple;
+	bh=3DY4sdD6Ak+INsGBF03kY73HAAA8wXnirguJXoLXA0k=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=BJkrH6O0N4g40xWcNeJ3op6F5PwEhVXtZWU87N1M50DSr5sNreVYF1Pn6hTuCjDBHCJty108OW80Kn/EYiH4oQdcejUWZ3/DjPC3v+vcUBRcyvZGc+LnkDXM7DHSMZ8Oc2e4RW+vS7u1qnUDZmZoCQDNrlvkE32COnDphr/nSOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ryc/S090; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=7ytPBLXxydKCW1rvbBIqeVfDBeJGUvXYVWgQ5qPn73o=; b=ryc/S090TD4aAR+Y9CodqeNpBu
+	LZ1y5H+kzmlFZdM60EFQeH+97ZaBFuRtt5khUBV/BHpWOosdVmq+spJRD5gqVU4PQUdMsYQD5OlrW
+	b87yc7mM1GOjqttFxDB8rJABM/rHrFI2GM1rxsqrCm7dMjJHbuaethW6vAs8aV0lu5DdVkfCikJkA
+	orMvEh+P33DPIXAVXZ1F8S0VR3RfJGKXuUZkOx1uexiME91cgp8OicTsrBzHXWaxwGoUlOaH1cW5N
+	gkeIt5YvCVFihj1IvNzCWfgo23JuLeuAvd1n1eEs6lXQOA/jKqfOQkHU+jjwbLmH/EFLBiztawwbO
+	bK9bbVOg==;
+Received: from [50.53.25.54] (helo=[127.0.0.1])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulAJT-0000000DER1-0v6h;
+	Sun, 10 Aug 2025 17:58:32 +0000
+Date: Sun, 10 Aug 2025 10:58:28 -0700
+From: Randy Dunlap <rdunlap@infradead.org>
+To: vivekyadav1207731111@gmail.com, skhan@linuxfoundation.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+CC: Vivek Yadav <vivekyadav1207731111@gmail.com>
+Subject: Re: [PATCH] kernel-parameters: fix kernel-doc warning
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250810172425.21990-1-vivekyadav1207731111@gmail.com>
+References: <20250810172425.21990-1-vivekyadav1207731111@gmail.com>
+Message-ID: <E7C759A2-E5B2-435F-AF94-E5FF8D9DB281@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Jun 2025 00:24:13 +0200, Ryan Lahfa wrote:
-> Le Wed, Oct 23, 2024 at 09:38:39PM +0200, Antony Antony a écrit :
-> > On Wed, Oct 23, 2024 at 11:07:05 +0100, David Howells wrote:
-> > > Hi Antony,
-> > > 
-> > > I think the attached should fix it properly rather than working around it as
-> > > the previous patch did.  If you could give it a whirl?
-> > 
-> > Yes this also fix the crash.
-> > 
-> > Tested-by: Antony Antony <antony.antony@secunet.com>
-> 
-> I cannot confirm this fixes the crash for me. My reproducer is slightly
-> more complicated than Max's original one, albeit, still on NixOS and
-> probably uses 9p more intensively than the automated NixOS testings
-> workload.
+On August 10, 2025 10:24:25 AM PDT, vivekyadav1207731111@gmail=2Ecom wrote:
+>From: Vivek Yadav <vivekyadav1207731111@gmail=2Ecom>
+>
+>Fix kernel-doc warning in kernel-parameters=2Etxt
 
-I'm seeing a problem in the same area - the symptom is slightly different,
-but the location seems very similar. I'm also running a NixOS image.
-Mounting a 9p filesystem in qemu with `cache=readahead`, reading a
-12943-byte file, in the guest I do see a 12943-byte file, but only
-the first 12288 bytes are populated: the rest are zero. This also
-reproduces (most but not all of the time) on 6.16-rc7, but not on all host
-machines I've tried.
+Please put the warning message here=2E=20
 
-After applying a simplified version of [1] (i.e. [2]), the problem does not
-reproduce anymore. It seems something in `p9_client_read_once` somehow
-leaves the iov_iter in an unhealthy state. It would be good to understand
-exactly what, but I haven't been able to figure that out yet.
-
-I have a smallish nix-based reproducer at [3], and a more involved setup
-with a lot of logging enabled and a convenient way to attach gdb at [4].
-You start the VM and then 'cat /repro/default.json' manually, and see if
-it looks 'truncated'.
-
-Interestingly, the file is read in two p9 read calls: one of 12288 bytes and
-one of 655 bytes. The first read is a zero-copy one, the second is not
-zero-copy (because it is smaller than 1024). I've also tried with a slightly
-larger version of the file, that is read as 2 zero-copy reads, and I have not
-been able to reproduce the problem with that. From my (admittedly limited)
-understanding the non-zerocopy code path looks fine, though.
-
-I hope this is helpful - I'd be happy to keep looking into this further,
-but any help pointing me in the right direction would be much appreciated :)
+>
+>Signed-off-by: Vivek Yadav <vivekyadav1207731111@gmail=2Ecom>
+>---
+> Documentation/admin-guide/kernel-parameters=2Etxt | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/Documentation/admin-guide/kernel-parameters=2Etxt b/Document=
+ation/admin-guide/kernel-parameters=2Etxt
+>index 747a55abf=2E=2E302145870 100644
+>--- a/Documentation/admin-guide/kernel-parameters=2Etxt
+>+++ b/Documentation/admin-guide/kernel-parameters=2Etxt
+>@@ -7506,7 +7506,7 @@
+> 			Set a trigger on top of a specific event, with an optional
+> 			filter=2E
+>=20
+>-			The format is is "trace_trigger=3D<event>=2E<trigger>[ if <filter>],=
+=2E=2E=2E"
+>+			The format is "trace_trigger=3D<event>=2E<trigger>[ if <filter>],=2E=
+=2E=2E"
+> 			Where more than one trigger may be specified that are comma deliminat=
+ed=2E
+>=20
+> 			For example:
 
 
-Kind regards,
-
-Arnout
-
-[1] https://lore.kernel.org/all/3327438.1729678025@warthog.procyon.org.uk/T/#mc97a248b0f673dff6dc8613b508ca4fd45c4fefe
-[2] https://codeberg.org/raboof/nextcloud-onlyoffice-test-vm/src/branch/reproducer-with-debugging/kernel-use-copied-iov_iter.patch
-[3] https://codeberg.org/raboof/nextcloud-onlyoffice-test-vm/src/branch/small-reproducer
-[4] https://codeberg.org/raboof/nextcloud-onlyoffice-test-vm/src/branch/reproducer-with-debugging
+~Randy
 
