@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-761509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74075B1FB23
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:52:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587E3B1FB29
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20CB1896F69
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:53:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3EAE3AD133
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED004272811;
-	Sun, 10 Aug 2025 16:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097B9274FF1;
+	Sun, 10 Aug 2025 16:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTCoucGe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDFNhDnm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36392243958;
-	Sun, 10 Aug 2025 16:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B1326CE3A;
+	Sun, 10 Aug 2025 16:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754844756; cv=none; b=hCS6NihL/hR7dQh2cEk2BbgMu5AQwOhA4C38/6JYQq7bPwd2N0MhN5hDH1dJIGrTek2No1tC3ZlytGhjE1hr0HT2macw6bzsQPi+SL+p7HDQlgh4X4T6+LzMtNF9eQOH4Ty93+htJbmoRk++jH2PpJ5HiWMGNm/eaF5a+Azz+Ew=
+	t=1754844760; cv=none; b=i6cQtCl76AUStXX2uxVv9lvBzEN7dP/UY3vi6NnW/ywDCX3tsN4nPpIYBkzUOx7e37CR28kQ0t8ROZdTqfEIkWOowTvhjEZggpiMk9AnivHIXC/2w174BeNAppRe3MBQLr5/gTlq2BJ8D3CkMP1ZlXjQQ7kQtZoaQ1zCdtAnrqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754844756; c=relaxed/simple;
-	bh=Rc9gcte61KO2vI3yv5oPqQK/jrE1EmDqiOIuzeZCDoI=;
+	s=arc-20240116; t=1754844760; c=relaxed/simple;
+	bh=MnCNRV8NseshZqcVAz5rGV17eUoHutGZV/rur5kVCQA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T5EjFW6phKzHQ5DD4ZQaBlSnKUsGcLEKe3Gi0quPg5G78WnthRFc60qDp1w09jfTRMOamEb8w+bDEetdINV/Zk/0DFi7vlT4Cofhcjkez/LmOFs1GCiRSWYaX5NQYhP9E/5LnzmS6lKP3fbctBW4Wn3ZR5+1NbIrQq4lKh87Lzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTCoucGe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD5EC4CEF7;
-	Sun, 10 Aug 2025 16:52:34 +0000 (UTC)
+	 MIME-Version; b=DDRrPFbwWdMbzjJvJe0HkzWrOK0+fhOpZZZ4ECBSCBSqnB8LzmjKp7WPs25gZVF09y7NMxm0fEyxl3KKy9Y9eRSf6wSGHpmh/FreKCjyS3Nb7EBEqpwPgwX12fVRyWFgX+TulCEuKO9fCe4mwam6lAEhL80lRK6GXQ1YmsK8ivI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDFNhDnm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D183C4CEEB;
+	Sun, 10 Aug 2025 16:52:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754844756;
-	bh=Rc9gcte61KO2vI3yv5oPqQK/jrE1EmDqiOIuzeZCDoI=;
+	s=k20201202; t=1754844760;
+	bh=MnCNRV8NseshZqcVAz5rGV17eUoHutGZV/rur5kVCQA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WTCoucGeQzSFRfmxbbXSg+HO6FY0UMLpE8MEn+6NH/bbWOkNgcfe8/l3Dmenocmwo
-	 q2d5D+NISd9VHIMwN2diPT7X4xFhjj6OmDvDb9BKzpbQeY1lgVzt5Ey89yMo7HERy/
-	 rs2j7VQtAvablpTwchQsANXcGzkMSK+Y81/TBR1YxvL8bfsmtTNklztnNu3SEgRS9O
-	 lu3en5VxbPPSBKgedNWG/vOiIfZz/K7sS5hyCUKZvYJrNpYb6Xv71jCKmzT9xYqTeZ
-	 cDv14qee2rLsujZcizRGWKkRNB7R7B20RU9ZQIHtgbnYe+Y6yizqKHmnoaUXpVkUQn
-	 6MRMXLeriZwVQ==
+	b=hDFNhDnms2v51fTMJ5USIwCG6bq12Gxj4lYpsQEw0XYsXdiNFLhgGi0m4w7wQ/zkO
+	 E6+Tjv5txIVNCjErjL9Z/AS4Srb2Nl7irt5s7QzKNwk0xkiRPpg6WiAeg0n9RYIylx
+	 j3uxeh9r6sda7MimlK6tehtPJ9Wg2s+PGW5InKWlfoHjYCAWJuLgBEdvE5oOheNbOV
+	 bUE/SMeURmlKXk8uJp70Y+2/b1shODWSLU1phVDHhXhhnUj/XPWMs5n1DOrOQEYsch
+	 veYwrhY7rX5O6ZrKGl1MebrwF4vyWXrmLEVs9QvTcg8ai62ZNKAyBp6lrxk1sSLupB
+	 MzIbM9zzlbALg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
+Cc: Elad Nachman <enachman@marvell.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Sasha Levin <sashal@kernel.org>,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.16] regmap: irq: Free the regmap-irq mutex
-Date: Sun, 10 Aug 2025 12:51:53 -0400
-Message-Id: <20250810165158.1888206-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.16] irqchip/mvebu-gicp: Clear pending interrupts on init
+Date: Sun, 10 Aug 2025 12:51:55 -0400
+Message-Id: <20250810165158.1888206-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250810165158.1888206-1-sashal@kernel.org>
 References: <20250810165158.1888206-1-sashal@kernel.org>
@@ -64,17 +68,20 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.16
 Content-Transfer-Encoding: 8bit
 
-From: Mark Brown <broonie@kernel.org>
+From: Elad Nachman <enachman@marvell.com>
 
-[ Upstream commit 1da33858af6250184d2ef907494d698af03283de ]
+[ Upstream commit 3c3d7dbab2c70a4bca47634d564bf659351c05ca ]
 
-We do not currently free the mutex allocated by regmap-irq, do so.
+When a kexec'ed kernel boots up, there might be stale unhandled interrupts
+pending in the interrupt controller. These are delivered as spurious
+interrupts once the boot CPU enables interrupts.
 
-Tested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Link: https://patch.msgid.link/20250731-regmap-irq-nesting-v1-1-98b4d1bf20f0@kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Clear all pending interrupts when the driver is initialized to prevent
+these spurious interrupts from locking the CPU in an endless loop.
+
+Signed-off-by: Elad Nachman <enachman@marvell.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250803102548.669682-2-enachman@marvell.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
@@ -82,142 +89,113 @@ LLM Generated explanations, may be completely bogus:
 
 **Backport Status: YES**
 
-This commit fixes a resource leak bug where a mutex allocated with
-`mutex_init()` in `regmap_add_irq_chip_fwnode()` was never properly
-freed with `mutex_destroy()`. This is a clear memory/resource leak that
-has existed since the mutex was first introduced in 2011 (commit
-f8beab2bb611).
+This commit should be backported to stable kernel trees. Here's my
+extensive analysis:
 
-**Key reasons for backporting:**
+## Reasons for Backporting:
 
-1. **Clear bug fix**: The commit fixes a resource leak where
-   `mutex_init(&d->lock)` at line 804 allocates mutex resources but they
-   were never freed. The fix adds corresponding
-   `mutex_destroy(&d->lock)` calls in both error paths and the cleanup
-   function.
+### 1. **Fixes a Real Bug Affecting Users**
+The commit addresses a concrete issue where stale, unhandled interrupts
+from before a kexec can cause spurious interrupts that lock the CPU in
+an endless loop. This is a serious functionality bug that can prevent
+systems from booting properly after kexec.
 
-2. **Long-standing issue**: This bug has existed since 2011 when the
-   mutex was first introduced, affecting all stable kernels that include
-   the regmap-irq subsystem.
+### 2. **Small and Contained Fix**
+The change is minimal and surgical:
+- Only adds 9 lines of functional code
+- The fix is self-contained within the probe function
+- Simply clears pending interrupts by writing to the
+  GICP_CLRSPI_NSR_OFFSET register for all 64 possible interrupts
+- Uses standard kernel APIs (ioremap/iounmap)
 
-3. **Small and contained change**: The patch only adds two
-   `mutex_destroy()` calls:
-   - One in the error path (`err_mutex:` label) at line 935
-   - One in `regmap_del_irq_chip()` at line 1031
+### 3. **Low Risk of Regression**
+- The clearing operation only happens once during driver initialization
+- If ioremap fails, it's handled gracefully with an error message but
+  doesn't fail the probe
+- The clearing loop writes to a register specifically designed for
+  clearing interrupts (GICP_CLRSPI_NSR_OFFSET)
+- This is a write-only operation that doesn't affect normal interrupt
+  handling flow
 
-4. **No behavioral changes**: The fix only ensures proper cleanup; it
-   doesn't change any functional behavior or introduce new features.
+### 4. **Follows Established Pattern**
+Similar fixes for spurious/pending interrupts have been backported in
+other interrupt controllers:
+- commit 28e89cdac648 ("irqchip/renesas-rzv2h: Prevent TINT spurious
+  interrupt") - marked with Cc: stable@vger.kernel.org
+- commit 853a6030303f ("irqchip/renesas-rzg2l: Prevent spurious
+  interrupts when setting trigger type")
 
-5. **Low regression risk**: Adding `mutex_destroy()` calls is a standard
-   cleanup operation that carries minimal risk. The patch also properly
-   adjusts error handling labels (changing `goto err_alloc` to `goto
-   err_mutex` after mutex initialization).
+### 5. **Critical for Kexec Functionality**
+Kexec is an important feature for:
+- Crash dump collection (kdump)
+- Fast reboot scenarios
+- System recovery
+This fix ensures these use cases work reliably on Marvell platforms
+using the GICP interrupt controller.
 
-6. **Affects widely-used subsystem**: The regmap-irq framework is used
-   by many drivers across the kernel for interrupt handling, making this
-   fix broadly beneficial.
+### 6. **No Architectural Changes**
+The fix doesn't introduce:
+- New features or capabilities
+- Changes to existing APIs or interfaces
+- Modifications to interrupt handling logic
+- Any structural changes to the driver
 
-The commit follows stable kernel rules perfectly - it's a small, obvious
-fix for a real bug with minimal risk of regression. While not a critical
-security issue or crash fix, resource leaks are valid stable candidates,
-especially in widely-used infrastructure code like regmap.
+### 7. **Clear Problem Statement**
+The commit message clearly describes:
+- The problem scenario (kexec with pending interrupts)
+- The symptom (CPU locked in endless loop)
+- The solution (clear all pending interrupts on init)
 
- drivers/base/regmap/regmap-irq.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+## Code Analysis:
 
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index d1585f073776..4aac12d38215 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -816,7 +816,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 						     d->mask_buf[i],
- 						     chip->irq_drv_data);
- 			if (ret)
--				goto err_alloc;
-+				goto err_mutex;
- 		}
+The added code (lines 240-247 in the patched version):
+```c
+base = ioremap(gicp->res->start, gicp->res->end - gicp->res->start);
+if (IS_ERR(base)) {
+    dev_err(&pdev->dev, "ioremap() failed. Unable to clear pending
+interrupts.\n");
+} else {
+    for (i = 0; i < 64; i++)
+        writel(i, base + GICP_CLRSPI_NSR_OFFSET);
+    iounmap(base);
+}
+```
+
+This is a defensive programming approach that ensures system stability
+without affecting normal operation, making it an ideal candidate for
+stable backport.
+
+ drivers/irqchip/irq-mvebu-gicp.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/irqchip/irq-mvebu-gicp.c b/drivers/irqchip/irq-mvebu-gicp.c
+index d3232d6d8dce..fd85c845e015 100644
+--- a/drivers/irqchip/irq-mvebu-gicp.c
++++ b/drivers/irqchip/irq-mvebu-gicp.c
+@@ -177,6 +177,7 @@ static int mvebu_gicp_probe(struct platform_device *pdev)
+ 		.ops	= &gicp_domain_ops,
+ 	};
+ 	struct mvebu_gicp *gicp;
++	void __iomem *base;
+ 	int ret, i;
  
- 		if (chip->mask_base && !chip->handle_mask_sync) {
-@@ -827,7 +827,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 			if (ret) {
- 				dev_err(map->dev, "Failed to set masks in 0x%x: %d\n",
- 					reg, ret);
--				goto err_alloc;
-+				goto err_mutex;
- 			}
- 		}
- 
-@@ -838,7 +838,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 			if (ret) {
- 				dev_err(map->dev, "Failed to set masks in 0x%x: %d\n",
- 					reg, ret);
--				goto err_alloc;
-+				goto err_mutex;
- 			}
- 		}
- 
-@@ -855,7 +855,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 			if (ret != 0) {
- 				dev_err(map->dev, "Failed to read IRQ status: %d\n",
- 					ret);
--				goto err_alloc;
-+				goto err_mutex;
- 			}
- 		}
- 
-@@ -879,7 +879,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 			if (ret != 0) {
- 				dev_err(map->dev, "Failed to ack 0x%x: %d\n",
- 					reg, ret);
--				goto err_alloc;
-+				goto err_mutex;
- 			}
- 		}
+ 	gicp = devm_kzalloc(&pdev->dev, sizeof(*gicp), GFP_KERNEL);
+@@ -236,6 +237,15 @@ static int mvebu_gicp_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  	}
-@@ -901,7 +901,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 			if (ret != 0) {
- 				dev_err(map->dev, "Failed to set masks in 0x%x: %d\n",
- 					reg, ret);
--				goto err_alloc;
-+				goto err_mutex;
- 			}
- 		}
- 	}
-@@ -910,7 +910,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 	if (chip->status_is_level) {
- 		ret = read_irq_data(d);
- 		if (ret < 0)
--			goto err_alloc;
-+			goto err_mutex;
  
- 		memcpy(d->prev_status_buf, d->status_buf,
- 		       array_size(d->chip->num_regs, sizeof(d->prev_status_buf[0])));
-@@ -918,7 +918,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 
- 	ret = regmap_irq_create_domain(fwnode, irq_base, chip, d);
- 	if (ret)
--		goto err_alloc;
-+		goto err_mutex;
- 
- 	ret = request_threaded_irq(irq, NULL, regmap_irq_thread,
- 				   irq_flags | IRQF_ONESHOT,
-@@ -935,6 +935,8 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
- 
- err_domain:
- 	/* Should really dispose of the domain but... */
-+err_mutex:
-+	mutex_destroy(&d->lock);
- err_alloc:
- 	kfree(d->type_buf);
- 	kfree(d->type_buf_def);
-@@ -1027,6 +1029,7 @@ void regmap_del_irq_chip(int irq, struct regmap_irq_chip_data *d)
- 			kfree(d->config_buf[i]);
- 		kfree(d->config_buf);
- 	}
-+	mutex_destroy(&d->lock);
- 	kfree(d);
++	base = ioremap(gicp->res->start, gicp->res->end - gicp->res->start);
++	if (IS_ERR(base)) {
++		dev_err(&pdev->dev, "ioremap() failed. Unable to clear pending interrupts.\n");
++	} else {
++		for (i = 0; i < 64; i++)
++			writel(i, base + GICP_CLRSPI_NSR_OFFSET);
++		iounmap(base);
++	}
++
+ 	return msi_create_parent_irq_domain(&info, &gicp_msi_parent_ops) ? 0 : -ENOMEM;
  }
- EXPORT_SYMBOL_GPL(regmap_del_irq_chip);
+ 
 -- 
 2.39.5
 
