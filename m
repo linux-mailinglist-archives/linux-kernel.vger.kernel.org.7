@@ -1,160 +1,77 @@
-Return-Path: <linux-kernel+bounces-761484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A7DB1FAB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:18:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D84B1FABA
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C763F18978BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:19:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81511175DCA
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FC825DCEC;
-	Sun, 10 Aug 2025 15:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8BD267B12;
+	Sun, 10 Aug 2025 15:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alXJWsza"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aFH0+/FP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119AD29CEB;
-	Sun, 10 Aug 2025 15:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CEB1531F9;
+	Sun, 10 Aug 2025 15:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754839119; cv=none; b=SNUrk4cSUvDtW4xNCPK68xTokqZP36Kd8b7RfzJhHJUsSwv79MFzJP1rwVg4U+G+TtxrQkQIBCLvuqKjhOElLVk7RAe7Zx5C7PrMlezlXg2rsGv2zXBlSd6cLZWGukw5CIIrfg1UWsT+HUojwX9Wod58xn/yJ77YD0OhyC9LAUw=
+	t=1754839499; cv=none; b=c3vdjSLSLxzmWLePFP9k6/bt63UafPvFmN6b/zIEAsoFfHQjDwixr6oHyknJHeBVcBuoPnwva7HA8POO4FAIR7dRKDyScmGv06dRxX+PYH22dFdvdtjeyXnhxj+DfRE+Lfxz5G8642tsSBTd64m3BVCEFHCraUTJHi4NVPscdr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754839119; c=relaxed/simple;
-	bh=bAi6fqyvmtf+Qk+ny+MBAVSOWromnh9HLGoIUghJp3s=;
+	s=arc-20240116; t=1754839499; c=relaxed/simple;
+	bh=PLxj+5oEAOsT67VdDk+2iuZq/HsnoFHEhynn/Tyf3gs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXqzrOberacDE9h7FhLL4CCTS7SK7CWJT2IiiVRHORk4jKvO7shhOrTcIXJxpuPwwVSXBuLahH9eOfuhotUeQyYmKqgfpnDTuNw0tp74kXfBqQTXwOWMTAGxm/ThqBW8pESAOrHkEPRFy5+LLmFnZesdo3B+KLMnyr3+LA2d56c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alXJWsza; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2400f746440so29759315ad.2;
-        Sun, 10 Aug 2025 08:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754839117; x=1755443917; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/mzFFa7LIdL1kbelEVj2RxK7XsJ6E5WDtdZJbqzJsac=;
-        b=alXJWsza8BVAXe5iSkos9EVmx8ipXevG3UoL260r8+2fPXnLWVDSdee12Nsj54Arua
-         UvLHr1GjoInxsoPmHGJxxRSF8SdKlYmPb6USmzfoZVHqH7OOw3uZEpamPo9jP5fP+Mr3
-         ZlZBAdRfqltre1ebZ/a89tLZL4Ih/c4viUweFn/f880JVHn6Pjcax5c+lVVIMlxjw4Lo
-         6zC0TNDcLTl4sNHyJxxxZU9bTVmc3FvnuKx903ueQi6pkRgrXHKVHzwlV5z4z1LRcL6t
-         ixLyij80PMzJGATU1MaV+HVVeUj6GjwL0C3Cvi9Jh0CV4XYWbwmxFpP/42D5qnfYxkxs
-         cPaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754839117; x=1755443917;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/mzFFa7LIdL1kbelEVj2RxK7XsJ6E5WDtdZJbqzJsac=;
-        b=c4brOyou1TmjxLbaN1l3w2/Si+1W8fgd8VXcc96NE8r4JBP+doXg4HInMfePIQxpFr
-         7yFY0Y7kxocV3nJZ/9uO4dgHhKUWOixxJA5wWuBHR0wA7CfAk2LgJ9ta8RKQ9vGWEHVa
-         WCDd9dJ8zFujuj9Gx++E5gtPPZntHnqQkFCBwFVRTpPBe6WezfnFHRSK7ftmJROlnc/x
-         9Ti9KpHGdKzKopWlnNZd5rHr87jEASCl/zyNKE1p8nIpNt8MilKrSAjtIBzse03R5YtP
-         okz49VgxxG5F4AUeLMLjn81bCTcmM3q+oM1nXm7bg9YQFhx/NMlHd6wjIeOPFQnzMlU8
-         wPZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUd8kd/r7pyKwPADX9vLfoxlG0gjrn+7LZwJ3aGJz96e/YJqhKiEsaHvBnkgYX1HM6KoJ8jMwSNERWP@vger.kernel.org, AJvYcCV1IwXp3U/ESbcQGZPSn+3q2hkpc+BEbUcv2Oq2L3+0zt+rbB/YJkbTRWcracOjz+jpuEKTHtdc6vsig3tE@vger.kernel.org, AJvYcCVCfXPWWFnnaOxFkfFL0vjYEaxz32g2c4hccdyjctPpt6T37PN3wvjGBXkp9ZXAn12ItSbjYynAi3hb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRPSr/SXxSzAJMMdbuDoHEEeu6vOKDT5NNfFy16xla0BmVSFgb
-	/Aj+3bu3lhb21Vb/XpKNPjUP5fyT+jngWQ+EVTqOEGPzrIGQI2fAtpKB
-X-Gm-Gg: ASbGncsTvKv14HEcMt+pQaC08Z9QdmIVzjIICMdHD5VlIJT7ZGZMMuIpYyV6Ff4SjG7
-	4nZDu6vmgZ8FGIWCZth+XkCH9ijw3vVEit7/7EIgtJ85Ejth+WlIlQNcfXv/NlAJ3PACIgvOF7z
-	o+xGjPPiUVmF/Hthmru35WPMYteYOLFU9ZugqSoL6Yd3DZAugPet4vP9uvUGNdDxRRmxluN41rW
-	55maJYznjtXXISMIrp2aKTxh9B8I6QsRMd2FAgnXERu0sQP19MKwsS3eOVlBla2A/eeXxGGWeje
-	4TevgX5YKTSs3WcEce0t3/GsZ7mFd1u+bVC4GX6bRg8fQ92dJiVYQRBH8eqpDXS6NjP79IUgDAR
-	U9HW/dz8Cwm/Fq5McwN7bxQfElspcezw=
-X-Google-Smtp-Source: AGHT+IHgQ53sypUQVBCdjpA9anQ7FU845PK3h0r8M83B00RT2r21DveF6cG7GeUKs1au9UI/CPXXjQ==
-X-Received: by 2002:a17:902:d2c9:b0:240:1953:f9a with SMTP id d9443c01a7336-242c20703d5mr166416305ad.2.1754839117245;
-        Sun, 10 Aug 2025 08:18:37 -0700 (PDT)
-Received: from localhost ([2804:30c:1f50:da00:c6fb:5400:5af6:282f])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241d1ef59b2sm254168645ad.7.2025.08.10.08.18.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 08:18:35 -0700 (PDT)
-Date: Sun, 10 Aug 2025 12:18:50 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: iio: adc: add ade9000
-Message-ID: <aJi4Woh3XzeeNlcJ@debian-BULLSEYE-live-builder-AMD64>
-References: <20250808141020.4384-1-antoniu.miclaus@analog.com>
- <20250808141020.4384-3-antoniu.miclaus@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4DAjRjC6HJ8UZ/ptvBb+hQwq192oOXOH2FCYfQHy2WLDKiU3dVCFkMKcgijm6SSiYycgbhxdkZIPj9W8nTCcKEfKcK4nKRIT7E9bNismsVwtuaQILLCLBo09wRSY5NenElncFKuDO0fg11jZKah299o3owBdm72E2EHv0s1Kdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aFH0+/FP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB3C8C4CEEB;
+	Sun, 10 Aug 2025 15:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754839499;
+	bh=PLxj+5oEAOsT67VdDk+2iuZq/HsnoFHEhynn/Tyf3gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aFH0+/FPyi7lfvCWUoFyttfWxrILDxgBt1wrylmuXeH4nRa7CVepd9kfSrqeIZ1cB
+	 v5GNAevMLo0cYf6RYwSkB/hx35ITzFNb9eugnFaYfR2Z6Sc8Wb3BDGhi++yw8aWhJn
+	 IOFfqMvw42wB4uvLuNQDMjoOGpcUAirD+5QiQSgc=
+Date: Sun, 10 Aug 2025 17:24:56 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [GIT PULL] TTY / Serial driver fix for 6.17-rc1
+Message-ID: <2025081054-embark-sessions-4a18@gregkh>
+References: <aJdf0rAZ5x5klUhX@kroah.com>
+ <2025080937-hardly-facial-cde0@gregkh>
+ <CAHk-=wh-x5kbjAZHK4Xto_Qpf55iMrAvKhAzGpoHT6fDZfkzJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250808141020.4384-3-antoniu.miclaus@analog.com>
+In-Reply-To: <CAHk-=wh-x5kbjAZHK4Xto_Qpf55iMrAvKhAzGpoHT6fDZfkzJg@mail.gmail.com>
 
-Hi Antoniu,
-
-Didn't manage to a full review of the bindings as this has many features.
-Though, I've noticed one small nit below.
-
-On 08/08, Antoniu Miclaus wrote:
-> Add devicetree bindings support for ade9000.
+On Sat, Aug 09, 2025 at 06:18:50PM +0300, Linus Torvalds wrote:
+> On Sat, 9 Aug 2025 at 17:57, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > And, as proof I shouldn't send pull requests a few mere hours after
+> > getting home from a week long vacation, I got the version number wrong
+> > here, it's 6.17-rc1, but the tag and the text all are correct, this
+> > affects your tree now.
 > 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v3:
->  - fix $id schema URL format
->  - remove address/size-cells and channel subnodes
->  - add dready interrupt support
->  - add clock input/output support
->  - simplify device tree structure
->  .../bindings/iio/adc/adi,ade9000.yaml         | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-> new file mode 100644
-> index 000000000000..07bc49acc920
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml
-> @@ -0,0 +1,110 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright 2025 Analog Devices Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ade9000.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices ADE9000 High Performance, Polyphase Energy Metering driver
-> +
-> +maintainers:
-> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +
-> +description: |
-> +  The ADE9000 s a highly accurate, fully integrated, multiphase energy and power
-> +  quality monitoring device. Superior analog performance and a digital signal
-> +  processing (DSP) core enable accurate energy monitoring over a wide dynamic
-> +  range. An integrated high end reference ensures low drift over temperature
-> +  with a combined drift of less than ±25 ppm/°C maximum for the entire channel
-> +  including a programmable gain amplifier (PGA) and an analog-to- digital
-> +  converter (ADC).
-> +
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ADE9000.pdf
-> +
-> +$ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-...
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reset-gpios
-> +  - interrupts
-> +  - interrupt-names
-> +  - vdd-supply
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-spi-peripheral-props is alread referenced right after the dt-binding general
-description. Is it needed to also reference it here?
+> It's not like I even look at the tag name, so I wouldn't have noticed
+> if you hadn't mentioned it.
+
+Ah, good to know, now I can put almost anything there :)
+
+Thanks for taking this last minute fix,
+
+greg k-h
 
