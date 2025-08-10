@@ -1,228 +1,187 @@
-Return-Path: <linux-kernel+bounces-761438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEFE6B1FA0E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 14:58:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54990B1FA12
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0316170001
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 12:58:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2071898AC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 13:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1180D2566E8;
-	Sun, 10 Aug 2025 12:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385C12522B5;
+	Sun, 10 Aug 2025 13:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AH7eaSgM"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5x6GaxY"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877802571DD;
-	Sun, 10 Aug 2025 12:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88BF1C683;
+	Sun, 10 Aug 2025 13:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754830695; cv=none; b=hqSy8adwnt0tJ/aH7EaiHkz/K02/nF68/9poUag98NBlNKqp5RkehhMgtHdH7237SmDAxY3yrnuRjA5BjiYKSKmIpBSJmVn85Z0pX9kACdbxNFGtdo0z7V45/blVZVMbbzq/uDNgOMjKwSsecTVipuWp6t/FNQhj3x52Pj+hlGo=
+	t=1754830955; cv=none; b=TPqbKU7Z/YYVY6yQjBLR+oOhPPWp3Qtay7UCDSp0XT9P+M/bii5voAyl8PWjcC1HwMuNqqucjvGuedsDl+NOmY52hpf/fNXvVEfWhETfwDWg6otLCjoDzPhWWhB57vVJAimrJSKgkfN9eMNJTlN6m9KPv6PuIGASeYuFIlJPFiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754830695; c=relaxed/simple;
-	bh=MqwKQc2JPJBB2GNaC3gYzjQZ5bv/gUTQatKs/70juhI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iQazafVavYrs80pzOthnQ6mTjvakg5Zp1v1PGw5EObwEWQXlb8emG+wl6y/7mBG4WkmeYFezHY7k8nsdWxX2w6kwoYZ1XuZVRROrDinc/tXkD93AqZhpmkeauE0ZLKB2I3/eKSKyjmODbp9ki38AZaRcWaG0j72dQg+uJT/OA8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AH7eaSgM; arc=none smtp.client-ip=209.85.208.177
+	s=arc-20240116; t=1754830955; c=relaxed/simple;
+	bh=7vETKwtpidENX53WjwI6MHM6eVFOckiWgacFT/qG6FM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fl4MDNWKxcSeDyX9fGiD3qYEfAY3f8vWVJlxs8NrVEyjzIyin/oaXZjWGLJoijUSkpYpzn8lfXy4ScTa9V2R8lXXpvyTe7vNyuX55hLQvNDlm/HmMXaGEasGBIkmaM8BKUpJykNKoqAhzx7MAUEB9cju9QKuqi9DF66UnaCzrsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5x6GaxY; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-332426c78a2so27844701fa.2;
-        Sun, 10 Aug 2025 05:58:13 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-af98b77d2f0so660647066b.3;
+        Sun, 10 Aug 2025 06:02:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754830692; x=1755435492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754830952; x=1755435752; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qPUEdIdCRmt+MYJsQtBbxjY1GnPuX9CU1RwbVybqcDU=;
-        b=AH7eaSgMHF9Q+2Or7UcBXZXSh3j4uUpeZhbhFzdgzTtcc+meDEA4XilEObalA8QYA1
-         AP3W95u7cxgpku5Ax+C/3olW31oSRRb206lc9AjrM6w5C9yCvGOVnyzLNEoxy7T9Da4d
-         NOOk/c9BV2OVDEc31HwyVt2mmmC6IqSqYhzn3UVJOctUDQK4AuSIhEHGy8ezm0Dy2JdW
-         OshW1xNdxYApAuRZxGAsnbZQtV8p/OJEAMVrSPRUzkp4wE/Z1hAx73IEaG+AtLarJUdT
-         IwDltR25JAhNBkDea1Tz19ypE5M8/5m4sCg12ZFM7EVSPsIQ0L4xLrYM7elHvYZb7mm5
-         eoXQ==
+        bh=oSlOOEhHSp0QmqGAVt0Ofk92yXA+aQmJze++Vd3SO3g=;
+        b=A5x6GaxYRh9k6qmp5rI3dT/W1fNYdHygpTq9FZOkjs4ur1PMpqvCoIE+R8CAh+NJ1N
+         U/ubZ+2T3KT/ED0yDs0Ok0a93IcbgZRQ0e5S1qb94GO0RPC2eDv2e00C4uH/WO6iDM4u
+         IvhYOnIbMsIXnh8U3IvE49PhAf/HDRzN6pwHvXs0Zmb9tEYRgHTlM735mzkkgqzIwSq0
+         OCxnnONIGFU21b14mYgXBbUC/tzuZvzb5f1xumV6Nwo1qkRaMvO4ekDJ9zUhQJHzfJM6
+         Pal6iuqmkZZ3E6XSVeTPutOeE2FC53IMqhKYDArsXx7CYnUcDyQApv9Que54rs+q2ZmV
+         2hIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754830692; x=1755435492;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1754830952; x=1755435752;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qPUEdIdCRmt+MYJsQtBbxjY1GnPuX9CU1RwbVybqcDU=;
-        b=dMSJzSzy+IkgMV0KwJVuo69FwJx84l8V5KjX6mZQ4L3/NvXWmV4FaM+COdZAvl5X64
-         gzEHVDUyA5D67sf9kkroMve98EUarP8TbkoeV1j3lk7thPURBfxBf/VtJHbIhcv/25Ar
-         iDFbzI6wYn6mKrcVffN6nlacJI9E5PxKWgYpn3pWbf+OW6asCUXhWanisxMPg+E1gKjT
-         09RfmAgTqcDUJmWpeGhD1VYcujk65grV3VTxlUBbxVHtWNFvJ7hbVUVDxAx2FzVTmbes
-         DStYpJr99IAD5KqO+hOMI73lSnWq0BE7ZqmTWfPW7XYmqg1vS11JHlVfp+Sfa84oD1mV
-         J3ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW13U0+I8G7jnzXHrBxVhe/h0J+/4IuAo4UIlucrdyLYxRdW1e+98dElgMP9V9Q6U4GRKWvspTQQhkCLY8=@vger.kernel.org, AJvYcCXiWSh7SxhRHLBJNHW6ZsgiKiYtDAIt3P2vRV/PIORzcYk/tYnpiHSFojKq/1UpRk3ivYAiiYbtn8zs9A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUBL2h0ESM37p6JWRoE587AS49hzWtvtVwFFm0v6tGPQISPH3W
-	gHrLdv/64+XeKrbzd0IuwwUr5XvUSythUDqpsdf3/j2WnsHJjD+p87gJ
-X-Gm-Gg: ASbGncukUyuxppTH+wf1jd9DRuRUv/nPTTGF890nwhkT8mhHaJQs1AcGU45lhHHnuMP
-	KrLKMeP+8gm2LZt/fUZTHqqBdmSTfiSmlR6Jp5CPA40525GRuKsPATXidZ+XiP1UNiFlAOYuRyb
-	TeP3BweS4l0xRT9XXqmnyE0zaqDaI49zc3zWm8g/Df5TleUCsS9jixU+8kktZJw1SdEym8Fa6wY
-	5HCVNAaUcit7mPXIi8EOoEWhIKPqIUYfNxxHkT1Wg4vPWIeYFWywSHW2Dt53Z+3059RJRDX/ZMd
-	OPHMdI04/PLCFVFn9GMZsfQIqABAjfYD/mKSSHMaYViHLqsHGLgkFFTwQmaiMakYY690bVho1YE
-	4jNp/0wF+TzlgZSKRTsBm5IH2hzNntX26NqZ7tw==
-X-Google-Smtp-Source: AGHT+IFrIl3eJCoqqHt0ANltzYIq2yL9Jka0mZA2tOEeoGsTnUPJed1OxDGIgQlZCm+SP4loyYZbRA==
-X-Received: by 2002:a05:6512:3502:b0:55b:732d:931 with SMTP id 2adb3069b0e04-55cc00b14c8mr2560689e87.12.1754830691289;
-        Sun, 10 Aug 2025 05:58:11 -0700 (PDT)
-Received: from localhost.localdomain ([2a03:32c0:2e:37dd:bfc4:9fdc:ddc6:5962])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c9908esm3804561e87.76.2025.08.10.05.58.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 05:58:10 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: ryabinin.a.a@gmail.com,
-	christophe.leroy@csgroup.eu,
-	bhe@redhat.com,
-	hca@linux.ibm.com,
-	andreyknvl@gmail.com,
-	akpm@linux-foundation.org,
-	zhangqing@loongson.cn,
-	chenhuacai@loongson.cn,
-	davidgow@google.com,
-	glider@google.com,
-	dvyukov@google.com,
-	alexghiti@rivosinc.com
-Cc: alex@ghiti.fr,
-	agordeev@linux.ibm.com,
-	vincenzo.frascino@arm.com,
-	elver@google.com,
-	kasan-dev@googlegroups.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linux-mm@kvack.org,
-	snovitoll@gmail.com
-Subject: [PATCH v6 2/2] kasan: call kasan_init_generic in kasan_init
-Date: Sun, 10 Aug 2025 17:57:46 +0500
-Message-Id: <20250810125746.1105476-3-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250810125746.1105476-1-snovitoll@gmail.com>
-References: <20250810125746.1105476-1-snovitoll@gmail.com>
+        bh=oSlOOEhHSp0QmqGAVt0Ofk92yXA+aQmJze++Vd3SO3g=;
+        b=T1MJVp2Cgp4Yx/An4kkdNZx9TWnalEP9DLwJGUsH7oOTsfbBKu5Nu/eTIzDtc6pMT2
+         XfOFO+pJOwlfQYBS/qL2zGISUorwNQdDagRNMuVv4d7Y/995iY8lAJ90mcH05ydI07m5
+         iHo36g17NO5AM8KtegwYIzf9J4NRZftDLRExgFIEABVTLdkaiQKS8QdyCVzdNnWiIyhf
+         ZOPDKe9ryK39ZGWw1cspP4YFOHBSG2CCPqRe6r/27zKorypl6mGa/ejqFpveoj7YB3CH
+         bgueCgzDGUOO29TEmMvn/kPd3OZ/3CCtk5Y/2JMTgFOEmF9/lMRrCC/pMyE5JjuVr599
+         j6Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUC9hv1TYBBQmE7lJMm2Se/nSzw88TiZl+ZthezESdcJkI8O0AvGhSw7piNhZbJj8xNYUQYmbTcK/hU/BoT@vger.kernel.org, AJvYcCUh2u3regHOZTnbZoXORDB13c0NECUiIgW/2bUWNVIFBlz1QAUKOpqq/1Pmk8DNMo22J5BPdtWK1OdurHFphw==@vger.kernel.org, AJvYcCVpWqG3Tz5zWdogboKLTBUexBlMbCUPBIE+TXA8nM26qDTW6Zq45r3FMySJuxoGas5vy6EqoUQREDufbMMY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWhLu44rIWbYKiO1KSyV93HXbsG/LFwSFRmTnWmEPXPPyCMRSe
+	WTCZqaGa0oDPHayQ4+kC6oTjXpD65yr7mbqNo0WS48q0px5gknOrIePUY2lMmd4/G+NvwrWFgop
+	ITnU/2yf+jgVjR2B7nkl5WSTRLouye4s=
+X-Gm-Gg: ASbGnctG6dnL6AAt+YgIV6N28RjybKwVFTWUEKBuKa0c0fWsWfmJ8oQtEfy53yZOqX8
+	fAKPWiYZDGM52lWhDL3ZrX3EUMv2TJXOMCWtumpFF3LQu+biXpHYMz6Gel+/xYY8qNWDn8B8ttR
+	+2zQQWiJN5OGcLA5L0uBa0HOFVgxG543FkxiZVe5WrDdhnsVw2PN49ACIFgr5RHnBI96QuIVX8Y
+	iDcnRY=
+X-Google-Smtp-Source: AGHT+IGc1LjBDs581anLLqxndQtaeysDoGVU+r3AisBDGvFqnux7ki0lPq5hSFTSlEIgP20ONz/YoIpX6TnfSC527jk=
+X-Received: by 2002:a17:906:9f8b:b0:ae6:f087:953 with SMTP id
+ a640c23a62f3a-af9c63b0a87mr823318466b.12.1754830951730; Sun, 10 Aug 2025
+ 06:02:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250808-tonyk-overlayfs-v3-0-30f9be426ba8@igalia.com>
+ <20250808-tonyk-overlayfs-v3-6-30f9be426ba8@igalia.com> <CAOQ4uxiDtq4LF-OVtQ6ufmcAZqLn-jqynM06RgHLgUYOW-uHHA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiDtq4LF-OVtQ6ufmcAZqLn-jqynM06RgHLgUYOW-uHHA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 10 Aug 2025 15:02:20 +0200
+X-Gm-Features: Ac12FXz3sd9nkTZqSLTKZCKnaQeDmVdIW_6sTRxrlBzilIXPWIRh2FNlF3TnYpg
+Message-ID: <CAOQ4uxg326bEDdfKCKnoV0MnBBgRbxPEgN_41kBJv9HUdb-5dg@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 6/7] ovl: Add S_CASEFOLD as part of the inode flag
+ to be copied
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Call kasan_init_generic() which handles Generic KASAN initialization.
-For architectures that do not select ARCH_DEFER_KASAN,
-this will be a no-op for the runtime flag but will
-print the initialization banner.
+On Sat, Aug 9, 2025 at 11:51=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Fri, Aug 8, 2025 at 10:59=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@i=
+galia.com> wrote:
+> >
+> > To keep ovl's inodes consistent with their real inodes, add the
+> > S_CASEFOLD flag as part of the flags that need to be copied.
+> >
+> > Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> > ---
+> > Changes from v2:
+> > - Instead of manually setting the flag if the realpath dentry is
+> >   casefolded, just add this flag as part of the flags that need to be
+> >   copied.
+> > ---
+> >  fs/overlayfs/overlayfs.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> > index bb0d7ded8e763a4a7a6fc506d966ed2f3bdb4f06..8a9a67d2933173c61b0fa0a=
+f5634d91e092e00b2 100644
+> > --- a/fs/overlayfs/overlayfs.h
+> > +++ b/fs/overlayfs/overlayfs.h
+> > @@ -822,7 +822,7 @@ struct inode *ovl_get_inode(struct super_block *sb,
+> >  void ovl_copyattr(struct inode *to);
+> >
+> >  /* vfs inode flags copied from real to ovl inode */
+> > -#define OVL_COPY_I_FLAGS_MASK  (S_SYNC | S_NOATIME | S_APPEND | S_IMMU=
+TABLE)
+> > +#define OVL_COPY_I_FLAGS_MASK  (S_SYNC | S_NOATIME | S_APPEND | S_IMMU=
+TABLE | S_CASEFOLD)
+> >  /* vfs inode flags read from overlay.protattr xattr to ovl inode */
+> >  #define OVL_PROT_I_FLAGS_MASK  (S_APPEND | S_IMMUTABLE)
+> >
+>
+> Ok, this is simpler, but it's too simple.
+> OVL_COPY_I_FLAGS_MASK is used in copy up with the assumption that
+> all copied i_flags are related to fileattr flags, so you need something l=
+ike:
+>
+> diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> index 27396fe63f6d..66bd43a99d2e 100644
+> --- a/fs/overlayfs/copy_up.c
+> +++ b/fs/overlayfs/copy_up.c
+> @@ -670,7 +670,7 @@ static int ovl_copy_up_metadata(struct
+> ovl_copy_up_ctx *c, struct dentry *temp)
+>         if (err)
+>                 return err;
+>
+> -       if (inode->i_flags & OVL_COPY_I_FLAGS_MASK &&
+> +       if (inode->i_flags & OVL_FATTR_I_FLAGS_MASK &&
+>             (S_ISREG(c->stat.mode) || S_ISDIR(c->stat.mode))) {
+>                 /*
+>                  * Copy the fileattr inode flags that are the source of a=
+lready
 
-For SW_TAGS and HW_TAGS modes, their respective init functions will
-handle the flag enabling, if they are enabled/implemented.
+Which reminds me that you also need to verify that a copied up directory
+conforms to the ofs->casefold expectation, because there is no code
+to make the copied up directory casefolded.
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217049
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
-Acked-by: Alexander Gordeev <agordeev@linux.ibm.com> # s390
----
-Changes in v6:
-- Call kasan_init_generic() in arch/riscv _after_ local_flush_tlb_all()
----
- arch/arm/mm/kasan_init.c    | 2 +-
- arch/arm64/mm/kasan_init.c  | 4 +---
- arch/riscv/mm/kasan_init.c  | 1 +
- arch/s390/kernel/early.c    | 3 ++-
- arch/x86/mm/kasan_init_64.c | 2 +-
- arch/xtensa/mm/kasan_init.c | 2 +-
- 6 files changed, 7 insertions(+), 7 deletions(-)
+We can assume that layers check has already verified that upperdir/workdir
+are casefold correct, but we need to verify that $workdir/work/$tmpdir crea=
+ted
+by ovl_create_temp() has inherited the expected casefolding.
 
-diff --git a/arch/arm/mm/kasan_init.c b/arch/arm/mm/kasan_init.c
-index 111d4f703136..c6625e808bf8 100644
---- a/arch/arm/mm/kasan_init.c
-+++ b/arch/arm/mm/kasan_init.c
-@@ -300,6 +300,6 @@ void __init kasan_init(void)
- 	local_flush_tlb_all();
- 
- 	memset(kasan_early_shadow_page, 0, PAGE_SIZE);
--	pr_info("Kernel address sanitizer initialized\n");
- 	init_task.kasan_depth = 0;
-+	kasan_init_generic();
- }
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index d541ce45daeb..abeb81bf6ebd 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -399,14 +399,12 @@ void __init kasan_init(void)
- {
- 	kasan_init_shadow();
- 	kasan_init_depth();
--#if defined(CONFIG_KASAN_GENERIC)
-+	kasan_init_generic();
- 	/*
- 	 * Generic KASAN is now fully initialized.
- 	 * Software and Hardware Tag-Based modes still require
- 	 * kasan_init_sw_tags() and kasan_init_hw_tags() correspondingly.
- 	 */
--	pr_info("KernelAddressSanitizer initialized (generic)\n");
--#endif
- }
- 
- #endif /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
-diff --git a/arch/riscv/mm/kasan_init.c b/arch/riscv/mm/kasan_init.c
-index 41c635d6aca4..c4a2a9e5586e 100644
---- a/arch/riscv/mm/kasan_init.c
-+++ b/arch/riscv/mm/kasan_init.c
-@@ -533,4 +533,5 @@ void __init kasan_init(void)
- 
- 	csr_write(CSR_SATP, PFN_DOWN(__pa(swapper_pg_dir)) | satp_mode);
- 	local_flush_tlb_all();
-+	kasan_init_generic();
- }
-diff --git a/arch/s390/kernel/early.c b/arch/s390/kernel/early.c
-index 9adfbdd377dc..544e5403dd91 100644
---- a/arch/s390/kernel/early.c
-+++ b/arch/s390/kernel/early.c
-@@ -21,6 +21,7 @@
- #include <linux/kernel.h>
- #include <asm/asm-extable.h>
- #include <linux/memblock.h>
-+#include <linux/kasan.h>
- #include <asm/access-regs.h>
- #include <asm/asm-offsets.h>
- #include <asm/machine.h>
-@@ -65,7 +66,7 @@ static void __init kasan_early_init(void)
- {
- #ifdef CONFIG_KASAN
- 	init_task.kasan_depth = 0;
--	pr_info("KernelAddressSanitizer initialized\n");
-+	kasan_init_generic();
- #endif
- }
- 
-diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-index 0539efd0d216..998b6010d6d3 100644
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@ -451,5 +451,5 @@ void __init kasan_init(void)
- 	__flush_tlb_all();
- 
- 	init_task.kasan_depth = 0;
--	pr_info("KernelAddressSanitizer initialized\n");
-+	kasan_init_generic();
- }
-diff --git a/arch/xtensa/mm/kasan_init.c b/arch/xtensa/mm/kasan_init.c
-index f39c4d83173a..0524b9ed5e63 100644
---- a/arch/xtensa/mm/kasan_init.c
-+++ b/arch/xtensa/mm/kasan_init.c
-@@ -94,5 +94,5 @@ void __init kasan_init(void)
- 
- 	/* At this point kasan is fully initialized. Enable error messages. */
- 	current->kasan_depth = 0;
--	pr_info("KernelAddressSanitizer initialized\n");
-+	kasan_init_generic();
- }
--- 
-2.34.1
+Same goes for ovl_mkdir(), we must verify that the new created dentry/inode
+conform to the expected ofs->casefold.
 
+I think this check in ovl_create_real() should cover both cases:
+
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 70b8687dc45e..be8c5d02302d 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -187,6 +187,11 @@ struct dentry *ovl_create_real(struct ovl_fs
+*ofs, struct dentry *parent,
+                        /* mkdir is special... */
+                        newdentry =3D  ovl_do_mkdir(ofs, dir, newdentry,
+attr->mode);
+                        err =3D PTR_ERR_OR_ZERO(newdentry);
++                       /* expect to inherit casefolding from
+workdir/upperdir */
++                       if (!err && ofs->casefold !=3D
+ovl_dentry_casefolded(newdentry)) {
++                               dput(newdentry);
++                               err =3D -EINVAL;
++                       }
+                        break;
+
+Thanks,
+Amir.
 
