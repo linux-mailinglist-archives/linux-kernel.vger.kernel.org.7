@@ -1,280 +1,98 @@
-Return-Path: <linux-kernel+bounces-761493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE73B1FAD6
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:44:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A92B1FAF8
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763EC1899478
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:44:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D17657A9FA4
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DB426E16C;
-	Sun, 10 Aug 2025 15:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iic6ewxo"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085D0267B90;
+	Sun, 10 Aug 2025 16:00:51 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4033246787;
-	Sun, 10 Aug 2025 15:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3DF2C181;
+	Sun, 10 Aug 2025 16:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754840660; cv=none; b=RpLZYoK7YbAQroERzob2IPqXV4KFi6VDl82afcVVrgfe0yu7rD2YG/X/PWbopkJlcLtWrASE1GdbfpwWW58ZbI2cTafgUuxWbuVR2j2m6QStXvZBF4LKOEFWhgQCgzxA6/GMito239/Hkd8lOu2fbCBWJRSrUZO49FpfcJLOBiE=
+	t=1754841650; cv=none; b=SNNMXo4fqIseaGRBghEsnxw5KHreJbrIrPikmXlG37db2kX7ZP7HVOAhjgbIUm/Y6TCynzE+LKhHJ1KFGzgZ+DXpS1ntkmtGTnLHe2LIjgDq/KxgaaIGCz9nTxfKYCkJ0r2+6Ys4/pZE0gGbcUV0nW0j2ES40e36CcUC6CxFz98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754840660; c=relaxed/simple;
-	bh=Hne6qwxJ4KYkirc6n+j6KNnWgG/jNvNCJiD/yQhYjSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYH8AWkiVTCeclvzqrodIEfJF7jDjlpiEGVPoD3wCWZNjodD+8g1B8HJUOyBynQQw/a9fGHhGV73f/0Cns8rcZ4DsCXdCRkJKQx3UexnJaUTZs8u9Xhmk3qTaXCLEiyzzUupYPg5azU943b5vC97ObTYbmLJGtOaRP9FsjOD6zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iic6ewxo; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-320dfa8cfa3so3418845a91.3;
-        Sun, 10 Aug 2025 08:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754840658; x=1755445458; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NBIWANbCSNqX3PB3qnnw7IYaFXCa8H4jpKX9qPWWwF4=;
-        b=iic6ewxo6AtwVkqNV1auf8YIYJp93JBJXOX3xcaUiZ4N6KTGPuhkPmSzi9+a2AsYNV
-         wds+T6wizJNF+62VMO3bPhIeAu44/oWbXdSysAeZXN3CuULyVxGkaJAQ8tJfY40+mDxZ
-         ewUVZ8f1QqbQ8AU79L/Hfdir3R+5+fRQPWaj1E8zwURZA18mv0rCDYtF6YXtEe5gpzP/
-         Qh+PGAXKF/oOReHN+1EhIEuzFXhpc691IWwxBOKSEyxVPkxq3tuEBzz8o1E0Cn1XQFx1
-         RODiDepOPbwK+d0csaIb0p7EEgXt9vHxRJKTt9Bhg0cmzbQaz/kmfr6BPhcCePvodnoN
-         6ntQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754840658; x=1755445458;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NBIWANbCSNqX3PB3qnnw7IYaFXCa8H4jpKX9qPWWwF4=;
-        b=qT2mSj1ymmembTNVUZ/FNhByg7oMh8zJ/x3bGsWYVpc09Se03LcHXpHKsoOjC5BMzX
-         5wCU0gjJ/ONV80HHS1D9jwnelqW0X1LmKQEwM9j9eOMTvMaB1RFymZON1b4vkoZwlxIT
-         MWzfybwpmZJNthNdfxxoNsKrCpTZKJe6+cb2sqaLUPDkp0MsRHGUmbWukAd4bniOUkZm
-         sefYHZvmFSdWToqPBkYG4E8PVFKmN1tfgiyIWhWVHIAnG6kfErk8NPIQTUJov3dIse2R
-         AZFpskZreJFYFWcIZVzOr02e0fvFZ1pr3L3IaFvmuyR5y+H6Q2UpXtbv75bv8uytgFn5
-         rwfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQbcibUjDPVJ13fPyid3p3niIXdoTOSzoUV77SAWG7ZAPpPvtImPfl9YWDIT5Wv+qaTH571HD4lcJn@vger.kernel.org, AJvYcCWILV/8ozuqFYIPArkRYACC/6kLGjjzckHJqQJhV+ZNamTYMaA8PkP5gCqq6h9OFlh4ujaqxYBQD8vH@vger.kernel.org, AJvYcCWnQVnayt46ePTfKcj7yFJibHNT0Cox+9oVee2jsGMsjmBX42FC8+BsdM+9kN2xgvLozn3hnzvbx06kOnRx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFUhfn/b2qb9E9yU90KSWD6ilQEbNYZVkH68vKyTWsHlDq+KXK
-	g0Uhn816ikXlL2F51j612pJQLkhJyho+yaBoxyp3ZyMHvX92BXBRNSXR
-X-Gm-Gg: ASbGncuBfmWJSmVF2Rx39ZkTKS2FvxV6REls2hK1h3YeI3osa/NDukshuPk3AY7we4m
-	N2V2r0nAIlYbwX3is8WeRr8fmE+knohCyUJKDLV5jc2LqJDjaCTLpXoAr2s8wyOJVXGJ3Y2COtW
-	68B10xBocdRn+SVDnlrZw2fDwUjdTRWbwYUN385pJ29zcrBTjqInlCXci8d9hacA2+LnUxafVZS
-	4xWi53lQRDiWXazPhuUIN/muksHayRyBN0l2wpX7TjRPbKxWjWZNMMrzxd1ooEy+loVwcRBBL8b
-	cTelxD9FRKN+oxIzUFdZPACHDVKHbqnR+ZZHevT5NO+X5+eQVrBZ3jLUNkEhJ0Pw+QTCHROAlxl
-	B17UJe4w6eY+cYH0xsTnxrzE9/TidomE=
-X-Google-Smtp-Source: AGHT+IFoChiIoUOXeobw7QT0kPBjnTuVIMmkErksIaCZsvi/RYO/yJiAhEHEmHEe1v6BMFVmpZ83SQ==
-X-Received: by 2002:a17:90b:2b4f:b0:311:c5d9:2c70 with SMTP id 98e67ed59e1d1-32183a05009mr15818432a91.15.1754840658091;
-        Sun, 10 Aug 2025 08:44:18 -0700 (PDT)
-Received: from localhost ([2804:30c:1f50:da00:c6fb:5400:5af6:282f])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32161282b5esm12666144a91.27.2025.08.10.08.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 08:44:17 -0700 (PDT)
-Date: Sun, 10 Aug 2025 12:44:32 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] iio: adc: add ade9000 support
-Message-ID: <aJi-YCsgepj0GLip@debian-BULLSEYE-live-builder-AMD64>
-References: <20250808141020.4384-1-antoniu.miclaus@analog.com>
- <20250808141020.4384-4-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1754841650; c=relaxed/simple;
+	bh=NwsNLfO/+MFsOtjy/2VZNi2TOkyj58Atsa8ZBa7OwhI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ePsXTBXY1QPiWpqu188DeyPEB7NMHE3DgruA8Cs29CUGWKM3GKEbVH+OdlV46DIPjzb/r71eF3AmQH3C90yQEbe19bt2U50bv4lihkmLaT1X/alZlpIc9nhoui4yeqgoZN90SLjirWwhYKaTFhJgyJ/JUlt9Yh2G30ioDAi18eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id DAC411A054F;
+	Sun, 10 Aug 2025 15:45:01 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf06.hostedemail.com (Postfix) with ESMTPA id 485A220010;
+	Sun, 10 Aug 2025 15:44:59 +0000 (UTC)
+Message-ID: <bee3cea19d9fc1c97b1816f516fdd5283cebc1e1.camel@perches.com>
+Subject: Re: [PATCH v2 1/2] README: restructure with role-based
+ documentation and guidelines
+From: Joe Perches <joe@perches.com>
+To: Sasha Levin <sashal@kernel.org>
+Cc: corbet@lwn.net, josh@joshtriplett.org, kees@kernel.org, 
+	konstantin@linuxfoundation.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org, workflows@vger.kernel.org
+Date: Sun, 10 Aug 2025 08:44:58 -0700
+In-Reply-To: <20250809234008.1540324-2-sashal@kernel.org>
+References: <20250809234008.1540324-1-sashal@kernel.org>
+	 <20250809234008.1540324-2-sashal@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808141020.4384-4-antoniu.miclaus@analog.com>
+X-Stat-Signature: 3a77nyes4o3ndiwsq6jfta864pmfa46b
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 485A220010
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1+hb8m+D8wj5BHAfBujPm1MlO2IqBMyTU8=
+X-HE-Tag: 1754840699-118705
+X-HE-Meta: U2FsdGVkX19EkAO2csveQD8LvL+TybIV+U2PpyegGR42tPv/ZEG1N4TIHvRxT5+VXRwqBQ8uDV0aMlLa6XsVui/NYw7Lcf1dyUMqJ4klI+BzH03VzZETSLbpVD+9zliQDA5a72unGO/9D8fPF6frbnlN/LPbLcSA0WM5jmkE/7f4YxAsHuYLjN9T4F0+pXYhAmkbAUmHfJj/tqy2xzyc1XEDDPB+baBDbMp3og/5O25AZ/PGmcx7erTdsrclLEcD2yvCftqRM5h2bgXe171yX424MyInDPMzRiSovN9o+MQJ+n5UtzpZH1lewYvb1Qn78EkBeALLxzUnLO2LaRdKTT2f3fSnbVRM
 
-Hi Antoniu,
+On Sat, 2025-08-09 at 19:40 -0400, Sasha Levin wrote:
+> Reorganize README to provide targeted documentation paths for different
+> user roles including developers, researchers, security experts,
+> maintainers, and AI coding assistants. Add quick start section and
+> essential docs links.
+>=20
+> Include proper attribution requirements for AI-assisted contributions
+> using Assisted-by tags with agent details and tools used.
 
-Similarly to Nuno, I'm also getting into review only in v3 and may be missing
-remarks made in previous iterations. Also, this driver is extensive and for now,
-I only reviewed a few things (mostly register definitions and clock setup).
-I agree with somebody's suggestion I've seen about splitting the code into more
-patches according to the features that are going to be supported.
-More comments inline.
+Nicely done.
 
-On 08/08, Antoniu Miclaus wrote:
-> Add driver support for the ade9000. highly accurate,
-> fully integrated, multiphase energy and power quality
-> monitoring device.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-...
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index 1c6ca5fd4b6d..98876d1ea8bf 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -20,6 +20,7 @@ obj-$(CONFIG_AD7091R5) += ad7091r5.o
->  obj-$(CONFIG_AD7091R8) += ad7091r8.o
->  obj-$(CONFIG_AD7124) += ad7124.o
->  obj-$(CONFIG_AD7173) += ad7173.o
-> +obj-$(CONFIG_ADE9000) += ade9000.o
->  obj-$(CONFIG_AD7191) += ad7191.o
->  obj-$(CONFIG_AD7192) += ad7192.o
->  obj-$(CONFIG_AD7266) += ad7266.o
-> @@ -46,6 +47,7 @@ obj-$(CONFIG_AD7944) += ad7944.o
->  obj-$(CONFIG_AD7949) += ad7949.o
->  obj-$(CONFIG_AD799X) += ad799x.o
->  obj-$(CONFIG_AD9467) += ad9467.o
-> +obj-$(CONFIG_ADE9000) += ade9000.o
-Duplicated addition to into Makefile?
+Perhaps the 'Assisted-by:' tag should not be limited to AI
+assistance but could also be used when accepted notes were
+given on any revised patch submission.
 
->  obj-$(CONFIG_ADI_AXI_ADC) += adi-axi-adc.o
->  obj-$(CONFIG_ASPEED_ADC) += aspeed_adc.o
->  obj-$(CONFIG_AT91_ADC) += at91_adc.o
-> diff --git a/drivers/iio/adc/ade9000.c b/drivers/iio/adc/ade9000.c
-> new file mode 100644
-> index 000000000000..a05327119128
-> --- /dev/null
-> +++ b/drivers/iio/adc/ade9000.c
-> @@ -0,0 +1,2033 @@
-...
-> +
-> +/* Address of ADE9000 registers */
-> +#define	ADE9000_REG_AIGAIN		0x000
-> +#define	ADE9000_REG_AVGAIN		0x00B
-> +#define	ADE9000_REG_AIRMSOS		0x00C
-> +#define	ADE9000_REG_AVRMSOS		0x00D
-> +#define	ADE9000_REG_APGAIN		0x00E
-> +#define	ADE9000_REG_AWATTOS		0x00F
-> +#define	ADE9000_REG_AVAROS		0x010
-> +#define	ADE9000_REG_AFVAROS		0x012
-> +#define	ADE9000_REG_CONFIG0		0x060
-> +#define	ADE9000_REG_DICOEFF		0x072
-> +#define	ADE9000_REG_AI_PCF		0x20A
-> +#define	ADE9000_REG_AV_PCF		0x20B
-> +#define	ADE9000_REG_AIRMS		0x20C
-> +#define	ADE9000_REG_AVRMS		0x20D
-> +#define	ADE9000_REG_AWATT		0x210
-> +#define	ADE9000_REG_AVAR		0x211
-> +#define	ADE9000_REG_AVA			0x212
-> +#define ADE9000_REG_AFVAR		0x214
-> +#define	ADE9000_REG_APF			0x216
-> +#define	ADE9000_REG_BI_PCF		0x22A
-> +#define	ADE9000_REG_BV_PCF		0x22B
-> +#define	ADE9000_REG_BIRMS		0x22C
-> +#define	ADE9000_REG_BVRMS		0x22D
-> +#define	ADE9000_REG_CI_PCF		0x24A
-> +#define	ADE9000_REG_CV_PCF		0x24B
-> +#define	ADE9000_REG_CIRMS		0x24C
-> +#define	ADE9000_REG_CVRMS		0x24D
-> +#define	ADE9000_REG_AWATT_ACC		0x2E5
-> +#define ADE9000_REG_AWATTHR_LO		0x2E6
-Some defines are using tabs before the define name, others are using spaces.
-I would standardize to have one space after each '#define' but I guess it's
-also okay if you use all tabs.
+Oh, and maybe a checkpatch update like this?
+---
+ scripts/checkpatch.pl | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +#define ADE9000_REG_AVAHR_LO		0x2FA
-> +#define ADE9000_REG_AFVARHR_LO		0x30E
-> +#define ADE9000_REG_BWATTHR_LO		0x322
-> +#define ADE9000_REG_BVAHR_LO		0x336
-> +#define ADE9000_REG_BFVARHR_LO		0x34A
-...
-> +
-> +/* Disable all interrupts except EGYRDY */
-> +#define ADE9000_MASK0			0x00000001
-Can we have more suggestive names for the masks?
-If this disables all interrupts except EGYRDY, would it be reasonable to call it
-ADE9000_EGYRDY_INT_MASK or ADE9000_MASK0_EGYRDY_MASK (or something that hints
-about that interrupt)?
-By the way, to me, this almost looks more like a constant than a mask.
-Does it become clearer that these are masks if we define them with BIT macro?
-#define ADE9000_MASK0_EGYRDY_MASK		BIT(0)   ?
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index e722dd6fa8ef3..d17661141da79 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -641,6 +641,7 @@ our $signature_tags =3D qr{(?xi:
+ 	Reviewed-by:|
+ 	Reported-by:|
+ 	Suggested-by:|
++	Assisted-by:|
+ 	To:|
+ 	Cc:
+ )};
 
-> +
-> +/* Disable all interrupts */
-> +#define ADE9000_MASK1			0x00000000
-Same suggestion would apply here although this really looks like a constant.
-ADE9000_MASK1_INT_DISABLE maybe?
-
-> +
-> +/* Events disabled */
-> +#define ADE9000_EVENT_MASK		0x00000000
-I would call these predefined values just constants and drop the mask part of
-the name.
-
-> +
-> +/*
-> + * Assuming Vnom=1/2 of full scale.
-> + * Refer to Technical reference manual for detailed calculations.
-> + */
-> +#define ADE9000_VLEVEL			0x0022EA28
-> +
-...
-> +
-> +static unsigned long ade9000_clkout_recalc_rate(struct clk_hw *hw,
-> +						unsigned long parent_rate)
-> +{
-> +	/* CLKOUT provides the same frequency as the crystal/external clock */
-> +	return parent_rate ? parent_rate : 24576000; /* Default 24.576 MHz */
-This value is a data sheet constant and is used twice in the driver. Does it
-make sense to have a define for it?
-#define ADE9000_DEFAULT_CLK_FREQ_HZ		24576000   ?
-
-> +}
-> +
-> +static const struct clk_ops ade9000_clkout_ops = {
-> +	.prepare = ade9000_clkout_prepare,
-> +	.unprepare = ade9000_clkout_unprepare,
-> +	.recalc_rate = ade9000_clkout_recalc_rate,
-> +};
-...
-> +
-> +static int ade9000_probe(struct spi_device *spi)
-> +{
-> +	struct device *dev = &spi->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct ade9000_state *st;
-> +	struct regmap *regmap;
-> +	int irq;
-> +	int ret;
-...
-> +
-> +	/* Optional external clock input */
-> +	st->clkin = devm_clk_get_optional_enabled(dev, "clkin");
-> +	if (IS_ERR(st->clkin))
-> +		return dev_err_probe(dev, PTR_ERR(st->clkin), "Failed to get and enable clkin: %ld", PTR_ERR(st->clkin));
-> +
-> +	/* Register clock output provider */
-If I'm correctly reading ADE9000 data sheet, CLKOUT will have one of the
-connections to the external crystal when a crystal is used. So, maybe condition
-the clock provider feature to the supply of an external CMOS clock (not crystal)?
-Also, the description of CLKIN pin gives me the impression that the device
-requires an external clock input (either crystal or CMOS clock) so clkin would
-not be optional.
-
-> +	if (device_property_present(dev, "#clock-cells")) {
-> +		struct clk_init_data clk_init = {};
-> +		struct clk *clkout;
-> +		unsigned long parent_rate = 24576000; /* Default crystal frequency */
-> +
-> +		if (st->clkin)
-> +			parent_rate = clk_get_rate(st->clkin);
-> +
-> +		clk_init.name = "clkout";
-> +		clk_init.ops = &ade9000_clkout_ops;
-> +		clk_init.flags = CLK_GET_RATE_NOCACHE;
-> +		clk_init.num_parents = 0;
-> +
-> +		st->clkout_hw.init = &clk_init;
-> +
-> +		clkout = devm_clk_register(dev, &st->clkout_hw);
-> +		if (IS_ERR(clkout))
-> +			return dev_err_probe(dev, PTR_ERR(clkout), "Failed to register clkout: %ld", PTR_ERR(clkout));
-> +
-> +		ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &st->clkout_hw);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Failed to add clock provider: %d", ret);
-> +	}
-
-Best regards,
-Marcelo
 
