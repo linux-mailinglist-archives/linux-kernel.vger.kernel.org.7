@@ -1,159 +1,167 @@
-Return-Path: <linux-kernel+bounces-761502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA001B1FB00
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:09:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C626FB1FB04
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA811899F89
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:09:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C8C178A2A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4349E26CE05;
-	Sun, 10 Aug 2025 16:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6855D1D5CE8;
+	Sun, 10 Aug 2025 16:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BclEYCMG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gb4LRBnq"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207241E32B9;
-	Sun, 10 Aug 2025 16:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D9E1C683
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 16:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754842156; cv=none; b=F6jfLa11SBv5csG8KYiV0+NMsi9ZeXotoqDbuntOTia//mlc8Fdf7CtDqFF/DPc3YftkRzRWhZZfeZLuP1vbkdc6lliXzkW08Yn1KVM3vp43jfEw2FbAoxDDcCXqylZoFfM3iaT0+YnO4JCTOuvm+JUF+QaPKQgPfN3vnlerIBw=
+	t=1754842660; cv=none; b=Ueb8GUbmdt3SjqSY8w6mGWi5siwIgxcxfpexpYZvYedkkXTtoOSszoHcV8aPvUXo16Fee/Hw+nYkfMDHhKWV2c3+N42KxErXKgAXu0nuWuzICfpOfozixLOf27D7O994rrPJch9aZvW5M991O7zUb7B0UHzCco4ulKp2RCd7DHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754842156; c=relaxed/simple;
-	bh=iNEZMkRAwa9NNxtNxZOMxbo9qgjn9DPyf2np5vh35Jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MDyP/cae9dKWuSLC/RqY5QF68LCcjQyp3tP0uJ3/rsRsCWwr9enTy6j5Nq7oGC44cwsQJ4QlRhlJDh6DNFglW1P2acXiRUq+OhxGsSM/8XVjtB+dxrRVK/lFkvtRSgninu3Z8LXqjS2YskHwkrSf4lxebZHIKsgtxQ3O69DuM1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BclEYCMG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57AFNgm8008143;
-	Sun, 10 Aug 2025 16:09:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=tgzC2y
-	I/MF9coSbtIS/FuZVwgTWSWN7MU391hjnl1Ws=; b=BclEYCMG0yg9Qu/h8FqDQ2
-	wPbS6GCoY4PB0KraKbq31yOh/iLedT/ORzSvhrGA9uPbrtrVBZtR21e4rA01VxjD
-	+S6veD1oBh59kq5Q60HtHoFyfCWDRgbfrSSw6Uv75nsC9l0kf3xfaPaaycVnrWiA
-	dTzchc+07xRH40wLLKr3Ns7/BLSKBhucouOlWukw+6fqId34DTUHVvvpWKfH2Bcv
-	VhT49jozdMhPi1DPfcgvXvObHkiCfjuWFy7TYrq+9K0JU9B/XYjD9emAG1KwCchZ
-	Wu0pszxUcptgLUducc5BBqEF71DGOMOyPqkHiRSWlss9QK15mf0/5jI9AYtrFBIA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48eha9t3w3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Aug 2025 16:09:01 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57AG91Uj022130;
-	Sun, 10 Aug 2025 16:09:01 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48eha9t3w1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Aug 2025 16:09:01 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57AELopM025667;
-	Sun, 10 Aug 2025 16:09:00 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ejvm25aa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Aug 2025 16:09:00 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57AG8wr835914380
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 10 Aug 2025 16:08:58 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9F3C32004B;
-	Sun, 10 Aug 2025 16:08:58 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 45DCB20040;
-	Sun, 10 Aug 2025 16:08:56 +0000 (GMT)
-Received: from [9.43.79.85] (unknown [9.43.79.85])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 10 Aug 2025 16:08:56 +0000 (GMT)
-Message-ID: <40b96722-a304-443f-966a-b155950fcbd9@linux.ibm.com>
-Date: Sun, 10 Aug 2025 21:38:55 +0530
+	s=arc-20240116; t=1754842660; c=relaxed/simple;
+	bh=r+/tz4wOk7S63KAYEOx9vULkKR8ZDVGPGskKkBYlZWI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I2SkHNdl9WeSP4N9bAMUWBPhfL5uYFoF//EsH2MtA9e7ZBx0c/eruI+3dC6wV6P/VgmEoY+lHnX86xE5GiaoqIagHueEL/Z04Bo8YEI0zsjW+qoMCN668YicslIPu8XgxKdwsW8P6X/1vWOca1IokFJAgzEr1teH4r4VnvKqpiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gb4LRBnq; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76bdea88e12so3096344b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 09:17:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754842656; x=1755447456; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dEAJER69/NfwAiGupTfaKK2jAZ45McqgSZlh8HSXymw=;
+        b=gb4LRBnqdr5mOvEM9bsoBtKBoTPEtuGLhdBxTrrtCHJ4KgggdqIkJUnfrC6NCxpGzx
+         Nf/AkTnjDfvQu360S6FvROj3kIc3GTNFrJ0IJQaWj1jCU6tpSMHfKDUHrTWwOxWMuS6u
+         /9dCXl5yrgKU1LBCvJUS/MrDYBOAJhOcmnPvoeJ5iib9dijDx/BPc290Dw2SrRt8sSA0
+         pBp1/8Q8HmbRSxwDdKkSpI6QufHDAkQGBYOpLE8HD5atB2PfoINIM9w+rnIZrYuIMx7c
+         GS2fp3+RWZXjWyieSFB1eDAcYVCaMmZta9WGa07dDPITrTLlooGN60O3fBhuazak1zVB
+         w8FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754842656; x=1755447456;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dEAJER69/NfwAiGupTfaKK2jAZ45McqgSZlh8HSXymw=;
+        b=tDLmpdth+pwmdddgYP6CrKZhsgZpD+pRdYgp8/ZS3WZZ1vbujFfgLHcZsZKQ1gCQDE
+         NmvwQ+QdXCICCmVaeaMeU88pqeYSl52RYt8Y3tIBhika+KVppRyptXDi7EOWCx2Mr/MW
+         mxM5fbKHhcXXwoddrb/jtuV3ZTfG5/C016BujAhA31sCC9hGqgn3xowm+3hCW6KuhQXF
+         68pAG0SfKl7DAW5Jj2sCL9vhkl0VXwDtBp6gux8gQSdFZL5HqsH1IBPEETSPOUzkH9Vd
+         zhH8xsrMAk8r1pTa0MZgLHRFcH2MZO2pNxueF0vyl3eGLJ5yoK74X1BYYFOz2UKl4x0M
+         /UOw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7z9WQqFzL7myMAB4geXM3r5CYiIS+Rv/gBihedXnH3CsWqmxES1+SGRQpHhk5NKCpp2KILrMLkZh8IV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr7oNY1gJLiyKrzZLccoG5uDtsAOZrCUxwU/4VEflxbbVrwntP
+	WEk6L3ePCPw7zwTg3B9SuyAsESiQP+ykK1u8ThA8io2FVEiFWmA6Q0PC
+X-Gm-Gg: ASbGncvcGF7+pZtz8/roWBsOad/lS6m40bTCkgAKKNV0QpnEKQ1sgap8cnr7VKw+ndQ
+	ugQ1SgxNLKSnkPqnSb4xmGfLMlTaLOPwPBQahbBLtt6wIs/MeTdG1oyB8bMWytbWmcaIsU02t+K
+	yU4ODsV9yqNFZfKPveN1OcPKl5/x9MGt0/2zeT4p4pJ7pBgoaWtUZAT+jsdHKu7k2kAwQlHCnj3
+	2J8CGEPrf5gy7GFIGuR00m2oonfq6K9AWL3w9JuWJ0bJB8uVFuhFWNRgq1xmFTg3q/s3vbiVNYg
+	87eWE2vKcFaWzGet7/kmKpciwjXhtI9FZcJH9+C+flq7fx7IPkesepivBrx7JOgEYGJ6FMQ8DTH
+	oSnULD8FwTvpWckN4FnnBxQFhMgmut1ROjxBM5oTRjwrhW/CEyQcAMA1TQ7I9TNWLt1UmVTDhdW
+	Tf
+X-Google-Smtp-Source: AGHT+IGaneADRRWLQHrxVro1KG5pLemoUIgsHzCDalyypmDxM0LYn3Wt757/XYCwlglY3qEq1dRvcQ==
+X-Received: by 2002:a05:6a00:b44:b0:746:2ae9:fc42 with SMTP id d2e1a72fcca58-76c461784fcmr14689584b3a.19.1754842656447;
+        Sun, 10 Aug 2025 09:17:36 -0700 (PDT)
+Received: from localhost.localdomain (wf122-104.ust.hk. [175.159.122.104])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bdd2725c9sm22495944b3a.6.2025.08.10.09.17.33
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 10 Aug 2025 09:17:36 -0700 (PDT)
+From: Haoyang LIU <tttturtleruss@gmail.com>
+To: Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: hust-os-kernel-patches@googlegroups.com,
+	Haoyang LIU <tttturtleruss@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] scripts/checktransupdate.py: add support for scanning directory
+Date: Mon, 11 Aug 2025 00:17:30 +0800
+Message-ID: <20250810161730.6530-1-tttturtleruss@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf auxtrace: Avoid redundant NULL check in
- auxtrace_mmap_params__set_idx()
-To: Gautam Menghani <gautam@linux.ibm.com>, peterz@infradead.org,
-        mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-        kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250804110602.23422-1-gautam@linux.ibm.com>
-Content-Language: en-US
-From: Aditya Bodkhe <adityab1@linux.ibm.com>
-In-Reply-To: <20250804110602.23422-1-gautam@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=KPRaDEFo c=1 sm=1 tr=0 ts=6898c41d cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=3B45m_xtiCOFTJ9Nk4UA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: koHLIe8CZxvcfPJ99sol1offNMVOtdje
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDExNSBTYWx0ZWRfXy59u5RhCtzhd
- VJ+mgx7cEauc1JgWlxbLlD78nRwxuym8LP3FNuwcediPbro86XYhFELdfAFCIOk16gkXJ5b8YIF
- h7KMuSA9lnkbDjXWVKmlepeK8ahq6BtjSS3wFAxO3l87ZsGMw8F8KXq0RvMiI6Hzqc5m5cTlOpW
- 2ORTHrBbcZ3QV2A/2WD7RJCHHI6mCLPoEB/ZumjmziMttvLN0B0EV7YwcuGH41tZJTKmxt+xxOb
- S2vcSgVOWcYOsx5FIAsfErNkmr4QpCGMUjeqqXJd7Lmf3+F4oNRIeAeDjcJLgwzqZoVGlei92Gb
- IoZuG0XAcllBjXa5y2+dlVqXdkhV4nzNKI2iS42eGwVyGI3BP8E3UcxNPz0jOmFxzd1WK6mMo6J
- 4SNgtDQWWNlxAdkwlL4jeBhMnVRBHsghh3Dz7I4R69CHpgkOnT2XaJCcQvWLGTV+Yuwu+3Ho
-X-Proofpoint-GUID: sFWV954d6K42-v_kHEDN3jaP_UOxB1cI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-10_05,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999 spamscore=0
- clxscore=1011 adultscore=0 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 mlxscore=0 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508100115
+Content-Transfer-Encoding: 8bit
 
+Origin script can only accept a file as parameter, this commit enables
+it to scan a directory.
 
-On 04/08/25 4:36 pm, Gautam Menghani wrote:
-> Since commit eead8a011477 ("libperf threadmap: Don't segv for index 0 for the
-> NULL 'struct perf_thread_map' pointer"), perf_thread_map__pid() can
-> check for a NULL map and return -1 if idx is 0. Cleanup
-> auxtrace_mmap_params__set_idx() and remove the redundant NULL check.
->
-> No functional change intended.
->
-> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
-> ---
->   tools/perf/util/auxtrace.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-> index ebd32f1b8f12..5e437133c753 100644
-> --- a/tools/perf/util/auxtrace.c
-> +++ b/tools/perf/util/auxtrace.c
-> @@ -185,10 +185,7 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
->   
->   	if (per_cpu) {
->   		mp->cpu = perf_cpu_map__cpu(evlist->core.all_cpus, idx);
-> -		if (evlist->core.threads)
-> -			mp->tid = perf_thread_map__pid(evlist->core.threads, 0);
-> -		else
-> -			mp->tid = -1;
-> +		mp->tid = perf_thread_map__pid(evlist->core.threads, 0);
->   	} else {
->   		mp->cpu.cpu = -1;
->   		mp->tid = perf_thread_map__pid(evlist->core.threads, idx);
+Usage example:
+./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
 
-LGTM.
+Signed-off-by: Haoyang LIU <tttturtleruss@gmail.com>
+---
+ scripts/checktransupdate.py | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-Reviewed-by: Aditya Bodkhe <adityab1@linux.ibm.com>
+diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
+index e39529e46c3d..0d197d036650 100755
+--- a/scripts/checktransupdate.py
++++ b/scripts/checktransupdate.py
+@@ -13,6 +13,8 @@ The usage is as follows:
+ This will print all the files that need to be updated or translated in the zh_CN locale.
+ - ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+ This will only print the status of the specified file.
++- ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
++This will print all the files in the specified folder and its subfolders.
+ 
+ The output is something like:
+ Documentation/dev-tools/kfence.rst
+@@ -21,6 +23,17 @@ No translation in the locale of zh_CN
+ Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+ commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
+ 1 commits needs resolving in total
++
++Documentation/translations/zh_CN/dev-tools/index.rst
++commit d5af79c05e93 ("Documentation: move dev-tools debugging files to process/debugging/")
++commit d5dc95836147 ("kbuild: Add Propeller configuration for kernel build")
++commit 315ad8780a12 ("kbuild: Add AutoFDO support for Clang build")
++3 commits needs resolving in total
++
++Documentation/translations/zh_CN/dev-tools/kcsan.rst
++commit b37221cc861d ("Documentation: kcsan: fix "Plain Accesses and Data Races" URL in kcsan.rst")
++commit 72ffee678f6f ("docs: update dev-tools/kcsan.rst url about KTSAN")
++2 commits needs resolving in total
+ """
+ 
+ import os
+@@ -131,7 +144,7 @@ def check_per_file(file_path):
+     opath = get_origin_path(file_path)
+ 
+     if not os.path.isfile(opath):
+-        logging.error("Cannot find the origin path for {file_path}")
++        logging.error(f"Cannot find the origin path for {file_path}")
+         return
+ 
+     o_from_head = get_latest_commit_from(opath, "HEAD")
+@@ -293,6 +306,17 @@ def main():
+                 if args.print_missing_translations:
+                     logging.info(os.path.relpath(os.path.abspath(file), linux_path))
+                     logging.info("No translation in the locale of %s\n", args.locale)
++    else:
++        # check if the files are directories or files
++        new_files = []
++        for file in files:
++            if os.path.isfile(file):
++                new_files.append(file)
++            elif os.path.isdir(file):
++                # for directories, list all files in the directory and its subfolders
++                new_files.extend(list_files_with_excluding_folders(
++                    file, [], "rst"))
++        files = new_files
+ 
+     files = list(map(lambda x: os.path.relpath(os.path.abspath(x), linux_path), files))
+ 
+-- 
+2.50.1
 
 
