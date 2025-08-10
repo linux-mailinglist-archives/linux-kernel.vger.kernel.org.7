@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-761494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3972B1FAD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:44:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE73B1FAD6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2ACA3AA42C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:44:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763EC1899478
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CAD26E71F;
-	Sun, 10 Aug 2025 15:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DB426E16C;
+	Sun, 10 Aug 2025 15:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YFzSe6yB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iic6ewxo"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B421BFC0B
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 15:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4033246787;
+	Sun, 10 Aug 2025 15:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754840662; cv=none; b=oWjdXqdCUt7es2wsZrToj9VQgu+ZO7TDbg9ias6k7Qg7+Ie0yu8SRk4YBshcWwb/4V1BjF1+Wv+KiU1mgAI/fg9cRKV3Gj+F1fZvAr+lMT74RGCr7wAkjjhLlcgbfKU0ZWMbUZu/cBfkyJT+4P8xEkqebTieHzj4nEb/1q49IC8=
+	t=1754840660; cv=none; b=RpLZYoK7YbAQroERzob2IPqXV4KFi6VDl82afcVVrgfe0yu7rD2YG/X/PWbopkJlcLtWrASE1GdbfpwWW58ZbI2cTafgUuxWbuVR2j2m6QStXvZBF4LKOEFWhgQCgzxA6/GMito239/Hkd8lOu2fbCBWJRSrUZO49FpfcJLOBiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754840662; c=relaxed/simple;
-	bh=mo3BkmkZcz4RrvyHPFvnYtr9kBp14hLUSvFThEc66i4=;
+	s=arc-20240116; t=1754840660; c=relaxed/simple;
+	bh=Hne6qwxJ4KYkirc6n+j6KNnWgG/jNvNCJiD/yQhYjSc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HtnW+fQx/cSpknNmfCxftIZUo42KcuHWiDpjHYdmNxN52lHu0QyhuWjdgpfeMi7ZmM2BCRQP6UvxTaG0aHoU5zv8x09IN8vWx/6qB/31YsgWjmHiKpHSJxQk2aTzXJJde/sRbOSPC2o1mfibCEFWxKN28fRtsiREW14KkO2C5zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YFzSe6yB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754840657;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q+czV7nM5qInm3XftdXKnxWAN+sI3lLzlF5n8cEHrSA=;
-	b=YFzSe6yBB4mQ6q1zYwIlJU7LhaG9KNLgdjFXTwsekeRJ1qvqDo+b31DmpgJxyXqBFHbQFP
-	TLkFJH92wGqp/opzZ0h/nzhTPm+fHLgF8RoKJFD708g/Xk3+P25DPpe4IAwTkFk3KoqwMf
-	RfldDCYzVPzzcd2dTQMezEEtYg17kTI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-29-U3a_-3cYMASI1ea8uqM2tg-1; Sun,
- 10 Aug 2025 11:44:13 -0400
-X-MC-Unique: U3a_-3cYMASI1ea8uqM2tg-1
-X-Mimecast-MFC-AGG-ID: U3a_-3cYMASI1ea8uqM2tg_1754840652
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ADB661956080;
-	Sun, 10 Aug 2025 15:44:11 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.117])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 460E418004A3;
-	Sun, 10 Aug 2025 15:44:07 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 10 Aug 2025 17:43:00 +0200 (CEST)
-Date: Sun, 10 Aug 2025 17:42:55 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: =?utf-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Xiang Gao <gxxa03070307@gmail.com>,
-	"mjguzik@gmail.com" <mjguzik@gmail.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"joel.granados@kernel.org" <joel.granados@kernel.org>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
-Message-ID: <20250810154255.GA11928@redhat.com>
-References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
- <20250802022550.GT222315@ZenIV>
- <15b18541f37447dd8d5dbd8012662f67@xiaomi.com>
- <20250802084525.GB31711@redhat.com>
- <80be47cb31d14ffc9f9a7d8d4408ab0a@xiaomi.com>
- <20250804114900.GA6656@redhat.com>
- <20250804-gepfercht-delfin-0172b1ee9556@brauner>
- <20250804124402.GB6656@redhat.com>
- <20250805124300.GB27131@redhat.com>
- <20250808-erleichtern-hinreichend-35335e412d9e@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYH8AWkiVTCeclvzqrodIEfJF7jDjlpiEGVPoD3wCWZNjodD+8g1B8HJUOyBynQQw/a9fGHhGV73f/0Cns8rcZ4DsCXdCRkJKQx3UexnJaUTZs8u9Xhmk3qTaXCLEiyzzUupYPg5azU943b5vC97ObTYbmLJGtOaRP9FsjOD6zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iic6ewxo; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-320dfa8cfa3so3418845a91.3;
+        Sun, 10 Aug 2025 08:44:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754840658; x=1755445458; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NBIWANbCSNqX3PB3qnnw7IYaFXCa8H4jpKX9qPWWwF4=;
+        b=iic6ewxo6AtwVkqNV1auf8YIYJp93JBJXOX3xcaUiZ4N6KTGPuhkPmSzi9+a2AsYNV
+         wds+T6wizJNF+62VMO3bPhIeAu44/oWbXdSysAeZXN3CuULyVxGkaJAQ8tJfY40+mDxZ
+         ewUVZ8f1QqbQ8AU79L/Hfdir3R+5+fRQPWaj1E8zwURZA18mv0rCDYtF6YXtEe5gpzP/
+         Qh+PGAXKF/oOReHN+1EhIEuzFXhpc691IWwxBOKSEyxVPkxq3tuEBzz8o1E0Cn1XQFx1
+         RODiDepOPbwK+d0csaIb0p7EEgXt9vHxRJKTt9Bhg0cmzbQaz/kmfr6BPhcCePvodnoN
+         6ntQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754840658; x=1755445458;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NBIWANbCSNqX3PB3qnnw7IYaFXCa8H4jpKX9qPWWwF4=;
+        b=qT2mSj1ymmembTNVUZ/FNhByg7oMh8zJ/x3bGsWYVpc09Se03LcHXpHKsoOjC5BMzX
+         5wCU0gjJ/ONV80HHS1D9jwnelqW0X1LmKQEwM9j9eOMTvMaB1RFymZON1b4vkoZwlxIT
+         MWzfybwpmZJNthNdfxxoNsKrCpTZKJe6+cb2sqaLUPDkp0MsRHGUmbWukAd4bniOUkZm
+         sefYHZvmFSdWToqPBkYG4E8PVFKmN1tfgiyIWhWVHIAnG6kfErk8NPIQTUJov3dIse2R
+         AZFpskZreJFYFWcIZVzOr02e0fvFZ1pr3L3IaFvmuyR5y+H6Q2UpXtbv75bv8uytgFn5
+         rwfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQbcibUjDPVJ13fPyid3p3niIXdoTOSzoUV77SAWG7ZAPpPvtImPfl9YWDIT5Wv+qaTH571HD4lcJn@vger.kernel.org, AJvYcCWILV/8ozuqFYIPArkRYACC/6kLGjjzckHJqQJhV+ZNamTYMaA8PkP5gCqq6h9OFlh4ujaqxYBQD8vH@vger.kernel.org, AJvYcCWnQVnayt46ePTfKcj7yFJibHNT0Cox+9oVee2jsGMsjmBX42FC8+BsdM+9kN2xgvLozn3hnzvbx06kOnRx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFUhfn/b2qb9E9yU90KSWD6ilQEbNYZVkH68vKyTWsHlDq+KXK
+	g0Uhn816ikXlL2F51j612pJQLkhJyho+yaBoxyp3ZyMHvX92BXBRNSXR
+X-Gm-Gg: ASbGncuBfmWJSmVF2Rx39ZkTKS2FvxV6REls2hK1h3YeI3osa/NDukshuPk3AY7we4m
+	N2V2r0nAIlYbwX3is8WeRr8fmE+knohCyUJKDLV5jc2LqJDjaCTLpXoAr2s8wyOJVXGJ3Y2COtW
+	68B10xBocdRn+SVDnlrZw2fDwUjdTRWbwYUN385pJ29zcrBTjqInlCXci8d9hacA2+LnUxafVZS
+	4xWi53lQRDiWXazPhuUIN/muksHayRyBN0l2wpX7TjRPbKxWjWZNMMrzxd1ooEy+loVwcRBBL8b
+	cTelxD9FRKN+oxIzUFdZPACHDVKHbqnR+ZZHevT5NO+X5+eQVrBZ3jLUNkEhJ0Pw+QTCHROAlxl
+	B17UJe4w6eY+cYH0xsTnxrzE9/TidomE=
+X-Google-Smtp-Source: AGHT+IFoChiIoUOXeobw7QT0kPBjnTuVIMmkErksIaCZsvi/RYO/yJiAhEHEmHEe1v6BMFVmpZ83SQ==
+X-Received: by 2002:a17:90b:2b4f:b0:311:c5d9:2c70 with SMTP id 98e67ed59e1d1-32183a05009mr15818432a91.15.1754840658091;
+        Sun, 10 Aug 2025 08:44:18 -0700 (PDT)
+Received: from localhost ([2804:30c:1f50:da00:c6fb:5400:5af6:282f])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32161282b5esm12666144a91.27.2025.08.10.08.44.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 08:44:17 -0700 (PDT)
+Date: Sun, 10 Aug 2025 12:44:32 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] iio: adc: add ade9000 support
+Message-ID: <aJi-YCsgepj0GLip@debian-BULLSEYE-live-builder-AMD64>
+References: <20250808141020.4384-1-antoniu.miclaus@analog.com>
+ <20250808141020.4384-4-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,98 +89,192 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250808-erleichtern-hinreichend-35335e412d9e@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250808141020.4384-4-antoniu.miclaus@analog.com>
 
-On 08/08, Christian Brauner wrote:
->
-> On Tue, Aug 05, 2025 at 02:43:01PM +0200, Oleg Nesterov wrote:
-> >
-> > After the quick grep I don't see the problematic users, but if a zombie
-> > task T does task_ppid_nr_ns(current, NULL) the kernel can crash:
-> >
-> > 	- pid_alive() succeeds, the task is not reaped yet
-> >
-> > 	- the parent/debugger does wait()->release_task(T), T->thread_pid
-> > 	  is NULL now
-> >
-> > 	- T calls task_tgid_nr_ns()-> ... pid_nr_ns(ns => NULL) because
-> > 	  task_active_pid_ns(T) returns NULL
-> >
-> > Do you think this worth fixing?
->
-> If it's not too much work and it is an actual real-world concern then I
-> think we should fix it. But I trust your judgement here!
+Hi Antoniu,
 
-Well, I don't really know what to do ;)
+Similarly to Nuno, I'm also getting into review only in v3 and may be missing
+remarks made in previous iterations. Also, this driver is extensive and for now,
+I only reviewed a few things (mostly register definitions and clock setup).
+I agree with somebody's suggestion I've seen about splitting the code into more
+patches according to the features that are going to be supported.
+More comments inline.
 
-Initially I was going to do something like below to "fix" task_tgid_nr_ns()
+On 08/08, Antoniu Miclaus wrote:
+> Add driver support for the ade9000. highly accurate,
+> fully integrated, multiphase energy and power quality
+> monitoring device.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+...
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index 1c6ca5fd4b6d..98876d1ea8bf 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -20,6 +20,7 @@ obj-$(CONFIG_AD7091R5) += ad7091r5.o
+>  obj-$(CONFIG_AD7091R8) += ad7091r8.o
+>  obj-$(CONFIG_AD7124) += ad7124.o
+>  obj-$(CONFIG_AD7173) += ad7173.o
+> +obj-$(CONFIG_ADE9000) += ade9000.o
+>  obj-$(CONFIG_AD7191) += ad7191.o
+>  obj-$(CONFIG_AD7192) += ad7192.o
+>  obj-$(CONFIG_AD7266) += ad7266.o
+> @@ -46,6 +47,7 @@ obj-$(CONFIG_AD7944) += ad7944.o
+>  obj-$(CONFIG_AD7949) += ad7949.o
+>  obj-$(CONFIG_AD799X) += ad799x.o
+>  obj-$(CONFIG_AD9467) += ad9467.o
+> +obj-$(CONFIG_ADE9000) += ade9000.o
+Duplicated addition to into Makefile?
 
-	--- a/include/linux/pid.h
-	+++ b/include/linux/pid.h
-	@@ -299,7 +299,9 @@ static inline pid_t task_ppid_nr_ns(const struct task_struct *tsk, struct pid_na
-		pid_t pid = 0;
-	 
-		rcu_read_lock();
-	-	if (pid_alive(tsk))
-	+	if (!ns)
-	+		ns = task_active_pid_ns(current);
-	+	if (ns && pid_alive(tsk))
-			pid = task_tgid_nr_ns(rcu_dereference(tsk->real_parent), ns);
-		rcu_read_unlock();
+>  obj-$(CONFIG_ADI_AXI_ADC) += adi-axi-adc.o
+>  obj-$(CONFIG_ASPEED_ADC) += aspeed_adc.o
+>  obj-$(CONFIG_AT91_ADC) += at91_adc.o
+> diff --git a/drivers/iio/adc/ade9000.c b/drivers/iio/adc/ade9000.c
+> new file mode 100644
+> index 000000000000..a05327119128
+> --- /dev/null
+> +++ b/drivers/iio/adc/ade9000.c
+> @@ -0,0 +1,2033 @@
+...
+> +
+> +/* Address of ADE9000 registers */
+> +#define	ADE9000_REG_AIGAIN		0x000
+> +#define	ADE9000_REG_AVGAIN		0x00B
+> +#define	ADE9000_REG_AIRMSOS		0x00C
+> +#define	ADE9000_REG_AVRMSOS		0x00D
+> +#define	ADE9000_REG_APGAIN		0x00E
+> +#define	ADE9000_REG_AWATTOS		0x00F
+> +#define	ADE9000_REG_AVAROS		0x010
+> +#define	ADE9000_REG_AFVAROS		0x012
+> +#define	ADE9000_REG_CONFIG0		0x060
+> +#define	ADE9000_REG_DICOEFF		0x072
+> +#define	ADE9000_REG_AI_PCF		0x20A
+> +#define	ADE9000_REG_AV_PCF		0x20B
+> +#define	ADE9000_REG_AIRMS		0x20C
+> +#define	ADE9000_REG_AVRMS		0x20D
+> +#define	ADE9000_REG_AWATT		0x210
+> +#define	ADE9000_REG_AVAR		0x211
+> +#define	ADE9000_REG_AVA			0x212
+> +#define ADE9000_REG_AFVAR		0x214
+> +#define	ADE9000_REG_APF			0x216
+> +#define	ADE9000_REG_BI_PCF		0x22A
+> +#define	ADE9000_REG_BV_PCF		0x22B
+> +#define	ADE9000_REG_BIRMS		0x22C
+> +#define	ADE9000_REG_BVRMS		0x22D
+> +#define	ADE9000_REG_CI_PCF		0x24A
+> +#define	ADE9000_REG_CV_PCF		0x24B
+> +#define	ADE9000_REG_CIRMS		0x24C
+> +#define	ADE9000_REG_CVRMS		0x24D
+> +#define	ADE9000_REG_AWATT_ACC		0x2E5
+> +#define ADE9000_REG_AWATTHR_LO		0x2E6
+Some defines are using tabs before the define name, others are using spaces.
+I would standardize to have one space after each '#define' but I guess it's
+also okay if you use all tabs.
 
-and then add WARN_ON() into pid_nr_ns(). But note that we should not check 'ns'
-before 'pid', we need
+> +#define ADE9000_REG_AVAHR_LO		0x2FA
+> +#define ADE9000_REG_AFVARHR_LO		0x30E
+> +#define ADE9000_REG_BWATTHR_LO		0x322
+> +#define ADE9000_REG_BVAHR_LO		0x336
+> +#define ADE9000_REG_BFVARHR_LO		0x34A
+...
+> +
+> +/* Disable all interrupts except EGYRDY */
+> +#define ADE9000_MASK0			0x00000001
+Can we have more suggestive names for the masks?
+If this disables all interrupts except EGYRDY, would it be reasonable to call it
+ADE9000_EGYRDY_INT_MASK or ADE9000_MASK0_EGYRDY_MASK (or something that hints
+about that interrupt)?
+By the way, to me, this almost looks more like a constant than a mask.
+Does it become clearer that these are masks if we define them with BIT macro?
+#define ADE9000_MASK0_EGYRDY_MASK		BIT(0)   ?
 
-	--- a/kernel/pid.c
-	+++ b/kernel/pid.c
-	@@ -491,7 +491,13 @@ pid_t pid_nr_ns(struct pid *pid, struct pid_namespace *ns)
-		struct upid *upid;
-		pid_t nr = 0;
-	 
-	-	if (pid && ns->level <= pid->level) {
-	+	if (!pid)
-	+		return nr;
-	+
-	+	if (WARN_ON_ONCE(!ns)
-	+		return nr;
-	+
-	+	if (ns->level <= pid->level) {
-			upid = &pid->numbers[ns->level];
-			if (upid->ns == ns)
-				nr = upid->nr;
+> +
+> +/* Disable all interrupts */
+> +#define ADE9000_MASK1			0x00000000
+Same suggestion would apply here although this really looks like a constant.
+ADE9000_MASK1_INT_DISABLE maybe?
 
-Think of task_pid_vnr(current) from a zombie, it should return 0 without warning.
+> +
+> +/* Events disabled */
+> +#define ADE9000_EVENT_MASK		0x00000000
+I would call these predefined values just constants and drop the mask part of
+the name.
 
+> +
+> +/*
+> + * Assuming Vnom=1/2 of full scale.
+> + * Refer to Technical reference manual for detailed calculations.
+> + */
+> +#define ADE9000_VLEVEL			0x0022EA28
+> +
+...
+> +
+> +static unsigned long ade9000_clkout_recalc_rate(struct clk_hw *hw,
+> +						unsigned long parent_rate)
+> +{
+> +	/* CLKOUT provides the same frequency as the crystal/external clock */
+> +	return parent_rate ? parent_rate : 24576000; /* Default 24.576 MHz */
+This value is a data sheet constant and is used twice in the driver. Does it
+make sense to have a define for it?
+#define ADE9000_DEFAULT_CLK_FREQ_HZ		24576000   ?
 
-But this looks overcomplicated to me. So I am going to send the patch which simply
-changes __task_pid_nr_ns()
+> +}
+> +
+> +static const struct clk_ops ade9000_clkout_ops = {
+> +	.prepare = ade9000_clkout_prepare,
+> +	.unprepare = ade9000_clkout_unprepare,
+> +	.recalc_rate = ade9000_clkout_recalc_rate,
+> +};
+...
+> +
+> +static int ade9000_probe(struct spi_device *spi)
+> +{
+> +	struct device *dev = &spi->dev;
+> +	struct iio_dev *indio_dev;
+> +	struct ade9000_state *st;
+> +	struct regmap *regmap;
+> +	int irq;
+> +	int ret;
+...
+> +
+> +	/* Optional external clock input */
+> +	st->clkin = devm_clk_get_optional_enabled(dev, "clkin");
+> +	if (IS_ERR(st->clkin))
+> +		return dev_err_probe(dev, PTR_ERR(st->clkin), "Failed to get and enable clkin: %ld", PTR_ERR(st->clkin));
+> +
+> +	/* Register clock output provider */
+If I'm correctly reading ADE9000 data sheet, CLKOUT will have one of the
+connections to the external crystal when a crystal is used. So, maybe condition
+the clock provider feature to the supply of an external CMOS clock (not crystal)?
+Also, the description of CLKIN pin gives me the impression that the device
+requires an external clock input (either crystal or CMOS clock) so clkin would
+not be optional.
 
-	--- a/kernel/pid.c
-	+++ b/kernel/pid.c
-	@@ -514,7 +514,8 @@ pid_t __task_pid_nr_ns(struct task_struct *task, enum pid_type type,
-		rcu_read_lock();
-		if (!ns)
-			ns = task_active_pid_ns(current);
-	-	nr = pid_nr_ns(rcu_dereference(*task_pid_ptr(task, type)), ns);
-	+	if (ns)
-	+		nr = pid_nr_ns(rcu_dereference(*task_pid_ptr(task, type)), ns);
-		rcu_read_unlock();
+> +	if (device_property_present(dev, "#clock-cells")) {
+> +		struct clk_init_data clk_init = {};
+> +		struct clk *clkout;
+> +		unsigned long parent_rate = 24576000; /* Default crystal frequency */
+> +
+> +		if (st->clkin)
+> +			parent_rate = clk_get_rate(st->clkin);
+> +
+> +		clk_init.name = "clkout";
+> +		clk_init.ops = &ade9000_clkout_ops;
+> +		clk_init.flags = CLK_GET_RATE_NOCACHE;
+> +		clk_init.num_parents = 0;
+> +
+> +		st->clkout_hw.init = &clk_init;
+> +
+> +		clkout = devm_clk_register(dev, &st->clkout_hw);
+> +		if (IS_ERR(clkout))
+> +			return dev_err_probe(dev, PTR_ERR(clkout), "Failed to register clkout: %ld", PTR_ERR(clkout));
+> +
+> +		ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &st->clkout_hw);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "Failed to add clock provider: %d", ret);
+> +	}
 
-
-and leave pid_nr_ns() alone.
-
-People will do mistakes, it is better not to crash and just return 0 if, say,
-a zombie task does task_pid_vnr(another_task). Currently it is not simple to
-do this correctly because, again, the pid_alive(current) check can't help.
-
-pid_nr_ns() is more "low-level", its users should know what they are doing.
-
-Although the quick grep suggests many of cleanups. Say, why kvm_create_pit()
-does get_pid? why can't it simply use task_tgid_vnr(current). Even do_getpgid()
-and sys_getsid() look overcomplicated. Later.
-
-Oleg.
-
+Best regards,
+Marcelo
 
