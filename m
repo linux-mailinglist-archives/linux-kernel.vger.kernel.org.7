@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-761410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA5BB1F9BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 13:13:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C71FFB1F9C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 13:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D2047AB67F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:11:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1AB4177268
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F50023956E;
-	Sun, 10 Aug 2025 11:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFB623D2A0;
+	Sun, 10 Aug 2025 11:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmmLXmY4"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ht+fXlbT"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D76B22A4E5;
-	Sun, 10 Aug 2025 11:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F73566A
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 11:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754824390; cv=none; b=WXhNNeAVYvVOXx0hm5Ps934HlESRgFx/LQcvx4Abs2RCzwL3SAJxFJhaoTfYjfMZn5+8oGBnalqvmRiYMmqND7p6uwOx/Thlkvalw5UtiRf5RiTcR/NT7tguR1nSlfIdE3Id80yiFp12ObSSsFe62dOf5X98IXkYfhii8jMOQ4U=
+	t=1754824966; cv=none; b=qWUidFx1pEe8oTiTaHFz8OrUpDS4O7PbCcOAf/Ok6EtvHZzS52iWEgPwn9ta/g2k4Dpw5IrURzoCrsPbUsGJsB2hKRAcPvK+RGeN2ZIaGFsuBEHzNmvi+Mxarl2jEaS+Jx8c2IRKobHFqFZYXnNH7Iif2Fs7vlTDpaclAiv0308=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754824390; c=relaxed/simple;
-	bh=QhLjmOIS92P7ea/XzuNovZfDinZN9nt/o+nPMeNZ4zw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mP+n4u6Uf0DyoXy5EpRaMGY10Sj2oj2GXjmvupwViNODS9qh9N+vDtoPiOsgSlDpHCDEJnYNZ1XEDaEkQYSL7ZnandGyaUumLWrxLUK1Mh+wKX3D9YePkaBg6BCDhvANs+mzkEAXrmBdiGT3Q5sg+Tnh/4oTwqk2VUh00/2+kTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BmmLXmY4; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1754824966; c=relaxed/simple;
+	bh=e1gGJ9Xs89sHMXSSC7LWCCJGzyL5Y/mSAQAQNPjPduw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CVIUukmuI1CxG5V0cl5yV2h68be/4uHqM0t4SLiN69cpuBgsyFA/gnhi0oy8IvcXVZi3vjOXtNHEWN5X1zLMA3+/wkWjiHfH11X9ZQ1qDKYCO5Lh4sUi2fA4oCY/Na7o44/8DRFO5pFSGaCYmnhzAMPCWnbq2H7fUbiG9KLrTow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ht+fXlbT; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76bed310fa1so2916364b3a.2;
-        Sun, 10 Aug 2025 04:13:09 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-459ddf9019cso10852045e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 04:22:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754824389; x=1755429189; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rb/Swu0G08J4y82/6Cs36yghjUYUfH8TllUehxDTCYg=;
-        b=BmmLXmY4kYy3pOqFq6pV1i3loCDlQ5KFYQS0F0fnpGSEHNlvyaKZT6xOPVWk0hkAer
-         J34sHkBe4dc5KZGbOSF6NSqCQUSJzU3EYwq7WRtcsWdIiqlfinM1TkX9NKyqOvAGTmW5
-         DsvgXk1l9dJ1hiaVz3BES8+sP506UCBFKT9v/JvMB55puxwxs+kg3qR89K+jalsWFyTB
-         wUuXYFFQgCdup6tX5nLNs8PZXzMAqpAej9P6rBotyq5M8IxveVW62NjCzCVK26vhdrdU
-         /Bjl9lrOMHKl40NAxA7LPH7/s2ERa54q6sub8MOvxneMRM/mSqk9d4GoiLTBorFEh8mO
-         lU0g==
+        d=gmail.com; s=20230601; t=1754824963; x=1755429763; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jhhFXRDo1oqiT60OoNv34yNBdmuJ8HYGxW8L8Z+UYnk=;
+        b=Ht+fXlbTLf+EU0XQRfPUaYMvQj4zylKfgb2D4Cf65jXj/BOlpcQKvB6K3RFc0bUpeq
+         zJRYN3d4wecp0mDVet0nwnV8I50GA9QNgn2nwkMFU6WRwruDcXxEqHvZY/oUk0K1uoF9
+         cAGKADA245W3ikiSXjyeI5cm3ug+5/dFWO+KaXTsoJsfSJ0oC6iXNOFsTDCMybmQ7szn
+         LTeCNbQkqikf8aoPXHGk8uA206mW6HUgBPUv+STXe/X5a/Z/XijP8K9mpR8iM2al50S3
+         FWewwOMX+DE60U0smFpZXk+cHCblLv6ftd+ZBzOIV8CKJrY/QRod6vwBHuV71Nn9fis4
+         r3aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754824389; x=1755429189;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rb/Swu0G08J4y82/6Cs36yghjUYUfH8TllUehxDTCYg=;
-        b=njGTnVnfeg9ADevJnr1bt+x7x8vGg+epWfJ3/udLaSU3Kbn/OYLy2EwgfqjieuD/d9
-         wqEeGY4iNrsWfRZeDBKR9Y4ol8Fl6f3zwQMjeQ132/6xzGoTlODPJUMDHGDszRViHv2Z
-         GeeorxypPMLyfKaiIuOavJDamIw9itMJIUAiuNlvtahT/Hv/7vJeUxEz6CXCL4xsPXp8
-         paGrwi4UYxLqVn0iliqpmo3t+XLSA4JDvGSDDBl815jjyOi8FHW9Oxf65UimUOc3TqKj
-         WwTVZeS4eVAGVnR2/CEB+AxR8X3QR93JQKBhMKKMmywVAFzS0MQD6kmlm908aAH0g9zw
-         A29g==
-X-Forwarded-Encrypted: i=1; AJvYcCU4cApPiHeR4MyKGSH0gAPmReaEoICBnUt8F/ktckIp/mkFk4MeEOvMNXdiKm4YCLzLPlqWvXITOCk=@vger.kernel.org, AJvYcCV0STYBizgnRgmD6I6l02oZt5JdcxELFtVW/EiDFbdEFR3pK4z1rVQqL01WIqWQwrVaFnSyAUNkEYSPNtpredE7BHW6@vger.kernel.org, AJvYcCXSnoy8gXxK38BXTFu2zXDzhGZKYtW52amH8eNSJ8PnzgCIZ9CdsuY2rqpDW07olQa4KLu152fu7I4c4O9w@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAzWXUK0T+1O8uyMU3E9SfdJEeofs4Grwoj/AbI1bo6hqxHWIr
-	88X1w+zPK+n+rJQ3yuO4kJyKmwA8P2ZTchVHS7vC+EomAlh6wwgtUjAB
-X-Gm-Gg: ASbGnctz28l2HF4eiLxrM2K8ARasyHIAmEVT7GZTAqpRzyNQAJywT+JRNoLSINJ0eOq
-	oFHTjKDx6VfWUZC+IuiDwQfukgoJdVJo4DSp6Xjk6+jmbnlBJyc+clX/4MlpzI2xeGwSqRrahnR
-	aiKFRF6gt1UXsbEHMwqijOsZLAye0xeghdy5HTFhcw121QR5vNwd1fBck6boigG2AU1e+sJ6QlW
-	gk8+n3cuSa6o4xwg4V/8OGteWkB12xCkcnpwtoKlSpJCmJTJmxpT/qeDEyXGkTnBCLd0F27fxTo
-	KiYkf3dnz2X0dnKR0l0k8dn0iPW7CNlcshmq4Y2Jeun9S18ox5Sg0L9O95iokN0EeFbvUjERaSB
-	s/M5Xi7jvvJKw/cx0ZzxPyX0Apb2OXLIfWBE6+MFk2K4=
-X-Google-Smtp-Source: AGHT+IFYbOlLruk89Zs56x9IK75Dy2SXGTNWfKStneEVZOxxj2/Sw109N76g6LUWLW1IDYmJc4i51w==
-X-Received: by 2002:a05:6a00:139e:b0:748:9d26:bb0a with SMTP id d2e1a72fcca58-76c461b2aa8mr13327685b3a.18.1754824388851;
-        Sun, 10 Aug 2025 04:13:08 -0700 (PDT)
-Received: from kforge.gk.pfsense.com ([103.70.166.143])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c0a952525sm15705030b3a.79.2025.08.10.04.13.05
+        d=1e100.net; s=20230601; t=1754824963; x=1755429763;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jhhFXRDo1oqiT60OoNv34yNBdmuJ8HYGxW8L8Z+UYnk=;
+        b=u8IxfBvFDejE1r8EL52Ft+9sbYTIhu+3Pr8nW2V/y/EbIZDHKGFMEVYP1KZDlSiHbk
+         7YHj0ZXdKgjPBL48ErBYjwVz+xM1sghWVDh8TOS/dY5N4Z7f45aIj4Gsn38L4qNC1Bx7
+         qj5YfbWYLz4gAWqNd3/ydZgypf6+HeU4+qVeMKdK2beXm5kqgMnsr7bWHxUZl1K8E890
+         kYD2iE3LKjdIR5EAgkH6t/SgDB3PVlG4tEbQOeVRi0U9baTZJ8xzOgGmOXCoeYKP9DgZ
+         puxNAn8dNbGqXMAPlIGXuvhH9yPwsh6HTGYIFh5QvO1tD0q1orhVejNpWckH6esMUsyY
+         84mg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3/CB5GJECIjUDmghXneqFukTqEHhbxPzwZWcl0SRBfopjAJB+Sh+OcPAoGp7EvQubMf4mr0aFVsrNgVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykS2V+LfJLLF/rMZmEfWTPCK2BM9Gn+ZBu0PpYGK0oqRnSERN3
+	PV7eGGPN53/UnRQ6I9qOHYE/yXAbKP7GDi7Z6BYVIwuusIMT/9eKZKY7
+X-Gm-Gg: ASbGncuCWPaDVKQOdQJ415Bhmx7iVTx9IpzanadF1ILVrp3q7+nuil8sjqNli3DCD21
+	RLGxqIJw242yTllEUS0zzCCnODCs8nnUrza3DFqQ1N0zTRXI9DDipSz+pLrtBZrCjpi0xM4nr0+
+	n/UZhG8ZRqgG6mi9vWLwUqtbekMggZYtTQBuqZv0fsttxjJqZopXorT89TwTyP7H3Ducuq0gVnI
+	gDbdhG/r5dv/43EWQY/hUrLgO4KJXjEavC4JqIXGYNXq69sOQ9pur5Cnt83cL6QbfcH3Sx/O79g
+	8RNZHJjQxteWt2PvBwnMwCdU5RhUSHtIowvd1mT0zlK9Qsni8unUfGTiOMn9tBUJ9Fy1bhPfT0M
+	YFir+WOZsusEQ2clgZks6EyDPgGz1UatIVQQ4QxmKh56VXBI0xci5XDw0tmfJ4/4trmuzr/V7
+X-Google-Smtp-Source: AGHT+IFaniUBDX8gJy6ORJM4iQr4pxv5XTKMu1lZCkl7ztSeaP2EIElttBJC25j1GVEo/9v7FIJk8Q==
+X-Received: by 2002:a05:600c:4ed0:b0:456:1bae:5470 with SMTP id 5b1f17b1804b1-459f4eb4126mr86519615e9.8.1754824962393;
+        Sun, 10 Aug 2025 04:22:42 -0700 (PDT)
+Received: from localhost.localdomain (109.red-88-1-15.dynamicip.rima-tde.net. [88.1.15.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8f5ca8ab7sm15816113f8f.59.2025.08.10.04.22.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 04:13:08 -0700 (PDT)
-From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-To: rostedt@goodmis.org
-Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
-	corbet@lwn.net,
-	skhan@linuxfoundation.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+        Sun, 10 Aug 2025 04:22:41 -0700 (PDT)
+From: Javier Garcia <rampxxxx@gmail.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dakr@kernel.org,
+	robin.clark@oss.qualcomm.com,
+	antomani103@gmail.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	me@brighamcampbell.com
+Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] Documentation/rv: Fix minor typo in monitor_synthesis page
-Date: Sun, 10 Aug 2025 16:42:48 +0530
-Message-ID: <20250810111249.93181-1-krishnagopi487@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Javier Garcia <rampxxxx@gmail.com>
+Subject: [PATCH v2] drm: Add directive to format code in comment
+Date: Sun, 10 Aug 2025 13:22:18 +0200
+Message-ID: <20250810112218.293272-1-rampxxxx@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <qf6xwtxh57jg6ico7n53ft7bepogeal5wfhthodsnf55eabgum@de2ah47jovbg>
+References: <qf6xwtxh57jg6ico7n53ft7bepogeal5wfhthodsnf55eabgum@de2ah47jovbg>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,27 +100,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Specifically, fix spelling of "practice"
+Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
 
-Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2444: Unexpected indentation.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2446: Block quote ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2450: Definition list ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2451: Definition list ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2455: Unexpected indentation.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2456: Definition list ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2457: Definition list ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2458: Definition list ends without a blank line; unexpected unindent.
+
+
+Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
 ---
- Documentation/trace/rv/monitor_synthesis.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1 -> v2:
+      * Added the proper Fixes tag.
+      * v1 https://lore.kernel.org/lkml/20250804212902.22554-1-rampxxxx@gmail.com
 
-diff --git a/Documentation/trace/rv/monitor_synthesis.rst b/Documentation/trace/rv/monitor_synthesis.rst
-index ac808a7554f5..3a7d7b2f6cb6 100644
---- a/Documentation/trace/rv/monitor_synthesis.rst
-+++ b/Documentation/trace/rv/monitor_synthesis.rst
-@@ -181,7 +181,7 @@ which is the list of atomic propositions present in the LTL specification
- functions interacting with the Buchi automaton.
- 
- While generating code, `rvgen` cannot understand the meaning of the atomic
--propositions. Thus, that task is left for manual work. The recommended pratice
-+propositions. Thus, that task is left for manual work. The recommended practice
- is adding tracepoints to places where the atomic propositions change; and in the
- tracepoints' handlers: the Buchi automaton is executed using::
- 
+ drivers/gpu/drm/drm_gpuvm.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+index bbc7fecb6f4a..74d949995a72 100644
+--- a/drivers/gpu/drm/drm_gpuvm.c
++++ b/drivers/gpu/drm/drm_gpuvm.c
+@@ -2432,6 +2432,8 @@ static const struct drm_gpuvm_ops lock_ops = {
+  *
+  * The expected usage is:
+  *
++ * .. code-block:: c
++ *
+  *    vm_bind {
+  *        struct drm_exec exec;
+  *
 -- 
-2.43.0
+2.50.1
 
 
