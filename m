@@ -1,137 +1,150 @@
-Return-Path: <linux-kernel+bounces-761369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD17B1F8E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:34:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B67B1F8F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47BE41899E60
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5003BD2A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFE01EE7B9;
-	Sun, 10 Aug 2025 07:34:06 +0000 (UTC)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A422144B4;
+	Sun, 10 Aug 2025 07:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OzlVMe4q"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880C44A21;
-	Sun, 10 Aug 2025 07:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4161A7264
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 07:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754811245; cv=none; b=Hsg67UhQRUOBJxLrXxEAk3dKYwEw8rzg9/FJVvdE0jFAeegpDIb9ZZa7re4C4QVjTevHdQc847HUNFlqD2PuZdePvwaThs3Vn9IJYNH/TN65isyqdRJXJxizlMRsASjasC4O/FUILZ+53204cKD4tqT3reYVoyntWkvr0cob8QU=
+	t=1754811638; cv=none; b=XctkPdjgn/UX6ebNKAbLuYpv7K++YsZ7SEVVeSeKe2S5n8tUWmridKdULeQzMp+MIxZHTshomijCjI3pnHoTCTSpWDprebjazVtLCb3Umo7MVl2qhsj7ygyNFO8z4cFizbGMp+AakxMCVmUADtSQdDux3HCxjEZ8VDfGZqVOdeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754811245; c=relaxed/simple;
-	bh=xwDCfS4A04WfjmLFHkrpS0QrCC1isG9MZNjnxI1Os4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+mkVj3+lFKNmdvT6gKRZ55Z3JXFP1ABxF42iwa0n0NOrc212tLgzDvE4C4cDkq/oNuab8ROmB+mJMVPjKEZN7c/gKVISmI8Pwnnh6FQmZzL2kSjjWGBhmfbtCoSzMqOljlm0j/HQuYVuADmu76HaWy9yFwV7nQNgnPdewwSqZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1754811638; c=relaxed/simple;
+	bh=Y2MyhjjslDupB6WjuFHwZ+ZhdYcIeH3CC6kbwxOn4Jc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t6Mm+pnn/693p8UzLYmQBvsF3lLzk6oyKeZGegWrSt+LVey4H4p+nfw1HRkukm+7vdPhZcvfaYgBd2+DuFzz2NdsvEHw4Dm7yazN2A5K45kpCx9RjW7Uc2YLWr6He4VPEtHXcIP9I4US2tYOoqTKbbMVQz3sD2Zp+f7H23ghb98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OzlVMe4q; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4febcc4c93dso2780646137.0;
-        Sun, 10 Aug 2025 00:34:03 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-240418cbb8bso21466805ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 00:40:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754811636; x=1755416436; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f3qWSqA6uMau46FnL/gjHf1qw0j0WRwZWdWAHLL5xbI=;
+        b=OzlVMe4qV54/0Tw9iSMIGyCw4R8qao0mYR9+RP8ntD/O5iDG7NelEGDoNC5q1x11Q2
+         k05VhWhACH37aHEcbSLSBNUkDaP5fiSoaqngeKeKDKCs6fyQbbBC5FcZj7S8GG/Q8P8Q
+         bKq1bp5o4+sEOa+IuP2ulXAAO1XF5okHHV9neayjB7Jo+vUtVpxWgVtFLsEUbQsr9vhV
+         fSTXjU2q1eB9r+WlhjJJ+L51yUbBwrxAmEeL5qfJcJV2Omw6qGU7yzvxtJD0JyrFwO+0
+         FI0IZNXGIoika0l8L7PikOwJh2ax4JuCq1jbq0tfHShhZdkXVDEwX5owECSWqFZ2LItW
+         co/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754811242; x=1755416042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o1x2PhzoBNX+uaq88L79zI+BIBgIzC4qRXmSyVMDstI=;
-        b=Q3Bd52wsPVIcQV3LHDUc9tjr4Cier7107SBQNddwqLcHrUWpQZLQfx1GQFCZFWQL63
-         3uTnZ1bDiKoJ027KwXsXq4QduxJQTxMuo09IgUACB0n/ez+dEU6MBf57sIIyY/qe8NTD
-         y+1TbIcchAhjobWVIX5/iLoRexu5O9l5WuVru3/iVY40sLIH/xcH4R+s7AnXnsk7A6JP
-         +i4EmHjiPrI+jTQBM/+kHN/953BxdoRtpBIXiDyWXxknbgfjre9AgFNjT+5sAwKFUcWi
-         o9ErHBEo7e3yBGWVX8n6zqmks1sp6AHov41KMTKdyGtOiW+jBieR7Qpk038NhdHCTFhY
-         Xadg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzFX1njcGW9pkJTmwUMztnZBy/DgTJstJwETaAZQKundjYVC/NYokKGpeK3UJTRlX3y+jj7gmIDn7QrGmv@vger.kernel.org, AJvYcCW7JuCPcm7wyEY1yNqs5QjpW/jaezJ5rsmN4IW0Z+/PSqRumxvLXaoMLoTo97POsXPGqNA4Pv3cDPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1DpCLlQHS0fdPrVrW5ObzBigTHTOYpD65Ue6Qdz/QDLv/sWbY
-	cpRBxT7/8gTW2sq8n3w9Db6Qd/6HJSL7dnRvc8ruzeGBS0sbLQsGHLlf95JgPtK+
-X-Gm-Gg: ASbGncv8OPo3/PeNkLkyRQ4pB4vEibEmoKoeL+bfzEiePcC7hWMmzTiSvHeQIax9k6l
-	UiGHaP5mGWT8Nw3JtYKarLQ6SMzgleLpSrMHSJSLSX5Iae0odVN8QJOuvO9TEhcedqfSc+sKoZR
-	PbV53CrsJ0njCkGeNAeDxVFArPrNaAOZdJT3kAe3KKP27SuWhHOyU+LXrLM5ZD3V8bxF6NvmZOu
-	R/7vY+W8cYoQ/TTVC2I5AcaMczlaKCAWzhS6BJ+NtcvJx+n82No46DQApnZ90n+BNOZfYW2YBq+
-	IDvI4FAxchbz7fLwXD8wdlC96D4D+/wVN82J9k2WR1LCcd/CoA4pBuhXqmwR+xVP3Mq83Y0M6JF
-	hdog4atuxxTEauHP/FoBIuD0+RWGTFZ3XAk+C7N6aNJGowuApaP6c2ezRp9Dx
-X-Google-Smtp-Source: AGHT+IFJKcC7TJNECi1PnF9doH43N5z0NpORDnFziQlF8AFJ5pEnhFTJCnDIn33YwsSZkbg2nEsZNQ==
-X-Received: by 2002:a05:6102:330d:b0:4e5:5c14:5937 with SMTP id ada2fe7eead31-506231f1ee7mr2927014137.1.1754811242050;
-        Sun, 10 Aug 2025 00:34:02 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5062bc4f1f2sm1213286137.15.2025.08.10.00.34.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Aug 2025 00:34:01 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4febcc4c93dso2780639137.0;
-        Sun, 10 Aug 2025 00:34:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVL7p0JGed6X0yZkgmnysxh3CTGDuc0U8db58JE/peuCcYLs+E7WrP5ExTQYtxGgVjtNzMkJSzHifjyxe4h@vger.kernel.org, AJvYcCWKRT8OctbZV+KdSsDyqlerMAMxFCaP1CZj4Qv6/aaXNO7AirmRmQL6MkHaZTTEZ/ktCXjZ8dAzH30=@vger.kernel.org
-X-Received: by 2002:a05:6102:4b09:b0:504:d7fc:d970 with SMTP id
- ada2fe7eead31-504d7fce8ccmr5111272137.12.1754811241147; Sun, 10 Aug 2025
- 00:34:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754811636; x=1755416436;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f3qWSqA6uMau46FnL/gjHf1qw0j0WRwZWdWAHLL5xbI=;
+        b=kZSSMG2ZmYxNr2WwFO67C56eiRqPOhRixg9tq525qqVHgd9edyPvvsmVFbPHb9wIy3
+         e2iRGMBksYlwoK8gZIWlwu4/C8E2fYsF9Db9QGsabKpK335zknZMpZ9gfLILPj7uIoje
+         mC7C0lkwJjQPBYC6x+DJIU6dQubulVAPtTQcVTiSy9rKDl8IAfc2XKkh6XZCHpbdVdKU
+         GbpxwTYNkpVfexCOQsd5LYgzkAY4C4ptCBNQ2mbewPzXXkDG1J3SIpxAr16zOikCuvuV
+         GI9tc0xjwyoQIRZ+fUnMhaDypSnESY2ISF/Le7xcrWC5wcdBAE1Q0BTHAiEZKKHeWX+/
+         +JMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcbl2an5kiJf2bmVYr31y9CnjcGYK4lFOo+I6vFvj95kbLk8iyhAKCQ7IrTXB2FH38Gi+TMtZXZWtnsK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxehECRM59rqjcH6jBXSDUqPwsiyRQxC2LeNpvpuxLxGMNeK+/e
+	hnJ+PgZo/2uOJTjiLLDtLZkLPEcI0vcIidbMNBWzG8s/qJRAeCU917r8
+X-Gm-Gg: ASbGnctQ4tsO315qdYX86UHbNfoIjLllbK8ACfLioEAMbDt9cmCLpDwRWQFY9vBmVqQ
+	yYOYaWoafOYvInWqBbfq2toVoncC1bAWZGPuNdWkiXy01ya3bVSW3WFi8eSlGyc68T4z8zUn7xM
+	79TabqvKdOjsKdo4dtSHXQGfmMyU5Dhh1RGILzYvD0AarlPjd8KxUkNQhneAExvd9kN7+qty6jK
+	57iHkMAkeGIfDlWaw175rFLvFTrH111p2LoKC6aKjL2PpNbFf/HzpPDfev6TE6YAdDe0+8hjI7f
+	+i0F9vSueCx4gJjImeGFasFeRKwfn8Mj8kxBmrG4FSsdnQdiYOdUH/OzQWkIoCdFKJXy//eBHu1
+	+d+7uegwMXp1sSlFLbo2WLNC/v9+vwiaUdw==
+X-Google-Smtp-Source: AGHT+IHj8XJuZT+e8n3ptEvI4d1ZhTGMLL33JrSEDgad1N3hMltDmcEcAbLS/oGZI8f23DZetqYLKQ==
+X-Received: by 2002:a17:902:ea0b:b0:240:b073:932b with SMTP id d9443c01a7336-242c205fe65mr120641005ad.23.1754811635618;
+        Sun, 10 Aug 2025 00:40:35 -0700 (PDT)
+Received: from pop-os.. ([172.59.160.70])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976d13sm244105245ad.109.2025.08.10.00.40.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 00:40:35 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH] gpu: fix spacing and indentation in drm_gpuvm_sm_map_exec_lock description
+Date: Sun, 10 Aug 2025 00:40:14 -0700
+Message-Id: <20250810074014.339366-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <07262c55e82fc4a3e3dbe7c45713b14955271e7f.1754552156.git.geert+renesas@glider.be>
- <aJcbbb4OVK_q2VkU@smile.fi.intel.com>
-In-Reply-To: <aJcbbb4OVK_q2VkU@smile.fi.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 10 Aug 2025 09:33:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXF_Dto3EVBKxr9+M=rmcwNcZy66aUqbb5OiRb75vSfnA@mail.gmail.com>
-X-Gm-Features: Ac12FXwGgzS1R8tErAwY2YGYM2qaGffulr1FlL4YL6iDAqzTGK-BqExfdLaEPI0
-Message-ID: <CAMuHMdXF_Dto3EVBKxr9+M=rmcwNcZy66aUqbb5OiRb75vSfnA@mail.gmail.com>
-Subject: Re: [PATCH] Documentation/printf: Use literal fwnode_handle
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Andy,
+Fixes:
+./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2444: ERROR: Unexpected indentation. [docutils]
+./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2446: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
+./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2450: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2451: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2455: ERROR: Unexpected indentation. [docutils]
 
-CC Sakari
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+---
+ drivers/gpu/drm/drm_gpuvm.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-On Sat, 9 Aug 2025 at 11:57, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Thu, Aug 07, 2025 at 09:36:01AM +0200, Geert Uytterhoeven wrote:
-> > When looking for fwnode_handle in the printk format documentation, it i=
-s
-> > only found in the Chinese translation:
-> >
-> >     $ git grep fwnode_handle -- Documentation/*printk-formats.rst
-> >     Documentation/translations/zh_CN/core-api/printk-formats.rst:=E7=94=
-=A8=E4=BA=8E=E6=89=93=E5=8D=B0fwnode_handles=E7=9A=84=E6=B6=88=E6=81=AF=E3=
-=80=82=E9=BB=98=E8=AE=A4=E6=83=85=E5=86=B5=E4=B8=8B=E6=98=AF=E6=89=93=E5=8D=
-=B0=E5=AE=8C=E6=95=B4=E7=9A=84=E8=8A=82=E7=82=B9=E5=90=8D=E7=A7=B0=EF=BC=8C=
-=E5=8C=85=E6=8B=AC=E8=B7=AF=E5=BE=84=E3=80=82
-> >
-> > This happens because the original documentation talks about "fwnode
-> > handles", without mentioning the actual type name.
->
-> Fixes?
+diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+index bbc7fecb6f4a..17dafa01700f 100644
+--- a/drivers/gpu/drm/drm_gpuvm.c
++++ b/drivers/gpu/drm/drm_gpuvm.c
+@@ -2441,21 +2441,26 @@ static const struct drm_gpuvm_ops lock_ops = {
+  *        drm_exec_until_all_locked (&exec) {
+  *            for_each_vm_bind_operation {
+  *                switch (op->op) {
+- *                case DRIVER_OP_UNMAP:
+- *                    ret = drm_gpuvm_sm_unmap_exec_lock(gpuvm, &exec, op->addr, op->range);
+- *                    break;
+- *                case DRIVER_OP_MAP:
+- *                    ret = drm_gpuvm_sm_map_exec_lock(gpuvm, &exec, num_fences,
+- *                                                     op->addr, op->range,
+- *                                                     obj, op->obj_offset);
+- *                    break;
++ *                    case DRIVER_OP_UNMAP:
++ *                        ret = drm_gpuvm_sm_unmap_exec_lock(gpuvm, &exec, op->addr, op->range);
++ *                        break;
++ * 
++ *                    case DRIVER_OP_MAP:
++ *                        ret = drm_gpuvm_sm_map_exec_lock(gpuvm, &exec, num_fences,
++ *                                                         op->addr, op->range,
++ *                                                         obj, op->obj_offset);
++ * 
++ *                        break;
++ * 
+  *                }
+  *
+  *                drm_exec_retry_on_contention(&exec);
+- *                if (ret)
+- *                    return ret;
++ *                if (ret) return ret;
++ * 
+  *            }
++ * 
+  *        }
++ * 
+  *    }
+  *
+  * This enables all locking to be performed before the driver begins modifying
+-- 
+2.34.1
 
-If you insist...
-
-Fixes: 3bd32d6a2ee62db3 ("lib/vsprintf: Add %pfw conversion specifier
-for printing fwnode names")
-
-> Anyway, LGTM,
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
