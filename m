@@ -1,129 +1,87 @@
-Return-Path: <linux-kernel+bounces-761311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 476BCB1F853
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 06:38:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AE6B1F86D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 372134E060B
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 04:38:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094A83BDD14
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 05:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E331DDC1B;
-	Sun, 10 Aug 2025 04:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=wiesinger.com header.i=@wiesinger.com header.b="dhavXmDC"
-Received: from vps01.wiesinger.com (vps01.wiesinger.com [46.36.37.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDEA1E25EF;
+	Sun, 10 Aug 2025 05:10:47 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DA18F6E;
-	Sun, 10 Aug 2025 04:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.36.37.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F601DED53
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 05:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754800691; cv=none; b=F/I6n3NwNA0aIwsO+c9pmcyZ3w7PYLwtuwHSRMyvQLcxblLcZ2xuiLWLUSlJkWtZF5KjZiizpgUWZyfIBikvQ5uEwvi8bMUMSAvbiLXfR/kEj32Iwd+eIYecldU1FiXv1TOFIrkdZy8GCVpQMKin8b4+yrRtGRH9Qfb9siVghfw=
+	t=1754802647; cv=none; b=aSUqdvmaczOvef8t+apH9WOh4qh7shfGDY53xYNSUgPaw39rOelcdV5DYpCaSYvjg8zEk733HdINx92h3ICFU+OLghPU62NzZsz7uzu+W7JnhCD0U8if6nPodZpAdv/wyXtQpcBHrzonEEIewEJmVQnyfiTNTkncZWSHggax8eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754800691; c=relaxed/simple;
-	bh=f2b1lACTIXxtBjl4k0cDVkZgPF53VUF7AT+sr3tLEfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OTaRBKcmejcia4MgEZaybXDE077Q3BFSJ9zDVksRWMGuHTKgL++3+ZToMMTR1LvHvg8HqbvsUrUJ5jtJxXjRrtSYZOWDZgD7k4+1X1/pi0XRHmY5G0DL75zhEiR9zXjOlG/1YJ0w/S/MzvSoSwyaF1v9tLRbg9ijjKWwpIXDbyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wiesinger.com; spf=pass smtp.mailfrom=wiesinger.com; dkim=pass (4096-bit key) header.d=wiesinger.com header.i=@wiesinger.com header.b=dhavXmDC; arc=none smtp.client-ip=46.36.37.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wiesinger.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiesinger.com
-Received: from wiesinger.com (wiesinger.com [84.112.177.114])
-	by vps01.wiesinger.com (Postfix) with ESMTPS id 0254D9F17F;
-	Sun, 10 Aug 2025 06:30:34 +0200 (CEST)
-Received: from [192.168.33.7] (wireguard7.intern [192.168.33.7] (may be forged))
-	(authenticated bits=0)
-	by wiesinger.com (8.18.1/8.18.1) with ESMTPSA id 57A4Tlnk1474492
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Sun, 10 Aug 2025 06:30:04 +0200
-DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com 57A4Tlnk1474492
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiesinger.com;
-	s=default; t=1754800234;
-	bh=Ql1ef1pbf+/lPlq9bKd29v+6nLUxpRIcOlURimQeAZY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dhavXmDCnK3qVFGV+jVRSXA2i4CFj1gdKHtlLsyLg9yCnGG1XalikGs2nVQWwsK7t
-	 esVJ+R3s8Zhkx+5KTXJ2KjVkAzX8mzOWWIClG0bR5+lGozjrccRWFPbjAnwoZ4Q7Nm
-	 yg/cLe7rVif1JQ3GldRxe+5fAhORFhxSUAwimIFoW6xWzBzPIu6OJXc7Xjt092fFys
-	 JBzufpLyZ9UBmnUFoJu+qv+sUOpM6Cp/ECG0efyaXXxYtv1g3RzHDFHa49Sokpw6R/
-	 5OoUVk0vGrctvoLlwf3+OTN9iMe/NP0KTUeW86cdVj+a0qIxA8XmVhQe/H+CNvVSgV
-	 m4D5nNhsfzApdvuRbZ7oJyJrfW7JxEHlgBZMGDAfYm/GksgrO/2U5D0J27Forf47T2
-	 LsQkiethQTgGGN13ah6ScT7VJBY8ZQtsWhbYH/ZQhF1aP2HWajrcxdKCcnQ3bc0Lhq
-	 Fjy0Tmrr8h3rD9t/ggPUAW/pujJw+hlcPkoDpRddKVItXJaewzNwWLjhnOpktbwMNI
-	 d4YlXIBLfP4xuSTUUdHKc1ZNvSSPPSN9ZEWP5FKzB31dwgcRuFeZM1S2hJDAnRPO8h
-	 55GJzUJVaXpA3VyLjVIzhEq4zxW9i7UvbiiyXZNA/jhUeI0DeBuKhav9wAq3+m3j0X
-	 1ELLVJTOzpsLjtJvP91DGnK0=
-Message-ID: <f993a298-b455-4aa7-a4e1-f0416b255c5e@wiesinger.com>
-Date: Sun, 10 Aug 2025 06:29:47 +0200
+	s=arc-20240116; t=1754802647; c=relaxed/simple;
+	bh=9FSnWZN21YBaLFde2pnRBLG+oERfvF97uAXbcUTYclc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FNgCAzYk2ryFeWOu0I4SlronxsYgDzsnfNdWQd9c2HccIrAaswG5vEtBH685t/wfZc+dn/rp95QRXaHJfrwjj5FM4xZu7EOYspt/JrkXRzi+2B1V40lYWKg8bZOtc+D5GcXPBaVXZsMbAg5Knzb2ocak3zFJyy+Vdd733JHlFzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id ED52E1A020F;
+	Sun, 10 Aug 2025 04:31:12 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf19.hostedemail.com (Postfix) with ESMTPA id 1447D20026;
+	Sun, 10 Aug 2025 04:31:10 +0000 (UTC)
+Message-ID: <3529faaf84a5a9a96c5c0ec4183ae0ba6e97673c.camel@perches.com>
+Subject: [PATCH] checkpatch: Allow http links of any length in commit logs
+From: Joe Perches <joe@perches.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, "Dr. David Alan Gilbert"
+ <linux@treblig.org>
+Date: Sat, 09 Aug 2025 21:31:10 -0700
+In-Reply-To: <20250625133258.78133-1-linux@treblig.org>
+References: <20250625133258.78133-1-linux@treblig.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Content-Language: en-US
-To: Aquinas Admin <admin@aquinas.su>,
-        =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Carl E. Thompson" <list-bcachefs@carlthompson.net>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
- <1869778184.298.1754433695609@mail.carlthompson.net>
- <5909824.DvuYhMxLoT@woolf>
-From: Gerhard Wiesinger <lists@wiesinger.com>
-In-Reply-To: <5909824.DvuYhMxLoT@woolf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Stat-Signature: fp5fkhrmegpkf1weaonz3fx3di3c6nfh
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 1447D20026
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/X5t25Ga1iS4apkFpLbuQip8RajIgvE3Q=
+X-HE-Tag: 1754800270-74814
+X-HE-Meta: U2FsdGVkX1/szqzOwoD0gQJmrivfztLfifPFk3qG99c6V9b7JDLAOA0g0ga6PjzsUpX8XWQMgftQQMeJQDaw76PTyi/W2L2PScm7ocvE1btyLj+DRzmSnPwCpMPc8IDPS67FtQXdle1WxHECIkXEArIrUZp2aZ9BARxL0wpanRdK8UwpWAGBTmuJrnU/y6e5sqPVJVORLk6OtmHo9c5Mv3KpXpA381ZK+8tPY5Ihz36MJn37rqYZbZZ564wvTt9ZQUsSrrxn6ZQDK/zfsl0Myv4EzQka47DLB2rwGFRq2J03d3pWwfGoNYXHS7dMsLun7rC07OWdnMkAdGpLeSDReMG87F9uH/sEawajwx+mA+1dzYlE/3irEvjZV3ECftZW
 
-On 07.08.2025 14:42, Aquinas Admin wrote:
-> This "We don't start adding new features just because you found other bugs"
-> sounds absurd. So, if we find bugs, they can't be fixed if we need to extend the
-> functionality before the release? Excuse me, what? I clearly understand the
-> absurdity of this requirement. Because it effectively means that if we notice
-> that ext4 is corrupting data only in RC simply because some code was forgotten
-> to be added to a subsystem during the release window, we can't accept the fix
-> because it requires adding new functionality and we will release the version
-> with the problem. I clearly understand that this is not the exact situation,
-> but it was done as a solution to an existing user's problem. Moreover, the
-> amount of changes is not that significant. Especially since it's not really a
-> fix but a workaround, a useful one that can actually help some real users in
-> certain situations.
->
-> new USB serial driver device ids 6.12-rc7 is this new functionality or not?
-> ALSA: hda/realtek: Support mute LED on HP Laptop 14-dq2xxx 6.11-rc7 - new
-> functionality?
-> ALSA: hda/realtek: Enable Mute Led for HP Victus 15-fb1xxx - 6.11-rc7
-> Octeontx2-pf: ethtool: support multi advertise mode - 6.15-rc5
-> drm/i915/flipq: Implement Wa_18034343758
-> drm/i915/display: Add drm_panic support
-> Is this different? Or are the rules somehow not for everyone?
->
-> But no, instead, this is what happened.
+Dave Gilbert noticed that checkpatch warns about URL links
+over 75 chars in length in commit logs.
 
-That mentioned code parts are AFAIK NOT experimental and therefore 
-stable. But still include feature request in RC7 phase. Will that be 
-removed, too?
+Fix that.
 
-I think we should sort out 3 topics:
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ scripts/checkpatch.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-1. Technical topics
-
-2. Working together from an organizational/process perspective
-
-3. Working together from a personal perspective
-
-my 2 cents.
-
-Ciao,
-
-Gerhard
-
-
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index e722dd6fa8ef3..319cc5f858858 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3294,7 +3294,7 @@ sub process {
+ 					# file delta changes
+ 		      $line =3D~ /^\s*(?:[\w\.\-\+]*\/)++[\w\.\-\+]+:/ ||
+ 					# filename then :
+-		      $line =3D~ /^\s*(?:Fixes:|$link_tags_search|$signature_tags)/i ||
++		      $line =3D~ /^\s*(?:Fixes:|https?:|$link_tags_search|$signature_tag=
+s)/i ||
+ 					# A Fixes:, link or signature tag line
+ 		      $commit_log_possible_stack_dump)) {
+ 			WARN("COMMIT_LOG_LONG_LINE",
 
 
