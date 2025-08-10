@@ -1,137 +1,136 @@
-Return-Path: <linux-kernel+bounces-761573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C80EB1FC0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 22:20:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54217B1FC12
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 22:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9CD1895023
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:20:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EE377A99D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7211021C160;
-	Sun, 10 Aug 2025 20:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B624A21638A;
+	Sun, 10 Aug 2025 20:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDchgDaD"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fXvNsaDk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289091F429C;
-	Sun, 10 Aug 2025 20:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575B1219E8;
+	Sun, 10 Aug 2025 20:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754857228; cv=none; b=Jh4UimaZtzuVwshC+rR9f4+DGoUCPGVAb6c6Pj0PB4IXaFEM3mWfffdbNlysDnPxVnr77PYC1ySNsQoEkn6bALTTYYRv0HQhQ6rRxKUafXoGZQwnAG2t85hlmReehJLhFPe6omSy6HBMDx2du3L23ZqTJl39O//z3YQHXPbDvt0=
+	t=1754858774; cv=none; b=TyEAeUj1TMXCatMW1rZzTXIfDpd+lhRZY+u0qrfJOrYzKWBcEevxoSOFUijzqgJohSB7DKnpIGNA0F+W2YyIkQsglz80beCmiP73wcSa2/sCWsE99fcbQwPsutc3Nwop583xtCUe7UGGPT+6ZtMA5GENNOOZNLA0XqJlI4kToME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754857228; c=relaxed/simple;
-	bh=X18dPKykegb5IVOtMVKhJoUQ7LQapb0oeOk+mCzKQeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z88GJaX1lYIFALajDobd9Peo6nq5iITa8i+cRMAMog0bw3R8lbpTXgqWIX4OyJIgdCi0G/B3MzWKZNnUi3dIU1RfFpW8McJpOz8u+kqKNfWRX1bxmo7LxZa4HOjd5u32XxDgAqmKpqFcQBASule96Y+FLOsy49NMXb74ecf7Tog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDchgDaD; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459e7ea3ebeso13507535e9.0;
-        Sun, 10 Aug 2025 13:20:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754857225; x=1755462025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l27SIyY6K8c3MGvtKdMZemDVV/kUF03H7mYHi+f0BLw=;
-        b=gDchgDaDir3ZeOUg2LYb/hAJjclRQ7L40MdNbqkuzN6av/d3ifKrjoPcHFl7CcU97r
-         H6YCb3pY5EMM00nqFDfBZy/j3wuqVJYRyXfHLLWGH0Z7zlHXp8jx2xBeWnmILB2XAR5E
-         /Gq5naEj0w7wAMakSXhcCbbcCfqWLQtrEPSndiEFMcLDO+0dyUtsXx1hIHzwJ1TuXJVE
-         JgFrOdgpVoWpd2UNYkub0/po+yfrz6QeC1u0AAy9TIYe96eRWVIY8KDottezcnnG8YyQ
-         VEbgplScKNVH2RejRCFQvS3kfTY//rGc/HhTkvHwgsF3VV3r2+Rasm1waNQJELMd6x7Y
-         J4wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754857225; x=1755462025;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l27SIyY6K8c3MGvtKdMZemDVV/kUF03H7mYHi+f0BLw=;
-        b=LlVauVPbJTq9vAiIXd0VkDdXccQiMWweAHavkBL7V+YZMUjme8xCKMNULYLfEEJvMj
-         ezKGI8HKRtmRAAHaxMtpBOjOo/eG3wic2L+p3FPR1gdtlJpsKZijlVFpk1RIfTeqUjHv
-         3hGbzTdOWibxyfedT1nPA23L+JIy7yWAhGY5GvD8TJN7fuFbiPDyRmd3hqAnjXw+Ipta
-         wy2YldQGYz7MHWMxG6YAC6E8fgFShIk86Wuj+Hf/guhuPP16qLattOJ/SiIPuiKYXzVy
-         2KLVXe5iYUnVaGzsjQzMCG1r//AtRYi/B4EWVLaY9slb8C1ZYdRpMz8+PjuYn/dl/bNL
-         ypZw==
-X-Forwarded-Encrypted: i=1; AJvYcCU90dothLu5rKVlJ2s7KPxzXgx18At6C8vPvb3bQ7fcAtvvKdLbc6m9sLUsBFxaCn/J4OKHGYU1@vger.kernel.org, AJvYcCWJzq9zWAGaZBnSJ1DoKnau37S4MCr42zvVQqTorP8KZkoAYj1PsJad+odRsMEJluMzADRxklMN6vXrOA==@vger.kernel.org, AJvYcCXuaegVPdEz82HmAr/DjuPSfLVnhMjjYR67E34s6l6GASWS42MH3VOYlIFKPd5pZBrvkvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqMaMdgSbFwnoSmqYRSnCaKn5n3MKnhzzvZYjYhCR4gLpvAHM4
-	dn0W6RnGYhN6HMxLyMn9j4GBiHgiO8WTZT7ATDd284hGs8mmZnb/haa/
-X-Gm-Gg: ASbGncvZYaQwhCduIEQ7UJ5YEQM2MwKeM9DQkv3x+YIpa5SxqavniJg//uug+8SaG9h
-	1yatJBOIyGviw5qTmQF/yHJbpAsJYzH72M2oXSUEerVYZRUpNa/88CooGLC/jSW5ggizDaiOkVI
-	B6F1FWiKi3jSz08PNGUINdBU738sCGoQJgeOMSMBDwD4R4TrQ3p24toMP41uhgu1pP/rY6jzOnW
-	75fsBxLB8qUGVeaRidgOspGaEP/ydaSOSCLFWPJ8nPye5BtFuixqe2A/tEUHPQmRTIKPbBPglr2
-	fGyVV6folZKrURB+FsE80VlDfsv4/iNCOnkRA55oc0oYYJnk7rEDEt73GMgARwrHspljMxUYix6
-	jOE0dJQ2051M7+nvO/dLfK0KTQKXQ3WHpWhes6xYJZA==
-X-Google-Smtp-Source: AGHT+IGk7vG3POgXRirhM3QifkV6PKInb2ftoINCwL8L4D+zlXJNfPRwum9XWmerF0tKkLVVBbs8kQ==
-X-Received: by 2002:a05:600c:354d:b0:456:173c:8a53 with SMTP id 5b1f17b1804b1-459f4f2e6e4mr81715875e9.2.1754857225254;
-        Sun, 10 Aug 2025 13:20:25 -0700 (PDT)
-Received: from [192.168.8.100] ([148.252.128.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459e58554f2sm224218235e9.12.2025.08.10.13.20.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Aug 2025 13:20:24 -0700 (PDT)
-Message-ID: <757b3268-43ab-41bf-88fa-4730089721f3@gmail.com>
-Date: Sun, 10 Aug 2025 21:21:45 +0100
+	s=arc-20240116; t=1754858774; c=relaxed/simple;
+	bh=X6u2f9fO9neZj9s6w+y5uN4zh9MdsPoxai4OlaDcAbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3AndUTeMw9WBzeg0r7m/W3Kdchqds35UlGHOsagk7+o55qWAsJWcfNcT+hxT5R6ne6At0Os9hqwD/Wng2K6imtvP6p4YaUsT+qW0Qb70p5RDCtfpRxGuHohqgp43sbrgTPSWGYaZspOLWBrsKThivlJKbcItlBPvBc1jBxImnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fXvNsaDk; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A77FA40E0232;
+	Sun, 10 Aug 2025 20:37:06 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id z5318P-2Ttr6; Sun, 10 Aug 2025 20:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1754858222; bh=jPuah6eZJsKx0Tn4u3wz+pvNuujj0ltLpFFE0DRYR+g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fXvNsaDkf/mITzivh/QNweou4KTleJgtzJ/0LAOU+UOTVC7hGdo2p5SReEH1DGoTj
+	 IYl0oWH+EVK5sSrk56H0xO2kq/EkyOdfSP/ezNF1mMJuwDmaF6I2ujWejIP6vuoeJI
+	 3Pp+WseZxIgPYLLJgvKjcq87m5owWsxYFnq/oP03v3ie8jzqGLZxyKqS2FJiC9dwYO
+	 umIK6ww0vJBUXiqd0up7ihR8cLoRY5wYi0yVlC4LjpZ2KwxOy9OizEyGWZMc0NIhPY
+	 EqpGMr258Yccf98tvi+xBz4DZNVCj/nOYE797XtQUzeDe2bV9jctxNB8A78RtN7Cu7
+	 Vt2ePa29wN6SwwcjveObo5FqCRHQY5hUkFiW0V+pCAYPq5QB03l1b5RywJHmgPq3HD
+	 LU0WX3hoZuIoGDz7CvL4keD6zMEbzsxXY/Hh5jWX6Zn3Z9ScXKdOfPUvncBKTIv9VF
+	 ybtMo7vhcCZ2uFpGFX/P2fnc5GfaJ8fLC19Ny3HAmeaMBeoGoHjNl9MQoLifqKpUPl
+	 5GE6dArkl3QmxQ4Sig4DW19DErcYXxFqGZAYJsT5bxsigDhyF1/MpSVg1EUxH7slAA
+	 WVVeoe7t7+uzjGl5rLGHhtn0JRauaOWfdc+jW8AWLGDMEYHUh2AfxnZdcoq9OSGlfW
+	 TJbEJmjErDiFvNW+/q0ihQ3w=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D8ECE40E0217;
+	Sun, 10 Aug 2025 20:36:50 +0000 (UTC)
+Date: Sun, 10 Aug 2025 22:36:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v6 08/22] x86/sev: Pass SVSM calling area down to early
+ page state change API
+Message-ID: <20250810203643.GLaJkC2wtmxtvrPbeT@fat_crate.local>
+References: <20250722072708.2079165-24-ardb+git@google.com>
+ <20250722072708.2079165-32-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux-next v3] mm, page_pool: introduce a new page type
- for page pool in page type
-To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
- netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
- harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
- ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
- brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
- usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
- almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
- linux-rdma@vger.kernel.org, sfr@canb.auug.org.au
-References: <20250729110210.48313-1-byungchul@sk.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250729110210.48313-1-byungchul@sk.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250722072708.2079165-32-ardb+git@google.com>
 
-On 7/29/25 12:02, Byungchul Park wrote:
-> Changes from v2:
-> 	1. Rebase on linux-next as of Jul 29.
-> 	2. Skip 'niov->pp = NULL' when it's allocated using __GFP_ZERO.
-> 	3. Change trivial coding style. (feedbacked by Mina)
-> 	4. Add Co-developed-by, Acked-by, and Reviewed-by properly.
-> 	   Thanks to all.
+On Tue, Jul 22, 2025 at 09:27:17AM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
 > 
-> Changes from v1:
-> 	1. Rebase on linux-next.
-> 	2. Initialize net_iov->pp = NULL when allocating net_iov in
-> 	   net_devmem_bind_dmabuf() and io_zcrx_create_area().
-> 	3. Use ->pp for net_iov to identify if it's pp rather than
-> 	   always consider net_iov as pp.
-> 	4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
+> The early page state change API is mostly only used very early, when
+> only the boot time SVSM calling area is in use. However, this API is
+> also called by the kexec finishing code, which runs very late, and
+> potentially from a different CPU (which uses a different calling area).
 > 
-> ---8<---
->  From 88bcb9907a0cef65a9c0adf35e144f9eb67e0542 Mon Sep 17 00:00:00 2001
-> From: Byungchul Park <byungchul@sk.com>
-> Date: Tue, 29 Jul 2025 19:49:44 +0900
-> Subject: [PATCH linux-next v3] mm, page_pool: introduce a new page type for page pool in page type
+> To avoid pulling the per-CPU SVSM calling area pointers and related SEV
+> state into the startup code, refactor the page state change API so the
+> SVSM calling area virtual and physical addresses can be provided by the
+> caller.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/x86/boot/compressed/sev.c      | 12 +++++++++---
+>  arch/x86/boot/startup/sev-shared.c  | 17 +++++++++--------
+>  arch/x86/boot/startup/sev-startup.c | 11 +++++++----
+>  arch/x86/coco/sev/core.c            |  3 ++-
+>  arch/x86/include/asm/sev-internal.h |  3 ++-
+>  5 files changed, 29 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+> index f714235d3222..18b0ccf517eb 100644
+> --- a/arch/x86/boot/compressed/sev.c
+> +++ b/arch/x86/boot/compressed/sev.c
+> @@ -65,7 +65,9 @@ void snp_set_page_private(unsigned long paddr)
+>  	if (!sev_snp_enabled())
+>  		return;
+>  
+> -	__page_state_change(paddr, paddr, SNP_PAGE_STATE_PRIVATE);
+> +	__page_state_change(paddr, paddr, SNP_PAGE_STATE_PRIVATE,
+> +			    (struct svsm_ca *)boot_svsm_caa_pa,
+> +			    boot_svsm_caa_pa);
 
-That will conflict with "netmem: replace __netmem_clear_lsb() with
-netmem_to_nmdesc()", it'll need some coordination.
+All those functions should probably get a
+
+struct psc_desc *d;
+
+where all those members are set to the current arguments so that we don't
+marshall so many arguments back'n'forth.
 
 -- 
-Pavel Begunkov
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
