@@ -1,167 +1,217 @@
-Return-Path: <linux-kernel+bounces-761503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C626FB1FB04
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:17:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5AD6B1FB07
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C8C178A2A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:17:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A21C3B7143
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6855D1D5CE8;
-	Sun, 10 Aug 2025 16:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757C925EF97;
+	Sun, 10 Aug 2025 16:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gb4LRBnq"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nqsg3gac"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D9E1C683
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 16:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED316157E6B;
+	Sun, 10 Aug 2025 16:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754842660; cv=none; b=Ueb8GUbmdt3SjqSY8w6mGWi5siwIgxcxfpexpYZvYedkkXTtoOSszoHcV8aPvUXo16Fee/Hw+nYkfMDHhKWV2c3+N42KxErXKgAXu0nuWuzICfpOfozixLOf27D7O994rrPJch9aZvW5M991O7zUb7B0UHzCco4ulKp2RCd7DHA=
+	t=1754843556; cv=none; b=a8unM+tzPQgsPrQamUdBlZgY7mJTJ2GhOwEyqIipykKSF6u7RK4vwx0zPWyUL4brPoSmKm4ioIvecxMzis8Vc2IXDvdSqv8B7ctQkIaPXi00DQmpwcexQxnol5T8Il3pMAIe1Hqz8E52W7bCElGOqbn+rQyNa/XkwPUleksOI1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754842660; c=relaxed/simple;
-	bh=r+/tz4wOk7S63KAYEOx9vULkKR8ZDVGPGskKkBYlZWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I2SkHNdl9WeSP4N9bAMUWBPhfL5uYFoF//EsH2MtA9e7ZBx0c/eruI+3dC6wV6P/VgmEoY+lHnX86xE5GiaoqIagHueEL/Z04Bo8YEI0zsjW+qoMCN668YicslIPu8XgxKdwsW8P6X/1vWOca1IokFJAgzEr1teH4r4VnvKqpiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gb4LRBnq; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1754843556; c=relaxed/simple;
+	bh=c9gEEsNxj+x9pbEk5rYVT9g2jXSTWDkVgHLIFplCDUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bw8MMF1l2rSIOdOrHuzrYoXycCQ7ppGOUzWXTFZW7r3ZXsk4KGAY3/n2hiMcbRWQ0c4+5Inh/Q6PsdL2OOelzIFy3c6RUHA7YNd154TK3Mc3ANC8yc3OsyfxNtWeziQ8tLoWxU2OrkLJYOPU8JNOOu3n554+Vwsv2Nahp0SnicM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nqsg3gac; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76bdea88e12so3096344b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 09:17:37 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b794c0b720so426880f8f.1;
+        Sun, 10 Aug 2025 09:32:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754842656; x=1755447456; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dEAJER69/NfwAiGupTfaKK2jAZ45McqgSZlh8HSXymw=;
-        b=gb4LRBnqdr5mOvEM9bsoBtKBoTPEtuGLhdBxTrrtCHJ4KgggdqIkJUnfrC6NCxpGzx
-         Nf/AkTnjDfvQu360S6FvROj3kIc3GTNFrJ0IJQaWj1jCU6tpSMHfKDUHrTWwOxWMuS6u
-         /9dCXl5yrgKU1LBCvJUS/MrDYBOAJhOcmnPvoeJ5iib9dijDx/BPc290Dw2SrRt8sSA0
-         pBp1/8Q8HmbRSxwDdKkSpI6QufHDAkQGBYOpLE8HD5atB2PfoINIM9w+rnIZrYuIMx7c
-         GS2fp3+RWZXjWyieSFB1eDAcYVCaMmZta9WGa07dDPITrTLlooGN60O3fBhuazak1zVB
-         w8FQ==
+        d=gmail.com; s=20230601; t=1754843553; x=1755448353; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2rOo9oFeJToirvfpB6J/Lhvo2xvMGuGLJdL/jrK5OKk=;
+        b=Nqsg3gactkV6u1piiIHdOt9mqvmMZwdrWImSVx9P9IGoijrAJA8BCzvHBBURKyscAJ
+         X95FRvvCjDX11QkgwYhE6snADw1pHsTLSextsCAtTlaYCuLpO3EGy3Q2zwOwLkrUSw01
+         LO3cLR5RTMA7ATj+SDFD95lyP2q9AxQRQuIgZEaMbKJLo7/yS+nA2POL6Khrktbvrxqr
+         pDnIhCaZPiY5qReaN5ew9tcoN7daO5ZGUVzvxz6C3m/KC7+Dvsp9kQsZoEUojlPje74D
+         UWYs1ebfuo7TlG+78ncbbkXF/cXEuKYdFhjhzt9LUluM+1UuIwlGVH39vJ+VptiZJb1n
+         4JWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754842656; x=1755447456;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dEAJER69/NfwAiGupTfaKK2jAZ45McqgSZlh8HSXymw=;
-        b=tDLmpdth+pwmdddgYP6CrKZhsgZpD+pRdYgp8/ZS3WZZ1vbujFfgLHcZsZKQ1gCQDE
-         NmvwQ+QdXCICCmVaeaMeU88pqeYSl52RYt8Y3tIBhika+KVppRyptXDi7EOWCx2Mr/MW
-         mxM5fbKHhcXXwoddrb/jtuV3ZTfG5/C016BujAhA31sCC9hGqgn3xowm+3hCW6KuhQXF
-         68pAG0SfKl7DAW5Jj2sCL9vhkl0VXwDtBp6gux8gQSdFZL5HqsH1IBPEETSPOUzkH9Vd
-         zhH8xsrMAk8r1pTa0MZgLHRFcH2MZO2pNxueF0vyl3eGLJ5yoK74X1BYYFOz2UKl4x0M
-         /UOw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7z9WQqFzL7myMAB4geXM3r5CYiIS+Rv/gBihedXnH3CsWqmxES1+SGRQpHhk5NKCpp2KILrMLkZh8IV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr7oNY1gJLiyKrzZLccoG5uDtsAOZrCUxwU/4VEflxbbVrwntP
-	WEk6L3ePCPw7zwTg3B9SuyAsESiQP+ykK1u8ThA8io2FVEiFWmA6Q0PC
-X-Gm-Gg: ASbGncvcGF7+pZtz8/roWBsOad/lS6m40bTCkgAKKNV0QpnEKQ1sgap8cnr7VKw+ndQ
-	ugQ1SgxNLKSnkPqnSb4xmGfLMlTaLOPwPBQahbBLtt6wIs/MeTdG1oyB8bMWytbWmcaIsU02t+K
-	yU4ODsV9yqNFZfKPveN1OcPKl5/x9MGt0/2zeT4p4pJ7pBgoaWtUZAT+jsdHKu7k2kAwQlHCnj3
-	2J8CGEPrf5gy7GFIGuR00m2oonfq6K9AWL3w9JuWJ0bJB8uVFuhFWNRgq1xmFTg3q/s3vbiVNYg
-	87eWE2vKcFaWzGet7/kmKpciwjXhtI9FZcJH9+C+flq7fx7IPkesepivBrx7JOgEYGJ6FMQ8DTH
-	oSnULD8FwTvpWckN4FnnBxQFhMgmut1ROjxBM5oTRjwrhW/CEyQcAMA1TQ7I9TNWLt1UmVTDhdW
-	Tf
-X-Google-Smtp-Source: AGHT+IGaneADRRWLQHrxVro1KG5pLemoUIgsHzCDalyypmDxM0LYn3Wt757/XYCwlglY3qEq1dRvcQ==
-X-Received: by 2002:a05:6a00:b44:b0:746:2ae9:fc42 with SMTP id d2e1a72fcca58-76c461784fcmr14689584b3a.19.1754842656447;
-        Sun, 10 Aug 2025 09:17:36 -0700 (PDT)
-Received: from localhost.localdomain (wf122-104.ust.hk. [175.159.122.104])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bdd2725c9sm22495944b3a.6.2025.08.10.09.17.33
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 10 Aug 2025 09:17:36 -0700 (PDT)
-From: Haoyang LIU <tttturtleruss@gmail.com>
-To: Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com,
-	Haoyang LIU <tttturtleruss@gmail.com>,
+        d=1e100.net; s=20230601; t=1754843553; x=1755448353;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2rOo9oFeJToirvfpB6J/Lhvo2xvMGuGLJdL/jrK5OKk=;
+        b=PKD9Jq7tMR/9rnDoqCkOaCxfZDt65qxc9jy+NXxLrj/nt26i8Zn8nCVBsF2+jr7NNY
+         7PRJjAz9SlnqtD7jk5tcfrLoljPWgZLhspFT8bPxngXf+EjlhJ8AUdIIRwW5quE6Umop
+         v+ezdiHf1DCXF+tj1vVv2TU9Al2aSZLlOdHFMIVJW20RGHMMXb1evKedNl3VGfSIVWYs
+         vUKgXvcNJQxsciww8eTN3xP++W8zodMR4dEwtGfuDSH5D6ftH6dm9zP1qxozWdV0R12H
+         MrbyMJaxXEYVYj6bSuEwNYHI90extZWTTAgoqBrwcxQoZ/yQn413bBN0Ih1JpRE5Kwyd
+         Y6oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfDL9RhhuI7t6sPXqNOuj0BmaJkeWxVxAJnoZR5sxYev1VCXsXANL0F1px8AEn5TRaTNAEO9Z17BEgmXc=@vger.kernel.org, AJvYcCWrrxCqjJTSucekkvwl6/WubNhNwwkQ1fgcrCLB9JAAEPr8GTuvG3kbe3ZYuzDBj7BrM+itxn6i@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhF1hn8iFrMBw+gg+VSBVfYmB0mI9LwVZFKEAM0D8cC4XRaLlk
+	6HTLgHGkPIDll9TtK4wFCBeO1vBS5drNYMD53fpY+4ihQ+5FNhB4OQAy
+X-Gm-Gg: ASbGncuPORorv0GLJfdkQ7n5ngNnfCoHLglcZ8a4iVV7EkrkI3TpcHHaSngyMCGpZOb
+	e+z2mi0uDzCAZeQ0oLoSu2GVxRDTRb/fY0GyvuRt0IbVn+DcfCHZbJQyQl6GFs0IVM0GKmS6tN7
+	3Eem1yRv89NJ6xwHCRWgLTeQo0FTGpAh11VrW4we4zwMR2GL0gxvnwgbHq1zpsIHJeYztZJqmsQ
+	FsjLm9LNWUoWYn5pAJXdtIUfquiKf22IS9epnRIrajWgVePRFD1IIIAqQyxCualvWQSKAA9yrK6
+	yz1Gut2Lp5JnPmkCsrchuSrkU8jLsGWEXndcyBFRFJEUdkTui+Xa8HECdGsPevOI+1fGxhDiZdC
+	yIvpaN7DFX4beQ3w=
+X-Google-Smtp-Source: AGHT+IFzGJoHdY1WMREsnjDqYb+5+j4HV61VOnJ141EPHzzNV03WNSgwr3JXPrOlvg6sQOprtsbe2g==
+X-Received: by 2002:a05:6000:2282:b0:3b7:95b2:2dd6 with SMTP id ffacd0b85a97d-3b906844e1amr1497341f8f.7.1754843552962;
+        Sun, 10 Aug 2025 09:32:32 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d005:3b00:f9ef:f5a3:456e:8480])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459fb43b491sm83275295e9.3.2025.08.10.09.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 09:32:32 -0700 (PDT)
+Date: Sun, 10 Aug 2025 19:32:29 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Arkadi Sharshevsky <arkadis@mellanox.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] scripts/checktransupdate.py: add support for scanning directory
-Date: Mon, 11 Aug 2025 00:17:30 +0800
-Message-ID: <20250810161730.6530-1-tttturtleruss@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH/RFC net] net: dsa: lantiq_gswip: honor dsa_db passed to
+ port_fdb_{add,del}
+Message-ID: <20250810163229.otapw4mhtv7e35jp@skbuf>
+References: <aJfNMLNoi1VOsPrN@pidgin.makrotopia.org>
+ <aJfNMLNoi1VOsPrN@pidgin.makrotopia.org>
+ <20250810130637.aa5bjkmpeg4uylnu@skbuf>
+ <aJixPn_7gYd1o69V@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJixPn_7gYd1o69V@pidgin.makrotopia.org>
 
-Origin script can only accept a file as parameter, this commit enables
-it to scan a directory.
+On Sun, Aug 10, 2025 at 03:48:30PM +0100, Daniel Golle wrote:
+> [   66.300000] gswip 1e108000.switch: port 3 failed to add 6a:94:c2:xx:xx:xx vid 1 to fdb: -22
+> [   66.300000] gswip 1e108000.switch: port 3 failed to add 1a:f8:a8:xx:xx:xx vid 0 to fdb: -22
+> [   66.320000] gswip 1e108000.switch: port 3 failed to add 1a:f8:a8:xx:xx:xx vid 1 to fdb: -22
+> [   66.320000] gswip 1e108000.switch: port 3 failed to delete 6a:94:c2:xx:xx:xx vid 1 from fdb: -2
+> 
+> So the problem is apparently that at the point of calling br_add_if() the
+> port obviously isn't (yet) a member of the bridge and hence
+> dsa_port_bridge_dev_get() would still return NULL at this point, which
+> then causes gswip_port_fdb() to return -EINVAL.
 
-Usage example:
-./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
+Nope, this theory is false because the user port _is_ a member of the
+bridge when it processes the SWITCHDEV_FDB_ADD_TO_DEVICE events.
 
-Signed-off-by: Haoyang LIU <tttturtleruss@gmail.com>
----
- scripts/checktransupdate.py | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+There are 2 cases for handling these events. One is handling past events
+which were missed and are re-generated during FDB replay:
 
-diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
-index e39529e46c3d..0d197d036650 100755
---- a/scripts/checktransupdate.py
-+++ b/scripts/checktransupdate.py
-@@ -13,6 +13,8 @@ The usage is as follows:
- This will print all the files that need to be updated or translated in the zh_CN locale.
- - ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
- This will only print the status of the specified file.
-+- ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools
-+This will print all the files in the specified folder and its subfolders.
- 
- The output is something like:
- Documentation/dev-tools/kfence.rst
-@@ -21,6 +23,17 @@ No translation in the locale of zh_CN
- Documentation/translations/zh_CN/dev-tools/testing-overview.rst
- commit 42fb9cfd5b18 ("Documentation: dev-tools: Add link to RV docs")
- 1 commits needs resolving in total
-+
-+Documentation/translations/zh_CN/dev-tools/index.rst
-+commit d5af79c05e93 ("Documentation: move dev-tools debugging files to process/debugging/")
-+commit d5dc95836147 ("kbuild: Add Propeller configuration for kernel build")
-+commit 315ad8780a12 ("kbuild: Add AutoFDO support for Clang build")
-+3 commits needs resolving in total
-+
-+Documentation/translations/zh_CN/dev-tools/kcsan.rst
-+commit b37221cc861d ("Documentation: kcsan: fix "Plain Accesses and Data Races" URL in kcsan.rst")
-+commit 72ffee678f6f ("docs: update dev-tools/kcsan.rst url about KTSAN")
-+2 commits needs resolving in total
- """
- 
- import os
-@@ -131,7 +144,7 @@ def check_per_file(file_path):
-     opath = get_origin_path(file_path)
- 
-     if not os.path.isfile(opath):
--        logging.error("Cannot find the origin path for {file_path}")
-+        logging.error(f"Cannot find the origin path for {file_path}")
-         return
- 
-     o_from_head = get_latest_commit_from(opath, "HEAD")
-@@ -293,6 +306,17 @@ def main():
-                 if args.print_missing_translations:
-                     logging.info(os.path.relpath(os.path.abspath(file), linux_path))
-                     logging.info("No translation in the locale of %s\n", args.locale)
-+    else:
-+        # check if the files are directories or files
-+        new_files = []
-+        for file in files:
-+            if os.path.isfile(file):
-+                new_files.append(file)
-+            elif os.path.isdir(file):
-+                # for directories, list all files in the directory and its subfolders
-+                new_files.extend(list_files_with_excluding_folders(
-+                    file, [], "rst"))
-+        files = new_files
- 
-     files = list(map(lambda x: os.path.relpath(os.path.abspath(x), linux_path), files))
- 
--- 
-2.50.1
+[   65.510000] [<807ed128>] dsa_user_fdb_event+0x110/0x1c8
+[   65.510000] [<807f89b8>] __switchdev_handle_fdb_event_to_device+0x138/0x228
+[   65.510000] [<807f8ad8>] switchdev_handle_fdb_event_to_device+0x30/0x48
+[   65.510000] [<807ec328>] dsa_user_switchdev_event+0x90/0xb0
+[   65.510000] [<807c43c0>] br_switchdev_fdb_replay+0xd0/0x138
+[   65.510000] [<807c4de8>] br_switchdev_port_offload+0x240/0x39c
+[   65.510000] [<80799b6c>] br_switchdev_blocking_event+0x80/0xec
+[   65.510000] [<80065e20>] raw_notifier_call_chain+0x48/0x88
+[   65.510000] [<807f83e0>] switchdev_bridge_port_offload+0x5c/0xd0
+[   65.510000] [<807e4c90>] dsa_port_bridge_join+0x170/0x410
+[   65.510000] [<807ed5fc>] dsa_user_changeupper.part.0+0x40/0x180
+[   65.510000] [<807f0ac0>] dsa_user_netdevice_event+0x5b4/0xc34
+[   65.510000] [<80065e20>] raw_notifier_call_chain+0x48/0x88
+[   65.510000] [<805edeec>] __netdev_upper_dev_link+0x1bc/0x450
+[   65.510000] [<805ee1dc>] netdev_master_upper_dev_link+0x2c/0x38
+[   65.510000] [<807a055c>] br_add_if+0x494/0x890
 
+If you look at the order of operations, you'll see that:
+
+int dsa_port_bridge_join(struct dsa_port *dp, struct net_device *br,
+			 struct netlink_ext_ack *extack)
+{
+	...
+	err = dsa_port_bridge_create(dp, br, extack); // this sets dp->bridge
+	if (err)
+		return err;
+
+	brport_dev = dsa_port_to_bridge_port(dp);
+
+	info.bridge = *dp->bridge;
+	err = dsa_broadcast(DSA_NOTIFIER_BRIDGE_JOIN, &info); // this calls ds->ops->port_bridge_join()
+	if (err)
+		goto out_rollback;
+
+	/* Drivers which support bridge TX forwarding should set this */
+	dp->bridge->tx_fwd_offload = info.tx_fwd_offload;
+
+	err = switchdev_bridge_port_offload(brport_dev, dev, dp,
+					    &dsa_user_switchdev_notifier,
+					    &dsa_user_switchdev_blocking_notifier,
+					    dp->bridge->tx_fwd_offload, extack); // this calls br_switchdev_fdb_replay()
+	if (err)
+		goto out_rollback_unbridge;
+	...
+}
+
+by the time br_switchdev_fdb_replay() is called, dp->bridge correctly
+reflects the bridge that is generating the events.
+
+The problem is not a race condition, the problem is that the driver does
+not correctly handle host FDB entries.
+
+The truly revealing step is to uncomment this:
+
+	netdev_dbg(dev, "%s FDB entry towards %s, addr %pM vid %d%s\n",
+		   event == SWITCHDEV_FDB_ADD_TO_DEVICE ? "Adding" : "Deleting",
+		   orig_dev->name, fdb_info->addr, fdb_info->vid,
+		   host_addr ? " as host address" : "");
+
+and see it will print "as host address", meaning dsa_port_bridge_host_fdb_add()
+will be called.
+
+At the DSA cross-chip notifier layer, this generates a DSA_NOTIFIER_HOST_FDB_ADD
+event rather than the port-level DSA_NOTIFIER_FDB_ADD. The major difference in
+handling is that HOST_FDB_ADD events are matched by the *CPU* port, see
+dsa_port_host_address_match().
+
+The CPU port is not part of the bridge that generated the host FDB entry,
+only the user port it services is.
+
+The problem originates, roughly speaking, since commit 10fae4ac89ce
+("net: dsa: include bridge addresses which are local in the host fdb
+list"), which first appeared in v5.14. We rolled out a new feature using
+existing API, and didn't notice the gswip driver wouldn't tolerate
+ds->ops->port_fdb_add() getting called on the CPU port.
+
+Anyway, your intuition for fixing this properly was somewhat correct.
+Even if gswip does not implement FDB isolation, it is correct to look at
+the dsa_db :: bridge member to see which bridge originated the host FDB
+entry. That was its exact purpose, as documented in section "Address
+databases" of Documentation/networking/dsa/dsa.rst. Even if cpu_dp->bridge
+is NULL (as expected), drivers have to know on behalf of which user port
+(member of a bridge) the CPU port is filtering an entry towards the host.
+This is because CPU and DSA ports are servicing multiple address databases.
+
+The only problem is that the API you're making use for fixing this was
+introduced in commit c26933639b54 ("net: dsa: request drivers to perform
+FDB isolation"), first appeared in v5.18. Thus, you can't fix an issue
+in linux-5.15.y using this method, unless the API change is backported.
+
+Alternatively, for stable kernels you could suppress the error and
+return 0 in the gswip driver, with the appropriate comment that the API
+doesn't communicate the bridge ID for host FDB entries, and thus, the
+driver just won't filter them. Then, you could develop the solution
+further for net-next, keeping in mind how things are supposed to work.
 
