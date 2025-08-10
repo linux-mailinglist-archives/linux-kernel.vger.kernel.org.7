@@ -1,237 +1,142 @@
-Return-Path: <linux-kernel+bounces-761481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41C3B1FAAE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:13:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2061CB1FAB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA2F818973CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:13:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1999D1799C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D641F266F15;
-	Sun, 10 Aug 2025 15:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE19126CE05;
+	Sun, 10 Aug 2025 15:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLBTws0x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3kRrcm9o"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F28B208A7;
-	Sun, 10 Aug 2025 15:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F032026B2CE;
+	Sun, 10 Aug 2025 15:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754838772; cv=none; b=XCXD1iZKyIf41YPiOtgA2UXd+/6Q321i+Pca9izARi44Q3dnNqZ1rRCGJI2+DQF8sI38AXaipnHEBW37OhX8x8WzQB4gdo1gsxItmkCQAIwRwzU9tSmIRAflMIUcnASkUOP/xjbWw1c4qo/RzdfB+lKADr3FzQWWBgmFZPqtNtM=
+	t=1754838910; cv=none; b=WgHMz45GAIBF4UG1GI25CNIYCU1SZrDpcDxFZZrziABZ0CoQ1PHMFIzE5bmVLHqtRBvDfV2xRlHNoUAJeNL5kTxqaq+tizrjeqyBoyB/p/B8ZbErmUuMHK0hpQkpWH+N3vTLaIkC2IztB8cbjtzik1z4yFcsKJYGTE86Yn3Biio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754838772; c=relaxed/simple;
-	bh=92DNNeaJh4B30+E5mUTWLRfD2YMswZh0XAsqdfVt/Ns=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=ELpnnwZ8bs0E7I6r57xCuHTJu2Hcke83XXffwo1ABo6elIEbqEagfXPak87dU125Xdsf36p42oV/Xs5/p7X0Oa0eVB+Usc9ZsISZmxsR4ZTdPZgMyNFdWQlsJzWbEoWxeF16MLI1wcOFOLpycd+bTmHWH+XN1JwQArXJSqH6CGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLBTws0x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CDE8C4CEEB;
-	Sun, 10 Aug 2025 15:12:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754838771;
-	bh=92DNNeaJh4B30+E5mUTWLRfD2YMswZh0XAsqdfVt/Ns=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tLBTws0x7tBiIMbyYOuQklS5mHKmuZHfThLfeOqp5YNHiEJSf6M5A4jB7IEknVIWO
-	 S9xpSAuOkJ/KsnAmKWcKfHgkMgrEDru3epw23PR89GzwUfz9sBPllRHC2iQ3zrZMbs
-	 zqLIp5tgokPhK9ndo2ApkMJ69xowtvTEO+OVrAHg+D8zQQBj3WEy5ez8wme8Cr+2Lc
-	 U+O8zPi0hlDEd/kHvSYfleSnch4yXbz1+JmcKS2HC1Z7l4vM+LclwPWCjng/xS6TEi
-	 fYsZd3GZjEwED62WvH+UJYS1fz0pbI+J+AttHgAp5I3UD9aG15ZuEroW9dfMCZAci7
-	 aF/Y1DqyfVRrA==
-Content-Type: multipart/mixed; boundary="------------esjKvN8AEjEUOU80jpmuCZLh"
-Message-ID: <9bc69944-a34e-4a4e-9071-7d2049d12449@kernel.org>
-Date: Sun, 10 Aug 2025 17:12:46 +0200
+	s=arc-20240116; t=1754838910; c=relaxed/simple;
+	bh=4py5CiaEqZCxsBjzLqsWWptAKmnXu0QuOgMZZwuHK7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkFh6Pc7F5BzIgtA+kZ/iAxHVocHlSt0UlKjQNyjty1gOLyYWdJA41NwySPHsdpw+aJuun9O5BuuxSkf87WEQ790hqpzAiYNFqZQsCds2hgfIXzxIMJRJPtyd5cywoL/wnZY9TcEMubQTgnXh97n/8FKj1kSlqPfxFxcWvQ8s0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3kRrcm9o; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KCZ5r6bLjXiaZzh+JC2eqEL4QryolyvFac905CpBFhY=; b=3kRrcm9ois4tc4AmmgL8vGPwAT
+	jUtJBK1VKIQVZeuuBEOQLPQUijfLJhl7u2K3LtTGjAr4OHb5hAboE1y4eauF9qIIUQ6CPyWxbGbl4
+	yS0MUb+sKAwkQAc8k86Rz2u8LVaqwc5qLV/yyE5e4O6IphgNWf3+WXr+ZUxwLnVW65ejLtm61d3Os
+	mVBHHDOmlW2WORHsbBLCIchtnMCjcdlZCLnmdfuZKSUmpEGi97gjKgltX/eNzYbw0JUPSImDtEeZn
+	MQ9Z9Hoi9s6mlaY7RmCvLzyI4DJc6gqOMFvY2ulL7ucskZlGtKjMzFctziahr1GBtBI4ND3ycNE2x
+	qGXjhf9g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ul7lM-00000005joe-19Z7;
+	Sun, 10 Aug 2025 15:15:08 +0000
+Date: Sun, 10 Aug 2025 08:15:08 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Rajeev Mishra <rajeevm@hpe.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] loop: sync filesystem cache before getting file size
+ in get_size()
+Message-ID: <aJi3fFwlqb-SfHGg@infradead.org>
+References: <20250807232522.192898-1-rajeevm@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/21] x86/platform: select legacy gpiolib interfaces
- where used
-To: Arnd Bergmann <arnd@arndb.de>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Arnd Bergmann <arnd@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
- Linus Walleij <linus.walleij@linaro.org>,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Lee Jones <lee@kernel.org>, Dzmitry Sankouski <dsankouski@gmail.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, linux <linux@treblig.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-6-arnd@kernel.org>
- <aJccS7fdcx0INYTA@smile.fi.intel.com>
- <3190334c-538d-4e2d-80a4-6e24b255e844@app.fastmail.com>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <3190334c-538d-4e2d-80a4-6e24b255e844@app.fastmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807232522.192898-1-rajeevm@hpe.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-This is a multi-part message in MIME format.
---------------esjKvN8AEjEUOU80jpmuCZLh
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-Hi Arnd, Andy,
-
-On 9-Aug-25 9:44 PM, Arnd Bergmann wrote:
-> On Sat, Aug 9, 2025, at 12:00, Andy Shevchenko wrote:
->> On Fri, Aug 08, 2025 at 05:17:49PM +0200, Arnd Bergmann wrote:
->>> From: Arnd Bergmann <arnd@arndb.de>
->>>
->>> A few old machines have not been converted away from the old-style
->>> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
->>> symbol so the code still works where it is needed but can be left
->>> out otherwise.
->>
->>> --- a/drivers/platform/x86/x86-android-tablets/Kconfig
->>> +++ b/drivers/platform/x86/x86-android-tablets/Kconfig
->>> @@ -8,6 +8,7 @@ config X86_ANDROID_TABLETS
->>>  	depends on I2C && SPI && SERIAL_DEV_BUS
->>>  	depends on GPIOLIB && PMIC_OPREGION
->>>  	depends on ACPI && EFI && PCI
->>> +	select GPIOLIB_LEGACY
->>>  	select NEW_LEDS
->>>  	select LEDS_CLASS
->>>  	select POWER_SUPPLY
->>
->> Hmm... This is a surprising change. But I leave it to Hans.
-
-Yes I was surprised by this myself since I explicitly removed
-all legacy GPIO use from the x86-android-tablets code a while
-ago (or so I thought).
-
-> I think the only function that still needs it is
-> x86_android_tablet_probe() doing
+On Thu, Aug 07, 2025 at 11:25:22PM +0000, Rajeev Mishra wrote:
+> The get_size() function now uses vfs_getattr_nosec() with AT_STATX_SYNC_AS_STAT
+> to ensure filesystem cache is synchronized before retrieving file size. This
+> provides more accurate size information, especially when:
 > 
-> static struct gpio_keys_button *buttons;
+> - The backing file size has been changed by another process
+> - The file is on a network filesystem (NFS, CIFS, etc.)
+> - The file is being modified concurrently
+> - The most accurate size is needed for loop device setup
 > 
->                 for (i = 0; i < dev_info->gpio_button_count; i++) {
->                         ret = x86_android_tablet_get_gpiod(dev_info->gpio_button[i].chip,
->                                                            dev_info->gpio_button[i].pin,
->                                                            dev_info->gpio_button[i].button.desc,
->                                                            false, GPIOD_IN, &gpiod);
-> 
->                         buttons[i] = dev_info->gpio_button[i].button;
->                         buttons[i].gpio = desc_to_gpio(gpiod);
->                         /* Release GPIO descriptor so that gpio-keys can request it */
->                         devm_gpiod_put(&x86_android_tablet_device->dev, gpiod);
->                 }
-> 
-> So the driver itself uses gpio descriptors, but it passes
-> some of them into another driver by number. There is probably
-> an easy workaround that I did not see.
 
-Ah I see, so this is basically in the same boat as
-drivers/input/misc/soc_button_array.c which also first
-gets a gpio_desc and then calls desc_to_gpio() to store
-the GPIO number in struct gpio_keys_button which is passed
-as platform_data to drivers/input/keyboard/gpio_keys.c
+Please wrap your commit messages at 73 (or apparently 75) lines.
 
-The gpio_keys driver then converts things back
-into a gpio_desc in gpio_keys_setup_key()
-using devm_gpio_request_one() + gpio_to_desc()
+Also 'syncing the cache' (what cache?) is at best an implementation
+detail.  The VFS semantics simply are that you need a getattr to
+retrieve the inode size, and the loop code fails to do this correctly.
 
-So it looks like we need to add a gpiod member to
-struct gpio_keys_button (include/linux/gpio_keys.h)
-and modify gpio_keys.c to prefer that over using
-button->gpio, something like the attached patch
-basically.
+> The implementation gracefully falls back to i_size_read() if vfs_getattr_nosec()
+> fails, maintaining backward compatibility.
 
-I won't have time to work on this until September,
-so if someone wants to take the attached patch and run
-with it go for it.
+No need to fall back.  If vfs_getattr faills the file systems is
+completely toast.
 
-Note the x86-android-tablets / soc_button_array code
-will become responsible for requesting / releasing
-the gpiod when using the new gpio_keys_button.gpiod
-member.
+>  static int part_shift;
+>  
+> +/**
+> + * get_size - calculate the effective size of a loop device
+> + * @offset: offset into the backing file
+> + * @sizelimit: user-specified size limit
+> + * @file: the backing file
+> + *
+> + * Calculate the effective size of the loop device
+> + *
+> + * Returns: size in 512-byte sectors, or 0 if invalid
+> + */
 
-For the x86-android-tablets code this is easy, just drop
-these 2 lines:
+We don't really need a verbose kerneldoc for a static helper with 2
+callers.
 
-                        /* Release GPIO descriptor so that gpio-keys can request it */
-                        devm_gpiod_put(&x86_android_tablet_device->dev, gpiod);
+>  static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+>  {
+> +	struct kstat stat;
+>  	loff_t loopsize;
+> +	int ret;
+> +
+> +	/*
+> +	 * Get file attributes for validation. We use vfs_getattr() to ensure
+> +	 * we have up-to-date file size information.
+> +	 */
 
-And for soc_button_array.c it is _probably_ just a matter
-of switching to devm_gpiod_get_index() and drop the
-gpiod_put().
+The comment seems a bit misleading or at least not to the point.
 
-I have hardware to test both the x86-android-tablets
-code as well as the soc_button_array code. I might be
-able to do a quick test on August 22nd or 29th.
+I'd say:
 
-Regards,
+	/*
+	 * File systems don't have to keep i_size in sync.  While local file
+	 * systems typically keep it in sync, remote file system often do not.
+	 * Go through ->getattr to retrieve the current value.
+	 */
 
-Hans
+> +	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 
+> +			        AT_STATX_SYNC_AS_STAT);
 
+Most kernel callers just pass 0 instead of AT_STATX_SYNC_AS_STAT here,
+which honestly is less confusing as I had to look up
+AT_STATX_SYNC_AS_STAT first.
 
-p.s.
+> +	if (ret) {
+> +		/*
+> +		 * If we can't get attributes, fall back to i_size_read()
+> +		 * which should work for most cases.
+> +		 */
 
-It looks like this will also help with:
+As said above, there is no need to do this.  Adding a proper error
+return chain here is better.
 
-drivers/platform/x86/meraki-mx100.c
-drivers/platform/x86/pcengines-apuv2.c
-drivers/platform/x86/barco-p50-gpio.c
-
-I do not have hardware to test these, but if the changes
-work for x86-android-tablets + soc_button_array then
-hopefully they will be fine here too.
-
---------------esjKvN8AEjEUOU80jpmuCZLh
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-Input-gpio-keys-Allow-directly-passing-a-gpio_desc-i.patch"
-Content-Disposition: attachment;
- filename*0="0001-Input-gpio-keys-Allow-directly-passing-a-gpio_desc-i.pa";
- filename*1="tch"
-Content-Transfer-Encoding: base64
-
-RnJvbSA2ZmU0YmQ3MzFkYjU5YmIwMWNjMGNlM2NiZDI0MTI0MzRlYTA1M2M2IE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBIYW5zIGRlIEdvZWRlIDxoYW5zZ0BrZXJuZWwub3Jn
-PgpEYXRlOiBTdW4sIDEwIEF1ZyAyMDI1IDE2OjU4OjAxICswMjAwClN1YmplY3Q6IFtQQVRD
-SF0gSW5wdXQ6IGdwaW8ta2V5cyAtIEFsbG93IGRpcmVjdGx5IHBhc3NpbmcgYSBncGlvX2Rl
-c2MgaW5zdGVhZAogb2YgYSBHUElPIG51bWJlcgoKVXNpbmcgR1BJTyBudW1iZXJzIGlzIGRl
-cHJlY2F0ZWQuIEFsbG93IGNvZGUgcGFzc2luZyBHUElPLWtleXMgaW5mbyB0aHJvdWdoCnBs
-YXRmb3JtLWRhdGEgKHN0cnVjdCBncGlvX2tleXNfYnV0dG9uKSB0byBkaXJlY3RseSBwYXNz
-IGEgZ3Bpb19kZXNjCmluc3RlYWQgb2YgYSBHUElPIG51bWJlci4KCk5vdGUgcmVxdWVzdGlu
-ZyAvIHJlbGVhc2luZyB0aGUgZ3Bpb19kZXNjIHdpbGwgYmUgdGhlIHJlc3BvbnNpYmlsaXR5
-Cm9mIHRoZSBjb2RlIHBhc3NpbmcgaW4gdGhlIHBsYXRmb3JtLWRhdGEuCgpTaWduZWQtb2Zm
-LWJ5OiBIYW5zIGRlIEdvZWRlIDxoYW5zZ0BrZXJuZWwub3JnPgotLS0KIGRyaXZlcnMvaW5w
-dXQva2V5Ym9hcmQvZ3Bpb19rZXlzLmMgfCAyICsrCiBpbmNsdWRlL2xpbnV4L2dwaW9fa2V5
-cy5oICAgICAgICAgIHwgNSArKysrLQogMiBmaWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMo
-KyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2lucHV0L2tleWJvYXJk
-L2dwaW9fa2V5cy5jIGIvZHJpdmVycy9pbnB1dC9rZXlib2FyZC9ncGlvX2tleXMuYwppbmRl
-eCBmOWRiODZkYTA4MTguLjMyMzI0N2Y2M2E3ZSAxMDA2NDQKLS0tIGEvZHJpdmVycy9pbnB1
-dC9rZXlib2FyZC9ncGlvX2tleXMuYworKysgYi9kcml2ZXJzL2lucHV0L2tleWJvYXJkL2dw
-aW9fa2V5cy5jCkBAIC01MjgsNiArNTI4LDggQEAgc3RhdGljIGludCBncGlvX2tleXNfc2V0
-dXBfa2V5KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYsCiAJCQkgKi8KIAkJCWJkYXRh
-LT5ncGlvZCA9IE5VTEw7CiAJCX0KKwl9IGVsc2UgaWYgKGJ1dHRvbi0+Z3Bpb2QpIHsKKwkJ
-YmRhdGEtPmdwaW9kID0gYnV0dG9uLT5ncGlvZDsKIAl9IGVsc2UgaWYgKGdwaW9faXNfdmFs
-aWQoYnV0dG9uLT5ncGlvKSkgewogCQkvKgogCQkgKiBMZWdhY3kgR1BJTyBudW1iZXIsIHNv
-IHJlcXVlc3QgdGhlIEdQSU8gaGVyZSBhbmQKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgv
-Z3Bpb19rZXlzLmggYi9pbmNsdWRlL2xpbnV4L2dwaW9fa2V5cy5oCmluZGV4IDgwZmE5MzBi
-MDRjNi4uN2MzMmMzYTA2OTVmIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2dwaW9fa2V5
-cy5oCisrKyBiL2luY2x1ZGUvbGludXgvZ3Bpb19rZXlzLmgKQEAgLTUsMTEgKzUsMTMgQEAK
-ICNpbmNsdWRlIDxsaW51eC90eXBlcy5oPgogCiBzdHJ1Y3QgZGV2aWNlOworc3RydWN0IGdw
-aW9fZGVzYzsKIAogLyoqCiAgKiBzdHJ1Y3QgZ3Bpb19rZXlzX2J1dHRvbiAtIGNvbmZpZ3Vy
-YXRpb24gcGFyYW1ldGVycwogICogQGNvZGU6CQlpbnB1dCBldmVudCBjb2RlIChLRVlfKiwg
-U1dfKikKLSAqIEBncGlvOgkJJS0xIGlmIHRoaXMga2V5IGRvZXMgbm90IHN1cHBvcnQgZ3Bp
-bworICogQGdwaW86CQklLTEgaWYgdGhpcyBrZXkgZG9lcyBub3Qgc3VwcG9ydCBncGlvIChk
-ZXByZWNhdGVkIHVzZSBncGlvZCkKKyAqIEBncGlvZDoJCWdwaW9fZGVzYyBmb3IgdGhlIEdQ
-SU8sIE5VTEwgaWYgdGhpcyBrZXkgZG9lcyBub3Qgc3VwcG9ydCBncGlvCiAgKiBAYWN0aXZl
-X2xvdzoJCSV0cnVlIGluZGljYXRlcyB0aGF0IGJ1dHRvbiBpcyBjb25zaWRlcmVkCiAgKgkJ
-CWRlcHJlc3NlZCB3aGVuIGdwaW8gaXMgbG93CiAgKiBAZGVzYzoJCWxhYmVsIHRoYXQgd2ls
-bCBiZSBhdHRhY2hlZCB0byBidXR0b24ncyBncGlvCkBAIC0yNiw2ICsyOCw3IEBAIHN0cnVj
-dCBkZXZpY2U7CiBzdHJ1Y3QgZ3Bpb19rZXlzX2J1dHRvbiB7CiAJdW5zaWduZWQgaW50IGNv
-ZGU7CiAJaW50IGdwaW87CisJc3RydWN0IGdwaW9fZGVzYyAqZ3Bpb2Q7CiAJaW50IGFjdGl2
-ZV9sb3c7CiAJY29uc3QgY2hhciAqZGVzYzsKIAl1bnNpZ25lZCBpbnQgdHlwZTsKLS0gCjIu
-NDkuMAoK
-
---------------esjKvN8AEjEUOU80jpmuCZLh--
 
