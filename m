@@ -1,171 +1,231 @@
-Return-Path: <linux-kernel+bounces-761435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D277B1FA00
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 14:51:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583B7B1FA05
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 14:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52AEA3BD36D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 12:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62AF6170523
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 12:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7720D266595;
-	Sun, 10 Aug 2025 12:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0104B2472BF;
+	Sun, 10 Aug 2025 12:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cTL80EA0"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCbMYt/U"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC50B2609EE;
-	Sun, 10 Aug 2025 12:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8402F1E50E;
+	Sun, 10 Aug 2025 12:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754830214; cv=none; b=LZbBIxaLubL7LqmyPc4PBjh5DU5yfXJjvex4xTxXMB4umG6YBXFNsbySG2c5ak6qwLdgkSGhhvDvuD707fvOezDy5hIhjGP7LRGg0KYaUonEcChU2q+H8Nv17F0ZhT7mymq2DfcAdk88H0NFEWkZymZW/5jt8z/qY7di6AK1hmw=
+	t=1754830683; cv=none; b=nKiAl1J9fdWhpbt7SsbRzzRN38AILbEMKFledUjmiWs5M6En7sr2+eOc+hUkWzyF3tswtLNfjmeP9u1XOnTfp9kRF6o7Urx3U3wZ4X0ll9y4vajmHtaDI0pVtB+0DJNJiN+UYpim0AF9YfqzKi8OvwXdUlCKdNRKl74IfVjjZsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754830214; c=relaxed/simple;
-	bh=arZnJXmoOJKhWbWAcpS6ht/gajjwWaE/UIcjKXQmTDg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BYupEldkbHVCYPfuwIiBn2sZ4YYXbMTiRrGgooFGkuLeZ8m6iZwAFR934qNkGbAOfhU5fe+EJP/P+0L5rRZD3Ocwo3mJ70vaJa3IqVK+TCtpXxkCy777SyhG3D/0XoT8P5dFL+czlquDEpp5740r20RJdyvVlw6I4GATUbmamD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cTL80EA0; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1754830683; c=relaxed/simple;
+	bh=EhLsZojnCpTP6DR0ZKTrGtcX/QnBRFrvIOrMtYcrMLQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W4ZYZ+NKcNL+oHiXQ3oFA8U4Wwqm7OxlFyXVMkg7wjz1PBNyXjHC5x+KPpgtYvzowHv/ikE5BpUNIrrRyGMmNHxoyJUQFQkz1i6iu6cMfK21sQwTH4PpVRo3UndDNpDYVCxGpfxMPqQaMcnpvhh38zQXGtxcdz+I9UECdCW1NPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCbMYt/U; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6182ea5a6c0so49698a12.0;
-        Sun, 10 Aug 2025 05:50:11 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55b93104888so4506041e87.1;
+        Sun, 10 Aug 2025 05:58:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754830210; x=1755435010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vq9wTkBsLSSMh7upQxNHd8g80sSc8UjlQSBDAR3TBns=;
-        b=cTL80EA0n9ywDErV6Ef9Fw37B3NWyHd0U3lQuPur2JmthyvdcSUqyJtKdvSoEbnY4D
-         9RvfdDPph1rBKWyruPIIW7RLblapJsPokOvwwW8NqvhJ7tDFH3mA9r4DEPT9JZI3Xdh7
-         16Bqx7hoVcboVgzGz1Lets/lxQfsQ45dzrgNuQgRZPPuBhYqeI7RnQpLDQzSVlt9S47S
-         tqcUBOF+kfRW+FlTqzQnjZtjdllbcyzEP1TJjaedrphWS1kcWcFKOSx4NQNOPRKvttW6
-         0+1Y78KBeBQDtQBRWta0d7R7e2WeA4PNQJFxSvlyfsjy+gy4qxkSwxop1OksCzZAD+3n
-         XGrA==
+        d=gmail.com; s=20230601; t=1754830680; x=1755435480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fLpTR6tAuSk7MmdRr1bx3cY7Ji1Fi9DhOlpvPdNYklM=;
+        b=NCbMYt/U4MIDHV68kIz6cRr4GvYdlL8tP+LHvM20vkHvNFvNUjGAI9CBF7fXo9rI3T
+         jEDFMQ6VCA/wUsWT2uGz5SXyuaR5fIJtV8kZ88cbyu90zouK/CrqMW4HxRZg68xpbdwF
+         an4e30B3S6KgNO1ElGryncczmaJADREGQVQFOhT39AgQBrwohOCGVpiWeVyL10+Jh+Ij
+         2UhJ4u65DhO1EXsDdtv8ZWSWqcZqYL1VqINwbgLp2s1gXjaO9HULWAA6Xic3N1mI0wg7
+         BYck9Xp/bzfQXxuTPhZIUscUSO5wdj/I1A6jhJqzxXvE+E3xyfAwAMYBOKDRj4IKSfEg
+         zH0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754830210; x=1755435010;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vq9wTkBsLSSMh7upQxNHd8g80sSc8UjlQSBDAR3TBns=;
-        b=nCZrpa2sjYNJtmOCxWFOgmiTu9Loe9ybm8ClkuqU9bvfoDWUPYIqGVIIk+zEYt65iR
-         z+eklCgOH3G3VNelxBx4SvPWXgD5egyUVckCPf2gfrSKatld9taGV9hd43C22pxXK20z
-         0FAF9VRxKOiU8sFJlVY7AANtcrrHYoRsWW/+IpSRPy+PidFlCZkbiLc5aSKZq64B+9C6
-         Zef+6WSfZ4LmTgkM96+XtEAPXyi5IDoftqxekXdNNnOew2KKAb68JdMgZEHFHJJKol7h
-         5Wa61AQlIwuIQn2eKLU3GIUUZHuRyN5cX65Q+zx2zp3V+H02ELEI4pu5M9oJAGSKPjC1
-         eJvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW32j82djnKfCHt0FZpPDlIRekr365CXV2zNCllnGWQI+TEMAwGUAjzUZO8oTxBXooSouGBqg2Drb5oOgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTD/asgap3/xoHjVAwtHXV1ay66TYljkGQGnjR/KGAzSz/C0NK
-	bfcu3JlX6naXTJgs15PmAkxAXhuTnkGL9Fk/O2vrbkGyeMdR6ty7mCnt76ZJy4QcL8s=
-X-Gm-Gg: ASbGncsKqbIW5+ygLGd/IexB7tea9qSc9Sks0q3taaYp+hntc5KzZkrMfpCxm6sflAE
-	AF4OmSH4z3ntQiDbykm+fR0SX3gHIBfeX/BjpX5iyAFyWabuXgVaqNrRBTueRALZJM+YfeWOB14
-	w8a8OibAZmV3t0k9RM4YF4WgdlAvdCK3QLm6+VpJejS+ZZ7L/7nH+G5eNZBJFbcqmRMV82Y47to
-	dRfF65ECnw4xOMDhtCn4Z3Rs1lLOqBtg9v896lPU0vLtSUeBm2DE/ilPwo2J+BGaWlMPWzkwDXu
-	p7JiFAZT7eDibcqHPmvNMsYwp20pBTIrz9nkYZvRtArqMQECYECT6NW1jz7wpIywnjCVNurNifW
-	uVkBweyboqadG28x/xFT4WOr/N2SJrxNeH39/u0qQRyy5W9+BJUyva9v2+l30k8W/4DxqkhK91R
-	jQiM/zTQ==
-X-Google-Smtp-Source: AGHT+IEbRSTDonATc2F8RIz7Tqy6fgw8oS0LhPw0NGSmSUtZL5LGHuIugS8Auz31g7J9wqwbpap2Og==
-X-Received: by 2002:a05:6402:50ca:b0:615:49c3:f347 with SMTP id 4fb4d7f45d1cf-617e2b7037amr7835357a12.2.1754830209950;
-        Sun, 10 Aug 2025 05:50:09 -0700 (PDT)
-Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8ffbdb4sm16636594a12.52.2025.08.10.05.50.09
+        d=1e100.net; s=20230601; t=1754830680; x=1755435480;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fLpTR6tAuSk7MmdRr1bx3cY7Ji1Fi9DhOlpvPdNYklM=;
+        b=GqfA0PjHzRdq1JwwRQFrCEluS/ceLyMt01PzXqZyieohKmR5yPYT+0/8g6//OXRGTR
+         P/kBQcpfcD7NSw9ewceuo13NEoyrSNiCb6bfPJBiRxDvcO4e9szvMN8OxSpvZFNRLzAH
+         US9PF2CRLJT2hR0co6JE3ZshIX8TtOdkLqe0u+kac6kMCBeYSuT0ASVm8SWfclH5HabA
+         7fv1ZMet6lUGX9OXNcRwh3Eu2vcj1D+iUnLyOWk2yWvwtLAysD539wv9tmmc00WcFLcj
+         WUTJx0UL4mvYSUX82yL3gLQO+aDSB38V+UbNk7si1Z1U5JImJKzS1I0ht0ZI1aeYpLyD
+         kAAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxatSrdEsn9KagUhZwKeWeXJdVxOaOFMZi5FMBX1M6DQtTxhX41qDc4V762ZlWjQ9QvYTQXHZ692u2PA==@vger.kernel.org, AJvYcCVYSpp7Luigg7Yn3KWnc1sZodPOrGCoj91/gAhdzwxFoGXA8EX8qX3s86GX8hBLcHU+N3CtAcPOZKXVnIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuoEgfNGtiiDMfjmlqvCuqzuOFlwBQWe1tjmUBfGWOIQmNn88y
+	uI9l+tKLFKXeym1h6xRdrJWwli0T1lnx5Vrw75hrx+KfF0jb/7cJx746
+X-Gm-Gg: ASbGncsyHa2mQgw3C+hgKETmmXkVKCFYV7ZoYNTZ8DLz+w1+tMWe0DEAh1FGY8G553k
+	MwP+oQm0qYvvbvRtdqz+xR6BBIicUcKLIqS2UAhSeRrFFl8lBum/AiMaXp7Wg8ZwTisPuEJQ2Vh
+	xvpdZCOAaFdZJ6hFWi16QjdHYd43RWDjNFuopQLQxPQKDs7o4BwCzn/8yfKGndZ9i9qGSxmT1UT
+	+O/9BkDG6SfcUq16TqNodn7NbLyhkjj6F1er6exp+U+B1h3J4NnWGrTTP0OxtumthbXn3lOgW7G
+	uJ6+1sQuCD9ev1mUFrU3fZDSiCcmuRNsekF+AiU7/QVrr45Nu3DRdqEZOk4kCmyTckUJiOrWIne
+	4h3QXUd+61H1gWotAVoQS5vBhs0dAmK+S3+JTUQ==
+X-Google-Smtp-Source: AGHT+IGP/4+VH4qZJqmI6pqOQcdamwMMjmUjwyAr9JTcQGvwe1pb2iGdV8kKhr91VYx69eEOJbHKcQ==
+X-Received: by 2002:a05:6512:2313:b0:55b:8397:cffd with SMTP id 2adb3069b0e04-55cc00ada77mr2589766e87.9.1754830679327;
+        Sun, 10 Aug 2025 05:57:59 -0700 (PDT)
+Received: from localhost.localdomain ([2a03:32c0:2e:37dd:bfc4:9fdc:ddc6:5962])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c9908esm3804561e87.76.2025.08.10.05.57.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 05:50:09 -0700 (PDT)
-From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-sound@vger.kernel.org,
+        Sun, 10 Aug 2025 05:57:58 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: ryabinin.a.a@gmail.com,
+	christophe.leroy@csgroup.eu,
+	bhe@redhat.com,
+	hca@linux.ibm.com,
+	andreyknvl@gmail.com,
+	akpm@linux-foundation.org,
+	zhangqing@loongson.cn,
+	chenhuacai@loongson.cn,
+	davidgow@google.com,
+	glider@google.com,
+	dvyukov@google.com,
+	alexghiti@rivosinc.com
+Cc: alex@ghiti.fr,
+	agordeev@linux.ibm.com,
+	vincenzo.frascino@arm.com,
+	elver@google.com,
+	kasan-dev@googlegroups.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-Subject: [PATCH 7/7] ALSA: usb-audio: Add infrastructure for TASCAM US-144MKII
-Date: Sun, 10 Aug 2025 14:49:58 +0200
-Message-Id: <20250810124958.25309-8-ramiserifpersia@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250810124958.25309-1-ramiserifpersia@gmail.com>
-References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
+	loongarch@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	linux-mm@kvack.org,
+	snovitoll@gmail.com
+Subject: [PATCH v6 0/2] kasan: unify kasan_enabled() and remove arch-specific implementations
+Date: Sun, 10 Aug 2025 17:57:44 +0500
+Message-Id: <20250810125746.1105476-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This commit adds Kconfig and Makefile entries for TASCAM US-144MKII
-USB audio/MIDI interface support. It includes the configuration option
-and links new driver files.
+This patch series addresses the fragmentation in KASAN initialization
+across architectures by introducing a unified approach that eliminates
+duplicate static keys and arch-specific kasan_arch_is_ready()
+implementations.
 
-The Kconfig entry for US-144MKII is added. The Makefile is updated to
-compile new driver components.
+The core issue is that different architectures have inconsistent approaches
+to KASAN readiness tracking:
+- PowerPC, LoongArch, and UML arch, each implement own kasan_arch_is_ready()
+- Only HW_TAGS mode had a unified static key (kasan_flag_enabled)
+- Generic and SW_TAGS modes relied on arch-specific solutions
+  or always-on behavior
 
-The US-122L driver's device ID table is adjusted to remove the US-144MKII
-entry, as it will now be handled by its dedicated driver.
+Changes in v6:
+- Call kasan_init_generic() in arch/riscv _after_ local_flush_tlb_all()
+- Added more details in git commit message
+- Fixed commenting format per coding style in UML (Christophe Leroy)
+- Changed exporting to GPL for kasan_flag_enabled (Christophe Leroy)
+- Converted ARCH_DEFER_KASAN to def_bool depending on KASAN to avoid
+        arch users to have `if KASAN` condition (Christophe Leroy)
+- Forgot to add __init for kasan_init in UML
 
-Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
----
- sound/usb/Kconfig        | 12 ++++++++++++
- sound/usb/usx2y/Makefile |  2 ++
- sound/usb/usx2y/us122l.c |  7 +------
- 3 files changed, 15 insertions(+), 6 deletions(-)
+Changes in v5:
+- Unified patches where arch (powerpc, UML, loongarch) selects
+  ARCH_DEFER_KASAN in the first patch not to break
+  bisectability. So in v5 we have 2 patches now in the series instead of 9.
+- Removed kasan_arch_is_ready completely as there is no user
+- Removed __wrappers in v4, left only those where it's necessary
+  due to different implementations
 
-diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
-index 41c47301bc19..9b890abd96d3 100644
---- a/sound/usb/Kconfig
-+++ b/sound/usb/Kconfig
-@@ -117,6 +117,18 @@ config SND_USB_US122L
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called snd-usb-us122l.
- 
-+config SND_USB_US144MKII
-+	tristate "Tascam US-144MKII USB driver"
-+	depends on X86 || COMPILE_TEST
-+	select SND_RAWMIDI
-+	select SND_PCM
-+	help
-+	  Say Y here to include support for Tascam US-144MKII USB Audio/MIDI
-+	  interface.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called snd-usb-us144mkii.
-+
- config SND_USB_6FIRE
- 	tristate "TerraTec DMX 6Fire USB"
- 	select FW_LOADER
-diff --git a/sound/usb/usx2y/Makefile b/sound/usb/usx2y/Makefile
-index fc033aba03a4..eca3680ad231 100644
---- a/sound/usb/usx2y/Makefile
-+++ b/sound/usb/usx2y/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- snd-usb-usx2y-y := usbusx2y.o usX2Yhwdep.o usx2yhwdeppcm.o
- snd-usb-us122l-y := us122l.o
-+snd-usb-us144mkii-y := us144mkii.o us144mkii_pcm.o us144mkii_playback.o us144mkii_capture.o us144mkii_midi.o us144mkii_controls.o
- 
- obj-$(CONFIG_SND_USB_USX2Y) += snd-usb-usx2y.o
- obj-$(CONFIG_SND_USB_US122L) += snd-usb-us122l.o
-+obj-$(CONFIG_SND_USB_US144MKII) += snd-usb-us144mkii.o
-diff --git a/sound/usb/usx2y/us122l.c b/sound/usb/usx2y/us122l.c
-index 2ace3ba46091..6667b50e99a8 100644
---- a/sound/usb/usx2y/us122l.c
-+++ b/sound/usb/usx2y/us122l.c
-@@ -686,12 +686,7 @@ static const struct usb_device_id snd_us122l_usb_id_table[] = {
- 		.idVendor =	0x0644,
- 		.idProduct =	USB_ID_US122MKII
- 	},
--	{
--		.match_flags =	USB_DEVICE_ID_MATCH_DEVICE,
--		.idVendor =	0x0644,
--		.idProduct =	USB_ID_US144MKII,
--		.driver_info =	US122L_FLAG_US144
--	},
-+
- 	{ /* terminator */ }
- };
- MODULE_DEVICE_TABLE(usb, snd_us122l_usb_id_table);
+Tested on:
+- powerpc - selects ARCH_DEFER_KASAN
+Built ppc64_defconfig (PPC_BOOK3S_64) - OK
+Booted via qemu-system-ppc64 - OK
+
+I have not tested in v4 powerpc without KASAN enabled.
+
+In v4 arch/powerpc/Kconfig it was:
+	select ARCH_DEFER_KASAN			if PPC_RADIX_MMU
+
+and compiling with ppc64_defconfig caused:
+  lib/stackdepot.o:(__jump_table+0x8): undefined reference to `kasan_flag_enabled'
+
+I have fixed it in v5 via adding KASAN condition:
+	select ARCH_DEFER_KASAN			if KASAN && PPC_RADIX_MMU
+
+- um - selects ARCH_DEFER_KASAN
+
+KASAN_GENERIC && KASAN_INLINE && STATIC_LINK
+	Before:
+		In file included from mm/kasan/common.c:32:
+		mm/kasan/kasan.h:550:2: error: #error kasan_arch_is_ready only works in KASAN generic outline mode!
+		550 | #error kasan_arch_is_ready only works in KASAN generic outline mode
+
+	After (with auto-selected ARCH_DEFER_KASAN):
+		./arch/um/include/asm/kasan.h:29:2: error: #error UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
+		29 | #error UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
+
+KASAN_GENERIC && KASAN_OUTLINE && STATIC_LINK && 
+	Before:
+		./linux boots.
+
+	After (with auto-selected ARCH_DEFER_KASAN):
+		./linux boots.
+
+KASAN_GENERIC && KASAN_OUTLINE && !STATIC_LINK
+	Before:
+		./linux boots
+
+	After (with auto-disabled !ARCH_DEFER_KASAN):
+		./linux boots
+
+- loongarch - selects ARCH_DEFER_KASAN
+Built defconfig with KASAN_GENERIC - OK
+Haven't tested the boot. Asking Loongarch developers to verify - N/A
+But should be good, since Loongarch does not have specific "kasan_init()"
+call like UML does. It selects ARCH_DEFER_KASAN and calls kasan_init()
+in the end of setup_arch() after jump_label_init().
+
+Previous v5 thread: https://lore.kernel.org/all/20250807194012.631367-1-snovitoll@gmail.com/
+Previous v4 thread: https://lore.kernel.org/all/20250805142622.560992-1-snovitoll@gmail.com/
+Previous v3 thread: https://lore.kernel.org/all/20250717142732.292822-1-snovitoll@gmail.com/
+Previous v2 thread: https://lore.kernel.org/all/20250626153147.145312-1-snovitoll@gmail.com/
+
+Sabyrzhan Tasbolatov (2):
+  kasan: introduce ARCH_DEFER_KASAN and unify static key across modes
+  kasan: call kasan_init_generic in kasan_init
+
+ arch/arm/mm/kasan_init.c               |  2 +-
+ arch/arm64/mm/kasan_init.c             |  4 +---
+ arch/loongarch/Kconfig                 |  1 +
+ arch/loongarch/include/asm/kasan.h     |  7 ------
+ arch/loongarch/mm/kasan_init.c         |  8 +++----
+ arch/powerpc/Kconfig                   |  1 +
+ arch/powerpc/include/asm/kasan.h       | 12 ----------
+ arch/powerpc/mm/kasan/init_32.c        |  2 +-
+ arch/powerpc/mm/kasan/init_book3e_64.c |  2 +-
+ arch/powerpc/mm/kasan/init_book3s_64.c |  6 +----
+ arch/riscv/mm/kasan_init.c             |  1 +
+ arch/s390/kernel/early.c               |  3 ++-
+ arch/um/Kconfig                        |  1 +
+ arch/um/include/asm/kasan.h            |  5 ++--
+ arch/um/kernel/mem.c                   | 13 ++++++++---
+ arch/x86/mm/kasan_init_64.c            |  2 +-
+ arch/xtensa/mm/kasan_init.c            |  2 +-
+ include/linux/kasan-enabled.h          | 32 ++++++++++++++++++--------
+ include/linux/kasan.h                  |  6 +++++
+ lib/Kconfig.kasan                      | 12 ++++++++++
+ mm/kasan/common.c                      | 17 ++++++++++----
+ mm/kasan/generic.c                     | 19 +++++++++++----
+ mm/kasan/hw_tags.c                     |  9 +-------
+ mm/kasan/kasan.h                       |  8 ++++++-
+ mm/kasan/shadow.c                      | 12 +++++-----
+ mm/kasan/sw_tags.c                     |  1 +
+ mm/kasan/tags.c                        |  2 +-
+ 27 files changed, 113 insertions(+), 77 deletions(-)
+
 -- 
-2.39.5
+2.34.1
 
 
