@@ -1,146 +1,165 @@
-Return-Path: <linux-kernel+bounces-761377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0B1B1F952
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 10:09:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01ECEB1F956
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 10:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15F13B1ACB
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 08:09:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18DE97A9CB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 08:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACB52367CC;
-	Sun, 10 Aug 2025 08:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47988238D49;
+	Sun, 10 Aug 2025 08:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="t3fqqPUu"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YW+c4kfO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D4814885D;
-	Sun, 10 Aug 2025 08:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF101EA7E1
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 08:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754813354; cv=none; b=kGnObdNd+dBRkA5xUEfClGk4S3Jfl7VAAebXr98AHMNbc28+YGe8eoBXBrq3dvc1g5MbgNmOrNuQLdIj5HX8sRckimhTmlV181W1voQgO9ab9GBelTFIaP7UTcSA92RrVtJIBCj6dGNGAmELCRDfTdqhwjE2XwCGywpFjZtABKo=
+	t=1754813699; cv=none; b=VwwepJh7vJ7A1UmxWxi4MiKZbWDFzutW2X5Cip1yRCKfnbt0kIHvsTFc5fYzQLQCrAfP0jy+KNx535dUTGT61p/h/M9BsrjiWVJeC8HB3VAc8hV7CKihuQGkkzVOJ9NuDp1Un54UCIVtuEQcfqEbHz2j1tg1JsCBPUAgbC7An58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754813354; c=relaxed/simple;
-	bh=Z4MkdGaD5yMVPCNaHWZ77bCzeRvGMa/DJf7l5HVwimc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=CXunuT27LIuUmiYZ9ln4BKLS4yG7nzmYv06qdkSae8BYWa0zxjbQyxjW0PDFbGm/EB54+s7xBhiaOaz4VTppJKdR8TpfQ7hJ+vcvH+bxEo2yw1PtqQiZqkW3z2+T/WDlsKlE9hbX5kIPImayo5D2ey/P3fZem3zHO/BB/2qJ3iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=t3fqqPUu; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1754813345; x=1755418145; i=markus.elfring@web.de;
-	bh=Z4MkdGaD5yMVPCNaHWZ77bCzeRvGMa/DJf7l5HVwimc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=t3fqqPUuLhL4lWZsUFryimW0Q/ffpNkk/sHZloFLA3StWeatVsxD2Ay3ejpxL6fb
-	 zJfEB0rW9hnXrqtyrvyjjWSg/w5jtu4phzGurKUa3J7kGeT+tZuu2G4fgUqIys7fi
-	 tB6r0ezXG8MDLXZ70hsiMGqeLXtVsHRv6blZspyM60rmIUdvvS4cFth7E4tcwEEuA
-	 4WxUDVw1Fkf7zpf/6+ovsGNv3e28kLB2bTomwLOfLOQB0eaHsUOY6Xk6j3+dtAWrr
-	 Gg5ufV7BywYk35Ig0oOQHO+toYLElwctRlmuXwCzF+TBMocmekBZIdUR9Yln8yllg
-	 8KzonRYCuHGSDyeXIQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.214]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mrfp8-1uHTeP3Fu0-00la50; Sun, 10
- Aug 2025 10:09:05 +0200
-Message-ID: <f34219ae-098f-4732-94e9-f077316d843d@web.de>
-Date: Sun, 10 Aug 2025 10:08:52 +0200
+	s=arc-20240116; t=1754813699; c=relaxed/simple;
+	bh=fGW6aFRPqxEB+wkPVbwUTC0fZF4Hi16hQUbYb1/bkBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PsKTeeI71H/izLL9PD4ui4l4KVK+M6qhoTjWePQKb8Y/zW7Jn1IixDSw+1JAPqXw0OFNtgepSfzFidn2rDQ2O90OATBWkRmmh33AG+OabuIZWHjAT9uiKlMRfoNk3Om1djwRX8nTZ3NLg9HAJR1d5sXUuG4f1d8gSzppuNE0cjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YW+c4kfO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2309FC4CEEB;
+	Sun, 10 Aug 2025 08:14:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754813699;
+	bh=fGW6aFRPqxEB+wkPVbwUTC0fZF4Hi16hQUbYb1/bkBo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YW+c4kfO6iVUIhxBhnUx9AMimsxobF81pwBpnyQ0SE5E7ELvWmZdkfeto7vwKO9jq
+	 6pfvL+Cjs/zRk8dKyK8FH3SBte060/4efJu+6WPW5gqUVS7doAeda5u4823Pi023DS
+	 xSZ4J/a/A52yUL+0jAMbSqNBdb5bPoPsJslMJWDztDUguK7z0qX4D48MemjMXuhf85
+	 AABeg3ebvYkxWOGU/om+RSgSI+PV5rsz5/PN3cvtuA/LRwgy8Q3wEZG1Uma+J0C0Hx
+	 mwu9p4LHmHq3C+bZ43Yg2AFe8sDP+W4iDit7LlDX3xtJVyjUr+tLkWXA78uG7Q9Isw
+	 7bMMhv3lMwXSg==
+Date: Sun, 10 Aug 2025 11:14:53 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: mawupeng <mawupeng1@huawei.com>, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: ignore nomap memory during mirror init
+Message-ID: <aJhU_a6NeUKeu4rY@kernel.org>
+References: <aHjQp9zPVPuPyP3B@kernel.org>
+ <9688e968-e9af-4143-b550-16c02a0b4ceb@huawei.com>
+ <aHj8mfecDhJJZW1Y@kernel.org>
+ <8d604308-36d3-4b55-8ddb-b33f8b586c1a@huawei.com>
+ <aHzjOxg_oPp06blC@kernel.org>
+ <CAMj1kXGKGXeKGKWT3VzkBtACtjFyz8ntiyoTU26DA4aR6mi88g@mail.gmail.com>
+ <aH9JMT93itrztZ+m@kernel.org>
+ <113b914f-1597-41ca-b714-7ea048c3c6df@huawei.com>
+ <aJM1RFjpQxQzfASv@kernel.org>
+ <CAMj1kXHg-xB8KxkgL1FYu8PpBVqXUsR7wMxUXwfUXm=BfuUHGg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Salah Triki <salah.triki@gmail.com>, linux-iio@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
- David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-References: <aJQOmQKO219rS8ZN@pc>
-Subject: Re: [PATCH v2] iio: pressure: bmp280: Use IS_ERR() in
- bmp280_common_probe()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <aJQOmQKO219rS8ZN@pc>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:AvhrCOMTUFsJvDkZwccEZtipCctmDl25pmwBYLrcGEL37WkwTdP
- glGgxe06IKKG0oEdcIoyifhS09yU+GSUX+LEsfjTna6YFvgAaV3n0TCjhyIocni/cqhkVZP
- xGSqEqX0cF4M8zqH6/Rd0u44dUHgYbGDMUJ6TGOPgThq2FrWxOqZYUhQE8u52sRjBUnc+er
- NJWrLrsTqXvwTmzmyknOA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KB2oqePxtVo=;brdJLwhkwmQ7H0WmT0/Pjqfx7vH
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXHg-xB8KxkgL1FYu8PpBVqXUsR7wMxUXwfUXm=BfuUHGg@mail.gmail.com>
 
-> `devm_gpiod_get_optional()` may return non-NULL error pointer on failure=
-.
-> Check its return value using `IS_ERR()` and propagate the error if
-> necessary.
+On Sun, Aug 10, 2025 at 03:14:03PM +1000, Ard Biesheuvel wrote:
+> On Wed, 6 Aug 2025 at 20:58, Mike Rapoport <rppt@kernel.org> wrote:
+> >
+> > On Tue, Aug 05, 2025 at 04:47:31PM +0800, mawupeng wrote:
+> > >
+> > > On 2025/7/22 16:17, Mike Rapoport wrote:
+> > > > Hi Ard,
+> > > >
+> > > > On Mon, Jul 21, 2025 at 03:08:48PM +1000, Ard Biesheuvel wrote:
+> > > >> On Sun, 20 Jul 2025 at 22:38, Mike Rapoport <rppt@kernel.org> wrote:
+> > > >>>
+> > > >> ...
+> > > >>>
+> > > >>>> w/o this patch
+> > > >>>> [root@localhost ~]# lsmem --output-all
+> > > >>>> RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
+> > > >>>> 0x0000084000000000-0x00000847ffffffff   32G online       yes   67584-67839    0 Movable
+> > > >>>> 0x0000085000000000-0x0000085fffffffff   64G online       yes   68096-68607    0 Movable
+> > > >>>>
+> > > >>>> w/ this patch
+> > > >>>> [root@localhost ~]# lsmem --output-all
+> > > >>>> RANGE                                  SIZE  STATE REMOVABLE         BLOCK NODE   ZONES
+> > > >>>> 0x0000084000000000-0x00000847ffffffff   32G online       yes   8448-8479    0  Normal
+> > > >>>> 0x0000085000000000-0x0000085fffffffff   64G online       yes   8512-8575    0 Movable
+> > > >>>
+> > > >>> As I see the problem, you have a problematic firmware that fails to report
+> > > >>> memory as mirrored because it reserved for firmware own use. This causes
+> > > >>> for non-mirrored memory to appear before mirrored memory. And this breaks
+> > > >>> an assumption in find_zone_movable_pfns_for_nodes() that mirrored memory
+> > > >>> always has lower addresses than non-mirrored memory and you end up wiht
+> > > >>> having all the memory in movable zone.
+> > > >>>
+> > > >>
+> > > >> That assumption seems highly problematic to me on non-x86
+> > > >> architectures: why should mirrored (or 'more reliable' in EFI speak)
+> > > >> memory always appear before ordinary memory in the physical memory
+> > > >> map?
+> > > >
+> > > > It's not really x86, although historically it probably comes from there.
+> > > > ZONE_NORMAL is always before ZONE_MOVABLE, so in order to have ZONE_NORMAL
+> > > > with mirrored (more reliable) memory, the mirrored memory should be before
+> > > > non-mirrored.
+> > > >
+> > > >>> So to workaround this firmware issue you propose a hack that would skip
+> > > >>> NOMAP regions while calculating zone_movable_pfn because your particular
+> > > >>> firmware reports the reserved mirrored memory as NOMAP.
+> > > >>>
+> > > >>
+> > > >> NOMAP is a Linux construct - the particular firmware reports a
+> > > >> 'reserved' memory region, but other more widely used memory types such
+> > > >> as EfiRuntimeServicesCode or *Data would result in an omitted region
+> > > >> as well, and can appear anywhere in the physical memory map. There is
+> > > >> no requirement for the firmware to do anything here wrt the
+> > > >> MORE_RELIABLE attribute even though such regions may be carved out of
+> > > >> a block of memory that is reported as such to the OS.
+> > > >>
+> > > >> So I agree with Wupeng Ma that there is an issue here: reporting it as
+> > > >> mirrored even though it is reserved should not be needed to prevent
+> > > >> the kernel from mishandling it.
+> > > >
+> > > > But a check for NOMAP won't actually fix it in the general case, especially
+> > > > if it can appear anywhere in the physical memory map. E.g. if there's an MR
+> > > > region followed by two reserved regions and one of these regions is not
+> > > > NOMAP and then MR region again, ZONE_NORMAL will only include the first MR
+> > > > region.
+> > >
+> > > What kind of memory is reserved and is not nomap.
+> >
+> > EFI_ACPI_RECLAIM_MEMORY is surely reserved and it won't be nomap if it can
+> > be mapped WB. I believe other types may be treated the same, I don't
+> > familiar with efi code enough to tell.
+> >
+> > > > We may want to consider scanning the entire memblock.memory to find all
+> > > > mirrored regions in a and than make a decision where to cut ZONE_NORMAL
+> > > > based on that.
+> > >
+> > > AFICT, mirrored memory should always locate at the top of numa memory
+> > > region due the linux's zone management. there maybe no good decision
+> > > based on memblock.memory rather that use the the first non-mirror
+> > > usable memory pfn to cut.
+> >
+> > Thinking out loud, if nomap is not usable to Linux why would efi add it to
+> > memblock.memory at all?
+> >
+> 
+> Because the region has RAM semantics and not MMIO semantics. This is
+> important on architectures such as arm64, where mapping RAM with
+> device attributes breaks cache coherency.
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16#n145
+Right, such regions should not be mapped. But this can be achieved with not
+memblock_add'ing them at the first place, like e820 does for example.
 
-
-> Also switch to `gpiod_set_value_cansleep()`, which is safe to use in
-> sleepable contexts like probe.
-
-Would it be helpful to provide desirable changes by separate update steps?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16#n81
-
-Regards,
-Markus
+-- 
+Sincerely yours,
+Mike.
 
