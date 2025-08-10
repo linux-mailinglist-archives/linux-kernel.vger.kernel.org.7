@@ -1,165 +1,127 @@
-Return-Path: <linux-kernel+bounces-761316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A365BB1F864
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 06:49:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0917DB1F867
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 06:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43EE63BE945
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 04:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 206DD17ADF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 04:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D4A1D61B7;
-	Sun, 10 Aug 2025 04:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2281B0420;
+	Sun, 10 Aug 2025 04:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUl2HFwX"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jj1JxeSw"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D511F03DE;
-	Sun, 10 Aug 2025 04:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8676A14A0B7
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 04:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754801302; cv=none; b=LNCWj7LOWsKndFB0DuajX1O6cHEH4zXMn5RDZMPTQAXrqIBNfeoUQQXvzpinKqVJWN0lSNjiiVar+t0gBrt6cpPhdyoIiFfx2zpjwAxdUsHIPMvcUtLoX64Co6nNqxPgrF0wSYKv5w+edV+CpNKsxaywNOo1VTlUeWjQkXvnu+Y=
+	t=1754801539; cv=none; b=IC4OcUXpdVLmMHuy1HSOoJa5mLBGPZm1jeI8wRit4W0xw24ApesozY9NjnmrRDxnb1eCCwvjWpkDoKmwo7G7514TdI3eUuJ4qEQM6M3nzHSnbaZsRIHm8tXcfObun5P9IKN0rx3YFUhJceeeXAylnF2sLyLW/w+BuiBqDAVQdoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754801302; c=relaxed/simple;
-	bh=jKaQoD/0uZFAoKwRDDwPtcqfLkEUzW7KbgTPmaYObs4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jzjJ2tpifXuEr5FKX0mw+Ttcbmqq4TzEntaOIbjPYrGSLrC1oGQ0reDSfYMnyP+lchbLvbScdaapKALXTBcyL+Q5AqV73wTUiTS/KuSByyEDOrGLfnLWp4Q1Sulws9A94G2iHW4aVF1Bt7jwybjvTHMfG+nw39CojAAHUDJQecs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUl2HFwX; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b421b70f986so2412924a12.1;
-        Sat, 09 Aug 2025 21:48:20 -0700 (PDT)
+	s=arc-20240116; t=1754801539; c=relaxed/simple;
+	bh=QpYrr5zdwL4EQJjR8CXyru7YDcS9YlE8WhSGCct7Gdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jR3aI+7fqK5z8FVZWwCJ2fFZPLOO6DkcUCqZ4teLdMO0G86cAd5Fik3tNuuGjsr3p9iWAWStHAgzPive/yKJKOlYTkyEsN4p+LDW2W7EvYdR2vEljfIvf/YrtzFqEmrQoneaPdlVL5G4LrtBorL5BGG9cyfykmvsaSR1Ha/aOn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jj1JxeSw; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61553a028dfso4380603a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 21:52:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754801300; x=1755406100; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bUxuiidVAG6WD5n/vYEciBFeyJ2xEqyPcRFxaktImJQ=;
-        b=CUl2HFwX4Ugj7OwqANDUvQyaAZIZkXC24G88dtiwRBLO3u1xVi1cvb6CNrqKcpiQ8e
-         q4Gl+BiUsPVO2Uy1LFK8hG8gug8/aOHohoZ6pwNsnyG1B7Epjy6nIc8n8Eo067v/wzys
-         L5sQ5kjl/Gmvzrd77J4EoS1UBRT/5ulQsHGQy3Y6tXSVwD5/gGi8d/hmNptigzGf+2Bb
-         EaNjAzgFw2CkAmLnhJBjYhd9h+i/XPaSGWbHCMdreejvwHSpsSFMsfYjpSbJzmjhAcu6
-         Hlq08Zbg8sGjH8tXojz1sAYeq7RDYILF26U1eDzALk9/4mxMGI16UwH8GifHN3Tjrvvs
-         rkHQ==
+        d=linux-foundation.org; s=google; t=1754801536; x=1755406336; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DIOvpfcvfL+aB8v7AdDV+E3Zb8xwZqXo/sST33XUOtA=;
+        b=Jj1JxeSwpYEEafyNJ8czIUQwSAguzRXK/H1ckYPCx3vmIlEqmcqPjMkAZpFmTSxEU1
+         h7GfrOfzGp8fjI8QSgZEjhaPHsMiTfZ4e9A3APkl97uv1m5sNwkqe92dIUQLMv64vtGx
+         9Aednnnem8g3EROkhADuuPhlucm4wLUWaWD64=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754801300; x=1755406100;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bUxuiidVAG6WD5n/vYEciBFeyJ2xEqyPcRFxaktImJQ=;
-        b=gavMQUHrQKeaVfOWqgZ4RpdVAtSaGx6/bbH5D4CayD6dupupZLeVLGqi7v5BEP8Us6
-         piSmTH43Rtc5AMSXQ3qvFggyDjiPBS0c5lfGJuEFHlfWaPh7YX6NXP4zFkcJH5U2A1Rw
-         EIQZkyY/Gd6lZbGeZHuvLqYsvM06NVVI6/0/z60/DsfbBsfjytju0LJu03A83/dX7EKG
-         rIup+Ek+ksfhwku1hgjlglNyKXE9yooY66vb3IcZBHzJxML6her53UNbFFXOhfrPZ83L
-         Qlmh9HrZ+BMJ2V/EhVdPsoS1dun+N/IYlpMUQ1Tun0I3xRNcJzFIMzxbkzB1b83cKyc7
-         h+Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCW85zV+ocvanfTpoBiN45y3ym/icbIKm5/uT1hRst+iEnE+bJUPBeV9nNOWl5w9vuB5qvsD6/NIIssaK72r@vger.kernel.org, AJvYcCXJlhJowSCs9xyMEFeh0ILM64TaQAWczvpcev7o8YXvUri8VvKYVyS3h2XwlYXNbJLRKPLyDWm8pxx3YJAv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUpljFd38Opx4qSTHE0t5nc3VXZkHo+/Sa1z6CmCHRMwYyw4ES
-	hOFxN66MQHuSDaqP90SzNCts/ijbQ4zlmMG12vAf9qTpFANoP6BzLYQltBMlw7Bh
-X-Gm-Gg: ASbGncu7IawGQReZwtM/f1QWkOXO5h8H/vOG/TDjLipLp7BZVywDJMzRIK+fNsI1L2j
-	rbg3uo1iQqmCraW04SAuZMbsi4WprpDQAGK9NmYI1LZuJslH8t7pccx+3E2qP0ApeL6zJjWembE
-	06a+bX2pyCjolL+kbQFG341EqhmwLeCd0JH5y/1WEV/AzZ4DzLoFi1Ma255gPD2IqU2taSmhgO8
-	R+P8dY4pM0R09DowIA4o4Tura0yI5pvDfuG+ikRQBhAMkUY4GURU0Adh12n3OSSPsooVDRvqsvA
-	S4aXBru1URxG8y4qzEhBFS8q0ehk+tis/fNRZvX4VBEr7Goqvym5r0nfpmrY29tRB2+XApaN2CK
-	rWpe9RC7J/nNF6T9NzjozExGX31EoBdwvSqY31NAEIcoz6A==
-X-Google-Smtp-Source: AGHT+IFcSi8oD8lofATKiO7FDlwHynV8TwFnSb8cJQbts2bmt5GSt1Z/Udfwoa/l2lAJ+0a+EYVXZA==
-X-Received: by 2002:a17:902:e892:b0:234:8ef1:aa7b with SMTP id d9443c01a7336-242c20073d3mr127126905ad.20.1754801299794;
-        Sat, 09 Aug 2025 21:48:19 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976f53sm244113645ad.113.2025.08.09.21.48.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 21:48:19 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: brauner@kernel.org,
-	djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH 4/4] iomap: don't abandon the whole thing with iomap_folio_state
-Date: Sun, 10 Aug 2025 12:48:06 +0800
-Message-ID: <20250810044806.3433783-5-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250810044806.3433783-1-alexjlzheng@tencent.com>
-References: <20250810044806.3433783-1-alexjlzheng@tencent.com>
+        d=1e100.net; s=20230601; t=1754801536; x=1755406336;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DIOvpfcvfL+aB8v7AdDV+E3Zb8xwZqXo/sST33XUOtA=;
+        b=XNl2Ea7KUTn1Fs9PteeMLG+Sh94Y2M/mFB+raTc0cFxlfo3QcftIGLYw/dxEwDT7n+
+         +Tn2KD3iHLvzy6psmo3UU2QNddfkriGgALtc6yYi0SekeUPPAZJGqaHHMy1vXRm0sQHT
+         JOFTz0UC60jV3N3u7f9XspSdETYAMfyfmNln+tvHOJpDwm/g/MvQr1WKfih/LltcclCP
+         DJ8ZhDLN4DfO3J+2BKBC/CjIOEgJBLOaUHq+cNMpo1DLk5V1eLehfeywt7EjTb0O8ImE
+         3aCiLXjUFHXQDY1WwSXHL6eYQLLaYArAKzg7DmcSgQKMkXXxvMSizUHAkNE/5KLgA2el
+         KX7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ3JrjXG/hZwr7N7zUEQxFwPSL807vLS54uTJ+/6vgE+I1KdPmO5HlC4SpxmSt6kDIbDBm1Ykf6DcQ19I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLvz0M/vAvIhZhX8og3KARtnU+/SYilwLRl0sRDLVA6Yyx8ecs
+	ci5uzoD5Fwl2InfnvmMGxDtF5RPydVFTFM/MOSSJV4w0BURohGQJ1cGdIgkrwxlxoWjA7H2qRAW
+	dtEfflb5BUA==
+X-Gm-Gg: ASbGnctTUOrW9eDXXhqmqX3Uj9AUoYrbj5tvZ0p/VbKsD16GONIt2cVkxnT+0XrCDfK
+	MSPwBerq/QgnHQl7uULVLZYLLxMo7sm3JkRk7+XyFe9r6GVg8v81EP5Gtyo3BQUo0hCLpLkdsvP
+	F/p+/VqKhtiLOG5Z5L02L99iDqatb1VANSkB0G4RmRjxcE29qkl4Ypwi6ZuGcNyIhys+WNY/9Rb
+	TEe6/Iku6H7MoQ/xQ3X9m6KzlP0OWIeULLmOJaQV4cVKfqo40X4AXLYwV2mRQXcx0kUuJNK+7p5
+	HpUM7ezA2tnc39N3VjORgChQhz26vInh77Rwr/YcVgc1G4bgNR+13s3LaFgWlCcVB1MPkk8BGKP
+	pi8fuA95iXJlXPclaWYeUzJyp1AuY7i4CUwcdLUyuT7uNaCcnKpaoePWN3R36cfRrzFYkt4wI
+X-Google-Smtp-Source: AGHT+IGvbe2D/ksm+2TVb7ODFBuBGy8fcLSOnfe7uKJn6f0IWXQWXyJY3cD3r7w8WrHar8TkOQID+Q==
+X-Received: by 2002:a05:6402:430f:b0:615:522e:29fe with SMTP id 4fb4d7f45d1cf-617e2c4bc5dmr8002639a12.19.1754801535650;
+        Sat, 09 Aug 2025 21:52:15 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615ed86d601sm12364463a12.56.2025.08.09.21.52.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 Aug 2025 21:52:14 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6157b5d0cc2so4753243a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 21:52:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUFzk+v8q3pp0WRDKjItSqAg4suztEIRsnHcrUELUEIUIWoqe9ak3Kax9SE90YHxzTKDpSaU4Wrqa+45Jo=@vger.kernel.org
+X-Received: by 2002:a05:6402:34c8:b0:618:1cc6:af45 with SMTP id
+ 4fb4d7f45d1cf-6181cc6b72fmr1142596a12.0.1754801533357; Sat, 09 Aug 2025
+ 21:52:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <aJWOH9GgXhoJsHp6@gondor.apana.org.au> <CAHk-=wgE=tX+Bv5y0nWwLKLjrmUTx4NrMs4Qx84Y78YpNqFGBA@mail.gmail.com>
+ <72186af9-50c4-461a-bf61-f659935106cc@oracle.com>
+In-Reply-To: <72186af9-50c4-461a-bf61-f659935106cc@oracle.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 10 Aug 2025 07:51:56 +0300
+X-Gmail-Original-Message-ID: <CAHk-=wjn5AtuNixX36qDGWumG4LiSDuuqfbaGH2RZu2ThXzV-A@mail.gmail.com>
+X-Gm-Features: Ac12FXyrsiG5csXTsT8XML7TTrnPvAVkGUcnHQ2aFJ6MSlHxgwl1oOGUIedHDGs
+Message-ID: <CAHk-=wjn5AtuNixX36qDGWumG4LiSDuuqfbaGH2RZu2ThXzV-A@mail.gmail.com>
+Subject: Re: [GIT PULL] Crypto Fixes for 6.17
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+On Sat, 9 Aug 2025 at 21:22, Vegard Nossum <vegard.nossum@oracle.com> wrote:
+>
+> The actual explanation is given in the email here:
 
-With iomap_folio_state, we can identify uptodate states at the block
-level, and a read_folio reading can correctly handle partially
-uptodate folios.
+Yeah, that should have been in the commit message somewhere.
 
-Therefore, when a partial write occurs, accept the block-aligned
-partial write instead of rejecting the entire write.
+And honestly, it should have been in the code too. Having very random
+constants in header files with no explanation for them is not great.
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/iomap/buffered-io.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+> This is an anti-pattern of the crypto code that AFAICT ultimately stems
+> from the removal of VLAs:
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 1b92a0f15bc1..10701923d968 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -873,6 +873,25 @@ static int iomap_write_begin(struct iomap_iter *iter,
- 	return status;
- }
- 
-+static int iomap_trim_tail_partial(struct inode *inode, loff_t pos,
-+		size_t copied, struct folio *folio)
-+{
-+	struct iomap_folio_state *ifs = folio->private;
-+	unsigned block_size, last_blk, last_blk_bytes;
-+
-+	if (!ifs || !copied)
-+		return 0;
-+
-+	block_size = 1 << inode->i_blkbits;
-+	last_blk = offset_in_folio(folio, pos + copied - 1) >> inode->i_blkbits;
-+	last_blk_bytes = (pos + copied) % block_size;
-+
-+	if (!ifs_block_is_uptodate(ifs, last_blk))
-+		copied -= min(copied, last_blk_bytes);
-+
-+	return copied;
-+}
-+
- static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
- {
-@@ -886,12 +905,15 @@ static int __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
- 	 * read_folio might come in and destroy our partial write.
- 	 *
- 	 * Do the simplest thing and just treat any short write to a
--	 * non-uptodate page as a zero-length write, and force the caller to
--	 * redo the whole thing.
-+	 * non-uptodate block as a zero-length write, and force the caller to
-+	 * redo the things begin from the block.
- 	 */
--	if (unlikely(copied < len && !folio_test_uptodate(folio)))
--		return 0;
--	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
-+	if (unlikely(copied < len && !folio_test_uptodate(folio))) {
-+		copied = iomap_trim_tail_partial(inode, pos, copied, folio);
-+		if (!copied)
-+			return 0;
-+	}
-+	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), copied);
- 	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
- 	filemap_dirty_folio(inode->i_mapping, folio);
- 	return copied;
--- 
-2.49.0
+I'd say that it stems from using random sizes with no logic and the
+VLAs were just the *previous* problem case of the same issue.
 
+> As a minimal future-proofing fix, maybe we could add something like
+>
+> BUILD_BUG_ON(sizeof(struct md5_state) <= HASH_MAX_DESCSIZE);
+>
+> to every hashing algorithm, and/or a dynamic check in the crypto API
+> (completely untested):
+
+The dynamic check may be the right thing to do regardless, but when
+fixing outright bugs, at least document what went wrong and why. Not
+just "360 was too small for X, so it is now 361".
+
+                Linus
 
