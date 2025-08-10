@@ -1,88 +1,115 @@
-Return-Path: <linux-kernel+bounces-761518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A3BB1FB50
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B680DB1FB56
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467093B8681
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD04B1883F51
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C2826FA54;
-	Sun, 10 Aug 2025 17:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC2026CE0F;
+	Sun, 10 Aug 2025 17:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O5OpqBNY"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mup/xahv"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A4A1E32B9;
-	Sun, 10 Aug 2025 17:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D995C1BDCF;
+	Sun, 10 Aug 2025 17:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754846086; cv=none; b=NaBwCF0xdxsOq5wbaBNkRtu6opccrHfs7cQehHRb2x1EZm/23V6oA7hTTe7PE0/ruKWRIFnivlnzTT/rnOAlfMWFZD9R5Q24xqf2vKstjsDeEF5e+AOWatnEfpcWiWKB8uJKENIyLTvE79iRHVa33Fcn/NGlHn3A52Dzhe5vcXo=
+	t=1754846674; cv=none; b=l6x9oCwVjpIUBVRd/A8e8VFyBXubRWiusvVzFghP41wkUhCgmbDQ8OjuwtDjdsVsB1kSlMT/+R4k4LNw7OZGifsCdrZsIENjVOgo73ZKEUE+/Zm2Lt7ySYOSjE2zP9cgcVdIFqIWgLFKFKB/qI7YCrUJkdva3kGF3KUd4lbRrY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754846086; c=relaxed/simple;
-	bh=nuaEZLqaF29jbcZjusnG+UIwzzIyCEAkmwA0hD0A+NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOkID+0vNCcoxz816858nTJGGXO4/yuBAqOvfuWPsjHAanCeZVvTAIn1IICK3HKkwc2hyfI5T1z+W+/fnmijl3PWIOFH8aEceBRW4kdybEViwpxbROZTws0S0RRFKer6NOaV76ZPzzf2CVprSijIOvSfOUB4cuEJ2FzUBagRdSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O5OpqBNY; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=734sXD+FLPX9G5Q8Oqch+kt66rWLcQSQY+YqBCv5MGg=; b=O5OpqBNYJSUMetRlR4jEskXQCN
-	p0+KJD3k7NUy8opYDwsSzZ1IaZDuMqyQI6En116okXyuW0XET4zbRant55Iks08ShvPzMSNSpMeMM
-	lOAdpVJfM04sxRwVr+/d+28BgU3EgOxQtJIxUN2bGbRD9x7d0N+yQU2cMJX5zLxLg/WnKgpIeXvJ3
-	2ijHiJ4PiD+eQ/LDNMiilBMgpqIev6sdltpcKDAYLOZOJn7NWM9whFgE41y8tL6iwzDd2ScKTjhjS
-	p2RHkMv56Xjnmtt3Lrdf/73jsOiIuoPkQcILi4SysCC0IkZcSV/pBg1IxCJpfmHjoy/XNk+1aD96g
-	BpX5Xe5A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ul9d6-00000005pZm-48Yh;
-	Sun, 10 Aug 2025 17:14:44 +0000
-Date: Sun, 10 Aug 2025 10:14:44 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Keith Busch <kbusch@meta.com>,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
-	dw@davidwei.uk, brauner@kernel.org, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCHv2 1/7] block: check for valid bio while splitting
-Message-ID: <aJjThNwGsrjFtWlg@infradead.org>
-References: <20250805141123.332298-1-kbusch@meta.com>
- <20250805141123.332298-2-kbusch@meta.com>
- <aJiusAtZ-CsnPTOR@infradead.org>
- <aJi9RgOAjXm8Hwlo@kbusch-mbp>
+	s=arc-20240116; t=1754846674; c=relaxed/simple;
+	bh=wlZ2vvANBOBNoXnQFZS9/zrkZfupPRS4k+iwoWlqWUg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=umR6pe2BRhDXrDM050kqY9FPNghV18ZaXvrplrHPzK7nK6qSTm98QXDcXKNkHY3YAHt/+nvgNmut52EadxQjka5i+gkUEi0bz183uw7A1PH3Fu6A34Uy9ZcQZugo5LEI5eZPZsyXcwRXmi5DSp95Cii0d4dk4NaaTeL+i2JlC8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mup/xahv; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-320dfa8cfa3so3456708a91.3;
+        Sun, 10 Aug 2025 10:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754846672; x=1755451472; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vYPf+w1WeOZKmEb4rqwBDVjQYiVUVPfTd8uq28qABWQ=;
+        b=Mup/xahvZuji2DqbG6Wkgvv1N8x1YHQw6zQYU7Zl7uhrHRt+Tqgck1RLxB3aTi3FS+
+         r24mA79U7d9FgbPm0nLV8UQa5+fnRAUkhx+UeD8dIUUSB+PWy6tMjNx66k0i9piDOc0n
+         NOcEUqMuIYAxZafkoUVLB7gnaHIzsCxZrCTiacv1/fDHg5M3GdMtx68n+ooxEQmhYDWK
+         lIH9qQsQ6iG95sQKdjundfYt/ZFWXPYTXVSods/9zpp+Ldh/SizyFmqLvt2EeQ5NSm6j
+         u60xlX2vVAkAxrshdq215A9L6mWhFxzkqV86vy3Uea6Qhe6prdT5DJo2yth7wrJTlFie
+         ptJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754846672; x=1755451472;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vYPf+w1WeOZKmEb4rqwBDVjQYiVUVPfTd8uq28qABWQ=;
+        b=gOP0Ua25REXCoiW0m68rkVaGAxz07MueW6DlSjeqZ5VVaFWF7Z36GqrHNxw5bKYUKr
+         fMjzzVBoOyiB15qmKrxWlO/mLfd45g37RSTmeAheGTmQYd/tBeYmbHy0d/qLzMLk6uC+
+         fwScX7GcjS8+EyH69CsBLGVM/WcqhdTVnraEWYbcKyNa+m0GIiXi+tFhihKoMo88lwhb
+         ckZVlJ9spoR8paWqN2cCl+2mHyW3ENLfvDlcPVKyT3+I+eg+7imU53MuQEMxt18kt9Mv
+         0srnvFkiugCDeBHfbRDGvDOqWzngNl6715h/UIPbcjJjsthmNt7MJaBcrjf5wtgMoTJy
+         Kh/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUg3XV0JIlWEnL7wvIY524q54IxCS6FeJy/8PL4MwMH/aRvtqLvFTUgpjNWRDIsA++xezYRSMsXaRY=@vger.kernel.org, AJvYcCXJOUtLK5sgrcnEKoYr/d6k2sBuskdRCQau8rqZOSzW4RlOhEgerCTN4iLoEPZ7iPCCmLMLrQDCadt1TW9j@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXBaynHlXe6EnrmkKW4YsqZKo0JNasan6R6Wt7ildswj4+AGdd
+	f70B7BknhNRxUPLIwbWcUm6r8rRz5QNQZRrBROTdDHhbJGRXighDySl0
+X-Gm-Gg: ASbGncuCYcFyB18g27BPaswpYR4vhhPIrxrMli+t0JlQ3poEu6Kdw70cxbXIfuRcX7G
+	xkUZ9Ikbaaeb+2E5xOV9WgyqbpBpNkF3hoQ0dbR1drfJv3yX214+VJRmSDuER2m6QPwL7u1/FNn
+	l8sY74SlLv2s3VjZWJDpDU2ZjlqQ2Eq3XdI5XDnIqcvv7Ay+hHdGz9RnN+k9YwZtkrktCaT/guI
+	6a3/rCIfnEELap8/CSHFgV+fJRyj66bsFP22oaOyMxXICktTAxt9mjCvzKd76zU3OVNQfjNWOQR
+	fK3Zs26LTe8C8ZWIHJPlcBchGpsoZQF53nI+05KaIo97pxt2EIYkel2B28dUCF39GJ8fdlA8740
+	8nP34ogRHdJC0LrlSef7SYYPXc30jnw7ogzq98brr0O4xbCrRotxuMQ==
+X-Google-Smtp-Source: AGHT+IFPwzf3lb0Ao4zrfqweIQpn5tKSMkvkW8b+XoGtFSrjdWRdmpvQFTv9O1tZud7cre1Pddk5Ag==
+X-Received: by 2002:a17:902:e741:b0:242:c66f:9f87 with SMTP id d9443c01a7336-242c66fa6c7mr144288355ad.51.1754846672062;
+        Sun, 10 Aug 2025 10:24:32 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:d003:7033:bde6:1560:bbd5:3563])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32161227032sm12781264a91.12.2025.08.10.10.24.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 10:24:31 -0700 (PDT)
+From: vivekyadav1207731111@gmail.com
+To: skhan@linuxfoundation.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Vivek Yadav <vivekyadav1207731111@gmail.com>
+Subject: [PATCH] kernel-parameters: fix kernel-doc warning
+Date: Sun, 10 Aug 2025 10:24:25 -0700
+Message-Id: <20250810172425.21990-1-vivekyadav1207731111@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJi9RgOAjXm8Hwlo@kbusch-mbp>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 10, 2025 at 09:39:50AM -0600, Keith Busch wrote:
-> > >  	bytes = ALIGN_DOWN(bytes, bio_split_alignment(bio, lim));
-> > > +	if (!bytes)
-> > > +		return -EINVAL;
-> > 
-> > How is this related to the other hunk and the patch description?
-> 
-> The patchset allows you to submit an io with vectors that are partial
-> logical blocks. Misuse could create a bio that exceeds the device max
-> vectors or introduces virtual boundary gaps, requiring a split into
-> something that is smaller than a block size. This check catches that.
-> 
-> Quick example: nvme with a 4k logical block size, and the usual 4k
-> virtual boundary. Send an io with four vectors iov_len=1k. The total
-> size is block sized, but there's no way that could split into a valid
-> io. There's a test specifically for this in my reply about xfstests.
+From: Vivek Yadav <vivekyadav1207731111@gmail.com>
 
-Can you turn the above into a comment explaining the check?
+Fix kernel-doc warning in kernel-parameters.txt
+
+Signed-off-by: Vivek Yadav <vivekyadav1207731111@gmail.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 747a55abf..302145870 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -7506,7 +7506,7 @@
+ 			Set a trigger on top of a specific event, with an optional
+ 			filter.
+ 
+-			The format is is "trace_trigger=<event>.<trigger>[ if <filter>],..."
++			The format is "trace_trigger=<event>.<trigger>[ if <filter>],..."
+ 			Where more than one trigger may be specified that are comma deliminated.
+ 
+ 			For example:
+-- 
+2.25.1
+
 
