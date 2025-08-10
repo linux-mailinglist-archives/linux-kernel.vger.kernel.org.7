@@ -1,136 +1,146 @@
-Return-Path: <linux-kernel+bounces-761574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54217B1FC12
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 22:46:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DB6B1FC14
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 22:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EE377A99D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:44:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB917A2E79
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 20:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B624A21638A;
-	Sun, 10 Aug 2025 20:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DA021ADA2;
+	Sun, 10 Aug 2025 20:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fXvNsaDk"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C3hQ54Kn"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575B1219E8;
-	Sun, 10 Aug 2025 20:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78072F9EC;
+	Sun, 10 Aug 2025 20:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754858774; cv=none; b=TyEAeUj1TMXCatMW1rZzTXIfDpd+lhRZY+u0qrfJOrYzKWBcEevxoSOFUijzqgJohSB7DKnpIGNA0F+W2YyIkQsglz80beCmiP73wcSa2/sCWsE99fcbQwPsutc3Nwop583xtCUe7UGGPT+6ZtMA5GENNOOZNLA0XqJlI4kToME=
+	t=1754858930; cv=none; b=BdY6953hJZ8j4GYj2eKtIEBbrqi8Zi5wyCVtFrMMVrkIYg6e5rf4MyJDE9+gpMyY9uoqVwBP115uI7OeQUSXfzRNTFhUZXIa1e7MZAyNl86abvBdnndnWZriqHXFmZp2bJIM7NeQ+FjwrMwdjpY/6VGnzvYLl7tC8G0lEsxbBwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754858774; c=relaxed/simple;
-	bh=X6u2f9fO9neZj9s6w+y5uN4zh9MdsPoxai4OlaDcAbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3AndUTeMw9WBzeg0r7m/W3Kdchqds35UlGHOsagk7+o55qWAsJWcfNcT+hxT5R6ne6At0Os9hqwD/Wng2K6imtvP6p4YaUsT+qW0Qb70p5RDCtfpRxGuHohqgp43sbrgTPSWGYaZspOLWBrsKThivlJKbcItlBPvBc1jBxImnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fXvNsaDk; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A77FA40E0232;
-	Sun, 10 Aug 2025 20:37:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id z5318P-2Ttr6; Sun, 10 Aug 2025 20:37:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1754858222; bh=jPuah6eZJsKx0Tn4u3wz+pvNuujj0ltLpFFE0DRYR+g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fXvNsaDkf/mITzivh/QNweou4KTleJgtzJ/0LAOU+UOTVC7hGdo2p5SReEH1DGoTj
-	 IYl0oWH+EVK5sSrk56H0xO2kq/EkyOdfSP/ezNF1mMJuwDmaF6I2ujWejIP6vuoeJI
-	 3Pp+WseZxIgPYLLJgvKjcq87m5owWsxYFnq/oP03v3ie8jzqGLZxyKqS2FJiC9dwYO
-	 umIK6ww0vJBUXiqd0up7ihR8cLoRY5wYi0yVlC4LjpZ2KwxOy9OizEyGWZMc0NIhPY
-	 EqpGMr258Yccf98tvi+xBz4DZNVCj/nOYE797XtQUzeDe2bV9jctxNB8A78RtN7Cu7
-	 Vt2ePa29wN6SwwcjveObo5FqCRHQY5hUkFiW0V+pCAYPq5QB03l1b5RywJHmgPq3HD
-	 LU0WX3hoZuIoGDz7CvL4keD6zMEbzsxXY/Hh5jWX6Zn3Z9ScXKdOfPUvncBKTIv9VF
-	 ybtMo7vhcCZ2uFpGFX/P2fnc5GfaJ8fLC19Ny3HAmeaMBeoGoHjNl9MQoLifqKpUPl
-	 5GE6dArkl3QmxQ4Sig4DW19DErcYXxFqGZAYJsT5bxsigDhyF1/MpSVg1EUxH7slAA
-	 WVVeoe7t7+uzjGl5rLGHhtn0JRauaOWfdc+jW8AWLGDMEYHUh2AfxnZdcoq9OSGlfW
-	 TJbEJmjErDiFvNW+/q0ihQ3w=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D8ECE40E0217;
-	Sun, 10 Aug 2025 20:36:50 +0000 (UTC)
-Date: Sun, 10 Aug 2025 22:36:43 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Kevin Loughlin <kevinloughlin@google.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nikunj A Dadhania <nikunj@amd.com>
-Subject: Re: [PATCH v6 08/22] x86/sev: Pass SVSM calling area down to early
- page state change API
-Message-ID: <20250810203643.GLaJkC2wtmxtvrPbeT@fat_crate.local>
-References: <20250722072708.2079165-24-ardb+git@google.com>
- <20250722072708.2079165-32-ardb+git@google.com>
+	s=arc-20240116; t=1754858930; c=relaxed/simple;
+	bh=rdNHebi+UL1GxCQGqlOikEggD1zovHnZEftEsnYBGmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P1vCsw92+jBVa4nWMee7ao26RhpC8Gv0Qy0UptsVUwpHMUT4w4x3RW5/qIfB7s479MRWnuk1jwzRZlu76khknDp5bGcU6Mu8qyGULzQW9pkIvy1AwWvJ831MJTIEdiSQPF1Rs/S++0ZftRkjktH1OcjQRwwekuhMYXk/8VGTxEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C3hQ54Kn; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-32f1aaf0d60so33210071fa.1;
+        Sun, 10 Aug 2025 13:48:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754858926; x=1755463726; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rdNHebi+UL1GxCQGqlOikEggD1zovHnZEftEsnYBGmQ=;
+        b=C3hQ54KnyzKvllKHNLdOgCreklAYsy/HX0bUza6p2hO5SZm0hwyFeFXfXDYvslDFDe
+         OIJpPWOQazYum9PT/2u3Bh2JHJHO6GNoxmGfpJ9fAF+t/6p/PwFDqkyGfiPxOh1gpTN2
+         CKh6YTrEuZy7LteKW1uswWP3GSHqzeN/PE9Erse3cwGsEfN4NZZUYt6StpRSWZrdMftZ
+         PHu6mnI/xYDSnOmYj92CpJzaY04eUTGkWtJv+klO7qbOfPWkU1oy7BWvmYpDjqa5wb+i
+         TxYnp3ouAjDpKsKN3pV/4OjTCaK7rHGqCxHFXzelH6f//EeLs57SVv5fgvgr1bRGW5yX
+         IVFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754858926; x=1755463726;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rdNHebi+UL1GxCQGqlOikEggD1zovHnZEftEsnYBGmQ=;
+        b=HBo7fBGiBf9VHwbQdZaHvvT4bQTJb1ZINMosWqONJ03x8+jRvZwDH7RT/eh7yF00Jx
+         WlSmd2xsq8Y2iH9f/guslg8bGKLc52UzZTfsW6n6RKlg7BwP4jwCVEefWYEUiuztrkqh
+         rpeULrQ2cqsYrwj5fv0ct8RojOjNyi/yOsBPKaw2ZVkqCsg8HDsd9A8nLk07RZTVoWtm
+         MexLZWg17RnvuX5LE9uz02Cwz6dKZuozxGbxEZMLyl8svAYGJSAPAFnAMzuu4Z1zZcjw
+         s0QLLPCFcCe0L/0rfLyO6EWYAe5cJSnKLyk+Vk1z+tHBsL0DsxsT9lKV/6CQgGjwbo/s
+         GOcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVszeE9H/+8VlCp9j+FU7uHeSEJKec0pmH+7i5OLV4+NuqfPnk/bnub4KrgloU9Mj2rcVvZ2trEZQ4=@vger.kernel.org, AJvYcCWTM54tphcg/DwWRNXusED31o8PnF7iIlF/cY6S+4MErQQWbStA9V/8CZhOUX1tHAmTXOKkSDF+iKvqZKsg@vger.kernel.org
+X-Gm-Message-State: AOJu0YydlLGQ1zjVdZBUmD6sWih2JRGel7N72rPP+BKlSrCdu+7SP+QG
+	jIfEzaQRMT2GKR8Q7mFaHVOBYepMbi6bxcSRW8Xu+EJOISKeuAqtfSYyXIeeGPUlky3jr1A6q2z
+	BhN06ITIRVic8oDdzyHFdVVd4pTcKc04=
+X-Gm-Gg: ASbGncsWOTHOAUUoi+1nUNihndP4kSJSNZppHcMHgtReCibJSr2oVhvRmoUJ+26WJ/b
+	KjhJshtXcBvJAuINnC1DRN3JAEuWYOwkuoepoQFerrmYAx7s44kIBtXgeFCI7oGn5sM+lWLBFE/
+	TO2IDPL4+ZY0SIdDx/gX9vuhTCfs2CGV0V2mFdQZ/rIQm/gfGvW6lDTzgw9GmB1YdqrWjn5F75c
+	Dwgn7a4
+X-Google-Smtp-Source: AGHT+IHYxF/wbVZspbsHga3k6H99j5TR/tuJmZFDOCuHtEDWlfE1Ja5kos7ctC2evw2QgxaFQ+f4s/ZZJWfoA4VRk6Q=
+X-Received: by 2002:a05:651c:502:b0:330:8de6:de71 with SMTP id
+ 38308e7fff4ca-333a1f4e90bmr26476051fa.0.1754858926249; Sun, 10 Aug 2025
+ 13:48:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250722072708.2079165-32-ardb+git@google.com>
+References: <20250804192513.62799-1-akshayaj.lkd@gmail.com>
+ <CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com>
+ <CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
+ <CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
+ <20250806161801.000061c0@huawei.com> <aJO05BNi2TsYtdwe@smile.fi.intel.com>
+ <20250807140401.00006c85@huawei.com> <aJcapPt8f5YMUBH3@smile.fi.intel.com>
+ <20250809205736.34b75763@jic23-huawei> <CAHp75VffV4Xomb-1zp6_xB=r+PJzsDnj_gjwyWas8cX7dhuhng@mail.gmail.com>
+In-Reply-To: <CAHp75VffV4Xomb-1zp6_xB=r+PJzsDnj_gjwyWas8cX7dhuhng@mail.gmail.com>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Mon, 11 Aug 2025 02:18:34 +0530
+X-Gm-Features: Ac12FXyOW0Kqwgm4cP7q5kbJRA2g_4fydpZvChLBBPDwqZ96bllVvqIriG8kG38
+Message-ID: <CAE3SzaRZGvOwi0UeBU9Nw2=_jwF9AYLyY0BFG9tHzwbMFv1o7g@mail.gmail.com>
+Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
+ support in device registration
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, anshulusr@gmail.com, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 09:27:17AM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> The early page state change API is mostly only used very early, when
-> only the boot time SVSM calling area is in use. However, this API is
-> also called by the kexec finishing code, which runs very late, and
-> potentially from a different CPU (which uses a different calling area).
-> 
-> To avoid pulling the per-CPU SVSM calling area pointers and related SEV
-> state into the startup code, refactor the page state change API so the
-> SVSM calling area virtual and physical addresses can be provided by the
-> caller.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> ---
->  arch/x86/boot/compressed/sev.c      | 12 +++++++++---
->  arch/x86/boot/startup/sev-shared.c  | 17 +++++++++--------
->  arch/x86/boot/startup/sev-startup.c | 11 +++++++----
->  arch/x86/coco/sev/core.c            |  3 ++-
->  arch/x86/include/asm/sev-internal.h |  3 ++-
->  5 files changed, 29 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-> index f714235d3222..18b0ccf517eb 100644
-> --- a/arch/x86/boot/compressed/sev.c
-> +++ b/arch/x86/boot/compressed/sev.c
-> @@ -65,7 +65,9 @@ void snp_set_page_private(unsigned long paddr)
->  	if (!sev_snp_enabled())
->  		return;
->  
-> -	__page_state_change(paddr, paddr, SNP_PAGE_STATE_PRIVATE);
-> +	__page_state_change(paddr, paddr, SNP_PAGE_STATE_PRIVATE,
-> +			    (struct svsm_ca *)boot_svsm_caa_pa,
-> +			    boot_svsm_caa_pa);
+On Sun, Aug 10, 2025 at 2:04=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Sat, Aug 9, 2025 at 9:57=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> > On Sat, 9 Aug 2025 12:53:40 +0300
+> > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > > On Thu, Aug 07, 2025 at 02:04:01PM +0100, Jonathan Cameron wrote:
+> > > > On Wed, 6 Aug 2025 23:02:44 +0300
+> > > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > > > > On Wed, Aug 06, 2025 at 04:18:01PM +0100, Jonathan Cameron wrote:
+> > > > > > On Tue, 5 Aug 2025 14:47:32 +0200
+> > > > > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > > > > > > On Tue, Aug 5, 2025 at 6:05=E2=80=AFAM Akshay Jindal <akshaya=
+j.lkd@gmail.com> wrote:
+> > > > > > > > On Tue, Aug 5, 2025 at 2:36=E2=80=AFAM Andy Shevchenko
+> > > > > > > > <andy.shevchenko@gmail.com> wrote:
+>
+> ...
+>
+> > > We can do it, but this sounds to me like a step back. Implementing pr=
+oper PM
+> > > runtime callbacks is a step forward.
+> > I entirely agree that runtime PM is good to have and it does a lot more
+> > than just turning the power on and off once per probe / remove cycle.
 
-All those functions should probably get a
+Initially, while working on a patch for this driver(sysfs for data
+freshness), while testing
+I needed to suspend the sensor but could not because the driver only suppor=
+ts
+system suspend and resume. At that time, I had made up my mind that I
+have to add
+runtime suspend support for this driver because before Andy's
+comments, I used to consider
+runtime PM support as a way to give control to users to do on-demand
+suspension and
+resuming sensor operations. But now I learnt that it is so much more.
 
-struct psc_desc *d;
+So Irrespective of the acceptance of this patch, my next patch was
+going to be runtime PM support.
 
-where all those members are set to the current arguments so that we don't
-marshall so many arguments back'n'forth.
+Will it be acceptable, that this driver like many other drivers have
+support for both remove callback
+and runtime PM?
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+Akshay.
 
