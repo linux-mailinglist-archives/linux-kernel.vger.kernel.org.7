@@ -1,164 +1,177 @@
-Return-Path: <linux-kernel+bounces-761534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1C00B1FB7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2C0B1FB81
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A69791895B69
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B1F0176876
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BDC270EC3;
-	Sun, 10 Aug 2025 17:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140472741D1;
+	Sun, 10 Aug 2025 17:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JZY0tJov"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2047.outbound.protection.outlook.com [40.107.96.47])
+	dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b="Qka6HBPB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ibFpBTjG"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEE51B3930
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 17:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754848441; cv=fail; b=FJ2zIBx4UsJyOtVEegQAEUhn9x+auQd2tFi9uSfj5b2xozEhGL4VkbndeWMV1iT/E6xDS20zQm1i7v2HzLTznf+eV/HqQELqgpqPRl1qgu/fFaJ9g/VX6b+bRJ4JEVYYP8YSYnYMScNeHLrmW3s9a+o9lZ4SruxEPv87Udi+4vk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754848441; c=relaxed/simple;
-	bh=dw0nRoFNLPIVaEce7vJ6w5QVeHnjA+L5ekitEsFTnas=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdDjp0Y3WAhIIWQi2R7BMMdvZulKvy2JwiPZ4CWbuiAJzYppcMUWf8+08Q8VDYkjGYnZkG4ahUG9nQFbm7HDqbiNb18bpyAHWzxY/IgcR/elkl9Fa8N7wyTt+AN9/PxxbW1yJIww1qLoUi5HQHSb4q9XV67p9KWezKB1QnZ17gY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JZY0tJov; arc=fail smtp.client-ip=40.107.96.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ydH56lcgcofJQusZCzM7ws3AC2OgGQ1YBxPNhaTfm/45SsbwpBt6UNzx+oI9dAjSFxBTJhe6vvaMF/E3oK4M0lZzx6+SDe98unwDFhYUiMhl+vHOBqfyUGnFiCtzQ28i30NokEowgUlQyZFG6UZwum5s4MAaCNmeQu8vuwXl3Uwjr3ABNVQFDQsV6HzZYaBAiNznjTYP2vVqZWE3ozjtWIWoy3Xo586ib5DueRyxRcQ0bPfjZkr3Ce5fHvP4/n0jITAUu+NE+zva8pMnsi2/hm6qWjwnfFVcRGEw18Ic8vWbWA2aQaVgfF8ipsL8TDCy54qHvbdJ6H6Ms6+0IfeGBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HdTfUAc/6dqyCcBKgO9XLt94PShZFIBSPsl7vH2AVwM=;
- b=XlemRuzDb1I3/NywPeCN98c8yr4lunqx9GE4PP0lva6ExU2cpoVmEVPz9u7wl16qAbCKHeDhK5cigw0F3oxhn0VeNs81xbukNfmMpoU7XTCWw0ltgIUnw2Ps/lzCeJsFqQQjV6uQqJeNMLLCDhrdbduxZAJObey/Sl9ppE9CwJkj7HZQksyWn7EIey6YBnVgORSfigCZvp9+rjDQSQGVJjIaacykFj/O2l8G3USNX/hmAknrW6l7LMFqIwAuCxcNsM5QPDWb3Hj2xpUOUZG4ln+6FN2zXC2Pz09awzvfXgqHTNzL09vicdw7M6SZ69uNIlypa3PGjdanv4h0wkOn6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=ee.iitb.ac.in smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HdTfUAc/6dqyCcBKgO9XLt94PShZFIBSPsl7vH2AVwM=;
- b=JZY0tJovHJeKRZUrvIo57eTH4JwgAi4FpZG0Ktnc3D/7Y/Ov69u/n0cP+2IUaUsoSJAawBVUT5Ubz0uaYvsnSmPhR89DmyMgP0vJTkj50nbEY+NEWhnA2Sso284DiddRFz7AYFh75n66dtQR+1uXuoDW6fFFZ2DLDzWJ73lCskrgIiqVMtbqyk81hJxfFUi2a8fZzTtSBdib9DzaEfd8QYHiZMbAbz4eO+vKJebsflg2NVN0Qkb1gtGzAM/Xj00sGMyAn2NDyvfKmUlMLwC7Dl0dTorL1/DKEVYJlfKLdr/Z50wLi/l8IN6HGgWhbJXVP2rJawPTGQvWJhOmShUQPg==
-Received: from SJ0PR13CA0010.namprd13.prod.outlook.com (2603:10b6:a03:2c0::15)
- by SA3PR12MB7829.namprd12.prod.outlook.com (2603:10b6:806:316::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.14; Sun, 10 Aug
- 2025 17:53:55 +0000
-Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
- (2603:10b6:a03:2c0:cafe::82) by SJ0PR13CA0010.outlook.office365.com
- (2603:10b6:a03:2c0::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.12 via Frontend Transport; Sun,
- 10 Aug 2025 17:53:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.11 via Frontend Transport; Sun, 10 Aug 2025 17:53:54 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 10 Aug
- 2025 10:53:44 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 10 Aug
- 2025 10:53:44 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Sun, 10 Aug 2025 10:53:43 -0700
-Date: Sun, 10 Aug 2025 10:53:41 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-CC: <jgg@ziepe.ca>, <kevin.tian@intel.com>, <joro@8bytes.org>,
-	<will@kernel.org>, <robin.murphy@arm.com>, <praan@google.com>,
-	<baolu.lu@linux.intel.com>, <jgg@nvidia.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <akhileshpatilvnit@gmail.com>,
-	<skhan@linuxfoundation.org>
-Subject: Re: [PATCH] iommufd: viommu: free memory allocated by kvcalloc()
- using kvfree()
-Message-ID: <aJjcpdioo/kTghlX@Asurada-Nvidia>
-References: <aJifyVV2PL6WGEs6@bhairav-test.ee.iitb.ac.in>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6DC1EA7E1;
+	Sun, 10 Aug 2025 17:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754848642; cv=none; b=PhHQoowWHmSfSeFtsFrl1lgQf5kLbk+mLJSoRrLctfRqvexmCxJ1bVOcExzUI1JVCkJYo+lPWWEp01e87jq9sXMfescsQSNvUgBh8HpIRoeh2YEl4Y/kSS86ZDjlZS31Kvlgosl9djdGKz27HcXEvb11qsalH2ZUE4YTVDLmH2k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754848642; c=relaxed/simple;
+	bh=fSO2pKtQJLGHg+uw3sLgbIV1Rv915LeTxSDp+iPlEGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FG+LW5KlgqGnh6qQ2jBXmJW7l+7LoueFrIQzkD+5nY2Zr4UxP/eYMI0vQwsClrFo+a53sb2uJUNQuJfvDqlY+j4gKKTCfJ6Cy1WdGlxgJwaSUGWxsPDOsvVfR8HYA7dKr578IHwguCQ7bpk4nLfFAR1oUj6we3cbA7j1G2BYMHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net; spf=pass smtp.mailfrom=bzzt.net; dkim=pass (2048-bit key) header.d=bzzt.net header.i=@bzzt.net header.b=Qka6HBPB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ibFpBTjG; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bzzt.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bzzt.net
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id EC79F7A005D;
+	Sun, 10 Aug 2025 13:57:18 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Sun, 10 Aug 2025 13:57:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bzzt.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1754848638;
+	 x=1754935038; bh=CKJHwhQNQy+ROAE4lhfUgG6FBAvwCYWmzuMLynqXNDE=; b=
+	Qka6HBPBqe5fFkfsB1QsgZOj02B+CQ+76ZlodrPFL+Ch8r3VIJk5Snqf0cKnkhA1
+	IZ3dLri3iITKx1o65wRVm6bwyEv1gnfpvsizzGHfJQrSNDTtgJxk8tmLcbajYzBA
+	OJA1ASn2woSDuMTnZr4Ip/0AwaHMRNa98/nC6iWh1B5iENqmoouEGNm5WcpZQtAi
+	3eluXgNwlrPBwTw9kDqn0ksDwa2GPbUxCZO+gWzQ886tKa+gz9FXgWJBSmW+dDEB
+	wxY8aO4Pz2r3IrvHVOHlEK44BOh2Jp0DHEK/s82OTf3/++9Qa7jBG9mLDr3NYnoY
+	7V5Jv8FAirX6vjKFezargA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754848638; x=
+	1754935038; bh=CKJHwhQNQy+ROAE4lhfUgG6FBAvwCYWmzuMLynqXNDE=; b=i
+	bFpBTjGb9fCWYdq3sYwnc0SHSZGr0WTjAbLnYO7IqS1tpAd7njgM7Xu0qFrtpP3m
+	gFdnLnit6gx9yjF8AkfMVilRyZ1VEeSQEaVcTMol2DHkYYs6M4myxRUvV0l0UUE4
+	0Yd46zL8595Ndxs7cyMZEsrAPz75trPsXwlTkt8C+1UyeOlpLnMmUUylTDh9ZCg3
+	IDuKdeRW4lihW8dScWLFA+LVWbakEISc7Y/7z+0dhDL6lPF4ybEluUcOv1fo1Xr/
+	pqrbaQaDx8aTZnBXTqKbWFMHmmflnsoFrHpLvg4uPqQ2suyvsYTyk4qAXVeMn2w3
+	m5njHCjRRezeCmXN3lVhA==
+X-ME-Sender: <xms:fd2YaGODLmsaYYqHgAYhzfD8D87YLk_dlT3sie7l16O5O1btDznLhA>
+    <xme:fd2YaAIhHDYjSjkzmFk6sVZ7Vk20nHv22OSrP0A-ZI4a6rgL_TS84h99OUilz2wmY
+    pFC546vITfipt39nL8>
+X-ME-Received: <xmr:fd2YaBFYsrXgcgPT6m4SvNx4z8pIzvPRMxWG3mU1b_S4PmJD2dQi87L16oZ9gYjtET2T2uHTdnhE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedtvdefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfgggtgfesthekre
+    dtredtjeenucfhrhhomheptehrnhhouhhtucfgnhhgvghlvghnuceorghrnhhouhhtsegs
+    iiiithdrnhgvtheqnecuggftrfgrthhtvghrnheptefhueeugeduueffudfgveeuveetje
+    ehgeetvdevjefghfeltdethfeugeegvedvnecuffhomhgrihhnpehkvghrnhgvlhdrohhr
+    ghdptghouggvsggvrhhgrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhhouhhtsegsiiiithdrnhgvthdpnhgspghrtghpthht
+    ohepudeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrhigrnheslhgrhhhfrg
+    drgiihiidprhgtphhtthhopegrnhhtohhnhidrrghnthhonhihsehsvggtuhhnvghtrdgt
+    ohhmpdhrtghpthhtoheprghnthhonhihsehphhgvnhhomhgvrdhorhhgpdhrtghpthhtoh
+    eprghsmhgruggvuhhssegtohguvgifrhgvtghkrdhorhhgpdhrtghpthhtohepsghrrghu
+    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughhohifvghllhhssehrvgguhh
+    grthdrtghomhdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:fd2YaBDLZ2R5Ln6k6Z1XOkXZIwdLI8Dme8LY1SElmURnfN5lISEafQ>
+    <xmx:fd2YaL2f48BRL_vkrRKQx4L17yDv_SdYFwZYMSr7yM46T9u56chk6w>
+    <xmx:fd2YaONzoIRKTHhOqJEQbN7sZHuf_qqizhRCoUY8kQIr2KL5U5Jd7A>
+    <xmx:fd2YaI4I-JiomzH8_jKrJt8RHA-cepX4Twx3FtxE2KZwlgxVVC2aRQ>
+    <xmx:ft2YaFb6tPdtSsGjfunltI3H_MMOjEBfiMTpr3yLLBS_syheoxzx2VRh>
+Feedback-ID: i8a1146c4:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 10 Aug 2025 13:57:13 -0400 (EDT)
+From: Arnout Engelen <arnout@bzzt.net>
+To: ryan@lahfa.xyz
+Cc: antony.antony@secunet.com,
+	antony@phenome.org,
+	asmadeus@codewreck.org,
+	brauner@kernel.org,
+	dhowells@redhat.com,
+	ericvh@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com,
+	lucho@ionkov.net,
+	maximilian@mbosch.me,
+	netfs@lists.linux.dev,
+	regressions@lists.linux.dev,
+	sedat.dilek@gmail.com,
+	v9fs@lists.linux.dev
+Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
+Date: Sun, 10 Aug 2025 19:57:11 +0200
+Message-ID: <20250810175712.3588005-1-arnout@bzzt.net>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
+References: <w5ap2zcsatkx4dmakrkjmaexwh3mnmgc5vhavb2miaj6grrzat@7kzr5vlsrmh5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aJifyVV2PL6WGEs6@bhairav-test.ee.iitb.ac.in>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|SA3PR12MB7829:EE_
-X-MS-Office365-Filtering-Correlation-Id: edc34a5a-fe58-48d0-67c9-08ddd836df6a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0sLV0KNs46QsY6+tmQQr16NkbCsq+WLSjRU4uJzFET6sdU+yDQxL1eJNq1yp?=
- =?us-ascii?Q?gCklqJq1oOj2NGaGruKngqs/rLiQ1+h5KVq54LHok8voP/8L3DF1Bpn1oQKf?=
- =?us-ascii?Q?TcfncZpP0YPbVMTqMWnRfwiiddLbGE1WUt18wtF1+bXk5WJvvkU75kC4z/FO?=
- =?us-ascii?Q?Bn0yuPaLpTa88Ux+V9Ak3fOuzuCdbRFxqzTLYGlAs15w7HxvhfwFZs0kduXt?=
- =?us-ascii?Q?tkKPv/ykctOxs1eGZrWhaiXU/LuNnsw589CaGo3RTsR2MpXuulL8wZ4v5yRj?=
- =?us-ascii?Q?zEszVB/9PysWNSzisINccL+HbdWINzYc1+2vTFCO8MTWNC0MRiK5HGUu6+ha?=
- =?us-ascii?Q?qfKd1RKJm+3plJwu/eCPGOUH11ZTGz4Od9zXgyRY+cCfzYrf9B3IWWhXKxPH?=
- =?us-ascii?Q?cmO6nfgC/kGy7+RiR6tfBpLWwBMgZDwwIBlOxDO5mcXjkJeW1ZB/DTjRMyCK?=
- =?us-ascii?Q?2T8JB0I/C04oFAGGh99BC5KbAIzIvK8I3QhhIrn7wh4alIX2wvmu9CNrXOEl?=
- =?us-ascii?Q?a4PYSARiFWhGjXY8vwccSbdlfAUx1NwfqoPnbvohoC1Ll9Muj0wmV/qP6Mht?=
- =?us-ascii?Q?FFWZvFxsHFptrYATIhtUidveS52QqpBbO0jBe7A5s25TJQDtouPLEA0el7NU?=
- =?us-ascii?Q?VD8r8Qd6IESJ3AZ2XQyNRFkl2JG8GZdGS1ifLINMQtVMKzRyoLDT2zJ1Q9f9?=
- =?us-ascii?Q?LAPnyH5wwQlYziTkvpMVrQv4ZSRMtA1nOZOd4S8KzSgVW02a1EASs6CXRHQ7?=
- =?us-ascii?Q?cRtQ2Jzt0kRvlSgcvj7nOlSEgGlVVfDKnffpaWHLlTNZUBldu3UjkOfOWzZd?=
- =?us-ascii?Q?KhOet+EQWq8GKx052uZjbDdUjL0TvF9W9vi6Tr3z0nfaSetgPeYUmGPWRL4V?=
- =?us-ascii?Q?vDLBsYmyd3N0cH3mDVsRSaa1A7o7NKHcL+EBu64j7DZ3AVvfIg3EPSuKtuW5?=
- =?us-ascii?Q?29oz6fA+KFBwutt/gipsCByWujC29RQCzvDdgm2SlTwuN6d9EaHK1m+UdLYS?=
- =?us-ascii?Q?vmePE4PNC6kbCX4B+hzG/XuKAVF9OW3YEHyigbhpTypeQO9vzKtNoAEssfn5?=
- =?us-ascii?Q?1ovC3BOqMlU1fEAvsAvMk1itApZQb9E26JrjRhgnRXP3pQhk7bx7X2Ob3eQh?=
- =?us-ascii?Q?x0bSWWIhVY2TMMZBPVaXsQ0K2ZhdkZ/CP2xXt+5VE8kAmqIfltM8n8n9hT1N?=
- =?us-ascii?Q?UDj8HKeAwE2PJt6sqpcoPK/+sksWdfYLUPttUoDuupV4+9lAsJgTEhb12Nft?=
- =?us-ascii?Q?AJ6V9oX/Os1XMCF0r4MGxjNsnBI7irg2TucVnB5rm1kp4Dq7rYU2SvunRuE5?=
- =?us-ascii?Q?O8lWyy3rx8h9jCOBqS0GOYysONuZPzmX50PCsND3Hz1GLDu8gud49nEV15YS?=
- =?us-ascii?Q?nLYqvGvLQa7pDIX6FRP3ASEx3O1UxnmrRKdv4GlCAVDd1zB30sCYUrKD7kQ3?=
- =?us-ascii?Q?KG+VwAK80l6kZsaSfBKmZV+YB4M1rgNXjRU0TXOQKGD792OfW14+tyXenruf?=
- =?us-ascii?Q?V/a8DZrcFxWDjmb1dx2jViHogHEMAKguU9n7?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2025 17:53:54.4275
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: edc34a5a-fe58-48d0-67c9-08ddd836df6a
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7829
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 10, 2025 at 07:04:01PM +0530, Akhilesh Patil wrote:
-> Use kvfree() instead of kfree() to free pages allocated by kvcalloc()
-> in iommufs_hw_queue_alloc_phys() to fix potential memory corruption.
-> Ensure the memory is properly freed, as kvcalloc may internally use
-> vmalloc or kmalloc depending on available memory in the system.
+On Fri, 13 Jun 2025 00:24:13 +0200, Ryan Lahfa wrote:
+> Le Wed, Oct 23, 2024 at 09:38:39PM +0200, Antony Antony a écrit :
+> > On Wed, Oct 23, 2024 at 11:07:05 +0100, David Howells wrote:
+> > > Hi Antony,
+> > > 
+> > > I think the attached should fix it properly rather than working around it as
+> > > the previous patch did.  If you could give it a whirl?
+> > 
+> > Yes this also fix the crash.
+> > 
+> > Tested-by: Antony Antony <antony.antony@secunet.com>
 > 
-> Fixes: 2238ddc2b056 ("iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC ioctl")
-> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
- 
-Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+> I cannot confirm this fixes the crash for me. My reproducer is slightly
+> more complicated than Max's original one, albeit, still on NixOS and
+> probably uses 9p more intensively than the automated NixOS testings
+> workload.
 
-Thanks!
+I'm seeing a problem in the same area - the symptom is slightly different,
+but the location seems very similar. I'm also running a NixOS image.
+Mounting a 9p filesystem in qemu with `cache=readahead`, reading a
+12943-byte file, in the guest I do see a 12943-byte file, but only
+the first 12288 bytes are populated: the rest are zero. This also
+reproduces (most but not all of the time) on 6.16-rc7, but not on all host
+machines I've tried.
+
+After applying a simplified version of [1] (i.e. [2]), the problem does not
+reproduce anymore. It seems something in `p9_client_read_once` somehow
+leaves the iov_iter in an unhealthy state. It would be good to understand
+exactly what, but I haven't been able to figure that out yet.
+
+I have a smallish nix-based reproducer at [3], and a more involved setup
+with a lot of logging enabled and a convenient way to attach gdb at [4].
+You start the VM and then 'cat /repro/default.json' manually, and see if
+it looks 'truncated'.
+
+Interestingly, the file is read in two p9 read calls: one of 12288 bytes and
+one of 655 bytes. The first read is a zero-copy one, the second is not
+zero-copy (because it is smaller than 1024). I've also tried with a slightly
+larger version of the file, that is read as 2 zero-copy reads, and I have not
+been able to reproduce the problem with that. From my (admittedly limited)
+understanding the non-zerocopy code path looks fine, though.
+
+I hope this is helpful - I'd be happy to keep looking into this further,
+but any help pointing me in the right direction would be much appreciated :)
+
+
+Kind regards,
+
+Arnout
+
+[1] https://lore.kernel.org/all/3327438.1729678025@warthog.procyon.org.uk/T/#mc97a248b0f673dff6dc8613b508ca4fd45c4fefe
+[2] https://codeberg.org/raboof/nextcloud-onlyoffice-test-vm/src/branch/reproducer-with-debugging/kernel-use-copied-iov_iter.patch
+[3] https://codeberg.org/raboof/nextcloud-onlyoffice-test-vm/src/branch/small-reproducer
+[4] https://codeberg.org/raboof/nextcloud-onlyoffice-test-vm/src/branch/reproducer-with-debugging
 
