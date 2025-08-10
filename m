@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-761521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6301BB1FB5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:31:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF576B1FB61
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B829178CAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE3C1896345
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4BA26E16C;
-	Sun, 10 Aug 2025 17:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18742701CE;
+	Sun, 10 Aug 2025 17:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XS110JeH"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="d2oUyoKQ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA68FC0B;
-	Sun, 10 Aug 2025 17:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FBA1DF75D;
+	Sun, 10 Aug 2025 17:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754847105; cv=none; b=F944olMrv7BrF7YN0QVzLCPoISKr9lpyk+gy9QqElyDjNl+NQg35LiLv+70HAxUQdDfQ7ZL3NnIyfgOiS0M1SBsdtU1sMYC6tVNCuc8sE/18hTLQuMMV2dBWGmzGIi7q9CFaxk1z7oF/ZivnUI34p+a8BYdCeJNPwfQQcXkGLfE=
+	t=1754847138; cv=none; b=ArGbwk6YSrQ5Kz/OK3dux391g9iP+P6FXzVKsqGbyH1Z0vQbe06RnmIC+rUdIXKV97F92kereJ6BjibRA4hQCmv1Bwu8rVgWpk99fgQnmZ9/zYYGymj00N5s6VbKYiy/1xwCHZfejdEEpza9S1Ra8koXgt3IGfP3Vx25GMSOuEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754847105; c=relaxed/simple;
-	bh=aGs02sc6LESggoW37yomq+DDwZ03g4IwHFGzac0j87I=;
+	s=arc-20240116; t=1754847138; c=relaxed/simple;
+	bh=TNmUQ437s7eOKUcfVKHyRc4T6i8CUtA4TWoV3ciCMN8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WPWBPvh7WykkHIBaju4JTe43wQ5GX6hevwG6oI62heeFfmlGMVBidNelkdhSy7z8zmBJ/sWmssQxOnAf2Mgj4LUe+yijQ6OtjV9cs6u4hCSp3NYx7E8YEi6O59iy3HOXz+QjqF7xzr6dvfoGeyh5AAdDepAWLh9UbPZBnUTTzUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XS110JeH; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3322d10e29dso29533171fa.0;
-        Sun, 10 Aug 2025 10:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754847102; x=1755451902; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yTaJLRTtqeXWxdYr5rgLHJrchc4OZe1+0HwTL62xei4=;
-        b=XS110JeHZN3RcOCy+Rc3aYk97Xk5vPvYzrSl/csOl9QMt6pEH3Sxcnxv0QhGg9FERX
-         UnNftXGirX1nBmBQg+CgTmt7eWI7BedoXZ75rZzl3CaBpdRv08Ol82Fyd+odujz4OIhF
-         zKabsglU+jXqjfm8by4DyVVn2vkHQcK+thJKvPhyxryH1y7tH6WsyRCiGYrV/ET7gDiI
-         Ayw1Dltcj/lcnbLVopgjlAj80pbJduW0ImoFjWzmNyQ0Lp0aLUi0+s7XC37J+Tn3JhEq
-         0eNO8d7/DBICF12Ngis7YEYRN4vNtRkBJbeG9yKalzIynSbiGjm9Tq9KZUHBCs7tT+QZ
-         qrMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754847102; x=1755451902;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yTaJLRTtqeXWxdYr5rgLHJrchc4OZe1+0HwTL62xei4=;
-        b=w2A+GLKOd6QQi4JQhQ2dbt6qrcwGaYe0Qs89XhYRN+qLEYDmimRnQE+ndiLNpFFMkt
-         NBNCgap12RSiGswfVUTpVF6Dyn6JKJWff+xoPhAC0OomPuPB4j82w7riejwlHUm7ee+R
-         PqE+CMOSl6IsEwtDzOWDLGWBDuD4zSoS0kk3/vDTI6Um1p7s+ZepoQNmwTspzZEm9i2m
-         /iiiOA7LYqalcP/UucD5+XywyaoZic4pgbsBFcHQWh+thnK1QOHz9XH0yMNhLf5v7hWu
-         v83zcJqvS/Hh79uDL85B0PDLSFqIZXuAMwq9EjBmyvfEquiFbtjoDnY5V+G7U+DfkdhO
-         WY+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUj0oCU7xRmGoQyk0knci9cTQhw5nIP+ZcwmQBffkwaLCWsTdR3/PeR7L9og2qp54DqF3B9E2jufKx2M5oR@vger.kernel.org, AJvYcCUnz09/5Yyow7yan8gPak/Pwog/poj6/7zKxfpD2AGvPlsixULAMIC6RaF3Bfa9B4YuTnhAQleU@vger.kernel.org, AJvYcCVkY5i6hHjVP0Q2OMz8ZCMmp0NCxvnbJsNqtdq1+N5JL4pE1B/FGU10JcvGsGL/NqomIpeDFRgo90bvDA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBGvgEDML5krzZMK+iDc1N7DVGjU8Q7U0O5e+P4rDLSJkV0k9+
-	SUXNxoY17Ygr5+v35gji7hcMG5BMWc/qk9Ykox8AHaEf2EZDNWUXjovKVzkdqg==
-X-Gm-Gg: ASbGncuHVMvhneBY6kAi+amMFn38UaGVQInrnd481jOEb1G04q+JAQ2HrF1IEpz8gWO
-	aGP6ZZ+lADFDvm8IeeE71kP8cndjbleMtbh+ra5hn7BSXJbylD5H6sSzeBc5ub0G/xP3y4Hanc5
-	/H2FxQFMtAm+v7J2/FEU2LxcdWzKDvjd+ABBJQkL4EAuQtA+mTFDb5sDql0ieebR8Sb3oTzHqDC
-	MTmjmtYcUmPUIwNdaLu6Ts+OR1QwktXXMVwtdl8KvHg676GL2Qg8SsJUNnglw6ZXG0xv6ytnGz0
-	Fk6d247lnMG84LHGvZSMuFBmaRECCFPnJDNWITmvXQ2zb5KOFkQiOlf9ph+RTdqbfY67OVkG8n1
-	GuynLSkB6ZS8FWYFl2g==
-X-Google-Smtp-Source: AGHT+IGexTDKokp9rk/e6fsbCXImxJu0jdE/ahX4LI8fjziTk042QG5GF6IUPrE69FOI/cc07tS3Pg==
-X-Received: by 2002:a05:6512:2391:b0:55b:9376:5318 with SMTP id 2adb3069b0e04-55cc011b322mr2088594e87.40.1754847101748;
-        Sun, 10 Aug 2025 10:31:41 -0700 (PDT)
-Received: from gmail.com ([185.209.199.97])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898bf90sm3956911e87.26.2025.08.10.10.31.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 10:31:41 -0700 (PDT)
-Date: Sun, 10 Aug 2025 18:31:35 +0100
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] HID: multitouch: fix integer overflow in set_abs()
-Message-ID: <aJjXacCgSk-aNyTh@gmail.com>
-References: <20250723173659.59327-1-qasdev00@gmail.com>
- <914ff45b-2260-42c0-9ccf-a3efd667d4f5@kernel.org>
- <aIJXqs-U8vDpYv0S@gmail.com>
- <f7257221-cbfa-4f51-8ac4-38060bfaf2f4@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0rOLnXihTN5awBnE0NYyWUNNyG+FGn2RHXiAR4UsA4GR37Q2F6S4TXoFngE8SUqPNW37kINlFNWgAUT76VujqtkHob83i2tnqd+dqbIzQ7kIABDxiEdCdZaXm80ZJyTuwPmr1VLfZT1Sht3lrKmFS/09/Q1S4TBU5lXKQvlSnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=d2oUyoKQ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AYabts41ywViN3lH6/8mBeNV/CtbPocv9+f3715eNQI=; b=d2oUyoKQjAlkYYjzqabnE8JhdT
+	A7TTg6U0iA88OIcQafOU1XXEa7mLYSBkx9mW/mO18DHVPMM4wb8xVIK2HJ5UxGPumcyTn6wtSKNTP
+	vC31BdYHbtRZ9fLXSN9RO4ZV3zmx5opY7WgMLC/QEUbBmW+JibenOeqBB7AlwoAukX6I=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ul9tr-004Eep-KM; Sun, 10 Aug 2025 19:32:03 +0200
+Date: Sun, 10 Aug 2025 19:32:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ujwal Kundur <ujwal.kundur@gmail.com>
+Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rds: Fix endian annotations across various
+ assignments
+Message-ID: <ac09739a-eec5-4025-989e-a6a202fcfd63@lunn.ch>
+References: <20250810171155.3263-1-ujwal.kundur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f7257221-cbfa-4f51-8ac4-38060bfaf2f4@kernel.org>
+In-Reply-To: <20250810171155.3263-1-ujwal.kundur@gmail.com>
 
-On Thu, Jul 31, 2025 at 09:43:38AM +0200, Jiri Slaby wrote:
-> On 24. 07. 25, 17:56, Qasim Ijaz wrote:
-> > On Thu, Jul 24, 2025 at 08:58:40AM +0200, Jiri Slaby wrote:
-> > > On 23. 07. 25, 19:36, Qasim Ijaz wrote:
-> > > > It is possible for a malicious HID device to trigger a signed integer
-> > > > overflow (undefined behaviour) in set_abs() in the following expression
-> > > > by supplying bogus logical maximum and minimum values:
-> > > > 	
-> > > > 	int fuzz = snratio ? (fmax - fmin) / snratio : 0;
-> > > > 
-> > > > For example, if the logical_maximum is INT_MAX and logical_minimum is -1
-> > > > then (fmax - fmin) resolves to INT_MAX + 1, which does not fit in a 32-bit
-> > > > signed int, so the subtraction overflows.
-> > > 
-> > > The question is if it matters with -fwrapv?
-> > 
-> > Ah yea thanks for bringing this up Jiri. I think you might be correct,
-> > after doing some research it looks like the kernel enables -fno‑strict‑overflow
-> > which implies -fwrapv which leads to wrap around instead of UB If I undestand
-> > correctly. So with that in mind this patch probably doesn't do anything
-> > useful, do you agree?
+On Sun, Aug 10, 2025 at 10:41:55PM +0530, Ujwal Kundur wrote:
+> Sparse reports the following warnings:
 > 
-> Yes, it correctly wraps around. But the question remains :). Does it matter
-> or not?
+> net/rds/af_rds.c:245:22: warning: invalid assignment: |=
+> net/rds/af_rds.c:245:22: left side has type restricted __poll_t
+> net/rds/af_rds.c:245:22: right side has type int
 > 
+> __poll_t is typedef'ed to __bitwise while POLLERR is defined as 0x0008,
+> force conversion.
 
-probably not. From what I can tell it doesn't look like any further security
-issues occur as a result of the wrap around behaviour so i think its
-probably best to drop this patch.
+Please could you split this up, one patch per type of problem.
 
-thanks,
-qasim
-> thanks,
-> -- 
-> js
-> suse labs
+> diff --git a/net/rds/af_rds.c b/net/rds/af_rds.c
+> index 086a13170e09..9cd5905d916a 100644
+> --- a/net/rds/af_rds.c
+> +++ b/net/rds/af_rds.c
+> @@ -242,7 +242,7 @@ static __poll_t rds_poll(struct file *file, struct socket *sock,
+>  	if (rs->rs_snd_bytes < rds_sk_sndbuf(rs))
+>  		mask |= (EPOLLOUT | EPOLLWRNORM);
+>  	if (sk->sk_err || !skb_queue_empty(&sk->sk_error_queue))
+> -		mask |= POLLERR;
+> +		mask |= (__force __poll_t)POLLERR;
+
+I don't like __force, it suggests something is wrong with the
+design. If it is needed, it should be hidden away.
+
+However:
+
+~/linux/net$ grep -r POLLERR
+caif/caif_socket.c:	wake_up_interruptible_poll(sk_sleep(sk), EPOLLERR|EPOLLHUP);
+caif/caif_socket.c:		mask |= EPOLLERR;
+rds/af_rds.c:		mask |= POLLERR;
+bluetooth/af_bluetooth.c:		mask |= EPOLLERR |
+sctp/socket.c:		mask |= EPOLLERR |
+vmw_vsock/af_vsock.c:		mask |= EPOLLERR;
+vmw_vsock/af_vsock.c:				mask |= EPOLLERR;
+vmw_vsock/af_vsock.c:					mask |= EPOLLERR;
+9p/trans_fd.c:		return EPOLLERR;
+9p/trans_fd.c:	if (n & (EPOLLERR | EPOLLHUP | EPOLLNVAL)) {
+mptcp/protocol.c:		mask |= EPOLLERR;
+core/datagram.c:	if (key && !(key_to_poll(key) & (EPOLLIN | EPOLLERR)))
+core/datagram.c:		mask |= EPOLLERR |
+core/sock.c:		wake_up_interruptible_poll(&wq->wait, EPOLLERR);
+nfc/llcp_sock.c:		mask |= EPOLLERR |
+smc/af_smc.c:		else if (flags & EPOLLERR)
+smc/af_smc.c:			mask |= EPOLLERR;
+phonet/socket.c:		return EPOLLERR;
+iucv/af_iucv.c:		mask |= EPOLLERR |
+unix/af_unix.c:		mask |= EPOLLERR;
+unix/af_unix.c:		mask |= EPOLLERR |
+ipv4/tcp.c:		mask |= EPOLLERR;
+sunrpc/rpc_pipe.c:		mask |= EPOLLERR | EPOLLHUP;
+atm/common.c:		mask = EPOLLERR;
+
+So why is af_rds.c special? Or do all these files also give the same
+warning?
+
+Also:
+
+https://elixir.bootlin.com/linux/v6.16/source/include/uapi/linux/eventpoll.h#L34
+
+#define EPOLLERR	(__force __poll_t)0x00000008
+
+So your patch does nothing.
+
+    Andrew
+
+---
+pw-bot: cr
 
