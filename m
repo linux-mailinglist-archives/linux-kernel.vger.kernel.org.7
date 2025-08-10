@@ -1,144 +1,121 @@
-Return-Path: <linux-kernel+bounces-761577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC32CB1FC1A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:02:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA998B1FC1D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22D6189789D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:02:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9DB5174001
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E6621C190;
-	Sun, 10 Aug 2025 21:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D24321FF39;
+	Sun, 10 Aug 2025 21:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IO7dI0Qn"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gwjn8bTb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2344A1E1C22;
-	Sun, 10 Aug 2025 21:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CF17E0E8;
+	Sun, 10 Aug 2025 21:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754859727; cv=none; b=g6/vG9JToQT0qcN4TqW7zZrj+NzDxJNCBdoOTZ+a6hJexFSXHisAxCjFuiZiakENb83USMCrQFy9mLkuENT4SzyTZKCkGJ1hRa2raU5uA3+mAHf1zRdTfthu4YBAao6UkF8vACWrtVxOffimC7d605PJpfP/PKiuTEnIOLVVUDA=
+	t=1754860323; cv=none; b=SZNfJBlPZ7pFbGAMR+GLsuVyJOxzc3gAed0YwoirUVr3OIhoARDBT5ywDFk+2feom//RQT1phtGsEfITj4fAwl49XacwptPCsaoDKU6UNlalMyHTkXTiSMZCMyQa0/jFi17epQRmthHvSc9Pl10uBTxCk4ogGgR47kvdLYQsprg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754859727; c=relaxed/simple;
-	bh=MTXpiQqqPMFlsP0/kHI84hBYDr03N6s0a9a8p8cA+js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rd4LPrSIYKym3K+cJHgFyvHOSa3IIG3wI9qJ7C9C+vlK8H2cQwpR+r4qEkEIWiP2IUzUkPvvg3gWpgWCu3J6Ju9k0B7FO/syltXZUqxlbPl9RMyFYERPaf4Sa8l+6ChuDidFyPcNqhK5ap0CoMgo0SOwOxnag+IfIVv1Gsw9PMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IO7dI0Qn; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b78110816cso498942f8f.3;
-        Sun, 10 Aug 2025 14:02:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754859724; x=1755464524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=icmOYryH7gKnxyHk0FI5g2O7kLHyCbYHHIR+yF/LTpA=;
-        b=IO7dI0QnhtNCXhswWlOWV+nnQY8DBw0Ymjq1fjDKjh5t8fySAYdx4Bg6x7pH9CNlxr
-         QajpCTuMsJqe/6rll7keHSIwhg4xr4DPprsAjjbWhuNiAUYJXo2GTylI94PU5oemCcTw
-         1K/bpgdi3XRsOKPGiwKdNt/T+8FQ8zm56ZDPFZCJzwP28fPWFdmK8lA6amxOVQhbb7n7
-         my1Z1f9fFnQB20Nqx6YJdZgXDZoO/IAbDpr9fMsxyKtyPViVWjj474i95odvqY91ZV/Z
-         AkjRvE4p8SfbdG+CNVbZed/rjykdwWkXe31iK5IbvIAUg9ljNY/t4FQo3Gg23ceh7W1B
-         vqhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754859724; x=1755464524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=icmOYryH7gKnxyHk0FI5g2O7kLHyCbYHHIR+yF/LTpA=;
-        b=UuBtWTSfzLe95MGu/X0lGiLWf3s9UwJLesGMhhVuSw7JrmdbtwvN2YCj5ITOOoZfsy
-         /vWtHdB9+ZzGE1p84hFAls1t98X5kZCYrCvTDa4UsY7geZfW/GjyuD1onPbACNrTz2aB
-         4iwleUNbN8P+uUoQirjzBcPVB7Q64NfDZjRXncZZYkNGDskAgF5BfpBky6vDD6sI8F2F
-         DZR+xxnuLBiNDZqq0JziIj6eJ7SV9ink1pgQEqOD2+FY26Hhgmmix/H5j4iX2SBc9Lit
-         jSKYgUquvmNxL4sErmwj55Dr3skrJgCS66D1OR/VCtd5oaetjvwBhgpLyvrB7ytL2W2T
-         3ZzA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Th8xGt7WGkLO8PeTcQMYfTOYRyostoFHkaTvAIjaC7biRXgrAlaU1numazrw+TIjoI2bhSGp@vger.kernel.org, AJvYcCWRCLc6ZBsE7TlSGs4OkpXxl4YEU7dKhzOKVCoxE5swzXGBlx644yrLVLcldi+qruGsCTAR9Jh2IlvGU5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVSPBWEHZbVFT1aTUZpHSNFPeislQoyUtqXAypUEvks/DFStlO
-	lMP50sWHtH/CpOfkIqBSmaRhNRQz3A8eb2P79v/gXJil9Dk18qLJL0wB
-X-Gm-Gg: ASbGncuGYdxrr6B7vaSreXwaenHvlnaOrzvII0lD1dNeHPzqDf+/i3iH0sbMdNtdYhR
-	dZPJcMSfg5FQCbmt2x+40gObaPVAD2CltuEr8hThBHe23dG692xxYLr821CTvfDEwxq2fjLomUJ
-	r5Ze/LpWKNoO/10nxIDPDdUm47E3LxFF8H5c/UsQYoJ5i39WXC6K/zJwH2xBJAW1i4UF8S75cw1
-	Bgg2UDrJKyqxJZPc/98ZTMIjO9l/PLAfM5907BX9V9NpcfFAXecymLFmjpllkg8vPSmpbbG1TLA
-	H+/TAZIpLNdzHZ/TYVYNAmTRHc0AXMO/r2RvuXrHjJ/rtGvt6rLalpVLlUQAhndEHFxOXemJL41
-	9g7OJuImxSRX6GY6n99vexJuGSQ==
-X-Google-Smtp-Source: AGHT+IF3cK3YJXTrG0mJgB/AvVE8OALybbZ5XANg6amBb0MDC+vj2TUp0Gz/9EM8XFqZ8GvmvZoSfw==
-X-Received: by 2002:a05:6000:238a:b0:3b7:8b61:2bb9 with SMTP id ffacd0b85a97d-3b906e6f195mr1725625f8f.8.1754859724175;
-        Sun, 10 Aug 2025 14:02:04 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:f9ef:f5a3:456e:8480])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c485444sm38588999f8f.66.2025.08.10.14.02.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 14:02:03 -0700 (PDT)
-Date: Mon, 11 Aug 2025 00:02:00 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Arkadi Sharshevsky <arkadis@mellanox.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH/RFC net] net: dsa: lantiq_gswip: honor dsa_db passed to
- port_fdb_{add,del}
-Message-ID: <20250810210200.6n3xguqi5ukbybm2@skbuf>
-References: <aJfNMLNoi1VOsPrN@pidgin.makrotopia.org>
- <aJfNMLNoi1VOsPrN@pidgin.makrotopia.org>
- <20250810130637.aa5bjkmpeg4uylnu@skbuf>
- <aJixPn_7gYd1o69V@pidgin.makrotopia.org>
- <20250810163229.otapw4mhtv7e35jp@skbuf>
- <aJjO3wIbjzJYsS2o@pidgin.makrotopia.org>
+	s=arc-20240116; t=1754860323; c=relaxed/simple;
+	bh=XrfQgl5l4McAsqhy747liDQB2Wk7PKkiU9eU9e0wRRM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OYdmxN84gKsklqX1Oq9/g5TA05Yf/CW5nJZG0MxU++qUmmjSqy7zUCKa5Jg+FvAbG2/v61gDByMCVVQqWn3ZZTF1Vl8SQxwwo2hAWkkjvF5xr+sJ6BYizVPdTsj/YsxKXEd0+E+JxFxrawIwvksL2slW06R0cCtjNp+Rez0Awq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gwjn8bTb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED3CC4CEEB;
+	Sun, 10 Aug 2025 21:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754860322;
+	bh=XrfQgl5l4McAsqhy747liDQB2Wk7PKkiU9eU9e0wRRM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Gwjn8bTbzGhzzolmVUPo9n7gcBleM2ZVFGDflhWOkdwNBJ0e6wotBLuXD0buvnF7g
+	 aXoNaKfXoEDoNj4lZ/8pa6odo8DFWObVF3OfZG3lrpWmvwF9AJmOUqEzkaWzOeq7Yd
+	 DpcJnBQo9Z4JNU1FE++ilb7nhN/t2KWXk7okkwr6WQvrfPpvZrLhMXDkZ6HQcXTy6q
+	 oJdFW6I2y1cQ+XGdnxUPHqxnZ8SZfN7pdNeHUDKckOniwED43a0ZbSyUveH+xY3V9p
+	 M3Gg6vutVvVco0CLG4wUKYmINApUE8HUs9Uyk6Lbw9URsrzxtpmDb+/V1rKT1fuakD
+	 n8BmE1Qp9O4Dg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE7439D0C2B;
+	Sun, 10 Aug 2025 21:12:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJjO3wIbjzJYsS2o@pidgin.makrotopia.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 00/12] irqchip: MSI cleanup and conversion to MSI parent
+ domain
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <175486033550.1221929.7725164280675452092.git-patchwork-notify@kernel.org>
+Date: Sun, 10 Aug 2025 21:12:15 +0000
+References: <cover.1750860131.git.namcao@linutronix.de>
+In-Reply-To: <cover.1750860131.git.namcao@linutronix.de>
+To: Nam Cao <namcao@linutronix.de>
+Cc: linux-riscv@lists.infradead.org, maz@kernel.org, tglx@linutronix.de,
+ atenart@kernel.org, andrew@lunn.ch, gregory.clement@bootlin.com,
+ sebastian.hesselbarth@gmail.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, chenhuacai@kernel.org,
+ jiaxun.yang@flygoat.com, anup@brainfault.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, linux-mips@vger.kernel.org
 
-On Sun, Aug 10, 2025 at 05:54:55PM +0100, Daniel Golle wrote:
-> As it would be nice to have the proper fix backported at least all the way
-> down to linux-6.1.y, do you think it would be ok to have that solution
-> I proposed (and picked from the GPL-2.0 licensed vendor driver) applied to
-> the 'net' tree (with a more appropriate Fixes: tag and commit description,
-> obviously) and either just not fix it for linux-5.15.y, or only there
-> replace the 'return -EINVAL;' with a 'dev_warn(...); return 0;'?
+Hello:
+
+This series was applied to riscv/linux.git (fixes)
+by Thomas Gleixner <tglx@linutronix.de>:
+
+On Thu, 26 Jun 2025 16:48:57 +0200 you wrote:
+> The initial implementation of PCI/MSI interrupt domains in the hierarchical
+> interrupt domain model used a shortcut by providing a global PCI/MSI
+> domain.
 > 
-> In fact, commit c26933639b54 ("net: dsa: request drivers to perform FDB
-> isolation") also touches drivers/net/dsa/lantiq_gswip.c and does add
-> struct dsa_db as parameter for the .port_fdb_{add,del} ops. Would it be
-> ok to hence target that commit in the Fixes: tag?
+> This works because the PCI/MSI[X] hardware is standardized and uniform, but
+> it violates the basic design principle of hierarchical interrupt domains:
+> Each hardware block involved in the interrupt delivery chain should have a
+> separate interrupt domain.
+> 
+> [...]
 
-Generally the commit from the Fixes: tag is the one which "git bisect"
-points to, when monitoring the described problem.
+Here is the summary with links:
+  - [01/12] irqdomain: Add device pointer to irq_domain_info and msi_domain_info
+    https://git.kernel.org/riscv/c/858e65af9135
+  - [02/12] irqchip/bcm2712-mip: Switch to msi_create_parent_irq_domain()
+    https://git.kernel.org/riscv/c/91650ca5efcf
+  - [03/12] irqchip/riscv-imsic: Convert to msi_create_parent_irq_domain() helper
+    https://git.kernel.org/riscv/c/59422904dd98
+  - [04/12] irqchip/imx-mu-msi: Convert to msi_create_parent_irq_domain() helper
+    https://git.kernel.org/riscv/c/c7cc7b122a4c
+  - [05/12] irqchip/loongson-pch-msi.c: Switch to msi_create_parent_irq_domain()
+    https://git.kernel.org/riscv/c/7f91d608cc43
+  - [06/12] irqchip/sg2042-msi: Switch to msi_create_parent_irq_domain()
+    https://git.kernel.org/riscv/c/7c0dbd80de03
+  - [07/12] irqchip/alpine-msi: Clean up whitespace style
+    https://git.kernel.org/riscv/c/6e44ac411255
+  - [08/12] irqchip/alpine-msi: Convert to lock guards
+    https://git.kernel.org/riscv/c/71476f915f92
+  - [09/12] irqchip/alpine-msi: Convert to __free
+    https://git.kernel.org/riscv/c/f7c2dd9f4c2d
+  - [10/12] irqchip/alpine-msi: Switch to msi_create_parent_irq_domain()
+    https://git.kernel.org/riscv/c/7a91ad7ebd61
+  - [11/12] irqchip/armada-370-xp: Switch to msi_create_parent_irq_domain()
+    https://git.kernel.org/riscv/c/bafb2901317f
+  - [12/12] irqchip/ls-scfg-msi: Switch to use msi_create_parent_irq_domain()
+    https://git.kernel.org/riscv/c/94b59d5f567a
 
-If the problem are the error messages, the proper fix which restores
-previous behavior would be returning zero with no further logging.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-If the problem is the lack of host FDB entries from the hardware, the
-new logic to be properly tested in a context where it makes a real difference.
-I suggest tools/testing/selftests/net/forwarding/local_termination.sh
-once dsa_switch_supports_uc_filtering() returns true. Otherwise, the CPU
-port must be in the flood mask of bridged user ports in order to receive
-unknown traffic, and for the basic usage, I don't see much practical
-benefit from adding host FDB entries to hardware. One situation is when
-there are 2 bridged ports A and B, and the station connected to A wants
-to talk to the CPU (the bridge net device), what will happen is the
-station connected to port B will also see this traffic due to flooding.
-Anyway, that behavior has existed since forever for drivers which don't
-learn the MAC SA from host-transmitted packets, and don't have functional
-software-based host RX filtering.
 
-So I'm concerned that if you try to push solution B for problem A, and
-test it only for problem A's circumstances and current requirements,
-this will create the premise for a never-ending rabbit hole of further
-fixups onto the new logic, sent to stable kernels.
 
