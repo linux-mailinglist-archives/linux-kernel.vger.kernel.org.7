@@ -1,113 +1,342 @@
-Return-Path: <linux-kernel+bounces-761506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E0AB1FB0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:49:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9DAB1FB11
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 18:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A968C16E7D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335E73B588A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421F326B0A9;
-	Sun, 10 Aug 2025 16:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A798825F7A4;
+	Sun, 10 Aug 2025 16:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVAi8pJH"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hY98JF3b"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8FB1AA7BF;
-	Sun, 10 Aug 2025 16:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CE818C933;
+	Sun, 10 Aug 2025 16:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754844588; cv=none; b=ZAFPnYKTySXb0mF1NM662PubiFfvMvtApjdWophkbf8junzB9XzWIMnmcZixdOEhvzCB5fqo4bzK3RyWD+eQepPCOtPlDH2Sx/E/dR/xmEsCn+ZwyyZaFxwXSF+w0ZHoRpARiRN23cuUGF/cR/MMe6djN9HrtiIHhEUjua3f+vk=
+	t=1754844661; cv=none; b=po1GL96LKk7ntV4aZMuPqMZQVnatfEMY1kk2ANqEmcDBjFeACjJ34sJYsFLlk2dCcUJNhQrzvDmbH95D+iNdcylPZxXUxzvi+YOh2abSwWiYVuGsGWYocbzpS+uLKd1WlNPIDpOtcPBZimSQDV6Ln9l2/rO9iS+RQUkNek7z1lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754844588; c=relaxed/simple;
-	bh=1O7Ir2JV9F3FRquanCEG57N9yilLJmRdcXyWCErqjXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ktRrpiw2+IMHqgRh9m7qVKotK4BKj5RJEg+0pSgaN4riycFHI6XKTCcHS9+ZiZCdQ80xPN2YaTqyuyZZHvwc0LYUqDMEdz/hfyKX3GpcDzzX0ME3vTIi2HNbnc0obPyzw/rlIUUvBkFZUZGahEe1R5ze9jYeoVAB/kclw8Wr/1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVAi8pJH; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b788fdcc2dso265748f8f.1;
-        Sun, 10 Aug 2025 09:49:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754844585; x=1755449385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1O7Ir2JV9F3FRquanCEG57N9yilLJmRdcXyWCErqjXM=;
-        b=PVAi8pJHHY/8oHFlvuQvUSML7QDWKPFusHDklGm/f2/hVcBxddUGv2l69duDGRQzgU
-         lcRS6JJ311x16P9T9iGrScxL7HypsU3m/ni27o9rAahBAvFBlxZ/hrT6py+Mhvz/BPyr
-         uvOk7VRn91TNpZ4tRywZ+zETSmBbMKQBmr+fj0FfRzlur41hnk5fmC57a9H/bw4yno2S
-         sLajvFyyC3ySesrSDPANAbqZCWNNhQ9JM3h7WmcDdQYjPrplAxSrZ76mxcKb0EKvpy3d
-         SeVhcL26buhC1G8vybDgOv2XfgntQDNU2PUkER0QkTpTipw5lGG8KN/XPt+mw8VuPsjL
-         iA7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754844585; x=1755449385;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1O7Ir2JV9F3FRquanCEG57N9yilLJmRdcXyWCErqjXM=;
-        b=kTq7IYcgQg+WPajneWiRyEdjigf9al7ArWA/qJrdV3EuaAyWXWuTNMhCVzPn3AXzxE
-         tlcdrjHrOuho80lf+qXXH5ui+A9xXBVbnx4bb5nOPbRdH3PTCIG9ObFkAAvw06SGB4gt
-         nKm8py4eqgpS8oAbGOLxBIXUszoRwdOa1OnJXs86fwDfmaEZAXIq0ymyopIRRQjdm4I9
-         WG1htbB+SmohSpgcNYlSMv2wlr8seTIt6iMu2ZNx9wVsFRQwwg36baWOyyBxcoJmecMc
-         jiXWj67x6WFLeD/pLyPQrX4sdt+a/JBzWazXiMS7+VXvg18XNMvBREFGpl1wbOM/aufs
-         EulA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo+aKCmMWWcIkOxElHZexShrdGnhfDyfUFnD3yVnDEzK/XGf13fofxfnN7IJOLvWbJcYMvtWAF@vger.kernel.org, AJvYcCVltb8Gvn/dpWJmpPDhkBMgTaAgb4QjRp+lyjKd6U0zKmCkWLGtukUDYCCj1IJjKPtLDDmoHjXHVajq@vger.kernel.org, AJvYcCXl594th+50gUpVpj1yyjvdXKLKRxVyHayYUuYUfjn+vyQKvlLJNNN0P8Qk1rasXasAuYdeJDAah/fqq3xY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4aWw3RsEiO2KL4VsqGallW4BGF6utf8QsbXbVQqnyxWirvlDM
-	Yjuw6BMuCwrDMogeD5BATzXfIy3PHbTUuTdOC3iZ68BI/Pc4yRKxGoUg
-X-Gm-Gg: ASbGncsAJNPTSupt75YRxQozq8SIzLHwvR2SCTmOGix+tKtRO6QGAdnhwEN0beyNx5U
-	k4s/xrXOCvpJyCZtDKx4zHV8jDDYUKAsJ30byYNCWmnSJTGratqs51izYgoFyH2aCR8X5SMjNNb
-	6pXyGanb36p6N9/f7JYDwlRrNn2vqbJJx/SB955DKrm34cJOeMCO/256IZDd4F2UjfPy6dE8Fk5
-	/P/lt9mHfStcebm6TcoNChdrFCX45mAMAcJzXi9j3AGAuZzdEc+OOhxmACtgQqCs9902r77nPmv
-	xCJIs1xFNBq9sGb35xN7KsjJxedc5fcSHoSoUzvIDe7wD/0J2SMA7gFX0fsXUtWBopUjgGTOXBs
-	1xaHVLgGbMZe1YMc=
-X-Google-Smtp-Source: AGHT+IF3CiPbtmzEifmcmnCZ6v8i8GbiWTGaqS99ZpLMhFYLskKAThOPIcEoj6BjqGlkH2y/M2FuGw==
-X-Received: by 2002:a05:600c:820a:b0:456:1a00:c745 with SMTP id 5b1f17b1804b1-459fd04c3e9mr22165455e9.3.1754844584509;
-        Sun, 10 Aug 2025 09:49:44 -0700 (PDT)
-Received: from skbuf ([2a02:2f04:d005:3b00:f9ef:f5a3:456e:8480])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3bc12csm38395980f8f.28.2025.08.10.09.49.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 09:49:43 -0700 (PDT)
-Date: Sun, 10 Aug 2025 19:49:41 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>, jonas@kwiboo.se, alsi@bang-olufsen.dk,
-	conor+dt@kernel.org, davem@davemloft.net,
-	devicetree@vger.kernel.org, edumazet@google.com, heiko@sntech.de,
-	krzk+dt@kernel.org, kuba@kernel.org, linus.walleij@linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, robh@kernel.org, ziyao@disroot.org
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add RTL8367RB-VB switch to
- Radxa E24C
-Message-ID: <20250810164941.4oezju3c4vhnunrx@skbuf>
-References: <db1f42c3-c8bb-43ef-a605-12bfc8cd0d46@kwiboo.se>
- <20250810140115.661635-1-amadeus@jmu.edu.cn>
- <1f2f8eda-3056-48bd-9c86-3fb699f043f3@lunn.ch>
+	s=arc-20240116; t=1754844661; c=relaxed/simple;
+	bh=3VNLNjUTrhelNb9JDbpsPb6apJlCQ5RSNazhNDqjal8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G4Kx9QtDv1tkNKY/ON63ZA7XSoF+lQbUPK2364f3576XBdmOh33p+H808xaQSzIoXa0RoGzC1CNNtSLeigVT3LWrKz65pqGaUh1Ru//p7KLPt//8kGQ7lhfDaqKCGFSDztLpb3gLc1O2NejPpGXNiC9JCW6kIh7DUV+DYt3+Ago=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hY98JF3b; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57AB0HnT022969;
+	Sun, 10 Aug 2025 16:50:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=rnYQL5
+	Yk1Pt2iFo15ApPacITklfJKgoKX7PfLbLJd9E=; b=hY98JF3btHUjAgNeP71gQQ
+	jwPkfT5O+Eln6iwS5228d0/B1um4IFdnf8TUo5maIDdlK2GBxTnHhQZYqAsVWdVJ
+	jMomxX/euWxnY3h3RrruPlvuuU2/rkIG29vV2RB15q7GdIi7XXxVecVZuPGLmyEW
+	18kZFtFityqTTedHBJ9yIokZ9pr+WzbkMUu+xhjMu2YpqX2XDkGqcmupg+Eka2Hz
+	V+OyzmyzkvXvqSc869LmS70fSevuLhdai2VYd3pCsytquvRRB7W0hAdWUWEpmiuv
+	YsdRlfy2SJyx++gpeoc8st3rZex+ayvuGapANnHaqWOog3PHh9/HVpdI3OUTLZHQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dwucwv7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Aug 2025 16:50:06 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57AGo5CW006037;
+	Sun, 10 Aug 2025 16:50:05 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dwucwv7h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Aug 2025 16:50:05 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57ACE2PW026279;
+	Sun, 10 Aug 2025 16:50:04 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48eh20tn7u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Aug 2025 16:50:04 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57AGo4j717433118
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 10 Aug 2025 16:50:04 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0E5F658054;
+	Sun, 10 Aug 2025 16:50:04 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C448B58045;
+	Sun, 10 Aug 2025 16:49:55 +0000 (GMT)
+Received: from [9.124.216.245] (unknown [9.124.216.245])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 10 Aug 2025 16:49:55 +0000 (GMT)
+Message-ID: <f7cbe7ee-35e2-4659-ba52-62b6b932c192@linux.ibm.com>
+Date: Sun, 10 Aug 2025 22:19:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f2f8eda-3056-48bd-9c86-3fb699f043f3@lunn.ch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] selftests/mm: add check_folio_orders() helper.
+To: Zi Yan <ziy@nvidia.com>, Wei Yang <richard.weiyang@gmail.com>,
+        wang lian <lianux.mm@gmail.com>,
+        Baolin Wang
+ <baolin.wang@linux.alibaba.com>,
+        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+References: <20250808190144.797076-1-ziy@nvidia.com>
+ <20250808190144.797076-3-ziy@nvidia.com>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <20250808190144.797076-3-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDEyMSBTYWx0ZWRfX980C3vR34l7C
+ GiYFFrGmMMlVp7LeFFWFqZli1+8xA8iMoQinM2vN9ibpbNx5SGeLcWq5u8ghCtnkoiPeCwNzVLx
+ a/HnTDRZULVgiIUdxDbtUCFZecDh9JzkoSltN2+QEvYbLBrhrTCcY6x5pdO0+Ex3puLYUmAmRpC
+ +Y/qYSA3OlqTeE5qKL64wtfQwtRW/pvFQFM8Jte9X1Xkg0f/kaNQ5fcI3OkTUGvRxOiipcqAnXt
+ QuqkjQ7j5uIXlekZhKVXQXfY7GsPto5HLQAAvhCRx6JmZgsvsru33TQxVFGzeaKC8zNzVflqLWB
+ VOAfAnjUO39kgGQMt/+uHg0CnlvwWNu5N7Puoyd0dkTSami+zPP+2UGSLTbPRVI4O+AsL0NuMbf
+ 4C0a/hJF4JQfS00ggIZGUEs+M5prrwgqbZkYEj8v1W2X2kqFURHcsjxxhEMsblPPgkoIhcid
+X-Authority-Analysis: v=2.4 cv=d/31yQjE c=1 sm=1 tr=0 ts=6898cdbe cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=Ikd4Dj_1AAAA:8 a=h_jtaqhVJtM5NzTXNHYA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: KzsxtGyBukxEBsUHg540cpkVSaTz4Z5y
+X-Proofpoint-ORIG-GUID: mp0N7QTIOyH3pOhTMOtc60gqrVosNdqo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-10_05,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxscore=0 suspectscore=0 impostorscore=0 priorityscore=1501
+ mlxlogscore=999 phishscore=0 lowpriorityscore=0 adultscore=0 spamscore=0
+ bulkscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508100121
 
-On Sun, Aug 10, 2025 at 05:15:59PM +0200, Andrew Lunn wrote:
-> Just a guess, but maybe it is a DSA tagger bug? Maybe the user frame
-> is a VLAN frame. The tagger is placing the VLAN tag into the DSA
-> header, so in effect, the frame is no longer a VLAN frame. But it is
-> not calling __vlan_hwaccel_clear_tag() to indicate the skbuf no longer
-> needs VLAN processing?
 
-For the original skb to have had a VLAN hwaccel tag, validate_xmit_vlan()
-would have had to not push it inside, so vlan_hw_offload_capable() must
-have been true for DSA user ports. But we advertise neither the
-NETIF_F_HW_VLAN_CTAG_TX nor the NETIF_F_HW_VLAN_STAG_TX netdev feature.
-So the VLAN tags in skbs transmitted through DSA user ports should all
-be in the skb head.
+On 8/9/25 12:31 AM, Zi Yan wrote:
+> The helper gathers an folio order statistics of folios within a virtual
+> address range and checks it against a given order list. It aims to provide
+> a more precise folio order check instead of just checking the existence of
+> PMD folios.
+>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   .../selftests/mm/split_huge_page_test.c       |   4 +-
+>   tools/testing/selftests/mm/vm_util.c          | 133 ++++++++++++++++++
+>   tools/testing/selftests/mm/vm_util.h          |   7 +
+>   3 files changed, 141 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+> index cb364c5670c6..5ab488fab1cd 100644
+> --- a/tools/testing/selftests/mm/split_huge_page_test.c
+> +++ b/tools/testing/selftests/mm/split_huge_page_test.c
+> @@ -34,8 +34,6 @@ uint64_t pmd_pagesize;
+>   #define PID_FMT_OFFSET "%d,0x%lx,0x%lx,%d,%d"
+>   #define PATH_FMT "%s,0x%lx,0x%lx,%d"
+>   
+> -#define PFN_MASK     ((1UL<<55)-1)
+> -#define KPF_THP      (1UL<<22)
+>   #define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
+>   
+>   int is_backed_by_thp(char *vaddr, int pagemap_file, int kpageflags_file)
+> @@ -49,7 +47,7 @@ int is_backed_by_thp(char *vaddr, int pagemap_file, int kpageflags_file)
+>   
+>   		if (kpageflags_file) {
+>   			pread(kpageflags_file, &page_flags, sizeof(page_flags),
+> -				(paddr & PFN_MASK) * sizeof(page_flags));
+> +				PAGEMAP_PFN(paddr) * sizeof(page_flags));
+>   
+>   			return !!(page_flags & KPF_THP);
+>   		}
+> diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
+> index 6a239aa413e2..41d50b74b2f6 100644
+> --- a/tools/testing/selftests/mm/vm_util.c
+> +++ b/tools/testing/selftests/mm/vm_util.c
+> @@ -338,6 +338,139 @@ int detect_hugetlb_page_sizes(size_t sizes[], int max)
+>   	return count;
+>   }
+>   
+> +static int get_page_flags(char *vaddr, int pagemap_file, int kpageflags_file,
+> +			  uint64_t *flags)
+> +{
+> +	unsigned long pfn;
+> +	size_t count;
+> +
+> +	pfn = pagemap_get_pfn(pagemap_file, vaddr);
+> +	/*
+> +	 * Treat non-present page as a page without any flag, so that
+> +	 * gather_folio_orders() just record the current folio order.
+> +	 */
+> +	if (pfn == -1UL) {
+> +		*flags = 0;
+> +		return 0;
+> +	}
+> +
+> +	count = pread(kpageflags_file, flags, sizeof(*flags),
+> +		      pfn * sizeof(*flags));
+> +
+> +	if (count != sizeof(*flags))
+> +		return -1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int gather_folio_orders(char *vaddr_start, size_t len,
+> +			       int pagemap_file, int kpageflags_file,
+> +			       int orders[], int nr_orders)
+> +{
+> +	uint64_t page_flags = 0;
+> +	int cur_order = -1;
+> +	char *vaddr;
+> +
+> +	if (!pagemap_file || !kpageflags_file)
+> +		return -1;
+> +	if (nr_orders <= 0)
+> +		return -1;
+> +
+> +	for (vaddr = vaddr_start; vaddr < vaddr_start + len; ) {
+> +		char *next_folio_vaddr;
+> +		int status;
+> +
+> +		if (get_page_flags(vaddr, pagemap_file, kpageflags_file, &page_flags))
+> +			return -1;
+> +
+> +		/* all order-0 pages with possible false postive (non folio) */
+> +		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
+> +			orders[0]++;
+> +			vaddr += psize();
+> +			continue;
+> +		}
+> +
+> +		/* skip non thp compound pages */
+> +		if (!(page_flags & KPF_THP)) {
+> +			vaddr += psize();
+> +			continue;
+> +		}
+> +
+> +		/* vpn points to part of a THP at this point */
+> +		if (page_flags & KPF_COMPOUND_HEAD)
+> +			cur_order = 1;
+> +		else {
+> +			/* not a head nor a tail in a THP? */
+> +			if (!(page_flags & KPF_COMPOUND_TAIL))
+> +				return -1;
+> +			continue;
+
+If KPF_COMPOUND_TAIL is set, do we use the same vaddr, or should we 
+advance to the next vaddr before continuing?
+
+
+> +		}
+> +
+> +		next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
+> +
+> +		if (next_folio_vaddr >= vaddr_start + len)
+> +			break;
+> +
+> +		while (!(status = get_page_flags(next_folio_vaddr, pagemap_file,
+> +						 kpageflags_file,
+> +						 &page_flags))) {
+> +			/* next compound head page or order-0 page */
+> +			if ((page_flags & KPF_COMPOUND_HEAD) ||
+> +			    !(page_flags & (KPF_COMPOUND_HEAD |
+> +			      KPF_COMPOUND_TAIL))) {
+> +				if (cur_order < nr_orders) {
+> +					orders[cur_order]++;
+> +					cur_order = -1;
+> +					vaddr = next_folio_vaddr;
+> +				}
+> +				break;
+> +			}
+> +
+> +			/* not a head nor a tail in a THP? */
+> +			if (!(page_flags & KPF_COMPOUND_TAIL))
+> +				return -1;
+> +
+> +			cur_order++;
+> +			next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
+> +		}
+> +
+> +		if (status)
+> +			return status;
+> +	}
+> +	if (cur_order > 0 && cur_order < nr_orders)
+> +		orders[cur_order]++;
+> +	return 0;
+> +}
+> +
+> +int check_folio_orders(char *vaddr_start, size_t len, int pagemap_file,
+> +			int kpageflags_file, int orders[], int nr_orders)
+> +{
+> +	int *vaddr_orders;
+> +	int status;
+> +	int i;
+> +
+> +	vaddr_orders = (int *)malloc(sizeof(int) * nr_orders);
+> +
+> +	if (!vaddr_orders)
+> +		ksft_exit_fail_msg("Cannot allocate memory for vaddr_orders");
+> +
+> +	memset(vaddr_orders, 0, sizeof(int) * nr_orders);
+> +	status = gather_folio_orders(vaddr_start, len, pagemap_file,
+> +				     kpageflags_file, vaddr_orders, nr_orders);
+> +	if (status)
+> +		return status;
+> +
+> +	status = 0;
+> +	for (i = 0; i < nr_orders; i++)
+> +		if (vaddr_orders[i] != orders[i]) {
+> +			ksft_print_msg("order %d: expected: %d got %d\n", i,
+> +				       orders[i], vaddr_orders[i]);
+> +			status = -1;
+> +		}
+> +
+> +	return status;
+> +}
+> +
+>   /* If `ioctls' non-NULL, the allowed ioctls will be returned into the var */
+>   int uffd_register_with_ioctls(int uffd, void *addr, uint64_t len,
+>   			      bool miss, bool wp, bool minor, uint64_t *ioctls)
+> diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+> index 1843ad48d32b..02e3f1e7065b 100644
+> --- a/tools/testing/selftests/mm/vm_util.h
+> +++ b/tools/testing/selftests/mm/vm_util.h
+> @@ -18,6 +18,11 @@
+>   #define PM_SWAP                       BIT_ULL(62)
+>   #define PM_PRESENT                    BIT_ULL(63)
+>   
+> +#define KPF_COMPOUND_HEAD             BIT_ULL(15)
+> +#define KPF_COMPOUND_TAIL             BIT_ULL(16)
+> +#define KPF_THP                       BIT_ULL(22)
+> +
+> +
+>   /*
+>    * Ignore the checkpatch warning, we must read from x but don't want to do
+>    * anything with it in order to trigger a read page fault. We therefore must use
+> @@ -85,6 +90,8 @@ bool check_huge_shmem(void *addr, int nr_hpages, uint64_t hpage_size);
+>   int64_t allocate_transhuge(void *ptr, int pagemap_fd);
+>   unsigned long default_huge_page_size(void);
+>   int detect_hugetlb_page_sizes(size_t sizes[], int max);
+> +int check_folio_orders(char *vaddr_start, size_t len, int pagemap_file,
+> +			int kpageflags_file, int orders[], int nr_orders);
+>   
+>   int uffd_register(int uffd, void *addr, uint64_t len,
+>   		  bool miss, bool wp, bool minor);
 
