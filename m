@@ -1,121 +1,116 @@
-Return-Path: <linux-kernel+bounces-761404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA78B1F9A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 12:32:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49183B1F9AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 12:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0DB63B68C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 10:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F301189925D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 10:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A52246BD2;
-	Sun, 10 Aug 2025 10:32:43 +0000 (UTC)
-Received: from mail.lichtvoll.de (lichtvoll.de [37.120.160.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0B0246767;
+	Sun, 10 Aug 2025 10:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="c6O+3OdX"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597C8198E9B;
-	Sun, 10 Aug 2025 10:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.120.160.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848591C4A13;
+	Sun, 10 Aug 2025 10:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754821963; cv=none; b=m6jPh5leNObINCxga0b9vCbucCtsc/1bEVMlBOs3H/fdpfpjKRVL4zf3Y/P2eOdIGSvAU9bamjjT0kZWfUUm9xFfY8yylV1wS/5F+kO5jg3Qrx9dpWo91ivJi9qBCl6Y5F4NGAAv7sTkMwHjBJw40LpWUVCRTDv9ZCe9g7SB3kI=
+	t=1754822356; cv=none; b=FmARPolFx5uZS0DUDAQOPqeh1WToKDJSK9Sv4a0us89zwRQAoZMGip9qVMI7uMNbJrd8WfDYMGcDtutQTuG6eCrseBG7RBCFYL5rMyCZjheILij50O35g1xSgnCkTYL7nUkXL0NnwzUNd60NgyqF3507TeD2dHdqKHI2pMllnTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754821963; c=relaxed/simple;
-	bh=8D9WEyhPPhhVKH+WCxVVbKm/SDCaoqn/KutdHv9zxqo=;
+	s=arc-20240116; t=1754822356; c=relaxed/simple;
+	bh=Ur8ZN6WppBJ3rQO/fpOXDAk/Dsyij99LBvAPXolM2SA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YRHeh+m0QyDx19gWe1Yl/wFJpvu3RReAqXlzG+9wqpVt1rqlJd1iAZUXEUxRi6XZmOtOm08JdkoE+AywfSITUeHd4pNIzVzgsnzfRmhekf+UmbgriCMR28n/twfoxxc8FPZNStctwpHmrCyrhQ1EZKf08VAmHmSeKfbAS/nOGvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de; spf=pass smtp.mailfrom=lichtvoll.de; arc=none smtp.client-ip=37.120.160.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lichtvoll.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtvoll.de
-Received: from 127.0.0.1 (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by mail.lichtvoll.de (Postfix) with ESMTPSA id E7DC912E133;
-	Sun, 10 Aug 2025 10:32:38 +0000 (UTC)
-Authentication-Results: mail.lichtvoll.de;
-	auth=pass smtp.auth=martin@lichtvoll.de smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Gerhard Wiesinger <lists@wiesinger.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-Date: Sun, 10 Aug 2025 12:32:38 +0200
-Message-ID: <22799288.EfDdHjke4D@lichtvoll.de>
-In-Reply-To: <e19849f2-4a39-4a09-b19e-cb4f291a2dc2@wiesinger.com>
+	 MIME-Version:Content-Type; b=l1EO+vGgoThAXFsQmBL+w67bbOfNBWI/yyecmaz6zkRZJd+bzn8hyks8RwSt4UQbqo04CcT+hfWkrrjAyvWl5dT+irbqNzg7dXQ4MAx0POHye+uSSYi1TtwmPHl/b+nP9Fgb6SOSDnN0OMwM58hlC9cL4QTzjRGXE7e96vq1lwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=c6O+3OdX; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1754822351;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DG3sN56rxqKOMFmRnaKRglG8cxswKXU4xjbArzpWD3Y=;
+	b=c6O+3OdXl8RKanSSM8cAM3jUKF7O5NGsSuH5+/skIi2RvWZSHrwQJr+/AqTkCPW2H+FZO8
+	hbs3CWUuPjxtAfyF+zPULBsG8vbRr2gUSRBP3Xdh5vwrlKxI0hxwSmFCsKkIdAYOVrtw/V
+	mWtrB7j85winhs8LjM7Sm0ZtgYHuBh0=
+From: Sven Eckelmann <sven@narfation.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Jonas Jelonek <jelonek.jonas@gmail.com>
+Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Markus Stockhausen <markus.stockhausen@gmx.de>,
+ Harshal Gohel <hg@simonwunderlich.de>,
+ Jonas Jelonek <jelonek.jonas@gmail.com>
+Subject:
+ Re: [PATCH v5 11/11] i2c: rtl9300: add support for RTL9310 I2C controller
+Date: Sun, 10 Aug 2025 12:39:08 +0200
+Message-ID: <13823964.uLZWGnKmhe@ripper>
+In-Reply-To: <20250809220713.1038947-12-jelonek.jonas@gmail.com>
 References:
- <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
- <e19849f2-4a39-4a09-b19e-cb4f291a2dc2@wiesinger.com>
+ <20250809220713.1038947-1-jelonek.jonas@gmail.com>
+ <20250809220713.1038947-12-jelonek.jonas@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; boundary="nextPart3006162.e9J7NaK4W3";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-Hi Gerhard, hi.
+--nextPart3006162.e9J7NaK4W3
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+Date: Sun, 10 Aug 2025 12:39:08 +0200
+Message-ID: <13823964.uLZWGnKmhe@ripper>
+In-Reply-To: <20250809220713.1038947-12-jelonek.jonas@gmail.com>
+MIME-Version: 1.0
 
-Gerhard Wiesinger - 10.08.25, 08:20:43 CEST:
-> On 28.07.2025 17:14, Kent Overstreet wrote:
-> > Schedule notes for users:
-> >=20
-> > I've been digging through the bug tracker and polling users to see
-> > what bugs are still outstanding, and - it's not much.
-> >=20
-> > So, the experimental label is coming off in 6.18.
-> >=20
-> > As always, if you do hit a bug, please report it.
->=20
-> I can now confirm that bcachefs is getting stable and the test cases
-> with intentionally data corruption (simulation of a real world case I
-> had) gets bcachefs back to a consistent state (after 2 runs of: bcachefs
-> fsck -f -y ${DEV}). That's a base requirement for a stable filesystem.
-> Version of bcachefs-tools is git
-> 530e8ade4e6af7d152f4f79bf9f2b9dec6441f2b and kernel is
-> 6.16.0-200.fc42.x86_64.
->=20
-> See for details, I made data corruption even worser with running the
-> destroy script 5x:
->=20
-> https://lore.kernel.org/linux-bcachefs/aa613c37-153c-43e4-b68e-9d50744be
-> 7de@wiesinger.com/
->=20
-> Great work Kent and the other contributors.
->=20
-> Unfortunately btrfs can't be repaired to a consistent state with the
-> same testcase. I'd like to be that testcase fixed also for BTRFS as a
-> stable filesystem (versions: 6.16.0-200.fc42.x86_64, btrfs-progs v6.15,
-> -EXPERIMENTAL -INJECT -STATIC +LZO +ZSTD +UDEV +FSVERITY +ZONED
-> CRYPTO=3Dlibgcrypt).
->=20
-> (I reported that already far in the past on the mailing list, see here:
-> https://lore.kernel.org/linux-btrfs/63f8866f-ceda-4228-b595-e37b016e7b1f
-> @wiesinger.com/).
+On Sunday, 10 August 2025 00:07:12 CEST Jonas Jelonek wrote:
+> Add support for the internal I2C controllers of RTL9310 series based
+> SoCs to the driver for RTL9300. Add register definitions, chip-specific
+> functions and compatible strings for known RTL9310-based SoCs RTL9311,
+> RTL9312 and RTL9313.
+> 
+> Make use of a new device tree property 'realtek,scl' which needs to be
+> specified in case both or only the second master is used. This is
+> required due how the register layout changed in contrast to RTL9300,
+> which has SCL selection in a global register instead of a
+> master-specific one.
+> 
+> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
 
-Thanks for this great find and these test results.
+Tested-by: Sven Eckelmann <sven@narfation.org>
 
-On a technical perspective I still think the Linux kernel is a better=20
-kernel with BCacheFS included.
+Tested the patchset on an RTL9312 device with both SFP modules and an POE MCU 
+which requires I2C Block transfers (but not SMBus).
 
-And write this without having had any issues =E2=80=93 except for bad perfo=
-rmance=20
-especially on hard disks, but partly also on flash =E2=80=93 with BTRFS. An=
-d I use=20
-it on a couple laptops, some virtual machines and a lot of external disks.=
-=20
-But not on a multi device setup. I had a BTRFS RAID 1 for a long time.=20
-This also has been stable since kernel 4.6 up to the time I still used it.
+Regards,
+	Sven
+--nextPart3006162.e9J7NaK4W3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-So I did not really have much of a need to fsck BTRFS.
+-----BEGIN PGP SIGNATURE-----
 
-Best,
-=2D-=20
-Martin
+iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaJh2zAAKCRBND3cr0xT1
+y6rPAQC/BU2mCIX9Aeu/U8eQoLTcIxd8awoI1PYPtLo78O1PjAD9Eqv7NMyGcL+d
+ltpkoAvmlxV3ahsYxhCuACEP/UQm8gk=
+=7TNJ
+-----END PGP SIGNATURE-----
+
+--nextPart3006162.e9J7NaK4W3--
+
 
 
 
