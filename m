@@ -1,176 +1,161 @@
-Return-Path: <linux-kernel+bounces-761305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A81CB1F839
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 05:05:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC540B1F83D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 05:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC313BC68E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 03:05:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C94F9189B7F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 03:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E40A1A315C;
-	Sun, 10 Aug 2025 03:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966401494A8;
+	Sun, 10 Aug 2025 03:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exYXhdii"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JfhLq573"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFAE17333F;
-	Sun, 10 Aug 2025 03:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFAA19CC28
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 03:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754795150; cv=none; b=tmq/2pDoSR/NbuWfmDO8hheQeEbsaLhlr8x03eW+OlNUcQx4All0P+nbDNA7UlH79opiTEZUuEVjcJYsV8GDFCf+GMX229B4kHH7ND8u/1kTmjJi3EuVWoumYwxiiPH4h2MnkTMjnBtZsuzy3WLYktWAY/r0HFqDFbFhUGrzI8k=
+	t=1754795883; cv=none; b=ayXPoXVvqIWZU03gvTfhFENnAYNU+KMzOhue9/YvqI8XPx3GnBleAxh3GkcuscfvV0Ku1oMm6FkRkqPBxb4i2qDP5cqr+NpQmlijt/Qv2U+cBaCX1cCrh0GKBY7YKNZYSdP59JAp0CrhGqCtgzf59WSvYUQ1PlVxlOdd1tC1UVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754795150; c=relaxed/simple;
-	bh=kVXO32XWFGFryq+9u4jMGw/2BQMQgJzRVyV+Y/D478Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QfNyBD0WsRuFRIhv3a8LWM0uAyYfw5ogyk05XSwmWnsVUJT5USv4lpt61hqAQgyFCGr5lBpHP07sY0zQRpD+xxRIb60YfsED/vQFimzGfvwYQk9x31ZiK57aaZAWdBUffdkm2Q5dYlSETEtpBA1Qb2P3L7DFExT6YeXrbWnEVKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=exYXhdii; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-7698e914cd2so4385353b3a.3;
-        Sat, 09 Aug 2025 20:05:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754795148; x=1755399948; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z/lWdjE3fEvYN7U+VU8qdCr2mZquMa68Yf5oLPz/zjM=;
-        b=exYXhdii9sU3dH8OXIsCfC8jSw1z4/SZDe7d7ICOBLgKGe5D8XS7i79z+v9MqrQwPm
-         8+EqjvaVnv+qMtURWVYy4LpZMv+AkiSVTkVHeYVOjd5cU+c4edIClzLA3IQ+KK4EnYrK
-         CCBG5QiC5948kCOq+22hgXXa+hfrUbyAFawpSn1C7O0+/2Tsq/94v0iMj8MRpCRuge+S
-         I8naxgO+DTFab3bCFjsqCSILBOuCx5EIZq2rHpacJOdNaDSkp/n955nnUdE8RIiR52P8
-         O6Pxk1WSk7YmlQz23YefTaaag50TV3RkcaDP/1klNvVQTKq2kGLvszHCI7uMe1pA1iqO
-         5nuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754795148; x=1755399948;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z/lWdjE3fEvYN7U+VU8qdCr2mZquMa68Yf5oLPz/zjM=;
-        b=V8oxCkJ6a+vq5tels9NC4KZcIfHMcM2qXsH2Fa9LhllmCMf8g/FYPGNg9MTBKT/Y0t
-         /rjP/Aw8U79bBN0yJCNy3xS1k8Y+f5oXQCJ2W6K0ClX7ySfo5s+Na0z+d2t/Kz3qRZpc
-         qkWfcy+G6IwlJJ6M09MujHhl2V0Cr3Qs4C2xpCMGX4xqS9U283dnQMIBovgiuslaGGoJ
-         PZnT4rKT26jaydM51feybdJkVvIVoMQwie4ivAIu3Iwt8fi3ea6Vl+obHiR3a4mjmjBx
-         H17+e9ZKSpdAt9TSJIwUTNVnefoWPZnPtGrLhFmamvSo/KlC0oXUpky3oRQgQhNc1ooo
-         hixw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgEDxS5n+kYrlTjfi7WGNiIZsCX+lgPPgAlVdX6fHB+QSQNWx0/uVJ6Sbv58uKENErJG0=@vger.kernel.org, AJvYcCVSWvG/1e1kkLxLSiJcWh0k+lQE4bEQ9Id7bO9C81/gw8tIoDM8e8wbNSzvOZSZASYgLQjDVW7qKBTegDNS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLdkkzRxRUiIwGNI4fO7JbRefURS02qg+T+FERtxwtH7JBc978
-	52xF/ZcCzwy9chPtLrIb3/+/mmSic8xg+ujdR46zRkQpoIrutSq7aimc
-X-Gm-Gg: ASbGnctef11rl2s/MpAeWlB/i3HcW+NN9D16wDpb2D+sAuxaDIdydwNM7A9w53QBZ91
-	xkWDakumvCtEN4PzHJWD9N2kG18sWCr03fwJxKBIGAJKGpYmiDGpwTRbNZobKXkSrbT2yaNbPiI
-	6ZdIHKR83TUXrWFXqiGSjS7k2iNXz26mIEf5skRk/mZ4tnZP8pEAs7HosHVaoIyuh+ExILnU3LV
-	HRceCsN8kCbPnDXSvXY6Htx3//07aVUpHOlA2nEQNmlmK1CrRidsXzsF2nfOlIKAcrfSIRXRroL
-	Me1SfGycHtqoROKktoOD/1zu7j0CRjUaPaaZkv/cFn9j5tUb0lc0HpzkznyFHrjalmD9nY7HEDL
-	41tulaClU8QDWSNAuNa8=
-X-Google-Smtp-Source: AGHT+IGpQgcJ07Rb0COrFVRfwZ1+k4jjANaMerJrGc10MFgaKDK94feNSeCO72ZP1Id+CGk4jqhMnw==
-X-Received: by 2002:a05:6a00:2d14:b0:76b:caa2:5bd8 with SMTP id d2e1a72fcca58-76c4617fc32mr12233675b3a.13.1754795148132;
-        Sat, 09 Aug 2025 20:05:48 -0700 (PDT)
-Received: from 7950hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bdd2725c9sm21276265b3a.6.2025.08.09.20.05.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Aug 2025 20:05:47 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: peterz@infradead.org,
-	alexei.starovoitov@gmail.com
-Cc: mingo@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	jani.nikula@intel.com,
-	simona.vetter@ffwll.ch,
-	tzimmermann@suse.de,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH tip 3/3] sched: fix some typos in include/linux/preempt.h
-Date: Sun, 10 Aug 2025 11:04:42 +0800
-Message-ID: <20250810030442.246974-4-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250810030442.246974-1-dongml2@chinatelecom.cn>
-References: <20250810030442.246974-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1754795883; c=relaxed/simple;
+	bh=22P7DLdflwAsPb30ly4UPh8Dai9AvMRYCaY2LSYqiPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RSQwy3sIUyP2FgGk21QAQo/+VMAU2vjLnidu64YAAMdaqmMRZSC9XTsdlo0kP6Wztz8oRweivyyrL+abvnobVh8HnICFIFy9YqiJTm7Ak+h4Mxut+HkHU0ARJyvITcEDgMvsITa6o7JXuK+piPGGhXYFBi67LRKTPZkkrHO5vLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JfhLq573; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 9 Aug 2025 23:17:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754795868;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vXbU2WwUnaf/JbXlfo+A6q0wkok3ZP8oUqJ1zUirNHk=;
+	b=JfhLq573Ft+AsgCIcSkHh2MDsQPDPISbI9kWXxAahlkHU91F0XI8gq7BMK/FLstwjJKApi
+	yGetRS021Vrb2uSiPfjdwos+XcCUAdYhV3uqz6vaY8rs2fUy+/cKLBCz4YWRyWPyi5xT/k
+	cEgTWRCxY0o1QCDKWCehmMsPKaKy5wo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Josef Bacik <josef@toxicpanda.com>, Aquinas Admin <admin@aquinas.su>, 
+	Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	"Carl E. Thompson" <list-bcachefs@carlthompson.net>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs changes for 6.17
+Message-ID: <k6e6f3evjptze7ifjmrz2g5vhm4mdsrgm7dqo7jdatkde5pfvi@3oiymjvy6f3e>
+References: <22ib5scviwwa7bqeln22w2xm3dlywc4yuactrddhmsntixnghr@wjmmbpxjvipv>
+ <f4be82e7-d98c-44d1-a65b-8c4302574fff@tnxip.de>
+ <1869778184.298.1754433695609@mail.carlthompson.net>
+ <5909824.DvuYhMxLoT@woolf>
+ <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
+ <20250809192156.GA1411279@fedora>
+ <2z3wpodivsysxhxmkk452pa4zrwxsu5jk64iqazwdzkh3rmg5y@xxtklrrebip2>
+ <20250810022436.GA966107@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250810022436.GA966107@mit.edu>
+X-Migadu-Flow: FLOW_OUT
 
-There are some typos in the comments of migrate in
-include/linux/preempt.h:
+On Sat, Aug 09, 2025 at 10:24:36PM -0400, Theodore Ts'o wrote:
+> On Sat, Aug 09, 2025 at 04:37:51PM -0400, Kent Overstreet wrote:
+> > showed that it was possible, but the common consensus in the user
+> > community, among people with the data (i.e. quite a few of the distros)
+> > is that btrfs dropped the ball, and regressed on reliability from
+> > ext4/xfs.
+> 
+> Kent, you eeem to have ignored the primary point of Josef's message,
+> and instead, prceeded to prove *exactly* what he was pointing out.
+> Let me quote the most relevant parts of his e-mail, in case you missed
+> it:
+> 
+> > Btrfs doesn't need me or anybody else wandering around screaming
+> > about how everybody else sucks to gain users. The proof is in the
+> > pudding. If you read anything that I've wrote in my commentary about
+> > other file systems you will find nothing but praise and respect,
+> > because this is hard and we all make our tradeoffs.
+> >
+> > That courtesy has been extended to you in the past, and still
+> > extends to your file system. Because I don't need to tear you down
+> > or your work down to make myself feel good. And because I truly
+> > beleive you've done some great things with bcachefs, things I wish
+> > we had had the foresight to do with btrfs.
+> >
+> > I'm yet again having to respond to this silly childishness because
+> > people on the outside do not have the context or historical
+> > knowledge to understand that they should ignore every word that
+> > comes out of your mouth. If there are articles written about these
+> > claims I want to make sure that they are not unchallenged and thus
+> > viewed as if they are true or valid.
+> > 
+> > ...
+> > Emails like this are why nobody wants to work with you. Emails like
+> > this are why I've been on literally dozens of email threads, side
+> > conversations, chat threads, and in person discussions about what to
+> > do when we have exceedingly toxic developers in our community.
+> > 
+> > Emails like this are why a majority of the community filters your emails to
+> > /dev/null.
+> > 
+> > You alone with your toxic behavior have wasted a fair amount of mine
+> > and other peoples time trying to figure out how do we exist in our
+> > place of work with somebody who is bent on tearing down the
+> > community and the people who work in it.
+> 
+> And how did you respond?  By criticizing another file system, and
+> talking about how wonderful you believe bcachefs to be, all of which
+> is beside the point.  In fact, you once again demonstrated exactly why
+> a very large number of kernel deevlopers have decided you are
+> extremely toxic, and have been clamoring that your code be ejected
+> from the kernel.  Not because of the code, but because your behavior.
 
-  elegible -> eligible
-  it's -> its
-  migirate_disable -> migrate_disable
-  abritrary -> arbitrary
+I would dearly love to have not opened that up, but "let's now delete
+bcachefs from the kernel" opened up that discussion, because our first
+priority has to be doing right by users - and a decision like that
+should absolutely be discussed publicly, well in advance, with all
+technical arguments put forth.
 
-Just fix them.
+Or was that going to happen without giving users advance notice?
+Without a discussion of why we need a filesystem that's prioritizing
+basic reliability and robustness?
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- include/linux/preempt.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Moreover -
 
-diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-index 92237c319035..102202185d7a 100644
---- a/include/linux/preempt.h
-+++ b/include/linux/preempt.h
-@@ -372,7 +372,7 @@ static inline void preempt_notifier_init(struct preempt_notifier *notifier,
- /*
-  * Migrate-Disable and why it is undesired.
-  *
-- * When a preempted task becomes elegible to run under the ideal model (IOW it
-+ * When a preempted task becomes eligible to run under the ideal model (IOW it
-  * becomes one of the M highest priority tasks), it might still have to wait
-  * for the preemptee's migrate_disable() section to complete. Thereby suffering
-  * a reduction in bandwidth in the exact duration of the migrate_disable()
-@@ -387,7 +387,7 @@ static inline void preempt_notifier_init(struct preempt_notifier *notifier,
-  * - a lower priority tasks; which under preempt_disable() could've instantly
-  *   migrated away when another CPU becomes available, is now constrained
-  *   by the ability to push the higher priority task away, which might itself be
-- *   in a migrate_disable() section, reducing it's available bandwidth.
-+ *   in a migrate_disable() section, reducing its available bandwidth.
-  *
-  * IOW it trades latency / moves the interference term, but it stays in the
-  * system, and as long as it remains unbounded, the system is not fully
-@@ -399,7 +399,7 @@ static inline void preempt_notifier_init(struct preempt_notifier *notifier,
-  * PREEMPT_RT breaks a number of assumptions traditionally held. By forcing a
-  * number of primitives into becoming preemptible, they would also allow
-  * migration. This turns out to break a bunch of per-cpu usage. To this end,
-- * all these primitives employ migirate_disable() to restore this implicit
-+ * all these primitives employ migrate_disable() to restore this implicit
-  * assumption.
-  *
-  * This is a 'temporary' work-around at best. The correct solution is getting
-@@ -407,7 +407,7 @@ static inline void preempt_notifier_init(struct preempt_notifier *notifier,
-  * per-cpu locking or short preempt-disable regions.
-  *
-  * The end goal must be to get rid of migrate_disable(), alternatively we need
-- * a schedulability theory that does not depend on abritrary migration.
-+ * a schedulability theory that does not depend on arbitrary migration.
-  *
-  *
-  * Notes on the implementation.
--- 
-2.50.1
+"Work as service to others" is something I think worth thinking about.
+We're not supposed to be in this for ourselves; I don't write code to
+stroke my own ego, I do it to be useful.
 
+I honestly can't even remember the last time I wrote code purely for
+enjoyment, or worked on a project because it was what I wanted to work
+on. My life consists of writing code base on what's needed; to fix a
+bug, to incorporate a good idea someone else had, to smooth something
+over to make someone else's life easier down the line. Very rarely does
+it come from my own vision.
+
+My feelings are entirely secondary to the work I do.
+
+And yet again, in this thread, we keep hearing about how pissed off
+people are, and how that's supposed to be our primary concern. I'm
+afraid I can't agree.
+
+And if someone's going to start outright swearing over technical
+criticism, that's a flagrant CoC violation - and just beyond
+unprofessional. That is one of the interactions you guys are apparently
+basing this one, and that wasn't me.
+
+And I have to point out, this has been escalated, over and over and
+over, over a patch that was purely internal to fs/bcachefs.
+
+I think you guys have been taking this a bit too far.
 
