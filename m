@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-761385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB0CB1F975
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:10:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32ECBB1F977
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D812189729A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1A713B8F9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B609F23E23C;
-	Sun, 10 Aug 2025 09:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193E123B611;
+	Sun, 10 Aug 2025 09:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0uftgnK"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Dgsk0sQB"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DA01CBA18;
-	Sun, 10 Aug 2025 09:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FC422B5A3
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 09:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754817022; cv=none; b=Q3ZbWYjWu2axlKkxO03WslVEO7Oo01al1uXfe0HjtGiCYwWTVe7Mch2Jq5I5VKu0Rx7Pavw1dECgZw619j5MkDnAYRU/u9/7alvaFmlOf47P+7jxFFEOIaMDGaOflZJgSsxcLETM03S20kY6uJPH3/pE3LpPMBpdADUhEyJ95Yg=
+	t=1754817696; cv=none; b=Zb3hgmc+5fgxcfd4VHHa33cXQdE/3ijGPOuHmm5e8c0Yll9YrQMjKXPIBIxZJWZaxnDFLhDIIAxJ5ZWDQ0QwjYcA4DsHwxbvUt4n5TP6HJXLKqxAWjfA1G1xiajOhxLcUyLNo/KeTZ7Lug2mntLIITs8p7yTxonPdNe3wOesSMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754817022; c=relaxed/simple;
-	bh=AarUpmoqBH0VjpicWfUBDo75sYZonSW04kSonv2nz38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CAMbJ9LPDbMGS49289qaNdzXB+YGX43+DwXXy6jHGpof+Eny0QAklQOe00i1KExEtXGGA0YMkCkVnzqiU1FB9RGkS6vS7JfFhybvRQGovmAv9g7tMt3cPNJrhhZwpfLeVCqHE4sGR1y/y4j4nDO5VMKllnS+tbGwHr5EnzDavAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U0uftgnK; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4538bc52a8dso22267815e9.2;
-        Sun, 10 Aug 2025 02:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754817017; x=1755421817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WvZTBUTJuWW1WaJXGc+vnqzxzvAXh3a0z05/pfxtXiA=;
-        b=U0uftgnKdwJ1CgvW+YM/vtcHynV/6pd3BkHiqYclvPFsz+o21y77CqHaeApAc5QYQV
-         NBpucHWDMqzTIrPD7MWsoDLyGHgdEu+elJCgLcfBZYFYl2zPzX+WIV5/+vcfmi4xjkp5
-         Kt7MiiDSwaOm3seV/kFJssO5bjuopDJPXhQanwznLUQFI9P3QDSoTbAt2akaYvfqzFJ8
-         nIatqt6F19nkfh+7KHYM1dXDX1RyYOmCWmar7H7CWIcOkotAJdILWcKimrsGdYcp5jUk
-         CDfhCdEK3ej03sbibTZ4Cas6LcLOhcjg53uh9qZo4/z4IQPYqBUPurRQZf0p4F6YiLhE
-         gl/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754817017; x=1755421817;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WvZTBUTJuWW1WaJXGc+vnqzxzvAXh3a0z05/pfxtXiA=;
-        b=siIkatgnEHdLhyJM9upni66ASzHbzKi9HVGuJZU0HwzHHAxaf4xOVFlHSEzdHAfi+o
-         HZrX/FVGr1sQfbpKpmTI9UnN18ZxEmhOfW/iRxX5pZmjIGqMWUGMOXc2Erc1WJHrKd6U
-         SguQBRCP3YsGxICR6buyh29TKJsq9RlgcVfaaBXIDLL2CRk8UngDUAY8a6oowv72W5VV
-         JHkPFBxcn/MqcaFXFutWvmR/vveMFCFNYGzdErejasLphZrEbchYmg7dhFTSBnh+fSGx
-         j9Pi7XJZUghIl9Hqtn6wDvtEMGAXRFSuBTDHFmuTmT0AXm0008FPttk750JuLBjVXq+y
-         g4LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUjaP6vimoDTTO4YYLpJaIQRjmvqnAWIVCDmoLBFx7L15TrFwoVXycmOr6beOkKEY3YVi+fgOlW3KP@vger.kernel.org, AJvYcCXmdWkJyzzxrNMsZJ3LJrmF92UEiaoJrWQ6QrhKnV68nsQcEJ0CbsDGFVwZ1bRTybKXeQghrjnz6paJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoFSak81AFSb7Y9L48TARGY8dwmhwxZdkeVm+2n/WF0WzIGq/S
-	JRDpTBirZWheHZDtEHkF3B5PheKShDzHfxkBd8Y5FI8kpxZAVr7wI4JSDOz4Jw==
-X-Gm-Gg: ASbGncsdNlyIj2StrSHeFZ9pQqutcee6BXJ/Q7Q7jF1SsslkibL8JrATpSFb2yReO8K
-	KLNWO3L3O3ioLZJZDezFe6EkKU1NSHfZpIiTlm4n/I1ez6bUYEOjtJqjrIJfbOBDAboF3IgBQ1r
-	6ld2fgCZd2Z9aPKeWZsoQv7dktBeWml5mMuG8rRIK9RXCKR20JR6w8GuAhazp1P/rSQFMXgsvpD
-	ynlJ7B1PeDrn8wATPYNJVVnrkDVKxSbVLfSKB0Yd6L3ioug/lfmvR1vDRc+3lvXBf2K/fsqeXbS
-	cyyVGVhhFahETziky3kqOcbfXiq3543gbvutom0kTb0t+cDdS/wZmqD6SjG2KaJxrh0uZtaxaTz
-	QTEZIf+GTWmYq8g/olpFPp/cgER0/vbr3anXxHkEhqMOkfceUNp7+JqOjI/ElvQRz2kwdtX8Y0F
-	Es9RD4vGUsJo+h3DfXn6NZsmA9C89ioAkH
-X-Google-Smtp-Source: AGHT+IEI39Qe0sPacI0gnFG0jDx8f2VGWrXmRDWrdvWPyCAqwFKtJHGu0UEBwNgIX4mRIqCYJQCItQ==
-X-Received: by 2002:a05:600c:c0d2:10b0:459:ea5d:418b with SMTP id 5b1f17b1804b1-459f4eb3fcemr48468855e9.9.1754817016582;
-        Sun, 10 Aug 2025 02:10:16 -0700 (PDT)
-Received: from ?IPV6:2001:9e8:f12c:bb32:3d75:9109:b5a7:a261? ([2001:9e8:f12c:bb32:3d75:9109:b5a7:a261])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8ff860acbsm10209684f8f.51.2025.08.10.02.10.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Aug 2025 02:10:16 -0700 (PDT)
-Message-ID: <97ff6fe9-0dfc-4116-99a0-7efcdd16f8dc@gmail.com>
-Date: Sun, 10 Aug 2025 11:10:15 +0200
+	s=arc-20240116; t=1754817696; c=relaxed/simple;
+	bh=VFwkm31i9/tKE057pPNZIoanm3t4mIphBXmwDC5Uils=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rulTB1eyS4IQSV41YIjfZHlo/M6rIOiaeZ0RZAlL8bAlZIgfAKVocIpCLwVRA4mBR+i0qgv87ZgoXjV5HR65YCivZu+6wvfxE8MtS1oHu/A7gKK0lSWKadhOIPaIwCPaZW33h7Di5GM/5bcBnFkgzdoGTIGJNpJ2hOSzUf7gPA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Dgsk0sQB; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1754817692;
+	bh=VFwkm31i9/tKE057pPNZIoanm3t4mIphBXmwDC5Uils=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dgsk0sQB21nZ9PzQOVKk2iiVoV1rTBZ5/5544czQpjYx8SmgqZ+upRXfobmMV3Tdl
+	 EHD06Lwa9ztRq7cgLzzHGa3RH5wRImcyMtJdnzdv4ITH9cshabt7sTkwVTH83rm7wy
+	 PNrs76CSpHDZ1gBp1ik1g3sPCHBxUPW+80Bt9xIE=
+Date: Sun, 10 Aug 2025 11:21:32 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Daniel Palmer <daniel@0x0f.com>
+Cc: geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] m68k: Add target for lz4 compressed vmlinux
+Message-ID: <e4ac35a6-f521-47fa-b949-b827197ca537@t-8ch.de>
+References: <20250809015529.373693-1-daniel@0x0f.com>
+ <5dd0a031-dd7b-4078-b1a8-6b760248390b@t-8ch.de>
+ <CAFr9PXmF-AOL8yj9FntHw+b1A8HWKNeAHU=rx7Dk7pfi1N_4fA@mail.gmail.com>
+ <d7974cbe-41b3-4994-8982-30c8f660e65f@t-8ch.de>
+ <CAFr9PXkJCPm9UwV8-FeZxhB+ODxGgtbKdD3n90UjqyPGF8tMSw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 07/11] i2c: rtl9300: move setting SCL frequency to
- config_io
-Content-Language: en-GB
-To: Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>,
- Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Harshal Gohel <hg@simonwunderlich.de>,
- Markus Stockhausen <markus.stockhausen@gmx.de>,
- Sven Eckelmann <sven@narfation.org>
-References: <20250809220713.1038947-8-jelonek.jonas@gmail.com>
- <9a1616dc-34b2-42fd-8f64-9d46fa3bb92f@web.de>
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-In-Reply-To: <9a1616dc-34b2-42fd-8f64-9d46fa3bb92f@web.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFr9PXkJCPm9UwV8-FeZxhB+ODxGgtbKdD3n90UjqyPGF8tMSw@mail.gmail.com>
+
+On 2025-08-10 18:08:15+0900, Daniel Palmer wrote:
+> On Sat, 9 Aug 2025 at 21:29, Thomas Weißschuh <linux@weissschuh.net> wrote:
+> > On 2025-08-09 20:35:39+0900, Daniel Palmer wrote:
+> > > On Sat, 9 Aug 2025 at 16:50, Thomas Weißschuh <linux@weissschuh.net> wrote:
+> > I would continue with vmlinux.tmp. It might not actually be stripped.
+> >
+> > quiet_cmd_precompress = PRECOMPRESS $@
+> > ifndef CONFIG_KGDB
+> >       cmd_precompress = cp $< $@
+> > else
+> >       cmd_precompress = $(STRIP) $< -o $@
+> > endif
+> >
+> > vmlinux.tmp: vmlinux FORCE
+> >         $(call if_changed,precompress)
+> >
+> > targets += vmlinux.tmp
+> >
+> > This will also correctly handle CONFIG_KGDB changing.
+> >
+> > (Maybe the naming can be improved)
+> 
+> Nice, that's a lot better and I've reworked my patch to do that.
+
+If you also modify the existing code, you should split up the changes
+over multiple patches. First split out the rule for vmlinux.tmp, then
+switch over the compressors. Each patch should do a single step and
+explain why it is done.
+
+And I am still not happy about the naming in my example :-/
+
+> > And for the compressor invocations we already have predefined commands:
+> >
+> > vmlinux.gz: vmlinux.tmp FORCE
+> >         $(call if_changed,gzip)
+> 
+> I also did this for all of the targets and $(call if_changed,lz4)
+> results in an lz4 file with the old header format[0] and 8MB block
+> size which is not what I need.
+> So v2 will have a patch to add a helper to generate that style of lz4
+> in scripts/Makefile.lib
+
+Modifying generic files in scripts/ will be more effort to argue for.
+Also that change should be its own patch again.
+
+I am wondering a bit why the legacy header format does not work.
+The manpage of lz4 specifically mentions that it is commonly used for
+Linux kernel images. Which is exactly what we are doing here.
+Does your usecase work not work with the legacy header? If not, please
+mention this in the patches.
 
 
-On 10.08.2025 10:49, Markus Elfring wrote:
-> …
->> +++ b/drivers/i2c/busses/i2c-rtl9300.c
-> …
->> +static int mshv_vtl_sint_ioctl_set_eventfd(struct mshv_vtl_set_eventfd __user *arg)
->> +{
-> …
->> @@ -244,7 +245,7 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
->>  
->>  	mutex_lock(&i2c->lock);
->>  	if (chan->sda_num != i2c->sda_num) {
->> -		ret = rtl9300_i2c_config_io(i2c, chan->sda_pin);
->> +		ret = rtl9300_i2c_config_io(i2c, chan);
->>  		if (ret)
->>  			goto out_unlock;
-> …
->
-> Under which circumstances would you become interested to apply a statement
-> like “guard(mutex)(&i2c->lock);”?
-> https://elixir.bootlin.com/linux/v6.16/source/include/linux/mutex.h#L225
-
-Didn't know about that before but no objections against it. Can integrate that
-in the next version.
-
-The link Sven posted was quite helpful on that, thanks! This looks quite similar
-to how it is in Rust, that you just lock/guard it and it is dropped at the end of
-the current scope. I like that :)
-
-> Regards,
-> Markus
-
-Best regards,
-Jonas
+Thomas
 
