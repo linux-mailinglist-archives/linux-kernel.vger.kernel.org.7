@@ -1,186 +1,228 @@
-Return-Path: <linux-kernel+bounces-761390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87DDB1F983
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:42:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B48B1F985
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 469573A9FA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4CE164E41
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDF2244660;
-	Sun, 10 Aug 2025 09:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8158238C16;
+	Sun, 10 Aug 2025 09:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CoWHlNtN"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OIElfDo5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC948BEE;
-	Sun, 10 Aug 2025 09:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4F346447
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 09:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754818918; cv=none; b=PjYk5PafGF7bX456Thvid9ROUhIY3YZGw9OT5RrB97CtMVKS2L/bvDGD9vGDZQQfIhJbwHcU5gxfv9b7keOiBccsysiVdeTLANyTagMwJHHAlYmH68A7rNwIjR4uhIj6R8QSoQpW9C9bVh9Zk/pknXpaly+F0z6JT/zowa+diXg=
+	t=1754819158; cv=none; b=LV0VxrXemy9diaUoLqH5qEZEN871yQV6aP9opscf9jhludcAJynKWe3CZ1X0fiYUzFCtRRDjDCcGnLFEJvMmt7b5jWQl+VEUoOz5axFRB1C/QBQKz0tpXYfjOPuz4l0uv4z+TFWTL4FOBTiwxK0PC0QOmLnavYitspMcARWFZoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754818918; c=relaxed/simple;
-	bh=HxXKid4gzZk4f/k8yE6zqulz1MKpGqJC7x8XQetKVoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llGajP773Hva7wf2ArwFUzn6AjuRSEjx7fUKEe9tDObjlu6yzAdjiHStRpovRD/JoXH53tDCV8r9J8+ZChuOcNSi6DioV3hZ+WsHFBtm+pJRhP6VjWl8jt0SRUsZk7Xui7xuxmPGLD8YWJwIJ53jhltsv0rvdtH+g592bOWtjQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CoWHlNtN; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57A9UafY032244;
-	Sun, 10 Aug 2025 09:41:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=eUIR9POZpK7ETPFvmtBrWE7qW4mYsu
-	7xez1pExehzP4=; b=CoWHlNtNMMgM5y6tSJwAKdnDkuiAO1MUkmkZErW9DvM5+M
-	xKYVsUAK4e01ObzL6O1vyYWQ/xpXeIOSwH2Y4MYeRdDHv5MQjCcbhcIfTEfCnry9
-	01kXXcCMxfJrdPwwbYO/MXLAhNnzWkFEJMak8w07WNA/p2q8wepCKoklugb+C7Ue
-	y6b0UOKiNlRlJoYbtF8eq41wQnMoJNvsubOitJ9j5+eFuGs3mUwu5qtlnFuI3QgH
-	53bIGSgAyDTcPJ90Vx2beSFf2sprUaCBWRh9V8VBnzAaQgAHoxIP1d/XsDHT/eHC
-	x3PJM9L3R6Xfs7sDnEyPfBggy0YOJXs4vJ7irG4g==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dwucvss0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Aug 2025 09:41:49 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57A9fmao020659;
-	Sun, 10 Aug 2025 09:41:48 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dwucvsrw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Aug 2025 09:41:48 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57A6F3df010622;
-	Sun, 10 Aug 2025 09:41:47 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48egnu9hmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Aug 2025 09:41:47 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57A9fkRQ16122242
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 10 Aug 2025 09:41:46 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F0E5F20043;
-	Sun, 10 Aug 2025 09:41:45 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B276520040;
-	Sun, 10 Aug 2025 09:41:43 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.216.43])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sun, 10 Aug 2025 09:41:43 +0000 (GMT)
-Date: Sun, 10 Aug 2025 15:11:41 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 07/13] generic/1228: Add atomic write multi-fsblock
- O_[D]SYNC tests
-Message-ID: <aJhpVROJPYlz2gNB@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1752329098.git.ojaswin@linux.ibm.com>
- <ae247b8d0a9b1309a2e4887f8dd30c1d6e479848.1752329098.git.ojaswin@linux.ibm.com>
- <20250717163510.GJ2672039@frogsfrogsfrogs>
- <aIDpdg_SibBYFAPy@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <20250723145423.GN2672039@frogsfrogsfrogs>
+	s=arc-20240116; t=1754819158; c=relaxed/simple;
+	bh=zUrNJw5KCyuPIT/2MYMWIMwi9Mii8MMO+nFvlFlxcnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a5rmMrLmnnXbARVHco/s3cQ1gE+jAhPZCvXmEXod6ZCAGHn2qenu0uzhiTj7eIrHfU72hU3XUA5tjSOBNxFQJPIuQJWNkAep1X4Wlsue2E5GEIbbDB/vBqLB5HYR5rbXzo+AbSbFifpi7k2iWuw4IpYnRCxJQ/lPB/4gqoLllQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OIElfDo5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754819155;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WYqoKKAs3JUx+DxFrg2IMR5YpWxx998Htycfaz+QPVc=;
+	b=OIElfDo5PTBjFfJYF+yiuSbsje6mo8NCO5lXL0XNgQUPD8v3Bv6LiRDrk5k1UxoBJgf/N0
+	WYtn1nq7MgIJWm7EMBHzpga/Ba7GYhzkMWg7g1eCvdhCyD68jpzIhE+IxVTtyXEhncaAJ2
+	yNX7JiyJz53NktosVjLmKEeIDUfO6Tw=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-101-_F_rI053MAafti46I1XXug-1; Sun, 10 Aug 2025 05:45:53 -0400
+X-MC-Unique: _F_rI053MAafti46I1XXug-1
+X-Mimecast-MFC-AGG-ID: _F_rI053MAafti46I1XXug_1754819152
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b31f112c90aso2961975a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 02:45:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754819152; x=1755423952;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WYqoKKAs3JUx+DxFrg2IMR5YpWxx998Htycfaz+QPVc=;
+        b=DZ5cQtTNJqsAIsAU+wkzapvhH0jfKXt7jeKDDongynz9hx6hgVh93xetjp+WVtHp5S
+         bhaDf2ybtlNLszT3VdlK5GRJSrx9DHHHaDqlLRiWSaSsMut6af2pIbL6FEATMHUQEfo+
+         dp/nxUmNvtjzU3OQ7CtmuywDVkSraEJBaStX2HlfQ0nxapxQLtD7haA31pWzGD5GmqWg
+         DgGZjwr8eat6draqnrYdStzeWVpCDdAupZT/d3jmLdGAv9mfsXO7CDcl7RIBaeQ1rcoG
+         G/61rwV1iQ9p42V5jpSJizZ1C7yu+6N777+iYcKrmeSIcdmECmD82E7oKOEfW3er4u26
+         etcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUELjT/BKIp0O8dZecliNZNuGvv+TlDh43HaIREv/KactufHCVMw/XcxV0qPW3dpCmr/sdiD+FWWlg5Mpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC4wrJ/sJ4nlIpTYmWYZro7LF77D315ZE+KESo4wShyDzuuG/Q
+	IvtRdhcjgvRak7AghYWryUrRAiN0f9ubbxtl6D+LxusVnRGyNongdJRBLGhJQ8gCuD8GGSTIVRD
+	82JVLD3b9i0o8Sb+xflcGl7I4PBhDdbDibgCAvzEQ5rtaMK8GuR0J87k+Wx3T+ce7l46x8EuQw9
+	li4ANnzNg10oSt3tZnL240VfmOkENa1LLeQcjiZ3FG
+X-Gm-Gg: ASbGncuK9WfgRmmFg3MsPFg0BcmMP1gr1Mxc1jVLMqZ4iBjoHCZtqyN9tQxzQZch1Yt
+	MivYgrWUq2ZVGP9flVnsEY/E2oK/Mqz0nQR3n3tPEDgSnQR4yjVe3PO3ZB+CW5nv7Kz2VimWO4q
+	1REUmQFE1LujZbAISKNfmW
+X-Received: by 2002:a17:902:e84c:b0:23f:ed0f:8dd4 with SMTP id d9443c01a7336-242b07940a6mr188155165ad.23.1754819152120;
+        Sun, 10 Aug 2025 02:45:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG3VmcJMb+fKyzh2eropeS8kzbXx6MkPWPFWpThYHuztmqtZjehzHYzrwD7X9QcmvcWptoMYVrw5OhZ0cBqYyM=
+X-Received: by 2002:a17:902:e84c:b0:23f:ed0f:8dd4 with SMTP id
+ d9443c01a7336-242b07940a6mr188154955ad.23.1754819151692; Sun, 10 Aug 2025
+ 02:45:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723145423.GN2672039@frogsfrogsfrogs>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA2NyBTYWx0ZWRfXz39s8cURrgEA
- hMLMtVU+/ycloGFupQZzV1rY3fMQ8uHkr6h9JQMmJmk1h+tPeso25SlRGwVZ8LLcXHn5iDuUJkJ
- gTeuHpkRJSAMqCpfu8PhPbX0OnQ+wLKnXHMlWI05KphMT0GlwbPam/o7f/mSV+a7kgQLjIwO/Hb
- IDTf5nqD3ddVzWxdgYP5dnxrluZYQoQQwlQTdv888Y0Cy20+rqHLomBXc3FpeOX84jSBsGEx2Sm
- LmbixJQ/Ty6ksoDzQ1aX5awokMa9wsc2hrCFVuc6PJDhBDpiDi2u0iuDxhjtcdckX4sy/XgjDTf
- Lx5DXFZwVepLDWTBhc5x8Aza8qBHYNBAm7g/bbm+ZReHtsM3lyhqiTQmlkDaZp44GUd82Elq02H
- 2vjr6xJ24SjrxoaiWFQ0esZ2R5XOAlclv3ZsWk228R3czc2ivrZKdGbJfGIV/V+Q9eOJrfS1
-X-Authority-Analysis: v=2.4 cv=d/31yQjE c=1 sm=1 tr=0 ts=6898695d cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
- a=duHtkgBDHVnZg8uZmhQA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: ZbLsdEtLJCQDBvxTd_-8e38Bz4S3Gc4d
-X-Proofpoint-ORIG-GUID: alXEItiCxgwqTKVMwi_sBksvfkFIGd28
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-10_03,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxscore=0 suspectscore=0 impostorscore=0 priorityscore=1501
- mlxlogscore=980 phishscore=0 lowpriorityscore=0 adultscore=0 spamscore=0
- bulkscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
- definitions=main-2508100067
+References: <20250807115752.1663383-1-eperezma@redhat.com> <20250807115752.1663383-6-eperezma@redhat.com>
+ <edf19f09-bd54-4297-8c5e-da331c24fc4c@redhat.com>
+In-Reply-To: <edf19f09-bd54-4297-8c5e-da331c24fc4c@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Sun, 10 Aug 2025 11:45:15 +0200
+X-Gm-Features: Ac12FXxiGID8AW94vngfEmBWhzBUSS3xWFDvZD5F09p7QM7EFiDyRjdInni3pLE
+Message-ID: <CAJaqyWcNR620aOsVVJB6wb5stkNjF37JTue511Guh3OZtfeAXA@mail.gmail.com>
+Subject: Re: [RFC v2 5/7] vduse: add vq group asid support
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
+	Yongji Xie <xieyongji@bytedance.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>, 
+	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	jasowang@redhat.com, Maxime Coquelin <mcoqueli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 23, 2025 at 07:54:23AM -0700, Darrick J. Wong wrote:
-> On Wed, Jul 23, 2025 at 07:23:58PM +0530, Ojaswin Mujoo wrote:
-> > On Thu, Jul 17, 2025 at 09:35:10AM -0700, Darrick J. Wong wrote:
-> > 
-> > <snip>
-> > 
-> > > > +verify_atomic_write() {
-> > > > +	if [[ "$1" == "shutdown" ]]
-> > > > +	then
-> > > > +		local do_shutdown=1
-> > > > +	fi
-> > > > +
-> > > > +	test $bytes_written -eq $awu_max || _fail "atomic write len=$awu_max assertion failed"
-> > > > +
-> > > > +	if [[ $do_shutdown -eq "1" ]]
-> > > > +	then
-> > > > +		echo "Shutting down filesystem" >> $seqres.full
-> > > > +		_scratch_shutdown >> $seqres.full
-> > > > +		_scratch_cycle_mount >>$seqres.full 2>&1 || _fail "remount failed for Test-3"
-> > > > +	fi
-> > > > +
-> > > > +	check_data_integrity
-> > > > +}
-> > > > +
-> > > > +mixed_mapping_test() {
-> > > > +	prep_mixed_mapping
-> > > > +
-> > > > +	echo "+ + Performing O_DSYNC atomic write from 0 to $awu_max" >> $seqres.full
-> > > > +	bytes_written=$($XFS_IO_PROG -dc "pwrite -DA -V1 -b $awu_max 0 $awu_max" $testfile | \
-> > > > +		        grep wrote | awk -F'[/ ]' '{print $2}')
-> > > > +
-> > > > +	verify_atomic_write $1
-> > > 
-> > > The shutdown happens after the synchronous write completes?  If so, then
-> > > what part of recovery is this testing?
-> > > 
-> > > --D
-> > 
-> > Right, it is mostly inspired by [1] where sometimes isize update could
-> > be lost after dio completion. Although this might not exactly be
-> > affected by atomic writes, we added it here out of caution.
-> > 
-> > [1] https://lore.kernel.org/fstests/434beffaf18d39f898518ea9eb1cea4548e77c3a.1695383715.git.ritesh.list@gmail.com/
-> 
-> Ah, so we're racing with background log flush then.  Would it improve
-> the potential failure detection rate to call shutdown right after the
-> pwrite, e.g.
-> 
-> $XFS_IO_PROG -dxc "pwrite -DA..." -c 'shutdown' $testfile
-> 
-> It can take a few milliseconds to walk down the bash functions and
-> fork/exec another child process.
+On Fri, Aug 8, 2025 at 9:45=E2=80=AFAM Maxime Coquelin
+<maxime.coquelin@redhat.com> wrote:
+>
+>
+>
+> On 8/7/25 1:57 PM, Eugenio P=C3=A9rez wrote:
+> > diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
+> > index b4b139dc76bb..d300fd5f867f 100644
+> > --- a/include/uapi/linux/vduse.h
+> > +++ b/include/uapi/linux/vduse.h
+> > @@ -47,7 +47,8 @@ struct vduse_dev_config {
+> >       __u32 vq_num;
+> >       __u32 vq_align;
+> >       __u32 ngroups; /* if VDUSE_API_VERSION >=3D 1 */
+> > -     __u32 reserved[12];
+> > +     __u32 nas; /* if VDUSE_API_VERSION >=3D 1 */
+> > +     __u32 reserved[11];
+> >       __u32 config_size;
+> >       __u8 config[];
+> >   };
+> > @@ -82,6 +83,17 @@ struct vduse_iotlb_entry {
+> >       __u8 perm;
+> >   };
+> >
+> > +struct vduse_iotlb_entry_v2 {
+> > +     __u64 offset;
+> > +     __u64 start;
+> > +     __u64 last;
+> > +#define VDUSE_ACCESS_RO 0x1
+> > +#define VDUSE_ACCESS_WO 0x2
+> > +#define VDUSE_ACCESS_RW 0x3
+> > +     __u8 perm;
+> > +     __u32 asid;
+> > +};
+> > +
+> >   /*
+> >    * Find the first IOVA region that overlaps with the range [start, la=
+st]
+> >    * and return the corresponding file descriptor. Return -EINVAL means=
+ the
+> > @@ -172,6 +184,16 @@ struct vduse_vq_group {
+> >       __u32 num;
+> >   };
+> >
+> > +/**
+> > + * struct vduse_vq_group - virtqueue group
+> > + @ @group: Index of the virtqueue group
+> > + * @asid: Address space ID of the group
+> > + */
+> > +struct vduse_vq_group_asid {
+> > +     __u32 group;
+> > +     __u32 asid;
+> > +};
+> > +
+> >   /**
+> >    * struct vduse_vq_info - information of a virtqueue
+> >    * @index: virtqueue index
+> > @@ -232,6 +254,7 @@ struct vduse_vq_eventfd {
+> >    * @uaddr: start address of userspace memory, it must be aligned to p=
+age size
+> >    * @iova: start of the IOVA region
+> >    * @size: size of the IOVA region
+> > + * @asid: Address space ID of the IOVA region
+> >    * @reserved: for future use, needs to be initialized to zero
+> >    *
+> >    * Structure used by VDUSE_IOTLB_REG_UMEM and VDUSE_IOTLB_DEREG_UMEM
+> > @@ -241,7 +264,8 @@ struct vduse_iova_umem {
+> >       __u64 uaddr;
+> >       __u64 iova;
+> >       __u64 size;
+> > -     __u64 reserved[3];
+> > +     __u32 asid;
+> > +     __u32 reserved[5];
+> >   };
+> >
+> >   /* Register userspace memory for IOVA regions */
+> > @@ -265,7 +289,8 @@ struct vduse_iova_info {
+> >       __u64 last;
+> >   #define VDUSE_IOVA_CAP_UMEM (1 << 0)
+> >       __u64 capability;
+> > -     __u64 reserved[3];
+> > +     __u32 asid; /* Only if device API version >=3D 1 */
+> > +     __u32 reserved[5];
+> >   };
+> >
+> >   /*
+> > @@ -289,6 +314,7 @@ enum vduse_req_type {
+> >       VDUSE_UPDATE_IOTLB,
+> >       VDUSE_GET_VQ_GROUP,
+> >       VDUSE_GET_VRING_DESC_GROUP,
+> > +     VDUSE_SET_VQ_GROUP_ASID,
+> >   };
+> >
+> >   /**
+> > @@ -344,6 +370,8 @@ struct vduse_dev_request {
+> >               struct vduse_dev_status s;
+> >               struct vduse_iova_range iova;
+> >               struct vduse_vq_group vq_group; /* Only if vduse api vers=
+ion >=3D 1 */
+> > +             /* Only if vduse api version >=3D 1 */
+> > +             struct vduse_vq_group_asid vq_group_asid;
+> >               __u32 padding[32];
+>
+> I think you need to update padding size here.
+>
 
-Sounds good, I can make that change.
+Nope, that's an union so u32[32] is the total size. Modifying it would
+change uapi :).
 
-Thanks!
-> 
-> --D
-> 
-> > > > +}
-> > > > +
-> > 
+> >       };
+> >   };
+> > @@ -367,6 +395,8 @@ struct vduse_dev_response {
+> >       union {
+> >               struct vduse_vq_state vq_state;
+> >               struct vduse_vq_group vq_group; /* Only if vduse api vers=
+ion >=3D 1 */
+> > +             /* Only if vduse api version >=3D 1 */
+> > +             struct vduse_vq_group_asid vq_group_asid;
+> >               __u32 padding[32];
+> >       };
+> >   };
+>
+> Same
+>
+> Regards,
+> Maxime
+>
+
 
