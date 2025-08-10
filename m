@@ -1,218 +1,146 @@
-Return-Path: <linux-kernel+bounces-761477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD87B1FAA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:06:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A830B1FAA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815493BB809
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650F31897B87
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B930264A65;
-	Sun, 10 Aug 2025 15:05:58 +0000 (UTC)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E77246BB4;
+	Sun, 10 Aug 2025 15:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caTJpOI6"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064BD3C38;
-	Sun, 10 Aug 2025 15:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287AE1E7C18
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 15:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754838357; cv=none; b=IgHxsfelun+MvWcnQh5dtZ2dsZGV+CX3UDPMS2P+jLidRtMZ/G9Usu0D/zKtOwST3pn55Hv9+lFtUl/v/P672wUP223KwlwaqeClYx9AR4a4DUxzmg/2RRdg6HUvrU8CZDNjVstbuoOdgFm/aPidBhIhULxOmZxjpKKS5FV24Ss=
+	t=1754838432; cv=none; b=IfWvYj521+63H5DuOhBsK/XGXQqrZbFvOgUAd6MPbcOhsRliO7x1q4OVx1BJE4+v2Qav4R5/qLHdA1IWJ9uANqETKwbWpryZZq6uiJ7NRfLi16YaS3cmfl+ygCV5R33LBjccwTVyvXavA5zS2OTDa//Oi9gHWd75GmvrpXJ3tBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754838357; c=relaxed/simple;
-	bh=VS4jroL1tgveOOP2fX+aDbX7Yqcb8U/jU7EdrCg5LKs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Uk68naSoJCoSW65EHHRxlr6MBzGs0+AplL9otrvwWe6b4GXrC6vJV0SnfAeSqr4ZYP2RION0Sa4YcRrZq6YxRvz2dtEIDW7Oh1cY3SzT1uPci1btnt4TyT3Sm570OCwT4K/MNadUtPvgKWnGq94EHDbX2X6IMMR1vvp+EpTVmjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+	s=arc-20240116; t=1754838432; c=relaxed/simple;
+	bh=deRGbW0s/h4m4pwH2/0Jt/It4jlWPpRe+yq7Go9R7TA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jGkPceNGm/88vDBznmm80+XE+h7UPwt7Ddmsl0si5TUMItol5e/1ZRPVCVWXZtLyQiNYR8DKNQ3E0Srrxy8elp8/pbp0xVk6F9XIYCBNBAtIbomyOxAjyHPcrNg3Jhzxk6yrmSbIbHrjNDJEZL6R3qwxenA40YLXl481E7TDTV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=caTJpOI6; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32116dd55dcso691487a91.3;
-        Sun, 10 Aug 2025 08:05:55 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-459ddf83023so21410175e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 08:07:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754838429; x=1755443229; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZQ59xHtOgWbEJc4IF9smzu3yNmmI1a87WpQPWKQVfHs=;
+        b=caTJpOI6Bk+ZWvIC+LfYnEQ0SiAAw3nJitmCTac5Gn/fwS4GV5qc+WhFhNObJWov+a
+         1BtIcAWwssFkjakdxsoSwGBFeGCC/nE0XFQ4jHOAvWxL796+s+kGNOOmH6IZNAplgqU/
+         eUjd20+MSK6btgyW4e2NWU3HP3qoxyYjcJGcOodOarJlUHdemxucCdrf7qCqF8YJFd+2
+         zjrMoJ1eCgbzJOionXvnP3RnAPgb/5JGsoxHmvhmY0tbAHmgq7NbXDIqNJ+v5vTHXPrB
+         f713riGSFpRwHtHvRMQagJzWSjIBhQGqa5q5RJRFXrK0MdpAzHwINoeKQg0ZUHylvdnG
+         AwOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754838355; x=1755443155;
-        h=content-transfer-encoding:organization:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rw75YOLprBb6oK/VjbpS7g6mJyg1To/vCc6CBoQypEk=;
-        b=spFULThgG70Ljn71O8cRLaygKu/QDx+cjbFchJQ9O0WGygtcppENR4zHY9s4YO8e6b
-         sDyQ3JkXKn8ZdN+4bB/VNuOaTB4P0H/juexQw13T+WtstLt+x0rJoKrIj7luFgX4hhoV
-         y6c4VJh9fDvH1vtAnIBq4ujUlWBuHWIOA6OJpA7cT5ilhNAZ0idC0BlRSOxYKZJgxnS2
-         qt0wxk94yiTwMA/80F/3FsuJG/JZgnR0urTzupkClErL5/YXDhuedSCJGsBEc2KK2vfW
-         buQk8HoMajP6QMxgmIJkPUe/Ex2nm3gYOU7vrMTEP2ky46+fFlDeZ45HzVk/5hsJBpXO
-         dZ0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWov82IYesJdSdtce7k+Pte3GIKVrQPRh7Z1H0pvu5v7NGN5pFuIj87OZalhK+RwHKhNfUwot+MoUlrpX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX+fHL1IyN7xpFR8x+spBwE1DK2YQ9Qeq8lQ3B/16G19PyTXfg
-	uCkWEvgbpActka6QhJpfwi/4KyVgs5SiZdeox6MBQohjSM/4cwoP/ZsK1ET02w==
-X-Gm-Gg: ASbGnctw24XmfNMlT5P7vqw5B2DQptxB0hl0MKoVTzsiGLogYutPXtmV0slb1DIQ0Lc
-	62yDNCjx0tr3XxU6h+Sr5goFDkVrGbKJ/ASS6ylXy/Hp/9APW3lNV/LuklEoHWIdr2N+acGXxKn
-	ANHChht6xt2Bm5dzpbxhz0ouVJtkR3HxaXk9g/cRRDyHeUZD5oMO5MNI0uHTgR50uhtXEQW0eU6
-	LN9GyzMkbXZbeFXSZ7iyxwLAmoVhc1+DqXzpdNNTIjWXTjMz3pfhew1a68jAoQa85YpLvRMb6KR
-	uLmqddyf5GIrvc4lqd8+Sg9lu5N+EDhkQRgXX7GP6SPIIDhQHMyV7/SuhcioifE1PmSPzm9mnAz
-	b1W1QthzPbF1dSa79krgEv8EsOmKMgLr2
-X-Google-Smtp-Source: AGHT+IHgBPLnCIqw+XYClcoWUZeYHzPL/scfxM+cVHtLK+8JGxzhvAFyi2c3ztOuz1HfBFhcp5dFjQ==
-X-Received: by 2002:a17:90b:164a:b0:31f:24c2:16cb with SMTP id 98e67ed59e1d1-32199dd2640mr3574878a91.6.1754838354809;
-        Sun, 10 Aug 2025 08:05:54 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bea205365sm20165704b3a.83.2025.08.10.08.05.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Aug 2025 08:05:54 -0700 (PDT)
-Message-ID: <1f8dd706-0eb0-4e09-a0fe-fc48fb24005e@kzalloc.com>
-Date: Mon, 11 Aug 2025 00:05:49 +0900
+        d=1e100.net; s=20230601; t=1754838429; x=1755443229;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZQ59xHtOgWbEJc4IF9smzu3yNmmI1a87WpQPWKQVfHs=;
+        b=Bt++xy9RUEjOK9ofEF0TJJTxf5dlXwcwH12P2RlrvofIKz+FM92H6PFfKD23tlUzPy
+         SFihJkFO7mie+KJ2OQKtTaK0/gd5ExQ9w5SI9v8RWuig8y8HvoBFnlEoqosdO21tx4iE
+         9wjXbm08fnQdRsctUzFDn1lYoRgh516L3B/0ImFsCj0dYXmL0P89plJ1QqT2CJm6m6+C
+         bOHeH6VIUJOF2D7xHQeo/4P3l6I7EEdqPFPID2rpNx7EDY+zSfulYNfx/yL5b5RZzwIE
+         chs3QsUqL+x9XENXfHvTaEhx2cruRexT9k2pRedqf647T1BbAcQJVNg2NuvJ5rrkba8R
+         0mKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOfOkCz0kWxq/GHDn19A0p+05qGuiNk8XfMaf/XdbZiY/7Gkjvd1TBv3wDplt91ldpGH+Dn8AydK4O0ZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIbpn4yHcriTp5s76mS3wdBMmdVPV3iMZdcpkwDmNMGfyQF/0t
+	Eq58FfkInp8LDs1WhZSHyzgMuiS3IXHpDUMom69vKUwLs2Po4XNOtg/Zd+P8Ksll
+X-Gm-Gg: ASbGnct023PWP9ouk8GtEpOI3JNtM8q9Y5tjUw5urGLFWz3sw/lqJGqzQcmMbZom/mu
+	3nlvtlk2bdG9eZvpK013yWxkXsfyB/tOOg2iDx9NUsjnZis8mif7oIEJTRA21fXsjShtk2RoAGN
+	Bb/RTJ71zsv0GoUueSpBBLFLz1u09BKfSwz9s+mOdb90RlrF4snC5qtVqg5oKMxIElBLzkgnQ5f
+	D5G953HrgySWtXsD1q2SzpJUpRTt6SmhLToFOOMORfye21IGt1BS0ZQa1LAR0uZwGCERXgmL+fl
+	RShcyi6Bh12dCcgDo0D79RYymJTnltIpnkwlFp75QPJWj7rX1jnkrHpW+M8aNSusX2VllUpiCNj
+	h1G8tHoflwpz7cag05SMRj0DY8x1TYb2/HOC6qi10eV2oO0LAsVLjay4VDs6TNKRuc3b88wPT
+X-Google-Smtp-Source: AGHT+IGnsEOHPXBo/gu/b3QC4R5+Wjtv9EVFuqU+/OTZ1FCVewLf4z2r7z+BM9J6nhmv/NU272ooIw==
+X-Received: by 2002:a5d:64c3:0:b0:3b7:974d:5359 with SMTP id ffacd0b85a97d-3b900b50441mr8668873f8f.32.1754838429143;
+        Sun, 10 Aug 2025 08:07:09 -0700 (PDT)
+Received: from localhost.localdomain (109.red-88-1-15.dynamicip.rima-tde.net. [88.1.15.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8f5d7deaasm16567371f8f.65.2025.08.10.08.07.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 08:07:08 -0700 (PDT)
+From: Javier Garcia <rampxxxx@gmail.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dakr@kernel.org,
+	robin.clark@oss.qualcomm.com,
+	antomani103@gmail.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	me@brighamcampbell.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Javier Garcia <rampxxxx@gmail.com>
+Subject: [PATCH v3] drm: Add directive to format code in comment
+Date: Sun, 10 Aug 2025 17:07:06 +0200
+Message-ID: <20250810150706.305040-1-rampxxxx@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <DBYS3FAEVMHC.178SXO45NIBI8@kernel.org>
+References: <DBYS3FAEVMHC.178SXO45NIBI8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-usb@vger.kernel.org
-Cc: linux-rt-users@vger.kernel.org, gregkh@linuxfoundation.org,
- stern@rowland.harvard.edu, Thomas Gleixner <tglx@linutronix.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-From: Yunseong Kim <ysk@kzalloc.com>
-Subject: [BUG] usb: sleepable spinlock used in USB bh_worker softirq on
- PREEMPT_RT
-Organization: kzalloc
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-While running a PREEMPT_RT-enabled kernel I observed a sleepable
-spinlock (rt_spin_lock) being taken from a softirq context within
-the USB core framework. On PREEMPT_RT, spin_lock() may sleep when
-contended. This is unsafe in softirq context and can cause hangs or
-deadlocks.
+Add formating directive line in function `drm_gpuvm_sm_map_exec_lock()`
+comment to clear warning messages shown bellow that appears generating
+documentation `make htmldocs`.
 
-Below is the relevant call path, reformatted for clarity:
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2444: Unexpected indentation.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2446: Block quote ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2450: Definition list ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2451: Definition list ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2455: Unexpected indentation.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2456: Definition list ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2457: Definition list ends without a blank line; unexpected unindent.
+  Warning: ./drivers/gpu/drm/drm_gpuvm.c:2458: Definition list ends without a blank line; unexpected unindent.
 
-(1) softirq context: workqueue_softirq_action
+Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
+Signed-off-by: Javier Garcia <rampxxxx@gmail.com>
+---
+v2 -> v3:
+      * Added the proper imperative message.
+      * Fixes tag possition.
+      * v2 https://lore.kernel.org/lkml/20250810112218.293272-1-rampxxxx@gmail.com
 
- --> bh_worker()
-     --> process_scheduled_works()
-         --> process_one_work()
-              --> usb_giveback_urb_bh()
-                   --> __usb_hcd_giveback_urb()
-                        --> hub_irq()
-                             --> hub_resubmit_irq_urb()
-                                 --> spin_lock()
-                                         |
-                                         --> rt_spin_lock()
-                                             ** <-- sleepable spinlock
-                                                    used in softirq
-                                                    context **
-Stack trace excerpt:
+v1 -> v2:
+      * Added the proper Fixes tag.
+      * v1 https://lore.kernel.org/lkml/20250804212902.22554-1-rampxxxx@gmail.com
+ drivers/gpu/drm/drm_gpuvm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-| BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-| in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 15, name: ksoftirqd/0
-| preempt_count: 0, expected: 0
-| RCU nest depth: 2, expected: 2
-| CPU: 0 UID: 0 PID: 15 Comm: ksoftirqd/0 Not tainted 6.16.0-11245-gc87c2e4c1589 #35 PREEMPT_RT 
-| Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
-| Call trace:
-|  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
-|  __dump_stack+0x30/0x40 lib/dump_stack.c:94
-|  dump_stack_lvl+0x148/0x1d8 lib/dump_stack.c:120
-|  dump_stack+0x1c/0x3c lib/dump_stack.c:129
-|  __might_resched+0x2e4/0x52c kernel/sched/core.c:8957
-|  __rt_spin_lock kernel/locking/spinlock_rt.c:48 [inline]
-|  rt_spin_lock+0xa8/0x1bc kernel/locking/spinlock_rt.c:57
-|  spin_lock include/linux/spinlock_rt.h:44 [inline]
-|  hub_resubmit_irq_urb+0x2c/0x168 drivers/usb/core/hub.c:687
-|  hub_irq+0x2ac/0x3d0 drivers/usb/core/hub.c:814
-|  __usb_hcd_giveback_urb+0x2f0/0x5e8 drivers/usb/core/hcd.c:1663
-|  usb_giveback_urb_bh+0x234/0x3c4 drivers/usb/core/hcd.c:1697
-|  process_one_work kernel/workqueue.c:3236 [inline]
-|  process_scheduled_works+0x678/0xd18 kernel/workqueue.c:3319
-|  bh_worker+0x2f0/0x59c kernel/workqueue.c:3579
-|  workqueue_softirq_action+0x104/0x14c kernel/workqueue.c:3606
-|  tasklet_hi_action+0x18/0x8c kernel/softirq.c:860
-|  handle_softirqs+0x208/0x63c kernel/softirq.c:579
-|  run_ksoftirqd+0x64/0x264 kernel/softirq.c:968
-|  smpboot_thread_fn+0x4ac/0x908 kernel/smpboot.c:160
-|  kthread+0x5e8/0x734 kernel/kthread.c:464
-|  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
+diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+index bbc7fecb6f4a..74d949995a72 100644
+--- a/drivers/gpu/drm/drm_gpuvm.c
++++ b/drivers/gpu/drm/drm_gpuvm.c
+@@ -2432,6 +2432,8 @@ static const struct drm_gpuvm_ops lock_ops = {
+  *
+  * The expected usage is:
+  *
++ * .. code-block:: c
++ *
+  *    vm_bind {
+  *        struct drm_exec exec;
+  *
+-- 
+2.50.1
 
-
-(2) softirq context: run_ksoftirqd()
-
---> handle_softirqs()
-    --> tasklet_action()
-        --> workqueue_softirq_action()
-            --> bh_worker()
-                --> process_scheduled_works()
-                    --> process_one_work()
-                        --> usb_giveback_urb_bh()
-                            --> __usb_hcd_giveback_urb()
-                                --> async_completed()
-                                    --> spin_lock()
-                                         |
-                                         --> rt_spin_lock()
-                                            ** <-- BUG: sleeping function
-                                                    called from invalid
-                                                    context **
-
-Stack trace excerpt:
-
-| BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-| in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 15, name: ksoftirqd/0
-| preempt_count: 0, expected: 0
-| RCU nest depth: 2, expected: 2
-| CPU: 0 UID: 0 PID: 15 Comm: ksoftirqd/0 Not tainted 6.16.0-10393-g3267b1c07fff-dirty #43 PREEMPT_RT 
-| Hardware name: QEMU KVM Virtual Machine, BIOS 2025.02-8ubuntu1 06/11/2025
-| Call trace:
-|  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:499 (C)
-|  __dump_stack+0x30/0x40 lib/dump_stack.c:94
-|  dump_stack_lvl+0x148/0x1d8 lib/dump_stack.c:120
-|  dump_stack+0x1c/0x3c lib/dump_stack.c:129
-|  __might_resched+0x2e4/0x52c kernel/sched/core.c:8957
-|  __rt_spin_lock kernel/locking/spinlock_rt.c:48 [inline]
-|  rt_spin_lock+0xa8/0x1bc kernel/locking/spinlock_rt.c:57
-|  spin_lock include/linux/spinlock_rt.h:44 [inline]
-|  async_completed+0x70/0xabc drivers/usb/core/devio.c:633
-|  __usb_hcd_giveback_urb+0x2f0/0x5e8 drivers/usb/core/hcd.c:1663
-|  usb_giveback_urb_bh+0x234/0x3c4 drivers/usb/core/hcd.c:1697
-|  process_one_work kernel/workqueue.c:3236 [inline]
-|  process_scheduled_works+0x678/0xd18 kernel/workqueue.c:3319
-|  bh_worker+0x2f0/0x59c kernel/workqueue.c:3579
-|  workqueue_softirq_action+0x104/0x14c kernel/workqueue.c:3606
-|  tasklet_action+0x18/0x8c kernel/softirq.c:854
-|  handle_softirqs+0x208/0x63c kernel/softirq.c:579
-|  run_ksoftirqd+0x64/0x264 kernel/softirq.c:968
-|  smpboot_thread_fn+0x4ac/0x908 kernel/smpboot.c:160
-|  kthread+0x5e8/0x734 kernel/kthread.c:464
-|  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
-
-Softirq context is not allowed to sleep. PREEMPT_RT replaces spinlock
-implementations with sleepable variants to improve RT performance.
-This is fine in process context but unsafe in atomic contexts such as
-softirq. This specific instance is in the USB core bh path, so a
-framework-level fix seems appropriate.
-
-Because USB activity frequently triggers hub interrupts and URB
-givebacks "urb->complete(urb)", this issue can be hit easily on
-PREEMPT_RT systems. This means that using USB devices under PREEMPT_RT
-may be unstable in its current state, especially under high I/O load or
-when multiple devices are active. The likelihood of encountering this
-problem increases with frequent plug/unplug events, isochronous transfers,
-or heavy USB traffic.
-
-At the moment, I think the following solutions might be possible:
- 1. Use raw spinlocks (raw_spin_lock_irqsave/restore) in bh paths.
- 2. Move sleepable work into process context (regular workqueues).
- 3. Avoid locking entirely in these atomic paths if possible.
-
-I believe this requires a change in the USB core framework rather than
-just in individual drivers.
-
-Kernel config, full logs, and reproduction steps can be provided on
-request.
-
-This bug was uncovered during my work to fixing KCOV for PREEMPT_RT awareness.
-Link: https://lore.kernel.org/all/ee26e7b2-80dd-49b1-bca2-61e460f73c2d@kzalloc.com/t/#u
-
-Best Regards,
-Yunseong Kim
 
