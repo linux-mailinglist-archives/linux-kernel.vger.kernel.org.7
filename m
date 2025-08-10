@@ -1,99 +1,131 @@
-Return-Path: <linux-kernel+bounces-761609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CAAB1FC73
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910D8B1FC93
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2078D1895BCC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02E33B88D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 22:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCCD230268;
-	Sun, 10 Aug 2025 21:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED162BCF4C;
+	Sun, 10 Aug 2025 22:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lfsd4V2S"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="K/ocHRIU"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1200214AD2D
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 21:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9957B1B0F19;
+	Sun, 10 Aug 2025 22:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754862508; cv=none; b=pfFKE8BGg9qKP5OQcfmlfY5+bUaFDrBmpOa18wf739M1vnkCF9ozExIoa1wbznUMnV1pMc/dTmle0DpNiCDLjYCa69tXIoJvqqqFGCuAAcoy0U1JaWlg1BVeicdUF2vOAavBoO/w0lN0FkuyrbMM+jrHaEWrLGsZyMjoCMhr7yI=
+	t=1754863672; cv=none; b=Ivx8gUTDBHO9TnCH0R4APAdQvzHgEfEt1bHqpDnYSXkUxZPeFIy+p9umi4qUS2oIQCe8JnvYaRAJ+1Kxr1tYt7+ZFSAQpOpD2ec3+hSd8pW+zFFffEFwZ1lo8T/1+p20J+S5Vs9lwMMUcDonDGdN7yJDuG9f3Kp0MmggEO6uViI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754862508; c=relaxed/simple;
-	bh=mBae3Rc6k6l+x8iE0UTP9m2+PZQsZp/Zr3NDvf9q5Vk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CrrZAksThP0LRjEFLy03uN8OrWvfBukGKk1rnMO6CFPOWFqA9u+ReZ6IYUSW7iAfv6Ve3B6rkdaSfFSJG8dNNlg+NS8jAu/Esj2tHbjpDlgVHzyIP0QVcZeiSbz4OCdukdq/1G5t6VisbneGzWEL35CYNf1L5daldj6Oe7bx9a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lfsd4V2S; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754862504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DsRVIjvDJuLJuwcP7K5TKBV9TNHb6qj3xLt5+6zs3GM=;
-	b=lfsd4V2SOoMxEgiM0wJIKj0X+EcFtGa0V6VxZQV0ByYt9LYlK7rK7pgLUviBqrIMP/4JV7
-	78QxrhLiu2Ue059XakSSOWpwlmELJ4VJge6d/5OF9z8JQx8wSrLgTGQ+RlcqkSmFvO0lHQ
-	iR2VCimTkLCY5s8TeK0sRwcmHUghw8s=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/hugetlb: Use max() to simplify hugetlb_vmemmap_optimizable_size()
-Date: Sun, 10 Aug 2025 23:47:45 +0200
-Message-ID: <20250810214745.2368-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1754863672; c=relaxed/simple;
+	bh=CDN90bCC1qPfKH3VcQqpxLM8FpV2+jQZduZTlVhDc5o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sdgPCg2nZFeCfK7ApGEeaPS2sTrpTnGChLg5M1OBk4ZU2RPPOyuVYJyWTr4A42+jsQYq5+TrgL98d6WUepVAf1pzwpixogSZy+dJQ029HzUxfaOus5K+PKrgIDMN8Mn7HWNDr5IweyXNQH0ILczHSBqZt8ZegKheAKIQ4whk4Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=K/ocHRIU; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=CDN90bCC1qPfKH3VcQqpxLM8FpV2+jQZduZTlVhDc5o=; b=K/ocHRIUCZ+l4jxIc3Ysa0aIn1
+	1klUPbwn35szYJXKCEt2g1ewWgZaxp3M67vuB8afvqYSUgk7ouwboV4I5kasRw5WdVBoURphSB8Gr
+	AVYXhwN+BTy5q8bt0BN3YwGsjnoxy7KB5HTsW9PKhqekqFoIu1Q6lklyEL6U4f3LJ2R2cRSjhhUTH
+	gEfQ7YsyrPTnpBWNIhkO6Ekg+53x0uSdGe6B0F5cZjYd/tKZgsP90QEzskkfTl6KXsDbFVfxnfs+T
+	d3fRURu1z4hSeQqp6Bk68v2diKnoueZMKRpzMgan9IIBtyo6lCxVo4pP2/5gEplUDHyDKLkUs0at8
+	OtaSenog==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1ulDto-0001jP-1N;
+	Sun, 10 Aug 2025 23:48:16 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1ulDtn-0000cY-34;
+	Sun, 10 Aug 2025 23:48:15 +0200
+Message-ID: <3a12312d37abe53cbd1a374d9cda81801f3f37e8.camel@apitzsch.eu>
+Subject: Re: [PATCH v2 0/5] media: i2c: imx214: Add some style improvements
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, Ricardo Ribalda
+	 <ribalda@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 10 Aug 2025 23:48:14 +0200
+In-Reply-To: <20250630-imx214_fixes-v2-0-cd1a76c412c0@apitzsch.eu>
+References: <20250630-imx214_fixes-v2-0-cd1a76c412c0@apitzsch.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27728/Sun Aug 10 10:32:45 2025)
 
-Use max() to simplify hugetlb_vmemmap_optimizable_size() and improve its
-readability.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- mm/hugetlb_vmemmap.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/mm/hugetlb_vmemmap.h b/mm/hugetlb_vmemmap.h
-index 18b490825215..4da44b1e8e1a 100644
---- a/mm/hugetlb_vmemmap.h
-+++ b/mm/hugetlb_vmemmap.h
-@@ -11,6 +11,7 @@
- #include <linux/hugetlb.h>
- #include <linux/io.h>
- #include <linux/memblock.h>
-+#include <linux/minmax.h>
- 
- /*
-  * Reserve one vmemmap page, all vmemmap addresses are mapped to it. See
-@@ -44,11 +45,10 @@ static inline unsigned int hugetlb_vmemmap_size(const struct hstate *h)
-  */
- static inline unsigned int hugetlb_vmemmap_optimizable_size(const struct hstate *h)
- {
--	int size = hugetlb_vmemmap_size(h) - HUGETLB_VMEMMAP_RESERVE_SIZE;
+Am Montag, dem 30.06.2025 um 21:05 +0200 schrieb Andr=C3=A9 Apitzsch via B4
+Relay:
+> The following changes have be suggested by Laurent in [1]. But the
+> related series had already be applied. That's why they are addressed
+> in this series.
+>=20
+> [1]
+> https://lore.kernel.org/linux-media/20250621181751.GA9125@pendragon.ideas=
+onboard.com/
+>=20
+> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> ---
+> Changes in v2:
+> - Drop unnecessary sentence from commit message (patch 3/5)
+> - Fix typo in summary (patch 5/5)
+> - Use imperative mood for commit message (patch 5/5)
+> - Add R-b tags
+> - Link to v1:
+> https://lore.kernel.org/r/20250629-imx214_fixes-v1-0-873eb94ad635@apitzsc=
+h.eu
+>=20
+> ---
+> Andr=C3=A9 Apitzsch (5):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Remove unneeded parent=
+heses
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Drop dev argument from
+> imx214_parse_fwnode()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Use __free(fwnode_hand=
+le)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Move imx214_pll_update=
+ to imx214_ctrls_init
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Separate legacy link f=
+requency check from
+> PLL calculation
+>=20
+> =C2=A0drivers/media/i2c/imx214.c | 245 ++++++++++++++++++++++------------=
 -
- 	if (!is_power_of_2(sizeof(struct page)))
- 		return 0;
--	return size > 0 ? size : 0;
-+
-+	return max(0, hugetlb_vmemmap_size(h) - HUGETLB_VMEMMAP_RESERVE_SIZE);
- }
- #else
- static inline int hugetlb_vmemmap_restore_folio(const struct hstate *h, struct folio *folio)
--- 
-2.50.1
+> ----------
+> =C2=A01 file changed, 121 insertions(+), 124 deletions(-)
+> ---
+> base-commit: 5e2562c1e46d3623fbdef77693f374eade075840
+> change-id: 20250623-imx214_fixes-123f285f5b62
+>=20
+> Best regards,
 
+Hi Sakari,
+
+kind reminder, that this series is still pending.
+
+Is there anything left to do from my side?
+
+Best regards,
+Andr=C3=A9
 
