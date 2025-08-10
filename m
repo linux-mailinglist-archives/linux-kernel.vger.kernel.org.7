@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-761603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5037AB1FC63
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:27:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB953B1FC6B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 23:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B1F3A30C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136FA16703A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 21:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6B5287276;
-	Sun, 10 Aug 2025 21:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B68D2877C0;
+	Sun, 10 Aug 2025 21:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="QkcH4F2B"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="DAG6a+UN"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2047286888
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 21:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822B1286898
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 21:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754861167; cv=none; b=JYSPH2eS7vky6L2Om2IIXTp7OaRjOrxhLp2eH++jFEuWiGh2tyuukBq7kXmkICXcJm7qfNOna+0dugJdTCdv8LuWWWtTDO6Pq/qa1IC1DvAGR5wvvgadu67BZtMo3IIaIhD/wMTy9qXbDib1E03whoGrxWDBZkpq9vR8czc4/f4=
+	t=1754861173; cv=none; b=k3/VacdUp3d0wCxh+TuOg6atEXsaKP47jWBxQtD6PGaltlHl5qYkaDz4vHPUiO9J33gX9Sqx34kFY1l/1VEwU2MwAjuVshHxQKfBvNr2TG9B9KV3VQ5wmUfEnGRBX4EULSmYJ/NKW98c5yc+OISiRIc16bLc2IcTwP93ZGZomMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754861167; c=relaxed/simple;
-	bh=x8mU9Y4HhV1FCoU2AUaPuUKXO5gWbXUK1l99Ba7jfvg=;
+	s=arc-20240116; t=1754861173; c=relaxed/simple;
+	bh=ca7TZL84pkQlUUk0w8WX6/8qkMHUjtCkt3b7BX4YX60=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l/hzTLab4fmdGb5bGSPq4ucViGDEFZVGeYhjwhAAC2knfbK1fg0EqeXONV8o8hLLZt37IQhu+YF90eWFdvXBkq6OoFhX5CHPi6oMbjoeVTIbMKWaMsETLMpB/ajZX5sS+yj9KOENTc+CgjUYJbe9yv1va7aT87V49OUMOY1VQgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=QkcH4F2B; arc=none smtp.client-ip=121.127.44.73
+	 MIME-Version; b=f7aNqJvMolNphaNQAh1X9LqMrs0pj4Y3bwmQ8TwDvkcBsKIZIRXNhFLElpAb34LpRfSqMgNHZ6/OuUay0Y4Xv0v9V3F14c87mq2SQn6ZFjbsxK64uXFqZko8V/eErGI1ELldV/zKkktDRlLUBA41Yz5c4y39I7ArvJxw9fyAm4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=DAG6a+UN; arc=none smtp.client-ip=121.127.44.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
  Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1754861159; bh=omailk5J82FETW0CF3chBXgq8BxD9mp50Z7b28u4AKs=;
- b=QkcH4F2BnxC8mqKIhjuebuu5OgrnliFhLQNdYLpl/Z7IXfw/ELlgGwHhTR6vKmEbVa9f1Gc8+
- Z0ukGvoLgjc7upluwiAkrrRlyKkT3KqY4kmvkqvxtprRL4GI0VBqU3FRJ0ku9Rr+4VEq9c0AJ7D
- sqxBuvPCvAbcS9150HVhztmxJZI8xW+Nsco8YYL3zIAMo51g63SK+ZO6FviRDMPCV9WkiWTexFc
- k+cg/UJYaon5IUZYxlAM/lfuUvN2TrYSFr0CUn6xFYA6EtxhVSu85Pgf7sac1oGOnMqFvzBUUmh
- q6dveoqGiN+cKWlK3BYSszKTd0BmCsGl6Ywd40fTSySQ==
-X-Forward-Email-ID: 68990e66797ab8962779243f
+ t=1754861164; bh=PimwDS8LC37CYWaFf7XT6w/idZMKOZ2fzD26lIMQhVg=;
+ b=DAG6a+UNAXjj0V8JIo6ZDnOmc8z3T7DtTNmuJHE1LZuwYPkW5j8c02IAQ+EMRO5cFyqGEfafz
+ HQwkBE8CFfBD/km4U5O0KRQdVXSx1BTvbDwjq77gvyw6I16J6JFmXtu2Q0ZPTW+lGq5zCSAwSPw
+ Cgl12dJZ8EklhrEIHvDufKdNXxZDKtFd+BokTi6F0wrwk+3gh1W1QG8w/6FhcqkqDyjzo1AUu0z
+ 4pMubGUuJ95MQu1KUl2Etau27t8/fyVn0EZL8MCDbCIVuBHL9puV1rLLeCcSnyCNtXzHiG4GzFm
+ h6CgE7uKwLtZ4SAV7JV+rs3/XxCbKgPg6X1rzGbYIUIA==
+X-Forward-Email-ID: 68990e6b797ab8962779245a
 X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  121.127.44.73
 X-Forward-Email-Version: 1.2.4
@@ -61,9 +61,9 @@ Cc: Alex Bee <knaerzche@gmail.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v2 4/7] media: rkvdec: Add RK3288 variant
-Date: Sun, 10 Aug 2025 21:24:34 +0000
-Message-ID: <20250810212454.3237486-5-jonas@kwiboo.se>
+Subject: [PATCH v2 5/7] media: rkvdec: Disable QoS for HEVC and VP9 on RK3328
+Date: Sun, 10 Aug 2025 21:24:35 +0000
+Message-ID: <20250810212454.3237486-6-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250810212454.3237486-1-jonas@kwiboo.se>
 References: <20250810212454.3237486-1-jonas@kwiboo.se>
@@ -77,8 +77,11 @@ Content-Transfer-Encoding: 8bit
 
 From: Alex Bee <knaerzche@gmail.com>
 
-Add a RK3288 variant, a version of the Rockchip VDEC IP that only
-support HEVC decoding.
+The RK3328 VDEC has a HW quirk that require QoS to be disabled when HEVC
+or VP9 is decoded, otherwise the decoded picture may become corrupted.
+
+Add a RK3328 variant with a quirk flag to disable QoS when before
+decoding is started.
 
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
 Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
@@ -86,35 +89,133 @@ Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 Changes in v2:
 - No change
 ---
- drivers/media/platform/rockchip/rkvdec/rkvdec.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c |  9 +++++++++
+ drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h |  2 ++
+ drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c  | 10 ++++++++++
+ drivers/media/platform/rockchip/rkvdec/rkvdec.c      | 12 ++++++++++++
+ drivers/media/platform/rockchip/rkvdec/rkvdec.h      |  4 ++++
+ 5 files changed, 37 insertions(+)
 
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+index 1994ea24f0be..f8bb8c4264f7 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+@@ -789,6 +789,15 @@ static int rkvdec_hevc_run(struct rkvdec_ctx *ctx)
+ 	writel(1, rkvdec->regs + RKVDEC_REG_PREF_LUMA_CACHE_COMMAND);
+ 	writel(1, rkvdec->regs + RKVDEC_REG_PREF_CHR_CACHE_COMMAND);
+ 
++	if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS) {
++		u32 reg;
++
++		reg = readl(rkvdec->regs + RKVDEC_REG_QOS_CTRL);
++		reg |= 0xFFFF;
++		reg &= ~BIT(12);
++		writel(reg, rkvdec->regs + RKVDEC_REG_QOS_CTRL);
++	}
++
+ 	/* Start decoding! */
+ 	reg = (run.pps->flags & V4L2_HEVC_PPS_FLAG_TILES_ENABLED) ?
+ 		0 : RKVDEC_WR_DDR_ALIGN_EN;
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
+index 540c8bdf24e4..c627b6b6f53a 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-regs.h
+@@ -219,6 +219,8 @@
+ #define RKVDEC_REG_H264_ERR_E				0x134
+ #define RKVDEC_H264_ERR_EN_HIGHBITS(x)			((x) & 0x3fffffff)
+ 
++#define RKVDEC_REG_QOS_CTRL				0x18C
++
+ #define RKVDEC_REG_PREF_LUMA_CACHE_COMMAND		0x410
+ #define RKVDEC_REG_PREF_CHR_CACHE_COMMAND		0x450
+ 
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
+index 0e7e16f20eeb..cadb9d592308 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-vp9.c
+@@ -824,6 +824,16 @@ static int rkvdec_vp9_run(struct rkvdec_ctx *ctx)
+ 	writel(1, rkvdec->regs + RKVDEC_REG_PREF_CHR_CACHE_COMMAND);
+ 
+ 	writel(0xe, rkvdec->regs + RKVDEC_REG_STRMD_ERR_EN);
++
++	if (rkvdec->quirks & RKVDEC_QUIRK_DISABLE_QOS) {
++		u32 reg;
++
++		reg = readl(rkvdec->regs + RKVDEC_REG_QOS_CTRL);
++		reg |= 0xFFFF;
++		reg &= ~BIT(12);
++		writel(reg, rkvdec->regs + RKVDEC_REG_QOS_CTRL);
++	}
++
+ 	/* Start decoding! */
+ 	writel(RKVDEC_INTERRUPT_DEC_E | RKVDEC_CONFIG_DEC_CLK_GATE_E |
+ 	       RKVDEC_TIMEOUT_E | RKVDEC_BUF_EMPTY_E,
 diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-index 56807122720e..c20e046205fe 100644
+index c20e046205fe..d61d4c419992 100644
 --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
 +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-@@ -1222,6 +1222,10 @@ static void rkvdec_watchdog_func(struct work_struct *work)
- 	}
- }
+@@ -1226,6 +1226,13 @@ static const struct rkvdec_variant rk3288_rkvdec_variant = {
+ 	.capabilities = RKVDEC_CAPABILITY_HEVC,
+ };
  
-+static const struct rkvdec_variant rk3288_rkvdec_variant = {
-+	.capabilities = RKVDEC_CAPABILITY_HEVC,
++static const struct rkvdec_variant rk3328_rkvdec_variant = {
++	.capabilities = RKVDEC_CAPABILITY_HEVC |
++			RKVDEC_CAPABILITY_H264 |
++			RKVDEC_CAPABILITY_VP9,
++	.quirks = RKVDEC_QUIRK_DISABLE_QOS,
 +};
 +
  static const struct rkvdec_variant rk3399_rkvdec_variant = {
  	.capabilities = RKVDEC_CAPABILITY_HEVC |
  			RKVDEC_CAPABILITY_H264 |
-@@ -1229,6 +1233,10 @@ static const struct rkvdec_variant rk3399_rkvdec_variant = {
- };
- 
- static const struct of_device_id of_rkvdec_match[] = {
+@@ -1237,6 +1244,10 @@ static const struct of_device_id of_rkvdec_match[] = {
+ 		.compatible = "rockchip,rk3288-vdec",
+ 		.data = &rk3288_rkvdec_variant,
+ 	},
 +	{
-+		.compatible = "rockchip,rk3288-vdec",
-+		.data = &rk3288_rkvdec_variant,
++		.compatible = "rockchip,rk3328-vdec",
++		.data = &rk3328_rkvdec_variant,
 +	},
  	{
  		.compatible = "rockchip,rk3399-vdec",
  		.data = &rk3399_rkvdec_variant,
+@@ -1267,6 +1278,7 @@ static int rkvdec_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, rkvdec);
+ 	rkvdec->dev = &pdev->dev;
+ 	rkvdec->capabilities = variant->capabilities;
++	rkvdec->quirks = variant->quirks;
+ 	mutex_init(&rkvdec->vdev_lock);
+ 	INIT_DELAYED_WORK(&rkvdec->watchdog_work, rkvdec_watchdog_func);
+ 
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+index 8e1f8548eae4..e633a879e9bf 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+@@ -26,6 +26,8 @@
+ #define RKVDEC_CAPABILITY_H264		BIT(1)
+ #define RKVDEC_CAPABILITY_VP9		BIT(2)
+ 
++#define RKVDEC_QUIRK_DISABLE_QOS	BIT(0)
++
+ struct rkvdec_ctx;
+ 
+ struct rkvdec_ctrl_desc {
+@@ -69,6 +71,7 @@ vb2_to_rkvdec_decoded_buf(struct vb2_buffer *buf)
+ 
+ struct rkvdec_variant {
+ 	unsigned int capabilities;
++	unsigned int quirks;
+ };
+ 
+ struct rkvdec_coded_fmt_ops {
+@@ -121,6 +124,7 @@ struct rkvdec_dev {
+ 	struct delayed_work watchdog_work;
+ 	struct iommu_domain *empty_domain;
+ 	unsigned int capabilities;
++	unsigned int quirks;
+ };
+ 
+ struct rkvdec_ctx {
 -- 
 2.50.1
 
