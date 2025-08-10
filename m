@@ -1,134 +1,156 @@
-Return-Path: <linux-kernel+bounces-761465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5ADB1FA6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:33:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4427AB1FA72
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 16:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBC4174B82
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 14:33:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE4064E1A2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 14:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89AF262FC1;
-	Sun, 10 Aug 2025 14:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDE3262FC1;
+	Sun, 10 Aug 2025 14:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBPtTeFC"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bE/b6jb8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9901927462;
-	Sun, 10 Aug 2025 14:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4A127462;
+	Sun, 10 Aug 2025 14:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754836385; cv=none; b=sPU6osiZUC0D9BLmpJVU69DQytAZFXHtpTS4PaIvOANpKlpO+Xn3UPsill4vZszKZWSXcZwyrXYl2UjXf8qbN7+Ayb1+pXfHS4woK/SGqhpk27AJCmMPqtLvtdfF4DRXHSlWsd16SH1w7YMzRiDxJYUQWIXzEKIlW54FX7NV0lk=
+	t=1754836470; cv=none; b=ZGeH16v70T7xSMRMjzLQZ92VHbdK2QjXQdQBzc/YRAeYxMYvsJvIF3nbXQUiPMbX9qnJZQf/J/rhFGRn2xfVMv8W+2oDOeMT5rY0KkdOTUfUDWduJSAyDrGuvmd7CNxVtx29+FpTOZLV6cEFjvhxlJsY85zaaoIhnAIUF4zSijs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754836385; c=relaxed/simple;
-	bh=CJhjBKExR3c7p9ihQ8Yq1x9T2uLUyzu7TUtb7fzt74s=;
+	s=arc-20240116; t=1754836470; c=relaxed/simple;
+	bh=Vs6zCVzNYOOBeaFgHyVlLxbYIuRdFhTAig9mwdgEfDQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V+nX3eJ7bP9rThbKkk9wIvnIweQ6Lox2FtSCVT2Nr+9tIbAkdGpCm4uNZnZJvXcnTBjQ5s0eO4Fj1nFmCarXlgOscp8iHt8GjSxJ2D13NU3Cl62SvpIgydUoQ8il10IrxetQzgUFxp4CXwPWI8ZPV5gkZsHo/wS8QUL+sgsMlxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBPtTeFC; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae9c2754a00so682538666b.2;
-        Sun, 10 Aug 2025 07:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754836382; x=1755441182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CJhjBKExR3c7p9ihQ8Yq1x9T2uLUyzu7TUtb7fzt74s=;
-        b=KBPtTeFCRJeoZAFx0nCuPxUJabtsJWh3pyYBNEnw1SwhTyDyOuNzn3WYVGafltAbka
-         X1QJxK48r2TV6jH91zMJO1jXuqPM6El/PC0JvAlLIHNTy+Y5yqC1yq5q0/Gquc8ZTD1d
-         /d9Fut3mg94KoFlsMYMyi+QLclP7IG1Z6O7W0AhBWLTmjVkGE4BhxF6u3op80kRE+3z6
-         i8Q23ANFd+of2dQrsDBqWmhJLX9IRe9bU4whBTlTSdmOrHsfQY2nd+8BJj88feh+PP6U
-         GTo5WrMZk+mD7gEBzB2O4q71CovGJAh/U5/WbeBiiYdXY9/9mfepVrHVEVtRbgnWoGAl
-         wZnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754836382; x=1755441182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CJhjBKExR3c7p9ihQ8Yq1x9T2uLUyzu7TUtb7fzt74s=;
-        b=WoX0G1OnFj4tC/YEOMbvXUXjn2xRt0mwDmWRgDHsQt58Ew3fq/wNXN1Fr7qBieVdSp
-         YkU1iaBodWreDt9C/7watvaXWmI2pLXugrISxwkDdhk7F9tRuPNnrJ7iGM+Csk3x/H3G
-         dO/ukoOPYhzUKOS1aQzEcHxUJ41wygvIR4KSyOUG7RPnJdXjDi2wRnVH5ZjxYLfQClYa
-         lhBjn7GjpHZU06Nx1OHID5r6nnyDcTKKe/f6LQ0dKOlBDYyE1XuqBAZtBxtmvs6iOk7J
-         ZqBHH1oBFPuDpeTg1qRhlRzpon0rNSUbyN71093st3EHDH67RtzGO6CS8tPOiO3mhLlW
-         GjLw==
-X-Forwarded-Encrypted: i=1; AJvYcCU53qAjyIXZsKfpMw6L0NvDQ3f97znWeJcT4h5f2RLLyQz81qsA1qqbJwEY0IbF6M/tapl9ajHK1NFOLoME@vger.kernel.org, AJvYcCVGrFBfMkqdm2GvUHO/y/x59PAD++KDZwPwaYZZLy+mNVlxM1A8rQ+sZZ5h2i+cAoISBvueG42dWFLJ4384@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwLfKCZdV45PG8GWtyt2ggMuEoZPrPViFaXhng3a0g7gDXbRAN
-	DNmBYVxec8TWef+RKd55sUqarn/EajdIFPsIQUzH9ziOYG9ThrtutLPtbcvEvbfSvNXS/pCNOS/
-	XYbFiPECJ5fvEGJD5e130S8mU3tkDJcHdZCqep/s=
-X-Gm-Gg: ASbGncs1No6J9kdubG16Vr2pdN2z7hkI1GpM2xLPEWfVzIc06E4TnkRzOb+VwRGtN5l
-	LLkIXc3jigzp1KQj9CiCw5Yi/KaUxHk2Lxzq1sfSZEQngjKR1aTtgPNP/bNqQRNoatdQFhx4V6W
-	BhYERcZkgkajMvBUXZveqMheOPZuI23JI0ym+VsLn7KLr3DU0GS+0YEmhKtelCFzNEtPilpKUAX
-	dAhQnk=
-X-Google-Smtp-Source: AGHT+IEmLFippxPo1yWpvRmkH1XCrTMyj2CVWyfRoMuEjgvGmddka6dEo2F6UI78eEYemrSb84SZ3W0I36GxnJQguZw=
-X-Received: by 2002:a17:907:934a:b0:ae6:f163:5d75 with SMTP id
- a640c23a62f3a-af9c63b017dmr764449266b.11.1754836381487; Sun, 10 Aug 2025
- 07:33:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=j49ZlWtU6KpHIaq3AMO5KN2BhZhteiaCmph/VSw4uEUvboadsbnPIrziqzvsgqU7x7klrEivcJ7xTIkZKbWsrMlKdb7TozyvF4D2CskyFFx0h9UI626ec0i6kSAU8a78MQKgssmy8OG/jfAVORK5U/b3PvNYgMWwFY63CIKh/r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bE/b6jb8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1BEC4CEF9;
+	Sun, 10 Aug 2025 14:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754836469;
+	bh=Vs6zCVzNYOOBeaFgHyVlLxbYIuRdFhTAig9mwdgEfDQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bE/b6jb8qYgeLQqPPzjS7lIcQt7MSLTioMwQiWOl4zLFfoQVSokaOMVi0HbJ+q99U
+	 1HhhWeTBO/p9pYEfQ2T3irZMpCLD3c/n1e216b7sH8xAJ2NFPo16mtxeFJgNTfBxWV
+	 GMeL/6fSnEIR8DXApCWYNRqWkFEuBMtfkVRziWWctxZZEM1xYTbx6/B6aGqH5iX+JQ
+	 pqrqutzB0iftz3Xkdg171jGKWT6+wx+8a+/rc5NKdjbJzfpenaOVB/gqHT4/nOAvx8
+	 Fy4g+IRIogu8REQOk9flilF1eSzWQLi0zqj6TnbEz4StoUq3nqnZiafwNtHBhkuzVo
+	 XcZpRvEquyhHQ==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso6438182a12.1;
+        Sun, 10 Aug 2025 07:34:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUfD5ljrnRKseTWUq8Xckk5DbgkCUY5dNVIuD20cFGIXfzF+Hsl5ahdBTY802D+3YCWwYecz3uq@vger.kernel.org, AJvYcCVtUuVrx9n+/xVPdQR6FNkMLxQ/ZNRkhILFcX6sNvNVJu/Pr2ndrQP0n6WFfLk6KmELBLlUnDVEdPZDABs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY58obNyRy41G4WDyHc40dRmfO3l4lAX8xbNk6O+QPu49y3NlZ
+	QQYiSmDiPA/fOf73gqyptsSrA7mOHRS6mtizjEjIQJaBdeU3+TuSh3yl8A2LfrG+h0Ic6KWtC7v
+	JOcBvm8p0cr6BEtdTiDgjr/tC/axPpAw=
+X-Google-Smtp-Source: AGHT+IG4o84/rM7QVQPWh7TEB1TD66BC3/NtSFnHTksgcfeKzFYNg4vkE3t6ZzTFlBzTgE7WDqS1OXBxCK5OvRJhOis=
+X-Received: by 2002:a17:906:d542:b0:af9:1ee4:a30c with SMTP id
+ a640c23a62f3a-af9c64d3cfbmr962040166b.36.1754836468386; Sun, 10 Aug 2025
+ 07:34:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxhmA862ZPAXd=g3vKJAvwAdobAnB--7MqHV87Vmh0USFw@mail.gmail.com>
- <20250804173228.1990317-1-paullawrence@google.com> <CAOQ4uxiFVt8eVmP5hUkjvascK-rVNyZzAec_tiGQf7N0PYDdTQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiFVt8eVmP5hUkjvascK-rVNyZzAec_tiGQf7N0PYDdTQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 10 Aug 2025 16:32:50 +0200
-X-Gm-Features: Ac12FXxr9byjNW2nQMobzxNF-4ZzU1DKKMiM6TnNG_zfEaqNRdDpRWqdvRy20Iw
-Message-ID: <CAOQ4uxgYgbzcR1XV1kM6hEis6Lfnbo0xWYzdc0exAAPq-M6rew@mail.gmail.com>
-Subject: Re: [PATCH 0/2] RFC: Set backing file at lookup
-To: Paul Lawrence <paullawrence@google.com>
-Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, miklos@szeredi.hu
+References: <20250721101343.3283480-1-chenhuacai@loongson.cn>
+In-Reply-To: <20250721101343.3283480-1-chenhuacai@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 10 Aug 2025 22:34:10 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4TToP7AY8yMUjikTLChMpMQMB1=HRaMDS7Ern5nf92Fg@mail.gmail.com>
+X-Gm-Features: Ac12FXxpVhYI7CqxcRy_NIXh4NRe49UwUMvXTV70a1B4VMSu132CrmAPg_2WB9I
+Message-ID: <CAAhV-H4TToP7AY8yMUjikTLChMpMQMB1=HRaMDS7Ern5nf92Fg@mail.gmail.com>
+Subject: Re: [PATCH V3] init: Handle bootloader identifier in kernel parameters
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 10, 2025 at 3:25=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Mon, Aug 4, 2025 at 7:32=E2=80=AFPM Paul Lawrence <paullawrence@google=
-.com> wrote:
-> >
-> > Based on our discussion, I put together two simple patches.
-> >
-> > The first adds an optional extra parameter to FUSE_LOOKUP outargs. This=
- allows
-> > the daemon to set a backing file at lookup time on a successful lookup.
-> >
-> > I then looked at which opcodes do not require a file handle. The simple=
-st seem
-> > to be FUSE_MKDIR and FUSE_RMDIR. So I implemented passthrough handling =
-for these
-> > opcodes in the second patch.
-> >
-> > Both patches sit on top of Amir's tree at:
-> >
-> > https://github.com/amir73il/linux/commit/ceaf7f16452f6aaf7993279b1c10e7=
-27d6bf6a32
-> >
->
-> I think you based your patches on ceaf7f16452f^ and patch 1/2 replaces co=
-mmit
-> ceaf7f16452f ("fuse: support setting backing inode passthrough on getattr=
-")
->
-> Right?
->
-> That makes sense to me because that last patch was a hacky API,
-> but then you made some other changes to my patch which I did not understa=
-nd why.
+Hi, Andrew,
 
-Push a new version of fuse-backing-inode-wip based on
-https://github.com/amir73il/libfuse/commits/fuse_passthrough_iops/
+Can you take this patch to linux-mm (seems the best tree for it)?
 
-Please base your work on the above branch with the helpers instead of
-modifying them.
+Huacai
 
-Thanks,
-Amir.
+On Mon, Jul 21, 2025 at 6:14=E2=80=AFPM Huacai Chen <chenhuacai@loongson.cn=
+> wrote:
+>
+> BootLoader (Grub, LILO, etc) may pass an identifier such as "BOOT_IMAGE=
+=3D
+> /boot/vmlinuz-x.y.z" to kernel parameters. But these identifiers are not
+> recognized by the kernel itself so will be passed to user space. However
+> user space init program also doesn't recognized it.
+>
+> KEXEC/KDUMP (kexec-tools) may also pass an identifier such as "kexec" on
+> some architectures.
+>
+> We cannot change BootLoader's behavior, because this behavior exists for
+> many years, and there are already user space programs search BOOT_IMAGE=
+=3D
+> in /proc/cmdline to obtain the kernel image locations:
+>
+> https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/util.go
+> (search getBootOptions)
+> https://github.com/linuxdeepin/deepin-ab-recovery/blob/master/main.go
+> (search getKernelReleaseWithBootOption)
+>
+> So the the best way is handle (ignore) it by the kernel itself, which
+> can avoid such boot warnings (if we use something like init=3D/bin/bash,
+> bootloader identifier can even cause a crash):
+>
+> Kernel command line: BOOT_IMAGE=3D(hd0,1)/vmlinuz-6.x root=3D/dev/sda3 ro=
+ console=3Dtty
+> Unknown kernel command line parameters "BOOT_IMAGE=3D(hd0,1)/vmlinuz-6.x"=
+, will be passed to user space.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+> V2: Update comments and commit messages.
+> V3: Document bootloader identifiers.
+>
+>  init/main.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/init/main.c b/init/main.c
+> index 225a58279acd..b25e7da5347a 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -545,6 +545,12 @@ static int __init unknown_bootoption(char *param, ch=
+ar *val,
+>                                      const char *unused, void *arg)
+>  {
+>         size_t len =3D strlen(param);
+> +       /*
+> +        * Well-known bootloader identifiers:
+> +        * 1. LILO/Grub pass "BOOT_IMAGE=3D...";
+> +        * 2. kexec/kdump (kexec-tools) pass "kexec".
+> +        */
+> +       const char *bootloader[] =3D { "BOOT_IMAGE=3D", "kexec", NULL };
+>
+>         /* Handle params aliased to sysctls */
+>         if (sysctl_is_alias(param))
+> @@ -552,6 +558,12 @@ static int __init unknown_bootoption(char *param, ch=
+ar *val,
+>
+>         repair_env_string(param, val);
+>
+> +       /* Handle bootloader identifier */
+> +       for (int i =3D 0; bootloader[i]; i++) {
+> +               if (!strncmp(param, bootloader[i], strlen(bootloader[i]))=
+)
+> +                       return 0;
+> +       }
+> +
+>         /* Handle obsolete-style parameters */
+>         if (obsolete_checksetup(param))
+>                 return 0;
+> --
+> 2.47.3
+>
 
