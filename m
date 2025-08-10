@@ -1,120 +1,94 @@
-Return-Path: <linux-kernel+bounces-761292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2FEB1F77B
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 02:50:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F9EB1F7F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 03:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 916D13ADE8A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 00:50:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC03C189AFAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 01:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA20B1C69D;
-	Sun, 10 Aug 2025 00:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCC81459FA;
+	Sun, 10 Aug 2025 01:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+zoD5MO"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="qFL1qI64"
+Received: from r3-19.sinamail.sina.com.cn (r3-19.sinamail.sina.com.cn [202.108.3.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB81B660
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 00:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F56128DB3
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 01:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754787028; cv=none; b=gXUa7LbaJSZdSiwjDQJxybUrPhUQfCQieL4obQ3/jxy3/PeMmPVvW8kVKg6AwR87rklLFtxLkiBnJItKqcUjw+JbTfZKXG2lF+Ipy1DyOzcq0kY+N+SuJuYXw1DKpPauyYcRyi6HdL29X3oMhMrVk+6yJgdXzZeoZIZSYsKAvnc=
+	t=1754789784; cv=none; b=oaYMLE9+KLTQruznsfG1NWkZX3UI66oQnMQB9tDFlrMH1VS1OTVD65IuR9GOC8Yssr3VY/WmplM/NWsrY1M2fbX1Z9nMyt4Mao1ugPL9ZANX9c5Vrb1VChJ9EiIPy4DqkhZoCJ9XJqBYS/xsmho7K/BmoeTz5nJVeNd9F+K0j+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754787028; c=relaxed/simple;
-	bh=Ba4brA2ogJTzPenC9lKFuHTAA7jq25ngaLLV44WtBLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GQnJERshw4Qgyj5tspIExaHTKRPN1m9+PJtjoPSgdkL86J/kpVywCIRMPSodEP2MIL9quNmAssTNHFaRr10cOw6f/z1bPmpdJqbHELD50ZLjnlvO2yUUFz440fMJ2qIrODlx1DQex7QAizHxWfqW+nt6ap9kzz60EZ6TzsZAL74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+zoD5MO; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so5808110a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Aug 2025 17:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754787025; x=1755391825; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ba4brA2ogJTzPenC9lKFuHTAA7jq25ngaLLV44WtBLU=;
-        b=V+zoD5MOgJszfcHGTsXQ+mtzcYkr9QiqshIx+8tlMDR31zpDXL8lun309rXAmLDds9
-         ryK0HITXCANRCDTaEVm0GKxlFaiuxqAeA0DPnPgh0t7/aX7OWfZv6jwaZMnNYwxiUfjJ
-         YyCR6LzDR5xNdZs2hDwhk6T/Jb/vy0ROrh5czfk006pDSQkcSY2MdGCqbrTFSQ/+yTM/
-         0EowufgnTPqzBzEwWviX2pIX288/efem6E2pCLW6YQvpU9ABAJNfajSeUmon0meniEQb
-         eDkJNSwrux3Jyvr8MlV9SWPJ1+K8BO/jemOsbVrjWmbiY7qpvUWUpNJARBgNfcGJmqA/
-         M5JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754787025; x=1755391825;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ba4brA2ogJTzPenC9lKFuHTAA7jq25ngaLLV44WtBLU=;
-        b=Uj0tQEWK9r72yynFJpck1+ikNCAO9cmdrD9ltNSn7uEMzNdTcXp9LAR2Nej1P+4bQz
-         drdTry0L3IVcOwcAI2cWd9lZaU67Vq2w64XPwNvvWvZcLycQ06IeUQVLtz7tDfZ0uo7r
-         HdNVkj2eANijVxt003YMYY40jZ9dhIoyEC3cYkP+kMjJ2+T2I83mka6GIfMdMayz/ScD
-         gfYAn9fwAY8GjzxftEazSVT7h3maogDG+o7MIGAY9z10q/yqiMzaUHlCZdC1DpyD91D+
-         Yq7OeAKD/rF0o28FJ1xdsemRyFTsQ/p+ZNxJEcUjRTtsMnaRsM64FWLSVzhySeqxvPOX
-         w/Og==
-X-Gm-Message-State: AOJu0YxbQd58G8E9p8irWohw1LLEmE+1BakO/BIYeMBTjmaOPwdfnijO
-	xff14Xrom4/HKx9hLnd7SC0I6V5PQ7hK1nd4YZMttGRwmK0+CmmqyKemLEOueleShIVEFZ8KMPs
-	tBv1AiDLtw0bls9KJwwX3rF7ayMnyCGY=
-X-Gm-Gg: ASbGncsGagBOxHxYbcizE8dDaIGp743c4ALXtBS++G/+ii91JZAFp8B80gWvd+rycfj
-	8/3iGQ0oAfpqgEzQj0gLgsFEfxX9dqqfXRaFI6ogVqO568aBTFnfn2FK+q87P0qKAVMe0IDBVgt
-	e+j50aOjqkkjdbUzUPoCCVfwswEiSB46/AfIFqA2aX6WM6kYS4PM58K6fWtv4B30CTYsvb6bVLY
-	fT4XHnzMHpz0wJwsB/7q6WvMzRJRNq4l+uCbOA=
-X-Google-Smtp-Source: AGHT+IHDFltqqEePRdI3Bk9w4tVxlj7ls6tuYPRjB4eZwmq09Po83xqonA+gu2aSNM54qdtFOZCI0RMAgB3v0vc7Tqw=
-X-Received: by 2002:a05:6402:4309:b0:618:1250:ac54 with SMTP id
- 4fb4d7f45d1cf-6181250b01cmr1684071a12.21.1754787024967; Sat, 09 Aug 2025
- 17:50:24 -0700 (PDT)
+	s=arc-20240116; t=1754789784; c=relaxed/simple;
+	bh=Knjpq0a+UMDsXXR/up1CLZNHEPBq0LgtOklP/Cy0XQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=K/LCMV42Ae+QQgwB+BYrWA1sokC4aLUY5E1zBmmpOzh6KjLLGxq3SrhM5Fm0TPS46D+TN/T4/ZxYwelws+8ttXoMFRPb4S6YjOSMRk07L2HQFgJHrbj29wz1EHQoSb93uzeu/tA4t/+lNsAg6Bg/FNFG34bEDh3LhoyVHs495Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=qFL1qI64; arc=none smtp.client-ip=202.108.3.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754789779;
+	bh=kbOGWtlKRbiYSgddT0QqVfyof5p+SHev96QEjhh+3k8=;
+	h=From:Subject:Date:Message-ID;
+	b=qFL1qI64eQ6wavTu1j6rtQ0aW0k5s3tVlR4b8ftCEYOIYfo1jNHyrzwcpY7c0EII6
+	 CPBu/VKEi9LtXwibzDSS5EXCXCNyxd+dV6WYPjHQy+TvwmIEOs1uT6Y2zgNbW0vYqb
+	 CB/sfd6MJixEjo4mMGAKvwYkHKi/NSR/40I5AdTY=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 6897F78700003B26; Sun, 10 Aug 2025 09:36:08 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 081934457075
+X-SMAIL-UIID: 91BB145C0EB04AD891A39FAD80409E59-20250810-093609-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+63859a31071a369082b1@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] WARNING in try_to_migrate_one (3)
+Date: Sun, 10 Aug 2025 09:35:56 +0800
+Message-ID: <20250810013557.4116-1-hdanton@sina.com>
+In-Reply-To: <6897b156.050a0220.51d73.0082.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+LcPJ3nAdBmuSBQ0mgzFmUL=ZE5RKkfp_4dQf-ycTiHxH=PXA@mail.gmail.com>
-In-Reply-To: <CA+LcPJ3nAdBmuSBQ0mgzFmUL=ZE5RKkfp_4dQf-ycTiHxH=PXA@mail.gmail.com>
-From: wajahat iqbal <wajahatiqbal22@gmail.com>
-Date: Sun, 10 Aug 2025 05:50:13 +0500
-X-Gm-Features: Ac12FXyYW_gewChXiR6nmZL-xdDrshOfCvH_V5M4UMWvr0UnJjaEg4qwPwQkvcY
-Message-ID: <CA+LcPJ0YQtbYcyyTniFafMOy-iJY++Od1Qd-Tu8vzK7JaFsOLQ@mail.gmail.com>
-Subject: Clarification on SEAM Interface Usage and Patch Scope
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+> Date: Sat, 09 Aug 2025 13:36:38 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    0227b49b5027 Merge tag 'gpio-updates-for-v6.17-rc1-part2' ..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1422d434580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2ae1da3a7f4a6ba4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=63859a31071a369082b1
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117c72f0580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ab7ea2580000
 
-Thanks for the ongoing review and feedback.
+#syz test
 
-To clarify the question about the SEAM interface and whether this
-patch should affect multiple drivers:
-
-I performed a thorough search through the kernel source for the term
-SEAMCALL to identify all users of the SEAM interface. Running:
-
-=> grep -R "SEAMCALL" .
-
-from the kernel source root revealed that SEAMCALL is currently only
-used within the TDX (Intel Trust Domain Extensions) host-side code,
-located primarily under:
-
-arch/x86/virt/vmx/tdx/
-
-No other drivers or subsystems in the drivers/ directory or elsewhere
-in the kernel tree appear to use this interface.
-
-Therefore, this patch targets the sole existing in-tree consumer of
-the SEAM interface. If other uses appear in the future, I am open to
-updating them accordingly or submitting follow-up patches.
-
-I will also resend this reply including all previous To: and Cc:
-recipients and format it as plain text with inline replies, as
-requested.
-
-Please let me know if you have further questions or concerns.
-
-Best regards,
-Wajahat Iqbal.
+--- x/mm/rmap.c
++++ y/mm/rmap.c
+@@ -2366,6 +2366,7 @@ static bool try_to_migrate_one(struct fo
+ 		subpage = folio_page(folio, pfn - folio_pfn(folio));
+ 		address = pvmw.address;
+ 		anon_exclusive = folio_test_anon(folio) &&
++				 pfn == folio_pfn(folio) &&
+ 				 PageAnonExclusive(subpage);
+ 
+ 		if (folio_test_hugetlb(folio)) {
+--
 
