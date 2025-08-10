@@ -1,86 +1,127 @@
-Return-Path: <linux-kernel+bounces-761353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF188B1F8B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:01:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDECBB1F8B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CB1189A06D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:01:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14916168E19
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBBE22F77B;
-	Sun, 10 Aug 2025 07:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EA5227563;
+	Sun, 10 Aug 2025 07:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eAH+Dunv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="V6b6ocb5"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEA728DB3;
-	Sun, 10 Aug 2025 07:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86E5566A;
+	Sun, 10 Aug 2025 07:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754809264; cv=none; b=iGyvzf7woVD/lxBJ4yNBdvrZqqIpHDc1NVPjWw/rAxjskPE7XKFXNROGsIeZkMmpdz+5A29KV0PQQ5oD29HSx0ZzExmmxaW6/hGpOmkGPcvnP0OfQs2AMAcRU14BKJBwB9m+MIUPDjrY79Ccfge5KiTwgkA7Bqh5y7G6As3YwO8=
+	t=1754809317; cv=none; b=ERThBI1z4yog/6Rz7AibbHpKSdoQTEQ9jJDlrmsCq0ofdVrmC3ZbGcto0i22p1lBcpyhRczaAXqkoGCNZZKFYXZJ9Ovf+v51jnqe3lYPOFsEEW9Z/xQBfmi6fDkq7ZgC11f3Qo0QaXsJC4VAFGl28zm3i+DgJATm+wcpfNrGmH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754809264; c=relaxed/simple;
-	bh=FxogHXorMPaYiG70MeaplwIPWAFMg2TKk2C7T0NeXLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+mjFovZliAsOE91iOGsKiYWJLdTnyyjsCy1mOABoZhpnUScJ8bRxU2cAwvmyMJ5UjqgXNa5X6fUsf/EmNsCtkCaeK2N1WWWNKXZQr/Z2JdaEEhEurRg1Ai2R1wXhLv0ciwkkry/IldquAkOGnlt+fFYwyPcKN5xn9+lWlN7ztU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eAH+Dunv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01869C4CEEB;
-	Sun, 10 Aug 2025 07:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754809263;
-	bh=FxogHXorMPaYiG70MeaplwIPWAFMg2TKk2C7T0NeXLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eAH+DunvbVDm6W4ae0E+5SFj1zGSWyPbIDhuAHnYYFgDpRYoOLAuVCihU5zZmU7YE
-	 /I0auZJvaTtX7tkuX5g4JcGfzOJgT2ipSQmnkpHFSBR71HgN8xrAp7Bw+A5oBSadMF
-	 tMfkc/tKr5MYuzJucv458RSc6xpL6eushn/MltYQ=
-Date: Sun, 10 Aug 2025 09:01:00 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: corbet@lwn.net, josh@joshtriplett.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-	workflows@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] agents: add unified agent coding assistant
- configuration
-Message-ID: <2025081040-armchair-although-8bf1@gregkh>
-References: <20250809234008.1540324-1-sashal@kernel.org>
- <20250809234008.1540324-3-sashal@kernel.org>
+	s=arc-20240116; t=1754809317; c=relaxed/simple;
+	bh=jcrn+VBHBVRuF2X9rlMWIy8O7/W+PKX3+qIuU/YzHCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dMRQ23Mqay1aT2nQL67bmsMQWi2xv5H5CFfslgatNQiBrqmrOjv4mDMlsZb6hwflNr7HxsJFDFGWwIeVi1CjKzlCUnby2/LhajYQurcXdtXKimLFfL6hzERaq/buQTj9Q8K8uBA83514ttDkqo3Yr07hCM2G7/Q+iiZoCdTGFQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=V6b6ocb5; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1754809312;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UTxcRIoRKKSNomMvw3b2nj7P65Cz7tc/XNzVDr/j4I0=;
+	b=V6b6ocb5cIIMqvZ9lbQj0lhYVnR9tINZm4iPTHbHndg+0jlNNn8HYENuJpF9QTqEg5sC/e
+	sXor0Bqd2r12Cd8OBMtDyZIB+Q0ciV57wL9kel1S8nNx5U/5uet8AgPH9Pe2UoRVGGFNxB
+	k/2Q/QVgY0xwMBh7VXU1hb8gdktJ/cE=
+From: Sven Eckelmann <sven@narfation.org>
+To: Jonas Jelonek <jelonek.jonas@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Markus Stockhausen <markus.stockhausen@gmx.de>,
+ Harshal Gohel <hg@simonwunderlich.de>
+Subject: Re: [PATCH v5 05/11] i2c: rtl9300: check if xfer length is valid
+Date: Sun, 10 Aug 2025 09:01:49 +0200
+Message-ID: <10704304.nUPlyArG6x@sven-desktop>
+In-Reply-To: <aJgzUFOzxxdNDrQa@shikoro>
+References:
+ <20250809220713.1038947-1-jelonek.jonas@gmail.com>
+ <20250809220713.1038947-6-jelonek.jonas@gmail.com> <aJgzUFOzxxdNDrQa@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250809234008.1540324-3-sashal@kernel.org>
+Content-Type: multipart/signed; boundary="nextPart2319299.iZASKD2KPV";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-On Sat, Aug 09, 2025 at 07:40:08PM -0400, Sasha Levin wrote:
-> Create a single source of truth for agent instructions with
-> symlinks for all major coding agents:
-> - CLAUDE.md (Claude Code)
-> - .github/copilot-instructions.md (GitHub Copilot)
-> - .cursorrules (Cursor)
-> - .codeium/instructions.md (Codeium)
-> - .continue/context.md (Continue)
-> - .windsurfrules (Windsurf)
-> - GEMINI.md (Gemini)
+--nextPart2319299.iZASKD2KPV
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+Date: Sun, 10 Aug 2025 09:01:49 +0200
+Message-ID: <10704304.nUPlyArG6x@sven-desktop>
+In-Reply-To: <aJgzUFOzxxdNDrQa@shikoro>
+MIME-Version: 1.0
 
-Having these non-dot-files in the root directory for just specific
-closed source tools feels a bit wrong to me.  I thought all of these
-tools were standardizing on "use README" and didn't need these extra
-helpers?  The fact that most of them just contain README seems like
-that's the case, they just need to work it out somehow?
+On Sunday, 10 August 2025 07:51:12 CEST Wolfram Sang wrote:
+> On Sat, Aug 09, 2025 at 10:07:06PM +0000, Jonas Jelonek wrote:
+> > Add an explicit check for the xfer length to 'rtl9300_i2c_config_xfer'
+> > to make sure a length < 1 or > 16 isn't accepted. While there shouldn't
+> > be a length > 16 because this is specified in the i2c_adapter_quirks, a
+> > length of 0 may be passed.
+> 
+> There is another quirk for this: I2C_AQ_NO_ZERO_LEN
+> 
+> With that, you shouldn't need the code here.
 
-Anyway, I'd not like this patch to be added (patch 1/2 is great), as it
-feels like these agents need to get their act together in ways to not
-need these, we shouldn't be forced to deal with their inefficiencies.
+I am a little bit lost here. Let us assume that i2c_smbus_write_byte_data() is 
+called - for example by an in-kernel driver. We would then have following call 
+chain:
 
-thanks,
+* i2c_smbus_write_byte_data
+* i2c_smbus_xfer
+* __i2c_smbus_xfer
+* adapter->algo->smbus_xfer (aka rtl9300_i2c_smbus_xfer)
 
-greg k-h
+But the quirk is only checked in i2c_check_for_quirks - and then on 
+`struct i2c_msg` and not `union i2c_smbus_data`. And this is only called by 
+__i2c_transfer (which is called by i2c_transfer, i2c_smbus_xfer_emulated, 
+...). But on first glance, it didn't look like it will be called when using 
+i2c_smbus_write_byte_data - unless __i2c_smbus_xfer fails and must fall back 
+to i2c_smbus_xfer_emulated. I most likely missed something when doing a quick 
+check of the source code. Maybe you can point it out.
+
+And I might have to point out that I am currently not next to the actual HW to 
+check if my statement that adapter->algo->smbus_xfer == rtl9300_i2c_smbus_xfer 
+is really true.
+
+Kind regards,
+	Sven
+--nextPart2319299.iZASKD2KPV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaJhD3QAKCRBND3cr0xT1
+y5n4APsHIMoTBC0vlamQgH2LwXocWomzmEvz4sqCk1WX0DBHxwD+MGgmXPdlfMEJ
+gwkQGvv7xV4MXVbfy9qsHbgnaAK7GAo=
+=DchT
+-----END PGP SIGNATURE-----
+
+--nextPart2319299.iZASKD2KPV--
+
+
+
 
