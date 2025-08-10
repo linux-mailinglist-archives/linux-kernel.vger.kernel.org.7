@@ -1,208 +1,294 @@
-Return-Path: <linux-kernel+bounces-761621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56904B1FCAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:20:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07ADFB1FCAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 00:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4F91894DF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 22:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0298D1894F87
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 22:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6782D6409;
-	Sun, 10 Aug 2025 22:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043342D661C;
+	Sun, 10 Aug 2025 22:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="c+k33BbH"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WKSwrXw2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439C22C3745;
-	Sun, 10 Aug 2025 22:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAAB2BF010
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 22:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754864427; cv=none; b=Q7GafIwdxu8hYaW4dbhYjlsFl6WsNqsAJIoM4xfNo+Us47KsdiYPflr9Az5BlJ/4fi6f4DW60ZhjHon1ZHQShHDnLvQUzfRCJmZ2z/W9tmMYIAXZU458gj00TL/onc7lgkd7UDGSzPiptz0J3R5aNR5SVBPU/CPJUoNpxM85xSw=
+	t=1754864527; cv=none; b=T7nfK7XFTd8SORhSBt7p9/8GyqvhkFnz23E7NHWfjeuauZDwZREqx2CvtVpSGBfulWk7Q4IvhDDAYMZc/b2ctPTwLzGW6FBGnMeLtn2W1YpvQfy5MKnw8gt6memZorqKC300mPkErIQahtn0ZwQ2XlrmPEBV+z2IUAdoABEB5nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754864427; c=relaxed/simple;
-	bh=Npiszttg3MxdsmYdIUoXlbDZtJa6G6tHOGzIGAbEFKE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ECtu78dZz5ZPPT7hKC2QB+Ckmd86n+pQmEY7tavwUR0mDfFoar31ICCh+m1NeONnPKOPXyYRkspU7BX/kw4S7HHLL4NjmH8UMj2M9icpKIS0ZbPsaoiTHtT8Rwd+JL16OFFNUkVP3lFMv47ncwahzWIeYObTxDhA6vueXeZlixU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=c+k33BbH; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=5kwrvvdUBPlIjzHfmvkp9awYUk38GQQrwActREjbtBk=; t=1754864424;
-	x=1755469224; b=c+k33BbHAmUmhLJX3tYbE6WliBl+0t0FCYvmcaY4oOhL1PqI0eLQd7MnQMKUV
-	azFydn4DZJyhimhDXcMcrH55ulQSODXOzg8PiKCqv9n90WGv+upHe1TcGkl2opSWKmlx80MXMKl4U
-	a2x+tkXiMtdoAcsuo+rHOVC+5nPMW9TE/3ffN+QZlfzc2h6xFov9ZMUhSEg/G5Hl4G98qBUhVhXNu
-	vyRkqtQeECHBq8O/mBQVUgR0IwO2QsuuuwjAjnMfgTmzpQk3HvrONcW1YVN1Dsxkf3+IlkPsFfzsH
-	0sPrwHPYHuXp4oJsZyveQ+CH5+blC13G5scqnRvrRYEa/V1qsw==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1ulEOq-00000003Uhn-1Exc; Mon, 11 Aug 2025 00:20:20 +0200
-Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1ulEOq-00000000QWm-0Ftm; Mon, 11 Aug 2025 00:20:20 +0200
-Message-ID: <2bcb018c8b237f7ab2356f4459e14ae81a6fec8b.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH] sparc64: fix hugetlb for sun4u
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Anthony Yznaga <anthony.yznaga@oracle.com>, sparclinux@vger.kernel.org, 
-	davem@davemloft.net, andreas@gaisler.com
-Cc: linux-kernel@vger.kernel.org, agordeev@linux.ibm.com, will@kernel.org, 
-	ryan.roberts@arm.com, david@redhat.com, osalvador@suse.de
-Date: Mon, 11 Aug 2025 00:20:18 +0200
-In-Reply-To: <b5b75976c94b7b46f86a5af4675a1a570aaf20cc.camel@physik.fu-berlin.de>
-References: <20250716012446.10357-1-anthony.yznaga@oracle.com>
-						 <35f5ec4eda8a7dbeeb7df9ec0be5c0b062c509f7.camel@physik.fu-berlin.de>
-						 <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
-					 <38f4469f48e6d36fa92b445c8ecef7a440be43e6.camel@physik.fu-berlin.de>
-				 <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
-			 <fc1555550f7a9b3c9aa5fb651769cf41ed859c77.camel@physik.fu-berlin.de>
-		 <ff3d87634aedec28e7103f16a35031bfe86ca501.camel@physik.fu-berlin.de>
-	 <b5b75976c94b7b46f86a5af4675a1a570aaf20cc.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1754864527; c=relaxed/simple;
+	bh=L6jvK6ACaYL1SKlK5QC34DBWw1qmKVlL/yCAWgBC/h0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sl8NIkC1eeU15bNU1msCHIjWmSx0dkmM3p/Z71jfk0vecc2sAZEv2A22LP0HoM+M2immcrimOIHjmtKbp97AhwPw3k2xfj6j8E3zwQZa0hOUpYELax/EGj3SxCYsY5To/MNfcbVWPAWRHx8oQntgChaEPbZ+TEGNW4ie/xfo3hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WKSwrXw2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754864524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DTxIrdPV4iWneFJR6EUg7IhXT4i8rDJLDvWWCgyO0NI=;
+	b=WKSwrXw2yhHBMIouI6qOeWCkVgGxMf7vEB6I8ABl4pMikXp8NcUzx4QS3x2n6+UCZBy7mx
+	sY+nWYaFQfKSF0x//lAXqUQH5d4JeM3acESKeQje2PflehftExY4X0td8mx3bKsQpLP6c7
+	3FiHSdHfcYXdfU8g+JGzKcNfgzcGPIU=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-404-Z8vXp7SVO8KZNb6XNkfppQ-1; Sun, 10 Aug 2025 18:22:03 -0400
+X-MC-Unique: Z8vXp7SVO8KZNb6XNkfppQ-1
+X-Mimecast-MFC-AGG-ID: Z8vXp7SVO8KZNb6XNkfppQ_1754864522
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4af210c5cf3so160866701cf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 15:22:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754864522; x=1755469322;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DTxIrdPV4iWneFJR6EUg7IhXT4i8rDJLDvWWCgyO0NI=;
+        b=LPfj9xVT9hKrMFRREphfMLb1a9NbnevKah8vZPqF48CxWGxSwALyJZoa1hOSpkNQ/z
+         1gPvLADQekBtOz8e8Zq85HSafTnvLQN4lyFDE0y+WLoK+f4KGUiHzJ70HYULQbt9wsxS
+         1/9fE8SiPyUX4Co1nPK7sZs9O1XoKRLaSKEJYcPQsTNBFpNGiq2yz78iQqwpS8H5j1iM
+         cKVk58ot69xpv/B4+ATIgtB1VHnqIzxgTmBd/DYnRDouylIGz9PVpe2y2MmsrGJ7CAlp
+         usmh2vVRnkDhA2ewn3waSXiKoqvGMwtJyES5KHbZuMMNCzWKPV7ad8CGRVkU4a/1ACiz
+         eAzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxkQRWogOolfK4HX0XpkTp1oNL/VPh9C32rFnI289ItQjMeNNL7gVMvfNFblPIU/pqkcuaA23OIAYbd9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfT/B3yILw2ddTXpOaEj3sqVS5l5qO6eYPdiXy4cGS3z36DaHu
+	h9mw3XykMv6mBrLCCN4oDUL2guLn67U3UtUiZue1OP5irJVZD2Zbl91GvlBtoNS4GXn8KTXptHU
+	nxDfHYutFQb3AM0UP9FUC4MqEVQAmifieP1XdhRB4RgAXJO3w0sNKkOwIz3MZpSIZPw==
+X-Gm-Gg: ASbGnctPyDBFwY66V0khsK9viys7I0q+5wES0RnI1WjqQrpMXKX6ZDHvJIB/0XFCV7L
+	8Ngijqc+2tMCiY68P3vgviZBy1R/LJpVW1NNgdtV3eKLw6UxmiEyZ4QtAg05L22Rk3P089LFHPq
+	Yd0cXRbVrpoqaeK53NXMVtUDrXY5dJvHlWFuSB1yUWkdYCYGqh2gLQabBD8MMEyROkieJJngixw
+	Ptb0qlTYp68gJ7GakOF5WpHEn87R47ubJcjMwdnZfA5aHw+/NARZRQ/v6gM0sMJLreaGrUcRtvu
+	F+Yj93we4HV1zbmARIAn5CikwzKrQ95YvSFnw9LDTlHqTZ3WEolKmA9514IHe9w0enKlk/DFokQ
+	UGRQDqA==
+X-Received: by 2002:ac8:5d0f:0:b0:4b0:8092:9912 with SMTP id d75a77b69052e-4b0aed42512mr175423841cf.19.1754864522404;
+        Sun, 10 Aug 2025 15:22:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG0/+zhF0BEbIolaJOCDjorPdn+0fQDWtw+ZQnbIpL+/rhtw0D1XSan+ygZuYsN1eYwat9u9w==
+X-Received: by 2002:ac8:5d0f:0:b0:4b0:8092:9912 with SMTP id d75a77b69052e-4b0aed42512mr175423681cf.19.1754864521987;
+        Sun, 10 Aug 2025 15:22:01 -0700 (PDT)
+Received: from [10.144.145.224] (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e816a9a3cdsm714913185a.23.2025.08.10.15.21.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 15:22:01 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+Date: Sun, 10 Aug 2025 18:21:51 -0400
+Subject: [PATCH] peci: controller: peci-aspeed: convert from round_rate()
+ to determine_rate()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAH4bmWgC/x3MQQqAIBBA0avErBsorcSuEi1Ep5qNxVgRhHdPW
+ r7F/y8kEqYEY/WC0M2J91jQ1hX4zcWVkEMxqEb1jVEWD/KMsl8xoLiTsO/0oK2yhvwApTqEFn7
+ +4zTn/AGKlAVXYQAAAA==
+X-Change-ID: 20250729-peci-round-rate-543639297ec6
+To: Iwona Winiarska <iwona.winiarska@intel.com>, 
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+ openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754864519; l=5809;
+ i=bmasney@redhat.com; s=20250528; h=from:subject:message-id;
+ bh=L6jvK6ACaYL1SKlK5QC34DBWw1qmKVlL/yCAWgBC/h0=;
+ b=ExfjZ3UpYQJq/TbnRfU0VlhnPXC/BUUDuaJmbmTAojaDwiZAdey0YvI5/J2A7xXNMUS9wkF5N
+ vb2GIQ8yHxiAnFyZY8qfOjL4oDD/6ms/NRhowThZjXsoS9w0+utR2C+
+X-Developer-Key: i=bmasney@redhat.com; a=ed25519;
+ pk=x20f2BQYftANnik+wvlm4HqLqAlNs/npfVcbhHPOK2U=
 
-Hi,
+The round_rate() clk ops is deprecated, so migrate this driver from
+round_rate() to determine_rate() using the Coccinelle semantic patch
+appended to the "under-the-cut" portion of the patch.
 
-On Sun, 2025-08-10 at 11:52 +0200, John Paul Adrian Glaubitz wrote:
-> On Sat, 2025-08-09 at 08:42 +0200, John Paul Adrian Glaubitz wrote:
-> > Let me know if you have more suggestions to test. I can also provide yo=
-u with full
-> > access to this Netra 240 if you send me your public SSH key in a privat=
-e mail.
->=20
-> I have narrowed it down to a regression between v6.3 and v6.4 now.
->=20
-> The bug can be reproduced with the sparc64_defconfig on a Sun Netra 240 b=
-y setting
-> CONFIG_TRANSPARENT_HUGEPAGE=3Dy and CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=3D=
-y. When testing
-> on a modern systemd-based distribution, it's also necessary to enable CGr=
-oup support
-> as well as enable support for Sun partition tables with CONFIG_SUN_PARTIT=
-ION=3Dy.
->=20
-> Then it should be a matter of bisecting the commits between v6.3 and v6.4=
-.
->=20
-> I will do that within the next days as I'm currently a bit busy with othe=
-r stuff.
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+Coccinelle semantic patch is below. It's large and I don't want to
+pollute the kernel changelog with the same code hundreds of times,
+so that's why it's included under the cut. For subsystems with more
+than one patch, I've included it on the cover letter.
 
-OK, it turns out it's reproducible on older kernels (but not as old as 4.19=
-) as well.
-It's just much harder to trigger. I found a reproducer though and will try =
-to find
-the problematic commit next.
+    virtual patch
 
-[50686.808389] BUG: Bad page map in process sshd-session  pte:00000002 pmd:=
-01448000
-[50686.905701] addr:00000100000a0000 vm_flags:00000075 anon_vma:00000000000=
-00000 mapping:fff000003c8ca4f8 index:50
-[50687.038425] file:sshd-session fault:filemap_fault mmap:ext4_file_mmap [e=
-xt4] read_folio:ext4_read_folio [ext4]
-[50687.170246] CPU: 0 PID: 37883 Comm: sshd-session Not tainted 6.3.0-2-spa=
-rc64 #1  Debian 6.3.11-1
-[50687.285751] Call Trace:
-[50687.317771] [<0000000000d660b0>] dump_stack+0x8/0x18
-[50687.382976] [<000000000064fd1c>] print_bad_pte+0x15c/0x200
-[50687.455024] [<0000000000650f84>] unmap_page_range+0x3e4/0xbe0
-[50687.530513] [<0000000000651cd8>] unmap_vmas+0xf8/0x1a0
-[50687.597993] [<000000000065e674>] exit_mmap+0xb4/0x360
-[50687.664331] [<00000000004647dc>] __mmput+0x3c/0x120
-[50687.728380] [<00000000004648f4>] mmput+0x34/0x60
-[50687.788999] [<000000000046b510>] do_exit+0x250/0xa00
-[50687.854194] [<000000000046bea4>] do_group_exit+0x24/0xa0
-[50687.923962] [<000000000046bf3c>] sys_exit_group+0x1c/0x40
-[50687.994875] [<0000000000406174>] linux_sparc_syscall+0x34/0x44
-[50688.071518] Disabling lock debugging due to kernel taint
-[50689.484196] Unable to handle kernel paging request at virtual address 00=
-0c000002400000
-[50689.588368] tsk->{mm,active_mm}->context =3D 00000000001815a6
-[50689.661677] tsk->{mm,active_mm}->pgd =3D fff000000ae60000
-[50689.730374]               \|/ ____ \|/
-                             "@'/ .. \`@"
-                             /_| \__/ |_\
-                                \__U_/
-[50689.923679] sshd-session(37883): Oops [#1]
-[50689.977420] CPU: 0 PID: 37883 Comm: sshd-session Tainted: G    B        =
-      6.3.0-2-sparc64 #1  Debian 6.3.11-1
-[50690.112384] TSTATE: 0000008811001607 TPC: 00000000006510cc TNPC: 0000000=
-0006510d0 Y: 00000000    Tainted: G    B            =20
-[50690.261089] TPC: <unmap_page_range+0x52c/0xbe0>
-[50690.320650] g0: 00000000000004a8 g1: 000c000000000000 g2: 00000000000088=
-00 g3: ffffffffffffffff
-[50690.435029] g4: fff0000001ef1280 g5: 0000000031200000 g6: fff0000001f040=
-00 g7: ffffffffffffffff
-[50690.549403] o0: 000c000002400a20 o1: 00000100000a4000 o2: 00000001000482=
-90 o3: 0000000000000000
-[50690.663779] o4: 0000000000000001 o5: 000000000000000d sp: fff0000001f06f=
-61 ret_pc: 0000010000000000
-[50690.782728] RPC: <0x10000000000>
-[50690.825039] l0: 0000000100048290 l1: 000c000002400a20 l2: 00000100000a60=
-00 l3: fff0000000950000
-[50690.939419] l4: 00000100000fc000 l5: fff000000196dc20 l6: fff0000001f079=
-38 l7: 00000000010f6fd0
-[50691.053798] i0: fff0000001f07aa8 i1: 0000000000002000 i2: 00000100000a40=
-00 i3: fff0000008311b00
-[50691.168170] i4: 0000000000100000 i5: fff0000001448290 i6: fff0000001f070=
-81 i7: 0000000000651cd8
-[50691.282546] I7: <unmap_vmas+0xf8/0x1a0>
-[50691.332867] Call Trace:
-[50691.364891] [<0000000000651cd8>] unmap_vmas+0xf8/0x1a0
-[50691.432371] [<000000000065e674>] exit_mmap+0xb4/0x360
-[50691.498708] [<00000000004647dc>] __mmput+0x3c/0x120
-[50691.562759] [<00000000004648f4>] mmput+0x34/0x60
-[50691.623376] [<000000000046b510>] do_exit+0x250/0xa00
-[50691.688573] [<000000000046bea4>] do_group_exit+0x24/0xa0
-[50691.758340] [<000000000046bf3c>] sys_exit_group+0x1c/0x40
-[50691.829256] [<0000000000406174>] linux_sparc_syscall+0x34/0x44
-[50691.905886] Caller[0000000000651cd8]: unmap_vmas+0xf8/0x1a0
-[50691.979085] Caller[000000000065e674]: exit_mmap+0xb4/0x360
-[50692.051141] Caller[00000000004647dc]: __mmput+0x3c/0x120
-[50692.120911] Caller[00000000004648f4]: mmput+0x34/0x60
-[50692.187246] Caller[000000000046b510]: do_exit+0x250/0xa00
-[50692.258160] Caller[000000000046bea4]: do_group_exit+0x24/0xa0
-[50692.333645] Caller[000000000046bf3c]: sys_exit_group+0x1c/0x40
-[50692.410280] Caller[0000000000406174]: linux_sparc_syscall+0x34/0x44
-[50692.492629] Caller[fff0000102ad4a74]: 0xfff0000102ad4a74
-[50692.562397] Instruction DUMP:
-[50692.562399]  ce762010=20
-[50692.601281]  02f47fa8=20
-[50692.632163]  c4362018=20
-[50692.663044] <c45c6008>
-[50692.693926]  86100011=20
-[50692.724808]  8e08a001=20
-[50692.755689]  8400bfff=20
-[50692.786569]  8779d402=20
-[50692.817451]  c458e018=20
+    // Look up the current name of the round_rate function
+    @ has_round_rate @
+    identifier round_rate_name =~ ".*_round_rate";
+    identifier hw_param, rate_param, parent_rate_param;
+    @@
 
-[50692.898656] Fixing recursive fault but reboot is needed!
+    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+                  unsigned long *parent_rate_param)
+    {
+    	...
+    }
 
-Adrian
+    // Rename the route_rate function name to determine_rate()
+    @ script:python generate_name depends on has_round_rate @
+    round_rate_name << has_round_rate.round_rate_name;
+    new_name;
+    @@
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+    coccinelle.new_name = round_rate_name.replace("_round_rate", "_determine_rate")
+
+    // Change rate to req->rate; also change occurrences of 'return XXX'.
+    @ chg_rate depends on generate_name @
+    identifier has_round_rate.round_rate_name;
+    identifier has_round_rate.hw_param;
+    identifier has_round_rate.rate_param;
+    identifier has_round_rate.parent_rate_param;
+    identifier ERR =~ "E.*";
+    expression E;
+    @@
+
+    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+                  unsigned long *parent_rate_param)
+    {
+    <...
+    (
+    -return -ERR;
+    +return -ERR;
+    |
+    - return rate_param;
+    + return 0;
+    |
+    - return E;
+    + req->rate = E;
+    +
+    + return 0;
+    |
+    - rate_param
+    + req->rate
+    )
+    ...>
+    }
+
+    // Coccinelle only transforms the first occurrence of the rate parameter
+    // Run a second time. FIXME: Is there a better way to do this?
+    @ chg_rate2 depends on generate_name @
+    identifier has_round_rate.round_rate_name;
+    identifier has_round_rate.hw_param;
+    identifier has_round_rate.rate_param;
+    identifier has_round_rate.parent_rate_param;
+    @@
+
+    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+                  unsigned long *parent_rate_param)
+    {
+    <...
+    - rate_param
+    + req->rate
+    ...>
+    }
+
+    // Change parent_rate to req->best_parent_rate
+    @ chg_parent_rate depends on generate_name @
+    identifier has_round_rate.round_rate_name;
+    identifier has_round_rate.hw_param;
+    identifier has_round_rate.rate_param;
+    identifier has_round_rate.parent_rate_param;
+    @@
+
+    long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+                  unsigned long *parent_rate_param)
+    {
+    <...
+    (
+    - *parent_rate_param
+    + req->best_parent_rate
+    |
+    - parent_rate_param
+    + &req->best_parent_rate
+    )
+    ...>
+    }
+
+    // Convert the function definition from round_rate() to determine_rate()
+    @ func_definition depends on chg_rate @
+    identifier has_round_rate.round_rate_name;
+    identifier has_round_rate.hw_param;
+    identifier has_round_rate.rate_param;
+    identifier has_round_rate.parent_rate_param;
+    identifier generate_name.new_name;
+    @@
+
+    - long round_rate_name(struct clk_hw *hw_param, unsigned long rate_param,
+    -               unsigned long *parent_rate_param)
+    + int new_name(struct clk_hw *hw, struct clk_rate_request *req)
+    {
+        ...
+    }
+
+    // Update the ops from round_rate() to determine_rate()
+    @ ops depends on func_definition @
+    identifier has_round_rate.round_rate_name;
+    identifier generate_name.new_name;
+    @@
+
+    {
+        ...,
+    -   .round_rate = round_rate_name,
+    +   .determine_rate = new_name,
+        ...,
+    }
+
+Note that I used coccinelle 1.2 instead of 1.3 since the newer version
+adds unnecessary braces as described in this post.
+https://lore.kernel.org/cocci/67642477-5f3e-4b2a-914d-579a54f48cbd@intel.com/
+---
+ drivers/peci/controller/peci-aspeed.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/peci/controller/peci-aspeed.c b/drivers/peci/controller/peci-aspeed.c
+index ad3a7d71ed4c61e6123dcbbad264812cb83cbb07..a0c99ecf7f3805a1cdac55a8d5db9c61ad3cf37c 100644
+--- a/drivers/peci/controller/peci-aspeed.c
++++ b/drivers/peci/controller/peci-aspeed.c
+@@ -362,12 +362,14 @@ static int clk_aspeed_peci_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
+-static long clk_aspeed_peci_round_rate(struct clk_hw *hw, unsigned long rate,
+-				       unsigned long *prate)
++static int clk_aspeed_peci_determine_rate(struct clk_hw *hw,
++					  struct clk_rate_request *req)
+ {
+-	int div = clk_aspeed_peci_get_div(rate, prate);
++	int div = clk_aspeed_peci_get_div(req->rate, &req->best_parent_rate);
+ 
+-	return DIV_ROUND_UP_ULL(*prate, div);
++	req->rate = DIV_ROUND_UP_ULL(req->best_parent_rate, div);
++
++	return 0;
+ }
+ 
+ static unsigned long clk_aspeed_peci_recalc_rate(struct clk_hw *hw, unsigned long prate)
+@@ -394,7 +396,7 @@ static unsigned long clk_aspeed_peci_recalc_rate(struct clk_hw *hw, unsigned lon
+ 
+ static const struct clk_ops clk_aspeed_peci_ops = {
+ 	.set_rate = clk_aspeed_peci_set_rate,
+-	.round_rate = clk_aspeed_peci_round_rate,
++	.determine_rate = clk_aspeed_peci_determine_rate,
+ 	.recalc_rate = clk_aspeed_peci_recalc_rate,
+ };
+ 
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250729-peci-round-rate-543639297ec6
+
+Best regards,
+-- 
+Brian Masney <bmasney@redhat.com>
+
 
