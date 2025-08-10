@@ -1,150 +1,102 @@
-Return-Path: <linux-kernel+bounces-761372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B67B1F8F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:40:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811BEB1F8F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5003BD2A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:40:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07A157A972C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 07:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A422144B4;
-	Sun, 10 Aug 2025 07:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FDB22FAC3;
+	Sun, 10 Aug 2025 07:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OzlVMe4q"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VABYmxx1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4161A7264
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 07:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F121F949;
+	Sun, 10 Aug 2025 07:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754811638; cv=none; b=XctkPdjgn/UX6ebNKAbLuYpv7K++YsZ7SEVVeSeKe2S5n8tUWmridKdULeQzMp+MIxZHTshomijCjI3pnHoTCTSpWDprebjazVtLCb3Umo7MVl2qhsj7ygyNFO8z4cFizbGMp+AakxMCVmUADtSQdDux3HCxjEZ8VDfGZqVOdeY=
+	t=1754811621; cv=none; b=NuVyIK32b50Uiv7kj97uuLJDXBS3vytaC5ltAuOzuPHnounKXGMWnTfo/30/gVEo+oIedr+y7+V4OUlOv5IFI7LHROdCpVnPKQNcHGK0iyAWrtVNK6r6Me6JxEZU1QMPuz3QdEkgjdcTER/VdSvniQmcKpIZoN9lHbX5tmicJaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754811638; c=relaxed/simple;
-	bh=Y2MyhjjslDupB6WjuFHwZ+ZhdYcIeH3CC6kbwxOn4Jc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t6Mm+pnn/693p8UzLYmQBvsF3lLzk6oyKeZGegWrSt+LVey4H4p+nfw1HRkukm+7vdPhZcvfaYgBd2+DuFzz2NdsvEHw4Dm7yazN2A5K45kpCx9RjW7Uc2YLWr6He4VPEtHXcIP9I4US2tYOoqTKbbMVQz3sD2Zp+f7H23ghb98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OzlVMe4q; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-240418cbb8bso21466805ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 00:40:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754811636; x=1755416436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f3qWSqA6uMau46FnL/gjHf1qw0j0WRwZWdWAHLL5xbI=;
-        b=OzlVMe4qV54/0Tw9iSMIGyCw4R8qao0mYR9+RP8ntD/O5iDG7NelEGDoNC5q1x11Q2
-         k05VhWhACH37aHEcbSLSBNUkDaP5fiSoaqngeKeKDKCs6fyQbbBC5FcZj7S8GG/Q8P8Q
-         bKq1bp5o4+sEOa+IuP2ulXAAO1XF5okHHV9neayjB7Jo+vUtVpxWgVtFLsEUbQsr9vhV
-         fSTXjU2q1eB9r+WlhjJJ+L51yUbBwrxAmEeL5qfJcJV2Omw6qGU7yzvxtJD0JyrFwO+0
-         FI0IZNXGIoika0l8L7PikOwJh2ax4JuCq1jbq0tfHShhZdkXVDEwX5owECSWqFZ2LItW
-         co/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754811636; x=1755416436;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f3qWSqA6uMau46FnL/gjHf1qw0j0WRwZWdWAHLL5xbI=;
-        b=kZSSMG2ZmYxNr2WwFO67C56eiRqPOhRixg9tq525qqVHgd9edyPvvsmVFbPHb9wIy3
-         e2iRGMBksYlwoK8gZIWlwu4/C8E2fYsF9Db9QGsabKpK335zknZMpZ9gfLILPj7uIoje
-         mC7C0lkwJjQPBYC6x+DJIU6dQubulVAPtTQcVTiSy9rKDl8IAfc2XKkh6XZCHpbdVdKU
-         GbpxwTYNkpVfexCOQsd5LYgzkAY4C4ptCBNQ2mbewPzXXkDG1J3SIpxAr16zOikCuvuV
-         GI9tc0xjwyoQIRZ+fUnMhaDypSnESY2ISF/Le7xcrWC5wcdBAE1Q0BTHAiEZKKHeWX+/
-         +JMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcbl2an5kiJf2bmVYr31y9CnjcGYK4lFOo+I6vFvj95kbLk8iyhAKCQ7IrTXB2FH38Gi+TMtZXZWtnsK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxehECRM59rqjcH6jBXSDUqPwsiyRQxC2LeNpvpuxLxGMNeK+/e
-	hnJ+PgZo/2uOJTjiLLDtLZkLPEcI0vcIidbMNBWzG8s/qJRAeCU917r8
-X-Gm-Gg: ASbGnctQ4tsO315qdYX86UHbNfoIjLllbK8ACfLioEAMbDt9cmCLpDwRWQFY9vBmVqQ
-	yYOYaWoafOYvInWqBbfq2toVoncC1bAWZGPuNdWkiXy01ya3bVSW3WFi8eSlGyc68T4z8zUn7xM
-	79TabqvKdOjsKdo4dtSHXQGfmMyU5Dhh1RGILzYvD0AarlPjd8KxUkNQhneAExvd9kN7+qty6jK
-	57iHkMAkeGIfDlWaw175rFLvFTrH111p2LoKC6aKjL2PpNbFf/HzpPDfev6TE6YAdDe0+8hjI7f
-	+i0F9vSueCx4gJjImeGFasFeRKwfn8Mj8kxBmrG4FSsdnQdiYOdUH/OzQWkIoCdFKJXy//eBHu1
-	+d+7uegwMXp1sSlFLbo2WLNC/v9+vwiaUdw==
-X-Google-Smtp-Source: AGHT+IHj8XJuZT+e8n3ptEvI4d1ZhTGMLL33JrSEDgad1N3hMltDmcEcAbLS/oGZI8f23DZetqYLKQ==
-X-Received: by 2002:a17:902:ea0b:b0:240:b073:932b with SMTP id d9443c01a7336-242c205fe65mr120641005ad.23.1754811635618;
-        Sun, 10 Aug 2025 00:40:35 -0700 (PDT)
-Received: from pop-os.. ([172.59.160.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976d13sm244105245ad.109.2025.08.10.00.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 00:40:35 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH] gpu: fix spacing and indentation in drm_gpuvm_sm_map_exec_lock description
-Date: Sun, 10 Aug 2025 00:40:14 -0700
-Message-Id: <20250810074014.339366-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754811621; c=relaxed/simple;
+	bh=WHWmEOsLCNGyz3tr9tafWz5xXeDFPhb+UwnACzQ5E/U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=u2643j50pFFpkZA2UjUYXgwcg5ekMAZVsb27ODIa1+Pb5EV0WPoCmoLRccISRv0avwJ9tkSktg5oKuvOZ2GW5OG3HdCuecDynH4gZaB63mGKTtcewjQUES1+AS8swC+bH7R1H34aXXRTJa+iuILWIxSQ95lgZ3TW5iSg+WErPtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VABYmxx1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D0AC4CEEB;
+	Sun, 10 Aug 2025 07:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754811620;
+	bh=WHWmEOsLCNGyz3tr9tafWz5xXeDFPhb+UwnACzQ5E/U=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=VABYmxx1IScFp5K6i/ANhrPtgaWmjVEA+zoI2e0amo4vW2034KFqvp9j+4aTcmwPI
+	 l9FQoCuRaAeRKS+y33JqTq/FZySPUhHeWfNvz2zdR4gYcBx9gfV2ZKH2VvvtUwdgpq
+	 1NQEbFsVPDV6fQPWpmpXHLlHPfCUBwlkbenTd2ipSb6yyUyqDflsb4HqHE3m6l3+y0
+	 EToTsY0V+vVy3lnrirGLYl/man4e/xMB7XcIwcEKqnW2IZv4Ew6FN94jHytuO4gGLx
+	 pdBwODgRagH2toZDEzxguZLCR3h11S8D8beeVkl5FLl6RyaEYcNjJnxGw0iy2bJsmX
+	 R7L2xPSN4pD1Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 10 Aug 2025 09:40:15 +0200
+Message-Id: <DBYKSUYMQPEC.16UUNM5ALNR6Z@kernel.org>
+Subject: Re: [PATCH v2 11/13] rust: block: replace `core::mem::zeroed` with
+ `pin_init::zeroed`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Andreas Hindborg" <a.hindborg@kernel.org>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
+ Krummrich" <dakr@kernel.org>, "Jens Axboe" <axboe@kernel.dk>, "Yutaro Ohno"
+ <yutaro.ono.418@gmail.com>, "Xizhe Yin" <xizheyin@smail.nju.edu.cn>,
+ "Manas" <manas18244@iiitd.ac.in>, "Fiona Behrens" <me@kloenk.dev>
+Cc: "Lyude Paul" <lyude@redhat.com>, <linux-block@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250523145125.523275-1-lossin@kernel.org>
+ <ygVv2TD4X8QxR1siVW36cSGzeG722j-diB-TA2u1vdX6T_J-hb_dKDiU5vqAhccX3PrLw8yIbuHrgoz2aH-dbw==@protonmail.internalid> <20250523145125.523275-12-lossin@kernel.org> <87ms8a5f7b.fsf@kernel.org> <2yeRfzu6TlmaFLopKKmkgCjPM8Q1zo-YY5zgWjrbr00Bd8EwX2husSNSthkSujwznGxXmqteH00Apemot4z77w==@protonmail.internalid> <DBXC9DNUC9F0.2WUOVY87GAA4X@kernel.org> <87frdzhcbk.fsf@t14s.mail-host-address-is-not-set>
+In-Reply-To: <87frdzhcbk.fsf@t14s.mail-host-address-is-not-set>
 
-Fixes:
-./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2444: ERROR: Unexpected indentation. [docutils]
-./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2446: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
-./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2450: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2451: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-./Documentation/gpu/drm-mm:506: ./drivers/gpu/drm/drm_gpuvm.c:2455: ERROR: Unexpected indentation. [docutils]
+On Sun Aug 10, 2025 at 9:21 AM CEST, Andreas Hindborg wrote:
+> "Benno Lossin" <lossin@kernel.org> writes:
+>
+>> On Fri Aug 8, 2025 at 11:35 AM CEST, Andreas Hindborg wrote:
+>>> "Benno Lossin" <lossin@kernel.org> writes:
+>>>
+>>>> All types in `bindings` implement `Zeroable` if they can, so use
+>>>> `pin_init::zeroed` instead of relying on `unsafe` code.
+>>>>
+>>>> If this ends up not compiling in the future, something in bindgen or o=
+n
+>>>> the C side changed and is most likely incorrect.
+>>>>
+>>>> Signed-off-by: Benno Lossin <lossin@kernel.org>
+>>>> ---
+>>>
+>>> Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>
+>> Thanks, this one was already picked & the PR that included it contains
+>> your Acked-by (it couldn't be rebased since I noticed it too late). Let
+>> me know if you need any pointers.
+>
+> Right, I remember now that you point it out. It's just because I got a
+> new fancy email filter (lei q dfn:...). Hopefully I will miss fewer of
+> these in the future.
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+That's nice and no worries, I should have pinged you before applying :)
+
 ---
- drivers/gpu/drm/drm_gpuvm.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-index bbc7fecb6f4a..17dafa01700f 100644
---- a/drivers/gpu/drm/drm_gpuvm.c
-+++ b/drivers/gpu/drm/drm_gpuvm.c
-@@ -2441,21 +2441,26 @@ static const struct drm_gpuvm_ops lock_ops = {
-  *        drm_exec_until_all_locked (&exec) {
-  *            for_each_vm_bind_operation {
-  *                switch (op->op) {
-- *                case DRIVER_OP_UNMAP:
-- *                    ret = drm_gpuvm_sm_unmap_exec_lock(gpuvm, &exec, op->addr, op->range);
-- *                    break;
-- *                case DRIVER_OP_MAP:
-- *                    ret = drm_gpuvm_sm_map_exec_lock(gpuvm, &exec, num_fences,
-- *                                                     op->addr, op->range,
-- *                                                     obj, op->obj_offset);
-- *                    break;
-+ *                    case DRIVER_OP_UNMAP:
-+ *                        ret = drm_gpuvm_sm_unmap_exec_lock(gpuvm, &exec, op->addr, op->range);
-+ *                        break;
-+ * 
-+ *                    case DRIVER_OP_MAP:
-+ *                        ret = drm_gpuvm_sm_map_exec_lock(gpuvm, &exec, num_fences,
-+ *                                                         op->addr, op->range,
-+ *                                                         obj, op->obj_offset);
-+ * 
-+ *                        break;
-+ * 
-  *                }
-  *
-  *                drm_exec_retry_on_contention(&exec);
-- *                if (ret)
-- *                    return ret;
-+ *                if (ret) return ret;
-+ * 
-  *            }
-+ * 
-  *        }
-+ * 
-  *    }
-  *
-  * This enables all locking to be performed before the driver begins modifying
--- 
-2.34.1
-
+Cheers,
+Benno
 
