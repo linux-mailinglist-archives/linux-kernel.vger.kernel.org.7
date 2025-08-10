@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-761392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7117CB1F986
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:50:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD75B1F988
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 11:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF9C1896002
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:50:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3BC13B4455
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 09:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343F423A9AD;
-	Sun, 10 Aug 2025 09:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075AF23F40A;
+	Sun, 10 Aug 2025 09:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ez1RxXOE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="pGQ4emiw"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C90E1DB92A
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 09:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB371188A0C;
+	Sun, 10 Aug 2025 09:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754819405; cv=none; b=HkLAoIxpdVoItriWmuGdc1j/0C+NMIag4Qmus8QSLMFDa44kzKk5IXKVEmI9pOOyuxKfw3T5/SES3NVifZwricswUDM9xfUDrYXEtNe4Qgf6B4z8EFajJLa2lwIU7nPTrvv2G7SrwoMef8mkxWSSSgTxnWUB377g+40B2JOa9rw=
+	t=1754819571; cv=none; b=lf67ubcheLETW4zpFgujPoh18cTnMTbpeb5I800ltKf2lY9wWbR8PxYyVeiGj73pMyYO4kVY9/b8UYCJu0Zyexs0SJ4JPCVMMUtBoRO/v9rbM2TKAUfiMnQGILZ0kM9a1dKJe9KBLEg/1ZsFfn8ObbKZfVnmg/kFDckqgNMkBMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754819405; c=relaxed/simple;
-	bh=S5iYfEFmgkv1YdH2jyiFWAX3ClrOAVHmKPAAv0Mx9lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cAUHpWBY22jGpucl7ro2To/WrjSQue1eh0E1CMIwCKEySNbpXhe4gRrtDYUpa4qrKFrdwbXwRYl+D/KdUkGgKqkQOXzjoV5WPSblMklzEKmBROZV86IeTk1w7CWJrlctC/1I3323exC7M4nMfCvsB9l8GFUdWItzV8AjLyQo2aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ez1RxXOE; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754819404; x=1786355404;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S5iYfEFmgkv1YdH2jyiFWAX3ClrOAVHmKPAAv0Mx9lg=;
-  b=Ez1RxXOEZCg60tC1P6moA9oQT0xgr3GNgZYg8LX3CsCOq/jMeOH9vqhC
-   NfQOVDBoKbfHQXp7E832b6Xax7XcEBQWMdgnaNEeapp5123Y9nYGGLnqV
-   EkE4Th/lIOk0giwa7JaJY/SrrnOc3zOVqrgmrvsava0c9kUBc3E7mHNTP
-   B4H8LUHHzGNxs1FG1Qqpg0OVxserXdstYTUUyMOgiQrFypiidV0vdIW1h
-   6Lo0o7IRmlOVAbVHMQ025f98FjK71MXqs1uZdfclVgnD1+CgcxOCTHYC8
-   LoTjaWLT1nV8B/Blp+2C64wM5W3pikbCvABFdOmRRa+E9C+ZXGNhW61Me
-   A==;
-X-CSE-ConnectionGUID: /qHuDpNUTGaamHDsaV354w==
-X-CSE-MsgGUID: D4d9e1pCS9SBzTj8PT0pYg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11516"; a="74549298"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="74549298"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2025 02:50:03 -0700
-X-CSE-ConnectionGUID: WpdJDaenSfWkgqXhx9TUEQ==
-X-CSE-MsgGUID: gtmWuhJYSYahXYGG2Rz1bA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165985762"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 10 Aug 2025 02:50:00 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ul2gc-0005FM-0w;
-	Sun, 10 Aug 2025 09:49:54 +0000
-Date: Sun, 10 Aug 2025 17:49:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tiwei Bie <tiwei.bie@linux.dev>, richard@nod.at,
-	anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net
-Cc: oe-kbuild-all@lists.linux.dev, linux-um@lists.infradead.org,
-	linux-kernel@vger.kernel.org, benjamin@sipsolutions.net,
-	arnd@arndb.de, tiwei.btw@antgroup.com, tiwei.bie@linux.dev
-Subject: Re: [PATCH v2 06/10] um: Define timers on a per-CPU basis
-Message-ID: <202508101712.K4PzKDp3-lkp@intel.com>
-References: <20250810055136.897712-7-tiwei.bie@linux.dev>
+	s=arc-20240116; t=1754819571; c=relaxed/simple;
+	bh=0zbKbrfwdAGAGat6xjBXj/g3hVQvEW3XlbIDjn69heM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cVWk/9+j5LrXfyWa3ROSyj5GwNpk/JNYAwR23BisRtw7+nFaoBT7pBjdphh1LWGDdUB5tDTD/WQVz1KbYSvtCOvAp8QEkzp4uqYYw0/vhXuENSutlbV4qj41q5xzU0rJ9IizW2/bWgxirt13PgaVb7jbusvjhGqC/9nEVFIcp+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=pGQ4emiw; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=oV8Gds9hWjugNfFQS5K+yU4Rf58QVDw1DCSo4yGQ5/4=; t=1754819566;
+	x=1755424366; b=pGQ4emiw29doT69zZZrlr5b4buh3yJzl/O9kPqXS4Gn574XnQjv+l8G+JuyRr
+	sC2KFaesbc0loe0FyGCDpnU7EFhxQUfjopT6nLEvAe1LCd5ZA7eioPt6+OJKhChfdga+nBDIdK+S/
+	61QC87mS8/o98UFK3emv5EDFaB+qIRLDGXKtBdOKRYFMAhbtsPIk7Df2HY07L66R0+VVjEEwc+GZA
+	AcxJSQ09zFKiGOftbOP+AzECDaghugW1zbn0oxRduZglkqGhDGYAa64pxeWqXHcprtZu6inzP/OaU
+	xj2kzQYqpglSTUFqVkAm9CARPUk+KkV4/wjyGSawSOd7k0gqaw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1ul2jF-00000001gT9-0PqX; Sun, 10 Aug 2025 11:52:37 +0200
+Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=suse-laptop.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1ul2jE-00000002jI4-3Z8d; Sun, 10 Aug 2025 11:52:37 +0200
+Message-ID: <b5b75976c94b7b46f86a5af4675a1a570aaf20cc.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] sparc64: fix hugetlb for sun4u
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Anthony Yznaga <anthony.yznaga@oracle.com>, sparclinux@vger.kernel.org, 
+	davem@davemloft.net, andreas@gaisler.com
+Cc: linux-kernel@vger.kernel.org, agordeev@linux.ibm.com, will@kernel.org, 
+	ryan.roberts@arm.com, david@redhat.com, osalvador@suse.de
+Date: Sun, 10 Aug 2025 11:52:36 +0200
+In-Reply-To: <ff3d87634aedec28e7103f16a35031bfe86ca501.camel@physik.fu-berlin.de>
+References: <20250716012446.10357-1-anthony.yznaga@oracle.com>
+					 <35f5ec4eda8a7dbeeb7df9ec0be5c0b062c509f7.camel@physik.fu-berlin.de>
+					 <7e1e9aa5-0529-4fb5-84fb-557b5cc1cd50@oracle.com>
+				 <38f4469f48e6d36fa92b445c8ecef7a440be43e6.camel@physik.fu-berlin.de>
+			 <b14f55642207e63e907965e209f6323a0df6dcee.camel@physik.fu-berlin.de>
+		 <fc1555550f7a9b3c9aa5fb651769cf41ed859c77.camel@physik.fu-berlin.de>
+	 <ff3d87634aedec28e7103f16a35031bfe86ca501.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250810055136.897712-7-tiwei.bie@linux.dev>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hi Tiwei,
+Hi Anthony,
 
-kernel test robot noticed the following build warnings:
+On Sat, 2025-08-09 at 08:42 +0200, John Paul Adrian Glaubitz wrote:
+> Let me know if you have more suggestions to test. I can also provide you =
+with full
+> access to this Netra 240 if you send me your public SSH key in a private =
+mail.
 
-[auto build test WARNING on uml/next]
-[also build test WARNING on linus/master next-20250808]
-[cannot apply to uml/fixes arnd-asm-generic/master v6.16]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I have narrowed it down to a regression between v6.3 and v6.4 now.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tiwei-Bie/um-Stop-tracking-virtual-CPUs-via-mm_cpumask/20250810-135542
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux next
-patch link:    https://lore.kernel.org/r/20250810055136.897712-7-tiwei.bie%40linux.dev
-patch subject: [PATCH v2 06/10] um: Define timers on a per-CPU basis
-config: um-randconfig-001-20250810 (https://download.01.org/0day-ci/archive/20250810/202508101712.K4PzKDp3-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250810/202508101712.K4PzKDp3-lkp@intel.com/reproduce)
+The bug can be reproduced with the sparc64_defconfig on a Sun Netra 240 by =
+setting
+CONFIG_TRANSPARENT_HUGEPAGE=3Dy and CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=3Dy.=
+ When testing
+on a modern systemd-based distribution, it's also necessary to enable CGrou=
+p support
+as well as enable support for Sun partition tables with CONFIG_SUN_PARTITIO=
+N=3Dy.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508101712.K4PzKDp3-lkp@intel.com/
+Then it should be a matter of bisecting the commits between v6.3 and v6.4.
 
-All warnings (new ones prefixed by >>):
+I will do that within the next days as I'm currently a bit busy with other =
+stuff.
 
->> Warning: arch/um/os-Linux/time.c:90 function parameter 'cpu' not described in 'os_timer_disable'
+Adrian
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
