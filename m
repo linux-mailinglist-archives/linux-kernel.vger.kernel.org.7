@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-761442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B72BB1FA1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:25:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF962B1FA21
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 15:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A812174934
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 13:25:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A15E3BAF6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 13:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D432255F2C;
-	Sun, 10 Aug 2025 13:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59302580CA;
+	Sun, 10 Aug 2025 13:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcS9IK2r"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="uKEzDTD5"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767B3229B36;
-	Sun, 10 Aug 2025 13:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5282550DD
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 13:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754832318; cv=none; b=fBmrk0/l79Fy4L6HdxVsbUXm+xfHJ+Z7gfzuH5xe8wcXufLg9a1vx7w2EAHiZ6QQqBvf40ACXkSD+sqfVDrc/wb60J0yGRp/Bh9to51cviKBGl+CPjoaKHQferDlkNSWyVehp/HUHxxx5V7Yv96h5kfBjm5sTKoo2g4BA+/upw8=
+	t=1754832863; cv=none; b=IBYgWp5wAOui0gy36IBb7emQOK1V92+VY+/b2l75NuxvLakM4CThr5I/kaMXvsmPnhOwuziQk/pHc38n2QQQKtXhxGdnjqZnPh+alIYficlo+hEqMTaU46G67Q/6C1XR8yhlykOrfu3w3JeZQHCK5JJ+yvCxWK3tSIumMAIHddo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754832318; c=relaxed/simple;
-	bh=Km5gcCVceWztQI650A0mp1I8HulI/vmgBxVOIuYNWns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B7Xfqx6YgXXaqJe0nR2mF5AxzWXjmi6wdboxypZ6PkpH6apzUN7C7BLHzqSzCTDHutWdzwb/LIeZorD2ior1r8i2I2bEcrbGe9TUXLppAt15vOAbQefl9GlsBcNotCnh5YGUogt2R3i+9ONjpD1jIEjIfWsMtjEhpTo8c504WpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JcS9IK2r; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-615622ed677so4197893a12.1;
-        Sun, 10 Aug 2025 06:25:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754832315; x=1755437115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Km5gcCVceWztQI650A0mp1I8HulI/vmgBxVOIuYNWns=;
-        b=JcS9IK2rKEFYa3b+o8sQ4k9RDdUpAiv6WZQDHbAo9rY+5bcix3AWMd1c9BIX812fI0
-         1/ZUpZa0oZ2br7p+rLR64rnG7iCBUJnY9pfT2sktolrBpJ0f7UTsOvxFccTp7rViXP7M
-         Eu6cq7Bpi0F8LqRINDhUODw5GekwahxtEcFGLcC4XQoaXXYrYTZSbFwyItAdJbIo5KSC
-         RFRqJx2YleBsan1wqR5qc4kxbdu7GcsTnCL9eouBNqyTJuRXKENqQfm6G2xA//KC7dA+
-         Ojzmkz1O3FLVjS1jSlw6aCgSoWZUBrj8LoV0aIcDLsNnyfBuaWtszHlwzdcHVWvuud97
-         PSjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754832315; x=1755437115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Km5gcCVceWztQI650A0mp1I8HulI/vmgBxVOIuYNWns=;
-        b=BfavUsY+2gtD9JDZqjTh8b8ff2PmPSvq4KiAWwbbUnPSYX/1mhau7DO67FL3lHJMV0
-         KIdUwOZQuwBLV1nyXwjMylxlnp+kzRd1UfU8keHv4Jc5Ut5WVY4W5UZkhLn2dRuedqlr
-         AgM1g46zakJz8IKei6I2drJRtEiSNidUMbZD6tMiYN3hCUnSDzDG/XJw7GuQ8gV2t0g6
-         DJpnrzudLN3DtOoCW6X1jBYzHyAFGJIkMxI8O8kVhmdc0EUDVhUIGZlZ3wAvaM3il1ds
-         41JAlfIO0Yi93VCpfVfo+UuFA1dVgsflO1IrwB7ynuT+UPK7ky2SSy0pcdt95vVwik0h
-         15zA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7/5j4MdOSGWqKMacmwKXtsXtB11fikA9Mpl6a5qUrNjlkgT9ByzvHwQXuZ55NybKr4feS12X1N7niwQsk@vger.kernel.org, AJvYcCXfmZ9YioAjOrTjH01ZngKKSlyq6I8IdZKIPuaKnaYgfo4eP8kH8hE4riXVv8ghTF43JmdLNFuB+IauND4B@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGQt/GO+vYWLTfAwnffm6vhCzhPnHNBfRkD6v+zJ8n00AaCcP8
-	bYoD35+D6DVnO3APP1kp5CkcSkUpennV9O0MvBKSZC3+UOFNIH9kH/oqaLNCPtZDDpv8lrcht5k
-	TbQK7XH8q+q4gg+Qo4FLUAqC1mjHALb0LtUbnuxM=
-X-Gm-Gg: ASbGncsZfxhdbOJNSLVoFBFEGZ3OLMNEcWOaWRCqMQZFPPlOYjpdZ1p2c7M056XH6F9
-	iYg4k1L+JltSLGSm+p4oZm2cRJEcWZr4xLZZFTtr3BjRRzYyiRpCPCNl8IHPMAoYEcVlccCXJJU
-	p9TzZaOnvEnLG9qluhRHzUcaL77nOr4QW31zn973zR7OkdMeZYEY40ahRxNG0cnYlHPZKbtAjkF
-	h8WYtk=
-X-Google-Smtp-Source: AGHT+IGH/YhNs7ZPh9Ppy7izd55Uzuv4yl3ahzURUGm48TK3UaAS5/72+Z6WZzH8XPnMi2c9ah1CecmLAeKfeJx58nY=
-X-Received: by 2002:a17:907:3e8c:b0:af9:2b35:a8b with SMTP id
- a640c23a62f3a-af9c633021emr1002194066b.3.1754832314435; Sun, 10 Aug 2025
- 06:25:14 -0700 (PDT)
+	s=arc-20240116; t=1754832863; c=relaxed/simple;
+	bh=Qd98IcXForaGHqWydw1PQXOwfE0+jt60T1QofX//ck0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oLKXnGUSvcY+BS9ZEmMrntXiI5Tu5JgLMI7CSqrw0xPWLgiDitaz6zoHZfPex025H/ITzdf3DE0H0yC9ktDSN/8f1sG+lh+3Oi2iCdF6nqDjBz5YWXBBEqrAviWSTHTW3qjOH0PO6jMuXU3pAC7fUMWtt+o7t4lV75YGn17Xmzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=uKEzDTD5; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id 0D2C8104D0D6
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Aug 2025 19:04:10 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 0D2C8104D0D6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1754832850; bh=Qd98IcXForaGHqWydw1PQXOwfE0+jt60T1QofX//ck0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=uKEzDTD5W/4LA9UiT3MOyOY2rvaVgxsh5k/xC0ZKFsp/3WghSLCmIvWU/2RjpKK/J
+	 xIQwSMq7YwwTQ5ljwI9ObSEPSGNtlqyJW/kWgvUv4BPKuUchDuNOZPu/eNFGf3Y1p8
+	 Sn0PpFxbC7yl/r/dkQqiChbI8JbVQuRgFWuhFOu4=
+Received: (qmail 13254 invoked by uid 510); 10 Aug 2025 19:04:09 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.12802 secs; 10 Aug 2025 19:04:09 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
+  by ldns1.iitb.ac.in with SMTP; 10 Aug 2025 19:04:07 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns1.iitb.ac.in (Postfix) with ESMTP id 06EFA360082;
+	Sun, 10 Aug 2025 19:04:07 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id C26CB1E812DF;
+	Sun, 10 Aug 2025 19:04:06 +0530 (IST)
+Date: Sun, 10 Aug 2025 19:04:01 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: jgg@ziepe.ca, kevin.tian@intel.com, joro@8bytes.org, will@kernel.org,
+	robin.murphy@arm.com, praan@google.com, baolu.lu@linux.intel.com,
+	nicolinc@nvidia.com, jgg@nvidia.com
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
+Subject: [PATCH] iommufd: viommu: free memory allocated by kvcalloc() using
+ kvfree()
+Message-ID: <aJifyVV2PL6WGEs6@bhairav-test.ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxhmA862ZPAXd=g3vKJAvwAdobAnB--7MqHV87Vmh0USFw@mail.gmail.com>
- <20250804173228.1990317-1-paullawrence@google.com>
-In-Reply-To: <20250804173228.1990317-1-paullawrence@google.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 10 Aug 2025 15:25:02 +0200
-X-Gm-Features: Ac12FXx04-e9BdriTZclwPTFoU_aAoOzlFpBwZXQdsZIGAGqSJ3Y3xASZhvMSiM
-Message-ID: <CAOQ4uxiFVt8eVmP5hUkjvascK-rVNyZzAec_tiGQf7N0PYDdTQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] RFC: Set backing file at lookup
-To: Paul Lawrence <paullawrence@google.com>
-Cc: bernd.schubert@fastmail.fm, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Aug 4, 2025 at 7:32=E2=80=AFPM Paul Lawrence <paullawrence@google.c=
-om> wrote:
->
-> Based on our discussion, I put together two simple patches.
->
-> The first adds an optional extra parameter to FUSE_LOOKUP outargs. This a=
-llows
-> the daemon to set a backing file at lookup time on a successful lookup.
->
-> I then looked at which opcodes do not require a file handle. The simplest=
- seem
-> to be FUSE_MKDIR and FUSE_RMDIR. So I implemented passthrough handling fo=
-r these
-> opcodes in the second patch.
->
-> Both patches sit on top of Amir's tree at:
->
-> https://github.com/amir73il/linux/commit/ceaf7f16452f6aaf7993279b1c10e727=
-d6bf6a32
->
+Use kvfree() instead of kfree() to free pages allocated by kvcalloc()
+in iommufs_hw_queue_alloc_phys() to fix potential memory corruption.
+Ensure the memory is properly freed, as kvcalloc may internally use
+vmalloc or kmalloc depending on available memory in the system.
 
-I think you based your patches on ceaf7f16452f^ and patch 1/2 replaces comm=
-it
-ceaf7f16452f ("fuse: support setting backing inode passthrough on getattr")
+Fixes: 2238ddc2b056 ("iommufd/viommu: Add IOMMUFD_CMD_HW_QUEUE_ALLOC ioctl")
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+---
+ drivers/iommu/iommufd/viommu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Right?
+diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
+index 2ca5809b238b..462b457ffd0c 100644
+--- a/drivers/iommu/iommufd/viommu.c
++++ b/drivers/iommu/iommufd/viommu.c
+@@ -339,7 +339,7 @@ iommufd_hw_queue_alloc_phys(struct iommu_hw_queue_alloc *cmd,
+ 	}
+ 
+ 	*base_pa = (page_to_pfn(pages[0]) << PAGE_SHIFT) + offset;
+-	kfree(pages);
++	kvfree(pages);
+ 	return access;
+ 
+ out_unpin:
+@@ -349,7 +349,7 @@ iommufd_hw_queue_alloc_phys(struct iommu_hw_queue_alloc *cmd,
+ out_destroy:
+ 	iommufd_access_destroy_internal(viommu->ictx, access);
+ out_free:
+-	kfree(pages);
++	kvfree(pages);
+ 	return ERR_PTR(rc);
+ }
+ 
+-- 
+2.34.1
 
-That makes sense to me because that last patch was a hacky API,
-but then you made some other changes to my patch which I did not understand=
- why.
-
-Thanks,
-Amir.
 
