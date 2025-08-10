@@ -1,134 +1,338 @@
-Return-Path: <linux-kernel+bounces-761522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF576B1FB61
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:32:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3525B1FB63
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 19:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE3C1896345
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:32:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C0D3A327D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Aug 2025 17:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18742701CE;
-	Sun, 10 Aug 2025 17:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F8826FDB3;
+	Sun, 10 Aug 2025 17:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="d2oUyoKQ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jtrxiA0A"
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FBA1DF75D;
-	Sun, 10 Aug 2025 17:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FDB1DDA15;
+	Sun, 10 Aug 2025 17:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754847138; cv=none; b=ArGbwk6YSrQ5Kz/OK3dux391g9iP+P6FXzVKsqGbyH1Z0vQbe06RnmIC+rUdIXKV97F92kereJ6BjibRA4hQCmv1Bwu8rVgWpk99fgQnmZ9/zYYGymj00N5s6VbKYiy/1xwCHZfejdEEpza9S1Ra8koXgt3IGfP3Vx25GMSOuEA=
+	t=1754847395; cv=none; b=LUEEqav40hseyVDBotLdHmDz+wL0ztriPqlcjrAg4Oy+yRMcJe7evEf4FAYn2MWhuRo9C4789b3XVM+ta1NWXm3+v/HexR1va7maUXpgr4XMDWeYOQpRfA3o4oX6ExfycKNGExBk7SxzmCv7KEjeyYpXSOCDMD1jNAdGGra8WYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754847138; c=relaxed/simple;
-	bh=TNmUQ437s7eOKUcfVKHyRc4T6i8CUtA4TWoV3ciCMN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H0rOLnXihTN5awBnE0NYyWUNNyG+FGn2RHXiAR4UsA4GR37Q2F6S4TXoFngE8SUqPNW37kINlFNWgAUT76VujqtkHob83i2tnqd+dqbIzQ7kIABDxiEdCdZaXm80ZJyTuwPmr1VLfZT1Sht3lrKmFS/09/Q1S4TBU5lXKQvlSnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=d2oUyoKQ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=AYabts41ywViN3lH6/8mBeNV/CtbPocv9+f3715eNQI=; b=d2oUyoKQjAlkYYjzqabnE8JhdT
-	A7TTg6U0iA88OIcQafOU1XXEa7mLYSBkx9mW/mO18DHVPMM4wb8xVIK2HJ5UxGPumcyTn6wtSKNTP
-	vC31BdYHbtRZ9fLXSN9RO4ZV3zmx5opY7WgMLC/QEUbBmW+JibenOeqBB7AlwoAukX6I=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ul9tr-004Eep-KM; Sun, 10 Aug 2025 19:32:03 +0200
-Date: Sun, 10 Aug 2025 19:32:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ujwal Kundur <ujwal.kundur@gmail.com>
-Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] rds: Fix endian annotations across various
- assignments
-Message-ID: <ac09739a-eec5-4025-989e-a6a202fcfd63@lunn.ch>
-References: <20250810171155.3263-1-ujwal.kundur@gmail.com>
+	s=arc-20240116; t=1754847395; c=relaxed/simple;
+	bh=TFw3Jt4Nf6T+M/9R2NIHl5Pu487SyK04JZQm86A00rw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SyHwD8a6K9m9hlzKKq0yOrgqSZBF48caLu73jTQMjtT+FbCApf4wTKWXbyVtA15ETFpBhAMQqsC8PMCviwHAAK63cyuDmNnaT+yk9ZEQsjqDDA+fnhXOQwytbrTe3DAJXYJeiI/6ienkGlOFRVpe6nt+VqkJ4+bGyZ9qYM3sB8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jtrxiA0A; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id l9x1upD4iPUh5l9x1uh8r7; Sun, 10 Aug 2025 19:35:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1754847320;
+	bh=97gR4svqUgNl2V2IPUV7h4EF2W6dzUtZbbMTKvsvGcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=jtrxiA0ANe71GcesZsKA2kxMQ4ACEfK6q4ZRnmBry5SHvBrjKu6FhdNIj7BXFWx+q
+	 eX1nDJdAXMtHKUDoF65/5p9Z/VCDij46cWq84HCqvPyuDvnJlma1AuvabGo1fYRrod
+	 kAuHZOI43NTi/dQw8F47LG4NN7zVxTH10DcezeILXn+auDfcfbdSHQJgc3FUmU2xkP
+	 HnDFSYol8Y7vVJT1bs9RrncqV3CEEcX4rOdNE+7g1u2J4WlID7stBgMul6YCIfo8I2
+	 T04TLA7H5qULZHV72JRO+rWFRTgCaRMELmCBurBRwNwKDAg7O/trqwq2rvgF/uhayO
+	 jLw2qoiv334oA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 10 Aug 2025 19:35:20 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <d19e7b07-369f-4909-b931-af881a2a4425@wanadoo.fr>
+Date: Sun, 10 Aug 2025 19:35:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250810171155.3263-1-ujwal.kundur@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] iio: adc: add ade9000 support
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250808141020.4384-1-antoniu.miclaus@analog.com>
+ <20250808141020.4384-4-antoniu.miclaus@analog.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <20250808141020.4384-4-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 10, 2025 at 10:41:55PM +0530, Ujwal Kundur wrote:
-> Sparse reports the following warnings:
-> 
-> net/rds/af_rds.c:245:22: warning: invalid assignment: |=
-> net/rds/af_rds.c:245:22: left side has type restricted __poll_t
-> net/rds/af_rds.c:245:22: right side has type int
-> 
-> __poll_t is typedef'ed to __bitwise while POLLERR is defined as 0x0008,
-> force conversion.
+Le 08/08/2025 à 16:10, Antoniu Miclaus a écrit :
+> Add driver support for the ade9000. highly accurate,
+> fully integrated, multiphase energy and power quality
+> monitoring device.
 
-Please could you split this up, one patch per type of problem.
+Hi,
+...
 
-> diff --git a/net/rds/af_rds.c b/net/rds/af_rds.c
-> index 086a13170e09..9cd5905d916a 100644
-> --- a/net/rds/af_rds.c
-> +++ b/net/rds/af_rds.c
-> @@ -242,7 +242,7 @@ static __poll_t rds_poll(struct file *file, struct socket *sock,
->  	if (rs->rs_snd_bytes < rds_sk_sndbuf(rs))
->  		mask |= (EPOLLOUT | EPOLLWRNORM);
->  	if (sk->sk_err || !skb_queue_empty(&sk->sk_error_queue))
-> -		mask |= POLLERR;
-> +		mask |= (__force __poll_t)POLLERR;
+> +static int ade9000_clkout_prepare(struct clk_hw *hw)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void ade9000_clkout_unprepare(struct clk_hw *hw)
+> +{
+> +}
 
-I don't like __force, it suggests something is wrong with the
-design. If it is needed, it should be hidden away.
+Is it really needed to have these 2 empty functions?
+clk core seems to accept NULL for .prepare and .unprepare.
 
-However:
+> +
+> +static unsigned long ade9000_clkout_recalc_rate(struct clk_hw *hw,
+> +						unsigned long parent_rate)
+> +{
+> +	/* CLKOUT provides the same frequency as the crystal/external clock */
+> +	return parent_rate ? parent_rate : 24576000; /* Default 24.576 MHz */
+> +}
+> +
+> +static const struct clk_ops ade9000_clkout_ops = {
+> +	.prepare = ade9000_clkout_prepare,
+> +	.unprepare = ade9000_clkout_unprepare,
+> +	.recalc_rate = ade9000_clkout_recalc_rate,
+> +};
 
-~/linux/net$ grep -r POLLERR
-caif/caif_socket.c:	wake_up_interruptible_poll(sk_sleep(sk), EPOLLERR|EPOLLHUP);
-caif/caif_socket.c:		mask |= EPOLLERR;
-rds/af_rds.c:		mask |= POLLERR;
-bluetooth/af_bluetooth.c:		mask |= EPOLLERR |
-sctp/socket.c:		mask |= EPOLLERR |
-vmw_vsock/af_vsock.c:		mask |= EPOLLERR;
-vmw_vsock/af_vsock.c:				mask |= EPOLLERR;
-vmw_vsock/af_vsock.c:					mask |= EPOLLERR;
-9p/trans_fd.c:		return EPOLLERR;
-9p/trans_fd.c:	if (n & (EPOLLERR | EPOLLHUP | EPOLLNVAL)) {
-mptcp/protocol.c:		mask |= EPOLLERR;
-core/datagram.c:	if (key && !(key_to_poll(key) & (EPOLLIN | EPOLLERR)))
-core/datagram.c:		mask |= EPOLLERR |
-core/sock.c:		wake_up_interruptible_poll(&wq->wait, EPOLLERR);
-nfc/llcp_sock.c:		mask |= EPOLLERR |
-smc/af_smc.c:		else if (flags & EPOLLERR)
-smc/af_smc.c:			mask |= EPOLLERR;
-phonet/socket.c:		return EPOLLERR;
-iucv/af_iucv.c:		mask |= EPOLLERR |
-unix/af_unix.c:		mask |= EPOLLERR;
-unix/af_unix.c:		mask |= EPOLLERR |
-ipv4/tcp.c:		mask |= EPOLLERR;
-sunrpc/rpc_pipe.c:		mask |= EPOLLERR | EPOLLHUP;
-atm/common.c:		mask = EPOLLERR;
+...
 
-So why is af_rds.c special? Or do all these files also give the same
-warning?
+> +static irqreturn_t ade9000_irq0_thread(int irq, void *data)
+> +{
+> +	struct iio_dev *indio_dev = data;
+> +	struct ade9000_state *st = iio_priv(indio_dev);
+> +	s64 timestamp = iio_get_time_ns(indio_dev);
+> +	u32 handled_irq = 0;
+> +	u32 interrupts;
+> +	u32 status;
+> +	int ret;
+> +
+> +	ret = regmap_read(st->regmap, ADE9000_REG_STATUS0, &status);
+> +	if (ret) {
+> +		dev_err(&st->spi->dev, "IRQ0 read status fail");
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	ret = regmap_read(st->regmap, ADE9000_REG_MASK0, &interrupts);
+> +	if (ret) {
+> +		dev_err(&st->spi->dev, "IRQ0 read status fail");
 
-Also:
+s/status/interrupts/ maybe?
 
-https://elixir.bootlin.com/linux/v6.16/source/include/uapi/linux/eventpoll.h#L34
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	if ((status & ADE9000_ST0_PAGE_FULL_BIT) &&
+> +	    (interrupts & ADE9000_ST0_PAGE_FULL_BIT)) {
+> +		/* Always use streaming mode */
+> +		ret = ade9000_iio_push_streaming(indio_dev);
+> +		if (ret) {
+> +			dev_err(&st->spi->dev, "IRQ0 IIO push fail");
+> +			return IRQ_HANDLED;
+> +		}
+> +
+> +		handled_irq |= ADE9000_ST0_PAGE_FULL_BIT;
+> +	}
+> +
+> +	if ((status & ADE9000_ST0_WFB_TRIG_BIT) &&
+> +	    (interrupts & ADE9000_ST0_WFB_TRIG_BIT)) {
+> +		ret = ade9000_waveform_buffer_en(st, false);
+> +		if (ret) {
+> +			dev_err(&st->spi->dev, "IRQ0 WFB fail");
+> +			return IRQ_HANDLED;
+> +		}
+> +
+> +		ret = ade9000_iio_push_buffer(indio_dev);
+> +		if (ret) {
+> +			dev_err(&st->spi->dev, "IRQ0 IIO push fail @ WFB TRIG");
+> +			return IRQ_HANDLED;
+> +		}
+> +
+> +		handled_irq |= ADE9000_ST0_WFB_TRIG_BIT;
+> +	}
+> +
+> +	if ((status & ADE9000_ST0_EGYRDY) &&
+> +	    (interrupts & ADE9000_ST0_EGYRDY)) {
+> +		iio_push_event(indio_dev,
+> +			       IIO_UNMOD_EVENT_CODE(IIO_ENERGY,
+> +						    ADE9000_ST0_EGYRDY,
+> +						    IIO_EV_TYPE_MAG,
+> +						    IIO_EV_DIR_NONE),
+> +			       timestamp);
+> +
+> +		handled_irq |= ADE9000_ST0_EGYRDY;
+> +	}
+> +
+> +	ret = regmap_write(st->regmap, ADE9000_REG_STATUS0, handled_irq);
+> +	if (ret)
+> +		dev_err(&st->spi->dev, "IRQ0 write status fail");
+> +
+> +	return IRQ_HANDLED;
+> +}
 
-#define EPOLLERR	(__force __poll_t)0x00000008
+...
 
-So your patch does nothing.
+> +static int ade9000_probe(struct spi_device *spi)
+> +{
+> +	struct device *dev = &spi->dev;
+> +	struct iio_dev *indio_dev;
+> +	struct ade9000_state *st;
+> +	struct regmap *regmap;
+> +	int irq;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return dev_err_probe(dev, -ENOMEM, "Unable to allocate ADE9000 IIO");
+> +	st = iio_priv(indio_dev);
+> +
+> +	regmap = devm_regmap_init(dev, NULL, spi, &ade9000_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(dev, PTR_ERR(regmap), "Unable to allocate ADE9000 regmap");
+> +	spi_set_drvdata(spi, st);
+> +
+> +	irq = fwnode_irq_get_byname(dev_fwnode(dev), "irq0");
+> +	if (irq < 0)
+> +		return dev_err_probe(dev, -EINVAL, "Unable to find irq0");
+> +
+> +	ret = devm_request_threaded_irq(dev, irq, NULL,
+> +					ade9000_irq0_thread,
+> +					IRQF_ONESHOT,
+> +					KBUILD_MODNAME, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to request threaded irq: %d", ret);
+> +
+> +	irq = fwnode_irq_get_byname(dev_fwnode(dev), "irq1");
+> +	if (irq < 0)
+> +		return dev_err_probe(dev, -EINVAL, "Unable to find irq1");
+> +
+> +	ret = devm_request_threaded_irq(dev, irq, NULL,
+> +					ade9000_irq1_thread,
+> +					IRQF_ONESHOT,
+> +					KBUILD_MODNAME, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to request threaded irq: %d", ret);
+> +
+> +	irq = fwnode_irq_get_byname(dev_fwnode(dev), "dready");
+> +	if (irq < 0)
+> +		return dev_err_probe(dev, -EINVAL, "Unable to find dready");
+> +
+> +	ret = devm_request_threaded_irq(dev, irq, NULL,
+> +					ade9000_dready_thread,
+> +					IRQF_ONESHOT,
+> +					KBUILD_MODNAME, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to request threaded irq: %d", ret);
+> +
+> +	st->spi = spi;
+> +
+> +	/* Optional external clock input */
+> +	st->clkin = devm_clk_get_optional_enabled(dev, "clkin");
+> +	if (IS_ERR(st->clkin))
+> +		return dev_err_probe(dev, PTR_ERR(st->clkin), "Failed to get and enable clkin: %ld", PTR_ERR(st->clkin));
 
-    Andrew
+No need to dupliacte PTR_ERR(clkin) in the error message. Same for 
+several messages above.
 
----
-pw-bot: cr
+> +
+> +	/* Register clock output provider */
+> +	if (device_property_present(dev, "#clock-cells")) {
+> +		struct clk_init_data clk_init = {};
+> +		struct clk *clkout;
+> +		unsigned long parent_rate = 24576000; /* Default crystal frequency */
+> +
+> +		if (st->clkin)
+> +			parent_rate = clk_get_rate(st->clkin);
+
+parent_rate seems to be unused.
+
+> +
+> +		clk_init.name = "clkout";
+> +		clk_init.ops = &ade9000_clkout_ops;
+> +		clk_init.flags = CLK_GET_RATE_NOCACHE;
+> +		clk_init.num_parents = 0;
+
+Would it make sense to have clk_init a "static const struct 
+clk_init_data" defined outside of the probe to have the code be less 
+verbose?
+
+> +
+> +		st->clkout_hw.init = &clk_init;
+> +
+> +		clkout = devm_clk_register(dev, &st->clkout_hw);
+> +		if (IS_ERR(clkout))
+> +			return dev_err_probe(dev, PTR_ERR(clkout), "Failed to register clkout: %ld", PTR_ERR(clkout));
+
+No need to dupliacte PTR_ERR(clkout) in the error message.
+
+> +
+> +		ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &st->clkout_hw);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "Failed to add clock provider: %d", ret);
+
+No need to dupliacte ret in the error message.
+
+> +	}
+> +
+> +	indio_dev->name = spi_get_device_id(spi)->name;
+> +	indio_dev->dev.parent = &st->spi->dev;
+> +	indio_dev->info = &ade9000_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
+> +	indio_dev->setup_ops = &ade9000_buffer_ops;
+> +
+> +	st->regmap = regmap;
+> +
+> +	ret = devm_regulator_get_enable(&spi->dev, "vdd");
+> +	if (ret)
+> +		return dev_err_probe(&spi->dev, ret,
+> +				     "Failed to get and enable vdd regulator\n");
+> +
+> +	ret = devm_regulator_get_enable_optional(dev, "vref");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to get and enable vref regulator\n");
+> +
+> +	/* Configure reference selection based on vref regulator availability */
+> +	if (ret != -ENODEV) {
+> +		ret = regmap_update_bits(st->regmap, ADE9000_REG_CONFIG1,
+> +					 ADE9000_EXT_REF_MASK,
+> +					 ADE9000_EXT_REF_MASK);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	indio_dev->channels = ade9000_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(ade9000_channels);
+> +	ret = devm_iio_kfifo_buffer_setup(dev, indio_dev,
+> +					  &ade9000_buffer_ops);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to setup IIO buffer");
+> +
+> +	ret = ade9000_reset(st);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "ADE9000 reset failed");
+> +
+> +	ret = ade9000_setup(st);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Unable to setup ADE9000");
+
+Missing \n at the end of the message. Same for some other messages above 
+using dev_err_probe() or dev_err().
+
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
+> +};
+
+...
+
+CJ
+
 
