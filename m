@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-762010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB1CBB2010A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:00:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD79FB2010B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D44F17CCA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2D53BCC16
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 08:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124C52DA75F;
-	Mon, 11 Aug 2025 08:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08152DAFBD;
+	Mon, 11 Aug 2025 08:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WmT/tBEu"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qEkpcc5y"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50972DAFA6
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73182DAFA9
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 08:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754899216; cv=none; b=eKiGseWCu1/k27k0hxN1XalIvAKFhvwd9W/5qPAOG7zonwz40XgzLcR2FFNOLoI4mXDFYTvT4EPSkTxrieIHvqmgMekw/d5Xs/t5Ox+YyRSfKqbnsQ+YBCPNn8Vxi3RNZsHOhL35dLgschkxkaOx0hYTJyarCKadXAydFWoZdyA=
+	t=1754899221; cv=none; b=mZnFmlFxE7NxJGqm86JC7maJypwaeW0/YoHJiPW8WfhM32dwU8tilSs5d9j9/oJeMyRKh35gVSRrzmV9rz5RmAKxlRByDaLS5lloso4+3OTB/RsgNNRoGU2Um/+NpFkTxoXyBtIXvuKcOSsqsM8Bh5a/88cdVTP7ySeAJtVNJI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754899216; c=relaxed/simple;
-	bh=eXQlmds6CCmTRCPcdUyEcEuHD7C/bJLbTBs8rzwDtCU=;
+	s=arc-20240116; t=1754899221; c=relaxed/simple;
+	bh=D34kq3r7k+H6q6dNbv0C7/Aqz9VAOIRBun7toR5ws5U=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SRbMwtuFRh0GSnaMtjNUdBiwJJP/C1w06Tp7UMjaI55WWf/XgBeTcDTOjSc3/uzZSgUAjyOFeqkom6jslGFYCz/wg3QgZMszBfu15gi2cHfNTHsccXwbipjPGq1arhAohIkT9+81WURrmbVGE2mANqdniPJcDAVJ3GNpy86HX9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WmT/tBEu; arc=none smtp.client-ip=198.47.19.246
+	 MIME-Version:Content-Type; b=NzujEDqSQa9zPjnjMXDOcBX9HfXltibtdHD+545jRcky1jbOD/2f1qrc2zO0m4oZL32LePy5WxYzBmDyDP+f0E+uTDyRvoKUxOcYVTw1cBy7nc4TJ8HiugWHuKpQSPvRrkyXIK6z3MaSP4rKhkUDL/922xLBmkeIMqNBgmT1qyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qEkpcc5y; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57B7xnsO1495658;
-	Mon, 11 Aug 2025 02:59:49 -0500
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57B7xu411564151;
+	Mon, 11 Aug 2025 02:59:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754899189;
-	bh=ts5ub4oKhxUB/GkeQn0dDeXELr5sbbPBU+j4PIA4u+k=;
+	s=ti-com-17Q1; t=1754899197;
+	bh=7PfiPykHsTbwLkTcmOnffcGjkDy3xo0UuxzokO5rkK8=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=WmT/tBEus+/FlbJVqnjNH0a3PzrKbwFJLySgoiCMmKi4hF6xUPte1t4pl/PAzAuEG
-	 1egrHsJv7P78dfv00smN2JchljwI/yYrV+mKsw2PFB5mNS5vP2F1lmZuwYyLDpL+zz
-	 sZ28fIeutLh4BJhZHe/c2IpT+77YXOQuBofybUak=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57B7xnVr3526447
+	b=qEkpcc5ym9E/+sTPiKbpwNWFx+aOzHKrRuRzH+no/ya1rwhG8FqPuAlJj2Evhhi7B
+	 83Medxk0/dr4xA5ZunsWLQ0wFRWMG0vBBr7DXEuqXNnJPXHS/9+m8WJnQO2IIu5tEn
+	 vBkf2rwR4/jlPAhSC8UbFdh6jQaLLX8cgQa/Mn+M=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57B7xuph2515611
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 11 Aug 2025 02:59:49 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 11 Aug 2025 02:59:56 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 11
- Aug 2025 02:59:49 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2025 02:59:56 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 11 Aug 2025 02:59:49 -0500
+ Frontend Transport; Mon, 11 Aug 2025 02:59:56 -0500
 Received: from hkshenoy.dhcp.ti.com (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57B7x5Cx2817433;
-	Mon, 11 Aug 2025 02:59:42 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57B7x5D02817433;
+	Mon, 11 Aug 2025 02:59:49 -0500
 From: Harikrishna Shenoy <h-shenoy@ti.com>
 To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
         <Laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>,
@@ -68,9 +68,9 @@ CC: <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
         <linux-kernel@vger.kernel.org>, <devarsht@ti.com>,
         <j-choudhary@ti.com>, <u-kumar1@ti.com>, <h-shenoy@ti.com>,
         <s-jain1@ti.com>
-Subject: [PATCH v5 5/6] drm/bridge: cadence: cdns-mhdp8546-core: Reduce log level for DPCD read/write
-Date: Mon, 11 Aug 2025 13:29:03 +0530
-Message-ID: <20250811075904.1613519-6-h-shenoy@ti.com>
+Subject: [PATCH v5 6/6] drm/bridge: cadence: cdns-mhdp8546-core: Handle HDCP state in bridge atomic check
+Date: Mon, 11 Aug 2025 13:29:04 +0530
+Message-ID: <20250811075904.1613519-7-h-shenoy@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250811075904.1613519-1-h-shenoy@ti.com>
 References: <20250811075904.1613519-1-h-shenoy@ti.com>
@@ -84,44 +84,56 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Jayesh Choudhary <j-choudhary@ti.com>
+Now that we have DBANC framework and legacy connector functions removed,
+handle the HDCP disabling in bridge atomic check rather than in connector
+atomic check previously.
 
-Reduce the log level for cdns_mhdp_dpcd_read and cdns_mhdp_dpcd_write
-errors in cdns_mhdp_transfer function as in case of failure, there is
-flooding of these prints along with other indicators like EDID failure
-logs which are fairly intuitive in themselves rendering these error logs
-useless.
-Also, the caller functions for the cdns_mhdp_transfer in drm_dp_helper.c
-(which calls it 32 times), has debug log level in case transfer fails.
-So having a superseding log level in cdns_mhdp_transfer seems bad.
-
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
 ---
- drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-index 47c657237c37..4fb1db3e030c 100644
+index 4fb1db3e030c..af41b2908a74 100644
 --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
 +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-@@ -778,7 +778,7 @@ static ssize_t cdns_mhdp_transfer(struct drm_dp_aux *aux,
- 			if (!ret)
- 				continue;
+@@ -1960,6 +1960,10 @@ static int cdns_mhdp_atomic_check(struct drm_bridge *bridge,
+ {
+ 	struct cdns_mhdp_device *mhdp = bridge_to_mhdp(bridge);
+ 	const struct drm_display_mode *mode = &crtc_state->adjusted_mode;
++	struct drm_connector_state *old_state, *new_state;
++	struct drm_atomic_state *state = crtc_state->state;
++	struct drm_connector *conn = mhdp->connector;
++	u64 old_cp, new_cp;
  
--			dev_err(mhdp->dev,
-+			dev_dbg(mhdp->dev,
- 				"Failed to write DPCD addr %u\n",
- 				msg->address + i);
+ 	mutex_lock(&mhdp->link_mutex);
  
-@@ -788,7 +788,7 @@ static ssize_t cdns_mhdp_transfer(struct drm_dp_aux *aux,
- 		ret = cdns_mhdp_dpcd_read(mhdp, msg->address,
- 					  msg->buffer, msg->size);
- 		if (ret) {
--			dev_err(mhdp->dev,
-+			dev_dbg(mhdp->dev,
- 				"Failed to read DPCD addr %u\n",
- 				msg->address);
+@@ -1979,6 +1983,25 @@ static int cdns_mhdp_atomic_check(struct drm_bridge *bridge,
+ 	if (mhdp->info)
+ 		bridge_state->input_bus_cfg.flags = *mhdp->info->input_bus_flags;
  
++	if (conn && mhdp->hdcp_supported) {
++		old_state = drm_atomic_get_old_connector_state(state, conn);
++		new_state = drm_atomic_get_new_connector_state(state, conn);
++		old_cp = old_state->content_protection;
++		new_cp = new_state->content_protection;
++
++		if (old_state->hdcp_content_type != new_state->hdcp_content_type &&
++		    new_cp != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
++			new_state->content_protection = DRM_MODE_CONTENT_PROTECTION_DESIRED;
++			crtc_state = drm_atomic_get_new_crtc_state(state, new_state->crtc);
++			crtc_state->mode_changed = true;
++		}
++
++		if (!new_state->crtc) {
++			if (old_cp == DRM_MODE_CONTENT_PROTECTION_ENABLED)
++				new_state->content_protection = DRM_MODE_CONTENT_PROTECTION_DESIRED;
++		}
++	}
++
+ 	mutex_unlock(&mhdp->link_mutex);
+ 	return 0;
+ }
 -- 
 2.34.1
 
