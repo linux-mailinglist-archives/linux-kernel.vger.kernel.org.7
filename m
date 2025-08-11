@@ -1,249 +1,145 @@
-Return-Path: <linux-kernel+bounces-762593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084A0B208CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:31:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B864FB208CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEA83ACEAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9500618A2A2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD322BE63F;
-	Mon, 11 Aug 2025 12:31:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F82623B613
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043752D3A88;
+	Mon, 11 Aug 2025 12:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C2esKwGb"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C1D23B613
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754915490; cv=none; b=ZCiqv6+6/R/IMRgZFrKoqyJVH2OlGbwyC0BWr3LIDYKHXwBFzbS2oyMUcxOkGiqd7X9H5Mxz8c1fRCYrE1LCd6Q9DPB9JT57cqiM0g7FKM0ilHK5h8qqxCtZucWVaBtwu+BprhgADBbmX0YZKbenxf7VrUTplOufm3mv1JaAVBA=
+	t=1754915528; cv=none; b=Y7Dx9nlqzo1F62UAEOBZtW2sOPKrx7rxnQcgItas/28CEF6iF8LIOjo6E+4azRmpAed2eqrWOe9TpxgxYMHL5VVImxup5IQsU7ZMEsBzdmThDn2FOJysCGS/7uCq6rd1I7ldMsSjHhE1OKqdr6RLUtcgxkHYkkmVqExR+r2xLgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754915490; c=relaxed/simple;
-	bh=crSbkX5wZCnAYf+xoVb8D9BZ0tyCYd1uy4y9JGpiV64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pn+v2dCNrwjvOBN9Wq5WmiFeGbyTxM9u/Pdp8BCQeXyCD5rzxJ4TIVYuXtKmf+71OVmK2Yr5UI6SeRu/M3l+ljU3PKCqV/fcIDuK8Ecvzzfu2Z4u4dlyrBBMoAnDNZwF1uylS72hPjEf/rhZgMBwcipZsic/Jz5OsfRQjYuBMW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 800DF1D13;
-	Mon, 11 Aug 2025 05:31:20 -0700 (PDT)
-Received: from [10.57.5.137] (unknown [10.57.5.137])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0EC983F738;
-	Mon, 11 Aug 2025 05:31:24 -0700 (PDT)
-Message-ID: <d8048adc-b19a-4d10-83e8-44b9a85c4d48@arm.com>
-Date: Mon, 11 Aug 2025 13:31:28 +0100
+	s=arc-20240116; t=1754915528; c=relaxed/simple;
+	bh=zzHfmtHVdGKVLDTeJmDuM0QQ2WoBFrZ74R1S49h3S4Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=oZxGUqahzs2hpL8Qc2QoCvOXQIReDLH3hBNx0L3NrWKcQZmUqzmSdCTEoIkQEaUVgBsgCaDzbFgfvG8B0MwElEpFXCcgmyc4hAh71T5OvC0mMMbSDZmuvjlEexWJ0waAgQkVLilCEN13J5F2uBoAYI27vfPQg4R6acD8nWpuLzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C2esKwGb; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b79629bd88so1854049f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 05:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754915525; x=1755520325; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cBznQW2jozfPAknKzYDGUUpAByXONdMvspvsg7mmV1I=;
+        b=C2esKwGbAJdaF1Gwl5quWE1O+KxHRed0WzfbZLra1uZugoDVJjWY4hTg+Zy2lqWqyA
+         R0FTZACB2fbJq7d01BCMCU4l8wRWuTduzP3UpD+RNjgEUX27EKIYEPoXjcU+F/ZFxgVE
+         jiFX0MPsrJCjMFmRINoueKsWQUAKPghrSFpFOGwsjO9ts5LE+GeiV0Vt82CYmAoYF6ON
+         EZUV5oEkvVGG0uA/Syjnsor+Fl8L+vQrrBxNiKcZjJ/QoN45VZl6vbjHmSZdK8slO6YT
+         0vwljPku4A3sPplhTgySBUb1+vprfYxEgB6spaPljRppuOr8ZDFi16yXYlHFPGiBEj0f
+         RPtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754915525; x=1755520325;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cBznQW2jozfPAknKzYDGUUpAByXONdMvspvsg7mmV1I=;
+        b=lKbq9OQjLAOS4x9FWIvFuTM+CUGt/9Ju4svAp8Tn6lFk19yZz3FzjvY9U9AeOLOJYu
+         9DPdUVxychVmDRalQpGNxZzsWKWrrz+4YW03h3zyX2Ty1CHdS6Wg3P40YLzS0ghCX3hS
+         OkfBe7C2cHoHVZH9OI44YLzVQNzw7Kis+v7JWjVvmbLHLKWrWfmmEIL5P0I8I9YHFV/5
+         zYXnbnOInwtEeOHy+1cPmpX2BuuLxWJ3aupnGhEyULMDowuIosrNWImRWgDSpwggSNeA
+         t6YoW9YlhOy82F7ZUuBAasQ+doMsM3m6o/x9rWzzMyBBFMWJGQRDrlqHmOFX9L4dDW2G
+         TMWg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4fa3DBkP663UIMqza+qjg7UniIP2BYlZthx86TefW/hr7b3W1bvp9iwqdwvZ4//IO7Vtu8fpjiqE5Okk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWFu3Nu0mEbPZbWmxxqWw+yWKmD1NpTVei9/iqYlO0fE8j6DnT
+	E1vt15M6pwUvhBIvQ37F10fonYT050hGF9fCm3GUcBBYAiSBCZHFYx/1TtHEEh0CgVV3ByIxQgH
+	Mnf/5ocZnc/crHnJF+Q==
+X-Google-Smtp-Source: AGHT+IG/Z7TLbDdRCiOWcvFypzhdjqXp/cd3cMWabRFYYCugnNAQDA35iDfdsoOmBv1cEO9jIyPklYpgoxPqh0I=
+X-Received: from wrbbs8.prod.google.com ([2002:a05:6000:708:b0:3b9:afb:8189])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:24c2:b0:3b7:9b81:73f6 with SMTP id ffacd0b85a97d-3b900b55f20mr10096012f8f.54.1754915524996;
+ Mon, 11 Aug 2025 05:32:04 -0700 (PDT)
+Date: Mon, 11 Aug 2025 12:31:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 2/2] arm64: Add encrypt/decrypt support for vmalloc
- regions
-To: Shanker Donthineni <sdonthineni@nvidia.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Steven Price <steven.price@arm.com>, linux-arm-kernel@lists.infradead.org
-Cc: Gavin Shan <gshan@redhat.com>, Mike Rapoport <rppt@kernel.org>,
- Vikram Sethi <vsethi@nvidia.com>, Jason Sequeira <jsequeira@nvidia.com>,
- Dev Jain <dev.jain@arm.com>, David Rientjes <rientjes@google.com>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250811005036.714274-1-sdonthineni@nvidia.com>
- <20250811005036.714274-3-sdonthineni@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-X-Mozilla-Draft-Info: internal/draft; vcard=0; receipt=0; DSN=0; uuencode=0;
- attachmentreminder=0; deliveryformat=0
-X-Identity-Key: id1
-Fcc: imap://robin.murphy%40arm.com@outlook.office365.com/Sent Items
-In-Reply-To: <20250811005036.714274-3-sdonthineni@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIALXimWgC/32OQQ6DIBBFr2JmXQxg0MRV79G4AJziJAotWNLGe
+ PdS3Xc3b/Lnzd8gYSRM0FcbRMyUKPgC8lKBnbR3yGgsDJJLxTuhmJ7JebaQL9McrF5DZKYRGlE
+ 11owayuUj4p3eh/U2nBzx+Sry9VyC0QmZDctCa1/lthYdi1bALzxRKs7P0SiLI/33eRaMswaFk Vop0Vp+dSG4Geuih2Hf9y+ZKdjh5AAAAA==
+X-Change-Id: 20250715-align-min-allocator-b31aee53cbda
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1536; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=zzHfmtHVdGKVLDTeJmDuM0QQ2WoBFrZ74R1S49h3S4Y=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBomeK6v4t7/LGcr8Z9JdjgvaB35kRT6S2yphLKo
+ cZCh7QDQFSJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJniugAKCRAEWL7uWMY5
+ Rn7LD/9eiMkB3/YXJ/np/GC3JyupWv/t6ucU2G1PY7FnRqFYjRG/uei0BWZ13TKDupvybhdbwWS
+ KJwMtGcUsPUrcI6ix+QA6tqY4fufThS9TCd7WmO7MTdTsbgkvRULKC4st958E+QKQ8E09cX6ATy
+ TPGL0oomYmc3HIHRoFqWEfz5GvgvzyzlJYCuoBTgeZbtT3i7ZBQnIZkxZJI+GeHLWBaGreBEwlS
+ l2B43fHLS1o7Wswkfi+PGalOrE5uhkhZLzS/dX+z5BAV9qlcVYWR1jnu1PCYwLkKDXI1ZO8w16T
+ B0qZ5sF2jfOKIygenezFHbeQN6VXxJxEvSMgJRf59W8gfoNMZWh2aygPpaZAWFVWMSGmULEbgm4
+ vbuImfsCL9ecD07UEvs+0lz2PQoPRJkgPw484UHMvw1imeCm2xlX7FW/wza7SPL3Y1MfpYmpSoB
+ XLEmHuZg0kjHp2b866rkvquSJmvvUbmBqeclTVr24qKAH0b0s4u0qeyupfLyGs1Mau6la52u4dx
+ /Q1Lgw/3K3Hom/IYJ0O92K2VUJMJ8B9jl3F68wnPJT9ruh03jL3NBytDIbdyBSMPDjHdEQKnlLm
+ miRCcr3IPs4H0nGzRIrbbvp7i3PU8anefCyibX+59e0vnQkXPfpMQBuI0Kb1jx4ZE/vblw5lR6h YrF4CikooKg396A==
+X-Mailer: b4 0.14.2
+Message-ID: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
+Subject: [PATCH v2 0/2] Take ARCH_KMALLOC_MINALIGN into account for build-time
+ XArray check
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Tamir Duberstein <tamird@gmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 2025-08-11 1:50 am, Shanker Donthineni wrote:
-> On ARM64 systems with CCA (Confidential Compute Architecture) enabled,
-> the kernel may need to change the encryption attributes of memory
-> regions. The existing implementation of set_memory_encrypted() and
-> set_memory_decrypted() assumes that the input address is part of the
-> linear mapping region '__is_lm_address()', and fails with -EINVAL
-> otherwise.
-> 
-> This breaks use cases where the memory region resides in the vmalloc
-> area, which is mapped in non-linear mapping region.
-> 
-> This patch introduces a new helper, realm_set_memory(), which detects
-> whether the given address is from a non-linear mapping. If so, it uses
-> vmalloc_to_page() to resolve each page’s physical address and applies
-> attribute changes one page at a time. For the linear address regions,
-> it maintains the existing fast-path.
-> 
-> This change ensures that encrypted/decrypted memory attribute updates
-> correctly for all memory regions, including those allocated via vmap(),
-> module allocations, or other vmalloc-backed paths.
-> 
-> Call stack of Realm crash, QEMU hypervisor + NVME device (emulated):
->   ...
->   Freeing unused kernel memory: 6336K
->   Run /sbin/init as init process
->   Internal error: synchronous external abort: 0000000096000250 [#1]  SMP
->   Modules linked in:
->   CPU: 0 UID: 0 PID: 64 Comm: lsblk Not tainted 6.15.5 #2 PREEMPT(undef)
->   Hardware name: linux,dummy-virt (DT)
->   pstate: 43400005 (nZcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
->   pc : __pi_memset_generic+0x16c/0x188
->   lr : dma_alloc_from_pool+0xd0/0x1b8
->   sp : ffff80008335b350
->   x29: ffff80008335b350 x28: ffff800083162000 x27: ffff80008335b3c0
->   x26: ffff80008144f000 x25: ffff8000801a27e8 x24: ffff800081e14000
->   x23: ffffc1ffc0000000 x22: 0000000000001000 x21: ffff800081458310
->   x20: 0000000042a40000 x19: ffff00000232fcc0 x18: 0000000000200000
->   x17: 00000000000120c0 x16: ffff0000795520c0 x15: 0000000000000000
->   x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
->   x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
->   x8 : ffff800083162000 x7 : 0000000000000000 x6 : 000000000000003f
->   x5 : 0000000000000040 x4 : 0000000000000000 x3 : 0000000000000004
->   x2 : 0000000000000fc0 x1 : 0000000000000000 x0 : ffff800083162000
->   Call trace:
->     __pi_memset_generic+0x16c/0x188 (P)
->     dma_direct_alloc_from_pool+0xc4/0x230
+The Rust bindings for XArray include a build-time check to ensure that
+you can only use the XArray with pointers that are 4-byte aligned.
+Because of that, there is currently a build failure if you attempt to
+create an XArray<KBox<T>> where T is a 1-byte or 2-byte aligned type.
+However, this error is incorrect as KBox<_> is guaranteed to be a
+pointer that comes from kmalloc, and kmalloc always produces pointers
+that are at least 4-byte aligned.
 
-But isn't that exactly the case that patch #1 is supposed to have fixed? 
- From a quick scan of set_memory_decrypted() callers I don't see 
-anything obvious jumping out - can you clarify who you think needs this 
-for reasons other than papering over bugs in the DMA layer?
+To fix this, we augment the compile-time logic that computes the
+alignment of KBox<_> to take the minimum alignment of its allocator into
+account.
 
-Thanks,
-Robin.
+Intended to land through alloc-next under the RUST [ALLOC] entry.
 
->     dma_direct_alloc+0x80/0x4a0
->     dma_alloc_attrs+0x94/0x238
->     dma_pool_alloc+0x128/0x258
->     nvme_prep_rq.part.0+0x5f0/0x950
->     nvme_queue_rq+0x78/0x1e8
->     blk_mq_dispatch_rq_list+0x10c/0x6f0
->     __blk_mq_sched_dispatch_requests+0x4a0/0x580
->     blk_mq_sched_dispatch_requests+0x38/0xa0
->     blk_mq_run_hw_queue+0x288/0x2f8
->     blk_mq_flush_plug_list+0x134/0x630
->     __blk_flush_plug+0x100/0x168
->     blk_finish_plug+0x40/0x60
->     read_pages+0x1a0/0x2b0
->     page_cache_ra_unbounded+0x1f8/0x268
->     force_page_cache_ra+0xa4/0xe0
->     page_cache_sync_ra+0x48/0x268
->     filemap_get_pages+0xf4/0x7a0
->     filemap_read+0xf0/0x448
->     blkdev_read_iter+0x8c/0x1a8
->     vfs_read+0x288/0x330
->     ksys_read+0x78/0x118
->     __arm64_sys_read+0x24/0x40
->     invoke_syscall+0x50/0x120
->     el0_svc_common.constprop.0+0x48/0xf0
->     do_el0_svc+0x24/0x38
->     el0_svc+0x34/0xf8
->     el0t_64_sync_handler+0x10c/0x138
->     el0t_64_sync+0x1ac/0x1b0
-> 
-> Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
-> ---
->   arch/arm64/mm/pageattr.c | 55 +++++++++++++++++++++++++++++++++++-----
->   1 file changed, 48 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
-> index 04d4a8f676db4..65c3322a86b49 100644
-> --- a/arch/arm64/mm/pageattr.c
-> +++ b/arch/arm64/mm/pageattr.c
-> @@ -202,21 +202,26 @@ int set_direct_map_default_noflush(struct page *page)
->   				   PAGE_SIZE, change_page_range, &data);
->   }
->   
-> +/*
-> + * Common function for setting memory encryption or decryption attributes.
-> + *
-> + * @addr:        Virtual start address of the memory region
-> + * @start:       Corresponding physical start address
-> + * @numpages:    Number of pages to update
-> + * @encrypt:     If true, set memory as encrypted; if false, decrypt
-> + */
->   static int __set_memory_enc_dec(unsigned long addr,
-> +				phys_addr_t start,
->   				int numpages,
->   				bool encrypt)
->   {
->   	unsigned long set_prot = 0, clear_prot = 0;
-> -	phys_addr_t start, end;
-> +	phys_addr_t end;
->   	int ret;
->   
->   	if (!is_realm_world())
->   		return 0;
->   
-> -	if (!__is_lm_address(addr))
-> -		return -EINVAL;
-> -
-> -	start = __virt_to_phys(addr);
->   	end = start + numpages * PAGE_SIZE;
->   
->   	if (encrypt)
-> @@ -248,9 +253,45 @@ static int __set_memory_enc_dec(unsigned long addr,
->   				      __pgprot(0));
->   }
->   
-> +/*
-> + * Wrapper for __set_memory_enc_dec() that handles both linear-mapped
-> + * and vmalloc/module memory regions.
-> + *
-> + * If the address is in the linear map, we can directly compute the
-> + * physical address. If not (e.g. vmalloc memory), we walk each page
-> + * and call the attribute update individually.
-> + */
-> +static int realm_set_memory(unsigned long addr, int numpages, bool encrypt)
-> +{
-> +	phys_addr_t start;
-> +	struct page *page;
-> +	int ret, i;
-> +
-> +	if (__is_lm_address(addr)) {
-> +		start = __virt_to_phys(addr);
-> +		return __set_memory_enc_dec(addr, start, numpages, encrypt);
-> +	}
-> +
-> +	for (i = 0; i < numpages; i++) {
-> +		page = vmalloc_to_page((void *)addr);
-> +		if (!page)
-> +			return -EINVAL;
-> +
-> +		start = page_to_phys(page);
-> +		ret = __set_memory_enc_dec(addr, start, 1, encrypt);
-> +		if (ret)
-> +			return ret;
-> +
-> +		addr += PAGE_SIZE;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static int realm_set_memory_encrypted(unsigned long addr, int numpages)
->   {
-> -	int ret = __set_memory_enc_dec(addr, numpages, true);
-> +	int ret = realm_set_memory(addr, numpages, true);
-> +
->   
->   	/*
->   	 * If the request to change state fails, then the only sensible cause
-> @@ -264,7 +305,7 @@ static int realm_set_memory_encrypted(unsigned long addr, int numpages)
->   
->   static int realm_set_memory_decrypted(unsigned long addr, int numpages)
->   {
-> -	int ret = __set_memory_enc_dec(addr, numpages, false);
-> +	int ret = realm_set_memory(addr, numpages, false);
->   
->   	WARN(ret, "Failed to decrypt memory, %d pages will be leaked",
->   	     numpages);
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v2:
+- Reword guarantee on `const MIN_ALIGN`.
+- Change formatting of if/else in kbox.rs.
+- Rebase on v6.17-rc1.
+- Link to v1: https://lore.kernel.org/r/20250715-align-min-allocator-v1-0-3e1b2a5516c0@google.com
+
+---
+Alice Ryhl (2):
+      rust: alloc: specify the minimum alignment of each allocator
+      rust: alloc: take the allocator into account for FOREIGN_ALIGN
+
+ rust/kernel/alloc.rs           |  8 ++++++++
+ rust/kernel/alloc/allocator.rs |  8 ++++++++
+ rust/kernel/alloc/kbox.rs      | 13 +++++++++----
+ rust/kernel/sync/arc.rs        |  6 +++---
+ 4 files changed, 28 insertions(+), 7 deletions(-)
+---
+base-commit: 062b3e4a1f880f104a8d4b90b767788786aa7b78
+change-id: 20250715-align-min-allocator-b31aee53cbda
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
