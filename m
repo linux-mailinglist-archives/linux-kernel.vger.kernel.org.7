@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-763322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E1FB2132B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:29:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8F2B2132D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCC684E3D35
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:29:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8691C3E329A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA952D47E1;
-	Mon, 11 Aug 2025 17:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC242D3A7B;
+	Mon, 11 Aug 2025 17:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBOQs3UF"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcgAUVsB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D121F3FF8;
-	Mon, 11 Aug 2025 17:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C4D15A848;
+	Mon, 11 Aug 2025 17:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933385; cv=none; b=har6e66LQBdhHtsJW+2cY2tu39oBkg0GHC0HWSlEVN7DBamZhsSRWSjkSfLGbe4QoyNz8lGM8SG2qoSHf/b/3wwCqNfmDgkmqEfZrnfmyIxlAesoIgCkqNGVdjBJb1CEnwj5fZa19jeCUoSa450yRImwkp+E69/XUxlH/OMJzIY=
+	t=1754933419; cv=none; b=Qfg6mVSs2Wm1iGKnffQG6IFWuwEIE0PO94QSxHTPGR9i1tAdmkwq5h31W1QA4VZWDc7UfRIumlMh96L0GLl17CxgzebSo3BouOsQB+bGM5OTNb0oK3CFizpJj/hvmfxba8W+rnhT/2IQ9U3Lr4StrLzz2y/ORXBnK1KiueKnuiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933385; c=relaxed/simple;
-	bh=/2ShzW/WUuLy/OiwRAPyuou+grVkG/G7LG9IZQ96NwE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W2EEJKMbsvT+UrSuNXOiXVWwSFiFCkSK4h5/fv5D+hL7QX3aLzZS6ey0ep4uV3EAsOvk1p7X/5r7gGH5y6HapvsKDr9a3zd8GPQjUJvb8lS8WvoWmoA7sTlqIBxXqWvogqqdmUERdIDw4sjl6akfQM6bIIDeiuZAah7WHIZxD+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBOQs3UF; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b4209a0d426so4624026a12.1;
-        Mon, 11 Aug 2025 10:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754933383; x=1755538183; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/2ShzW/WUuLy/OiwRAPyuou+grVkG/G7LG9IZQ96NwE=;
-        b=hBOQs3UFafU4zeWYoH0xwtAmlvTUws1os8fgmwQ1IjralEZukIB8oY2+NqJQml/40x
-         OAl2lOcR0HSVp2GUS9J2bqC8l5g0ACCZvEGNzLhxXKXw6evjHZ1Vdn9Te7cmtfTxtpE3
-         OkGL8rRyF7OiVGYxckApKoVit77+lYAHl5/ingQ0+fX/4jmZUrR5B1E1uaMCAlVDzk5m
-         qyOPGOe+hQ6txQQjk4zIWXVV3cPr1kbFTHrzDc0qtUdZ7IBbwcxJIXbPZut6rf5ODR4l
-         dMBmLU+b75eAkR90KWrLsV31JEttrDfJwmJlypXHOVNItLKb+uPJ4QaA7pNAckVGb9Ia
-         3uAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754933383; x=1755538183;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/2ShzW/WUuLy/OiwRAPyuou+grVkG/G7LG9IZQ96NwE=;
-        b=Pf22I9Ipzj/XXe0rU4Mznt44ZtzIngQWS2i/Al0q6n1FJTsRLD87QBvVOyOGro9cYJ
-         6sRkZP6ltas3/1IZOQx0Z7/bPOBvZNoU/i8CZBp/PlQoec/RzY5YibzIAgCrZbZRWjKb
-         EWkCqK8CNo0wqfxkI1QZBbhaTpwobblRs7JqGVqyzU5TLO7ZCOi/GXyuseAfn3vrz6Me
-         6eoZ+GZ1PYf/H7o39vBzZQHaRquYm3A6KYr9zJzHJ7lsWFAr7dAuEdUhNbtvV+WcirWN
-         gMqF19fAsJW2+8ae+7zzSCfZEQnV3tneoYTTL2/D1vYi3aFt4Ap3JA+5EOzFskpFDYdu
-         lb5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW8ns64/S1YcMnBkUrA3r7x+mGWgSqsyaYuojSy2kOd9gc/zwrb5CP7x1z5Qqs//2dS8rtjtnfNo6eAZHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4HEn0Fl9vIdjmHjg4PIgdkY6+5OgSjHXKJzIPEbkXKdGhP48S
-	3OpCIvLPxHpiqQdsnGTnKUPBbd1Kg0R3FpxtOv9zzJcM2jSBPdQmVOAotvwC2zCZ
-X-Gm-Gg: ASbGncupAjBXsfHjPCXb89XpTbU8JC9ndR31jegC1skmDTWPVvb1FFn4PQr4hREgxqW
-	ZB/bUIz+eVRBVZ44b1KaIHuCcoKGolpCe9Ni5TB5JaxHm5PPo0Adf5mtSARsywhNR+HxoUc/zay
-	YJJPLE/68L/BeJsSemeWtWB//yqP4eIoHrQrB0mywWpBEcSRRCpvd2EXIbTOVF+HdoFNj+kYPav
-	uhF907UEztkqnUvnCT2pJ9P8315Idek5yR+DkUcnE8cm6BNzEHKfgXc58XipZ946tdBljerzbvI
-	3pJ+NvD8/pk+F4zEmbm0wbZUNX1PE4C6sbIaGErQNvec6htP/vrlcDYYxpihlkVLngR7C7HkjRq
-	thD41XEHzxj9It6ZdplKElDvzupU=
-X-Google-Smtp-Source: AGHT+IFjgykEGq2OvWiHCETc4+d7Jrzw7+wf1/Rp6hxWBxQPIvb+9EM2FzGSsqyhlg1GmjPZ2vYMkQ==
-X-Received: by 2002:a17:902:d486:b0:242:abc2:7f32 with SMTP id d9443c01a7336-242fc210059mr5813885ad.3.1754933383353;
-        Mon, 11 Aug 2025 10:29:43 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:14a::17? ([2620:10d:c090:600::1:56e6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63f36311sm32008340a91.34.2025.08.11.10.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 10:29:42 -0700 (PDT)
-Message-ID: <a94bafca6b9a03be3d09b76341c89ddef6ce9bbb.camel@gmail.com>
-Subject: Re: [PATCH] bpf: fix reuse of DEVMAP
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Yureka Lilian <yuka@yuka.dev>, Andrii Nakryiko <andrii@kernel.org>, 
- Alexei Starovoitov	 <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Martin KaFai Lau	 <martin.lau@linux.dev>, Song Liu
- <song@kernel.org>, Yonghong Song	 <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh	 <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo	 <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 11 Aug 2025 10:29:41 -0700
-In-Reply-To: <20250811093945.41028-1-yuka@yuka.dev>
-References: <20250811091046.35696-1-yuka@yuka.dev>
-	 <20250811093945.41028-1-yuka@yuka.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754933419; c=relaxed/simple;
+	bh=QTUJmNuIA9Y8USJQy0wkUEM7A1icU1YnzbFoTOlFan8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Jh5Ssv8AFT4USTtpuhzyi1hSG35Vx7Cvup/i5uEaNHX5vIELOadQ5pR2vaCXd91c4bKdGNmLf7nTuIIzP6jejVEV1LmEXCL/mLP/yR94LfssP/Vro7MBEowAtPQynwaFo2J0eP/JR+5F6cS9//Ikyyavs14fkngya5ISsGt6JGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcgAUVsB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D55C4CEED;
+	Mon, 11 Aug 2025 17:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754933416;
+	bh=QTUJmNuIA9Y8USJQy0wkUEM7A1icU1YnzbFoTOlFan8=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=dcgAUVsBTHF9QfoKmlubmqlHzmn7mZuuwcfbBegOq8vsHU6iyyTPn6vMC2pHuBHGs
+	 U9h9EnNdLO1Y+disDSpYK12itPxHxKawC4n3cWljwg1wlUY45hzeftYigC/sNNvmCb
+	 LyuCaZXrXJM/qrViaYgL0GbX8npsYqv9acLxPBxoKAWfycX/I/2X2aM347twKvQ2ac
+	 HDD/pOPGkfhqgjcTbiYh5m6P07Q5fTE3p9RIQPef8yctRr3bEK7w8oNWb1huBZeRr7
+	 eLOVvAEYqUDEwXhXoGI+6E7Ej4jxiy0qz4cot3wuWE3w+lPrW9opUg8yW+MsRAM+lD
+	 reVk2ZEl9E3Xw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 11 Aug 2025 19:30:11 +0200
+Message-Id: <DBZRZ3LKJQF7.210QIJ4S1EI94@kernel.org>
+Subject: Re: [PATCH v9 7/7] rust: irq: add &Device<Bound> argument to irq
+ callbacks
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, "Benno Lossin" <lossin@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com> <20250811-topics-tyr-request_irq2-v9-7-0485dcd9bcbf@collabora.com> <32B71539-BF90-4815-9085-2963F5DD69B5@collabora.com>
+In-Reply-To: <32B71539-BF90-4815-9085-2963F5DD69B5@collabora.com>
 
-On Mon, 2025-08-11 at 11:39 +0200, Yureka Lilian wrote:
-> Previously, re-using pinned DEVMAP maps would always fail, because
-> get_map_info on a DEVMAP always returns flags with BPF_F_RDONLY_PROG set,
-> it BPF_F_RDONLY_PROG being set on a map being created is invalid.
->=20
-> Thus, match the BPF_F_RDONLY_PROG flag being set on the new map when
-> checking for compatibility with an existing DEVMAP
->=20
-> The same problem is handled in third-party ebpf library:
-> - https://github.com/cilium/ebpf/issues/925
-> - https://github.com/cilium/ebpf/pull/930
->=20
-> Signed-off-by: Yureka Lilian <yuka@yuka.dev>
-> ---
+On Mon Aug 11, 2025 at 7:00 PM CEST, Daniel Almeida wrote:
+>
+>
+>> On 11 Aug 2025, at 13:03, Daniel Almeida <daniel.almeida@collabora.com> =
+wrote:
+>>=20
+>> From: Alice Ryhl <aliceryhl@google.com>
+>>=20
+>> When working with a bus device, many operations are only possible while
+>> the device is still bound. The &Device<Bound> type represents a proof in
+>> the type system that you are in a scope where the device is guaranteed
+>> to still be bound. Since we deregister irq callbacks when unbinding a
+>> device, if an irq callback is running, that implies that the device has
+>> not yet been unbound.
+>>=20
+>> To allow drivers to take advantage of that, add an additional argument
+>> to irq callbacks.
+>>=20
+>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>
+> Sorry. I forgot to add my SOB here.
+>
+>
+> Perhaps this can be added when the patch is being applied in order to cut=
+ down on the
+> number of versions, and therefore avoid the extra noise? Otherwise let me=
+ know.
+>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-The change makes sense to me, could you please add a selftest?
-
-[...]
+Sure -- no need to resubmit AFAIC.
 
