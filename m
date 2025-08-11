@@ -1,127 +1,125 @@
-Return-Path: <linux-kernel+bounces-762617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4722B208FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:40:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28376B208F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC272A365D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:40:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F2B87AB782
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002DF2D3EDF;
-	Mon, 11 Aug 2025 12:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A533A2DBF40;
+	Mon, 11 Aug 2025 12:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Ioa9F5oY"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cUiForYF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE41E41C62;
-	Mon, 11 Aug 2025 12:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754915960; cv=pass; b=ABA8cMBCK1vf6eHJyAiVz7LQX8ZR1OYgHGDVx5AM2ZEGtICpbtKz8C3S7rohMFQ3I/cMnGS4tXCsjHPs+BozVOhkNtRt1YEjMwvo+CYritKcJcrESdNLgAO/sWrmqm/zAEqAx1H6LuLKlGcfiH8dkV/Jk2debR2gBMkjOhtzkyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754915960; c=relaxed/simple;
-	bh=z2hzk4IfGXWa4JuejGkWiKQo0s3XKBlVLEK9kN6K/lQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=rrkZhqRg81Dc41JDzKQ1n6lYtX5pZtacV9cVUwSLYnGBBZB0eoK+2B4GNE2m3KH6JX1BZev9Rp0t2x0SB7k430unM3M+gSpbSSsSspkH9+SNlU3j7UImIzRzuWvuH5JPGMMICgQX80ls5+tC6D+sdfmOdige+QQp6joCBqA1zrg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Ioa9F5oY; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754915938; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nFW+hitDNKztHDu3BY4oB26P8s1cDDMjiYZZvAHQP5SgaD0Pzfj88cX82zVRXVbMBTWSkUbCBGpwvp2AgRXhGNcK5vcgeKpKPUM6WglbrLm2wDCvC6VDrMmLllsTM42+BpoLkqtDikk/bQyRDcLX/vfyqYzjyRGRsDBEBHW28b8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754915938; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=z2hzk4IfGXWa4JuejGkWiKQo0s3XKBlVLEK9kN6K/lQ=; 
-	b=mlLlyQmV0FiKndRvBftVnQheamwngjhNkOa5mtzX58SiBNTB0kPTlBd0NtKnKJcgi0DIRnQUHkkrPEoVs+JV7+kLbK+P2gzL31CEefE8uvqMYVab1jH86PC4NiVURvWSvjgYQV9+/g883fuffRrpf4tZpowgYcG0MLFM1F0nAlI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754915938;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=z2hzk4IfGXWa4JuejGkWiKQo0s3XKBlVLEK9kN6K/lQ=;
-	b=Ioa9F5oY46jWlA7KeXvEZYb0FxA0buIINAMXinW4lTNZLYMxlGK4jtl7Onfbm6sB
-	72venE5LRq61e2yHh8qW0dwQt/JwbB9nLsCRGtdEcWRXzic5Y/ZixmkvZS9jc0ejM7M
-	P878dHjWIv5cD1s9zFbGWP+jhK+vmWZmiNUvYXfI=
-Received: by mx.zohomail.com with SMTPS id 1754915936203205.61364902100854;
-	Mon, 11 Aug 2025 05:38:56 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD722D77E2;
+	Mon, 11 Aug 2025 12:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754915947; cv=none; b=W57VB7teofQUzGcNPR+jha5nrbkrcyAvX3nGJK2xRMCy9e7BsZomBiUGXJpJMgcGmRVBogi3AKSj57NsKPcK/KtW7JU1lfFgjuVh0nX+RYW/xRGdrzvKsJoQgKWdH4UJfZfL6UNYCF/ekORkZxBR62vhuqoH24bxTbtZUof8K68=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754915947; c=relaxed/simple;
+	bh=dhBKEeU5ldQLq/3XtEZvKKj307e0aSyze9dkI+ujZdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=siroIKSChMBQYkG2Rmen/ix+6B/K6hgANbXuHEc72EabIldusApkXE81SnO+mbyS+p0yAo47RqRCpl3ZvlnH1R7bB9jqMBkf6fClea3JVJv3EzTI9RuCmKsHGRPcBj1gQhd6osKcD/Zwkutv5bIio4CWZsqCXQVL1uCJO0xyDqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cUiForYF; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754915945; x=1786451945;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dhBKEeU5ldQLq/3XtEZvKKj307e0aSyze9dkI+ujZdQ=;
+  b=cUiForYFbQb4u4n6MdqmfHdqmWxG53uJMuwJvPec8gUdIYRusJOa146h
+   l68op4xCPEnN9xxZPHh2XWkBcZ2eHfq4uIEINE8F+qxD3IRQR/VpZNQGW
+   ChloKatfrCXn4+AlqFfD0CF7yNJ0aHBCQFhjGilUaKfEjdzoyJ1IGM4Gf
+   4HtAqp0foknn5QYTh8PqCkCT5bW/rNDP2Ot0PG2PPPuoQpce9UpXzbxtY
+   jmw6yGhRidhUthNFiuIZgUMYfsgDuyGHFWgdEhlYk+1CSgkY8c+BLi7NX
+   mSZ3Yzm4X/gSTM7C6j5Ay9AlZGEmk3I3Yl0xq/4llb4szCoQbiIjSY9RD
+   Q==;
+X-CSE-ConnectionGUID: jD9SyHoxSjWoeMQ1+BsATw==
+X-CSE-MsgGUID: 5ctARMVoT9qlkulraF9fyA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="60968657"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="60968657"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 05:39:04 -0700
+X-CSE-ConnectionGUID: xSVS8NyHQXmcsesZ23AQDA==
+X-CSE-MsgGUID: ltCEpc67QXCqN9i6K1Q+ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165808200"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 05:39:02 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1ulRnm-000000052Up-4BX2;
+	Mon, 11 Aug 2025 15:38:58 +0300
+Date: Mon, 11 Aug 2025 15:38:58 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] iio: magnetometer: add support for Infineon
+ TLV493D 3D Magentic sensor
+Message-ID: <aJnkYn4nN5K6AO2q@smile.fi.intel.com>
+References: <20250807-tlv493d-sensor-v6_16-rc5-v3-0-b80d2cb41232@gmail.com>
+ <20250807-tlv493d-sensor-v6_16-rc5-v3-1-b80d2cb41232@gmail.com>
+ <CAHp75VeKPr=3H_wOvcesqj4OsrqN7zwRFFk3ys3O012JpQtxrQ@mail.gmail.com>
+ <aJcw8icGvsDzFGpJ@dixit>
+ <CAHp75Vc7Jftvmgb0EgnYmiKtT2TTYb2uQGNgaqm7hvkFWpJ9cg@mail.gmail.com>
+ <aJdcUhz-vqnx8DwA@dixit>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v2] rust: irq: add &Device<Bound> argument to irq
- callbacks
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250811-irq-bound-device-v2-1-d73ebb4a50a2@google.com>
-Date: Mon, 11 Aug 2025 09:38:41 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Benno Lossin <lossin@kernel.org>,
- Dirk Behme <dirk.behme@gmail.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <19D30F1F-BA10-4C38-A0A8-1C0072516B55@collabora.com>
-References: <20250811-irq-bound-device-v2-1-d73ebb4a50a2@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJdcUhz-vqnx8DwA@dixit>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Sat, Aug 09, 2025 at 08:03:54PM +0530, Dixit Parmar wrote:
+> On Sat, Aug 09, 2025 at 02:44:00PM +0200, Andy Shevchenko wrote:
 
+...
 
-> On 11 Aug 2025, at 09:33, Alice Ryhl <aliceryhl@google.com> wrote:
->=20
-> When working with a bus device, many operations are only possible =
-while
-> the device is still bound. The &Device<Bound> type represents a proof =
-in
-> the type system that you are in a scope where the device is guaranteed
-> to still be bound. Since we deregister irq callbacks when unbinding a
-> device, if an irq callback is running, that implies that the device =
-has
-> not yet been unbound.
->=20
-> To allow drivers to take advantage of that, add an additional argument
-> to irq callbacks.
->=20
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> This patch is a follow-up to Daniel's irq series [1] that adds a
-> &Device<Bound> argument to all irq callbacks. This allows you to use
-> operations that are only safe on a bound device inside an irq =
-callback.
->=20
-> [1]: =
-https://lore.kernel.org/all/20250810-topics-tyr-request_irq2-v8-0-8163f4c4=
-c3a6@collabora.com/
-> ---
-> Changes in v2:
-> - Rebase on v8 of [1] (and hence v6.17-rc1).
->=20
+> > > > > +       data->wr_regs[TLV493D_WR_REG_MODE1] |= mode1_cfg;
+> > > > > +       data->wr_regs[TLV493D_WR_REG_MODE2] |= mode2_cfg;
+> > > >
+> > > > No mask for the existing values in the respective wr_regs? Wouldn't
+> > > > you need to use FIELD_MODIFY() instead?
+> > > >
+> > > I believe, we are doing OR op with the value created using FIELD_PREP,
+> > > so it should not interefere with the existing non-masked values.
+> > 
+> > I am talking about existing values in the array.
+> >
+> Right. So in that I think it will make more sense to directly use
+> FIELD_MODIFY instead of using FIELD_PREP first and then doing this OR
+> op. Right?
 
-Thanks, I=E2=80=99ll apply on top of the series as a convenience to the =
-maintainers.
+Just double check carefully, but sounds about right.
 
-=E2=80=94 Daniel=20
+> > > However, as FIELD_MODIFY is there, I should utilize it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
