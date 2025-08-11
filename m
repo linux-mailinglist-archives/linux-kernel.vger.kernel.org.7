@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-763517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02889B215E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:49:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF933B215E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21656463B2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:49:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50DD1A22BEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BB725A655;
-	Mon, 11 Aug 2025 19:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74722D8DD1;
+	Mon, 11 Aug 2025 19:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cNAl4xij"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcYNZ14G"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAB218C322;
-	Mon, 11 Aug 2025 19:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FAC27F724;
+	Mon, 11 Aug 2025 19:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754941790; cv=none; b=gUakfOqsuKw/igWhxkMhju0GdQbTML3XTVFA1NHgbGo8kYb4V7EEkGVvTP0h08LNB/haQNw5w6g5hoLPMaJ7xA4byTG/5MByrAdUc1hsAVK/Pzzbc4eevtLyc1PaxF1xFBNJbgqoWqGnW7jRJePl6w/fRtdPToQe8oJf+DGeJ54=
+	t=1754941809; cv=none; b=DA3OIJqKszxwU5xv9HbMdIaiQc7TT9m+b1msKfBfzTQjLOGqRfJhHBjpD3pOicNoRYmc7LMgtFyzOt03E0vi5GOJ9ye5wc7Wh+yM5ZHrzzBEL1IjCNtd4yZWMYWaD40+Zi5OJAC/DrRixxoNqqC0q8x35MtW4uLZg9/36W31gl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754941790; c=relaxed/simple;
-	bh=rboVk1bB7Jbo8EaAei+dCAWs6rnzVtrl+0yGju+GrqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RC0wdSL2ap+9LEFjToPF6t9x2Bt4BwGDs1zz/MbyYVy6VYVhSQrAg7BepGYXfNvHUqiXTd9Izjd72hOJfTambk4SlPkx2ZCFX8PoI+R/h2wEZjXVD6m7FemC8GYlhed+oMiqeRawGJN1oJlDIWHUiwYKM2ND9JEdyZLU9uM2p3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cNAl4xij; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BGC0NF013114;
-	Mon, 11 Aug 2025 19:49:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	K2oxZ++xDq8dbM7T/oUEPTAbdcUvj6c8DlW4OF00CXM=; b=cNAl4xijGzYFHWTq
-	t2N76DHv+ZAUc++aQKEYzE3OII/bpneFfHtwAPMzHGpZNouaB9HDtHvqH9go0j2w
-	lmpkd1sixkikQ3bGgeti3C8TENMS7a8vbenj0mWzewzD7+0u/4TGGumOqOsLJFFp
-	w14t+/A6ZcTPA5suzDqUb2YQf7WkcvbeQUHiW0fp7xFijFS8StlKBsxf0uci3mxo
-	jwVTnWI9gRw5HGquuUvIngFSC47yXXpkapLcl4HIXtdtip9ow8b/DIzPFDDeEXFJ
-	BLiKM8ZCVxSGVdGr/0j6B0LVzSlggMTAydns7uJcYB7jAF+8xnvc/4LBP0T3T4yL
-	ISlT+g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dupmnsu0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 19:49:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57BJnVQh022703
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Aug 2025 19:49:31 GMT
-Received: from [10.216.45.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
- 2025 12:49:26 -0700
-Message-ID: <331c5c34-9bf7-4c1f-97cb-e78749c9f6b0@quicinc.com>
-Date: Tue, 12 Aug 2025 01:19:23 +0530
+	s=arc-20240116; t=1754941809; c=relaxed/simple;
+	bh=Fk8Bw6MA9OkJVdq47gc5L3v+FCeIAny4QBYM5xUaMaM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uq/tNMRAl5DI7Ll5U62+JQYTBL8+3McsU2bU6jZVlHy5+bCExduDbulpL2f4blKFXbbYNOAJqXDxPZ6AqwlmyNzG1+VbiSINGFremaD5zzaxwdhRwZZfhpmF+badk3bzof3McNfQht5Muo348+mgRSDYW3d2qSlD72MhBDa6X6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcYNZ14G; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b78315ff04so4054145f8f.0;
+        Mon, 11 Aug 2025 12:50:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754941806; x=1755546606; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FNKfzHYbB1ZIWLHm8XS7VDzFjrBi6oFDR5W7bTakxwI=;
+        b=XcYNZ14GdlliYCqwjnujhEWh09HLuK+jJW6FFGuVxhfU1o/kV210U8P4B5gEwV59YL
+         veJ9ZweL8VBO7FIfoVnO8wGq15/KLPVAIZRCWzHbnVdnnPi8YnTyrqUIekGFio25dF5i
+         AzzL5gjyJtfSFZtGlxR3Ej6NSlVnJeAVuF+8qlhfKrSRV/eR137539hfTjmf+hyCmiON
+         +oTn4NADcN7Dy9e2b82xufJQ1c2Vnli1DaYO4Xol6xHmid5UsrSIC9vF7Jm42azyr+EG
+         FdwS3nxlmEo2hzpatWYa3cgDsjet9CAI41o6JCao0s/YT0gJPX/JO/wkvSlf5mzS9KOu
+         eOCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754941806; x=1755546606;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FNKfzHYbB1ZIWLHm8XS7VDzFjrBi6oFDR5W7bTakxwI=;
+        b=MpiEBcJc7kuHeR+/8orRRv6so1GLuvdD/zDeyU0InSSll35UvEIUYXbZnNXEwmPEdF
+         SRIe8L/RNyX4T3cZrOLkdohkr6VdXy9YXJFJ1cgpXf3HzsTcNy2aT5YRU6vBFo0MD/vL
+         abUAPjnG87DCKfqrQPUN9YcqmNxVWCUyrNtI8kr3zfA9cKhjRokTpUWwIptOzIwU64Er
+         g3B6YFTAk126MTFf/hgFJRbs5DgJC0ai7rs2d+/7gBEJ5h/cFykXhdn0Y7KCWQlg7FJl
+         iKL9qeT78kc8VZ32ewIyWOcwHBwfRDsYMt4nnjgj5Qh3pbGjYYap+awJBxckHihj5Kcm
+         H8zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVO42Wg0C+hEyWFGxPZdXYH4bzN6JvZ5JeGNBC/wqpM5ucMqSRMz+s7n3EzwF2KzdeOIniXOVB@vger.kernel.org, AJvYcCX7yrAFiH1xBXrJ5bw37axMBzhu6cytRxW78Vd+z+d7iIFeY+k12YiYux4zbiSjil8OTezr6pgTqcU=@vger.kernel.org, AJvYcCXWZ6Ys83SRummF4HbEhCkGBBf9Y/A+W2rnvnlHTOManDVcgLjCt0GspkaaDUNlhRxCV0pUWcextXN/jyk4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6rmSNR77KwAthGdgXVM6U4AGUbkE2NXiBwNhymarVKF8KHNPW
+	3PGGGdFpHR8UIDlF2uvMhDbZGv4fT4zSyzBOqdcQAEPcIziDaEU0UJ9DQf3zDw==
+X-Gm-Gg: ASbGncv5swKfvLZrknDEQkC1dDw7PxLr8EO3ADbZHaGqjwMNbfgQ9+wlnt0o6wT7SXn
+	8AWObgKr0BUo1LfJm+Rh5hfHztK3q5k6aTVRBUONYqsCiq3K6bqHJ960TR71Uu4Lbu5ItvFDLGv
+	X3BR3Iu4H6r9yCzpxAPSJYX8xcId9N4k8h4CGrMmAM3M8lft+CzKN+jv4w3Ryv1aIRk1hTsTst8
+	iPcoy6uwJxGgBZlEhFIUyOeyZsvuNyF4fjT7CheWhW9lEUXW1A4nelKAsUH9Bq/en9HkPFLGey0
+	TOzR7m0Ro4EN/EeClKJaC//TI5CMsZ9wfEke8WSBjmgYJIA1P9dveB06RQD57WB20WLTsqCO9F1
+	T0sUGBBSs7uNVjkCzqwQGMWkMGB3hZq9CljkHyHdj6owmHyRdNAH2uidQ6ntKxQ==
+X-Google-Smtp-Source: AGHT+IFHbn4y9hfGTMN6NHymhuhRV3bgWXUmWSsnPpSR+XutWW+nNtL9qKWYLtipZOMJQNrXZXOc6A==
+X-Received: by 2002:a05:6000:26c9:b0:3a4:e7d3:bd9c with SMTP id ffacd0b85a97d-3b910fd1214mr707538f8f.17.1754941805587;
+        Mon, 11 Aug 2025 12:50:05 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9eddsm41709246f8f.22.2025.08.11.12.50.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 12:50:05 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: [PATCH v2 0/3] i2c: pxa: fix I2C communication on Armada 3700
+Date: Mon, 11 Aug 2025 21:49:54 +0200
+Message-Id: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
- device tree
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <mani@kernel.org>,
-        <conor+dt@kernel.org>, <bvanassche@acm.org>, <andersson@kernel.org>,
-        <neil.armstrong@linaro.org>, <konradybcio@kernel.org>,
-        <krzk+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
- <20250806154340.20122-5-quic_nitirawa@quicinc.com>
- <5nsglhsnqdx4l44r36zmxumcpbbwhns4432hm3lvttsgyjaknb@feobdhpzzo65>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <5nsglhsnqdx4l44r36zmxumcpbbwhns4432hm3lvttsgyjaknb@feobdhpzzo65>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=bY5rUPPB c=1 sm=1 tr=0 ts=689a494c cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=oXI4R0A_xwN3MdgyEWoA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: dl8omPryo6_9wFkZnuDwPlfdEOr6_J7q
-X-Proofpoint-ORIG-GUID: dl8omPryo6_9wFkZnuDwPlfdEOr6_J7q
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwMCBTYWx0ZWRfXyZPEnPh1k6np
- cM9zNdbmK9mbNphIOHVzzakNmMU4rjULaPCyRbD30YTwEY2/+MEF/BIN9YQ5gT8LmvU0HHJ8KPC
- jlpYxvrigLfG0lQRHRvxsvE0a8uJUf4IxQc+8pCi6qoX/mUURQq5n8bJvhJrlHrazHTCsQzrGlB
- svNlf/BrzxOK9N3nxcdoVP+Y+j9BfjGpG/OGDH1b23vBRu3IQGWhNIng4i++wEGU4QlkAj//Urf
- OBdumWYtG6FxqFX3VNhPRWn7YDqApCtFLkeTKUe5090OgBLbdZ48hrngJXSoiTU4fX87u70+EHz
- DNGC+WCAG82uwRA97+yvPvkh9r3qPv0xmLivW3bwQzzVKkZqM8+yoYdgEZOk0SbZHSeLiuDBBkW
- 9udj83k5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_04,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 clxscore=1015 phishscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090000
+X-B4-Tracking: v=1; b=H4sIAGJJmmgC/4WNSwrDMAxErxK0rorskJR01XuULIytJoLmg52al
+ JC7Vw103Z3eMPO0QeIonOBabBA5S5JpVLCnAnzvxo5RgjJYshVVhlCsx3l1+JD1uP00DK9RvFt
+ 0iSXXgQ2XgXwN6pgja/Hw31vlXtIyxffxLptv+jObP+ZskJAbai6BGkemunWDk+dZW9Du+/4B1
+ 5RsgsoAAAA=
+X-Change-ID: 20250510-i2c-pxa-fix-i2c-communication-3e6de1e3d0c6
+To: Wolfram Sang <wsa@kernel.org>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Russell King <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
+ Hanna Hawa <hhhawa@amazon.com>
+Cc: Robert Marko <robert.marko@sartura.hr>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Russell King <rmk+kernel@armlinux.org.uk>, linux-i2c@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Imre Kaloz <kaloz@openwrt.org>, Gabor Juhos <j4g8y7@gmail.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
+There is a long standing bug which causes I2C communication not to
+work on the Armada 3700 based boards. This small series restores
+that functionality.
 
+Signed-off-by: Imre Kaloz <kaloz@openwrt.org>
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Changes in v2:
+  - collect offered tags
+  - rebase and retest on tip of i2c/for-current
+  - Link to v1: https://lore.kernel.org/r/20250511-i2c-pxa-fix-i2c-communication-v1-0-e9097d09a015@gmail.com
 
-On 8/9/2025 1:00 PM, Dmitry Baryshkov wrote:
-> On Wed, Aug 06, 2025 at 09:13:40PM +0530, Nitin Rawat wrote:
->> Add support in QMP PHY driver to read optional vdda-phy-max-microamp
->> and vdda-pll-max-microamp properties from the device tree.
->>
->> These properties define the expected maximum current (in microamps) for
->> each supply. The driver uses this information to configure regulators
->> more accurately and ensure they operate in the correct mode based on
->> client load requirements.
-> 
-> What defines those load values? Are they actually dependent on the
-> platform? On the SoC? On the board design? On the UFS gear?
+---
+Gabor Juhos (3):
+      i2c: add init_recovery() callback
+      i2c: pxa: prevent calling of the generic recovery init code
+      i2c: pxa: handle 'Early Bus Busy' condition on Armada 3700
 
-Hi Dmitry,
+ drivers/i2c/busses/i2c-pxa.c | 25 +++++++++++++++++++------
+ drivers/i2c/i2c-core-base.c  |  8 +++++++-
+ include/linux/i2c.h          |  4 ++++
+ 3 files changed, 30 insertions(+), 7 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250510-i2c-pxa-fix-i2c-communication-3e6de1e3d0c6
 
-These load values are defined at the SoC level, although they may vary 
-depending on the UFS gear. However, the peak value per power grid is 
-determined by the maximum gear supported by the controller.
-
-In summary, the value is SoC-specific and does not depend on board-level 
-variations. Based on this, I'm comfortable hardcoding per-compatible 
-data directly in the driver instead of relying on the device tree.
-
-Thanks,
-Nitin
-
-
-> 
->>
->> If the property is not present, the driver defaults load to
->> `QMP_VREG_UNUSED`.
->>
->> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 22 +++++++++++++++++++---
->>   1 file changed, 19 insertions(+), 3 deletions(-)
->>
-> 
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
 
 
