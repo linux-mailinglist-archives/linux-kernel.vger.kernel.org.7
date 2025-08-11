@@ -1,178 +1,328 @@
-Return-Path: <linux-kernel+bounces-762317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFF2B204D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:04:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0146B204D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4D3161975
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:04:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA84A189FD75
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750BE1EE7DD;
-	Mon, 11 Aug 2025 10:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BEE21D3CD;
+	Mon, 11 Aug 2025 10:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W3Rf7EMb"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="POVQZITM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728394A21
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8EB1D7E4A;
+	Mon, 11 Aug 2025 10:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754906649; cv=none; b=ZTRkDrzHKfa6diILLQDaZYdcSl9NLTrrXqKQcGKaYYkIkqJ4hiJlK0bXaV39uo4EgOED8rlI009kdNnAvNzNZdLNgQwLNBc5zqIa0gfLcVEOE2eS8V+lgV/EOJYratEEhIT7zNKdoC2IHh5k+9jpxRUZjbVhcGQecWHYt5uC6pE=
+	t=1754906754; cv=none; b=F5smxAUimSfy/cJftD5SbJjdv2O7qKAPoCbZAalq2RtbJqAPpGWFfoZnV0MGVbozQqySccbQyzEnDj1r58GXJOnwH0reLnnGXqHPFGgDcOQtkKaKLS+yO3ejo4CDZbpBlAs2QVOdeyUd1uo7YexlbbJrSArmNm8n4oNINNYuKt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754906649; c=relaxed/simple;
-	bh=gX5KwB+JUs6gFsJqbR+NWqQ67lLNLTe6qTEmpI/4X1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oCHuuFbI2PGgvZ89yRjPh1boMWTItEIa8oDuKBHu9JwEBI3WGkO6ss2pFsvDci3gs4GFql0mVkGvAStWhXg16p6xKOzT4wMo37U3x2Ts+TCEzRlesvBWW53ClZPiUQrNhNgMVGtnXoOo/inNNxfeXLIzMMBUf5P/sDzYZ7HroQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W3Rf7EMb; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WmF2TCFIYmZOrDoQMQqFgcWE6Zp901yga/R5DeRrJ8I=; b=W3Rf7EMbJBxd3jy3fHZnKd6YZl
-	RUp7k/Tjm3Nri7bagAz9Y7QWrZmVLpT6n6H8St8UxjrENQgOlwRK3OAzGcqlP7ugb2X8m2t//tUie
-	jQJw4QcRVFjBUVFViqbVseXn9AImd6W1SRAzVf6LX23qM8ztDrAs/V07xEgszFrnZwN5c3KmR2WPK
-	7EBesl1Pj9/a3azz+eyrg84Vm0UbbBYBtMoKg0YJSybi9raagX5UKHfe/WgbGNd6Q+f45WEgIDwTx
-	8lFZNuWqe0ZEguFSvOowRq1JYv9hXlQSuAp/0xcJsx49L8F+cfKSJWRTxc+Zl+jy7Jp7P95OcTkKD
-	uN8Fzqww==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulPNs-0000000FOnV-1iC5;
-	Mon, 11 Aug 2025 10:04:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EFBFB300328; Mon, 11 Aug 2025 12:04:03 +0200 (CEST)
-Date: Mon, 11 Aug 2025 12:04:03 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Ingo Molnar <mingo@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [patch V2 m@/6] perf/core: Split out AUX buffer allocation
-Message-ID: <20250811100403.GE1613200@noisy.programming.kicks-ass.net>
-References: <20250811065859.660930338@linutronix.de>
- <20250811070620.590421133@linutronix.de>
+	s=arc-20240116; t=1754906754; c=relaxed/simple;
+	bh=fxjTEqUImoF53drqVHSEnhgix2VVZt5sV1N0vgMdq8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=p875TOcagplbZMGX0uvpG6NAx7z5oj0EgZg4IOtnKw6xuTDQtbRxrXc7MBVLZ+46oD/9KfAZTqLiBlNtRiEDnTfTW2UHdPhrfGoUtexaW0l9wEufrvsLoX6SJgjadYnlZ43WdQDvVYZwnn7CANk/afsFc8gUO4XHkr+u2LSecdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=POVQZITM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9dCCa021620;
+	Mon, 11 Aug 2025 10:05:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jnHSLgJERtsCjMps84k/6BBQYIQdG+I5hvDzioIab4Y=; b=POVQZITMO+sJVEOd
+	LLjNe0t0Rct5aDbi1lXfVB+YPaF09lfP/ZfMEo4dhe8bk6LHawzsL35JqOEvB5iX
+	qynT7euwCA0WJ4upstBKp1Ps8fOEOrCCvSDg/t6cj2WWRtiq1MFt2HEgdXiC00hK
+	FroGo/pSEKrLruR0Vi74I9t3HSyt/PFN22bGpgFmPSfzQCmnYM2ssVl10YanUF65
+	JfoHxOQnCobzANH4fdJRTlUg+de2FYxpCrPSpBxnpeMCsxWIk2zYBFm8LqQf1ds3
+	jP6+6bN20IVyStCSHAt80gfRzC9ejiOaFJyPt5w1rVz+OcGzr/U8fIVSCsHV+lee
+	+LwWyw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxj43y3v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 10:05:49 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57BA5mQC009411
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 10:05:48 GMT
+Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
+ 2025 03:05:44 -0700
+Message-ID: <beff5494-17b6-2fe8-1a5c-6a9a820204bb@quicinc.com>
+Date: Mon, 11 Aug 2025 15:35:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811070620.590421133@linutronix.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v9 4/8] media: venus: hfi_plat_v4: Add capabilities for
+ the 4XX lite core
+Content-Language: en-US
+To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>,
+        <quic_vgarodia@quicinc.com>, <bryan.odonoghue@linaro.org>,
+        <krzk+dt@kernel.org>, <konradybcio@kernel.org>,
+        <dmitry.baryshkov@oss.qualcomm.com>, <mchehab@kernel.org>,
+        <robh@kernel.org>, <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250808085300.1403570-1-jorge.ramirez@oss.qualcomm.com>
+ <20250808085300.1403570-5-jorge.ramirez@oss.qualcomm.com>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20250808085300.1403570-5-jorge.ramirez@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNyBTYWx0ZWRfX85iVX+lWrvsT
+ Cn7aRrF4/AXdipNNpJ4WhaXbShW2J8LWaw7BTJxCxlbrrFGllzlU39N12bKllyz+/DhiuzKjm85
+ raR3PyooqPz4xrREzjmwP5mJ4XIBHlxP2AJ1yVt/HkR23RsmksJOzeTETwUQ4sPQSa1N6cvjulH
+ j/48BBM8utX3YLVobFZkfl/sTYv9gP2gGFVognw4xQSQUXVZC+xfPDv3jNmeV5FJEnKB78dBSBU
+ ZdVFL6aCOCCqckpZ6vo0T3Lzpwes2X741IZ/IXOuJaQxqXVnYOAYzv/cHVJqTMevTraViz1FSWl
+ m/L1BU9Nd8z8/jy8Ivnl5UdBdjbhCW+D929DBQaO8PBuY50eZzyE5FkpJFXEMsXP8QXNbMXsfpo
+ HlPpnbbm
+X-Authority-Analysis: v=2.4 cv=fvDcZE4f c=1 sm=1 tr=0 ts=6899c07d cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8
+ a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=LzSCczN5UG7F6-Q5to0A:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: y423bYYgqOahd-89Oinr1AggfxW1OLEE
+X-Proofpoint-GUID: y423bYYgqOahd-89Oinr1AggfxW1OLEE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ clxscore=1015 phishscore=0 bulkscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090027
 
-On Mon, Aug 11, 2025 at 09:06:41AM +0200, Thomas Gleixner wrote:
-> The code logic in perf_mmap() is incomprehensible and has been source of
-> subtle bugs in the past. It makes it impossible to convert the atomic_t
-> reference counts to refcount_t.
+
+
+On 8/8/2025 2:22 PM, Jorge Ramirez-Ortiz wrote:
+> Populate the HFI v4 lite capability set used by the AR50_LITE video
+> core.
 > 
-> There is not really much, which is shared between the ringbuffer and AUX
-> buffer allocation code since the mlock limit calculation and the
-> accounting has been split out into helper functions.
+> These capabilities define the supported codec formats and operational
+> limits specific to this streamlined VPU variant.
 > 
-> Move the AUX buffer allocation code out and integrate the call with a
-> momentary workaround to allow skipping the remaining ringbuffer related
-> code completely. That workaround will be removed once the ringbuffer
-> allocation is moved to its own function as well.
-> 
-> No functional change.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
-> V2: Fixup invers condition and add the dropped flags setup back - Lorenzo
->     Fixup subject line to match the content
-> ---
->  kernel/events/core.c |  137 +++++++++++++++++++++++++++++----------------------
->  1 file changed, 78 insertions(+), 59 deletions(-)
+>  .../platform/qcom/venus/hfi_platform_v4.c     | 167 ++++++++++++++++--
+>  1 file changed, 151 insertions(+), 16 deletions(-)
 > 
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -6970,12 +6970,79 @@ static void perf_mmap_account(struct vm_
->  	atomic64_add(extra, &vma->vm_mm->pinned_vm);
+> diff --git a/drivers/media/platform/qcom/venus/hfi_platform_v4.c b/drivers/media/platform/qcom/venus/hfi_platform_v4.c
+> index 41e4dc28ec1b..cda888b56b5d 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_platform_v4.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_platform_v4.c
+> @@ -246,28 +246,150 @@ static const struct hfi_plat_caps caps[] = {
+>  	.num_fmts = 4,
+>  } };
+>  
+> +static const struct hfi_plat_caps caps_lite[] = {
+> +{
+> +	.codec = HFI_VIDEO_CODEC_H264,
+> +	.domain = VIDC_SESSION_TYPE_DEC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.num_caps = 7,
+> +	.pl[0] = { HFI_H264_PROFILE_BASELINE, HFI_H264_LEVEL_5},
+> +	.pl[1] = {HFI_H264_PROFILE_MAIN, HFI_H264_LEVEL_5},
+> +	.pl[2] = {HFI_H264_PROFILE_HIGH, HFI_H264_LEVEL_5},
+> +	.pl[3] = {HFI_H264_PROFILE_CONSTRAINED_BASE, HFI_H264_LEVEL_5},
+> +	.pl[4] = {HFI_H264_PROFILE_CONSTRAINED_HIGH, HFI_H264_LEVEL_5},
+> +	.num_pl = 5,
+> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+> +	.num_fmts = 4,
+> +}, {
+> +	.codec = HFI_VIDEO_CODEC_HEVC,
+> +	.domain = VIDC_SESSION_TYPE_DEC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.num_caps = 7,
+> +	.pl[0] = {HFI_HEVC_PROFILE_MAIN, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0 << 28 },
+> +	.pl[1] = {HFI_HEVC_PROFILE_MAIN10, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0 << 28 },
+> +	.num_pl = 2,
+> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+> +	.num_fmts = 4,
+> +}, {
+> +	.codec = HFI_VIDEO_CODEC_VP9,
+> +	.domain = VIDC_SESSION_TYPE_DEC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.num_caps = 7,
+> +	.pl[0] = {HFI_VP9_PROFILE_P0, 200},
+> +	.pl[1] = {HFI_VP9_PROFILE_P2_10B, 200},
+> +	.num_pl = 2,
+> +	.fmts[0] = {HFI_BUFFER_OUTPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[1] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.fmts[2] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[3] = {HFI_BUFFER_OUTPUT2, HFI_COLOR_FORMAT_NV21},
+> +	.num_fmts = 4,
+> +}, {
+> +	.codec = HFI_VIDEO_CODEC_H264,
+> +	.domain = VIDC_SESSION_TYPE_ENC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.caps[7] = {HFI_CAPABILITY_HIER_P_NUM_ENH_LAYERS, 0, 6, 1},
+> +	.caps[8] = {HFI_CAPABILITY_ENC_LTR_COUNT, 0, 4, 1},
+> +	.caps[9] = {HFI_CAPABILITY_MBS_PER_SECOND_POWERSAVE, 0, 244800, 1},
+> +	.caps[10] = {HFI_CAPABILITY_I_FRAME_QP, 0, 51, 1},
+> +	.caps[11] = {HFI_CAPABILITY_P_FRAME_QP, 0, 51, 1},
+> +	.caps[12] = {HFI_CAPABILITY_B_FRAME_QP, 0, 51, 1},
+> +	.caps[13] = {HFI_CAPABILITY_SLICE_BYTE, 1, 10, 1},
+> +	.caps[14] = {HFI_CAPABILITY_SLICE_MB, 1, 10, 1},
+> +	.num_caps = 15,
+> +	.pl[0] = {HFI_H264_PROFILE_BASELINE, HFI_H264_LEVEL_5},
+> +	.pl[1] = {HFI_H264_PROFILE_MAIN, HFI_H264_LEVEL_5},
+> +	.pl[2] = {HFI_H264_PROFILE_HIGH, HFI_H264_LEVEL_5},
+> +	.pl[3] = {HFI_H264_PROFILE_CONSTRAINED_BASE, HFI_H264_LEVEL_5},
+> +	.pl[4] = {HFI_H264_PROFILE_CONSTRAINED_HIGH, HFI_H264_LEVEL_5},
+> +	.num_pl = 5,
+> +	.fmts[0] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[1] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.num_fmts = 2,
+> +}, {
+> +	.codec = HFI_VIDEO_CODEC_HEVC,
+> +	.domain = VIDC_SESSION_TYPE_ENC,
+> +	.caps[0] = {HFI_CAPABILITY_FRAME_WIDTH, 128, 1920, 1},
+> +	.caps[1] = {HFI_CAPABILITY_FRAME_HEIGHT, 128, 1920, 1},
+> +	.caps[2] = {HFI_CAPABILITY_MBS_PER_FRAME, 64, 8160, 1},
+> +	.caps[3] = {HFI_CAPABILITY_BITRATE, 1, 60000000, 1 },
+> +	.caps[4] = {HFI_CAPABILITY_MBS_PER_SECOND, 64, 244800, 1},
+> +	.caps[5] = {HFI_CAPABILITY_FRAMERATE, 1, 120, 1},
+> +	.caps[6] = {HFI_CAPABILITY_MAX_VIDEOCORES, 0, 1, 1},
+> +	.caps[7] = {HFI_CAPABILITY_HIER_P_NUM_ENH_LAYERS, 0, 6, 1},
+> +	.caps[8] = {HFI_CAPABILITY_ENC_LTR_COUNT, 0, 4, 1},
+> +	.caps[9] = {HFI_CAPABILITY_MBS_PER_SECOND_POWERSAVE, 0, 244800, 1},
+> +	.caps[10] = {HFI_CAPABILITY_I_FRAME_QP, 0, 51, 1},
+> +	.caps[11] = {HFI_CAPABILITY_P_FRAME_QP, 0, 51, 1},
+> +	.caps[12] = {HFI_CAPABILITY_B_FRAME_QP, 0, 51, 1},
+> +	.caps[13] = {HFI_CAPABILITY_SLICE_BYTE, 1, 10, 1},
+> +	.caps[14] = {HFI_CAPABILITY_SLICE_MB, 1, 10, 1},
+> +	.num_caps = 15,
+> +	.pl[0] = {HFI_HEVC_PROFILE_MAIN, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0},
+> +	.pl[1] = {HFI_HEVC_PROFILE_MAIN10, HFI_HEVC_LEVEL_5 | HFI_HEVC_TIER_HIGH0},
+> +	.num_pl = 2,
+> +	.fmts[0] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12},
+> +	.fmts[1] = {HFI_BUFFER_INPUT, HFI_COLOR_FORMAT_NV12_UBWC},
+> +	.num_fmts = 2,
+> +} };
+> +
+>  static const struct hfi_plat_caps *get_capabilities(struct venus_core *core,
+>  						    unsigned int *entries)
+>  {
+> -	if (is_lite(core))
+> -		return NULL;
+> +	*entries = is_lite(core) ? ARRAY_SIZE(caps_lite) : ARRAY_SIZE(caps);
+>  
+> -	*entries = ARRAY_SIZE(caps);
+> -	return caps;
+> +	return is_lite(core) ? caps_lite : caps;
 >  }
 >  
-> +static int perf_mmap_aux(struct vm_area_struct *vma, struct perf_event *event,
-> +			 unsigned long nr_pages)
-> +{
-> +	long user_extra = nr_pages, extra = 0;
-> +	struct perf_buffer *rb = event->rb;
-> +	u64 aux_offset, aux_size;
-> +	int ret, rb_flags = 0;
+>  static void get_codecs(struct venus_core *core,
+>  		       u32 *enc_codecs, u32 *dec_codecs, u32 *count)
+>  {
+> -	if (is_lite(core))
+> -		return;
+> +	const struct hfi_plat_caps *caps;
+> +	unsigned int num;
+> +	size_t i;
 > +
-> +	/*
-> +	 * AUX area mapping: if rb->aux_nr_pages != 0, it's already
-> +	 * mapped, all subsequent mappings should have the same size
-> +	 * and offset. Must be above the normal perf buffer.
-> +	 */
-> +	aux_offset = READ_ONCE(rb->user_page->aux_offset);
-> +	aux_size = READ_ONCE(rb->user_page->aux_size);
+> +	*enc_codecs = 0;
+> +	*dec_codecs = 0;
 > +
-> +	if (aux_offset < perf_data_size(rb) + PAGE_SIZE)
-> +		return -EINVAL;
-> +
-> +	if (aux_offset != vma->vm_pgoff << PAGE_SHIFT)
-> +		return -EINVAL;
-> +
-> +	/* Already mapped with a different offset */
-> +	if (rb_has_aux(rb) && rb->aux_pgoff != vma->vm_pgoff)
-> +		return -EINVAL;
-> +
-> +	if (aux_size != nr_pages * PAGE_SIZE)
-> +		return -EINVAL;
-> +
-> +	/* Already mapped with a different size */
-> +	if (rb_has_aux(rb) && rb->aux_nr_pages != nr_pages)
-> +		return -EINVAL;
-> +
-> +	if (!is_power_of_2(nr_pages))
-> +		return -EINVAL;
-> +
-> +	/* If this succeeds, subsequent failures have to undo it */
-> +	if (!atomic_inc_not_zero(&rb->mmap_count))
-> +		return -EINVAL;
-> +
-> +	/* If mapped, attach to it */
-> +	if (rb_has_aux(rb)) {
-> +		atomic_inc(&rb->aux_mmap_count);
-> +		return 0;
-
-so this was: ret = 0; goto unlock;, which then would've also taken the
-!ret branch and done perf_mmap_account(), no?
-
+> +	caps = get_capabilities(core, &num);
+>  
+> -	*enc_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
+> -		      HFI_VIDEO_CODEC_VP8;
+> -	*dec_codecs = HFI_VIDEO_CODEC_H264 | HFI_VIDEO_CODEC_HEVC |
+> -		      HFI_VIDEO_CODEC_VP8 | HFI_VIDEO_CODEC_VP9 |
+> -		      HFI_VIDEO_CODEC_MPEG2;
+> -	*count = 8;
+> +	for (i = 0; i < num; caps++, i++) {
+> +		if (caps->domain == VIDC_SESSION_TYPE_ENC)
+> +			*enc_codecs |= caps->codec;
+> +		else
+> +			*dec_codecs |= caps->codec;
 > +	}
 > +
-> +	if (!perf_mmap_calc_limits(vma, &user_extra, &extra)) {
-> +		atomic_dec(&rb->mmap_count);
-> +		return -EPERM;
+> +	*count = num;
+>  }
+>  
+>  static const struct hfi_platform_codec_freq_data codec_freq_data[] =  {
+> @@ -281,15 +403,28 @@ static const struct hfi_platform_codec_freq_data codec_freq_data[] =  {
+>  	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200, 10, 200 },
+>  };
+>  
+> +static const struct hfi_platform_codec_freq_data codec_freq_data_lite[] = {
+> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+> +	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 440, 0, 440 },
+> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 0, 675 },
+> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 0, 675 },
+> +};
+> +
+>  static const struct hfi_platform_codec_freq_data *
+>  get_codec_freq_data(struct venus_core *core, u32 session_type, u32 pixfmt)
+>  {
+> -	const struct hfi_platform_codec_freq_data *data = codec_freq_data;
+> -	unsigned int i, data_size = ARRAY_SIZE(codec_freq_data);
+> +	const struct hfi_platform_codec_freq_data *data;
+> +	unsigned int i, data_size;
+>  	const struct hfi_platform_codec_freq_data *found = NULL;
+>  
+> -	if (is_lite(core))
+> -		return NULL;
+> +	if (is_lite(core)) {
+> +		data = codec_freq_data_lite;
+> +		data_size = ARRAY_SIZE(codec_freq_data_lite);
+> +	} else {
+> +		data = codec_freq_data;
+> +		data_size = ARRAY_SIZE(codec_freq_data);
 > +	}
-> +
-> +	if (vma->vm_flags & VM_WRITE)
-> +		rb_flags |= RING_BUFFER_WRITABLE;
-> +
-> +	ret = rb_alloc_aux(rb, event, vma->vm_pgoff, nr_pages,
-> +			   event->attr.aux_watermark, rb_flags);
-> +	if (ret) {
-> +		atomic_dec(&rb->mmap_count);
-> +		return ret;
-> +	}
-> +
-> +	atomic_set(&rb->aux_mmap_count, 1);
-> +	rb->aux_mmap_locked = extra;
-> +	perf_mmap_account(vma, user_extra, extra);
-> +	atomic_inc(&event->mmap_count);
-> +	return 0;
-> +}
+>  
+>  	for (i = 0; i < data_size; i++) {
+>  		if (data[i].pixfmt == pixfmt && data[i].session_type == session_type) {
 
-These two aux and rb split out patches seem like they're trying to take
-too big a step. Let me try and do the same with smaller steps.
-
-If only to try and find bugs.
+Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 
