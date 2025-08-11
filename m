@@ -1,60 +1,102 @@
-Return-Path: <linux-kernel+bounces-762214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D897EB20395
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:30:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD25B2036C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 084B217D422
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:30:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 493E97B0408
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3442E0419;
-	Mon, 11 Aug 2025 09:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA172DE715;
+	Mon, 11 Aug 2025 09:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hwKHGRpT"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QTYs4AVA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591942DFF28
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5572DCF6B;
+	Mon, 11 Aug 2025 09:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754904508; cv=none; b=AATzkWKY8HflkuGXnUQasNWkbdkYbUjI+Mj0DKRWSClrqmG92dCuAk7mFFPVVGekJSrw8zAkIS4HFDTU1zWGmkFzmhbN8J7w7uyGt4i8HZroY8F8nJUD3mLffjIzC1BkFqthm3qMaIU/vkum2oGTRiju1M2r7d5YD+5pyP/FUYQ=
+	t=1754904460; cv=none; b=KkDgJ11OeGjnQfviKUfDBPkghDKD4EWydOyBl00AtMpWgE6KM57Xh2nckadxNoxex64ovffy3vf5rR8D2o2C4Ptk0/nArXIlEnmKo4lopNLuznVwWH1imKeLvLLG0rZh4wGx73MHpkZTfJ3KhwnjhtizsKIHgi+c1OMTKlX7aos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754904508; c=relaxed/simple;
-	bh=/vC9osK8wfB1+R2JlW34aWLlJGmHsgTTDK1oQaPrH9E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iWOSW2Eqhn9Z8zIo0nXFo5Vk8n78WrkGT51BNiTQbmxY1m066zaE9LmnqTqNVfSMake9mZvH93bjHwkO6mEy3Zvg/koSaWvP43L3LgIAbdviuFjHHkF8zujrPfvYj/LhD9e23sIvff2fi573rsgg9isROBeeaawpmIrGyd+a7g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hwKHGRpT; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754904504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wABBNQ3mHZ/Q4oyr/JGJiJ2cVXrJHeWuyGrS/7dyF1s=;
-	b=hwKHGRpTwcj5BnYND7AUt6PvBNz24D5wu7pvV+pT3oIVgQM16TUOiEfmR5zIrUo/zIa/ZN
-	33xkg7+hz0dUpiH9gD2Clb6XR36ZEEca1c5Vw1UvnN4KbQa27VE5RBcauGlM9bU7Rf3q3z
-	fqGpZNysr9Fdqxk9cgpla5SLDtPx6bY=
-From: Youling Tang <youling.tang@linux.dev>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	Baoquan He <bhe@redhat.com>,
-	kexec@lists.infradead.org,
-	loongarch@lists.linux.dev,
+	s=arc-20240116; t=1754904460; c=relaxed/simple;
+	bh=Z1SyJgR0AtiZ9X/pQ4mumLbUzdXK/ttulk6jcc2Jf54=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J9wdy+J4fbIeViBHZ76hn6S8CSXuDzh18WuVS83nbsx4Vi+bazLMPfcVXKxeFUlAxLyEyWbAhk8wVEl98c2K+Af7rAB9yR9PqLLJsBlp0TInD7oCXpDBuRdTX7yM58U9jVgruRO72s43Xuersped1G31zQ53CtEl46skupA0Fdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QTYs4AVA; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754904459; x=1786440459;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Z1SyJgR0AtiZ9X/pQ4mumLbUzdXK/ttulk6jcc2Jf54=;
+  b=QTYs4AVADOtn/MIm3dsnDhq7DOTTmmqdriFuY2C2/bLQEes7lXHJVw8c
+   fe1AvXHaLRYRkFKmj5lKD29Pmv4X3SpRC/Pk6B5QwNx6M+qXkMtB08miU
+   w8tdEvBXVPyycLUUkj0W3IiOEbqCDw8ma91w8os7nnsUR8EAzS7hRKE6i
+   5f/5zSK0gh7KoyZcVhn9wm8jB9l8w9E3F94zbayAfgZmqb5rxj80szUVx
+   i//1Cl8djkX1UvAPk+X/KGkkYwekCsLR/cJ8HXZuEPZEmG8fHXlRI44S7
+   Mf6mL1OvIKj7g6bD4ZOqUrI0wvmDMHP3YAaMFmwzGLTOiLm29O/zXQmRT
+   Q==;
+X-CSE-ConnectionGUID: aSTu1ZFIRzGCMwif8zi26Q==
+X-CSE-MsgGUID: r3pjT1lPTK27YS0KvK5CUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57217883"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="57217883"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 02:27:37 -0700
+X-CSE-ConnectionGUID: TAeCBx1TT56ATbcgaIbc3w==
+X-CSE-MsgGUID: zYc+WjGwQ3yJQu9skQVhTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165860258"
+Received: from kandpal-x299-ud4-pro.iind.intel.com ([10.190.239.10])
+  by orviesa007.jf.intel.com with ESMTP; 11 Aug 2025 02:27:28 -0700
+From: Suraj Kandpal <suraj.kandpal@intel.com>
+To: kernel-list@raspberrypi.com,
+	amd-gfx@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	youling.tang@linux.dev,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: [PATCH 5/6] LoongArch/kexec_file: Add "mem" parameter to limit memory usage of kdump kernel
-Date: Mon, 11 Aug 2025 17:26:58 +0800
-Message-Id: <20250811092659.14903-6-youling.tang@linux.dev>
-In-Reply-To: <20250811092659.14903-1-youling.tang@linux.dev>
-References: <20250811092659.14903-1-youling.tang@linux.dev>
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org
+Cc: ankit.k.nautiyal@intel.com,
+	arun.r.murthy@intel.com,
+	uma.shankar@intel.com,
+	jani.nikula@intel.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	harry.wentland@amd.com,
+	siqueira@igalia.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	liviu.dudau@arm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	robin.clark@oss.qualcomm.com,
+	abhinav.kumar@linux.dev,
+	tzimmermann@suse.de,
+	jessica.zhang@oss.qualcomm.com,
+	sean@poorly.run,
+	marijn.suijten@somainline.org,
+	laurent.pinchart+renesas@ideasonboard.com,
+	mcanal@igalia.com,
+	dave.stevenson@raspberrypi.com,
+	tomi.valkeinen+renesas@ideasonboard.com,
+	kieran.bingham+renesas@ideasonboard.com,
+	louis.chauvet@bootlin.com,
+	Suraj Kandpal <suraj.kandpal@intel.com>
+Subject: [RFC PATCH 0/8] Refactor drm_writeback_connector structure
+Date: Mon, 11 Aug 2025 14:56:59 +0530
+Message-Id: <20250811092707.3986802-1-suraj.kandpal@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,68 +104,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Youling Tang <tangyouling@kylinos.cn>
+Some drivers cannot work with the current design where the connector
+is embedded within the drm_writeback_connector such as intel and
+some drivers that can get it working end up adding a lot of checks
+all around the code to check if it's a writeback conenctor or not.
+This series intends to solve it by moving the drm_writeback_connector
+within the drm_connector and remove the drm_connector base which was in
+drm_writeback_connector. A Proposal suggested by Dmitry.
+We want to get an Ack from all drivers whom are affected by these
+changes.
+ We do all other required modifications that come with these changes
+along with addition of new function which returns the drm_connector when
+drm_writeback_connector is present.
+All drivers will be expected to allocate the drm_connector.
+This discussion was tiggered from [1] and sits on top of Dmitry's series
+see [2].
 
-Add the "mem=size@start" parameter to the cmdline and pass it to the
-capture kernel. Limit the runtime memory area for capturing the kernel
-to avoid disrupting the production kernel site.
+[1] https://patchwork.freedesktop.org/series/152106/
+[2] https://patchwork.freedesktop.org/series/152420/
 
-Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
----
- arch/loongarch/kernel/machine_kexec_file.c | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
 
-diff --git a/arch/loongarch/kernel/machine_kexec_file.c b/arch/loongarch/kernel/machine_kexec_file.c
-index 06def654cc09..7da88c80cace 100644
---- a/arch/loongarch/kernel/machine_kexec_file.c
-+++ b/arch/loongarch/kernel/machine_kexec_file.c
-@@ -89,6 +89,26 @@ static void cmdline_add_elfcorehdr(struct kimage *image, unsigned long *cmdline_
- 	*cmdline_tmplen += elfcorehdr_strlen;
- }
- 
-+/*
-+ * Adds the "mem=size@start" command line parameter to command line, indicating the
-+ * memory region the new kernel can use to boot into.
-+ */
-+static void cmdline_add_mem(struct kimage *image, unsigned long *cmdline_tmplen,
-+				char *modified_cmdline)
-+{
-+	int mem_strlen = 0;
-+
-+	mem_strlen = sprintf(modified_cmdline + (*cmdline_tmplen), "mem=0x%llx@0x%llx ",
-+		crashk_res.end - crashk_res.start + 1, crashk_res.start);
-+	*cmdline_tmplen += mem_strlen;
-+
-+	if (crashk_low_res.end) {
-+		mem_strlen = sprintf(modified_cmdline + (*cmdline_tmplen), "mem=0x%llx@0x%llx ",
-+			crashk_low_res.end - crashk_low_res.start + 1, crashk_low_res.start);
-+		*cmdline_tmplen += mem_strlen;
-+	}
-+}
-+
- #endif
- 
- /* Adds the "initrd=start,size" command line parameter to command line. */
-@@ -136,6 +156,7 @@ int load_other_segments(struct kimage *image,
- 	/* load elf core header */
- 	void *headers;
- 	unsigned long headers_sz;
-+
- 	if (image->type == KEXEC_TYPE_CRASH) {
- 		ret = prepare_elf_headers(&headers, &headers_sz);
- 		if (ret) {
-@@ -165,6 +186,9 @@ int load_other_segments(struct kimage *image,
- 
- 		/* Add the elfcorehdr=size@start parameter to the command line */
- 		cmdline_add_elfcorehdr(image, &cmdline_tmplen, modified_cmdline, headers_sz);
-+
-+		/* Add the mem=size@start parameter to the command line */
-+		cmdline_add_mem(image, &cmdline_tmplen, modified_cmdline);
- 	}
- #endif
- 
+Suraj Kandpal (8):
+  drm: writeback: Refactor drm_writeback_connector structure
+  drm/amd/display: Adapt amd writeback to new drm_writeback_connector
+  drm/arm/komeda: Adapt komeda writeback to new drm_writeback_connector
+  drm/arm/mali: Adapt mali writeback to new drm_writeback_connector
+  drm/vc4: Adapt vc4 writeback to new drm_writeback_connector
+  drm/vkms: Adapt vkms writeback to new drm_writeback_connector
+  drm/rcar_du: Adapt vkms writeback to new drm_writeback_connector
+  drm/msm/dpu: Adapt dpu writeback to new drm_writeback_connector
+
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  4 +-
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  2 +-
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c  |  8 +--
+ .../gpu/drm/arm/display/komeda/komeda_crtc.c  |  6 +-
+ .../gpu/drm/arm/display/komeda/komeda_kms.h   |  6 +-
+ .../arm/display/komeda/komeda_wb_connector.c  |  8 +--
+ drivers/gpu/drm/arm/malidp_drv.h              |  2 +-
+ drivers/gpu/drm/arm/malidp_mw.c               |  6 +-
+ drivers/gpu/drm/drm_writeback.c               | 33 ++++++---
+ .../drm/msm/disp/dpu1/dpu_encoder_phys_wb.c   |  3 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c | 16 +++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.h |  4 +-
+ .../gpu/drm/renesas/rcar-du/rcar_du_crtc.h    |  4 +-
+ .../drm/renesas/rcar-du/rcar_du_writeback.c   | 22 +++---
+ drivers/gpu/drm/vc4/vc4_txp.c                 | 14 ++--
+ drivers/gpu/drm/vkms/vkms_composer.c          |  2 +-
+ drivers/gpu/drm/vkms/vkms_drv.h               |  2 +-
+ drivers/gpu/drm/vkms/vkms_writeback.c         | 15 ++--
+ include/drm/drm_connector.h                   | 60 ++++++++++++++++
+ include/drm/drm_writeback.h                   | 68 ++-----------------
+ 20 files changed, 155 insertions(+), 130 deletions(-)
+
 -- 
 2.34.1
 
