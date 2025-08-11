@@ -1,193 +1,213 @@
-Return-Path: <linux-kernel+bounces-762185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DD3B20316
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:19:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0973B2031E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02063A91DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:19:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48E7B7AA46E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5812B2DD5E0;
-	Mon, 11 Aug 2025 09:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809A82DA774;
+	Mon, 11 Aug 2025 09:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IC1/WLPH"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lG/fmn9y"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E592DA774
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089A91FC109;
+	Mon, 11 Aug 2025 09:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754903968; cv=none; b=doL+Sz3sK0aTvvgRfY1gmh0ngEnBlKbeSuMO21MIowZ5Gsg9m5JGEm8mBlgEfCuNaepwkGmIGwa97miKuTY1TXHPtpU05q+5t8/H11RsS9dgqUlLCnqBO8Ne0qsjfZo6Ozxw+zjj1DdSGOf7oS/PpKwoFXMIYOu0gYWV/4Zgpxg=
+	t=1754904005; cv=none; b=iYFW+eluHQWn55OuHk6IdahtJiWGFGZnY3LLI7rQWSBnNuRpqMhnFQKlzOH+MW0OhYbGLZR4FfXM6FCSrnQzw1jf6Rffvwln75w+Bg08E7JMgsGm8QyOH8QTfXNxPyybFIlJSRR1OeGHWg8Dnm8J5qbY+whqyOstDx2jv7GHGJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754903968; c=relaxed/simple;
-	bh=eOcXVHRq7KcT5QV7lddFhfB5s66umFv3YrBqQ/TX/uc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DpW5FiRjMw4+yvLU6hfdhk1ivORPnjDCxShEfxuVpERQm8EGa/1KpzIqZNrdeWmH4c4NVduBI14bdlIIuk/dRYu2FN9E3hsM85JyphXJGc8hTN6dUUIcsMzXuM7Ay4dCuu87Pn0xKV9sOrCcMFJyy3eBVUMmQ8wO4/05MU1t4MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IC1/WLPH; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4af12ba96daso46837571cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 02:19:26 -0700 (PDT)
+	s=arc-20240116; t=1754904005; c=relaxed/simple;
+	bh=kDTUSgEstOg8AcvyHgZdbab++wrodPpsdtlCtIN9Kfs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bTzq9xkSGZ1ttYycIvzZJIfSWRoCTOk/1SAhpsNCRxNFPdpl97B0nC3IKhTSULUIJj3p8Udp2fNBL/eaiud2+uvTsXSXQTb6+nBitaWsFgmLXbl3MZBC8rbAI9TDVxRie9RtKxChXiELqzMiP8OZ8BYMzAn2PL4o/ximkiV2wKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lG/fmn9y; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-556fd896c99so3555420e87.3;
+        Mon, 11 Aug 2025 02:20:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754903966; x=1755508766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9X3+VyeiU1OgsV7atWhvLrxkvJsIXxj9Qgw0FX6QMEE=;
-        b=IC1/WLPHof7gy7NDluHwPQCGGRp2bnxoJO4nLyeMuVaA16aD3gkdia/0IJYpGsPeOA
-         fDEUWTLRFEY4x/jukbffuRlMkGPhe8jUSuvZ1yPPjOW/OD4TF5PTjoohB8ffB9FP6O3D
-         /CJUO7Uqpl2ON+hNvU+owkyFKmK3aoCnsikY4BjlivzSsdtfdFu0w9uROLcP0c3SYJc2
-         YJRBkBMz0vykid9wn4+q8Aolv31wwmF694SG9VkAzsE+kqHtqPApSPD5fh2XufQv0oah
-         yuXzHBZNPPoD/rayCyX35a5NhVRLO5IKBfSWfiuprwJQLon+moeaW7p496duSTFbMbN6
-         qQvw==
+        d=gmail.com; s=20230601; t=1754904002; x=1755508802; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fLY040Of3yhdDWokuw+L+nE0pmeX/ImH14JZx346nu0=;
+        b=lG/fmn9yAWNI+cS35fgI95okvtxKptbW6z2u2PueGTs9vUS/8T1xnz0KNz/I+A631b
+         gGIIVhfIodac7ySAXgnogMlqriVvprlpjyIkXvIJTcG8/Y8KQJUF7L0w0vMsdNh/Om86
+         5VrdyTwBbFMdP64+T1TeZcrpkDSYvLUEL/or/GtzvfO56yq+I7w9ycgUchVLwB9ZWbg3
+         dhwh5XNHFh54FADf2PrQ0ur9yoJt//AKj/3nMtyT6kHLxN5V+FioTPJZSskjEf66W5iQ
+         efF292TZRdPTLkaiGH952s46f36zzcy6IGq2F/TGGv1gJ4TUYv9U03SfnwuwDxjtbFep
+         Q/PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754903966; x=1755508766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9X3+VyeiU1OgsV7atWhvLrxkvJsIXxj9Qgw0FX6QMEE=;
-        b=hRUjgxxUUR+CE8uQc24SCzzGLZykFwNMTxLKZwcRVV6bq2BZm7Jkv2GZRaywhSEKHe
-         RbM2d5gMQB7HOLalj+upWUnN4B0HTUOdMf9eiXxX8I5XA/BnpYpK4I1gpIskFLS5l/E/
-         FQHvH5bihQ+f2dPKAdNMzyvnDviLr21av6DEesmuB7VfkfFGankBSU9gwDYTOsqRM7n0
-         zozM9TuWnlrdnRyg8gP1K7WI6I7PfILikp1b8YoBRimvEmu3JAaVduJvwPAUEt6YRrqy
-         U8KTcoLTATcSUKD9xjLh+DF8f9oSsIFPZH3B7qrC9Brl5guVfBc6LdJQoAjTcX8IfshQ
-         +niA==
-X-Forwarded-Encrypted: i=1; AJvYcCW73k7x3wlQuaJ6Le+dZlvgmVwPSDNA56wfUV/YMs4O0YRr+GyDqWSO1W2Khh0xqXcmylfRzfne5nG3cjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzOxnW0efpaPhcaa/90EWKZbAtTd2QNMEiSJMk/WQ8zS/WOIJ6
-	l9Vajxw5n1HPyWFlxrUzl4bSl9G8FEp7vTwcFMv02kEtb0G+cYqW370xD8lCvtJaHb8weCcngAD
-	RqwSCNRXQpqn2whXMdcs1HNO9nUGcbnfFtPMCR5UF
-X-Gm-Gg: ASbGnctIqXX77uwvQ37SYcW5KFcUazT9RftfEEL07agM+wAF/pUvtcej6y61xVrGUsE
-	f/mlbpo8gABPFzmCxDPFvawTYzhbWNatRVu2umBsyK/Scr4dpnuqHSF4msYsDU3/1UNfhJdyRhE
-	ck4BM7SQkEsWBN/OqHMxXSV3UWdMllCXwHbcQQgFGMm0iJAOY26SUZv30zcR+KqTwtukrEseyyV
-	m1z8Ag=
-X-Google-Smtp-Source: AGHT+IGsGqL0Tet528TAr+FeI8cqB44Iw1Yw7vkXFDKW2y66uKrMwpszv3VtSYrNMrGppCnsouzQ6A2JECoC7Hzay+s=
-X-Received: by 2002:a05:622a:548:b0:4af:203f:73e9 with SMTP id
- d75a77b69052e-4b0aecff0afmr124996791cf.3.1754903965426; Mon, 11 Aug 2025
- 02:19:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754904002; x=1755508802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fLY040Of3yhdDWokuw+L+nE0pmeX/ImH14JZx346nu0=;
+        b=gGn1UfaBQ1nYCUEbgqXZqNI/9w5o7wH9Ds2fZkUNXAeWGh/l6R+AyGBTNtPNz3aK3v
+         /PH+jxDLfufu3PctHXusafsU5K/2HD0R2/VPjdm13LrUM4hYr0xWGkBaePewJ2StzKAU
+         bVUKkSnfWnAjtoQSYkPnLi6XFl00BWCjRpDkmbs248ZThGY46BrWHtsChU31Wj3pEKXo
+         bU6bxRo9s/TO1hsQpi5wcV8uP0wR1/k2peG7dYStOZzdpAACyBZdaY5tBK6+lq5H03fI
+         ic8YGREr1XVkgyMfBVHrEvuEUE5kQHpt4E+z7uGu5BWcI1jLuwoLCOgSjSCECnerw11y
+         6fHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlWDN1c0hokHimpzgOybCWojI7Fnr1LAmmTCWvelL3eYbyV5T9rTx6NH/nHuRkPoxC+s1pgQ4J@vger.kernel.org, AJvYcCW8JQDnxRHeCz5yPzJ9DRK+4nIMslQKfVT1NawUB1JIbe8tFXHjc8i+eb9bc+P2GjbV6BRA41C3Tz+QnG9O@vger.kernel.org, AJvYcCXF2U18rM2c6IJ1a4pEeMrts5pjd03oSdZYcAUAPtNR/YrjRxbVsGgiClJ5ZuvdKDU4Q5ArAu/+Ts+g@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjcpFQyeFQt8PStLOqKt8FAqkRXFiH15kFGIqeBauurx7mj9u9
+	lKKg2tr7avGI2gfmNu2HgpVpFRS112YiZimTOT1ZTS3fkbLXbMlrbKWE
+X-Gm-Gg: ASbGnct7eBpm3j7q5qD/T0q73jwJ08fJvTR7+9f0pj4yQhv9x1vD2VwHmPcKNvsVlfh
+	b9Z6UwdximAAQlzzwdEEOJVnbtm9C4r0STobF9l7m5fVHT5/P4Eat8SFyWQvIJjSxGNajMzCSs3
+	pzjKgsRmPMwjlBVOx+y4cx7FQbcdZywoOpFn866+MPIQcWqtxh52ZZB4yMtEVimHbSNio3XS/zf
+	LbyXpk29hQTnJBGe8Usxb7bH1KIXjpdruqh2NI67LWNZ7Czieg+sbfDsF/eF5+MeXqW7S07Mf6N
+	dIR+UzfcSPyhJsbJCXN6iDH2Aosh13lg0raJpRj9MWtRgTPBLStbLedTdrDslVgaSsXUQ4ZY77K
+	VnYF0cUbH1RZHJx4tCQPZPProMIpeaTx7V+PgG2twss1aspTYhg==
+X-Google-Smtp-Source: AGHT+IGpCY6KOvg3QSYUnRILfbfaaXOePg+07gXfRkMy51cNJOdQvFG2SnzuWEcAl0oD7au0pSO4/A==
+X-Received: by 2002:a05:6512:10d6:b0:55c:ad2a:aa7c with SMTP id 2adb3069b0e04-55cc0094c9cmr3053586e87.22.1754904001692;
+        Mon, 11 Aug 2025 02:20:01 -0700 (PDT)
+Received: from pc636 (host-95-203-26-173.mobileonline.telia.com. [95.203.26.173])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cce15c650sm806954e87.103.2025.08.11.02.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 02:20:01 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 11 Aug 2025 11:19:57 +0200
+To: Mike Rapoport <rppt@kernel.org>, Harry Yoo <harry.yoo@oracle.com>
+Cc: Harry Yoo <harry.yoo@oracle.com>, Dennis Zhou <dennis@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Hildenbrand <david@redhat.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, kasan-dev@googlegroups.com,
+	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Huth <thuth@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	Oscar Salvador <osalvador@suse.de>, Jane Chu <jane.chu@oracle.com>,
+	Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Alistair Popple <apopple@nvidia.com>,
+	Joao Martins <joao.m.martins@oracle.com>,
+	linux-arch@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH V4 mm-hotfixes 1/3] mm: move page table sync declarations
+ to linux/pgtable.h
+Message-ID: <aJm1vQ2D1YOhipos@pc636>
+References: <20250811053420.10721-1-harry.yoo@oracle.com>
+ <20250811053420.10721-2-harry.yoo@oracle.com>
+ <aJmkX3JBhH3F0PEC@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811084427.178739-1-dqfext@gmail.com>
-In-Reply-To: <20250811084427.178739-1-dqfext@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 11 Aug 2025 02:19:14 -0700
-X-Gm-Features: Ac12FXyDAHXwINvs0_c2V2RB4ZbG2aFo4c_KD22t99jVdd62EqxWa-M4aOJp_VE
-Message-ID: <CANn89iLEMss3VGiJCo=XGVFBSA12bz0y01vVdmBN7WysBLtoUA@mail.gmail.com>
-Subject: Re: [PATCH net] ppp: fix race conditions in ppp_fill_forward_path
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Pablo Neira Ayuso <pablo@netfilter.org>, Felix Fietkau <nbd@nbd.name>, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJmkX3JBhH3F0PEC@kernel.org>
 
-On Mon, Aug 11, 2025 at 1:44=E2=80=AFAM Qingfang Deng <dqfext@gmail.com> wr=
-ote:
->
-> ppp_fill_forward_path() has two race conditions:
->
-> 1. The ppp->channels list can change between list_empty() and
->    list_first_entry(), as ppp_lock() is not held. If the only channel
->    is deleted in ppp_disconnect_channel(), list_first_entry() may
->    access an empty head or a freed entry, and trigger a panic.
->
-> 2. pch->chan can be NULL. When ppp_unregister_channel() is called,
->    pch->chan is set to NULL before pch is removed from ppp->channels.
->
-> Fix these by using a lockless RCU approach:
-> - Use list_first_or_null_rcu() to safely test and access the first list
->   entry.
-> - Convert list modifications on ppp->channels to their RCU variants and
->   add synchronize_rcu() after removal.
-> - Check for a NULL pch->chan before dereferencing it.
->
-> Fixes: f6efc675c9dd ("net: ppp: resolve forwarding path for bridge pppoe =
-devices")
-> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
-> ---
->  drivers/net/ppp/ppp_generic.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.=
-c
-> index 8c98cbd4b06d..fd3ac75a56e3 100644
-> --- a/drivers/net/ppp/ppp_generic.c
-> +++ b/drivers/net/ppp/ppp_generic.c
-> @@ -33,6 +33,7 @@
->  #include <linux/ppp_channel.h>
->  #include <linux/ppp-comp.h>
->  #include <linux/skbuff.h>
-> +#include <linux/rculist.h>
->  #include <linux/rtnetlink.h>
->  #include <linux/if_arp.h>
->  #include <linux/ip.h>
-> @@ -1598,11 +1599,14 @@ static int ppp_fill_forward_path(struct net_devic=
-e_path_ctx *ctx,
->         if (ppp->flags & SC_MULTILINK)
->                 return -EOPNOTSUPP;
->
-> -       if (list_empty(&ppp->channels))
-> +       pch =3D list_first_or_null_rcu(&ppp->channels, struct channel, cl=
-ist);
+On Mon, Aug 11, 2025 at 11:05:51AM +0300, Mike Rapoport wrote:
+> On Mon, Aug 11, 2025 at 02:34:18PM +0900, Harry Yoo wrote:
+> > Move ARCH_PAGE_TABLE_SYNC_MASK and arch_sync_kernel_mappings() to
+> > linux/pgtable.h so that they can be used outside of vmalloc and ioremap.
+> > 
+> > Cc: <stable@vger.kernel.org>
+> > Fixes: 8d400913c231 ("x86/vmemmap: handle unpopulated sub-pmd ranges")
+> > Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
+> > ---
+> >  include/linux/pgtable.h | 16 ++++++++++++++++
+> >  include/linux/vmalloc.h | 16 ----------------
+> >  2 files changed, 16 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> > index 4c035637eeb7..ba699df6ef69 100644
+> > --- a/include/linux/pgtable.h
+> > +++ b/include/linux/pgtable.h
+> > @@ -1467,6 +1467,22 @@ static inline void modify_prot_commit_ptes(struct vm_area_struct *vma, unsigned
+> >  }
+> >  #endif
+> >  
+> > +/*
+> > + * Architectures can set this mask to a combination of PGTBL_P?D_MODIFIED values
+> > + * and let generic vmalloc and ioremap code know when arch_sync_kernel_mappings()
+> 
+> If ARCH_PAGE_TABLE_SYNC_MASK can be used outside vmalloc(), the comment
+> needs an update, maybe
+> 
+> ... and let the generic code that modifies kernel page tables
+> 
+> Other than that
+> 
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> 
+> > + * needs to be called.
+> > + */
+> > +#ifndef ARCH_PAGE_TABLE_SYNC_MASK
+> > +#define ARCH_PAGE_TABLE_SYNC_MASK 0
+> > +#endif
+> > +
+> > +/*
+> > + * There is no default implementation for arch_sync_kernel_mappings(). It is
+> > + * relied upon the compiler to optimize calls out if ARCH_PAGE_TABLE_SYNC_MASK
+> > + * is 0.
+> > + */
+> > +void arch_sync_kernel_mappings(unsigned long start, unsigned long end);
+> > +
+> >  #endif /* CONFIG_MMU */
+> >  
+> >  /*
+> > diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> > index fdc9aeb74a44..2759dac6be44 100644
+> > --- a/include/linux/vmalloc.h
+> > +++ b/include/linux/vmalloc.h
+> > @@ -219,22 +219,6 @@ extern int remap_vmalloc_range(struct vm_area_struct *vma, void *addr,
+> >  int vmap_pages_range(unsigned long addr, unsigned long end, pgprot_t prot,
+> >  		     struct page **pages, unsigned int page_shift);
+> >  
+> > -/*
+> > - * Architectures can set this mask to a combination of PGTBL_P?D_MODIFIED values
+> > - * and let generic vmalloc and ioremap code know when arch_sync_kernel_mappings()
+> > - * needs to be called.
+> > - */
+> > -#ifndef ARCH_PAGE_TABLE_SYNC_MASK
+> > -#define ARCH_PAGE_TABLE_SYNC_MASK 0
+> > -#endif
+> > -
+> > -/*
+> > - * There is no default implementation for arch_sync_kernel_mappings(). It is
+> > - * relied upon the compiler to optimize calls out if ARCH_PAGE_TABLE_SYNC_MASK
+> > - * is 0.
+> > - */
+> > -void arch_sync_kernel_mappings(unsigned long start, unsigned long end);
+> > -
+> >  /*
+> >   *	Lowlevel-APIs (not for driver use!)
+> >   */
+> > -- 
+> > 2.43.0
+> > 
+> 
+LGTM,
 
-It is unclear if rcu_read_lock() is held at this point.
+Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 
-list_first_or_null_rcu() does not have a builtin __list_check_rcu()
-
-
-
-> +       if (!pch)
->                 return -ENODEV;
->
-> -       pch =3D list_first_entry(&ppp->channels, struct channel, clist);
->         chan =3D pch->chan;
-
-chan =3D READ_ONCE(pch->chan);
-
-And add a WRITE_ONCE(pch->chan, NULL) in ppp_unregister_channel()
-
-And/or add __rcu to pch->chan
-
-> +       if (!chan)
-> +               return -ENODEV;
-> +
->         if (!chan->ops->fill_forward_path)
->                 return -EOPNOTSUPP;
->
-> @@ -3515,7 +3519,7 @@ ppp_connect_channel(struct channel *pch, int unit)
->         hdrlen =3D pch->file.hdrlen + 2;  /* for protocol bytes */
->         if (hdrlen > ppp->dev->hard_header_len)
->                 ppp->dev->hard_header_len =3D hdrlen;
-> -       list_add_tail(&pch->clist, &ppp->channels);
-> +       list_add_tail_rcu(&pch->clist, &ppp->channels);
->         ++ppp->n_channels;
->         pch->ppp =3D ppp;
->         refcount_inc(&ppp->file.refcnt);
-> @@ -3545,10 +3549,11 @@ ppp_disconnect_channel(struct channel *pch)
->         if (ppp) {
->                 /* remove it from the ppp unit's list */
->                 ppp_lock(ppp);
-> -               list_del(&pch->clist);
-> +               list_del_rcu(&pch->clist);
->                 if (--ppp->n_channels =3D=3D 0)
->                         wake_up_interruptible(&ppp->file.rwait);
->                 ppp_unlock(ppp);
-> +               synchronize_rcu();
-
-synchronize_net() is preferred.
-
->                 if (refcount_dec_and_test(&ppp->file.refcnt))
->                         ppp_destroy_interface(ppp);
->                 err =3D 0;
-> --
-> 2.43.0
->
+--
+Uladzislau Rezki
 
