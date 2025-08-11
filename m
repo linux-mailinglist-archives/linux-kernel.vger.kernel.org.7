@@ -1,133 +1,160 @@
-Return-Path: <linux-kernel+bounces-763266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096CAB2128C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:49:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E73DB2128B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BDEE18863B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:47:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB0A3B764A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376EA29BDA9;
-	Mon, 11 Aug 2025 16:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59716296BCE;
+	Mon, 11 Aug 2025 16:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnGAjB0G"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pvUcqneq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB3C1F3FF8;
-	Mon, 11 Aug 2025 16:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475431A9F81
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754930797; cv=none; b=LZtvC2/AHFUgx9U/dMQrhuaMMtl3qfKjQUuiEPsAQ95D25AnTVE4KmrNGS15IsEjVFiwSWRAtOsNprzM2Ny1jeJ40xBgsRZsD+P/CIs4uP9BVrRJz0lcdVoQXNFaXCj4VxCf0GmeL9Ng4hN78W9Q3vA8aVfbtdFBB4Eb0EuI/S4=
+	t=1754930824; cv=none; b=pIh2mFV8pLmH+8slQeFcfh27/qcVjU2N3dQ9nKOWKkswfbNtNKhdF7dfzY30nfaLYxrUWIddT4iSS9J+ZDRyLYPmeF/BSXTHl0sWiz8PWk8nCRpjvtj2fx6t3FabUWb/91i72unMMiSO0qS4WjR1hJFrSbm2Xuot2B7ejQ4jy4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754930797; c=relaxed/simple;
-	bh=joXflQgfYApyyE87QumiSz5Yi2G1GWbmG8jAHhbaomE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gBlSzNwuRxYVJrHjlCfKZcqkKVd+gmkntw55OIsmwOt826VISAc4r1Y2p/xu/AMUwHxq/YAyHm5Z3Q0GYi/eqM4IJZd3nxzc9Rvl+sS3CUPmBfshLn2QTTBYcn9j/E4kjUZCeg0uzD7t7CXr77vM65IZqh2kdMs1/sWS07V4vcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnGAjB0G; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76bd202ef81so5911499b3a.3;
-        Mon, 11 Aug 2025 09:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754930795; x=1755535595; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k/XB2Ruz07Wi+RhCmNAtu2N4YgR6VtYgzdg2cDhpBEA=;
-        b=TnGAjB0G+AnM60AuGE3ozEVjo0dm+pii4Obbs2SlDcx8lJRVC+6JcMl3g7VQFxCZ/I
-         U39AXp6SdYWeS34Gih8J1lnJrdgYQaN9BOKVJ+yaUUroAG2g9FyhIs+A3/7hudDhBzKO
-         6FJHkDujiM62kzoWyonZ4do68sBaBBv9yXdsv8EvhBqSC9A6hOzJCV45vC1AdRFw0rBe
-         psYl7KGeWtYP9RmPkhPLeksSb8F8Ss075+Guda4hiptZuC6p2Ig0NClcWzG4oXQwQQBE
-         VJZDZpNKf3AhJ5VO5L8LKmWsCsTdDJQjQX2V4fkMGkqg6aw2zKveDFoEYLAMSnEtZnvw
-         H5XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754930795; x=1755535595;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=k/XB2Ruz07Wi+RhCmNAtu2N4YgR6VtYgzdg2cDhpBEA=;
-        b=Jer3lcJxzpHnITLaDZHdNezi+2rnHBqXWm/knExJZjr8qXIosk0KDMHZtAvxJxbJ4g
-         lmDwIHJzpyvbRsTV9QI4aHUx7NpxokBxCrldH0Kyj44hBpamuOeD9R7DGsc5jew/G73P
-         8pkRcaMU7vCIscJ+ytiQNC1nP5k1LAADDAxPa8U0X2ijyx3pBgAE51ttIxyI1KpQP1iJ
-         WOUAa+TS201pLH6ZwiwjVPyeiOZ+RvHf1A1zwNGEWmt1G6cQI6RIudslPbggHKm088sM
-         GS7y4KMfMQQ4inNhmk3sa2VgZAmnuJFENMrxWpDwsU8tuhQtlZ/zGKxMHu4ArziHncO7
-         YmAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU15NwnJftQAfxFr8de3NJArGg+xnxISdNI96ib4roRqkISYiUG3CU+0bN1I4l+YHZBL2LROzuL59pzyZif@vger.kernel.org, AJvYcCWtzo/0uqtlziAJNws56wdaNnYk7MMfpNB0x7vyKNfmfUZanFuXER6KeDow0L1BFk9n+mg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdOKmcqwo6RJELIolEF27rb+27EodEa1eJahaa6gavYT9OUQFi
-	Gzf+3gSfrPtSsf+h1MJnLsAvu5QX5P1eyDVR0ZSTeqg8qtnIpQ82Iqsz
-X-Gm-Gg: ASbGncvh12QUTitiHYb+Y8mJRWx9d4ogGqC0jpJaU0di+Iph3VvQ9GqgJnyBsmlYHxp
-	CiMP/LD9MU1QJKx0x3yq0ly27wvYYxtyMTaD+6TPgpXej17Y4gov2PK/ClPSrlDbpL1t//rAc9W
-	jN0D+aB3+akiHZv3jto8YnWByA7LFs192Nv6C/DW9H/Rdyrq1dOS0mU1oTUvfrHjRCnTebkFeRk
-	18KxISMEMKdq0lKP7b5rfMgaPuTqeVbvHsBeGqg+cCoiQ9Ll5qws+OQ+oi9Wsh9uxstXgEIHFWr
-	DZVlHpvsH1QzTHZ7dms+ylgB/mtNHH59RgCOyQSBmmCcbZMEAItczgU2BZtyrLwX2ruFt1EfswR
-	F1LwdDhLSsjEpnidFVr7+bfMdJ452qkeDltNDog==
-X-Google-Smtp-Source: AGHT+IH/jnPaWTh+Y6hkStQxD5hrTJ9hnc875d6bFBkLJwt6TGqRuJpfXV8AUud8dlmEcwkWb4ccuw==
-X-Received: by 2002:a05:6a20:9184:b0:240:489:beab with SMTP id adf61e73a8af0-2409a9714b2mr214634637.34.1754930795541;
-        Mon, 11 Aug 2025 09:46:35 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c096:14a::17? ([2620:10d:c090:600::1:56e6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c0e86f3c6sm18226200b3a.5.2025.08.11.09.46.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 09:46:35 -0700 (PDT)
-Message-ID: <6b72f32a9d1b137fb3f3ae0c439b1688fef8dd8d.camel@gmail.com>
-Subject: Re: [PATCH] bpf: replace kvfree with kfree for kzalloc memory
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>, Alexei Starovoitov
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko	 <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Song Liu	 <song@kernel.org>, Yonghong
- Song <yonghong.song@linux.dev>, KP Singh	 <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo	 <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, bpf@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Mon, 11 Aug 2025 09:46:33 -0700
-In-Reply-To: <20250811123949.552885-1-rongqianfeng@vivo.com>
-References: <20250811123949.552885-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754930824; c=relaxed/simple;
+	bh=Prp8WzqA6YNKxb8OzECBYLVfoH/qg6qLGJ5psfyRxgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YQ6eQkvVbP7QfVRewoZg3In7RpaCJlskM4jEJI+6TmlwVxJrd4sZfSRrTY0PB7BRRhVCETCgPO/L2uNn4P41siLdJzLl86m77oSeQXIEM9/munyIluc1ijb94kMF/jDWif+rZdqpIw4zmjpLhujSxWOiU2VspDBHEgs0FNT2tGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pvUcqneq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BA8WMr027956;
+	Mon, 11 Aug 2025 16:46:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=i8LsXB
+	MRBe/Icg4da9jE4AlWAsPYCbJGuzx7DJqs7+8=; b=pvUcqneqANvc7ZJ3wXGNpF
+	8d/UNG2ORVtv9z8kuz1JFSj+2Pf307wacnhWibXtJ8MvSudc2ZRNc6MALykKZysf
+	p9svoc9ee2SxmWSto1ih9W3gx9757J/a/K1EsSGhlnYJyJUn6F8bAdJLLilQAvUx
+	E/OrYd6sUwcZ/+tbMhVNqOLWFMq5narkdFfsWfMP/rv3yp79pxqR139nJz2Qy0N6
+	ZnmQkT4EYmlu63YOcnCzC9oL4KXtPqd4VIotCVAuOB1aF33VN93o7xoUYtGukMtj
+	rd51vZ9kuqEOcgF6gFkgXCKIpKu7k6dicxxpXbgix/vXQtf1ZBQ4AN8ahdTQ6eSA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx2ctdat-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 16:46:43 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57BG7uH8017617;
+	Mon, 11 Aug 2025 16:46:42 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ekc3ed6b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 16:46:42 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57BGkeJZ47448424
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 11 Aug 2025 16:46:40 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 59F5A20043;
+	Mon, 11 Aug 2025 16:46:40 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 023E020040;
+	Mon, 11 Aug 2025 16:46:39 +0000 (GMT)
+Received: from [9.39.30.243] (unknown [9.39.30.243])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 11 Aug 2025 16:46:38 +0000 (GMT)
+Message-ID: <f3ecce9f-22cf-48e2-843e-63f08a577e69@linux.ibm.com>
+Date: Mon, 11 Aug 2025 22:16:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc/fsl/qbman: Use for_each_online_cpu() instead of
+ for_each_cpu()
+To: Fushuai Wang <wangfushuai@baidu.com>
+Cc: frederic@kernel.org, christophe.leroy@csgroup.eu,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20250811065216.3320-1-wangfushuai@baidu.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250811065216.3320-1-wangfushuai@baidu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNiBTYWx0ZWRfXzUjSuxKKKX8J
+ NIaAIJsCrluSo5NbhwWQJ+X9uLkf919nigjMkco6BbFFc5a/uHZT8WzAC+py6gT6myDO/mgBYve
+ +HVOAOr/0qvkXD66X2bNKuE5c4LzorK3dQrdvFz+ZXC/0UTx8CmLBk0dOWN1A/mJg/kEFqt5C2E
+ ggZhjUhfdNwm4QjQXJ2M+6ysrhYzMelsLKVvVt50crY9g7uUKJ81EDEZn/lGr5yNdvtouZoDk0I
+ wjLYwCHZ9WNXwrWu5a4C/3Vi5io9qe8jsxEykyGqG3v5eXfozxE81sgwoR08weXvGNWy/5noMk2
+ d6ny8FdV7zbFkMT8OUNk3cEiMJsU6jw6gXpvoCCWE231RkZ3d0FcJPjowMA0LELm7lijW1kgr25
+ T0XItL4i+K4UpQKRn0B2g8GyzubcCNPnRBaQxrcwdqaZft4uPn0oEcJxJ9naryoEdT63hryq
+X-Proofpoint-GUID: TDgLOFCUzs6KSeu4QXexSOYJXoB8Jad6
+X-Authority-Analysis: v=2.4 cv=C9zpyRP+ c=1 sm=1 tr=0 ts=689a1e73 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=zuLzuavZAAAA:8 a=VATuJ96wsPKbvXY_zzoA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: TDgLOFCUzs6KSeu4QXexSOYJXoB8Jad6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_03,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0 phishscore=0
+ mlxlogscore=977 suspectscore=0 impostorscore=0 clxscore=1011 malwarescore=0
+ spamscore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508110106
 
-On Mon, 2025-08-11 at 20:39 +0800, Qianfeng Rong wrote:
-> The 'backedge' pointer is allocated with kzalloc(), which returns
-> physically contiguous memory. Using kvfree() to deallocate such
-> memory is functionally safe but semantically incorrect.
->=20
-> Replace kvfree() with kfree() to avoid unnecessary is_vmalloc_addr()
-> check in kvfree().
->=20
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+
+
+On 8/11/25 12:22, Fushuai Wang wrote:
+> Replace the opencoded for_each_cpu(cpu, cpu_online_mask) loop with the
+> more readable and equivalent for_each_online_cpu(cpu) macro.
+> 
+> Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
 > ---
+>   drivers/soc/fsl/qbman/qman_test_stash.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/fsl/qbman/qman_test_stash.c b/drivers/soc/fsl/qbman/qman_test_stash.c
+> index f4d3c2146f4f..6f7597950aa3 100644
+> --- a/drivers/soc/fsl/qbman/qman_test_stash.c
+> +++ b/drivers/soc/fsl/qbman/qman_test_stash.c
+> @@ -103,7 +103,7 @@ static int on_all_cpus(int (*fn)(void))
+>   {
+>   	int cpu;
+>   
+> -	for_each_cpu(cpu, cpu_online_mask) {
+> +	for_each_online_cpu(cpu) {
+>   		struct bstrap bstrap = {
+>   			.fn = fn,
+>   			.started = ATOMIC_INIT(0)
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Yes. This change makes sense given that for_each_online_cpu expands into the same.
 
->  kernel/bpf/verifier.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index c4f69a9e9af6..4e5de1ff7e30 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -19553,7 +19553,7 @@ static int is_state_visited(struct bpf_verifier_e=
-nv *env, int insn_idx)
->  				err =3D err ?: add_scc_backedge(env, &sl->state, backedge);
->  				if (err) {
->  					free_verifier_state(&backedge->state, false);
-> -					kvfree(backedge);
-> +					kfree(backedge);
+Why not do for the remaining ones too?
 
-The backedge encapsulates verifier state, verifier states are
-allocated using kzalloc() and freed using kfreed() in other places in
-verifier.c =3D> I think this patch is valid.
+linux_tip$ grep -Rw "for_each_cpu" * | grep  cpu_online_mask
+arch/riscv/kernel/unaligned_access_speed.c:     for_each_cpu(cpu, cpu_online_mask) {
+arch/riscv/kernel/unaligned_access_speed.c:     for_each_cpu(cpu, cpu_online_mask) {
+drivers/soc/fsl/qbman/qman_test_stash.c:        for_each_cpu(cpu, cpu_online_mask) {    ** current patch addresses this.
+drivers/infiniband/hw/hfi1/sdma.c:      for_each_cpu(cpu, cpu_online_mask) {
+drivers/cpuidle/cpuidle-tegra.c:        for_each_cpu(lcpu, cpu_online_mask) {
+include/rv/da_monitor.h:        for_each_cpu(cpu, cpu_online_mask) {
+kernel/trace/trace_osnoise.c:   for_each_cpu(cpu, cpu_online_mask) {
+kernel/trace/trace_osnoise.c:   for_each_cpu(cpu, cpu_online_mask) {
 
->  					return err;
->  				}
->  			}
+
+Rest everyone seems to have moved.
+linux_tip$ grep -Rw "for_each_online_cpu" * | wc
+     416    1141   23047
+
+
 
