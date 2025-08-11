@@ -1,153 +1,143 @@
-Return-Path: <linux-kernel+bounces-763304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B741B212FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:13:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0770B21302
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BCB77B49C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:11:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580ED2A61D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DBE2C21FE;
-	Mon, 11 Aug 2025 17:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D100778F26;
+	Mon, 11 Aug 2025 17:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INnIVgCr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vh64SCF5"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AD1482FF;
-	Mon, 11 Aug 2025 17:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4354117993
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754932390; cv=none; b=ojz5kulkNoUhuOAGmdDJ9Mf8XGgp5acMc0jPtCnxJwANXvaWnp2VtHJl06lR22C18F06JSsWeT7cWZaFW3p/BGcNTpMSzLzHtuJfcqmg5JbIGvyhz27ratD6YqOB3oJZzbZPjnoN+SrFTq+tb+FU9GT+IxgpcFb8RIEadZyIJ4w=
+	t=1754932560; cv=none; b=hchxkbQqV820CQvzJaqWnegtODdD/gNa2mIST9Qk2Hd9Z5yEN07E+IXTvUz0JAm9P3bFSLoMhNz80H2PtCBiZaYOIU9taf3MXrqg/+ylICEt1zsmlRjI4u4m40MnLsYh3JP07wlxadBblEYjfNKlOXcLKgAtsvr1TNCmYMV70vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754932390; c=relaxed/simple;
-	bh=FPu5hQjGm+vHV3MlOKsGeTgCukCk03tTyteRGuQsup8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XMcRJeutuMFkQriBieNBMZkut1kpkyC8G1OtGn5iV06jIYZ02SyqJfaxspNiSITm0i4qSN2bZKQ13B6yhUociWKQdSjwtgyK10B1MhiPjeQ2smNUtlv4FpO5wLMVyQAsoo3GMNgohDFvvU0aEvLb622Rlm1r1XHb/vDQTEtxclQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INnIVgCr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C72C4CEED;
-	Mon, 11 Aug 2025 17:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754932389;
-	bh=FPu5hQjGm+vHV3MlOKsGeTgCukCk03tTyteRGuQsup8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=INnIVgCr0ton64MB3wAu6vYa3ye1fwnwTSoRHv+DXq4yAnkVgF8xaDNr4gQvO+A8X
-	 e+uAKaRWrnJEnNKGRm0KZRf3rdGQ7pwo4Jvf3jLc4QUJ1fji6nZtE9MmZfJUhD2RK1
-	 drWKtnxw59EbCqud/zQ0NEaj4AP2D+wOYM+Ff6lmL+pnsq6CVw4l3cQc+6YeZTnUac
-	 nc/9ru1Xqnhf8/CyZBeL2UuhvEl2JM/qILW8Va124/ZiOmW4Cyxz1Msms9vW5BZd/W
-	 KRPBih+yrVujz4tOlNHZ4Ydh91Ux9OoA04+DS4ysR1WPWGFq3v/Cb0IuMBCwmJ8Gps
-	 4WiwWoBb3B7JA==
-Message-ID: <e263d0b4-04e9-4d65-ad43-197573b66721@kernel.org>
-Date: Mon, 11 Aug 2025 19:13:04 +0200
+	s=arc-20240116; t=1754932560; c=relaxed/simple;
+	bh=DQDV5MSdG7iIlFM3KP66cLZJSF82N+ojje6K3pNRkwo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZRJz9mu6vYQUb9Hj5Ee1ce9g+EzFLpYj+Wne36F1XOz+q3bFHBJh/I9vXtnWrf6s+Kqn9ozOKmYgV9eZMLrVKlEE5RRtLEjyxjdWCo1MjLu53yQymEGqkGifnm7T5/xBm6QP8Zzi1vs4+o27JObRsl2j36dP06nPwlpbPxGBOa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vh64SCF5; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23fd91f2f8bso33218955ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754932557; x=1755537357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=se2ODQFZ+H1X/pnjLuBikbbRlreY+4s+qe+LloKg96s=;
+        b=vh64SCF5UGSpyt7z/X6CYC6hJIe45nZemLoiUFfqikcjcZALcmmfAoOBORz1EToAgH
+         6iURYKHezwwBy4Llboxd3OLIZSIZxapyJ+16E6Hxst8okFWe+7hByP16R1UagSRLhaRi
+         Wy4tvi3lCW+SPikWouYFYlf/wVHOphbNy9gixF9IRn0IsQ3/Cr90q/A+sU1cDJb8cm/r
+         4vByz3FsIxFnuwDFIvCGnUx9+91T7zHTP3qBKnK4ZjsZrFfwYZf4fpcvTri7F5NBQNKT
+         W4qpdDtyD2x7ILRgcNh+JZ9PbTrZlyKqJbLoDQFSTRm4LAb709AdCeVj6As5NBMOsc2R
+         7tkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754932557; x=1755537357;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=se2ODQFZ+H1X/pnjLuBikbbRlreY+4s+qe+LloKg96s=;
+        b=KbHaJVSDxPDJBkSGaCVUkAK2GGhLOn8cUkCYmADcp7e0LN7wnxtWTnl4owT8HlZKKy
+         BGMAYfqxXPaGOmHGS71u80yjK8vuAloUKxWpXHTqbTrugHUi0iADGxAUSjMk69X5+dyp
+         nI/TuL21plp6IXnkTS9a+apqL0b1XQllUxRUAuo0UmUrDZUx2N/NIUqCCwuVDRA5pvLr
+         88FQd50ijWh81mjCZ7IuzynO+52w84DLB4UUDGCOxJmwwqhjpRaFoEtgjo6xpaK03Fw3
+         UNVQDEf41pTMVQCQBhfRDIkHVOwdXuB2sePVxiO1CYqiMhDNhmcNWv3YjlPtfO43nkUK
+         GMUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDew5S+ItyKBJhEJ709u0FA56Yo4+rgpdA03RsCt9tCq2Joc1yr6YfCEFr4PAy4xTj1StQ0ToP36WdErU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo96ErPEfsFPINL+ot1584glNDnKu2yWFj8U0qV+gcH+oBVxGr
+	hHJe1N9TwVcQsSxjcVjuxswgWcRVRy5CuisHZ7DgkN86kTOHHG1F0ankZ5GqYNeZcig=
+X-Gm-Gg: ASbGnctJ/TwykjxIfoKT++C3booKjTaQmYfP/zp+RIkSs3khZO/rOwJY2IF5BXU0I1G
+	74qQR175eCEhljBKdG6qK4F7A5Hs0IU4dvNykCv7sl2r60rWn3Uq4bXmRWHOJroLvn23wixh4GH
+	vW9oseub1ihR8Vo8LpuESVaekvCDRdZ/ENNNRb9Qu0MNpMf3nwgDxqSEA0+eLX0AxGqOMy8T1wv
+	L0dyd5UDvz9yAp0O/Mcslv19vEjbOuVnrrfpQS2X+ezlVzjnoQ/MIpttAEzhGBAl3R+kh8nP5Cq
+	4uATyzuUMBOGHMJWadItd4EZmc0cv3ljs8aAYtgpSIkEEHX45oK3HS34tVD+nFj8UE/b8JKwz/X
+	VTLCZj6vP3aMePr/YWv0YfUsS1kkiDpxCUWXk
+X-Google-Smtp-Source: AGHT+IEbJyyWqbQ4DL4JW1yoKcbTondc4o8KsIOOyz7k/Arl4I5K5BEN0nKVMUcO32W1ob2oOWy9ug==
+X-Received: by 2002:a17:902:d486:b0:242:abc2:7f32 with SMTP id d9443c01a7336-242fc210059mr5262035ad.3.1754932557531;
+        Mon, 11 Aug 2025 10:15:57 -0700 (PDT)
+Received: from localhost ([71.212.208.158])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32115948a74sm24825423a91.4.2025.08.11.10.15.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 10:15:57 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson
+ <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+ Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan
+ <saravanak@google.com>, Maulik Shah <quic_mkshah@quicinc.com>, Prasad
+ Sodagudi <psodagud@quicinc.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC/PATCH 1/3] PM: QoS: Introduce a system-wakeup QoS limit
+In-Reply-To: <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
+References: <20250716123323.65441-1-ulf.hansson@linaro.org>
+ <20250716123323.65441-2-ulf.hansson@linaro.org>
+ <CAJZ5v0iq7UODJ83fkwnzfFR3HpG2_R-YRnip_cLwyUHZZ+rXyg@mail.gmail.com>
+Date: Mon, 11 Aug 2025 10:15:56 -0700
+Message-ID: <7hldnp6apf.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/4] arm64: dts: qcom: sm8650: Enable MCQ support for
- UFS controller
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, mani@kernel.org,
- alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, agross@kernel.org,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250811143139.16422-1-quic_rdwivedi@quicinc.com>
- <20250811143139.16422-3-quic_rdwivedi@quicinc.com>
- <67aedb2a-3ccc-4440-b2ff-b3dbedf5e25c@kernel.org>
- <9ff100b4-a3a5-4364-8172-1ccb5566e50c@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <9ff100b4-a3a5-4364-8172-1ccb5566e50c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 11/08/2025 18:54, Ram Kumar Dwivedi wrote:
-> 
-> 
-> On 11-Aug-25 8:13 PM, Krzysztof Kozlowski wrote:
->> On 11/08/2025 16:31, Ram Kumar Dwivedi wrote:
->>> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
->>> on the Qualcomm SM8650 platform by updating the device tree node. This
->>> includes adding new register region for MCQ and specifying the MSI parent
->>> required for MCQ operation.
->>>
->>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 7 ++++++-
->>>  1 file changed, 6 insertions(+), 1 deletion(-)
+"Rafael J. Wysocki" <rafael@kernel.org> writes:
+
+> On Wed, Jul 16, 2025 at 2:33=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
+rg> wrote:
 >>
->> Way you organize your patchset is confusing. Why DTS is in the middle?
->> It suggests dependency and this would be strong objection from me.
-> 
-> Hi Krzysztof,
-> 
-> My current patch submission order is as follows:
-> 
-> 1.DT binding
-> 2.Device tree
-> 3.Driver changes
+>> Some platforms and devices supports multiple low-power-states than can be
+>> used for system-wide suspend. Today these states are selected on per
+>> subsystem basis and in most cases it's the deepest possible state that
+>> becomes selected.
+>>
+>> For some use-cases this is a problem as it isn't suitable or even breaks
+>> the system-wakeup latency constraint, when we decide to enter these deep=
+er
+>> states during system-wide suspend.
+>>
+>> Therefore, let's introduce an interface for user-space, allowing us to
+>> specify the system-wakeup QoS limit. Subsequent changes will start taking
+>> into account the QoS limit.
+>
+> Well, this is not really a system-wakeup limit, but a CPU idle state
+> latency limit for states entered in the last step of suspend-to-idle.
+>
+> It looks like the problem is that the existing CPU latency QoS is not
+> taken into account by suspend-to-idle, so instead of adding an
+> entirely new interface to overcome this, would it make sense to add an
+> ioctl() to the existing one that would allow the user of it to
+> indicate that the given request should also be respected by
+> suspend-to-idle?
+>
+> There are two basic reasons why I think so:
+> (1) The requests that you want to be respected by suspend-to-idle
+> should also be respected by the regular "runtime" idle, or at least I
+> don't see a reason why it wouldn't be the case.
+> (2) The new interface introduced by this patch basically duplicates
+> the existing one.
 
-Why are you repeating the obvious? That order is INCORRECT and that is
-why I commented.
+I also think that just using the existing /dev/cpu_dma_latency is the
+right approach here, and simply teaching s2idle to respect this value.
 
-> 
-> Please let me know if you'd prefer to rearrange the order and place the driver patch in the middle.
+I'm curious about the need for a new ioctl() though.  Under what
+conditions do you want normal/runtime CPUidle to respect this value and
+s2idle to not respect this value?
 
-I need to you read the documents I mentioned. It is your task to read
-the docs, not asking me to quote them again because you do not bother
-with that.
-
-
-Best regards,
-Krzysztof
+Kevin
 
