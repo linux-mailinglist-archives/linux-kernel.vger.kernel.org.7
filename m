@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-763400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D17FB2142E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:25:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A6EB21422
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59F3D7B43D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:21:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4FC6258F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028AB2E718F;
-	Mon, 11 Aug 2025 18:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF692E764A;
+	Mon, 11 Aug 2025 18:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTs5I/2N"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y3jyZmKB"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE52B2C21D0
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA222E610C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936273; cv=none; b=GITEf/uWyRQBF2dPx2ryfbk/KkfcmNUU+tuY6WCmCLsGL/WfdElnCqzUtamysP9BxPp2dF+PnVCxjG1M26dtwm+mIbVjZmzG1WpOX+SleZjsqD+Ey2gSRrJknf7b+qPxhe0DlwE4POTN1qpU4wc0/Degllfj9QFHP4+DjUuWzjg=
+	t=1754936274; cv=none; b=aJsudOSFu6bOaCTpyEZ4d0k/SfcBe9JdR/AhKN+hYB8EhHMGkwTcmrxhyNIW9bJNKucm5mOC3c2MJNGUO0qIhekGvhpje/WcAnsk69WuGjyTGq74kxYQOItdw5DLCa9Fgr2j9bLM986iEWiXBRWKsrtyCT2uH5w2gT+q4hveoiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936273; c=relaxed/simple;
-	bh=EddyqxZoO2oB2oKRo3cjCHXi9KMfEvhPkZ+9MhTxLTw=;
+	s=arc-20240116; t=1754936274; c=relaxed/simple;
+	bh=47HI7bCkBNvQJ+DtUST6W3uW4FMOR3SyHta8tGZ5LJM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iMvmVzEFaaEy2lsjw4MKfKNPXPmAg9oyW2HcOmTkM0hbIsqZf7xcieCr38kDYzhVWGwrKH8aggYfagEkKPZwcrpFASvTQ35236Pq8YmfqFvsG37hQtT7fFNW9Cm+PGsRTIyCs9wb0ysdaPc0sDxTEzI0ztcYejngf/C3E8OfdGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTs5I/2N; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=E7vYFyq9bKyrb3yr90coa86kQx1qNX9RsXvOIQl31LpamH6Z7V+BswjbtPgsHbKtela8uL+o2fe5VtUu4YtRsoLqRMGGTdnKn8IH18RCBkWSNwIU4zSd4W0zXO4AKMqmNU38TTRNRMEqwDBQT724CKIsT6Fka18+XNVGoN6yN4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y3jyZmKB; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754936271; x=1786472271;
+  t=1754936272; x=1786472272;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=EddyqxZoO2oB2oKRo3cjCHXi9KMfEvhPkZ+9MhTxLTw=;
-  b=WTs5I/2Nh2dVH0wQXRDreNTuqFha8GIlSo9xOoxNmNnZLnp7/vX2uar7
-   +pQO3JnQxiicjiNMCjwM+jy72ixUu/i+LKZCCywe2CBmxwM8rFYhJGidu
-   jL5yDTQED/oDBBHJLLnkjM7lwn/Nin01MLMgzpmxcGFoTIQOI1l4jY/jA
-   rApLqnZLkWQktBdgAIMuynAwA3Z3Aw94+GHB+2GlY8srEu+ADK0V6839B
-   H+sJhQ9vNFr+8HYZHttQrVnKG6Fr/7o71GSC24iYF1+Xulgpy7B4LOF6R
-   Bp0utnx7zusVIpWAJ7t0cB3PziueA4jc4ruy5wU+Rc+GeAoOcLAy1ULds
-   g==;
-X-CSE-ConnectionGUID: I5c529LsSPeTCmeVPHlWdA==
-X-CSE-MsgGUID: q/MQ5hiWRlCiVbq1VBbCkg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68277571"
+  bh=47HI7bCkBNvQJ+DtUST6W3uW4FMOR3SyHta8tGZ5LJM=;
+  b=Y3jyZmKB2bm6AKQktlzQy3rUU2i1W0rYnNVAYiKhLY+aDgU0lm/H4Ghu
+   graXKkG/ncZqgrq99X3yt0S7iRo5kvHpKj9R3VepK/FwuQj0BmwRtEbXa
+   ekny4R/+AgNQHA4LdgJ5VHkFB0Q0EIhmqq7iFUDh8E4sQ8tTCdA62WQZi
+   vbB0YPOp9OiaTKMx0g4TjxbEhUbSxomIHg/aYwA25vJKgZFuavaZ85Z7e
+   PGYz0MB1JEXcq8rfowDuiW/wZu25xsaOleX/hQgHJDSMUbCDIldRKBi6F
+   PqL2ezVQ97D6L/9HV3v0oKONCxXcXLBHtXHqv7A9cJLk/e5K4AnB/beyZ
+   Q==;
+X-CSE-ConnectionGUID: 72dtMDMGRKGdpH5q1FI9Wg==
+X-CSE-MsgGUID: RcC/XAsITBCnUTofeDBhBA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68277586"
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="68277571"
+   d="scan'208";a="68277586"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
   by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:28 -0700
-X-CSE-ConnectionGUID: j6FQF43vTnWqpZnBthawCg==
-X-CSE-MsgGUID: 6F+KuQiOTXW7zskkXqh8iA==
+X-CSE-ConnectionGUID: VB9MA2rvSBGOEPbA8oYohw==
+X-CSE-MsgGUID: 4+yvT43TR0qx8FG1fov7pA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="196825714"
+   d="scan'208";a="196825717"
 Received: from puneetse-mobl.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.221.229])
   by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 11:17:27 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -72,9 +72,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v8 30/32] fs/resctrl: Provide interface to create architecture specific debugfs area
-Date: Mon, 11 Aug 2025 11:17:04 -0700
-Message-ID: <20250811181709.6241-31-tony.luck@intel.com>
+Subject: [PATCH v8 31/32] x86/resctrl: Add debugfs files to show telemetry aggregator status
+Date: Mon, 11 Aug 2025 11:17:05 -0700
+Message-ID: <20250811181709.6241-32-tony.luck@intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250811181709.6241-1-tony.luck@intel.com>
 References: <20250811181709.6241-1-tony.luck@intel.com>
@@ -86,113 +86,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All files below /sys/fs/resctrl are considered user ABI.
+Each telemetry aggregator provides three status registers at the top
+end of MMIO space after all the per-RMID per-event counters:
 
-This leaves no place for architectures to provide additional
-interfaces.
+  agg_data_loss_count: This counts the number of times that this aggregator
+  failed to accumulate a counter value supplied by a CPU core.
 
-Add resctrl_debugfs_mon_info_arch_mkdir() which creates a directory in the
-debugfs file system for a resource. Naming follows the layout of the
-main resctrl hierarchy:
+  agg_data_loss_timestamp: This is a "timestamp" from a free running
+  25MHz uncore timer indicating when the most recent data loss occurred.
 
-	/sys/kernel/debug/resctrl/info/{resource}_MON/{arch}
+  last_update_timestamp: Another 25MHz timestamp indicating when the
+  most recent counter update was successfully applied.
 
-The {arch} last level directory name matches the output of
-the user level "uname -m" command.
+Create files in /sys/kernel/debug/resctrl/info/PERF_PKG_MON/x86_64/
+to display the value of each of these status registers for each aggregator
+in each enabled event group.
 
-Architecture code may use this directory for debug information,
-or for minor tuning of features. It must not be used for basic
-feature enabling as debugfs may not be configured/mounted on
-production systems.
-
-Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- include/linux/resctrl.h |  9 +++++++++
- fs/resctrl/rdtgroup.c   | 29 +++++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+ arch/x86/kernel/cpu/resctrl/intel_aet.c | 53 +++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index c1cfba3c8422..b6af933ca3f9 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -571,6 +571,15 @@ void resctrl_arch_reset_all_ctrls(struct rdt_resource *r);
- extern unsigned int resctrl_rmid_realloc_threshold;
- extern unsigned int resctrl_rmid_realloc_limit;
+diff --git a/arch/x86/kernel/cpu/resctrl/intel_aet.c b/arch/x86/kernel/cpu/resctrl/intel_aet.c
+index 4afc99e74cef..ff70f2b18165 100644
+--- a/arch/x86/kernel/cpu/resctrl/intel_aet.c
++++ b/arch/x86/kernel/cpu/resctrl/intel_aet.c
+@@ -13,6 +13,7 @@
  
-+/**
-+ * resctrl_debugfs_mon_info_arch_mkdir() - Create a debugfs info directory.
-+ *					   Removed by resctrl_exit().
-+ * @r:	Resource (must be mon_capable).
-+ *
-+ * Return: dentry pointer on success, or NULL on error.
-+ */
-+struct dentry *resctrl_debugfs_mon_info_arch_mkdir(struct rdt_resource *r);
-+
- int resctrl_init(void);
- void resctrl_exit(void);
- 
-diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index d1ecc5cd3089..fccac3da90cb 100644
---- a/fs/resctrl/rdtgroup.c
-+++ b/fs/resctrl/rdtgroup.c
-@@ -24,6 +24,7 @@
- #include <linux/sched/task.h>
- #include <linux/slab.h>
- #include <linux/user_namespace.h>
-+#include <linux/utsname.h>
- 
- #include <uapi/linux/magic.h>
- 
-@@ -75,6 +76,8 @@ static void rdtgroup_destroy_root(void);
- 
- struct dentry *debugfs_resctrl;
- 
-+static struct dentry *debugfs_resctrl_info;
-+
- /*
-  * Memory bandwidth monitoring event to use for the default CTRL_MON group
-  * and each new CTRL_MON group created by the user.  Only relevant when
-@@ -4355,6 +4358,31 @@ int resctrl_init(void)
- 	return ret;
+ #include <linux/cleanup.h>
+ #include <linux/cpu.h>
++#include <linux/debugfs.h>
+ #include <linux/intel_vsec.h>
+ #include <linux/io.h>
+ #include <linux/minmax.h>
+@@ -299,6 +300,55 @@ static bool get_pmt_feature(enum pmt_feature_id feature, struct event_group **ev
+ 	return false;
  }
  
-+/*
-+ * Create /sys/kernel/debug/resctrl/info/{r->name}_MON/{arch} directory
-+ * by request for architecture to use for debugging or minor tuning.
-+ * Basic functionality of features must not be controlled by files
-+ * added to this directory as debugfs may not be configured/mounted
-+ * on production systems.
-+ */
-+struct dentry *resctrl_debugfs_mon_info_arch_mkdir(struct rdt_resource *r)
++static int status_read(void *priv, u64 *val)
 +{
-+	struct dentry *moninfodir;
-+	char name[32];
++	void __iomem *info = (void __iomem *)priv;
 +
-+	if (!r->mon_capable)
-+		return NULL;
++	*val = readq(info);
 +
-+	if (!debugfs_resctrl_info)
-+		debugfs_resctrl_info = debugfs_create_dir("info", debugfs_resctrl);
-+
-+	sprintf(name, "%s_MON", r->name);
-+
-+	moninfodir = debugfs_create_dir(name, debugfs_resctrl_info);
-+
-+	return debugfs_create_dir(utsname()->machine, moninfodir);
++	return 0;
 +}
 +
- static bool resctrl_online_domains_exist(void)
- {
- 	struct rdt_resource *r;
-@@ -4406,6 +4434,7 @@ void resctrl_exit(void)
++DEFINE_SIMPLE_ATTRIBUTE(status_fops, status_read, NULL, "%llu\n");
++
++static void make_status_files(struct dentry *dir, struct event_group *e, int pkg, int instance)
++{
++	void *info = (void __force *)e->pkginfo[pkg]->addrs[instance] + e->mmio_size;
++	char name[64];
++
++	sprintf(name, "%s_pkg%d_agg%d_data_loss_count", e->name, pkg, instance);
++	debugfs_create_file(name, 0400, dir, info - 24, &status_fops);
++
++	sprintf(name, "%s_pkg%d_agg%d_data_loss_timestamp", e->name, pkg, instance);
++	debugfs_create_file(name, 0400, dir, info - 16, &status_fops);
++
++	sprintf(name, "%s_pkg%d_agg%d_last_update_timestamp", e->name, pkg, instance);
++	debugfs_create_file(name, 0400, dir, info - 8, &status_fops);
++}
++
++static void create_debug_event_status_files(struct dentry *dir, struct event_group *e)
++{
++	int num_pkgs = topology_max_packages();
++
++	for (int i = 0; i < num_pkgs; i++)
++		for (int j = 0; j < e->pkginfo[i]->num_regions; j++)
++			make_status_files(dir, e, i, j);
++}
++
++static void create_debugfs_status_file(void)
++{
++	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_PERF_PKG].r_resctrl;
++	struct event_group *evg;
++	struct dentry *infodir;
++
++	infodir = resctrl_debugfs_mon_info_arch_mkdir(r);
++	if (!infodir)
++		return;
++
++	list_for_each_entry(evg, &active_event_groups, list)
++		create_debug_event_status_files(infodir, evg);
++}
++
+ /*
+  * Ask OOBMSM discovery driver for all the RMID based telemetry groups
+  * that it supports.
+@@ -314,6 +364,9 @@ bool intel_aet_get_events(void)
+ 			       known_perf_event_groups,
+ 			       ARRAY_SIZE(known_perf_event_groups));
  
- 	debugfs_remove_recursive(debugfs_resctrl);
- 	debugfs_resctrl = NULL;
-+	debugfs_resctrl_info = NULL;
- 	unregister_filesystem(&rdt_fs_type);
++	if (ret1 || ret2)
++		create_debugfs_status_file();
++
+ 	return ret1 || ret2;
+ }
  
- 	/*
 -- 
 2.50.1
 
