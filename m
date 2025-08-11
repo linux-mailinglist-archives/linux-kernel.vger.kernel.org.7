@@ -1,124 +1,167 @@
-Return-Path: <linux-kernel+bounces-762493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B66B2077D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:23:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D35FB20772
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D581C189F4C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:23:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40BD1758CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DF22BEC52;
-	Mon, 11 Aug 2025 11:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F66241136;
+	Mon, 11 Aug 2025 11:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HAkmPaVk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXFujpC/"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FEB2D0298
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852B62874E9;
+	Mon, 11 Aug 2025 11:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754911370; cv=none; b=q9tJojQMlcfv/u5gpaZdMjsde3lN0/fOcEtPuuqkbZoXFZUrTRJXnrLwux2Dacyhu2kohnyaibLzYeh97fWaizzdiVN3wdLGIP9t4zDRmgw1AY819BGvr6yskZEUMSqDmIo0iby3TkJ7gFYNqD5EeaMPUU2Vg6u6xheFw3ZY2J4=
+	t=1754911307; cv=none; b=By9ZAhzlA5L2mZZVnbgYzMvFWxrOISt63NGoNPyhC+6IggjR7GKjOnPjttw2ZpS36WvQYEm6q+690PhodZONCPfj9HqXu3DQ/zit6l6/heZRRNbdNB2CwRWWDnxVSmC+CWjLX5uQij+FNMqyFnkMo4lUZPPepVpHj6Lm85jVBYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754911370; c=relaxed/simple;
-	bh=ZOqfIENZoCDHfFICtEOL8YJoPa60molw2ph21bKNCGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oij/yWQjbO4gLfahmHKRBEKZW7sw7QHAt0klKkAByDUzdbGpqEj5Vi+RsV8yNQWI96n0R2dPeinJVSvyJqLOU5XkQ6k9t2AlMWiKAOT6nuYhqZ+4jrs4NxWrHF4dI9Y9Y4c0pKWCO9W4apnDt0W6dXgayk/IP6+VAdkD25g9VFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HAkmPaVk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754911367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aTv5PwSwqaTOZ1ypCe+ttHkuGMC/kFwpTVvvw1cs3Lw=;
-	b=HAkmPaVkbHSa/acXU+UGDnPPwAAgyX+zGzPNF23tJJGmNO39VM3GiifmMvo2On6sFjyS3F
-	uYce1RiotQQlZh+0BQxvAP8+dt+DHSnpmCeCFC0Vz33V+egeKiJYdI1rpZ8cEPQW/9LwH4
-	z8+mNLCN/wAS7hlpLiJOw4mbovuEyYE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-h1gUKyDaMoC7qTEaY5RMSg-1; Mon,
- 11 Aug 2025 07:22:44 -0400
-X-MC-Unique: h1gUKyDaMoC7qTEaY5RMSg-1
-X-Mimecast-MFC-AGG-ID: h1gUKyDaMoC7qTEaY5RMSg_1754911362
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EDC441800285;
-	Mon, 11 Aug 2025 11:22:41 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.234])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 13EBF19560B0;
-	Mon, 11 Aug 2025 11:22:33 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 11 Aug 2025 13:21:29 +0200 (CEST)
-Date: Mon, 11 Aug 2025 13:21:20 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [RESEND PATCH] sched: restore the behavior of put_task_struct()
- for non-rt
-Message-ID: <20250811112119.GC5250@redhat.com>
-References: <aJOwe_ZS5rHXMrsO@uudg.org>
- <20250811100624.LuYV-ZuF@linutronix.de>
- <20250811104033.GA5250@redhat.com>
- <20250811110501.nTDNkPnM@linutronix.de>
+	s=arc-20240116; t=1754911307; c=relaxed/simple;
+	bh=fJBQEdPBD8Fj/DZRBtUbIqsLDInvdTBnfhxQ/d5rsZ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qQWDxVdf3FvU9h6fUgqHVuAG6uVvmjFkATxc771j7zjmpsWT27r6Wk5RH5xutizr7+M1Vgc3YQmonh0pq99Up/zMIVwKwNyJAgGyrtYT2axiSzMUBAr9XXzFMOduCXlWAxRg69mbnZtmBoV83SWojRwogRchLRCbahysI94hZhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXFujpC/; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e91729232d9so55205276.1;
+        Mon, 11 Aug 2025 04:21:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754911304; x=1755516104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oua6uu1FsiEG+FbQxDQznAhdN0yrac6Ee4wtUSAb7QQ=;
+        b=VXFujpC/DO2tWty6bkh/3Y6pxPm6j4WwMDuIlYGF/E6NR2CRUDarcZybuQyzLrTsO0
+         h9wh5PFmEhqpWi4OLhBOSVOdDFumRpdnQoHBG9RCstChaoTYD7JX7YE3PDUlMBSL7TfI
+         Uf6urqE2iDP8tLvgdoD7MYbrsBZJEzgOAuw+1m/BseTgWBvc7NgEzQMbQBYlKRJg07UK
+         xEORWp9PFGg1X95KVCI5GsWlV/7lA7CjRYo/JrL1JpEr4F4ohOlzfRyGzKABedzViQ9a
+         RSso/dbTpZjozCIEmidBfJxhQQcABftil2WRSdr7lK79QQmOIRlK9AKBRcdgKbzs+s5F
+         bmEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754911304; x=1755516104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oua6uu1FsiEG+FbQxDQznAhdN0yrac6Ee4wtUSAb7QQ=;
+        b=bebQBPzd8IjBwHThrRbj117RVqVzKdyib205VWvZOHR8iFmGJjQK7YPl+1SNb/GT9N
+         rLx3lSX3Q/ROsT9a7dqZzJ5V5q0Xp1tZEt/L0to06h6k3zo0QwxQF3+XVb2IE8VuthJx
+         Q5QlLhfbJNoJfQMnB7cHFntRx5eQHr0Q94kMkdaMFiLLZtcVhMIfLL1KqILbwuLhgNnt
+         G3hVuhk6Ul68+WQCd0kAVvus0NhCNjLhb8lxPcrjJBR/wPI111zntqLtNL1cbVjnsVXw
+         tqiAiJWgfghJ01U/iYTFSvfvqxqLv4tWRB4DUZod3daSik/cSmi6MLldwfDkdWDB4LEb
+         c2IA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKDXM+ShDDcHKQdVVETy/4ezvza1CtsOHLMZmifrYrDNmX4ok8Bvyuo1ybMJ8gWZ33xby2rPSEl8iD@vger.kernel.org, AJvYcCVz+mPUn1vgayIth5fe+7cgqb82zOqua3ejkOlCJ2JsaHBPTnn5Hzxlewh40zAxutCazmNkuFcQceS3VGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOOlnwbDBi8LncTw29vexjnmS/+HIYqIZ6R2WT8BbXdV4ifrHn
+	RgLR7jbEAV65zgdcOhVVO6oIgsF16KNqnQKijOcS+Qw4bTH6aEOY2AR9TZZXr20jlU3L2FuNiKV
+	IRmLpjHOohnpN+4tNeeAnLANAgLJh/ZU=
+X-Gm-Gg: ASbGncs/O2EuYCF8sOqA8N1/SvwTc1PuIg9VV512j+9poJeSI0ONV4gFxD9Di9uCCwh
+	KEpqY3Mm0haj+jyAp3tlR0owhWPds6dfcrG3vS7xOXpyuLEWt98v3RJTsH46pL5uPYVro9HTh9v
+	EcC753umtdh3OuPKWdZXMlo2RKrGSZrBOirA6PmNrHQSqxXHgANpW0+1Sldkg5HMDMl6AwKhyZI
+	iW5
+X-Google-Smtp-Source: AGHT+IFal31QTX372Rt1MAx31/CoJRJqKRAhiiSHSEoIDYyMcyqwKzlo0opbeNHOvKi39NcCyTZhsFoMxqBqcu6XHeU=
+X-Received: by 2002:a05:690c:630b:b0:71a:2130:a8ef with SMTP id
+ 00721157ae682-71c083d4aa4mr54748447b3.7.1754911304256; Mon, 11 Aug 2025
+ 04:21:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811110501.nTDNkPnM@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250811081543.4377-1-ot_shunxi.zhang@mediatek.com>
+ <20250811081543.4377-2-ot_shunxi.zhang@mediatek.com> <b41749ae-640b-4911-976f-8aa36d40ed6b@kernel.org>
+In-Reply-To: <b41749ae-640b-4911-976f-8aa36d40ed6b@kernel.org>
+From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
+Date: Mon, 11 Aug 2025 15:21:25 +0400
+X-Gm-Features: Ac12FXz5R8bUd6DGN4oYRK6orLAYYfuyZ4YZlmfC6PZBO9X7PAQ1xeup1WjaCmM
+Message-ID: <CAE7dp2rxfgj6FKoM-kesX8632t3AA7Lk5rC-uasyQUS2hQuUfQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] mfd: mt6397: Add new bit definitions for RTC_BBPU register
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: ot_shunxi.zhang@mediatek.com, Eddie Huang <eddie.huang@mediatek.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Lee Jones <lee@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sirius.wang@mediatek.com, vince-wl.liu@mediatek.com, jh.hsu@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/11, Sebastian Andrzej Siewior wrote:
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+    linux-mediatek@lists.infradead.org,
+    linux-rtc@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+
+Shunxi,
+
+Can you confirm whether `RTC_BBPU_PWREN` (bit 0),
+`RTC_BBPU_CLR` (bit 1) and `RTC_BBPU_RESET_AL` (bit 3) are documented
+in the MT6397 datasheet (please cite section/page)? They look like
+standard RTC controls (power enable, clear/reset, alarm reset) and
+might be useful to include, but I agree with Krzysztof that adding
+definitions with no users can accumulate technical debt.
+
+Suggestion: either
+- add the definitions when a driver actually needs them, or
+- keep them now but add a short rationale in the commit message
+  (datasheet reference + intended use) so future reviewers understand
+  why they exist.
+
+Also: please split cosmetic whitespace fixes (RTC_BBPU_KEY) into a
+separate patch to make review/merge easier.
+
+Thanks for the patch; I=E2=80=99m following the thread.
+
+=E2=80=94 Giorgi
+
+
+On Mon, Aug 11, 2025 at 3:03=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
-> On 2025-08-11 12:40:34 [+0200], Oleg Nesterov wrote:
+> On 11/08/2025 10:15, ot_shunxi.zhang@mediatek.com wrote:
+> > From: Shunxi Zhang <ot_shunxi.zhang@mediatek.com>
 > >
-> > What exactly do you think we could do regardless of PREEMPT_RT?
+> > This patch adds new bit definitions for the RTC_BBPU register in the
 >
-> Do what we do now and have one free path for task_struct regardless if
-> PREEMPT_RT is enabled or not. The one via RCU which delays the freeing
-> until after the grace period.
-
-Ah, got it. I won't really argue, but...
-
-call_rcu() is not free, it obviously delays free_task/etc. To me this
-!PREEMPT_RT optimization makes sense.
-
-But lets forget it for the moment. This patch
-
-	https://lore.kernel.org/all/aGvTz5VaPFyj0pBV@uudg.org
-	[PATCH v6] sched: do not call __put_task_struct() on rt if pi_blocked_on is set
-
-removed that optimization by mistake, this doesn't even match the changelog.
-I think it should be restored, and this is what the new patch from Luis does.
-
-Then we can discuss this all again and possibly remove it, but this
-should be explicitly documented in the changelog.
-
-Oleg.
-
+> Why? There is no user of these. Don't add useless defines.
+>
+> > mt6397 RTC header file. The following bit definitions are introduced:
+>
+> Hm?
+>
+> >
+> > Signed-off-by: Shunxi Zhang <ot_shunxi.zhang@mediatek.com>
+> > ---
+> >  include/linux/mfd/mt6397/rtc.h | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/mfd/mt6397/rtc.h b/include/linux/mfd/mt6397/=
+rtc.h
+> > index 27883af44f87..001cef6b7302 100644
+> > --- a/include/linux/mfd/mt6397/rtc.h
+> > +++ b/include/linux/mfd/mt6397/rtc.h
+> > @@ -15,8 +15,11 @@
+> >  #include <linux/rtc.h>
+> >
+> >  #define RTC_BBPU               0x0000
+> > +#define RTC_BBPU_PWREN         BIT(0)
+> > +#define RTC_BBPU_CLR           BIT(1)
+> > +#define RTC_BBPU_RESET_AL      BIT(3)
+> >  #define RTC_BBPU_CBUSY         BIT(6)
+> > -#define RTC_BBPU_KEY            (0x43 << 8)
+> > +#define RTC_BBPU_KEY           (0x43 << 8)
+>
+>
+> Why?
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
 
