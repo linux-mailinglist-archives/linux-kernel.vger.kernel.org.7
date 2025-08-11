@@ -1,513 +1,221 @@
-Return-Path: <linux-kernel+bounces-763732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05785B21977
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:39:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0C3B21979
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 01:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B11746382B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7634B1A25170
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 23:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1206422ACF3;
-	Mon, 11 Aug 2025 23:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFC722ACF3;
+	Mon, 11 Aug 2025 23:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CNQdLPcr"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K09RhlCO"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2045.outbound.protection.outlook.com [40.107.244.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3872B15990C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 23:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754955575; cv=none; b=aPJVD7BynM99/qTjJB/xckW6rGgrw36amO2Zrei3o1mMmGd3FAyRaoKk/eWoauXDoX7z2VhXXxJT045u0/soa/cCiSFqG1PXNRFqWakIZXVpXJ/X3a5BwUsr2ULqXSicG1GgkoFU9hBO1JTsGUNQZcrraRGZEa2/iSWPIFoudc0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754955575; c=relaxed/simple;
-	bh=CgsHhYKuzt2u/unQTOKXZO6yYr3HlUlJ26LVRKOATkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FyTHnCQkX+U0WPeaRranKalUebiLFNx9ZYl6wjaCphmzoiuCbo/E0qlTvS76GCj8tRQsqHU24p+jcDAncXMMPlMkhuHQSum3dXQcwhx3NB6nDMjyGuC0375XHem6dzAv9APT1Z6Zf2zZ7YRtmUrh6hgAhCLObj72YD2I/O2AUxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CNQdLPcr; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e5477e8effso8760165ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:39:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754955572; x=1755560372; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8lKenfnjZgeAQPLlLmbgh5W75Wb8BtdzZVIVKBkQ4ic=;
-        b=CNQdLPcryBXMnf7F15ZQRLaBh+AgRgrch2JnTIpkYxHmhNgEhrdEGubehakXbJGCjM
-         nJ0mqF7TguAXdqoxGytg+Tmd3ycv6kWIQ9hj5Wh1uKC2+PcEvYdrDnhcJ4eRFbYIbjMc
-         BIobw5VGjI8feXld6JwCCfftr/VFdE0H1FrPgxts58T3xqkgLySnsqwL1RQu3aebRlCO
-         hdkE8gUl3JQAnomZIk9aHY5Ug8qW35SDI8s7HgTxEVcdr79Roim+G6ve1NxawJkD7pqN
-         N5zULoq7PF+PN20cTwu0o/eMzO+Nk294r18jPPF2lRN5L7WHrEmvHcs3E3UBQxH8pRDZ
-         JcMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754955572; x=1755560372;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8lKenfnjZgeAQPLlLmbgh5W75Wb8BtdzZVIVKBkQ4ic=;
-        b=kmB3VeILf5OKO0d6LEVPAkYO/t9kspGV8XyQQAZjkrM8GpsDMhqlRL7hTw4W+NQsO3
-         lqfSkc224pbhvFhCRnxKp3CPJmYZ2ykjgXAFRft4rjE1fj6+wA7zvlitL+09R1BS6O5i
-         tiVCxiw28fy8Xq31KUZfKp5zkIZv5Rd+8JTLHs5TkSbzIEFcHnao9OLADgTHOQD46vzp
-         Vuc6yOBAeHrC3eazTA/7jcvqS+bbjwoMaEWCDwso7VxQn3k3GjGVMlcFPRydV9j/KRCc
-         8nTDSX41xbKLu7ePtrC9JoqW8d1Ue0sEYCvDZFD1cHNYlsNOxZZ6cBROkAHsseKGM4R6
-         WEiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFAocF3szEaX07kx40yKuMwS0ETNJBmadGova+mdIE+JjNpQ7kxDKybTX2sqSDe3IJ39g+RzlJzqngoSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA2svy2LORozA2SFlsJOBJwAbdBQa6gP4b6aBfr5q8KJqF27ii
-	8LKobGAQGOSHRurhCTBxoHn9GqQU7BuWF0n0g/lVd4icCioMzV+4R7VS9XFb2G3hJQu+4i7ndBd
-	HWj2wQw==
-X-Gm-Gg: ASbGncvo7qC5eOufJU3aD6v72C1TjGMxVjIFbAnBu1V99O7DFaf9xh/+400sIIkyt3t
-	9A21rWDncEeq04vjl11hJowho3qUYivdBRZFG3rG4KuaoxMJiufzW1KqoL7TsNB9cn1UUcC5AOk
-	RVDl8zJHmTTz24BFPJxwRv0yasA6WCqQlZn20AVkabp2h7t2q3H6MLhleYgh5sHknnBSQZOvEvo
-	g98y2g0SSDv4IibqXNV8qeY4assJXnVQfDBr6X7xdIvLCHaZvXvqAYnyWpD7Z2C4xnbKh3+Pt/1
-	rUMQQzDsRIYwhyi/PZqsYK5SPOiZ9hYUv6Ea6ds1t0rTQceJWw7wjU/F0vgW5ZTfuPrT8YhDd+T
-	3SQ4q1s/I7tZrvt6WBNLHjtZMBoULllWpqgOyte83FVJS360tL0xTG/WWP5RuNJGraok=
-X-Google-Smtp-Source: AGHT+IEqxzGHtVJxoiq1h2xC6cI4AXui0X5as8mt43CBZ5R7sj8uOt7w5q5EAKKhBnmgylY8YfNfZw==
-X-Received: by 2002:a05:6e02:b28:b0:3e5:5357:6df3 with SMTP id e9e14a558f8ab-3e55af21d10mr25814135ab.8.1754955572046;
-        Mon, 11 Aug 2025 16:39:32 -0700 (PDT)
-Received: from google.com (39.173.198.104.bc.googleusercontent.com. [104.198.173.39])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e5536236eesm11555385ab.21.2025.08.11.16.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 16:39:31 -0700 (PDT)
-Date: Mon, 11 Aug 2025 16:39:27 -0700
-From: Justin Stitt <justinstitt@google.com>
-To: Abhinav Saxena <xandfury@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Paul Moore <paul@paul-moore.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v3] selftests/tty: add TIOCSTI test suite
-Message-ID: <ytndgs2vwkhijeuruejvk55geqouuditkjpge6u7gb6qt6hxqa@uh2wnuapkb5f>
-References: <20250730-toicsti-bug-v3-1-dd2dac97f27a@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5C3158DAC;
+	Mon, 11 Aug 2025 23:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754955610; cv=fail; b=Cik/Pznk5Uk8IEagHMrO7a5nG+9XKh891kXd+w+52gja+YLlA+fVgM6y6WTejxj6MbVIl3aJH0R7pJFnNzzP/kUlkrpvlTb0iWEUTOFN7y34xejoMZpkoCKwPYuszo9lRXuqi2vdlOkolI3ajCtXk9rdmh5QCeME/MiQPSEEWrY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754955610; c=relaxed/simple;
+	bh=go6szpEfow/H8db+zJ3DpOO2WmZmpkKeTtJuyhIO9hk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WgsNqP5p/E6qI/lpZXm7T6pcYBhp9LWBfuWoHxdoAeXOmlKB47vN4g3aO7fzqLC1kLeF73X4FQfAwin+7GIRE7LyZRXPKYcQrckycEOKwjz15TIe77hxmkp4sZU9Ic3kMIcHH3/MLFcYpV09UJvM3TZlhQA71Ayapr1+y1aSBt0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K09RhlCO; arc=fail smtp.client-ip=40.107.244.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yXT5AASG/d0qDjNsPE65GYdAoY1YJUkFWqoqFNhdUtOZuBO8Om4P7H/9sO1+xrKzNPonvedo2jRMca+3AkxT2YCLqjXUiXBPKajAAY7lQlALuY2kUg6zaYdQjHVUrckojsIPPX0jTYSQtSHjrwM1K1AquIy7sRRkfLZGj1hWj0MS97GDnJM4XqS6HcmmkeQ8uY3x1lWbFEdvckD/QYqgfok2VrcLWrVW99KELVtb5+YX1J/3XIYBay7trgoLdB9fHbPPtZUFBeK9tkuEtKM89mjsCmVb9pE8iYb3QjwgAxyucIWocg9Fybfus7F/IM0saFcyCQbKXjnsVjnaE4YDvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XL2IRNe9N6NLfvdtL9D1UbfUPpOoe3N4S9hit4NPRE0=;
+ b=G+WlQFBcaTlmMUnVKXLWsp5Xh8/sn2pT8wkfbVyPrKWgVtibse02+GkbCdZTnGykYRZAFD1KkUOtStcreE4uToASGjk+pc1XEUqdbNhSixRnv+/jcLFVKTeowgHnp1bPw+wqjDyIaSlcAxTch79oXTVrdF8e90WJNPcJLYTXTOxMfaWeePe8IVaGr7pg4hpIx6Syth5Qg5vUNA1HxcVJH+2qJmxQNseoVKkZgeEaWY+stU/61Xn1Eum1GkWQk93lwWxjG5dahM0Lr4JIfTCepl1NC4iirTRorg7fC5ul9Y4Q+9AZxUT43p4ETrmoHiR5LdPyG6j5LVv4BLOkv9Xyog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XL2IRNe9N6NLfvdtL9D1UbfUPpOoe3N4S9hit4NPRE0=;
+ b=K09RhlCO7NXlAzl567M1Ie3KqbbiiLS5KiH0hNbl5hLwp2gZQonM5NdEPD+Y3TfBJjQB3OQ87z/Q2oC4tY0mwtcqG9Cbe/0kk01h6xS1kbXyWnZDa+JOMvRk2Ii1U1D1d9QKfDX3lQzD2y0WlTg574jVE9MbE+emB+HUjB/CVac=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc) by SN7PR12MB7300.namprd12.prod.outlook.com
+ (2603:10b6:806:298::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Mon, 11 Aug
+ 2025 23:40:06 +0000
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::bed0:97a3:545d:af16]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::bed0:97a3:545d:af16%7]) with mapi id 15.20.8989.011; Mon, 11 Aug 2025
+ 23:40:05 +0000
+Message-ID: <92fd18a3-ac02-48e3-97a4-13e07740aadf@amd.com>
+Date: Mon, 11 Aug 2025 18:39:58 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 28/34] fs/resctrl: Auto assign counters on mkdir and
+ clean up on group removal
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ tony.luck@intel.com, james.morse@arm.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
+Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
+ akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
+ Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
+ seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
+ xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
+ sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
+ peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
+ mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
+ gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
+References: <cover.1753467772.git.babu.moger@amd.com>
+ <df758bfeb3f8a3e975891029b3a0ca90da3744f0.1753467772.git.babu.moger@amd.com>
+ <dbae9388-3fdc-4f26-9a1e-dd7abe73b0b0@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <dbae9388-3fdc-4f26-9a1e-dd7abe73b0b0@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA9PR10CA0022.namprd10.prod.outlook.com
+ (2603:10b6:806:a7::27) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250730-toicsti-bug-v3-1-dd2dac97f27a@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|SN7PR12MB7300:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3643b078-2134-423b-d899-08ddd9306659
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Qk9vdjRWQUpiUEliR0l1R215Nm5VN3RXUkRxQklDUThObDNBK3F6VXFBNVJJ?=
+ =?utf-8?B?NlJ5Sll6S0t1clB3UXhwS0RzV2I5Qk5odVhKYXJvUFJaL0x0Vjh4R0VET0Vo?=
+ =?utf-8?B?eDkyd3ZCQnFwWHcvRHEzYnlnWFNOYnBMelRFR3ZnUlRNRENCZTRFT1ZBNHo3?=
+ =?utf-8?B?WWNhK0EwTkMzb3ZQM3Blb0M2am1uUlgyclFsTzFUamdtUllRQjlkSTlHeFk4?=
+ =?utf-8?B?dzk1SE54K3hhQi9rRDF0ZE1mWm1iWkljZ0w4YzNxK0padkJQZ0ZoOGZYYjR3?=
+ =?utf-8?B?U3Vlc2pjZ0c1UFBUSDN3YXZSc0dxQ01HRUlZbVo3Rlg3cXRDcFFFS0c2ZU10?=
+ =?utf-8?B?Qk83anhMS2RPNHkwSXFhQTJqcmc2UlZtc3hPeW9mT1c2a0RoeVBuMTRLelBE?=
+ =?utf-8?B?ZWg0YVJ2OFZLR216WXJEdlFUdm5LdFcyam5TM2J2K2hUbnRadGRzNitPTUNp?=
+ =?utf-8?B?NjR1d0lNaU01MHpIYWErSUcrL3BXbmNXTGZEdk14Z3VyY1VOQi9nWUlERmcw?=
+ =?utf-8?B?U2NtcjYzc0RTT3pDdXpWV09Tc3oycFRrYkdGdFBnVkgzSnZJSzZlcjVKTUx3?=
+ =?utf-8?B?eDYzakQzdmZLVUQ2RlFEZlNHcUlnMUZUU2c1d3VnVXU2QitZWUo4WHAyK284?=
+ =?utf-8?B?Y29pT1Urcml1bUJxNU9udUh1bHN4aC8wNVlvVjZrMGxUWFkzN2dLaGp4OFhH?=
+ =?utf-8?B?c1BSdjh5TGRxRk42RjFjbjV2elBSeHFVZ05DVklwelZtRGt1WUZIUTd6dFFu?=
+ =?utf-8?B?YU5na3oyTEJ0SHBpTnZNVVBvQjdiMVdCUVJpbXBhWklGNnpOR2dYV1NreE9B?=
+ =?utf-8?B?WnJmcDRrUjZ0Z1pBVG9id3cwQUNSQjlPSTNzWW1ZN0ZUdlRKRVVFRC9pWWhQ?=
+ =?utf-8?B?aCtUdzREak5ZcHpYZVNOcEMzRi9Da3lIWDE0L1JseTdHaWVzc042MG42cjlS?=
+ =?utf-8?B?K3Fib0tERlRZcU90Tkx4eFoxU2lyYlUvN0oxSi9WTXFQelZ2OHJwM0hjZEk0?=
+ =?utf-8?B?K2JWYnNNVnlySEpQVUVYc0ZNUUUvOVJzSVVxemlqbnluMnN1QUlsZTBFUklE?=
+ =?utf-8?B?NjhHQ1AyamxZZkEzSGVFNlNpb2J4NHRLWjFvL1poSE1obVJJZklyYTY0cTVM?=
+ =?utf-8?B?Y0E3YzUyNE1GWEI1cmp3OERyeDg2c3Vhcm1JU3lZaXdHK3p2R242ejhkeWxY?=
+ =?utf-8?B?WWxEWjZEMlh6SS8vR2dZTEtqMkVlU2RNV3kzUHRIZktZYkJjM2lubXgwdUlC?=
+ =?utf-8?B?b3NqM2tWZ0puVENVNFgxVk9xM09uYWtpcTR1enNvaGVUaGZvUFkyRUVWQ3VN?=
+ =?utf-8?B?TmxkSm1sd0ZCcElaaXFkTkpTa2VNMjZ4Mnh0UDJ4M0RISkJQLzJJUGg4WDRS?=
+ =?utf-8?B?bW9memJsM0FFNmVYNFo5R1dqbFRIZTdIdkZiQzNBQjgwVDV6RlFlcmtqaW0x?=
+ =?utf-8?B?RzViSXJhMFQyNW1vN2NaT0ZJano5YUx6SmFLWFc0d1RsSi9WSSttUVBBOXVj?=
+ =?utf-8?B?cjVialgxMXdHRXZNWkxodVFoVXpuRkxaWGxodGJvYTVpVGQwd1EzVG81VHpG?=
+ =?utf-8?B?aVJZVU9DcGNhOXdPTGRyR0tNWndRUUpXU005YXhzenRxdUtHZmdUNzhlWnM1?=
+ =?utf-8?B?Ym1vRjRSRHVrTFJLNituZVZIaWM5cVgzY1Ewa0dBWWV3OXowT3RHWEN3MmRN?=
+ =?utf-8?B?SlM1WXNWczVOMnRzOVNNTGVjWGNIbnB2RXdXOWNJU216MW5WQ21WYmtDRk9B?=
+ =?utf-8?B?OFNQeG55aUx1N0c2d29OclQ1NS9jRVd6VnpuWHd2ZGluVTRrR0krNlo5NnEz?=
+ =?utf-8?B?Y2pHNFZ5SUZXZHBxcU84eHVSazR0SEY0VGIzUUtDVE1TcGhndnJNWGk0Uno2?=
+ =?utf-8?B?ZVBzT25VSGxkQ29tSFNreFJZcmlYV1BEc2dUOHBRNmNJclE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bTRuU1R5d0owb08vUGtCeVF5NjhlZzlRSDJDWjBlWmV6bGlUdjFGWmgyYmph?=
+ =?utf-8?B?b21jOTU2L0VqUHJ1eittUW5RaitIczdWMEl5VmVIN1prT1FpR2lueWdiUHpW?=
+ =?utf-8?B?dE5sTnpEbVB5b3FpRVdNZmVNcXVvb0FUSkZsTklhVDBuMURNRmRjZ0JFcmJK?=
+ =?utf-8?B?OFI4eDl2M2h4Nmo1YUVsWmlnWXBlbzR5V1E3V2F3a1V6cnBPM29LZ1pBQXhn?=
+ =?utf-8?B?K3d1Z2U2UllyellHTXVKZmNJWVVxN1lhb01BNGtvUHlUQ1I3cVQyaWtVTVZK?=
+ =?utf-8?B?WGZqUUc3aVVCYTQ1R0hNc3ZXRFRJUUZpNE1EWFFsLzJLTUkyenFOd0hoZkI3?=
+ =?utf-8?B?Kzc3OXpOK3NXaWFOdWtCMktYZmNIcDd5Rm9vWDJRWnBMblBCNU81TGsxS1Vs?=
+ =?utf-8?B?SmdYUW56UmtGcEFoWGNOMkZST0ZEblFKMHBNT0x1WXpoVjNkUnY4bExCZTl1?=
+ =?utf-8?B?cUFlM2U2UXN1TGhZcC91ZmQwV2dIeW1GeSsva1REMnpmcTFMcnVqZUtyelZG?=
+ =?utf-8?B?czJKYzZmQkZkazhubHBGbFY3YXVnK1RDTlpWS002aldZZ29VMi9XZGRoalMv?=
+ =?utf-8?B?VHJLUG5WK3ZzMy9kSFBscEp0YldqdlV0TTl0SkppdDFYTlFwN1lrcHNTUmVR?=
+ =?utf-8?B?Mm10OEVHT0V4NTFKVFpjUUNCQzR0bFVtbnVYYzRLdFRPSno1WmJGaW5BUWNW?=
+ =?utf-8?B?Q2xpUEJEbGxOK3BESDdZbjZZMXpDOEY4aTJUTEJOMFVXZlBkZytTQ0E1VHp6?=
+ =?utf-8?B?U21aVlRvWkZZTU4wMndoZThsajN4ZE5YZWlCNCsrMmVyQ1NjZU1Fb0x3elY3?=
+ =?utf-8?B?bmFPZEhWcjFFU1hsalM0MVhaYVdCcFM1Zk5nOGxiNktiZ2RXQmV5UUEzeDVw?=
+ =?utf-8?B?ZHBLTCtzUmJ0emFNTmdKRmNWZFUveUtNT2wwaUJhZGUrNC9hYzk3MHErdFlE?=
+ =?utf-8?B?ZVk2QzBsRnZzMm0wTVdLN2trVWV4dzNrcUZYOTZwU090MkVST2l4QnB2aUw4?=
+ =?utf-8?B?L1p1M0FibVRLMi9RYVJGV2FyNitUb0RUMlRvVzA5RnU0QVR0emlwYUhrL0dH?=
+ =?utf-8?B?UmlmWHlTWm1lbWlEdEVVUzdXeHRSWnVQTXpPclgwdGNKaEtBWkpOVFBrNUNz?=
+ =?utf-8?B?T0FEdjFpemNnTmRtVWZBb1ZuUjBBdlY4S0NnK0l0TzBIb2h5MXVMMGRLZHl0?=
+ =?utf-8?B?c2p6cWFoM0grYkxiSmNEK2lrNkVna3RWbkFBbVUvMlN6bEYwb0ZiczdQNFZB?=
+ =?utf-8?B?TDRKSUl2SGNkbFBVRW82bEtEdEZ6ZXc0aTJIMmI3VTBFWXJJb1Y4ZVRuSjkz?=
+ =?utf-8?B?T3ZQbG10aUdWRzZDOVZWQk5xMUpMT3pzRmJZeE5vZm5SUERzaythNTBWSHha?=
+ =?utf-8?B?ZldreGdiV0hjNkZkVGh6ZTVMbUlqMUh2Y1ZrbXRRVXpiajdYcUlza2lzM2Zn?=
+ =?utf-8?B?L29kbjdUMGdUVWNyQnAxTEFmQXlQNGZpQ0w5THlzMjZMWEt6OGR3Y2lTLzVk?=
+ =?utf-8?B?YmVrMWdDZ1dKeDgzWk8rbEFaL2YxYy9uZ0s4TUhGSGFpVEx1M05WMnRVUFlM?=
+ =?utf-8?B?dmZCZ2FCbFRmdW01a2h4VnEzSWZHRGRKVUljQmZnTjYxczBXRU9oMUlrNXRx?=
+ =?utf-8?B?WWIrVUhxV1lDbXpsekREOHI0TmowTkJUMTJRaDV3WTY2K21mMEV6V0xPSzBP?=
+ =?utf-8?B?Z2VXQ0plL2dwVHM3STRlUXJBUVVzTDIxSGV1YnRUbUcxRXlxRFRWYTM4Yi9P?=
+ =?utf-8?B?V25WSWhsR3JlQ2U5WklMUlgyQUdub0tJS1RkQm9KZnlYR29POFBpVmVPUnVT?=
+ =?utf-8?B?ZUsxOVJucVg0Y1RPT2RWd2M2SFJqUjZvN0trSmJINko3NS9NZjZTSVZINmZL?=
+ =?utf-8?B?WVdOeXZlMGtkSEZIUnpEWVBjMWIvUlZTQjkxYVZGY0RhWVUrUExaaVkxcFZS?=
+ =?utf-8?B?QzBQVHpFa3ZKZExObjdGYy9rUkcrS2RDcDQ4M0plNXN0bUNZK3FKaEwwQlU4?=
+ =?utf-8?B?SmtyNTRHWW1zdWJRSXh0UzNYWC9wZjVDWjFFeUVXNTVWTUZJTjNxOFc4Ky8y?=
+ =?utf-8?B?ejQzdUhJdDNNZHIvSStsQ01xNDlpcXNicmNwdzJmTjRHNW1IKzVYbWU0QjBs?=
+ =?utf-8?Q?D8DN9oq/op/UmpXhNyEqGE22j?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3643b078-2134-423b-d899-08ddd9306659
+X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 23:40:05.7962
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xA+Y5tinLKoD89HKA692CPP970QA+CduT7INg81CT9oBSW64JhCNTDK3ka3P8leq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7300
 
-Hi,
+Hi Reinette,
 
-On Wed, Jul 30, 2025 at 06:14:43PM -0600, Abhinav Saxena wrote:
-
-<snip>
-
-> ---
->  tools/testing/selftests/tty/Makefile           |   6 +-
->  tools/testing/selftests/tty/config             |   1 +
->  tools/testing/selftests/tty/tty_tiocsti_test.c | 650 +++++++++++++++++++++++++
->  3 files changed, 656 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/tty/Makefile b/tools/testing/selftests/tty/Makefile
-> index 50d7027b2ae3..7f6fbe5a0cd5 100644
-> --- a/tools/testing/selftests/tty/Makefile
-> +++ b/tools/testing/selftests/tty/Makefile
-> @@ -1,5 +1,9 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS = -O2 -Wall
-> -TEST_GEN_PROGS := tty_tstamp_update
-> +TEST_GEN_PROGS := tty_tstamp_update tty_tiocsti_test
-> +LDLIBS += -lcap
->  
->  include ../lib.mk
-> +
-> +# Add libcap for TIOCSTI test
-> +$(OUTPUT)/tty_tiocsti_test: LDLIBS += -lcap
-
-Is it necessary to append -lcap to LDLIBS twice? Once globally and once
-for that TU?
-
-> diff --git a/tools/testing/selftests/tty/config b/tools/testing/selftests/tty/config
-> new file mode 100644
-> index 000000000000..c6373aba6636
-> --- /dev/null
-> +++ b/tools/testing/selftests/tty/config
-> @@ -0,0 +1 @@
-> +CONFIG_LEGACY_TIOCSTI=y
-> diff --git a/tools/testing/selftests/tty/tty_tiocsti_test.c b/tools/testing/selftests/tty/tty_tiocsti_test.c
-> new file mode 100644
-> index 000000000000..1eafef6e36fa
-> --- /dev/null
-> +++ b/tools/testing/selftests/tty/tty_tiocsti_test.c
-> @@ -0,0 +1,650 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * TTY Tests - TIOCSTI
-> + *
-> + * Copyright © 2025 Abhinav Saxena <xandfury@gmail.com>
-> + */
-> +
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <fcntl.h>
-> +#include <sys/ioctl.h>
-> +#include <errno.h>
-> +#include <stdbool.h>
-> +#include <string.h>
-> +#include <sys/socket.h>
-> +#include <sys/wait.h>
-> +#include <pwd.h>
-> +#include <termios.h>
-> +#include <grp.h>
-> +#include <sys/capability.h>
-> +#include <sys/prctl.h>
-> +#include <pty.h>
-> +#include <utmp.h>
-> +
-> +#include "../kselftest_harness.h"
-> +
-> +enum test_type {
-> +	TEST_PTY_TIOCSTI_BASIC,
-> +	TEST_PTY_TIOCSTI_FD_PASSING,
-> +	/* other tests cases such as serial may be added. */
-> +};
-> +
-> +/*
-> + * Test Strategy:
-> + * - Basic tests: Use PTY with/without TIOCSCTTY (controlling terminal for
-> + *   current process)
-> + * - FD passing tests: Child creates PTY, parent receives FD (demonstrates
-> + *   security issue)
-> + *
-> + * SECURITY VULNERABILITY DEMONSTRATION:
-> + * FD passing tests show that TIOCSTI uses CURRENT process credentials, not
-> + * opener credentials. This means privileged processes can be given FDs from
-> + * unprivileged processes and successfully perform TIOCSTI operations that the
-> + * unprivileged process couldn't do directly.
-> + *
-> + * Attack scenario:
-> + * 1. Unprivileged process opens TTY (direct TIOCSTI fails due to lack of
-> + *    privileges)
-> + * 2. Unprivileged process passes FD to privileged process via SCM_RIGHTS
-> + * 3. Privileged process can use TIOCSTI on the FD (succeeds due to its
-> + *    privileges)
-> + * 4. Result: Effective privilege escalation via file descriptor passing
-> + *
-> + * This matches the kernel logic in tiocsti():
-> + * 1. if (!tty_legacy_tiocsti && !capable(CAP_SYS_ADMIN)) return -EIO;
-> + * 2. if ((current->signal->tty != tty) && !capable(CAP_SYS_ADMIN))
-> + *        return -EPERM;
-> + * Note: Both checks use capable() on CURRENT process, not FD opener!
-> + *
-> + * If the file credentials were also checked along with the capable() checks
-> + * then the results for FD pass tests would be consistent with the basic tests.
-> + */
-> +
-> +FIXTURE(tiocsti)
-> +{
-> +	int pty_master_fd; /* PTY - for basic tests */
-> +	int pty_slave_fd;
-> +	bool has_pty;
-> +	bool initial_cap_sys_admin;
-> +	int original_legacy_tiocsti_setting;
-> +	bool can_modify_sysctl;
-> +};
-> +
-> +FIXTURE_VARIANT(tiocsti)
-> +{
-> +	const enum test_type test_type;
-> +	const bool controlling_tty; /* true=current->signal->tty == tty */
-> +	const int legacy_tiocsti; /* 0=restricted, 1=permissive */
-> +	const bool requires_cap; /* true=with CAP_SYS_ADMIN, false=without */
-> +	const int expected_success; /* 0=success, -EIO/-EPERM=specific error */
-> +};
-> +
-> +/*
-> + * Tests Controlling Terminal Variants (current->signal->tty == tty)
-> + *
-> + * TIOCSTI Test Matrix:
-> + *
-> + * | legacy_tiocsti | CAP_SYS_ADMIN | Expected Result | Error |
-> + * |----------------|---------------|-----------------|-------|
-> + * | 1 (permissive) | true          | SUCCESS         | -     |
-> + * | 1 (permissive) | false         | SUCCESS         | -     |
-> + * | 0 (restricted) | true          | SUCCESS         | -     |
-> + * | 0 (restricted) | false         | FAILURE         | -EIO  |
-> + */
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_pty_permissive_withcap) {
-> +	.test_type = TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty = true,
-> +	.legacy_tiocsti = 1,
-> +	.requires_cap = true,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_pty_permissive_nocap) {
-> +	.test_type = TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty = true,
-> +	.legacy_tiocsti = 1,
-> +	.requires_cap = false,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_pty_restricted_withcap) {
-> +	.test_type = TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty = true,
-> +	.legacy_tiocsti = 0,
-> +	.requires_cap = true,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_pty_restricted_nocap) {
-> +	.test_type = TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty = true,
-> +	.legacy_tiocsti = 0,
-> +	.requires_cap = false,
-> +	.expected_success = -EIO, /* FAILURE: legacy restriction */
-> +}; /* clang-format on */
-> +
-> +/*
-> + * Note for FD Passing Test Variants
-> + * Since we're testing the scenario where an unprivileged process pass an FD
-> + * to a privileged one, .requires_cap here means the caps of the child process.
-> + * Not the parent; parent would always be privileged.
-> + */
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_permissive_withcap) {
-> +	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty = true,
-> +	.legacy_tiocsti = 1,
-> +	.requires_cap = true,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_permissive_nocap) {
-> +	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty = true,
-> +	.legacy_tiocsti = 1,
-> +	.requires_cap = false,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_restricted_withcap) {
-> +	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty = true,
-> +	.legacy_tiocsti = 0,
-> +	.requires_cap = true,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_pty_restricted_nocap) {
-> +	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty = true,
-> +	.legacy_tiocsti = 0,
-> +	.requires_cap = false,
-> +	.expected_success = -EIO,
-> +}; /* clang-format on */
-> +
-> +/*
-> + * Non-Controlling Terminal Variants (current->signal->tty != tty)
-> + *
-> + * TIOCSTI Test Matrix:
-> + *
-> + * | legacy_tiocsti | CAP_SYS_ADMIN | Expected Result | Error |
-> + * |----------------|---------------|-----------------|-------|
-> + * | 1 (permissive) | true          | SUCCESS         | -     |
-> + * | 1 (permissive) | false         | FAILURE         | -EPERM|
-> + * | 0 (restricted) | true          | SUCCESS         | -     |
-> + * | 0 (restricted) | false         | FAILURE         | -EIO  |
-> + */
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_permissive_withcap) {
-> +	.test_type = TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty = false,
-> +	.legacy_tiocsti = 1,
-> +	.requires_cap = true,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_permissive_nocap) {
-> +	.test_type = TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty = false,
-> +	.legacy_tiocsti = 1,
-> +	.requires_cap = false,
-> +	.expected_success = -EPERM,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_restricted_withcap) {
-> +	.test_type = TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty = false,
-> +	.legacy_tiocsti = 0,
-> +	.requires_cap = true,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, basic_nopty_restricted_nocap) {
-> +	.test_type = TEST_PTY_TIOCSTI_BASIC,
-> +	.controlling_tty = false,
-> +	.legacy_tiocsti = 0,
-> +	.requires_cap = false,
-> +	.expected_success = -EIO,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_permissive_withcap) {
-> +	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty = false,
-> +	.legacy_tiocsti = 1,
-> +	.requires_cap = true,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_permissive_nocap) {
-> +	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty = false,
-> +	.legacy_tiocsti = 1,
-> +	.requires_cap = false,
-> +	.expected_success = -EPERM,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_restricted_withcap) {
-> +	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty = false,
-> +	.legacy_tiocsti = 0,
-> +	.requires_cap = true,
-> +	.expected_success = 0,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(tiocsti, fdpass_nopty_restricted_nocap) {
-> +	.test_type = TEST_PTY_TIOCSTI_FD_PASSING,
-> +	.controlling_tty = false,
-> +	.legacy_tiocsti = 0,
-> +	.requires_cap = false,
-> +	.expected_success = -EIO,
-> +}; /* clang-format on */
-> +
-> +/* Helper function to send FD via SCM_RIGHTS */
-> +static int send_fd_via_socket(int socket_fd, int fd_to_send)
-> +{
-> +	struct msghdr msg = { 0 };
-> +	struct cmsghdr *cmsg;
-> +	char cmsg_buf[CMSG_SPACE(sizeof(int))];
-> +	char dummy_data = 'F';
-> +	struct iovec iov = { .iov_base = &dummy_data, .iov_len = 1 };
-> +
-> +	msg.msg_iov = &iov;
-> +	msg.msg_iovlen = 1;
-> +	msg.msg_control = cmsg_buf;
-> +	msg.msg_controllen = sizeof(cmsg_buf);
-> +
-> +	cmsg = CMSG_FIRSTHDR(&msg);
-> +	cmsg->cmsg_level = SOL_SOCKET;
-> +	cmsg->cmsg_type = SCM_RIGHTS;
-> +	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-> +
-> +	memcpy(CMSG_DATA(cmsg), &fd_to_send, sizeof(int));
-> +
-> +	return sendmsg(socket_fd, &msg, 0) < 0 ? -1 : 0;
-> +}
-> +
-> +/* Helper function to receive FD via SCM_RIGHTS */
-> +static int recv_fd_via_socket(int socket_fd)
-> +{
-> +	struct msghdr msg = { 0 };
-> +	struct cmsghdr *cmsg;
-> +	char cmsg_buf[CMSG_SPACE(sizeof(int))];
-> +	char dummy_data;
-> +	struct iovec iov = { .iov_base = &dummy_data, .iov_len = 1 };
-> +	int received_fd = -1;
-> +
-> +	msg.msg_iov = &iov;
-> +	msg.msg_iovlen = 1;
-> +	msg.msg_control = cmsg_buf;
-> +	msg.msg_controllen = sizeof(cmsg_buf);
-> +
-> +	if (recvmsg(socket_fd, &msg, 0) < 0)
-> +		return -1;
-> +
-> +	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
-> +		if (cmsg->cmsg_level == SOL_SOCKET &&
-> +		    cmsg->cmsg_type == SCM_RIGHTS) {
-> +			memcpy(&received_fd, CMSG_DATA(cmsg), sizeof(int));
-> +			break;
-> +		}
-> +	}
-> +
-> +	return received_fd;
-> +}
-> +
-> +static inline bool has_cap_sys_admin(void)
-> +{
-> +	cap_t caps = cap_get_proc();
-> +
-> +	if (!caps)
-> +		return false;
-> +
-> +	cap_flag_value_t cap_val;
-> +	bool has_cap = (cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE,
-> +				     &cap_val) == 0) &&
-> +		       (cap_val == CAP_SET);
-> +
-> +	cap_free(caps);
-> +	return has_cap;
-> +}
-> +
-> +/*
-> + * Drop to nobody user (uid/gid 65534) to lose all capabilities
-> + */
-> +static inline bool drop_to_nobody(struct __test_metadata *_metadata)
-> +{
-
-Maybe we can retrieve the uid/gid from getpwnam(3) with:
-  const struct passwd *pw = getpwnam("nobody");
-
-... then use pw->pw_{uid,gid}. I suggest this because there might be
-portability issues with the hardcoded 65534 -- not 100% sure though.
-
-> +	ASSERT_EQ(setgroups(0, NULL), 0);
-> +	ASSERT_EQ(setgid(65534), 0);
-> +	ASSERT_EQ(setuid(65534), 0);
-> +
-> +	ASSERT_FALSE(has_cap_sys_admin());
-> +	return true;
-> +}
-> +
-> +static inline int get_legacy_tiocsti_setting(struct __test_metadata *_metadata)
-> +{
-> +	FILE *fp;
-> +	int value = -1;
-> +
-> +	fp = fopen("/proc/sys/dev/tty/legacy_tiocsti", "r");
-> +	if (!fp) {
-> +		/* legacy_tiocsti sysctl not available (kernel < 6.2) */
-> +		return -1;
-> +	}
-> +
-> +	if (fscanf(fp, "%d", &value) == 1) {
-> +		if (value < 0 || value > 1)
-> +			value = -1; /* Invalid value */
-> +	} else {
-> +		value = -1; /* Failed to parse */
-> +	}
-> +
-> +	fclose(fp);
-> +	return value;
-> +}
-> +
-
-<snip>
-
-> ---
-> base-commit: 283564a43383d6f26a55546fe9ae345b5fa95e66
-> change-id: 20250618-toicsti-bug-7822b8e94a32
-> 
-> Best regards,
-> -- 
-> Abhinav Saxena <xandfury@gmail.com>
-> 
+On 7/30/2025 3:08 PM, Reinette Chatre wrote:
+> Hi Babu,
 >
+> On 7/25/25 11:29 AM, Babu Moger wrote:
+>
+>> ---
+>>   fs/resctrl/monitor.c  |  1 +
+>>   fs/resctrl/rdtgroup.c | 70 +++++++++++++++++++++++++++++++++++++++++--
+>>   2 files changed, 69 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+>> index 6205bbfe08fb..5cf1b79c17f5 100644
+>> --- a/fs/resctrl/monitor.c
+>> +++ b/fs/resctrl/monitor.c
+>> @@ -1072,6 +1072,7 @@ int resctrl_mon_resource_init(void)
+>>   		mon_event_all[QOS_L3_MBM_LOCAL_EVENT_ID].evt_cfg = READS_TO_LOCAL_MEM |
+>>   								   READS_TO_LOCAL_S_MEM |
+>>   								   NON_TEMP_WRITE_TO_LOCAL_MEM;
+>> +		r->mon.mbm_assign_on_mkdir = true;
+>>   		resctrl_file_fflags_init("num_mbm_cntrs",
+>>   					 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
+>>   		resctrl_file_fflags_init("available_mbm_cntrs",
+>> diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+>> index bf04235d2603..d087ba990cd3 100644
+>> --- a/fs/resctrl/rdtgroup.c
+>> +++ b/fs/resctrl/rdtgroup.c
+> Please move rdtgroup_assign_cntrs() and rdtgroup_unassign_cntrs() to
+> be with counter management code in monitor.c
 
-Justin
+Sure.Â  Taken care of this.
+
+Thanks
+
+Babu
+
 
