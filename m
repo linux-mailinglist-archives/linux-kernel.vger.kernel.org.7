@@ -1,189 +1,156 @@
-Return-Path: <linux-kernel+bounces-763302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DD3B212F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:11:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DAADB212F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25573E174A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF8D4282FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DBB2D47F0;
-	Mon, 11 Aug 2025 17:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E852D47E1;
+	Mon, 11 Aug 2025 17:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DsSHFWlf"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dk4Y/2aJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24052D3A74;
-	Mon, 11 Aug 2025 17:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE492C21EE;
+	Mon, 11 Aug 2025 17:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754932295; cv=none; b=U1PjLRTfJl5uMYz84OPw7pKV/uEZnBUawKIswzCTo62zvsuPm72BhjE0IZutTov48xq3UtmTiKd84WPe/Vic1C58oJcYF7pPLdkO1GIptWk6KcOY6d3tZ4unkPk92m8ZayjQGrhLF/5uqzi9Ivxemn+m2MIUyh5Q3iLEm4eWDdY=
+	t=1754932308; cv=none; b=qjtNDjcwihB6ifjwYa9OQ8ETTn7zxyCqIFFF8qUZAG1FcO0IZ2f28Rdb+H9YJKrm5biMLZdoZE4kxu9ArA0bDzDi6srM/uRq7y1QgTbBpYrIGNJ/ECa1g11yuzkKp7XNE4nn0F3/KOFiLQ8iRAqBxPe/75/HbAlGQPLJLl0oMGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754932295; c=relaxed/simple;
-	bh=wVc7rtdKgh4ftRY8mKK68u8nLHsymZqndxQw+3zFRFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sZXcs6bYHFxxMgpZLgJu51EaXM2U3nw9M4DLGqBbUNpawQQw3sgRpX/rcplfhxP0NrhzWAxfebALNOHHRvNNqYnUP4olAI4VRqR+PCSfG8puYJsC7cMBfB6CCabtsWsNH9G31cKGrZcPh4ajFhaOtQHYjnsoeWCxoGlpKQTqEbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DsSHFWlf; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-70736b2ea12so23688166d6.1;
-        Mon, 11 Aug 2025 10:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754932292; x=1755537092; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qEh+hVLSwc8F1JBvdb8QBbaUWYY2ob9KADUt5QO1TRk=;
-        b=DsSHFWlfqpKHIvFulNs60hhj0qgTPrseLqbM3v+M0s6jXmx1B3Oa9L/InFGoooO01v
-         eavOaIXBhesioBUl4IEqbQ3HT31pY2f1j5bgdjpEwnbvgiYGXA0jzOjtzH1D/ub0UHWK
-         RjodAMLlnOFQyJUmLcBvKpjUbSee3nxfEQpCmMVolaIr3A0af4v8LLvOv01FXpfRvke9
-         9/J468E4FtgXCXI8BYZsZp3ysvSCOVzJ14FtoM/zxEcKtSWJNW0rRXGWBQADgS6qBeb8
-         ZvZq3thQT2ZLq8DWTkQUHGz1Mbydm2B2yz4z52+wsQJ4SkJDvft+lFVIt+B2KppJuPp/
-         hEmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754932292; x=1755537092;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qEh+hVLSwc8F1JBvdb8QBbaUWYY2ob9KADUt5QO1TRk=;
-        b=YgWxeDGFV8AIXkMxVJPvIcahhJp9a440vKHN2qYI8zQMYNH2sU5qR89j57/kuujyvT
-         Jr3tzaa0crxwRFt4KVlLpk4dB66wwVwjxwSv0Av0uUk52hZh5olpJMBGUGkqgl+I3owo
-         F9SgSvbPsPg/r7AWN9DWuNIkomBG78VBtZbZlK7iEkSY9R9bCQNo0HQ75V/jef7mFs5q
-         xWE/jLzmQn/zpEBT/O94sHRkoeQYnJcjG0OPM0rt5dib27ao0PJQty3vmOIBfdGPGrWs
-         cjztqnWKxZCp+sVj/tpzlrz0GmIHGi5y/c/8iSwfvo3QeKkO4rTJrd14FfCf2GGIJ4LN
-         c4EA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjWSzM0OosqZyKsQQPlVy2YjBs7n+Zbu4SyVLeZhNu8w/I83g1LOo4dXAq2buCoWJQMNQ1K60Snw8M@vger.kernel.org, AJvYcCUoK9+mkSlq4zH6T7/S5RnkmgmMEvzXwlY/81mPFDLocykLZfZ951rwQzvmLuGso0mMThpsoxebZBU5UPoAgBo=@vger.kernel.org, AJvYcCW0Z7khO8rbCvLyuV4OlrBfAQVvp+ZpPWwJEZsMgZ5Gw1XIRfU8frNxhjaXr2H4pjiqdvriWwMi2dObk0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfcAskmm6g+i/QplUDZZrjpYx+pqAINk6xfG/ocuJBz4sUoDzT
-	yeTU+8VJWtHmuA5O3hu516jpio+5Pnd4Dzkz4a52gS9GJbfJqclM5+Sm
-X-Gm-Gg: ASbGnctnO8fMBHQ5SRiREH2czPJ9oGzos/WOny5/4QiInbBJi4PHLuCACaOqgIDb+UN
-	T8cxOzPIYcY/nxnGZNgPURXm67LNro7qpmdc3+DhxztnAOlqzU/fRWKHFl04J2DWhwxuPp3JQXs
-	AOI3MXTj14Y0fDsb1kYIRZGt4A1csnN2sCjNpBNMuCpkc1BYlKKszFkt+3tkI0gSae8/KFc3cGr
-	H12zcpeSw0/vwi4JMacv7tZj8H31ipPZ+3yrAE2BJbXQ1kqbm+W+azkrqIDU/OwRmAgOezE8bGm
-	wRtfKoIP7T4Uwyo5KgrmLj8vZeVF8MlPBnVunsuFpcyjltUwauWWE0XvGNHcWjOHKZgAcQy7fPY
-	dYtbPBHz1WEgpCimcyLpxGCRRrPbrcZC8+NFoE+x7g/WY4ZAUkKUsZ1hlPw2LxgKgw33PvjjE4i
-	8/p8HL7PJahy0dFzCY5m8LC12gY5FMGbgCSQ==
-X-Google-Smtp-Source: AGHT+IFaL0mWhUrWhMfjB0nn3eILU1Iot3PDvHyYKBmQhv3IrFEoymjnGL3Y/0LvSvp+MZKa+8g8gg==
-X-Received: by 2002:a05:6214:dc6:b0:702:d655:f4e9 with SMTP id 6a1803df08f44-7099a2c5410mr159359536d6.18.1754932292183;
-        Mon, 11 Aug 2025 10:11:32 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ce39fb3sm158033296d6.82.2025.08.11.10.11.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 10:11:31 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 11C29F40068;
-	Mon, 11 Aug 2025 13:11:31 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Mon, 11 Aug 2025 13:11:31 -0400
-X-ME-Sender: <xms:QiSaaFgUhH2okCVIM3lJFIaxNTlRGcsE1rqdTQ9zhPJBnVIMNPdA5g>
-    <xme:QiSaaAnDSUJNnNFqpyD5qkszOzkoqjSbpSffkCzIG6g0GtrpEVxjyw_Wx86pbqKar
-    Oib-VnBNNpl0O02Yw>
-X-ME-Received: <xmr:QiSaaGx-0S3OgGmQAHf6MMZgSMAoxbQ_fNiP4Sc07Q_Lx51ixTN_pNZ2fw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeeftddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffei
-    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
-    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
-    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
-    gvrdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopegurghnihgvlhdrrghlmhgvihgurgestgholhhlrggsohhrrgdrtghomhdprh
-    gtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidr
-    ghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguh
-    hordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgt
-    ohhmpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopehtmhhg
-    rhhoshhssehumhhitghhrdgvughupdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdroh
-    hrgh
-X-ME-Proxy: <xmx:QiSaaDsuR59-eXq4fNYQ0iiFPG22mp3OImHuCqtZhCOQChUEUFPXmw>
-    <xmx:QySaaDvp8bEe118GZ3zAvHhh7arN4DxuQsveCx3SPXxNjzWJEHnUxw>
-    <xmx:QySaaJlETmKFcoZic2H0cXHsljJ59qJZVZK_zN2KlKSWlWt7FOhImQ>
-    <xmx:QySaaJuC0pRItfR8WSLcRdNBwDfaWxA0KaW7vEQUZNRCzJYpDqq_qA>
-    <xmx:QySaaIMmKYPp9nHCjlzAZ90N9R1dQLrxAvfjJBK2JZEOgBj7vzqsTiw_>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Aug 2025 13:11:30 -0400 (EDT)
-Date: Mon, 11 Aug 2025 10:11:29 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v9 7/7] rust: irq: add &Device<Bound> argument to irq
- callbacks
-Message-ID: <aJokQTM97xBMXxVo@Mac.home>
-References: <20250811-topics-tyr-request_irq2-v9-0-0485dcd9bcbf@collabora.com>
- <20250811-topics-tyr-request_irq2-v9-7-0485dcd9bcbf@collabora.com>
- <32B71539-BF90-4815-9085-2963F5DD69B5@collabora.com>
+	s=arc-20240116; t=1754932308; c=relaxed/simple;
+	bh=hVFK3Dex4Wp89FAfhOVOFn0MpP5+pbqHepymD3AB6oI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u6/59uGJp3kAG9a6vg+Qb3qrKx6f0uMmYkH/PyqZ5UX4vuko96j4msDSkxzcvEb+2eSVdElOWHbBG14S8NSVFCAdyayJS8owTW31F1DmPbfA6jwvFHlzniybLzr9QO5vrtTLabT6DPqQJdf3q8MKadEGYm6EhCRKB7L73n5490M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dk4Y/2aJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF6EC4CEED;
+	Mon, 11 Aug 2025 17:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754932308;
+	bh=hVFK3Dex4Wp89FAfhOVOFn0MpP5+pbqHepymD3AB6oI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dk4Y/2aJys1m9oWflBiX0bC8I4AuRRmLNlMrZsnLRWnaOuh7Zyqc9iEYIDJOVultC
+	 gUJnY2TibSESE6iH4b5yIeiMPfL5ciVBXImH1CC+TpxWLPGuMgsUuy6/JcvCibIDhi
+	 3SCjfdnty8fmeCdg/DL5hSQD0xxxGl+8RzcxTg/LlrTvApHrhnq9haayCWuhFd+mBA
+	 x1INC7MkeJXreopJw+9u/IOckIz5HtHqI/qx0VdQsPZqtRRGGkewiClNqlo9WRVoPl
+	 acSfGJfNVJeBZGctPjz66O9wM0T1kximvgtRM7KFZb8vWy+nIfKqEn/W1hFr167wF7
+	 pU5CUMs7lpy9g==
+Message-ID: <7c957d52-8f79-4d2d-8463-770b9121c3ce@kernel.org>
+Date: Mon, 11 Aug 2025 19:11:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32B71539-BF90-4815-9085-2963F5DD69B5@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/4] dt-bindings: ufs: qcom: Document MCQ register
+ space for UFS
+To: Bjorn Andersson <andersson@kernel.org>,
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+ bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, konradybcio@kernel.org, agross@kernel.org,
+ James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+ linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250811143139.16422-1-quic_rdwivedi@quicinc.com>
+ <20250811143139.16422-2-quic_rdwivedi@quicinc.com>
+ <gcjyrmfxv7s2j7zkm5gcfn7bmuihq4lrm7cwjgpax6hnok7pxm@wanm5thogmzd>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <gcjyrmfxv7s2j7zkm5gcfn7bmuihq4lrm7cwjgpax6hnok7pxm@wanm5thogmzd>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 02:00:47PM -0300, Daniel Almeida wrote:
+On 11/08/2025 17:02, Bjorn Andersson wrote:
+> On Mon, Aug 11, 2025 at 08:01:36PM +0530, Ram Kumar Dwivedi wrote:
+>> Document Multi-Circular Queue (MCQ) register space for
+>> Qualcomm UFS controllers.
+>>
+>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> ---
+>>  .../devicetree/bindings/ufs/qcom,ufs.yaml        | 16 ++++++++++------
+>>  1 file changed, 10 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+>> index 6c6043d9809e..daf681b0e23b 100644
+>> --- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+>> +++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+>> @@ -89,9 +89,13 @@ properties:
+>>      maxItems: 2
+>>  
+>>    reg-names:
+>> -    items:
+>> -      - const: std
+>> -      - const: ice
+>> +    oneOf:
+>> +      - items:
+>> +          - const: std
+>> +          - const: ice
+>> +      - items:
+>> +          - const: ufs_mem
+>> +          - const: mcq
 > 
+> So you can either "std" and "ice", or "ufs_mem" and "mcq".
 > 
-> > On 11 Aug 2025, at 13:03, Daniel Almeida <daniel.almeida@collabora.com> wrote:
-> > 
-> > From: Alice Ryhl <aliceryhl@google.com>
-> > 
-> > When working with a bus device, many operations are only possible while
-> > the device is still bound. The &Device<Bound> type represents a proof in
-> > the type system that you are in a scope where the device is guaranteed
-> > to still be bound. Since we deregister irq callbacks when unbinding a
-> > device, if an irq callback is running, that implies that the device has
-> > not yet been unbound.
-> > 
-> > To allow drivers to take advantage of that, add an additional argument
-> > to irq callbacks.
-> > 
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> 
-> Sorry. I forgot to add my SOB here.
-> 
-> 
-> Perhaps this can be added when the patch is being applied in order to cut down on the
-> number of versions, and therefore avoid the extra noise? Otherwise let me know.
-> 
+> Does this imply that "std" changes name to "ufs_mem"? Why?
+> Is MCQ incompatible with ICE?
+I commented on v1 what has to be fixed. I also said I will provide the
+actual fix and then this is sent ignoring my comments and ignoring my fix.
 
-I think it's fine to submit with only Alice's SoB, my understanding is
-that you won't necessarily need to add your SoB if you are simply
-re-submitting a patch (with minor changes). There are changes where your
-SoB is needed: 1) you change the code significantly, in which case, you
-may also need to add "Co-Developed-by" for Alice as well; 2) you're
-submitting the patch as a maintainer, and you have queued that patch
-already somewhere in your tree, in this case SoB shows how the patch
-flows around. Of course, either case it's better to sync with Alice
-first, which I believe you have already done that.
+So no, this does not get fixed.
 
-While I'm at it,
+NAK.
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-
-Regards,
-Boqun
-
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> 
-> 
+Best regards,
+Krzysztof
 
