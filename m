@@ -1,166 +1,140 @@
-Return-Path: <linux-kernel+bounces-763539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D978B21662
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:25:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC1CB21664
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E111905EC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BB491905DF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5122DC320;
-	Mon, 11 Aug 2025 20:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056A7311C13;
+	Mon, 11 Aug 2025 20:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3H4IDnf"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ob/yIfzH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11CF311C13;
-	Mon, 11 Aug 2025 20:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFC12D47F9;
+	Mon, 11 Aug 2025 20:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754943925; cv=none; b=WfQQHw3K/diRRxcfzFw/ummVRPi/4UAZzCDhBDjKKRp0+IQFSJ4xWVQOuLQIMgjq4xGIJ0/U+6nhHidpp0XipzbrxdHlMdvxu5pDPZJKAOSLEfVQfqHx/3vQd5qRMfrnlXBEYTQbpwyCXRty5QYF0MlyXA3BqjsAs/reWzxpolE=
+	t=1754943943; cv=none; b=JlYKFsU6qQ4372R60sLjOXmv7oXpJUxXg468OcOGS6JPd7GaLP4Oh2U5IfbLJZFdCGis/RI4z7u91N/a5Er7LxgwH/59gaNL+R9MtjBCGYsRGPXuKla9W4qJMvDuKaTPo48ebius9507yR38F2tr3slihJWNeAFtAghb+7OOKFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754943925; c=relaxed/simple;
-	bh=xFsEMZMx71vL7LJWMb0H4gztc03wO1iFZ3A6/tkXmf0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IGHbz/b9cwFlZQZGl8vFfezSGPeA0JoLjSSwvJwWxpk21R22YyzYQ2kDnVaGu2t9G9hHATZXDf9IBr3x70h+CuxwmvTRDHEY6v+hgCAiREhu37GYFSNTKo6cae2cZBcLgkywWfnm/zQW6l4FCDaNnbkU2ohXEMGXFgz9bCBtZOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3H4IDnf; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71c06bb7470so24179717b3.3;
-        Mon, 11 Aug 2025 13:25:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754943923; x=1755548723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RBXQBxGfZ1zpntH+TOiqrJLsBk8tkPN10Nu3SVV4di8=;
-        b=l3H4IDnfkbmonpurxXKhOPt4hTwk/M1JeaaH60AS2zZfa4hQcparluYJNN0u0I8otA
-         QA6sILw1YOrXJIAw0EIiGRwUh2PH4IDOk8L0C7qSpMX9+bss10tklLylDPF2XzXKZPE3
-         dOW1kKEyKlXGh4yjnCPK9BanJdmoBv+Q7DXZVoqzpxgYCGrY2Fu8Y7Nv/+ssmsLArB4H
-         yg+JJ67Xi5oUxbar0n5FA/Y5cuRkkxJp+w6l8jntq8ludljeR7mysNaIGkFx4JR3/OEG
-         0dcrmXKS165LeXC7L4xTj2cLyGhjwpo5+7xB3XejhvL1Sv4G2psQJNlZvpK1Nkbny1Ky
-         7AZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754943923; x=1755548723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RBXQBxGfZ1zpntH+TOiqrJLsBk8tkPN10Nu3SVV4di8=;
-        b=v9iEjOiAdeVJ0cs7xzDo6pX4ppvAHlfngZwfiwLG6ImnDYERUWt1UCG0HsQFh0eLhO
-         EgmbKAWppVIlZ3fejICWIBfCfkglISKS++5U3firJSkCMPE6VxjTYOhCpQQSMelCZbFL
-         eXoSOo5XL7/MIRSdmBFgmMrvHQ4gNB5+ec14NW+rp9aRdiNcqdHKyprFi0r1IlxBl6AX
-         zsFXAL7B8/BjjPytMxdjLdWt2Or813kQGMmFPd/hcMZVjzXClOfm8cpz+m9iF+Ve0ViO
-         xuQYax/t1esZjvi2zD41c77Hxm1n+SFOI1wTL/LH+RZihGx0MY6Ji5vwUoNpgNuZxSqP
-         qmDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbSiOIXjsGG5V5RjbB8M8q0QcHSzepCP8xdfZRkEg53JLNIKamkcjbeNbUhtxICuOJ1mRyV2im6TMDtOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6FzHHjHo1dzDGfigW/p4/Gf6/BlVcSnBHe1WGOC4yvqRzb/1x
-	u7b77Ka4GTPsRLMgIDbxU8BXkI4h9Tp10B4Gl/P1Gaif5ojZ07yk3/dY3ctlisuK8YVFPx1nCeD
-	/Ri7MT55CLpIAGgXpo+TlQJo+FOsIW/Y=
-X-Gm-Gg: ASbGncsZbg77JZ2kAHVgyxtVXFkrnyM8K4GRYF/2X5SgFQaO2rGF7wwyvzE4SjCDbLe
-	gkXWHtbgym6SDvRWiCv3pAvLYGc1lpO0JUn5m5r4bSpv7+Trv2yBVajiwkrBdQlGvvpwe8y3IMH
-	ZpoXXWVJsKaXkxE8j6G3KUsmcNhIrTkFH3lApBPzAIlX0Yi2/DcaByJuWLBeHrHr2JQ7X7zWNae
-	sLIOl8li8FAWXhsiYqr
-X-Google-Smtp-Source: AGHT+IGT6zgJrI+bwB8rpn6s+VJg0y2XQvjU11F/NMNvCcXTBbAqPiT0BUy1aINV8dMOssmCRvrZmQOBZRc5rglA2U0=
-X-Received: by 2002:a05:690c:350f:b0:71c:149b:869a with SMTP id
- 00721157ae682-71c4286f33dmr17279787b3.0.1754943922701; Mon, 11 Aug 2025
- 13:25:22 -0700 (PDT)
+	s=arc-20240116; t=1754943943; c=relaxed/simple;
+	bh=z+N9HKMf43dB8SbHDpAKnQGM462JuzP2hLnzywSwO8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CjGqprOZ6ocbdw2eRN7ccK60j4tO6BNOluWZ1/5inkkT9KNsm9kC+vxmCSkjJrPlVeY8UKuH1bdIAS/of2wrnsT+xjFmqIiJRtJ3hh8CMQMbdjaq6vug1HxEIpqq+tJGv9YLqZLI7dfyt8C3NySLgxWpC2T6h6accVCnxqZ/NyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ob/yIfzH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86ABBC4CEED;
+	Mon, 11 Aug 2025 20:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754943942;
+	bh=z+N9HKMf43dB8SbHDpAKnQGM462JuzP2hLnzywSwO8A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ob/yIfzHWPzoT+uIL2DAMepsicYWZRV0VNecgGFL21mNBP5gC6ZBaXvNCH8922OQ1
+	 pBXKgFGdDeR0n2ulZ7xZ+VQCMm39yt6J2BqlCD6XvJA5kYE9Z9XOtFbX7p9VJYQtci
+	 IoeRPM1iAWInBB/pYtF8yKds1BNM3UNgdOfLaGTM5x9waobDHjcpE6A+0DDqMC1cMx
+	 gCbBJB1sG283BypTNR+kq+c15Z1p1GFTQYSZhHPWoSUsBw2CRbPZAWrQQF6p3BCvZn
+	 QCHeZVEAm8fV8p3bE84/LFjShidVG0WTFF0F0+8C3MiVx5JSfI3nKYu+lpTBKqvIWO
+	 mank+bfqSBEXA==
+Date: Mon, 11 Aug 2025 21:25:33 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Akshay Jindal <akshayaj.lkd@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@intel.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, anshulusr@gmail.com, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: light: ltr390: Add remove callback with needed
+ support in device registration
+Message-ID: <20250811212533.341e7c44@jic23-huawei>
+In-Reply-To: <CAE3SzaRZGvOwi0UeBU9Nw2=_jwF9AYLyY0BFG9tHzwbMFv1o7g@mail.gmail.com>
+References: <20250804192513.62799-1-akshayaj.lkd@gmail.com>
+	<CAHp75VfJzVAJYC9-2oyfV4qBLmraXRgqZFcho6b7orW+1sYkXw@mail.gmail.com>
+	<CAE3SzaTBzF=W9++d4CmW-vRkKLy9zd2oB4ADX8NuH-woTvJxqg@mail.gmail.com>
+	<CAHp75VePmhLstCraz_+7Cqc_bLQ49+1rV4oH59a1oo2xHp0R+Q@mail.gmail.com>
+	<20250806161801.000061c0@huawei.com>
+	<aJO05BNi2TsYtdwe@smile.fi.intel.com>
+	<20250807140401.00006c85@huawei.com>
+	<aJcapPt8f5YMUBH3@smile.fi.intel.com>
+	<20250809205736.34b75763@jic23-huawei>
+	<CAHp75VffV4Xomb-1zp6_xB=r+PJzsDnj_gjwyWas8cX7dhuhng@mail.gmail.com>
+	<CAE3SzaRZGvOwi0UeBU9Nw2=_jwF9AYLyY0BFG9tHzwbMFv1o7g@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250809031517.5535-1-rosenp@gmail.com> <adf6d126-1f80-4590-a9f6-171b7feaf656@oss.qualcomm.com>
-In-Reply-To: <adf6d126-1f80-4590-a9f6-171b7feaf656@oss.qualcomm.com>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 11 Aug 2025 13:25:11 -0700
-X-Gm-Features: Ac12FXwdnaim6R97XiHA8gvSEBp7k4c9rBg3M3JXjfO7r7BbFC0AH16IyBnLB64
-Message-ID: <CAKxU2N8=B8JHNppr+RbOBbzBztXs1f2wLVn3ZtwDHSpokCNf0Q@mail.gmail.com>
-Subject: Re: [PATCH ath-next] wifi: ath10k: switch to of_get_mac_address
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: linux-wireless@vger.kernel.org, Jeff Johnson <jjohnson@kernel.org>, 
-	"open list:QUALCOMM ATHEROS ATH10K WIRELESS DRIVER" <ath10k@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 12:55=E2=80=AFPM Jeff Johnson
-<jeff.johnson@oss.qualcomm.com> wrote:
->
-> On 8/8/2025 8:15 PM, Rosen Penev wrote:
-> > In 9d5804662ce1f9bdde0a14c3c40940acbbf09538 , device_get_mac_address wa=
-s
->
-> see
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#de=
-scribe-your-changes
->
-> specifically: If you want to refer to a specific commit, don=E2=80=99t ju=
-st refer to
-> the SHA-1 ID of the commit. Please also include the oneline summary of th=
-e
-> commit, to make it easier for reviewers to know what it is about.
->
-> So in this case:
-> 9d5804662ce1 ("ath10k: retrieve MAC address from system firmware if provi=
-ded")
->
-> > introduced as a generic way to get MAC addresses from anywhere.
-> > Unfortunately since then, the landscape has changed and the OF version
->
-> when did the landscape change? if using device_get_mac_address() is break=
-ing
-> folks, it would be nice to know which versions of the kernel have the bad
-> behavior so that the patch can be backported to any broken LTS kernels.
->
-> > is required for NVMEM support. The second problem is that with NVMEM
-> > it's possible that it loads after ath10k. For that reason, check for
-> > deferred errors and exit out of probe in such a case.
+On Mon, 11 Aug 2025 02:18:34 +0530
+Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
+
+> On Sun, Aug 10, 2025 at 2:04=E2=80=AFAM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
 > >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  drivers/net/wireless/ath/ath10k/core.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > On Sat, Aug 9, 2025 at 9:57=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
+rg> wrote: =20
+> > > On Sat, 9 Aug 2025 12:53:40 +0300
+> > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote: =20
+> > > > On Thu, Aug 07, 2025 at 02:04:01PM +0100, Jonathan Cameron wrote: =
+=20
+> > > > > On Wed, 6 Aug 2025 23:02:44 +0300
+> > > > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote: =20
+> > > > > > On Wed, Aug 06, 2025 at 04:18:01PM +0100, Jonathan Cameron wrot=
+e: =20
+> > > > > > > On Tue, 5 Aug 2025 14:47:32 +0200
+> > > > > > > Andy Shevchenko <andy.shevchenko@gmail.com> wrote: =20
+> > > > > > > > On Tue, Aug 5, 2025 at 6:05=E2=80=AFAM Akshay Jindal <aksha=
+yaj.lkd@gmail.com> wrote: =20
+> > > > > > > > > On Tue, Aug 5, 2025 at 2:36=E2=80=AFAM Andy Shevchenko
+> > > > > > > > > <andy.shevchenko@gmail.com> wrote: =20
 > >
-> > diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wirel=
-ess/ath/ath10k/core.c
-> > index 6f78f1752cd6..76747eb0925b 100644
-> > --- a/drivers/net/wireless/ath/ath10k/core.c
-> > +++ b/drivers/net/wireless/ath/ath10k/core.c
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/module.h>
-> >  #include <linux/firmware.h>
-> >  #include <linux/of.h>
-> > +#include <linux/of_net.h>
-> >  #include <linux/property.h>
-> >  #include <linux/dmi.h>
-> >  #include <linux/ctype.h>
-> > @@ -3456,7 +3457,9 @@ static int ath10k_core_probe_fw(struct ath10k *ar=
-)
-> >               ath10k_debug_print_board_info(ar);
-> >       }
-> >
-> > -     device_get_mac_address(ar->dev, ar->mac_addr);
-> > +     ret =3D of_get_mac_address(ar->dev->of_node, ar->mac_addr);
-> > +     if (ret =3D=3D -EPROBE_DEFER)
-> > +             goto err_free_firmware_files;
->
-> Note a similar proposal for ath11k was deferred since it seems to break x=
-86
-> attachment when there isn't a device tree node:
-> https://msgid.link/ec974dc0-962b-f611-7bbb-c07a3872f70f@oss.qualcomm.com
-In response to this, I'll change this patch to only add NVMEM support
->
-> I'd have the same concerns here.
-> (but I didn't dig into how the fwnode items are set if there isn't a DT)
-I have no idea either. I assume for pcie cards the MAC is set from the EEPR=
-OM.
->
-> >
-> >       ret =3D ath10k_core_init_firmware_features(ar);
-> >       if (ret) {
->
+> > ...
+> > =20
+> > > > We can do it, but this sounds to me like a step back. Implementing =
+proper PM
+> > > > runtime callbacks is a step forward. =20
+> > > I entirely agree that runtime PM is good to have and it does a lot mo=
+re
+> > > than just turning the power on and off once per probe / remove cycle.=
+ =20
+>=20
+> Initially, while working on a patch for this driver(sysfs for data
+> freshness), while testing
+> I needed to suspend the sensor but could not because the driver only supp=
+orts
+> system suspend and resume. At that time, I had made up my mind that I
+> have to add
+> runtime suspend support for this driver because before Andy's
+> comments, I used to consider
+> runtime PM support as a way to give control to users to do on-demand
+> suspension and
+> resuming sensor operations. But now I learnt that it is so much more.
+>=20
+> So Irrespective of the acceptance of this patch, my next patch was
+> going to be runtime PM support.
+>=20
+> Will it be acceptable, that this driver like many other drivers have
+> support for both remove callback
+> and runtime PM?
+Sounds good. Though you probably don't need an explicit remove callback,
+just one more devm_add_action_or_reset().
+
+That stuff just allows you to register the 'undo' immediately after the
+'do' in probe which makes for easy to read code in many cases.
+
+Jonathan
+
+>=20
+> Thanks,
+> Akshay.
+>=20
+
 
