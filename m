@@ -1,170 +1,164 @@
-Return-Path: <linux-kernel+bounces-763368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5162B213FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:16:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C119B213FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6EC3622274
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:15:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893E8190782C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E12E2DE6E9;
-	Mon, 11 Aug 2025 18:14:09 +0000 (UTC)
-Received: from smtp.carlthompson.net (charon.carlthompson.net [45.77.7.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5BC296BAC;
+	Mon, 11 Aug 2025 18:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uae0afUm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E83A2D6E66;
-	Mon, 11 Aug 2025 18:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.77.7.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEBC2405E1;
+	Mon, 11 Aug 2025 18:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936049; cv=none; b=BoOxC5q8TZpmRCCllgaYZxlTX0Y6xfjDIJX7rnK6XV/mVOPFmjrFFgp3R6HoYOFDUdR1iVk+WUebgoytgqyXJfjk6Qey/ciIh44/b81cxGC7iAb4PnZ9spJzUyTJXOoVhp/t/CcLFKkQhSGyCx1vteP8xl0AKrYxnOsDEPViq/k=
+	t=1754936121; cv=none; b=LlQWlTO0vlhpY38EfFezuiOLiHCWwGwBXd0/RRrk6jbTY8xJVjt4pbvG4oHeWyAayXmJImCuZ/lzMu5CI0LfMuHpQ4AOcYyvazZebhXcDamNR5IK/I4n7Jw/mCAiqQ9Q2F45ZUN57RT64pbXAmW+Y8pCT6941PcEmzrqisQGZT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936049; c=relaxed/simple;
-	bh=cxoFCFETBOccsLdMwv3sh9Um/zOuhvG93S2CSNiIWzA=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=giYPVeQRDIHtVqmASBU+GL35FSAABeawanriJEBnltqVC+5d00RIyQvaclmcwwX5oorbemnfho+ee1BiB9K897NpKEleTGLL1+xV/wpLLAwVYfXo0T8hRW1eRv2SRL4iwSpAZ930dUODZcNI1LafgWBrbxh5gtDdG8JAvM6EJgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net; spf=pass smtp.mailfrom=carlthompson.net; arc=none smtp.client-ip=45.77.7.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=carlthompson.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=carlthompson.net
-Received: from mail.carlthompson.net (mail.home [10.35.20.252])
-	(Authenticated sender: cet@carlthompson.net)
-	by smtp.carlthompson.net (Postfix) with ESMTPSA id 775F11E3AE570;
-	Mon, 11 Aug 2025 11:13:58 -0700 (PDT)
-Date: Mon, 11 Aug 2025 11:13:58 -0700 (PDT)
-From: "Carl E. Thompson" <list-bcachefs@carlthompson.net>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	Konstantin Shelekhin <k.shelekhin@ftml.net>
-Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	malte.schroeder@tnxip.de, torvalds@linux-foundation.org
-Message-ID: <514556110.413.1754936038265@mail.carlthompson.net>
-In-Reply-To: <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
+	s=arc-20240116; t=1754936121; c=relaxed/simple;
+	bh=i3CFgTgaOVgs6rVHGnHbogoOuom+K3may1STKdsu0mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sa4EqjQCSdmrcbCnByiRkMs+b8RrdSZqq9gA6JEhijelEd2tvk3e9z751+ukfYM62WfRqv93L+76rViRnE03IJna3GNAC3eCb5xtoZgnn65WgGXE8oxLlmAL0tvOFh3i5ts3OR2wl7h90Zjy3osKklrOvTzM4W5pXd28sKYr0Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uae0afUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C93CAC4CEED;
+	Mon, 11 Aug 2025 18:15:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754936121;
+	bh=i3CFgTgaOVgs6rVHGnHbogoOuom+K3may1STKdsu0mA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uae0afUmNoR8KA75DBNbdfNVvW4DcYug6cz7AdolgVFs9SQ+d0rhY+lM+COc+IIf9
+	 Aq95eCDiCKptC8hUhrCrzyh48PdZM78pq9CummJ54DYD+kDiOJ6/HkHfIech24yVG3
+	 nkNX6ADQWuGLnlWxW35pL48f+w8s3kno8qucUUE9cVpXGR2HUgZEff37o/jkoTAV59
+	 3Qqxtjbvt4PEUE9+1pK4Z8PkALZzSam0GyITEycCamBv0hyk/6YeMQ/ovDoHKIoyP+
+	 7vVcJOwu7joQKHnhFli2ZyBQRKMow0D+TrxlECK66pI9AnbaP2ps+atLTs4ZFueivG
+	 Q9dSR6II4JEQw==
+Date: Mon, 11 Aug 2025 08:15:19 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Qu Wenruo <wqu@suse.com>
+Cc: syzbot <syzbot+ead9101689c4ca30dbe8@syzkaller.appspotmail.com>,
+	anna-maria@linutronix.de, clm@fb.com, dsterba@suse.com,
+	frederic@kernel.org, josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+	jiangshanlai@gmail.com
+Subject: Re: [syzbot] [btrfs?] INFO: task hung in __alloc_workqueue (2)
+Message-ID: <aJozN9LVgaPFX9dX@slm.duckdns.org>
+References: <6899154b.050a0220.51d73.0094.GAE@google.com>
+ <e3424457-8786-45dd-a0d9-ecc8bfae0829@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev73
-X-Originating-Client: open-xchange-appsuite
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3424457-8786-45dd-a0d9-ecc8bfae0829@suse.com>
 
-I seriously hope none of the kernel developers are foolish enough to be foo=
-led (yet again) by this I'm-a-reasonable-guy-we-can-talk-this-out act. You'=
-ve been there and done that.
+Hello,
 
-Kent's perplexing behavior almost makes me want to put on a tinfoil hat. Is=
- it simply mental illness or is it something more? Is he being egged on by =
-backers who *want* to destabilize the leadership of Linux for whatever reas=
-on? It's hard to see how any individual could be this far out there without=
- help.
+On Mon, Aug 11, 2025 at 08:02:40AM +0930, Qu Wenruo wrote:
+...
+> > Call Trace:
+> >   <TASK>
+> >   context_switch kernel/sched/core.c:5357 [inline]
+> >   __schedule+0x16f3/0x4c20 kernel/sched/core.c:6961
+> >   __schedule_loop kernel/sched/core.c:7043 [inline]
+> >   schedule+0x165/0x360 kernel/sched/core.c:7058
+> >   schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
+> >   do_wait_for_common kernel/sched/completion.c:100 [inline]
+> >   __wait_for_common kernel/sched/completion.c:121 [inline]
+> >   wait_for_common kernel/sched/completion.c:132 [inline]
+> >   wait_for_completion+0x2bf/0x5d0 kernel/sched/completion.c:153
+> >   kthread_flush_worker+0x1c6/0x240 kernel/kthread.c:1563
+> 
+> This is flushing pwq_release_worker during error handling, and I didn't see
+> anything btrfs specific except btrfs is allocating an ordered workqueue
+> which utilizes WQ_UNBOUND flag.
+> 
+> And that WQ_UNBOUND flag is pretty widely used among other filesystems,
+> maybe it's just btrfs have too many workqueues triggering this?
+> 
+> Adding workqueue maintainers.
 
-And I'll point out what's obvious to people who have followed this closely =
-but may not be to people who read an occasional email thread like this one:=
- A very large portion of what Kent says including in this email is just fac=
-tually wrong. Either he is an unashamed and extremely prolific liar or he i=
-s very sick.
+That flush stall likely is a secondary effect of another failure. The
+kthread worker is already spun up and running and the work function
+pwq_release_workfn() grabs several locks. Maybe someone else is stalling on
+those unless the kthread is somehow not allowed to run? Continued below.
 
-Carl
+> > Showing all locks held in the system:
+> > 1 lock held by khungtaskd/38:
+> >   #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+> >   #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+> >   #0: ffffffff8d9a8b80 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
+> > 1 lock held by udevd/5207:
+> >   #0: ffff8880358bfa18 (&ep->lock){++++}-{3:3}, at: write_lock_irq include/linux/rwlock_rt.h:104 [inline]
+> >   #0: ffff8880358bfa18 (&ep->lock){++++}-{3:3}, at: ep_poll fs/eventpoll.c:2127 [inline]
+> >   #0: ffff8880358bfa18 (&ep->lock){++++}-{3:3}, at: do_epoll_wait+0x84d/0xbb0 fs/eventpoll.c:2560
+> > 2 locks held by getty/5598:
+> >   #0: ffff88823bfae8a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+> >   #1: ffffc90003e8b2e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x444/0x1410 drivers/tty/n_tty.c:2222
+> > 3 locks held by kworker/u8:3/5911:
+> > 3 locks held by kworker/u8:7/5942:
+> > 6 locks held by udevd/6060:
+> > 1 lock held by udevd/6069:
+> > 1 lock held by udevd/6190:
+> > 6 locks held by udevd/6237:
+~~~trimmed~~~
 
-> On 2025-08-11 7:26 AM PDT Kent Overstreet <kent.overstreet@linux.dev> wro=
-te:
->=20
-> =20
-> On Mon, Aug 11, 2025 at 12:51:11PM +0300, Konstantin Shelekhin wrote:
-> > > =C2=A0Yes, this is accurate. I've been getting entirely too many emai=
-ls from Linus about
-> > > how pissed off everyone is, completely absent of details - or anythin=
-g engineering
-> > > related, for that matter.
-> >=20
-> > That's because this is not an engineering problem, it's a communication=
- problem. You just piss
-> > people off for no good reason. Then people get tired of dealing with yo=
-u and now we're here,
-> > with Linus thinking about `git rm -rf fs/bcachesfs`. Will your users be=
- happy? Probably not.
-> > Will your sponsors be happy? Probably not either. Then why are you keep=
- doing this?
-> >=20
-> > If you really want to change the way things work go see a therapist. A =
-competent enough doctor
-> > probably can fix all that in a couple of months.
->=20
-> Konstantin, please tell me what you're basing this on.
->=20
-> The claims I've been hearing have simply lacked any kind of specifics;
-> if there's people I'd pissed off for no reason, I would've been happy to
-> apologize, but I'm not aware of the incidences you're claiming - not
-> within a year or more; I have made real efforts to tone things down.
->=20
-> On the other hand, for the only incidences I can remotely refer to in
-> the past year and a half, there has been:
->=20
-> - the mm developer who started outright swearing at me on IRC in a
->   discussion about assertions
-> - the block layer developer who went on a four email rant where he,
->   charitably, misread the spec or the patchset or both; all this over a
->   patch to simply bring a warning in line with the actual NVME and SCSI
->   specs.
-> - and reference to an incident at LSF, but the only noteworthy event
->   that I can recall at the last LSF (a year and a half ago) was where a
->   filesystem developer chased a Rust developer out of the community.
->=20
-> So: what am I supposed to make of all this?
->=20
-> To an outsider, I don't think any of this looks like a reasonable or
-> measured response, or professional behaviour. The problems with toxic
-> behaviour have been around long before I was prominent, and they're
-> still in evidence.
->=20
-> It is not reasonable or professional to jump from professional criticism
-> of code and work to personal attacks: it is our job to be critical of
-> our own and each other's code, and while that may bring up strong
-> feelings when we feel our work is attacked, that does not mean that it
-> is appropriate to lash out.
->=20
-> We have to separate the professional criticism from the personal.
->=20
-> It's also not reasonable or professional to always escelate tensions,
-> always look for the upper hand, and never de-escalate.
->=20
-> As a reminder, this all stems from a single patch, purely internal to
-> fs/bcachefs/, that was a critical, data integrity hotfix.
->=20
-> There has been a real pattern of hyper reactive, dramatic responses to
-> bugfixes in the bcachefs pull requests, all the way up to full blown
-> repeated threats of removing it from the kernel, and it's been toxic.
->=20
-> And it's happening again, complete with full blown rants right off the
-> bat in the private maintainer thread about not trusting my work (and I
-> have provided data and comparisons with btrfs specifically to rebut
-> that), all the way to "everyone hates you and you need therapy". That is
-> not reasonable or constructive.
->=20
-> This specific thread was in response to Linus saying that bcachefs was
-> imminently going to be git rm -rf'd, "or else", again with zero details
-> on that or else or anything that would make it actionable.
->=20
-> Look, I'm always happy to sit down, have a beer, talk things out, and
-> listen.
->=20
-> If there's people I have legitimately pissed off (and I do not include
-> anyone who starts swearing at me in a technical discussion) - let me
-> know, I'll listen. I'm not unapproachable, I'm not going to bite your
-> head off.
->=20
-> I've mended fences with people in the past; there were people I thought
-> I'd be odds with forever, but all it really takes is just talking. Say
-> what it is that you feel has affected, be willing to listen and turn,
-> and it gets better.
+That's a lot of locks to be held, so something's not going right for sure.
+
+> > Sending NMI from CPU 1 to CPUs 0:
+> > NMI backtrace for cpu 0
+> > CPU: 0 UID: 0 PID: 5911 Comm: kworker/u8:3 Tainted: G        W           6.16.0-syzkaller-11852-g479058002c32 #0 PREEMPT_{RT,(full)}
+> > Tainted: [W]=WARN
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+> > Workqueue: bat_events batadv_iv_send_outstanding_bat_ogm_packet
+> > RIP: 0010:get_timer_this_cpu_base kernel/time/timer.c:939 [inline]
+> > RIP: 0010:__mod_timer+0x81c/0xf60 kernel/time/timer.c:1101
+> > Code: 01 00 00 00 48 8b 5c 24 20 41 0f b6 44 2d 00 84 c0 0f 85 72 06 00 00 8b 2b e8 f0 bb 49 09 41 89 c5 89 c3 bf 08 00 00 00 89 c6 <e8> 0f c1 12 00 41 83 fd 07 44 89 34 24 0f 87 69 06 00 00 e8 4c bc
+> > RSP: 0018:ffffc90004fff680 EFLAGS: 00000082
+> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: f9fab87ca5ec6a00
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000008
+> > RBP: 0000000000200000 R08: 0000000000000000 R09: 0000000000000000
+> > R10: dffffc0000000000 R11: fffff520009ffeac R12: ffff8880b8825a80
+> > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000802
+> > FS:  0000000000000000(0000) GS:ffff8881268cd000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f46b6524000 CR3: 000000003afb2000 CR4: 00000000003526f0
+> > Call Trace:
+> >   <TASK>
+> >   queue_delayed_work_on+0x18b/0x280 kernel/workqueue.c:2559
+> >   queue_delayed_work include/linux/workqueue.h:684 [inline]
+> >   batadv_forw_packet_queue+0x239/0x2a0 net/batman-adv/send.c:691
+> >   batadv_iv_ogm_schedule_buff net/batman-adv/bat_iv_ogm.c:842 [inline]
+> >   batadv_iv_ogm_schedule+0x892/0xf00 net/batman-adv/bat_iv_ogm.c:874
+> >   batadv_iv_send_outstanding_bat_ogm_packet+0x6c6/0x7e0 net/batman-adv/bat_iv_ogm.c:1714
+> >   process_one_work kernel/workqueue.c:3236 [inline]
+> >   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+> >   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+> >   kthread+0x711/0x8a0 kernel/kthread.c:463
+> >   ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+> >   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> >   </TASK>
+
+So, task hung watchdog triggered and making all cpus dump their backtraces
+and it's only one CPU. Is this a two CPU setup in a live lockup? I don't see
+anything apparent and these are time based conditions that can be triggered
+by severely overloading the system too. If you can reproduce the conditions,
+seeing how the system is doing in general and whether the system can unwind
+itself after killing the workload may be useful.
+
+Thanks.
+
+-- 
+tejun
 
