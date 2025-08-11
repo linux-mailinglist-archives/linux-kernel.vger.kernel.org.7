@@ -1,120 +1,117 @@
-Return-Path: <linux-kernel+bounces-761793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3322BB1FE83
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428DCB1FE84
 	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 07:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23D86173557
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:26:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F493B1107
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 05:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E706B26A08C;
-	Mon, 11 Aug 2025 05:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCFC26C391;
+	Mon, 11 Aug 2025 05:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xcqhyHqk"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MCCLQX8Z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F211425D535
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 05:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049091C07C4;
+	Mon, 11 Aug 2025 05:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754889972; cv=none; b=k1RjUkseIRSNZqSladsYYH8cLiF3hYt1EHmSLf9W24VAzUOQeAXlNxAgeBAvHxFfVwgH8dcFkZe4ik1wMG5Yvipn6td181ByTVXrk9vX8aXbsc8HCD2NdGb0H858U9TMrTniUtpIwgdzw2ybDpUENn73zwpdAWkP5L52Q6gElNY=
+	t=1754889961; cv=none; b=EDYO3nMp1qyGvDdGCrJR5yQOKWotoRoh6Ouel7hskYEFgVU8Iim/D8q/A5WR0uqcicndnnTWVdGX1L0o+pho0xWqwdoQ5siyBpyCWmcbTTvTDqnJik1Xmv4IRHvDX02Kcb1sAqSLnpQuS6Xwt93/8ru648CIyar/04BmbTaE1Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754889972; c=relaxed/simple;
-	bh=NNDGtBLpnRoQigFULzNfJgs80+9RGRJEtrbVf7zpZ+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jKQbuKrIh3JvLPHQP+82Fz/2eAa4voxs5tFet3Qt4/f1VMfykvpKY82tcBJ165cdtz5P8l9+APFroIrugpAnoZa8KCxy65p3vGhBofJT+dsUl8OngxskyNOlojc9uOWbNbHgogmHATX8hBoKi2gPUuDUiLYFd4vL49x1cFVHHOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xcqhyHqk; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754889956;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TIdC7jAQgd8cJ46AKFrFCkfnkGDYD5aUIIx17ql8cuI=;
-	b=xcqhyHqkI91jlA+iYThKGWRbFwm5w0+OJ4nBb1Up2XQS6zeBBxyk28S7/B+2h8Xya5Yxk2
-	H/sJMs5y7EkV8S08sCakQAIGFgGbIx3QZqGd0HVLyXJChVTfOUz9cm+NDfdP2CevsJl6mX
-	TaI5krVFH5xpqDBUAf+osIaPoT/34Y8=
-From: Yuntao Wang <yuntao.wang@linux.dev>
-To: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Yuntao Wang <yuntao.wang@linux.dev>
-Subject: [PATCH] fs: fix incorrect lflags value in the move_mount syscall
-Date: Mon, 11 Aug 2025 13:24:26 +0800
-Message-ID: <20250811052426.129188-1-yuntao.wang@linux.dev>
+	s=arc-20240116; t=1754889961; c=relaxed/simple;
+	bh=gEKVH43a1VlYIav599dvZjUBUDVcCJDUOzKldTsJvM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A2/s7Eupr0mWwUfS3rn7i+08aE3N85M2LCO1/C1I2HMvUC7Rlu3OL1B+Lhv419RQoAVKCUwDRU/gCyoVzKw3jCEhlFizBRBN/Apd8eTmwT6ajwYqKxloABWrNqd5LXVwESvwqc6b0VbtDFiPfhvLjBhoKssU7qN0NRvhfORlxss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MCCLQX8Z; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754889960; x=1786425960;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gEKVH43a1VlYIav599dvZjUBUDVcCJDUOzKldTsJvM0=;
+  b=MCCLQX8ZIjtMdQ3v5h0P+7dlxaJLQQ6pV81A8H2nXEEpfzAIiFkXAT+P
+   MN2bGInwqy9j3YJ3XRTJlgBZ5ARVpwDM+7wSaYE6bg/c1xF1H5gBobkER
+   mlXbLeOK8ZL2M5kOqgzjxzU1YXEiSc+/F27HnPaOGreIHMyB8ge5ugs7Q
+   vi8g0D9HGDMQCKogp1m1hYMl2PozDWSDMmWHK4PXYtM0sulxztoofZQUw
+   v3rwzK2e7xA5TVr5Xn+GdrdsnHVTMQVrXKUMo5Cf+7om1wxjg4AG0lWY6
+   D6byZp5GiDnJIuOVliyVOWpPpDAcDZ1KA5fUc2c9HR0Yzu4oHRaLTtkyV
+   A==;
+X-CSE-ConnectionGUID: jbSnxtoITr+wWSeNSsyhDQ==
+X-CSE-MsgGUID: KRRsEgfdR+KgvBFU7js3Tg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57214978"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="57214978"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2025 22:26:00 -0700
+X-CSE-ConnectionGUID: wB7bb9+nTWieHSYhDlS3OQ==
+X-CSE-MsgGUID: w99MNDdvRSuqBqcCEzDBZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="196655949"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa001.fm.intel.com with ESMTP; 10 Aug 2025 22:25:57 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id F14B393; Mon, 11 Aug 2025 07:25:55 +0200 (CEST)
+Date: Mon, 11 Aug 2025 07:25:55 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Mario Limonciello <superm1@kernel.org>,
+	"Rangoju, Raju" <raju.rangoju@amd.com>, linux-usb@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	andreas.noever@gmail.com, michael.jamet@intel.com,
+	westeri@kernel.org, YehezkelShB@gmail.com, bhelgaas@google.com,
+	Sanath.S@amd.com
+Subject: Re: [PATCH 0/3] thunderbolt: Update XDomain vendor properties
+ dynamically
+Message-ID: <20250811052555.GQ476609@black.igk.intel.com>
+References: <20250806150024.GF476609@black.igk.intel.com>
+ <2025080628-viral-untruth-4811@gregkh>
+ <20250807051533.GG476609@black.igk.intel.com>
+ <2025080758-supervise-craftily-9b7f@gregkh>
+ <17ed42fe-9d8d-46da-8434-f508ec5932fa@kernel.org>
+ <20250808044538.GK476609@black.igk.intel.com>
+ <2025080822-cardboard-aloha-3c5d@gregkh>
+ <20250808091313.GN476609@black.igk.intel.com>
+ <2025080832-poker-rectal-0895@gregkh>
+ <20250811045307.GP476609@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250811045307.GP476609@black.igk.intel.com>
 
-The lflags value used to look up from_path was overwritten by the one used
-to look up to_path.
+On Mon, Aug 11, 2025 at 06:53:07AM +0200, Mika Westerberg wrote:
+> On Fri, Aug 08, 2025 at 04:13:28PM +0100, Greg KH wrote:
+> > > 0004 USB4
+> > > 
+> > > sounds good to me. In USB4 there is no "root hub". It's called host router
+> > > (but we do have device routers that are called USB4 hubs for added
+> > > confusion ;-).
+> > > 
+> > > But I'm fine with other numbers too, does not matter if you want to save it
+> > > for some future USB variant.
+> > 
+> > Ok, use 0004 for this.  But what should I use for the text string here
+> > in the usb.ids file?
+> 
+> Thanks! I'll cook up a patch changing these.
+> 
+> I don't think it should be in usb.ids because it is not visible anywhere
+> except over USB4 link (between hosts). You don't see this through USB 2.x
+> or 3.x.
 
-In other words, from_path was looked up with the wrong lflags value. Fix it.
+Of course for documentation purposes it could be:
 
-Fixes: f9fde814de37 ("fs: support getname_maybe_null() in move_mount()")
-Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
----
- fs/namespace.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ddfd4457d338..43665cb6df28 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4551,20 +4551,13 @@ SYSCALL_DEFINE5(move_mount,
- 	if (flags & MOVE_MOUNT_SET_GROUP)	mflags |= MNT_TREE_PROPAGATION;
- 	if (flags & MOVE_MOUNT_BENEATH)		mflags |= MNT_TREE_BENEATH;
- 
--	lflags = 0;
--	if (flags & MOVE_MOUNT_F_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
--	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
--	uflags = 0;
--	if (flags & MOVE_MOUNT_F_EMPTY_PATH)	uflags = AT_EMPTY_PATH;
--	from_name = getname_maybe_null(from_pathname, uflags);
--	if (IS_ERR(from_name))
--		return PTR_ERR(from_name);
--
- 	lflags = 0;
- 	if (flags & MOVE_MOUNT_T_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
- 	if (flags & MOVE_MOUNT_T_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-+
- 	uflags = 0;
- 	if (flags & MOVE_MOUNT_T_EMPTY_PATH)	uflags = AT_EMPTY_PATH;
-+
- 	to_name = getname_maybe_null(to_pathname, uflags);
- 	if (IS_ERR(to_name))
- 		return PTR_ERR(to_name);
-@@ -4582,6 +4575,17 @@ SYSCALL_DEFINE5(move_mount,
- 			return ret;
- 	}
- 
-+	lflags = 0;
-+	if (flags & MOVE_MOUNT_F_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-+	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-+
-+	uflags = 0;
-+	if (flags & MOVE_MOUNT_F_EMPTY_PATH)	uflags = AT_EMPTY_PATH;
-+
-+	from_name = getname_maybe_null(from_pathname, uflags);
-+	if (IS_ERR(from_name))
-+		return PTR_ERR(from_name);
-+
- 	if (!from_name && from_dfd >= 0) {
- 		CLASS(fd_raw, f_from)(from_dfd);
- 		if (fd_empty(f_from))
--- 
-2.50.1
-
+    0004 Linux USB4 Connection Manager
 
