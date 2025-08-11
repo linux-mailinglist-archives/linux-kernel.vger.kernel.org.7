@@ -1,183 +1,110 @@
-Return-Path: <linux-kernel+bounces-762986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26EE5B20D3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:13:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A2EB20D47
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC12623039
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9618B1624DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CF62DFA34;
-	Mon, 11 Aug 2025 15:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71232DFA38;
+	Mon, 11 Aug 2025 15:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q02aehD2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED572C17B6;
-	Mon, 11 Aug 2025 15:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WeuM+lO7"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8831C4EB38;
+	Mon, 11 Aug 2025 15:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754925075; cv=none; b=CG9ffVXz+otla2Eer4216Mh7S4AYBB7YjCybkznsiaLve48wfpP0hBG7iO+BvndeuUqF+lyleeF90NAIrhphI4gPD6NMAc6Mqt/29wNfvadueGBh3MlMrzXTBjH4imk/3T6Qnvh7dy2GGyLGcbicEYWo4QCIGjIDURDilg6DB9U=
+	t=1754925277; cv=none; b=lEHlIsZGapRYVlOsAMqAxEQFLuthHkHo77at7GyYUQf2iERnE7AsIBZBqGFSsdylyn3xYuqvD/pRrmm2V3+GLEFwlN4ZjLQmvPb7b7yKh38MmSXU6ebVge8dVERYLgK5aubkMYAldDltQ1wX7x/A4k9HSjOBRFeRtW0hZAtFz+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754925075; c=relaxed/simple;
-	bh=7HZKE3O+WT6DDNM9/2drqU5rxj0lRkDaLvloQLzT5lM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hR1eRenMhnnuLDWfl0ETAqQm6ENMQq/h8LhVUH/cuZ063HeVrIednz7NK6LUJkdZXKSy0pPWUJsAH9jSeB5wE3S0vbhGVKC9zi225pZXLd3bxQcTkO2A3TyCq4gBAGj4gTdfVmD0V0/OfOQJJcoBrhb76a8m7yZQqTdCoOz4rz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q02aehD2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B93F6C4CEED;
-	Mon, 11 Aug 2025 15:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754925075;
-	bh=7HZKE3O+WT6DDNM9/2drqU5rxj0lRkDaLvloQLzT5lM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q02aehD2d6ncjMmY+jObE7v0Lyo+L5H3Xxy/XR80vOfJESLoOxs+i536u3aStBoX8
-	 s8RTsDXRej/j4IxSVli8GBBOnZZ2Gq+hmeysLS15mrGtoKiO5H2vt28mYxV3nYdDaJ
-	 48bIwUDFDO4E+3DVh73HPqg9i0mmZX8v/UqCEN8lJhPAFkA+zNWg8yh+WZpsrELdxq
-	 aDn+8+zeaApIbAd94JXx0BWSnup4NdVIbCXd3kpBxIDXHXL4CbWyiA+xSf1/sVP2D4
-	 atvuxZgKLZij9aVIUKwpEF4BY7aJuiMhtYy9Y0tpBz6sD4cSCFql6v4ltj6s7uglaF
-	 HtmFfldHq9bIQ==
-Date: Mon, 11 Aug 2025 10:11:12 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: cros-qcom-dts-watchers@chromium.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH] arm64: dts: qcom: sc7180: Describe on-SoC USB-adjacent
- data paths
-Message-ID: <y6b5yqjbaz3sya5jg5fmcgivprtybj43eylpftd6z3mamrb737@kua5xzfonnpt>
-References: <20250808-topic-7180_qmpphy_ports-v1-1-718d7c52921a@oss.qualcomm.com>
+	s=arc-20240116; t=1754925277; c=relaxed/simple;
+	bh=aTsbw2smJ5VIymi9ayK2LE0nzymwzY8VncqZhJ3BXqI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aqG551zUfqWNDTQQqDd1J/FxOE6DAgxcmsyVn6vnYTgxIeNdsPs2ohQeoo09WWPC9VB4hILsxCeoT9gXjwLmrZCsmjenGMgilWO0vjOT+Syqy1l4VsoxTawvzMl/iNqlMGVOZRT6qyvdIkMKTGXYLfsxYiVinERtlpwBA4s6GNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WeuM+lO7; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=aT
+	sbw2smJ5VIymi9ayK2LE0nzymwzY8VncqZhJ3BXqI=; b=WeuM+lO7vqO8Cpljb+
+	8ozhdmhynoSpVq9NUOLBe0UyWUQYuQZztKLlFHwlQKwnvfNFGEeoGLhYLERdgrlG
+	g/5O1D3FFNrrOt+MjJ+8W4DGhVYP36mzV70pumCa3D9To5fooESLnsWSCb1nmANH
+	yAA9ux82qbiR3L2KvTPVNi/VY=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDn5+2MCJposuAOAw--.27979S2;
+	Mon, 11 Aug 2025 23:13:17 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	will@kernel.org,
+	boqun.feng@gmail.com,
+	longman@redhat.com,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] sched/cgroup: Lock optimize for cgroup cpu throttle
+Date: Mon, 11 Aug 2025 23:13:16 +0800
+Message-Id: <20250811151316.838707-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250808-topic-7180_qmpphy_ports-v1-1-718d7c52921a@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn5+2MCJposuAOAw--.27979S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZrW8Kr4xGw4UKFWDJFyDAwb_yoW8XF1xp3
+	90vF43trs5ZF1IqF109w4ftay8Z395J3y5G3Z8GrW5Cr1Yq3WIyrsYgayY9an8Gws3ua1j
+	vr1jq3ZrGayYvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8xhLUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbioxWmCmiaBhczAwAAsJ
 
-On Fri, Aug 08, 2025 at 11:20:45AM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Define ports {} for the DWC controller & the QMPPHY and connect them
-> together for the SS lanes.
+On Mon, 2025-08-11 at 16:36 +0800, Sebastian wrote:
 
-Sounds quite reasonable to me, but I can only guess why you think it's a
-good idea. Please start with a paragraph documenting which problem
-you're solving.
+> What about using task_work_add() and throttling the task on its way to
+> userland? The callback will be invoked without any locks held.
 
-Regards,
-Bjorn
 
-> 
-> Leave the DP endpoint unconnected for now, as both Aspire 1 and the
-> Chromebooks (unmerged, see [1]) seem to have a non-trivial topology.
-> Take the creative liberty to add a newline before its ports' subnodes
-> though.
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/20240210070934.2549994-23-swboyd@chromium.org/
-> 
-> Suggested-by: Rob Herring (Arm) <robh@kernel.org>
-> Closes: https://lore.kernel.org/linux-arm-msm/175462129176.394940.16810637795278334342.robh@kernel.org/
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 48 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> index 8f827f1d8515d6113c85a2ecacf7ac364e195242..a0df10a97c7f8aa5cd468c8983e74256490d1d06 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -2897,6 +2897,31 @@ usb_1_qmpphy: phy@88e8000 {
->  
->  			#clock-cells = <1>;
->  			#phy-cells = <1>;
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					usb_1_qmpphy_out: endpoint { };
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					usb_1_qmpphy_usb_ss_in: endpoint {
-> +						remote-endpoint = <&usb_1_dwc3_ss>;
-> +					};
-> +				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +
-> +					usb_1_qmpphy_dp_in: endpoint { };
-> +				};
-> +			};
->  		};
->  
->  		pmu@90b6300 {
-> @@ -3070,6 +3095,26 @@ usb_1_dwc3: usb@a600000 {
->  				phys = <&usb_1_hsphy>, <&usb_1_qmpphy QMP_USB43DP_USB3_PHY>;
->  				phy-names = "usb2-phy", "usb3-phy";
->  				maximum-speed = "super-speed";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
-> +
-> +						usb_1_dwc3_hs: endpoint {
-> +						};
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +
-> +						usb_1_dwc3_ss: endpoint {
-> +							remote-endpoint = <&usb_1_qmpphy_usb_ss_in>;
-> +						};
-> +					};
-> +				};
->  			};
->  		};
->  
-> @@ -3384,8 +3429,10 @@ mdss_dp: displayport-controller@ae90000 {
->  				ports {
->  					#address-cells = <1>;
->  					#size-cells = <0>;
-> +
->  					port@0 {
->  						reg = <0>;
-> +
->  						dp_in: endpoint {
->  							remote-endpoint = <&dpu_intf0_out>;
->  						};
-> @@ -3393,6 +3440,7 @@ dp_in: endpoint {
->  
->  					port@1 {
->  						reg = <1>;
-> +
->  						mdss_dp_out: endpoint { };
->  					};
->  				};
-> 
-> ---
-> base-commit: b1549501188cc9eba732c25b033df7a53ccc341f
-> change-id: 20250808-topic-7180_qmpphy_ports-e63404331685
-> 
-> Best regards,
-> -- 
-> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
+Dear Sebastian,
+
+I believe what you mentioned is related to the same issue that Valentin
+brought up later, which is the current solution of "delaying CPU throttling
+through the task_work mechanism until returning to user mode."
+My colleagues and I indeed noticed this from the beginning. However, on our
+6.1.134 RT-Linux system, we have tried new versions of this solution one by
+one, but they have all failed during basic script tests, so none have reached
+the stage of being used in our project. I see that this modification has been
+promoted in the community for more than two years, yet it remains in a state
+that doesn't work well (on our 6.1.134 RT-Linux system). I wonder if the
+changes require too many considerations or if this modification simply isn't
+suitable for running on RT-Linux. Our project cannot afford to wait, and
+there are many performance issues in RT-Linux.
+Therefore, I focused on making minimal changes to a complex and stable
+scheduling system (at least not altering the complex management logic of
+nr_running and related logic) and instead worked on the code of lock module
+and the logic of adjusting priorities, which are relatively easier to
+understand and modify.
+As a result, I implemented a patch that runs stably on 6.1.134 RT-Linux and
+meets the demands.
+
+
+Thanks
+Xin Zhao
+
 
