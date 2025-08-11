@@ -1,84 +1,59 @@
-Return-Path: <linux-kernel+bounces-762388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23CCB205E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:42:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB38B205DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70173ADADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 400821720B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59432367C9;
-	Mon, 11 Aug 2025 10:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A90D238D32;
+	Mon, 11 Aug 2025 10:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FKyp5XTt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ffqmA0fB"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815312343C2
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37FC2264C7;
+	Mon, 11 Aug 2025 10:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754908922; cv=none; b=HEpIR4k1FXpWUlsjMxz0Hs7iMX/SVI5hY9HkrvVjsiA1TjfpJjH4NpJHk4rX4QPUFBhdRG2AuNXENTVdMCSMi9k0Sjjixg4Sz6Qyhw3WtBnXFrqd2wIj7034NuYi6tLeT2NouxudRS69iy9dYMEDJauK8F6lcRMGpy5LyYND0Q8=
+	t=1754908910; cv=none; b=Mq0kPAImWhNJsJ1mZKSi572mT29Ux0l59Z1YT3/eu3itu2UBki6zk5e2HU9R6sgWu+CBQ3IZWKOFwJ2VW+rpk7JF/80ZRdOrQ//8rahr+2E08mRakQhF2uYKCWlgmpn7OsQqnjLdDOSdrlPIEQ6/NNoZT+uwkZNJrZkN2abzzwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754908922; c=relaxed/simple;
-	bh=oUUPBFt8iPQEt8wtHKfQYq4KaOfu60yp7zYZFd7eCH8=;
+	s=arc-20240116; t=1754908910; c=relaxed/simple;
+	bh=ogNDkN0Kti67wyjDkFkj3V/1dOo2vGXEtQDlghmP1JE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwCt/VL4kXRxWUS/boqU0spnl9sNX8BtNjkbRXfHrACj8eaqdphND2xvyUbafk4nX3dHafJbwn4WaPUqdir9EubdOhvE00s4I8kvsaRz5lTR+HItdO6KA597Go5ikA2Ifz6n86uu5R/cmDIbirtwKHiK5RvFdoI4bvbnAsdsKOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FKyp5XTt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754908919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0Mf+fEKLcRqF2Lbn8B1ER4v3t7yfNx1UEpVwuNnQTTs=;
-	b=FKyp5XTt1kqlg0x2coQOxiWBWzwRAPyf0I2jlpkGU6pf81KWGkCF/+gTHmGwDVBK2BkkfE
-	ZkGFL8mw6VJ+dYORHGyAPB6yPTEDxLqVmaoA3rdwOcLFzKE7UmRAr6o2wO301gL+4/7CQV
-	K14iFtGpWEqMYlxmV3Mye/HiReqRpGA=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-287-pC-M_UN9OVqUAWD6nHCYlA-1; Mon,
- 11 Aug 2025 06:41:58 -0400
-X-MC-Unique: pC-M_UN9OVqUAWD6nHCYlA-1
-X-Mimecast-MFC-AGG-ID: pC-M_UN9OVqUAWD6nHCYlA_1754908916
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB11E180047F;
-	Mon, 11 Aug 2025 10:41:55 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.234])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BB56E180044F;
-	Mon, 11 Aug 2025 10:41:47 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 11 Aug 2025 12:40:43 +0200 (CEST)
-Date: Mon, 11 Aug 2025 12:40:34 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [RESEND PATCH] sched: restore the behavior of put_task_struct()
- for non-rt
-Message-ID: <20250811104033.GA5250@redhat.com>
-References: <aJOwe_ZS5rHXMrsO@uudg.org>
- <20250811100624.LuYV-ZuF@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8lkGvatNAEQrSHwhW4+xUA9sid46O+Oie4dXfpxh/m2PrGBiwTunGs7xRa/TN69v8gsrmSi8gftgO3QWxONNH8FsIgXmFBmFjRkB6B5B6bkv0ZkInCG1eSIMLmrI2s1fcLY3FnN3UKMIvYPVQI6DOYj4Hr+hNtoL7ASUi0qy00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ffqmA0fB; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ogNDkN0Kti67wyjDkFkj3V/1dOo2vGXEtQDlghmP1JE=; b=ffqmA0fBOVEiLoSiu2XMUCtY5W
+	yErdxopJdli+VogUfdGfEwFhU+940mHrbFxnIRTiyQhqPnJWnQk+b91BgvMqaooQTeMQ0RyojMxBB
+	Yj7sPeQQaaDYFocd9q+s9XyeNt9dGre/JBZbNtnOhlXMVi+HMELHZWsZOuNiiMCaylgYV6UrjI306
+	BaiXOk8uLtQzjeO9QHqFD/mlzdmY9huKnI7hRnJ3DSh3ljm+o1dbGonizhpXlXH9zxq6octWTAebF
+	5jbahh9R7w9Y11ssWY8ArZ5OP7H3n/3qmWAzeytm1z0lbGHkq2X1mQKwQ6hdalJ3LRg9I/kQ7OJ7u
+	gaP2cRIA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ulPyF-00000007MiG-1faC;
+	Mon, 11 Aug 2025 10:41:39 +0000
+Date: Mon, 11 Aug 2025 03:41:39 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: alexjlzheng@gmail.com
+Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: Re: [PATCH v2 4/4] iomap: don't abandon the whole thing with
+ iomap_folio_state
+Message-ID: <aJnI49GCSfILx8eE@infradead.org>
+References: <20250810101554.257060-1-alexjlzheng@tencent.com>
+ <20250810101554.257060-5-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,54 +62,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811100624.LuYV-ZuF@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250810101554.257060-5-alexjlzheng@tencent.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 08/11, Sebastian Andrzej Siewior wrote:
->
-> I don't want to drag this but this comment is obvious for anyone who is
-> fluent in C. It is just a statement with no explanation.
-> An important note would be that the atomic context restriction only
-> apply to PREEMPT_RT and therefore we have this context override for
-> lockdep below. The other question would be why don't we do this
-> unconditionally regardless of PREEMPT_RT. The only reason I could find
-> is that releasing the task here from the "exit path" makes the vmap
-> stack "earlier" available for reuse.
+Where "the whole thing" is the current iteration in the write loop.
+Can you spell this out a bit better?
 
-Sorry, could you clarify your "other" question?
-
-What exactly do you think we could do regardless of PREEMPT_RT?
-
-Oleg.
-
-> 
-> > +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> > +		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
-> > +
-> > +		lock_map_acquire_try(&put_task_map);
-> > +		__put_task_struct(t);
-> > +		lock_map_release(&put_task_map);
-> > +		return;
-> > +	}
-> > +
-> >  	/*
-> >  	 * Under PREEMPT_RT, we can't call __put_task_struct
-> >  	 * in atomic context because it will indirectly
-> > @@ -137,10 +150,6 @@ static inline void put_task_struct(struct task_struct *t)
-> >  	 * current process has a mutex enqueued (blocked on
-> >  	 * a PI chain).
-> >  	 *
-> > -	 * In !RT, it is always safe to call __put_task_struct().
-> > -	 * Though, in order to simplify the code, resort to the
-> > -	 * deferred call too.
-> > -	 *
-> >  	 * call_rcu() will schedule __put_task_struct_rcu_cb()
-> >  	 * to be called in process context.
-> >  	 *
-> > 
-> 
-> Sebastian
-> 
+Also please include the rationale why you are changing the logic
+here in the commit log.
 
 
