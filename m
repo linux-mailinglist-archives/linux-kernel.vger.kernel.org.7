@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-762627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045B5B20918
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46733B2091E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 300D87B206C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:43:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170901887CBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110092D3ECB;
-	Mon, 11 Aug 2025 12:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD9223E23C;
+	Mon, 11 Aug 2025 12:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J4SAgSLZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Iuih7vAG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A443A2D3A9B
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562E88635B
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916293; cv=none; b=U3Zj3vjsFQHt/mDR6BHoN6epx3ZzLgxfZt+p3M822+4eTPKT2/Rs4hDy2+uzQMh6PVGAvINNWS1NnkpGqxHXNBjpiknv7Nl/faUn3JmpZpTlO/azYWHBbFI91lBE5gvg8Vvl9jChTwJ+R0kO0Pji+j79Vh1FzIoKiUQS8p+/nwo=
+	t=1754916344; cv=none; b=EtnzY7rmIcLyr5ui6oa9XCx7qg41VZghCBBuxw9LcpucUTxJnVU29fSkzKlWqV9PKJVNdh0+b54WJwusfwuYIIYWMxX0BLYLrkbngsF0HW12+YmGudekRlFsBbJDpGtie5P5gYkflZZEJdFaKPU7T9PbZGUck2E361gQgu7vmz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916293; c=relaxed/simple;
-	bh=r9PD8c2V1K8UlQjyYWcnwhI1Wbdsemc+Su+YG7mdqqE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ChpaP27JTYTDmNS30eBTzbIvEfZBIuAPR6xfbhrkRD4uf7LjLTj5KE/rXBKVslBmixULQC0r7rbNcdCOajp8L0jQgamxuUfvBDmh0ewOAHFqavU+DpiqCCgvhMv+P6U2otc6m4q5bBUaBipY9d4ne2sgyx+UB8woDPS/30VmHSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J4SAgSLZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754916290;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GUFx77mFsjO3+sNdMc+P7xX572cUmISh0hQE2zjvXB4=;
-	b=J4SAgSLZrvBSWfEJcot6MnJ2Lx9A943hulImFoHmbNWLrrvMeWQ6ElIuWTXInN882SvVVF
-	Y4vVGSUfkuTRA3zT1EKnppBI03HxYBwoqF+W4LNSoCia/H89Rxznk9dwMtMxunMX1fXOh7
-	rik3dnO3etJxhyrV0V86ShlW1bHxD+Y=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-xerZ-hIiP-GG5T4K7-TLkA-1; Mon,
- 11 Aug 2025 08:44:47 -0400
-X-MC-Unique: xerZ-hIiP-GG5T4K7-TLkA-1
-X-Mimecast-MFC-AGG-ID: xerZ-hIiP-GG5T4K7-TLkA_1754916286
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D4D019560B7;
-	Mon, 11 Aug 2025 12:44:46 +0000 (UTC)
-Received: from [10.22.80.50] (unknown [10.22.80.50])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F1201955F16;
-	Mon, 11 Aug 2025 12:44:44 +0000 (UTC)
-Date: Mon, 11 Aug 2025 14:44:41 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    "open list:DEVICE-MAPPER  (LVM)" <dm-devel@lists.linux.dev>, 
-    open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] dm bufio: remove redundant __GFP_NOWARN
-In-Reply-To: <20250811123638.550822-3-rongqianfeng@vivo.com>
-Message-ID: <649a5bf8-309b-8128-b3f9-971d3a0bb350@redhat.com>
-References: <20250811123638.550822-1-rongqianfeng@vivo.com> <20250811123638.550822-3-rongqianfeng@vivo.com>
+	s=arc-20240116; t=1754916344; c=relaxed/simple;
+	bh=jW5Qvse2VjAQgBMlkx0ghwxP6d3zSzl6DpklQz/HXq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IhoqCx6kopYQqzD7UG2k0+g6Cv1/uliywdwG7pmqXBSfVrTkZ9a/rNYetay2UeHlVZ3ueEkdDaQPjRs51PC1OPCTn7YErEhK7qituuATab1qImxftvlyqLWJKhaDO65bpHZZjedrlouqVbRjX+IJoNwn3XIEMk+7ihB5DMY8U3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Iuih7vAG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9dAES028829
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:45:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=pT9ohewNtPwm8XYt5Nk3ZAoe
+	mGBHmM5ljwEdjo4ftDE=; b=Iuih7vAGr956+NyImXauom3d6ITOXc7qap30yyTV
+	R7D6/c4BW+X1ZD5N2PjbcrbD580GzH3J456uyczrNYnapSnpkD4fAIE1ntNnl5C+
+	GJoGyErafNsaL2E6NNJLMdJ8jsAiKIaGQFoD/HXfiuzF4kRh2GEDqwkod4yQOiXl
+	CWyBeDcTWxJsSAnaIBAHkwK8ihB6jtjR9pbIn1R+8dIr6FIwLfOXiUayoWyWOe+F
+	Jh6A2rBhyVGVComgkXwRGhQqYLljZtNkEDbe3ysJB67SYjcjE5dygDYDD3k+CAwa
+	LkO/gksYsx0r5dpP5WD5O8SINn7ge7W/qBh5jOozmKievw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9smjmk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:45:41 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-707453b0307so98012916d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 05:45:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754916340; x=1755521140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pT9ohewNtPwm8XYt5Nk3ZAoemGBHmM5ljwEdjo4ftDE=;
+        b=qGRwflB9xHj92jnPpkTGVntHmBiCnK7+RtukLxwOfyGeFcT6PfAV983mVqpWKdczqp
+         wJeJE90uuSJtwpaM4orduli8/2+jR2exdc6ojNeBtQsWSGqqvzXZ+D7jSelZJQC/RTlW
+         eGQQ7Npjv4oDpcp7Z3CH0LYZvsOhRs3n3IL2ZYKTcg9/L1BBk+ontd+IFd5zkqEy0txN
+         mCrK2f2XHZuNvrVh7JKpTpnPfbZWdWW98lGpHjRzgCIJFz79qCg//liDlNro0t7fwkC8
+         tiEYf4djlVAqBl1z/F3bC+41nabTFVx3jiIgLQ5H1YyXpvB+pyTc8uz91dAuef67ldkv
+         PN0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVOBy9MDWYIuVSw1Rs+g9K65NHGNz5NXIfSNC19pmJ4i/Wl52jayIE346ZLzG/jnazvQbuWgPn5rAkCzn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKdjJC29OQT3nh8nxWLg4MSmpmtYOMkJ52j1QfmZfL0c7brbMO
+	YgztzFi/fSWzV4qREQO8ZyfqG7EjdWM619qrQC4ojFhLShuNDHWO4iS3O9qpljdC25/tgOoDYmV
+	P+8uKH5PM6K7Hz1eR4ldqDLRKQGnvfaKk/dVTdovUquP3CAiRvP3g+NrYVBoMimZdYsk=
+X-Gm-Gg: ASbGncvZ2ND0VqpxOGRzXGpyqYLZUSdl42MpdUNPKZDpPI6M3j9u2/CONDV3NoS8LIj
+	xiZOZK6fovF4DyWY15GuhxzCAMx2ruabpg8cKc74I8a4Ucp8GC6kRrq5+hpYbA1rm63EQq4rqU/
+	mSivMaWonE5MiR6k8d7dQHtWNidWWBVa4C0WROTlkg8iedtpaqPXlJE1Cf9EVxSryBe+98RTYWm
+	Qvr/3lcYRZK6TIa55Aqmh1XJCyBbOCyQUldaFCvNnowG9uS885lwhZH8SFS1iazLKT+JSEL8y/H
+	pFPzcTs82byAcM4TqglgYptvIsianjiA8Gh5IqcUPDMvt4e7ZwW1YkSfit+TLQeGEbOBGRk8snf
+	K72dV0tyacrcVi6c0/BkyybUAtOaIa+vZO5pvwwGZsrU4q+ZQPf/R
+X-Received: by 2002:a05:6214:2626:b0:707:1b24:f305 with SMTP id 6a1803df08f44-7099a1fcfb3mr151745136d6.18.1754916340031;
+        Mon, 11 Aug 2025 05:45:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNeqcsczlEMfgPrp2sE30gPgQQo08+/icjLACF9Uyg6u4HdWc5u3IL4q586h1hVCxd/FxkBw==
+X-Received: by 2002:a05:6214:2626:b0:707:1b24:f305 with SMTP id 6a1803df08f44-7099a1fcfb3mr151744486d6.18.1754916339187;
+        Mon, 11 Aug 2025 05:45:39 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898c0e9sm4233296e87.13.2025.08.11.05.45.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 05:45:38 -0700 (PDT)
+Date: Mon, 11 Aug 2025 15:45:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: chris.ruehl@gtsys.com.hk
+Cc: sre@kernel.org, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ruehlchr@gmail.com
+Subject: Re: [PATCH] msm: arm: qcom battery manager add OOI chemistry
+Message-ID: <tvdv6755c57x5b4yjtqopshxtdjl7eoor5mxqh62k47o6dtcdh@znug23oizqbw>
+References: <20250811111026.24292-1-chris.ruehl@gtsys.com.hk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811111026.24292-1-chris.ruehl@gtsys.com.hk>
+X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=6899e5f5 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=O7zmUmNSAAAA:8 a=EUspDBNiAAAA:8 a=XW9AV8nKKixspLQJyWAA:9
+ a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=IJxu9zi5bFdC9NS7oKyv:22
+X-Proofpoint-ORIG-GUID: N3Ip2zYH5nAN2lYK0Qkb3-2DifCVF-KW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfXxffxTK9Edqm3
+ eB1jeF7LFqsIlomuswWhg8zB2I5K0CLQHDgTzW0gnN8Q+yhHDMqLv8j1iekJ/4s3IALM9tYOEMc
+ s1/2qSONrSE4cV7VR/lR4IPyBbfvjA722cSPrpffxZxNn9foMbaUa3hIaNFZm4coHhpvy1b3vw/
+ 4/hOWoC1bNFviKoRrUWM+Q6IQWVrHGlXvgmhKFAOdoI7qL7bSa9MKy4Kxd63FHp/Gl6tc2CxUUy
+ oilpfLKvCWdf3FNHUrI9AhbUGqXjo0HsRSCjeY0KYaFym0xZyp8m7i2edYeRjHkMaBFILVvKnuf
+ gU/J5r44VZF9pFCsjSdAF7/lRoCr08XWtrg+mVZLLYm86rlE3nVoJ9WofZv+1Np6itrUZkZPZat
+ VSVsDirU
+X-Proofpoint-GUID: N3Ip2zYH5nAN2lYK0Qkb3-2DifCVF-KW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090015
 
-Hi
-
-I think that GFP_NOWAIT already includes __GFP_NORETRY too. So, should we 
-drop __GFP_NORETRY as well?
-
-Mikulas
-
-
-On Mon, 11 Aug 2025, Qianfeng Rong wrote:
-
-> GFP_NOWAIT already includes __GFP_NOWARN, so let's remove the redundant
-> __GFP_NOWARN.  Also update comments to clarify the flag semantics.
+On Mon, Aug 11, 2025 at 01:10:26PM +0200, chris.ruehl@gtsys.com.hk wrote:
+> From: Christopher Ruehl <chris.ruehl@gtsys.com.hk>
 > 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+> The ASUS S15 xElite model report the Li-ion battery with an OOI, hence this
+> update the detection and return the appropriate type.
+> 
+> Signed-off-by: Christopher Ruehl <chris.ruehl@gtsys.com.hk>
 > ---
->  drivers/md/dm-bufio.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/md/dm-bufio.c b/drivers/md/dm-bufio.c
-> index ff7595caf440..4b20854e92f5 100644
-> --- a/drivers/md/dm-bufio.c
-> +++ b/drivers/md/dm-bufio.c
-> @@ -1337,7 +1337,7 @@ static void use_bio(struct dm_buffer *b, enum req_op op, sector_t sector,
->  	char *ptr;
->  	unsigned int len;
->  
-> -	bio = bio_kmalloc(1, GFP_NOWAIT | __GFP_NORETRY | __GFP_NOWARN);
-> +	bio = bio_kmalloc(1, GFP_NOWAIT | __GFP_NORETRY);
->  	if (!bio) {
->  		use_dmio(b, op, sector, n_sectors, offset, ioprio);
->  		return;
-> @@ -1601,18 +1601,18 @@ static struct dm_buffer *__alloc_buffer_wait_no_callback(struct dm_bufio_client
->  	 * dm-bufio is resistant to allocation failures (it just keeps
->  	 * one buffer reserved in cases all the allocations fail).
->  	 * So set flags to not try too hard:
-> -	 *	GFP_NOWAIT: don't wait; if we need to sleep we'll release our
-> -	 *		    mutex and wait ourselves.
-> +	 *	GFP_NOWAIT: don't wait and don't print a warning in case of
-> +	 *		    failure; if we need to sleep we'll release our mutex
-> +	 *		    and wait ourselves.
->  	 *	__GFP_NORETRY: don't retry and rather return failure
->  	 *	__GFP_NOMEMALLOC: don't use emergency reserves
-> -	 *	__GFP_NOWARN: don't print a warning in case of failure
->  	 *
->  	 * For debugging, if we set the cache size to 1, no new buffers will
->  	 * be allocated.
->  	 */
->  	while (1) {
->  		if (dm_bufio_cache_size_latch != 1) {
-> -			b = alloc_buffer(c, GFP_NOWAIT | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
-> +			b = alloc_buffer(c, GFP_NOWAIT | __GFP_NORETRY | __GFP_NOMEMALLOC);
->  			if (b)
->  				return b;
->  		}
-> -- 
-> 2.34.1
+>  drivers/power/supply/qcom_battmgr.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+-- 
+With best wishes
+Dmitry
 
