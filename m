@@ -1,228 +1,240 @@
-Return-Path: <linux-kernel+bounces-763115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC20B2108B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:59:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D90A4B2106D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42AF03E1217
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A75685583
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9F812CDBE;
-	Mon, 11 Aug 2025 15:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6812E5B14;
+	Mon, 11 Aug 2025 15:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u3l5Xx7f";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cn7QAdb5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u3l5Xx7f";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cn7QAdb5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+ee6uzy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADF42E4269
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA642E0934;
+	Mon, 11 Aug 2025 15:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754926126; cv=none; b=o5VYN4CbCvzb0ymDeAmDD2LLqxdxYTBtprHxiMH5kWoYNzeN/md/pDcDb4j5s4ls7ZukZVpYQCQg31ylt90bGgENYpPjEWbVc6+HNGWSejqowfjSEHxrpK2+zoQnKrmqHAUMpMTgtnZacUMRP1AhD6eGqc9pBQbknFls2Bwtt+w=
+	t=1754926172; cv=none; b=g+PcOgopCm9b+4F5igGn5PQPGTPWDNQaA61lJ31ur98uPKR44lp3nb186ZT1vrx1Xo3GzOXJ5v6oKe2X8JtrjUQqMZnK+UnuxsHK/qPEDy8vi6WMz6IBItx53bCmuj+Mqlrx6j+Wa7iyUvxYzTKDP2sUcoE8u/+hDXK3yX3q0X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754926126; c=relaxed/simple;
-	bh=ZwDfwlp8cBdlKBwbH0lcrnLu6cPP4Gi1D1kbqHCOap0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NGfR0lXVswkdUWLFcl9S56TQV1RhZLKWFgQw298rEDmSNhAsuUt+PMSI+k3zVlneD37wFeSPfK1KDtEi2sqxvv6/vrUokbmGudgZktx8E2qcwEtrgkkojYeuHU4YMYCbfW8iuGaBtUxUz/LQqkeqezGpcy5FkGXEnQAG27NyuB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u3l5Xx7f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cn7QAdb5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u3l5Xx7f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cn7QAdb5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 24AB61F460;
-	Mon, 11 Aug 2025 15:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754926123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5DZ4tuyFJQLZXRPQVeVCDKXSBZt5Eva1A2iGtDgdvS4=;
-	b=u3l5Xx7fHip7r5u6WQNaCcytXGF6LctH3+LRuIxfaCJhCmGltLGcmXcNiI3KKmr4qxEB9k
-	lQiWrxuTAMSDX+EGt28AzzDosWXM9GfWfXW7uSoSNY/pn+X5u+aoEoFtV0UKxe8smw7VcW
-	dQblRAyMedL4GWgP7auP8jEfSvPBDXQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754926123;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5DZ4tuyFJQLZXRPQVeVCDKXSBZt5Eva1A2iGtDgdvS4=;
-	b=cn7QAdb5nUuszXF1xhrXi15XNjCEYp1sZ1ki7wD0L9avK7V4hgwNamX18gokbcIzvzM+xK
-	+wE6aPMxCXd8YHCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754926123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5DZ4tuyFJQLZXRPQVeVCDKXSBZt5Eva1A2iGtDgdvS4=;
-	b=u3l5Xx7fHip7r5u6WQNaCcytXGF6LctH3+LRuIxfaCJhCmGltLGcmXcNiI3KKmr4qxEB9k
-	lQiWrxuTAMSDX+EGt28AzzDosWXM9GfWfXW7uSoSNY/pn+X5u+aoEoFtV0UKxe8smw7VcW
-	dQblRAyMedL4GWgP7auP8jEfSvPBDXQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754926123;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5DZ4tuyFJQLZXRPQVeVCDKXSBZt5Eva1A2iGtDgdvS4=;
-	b=cn7QAdb5nUuszXF1xhrXi15XNjCEYp1sZ1ki7wD0L9avK7V4hgwNamX18gokbcIzvzM+xK
-	+wE6aPMxCXd8YHCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DBE7F13A55;
-	Mon, 11 Aug 2025 15:28:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vnA8NCoMmmiBaAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 11 Aug 2025 15:28:42 +0000
-Message-ID: <15d8a106-62f8-489c-83d7-3ae0d1fcbfbd@suse.de>
-Date: Mon, 11 Aug 2025 17:28:42 +0200
+	s=arc-20240116; t=1754926172; c=relaxed/simple;
+	bh=DaoO0tOAvuz+IieVCs2Sd8Rvss6i/VyAINsBzWtgG08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HlILmarBmBsTBNBYYX7j7wgzEBI4AJqmWLgBVmc80j1gfJzRPMyaJ9O+VvAZ9W3cRmqWCGHYswlpyGxAGk5tKaPjEFVgFWbiOFCbHrclpk3ptpyrcvrMU2M9CAqj1616AR1C0OfnhwhVGeu6BvjblDo18EOYXcowxJ13G8+gYI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+ee6uzy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7EACC4CEED;
+	Mon, 11 Aug 2025 15:29:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754926171;
+	bh=DaoO0tOAvuz+IieVCs2Sd8Rvss6i/VyAINsBzWtgG08=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u+ee6uzyVyBXe3OGMvR73lm8imKsfB3QLa0r3oVyr53nuV+UFgcuDRoNpMLAtIkzL
+	 N7q6xmJHs8ImeY0PuX7INuJEplIyHdIw1HmslRd/HZ0MyBK7MGeVguerKl1pwLBbA9
+	 owVy9BHNa1REfFNrO4G9zCCugNr1wUudSll+G4GKKhpIkhw7U1fTYb0xiYIaXImJj3
+	 O5pkkD8CxthBIjekBuqxrUGHi/cGYOnDW8XOvTYg8zZBaP2f5sm7VbAhIqCo9b1FyJ
+	 novVXUKROcJZvIIraAhV3Vwn0fDT2ALJ8QyINnWNVBr4IXlhac305eHEg9Vga5GOWB
+	 +sUIr5juO4jSg==
+Date: Mon, 11 Aug 2025 08:29:31 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 06/11] generic: Add atomic write multi-fsblock
+ O_[D]SYNC tests
+Message-ID: <20250811152931.GI7965@frogsfrogsfrogs>
+References: <cover.1754833177.git.ojaswin@linux.ibm.com>
+ <af97ff125953e4e29abc42d1726c632398652d67.1754833177.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/tests: Fix drm_test_fb_xrgb8888_to_xrgb2101010()
- on big-endian
-To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, lumag@kernel.org, cristian.ciocaltea@collabora.com,
- gcarlos@disroot.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250630090054.353246-1-jose.exposito89@gmail.com>
- <20250630090054.353246-2-jose.exposito89@gmail.com>
- <9467c5f1-fb70-4698-a611-80f9be499b22@suse.de> <aJnE6Uu_WutFA06X@fedora>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <aJnE6Uu_WutFA06X@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,collabora.com,disroot.org,lists.freedesktop.org,vger.kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af97ff125953e4e29abc42d1726c632398652d67.1754833177.git.ojaswin@linux.ibm.com>
 
-Hi
+On Sun, Aug 10, 2025 at 07:11:57PM +0530, Ojaswin Mujoo wrote:
+> This adds various atomic write multi-fsblock stresst tests
+> with mixed mappings and O_SYNC, to ensure the data and metadata
+> is atomically persisted even if there is a shutdown.
+> 
+> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Am 11.08.25 um 12:24 schrieb José Expósito:
-> Hi Thomas,
->
-> On Mon, Jun 30, 2025 at 01:37:58PM +0200, Thomas Zimmermann wrote:
->>
->> Am 30.06.25 um 11:00 schrieb José Expósito:
->>> Fix failures on big-endian architectures on tests cases
->>> single_pixel_source_buffer, single_pixel_clip_rectangle,
->>> well_known_colors and destination_pitch.
->>>
->>> Fixes: 15bda1f8de5d ("drm/tests: Add calls to drm_fb_blit() on supported format conversion tests")
->>> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
->> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Just a friendly reminder about this patches. Can I merge them?
-> They have been in the ML for a while and it doesn't look like
-> there are concerns.
+Looks fine to me now.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Merged into drm-misc-fixes now. Sorry for the delay.
+--D
 
-Best regards
-Thomas
-
->
-> Best wishes,
-> Jose
->   
->>> ---
->>>    drivers/gpu/drm/tests/drm_format_helper_test.c | 1 +
->>>    1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/drm/tests/drm_format_helper_test.c
->>> index 86829e1cb7f0..981dada8f3a8 100644
->>> --- a/drivers/gpu/drm/tests/drm_format_helper_test.c
->>> +++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
->>> @@ -1040,6 +1040,7 @@ static void drm_test_fb_xrgb8888_to_xrgb2101010(struct kunit *test)
->>>    	memset(buf, 0, dst_size);
->>>    	drm_fb_xrgb8888_to_xrgb2101010(&dst, dst_pitch, &src, &fb, &params->clip, &fmtcnv_state);
->>> +	buf = le32buf_to_cpu(test, (__force const __le32 *)buf, dst_size / sizeof(u32));
->>>    	KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
->>>    }
->> -- 
->> --
->> Thomas Zimmermann
->> Graphics Driver Developer
->> SUSE Software Solutions Germany GmbH
->> Frankenstrasse 146, 90461 Nuernberg, Germany
->> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
->> HRB 36809 (AG Nuernberg)
->>
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+> ---
+>  tests/generic/1228     | 137 +++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/1228.out |   2 +
+>  2 files changed, 139 insertions(+)
+>  create mode 100755 tests/generic/1228
+>  create mode 100644 tests/generic/1228.out
+> 
+> diff --git a/tests/generic/1228 b/tests/generic/1228
+> new file mode 100755
+> index 00000000..888599ce
+> --- /dev/null
+> +++ b/tests/generic/1228
+> @@ -0,0 +1,137 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
+> +#
+> +# FS QA Test 1228
+> +#
+> +# Atomic write multi-fsblock data integrity tests with mixed mappings
+> +# and O_SYNC
+> +#
+> +. ./common/preamble
+> +. ./common/atomicwrites
+> +_begin_fstest auto quick rw atomicwrites
+> +
+> +_require_scratch_write_atomic_multi_fsblock
+> +_require_atomic_write_test_commands
+> +_require_scratch_shutdown
+> +_require_xfs_io_command "truncate"
+> +
+> +_scratch_mkfs >> $seqres.full
+> +_scratch_mount >> $seqres.full
+> +
+> +check_data_integrity() {
+> +	actual=$(_hexdump $testfile)
+> +	if [[ "$expected" != "$actual" ]]
+> +	then
+> +		echo "Integrity check failed"
+> +		echo "Integrity check failed" >> $seqres.full
+> +		echo "# Expected file contents:" >> $seqres.full
+> +		echo "$expected" >> $seqres.full
+> +		echo "# Actual file contents:" >> $seqres.full
+> +		echo "$actual" >> $seqres.full
+> +
+> +		_fail "Data integrity check failed. The atomic write was torn."
+> +	fi
+> +}
+> +
+> +prep_mixed_mapping() {
+> +	$XFS_IO_PROG -c "truncate 0" $testfile >> $seqres.full
+> +	local off=0
+> +	local mapping=""
+> +
+> +	local operations=("W" "H" "U")
+> +	local num_blocks=$((awu_max / blksz))
+> +	for ((i=0; i<num_blocks; i++)); do
+> +		local index=$((RANDOM % ${#operations[@]}))
+> +		local map="${operations[$index]}"
+> +		local mapping="${mapping}${map}"
+> +
+> +		case "$map" in
+> +			"W")
+> +				$XFS_IO_PROG -dc "pwrite -S 0x61 -b $blksz $off $blksz" $testfile > /dev/null
+> +				;;
+> +			"H")
+> +				# No operation needed for hole
+> +				;;
+> +			"U")
+> +				$XFS_IO_PROG -c "falloc $off $blksz" $testfile >> /dev/null
+> +				;;
+> +		esac
+> +		off=$((off + blksz))
+> +	done
+> +
+> +	echo "+ + Mixed mapping prep done. Full mapping pattern: $mapping" >> $seqres.full
+> +
+> +	sync $testfile
+> +}
+> +
+> +verify_atomic_write() {
+> +	test $bytes_written -eq $awu_max || _fail "atomic write len=$awu_max assertion failed"
+> +	check_data_integrity
+> +}
+> +
+> +mixed_mapping_test() {
+> +	prep_mixed_mapping
+> +
+> +	echo -"+ + Performing O_DSYNC atomic write from 0 to $awu_max" >> $seqres.full
+> +	if [[ "$1" == "shutdown" ]]
+> +	then
+> +		bytes_written=$($XFS_IO_PROG -x -dc \
+> +				"pwrite -DA -V1 -b $awu_max 0 $awu_max" \
+> +				-c "shutdown" $testfile | grep wrote | \
+> +				awk -F'[/ ]' '{print $2}')
+> +		_scratch_cycle_mount >>$seqres.full 2>&1 || _fail "remount failed"
+> +	else
+> +		bytes_written=$($XFS_IO_PROG -dc \
+> +				"pwrite -DA -V1 -b $awu_max 0 $awu_max" $testfile | \
+> +				grep wrote | awk -F'[/ ]' '{print $2}')
+> +	fi
+> +
+> +	verify_atomic_write
+> +}
+> +
+> +testfile=$SCRATCH_MNT/testfile
+> +touch $testfile
+> +
+> +awu_max=$(_get_atomic_write_unit_max $testfile)
+> +blksz=$(_get_block_size $SCRATCH_MNT)
+> +
+> +# Create an expected pattern to compare with
+> +$XFS_IO_PROG -tc "pwrite -b $awu_max 0 $awu_max" $testfile >> $seqres.full
+> +expected=$(_hexdump $testfile)
+> +echo "# Expected file contents:" >> $seqres.full
+> +echo "$expected" >> $seqres.full
+> +echo >> $seqres.full
+> +
+> +echo "# Test 1: Do O_DSYNC atomic write on random mixed mapping:" >> $seqres.full
+> +echo >> $seqres.full
+> +for ((iteration=1; iteration<=10; iteration++)); do
+> +	echo "=== Mixed Mapping Test Iteration $iteration ===" >> $seqres.full
+> +
+> +	echo "+ Testing without shutdown..." >> $seqres.full
+> +	mixed_mapping_test
+> +	echo "Passed!" >> $seqres.full
+> +
+> +	echo "+ Testing with sudden shutdown..." >> $seqres.full
+> +	mixed_mapping_test "shutdown"
+> +	echo "Passed!" >> $seqres.full
+> +
+> +	echo "Iteration $iteration completed: OK" >> $seqres.full
+> +	echo >> $seqres.full
+> +done
+> +echo "# Test 1: Do O_SYNC atomic write on random mixed mapping (10 iterations): OK" >> $seqres.full
+> +
+> +
+> +echo >> $seqres.full
+> +echo "# Test 2: Do extending O_SYNC atomic writes: " >> $seqres.full
+> +bytes_written=$($XFS_IO_PROG -x -dstc "pwrite -A -V1 -b $awu_max 0 $awu_max" \
+> +		-c "shutdown" $testfile | grep wrote | awk -F'[/ ]' '{print $2}')
+> +_scratch_cycle_mount >>$seqres.full 2>&1 || _fail "remount failed"
+> +verify_atomic_write
+> +echo "# Test 2: Do extending O_SYNC atomic writes: OK" >> $seqres.full
+> +
+> +# success, all done
+> +echo "Silence is golden"
+> +status=0
+> +exit
+> +
+> diff --git a/tests/generic/1228.out b/tests/generic/1228.out
+> new file mode 100644
+> index 00000000..1baffa91
+> --- /dev/null
+> +++ b/tests/generic/1228.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 1228
+> +Silence is golden
+> -- 
+> 2.49.0
+> 
+> 
 
