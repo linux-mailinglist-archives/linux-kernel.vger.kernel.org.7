@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-763515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D144FB215DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD160B215E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA3BD46396B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6CC0463AAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50372D876C;
-	Mon, 11 Aug 2025 19:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F5C2D8765;
+	Mon, 11 Aug 2025 19:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="OneJKKKf"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="acaGdy7m"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4FE1F875A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 19:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E27E18C322;
+	Mon, 11 Aug 2025 19:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754941662; cv=none; b=kyN2lb+FvA5YZi6DDbKeYPnq4T7WEdQ63YPcToXxjg5TaIeTw2Vsrnnw+XH8qJQDlJ4MTGN4V+fHV1y9y8tk0RDCAMjS7S5XVMfq6KbbB9b7iBPwgz2I+tpkFbsR3iEq8KbghRJ3NkP2MAp6VUg9zqyCSbK4uK3PaZ5lm2HHOYw=
+	t=1754941775; cv=none; b=AElb4Q9bb4Gbo4q0UOpVdyqTzPBZxBNHqlMt1AUsaVlajF5/oUgJevtAPJnVsOhOCDPq1ss65U5V+IiwGqOoK+2EMIOSaSXZzpz0DU/IQlHLq0PkItLDUs+F50rU9IeRujnUw5NA7EmuZRoMF584ELWdaBna0IrIeHXP8xhPAfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754941662; c=relaxed/simple;
-	bh=8VP4+SXuBWDYxMejSZPkzLZued5y6P3qoQt3VsSOjQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RgUCPanCDAMCdjL7UxRLgNFbkMrMoOi8yiIxVd99jV5Srww2CYva4YtE6qfP3Ukv+hKSy35jernG43j0puryk1HLwiGgUhRMY5jNGY792NCT9jMb/q5WT311qXod/7dJ6wac6qiacUfzlVXzpZKFl4iu3sOuA1MelbD13Ds4trE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=OneJKKKf; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1754941658;
- bh=LbVk/fpTYYUx2D//VVnb557+OAlwMeSeZqu2R2SQyeE=;
- b=OneJKKKfpWaJ1U45wzdHxGotxPeOQPq5dRHw3cqoU4wLZpFQuuKAlR+3TtNAaBoDIqAQzia+F
- DLxduQkuBIbm/ta3wh095DNvIOHEpE8TSyY0DGquPXGGbUYT6IQud2XKwNcHs6KhHDE1/Nph1QG
- acy1JefkdoNBwDgkti8hvxbCuSmk22wBYt+tRKBVORz2q8Peh0QZOAS2cKwsxXz1kpeLgUOilRb
- 8xbIsmTSHcyI6mpbtbUa/MSh+d6QcI3Kac/loTg26zj7ZQtASJFa9SwychxZ/cZ8hj9+K3c1oc5
- Cmo5veEwX5cwup3wEGN9Wg4fjLseuj2JCfvoZ1TQycow==
-X-Forward-Email-ID: 689a48a7de615f3104e044ef
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.2.4
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <d0d50da8-f8bb-4a6f-bd44-5199d26b7a86@kwiboo.se>
-Date: Mon, 11 Aug 2025 21:46:42 +0200
+	s=arc-20240116; t=1754941775; c=relaxed/simple;
+	bh=BKJRuShw+ifPGO5zDJ02R/+RA2ZGWjS7IyXGvaWV6UE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RX08xdcO+yY2Azqf8G7tLyhpSiANQmSsMFYceGXfwp5uHx+mx9GDFiiLNAboiC5mB1N9QTMI4N35dHh93GErw0Yph50x/CiHk98UmgC3ura28raq14iXAdwfq7j1DA+Oidk+KE5IVP9y5Eq3w4ZA0Qd92tEMVYHEyGSPl3BdoQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=acaGdy7m; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BG6vD8028837;
+	Mon, 11 Aug 2025 19:49:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kIQNEOr2Ctamux622lIofJF12/gwgzh0TGqzjOJ7sbs=; b=acaGdy7mfCdoKpKH
+	gGTzErvMTs1iyBmeboWlGaYrVtCzeSyBCtkzKXJCvBWKeYwVNhudE/ZAeNstCuZC
+	gDPGWzppNl6w/flyFE4wIMnw1vg24hFsSsQ4OHv+ukIWZCbg169I3UurIKPR7tiN
+	qUo+0eJU6xdwh2ogJtVZdXZrKEgv4K2DxU85UVCUaafauIEqMwxJTAmgiGvmk7uP
+	tlnWOlevlYWnMX7xcrGIC7+IDh7O8vcoWAD+pxcp+HEjxKJR44QM/kGkDxCNDES1
+	/zNEivytx2OR3JPA701hBLiLY3kEElXml3KY8MesfzJOlXHayUVEOMQyWYXfzD63
+	slyIGQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9snsjh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 19:49:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57BJn7nW001114
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 19:49:07 GMT
+Received: from [10.216.45.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
+ 2025 12:49:01 -0700
+Message-ID: <d072b19d-bc01-45c8-8cf3-bceb53ca9b2c@quicinc.com>
+Date: Tue, 12 Aug 2025 01:18:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,123 +64,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] media: rkvdec: Add HEVC backend
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Alex Bee <knaerzche@gmail.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250810212454.3237486-1-jonas@kwiboo.se>
- <20250810212454.3237486-2-jonas@kwiboo.se>
- <9c8cb837d10d3cdd54fe34dedfe40c10e848f648.camel@collabora.com>
+Subject: Re: [PATCH V1 4/4] phy: qcom-qmp-ufs: read max-microamp values from
+ device tree
+To: Bjorn Andersson <andersson@kernel.org>, Mark Brown <broonie@kernel.org>
+CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <mani@kernel.org>, <conor+dt@kernel.org>,
+        <bvanassche@acm.org>, <neil.armstrong@linaro.org>,
+        <dmitry.baryshkov@oss.qualcomm.com>, <konradybcio@kernel.org>,
+        <krzk+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20250806154340.20122-1-quic_nitirawa@quicinc.com>
+ <20250806154340.20122-5-quic_nitirawa@quicinc.com>
+ <f368b6da-1aa3-4b8e-9106-3c29d4ab5c5e@oss.qualcomm.com>
+ <fe2bc07c-8fe9-47fd-bcd7-c2f0ebbd596f@sirena.org.uk>
+ <aed1de56-fafe-4ccc-b542-69400b574def@oss.qualcomm.com>
+ <acf89420-743b-4178-ac05-d4ca492bfee3@sirena.org.uk>
+ <599b8a4b-324a-4543-ba27-0451f05c3dfd@quicinc.com>
+ <3aa82f65-4812-4bf0-9323-96f40824a004@sirena.org.uk>
+ <8c7f8cfc-2090-449e-b6ec-688a0021bac4@oss.qualcomm.com>
+ <14566f49-7f7b-4583-98b7-8a473054f7c3@sirena.org.uk>
+ <kwp3q4r5rzahzro5f6l6ml24vbiutyxokrhjsbtzcb5kvanx5e@elagxv6w5dq7>
 Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <9c8cb837d10d3cdd54fe34dedfe40c10e848f648.camel@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <kwp3q4r5rzahzro5f6l6ml24vbiutyxokrhjsbtzcb5kvanx5e@elagxv6w5dq7>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689a4933 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=goew4TiO_d3vh4neJagA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: z4j3y0ZhEyzLxSi9fxUT7xqILUrZh4A5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX6P50+mmJI+aK
+ CoiF5vfBJWYS8JXs+7MDfglj4szRXReknGLhkUxFcJCSAZkKMLhD6lCDs0gWJ/GVu6Kvz0ZuemG
+ PA8leKZ8ZrYWoRqH36Kr8Uv5QuVQsOyhTuTBNGI/67wP45sBy1VgnSKj3xVRYC6BB1mXHm7LeIa
+ 9kYTav9gn5majOvH/0QUNy6F7ay7M5X8LfbCKkxL9yf2+bzrAN3IrcSyQgpsrUZYZquB5MMXfrR
+ VdoPFsK9TbtzMjhWMjVHc1NwrdecHqgqdbUqmtGGZYc6YuL+6qOIOQajoXm4K6RDHSbxzfPy6BO
+ lV9xCbdyjbqXpfGFfHLzozVr1slQG18KrJYLqgHMx3jUMtLboEDBCLD1SeG/peH3f/zzdVns+PL
+ WZh+fo7+
+X-Proofpoint-GUID: z4j3y0ZhEyzLxSi9fxUT7xqILUrZh4A5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_04,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090015
 
-Hi Nicolas,
 
-On 8/11/2025 9:12 PM, Nicolas Dufresne wrote:
-> Le dimanche 10 août 2025 à 21:24 +0000, Jonas Karlman a écrit :
->> The Rockchip VDEC supports the HEVC codec with the Main and Main10
->> Profile up to Level 5.1 High tier: 4096x2304@60 fps.
+
+On 8/11/2025 9:20 PM, Bjorn Andersson wrote:
+> On Thu, Aug 07, 2025 at 08:09:56PM +0100, Mark Brown wrote:
+>> On Thu, Aug 07, 2025 at 07:43:15PM +0200, Konrad Dybcio wrote:
+>>> On 8/7/25 7:26 PM, Mark Brown wrote:
 >>
->> Add the backend for HEVC format to the decoder.
+>>>> Note that that's specifying OPPs which is different...
 >>
->> Signed-off-by: Alex Bee <knaerzche@gmail.com>
->> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
->> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
->> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->> ---
->> Changes in v2:
->> - Use new_value in transpose_and_flatten_matrices()
->> - Add NULL check for ctrl->new_elems in rkvdec_hevc_run_preamble()
->> - Set RKVDEC_WR_DDR_ALIGN_EN for RK3328
->> ---
->>  .../media/platform/rockchip/rkvdec/Makefile   |    2 +-
->>  .../rockchip/rkvdec/rkvdec-hevc-data.c        | 1848 +++++++++++++++++
->>  .../platform/rockchip/rkvdec/rkvdec-hevc.c    |  817 ++++++++
->>  .../platform/rockchip/rkvdec/rkvdec-regs.h    |    2 +
->>  .../media/platform/rockchip/rkvdec/rkvdec.c   |   76 +
->>  .../media/platform/rockchip/rkvdec/rkvdec.h   |    1 +
->>  6 files changed, 2745 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
->>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-hevc.c
+>>> The microamp properties are in the top-level, not under OPP if
+>>> that's what you meant
 >>
->> diff --git a/drivers/media/platform/rockchip/rkvdec/Makefile
->> b/drivers/media/platform/rockchip/rkvdec/Makefile
->> index cb86b429cfaa..a77122641d14 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/Makefile
->> +++ b/drivers/media/platform/rockchip/rkvdec/Makefile
->> @@ -1,3 +1,3 @@
->>  obj-$(CONFIG_VIDEO_ROCKCHIP_VDEC) += rockchip-vdec.o
->>  
->> -rockchip-vdec-y += rkvdec.o rkvdec-h264.o rkvdec-vp9.o
->> +rockchip-vdec-y += rkvdec.o rkvdec-h264.o rkvdec-hevc.o rkvdec-vp9.o
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
->> b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
->> new file mode 100644
->> index 000000000000..eac4ea604949
->> --- /dev/null
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-hevc-data.c
->> @@ -0,0 +1,1848 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Rockchip Video Decoder driver
->> + *
->> + * Copyright (C) 2023 Collabora, Ltd.
->> + *	Sebastian Fricke <sebastian.fricke@collabora.com>
->> + */
->> +
->> +#include <linux/types.h>
->> +
->> +#define RKV_CABAC_TABLE_SIZE		27456
->> +
->> +/*
->> + * This file is #include from rkvdec-hevc.c and not compiled.
->> + */
->> +static const u8 rkvdec_hevc_cabac_table[RKV_CABAC_TABLE_SIZE] = {
->> +	0x07, 0x0f, 0x48, 0x58, 0x58, 0x40, 0x40, 0x40, 0x40, 0x40, 0x0f,
->> 0x40, 0x40, 0x40, 0x0f,
+>> I mean the OPPs use case is an existing well known one for dumping stuff
+>> into DT.
+>>
+>>>> That doesn't mean that it's a good idea to put that information in the
+>>>> DT, nor if it is sensible to put in DT does it mean that it's a good
+>>>> idea to define a generic property that applies to all regulator
+>>>> consumers which is what I now think Konrad is proposing.
+>>
+>>> Yeah, that's what I had in mind
+>>
+>>> I was never able to get a reliable source for those numbers myselfe
+>>> either.. At least some of them are prooooobably? chosen based on the
+>>> used regulator type, to ensure it's always in HPM..
+>>
+>> That's what set_mode() is for.  Like I say it's becoming less and less
+>> relevant though.
+>>
 > 
-> Nit, in H.264 case, we managed to fill the CABAC based on the spect with macros,
-> didn't we figure-out this one ? I didn't check in Detlev tree, I'm just asking
-> here.
+> set_mode() just applies the mode to the regulator_dev, so in cases where
+> you have multiple consumers of a regulator_dev things would break.
+> 
+> Further, there are numerous cases where we have multiple consumers each
+> needing a "low" mode, but their combined load requires a "high" mode.
+> 
+> set_load() and its aggregation of the inputs deals with both of these
+> issues.
+> 
+> 
+> Whether mode setting is becoming less relevant in our hardware, that I
+> don't have the definitive answer to.
+> 
+>>> That said, our drivers cover a wide variety of hardware, built on a
+>>> wide variety of process nodes, with different configurations, etc.,
+>>> so it's either polluting the DT, or polluting the driver with
+>>> per-compatible hardcoded data (and additional compatibles because
+>>> fallbacks wouldn't work most of the time)
+> 
+> If this is our reason for putting it in DeviceTree, then we should write
+> that in the commit message :)
+> 
+>>
+>> That's really not a persuasive argument for adding a genric property
+>> that applies to all regulator consumers...
+>>
+> 
+> I agree, even if we determine that this belongs in DT, because it needs
+> to be tweaked on a per-board basis, it's still only applicable to a
+> fraction of our device nodes.
 
-As hinted at in the cover letter: in the initial implementation used for
-LibreELEC I just shamelessly copied the cabac data 1:1 from the Rockchip
-mpp library, for this series it was replaced with the cabac table from
-Sebastian Fricke prior series to add a HEVC backend [1]. Sebastian
-mentioned following regarding the cabac table:
+Hi Bjorn & Mark,
 
-"""
-Notable design decisions:
-- The giant static array of cabac values is moved to a separate c file,
-I did so because a separate .h file would be incorrect as it doesn't
-expose anything of any value for any other file than the rkvdec-hevc.c
-file. Other options were:
-  - Calculating the values instead of storing the results (No clear pattern
-    found for the calculation using the static array and the formulas from the
-    specification)
-  - Supply them via firmware (Adding firmware makes the whole software
-    way more complicated and the usage of the driver less obvious)
-"""
+I had a follow-up discussion with the PHY designer to confirm whether 
+this value could vary at the board level. Based on their response, it's 
+a fixed value for the SoC and remains consistent across different 
+boards. Therefore, I'm comfortable removing it from the device tree and 
+using hardcoded, per-compatible data in the driver.
 
-I have not explored any other way to handle the cabac table based on
-these design decisions.
-
-[1] https://lore.kernel.org/linux-media/20230101-patch-series-v2-6-2-rc1-v2-0-fa1897efac14@collabora.com/
+The only concern is that this approach may lead to driver bloat over 
+time, as more SoCs are added and each requires its own hardcoded 
+configuration.
 
 Regards,
-Jonas
+Nitin
+
+
+
+
+
 
 > 
-> Nicolas
+> Regards,
+> Bjorn
+> 
+>> My instinct with this stuff is generally to avoid putting it in the DT,
+>> we see far too many instances where someone's typed some numbers in
+>> wrongly or discovers the ability to drive the hardware harder and needs
+>> to tune the numbers - once something is ABI you're stuck just trusting
+>> the numbers.  That said I'm not going to stop you putting something
+>> specific to this driver in there, I just don't think this is a good idea
+>> as a generic property.
+> 
 
-[snip]
 
