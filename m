@@ -1,132 +1,142 @@
-Return-Path: <linux-kernel+bounces-762970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97A0B20CF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:05:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E667B20CE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F694190677E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:03:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 553384E23B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1464F2E0B60;
-	Mon, 11 Aug 2025 15:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C082DECC6;
+	Mon, 11 Aug 2025 15:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYHFpV0R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DH/ynZYC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F7C2DF3F2;
-	Mon, 11 Aug 2025 15:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6F96A8D2;
+	Mon, 11 Aug 2025 15:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754924549; cv=none; b=lovPsJXW30LMxcM+DNktDYYmRu+lp+E3qC763zraIAaN2TI7xkf3Zmp/85QQD3v3bFbigGA5r4cOc44h9liqlsbfzAvQsz9856NskA+12YU/TeoTyHPAqe9SUFdtJiGKWlbrRC6RUyh0ywNGjTUeWHyWQ/CSEut7KAeH1h7fnZ0=
+	t=1754924601; cv=none; b=mGt2t4kYn/Qg63zJcK78ZAZwy5THafa1xMfRT1lt977cIQRW+93H9iXoKw4IVvxsedfjsQdpMw2lTWbL/pl808DFXAolApMBhtkc7+NxEjdJxjnhKUQIVYd8eG/V7bfooWhEpgDFgxHLSbkx5x1U43OiS1OV3VaRQKGDIA0/tUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754924549; c=relaxed/simple;
-	bh=jJoLAVezPU1buWN29GzwKEGln1MoMx0OWBXK+R1plKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fhTg/fsu/g1sky92JmDZ8dITsMzHYDXs9XFGNCDnNfMHH23mQHqY6YdkPwOF+LI7+esoTz+wYevMISFZF34TsJTASq1LDIwTazf1BHB5RJSTP3A0ymmDHhLDIbvrk5pDX2o7TjXVpDPApvJOHnNhbHJsP5AdwyuDDGkQ4o77JqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYHFpV0R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B9DC4CEF5;
-	Mon, 11 Aug 2025 15:02:28 +0000 (UTC)
+	s=arc-20240116; t=1754924601; c=relaxed/simple;
+	bh=zH3Xr4/8gJV2SChW0xUKH3jzlpgJZI6xap1AHoXTOnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MuLtiF3UoX/IGz4/nUC9/Ptvmsi7LDcKHzQt/ZbAURuK2HwiXo5fzHZUTKF5GCgT+jZenbewOAIvTufAdZM3e50f18JnfU5qr3ecGKdw5mgPidk5YkMH7i7+GYeZ14Vq93RqVrDn+5nK50wy0uMVY6XSwlaE3ir5Ws2BtJySVPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DH/ynZYC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE6BC4CEED;
+	Mon, 11 Aug 2025 15:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754924549;
-	bh=jJoLAVezPU1buWN29GzwKEGln1MoMx0OWBXK+R1plKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hYHFpV0RvSYMCnQn8ztGXzou+dfcbniPNOGJxZFnBhU0Qc93aVjnInBNDqkkw6KXl
-	 4e9IYdVCGcclZcx9zy5rtKM/3tTjseBuLGesNUCNsPP0XH2a3ICuMfzHXEBlT49rC5
-	 48l1skQHcACrb0kmTKvsEDIHF+F46CBqVXBSk7K52RDza78b1C6EzphwvIu8FeDsf+
-	 AMDm2/DPIMnmKd6rO5gFoRfxmqiZBx1nmefXjYV150TQi4RNXtmwKcn624CsUtm86v
-	 4TsQRcSxSmxhJG0BNh9176dBY1QuVBRGTFM9/eM4oWGkN6SBm+Lkk6knYZ5j3SD4Ug
-	 wyCH2mbMEKL+g==
-Date: Mon, 11 Aug 2025 10:02:26 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com, 
-	bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	konradybcio@kernel.org, agross@kernel.org, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/4] dt-bindings: ufs: qcom: Document MCQ register
- space for UFS
-Message-ID: <gcjyrmfxv7s2j7zkm5gcfn7bmuihq4lrm7cwjgpax6hnok7pxm@wanm5thogmzd>
-References: <20250811143139.16422-1-quic_rdwivedi@quicinc.com>
- <20250811143139.16422-2-quic_rdwivedi@quicinc.com>
+	s=k20201202; t=1754924601;
+	bh=zH3Xr4/8gJV2SChW0xUKH3jzlpgJZI6xap1AHoXTOnE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DH/ynZYCs8+d8JPMciiByh6+fpomeBGINIb88dTAM54Rg4feOgpEFufU0KX7o6gZE
+	 W7+IhEnkGBxrt05CBqLVTrW/KTr/IyUoY0NGkbyKQLZbSOAZRVIH96sjhMkACmfynZ
+	 x9zQZtv0HJ0/iCPLcXjNxM2mucbwDMCtwWUR3TG0Z1yrfdZipwF521PTEJ3eCFhLtW
+	 dyHe+euR/48F7x1wYgl2yN0tr2q0z0g7mOzGRZBHq8mOG6rR+n27312OYbyS/by1aI
+	 4E4ukXnJRVC2Kapa6XjuPXKyBErIp4YIAl3sZJxjmPCFYektTvbyo+zGGmhgPeE+uo
+	 kURCTDvNlY2cw==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+ Marc Zyngier <maz@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Aboorva Devarajan <aboorvad@linux.ibm.com>
+Subject:
+ [PATCH v1] cpuidle: governors: menu: Avoid using invalid recent intervals
+ data
+Date: Mon, 11 Aug 2025 17:03:11 +0200
+Message-ID: <2793874.mvXUDI8C0e@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811143139.16422-2-quic_rdwivedi@quicinc.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 11, 2025 at 08:01:36PM +0530, Ram Kumar Dwivedi wrote:
-> Document Multi-Circular Queue (MCQ) register space for
-> Qualcomm UFS controllers.
-> 
-> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> ---
->  .../devicetree/bindings/ufs/qcom,ufs.yaml        | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-> index 6c6043d9809e..daf681b0e23b 100644
-> --- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
-> @@ -89,9 +89,13 @@ properties:
->      maxItems: 2
->  
->    reg-names:
-> -    items:
-> -      - const: std
-> -      - const: ice
-> +    oneOf:
-> +      - items:
-> +          - const: std
-> +          - const: ice
-> +      - items:
-> +          - const: ufs_mem
-> +          - const: mcq
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-So you can either "std" and "ice", or "ufs_mem" and "mcq".
+Marc has reported that commit 85975daeaa4d ("cpuidle: menu: Avoid
+discarding useful information") caused the number of wakeup interrupts
+to increase on an idle system [1], which was not expected to happen
+after merely allowing shallower idle states to be selected by the
+governor in some cases.
 
-Does this imply that "std" changes name to "ufs_mem"? Why?
-Is MCQ incompatible with ICE?
+However, on the system in question, all of the idle states deeper than
+WFI are rejected by the driver due to a firmware issue [2].  This causes
+the governor to only consider the recent interval duriation data
+corresponding to attempts to enter WFI that are successful and the
+recent invervals table is filled with values lower than the scheduler
+tick period.  Consequently, the governor predicts an idle duration
+below the scheduler tick period length and avoids stopping the tick
+more often which leads to the observed symptom.
+
+Address it by modifying the governor to update the recent intervals
+table also when entering the previously selected idle state fails, so
+it knows that the short idle intervals might have been the minority
+had the selected idle states been actually entered every time.
+
+Fixes: 85975daeaa4d ("cpuidle: menu: Avoid discarding useful information")
+Link: https://lore.kernel.org/linux-pm/86o6sv6n94.wl-maz@kernel.org/ [1]
+Link: https://lore.kernel.org/linux-pm/7ffcb716-9a1b-48c2-aaa4-469d0df7c792@arm.com/ [2]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Tested-by: Christian Loehle <christian.loehle@arm.com>
+Tested-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/cpuidle/governors/menu.c |   21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -97,6 +97,14 @@
+ 
+ static DEFINE_PER_CPU(struct menu_device, menu_devices);
+ 
++static void menu_update_intervals(struct menu_device *data, unsigned int interval_us)
++{
++	/* Update the repeating-pattern data. */
++	data->intervals[data->interval_ptr++] = interval_us;
++	if (data->interval_ptr >= INTERVALS)
++		data->interval_ptr = 0;
++}
++
+ static void menu_update(struct cpuidle_driver *drv, struct cpuidle_device *dev);
+ 
+ /*
+@@ -222,6 +230,14 @@
+ 	if (data->needs_update) {
+ 		menu_update(drv, dev);
+ 		data->needs_update = 0;
++	} else if (!dev->last_residency_ns) {
++		/*
++		 * This happens when the driver rejects the previously selected
++		 * idle state and returns an error, so update the recent
++		 * intervals table to prevent invalid information from being
++		 * used going forward.
++		 */
++		menu_update_intervals(data, UINT_MAX);
+ 	}
+ 
+ 	/* Find the shortest expected idle interval. */
+@@ -482,10 +498,7 @@
+ 
+ 	data->correction_factor[data->bucket] = new_factor;
+ 
+-	/* update the repeating-pattern data */
+-	data->intervals[data->interval_ptr++] = ktime_to_us(measured_ns);
+-	if (data->interval_ptr >= INTERVALS)
+-		data->interval_ptr = 0;
++	menu_update_intervals(data, ktime_to_us(measured_ns));
+ }
+ 
+ /**
 
 
-Please use the commit message to document why this is.
 
-Regards,
-Bjorn
-
->  
->    required-opps:
->      maxItems: 1
-> @@ -177,9 +181,9 @@ allOf:
->              - const: rx_lane1_sync_clk
->          reg:
->            minItems: 1
-> -          maxItems: 1
-> +          maxItems: 2
->          reg-names:
-> -          maxItems: 1
-> +          maxItems: 2
->  
->    - if:
->        properties:
-> @@ -280,7 +284,7 @@ allOf:
->      then:
->        properties:
->          reg:
-> -          maxItems: 1
-> +          maxItems: 2
->          clocks:
->            minItems: 7
->            maxItems: 8
-> -- 
-> 2.50.1
-> 
 
