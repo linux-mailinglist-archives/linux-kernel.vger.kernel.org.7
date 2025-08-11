@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-762368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D267B205A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:36:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C37B205A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2184237EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB645188B38A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7D62797B1;
-	Mon, 11 Aug 2025 10:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D1E2264C7;
+	Mon, 11 Aug 2025 10:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="muJKlt2Q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQtUuk4A"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9A62797A9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A332253E9;
+	Mon, 11 Aug 2025 10:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754908446; cv=none; b=f8IyFi4K42g+ZSOHX6zlv0+x6FNhDmsp2+OAK3BHAcqWfhGy/juvpFh4briu6qoY2ePW8TnEwK6yBvRO4jvEMeOoWPdx3F6mIyvYTik7mduzFmrJ9syjwWk+oQuFLQoOpefEb1NwM781OBunyb203j8vCIQ/HnpXpG+hKoM8fQk=
+	t=1754908490; cv=none; b=Yo89QJ5hPKsImS7R4wstvNXpySbXBg1PHHOmaTjepE91uHSpndYjK9B1vwtGp4Sj3WLdVcJxRaGRl5UjIw6tgSSs9ZU/SCWvlUSUnNA6d0ygUwqdGXtQoeEGdTZp6ttqXyuvNs2BFSGyjKqG6I5BTUKtbxWOtEHRsnNoEdG9W2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754908446; c=relaxed/simple;
-	bh=n6bYWBbuvYgd7Of4AkNGNr2HVdrMAtKaVoR0TN1D2LE=;
+	s=arc-20240116; t=1754908490; c=relaxed/simple;
+	bh=1vlHv6Px1eYLtdGgu2Ty/fXv2MFPBY2XO+bhllMxoks=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RynPb9RzYDWXeuVlIkSNGSDuZNnBCqijy3M+RXkHrp1SV2B6YBntRbkgeKL1445N4QLk8KfoZdMa2i5wFWDk5IbwjpLwyWisDbFu2SMG9gS1q3kkyLN8nNtSy4aMfOZzQ/YD88dH62pBzcyqptL70W4fe76Dy9TifjCz1JQBJjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=muJKlt2Q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9dKgb018342
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:34:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wsD7GGJiNnfcvjretasZ/pNIYgJDbc71adqR86O7WrU=; b=muJKlt2QHD30b0PW
-	KCf4MMfDmKz/Chb2p8V2b1lzpymdYwgT5IafpJ8GsAtII2dqKbGBQ2V75pI5FEuA
-	6gTh7QPlryeJRU5t1F0EDOoeZnG0+tsbNzZlrfbzoioXA3mBaHW49S/lSgCfqRFo
-	9d3ac/8ptkZ4+Bfdr4OMEb81n3U+eyKPRYj2BvyF77YDfIJ9DowsHzMu8ZEYbHeJ
-	HPWS+xpa7XOsdYt6MAcAEtut6r/+tvsHpe2KNqpvB8OVFhxwnxWKAjXrFrq8qo5a
-	ZOrHnnQTio8fCBfr2yj5ItOMkO3olR0aNOXQ9e/XFBOXwWtyTInSVOOecJQ8AN5C
-	/wkNxA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3g406q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:34:04 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-707641946ecso10704796d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:34:04 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Nw+HCkgdzK/AtWrDUYIcqr/w3nfBGHfY7AWm6B0bV25819YCvBzAs6pWIU380MbRDeW2jKJnKHnz8JCVEJqhCkpcIZPRjAZbCjKroYID2MmNLz/2d7o1FPT379LaoZGCV7wtcd+YqlXpyCLwLMrE7U5xovexxKK/nD53ztTKbxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQtUuk4A; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-556fd896c99so3606839e87.3;
+        Mon, 11 Aug 2025 03:34:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754908486; x=1755513286; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xVkeBhGZWokh7cmfvwm/viK0uMUshY/NRCF71JVFH+o=;
+        b=LQtUuk4ASV7qxG96nkJ4MyHWPBVWArTNQ4L/JS2w6tD70xLmG/feZZdmAFhNKNusnr
+         Jiq+OfaR5izUcifmRxf7eO6szwADzxaEsGxWtc4CbLvDyvLQSC+I1qk5UhSYcV+cP0z/
+         BKwSHveMmPyeSXT66tGkMIO9IdVIQjxAIhWx3t9V3+x5P7HfjUX2RcqPk7pwI+s9w0be
+         Ij2ECeF1c9j1+97NFZUgK9Ykbal0vmy6gm70YEiVFxf4tjf766CtNTnETFKkTuVM638m
+         hZ3n2QR9wXz1aVHSq7q8A2vfbk7MVqxDNrWRNi7QQCO+BdwU8bk40xK88f98WMBWRwOE
+         Xwdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754908443; x=1755513243;
+        d=1e100.net; s=20230601; t=1754908486; x=1755513286;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wsD7GGJiNnfcvjretasZ/pNIYgJDbc71adqR86O7WrU=;
-        b=ev/rXEM/frI/sRuUEvA3HoBCvmkejZJEKCDaHGw+twfppTzPv7aIrLXaZwufvYvLZe
-         hIUadCeVMoMyFzR5ZAQJ+NwHo7gmzVdjIIrepYxqy1Ymev6wT65eWEIoEU4ulT8Zw0el
-         igQ7r1xD/Fz6h4NUoB2UQpJoCQioFQjPTAHFTlev6vJE+46K5F9OYskMu1FZniP9qhDY
-         yUZj3PE16oH80+LmPujmXjw8jLJmweVKaAllAtxL89HFqYcm++If+tIhKN+cgNBwy8Od
-         f5Een2c4UNm6hZQ3vfrUgRKZBuE5yJw9SgL9ojSWQtYg3thAij5cgADRlaKOCZtRYzKI
-         9/mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgm9R4iQjy5+nbarJYU2jDfm2HT6QqmmRDk2ptlhAoxVYCiM18HdCPCV6H2OgnOIN3IoVEwc4GxGboD9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbPJBSTRtZAgS2Yw5OGsc9kVUQ7BbmfoDUDGSAWW70ezAOYucf
-	1fWUpgwIM060DR37FFvozkHrokC94uvi6mZHaRqytFeZclP7ppVZ8e8Jy7r8N8QUpFKwmiK4EkS
-	YX+DBBnuLz2eF3V6vwGydVS1T9zW17Rm2b35FKIvdBIeRXrE4U7T2gWhhW4zhwHtB2vE=
-X-Gm-Gg: ASbGncsCqifm6v8dG5uTPL4U5ru0egkFX8qYhdAnS0RVBapynInFeKEQGHHHWlMmJR1
-	pWcP4YjzbLzK63kGSxkmHxl212mpZC4yBMqs1wiAA/C1b0GMq0cGiytoNGaL9+699Wm091HLsDo
-	A/nKTcGk9NhqhUG8KkkRhbKRCYnNrie3or/CPjR2nHCQgb1Q2nl0Bq5JXXxs8LITy+nsNcszV97
-	yjlSBbPcqBKEDWIhvrBHSpAcb/OcTKM1xtg9c+3Bk67K2Fq7m9r/jwf0JLW6W9hnR3q1QEaTUiz
-	J0p756PxlMEiog7kc2Y+hjZFpqH8KKYEAow2MWug9V9X3Q7I3FiHi4vFosPTYfbc+voIKgkakLJ
-	EpV/z4hughH46jzznYQ==
-X-Received: by 2002:a05:6214:2608:b0:709:23f0:f50 with SMTP id 6a1803df08f44-709b094cbe7mr53402236d6.8.1754908443214;
-        Mon, 11 Aug 2025 03:34:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpXju1O/sKkYY/b3BkoXU3yRD84XzBcfZoJ/QUx+rjP0trH4Je3JcbjdMDL95C2fO2CoviQQ==
-X-Received: by 2002:a05:6214:2608:b0:709:23f0:f50 with SMTP id 6a1803df08f44-709b094cbe7mr53401926d6.8.1754908442594;
-        Mon, 11 Aug 2025 03:34:02 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8eff60esm18546387a12.13.2025.08.11.03.33.59
+        bh=xVkeBhGZWokh7cmfvwm/viK0uMUshY/NRCF71JVFH+o=;
+        b=MjTJUBkbg37Gr9jYXOOLBktiI7oYWb8j/8WLQD6fNoMeOjKJw0ivN4L/TUsPO9aOA8
+         frTGK1Fd0GvRAAEEbbdPHas8Bhdu1P5drdLpZmjQudacoNXRaqguy/2aNRgGBx2iHqg+
+         zzh8HHukQbeablBphp9SG9E5DfRYtaWhA1TdH/UFIJ2pznFHIDgbB0+3DoFxZ0Jtbgks
+         zC7BboKzrWO7WST4smUM8pOskH+jbkd/oZ1h4AxlHGuWqBfOtwW9HF79RCtA8Dkv34mM
+         Qn6yV/m70SlE6m5lK55bYJhyo+urY6apEwCjhQUNoX3W3Va/1h8OTVBCwF129ZyPbUR9
+         ZCxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWbowag0p/R4YXuoLZufezcRfIaSQ+gT1FbRLcaIf94kvMDGAU+RoBGgIPXpxsQ/X4tTjuTG5rz3Sn@vger.kernel.org, AJvYcCWJb+J58C9jspBagVdDq3m+ojzAmGS3dpumgcx11G6DzFpdmcOkpQNKJvixS4WDPKLVhs883nTk6ITUk0tB@vger.kernel.org, AJvYcCWzAjJkyaEuTWZYrgNmcR657ElQTA0lUumQyhcg1NJJIKgI5BY/kBbqUOgGQLjTj8ZWvT8UA18PTPL7ZWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj4mIXMlE039h6o1xo5uhFb0vwt+DwOcN9p3WpjS7di9TR7p+7
+	KQ3oPoiCt3Wejx2iWLKU9FR9V0j5TyzEYjf3WWkrdhORMpTYMZuBa5e3
+X-Gm-Gg: ASbGnctusntBsd12bgnctRuF/cuDUNv8sWN1RRZ+dwbUGu3jP8Q5OGwC/GuWy6je7I5
+	kBGjQx8elLgEJjAm0uWsUVez/lIMCkqibpYmbUi6ICiF9zzHRZXQMtMJYE5qUDW9yD/9f6rrQoO
+	WkrUDZi68xHzem01YjlJDml2VFKu2JWfWvoQjhNOoxjrSl+u3LpRHenEQQjvoqdWsmtHabRaXWo
+	mw17aaqfL9d7SYEof4erctMbPwVjnROuVBmZfrCvPDn1X/sJi32J1HTfTIc4T3bbH0o2qkCfOeL
+	bdtEBuDxlHcmb8PRwPhIavds8ReQ4u64jLiHsDm78r42BIK6xqgUZETt5iWjfKzEpwCXmpfJAoG
+	GnZpzXuHW0E6odypvKT0LjKIG1LBIsZ6I9SWmK8T6crCTSb/2HVzwJZv2Cwj4uvGJLwKMHe5fM8
+	90WRs=
+X-Google-Smtp-Source: AGHT+IETaLJYFx+bsfg4cBqsGAjrcijmy8/Ov+YfnKtp2jsr35IKM/ta5BmKJDpDCoMgIaYs24JBIQ==
+X-Received: by 2002:a05:6512:3f02:b0:55c:bfe7:f045 with SMTP id 2adb3069b0e04-55cc0112fbemr2937187e87.40.1754908485923;
+        Mon, 11 Aug 2025 03:34:45 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cd1000bf3sm665504e87.6.2025.08.11.03.34.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 03:34:02 -0700 (PDT)
-Message-ID: <0a3698bd-01bf-4882-b41c-426bca328e40@oss.qualcomm.com>
-Date: Mon, 11 Aug 2025 12:33:59 +0200
+        Mon, 11 Aug 2025 03:34:45 -0700 (PDT)
+Message-ID: <b7e97aa3-8f2d-4a59-8a38-577717404865@gmail.com>
+Date: Mon, 11 Aug 2025 13:34:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,60 +82,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] drm/msm/dsi_phy_14nm: convert from round_rate() to
- determine_rate()
-To: Brian Masney <bmasney@redhat.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov
- <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20250810-drm-msm-phy-clk-round-rate-v2-0-0fd1f7979c83@redhat.com>
- <20250810-drm-msm-phy-clk-round-rate-v2-2-0fd1f7979c83@redhat.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250810-drm-msm-phy-clk-round-rate-v2-2-0fd1f7979c83@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 09/21] input: gpio-keys: make legacy gpiolib optional
+To: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-10-arnd@kernel.org>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250808151822.536879-10-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=6899c71c cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=20KFwNOVAAAA:8 a=EUspDBNiAAAA:8
- a=aS93HcZ8ji4XsMPHnqgA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfX4p5ZTPPa/Xjm
- wN+XS92m6cgJNxNDEQ31s9U0eVBK9Y6zucbbCJmkqsbB3BOdoGo7I9mpva5dDOJ4tMYLuen/15h
- vO0CB2kFWHlgbgPJZmgyZc1lC+7cnqRdknuGJva1BANKWBXegzMkVDNAVLTdIneRUq75pawYp3x
- Xwg5M/96/nGZJAG72C+2ak/OGXkneNL+ePNj4hQgKT1BgwM4WMAl0cVygabr/uj2F63dm014Zjx
- kD4VU9g2sgdipJZJa47wftyLewa0JmMQBkLiPmHMBpeqvXdcNYCa6GnrLSFh+WNOlb76kPyZbB0
- 0Ds2itbeQE1eFDnH6RcV0TMC0Og75wRJ1fUqgguRu60T8EjjER3NxG5/hPrb1hgcHOr8MJPmt9y
- s1He45Ob
-X-Proofpoint-GUID: NkQV9r96jLdlcrXQfvk7i4Na_G69YvtF
-X-Proofpoint-ORIG-GUID: NkQV9r96jLdlcrXQfvk7i4Na_G69YvtF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
- spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090031
 
-On 8/11/25 12:57 AM, Brian Masney wrote:
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series. The change to use clamp_t() was
-> done manually.
+Hi dee Ho peeps,
+
+On 08/08/2025 18:17, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> Most users of gpio-keys and gpio-keys-polled use modern gpiolib
+> interfaces, but there are still number of ancient sh, arm32 and x86
+> machines that have never been converted.
+> 
+> Add an #ifdef block for the parts of the driver that are only
+> used on those legacy machines.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
+>   drivers/input/keyboard/gpio_keys.c        | 5 +++--
+>   drivers/input/keyboard/gpio_keys_polled.c | 2 ++
+>   drivers/mfd/rohm-bd71828.c                | 2 ++
+>   drivers/mfd/rohm-bd718x7.c                | 2 ++
+>   include/linux/gpio_keys.h                 | 2 ++
+>   5 files changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+> index f9db86da0818..984b20f773ed 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -528,6 +528,7 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+>   			 */
+>   			bdata->gpiod = NULL;
+>   		}
+> +#ifdef CONFIG_GPIOLIB_LEGACY
+>   	} else if (gpio_is_valid(button->gpio)) {
+>   		/*
+>   		 * Legacy GPIO number, so request the GPIO here and
+> @@ -546,6 +547,7 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+>   
+>   		if (button->active_low ^ gpiod_is_active_low(bdata->gpiod))
+>   			gpiod_toggle_active_low(bdata->gpiod);
+> +#endif
+>   	}
+>   
+>   	if (bdata->gpiod) {
+> @@ -583,8 +585,7 @@ static int gpio_keys_setup_key(struct platform_device *pdev,
+>   			if (irq < 0) {
+>   				error = irq;
+>   				dev_err_probe(dev, error,
+> -					      "Unable to get irq number for GPIO %d\n",
+> -					      button->gpio);
+> +					      "Unable to get irq number for GPIO\n");
+>   				return error;
+>   			}
+>   			bdata->irq = irq;
+> diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
+> index e6707d72210e..0ae0e53910ea 100644
+> --- a/drivers/input/keyboard/gpio_keys_polled.c
+> +++ b/drivers/input/keyboard/gpio_keys_polled.c
+> @@ -301,6 +301,7 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+>   				return dev_err_probe(dev, PTR_ERR(bdata->gpiod),
+>   						     "failed to get gpio\n");
+>   			}
+> +#ifdef CONFIG_GPIOLIB_LEGACY
+>   		} else if (gpio_is_valid(button->gpio)) {
+>   			/*
+>   			 * Legacy GPIO number so request the GPIO here and
+> @@ -323,6 +324,7 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
+>   
+>   			if (button->active_low ^ gpiod_is_active_low(bdata->gpiod))
+>   				gpiod_toggle_active_low(bdata->gpiod);
+> +#endif
+>   		}
+>   
+>   		bdata->last_state = -1;
+> diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
+> index a14b7aa69c3c..fb68694fadca 100644
+> --- a/drivers/mfd/rohm-bd71828.c
+> +++ b/drivers/mfd/rohm-bd71828.c
+> @@ -21,7 +21,9 @@
+>   
+>   static struct gpio_keys_button button = {
+>   	.code = KEY_POWER,
+> +#ifdef CONFIG_GPIOLIB_LEGACY
+>   	.gpio = -1,
+> +#endif
+>   	.type = EV_KEY,
+>   };
+>   
+> diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
+> index 25e494a93d48..6c99ab62e31b 100644
+> --- a/drivers/mfd/rohm-bd718x7.c
+> +++ b/drivers/mfd/rohm-bd718x7.c
+> @@ -20,7 +20,9 @@
+>   
+>   static struct gpio_keys_button button = {
+>   	.code = KEY_POWER,
+> +#ifdef CONFIG_GPIOLIB_LEGACY
+>   	.gpio = -1,
+> +#endif
+>   	.type = EV_KEY,
+>   };
+>   
+> diff --git a/include/linux/gpio_keys.h b/include/linux/gpio_keys.h
+> index 80fa930b04c6..e8d6dc290efb 100644
+> --- a/include/linux/gpio_keys.h
+> +++ b/include/linux/gpio_keys.h
+> @@ -25,7 +25,9 @@ struct device;
+>    */
+>   struct gpio_keys_button {
+>   	unsigned int code;
+> +#ifdef CONFIG_GPIOLIB_LEGACY
+>   	int gpio;
+> +#endif
+>   	int active_low;
+>   	const char *desc;
+>   	unsigned int type;
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+AFAIR, these ROHM PMICs (bd718[15, 27, 28, 37, 47, 50, 78, 85]) all 
+provide a 'button IRQ', from a power button. (Or, couple of IRQs but 
+let's skip the details) The gpio-keys is used to send the KEY_POWER 
+event when IRQ is detected.
 
-Konrad
+The IRQ comes from the PMIC, and the regmap_irq chip provided by the MFD 
+provides it. This IRQ information is delivered to the gpio-keys from the 
+MFD driver via platform data. That's basically what these "button" 
+structs are here for. No GPIO line information (only the IRQ number) is 
+needed to be delivered to the gpio-keys. This problematic assignment:
+
+ > +#ifdef CONFIG_GPIOLIB_LEGACY
+ >   	.gpio = -1,
+ > +#endif
+
+is only needed to invalidate the gpio information so that the gpio-keys 
+wont use it, only the IRQ.
+
+As such, this patch seems Ok to me, you can treat this as an ack :) 
+This, however made me ponder following - is this the tight way to handle 
+the power-button IRQ? I don't see any other MFD devices doing this in 
+same way, although I am pretty sure there are other PMICs with similar 
+power-button IRQ...
+
+I see for example the "drivers/mfd/rt5120.c" to invoke 
+"drivers/input/misc/rt5120-pwrkey.c" instead of using the gpio-keys. 
+This, however, feels like code duplication to me. I'd rather kept using 
+the gpio-keys, but seeing:
+
+git grep KEY_POWER drivers/mfd/
+drivers/mfd/rohm-bd71828.c:     .code = KEY_POWER,
+drivers/mfd/rohm-bd718x7.c:     .code = KEY_POWER,
+
+makes me wonder if there is more widely used (better) way?
+
+Yours,
+	-- Matti
 
