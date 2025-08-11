@@ -1,89 +1,171 @@
-Return-Path: <linux-kernel+bounces-763410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9DEB2143E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:26:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DC0B21440
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9279E6258E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:26:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70EBE3E3DC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0E12E11D1;
-	Mon, 11 Aug 2025 18:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402592E424B;
+	Mon, 11 Aug 2025 18:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYYuyrKz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fkj1toEf"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6152D6E42
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7762E3B00;
+	Mon, 11 Aug 2025 18:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936542; cv=none; b=Z4331Ziwl4UdKIgMoqxumUDOLobYXJYYu/SjHOKQUA0AOcVVP5uG2stm1dQz8TwxjpmRZOWHB0xsMRvs/5r1UkCAB0+qjtqqOxl48HBXOJg7uTuU1V8zVrp4s0b4DVNF2Ue4dkGdVqah6dKlg6Qf8sn0YJGK0kfZOBShJrW3uC0=
+	t=1754936545; cv=none; b=D1vaav/sY3YjBmbTdT3sNMspxTFOEFnjzCkUj4pDu08gJqa5vDCwAyqKAp4Pwxa3jGhitWb5PiBI+uZT4E6eSEouSpqqT+LPg2+ywslO241gCjBZLuWrZGoIYkzstatXQ1Ybun+1MKY2OKRJ+ENoLcx+344ZzdQjcikXHSjqNZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936542; c=relaxed/simple;
-	bh=q5dJdsjoxy9j2Cp/MIOSZiiCzeToApX8+0RvK+BN4CI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+KcLnEN5FmbU/I1nrKLiOgezoBtJ7ppfYOdal5jX/nqHgmE9K7GSxbTp9tdyAfKllA/Dg+3zEyEy5ytT+9z7/jb9p+L8KeZLn2RbiCW6nqPP4QYVF92ck9Xz4BqbnR7LW60gHxUfNMlr6RNHxAkOhSW0i83UXk/hlfiRQtRk9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYYuyrKz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D952C4CEED;
-	Mon, 11 Aug 2025 18:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754936542;
-	bh=q5dJdsjoxy9j2Cp/MIOSZiiCzeToApX8+0RvK+BN4CI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XYYuyrKzNfMluo4aYmD7/Co+9Tiz1yXSYZjqwNehA4208Vlvo0wm0H4jinnm3Pv5y
-	 AznQLR30t5clv8QDmZYlgb7QiL0N/F2RLETkOy19mP6CTNg6tt9WcmKXCC+/ZwvWxn
-	 auS2UjWvhVhQl/2KRRE0q2/EdEPkyhJ6d6Na1V3h9YgFdZRXwMZpCBnN3VHiXbq0Ua
-	 Vae5E4HU779SRjhvRj/m6SVTy5hDDha4PWE8CF32SZw0JMst7mA++a9WsM1Yqtfhf+
-	 ARlr0/c4rcl7UeDD9N8cxjtV9nvsVLdlCj1LAykaL9njF0epEIxrXDLgMStVOQoE+s
-	 yH2rxNSXKX8IA==
-Date: Mon, 11 Aug 2025 08:22:16 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	linux-kernel@vger.kernel.org,
-	Cheng-Yang Chou <yphbchou0911@gmail.com>
-Subject: Re: [PATCH] tools/sched_ext: Receive updates from SCX repo
-Message-ID: <aJo02GwCco0ToB9B@slm.duckdns.org>
-References: <20250804110449.696135-1-arighi@nvidia.com>
+	s=arc-20240116; t=1754936545; c=relaxed/simple;
+	bh=mOVxMwHNXKnJipk47e8SQdaZXOBitrJX60mFQRCQalw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aUlUqnEkqSE+wubvEga6l2VQyGYvrBkKjBgQ8AHNomtf21DEUoYHJpL4GTJXWtkbftC1JgGmDwmigrcBIpSxnjSXJ+BW11vRjbJZo2CvTEeuxdkaTd1Y+DUon+nayxMtN9XuP0Gv2J1iGwsns/rqWRcWGWaqgIMfHQfJCQ4A0Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fkj1toEf; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76bfd457607so4570927b3a.0;
+        Mon, 11 Aug 2025 11:22:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754936543; x=1755541343; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7mEWpl63ZoyplRlAL0IOHiBd7kGAmwSsw36Ew/d61UE=;
+        b=Fkj1toEfW50X+RdT6+VOTE2rzhoDpl4GokJcAK+0i215+2PJc9fFlc/NUf9vinPiz9
+         HK3EAmveabWqOF89Tn9n7id3bdDVLfX/hiBrL1zAvdKgdTmTuHeCz93k+nSlmF4BR+Yz
+         13OI6WAYBYnp1eQb+x4ELs/Ua8Kmi9GqBY8BdC7pZu24yKgR4nsOllijmkM04K/CwJvV
+         T8JUIYUiqtXgbkelh3T92jbgB2XJS/yf9WtvQPZwcYg95ONRsgtAdo7JMpgrUSB0x5uv
+         5JTd0RMstwy3Gn08VBo9WPIZUUzgRacE8uUxtxs3w16kvptqR6Z2YrWYChY+/NNNpcg8
+         hVrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754936543; x=1755541343;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7mEWpl63ZoyplRlAL0IOHiBd7kGAmwSsw36Ew/d61UE=;
+        b=XAKAm9kcnoGumfEA1RmtM6zl4U9Lj33/D92/OYb+xc3DCmYPvzUrMYWiPd7DvKUeF0
+         1gmy3irm3oMTWUSIKsetK0n/7UJFTK6ompxpPHl9VzszrkoLTkvQqnm9AoY6XwrB0u2F
+         bWy2uiATWvuns7akPnzgo8kn9c08ziPgPZCqT0u1aTmmIGEBF3hR5ZKi+UzYvl2FQG7f
+         jgpR/86X0liMCA476C4zj4aSCy6Qz7QC+N4Z7bA2mfMIZ7JRNvG3Klv18JQckIcomxBd
+         /WATIHTSFhWit6BQH5WlIqK7qbIHt/xWbkSRit9JqcoGlYGRzxJk+sRiSgcFxEv5SBk1
+         Oj+w==
+X-Gm-Message-State: AOJu0YwwMrX7oZ+Qm1KOCBbqv9THCgveiI5Wlx1ns9ufQ1h3TopZa+/m
+	aeeDrOUeT6lrzt0I4f4sh5U2aeeQJZa7Cc1YtKfUzBynb0dC242gxwgfDG1evodY
+X-Gm-Gg: ASbGncsL4YuUNoz4BUUUZVFuXkAuzaCwFRwimzIuaU/8SrRniryPAqE9ng8V785eqSq
+	2zdJELqLdighWLCRY4IJHS0hQ2vPs+2Wf4LdAjROEDX1ddZE8XH8KKxUuCYYgr5IQM3SMjC1EKL
+	wYPlkdoPklocff5swUN4znuPRFtVbwFgCA1bzwHSVXITyf0EwAF+q4DioMZ3CDOmbTRrJ006ybR
+	fy8/3OBeBjLZoQa/wMpJsvOAXLzNR+MJEZvoxvQl3r9HBEEKmCljvS7LN0ur81PVU6ure6aT3xb
+	PsS2eroO7UIqBFXbC7wIgn//50UpyQfkhAjlluECV//aEDprGyz4HtHxTPgn1J5HksPas0wi2Hi
+	D4y/dB014j5Zi81psIwEC7Wowylrubl23HJK0P/BlKHA2KkQ/OCfoTBuFAgT9TMmZLSXy+eWQZk
+	ZRyGDWKQg=
+X-Google-Smtp-Source: AGHT+IHEDbEUXj8YoO4yyjGR/BV3tZDxo1gsO3xYNRHNCBTZx1ulNcZoy5PO/brKhi/Qlu/QPgR2QA==
+X-Received: by 2002:a05:6a21:3391:b0:240:1ca4:297d with SMTP id adf61e73a8af0-2409a8be8bcmr747279637.13.1754936542697;
+        Mon, 11 Aug 2025 11:22:22 -0700 (PDT)
+Received: from ?IPV6:2804:14c:de86:8d34:add1:b1bb:ed29:6539? ([2804:14c:de86:8d34:add1:b1bb:ed29:6539])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bf772116asm21417693b3a.97.2025.08.11.11.22.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 11:22:22 -0700 (PDT)
+Message-ID: <42c3fc0c-46a8-4502-ad53-d3b886fad5e8@gmail.com>
+Date: Mon, 11 Aug 2025 15:22:18 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250804110449.696135-1-arighi@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] Rust: kernel patch series
+From: AI Talking about AI <aitalkingai@gmail.com>
+To: rust-for-linux@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <79821f85-9e95-4426-8b1f-8752f8683dc9@gmail.com>
+Content-Language: en-US
+In-Reply-To: <79821f85-9e95-4426-8b1f-8752f8683dc9@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 04, 2025 at 01:04:49PM +0200, Andrea Righi wrote:
-> Receive tools/sched_ext updates form https://github.com/sched-ext/scx to
-> sync userspace bits:
-> 
->  - basic BPF arena allocator abstractions,
-> 
->  - additional process flags definitions,
-> 
->  - fixed is_migration_disabled() helper,
-> 
->  - separate out user_exit_info BPF and user space code.
-> 
-> This also fixes the following warning when building the selftests:
-> 
->  tools/sched_ext/include/scx/common.bpf.h:550:9: warning: 'likely' macro redefined [-Wmacro-redefined]
->   550 | #define likely(x) __builtin_expect(!!(x), 1)
->       |         ^
-> 
-> Co-developed-by: Cheng-Yang Chou <yphbchou0911@gmail.com>
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+From 21a3d2a2dcff13f445915602c06a17af07835ee7 Mon Sep 17 00:00:00 2001
+From: AI talking about AI <aitalkingai@gmail.com>
+Date: Thu, 7 Aug 2025 07:53:56 -0700
+Subject: [PATCH 1/2] rust: mark CStr::to_str #[must_use] and update docs
 
-Applied to sched_ext/for-6.18.
+Add explanation about handling UTF-8 errors and mark CStr::to_str as #[must_use] to prevent silent error ignoring. Also document safety requirements of as_str_unchecked.
 
-Thanks.
+Signed-off-by: AI talking about AI <aitalkingai@gmail.com>
+---
+ rust/kernel/str.rs | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
+diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+index 6c89255..290031b 100644
+--- a/rust/kernel/str.rs
++++ b/rust/kernel/str.rs
+@@ -37,12 +37,8 @@ impl BStr {
+     /// # Examples
+     ///
+     /// ```
+-    /// # use kernel::b_str;
+-    /// assert_eq!(Some(b_str!("bar")), b_str!("foobar").strip_prefix(b_str!("foo")));
+-    /// assert_eq!(None, b_str!("foobar").strip_prefix(b_str!("bar")));
+-    /// assert_eq!(Some(b_str!("foobar")), b_str!("foobar").strip_prefix(b_str!("")));
+-    /// assert_eq!(Some(b_str!("")), b_str!("foobar").strip_prefix(b_str!("foobar")));
+-    /// ```
++
++///
+     pub fn strip_prefix(&self, pattern: impl AsRef<Self>) -> Option<&BStr> {
+         self.deref()
+             .strip_prefix(pattern.as_ref().deref())
+@@ -346,7 +342,7 @@ impl CStr {
+     ///
+     /// If the contents of the [`CStr`] are valid UTF-8 data, this
+     /// function will return the corresponding [`&str`] slice. Otherwise,
+-    /// it will return an error with details of where UTF-8 validation failed.
++    /// it will return an [`Err`] with details of where UTF-8 validation failed.
+     ///
+     /// # Examples
+     ///
+@@ -356,7 +352,21 @@ impl CStr {
+     /// assert_eq!(cstr.to_str(), Ok("foo"));
+     /// # Ok::<(), kernel::error::Error>(())
+     /// ```
++
++    ///
++    /// # Errors
++    ///
++    /// This function returns an [`Err`] when the underlying bytes are not
++    /// valid UTF-8. The [`Err`] must be handled; it cannot be discarded,
++    /// as indicated by the `#[must_use]` annotation on this method.
++    ///
++    /// This method returns a [`Result`] because not all C strings contain
++    /// valid UTF-8. To avoid accidentally ignoring a failed conversion,
++    /// the return type is marked `#[must_use]`. Code that calls this
++    /// function should handle the error case explicitly (e.g. by logging or
++    /// propagating it), rather than silently discarding it.
+     #[inline]
++    #[must_use]
+     pub fn to_str(&self) -> Result<&str, core::str::Utf8Error> {
+         core::str::from_utf8(self.as_bytes())
+     }
+@@ -380,7 +390,10 @@ impl CStr {
+     /// ```
+     #[inline]
+     pub unsafe fn as_str_unchecked(&self) -> &str {
+-        // SAFETY: TODO.
++        // SAFETY: The data behind `self` are bytes from a `CStr`, i.e. a NUL-terminated sequence
++        // of u8 values. `from_utf8_unchecked` requires that the byte slice be valid UTF-8; the
++        // caller of this method must therefore guarantee that the `CStr` contains valid UTF-8
++        // data before calling this function. See [`to_str`] for a checked version.
+         unsafe { core::str::from_utf8_unchecked(self.as_bytes()) }
+     }
+ 
 -- 
-tejun
+2.39.5
+
 
