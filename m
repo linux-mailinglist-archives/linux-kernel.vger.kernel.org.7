@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-762703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5989B20A0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:24:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65201B20A08
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF5218A58AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7378D2A0185
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6BE2DCF58;
-	Mon, 11 Aug 2025 13:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554832DCF6F;
+	Mon, 11 Aug 2025 13:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JML8hIvK"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PJTZBGOc"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE701F5820;
-	Mon, 11 Aug 2025 13:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8421F5820;
+	Mon, 11 Aug 2025 13:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754918622; cv=none; b=BSN1mhjMU4PZf5wEonaXVK9H5e1S+Z0qN/Ezt6Y993O54+cW7cjHEPAvgw4fpJxcWImwzN3YaGBskZKq3tvLW/hASd8JPzBjVpp3Tt9uaofSmE+2zRi3wM0tCgHm+NRHJhogRuFYrQ++F6boOswj0PmCvPRlFtyj2Ed5yH0DvFA=
+	t=1754918612; cv=none; b=T9ir5LAfoHl5e6+vcqvvTKAyPMcHifiqltKJYjfod0YdbTKiJOzIiJYLh13S4QrTBpjeNucCJQV6la3MAiHm1rCvU0gM42nnZT9ASiMqeM3oHsH+Cy3SG7qLtANsJP5HBSgBuMK7K8nmpIAq8bOXgDSU4Cxr0o7TKAMM+WLr7Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754918622; c=relaxed/simple;
-	bh=wHW3BD/OhOcrPu7KFCVJOURhRRyzQJLJFCVQAcdkFF4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eNv4L2lgCsxboCfNshG+hIIDYYq1Qn8JTPhFRvN7vc/FbRRVWO0pkivyYH7+/AN6NlMmbBFDtr8gU7XYSqb9/vtgRZxknL9TFRC3x/d8ZoWa5rnecoWzLZ5W5WjLWdvCknX3WOS1ofRldDyEUlEwtwHDNsqwfFFd4+GtBME0mKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JML8hIvK; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b786421e36so2324349f8f.3;
-        Mon, 11 Aug 2025 06:23:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754918617; x=1755523417; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3i1TwRw5PXH9PjVgIN+9fLGelO+SfMaHlVr07PGn1u4=;
-        b=JML8hIvKHB9/V6tEpgNpWXvslFCMnGIsIblRvvYFTnfHsGqXA9iAcyppTL8kOd9vQi
-         DnaEy0e05IuvJ4+UDrSebtcULb0YUlzy/Ddc8nUJXtt6q54e6doFwz9s+gmBM4YpDb0F
-         +eGnezsm5MJpvw5tIPiuAKj1J0BL7TU4l4GAqKRORE5POJ6XFIj06zi8l1rSozueR/u4
-         izt33C4qciMX3fWup8XxfnP/CSNGLN2mhJB0Sz7GOaBaYiI682N/DVU7alcgy/Us+3Pc
-         culJ4d4C9snrNWqIx02tcFB2o8TT9RM51Gnit0GuyRflc1DxYIjXUXo4pltVdDKoIfok
-         rxIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754918617; x=1755523417;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3i1TwRw5PXH9PjVgIN+9fLGelO+SfMaHlVr07PGn1u4=;
-        b=u5WD2ZnwpM6jkTqGrDXm7Z26DkKPTlhFJ6Az7/vVydyCpd/1KkPoJd+kW/a7asJnwK
-         cuCG5j+Yr5TBCotwCyGk/ptFA354zPP0/yAv/45DyECgHeAbCTDrFDYQIyHcx6QMvj0Y
-         XMJHNMiEBKtjdmJUsM6iINuec+QrXw5dKp7bkWFTW+iJmbbeA440eTpXNtA19WzqFXCO
-         Q2MRv2SwGZSneugnV+glhcV2P81srAUYiLVS6CWSYtBdW/5QX1vqcrQdZsAa6v5KE5lk
-         eUatYi7imuQDacqBP92fpCJd/BiZ2vT+Hy8eXDkT2OA5qqAspz+1dpEC82rIiOR/onor
-         c0iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq5Wj3VnauejqG3EZhMEDLiP6qD9QsFev6FUTQ4ZXH9m6EImzWuVAMOwuwwILL2fGJWK1XUbRiE3Rb0EU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXckqGe90gLhRVGLdVq8FYgCqOnd4UV4LRFtdNi8xB8cYJfsvq
-	CWIVpOZ0zGF4DGbyhvFWGseT6hoPMGxsZ7j+UayHqPkaMkjk8AMBUXNat5M4kQ==
-X-Gm-Gg: ASbGncsTQGo3Y+as6u+bap4GgOCfhqHqlnItWSm4G9TTDh9nyQKFxk6APRpjkzqcNJo
-	z6FSNiFSwthceqPiJB6UDDXjpaYiPdl9vOn3U3dBUzq8m4nZ26fD59cd0g0C+gs7w7Sn6NNCOjE
-	exFX2cRFOLFFpvlBXywMYyDT/eCLEOBihT8wKXEbgbMa5cdvBiCLjsAzrUhmPfPTV82KKvYnC/r
-	bM0KmEM/zYnSqGAgXJyTTbNY9GwsdEt8wavoE/I7fBDCc3kdVyQZQ7uqsZtO/W3cO7uwsLgRWni
-	fZYxG2n342s4jMNBC4eXH0xD4Gl8dKuri34RY4sTkhjeQnKZ/G1hASEZxdSKo7yJ62Yxy8EJqTQ
-	PNcaSRFKDrTWyKo78xeX5BQ==
-X-Google-Smtp-Source: AGHT+IGBHoj4ms524wUd0zko8zHozOF0t+LhhO65J3aM5sG0taiXoz6QgxsNwY8QbsjLVlUpoADWPg==
-X-Received: by 2002:a05:6000:2886:b0:3b8:2cb1:5f8f with SMTP id ffacd0b85a97d-3b900b35ab9mr9247412f8f.25.1754918617223;
-        Mon, 11 Aug 2025 06:23:37 -0700 (PDT)
-Received: from fedora ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453ab0sm40983617f8f.44.2025.08.11.06.23.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 06:23:36 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH] fs: Use try_cmpxchg() in sb_init_done_wq()
-Date: Mon, 11 Aug 2025 15:23:03 +0200
-Message-ID: <20250811132326.620521-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754918612; c=relaxed/simple;
+	bh=QOt4nl4gH2rAahpzS5A/CbVGMy7r+RZAUBvLUl62HhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=opZCclJcQffuEyk5iAqVSIr1wFm9ocDfxeAhKwcxMKztnM78pAEMXsAD7fQoV8Imz7xFa5iS2J9tKBHnsSrl8Qt46kv4HG4JRO5odxO5BOldY6uhLMrasON0Q2F96JYf3JqNZTSTCxzeE9inxCATq9IUJtk5grnXuXNHOg33opo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PJTZBGOc; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 30B8443A03;
+	Mon, 11 Aug 2025 13:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754918607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gUI1uF0yA+eVneoGws46GefU9bZoq7cd2UXxP673XV8=;
+	b=PJTZBGOc2I/0iLGm3hKvx46Ro41UxERqinu4KYAduJzMrW2ja3GzFgCUvsRFt+drRSEmhU
+	RrDNVgP6/ShOWhZL5Fee+o1wZwzskhZ4V1Pq82j7kOt+yWZeFEWVH6+EmGZCrMklfbAHPv
+	2ilgJXpI6B+ve6w63rmYZu2G5ljTRWT8d3ElshTtEB/5qIMHE4MgEemgVStHNVEH8r886F
+	7Pamc/MBsCKaS2c0Fwjdk4SJIl+C7d2txQKGMZNwectTI9XrdvoHFqi6ML7420uGmsBsiz
+	hCdBihh9Sj/ZkO8irotjUgSgkHARw9Z8hJ5ffBq029QyNEvgPwOlQYv8Yjw+DQ==
+Date: Mon, 11 Aug 2025 15:23:23 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
+ King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v10 11/15] net: phy: at803x: Support SFP
+ through phy_port interface
+Message-ID: <20250811152323.24012309@fedora.home>
+In-Reply-To: <67dd0a3e-12ac-49ab-aec1-f238db7030e6@lunn.ch>
+References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
+	<20250722121623.609732-12-maxime.chevallier@bootlin.com>
+	<67dd0a3e-12ac-49ab-aec1-f238db7030e6@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufedvheeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeeftdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleehgeevfeejgfduledtlefhlefgveelkeefffeuiedtteejheduueegiedvveehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeftddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepnhgvthguvghvs
+ ehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqmhhsmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Use !try_cmpxchg() instead of cmpxchg(*ptr, old, new) != old.
+Hi Russell, Andrew,
 
-The x86 CMPXCHG instruction returns success in the ZF flag,
-so this change saves a compare after CMPXCHG.
+On Sat, 26 Jul 2025 23:24:36 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-No functional change intended.
+> > -	if (iface == PHY_INTERFACE_MODE_SGMII)
+> > -		dev_warn(&phydev->mdio.dev, "module may not function if 1000Base-X not supported\n");  
+> 
+> I think we need to keep this warning. I don't remember the details,
+> but i think this is the kernel saying the hardware is broken, this
+> might not work, we will give it a go, but don't blame me if it does
+> not work. We need to keep this disclaimer.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
----
- fs/super.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+As I'm preparing for the next iteration, I was wondering if this could
+be something we could move into the core.
 
-diff --git a/fs/super.c b/fs/super.c
-index 7f876f32343a..e91718017701 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -2318,13 +2318,15 @@ int sb_init_dio_done_wq(struct super_block *sb)
- 						      sb->s_id);
- 	if (!wq)
- 		return -ENOMEM;
-+
-+	old = NULL;
- 	/*
- 	 * This has to be atomic as more DIOs can race to create the workqueue
- 	 */
--	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
--	/* Someone created workqueue before us? Free ours... */
--	if (old)
-+	if (!try_cmpxchg(&sb->s_dio_done_wq, &old, wq)) {
-+		/* Someone created workqueue before us? Free ours... */
- 		destroy_workqueue(wq);
-+	}
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(sb_init_dio_done_wq);
--- 
-2.50.1
+The series generalizes most of the SFP handling for PHYs, and I
+actually don't have a nice spot in at803x to put the warning anymore :)
 
+However what's being said by this warning has nothing specific to
+at803x, it applies to any PHY driver (or even, any SFP upstream) that
+supports 1000BaseX but does not support SGMII.
+
+The idea is that some modules with a built-in PHY will work when using
+1000BaseX as the MII (with of course the limitation that 10/100M won't
+ever work), so instead of bailing out when we have an SGMII module on a
+1000BaseX SFP cage, we give it a try with a very loud warning that this
+is "best effort, probably won't work, don't blame the kernel".
+
+This has been discussed a bit originally here [1]
+
+Is it OK for you if we move that warning into core code ?
+
+Maxime
+
+[1] : https://lore.kernel.org/netdev/20210701231253.GM22278@shell.armlinux.org.uk/
 
