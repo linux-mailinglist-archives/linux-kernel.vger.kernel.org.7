@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-763176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 606E0B211B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:24:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDBDDB2115B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE0F5053DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:09:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6AC6E0969
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49BF6F06B;
-	Mon, 11 Aug 2025 16:02:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E4529BDA9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E557C2E1741;
+	Mon, 11 Aug 2025 16:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IUmnQnCM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70E429BDAE;
+	Mon, 11 Aug 2025 16:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754928130; cv=none; b=dH+7ugNo/fXGLAW7tN+c3NgH6ejOaEeEQ9RHDaoKBgVvTjvI02GUU1hVV5/U0zqmuUtbSgJTQo+yB16ayXFktcMjvcLOdBZ+b0zPvn/f5vx2AoxtanFtnpBuea+rKZWaXY1R7R66zD2fmAeRo+ELcjuQuZBQseLOKLUhQL7nd08=
+	t=1754928144; cv=none; b=EgJy1QGFJKsH3HnSlUFpkXURWAlujN8u/lUTeULlUeCvB6ByNybuEOnvd5TBtGHkjRH4frSjJ4Mxt97BFgoVb0u0oxU2w0LPb1qKP/5VkOqZbyEqsGz4h/+D6R1mnJuiJSOV+HpbU9poHIS0MSAgYybFVRW/2lSqtNQ1RGHOt0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754928130; c=relaxed/simple;
-	bh=Qj13QBAwJ77MFXFG1RJS3Noyd9BQgNdqtzWsMbAqH4U=;
+	s=arc-20240116; t=1754928144; c=relaxed/simple;
+	bh=C0YeLo+QrnMfCU48sqIKEtj6gv3YrfL49zOooRu34XY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B+YYg3jWpn9lzlkWqHuLBGjv+NyiIayOvPox4ZFftTj4o4x7JVE5YLU60H2IkDf6DnR0+bSN14dYWfmlqyU8kgTYYsgZhgWMBimVQ8hT3lhGIeJgZIkFEBPvUQ27wktfnGsLFF5gWkqs5w+Snwk35us27aJPfqfV0wzpqwIyZKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDC66266C;
-	Mon, 11 Aug 2025 09:01:59 -0700 (PDT)
-Received: from [10.1.28.163] (e137867.arm.com [10.1.28.163])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0D163F738;
-	Mon, 11 Aug 2025 09:02:03 -0700 (PDT)
-Message-ID: <4b18c96b-116b-417d-ab98-eb81b80c9897@arm.com>
-Date: Mon, 11 Aug 2025 17:01:57 +0100
+	 In-Reply-To:Content-Type; b=gbOnTQbwhOYCiwCmjLeNXPQWC9ffFP/51ZcXoCM3WPXDDLLG38T6yjWQgn/s3GusM9+iOSw5lv5H3uH7srBnZzpNmkjlgSvF3ZKuIfYgANkN96aTVvSEBSMzDpzQimsFX/z6qWi2KgQgIpwipgGFg3P8Fa1h60g4yCdcFtayWVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IUmnQnCM; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754928143; x=1786464143;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=C0YeLo+QrnMfCU48sqIKEtj6gv3YrfL49zOooRu34XY=;
+  b=IUmnQnCMIOaX0feDxNesMj094BXW73aczSzXyOmJ3kwIkmRtdChl2skL
+   2xZArAFwlyifgl+hcw4MwIwSmJu3dQNm/gqWNCWaNw+PIHSK88qFa23x3
+   yxuPE/9r50VPkLc+6Y0snoA+ft+lkbNS1LJFhojhSyBS6GIDAYpMjKS+C
+   fTgJcbt3IVYWDHkzoUqmgA3gQj4OAi2qzo0oBKUwgIvfJX5llhNdvKdXd
+   e/104Ak0mgZkT6JvOA/kL9cX9gcZMNkPFvCYsHsyDB+nhk4FZzgNLACOb
+   d8YwtTnqGoBNSq8gWQPmFqEPvj0qJwOrWGI8A3b1EKtF9EXTehyVsqpy/
+   Q==;
+X-CSE-ConnectionGUID: vTSoCSZMQMKcrESf5ncjRA==
+X-CSE-MsgGUID: e2N8t9H0T/6FhXBwRS9qpw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="67894347"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="67894347"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 09:02:22 -0700
+X-CSE-ConnectionGUID: CByM2r3CQCGGimtDhEWCDg==
+X-CSE-MsgGUID: uLWlT41NQV2tgixo1qysAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="165447249"
+Received: from bvivekan-mobl2.gar.corp.intel.com (HELO [10.247.119.140]) ([10.247.119.140])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 09:02:18 -0700
+Message-ID: <34846223-7ab7-46d9-9e8b-4adc2bc59c44@intel.com>
+Date: Mon, 11 Aug 2025 09:02:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,96 +66,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v7 2/7] arm64: entry: Refactor the entry and exit
- for exceptions from EL1
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oleg@redhat.com,
- sstabellini@kernel.org, mark.rutland@arm.com, puranjay@kernel.org,
- broonie@kernel.org, mbenes@suse.cz, ryan.roberts@arm.com,
- akpm@linux-foundation.org, chenl311@chinatelecom.cn,
- anshuman.khandual@arm.com, kristina.martsenko@arm.com,
- liaochang1@huawei.com, ardb@kernel.org, leitao@debian.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- xen-devel@lists.xenproject.org, Ada Couprie Diaz <ada.coupriediaz@arm.com>
-References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
- <20250729015456.3411143-3-ruanjinjie@huawei.com>
- <df50cc99-027e-4182-ba4c-9837b354a062@arm.com>
- <6825c4c4-2c48-db3b-55e2-97922f25897f@huawei.com>
-From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+Subject: Re: [PATCH] dmaengine: idxd: Replace memset(0) + strscpy() with
+ strscpy_pad()
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250810225858.2953-2-thorsten.blum@linux.dev>
 Content-Language: en-US
-Organization: Arm Ltd.
-In-Reply-To: <6825c4c4-2c48-db3b-55e2-97922f25897f@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250810225858.2953-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 06/08/2025 03:49, Jinjie Ruan wrote:
 
-> On 2025/8/5 23:06, Ada Couprie Diaz wrote:
->> Hi,
->>
->> On 29/07/2025 02:54, Jinjie Ruan wrote:
->>
->>> [...]
->>> diff --git a/arch/arm64/kernel/entry-common.c
->>> b/arch/arm64/kernel/entry-common.c
->>> index 8e798f46ad28..97e0741abde1 100644
->>> --- a/arch/arm64/kernel/entry-common.c
->>> +++ b/arch/arm64/kernel/entry-common.c
->>> [...]
->>> @@ -475,73 +497,81 @@ UNHANDLED(el1t, 64, error)
->>>    static void noinstr el1_abort(struct pt_regs *regs, unsigned long esr)
->>>    {
->>>        unsigned long far = read_sysreg(far_el1);
->>> +    arm64_irqentry_state_t state;
->>>    -    enter_from_kernel_mode(regs);
->>> +    state = enter_from_kernel_mode(regs);
->> Nit: There is some inconsistencies with some functions splitting state's
->> definition
->> and declaration (like el1_abort here), while some others do it on the
->> same line
->> (el1_undef() below for example).
->> In some cases it is welcome as the entry function is called after some
->> other work,
->> but here for example it doesn't seem to be beneficial ?
-> Both methods can keep the modifications to `enter_from_kernel_mode()` on
-> the same line as the original code, which will facilitate code review.
->
-> I think it is also fine to do it on the same line here, which can reduce
-> one line code, which method is better may be a matter of personal opinion.
-Fair point !
-Then, as mentioned previously, I'm happy to leave my Reviewed-By.
->>>        local_daif_inherit(regs);
->>>        do_mem_abort(far, esr, regs);
->>>        local_daif_mask();
->>> -    exit_to_kernel_mode(regs);
->>> +    exit_to_kernel_mode(regs, state);
->>>    }
->>>      static void noinstr el1_pc(struct pt_regs *regs, unsigned long esr)
->>>    {
->>>        unsigned long far = read_sysreg(far_el1);
->>> +    arm64_irqentry_state_t state;
->>>    -    enter_from_kernel_mode(regs);
->>> +    state = enter_from_kernel_mode(regs);
->>>        local_daif_inherit(regs);
->>>        do_sp_pc_abort(far, esr, regs);
->>>        local_daif_mask();
->>> -    exit_to_kernel_mode(regs);
->>> +    exit_to_kernel_mode(regs, state);
->>>    }
->>>      static void noinstr el1_undef(struct pt_regs *regs, unsigned long
->>> esr)
->>>    {
->>> -    enter_from_kernel_mode(regs);
->>> +    arm64_irqentry_state_t state = enter_from_kernel_mode(regs);
->>> +
->>>        local_daif_inherit(regs);
->>>        do_el1_undef(regs, esr);
->>>        local_daif_mask();
->>> -    exit_to_kernel_mode(regs);
->>> +    exit_to_kernel_mode(regs, state);
->>>    }
->>>
->>> [...]
->> Other than the small nit:
->> Reviewed-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+
+On 8/10/25 3:58 PM, Thorsten Blum wrote:
+> Replace memset(0) followed by strscpy() with strscpy_pad() to improve
+> idxd_load_iaa_device_defaults(). This avoids zeroing the memory before
+> copying the strings and ensures the destination buffers are only written
+> to once, simplifying the code and improving efficiency.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/dma/idxd/defaults.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/dma/idxd/defaults.c b/drivers/dma/idxd/defaults.c
+> index c607ae8dd12c..2bbbcd02a0da 100644
+> --- a/drivers/dma/idxd/defaults.c
+> +++ b/drivers/dma/idxd/defaults.c
+> @@ -36,12 +36,10 @@ int idxd_load_iaa_device_defaults(struct idxd_device *idxd)
+>  	group->num_wqs++;
+>  
+>  	/* set name to "iaa_crypto" */
+> -	memset(wq->name, 0, WQ_NAME_SIZE + 1);
+> -	strscpy(wq->name, "iaa_crypto", WQ_NAME_SIZE + 1);
+> +	strscpy_pad(wq->name, "iaa_crypto");
+>  
+>  	/* set driver_name to "crypto" */
+> -	memset(wq->driver_name, 0, DRIVER_NAME_SIZE + 1);
+> -	strscpy(wq->driver_name, "crypto", DRIVER_NAME_SIZE + 1);
+> +	strscpy_pad(wq->driver_name, "crypto");
+>  
+>  	engine = idxd->engines[0];
+>  
+
 
