@@ -1,127 +1,138 @@
-Return-Path: <linux-kernel+bounces-762250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4971BB20401
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:43:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B4CB2041E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71ECE189D7DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:43:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06A3E18836EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DC52D8360;
-	Mon, 11 Aug 2025 09:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E366F2DEA6A;
+	Mon, 11 Aug 2025 09:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wo6PFPZP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PEK8J9K1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CDD221F09;
-	Mon, 11 Aug 2025 09:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB492DE715
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754905377; cv=none; b=mx77MWB35cVPuFaa99L3IGJpSq4TQKKPXmrbQ2J+D1zorIKMPwRLr6VpzpMJihaP9rKSC8KJgmYmCCm8Pkw0XE4H0yynnYC42xdRjqQ/sBit9v0kb9S9DxVvqmWOb8wo6WuTtrVeQmYiu5jOFW4n0hmdYlTC6sD1G6mZPSu2BdY=
+	t=1754905471; cv=none; b=fsLYck8ntLH948ajBMMlgafUhu3YQfMNYmISD68mXr1KECK9cE7RZMkOdIUEWgh/yQIdH2vg31Gjvhk6n+4oC5koMmHy6uPTnnQrl2werdd6B71CJBl4tvpxKtHTOYiQ8s4711dJ+u2/9FNhlTErOqHxcFdWYPHUJRUUEJ/zvY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754905377; c=relaxed/simple;
-	bh=8FokdP0RSTBt/P39LgCOsTHUzPcgNeFkIbO8ny7/gHs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=X1mh5WemhnG3HMDwraNdnZPEUhSm2c8xL0IZDtmMvkLcejQDV9NyQPOXirV1VK65SNcynWjowMwv3HqZ3Om/JW4son/Rod0XJ320WhuUkZ4S8E271lLLKnbCmgFTFLDPNaZe7HxFrcUKA4ymGhcAJc3FVIwvVEgI/341fBT7wPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wo6PFPZP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD69CC4CEED;
-	Mon, 11 Aug 2025 09:42:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754905376;
-	bh=8FokdP0RSTBt/P39LgCOsTHUzPcgNeFkIbO8ny7/gHs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Wo6PFPZPWIoLRqTcUjCqZWuW1JRj0D5QnDYKQJnmsoowl1vqXn6XkhgpZSmqsYQjd
-	 Z8GJTfCkX/lvVgliu7tFxxXV2qUJmPtpvJoa85qupVFFL+e+qQvcC4tqcS9Vc6rLt3
-	 8Vm14wt7qw3V3W227z0710YY4LPRfG93Qw5Yz+4nowbkKXvjLM/8jMf3aD9n3tP3HA
-	 6FSFbULISznTBUCva1JjrALegBb53z9rJnBxeZAfPFnpjJgDMfMGv5Fi0LvC/aLUjV
-	 vb88PgaoYoG162Xgd1erIBCRLnEKg07HNyv7THE8kfXtGL/Tlr+PvvXwhY321UeEn1
-	 zgDBJWQFFKx6g==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
- daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
- netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
- tglx@linutronix.de, arnd@arndb.de, jstultz@google.com, sboyd@kernel.org,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- tgunders@redhat.com, me@kloenk.dev, david.laight.linux@gmail.com
-Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
-In-Reply-To: <20250811.105320.1421518245611388442.fujita.tomonori@gmail.com>
-References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
- <20250220070611.214262-8-fujita.tomonori@gmail.com>
- <87y0wx9hpk.fsf@kernel.org>
- <huGw-FNRjvsPJK5CIsoI3puxml780Rr5GbJB6xg92PGzQOCMRTwC_utxTpn8u7G1sNjqq35iWOTNANpVUuip4w==@protonmail.internalid>
- <20250811.105320.1421518245611388442.fujita.tomonori@gmail.com>
-Date: Mon, 11 Aug 2025 11:42:46 +0200
-Message-ID: <878qjqgpnt.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1754905471; c=relaxed/simple;
+	bh=/C+FRlGjQPtfUyOjnLRRzxn89zl6SzjGkixLNr8a/bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ThsIyKLFrZt8vnvKBzOLw0lx9t4OMVHYSmWPh5nqS5gYeEhfDUWQrL2RKG7viT8cCx04gJuZ1R3IMGrJmWNmXvMSyjYOBq94KQ4e6M7orVfMSwAITxz/2s6E1yEgytHAeAXlbtwLOqyKkPjZyPHqxvDhZ+w7ba6UiruV8mTkT+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PEK8J9K1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754905468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aWAq+VNH88+5aD3C80O8tNZjd996k0N5ELPJ0iNyg+I=;
+	b=PEK8J9K1ieH1m5OG/WPM6tjkslgcyslgnDzTUiiF59j85Yx6vcBwow9WLDx1fabZVjqe+n
+	Q/jcLdxANnsGprEK9ykKjsHY2KXwZeR2e+/dqXtyg2FRvHWWVazg6O0eLpS/lzAMStukmu
+	0fuS7XhA+n4K9IEmBza6PcTDvhWqUWg=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-6-kNXTe3OnPpetNzzlStmxMQ-1; Mon,
+ 11 Aug 2025 05:44:25 -0400
+X-MC-Unique: kNXTe3OnPpetNzzlStmxMQ-1
+X-Mimecast-MFC-AGG-ID: kNXTe3OnPpetNzzlStmxMQ_1754905462
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6A061195608F;
+	Mon, 11 Aug 2025 09:44:20 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.234])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 173C519560AD;
+	Mon, 11 Aug 2025 09:44:06 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 11 Aug 2025 11:43:08 +0200 (CEST)
+Date: Mon, 11 Aug 2025 11:42:53 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
+	wangfushuai <wangfushuai@baidu.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 6/9] freezer: Set default freeze priority for
+ zombie tasks
+Message-ID: <20250811094252.GC11928@redhat.com>
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <20250807121418.139765-7-zhangzihuan@kylinos.cn>
+ <20250808142948.GA21685@redhat.com>
+ <393a4509-9b05-45b8-8496-699ace9a5438@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <393a4509-9b05-45b8-8496-699ace9a5438@kylinos.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-"FUJITA Tomonori" <fujita.tomonori@gmail.com> writes:
+On 08/11, Zihuan Zhang wrote:
+> 
+> 在 2025/8/8 22:29, Oleg Nesterov 写道:
+> >On 08/07, Zihuan Zhang wrote:
+> >>@@ -6980,6 +6981,7 @@ void __noreturn do_task_dead(void)
+> >>  	current->flags |= PF_NOFREEZE;
+> >>
+> >>  	__schedule(SM_NONE);
+> >>+	freeze_set_default_priority(current, FREEZE_PRIORITY_NEVER);
+> >>  	BUG();
+> >But this change has no effect?
+> >
+> >Firstly, this last __schedule() should not return, note the BUG() we have.
+> >
+> >Secondly, this zombie is already PF_NOFREEZE, freeze_task() will return
+> >false anyway.
+> Sorry, but in our tests with a large number of zombie tasks, returning early
+> reduced the overhead. Even though freeze_task() would return false for
+> PF_NOFREEZE, skipping the extra path still saved time in our suspend/freezer
 
-> Sorry, I somehow missed this email.
->
-> On Sat, 22 Mar 2025 17:02:31 +0100
-> Andreas Hindborg <a.hindborg@kernel.org> wrote:
->
->>> +/// Lower CPU power consumption or yield to a hyperthreaded twin processor.
->>> +///
->>> +/// It also happens to serve as a compiler barrier.
->>> +pub fn cpu_relax() {
->>> +    // SAFETY: FFI call.
->>
->> I don't think this safety comment is sufficient. There are two other
->> similar comments further down.
->
-> Updated the comment.
->
->>> +/// ```rust
->>> +/// use kernel::io::poll::read_poll_timeout;
->>> +/// use kernel::time::Delta;
->>> +/// use kernel::sync::{SpinLock, new_spinlock};
->>> +///
->>> +/// let lock = KBox::pin_init(new_spinlock!(()), kernel::alloc::flags::GFP_KERNEL)?;
->>> +/// let g = lock.lock();
->>> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), Some(Delta::from_micros(42)));
->>> +/// drop(g);
->>> +///
->>> +/// # Ok::<(), Error>(())
->>> +/// ```
->>
->> I am guessing this example is present to test the call to `might_sleep`.
->
-> I also guess so. Boqun wrote this test, IIRC.
->
->> Could you document the reason for the test. As an example, this code is
->> not really usable. `#[test]` was staged for 6.15, so perhaps move this
->> to a unit test instead?
->>
->> The test throws this BUG, which is what I think is also your intention:
->
-> might_sleep() doesn't throw BUG(), just a warning. Can the test
-> infrastructure handle such?
+https://lore.kernel.org/all/20250707084214.GD1613200@noisy.programming.kicks-ass.net/
 
-As I wrote, kunit does not handle this. But I am confused about the
-bug/warn comment. The trace I pasted clearly says "BUG"?
+Anyway the patch makes no sense in its current form, see my note
+about __schedule() above.
 
-I think we should just remove this test for now.
-
-
-Best regards,
-Andreas Hindborg
-
+Oleg.
 
 
