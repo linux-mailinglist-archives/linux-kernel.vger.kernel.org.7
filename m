@@ -1,92 +1,154 @@
-Return-Path: <linux-kernel+bounces-762238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F87B203DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A0EB203DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA9D63AE46C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:35:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8F0117410B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 09:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340BC219A9B;
-	Mon, 11 Aug 2025 09:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F96223DED;
+	Mon, 11 Aug 2025 09:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QmOrpa72"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="GTk5FROV"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F27221C9F1
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 09:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C30772624;
+	Mon, 11 Aug 2025 09:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754904924; cv=none; b=JBqYYFxnVmGA+fgo8jUGjBhnPoAn9WdEIB8dIr4brmMMZt+pP7CC9l9z5gJ0isFCFyFyOPaYPOGEBkOTFYs59uPbZNTYYnjRkhrDwaS5t7/wc4TCvm9XBB4mf7VUuoxgDadmjGLy5VzUQbkbQiuz/JP0uOYEhWj3IMrz3OajFJE=
+	t=1754904949; cv=none; b=fxleQrLP3roFYhE3gkngIe7pI1AZJiVoRn+LttSquGixOCT4aKM9CvUa9sesTMyzQAZjFw771gVqMROgWkjmRztnJxmWf6eQpybQg9sJAnrFItBSusJ0JphSfxAVF68kb8OmgAAQXD4PhVJKdi8ImOeY77KhTeO/D3vxSJQrzzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754904924; c=relaxed/simple;
-	bh=N5OBK83I6BMc5+G4FWzZ69mcWguLo+tCMMtgMyyBQuw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fzi9LTgOh10xe25LGhZSIXuMjxIZcuDRHzlI7prJuj4AiP84mtKX1VoU6Gsc9wk45qLS+B6PrHF0wXApJGkBcwDQY0lnIRVxM1gtL9KxOubjr7QNomdFM0nyl6yCs4AcwcV/Z6DlamEz4ULnOA4VDNjbXyO04B1EmOfkfbpKjpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QmOrpa72; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754904918;
+	s=arc-20240116; t=1754904949; c=relaxed/simple;
+	bh=fRO/XvhtmCzSop7U0WLU8SqB29CBl0HDXlMdKUkfoCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L6Lq1CscblqeVRDXW4bC5MwfElylqGNREAXCBdUXzgzf/tSQZzZ5ssGXHKiF/HmLvsIJL3YUeHUBzu6/3wvXMRo7xxtHcITcXcflunHeSLFSNb4rNbi+oX3ubMKL3P9laTxNV+uoUI9yLFnwvX7ZriRaRUR51Rru+4jsqwBOdBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=GTk5FROV; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4c0qHt1TDXz9t3B;
+	Mon, 11 Aug 2025 11:35:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1754904938;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yTqGLRCADO0VrcQ5UXFXw61pDkrPUQFqQTnjcLtaKTE=;
-	b=QmOrpa72t06MF56gnq/SF/qj5ZPu0xxy2ibfwIXBtV3lc2LuNj3MsUciBkfDZJBwoCxflZ
-	ch78fpo8G8pQAk9EorPnsPH+rEWj77qQAcgET+/KHmErmKVtBq6Ik3VFQNCGG70ep7fDq4
-	rJ8WWWVoLe0iz2uvmnPJHAN56LwrxAk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] caif: Replace memset(0) + strscpy() with strscpy_pad()
-Date: Mon, 11 Aug 2025 11:34:40 +0200
-Message-ID: <20250811093442.5075-2-thorsten.blum@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYaSNjo652MdDtNEkrK62ubowtD18Yw4cYxTCIxPtHU=;
+	b=GTk5FROVMTCTxXEJppTQOFY+PCoXfXU0dO6ikOewslNIUGy1NT48uxATKWrhNK5SmFUp+J
+	bdYU+VSSFeJfM3LNhz9fz2oQVmhbI9Yxr/R9k4L8fpCJeGFyB05/RXH4ljZ+uygivdVEb6
+	WPyKyBkBSC2eJqSmo2xNBaUSwgfmTsvJYuJxADqsbd7JmYkDERu9VBjASWB4mxg7fL9uLp
+	eKwwiCGqWgkU04QXht8/a4j2a7fh+CUrTGVIjQVhSevAfaixjy23fZhq9gUstYORo456H0
+	SNAxLMr1DEWsFAD40K3IyPE+QcXwbvAxjon0uHgBmMNsaQs9gx3Cy3fBm4tUcw==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Message-ID: <d1560177-b7ec-45f0-beb2-62bd5fe7d3a6@pankajraghav.com>
+Date: Mon, 11 Aug 2025 11:35:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH v3 5/5] block: use largest_zero_folio in
+ __blkdev_issue_zero_pages()
+To: Jens Axboe <axboe@kernel.dk>, hch@lst.de
+Cc: linux-kernel@vger.kernel.org, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Mike Rapoport <rppt@kernel.org>,
+ Zi Yan <ziy@nvidia.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ willy@infradead.org, Ritesh Harjani <ritesh.list@gmail.com>,
+ linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, Pankaj Raghav <p.raghav@samsung.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+References: <20250811084113.647267-1-kernel@pankajraghav.com>
+ <20250811084113.647267-6-kernel@pankajraghav.com>
+Content-Language: en-US
+From: Pankaj Raghav <kernel@pankajraghav.com>
+In-Reply-To: <20250811084113.647267-6-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4c0qHt1TDXz9t3B
 
-Replace memset(0) followed by strscpy() with strscpy_pad() to improve
-cfctrl_linkup_request(). This avoids zeroing the memory before copying
-the string and ensures the destination buffer is only written to once,
-simplifying the code and improving efficiency.
+On 8/11/25 10:41, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
+> 
+> Use largest_zero_folio() in __blkdev_issue_zero_pages().
+> On systems with CONFIG_PERSISTENT_HUGE_ZERO_FOLIO enabled, we will end up
+> sending larger bvecs instead of multiple small ones.
+> 
+> Noticed a 4% increase in performance on a commercial NVMe SSD which does
+> not support OP_WRITE_ZEROES. The device's MDTS was 128K. The performance
+> gains might be bigger if the device supports bigger MDTS.
+> 
+> Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>  block/blk-lib.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- net/caif/cfctrl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+@Jens and @Christoph, is it possible to take a quick look of this patch when you have the time?
 
-diff --git a/net/caif/cfctrl.c b/net/caif/cfctrl.c
-index 06b604cf9d58..2aa1e7d46eb2 100644
---- a/net/caif/cfctrl.c
-+++ b/net/caif/cfctrl.c
-@@ -257,9 +257,7 @@ int cfctrl_linkup_request(struct cflayer *layer,
- 		cfpkt_add_body(pkt, &tmp16, 2);
- 		tmp16 = cpu_to_le16(param->u.utility.fifosize_bufs);
- 		cfpkt_add_body(pkt, &tmp16, 2);
--		memset(utility_name, 0, sizeof(utility_name));
--		strscpy(utility_name, param->u.utility.name,
--			UTILITY_NAME_LENGTH);
-+		strscpy_pad(utility_name, param->u.utility.name);
- 		cfpkt_add_body(pkt, utility_name, UTILITY_NAME_LENGTH);
- 		tmp8 = param->u.utility.paramlen;
- 		cfpkt_add_body(pkt, &tmp8, 1);
--- 
-2.50.1
+I already made the changes that Christoph mentioned before, so I think it should
+be good to go.
 
+@Christoph, I will send the follow up patches to iomap direct io code once we get these changes
+merged.
+
+> diff --git a/block/blk-lib.c b/block/blk-lib.c
+> index 4c9f20a689f7..3030a772d3aa 100644
+> --- a/block/blk-lib.c
+> +++ b/block/blk-lib.c
+> @@ -196,6 +196,8 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
+>  		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
+>  		struct bio **biop, unsigned int flags)
+>  {
+> +	struct folio *zero_folio = largest_zero_folio();
+> +
+>  	while (nr_sects) {
+>  		unsigned int nr_vecs = __blkdev_sectors_to_bio_pages(nr_sects);
+>  		struct bio *bio;
+> @@ -208,15 +210,14 @@ static void __blkdev_issue_zero_pages(struct block_device *bdev,
+>  			break;
+>  
+>  		do {
+> -			unsigned int len, added;
+> +			unsigned int len;
+>  
+> -			len = min_t(sector_t,
+> -				PAGE_SIZE, nr_sects << SECTOR_SHIFT);
+> -			added = bio_add_page(bio, ZERO_PAGE(0), len, 0);
+> -			if (added < len)
+> +			len = min_t(sector_t, folio_size(zero_folio),
+> +				    nr_sects << SECTOR_SHIFT);
+> +			if (!bio_add_folio(bio, zero_folio, len, 0))
+>  				break;
+> -			nr_sects -= added >> SECTOR_SHIFT;
+> -			sector += added >> SECTOR_SHIFT;
+> +			nr_sects -= len >> SECTOR_SHIFT;
+> +			sector += len >> SECTOR_SHIFT;
+>  		} while (nr_sects);
+>  
+>  		*biop = bio_chain_and_submit(*biop, bio);
+
+
+--
+Pankaj
 
