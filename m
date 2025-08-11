@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-762648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3107BB20953
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:51:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA64B20956
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E75CC42554B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA3C18A4AD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAE82BDC38;
-	Mon, 11 Aug 2025 12:51:52 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227CA2BDC38;
+	Mon, 11 Aug 2025 12:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S5XNTjBH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F9D225793
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149182E370F;
+	Mon, 11 Aug 2025 12:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754916712; cv=none; b=n1dhXgiSMo5UVUa6OxXLBRC8sYveknDFwwfq+eVCPeuEhe0FTqeSr7A7Pm4GQBnfurwvF9pbsdEaTWNxqdNwowCOV6VSQ7FPOAGP3F+loE7HpplFw6qVjxwmn0915LyeHKwUMYReYp13YFVUN9V/XorsFqode5H3jSISZf8fy70=
+	t=1754916749; cv=none; b=iIJDU6ZgpePnlyO9fvSAHDQo3JxdXodbQ32S7noahDQlY6aYCR95/IN0Vszk3HVw6Bbi8XzXnu5Z/2TLHXRX5dnftdMPoHK/4eg/VxB2vw8hGpIv8LE+V+mw84o9kfMBKuKcnXkJ5NjgyWTY8xWLurf5d0Aq7td3zSXij8TC3r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754916712; c=relaxed/simple;
-	bh=UfWloCpGHL6SM4IDF9Sai2JQuqbdUtevLetjkdvFHy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=G1MRv4d/oTRf/jTXGjYwzjvOU79YTPm5hFiFRQzTWmYwZVuRMNGFV4Yj+vYyS/nu5o1Zi48CTTjHueX4PG+6QDfNLEbxY5jk+3oQs3vmWe1b6UV0bXKwFOeUQIsI3TTFpfhr3DD0CD9O5c76GNsi58HkB+JROIiA0SN41A96rw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c0vb14blFz2TT60;
-	Mon, 11 Aug 2025 20:49:01 +0800 (CST)
-Received: from dggpemf100018.china.huawei.com (unknown [7.185.36.183])
-	by mail.maildlp.com (Postfix) with ESMTPS id 71C4914010C;
-	Mon, 11 Aug 2025 20:51:39 +0800 (CST)
-Received: from [10.67.111.115] (10.67.111.115) by
- dggpemf100018.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Aug 2025 20:51:38 +0800
-Message-ID: <9dfd8510-91e5-40c4-a3ec-6f70667fc366@huawei.com>
-Date: Mon, 11 Aug 2025 20:51:37 +0800
+	s=arc-20240116; t=1754916749; c=relaxed/simple;
+	bh=sKcDxReHvOjMWuRz/JJIjfs2GC55bod9+lD6K9tF16k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MEz3z8jrRELXMwdpxVQazfohNrXtoAzOz+CzSuhuI6NrFRz9GBzfP0aI9ZSYcP+Ub5Rq9c/H84EjRUEtjUbWXNZtsAUYpkrWixIJAUvunkgim+v+yDYRy7ptYJgoX5B27N7VXe7bYHTx1bRcDs7YQzQCUcMTIaIccuhXj/ErsgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S5XNTjBH; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754916748; x=1786452748;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sKcDxReHvOjMWuRz/JJIjfs2GC55bod9+lD6K9tF16k=;
+  b=S5XNTjBH7Y2WCbXYIKDTjDR5mrAnUZYYcWXcR+pT4v2jMTTZ/nEEbiAy
+   vOA9+9c/eK/lCZzRaPf1Q1SlxG0VVFwzZd0VXCotiRIOmAyk6nuRvKU5I
+   lj8P/VFcgw+ifwgumVxpykW3K69c45WAdzKGItOdB4V+Wlc87XBcL4M6k
+   o6kdHfeWuTfzZuR3nnsiMNxJfQqubjnu6z6HtYulSUOVLv8QhrZBRxYR6
+   XzPJz4ZHUxbX8ce31UPWbOGIm0mLTQTST0/PT51vKbqQdHr14FLEm7UUR
+   YMvKg9EZyxOQGTc1PShbOKL6CaB566gXB2KNGOpXTfVEosj8WoMuYdUdA
+   g==;
+X-CSE-ConnectionGUID: b6lVElART9eyo31z69buCQ==
+X-CSE-MsgGUID: +d13Y+FPSUWis5NArG2mbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57089243"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="57089243"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 05:52:27 -0700
+X-CSE-ConnectionGUID: xFz4n3B8RWuruOLSnyLmXg==
+X-CSE-MsgGUID: bBnKF4ZXRJqsXLbK/cPS6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="166709515"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 05:52:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1ulS0i-000000052c0-0OQj;
+	Mon, 11 Aug 2025 15:52:20 +0300
+Date: Mon, 11 Aug 2025 15:52:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/21] input: gpio-keys: make legacy gpiolib optional
+Message-ID: <aJnng9z9pUTFI49x@smile.fi.intel.com>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-10-arnd@kernel.org>
+ <b7e97aa3-8f2d-4a59-8a38-577717404865@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT] x86/apic: CPU Hang in x86 VM During Kdump
-To: Thomas Gleixner <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<peterz@infradead.org>, <sohil.mehta@intel.com>, <rui.zhang@intel.com>,
-	<arnd@arndb.de>, <yuntao.wang@linux.dev>, <linux-kernel@vger.kernel.org>
-References: <20250604083319.144500-1-zouyipeng@huawei.com>
- <87ecu1pfnn.ffs@tglx> <87tt2vnzsv.ffs@tglx>
- <4426d19d-7f7e-411b-8573-36b8990e5d9a@huawei.com> <87a54mkccu.ffs@tglx>
-Content-Language: en-US
-From: Yipeng Zou <zouyipeng@huawei.com>
-In-Reply-To: <87a54mkccu.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf100018.china.huawei.com (7.185.36.183)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7e97aa3-8f2d-4a59-8a38-577717404865@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Mon, Aug 11, 2025 at 01:34:43PM +0300, Matti Vaittinen wrote:
+> On 08/08/2025 18:17, Arnd Bergmann wrote:
 
-在 2025/7/30 3:48, Thomas Gleixner 写道:
-> On Tue, Jul 29 2025 at 21:35, Yipeng Zou wrote:
->> 在 2025/7/29 16:53, Thomas Gleixner 写道:
->>> On Sun, Jul 27 2025 at 22:01, Thomas Gleixner wrote:
->>> So the patch I gave you should handle the reboot vector pending in IRR
->>> gracefully. Can you please give it a try?
->> Hi Thomas:
->>
->>       Thanks for your time!
->>
->>       Indeed, It invokes kdump_nmi_shootdown_cpus() and uses the NMI
->> shutdown.
->>
->>       I started the test run today, but this is a low-probability to hit
->> this path, might take a while.
-> It's trivial enough to enforce that, no?
+...
 
-Hi Thomas:
+> As such, this patch seems Ok to me, you can treat this as an ack :) This,
+> however made me ponder following - is this the tight way to handle the
+> power-button IRQ? I don't see any other MFD devices doing this in same way,
+> although I am pretty sure there are other PMICs with similar power-button
+> IRQ...
+> 
+> I see for example the "drivers/mfd/rt5120.c" to invoke
+> "drivers/input/misc/rt5120-pwrkey.c" instead of using the gpio-keys. This,
+> however, feels like code duplication to me. I'd rather kept using the
+> gpio-keys, but seeing:
+> 
+> git grep KEY_POWER drivers/mfd/
+> drivers/mfd/rohm-bd71828.c:     .code = KEY_POWER,
+> drivers/mfd/rohm-bd718x7.c:     .code = KEY_POWER,
+> 
+> makes me wonder if there is more widely used (better) way?
 
-     Sorry for delay - after resolving a few environmental issues, 
-anyway, it works.
-
-     All previously failed test cases are now passing.
-
-     I also think this solution is reasonable.
+FWIW, on Intel platforms that use power button by PMIC we add a special driver
+for each of such cases.
 
 -- 
-Regards,
-Yipeng Zou
+With Best Regards,
+Andy Shevchenko
+
 
 
