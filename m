@@ -1,314 +1,117 @@
-Return-Path: <linux-kernel+bounces-763294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C87B212DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:08:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32121B212D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA1357A4BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:06:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7200620898
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627652D320B;
-	Mon, 11 Aug 2025 17:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9E82D47E6;
+	Mon, 11 Aug 2025 17:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b="AQcfRg8Q"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hx5jxZ6k"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC72E311C01;
-	Mon, 11 Aug 2025 17:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566F729BDB5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 17:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754932050; cv=none; b=b4cIvBx5Wd7uY8u9ldd41J0N3RVMxC1rEMVqur3l14hWzHK8gh+u3LzymRidiOh6MCfPsOgmmsT2GsMGDce9ayRGt7QXNjGVxEum+l5fONW2BF1LjEVm3Ws7iJSmTLFO6UN9D8AwCHw/87rkt10DQgI6kTm7PNW9NTClPw0a+Hw=
+	t=1754932032; cv=none; b=lUz4mky0NaNcXbRwe5dLVv4azCpi5OhN39Ux06t3+rfevx0olE/hpn51d7jl0B0ibdxWvC1e7bAPJRvuxS0AonJ3DLnlUiysO8CYWgTWuX4NJn4UYv9q7hFYsgb/OmSpsm3GovjMv0f0WyrWMsjD4FzutL68DOt9pbhdjUDHl1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754932050; c=relaxed/simple;
-	bh=RVszgM0um3eMUdt3IRVk6zljjfpf0+MIb3XriCiYPwA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tLCwufx3khI9W8r7yP2aDtOmGbxJYb4Yy3BgtYpyESVSRI/ZzDxSXDMxrIVCEjVtdrR3dVBu9Ppc2pMNR2XEqv05tEH/HNdmG/xhVdvWzgqIUCgv1HhoneHOP1IoPCkrsVmYQOZ0lXtHT9vM6xYpUmpLpeM+/2o7fORQnPo1Ua0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us; spf=pass smtp.mailfrom=gmx.us; dkim=pass (2048-bit key) header.d=gmx.us header.i=len.bao@gmx.us header.b=AQcfRg8Q; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.us
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.us;
-	s=s31663417; t=1754932039; x=1755536839; i=len.bao@gmx.us;
-	bh=yC2S/wEi8KGENwurWbzuHG8Vw4xK4n4Tr7WdMBlsZNY=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AQcfRg8QTRxKmHBWPhU+1wfBC6Hv7yZOLvYwAVieTRhEqpFkeCY/lsOSyjpECLWJ
-	 LGo1yIXIytIvRuVBpYkoqKP/717GmNlpWt9EBO841DtOGR1oVmKNlVh4rXo0u0Ijg
-	 rAkSaKFU+zcl1fFhCN/8mwkyvXhZ77t63O2bCTqj2njC95OCLRnkdbO+ddjZ7sk9G
-	 iaBbN92PuVMcVAKBYEnssu54oKDgW40D6Xg0gzVbAahBuw3X7KMQjCQkPjCyisZH3
-	 d+s9e7BJETRu0zgBEjTNFOJGwYEopdESTECv1mMWKRbhfqRfQm+u6cbzdf5CVDaKH
-	 umZlLNPZPTeBNoSMKA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from ubuntu ([79.159.189.119]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1N4hvb-1udiJm3SZL-00zS69; Mon, 11
- Aug 2025 19:07:19 +0200
-From: Len Bao <len.bao@gmx.us>
-To: Nilesh Javali <njavali@marvell.com>,
-	Manish Rangankar <mrangankar@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Len Bao <len.bao@gmx.us>,
-	linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1754932032; c=relaxed/simple;
+	bh=ero7dqEd2L68k0qTaixH5BImBh18D8SQtMNdTCT/vZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mB0Dcyvx/1ftkg8H6P7oS2vIVbuqbjxPn54H85qkwBpWCQL0a384mLP5hkFw+rPtT7DI704qO7vTfMVOEysh7WLVdfwtbVyCdHee7iTK9lRUlOulR4fWdjJmX/WaGWEHmeoeCkOsy9oji5BSwfi8Kk8fwiFH44Gwsb6dUobHHys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hx5jxZ6k; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76bde897110so3691696b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754932030; x=1755536830; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S69QPamIXLtkMBYpOoBfBZTo6wmvCznnyAmXGWp0EzA=;
+        b=hx5jxZ6k51cfxiGPYE4Wh/khBrYahJLdJh7dP/dQGFRq6tuIrCzEpMdrq6KpWl+msc
+         ks0LT4ttMrQe+1oS5JFgUUIxakqwcg4QKuAM3FZMh5auzeaUeNhJTuPgoC1KcyfwDYJ2
+         JV4k1AxbACe3x7qmuCPH6yEcao+xMudSNOXyzeBvOBs97j1meMEOn5d5oeCzhqFI/XtZ
+         rdXLVGeadKTxielhz0sHyD2znnKyiePuwijkLdo8zELou9iVQyjqdHNIoioey3hPfdyZ
+         24WKBlutKB3rqg+cvnskkQVnO+NZYQwo3xBwlzmGE/UlNVIqMhxE/mnjqPf+MpkD6Elg
+         pT1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754932030; x=1755536830;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S69QPamIXLtkMBYpOoBfBZTo6wmvCznnyAmXGWp0EzA=;
+        b=JMT07x9Y3GucfUpQHdCPb6nqTW1mPJRN48e9jgBFzVbe8RZRNCtKWJ3rauN5pIJ74X
+         27RjEV3lF42kzBQqo1dxchrYgHA+UaBlHtceo2kRHY+W0Ob6vwqq/n3zB+8XFUcX8NM1
+         4+TiokfwBKkoXVHyvHhqUb7nLkdpxUciWnGP5KVb89ZcT1o9uPLEfxvfGvpQ0QtTests
+         oZMCPl1WDxyylmWcmheBPRGhf9JM7g42NruPZs3R/zDEjP4Al7xSWJhQFtvuFTTZdukW
+         Fkswibhy5MFhNLTdDI32Uatlp9WmSv/zE8Dbf2scueuiJ6of4goqtqaNlU/jaiwzaqrH
+         APFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA100MbzgOwylogKctdJsH13FERNmO5rNZDQB0xuzjrKM9d+zOKYvG3eEJlnjM0U9cNQiiX4KIig0JF3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAIZoRaqx/+KbaQvQ+9rV6/D3VQTddebnnvLkycxYK51p4wVkX
+	6l8Ls7hZXARBnjojPZJbi9q7IN7fRd2U/mWynl1MHFuFs1XQU4agv0yB
+X-Gm-Gg: ASbGnctbow3YHi43DOfv5tgSvZct2VVSU7LzGhCwpK2EvO50MF7KvE7iA0TQLlwStd1
+	1Kx5g5j6SUlXR0qpIJMRwChYnulQTbznBw8NUz5L2K1FvhYbaJaerXNtQX8TEhKD1wl5pMmkn1m
+	aR9sSW32ia5BOcL0vRBY705mLKvLuGWhyoH1VuW22EEjW7maGwFMlcV0x6f1TfTAjTZ/+Usn6L0
+	4srLGsejkCz/o0wanrb8f3D30izRzxmAI/eVSHr9h34INZ2Xy12LjKrBu5NPSJBEWRYQiA4iOT0
+	4YNuzlCUoqCldQLUTE/eeXrJN+FbArUps4xxDRejH53vyMx/lzEjWNH023scjJ/J1r39jOy6uie
+	+Kna4KPLEvN3jBoRBDHd8K/XGUUZX5ZRUqHCyQHm+/F11TpIf4Dx2h1M0iieXmRfxlzrmxnWX52
+	yF
+X-Google-Smtp-Source: AGHT+IEqcNdqHJSsF3iz71GBi7tMXwu/Q35YPRIyWtZopJfWBSkD2UYMrhhd+Ud83W8mJL5Uy7g7Sw==
+X-Received: by 2002:a05:6a00:1491:b0:740:aa31:fe66 with SMTP id d2e1a72fcca58-76c460d2c66mr17856310b3a.4.1754932030378;
+        Mon, 11 Aug 2025 10:07:10 -0700 (PDT)
+Received: from localhost.localdomain (wf122-104.ust.hk. [175.159.122.104])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c09adf8efsm18836986b3a.68.2025.08.11.10.07.08
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 11 Aug 2025 10:07:09 -0700 (PDT)
+From: Haoyang LIU <tttturtleruss@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com,
+	Haoyang LIU <tttturtleruss@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: qla4xxx: Replace snprintf() with sysfs_emit()
-Date: Mon, 11 Aug 2025 17:06:32 +0000
-Message-ID: <20250811170639.65597-1-len.bao@gmx.us>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH] scripts/checktransupdate.py: fix missing f prefix in f-string
+Date: Tue, 12 Aug 2025 01:07:04 +0800
+Message-ID: <20250811170704.99420-1-tttturtleruss@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Gn610vzH3ffqIXqi2c1uPmtHJ6iYhVlU3jBNuc3qxl1uW7N3hwT
- Jdnh3zIKLGPdz7/vuio87pz5xWS+9C8+eJ/CDPbGGl3vM0Fp8a3tD9s5vJeega1ar+slFie
- MkO/7USMWO1CbN8z/1NVbUyiao58BxKxonaiY6kyN9Ox2Bw0hY4brf8AQti2PyqL4SNeNuI
- zII+kN1BkoKGO55jTlb0g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VjPdibdsRno=;v7HzDnBSX1aiUyumOQIg/kJtETo
- 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
- H1N1F7vUevA==
+Content-Transfer-Encoding: 8bit
 
-Documentation/filesystems/sysfs.rst mentions that show() should only
-use sysfs_emit() or sysfs_emit_at() when formating the value to be
-returned to user space. So replace snprintf() with sysfs_emit().
+add a f prefix for f-string
 
-Signed-off-by: Len Bao <len.bao@gmx.us>
-=2D--
- drivers/scsi/qla4xxx/ql4_attr.c | 52 ++++++++++++++++-----------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+Fixes: 63e96ce050e5 ("scripts: fix all issues reported by pylint")
+Signed-off-by: Haoyang LIU <tttturtleruss@gmail.com>
+---
+ scripts/checktransupdate.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla4xxx/ql4_attr.c b/drivers/scsi/qla4xxx/ql4_at=
-tr.c
-index 84f99ff8e69..a9b75b29c8a 100644
-=2D-- a/drivers/scsi/qla4xxx/ql4_attr.c
-+++ b/drivers/scsi/qla4xxx/ql4_attr.c
-@@ -156,13 +156,13 @@ qla4xxx_fw_version_show(struct device *dev,
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
-=20
- 	if (is_qla80XX(ha))
--		return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d (%x)\n",
--				ha->fw_info.fw_major, ha->fw_info.fw_minor,
--				ha->fw_info.fw_patch, ha->fw_info.fw_build);
-+		return sysfs_emit(buf, "%d.%02d.%02d (%x)\n",
-+				  ha->fw_info.fw_major, ha->fw_info.fw_minor,
-+				  ha->fw_info.fw_patch, ha->fw_info.fw_build);
- 	else
--		return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d.%02d\n",
--				ha->fw_info.fw_major, ha->fw_info.fw_minor,
--				ha->fw_info.fw_patch, ha->fw_info.fw_build);
-+		return sysfs_emit(buf, "%d.%02d.%02d.%02d\n",
-+				  ha->fw_info.fw_major, ha->fw_info.fw_minor,
-+				  ha->fw_info.fw_patch, ha->fw_info.fw_build);
- }
-=20
- static ssize_t
-@@ -170,7 +170,7 @@ qla4xxx_serial_num_show(struct device *dev, struct dev=
-ice_attribute *attr,
- 			char *buf)
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
--	return snprintf(buf, PAGE_SIZE, "%s\n", ha->serial_number);
-+	return sysfs_emit(buf, "%s\n", ha->serial_number);
- }
-=20
- static ssize_t
-@@ -178,8 +178,8 @@ qla4xxx_iscsi_version_show(struct device *dev, struct =
-device_attribute *attr,
- 			   char *buf)
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
--	return snprintf(buf, PAGE_SIZE, "%d.%02d\n", ha->fw_info.iscsi_major,
--			ha->fw_info.iscsi_minor);
-+	return sysfs_emit(buf, "%d.%02d\n", ha->fw_info.iscsi_major,
-+			  ha->fw_info.iscsi_minor);
- }
-=20
- static ssize_t
-@@ -187,9 +187,9 @@ qla4xxx_optrom_version_show(struct device *dev, struct=
- device_attribute *attr,
- 			    char *buf)
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
--	return snprintf(buf, PAGE_SIZE, "%d.%02d.%02d.%02d\n",
--			ha->fw_info.bootload_major, ha->fw_info.bootload_minor,
--			ha->fw_info.bootload_patch, ha->fw_info.bootload_build);
-+	return sysfs_emit(buf, "%d.%02d.%02d.%02d\n",
-+			  ha->fw_info.bootload_major, ha->fw_info.bootload_minor,
-+			  ha->fw_info.bootload_patch, ha->fw_info.bootload_build);
- }
-=20
- static ssize_t
-@@ -197,7 +197,7 @@ qla4xxx_board_id_show(struct device *dev, struct devic=
-e_attribute *attr,
- 		      char *buf)
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
--	return snprintf(buf, PAGE_SIZE, "0x%08X\n", ha->board_id);
-+	return sysfs_emit(buf, "0x%08X\n", ha->board_id);
- }
-=20
- static ssize_t
-@@ -207,8 +207,8 @@ qla4xxx_fw_state_show(struct device *dev, struct devic=
-e_attribute *attr,
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
-=20
- 	qla4xxx_get_firmware_state(ha);
--	return snprintf(buf, PAGE_SIZE, "0x%08X%8X\n", ha->firmware_state,
--			ha->addl_fw_state);
-+	return sysfs_emit(buf, "0x%08X%8X\n", ha->firmware_state,
-+			  ha->addl_fw_state);
- }
-=20
- static ssize_t
-@@ -220,7 +220,7 @@ qla4xxx_phy_port_cnt_show(struct device *dev, struct d=
-evice_attribute *attr,
- 	if (is_qla40XX(ha))
- 		return -ENOSYS;
-=20
--	return snprintf(buf, PAGE_SIZE, "0x%04X\n", ha->phy_port_cnt);
-+	return sysfs_emit(buf, "0x%04X\n", ha->phy_port_cnt);
- }
-=20
- static ssize_t
-@@ -232,7 +232,7 @@ qla4xxx_phy_port_num_show(struct device *dev, struct d=
-evice_attribute *attr,
- 	if (is_qla40XX(ha))
- 		return -ENOSYS;
-=20
--	return snprintf(buf, PAGE_SIZE, "0x%04X\n", ha->phy_port_num);
-+	return sysfs_emit(buf, "0x%04X\n", ha->phy_port_num);
- }
-=20
- static ssize_t
-@@ -244,7 +244,7 @@ qla4xxx_iscsi_func_cnt_show(struct device *dev, struct=
- device_attribute *attr,
- 	if (is_qla40XX(ha))
- 		return -ENOSYS;
-=20
--	return snprintf(buf, PAGE_SIZE, "0x%04X\n", ha->iscsi_pci_func_cnt);
-+	return sysfs_emit(buf, "0x%04X\n", ha->iscsi_pci_func_cnt);
- }
-=20
- static ssize_t
-@@ -253,7 +253,7 @@ qla4xxx_hba_model_show(struct device *dev, struct devi=
-ce_attribute *attr,
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
-=20
--	return snprintf(buf, PAGE_SIZE, "%s\n", ha->model_name);
-+	return sysfs_emit(buf, "%s\n", ha->model_name);
- }
-=20
- static ssize_t
-@@ -261,8 +261,8 @@ qla4xxx_fw_timestamp_show(struct device *dev, struct d=
-evice_attribute *attr,
- 			  char *buf)
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
--	return snprintf(buf, PAGE_SIZE, "%s %s\n", ha->fw_info.fw_build_date,
--			ha->fw_info.fw_build_time);
-+	return sysfs_emit(buf, "%s %s\n", ha->fw_info.fw_build_date,
-+			  ha->fw_info.fw_build_time);
- }
-=20
- static ssize_t
-@@ -270,7 +270,7 @@ qla4xxx_fw_build_user_show(struct device *dev, struct =
-device_attribute *attr,
- 			   char *buf)
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
--	return snprintf(buf, PAGE_SIZE, "%s\n", ha->fw_info.fw_build_user);
-+	return sysfs_emit(buf, "%s\n", ha->fw_info.fw_build_user);
- }
-=20
- static ssize_t
-@@ -278,7 +278,7 @@ qla4xxx_fw_ext_timestamp_show(struct device *dev, stru=
-ct device_attribute *attr,
- 			      char *buf)
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
--	return snprintf(buf, PAGE_SIZE, "%s\n", ha->fw_info.extended_timestamp);
-+	return sysfs_emit(buf, "%s\n", ha->fw_info.extended_timestamp);
- }
-=20
- static ssize_t
-@@ -300,7 +300,7 @@ qla4xxx_fw_load_src_show(struct device *dev, struct de=
-vice_attribute *attr,
- 		break;
- 	}
-=20
--	return snprintf(buf, PAGE_SIZE, "%s\n", load_src);
-+	return sysfs_emit(buf, "%s\n", load_src);
- }
-=20
- static ssize_t
-@@ -309,8 +309,8 @@ qla4xxx_fw_uptime_show(struct device *dev, struct devi=
-ce_attribute *attr,
- {
- 	struct scsi_qla_host *ha =3D to_qla_host(class_to_shost(dev));
- 	qla4xxx_about_firmware(ha);
--	return snprintf(buf, PAGE_SIZE, "%u.%u secs\n", ha->fw_uptime_secs,
--			ha->fw_uptime_msecs);
-+	return sysfs_emit(buf, "%u.%u secs\n", ha->fw_uptime_secs,
-+			  ha->fw_uptime_msecs);
- }
-=20
- static DEVICE_ATTR(fw_version, S_IRUGO, qla4xxx_fw_version_show, NULL);
-=2D-=20
-2.43.0
+diff --git a/scripts/checktransupdate.py b/scripts/checktransupdate.py
+index e39529e46c3d..b57fb9139f5f 100755
+--- a/scripts/checktransupdate.py
++++ b/scripts/checktransupdate.py
+@@ -131,7 +131,7 @@ def check_per_file(file_path):
+     opath = get_origin_path(file_path)
+ 
+     if not os.path.isfile(opath):
+-        logging.error("Cannot find the origin path for {file_path}")
++        logging.error(f"Cannot find the origin path for {file_path}")
+         return
+ 
+     o_from_head = get_latest_commit_from(opath, "HEAD")
+-- 
+2.50.1
 
 
