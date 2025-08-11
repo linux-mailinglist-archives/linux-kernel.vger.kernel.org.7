@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-763669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E3FB21878
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:34:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3CEB21887
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13901884C0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:34:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CDBC167E5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F015A26E71F;
-	Mon, 11 Aug 2025 22:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XYZI9dyj"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29BD2E0915;
+	Mon, 11 Aug 2025 22:43:21 +0000 (UTC)
+Received: from sxb1plsmtpa01-04.prod.sxb1.secureserver.net (sxb1plsmtpa01-04.prod.sxb1.secureserver.net [92.204.81.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F6921C19D;
-	Mon, 11 Aug 2025 22:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5C81F948
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.204.81.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754951648; cv=none; b=od72bKaAYzDe22M7/ZBMKr/pwkirGkL3KvbD0Vf9TPMHXBJJsDtVOHVtxT2cmiXeHQSBxMY+pbYW7IY98chtKyAD7jd6k2b/1peIS294GQSUFou2VgvtbTfWw1t75WHHhmBpVtygcjVB2oXuCyl4icQrMNMWQYaKSXd86zu0CNk=
+	t=1754952201; cv=none; b=MfgnC9Hxx2w0lQEG0phCYCApI2MeDiTJDLnl39VbHYb273Bpvwbsry1VOcnI1ZqQ2pynXmkQnq9RieIU/uc+0IL63THZgR3UEoAYbYl2mRGdCq4uwA1PzigxyKz07nrGTINsFfiH9oidT31213zPDec6QCs3qbo/0oWoJiPGKx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754951648; c=relaxed/simple;
-	bh=mkiyXdF2n1cF1Jn2rMuBCcE5PZTE98Wg0dFNXa956wY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mjoN+fGubYKbpuSbpTH2lbZF7WuPHMr+A63HYbj0DkmNy4eaOkNYiwDklMzWJc++SOo31tNIwj/T3BxhHhf6RvKDssyi/Tsex5zEiaoaerPYMVZGPseGgjkunXjIZi0GvfW9wXEegC0M7quAWPS04lx9GZ/3ryXDBtRDjSlXmWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XYZI9dyj; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754951643;
-	bh=Iq48dsdcKsW+mJEn/1rcHJexVmJNAGD2zZfJ0SOoOX8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XYZI9dyjodmyNsbl/vvDimQhB+4AWtUJxhNvfaD6MklKUvYXjXnarqaaMaUrLLIv1
-	 m/LxxRqBPQqstxDYfC/RNefmt3i2gkMVmB1bgENZaUm+eF/X7ZXuCJlocwvzlEtXnn
-	 EUOOgZNk/xJ6krn4JL1ssTdq4JfvZj8bidK4PhKI7UOg8JUkRzCoBWrPoMU5afqPeh
-	 +U9T8sfaD/06OEkKfy0wXtr1hP/BZ4SwSlUAW47Ni9JKlq31IfP6h9S8PZHSLaY1U1
-	 QtgvwVgxDIBvBOkBzON4TOVnq/5Hmc4vOHUaWRCzOxkNDFI4Wpzsd+kojNjKJbpaix
-	 xcMpQA8MkpvRQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c18Z30Pqqz4xdg;
-	Tue, 12 Aug 2025 08:34:03 +1000 (AEST)
-Date: Tue, 12 Aug 2025 08:34:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Schier
- <nsc@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
- linux-kbuild@vger.kernel.org
-Subject: Re: Updating Kbuild tree and contacts
-Message-ID: <20250812083402.2a985821@canb.auug.org.au>
-In-Reply-To: <20250811184849.GA1266@ax162>
-References: <20250811184849.GA1266@ax162>
+	s=arc-20240116; t=1754952201; c=relaxed/simple;
+	bh=9MRx4lFsJOTUCCHhBjm+do0sa2EoYT7DIOjOH6g8ctg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O7FGgzHSWF0tVuIpEkcvPqMzlyEX1kEfRzCwtgrMiTsNS5HbBwbIWTcELaUHBD5umkEe43//245EOcScQO39rC3myZkFkvBZgT0QvnRULkQ8hAv0bxoMpfnTgfwIUFD0AGDH/uBVCdSc7MNH19TL0Yc6hf+vUX6YvmazVU5EXIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=92.204.81.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id lb75us1r2CMUGlb7Bu6Q2c; Mon, 11 Aug 2025 15:35:38 -0700
+X-CMAE-Analysis: v=2.4 cv=Vfn3PEp9 c=1 sm=1 tr=0 ts=689a703b
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=Byx-y9mGAAAA:8 a=GvQkQWPkAAAA:8 a=xVveRHJumbGvxgx-NYMA:9
+ a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19 a=QEXdDO2ut3YA:10
+Feedback-ID: b02b9d59cd6f6f6f50f4ed83f9c2f43e:squashfs.org.uk:ssnet
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <2156fc8a-a43b-4986-8537-d1d530821dbf@squashfs.org.uk>
+Date: Mon, 11 Aug 2025 23:35:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ZMRtbcM6y+NEXjvp3P9=.T8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] squashfs: Avoid mem leak in squashfs_fill_super
+To: scott_gzh@163.com
+Cc: linux-kernel@vger.kernel.org, Scott GUO <scottzhguo@tencent.com>
+References: <20250811061921.3807353-1-scott_gzh@163.com>
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20250811061921.3807353-1-scott_gzh@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfJeeUsXUeDhxrRdU2a6Ivd48/w5mcbJ94g8GOQ2IHGmG6J2npqfgbmyoFxln8cZdUM48D/l25wepcck0sVcVbNQhbZvLzAQ6BDXtYDNj3ONrFTBEGGMO
+ aykJqev4EnK7uas0dSMGQI7Byaxtd0wNcI+03foy+Xj+5XJSAtNLm05DFUsrNobiwwDT9kUOC8qSs/HJGiPRq4bWDXlPLRol2QhN7nXwbC9+/SzMp4Qc1I5A
+ V/ofeqaShdYUmdlf5XysEce7eU9ec9oA6jozaMcKTGQ=
 
---Sig_/ZMRtbcM6y+NEXjvp3P9=.T8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Nathan,
 
-On Mon, 11 Aug 2025 11:48:49 -0700 Nathan Chancellor <nathan@kernel.org> wr=
-ote:
->
-> Nicolas and I have taken over Kbuild maintenace from Masahiro as of
-> commit 8d6841d5cb20 ("MAINTAINERS: hand over Kbuild maintenance"). Could
-> you please update your contacts for the Kbuild tree to both of us and
-> the Kbuild tree to
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git
->=20
-> and start pulling kbuild-fixes and kbuild-next in at their respective
-> places within the -next update cycle? Please let me know if there are
-> any issues or questions.
+On 11/08/2025 07:19, scott_gzh@163.com wrote:
+> From: Scott GUO <scottzhguo@tencent.com>
+> 
+> If sb_min_blocksize returns 0, -EINVAL was returned without freeing
+> sb->s_fs_info, causing mem leak.
+> 
+> Fix it by goto failed_mount.
+> 
 
-Done.
+Thanks for spotting this, but, NACK to the patch.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+A better fix is to call sb_min_blocksize and check the
+return result before the memory is allocated.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+Phillip
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/ZMRtbcM6y+NEXjvp3P9=.T8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiab9oACgkQAVBC80lX
-0Gw6UAf+PK5X+uR3Sv/MPXeoWhHHsljTDBmeFKcuRhxLkM3kOqXH8ttGIqy/fWmK
-TlRXjYlt89FCQ0+wPPjaoNswqx5v0hJm3OlFeQEnFol6Fu2k5VBdfrqDFyNM/+Cp
-9PG72HPYASZdtppn0aaHRVM7Y+Rq0u69vdVJ0Lxp5OptZAKoSvuej6zQq3UgACW2
-qvOA72rpwYYTsg28x1k6sb+JutxsJd3fWk68/K6N1gy6Fa+0rbGRhChe4YtkBo6z
-BVKvuuBQMOiL745oBXFxAEIX2bzP63XGHe7g9pWZVErsy+2byB8FXqKjLbudna7K
-4y32rqY/kjcbUQ/G8tlNzfFTLE5mjw==
-=/fdb
------END PGP SIGNATURE-----
-
---Sig_/ZMRtbcM6y+NEXjvp3P9=.T8--
+> Fixes: 734aa85390ea ("Squashfs: check return result of sb_min_blocksize")
+> Signed-off-by: Scott GUO <scottzhguo@tencent.com>
+> ---
+>   fs/squashfs/super.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
+> index 992ea0e37257..7d501083b2e3 100644
+> --- a/fs/squashfs/super.c
+> +++ b/fs/squashfs/super.c
+> @@ -201,10 +201,12 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>   
+>   	msblk->panic_on_errors = (opts->errors == Opt_errors_panic);
+>   
+> +	err = -EINVAL;
+> +
+>   	msblk->devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
+>   	if (!msblk->devblksize) {
+>   		errorf(fc, "squashfs: unable to set blocksize\n");
+> -		return -EINVAL;
+> +		goto failed_mount;
+>   	}
+>   
+>   	msblk->devblksize_log2 = ffz(~msblk->devblksize);
+> @@ -227,8 +229,6 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>   		goto failed_mount;
+>   	}
+>   
+> -	err = -EINVAL;
+> -
+>   	/* Check it is a SQUASHFS superblock */
+>   	sb->s_magic = le32_to_cpu(sblk->s_magic);
+>   	if (sb->s_magic != SQUASHFS_MAGIC) {
 
