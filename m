@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-763641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A699B2180E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AEB1B21817
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Aug 2025 00:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EC141A22300
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09356260CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 22:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8845A22A7E9;
-	Mon, 11 Aug 2025 22:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690062E424B;
+	Mon, 11 Aug 2025 22:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eecyzQbl"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MoVJWFI6"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE8B1534EC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239CB2DE6F1
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 22:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754950632; cv=none; b=iXVo/UsTnomYrvwhsagacHvRGADA6Yqbf9NSa5spwjfehZlZ3HAu0US3yGXCs+HC836lMgBGi8Rf+jg0BolmTD++w6fqa6YVqPXanCIoNiNCJ0lGEi6P6yHNtImZkDgcxaO2kZ5VymWr1n+vrFZgCx2oWbNFDIq8E45Is7x421M=
+	t=1754950636; cv=none; b=B7Kn/rDLcTCJi7LFRqN+nR4DnUkSo8EIdvpqMkSNev3oESdDqk6iIgPv8RAbKsyttgeMCRg0O4oTGrn1gi3jfiRbWf3JBcT4uq1TFmKGUVezUvtvcTUqSg937tzqDQ9j2JSvUxq24bmWJHgvT/j323/p68t+4I8LeNvQA17/dwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754950632; c=relaxed/simple;
-	bh=1t2gSAFuBD2pmTHsdNa89BroU/+iTca3RYH3ziKTQkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cSfZCQ5DwrU00Vvlbs8J6v3vxxvuRhCgb7LDZ/VOV2+Dt2tUh7ZGiTgUPxCkPBLxc5vDIKl9PSzL9FJpYUgGJPv9d914PZpS0+qMi2eE2UI3o6KmNZZJdlRZ7FmGfrYXHXksCUb4A05SutWh2hC8CAdMYGf04oWVTOijBf3LCbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eecyzQbl; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-31f325c1bc1so4269211a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:17:11 -0700 (PDT)
+	s=arc-20240116; t=1754950636; c=relaxed/simple;
+	bh=6zMbsQeemaLT9qsDKon3L3xPV4wlTm/uDmufkhqLnVY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s0bkm95bUuqtFrsbzkGVCCogwWbwBaTDPnIvf250CbzsG+0yNHc7foUwBLa++t+o+zVNYlr7vi+blpqzA961FLKk3jvDhCLl4sM6IphzAMJkGw1OzjKGN8nhTa5y0LuCI2Ba50RoTidTW2W+QsP4vltZ9T1nMk1gjQy8aQoiDbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MoVJWFI6; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2eb5cbe41e1so5322056fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 15:17:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1754950631; x=1755555431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sv7bfonbOtnyi9GXdkuQQycl89N9wubFNFBp3GJPPOY=;
-        b=eecyzQblgywX3H6nDiILBZ/VmqpAqdSbeXlx9Y0X/xuh/jqZhGroWVRSdLPsBBYVfa
-         L5hijNwFJrJ90qxRufJJ2uwAf0qzqW/B2Lgtqz0PUti7d3cqyFuiokfRzfTimvmQN4xt
-         5e5RcBiCnuyao+YrA+it7h10N2XjMcg1JWtEai+kJix5mSB3XsfZs1/cw3VBZmtXJ/XW
-         qKU0AwolcmMThpzU2ZkjoiY0YoXfIdxLNYvLUuZAOaov8Re6M5wCt8vwB4pvXVup8ggy
-         6u0NqTGHiNPDIoTwTQNHGtz9Sn5dxvU18p/epeN0ZYuROcEjKRaLyy2q9b6OTsa6fS7Z
-         Pw7g==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1754950633; x=1755555433; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNjy4x9oFNeCSMPDvjvsMqdoAFBJssytJuYnj0zLwq8=;
+        b=MoVJWFI6IWfPoRMAbLUeAap+YdCPVPWnM5TuFnNwoFCRikUnYS7vzG+g/QpXEOIxtl
+         zh2K/ejltXfx4jTYBI06+uoux8EqUN/nuK4SHJBSsElvBEnhwoy+QVtLGIWhVGJZA7H+
+         ez+tPtBNhEJpOdXh2YoeRpCP5mfno0Y/XsQCLqRz5QwDBd6hCL3TjIj7XO7PMIZ+9Pqg
+         5FWxq+IVhGPhS+Umvnwrs3dNNT0OEqTnbikFecql68nirGl0UeaubFfQQt5LNLw1SM2k
+         eCm8+WfHVOHInQd46hGkg+RMAQ2kZPPviFm4PRN0Tj5NWAg2qx6+xC1bceJgCsh6AKP5
+         V1kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754950631; x=1755555431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sv7bfonbOtnyi9GXdkuQQycl89N9wubFNFBp3GJPPOY=;
-        b=scsmwvzl/ogDUTl5wJrhdaiqYD21vR/MiC93Wd+6yYJMswI/iQG4ZtfLqrkLeekjFu
-         Rmb5Fsn55AMwHQvfnGeqX9qDdrzK3TqTupA1/dwBGYscnEp/nlRw9kuNRK16MFN2LFxH
-         ngoYLPfZZgrMxhwE4erWK0ep4J6fwrOBdpshKNDfrB7URz/ovw4fUTlSWN3hF6ZqnZ8L
-         Tcft4hZKAbg54tuDHTTj6mdCEaGLl2RIhGcqHK2IMFZpOhvyaC1QIC4NS+2os8ggKBJm
-         1VHaXxqD8TfXp4FIUiktXufjaHBLqsoEARzSRXOP+LOIG49q3cWLUJPVlzFl7Q4FxUgU
-         tgIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLz1ryv2gKaAdjr4duX4QOin1HfP02ZEmmX915QtAPvhp2fTobfs47PSzMmGb5IRLhheyX2LM9r4+uqWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7YqMi2Ur67DcQKHvCZxOgKXao4ye9fC25fMkxchb6xvPARVpo
-	o1KAsd3dltidOOtnrwYqZXtXDyxYBGXfhY9s7wGVh885Ol0+Pe4s0v5XViWuca5WwMYgcP7eP2j
-	bsXglw43xaaZcdJh8zb3/RTBf/fz6A1h9S6+Qufs2oBbotke07RM=
-X-Gm-Gg: ASbGncsQ+8/dVW9K6xPEfqcd/lX5Pff2HDNuD9ZNr9euitUoY52PLohkhyKDaTQNA9X
-	16OJgZoaLJRSZfKQeZqoTi67sHcBrtFWe91fV1ogHSw1K2Q/Pb+A6UEn6q5Yg2UAG2eLoL3ZjHS
-	s39nMt/Qh6vjRdWM2ZDsrRQHxzGn7yNGyl71e7UJtlH1TYrncbyEwE++fB4gBc4Do8hM9XWEohi
-	bA6n4w=
-X-Google-Smtp-Source: AGHT+IFwFEBMYcuh4oMcdsq/fHgVqQT9Tc8p5Bbo9xtS2j8tV/hcAwRwQa/i5ZfaQKMacfbgAwKozV5H4uA2yniz+B8=
-X-Received: by 2002:a17:90b:3910:b0:321:2160:bf72 with SMTP id
- 98e67ed59e1d1-321839d3f14mr20936515a91.7.1754950630749; Mon, 11 Aug 2025
- 15:17:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754950633; x=1755555433;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xNjy4x9oFNeCSMPDvjvsMqdoAFBJssytJuYnj0zLwq8=;
+        b=dmV+4HolNkYNDvQ9bn3hWW2El2b7sXiimEBWx2IBizT2h2SVS2wyNNpVbtML07884k
+         EF0D6LnwBf2JxpH/1Id1Qn3f8Je4OchweClvGRmsnfd1VzcLx9yrvz8/n7qeIotN+DuI
+         16n7MYO+yT8P04BZtub3YQxjPohk6MLYwx9oL3WOKp64x3Wm50NB1dG2bIHB/3eJRFMM
+         L2eAS9vEfy2S2fWJUiY6eHLQIvXTmTU0ulSFhWuZ0q2wwDPp88DRJgRlS6JvRRpntqqa
+         RLsCFg08vVfSHEmkLTOViU6Y3o2WxGeS8VnQflxKz7ZzUNAbbbJMVoRiUHEB62rQipR6
+         shWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwoCFhVj5hPwXie4PmQGlql1HQm1MI5yM6q2oN/h0vaf/BnnlZC6Z1h6qyo7ThjsDaccGtDAbQOeE60RI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG71dEd6Ah15+KffiZ5lIMQrgoGqc+OAYed3ivEyE2Yq72mRfm
+	ZsIYHEjhOSDiax4TQeOl4jvOjRSgEzRkuOelknGzT4Wuihbn8vtIt2KZmV3FcNnHzW4=
+X-Gm-Gg: ASbGncvBJ6Mj+jRjqB4aO7475YSSxiFgmmJDBAp0N9gU2mHuDng3IssZTbglBta1gfk
+	G0UfuEBFYsx8yXmVBu4lL6P2D41B6dr7Pqkei/n8Afp0yop111bhC1Fh5g8qzUgiYjQvjmf1bGn
+	3Nlykq8bdW8/3JWteu3/deYDrtVPVGshDqcK02SHiCvzl2GJwJ1CrDkfL5P3RQ356lCakxzJM+a
+	urWzf60OTMPZ4mHLGjYyefZWunDY3Axm3e/krzRxu32bYArKs0dI20rlAahOPYvwcynBUsoiapF
+	y3Ae9ots/Ensrps7Qjvp/CGJ//P5kP9jNK+/b+684d7k3NOGLSBRbPPZlbRWE8Lx+SQWkYrnqGb
+	m+QTcGJV/LC8Oa7HLrly/AeztHNRs
+X-Google-Smtp-Source: AGHT+IGfPiRvZKy6rxD4u9Cif9ZJqjUmLXidFEtaaqAJKIjiQ75nNSgQ5MRUryvHD4v6+OcsVx68HA==
+X-Received: by 2002:a05:6870:700c:b0:2d4:e8fd:7ffb with SMTP id 586e51a60fabf-30c94e8080fmr798012fac.1.1754950632887;
+        Mon, 11 Aug 2025 15:17:12 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:4a4f:fe55:51b4:b5ba])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30c8cc3b8a9sm475177fac.19.2025.08.11.15.17.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 15:17:11 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Mon, 11 Aug 2025 17:17:01 -0500
+Subject: [PATCH] dt-bindings: clock: adi,axi-clkgen: add clock-output-names
+ property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722212139.1666060-1-bboscaccy@linux.microsoft.com>
- <8d6e0d9d4bb99481d01500a7211e5119@paul-moore.com> <87pld788yu.fsf@microsoft.com>
- <CAHC9VhTPrrgRh7v-H7qpizbxHNcW-V1qj-=24+Z8at2w4Co4uw@mail.gmail.com>
-In-Reply-To: <CAHC9VhTPrrgRh7v-H7qpizbxHNcW-V1qj-=24+Z8at2w4Co4uw@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 11 Aug 2025 18:16:58 -0400
-X-Gm-Features: Ac12FXyuWYLohIYpJotYXh5r2pfwoxJNS_CY_qqw-DoJKGoTJNQfJaZ4ATHiamo
-Message-ID: <CAHC9VhTWZ1McpFoqhsez+pm7LFSdsF77S6fx0iM9hVc3jOxS3Q@mail.gmail.com>
-Subject: Re: [PATCH v2] lsm,selinux: Add LSM blob support for BPF objects
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
-	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
-	Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-v1-1-f02727736aa7@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIANxrmmgC/x2NQQqDMBAAvyJ77oJRC+JXSg8x2aSLdhOSKBbx7
+ 017mpnTnJApMWWYmhMS7Zw5SA11a8C8tHhCtrWha7t7OyqFtuDMYll8RrMuqA/+0ZOgtrZqMAu
+ GrcStoOg3ZYwpRErlg25QvenJjbMboA5iIsfHf/54XtcXikBLnYwAAAA=
+X-Change-ID: 20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-f413c3ef8bf4
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1351; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=6zMbsQeemaLT9qsDKon3L3xPV4wlTm/uDmufkhqLnVY=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBommvguy/LPYy0gdbX3Hcqe+qgkhBDoIbu0U6Po
+ vM2msDB/EuJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaJpr4AAKCRDCzCAB/wGP
+ wD8qB/9Y81s4hgteVENjJBEJVhH0/XRGa4C4OPOfAhy/rC2BXj5E1ae1MH27tHk2L5OrlyGm0FG
+ Cyg83PMwCHuE3QmpOZBAw28shznI5C+GGS0SjIGefq+AefIYqjYBD/rUCbCo/sFmTdIoB+L9YnV
+ Sy2Rdh7Ti1HdYRQBinkvnykThfWJ2JRqgBfxa8MBk/43iZl9OocMmEgzea1Q9Yny7v13h1AYwxn
+ 1NhbR7ZJl0Fcw6lbaRH+D3X7uk7ObYYMHSd0VJnie6ceFPZS5DEguqDMqoqqaonHsS0Nn/IwEC/
+ kCvW6vuRA8ma6gYJnRZ1Mjo0YVTymyhXHTifS0ocBq+hyYgb
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On Thu, Aug 7, 2025 at 1:21=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
-> On Thu, Aug 7, 2025 at 11:09=E2=80=AFAM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
-> > Paul Moore <paul@paul-moore.com> writes:
-> >
-> > > On Jul 22, 2025 Blaise Boscaccy <bboscaccy@linux.microsoft.com> wrote=
-:
-> > >>
-> > >> This patch introduces LSM blob support for BPF maps, programs, and
-> > >> tokens to enable LSM stacking and multiplexing of LSM modules that
-> > >> govern BPF objects. Additionally, the existing BPF hooks used by
-> > >> SELinux have been updated to utilize the new blob infrastructure,
-> > >> removing the assumption of exclusive ownership of the security
-> > >> pointer.
-> > >>
-> > >> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-> > >> ---
-> > >> v2:
-> > >> - Use lsm_blob_alloc
-> > >> - Remove unneded null check
-> > >> - ifdef guard bpf alloc helpers
-> > >> ---
-> > >>  include/linux/lsm_hooks.h         |  3 ++
-> > >>  security/security.c               | 86 ++++++++++++++++++++++++++++=
-+--
-> > >>  security/selinux/hooks.c          | 56 ++++----------------
-> > >>  security/selinux/include/objsec.h | 17 ++++++
-> > >>  4 files changed, 113 insertions(+), 49 deletions(-)
-> > >
-> > > This looks good to me, one nit/question below ...
-> > >
-> > >> @@ -5684,7 +5731,16 @@ int security_bpf_prog(struct bpf_prog *prog)
-> > >>  int security_bpf_map_create(struct bpf_map *map, union bpf_attr *at=
-tr,
-> > >>                          struct bpf_token *token, bool kernel)
-> > >>  {
-> > >> -    return call_int_hook(bpf_map_create, map, attr, token, kernel);
-> > >> +    int rc =3D 0;
-> > >
-> > > I understand the motivation behind initializing @rc to zero, but to b=
-e
-> > > honest it is redundant and will surely result in a follow on patch fr=
-om
-> > > someone to remove the initialization.
-> > >
-> > > Do you have any objection to me removing the initialization during th=
-e
-> > > merge?  This would obviously apply to the other two as well.
-> > >
-> >
-> > No objections on my end. Thanks.
->
-> Okay, merged to lsm/dev-staging with plans to move it to lsm/dev once
-> the merge window closes.
+Add an optional `clock-output-names` property to the ADI AXI Clock
+Generator binding. This is already being used in the Linux driver and
+real-world dtbs, so we should document it to allow for correct binding
+validation.
 
-Now merged into lsm/dev, thanks!
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---=20
-paul-moore.com
+diff --git a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+index 2b2041818a0a44456ee986fe29d32346f68835f3..6eea1a41150a7c90153cffcfb5b4862c243b4e0f 100644
+--- a/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
++++ b/Documentation/devicetree/bindings/clock/adi,axi-clkgen.yaml
+@@ -42,6 +42,9 @@ properties:
+           - const: clkin2
+           - const: s_axi_aclk
+ 
++  clock-output-names:
++    maxItems: 1
++
+   '#clock-cells':
+     const: 0
+ 
+@@ -65,4 +68,5 @@ examples:
+       reg = <0xff000000 0x1000>;
+       clocks = <&osc 1>, <&clkc 15>;
+       clock-names = "clkin1", "s_axi_aclk";
++      clock-output-names = "spi_sclk";
+     };
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250811-dt-bindings-clk-axi-clkgen-add-clock-output-names-property-f413c3ef8bf4
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
