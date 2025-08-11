@@ -1,169 +1,113 @@
-Return-Path: <linux-kernel+bounces-762674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8034B20991
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:04:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59D0B20990
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8818D7A58F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F7D3B03F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CB819C560;
-	Mon, 11 Aug 2025 13:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B003B29E;
+	Mon, 11 Aug 2025 13:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcXUaKth"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="J+FsrAva"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F412D8379;
-	Mon, 11 Aug 2025 13:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D472D29B7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754917431; cv=none; b=OZNthNBBHQHMjq1y1FwX/rotSW3mKcLOt/k9b+60FbkVpk1vjXt/foWoy/nWjfpPOSfjQ7hPJa9ghAT1ePRVVkzDKHZ6iAG/i8GjdogK2Uhfz9CZqUWME3vsT4Xu6VmXwsa0fx3zbgqbYzLZwqNRC2bDmhbBPPA9SsS0QL+O5fA=
+	t=1754917455; cv=none; b=tMtpOKcDZCBH3zNv2TBExvLJT4ofiNiJEca4a5xUkctAyxJlDbNHhLTwMqrmnuBkcf40I1kQ01jBvPbTnYcA6POY04lOIlHFUW7MdaAW/PGxiBa4O1eZhRrYE8SRkb9UMXV1b8zCLCKOlC+OVRCoI33SLi46EndK9AN9hFY7U1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754917431; c=relaxed/simple;
-	bh=3XV0BOPj87d4K2drpUw7csDwsmYC1/zDiQixDaNTPBU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZnD2PrptS1nSzq/ikMGF9AlDnr8//iBV/6YnFHukhNVfJJQx0BconDjTFwqMgWllPwW0igtLJZSoQJ3NT08EXmOX4WlV1mSUFT+2CdD6F0/tE9hhX5GdxfYyECD0zDWrgATEAxIA08YYlhCIkxntf9TdsuQFPRtGkhnwQnFyVd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcXUaKth; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75E7FC4CEF7;
-	Mon, 11 Aug 2025 13:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754917430;
-	bh=3XV0BOPj87d4K2drpUw7csDwsmYC1/zDiQixDaNTPBU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=bcXUaKtha1JsyBYMfuSntSDCZeen5HL6wlfaipXFXaYHYsu/ytML8BKzOfB/VWc40
-	 zTnlzGYeckeNfCmQV26iWuLgpY4X4opAjlzneLS4+f4Bud1iES4ZclSTaLkujN4Igm
-	 botcPwbnjYBehfUX5EkZ/Tzes8TKBwZq9OdyN5Rp2m2sIJ5zESMoOxd5IoNG2OYWdW
-	 fMYyTtpAZMwDiTqmej45BWyOqq6gAQGEC5YNbOuVnrSTf/pSgQ2z6/KHl5V2DrWc7t
-	 h3KwjGFg05KYzSfxSu1rORmJwOYQhWRLEb/nB6nAshfRe22U2V+pp2jT8/sDkRbnG5
-	 MgDX/kepYDRcw==
-Message-ID: <850dcbf562b7eb5848278937092d2d8511eb648f.camel@kernel.org>
-Subject: Re: [Question]nfs: never returned delegation
-From: Jeff Layton <jlayton@kernel.org>
-To: "zhangjian (CG)" <zhangjian496@huawei.com>, Trond Myklebust
-	 <trondmy@kernel.org>, anna@kernel.org
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 11 Aug 2025 09:03:49 -0400
-In-Reply-To: <ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com>
-References: <ff8debe9-6877-4cf7-ba29-fc98eae0ffa0@huawei.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754917455; c=relaxed/simple;
+	bh=UIAv6R7dgXimPGt0N+vkLUJHGcilgggiS9Tp1RgoP0c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ku94EgZtFL2ViFFldaCvPshWNw2OlQf8/HU7Z6o1+bPwUAWd72tQ7rv27vX2ae05uF+dT8dqzfmzDQYibRexI4RO1AjY46+6neitsO2uW/mxYdbPmt0ncUabGhmlucpmOTY4tKBEDWQUsZ/uFKdTIqILt31lFbSJrIfmWA/6x+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=J+FsrAva; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b783ea502eso3023212f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754917452; x=1755522252; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pOGdI0qcS1DuMMYIZAl6Dd0I+M+1ceI41qmsPEwfMrI=;
+        b=J+FsrAvaMON+i891NAtSIKCnEuhd3VAeJ6iWItNQx/ngBJ25UOhTQ0+J0sz0WAhVMn
+         fcOIx9uaxx2UzWNeOiFMzf9sNiImvMo/TX4l5MZrYQIgSJPdDFPVupUsQEFMJ+elTLfi
+         93CuoL4QANWqupX7dsHMJRdV+w5nZDU/wEioAKzIkDh2rXm0ZLciHq7W+d9EUEqcUP/S
+         7zQSUnFNloqwRWbWbUv+IWdx5qmLjLWF8UAg0MWZZgDy9/n0vYuqYBx0+MpluRJ4rJI6
+         DeXYYJbYYlJF3AubAZpee2v5clylXdkyexoVNciFqZX/ASFtvhdlIFGHXagVoY5hdDQ/
+         gZbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754917452; x=1755522252;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pOGdI0qcS1DuMMYIZAl6Dd0I+M+1ceI41qmsPEwfMrI=;
+        b=gD+PuLm6gesC6WrtyGkxEPa+eEj3PhLg6tLg3mUYQe3cjFjFWbG3P+IaC5B0GYgMGN
+         J7KtLJiQuunVpu0DENZ1cdwpsb0q96RrNtfiZlVolZ03mN9N+LpUzdaQFokjL4zVojfX
+         6SZBcXCDBGbbaB++moe/f/qXMLWmrkC0zFJe4VkOjuZEJzAT/OyP1urtQbSCz9LNN0ji
+         arlhEY1jE04ICbopKO8cOvawpdb/2/6F3r35aSFy1at8RhS9zmU5fJsF/L1K0pmDzEqI
+         fOAjudUQpw+/91n7tFOCETfkSeeptiu0Xse0/XtucJAJ+BDXlWWhV2X4DJUAWumgBR0b
+         NP3w==
+X-Forwarded-Encrypted: i=1; AJvYcCV1IGHRPYVxmXKOk3or5uGhRCP/ifPs31ZAspI638pfDVue+ISzVMAAuPIes9CiWlid0/KxRm0N530aAbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9oB1Nfa5G25sye7heFTXvII1aiTv+GHSVOa6G3INOo/EBqA3x
+	7+yEKWYt+z7MH7uSowWAxil4qUJRk5lvnaxq6SDWn9rV7QZvAPaJcU6FHG9G7IHQNQ8=
+X-Gm-Gg: ASbGnctYczyD9gOEktMT749D1kQOegc+kvuRvVE5bVRI8VtO2o3lGt8qZZGru64bKxg
+	rnn+QWgdO+qOb5p8HNbvPjNrDKtkPvLTPIiCzUejWeCSubzOD7RVanGlcdy4kGv5h8QZQ28KVcq
+	D0T3HVrgAH6J6rmWiRM+PIrJLXcmQkqeEIeZ0Tg8BJ090XmyPfXDpTv/74j31OWH29JWsYiQ/e2
+	SomQvJVPWwlYViiWJQv0uvCMSuuM4zESnCmLUm0uZkT5Wq2SIHMtM+3hfkEli1qLlGkcUr/I7Rg
+	p1RvxFza/NUnNiSOAb4Fm8X6Bv9F17nJV3rGNc2RgXdMT/Lb+bUpa16xlQbo54ZvIQWe+VB69bE
+	BJeRGbmocwi4jEb9shSXGc6x9
+X-Google-Smtp-Source: AGHT+IHtUbLqpcg23VCQmTvH5m2lShmq9cFbBS5x0r30qI8afvacXVE3h1Mdirh1FpDghLktqygdCQ==
+X-Received: by 2002:a05:6000:3111:b0:3b7:882c:778 with SMTP id ffacd0b85a97d-3b8f97e1b4fmr13538412f8f.17.1754917451367;
+        Mon, 11 Aug 2025 06:04:11 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6841:8926:4410:c880])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b90a64318fsm5400195f8f.21.2025.08.11.06.04.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 06:04:11 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: TODO: remove the task for converting to the new line setters
+Date: Mon, 11 Aug 2025 15:04:09 +0200
+Message-ID: <175491744673.53661.12726233261625402174.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <417af7e5a110c527eb759289bd5d2fd6885f4e01.1754917104.git.geert+renesas@glider.be>
+References: <417af7e5a110c527eb759289bd5d2fd6885f4e01.1754917104.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-08-11 at 20:48 +0800, zhangjian (CG) wrote:
-> Recently, we meet a NFS problem in 5.10. There are so many test_state_id =
-request after a non-privilaged request in tcpdump result. There are 40w+ de=
-legations in client (I read the delegation list from /proc/kcore).
-> Firstly, I think state manager cost a lot in nfs_server_reap_expired_dele=
-gations. But I see they are all in NFS_DELEGATION_REVOKED state except 6 in=
- NFS_DELEGATION_REFERENCED (I read this from /proc/kcore too).=20
-> I analyze NFS code and find if NFSPROC4_CLNT_DELEGRETURN procedure meet E=
-TIMEOUT, delegation will be marked as NFS4ERR_DELEG_REVOKED and never retur=
-n it again. NFS server will keep the revoked delegation in clp->cl_revoked =
-forever. This will result in following sequence response with RECALLABLE_ST=
-ATE_REVOKED flag. Client will send test_state_id request for all non-revoke=
-d delegation.
-> This can only be solved by restarting NFS server.
-> I think ETIMEOUT in NFSPROC4_CLNT_DELEGRETURN procedure may be not the on=
-ly case that cause lots of non-terminable test_state_id requests after any =
-non-privilaged request.=20
-> Wish NFS experts give some advices on this problem.
->=20
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-What should happen is that the client should issue a TEST_STATEID and
-then follow up with a FREE_STATEID once it's clear that it has been
-revoked. Alternately, if the client expires then the server will purge
-any state it held at that point. The server is required to keep a
-record of these objects until one of those events occurs.
 
-v5.10 is pretty old, and there have been a number of fixes in this area
-in both the client and server over the last several years. You may want
-to try a newer kernel (or look at doing some backporting).
+On Mon, 11 Aug 2025 15:00:01 +0200, Geert Uytterhoeven wrote:
+> The task is complete, but this was not reflected in the TODO file.
+> 
+> 
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+Applied, thanks!
+
+[1/1] gpio: TODO: remove the task for converting to the new line setters
+      https://git.kernel.org/brgl/linux/c/6ec4b94e8e959b4201ca0bfc43fa50dc946d10cb
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
