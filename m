@@ -1,75 +1,109 @@
-Return-Path: <linux-kernel+bounces-762735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EEAB20A93
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:42:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 897FDB20A32
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB3317FD1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:41:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE54D18A7845
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077BB2DCF73;
-	Mon, 11 Aug 2025 13:35:07 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6802DCF67;
+	Mon, 11 Aug 2025 13:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOpd6ZsL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69251BD035;
-	Mon, 11 Aug 2025 13:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450922D781D;
+	Mon, 11 Aug 2025 13:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754919306; cv=none; b=Brq6kWsCU7Ejw8wkAJHjQBB+Rq0vLZf0obquXjj4nAPio+hzXaqc8TkmeuKXhqC14ynnxqEwpkf4//RcDuLqznyaVEUZokbxF76YAyfS89zUqQ4ofeARs3w4nGrTlxhjwstCrME2WrTwAsn+0H5Slm1oX3C4NmB3zbKMQPqhAeU=
+	t=1754918847; cv=none; b=uJHUvYc7yZeYG0xfO7ndMe5EjJVN1FZ5lde9BUQ00zS0rFgdmMeNXcoliB14jc5SN+8++x7y/zGlrloXnEXLGN8oW79pHwNHjA65ptaCSf7TJqxypu+gYL6nNxplbGOGlM4EzhjZXwCzokGgseaYiQR+/meBR6P8+TZ0e2r6tOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754919306; c=relaxed/simple;
-	bh=V16S8ufTDwgBbRtXqhu70gPq7n4w4giCSHIKAI5I5SI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gckn+5Yex9NokVAZccvykhXBXt3tiklXZ+WP+Ec49LWaL2SV0XZQRqB6nC0It5B5ifNZM0nQthK28mIAkgBCWJElcv1d86QeV0N6zKbUmo54n6l0ZwT1LxJoNdrS1yxLa4WYevRASXJIhstyLlvIHIpKRKs4WG4hJojWcwkxkwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from altlinux.malta.altlinux.ru (obninsk.basealt.ru [217.15.195.17])
-	(Authenticated sender: kovalevvv)
-	by air.basealt.ru (Postfix) with ESMTPSA id E0AA52336B;
-	Mon, 11 Aug 2025 16:27:20 +0300 (MSK)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: Takashi Iwai <tiwai@suse.com>,
-	Kailang Yang <kailang@realtek.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kovalev@altlinux.org
-Subject: [PATCH] ALSA: hda/realtek: Fix headset mic on HONOR BRB-X
-Date: Mon, 11 Aug 2025 16:27:16 +0300
-Message-Id: <20250811132716.45076-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
+	s=arc-20240116; t=1754918847; c=relaxed/simple;
+	bh=aqJESQduy9tFCdv0UBjs2PmEVls0xlloVCuMQby/UDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ll8Rwr/DKBWYIfjUbNYGFCJwjTzwYYK+htM8Bo4qkjeQBZ1u1qvOUJ4+saAy91+mbdf5UVvkN55fVVHQWtfqxC5J1BPZRDeHIf0qFSisBOaAVf7+ui478ByEF4iuDQxDZrA4PWAe4BSr2fZhBNR20m2MgmkPhP/UwCRur+X6fZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOpd6ZsL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CE5C4CEED;
+	Mon, 11 Aug 2025 13:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754918846;
+	bh=aqJESQduy9tFCdv0UBjs2PmEVls0xlloVCuMQby/UDQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YOpd6ZsLSICIvr5+1smLKQZJdvJAq23T44dQd03V8TpUuoyYzoqP2K9b/P7GQjwHc
+	 25u9vfGxh+7lg5Wg1tFmaxxJ9s089744fZgZ7qJXgCJ64Plh4jelJAVgUMWAy0yR9s
+	 n6+l+XuyMNQE4FgW4z7uzoNgKhCF9FICDWrWAo0cmRGy5p3clOi2tesWM45jcGaupb
+	 OOAVbVozSmv4fzNi1rclNiQwKnyH7AeHs908V9FsmOOO8yGBsXjvxnMX+Y+GXsG490
+	 H1+phv9C3KRGoOSOBaz3yGhqp36v1/1BEXfgulKqdRKMahdxxs/QJ1fE7t1E6iUI19
+	 a5aEV2/tPIO3A==
+Date: Mon, 11 Aug 2025 22:27:22 +0900
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] platform/chrome: cros_ec: Avoid
+ -Wflex-array-member-not-at-end warning
+Message-ID: <aJnvuv334M7TljoB@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add a PCI quirk to enable microphone input on the headphone jack on
-the HONOR BRB-X M1010 laptop.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+Use the new TRAILING_OVERLAP() helper to fix the following warning:
+
+drivers/platform/chrome/cros_ec.c:106:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+This helper creates a union between a flexible-array member (FAM)
+and a set of members that would otherwise follow it. This overlays
+the trailing members onto the FAM while preserving the original
+memory layout.
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- sound/hda/codecs/realtek/alc269.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+ - Use the new TRAILING_OVERLAP() helper instead of DEFINE_RAW_FLEX().
 
-diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/realtek/alc269.c
-index 337e33a59de88..e90c4047ea62e 100644
---- a/sound/hda/codecs/realtek/alc269.c
-+++ b/sound/hda/codecs/realtek/alc269.c
-@@ -7140,6 +7140,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1d72, 0x1901, "RedmiBook 14", ALC256_FIXUP_ASUS_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1d72, 0x1945, "Redmi G", ALC256_FIXUP_ASUS_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1d72, 0x1947, "RedmiBook Air", ALC255_FIXUP_XIAOMI_HEADSET_MIC),
-+	SND_PCI_QUIRK(0x1ee7, 0x2078, "HONOR BRB-X M1010", ALC2XX_FIXUP_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1f66, 0x0105, "Ayaneo Portable Game Player", ALC287_FIXUP_CS35L41_I2C_2),
- 	SND_PCI_QUIRK(0x2014, 0x800a, "Positivo ARN50", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
- 	SND_PCI_QUIRK(0x2782, 0x0214, "VAIO VJFE-CL", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+v1:
+ - Link: https://lore.kernel.org/linux-hardening/Z-apE0ZmckBjRDyx@kspp/
+
+ drivers/platform/chrome/cros_ec.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/platform/chrome/cros_ec.c b/drivers/platform/chrome/cros_ec.c
+index fd58781a2fb7..b1730362e399 100644
+--- a/drivers/platform/chrome/cros_ec.c
++++ b/drivers/platform/chrome/cros_ec.c
+@@ -102,14 +102,13 @@ EXPORT_SYMBOL(cros_ec_irq_thread);
+ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
+ {
+ 	int ret;
+-	struct {
+-		struct cros_ec_command msg;
++	TRAILING_OVERLAP(struct cros_ec_command, msg, data,
+ 		union {
+ 			struct ec_params_host_sleep_event req0;
+ 			struct ec_params_host_sleep_event_v1 req1;
+ 			struct ec_response_host_sleep_event_v1 resp1;
+ 		} u;
+-	} __packed buf;
++	) __packed buf;
+ 
+ 	memset(&buf, 0, sizeof(buf));
+ 
 -- 
-2.50.1
+2.43.0
 
 
