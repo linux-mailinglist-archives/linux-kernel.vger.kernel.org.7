@@ -1,187 +1,122 @@
-Return-Path: <linux-kernel+bounces-763233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6681BB2120C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:33:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40CEB21218
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F809189B640
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A224E3A4760
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E69311C37;
-	Mon, 11 Aug 2025 16:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAA6221267;
+	Mon, 11 Aug 2025 16:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JA8t82pJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RZyKPJdh"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80317296BD2;
-	Mon, 11 Aug 2025 16:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB041A9FB6
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 16:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754929579; cv=none; b=mi6Zn8u2bZFjp+6xR4svV1bUhXKTJ0ovw7NMqImZiCt7QxDfdKwlLr9OcZuVAkZGlH1HVT/kYja1aSO0v6ToSIEr5peIJktbQ8N3qWC2ESltxcA0Em97NbxlkUyADOM4KLJr7m3LLmkvELjHolFJjzZFKEAtgqTlbER/3s72cVc=
+	t=1754929829; cv=none; b=MmzoiXWqBZNIPQIRAuHI7Z/k42IoIWM5PeJica1n/6QvqOOjh2FiFiNFpggz+/JfoE4I92IayWePfZ6uVC38SN/qU2m3a7A8i4F3SmSgMRKgBkfEQz6QiZ1H8zzRHYlrp0SDRxGDgLimY0UzevKTrpxhRDIlFKaXjlOJHLRyOvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754929579; c=relaxed/simple;
-	bh=8oRjOADqIdvBLd9hq9nnySSZk2IXEYoBELHbgdaVSds=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lbFD8mPfWfJEobJryZ6cp0sELGU05bo4OFuf8h+35K+hygeCyUi/WiuMROWMYQCPJK92tWQY++qetwnn9YTjsfchiLu2pi1APTUX7PzkbsYI0/G5fies2j4wXSDe9p3+jfB/GTs+Pk3+ANpMqInwSZXQeqphiJKYkfdiycdfPRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JA8t82pJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD920C4CEF5;
-	Mon, 11 Aug 2025 16:26:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754929578;
-	bh=8oRjOADqIdvBLd9hq9nnySSZk2IXEYoBELHbgdaVSds=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JA8t82pJkPjKwB+BlXaucrt1METmOINHLzIeCi5xMpoqQNjpu407Y4+1s1PVvGv2V
-	 LNyfzFvh9geK+9rERIb7bSQ0nja/LGjn9o+0grASJUUUkVWHORObFrmNYRMpYwqpYH
-	 xvEbIAxj0YmfIow5lZPs/mH5fvq/62BdgqocYSzg2ofgoN3YmefAAlj1PUGXp+1GZc
-	 OthtooKItDvn584oVD62xdZ5LVZYkeAqk1Sk8k9HJxDbM7OheAEODvrZjd9bt//ZNT
-	 OdlC5VBSSB3H/H8aA5PfwXNJPEA4dl/f4sUeCZEZZkGhd7uaDVjlLX8G6xozUJjEgV
-	 KcKLzbiFqD56Q==
-From: "Mario Limonciello (AMD)" <superm1@kernel.org>
-To: David Airlie <airlied@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
-	Daniel Dadap <ddadap@nvidia.com>,
-	"Mario Limonciello (AMD)" <superm1@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Subject: [PATCH v10 4/4] DRM: Add a new 'boot_display' attribute
-Date: Mon, 11 Aug 2025 11:26:06 -0500
-Message-ID: <20250811162606.587759-5-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250811162606.587759-1-superm1@kernel.org>
-References: <20250811162606.587759-1-superm1@kernel.org>
+	s=arc-20240116; t=1754929829; c=relaxed/simple;
+	bh=nLwFsXXmcF4CWKmWS1PZk11GRAQpaVXy52auHJdDnHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Vz7bIMM+hHCFPSBVUvVB/trXo72FtxrxJt6uHvdWXqIWvD5iknDRddxOFrGNoIjBfTXOuJlsZFEmKP5daII9sot9cS54rRSM6cncLoYz6oVTplS/F0ubVFDBNADxVqF1uQs6IZkjBoPb/JklhGdESYjLS/4RqA/CQHKW59E2aE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RZyKPJdh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57BBWOV5007754;
+	Mon, 11 Aug 2025 16:29:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HlMP3HUL6Cc8PMyjMVeTRfAvfp9gV/f6PuorDrC/x9M=; b=RZyKPJdhen1V4+Hr
+	zW2NEPk4jQDgQ7MYOS5fc1lmVUVeFQWVbb20VyG60DZl7yVnWonD3XNH4BNO6JBl
+	yiFFK8qRpZi6wTqEhSZvIWV98cIooL+0rPy7budq1lz4Y8F9KWeRtkRn4QvmyD76
+	QsClMxdjqCCKaNZFTvnewjzKcij2PiTyF/d2LW1fIgaM21+WCEl4YEHAAqahFJm+
+	uPdnW6WoCTVdtXaDGmXo3iLUxAuTE8euMbCJhEE1+GfOfamrFUfsbfdkfOrp0C8s
+	v9jyPQhqsuQXrLhKB3jRXy+qBoiaiLsepYhq3nz91/f8g2RORx7S3/M+nahKFLuE
+	0RGXww==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffq6gx3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 16:29:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57BGTtYc030278
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Aug 2025 16:29:55 GMT
+Received: from [10.216.45.192] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 11 Aug
+ 2025 09:29:51 -0700
+Message-ID: <25f6b30a-75fd-429c-ad3a-29cfc3a677a8@quicinc.com>
+Date: Mon, 11 Aug 2025 21:59:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: swap: check for xa_zero_entry() on vma in swapoff
+ path
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+CC: <akpm@linux-foundation.org>, <shikemeng@huaweicloud.com>,
+        <kasong@tencent.com>, <nphamcs@gmail.com>, <bhe@redhat.com>,
+        <baohua@kernel.org>, <chrisl@kernel.org>, <david@redhat.com>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <20250808092156.1918973-1-quic_charante@quicinc.com>
+ <46d4a5bb-5734-40b4-a5f1-3094500ef1c3@lucifer.local>
+Content-Language: en-US
+From: Charan Teja Kalla <quic_charante@quicinc.com>
+In-Reply-To: <46d4a5bb-5734-40b4-a5f1-3094500ef1c3@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NSBTYWx0ZWRfX3cOyk7cOWaNP
+ X9O6YD0qm4tN42PMd2cVWr4rmsRn728khHrJMWs/qobrWaMvg4RtLXsudawgppGwIfXcLYEMTDs
+ KnJgyKSAszS0V0IekerdkFlSTN99leBMVSw8npoeg96NEoLSoHnIK3u2IiPt5XjYWVk1to6e/Wm
+ OUV+h0+nzky3WHvhSC8TQtVBrgcl17/6MIgzxwGyHlsA1T9y+BziezB4rO9RorilhzhU64s+5t2
+ GSiQawACZX9kw+8zg++Ru1ZBl32Yq1KnYG5s3iScUlYZfYPIoSCpr721dCqXJJJFZnZZI4W5PY8
+ MP+sENMEGy/NXlmfHIeTcC+PSP83FfB21witL+OVFBmA7W0d2i7H+4vFVL4cM17ZxmZwNzMnxfq
+ 4CBQW2NC
+X-Authority-Analysis: v=2.4 cv=TLZFS0la c=1 sm=1 tr=0 ts=689a1a84 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=Eu7-4bY5xJMfsWnsbBEA:9 a=NqO74GWdXPXpGKcKHaDJD/ajO6k=:19 a=QEXdDO2ut3YA:10
+ a=QYH75iMubAgA:10
+X-Proofpoint-GUID: dgL5N7pKdAMMncEIiKUWYf5ebzNIeq1P
+X-Proofpoint-ORIG-GUID: dgL5N7pKdAMMncEIiKUWYf5ebzNIeq1P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_03,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110075
 
-On systems with multiple GPUs there can be uncertainty which GPU is the
-primary one used to drive the display at bootup. In some desktop
-environments this can lead to increased power consumption because
-secondary GPUs may be used for rendering and never go to a low power
-state. In order to disambiguate this add a new sysfs attribute
-'boot_display' that uses the output of video_is_primary_device() to
-populate whether the PCI device was used for driving the display.
 
-Suggested-by: Manivannan Sadhasivam <mani@kernel.org>
-Acked-by: Manivannan Sadhasivam <mani@kernel.org>
-Link: https://gitlab.freedesktop.org/xorg/lib/libpciaccess/-/issues/23
-Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
----
-v10:
- * Rebase on 6.17-rc1
- * Drop Thomas' tag, as this is now in a totally different subsystem
-   (although same code)
- * Squash "Adjust visibility of boot_display attribute instead of creation"
- * Squash "PCI: Move boot display attribute to DRM"
----
- Documentation/ABI/testing/sysfs-class-drm |  8 +++++
- drivers/gpu/drm/drm_sysfs.c               | 41 +++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-drm
 
-diff --git a/Documentation/ABI/testing/sysfs-class-drm b/Documentation/ABI/testing/sysfs-class-drm
-new file mode 100644
-index 0000000000000..d23fed5e29a74
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-drm
-@@ -0,0 +1,8 @@
-+What:		/sys/class/drm/.../boot_display
-+Date:		January 2026
-+Contact:	Linux DRI developers <dri-devel@vger.kernel.org>
-+Description:
-+		This file indicates that displays connected to the device were
-+		used to display the boot sequence.  If a display connected to
-+		the device was used to display the boot sequence the file will
-+		be present and contain "1".
-diff --git a/drivers/gpu/drm/drm_sysfs.c b/drivers/gpu/drm/drm_sysfs.c
-index a455c56dbbeb7..b01ffa4d65098 100644
---- a/drivers/gpu/drm/drm_sysfs.c
-+++ b/drivers/gpu/drm/drm_sysfs.c
-@@ -18,6 +18,7 @@
- #include <linux/gfp.h>
- #include <linux/i2c.h>
- #include <linux/kdev_t.h>
-+#include <linux/pci.h>
- #include <linux/property.h>
- #include <linux/slab.h>
- 
-@@ -30,6 +31,8 @@
- #include <drm/drm_property.h>
- #include <drm/drm_sysfs.h>
- 
-+#include <asm/video.h>
-+
- #include "drm_internal.h"
- #include "drm_crtc_internal.h"
- 
-@@ -508,6 +511,43 @@ void drm_sysfs_connector_property_event(struct drm_connector *connector,
- }
- EXPORT_SYMBOL(drm_sysfs_connector_property_event);
- 
-+static ssize_t boot_display_show(struct device *dev, struct device_attribute *attr,
-+				 char *buf)
-+{
-+	return sysfs_emit(buf, "1\n");
-+}
-+static DEVICE_ATTR_RO(boot_display);
-+
-+static struct attribute *display_attrs[] = {
-+	&dev_attr_boot_display.attr,
-+	NULL
-+};
-+
-+static umode_t boot_display_visible(struct kobject *kobj,
-+				    struct attribute *a, int n)
-+{
-+	struct device *dev = kobj_to_dev(kobj)->parent;
-+
-+	if (dev_is_pci(dev)) {
-+		struct pci_dev *pdev = to_pci_dev(dev);
-+
-+		if (video_is_primary_device(&pdev->dev))
-+			return a->mode;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct attribute_group display_attr_group = {
-+	.attrs = display_attrs,
-+	.is_visible = boot_display_visible,
-+};
-+
-+static const struct attribute_group *card_dev_groups[] = {
-+	&display_attr_group,
-+	NULL
-+};
-+
- struct device *drm_sysfs_minor_alloc(struct drm_minor *minor)
- {
- 	const char *minor_str;
-@@ -531,6 +571,7 @@ struct device *drm_sysfs_minor_alloc(struct drm_minor *minor)
- 
- 		kdev->devt = MKDEV(DRM_MAJOR, minor->index);
- 		kdev->class = drm_class;
-+		kdev->groups = card_dev_groups;
- 		kdev->type = &drm_sysfs_device_minor;
- 	}
- 
--- 
-2.43.0
+On 8/11/2025 5:37 PM, Lorenzo Stoakes wrote:
+> Any syzbot link or further information as to where this bug was found? Was this
+> on your system?
+> 
+> Has this happened in reality or due to fault injection?
+Sorry, missed to mention this information on the commit message.
 
+Yes this is really reported on the 6.12 LTS kernel, while running the
+tests on the device farm, though, reproduction rate is very low.
+
+Thanks
+Charan
 
