@@ -1,164 +1,138 @@
-Return-Path: <linux-kernel+bounces-763314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD3B21316
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:25:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA77B2116D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A396263D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:25:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B2C0504685
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFB22D47F7;
-	Mon, 11 Aug 2025 17:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EBD2C21CE;
+	Mon, 11 Aug 2025 15:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q5ujRXs8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eXqtHxED"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="wL+LGZSW"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666002C21E7;
-	Mon, 11 Aug 2025 17:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D88296BA2;
+	Mon, 11 Aug 2025 15:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754933115; cv=none; b=kAOWCzNI9sN7L80jhXTcpHPthsBQj/39lSIHlMu2LK/p/tRsQm7wgwVNxEangKfdhhfMc1lhIRXffbmx9YjdBtYx2TYlMHJ60VK5uThQTmEKazBSFekhpOj27p9RPxy65Gd8vgOB/MN5AAaFyu5H1nvpTU0T7WN23aAJeJo81xE=
+	t=1754927744; cv=none; b=eeNURS5p9kc6g5fMeR8ddX5ExFBRVd5j8O6zAwQ1soy7feXlHHJvGHX5Ruj+wa5Qzq6udz3MxDl7DgYn3xwdoattbN55UkQ91jrWMWjIRRLS9abxzfu5rGeBkrsPOE2tLRQbCiRJl+n5Xc4RSDaM7mdYMSAPAhufxlOOqYwgVE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754933115; c=relaxed/simple;
-	bh=47KTT10WHKFiZxMxIMHfux8Gl1sdDOUG/ZJ4cJ9XvcI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aF0NyXttAJIrL3VUNO+W58+8tv0VJY1qHc53wXS5rfxW2A3Z9hRErK87+aRCHImn6/tvlP2+ZapFAV2IO60SmM8UNJo/Jw0IwDfGtLdWYh81XBmEAaoYQVQnHqVEkYs6if2yICJiRVHk+puHZK/5BqNvhTRgm4JqelZo5mJFcBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q5ujRXs8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eXqtHxED; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 11 Aug 2025 15:48:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754933111;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ikOouoXkHEHMnRWF645nAnqb7byHThXc7UH59ZZJEzk=;
-	b=q5ujRXs8uhBcDutEKGS/XAFEN+2p2F26V2xd6izrlg8b6/UIoGfWsAEMmVOliAGCITxQUT
-	oAUhJckKMypuX659UUtdo+10WbR2+9DLXdO5m/0S6phmZdyit9mUkUqRrzi7+RDG2IfPEr
-	toafYPya+tdnTtD8FvPc1ANq5lfIQlNUa8s6QVZMMJGZstiCPXbTfqiqAZ00LhzpK9oPXN
-	if1JgYH/YC3Aeeg/74JHQZOC3X/Hk851o7ANZgfYbsWXCmfrMCkYX09X8MSXSpBAeqE8GN
-	ZdCRyqeFY1JjwHLme/2Eq3k2FQsNz7jJLxTyFdGtFn4Hr8iTY1VCf60t06yJjQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754933111;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ikOouoXkHEHMnRWF645nAnqb7byHThXc7UH59ZZJEzk=;
-	b=eXqtHxEDdgcpf5grE9fr+jJFwVqjjhyTJWNo0QqPlgfzMMTy2n/TBvq/rW+p4Ku86azSAj
-	tdbRsG3nKS+ccDAA==
-From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/bugs: Select best SRSO mitigation
-Cc: David Kaplan <david.kaplan@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250721160310.1804203-1-david.kaplan@amd.com>
-References: <20250721160310.1804203-1-david.kaplan@amd.com>
+	s=arc-20240116; t=1754927744; c=relaxed/simple;
+	bh=ElJ/T/tRj+7GGPhvILF3z+61P6Tjni3YzNxIaUm1aBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B/Ppws2R4aZKPd+W0yYqO5Y3V5qcKLcb4GQ4swH5x0HG3+l+ilp4myKXmXLiZGUOcI/o9U9/OhFDKQJhlvEWDAZWkuiw0TR/S6IAXuf4P82OrRqrLs3PBEdq0ehHiqm+Sb9BrblHs9rG+WKD+/iR9/dtZW0wTgohAT1g6g7hRME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=wL+LGZSW; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 986B3635B040;
+	Mon, 11 Aug 2025 17:48:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1754927302;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=1L9wHhKVuXZQmzSOEtmhCm41l8tFu1qnDWrexhilFd8=;
+	b=wL+LGZSWocUdhgr4uDnJkqv/zrJDjGwZO0DZ5R+3skpojeX9/PCnPdJb8dmZRkEGkhxQwm
+	fZlDnWEpL9uNRlPOF54P6RoNCeCYp1wG2BTGWGuhhQwXcg4qbGAtqFYW7khRm9CzynxQm9
+	KkqaxakLAtnJyncaLQ2jBvjGKFju27U=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org
+Cc: linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Damien Le Moal <dlemoal@kernel.org>, John Garry <john.g.garry@oracle.com>,
+ Christoph Hellwig <hch@lst.de>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>, linux-mm@kvack.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Michal Hocko <mhocko@kernel.org>, David Hildenbrand <david@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject:
+ [REGRESSION][BISECTED] Unexpected OOM instead of reclaiming inactive file
+ pages
+Date: Mon, 11 Aug 2025 17:48:08 +0200
+Message-ID: <5905724.LvFx2qVVIh@natalenko.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175492728627.1420.312317503925693968.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="nextPart3613097.ElGaqSPkdT";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-The following commit has been merged into the x86/urgent branch of tip:
+--nextPart3613097.ElGaqSPkdT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org
+Date: Mon, 11 Aug 2025 17:48:08 +0200
+Message-ID: <5905724.LvFx2qVVIh@natalenko.name>
+MIME-Version: 1.0
 
-Commit-ID:     4fa7d880aeb8cdbdaa4fb72be3e53ac1d6bcc088
-Gitweb:        https://git.kernel.org/tip/4fa7d880aeb8cdbdaa4fb72be3e53ac1d6b=
-cc088
-Author:        David Kaplan <david.kaplan@amd.com>
-AuthorDate:    Mon, 21 Jul 2025 11:03:10 -05:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 11 Aug 2025 17:32:36 +02:00
+Hello Damien.
 
-x86/bugs: Select best SRSO mitigation
+I'm fairly confident that the following commit
 
-The SRSO bug can theoretically be used to conduct user->user or guest->guest
-attacks and requires a mitigation (namely IBPB instead of SBPB on context
-switch) for these.  So mark SRSO as being applicable to the user->user and
-guest->guest attack vectors.
+459779d04ae8d block: Improve read ahead size for rotational devices
 
-Additionally, SRSO supports multiple mitigations which mitigate different
-potential attack vectors.  Some CPUs are also immune to SRSO from
-certain attack vectors (like user->kernel).
+caused a regression in my test bench.
 
-Use the specific attack vectors requiring mitigation to select the best
-SRSO mitigation to avoid unnecessary performance hits.
+I'm running v6.17-rc1 in a small QEMU VM with virtio-scsi disk. It has got 1 GiB of RAM, so I can saturate it easily causing reclaiming mechanism to kick in.
 
-Signed-off-by: David Kaplan <david.kaplan@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250721160310.1804203-1-david.kaplan@amd.com
----
- Documentation/admin-guide/hw-vuln/attack_vector_controls.rst |  2 +-
- arch/x86/kernel/cpu/bugs.c                                   | 13 +++++--
- 2 files changed, 12 insertions(+), 3 deletions(-)
+If MGLRU is enabled:
 
-diff --git a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst b/D=
-ocumentation/admin-guide/hw-vuln/attack_vector_controls.rst
-index b4de16f..6dd0800 100644
---- a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
-+++ b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
-@@ -214,7 +214,7 @@ Spectre_v1            X
- Spectre_v2            X                           X
- Spectre_v2_user                      X                           X          =
-  *       (Note 1)
- SRBDS                 X              X            X              X
--SRSO                  X                           X
-+SRSO                  X              X            X              X
- SSB                                                                         =
-          (Note 4)
- TAA                   X              X            X              X          =
-  *       (Note 2)
- TSA                   X              X            X              X
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index b74bf93..2186a77 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -386,7 +386,6 @@ static bool __init should_mitigate_vuln(unsigned int bug)
-=20
- 	case X86_BUG_SPECTRE_V2:
- 	case X86_BUG_RETBLEED:
--	case X86_BUG_SRSO:
- 	case X86_BUG_L1TF:
- 	case X86_BUG_ITS:
- 		return cpu_attack_vector_mitigated(CPU_MITIGATE_USER_KERNEL) ||
-@@ -3184,8 +3183,18 @@ static void __init srso_select_mitigation(void)
- 	}
-=20
- 	if (srso_mitigation =3D=3D SRSO_MITIGATION_AUTO) {
--		if (should_mitigate_vuln(X86_BUG_SRSO)) {
-+		/*
-+		 * Use safe-RET if user->kernel or guest->host protection is
-+		 * required.  Otherwise the 'microcode' mitigation is sufficient
-+		 * to protect the user->user and guest->guest vectors.
-+		 */
-+		if (cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_HOST) ||
-+		    (cpu_attack_vector_mitigated(CPU_MITIGATE_USER_KERNEL) &&
-+		     !boot_cpu_has(X86_FEATURE_SRSO_USER_KERNEL_NO))) {
- 			srso_mitigation =3D SRSO_MITIGATION_SAFE_RET;
-+		} else if (cpu_attack_vector_mitigated(CPU_MITIGATE_USER_USER) ||
-+			   cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_GUEST)) {
-+			srso_mitigation =3D SRSO_MITIGATION_MICROCODE;
- 		} else {
- 			srso_mitigation =3D SRSO_MITIGATION_NONE;
- 			return;
+$ echo 1000 | sudo tee /sys/kernel/mm/lru_gen/min_ttl_ms
+
+then, once page cache builds up, an OOM happens without reclaiming inactive file pages: [1]. Note that inactive_file:506952kB, I'd expect these to be reclaimed instead, like how it happens with v6.16.
+
+If MGLRU is disabled:
+
+$ echo 0 | sudo tee /sys/kernel/mm/lru_gen/min_ttl_ms
+
+then OOM doesn't occur, and things seem to work as usual.
+
+If MGLRU is enabled, and 459779d04ae8d is reverted on top of v6.17-rc1, the OOM doesn't happen either.
+
+Could you please check this?
+
+Thank you.
+
+-- 
+Oleksandr Natalenko, MSE
+
+[1]: https://paste.voidband.net/TG5OiZ29.log
+--nextPart3613097.ElGaqSPkdT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmiaELgACgkQil/iNcg8
+M0vbWRAA1sWIe8mVt6d0YmxKVEnYTYmMS1xatrN0wE+v1F22bp2RIiILZ5N1jlYM
+s7mU4zQPn+K3KGeskURO7fI+Pkxqhas8UeN4p2GXkDGxSW3/N+eglmgbn0ICCE1w
+I+fsBRbF7u5AI1xwUrDl4QDs+3YwW+v5RQbwFTwQYLu1oz9cARZD4tn4P80x7RIl
+ct/TtcUvkHWjs0JEKXxfCqDQfEe36dD5TD2hFk5Fo1tIrSQfMojmoJ+gMXPCtXsh
+tfPuXFeenpcySoLvu6PS5AayzqPCle4t2WOuVigE5KMhPkpNG22Of7PM4FbueRQa
+O4QECIWlzQNs0n5VVrCNlAWC5dCtzGHvV/HI2tOmEGIUjdpU39JmibrQa9OsK3TA
+lqMgmD8rgMT4r7TLgM0f4F48q5enU8nfSiuL3PVxeEWDJUlz2cCyb9cFp8u6ybI8
+NI9n/1l+G8rV24E4eWuB7+vWMdpcio+/C1xxB0KZS8tdSdB1vQJqFhv4o0TqJshS
+PurH9SL9ZoRz9s+JequLlnz5vZCULAHMD8pwcZ9KbjhuohA5BePtDt26IoH+0KoM
+ph1zjJobDbwNCLvGi+xXorBKXjytESPDJEyBfQK77T5HeEGiFgzF5OG+Nt/9V085
+ReA9mxcKPcpe1VXz4Hl3LHaPBUkg6ATQ9r0m+FTF6WIowpomIG0=
+=guvX
+-----END PGP SIGNATURE-----
+
+--nextPart3613097.ElGaqSPkdT--
+
+
+
 
