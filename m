@@ -1,220 +1,101 @@
-Return-Path: <linux-kernel+bounces-763442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B840FB214A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F5DB21496
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A28917AE308
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:41:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBDE37AAE49
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5F62E2EE4;
-	Mon, 11 Aug 2025 18:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AA62E2F1C;
+	Mon, 11 Aug 2025 18:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="SX/N3S/9";
-	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="OhisA6DN";
-	dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="nBi17JTF";
-	dkim=neutral (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b="I/faDtGY"
-Received: from mail.tnxip.de (mail.tnxip.de [49.12.77.104])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFD69BON"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718A42E2859;
-	Mon, 11 Aug 2025 18:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.77.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19CC2E2EE4;
+	Mon, 11 Aug 2025 18:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754937678; cv=none; b=h2ymD7Fi2S8eXwaCWTSR4Jz+F5EN4kJhjM28WdLfdtVBsivE9y+CQPRcjO3EpIihLiSTqXqNOhJ8EuBSgiKmbdni1fpoIM0nvMqgZHxehBao5W7OaZ/O4tfO8QJMuj5qIAD6TVlYvOdkxha0hP/OT5oIPtxxMWTLUqmLKM9WxEU=
+	t=1754937676; cv=none; b=L+I19pEzWbErr9oD9Q+wdnS5SisupIomWZUftV7gXgr8GJm02fE/vzNNMC3Vy607nT9Q/H3t1ngHmyMaT8JKzd5aZhx0Pd+c3Pg+MsicB5wJTFHLfkY71j/e1OMVYiqvlENTPHSdslGcuX3BOQfWYxW6/X1iS/3wPlS1SOdveH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754937678; c=relaxed/simple;
-	bh=H2Zu/oVnTRxJcvLU0WTB1AXWL7ufPkTJOrsH3DjY4VQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ODMRqLS7O3p8efPdcwnXLjkAfwoivfnjw5JZRXXH/i6xRaCFT7Hg48VoEO381WrCuvuUlqszq6iQpNLPxAzbFzfeyiRFZ/JTYeYku8SfcCS0wy0Rq0M8wp/5+vr5UBTRV0dJxslDFf9tX9QSxbnQfx25EDMnCAdkSO7dW/0oYGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de; spf=pass smtp.mailfrom=tnxip.de; dkim=pass (1024-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=SX/N3S/9; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=OhisA6DN; dkim=permerror (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=nBi17JTF; dkim=neutral (0-bit key) header.d=tnxip.de header.i=@tnxip.de header.b=I/faDtGY; arc=none smtp.client-ip=49.12.77.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tnxip.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tnxip.de
-Received: from gw.tnxip.de (unknown [IPv6:fdc7:1cc3:ec03:1:50ae:ade0:7d29:fff2])
-	by mail.tnxip.de (Postfix) with ESMTPS id 123DA1F59D;
-	Mon, 11 Aug 2025 20:41:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-vps;
-	t=1754937663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TD+IuNqJe0oKKdsqKJDKKW118jZ+WkZgDGk9TFAgU14=;
-	b=SX/N3S/9C7HLGFl8+y3H0aeN5oEGaflVAJ23NXUFMsDg65KJrLvxjPQMPOYWUOSuUYjQZz
-	SUCMA7/nV2tZDRU+DAhc6TbFFJu7LD5jvM4eQJYk0ZXVcxLw7XmHnCwJE+QzMFZNF9EdJE
-	s1A9X/YptACUpV1RJszB+kY1qqXuyXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
-	s=mail-vps-ed; t=1754937663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TD+IuNqJe0oKKdsqKJDKKW118jZ+WkZgDGk9TFAgU14=;
-	b=OhisA6DNrTrRkr7kOqnINsMH+WNbBGbYHHmpHUyzMCHrU56NKkPc39fW6FVuQAVCiumFKT
-	aVAlPY2AwWAMJmDg==
-Received: from [IPV6:2a04:4540:8c0c:3700:8bf2:48fa:c061:20a] (unknown [IPv6:2a04:4540:8c0c:3700:8bf2:48fa:c061:20a])
-	by gw.tnxip.de (Postfix) with ESMTPSA id 96E7310000000003E2F9D;
-	Mon, 11 Aug 2025 20:40:53 +0200 (CEST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=tnxip.de;
-	s=mail-gw-ed; t=1754937662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TD+IuNqJe0oKKdsqKJDKKW118jZ+WkZgDGk9TFAgU14=;
-	b=nBi17JTFxetF9nGOMpNNQxT4oKp9faDV3Oz2G69+KTiJCR1fRARnnEYxdBDPXg0ov2RKs+
-	eu7OJMQmI3F+qvCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tnxip.de; s=mail-gw;
-	t=1754937662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TD+IuNqJe0oKKdsqKJDKKW118jZ+WkZgDGk9TFAgU14=;
-	b=I/faDtGY4Vi3+PQs4puPjB8rBKb88yLEhGM1G+qvW/c8HLE5XL0cHNI6CFYQnzRPBP7R8C
-	h+rTz61chjO18xUMV00jcqMysHERRJeOBJeP07wFeyqbTHrJ9AWgoGzYuPRMnH4sFqRREC
-	tI16sG4/QOxAJ1OTnI93IH0QRrRGQdQ=
-Message-ID: <28dbd3e0-8d5b-4dfe-a7e7-3a73347480f6@tnxip.de>
-Date: Mon, 11 Aug 2025 20:40:53 +0200
+	s=arc-20240116; t=1754937676; c=relaxed/simple;
+	bh=wRdVneU2myHzAw9c5jGA/JiJKIwsqJlNt2ntxC158ns=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gY9IdkzVmCrFVWmIsC3qDTcQHtQYt13xxmY5X7bdqYzGYiCfzc3UH6lafhWXBe97uf92I5MvNkWuA/5+KTXtvEaJPiI9fzj160ONmQb3kdAjTJMxFv40FXRGSkmkGFb+0qVt4V6N1X6yEbTPUPG5ybRciJSWo28KILHytW792RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFD69BON; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09AD9C4CEED;
+	Mon, 11 Aug 2025 18:41:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754937676;
+	bh=wRdVneU2myHzAw9c5jGA/JiJKIwsqJlNt2ntxC158ns=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AFD69BOND9L2lcx2DkNAUPS10GatC2jPTqiL5wiNbnuSDr3FSXMbsuoV9K8XLeLxH
+	 Rx9l8nWElQw79MlB2uBSHPppiYTg2zS/A90eT0HacYPbv+htrgUTlpp4818Tdv3Zzs
+	 eAgSv2L2+w8uYYha6wY6n6bmGNPNU76I/BLGj9Zjz2yfJ5rl5zV8zhBuqenpbKIpBS
+	 a5tWkI5RCkG8c5FPMa9Yl56vKjHES4gDVC61YRqW86669wFRPPI2q3Wbhedd0owgvf
+	 wucJsN9aUZji73T+1xCr7aY3Ael4DkFU3g/beSjfhvSDAS6vbB3vURBE1U45smGDKV
+	 QQ+ah6EJwHgqw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Amit Kucheria <amitk@kernel.org>,
+	Thara Gopinath <thara.gopinath@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+	George Moussalem <george.moussalem@outlook.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v13 0/2] Add support for IPQ5018 tsens
+Date: Mon, 11 Aug 2025 13:40:54 -0500
+Message-ID: <175493766080.138281.13653180985515249803.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250612-ipq5018-tsens-v13-0-a210f3683240@outlook.com>
+References: <20250612-ipq5018-tsens-v13-0-a210f3683240@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [GIT PULL] bcachefs changes for 6.17
-To: "Carl E. Thompson" <list-bcachefs@carlthompson.net>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- Konstantin Shelekhin <k.shelekhin@ftml.net>
-Cc: admin@aquinas.su, linux-bcachefs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org
-References: <3ik3h6hfm4v2y3rtpjshk5y4wlm5n366overw2lp72qk5izizw@k6vxp22uwnwa>
- <55e623db-ff03-4d33-98d1-1042106e83c6@ftml.net>
- <iktaz2phgjvhixpb5a226ebar7hq6elw6l4evcrkeu3wwm2vs7@fsdav6kbz4og>
- <514556110.413.1754936038265@mail.carlthompson.net>
-Content-Language: en-US, de-DE
-From: =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>
-In-Reply-To: <514556110.413.1754936038265@mail.carlthompson.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 11.08.25 20:13, Carl E. Thompson wrote:
-> I seriously hope none of the kernel developers are foolish enough to be fooled (yet again) by this I'm-a-reasonable-guy-we-can-talk-this-out act. You've been there and done that.
->
-> Kent's perplexing behavior almost makes me want to put on a tinfoil hat. Is it simply mental illness or is it something more? Is he being egged on by backers who *want* to destabilize the leadership of Linux for whatever reason? It's hard to see how any individual could be this far out there without help.
->
-> And I'll point out what's obvious to people who have followed this closely but may not be to people who read an occasional email thread like this one: A very large portion of what Kent says including in this email is just factually wrong. Either he is an unashamed and extremely prolific liar or he is very sick.
->
-> Carl
 
-Frankly for me as a user who does probably not know the hole picture you
-seem to just be spewing paranoid hate into these threads which I do not
-quite understand. Yes, Kent can be off-putting, but really, that is
-something I often observe from other people as well, the tone on LKML
-tends to be pretty harsh.
+On Thu, 12 Jun 2025 10:46:12 +0400, George Moussalem wrote:
+> IPQ5018 has tsens V1.0 IP with 5 sensors, of which 4 are in use,
+> and 1 interrupt. There is no RPM present in the soc to do tsens early
+> enable. Adding support for the same here.
+> 
+> Last patch series sent by Qualcomm dates back to Sep 22, 2023.
+> Since I'm working on OpenWrt support for IPQ5018 based boards (routers)
+> and Sricharan Ramabadhran <quic_srichara@quicinc.com> in below email
+> confirmed this SoC is still active, I'm continuing the efforts to send
+> patches upstream for Linux kernel support.
+> https://lore.kernel.org/all/63dc4054-b1e2-4e7a-94e7-643beb26a6f3@quicinc.com/
+> 
+> [...]
 
-My involvement in bcachefs is that of an early adopter and hence, a
-tester. I find working with him productive. I give him bug reports,
-observations and data and he fixes those. If I did something stupid, he
-will point that out, and very directly so.
+Applied, thanks!
 
-So what you call a "I'm-a-reasonable-guy-we-can-talk-this-out act" is
-actually how he can and does behave, at least when interacting on IRC
-with his users, testers and co-developers.
+[1/2] dt-bindings: thermal: qcom-tsens: make ipq5018 tsens standalone compatible
+      (no commit info)
+[2/2] arm64: dts: qcom: ipq5018: Add tsens node
+      commit: 450a80623e3b8bb5dae59e0d56046fc3d0a88f3b
 
-So maybe if we can dial the personal attacks down a few notches
-(including against btrfs, though I have my reasons why I jumped from
-it to bcachefs like two years ago) and have a calm discussion it might
-be possible to build new bridges?
-
-
-/Malte
-
->
->> On 2025-08-11 7:26 AM PDT Kent Overstreet <kent.overstreet@linux.dev> wrote:
->>
->>  
->> On Mon, Aug 11, 2025 at 12:51:11PM +0300, Konstantin Shelekhin wrote:
->>>>  Yes, this is accurate. I've been getting entirely too many emails from Linus about
->>>> how pissed off everyone is, completely absent of details - or anything engineering
->>>> related, for that matter.
->>> That's because this is not an engineering problem, it's a communication problem. You just piss
->>> people off for no good reason. Then people get tired of dealing with you and now we're here,
->>> with Linus thinking about `git rm -rf fs/bcachesfs`. Will your users be happy? Probably not.
->>> Will your sponsors be happy? Probably not either. Then why are you keep doing this?
->>>
->>> If you really want to change the way things work go see a therapist. A competent enough doctor
->>> probably can fix all that in a couple of months.
->> Konstantin, please tell me what you're basing this on.
->>
->> The claims I've been hearing have simply lacked any kind of specifics;
->> if there's people I'd pissed off for no reason, I would've been happy to
->> apologize, but I'm not aware of the incidences you're claiming - not
->> within a year or more; I have made real efforts to tone things down.
->>
->> On the other hand, for the only incidences I can remotely refer to in
->> the past year and a half, there has been:
->>
->> - the mm developer who started outright swearing at me on IRC in a
->>   discussion about assertions
->> - the block layer developer who went on a four email rant where he,
->>   charitably, misread the spec or the patchset or both; all this over a
->>   patch to simply bring a warning in line with the actual NVME and SCSI
->>   specs.
->> - and reference to an incident at LSF, but the only noteworthy event
->>   that I can recall at the last LSF (a year and a half ago) was where a
->>   filesystem developer chased a Rust developer out of the community.
->>
->> So: what am I supposed to make of all this?
->>
->> To an outsider, I don't think any of this looks like a reasonable or
->> measured response, or professional behaviour. The problems with toxic
->> behaviour have been around long before I was prominent, and they're
->> still in evidence.
->>
->> It is not reasonable or professional to jump from professional criticism
->> of code and work to personal attacks: it is our job to be critical of
->> our own and each other's code, and while that may bring up strong
->> feelings when we feel our work is attacked, that does not mean that it
->> is appropriate to lash out.
->>
->> We have to separate the professional criticism from the personal.
->>
->> It's also not reasonable or professional to always escelate tensions,
->> always look for the upper hand, and never de-escalate.
->>
->> As a reminder, this all stems from a single patch, purely internal to
->> fs/bcachefs/, that was a critical, data integrity hotfix.
->>
->> There has been a real pattern of hyper reactive, dramatic responses to
->> bugfixes in the bcachefs pull requests, all the way up to full blown
->> repeated threats of removing it from the kernel, and it's been toxic.
->>
->> And it's happening again, complete with full blown rants right off the
->> bat in the private maintainer thread about not trusting my work (and I
->> have provided data and comparisons with btrfs specifically to rebut
->> that), all the way to "everyone hates you and you need therapy". That is
->> not reasonable or constructive.
->>
->> This specific thread was in response to Linus saying that bcachefs was
->> imminently going to be git rm -rf'd, "or else", again with zero details
->> on that or else or anything that would make it actionable.
->>
->> Look, I'm always happy to sit down, have a beer, talk things out, and
->> listen.
->>
->> If there's people I have legitimately pissed off (and I do not include
->> anyone who starts swearing at me in a technical discussion) - let me
->> know, I'll listen. I'm not unapproachable, I'm not going to bite your
->> head off.
->>
->> I've mended fences with people in the past; there were people I thought
->> I'd be odds with forever, but all it really takes is just talking. Say
->> what it is that you feel has affected, be willing to listen and turn,
->> and it gets better.
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
