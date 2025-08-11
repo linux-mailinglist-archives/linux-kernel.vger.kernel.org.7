@@ -1,174 +1,240 @@
-Return-Path: <linux-kernel+bounces-762378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9DEB205C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:38:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C86EB205CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844B83BEE33
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:38:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B6567A7EAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8101D26E6FA;
-	Mon, 11 Aug 2025 10:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9613723E334;
+	Mon, 11 Aug 2025 10:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="S+J0AC6q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBVNPWfY"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA6B26E6FF
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0D82248BE
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754908626; cv=none; b=AK2n+tic7o2Q/Yw8jVC6dTKrGHTQDz4y2UzlobW06GQQ9WkSy/TMQasQ3IyTBDZz9QpPXWShNcGk1C/G/YOR4Lc23vA0sVDwNYjnc/FAP8vtrIwA33zASww/Zrbi4oagVo8ilb5eBnoZu0/4t2/AXc145wUINGhLwmoITz0asa0=
+	t=1754908684; cv=none; b=QGiGg7nuJ/ZfNXgFkxu96BnZBNDzW7jyaFDEOU7Jv6vZck4xSDj34F/lS1fPLxSkP/oOZnbgVhKqxj2PSvgy7JGoW86LYNDPhih0ri0f1esn2pBOLSkxVqx922iWWmbnwt+ZZT7MCEs2Qe4KPImk+2sk/ore+x265dEdd5nv+1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754908626; c=relaxed/simple;
-	bh=QikfI1Y7UGLrmo/VJcTOMNHQlyxpRldmUGBXg94jSG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iHF7eCaJB4fZZsnk+4Yq+ZMMirMRruR9+2VISEqt3eckdB4PzbzQmE0uXxbB5QyNT1yO8MtCxjYzhjgb+oynDhu0iP/3kPL45Ooy77f8wFhiK0Q19TsP+wJpWk4J+EUhxjU/lQN3QFLVLWX7WqxuEAE49OpkZgBNYIBG/hIShS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=S+J0AC6q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9dLri029350
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:37:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6J24Z6vXIRBkYsnNDEpJUSa0Kgse74Ef/BzsEOsA0z8=; b=S+J0AC6qY0UYJMaJ
-	M6vU6EDV5FPItVmIwf9NVBwbc9o9Codo30mkWYwcVGQWyxWl0jgPg18uBGyrwGb+
-	Fy2fYPQnM2bKZOaIfSNMTM0KYtvB9nzs369FK0U6yKZnDJzs1jJk6LjRMxEWAe4B
-	GOXFT0lBpwMDEep43ItDthHT0PzePvyi35j0EjRDIFdEe1iwAo4Mgk9+T4nBEf4+
-	jfAKE2iX7wrPOEcfzOJy8VB0yXXeLH59HMGO6Pp9Y/Jhc0g4ogGoLWV4jNWClhzI
-	9za1XRVtzlyJAfn/p08lkCjwJInQ6bndEb8zsPv2U94+eN4hY5kCqSCP4u0w2aZd
-	y4Hf8w==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dygmbyy5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:37:04 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7092ca7dae0so11720816d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:37:04 -0700 (PDT)
+	s=arc-20240116; t=1754908684; c=relaxed/simple;
+	bh=XZHF0n8H867XHlXPQx2Z568uWIDx/pPp7gDATLqqwAU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P6zIMme6GBximMcJ/gFSkgbGKDU48LngohrEi+0yVdntdgGD+zj680yKj2zSLRmR5NvBf2nn6AC3kExHMi/ksYReodIQy5wDmQhm5Z8NORodXFUQ6SGPvEWK6YKqOSGCUNUWkfu86u4nlFL42yqgm89teMgwVHj0FLaoFW0bKfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QBVNPWfY; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71bd9e38af7so38131897b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:38:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754908682; x=1755513482; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ffyxwyw8addnqKr26EOluv0zD0sB03PTkKSi1k3qjZ0=;
+        b=QBVNPWfYUnVjJ/h2dKDHPWriO8EQtwd0AvO27RuUkrfBtDPZy92FelwHid+WzJFgi4
+         brOEozdk3dQKdj7UIM7t7hS2OLbduf9EbuYPdZdCmuG4ywN8z8km1C+bFgFwTIkx/gxn
+         h2riOr9VOOHw0j8gc69gPcOUs+amtmJxn9FAkAqKZr1lj8nRQfBFJIVHlSRgh/38Ecoo
+         ejS+WpKVOsPiWLDn4UNDIM0I8zYeeot6nBf6h31Pt7bd1ctpe8nubteSxJrQ7S1REICP
+         JFTEMUjusEQ2fKzWkePMKe+qMMzktJ7rYc/9tT1iCLlBkwO9SPYHEzusW+uw57gm2H4W
+         e07A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754908623; x=1755513423;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6J24Z6vXIRBkYsnNDEpJUSa0Kgse74Ef/BzsEOsA0z8=;
-        b=azOX1lBRhfUYQ1Y/X/UMa2vtTXR3oInKEad4ULG63ZXq9uMo9VlfN8VYeXGa3eqU7Q
-         t2jiao1I0k+T8uNuA28ntYYcgFjpn1IdF2GJCFYyd2hV6xhoPom4tZL7P2b+BBbJn8K4
-         AQDzQu8b40wnSmQ+rG/utEXvnYQdzAGyFtf+ZRk9HnJnlRXX+NTLOm0hUyAED0A75uxX
-         RyLSpYNRBTas8jMQrnJj9ctJajQt/Ckl+SBj1I9gBPVz3vlcO1IJz//mqEsXXpQa+eTj
-         jYimPUhPdEZqQbaPo0J7KivZdg+6R7Pb8sGaW5BO+RTRa+/JsRmI5tnayfWeJpyjLF2d
-         ObSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhX7ie7h9r6S/AjivngocpB8v/aa+BoCj3pj/41/jBC2B/tJYforcCQ3ylY1gCKl0IJ/swqmkcsYYqoGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4/3DWoFYp+pcvqQQOrIZfxtKo882l58/cpqFWoaZrshVh7DiE
-	4lrio8vrFM1MlHMD1UmHDDjquz89Uu6UjdiyYVQM3eHzKcxed2tRMwYhUerkxlj1PIySpn47V9S
-	uSH6UvmrKNmmvfuB6ZwoT4s2SgIMBoiNmy/lzt+fYnEcIH9G1DpYzpC/us+ZLnwhrRiI=
-X-Gm-Gg: ASbGnctp85iQ+46GTSqnXJ7ycCl/Lak2HUhcZn+QKxRuMfMm+jMxhkFYwJNWOKC7JBV
-	0PrYKfYJ4gsNJWwMx40EqIvyGscn+3vNm2/dGUv+dcr6PWhadK4OSTOZlpYsrIWnVY3AxUEh4f7
-	Z0TFuEyK1DwP8HvQTWB8H9IVLxjv8JLzvuP46p2FN0ikutbmjbtsXBKmQMGxsidFj/AszD+OKvX
-	65VJKTHvAauCaqHiZEftQEk+jvyOKN0Vy9YMtHHcOaaRSY+97T6I5270tsbgg3IS1fnrou/1GKp
-	Pvxocn58HUbMd/LBK8o55R0uG61FySYPlzlpQOVdBqqYe5PS89+MS7EHawxVgduf1zCtxAYE0Uf
-	M2u+1IZf3eP2JKVSFjg==
-X-Received: by 2002:a05:6214:e4c:b0:709:5007:9f80 with SMTP id 6a1803df08f44-709abcb6b7cmr55987246d6.0.1754908623539;
-        Mon, 11 Aug 2025 03:37:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTrAinsHS3lX6lpHjYp65jzzXK4FwsVNqOAIzUsaWy9noN4VK/hftIl5eBF7ttkBFQYzjclg==
-X-Received: by 2002:a05:6214:e4c:b0:709:5007:9f80 with SMTP id 6a1803df08f44-709abcb6b7cmr55987086d6.0.1754908623021;
-        Mon, 11 Aug 2025 03:37:03 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f245c1sm18271623a12.22.2025.08.11.03.37.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 03:37:02 -0700 (PDT)
-Message-ID: <619efc83-37f3-4b4e-b756-c53ecd2f6867@oss.qualcomm.com>
-Date: Mon, 11 Aug 2025 12:37:00 +0200
+        d=1e100.net; s=20230601; t=1754908682; x=1755513482;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ffyxwyw8addnqKr26EOluv0zD0sB03PTkKSi1k3qjZ0=;
+        b=OlNRmoBTXSFg7eKClJ9Z6JC6/vZIjK2fftVS0ip34O9STEVyHNQlMUwU3WOAD4IFb9
+         kHQBOGRnFcWCHwh6ghh5m+tZBg84PD+/CUXoqO4+0tyeVLiUbrjGuNe+Rgs56MBCdAJ5
+         EMFTIGrpx7vJ8ItApJYLKYmGeMsPreo6nf3dKQEGCrU5ostbxibMUjGTdDh/B+ipuj5N
+         8ikNY9Met61mvjZpYM+7kRNqp5p3rWc63fR94iV7v3hzAKS2fsrL3zzp1LuJO6iVKih1
+         CzvL1yxYjItId/3wRqqq7PMVyBIeB0I57WiU8tzG6pxaXTYaFd4EnneH50/EdAdK81VM
+         wNQg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/J5UsLvdZC0lglfKpzC+cAH7jtFDnknV55QqWTV2/4NY+R3msQCzny9CgWVA3bQKJhcmMEnciiQsvDVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqyEx0QTWVxfLNV+gb3Sbn3tMFPpKQmtryAm1ynL+i3eELnYV5
+	87aPeyUk6PqYhS21y9Slp/XjhEZUHViIb/cvrpUtcdzU/NApoiumzMPZiooHDr4V3FQJpt+i3mE
+	8xv8lk9QJwhmiBpLyShNYlBLD6tnbhno6PERcpqRFig==
+X-Gm-Gg: ASbGncsj17ZhKjLmgTOWShcXYYiszFtF7tPuJp6Dm4Yblyc45huvGinQbb6xmjRmZ+7
+	toVLNWZLTXKT/TTESX/JEK4guGf+ASAt6yAvgTMJiB2ATCFztnD7FFZROU86Lq3ihAmQgSrSuzX
+	BXNfmeM+i+OMoF/MugQrX4ACSlq6s4W7XtBsv4VMHQMOaD+0Wun875ZAOC27Us5yBQC4qyUmGh7
+	B2NPF7C
+X-Google-Smtp-Source: AGHT+IHq7z8MGrZL9eQUvunOFR10BiyWjOBDwC6IHPp2y0K4MhVzM8oV5A4a9S2mJl00/AReb6Fgx328t2eQplBjq1o=
+X-Received: by 2002:a05:690c:a4c1:20b0:71c:bf3:afb5 with SMTP id
+ 00721157ae682-71c0bf3b6b5mr61002717b3.17.1754908681687; Mon, 11 Aug 2025
+ 03:38:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] phy: qcom: qmp-combo: register a typec mux to
- change the QMPPHY_MODE
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
- <20250807-topic-4ln_dp_respin-v4-5-43272d6eca92@oss.qualcomm.com>
- <ibrupwvn5frzb4vo3eukb7p7pzonaxwhygshz743wmyrbprkcq@xcpt4ryzvwqr>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <ibrupwvn5frzb4vo3eukb7p7pzonaxwhygshz743wmyrbprkcq@xcpt4ryzvwqr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzNSBTYWx0ZWRfX/rr8ObzRbkTf
- mMXxzOuDiZDfeR+93ouC/diB9iMD9WVWDmv5vXr98gWtVB41pwfGBUqjQhdHbLPnu51aNx5b3A/
- 6k9ybMvRtc9rYHEtjGlrz9N1jTaN/5xyU818QAny9bwKeEQGEogdK9lVLPWFSCx3rtTMXjpaE8F
- p6GyXaPWbBfogYB7t/p8sDoxav1SeQF7cTorXEtxaSmJXZ6IRjMbdI+4pQawZKnYQUIjhFL4oaT
- nbzf2DvOunpimiI9biLx4aCOscDU8foP6qNVIfIxGBnRjW49TcpneTFVyGsUfWxVSSO5buH2k8E
- F9AG8fBflL2JM4J6cgaXJWxOWXWDrwBfzX/SJA/2A8zfIVAzgMJNOvGd6ASGG4sLUUD6S4LGvbf
- p610k7+Y
-X-Authority-Analysis: v=2.4 cv=FvMF/3rq c=1 sm=1 tr=0 ts=6899c7d0 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=ZHkuymcytaaAwfHE7G8A:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: TKgUc1o1lUEwbhm19Pf6KrWnHfSmBfum
-X-Proofpoint-ORIG-GUID: TKgUc1o1lUEwbhm19Pf6KrWnHfSmBfum
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
- clxscore=1015 impostorscore=0 spamscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090035
+References: <20250731121832.213671-1-jonathanh@nvidia.com>
+In-Reply-To: <20250731121832.213671-1-jonathanh@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 11 Aug 2025 12:37:25 +0200
+X-Gm-Features: Ac12FXwal9A2ewQ1W53HjXWlcznLW4YwFGVrs-kYpRR0tXOk-MhSRWh0vo7aZ1s
+Message-ID: <CAPDyKFr+uVDYBMvsN+L9XPToaD+Wr9P=SnnXyKB6ucqQ7se=7A@mail.gmail.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Ensure power-domains are in a known state
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/9/25 10:13 AM, Dmitry Baryshkov wrote:
-> On Thu, Aug 07, 2025 at 06:33:23PM +0200, Konrad Dybcio wrote:
->> From: Neil Armstrong <neil.armstrong@linaro.org>
->>
->> Register a typec mux in order to change the PHY mode on the Type-C
->> mux events depending on the mode and the svid when in Altmode setup.
->>
->> The DisplayPort phy should be left enabled if is still powered on
->> by the DRM DisplayPort controller, so bail out until the DisplayPort
->> PHY is not powered off.
->>
->> The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
->> will be set in between of USB-Only, Combo and DisplayPort Only so
->> this will leave enough time to the DRM DisplayPort controller to
->> turn of the DisplayPort PHY.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> [konrad: renaming, rewording, bug fixes]
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> ---
->>  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 118 ++++++++++++++++++++++++++++--
->>  1 file changed, 113 insertions(+), 5 deletions(-)
->>
->> +
->> +	if (qmp->qmpphy_mode != QMPPHY_MODE_USB3_ONLY && qmp->dp_powered_on) {
->> +		dev_dbg(qmp->dev, "typec_mux_set: DP PHY is still in use, delaying switch\n");
->> +		return 0;
->> +	}
-> 
-> I can't say that I'm fully happy about it, nevertheless:
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+On Thu, 31 Jul 2025 at 14:18, Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> After commit 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on
+> until late_initcall_sync") was applied, the Tegra210 Jetson TX1 board
+> failed to boot. Looking into this issue, before this commit was applied,
+> if any of the Tegra power-domains were in 'on' state when the kernel
+> booted, they were being turned off by the genpd core before any driver
+> had chance to request them. This was purely by luck and a consequence of
+> the power-domains being turned off earlier during boot. After this
+> commit was applied, any power-domains in the 'on' state are kept on for
+> longer during boot and therefore, may never transitioned to the off
+> state before they are requested/used. The hang on the Tegra210 Jetson
+> TX1 is caused because devices in some power-domains are accessed without
+> the power-domain being turned off and on, indicating that the
+> power-domain is not in a completely on state.
+>
+> From reviewing the Tegra PMC driver code, if a power-domain is in the
+> 'on' state there is no guarantee that all the necessary clocks
+> associated with the power-domain are on and even if they are they would
+> not have been requested via the clock framework and so could be turned
+> off later. Some power-domains also have a 'clamping' register that needs
+> to be configured as well. In short, if a power-domain is already 'on' it
+> is difficult to know if it has been configured correctly. Given that the
+> power-domains happened to be switched off during boot previously, to
+> ensure that they are in a good known state on boot, fix this by
+> switching off any power-domains that are on initially when registering
+> the power-domains with the genpd framework.
+>
+> Note that commit 05cfb988a4d0 ("soc/tegra: pmc: Initialise resets
+> associated with a power partition") updated the
+> tegra_powergate_of_get_resets() function to pass the 'off' to ensure
+> that the resets for the power-domain are in the correct state on boot.
+> However, now that we may power off a domain on boot, if it is on, it is
+> better to move this logic into the tegra_powergate_add() function so
+> that there is a single place where we are handling the initial state of
+> the power-domain.
+>
+> Fixes: a38045121bf4 ("soc/tegra: pmc: Add generic PM domain support")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-IIUC we'll be able to get rid of it after the dp rework?
+Thanks for looking into this!
 
-Konrad
+I have picked this up via my pmdomain tree and applied it as a fix
+with a stable tag. Please let me know if you prefer to take this via
+your soc tree instead.
+
+That said, I guess we have some use-cases on Tegra where it actually
+would make sense to allow powered-on PM-domains to stay on during
+boot. Although, at this point, it seems better to deal with those on a
+case by case basis, as improvements on top.
+
+Kind regards
+Uffe
+
+
+> ---
+> Please note the commit hash 13a4b7fb6260 is based upon the current hash
+> in -next. I have used the initial commit that added genpd support for
+> Tegra in the fixes-tag because this issue has really existed since this
+> was implemented.
+>
+>  drivers/soc/tegra/pmc.c | 51 +++++++++++++++++++++++------------------
+>  1 file changed, 29 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 2a5f24ee858c..034a2a535a1e 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -1232,7 +1232,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+>  }
+>
+>  static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
+> -                                        struct device_node *np, bool off)
+> +                                        struct device_node *np)
+>  {
+>         struct device *dev = pg->pmc->dev;
+>         int err;
+> @@ -1247,22 +1247,6 @@ static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
+>         err = reset_control_acquire(pg->reset);
+>         if (err < 0) {
+>                 pr_err("failed to acquire resets: %d\n", err);
+> -               goto out;
+> -       }
+> -
+> -       if (off) {
+> -               err = reset_control_assert(pg->reset);
+> -       } else {
+> -               err = reset_control_deassert(pg->reset);
+> -               if (err < 0)
+> -                       goto out;
+> -
+> -               reset_control_release(pg->reset);
+> -       }
+> -
+> -out:
+> -       if (err) {
+> -               reset_control_release(pg->reset);
+>                 reset_control_put(pg->reset);
+>         }
+>
+> @@ -1308,20 +1292,43 @@ static int tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+>                 goto set_available;
+>         }
+>
+> -       err = tegra_powergate_of_get_resets(pg, np, off);
+> +       err = tegra_powergate_of_get_resets(pg, np);
+>         if (err < 0) {
+>                 dev_err(dev, "failed to get resets for %pOFn: %d\n", np, err);
+>                 goto remove_clks;
+>         }
+>
+> -       if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS)) {
+> -               if (off)
+> -                       WARN_ON(tegra_powergate_power_up(pg, true));
+> +       /*
+> +        * If the power-domain is off, then ensure the resets are asserted.
+> +        * If the power-domain is on, then power down to ensure that when is
+> +        * it turned on the power-domain, clocks and resets are all in the
+> +        * expected state.
+> +        */
+> +       if (off) {
+> +               err = reset_control_assert(pg->reset);
+> +               if (err) {
+> +                       pr_err("failed to assert resets: %d\n", err);
+> +                       goto remove_resets;
+> +               }
+> +       } else {
+> +               err = tegra_powergate_power_down(pg);
+> +               if (err) {
+> +                       dev_err(dev, "failed to turn off PM domain %s: %d\n",
+> +                               pg->genpd.name, err);
+> +                       goto remove_resets;
+> +               }
+> +       }
+>
+> +       /*
+> +        * If PM_GENERIC_DOMAINS is not enabled, power-on
+> +        * the domain and skip the genpd registration.
+> +        */
+> +       if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS)) {
+> +               WARN_ON(tegra_powergate_power_up(pg, true));
+>                 goto remove_resets;
+>         }
+>
+> -       err = pm_genpd_init(&pg->genpd, NULL, off);
+> +       err = pm_genpd_init(&pg->genpd, NULL, true);
+>         if (err < 0) {
+>                 dev_err(dev, "failed to initialise PM domain %pOFn: %d\n", np,
+>                        err);
+> --
+> 2.43.0
+>
 
