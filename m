@@ -1,205 +1,337 @@
-Return-Path: <linux-kernel+bounces-762580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A20EB208AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CE0B208AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EA552A12BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1FF426A75
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3A12D3A63;
-	Mon, 11 Aug 2025 12:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FA925D558;
+	Mon, 11 Aug 2025 12:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Gpl0cloj"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="V/MIdt+u"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EB120297C;
-	Mon, 11 Aug 2025 12:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754914899; cv=none; b=N7yIdtto8H7RttXuXZZG91RZQaPIHvmReq+0B5ywaIb1yw2c1vIEn45aSwWzQyeai2UXUQsxxGyJj16pPR5C+LEAmoikS25D5bIZCqNcjErSRx82Ei3G45NcoVNAYktPqMgjuVdHFQ9ys2JFqUx6cwl6bllG6KQ08mKTrEX4/Jk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754914899; c=relaxed/simple;
-	bh=Ql1JCgnCHCe7QLdED93B26Cg21+RnnwnTV77huzWi0s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qs5yb3LZ9T9r1boC0kmChmGGQgCnOnAYtFC4/872CQZE4MAiL3vP3sNNWHqVosQzV6q5oXKWultRfdNEUgN7ZmidAmoFvz0LQcOyhw8gkRDkdDaiCYKukmP06UCTnEq5bvtXODAzHrLAdWZxiDy44bmwhhGNNYXipg67V3XSw9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Gpl0cloj; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1754914898; x=1786450898;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Ql1JCgnCHCe7QLdED93B26Cg21+RnnwnTV77huzWi0s=;
-  b=Gpl0clojgNadKcllAmuS5qeyr7U61wJHDZdoNrUpvQXfyYR/YcdiLIZZ
-   T/jJBrCdcFKKzgbl3tGf/K1pgZlnW+Wc2VVlRfjOgsTxTC0nXKo4JeT24
-   w6mnq55pqVRBeHTtrE7glPy239HLTPGbZokXHQdr1TeRPb5L4wjt9cgTH
-   BItjbrQ7jbkciy1t/uzQKgEoxZuQhBrpLN2wBn/Wz+MJZCOtQh+n47bpU
-   ELZLDE0f7x2RiAzlNQpwJj/qDLJv2+YdqJX7tCm/sRGy3Sbr1qWmGjXa7
-   kvztThpDlB8CDVKa6CkdGzraZDppxs/7+5hxV7+cCLmBt84aUAVnNWAhV
-   w==;
-X-CSE-ConnectionGUID: wyxru+5XTMK+lbiHaXZ4+w==
-X-CSE-MsgGUID: 5Wwrm8/ITrONPZG1z6ylXA==
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="45644208"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Aug 2025 05:21:28 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 11 Aug 2025 05:20:58 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Mon, 11 Aug 2025 05:20:53 -0700
-Date: Mon, 11 Aug 2025 12:20:53 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Robert Marko <robert.marko@sartura.hr>
-CC: Nicolas Ferre <nicolas.ferre@microchip.com>, Arnd Bergmann
-	<arnd@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	"Russell King" <linux@armlinux.org.uk>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Olivia Mackall <olivia@selenic.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
-	Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Lee Jones
-	<lee@kernel.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>,
-	<luka.perkov@sartura.hr>, Conor Dooley <Conor.Dooley@microchip.com>, "Lars
- Povlsen - M31675" <Lars.Povlsen@microchip.com>
-Subject: Re: [PATCH v8 01/10] arm64: Add config for Microchip SoC platforms
-Message-ID: <20250811122053.4bfyoefln7wpz2a4@DEN-DL-M70577>
-References: <20250702183856.1727275-1-robert.marko@sartura.hr>
- <20250702183856.1727275-2-robert.marko@sartura.hr>
- <ea353170-6e03-4231-afc2-3dc45253931d@app.fastmail.com>
- <CA+HBbNHxiU5+xVJTyPQFuCJLyEs5_MpybSBEgxi25bzaGfiVHA@mail.gmail.com>
- <421d61db-27eb-4ad2-bd98-eb187fd14b1e@microchip.com>
- <CA+HBbNEiKWS71jtF_jqV9bdX9HVroaZSGMaeD-xFM8sm0kLtCw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06452D3A89
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 12:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754914903; cv=pass; b=iZQ6jHD1Z9vLzt2Ljq0T/bNuuMN690ZK1RK5uKDeeUC9RuYXNc/cWjZuXvLypxBxQfn/Qe+lIv30MdfhPFM/0btYuK3IORIHRXfTViWIV/Myzcr4KlahpaFfhVE33LCD4cLQxNflC4+3V/91Tg3hFpnxpa47xqh5e844Y9Tw/sU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754914903; c=relaxed/simple;
+	bh=HqYz4WB1PuiISgEnI9FtvDpbr7XgEg0vrzvYkMdxDjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/UeHbwehPt/5DnIhDsH7wDwJzTweVcsrDiMA07i+g+4UkHBsl3gwKjGHbTAQ2aiYG3a5E1bWvdiUd/cY16xBxVIkq4I11M4MpVcxguFfY5kGP6JGQb3d9BGlZi5SbABrvAlTqELVr5WVSImeAGpAtANhBNL4VF0/GQ0Tr9XzxQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=V/MIdt+u; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754914886; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=c3nDaH7pjPL8FETLyZ432f8sZtj8VuNSjNtlF17IYaTv/gdygzF88RCM/MejX7mcNZ9mVdMBbzaO9Tj3ynezhBlaLlUEj0/iXKjO+4UwD4SSuNQ3m23ZwrTuAr33bmiHP3SF3GqxI3+TEdFgxz0/Dshx/r/YHYY/96kYHid4mmk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754914886; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6YPyznItPeL8QP2QJ0jPFy87s095al91cloDpCuZVPM=; 
+	b=WhGBdx/C8V/PpPgCEeko5UxOdG+0MBg2tKbbtA45pj6r3t0QTCHHW+h/nVD6NT+rgVV35hyvq6MV5Dyzi+k0D8i6T6R+gxcL0Jb/p5bqRc2/lp7GERyEDtumsxXZ74OfC4noQ+fHJLzl/pysEjigoDndCM6FuyypTeagVzk+Eak=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754914886;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=6YPyznItPeL8QP2QJ0jPFy87s095al91cloDpCuZVPM=;
+	b=V/MIdt+uYUo2qbC8K4DQALC4JMnBOfRnZZDcvgBPJaLUPSelekraMPbHFkrNrG0/
+	WMtbKMu9ZmOrl6TpzCMI9+bT+Wwca7eZBkKXQmMsthBhDpEIroZuuS5/lWr+xEJG1gR
+	ta1rbis/Mz9lDGYcN3EG8O+BIk9T9xnXggCL8l4s=
+Received: by mx.zohomail.com with SMTPS id 1754914884915123.2055238353555;
+	Mon, 11 Aug 2025 05:21:24 -0700 (PDT)
+Date: Mon, 11 Aug 2025 13:21:20 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Lukas Zapolskas <lukas.zapolskas@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/7] drm/panthor: Add DEV_QUERY.PERF_INFO handling for
+ Gx10
+Message-ID: <bpfe3i2ffk3jcezkhdsbf2jlencdeevkqbtzi36wxgsg5jhiky@czttx7r2i7wh>
+References: <cover.1753449448.git.lukas.zapolskas@arm.com>
+ <8925f2211994f1a4b34f0ba8c61bd0ae2af7d397.1753449448.git.lukas.zapolskas@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+HBbNEiKWS71jtF_jqV9bdX9HVroaZSGMaeD-xFM8sm0kLtCw@mail.gmail.com>
+In-Reply-To: <8925f2211994f1a4b34f0ba8c61bd0ae2af7d397.1753449448.git.lukas.zapolskas@arm.com>
 
-On Fri, Jul 04, 2025 at 07:36:06PM +0200, Robert Marko wrote:
-> 
-> On Thu, Jul 3, 2025 at 3:56 PM Nicolas Ferre
-> <nicolas.ferre@microchip.com> wrote:
-> >
-> > Robert, Arnd,
-> >
-> > On 03/07/2025 at 14:25, Robert Marko wrote:
-> > > On Wed, Jul 2, 2025 at 9:57 PM Arnd Bergmann <arnd@kernel.org> wrote:
-> > >>
-> > >> On Wed, Jul 2, 2025, at 20:35, Robert Marko wrote:
-> > >>> Currently, Microchip SparX-5 SoC is supported and it has its own symbol.
-> > >>>
-> > >>> However, this means that new Microchip platforms that share drivers need
-> > >>> to constantly keep updating depends on various drivers.
-> > >>>
-> > >>> So, to try and reduce this lets add ARCH_MICROCHIP symbol that drivers
-> > >>> could instead depend on.
-> > >>
-> > >> Thanks for updating the series to my suggestion!
-> > >>
-> > >>> @@ -174,6 +160,27 @@ config ARCH_MESON
-> > >>>          This enables support for the arm64 based Amlogic SoCs
-> > >>>          such as the s905, S905X/D, S912, A113X/D or S905X/D2
-> > >>>
-> > >>> +menuconfig ARCH_MICROCHIP
-> > >>> +     bool "Microchip SoC support"
-> > >>> +
-> > >>> +if ARCH_MICROCHIP
-> > >>> +
-> > >>> +config ARCH_SPARX5
-> > >>> +     bool "Microchip Sparx5 SoC family"
-> > >>
-> > >> This part is the one bit I'm not sure about: The user-visible
-> > >> arm64 CONFIG_ARCH_* symbols are usually a little higher-level,
-> > >> so I don't think we want both ARCH_MICROCHIP /and/ ARCH_SPARX5
-> > >> here, or more generally speaking any of the nested ARCH_*
-> > >> symbols.
-> >
-> > Well, having a look at arch/arm64/Kconfig.platforms, I like how NXP is
-> > organized.
-> >
-> > SPARX5, LAN969x or other MPU platforms, even if they share some common
-> > IPs, are fairly different in terms of internal architecture or feature set.
-> > So, to me, different ARCH_SPARX5, ARCH_LAN969X (as Robert proposed) or
-> > future ones make a lot sense.
-> > It will help in selecting not only different device drivers but
-> > different PM architectures, cores or TrustZone implementation...
-> >
-> > >> This version of your patch is going to be slightly annoying
-> > >> to existing sparx5 users because updating an old .config
-> > >> breaks when ARCH_MICROCHIP is not enabled.
-> >
-> > Oh, yeah, indeed. Even if I find Robert's proposal ideal.
-> >
-> > Alexandre, Lars, can you evaluate this level of annoyance?
-> >
-> > >> The two options that I would prefer here are
-> > >>
-> > >> a) make ARCH_SPARX5 a hidden symbol in order to keep the
-> > >>     series bisectable, remove it entirely once all references
-> > >>     are moved over to ARCH_MICROCHIP
-> > >>
-> > >> b) Make ARCH_MICROCHIP a hidden symbol that is selected by
-> > >>     ARCH_SPARX5 but keep the menu unchanged.
-> > >
-> > > Hi Arnd,
-> > > Ok, I see the issue, and I would prefer to go with option b and do
-> > > what I did for
-> > > AT91 with the hidden ARCH_MICROCHIP symbol to avoid breaking current configs.
-> >
-> > Yep, but at the cost of multiple entries for Microchip arm64 SoCs at the
-> > "Platform selection" menu level. Nuvoton or Cavium have this already, so
-> > it's probably fine.
-> 
-> Yes, this is why I went with a menu instead, to me it is much cleaner.
-> 
-> So, how would you guys want me to proceed?
-> 
-> a) Keep the menu-based config symbol
-> or
-> b) Like for AT91, add a hidden symbol and keep the individual SoC-s in
-> the top level
-> platform menu?
-> 
-> Regards,
-> Robert
+Hi Lukas,
 
-Hi Robert,
+On 25.07.2025 15:57, Lukas Zapolskas wrote:
+> This change adds the IOCTL to query data about the performance counter
+> setup. Some of this data was available via previous DEV_QUERY calls,
+> for instance for GPU info, but exposing it via PERF_INFO
+> minimizes the overhead of creating a single session to just the one
+> aggregate IOCTL.
+>
+> Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
+> Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/Makefile         |  1 +
+>  drivers/gpu/drm/panthor/panthor_device.c |  7 +++
+>  drivers/gpu/drm/panthor/panthor_device.h |  3 +
+>  drivers/gpu/drm/panthor/panthor_drv.c    | 10 ++-
+>  drivers/gpu/drm/panthor/panthor_fw.h     |  3 +
+>  drivers/gpu/drm/panthor/panthor_perf.c   | 77 ++++++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_perf.h   | 15 +++++
+>  drivers/gpu/drm/panthor/panthor_regs.h   |  1 +
+>  8 files changed, 116 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_perf.c
+>  create mode 100644 drivers/gpu/drm/panthor/panthor_perf.h
+>
+> diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
+> index 15294719b09c..0df9947f3575 100644
+> --- a/drivers/gpu/drm/panthor/Makefile
+> +++ b/drivers/gpu/drm/panthor/Makefile
+> @@ -9,6 +9,7 @@ panthor-y := \
+>  	panthor_gpu.o \
+>  	panthor_heap.o \
+>  	panthor_mmu.o \
+> +	panthor_perf.o \
+>  	panthor_sched.o
+>
+>  obj-$(CONFIG_DRM_PANTHOR) += panthor.o
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> index f0b2da5b2b96..15ab329722cc 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.c
+> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> @@ -19,6 +19,7 @@
+>  #include "panthor_fw.h"
+>  #include "panthor_gpu.h"
+>  #include "panthor_mmu.h"
+> +#include "panthor_perf.h"
+>  #include "panthor_regs.h"
+>  #include "panthor_sched.h"
+>
+> @@ -264,6 +265,10 @@ int panthor_device_init(struct panthor_device *ptdev)
+>  	if (ret)
+>  		goto err_unplug_fw;
+>
+> +	ret = panthor_perf_init(ptdev);
+> +	if (ret)
+> +		goto err_unplug_sched;
+> +
+>  	/* ~3 frames */
+>  	pm_runtime_set_autosuspend_delay(ptdev->base.dev, 50);
+>  	pm_runtime_use_autosuspend(ptdev->base.dev);
+> @@ -277,6 +282,8 @@ int panthor_device_init(struct panthor_device *ptdev)
+>
+>  err_disable_autosuspend:
+>  	pm_runtime_dont_use_autosuspend(ptdev->base.dev);
+> +
+> +err_unplug_sched:
+>  	panthor_sched_unplug(ptdev);
+>
+>  err_unplug_fw:
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index 4fc7cf2aeed5..720d39b9e783 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -120,6 +120,9 @@ struct panthor_device {
+>  	/** @csif_info: Command stream interface information. */
+>  	struct drm_panthor_csif_info csif_info;
+>
+> +	/** @perf_info: Performance counter interface information. */
+> +	struct drm_panthor_perf_info perf_info;
+> +
+>  	/** @gpu: GPU management data. */
+>  	struct panthor_gpu *gpu;
+>
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index 9256806eb662..8b1e3e38b12e 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -175,7 +175,8 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+> -		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs))
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_perf_info, shader_blocks))
+>
+>  /**
+>   * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
+> @@ -835,6 +836,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  			args->size = sizeof(priorities_info);
+>  			return 0;
+>
+> +		case DRM_PANTHOR_DEV_QUERY_PERF_INFO:
+> +			args->size = sizeof(ptdev->perf_info);
+> +			return 0;
+> +
+>  		default:
+>  			return -EINVAL;
+>  		}
+> @@ -859,6 +864,9 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  		panthor_query_group_priorities_info(file, &priorities_info);
+>  		return PANTHOR_UOBJ_SET(args->pointer, args->size, priorities_info);
+>
+> +	case DRM_PANTHOR_DEV_QUERY_PERF_INFO:
+> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->perf_info);
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
+> index 6598d96c6d2a..8bcb933fa790 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.h
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.h
+> @@ -197,8 +197,11 @@ struct panthor_fw_global_control_iface {
+>  	u32 output_va;
+>  	u32 group_num;
+>  	u32 group_stride;
+> +#define GLB_PERFCNT_FW_SIZE(x) ((((x) >> 16) << 8))
+>  	u32 perfcnt_size;
+>  	u32 instr_features;
+> +#define PERFCNT_FEATURES_MD_SIZE(x) (((x) & GENMASK(3, 0)) << 8)
+> +	u32 perfcnt_features;
+>  };
+>
+>  struct panthor_fw_global_input_iface {
+> diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
+> new file mode 100644
+> index 000000000000..e58a62ad7988
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panthor/panthor_perf.c
+> @@ -0,0 +1,77 @@
+> +// SPDX-License-Identifier: GPL-2.0 or MIT
+> +/* Copyright 2023 Collabora Ltd */
+> +/* Copyright 2025 Arm ltd. */
+> +
+> +#include <linux/bitops.h>
+> +#include <drm/panthor_drm.h>
+> +
+> +#include "panthor_device.h"
+> +#include "panthor_fw.h"
+> +#include "panthor_perf.h"
+> +#include "panthor_regs.h"
+> +
+> +struct panthor_perf_counter_block {
+> +	struct drm_panthor_perf_block_header header;
+> +	u64 counters[];
+> +};
+> +
+> +static size_t get_annotated_block_size(size_t counters_per_block)
+> +{
+> +	return struct_size_t(struct panthor_perf_counter_block, counters, counters_per_block);
+> +}
+> +
+> +static size_t session_get_user_sample_size(const struct drm_panthor_perf_info *const info)
+> +{
+> +	const size_t block_size = get_annotated_block_size(info->counters_per_block);
+> +	const size_t block_nr = info->cshw_blocks + info->fw_blocks +
+> +		info->tiler_blocks + info->memsys_blocks + info->shader_blocks;
+> +
+> +	return info->sample_header_size + (block_size * block_nr);
+> +}
+> +
+> +/**
+> + * PANTHOR_PERF_COUNTERS_PER_BLOCK - On CSF architectures pre-11.x, the number of counters
+> + * per block was hardcoded to be 64. Arch 11.0 onwards supports the PRFCNT_FEATURES GPU register,
+> + * which indicates the same information.
+> + */
+> +#define PANTHOR_PERF_COUNTERS_PER_BLOCK (64)
+> +
+> +static void panthor_perf_info_init(struct panthor_device *const ptdev)
+> +{
+> +	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+> +	struct drm_panthor_perf_info *const perf_info = &ptdev->perf_info;
+> +
+> +	if (PERFCNT_FEATURES_MD_SIZE(glb_iface->control->perfcnt_features))
+> +		perf_info->flags |= DRM_PANTHOR_PERF_BLOCK_STATES_SUPPORT;
+> +
+> +	perf_info->counters_per_block = PANTHOR_PERF_COUNTERS_PER_BLOCK;
 
-Sorry for the late reply.
+I might've mentioned this in a previous review, but maybe we could add PRFCNT_FEATURES register
+access in this commit, and both ways of retrieving the number of counters per block depending
+in the CSF firmware version?
 
-I appreciate the effort to make the addition of future symbols easier by using
-a common ARCH_MICROCHIP symbol — that makes sense to me.
+Other than that:
 
-Regarding the actual symbols, I’m certainly no expert, but I agree with
-Nicolas, that having more granular control with separate ARCH_SPARX5 and
-ARCH_LAN969X could make sense, as opposed to only having ARCH_MICROCHIP, as
-Arnd mentioned.
+Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
-As for the goal of using a common symbol for drivers to depend on,  while not
-breaking existing configs (are there any unwritten rules or practices about
-breaking existing configs?), I think option B will work fine. I dont mind the
-symbols being top-level.
-
-/Daniel
-
-
+> +
+> +	perf_info->sample_header_size = sizeof(struct drm_panthor_perf_sample_header);
+> +	perf_info->block_header_size = sizeof(struct drm_panthor_perf_block_header);
+> +
+> +	if (GLB_PERFCNT_FW_SIZE(glb_iface->control->perfcnt_size))
+> +		perf_info->fw_blocks = 1;
+> +
+> +	perf_info->cshw_blocks = 1;
+> +	perf_info->tiler_blocks = 1;
+> +	perf_info->memsys_blocks = GPU_MEM_FEATURES_L2_SLICES(ptdev->gpu_info.mem_features);
+> +	perf_info->shader_blocks = hweight64(ptdev->gpu_info.shader_present);
+> +
+> +	perf_info->sample_size = session_get_user_sample_size(perf_info);
+> +}
+> +
+> +/**
+> + * panthor_perf_init - Initialize the performance counter subsystem.
+> + * @ptdev: Panthor device
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int panthor_perf_init(struct panthor_device *ptdev)
+> +{
+> +	if (!ptdev)
+> +		return -EINVAL;
+> +
+> +	panthor_perf_info_init(ptdev);
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
+> new file mode 100644
+> index 000000000000..3c32c24c164c
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panthor/panthor_perf.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 or MIT */
+> +/* Copyright 2025 Collabora Ltd */
+> +/* Copyright 2025 Arm ltd. */
+> +
+> +#ifndef __PANTHOR_PERF_H__
+> +#define __PANTHOR_PERF_H__
+> +
+> +#include <linux/types.h>
+> +
+> +struct panthor_device;
+> +
+> +int panthor_perf_init(struct panthor_device *ptdev);
+> +
+> +#endif /* __PANTHOR_PERF_H__ */
+> +
+> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
+> index 48bbfd40138c..d613ce723981 100644
+> --- a/drivers/gpu/drm/panthor/panthor_regs.h
+> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
+> @@ -27,6 +27,7 @@
+>  #define GPU_TILER_FEATURES				0xC
+>  #define GPU_MEM_FEATURES				0x10
+>  #define   GROUPS_L2_COHERENT				BIT(0)
+> +#define   GPU_MEM_FEATURES_L2_SLICES(x)			((((x) & GENMASK(11, 8)) >> 8) + 1)
+>
+>  #define GPU_MMU_FEATURES				0x14
+>  #define  GPU_MMU_FEATURES_VA_BITS(x)			((x) & GENMASK(7, 0))
+> --
+> 2.33.0.dirty
 
