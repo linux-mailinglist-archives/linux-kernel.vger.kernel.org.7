@@ -1,126 +1,178 @@
-Return-Path: <linux-kernel+bounces-762446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0E3B206D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:05:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D878B206F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACFCF7B6726
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:58:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFABB7B68BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B3027605A;
-	Mon, 11 Aug 2025 10:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE433239085;
+	Mon, 11 Aug 2025 10:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3MtQ2wBk"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fyfqeBAd"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A0F274FD9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF62289350
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754909912; cv=none; b=pGINX7KQsWSe5yUhc5Wo7FjyYN7j+mzUHi5uuflUCDzuBoslBvkiibPOa8valqTCd/ZjbfuFc4MZtCSejjPzkV7+Hgn5nvBu6Gtnf4KcBQQXsdmrH9Joiw42PpTHyz6Zza1U5+hxSgqPJpg1kVt5wn4y+u0gaLAUyt2ImzkQ0xs=
+	t=1754909924; cv=none; b=brngHegeYI7QG6wHZKmhaF2Fdsv6Od1f4SkMdBcaZg4uZR1xJofuIQ8JLcU0/gXPkrbbloSHri0aX0DFqfMSXgHsA/Vrf5Vmf9jL4tBPTzZMdFW2onxKNoiKr6DerRPssSWqEH1VP0xcumugMm8VEDxdqJUexItxBue4p6fGitw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754909912; c=relaxed/simple;
-	bh=TOxT2K8UzAbuHX//OTejCpfdS4ER15Cjb0TOQpxNcJk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UsajDRb6Dtfa/6/WF+8nLdqiiy+LzMBoEMR/lRo0P7RJCQTWt4e7j/7/OdZel5OEwXrXYSinUGQPw42mn8vAuedh8OwVk99XU69lexI1EPGpATcoP8/hTtu/MaDTsSvyFBVJsLwESjIbN8QTO/PPuE4WNRoT1llD8G4+GrZjlSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3MtQ2wBk; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-459edc72b65so36886325e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:58:30 -0700 (PDT)
+	s=arc-20240116; t=1754909924; c=relaxed/simple;
+	bh=fK4jfWxAxG8hhrtguRsi7TtKPjAL7Pn0DSb61hYO1/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F+c9D8LQNPeu1IcnP0uR/vBY8dJ09X/v5+JVbi9mc+nnTSTTpLkxn2Amn35vw5S5tYOI4QuJg0kTsQpdvJUBr94x7eQ+lKc54E5X/WTKXes8HTNzibThlu21vkbK/NFTgi4DQ9o0nCiU0PGfIxv+W9k8HYX+gd+m0V1vL7pg8Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fyfqeBAd; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-459ddf8acf1so35316005e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:58:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754909909; x=1755514709; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6VBe2G11vJFi6UMiG8m5vVj3u8k4cJ5Bq1V5ylB2VXQ=;
-        b=3MtQ2wBksb1lMRjHRPwZQ6G9jnuyzPmCMHYI/9n33KJ9ls1EAltDbX8KRbGWB+EvDI
-         V9/OdBUNL4kZDh7I5yJo3DkvU//PVyjySbXSWzkbODbLWc7VF+VV58umQkYrRtJrVj5q
-         Zp+5aCnlFGQIhnVqXrgK73l0rwtSuo1Fe1w6LSc6fdD/qe6akNbKgh4GEL6/3yPaTsXz
-         zXAolUDuSxi0HKNDDi4qKjaqkawoO5onSaI2m5p2kBHctmXlJolBXM8ArERg4jaPWs3h
-         04gEMQT+UaExqHoEVe9T/OIdM5OmTn3ZEBuXy2kWfgu7wnldLqRTySLc7dYwsOGyW1gu
-         tYww==
+        d=suse.com; s=google; t=1754909921; x=1755514721; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2eDfsoEqJXD8CkPjgI5wPgXdl/c/jHhszq1yFHNlj5s=;
+        b=fyfqeBAdLauFQlbJ5kIubn3oekJOKh17SaO+8Gyc7rdnhzE94ts9jzCnxmT8dhWmyK
+         d+pmOLv4nAWXBiVZEUDPudcHVWhYfSxa+xXCbDJUkaTkhoA9CLtyJ4dA7JVPzfdXvjYg
+         gLVuLIYBYXWUlZoknVTMq3uCLlxiQUJMBAwIxCAlpEJukSMgRg+m2sFaRvXF8K8To75K
+         ZrlrlSJRXkIME54dny/jdnGbDwFhqQhM1TeULiRDI2+YII4nYeIdJC74dR14gKEAz3UV
+         PHLhfrksSnDD57zMZSF/zJsievt3ThOZH6IbqXncG+VLMfpdUDnDkLLwAapWZCG3M6sx
+         WtsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754909909; x=1755514709;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6VBe2G11vJFi6UMiG8m5vVj3u8k4cJ5Bq1V5ylB2VXQ=;
-        b=dWyEGw/C9z0cZ6D7EIFbGt1H3I/VU3UwXCWnTjJgV2RZHZ/GZlYtSJVlziqaernvNL
-         dqPeCjp6TPr6GU25MBw+K5X9M8im656YLgfCbILR8rPsNKGMu8NErxwmxmRji24bHvCW
-         VqNBZm9F2LHAmyj7puWPXrihDA3h2bvV7WhfmpVuRReJGObpilq4iW1UJuoHj5to1K6/
-         88yt3TYvRf1jhTqxnYb6w6c1F5RV9WVV6zFQ3fvbWW9ls2wNI4fAAxA8dsiPSCMQOblr
-         mCy1mo9zvVdUhYag+IJXdsh9D/RgRuPunnZsEg7wE8AdHcRw2N8/4Ulf5iOpPyOhlji2
-         hNmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNHOCn1sJcPJAJCYU4Fol5e45RqhdUSpdiVD9Va2batQ4SaxuhzowP0+97VYoO1WHtCMJ/5wQmFi18uYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgw7JZChrrwyfbOr5/4SUD5uEt7iTQD2v+aygyQv9zfvDCRbFa
-	wV6ohZIJpj3u68M0dFRZpmy4BzKzbOZlZ0ttAgtko3AShyYcHhqZ8rdgEa2dwRmetdunlQLtaiY
-	s9uWgtamCE7sGVTXYXw==
-X-Google-Smtp-Source: AGHT+IG8sKzGdKyWVo6N+Tazm1JzwCygSw4ih7pHvSmuGIdELFLS7ZBU3K2iJtSgj1DIhq+h6UpYCJqpemM7GTw=
-X-Received: from wmbhj11.prod.google.com ([2002:a05:600c:528b:b0:458:b662:fbc4])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:310d:b0:456:a1b:e906 with SMTP id 5b1f17b1804b1-459f4fc2d8emr103138305e9.33.1754909908982;
- Mon, 11 Aug 2025 03:58:28 -0700 (PDT)
-Date: Mon, 11 Aug 2025 10:58:28 +0000
-In-Reply-To: <20250810-topics-tyr-request_irq2-v8-3-8163f4c4c3a6@collabora.com>
+        d=1e100.net; s=20230601; t=1754909921; x=1755514721;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2eDfsoEqJXD8CkPjgI5wPgXdl/c/jHhszq1yFHNlj5s=;
+        b=FVh8H9fMKTZ1akrUryUpCzyexvYLQhEYfrIEzzCOGi8uIojuAF7EBlqQBqCpKCp++u
+         yKu6uA+vqfoT4L2k6pRqITbNTUn2DMveLUzaGR0E1Y1SaNuR7J5NuQ/Hb5BCY3vFNhD3
+         bIRs2U5eEit1ABlmX7jIFG4Vf1M5A9Q/SkVxCycGDFQUUAGmjLQL4ZAREU9zfeOSJr04
+         2Xrw02+GZ2Z4SB6qAZAW/tV5N6rVzUH8vLtu0m31QUN4h5iCaJq0A13rnDn1GMO1FXAp
+         /0hdL7g8S4a5/p2od27Uf2+YrzNuj5JacBUqOL4e4TwNxPgNNCQrmoH3KBF5Nh0SI+0T
+         qVbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVp4DySKkRx5ddyZ0BxPBkxk4yAzxKKWQRKodHkbw1CFkpWz0aSW0ExNQaGkv7vMPZWstd2t6goB5+w670=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZIjgga8/jOPl7WsdcIa1xIj4FIbKpnjjZgUJIdepgIBkDTTxI
+	5kRBpPtRfPsapkfCnxCfhoHJkmtcynA5z+sHijNDbSjz4yEyYvvoX0BUCtRPx28VUm0=
+X-Gm-Gg: ASbGncvr3dsI1g0a2FboKnk2293+KbQTGCsPpihyQIErfRtGyYxc5xBWsbNRGSeZOmC
+	pWVP1XYoF8e6LMZYq89RppXRTVWsdBlh0KumRI3MCwGJwTHmj0NB5xCvMRoxxscou33RQKCG7Y2
+	6Qc0bZhucKDDKknV9QZthRYVlpv+Z9V1sBFMs+SCn+76Wdgjl9H9R6fp0M3o4P34GzGnGQ4+CtB
+	xj33qgmnFg+wuc79vMRksiuzHMpXHvY65dDA/QmM5qxTnGFD/F1etKZs7qoONajgu6A1v6xSrMm
+	ZoG1zt4forb/OkPiGFLCYsFhkIuVf+4D2PxuINomvythD0Sx6Ne2GatAbGk5cUe1oglt+R1w2+f
+	xG5uF9XfrUpanXF53Zli7lagk2s/65kaA
+X-Google-Smtp-Source: AGHT+IFbmWJMYJQaNs4CcNQms0cyi9FBgsOYAQyUhMd4iBen9JAGKCb/WkfFa3wB/d3Zu4x8mcv7UA==
+X-Received: by 2002:a05:600c:5254:b0:456:13d8:d141 with SMTP id 5b1f17b1804b1-459f4f282damr96805005e9.27.1754909920821;
+        Mon, 11 Aug 2025 03:58:40 -0700 (PDT)
+Received: from localhost (109-81-30-31.rct.o2.cz. [109.81.30.31])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c48105csm40496846f8f.64.2025.08.11.03.58.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 03:58:40 -0700 (PDT)
+Date: Mon, 11 Aug 2025 12:58:39 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	David Hildenbrand <david@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
+	wangfushuai <wangfushuai@baidu.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
+ address process dependency issues
+Message-ID: <aJnM32xKq0FOWBzw@tiehlicka>
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <aJSpTpB9_jijiO6m@tiehlicka>
+ <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
+ <aJWglTo1xpXXEqEM@tiehlicka>
+ <ba9c23c4-cd95-4dba-9359-61565195d7be@kylinos.cn>
+ <aJW8NLPxGOOkyCfB@tiehlicka>
+ <09df0911-9421-40af-8296-de1383be1c58@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250810-topics-tyr-request_irq2-v8-0-8163f4c4c3a6@collabora.com> <20250810-topics-tyr-request_irq2-v8-3-8163f4c4c3a6@collabora.com>
-Message-ID: <aJnM1LgUYjTloVwV@google.com>
-Subject: Re: [PATCH v8 3/6] rust: irq: add support for non-threaded IRQs and handlers
-From: Alice Ryhl <aliceryhl@google.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
-	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Dirk Behme <dirk.behme@de.bosch.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <09df0911-9421-40af-8296-de1383be1c58@kylinos.cn>
 
-On Sun, Aug 10, 2025 at 09:32:16PM -0300, Daniel Almeida wrote:
-> This patch adds support for non-threaded IRQs and handlers through
-> irq::Registration and the irq::Handler trait.
+On Mon 11-08-25 17:13:43, Zihuan Zhang wrote:
 > 
-> Registering an irq is dependent upon having a IrqRequest that was
-> previously allocated by a given device. This will be introduced in
-> subsequent patches.
+> 在 2025/8/8 16:58, Michal Hocko 写道:
+[...]
+> > Also the interface seems to be really coarse grained and it can easily
+> > turn out insufficient for other usecases while it is not entirely clear
+> > to me how this could be extended for those.
+>  We recognize that the current interface is relatively coarse-grained and
+> may not be sufficient for all scenarios. The present implementation is a
+> basic version.
 > 
-> Tested-by: Joel Fernandes <joelagnelf@nvidia.com>
-> Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Our plan is to introduce a classification-based mechanism that assigns
+> different freeze priorities according to process categories. For example,
+> filesystem and graphics-related processes will be given higher default
+> freeze priority, as they are critical in the freezing workflow. This
+> classification approach helps target important processes more precisely.
+> 
+> However, this requires further testing and refinement before full
+> deployment. We believe this incremental, category-based design will make the
+> mechanism more effective and adaptable over time while keeping it
+> manageable.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Unless there is a clear path for a more extendable interface then
+introducing this one is a no-go. We do not want to grow different ways
+to establish freezing policies.
 
-> diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
-> index d6306415f561f94a05b1c059eaa937b0b585471d..f7d89a46ad1894dda5a0a0f53683ff97f2359a4e 100644
-> --- a/rust/kernel/irq.rs
-> +++ b/rust/kernel/irq.rs
-> @@ -13,5 +13,11 @@
->  /// Flags to be used when registering IRQ handlers.
->  pub mod flags;
->  
-> +/// IRQ allocation and handling.
-> +pub mod request;
+But much more fundamentally. So far I haven't really seen any argument
+why different priorities help with the underlying problem other than the
+timing might be slightly different if you change the order of freezing.
+This to me sounds like the proposed scheme mostly works around the
+problem you are seeing and as such is not a really good candidate to be
+merged as a long term solution. Not to mention with a user API that
+needs to be maintained for ever.
 
-Same comment here about removing `pub` from `mod request`.
+So NAK from me on the interface.
 
->  #[doc(inline)]
->  pub use flags::Flags;
-> +
-> +#[doc(inline)]
-> +pub use request::{Handler, IrqRequest, IrqReturn, Registration};
+> > I believe it would be more useful to find sources of those freezer
+> > blockers and try to address those. Making more blocked tasks
+> > __set_task_frozen compatible sounds like a general improvement in
+> > itself.
+> 
+> we have already identified some causes of D-state tasks, many of which are
+> related to the filesystem. On some systems, certain processes frequently
+> execute ext4_sync_file, and under contention this can lead to D-state tasks.
 
-With `pub` removed above, you don't need doc(inline) here.
+Please work with maintainers of those subsystems to find proper
+solutions.
 
-Alice
+-- 
+Michal Hocko
+SUSE Labs
 
