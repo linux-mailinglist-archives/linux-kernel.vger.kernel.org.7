@@ -1,121 +1,217 @@
-Return-Path: <linux-kernel+bounces-763493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7089B2154D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CD9B215D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 21:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8724E2A7497
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:23:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2B0B46396D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD402D8393;
-	Mon, 11 Aug 2025 19:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A803926B770;
+	Mon, 11 Aug 2025 19:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9PVhdoS"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b="D2WzmqmK"
+Received: from www522.your-server.de (www522.your-server.de [195.201.215.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C245149C51;
-	Mon, 11 Aug 2025 19:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D62918C322;
+	Mon, 11 Aug 2025 19:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.215.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754940188; cv=none; b=rv/pFSrk8ACcD1t5w5FZltcDR5gk1EZP2rxod+unI7n+PNPcPrqEZg0XwQMChNRfFm4djcduU7k9RVilvjWq/uVbaaD0VuVbOxJ6wYEJEZ18fmOlr3x+GvXdEvnMofyBSmEvQHl/l5Mrqi3NxgaH+gcZICfhLt9yyJiWAxTxlNE=
+	t=1754941578; cv=none; b=BmyKpLY6M+fDpgjKFiDHNya4oq6GZ2A4M4Uyu/X5uWfY3TbkysUv1x51X9G8EZA6YeDDF5jiYpQa4dauPd8zcbrkb4D0GgJkLFerARTY1CD32uZnmpmgPc+9txwD6b2Lc7QZnrcTQ/xbyQf8Uc2Kr9+7fAIn2LOI3RtEx2I8NCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754940188; c=relaxed/simple;
-	bh=JY8s0Z9hdpRQcufudBWVhQMc3pYUSvN2/3PccKGiYEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=si/EhfhTJJKdETx7Ao/54TTiwOs9nhB8rTQtieXYgpm/TR/JSvd6i3sSdiKUVlST4LIX0jtZzp/zmQA0hRdw/Mv2zoJqwBvVBKcx+XyfQVm0MOclbrIyBl2tgKeKOaUp/GHaHebxfFrRm157/Az4lP1JDvOfq9283QBBIh8Lu1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9PVhdoS; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6b7so5521396a12.2;
-        Mon, 11 Aug 2025 12:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754940185; x=1755544985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A4YdDTwD+VhVAOjXWk+9RG+ki3RkcphAUlUyjP4j9P4=;
-        b=g9PVhdoSKq+E1lhigP7D7QXoCj0mn3skFCQzLx+bYTLXSNEhlKjYjuGn5l2X5xy8YD
-         kXRHlNXOKue2ovDOLX+OBrfEoiM7WEUpoCHKKb/4gZNsd8kYW/I64AO8F9C23ZS/Qe1G
-         ahjrvlFM2B4xBCP2YnnFfAh1J6EoKuDq2jLqFuabjMJRvaIQAUFi9m6+X0YeCnPC7IJL
-         8CgQ8xbKMHmPLZXXEZVVnF9xubSur8gkfCjBqNCFT+3k+5chXNpv92Gp4X8JVuwyTdxh
-         EHZ3+EHuz8TT+f5ouC9fyaiX8xaFt9jqIrDG9j6Ck9UinB94iZIaWWDnHf6QH7OsZQ4s
-         mkSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754940185; x=1755544985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A4YdDTwD+VhVAOjXWk+9RG+ki3RkcphAUlUyjP4j9P4=;
-        b=LMLHjTF/TiCEY4uEeMPUjEXRQPwv4HphggkA+H92wUr4OmPB2DWKoUdaSuvyYy7rQf
-         fZiNJ9FUaJx0rUFjU+z3C12dm4TzeVdzfd7qtMEekd60B6V9XmOk9PdX2H+/OgsrpobR
-         GihL0L6FI41K9PlP27NBxVJMFRTCXv9B20AiAdjONE7dEVQuEpkuW1patDrkoEkdJwuJ
-         7B1mH1zeJ6hzqU64xNDEWCbyH9iEhclQO53WqMq2sQnw2Vva2ch+V7gS2wi6P42X8J5p
-         yJKzc9HF6jIT4cVLyZO79e7fWDvRwyKc24TQZ5Pdx2rwgyQJPegDSsFPogW1HARtptVr
-         zwhg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2li6vCgnOlv7id+yoTDJyz2U8bBVHBeq9TZr6XT9YBQTOfGWJbDRSXo/5eS7mwEVQzM3tHUYxPWM=@vger.kernel.org, AJvYcCUTiopfYUVRcFGxFT+ignHBiIfNJGBrxVnEhmWptvFa3G9KI1JUifJnJiBVmZFdQHKdRtObaAGi1GBHJTeZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4YHlI/N8KhHvSPnmXCPLxIfZaCRJ0H+KwrJhlGDJd/+6dp9Wu
-	JiaGSo17DfKLP5Gf+/qB0nLmnCvtBuZ7l6ZhvPK6WajUerd8VX6rNa9ABFDR1CAt50X68IX6smM
-	AbEMkl15ESGmzFGO8HxquSyoVJj28bk5YNImrNR8=
-X-Gm-Gg: ASbGncu/x0ULFvIb+3uoC/c9iDmjK8xMQ6WAP12Hem58gF2XcbNqGRE9Ccm2LnIulYe
-	JghWTYGj2gPuS2pGP9Ou+Ot2CwmgnsaSaw+gZ/xmTrilv1aCI7oqMhEaAFf7aLFRzoyGw5YF21E
-	B8FMgjUODtx9Mxyzv/2j8jCz0BNIs8k3FP0rOZbTb9FeRm3efRH0Ns3RvW+8NbVP3EXqRHgJ/RV
-	uGMii+VYA==
-X-Google-Smtp-Source: AGHT+IHFv0NbHgNM41Zi2g/uol7kNjolm/Z50ofS48c0fwIqCNI5EdqM71PkMehN/VSgLbgqNFf73ffFR8Fa8+i3mDs=
-X-Received: by 2002:a17:907:da4:b0:af9:3d0a:f38f with SMTP id
- a640c23a62f3a-af9c6086b26mr1370458466b.0.1754940185122; Mon, 11 Aug 2025
- 12:23:05 -0700 (PDT)
+	s=arc-20240116; t=1754941578; c=relaxed/simple;
+	bh=N6GHB/ahgUbmi+yED3AjLdK6t8K0zonzpYaVdq1u1H4=;
+	h=Message-Id:Cc:To:From:Date:Subject; b=g74sBUOC4lUy5+KD389ZoUSMMjKaKy3gWybjd822qDnUBEojWFy3ac66jb+slEAjmgyr8QVV5TJ9eEK0CuEKGBFdYGoyp2v0vK5pAH5HzNSWBVwUBfBR/dbiy5QNYMHtFDnCEnDB6/lFNkLrylqBCbaNwTP+F8kP7cH9ITARgs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de; spf=pass smtp.mailfrom=folker-schwesinger.de; dkim=pass (2048-bit key) header.d=folker-schwesinger.de header.i=@folker-schwesinger.de header.b=D2WzmqmK; arc=none smtp.client-ip=195.201.215.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=folker-schwesinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=folker-schwesinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=folker-schwesinger.de; s=default2212; h=Subject:Date:From:To:Cc:Message-Id:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References;
+	bh=ThKptu1Z4PVKyQbUsbmM9Z1W7xxTizz6/uivJLE43rQ=; b=D2WzmqmKTI59POEc8bYlFQos60
+	0Y1SZvAOvo3oDkaKyewhotd4fD5ZW4ODfce0MkSOJFb190cvACk1DV0KWychKrhyBboVbV/cwthPc
+	ISAgRCtzwcgXUJL8AOTdiE256ENnuyqhh30sFRlB1vckf4aOzWCwazLnXNGrGXZnRok2dtMtwVPSD
+	3mER2cUpWdKAELjrCs/JGCJbjxKpwwS8vFmvFiokwLYfvqM9AHZ8IHYIgTjPd9KGfR/svSeF3fwB+
+	iX/7bv6hfMuSi/GcnGoMVF+AjvLpb1+ZqvTiQs9/3wXsHdtxnpYzTNiSkETiwAlD9lSLcm72Qk3VV
+	owPCpY3w==;
+Received: from sslproxy08.your-server.de ([78.47.166.52])
+	by www522.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1ulYDV-0004c3-2R;
+	Mon, 11 Aug 2025 21:29:57 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <dev@folker-schwesinger.de>)
+	id 1ulYDV-0003zH-2q;
+	Mon, 11 Aug 2025 21:29:57 +0200
+Message-Id: <DBZUIRI5Q4A3.1OIBMF9Z5EQ0X@folker-schwesinger.de>
+Cc: "Vinod Koul" <vkoul@kernel.org>, "Michal Simek" <michal.simek@amd.com>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, "Marek Vasut" <marex@denx.de>, "Radhey
+ Shyam Pandey" <radhey.shyam.pandey@amd.com>
+To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+From: "Folker Schwesinger" <dev@folker-schwesinger.de>
+Date: Mon, 11 Aug 2025 21:22:59 +0200
+Subject: [PATCH v3] dmaengine: xilinx_dma: Support descriptor setup from
+ dma_vecs
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27729/Mon Aug 11 10:33:11 2025)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250811-iio-adc-ad7380-fix-missing-max_conversion_rate_hs-on-ad4381-4-v1-1-ffb728d7a71c@baylibre.com>
- <CAHp75Vc_-2czsaZ_-3+cSWAzyvz-PASR5mjCyoAxTu9qSEYyLA@mail.gmail.com> <5732b907-ccb8-4302-8fd7-ded63a5d852b@baylibre.com>
-In-Reply-To: <5732b907-ccb8-4302-8fd7-ded63a5d852b@baylibre.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 11 Aug 2025 21:22:28 +0200
-X-Gm-Features: Ac12FXzjpWpknWGnhabz1oYRizbUUq7XDkMINv4qURu564JnBN0GpDbJQIfXLEE
-Message-ID: <CAHp75Vf3s1ftm0wBPbeTuKgO0W22ndpdcGE+zSMSHD=4z1O4Xg@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: ad7380: fix missing max_conversion_rate_hz on adaq4381-4
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Angelo Dureghello <adureghello@baylibre.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 9:18=E2=80=AFPM David Lechner <dlechner@baylibre.co=
-m> wrote:
-> On 8/11/25 2:07 PM, Andy Shevchenko wrote:
-> > On Mon, Aug 11, 2025 at 8:32=E2=80=AFPM David Lechner <dlechner@baylibr=
-e.com> wrote:
+The DMAEngine provides an interface for obtaining DMA transaction
+descriptors from an array of scatter gather buffers represented by
+struct dma_vec. This interface is used in the DMABUF API of the IIO
+framework [1].
+To enable DMABUF support through the IIO framework for the Xilinx DMA,
+implement callback .device_prep_peripheral_dma_vec() of struct
+dma_device in the driver.
 
-...
+[1]: https://elixir.bootlin.com/linux/v6.16-rc1/source/drivers/iio/buffer/industrialio-buffer-dmaengine.c#L104
 
-> >> +       .max_conversion_rate_hz =3D 4 * MEGA,
-> >
-> > MEGA --> HZ_PER_MHZ
->
-> If we do this, we should fix up all of the other similar ones
-> in a separate patch. So I would leave this patch as-is.
+Signed-off-by: Folker Schwesinger <dev@folker-schwesinger.de>
+Reviewed-by: Suraj Gupta <suraj.gupta2@amd.com>
 
-Will it happen sooner?
+---
+Changes in v3:
+- Collect R-b tags from v2.
+- Rebase onto v6.17-rc1.
+- Link to v2: https://lore.kernel.org/dmaengine/DAQB7EU7UXR3.Z07Q6JQ1V67Y@folker-schwesinger.de/
 
-> > With that done
-> > Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Changes in v2:
+- Improve commit message to include reasoning behind the change.
+- Rebase onto v6.16-rc1.
+- Link to v1: https://lore.kernel.org/dmaengine/D8TV2MP99NTE.1842MMA04VB9N@folker-schwesinger.de/
+---
+ drivers/dma/xilinx/xilinx_dma.c | 94 +++++++++++++++++++++++++++++++++
+ 1 file changed, 94 insertions(+)
 
-I leave this to Jonathan because in spite of being a fix I still think
-it's better to use an appropriate multiplier (also note, MEGA appeared
-in the kernel much later than HZ_PER_* constants, which sounds in my
-favour).
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index a34d8f0ceed8..fabff602065f 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -2172,6 +2172,99 @@ xilinx_cdma_prep_memcpy(struct dma_chan *dchan, dma_addr_t dma_dst,
+ 	return NULL;
+ }
+ 
++/**
++ * xilinx_dma_prep_peripheral_dma_vec - prepare descriptors for a DMA_SLAVE
++ *	transaction from DMA vectors
++ * @dchan: DMA channel
++ * @vecs: Array of DMA vectors that should be transferred
++ * @nb: number of entries in @vecs
++ * @direction: DMA direction
++ * @flags: transfer ack flags
++ *
++ * Return: Async transaction descriptor on success and NULL on failure
++ */
++static struct dma_async_tx_descriptor *xilinx_dma_prep_peripheral_dma_vec(
++	struct dma_chan *dchan, const struct dma_vec *vecs, size_t nb,
++	enum dma_transfer_direction direction, unsigned long flags)
++{
++	struct xilinx_dma_chan *chan = to_xilinx_chan(dchan);
++	struct xilinx_dma_tx_descriptor *desc;
++	struct xilinx_axidma_tx_segment *segment, *head, *prev = NULL;
++	size_t copy;
++	size_t sg_used;
++	unsigned int i;
++
++	if (!is_slave_direction(direction) || direction != chan->direction)
++		return NULL;
++
++	desc = xilinx_dma_alloc_tx_descriptor(chan);
++	if (!desc)
++		return NULL;
++
++	dma_async_tx_descriptor_init(&desc->async_tx, &chan->common);
++	desc->async_tx.tx_submit = xilinx_dma_tx_submit;
++
++	/* Build transactions using information from DMA vectors */
++	for (i = 0; i < nb; i++) {
++		sg_used = 0;
++
++		/* Loop until the entire dma_vec entry is used */
++		while (sg_used < vecs[i].len) {
++			struct xilinx_axidma_desc_hw *hw;
++
++			/* Get a free segment */
++			segment = xilinx_axidma_alloc_tx_segment(chan);
++			if (!segment)
++				goto error;
++
++			/*
++			 * Calculate the maximum number of bytes to transfer,
++			 * making sure it is less than the hw limit
++			 */
++			copy = xilinx_dma_calc_copysize(chan, vecs[i].len,
++					sg_used);
++			hw = &segment->hw;
++
++			/* Fill in the descriptor */
++			xilinx_axidma_buf(chan, hw, vecs[i].addr, sg_used, 0);
++			hw->control = copy;
++
++			if (prev)
++				prev->hw.next_desc = segment->phys;
++
++			prev = segment;
++			sg_used += copy;
++
++			/*
++			 * Insert the segment into the descriptor segments
++			 * list.
++			 */
++			list_add_tail(&segment->node, &desc->segments);
++		}
++	}
++
++	head = list_first_entry(&desc->segments, struct xilinx_axidma_tx_segment, node);
++	desc->async_tx.phys = head->phys;
++
++	/* For the last DMA_MEM_TO_DEV transfer, set EOP */
++	if (chan->direction == DMA_MEM_TO_DEV) {
++		segment->hw.control |= XILINX_DMA_BD_SOP;
++		segment = list_last_entry(&desc->segments,
++					  struct xilinx_axidma_tx_segment,
++					  node);
++		segment->hw.control |= XILINX_DMA_BD_EOP;
++	}
++
++	if (chan->xdev->has_axistream_connected)
++		desc->async_tx.metadata_ops = &xilinx_dma_metadata_ops;
++
++	return &desc->async_tx;
++
++error:
++	xilinx_dma_free_tx_descriptor(chan, desc);
++	return NULL;
++}
++
+ /**
+  * xilinx_dma_prep_slave_sg - prepare descriptors for a DMA_SLAVE transaction
+  * @dchan: DMA channel
+@@ -3180,6 +3273,7 @@ static int xilinx_dma_probe(struct platform_device *pdev)
+ 	xdev->common.device_config = xilinx_dma_device_config;
+ 	if (xdev->dma_config->dmatype == XDMA_TYPE_AXIDMA) {
+ 		dma_cap_set(DMA_CYCLIC, xdev->common.cap_mask);
++		xdev->common.device_prep_peripheral_dma_vec = xilinx_dma_prep_peripheral_dma_vec;
+ 		xdev->common.device_prep_slave_sg = xilinx_dma_prep_slave_sg;
+ 		xdev->common.device_prep_dma_cyclic =
+ 					  xilinx_dma_prep_dma_cyclic;
 
---=20
-With Best Regards,
-Andy Shevchenko
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.50.1
 
