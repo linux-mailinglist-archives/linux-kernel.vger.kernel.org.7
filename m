@@ -1,82 +1,126 @@
-Return-Path: <linux-kernel+bounces-762539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE883B20830
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:48:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02CBEB20832
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84062A0218
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CF3418838A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4642D29C8;
-	Mon, 11 Aug 2025 11:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCC425393B;
+	Mon, 11 Aug 2025 11:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cy9Ou5ck"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kY6EvQcK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2649B199223;
-	Mon, 11 Aug 2025 11:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD58D199223
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754912905; cv=none; b=l/Z21G3c9o9qe8jIIKFo7CYJgKbXEDoTjfZBhv5yfWZb45HJkG0HNqwDWcBXubOvPxgciMJJsz7zNyXfzRfqc7a/t3NnEmWwzKy9aX09pFfp91VgTjN8l0FQq8J5EeMR65OQ3uC+uSajikT711EZChdJqJEO0AsA2Px8YOSc45I=
+	t=1754912974; cv=none; b=C3ixGSFUg0ULYYKjHKlB11l60Q7ri1ZmMiQHBe0GKZSXRA/cr0mNAprJyq01lAPNE4VdF/cXMeKOzGv++V7EBPf5cjMoo73wgWQufWHQrjsfscB/2IFTs77yL7bDS/3RKHu2vwxREmoP7pKMh2a4AWbxgNWE7O1zuLbIzRHqnCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754912905; c=relaxed/simple;
-	bh=GALCFWWVVaMP0Qh3lW438ZF6XSXEp7GMMF/6zwC0VfU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ttWOC3ifzJngg3rEjNclS5hSNnXG+3Orxg3WeZSZISa4bChlBh9aby6pWiTGEcB/vHlNMHgnZJDUDQbQ6AXDnaqqqANUNGVHL8I/m3DICsOEaNZFiYBsMXBaHfwevjOtwEYXIPZ9gDBtuE5SdXyhkTrEPhPFreIGUgTT2Lvyje8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cy9Ou5ck; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B813C4CEED;
-	Mon, 11 Aug 2025 11:48:24 +0000 (UTC)
+	s=arc-20240116; t=1754912974; c=relaxed/simple;
+	bh=QWJh3XA4bQPH/hLuxXXWVMN3sbdcGGCp6Qd7aRGBJRo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gXYln+dh83TH+DaKchycVjzdM9IqLSUCd1lRz3V55s2bHi+0vBNTFAf0Cn7UMxWLBTN6GftnJ2yKt+Ovs9tVzvnVGudKsmb0zJdjH0BuFfGZ2ljNHD06takJP6vBGm4Zagi/37+Ecdf1FkZNKaSyoGAvPexa1p4FXAO0cPs0kNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kY6EvQcK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3436EC4CEF1;
+	Mon, 11 Aug 2025 11:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754912904;
-	bh=GALCFWWVVaMP0Qh3lW438ZF6XSXEp7GMMF/6zwC0VfU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=cy9Ou5ckr178C66djNDhIk6LjNtaaa537/FifQnpBEUyjaMfE+SdIyDy+AYtKtEDK
-	 I7+bFuNvCpCuKaqm7ZwbXS0cMPWS8HNNH6mclufEd2mZ8A1s6O9YGLBkeYY/rgtQc4
-	 tlpluE1cL+Gg1ApmOfAaEqhg5mbmUskb+tHBHysTtwRkL8Sp2u59DS54kJsp+0TaEu
-	 vv+qvhigV1fVvGMG5IouBrTw8hiqm/GVrdl7xLKgLwehS5xd0U7er7PHhhWZs8skNq
-	 1o1O1fd6K2ONI0ZAFa3iQyrLd++n15hQjErEplBBq3dgnbFZ+3QRwt7TMe1bRehuKS
-	 G8Daz3PZQ1GtA==
-Date: Mon, 11 Aug 2025 13:48:22 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: =?ISO-8859-15?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-cc: bentiss@kernel.org, luguohong@xiaomi.com, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] HID: input: report battery status changes
- immediately
-In-Reply-To: <20250806073944.5310-2-jose.exposito89@gmail.com>
-Message-ID: <4q4qn3p8-6s3s-289n-44s2-43s76qrs2oo4@xreary.bet>
-References: <20250806073944.5310-1-jose.exposito89@gmail.com> <20250806073944.5310-2-jose.exposito89@gmail.com>
+	s=k20201202; t=1754912974;
+	bh=QWJh3XA4bQPH/hLuxXXWVMN3sbdcGGCp6Qd7aRGBJRo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kY6EvQcKrhDxNus5IyHzP0ejklCNGDJW1rLtX68H92A3y+B7cZKLyN+fskBUh8oja
+	 4iqbif8gokwIabUpPEoeeW9EsyUdAmbwMEAApDBE4Lati69S80+QlU7u56MmwQ07yv
+	 04417JW1yqcrfROuKS6vG8DnepZpITq75mIMh2ZE71A/a64u4yjE2jIgrOUndA7NTO
+	 SPd2pHVq2EewQqSBDoBnu6O1P89n2kPZ0p50jG7HOfGtDVy0I5nLi4MJz1TkgHMmjA
+	 t71OtK1Qgrxh4XeU0PgBHcUolyiALO3wx4EQ1hhK4h/K1ut49tKKfNfgJ0wUlqD5su
+	 4Wjys771lajhg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ulR1t-006Cex-8i;
+	Mon, 11 Aug 2025 12:49:29 +0100
+Date: Mon, 11 Aug 2025 12:49:28 +0100
+Message-ID: <86wm7a84dz.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: fanqincui  <fanqincui@163.com>
+Cc: "Will Deacon" <will@kernel.org>,
+	catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	"Fanqin Cui" <cuifq1@chinatelecom.cn>,
+	hanht2@chinatelecom.cn
+Subject: Re: [PATCH] arm64/module: Support for patching modules during runtime
+In-Reply-To: <56b98f57.954f.1989890838d.Coremail.fanqincui@163.com>
+References: <20250807072700.348514-1-fanqincui@163.com>
+	<aJXlegQfZTdimS3k@willie-the-truck>
+	<3d4011c0.6aaa.198981027d7.Coremail.fanqincui@163.com>
+	<86zfc68exk.wl-maz@kernel.org>
+	<587b3c08.7e85.19898424fdb.Coremail.fanqincui@163.com>
+	<86y0rq8cf8.wl-maz@kernel.org>
+	<56b98f57.954f.1989890838d.Coremail.fanqincui@163.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: fanqincui@163.com, will@kernel.org, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, cuifq1@chinatelecom.cn, hanht2@chinatelecom.cn
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 6 Aug 2025, Jos=C3=A9 Exp=C3=B3sito wrote:
+On Mon, 11 Aug 2025 10:57:44 +0100,
+fanqincui <fanqincui@163.com> wrote:
+>
+> >Well, you can't know about that. We patch basic primitives such as
+> >atomics, system register access, and plenty of other things. These
+> >things need to interoperate with the rest of the kernel.
+> >
+> >It's already difficult to guarantee inside the kernel itself. Having
+> >it in random modules will be even harder.
+> >
+>=20
+>=20
+> Okay, so the kernel patches you mentioned, are they already patched
+> when the module is installed?
 
-> When the battery status changes, report the change immediately to user
-> space.
+Yes.
 
-Could you please make the changelog a little bit more elaborative, i.e.=20
-why is it needed, what user-visible behavior change/improvement it brings,=
-=20
-etc.
+> This doesn't conflict with the kernel patching.
 
-I know it's in the e-mail thread, but at least some summary should go also=
-=20
-to the commit itself.
+In what sense?
 
-Thanks,
+> I mean, the specific patching within the module is up to me.
+
+No.
+
+> If the chicken-and-egg problem you mentioned exist, module
+> developers should avoid it in their own code.=C2=A0
+
+We're not in the business of making the kernel more fragile and hard
+to maintain than it already is. So either it *always* works, or it is
+completely disallowed.
+
+> I think the kernel should provide modules with the ability to patch
+> themselves, right?
+
+Only if it is safe to do so. Which is why I asked a question in my
+initial reply, which you still haven't answered.
+
+	M.
 
 --=20
-Jiri Kosina
-SUSE Labs
-
+Without deviation from the norm, progress is not possible.
 
