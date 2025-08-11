@@ -1,139 +1,164 @@
-Return-Path: <linux-kernel+bounces-763150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07B3B21113
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD3B21316
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9141D3E7FFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A396263D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FE329BDBC;
-	Mon, 11 Aug 2025 15:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFB22D47F7;
+	Mon, 11 Aug 2025 17:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkKBeFf1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q5ujRXs8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eXqtHxED"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9D22E2DC1;
-	Mon, 11 Aug 2025 15:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666002C21E7;
+	Mon, 11 Aug 2025 17:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754927286; cv=none; b=U9hROXLGcMAKrkgwauLjIXpVnV9f+zL7VcHsleVTIQ3MF4xIKicyPgM0wYSpegUVjH72jfQgzn5hfrDbjs58hhwSVkeYAFyghgrO/Y65DTHaQePQSiO5nTA4C8Py7jh2Q5/uBNoUjyRq5TnvzRvoqcYOpBUxYABaEHubgI0DZwE=
+	t=1754933115; cv=none; b=kAOWCzNI9sN7L80jhXTcpHPthsBQj/39lSIHlMu2LK/p/tRsQm7wgwVNxEangKfdhhfMc1lhIRXffbmx9YjdBtYx2TYlMHJ60VK5uThQTmEKazBSFekhpOj27p9RPxy65Gd8vgOB/MN5AAaFyu5H1nvpTU0T7WN23aAJeJo81xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754927286; c=relaxed/simple;
-	bh=8gmWeKWrJeK2Xkqz/8/mh/JFMl+WMCygehd7PMn2K1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsVRxXcCr41ULSWxc7xmD8mnp6rOBSv4y1Y+9BIjuP7YBZ0vjpUPeVzNVgFHuIqNaPDEkyDKDzvn9IMPlVh2LMLOq/TZuJb5UvryQXdj4TVXv3+roIE08GVHKzoWiP9XcGo55i5Ap/Qko7CB4fI7aTDezGxSf7pdATxQt5xaSnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkKBeFf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61320C4CEED;
-	Mon, 11 Aug 2025 15:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754927285;
-	bh=8gmWeKWrJeK2Xkqz/8/mh/JFMl+WMCygehd7PMn2K1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DkKBeFf1TXwV2F0ZOL9ioAkAZlbyz1mBR7cI5v4XGX1SgG96WAhj7uO1wVK5vWPft
-	 mvhSF68zCaiZv0e/313lzJq2fXxZjisu9w00pKKCcyjmg8c3YiJ2FL8+O3z+lL5E8w
-	 avSOcY74Ui7UIInfSSPhyarl/DuXEweNKo+8+aDCRQXPY6+AB9FzVuY1Ki3p/d0ziM
-	 e9AOS+GvjD8JNJK/74LHXkqL3sJZSs0Mf+APtWUp1D22vWYSrZoXYWgND19fjrE8xi
-	 kdx4GxBIRT2s/5uVUMUTTGFolE5AiukVGp9PQGCtgVczj/2/vXp0MGSvLwRsq+riBS
-	 AF7fCp/sKxsIA==
-Date: Mon, 11 Aug 2025 11:48:03 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: corbet@lwn.net, josh@joshtriplett.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-	workflows@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] README: restructure with role-based documentation
- and guidelines
-Message-ID: <aJoQs_5Mp7-LAtTS@lappy>
-References: <20250809234008.1540324-1-sashal@kernel.org>
- <20250809234008.1540324-2-sashal@kernel.org>
- <CAMuHMdWaVvAfm6LMxSpPuz3yZ7FDAexbUTOXrg58TqoWbce5ag@mail.gmail.com>
+	s=arc-20240116; t=1754933115; c=relaxed/simple;
+	bh=47KTT10WHKFiZxMxIMHfux8Gl1sdDOUG/ZJ4cJ9XvcI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=aF0NyXttAJIrL3VUNO+W58+8tv0VJY1qHc53wXS5rfxW2A3Z9hRErK87+aRCHImn6/tvlP2+ZapFAV2IO60SmM8UNJo/Jw0IwDfGtLdWYh81XBmEAaoYQVQnHqVEkYs6if2yICJiRVHk+puHZK/5BqNvhTRgm4JqelZo5mJFcBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q5ujRXs8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eXqtHxED; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 11 Aug 2025 15:48:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754933111;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ikOouoXkHEHMnRWF645nAnqb7byHThXc7UH59ZZJEzk=;
+	b=q5ujRXs8uhBcDutEKGS/XAFEN+2p2F26V2xd6izrlg8b6/UIoGfWsAEMmVOliAGCITxQUT
+	oAUhJckKMypuX659UUtdo+10WbR2+9DLXdO5m/0S6phmZdyit9mUkUqRrzi7+RDG2IfPEr
+	toafYPya+tdnTtD8FvPc1ANq5lfIQlNUa8s6QVZMMJGZstiCPXbTfqiqAZ00LhzpK9oPXN
+	if1JgYH/YC3Aeeg/74JHQZOC3X/Hk851o7ANZgfYbsWXCmfrMCkYX09X8MSXSpBAeqE8GN
+	ZdCRyqeFY1JjwHLme/2Eq3k2FQsNz7jJLxTyFdGtFn4Hr8iTY1VCf60t06yJjQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754933111;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ikOouoXkHEHMnRWF645nAnqb7byHThXc7UH59ZZJEzk=;
+	b=eXqtHxEDdgcpf5grE9fr+jJFwVqjjhyTJWNo0QqPlgfzMMTy2n/TBvq/rW+p4Ku86azSAj
+	tdbRsG3nKS+ccDAA==
+From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/bugs: Select best SRSO mitigation
+Cc: David Kaplan <david.kaplan@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250721160310.1804203-1-david.kaplan@amd.com>
+References: <20250721160310.1804203-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWaVvAfm6LMxSpPuz3yZ7FDAexbUTOXrg58TqoWbce5ag@mail.gmail.com>
+Message-ID: <175492728627.1420.312317503925693968.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 11, 2025 at 10:22:34AM +0200, Geert Uytterhoeven wrote:
->Hi Sasha,
->
->On Sun, 10 Aug 2025 at 10:09, Sasha Levin <sashal@kernel.org> wrote:
->> Reorganize README to provide targeted documentation paths for different
->> user roles including developers, researchers, security experts,
->> maintainers, and AI coding assistants. Add quick start section and
->> essential docs links.
->>
->> Include proper attribution requirements for AI-assisted contributions
->> using Assisted-by tags with agent details and tools used.
->>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->Thanks for your patch!
->
->> --- a/README
->> +++ b/README
->
->> +Who Are You?
->> +============
->> +
->> +Find your role below:
->> +
->> +* New Kernel Developer - Getting started with kernel development
->> +* Academic Researcher - Studying kernel internals and architecture
->> +* Security Expert - Hardening and vulnerability analysis
->> +* Backport/Maintenance Engineer - Maintaining stable kernels
->> +* System Administrator - Configuring and troubleshooting
->> +* Maintainer - Leading subsystems and reviewing patches
->
->Kernel Maintainer?
->Driver/Subsystem Maintainer?
+The following commit has been merged into the x86/urgent branch of tip:
 
-I tried to use similar terms to the ones used by the rest of our docs.
-In this case, the CoC interpertation actually defines this term :)
+Commit-ID:     4fa7d880aeb8cdbdaa4fb72be3e53ac1d6bcc088
+Gitweb:        https://git.kernel.org/tip/4fa7d880aeb8cdbdaa4fb72be3e53ac1d6b=
+cc088
+Author:        David Kaplan <david.kaplan@amd.com>
+AuthorDate:    Mon, 21 Jul 2025 11:03:10 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 11 Aug 2025 17:32:36 +02:00
 
-	The Code of Conduct uses the term "maintainers" numerous times.
-	In the kernel community, a "maintainer" is anyone who is
-	responsible for a subsystem, driver, or file, and is listed in
-	the MAINTAINERS file in the kernel source tree.
+x86/bugs: Select best SRSO mitigation
 
-So I just went with "Maintainer".
+The SRSO bug can theoretically be used to conduct user->user or guest->guest
+attacks and requires a mitigation (namely IBPB instead of SBPB on context
+switch) for these.  So mark SRSO as being applicable to the user->user and
+guest->guest attack vectors.
 
->> +* Hardware Vendor - Writing drivers for new hardware
->> +* Distribution Maintainer - Packaging kernels for distros
->> +* Agentic Coding - AI assistants working with kernel code
->
->Given the extensive split, what about normal (existing) kernel
->developers?
+Additionally, SRSO supports multiple mitigations which mitigate different
+potential attack vectors.  Some CPUs are also immune to SRSO from
+certain attack vectors (like user->kernel).
 
-Those people don't read the docs anyway :p
+Use the specific attack vectors requiring mitigation to select the best
+SRSO mitigation to avoid unnecessary performance hits.
 
-How about something like:
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250721160310.1804203-1-david.kaplan@amd.com
+---
+ Documentation/admin-guide/hw-vuln/attack_vector_controls.rst |  2 +-
+ arch/x86/kernel/cpu/bugs.c                                   | 13 +++++--
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
-Existing Kernel Developer
--------------------------
-
-Continue advancing your kernel development expertise:
-
-* Locking and Concurrency: Documentation/locking/index.rst
-* RCU (Read-Copy Update): Documentation/RCU/index.rst
-* Subsystem APIs: Documentation/driver-api/index.rst
-* Performance Analysis: Documentation/trace/index.rst
-* Testing Infrastructure: Documentation/dev-tools/testing-overview.rst
-* Patch Series Management: Documentation/process/5.Posting.rst
-* Maintainer Handbooks: Documentation/process/maintainer-handbooks.rst
-* Cross-Architecture Development: Documentation/arch/index.rst
-* Kernel Debugging: Documentation/process/debugging/kgdb.rst
-
--- 
-Thanks,
-Sasha
+diff --git a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst b/D=
+ocumentation/admin-guide/hw-vuln/attack_vector_controls.rst
+index b4de16f..6dd0800 100644
+--- a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
++++ b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+@@ -214,7 +214,7 @@ Spectre_v1            X
+ Spectre_v2            X                           X
+ Spectre_v2_user                      X                           X          =
+  *       (Note 1)
+ SRBDS                 X              X            X              X
+-SRSO                  X                           X
++SRSO                  X              X            X              X
+ SSB                                                                         =
+          (Note 4)
+ TAA                   X              X            X              X          =
+  *       (Note 2)
+ TSA                   X              X            X              X
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index b74bf93..2186a77 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -386,7 +386,6 @@ static bool __init should_mitigate_vuln(unsigned int bug)
+=20
+ 	case X86_BUG_SPECTRE_V2:
+ 	case X86_BUG_RETBLEED:
+-	case X86_BUG_SRSO:
+ 	case X86_BUG_L1TF:
+ 	case X86_BUG_ITS:
+ 		return cpu_attack_vector_mitigated(CPU_MITIGATE_USER_KERNEL) ||
+@@ -3184,8 +3183,18 @@ static void __init srso_select_mitigation(void)
+ 	}
+=20
+ 	if (srso_mitigation =3D=3D SRSO_MITIGATION_AUTO) {
+-		if (should_mitigate_vuln(X86_BUG_SRSO)) {
++		/*
++		 * Use safe-RET if user->kernel or guest->host protection is
++		 * required.  Otherwise the 'microcode' mitigation is sufficient
++		 * to protect the user->user and guest->guest vectors.
++		 */
++		if (cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_HOST) ||
++		    (cpu_attack_vector_mitigated(CPU_MITIGATE_USER_KERNEL) &&
++		     !boot_cpu_has(X86_FEATURE_SRSO_USER_KERNEL_NO))) {
+ 			srso_mitigation =3D SRSO_MITIGATION_SAFE_RET;
++		} else if (cpu_attack_vector_mitigated(CPU_MITIGATE_USER_USER) ||
++			   cpu_attack_vector_mitigated(CPU_MITIGATE_GUEST_GUEST)) {
++			srso_mitigation =3D SRSO_MITIGATION_MICROCODE;
+ 		} else {
+ 			srso_mitigation =3D SRSO_MITIGATION_NONE;
+ 			return;
 
