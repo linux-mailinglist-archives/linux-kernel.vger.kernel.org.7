@@ -1,345 +1,159 @@
-Return-Path: <linux-kernel+bounces-763142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1441DB2111B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:10:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 378C3B210D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D92A13E7540
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C30B18A31CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133292EA74B;
-	Mon, 11 Aug 2025 15:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="ogqg01Kz"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2054.outbound.protection.outlook.com [40.107.223.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEBA2EAB75;
+	Mon, 11 Aug 2025 15:40:47 +0000 (UTC)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3272EA730;
-	Mon, 11 Aug 2025 15:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754926843; cv=fail; b=K9v6obLMy85ZpMVUMP4e5Q591nNmh0BI6VBuxJIcNIV9izY3pp4QDfleWaF6PvSc5ObirV9HbjNa0uhity+/Kn078UZLZyhIB29Q5kY2s+v6VCjHWPzVLcckwlxLlRL6VWGqQkmeyj7lL1BtqwIVlOkn/IZiNUShObgZpm66VZk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754926843; c=relaxed/simple;
-	bh=CUHMEWzhNJkg29afeGmnZfXbs9J9dvVetcTADNbOh3w=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jH26KH3+oVZKuyzfo0sZNKVX4PA9+DTMj2vs1xIG5jKiELEuVCUbafTP0X5mtCpjshQixpzxX5iJtJn9nFSyug6b2TtFbWNkIc2ElfRg4JySJQMI4dAjAWoAYoZR/zD3Rgw6BXieCY6/36SrjPKavMGiLyBiAkEWM3MoH+tWm3c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=ogqg01Kz; arc=fail smtp.client-ip=40.107.223.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i6i2rg7oCyWS+WRQfWuj5J1u+1FPfQeGUKteJNbvJ/JRp6iatsbHvrUQiCmgUhJpOLwtmIB5+QkaP7nHsVkMU6KpOg+3evolmWL5Hdz0jxSI4Eegp74DSWtiLucjbJGtk0CAfcPK/mq6hDH73EOtJQOZw2KwY9JkkFiJc+XuA3einUsqKXctcxfYwQaftO2m+06FrvsQgzdL/WggCVeBf5PDa2ecQWSxRMV9qgg1Tfe7/Wu/QEXS3OF7yJTDDDgzUdeO0ocmx+8+dHCaGIEaNyYHbMZdqQwT1mewm6p63AZy5y+erROqMhWbI5qQpOXivyo7URR42nFyTuWHwLgXww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nLtb64lNMIZfsgaFQnvqu6y4a57LpgjnBHzODnq8MXw=;
- b=SGzv9pfHXMp0HuAKyINhgJnxpFPVgCO/SEbcZcDCRdLrf1t6v+FqbY6sS/PzkxblaKS9hSW5zRjBTbhbuT3br1g1btGHZrBFnB3/TYGpTLJFmJQnrEbT0VK4uxTg98+mpVWrg83GUqw8Khy9Gxc6ht2J889yda3EHffKrvRDgRwJFXB3MZjK8W5w5gtiBToJzPZjBlRi8ZpXi2nW34wCLnndCgtxdyPThwTiWD7QcBeLvjEY+fWjMxWH5Wm8fNND2QNnw5HaeVAc4LFzWkT02VR9yNFnKBF1gucJpGTFrQtTEy8hlAqk8p5A2sj1BgsKC+CmOtpi4vhC97hqtNwoCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nLtb64lNMIZfsgaFQnvqu6y4a57LpgjnBHzODnq8MXw=;
- b=ogqg01KzOjMLINWJGeVl33zgbcbEYXEkcSZnxsNDWaorkfMZmeXEfCNVK6NqNWPHtROnme/Gaap0ukHBidECsEL950MZL5fjr4TxOxPvqr5KtqGp41HoSeH8ZmBVCur+WZNa/kZGRM63VCm2yFeaJgvs2H5O3OqSlE4H2srlPtwqptZF4IAuoEncdnWVfzTypIQ0fvgg/9rzRECCZZHDyIHzKl99EYxmgRqKkJBZKazAf5kslHrVQB/khQjeMUJVKt1Lea5uXaBxJj1dCo6KH79htE6IY6Uraz5LO1Z0ZUAlu0oofxDXeStS+zGozkc7Zup7W261w5Vu/pneqgyX8A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from BYAPR03MB3461.namprd03.prod.outlook.com (2603:10b6:a02:b4::23)
- by PH0PR03MB6333.namprd03.prod.outlook.com (2603:10b6:510:be::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.11; Mon, 11 Aug
- 2025 15:40:38 +0000
-Received: from BYAPR03MB3461.namprd03.prod.outlook.com
- ([fe80::706b:dd15:bc81:313c]) by BYAPR03MB3461.namprd03.prod.outlook.com
- ([fe80::706b:dd15:bc81:313c%6]) with mapi id 15.20.9031.012; Mon, 11 Aug 2025
- 15:40:38 +0000
-Message-ID: <a70d060d-f1c8-4147-8f1b-1c7ce6360252@altera.com>
-Date: Mon, 11 Aug 2025 08:40:34 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] arm64: dts: Agilex5 Add gmac nodes to DTSI for
- Agilex5
-From: Matthew Gerlach <matthew.gerlach@altera.com>
-To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, dinguyen@kernel.org,
- maxime.chevallier@bootlin.com, richardcochran@gmail.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Mun Yew Tham <mun.yew.tham@altera.com>
-References: <20250724154052.205706-1-matthew.gerlach@altera.com>
- <20250724154052.205706-3-matthew.gerlach@altera.com>
- <13467efc-7c79-4d06-af1c-301b852a530c@altera.com>
-Content-Language: en-US
-In-Reply-To: <13467efc-7c79-4d06-af1c-301b852a530c@altera.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY1P220CA0003.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:a03:59d::10) To BYAPR03MB3461.namprd03.prod.outlook.com
- (2603:10b6:a02:b4::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528EB2EA755;
+	Mon, 11 Aug 2025 15:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754926847; cv=none; b=lR78RxZEKOiPj+Bt4MSA2MF+Zwp1ANqSSUvjOOgBNDL5wO5EspSag6iqXwiLOYhG75Jo4asa8H1wOvLTORR6bHI5EarPknJBaUM2PBZgiwyVHNy8qg+fulzZ1/1gqmhem69UdG+B3DPoAAij4y2djfCkHdeIN7tL/2InSl5cj2U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754926847; c=relaxed/simple;
+	bh=jVCVH2/BrjPYq9tmaVyl+u/aDZPlSuXVvt6G4jzNAA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jVHyugiWvEE+P7M+GTjXN2YCuYS9eKLDYajSRC6ZkTZqcmAfXsCmQaXst5TQKZVNZG1s4mGSlZT6mODt6IDA+/9YjTiwvV0laMSSAK5w77WnMLy9hETCx2vfZtZHKgicdRWQbbhBN6RKSvyWb6mRq4ef+mMVJb3cDPNovOXsI3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b350c85cf4eso525241a12.1;
+        Mon, 11 Aug 2025 08:40:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754926844; x=1755531644;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D/lsGJuVcSxEulcmxPExLRcznuDdwmEmGFnSLxnfCJg=;
+        b=Jf6FFluKNcwILiOmiCXn3K3IXka8Vp3Lb6tN4Yp9G0j2iXMx3fyPu0CF4HwE+0sMo8
+         kc7sruQfMl9infyH2gDGb32G2abwFrsVKtx/SswOZ2RGOo7/B4y6WM/qbhJmRkaRv+mt
+         UpCMBvUoDJ2RBsyji7YYO80MP490hQ942Q3cJAWhd4okBO5r57fvr2oQ2D1Y6tef+0Ti
+         fjSWnJINFhzU60ytVeCQu/Gl7xB1aQJaOwX3oeeUzo3oj/sTp1VDeiSk/nIOt7sws1A2
+         fIJndXPSA8Ekl3w19IHOf3xPtAL0nTZZ3syPrXph68SYvVxVh9OfH+qyrH7ktkmZHZkj
+         Si+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbqGWTda1/kpaBOzRbZU21QI2zDN2woRPWgAzTKyYXaOuM6Zn+glSwpWgoXnKHKxIxjesCGzagHF7Kk0Y=@vger.kernel.org, AJvYcCVnt/qY50xl1AoilrUAekALcQxl1wQrW0VZ6UO5Iz4t9Zz/e1dAOR1yQlVBTbj0iz7QaSaIeyEtWKIG2fug2s8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu8KsJ8M3X7u4foDjArmMubqyhKnIbJuy4+W5uTH5/gfZfrttQ
+	VEwnL8LRIytBN/D7a9QH513mzQ2GP+kZXBBoPyu9YlMm0q2wCe23XaUo
+X-Gm-Gg: ASbGncu1aAJpiZ+xBqklGOdv9PZX3Rrt59TA13YQrCBeU2aiN7P8y25/0MrU04D2Scq
+	xskI4qbJrSNdtrGiFjwIrn1ZuhSCa/jZOe5xysNFK1opavv2u/7WKjMaIlKv6SFXJHwNZgiiHN4
+	RKrlZcagGoHDzF/4VhnhSQ1bc14dxuCDDRFwCkeBSKkHmpMlsWITm+M0SdIVzQWo6CqO7y5x0b2
+	lVLcqqwq0DAXvuA6OuO5vQfB1DA3yZ7jguFIOTDe7k82PV+zQrLG0bT22dh5ZR4Zd/emLXAxfYA
+	QbkWaHl0QlJU0yv1zOsZ5GXKq/UctLp7j4lBJFTmg8biLBlQarBr9WS45J+3sUYUQeHHpOOKkML
+	OjPmNRdOlh/axwnkCmStqfXDCK4tIQsZu
+X-Google-Smtp-Source: AGHT+IGYEwS0QZ8ahZbXEAuTTmg5t2D9wKM98Dove8C64W5hDQ8B8uf6rb313Vha65Bikjrhb0orCA==
+X-Received: by 2002:a17:902:e546:b0:240:729c:a022 with SMTP id d9443c01a7336-242fc392176mr155965ad.11.1754926844439;
+        Mon, 11 Aug 2025 08:40:44 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976a48sm275791065ad.104.2025.08.11.08.40.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Aug 2025 08:40:43 -0700 (PDT)
+Message-ID: <a4e338f2-38dd-4c1e-b3c0-e6d18e7568fb@kzalloc.com>
+Date: Tue, 12 Aug 2025 00:40:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR03MB3461:EE_|PH0PR03MB6333:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01ac96cb-e9d4-4049-b5eb-08ddd8ed6bc5
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RGF2aEI2K2FENG9RRDBmWkE2eXNJTEZ6eWp5eEVNUVdxR21uTHB3NDEzQnpR?=
- =?utf-8?B?NWZYeXM4QXVZalhJOUFReGR0MG1HQmt5TDlRRHMrRWtQY3dCY3A2ck5sdTc5?=
- =?utf-8?B?dlQwUnpFTTN1cTZDL1RQck4yQ2ZGRytwNzZVRVNZVVRtcGwyNlhKOTRldHI3?=
- =?utf-8?B?VE05cENybFJNKzR0OENWbUpJdHQ1emtBckhhbVFiNTdlWTMzYjVMd1p0NVBq?=
- =?utf-8?B?dzBoamduSUNrL1lFeStzQ3VyWUxBdDJxWnB5dWJmK3duNlZMZ2dvSk50UzRY?=
- =?utf-8?B?ZEFaeXkvVW8xMjlNK01kRk1Qc0VFM0F6M2wwODZBZWdRcjJSWTRoV2JwNnZ4?=
- =?utf-8?B?eXBWZTVvTmtScFV6VjQ5UkZBeWdrcWNVZW9Zbkl4SUc5bTlIbmFlRDYvTmpr?=
- =?utf-8?B?NENiN014ejhkekRGazN2UWdya0Mvc0FIOGN3VXZVbk5qR3h6azEvb3E1a1ha?=
- =?utf-8?B?djZjTDVHNEVQblh4R2NwL3lHclJaTHZ0dFRxYjJKV0RNNUhsdWI1bkRUbTJu?=
- =?utf-8?B?Uk0rYVI5R3RSN20wakI5ZEtkYmlMK1JjUkFudXNxdG1uRzhJV3JsdXNMRi9E?=
- =?utf-8?B?Z20vc0xZcHNtbDRqd2Vxc1VFS20wc2lhR2xiV1VFVHFhMmNuMmpWTGovb0tj?=
- =?utf-8?B?YjU3M3h5MTZZVHArbHdOL0N5ckpueTE0Nm1mS25wOTZVaTdQRGt0SHJZSGdG?=
- =?utf-8?B?VzdFMDJlcVhhc0F1QTZMSEw1aTV5ekdRdjJHNVBhYzg4UzZZclc1WFVDbEto?=
- =?utf-8?B?U2FPc1VvZjdhaXZYdy81dGR6VXIwQnNOSStxTzREVmREZjhvZng0a0kyblpI?=
- =?utf-8?B?RFVwUldabFVCbHUzdndrdStlWDFyL1dZSjZHVWtUdUFCdllIQ1VQbStNZkh4?=
- =?utf-8?B?ZXJYdHErN3A4RkFJb1BPR1NOa2RiZTE0eUpCUEZtNk1UWW5mT2RaTWZZQU9v?=
- =?utf-8?B?WW1vRmxKTUJsSGsxcUt0Z3poSlJwVXhWSUY2SFFENDlBbGlkZFh4VGwrR1Vu?=
- =?utf-8?B?TERFdE5LSkhuTEI4Rzl5SVRJeG8wMmJwZ2s4UXc3akwxR1VidTBQWk1BblE5?=
- =?utf-8?B?eDgvNVN5QnZHSkhuL3V3K0MzVlRBem4rb1lrdmxSN3ZNVVVrSGxZbllPbG1K?=
- =?utf-8?B?YUFxbVpQSlEwaDNpWlZXQnkxSmNXd0MvaDNQWFFhWmRoZHVxdWVDcmlCWThV?=
- =?utf-8?B?UzlQaGJFbXpLZFlNcTc2d0N1bFdMZUhqdndyYlBhUGpWY1BQRFFmeGdzZ3d4?=
- =?utf-8?B?SmVQbjQrZVVOWGdzSmk1ZTYrWGtJcnB5MlJ5d1dkWXR3NTVWMmc0RStWSzkz?=
- =?utf-8?B?K2N5MUxGamw3TDU0QmVHbXpGQUFtaHQ3U3BDcjFZaGlCcXJhamJYSzFxbGNC?=
- =?utf-8?B?a2dhOGRhZFZwdXVvSWl3RUhkVlZRSVFNREVLckd1V3prNUVtNlc3dDVGazk0?=
- =?utf-8?B?M1FqMFp5U2hKVlRabGY1bktMVjY2akNrOG10c2ZTSDhDejBnN05BSkZnZDFk?=
- =?utf-8?B?ZXpkNjZZTnNwSG9iRmNRY2ppelhWcWxsVFBXem9wNmZmaGFTa3AySnJlb2Vv?=
- =?utf-8?B?RmFUL3YreWpWTXZHdTdMeHhuWGEwZ3Z4M3NvVS9ObHNvaDV3RlhQN2lzVjRW?=
- =?utf-8?B?TW96TmRBOWJxSUtGMVJ2VFk5aSszUXJ4c1BvMzZqendqMnhGTjd5VHNKRFNU?=
- =?utf-8?B?RENXOFhDRVJoQjZOWDVablBPUk8rN1FJWE11NnE0OHZKaDJuK3d1V3pDMk9j?=
- =?utf-8?B?ZXN2dEtydHNqYUc0Q0YvMTVqeVdTQloyVG1rWnNyYmZCeE42VWYrZ2lQZkpO?=
- =?utf-8?B?WXdBVnNtZ0lGSWlFNllhVzV1UG9FR3ZwMGNva21pSi9MZHRxQXZjajAyNzNh?=
- =?utf-8?B?bDhrdFc1MFhHZDJlS3NwdXVialFWaHU0YU95UWdOb0krWkRRd2YxaGVpbUNW?=
- =?utf-8?B?RkVKYmxGUFRrb0lQeE1Qb1RyTmRFR2dhT0crKzB5V3pZWmdsT0dWWis0NUZw?=
- =?utf-8?B?clQ5MlZJR1pRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR03MB3461.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V3loUjBCRjV2djBQTE9ZTlh5Q0xoaEpTdTljcmlvOW8rRFNndGVtblRaR2hp?=
- =?utf-8?B?OUtLNUVDU1oyTjFHZVAzcTZEbXRXZlhUVUR1OGxxYnFIUFJvVkZZUDJ0VzQ4?=
- =?utf-8?B?V2lYRzlSUEdPaEp3cExkU3l5bUNmYktUYlkyd2VPd2xzcGVkL0o1T1h0OGp0?=
- =?utf-8?B?NDIzVkJWZXc1a2EvTUJaTEdPVzU3U0psM2dYYVhjS2JCMXB1T3lJd0Z4ZWxH?=
- =?utf-8?B?SmdwaG0zUW9FemRob2VqTEtNQnUxMFR0VnhWOUFVQlc1bjhjRWUrMCtyUnpr?=
- =?utf-8?B?ZmNIZGs5V2RZWWVmaGFpSTIrSHFUeWlSeU9scExoKzZ1RDA0bXFEczVjcWRH?=
- =?utf-8?B?S25uVSsxTitNSzVqMTlmV1Q2UHBqb0tBVVFOVjRsWDkxRFN1THoza0lNTUdl?=
- =?utf-8?B?enZ6Q2xha2ZIMlNab0tzYmhSQWh0c0FGZDAzeHRvZ0FMQWNwRjFuN2NLdHNr?=
- =?utf-8?B?eFNFRkduVmRoZXQ0VWhjSjNCeUhUbkxoNHZlSEMwb05ocTdWRUFJYzEzc0N6?=
- =?utf-8?B?Ry9pdGQ3TUZWci9KV3Uyd01SbTdTQWJneUFrdVNCSFozL1JjV1N2NnJBUXpH?=
- =?utf-8?B?TldxSUZSNjVnei9ZaWZTbTQvQ2treUNFYjM4QTk0TTlUZ3JnS0pHQ3pGS3Uw?=
- =?utf-8?B?dFByb2RiM3ArVVUwUnpXanN0MEFlbndoNkhldEZHb2dkTnpCNzZZZ045bUVQ?=
- =?utf-8?B?WHVzSDZ3dHBiTjJhaWJYcVFCT1pETU5SYUtBcVdnVnU3bTIwdWJzVUdYL2FJ?=
- =?utf-8?B?amZ3OFJ2bDhoaUNXaSsxZ2lwR0FrNlB2NXRmWFZramRiWHdxSmZyVTJYaUox?=
- =?utf-8?B?NDdWRFJuWVhGcVliWkdvWDRuZ24zLzhxa3JzZk9NN0k2b0EvZnhGT1NMOHhT?=
- =?utf-8?B?Nis2SDR6T1l3MjlxTWZFRDlkYXRDT2tibFZ4allNSllOLzBoRWwrRWhJSTcw?=
- =?utf-8?B?NlZJZTZDL2xZZXdZckdoM3JqbHh6QzZMZWU2R2w1S25zbURycWt0cTNCZXQw?=
- =?utf-8?B?dlIyUHlPRnBZZ3NKUWx6cnNSNXM2UU9QMFFFSnVYR0VFUlBBdnNISFpWaldz?=
- =?utf-8?B?RnBSOS9ZUDZXZFZYdmh2VnJrVHdhblU4Zjg4bjFzb1hpaWFTbERGNDZDbFo5?=
- =?utf-8?B?ZDh5cm9CZzhvZm1WVzNTRWIwVEp2ek1WU2w3eTNnTC9TQWplRFFDSCtiZTl2?=
- =?utf-8?B?UldNU1ZtM1B2VTFvNHgvUk5EdkxKSUhrOUhDTHpQUDhOeTJHbEtsbGxOcHIv?=
- =?utf-8?B?UXVpdEVabldJWm5GajNTVVhrdzNockRiMXJ2SEJUMzZuZjI1cG9TcSsrRERx?=
- =?utf-8?B?cXBrVVhtWmFQQ0pFdndacDBUa054SjFxcE04dGNhM2R5WHJ5TnFIWmIrdExB?=
- =?utf-8?B?Z3M4aWhXSnJ1SjF3NnJFcTRHaUpzL2dpR2Z5UEllbWRuZGpYb2J6Q1gvdmxn?=
- =?utf-8?B?OW8wMGRSaldHYlUyQkQwK29GTStJVFJ0eUhiNitjTDFkOUN4blJvUm5heFBu?=
- =?utf-8?B?REZjMEI2RkdmQmtiUklIZWZLYlorVVR6aTNETXliZ2JnbERwVW4yR1V1S2Ji?=
- =?utf-8?B?blpVUU5PUWdDYjN1M3Y4QmRZM3BLVmNORmRYbHZyajF6c1QvQUNqY0VFQ3Zy?=
- =?utf-8?B?NVdib1g4dXhEdUFWdWlwdHVVZUN2UEtSK3NnNGxxWVJ1aFUyQXd3T280NlRE?=
- =?utf-8?B?UjFiSkNYcE5wRnVuVFIzR0V5R0gwLzJOZWFFbmhxcHUzcGJXQU5XRlhYNGZJ?=
- =?utf-8?B?V21FeUdBTHZXOHZpQWtuSHFsZjYrWWpiOVc2aXFVNDNkRU1Na1hrMU93N2l0?=
- =?utf-8?B?Rmt2MU9oUWhYMVNuM1o0QTNOZ3h2b2ZZa00xaHp2MjFTeVFmSGVMTzRzTEVU?=
- =?utf-8?B?NGFnbWQxakZlUDdtM0NCQXJPaEZOYUxMTWRZL3ppSXp6QlZITmFPdDVMeGVK?=
- =?utf-8?B?RGJNdEZpMEZTS082UkNQd1JsL3dDVGcrcU45UldoSkZnaTJ5WEV3cjRLL0Rn?=
- =?utf-8?B?dzltK1U3K2Z0OGErN1NIM2tYczBUWEJpM3NiUXNGREpENkhDVytzRnZpeTJz?=
- =?utf-8?B?S3UwSkJ3aDNJYWoyK09jWVQ4YXU3TnAvVjNiZ2dkb2hrSU1oaEJlWEUwUkZl?=
- =?utf-8?B?Wk5xengvaXAvMDFINmpPM2NiM2d5L2U0STgvclV4dCtxZEM5a0NHcTNVM2tC?=
- =?utf-8?B?MVE9PQ==?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01ac96cb-e9d4-4049-b5eb-08ddd8ed6bc5
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB3461.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2025 15:40:38.4825
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZqPAz6GuuNxJlluLzg7AFD23oPY6PhU5cV97PgyEbY+zGVpPP41JT7bUT5rh31gosIOa/TQZwLDMi/6zrWgJGMFLlZFs0XjJmSx1e+IvHqQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR03MB6333
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] usb: sleepable spinlock used in USB bh_worker softirq on
+ PREEMPT_RT
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-usb@vger.kernel.org, linux-rt-users@vger.kernel.org,
+ gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
+ Thomas Gleixner <tglx@linutronix.de>, Clark Williams <clrkwllms@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ syzkaller@googlegroups.com
+References: <1f8dd706-0eb0-4e09-a0fe-fc48fb24005e@kzalloc.com>
+ <20250811091559.CXIs7FvU@linutronix.de>
+Content-Language: en-US
+From: Yunseong Kim <ysk@kzalloc.com>
+Organization: kzalloc
+In-Reply-To: <20250811091559.CXIs7FvU@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi Sebastian,
+
+Thank you for your prompt reply and clarification.
+
+On 8/11/25 6:15 오후, Sebastian Andrzej Siewior wrote:
+> On 2025-08-11 00:05:49 [+0900], Yunseong Kim wrote:
+>> While running a PREEMPT_RT-enabled kernel I observed a sleepable
+>> spinlock (rt_spin_lock) being taken from a softirq context within
+>> the USB core framework. On PREEMPT_RT, spin_lock() may sleep when
+>> contended. This is unsafe in softirq context and can cause hangs or
+>> deadlocks.
+>>
+> …
+>> I believe this requires a change in the USB core framework rather than
+>> just in individual drivers.
+>>
+>> Kernel config, full logs, and reproduction steps can be provided on
+>> request.
+>>
+>> This bug was uncovered during my work to fixing KCOV for PREEMPT_RT awareness.
+>> Link: https://lore.kernel.org/all/ee26e7b2-80dd-49b1-bca2-61e460f73c2d@kzalloc.com/t/#u
+> 
+> I'm confused. Is this new or this the same bug that was reported by you
+> in the thread you linked?
+> The kcov issue should be fixed by
+> 	https://lore.kernel.org/all/20250811082745.ycJqBXMs@linutronix.de/
+
+You are absolutely right.
+
+While PREEMPT_RT does shift most softirq handling to the ksoftirqd process
+context where sleeping locks are generally allowed, I overlooked the ironclad
+rule: DO NOT SLEEP if interrupts are disabled. Even in ksoftirqd, disabling
+interrupts creates an atomic context, and acquiring a sleeping lock while
+irqs_disabled() is true can be disastrous in real-time environments.
+
+The bug I reported, specifically the call stack observed where rt_spin_lock was
+taken from a softirq context within the USB core framework, was a direct
+consequence of this misunderstanding. This issue was uncovered during my work on
+fixing KCOV for PREEMPT_RT awareness and was consistently reproducible across my
+v1 through v3 patches. For reference, my v3 work can be found here:
+ https://lore.kernel.org/lkml/ddd14f62-b6c9-4984-84be-6c999ea92e30@kzalloc.com/t/#u.
+
+I have applied your patch:
+ https://lore.kernel.org/all/20250811082745.ycJqBXMs@linutronix.de/
+
+-static inline unsigned long kcov_remote_start_usb_softirq(u64 id)
++static inline void kcov_remote_start_usb_softirq(u64 id)
+ {
+-	unsigned long flags = 0;
+-
+-	if (in_serving_softirq()) {
+-		local_irq_save(flags);
++	if (in_serving_softirq() && !in_hardirq())
+ 		kcov_remote_start_usb(id);
+
+!in_hardirq(), I can definitely confirm that the specific call stack and the bug
+I reported are no longer reproducible. Your fix has indeed addressed the
+underlying issue.
+
+>> Best Regards,
+>> Yunseong Kim
+> 
+> Sebastian
 
 
+Thank you again for your guidance and for resolving this problem!
 
-On 8/4/25 7:57 AM, Matthew Gerlach wrote:
->
-> On 7/24/25 8:40 AM, Matthew Gerlach wrote:
-> > From: Mun Yew Tham <mun.yew.tham@altera.com>
-> >
-> > Add the base device tree nodes for gmac0, gmac1, and gmac2 to the DTSI
-> > for the Agilex5 SOCFPGA.  Agilex5 has three Ethernet controllers based on
-> > Synopsys DWC XGMAC IP version 2.10.
-> >
-> > Signed-off-by: Mun Yew Tham <mun.yew.tham@altera.com>
-> > Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> > ---
-> > v2:
-> >   - Remove generic compatible string for Agilex5.
-> > ---
-> >   .../arm64/boot/dts/intel/socfpga_agilex5.dtsi | 336 ++++++++++++++++++
-> >   1 file changed, 336 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> > index 7d9394a04302..04e99cd7e74b 100644
-> > --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> > +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> > @@ -486,5 +486,341 @@ qspi: spi@108d2000 {
-> >   			clocks = <&qspi_clk>;
-> >   			status = "disabled";
-> >   		};
->
-> Is there any feedback for this patch and the next one in the series,
-> "[PATCH v2 3/4] arm64: dts: socfpga: agilex5: enable gmac2 on the
-> Agilex5 dev kit"?
->
-> Thanks,
-> Matthew Gerlach
+Best Regards,
+Yunseong Kim
 
-Just checking in again. Is there any feedback on this patch (v2 2/4) or 
-the next patch (v2 3/4)?
-https://lore.kernel.org/lkml/20250724154052.205706-1-matthew.gerlach@altera.com/T/#m2a5f9a3d22dfef094986fd8a421051f55667b427 
 
-https://lore.kernel.org/lkml/20250724154052.205706-1-matthew.gerlach@altera.com/T/#m3e3d9774dbdb34d646b53c04c46ec49d32254544
-
-Thanks,
-Matthew Gerlach
-
-> > +
-> > +		gmac0: ethernet@10810000 {
-> > +			compatible = "altr,socfpga-stmmac-agilex5",
-> > +				     "snps,dwxgmac-2.10";
-> > +			reg = <0x10810000 0x3500>;
-> > +			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
-> > +			interrupt-names = "macirq";
-> > +			resets = <&rst EMAC0_RESET>, <&rst EMAC0_OCP_RESET>;
-> > +			reset-names = "stmmaceth", "ahb";
-> > +			clocks = <&clkmgr AGILEX5_EMAC0_CLK>,
-> > +				 <&clkmgr AGILEX5_EMAC_PTP_CLK>;
-> > +			clock-names = "stmmaceth", "ptp_ref";
-> > +			mac-address = [00 00 00 00 00 00];
-> > +			tx-fifo-depth = <32768>;
-> > +			rx-fifo-depth = <16384>;
-> > +			snps,multicast-filter-bins = <64>;
-> > +			snps,perfect-filter-entries = <64>;
-> > +			snps,axi-config = <&stmmac_axi_emac0_setup>;
-> > +			snps,mtl-rx-config = <&mtl_rx_emac0_setup>;
-> > +			snps,mtl-tx-config = <&mtl_tx_emac0_setup>;
-> > +			snps,pbl = <32>;
-> > +			snps,tso;
-> > +			altr,sysmgr-syscon = <&sysmgr 0x44 0>;
-> > +			snps,clk-csr = <0>;
-> > +			status = "disabled";
-> > +
-> > +			stmmac_axi_emac0_setup: stmmac-axi-config {
-> > +				snps,wr_osr_lmt = <31>;
-> > +				snps,rd_osr_lmt = <31>;
-> > +				snps,blen = <0 0 0 32 16 8 4>;
-> > +			};
-> > +
-> > +			mtl_rx_emac0_setup: rx-queues-config {
-> > +				snps,rx-queues-to-use = <8>;
-> > +				snps,rx-sched-sp;
-> > +				queue0 {
-> > +					snps,dcb-algorithm;
-> > +					snps,map-to-dma-channel = <0x0>;
-> > +				};
-> > +				queue1 {
-> > +					snps,dcb-algorithm;
-> > +					snps,map-to-dma-channel = <0x1>;
-> > +				};
-> > +				queue2 {
-> > +					snps,dcb-algorithm;
-> > +					snps,map-to-dma-channel = <0x2>;
-> > +				};
-> > +				queue3 {
-> > +					snps,dcb-algorithm;
-> > +					snps,map-to-dma-channel = <0x3>;
-> > +				};
-> > +				queue4 {
-> > +					snps,dcb-algorithm;
-> > +					snps,map-to-dma-channel = <0x4>;
-> > +				};
-> > +				queue5 {
-> > +					snps,dcb-algorithm;
-> > +					snps,map-to-dma-channel = <0x5>;
-> > +				};
-> > +				queue6 {
-> > +					snps,dcb-algorithm;
-> > +					snps,map-to-dma-channel = <0x6>;
-> > +				};
-> > +				queue7 {
-> > +					snps,dcb-algorithm;
-> > +					snps,map-to-dma-channel = <0x7>;
-> > +				};
-> > +			};
-> > +
-> > +			mtl_tx_emac0_setup: tx-queues-config {
-> > +				snps,tx-queues-to-use = <8>;
-> > +				snps,tx-sched-wrr;
-> > +				queue0 {
-> > +					snps,weight = <0x09>;
-> > +					snps,dcb-algorithm;
-> > +				};
-> > +				queue1 {
-> > +					snps,weight = <0x0A>;
-> > +					snps,dcb-algorithm;
-> > +				};
-> > +				queue2 {
-> > +					snps,weight = <0x0B>;
-> > +					snps,coe-unsupported;
-> > +					snps,dcb-algorithm;
-> > +				};
-> > +				queue3 {
-> > +					snps,weight = <0x0C>;
-> > +					snps,coe-unsupported;
-> > +					snps,dcb-algorithm;
-> > +				};
-> > +				queue4 {
-> > +					snps,weight = <0x0D>;
-> > +					snps,coe-unsupported;
-> > +					snps,dcb-algorithm;
-> > +				};
-> > +				queue5 {
-> > +					snps,weight = <0x0E>;
-> > +					snps,coe-unsupported;
-> > +					snps,dcb-algorithm;
-> > +				};
-> > +				queue6 {
-> > +					snps,weight = <0x0F>;
-> > +					snps,coe-unsupported;
-> > +					snps,dcb-algorithm;
-> > +				};
-> > +				queue7 {
-> > +					snps,weight = <0x10>;
-> > +					snps,coe-unsupported;
-> > +					snps,dcb-algorithm;
-> > +				};
-> > +			};
-> > +		};
-> > +
->
 
