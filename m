@@ -1,102 +1,134 @@
-Return-Path: <linux-kernel+bounces-762341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D8EB20520
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:20:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48364B20523
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70BB18A16AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEA1618A1804
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A08228CB8;
-	Mon, 11 Aug 2025 10:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AD122330F;
+	Mon, 11 Aug 2025 10:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="g745/gIx"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eNEBIfAa"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0109E1DF982;
-	Mon, 11 Aug 2025 10:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DE71DF982;
+	Mon, 11 Aug 2025 10:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754907608; cv=none; b=mtSuLi620x8p/4RtP/OYk+kpKhV16qh7yWU/kp/pBRwZllnUvvI8QScNNp5amsQOwlUS4gHXhq3mpaDexREHv9kwnlsMhAOjsXu5zCpHxS9JIlfsBMmB25f/y5KP4HOkVpSYQI3Ze5m6CsKN78SxPTZaoAEVFMB6TXQAphjBpbY=
+	t=1754907622; cv=none; b=A1rbZg9VIf6bKo0JfN/LHjnDhAQ605pFDKMu4WrghIRbw5FECdS2VRjVY8aL129ZwckPtFApxzPv668MW/Z/7QEGpHJrlSZ24W1A1Nn7fhBoTj8vJwAEcEosFKDWbCQUic5hwkc/WvjhuEoHIsO1dahnXwyKSSYO981b6v4S5vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754907608; c=relaxed/simple;
-	bh=FJlUFyL1R+XZtVmsXNA2lWDfz7UoNDLHRD8kXsfNIDI=;
+	s=arc-20240116; t=1754907622; c=relaxed/simple;
+	bh=rGfHVF0qCtGUZ9N72iqTD5w7HVHytP5/3tPYzQMtPkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VlZU7EwUIBI4KibNVpNITDk0wkbIbTj108FrxoKZuZAYOBC4y5/6jA3JKz7Z2oLeN73J2AOyX2WF9zLK8LvbF1QEMLNOOuAbHpzMzdl10T4kEkGERdQ97+mb/JcSCQ9D4Dsm5uLMkJMOOHk9+xT07P90yZ8XJ8XzgvEehb+HNMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=g745/gIx; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	 Content-Type:Content-Disposition:In-Reply-To; b=EFg7shazdCVMMt3sr7DuUHVBZpTWRHwWebD6X6JYTGT5VgB8calGYPOjQwg9EbA+weN4/GZvNr0ReWd+u1Afs5Qgq/mEZy3tr20WiClcH73Sr0AnW/gL6YjoY2vRG0qFwppOPBY2bNBrd1jbjEeJx1zGTJYXblw4p8WfyN0zmOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eNEBIfAa; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4991A40E023D;
+	Mon, 11 Aug 2025 10:20:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id KSW4jXq4gEYY; Mon, 11 Aug 2025 10:20:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1754907612; bh=GcJUIrAdErTxmKVEiP9qWgdBljgYH1PC8ql9PSEuReM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eNEBIfAaKIlAiqZ7j/hcRYBQx5uIdnO4p47djMAe/fwmKZ4oUye7Icwuc1p9+n3wc
+	 wPjAytEjYZ4fvKrAAgDGzaOBTrRcbrvSjBa6nUrpA9eM9rWl2ApLXlLS3uop86SV6N
+	 aucdhtAk70NpbYyAhhY4r9fKLaFpi8wvgAM6S+TOHmIggYfVtlGDKhDh4HW3cgz7nq
+	 Kh3NRuGQWTKEm7a0uH33XUld/sV/4yS/T22kzqnRIukd8jgdkdkOPY8aGE3Srv2CS4
+	 t+HSI7v1YEd5CFKb3zrd+IGviNXrhQn/y4Dc3UaAhJZu6boJFefRTDkhD6AXyxe0FA
+	 Ep6iKWuX6Njx1XMWussKpyTn0CQHds14MWNsSUWlXcy9ZXQJU9BSFtsYoMU/9p13DP
+	 WL0dp5SmRM27b2HoKhC/oZoessXo2WVdRh+UJIvVnmq5b85dFhthrMYK+oaXvaxAse
+	 onpdndKU5fvthJ5jDSLi/8LADp9xrHMS2O4DPLBefAs2xHYp21UuP3kwf6b+jDShQe
+	 zXKzRxlQ9OhVNz6KOZtBnV3vexyV3UUakr1eXvjO+Eruwcf/eVJ50RPY6637PmHei0
+	 SZKfDG9580WaGruYMtc7YIqlmPanEPqEn3PyLsjjY6Xf+TDeOtoygDH42Xl9yoSJ/u
+	 3BiJTIv1O/NZZsEwNNaHFdZI=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4c0rH42b22z9sjB;
-	Mon, 11 Aug 2025 12:20:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754907600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fDBt9G451b4z8m3hFF/H1Ireg3q2+0iEF/cMTnKNzjI=;
-	b=g745/gIxsbzXatM5o0BK3LZFVN6WHz3Fg23aj1XXyhxFSZy1cW+pJm2UEOjzgJeffNYz37
-	GVM3XBUXUQZ8JW3wbKjUWS/+aivLVvyPnn8Pvu0j+wRyG48R6a5vdqmIlXSsBfC6r/4SgX
-	ziz/h9mKmEnMlRZwPfmH9VPESZ2khnyampl+h4lh5/aZ73vmLygtHqGP57JAiTg8JYkzBc
-	VlrAh4pSk//WffTSUiQBeih6Onm1GPDJefFzjLwQRL3+sNAsirC0Fz5+8G5hhGYJZr5xcE
-	PU9G7R+5WBj4xL0Ed9NB3pSGCKDk7GXeKrnwWYSugCBPnrtb/+POv+xDYeaHug==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Mon, 11 Aug 2025 12:19:51 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: David Hildenbrand <david@redhat.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, willy@infradead.org, Ritesh Harjani <ritesh.list@gmail.com>, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	"Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, hch@lst.de, 
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH v3 0/5] add persistent huge zero folio support
-Message-ID: <p6ciia5cm5re4paau3tqhcdk3cdjmnwjuc2l5rv6ztb6kcgvyp@2g6ei7okvuw5>
-References: <20250811084113.647267-1-kernel@pankajraghav.com>
- <hzk7e52sfhfqvo5bh7btthtyyo2tf4rwe24jxtp3fqd62vxo7k@cylwrbxqj47b>
- <dfb01243-7251-444c-8ac6-d76666742aa9@redhat.com>
- <112b4bcd-230a-4482-ae2e-67fa22b3596f@redhat.com>
- <rr6kkjxizlpruc46hjnx72jl5625rsw3mcpkc5h4bvtp3wbmjf@g45yhep3ogjo>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A346740E023B;
+	Mon, 11 Aug 2025 10:20:01 +0000 (UTC)
+Date: Mon, 11 Aug 2025 12:19:55 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>
+Subject: Re: [PATCH v6 19/22] x86/boot: Create a confined code area for
+ startup code
+Message-ID: <20250811101955.GOaJnDy0-uy0quuouD@fat_crate.local>
+References: <20250722072708.2079165-24-ardb+git@google.com>
+ <20250722072708.2079165-43-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <rr6kkjxizlpruc46hjnx72jl5625rsw3mcpkc5h4bvtp3wbmjf@g45yhep3ogjo>
-X-Rspamd-Queue-Id: 4c0rH42b22z9sjB
+In-Reply-To: <20250722072708.2079165-43-ardb+git@google.com>
 
-> > Sorry, RFC v2 I think. It got a bit confusing with series names/versions.
+On Tue, Jul 22, 2025 at 09:27:28AM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
 > 
-> Well, my worry is that 2M can be a high tax for smaller machines.
-> Compile-time might be cleaner, but it has downsides.
+> In order to be able to have tight control over which code may execute
+> from the early 1:1 mapping of memory, but still link vmlinux as a single
+> executable, prefix all symbol references in startup code with __pi_, and
+> invoke it from outside using the __pi_ prefix.
 > 
-> It is also not clear if these users actually need physical HZP or virtual
-> is enough. Virtual is cheap.
+> Use objtool to check that no absolute symbol references are present in
+> the startup code, as these cannot be used from code running from the 1:1
+> mapping.
+> 
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/x86/boot/startup/Makefile     | 14 ++++++++++++++
+>  arch/x86/boot/startup/sev-shared.c |  4 +---
+>  arch/x86/boot/startup/sme.c        |  1 -
+>  arch/x86/coco/sev/core.c           |  2 +-
+>  arch/x86/include/asm/setup.h       |  1 +
+>  arch/x86/include/asm/sev.h         |  1 +
+>  arch/x86/kernel/head64.c           |  2 +-
+>  arch/x86/kernel/head_64.S          |  8 ++++----
+>  arch/x86/mm/mem_encrypt_boot.S     |  6 +++---
+>  tools/objtool/check.c              |  3 ++-
+>  10 files changed, 28 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/x86/boot/startup/Makefile b/arch/x86/boot/startup/Makefile
+> index 32737f4ab5a8..e8fdf020b422 100644
+> --- a/arch/x86/boot/startup/Makefile
+> +++ b/arch/x86/boot/startup/Makefile
+> @@ -4,6 +4,7 @@ KBUILD_AFLAGS		+= -D__DISABLE_EXPORTS
+>  KBUILD_CFLAGS		+= -D__DISABLE_EXPORTS -mcmodel=small -fPIC \
+>  			   -Os -DDISABLE_BRANCH_PROFILING \
+>  			   $(DISABLE_STACKLEAK_PLUGIN) \
+> +			   $(DISABLE_LATENT_ENTROPY_PLUGIN) \
+>  			   -fno-stack-protector -D__NO_FORTIFY \
+>  			   -fno-jump-tables \
+>  			   -include $(srctree)/include/linux/hidden.h
 
-We do need physical as the main usecase was for block IO where we will
-be DMAing. The main reason I was seeing an improvement in perf was we
-were sending bigger chunks of memory in a single bio_vec instead of
-using multiple bio_vec.
+Commit message should say something about that hunk I guess. It looks like it
+disables the instrumentation that this plugin adds but I dunno.
 
---
-Pankaj
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
