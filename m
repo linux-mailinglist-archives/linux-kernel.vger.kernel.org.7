@@ -1,125 +1,117 @@
-Return-Path: <linux-kernel+bounces-763415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCEDB21446
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:27:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB83B21447
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 20:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962FB3BB090
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:27:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5DA41A232B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 18:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9B22E11C3;
-	Mon, 11 Aug 2025 18:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F162E2833;
+	Mon, 11 Aug 2025 18:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RaF3cZtZ"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pu7u48aC"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3B82E0B69
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FD72E0B69
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 18:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754936714; cv=none; b=sKtsfaME+Qo2CXxHnlkAcU17fnzJqODUGDpDlmFpTRW4E+kkptsh3Q7LvP7KDy82wlvuSqexk6i/Wx6dHTQ6wEkRef/HqE/uo1BubBKvLb9TYIJ1qWplPtusO7mo9mvjgKHbmotjIiOUCXuZf3hJkHMpEFaDO3MfNS6GswSnDe0=
+	t=1754936724; cv=none; b=dY8fUzbRAppNtLLrTjYlq1O32Uv0WhHSKjIhVAh3jEpX+rDHUh3w0SOAByFxFxvKsG7c6URYbwBOtOdeV+A0jUCfaaO+Oc7TRtQ0uTT+t0XBrXup5p7A9sqTALoPYnHZ3G/o8yIO+AspaztJgKeEK4CpnJjK5Y5jXEXJml4Yeto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754936714; c=relaxed/simple;
-	bh=DokD3vIRoHjif+5R31Uuaz7qu2/o6zaJk/QPZLREa1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bP2OkMhcc4O4oA+Tze5p1zi/f+wCkS7+2uKMUXbapevcDXugYJSt1K+XoiUxB/SCIh3liD8usQ2KUXEyiJN+8hEjNQzi+VHwQ9ODznQMz0CfsLg2l8A1a8omD7v1b50zonlUXlTZyfN9lX0/bZO+0MRT+fMDtAAMekwyW51Nfd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RaF3cZtZ; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-76bc61152d8so3981379b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:25:10 -0700 (PDT)
+	s=arc-20240116; t=1754936724; c=relaxed/simple;
+	bh=+RaoGEfqODQpjds3+pa5hzUvYCotn9nVbr9q7E3jVBQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XclA6YPxXhj2bonUd7bKVWcL2QwA2uehUbMiZMx+0Qi/nGmWK5hwx3vXmu23zKh/j97sktompIUirEW2fJrR9u0XTXbL+ITdoQEbkKmh9VOTsXg6hxqJ0P3fx1n2AnxUgLxLuKJDjEG68lHo7dbTPe9uSoYwsXAVxZ6T8MTWAyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pu7u48aC; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f2a98d91eso4441030a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754936709; x=1755541509; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GFiR90ByEmrbZSIU4oPPtikQuOT0OadaiRvQ1pEaI/0=;
-        b=RaF3cZtZIuPX+i7SYSgS/gVmYOCVAIgZuDCdAEx18G3WT8YIA+bGkQOo1bnsbkaQMU
-         mTV4me6/rOZ+8SqGIQdiRhfChPEicK8autG3kcII7FK5fySYglgwl6/3MG02JdgKdNOd
-         BRV4nq/I5NBZg2cHA3AGTG4+3uaBJfDu6BOB996SfSwyLjC9OGfY+vcKF+iwhat6nJwT
-         lG0tql8OLzV5Th6Lnixlfb55mSq99CfLbR3lfGK2Gd5rj1KLGEokz/L597XRMDUFtysw
-         IIEFCjv7zBJoznBKiPtRYlNC/dPKo0iKdg7sbxeP1Tx2cqCvbZt9kdylkrCH0TmA3TOU
-         Oi8w==
+        d=google.com; s=20230601; t=1754936722; x=1755541522; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GkymeW9oJwqBHxAPtMhP6NoKFqSvnGj/TBIK2S4XTUo=;
+        b=Pu7u48aChQ7x3AINRl4vlr1YlUJa3elREij6oAYsxdM3mPq5g4/wZGB9WWgJhbRxi7
+         B+CvxTPfX+xM5e8WeLqQJvNZ48UfZ4kkOQyfdYjSGbX0h+F1hKF12Xt8lWeuY56wxdOD
+         ijelmJC8G9NA+klOXh6Iq74Ww39uk2cpqjM0rc9J4sSgEVVtNkaB0rZ/D1lrA5IVaZGS
+         oKTmavfw7gH2kSarBfkLCjxnnaZwn9C+RFCS5J5FV3Fbrxd5b/Jv4Tm2UvGSFApTztc5
+         U+phlYpAUhgTnHvtO4AEUncwi+qaeVqhdsNrImcKXoAaU3i3Ho2bzyio1dxBT2nnpNuI
+         EAwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754936709; x=1755541509;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GFiR90ByEmrbZSIU4oPPtikQuOT0OadaiRvQ1pEaI/0=;
-        b=KHVtTJrOhm1VY6tWhMuYvrMjLodKndPYIpsW3/udjUwTu8DvPv9dSgOqyrFB6qkL1R
-         RHZaZrHYTPY8jGrPkVVebKMrh1ofZVi227csSLQFnnlZfs4A6i3AXSDqpC7M43l2o6Py
-         M3F5zh64b5htCCD56/Nw2ER5Mu72aRdAvF5Kdhs6sz8qYOiku0O7zQrX7ZjEISO13iqk
-         WZ6aDrTR42j0m3YiIQBEOt6XedirR+MWICRwvibYpFNtdBRAI1FS7kDoe6uroLOJXzUv
-         vzkMMtnhO/YDpR2BJp5+/J/HvZctOkrqzJzVSku6+VHm8juCxNc2fThcARpDhM83tJLv
-         p+cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgQhDZyHISwNf+BcuMaGb1qlHV1TwEzEmqoyUdhW2U8ratNisGDHfiXfL2TGT9I13/ihnVvVFL5mENogw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIoBkqqfypbf2zyVvM6vSc99FFErTp5m7JdjBhB+yHEI8zlnGa
-	LfkR3gRK9OTMvTGi7dH9HhekfcZXz4sx09DFhR7v/DouUU7oKdF0Qsgp
-X-Gm-Gg: ASbGncvz0xZyXhLjmEiWoIvbaLdkjykNgxd7NUJi8qnyKlc0Dp0r/RsdcS3VbKmeY2b
-	zPGLs2fOsNiGjBfEszay8q7zrIIqhpLnDXiCx2qfE0T+sGaXUlAcT4r75CvmaG1R5mcDaultiyH
-	ooV4JJTcHgRfKrHz6aaLvNCmlGy2f1FdLkl3X/KM6M7oy6G+TVkrePg2/4UQj5uyXJ1soLBTH3l
-	Fo+9SkTgPI5/vLT17uZzFzeAMx/p2glIa0SgsJb8Vv2eQFZeimadGCM/i70o9Q12jk2U9mxfTyy
-	YzOvTvgQpyXFPOyYbvaqeY8eSNKDQO8BKBB11wNZ3t41y+CWEokzzVPGOphlchIbY6dB4V1Gint
-	ziD67zAzEh7ro6bhxnwUaQOu3Hab/dEgI
-X-Google-Smtp-Source: AGHT+IGXJ6A+jBw2s9ZXQYHpLI2Ze6FA2tDiIc8Rtctqegz0VHdY8uYfOogfh0O8oZki2NTtbzW9CA==
-X-Received: by 2002:a05:6a00:1388:b0:74c:3547:7f0c with SMTP id d2e1a72fcca58-76e0de2ddf8mr950598b3a.3.1754936709451;
-        Mon, 11 Aug 2025 11:25:09 -0700 (PDT)
-Received: from archlinux ([2406:da18:c0d:d265:8107:1fcd:5d57:ff7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c020a4a1dsm20101039b3a.13.2025.08.11.11.25.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Aug 2025 11:25:08 -0700 (PDT)
-From: Jialin Wang <wjl.linux@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jialin Wang <wjl.linux@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] mm/vmscan: remove redundant folio_test_swapbacked()
-Date: Tue, 12 Aug 2025 02:25:00 +0800
-Message-ID: <20250811182500.42670-1-wjl.linux@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1754936722; x=1755541522;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GkymeW9oJwqBHxAPtMhP6NoKFqSvnGj/TBIK2S4XTUo=;
+        b=lcIr9uNS/ADDOP+cpsnvTHt5SDukK2lShOXkD9hanKbaj7ohs9oktcQlOBNVQhYBFA
+         1u4OtUKs3iLo+417XKZ4sFtfrxUzOMT4riihKq/mmZV5MH3nPubVjrd1pI4546BTdJwc
+         fh0/Bm/B9l5CNL2cNSClyCiNk3NYhKCSHHGfxWlJ9Jz1632bCqVHZP/Z7Dv1+cbR0/FI
+         mvFPoTnN7IaExCDuqeDJgHMXZd/yaWrESI/0C7db2Ez6hNGuU8f5klAE7gvPrkp2WQq9
+         h5pO5Z6s6Vpu6z5xZ/NagDj80M/xG12LgpoDQMAno0HOoIWTL4BCCDh8TablCpSQyps3
+         AXHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ3rjq/pFAXjS0xRAGEaD0gIYcPfWJGTPyayPQYqRBrK0DFlghmgjBbt/LQ+3mB50OCu9wbGW8qbm2k3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ+s7MB1GoPKvUEyiYeuSIZbhpHidJu7SD0DQhugy0ZyFGfx3q
+	1g8kNm6/2zYF0UuMhvDLFWnF3yXvsXkNPz+QCVUPIniyG1lpfmBkamJ9ITKR5S+i89YEOYtPS0t
+	3b6jgYg==
+X-Google-Smtp-Source: AGHT+IHhf+u8DAgFU8Tb7yj1qaPeuXMKCvgtRgZ1OiwVl9wM0oGpeZSCJHlG1M98vl/B3sySbxtqsUMXd2U=
+X-Received: from pjbsj7.prod.google.com ([2002:a17:90b:2d87:b0:31f:232:1fae])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fc4d:b0:312:e6f1:c05d
+ with SMTP id 98e67ed59e1d1-321c09df627mr727122a91.2.1754936722399; Mon, 11
+ Aug 2025 11:25:22 -0700 (PDT)
+Date: Mon, 11 Aug 2025 11:25:20 -0700
+In-Reply-To: <20250807201628.1185915-5-sagis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250807201628.1185915-1-sagis@google.com> <20250807201628.1185915-5-sagis@google.com>
+Message-ID: <aJo1kNCUzAe2TFAz@google.com>
+Subject: Re: [PATCH v8 04/30] KVM: selftests: Add vCPU descriptor table
+ initialization utility
+From: Sean Christopherson <seanjc@google.com>
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>, 
+	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas <erdemaktas@google.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-When !folio_is_file_lru(folio) is false, it implies that
-!folio_test_swapbacked(folio) must be true. Therefore, the additional
-check for !folio_test_swapbacked(folio) is redundant and can be safely
-removed.
+On Thu, Aug 07, 2025, Sagi Shahar wrote:
+> From: Ackerley Tng <ackerleytng@google.com>
+> 
+> Turn vCPU descriptor table initialization into a utility for use by tests
+> needing finer control, for example for TDX TD creation.
 
-This cleanup simplifies the code without changing any functionality.
+NAK.  "needing finer control" is not a sufficient explanation for why _this_
+patch is necessary.  There's also zero argument made throughout any of these
+patches as to why this pattern:
 
-Signed-off-by: Jialin Wang <wjl.linux@gmail.com>
----
- mm/vmscan.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+	vm = td_create();
+	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
+	vcpu = td_vcpu_add(vm, 0, guest_io_writes);
+	td_finalize(vm);
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 7de11524a936..9d4745ad5e23 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -985,8 +985,7 @@ static void folio_check_dirty_writeback(struct folio *folio,
- 	 * They could be mistakenly treated as file lru. So further anon
- 	 * test is needed.
- 	 */
--	if (!folio_is_file_lru(folio) ||
--	    (folio_test_anon(folio) && !folio_test_swapbacked(folio))) {
-+	if (!folio_is_file_lru(folio) || folio_test_anon(folio)) {
- 		*dirty = false;
- 		*writeback = false;
- 		return;
--- 
-2.50.0
+is the best approach.  IMO it is NOT the best approach.  I would much rather we
+structure things so that creating TDs can use APIs like this:
 
+static inline struct kvm_vm *td_create_with_vcpus(uint32_t nr_vcpus,
+						  void *guest_code,
+						  struct kvm_vcpu *vcpus[])
+{
+	return __vm_create_with_vcpus(VM_SHAPE_TDX, nr_vcpus, 0, guest_code, vcpus);
+}
+
+instead of open coding an entirely different set of APIs for creating TDs, which
+is not maintanable.
 
