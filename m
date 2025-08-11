@@ -1,287 +1,176 @@
-Return-Path: <linux-kernel+bounces-762431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953F3B20667
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:54:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DDBB206AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 12:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03FBB16591D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:54:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28F007A6AF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 10:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85FC279DAA;
-	Mon, 11 Aug 2025 10:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370C6267B02;
+	Mon, 11 Aug 2025 10:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rm09YEH3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xje/E3oF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEEC23D28C;
-	Mon, 11 Aug 2025 10:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C9E13AD1C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754909582; cv=none; b=ThG1Zoelte+Lfd4GumVMdNNEFJ1mbZg6PunzFi3b4b8jkyb17pnAsM/lcV1j1oY7uqGoknXzECBaE2SpQPo2kqc5zaj2R3V5V1sLrC2AYulqNruKEVi74k1Haqb5hn1MjcyVf/lyR9YH9b27SXD1iwHdt5/CiLUVg7LiL4tRC3U=
+	t=1754909754; cv=none; b=Fsd7z5gubfpNBQ8zFNJc9TvusuawNdETcMqQgk7eJrDNsCzVmUIi/tQrhjuY3jv14WS203eywuh5fcuZETRzVdxzjdXy4aBfLn/jdChbRMSvAFSemcUK+Pj3ppF0G4/uq/ON0gIkXpFIDLwroG5hEEadE940z4DJN6iC5bCK5Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754909582; c=relaxed/simple;
-	bh=1gGPyrJyshBlnSCLmfnaqE2KI5THYjimmqrm7wNgPoU=;
+	s=arc-20240116; t=1754909754; c=relaxed/simple;
+	bh=EDlgtCGTTiPDS26OgrMplbuhmJKWPHHmP5ixMDSjbRE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h7s8S9jllgrWTK2nskwoP3abk7gmghEn2egae80hnjABqIdjWNTnxbKvZjYqMG/x4RXP0YUYjeCjmIf8b17rEgjYVJvni/HaOD1scmI2Y1FjNL5+5dk7S3/T7AfbHZfYq4QxFykOazuaaEbr4nBGMId940gxDR6Sx5bE7EHhiSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rm09YEH3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B4E6C4CEED;
-	Mon, 11 Aug 2025 10:53:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754909581;
-	bh=1gGPyrJyshBlnSCLmfnaqE2KI5THYjimmqrm7wNgPoU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rm09YEH331RyTN1fnnzsMNXCyXPPKpEMdm8E7L0Uo174gLkyJxEbIFIFy0JGeFj4E
-	 Alwfz70vhC1HHuPdrM4/Wjt5WAQU4WcX4LL8rTCMOr0KcRbmR8+VeHM6cUZ2Lut0T7
-	 IwnOMYbTD+nQ8ryLP1yP6asjj9y6C966KMoqMilQgwAvvOktIUt6z4uIcCR//206qV
-	 fMYYLrQIEpjwV00Y2onGIx5cPXU2KA6aDaQZldtx726VAn6ZhKEczVNlx9J4m/aNDA
-	 ORnY9H6Jn6oa3T67BKGawb+o9pJ6Q9n6mJnA9khiGO03j4FhP+mBFyiuXRkyn84umr
-	 xV0+EbnrXRCUQ==
-Received: by pali.im (Postfix)
-	id A3085730; Mon, 11 Aug 2025 12:52:58 +0200 (CEST)
-Date: Mon, 11 Aug 2025 12:52:58 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: ronnie sahlberg <ronniesahlberg@gmail.com>,
-	Jeremy Allison <jra@samba.org>, Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>, linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Do not use UID and GID from EAs
-Message-ID: <20250811105258.t3r65wsytkmyguem@pali>
-References: <20240913200204.10660-1-pali@kernel.org>
- <20240913201041.cwueaflcxhewnvwj@pali>
- <20240917200600.6smfxhrppkyjuyku@pali>
- <ZunlTDxPLn4yryW3@jeremy-rocky-laptop.localdomain>
- <20240917202921.ty32zzmhrg33knpy@pali>
- <ZunnGhOogEQU2Hje@jeremy-rocky-laptop.localdomain>
- <20240917203431.w5dejuwfkmabrewz@pali>
- <CAN05THTVav8HOCk6V+5eg-BTESZDBx2BuQOF1c=Vn2dFv_UNxw@mail.gmail.com>
- <CAH2r5muUioziUN7mRFUAOV3tGPMLnb949j70GKYnRM2LygAWVQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HnurtZ/4z+wJbgaK6DW9UAGyC92DlxkeRsAb2/TFPAFy0Uk5Mgv2g5BJ+r603JXTin1aaXvt7HiAiwcPjeEZPyR49flxGhc23B3dJR52e5dFyuFqkiVhl5LjFkKMG/aKbgGhS8uMfpmaSF/a7Cirn6pTlxKQiY9MINyVqGLcgEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xje/E3oF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57B9d8tL000598
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:55:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=mfNS104sZvUDxiTcLFxI/nq7
+	cWMQCwJ3YOUX3c0FHSE=; b=Xje/E3oFVs9vdnrDl6g8LqFPDlxxovzpfF3DtGBI
+	coW9ZStep+39hJVXf+ZTRRDPVQc+mn8X7kWnebVhd8CjTVDZBAHrZnaEfH98mnbK
+	wf6jDOPJqt79qf+zlxmYfxknmSPDPUnGciPjJ9rZHD1J4sILU7HGeZgVLOms208b
+	6g9ssb7x3/DwraUbRMrq51yP/6MCKz19321gq3BepgXsmJGfBbJftNpspMBejuDb
+	v+cRInn+48Qntb/EFUa2WL99GbJkm1n2zYXWDbRWa58/2GHHXRJbTngb6erwxXDy
+	Zq5WhoBYHpcZGSK8aNKcbOCHVSTfoQKBRfaao4YmpA17oQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxq6v1x8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 10:55:52 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4aedd0b5af9so85527661cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 03:55:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754909751; x=1755514551;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mfNS104sZvUDxiTcLFxI/nq7cWMQCwJ3YOUX3c0FHSE=;
+        b=ghBv08m3pRLh8kemVdRgi0VqK4739M9FUfOyARsx5QyTkifQBrBQk4fbKzt+p5bwEo
+         HdW5UXHMzfHaiv0anAb1KuZrLN5YsnBTwndW0zntdHNm15IXc1/lnptXnWZs8T86xwLj
+         X8tovLsGdoFjBS/66AMPoJ42dofHy62+uUHWRupKtkkRE6zQ5DGrfVMi3GQga6modLoS
+         paLQ13NviSmUxVEg1VjcUoGHRQf86D4LdmjB0pGS7NQtT1VJ5wcKDzYdAREnnnDYmnH9
+         W4EGaWi6/9N+wXvr21+pXZj3TGeJ1tPAN6fKsqFvt7zS3QaT2rEXoNpPOqPtdr38LZHK
+         n92Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV4OHWO11+Q9XKGaOcGZyCwb8JoLgiZ2cyx3fka5JL9Po++R3eZmpNyrZ5Svp0QaTdXF9/D9+GU2RFPwiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNnE4TKl+QB2v8RUX35GLeHw71HJfZ0LmXdV0jG/DGkezQSI+v
+	bu3/q+cZc0jG+wuwI7vLdSe/zpDaQjwZRTjFEm+smTGRODAetbSdrEPfIVJDTI2zQbNOO16TEMn
+	YRxKTui1rKtYPzv4lddlGJZe1HKJnA7E61WqT6UcP0pzFmBprCm46a9nyu2v+pHuIj8I=
+X-Gm-Gg: ASbGncsaOMuejND0HNrrXIUf2PZIhkXpdF+KGfo5Z1tHvTDzy6A9NaVCYs8Aid9imyO
+	9FMUs6FI44wkE4mMCZ9Qg7aTvPsIhGEySbVkoojCP9JiAHQKBTYH+JEAckweDaPEL50sLVZj+4M
+	cb8ZHdYqEg/TZ5jZ41OjQzE/04D1sKtALgdroAb5cZJNUxt1gwNnZr0bhwIxzJUkSXQcpblMBxh
+	cvjLDaVfiF1ncEgvNIrpBHfP9TtCS6ITOQ0agevNTx5x5UuZE6xlwkSy5BrtgW8C/D1GU2IuJ9/
+	qToocQjJAF83N63z1BNggYcVnXGYrrgiM4FfvTxRhKZkrc4tc1cMoiFDOjefsRYQffnvdrV9dxN
+	YkWti6LhiP6SZvijQOieM/ecJExlIW6neZYestPS0DhDPB1r8yKNc
+X-Received: by 2002:a05:6214:cc7:b0:707:63b8:3d46 with SMTP id 6a1803df08f44-7099a30512cmr137320356d6.30.1754909751177;
+        Mon, 11 Aug 2025 03:55:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJGm+AQRrMZQkHwEUDLQJriTk9mSlKcg15YnclWYqXloRwI6zRHEDtZsJFogLVGniPGmspvg==
+X-Received: by 2002:a05:6214:cc7:b0:707:63b8:3d46 with SMTP id 6a1803df08f44-7099a30512cmr137319866d6.30.1754909750630;
+        Mon, 11 Aug 2025 03:55:50 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88ca334asm4229151e87.131.2025.08.11.03.55.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 03:55:49 -0700 (PDT)
+Date: Mon, 11 Aug 2025 13:55:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 5/6] phy: qcom: qmp-combo: register a typec mux to
+ change the QMPPHY_MODE
+Message-ID: <y4yiyokoo7fclwlpyhct4o7mt6swustuciigqnte5pruust26q@ryvuwpd6h4qm>
+References: <20250807-topic-4ln_dp_respin-v4-0-43272d6eca92@oss.qualcomm.com>
+ <20250807-topic-4ln_dp_respin-v4-5-43272d6eca92@oss.qualcomm.com>
+ <ibrupwvn5frzb4vo3eukb7p7pzonaxwhygshz743wmyrbprkcq@xcpt4ryzvwqr>
+ <619efc83-37f3-4b4e-b756-c53ecd2f6867@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="m7txbpwkpe7pcfqc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5muUioziUN7mRFUAOV3tGPMLnb949j70GKYnRM2LygAWVQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <619efc83-37f3-4b4e-b756-c53ecd2f6867@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyOCBTYWx0ZWRfX8mlert5hm2qn
+ aSyJqZ5iojFcsV4ByJbMUq/YdMYs3J/bx9IPmhhgZ2ApWaLxT2YRJ78L0wudX4b1wADFCwaB9jq
+ kuHlLj7X3grl0tIQor1zAtQrchei8HPo5+BeDJCZUdja8pDKOgkb5y0P6ieyus2ZG5Y/quTeaKs
+ DPLtnazzO5J8+ESWfkjo9Cxx1xiS2AHjFxG7ht+nVLjgWDVue4fFQ8RDElyQVjAIYyqpV3ryY7T
+ ZwiSIJ9QhkcEjJ0Xm/RxmldEaBuOsmn3y7Eq41i8fT1/oDfxe8MOAHKm5tHOzEeC/+MVUker0oL
+ ecnAcD40CaS1Er7XvxxitVUZStJyTauKtKIbDHtNx7bWJ1dnhOUEtutLIQe4lllgPUxdEPuf2s9
+ YvJNRlzn
+X-Authority-Analysis: v=2.4 cv=QYhmvtbv c=1 sm=1 tr=0 ts=6899cc38 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=mUy4j-dTXB4InB_98JkA:9
+ a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: 5sFuP93XKYQ2rfrcK8RumHxBLQHQ_16c
+X-Proofpoint-ORIG-GUID: 5sFuP93XKYQ2rfrcK8RumHxBLQHQ_16c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-11_01,2025-08-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 spamscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508090028
 
-
---m7txbpwkpe7pcfqc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-
-On Tuesday 17 September 2024 16:19:08 Steve French wrote:
-> On Tue, Sep 17, 2024 at 3:45 PM ronnie sahlberg
-> <ronniesahlberg@gmail.com> wrote:
-> >
-> > On Wed, 18 Sept 2024 at 06:37, Pali Rohár <pali@kernel.org> wrote:
-> > >
-> > > On Tuesday 17 September 2024 13:31:22 Jeremy Allison wrote:
-> > > > On Tue, Sep 17, 2024 at 10:29:21PM +0200, Pali Rohár wrote:
-> > > > > On Tuesday 17 September 2024 13:23:40 Jeremy Allison wrote:
-> > > > > > On Tue, Sep 17, 2024 at 10:06:00PM +0200, Pali Rohár wrote:
-> > > > > > > And seems that SMB2_OP_QUERY_WSL_EA is useful not only for reparse
-> > > > > > > points, but also for any regular file or directory as it can contain
-> > > > > > > UNIX mode and UID/GID ownership.
-> > > > > >
-> > > > > > uid/gid should *never* be exposed over the wire for SMB.
-> > > > > >
-> > > > > > That way lies madness.
-> > > > >
-> > > > > Hello Jeremy, if I understood wsl_to_fattr() function correctly then it
-> > > > > is already doing it, it fills uid/gid for stat() from data which were
-> > > > > exposed over the wire for SMB. Could you check that function if it is
-> > > > > truth?
-> > > >
-> > > > I'm sure the Windows implementation is doing it - however, any Linux
-> > > > server implementations should not do this (IMHO).
-> > > >
-> > > > It will break all SID -> uid / gid mapping that servers must
-> > > > carefully set up.
-> > > >
-> > > > On the wire - SIDs must be the only source of identity.
-> > >
-> > > Ok. But then I do not understand why Linux client parses and uses uid
-> > > and gids which are sent over the wire. If you are saying that the SIDs
-> > > must be the only source of truth then Linux client should rather ignore
-> > > uid and gid values?
-> >
-> > What I think Jeremy is refering to is that mixing uids and sids in the
-> > protocol itself is
-> > a protocol design mistake.
-> > Because this means that some PDUs in the protocol operate on SIDs but
-> > others operate on
-> > UID/GIDs and this means there is great risk of mistakes and have the
-> > sid<->uid mapping return
-> > different results depending on the actual PDU.
-> >
-> > Sometimes the sid<->uid mapping happens in the server, at other times
-> > the mapping happens in the client
-> > and it is very difficult to guarantee that the mapping is consistent
-> > across PDUs in the protocol as well as across different clients.
+On Mon, Aug 11, 2025 at 12:37:00PM +0200, Konrad Dybcio wrote:
+> On 8/9/25 10:13 AM, Dmitry Baryshkov wrote:
+> > On Thu, Aug 07, 2025 at 06:33:23PM +0200, Konrad Dybcio wrote:
+> >> From: Neil Armstrong <neil.armstrong@linaro.org>
+> >>
+> >> Register a typec mux in order to change the PHY mode on the Type-C
+> >> mux events depending on the mode and the svid when in Altmode setup.
+> >>
+> >> The DisplayPort phy should be left enabled if is still powered on
+> >> by the DRM DisplayPort controller, so bail out until the DisplayPort
+> >> PHY is not powered off.
+> >>
+> >> The Type-C Mode/SVID only changes on plug/unplug, and USB SAFE states
+> >> will be set in between of USB-Only, Combo and DisplayPort Only so
+> >> this will leave enough time to the DRM DisplayPort controller to
+> >> turn of the DisplayPort PHY.
+> >>
+> >> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> >> [konrad: renaming, rewording, bug fixes]
+> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >> ---
+> >>  drivers/phy/qualcomm/phy-qcom-qmp-combo.c | 118 ++++++++++++++++++++++++++++--
+> >>  1 file changed, 113 insertions(+), 5 deletions(-)
+> >>
+> >> +
+> >> +	if (qmp->qmpphy_mode != QMPPHY_MODE_USB3_ONLY && qmp->dp_powered_on) {
+> >> +		dev_dbg(qmp->dev, "typec_mux_set: DP PHY is still in use, delaying switch\n");
+> >> +		return 0;
+> >> +	}
+> > 
+> > I can't say that I'm fully happy about it, nevertheless:
+> > 
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > 
-> Yes - agreed.
-> 
-> SIDs are globally unique and should always be used/sent over the wire
-> (never send or use the local uid/gid which is not guaranteed to be
-> unique).  Whether retrieving ownership information via
-> the SMB ACL or via an SMB3.1.1 POSIX response, the SID is the correct
-> thing to send/use in the protocol.  For cases where the client is not
-> domain joined, the UID/GID can be encoded in the SID, for cases that
-> are domain joined the Linux UIDs/GIDs can be mapped consistently via
-> the SID.
-> 
-> -- 
-> Thanks,
-> 
-> Steve
+> IIUC we'll be able to get rid of it after the dp rework?
 
-Hello Steve, based on the above discussion I'm proposing a change which
-stops parsing UID and GID values stored in EAs on the SMB server for
-SMB2 and SMB3 dialects. Change is in the attachment.
+Which one? The HPD? not really. My unhappiness is about the sync between
+USB and DP. I'm unsure whether we need higher level of sync for
+USB-or-DP PHYs.
 
-Steve, Ronnie, Jeremy and Paulo, could you review this change?
-
---m7txbpwkpe7pcfqc
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment; filename="0001-cifs-Do-not-use-WSL-EAs-LXUID-LXGID-and-LXMOD-for-ow.patch"
-Content-Transfer-Encoding: 8bit
-
-From e72661de4214b135b5852b95be9ff6f66014df41 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-Date: Thu, 30 Jan 2025 22:43:31 +0100
-Subject: [PATCH] cifs: Do not use WSL EAs $LXUID, $LXGID and $LXMOD for
- ownership/permissions
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-When retrieving stat information about reparse points, do not use WSL EAs
-$LXUID, $LXGID and $LXMOD for deducing Linux UID, GID and permission bits
-of MODE. The source of truth for ownership and permissions should be always
-only the SMB Security Descriptor, hence the ownership should comes from the
-SID and permissions from ACL.
-
-WSL EA $LXMOD contains not only permission bits, but also the file type
-information. WSL subsystem requires from special files that this EA is
-present and its encoded file type matches the reparse point type.
-
-So let the EA $LXMOD code there, but use it only for validation of file
-type (S_DT bits) that it matches the file type from reparse point tag.
-
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/reparse.c   |  7 +------
- fs/smb/client/smb2inode.c | 10 ++--------
- fs/smb/client/smb2pdu.h   | 20 ++++++++++----------
- 3 files changed, 13 insertions(+), 24 deletions(-)
-
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index a1aa10a572c2..3660f7353258 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -1358,15 +1358,10 @@ static bool wsl_to_fattr(struct cifs_open_info_data *data,
- 		nlen = ea->ea_name_length;
- 		v = (void *)((u8 *)ea->ea_data + ea->ea_name_length + 1);
- 
--		if (!strncmp(name, SMB2_WSL_XATTR_UID, nlen))
--			fattr->cf_uid = wsl_make_kuid(cifs_sb, v);
--		else if (!strncmp(name, SMB2_WSL_XATTR_GID, nlen))
--			fattr->cf_gid = wsl_make_kgid(cifs_sb, v);
--		else if (!strncmp(name, SMB2_WSL_XATTR_MODE, nlen)) {
-+		if (!strncmp(name, SMB2_WSL_XATTR_MODE, nlen)) {
- 			/* File type in reparse point tag and in xattr mode must match. */
- 			if (S_DT(reparse_mode_type) != S_DT(le32_to_cpu(*(__le32 *)v)))
- 				return false;
--			fattr->cf_mode = (umode_t)le32_to_cpu(*(__le32 *)v);
- 			have_xattr_mode = true;
- 		} else if (!strncmp(name, SMB2_WSL_XATTR_DEV, nlen)) {
- 			fattr->cf_rdev = reparse_mkdev(v);
-diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-index 2a0316c514e4..18e5376a63ab 100644
---- a/fs/smb/client/smb2inode.c
-+++ b/fs/smb/client/smb2inode.c
-@@ -94,8 +94,6 @@ struct wsl_query_ea {
- #define NEXT_OFF cpu_to_le32(sizeof(struct wsl_query_ea))
- 
- static const struct wsl_query_ea wsl_query_eas[] = {
--	{ .next = NEXT_OFF, .name_len = SMB2_WSL_XATTR_NAME_LEN, .name = SMB2_WSL_XATTR_UID, },
--	{ .next = NEXT_OFF, .name_len = SMB2_WSL_XATTR_NAME_LEN, .name = SMB2_WSL_XATTR_GID, },
- 	{ .next = NEXT_OFF, .name_len = SMB2_WSL_XATTR_NAME_LEN, .name = SMB2_WSL_XATTR_MODE, },
- 	{ .next = 0,        .name_len = SMB2_WSL_XATTR_NAME_LEN, .name = SMB2_WSL_XATTR_DEV, },
- };
-@@ -130,9 +128,7 @@ static int check_wsl_eas(struct kvec *rsp_iov)
- 
- 		switch (vlen) {
- 		case 4:
--			if (strncmp(ea->ea_data, SMB2_WSL_XATTR_UID, nlen) &&
--			    strncmp(ea->ea_data, SMB2_WSL_XATTR_GID, nlen) &&
--			    strncmp(ea->ea_data, SMB2_WSL_XATTR_MODE, nlen))
-+			if (strncmp(ea->ea_data, SMB2_WSL_XATTR_MODE, nlen))
- 				return -EINVAL;
- 			break;
- 		case 8:
-@@ -140,9 +136,7 @@ static int check_wsl_eas(struct kvec *rsp_iov)
- 				return -EINVAL;
- 			break;
- 		case 0:
--			if (!strncmp(ea->ea_data, SMB2_WSL_XATTR_UID, nlen) ||
--			    !strncmp(ea->ea_data, SMB2_WSL_XATTR_GID, nlen) ||
--			    !strncmp(ea->ea_data, SMB2_WSL_XATTR_MODE, nlen) ||
-+			if (!strncmp(ea->ea_data, SMB2_WSL_XATTR_MODE, nlen) ||
- 			    !strncmp(ea->ea_data, SMB2_WSL_XATTR_DEV, nlen))
- 				break;
- 			fallthrough;
-diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-index 3c09a58dfd07..914e2737d1a2 100644
---- a/fs/smb/client/smb2pdu.h
-+++ b/fs/smb/client/smb2pdu.h
-@@ -425,7 +425,6 @@ struct smb2_create_ea_ctx {
- #define SMB2_WSL_XATTR_MODE		"$LXMOD"
- #define SMB2_WSL_XATTR_DEV		"$LXDEV"
- #define SMB2_WSL_XATTR_NAME_LEN	6
--#define SMB2_WSL_NUM_XATTRS		4
- 
- #define SMB2_WSL_XATTR_UID_SIZE	4
- #define SMB2_WSL_XATTR_GID_SIZE	4
-@@ -433,16 +432,17 @@ struct smb2_create_ea_ctx {
- #define SMB2_WSL_XATTR_DEV_SIZE	8
- 
- #define SMB2_WSL_MIN_QUERY_EA_RESP_SIZE \
--	(ALIGN((SMB2_WSL_NUM_XATTRS - 1) * \
--	       (SMB2_WSL_XATTR_NAME_LEN + 1 + \
--		sizeof(struct smb2_file_full_ea_info)), 4) + \
--	 SMB2_WSL_XATTR_NAME_LEN + 1 + sizeof(struct smb2_file_full_ea_info))
-+	(ALIGN(sizeof(struct smb2_file_full_ea_info) + \
-+	       SMB2_WSL_XATTR_NAME_LEN + 1, 4) + \
-+	 sizeof(struct smb2_file_full_ea_info) + \
-+	 SMB2_WSL_XATTR_NAME_LEN + 1)
- 
- #define SMB2_WSL_MAX_QUERY_EA_RESP_SIZE \
--	(ALIGN(SMB2_WSL_MIN_QUERY_EA_RESP_SIZE + \
--	       SMB2_WSL_XATTR_UID_SIZE + \
--	       SMB2_WSL_XATTR_GID_SIZE + \
--	       SMB2_WSL_XATTR_MODE_SIZE + \
--	       SMB2_WSL_XATTR_DEV_SIZE, 4))
-+	(ALIGN(sizeof(struct smb2_file_full_ea_info) + \
-+	       SMB2_WSL_XATTR_NAME_LEN + 1 + \
-+	       SMB2_WSL_XATTR_MODE_SIZE, 4) + \
-+	 sizeof(struct smb2_file_full_ea_info) + \
-+	 SMB2_WSL_XATTR_NAME_LEN + 1 + \
-+	 SMB2_WSL_XATTR_DEV_SIZE)
- 
- #endif				/* _SMB2PDU_H */
 -- 
-2.20.1
-
-
---m7txbpwkpe7pcfqc--
+With best wishes
+Dmitry
 
