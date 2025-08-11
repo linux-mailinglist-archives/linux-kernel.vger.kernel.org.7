@@ -1,174 +1,116 @@
-Return-Path: <linux-kernel+bounces-762852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFB1B20B86
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:17:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C151B20B74
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 16:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE743B6B8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E534818C5E14
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 14:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E103122A7E6;
-	Mon, 11 Aug 2025 14:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08E720F098;
+	Mon, 11 Aug 2025 14:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qd9n10Pe"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q6t1LLVI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B049122B8A1;
-	Mon, 11 Aug 2025 14:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFAA1F91F6
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 14:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754921511; cv=none; b=P5k1OyAxaKhfAdawYrS/LwxV9UXZ1dY93CoBNciMKsfbh5rvdq2cE+kCNqjMpQPD7TjMEae/w317cKZWieT3pgDoIpL9iHOZ0BvYQwREcLPKnyYrj0JUvxpjGQoMFh9T93XTMIc8CBkWxk0qScwSIi2dFzkZaj/CWHW6sdmevSs=
+	t=1754921528; cv=none; b=cjGOcTYFdiYpw+hn5Fi+L6YijLVbr/FKzHXT+tpIImATYggDmpk5SSUMohcunNGxRsz72U61B0iLQX7RspsNN9SB6AsflJIzDnE7AZs/CvacKGs5m7wrDIQk04d4isIHZULE6xxFiUNfeLEkP/MTM3JHDwDTwxYdA4ZNlD+1a8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754921511; c=relaxed/simple;
-	bh=52zIl4g4wS8N0P4SanQ/XGwLGw2MUMPvXujSd05uaOk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MxDpd5jRAZnDdCO3TdDiWBAN8eTtpsj+b6XYnC7p6mmCjqjhheWLILnRgMi+Uz4zKbR37o4mZbTxUHrXTKc8tu76NkZLF2FD7M3BBTM83J5fqIPVOxvC/RKsNGDsaE9nh75iSa7OcAKQA47nJEpHvICwN9VhnMRHMUEBjaLTlYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qd9n10Pe; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-31f3b54da19so3004154a91.1;
-        Mon, 11 Aug 2025 07:11:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754921509; x=1755526309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wqkO1hm1UmINOevs5zFUc44645SxzdI5Kvuf9lrylRU=;
-        b=Qd9n10PekTpc9QactjQPFvOxfLb2cQx/uslZiemGnxM8eBlvhTmPTIEeGggThFB3Fi
-         uP6UjxkCTxJ845ZcbMIYhEF8smUru9ZmI7ntzzmWIopJr9As22MVwhsWmehp8TvwSKWD
-         LYusNNsACwGiJKtrEz5L07Hec0rT6sGdQj7NTHpK92BRjNh/GNe33yT+Q6p7f9Md/ik7
-         LsYLV85iDX8ar02sD2SMbqY/PwF5WzI1KZ5T8VU6GfKGl5+Lk1Ak2gx+ZMFJK+jPW+rx
-         ZFjnqod1kJBcvleqwey1jEvmAoveoHCuZwkEpuUdeF6C4golA7nQ84Rh1hZxiJkTCRPk
-         vv4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754921509; x=1755526309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wqkO1hm1UmINOevs5zFUc44645SxzdI5Kvuf9lrylRU=;
-        b=D8tzYPScXRPaDW9LXKwZOSGPHAAR2qzn/8GPRn9DoSMwm2IpY16gU1Trqvq14DwBl8
-         GXM+emX8r+QZJ/ONOJC+wJncawLlVhtkDgNBXOiRxi60SFuKOp9xXkKZzzU9viM5hIq6
-         cYl+E6wdvqlzl7sg7FpPyY0LYfKp8kJxfdWBaf5/fQpSnLhz5qvz/13VJODKtmJ/NSPP
-         C+cXEd53U+DIhztgYl2Ckm6IZmgcbFeYrALMYARseSeLUnrQa1p+jM7OY+MelINAOadH
-         5ab31Stnkq+AQxh1yp1HFd/xqZvFhXvZmn4TFJoC/OdIzCCxAHmEmZrofo3Kcdf8faBp
-         1qAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSnCXZOkYkcCNs+N2M4gdW3sa2ISgEkF2dZJkJczm+iDvAzTf0MtBZd4Xx9W/JtKF5WjuCwDwtMg==@vger.kernel.org, AJvYcCWkqkObOB0K1sxVUvlQ7j+Bx8uNi5aOmhkLXfPFtGfbmHOrV6gvWMmEHEsZYUah4udBHtcVm4HS195Fmr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL+FtycWwLtSgC+ZuOJB7Hf99bcIeKUBk5IhgPuvqwBl4cE6Gt
-	3+NhR9zgjVP2swwoQMAOrkXsgsN9kkVK6WTh6QYqID33vCRzaPdeNwcAb6MXWo3RYw/doQGL9cp
-	Y0E7r88DBmKWPwkX2jl2bRUT1d3wRVn4=
-X-Gm-Gg: ASbGncuLtUjjbUEkDoCnvNQzknsZOD93VtE9lvZ9Q4PSWlSBNJpe4HfmfZaINs5Wbm4
-	woeJA0Dn+0WyYCLsBWVVpLiWNw41v0mEzR1V2DQvQ4NdHOn2z0WBtnCy/enMxaMwXX1QMIlw5/T
-	b8aCwZvuvFAfUqcWYgq9UbogQL0xxQXFqrLICHEdtVknbvyo9kPW3zY79DBJb/l4IeNRS1zwgFZ
-	J38mU4=
-X-Google-Smtp-Source: AGHT+IGBFTBUcWsEdEgyrkmhp2Bvgnup8SZT/3+JifAJM4YdWsB8S+wBmiiXvrDIpRrNTsYCO0lAlAdndeB4lTAmnb4=
-X-Received: by 2002:a17:90b:314b:b0:312:e76f:5213 with SMTP id
- 98e67ed59e1d1-32183c48f51mr16535466a91.28.1754921508739; Mon, 11 Aug 2025
- 07:11:48 -0700 (PDT)
+	s=arc-20240116; t=1754921528; c=relaxed/simple;
+	bh=UujaOmf1m1mgcm9mErX3O/zVAg7OSbtBx6gU1smwV50=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jMBeJs+SccVZi+YN/44iJOJv7W71zCjApSldACm2LvuBOdrM/dQqo2Ew45DkVhcL7DgwQjve6Bm3rNGY78xMW/cbw/zosDcV0kqZ/6GoOeM+i6QIASrFBaa49S29PPp+uYTTLrbXrinE9bNfzeug49Qdm5D0jDQMUEx/3uQf2GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q6t1LLVI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754921525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QrOjc/XHDwlIzjWMUvhwYvsBLeqDMZ09ML2nGQi9p3E=;
+	b=Q6t1LLVIYnG8Sk7MjGq5cHHC1Pip2gsLqgxlCvHI75NXd2CVplc0rf55ZE7PpwL7hSAjDL
+	ZtW7t5G+AKwXHPgbUom9fociQ16WbmN1+xRXOjxUkYR+L8HX42YtFRB6sBn9hxBHgBpyyb
+	AlhakUlmZ8RAUhAWT8Hz4JG3YkUUiX8=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-138-bwyeiEcBN-KTIJw9vceV3Q-1; Mon,
+ 11 Aug 2025 10:12:02 -0400
+X-MC-Unique: bwyeiEcBN-KTIJw9vceV3Q-1
+X-Mimecast-MFC-AGG-ID: bwyeiEcBN-KTIJw9vceV3Q_1754921521
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 95B7D1800290;
+	Mon, 11 Aug 2025 14:12:00 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.89.185])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8E9861800447;
+	Mon, 11 Aug 2025 14:11:53 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v3] futex: Use user_write_access_begin/_end() in futex_put_value()
+Date: Mon, 11 Aug 2025 10:11:47 -0400
+Message-ID: <20250811141147.322261-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807140545.566615-1-rongqianfeng@vivo.com>
-In-Reply-To: <20250807140545.566615-1-rongqianfeng@vivo.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Mon, 11 Aug 2025 10:11:37 -0400
-X-Gm-Features: Ac12FXyVyuw8Vpq0VyuJBUsGzOFQ-Gc0j-wBxDgNMv1MPzPyhkMSbJ_dOogGPDI
-Message-ID: <CAEjxPJ7j_cKGygKBbiEzAruFXEiUyToSHWopjLEKgJFq6UrYEA@mail.gmail.com>
-Subject: Re: [PATCH] selinux: Remove redundant __GFP_NOWARN
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, Aug 7, 2025 at 10:06=E2=80=AFAM Qianfeng Rong <rongqianfeng@vivo.co=
-m> wrote:
->
-> Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
-> made GFP_NOWAIT implicitly include __GFP_NOWARN.
->
-> Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
-> (e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
-> up these redundant flags across subsystems.
->
-> No functional changes.
->
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+Commit cec199c5e39b ("futex: Implement FUTEX2_NUMA") introduces a new
+futex_put_value() helper function to write a value to the given user
+address. However, it uses user_read_access_begin() before the write.
+For arches that differentiate between read and write accesses, like
+powerpc, futex_put_value() fails with a -EFAULT return value.  Fix that
+by using the user_write_access_begin/user_write_access_end() pair.
 
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Fixes: cec199c5e39b ("futex: Implement FUTEX2_NUMA")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/futex/futex.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> ---
->  security/selinux/avc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/security/selinux/avc.c b/security/selinux/avc.c
-> index 4b4837a20225..c70053f2806e 100644
-> --- a/security/selinux/avc.c
-> +++ b/security/selinux/avc.c
-> @@ -293,26 +293,26 @@ static struct avc_xperms_decision_node
->         struct extended_perms_decision *xpd;
->
->         xpd_node =3D kmem_cache_zalloc(avc_xperms_decision_cachep,
-> -                                    GFP_NOWAIT | __GFP_NOWARN);
-> +                                    GFP_NOWAIT);
->         if (!xpd_node)
->                 return NULL;
->
->         xpd =3D &xpd_node->xpd;
->         if (which & XPERMS_ALLOWED) {
->                 xpd->allowed =3D kmem_cache_zalloc(avc_xperms_data_cachep=
-,
-> -                                               GFP_NOWAIT | __GFP_NOWARN=
-);
-> +                                               GFP_NOWAIT);
->                 if (!xpd->allowed)
->                         goto error;
->         }
->         if (which & XPERMS_AUDITALLOW) {
->                 xpd->auditallow =3D kmem_cache_zalloc(avc_xperms_data_cac=
-hep,
-> -                                               GFP_NOWAIT | __GFP_NOWARN=
-);
-> +                                               GFP_NOWAIT);
->                 if (!xpd->auditallow)
->                         goto error;
->         }
->         if (which & XPERMS_DONTAUDIT) {
->                 xpd->dontaudit =3D kmem_cache_zalloc(avc_xperms_data_cach=
-ep,
-> -                                               GFP_NOWAIT | __GFP_NOWARN=
-);
-> +                                               GFP_NOWAIT);
->                 if (!xpd->dontaudit)
->                         goto error;
->         }
-> @@ -340,7 +340,7 @@ static struct avc_xperms_node *avc_xperms_alloc(void)
->  {
->         struct avc_xperms_node *xp_node;
->
-> -       xp_node =3D kmem_cache_zalloc(avc_xperms_cachep, GFP_NOWAIT | __G=
-FP_NOWARN);
-> +       xp_node =3D kmem_cache_zalloc(avc_xperms_cachep, GFP_NOWAIT);
->         if (!xp_node)
->                 return xp_node;
->         INIT_LIST_HEAD(&xp_node->xpd_head);
-> @@ -495,7 +495,7 @@ static struct avc_node *avc_alloc_node(void)
->  {
->         struct avc_node *node;
->
-> -       node =3D kmem_cache_zalloc(avc_node_cachep, GFP_NOWAIT | __GFP_NO=
-WARN);
-> +       node =3D kmem_cache_zalloc(avc_node_cachep, GFP_NOWAIT);
->         if (!node)
->                 goto out;
->
-> --
-> 2.34.1
->
+diff --git a/kernel/futex/futex.h b/kernel/futex/futex.h
+index c74eac572acd..2cd57096c38e 100644
+--- a/kernel/futex/futex.h
++++ b/kernel/futex/futex.h
+@@ -319,13 +319,13 @@ static __always_inline int futex_put_value(u32 val, u32 __user *to)
+ {
+ 	if (can_do_masked_user_access())
+ 		to = masked_user_access_begin(to);
+-	else if (!user_read_access_begin(to, sizeof(*to)))
++	else if (!user_write_access_begin(to, sizeof(*to)))
+ 		return -EFAULT;
+ 	unsafe_put_user(val, to, Efault);
+-	user_read_access_end();
++	user_write_access_end();
+ 	return 0;
+ Efault:
+-	user_read_access_end();
++	user_write_access_end();
+ 	return -EFAULT;
+ }
+ 
+-- 
+2.50.1
+
 
