@@ -1,346 +1,209 @@
-Return-Path: <linux-kernel+bounces-761738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D77B1FDE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:28:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8D6B1FDEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 04:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1F38164913
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:28:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B554188D015
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 02:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A522D8377;
-	Mon, 11 Aug 2025 02:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B469262FC1;
+	Mon, 11 Aug 2025 02:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Eb5Pw6u6"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJHyZbli"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7D02D6636;
-	Mon, 11 Aug 2025 02:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BEE3594F;
+	Mon, 11 Aug 2025 02:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754879182; cv=none; b=I/ZXq93H6OsGbCo3XQQT0Wv3GYx0LglChXTZUvDzMTcg7gvQ8wRLkHdJiiLvAyzikaNg9auwIupP69xt5KdEBKCiWFVdtnAe7OnSVxjKTYtNVrlbb3rayVJFi/5g2+QxE5a7BHvUoQp/JOh0Qy22gfC0EiLbpIGqraLsUKYUcCY=
+	t=1754879247; cv=none; b=Lb07IMmnvgU3amGWvd1V+L7sKQwnps9A80OaWJMsH8X4WFu2rOeWTtNRBB+XQ9ZCLhJYujJoSlP9+I6AXCw5Xup40DsYi8oSQs5zcu4ZmbPMj30nFTKMKNk6VBNfWQ5k1hgJS/97PUMdMkPKdVCfNXpWqvI1Z6XMn7p5EBK8Ey8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754879182; c=relaxed/simple;
-	bh=PSJu+BHhSMr4btKU2XwS2lJZFjaZFdpdFs/222/k3RA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ELlcwNutLvSeiPmCT2z7Iey5fW+xAYYtT1KzpVjalsNKKdS1ddA6JVG+KA21mYXx7U3yxHKsU0KWgOvGly51AOmYQLJnAbQ0gt6BnCdqUqBP7fe9iJN0Fx6zWHtkzdGef4fl3OdB6ApBuf2079rYzCen3ORvbVu8ExeEss12Akw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Eb5Pw6u6; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 8ad5b7e8765a11f08871991801538c65-20250811
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:From; bh=OK8p+gJrVIr64UGgL8ox7/n071xyuSynkQOAEVTADiA=;
-	b=Eb5Pw6u60vVTkSgeb/u/MpaWbavb9IY0Q4TwCyRCBf+6+J+gTFBdL1fGjTkdUeRn+lwxV7vdVz0sIzYpknh6gCcJIVF5dq+nWQoVvG26etOqdq+Q3XZwrB4HCxV3s1bsXPIp58rZCgAVIwNjSO08YktqlXd59uCby7UaZxSDWZw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:e5b79d24-4ef4-4ea9-94a7-dd7112200933,IP:0,UR
-	L:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:f1326cf,CLOUDID:c92d4aa1-1800-4e4f-b665-a3d622db32cf,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	1,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,A
-	V:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 8ad5b7e8765a11f08871991801538c65-20250811
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <kyrie.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 106174752; Mon, 11 Aug 2025 10:26:09 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 11 Aug 2025 10:26:48 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 11 Aug 2025 10:26:02 +0800
-From: Kyrie Wu <kyrie.wu@mediatek.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
-	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-Subject: [PATCH v8 12/12] media: mediatek: jpeg: add jpeg smmu sid setting
-Date: Mon, 11 Aug 2025 10:25:54 +0800
-Message-ID: <20250811022555.1049-13-kyrie.wu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250811022555.1049-1-kyrie.wu@mediatek.com>
-References: <20250811022555.1049-1-kyrie.wu@mediatek.com>
+	s=arc-20240116; t=1754879247; c=relaxed/simple;
+	bh=aMKWzvDtm/8g+NdL6hwVVMiy6H2j95sMRGkquX9m2Yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvdOqI5o/9CbnoQvdnpCdJRafnF0HOiPeBpT/HnyD+QpiZ0zkJzKCfkQeX9ZMDOSX3FOA1LtXPNdfSJ+4NYYCLYnmTOST5iY82djn0EJKkozILg95/eEzxydVkHtejQPfC6xmluFO2p5Jl34RZKZpA1Cg8sbmDHoO8UZHoNcQcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJHyZbli; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24041a39005so24274785ad.2;
+        Sun, 10 Aug 2025 19:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754879245; x=1755484045; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xslMt/NExvfPIQBfixpVYmv0aftSa67Btq8uVf+dkXs=;
+        b=VJHyZbliHpBBcv1v69AyK4C90cUon7/7/1iQCJIBqlGbTwUxySaVY4sWk2TaotqH7I
+         kxZHEqua/QNT4ul6Y1zR90ABAiGsunOCDtYbR1D1sgKF/CM3Fs64eYC8yKbXVwT2BrMR
+         NESWT/SpuF5Cnck6eCyukWdYTXIv3eHls/pvSZdCZbqRdIMiWbVbGPuSrLQCW5lwKiiz
+         IQL7Z3EFgjEGuuPJCEshKhSx5h4vzT8vud2fHZTPupkB8j0Ny6oPPVzrJZc945vbhQEp
+         l2PWguC4kRRgf/YU3YcrfjE9ahLodQ6K1m6AsEPurAgSFuqqTcwN6bkNIp/Z6P/NFcTu
+         CUoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754879245; x=1755484045;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xslMt/NExvfPIQBfixpVYmv0aftSa67Btq8uVf+dkXs=;
+        b=MVneasNrfCsdZNoi40A7u/EpjRN8x/AYfg32Rj/KVtrB4nWllYlFB/68aWlmORmbQJ
+         9q+syouKKGaqGw43DjYdrsKU53huO+nctSrXIAHuMvL4jh0KMGs0OEQdTYKeiY701W/y
+         RQK7Jf5dMb9mquH1/Srk8hSlh6bx4oPinIU+/JA03zVbizGH3UFUzTKYK3DlQATO18Sm
+         ODgfbkSXqMMqL0Oaq6g0UEVh+nswAEb0NXwAH5vVlsdeY5zmcmYSVYjbAAhFrT7w9gL2
+         Rg5kJkv5oJIxpsBb4MfrZWwlIi6h07MaoKr4aRQ1HOf3xnH7H9fg8UeTHpyp4F8t+lq7
+         Rf5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUuFKKLMR5J+oITqifQYAuw94okvODh6QQEqZr/VGR3Gc1bmv2VaQPgSH8FbV142dRhgXhzPzvJGi8W61JT@vger.kernel.org, AJvYcCVX5LfVI5U3ZL/LeGSG2LILLoAEqbtP6T8SBlsotnTKj9vOLUAYS871V9U9B+4MWo0c5yvK34H6uKxl@vger.kernel.org, AJvYcCXbGY53HN8vOogiTdvph5jD67qZr37R4siuV03uFMQLWiMbezo2QRNSEAKtebuD+u05H0GZtsbVfSX6rII=@vger.kernel.org, AJvYcCXkg7CMN2X734MCPbPCQ4pHjeIGpg2+rhfeo3QE776BwaoH9Xz96p7mpyhxUISlZc1UnRfjA5NN/UZXvTgf2s3dXBZ/HA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeYvAVp10UbsiYGiv4HK3hmktZmnX1xJnEjUR/l7amZv7YA95e
+	9GsCT/iqcWASiHcaKB61L7okOrRkanSli2XiCouoruFcC7P9Ujb1lYEQ6WlmZA==
+X-Gm-Gg: ASbGncv1GhVv6iSILmRiKQex2xaayYkoLUBCpcO8gSFKDS4XYFDFt/me68BRl+NJv9a
+	rOTCJ7IDpXwPFC+HbN5tlW23z+f52mScIZvmkF6/+udr3xtp0l2z6McJCwNNPOcX62eKHi8Ihy4
+	GEexjujrY9C+pwNToZ4MHezpt8F2FFYitQDgnkelR9mzCuh+M0hX8jYgMuNXswRsbjVAKD9Vjfe
+	d1OqGK8E9ttbwj/h/+5dvd+5Wr3lt2Rcd3fkMptUUI6iQ6B6XZoXHJ384JjaVdUoXayDqrZRYIQ
+	/A/MM2Ovhy/1CATxzc4x22wwtTBg+Jin21bUKX0week1sfQAjgL0jro83Abfa9hLS7b6KHhXzSG
+	tryX5hNkTHZdVHF/TQ0ESZR8=
+X-Google-Smtp-Source: AGHT+IF4W3uH1gueWAxmlk3UPjhyyXbryqb+gwcqzXF5ZvDE1+kn1zeMIZFQMxtqyDIKQWXJN2kWpw==
+X-Received: by 2002:a17:902:ebc6:b0:242:9bbc:3644 with SMTP id d9443c01a7336-242c225a177mr151867975ad.54.1754879244961;
+        Sun, 10 Aug 2025 19:27:24 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:69d7:30de:b05e:915b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2422ba1e09csm233091565ad.16.2025.08.10.19.27.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 19:27:24 -0700 (PDT)
+Date: Sun, 10 Aug 2025 19:27:22 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Lee Jones <lee@kernel.org>, Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, linux <linux@treblig.org>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 05/21] x86/platform: select legacy gpiolib interfaces
+ where used
+Message-ID: <npijagtgyad33xxlq46b7kwzydhcgt5tkgd5ihsjl6t4czbqyf@umovipwh73i2>
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-6-arnd@kernel.org>
+ <aJccS7fdcx0INYTA@smile.fi.intel.com>
+ <3190334c-538d-4e2d-80a4-6e24b255e844@app.fastmail.com>
+ <9bc69944-a34e-4a4e-9071-7d2049d12449@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9bc69944-a34e-4a4e-9071-7d2049d12449@kernel.org>
 
-Add a configuration to set jpeg dec & enc smmu sid
+Hi Hans,
 
-Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
----
- .../platform/mediatek/jpeg/mtk_jpeg_core.c    | 37 +++++++++++++++++++
- .../platform/mediatek/jpeg/mtk_jpeg_core.h    | 15 ++++++++
- .../platform/mediatek/jpeg/mtk_jpeg_dec_hw.c  | 23 ++++++++++++
- .../platform/mediatek/jpeg/mtk_jpeg_enc_hw.c  | 23 ++++++++++++
- 4 files changed, 98 insertions(+)
+On Sun, Aug 10, 2025 at 05:12:46PM +0200, Hans de Goede wrote:
+> Hi Arnd, Andy,
+> 
+> On 9-Aug-25 9:44 PM, Arnd Bergmann wrote:
+> > On Sat, Aug 9, 2025, at 12:00, Andy Shevchenko wrote:
+> >> On Fri, Aug 08, 2025 at 05:17:49PM +0200, Arnd Bergmann wrote:
+> >>> From: Arnd Bergmann <arnd@arndb.de>
+> >>>
+> >>> A few old machines have not been converted away from the old-style
+> >>> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
+> >>> symbol so the code still works where it is needed but can be left
+> >>> out otherwise.
+> >>
+> >>> --- a/drivers/platform/x86/x86-android-tablets/Kconfig
+> >>> +++ b/drivers/platform/x86/x86-android-tablets/Kconfig
+> >>> @@ -8,6 +8,7 @@ config X86_ANDROID_TABLETS
+> >>>  	depends on I2C && SPI && SERIAL_DEV_BUS
+> >>>  	depends on GPIOLIB && PMIC_OPREGION
+> >>>  	depends on ACPI && EFI && PCI
+> >>> +	select GPIOLIB_LEGACY
+> >>>  	select NEW_LEDS
+> >>>  	select LEDS_CLASS
+> >>>  	select POWER_SUPPLY
+> >>
+> >> Hmm... This is a surprising change. But I leave it to Hans.
+> 
+> Yes I was surprised by this myself since I explicitly removed
+> all legacy GPIO use from the x86-android-tablets code a while
+> ago (or so I thought).
+> 
+> > I think the only function that still needs it is
+> > x86_android_tablet_probe() doing
+> > 
+> > static struct gpio_keys_button *buttons;
+> > 
+> >                 for (i = 0; i < dev_info->gpio_button_count; i++) {
+> >                         ret = x86_android_tablet_get_gpiod(dev_info->gpio_button[i].chip,
+> >                                                            dev_info->gpio_button[i].pin,
+> >                                                            dev_info->gpio_button[i].button.desc,
+> >                                                            false, GPIOD_IN, &gpiod);
+> > 
+> >                         buttons[i] = dev_info->gpio_button[i].button;
+> >                         buttons[i].gpio = desc_to_gpio(gpiod);
+> >                         /* Release GPIO descriptor so that gpio-keys can request it */
+> >                         devm_gpiod_put(&x86_android_tablet_device->dev, gpiod);
+> >                 }
+> > 
+> > So the driver itself uses gpio descriptors, but it passes
+> > some of them into another driver by number. There is probably
+> > an easy workaround that I did not see.
+> 
+> Ah I see, so this is basically in the same boat as
+> drivers/input/misc/soc_button_array.c which also first
+> gets a gpio_desc and then calls desc_to_gpio() to store
+> the GPIO number in struct gpio_keys_button which is passed
+> as platform_data to drivers/input/keyboard/gpio_keys.c
+> 
+> The gpio_keys driver then converts things back
+> into a gpio_desc in gpio_keys_setup_key()
+> using devm_gpio_request_one() + gpio_to_desc()
+> 
+> So it looks like we need to add a gpiod member to
+> struct gpio_keys_button (include/linux/gpio_keys.h)
+> and modify gpio_keys.c to prefer that over using
+> button->gpio, something like the attached patch
+> basically.
+> 
+> I won't have time to work on this until September,
+> so if someone wants to take the attached patch and run
+> with it go for it.
+> 
+> Note the x86-android-tablets / soc_button_array code
+> will become responsible for requesting / releasing
+> the gpiod when using the new gpio_keys_button.gpiod
+> member.
+> 
+> For the x86-android-tablets code this is easy, just drop
+> these 2 lines:
+> 
+>                         /* Release GPIO descriptor so that gpio-keys can request it */
+>                         devm_gpiod_put(&x86_android_tablet_device->dev, gpiod);
+> 
+> And for soc_button_array.c it is _probably_ just a matter
+> of switching to devm_gpiod_get_index() and drop the
+> gpiod_put().
+> 
+> I have hardware to test both the x86-android-tablets
+> code as well as the soc_button_array code. I might be
+> able to do a quick test on August 22nd or 29th.
 
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-index 1b6d691186f4..50aee7fe5142 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-@@ -15,6 +15,7 @@
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <media/v4l2-event.h>
-@@ -1614,6 +1615,20 @@ static irqreturn_t mtk_jpeg_enc_done(struct mtk_jpeg_dev *jpeg)
- 	return IRQ_HANDLED;
- }
- 
-+static void mtk_jpeg_enc_set_smmu_sid(struct mtk_jpegenc_comp_dev *jpeg)
-+{
-+	struct mtk_jpeg_dev *mjpeg = jpeg->master_dev;
-+
-+	if (!mjpeg->variant->support_smmu || !jpeg->smmu_regmap)
-+		return;
-+
-+	regmap_update_bits(jpeg->smmu_regmap, JPEG_ENC_SMMU_SID,
-+			   JPG_REG_GUSER_ID_MASK <<
-+			   JPG_REG_ENC_GUSER_ID_SHIFT,
-+			   JPG_REG_GUSER_ID_ENC_SID <<
-+			   JPG_REG_ENC_GUSER_ID_SHIFT);
-+}
-+
- static void mtk_jpegenc_worker(struct work_struct *work)
- {
- 	struct mtk_jpegenc_comp_dev *comp_jpeg[MTK_JPEGENC_HW_MAX];
-@@ -1675,6 +1690,9 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 	jpeg_dst_buf->frame_num = ctx->total_frame_num;
- 	ctx->total_frame_num++;
- 	mtk_jpeg_enc_reset(comp_jpeg[hw_id]->reg_base);
-+
-+	mtk_jpeg_enc_set_smmu_sid(comp_jpeg[hw_id]);
-+
- 	mtk_jpeg_set_enc_dst(ctx,
- 			     comp_jpeg[hw_id]->reg_base,
- 			     &dst_buf->vb2_buf);
-@@ -1702,6 +1720,20 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 	v4l2_m2m_job_finish(jpeg->m2m_dev, ctx->fh.m2m_ctx);
- }
- 
-+static void mtk_jpeg_dec_set_smmu_sid(struct mtk_jpegdec_comp_dev *jpeg)
-+{
-+	struct mtk_jpeg_dev *mjpeg = jpeg->master_dev;
-+
-+	if (!mjpeg->variant->support_smmu || !jpeg->smmu_regmap)
-+		return;
-+
-+	regmap_update_bits(jpeg->smmu_regmap, JPEG_DEC_SMMU_SID,
-+			   JPG_REG_GUSER_ID_MASK <<
-+			   JPG_REG_DEC_GUSER_ID_SHIFT,
-+			   JPG_REG_GUSER_ID_DEC_SID <<
-+			   JPG_REG_DEC_GUSER_ID_SHIFT);
-+}
-+
- static void mtk_jpegdec_worker(struct work_struct *work)
- {
- 	struct mtk_jpeg_ctx *ctx = container_of(work, struct mtk_jpeg_ctx,
-@@ -1785,6 +1817,9 @@ static void mtk_jpegdec_worker(struct work_struct *work)
- 	jpeg_dst_buf->frame_num = ctx->total_frame_num;
- 	ctx->total_frame_num++;
- 	mtk_jpeg_dec_reset(comp_jpeg[hw_id]->reg_base);
-+
-+	mtk_jpeg_dec_set_smmu_sid(comp_jpeg[hw_id]);
-+
- 	mtk_jpeg_dec_set_config(comp_jpeg[hw_id]->reg_base,
- 				jpeg->variant->support_34bit,
- 				&jpeg_src_buf->dec_param,
-@@ -1944,6 +1979,7 @@ static struct mtk_jpeg_variant mtk8196_jpegenc_drvdata = {
- 	.cap_q_default_fourcc = V4L2_PIX_FMT_JPEG,
- 	.multi_core = true,
- 	.jpeg_worker = mtk_jpegenc_worker,
-+	.support_smmu = true,
- };
- 
- static const struct mtk_jpeg_variant mtk8195_jpegdec_drvdata = {
-@@ -1970,6 +2006,7 @@ static const struct mtk_jpeg_variant mtk8196_jpegdec_drvdata = {
- 	.cap_q_default_fourcc = V4L2_PIX_FMT_YUV420M,
- 	.multi_core = true,
- 	.jpeg_worker = mtk_jpegdec_worker,
-+	.support_smmu = true,
- };
- 
- static const struct of_device_id mtk_jpeg_match[] = {
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
-index 33f7fbc4ca5e..6e8304680393 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
-@@ -11,6 +11,7 @@
- 
- #include <linux/clk.h>
- #include <linux/interrupt.h>
-+#include <linux/mfd/syscon.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-fh.h>
-@@ -34,6 +35,14 @@
- 
- #define MTK_JPEG_MAX_EXIF_SIZE	(64 * 1024)
- 
-+#define JPEG_DEC_SMMU_SID				0
-+#define JPEG_ENC_SMMU_SID				0
-+#define JPG_REG_GUSER_ID_MASK			0x7
-+#define JPG_REG_GUSER_ID_DEC_SID		0x4
-+#define JPG_REG_GUSER_ID_ENC_SID		0x5
-+#define JPG_REG_DEC_GUSER_ID_SHIFT		8
-+#define JPG_REG_ENC_GUSER_ID_SHIFT		4
-+
- #define MTK_JPEG_ADDR_MASK GENMASK(1, 0)
- 
- /**
-@@ -65,6 +74,7 @@ enum mtk_jpeg_ctx_state {
-  * @multi_core:		mark jpeg hw is multi_core or not
-  * @jpeg_worker:		jpeg dec or enc worker
-  * @support_34bit:	flag to check support for 34-bit DMA address
-+ * @support_smmu:	flag to check if support smmu
-  */
- struct mtk_jpeg_variant {
- 	struct clk_bulk_data *clks;
-@@ -82,6 +92,7 @@ struct mtk_jpeg_variant {
- 	bool multi_core;
- 	void (*jpeg_worker)(struct work_struct *work);
- 	bool support_34bit;
-+	bool support_smmu;
- };
- 
- struct mtk_jpeg_src_buf {
-@@ -150,6 +161,7 @@ struct mtk_jpegdec_clk {
-  * @hw_param:		jpeg encode hw parameters
-  * @hw_state:		record hw state
-  * @hw_lock:		spinlock protecting the hw device resource
-+ * @smmu_regmap:	SMMU registers mapping
-  */
- struct mtk_jpegenc_comp_dev {
- 	struct device *dev;
-@@ -163,6 +175,7 @@ struct mtk_jpegenc_comp_dev {
- 	enum mtk_jpeg_hw_state hw_state;
- 	/* spinlock protecting the hw device resource */
- 	spinlock_t hw_lock;
-+	struct regmap *smmu_regmap;
- };
- 
- /**
-@@ -177,6 +190,7 @@ struct mtk_jpegenc_comp_dev {
-  * @hw_param:			jpeg decode hw parameters
-  * @hw_state:			record hw state
-  * @hw_lock:			spinlock protecting hw
-+ * @smmu_regmap:		SMMU registers mapping
-  */
- struct mtk_jpegdec_comp_dev {
- 	struct device *dev;
-@@ -190,6 +204,7 @@ struct mtk_jpegdec_comp_dev {
- 	enum mtk_jpeg_hw_state hw_state;
- 	/* spinlock protecting the hw device resource */
- 	spinlock_t hw_lock;
-+	struct regmap *smmu_regmap;
- };
- 
- /**
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-index e453a1634f33..da753a636eaa 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-@@ -624,6 +624,25 @@ static int mtk_jpegdec_hw_init_irq(struct mtk_jpegdec_comp_dev *dev)
- 	return 0;
- }
- 
-+static int mtk_jpegdec_smmu_init(struct mtk_jpegdec_comp_dev *dev)
-+{
-+	struct mtk_jpeg_dev *master_dev = dev->master_dev;
-+
-+	if (!master_dev->variant->support_smmu)
-+		return 0;
-+
-+	dev->smmu_regmap =
-+		syscon_regmap_lookup_by_phandle(dev->plat_dev->dev.of_node,
-+						"mediatek,smmu-config");
-+	if (IS_ERR(dev->smmu_regmap)) {
-+		return dev_err_probe(dev->dev, PTR_ERR(dev->smmu_regmap),
-+				     "mmap smmu_base failed(%ld)\n",
-+				     PTR_ERR(dev->smmu_regmap));
-+	}
-+
-+	return 0;
-+}
-+
- static int mtk_jpegdec_hw_probe(struct platform_device *pdev)
- {
- 	struct mtk_jpegdec_clk *jpegdec_clk;
-@@ -677,6 +696,10 @@ static int mtk_jpegdec_hw_probe(struct platform_device *pdev)
- 	dev->master_dev = master_dev;
- 	master_dev->max_hw_count++;
- 
-+	ret = mtk_jpegdec_smmu_init(dev);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, dev);
- 	pm_runtime_enable(&pdev->dev);
- 	ret = devm_clk_bulk_get(dev->dev,
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-index f30dccc93ecf..5e8a5cb4850e 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-@@ -348,6 +348,25 @@ static int mtk_jpegenc_hw_init_irq(struct mtk_jpegenc_comp_dev *dev)
- 	return 0;
- }
- 
-+static int mtk_jpegenc_smmu_init(struct mtk_jpegenc_comp_dev *dev)
-+{
-+	struct mtk_jpeg_dev *master_dev = dev->master_dev;
-+
-+	if (!master_dev->variant->support_smmu)
-+		return 0;
-+
-+	dev->smmu_regmap =
-+		syscon_regmap_lookup_by_phandle(dev->plat_dev->dev.of_node,
-+						"mediatek,smmu-config");
-+	if (IS_ERR(dev->smmu_regmap)) {
-+		return dev_err_probe(dev->dev, PTR_ERR(dev->smmu_regmap),
-+				     "mmap smmu_base failed(%ld)\n",
-+				     PTR_ERR(dev->smmu_regmap));
-+	}
-+
-+	return 0;
-+}
-+
- static int mtk_jpegenc_hw_probe(struct platform_device *pdev)
- {
- 	struct mtk_jpegenc_clk *jpegenc_clk;
-@@ -399,6 +418,10 @@ static int mtk_jpegenc_hw_probe(struct platform_device *pdev)
- 	dev->master_dev = master_dev;
- 	master_dev->max_hw_count++;
- 
-+	ret = mtk_jpegenc_smmu_init(dev);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, dev);
- 	pm_runtime_enable(&pdev->dev);
- 	ret = devm_clk_bulk_get(dev->dev,
+I just sent out a v2 of my series from '23 converting
+x86-android-tablets to use PROPERTY_ENTRY_GPIO(), including converting
+buttons and switches:
+
+
+https://lore.kernel.org/all/20250810-x86-andoroid-tablet-v2-0-9c7a1b3c32b2@gmail.com/
+
+I do not have hardware so it probably is busted but if you could make it
+work that would be great.
+
+Thanks.
+
 -- 
-2.46.0
-
+Dmitry
 
