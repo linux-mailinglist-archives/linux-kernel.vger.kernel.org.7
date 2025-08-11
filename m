@@ -1,113 +1,146 @@
-Return-Path: <linux-kernel+bounces-762686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1866AB209AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:10:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50DADB209B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED114224B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:10:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AEB91892EF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2AC2D97B5;
-	Mon, 11 Aug 2025 13:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F282D2D7803;
+	Mon, 11 Aug 2025 13:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TbPBI8AH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ojjnhV8s"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D13263C8E;
-	Mon, 11 Aug 2025 13:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EED42D8396
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754917826; cv=none; b=CJUZnVIxPMZRuSnQaTYFvLZGnhtV3B0/ps2BWUZ+hZRAF5lgdce3CiSce7XAIMBYGGfdgStDjiP/7SbBlvMqoZbcKDTe/cMjlKWhO53QyONBc0JupD5ckey5ujnSki1Di2ACCMFUFz8u4yLDVZHHDn3fLXouGo4q+ECSDhfja5E=
+	t=1754917840; cv=none; b=EulkbxzSHKfqK3wU+x/yfgCHMUOVMcwxu+qERkG9ADzwCTpsIMqSSZcDdDWvvhTgNydwc14awMVrdMnU9Vq3TrHqLF/c4ste2VTAi0F/G+LWDWLh3WcBaTa8d4M5H7eevLa9636slVIjznhVogMV3hxOkfdEx43Qd1dSyYmw8Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754917826; c=relaxed/simple;
-	bh=Qwn7PQpy+Ilx1ZMVgBKoiHSJ8+JjakaEkhRsJQobszU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XGyVt6bhoEoW3984pJEAPhEPuJaJf/tdj3T4RLp+rPpRW7Fv5oQxh4FX7obbgAkM0wviHlPY19pWhTmnpnf6vAV5Irs3JgqvBAwrzlmh12wQV0C3K92GDBLa54GPCrgOpUTvAImz/b7dmrvhAoU4L9RUKacK8LQoSeGZH2OD+jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TbPBI8AH; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754917825; x=1786453825;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Qwn7PQpy+Ilx1ZMVgBKoiHSJ8+JjakaEkhRsJQobszU=;
-  b=TbPBI8AHcVDUS5B3+AZzHQxhivBknjcsL12IDG7sdy0TZTH+bqHBowgK
-   HFxeb72NyahvcLvLXlh0dk2zSnjcR9H+feN48LEPgxGdGwUdcr1cbqx5Q
-   xsXMHRuKS5NaAPhauruX+saHQrF5rUmz0Z7KIgfv2g0XNmdtfAd5k6to/
-   +pTIJmvz3Fg0mcYhuYVrjEb5PFzkwTpOyAeza/lJlrqmE10q2K21mlJF8
-   iIDLDFUTiuBT5IbF///eFSNAVIzMaWa3QMvorEYuvwQf9wbrOIH2E1izV
-   jGRvXhCkVkjVP+h92s3uKlHXp8a9u3+nUESQwTLesHBEVRqypaC6F6icP
-   Q==;
-X-CSE-ConnectionGUID: RpNFWjxjTya4VwtB+L5yWA==
-X-CSE-MsgGUID: k3beOPxSTJ6jycDknH7mFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="57235093"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="57235093"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 06:10:24 -0700
-X-CSE-ConnectionGUID: clnapwvIQEyeYWRrme7gjw==
-X-CSE-MsgGUID: EgyUTF4xQLq0p80+Py96RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="165814002"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 06:10:21 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ulSI6-000000052mR-0VQx;
-	Mon, 11 Aug 2025 16:10:18 +0300
-Date: Mon, 11 Aug 2025 16:10:17 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: liziyao@uniontech.com
-Cc: Alex Lanzano <lanzano.alex@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Yao Zi <ziyao@disroot.org>,
-	WangYuli <wangyuli@uniontech.com>, Jun Zhan <zhanjun@uniontech.com>
-Subject: Re: [PATCH] iio: imu: bmi270: Match ACPI ID found on newer GPD
- firmware
-Message-ID: <aJnrucmDghe1K8Rc@smile.fi.intel.com>
-References: <20250730-bmi270-gpd-acpi-v1-1-1ffc85b17266@uniontech.com>
- <aJnrZNCpBYD92-n1@smile.fi.intel.com>
+	s=arc-20240116; t=1754917840; c=relaxed/simple;
+	bh=YdcvZYKwitUcECgcbI2UhLZ6metpTwEak9n/5y6m0SA=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AqOT7HU0VumjmdCQaM+EM6ACssesCkWsNTQS7GnDAk8drgTHw0iUCP/pQEIbi5Odpb1c3OocF2z/Bx8ZbVrxMg8etiXQayis6mSlcVg9BJX140yP2vnpqaOH+RTdX+Dm7/+fw8YBXVsIDQtASUfLWXtg4yf4fQw1yGCB4ZOhgkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ojjnhV8s; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23aeac7d77aso35787595ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:10:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754917837; x=1755522637; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YdcvZYKwitUcECgcbI2UhLZ6metpTwEak9n/5y6m0SA=;
+        b=ojjnhV8sG5RePBCOlfNn+HKKrpovehYP/8l1sr0vNYpFHhYyNj9xWMV43bJeaTo+kp
+         pGJmmwo0JTwJGp+EMoH+TiRmSHHwCWtSKYf/ADQ+n41Fq7MLbvF4puoYKzMZIfAb5Yr5
+         rfyUeS8+hBywvWWe45et8EVilsYHrox7Ct03tWZtWfpes3F5MB7MSmpvGYu3l/KMy0Lm
+         Xz5nZcHYvM5pMpkmNGOifNAmrO7N485x8Dy3qu1/BQr+p2mpzG31DunBz5mKNnrnKK8W
+         RdKVIPz8XNIoKoiGQOe1wq9OXTmtM2HvY5MHwnIuZgNfLGAMI4k+PY6m2DfBQiYd+C7+
+         Xhsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754917837; x=1755522637;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YdcvZYKwitUcECgcbI2UhLZ6metpTwEak9n/5y6m0SA=;
+        b=dTwB/MzRT6Cv/JUj4L4uTA5wM7oyVXf7A5Sd0dz0UAsLLWY+xuvuLo5i5VLBqVZD59
+         zi95zkH7OCVHJ3GPCc3aNr28cgW6KWWcq1nqtPwNghARJGV/rAkkk0Ll3t9eLjXhIb6z
+         z7hmA8IsFJ75DZWwG6ORCraYPQ81gCs+BUkJGGB43EMCjpvauD+0h/NbQQocVUIsCN/j
+         gissr0lgSrKYKBujvo7rJeCL+8yJc1PcwVkIfH6caM4JvCc/MtIiX4E9tquBToVw87/Y
+         +s/GYU+dYpbU0mBCQtuh+9z2WY1T0croxtjuSZU3mM/tcUuLBa9ZGZirLC5ZJIe6m2wh
+         XCZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfTuorwplipMwWwjLYgg7+fMkSVxWvtkjEwAQXCc+RXVkV/3Bnuom2tRIWlkU1ECuNIDt6tlYO3aSoXWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdsr2hVhEY4rIyhPu8nJI7UVViChLMKlf7EGW/cd05VhzZaQY0
+	ssomR7Ov6s/B8qgubSasSAKUKeYgVvIft8Z767eNN3xejBl/XHtV11R0I5qa/Xk70neMsuVjjCl
+	lcfifU2ipFCtYuaVUWjcYGIF4BepuZpyDm9q3eGzC8g==
+X-Gm-Gg: ASbGncvIg1u4zyQUMGq55ntA9zUfQAXLZewwY2joeDu/wIZyttCH7lJkyJA76tuiXqC
+	lZ+TpQBShqBeV0iN8Bl8puJplTbebgA/y8L7VfuKnCh8OWKMcdhAGk/FXZXqhLEtefezdDVdCqS
+	VOJqRh6monL2TB3R7CI5Dvie6uC/oi+ofWciGj050YaT3/zkugocsVzu/1zNRkvqU5jg+1293Xr
+	zbUOiMwO8TXYpJeneEY+Xj9vzLJXfbHyWTZuvk=
+X-Google-Smtp-Source: AGHT+IEgMvtsNpCEbzm+bQO3Dq6oVeggGu7qnt+f1HYUPfLnzNmxpfjIx2ohdBUK5XJ+fhQGIjFsq0lNMPvywZaOZwE=
+X-Received: by 2002:a17:903:32cb:b0:240:96a:b812 with SMTP id
+ d9443c01a7336-242c203d030mr203994295ad.24.1754917837398; Mon, 11 Aug 2025
+ 06:10:37 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 11 Aug 2025 06:10:31 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 11 Aug 2025 06:10:31 -0700
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <20250808151822.536879-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJnrZNCpBYD92-n1@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250808151822.536879-1-arnd@kernel.org>
+Date: Mon, 11 Aug 2025 06:10:31 -0700
+X-Gm-Features: Ac12FXxi-t7kK_6HIDwsxWJsHZcp5BcOM26Y8X32Zi2av6pcVu6UuipKim4OtEQ
+Message-ID: <CAMRc=MeyW8gtG_hsLWytCpufQRmg3s5QZenxCvP3MNGmaoo2cA@mail.gmail.com>
+Subject: Re: [PATCH 00/21] gpiolib: fence off legacy interfaces
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Andrew Lunn <andrew@lunn.ch>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Gregory Clement <gregory.clement@bootlin.com>, Russell King <linux@armlinux.org.uk>, 
+	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Jeff Johnson <jjohnson@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-sh@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
+	patches@opensource.cirrus.com, netdev@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+	platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-sound@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 11, 2025 at 04:08:53PM +0300, Andy Shevchenko wrote:
-> On Wed, Jul 30, 2025 at 08:56:16PM +0800, Cryolitia PukNgae via B4 Relay wrote:
-> > 
-> > Some GPD devices ship a buggy firmware that describes on-device BMI260
-> > with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40,
-> > let's match the correct ID to detect the device. The buggy ID "BMI0160"
-> > is kept as well to maintain compatibility with older firmwares.
-> 
-> I think I saw this patch already and there was even an (unfinished)
-> discussion...
-> https://lore.kernel.org/linux-iio/20250730-bmi270-gpd-acpi-v1-1-1ffc85b17266@uniontech.com/
-> 
-> So, why are you sending the same patch again?
+On Fri, 8 Aug 2025 17:17:44 +0200, Arnd Bergmann <arnd@kernel.org> said:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Commit 678bae2eaa81 ("gpiolib: make legacy interfaces optional") was
+> merged for linux-6.17, so now it is possible to use the legacy interfaces
+> conditionally and eventually have the support left out of the kernel
+> whenever it is not needed.
+>
+> I created six patches to force-enable CONFIG_GPIOLIB_LEGACY on the
+> few (mostly ancient) platforms that still require this, plus a set of
+> patches to either add the corresponding Kconfig dependencies that make
+> the device drivers conditional on that symbol, or change them to no
+> longer require it.
+>
+> The final patch ends up turning the Kconfig symbol off by default,
+> which of course depends on everything else getting merged first to avoid
+> build errors.
+>
+> I would suggest that patches 1-20 can just get merged through the
+> respective maintainer trees independently when they are deemed ready,
+> and the final patch can wait another merge window.
+>
 
-Oh, my gosh, it's this discussion already! Please, ignore my above comment.
+Oh, not at all, I'm fine sending a second PR late into the merge window to
+get that done in a single cycle.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks for doing this, awesome work!
 
-
+Bartosz
 
