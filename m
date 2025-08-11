@@ -1,113 +1,77 @@
-Return-Path: <linux-kernel+bounces-762532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C78B20818
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:44:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD20B2081A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38EB4169566
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:44:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D704416FECA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 11:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35A22797A9;
-	Mon, 11 Aug 2025 11:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="b8O/82Rd"
-Received: from mx3.wp.pl (mx3.wp.pl [212.77.101.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADDE2D372A;
+	Mon, 11 Aug 2025 11:45:26 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774A426D4CE
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 11:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666862BEC2F;
+	Mon, 11 Aug 2025 11:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754912681; cv=none; b=km04KI7A5HluN2CVHrTvsKCX6UY5ZTd8H/r9p4al91aw5gJgeWBUaojL27z2yBKI3l3Qqdr7RBTrWyIXSi5UMjDnCxFe5Q5SFjK8tfiT6rjSXsLEQS53p7mhC4R79pewR6Et7QEXzhNosZ2CeoXOLArskMHAzZzmoqhSZsFAyAk=
+	t=1754912726; cv=none; b=WGQMxugiI47PzvSt8LzzwIQyg1C9+/siF9C9CwJjkuFxntk9o9ojKPcG27RFB/16AOctt76/LVXoKgtj6GZSSmOtiWX0vyyu7ml78IT1yY+RnCu4D8VQh4aDUA6cACxEDBygr2Za03PilZKbTLYCQ8LuGvoxIPfMQofH6Rn6GmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754912681; c=relaxed/simple;
-	bh=Ez6SINq3WRAmM/Dg8l/3+nB/nR+O83xlym6fKiLRzVQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=DDMA76CQF+psioilLcnfkONXEXKp2nVagXUVejIDpifVvzSySxRv7iLub6BgE9L0v+hW1HXOi9YnXHtUs1J2wZ8cyogW7PZLwidLVgIea205Mz2v0ZhLpjmOm3lvL/OkrnuwRvW++BX14MBHiZAgwNv+8x3WEMzL72WhhtZFqTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=b8O/82Rd; arc=none smtp.client-ip=212.77.101.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 11193 invoked from network); 11 Aug 2025 13:44:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1754912674; bh=P9Mojr1dPjuPYog11ph6cxB1cTkaM1gR2irGlGlo2wA=;
-          h=From:To:Subject;
-          b=b8O/82RdfB8sn6+6Y+YKlNoX7aDZ9jG243/EC5lZtHGo4MZcmOti7vj5Tzcamubck
-           lEhGcafay+OeRodtv1gxYuwoED5FoZ5vf8aT6NFELx5o2+EP+vXshYkG4RwkupXdOz
-           xZ7VkaJYNrhibntKnvDafntxaUEWyZddk3ylr6nAi/tCEOlkIDiF6nF8Tv82qM8pjc
-           BX2NLtTenIDMTkVTDtsGa6S6V5+dLVTONLxi6O60vxXWI+aw85oawRdXolDp62D2Ho
-           vlyWxrfJvitzb5+jvXuQ1LNEyferedCkTpfpX0yTcADAaXJ8s27LEogu0nfa7dpDbg
-           0oe8yHqvRWkRQ==
-Received: from 83.24.148.125.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.148.125])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <robh@kernel.org>; 11 Aug 2025 13:44:34 +0200
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tsbogend@alpha.franken.de,
-	olek2@wp.pl,
-	davem@davemloft.net,
-	devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org,
+	s=arc-20240116; t=1754912726; c=relaxed/simple;
+	bh=1FpN0t8TOFT0mPy+HBk3oYO0/vYuhEeuchJL9MfoR4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWqJxeLfng2GGGjkJtrm89DIPsVLEtXis4LOsdAtf0IJZN6+UGbX8DF1+T9WBdsrUs6f39P6wwOSsD+PgA5UKHLTcB5pTY9Q9AOgujAuyXbRxKvJUfw67vhaV8aNSfahyNK1Ipv6snbsni1S4tiZbGx8+yb55hoY/NeKaGMw3vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id F2C26227A87; Mon, 11 Aug 2025 13:45:19 +0200 (CEST)
+Date: Mon, 11 Aug 2025 13:45:19 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: fsverity@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, david@fromorbit.com, djwong@kernel.org,
+	ebiggers@kernel.org, hch@lst.de, Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net] mips: lantiq: add missing burst length property
-Date: Mon, 11 Aug 2025 13:44:23 +0200
-Message-ID: <20250811114432.732587-1-olek2@wp.pl>
-X-Mailer: git-send-email 2.47.2
+Subject: Re: [PATCH RFC 04/29] fsverity: add per-sb workqueue for post read
+ processing
+Message-ID: <20250811114519.GA8969@lst.de>
+References: <20250728-fsverity-v1-0-9e5443af0e34@kernel.org> <20250728-fsverity-v1-4-9e5443af0e34@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-WP-MailID: 82fa28d6888cff3bfe4d1195cced04de
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 0000000 [4ZNN]                               
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728-fsverity-v1-4-9e5443af0e34@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-The upstream dts lacks the lantiq,{rx/tx}-burst-length property. Other
-issues were also fixed:
-/home/aleksander/workspace/linux/arch/mips/boot/dts/lantiq/danube_easy50712.dtb: etop@e180000 (lantiq,etop-xway): $nodename:0: 'etop@e180000' does not match '^ethernet@[0-9a-f]+$'
-	from schema $id: http://devicetree.org/schemas/net/lantiq,etop-xway.yaml#
-/home/aleksander/workspace/linux/arch/mips/boot/dts/lantiq/danube_easy50712.dtb: etop@e180000 (lantiq,etop-xway): 'interrupt-names' is a required property
-	from schema $id: http://devicetree.org/schemas/net/lantiq,etop-xway.yaml#
-/home/aleksander/workspace/linux/arch/mips/boot/dts/lantiq/danube_easy50712.dtb: etop@e180000 (lantiq,etop-xway): 'lantiq,tx-burst-length' is a required property
-	from schema $id: http://devicetree.org/schemas/net/lantiq,etop-xway.yaml#
-/home/aleksander/workspace/linux/arch/mips/boot/dts/lantiq/danube_easy50712.dtb: etop@e180000 (lantiq,etop-xway): 'lantiq,rx-burst-length' is a required property
-	from schema $id: http://devicetree.org/schemas/net/lantiq,etop-xway.yaml#
+On Mon, Jul 28, 2025 at 10:30:08PM +0200, Andrey Albershteyn wrote:
+> From: Andrey Albershteyn <aalbersh@redhat.com>
+> 
+> For XFS, fsverity's global workqueue is not really suitable due to:
+> 
+> 1. High priority workqueues are used within XFS to ensure that data
+>    IO completion cannot stall processing of journal IO completions.
+>    Hence using a WQ_HIGHPRI workqueue directly in the user data IO
+>    path is a potential filesystem livelock/deadlock vector.
 
-Fixes: 14d4e308e0aa ("net: lantiq: configure the burst length in ethernet drivers")
-Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
----
- arch/mips/boot/dts/lantiq/danube_easy50712.dts | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Do they?  I though the whole point of WQ_HIGHPRI was that they'd
+have separate rescue workers to avoid any global pool effects.
 
-diff --git a/arch/mips/boot/dts/lantiq/danube_easy50712.dts b/arch/mips/boot/dts/lantiq/danube_easy50712.dts
-index 1ce20b7d05cb..c4d7aa5753b0 100644
---- a/arch/mips/boot/dts/lantiq/danube_easy50712.dts
-+++ b/arch/mips/boot/dts/lantiq/danube_easy50712.dts
-@@ -82,13 +82,16 @@ conf_out {
- 			};
- 		};
- 
--		etop@e180000 {
-+		ethernet@e180000 {
- 			compatible = "lantiq,etop-xway";
- 			reg = <0xe180000 0x40000>;
- 			interrupt-parent = <&icu0>;
- 			interrupts = <73 78>;
-+			interrupt-names = "tx", "rx";
- 			phy-mode = "rmii";
- 			mac-address = [ 00 11 22 33 44 55 ];
-+			lantiq,rx-burst-length = <4>;
-+			lantiq,tx-burst-length = <4>;
- 		};
- 
- 		stp0: stp@e100bb0 {
--- 
-2.47.2
+> 2. The fsverity workqueue is global - it creates a cross-filesystem
+>    contention point.
+
+How does this not affect the other file systems?
+
+If the global workqueue is such an issue, maybe it should be addressed
+in an initial series before the xfs support?
 
 
