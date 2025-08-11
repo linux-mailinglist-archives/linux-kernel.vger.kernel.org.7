@@ -1,270 +1,148 @@
-Return-Path: <linux-kernel+bounces-761703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-761704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7328B1FD89
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:42:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 487F8B1FD8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 03:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9950170300
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 01:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8863B89BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 01:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF5F248F7A;
-	Mon, 11 Aug 2025 01:42:40 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF1F2571C2;
+	Mon, 11 Aug 2025 01:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irEeSlYz"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E954242D73;
-	Mon, 11 Aug 2025 01:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655BE1581F8;
+	Mon, 11 Aug 2025 01:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754876560; cv=none; b=p2GG8mmXB6zRIFIaVAy6llTcevPI0ueqA5WZVB7Tmy1mSWi3daWE/nV6ZGewdrR6cQE0T30VC8Ov3fCvoqU+xPSvL1QpDnKIzYuNUsVhpSmEMNssNFoZQ+jJ95UVoAp35Mt8lHLxzH8XnHRE8mcT872+DLsMxg2ueG1RqpAtc7s=
+	t=1754877221; cv=none; b=quqRfzjHWOT6yptA3otHycEGukkhWBW6yA0ziekLtW+dWrFIbyyJICgzYkhYKq/GCCPCD3Dmj+PGutdpnv/FXJovb0LJvyfbbHKPN5nXbC2af4AUdaTYovs765oc6M32Qry727AIuA58A1GjOyati+htS/+ttcxFGeOb9XkHRvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754876560; c=relaxed/simple;
-	bh=V/pTiBiSZwQRSwGchDc2Lf/LWzto82/g9m/e4SrqJrQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fda+sDIELH1wlcbdsDs01wZeFCncV1K6TSeV2lDW8Wz5GNpsTJORE/b4/sRl7gdLZZV8hz8ylQgxW+UFdmuFurT4SeWhFK2JxX0cTTMF9BqavS9ruqQ2WOykopNAplQQNIeddDMQfw3PQgHEbmHnBeAeSd5QThhi8B7/DH5Wp+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c0cp22wk8zKHMn6;
-	Mon, 11 Aug 2025 09:42:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 961C11A0F2B;
-	Mon, 11 Aug 2025 09:42:33 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDXUxSESploFqoZDQ--.21267S3;
-	Mon, 11 Aug 2025 09:42:31 +0800 (CST)
-Subject: Re: [PATCH v2] brd: use page reference to protect page lifetime
-To: Hou Tao <houtao@huaweicloud.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- hch@lst.de, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250729090616.1008288-1-yukuai1@huaweicloud.com>
- <00473627-a594-dd5c-2100-eaf2df84ff7d@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <fb80019b-06aa-f491-4d25-2f413d832741@huaweicloud.com>
-Date: Mon, 11 Aug 2025 09:42:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754877221; c=relaxed/simple;
+	bh=4DvNoUFhbxlMFcdamXwbz2OHDWNZVfjnAN9mIvUd224=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=FW5YTA66az01wllfvL8mQvrTCC9gXZ+0gGOhlGRL5SH47Nhy4qAK8/30UNpIxo822+qlpgAc5HSeAkupJu7KXlykwD4LioSpFh7AQMIlwtS9IUYGkquEL+CtGLyWIudgrIpNK80VbQoq/zHu1CwYH94SbMfCD7cHeVEDKwCBdN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=irEeSlYz; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-24003ed822cso21926395ad.1;
+        Sun, 10 Aug 2025 18:53:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754877219; x=1755482019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ziBLjYfFtJCisSNX2VUBvLqzkZm7Ob1xtTc3XAKbHy8=;
+        b=irEeSlYz86vXv+gVVCRRPnijV0dDTZK8OzR/PH6WeZ0cAEKMqaOml3nNd7DqOTydy8
+         G7ueIGA8xUB8KBcdww8OK+44x/dBEXn3Ue/lZKVWOnsunS9iF9kFJtFLzt8V7ZN3W8Cw
+         Ds3B3PSR6xyizdySN/nwCd633m8PGUpCcRTLziMgtJwqj5Uj9pGEfDSbknJRIWTSD/GE
+         ULpFK1ZngWAKQkYrDGSukjTfxC+FNNwH9sQvCNoZ/TYu1d9lXPFtTZDJuRZSFw2ZQl16
+         zk7Fq4m8jM0UxJt6s+g0FrulHIXqdDtwe35ZQjnqie6DVcwQDeu34NpT/RZ2j9CmyoMF
+         aBkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754877219; x=1755482019;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ziBLjYfFtJCisSNX2VUBvLqzkZm7Ob1xtTc3XAKbHy8=;
+        b=kuX8BcOAEYy5UEXnuCUiCk8M4sURQ8jNKxe4yhzoEocUCIA2ojU9GcVcrhlVtL2AjL
+         5YTTkz+h2bDDasMBV9XcPN4vEchG6dUcXwvbmj3HNmGRcUEO5xaaUjBkHOAjpdfSghk5
+         Sz/9WvOIac5xOEvkl4GIwpYXy2DOGSyejIZkSG+XjcPJxma5QCLagHFkup5FkGSTkcXV
+         96jAhfvzeVkkftVgYMhhC7A/9+L0fLphw+Mn9VxubDaBflFqhrNUaVBTRHusoepZ7XjZ
+         n7h8Dq3Sfxv8IpaDnevQF82HIxVfu+RDrxcblIFxjbY0n4PQvjk/+ljxHop5FrMd5ldi
+         5/dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgy6NFJ20b4w0KPXSbtDWgrs+JtKYuJvcl5Swj6xcmblDC+LUU5try2WWjs+V0MsVxI26usQxtZHk6GuD4maw=@vger.kernel.org, AJvYcCUlSE3h9uYfi6mB0DunKeKBQ+ARU1VDdz3zLBCoxSzP4M3Qwmdu2uT+NxtzLuhv0OhvI98dzlpF@vger.kernel.org, AJvYcCW3AG2lRDzTCeIF8FjA9DNUa4BF8RsCF00UX7aviduMzURc2mWrstjL3IoKkv8eiepxwsDZR6InyaZTQmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw46LL2hFrSxRt/b2W/5KZkPrMJDj7cmvznyECWGlrQuKBFt+0x
+	wOt8qMgCtQCmskXmNy1QARy6xU7ZOeBtNgSDPwC43CB5YaDXPI/2bdJf
+X-Gm-Gg: ASbGncseXXw/pouLAA2ijX4d4MkLWzxoDmg6Ly8QnJzFIFKzb2w3tuWn0w8mplINzLc
+	n0ZlN3UPsolKUw4IzrPzzoP38nG2CLBjh12q227VcnOlc0rrtyRUps7gTfoxruhVKxT4ppQY1T+
+	qwT8hwZvMTlWJAj7k0mq5iI7CGh5PeI2R8KDhqDYNkHFKYgWnebMs6xB3gXKVqIkq9SY6JBQhDw
+	EMJa8JfAeOLzN5o+dqrfS/ZPXi5HsHD3gOJ9kcrQGpkEU7fxloPzCP36zA28/GyQyhTq4iPHmkS
+	McERWAcRQ0WAOkEKjivZU35RK134KykNFa2xlBSKrJYr49ZYGxfkihBmpQs8xIK660E5umLnePm
+	O5kkwPwXNQ71yuesLul265dvVpG/0pc6xh/2WXRMJXMFD6Jz8hVuFKjxRfKHKALBLkfkE3ZoDE8
+	yL
+X-Google-Smtp-Source: AGHT+IGxJNlNVh+bHpFl4YYFftkqDi9J35S5pIRmYVj7AzYswK6YLiSL/gwFEdmTOk3P8LHeejf3Qw==
+X-Received: by 2002:a17:902:dace:b0:240:3e41:57bf with SMTP id d9443c01a7336-242c2003f68mr158953465ad.13.1754877219372;
+        Sun, 10 Aug 2025 18:53:39 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaf87csm258762345ad.176.2025.08.10.18.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Aug 2025 18:53:38 -0700 (PDT)
+Date: Mon, 11 Aug 2025 10:53:20 +0900 (JST)
+Message-Id: <20250811.105320.1421518245611388442.fujita.tomonori@gmail.com>
+To: a.hindborg@kernel.org
+Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
+ daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+ netdev@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, anna-maria@linutronix.de,
+ frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
+ jstultz@google.com, sboyd@kernel.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev,
+ david.laight.linux@gmail.com
+Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <87y0wx9hpk.fsf@kernel.org>
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+	<20250220070611.214262-8-fujita.tomonori@gmail.com>
+	<87y0wx9hpk.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <00473627-a594-dd5c-2100-eaf2df84ff7d@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXUxSESploFqoZDQ--.21267S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jr1fWFW5AFyrtr1UAFyrWFg_yoW7Gw4fpF
-	WDJFyxC3y5Jry7Cr17Xws8CFyFq34IgF4fK3y3Ja12krnakr93tFy7Kr1Fga98CrWUCrWk
-	AF4DtrnrCrs8ta7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Sorry, I somehow missed this email.
 
-在 2025/08/09 10:28, Hou Tao 写道:
-> 
-> 
-> On 7/29/2025 5:06 PM, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> As discussed [1], hold rcu for copying data from/to page is too heavy.
->> it's better to protect page with rcu around for page lookup and then
->> grab a reference to prevent page to be freed by discard.
->>
->> [1] https://lore.kernel.org/all/eb41cab3-5946-4fe3-a1be-843dd6fca159@kernel.dk/
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->> Changes from v1:
->>   - refer to filemap_get_entry(), use xas_load + xas_reload to fix
->>   concurrent problems.
->>
->>   drivers/block/brd.c | 73 ++++++++++++++++++++++++++++-----------------
->>   1 file changed, 46 insertions(+), 27 deletions(-)
->>
->> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
->> index 0c2eabe14af3..b7a0448ca928 100644
->> --- a/drivers/block/brd.c
->> +++ b/drivers/block/brd.c
->> @@ -44,45 +44,72 @@ struct brd_device {
->>   };
->>   
->>   /*
->> - * Look up and return a brd's page for a given sector.
->> + * Look up and return a brd's page with reference grabbed for a given sector.
->>    */
->>   static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
->>   {
->> -	return xa_load(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
->> +	struct page *page;
->> +	XA_STATE(xas, &brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
->> +
->> +	rcu_read_lock();
->> +repeat:
->> +	xas_reset(&xas);
-> 
-> Is it better to move xas_reset() to the failing branches instead of
-> adding an extra xas_reset() for the success branch ?
+On Sat, 22 Mar 2025 17:02:31 +0100
+Andreas Hindborg <a.hindborg@kernel.org> wrote:
 
-Ok.
->> +	page = xas_load(&xas);
->> +	if (xas_retry(&xas, page))
->> +		goto repeat;
->> +
->> +	if (!page || xa_is_value(page)) {
->> +		page = NULL;
->> +		goto out;
->> +	}
+>> +/// Lower CPU power consumption or yield to a hyperthreaded twin processor.
+>> +///
+>> +/// It also happens to serve as a compiler barrier.
+>> +pub fn cpu_relax() {
+>> +    // SAFETY: FFI call.
 > 
-> brd will not store special value in the xarray, so xa_is_value() is
-> unnecessary.
+> I don't think this safety comment is sufficient. There are two other
+> similar comments further down.
 
-Yes, this is correct.
+Updated the comment.
 
-Thanks,
-Kuai
-
->> +
->> +	if (!get_page_unless_zero(page))
->> +		goto repeat;
->> +
->> +	if (unlikely(page != xas_reload(&xas))) {
->> +		put_page(page);
->> +		goto repeat;
->> +	}
->> +out:
->> +	rcu_read_unlock();
->> +
->> +	return page;
->>   }
->>   
->>   /*
->>    * Insert a new page for a given sector, if one does not already exist.
->> + * The returned page will grab reference.
->>    */
->>   static struct page *brd_insert_page(struct brd_device *brd, sector_t sector,
->>   		blk_opf_t opf)
->> -	__releases(rcu)
->> -	__acquires(rcu)
->>   {
->>   	gfp_t gfp = (opf & REQ_NOWAIT) ? GFP_NOWAIT : GFP_NOIO;
->>   	struct page *page, *ret;
->>   
->> -	rcu_read_unlock();
->>   	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
->> -	if (!page) {
->> -		rcu_read_lock();
->> +	if (!page)
->>   		return ERR_PTR(-ENOMEM);
->> -	}
->>   
->>   	xa_lock(&brd->brd_pages);
->>   	ret = __xa_cmpxchg(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT, NULL,
->>   			page, gfp);
->> -	rcu_read_lock();
->> -	if (ret) {
->> +	if (!ret) {
->> +		brd->brd_nr_pages++;
->> +		get_page(page);
->>   		xa_unlock(&brd->brd_pages);
->> -		__free_page(page);
->> -		if (xa_is_err(ret))
->> -			return ERR_PTR(xa_err(ret));
->> +		return page;
->> +	}
->> +
->> +	if (!xa_is_err(ret)) {
->> +		get_page(ret);
->> +		xa_unlock(&brd->brd_pages);
->> +		put_page(page);
->>   		return ret;
->>   	}
->> -	brd->brd_nr_pages++;
->> +
->>   	xa_unlock(&brd->brd_pages);
->> -	return page;
->> +	put_page(page);
->> +	return ERR_PTR(xa_err(ret));
->>   }
->>   
->>   /*
->> @@ -95,7 +122,7 @@ static void brd_free_pages(struct brd_device *brd)
->>   	pgoff_t idx;
->>   
->>   	xa_for_each(&brd->brd_pages, idx, page) {
->> -		__free_page(page);
->> +		put_page(page);
->>   		cond_resched();
->>   	}
->>   
->> @@ -117,7 +144,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
->>   
->>   	bv.bv_len = min_t(u32, bv.bv_len, PAGE_SIZE - offset);
->>   
->> -	rcu_read_lock();
->>   	page = brd_lookup_page(brd, sector);
->>   	if (!page && op_is_write(opf)) {
->>   		page = brd_insert_page(brd, sector, opf);
->> @@ -135,13 +161,13 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
->>   			memset(kaddr, 0, bv.bv_len);
->>   	}
->>   	kunmap_local(kaddr);
->> -	rcu_read_unlock();
->>   
->>   	bio_advance_iter_single(bio, &bio->bi_iter, bv.bv_len);
->> +	if (page)
->> +		put_page(page);
->>   	return true;
->>   
->>   out_error:
->> -	rcu_read_unlock();
->>   	if (PTR_ERR(page) == -ENOMEM && (opf & REQ_NOWAIT))
->>   		bio_wouldblock_error(bio);
->>   	else
->> @@ -149,13 +175,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
->>   	return false;
->>   }
->>   
->> -static void brd_free_one_page(struct rcu_head *head)
->> -{
->> -	struct page *page = container_of(head, struct page, rcu_head);
->> -
->> -	__free_page(page);
->> -}
->> -
->>   static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
->>   {
->>   	sector_t aligned_sector = round_up(sector, PAGE_SECTORS);
->> @@ -170,7 +189,7 @@ static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
->>   	while (aligned_sector < aligned_end && aligned_sector < rd_size * 2) {
->>   		page = __xa_erase(&brd->brd_pages, aligned_sector >> PAGE_SECTORS_SHIFT);
->>   		if (page) {
->> -			call_rcu(&page->rcu_head, brd_free_one_page);
->> +			put_page(page);
->>   			brd->brd_nr_pages--;
->>   		}
->>   		aligned_sector += PAGE_SECTORS;
+>> +/// ```rust
+>> +/// use kernel::io::poll::read_poll_timeout;
+>> +/// use kernel::time::Delta;
+>> +/// use kernel::sync::{SpinLock, new_spinlock};
+>> +///
+>> +/// let lock = KBox::pin_init(new_spinlock!(()), kernel::alloc::flags::GFP_KERNEL)?;
+>> +/// let g = lock.lock();
+>> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), Some(Delta::from_micros(42)));
+>> +/// drop(g);
+>> +///
+>> +/// # Ok::<(), Error>(())
+>> +/// ```
 > 
-> .
+> I am guessing this example is present to test the call to `might_sleep`.
+
+I also guess so. Boqun wrote this test, IIRC.
+
+> Could you document the reason for the test. As an example, this code is
+> not really usable. `#[test]` was staged for 6.15, so perhaps move this
+> to a unit test instead?
 > 
+> The test throws this BUG, which is what I think is also your intention:
+
+might_sleep() doesn't throw BUG(), just a warning. Can the test
+infrastructure handle such?
 
 
