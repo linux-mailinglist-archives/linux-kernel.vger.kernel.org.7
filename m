@@ -1,155 +1,126 @@
-Return-Path: <linux-kernel+bounces-763334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-763336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E8CB2137A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7521AB21387
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 19:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 583FF626D9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF98626EBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 17:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE15B2D47F7;
-	Mon, 11 Aug 2025 17:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D623C2D47F3;
+	Mon, 11 Aug 2025 17:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICIcPitU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dzGv4nZJ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A8B21771B;
-	Mon, 11 Aug 2025 17:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68C829BDB8;
+	Mon, 11 Aug 2025 17:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754934031; cv=none; b=oGpfrzxYs85d2GJkdOAr0XEedk1awuYNDvrO5W7MTF8NckWllGJesJHlv24o86v0IqMbjYGSXHb3NMjieCaIZN2vRBmjz2Vtr5mDFIofJW1t5YxuvaDQUkjMR2VnVbL9EiZP52OqQohypuq0lIbStTnQIUWbeHuQZT+HtCyqO4g=
+	t=1754934070; cv=none; b=ARZfnYDKS8jYnOuSKsi6RkyrEIQ3KB5AVw94fvXivYx7VV+CQgXKpZRJNH8OYrDXkyIXAYQl5uHm0oDrBDpp2Y9mrNPb5EjvXl2mDaFhjQFN05gQZAT/XZE8Bf+QF1u91bR1oPso2dYWsMnZ9zqWaQa0UX1iZZ8Pq0Z1B8c8OAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754934031; c=relaxed/simple;
-	bh=DR4nzsj2RSJeo1Dqf7XMP3J098TXOv60AI7D/vJomI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XMfOVe/7Os7UgBpP5BrF3h5h3mNkwdfMBQYv9kpJZwMAVBH6yZ48l1t6rhyYH+SYRXGIT2BaI05DABxqRChTMwYElqr1sPpnONHjOigyU9+L30Jyj2/A5hlJn/t1eMOn7cXzBee/VoGD20mQ8JQJ62D4Tua7tt6UeWTSv6DHC/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICIcPitU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D4B9C4CEED;
-	Mon, 11 Aug 2025 17:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754934031;
-	bh=DR4nzsj2RSJeo1Dqf7XMP3J098TXOv60AI7D/vJomI4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ICIcPitUvvE+Smdr08VW/T0wbBwaCCrgWxjRnugeYNKEXuLNeR+JSbYkG4VsQ5DRe
-	 7yIzBomnbXC3CvW+XcvnjkzDoJTYh0JkarCgDW5P9hTcl2WMyDkKWhz4l9bKVPUJ0a
-	 cuDQl/tmHI1YqCGjcNI6funcs1bfaaU0McQ44XoA5y/OmuBFAYz/IIsZQ/KTBWuwYd
-	 6nS1ft+xWXfENLaDtvzQ9o8B661nt71bebSGTqybfAb7HTcDYC/5Tbq1lmvvq8vHEy
-	 ecLfCuiRrG2hsS2iuTkCTvWSKGLA58N9EWVw5jiKXStJLG3ZJuuj42zE0Jo/Ix9fxk
-	 qiliFgEoTsuEg==
-Message-ID: <c60ccef1-7213-4dd7-8c10-e8ef03675bd8@kernel.org>
-Date: Mon, 11 Aug 2025 19:40:27 +0200
+	s=arc-20240116; t=1754934070; c=relaxed/simple;
+	bh=PNyZIdImmrds073f5nB1fB3oII1aVT3NsL27tbZppTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B5zNyJ8EpmqFf9S7LeXu6YKGNMvRoGFOyQFREhSdpXJX/FR6yVJENeq+AYMh7KYH+YGwbnPlV9Dlkf2Uk5Jg+4y2bkemXFUBwNp+Zrc9PqtIVUKxVFx9ta+rk0lc+v2AhsnwBNionaoHCO4ECwIJgeTDyZHHWvF034nzD/PaxDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dzGv4nZJ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A025B40E0265;
+	Mon, 11 Aug 2025 17:41:04 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 9Rk2tVDAzDoP; Mon, 11 Aug 2025 17:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1754934054; bh=vzqZZp4GUIsU8G18PqUEspYBU/y65Fim9IDqH6lG4GI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dzGv4nZJob76BP5SVOWCilfK/GOhDtwkxMm+jukWn9ePbM4snhygW/tIXVZNaGpEV
+	 ReJwsiRUYOyfPh3CpMuenUZITPnN73z5ojcQaPyDzeSt90foWwKvkEmJQOCQMituJ3
+	 2XKPhdc6b0XOUuxQLJ/rdpJaFfY77UkELTpu/ddxosRBIipUNOdcio4fBMqbNUIhAu
+	 xARd8wHQZuRtAANFTyt5Fbb485mW8XxCOFYuTyO5wrHPIfTncRoDMVNUAVM9zOLoCo
+	 BzoRPOVy7iVbYev5YPsZRdKmuqzHQpLF9nmPRnSojcI5aK42wKNtG5k4lmM7JmwzJ8
+	 VR3VNaWqb8DPA+jjDJBTkndHR18n0Be4YpYyedtV2aK8355XnjXCTywrRfs0h2rxXc
+	 lfzjlyvXkrw0SaU2PHvWbzlGOqcXzQP7Ts0BfrN0BFdu/0FxG9jcKyKz9UFbVYsGHw
+	 4g/7BFmAnU5dfHsx/TirK+Ktmd/39Lup5bOE+O20ooVnzJQWaL74+Ciqe11kVhC/hm
+	 GOrOaYWG9+gdBB9qpweVGhNa9jQ890Fy5p+2aMzJ0fSaDHskOYZrEodwXK216LtJ0n
+	 9RsMQfDcWJ0IRYqf2YFEOE4U3/H0cn/CxWYX8+D0VGeaB1+r6GSA8Nepv9fSizc8Fl
+	 z3wMReaviJTvDXjHrL9nnP/U=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5DDEA40E0217;
+	Mon, 11 Aug 2025 17:40:42 +0000 (UTC)
+Date: Mon, 11 Aug 2025 19:40:34 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb+git@google.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Kevin Loughlin <kevinloughlin@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: Re: [PATCH v6 21/22] x86/boot: Move startup code out of __head
+ section
+Message-ID: <20250811174034.GRaJorEmcBfLTDhWml@fat_crate.local>
+References: <20250722072708.2079165-24-ardb+git@google.com>
+ <20250722072708.2079165-45-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: barco-p50-gpio: use software nodes for
- gpio-leds/keys
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Santosh Kumar Yadav <santoshkumar.yadav@barco.com>,
- Peter Korsgaard <peter.korsgaard@barco.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Arnd Bergmann <arnd@arndb.de>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <2meuzip4qnxvle4bwk4hbow4j34ii3cwb46xd5inq5btif5mjg@iiygy6ir7vtr>
- <aJnlnx2qF6P61jJN@smile.fi.intel.com>
- <7c2d08e3-d1e2-433e-b726-307246ab17e9@kernel.org>
- <aJoQE2CQv3nzaSqc@smile.fi.intel.com>
- <uakyig6sp2sfuwtt2aq7ds5dcbsjrgcijenunefqzc46inpees@xc6bfr4mjnan>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <uakyig6sp2sfuwtt2aq7ds5dcbsjrgcijenunefqzc46inpees@xc6bfr4mjnan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250722072708.2079165-45-ardb+git@google.com>
 
-Hi,
+On Tue, Jul 22, 2025 at 09:27:30AM +0200, Ard Biesheuvel wrote:
+> @@ -210,7 +210,7 @@ bool __head snp_init(struct boot_params *bp)
+>  	return true;
+>  }
+>  
+> -void __head __noreturn snp_abort(void)
+> +void __init __noreturn snp_abort(void)
+>  {
+>  	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
+>  }
 
-On 11-Aug-25 5:49 PM, Dmitry Torokhov wrote:
-> On Mon, Aug 11, 2025 at 06:45:23PM +0300, Andy Shevchenko wrote:
->> On Mon, Aug 11, 2025 at 04:20:33PM +0200, Hans de Goede wrote:
->>> On 11-Aug-25 2:44 PM, Andy Shevchenko wrote:
->>>> On Sun, Aug 10, 2025 at 09:31:37PM -0700, Dmitry Torokhov wrote:
->>
->> ...
->>
->>>> Otherwise LGTM as here it looks like we establish platform device ourselves and
->>>> hence no need some additional magic Hans mentioned in the other series.
->>>
->>> Not entirely like with the x86-android-tablets patches this
->>> declares a software-node for the gpiochip:
->>>
->>> static const struct software_node gpiochip_node = {
->>> 	.name = DRIVER_NAME,
->>> };
->>>
->>> and registers that node, but nowhere does it actually
->>> get assigned to the gpiochip.
->>>
->>> This is going to need a line like this added to probe():
->>>
->>> 	p50->gc.fwnode = software_node_fwnode(&gpiochip_node);
->>>
->>> note the software_node_fwnode() call MUST be made after
->>> registering the software-nodes (group).
->>>
->>> Other then needing this single line things are indeed
->>> much easier when the code containing the software
->>> properties / nodes is the same code as which is
->>> registering the gpiochip.
->>
->> Ah, good point!
-> 
-> This is wrong though, the software node need not be attached to the
-> gpiochip (and I wonder if it is even safe to do so). It simply provides
-> a name by which gpiochip is looked up in swnode_get_gpio_device().
+So this thing already conflicts with the SAVIC stuff:
 
-Ah interesting. This is very different from how fwnodes generally
-work though. Generally speaking when a PROPERTY_ENTRY_REF() is used
-like PROPERTY_ENTRY_GPIO() does then the lookup is done by matching
-the reference to the fwnode of the type of device to which the
-reference points.
+ld: vmlinux.o: in function `savic_probe':
+/home/boris/kernel/2nd/linux/arch/x86/kernel/apic/x2apic_savic.c:29:(.text+0x6601f): undefined reference to `snp_abort'
+make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1244: vmlinux] Error 2
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:248: __sub-make] Error 2
 
-IOW the standard way how this works for most other subsystems
-is that gpiolib-swnode.c: swnode_get_gpio_device() would call
-gpio_device_find() with a compare function which uses
-device_match_fwnode().
+because it calls snp_abort().
 
-I see that instead it uses the swnode name and passes that to
-gpio_device_find_by_label().
+I'm thinking since it is a one-liner, we can simply turn it into a macro which
+evaluates to
 
-I must say that AFAIK this is not how swnodes are supposed to
-be used the swnode name field is supposed to only be there
-for debugging use and may normally be left empty all together.
+	sev_es_terminate(SEV_TERM_SET_GEN, GHCB_SNP_UNSUPPORTED);
 
-I guess using the swnode-name + gpio_device_find_by_label()
-works but it goes against the design of how fw-nodes
-and especially fwnode-references are supposed to be used...
+and problem solved.
 
-Having a fwnode reference pointing to what is in essence
-a dangling (not attached to any device) fwnode is weird.
+Or you folks have a better idea?
 
-Are there already any users of PROPERTY_ENTRY_GPIO() in
-the kernel? If not then I think that we should fix things
-up to actually do a reference match and not a name based
-lookup.
+Thx.
 
-Andy IIRC you've done quite a bit of work on software-nodes,
-what is your take on this ?
+-- 
+Regards/Gruss,
+    Boris.
 
-Note this is likely my last email in this thread for
-a while since I will be traveling without email access.
-
-Regards,
-
-Hans
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
