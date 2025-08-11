@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-762737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-762738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEB1B20A62
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:35:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DECB20A69
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 15:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3B72426C78
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4C8171385
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Aug 2025 13:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC462DECD6;
-	Mon, 11 Aug 2025 13:35:17 +0000 (UTC)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035D02D2390;
+	Mon, 11 Aug 2025 13:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5+TYzps"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0449F2DECB9;
-	Mon, 11 Aug 2025 13:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943AB21CA1F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 13:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754919317; cv=none; b=BL/wDm1um1GDDjQlyKA7ElzpBmAPRBCeWFSDcFd4mgLo9LAdFlu26x4pBDnDKA/3JrtXee/GZlq9w/8H10bApUkkHsgnYsFc9ajXJJ9KvkiYAfxVdP9w16HCzmOV16EOj8VZaOEe9btV6cBns4QCzPtHQ3jGAnrDk17nSaruVZA=
+	t=1754919350; cv=none; b=Ind47+jAShPrwg1BAvlKM/cNLjiIM4rk1gcNPYcbY4IJSMYare4TYfN1c0rK4ipxTyqzpZeGeYwB6L6dW5z+NtVJ573PcN+Z2vwMSs4vlZFasdi2TCB4886zp3ID7TcNEHe3GeMHGfasALLexF9FGtL6C37itonjExghp2ZDqU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754919317; c=relaxed/simple;
-	bh=2By3DXjOpyWC6A0/Io5OyiKxzRwNwLBN4nfDfSv/IMA=;
+	s=arc-20240116; t=1754919350; c=relaxed/simple;
+	bh=NOLlylZjzQUb9xKJx2Hx2JTobj/7UiKnvpVXU7FIVaU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=leNlpaVS2zF8NVO1ogVozGVyiIDWfPBEihw03xNbb5Xm2AjNsOnPFg2EIVqinosquYa/5imzm6KtqijEzSGdHh4ALCfm+scj4XFqzk3DyMbW5KGg4NMbQczxYs89gfNxIf1LlvNR0Kr3pPO/mZD/wwRGEJdb2M0UjqJRNi/bNDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4fe234cf176so2033981137.2;
-        Mon, 11 Aug 2025 06:35:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=Bj6iuwpUerIKKmtA739WDQcj0zXQnbCv3MX5YWMZ8lTYwPaWiqRZZcOjy6kETmqGDJwrNX40ONpvD8XjErp6fFt/hWHO43J5rKIlflchJQxcTdttZ/9a3Kh/0q4x+kwaxAj7YLEchiKkQxS/D2RuZw524wbqE0+ajZeOoEOrvbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5+TYzps; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-af93381a1d2so701998766b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Aug 2025 06:35:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754919347; x=1755524147; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NOLlylZjzQUb9xKJx2Hx2JTobj/7UiKnvpVXU7FIVaU=;
+        b=V5+TYzpsM83XZNgIaZPoTilrdG9hE+Pogldsx03uxPN+By2WC9IZFyKKifX0/Kzctu
+         ghqxuFxjkbcbN8mr2y780n6l8aOGP6Ju2HDm5H+9Np/v4khZw5N+fzr5TF0LXzkTuVwl
+         pFsqpDJQW2Owb/i50CToe3NI6JJU4o8bZBWWkqRNeRUSvuIPTTFShMm129t1/Lkb2p3J
+         wCXBI/IP1QXl5HxMpcHRgHSdJISboGoe4N+bKO7HU1mGLVd4hMuTMkDVDJGiT5vklQkr
+         IqIWpdmG0llYIcxE3MDrZxfLJaO0+tDrcXGoU63cdqMlRv0AQ9nmCUwj3fNzsA3YHMKv
+         dETA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754919314; x=1755524114;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aZT4bJb4w3zFZE2I1irZKM1rEMcPNOhmCHPvkSE90D4=;
-        b=NtwICyr+CbdGrBHkYiOrn9p0Grt1HW/+ztgovXE1Kg+7uVxpgKrb/+akUyqVgpCwH1
-         +uE90o0lDt55dzohEWee5DE+gw18He9VA+Q13SXVaSIXAgciZhdRfgmuhQLw9e8SfIhP
-         zcVL//rA72GzVApd04rvDXaKzECCjalzffjlnCt32GMpbovPveRe2imzosxDTWEoDZ0a
-         myNMEs+sHY9ixSZjF2FB3FM25uaFLeFM++L4UEe+gewOBZz2OTd8TUPue3GVQez1sl/G
-         eb59zLM4aoWV5y6982Fg4Q9NRgbj61PTyk96khY9xUG3i+w3Y1SRAyEPZDWe/D+LNtwA
-         t6Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCU7P4JSkkAfaba+gkHUaImoodRbHkSha/Ajgn9Cq0nUwUXI5EuWjbpu5fjZeZO1zivXGp7j1eSP5dbY@vger.kernel.org, AJvYcCUDSCTXe9cIM0LzgX6pPOW4zwX5Gn1Uz6WVOGcKOOpcrcVKLv/j4cBK4L8qY7TMgEzwVoVs4+WryN/I@vger.kernel.org, AJvYcCWfmLrDW8FP1MxUyAxRA8AgvqMiyDdo0/CLy5+VbrIrqypxIbWRPohHO7Y0aSseRO0aL7n7VDJZI/X40RCCSJYxqMQ=@vger.kernel.org, AJvYcCXOot2TTQFda3UKEJYJJbIo7Tdivd5UUcirJChWicMqZJlXXluYf79b0Kk5p+GvsRtN+n8glCog54fcmWbU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMjhy+ebtXJGBCboy8FiYUp4T/N9Y1hovHGzt9RMSKAICAmjN6
-	eN+4cSSW1CNHO4ojUoJGtH7pauoQVGJnqzo4hvLG3UXdMY5Dy9XX3cSVflW9yrUw
-X-Gm-Gg: ASbGncsI950aGKSLv8XyuRaNxMaLXxqhgKmfAHWKu68nWiAUPeSh5VmUx1MwaZXQ4Rg
-	D98j3ThWt8Emq8CGDk83Rr3n1EWIyfTAwvNtpltlqyNKntGlEYOYYusz/dRM+LFOMlERwEAcJM1
-	040XXhvWSk+hDIpKgke/inbjIjqnIn/yEM75+eiimchZ69m3+SgOFf4sjL6C6D4ugdBGyXHYmlq
-	liMPKcw6lC7O5BkAmxqtQ7K98VYniv2p9CRBIpovnadStmUHaF4+qyYHUqYVuMkh3g1IXxZ19LT
-	QbhQInJuMk+pLN9FqQ1aB8wbnSlycq5iPCe4W0p64vPYdK/rNn/I1aZYpy2+sY0mWcgsLX6zo2n
-	aju5wEGyRrv//7jfUW3Hyq9jhcmKlFF+WsSHWiJThmP7Skh3k6rMarkMWvxJPOUIL+HdF+Uw=
-X-Google-Smtp-Source: AGHT+IFKXm48s/eMtpKkN2DOf0+xz0KeCJOjO3vbx8jMh6DxcyfBMexKj6+iFwL9sFdwWL/DhNX/sA==
-X-Received: by 2002:a05:6102:e10:b0:4e9:9659:3a5f with SMTP id ada2fe7eead31-5060e1fc261mr4482122137.10.1754919314245;
-        Mon, 11 Aug 2025 06:35:14 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-50629ae5cdfsm1777050137.6.2025.08.11.06.35.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Aug 2025 06:35:13 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4fe234cf176so2033968137.2;
-        Mon, 11 Aug 2025 06:35:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEr0MFM/CIzN3rfKOSGdH5638v40BvS6e7TXc1nERfhAFuQzrHjcSP4vpnI54XS0E2gOv2pk4FRXJEhSdI@vger.kernel.org, AJvYcCVr3qy0SiUDFU+CEv5TV2pFZb7x4QP2D/+KE915BEwAKeuvjmE457pwo7nPbifw35KQPSWxArm43Kmue+74hDp7sCg=@vger.kernel.org, AJvYcCXAFaFQ+L7jecurt7AtDFuQkMirRyFSFygxwx8hKZi5w8na4HcmIxEUo8zAPocZhTB+s98dEKgHqFnS@vger.kernel.org, AJvYcCXPqipV5TA7Ool8Pwm7FVEs9a69qp7pAQPJ9rhxedQm0yWC1g0WWtX9yygemusL0Q2IK3vG8LV/fJLj@vger.kernel.org
-X-Received: by 2002:a05:6102:3707:b0:4fb:fa39:d303 with SMTP id
- ada2fe7eead31-5060ffad642mr4106208137.21.1754919313669; Mon, 11 Aug 2025
- 06:35:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754919347; x=1755524147;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NOLlylZjzQUb9xKJx2Hx2JTobj/7UiKnvpVXU7FIVaU=;
+        b=rSZZIepaKhDw/Zm2CsrsCcVHZGbzj8ZbmV7QXHAWle8am7K2wJBVNMjwnFxulVH1+X
+         zTy16BlmNtWu1xRez1xITKuQ95HFWcSbQEkJM8isRcvYxcQLgPEOtH1UFfxkzij1pTpc
+         6QU2Gszi6g20SMYKkHk48fr7EYUs3GwzuxabkI1VPJ6el6BeVmm1P9Y3qj21Ty4GM6uX
+         PvDimlvZ4ABwAkSVxWrqSmaTnFuSROnd8HhP8TOtH7cHQPfHj8A6MXXUU4txNW7uN3mO
+         8OT+wT4CgWodPYmyeSjhBINGGh9i2BBLkeTyuh36pzVSGBvjuf1N7nSoQC3JFa224tzq
+         LVhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5EVYtcfzjZODZROLJNxMr3LWucsJWojTF65cdZcDnjNFqS690WPmWweefE4ESL8d4Z20+9Vc2NzkBBgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5IvviR62HYRaAHMbSFK/1098Bjj/kRr3iR75cYsq+ELoNLPHz
+	eDv0dR9FajmCjZQDxSefw0w7Cm7aev9/l50wT3K1JZf5EaRk6I8EPDaIftk3cXUDgpvCNqRJaTQ
+	SFfkVsgSuTZ3W1TKs5APUlEKuA5kCUGASovzP7Hpx
+X-Gm-Gg: ASbGncsKAJqzuOVoKCiH0TkMirkvM0uabJQ85c6NaN+zBtF8mc624lXkxLjXFe3vDgz
+	a6cYx1Yd8t1g3Jmc2lZSJ4FhF7oG2tG12X/zwws1RjsFrchH3dpAcDWkJ3RT1pFiIpLBd87ZA3Q
+	KOVHY7Wd79r7ufPJzmVUKNJVe5HcSTtXfupU636z1y9VKCGtcxnQeCw3o6mB8emLkrsgRtAqo9V
+	6cyRDt2RB+TwtdGOfkgNOpZy+q10yhS1+gxfA==
+X-Google-Smtp-Source: AGHT+IEMtjza3TqJyxfAJQyh/g//yT0fd/jmtnJvyR6WS2pLIzy4wk0OcH9xcPI9BD7giTYgWv7HB5G+dXSRgt0snm4=
+X-Received: by 2002:a17:906:4787:b0:af9:2002:c18a with SMTP id
+ a640c23a62f3a-af9c6373b46mr1283907966b.16.1754919346635; Mon, 11 Aug 2025
+ 06:35:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804202643.3967484-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250804202643.3967484-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250804202643.3967484-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Aug 2025 15:35:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU_BSGPfm82q6LRzd94yC9GnjTJn=CJ8FJE0OgLESq5iQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxKTAOrLzKUsRUaFMiV_w-B8p4kHpIBpfDsVjZyFeEl8slQLOm6ps31UGo
-Message-ID: <CAMuHMdU_BSGPfm82q6LRzd94yC9GnjTJn=CJ8FJE0OgLESq5iQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: renesas,r9a09g077/87: Add USB_CLK
- clock ID
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250808200250.2016584-1-jpiecuch@google.com> <20250811083609.GB1613200@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250811083609.GB1613200@noisy.programming.kicks-ass.net>
+From: Kuba Piecuch <jpiecuch@google.com>
+Date: Mon, 11 Aug 2025 15:35:35 +0200
+X-Gm-Features: Ac12FXxK4ZD6s-7VYdbjoueF6PsaOpuLOwBBRHilnnM34Pojh_ruezo5yGtwTLw
+Message-ID: <CABCx4RDTq6x5=dqiROM6GYU21heaCYwOkerUxvf9ENaEM3+BtQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] sched: add ability to throttle sched_yield()
+ calls to reduce contention
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	joshdon@google.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 4 Aug 2025 at 22:27, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Aug 11, 2025 at 10:36=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
 >
-> Add USB clock (USB_CLK) definition for the Renesas RZ/T2H (R9A09G077)
-> and RZ/N2H (R9A09G087) SoCs. USB_CLK is used as the reference clock for
-> USB PHY layer.
+> On Fri, Aug 08, 2025 at 08:02:47PM +0000, Kuba Piecuch wrote:
+> > Problem statement
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > Calls to sched_yield() can touch data shared with other threads.
+> > Because of this, userspace threads could generate high levels of conten=
+tion
+> > by calling sched_yield() in a tight loop from multiple cores.
+> >
+> > For example, if cputimer is enabled for a process (e.g. through
+> > setitimer(ITIMER_PROF, ...)), all threads of that process
+> > will do an atomic add on the per-process field
+> > p->signal->cputimer->cputime_atomic.sum_exec_runtime inside
+> > account_group_exec_runtime(), which is called inside update_curr().
+> >
+> > Currently, calling sched_yield() will always call update_curr() at leas=
+t
+> > once in schedule(), and potentially one more time in yield_task_fair().
+> > Thus, userspace threads can generate quite a lot of contention for the
+> > cacheline containing cputime_atomic.sum_exec_runtime if multiple thread=
+s of
+> > a process call sched_yield() in a tight loop.
+> >
+> > At Google, we suspect that this contention led to a full machine lockup=
+ in
+> > at least one instance, with ~50% of CPU cycles spent in the atomic add
+> > inside account_group_exec_runtime() according to
+> > `perf record -a -e cycles`.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> I've gotta ask, WTH is your userspace calling yield() so much?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue for v6.18 in a branch shared by clock and DT source code.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The code calling sched_yield() was in the wait loop for a spinlock. It
+would repeatedly yield until the compare-and-swap instruction succeeded
+in acquiring the lock. This code runs in the SIGPROF handler.
 
